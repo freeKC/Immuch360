@@ -1,0 +1,28 @@
+# The code built into Brush
+
+`brush_app` of Brush is built by the CI of Immuch360 from the sources of Brush (Apache-2.0, `brush-LICENSE.txt`), with
+the crates below compiled into it. This file is written by cargo about at each build: every crate with its version and
+the licence it declares, then the text of each licence as found in the crates (or the SPDX text when a crate carries
+no file). The crates come from crates.io, or from the git repositories that `Cargo.lock` of Brush pins, at the commits
+it names.
+
+## Licences
+
+{{#each overview}}
+* {{name}} ({{id}}): {{count}} crates
+{{/each}}
+
+## Crates, by licence
+
+{{#each licenses}}
+### {{name}} ({{id}}), text {{@index}}
+
+{{#each used_by}}
+* {{crate.name}} {{crate.version}}{{#if crate.repository}}, {{crate.repository}}{{/if}}
+{{/each}}
+
+````text
+{{{text}}}
+````
+
+{{/each}}

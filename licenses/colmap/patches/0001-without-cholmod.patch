@@ -1,0 +1,150 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e424f37..3de1007 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -64,6 +64,7 @@ option(WERROR_ENABLED "Whether to treat compiler warnings as errors" OFF)
+ option(CCACHE_ENABLED "Whether to enable compiler caching, if available" ON)
+ option(CGAL_ENABLED "Whether to enable the CGAL library" ON)
+ option(LSD_ENABLED "Whether to enable the LSD library" ON)
++option(CHOLMOD_ENABLED "Whether to use CHOLMOD (SuiteSparse) for sparse Cholesky factorizations" ON)
+ option(DOWNLOAD_ENABLED "Whether to enable (automatic) download of resources (requires Curl/OpenSSL)" ON)
+ option(UNINSTALL_ENABLED "Whether to create a target to 'uninstall' colmap" ON)
+ option(BENCHMARK_ENABLED "Whether to enable runtime benchmarking support" OFF)
+diff --git a/cmake/FindDependencies.cmake b/cmake/FindDependencies.cmake
+index e26d5e9..bb0e6e9 100644
+--- a/cmake/FindDependencies.cmake
++++ b/cmake/FindDependencies.cmake
+@@ -91,7 +91,13 @@ find_package(Glew ${COLMAP_FIND_TYPE})
+ 
+ find_package(Git)
+ 
+-find_package(CHOLMOD REQUIRED)
++if(CHOLMOD_ENABLED)
++    find_package(CHOLMOD REQUIRED)
++    list(APPEND COLMAP_COMPILE_DEFINITIONS COLMAP_CHOLMOD_ENABLED)
++    message(STATUS "Enabling CHOLMOD support")
++else()
++    message(STATUS "Disabling CHOLMOD support (sparse Cholesky by Eigen's SimplicialLDLT)")
++endif()
+ 
+ # Ceres and glog expose gflags::gflags in their interface dependencies, but gflags
+ # only defines the namespaced target when GFLAGS_USE_TARGET_NAMESPACE is ON. Bridge
+diff --git a/cmake/colmap-config.cmake.in b/cmake/colmap-config.cmake.in
+index fe35090..105c120 100644
+--- a/cmake/colmap-config.cmake.in
++++ b/cmake/colmap-config.cmake.in
+@@ -83,6 +83,8 @@ set(MVS_ENABLED @MVS_ENABLED@)
+ 
+ set(LSD_ENABLED @LSD_ENABLED@)
+ 
++set(CHOLMOD_ENABLED @CHOLMOD_ENABLED@)
++
+ set(FETCH_POSELIB @FETCH_POSELIB@)
+ 
+ set(FETCH_FAISS @FETCH_FAISS@)
+diff --git a/src/colmap/optim/CMakeLists.txt b/src/colmap/optim/CMakeLists.txt
+index c963409..b16c6a1 100644
+--- a/src/colmap/optim/CMakeLists.txt
++++ b/src/colmap/optim/CMakeLists.txt
+@@ -45,8 +45,10 @@ COLMAP_ADD_LIBRARY(
+         colmap_math
+         colmap_util
+         Eigen3::Eigen
+-        CHOLMOD::CHOLMOD
+ )
++if(CHOLMOD_ENABLED)
++    target_link_libraries(colmap_optim PUBLIC CHOLMOD::CHOLMOD)
++endif()
+ if(OPENMP_FOUND)
+     target_link_libraries(colmap_optim PUBLIC OpenMP::OpenMP_CXX)
+ endif()
+diff --git a/src/colmap/optim/sparse_cholesky.cc b/src/colmap/optim/sparse_cholesky.cc
+index beaa1c9..6de1f3a 100644
+--- a/src/colmap/optim/sparse_cholesky.cc
++++ b/src/colmap/optim/sparse_cholesky.cc
+@@ -35,13 +35,18 @@ namespace colmap {
+ 
+ void SparseCholeskyWithFallbackSolver::AnalyzePattern(
+     const Eigen::SparseMatrix<double>& A) {
++#ifdef COLMAP_CHOLMOD_ENABLED
+   supernodal_.analyzePattern(A);
+   // LDLT pattern is analyzed lazily on first fallback, since the common case
+   // never needs it.
++#else
++  ldlt_.analyzePattern(A);
++#endif
+ }
+ 
+ bool SparseCholeskyWithFallbackSolver::Factorize(
+     const Eigen::SparseMatrix<double>& A) {
++#ifdef COLMAP_CHOLMOD_ENABLED
+   if (!use_ldlt_) {
+     supernodal_.factorize(A);
+     if (supernodal_.info() == Eigen::Success) {
+@@ -52,6 +57,7 @@ bool SparseCholeskyWithFallbackSolver::Factorize(
+     ldlt_.analyzePattern(A);
+     use_ldlt_ = true;
+   }
++#endif
+   ldlt_.factorize(A);
+   return ldlt_.info() == Eigen::Success;
+ }
+@@ -65,12 +71,14 @@ bool SparseCholeskyWithFallbackSolver::Compute(
+ bool SparseCholeskyWithFallbackSolver::Solve(const Eigen::VectorXd& b,
+                                              Eigen::VectorXd* x) const {
+   THROW_CHECK_NOTNULL(x);
+-  if (use_ldlt_) {
+-    x->noalias() = ldlt_.solve(b);
+-    return ldlt_.info() == Eigen::Success;
++#ifdef COLMAP_CHOLMOD_ENABLED
++  if (!use_ldlt_) {
++    x->noalias() = supernodal_.solve(b);
++    return supernodal_.info() == Eigen::Success;
+   }
+-  x->noalias() = supernodal_.solve(b);
+-  return supernodal_.info() == Eigen::Success;
++#endif
++  x->noalias() = ldlt_.solve(b);
++  return ldlt_.info() == Eigen::Success;
+ }
+ 
+ }  // namespace colmap
+diff --git a/src/colmap/optim/sparse_cholesky.h b/src/colmap/optim/sparse_cholesky.h
+index 6dab1a4..2b4b46e 100644
+--- a/src/colmap/optim/sparse_cholesky.h
++++ b/src/colmap/optim/sparse_cholesky.h
+@@ -29,7 +29,9 @@
+ 
+ #pragma once
+ 
++#ifdef COLMAP_CHOLMOD_ENABLED
+ #include <Eigen/CholmodSupport>
++#endif
+ #include <Eigen/SparseCholesky>
+ #include <Eigen/SparseCore>
+ 
+@@ -39,7 +41,8 @@ namespace colmap {
+ // large systems) and falls back to Eigen's simplicial LDLT (more numerically
+ // tolerant) once supernodal reports the matrix is not positive definite.
+ // Supernodal CHOLMOD aborts at the first non-positive pivot in a dense block,
+-// which can trigger on mathematically PD but ill-conditioned systems.
++// which can trigger on mathematically PD but ill-conditioned systems. Built
++// without CHOLMOD (CHOLMOD_ENABLED=OFF), the simplicial LDLT does all the work.
+ class SparseCholeskyWithFallbackSolver {
+  public:
+   // One-shot factorization (analyze + factorize).
+@@ -53,9 +56,13 @@ class SparseCholeskyWithFallbackSolver {
+   bool Solve(const Eigen::VectorXd& b, Eigen::VectorXd* x) const;
+ 
+  private:
++#ifdef COLMAP_CHOLMOD_ENABLED
+   Eigen::CholmodSupernodalLLT<Eigen::SparseMatrix<double>> supernodal_;
+-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> ldlt_;
+   bool use_ldlt_ = false;
++#else
++  bool use_ldlt_ = true;
++#endif
++  Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> ldlt_;
+ };
+ 
+ }  // namespace colmap

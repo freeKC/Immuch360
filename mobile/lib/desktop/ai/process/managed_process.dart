@@ -15,7 +15,8 @@
 //    it;
 //  - stops within a second when killed (TerminateProcess, SIGKILL).
 // The work folders of the jobs are <temp>/immuch360-ai/<job>/: deleted at the end of a job by their owner, and when the
-// runner opens if older than an hour.
+// runner opens if older than an hour; that of a splat scene (splat-<key>, lot SP6) after a day, so that Retry starts
+// again from the poses COLMAP found. A folder used again counts from its last use, the time of its .last-used file.
 //
 // PR_SET_PDEATHSIG follows the thread that started the child, not the process: programs are started from the main
 // isolate of the app (the generator, the upscale and the probe are asynchronous, backends.dart), whose thread lasts as
@@ -28,6 +29,7 @@ import 'dart:io' as io;
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/process/process_job_object.dart';
 import 'package:immich_mobile/desktop/ai/process/process_priority.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
@@ -38,6 +40,38 @@ const aiWorkFolderName = 'immuch360-ai';
 
 /// The name of the Linux launcher in the archive of an engine
 const linuxLauncherName = 'immuch360-run';
+
+/// The name the work folder of a splat scene starts with: it is kept SplatV1.workKept after its last use, for Retry
+const splatWorkFolderPrefix = 'splat-';
+
+/// The file whose time is that of the last use of the work folder that holds it
+const aiWorkLastUsedName = '.last-used';
+
+/// When [folder] was last used: the time of its [aiWorkLastUsedName] file when it holds one, else its own
+DateTime aiWorkFolderLastUsed(io.Directory folder) {
+  final marker = io.File(p.join(folder.path, aiWorkLastUsedName));
+  try {
+    if (marker.existsSync()) {
+      return marker.lastModifiedSync();
+    }
+  } on io.FileSystemException {
+    // The time of the folder then
+  }
+  return folder.statSync().modified;
+}
+
+/// Marks [folder] used [at] that time (now by default); nothing when it cannot be written
+void touchAiWorkFolder(io.Directory folder, {DateTime? at}) {
+  try {
+    final marker = io.File(p.join(folder.path, aiWorkLastUsedName));
+    if (!marker.existsSync()) {
+      marker.createSync(recursive: true);
+    }
+    marker.setLastModifiedSync(at ?? DateTime.now());
+  } on io.FileSystemException catch (error) {
+    _log.warning('The work folder ${folder.path} could not be marked used: $error');
+  }
+}
 
 /// Starts a program: [Process.start] for the app, a fake in the tests
 typedef ProcessStarter =
@@ -178,22 +212,28 @@ class AiWorkFolders {
     }
   }
 
-  /// Deletes the work folders not changed for [maxAge] (an hour), those of jobs an earlier session left, and the
-  /// answers of the probe of the graphics cards (`gpu-probe-<pid>-<n>.json`) a probe stopped before it could delete them
-  /// left; returns how many went
+  /// Deletes the work folders not used for [maxAge] (an hour; a day for those of the splat scenes,
+  /// [splatWorkFolderPrefix]), those of jobs an earlier session left, and the answers of the probe of the graphics
+  /// cards (`gpu-probe-<pid>-<n>.json`) a probe stopped before it could delete them left; returns how many went
   int deleteOld({Duration maxAge = const Duration(hours: 1), DateTime? now}) {
     if (!root.existsSync()) {
       return 0;
     }
-    final limit = (now ?? DateTime.now()).subtract(maxAge);
+    final at = now ?? DateTime.now();
+    final limit = at.subtract(maxAge);
     var deleted = 0;
     for (final entry in root.listSync()) {
+      if (entry is io.Directory) {
+        final splat = p.basename(entry.path).startsWith(splatWorkFolderPrefix);
+        if (aiWorkFolderLastUsed(entry).isBefore(splat ? at.subtract(SplatV1.workKept) : limit) && delete(entry)) {
+          deleted++;
+        }
+        continue;
+      }
       if (!entry.statSync().modified.isBefore(limit)) {
         continue;
       }
-      if (entry is io.Directory && delete(entry)) {
-        deleted++;
-      } else if (entry is io.File && _probeAnswer.hasMatch(p.basename(entry.path))) {
+      if (entry is io.File && _probeAnswer.hasMatch(p.basename(entry.path))) {
         try {
           entry.deleteSync();
           deleted++;

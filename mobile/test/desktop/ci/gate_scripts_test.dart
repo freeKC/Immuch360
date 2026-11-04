@@ -153,6 +153,65 @@ const _av2Jobs = r'''
       - run: python3 .github/desktop/av2/av2_build.py pack --system macos-universal
 ''';
 
+/// The two jobs of the desktop workflow that build COLMAP (lot SP1 of the splat maker), as immuch360-desktop.yml has them
+const _colmapJobs = r'''
+  colmap-windows:
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+      - run: python .github/desktop/ai/colmap_build.py pack --system windows-x64
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+  colmap-linux:
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 .github/desktop/ai/colmap_build.py pack --system linux-x64
+''';
+
+/// The two jobs of the desktop workflow that build Brush (lot SP2 of the splat scenes), as immuch360-desktop.yml has
+/// them
+const _brushJobs = r'''
+  brush-windows:
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.brush || needs.codegen.outputs.brush_lock_changed == 'true' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python .github/desktop/ai/brush_build.py pack --system windows-x64
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+  brush-linux:
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.brush || needs.codegen.outputs.brush_lock_changed == 'true' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 .github/desktop/ai/brush_build.py pack --system linux-x64
+''';
+
 /// The release workflow with the with_sdcpp input, as immuch360-desktop-release.yml has it: passed to the build only,
 /// and the release job never running with it nor with sign_test
 const _releaseWithSdcpp = '''
@@ -223,6 +282,16 @@ jobs:
           persist-credentials: false
       - run: python3 .github/desktop/desktop_release.py
 ''';
+
+/// The release workflow with the with_splat input (lot SP14): COLMAP and Brush passed to the build only, and the release
+/// job never running with it nor with sign_test
+final _releaseWithSplat = _releaseWithSdcpp
+    .replaceFirst('      with_sdcpp:\n        type: boolean\n', '      with_splat:\n        type: boolean\n')
+    .replaceFirst(
+      'sdcpp: \${{ inputs.with_sdcpp == true }}',
+      'colmap: \${{ inputs.with_splat == true }}\n      brush: \${{ inputs.with_splat == true }}',
+    )
+    .replaceFirst('!inputs.with_sdcpp', '!inputs.with_splat');
 
 const _mise = '''
 [tools]
@@ -1184,6 +1253,105 @@ abstract class SyncEvents {
       }
     });
 
+    test('the jobs of COLMAP: on the images of the desktop builds, when asked, never as a package', () {
+      const good = '$_goodWorkflow$_sdcppJobs$_colmapJobs';
+      final run = check(good);
+      expect(run.exitCode, 0, reason: '$run');
+      for (final (workflow, message) in [
+        (
+          good.replaceFirst(
+            'runs-on: ubuntu-22.04\n    needs: codegen\n    if: \${{ inputs.colmap',
+            'runs-on: ubuntu-24.04\n    needs: codegen\n    if: \${{ inputs.colmap',
+          ),
+          'the job colmap-linux runs on ubuntu-24.04: COLMAP builds on ubuntu-22.04',
+        ),
+        (
+          good.replaceFirst(
+            'runs-on: windows-2022\n    needs: codegen\n    if: \${{ inputs.colmap',
+            'runs-on: windows-2025\n    needs: codegen\n    if: \${{ inputs.colmap',
+          ),
+          'the job colmap-windows runs on windows-2025',
+        ),
+        (
+          good.replaceFirst(
+            "    if: \${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}\n    timeout-minutes: 300\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3",
+            '    timeout-minutes: 300\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3',
+          ),
+          'the job colmap-linux runs on every event: its "if:" must read inputs.colmap',
+        ),
+        (
+          good.replaceFirst(
+            '          path: dist/\${{ steps.lock.outputs.artifact }}\n  colmap-linux:',
+            '          name: Immuch360-Desktop-colmap.zip\n          path: dist/\${{ steps.lock.outputs.artifact }}\n  colmap-linux:',
+          ),
+          'the job colmap-windows uploads Immuch360-Desktop-colmap.zip',
+        ),
+        (
+          good.replaceFirst('  colmap-linux:', '  colmap-macos:'),
+          'the job colmap-macos builds COLMAP on no known system',
+        ),
+        // The sdcpp input does not ask for COLMAP
+        (
+          good.replaceFirst('if: \${{ inputs.colmap || needs', 'if: \${{ inputs.sdcpp || needs'),
+          'the job colmap-windows runs on every event',
+        ),
+      ]) {
+        expect(workflow, isNot(good));
+        final refused = check(workflow);
+        expect(refused.exitCode, 1, reason: '$refused');
+        expect(refused.output, contains(message));
+      }
+    });
+
+    test('the jobs of Brush: on the images of the desktop builds, when asked, never as a package', () {
+      const good = '$_goodWorkflow$_sdcppJobs$_brushJobs';
+      final run = check(good);
+      expect(run.exitCode, 0, reason: '$run');
+      for (final (workflow, message) in [
+        (
+          good.replaceFirst(
+            "runs-on: ubuntu-22.04\n    needs: codegen\n    if: \${{ inputs.brush",
+            "runs-on: ubuntu-24.04\n    needs: codegen\n    if: \${{ inputs.brush",
+          ),
+          'the job brush-linux runs on ubuntu-24.04: Brush builds on ubuntu-22.04',
+        ),
+        (
+          good.replaceFirst(
+            "runs-on: windows-2022\n    needs: codegen\n    if: \${{ inputs.brush",
+            "runs-on: windows-2025\n    needs: codegen\n    if: \${{ inputs.brush",
+          ),
+          'the job brush-windows runs on windows-2025',
+        ),
+        (
+          good.replaceFirst(
+            "    if: \${{ inputs.brush || needs.codegen.outputs.brush_lock_changed == 'true' }}\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3",
+            '    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3',
+          ),
+          'the job brush-linux runs on every event: its "if:" must read inputs.brush',
+        ),
+        (
+          good.replaceFirst(
+            "    if: \${{ inputs.brush || needs.codegen.outputs.brush_lock_changed == 'true' }}\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python .github",
+            "    if: \${{ inputs.sdcpp || needs.codegen.outputs.sdcpp_lock_changed == 'true' }}\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python .github",
+          ),
+          'the job brush-windows runs on every event',
+        ),
+        (
+          good.replaceFirst(
+            '          path: dist/\${{ steps.lock.outputs.artifact }}\n  brush-linux:',
+            '          name: Immuch360-Desktop-brush.zip\n          path: dist/\${{ steps.lock.outputs.artifact }}\n  brush-linux:',
+          ),
+          'the job brush-windows uploads Immuch360-Desktop-brush.zip',
+        ),
+        (good.replaceFirst('  brush-linux:', '  brush-macos:'), 'the job brush-macos builds Brush on no known'),
+      ]) {
+        expect(workflow, isNot(good));
+        final refused = check(workflow);
+        expect(refused.exitCode, 1, reason: '$refused');
+        expect(refused.output, contains(message));
+      }
+    });
+
     group('--release', () {
       ScriptRun release(String workflow) {
         final root = tree({'workflow.yml': workflow, 'mise.toml': _mise});
@@ -1282,6 +1450,34 @@ abstract class SyncEvents {
           ),
         ]) {
           expect(workflow, isNot(_releaseWithAv2));
+          final refused = release(workflow);
+          expect(refused.exitCode, 1, reason: '$refused');
+          expect(refused.output, contains(message));
+        }
+      });
+
+      test('with_splat goes to the build only, as colmap and brush, and the job that writes never runs with it', () {
+        final run = release(_releaseWithSplat);
+        expect(run.exitCode, 0, reason: '$run');
+        expect(_releaseWithSplat, contains('brush: \${{ inputs.with_splat == true }}'));
+        for (final (workflow, message) in [
+          (
+            _releaseWithSplat.replaceFirst('colmap: \${{ inputs.with_splat == true }}', 'colmap: true'),
+            'the job build passes colmap: true',
+          ),
+          (
+            _releaseWithSplat.replaceFirst(
+              'brush: \${{ inputs.with_splat == true }}',
+              'brush: \${{ inputs.with_sdcpp }}',
+            ),
+            'the job build passes brush: \${{ inputs.with_sdcpp }}',
+          ),
+          (
+            _releaseWithSplat.replaceFirst(' && !inputs.with_splat', ''),
+            'the job release writes the contents and may run with with_splat',
+          ),
+        ]) {
+          expect(workflow, isNot(_releaseWithSplat));
           final refused = release(workflow);
           expect(refused.exitCode, 1, reason: '$refused');
           expect(refused.output, contains(message));

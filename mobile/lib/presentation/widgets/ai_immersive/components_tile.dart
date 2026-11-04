@@ -256,6 +256,7 @@ String aiFeatureGroupName(Translations t, AiFeatureGroup group) => switch (group
   AiFeatureGroup.photos => t.ai_immersive_feature_photos,
   AiFeatureGroup.scenes => t.ai_immersive_feature_scenes,
   AiFeatureGroup.panoramas => t.ai_immersive_feature_panoramas,
+  AiFeatureGroup.splats => t.ai_immersive_feature_splats,
   AiFeatureGroup.av2 => t.av2_decoder_name,
 };
 
@@ -267,6 +268,7 @@ String aiFeatureGroupTitle(Translations t, AiGroupComponents group) {
     AiFeatureGroup.photos => t.ai_immersive_components_photos(size: size),
     AiFeatureGroup.scenes => t.ai_immersive_components_scenes(size: size),
     AiFeatureGroup.panoramas => t.ai_immersive_components_panoramas(size: size),
+    AiFeatureGroup.splats => t.ai_immersive_components_splats(size: size),
     // Never in this tile (aiComponentGroupsFor gives the groups of the AI): the video settings show the AV2 decoder
     AiFeatureGroup.av2 => t.av2_settings_not_installed(size: size),
   };

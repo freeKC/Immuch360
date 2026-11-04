@@ -1472,12 +1472,12 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the gate of the headset; not yet on the phone branch; the decision of 30 October: the gate of the Meta Horizon Store build; the gate of the build read through SplatBuild.kindOf; the splats on the Quest 3 (fix-quest-splats-device): a version 4 SPZ refused, versions 1 and 3 rewritten and counted in the cache; the cache of a version 2 rewritten; the splat turn and SPZ version 4 (fix-quest-splat-navigation): version 4 opens"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatHeaderTest.kt": {
-    "blob": "b0e3533731e4ede6782f49e73fd49cb0bf68cceb",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the head of a splat file; the degrees and float types of a PLY, the fixed point bits of an SPZ; not yet on the phone branch; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the table of contents of version 4"
+    "blob": "d733c3d40cabe53afd241040fd8b12e250d57fb7",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the head of a splat file; the degrees and float types of a PLY, the fixed point bits of an SPZ; not yet on the phone branch; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the table of contents of version 4; the formats of the splat scenes made on a computer (feat-splat-maker-sp3-formats): the SPZ version 2 and the PLY a computer writes, the SPZ of the Dart writer among them"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatModuleFormatTest.kt": {
-    "blob": "b461034c1956b1ecde04e04085c94867b4ad8210",
-    "reason": "The splats on the Quest 3 (fix-quest-splats-device): unit tests of SplatModuleFormat; the whole check of an SPZ; not yet on the phone branch; the splat turn and SPZ version 4 (fix-quest-splat-navigation): version 4 rewritten"
+    "blob": "b5288a5bedade056998a84c0d059062b79ad17c6",
+    "reason": "The splats on the Quest 3 (fix-quest-splats-device): unit tests of SplatModuleFormat; the whole check of an SPZ; not yet on the phone branch; the splat turn and SPZ version 4 (fix-quest-splat-navigation): version 4 rewritten; the formats of the splat scenes made on a computer (feat-splat-maker-sp3-formats): their SPZ and PLY read to their end by the module checks"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatModuleFrameTest.kt": {
     "blob": "af36613d9365fe27db1647d203997c2ddf9b769f",

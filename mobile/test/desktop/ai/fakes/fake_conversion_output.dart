@@ -12,9 +12,15 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:path/path.dart' as p;
 
-class FakeConversionOutput implements ConversionOutput {
+class FakeConversionOutput implements ConversionOutput, ConversionCompanionOutput {
   final begun = <String>[];
   final discarded = <String>[];
+
+  /// The companions begun (the .ply of a splat scene), by the name each was begun for
+  final companions = <String, String>{};
+
+  /// The failure of the rename of a companion, when set
+  ImmersiveErrorCode? failCompanion;
 
   /// What each finish was asked, and the original it was given
   final finished = <(AiWhenExists, String?)>[];
@@ -77,6 +83,35 @@ class FakeConversionOutput implements ConversionOutput {
     }
     File(partPath).renameSync(path);
     return ConversionSaved(path: path, outcome: ConversionSaveOutcome.saved);
+  }
+
+  @override
+  Future<String> beginCompanion(ConversionJob job, String fileName) async {
+    final path = p.join(job.target!.folder, '.$fileName.$pid-c${companions.length + 1}.immuch360.part');
+    File(path).writeAsBytesSync(const []);
+    companions[path] = fileName;
+    return path;
+  }
+
+  @override
+  Future<String> finishCompanion(
+    ConversionJob job,
+    String partPath, {
+    required String versionPath,
+    required ImmersiveSource original,
+  }) async {
+    final code = failCompanion;
+    if (code != null) {
+      throw ConversionException(code, 'Scripted failure of the rename of the companion');
+    }
+    final stem = p.basenameWithoutExtension(versionPath);
+    final extension = p.extension(companions[partPath] ?? '');
+    var path = p.join(p.dirname(versionPath), '$stem$extension');
+    for (var n = 1; File(path).existsSync(); n++) {
+      path = p.join(p.dirname(versionPath), '$stem ($n)$extension');
+    }
+    File(partPath).renameSync(path);
+    return path;
   }
 
   @override

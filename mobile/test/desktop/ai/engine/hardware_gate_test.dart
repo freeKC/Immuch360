@@ -116,7 +116,8 @@ void main() {
 
       expect(mac.reason, AiGateReason.notYetOnMac);
       expect(mac.reason!.textKey, 'ai_immersive_gpu_not_on_mac');
-      // Nothing held back by default since ai-components-3 was published: every component installed, a card it takes
+      // Nothing held back on the branch of the test build, which lifts the splat scenes (lot SP8): every component
+      // installed, a card it takes
       expect(gate().heldGroups, isEmpty);
       expect(sdCppWindowsComponent.isComplete, isTrue);
       expect(windows.isAvailable, isTrue, reason: '$windows');

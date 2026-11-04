@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The files of the prereleases ai-components-1, 2 and 3: the AI components Immuch360 downloads when the user asks.
+"""The files of the prereleases ai-components-1 to 4: the AI components Immuch360 downloads when the user asks.
 
 Design: store/m2/ai-immersive-2026-10-26/design-final-2026-10-26.md, sections 2.2 and 4.6 (lot A3b), and
 phase23/design-final-2026-10-27.md, sections 7.1 to 7.4 (lot C2). The app carries a catalogue of these files with the
@@ -30,6 +30,15 @@ ai-components-2, the 3D scenes, and ai-components-3, the 360° panoramas (UPSTRE
      the GitHub API (--from-run RUN) or found in a --cache folder; its files go into our own archive
      sd-cpp-vulkan-<platform>.zip (sorted names, fixed dates, deflate), each with its size, sum and executable bit (the
      artifacts keep no file mode: a .exe, or an ELF program that is not a .so, is executable).
+ai-components-4, the splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, section 2.3; lot SP14):
+  8. the same for COLMAP 4.2.1 without its GPL parts (lot SP1) and Brush 0.3.0 without the LPIPS weights (lot SP2),
+     the artifacts Immuch360-AI-colmap-<lock>-<platform>.zip and Immuch360-AI-brush-<lock>-<platform>.zip of our CI,
+     whose <lock> must be the id of colmap.lock.json or brush.lock.json of this tree, made into colmap-cpu-<platform>
+     .zip and brush-vulkan-<platform>.zip. ENGINES says whether the Windows programs and libraries of an engine are
+     signed (the with_splat run of the release workflow, as with_sdcpp for ai-components-3): signed, each .exe and
+     .dll must carry an Authenticode signature; not signed, the script names those without one. A SHA256SUMS.txt in
+     an artifact must agree with its files, a signed program apart, and is written again with the sums of the files as
+     they are published.
 Every release also holds MODEL-LICENSES.md (the copy of licenses/ai-components/MODEL-LICENSES.md, dated, one section
 per release, the other sections kept as they are) and SHA256SUMS.
 
@@ -40,6 +49,10 @@ per release, the other sections kept as they are) and SHA256SUMS.
       else to a temporary one. With --write, what the files give is written into the catalogue (the libraries of ONNX
       Runtime and their notices, the parts, the archives) and the section of TAG into MODEL-LICENSES.md. An engine
       without its artifact stays pending: said, and the release is not published.
+  publish_ai_components.py --out DIR [--release TAG] [...] --dry-run [--token-file FILE]
+      the same, then what --publish would do, read only: the release TAG and a draft of it must not exist on
+      freeKC/Immuch360, the Latest release is read, and the requests of --publish are printed; exit 1 when --publish
+      would refuse.
   publish_ai_components.py --out DIR [--release TAG] [...] --publish [--token-file FILE]
       the same, then the prerelease TAG on freeKC/Immuch360 with the files of DIR, only when the catalogue and
       MODEL-LICENSES.md of the repository agree with them and nothing is pending. Made as a draft, filled, then
@@ -47,7 +60,7 @@ per release, the other sections kept as they are) and SHA256SUMS.
       no release workflow runs on it (the upstream workflows that run on a published release are disabled in the
       fork). A release that exists already is never touched.
   publish_ai_components.py --check [--release TAG] [--test-build BRANCH]
-      offline, for the three releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
+      offline, for the four releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
       be pending, said), in the release of its family, its file, parts and sums are those of the tables below, and
       MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart);
       and, whatever TAG, the three archives of the AV2 decoder (av2-decoder-1, not made by this script): in their
@@ -58,7 +71,9 @@ per release, the other sections kept as they are) and SHA256SUMS.
       another branch, or taken by a branch made from it, the sums fail the gate until they are taken out again. Once
       .github/desktop/av2/publish_av2_decoder.py --write has written the entries of av2-decoder-1 and its record
       (.github/desktop/av2/av2-decoder-1.json, lot AD11), sums equal to that record pass on every branch, and any
-      other sums fail.
+      other sums fail. The engines of ai-components-4, COLMAP and Brush, are checked as those of ai-components-3 (lot
+      SP14; before it, lot SP8 held them back, lifted on the branch of their test build only, which nothing needs any
+      more).
 
 Without --publish nothing leaves this computer; the network is used only to download the files and to read the cards
 and the artifacts. --sources FILE replaces the addresses and upstream sums of the tables below (the tests serve small
@@ -84,6 +99,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import textwrap
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -98,8 +114,11 @@ REPO = 'freeKC/Immuch360'
 TAG = 'ai-components-1'
 TAG_SCENES = 'ai-components-2'
 TAG_PANORAMAS = 'ai-components-3'
-RELEASES = (TAG, TAG_SCENES, TAG_PANORAMAS)
-FAMILIES = {TAG: '3D photos', TAG_SCENES: '3D scenes', TAG_PANORAMAS: '360° panoramas'}
+# The splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, section 2.3): COLMAP and Brush built by our CI
+# (lots SP1 and SP2), made into this release by this script since lot SP14 (ENGINES below)
+TAG_SPLATS = 'ai-components-4'
+RELEASES = (TAG, TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS)
+FAMILIES = {TAG: '3D photos', TAG_SCENES: '3D scenes', TAG_PANORAMAS: '360° panoramas', TAG_SPLATS: 'splat scenes'}
 SUMS = 'SHA256SUMS'
 # GitHub refuses an asset of 2 GiB or more; a larger file goes in parts of the largest whole number of MiB under 1.9 GiB
 ASSET_LIMIT = 2 * 1024 ** 3
@@ -212,13 +231,25 @@ class Upstream:
 
 @dataclasses.dataclass(frozen=True)
 class Engine:
-    """An engine of ai-components-3: the artifact of our CI its files come from (lot P2)"""
+    """An engine of ai-components-3 or 4: the artifact of our CI its files come from (lots P2, SP1 and SP2)"""
     component: str
     platform: str
+    release: str = TAG_PANORAMAS
+    # The start of the name of its artifact, Immuch360-AI-<what>-<lock>-<platform>.zip
+    prefix: str = 'Immuch360-AI-sdcpp-'
+    # The lock of its build, whose id the name of the artifact must carry; None: not checked (lot P2)
+    lock: str | None = None
+    # Whether its Windows programs and libraries are signed: True, each .exe and .dll must carry an Authenticode
+    # signature; False, published as built, those without one named; None, not looked at (lot P2)
+    signed: bool | None = None
 
     @property
     def artifact_suffix(self) -> str:
         return f'-{self.platform}.zip'
+
+    @property
+    def windows(self) -> bool:
+        return self.platform.startswith('windows')
 
 
 HF = 'https://huggingface.co'
@@ -273,8 +304,17 @@ UPSTREAM = (
 ENGINES = (
     Engine('sd-cpp-vulkan-win-x64', 'windows-x64'),
     Engine('sd-cpp-vulkan-linux-x64', 'linux-x64'),
+    # ai-components-4 (lot SP14). The Windows archives are those of the run 41884480484 of the release workflow, with
+    # with_splat and sign_test: their programs signed by APROGSYS, the runtime DLLs of Microsoft keeping their own
+    # signature. The Linux archives come from the same run.
+    Engine('colmap-cpu-win-x64', 'windows-x64', TAG_SPLATS, 'Immuch360-AI-colmap-', 'colmap.lock.json', True),
+    Engine('colmap-cpu-linux-x64', 'linux-x64', TAG_SPLATS, 'Immuch360-AI-colmap-', 'colmap.lock.json', False),
+    Engine('brush-vulkan-win-x64', 'windows-x64', TAG_SPLATS, 'Immuch360-AI-brush-', 'brush.lock.json', True),
+    Engine('brush-vulkan-linux-x64', 'linux-x64', TAG_SPLATS, 'Immuch360-AI-brush-', 'brush.lock.json', False),
 )
 ENGINE_ARTIFACT_PREFIX = 'Immuch360-AI-sdcpp-'
+# The folder of the locks of the engines
+LOCKS = ROOT / '.github' / 'desktop' / 'ai'
 
 CONTENT_TYPES = {'.gz': 'application/gzip', '.txt': 'text/plain', '.md': 'text/markdown', '.onnx':
                  'application/octet-stream', '.tflite': 'application/octet-stream', '.zip': 'application/zip'}
@@ -607,7 +647,8 @@ def licences_header(date: str) -> list:
         '# Licences of the AI components of Immuch360',
         '',
         f'Date: {date}. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases',
-        f'`{TAG}` (3D photos), `{TAG_SCENES}` (3D scenes) and `{TAG_PANORAMAS}` (360° panoramas):',
+        f'`{TAG}` (3D photos), `{TAG_SCENES}` (3D scenes), `{TAG_PANORAMAS}` (360° panoramas) and `{TAG_SPLATS}`',
+        '(splat scenes):',
         f'https://github.com/{REPO}/releases',
         '',
         'The app downloads a component only when the user asks for it, checks its SHA-256 against the catalogue built',
@@ -748,6 +789,35 @@ FAMILY_NOTES = {
         'miniz, stb, llamafile sgemm) are in the `licenses/` folder of each archive, from `licenses/sdcpp/` of the',
         'repository. No CUDA: the graphics card is reached through Vulkan only.',
     ],
+    TAG_SPLATS: [
+        'COLMAP 4.2.1: BSD-3-Clause, Copyright (c), ETH Zurich and UNC Chapel Hill',
+        '(https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt). Brush 0.3.0: Apache-2.0',
+        '(https://github.com/ArthurBrussee/brush/blob/v0.3.0/LICENSE), no NOTICE file. Both are built by our CI from',
+        'the sources pinned in `.github/desktop/ai/colmap.lock.json` and `brush.lock.json`, with the patches of',
+        '`licenses/colmap/patches/` and `licenses/brush/patches/` (each changed file of Brush says so, Apache-2.0',
+        'section 4 b), and run by the app as child processes, without a window and without the network.',
+        '',
+        'COLMAP is built without its GPL and non commercial parts: no graphical interface (Qt), OpenGL nor SiftGPU',
+        '(research and non-profit use only), no LSD (AGPL 3), no CGAL, GMP nor MPFR, no CHOLMOD nor any part of',
+        'SuiteSparse (Eigen\'s sparse solvers, MPL-2.0, take over), no CUDA, ONNX Runtime, dense reconstruction,',
+        'downloads (curl, OpenSSL) nor vocabulary trees; the CI fails when a file, an import or a string of any of',
+        'them is in an archive. The code built into it (VLFeat BSD-2-Clause, PoissonRecon MIT, PoseLib BSD-3-Clause,',
+        'faiss MIT, CLAPACK BSD-3-Clause with the notice of libf2c) and the ports of vcpkg, each with the licence its',
+        '`vcpkg.spdx.json` gives and every one on our list, are in `licenses/THIRD-PARTY.md` of each archive, their',
+        'texts in `licenses/` and the copyright files of the ports in `licenses/vcpkg/`. On Linux, `colmap` needs',
+        '`libgomp.so.1` of the system (GPL 3 with the GCC Runtime Library Exception).',
+        '',
+        'Brush is built without its window, its rerun and HTTP clients and its LPIPS loss: the LPIPS weights',
+        '(`crates/lpips/burn_mapped.bin`, whose origin is not written) are removed from the sources before the build',
+        'and none of their probes is in the program. The crates compiled into it are in `licenses/THIRD-PARTY.md` of',
+        'each archive, written by cargo about with the text of each licence (Apache-2.0, MIT, MPL-2.0 for `colored`',
+        'and `option-ext` compiled unmodified, CC0-1.0, ISC, Unicode-3.0, Zlib) and the NOTICE files of burn and',
+        'cubecl; `licenses/EXTRA-NOTICES.md` holds the copyright lines of the crates published without a licence file.',
+        '',
+        'On Windows the archives hold the runtime DLLs of Visual C++ and OpenMP, redistributable, signed by',
+        'Microsoft; on Linux, `immuch360-run`, the launcher of the app (MIT). No model of any kind: neither program',
+        'needs one.',
+    ],
 }
 
 
@@ -781,12 +851,13 @@ def family_section(tag: str, catalogue: dict, upstream: tuple = UPSTREAM) -> str
                      f'`{component.get("sha256")}` | {component.get("licence")} | {upstream_source(model)} |')
         for index, (asset, size, digest) in enumerate(component['parts'], start=1):
             parts.append(part_row(asset, index, len(component['parts']), component['assetName'], size, digest))
-    engines = [catalogue[engine.component] for engine in ENGINES if engine.component in catalogue
-               and catalogue[engine.component].get('releaseTag') == tag]
-    for component in engines:
+    made_here = [engine for engine in ENGINES if engine.component in catalogue
+                 and catalogue[engine.component].get('releaseTag') == tag]
+    engines = [catalogue[engine.component] for engine in made_here]
+    for engine, component in zip(made_here, engines):
         if component.get('sha256') is not None:
             lines.append(f'| `{component["assetName"]}` | `{component["id"]}` | {component.get("size")} | '
-                         f'`{component.get("sha256")}` | {component.get("licence")} | built and signed by our CI |')
+                         f'`{component.get("sha256")}` | {component.get("licence")} | {engine_source(engine)} |')
     lines.append('')
     if parts:
         lines += [
@@ -798,9 +869,10 @@ def family_section(tag: str, catalogue: dict, upstream: tuple = UPSTREAM) -> str
             *parts,
             '',
         ]
-    for component in engines:
+    for engine, component in zip(made_here, engines):
         if not component['archiveFiles']:
-            lines += [f'`{component["id"]}`: pending, written by lot P2 from the signed artifacts of our CI.', '']
+            lot = 'lot P2' if engine.release == TAG_PANORAMAS else 'this script'
+            lines += [f'`{component["id"]}`: pending, written by {lot} from the artifacts of our CI.', '']
             continue
         lines += [
             f'`{component["assetName"]}` holds, unpacked into `{component.get("installPath")}`:',
@@ -812,8 +884,34 @@ def family_section(tag: str, catalogue: dict, upstream: tuple = UPSTREAM) -> str
             '',
         ]
     lines += FAMILY_NOTES[tag]
+    if tag == TAG_SPLATS:
+        lines += ['', signatures_note(made_here)]
     lines.append('')
     return '\n'.join(lines)
+
+
+def engine_source(engine: Engine) -> str:
+    """The source column of an engine in MODEL-LICENSES.md"""
+    if engine.signed is None or engine.signed:
+        return 'built and signed by our CI'
+    return 'built by our CI, not signed' if engine.windows else 'built by our CI'
+
+
+def signatures_note(engines: list) -> str:
+    """What MODEL-LICENSES.md says of the signatures of the Windows programs of [engines]"""
+    windows = [engine for engine in engines if engine.windows]
+    signed = [f'`{engine.component}`' for engine in windows if engine.signed]
+    unsigned = [f'`{engine.component}`' for engine in windows if not engine.signed]
+    parts = []
+    if signed:
+        parts.append(f'The programs and libraries of {" and ".join(signed)} are signed by APROGSYS (Azure Artifact '
+                     'Signing), those of Microsoft keeping their own signature.')
+    if unsigned:
+        parts.append(f'The programs of {" and ".join(unsigned)} are not signed in this release (the runtime DLLs of '
+                     'Microsoft keep their signature).')
+    parts.append('Linux programs carry no signature. The app checks each archive and each of its files by its SHA-256 '
+                 'when it installs them.')
+    return '\n'.join(textwrap.wrap(' '.join(parts), width=114, break_long_words=False, break_on_hyphens=False))
 
 
 # The splat module of the Meta Spatial SDK, which shows the Gaussian splats of other tools on a Quest 3 or 3S (lot S5):
@@ -872,7 +970,7 @@ def licences_for(date: str, catalogue: dict, kept: str, made: dict | None = None
                  upstream: tuple = UPSTREAM) -> str:
     """MODEL-LICENSES.md: the section of [release] from [made] (the photos) or from the catalogue (a family), the
     other families from the catalogue, the photos kept from [kept] when [release] is another one"""
-    sections = {tag: family_section(tag, catalogue, upstream) for tag in (TAG_SCENES, TAG_PANORAMAS)}
+    sections = {tag: family_section(tag, catalogue, upstream) for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS)}
     if release == TAG and made is not None:
         sections[TAG] = made['photos']
     else:
@@ -1104,6 +1202,85 @@ def split_parts(source: pathlib.Path, out: pathlib.Path, asset: str) -> list:
     return parts
 
 
+def authenticode(data: bytes) -> bool:
+    """Whether [data] is a PE file whose certificate table holds something: an Authenticode signature, as signtool
+    writes it (presence only: signtool verify, in the job that signed, says whether it is valid)"""
+    try:
+        if data[:2] != b'MZ':
+            return False
+        header = int.from_bytes(data[0x3c:0x40], 'little')
+        if data[header:header + 4] != b'PE\0\0':
+            return False
+        optional = header + 24
+        magic = int.from_bytes(data[optional:optional + 2], 'little')
+        directories = optional + (96 if magic == 0x10b else 112)
+        offset = int.from_bytes(data[directories + 32:directories + 36], 'little')
+        size = int.from_bytes(data[directories + 36:directories + 40], 'little')
+        return size > 8 and offset + size <= len(data)
+    except (IndexError, ValueError):
+        return False
+
+
+def is_pe_name(path: str) -> bool:
+    return path.lower().endswith(('.exe', '.dll'))
+
+
+def lock_id(engine: Engine) -> str:
+    """The id of the lock of [engine], which names its artifact"""
+    try:
+        return json.loads((LOCKS / engine.lock).read_text(encoding='utf-8'))['id']
+    except (OSError, ValueError, KeyError) as error:
+        raise Failure(f'{engine.component}: no id in {engine.lock}: {error}') from None
+
+
+SUMS_INSIDE = 'SHA256SUMS.txt'
+
+
+def engine_checked(engine: Engine, artifact: pathlib.Path, files: dict) -> dict:
+    """The files of the artifact of [engine], checked: the name of the artifact, the signatures its table says, and the
+    SHA256SUMS.txt it may hold, written again when a signed program differs from it. Says what it found."""
+    if engine.lock is not None:
+        wanted = f'{engine.prefix}{lock_id(engine)}{engine.artifact_suffix}'
+        if artifact.name not in (wanted, f'{wanted}.zip'):
+            raise Failure(f'{engine.component}: the artifact {artifact.name} is not {wanted}, the build of '
+                          f'{engine.lock}')
+    built = re.search(rb'^Built by (\S+)', files.get('BUILD-INFO.txt', b''), re.MULTILINE)
+    pe = sorted(path for path, data in files.items() if is_pe_name(path) and data[:2] == b'MZ')
+    signed = [path for path in pe if authenticode(files[path])]
+    unsigned = [path for path in pe if path not in signed]
+    if engine.signed and unsigned:
+        raise Failure(f'{engine.component}: {", ".join(unsigned)} carry no signature; ENGINES says this engine is '
+                      'signed (take the archive of a run of the release workflow with with_splat)')
+    if engine.windows and engine.signed is not None:
+        print(f'{engine.component}: {len(pe)} programs and libraries, {len(signed)} with an Authenticode signature'
+              + (f', without one: {", ".join(unsigned)}' if unsigned else '')
+              + (f'; built by {built.group(1).decode()}' if built else ''))
+    elif built and engine.signed is not None:
+        print(f'{engine.component}: built by {built.group(1).decode()}')
+    if SUMS_INSIDE not in files:
+        return files
+    listed = []
+    for line in files[SUMS_INSIDE].decode('utf-8').splitlines():
+        match = re.fullmatch(r'([0-9a-f]{64}) [ *](.+)', line.strip())
+        if not match:
+            raise Failure(f'{engine.component}: {SUMS_INSIDE} has the line {line!r}')
+        listed.append((match.group(2), match.group(1)))
+    names = {path for path, _ in listed}
+    others = set(files) - {SUMS_INSIDE}
+    if names != others:
+        raise Failure(f'{engine.component}: {SUMS_INSIDE} names {sorted(names - others)} that the archive lacks and '
+                      f'misses {sorted(others - names)}')
+    changed = [path for path, digest in listed if sha256_bytes(files[path]) != digest]
+    for path in changed:
+        if not (is_pe_name(path) and authenticode(files[path])):
+            raise Failure(f'{engine.component}: {path} differs from the {SUMS_INSIDE} of its archive')
+    if not changed:
+        return files
+    renewed = ''.join(f'{sha256_bytes(files[path])}  {path}\n' for path, _ in listed).encode('utf-8')
+    print(f'{engine.component}: {SUMS_INSIDE} written again, {", ".join(changed)} signed since it was written')
+    return {**files, SUMS_INSIDE: renewed}
+
+
 def is_program(path: str, data: bytes, platform: str) -> bool:
     """Whether a file of an engine runs: a .exe on Windows, an ELF file that is not a library elsewhere"""
     name = path.rsplit('/', 1)[-1]
@@ -1161,7 +1338,7 @@ def download_artifact(api: str, repo: str, run: str, engine: Engine, token: str,
     API only, never to the storage the API redirects to. None when the run has no such artifact."""
     listed = get_json(f'{api.rstrip("/")}/repos/{repo}/actions/runs/{run}/artifacts?per_page=100', token) or {}
     matches = [artifact for artifact in listed.get('artifacts', [])
-               if artifact.get('name', '').startswith(ENGINE_ARTIFACT_PREFIX)
+               if artifact.get('name', '').startswith(engine.prefix)
                and (artifact['name'].endswith(engine.artifact_suffix)
                     or artifact['name'].endswith(engine.artifact_suffix.removesuffix('.zip')))]
     if not matches:
@@ -1199,7 +1376,7 @@ def download_artifact(api: str, repo: str, run: str, engine: Engine, token: str,
 def artifact_in(places: list, engine: Engine) -> pathlib.Path | None:
     """The artifact of [engine] already in a --cache folder"""
     found = sorted({path.resolve() for folder in places if folder.is_dir()
-                    for path in folder.glob(f'{ENGINE_ARTIFACT_PREFIX}*{engine.artifact_suffix}')})
+                    for path in folder.glob(f'{engine.prefix}*{engine.artifact_suffix}')})
     if len(found) > 1:
         raise Failure(f'{len(found)} artifacts for {engine.platform} in the cache: {", ".join(map(str, found))}')
     return found[0] if found else None
@@ -1258,9 +1435,11 @@ def prepare_family(args, catalogue: dict, release: str, token: str | None) -> di
                 artifact = download_artifact(args.api, args.repo, args.from_run, engine, token, downloads)
             if artifact is None:
                 pending.append(engine.component)
-                print(f'{engine.component}: pending, no artifact of the CI (give --from-run RUN of its sdcpp job)')
+                job = 'sdcpp job' if engine.release == TAG_PANORAMAS else f'{engine.prefix.split("-")[2]} job'
+                print(f'{engine.component}: pending, no artifact of the CI (give --from-run RUN of its {job})')
                 continue
-            data, listed = engine_archive(engine_files(artifact), engine.platform)
+            files_of = engine_checked(engine, artifact, engine_files(artifact))
+            data, listed = engine_archive(files_of, engine.platform)
             write_file(out / component['assetName'], data)
             files[component['assetName']] = (len(data), sha256_bytes(data))
             archives[engine.component] = (len(data), sha256_bytes(data), listed)
@@ -1368,7 +1547,7 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
     engines = {engine.component: engine for engine in ENGINES}
     family = {**{component: TAG for component in [*archives, *models]},
               **{component: model.release for component, model in upstream.items()},
-              **{component: TAG_PANORAMAS for component in engines},
+              **{component: engine.release for component, engine in engines.items()},
               **{component: TAG_AV2 for component in AV2_DECODERS}}
     if set(catalogue) != set(family):
         found.append(f'the catalogue has {sorted(catalogue)}; this script knows {sorted(family)}')
@@ -1473,7 +1652,7 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
         if row not in licences:
             found.append(f'{LICENCES_NAME} lacks the row {row}')
     sections = sections_of(licences)
-    for tag in (TAG_SCENES, TAG_PANORAMAS):
+    for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS):
         if tag in releases and sections.get(tag) != family_section(tag, catalogue, tuple(upstream_table)):
             found.append(f'the section of {tag} in {LICENCES_NAME} is not what the catalogue gives: run with '
                          f'--write-licences')
@@ -1493,7 +1672,23 @@ NOTES = {
                    'klein and the 360 ERP Outpaint LoRA (Apache-2.0), MI-GAN (MIT), Real-ESRGAN x4plus (BSD-3-Clause) '
                    'and stable-diffusion.cpp on Vulkan (MIT), built and signed by our CI. The files of 2 GiB or more '
                    'are in parts, which the app puts end to end.',
+    TAG_SPLATS: 'The components of the splat scenes of Immuch360 Desktop: COLMAP 4.2.1 (BSD-3-Clause), which places '
+                'the photos in 3D on the processor, built by our CI without its GPL and non commercial parts, and '
+                'Brush 0.3.0 (Apache-2.0), which trains the splat on the graphics card through Vulkan, built by our CI '
+                'without its LPIPS weights. For Windows x64 and Linux x64; this version of the app offers the splat '
+                'scenes on Windows only.',
 }
+
+
+def notes_of(tag: str) -> str:
+    """The text of the release [tag]: NOTES, and for the splat scenes what is signed"""
+    if tag != TAG_SPLATS:
+        return NOTES[tag]
+    windows = [engine for engine in ENGINES if engine.release == tag and engine.windows]
+    if all(engine.signed for engine in windows):
+        return NOTES[tag] + ' Their Windows programs are signed.'
+    return NOTES[tag] + ' Their Windows programs are not signed in this release.'
+
 NOTES_END = (
     ' This is not a release of the app: the app downloads these files only when you ask it to, checks each one by its '
     f'SHA-256, and works offline afterwards. Licences and sources: {LICENCES_NAME}. Sums: {SUMS}.\n'
@@ -1550,7 +1745,7 @@ def publish(args, made: dict, token: str) -> int:
               f'Delete it by hand to publish again.')
         return 1
     release = github.call('POST', f'/repos/{args.repo}/releases', {
-        'tag_name': tag, 'name': f'AI components {tag.rsplit("-", 1)[-1]}', 'body': NOTES[tag] + NOTES_END,
+        'tag_name': tag, 'name': f'AI components {tag.rsplit("-", 1)[-1]}', 'body': notes_of(tag) + NOTES_END,
         'draft': True, 'prerelease': True, 'make_latest': 'false',
     })
     print(f'draft made: {release["html_url"]}')
@@ -1582,6 +1777,45 @@ def publish(args, made: dict, token: str) -> int:
     return 0
 
 
+def dry_run(args, made: dict, token: str, refused: list) -> int:
+    """What --publish would do, read only: GET requests on the GitHub API, the others printed. [refused]: why --publish
+    would refuse already (the catalogue, MODEL-LICENSES.md or a pending engine)"""
+    tag = args.release
+    github = GitHub(args.api, token)
+    reasons = list(refused)
+    existing = github.call('GET', f'/repos/{args.repo}/releases/tags/{tag}')
+    if existing is not None:
+        reasons.append(f'{tag} exists already on {args.repo}: {existing.get("html_url")}')
+    drafts = drafts_of(github, args.repo, tag)
+    if drafts:
+        reasons.append(f'a draft of {tag} exists already on {args.repo}: {drafts[0].get("html_url")}')
+    latest = (github.call('GET', f'/repos/{args.repo}/releases/latest') or {}).get('tag_name')
+    print()
+    print(f'Dry run of --publish for {tag} on {args.repo} (read only):')
+    print(f'  GET releases/tags/{tag}: {"present" if existing else "absent (404)"}; drafts of {tag}: {len(drafts)}; '
+          f'Latest: {latest}')
+    body = notes_of(tag) + NOTES_END
+    print(f'  POST /repos/{args.repo}/releases: tag_name {tag}, name "AI components {tag.rsplit("-", 1)[-1]}", draft '
+          'true, prerelease true, make_latest "false", the tag made by GitHub on the head of the default branch')
+    print(f'    body: {body.strip()}')
+    total = 0
+    for name in sorted(made['files']):
+        size, digest = made['files'][name]
+        total += size
+        content_type = CONTENT_TYPES.get(pathlib.Path(name).suffix.lower(), 'application/octet-stream')
+        print(f'  POST <upload_url>?name={name}: {size} bytes, {content_type}, sha256:{digest}')
+    print(f'  PATCH <release>: draft false, prerelease true, make_latest "false"; then GET releases/latest must stay '
+          f'{latest}')
+    print(f'  {len(made["files"])} files, {total} bytes')
+    if reasons:
+        for line in reasons:
+            print(f'publish_ai_components: {line}')
+        print(f'dry run: --publish would refuse {tag}')
+        return 1
+    print(f'dry run: --publish would make {tag}; nothing was sent')
+    return 0
+
+
 # --- command line -------------------------------------------------------------------------------------------------
 
 
@@ -1597,16 +1831,17 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--out', type=pathlib.Path, help='the folder of the files of the release')
     parser.add_argument('--release', choices=RELEASES, help=f'the release to make or check ({TAG} by default when '
-                        'making, all three when checking)')
+                        'making, all four when checking)')
     parser.add_argument('--cache', type=pathlib.Path, action='append', default=[],
                         help='a folder of files already downloaded or made; downloads go to the first one')
-    parser.add_argument('--from-run', help='the run of our CI whose sdcpp artifacts give the engines of '
-                        f'{TAG_PANORAMAS}')
+    parser.add_argument('--from-run', help='the run of our CI whose artifacts give the engines of '
+                        f'{TAG_PANORAMAS} (sdcpp) or {TAG_SPLATS} (colmap and brush)')
     parser.add_argument('--write', action='store_true', help='write the catalogue and MODEL-LICENSES.md')
     parser.add_argument('--write-licences', action='store_true',
                         help='write the sections of the scenes and panoramas of MODEL-LICENSES.md from the catalogue, '
                         'offline')
     parser.add_argument('--publish', action='store_true', help='create the prerelease on GitHub')
+    parser.add_argument('--dry-run', action='store_true', help='what --publish would do, read only (GET requests)')
     parser.add_argument('--check', action='store_true', help='check the catalogue and MODEL-LICENSES.md, offline')
     parser.add_argument('--test-build', help=f'the branch whose catalogue may carry the sums of the AV2 decoder before '
                         f'{TAG_AV2} ({AV2_TEST_BUILD}), given by the gates of the desktop workflow; refused on any '
@@ -1678,7 +1913,10 @@ def main(argv=None) -> int:
         return 2
     args.release = args.release or TAG
     token = read_token(args)
-    if (args.publish or args.from_run) and not token:
+    if args.publish and args.dry_run:
+        print('--publish or --dry-run, not both')
+        return 2
+    if (args.publish or args.dry_run or args.from_run) and not token:
         print('no token: set GH_TOKEN or GITHUB_TOKEN, or give --token-file')
         return 2
     try:
@@ -1713,6 +1951,13 @@ def main(argv=None) -> int:
             print('the catalogue and MODEL-LICENSES.md of the repository agree with these files')
         if made['pending']:
             print(f'pending: {", ".join(made["pending"])}')
+        if args.dry_run:
+            refused = []
+            if found:
+                refused.append(f'{args.release} must carry the files the catalogue names')
+            if made['pending']:
+                refused.append(f'{args.release} waits for {", ".join(made["pending"])}')
+            return dry_run(args, made, token, refused)
         if not args.publish:
             print(f'not published: {args.release} is created only with --publish')
             return 0

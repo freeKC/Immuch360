@@ -1,6 +1,6 @@
 // Files the user keeps on a computer: "Save to a folder" where Linux has no share sheet, and "Save logs to a file",
-// which also gathers the crash reports of the native code. The folder or the file is chosen with the system's
-// dialogs (file_pickers.dart).
+// which also gathers the crash reports of the native code and the logs the features keep beside them (the programs of a
+// splat scene that failed). The folder or the file is chosen with the system's dialogs (file_pickers.dart).
 
 import 'dart:io';
 
@@ -75,6 +75,29 @@ Future<Directory> crashDumpDirectory() async =>
 /// How many crash reports go with the logs, the latest ones: older crashes rarely help and only weigh the file down
 const maxCrashDumpsSaved = 10;
 
+/// The logs folder of the app, beside the crash reports in its cache folder: the logs of the programs of a splat scene
+/// that failed (splat_work_folder.dart, keepSplatFailureLogs), which "Save logs to a file" takes with the log
+Future<Directory> appLogsDirectory() async => Directory(p.join((await getApplicationCacheDirectory()).path, 'logs'));
+
+/// How many of the logs of [appLogsDirectory] go with the log, the latest ones
+const maxProgramLogsSaved = 10;
+
+/// The logs (.log) of [folder], newest first, at most [maxProgramLogsSaved]
+Future<List<File>> latestProgramLogs(Directory folder) async {
+  final logs = <(File, DateTime)>[];
+  try {
+    await for (final entity in folder.list(followLinks: false)) {
+      if (entity is File && p.extension(entity.path).toLowerCase() == '.log') {
+        logs.add((entity, entity.statSync().modified));
+      }
+    }
+  } on FileSystemException {
+    // no logs folder: nothing failed
+  }
+  logs.sort((a, b) => b.$2.compareTo(a.$2));
+  return [for (final (file, _) in logs.take(maxProgramLogsSaved)) file];
+}
+
 /// The minidumps of [folder], newest first, at most [maxCrashDumpsSaved]
 Future<List<File>> latestCrashDumps(Directory folder) async {
   final dumps = <(File, DateTime)>[];
@@ -92,21 +115,28 @@ Future<List<File>> latestCrashDumps(Directory folder) async {
 }
 
 /// Keeps [logFile], written by ImmichLogger, as a file the user picks the place of: the log itself, or a ZIP archive
-/// of the log and the latest crash reports when there are some. False when the user gave up or the file could not be
-/// written. [announce] tells the user it is done.
-Future<bool> saveLogFile(File logFile, {Directory? crashDumps, bool announce = true}) async {
+/// of the log with the latest crash reports and the latest logs of the programs ([appLogsDirectory], [programLogs] in
+/// the tests) when there are some. False when the user gave up or the file could not be written. [announce] tells the
+/// user it is done.
+Future<bool> saveLogFile(File logFile, {Directory? crashDumps, Directory? programLogs, bool announce = true}) async {
   final dumps = await latestCrashDumps(crashDumps ?? await crashDumpDirectory());
+  final logs = await latestProgramLogs(programLogs ?? await appLogsDirectory());
   final baseName = p.basenameWithoutExtension(logFile.path);
-  final extension = dumps.isEmpty ? 'log' : 'zip';
+  final alone = dumps.isEmpty && logs.isEmpty;
+  final extension = alone ? 'log' : 'zip';
   // The name says so in the save dialog: a crash report holds a part of the memory of the app, the stacks of its
   // threads, which the user should know before attaching the file to a public issue
-  final suggestedName = dumps.isEmpty ? '$baseName.log' : '$baseName-with-crash-reports.zip';
+  final suggestedName = alone
+      ? '$baseName.log'
+      : dumps.isEmpty
+      ? '$baseName-with-program-logs.zip'
+      : '$baseName-with-crash-reports.zip';
   final String? chosen;
   try {
     chosen = await filePickers.saveLocation(
       suggestedName: suggestedName,
       initialDirectory: _lastFolder,
-      typeLabel: dumps.isEmpty ? 'Log' : 'ZIP',
+      typeLabel: alone ? 'Log' : 'ZIP',
       extensions: [extension],
     );
   } on PlatformException catch (error) {
@@ -125,7 +155,7 @@ Future<bool> saveLogFile(File logFile, {Directory? crashDumps, bool announce = t
 
   try {
     final target = File(path);
-    if (dumps.isEmpty) {
+    if (alone) {
       await _writeThroughPartial(target, await logFile.readAsBytes());
     } else {
       final entries = [
@@ -135,6 +165,12 @@ Future<bool> saveLogFile(File logFile, {Directory? crashDumps, bool announce = t
             name: 'crash_dumps/${p.basename(dump.path)}',
             bytes: await dump.readAsBytes(),
             modified: dump.statSync().modified,
+          ),
+        for (final log in logs)
+          ZipEntry(
+            name: 'logs/${p.basename(log.path)}',
+            bytes: await log.readAsBytes(),
+            modified: log.statSync().modified,
           ),
       ];
       await _writeThroughPartial(target, zipFiles(entries));

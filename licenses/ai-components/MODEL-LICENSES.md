@@ -1,7 +1,8 @@
 # Licences of the AI components of Immuch360
 
-Date: 2026-10-28. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases
-`ai-components-1` (3D photos), `ai-components-2` (3D scenes) and `ai-components-3` (360° panoramas):
+Date: 2026-11-04. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases
+`ai-components-1` (3D photos), `ai-components-2` (3D scenes), `ai-components-3` (360° panoramas) and `ai-components-4`
+(splat scenes):
 https://github.com/freeKC/Immuch360/releases
 
 The app downloads a component only when the user asks for it, checks its SHA-256 against the catalogue built
@@ -208,6 +209,328 @@ commits of `.github/desktop/ai/sd_cpp.lock.json` and signed for Windows, run by 
 their licences and those of the code built into them (Oniguruma, utf8proc, Darts-clone, JSON for Modern C++,
 miniz, stb, llamafile sgemm) are in the `licenses/` folder of each archive, from `licenses/sdcpp/` of the
 repository. No CUDA: the graphics card is reached through Vulkan only.
+
+<!-- ai-components-4 -->
+## ai-components-4: splat scenes
+
+https://github.com/freeKC/Immuch360/releases/tag/ai-components-4
+
+| File | Component | Size (bytes) | SHA-256 | Licence | Source, pinned revision |
+| --- | --- | --- | --- | --- | --- |
+| `colmap-cpu-win-x64.zip` | `colmap-cpu-win-x64` | 10100055 | `9ab1f508fdbc85e65964a7107b1c72ea680ba7c1cc4e06d1423b604b01bf7848` | BSD-3-Clause | built and signed by our CI |
+| `colmap-cpu-linux-x64.zip` | `colmap-cpu-linux-x64` | 25856357 | `ed3feff65a24c0e112e1d5218c4d49fb963b8212eabb239ae95f8f3cad878ad2` | BSD-3-Clause | built by our CI |
+| `brush-vulkan-win-x64.zip` | `brush-vulkan-win-x64` | 16364150 | `aaa3ad8bf55c4369a12b86cbcdffdcaf68f0054a42693f34e2e7679f26d55a77` | Apache-2.0 | built and signed by our CI |
+| `brush-vulkan-linux-x64.zip` | `brush-vulkan-linux-x64` | 17627739 | `24613b141da3c019ee23fed30ab43967e7a8549900ff764526d2868ba7a3d503` | Apache-2.0 | built by our CI |
+
+`colmap-cpu-win-x64.zip` holds, unpacked into `engines/colmap-cpu-win-x64`:
+
+| File | Size (bytes) | SHA-256 | Program |
+| --- | --- | --- | --- |
+| `BUILD-INFO.txt` | 1337 | `e46a3339b04a5ed7a3b2ef6db1b37731051b66bab4b86229ac6309b383913f93` | no |
+| `SHA256SUMS.txt` | 11850 | `1b4995932c1f36dcbaf73d1bc125623fdd12b98c278dffca306c746f10d868ac` | no |
+| `colmap.exe` | 26246984 | `52b69e006b3dd0168d1fb4548b754f18435811e7edb00b99d84810d54c092e5b` | yes |
+| `licenses/COPYING.txt` | 1942 | `beda69d6c1e7544a470002af34c5d754497f0ad7da168556a9b20852993404c3` | no |
+| `licenses/PoissonRecon-LICENSE.txt` | 1096 | `bbcbdc44ed818f009eb4433db9ab5e6509578d0ba43ddcb662b8a0cc9c160fb3` | no |
+| `licenses/PoseLib-LICENSE.txt` | 1551 | `f2974dfc7803858e4c3d35c4d5f26291cf072b6607a561caa2fae4758bfc13d2` | no |
+| `licenses/README.md` | 3568 | `4538aaaaebf4ab65bb8c21f71bad530a5966837445dfe220c14f341b5099fac9` | no |
+| `licenses/THIRD-PARTY.md` | 13063 | `4f98948de029572969568477be74c24d26fe46997e0288bc0aff245fafe1f1cf` | no |
+| `licenses/VLFeat-LICENSE.txt` | 1390 | `a31ef034eeab41e1c24e72747608a54c8e72c7e7f6ebcf7391f00c7e63c1495e` | no |
+| `licenses/faiss-LICENSE.txt` | 1107 | `f08a94bfb0bdc1d7f1cb59badaf0f8c551b10db871185622dbf1fd036affa9cb` | no |
+| `licenses/libf2c-Notice.txt` | 1235 | `cabd9f61080c1d7c155121cb4b7a57dfa0e7482449c640b7eeb633d9d757bacf` | no |
+| `licenses/patches/0001-without-cholmod.patch` | 5514 | `a6cc9cc28c9256cee75ca8f62661ccc4262c4bf5f14940aadec272b3a9ac191b` | no |
+| `licenses/patches/0002-vcpkg-without-suitesparse.patch` | 1119 | `a916f7ba404eca19298f24031287fd23a3dc8d25807e9bdcc48448d10ca68c2e` | no |
+| `licenses/patches/0003-faiss-without-blas.patch` | 2438 | `88f6efa8303509abc27a29b792c674a47834fa34ce122f1c9fba4e28f60f0642` | no |
+| `licenses/vcpkg/boost-algorithm.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-align.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-any.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-array.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-assert.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-atomic.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-bimap.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-bind.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-chrono.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-cmake.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-compat.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-concept-check.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-config.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-container-hash.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-container.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-conversion.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-core.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-date-time.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-describe.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-detail.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-dynamic-bitset.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-endian.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-exception.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-foreach.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-function-types.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-function.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-fusion.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-graph.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-headers.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-heap.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-integer.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-intrusive.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-io.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-iterator.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-lambda.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-lexical-cast.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-math.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-move.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-mp11.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-mpl.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-multi-index.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-multiprecision.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-numeric-conversion.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-optional.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-parameter.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-phoenix.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-pool.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-predef.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-preprocessor.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-program-options.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-property-map.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-property-tree.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-proto.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-random.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-range.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-ratio.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-regex.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-serialization.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-smart-ptr.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-spirit.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-static-assert.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-system.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-thread.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-throw-exception.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-tokenizer.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-tti.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-tuple.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-type-index.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-type-traits.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-typeof.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-unordered.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-utility.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-variant.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-variant2.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-winapi.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-xpressive.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/ceres.txt` | 14355 | `765fd9eac4cb827fa5de4304d1f81f4f2c5c332a3f1d6f0f3f7a69a33156729b` | no |
+| `licenses/vcpkg/clapack.txt` | 1607 | `23014869214a231525b38c39fdb5f82364fa24154ac80fdcab2a79671460fd09` | no |
+| `licenses/vcpkg/eigen3.txt` | 32831 | `ad251846a5a37acfed04407b7eee9161fbd58a91874b20fd949904413c407b2a` | no |
+| `licenses/vcpkg/expat.txt` | 1144 | `31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87` | no |
+| `licenses/vcpkg/fmt.txt` | 1094 | `a65fcc5a1095fc33cc37e4fff69366e49d7e92f613558a2b95ed1b70e33758b4` | no |
+| `licenses/vcpkg/gflags.txt` | 1479 | `90d1f3701813c3cd65eee2dc736746fe46b465918f3f7d6d31463a2018b33fa5` | no |
+| `licenses/vcpkg/gklib.txt` | 641 | `81118d7ac02c98ad2d49a8b7d12d24f41e3bef962342f5483bf1b80a79ce1992` | no |
+| `licenses/vcpkg/glog.txt` | 1479 | `136d48dea7a681413691f3db3098f6cf5ffaa3119d96d97bb83b8cff3ce38c4a` | no |
+| `licenses/vcpkg/imath.txt` | 1497 | `c20236d3b39fd20eba8e3d1fb3b892a5483df2e7d8d61bf43f165d3fac22f601` | no |
+| `licenses/vcpkg/libdeflate.txt` | 1078 | `4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a` | no |
+| `licenses/vcpkg/libjpeg-turbo.txt` | 6077 | `ba6bceebcba0fdd35488477c2cca8c4632ce82c74dbfbc87d886ce6fc4433579` | no |
+| `licenses/vcpkg/libpng.txt` | 5345 | `bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526` | no |
+| `licenses/vcpkg/metis.txt` | 641 | `64ab947d7b289ad76e935adff51b31e4ac160df7dfad24480dbaa452e39bbe79` | no |
+| `licenses/vcpkg/minizip-ng.txt` | 877 | `675181c03fc1302a1c8554c00f7be9bb420c5dbc9dcc2013433cec144413de03` | no |
+| `licenses/vcpkg/openblas.txt` | 1548 | `190b5a9c8d9723fe958ad33916bd7346d96fab3c5ea90832bb02d854f620fcff` | no |
+| `licenses/vcpkg/opencolorio.txt` | 1485 | `82a40c52065ee968aa62015735e84378ac11425db7a233e6a2dcd2c83fc24276` | no |
+| `licenses/vcpkg/openexr.txt` | 1501 | `84853c91d4c2e0310741d4773469d98bb93e61029608e0ba0882a3fffdf330bd` | no |
+| `licenses/vcpkg/openimageio.txt` | 25011 | `7585beae16904f28ee1a32fcc97f108e7717d78ddec927ebb98e09be7c5530d5` | no |
+| `licenses/vcpkg/openjph.txt` | 1448 | `5ddf5177863dfc9ab65fa129d587db651241f00e21ed2427b218bea997591f98` | no |
+| `licenses/vcpkg/pystring.txt` | 1530 | `f7f060301402ea0b5c507b865b1a9de037d4d7b24f37422a93b70fe9c7a9b78a` | no |
+| `licenses/vcpkg/robin-map.txt` | 1102 | `11f2c685ba565a31aef1219f63a7a8845602c97bff70016b9e3278dfe51a2ec5` | no |
+| `licenses/vcpkg/sqlite3.txt` | 71 | `3cafdd9b568b924b234b91f4a24649d509f02643ae727eac6a4e33818288c9c4` | no |
+| `licenses/vcpkg/tiff.txt` | 2416 | `0e27c2382d7b8147972bbb746e04059a1152c8d0fda9d03ef1399d1a433c4ade` | no |
+| `licenses/vcpkg/vcpkg-boost.txt` | 1073 | `1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460` | no |
+| `licenses/vcpkg/vcpkg-cmake-config.txt` | 1096 | `04b60f99a43bfd7fefdc8364b24aac704a2160cef969b75ba6a38b62dc4c4b70` | no |
+| `licenses/vcpkg/vcpkg-cmake.txt` | 1073 | `1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460` | no |
+| `licenses/vcpkg/yaml-cpp.txt` | 1061 | `aa6fcc27be034e41e21dd832f9175bfe694a48491d9e14ff0fa278e19ad14f1b` | no |
+| `licenses/vcpkg/zlib.txt` | 1002 | `e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2` | no |
+| `msvcp140.dll` | 557728 | `0f885b509a685d2bbfa652fed26b5fb31d88fbdab0a978c641d1c7b8aa460aa9` | no |
+| `msvcp140_2.dll` | 280200 | `3ea06f0ee098b4823cb79599df3780e7f23cce52c19aac31d2a0d47efe33a5e9` | no |
+| `vcomp140.dll` | 193152 | `55aba23cdcd6484fbb06f4155b8ca75adfce7a881f10afd0c49457165e677164` | no |
+| `vcruntime140.dll` | 124544 | `d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066` | no |
+| `vcruntime140_1.dll` | 49792 | `1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f` | no |
+
+`colmap-cpu-linux-x64.zip` holds, unpacked into `engines/colmap-cpu-linux-x64`:
+
+| File | Size (bytes) | SHA-256 | Program |
+| --- | --- | --- | --- |
+| `BUILD-INFO.txt` | 1170 | `88c8e89a491698586122db71c3f0b01117470e659a560a9bc6c670f8876c251d` | no |
+| `SHA256SUMS.txt` | 11519 | `f2bd59f5ec6f6eaa322f3a95c751c900c8d5e0bc2d0ef1899fa06b4708a57b12` | no |
+| `colmap` | 72599544 | `29dd48e5589100be0a6580045d1533787f46bb8ede50e868fb749446f6ce8caa` | yes |
+| `immuch360-run` | 16552 | `779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b` | yes |
+| `licenses/COPYING.txt` | 1909 | `ab30dabb4f0a6731f980108f57aa160cc8f5cebae6984e01a5d109df99669233` | no |
+| `licenses/PoissonRecon-LICENSE.txt` | 1075 | `addfdacb0d5e30f25641fc2c26cc423c541a60e16624b29d80d3490608ba4956` | no |
+| `licenses/PoseLib-LICENSE.txt` | 1522 | `f956d2d12c3a58c72e936bb390071d4c4df8f4da008bdcd617bb0a8a890eda1c` | no |
+| `licenses/README.md` | 3531 | `1f37f574c955e08a6add640df92525556c4fe4ec140629440e8e675d78da5f36` | no |
+| `licenses/THIRD-PARTY.md` | 12923 | `6d1cc2cad7ce9ae8e756f58116adec5f79923c5aa56e976998d984861ab8ad86` | no |
+| `licenses/VLFeat-LICENSE.txt` | 1365 | `33b9f7703327199088d74f884b19997a0084180f984724720095a7cb412c4d89` | no |
+| `licenses/faiss-LICENSE.txt` | 1086 | `52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85` | no |
+| `licenses/libf2c-Notice.txt` | 1212 | `44561c447e91203ddc747beeca5cc2794d95ee982c17c578670e4f0408bc3904` | no |
+| `licenses/patches/0001-without-cholmod.patch` | 5514 | `a6cc9cc28c9256cee75ca8f62661ccc4262c4bf5f14940aadec272b3a9ac191b` | no |
+| `licenses/patches/0002-vcpkg-without-suitesparse.patch` | 1119 | `a916f7ba404eca19298f24031287fd23a3dc8d25807e9bdcc48448d10ca68c2e` | no |
+| `licenses/patches/0003-faiss-without-blas.patch` | 2438 | `88f6efa8303509abc27a29b792c674a47834fa34ce122f1c9fba4e28f60f0642` | no |
+| `licenses/vcpkg/boost-algorithm.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-align.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-any.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-array.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-assert.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-atomic.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-bimap.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-bind.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-chrono.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-cmake.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-compat.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-concept-check.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-config.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-container-hash.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-container.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-conversion.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-core.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-date-time.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-describe.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-detail.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-dynamic-bitset.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-endian.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-exception.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-foreach.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-function-types.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-function.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-fusion.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-graph.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-headers.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-heap.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-integer.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-intrusive.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-io.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-iterator.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-lambda.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-lexical-cast.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-math.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-move.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-mp11.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-mpl.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-multi-index.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-multiprecision.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-numeric-conversion.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-optional.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-parameter.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-phoenix.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-pool.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-predef.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-preprocessor.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-program-options.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-property-map.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-property-tree.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-proto.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-random.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-range.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-ratio.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-regex.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-serialization.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-smart-ptr.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-spirit.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-static-assert.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-system.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-thread.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-throw-exception.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-tokenizer.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-tti.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-tuple.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-type-index.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-type-traits.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-typeof.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-unordered.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-utility.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-variant.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-variant2.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-winapi.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/boost-xpressive.txt` | 1338 | `c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566` | no |
+| `licenses/vcpkg/ceres.txt` | 14355 | `765fd9eac4cb827fa5de4304d1f81f4f2c5c332a3f1d6f0f3f7a69a33156729b` | no |
+| `licenses/vcpkg/clapack.txt` | 1607 | `23014869214a231525b38c39fdb5f82364fa24154ac80fdcab2a79671460fd09` | no |
+| `licenses/vcpkg/eigen3.txt` | 32154 | `9af2ed6fee290d31684b61774741b985aa2505e246fc28eca403f407262daf77` | no |
+| `licenses/vcpkg/expat.txt` | 1144 | `31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87` | no |
+| `licenses/vcpkg/fmt.txt` | 1094 | `a65fcc5a1095fc33cc37e4fff69366e49d7e92f613558a2b95ed1b70e33758b4` | no |
+| `licenses/vcpkg/gflags.txt` | 1479 | `90d1f3701813c3cd65eee2dc736746fe46b465918f3f7d6d31463a2018b33fa5` | no |
+| `licenses/vcpkg/gklib.txt` | 641 | `81118d7ac02c98ad2d49a8b7d12d24f41e3bef962342f5483bf1b80a79ce1992` | no |
+| `licenses/vcpkg/glog.txt` | 1479 | `136d48dea7a681413691f3db3098f6cf5ffaa3119d96d97bb83b8cff3ce38c4a` | no |
+| `licenses/vcpkg/imath.txt` | 1497 | `c20236d3b39fd20eba8e3d1fb3b892a5483df2e7d8d61bf43f165d3fac22f601` | no |
+| `licenses/vcpkg/libdeflate.txt` | 1078 | `4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a` | no |
+| `licenses/vcpkg/libjpeg-turbo.txt` | 6077 | `ba6bceebcba0fdd35488477c2cca8c4632ce82c74dbfbc87d886ce6fc4433579` | no |
+| `licenses/vcpkg/libpng.txt` | 5345 | `bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526` | no |
+| `licenses/vcpkg/metis.txt` | 641 | `64ab947d7b289ad76e935adff51b31e4ac160df7dfad24480dbaa452e39bbe79` | no |
+| `licenses/vcpkg/minizip-ng.txt` | 877 | `675181c03fc1302a1c8554c00f7be9bb420c5dbc9dcc2013433cec144413de03` | no |
+| `licenses/vcpkg/openblas.txt` | 1548 | `190b5a9c8d9723fe958ad33916bd7346d96fab3c5ea90832bb02d854f620fcff` | no |
+| `licenses/vcpkg/opencolorio.txt` | 1485 | `82a40c52065ee968aa62015735e84378ac11425db7a233e6a2dcd2c83fc24276` | no |
+| `licenses/vcpkg/openexr.txt` | 1501 | `84853c91d4c2e0310741d4773469d98bb93e61029608e0ba0882a3fffdf330bd` | no |
+| `licenses/vcpkg/openimageio.txt` | 24701 | `95b56cf947151b6007f9b458bc9b7da974982715aabd2f5d25b366275f2142fa` | no |
+| `licenses/vcpkg/openjph.txt` | 1448 | `5ddf5177863dfc9ab65fa129d587db651241f00e21ed2427b218bea997591f98` | no |
+| `licenses/vcpkg/pystring.txt` | 1530 | `f7f060301402ea0b5c507b865b1a9de037d4d7b24f37422a93b70fe9c7a9b78a` | no |
+| `licenses/vcpkg/robin-map.txt` | 1102 | `11f2c685ba565a31aef1219f63a7a8845602c97bff70016b9e3278dfe51a2ec5` | no |
+| `licenses/vcpkg/sqlite3.txt` | 69 | `1472ec10e27c62157cebd95d9186e8912a75a1a829fe3a612611710da2992ed5` | no |
+| `licenses/vcpkg/tiff.txt` | 2416 | `0e27c2382d7b8147972bbb746e04059a1152c8d0fda9d03ef1399d1a433c4ade` | no |
+| `licenses/vcpkg/vcpkg-boost.txt` | 1073 | `1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460` | no |
+| `licenses/vcpkg/vcpkg-cmake-config.txt` | 1096 | `04b60f99a43bfd7fefdc8364b24aac704a2160cef969b75ba6a38b62dc4c4b70` | no |
+| `licenses/vcpkg/vcpkg-cmake.txt` | 1073 | `1ee376fc340e0aa6ad6a3581c94126e741468705096ac92263048a21daa86460` | no |
+| `licenses/vcpkg/yaml-cpp.txt` | 1061 | `aa6fcc27be034e41e21dd832f9175bfe694a48491d9e14ff0fa278e19ad14f1b` | no |
+| `licenses/vcpkg/zlib.txt` | 1002 | `e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2` | no |
+
+`brush-vulkan-win-x64.zip` holds, unpacked into `engines/brush-vulkan-win-x64`:
+
+| File | Size (bytes) | SHA-256 | Program |
+| --- | --- | --- | --- |
+| `BUILD-INFO.txt` | 2780 | `426d3817f80d976a8dfa18b3718b3421d434726f394e0edec83cd71c0b2c14d6` | no |
+| `brush_app.exe` | 63775560 | `47064cf96a84482aa79d5f76653a152166c15ad80ad8dfbaee6d330287ccfcf0` | yes |
+| `licenses/EXTRA-NOTICES.md` | 5935 | `2b18770127e5c1212e88983220ec5a9eb8559df9033bd1b62ec89ef3307ebf31` | no |
+| `licenses/README.md` | 4527 | `07d0bba845a345ebfd2ededea5ae022e353262b2b4eab78eb929e25f9fc1ecaf` | no |
+| `licenses/THIRD-PARTY.md` | 467291 | `e5d8003e290996831420222a73dc69cee5a0653ed978170d4378db1243d9814a` | no |
+| `licenses/brush-LICENSE.txt` | 11358 | `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30` | no |
+| `licenses/patches/0001-immuch360-headless-trainer.patch` | 17608 | `788070930f92eb8922209337429762df0a5748567586cf2bb7e880f5d17be1bf` | no |
+| `vcruntime140.dll` | 124544 | `d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066` | no |
+
+`brush-vulkan-linux-x64.zip` holds, unpacked into `engines/brush-vulkan-linux-x64`:
+
+| File | Size (bytes) | SHA-256 | Program |
+| --- | --- | --- | --- |
+| `BUILD-INFO.txt` | 2463 | `7c001b43debec6455c7c0191a9ce004f2dbdd7d194456fc9f610e98ba0fa43d4` | no |
+| `brush_app` | 66707984 | `87573191097e23762c8ce50755dfc49d8446f8c1e446db6b137ac90e72ebb8da` | yes |
+| `immuch360-run` | 16552 | `779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b` | yes |
+| `licenses/EXTRA-NOTICES.md` | 5935 | `2b18770127e5c1212e88983220ec5a9eb8559df9033bd1b62ec89ef3307ebf31` | no |
+| `licenses/README.md` | 4527 | `07d0bba845a345ebfd2ededea5ae022e353262b2b4eab78eb929e25f9fc1ecaf` | no |
+| `licenses/THIRD-PARTY.md` | 430400 | `02effca99500521dd2698ec911518c66a8d86f6897c560c2ea5592a7fce2bc27` | no |
+| `licenses/brush-LICENSE.txt` | 11358 | `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30` | no |
+| `licenses/patches/0001-immuch360-headless-trainer.patch` | 17608 | `788070930f92eb8922209337429762df0a5748567586cf2bb7e880f5d17be1bf` | no |
+
+COLMAP 4.2.1: BSD-3-Clause, Copyright (c), ETH Zurich and UNC Chapel Hill
+(https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt). Brush 0.3.0: Apache-2.0
+(https://github.com/ArthurBrussee/brush/blob/v0.3.0/LICENSE), no NOTICE file. Both are built by our CI from
+the sources pinned in `.github/desktop/ai/colmap.lock.json` and `brush.lock.json`, with the patches of
+`licenses/colmap/patches/` and `licenses/brush/patches/` (each changed file of Brush says so, Apache-2.0
+section 4 b), and run by the app as child processes, without a window and without the network.
+
+COLMAP is built without its GPL and non commercial parts: no graphical interface (Qt), OpenGL nor SiftGPU
+(research and non-profit use only), no LSD (AGPL 3), no CGAL, GMP nor MPFR, no CHOLMOD nor any part of
+SuiteSparse (Eigen's sparse solvers, MPL-2.0, take over), no CUDA, ONNX Runtime, dense reconstruction,
+downloads (curl, OpenSSL) nor vocabulary trees; the CI fails when a file, an import or a string of any of
+them is in an archive. The code built into it (VLFeat BSD-2-Clause, PoissonRecon MIT, PoseLib BSD-3-Clause,
+faiss MIT, CLAPACK BSD-3-Clause with the notice of libf2c) and the ports of vcpkg, each with the licence its
+`vcpkg.spdx.json` gives and every one on our list, are in `licenses/THIRD-PARTY.md` of each archive, their
+texts in `licenses/` and the copyright files of the ports in `licenses/vcpkg/`. On Linux, `colmap` needs
+`libgomp.so.1` of the system (GPL 3 with the GCC Runtime Library Exception).
+
+Brush is built without its window, its rerun and HTTP clients and its LPIPS loss: the LPIPS weights
+(`crates/lpips/burn_mapped.bin`, whose origin is not written) are removed from the sources before the build
+and none of their probes is in the program. The crates compiled into it are in `licenses/THIRD-PARTY.md` of
+each archive, written by cargo about with the text of each licence (Apache-2.0, MIT, MPL-2.0 for `colored`
+and `option-ext` compiled unmodified, CC0-1.0, ISC, Unicode-3.0, Zlib) and the NOTICE files of burn and
+cubecl; `licenses/EXTRA-NOTICES.md` holds the copyright lines of the crates published without a licence file.
+
+On Windows the archives hold the runtime DLLs of Visual C++ and OpenMP, redistributable, signed by
+Microsoft; on Linux, `immuch360-run`, the launcher of the app (MIT). No model of any kind: neither program
+needs one.
+
+The programs and libraries of `colmap-cpu-win-x64` and `brush-vulkan-win-x64` are signed by APROGSYS (Azure
+Artifact Signing), those of Microsoft keeping their own signature. Linux programs carry no signature. The app
+checks each archive and each of its files by its SHA-256 when it installs them.
 
 <!-- end of the releases -->
 ## The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)

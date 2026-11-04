@@ -23,7 +23,7 @@ name: Immuch360 Desktop
 #                  after av2-macos), and a self check of the app on the runner (a folder and a video on the command
 #                  line, the keychain, five seconds of libmpv, the y4m over HTTP)
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
-#                  fake sd-cli and the probes of a generation and of a panorama as the artifact
+#                  fake sd-cli and the probes of a generation, of a panorama and of the splat scenes as the artifact
 #                  Immuch360-AI-tools-windows-x64, the release build, the ZIP and the installer (Inno Setup) for the
 #                  owner as artifacts named Immuch360-Desktop-<label>-windows-x64.zip and -windows-x64-setup.exe
 #                  (unsigned), then the desktop tests that need the DLLs of that build (libmpv, ANGLE), the probe of
@@ -47,6 +47,16 @@ name: Immuch360 Desktop
 #                  dav2d of .github/desktop/av2/av2.lock.json, and checked by running it on the fixtures: only when
 #                  asked (the av2 input) or when the lock, the program or its scripts changed, as artifacts
 #                  Immuch360-av2-decoder-<lock>-windows-x64.zip, -linux-x64.zip and -macos-universal.zip
+#   colmap-windows, colmap-linux
+#                  COLMAP on the processor and without its GPL parts, which places the photos of the splat scenes,
+#                  built from .github/desktop/ai/colmap.lock.json with the libraries of vcpkg (binary cache in the
+#                  Actions cache): only when asked (the colmap input) or when the lock or its patches changed, as
+#                  artifacts Immuch360-AI-colmap-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
+#   brush-windows, brush-linux
+#                  Brush, the trainer of the splat scenes, built from the tag of .github/desktop/ai/brush.lock.json with
+#                  the patch of licenses/brush/patches (no window, network client, rerun or LPIPS weights): only when
+#                  asked (the brush input) or when the lock, its script or licenses/brush changed, as artifacts
+#                  Immuch360-AI-brush-<lock>-windows-x64.zip and -linux-x64.zip that no release attaches
 #
 # Every package file is an artifact of its own, named Immuch360-Desktop-<label>-<system>.<extension>; the label comes
 # from .github/desktop/desktop_version.py. On a desktop-v* tag, immuch360-desktop-release.yml runs this workflow and
@@ -76,6 +86,14 @@ on:
         description: Also build the AV2 decoder (the av2 jobs), as when av2.lock.json or mobile/native/av2 changes
         type: boolean
         default: false
+      colmap:
+        description: Also build COLMAP (the colmap jobs), as when colmap.lock.json or its patches change
+        type: boolean
+        default: false
+      brush:
+        description: Also build Brush (the brush jobs), as when brush.lock.json changes
+        type: boolean
+        default: false
   # immuch360-desktop-release.yml, on a desktop-v* tag; the permissions below stay read only
   workflow_call:
     inputs:
@@ -85,6 +103,14 @@ on:
         default: false
       av2:
         description: Also build the AV2 decoder, for the release workflow to sign it (never for a release of the app)
+        type: boolean
+        default: false
+      colmap:
+        description: Also build COLMAP (never for a release)
+        type: boolean
+        default: false
+      brush:
+        description: Also build Brush (never for a release)
         type: boolean
         default: false
     outputs:
@@ -115,6 +141,8 @@ jobs:
       sdcpp_lock_changed: ${{ steps.sdcpp.outputs.changed }}
       spark_lock_changed: ${{ steps.sdcpp.outputs.spark_changed }}
       av2_lock_changed: ${{ steps.av2.outputs.changed }}
+      colmap_lock_changed: ${{ steps.colmap.outputs.changed }}
+      brush_lock_changed: ${{ steps.brush.outputs.changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -181,6 +209,53 @@ jobs:
             changed=true
           fi
           echo "the AV2 decoder changed since ${base:-no base}: $changed"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      # The same for COLMAP: its lock, the patches applied to its sources, the overlay ports of vcpkg and the build script
+      - name: Did the COLMAP lock or its patches change
+        id: colmap
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=
+          if [ "$EVENT" = pull_request ]; then
+            base=$(git merge-base HEAD "origin/$BASE_REF")
+          elif [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+            && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base=$BEFORE
+          fi
+          changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/ai/colmap.lock.json \
+            .github/desktop/ai/colmap licenses/colmap/patches .github/desktop/ai/colmap_build.py; then
+            changed=true
+          fi
+          echo "the COLMAP lock or its patches changed since ${base:-no base}: $changed"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      # The same for the brush jobs: the lock of Brush, its build script or licenses/brush (the patch, the lists of
+      # cargo deny and cargo about)
+      - name: Did the Brush lock, its script or its licences change
+        id: brush
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=
+          if [ "$EVENT" = pull_request ]; then
+            base=$(git merge-base HEAD "origin/$BASE_REF")
+          elif [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+            && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base=$BEFORE
+          fi
+          changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/ai/brush.lock.json \
+            .github/desktop/ai/brush_build.py licenses/brush; then
+            changed=true
+          fi
+          echo "brush.lock.json, brush_build.py or licenses/brush changed since ${base:-no base}: $changed"
           echo "changed=$changed" >> "$GITHUB_OUTPUT"
 
       - name: Install mise
@@ -303,11 +378,16 @@ jobs:
       - name: The tiny models of ONNX Runtime are what their script writes
         run: python3 .github/desktop/ai/make_tiny_models.py --check
 
-      # The catalogue of the AI components and of the AV2 decoder, offline (MODEL-LICENSES.md agrees); the sums of the
-      # AV2 decoder before av2-decoder-1 on the branch of its test build alone (lot AD6): merged anywhere else, or taken
-      # by a branch made from it, they fail here until they are taken out
-      - name: The catalogue of the components, the AV2 decoder without sums but on the branch of its test build
-        run: python3 .github/desktop/ai/publish_ai_components.py --check --test-build feat-av2
+      # The synthetic room of the splat scenes (lot SP0): 24 views of two cameras around three boxes, ray cast in pure
+      # Python, with their exact poses for the measures of lots SP1 and SP4; the same pixels on every system
+      - name: The synthetic dataset of the splat scenes is what its script writes
+        run: python3 .github/desktop/ai/make_splat_dataset.py --check
+
+      # The catalogue of the AI components and of the AV2 decoder complete, offline (MODEL-LICENSES.md agrees): the
+      # splat scenes of ai-components-4 among them (lot SP14), and the AV2 decoder at the sums of the record of
+      # av2-decoder-1 (lot AD11), which pass on every branch
+      - name: The catalogue of the AI components and of the AV2 decoder
+        run: python3 .github/desktop/ai/publish_ai_components.py --check
 
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
@@ -382,15 +462,27 @@ jobs:
 
       # The fake sd-cli of the 360° panoramas compiled into a real program (no Flutter in it), and immuch360-run, the
       # Linux launcher that makes sd-cli die with the app: the runner and the launcher of lot P2 are tested on them in
-      # the suite below (test/desktop/ai/gen, test/desktop/ai/process)
-      - name: The fake sd-cli and the launcher
+      # the suite below (test/desktop/ai/gen, test/desktop/ai/process). The fake COLMAP and the fake Brush of the splat
+      # scenes (lot SP0) are compiled the same way, for test/desktop/ai/splat, with the probe of their runners (lot SP4),
+      # which the suite kills while COLMAP or Brush runs under it, and splat_probe, the engine of the splat scenes from
+      # the photos to the .spz (lot SP6), killed the same way during its training
+      - name: The fake sd-cli, the fake COLMAP, the fake Brush, the probes of the splat scenes and the launcher
         id: fake_sd_cli
         working-directory: mobile
         run: |
           mkdir -p "$RUNNER_TEMP/sdcpp-fakes"
           mise exec -- dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_colmap.dart -o "$RUNNER_TEMP/sdcpp-fakes/fake-colmap"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_brush.dart -o "$RUNNER_TEMP/sdcpp-fakes/fake-brush"
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_runner_probe.dart \
+            -o "$RUNNER_TEMP/sdcpp-fakes/splat-runner-probe"
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$RUNNER_TEMP/sdcpp-fakes/splat-probe"
           gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/sdcpp-fakes/immuch360-run" ../.github/desktop/ai/immuch360_run.c
           echo "fake=$RUNNER_TEMP/sdcpp-fakes/fake-sd-cli" >> "$GITHUB_OUTPUT"
+          echo "colmap=$RUNNER_TEMP/sdcpp-fakes/fake-colmap" >> "$GITHUB_OUTPUT"
+          echo "brush=$RUNNER_TEMP/sdcpp-fakes/fake-brush" >> "$GITHUB_OUTPUT"
+          echo "probe=$RUNNER_TEMP/sdcpp-fakes/splat-runner-probe" >> "$GITHUB_OUTPUT"
+          echo "scene=$RUNNER_TEMP/sdcpp-fakes/splat-probe" >> "$GITHUB_OUTPUT"
           echo "launcher=$RUNNER_TEMP/sdcpp-fakes/immuch360-run" >> "$GITHUB_OUTPUT"
 
       # The fake AV2 companion (lot AD1 of the AV2 videos), compiled the same way: it speaks the protocol of
@@ -410,6 +502,10 @@ jobs:
         env:
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
           IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
+          IMMUCH360_FAKE_COLMAP: ${{ steps.fake_sd_cli.outputs.colmap }}
+          IMMUCH360_FAKE_BRUSH: ${{ steps.fake_sd_cli.outputs.brush }}
+          IMMUCH360_SPLAT_PROBE: ${{ steps.fake_sd_cli.outputs.probe }}
+          IMMUCH360_SPLAT_SCENE_PROBE: ${{ steps.fake_sd_cli.outputs.scene }}
           IMMUCH360_RUN_LAUNCHER: ${{ steps.fake_sd_cli.outputs.launcher }}
           IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
         run: mise exec -- flutter test
@@ -663,8 +759,10 @@ jobs:
       # The tests of test/desktop that need a real libmpv, skipped by the test job (no libmpv there), here with the
       # libmpv1 of Ubuntu 22.04, the oldest the packages accept (libmpv_for_tests.dart): FFmpeg's answer to a camera's
       # Digest challenge (the Tapo live view), the references a file may not open, the app's player on a path and
-      # through the media bridge (the folders, the shares and the server), and the y4m of an AV2 companion (the fake),
-      # its duration and its seeks by byte ranges with the FFmpeg 4.4 of Ubuntu 22.04 (lot AD3 of the AV2 videos)
+      # through the media bridge (the folders, the shares and the server), the y4m of an AV2 companion (the fake), its
+      # duration and its seeks by byte ranges with the FFmpeg 4.4 of Ubuntu 22.04 (lot AD3 of the AV2 videos), and the
+      # frames of a splat scene taken from a video filmed upright (exact seeks and frame steps, the rotation of the
+      # file, the sharpest moment kept)
       - name: Desktop tests on the system's libmpv
         working-directory: mobile
         env:
@@ -672,7 +770,7 @@ jobs:
         run: |
           mise exec -- flutter test test/desktop/video/camera_live_libmpv_test.dart \
             test/desktop/video/mpv_references_test.dart test/desktop/video/desktop_player_libmpv_test.dart \
-            test/desktop/video/av2/av2_libmpv_test.dart
+            test/desktop/video/av2/av2_libmpv_test.dart test/desktop/ai/splat/video_frames_libmpv_test.dart
 
       # The probe of the graphics cards of the AI features (lot C6, linux/runner/gpu_probe.cc): the app of the bundle
       # started with --immuch360-gpu-probe=<file> must answer within 10 s without crashing; the runner has no graphics
@@ -911,17 +1009,29 @@ jobs:
       # sdcpp_probe, the program that runs a real generation through the same runner and launcher on a PC with a
       # graphics card (the essay of lot P2), and panorama_probe, the engine of the panoramas on the same PC (the essay
       # of lot P3), all compiled by dart compile exe without Flutter; kept together as the artifact
-      # Immuch360-AI-tools-windows-x64, a name no release takes
-      - name: The fake sd-cli and the probes of a generation and of a panorama
+      # Immuch360-AI-tools-windows-x64, a name no release takes. The fake COLMAP and the fake Brush of the splat scenes
+      # (lot SP0) join them, for test/desktop/ai/splat, and the probe of their runners (lot SP4), which the suite kills
+      # while COLMAP or Brush runs under it, and which runs the archives of COLMAP and Brush on the PC of the essay; and
+      # splat_probe (lot SP6), the engine of the splat scenes from the photos to the .spz, which installs the archives
+      # of a mirror once and makes a scene on the PC of the essay, killed by the suite during its training
+      - name: The fake sd-cli, COLMAP and Brush, and the probes of a generation, a panorama and the splat scenes
         id: fake_sd_cli
         working-directory: mobile
         run: |
           tools="$(cygpath -u "$RUNNER_TEMP")/sdcpp-tools"
           mkdir -p "$tools"
           dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$tools/fake-sd-cli.exe"
+          dart compile exe test/desktop/ai/fakes/fake_colmap.dart -o "$tools/fake-colmap.exe"
+          dart compile exe test/desktop/ai/fakes/fake_brush.dart -o "$tools/fake-brush.exe"
           dart compile exe test/desktop/ai/tools/sdcpp_probe.dart -o "$tools/sdcpp-probe.exe"
           dart compile exe test/desktop/ai/tools/panorama_probe.dart -o "$tools/panorama-probe.exe"
+          dart compile exe test/desktop/ai/tools/splat_runner_probe.dart -o "$tools/splat-runner-probe.exe"
+          dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$tools/splat_probe.exe"
           echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
+          echo "colmap=$(cygpath -w "$tools/fake-colmap.exe")" >> "$GITHUB_OUTPUT"
+          echo "brush=$(cygpath -w "$tools/fake-brush.exe")" >> "$GITHUB_OUTPUT"
+          echo "probe=$(cygpath -w "$tools/splat-runner-probe.exe")" >> "$GITHUB_OUTPUT"
+          echo "scene=$(cygpath -w "$tools/splat_probe.exe")" >> "$GITHUB_OUTPUT"
           echo "tools=$(cygpath -w "$tools")" >> "$GITHUB_OUTPUT"
 
       # The fake AV2 companion (lot AD1 of the AV2 videos), for test/desktop/video/av2 on Windows
@@ -950,6 +1060,10 @@ jobs:
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
           IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
           IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
+          IMMUCH360_FAKE_COLMAP: ${{ steps.fake_sd_cli.outputs.colmap }}
+          IMMUCH360_FAKE_BRUSH: ${{ steps.fake_sd_cli.outputs.brush }}
+          IMMUCH360_SPLAT_PROBE: ${{ steps.fake_sd_cli.outputs.probe }}
+          IMMUCH360_SPLAT_SCENE_PROBE: ${{ steps.fake_sd_cli.outputs.scene }}
         run: flutter test test/desktop
 
       - name: Build
@@ -1072,8 +1186,9 @@ jobs:
       # (mpv_references_test), the app's player on a path and through the media bridge (desktop_player_libmpv_test),
       # the GLSL of renderer C compiled and drawn by ANGLE (plugin_shaders_windows_test: the hosted runners have no GPU,
       # so ANGLE's Direct3D 11 device is Windows' Basic Render Driver, which draws in software), the y4m of an AV2
-      # companion (the fake) with its duration and its seeks (av2_libmpv_test). The tests that need a GPU's video decoder
-      # or mpv drawing into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
+      # companion (the fake) with its duration and its seeks (av2_libmpv_test), the frames of a splat scene taken from
+      # a video filmed upright (video_frames_libmpv_test). The tests that need a GPU's video decoder or mpv drawing
+      # into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
       - name: Desktop tests on the build (libmpv, ANGLE)
         working-directory: mobile
         env:
@@ -1082,7 +1197,7 @@ jobs:
         run: |
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
             test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/plugin_shaders_windows_test.dart \
-            test/desktop/video/av2/av2_libmpv_test.dart
+            test/desktop/video/av2/av2_libmpv_test.dart test/desktop/ai/splat/video_frames_libmpv_test.dart
 
       # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
       # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
@@ -1958,6 +2073,543 @@ jobs:
             echo
             echo "Archive $SIZE bytes, SHA-256 \`$SHA256\`; program $program bytes; built in ${SECONDS_BUILT} s"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  # COLMAP 4.2.1 on the processor, without its GPL parts, which places the photos of the splat scenes (lot SP1 of the
+  # splat maker, plan of 2026-11-01, section 3): built from the commit of .github/desktop/ai/colmap.lock.json with the
+  # patches of licenses/colmap/patches (no CHOLMOD, no SuiteSparse in Ceres) and the libraries of vcpkg at the commit of
+  # the lock (LAPACK by CLAPACK, our overlay port, never the Fortran of lapack-reference), on the pinned images of the
+  # desktop builds. A first build of the libraries takes hours: they go to the binary cache of vcpkg, kept in the Actions
+  # cache, so that the next runs take them from there. Only when asked (the colmap input) or when the lock or its patches
+  # changed. The licence of every library is read in its vcpkg.spdx.json against our list, the archive holds no
+  # forbidden file, import or string, the archive's program places every view of a synthetic set where it is, and the
+  # help of the commands the app runs is compared with the fixtures its runner is frozen by
+  # (.github/desktop/ai/colmap_build.py, colmap_synthetic.py). The archive is named Immuch360-AI-colmap-<lock>-<system>.zip,
+  # not Immuch360-Desktop-*, so neither the packages job nor a release takes it.
+  colmap-windows:
+    name: COLMAP for Windows
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}
+    timeout-minutes: 300
+    env:
+      VCPKG_DISABLE_METRICS: '1'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python .github/desktop/ai/colmap_build.py lock --system windows-x64 --github-output
+
+      - name: Sources of COLMAP at the commit of the lock, with our patches
+        run: python .github/desktop/ai/colmap_build.py sources --dir "$RUNNER_TEMP/colmap"
+
+      - name: Restore the binary cache of vcpkg
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+          restore-keys: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-
+
+      - name: vcpkg and the libraries of COLMAP
+        id: vcpkg
+        run: |
+          python .github/desktop/ai/colmap_build.py vcpkg --system windows-x64 --source "$RUNNER_TEMP/colmap" \
+            --vcpkg "$RUNNER_TEMP/v" --installed "$RUNNER_TEMP/vi" --cache "$RUNNER_TEMP/vcpkg-archives" --github-output
+
+      # Even when the libraries failed halfway: what was built is kept for the next run
+      - name: Save the binary cache of vcpkg
+        if: ${{ always() && steps.vcpkg.outputs.cache_grew == 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+
+      # A licence out of our list fails the job at its end, after the build, so that one run says everything
+      - name: The licence of every library (vcpkg.spdx.json) against our list and the table of THIRD-PARTY.md
+        id: licences
+        continue-on-error: true
+        run: |
+          python .github/desktop/ai/colmap_build.py licences --system windows-x64 --installed "$RUNNER_TEMP/vi" \
+            --ports-json "$RUNNER_TEMP/colmap-report/ports-windows-x64.json"
+
+      - name: Build
+        run: |
+          python .github/desktop/ai/colmap_build.py build --system windows-x64 --source "$RUNNER_TEMP/colmap" \
+            --build "$RUNNER_TEMP/colmap-build" --vcpkg "$RUNNER_TEMP/v" --installed "$RUNNER_TEMP/vi"
+
+      - name: The archive
+        id: pack
+        run: |
+          python .github/desktop/ai/colmap_build.py pack --system windows-x64 --source "$RUNNER_TEMP/colmap" \
+            --build "$RUNNER_TEMP/colmap-build" --installed "$RUNNER_TEMP/vi" --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
+          python .github/desktop/ai/colmap_build.py check --archive "dist/${{ steps.lock.outputs.artifact }}"
+          {
+            echo "### ${{ steps.lock.outputs.artifact }}"
+            echo
+            echo '```'
+            cat "dist/${{ steps.lock.outputs.artifact }}.sha256"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: The synthetic set posed by the program of the archive
+        run: |
+          python .github/desktop/ai/colmap_synthetic.py render --out "$RUNNER_TEMP/synthetic"
+          python .github/desktop/ai/colmap_synthetic.py pose --colmap "$RUNNER_TEMP/unpacked/colmap.exe" \
+            --set "$RUNNER_TEMP/synthetic"
+          python .github/desktop/ai/colmap_synthetic.py compare --set "$RUNNER_TEMP/synthetic"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: colmap help as the fixtures say
+        id: help
+        if: ${{ always() && steps.pack.outcome == 'success' }}
+        continue-on-error: true
+        run: |
+          python .github/desktop/ai/colmap_build.py help --colmap "$RUNNER_TEMP/unpacked/colmap.exe" \
+            --save "$RUNNER_TEMP/colmap-report/help-windows-x64"
+
+      # The port list and the help texts of this run, to write the table of THIRD-PARTY.md and the fixtures from
+      - name: Upload the port list and the help texts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: colmap-report-windows-x64
+          path: ${{ runner.temp }}/colmap-report
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Licences and help as they must be
+        if: ${{ always() && (steps.licences.outcome == 'failure' || steps.help.outcome == 'failure') }}
+        run: |
+          echo "::error::the licences (${{ steps.licences.outcome }}) or the help (${{ steps.help.outcome }}) failed"
+          exit 1
+
+  colmap-linux:
+    name: COLMAP for Linux
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.colmap || needs.codegen.outputs.colmap_lock_changed == 'true' }}
+    timeout-minutes: 300
+    env:
+      VCPKG_DISABLE_METRICS: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/colmap_build.py lock --system linux-x64 --github-output
+
+      - name: Sources of COLMAP at the commit of the lock, with our patches
+        run: python3 .github/desktop/ai/colmap_build.py sources --dir "$RUNNER_TEMP/colmap"
+
+      # Ninja, and the headers of OpenGL that the CMake of COLMAP looks for even without its interface (nothing links
+      # them: the needed libraries of the archive are checked)
+      - name: Build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ninja-build libgl1-mesa-dev
+
+      - name: Restore the binary cache of vcpkg
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+          restore-keys: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-
+
+      - name: vcpkg and the libraries of COLMAP
+        id: vcpkg
+        run: |
+          python3 .github/desktop/ai/colmap_build.py vcpkg --system linux-x64 --source "$RUNNER_TEMP/colmap" \
+            --vcpkg "$RUNNER_TEMP/v" --installed "$RUNNER_TEMP/vi" --cache "$RUNNER_TEMP/vcpkg-archives" --github-output
+
+      - name: Save the binary cache of vcpkg
+        if: ${{ always() && steps.vcpkg.outputs.cache_grew == 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vcpkg-archives
+          key: colmap-vcpkg-${{ steps.lock.outputs.cache_key }}-${{ github.run_id }}
+
+      - name: The licence of every library (vcpkg.spdx.json) against our list and the table of THIRD-PARTY.md
+        id: licences
+        continue-on-error: true
+        run: |
+          python3 .github/desktop/ai/colmap_build.py licences --system linux-x64 --installed "$RUNNER_TEMP/vi" \
+            --ports-json "$RUNNER_TEMP/colmap-report/ports-linux-x64.json"
+
+      - name: Build
+        run: |
+          python3 .github/desktop/ai/colmap_build.py build --system linux-x64 --source "$RUNNER_TEMP/colmap" \
+            --build "$RUNNER_TEMP/colmap-build" --vcpkg "$RUNNER_TEMP/v" --installed "$RUNNER_TEMP/vi"
+
+      - name: immuch360-run
+        run: gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/immuch360-run" .github/desktop/ai/immuch360_run.c
+
+      - name: The archive
+        id: pack
+        run: |
+          python3 .github/desktop/ai/colmap_build.py pack --system linux-x64 --source "$RUNNER_TEMP/colmap" \
+            --build "$RUNNER_TEMP/colmap-build" --installed "$RUNNER_TEMP/vi" --launcher "$RUNNER_TEMP/immuch360-run" \
+            --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
+          chmod +x "$RUNNER_TEMP/unpacked/colmap" "$RUNNER_TEMP/unpacked/immuch360-run"
+          python3 .github/desktop/ai/colmap_build.py check --archive "dist/${{ steps.lock.outputs.artifact }}"
+          {
+            echo "### ${{ steps.lock.outputs.artifact }}"
+            echo
+            echo '```'
+            cat "dist/${{ steps.lock.outputs.artifact }}.sha256"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: The synthetic set posed by the program of the archive
+        run: |
+          python3 .github/desktop/ai/colmap_synthetic.py render --out "$RUNNER_TEMP/synthetic"
+          python3 .github/desktop/ai/colmap_synthetic.py pose --colmap "$RUNNER_TEMP/unpacked/colmap" \
+            --set "$RUNNER_TEMP/synthetic"
+          python3 .github/desktop/ai/colmap_synthetic.py compare --set "$RUNNER_TEMP/synthetic"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: colmap help as the fixtures say
+        id: help
+        if: ${{ always() && steps.pack.outcome == 'success' }}
+        continue-on-error: true
+        run: |
+          python3 .github/desktop/ai/colmap_build.py help --colmap "$RUNNER_TEMP/unpacked/colmap" \
+            --save "$RUNNER_TEMP/colmap-report/help-linux-x64"
+
+      - name: Upload the port list and the help texts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: colmap-report-linux-x64
+          path: ${{ runner.temp }}/colmap-report
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Licences and help as they must be
+        if: ${{ always() && (steps.licences.outcome == 'failure' || steps.help.outcome == 'failure') }}
+        run: |
+          echo "::error::the licences (${{ steps.licences.outcome }}) or the help (${{ steps.help.outcome }}) failed"
+          exit 1
+
+  # Brush, the trainer of the splat scenes (lot SP2; plan of 01/11/2026, sections 2.3 and 3), built from the tag of
+  # .github/desktop/ai/brush.lock.json at its commit with the toolchain of Brush's own CI at that tag, cargo build
+  # --locked (the Cargo.lock of the tag), after licenses/brush/patches: brush_app without window, network client, rerun
+  # or the LPIPS weights, whose provenance is not written. The jobs check that the crates compiled in hold none of them
+  # (cargo tree, and cargo deny with licenses/brush/deny.toml, our licence list), that none of five 64 byte probes of
+  # the weights is in the program, and that --help is the fixture the runner is frozen by; THIRD-PARTY.md is written by
+  # cargo about. cargo-deny and cargo-about come from their releases, checked by the SHA-256 of the lock. Only when
+  # asked (the brush input) or when the lock, its script or licenses/brush changed. The cargo registry, the git
+  # dependencies and the target folder are cached by the id of the lock. The archive is
+  # Immuch360-AI-brush-<lock>-<system>.zip, not Immuch360-Desktop-*, so neither the packages job nor a release takes it
+  # (.github/desktop/ai/brush_build.py)
+  brush-windows:
+    name: Brush for Windows
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.brush || needs.codegen.outputs.brush_lock_changed == 'true' }}
+    timeout-minutes: 150
+    defaults:
+      run:
+        shell: bash
+    env:
+      CARGO_TERM_COLOR: never
+      CARGO_INCREMENTAL: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python .github/desktop/ai/brush_build.py lock --system windows-x64 --github-output
+
+      - name: Sources of Brush at the commit of the tag, without the LPIPS weights, patched
+        run: python .github/desktop/ai/brush_build.py sources --dir "$RUNNER_TEMP/brush"
+
+      - name: cargo-deny and cargo-about of the lock
+        id: tools
+        run: python .github/desktop/ai/brush_build.py tools --system windows-x64 --dir "$RUNNER_TEMP/brush-tools" --github-output
+
+      - name: Rust of the lock
+        env:
+          TOOLCHAIN: ${{ steps.lock.outputs.toolchain }}
+        run: |
+          rustup toolchain install "$TOOLCHAIN" --profile minimal --no-self-update
+          rustup run "$TOOLCHAIN" rustc --version --verbose
+
+      - name: Restore the cargo cache
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ${{ runner.temp }}/brush/target
+          key: brush-windows-x64-${{ steps.lock.outputs.id }}-${{ hashFiles('.github/desktop/ai/brush.lock.json', 'licenses/brush/patches/*') }}
+          restore-keys: |
+            brush-windows-x64-${{ steps.lock.outputs.id }}-
+
+      - name: Build
+        id: build
+        run: python .github/desktop/ai/brush_build.py build --system windows-x64 --source "$RUNNER_TEMP/brush"
+
+      - name: Save the cargo cache
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ${{ runner.temp }}/brush/target
+          key: brush-windows-x64-${{ steps.lock.outputs.id }}-${{ hashFiles('.github/desktop/ai/brush.lock.json', 'licenses/brush/patches/*') }}
+
+      - name: No LPIPS, rerun, network, TLS, window or file dialog crate in brush_app
+        run: python .github/desktop/ai/brush_build.py graph --system windows-x64 --source "$RUNNER_TEMP/brush"
+
+      - name: cargo deny with our licence list
+        env:
+          CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
+        run: python .github/desktop/ai/brush_build.py deny --system windows-x64 --source "$RUNNER_TEMP/brush" --cargo-deny "$CARGO_DENY"
+
+      # Recorded in BUILD-INFO.txt, never blocking: updating Cargo.lock of the tag for them is the maintainer's decision
+      - name: Advisories of the RustSec database
+        continue-on-error: true
+        env:
+          CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
+        run: |
+          python .github/desktop/ai/brush_build.py advisories --system windows-x64 --source "$RUNNER_TEMP/brush" \
+            --cargo-deny "$CARGO_DENY" --out "$RUNNER_TEMP/brush-advisories.txt"
+
+      - name: THIRD-PARTY.md by cargo about
+        env:
+          CARGO_ABOUT: ${{ steps.tools.outputs.cargo_about }}
+        run: |
+          python .github/desktop/ai/brush_build.py about --system windows-x64 --source "$RUNNER_TEMP/brush" \
+            --cargo-about "$CARGO_ABOUT" --out "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md"
+
+      - name: None of the LPIPS weights in brush_app
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: python .github/desktop/ai/brush_build.py lpips --binary "$PROGRAM"
+
+      - name: brush_app --help as the fixture says, no viewer, no LPIPS loss
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: |
+          "$PROGRAM" --help > "$RUNNER_TEMP/brush-help.txt"
+          "$PROGRAM" --version > "$RUNNER_TEMP/brush-version.txt"
+          python .github/desktop/ai/brush_build.py help --output "$RUNNER_TEMP/brush-help.txt" \
+            --version-output "$RUNNER_TEMP/brush-version.txt"
+          if "$PROGRAM" > "$RUNNER_TEMP/brush-viewer.txt" 2>&1; then
+            echo "::error::brush_app without a source started (a viewer?)"; exit 1
+          fi
+          grep -q "no viewer" "$RUNNER_TEMP/brush-viewer.txt" || { cat "$RUNNER_TEMP/brush-viewer.txt"; exit 1; }
+          echo "brush_app without a source: $(cat "$RUNNER_TEMP/brush-viewer.txt")"
+          # A LPIPS weight is refused before the data is read or a card is set up, so at once even on a runner
+          if timeout 120 "$PROGRAM" . --lpips-loss-weight 0.5 > "$RUNNER_TEMP/brush-lpips.txt" 2>&1; then
+            echo "::error::brush_app took a LPIPS weight above 0"; exit 1
+          fi
+          grep -q "no LPIPS weights" "$RUNNER_TEMP/brush-lpips.txt" || { cat "$RUNNER_TEMP/brush-lpips.txt"; exit 1; }
+          echo "brush_app --lpips-loss-weight 0.5: $(cat "$RUNNER_TEMP/brush-lpips.txt")"
+
+      - name: The archive
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: |
+          python .github/desktop/ai/brush_build.py pack --system windows-x64 --source "$RUNNER_TEMP/brush" \
+            --bin "$PROGRAM" --third-party "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md" \
+            --advisories "$RUNNER_TEMP/brush-advisories.txt" --out dist
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  brush-linux:
+    name: Brush for Linux
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.brush || needs.codegen.outputs.brush_lock_changed == 'true' }}
+    timeout-minutes: 150
+    env:
+      CARGO_TERM_COLOR: never
+      CARGO_INCREMENTAL: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/brush_build.py lock --system linux-x64 --github-output
+
+      - name: Sources of Brush at the commit of the tag, without the LPIPS weights, patched
+        run: python3 .github/desktop/ai/brush_build.py sources --dir "$RUNNER_TEMP/brush"
+
+      - name: cargo-deny and cargo-about of the lock
+        id: tools
+        run: python3 .github/desktop/ai/brush_build.py tools --system linux-x64 --dir "$RUNNER_TEMP/brush-tools" --github-output
+
+      - name: Rust of the lock
+        env:
+          TOOLCHAIN: ${{ steps.lock.outputs.toolchain }}
+        run: |
+          rustup toolchain install "$TOOLCHAIN" --profile minimal --no-self-update
+          rustup run "$TOOLCHAIN" rustc --version --verbose
+
+      - name: Restore the cargo cache
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ${{ runner.temp }}/brush/target
+          key: brush-linux-x64-${{ steps.lock.outputs.id }}-${{ hashFiles('.github/desktop/ai/brush.lock.json', 'licenses/brush/patches/*') }}
+          restore-keys: |
+            brush-linux-x64-${{ steps.lock.outputs.id }}-
+
+      - name: Build
+        id: build
+        run: python3 .github/desktop/ai/brush_build.py build --system linux-x64 --source "$RUNNER_TEMP/brush"
+
+      - name: Save the cargo cache
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            ${{ runner.temp }}/brush/target
+          key: brush-linux-x64-${{ steps.lock.outputs.id }}-${{ hashFiles('.github/desktop/ai/brush.lock.json', 'licenses/brush/patches/*') }}
+
+      - name: No LPIPS, rerun, network, TLS, window or file dialog crate in brush_app
+        run: python3 .github/desktop/ai/brush_build.py graph --system linux-x64 --source "$RUNNER_TEMP/brush"
+
+      - name: cargo deny with our licence list
+        env:
+          CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
+        run: python3 .github/desktop/ai/brush_build.py deny --system linux-x64 --source "$RUNNER_TEMP/brush" --cargo-deny "$CARGO_DENY"
+
+      # Recorded in BUILD-INFO.txt, never blocking: updating Cargo.lock of the tag for them is the maintainer's decision
+      - name: Advisories of the RustSec database
+        continue-on-error: true
+        env:
+          CARGO_DENY: ${{ steps.tools.outputs.cargo_deny }}
+        run: |
+          python3 .github/desktop/ai/brush_build.py advisories --system linux-x64 --source "$RUNNER_TEMP/brush" \
+            --cargo-deny "$CARGO_DENY" --out "$RUNNER_TEMP/brush-advisories.txt"
+
+      - name: THIRD-PARTY.md by cargo about
+        env:
+          CARGO_ABOUT: ${{ steps.tools.outputs.cargo_about }}
+        run: |
+          python3 .github/desktop/ai/brush_build.py about --system linux-x64 --source "$RUNNER_TEMP/brush" \
+            --cargo-about "$CARGO_ABOUT" --out "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md"
+
+      - name: None of the LPIPS weights in brush_app
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: python3 .github/desktop/ai/brush_build.py lpips --binary "$PROGRAM"
+
+      - name: brush_app --help as the fixture says, no viewer, no LPIPS loss
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+        run: |
+          "$PROGRAM" --help > "$RUNNER_TEMP/brush-help.txt"
+          "$PROGRAM" --version > "$RUNNER_TEMP/brush-version.txt"
+          python3 .github/desktop/ai/brush_build.py help --output "$RUNNER_TEMP/brush-help.txt" \
+            --version-output "$RUNNER_TEMP/brush-version.txt"
+          if "$PROGRAM" > "$RUNNER_TEMP/brush-viewer.txt" 2>&1; then
+            echo "::error::brush_app without a source started (a viewer?)"; exit 1
+          fi
+          grep -q "no viewer" "$RUNNER_TEMP/brush-viewer.txt" || { cat "$RUNNER_TEMP/brush-viewer.txt"; exit 1; }
+          echo "brush_app without a source: $(cat "$RUNNER_TEMP/brush-viewer.txt")"
+          # A LPIPS weight is refused before the data is read or a card is set up, so at once even on a runner
+          if timeout 120 "$PROGRAM" . --lpips-loss-weight 0.5 > "$RUNNER_TEMP/brush-lpips.txt" 2>&1; then
+            echo "::error::brush_app took a LPIPS weight above 0"; exit 1
+          fi
+          grep -q "no LPIPS weights" "$RUNNER_TEMP/brush-lpips.txt" || { cat "$RUNNER_TEMP/brush-lpips.txt"; exit 1; }
+          echo "brush_app --lpips-loss-weight 0.5: $(cat "$RUNNER_TEMP/brush-lpips.txt")"
+
+      # The launcher that makes brush_app die with the app (PR_SET_PDEATHSIG), as in the archive of stable-diffusion.cpp
+      - name: immuch360-run
+        run: gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/immuch360-run" .github/desktop/ai/immuch360_run.c
+
+      - name: The archive
+        env:
+          PROGRAM: ${{ steps.build.outputs.program }}
+          ARTIFACT: ${{ steps.lock.outputs.artifact }}
+        run: |
+          python3 .github/desktop/ai/brush_build.py pack --system linux-x64 --source "$RUNNER_TEMP/brush" \
+            --bin "$PROGRAM" --third-party "$RUNNER_TEMP/brush-licences/THIRD-PARTY.md" \
+            --advisories "$RUNNER_TEMP/brush-advisories.txt" --launcher "$RUNNER_TEMP/immuch360-run" --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python3 -m zipfile -e "dist/$ARTIFACT" "$RUNNER_TEMP/unpacked"
+          chmod +x "$RUNNER_TEMP/unpacked/brush_app" "$RUNNER_TEMP/unpacked/immuch360-run"
+          "$RUNNER_TEMP/unpacked/immuch360-run" --parent $$ -- "$RUNNER_TEMP/unpacked/brush_app" --version
+
+      # The archive trains, not only starts: 30 steps of a small posed scene (brush_build.py scene) on the processor,
+      # through Mesa's lavapipe, in a fresh working folder (the autotune cache of cubecl lives there, and one left by
+      # another device makes Brush fail at its first kernel), started by immuch360-run as the app starts it
+      - name: brush_app of the archive trains on the processor (lavapipe)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends mesa-vulkan-drivers
+          python3 .github/desktop/ai/brush_build.py scene --dir "$RUNNER_TEMP/brush-scene"
+          mkdir -p "$RUNNER_TEMP/brush-train"
+          cd "$RUNNER_TEMP/brush-train"
+          status=0
+          # immuch360-run must be a child of this shell (--parent $$) and runs a program by its path: the time limit
+          # goes after it, by its path
+          VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json \
+          RUST_LOG='brush_cli=info,brush_process=info,cubecl_wgpu=info' \
+            "$RUNNER_TEMP/unpacked/immuch360-run" --parent $$ -- "$(command -v timeout)" 900 \
+            "$RUNNER_TEMP/unpacked/brush_app" "$RUNNER_TEMP/brush-scene" --total-steps 30 --max-resolution 128 \
+            --export-every 30 --export-path "$RUNNER_TEMP/brush-train/out" > train.log 2>&1 || status=$?
+          cat train.log
+          [ "$status" -eq 0 ] || { echo "::error::brush_app exited $status on lavapipe"; exit 1; }
+          python3 "$GITHUB_WORKSPACE/.github/desktop/ai/brush_build.py" trained --log train.log \
+            --ply out/export_30.ply
 
       - name: Upload the archive
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

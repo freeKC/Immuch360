@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
@@ -76,6 +77,8 @@ enum ActionButtonType {
   // "Play from the start" and "Mark as not watched" of a film, see watch_progress.action.dart
   watchProgress,
   makeImmersive,
+  // "Make a splat scene (AI)" of a video, on a computer (lib/desktop/ai/ui/splat_dialog.dart)
+  makeSplatScene,
   download,
   upload,
   openInBrowser,
@@ -187,6 +190,15 @@ enum ActionButtonType {
             context.timelineOrigin != TimelineOrigin.lockedFolder &&
             context.timelineOrigin != TimelineOrigin.trash &&
             context.asset.isImage,
+      // Immuch360 Desktop: "Make a splat scene (AI)" of a video (lib/desktop/ai/ui/splat_dialog.dart); photos make a
+      // scene from a selection. The button hides itself while the AI features or the splat scenes are off. Never in the
+      // locked folder nor in the trash.
+      ActionButtonType.makeSplatScene =>
+        CurrentPlatform.isDesktop &&
+            !context.isInLockedView &&
+            context.timelineOrigin != TimelineOrigin.lockedFolder &&
+            context.timelineOrigin != TimelineOrigin.trash &&
+            context.asset.isVideo,
     };
   }
 
@@ -252,6 +264,10 @@ enum ActionButtonType {
       ActionButtonType.makeImmersive =>
         CurrentPlatform.isDesktop
             ? DesktopMakeImmersiveButton(source: context.source, menuItem: true)
+            : const SizedBox.shrink(),
+      ActionButtonType.makeSplatScene =>
+        CurrentPlatform.isDesktop
+            ? DesktopMakeSplatButton(source: context.source, menuItem: true)
             : const SizedBox.shrink(),
     };
   }

@@ -8,6 +8,7 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec_licenses.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/splat/splat_window_licenses.dart';
@@ -43,6 +44,8 @@ Future<void> startDesktop(List<String> args) async {
   unawaited(cleanUpPartFilesAtStart());
   // The copies of the photos of the server a conversion left in the temporary folder, once an hour old
   unawaited(cleanUpAiCopiesAtStart());
+  // The work folders of the splat scenes a failure left, once a day old (lot SPF2)
+  unawaited(cleanUpSplatWorkAtStart());
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();

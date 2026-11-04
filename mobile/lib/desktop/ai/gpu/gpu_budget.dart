@@ -26,11 +26,20 @@
 //    asked, 0.28 GiB of margin. The image differs from the full reference's (another latent for the same seed): it is
 //    taken only when the full one does not fit, and the packet of the panorama says so (GeneratorReferenceMaxPixels).
 // Smaller outputs (1280 x 640, about 4.3 GiB taken) make a smaller panorama with a wider raw seam: not offered. The
-// other kinds of jobs run on the processor and ask nothing of the card. The answer of a check that passes carries the
-// whole report, so that the generator is given the card the check looked at (ggmlVulkanIndexOf), and the way chosen.
+// other kinds of jobs, the splat scenes apart (below), run on the processor and ask nothing of the card. The answer of
+// a check that passes carries the whole report, so that the generator is given the card the check looked at
+// (ggmlVulkanIndexOf), and the way chosen.
+//
+// A splat scene (lot SP4) asks the same budget twice: in the queue before its job starts, and again by the runner of
+// Brush once the poses are found, some minutes later ([brushCardOf]), with the need of the splat scenes
+// (SplatV1.freeGraphicsMemory: 2.5 GiB, where M1 measured 1.0 to 1.2 GiB at the peak at 1 024 pixels) and the card
+// its own rule chooses (splatCardOf of hardware_gate.dart: a dedicated card only). The queue asks with the need of the
+// kind of each job ([gpuNeedOf], lot SP6): a panorama by the ways above, a splat scene by its one figure.
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 const _gib = 1024 * 1024 * 1024;
 
@@ -61,6 +70,29 @@ enum PanoramaReference {
   /// The memory of the card it needs free when it starts
   final int need;
 }
+
+/// What a kind of job needs of the graphics card: [bytes] free on the card [cardOf] chooses, or, for a kind that may
+/// run with less ([byReferences]), the memory of the first way of GpuBudget.references that fits
+class GpuNeed {
+  const GpuNeed(this.bytes, this.cardOf, {this.byReferences = false});
+
+  final int bytes;
+  final PanoramaCard Function(GpuReport report, {required bool integratedAllowed}) cardOf;
+
+  /// The job runs one of the ways of GpuBudget.references (a panorama, [bytes] being its full reference's need)
+  final bool byReferences;
+}
+
+/// A 360° panorama: [panoramaFreeGraphicsMemory] on the card of panoramaCardOf, or the 5.1 GiB of its reduced
+/// reference (PanoramaReference)
+const panoramaGpuNeed = GpuNeed(panoramaFreeGraphicsMemory, panoramaCardOf, byReferences: true);
+
+/// A splat scene: SplatV1.freeGraphicsMemory on the dedicated card of splatCardOf
+const splatGpuNeed = GpuNeed(SplatV1.freeGraphicsMemory, splatCardOf);
+
+/// What a job that makes a file of [kind] needs of the graphics card: a splat scene its own, any other job of the card
+/// that of a panorama
+GpuNeed gpuNeedOf(ImmersiveKind kind) => kind == ImmersiveKind.gaussianSplat ? splatGpuNeed : panoramaGpuNeed;
 
 /// What the graphics card answers before a job
 sealed class GpuBudgetCheck {
@@ -109,6 +141,8 @@ class GpuBudget {
     Future<bool> Function()? integratedAllowed,
     this.references = PanoramaReference.values,
     this._appMemoryOf,
+    this._need,
+    this.cardOf = panoramaCardOf,
   }) : assert(references.isNotEmpty, 'At least one way to run the job'),
        _integratedAllowed = integratedAllowed ?? (() async => false);
 
@@ -122,13 +156,25 @@ class GpuBudget {
   /// The share of the app on a card the probe did not read it for (the DRM fdinfo of the app on Linux)
   final Future<int?> Function(GpuAdapter card)? _appMemoryOf;
 
-  /// The least memory a job needs free on its card: that of the way that asks the least
-  int get need => references.map((reference) => reference.need).reduce((a, b) => a < b ? a : b);
+  /// The one need the budget was made with (the runner of Brush asks a splat scene's); null: the ways of [references]
+  final int? _need;
 
-  /// Starts the probe again and tells whether a job may start on the card now, and how
-  Future<GpuBudgetCheck> check() async {
+  /// The rule of the gate that chooses the card: that of the panoramas unless told
+  final PanoramaCard Function(GpuReport report, {required bool integratedAllowed}) cardOf;
+
+  /// The least memory a job needs free on its card: the need the budget was made with, else that of the way that asks
+  /// the least
+  int get need => _need ?? _leastReference;
+
+  int get _leastReference => references.map((reference) => reference.need).reduce((a, b) => a < b ? a : b);
+
+  /// Starts the probe again and tells whether a job may start on the card now, and how: a job that [need]s its own
+  /// (the kind of the job, [gpuNeedOf]) on the card of its rule, by the first of [references] that fits for a
+  /// panorama; without [need], the one the budget was made with on the card of [GpuBudget.cardOf], by [references]
+  /// when it was made with none
+  Future<GpuBudgetCheck> check({GpuNeed? need}) async {
     final report = await probe();
-    final choice = panoramaCardOf(report, integratedAllowed: await _integratedAllowed());
+    final choice = (need?.cardOf ?? cardOf)(report, integratedAllowed: await _integratedAllowed());
     final card = choice.card;
     if (card == null || choice.refusal != null) {
       return GpuBudgetUnavailable(choice.refusal ?? AiGateReason.gpuNone);
@@ -143,11 +189,26 @@ class GpuBudget {
         appHolds = null;
       }
     }
+    // One figure: a kind that runs one way (a splat scene), or a budget made with its own need
+    final bytes = need == null ? _need : (need.byReferences ? null : need.bytes);
+    if (bytes != null) {
+      return free >= bytes
+          ? GpuBudgetReady(card, free, report, appHolds: appHolds)
+          : GpuBudgetWait(card, free, need: bytes, appHolds: appHolds);
+    }
     for (final reference in references) {
       if (free >= reference.need) {
         return GpuBudgetReady(card, free, report, reference: reference, appHolds: appHolds);
       }
     }
-    return GpuBudgetWait(card, free, need: need, appHolds: appHolds);
+    return GpuBudgetWait(card, free, need: _leastReference, appHolds: appHolds);
   }
 }
+
+/// The answer of [budget] as the runner of Brush asks it before it starts (brush_runner.dart): the card and its report,
+/// the memory free while other programs hold it, or the reason of the gate when no card can train
+Future<BrushCard> brushCardOf(GpuBudget budget) async => switch (await budget.check()) {
+  GpuBudgetReady(:final card, :final report) => BrushCardReady(card, report),
+  GpuBudgetWait(:final free) => BrushCardWait(free),
+  GpuBudgetUnavailable(:final reason) => BrushCardRefused(reason.name),
+};

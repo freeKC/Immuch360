@@ -1,0 +1,415 @@
+// The frames of a video for a splat scene taken by the app's own libmpv (plan 2026-11-01, section 2.2, lot SP5), the
+// way VideoThumbnailGrabber takes a thumbnail: a muted player without texture or audio opens the file once, goes to the
+// frame of each candidate exactly, and takes mpv's screenshot-raw of it. The grey copy and its sharpness are made in an
+// isolate from mpv's memory; only the sharpest frame of a window is turned into RGBA, turned upright, reduced to 1 600
+// pixels and encoded, in another isolate.
+//
+// A video filmed upright, its rotation in the file (a phone's portrait video), must come out upright, and the libmpv
+// builds do not agree: those of the Linux distributions (mpv 0.34 of Ubuntu 22.04, 0.35 of Debian 12) put a rotation
+// filter before the null output of a player without texture, so the screenshot is turned already; the app's Windows
+// build (mpv of 2026-10-09) leaves the rotation to its output, and the screenshot comes lying (320 x 180 for a video of
+// 180 x 320, seen in the CI on 1 November 2026). splatScreenshotTurns tells which by the size of the screenshot against
+// the size of the decoded frames, and by the rotation mpv still leaves to its output for a half turn, whose size says
+// nothing.
+//
+// How it goes to a frame: an exact seek (absolute+exact) decodes from the key frame before it, half a group of frames
+// on average; the lighthouse video of the measure has one key frame every 4.27 s, and 600 exact seeks took 4 min 22 s
+// on the PC (WSL, software VP9). The candidates follow each other 0.2 s apart, so the player steps from one to the next
+// instead (mpv's frame-step, untimed: one decoding a frame, 4 to 5 ms), and seeks only for the first one, or for one
+// further than [MpvSplatFrameSource.maxStep] ahead or behind. A step and a seek land on the same frame: the first one
+// whose time is the candidate's or after it.
+//
+// A video larger than twice the frames written (a 4K, 5.7K or 8K one: [MpvSplatFrameSource.maxDecodedSide]) is scaled
+// by mpv as it is decoded, to the long side of the frames written ([splatDecodeScale], swscale's area filter): FreeKC's
+// 8K HEVC video of a phone (7680 x 4320, 128.5 s, 2 November 2026) took 764 s for its 161 windows on the PC without it
+// (4.7 s a window, the dialog counting about a minute), every screenshot 133 MB of BGR0 copied twice in Dart, the app
+// at 771 MB; the frames are written at 1 600 pixels all the same. The decoded size is then not the size of a
+// screenshot: which way a screenshot lies is told by its orientation against that of the decoded frames
+// ([splatScreenshotTurns]).
+//
+// The player is made for the job and disposed after it, outside the app's pool: the pool has one player for the
+// thumbnails, which a minute of frames would hold from the library, or lose to it in the middle of the video. Nothing
+// but a path of this computer is opened (a server original is copied first, as for the photos).
+
+import 'dart:async';
+import 'dart:io';
+import 'dart:isolate';
+import 'dart:math' as math;
+import 'dart:typed_data';
+
+import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart';
+import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/splat/sharpness.dart';
+import 'package:immich_mobile/desktop/ai/splat/video_frames.dart';
+import 'package:immich_mobile/desktop/video/desktop_player.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('MpvSplatFrameSource');
+
+/// Makes the player of the frames: a muted one of [PlayerKind.thumbnail], with the mpv options of the app
+typedef SplatPlayerFactory = Future<DesktopPlayer> Function();
+
+class MpvSplatFrameSource implements SplatFrameSource {
+  MpvSplatFrameSource({
+    SplatPlayerFactory? create,
+    this.openTimeout = const Duration(seconds: 30),
+    this.frameTimeout = const Duration(seconds: 15),
+    this.longSide = SplatV1.photoLongSide,
+    this.quality = SplatV1.photoQuality,
+    this.codec = SbsCodecChoice.auto,
+    this.maxStep = const Duration(seconds: 1),
+    this.maxDecodedSide = 2 * SplatV1.photoLongSide,
+  }) : _create = create ?? (() => DesktopPlayer.create(PlayerKind.thumbnail));
+
+  final SplatPlayerFactory _create;
+
+  /// Longest wait for the file to open and show its first frame
+  final Duration openTimeout;
+
+  /// Longest wait for one frame once sought
+  final Duration frameTimeout;
+  final int longSide;
+  final int quality;
+  final SbsCodecChoice codec;
+
+  /// The farthest a candidate may be ahead of the frame shown to be stepped to rather than sought
+  final Duration maxStep;
+
+  /// The longest side of the decoded frames that mpv hands over as they are: a larger video is scaled to [longSide] as
+  /// it is decoded (see the top of this file)
+  final int maxDecodedSide;
+
+  /// The filter mpv was given for the frames of this video, null when none: for the log and the tests
+  String? decodeScale;
+
+  /// The exact seeks and the frame steps so far, for the log
+  int seeks = 0;
+  int steps = 0;
+
+  DesktopPlayer? _player;
+  StreamSubscription<PlayerEvent>? _subscription;
+  final _changed = StreamController<void>.broadcast();
+  var _restarts = 0;
+  String? _failure;
+  int? _handle;
+
+  /// The time of the frame shown, null before the first
+  Duration? _shown;
+
+  /// The size of the frames as decoded, the rotation the file asks for and what of it mpv leaves to its output, in
+  /// degrees clockwise (video-params, video-out-params)
+  var _decodedWidth = 0;
+  var _decodedHeight = 0;
+  var _fileRotation = 0;
+  var _outputRotation = 0;
+
+  /// The rotation the file asks for and what of it mpv leaves to its output, degrees clockwise, for the log and the
+  /// tests
+  int get fileRotation => _fileRotation;
+  int get outputRotation => _outputRotation;
+
+  void _wake() {
+    if (!_changed.isClosed) {
+      _changed.add(null);
+    }
+  }
+
+  Future<bool> _until(bool Function() condition, Duration timeout) async {
+    final deadline = DateTime.now().add(timeout);
+    while (!condition()) {
+      final left = deadline.difference(DateTime.now());
+      if (_failure != null || left <= Duration.zero) {
+        return false;
+      }
+      // The duration comes as a property, not an event: a short poll catches it
+      const poll = Duration(milliseconds: 100);
+      await _changed.stream.first.timeout(left < poll ? left : poll, onTimeout: () {});
+    }
+    return true;
+  }
+
+  @override
+  Future<SplatVideoFacts> open(String resource) async {
+    final player = _player = await _create();
+    _subscription = player.events.listen((event) {
+      switch (event.kind) {
+        case PlayerEventKind.restarted:
+          _restarts++;
+        case PlayerEventKind.failed:
+          _failure = event.message ?? 'failed';
+        case PlayerEventKind.loaded:
+          break;
+      }
+      _wake();
+    });
+    // A frame step tells its frame by the position only
+    player.position.addListener(_wake);
+    await player.open(resource);
+    if (!await _until(() => _restarts > 0 && player.duration.value > Duration.zero, openTimeout)) {
+      throw ConversionException(ImmersiveErrorCode.decodeFailed, _failure ?? 'The video did not open');
+    }
+    if (player.hasVideo.value == false) {
+      throw const ConversionException(ImmersiveErrorCode.decodeFailed, 'The file has no video');
+    }
+    _handle = await player.mpvHandle;
+    Future<int> number(String property) async => int.tryParse(await player.mpvProperty(property)) ?? 0;
+    _decodedWidth = await number('video-params/w');
+    _decodedHeight = await number('video-params/h');
+    _fileRotation = await number('video-params/rotate');
+    _outputRotation = await number('video-out-params/rotate');
+    final scale = splatDecodeScale(
+      decodedWidth: _decodedWidth,
+      decodedHeight: _decodedHeight,
+      longSide: longSide,
+      maxDecodedSide: maxDecodedSide,
+    );
+    if (scale != null) {
+      await player.setVideoFilters(scale);
+      decodeScale = scale;
+    }
+    _log.info(
+      'Frames of a video of $_decodedWidth x $_decodedHeight, turned $_fileRotation degrees by its file, '
+      '$_outputRotation of them left to the output${scale == null ? '' : ', scaled as decoded: $scale'}',
+    );
+    await player.setUntimed(true);
+    _shown = player.position.value;
+    final fps = double.tryParse(await player.mpvProperty('container-fps'));
+    return SplatVideoFacts(duration: player.duration.value, fps: fps != null && fps.isFinite && fps > 0 ? fps : null);
+  }
+
+  @override
+  Future<SplatFrame?> frameAt(Duration time) async {
+    final player = _player;
+    final handle = _handle;
+    if (player == null || handle == null) {
+      return null;
+    }
+    // A frame whose time is a millisecond before the candidate's is its frame: times are rounded in the files
+    const slack = Duration(milliseconds: 1);
+    final shown = _shown;
+    if (shown == null || time < shown - slack || time - shown > maxStep) {
+      final before = _restarts;
+      await player.seekExact(time);
+      seeks++;
+      if (!await _until(() => _restarts > before, frameTimeout)) {
+        _shown = null;
+        return null;
+      }
+      // Read from mpv: the position event of the seek may come after its playback-restart
+      final position = double.tryParse(await player.mpvProperty('time-pos'));
+      _shown = position == null ? time : Duration(microseconds: (position * 1e6).round());
+    } else {
+      while (_shown! < time - slack) {
+        final was = player.position.value;
+        await player.stepFrame();
+        steps++;
+        if (!await _until(() => player.position.value != was || player.completed.value, frameTimeout) ||
+            player.position.value == was) {
+          // The end of the video, or a frame that did not come: the next candidate seeks
+          _shown = null;
+          return null;
+        }
+        _shown = player.position.value;
+      }
+    }
+    final at = _shown ?? time;
+    final library = mpvLibraryPath;
+    // mpv restarted, so the frame is on its (null) output; a screenshot may still miss it for a moment
+    for (var attempt = 0; attempt < 10; attempt++) {
+      final grab = await _grabInBackground(handle, library);
+      if (grab != null) {
+        final turns = splatScreenshotTurns(
+          fileRotation: _fileRotation,
+          outputRotation: _outputRotation,
+          decodedWidth: _decodedWidth,
+          decodedHeight: _decodedHeight,
+          shotWidth: grab.width,
+          shotHeight: grab.height,
+        );
+        return _MpvFrame(at, grab, turns, this);
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    }
+    return null;
+  }
+
+  @override
+  Future<void> close() async {
+    _player?.position.removeListener(_wake);
+    await _subscription?.cancel();
+    _subscription = null;
+    await _changed.close();
+    final player = _player;
+    _player = null;
+    _handle = null;
+    await player?.dispose();
+  }
+}
+
+/// A screenshot of mpv, its rows packed (4 bytes a pixel, BGR0), with the sharpness of its grey copy
+class _Grab {
+  const _Grab(this.width, this.height, this.sharpness, this.pixels);
+
+  final int width;
+  final int height;
+  final double sharpness;
+  final TransferableTypedData pixels;
+}
+
+/// [_grab] in another isolate. Its own function, so that the closure sent there holds the handle and the path only
+Future<_Grab?> _grabInBackground(int handle, String library) => Isolate.run(() => _grab(handle, library));
+
+_Grab? _grab(int handle, String library) => withMpvScreenshot(handle, library, (frame) {
+  final sharpness = sharpnessOf(
+    frame.bgr0,
+    width: frame.width,
+    height: frame.height,
+    stride: frame.stride,
+    order: PixelOrder.bgr0,
+  );
+  final rowBytes = frame.width * 4;
+  final packed = Uint8List(rowBytes * frame.height);
+  for (var y = 0; y < frame.height; y++) {
+    packed.setRange(y * rowBytes, (y + 1) * rowBytes, frame.bgr0, y * frame.stride);
+  }
+  return _Grab(frame.width, frame.height, sharpness, TransferableTypedData.fromList([packed]));
+});
+
+/// The filter of mpv that scales the frames of a video decoded at [decodedWidth] x [decodedHeight] to [longSide] on
+/// their long side as they are decoded, when that side is over [maxDecodedSide]; null otherwise. libavfilter's scale,
+/// its area filter (a downscale of 4.8 times for an 8K video), the other side keeping the shape, even.
+String? splatDecodeScale({
+  required int decodedWidth,
+  required int decodedHeight,
+  required int longSide,
+  required int maxDecodedSide,
+}) {
+  if (decodedWidth <= 0 || decodedHeight <= 0 || math.max(decodedWidth, decodedHeight) <= maxDecodedSide) {
+    return null;
+  }
+  return decodedWidth >= decodedHeight
+      ? 'lavfi-scale=w=$longSide:h=-2:flags=area'
+      : 'lavfi-scale=w=-2:h=$longSide:flags=area';
+}
+
+/// The quarter turns, clockwise, that make a screenshot of mpv upright: none when mpv turned it already (it then lies
+/// across the decoded frames: portrait for frames decoded landscape), the rotation of the file otherwise
+/// ([fileRotation], in degrees clockwise, as mpv's video-params/rotate gives it). Their orientations are compared, not
+/// their sizes: mpv may scale the frames as they are decoded ([splatDecodeScale]). A half turn keeps the orientation:
+/// it is done when mpv leaves it to its output ([outputRotation], video-out-params/rotate), as is any turn of a square
+/// video.
+int splatScreenshotTurns({
+  required int fileRotation,
+  required int outputRotation,
+  required int decodedWidth,
+  required int decodedHeight,
+  required int shotWidth,
+  required int shotHeight,
+}) {
+  final turns = (fileRotation % 360) ~/ 90;
+  if (turns == 0 || fileRotation % 90 != 0) {
+    return 0;
+  }
+  if (turns.isOdd && decodedWidth != decodedHeight && decodedWidth > 0 && decodedHeight > 0) {
+    return (shotWidth > shotHeight) == (decodedWidth > decodedHeight) ? turns : 0;
+  }
+  return outputRotation % 360 == fileRotation % 360 ? turns : 0;
+}
+
+class _MpvFrame implements SplatFrame {
+  _MpvFrame(this.time, this._grab, this._turns, this._source);
+
+  @override
+  final Duration time;
+  final _Grab _grab;
+
+  /// Quarter turns clockwise still to do (splatScreenshotTurns)
+  final int _turns;
+  final MpvSplatFrameSource _source;
+
+  @override
+  int get width => _turns.isOdd ? _grab.height : _grab.width;
+
+  @override
+  int get height => _turns.isOdd ? _grab.width : _grab.height;
+
+  @override
+  double get sharpness => _grab.sharpness;
+
+  @override
+  Future<({int width, int height})> writeJpeg(String path) {
+    final request = _EncodeRequest(
+      _grab.pixels,
+      _grab.width,
+      _grab.height,
+      _turns,
+      path,
+      _source.longSide,
+      _source.quality,
+      _source.codec,
+    );
+    return _encodeInBackground(request);
+  }
+}
+
+class _EncodeRequest {
+  const _EncodeRequest(
+    this.pixels,
+    this.width,
+    this.height,
+    this.turns,
+    this.path,
+    this.longSide,
+    this.quality,
+    this.codec,
+  );
+
+  final TransferableTypedData pixels;
+  final int width;
+  final int height;
+
+  /// Quarter turns clockwise that make it upright
+  final int turns;
+  final String path;
+  final int longSide;
+  final int quality;
+  final SbsCodecChoice codec;
+}
+
+/// [_encode] in another isolate, the closure holding the request only
+Future<({int width, int height})> _encodeInBackground(_EncodeRequest request) => Isolate.run(() => _encode(request));
+
+/// The frame as RGBA, reduced to [_EncodeRequest.longSide], encoded and written, its size given back; in an isolate of
+/// its own
+({int width, int height}) _encode(_EncodeRequest request) {
+  final rgba = request.pixels.materialize().asUint8List();
+  for (var at = 0; at < rgba.length; at += 4) {
+    final blue = rgba[at];
+    rgba[at] = rgba[at + 2];
+    rgba[at + 2] = blue;
+    rgba[at + 3] = 0xFF;
+  }
+  final upright = orientDecoded(
+    SbsDecoded(width: request.width, height: request.height, rgba: rgba),
+    quarterTurns: request.turns,
+  );
+  final fitted = fitEye(upright, maxWidth: request.longSide, maxHeight: request.longSide);
+  SbsCodecException? refusal;
+  for (final codec in request.codec.codecs()) {
+    try {
+      final jpeg = codec.encodeSbs(
+        SbsPicture.single(width: fitted.width, height: fitted.height, rgba: fitted.rgba),
+        SbsEncodeOptions(quality: request.quality, subsampling: ChromaSubsampling.s420),
+      );
+      File(request.path).writeAsBytesSync(jpeg);
+      return (width: fitted.width, height: fitted.height);
+    } on SbsCodecException catch (error) {
+      refusal = error;
+    }
+  }
+  throw refusal ?? const SbsCodecException('No codec');
+}

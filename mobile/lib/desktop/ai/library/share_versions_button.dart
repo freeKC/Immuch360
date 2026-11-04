@@ -37,7 +37,8 @@ String shareVersionKindText(Translations t, ShareVersion version) => switch (ver
     version.xmp.origin == ImmersiveOrigin.generatedContent
         ? t.ai_immersive_version_stereo_panorama
         : t.ai_immersive_version_stereo_360,
-  null => t.ai_immersive_newer_version,
+  // No picture carries a splat scene in this version (plan 2026-11-01, decision D2): one is from a newer version
+  ImmersiveKind.gaussianSplat || null => t.ai_immersive_newer_version,
 };
 
 /// The photo of its folder [head] (the head of the file at [entry]) says it was made from, when our XMP in it names a

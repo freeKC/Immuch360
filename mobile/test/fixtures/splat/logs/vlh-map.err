@@ -1,0 +1,101 @@
+I20261101 13:54:07.609026 35992 incremental_pipeline.cc:353] Loading database
+I20261101 13:54:07.668516 35992 timer.cc:90] Elapsed time: 0.001 [minutes]
+I20261101 13:54:07.676685 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:07.796059 35992 incremental_pipeline.cc:492] Registering initial image pair #80 and #78
+I20261101 13:54:07.798828 35992 incremental_pipeline.cc:510] Global bundle adjustment
+I20261101 13:54:07.839138 35992 incremental_pipeline.cc:620] Registering image #82 (num_reg_frames=2)
+I20261101 13:54:07.919380 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:08.179940 35992 incremental_pipeline.cc:620] Registering image #84 (num_reg_frames=3)
+I20261101 13:54:08.214504 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:08.315353 35992 incremental_pipeline.cc:620] Registering image #79 (num_reg_frames=4)
+I20261101 13:54:08.431007 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:08.487227 35992 incremental_pipeline.cc:620] Registering image #81 (num_reg_frames=5)
+I20261101 13:54:08.588648 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:08.800701 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:08.943217 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:09.101181 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:09.289996 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:09.491610 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:09.737044 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:10.058601 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:10.339827 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:10.655286 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:11.066372 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:11.464965 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:11.983768 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:12.571652 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:12.983427 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:13.487295 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:14.109339 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:14.857082 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:15.762615 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:17.171624 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:18.614925 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:19.811904 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:20.821116 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:21.922451 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:23.737164 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:24.936646 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:26.857152 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:28.021334 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:29.313531 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:30.404051 35992 incremental_pipeline.cc:620] Registering image #102 (num_reg_frames=140)
+I20261101 13:54:30.429372 35992 incremental_pipeline.cc:620] Registering image #105 (num_reg_frames=141)
+I20261101 13:54:30.449249 35992 incremental_pipeline.cc:620] Registering image #113 (num_reg_frames=142)
+I20261101 13:54:30.467627 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:32.650500 35992 incremental_pipeline.cc:620] Registering image #112 (num_reg_frames=143)
+I20261101 13:54:32.699500 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:33.895228 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:34.847659 35992 incremental_pipeline.cc:826] Keeping successful reconstruction
+I20261101 13:54:34.917117 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:34.931177 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:34.941937 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:34.949616 35992 incremental_pipeline.cc:492] Registering initial image pair #109 and #106
+I20261101 13:54:34.950583 35992 incremental_pipeline.cc:510] Global bundle adjustment
+I20261101 13:54:34.967611 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:34.975341 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:34.981994 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:34.987755 35992 incremental_pipeline.cc:492] Registering initial image pair #106 and #109
+I20261101 13:54:34.988648 35992 incremental_pipeline.cc:510] Global bundle adjustment
+I20261101 13:54:35.004641 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.013724 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:35.018000 35992 incremental_pipeline.cc:492] Registering initial image pair #106 and #110
+I20261101 13:54:35.018540 35992 incremental_pipeline.cc:510] Global bundle adjustment
+I20261101 13:54:35.033328 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.044119 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:35.050583 35992 incremental_pipeline.cc:465] Finding good initial image pair
+I20261101 13:54:35.056322 35992 incremental_pipeline.cc:492] Registering initial image pair #107 and #108
+I20261101 13:54:35.057240 35992 incremental_pipeline.cc:510] Global bundle adjustment
+I20261101 13:54:35.072475 35992 incremental_pipeline.cc:620] Registering image #106 (num_reg_frames=2)
+I20261101 13:54:35.088841 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.115640 35992 incremental_pipeline.cc:620] Registering image #109 (num_reg_frames=3)
+I20261101 13:54:35.135977 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.199364 35992 incremental_pipeline.cc:620] Registering image #111 (num_reg_frames=4)
+I20261101 13:54:35.217354 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.267056 35992 incremental_pipeline.cc:620] Registering image #110 (num_reg_frames=5)
+I20261101 13:54:35.279935 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.350025 35992 incremental_pipeline.cc:620] Registering image #105 (num_reg_frames=6)
+I20261101 13:54:35.351358 35992 incremental_pipeline.cc:620] Registering image #105 (num_reg_frames=6)
+I20261101 13:54:35.429115 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.489788 35992 incremental_pipeline.cc:620] Registering image #102 (num_reg_frames=7)
+I20261101 13:54:35.509783 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.530346 35992 incremental_pipeline.cc:620] Registering image #104 (num_reg_frames=8)
+I20261101 13:54:35.541046 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.594077 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.622029 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.676111 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.739775 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.844399 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.938010 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:35.983113 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:36.140897 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:36.220599 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:36.343774 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:36.468178 35992 incremental_pipeline.cc:620] Registering image #87 (num_reg_frames=23)
+I20261101 13:54:36.493481 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:36.587318 35992 incremental_pipeline.cc:620] Registering image #86 (num_reg_frames=24)
+I20261101 13:54:36.622367 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:36.798312 35992 incremental_pipeline.cc:620] Registering image #88 (num_reg_frames=25)
+I20261101 13:54:36.833080 35992 incremental_pipeline.cc:88] Retriangulation and Global bundle adjustment
+I20261101 13:54:36.925295 35992 incremental_pipeline.cc:826] Keeping successful reconstruction
+I20261101 13:54:36.941654 35992 timer.cc:90] Elapsed time: 0.488 [minutes]

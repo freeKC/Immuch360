@@ -25,7 +25,14 @@ void main() {
     final names = [
       'x', 'y', 'z', 'nx', 'ny', 'nz', 'f_dc_0', 'f_dc_1', 'f_dc_2', //
       for (var i = 0; i < rest; i++) 'f_rest_$i',
-      'opacity', 'scale_0', 'scale_1', 'scale_2', 'rot_0', 'rot_1', 'rot_2', 'rot_3',
+      'opacity',
+      'scale_0',
+      'scale_1',
+      'scale_2',
+      'rot_0',
+      'rot_1',
+      'rot_2',
+      'rot_3',
     ];
     const sizes = {'float': 4, 'double': 8, 'uchar': 1, 'ushort': 2, 'int': 4};
     final header = StringBuffer('ply\nformat binary_little_endian 1.0\nelement vertex 2\n');
@@ -155,6 +162,24 @@ void main() {
       ),
     );
     expect(probe('sh3.ply'), const SplatHead(format: SplatFormat.ply, formatVersion: 1, gaussians: 8, shDegree: 3));
+  });
+
+  test('the golden SPZ version 2 of the splat scenes made on a computer and their PLY (lot SP0)', () {
+    for (final (spz, ply, gaussians) in [('sh3_v2.spz', 'sh3.ply', 8), ('edges_sh3_v2.spz', 'edges_sh3.ply', 32)]) {
+      final header = headers[spz] as Map<String, dynamic>;
+      expect(header['ply'], ply);
+      expect(
+        probe(spz),
+        SplatHead(format: SplatFormat.spz, formatVersion: 2, gaussians: gaussians, shDegree: 3),
+        reason: spz,
+      );
+      expect((probe(ply) as SplatHead).gaussians, gaussians, reason: ply);
+      // Its header, then positions (9), alpha (1), colours (3), scales (3), rotations (3), harmonics (45) per gaussian
+      final payload = gzip.decode(bytesOf(spz));
+      expect(payload.length, 16 + gaussians * (9 + 1 + 3 + 3 + 3 + 45), reason: spz);
+      expect(ByteData.sublistView(Uint8List.fromList(payload)).getUint8(13), 12, reason: '12 fractional bits');
+    }
+    expect((probe('edges_sh3.ply') as SplatHead).tool, 'make_splat_fixtures.py');
   });
 
   test('the heads of two files of another writer, read with the length of the whole file', () {

@@ -1,0 +1,65 @@
+{
+  "id": "3edecbb-1",
+  "version": "0.3.0-imm1",
+  "brush": {
+    "repository": "https://github.com/ArthurBrussee/brush",
+    "tag": "v0.3.0",
+    "commit": "3edecbb2fe79d3e2c87eeab85b15e0b1dd10d486",
+    "licence": "Apache-2.0",
+    "licenceSha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "cargoLockSha256": "a555fcb104371e9a6e4de179911c26234fd123228b7c6e30de1d9bfa97e4a2e6",
+    "versionLine": "brush-cli 0.3.0"
+  },
+  "rust": {
+    "toolchain": "1.89.0",
+    "why": "the toolchain of the CI of Brush at the tag (.github/workflows/ci.yml), and the stable Rust of the day of the release (14/09/2025)"
+  },
+  "cargo": {
+    "package": "brush-app",
+    "bin": "brush_app",
+    "profile": "dist",
+    "arguments": [
+      "--no-default-features"
+    ],
+    "why": "dist is the profile of the release binaries of Brush (release and thin LTO), the binary measured on 01/11/2026; without default features, brush_app has no viewer"
+  },
+  "patches": [
+    "0001-immuch360-headless-trainer.patch"
+  ],
+  "lpips": {
+    "path": "crates/lpips/burn_mapped.bin",
+    "size": 29433386,
+    "sha256": "abb257f9aa223154f3ed476674dbfc0b6daee5b2e07618bd208918ee9600e2e7",
+    "probes": {
+      "0": "1368616c663a3a62696e61727931363a3a663136036931365c6275726e5f636f72653a3a7265636f72643a3a66696c653a3a42696e46696c655265636f726465",
+      "1048576": "258f1fcd1d9b2a4929ec09c11d67248a278227ed210c1d78192c9e6aa1b7a7c39f9718a5a0b8954d23c8214a1da1205fa762a409a5f3a432a524a733a9d7a49d",
+      "8388608": "4e158aa2b617df213d20b1a317a10899baa0d01dc82179212f214f21682179202c22370fcd165e227520b020061e53233d2034207915d195f521f7a02aa48a1b",
+      "16777216": "a510a36329c928c929fe225c24a2250a250221412433a0e7a50ea53484bb1d44a0570a4d1435a07217b4a02794dc1c6b21281dc698329d8ea4c48ba19ab9a0a4",
+      "29360128": "a5ada58e9cb3a747a80fa751a783a8e4a7a41d5a21249bc196e198e69c212556259e214097e0a03b16d317f4a05106221ece89e6226a248d2317245a1d482229"
+    }
+  },
+  "tools": {
+    "cargo-deny": {
+      "version": "0.20.2",
+      "windows-x64": {
+        "url": "https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-x86_64-pc-windows-msvc.tar.gz",
+        "sha256": "975a22143262fd27476d19ee00c7af67978426e40e1dee94eed6bbade1cf87dc"
+      },
+      "linux-x64": {
+        "url": "https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-x86_64-unknown-linux-musl.tar.gz",
+        "sha256": "9f12ed4c49936e09b48bf862b595cde2fe64fcbd9d74dfacac6131ca824c8d5f"
+      }
+    },
+    "cargo-about": {
+      "version": "0.9.2",
+      "windows-x64": {
+        "url": "https://github.com/EmbarkStudios/cargo-about/releases/download/0.9.2/cargo-about-0.9.2-x86_64-pc-windows-msvc.tar.gz",
+        "sha256": "1c03e5890238562497c2d89a3b75b02560af349c1fc3e713d3284f532a5cd748"
+      },
+      "linux-x64": {
+        "url": "https://github.com/EmbarkStudios/cargo-about/releases/download/0.9.2/cargo-about-0.9.2-x86_64-unknown-linux-musl.tar.gz",
+        "sha256": "9099a59e820c38a68b9d65f300662a567d56562f9a10f6aa4c7e86c17c2566af"
+      }
+    }
+  }
+}

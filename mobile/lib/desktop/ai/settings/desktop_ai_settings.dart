@@ -4,7 +4,9 @@
 // 7.4 and 9): the type last chosen in the dialog, the 3D version made after a panorama, the .glb copy of a scene, the
 // folder the AI components were moved to, the integrated graphics allowed, the times measured per step, and the
 // address of the ComfyUI of the user. The times of the steps start from the measures of the design (AiTimings) and follow
-// the jobs this computer finished. Kept in desktop_ai.json of the support folder, beside
+// the jobs this computer finished. The splat scenes (plan 2026-11-01, lot SP0) add their switch "Splat scenes
+// (experimental)", on by default as every experimental feature of the app, what the user said they filmed last, and
+// "Also save a .ply for other 3D apps", off by default. Kept in desktop_ai.json of the support folder, beside
 // desktop_files.json and written the same way: a whole new file renamed over the old one, so a crash never leaves half
 // a setting. Keys this build does not know (a newer version) are kept as they are.
 //
@@ -13,6 +15,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -51,6 +55,9 @@ class DesktopAiSettings {
     this.integratedGpuAllowed = false,
     this.timings = const {},
     this.comfyUiUrl,
+    this.splatScenes = true,
+    this.splatSubject = SplatSubject.place,
+    this.splatKeepPly = false,
   });
 
   final AiDestination destination;
@@ -92,6 +99,15 @@ class DesktopAiSettings {
   /// The address of the ComfyUI of the user, local only; null for the default, http://127.0.0.1:8188
   final String? comfyUiUrl;
 
+  /// "Splat scenes (experimental)" under "AI features": on by default; off, no "Make a splat scene (AI)" anywhere
+  final bool splatScenes;
+
+  /// What the user said they filmed in the last splat scene ("What did you film?"), the choice of the next one
+  final SplatSubject splatSubject;
+
+  /// "Also save a .ply for other 3D apps" of a splat scene, off by default
+  final bool splatKeepPly;
+
   DesktopAiSettings copyWith({
     AiDestination? destination,
     String? Function()? folder,
@@ -107,6 +123,9 @@ class DesktopAiSettings {
     bool? integratedGpuAllowed,
     Map<String, Map<String, int>>? timings,
     String? Function()? comfyUiUrl,
+    bool? splatScenes,
+    SplatSubject? splatSubject,
+    bool? splatKeepPly,
   }) => DesktopAiSettings(
     destination: destination ?? this.destination,
     folder: folder == null ? this.folder : folder(),
@@ -122,6 +141,9 @@ class DesktopAiSettings {
     integratedGpuAllowed: integratedGpuAllowed ?? this.integratedGpuAllowed,
     timings: timings ?? this.timings,
     comfyUiUrl: comfyUiUrl == null ? this.comfyUiUrl : comfyUiUrl(),
+    splatScenes: splatScenes ?? this.splatScenes,
+    splatSubject: splatSubject ?? this.splatSubject,
+    splatKeepPly: splatKeepPly ?? this.splatKeepPly,
   );
 
   Map<String, Object?> toJson() => {
@@ -139,6 +161,9 @@ class DesktopAiSettings {
     'integratedGpuAllowed': integratedGpuAllowed,
     'timings': timings,
     'comfyUiUrl': comfyUiUrl,
+    'splatScenes': splatScenes,
+    'splatSubject': splatSubject.name,
+    'splatKeepPly': splatKeepPly,
   };
 
   /// The settings of [json], a default for each value that is missing or not understood
@@ -192,6 +217,9 @@ class DesktopAiSettings {
             })
           : const {},
       comfyUiUrl: text('comfyUiUrl'),
+      splatScenes: flag('splatScenes', defaults.splatScenes),
+      splatSubject: named(SplatSubject.values, json['splatSubject'], defaults.splatSubject),
+      splatKeepPly: flag('splatKeepPly', defaults.splatKeepPly),
     );
   }
 
@@ -211,7 +239,10 @@ class DesktopAiSettings {
       other.componentsFolder == componentsFolder &&
       other.integratedGpuAllowed == integratedGpuAllowed &&
       _sameTimings(other.timings, timings) &&
-      other.comfyUiUrl == comfyUiUrl;
+      other.comfyUiUrl == comfyUiUrl &&
+      other.splatScenes == splatScenes &&
+      other.splatSubject == splatSubject &&
+      other.splatKeepPly == splatKeepPly;
 
   @override
   int get hashCode => Object.hash(
@@ -229,6 +260,9 @@ class DesktopAiSettings {
     integratedGpuAllowed,
     Object.hashAllUnordered(timings.keys),
     comfyUiUrl,
+    splatScenes,
+    splatSubject,
+    splatKeepPly,
   );
 }
 
@@ -236,7 +270,15 @@ class DesktopAiSettings {
 /// ConversionKind and ImmersiveStage: the 3D photo as phase 1 runs it (a few seconds a photo), the 3D scene as M2
 /// measured it on ai1 (some 25 s, MoGe-2 4.1 s, LaMa 8.4 s to load and 3.1 s a region), the 360° panorama as M3
 /// measured it on the RTX 4060 Laptop (at most 250 s, the generation some 200 s, the upscale 41 s, the photo pasted
-/// back and the JPEG 3 s), the 360° 3D panorama as the design estimates it (some 10 s)
+/// back and the JPEG 3 s), the 360° 3D panorama as the design estimates it (some 10 s), the splat scene of 150 photos at
+/// the settings of the first test build as the plan of 1 November estimates it from its measure (some 13 min: the photos
+/// 45 s, the poses 260 s measured with SIFT at 1 024 pixels, the training 7.5 min, what the measure M1 gives for photos
+/// of 4:3 at 1 024 x 768, those of a phone, beside its 366 s measured on photos of 3:2 at 1 024 x 683), and the splat
+/// scene of a video of two minutes, kept apart ("splatSceneVideo", ConversionKind.timingsKey: some 12 min, the frames
+/// 40 to 90 s as the plan estimates them, every pair of its frames matched in 286 s and the mapping in 36 s as lot
+/// SPF1 measured them on the lighthouse, the training 306 s measured by M1 at 1 024 x 576). Its engine tells the time
+/// left of the whole job
+/// (ConversionKind.tellsWholeTimeLeft): these only give the time of the dialog until the first scene.
 const aiDefaultTimings = <String, Map<String, int>>{
   'sbsFromPhoto': {'reading': 100, 'decoding': 500, 'depth': 1000, 'rightEye': 500, 'encoding': 600, 'writing': 100},
   'sceneFromPhoto': {
@@ -270,17 +312,32 @@ const aiDefaultTimings = <String, Map<String, int>>{
     'encoding': 1500,
     'writing': 300,
   },
+  'splatScene': splatSceneDefaultTimings,
+  'splatSceneVideo': splatSceneVideoDefaultTimings,
 };
 
 /// The time the steps of the jobs take on this computer: those it measured (DesktopAiSettings.timings), else
-/// [aiDefaultTimings]. They give the time left of a job and the time a photo takes in the dialog.
+/// [aiDefaultTimings], those of the steps of COLMAP of a splat scene by the [processors] of the computer when given
+/// (splatDefaultOn, lot SPF2; as measured on 24 processors without). They give the time left of a job and the time a
+/// photo takes in the dialog.
 class AiTimings {
-  const AiTimings([this.measured = const {}]);
+  const AiTimings([this.measured = const {}, this.processors]);
 
   final Map<String, Map<String, int>> measured;
 
+  /// The processors of the computer, Platform.numberOfProcessors in the app; null for the defaults as measured
+  final int? processors;
+
   /// The milliseconds the step [stage] of a job of [kind] takes, null when nothing tells it
-  int? of(String kind, String stage) => measured[kind]?[stage] ?? aiDefaultTimings[kind]?[stage];
+  int? of(String kind, String stage) {
+    final kept = measured[kind]?[stage];
+    if (kept != null) {
+      return kept;
+    }
+    final byDefault = aiDefaultTimings[kind]?[stage];
+    final count = processors;
+    return byDefault == null || count == null ? byDefault : splatDefaultOn(kind, stage, byDefault, processors: count);
+  }
 
   /// [measured] with the steps of a job of [kind] that just ended well: each step the mean of what it was and what it
   /// took this time (the first time, what it took), so that one slow job weighs but half and a faster computer is

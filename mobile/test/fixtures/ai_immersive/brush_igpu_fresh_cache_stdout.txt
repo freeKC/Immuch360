@@ -1,0 +1,22 @@
+[2026-11-01T15:45:48Z INFO  cubecl_wgpu::runtime] Using adapter AdapterInfo { name: "Intel(R) RaptorLake-S Mobile Graphics Controller", vendor: 32902, device: 42888, device_type: IntegratedGpu, driver: "Intel Corporation", driver_info: "101.7088", backend: Vulkan }
+[2026-11-01T15:45:48Z INFO  cubecl_wgpu::runtime] Created wgpu compute server on device Device { inner: Core(CoreDevice { context: ContextWgpuCore { type: "Native" }, id: Id(0,1), error_sink: Mutex { data: ErrorSink }, features: Features { features_wgpu: FeaturesWGPU(TEXTURE_FORMAT_16BIT_NORM | TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES | PIPELINE_STATISTICS_QUERY | TIMESTAMP_QUERY_INSIDE_ENCODERS | TIMESTAMP_QUERY_INSIDE_PASSES | TEXTURE_BINDING_ARRAY | BUFFER_BINDING_ARRAY | STORAGE_RESOURCE_BINDING_ARRAY | SAMPLED_TEXTURE_AND_STORAGE_BUFFER_ARRAY_NON_UNIFORM_INDEXING | STORAGE_TEXTURE_ARRAY_NON_UNIFORM_INDEXING | PARTIALLY_BOUND_BINDING_ARRAY | MULTI_DRAW_INDIRECT | MULTI_DRAW_INDIRECT_COUNT | PUSH_CONSTANTS | ADDRESS_MODE_CLAMP_TO_ZERO | ADDRESS_MODE_CLAMP_TO_BORDER | POLYGON_MODE_LINE | POLYGON_MODE_POINT | CONSERVATIVE_RASTERIZATION | VERTEX_WRITABLE_STORAGE | CLEAR_TEXTURE | SPIRV_SHADER_PASSTHROUGH | MULTIVIEW | TEXTURE_ATOMIC | TEXTURE_FORMAT_NV12 | SHADER_I16 | SHADER_PRIMITIVE_INDEX | SHADER_EARLY_DEPTH_TEST | SHADER_INT64 | SUBGROUP | SUBGROUP_VERTEX | SUBGROUP_BARRIER | PIPELINE_CACHE | VULKAN_EXTERNAL_MEMORY_WIN32), features_webgpu: FeaturesWebGPU(DEPTH_CLIP_CONTROL | DEPTH32FLOAT_STENCIL8 | TEXTURE_COMPRESSION_BC | TEXTURE_COMPRESSION_BC_SLICED_3D | TEXTURE_COMPRESSION_ETC2 | TEXTURE_COMPRESSION_ASTC | TIMESTAMP_QUERY | INDIRECT_FIRST_INSTANCE | SHADER_F16 | RG11B10UFLOAT_RENDERABLE | BGRA8UNORM_STORAGE | FLOAT32_FILTERABLE | DUAL_SOURCE_BLENDING | CLIP_DISTANCES) } }) } => AdapterInfo { name: "Intel(R) RaptorLake-S Mobile Graphics Controller", vendor: 32902, device: 42888, device_type: IntegratedGpu, driver: "Intel Corporation", driver_info: "101.7088", backend: Vulkan }
+[2026-11-01T15:45:48Z INFO  brush_cli] Starting up
+[2026-11-01T15:45:48Z INFO  brush_process::process] Starting process with source Path("D:\\DEV\\immuch\\splat-maker-2026-11-01\\data\\room150_4")
+[2026-11-01T15:45:48Z INFO  brush_process::process] Mounted VFS with 155 files. (plys: 0)
+[2026-11-01T15:45:48Z INFO  brush_process::process] Start of view stream
+[2026-11-01T15:45:48Z INFO  brush_process::train_stream] Start of training stream
+[2026-11-01T15:45:48Z INFO  brush_process::train_stream] Using seed 42
+[2026-11-01T15:45:48Z INFO  brush_process::train_stream] Loading dataset
+[2026-11-01T15:45:48Z INFO  brush_process::train_stream] Log scene to rerun
+[2026-11-01T15:45:48Z INFO  brush_process::train_stream] Dataset loaded
+[2026-11-01T15:45:48Z INFO  brush_cli] Loaded dataset with 131 training, 19 eval views
+[2026-11-01T15:45:48Z INFO  brush_process::train_stream] Loading initial splats if any.
+[2026-11-01T15:45:48Z INFO  brush_cli] Completed loading.
+[2026-11-01T15:45:48Z INFO  brush_process::train_stream] Start training loop.
+[2026-11-01T15:46:11Z INFO  brush_cli] Refine iter 201, 19952 splats.
+[2026-11-01T15:46:31Z INFO  brush_cli] Refine iter 401, 21340 splats.
+[2026-11-01T15:46:52Z INFO  brush_cli] Refine iter 601, 22902 splats.
+[2026-11-01T15:47:14Z INFO  brush_cli] Refine iter 801, 24584 splats.
+[2026-11-01T15:47:36Z INFO  brush_process::train_stream] Running evaluation for iteration 1000
+[2026-11-01T15:47:38Z INFO  brush_cli] Eval iter 1000: PSNR 22.496212, ssim 0.7502236
+[2026-11-01T15:47:38Z INFO  brush_cli] Done training! Took FormattedDuration(107s).

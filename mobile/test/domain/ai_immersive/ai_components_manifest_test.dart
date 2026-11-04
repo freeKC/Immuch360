@@ -89,8 +89,13 @@ void main() {
     test('each component serves its features: the 3D photo never asks for the components of a later feature', () {
       expect(depthModelOnnxComponent.features, {AiFeature.stereoPhoto, AiFeature.stereoPanorama});
       expect(depthModelTfliteComponent.features, {AiFeature.stereoPhoto});
+      // Every feature runs on ONNX Runtime but the splat scene, made by COLMAP and Brush
       for (final runtime in aiComponents.where((component) => component.kind == AiComponentKind.runtime)) {
-        expect(runtime.features, AiFeature.values.where((feature) => feature.isAi).toSet(), reason: runtime.id);
+        expect(
+          runtime.features,
+          AiFeature.values.where((feature) => feature.isAi).toSet()..remove(AiFeature.splatScene),
+          reason: runtime.id,
+        );
       }
       for (final platform in AiPlatform.values) {
         // The phase 1 callers, which name no feature, get what they got
@@ -147,17 +152,23 @@ void main() {
             ? aiComponentsReleaseTag
             : scenes.contains(component.id)
             ? aiComponentsScenesReleaseTag
+            : component.features.contains(AiFeature.splatScene)
+            ? aiComponentsSplatsReleaseTag
             : aiComponentsPanoramasReleaseTag;
         expect(component.releaseTag, family, reason: component.id);
         expect(component.variantOf, isNull, reason: component.id);
-        // Every archive lists its files; those of the AV2 decoder on the branch of the test build AVT alone (the
-        // archives of the CI, av2-decoder-1 not made: publish_ai_components.py --check --test-build feat-av2)
+        // Every archive lists its files: the AV2 decoder's as the record of av2-decoder-1 gives them (lot AD11), the
+        // splat scenes' since ai-components-4 is made (lot SP14)
         expect(
           component.archiveFiles.isNotEmpty,
           component.isArchive,
           reason: '${component.id}: files of archives only',
         );
-        expect(component.isArchive, component.id.startsWith('sd-cpp-') || av2, reason: component.id);
+        expect(
+          component.isArchive,
+          ['sd-cpp-', 'colmap-', 'brush-'].any(component.id.startsWith) || av2,
+          reason: component.id,
+        );
         // Only a file of 2 GiB or more comes in parts
         expect(component.isInParts, (component.size ?? 0) >= aiReleaseAssetLimit, reason: component.id);
       }
@@ -232,7 +243,7 @@ void main() {
         expect(component.isComplete, isTrue, reason: component.id);
         expect(component.officialUrls.single, startsWith('https://'), reason: component.id);
       }
-      // Nothing held back since ai-components-3 was published: the panoramas are offered where their engine runs
+      // Nothing held back since ai-components-4 is made (lot SP14): the panoramas are offered where their engine runs
       expect(aiHeldFeatureGroups, isEmpty);
       for (final platform in AiPlatform.values) {
         expect(
@@ -269,12 +280,13 @@ void main() {
       ]);
     });
 
-    test('the app keeps the text of every licence, with its copyright line; the engine of P2 brings its own', () {
+    test('the app keeps the text of every licence, with its copyright line; stable-diffusion.cpp brings its own', () {
       for (final component in aiComponents) {
         final text = aiLicenceText(component);
-        // An engine brings its texts in its archive; the AV2 decoder too, but the app keeps those of dav2d and the
-        // patent licence of AV2 for the card shown before it is downloaded (av2_decoder_licences.dart)
-        if (component.isArchive && !component.features.contains(AiFeature.av2Video)) {
+        // stable-diffusion.cpp brings its texts in its archive; the app keeps those of COLMAP and Brush, and those of
+        // dav2d with the patent licence of AV2 for the card shown before the AV2 decoder is downloaded
+        // (av2_decoder_licences.dart)
+        if (component == sdCppWindowsComponent || component == sdCppLinuxComponent) {
           expect(text, 'See ${component.licenceUrl}\n', reason: component.id);
           continue;
         }
@@ -343,9 +355,14 @@ void main() {
     });
 
     test('the groups: each component under the first group that needs it, a shared one counted once', () {
+      // The groups of the AI, the AV2 decoder apart (the video settings show it); the splat scenes, offered since
+      // ai-components-4 is made (lot SP14), come last with their own two programs, which no other group needs
       final aiGroups = AiFeatureGroup.values.where((group) => group.isAi);
+      expect(aiGroups, [AiFeatureGroup.photos, AiFeatureGroup.scenes, AiFeatureGroup.panoramas, AiFeatureGroup.splats]);
       final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
       expect(windows.map((group) => group.group), aiGroups);
+      expect(windows.last.all, [colmapWindowsComponent, brushWindowsComponent]);
+      expect(windows.last.own, [colmapWindowsComponent, brushWindowsComponent]);
       expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
       expect(windows[1].all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
       expect(windows[1].own, [mogeGeometryComponent, lamaInpaintComponent]);
@@ -373,18 +390,28 @@ void main() {
       );
       final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
       // A group held back is never offered, its components complete; nothing is held back by default since the
-      // publication of ai-components-3 (29 October 2026)
+      // publication of ai-components-3 (29 October 2026) and of ai-components-4 (lot SP14)
       expect(
         aiComponentGroupsFor(
           AiPlatform.windowsX64,
           catalogue: complete,
           held: const {AiFeatureGroup.panoramas},
         ).map((group) => group.group),
-        [AiFeatureGroup.photos, AiFeatureGroup.scenes],
+        [AiFeatureGroup.photos, AiFeatureGroup.scenes, AiFeatureGroup.splats],
       );
+      // Nothing held back since ai-components-4 is made (lot SP14); the splat scenes held, the panoramas come last
       expect(aiHeldFeatureGroups, isEmpty);
-      final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete);
-      expect(groups.map((group) => group.group), aiGroups);
+      expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), aiGroups);
+      final groups = aiComponentGroupsFor(
+        AiPlatform.windowsX64,
+        catalogue: complete,
+        held: const {AiFeatureGroup.splats},
+      );
+      expect(groups.map((group) => group.group), [
+        AiFeatureGroup.photos,
+        AiFeatureGroup.scenes,
+        AiFeatureGroup.panoramas,
+      ]);
       expect(groups.last.own.map((component) => component.id), [
         'sd-cpp-vulkan-win-x64',
         'migan-512-places2-onnx',

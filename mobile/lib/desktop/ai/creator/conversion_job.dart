@@ -5,7 +5,8 @@
 //
 // Phases 2 and 3 (design-final 2026-10-27, sections 4.5 and 9.1) add the kind of each job and its lane, the job a 360°
 // 3D panorama is chained after (the panorama it is made from), "step 12 of 28" and the time left, and why a job still
-// waits when the other lane runs.
+// waits when the other lane runs. The splat scene (plan 2026-11-01, lot SP0) adds a kind of the graphics card whose
+// engine tells the time left of the whole job, its steps between COLMAP and Brush being counted in images and steps.
 //
 // A source says how to get the bytes the engine reads: a file of this computer is read in place, a server original or
 // a file of a share is copied to a temporary folder first (by the screens, lot A5c). Either way the original is never
@@ -28,12 +29,15 @@ import 'package:path/path.dart' as p;
 /// the graphics card for a generation
 enum ConversionLane { cpu, gpu }
 
-/// What a job makes: "2D to 3D SBS" (phase 1), "2D to 3D scene", "2D to 360° panorama", "360° to 3D 360°"
+/// What a job makes: "2D to 3D SBS" (phase 1), "2D to 3D scene", "2D to 360° panorama", "360° to 3D 360°", and
+/// "Photos to splat scene" from a whole selection of photos or one video, on the lane of the graphics card (its poses
+/// run on the processor, but the training holds the card)
 enum ConversionKind {
   sbsFromPhoto(ImmersiveKind.stereoPhoto, ConversionLane.cpu),
   sceneFromPhoto(ImmersiveKind.volumetricScene, ConversionLane.cpu),
   panoramaFromPhoto(ImmersiveKind.panorama360, ConversionLane.gpu),
-  stereoPanoramaFromPanorama(ImmersiveKind.stereoPanorama360, ConversionLane.cpu);
+  stereoPanoramaFromPanorama(ImmersiveKind.stereoPanorama360, ConversionLane.cpu),
+  splatScene(ImmersiveKind.gaussianSplat, ConversionLane.gpu);
 
   const ConversionKind(this.output, this.lane);
 
@@ -46,14 +50,35 @@ enum ConversionKind {
   /// The steps of its engine, in their order
   List<ImmersiveStage> get stages => ImmersiveStage.of(output);
 
-  /// How long a job of this kind takes on this computer, as [timings] tell its steps
-  Duration expectedDuration(AiTimings timings) =>
-      Duration(milliseconds: stages.fold(0, (sum, stage) => sum + (timings.of(name, stage.name) ?? 0)));
+  /// Whether its engine tells the time left of the whole job (ImmersiveProgress.remaining), which the time left then
+  /// is, rather than what the timings of the steps leave: the time of a splat scene follows its images, its pairs and
+  /// its pixels, not a time per step
+  bool get tellsWholeTimeLeft => this == splatScene;
+
+  /// The steps of a job of this kind, made from a video ([fromVideo]) or not: a splat scene of photos has no frames
+  /// to take, one of a video no photos to prepare (ImmersiveStage.splatOf); the other kinds have their [stages]
+  List<ImmersiveStage> stagesOf({bool fromVideo = false}) =>
+      this == splatScene ? ImmersiveStage.splatOf(video: fromVideo) : stages;
+
+  /// The name the times of the steps of a job of this kind are kept under (AiTimings, desktop_ai.json): its name, but
+  /// "splatSceneVideo" for a splat scene of a video, whose matching and training take their own times (286 s and 306 s
+  /// in the measures, against 195 s and some 7.5 min for 150 photos)
+  String timingsKey({bool fromVideo = false}) => this == splatScene && fromVideo ? 'splatSceneVideo' : name;
+
+  /// How long a job of this kind takes on this computer, as [timings] tell its steps; a splat scene of a video
+  /// ([fromVideo]) by the steps and the times of a video
+  Duration expectedDuration(AiTimings timings, {bool fromVideo = false}) {
+    final key = timingsKey(fromVideo: fromVideo);
+    return Duration(
+      milliseconds: stagesOf(fromVideo: fromVideo).fold(0, (sum, stage) => sum + (timings.of(key, stage.name) ?? 0)),
+    );
+  }
 }
 
 /// The time left of a job of [kind] at [stage], which has taken [inStage] so far: the time the step itself tells
 /// ([stageLeft], the steps of a generation), else what its timing leaves of it, then the timings of the steps after it;
-/// null when nothing tells any of them
+/// null when nothing tells any of them. For a kind whose engine tells the time left of the whole job
+/// ([ConversionKind.tellsWholeTimeLeft]), [stageLeft] is that time, taken as it is.
 Duration? conversionTimeLeft(
   ConversionKind kind,
   ImmersiveStage stage, {
@@ -61,6 +86,9 @@ Duration? conversionTimeLeft(
   Duration inStage = Duration.zero,
   Duration? stageLeft,
 }) {
+  if (kind.tellsWholeTimeLeft) {
+    return stageLeft;
+  }
   final stages = kind.stages;
   final at = stages.indexOf(stage);
   if (at < 0) {
@@ -144,6 +172,13 @@ enum ConversionState {
   depth,
   panoramaDepth,
   rightEye,
+  photos,
+  frames,
+  features,
+  matching,
+  mapping,
+  training,
+  splatCopy,
   encoding,
   writing,
   done,
@@ -192,6 +227,13 @@ enum ConversionState {
     ImmersiveStage.depth => depth,
     ImmersiveStage.panoramaDepth => panoramaDepth,
     ImmersiveStage.rightEye => rightEye,
+    ImmersiveStage.photos => photos,
+    ImmersiveStage.frames => frames,
+    ImmersiveStage.features => features,
+    ImmersiveStage.matching => matching,
+    ImmersiveStage.mapping => mapping,
+    ImmersiveStage.training => training,
+    ImmersiveStage.splatCopy => splatCopy,
     ImmersiveStage.encoding => encoding,
     ImmersiveStage.writing => writing,
   };
@@ -375,6 +417,19 @@ class ConversionTarget {
   String get path => p.join(folder, fileName);
 }
 
+/// The photos, or the video, of a splat scene and its settings (lot SP6): [members] in the order the dialog gives them
+/// (the engine plans them in time, 200 photos at most), the video alone for a video
+class SplatSelection {
+  const SplatSelection({required this.members, this.settings = const SplatSettings(), this.images});
+
+  final List<SplatMember> members;
+  final SplatSettings settings;
+
+  /// The images the dialog counted and told the time of: the photos used, or the frames of the video by its length
+  /// (161 for a video of 128.5 s); null when not counted, the engine then plans its own (splatPlannedImages)
+  final int? images;
+}
+
 /// One photo to convert, as the dialog hands it to the queue
 class ConversionRequest {
   const ConversionRequest({required this.source, this.target, this.quarterTurns = 0, this.skip})
@@ -425,9 +480,20 @@ class ConversionJob {
     this.waitingFor,
     this.gpuShortfall,
     this.keepsWaiting = false,
+    this.fromVideo = false,
+    this.splat,
+    this.placed,
+    this.keptFolder,
   });
 
   final String id;
+
+  /// A splat scene: its photos or its video, and its settings; null for the other kinds
+  final SplatSelection? splat;
+
+  /// A splat scene made from one video rather than from photos: its kind is said "Video to splat scene", its frames
+  /// are matched one after the other rather than in blocks, and its times are kept apart (ConversionKind.timingsKey)
+  final bool fromVideo;
 
   /// The original: the photo, also for a 360° 3D panorama chained after the panorama made from it
   final ConversionSource source;
@@ -496,13 +562,25 @@ class ConversionJob {
   /// The user asked this job to keep waiting for the memory of the graphics card: it never leaves the queue for it
   final bool keepsWaiting;
 
+  /// A splat scene: the images COLMAP placed, once it placed them (ImmersiveProgress.placed); "68 of 139 images placed
+  /// in 3D: the scene may be incomplete" while it trains
+  final SplatPlaced? placed;
+
+  /// The work folder a failure left until the next scene or a day (ImmersiveResult.keptFolder), named in the panel
+  final String? keptFolder;
+
+  /// Whether a Retry would end the same way: a splat scene of too few images placed, whose images the mapper places
+  /// the same way every time (69 and 69, 129 and 129 in the diagnosis of 3 November); the panel offers none (lot SPF2)
+  bool get retryGivesTheSame => kind == ConversionKind.splatScene && error == ImmersiveErrorCode.notEnoughOverlap;
+
   ConversionPhase get phase => state.phase;
 
   /// From 0 to 1
   double get progress => perMille / 1000;
 
   /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor] and [gpuShortfall] are
-  /// given as functions, so that they may go back to null
+  /// given as functions, so that they may go back to null; [placed] and [keptFolder] go back to null with [restarted]
+  /// only
   ConversionJob copyWith({
     ConversionState? state,
     int? perMille,
@@ -524,6 +602,8 @@ class ConversionJob {
     ConversionWait? Function()? waitingFor,
     GpuShortfall? Function()? gpuShortfall,
     bool? keepsWaiting,
+    SplatPlaced? placed,
+    String? keptFolder,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -555,6 +635,10 @@ class ConversionJob {
     waitingFor: waitingFor == null ? this.waitingFor : waitingFor(),
     gpuShortfall: gpuShortfall == null ? this.gpuShortfall : gpuShortfall(),
     keepsWaiting: keepsWaiting ?? this.keepsWaiting,
+    fromVideo: fromVideo,
+    splat: splat,
+    placed: placed ?? this.placed,
+    keptFolder: keptFolder ?? this.keptFolder,
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then. [keepsWaiting]: it
@@ -572,6 +656,8 @@ class ConversionJob {
     existing: existing,
     whenExists: whenExists,
     keepsWaiting: keepsWaiting,
+    fromVideo: fromVideo,
+    splat: splat,
   );
 
   @override

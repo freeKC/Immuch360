@@ -1,0 +1,31 @@
+I20261103 11:29:22.776368 20236 feature_matching.cc:196] === Feature matching & geometric verification ===
+I20261103 11:29:22.778186 25068 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778210 31524 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778246  5364 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778195 26572 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778288  3048 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778234 23048 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778320  5084 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778335 32232 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778350  7400 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778272  4832 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778273 33192 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778285 13528 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778224  7696 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778301 28212 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778311 17056 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778186 11152 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778325 32068 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778256  8052 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778341  6296 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778344 11420 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778282  4668 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778688 23272 sift.cc:1685] Creating SIFT CPU feature matcher
+I20261103 11:29:22.778724 20236 pairing.cc:905] Importing image pairs...
+I20261103 11:29:22.781323 20236 pairing.cc:938] Processing block [1/3]
+I20261103 11:29:43.269525 20236 feature_matching.cc:218] in 20.488s
+I20261103 11:29:43.269630 20236 pairing.cc:938] Processing block [2/3]
+I20261103 11:30:05.948450 20236 feature_matching.cc:218] in 22.679s
+I20261103 11:30:05.948508 20236 pairing.cc:938] Processing block [3/3]
+I20261103 11:30:11.937252 20236 feature_matching.cc:218] in 5.989s
+I20261103 11:30:11.937316 20236 timer.cc:90] Elapsed time: 0.819 [minutes]

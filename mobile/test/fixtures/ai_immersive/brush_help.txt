@@ -1,0 +1,199 @@
+Brush - universal splats
+
+Usage: brush_app [OPTIONS] [PATH_OR_URL]
+
+Arguments:
+  [PATH_OR_URL]
+          Source to load from (path or URL)
+
+Options:
+      --with-viewer
+          Spawn a viewer to visualize the training
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+  -V, --version
+          Print version
+
+Training options:
+      --total-steps <TOTAL_STEPS>
+          Total number of steps to train for
+
+          [default: 30000]
+
+      --lr-mean <LR_MEAN>
+          Start learning rate for the mean parameters
+
+          [default: 2e-5]
+
+      --lr-mean-end <LR_MEAN_END>
+          Start learning rate for the mean parameters
+
+          [default: 1e-6]
+
+      --mean-noise-weight <MEAN_NOISE_WEIGHT>
+          How much noise to add to the mean parameters of low opacity gaussians
+
+          [default: 40]
+
+      --lr-coeffs-dc <LR_COEFFS_DC>
+          Learning rate for the base SH (RGB) coefficients
+
+          [default: 2e-3]
+
+      --lr-coeffs-sh-scale <LR_COEFFS_SH_SCALE>
+          How much to divide the learning rate by for higher SH orders
+
+          [default: 20.0]
+
+      --lr-opac <LR_OPAC>
+          Learning rate for the opacity parameter
+
+          [default: 1e-2]
+
+      --lr-scale <LR_SCALE>
+          Learning rate for the scale parameters
+
+          [default: 1e-2]
+
+      --lr-scale-end <LR_SCALE_END>
+          Learning rate for the scale parameters
+
+          [default: 6e-3]
+
+      --lr-rotation <LR_ROTATION>
+          Learning rate for the rotation parameters
+
+          [default: 1e-3]
+
+      --ssim-weight <SSIM_WEIGHT>
+          Weight of SSIM loss (compared to l1 loss)
+
+          [default: 0.2]
+
+      --opac-loss-weight <OPAC_LOSS_WEIGHT>
+          Weight of the opacity loss
+
+          [default: 1e-9]
+
+      --scale-loss-weight <SCALE_LOSS_WEIGHT>
+          Weight of the opacity loss
+
+          [default: 1e-8]
+
+      --aux-loss-time <AUX_LOSS_TIME>
+          How long to apply aux losses and augementations for (1 being the full training duration)
+
+          [default: 0.9]
+
+Refine options:
+      --max-splats <MAX_SPLATS>
+          Max nr. of splats. This is an upper bound, but the actual final number of splats might be lower than this
+
+          [default: 10000000]
+
+      --refine-every <REFINE_EVERY>
+          Frequency of 'refinement' where gaussians are replaced and densified. This should roughly be the number of images it takes to properly "cover" your scene
+
+          [default: 200]
+
+      --growth-grad-threshold <GROWTH_GRAD_THRESHOLD>
+          Threshold to control splat growth. Lower means faster growth
+
+          [default: 0.00004]
+
+      --growth-select-fraction <GROWTH_SELECT_FRACTION>
+          What fraction of splats that are deemed as needing to grow do actually grow. Increase this to make splats grow more aggressively
+
+          [default: 0.1]
+
+      --growth-stop-iter <GROWTH_STOP_ITER>
+          Period after which splat growth stops
+
+          [default: 15000]
+
+      --match-alpha-weight <MATCH_ALPHA_WEIGHT>
+          Weight of l1 loss on alpha if input view has transparency
+
+          [default: 0.1]
+
+      --lpips-loss-weight <LPIPS_LOSS_WEIGHT>
+          [default: 0.0]
+
+Model Options:
+      --sh-degree <SH_DEGREE>
+          SH degree of splats
+
+          [default: 3]
+
+Dataset Options:
+      --max-frames <MAX_FRAMES>
+          Max nr. of frames of dataset to load
+
+      --max-resolution <MAX_RESOLUTION>
+          Max resolution of images to load
+
+          [default: 1920]
+
+      --eval-split-every <EVAL_SPLIT_EVERY>
+          Create an eval dataset by selecting every nth image
+
+      --subsample-frames <SUBSAMPLE_FRAMES>
+          Load only every nth frame
+
+      --subsample-points <SUBSAMPLE_POINTS>
+          Load only every nth point from the initial sfm data
+
+Process options:
+      --seed <SEED>
+          Random seed
+
+          [default: 42]
+
+      --start-iter <START_ITER>
+          Iteration to resume from
+
+          [default: 0]
+
+      --eval-every <EVAL_EVERY>
+          Eval every this many steps
+
+          [default: 1000]
+
+      --eval-save-to-disk
+          Save the rendered eval images to disk. Uses export-path for the file location
+
+      --export-every <EXPORT_EVERY>
+          Export every this many steps
+
+          [default: 5000]
+
+      --export-path <EXPORT_PATH>
+          Location to put exported files. By default uses the cwd.
+
+          This path can be set to be relative to the CWD.
+
+          [default: .]
+
+      --export-name <EXPORT_NAME>
+          Filename of exported ply file
+
+          [default: export_{iter}.ply]
+
+Rerun options:
+      --rerun-enabled
+          Whether to enable rerun.io logging for this run
+
+      --rerun-log-train-stats-every <RERUN_LOG_TRAIN_STATS_EVERY>
+          How often to log basic training statistics
+
+          [default: 50]
+
+      --rerun-log-splats-every <RERUN_LOG_SPLATS_EVERY>
+          How often to log out the full splat point cloud to rerun (warning: heavy)
+
+      --rerun-max-img-size <RERUN_MAX_IMG_SIZE>
+          The maximum size of images from the dataset logged to rerun
+
+          [default: 512]

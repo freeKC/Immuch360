@@ -4,6 +4,10 @@
 // (relief-360-v1). Shared by the computers, which write the files, and the Meta Quest, which reads them and computes
 // the same relief itself, so that both sides agree on every value (design-final 2026-10-26, sections 2.4 and 4.1;
 // design-final 2026-10-27, sections 2, 4.4 and 8).
+//
+// The splat scene of 1 November 2026 (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, sections 2.2 and 2.5) is
+// made from many photos or one video, not from a single photo: its kind, the name of its file and the settings of
+// splat-v1 are here too, so that the computers and, one day, the headset read the same values.
 
 /// The XMP namespace of the files Immuch360 makes, after the com.aprogsys identity of the app (an XMP namespace does
 /// not have to answer on the web)
@@ -18,12 +22,17 @@ const immersiveFormatVersion = 1;
 
 /// What a file of Immuch360 holds (Immuch360:Kind): a side by side 3D photo (phase 1), a 3D scene (phase 2), a 360°
 /// panorama generated beyond the edges of a photo and a 360° 3D panorama (phase 3), the last one also the 3D version
-/// of a 360° photo of the user.
+/// of a 360° photo of the user, and a Gaussian splat scene rebuilt from photos or a video ([gaussianSplat]).
 enum ImmersiveKind {
   stereoPhoto('StereoPhoto'),
   panorama360('Panorama360'),
   stereoPanorama360('StereoPanorama360'),
-  volumetricScene('VolumetricScene');
+  volumetricScene('VolumetricScene'),
+
+  /// A splat scene, splat-v1: in this version a plain `<name>_splat.spz` written by the computers, which carries no
+  /// XMP; the photo that will carry it with our XMP comes after the first test (plan 2026-11-01, decision D2), and a
+  /// packet of this kind is read until then as one of a kind this build cannot show
+  gaussianSplat('GaussianSplat');
 
   const ImmersiveKind(this.xmp);
 
@@ -178,6 +187,8 @@ List<ReliefQualityFlag> qualityFlagsOf(ImmersiveKind kind) => switch (kind) {
     ReliefQualityFlag.seam,
     ReliefQualityFlag.mostlyInvented,
   ],
+  // What a splat scene left out is told by its counts (SplatResultDetails), not by flags
+  ImmersiveKind.gaussianSplat => const [],
 };
 
 /// The flags of [text] (Immuch360:QualityFlags, tokens separated by commas or spaces), the unknown ones left out
@@ -266,6 +277,15 @@ const stereoPanoramaNameSuffix = '_360_3D';
 /// What follows the name of a source that already says 360 or pano in the name of its 3D version: "PANO_0001_3D.jpg"
 const stereoOf360NameSuffix = '_3D';
 
+/// What follows the name chosen for a splat scene: "salon_splat.spz", and "salon_splat.ply" for the copy for other 3D
+/// apps. Not one of [derivedNameSuffixes]: a splat scene is made from many photos, and its .spz is no picture of the
+/// library, so no photo has it as a version in this version of the app (plan 2026-11-01, decision D2)
+const splatNameSuffix = '_splat';
+
+/// The extension of the splat scene for the headset (SPZ version 2), and of its copy for other 3D apps
+const splatFileExtension = '.spz';
+const splatPlyExtension = '.ply';
+
 /// The suffixes of the names of the versions of an original: a 3D photo, a 360° 3D panorama, a 3D scene, a 360°
 /// panorama and the 3D version of a 360° photo (isDerivedNameCandidate tries each, so their order does not matter)
 const derivedNameSuffixes = [
@@ -294,13 +314,27 @@ String derivedNameEnd(ImmersiveKind kind, String originalName) => switch (kind) 
     nameSays360(originalName)
         ? '$stereoOf360NameSuffix$sbsFileExtension'
         : '$stereoPanoramaNameSuffix$sbsFileExtension',
+  ImmersiveKind.gaussianSplat => '$splatNameSuffix$splatFileExtension',
 };
 
 /// The name of the version of [kind] of [originalName], before the safe file name of the computers: "salon.jpg" gives
 /// "salon_scene3D.jpg", "salon_360.jpg", "salon_360_3D.jpg"; "PANO_0001.jpg" gives "PANO_0001_3D.jpg" for its 3D
-/// version
+/// version. For a splat scene, [originalName] is the name chosen in its dialog, kept whole: "salon" gives
+/// "salon_splat.spz", "2024.08 Lyon" gives "2024.08 Lyon_splat.spz" (splatFileNameFor).
 String derivedFileNameFor(ImmersiveKind kind, String originalName) =>
-    '${fileStem(originalName)}${derivedNameEnd(kind, originalName)}';
+    '${derivedNameStem(kind, originalName)}${derivedNameEnd(kind, originalName)}';
+
+/// What comes before the end of the name of a version of [kind] (derivedNameEnd): the name of the original without
+/// its extension, but for a splat scene the name chosen in its dialog as it is, since a name such as "St. Paul" or
+/// "2024.08 Lyon" has no extension to take off (the dialog proposes the name of the folder of the photos)
+String derivedNameStem(ImmersiveKind kind, String originalName) =>
+    kind == ImmersiveKind.gaussianSplat ? originalName : fileStem(originalName);
+
+/// The name of the splat scene named [name] in its dialog: "St. Paul" gives "St. Paul_splat.spz", and with [ply]
+/// "St. Paul_splat.ply", the copy for other 3D apps. The computers then pass it through their safe file name
+/// (versionTargetName) and take "name (1)" when it is taken.
+String splatFileNameFor(String name, {bool ply = false}) =>
+    '$name$splatNameSuffix${ply ? splatPlyExtension : splatFileExtension}';
 
 /// The name of an original without its extension: "salon" for "salon.jpg", "archive.tar" for "archive.tar.gz", the
 /// whole name when it has no extension or starts with its only dot
@@ -571,6 +605,128 @@ abstract final class Relief360V1 {
 
   /// Two neighbours stay linked when their depths differ by this much at most (the rule of relief-v1)
   static const linkThreshold = ReliefV1.linkThreshold;
+}
+
+/// What the user filmed for a splat scene, asked in its dialog ("What did you film?"): it sets the scale of the scene,
+/// and so where the headset places it (a place opens around the user, an object in front of them)
+enum SplatSubject { place, object }
+
+/// The settings of splat-v1, the splat scene a computer rebuilds from 20 to 200 photos or one video: the poses of the
+/// cameras by COLMAP on the processor, the training by Brush on the graphics card, a copy for the headset trained to at
+/// most [maxGaussians] gaussians and written as SPZ version 2 (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md,
+/// sections 2.1, 2.2, 2.4 and 2.5, with the measures of measure-2026-11-01.md). The definition of the training is the
+/// one the short measure M1 set (measure-m1-2026-11-01.md); the other values are the choices of the plan.
+abstract final class SplatV1 {
+  /// The name of the pipeline, for the logs now and for Immuch360:Pipeline once a photo carries the scene
+  static const pipeline = 'splat-v1';
+
+  /// Photos: refused under [minImages], a warning under [fewImages] ("50 to 200 is better"), and at most [maxPhotos]
+  /// taken, spread evenly in time
+  static const minImages = 20;
+  static const fewImages = 50;
+  static const maxPhotos = 200;
+
+  /// A video: from [minVideo] to [maxVideo] long; [videoFrames] frames taken up to [videoFramesUntil], more for a
+  /// longer one (one every [videoFramesUntil] / [videoFrames]), [maxVideoFrames] at most, the sharpest of each window
+  static const minVideo = Duration(seconds: 10);
+  static const maxVideo = Duration(minutes: 5);
+  static const videoFrames = 150;
+  static const videoFramesUntil = Duration(minutes: 2);
+  static const maxVideoFrames = 250;
+
+  /// The photos prepared for COLMAP: turned by their EXIF orientation, [photoLongSide] pixels on their longest side,
+  /// JPEG quality [photoQuality], one folder per group of cameras
+  static const photoLongSide = 1600;
+  static const photoQuality = 95;
+
+  /// A blurred photo or frame is left out: the variance of its Laplacian on a copy of [sharpnessSide] pixels under
+  /// [blurRatio] times the median of its neighbours, or, a frame of a video, under [blurFloorRatio] times the median of
+  /// all of them (lot SPF2: the run of nine close-ups out of focus that ended FreeKC's video of 3 November, from 4.9 to
+  /// 28.6 beside a median of 129.9, kept by their neighbours as blurred as they; a quarter leaves out those nine and
+  /// keeps the next, 34.3, where a fifth, 26.0, kept two of them. Not a photo: a sharp photo of a plain wall is low
+  /// too)
+  static const sharpnessSide = 512;
+  static const blurRatio = 0.5;
+  static const blurFloorRatio = 0.25;
+
+  /// SIFT on the processor, on images of [siftMaxImageSize] pixels at most (the same poses as the full definition, 2.3
+  /// times faster in the measure; 1 600 pixels placed no more of FreeKC's object of 3 November, diag-2026-11-03.md)
+  static const siftMaxImageSize = 1024;
+
+  /// The matching: every pair of images (exhaustive_matcher) for the photos and for a video of up to
+  /// [maxExhaustiveFrames] frames, the pairs of 200 photos; a longer video by a list of pairs (matches_importer), each
+  /// frame with the 1st, 2nd, 4th ... 512th after it and every frame with each [keyFrameStep]th frame, which ties the
+  /// turns around an object together. Measured on 3 November (diag-2026-11-03.md, lot SPF1) after FreeKC's object, 68
+  /// of 139 frames placed by sequential_matcher: every pair 123 of 139 (129 with [absPoseMinInliers]), the list 115
+  /// (125), for 9 591 and 2 526 pairs; his place in 8K, 55 of 140 by sequential_matcher, 116 (125) by every pair. The
+  /// cost, on the 22 threads of the PC: every pair of 150 frames of the lighthouse 286 s (sequential_matcher 58 to
+  /// 81 s), its list of 2 887 pairs 49 s
+  static const maxExhaustiveFrames = 200;
+  static const keyFrameStep = 10;
+
+  /// The mapper places an image from [absPoseMinInliers] inliers of its pose, COLMAP's 30 halved: +6 frames of 139 on
+  /// FreeKC's object, +9 of 140 on his place, the poses found otherwise unchanged (0.03 % of the scene)
+  static const absPoseMinInliers = 15;
+
+  /// The threads of the extraction: (memory free - [colmapMemoryReserve]) / [colmapMemoryPerThread], from
+  /// [colmapMinThreads] to the processors less two; once more with half of them after a crash (0xC0000005, seen at 24
+  /// threads)
+  static const colmapMemoryReserve = 1536 * 1024 * 1024;
+  static const colmapMemoryPerThread = 307 * 1024 * 1024;
+  static const colmapMinThreads = 2;
+
+  /// The poses: refused when fewer than [minPlacedShare] of the images or fewer than [minPlaced] are placed; made all
+  /// the same under [incompleteShare], said maybe incomplete from the poses to the result ("68 of 139 images placed in
+  /// 3D: the scene may be incomplete"); the images left out said under [partialShare]. [minPlacedShare] was half until
+  /// 3 November: FreeKC's object, 68 of 139 frames placed, was refused where he could hardly film better (lot SPF1)
+  static const minPlacedShare = 0.3;
+  static const incompleteShare = 0.5;
+  static const minPlaced = 20;
+  static const partialShare = 0.9;
+
+  /// The training of the copy for the headset: [steps] steps, at most [maxGaussians] gaussians (trained so, never cut
+  /// afterwards: 30.24 dB against 21.28 in the measure), spherical harmonics of degree [shDegree], images of
+  /// [trainingResolution] pixels at most on their longest side (set by M1: 0.20 dB from 1 280 pixels for 34 % less
+  /// time, 366 s against 556 s, and right for a video too)
+  static const steps = 20000;
+  static const maxGaussians = 150000;
+  static const shDegree = 3;
+  static const trainingResolution = 1024;
+
+  /// A program that writes nothing for this long is stopped: an exhaustive block of COLMAP took up to 31 s, Brush
+  /// writes a line every 200 steps (2 to 8 s)
+  static const colmapSilence = Duration(seconds: 600);
+  static const brushSilence = Duration(seconds: 300);
+
+  /// The scale written: an object has its longest side (between the percentiles [boundsLowPercentile] and
+  /// [boundsHighPercentile] of the positions) at [objectSize] metres; a place has the median height of its cameras at
+  /// [placeCameraHeight] above the floor found, else its longest side at [placeMinSize] metres at least, so that the
+  /// headset (an object under 2.5 m) places the scene as the user said
+  static const objectSize = 1.0;
+  static const placeCameraHeight = 1.5;
+  static const placeMinSize = 3.0;
+  static const boundsLowPercentile = 5;
+  static const boundsHighPercentile = 95;
+
+  /// The SPZ written: version 2, the one the splat module of the headset reads, positions in 24 bit fixed point with
+  /// [spzFractionalBits] fractional bits
+  static const spzVersion = 2;
+  static const spzFractionalBits = 12;
+
+  /// The gate and the queue: a dedicated graphics card of Vulkan 1.2 with [minGraphicsMemory] at least, [freeGraphicsMemory]
+  /// of it free before the training, [minPhysicalMemory] of memory in the computer, [jobMemory] of it held until the
+  /// poses are found. The gate compares them to what the hardware reports, which is less than the size it is sold
+  /// with, as the app does elsewhere (3.5 GiB for a computer of 4 GB, 14 GiB for 16 GB): a card sold with 4 GB (the GTX
+  /// 1650 and the RTX 3050 Laptop the design expects; the 8 GB RTX 4060 Laptop reads 7.77 GiB) is let in at 3.5 GiB,
+  /// a computer sold with 8 GB (7.6 to 7.9 GiB once the firmware and the graphics took their share) at 7 GiB
+  static const minGraphicsMemory = 3584 * 1024 * 1024;
+  static const freeGraphicsMemory = 2560 * 1024 * 1024;
+  static const minPhysicalMemory = 7 * 1024 * 1024 * 1024;
+  static const jobMemory = 4 * 1024 * 1024 * 1024;
+
+  /// The work folder of a job that failed is kept this long, so that Retry starts again from the poses found, or from
+  /// its images after a failure of COLMAP (which a diagnosis reads too: lot SPF1)
+  static const workKept = Duration(hours: 24);
 }
 
 /// The width and the height of the input of the depth model, the fixed input of the LiteRT export, kept on the

@@ -1313,7 +1313,7 @@ void main() {
       await settle(tester);
     }
 
-    testWidgets('held back by a version, it is not listed, whatever the engine; this build holds nothing', (
+    testWidgets('held back by a version, it is not listed, whatever the engine; this version holds nothing back', (
       tester,
     ) async {
       expect(aiHeldFeatureGroups, isEmpty);

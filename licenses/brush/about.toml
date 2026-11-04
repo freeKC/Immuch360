@@ -1,0 +1,31 @@
+# cargo about for the Brush that Immuch360 Desktop ships (.github/desktop/ai/brush_build.py about): the licences of
+# every crate built into brush_app (without its default features, for the target of the job), read from the crates
+# themselves (the command runs --frozen: no web service is asked); the same list as deny.toml, in the order of
+# preference when a crate offers a choice
+accepted = [
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Zlib",
+]
+ignore-build-dependencies = true
+ignore-dev-dependencies = true
+
+# libm carries its licence in LICENSE.txt, the MIT licence followed by the Apache 2.0 for its contributors and the
+# notices of musl and of the sources of its mathematics (Sun Microsystems, David Schultz, Arm...): cargo about does not
+# recognise that file as a whole, and would give the template of the MIT licence without any of them. The licence stays
+# the one libm declares; the checksum is the SHA-256 of LICENSE.txt of libm 0.2.15.
+[libm.clarify]
+license = "MIT"
+
+[[libm.clarify.files]]
+path = "LICENSE.txt"
+license = "MIT"
+checksum = "3823dda7cf046602f4b4e77ec8e227863dc4736037cc85bb33d9f19febe16bb7"

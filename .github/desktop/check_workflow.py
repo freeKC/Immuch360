@@ -27,7 +27,11 @@ writes holds no secret, the job that holds the secrets cannot write, and the bui
 stable-diffusion.cpp, the generator of the 360° panoramas (lot P2), is built by the jobs whose names start with
 "sdcpp" (sdcpp-windows, sdcpp-linux): each runs on the image of the desktop build of its system (windows-2022 with
 Visual Studio 2022, ubuntu-22.04 for its glibc), only when asked or when the lock changed (an "if:" that reads
-inputs.sdcpp), and names no artifact Immuch360-Desktop-*, the files a release attaches. With --release, a workflow
+inputs.sdcpp), and names no artifact Immuch360-Desktop-*, the files a release attaches. COLMAP, which places the photos
+of the splat scenes (lot SP1 of the splat maker), is built the same way by the jobs whose names start with "colmap"
+(colmap-windows, colmap-linux), when asked by inputs.colmap or when its lock changed. Brush, the trainer of the
+splat scenes (lot SP2), is held to the same by the jobs whose names start with "brush" (brush-windows, brush-linux, an
+"if:" that reads inputs.brush). With --release, a workflow
 with the with_sdcpp input passes it to the build and nothing else ("sdcpp: ${{ inputs.with_sdcpp == true }}"), and its
 job that writes the contents never runs with it or with sign_test (an "if:" that negates both): building and signing
 stable-diffusion.cpp never touches a release of the app.
@@ -37,6 +41,10 @@ whose names start with "av2" (av2-windows, av2-linux, av2-macos), held to the sa
 and macos-15, an "if:" that reads inputs.av2, and no artifact Immuch360-Desktop-*. With --release, the with_av2 input
 (lot AD11: the Windows program signed for av2-decoder-1) is held as with_sdcpp is: passed to the build as
 "av2: ${{ inputs.with_av2 == true }}" and nothing else, and the job that writes the contents never runs with it.
+
+With --release, the with_splat input (lot SP14 of the splat maker: COLMAP and Brush signed for ai-components-4) is held
+as with_sdcpp is: passed to the build as "colmap: ${{ inputs.with_splat == true }}" and "brush: ${{ inputs.with_splat
+== true }}" and nothing else, and the job that writes the contents never runs with it.
 
 .github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
 .github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
@@ -76,6 +84,13 @@ SDCPP_RUNNERS = {'sdcpp-windows': 'windows-2022', 'sdcpp-linux': 'ubuntu-22.04'}
 # The same for the AV2 decoder
 AV2_JOB = 'av2'
 AV2_RUNNERS = {'av2-windows': 'windows-2022', 'av2-linux': 'ubuntu-22.04', 'av2-macos': 'macos-15'}
+# The jobs that build a program the AI features run beside the app, by the start of their names: what they build, the
+# image of each job and the input that asks for them
+SIDECAR_JOBS = {
+    SDCPP_JOB: ('stable-diffusion.cpp', SDCPP_RUNNERS, 'inputs.sdcpp'),
+    'colmap': ('COLMAP', {'colmap-windows': 'windows-2022', 'colmap-linux': 'ubuntu-22.04'}, 'inputs.colmap'),
+    'brush': ('Brush', {'brush-windows': 'windows-2022', 'brush-linux': 'ubuntu-22.04'}, 'inputs.brush'),
+}
 
 
 def release_triggers(workflow: str, tag_prefix: str = 'desktop-v') -> list:
@@ -171,8 +186,29 @@ def job_if(body: list) -> str:
 
 
 def sdcpp_jobs(lines: list, owners: list) -> list:
-    """The jobs that build stable-diffusion.cpp: on their images, when asked only, never as a package of the app"""
-    return component_jobs(lines, owners, SDCPP_JOB, SDCPP_RUNNERS, 'stable-diffusion.cpp')
+    """The jobs that build stable-diffusion.cpp, COLMAP or Brush: on their images, when asked only, never as a package
+    of the app"""
+    found = []
+    for job, body in job_lines(lines, owners).items():
+        family = next((name for name in SIDECAR_JOBS if job.startswith(name)), None)
+        if family is None:
+            continue
+        what, runners, asked = SIDECAR_JOBS[family]
+        runner = next((re.match(r'^    runs-on:\s*(\S+)', line).group(1).strip('\'"') for line in body
+                       if re.match(r'^    runs-on:', line)), None)
+        if job not in runners:
+            found.append(f'the job {job} builds {what} on no known system: {", ".join(runners)} only')
+        elif runner != runners[job]:
+            found.append(f'the job {job} runs on {runner}: {what} builds on {runners[job]}, the image of the desktop '
+                         'build')
+        if asked not in job_if(body):
+            found.append(f'the job {job} runs on every event: its "if:" must read {asked} (or the lock changed)')
+        for line in body:
+            name = re.match(r'^\s+name:\s*[\'"]?(Immuch360-Desktop-\S*)', line)
+            if name:
+                found.append(f'the job {job} uploads {name.group(1)}: the name of a package of the app, which a release '
+                             'attaches')
+    return found
 
 
 def av2_jobs(lines: list, owners: list) -> list:
@@ -214,6 +250,13 @@ def release_sdcpp(workflow: str, lines: list, owners: list) -> list:
 def release_av2(workflow: str, lines: list, owners: list) -> list:
     """Nor the AV2 decoder it builds and signs for av2-decoder-1"""
     return release_component(workflow, lines, owners, 'with_av2', 'av2')
+
+
+def release_splat(workflow: str, lines: list, owners: list) -> list:
+    """Nor COLMAP and Brush, which it builds and signs for ai-components-4"""
+    found = release_component(workflow, lines, owners, 'with_splat', 'colmap')
+    return found + [line for line in release_component(workflow, lines, owners, 'with_splat', 'brush')
+                    if line not in found]
 
 
 def release_component(workflow: str, lines: list, owners: list, flag: str, key: str) -> list:
@@ -298,6 +341,7 @@ def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 
         found += release_triggers(workflow, tag_prefix)
         found += release_sdcpp(workflow, lines, owners)
         found += [line for line in release_av2(workflow, lines, owners) if line not in found]
+        found += [line for line in release_splat(workflow, lines, owners) if line not in found]
     return found
 
 

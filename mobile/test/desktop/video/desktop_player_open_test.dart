@@ -344,6 +344,34 @@ void main() {
     await player.dispose();
   });
 
+  test('an exact seek asks mpv for the frame at that moment, whatever its hr-seek option (the splat scenes)', () async {
+    final player = await DesktopPlayer.withPlatform(PlayerKind.thumbnail, native);
+    native.commands.clear();
+    await player.seekExact(const Duration(microseconds: 62480333));
+    await player.seekExact(Duration.zero);
+    expect(native.commands, [
+      ['seek', '62.480333', 'absolute+exact'],
+      ['seek', '0.000000', 'absolute+exact'],
+    ]);
+    await player.dispose();
+  });
+
+  test('a frame step, and a player that shows its frames as soon as they are decoded (the splat scenes)', () async {
+    final player = await DesktopPlayer.withPlatform(PlayerKind.thumbnail, native);
+    native.commands.clear();
+    await player.setUntimed(true);
+    expect(native.properties['untimed'], 'yes');
+    await player.stepFrame();
+    await player.stepFrame();
+    expect(native.commands, [
+      ['frame-step'],
+      ['frame-step'],
+    ]);
+    await player.setUntimed(false);
+    expect(native.properties['untimed'], 'no');
+    await player.dispose();
+  });
+
   test('a live stream has no start', () async {
     final player = await DesktopPlayer.withPlatform(PlayerKind.live, native);
     await player.open(_liveAddress, start: const Duration(seconds: 5), streamed: true);
