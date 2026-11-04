@@ -48,8 +48,9 @@ class SplatPage extends ConsumerWidget {
     if ((device == SplatDeviceClass.phone || device == SplatDeviceClass.computer) && probe is SplatHead) {
       final sourceId = this.sourceId;
       final fileBytes = size ?? _localSize() ?? 0;
+      // The answer the page shows, which an answer given in the viewer refreshes (splatAnswerProvider)
       final answer = device == SplatDeviceClass.computer
-          ? ref.read(splatAnswerProvider((_name, size ?? 1))).valueOrNull
+          ? ref.read(splatAnswerProvider((_name, size ?? _localSize() ?? 1))).valueOrNull
           : null;
       await showSplatViewer(
         context,

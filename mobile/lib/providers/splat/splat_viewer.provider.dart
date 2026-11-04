@@ -98,10 +98,14 @@ final splatComputerProvider = FutureProvider.autoDispose<SplatComputer?>((ref) {
   return ref.watch(splatComputerNowProvider)();
 });
 
-/// The answer kept for the file of a name and a size (computers)
-final splatAnswerProvider = FutureProvider.autoDispose.family<SplatFrameAnswer?, (String, int)>(
-  (ref, file) => ref.watch(splatAnswerStoreProvider).answer(file.$1, file.$2),
-);
+/// The answer kept for the file of a name and a size (computers), read again each time one is written: the answer
+/// given in the viewer counts at the next Explore of the same page (review of 4 November 2026)
+final splatAnswerProvider = FutureProvider.autoDispose.family<SplatFrameAnswer?, (String, int)>((ref, file) {
+  final store = ref.watch(splatAnswerStoreProvider);
+  final answered = store.answered.listen((_) => ref.invalidateSelf());
+  ref.onDispose(answered.cancel);
+  return store.answer(file.$1, file.$2);
+});
 
 /// The reduced copies of the splats above the cap, in the cache folder of the app: %LOCALAPPDATA% of this copy of the
 /// app on Windows, ~/.cache of the app on Linux, the cache of the app on Android and macOS; never the system's

@@ -66,12 +66,15 @@ class _RecordingImmersiveApi extends ImmersiveApi {
 }
 
 /// Records the viewings the splat viewer of a phone or a computer is asked for, and ends each as [endings] say in
-/// turn, then as [ending] says
+/// turn, then as [ending] says. With [answers], the answer each viewing gives in turn ([answering]) is written there
+/// for the file, as the service does when the page posts it
 class _Viewings implements SplatViewerService {
   final List<({SplatViewerSource source, SplatHead head, int fileBytes, int cap, SplatViewerLook look, bool watch})>
   shown = [];
   SplatViewerOutcome ending = const SplatViewerOutcome(SplatViewerEnd.closed);
   final List<SplatViewerOutcome> endings = [];
+  SplatAnswerStore? answers;
+  final List<SplatFrameAnswer?> answering = [];
 
   @override
   Future<SplatViewerOutcome> show({
@@ -87,6 +90,10 @@ class _Viewings implements SplatViewerService {
   }) async {
     shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap, look: look, watch: watchFrames));
     onOpening?.call();
+    final answer = answering.isEmpty ? null : answering.removeAt(0);
+    if (answer != null) {
+      unawaited(answers?.writeAnswer(source.name, fileBytes, answer));
+    }
     return endings.isEmpty ? ending : endings.removeAt(0);
   }
 
@@ -482,6 +489,62 @@ void main() {
           expect(viewings.shown.last.watch, isFalse);
           expect(viewings.shown.last.look.texts['reducedLine'], 'Reduced to 1,710,000 of 5,000,000 gaussians');
           expect(find.byType(SnackBar), findsNothing);
+          debugDefaultTargetPlatformOverride = null;
+        });
+
+        testWidgets('the answer given in the viewer counts at the next Explore of the same page', (tester) async {
+          // Review of 4 November 2026: the page kept the answer it read first, so the reduced copy taken was ignored
+          // and the file opened whole and watched again; this is the page the files given to the program open on
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          // The app's store, its file out of reach in a widget test: the answers stay in its memory
+          final answers = SplatAnswerStore(() async => throw const FileSystemException('no support folder'));
+          viewings
+            ..answers = answers
+            ..answering.add(const SplatFrameAnswer.reduce(1710000))
+            ..endings.add(const SplatViewerOutcome(SplatViewerEnd.reduce, keep: 1710000));
+          await pumpPage(
+            tester,
+            '/huge.spz',
+            with_: [
+              ...flat(computer: rtx),
+              splatAnswerStoreProvider.overrideWithValue(answers),
+            ],
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          expect(viewings.shown.map((viewing) => viewing.cap), [5000000, 1710000]);
+          expect(find.text('This device keeps its 1,710,000 strongest gaussians'), findsOneWidget);
+
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          expect(viewings.shown.last.cap, 1710000, reason: 'the reduced copy the user took for this file');
+          expect(viewings.shown.last.watch, isFalse);
+          debugDefaultTargetPlatformOverride = null;
+        });
+
+        testWidgets('keep them all is not offered again at the next Explore of the same page', (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          final answers = SplatAnswerStore(() async => throw const FileSystemException('no support folder'));
+          viewings
+            ..answers = answers
+            ..answering.add(const SplatFrameAnswer.whole());
+          await pumpPage(
+            tester,
+            '/huge.spz',
+            with_: [
+              ...flat(computer: rtx),
+              splatAnswerStoreProvider.overrideWithValue(answers),
+            ],
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(exploreSplatButtonKey));
+          await tester.pumpAndSettle();
+          expect(viewings.shown.map((viewing) => (viewing.cap, viewing.watch)), [(5000000, true), (5000000, false)]);
           debugDefaultTargetPlatformOverride = null;
         });
 

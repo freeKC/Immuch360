@@ -115,6 +115,10 @@ class SplatAnswerStore {
   final Future<File> Function() _file;
   Future<Map<String, Object?>>? _loading;
   Future<void> _writing = Future.value();
+  final _answered = StreamController<void>.broadcast();
+
+  /// Told each time an answer is written, for the pages that show one to read it again (review of 4 November 2026)
+  Stream<void> get answered => _answered.stream;
 
   Future<Map<String, Object?>> _load() => _loading ??= () async {
     try {
@@ -134,9 +138,9 @@ class SplatAnswerStore {
   Future<SplatFrameAnswer?> answer(String name, int fileBytes) async =>
       SplatFrameAnswer.fromJson((await _load())[splatAnswerKey(name, fileBytes)]);
 
-  /// Remembers [answer] for the file [name] of [fileBytes]
+  /// Remembers [answer] for the file [name] of [fileBytes]; [answered] is told once it is read back, before the disk
   Future<void> writeAnswer(String name, int fileBytes, SplatFrameAnswer answer) =>
-      _write(splatAnswerKey(name, fileBytes), answer.toJson());
+      _write(splatAnswerKey(name, fileBytes), answer.toJson(), told: true);
 
   /// The renderer the page last said it drew with, under the arguments of [highPerformance]
   Future<String?> renderer({required bool highPerformance}) async {
@@ -152,12 +156,15 @@ class SplatAnswerStore {
     await _write(splatRendererKey(highPerformance: highPerformance), name);
   }
 
-  Future<void> _write(String key, Object? value) async {
+  Future<void> _write(String key, Object? value, {bool told = false}) async {
     final entries = await _load();
     entries.remove(key);
     entries[key] = value;
     while (entries.length > maxEntries) {
       entries.remove(entries.keys.first);
+    }
+    if (told) {
+      _answered.add(null);
     }
     final text = jsonEncode(entries);
     _writing = _writing.then((_) async {
