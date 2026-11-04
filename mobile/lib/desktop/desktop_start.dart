@@ -3,18 +3,29 @@
 
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec_licenses.dart';
 import 'package:immich_mobile/desktop/ai/components/ai_components_folder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
+import 'package:immich_mobile/desktop/splat/splat_window_licenses.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
 import 'package:immich_mobile/desktop/window/window_setup.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+
+/// Whether [args] are those desktop_webview_window gives the engine of a title bar: `web_view_title_bar <id>`
+bool isWebViewTitleBarEngine(List<String> args) => args.isNotEmpty && args.first == 'web_view_title_bar';
+
+/// A second engine that runs nothing of the app: an empty view, no database, no window setup
+void runEmptyEngine() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const SizedBox.shrink());
+}
 
 /// [args] are the command line of the program: the files given to "Open with", or dropped on the program, opened once
 /// a session is (see DesktopOpenFilesHandler), like those of the later starts and of the drops on the window
@@ -36,5 +47,7 @@ Future<void> startDesktop(List<String> args) async {
   registerVideoLicenses();
   // The Rust crates of the JPEG codec of the AI features, from the texts the library carries (the three systems)
   registerSbsCodecLicenses();
+  // The WebView2 SDK and wil of the splat viewer's window (Windows)
+  registerSplatWindowLicenses();
   await setUpDesktopWindow();
 }

@@ -14,3 +14,9 @@ packages/sdk/fetch-client.ts -diff -merge
 packages/sdk/fetch-client.ts linguist-generated=true
 
 *.sh text eol=lf
+
+# The engine of the splat viewer and its licences, byte for byte as licenses/splat-viewer/MANIFEST lists them
+mobile/assets/splat_viewer/*.min.js -text -diff linguist-vendored=true
+mobile/assets/splat_viewer/Pass.js -text linguist-vendored=true
+mobile/assets/splat_viewer/*.wasm binary
+mobile/assets/licenses/splat-viewer/* -text

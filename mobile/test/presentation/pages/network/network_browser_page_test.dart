@@ -14,25 +14,33 @@ import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
+import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_source_relocator.dart';
 import 'package:immich_mobile/domain/services/network_video_thumbnail.service.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/repositories/upload.repository.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
@@ -1052,8 +1060,82 @@ void main() {
       expect(find.text('splat nas /cash.spz 65536'), findsOneWidget);
     });
 
-    testWidgets('lists none on a phone', (tester) async {
-      await pumpBrowser(tester, overrides: [isHorizonOsProvider.overrideWith((ref) async => false)]);
+    testWidgets('lists them on a phone or a tablet too, for the splat viewer', (tester) async {
+      await pumpBrowser(
+        tester,
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) async => false),
+          appConfigProvider.overrideWithValue(const AppConfig()),
+        ],
+      );
+
+      expect(splatTileOf('cash.spz'), findsOneWidget);
+      expect(splatTileOf('axes.ply'), findsOneWidget);
+      expect(splatTileOf('cube.ply'), findsNothing, reason: 'a mesh is no splat');
+      expect(find.byType(NetworkMediaTile), findsNWidgets(3));
+    });
+
+    testWidgets('on a phone or a tablet, a tap on a splat opens it in the splat viewer at once', (tester) async {
+      final viewings = _Viewings();
+      await pumpBrowser(
+        tester,
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) async => false),
+          appConfigProvider.overrideWithValue(const AppConfig()),
+          splatViewerServiceProvider.overrideWithValue(viewings),
+        ],
+      );
+
+      await tester.tap(splatTileOf('cash.spz'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('splat nas /cash.spz 65536'), findsNothing, reason: 'no page on the way');
+      expect(viewings.shown, [('nas', '/cash.spz', 150000)]);
+    });
+
+    testWidgets('on a computer, a tap on a splat says the computer is read, then opens it', (tester) async {
+      // Review of 4 November 2026: a tap showed nothing while the chip was read, up to 12 s
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final viewings = _Viewings();
+      final known = Completer<SplatComputer>();
+      await pumpBrowser(
+        tester,
+        overrides: [
+          appConfigProvider.overrideWithValue(const AppConfig()),
+          splatViewerServiceProvider.overrideWithValue(viewings),
+          splatComputerReaderProvider.overrideWithValue(() => known.future),
+          splatAnswerStoreProvider.overrideWithValue(
+            SplatAnswerStore(() async => throw const FileSystemException('no support folder')),
+          ),
+        ],
+      );
+
+      await tester.tap(splatTileOf('cash.spz'));
+      for (var i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.byKey(splatComputerReadingKey), findsOneWidget);
+      known.complete(
+        const SplatComputer(
+          gpu: SplatGpu(SplatGpuKind.dedicated, memory: 8 << 30),
+          physicalMemory: 16 << 30,
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(splatComputerReadingKey), findsNothing);
+      expect(viewings.shown, [('nas', '/cash.spz', 47819)]);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('lists none on a TV, which has no splat viewer', (tester) async {
+      await pumpBrowser(
+        tester,
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) async => false),
+          tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: true, isLowRamDevice: false)),
+        ],
+      );
 
       expect(find.byType(SplatTile), findsNothing);
       expect(find.byType(NetworkMediaTile), findsNWidgets(3));
@@ -1087,4 +1169,28 @@ void main() {
       expect(find.text('3 selected'), findsOneWidget);
     });
   });
+}
+
+/// Records the viewings the splat viewer is asked for: the share, the path and the cap of each
+class _Viewings implements SplatViewerService {
+  final List<(String?, String, int)> shown = [];
+
+  @override
+  Future<SplatViewerOutcome> show({
+    required SplatViewerSource source,
+    required SplatHead head,
+    required int fileBytes,
+    required int cap,
+    required SplatViewerLook look,
+    void Function(SplatPrepareStep step, double done)? progress,
+    SplatPrepareCancel? cancel,
+    void Function()? onOpening,
+    bool watchFrames = false,
+  }) async {
+    shown.add((source.sourceId, source.path, cap));
+    return const SplatViewerOutcome(SplatViewerEnd.closed);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

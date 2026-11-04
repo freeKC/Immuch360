@@ -2,8 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
 
-// The settings the app labels experimental are on by default, and each can still be turned off; Large splats is the
-// exception, off until a measure in the headset (decision D7 of the splats)
+// The settings the app labels experimental are on by default, and each can still be turned off; Large splats is an
+// exception, off until a measure in the headset (decision D7 of the splats), and Keep every gaussian another, off on
+// the computers whose graphics chip shares their memory (lot SVC)
 void main() {
   group('DJI drones (experimental)', () {
     test('is on by default', () {
@@ -70,6 +71,22 @@ void main() {
     test('Large splats is off by default: 50,000 gaussians until a measure in the headset says more (D7)', () {
       expect(const AppConfig().viewer.largeSplats, isFalse);
       expect(defaultConfig.read(SettingsKey.viewerLargeSplats), isFalse);
+    });
+
+    test('the dedicated graphics chip of a Windows computer is used by default (D2), a stored off wins', () {
+      expect(const AppConfig().viewer.highPerformanceGpu, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerHighPerformanceGpu), isTrue);
+      final config = AppConfig.fromEntries({SettingsKey.viewerHighPerformanceGpu: false});
+      expect(config.viewer.highPerformanceGpu, isFalse);
+      expect(config.write(SettingsKey.viewerHighPerformanceGpu, true).viewer.highPerformanceGpu, isTrue);
+    });
+
+    test('Keep every gaussian is off by default: a chip that shares the memory keeps 1,000,000 (lot SVC)', () {
+      expect(const AppConfig().viewer.keepAllGaussians, isFalse);
+      expect(defaultConfig.read(SettingsKey.viewerKeepAllGaussians), isFalse);
+      final config = AppConfig.fromEntries({SettingsKey.viewerKeepAllGaussians: true});
+      expect(config.viewer.keepAllGaussians, isTrue);
+      expect(config.write(SettingsKey.viewerKeepAllGaussians, false).viewer.keepAllGaussians, isFalse);
     });
 
     test('a stored on wins over the default of Large splats', () {

@@ -202,6 +202,16 @@
       android:screenOrientation="sensorLandscape"
       android:theme="@style/SphericalVideoTheme" />
 
+    <!-- The splat viewer of the phones and tablets, started from Flutter through SplatViewerApi: a WebView that shows
+         the page the app serves on its media bridge; a rotation does not load the page again -->
+    <activity
+      android:name=".splatviewer.SplatViewerActivity"
+      android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode"
+      android:exported="false"
+      android:hardwareAccelerated="true"
+      android:launchMode="singleTop"
+      android:theme="@style/SphericalVideoTheme" />
+
     <!-- Spatial 2.5D video player (phones only), started from Flutter through SpatialVideoApi -->
     <activity
       android:name=".spatial.SpatialVideoActivity"

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
@@ -5,25 +6,30 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_splat.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('SplatPage');
 
 /// A Gaussian splat file of another tool (lot S5): of the share [sourceId] at [path] ([size] bytes when known), or a
-/// file of the headset at [path] without a share (picked with Open a splat file). The page says what the head of the
+/// file of this device at [path] without a share (picked with Open a splat file). The page says what the head of the
 /// file says (its name, its size, its gaussians and format, the tool a comment of a PLY names) and offers "Explore the
-/// splat scene", which opens it in the immersive viewer of a Meta Quest 3 or 3S, or greys it with its reason; under it,
-/// that the splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants. A splat
-/// joins no previous and next, and is never sent to the Immich server, which takes no such file.
+/// splat scene", which opens it in the immersive viewer of a Meta Quest 3 or 3S (under it, that the splats use an
+/// experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants), or in the splat viewer of a
+/// computer, a phone or a tablet, or greys it with its reason. A splat joins no previous and next, and is never sent to
+/// the Immich server, which takes no such file.
 @RoutePage()
 class SplatPage extends ConsumerWidget {
   const SplatPage({super.key, this.sourceId, required this.path, this.size});
@@ -32,11 +38,32 @@ class SplatPage extends ConsumerWidget {
   final String path;
   final int? size;
 
-  String get _name => path.split('/').where((part) => part.isNotEmpty).lastOrNull ?? path;
+  /// The file's name, from a path of a share or of this device (backslashes on Windows)
+  String get _name => path.split(RegExp(r'[/\\]')).where((part) => part.isNotEmpty).lastOrNull ?? path;
 
-  /// Opens the splat of [splat] in the immersive viewer: through the media bridge for a file of a share, from its
-  /// place for a file of the headset
-  Future<void> _open(BuildContext context, WidgetRef ref, GaussianSplatRequest splat) async {
+  /// Opens the splat of [splat]: in the splat viewer on a computer, a phone or a tablet; in the immersive viewer of the
+  /// headset through the media bridge for a file of a share, from its place for a file of the headset
+  Future<void> _open(BuildContext context, WidgetRef ref, GaussianSplatRequest splat, SplatProbe probe) async {
+    final device = ref.read(splatDeviceClassProvider);
+    if ((device == SplatDeviceClass.phone || device == SplatDeviceClass.computer) && probe is SplatHead) {
+      final sourceId = this.sourceId;
+      final fileBytes = size ?? _localSize() ?? 0;
+      // The answer the page shows, which an answer given in the viewer refreshes (splatAnswerProvider)
+      final answer = device == SplatDeviceClass.computer
+          ? ref.read(splatAnswerProvider((_name, size ?? _localSize() ?? 1))).valueOrNull
+          : null;
+      await showSplatViewer(
+        context,
+        ref,
+        source: sourceId == null ? SplatViewerSource.local(path) : SplatViewerSource.share(sourceId, path),
+        head: probe,
+        fileBytes: fileBytes,
+        cap: splat.maxGaussians,
+        watchFrames: splatWatchesFrames(device: device!, head: probe, cap: splat.maxGaussians, answer: answer),
+        answer: answer,
+      );
+      return;
+    }
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
     final errorMessage = context.t.immersive_viewer_open_failed;
@@ -66,13 +93,31 @@ class SplatPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final probe = ref.watch(splatProbeProvider((sourceId: sourceId, path: path, size: size)));
     final value = probe.valueOrNull;
+    // A splat given to the program opens at once, as a tap on a splat does; once. Not before the gate can answer
+    // (a computer whose graphics chip is still being read): the build that follows opens it
+    final verdict = value != null && sourceId == null && ref.watch(splatExploreAtOnceProvider) == path
+        ? splatVerdictOf(ref, value, name: _name, fileBytes: size ?? _localSize() ?? 1)
+        : null;
+    if (value != null && verdict != null) {
+      final request = verdict.request;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final once = ref.read(splatExploreAtOnceProvider.notifier);
+        if (!context.mounted || once.state != path) {
+          return;
+        }
+        once.state = null;
+        if (request != null) {
+          unawaited(_open(context, ref, request, value));
+        }
+      });
+    }
     final Widget body;
     if (value != null) {
       body = _SplatDetails(
         name: _name,
         size: size ?? _localSize(),
         probe: value,
-        open: (request) => _open(context, ref, request),
+        open: (request) => _open(context, ref, request, value),
       );
     } else if (probe.hasError) {
       _log.warning('Could not read the splat $_name: ${probe.error}');
@@ -131,6 +176,9 @@ class _SplatDetails extends ConsumerWidget {
     final fileBytes = size ?? 1;
     final verdict = splatVerdictOf(ref, probe, name: name, fileBytes: fileBytes);
     final request = verdict?.request;
+    // The computers, phones and tablets show the splat in their own viewer: the Meta Spatial SDK is the headset's
+    final device = ref.watch(splatDeviceClassProvider);
+    final flat = device == SplatDeviceClass.phone || device == SplatDeviceClass.computer;
     return ListView(
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
       children: [
@@ -149,7 +197,9 @@ class _SplatDetails extends ConsumerWidget {
           Text(splatFileLine(t, head, locale), key: const Key('splat_page_line'), textAlign: TextAlign.center),
           if (request != null && head.gaussians > request.maxGaussians)
             Text(
-              t.splat_will_reduce(count: splatCountText(request.maxGaussians, locale)),
+              flat
+                  ? t.splat_device_keeps(count: splatCountText(request.maxGaussians, locale))
+                  : t.splat_will_reduce(count: splatCountText(request.maxGaussians, locale)),
               key: const Key('splat_page_reduce'),
               textAlign: TextAlign.center,
               style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.onSurfaceVariant),
@@ -158,13 +208,15 @@ class _SplatDetails extends ConsumerWidget {
         const SizedBox(height: 24),
         SplatButton(probe: probe, name: name, fileBytes: fileBytes, open: open),
         // The API of the splats is an experimental one of the Meta Spatial SDK (FreeKC's decision of 30 October 2026)
-        const SizedBox(height: 24),
-        Text(
-          t.splat_disclaimer,
-          key: const Key('splat_page_disclaimer'),
-          textAlign: TextAlign.center,
-          style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.onSurfaceVariant),
-        ),
+        if (!flat) ...[
+          const SizedBox(height: 24),
+          Text(
+            t.splat_disclaimer,
+            key: const Key('splat_page_disclaimer'),
+            textAlign: TextAlign.center,
+            style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.onSurfaceVariant),
+          ),
+        ],
       ],
     );
   }

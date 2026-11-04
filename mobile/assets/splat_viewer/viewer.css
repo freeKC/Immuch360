@@ -1,0 +1,241 @@
+/* The splat viewer's page: the scene fills the window, the panel floats over it in the app's colours */
+:root {
+  --primary: #4250af;
+  --bar: rgba(16, 16, 20, 0.72);
+  --text: #f2f2f5;
+  --muted: rgba(242, 242, 245, 0.72);
+  color-scheme: dark;
+}
+:root.light {
+  --bar: rgba(250, 250, 252, 0.84);
+  --text: #16161a;
+  --muted: rgba(22, 22, 26, 0.7);
+  color-scheme: light;
+}
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--text);
+  font: 14px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: block;
+  outline: none;
+  touch-action: none;
+}
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(6px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 6px
+    calc(8px + env(safe-area-inset-left));
+  background: var(--bar);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.3s;
+  z-index: 3;
+}
+.bar.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.titles {
+  flex: 1;
+  min-width: 0;
+}
+.title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tools {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+.tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.tool:hover, .tool:focus-visible {
+  background: rgba(127, 127, 127, 0.22);
+  outline: none;
+}
+.tool.on {
+  background: var(--primary);
+  color: #fff;
+}
+.tool svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+  flex: none;
+}
+.tool-walk, .tool-orbit {
+  background: rgba(127, 127, 127, 0.18);
+}
+@media (max-width: 720px) {
+  .tool-label {
+    display: none;
+  }
+  .tool {
+    padding: 0 8px;
+  }
+}
+.line {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  max-width: min(92vw, 720px);
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--bar);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  z-index: 3;
+}
+.line.shown {
+  opacity: 1;
+}
+.sheet {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: min(90vw, 560px);
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: var(--bar);
+  backdrop-filter: blur(10px);
+  z-index: 4;
+}
+.sheet p {
+  margin: 6px 0;
+}
+.sheet .error {
+  font-size: 16px;
+}
+.sheet-button {
+  margin-top: 10px;
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--primary);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.offer {
+  position: fixed;
+  left: 50%;
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  max-width: min(92vw, 620px);
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: var(--bar);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  z-index: 4;
+}
+.offer p {
+  margin: 4px 0 2px;
+}
+.offer-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.offer-keep {
+  background: transparent;
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--muted);
+}
+.hidden {
+  display: none;
+}
+.bar.hidden {
+  display: flex;
+}
+.loading {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(70vw, 360px);
+  text-align: center;
+  z-index: 2;
+}
+.loading.hidden {
+  display: none;
+}
+.progress {
+  margin-top: 10px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(127, 127, 127, 0.3);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--primary);
+  transition: width 0.15s;
+}
+.stick {
+  position: fixed;
+  width: 76px;
+  height: 76px;
+  margin: -38px 0 0 -38px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+  z-index: 2;
+}
+.stick .knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+}

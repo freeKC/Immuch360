@@ -1,5 +1,5 @@
 // "Explore the splat scene" (lot S5): a Gaussian splat file of another tool opened in the immersive viewer of a Meta
-// Quest 3 or 3S. The gate of the headset (splatGateOf, from the head of the file) offers it, or greys it with its
+// Quest 3 or 3S, or in the splat viewer of the computers, phones and tablets (plan of 2 November 2026). The gate of the headset (splatGateOf, from the head of the file) offers it, or greys it with its
 // reason from the moment the headset is known (spec 10.2 of the AI immersive design: never hidden); the viewer checks
 // again on the file itself, with the free memory and the heat.
 
@@ -8,14 +8,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 
 /// The key of "Explore the splat scene"
 const exploreSplatButtonKey = Key('splat_explore');
@@ -23,18 +26,42 @@ const exploreSplatButtonKey = Key('splat_explore');
 /// The key of the reason under a greyed button
 const splatRefusalKey = Key('splat_refusal');
 
-/// The reason a splat is not offered on this headset, as the button says it greyed
-String splatRefusalText(Translations t, SplatGateVerdict verdict, String locale) => switch (verdict.refusal) {
-  SplatRefusal.notInThisVersion => t.ai_immersive_unavailable_build,
-  SplatRefusal.olderHeadset => t.splat_older_headset,
-  SplatRefusal.notASplat => t.splat_not_splat,
-  SplatRefusal.compressedPly => t.splat_compressed_ply,
-  SplatRefusal.unsupportedPly => t.splat_unsupported_ply,
-  SplatRefusal.newerSpz => t.splat_newer_spz,
-  SplatRefusal.damaged => t.splat_damaged,
-  SplatRefusal.tooLarge => t.splat_too_large(count: splatCountText(verdict.gaussians ?? 0, locale)),
-  null => '',
-};
+/// The spinner shown while a computer's graphics chip and memory are read, before the gate can answer (a list of the
+/// cards at the first splat of a run, up to 12 s; review of 4 November 2026)
+const splatComputerReadingKey = Key('splat_computer_reading');
+
+/// [splatComputerReadingKey]'s spinner
+Widget splatComputerReading() => const Center(
+  key: splatComputerReadingKey,
+  child: Padding(
+    padding: EdgeInsets.all(8),
+    child: SizedBox.square(dimension: 32, child: CircularProgressIndicator()),
+  ),
+);
+
+/// The reason a splat is not offered on this device, as the button says it greyed: [onHeadset] false for a computer,
+/// a phone or a tablet
+String splatRefusalText(Translations t, SplatGateVerdict verdict, String locale, {bool onHeadset = true}) =>
+    switch (verdict.refusal) {
+      SplatRefusal.notInThisVersion => t.ai_immersive_unavailable_build,
+      SplatRefusal.olderHeadset => t.splat_older_headset,
+      SplatRefusal.notASplat => t.splat_not_splat,
+      SplatRefusal.compressedPly => t.splat_compressed_ply,
+      SplatRefusal.unsupportedPly => t.splat_unsupported_ply,
+      SplatRefusal.newerSpz => t.splat_newer_spz,
+      SplatRefusal.damaged => t.splat_damaged,
+      SplatRefusal.tooLarge =>
+        onHeadset
+            ? t.splat_too_large(count: splatCountText(verdict.gaussians ?? 0, locale))
+            : t.splat_too_large_device(count: splatCountText(verdict.gaussians ?? 0, locale)),
+      SplatRefusal.beyondMemory => t.splat_too_large_computer(
+        count: splatCountText(verdict.gaussians ?? 0, locale),
+        most: splatCountText(splatAboutCount(verdict.most ?? 0), locale),
+      ),
+      SplatRefusal.v4AboveCap => t.splat_v4_above_cap(count: splatCountText(verdict.gaussians ?? 0, locale)),
+      SplatRefusal.degree4 => t.splat_degree4,
+      null => '',
+    };
 
 /// What the head of a splat file says of it, as the page writes it: "452,451 gaussians, SPZ version 3", "19,469
 /// gaussians, PLY, made with Postshot" (the tool only when a comment of the file names it)
@@ -47,9 +74,36 @@ String splatFileLine(Translations t, SplatHead head, String locale) {
   };
 }
 
-/// The gate of the splat [probe] says, the file [name] of [fileBytes], on this headset with the settings of now; null
-/// until the headset is read and the platform told whether this build offers the splats
+/// The gate of the splat [probe] says, the file [name] of [fileBytes], on this device with the settings of now: the
+/// splat viewer's on a computer, a phone or a tablet, the headset's on a Meta Quest; null until Android said which,
+/// and on the headset until it is read and the platform told whether this build offers the splats
 SplatGateVerdict? splatVerdictOf(WidgetRef ref, SplatProbe probe, {required String name, required int fileBytes}) {
+  // The computers, phones and tablets: the gate of the splat viewer, as soon as Android said this is no headset
+  final device = ref.watch(splatDeviceClassProvider);
+  if (device == SplatDeviceClass.phone || device == SplatDeviceClass.computer) {
+    // A computer: nothing until the chip that draws and the memory are read (a probe of the cards, once per run), so
+    // that a splat a dedicated card shows whole is never said too large first
+    final facts = device == SplatDeviceClass.computer ? ref.watch(splatComputerProvider) : null;
+    if (facts != null && !facts.hasValue && !facts.hasError) {
+      return null;
+    }
+    final computer = facts?.valueOrNull;
+    final answer = device == SplatDeviceClass.computer
+        ? ref.watch(splatAnswerProvider((name, fileBytes))).valueOrNull
+        : null;
+    return splatViewerGateOf(
+      probe: probe,
+      name: name,
+      fileBytes: fileBytes,
+      largeSplats: ref.watch(appConfigProvider.select((config) => config.viewer.largeSplats)),
+      device: device!,
+      computer: computer ?? const SplatComputer(),
+      answer: answer,
+    );
+  }
+  if (CurrentPlatform.isAndroid && !ref.watch(isHorizonOsProvider).hasValue) {
+    return null;
+  }
   final facts = ref.watch(reliefDeviceFactsProvider);
   final inThisBuild = ref.watch(splatsInThisBuildProvider);
   if ((facts.isLoading && !facts.hasValue && !facts.hasError) || (inThisBuild.isLoading && !inThisBuild.hasValue)) {
@@ -77,10 +131,13 @@ class SplatButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Nothing until the headset is read, so that a splat it cannot show is never offered first
+    // Nothing until the headset is read, so that a splat it cannot show is never offered first; a computer shows that
+    // it reads its chip
     final verdict = splatVerdictOf(ref, probe, name: name, fileBytes: fileBytes);
     if (verdict == null) {
-      return const SizedBox.shrink();
+      return ref.watch(splatDeviceClassProvider) == SplatDeviceClass.computer
+          ? splatComputerReading()
+          : const SizedBox.shrink();
     }
     final request = verdict.request;
     final locale = Localizations.localeOf(context).toLanguageTag();
@@ -97,7 +154,12 @@ class SplatButton extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              splatRefusalText(context.t, verdict, locale),
+              splatRefusalText(
+                context.t,
+                verdict,
+                locale,
+                onHeadset: ref.watch(splatDeviceClassProvider) == SplatDeviceClass.quest,
+              ),
               key: splatRefusalKey,
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),

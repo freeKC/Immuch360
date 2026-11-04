@@ -1,0 +1,25 @@
+diff --git a/src/wasm.ts b/src/wasm.ts
+index 54e41d2..cd69932 100644
+--- a/src/wasm.ts
++++ b/src/wasm.ts
+@@ -1,7 +1,18 @@
+ import init_wasm from "spark-rs";
+-import WASM from "spark-rs/spark_rs_bg.wasm?arraybuffer&base64";
+ 
+-export const WASM_MODULE = WebAssembly.compile(WASM);
++// Immuch360: the WebAssembly ships as its own file, spark_rs_bg.wasm next to this module, rather than inlined in it as
++// base64 (a quarter smaller once the app's assets are deflated). Its name is built at run time so that the bundler
++// leaves the URL alone.
++const WASM_FILE = ["spark_rs_bg", "wasm"].join(".");
++
++export const WASM_MODULE = fetch(new URL(WASM_FILE, import.meta.url).href)
++  .then((response) => {
++    if (!response.ok) {
++      throw new Error(`${WASM_FILE}: HTTP ${response.status}`);
++    }
++    return response.arrayBuffer();
++  })
++  .then((bytes) => WebAssembly.compile(bytes));
+ 
+ // Flag indicating if the spark-rs project has been initialized
+ let initialized = false;

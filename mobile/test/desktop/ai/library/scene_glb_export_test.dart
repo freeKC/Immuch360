@@ -44,6 +44,10 @@ class _Pickers implements FilePickers {
     asked.add((suggestedName: suggestedName, initialDirectory: initialDirectory, extensions: extensions));
     return answer;
   }
+
+  @override
+  Future<String?> openFile({String? initialDirectory, String? typeLabel, List<String> extensions = const []}) async =>
+      null;
 }
 
 /// The writer of the queue: the .part next to the target, renamed onto the final name

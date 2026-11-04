@@ -56,6 +56,7 @@ import 'package:immich_mobile/utils/litert_licenses.dart';
 import 'package:immich_mobile/utils/meta_spatial_licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/utils/pairing_licenses.dart';
+import 'package:immich_mobile/utils/splat_viewer_licenses.dart';
 import 'package:immich_mobile/utils/zstd_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -181,6 +182,9 @@ Future<void> initApp() async {
   // The Meta Spatial SDK of the Quest viewer and its splat module, listed as active in the builds that offer the
   // Gaussian splats (lib/utils/meta_spatial_licenses.dart)
   LicenseRegistry.addLicense(metaSpatialLicenses);
+  // Spark, three.js and the crates of Spark's WebAssembly, of the splat viewer of the computers, phones and tablets
+  // (lib/utils/splat_viewer_licenses.dart)
+  LicenseRegistry.addLicense(splatViewerLicenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {

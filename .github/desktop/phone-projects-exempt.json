@@ -8,12 +8,12 @@
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the R8 rules of the quest flavour only, which keep the classes of the LiteRT API that its JNI library builds by name; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the R8 rule that keeps the classes of zstd-jni"
   },
   "mobile/android/app/src/main/AndroidManifest.xml": {
-    "blob": "2af8dfb25793d37756f983b6eed35a4d08669078",
-    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone; Play deep links (fix-play-deep-links): no https links of my.immich.app, Immich's domain, and BROWSABLE on the two content:// viewer filters"
+    "blob": "7ac7bc0aa7ed0478e68734d7ffdcab726baf6b6a",
+    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone; Play deep links (fix-play-deep-links): no https links of my.immich.app, Immich's domain, and BROWSABLE on the two content:// viewer filters; Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
-    "blob": "2b6311df0527629a1d9e4761c86170b43128b8af",
-    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity; DJI link stage 2 (feat-dji-link-2): the video view of the DJI link page registered with the app engine; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the sideways thumbstick scrolls of the flat app window handed to QuestStickPaging, one page call per push to the asset viewer; integration of 30 October: the channel and its hook on a Meta Quest only (QuestStickPaging.attach); decoder limit (fix-decoder-limit): the errors of the flat player in the words of the app, the hook of native_video_player set to FlatPlayerErrors.token; fix round: its CRLF line endings back, as upstream; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the flat player made by the app with its link (FlatPlayerSetup)"
+    "blob": "81016f8aba86e7150e4e068a4c88bf891eeb1eb8",
+    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity; DJI link stage 2 (feat-dji-link-2): the video view of the DJI link page registered with the app engine; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the sideways thumbstick scrolls of the flat app window handed to QuestStickPaging, one page call per push to the asset viewer; integration of 30 October: the channel and its hook on a Meta Quest only (QuestStickPaging.attach); decoder limit (fix-decoder-limit): the errors of the flat player in the words of the app, the hook of native_video_player set to FlatPlayerErrors.token; fix round: its CRLF line endings back, as upstream; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the flat player made by the app with its link (FlatPlayerSetup); Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/QuestStickPaging.kt": {
     "blob": "cf19ba404cda83630d3bab46c3d993f236e44f13",
@@ -554,6 +554,18 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideoActivity.kt": {
     "blob": "7344d2b76a62722d728fe7864ff5b0664259c8ec",
     "reason": "TV lot (5e7bf8e27, e66574872, cced20e83): the 360 video player of the phone app and its error view; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the 360 player starts a streamed video from its link, with the retries and the buffering line of the link"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/splatviewer/SplatViewerActivity.kt": {
+    "blob": "af4ce35b868f9275ec8766985585c4dea623f7e7",
+    "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules; the viewing number told back with the closing, and a new page shown while the activity is on top"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/splatviewer/SplatViewerApiImpl.kt": {
+    "blob": "07c47ad50dff7cc86df352df3e4cc2d36095666d",
+    "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules; the viewing number told back with the closing, and a new page shown while the activity is on top; the free bytes of a folder (StatFs) before a preparation"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/splatviewer/SplatViewerRules.kt": {
+    "blob": "04dff2f2642ee7e2f5bc4aca13e4e9a9b9f1c16a",
+    "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/tv/TvDevice.kt": {
     "blob": "055398fba0f6e62f24f2fe0a0edc2511a9f1428c",
@@ -1463,6 +1475,10 @@
     "blob": "11b1ac069c48fcca131c191aac3cea3b7e211b2b",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the bounds and the placement; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the orientations as measured, the measuring tape upright at the height of the eyes, the new memory keys; the floor of a place"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatPlacementViewerTest.kt": {
+    "blob": "1055959c28121bee4ccc103ec4b62c42ffdf112d",
+    "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV3): the Quest's SplatPlacement held to viewer_expected.json, which the page's placement.js is held to too"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatPreparerTest.kt": {
     "blob": "968604e7a7b0700043e32bb38b8d3f5c431dacdf",
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the preparation of a splat file; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): the rewrite as version 2 and the last check of every path; no orientation said for an object; a version 2 cut, short, in two members or flagged; the splat turn and SPZ version 4 (fix-quest-splat-navigation): version 4 prepared as version 2"
@@ -1526,6 +1542,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/PlaybackReportTest.kt": {
     "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
     "reason": "TV lot (e66574872): unit tests of PlaybackReport, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/splatviewer/SplatViewerRulesTest.kt": {
+    "blob": "fdbabb327a151fe333fddf9d7b1127d34ddc7aa3",
+    "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/tv/TvDeviceTest.kt": {
     "blob": "7d5062fb96cb57fd92eb50b09e47368ed84de5bb",

@@ -40,6 +40,10 @@ class _Pickers implements FilePickers {
     suggested.add(suggestedName);
     return answer;
   }
+
+  @override
+  Future<String?> openFile({String? initialDirectory, String? typeLabel, List<String> extensions = const []}) async =>
+      null;
 }
 
 void main() {

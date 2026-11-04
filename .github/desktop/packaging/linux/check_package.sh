@@ -10,7 +10,11 @@
 #   - with --video CLIP, the app started with the clip plays it on a virtual screen (video_smoke.sh, next to this
 #     script), with the libmpv of the distribution; its output, log and captures go to OUT_DIR (/tmp/video-smoke by
 #     default). The machine (its processor) and the versions of the video stack are printed first, for the day a
-#     container fails where another passed.
+#     container fails where another passed;
+#   - with SPLAT=<a small .spz> in the environment, then, the app started with the splat shows it in the splat viewer,
+#     a WebKitGTK window of the distribution's WebKitGTK with Mesa's software renderer (splat_smoke.sh, next to this
+#     script): the page must say ready with lit pixels and Esc must close the viewer with the app still running; its
+#     output, log and capture go to OUT_DIR/splat.
 #
 # H.264 on Fedora: its FFmpeg (ffmpeg-free, which mpv-libs takes) has no H.264 decoder of its own and decodes H.264
 # through libopenh264, which two packages provide: openh264, Cisco's build, from the fedora-cisco-openh264 repository,
@@ -29,6 +33,7 @@
 #     -v "$PWD/mobile/test/fixtures/video:/clips:ro" -v "$PWD/video-smoke:/out" ubuntu:24.04 \
 #     sh /check/check_package.sh /pkgs/Immuch360-Desktop-<label>-linux-amd64.deb \
 #     [--start | --video /clips/flat-6s.mp4 [/out [/clips/flat-6s-theora.mkv]]]
+# (with -v "$PWD/mobile/test/fixtures/splat_viewer:/splats:ro" -e SPLAT=/splats/room_floor.spz for the splat viewer)
 #
 # Run as root inside the container; exit 1 on the first failed check.
 set -eu
@@ -55,7 +60,8 @@ case "$package" in
     h264=yes
     # gdb for the stacks of a start that crashed or does not get on (video_smoke.sh)
     install_extra() {
-      sh "$(dirname "$0")/apt_install.sh" xvfb xauth libgl1-mesa-dri x11-apps x11-utils sqlite3 gdb >/tmp/extra.log \
+      sh "$(dirname "$0")/apt_install.sh" xvfb xauth libgl1-mesa-dri x11-apps x11-utils sqlite3 gdb xdotool \
+        >/tmp/extra.log \
         || { cat /tmp/extra.log; exit 1; }
     }
     video_stack() {
@@ -84,7 +90,8 @@ case "$package" in
     fi
     echo "  libopenh264: $(rpm -q openh264 noopenh264 | grep -v 'not installed' | tr '\n' ' ')"
     install_extra() {
-      dnf install -y -q xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers xwd xwininfo sqlite gdb >/tmp/extra.log \
+      dnf install -y -q xorg-x11-server-Xvfb xorg-x11-xauth mesa-dri-drivers xwd xwininfo sqlite gdb xdotool \
+        >/tmp/extra.log \
         2>&1 || { cat /tmp/extra.log; exit 1; }
     }
     video_stack() {
@@ -180,5 +187,12 @@ elif [ "$start" = "--start" ]; then
     echo "  the app ended by itself after less than 20 seconds (exit $status)"
     exit 1
   fi
+fi
+if [ -n "${SPLAT:-}" ]; then
+  [ "$start" = "--video" ] || install_extra
+  echo "-- a splat shown on a virtual screen"
+  dpkg-query -W -f '  ${Package} ${Version}\n' 'libwebkit2gtk-4.1-0' 'libjavascriptcoregtk-4.1-0' 2>/dev/null \
+    || rpm -q webkit2gtk4.1 javascriptcoregtk4.1 2>/dev/null | sed 's/^/  /' || true
+  xvfb-run -a -s "-screen 0 1280x800x24" sh "$(dirname "$0")/splat_smoke.sh" immuch360 "$SPLAT" "$smoke_out/splat"
 fi
 echo "== $PRETTY_NAME: all checks passed"

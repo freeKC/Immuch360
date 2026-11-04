@@ -47,8 +47,9 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// On by default (Settings, Advanced turns it off: the photos then go on the quad mesh, without filters)
     @Default(true) bool sharpFlatScreens,
 
-    /// Meta Quest, experimental: the Gaussian splat files of other tools (.spz, .ply) of the shares are listed and open
-    /// in the immersive viewer of a Quest 3 or 3S (lot S5). On by default (Settings, Advanced turns it off)
+    /// Experimental: the Gaussian splat files of other tools (.spz, .ply) of the shares are listed and open in the
+    /// immersive viewer of a Quest 3 or 3S (lot S5), and in the splat viewer of the computers, phones and tablets. On
+    /// by default (Settings, Advanced turns it off)
     @Default(true) bool gaussianSplats,
 
     /// Meta Quest, experimental: a splat shows up to 150 000 gaussians, the advice of the Meta Spatial SDK, rather than
@@ -56,6 +57,17 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// experimental settings: 50 000 until a measure in the headset says more (decision D7 of the splats, kept by
     /// FreeKC on 30 October 2026); Settings, Advanced turns it on
     @Default(false) bool largeSplats,
+
+    /// Windows computers with two graphics chips, experimental: the splat viewer draws with the dedicated chip
+    /// (WebView2's --force_high_performance_gpu), decision D2 of the splat viewer of 2 November 2026. On by default
+    /// (Settings, Advanced turns it off: Windows then chooses)
+    @Default(true) bool highPerformanceGpu,
+
+    /// Computers, experimental: a splat shows whole up to what the computer's memory holds also on a graphics chip
+    /// that shares that memory, which otherwise keeps its 1,000,000 strongest gaussians (lot SVC, 3 November 2026). Off
+    /// by default: such a chip draws 2 million gaussians at about 33 frames per second, 4 million at 12 to 20 (an Intel
+    /// UHD, measured); a dedicated graphics card shows every gaussian whatever this says
+    @Default(false) bool keepAllGaussians,
 
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)

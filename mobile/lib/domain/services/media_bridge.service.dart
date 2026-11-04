@@ -13,7 +13,9 @@
 //
 // Next to the shares, the bridge serves media the app makes in memory (registerGenerated): the live playlist and the
 // segments of a camera for AVPlayer on iPhone and iPad. Those are never cached by the client nor by the bridge, and
-// are answered from memory, Range included.
+// are answered from memory, Range included. The splat viewer registers its session the same way: its page and engine
+// from memory, the splat file of this device streamed from disk with ranges, the headers each file asks for (the
+// Content-Security-Policy of the page, no-store for the scene), and the small JSON events the page posts back.
 //
 // A transport stream with 192 byte packets (M2TS: Blu-ray, AVCHD camcorders, TV recordings), which Media3 cannot
 // read, is served as the 188 byte TS it holds when [LocalMediaBridge.convertM2ts] (see m2ts.dart).
@@ -278,8 +280,13 @@ class LocalMediaBridge implements MediaBridge {
     if (generated == null && target == null) {
       return _fail(response, HttpStatus.notFound, 'Not found');
     }
+    // Generated media that takes posts (the events of the splat viewer's page) is posted to; nothing else is
+    final takesPosts = generated?.$1 is GeneratedMediaSink;
+    if (request.method == 'POST' && takesPosts) {
+      return _answerPost(request, response, generated!.$1 as GeneratedMediaSink, generated.$2);
+    }
     if (request.method != 'GET' && request.method != 'HEAD') {
-      response.headers.set(HttpHeaders.allowHeader, 'GET, HEAD');
+      response.headers.set(HttpHeaders.allowHeader, takesPosts ? 'GET, HEAD, POST' : 'GET, HEAD');
       return _fail(response, HttpStatus.methodNotAllowed, 'Only GET and HEAD are served');
     }
     if (generated != null) {
@@ -427,19 +434,53 @@ class LocalMediaBridge implements MediaBridge {
     return isM2ts;
   }
 
-  /// A file of generated media, from memory: never cached, a range when one is asked
+  /// A post of at most [GeneratedMediaSink.maxPostBytes] to [name] of [sink]: 204 once handed over, 404 when [name]
+  /// takes no post, 413 when larger (nothing handed over, the connection closed rather than read to its end)
+  Future<void> _answerPost(HttpRequest request, HttpResponse response, GeneratedMediaSink sink, String name) async {
+    const most = GeneratedMediaSink.maxPostBytes;
+    var tooLarge = request.contentLength > most;
+    final body = BytesBuilder(copy: false);
+    if (!tooLarge) {
+      await for (final chunk in request) {
+        if (body.length + chunk.length > most) {
+          tooLarge = true;
+          break;
+        }
+        body.add(chunk);
+      }
+    }
+    if (tooLarge) {
+      response.persistentConnection = false;
+      return _fail(response, HttpStatus.requestEntityTooLarge, 'At most $most bytes are taken');
+    }
+    if (!sink.received(name, body.takeBytes())) {
+      return _fail(response, HttpStatus.notFound, 'Not found');
+    }
+    response
+      ..statusCode = HttpStatus.noContent
+      ..contentLength = 0;
+    await response.close();
+  }
+
+  /// A file of generated media, from memory or from disk: never cached unless the file says otherwise, a range when
+  /// one is asked
   Future<void> _answerGenerated(HttpRequest request, HttpResponse response, GeneratedMedia media, String name) async {
     final file = media.file(name);
     if (file == null) {
       return _fail(response, HttpStatus.notFound, 'Not found');
     }
-    final bytes = file.bytes;
+    final diskFile = file.diskFile;
+    if (diskFile != null) {
+      return _answerDisk(request, response, file, diskFile);
+    }
+    final bytes = file.bytes!;
     var start = 0;
     var end = bytes.length;
     final headers = response.headers
       ..set(HttpHeaders.contentTypeHeader, file.contentType)
       ..set(HttpHeaders.cacheControlHeader, 'no-cache')
       ..set(HttpHeaders.acceptRangesHeader, 'bytes');
+    file.headers.forEach(headers.set);
     final rangeHeader = request.headers.value(HttpHeaders.rangeHeader);
     if (rangeHeader != null) {
       final asked = parseSingleByteRange(rangeHeader, bytes.length);
@@ -457,6 +498,46 @@ class LocalMediaBridge implements MediaBridge {
     response.contentLength = end - start;
     if (request.method == 'GET') {
       response.add(Uint8List.sublistView(bytes, start, end));
+    }
+    await response.close();
+  }
+
+  /// A file of generated media on disk ([diskFile]), streamed from it: its size and date read at each request, a
+  /// single range when one is asked (on the condition of its date with If-Range), 404 once the file is gone
+  Future<void> _answerDisk(HttpRequest request, HttpResponse response, GeneratedFile file, File diskFile) async {
+    // Synchronous: a stat of a file of this device is quick, and the size and date must be those of this request
+    final stat = diskFile.statSync();
+    if (stat.type != FileSystemEntityType.file) {
+      return _fail(response, HttpStatus.notFound, 'Not found');
+    }
+    final size = stat.size;
+    final lastModified = HttpDate.format(stat.modified);
+    var start = 0;
+    var end = size;
+    final headers = response.headers
+      ..set(HttpHeaders.contentTypeHeader, file.contentType)
+      ..set(HttpHeaders.cacheControlHeader, 'no-cache')
+      ..set(HttpHeaders.acceptRangesHeader, 'bytes')
+      ..set(HttpHeaders.lastModifiedHeader, lastModified);
+    file.headers.forEach(headers.set);
+    final rangeHeader = request.headers.value(HttpHeaders.rangeHeader);
+    final ifRange = request.headers.value(HttpHeaders.ifRangeHeader);
+    if (rangeHeader != null && (ifRange == null || ifRange == lastModified)) {
+      final asked = parseSingleByteRange(rangeHeader, size);
+      if (asked != null && asked.start >= asked.end) {
+        headers.set(HttpHeaders.contentRangeHeader, 'bytes */$size');
+        return _fail(response, HttpStatus.requestedRangeNotSatisfiable, 'Range not satisfiable');
+      }
+      if (asked != null) {
+        start = asked.start;
+        end = asked.end;
+        response.statusCode = HttpStatus.partialContent;
+        headers.set(HttpHeaders.contentRangeHeader, 'bytes $start-${end - 1}/$size');
+      }
+    }
+    response.contentLength = end - start;
+    if (request.method == 'GET' && end > start) {
+      await response.addStream(diskFile.openRead(start, end));
     }
     await response.close();
   }

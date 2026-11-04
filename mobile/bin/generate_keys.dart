@@ -152,11 +152,24 @@ const _kParamTypeOverrides = <String, String>{
   // Counts of gaussians of a splat file, written out by the caller with the grouping of the language ("452,451"), or
   // left as {count} and {total} for the immersive viewer of the headset, which fills them in (lot S5)
   'splat_count.count': 'String',
+  'splat_device_keeps.count': 'String',
+  // The size of an object in the splat viewer's page, written there with its unit ("1.98 m")
+  'splat_kind_object.size': 'String',
+  // The frames per second of the page's offer, filled in there
+  'splat_slow_line.fps': 'String',
   'splat_ply_line.count': 'String',
   'splat_ply_tool_line.count': 'String',
   'splat_reduced.total': 'String',
+  // The counts of a computer (lot SVC), written out by the caller, or left as {kept} and {total} for the page
+  'splat_shown_whole.count': 'String',
+  'splat_slow_reduce.kept': 'String',
+  'splat_slow_reduce.total': 'String',
   'splat_spz_line.count': 'String',
   'splat_too_large.count': 'String',
+  'splat_too_large_computer.count': 'String',
+  'splat_too_large_computer.most': 'String',
+  'splat_too_large_device.count': 'String',
+  'splat_v4_above_cap.count': 'String',
   'splat_will_reduce.count': 'String',
   // Sizes written out with their unit by the caller ("3.4 GB"), and the extension of a file name ("osv")
   'upload_mobile_data_warning.size': 'String',

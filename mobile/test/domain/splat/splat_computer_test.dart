@@ -1,0 +1,351 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
+import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
+import 'package:immich_mobile/domain/models/splat/splat_header.dart';
+
+/// The gaussians a computer shows (lot SVC, 3 November 2026), held to what was measured on a laptop with 16 GB, an RTX
+/// 4060 Laptop of 8 GB and an Intel UHD (test/fixtures/splat_viewer/computer_measures.json): the memory the page and the
+/// card took, the scenes each chip drew whole, and the gate that follows.
+void main() {
+  final measures =
+      jsonDecode(File('test/fixtures/splat_viewer/computer_measures.json').readAsStringSync()) as Map<String, Object?>;
+  final cases = (measures['cases']! as List).cast<Map<String, Object?>>();
+  final physical = measures['physicalMemory']! as int;
+  final rtxMemory = ((measures['cards']! as List).first as Map)['memory']! as int;
+  const mb = 1024 * 1024;
+
+  final rtx = SplatComputer(
+    gpu: SplatGpu(SplatGpuKind.dedicated, name: 'NVIDIA GeForce RTX 4060 Laptop GPU', memory: rtxMemory),
+    physicalMemory: physical,
+  );
+  final intel = SplatComputer(
+    gpu: const SplatGpu(SplatGpuKind.integrated, name: 'Intel(R) UHD Graphics'),
+    physicalMemory: physical,
+  );
+
+  SplatHead headOf(Map<String, Object?> kase) => SplatHead(
+    format: '${kase['file']}'.endsWith('.ply') ? SplatFormat.ply : SplatFormat.spz,
+    formatVersion: '${kase['file']}'.endsWith('.ply') ? 1 : 2,
+    gaussians: kase['gaussians']! as int,
+    shDegree: 3,
+  );
+
+  SplatGateVerdict gate(
+    Map<String, Object?> kase,
+    SplatComputer computer, {
+    SplatFrameAnswer? answer,
+    SplatHead? head,
+    int? fileBytes,
+  }) => splatViewerGateOf(
+    probe: head ?? headOf(kase),
+    name: '${kase['file']}',
+    fileBytes: fileBytes ?? kase['fileBytes']! as int,
+    largeSplats: false,
+    device: SplatDeviceClass.computer,
+    computer: computer,
+    answer: answer,
+  );
+
+  Map<String, Object?> measured(String gpu, int gaussians, {String page = 'app'}) =>
+      cases.firstWhere((kase) => kase['gpu'] == gpu && kase['gaussians'] == gaussians && kase['page'] == page);
+
+  test('the fixture holds the measures of both chips, 637,401 to 12 million gaussians', () {
+    expect(cases.where((kase) => kase['gpu'] == 'rtx' && kase['page'] == 'app').map((kase) => kase['gaussians']), [
+      637401,
+      1000000,
+      2000000,
+      3000000,
+      4000000,
+      6000000,
+      8000000,
+      12000000,
+    ]);
+    expect(cases.where((kase) => kase['gpu'] == 'intel' && kase['page'] == 'app').length, 5);
+    for (final kase in cases) {
+      final renderer = '${kase['renderer']}';
+      expect(renderer, contains(kase['gpu'] == 'rtx' ? 'RTX 4060' : 'Intel(R) UHD'), reason: 'the chip proven');
+    }
+  });
+
+  test('the memory counted covers every measure: the page, and the card of the RTX', () {
+    for (final kase in cases) {
+      final gaussians = kase['gaussians']! as int;
+      final fileBytes = kase['fileBytes']! as int;
+      final page = kase['pageMB']! as int;
+      expect(
+        splatPageBytes(gaussians, fileBytes: fileBytes),
+        greaterThanOrEqualTo(page * mb),
+        reason: '${kase['gpu']} ${kase['page']} ${kase['file']}: $page MB measured',
+      );
+      if (kase['gpu'] == 'rtx') {
+        expect(
+          splatCardBytes(gaussians),
+          greaterThanOrEqualTo((kase['cardMB']! as int) * mb),
+          reason: '${kase['file']}: ${kase['cardMB']} MB of the card measured',
+        );
+      }
+    }
+  });
+
+  test('the card is counted by the layers Spark makes room in: past an edge, the whole next layer', () {
+    // Review of 4 November 2026. Measured on the RTX: 590 MB at 4 million, 1,046 at 6 and 1,048 at 8 (one layer
+    // more), 1,497 at 12; a count that grew with the gaussians gave 870 MB at 4,194,305 and 1,008 at 5 million
+    const layer = splatCardLayerGaussians;
+    expect(layer, 4194304);
+    expect(splatCardBytes(layer + 1), greaterThanOrEqualTo(1048 * mb));
+    expect(splatCardBytes(5000000), splatCardBytes(2 * layer));
+    expect(splatCardBytes(2 * layer + 1), greaterThanOrEqualTo(1497 * mb));
+    // A card of 2 GB: its half holds one layer, not the 5.09 million of the earlier count
+    const card2 = SplatComputer(
+      gpu: SplatGpu(SplatGpuKind.dedicated, memory: 2048 * mb),
+      physicalMemory: 256 << 30,
+    );
+    expect(splatComputerMostGaussians(card2), layer);
+    // Whatever the card, its limit fits its half by this count, and one gaussian more does not
+    for (final memory in [1024, 2048, 3072, 4096, 6144, 8188, 12288, 16384]) {
+      final computer = SplatComputer(
+        gpu: SplatGpu(SplatGpuKind.dedicated, memory: memory * mb),
+        physicalMemory: 256 << 30,
+      );
+      final most = splatComputerMostGaussians(computer);
+      expect(splatCardBytes(most), lessThanOrEqualTo(memory * mb ~/ 2), reason: '$memory MB: $most');
+      expect(splatCardBytes(most + 1), greaterThan(memory * mb ~/ 2), reason: '$memory MB: $most');
+    }
+  });
+
+  test('the measured laptop shows every scene it drew whole, 8 million included, within a third of its memory', () {
+    final most = splatComputerMostGaussians(rtx, fileBytesPerGaussian: 21);
+    expect(most, greaterThanOrEqualTo(8000000));
+    expect(most, lessThan(16000000), reason: 'a third of 16 GB: the RTX drew 8 million with 3.07 GB');
+    expect(splatComputerMostGaussians(rtx, fileBytesPerGaussian: 236), greaterThan(4000000), reason: 'PLY');
+    // Half of the card's 8 GB would hold more: the computer's memory is what limits this laptop
+    final cardOnly = splatComputerMostGaussians(SplatComputer(gpu: rtx.gpu, physicalMemory: 256 << 30));
+    expect(cardOnly, greaterThan(20000000));
+    expect(cardOnly, lessThan(splatEngineMostGaussians));
+  });
+
+  test('a computer whose memory is not known keeps the cap of the chips that share it, card or answer', () {
+    // Review of 4 November 2026: a dedicated card with no list and no memory read was given 64 million
+    final blind = SplatComputer(gpu: rtx.gpu);
+    expect(splatComputerMostGaussians(blind), splatComputerGaussians);
+    expect(splatComputerMostGaussians(const SplatComputer()), splatComputerGaussians);
+    expect(blind.showsWhole, isFalse);
+    expect(blind.copyWith(keepEveryGaussian: true).showsWhole, isFalse);
+    final four = measured('rtx', 4000000);
+    expect(gate(four, blind).request!.maxGaussians, splatComputerGaussians);
+    expect(gate(four, blind, answer: const SplatFrameAnswer.whole()).request!.maxGaussians, splatComputerGaussians);
+    expect(gate(measured('rtx', 8000000), blind).refusal, SplatRefusal.tooLarge);
+  });
+
+  test('a file larger than any the page loaded is not shown whole, whatever the memory allows', () {
+    // Review of 4 November 2026: the page loaded 1,960,197,759 bytes (96 million gaussians, ai1); a PLY of degree 3
+    // that a computer of 64 GB allows by its count is far beyond
+    expect(splatComputerMostFileBytes, 1960197759);
+    final big = SplatComputer(gpu: rtx.gpu, physicalMemory: 64 << 30);
+    const ply = SplatHead(format: SplatFormat.ply, formatVersion: 1, gaussians: 7000000, shDegree: 3);
+    expect(gate(measured('rtx', 8000000), big, head: ply, fileBytes: 7000000 * 248).request!.maxGaussians, 7000000);
+    const huge = SplatHead(format: SplatFormat.ply, formatVersion: 1, gaussians: 16000000, shDegree: 3);
+    expect(splatComputerMostGaussians(big, fileBytesPerGaussian: 248), greaterThan(16000000));
+    expect(
+      gate(measured('rtx', 12000000), big, head: huge, fileBytes: 16000000 * 248),
+      const SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: 16000000),
+    );
+    expect(
+      gate(
+        measured('rtx', 12000000),
+        big,
+        head: huge,
+        fileBytes: 16000000 * 248,
+        answer: const SplatFrameAnswer.whole(),
+      ).refusal,
+      SplatRefusal.tooLarge,
+    );
+  });
+
+  test('on the RTX every measured scene up to 8 million opens whole; 12 million, which ran, is past the margin', () {
+    for (final kase in cases.where((kase) => kase['gpu'] == 'rtx' && (kase['gaussians']! as int) <= 8000000)) {
+      final verdict = gate(kase, rtx);
+      expect(verdict.isOpen, isTrue, reason: '${kase['file']}');
+      expect(verdict.request!.maxGaussians, kase['gaussians'], reason: '${kase['file']} whole');
+    }
+    // Drawn at 50 to 57 fps with 4,069 MB in the web view, a quarter of this laptop's memory; the rule keeps a third
+    // at its own count of 450 bytes a gaussian, which makes it 10.3 million here: refused, with the numbers
+    final twelve = measured('rtx', 12000000);
+    expect((twelve['fps']! as List).every((fps) => (fps as num) >= 30), isTrue);
+    final verdict = gate(twelve, rtx);
+    expect(verdict.refusal, SplatRefusal.beyondMemory);
+    expect(verdict.gaussians, 12000000);
+    expect(verdict.most, inInclusiveRange(10000000, 11000000));
+  });
+
+  test('on the Intel the cap of 1,000,000 stays, reduced up to 4 million, refused beyond as before', () {
+    // Under the cap the request carries the cap, as before: shown whole
+    for (final gaussians in [637401, 1000000]) {
+      final request = gate(measured('intel', gaussians), intel).request!;
+      expect(request.maxGaussians, splatComputerGaussians);
+      expect(request.gaussians, lessThanOrEqualTo(request.maxGaussians));
+    }
+    for (final gaussians in [2000000, 3000000, 4000000]) {
+      expect(gate(measured('intel', gaussians), intel).request!.maxGaussians, splatComputerGaussians);
+    }
+    final six = measured('rtx', 6000000);
+    expect(gate(six, intel), const SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: 6000000));
+  });
+
+  test('Keep every gaussian shows them whole on the Intel too, up to the memory', () {
+    final keep = intel.copyWith(keepEveryGaussian: true);
+    for (final gaussians in [2000000, 3000000, 4000000]) {
+      expect(gate(measured('intel', gaussians), keep).request!.maxGaussians, gaussians);
+    }
+    expect(gate(measured('rtx', 8000000), keep).request!.maxGaussians, 8000000);
+  });
+
+  test('beyond the memory: refused with the count and what this computer holds', () {
+    final eight = measured('rtx', 8000000);
+    final small = SplatComputer(gpu: rtx.gpu, physicalMemory: 8 * 1024 * mb);
+    final most = splatComputerMostGaussians(small, fileBytesPerGaussian: (eight['fileBytes']! as int) / 8000000);
+    expect(most, inInclusiveRange(4000000, 5000000), reason: 'a computer of 8 GB');
+    expect(gate(eight, small), SplatGateVerdict.refused(SplatRefusal.beyondMemory, gaussians: 8000000, most: most));
+    // A card of 2 GB holds less than its computer
+    final card2 = SplatComputer(
+      gpu: const SplatGpu(SplatGpuKind.dedicated, memory: 2048 * mb),
+      physicalMemory: physical,
+    );
+    expect(gate(measured('rtx', 6000000), card2).refusal, SplatRefusal.beyondMemory);
+    expect(gate(measured('rtx', 4000000), card2).isOpen, isTrue);
+  });
+
+  test('the answer kept for a file comes first: its reduced copy, or every gaussian', () {
+    final four = measured('intel', 4000000);
+    final keepIntel = intel.copyWith(keepEveryGaussian: true);
+    expect(gate(four, keepIntel, answer: const SplatFrameAnswer.reduce(1710000)).request!.maxGaussians, 1710000);
+    // Kept them all: whole on that file even where the cap would apply
+    expect(gate(four, intel, answer: const SplatFrameAnswer.whole()).request!.maxGaussians, 4000000);
+    // A reduced copy above 4 million on a dedicated card: the reduction reads the file from the disk
+    final eight = measured('rtx', 8000000);
+    expect(gate(eight, rtx, answer: const SplatFrameAnswer.reduce(5000000)).request!.maxGaussians, 5000000);
+    // An SPZ of version 4 is never reduced here: whole when it fits
+    const v4 = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: 2000000, shDegree: 0);
+    expect(gate(four, rtx, head: v4, answer: const SplatFrameAnswer.reduce(1000000)).request!.maxGaussians, 2000000);
+  });
+
+  test('a whole splat that stopped the viewer: kept as such, opened as without an answer, its copy offered first', () {
+    // Review of 4 November 2026: a page that died on a whole splat kept no answer, and the next opening died the same
+    // way. The reduced copy offered is of the cap of the chips that share the memory, or half the file under it
+    const died = SplatFrameAnswer.died(1000000, SplatDeath.memory);
+    expect(SplatFrameAnswer.fromJson(died.toJson()), died);
+    expect(
+      SplatFrameAnswer.fromJson(const SplatFrameAnswer.died(750000, SplatDeath.graphics).toJson()),
+      const SplatFrameAnswer.died(750000, SplatDeath.graphics),
+    );
+    expect(SplatFrameAnswer.fromJson({'died': 'memory'}), isNull, reason: 'no count, no offer');
+    expect(died.reduces, isFalse);
+    expect(died.keepsWhole, isFalse);
+    expect(const SplatFrameAnswer.whole().keepsWhole, isTrue);
+    expect(splatDiedKeep(12000000), splatComputerGaussians);
+    expect(splatDiedKeep(1500000), 750000);
+    expect(splatDiedKeep(200000), splatFrameWatchFloor);
+    expect(splatDiedKeep(splatFrameWatchFloor), isNull);
+    final eight = measured('rtx', 8000000);
+    expect(gate(eight, rtx, answer: died).request!.maxGaussians, 8000000, reason: 'the offer comes before, not here');
+    expect(gate(measured('intel', 4000000), intel, answer: died).request!.maxGaussians, splatComputerGaussians);
+    expect(
+      splatWatchesFrames(device: SplatDeviceClass.computer, head: headOf(eight), cap: 8000000, answer: died),
+      isFalse,
+    );
+  });
+
+  test('the first frames are watched on a computer only, for a splat shown whole above the phones cap', () {
+    final head = headOf(measured('rtx', 4000000));
+    expect(splatWatchesFrames(device: SplatDeviceClass.computer, head: head, cap: 4000000), isTrue);
+    expect(splatWatchesFrames(device: SplatDeviceClass.computer, head: head, cap: 1000000), isFalse);
+    expect(splatWatchesFrames(device: SplatDeviceClass.phone, head: head, cap: 4000000), isFalse);
+    expect(
+      splatWatchesFrames(
+        device: SplatDeviceClass.computer,
+        head: head,
+        cap: 4000000,
+        answer: const SplatFrameAnswer.whole(),
+      ),
+      isFalse,
+    );
+    const small = SplatHead(format: SplatFormat.spz, formatVersion: 2, gaussians: 150000, shDegree: 0);
+    expect(splatWatchesFrames(device: SplatDeviceClass.computer, head: small, cap: 150000), isFalse);
+    const v4 = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: 2000000, shDegree: 0);
+    expect(splatWatchesFrames(device: SplatDeviceClass.computer, head: v4, cap: 2000000), isFalse);
+  });
+
+  test('the most a computer holds is said rounded down to three figures', () {
+    expect(splatAboutCount(10336420), 10300000);
+    expect(splatAboutCount(5362221), 5360000);
+    expect(splatAboutCount(4194304), 4190000);
+    expect(splatAboutCount(999999), 999000);
+    expect(splatAboutCount(150000), 150000);
+    expect(splatAboutCount(0), 0);
+  });
+
+  test('the answers as they are kept', () {
+    expect(
+      SplatFrameAnswer.fromJson(const SplatFrameAnswer.reduce(1330000).toJson()),
+      const SplatFrameAnswer.reduce(1330000),
+    );
+    expect(SplatFrameAnswer.fromJson(const SplatFrameAnswer.whole().toJson()), const SplatFrameAnswer.whole());
+    expect(SplatFrameAnswer.fromJson({'keep': 0}), isNull);
+    expect(SplatFrameAnswer.fromJson('whole'), isNull);
+  });
+
+  test('the chip a WebGL renderer names', () {
+    for (final kase in cases) {
+      expect(
+        splatGpuKindOfRenderer('${kase['renderer']}'),
+        kase['gpu'] == 'rtx' ? SplatGpuKind.dedicated : SplatGpuKind.integrated,
+      );
+    }
+    const dedicated = [
+      'ANGLE (AMD, AMD Radeon RX 7600 (0x00007480) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'ANGLE (Intel, Intel(R) Arc(TM) A770 Graphics (0x000056A0) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 (0x00001F91) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'NVIDIA GeForce RTX 3060/PCIe/SSE2',
+      'AMD Radeon Pro 5500M OpenGL Engine',
+      // The cards of the review of 4 November 2026, beside the chips of the processors named like them
+      'ANGLE (AMD, Radeon RX Vega (0x0000687F) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'AMD Radeon RX Vega 56',
+      'AMD Radeon HD 7970',
+      'ANGLE (Intel, Intel(R) Arc(TM) B580 Graphics (0x0000E20B) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'Intel(R) Arc(TM) A370M Graphics',
+      'Intel(R) Arc(TM) Pro B50 Graphics',
+    ];
+    const integrated = [
+      'ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001638) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x00009A49) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'AMD Radeon 780M Graphics',
+      'Mesa Intel(R) UHD Graphics 620 (KBL GT2)',
+      'llvmpipe (LLVM 15.0.7, 256 bits)',
+      'ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)',
+      'Apple M2',
+      'Adreno (TM) 740',
+      // Review of 4 November 2026: Ryzen 2000 to 5000, Panther Lake, the A-series of AMD
+      'ANGLE (AMD, AMD Radeon(TM) RX Vega 10 Graphics (0x000015D8) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'AMD Radeon RX Vega 11 Graphics',
+      'ANGLE (Intel, Intel(R) Arc(TM) B390 GPU (0x0000B080) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'Intel(R) Arc(TM) B370 GPU',
+      'Intel(R) Arc(TM) 140V GPU (16GB)',
+      'AMD Radeon HD 8610G',
+      'AMD Radeon HD 7660D',
+    ];
+    for (final name in dedicated) {
+      expect(splatGpuKindOfRenderer(name), SplatGpuKind.dedicated, reason: name);
+    }
+    for (final name in integrated) {
+      expect(splatGpuKindOfRenderer(name), SplatGpuKind.integrated, reason: name);
+    }
+    // WebKitGTK and WKWebView hide it
+    expect(splatGpuKindOfRenderer('Apple GPU'), SplatGpuKind.unknown);
+    expect(splatGpuKindOfRenderer(null), SplatGpuKind.unknown);
+    expect(splatGpuKindOfRenderer(''), SplatGpuKind.unknown);
+  });
+}

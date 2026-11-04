@@ -15,6 +15,7 @@ import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/document_tree_api.g.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/drone/drone_import.provider.dart';
@@ -402,8 +403,44 @@ void main() {
       expect(find.byKey(const Key('network_add_browse_folder')), findsNothing);
     });
 
-    testWidgets('a splat file is not offered on a phone', (tester) async {
-      await pumpSharesPage(tester, sources: const [smbSource]);
+    testWidgets('on a phone or a tablet the add button opens a splat file too, on its page when it cannot be read', (
+      tester,
+    ) async {
+      final api = _PickingDocumentTreeApi(
+        PickedFile(path: '/cache/picked-splat/gone.spz', name: 'gone.spz', size: 1000),
+      );
+      await pumpSharesPage(
+        tester,
+        sources: const [smbSource],
+        moreOverrides: [
+          isHorizonOsProvider.overrideWith((ref) async => false),
+          documentTreeApiProvider.overrideWithValue(api),
+        ],
+      );
+      await tester.tap(find.byTooltip('Add a share'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('network_add_open_splat')));
+      await tester.pumpAndSettle();
+      // The head of the file is read off the test zone, and fails: the page says why
+      final page = find.text('splat null /cache/picked-splat/gone.spz 1000');
+      for (var i = 0; i < 20 && page.evaluate().isEmpty; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+        await tester.pumpAndSettle();
+      }
+
+      expect(api.picks, [('picked-splat', 1 << 30)]);
+      expect(page, findsOneWidget);
+    });
+
+    testWidgets('a splat file is not offered on a TV', (tester) async {
+      await pumpSharesPage(
+        tester,
+        sources: const [smbSource],
+        moreOverrides: [
+          isHorizonOsProvider.overrideWith((ref) async => false),
+          tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: true, isLowRamDevice: false)),
+        ],
+      );
       await tester.tap(find.byTooltip('Add a share'));
       await tester.pumpAndSettle();
       expect(find.text('Open a splat file'), findsNothing);
