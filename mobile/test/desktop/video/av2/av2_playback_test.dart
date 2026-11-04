@@ -168,6 +168,65 @@ class _OneProcessRunner implements ProcessRunner {
   }
 }
 
+/// A probe that answers when the test says
+class _HeldProbe {
+  _HeldProbe(this.process);
+
+  final FakeAv2ProbeProcess process;
+  final _answer = Completer<void>();
+
+  void answer() => _answer.complete();
+}
+
+/// The runner of [ScriptedAv2Runner] whose probes answer only when the test lets them
+class _ProbeHeldRunner implements ProcessRunner {
+  final probes = <_HeldProbe>[];
+  final serves = <FakeAv2ServeProcess>[];
+
+  @override
+  Future<RunningProcess> start(ProcessLaunch launch) async {
+    if (launch.arguments.first == 'probe') {
+      final held = _HeldProbe(FakeAv2ProbeProcess(jsonEncode(av2ProbeJson())));
+      probes.add(held);
+      return _LateProbe(held);
+    }
+    final process = FakeAv2ServeProcess();
+    serves.add(process);
+    return process;
+  }
+}
+
+/// A probe process whose line and end come once its test answers
+class _LateProbe implements RunningProcess {
+  _LateProbe(this._held);
+
+  final _HeldProbe _held;
+
+  @override
+  int get pid => _held.process.pid;
+
+  @override
+  IOSink get stdin => _held.process.stdin;
+
+  @override
+  Stream<String> get stdoutLines async* {
+    await _held._answer.future;
+    yield* _held.process.stdoutLines;
+  }
+
+  @override
+  Stream<String> get stderrLines => _held.process.stderrLines;
+
+  @override
+  Future<int> get exitCode async {
+    await _held._answer.future;
+    return _held.process.exitCode;
+  }
+
+  @override
+  void kill() => _held.process.kill();
+}
+
 Future<void> _until(bool Function() condition, {Duration timeout = const Duration(seconds: 10)}) async {
   final watch = Stopwatch()..start();
   while (!condition()) {
@@ -755,6 +814,145 @@ void main() {
       expect(runner.launchesOf('probe').last.lowPriority, isFalse);
       expect(runner.launchesOf('serve').last.lowPriority, isFalse);
     });
+  });
+
+  // Review of lot AD6, m2: at each open a grab of the same video started a second companion, and the speed the details
+  // showed and the one kept for the notice of a format too slow were those of a computer shared between the two
+  group('beside the other companions', () {
+    Av2Bytes video([String path = '/clips/video.ivf']) =>
+        Av2Bytes.share(MemoryShare(av2Fixture('av2-256x144-8bit.ivf')), path);
+
+    test('a frame grab waits while the companion of the player takes its first measures, then starts', () async {
+      final runner = ScriptedAv2Runner();
+      final playbacks = Av2Playbacks(
+        companion: () async => (program: 'immuch360-av2', launcher: null),
+        runner: (_) => runner,
+        enabled: () => true,
+        decoderVersion: 'test',
+      );
+      final opening = playbacks.open(video());
+      await _until(() => runner.serves.isNotEmpty);
+      final player = runner.serves.single..say(av2ListeningLine);
+      final url = await opening;
+      addTearDown(playbacks.releaseAll);
+      expect(runner.launchesOf('probe'), hasLength(1));
+
+      // The picture of the same video, as the viewer asks for it when the video opens
+      var grabbed = false;
+      final grabbing = playbacks.open(video(), forThumbnail: true).then((url) {
+        grabbed = true;
+        return url;
+      });
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      expect(runner.launchesOf('probe'), hasLength(1), reason: 'no second companion while the player measures');
+      expect(runner.serves, hasLength(1));
+      expect(grabbed, isFalse);
+
+      // The player keeps up, 40 of the 30 frames a second: its speed is settled, the grab goes
+      player.say('stat decoded=20 served=18 fps=40.0 simd=avx2 gen=1 frame=18 serving=1');
+      await _until(() => playbacks.sessionOf(url)!.measureSettled);
+      await _until(() => runner.serves.length == 2);
+      runner.serves.last.say(av2ListeningLine);
+      await grabbing;
+      expect(runner.launchesOf('probe'), hasLength(2));
+    });
+
+    test('a frame grab does not wait for a player that was let go', () async {
+      final runner = ScriptedAv2Runner();
+      final playbacks = Av2Playbacks(
+        companion: () async => (program: 'immuch360-av2', launcher: null),
+        runner: (_) => runner,
+        enabled: () => true,
+        decoderVersion: 'test',
+      );
+      final opening = playbacks.open(video());
+      await _until(() => runner.serves.isNotEmpty);
+      runner.serves.single.say(av2ListeningLine);
+      final url = await opening;
+      addTearDown(playbacks.releaseAll);
+      final grabbing = playbacks.open(video('/clips/other.ivf'), forThumbnail: true);
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      expect(runner.serves, hasLength(1));
+      await playbacks.release(url);
+      await _until(() => runner.serves.length == 2);
+      runner.serves.last.say(av2ListeningLine);
+      await grabbing;
+    });
+
+    test('the speed shown and the measure kept leave out the lines taken while another companion decodes', () async {
+      final runner = ScriptedAv2Runner();
+      final kept = <Av2SpeedMeasure>[];
+      final playbacks = Av2Playbacks(
+        companion: () async => (program: 'immuch360-av2', launcher: null),
+        runner: (_) => runner,
+        enabled: () => true,
+        decoderVersion: 'test',
+        recordMeasure: (measure) async => kept.add(measure),
+      );
+      addTearDown(playbacks.releaseAll);
+      // A grab of the video that was open before, still decoding when the next one opens (Open with, one video after
+      // the other: 12h09:20 on the PC on 4 November)
+      final grabbing = playbacks.open(video('/clips/before.ivf'), forThumbnail: true);
+      await _until(() => runner.serves.isNotEmpty);
+      runner.serves.single.say(av2ListeningLine);
+      final grab = await grabbing;
+
+      final opening = playbacks.open(video());
+      await _until(() => runner.serves.length == 2);
+      final player = runner.serves.last..say(av2ListeningLine);
+      final url = await opening;
+      final session = playbacks.sessionOf(url)!;
+      Future<void> stat(double fps, int frame) async {
+        player.say('stat decoded=$frame served=$frame fps=$fps simd=avx2 gen=1 frame=$frame serving=1');
+        await _until(() => session.stat.value?.frame == frame);
+      }
+
+      // WorldCup beside the grab of a 4K video: 91 frames a second where the companion alone does 192
+      await stat(91, 10);
+      expect(session.speed.value, isNull, reason: 'the speed of a shared computer is not shown');
+      expect(session.measuredFps, isNull);
+      // The same line again, the grab gone: a repeat of the shared run, still no measure
+      await playbacks.release(grab);
+      await stat(91, 20);
+      expect(session.measuredFps, isNull);
+      // The next run, a moment after the grab ended, alone
+      await Future<void>.delayed(const Duration(milliseconds: 2500));
+      await stat(192, 30);
+      expect((session.speed.value, session.measuredFps), (192.0, 192.0));
+      await _until(() => kept.isNotEmpty);
+      expect(kept.single.fps, 192);
+      await playbacks.release(url);
+      expect(kept.map((measure) => measure.fps), everyElement(192));
+    }, timeout: const Timeout(Duration(seconds: 30)));
+
+    test('a probe for the screens before the player counts as a companion that decodes', () async {
+      final runner = _ProbeHeldRunner();
+      final playbacks = Av2Playbacks(
+        companion: () async => (program: 'immuch360-av2', launcher: null),
+        runner: (_) => runner,
+        enabled: () => true,
+        decoderVersion: 'test',
+      );
+      addTearDown(playbacks.releaseAll);
+      final opening = playbacks.open(video());
+      await _until(() => runner.probes.isNotEmpty);
+      runner.probes.removeAt(0).answer();
+      await _until(() => runner.serves.isNotEmpty);
+      final player = runner.serves.single..say(av2ListeningLine);
+      final session = playbacks.sessionOf(await opening)!;
+      // The gate of the next video probes it, the first picture decoded with every thread
+      final probing = playbacks.probe(video('/clips/next.ivf'));
+      await _until(() => runner.probes.isNotEmpty);
+      player.say('stat decoded=10 served=10 fps=91.0 simd=avx2 gen=1 frame=10 serving=1');
+      await _until(() => session.stat.value?.frame == 10);
+      expect(session.measuredFps, isNull);
+      runner.probes.removeAt(0).answer();
+      await probing;
+      await Future<void>.delayed(const Duration(milliseconds: 2500));
+      player.say('stat decoded=20 served=20 fps=190.0 simd=avx2 gen=1 frame=20 serving=1');
+      await _until(() => session.stat.value?.frame == 20);
+      expect(session.measuredFps, 190);
+    }, timeout: const Timeout(Duration(seconds: 30)));
   });
 
   group('on the compiled fake companion', () {

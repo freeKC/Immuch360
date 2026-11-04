@@ -21,7 +21,10 @@
 //  6. its stat lines tell how fast this computer decodes the video: the link of the player is the decoder
 //     (MediaKitVideoPlayerController), and the speed is kept per format (size, depth, frame rate) with the decoder
 //     measures of this computer (decoder_measure.dart), so that a format this computer decoded below 0.95 times the
-//     speed of the video says so before it plays (D2 of the plan; "Play anyway" plays it with its pauses);
+//     speed of the video says so before it plays (D2 of the plan; "Play anyway" plays it with its pauses). A line
+//     taken while another companion of the app decodes (a frame grab, a probe) measures a shared computer: it is
+//     neither shown nor kept, and the frame grabs wait while the player's companion takes its first measures (review
+//     of lot AD6, m2);
 //  7. the player let go of the video, the standard input is closed, which ends the companion; it is killed 300 ms later
 //     if it is still there. Killed or crashed by itself, or silent, the video fails with "The AV2 decoder stopped on
 //     this video" and the reason.
@@ -672,6 +675,15 @@ const av2MeasureWindow = Duration(seconds: 4);
 /// its next run (review of lot AD3, m3)
 const av2SeekSettle = Duration(seconds: 2);
 
+/// How long after another companion of the app stopped decoding (a frame grab, a probe) the lines of a player's
+/// companion are still left out: the run a line reports may have begun while the two shared the processor (review
+/// of lot AD6, m2)
+const av2QuietBeforeMeasure = Duration(seconds: 2);
+
+/// How long a frame grab waits at most while the player's companion takes its first measures: a player that never
+/// measures (paused at once, a video of a second) holds the grabs no longer
+const av2ThumbnailHold = Duration(seconds: 8);
+
 /// The median of [values], not empty: the mean of the two middle ones for an even count
 double _median(List<double> values) {
   final sorted = [...values]..sort();
@@ -824,6 +836,7 @@ class Av2Session {
     required this.probe,
     required this.accessPoints,
     required this.decoderVersion,
+    this._othersDecoding,
   });
 
   final Av2Bytes bytes;
@@ -834,6 +847,13 @@ class Av2Session {
 
   /// The version of the AV2 decoder (the catalogue's), which the measures of speed carry
   final String decoderVersion;
+
+  /// Whether another companion of the app decodes beside this one, or did a moment ago (Av2Playbacks): its lines then
+  /// measure a shared computer
+  final bool Function(Av2Session session)? _othersDecoding;
+
+  /// The stat lines left out because another companion decoded, for the log
+  int _sharedLines = 0;
 
   late final Uri url;
 
@@ -951,6 +971,7 @@ class Av2Session {
   /// another codec. [parentPid]: the app's process, which the companion watches (null in the tests that want none).
   /// [beforeServe] may refuse the format before any companion serves it (the measure of speed, see [Av2Playbacks]).
   /// [lowPriority]: a companion that gives way to the others (a thumbnail's, beside the player's start).
+  /// [othersDecoding]: whether another companion decodes beside the session, whose stat lines are then no measure.
   static Future<Av2Session> start({
     required Av2Bytes bytes,
     required Av2CompanionFiles files,
@@ -961,6 +982,7 @@ class Av2Session {
     bool lowPriority = false,
     Future<Av2Probe> Function()? probe,
     Future<void> Function(Av2Format format)? beforeServe,
+    bool Function(Av2Session session)? othersDecoding,
   }) async {
     try {
       return await _start(
@@ -973,6 +995,7 @@ class Av2Session {
         lowPriority: lowPriority,
         probe: probe,
         beforeServe: beforeServe,
+        othersDecoding: othersDecoding,
       );
     } catch (_) {
       await bytes.close();
@@ -990,6 +1013,7 @@ class Av2Session {
     int? threads,
     Future<Av2Probe> Function()? probe,
     Future<void> Function(Av2Format format)? beforeServe,
+    bool Function(Av2Session session)? othersDecoding,
   }) async {
     final watch = Stopwatch()..start();
     final length = await bytes.length();
@@ -1043,6 +1067,7 @@ class Av2Session {
       probe: found,
       accessPoints: points,
       decoderVersion: decoderVersion,
+      othersDecoding: othersDecoding,
     );
     await beforeServe?.call(session.format);
     final prepared = watch.elapsedMilliseconds;
@@ -1208,6 +1233,18 @@ class Av2Session {
   }
 
   void _measureOf(Av2Stat stat) {
+    if (_othersDecoding?.call(this) ?? false) {
+      // Another companion of the app decodes, or did a moment ago: this line measures a computer the two share. The
+      // speed shown and the measures keep what they had; a speed the companion repeats afterwards is still this one
+      if (stat.fps > 0) {
+        _companionFps = stat.fps;
+      }
+      _decodedSeen.clear();
+      if (_sharedLines++ == 0) {
+        _log.fine('The speed of an AV2 video is not measured while another AV2 companion decodes');
+      }
+      return;
+    }
     if (stat.fps > 0) {
       // A new run measured; the lines between two runs repeat the last speed
       if (stat.fps != _companionFps) {
@@ -1421,6 +1458,54 @@ class Av2Playbacks {
   /// The URLs served for a thumbnail: a grab measures no speed (a burst of a few pictures, beside the player's start)
   final _thumbnails = <String>{};
 
+  /// The companions starting (an open before its session serves) and the probes for the screens before the player:
+  /// each decodes beside the sessions that serve (review of lot AD6, m2)
+  final _starting = <Object>{};
+
+  /// When a companion other than a player's last stopped decoding, on [_clock]
+  Duration? _otherEndedAt;
+
+  /// Whether a companion other than [session] decodes now, or stopped less than [av2QuietBeforeMeasure] ago after
+  /// [session] began to open ([since], on [_clock]; one that ended before decoded beside nothing of it): the stat
+  /// lines of [session] then measure a computer they share
+  bool _othersDecoding(Av2Session session, {required Duration since}) {
+    if (_starting.isNotEmpty || _sessions.values.any((other) => !identical(other, session) && other.isRunning)) {
+      return true;
+    }
+    final ended = _otherEndedAt;
+    return ended != null && ended > since && _clock.elapsed - ended < av2QuietBeforeMeasure;
+  }
+
+  void _otherEnded() => _otherEndedAt = _clock.elapsed;
+
+  /// Waits while the companion of the player takes its first measures (its speed not settled), [av2ThumbnailHold] at
+  /// most: a frame grab would decode beside it, and the speed shown and kept would be that of a shared computer
+  Future<void> _afterPlayerMeasures() async {
+    final deadline = _clock.elapsed + av2ThumbnailHold;
+    while (true) {
+      final player = _playing.value;
+      final left = deadline - _clock.elapsed;
+      if (player == null || player.measureSettled || !player.isRunning || left <= Duration.zero) {
+        return;
+      }
+      final changed = Completer<void>();
+      void wake() {
+        if (!changed.isCompleted) {
+          changed.complete();
+        }
+      }
+
+      _playing.addListener(wake);
+      player.stat.addListener(wake);
+      try {
+        await changed.future.timeout(left, onTimeout: () {});
+      } finally {
+        _playing.removeListener(wake);
+        player.stat.removeListener(wake);
+      }
+    }
+  }
+
   /// The session serving [url], null for another resource
   Av2Session? sessionOf(String url) => _sessions[url];
 
@@ -1436,6 +1521,7 @@ class Av2Playbacks {
   /// [av2ProbeKept] rather than probing again. Closes [bytes]. Throws [Av2TurnedOff] or [Av2DecoderMissing], else what
   /// the probe throws.
   Future<Av2Probe> probe(Av2Bytes bytes) async {
+    final probing = Object();
     try {
       if (!enabled()) {
         throw const Av2TurnedOff();
@@ -1444,6 +1530,7 @@ class Av2Playbacks {
       if (files == null) {
         throw const Av2DecoderMissing();
       }
+      _starting.add(probing);
       final found = await runAv2Probe(runner(files.launcher), files, bytes);
       final now = _clock.elapsed;
       _probes
@@ -1451,6 +1538,9 @@ class Av2Playbacks {
         ..[bytes.key] = (probe: found, at: now);
       return found;
     } finally {
+      if (_starting.remove(probing)) {
+        _otherEnded();
+      }
       await bytes.close();
     }
   }
@@ -1472,28 +1562,45 @@ class Av2Playbacks {
     if (files == null) {
       throw const Av2DecoderMissing();
     }
+    if (forThumbnail) {
+      // The picture of the video the viewer opens, or of the one before it: after the player's first measures
+      await _afterPlayerMeasures();
+    }
     // The probe the gate had the companion make a moment ago, rather than a second one (93 to 349 ms on the PC)
     final probed = forThumbnail ? null : _takeProbe(bytes.key);
-    final session = await Av2Session.start(
-      bytes: bytes,
-      files: files,
-      runner: runner(files.launcher),
-      decoderVersion: decoderVersion,
-      parentPid: parentPid,
-      threads: threads,
-      probe: probed == null ? null : () async => probed,
-      // A thumbnail gives way: two grabs and the player's start come at once when a file is opened with the app, and
-      // each companion would take every core
-      lowPriority: forThumbnail,
-      beforeServe: forThumbnail || _anyway.contains(bytes.key)
-          ? null
-          : (format) async {
-              final measure = await loadMeasure?.call(format, decoderVersion);
-              if (av2IsTooSlow(measure)) {
-                throw Av2TooSlow(fps: measure!.fps, needed: format.frameRate, key: bytes.key);
-              }
-            },
-    );
+    final starting = Object();
+    final since = _clock.elapsed;
+    _starting.add(starting);
+    final Av2Session session;
+    try {
+      session = await Av2Session.start(
+        bytes: bytes,
+        files: files,
+        runner: runner(files.launcher),
+        decoderVersion: decoderVersion,
+        parentPid: parentPid,
+        threads: threads,
+        probe: probed == null ? null : () async => probed,
+        // A thumbnail gives way: two grabs and the player's start come at once when a file is opened with the app, and
+        // each companion would take every core
+        lowPriority: forThumbnail,
+        beforeServe: forThumbnail || _anyway.contains(bytes.key)
+            ? null
+            : (format) async {
+                final measure = await loadMeasure?.call(format, decoderVersion);
+                if (av2IsTooSlow(measure)) {
+                  throw Av2TooSlow(fps: measure!.fps, needed: format.frameRate, key: bytes.key);
+                }
+              },
+        othersDecoding: forThumbnail ? null : (session) => _othersDecoding(session, since: since),
+      );
+    } catch (_) {
+      _starting.remove(starting);
+      _otherEnded();
+      rethrow;
+    }
+    // Its start is its session's from now on: no end of another companion
+    _starting.remove(starting);
     final url = session.url.toString();
     _sessions[url] = session;
     desktopResourceOptions[url] = session.mpvOptions;
@@ -1559,6 +1666,7 @@ class Av2Playbacks {
       _playing.value = null;
     }
     await session.stop();
+    _otherEnded();
     if (!_thumbnails.remove(resource)) {
       await _record(session);
     }
