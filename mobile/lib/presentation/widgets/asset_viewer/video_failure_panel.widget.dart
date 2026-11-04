@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
@@ -96,6 +97,11 @@ VideoFailureText describeVideoFailure(
     );
   }
   final message = failure.message?.trim();
+  // Immuch360 Desktop: the failures of the AV2 decoder in the words of the app (lib/desktop/video/av2_decoding.dart)
+  final av2 = message == null ? null : av2FailureText(message, t);
+  if (av2 != null) {
+    return (title: t.video_failed_title, cause: av2, advice: [retry]);
+  }
   final shown = message == null || message.isEmpty || isMedia3StuckText(message) ? null : message;
   return (title: t.video_failed_title, cause: shown, advice: [retry]);
 }

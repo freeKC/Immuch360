@@ -1,8 +1,9 @@
 // What the screens of the AV2 videos read of a playback and of the measures of this computer (store/m2/av2-2026-11-02/
-// plan-2026-11-02.md, sections 1.3 and 1.4). The screens (lot AD5) are written on these contracts before the playback
-// (lot AD3) exists: the playback sets [activeAv2Decoding] from the stat lines of the companion immuch360-av2 (fps=,
-// simd=) while an AV2 video plays, and answers [av2ProbeProvider] with the probe of the companion and
-// [av2SpeedProvider] with the speeds it keeps per format in the decoder measures of this computer. Until then a video
+// plan-2026-11-02.md, sections 1.3 and 1.4). The screens (lot AD5) were written on these contracts before the playback
+// (lot AD3) existed; the app wires them to it (av2_app.dart, lot AD6): [activeAv2Decoding] follows the stat lines of
+// the companion immuch360-av2 (fps=, simd=) while an AV2 video plays, [av2ProbeProvider] answers with the probe of the
+// companion, [av2SpeedProvider] with the speeds kept per format in the decoder measures of this computer, and
+// [av2PlayAnywayProvider] tells the playback a video plays anyway. Without that wiring (the tests, the phones) a video
 // is taken as its head says it (an IVF header gives its size and its frame rate) and no speed is known: no notice comes
 // before it plays.
 
@@ -13,24 +14,17 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/domain/services/av2_stream.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 final _log = Logger('Av2Decoding');
-
-/// The extensions of the AV2 files the app reads (plan, section 1.1): IVF and Section 5 OBU streams
-const av2FileExtensions = {'ivf', 'obu'};
-
-/// Whether [name] is named like an AV2 file the app reads; its head tells whether it is one (readAv2Head)
-bool isAv2FileName(String name) {
-  final extension = p.extension(name).toLowerCase();
-  return extension.length > 1 && av2FileExtensions.contains(extension.substring(1));
-}
 
 /// The head of the file at [path] when it starts an AV2 stream, null for any other file and one that cannot be read
 Future<Av2Head?> readAv2HeadOfFile(String path) async {
@@ -115,7 +109,7 @@ final networkAv2HeadsProvider = Provider<NetworkAv2Heads>((ref) => NetworkAv2Hea
 /// (NetworkAv2Heads); null for any other file and one that is not AV2. A head that cannot be read is an error, never
 /// "no AV2": the tile then asks mpv for no frame, and the player says why and tries again.
 final networkAv2HeadProvider = FutureProvider.autoDispose.family<Av2Head?, NetworkMediaKey>((ref, key) async {
-  if (!CurrentPlatform.isDesktop || !isAv2FileName(key.path)) {
+  if (!CurrentPlatform.isDesktop || !isAv2VideoPath(key.path)) {
     return null;
   }
   try {
@@ -168,6 +162,51 @@ class Av2DecodingStats {
 /// (activeDesktopVideo). Set by the playback of lot AD3, read by the "Video decoding" line of the details.
 final activeAv2Decoding = ValueNotifier<Av2DecodingStats?>(null);
 
+/// Keeps [target] (activeAv2Decoding) to the session the player plays ([playing], Av2Playbacks.playing): the speed it
+/// decodes at (Av2Session.speed, null until measured), the speed the video needs, the SIMD level of dav2d; null while
+/// no AV2 video plays
+class Av2DecodingFollower {
+  Av2DecodingFollower(this.playing, this.target) {
+    playing.addListener(_follow);
+    _follow();
+  }
+
+  final ValueListenable<Av2Session?> playing;
+  final ValueNotifier<Av2DecodingStats?> target;
+  Av2Session? _session;
+
+  void _follow() {
+    _session?.stat.removeListener(_update);
+    _session?.speed.removeListener(_update);
+    final session = _session = playing.value;
+    session?.stat.addListener(_update);
+    session?.speed.addListener(_update);
+    _update();
+  }
+
+  void _update() {
+    final session = _session;
+    if (session == null) {
+      target.value = null;
+      return;
+    }
+    final simd = session.stat.value?.simd ?? '';
+    target.value = Av2DecodingStats(
+      neededFps: session.neededFps,
+      decodedFps: session.speed.value,
+      simd: simd.isEmpty ? null : simd,
+    );
+  }
+
+  void dispose() {
+    playing.removeListener(_follow);
+    _session?.stat.removeListener(_update);
+    _session?.speed.removeListener(_update);
+    _session = null;
+    target.value = null;
+  }
+}
+
 /// The last speed this computer measured for a format of AV2 video
 @immutable
 class Av2Speed {
@@ -176,15 +215,12 @@ class Av2Speed {
   final double decodedFps;
   final double neededFps;
 
-  /// Under this share of the frame rate of a video, its format is too slow for this computer: the video does not start
-  /// by itself, the notice says how fast it decodes and offers to play it anyway (plan, section 1.4)
-  static const tooSlowRatio = 0.95;
-
   /// How many times the real time this computer decodes the format
   double get ratio => neededFps <= 0 ? double.infinity : decodedFps / neededFps;
 
-  /// Whether the video would pause to catch up
-  bool get tooSlow => ratio < tooSlowRatio;
+  /// Whether the video would pause to catch up: under [av2TooSlowRatio] of its frame rate, the video does not start by
+  /// itself, the notice says how fast it decodes and offers to play it anyway (plan, section 1.4)
+  bool get tooSlow => ratio < av2TooSlowRatio;
 
   @override
   bool operator ==(Object other) => other is Av2Speed && other.decodedFps == decodedFps && other.neededFps == neededFps;
@@ -273,6 +309,10 @@ final av2SpeedProvider = Provider<Future<Av2Speed?> Function(Av2VideoFormat form
       (_) async => null,
 );
 
+/// "Play anyway" on the notice of a format measured too slow here: the playback plays [video] whatever its measure
+/// says, for the rest of the session of the app (Av2Playbacks.playAnyway); by default nobody is told
+final av2PlayAnywayProvider = Provider<void Function(Av2VideoRef video)>((ref) => (_) {});
+
 /// A path in quotes, spaces allowed, as FileSystemException and others write it
 final _quotedPath = RegExp(r"""(['"])((?:[A-Za-z]:\\|\\\\|/)[^'"]*)\1""");
 
@@ -285,9 +325,13 @@ String _lastPart(String path) => path.contains('\\') ? p.windows.basename(path) 
 
 /// The reason the screens of the AV2 videos give for [error], after "The AV2 decoder stopped on this video:" or "The
 /// AV2 decoder was not downloaded:": what went wrong in a few words, never the type of the error nor a path of this
-/// computer, which holds the name of the user (a file keeps its name). Lot AD6 adds the errors of the playback.
+/// computer, which holds the name of the user (a file keeps its name). The errors of the playback (av2_playback.dart)
+/// give their reason, never "The AV2 decoder stopped on this video" a second time.
 String av2ErrorReason(Object error) {
   final text = switch (error) {
+    Av2DecoderStopped(:final reason) => reason,
+    Av2PlaybackException(:final message) => message,
+    Av2NotAv2(:final reason) => 'not an AV2 stream: $reason',
     FileSystemException(:final osError?) when osError.message.trim().isNotEmpty => osError.message,
     FileSystemException(:final message) => message,
     ProcessException(:final message) => message,
@@ -305,6 +349,37 @@ String av2ErrorReason(Object error) {
     return 'no reason given';
   }
   return named.length <= 160 ? named : '${named.substring(0, 159)}…';
+}
+
+// The English texts of the failures of the playback (av2_playback.dart, Av2PlaybackException), which reach the player
+// as its message, after "This video cannot be played on the computer: " when the source could not be resolved
+final _decoderStopped = RegExp(r'The AV2 decoder stopped on this video: (.+)$', dotAll: true);
+final _formatRefused = RegExp(r'This AV2 video is (.+): this version of the AV2 decoder does not play it yet');
+final _tooSlow = RegExp(
+  r'This computer decodes this AV2 video at about (\d+) frames per second and it needs (\d+): it will pause to catch up',
+);
+const _turnedOff = 'AV2 videos are turned off: ';
+
+/// The failure of a player, [message], in the words of the screens of the AV2 videos ([t]) when the playback of an AV2
+/// video gave it (the companion stopped, a format it does not play, a computer too slow, the setting off); null for
+/// any other message, which the failure panel shows as it is
+String? av2FailureText(String message, Translations t) {
+  final stopped = _decoderStopped.firstMatch(message);
+  if (stopped != null) {
+    return t.av2_error_decoder_stopped(reason: stopped[1]!.trim());
+  }
+  final refused = _formatRefused.firstMatch(message);
+  if (refused != null) {
+    return t.av2_error_format(format: refused[1]!);
+  }
+  final slow = _tooSlow.firstMatch(message);
+  if (slow != null) {
+    return t.av2_too_slow(fps: slow[1]!, needed: slow[2]!);
+  }
+  if (message.contains(_turnedOff)) {
+    return t.av2_error_off;
+  }
+  return null;
 }
 
 /// A number of frames per second as the AV2 texts give it in [locale]: whole from 10 up, one decimal below ("7.4"), and

@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
 import 'package:immich_mobile/desktop/library/thumbnail_cache.dart';
 import 'package:immich_mobile/desktop/video/av2_decoding.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:immich_mobile/platform/local_image_api.g.dart';
@@ -30,7 +31,7 @@ import 'package:thumbhash/thumbhash.dart' as thumbhash_codec;
 /// - A video gets a frame taken by the desktop player's frame grabber (video_thumbnail_grabber.dart), kept in the
 ///   thumbnail cache like the photos' thumbnails; the film tile without libmpv, or when the video gives no frame.
 /// - An AV2 video (.ivf, .obu whose head says AV2) is never handed to mpv, which has no decoder for it: its frame comes
-///   through the AV2 decoder once installed ([av2FrameGrab], set by its playback), else the film tile says "AV2" and
+///   through the AV2 decoder once installed ([av2FrameGrab], set with its playbacks), else the film tile says "AV2" and
 ///   nothing is downloaded (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.2).
 /// - A file the engine cannot decode (HEIC or a camera raw file without a decoder of the system) gets a tile with
 ///   the format's name.
@@ -73,8 +74,10 @@ class DesktopLocalImageApi implements LocalImageApi {
   final VideoFrameGrab? _videoFrame;
   final VideoFrameGrab? _av2Frame;
 
-  /// A frame of an AV2 video through the AV2 decoder, set by its playback (lot AD3) once the decoder is installed;
-  /// null until then: an AV2 video gets the film tile that says AV2
+  /// A frame of an AV2 video through the AV2 decoder: [appVideoFrame], set with the app's AV2 playbacks at the start of
+  /// the window (av2PlaybacksProvider), whose grabber opens the video through its decoder and gives no frame yet
+  /// (VideoFrameNotYet) before it is installed; null without them (the tests): an AV2 video gets the film tile that
+  /// says AV2
   static VideoFrameGrab? av2FrameGrab;
 
   /// The word of the tile of an AV2 video, the same in every language, as its badge
@@ -86,6 +89,13 @@ class DesktopLocalImageApi implements LocalImageApi {
 
   /// The frame grab of the app once libmpv loaded at start, null before and without it
   static VideoFrameGrab? get _appVideoFrame => desktopVideoAvailable ? _grabLibraryFrame : null;
+
+  /// A frame of [path] by the frame grab of the app, none without libmpv: the grab of the AV2 videos
+  /// ([av2FrameGrab]), whose companion the grabber starts
+  static Future<Uint8List?> appVideoFrame(String path, int box) async {
+    final grab = _appVideoFrame;
+    return grab == null ? null : grab(path, box);
+  }
 
   static Future<Uint8List?> _grabLibraryFrame(String path, int box) =>
       VideoThumbnailGrabber.shared.grab(path, time: videoFrameTime, box: (width: box, height: box, cover: true));
@@ -221,7 +231,7 @@ class DesktopLocalImageApi implements LocalImageApi {
   Future<Uint8List?> _videoImage(File file, String assetId, int requestId, int box) async {
     var grab = _videoFrame ?? _appVideoFrame;
     // An AV2 video: through the AV2 decoder, else its tile; never mpv, which has no decoder for it
-    final av2 = isAv2FileName(file.path) && await readAv2HeadOfFile(file.path) != null;
+    final av2 = isAv2VideoPath(file.path) && await readAv2HeadOfFile(file.path) != null;
     final label = av2 ? av2TileLabel : null;
     if (av2) {
       grab = _av2Frame ?? av2FrameGrab;

@@ -1,7 +1,8 @@
 // The AV2 files of a share on a computer (network_media_tile.widget.dart, networkAv2HeadProvider; store/m2/
 // av2-2026-11-02/plan-2026-11-02.md, section 1.2): the head of an .ivf or .obu is read, 32 bytes, and an AV2 file gets
-// the "AV2" badge of the 3D splat tiles on a neutral tile, no frame asked of mpv; an IVF of AV1 is a video as any other;
-// nothing is read on a phone, which does not list them.
+// the "AV2" badge of the 3D splat tiles on a neutral tile, no frame asked of mpv, until the AV2 decoder is installed:
+// then its frame comes through it; an IVF of AV1 is a video as any other; nothing is read on a phone, which does not
+// list them.
 
 import 'dart:async';
 import 'dart:io';
@@ -10,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/av2_stream.dart';
@@ -68,6 +70,7 @@ void main() {
     String path, {
     bool? isSelected,
     Future<Av2Head?> Function(NetworkMediaKey key)? head,
+    bool decoderInstalled = false,
   }) => tester.pumpTestWidget(
     context,
     SizedBox(
@@ -95,6 +98,7 @@ void main() {
       networkUploadRecordsProvider.overrideWith(_NoRecords.new),
       networkUploadProvider.overrideWith(_IdleUpload.new),
       isHorizonOsProvider.overrideWith((ref) async => false),
+      av2DecoderInstalledProvider.overrideWithValue(decoderInstalled),
     ],
   );
 
@@ -114,6 +118,17 @@ void main() {
     expect(frames, isEmpty);
     expect(find.bySemanticsLabel('cosmos.ivf, AV2'), findsOneWidget);
     semantics.dispose();
+  }, variant: desktop);
+
+  testWidgets('with the AV2 decoder installed, the frame of an AV2 file comes through it, the badge on it', (
+    tester,
+  ) async {
+    await pumpTile(tester, '/clips/cosmos.ivf', decoderInstalled: true);
+    expect(badge, findsOneWidget);
+    // The grabber opens the bridge URL through the companion (VideoThumbnailGrabber, Av2Playbacks.openResource)
+    expect(frames.map((request) => (request.key.path, request.url.toString())), [
+      ('/clips/cosmos.ivf', 'http://127.0.0.1:1234/token/nas/clips/cosmos.ivf'),
+    ]);
   }, variant: desktop);
 
   testWidgets('a Section 5 stream too', (tester) async {

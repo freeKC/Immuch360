@@ -3,7 +3,8 @@
 // "3D scene" badge on the photos that carry a 3D scene and a "360° AI" badge on the panoramas generated beyond the
 // edges of a photo, a badge on the files sent to the server before, the selection
 // mark and the progress of an upload, and the folder rows. On a computer, an AV2 file (.ivf, .obu whose head says so)
-// gets the "AV2" badge of the 3D splat tiles on a neutral tile: no frame is asked of mpv, which has no AV2 decoder.
+// gets the "AV2" badge of the 3D splat tiles, on a neutral tile until the AV2 decoder is installed, then on a frame
+// that the grabber takes through it.
 
 import 'dart:async';
 import 'dart:collection';
@@ -15,7 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
+import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/desktop/video/av2_decoding.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
@@ -442,9 +445,9 @@ class NetworkMediaTile extends ConsumerWidget {
     final url = this.url;
     final hasThumbnail = entry.isImage && url != null && (entry.size ?? 0) <= networkThumbnailMaxFileSize;
     // Immuch360 Desktop: the head of an .ivf or .obu says whether it is AV2 (lib/desktop/video/av2_decoding.dart);
-    // a frame is asked of mpv, which has no AV2 decoder, only once it says no AV2: never while it is read, for an AV2
-    // file, nor when it could not be read
-    final av2Head = entry.isVideo && CurrentPlatform.isDesktop && isAv2FileName(entry.name)
+    // a frame is asked once it says no AV2 (mpv takes it), or AV2 with the AV2 decoder installed (the grabber opens
+    // it through its companion): never while it is read, nor when it could not be read
+    final av2Head = entry.isVideo && CurrentPlatform.isDesktop && isAv2VideoPath(entry.name)
         ? ref.watch(networkAv2HeadProvider(networkMediaKey(entry)))
         : null;
     final isAv2 = av2Head?.valueOrNull != null;
@@ -453,7 +456,8 @@ class NetworkMediaTile extends ConsumerWidget {
       AsyncData(:final value) => value == null,
       _ => false,
     };
-    final hasFrame = entry.isVideo && url != null && noAv2;
+    final av2Frame = isAv2 && ref.watch(av2DecoderInstalledProvider);
+    final hasFrame = entry.isVideo && url != null && (noAv2 || av2Frame);
     final isSelected = this.isSelected;
     // A share whose server makes the pictures of its media (a Plex server) shows those, read through its connection
     final serverPictures = switch (ref.watch(networkConnectionsProvider).opened(entry.sourceId)) {

@@ -15,6 +15,7 @@ import 'package:immich_mobile/desktop/library/desktop_storage_repository.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart';
+import 'package:immich_mobile/desktop/video/av2_app.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/self_check.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -60,6 +61,9 @@ List<Override> desktopOverrides() => [
   aiFreeSpaceProvider.overrideWithValue(systemFreeSpace),
   // The 3D conversions run with the engine on ONNX Runtime, the safe writer and the index of the folder library
   conversionToolsProvider.overrideWith(desktopConversionTools),
+  // The screens of the AV2 videos read the probe of the companion and the speeds measured here, and Play anyway tells
+  // the playback
+  ...av2AppOverrides(),
 ];
 
 /// What wraps the app on a computer, inside MaterialApp (main.dart): the desktop keys and the window's close guard,

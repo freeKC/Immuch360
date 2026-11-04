@@ -64,3 +64,14 @@ class Av2Decoder {
 final av2DecoderProvider = Provider<Av2Decoder>(
   (ref) => Av2Decoder(ref.watch(aiComponentsServiceProvider), ref.watch(aiPlatformProvider)),
 );
+
+/// Whether the AV2 decoder of this computer is installed, told again when it is installed or removed: the tiles of the
+/// shares ask a frame of an AV2 video only then (before, its grab would give none, and the frame of a share is not
+/// asked again for minutes)
+final av2DecoderInstalledProvider = Provider<bool>((ref) {
+  final decoder = ref.watch(av2DecoderProvider);
+  void changed() => ref.state = decoder.isInstalled;
+  decoder.service.addListener(changed);
+  ref.onDispose(() => decoder.service.removeListener(changed));
+  return decoder.isInstalled;
+});

@@ -14,6 +14,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/av2_gate.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -64,6 +65,7 @@ void main() {
   late List<Av2VideoRef> probed;
   late Future<Av2VideoFormat> Function(Av2VideoRef video) probe;
   late Av2Speed? Function(Av2VideoFormat format) speed;
+  late List<Av2VideoRef> playedAnyway;
 
   setUp(() async {
     context = await PresentationContext.create();
@@ -71,6 +73,7 @@ void main() {
     probed = [];
     probe = (video) async => Av2VideoFormat.ofHead(video.head);
     speed = (_) => null;
+    playedAnyway = [];
   });
 
   tearDown(() => context.dispose());
@@ -90,6 +93,7 @@ void main() {
             return probe(video);
           }),
           av2SpeedProvider.overrideWithValue((format) async => speed(format)),
+          av2PlayAnywayProvider.overrideWithValue(playedAnyway.add),
         ],
       );
 
@@ -313,10 +317,12 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('the player'), findsNothing);
+    expect(playedAnyway, isEmpty);
 
     await tester.tap(find.text('Play anyway'));
     await tester.pumpAndSettle();
     expect(find.text('the player'), findsOneWidget);
+    expect(playedAnyway, [_video], reason: 'the playback is told, or its own check would stop the player');
   }, variant: desktop);
 
   testWidgets('a format measured fast enough here, or never measured, plays at once', (tester) async {
@@ -350,6 +356,19 @@ void main() {
     expect(container.read(av2MacLibmpvReleaseProvider), macosLibmpvRelease);
   });
 
+  test('whether the decoder is installed is told again when it is installed or removed (the tiles of the shares)', () {
+    final container = ProviderContainer(
+      overrides: [av2DecoderProvider.overrideWith((ref) => Av2Decoder(service, AiPlatform.windowsX64))],
+    );
+    addTearDown(container.dispose);
+    final told = <bool>[];
+    container.listen(av2DecoderInstalledProvider, (_, next) => told.add(next), fireImmediately: true);
+    installed();
+    service.setStatus(av2WindowsComplete, const AiComponentStatus(AiComponentState.downloading));
+    service.setStatus(av2WindowsComplete, const AiComponentStatus(AiComponentState.notInstalled));
+    expect(told, [false, true, false]);
+  });
+
   testWidgets('Linux has its own decoder, offered the same way', (tester) async {
     await pumpGate(tester, platform: AiPlatform.linuxX64);
     expect(find.text('Download and play'), findsOneWidget);
@@ -362,10 +381,10 @@ void main() {
   group('named like an AV2 file', () {
     test('.ivf and .obu, in any case, and nothing else', () {
       for (final name in ['a.ivf', 'B.IVF', 'c.obu', 'clip.Obu']) {
-        expect(isAv2FileName(name), isTrue, reason: name);
+        expect(isAv2VideoPath(name), isTrue, reason: name);
       }
       for (final name in ['a.mp4', 'ivf', 'a.ivf.mp4', 'a.webm', 'a.mkv', 'obu']) {
-        expect(isAv2FileName(name), isFalse, reason: name);
+        expect(isAv2VideoPath(name), isFalse, reason: name);
       }
     });
 

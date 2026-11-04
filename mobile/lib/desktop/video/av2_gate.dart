@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/desktop/video/av2_decoding.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
@@ -60,7 +61,7 @@ final av2LocalVideoProvider = FutureProvider.autoDispose.family<Av2VideoRef?, ({
   ref,
   asset,
 ) async {
-  if (!isAv2FileName(asset.name)) {
+  if (!isAv2VideoPath(asset.name)) {
     return null;
   }
   final file = await ref.read(storageRepositoryProvider).getFileForAsset(asset.id);
@@ -88,7 +89,7 @@ class Av2AssetGate extends ConsumerWidget {
   final GestureTapUpCallback? onTapUp;
 
   /// Whether [asset] may be an AV2 file, which the gate reads
-  static bool applies(BaseAsset asset) => asset.isVideo && isAv2FileName(asset.name);
+  static bool applies(BaseAsset asset) => asset.isVideo && isAv2VideoPath(asset.name);
 
   Widget _screen(Widget screen, {required bool waiting}) =>
       Av2ViewerScreen(showBars: isCurrent && !waiting, onTapUp: onTapUp, child: screen);
@@ -171,7 +172,7 @@ class Av2ShareGate extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!isAv2FileName(file.path)) {
+    if (!isAv2VideoPath(file.path)) {
       return child;
     }
     if (!CurrentPlatform.isDesktop) {
@@ -333,7 +334,16 @@ class _Av2PlaybackGateState extends ConsumerState<Av2PlaybackGate> {
         }
         final speed = checked.speed;
         if (speed != null && speed.tooSlow && !_playAnyway) {
-          return _framed(Av2TooSlowNotice(speed: speed, onPlay: () => setState(() => _playAnyway = true)));
+          return _framed(
+            Av2TooSlowNotice(
+              speed: speed,
+              onPlay: () {
+                // The playback is told first: its own check of the measure would stop the player
+                ref.read(av2PlayAnywayProvider)(widget.video);
+                setState(() => _playAnyway = true);
+              },
+            ),
+          );
         }
         return widget.child;
       },

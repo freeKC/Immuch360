@@ -372,7 +372,7 @@ class Av2TurnedOff extends Av2PlaybackException {
   const Av2TurnedOff();
 
   @override
-  String get message => 'AV2 videos are turned off: Settings, Videos, AV2 videos';
+  String get message => 'AV2 videos are turned off: Settings, Asset Viewer, AV2 videos (experimental)';
 }
 
 /// The AV2 decoder is not installed (the card of lot AD5 offers it)
@@ -685,6 +685,10 @@ const av2EndGrace = Duration(milliseconds: 300);
 /// The bytes of the start of a file of a share the probe is given, in turn while it finds no picture there (the
 /// companion's own steps for a file it reads)
 const av2ProbeSteps = [1 << 20, 4 << 20, 16 << 20, 64 << 20];
+
+/// How long a probe made for the screens before the player ([Av2Playbacks.probe]) serves the video's next open: the
+/// gate probes, then the player opens at once, or after "Play anyway"
+const av2ProbeKept = Duration(minutes: 2);
 
 /// Runs the probe of the companion [files] through [runner] on [bytes]: the file itself for a file of this computer,
 /// the start of the file on the standard input for a share. [lowPriority]: below the others, as a thumbnail's
@@ -1405,6 +1409,15 @@ class Av2Playbacks {
   final _sessions = <String, Av2Session>{};
   final _anyway = <String>{};
 
+  /// The probes of [probe] by video, until the next [open] of the same video takes it (within [av2ProbeKept])
+  final _probes = <String, ({Av2Probe probe, Duration at})>{};
+  final _clock = Stopwatch()..start();
+
+  /// The session of the video the player plays (the last one [open] gave a player), null while none does; a
+  /// thumbnail's session is never it
+  ValueListenable<Av2Session?> get playing => _playing;
+  final _playing = ValueNotifier<Av2Session?>(null);
+
   /// The URLs served for a thumbnail: a grab measures no speed (a burst of a few pictures, beside the player's start)
   final _thumbnails = <String>{};
 
@@ -1418,6 +1431,36 @@ class Av2Playbacks {
   /// "Play anyway": [key] plays for the rest of the session of the app, whatever its format's measure says
   void playAnyway(String key) => _anyway.add(key);
 
+  /// What the companion of the installed decoder says of [bytes], for the screens before the player (the format the
+  /// gate refuses, the speed this computer measured for it); the next [open] of the same video takes it within
+  /// [av2ProbeKept] rather than probing again. Closes [bytes]. Throws [Av2TurnedOff] or [Av2DecoderMissing], else what
+  /// the probe throws.
+  Future<Av2Probe> probe(Av2Bytes bytes) async {
+    try {
+      if (!enabled()) {
+        throw const Av2TurnedOff();
+      }
+      final files = await companion();
+      if (files == null) {
+        throw const Av2DecoderMissing();
+      }
+      final found = await runAv2Probe(runner(files.launcher), files, bytes);
+      final now = _clock.elapsed;
+      _probes
+        ..removeWhere((_, kept) => now - kept.at > av2ProbeKept)
+        ..[bytes.key] = (probe: found, at: now);
+      return found;
+    } finally {
+      await bytes.close();
+    }
+  }
+
+  /// The probe of [key] that [probe] kept, taken once; null when none is, or it is older than [av2ProbeKept]
+  Av2Probe? _takeProbe(String key) {
+    final kept = _probes.remove(key);
+    return kept == null || _clock.elapsed - kept.at > av2ProbeKept ? null : kept.probe;
+  }
+
   /// The y4m URL of [bytes], served by a new companion until [release]. Throws an [Av2PlaybackException] (the video
   /// does not play, see its message), or [Av2NotAv2] for a file the player opens itself. [forThumbnail]: a frame is all
   /// that is wanted, no measure of speed applies.
@@ -1429,6 +1472,8 @@ class Av2Playbacks {
     if (files == null) {
       throw const Av2DecoderMissing();
     }
+    // The probe the gate had the companion make a moment ago, rather than a second one (93 to 349 ms on the PC)
+    final probed = forThumbnail ? null : _takeProbe(bytes.key);
     final session = await Av2Session.start(
       bytes: bytes,
       files: files,
@@ -1436,6 +1481,7 @@ class Av2Playbacks {
       decoderVersion: decoderVersion,
       parentPid: parentPid,
       threads: threads,
+      probe: probed == null ? null : () async => probed,
       // A thumbnail gives way: two grabs and the player's start come at once when a file is opened with the app, and
       // each companion would take every core
       lowPriority: forThumbnail,
@@ -1455,6 +1501,7 @@ class Av2Playbacks {
       _thumbnails.add(url);
     } else {
       session.stat.addListener(() => _measureOnce(session));
+      _playing.value = session;
     }
     return url;
   }
@@ -1508,6 +1555,9 @@ class Av2Playbacks {
       return;
     }
     desktopResourceOptions.remove(resource);
+    if (identical(_playing.value, session)) {
+      _playing.value = null;
+    }
     await session.stop();
     if (!_thumbnails.remove(resource)) {
       await _record(session);

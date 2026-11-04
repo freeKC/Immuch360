@@ -17,6 +17,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/network/immich_server_file_system.dart';
+import 'package:immich_mobile/desktop/platform/desktop_local_image_api.dart';
+import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
@@ -149,7 +151,9 @@ DesktopVideoRelease desktopAppVideoRelease(WidgetRef ref) => ref.read(av2Playbac
 /// The AV2 videos of the app (av2_playback.dart): the companion of the AV2 decoder installed for this computer,
 /// started by the session of the AI programs (its journal, the job object, immuch360-run), while "AV2 videos
 /// (experimental)" is on; the speeds it measures kept with the decoder measures. Made at the start of the window, so
-/// that the thumbnails of the library and of the shares find it (Av2Playbacks.app).
+/// that the thumbnails of the library and of the shares find it (Av2Playbacks.app): the library's frame grab of an AV2
+/// video goes through it (DesktopLocalImageApi.av2FrameGrab), and the "Video decoding" line follows the session the
+/// player plays (activeAv2Decoding).
 final av2PlaybacksProvider = Provider<Av2Playbacks>((ref) {
   final platform = aiPlatformOf(Abi.current());
   final component = platform == null
@@ -176,10 +180,14 @@ final av2PlaybacksProvider = Provider<Av2Playbacks>((ref) {
     threads: av2ThreadsFrom(Platform.environment),
   );
   Av2Playbacks.app = playbacks;
+  DesktopLocalImageApi.av2FrameGrab = DesktopLocalImageApi.appVideoFrame;
+  final decoding = Av2DecodingFollower(playbacks.playing, activeAv2Decoding);
   ref.onDispose(() {
     if (identical(Av2Playbacks.app, playbacks)) {
       Av2Playbacks.app = null;
+      DesktopLocalImageApi.av2FrameGrab = null;
     }
+    decoding.dispose();
     unawaited(playbacks.releaseAll());
   });
   return playbacks;
