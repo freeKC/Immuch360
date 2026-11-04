@@ -341,7 +341,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('Lists the .spz and .ply splats of your shares and folders and opens them in 3D, to move through'),
+        find.text(
+          'Lists the .spz and .ply splats of your shares and folders and the splat scenes of your timeline, and opens '
+          'them in 3D, to move through',
+        ),
         findsOneWidget,
       );
       expect(find.textContaining('Meta Spatial SDK'), findsNothing);

@@ -240,7 +240,7 @@ class AdvancedSettings extends HookConsumerWidget {
           key: const Key('advanced_settings_gaussian_splats'),
           valueNotifier: gaussianSplats,
           title: context.t.splat_setting_title,
-          subtitle: context.t.splat_setting_subtitle_device,
+          subtitle: context.t.splat_setting_subtitle_device_photos,
         ),
       // Large splats on the headset and on phones and tablets: a computer shows up to a million gaussians anyway
       if ((splatsInThisBuild || splatDevice == SplatDeviceClass.phone) && gaussianSplats.value)

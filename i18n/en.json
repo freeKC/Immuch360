@@ -3656,7 +3656,7 @@
   "splat_save_title": "Save this scene to Immich",
   "splat_save_view": "The view you see becomes its photo",
   "splat_setting_subtitle": "Lists the .spz and .ply splats of the shares and opens them on a Meta Quest 3 or 3S",
-  "splat_setting_subtitle_device": "Lists the .spz and .ply splats of your shares and folders and opens them in 3D, to move through",
+  "splat_setting_subtitle_device_photos": "Lists the .spz and .ply splats of your shares and folders and the splat scenes of your timeline, and opens them in 3D, to move through",
   "splat_setting_title": "Gaussian splats (experimental)",
   "splat_shown_whole": "Shown whole: all {count} gaussians",
   "splat_slow_keep": "Keep them all",
