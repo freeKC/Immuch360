@@ -1,14 +1,16 @@
 // y4m_probe: opens one y4m with libmpv, without a window or sound, and prints as JSON what mpv read from it. Built and
 // run by check_y4m.py (same folder) against the libmpv frameworks of the macOS build, or the system's libmpv on Linux.
 //
-//   y4m_probe URL_OR_PATH FORWARD_SECONDS BACK_SECONDS [FORMAT]
+//   y4m_probe URL_OR_PATH FORWARD_SECONDS BACK_SECONDS [FORMAT [OPTION=VALUE...]]
 //
 // FORMAT, when given, is passed as demuxer-lavf-format (no probe), as the app does for the y4m that the AV2 decoder
 // serves. The probe waits for the first frame and takes it with screenshot-raw, seeks exactly forward to
 // FORWARD_SECONDS, then back to BACK_SECONDS, taking the frame each time, then plays the rest as fast as it decodes
 // (untimed) and reads where it stopped. No cache and small reads ahead, so that the seek back goes to the stream (a
 // range request over HTTP) rather than to what mpv already holds; a seek forward within the TCP window of the
-// connection is read through by FFmpeg instead (its short seek), hence the two.
+// connection is read through by FFmpeg instead (its short seek), hence the two. Each OPTION=VALUE after FORMAT is set
+// after those, as the app sets its own for an AV2 stream (its cache among them: check_y4m.py companion), and the
+// report says how long the first frame took (openSeconds) and the untimed playback (playFrom, playSeconds).
 // Exit 0 when it printed a report, even a failed one: check_y4m.py judges it.
 
 #include <stdarg.h>
@@ -164,7 +166,7 @@ static int finish(const char *error) {
 
 int main(int argc, char **argv) {
   if (argc < 4) {
-    fprintf(stderr, "y4m_probe URL_OR_PATH FORWARD_SECONDS BACK_SECONDS [FORMAT]\n");
+    fprintf(stderr, "y4m_probe URL_OR_PATH FORWARD_SECONDS BACK_SECONDS [FORMAT [OPTION=VALUE...]]\n");
     return 2;
   }
   const char *source = argv[1];
@@ -192,6 +194,20 @@ int main(int argc, char **argv) {
     fprintf(stderr, "mpv refused demuxer-lavf-format=%s\n", format);
     return 2;
   }
+  for (int i = 5; i < argc; i++) {
+    char option[256];
+    const char *equals = strchr(argv[i], '=');
+    if (!equals || (size_t)(equals - argv[i]) >= sizeof option) {
+      fprintf(stderr, "not an OPTION=VALUE: %s\n", argv[i]);
+      return 2;
+    }
+    memcpy(option, argv[i], (size_t)(equals - argv[i]));
+    option[equals - argv[i]] = '\0';
+    if (mpv_set_option_string(mpv, option, equals + 1) < 0) {
+      fprintf(stderr, "mpv refused the option %s\n", argv[i]);
+      return 2;
+    }
+  }
   if (mpv_initialize(mpv) < 0) {
     fprintf(stderr, "mpv_initialize failed\n");
     return 2;
@@ -206,12 +222,15 @@ int main(int argc, char **argv) {
   put_property("ffmpeg-version");
 
   const char *load[] = {"loadfile", source, NULL};
+  double opened = now();
   if (mpv_command(mpv, load) < 0) {
     return finish("loadfile refused");
   }
   if (wait_for(MPV_EVENT_FILE_LOADED, NULL, &error) < 0 || wait_for(MPV_EVENT_PLAYBACK_RESTART, NULL, &error) < 0) {
     return finish(error);
   }
+  key("openSeconds");
+  printf("%.3f", now() - opened);
   put_property("file-format");
   put_property("current-tracks/video/codec");
   put_property("video-params/pixelformat");
@@ -238,11 +257,15 @@ int main(int argc, char **argv) {
     put_frame(name);
   }
 
+  put_number("playFrom", "time-pos");
   mpv_set_property_string(mpv, "untimed", "yes");
   mpv_set_property_string(mpv, "pause", "no");
+  double played = now();
   if (wait_for(MPV_EVENT_NONE, "eof-reached", &error) < 0) {
     return finish(error);
   }
+  key("playSeconds");
+  printf("%.3f", now() - played);
   put_number("endTime", "time-pos");
   put_property("frame-drop-count");
   put_property("decoder-frame-drop-count");

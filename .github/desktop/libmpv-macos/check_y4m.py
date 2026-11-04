@@ -34,6 +34,16 @@ the AV2 decoder's stream. Every check must pass:
       AV2 decoder
   check_y4m.py evaluate REPORT --depth 8|10 [--http --ranges START...]
       judges the JSON a probe printed (the tests give it reports of their own); exit 1 when a check failed
+  check_y4m.py companion (--zips ZIP... | --frameworks DIR | --system) [--headers DIR] [--search-headers DIR...]
+                         --program FILE --stream FILE[:TIMES]... [--summary FILE] [--work DIR]
+      the AV2 path itself (review of lot AD4, m8): the serve of immuch360-av2 (the program of an av2-* archive), fed
+      by the app's side in Python (.github/desktop/av2/av2_serve_check.py), on each stream given (played TIMES times
+      in a row), read by the probe over its HTTP/1.1 connection with the options the app opens an AV2 video with
+      (the y4m demuxer forced, the cache of a streamed video and av2CacheBytes, the wait after a stall): the demuxer
+      and decoder, the size, rate and length of the stream, a first frame, exact seeks forward and back, the end
+      without a dropped frame, and the frames a second of the untimed playback, written in the table and the summary
+  check_y4m.py evaluate-companion REPORT --width W --height H --depth 8|10 --frames N --fps F --forward K --back K
+      judges a probe's report of the AV2 path (the tests)
 """
 from __future__ import annotations
 
@@ -50,6 +60,8 @@ import threading
 
 HERE = pathlib.Path(__file__).resolve().parent
 PROBE_SOURCE = HERE / 'y4m_probe.c'
+# The app's side of the AV2 decoder, for the companion check
+AV2_SCRIPTS = HERE.parent / 'av2'
 
 # The fixtures: big enough frames that a seek goes back to the server, few enough that both stay small
 WIDTH = 320
@@ -153,6 +165,138 @@ def evaluate(report: dict, depth: int, http: bool, ranges: list[int]) -> list[tu
         check('over HTTP, the seek back asked for a range from a frame', bool(frames),
               f"ranges from {sorted(set(ranges))}, frames {frames}")
     return results
+
+
+# The options the app opens the y4m of an AV2 companion with, beyond the probe's (desktop_player.dart, forOpen of a
+# streamed video, and av2MpvOptions of av2_playback.dart); demuxer-max-bytes comes from av2_cache_bytes
+APP_AV2_OPTIONS = {'cache': 'yes', 'cache-secs': '60', 'demuxer-max-back-bytes': str(32 * 1024 * 1024),
+                   'cache-pause-wait': '1', 'cache-on-disk': 'no'}
+# Where the companion check seeks, in seconds of the stream: forward past the cache filled at the start, then back
+# beyond what mpv keeps behind, so that both reach the companion as ranges
+COMPANION_FORWARD = 0.7
+COMPANION_BACK = 0.2
+
+
+def av2_cache_bytes(frame_bytes: int, fps: float) -> int:
+    """av2CacheBytes of av2_playback.dart: 256 MiB, raised up to 512 MiB while that holds less than a second"""
+    floor, ceiling = 256 * 1024 * 1024, 512 * 1024 * 1024
+    second = int(-(-((frame_bytes + 6) * fps) // 1))
+    return floor if second <= floor else min(ceiling, second)
+
+
+def evaluate_companion(report: dict, width: int, height: int, depth: int, frames: int, fps: float, forward: int,
+                       back: int) -> list[tuple[str, bool, str]]:
+    """Each check of a probe's report of the AV2 path as (what, passed, detail); the last row is the speed"""
+    results = []
+
+    def check(what: str, passed: bool, detail) -> None:
+        results.append((what, bool(passed), str(detail)))
+
+    error = report.get('error')
+    check('opened and played', error is None and 'file-format' in report, error or 'no error')
+    check('demuxer yuv4mpegpipe', report.get('file-format') == 'yuv4mpegpipe', report.get('file-format'))
+    check('decoder rawvideo', report.get('current-tracks/video/codec') == 'rawvideo',
+          report.get('current-tracks/video/codec'))
+    formats = ('yuv420p',) if depth == 8 else ('yuv420p10', 'yuv420p10le')
+    check(f'pixel format {formats[0]}', report.get('video-params/pixelformat') in formats,
+          report.get('video-params/pixelformat'))
+    size = f"{report.get('video-params/w')}x{report.get('video-params/h')}"
+    check(f'size {width}x{height}', size == f'{width}x{height}', size)
+    check(f'{fps:g} frames per second', near(report.get('container-fps'), fps, 0.01), report.get('container-fps'))
+    check(f'duration {frames / fps:g} s', near(report.get('duration'), frames / fps, 0.5 / fps), report.get('duration'))
+    picture = report.get('firstFrame')
+    check('a first frame', near(report.get('firstTime'), 0, 0.5 / fps) and isinstance(picture, dict),
+          f"time {report.get('firstTime')}, after {report.get('openSeconds')} s")
+    for name, frame in (('forward', forward), ('back', back)):
+        time, shown = report.get(f'{name}Time'), report.get(f'{name}Frame')
+        check(f'exact seek {name}: frame {frame}', near(time, frame / fps, 0.5 / fps) and isinstance(shown, dict),
+              f'time {time} for {frame / fps:g}')
+    drops = (report.get('frame-drop-count'), report.get('decoder-frame-drop-count'))
+    check('played to the last frame, none dropped',
+          near(report.get('endTime'), (frames - 1) / fps, 0.5 / fps) and drops == ('0', '0'),
+          f"time {report.get('endTime')} for {(frames - 1) / fps:g}, dropped {drops[0]} and {drops[1]} (decoder)")
+    start, seconds, end = report.get('playFrom'), report.get('playSeconds'), report.get('endTime')
+    speed = None
+    if all(isinstance(value, (int, float)) for value in (start, seconds, end)) and seconds > 0:
+        speed = ((end - start) * fps + 1) / seconds
+    check('frames a second of the untimed playback', speed is not None,
+          f'{speed:.1f} for {fps:g} needed' if speed is not None else 'not measured')
+    return results
+
+
+def companion(args) -> int:
+    sys.path.insert(0, str(AV2_SCRIPTS))
+    import av2_serve_check as serve_check  # noqa: E402
+
+    program = pathlib.Path(args.program).resolve()
+    with tempfile.TemporaryDirectory() as temp:
+        work = pathlib.Path(args.work) if args.work else pathlib.Path(temp)
+        work.mkdir(parents=True, exist_ok=True)
+        probes, origin = build_probes(args, work)
+        if not probes:
+            print('no architecture of the library runs here')
+            return 1
+        rows, speeds, failed = [], [], False
+        for given in args.stream:
+            path_text, _, times_text = given.rpartition(':') if given.rpartition(':')[2].isdigit() else (given, '', '')
+            path, times = pathlib.Path(path_text), int(times_text or 1)
+            stream = serve_check.Stream(path)
+            code, info = serve_check.probe(program, path)
+            if code != 0 or not info.get('playable'):
+                rows.append((path.name, 'the probe of the companion', False, f'exit {code}, {info}'))
+                failed = True
+                continue
+            served = serve_check.Repeated(stream, times) if times > 1 else stream
+            picture = info['picture']
+            width, height, depth = picture['width'], picture['height'], picture['bits']
+            rate, scale = stream.fps
+            fps = rate / scale
+            frames = len(served.units)
+            frame_bytes = width * height * 3 // 2 * (1 if depth == 8 else 2)
+            forward = min(frames - 1, round(frames * COMPANION_FORWARD))
+            back = round(frames * COMPANION_BACK)
+            options = {**APP_AV2_OPTIONS, 'demuxer-max-bytes': str(av2_cache_bytes(frame_bytes, fps))}
+            for arch, command in probes:
+                where = f'{arch}, {path.name} x{times}, {width}x{height} {depth} bit'
+                runner = serve_check.Companion(program, served, info)
+                try:
+                    probe = command + [runner.url, f'{forward / fps:.6f}', f'{back / fps:.6f}', 'yuv4mpegpipe',
+                                       *(f'{key}={value}' for key, value in options.items())]
+                    try:
+                        done = _run(probe, timeout=PROBE_TIMEOUT)
+                        report = json.loads(done.stdout)
+                    except subprocess.TimeoutExpired:
+                        report = {'error': f'no answer from the probe within {PROBE_TIMEOUT} s'}
+                    except ValueError:
+                        report = {'error': f'no report (exit {done.returncode}): {done.stderr.strip()[-400:]}'}
+                    requests = [text for text in runner.texts() if text.startswith('request ')]
+                    stat = runner.last_stat()
+                finally:
+                    exit_code, gone = runner.close()
+                results = evaluate_companion(report, width, height, depth, frames, fps, forward, back)
+                measured = stat.get('fps', 'not measured yet')
+                results.append(('the companion served the player', bool(requests) and exit_code == 0,
+                                f'{len(requests)} requests on its HTTP/1.1 connection, its speed {measured} '
+                                f'frames a second, gone in {gone:.2f} s with code {exit_code}'))
+                for what, passed, detail in results:
+                    rows.append((where, what, passed, detail))
+                    failed |= not passed
+                    if what.startswith('frames a second') and passed:
+                        speeds.append(f'{where}: {detail}')
+                if report.get('log'):
+                    print(f'{where}: mpv said: {report["log"].strip()}')
+        print(f'### libmpv reads the AV2 decoder\n\nLibrary: {origin}; companion: {program.name}\n')
+        print('| Run | Check | Result | Detail |\n|---|---|---|---|')
+        for where, what, passed, detail in rows:
+            cell = detail.replace('|', '\\|').replace('\n', ' ')
+            print(f"| {where} | {what} | {'passed' if passed else 'FAILED'} | {cell} |")
+        verdict = 'FAILED' if failed else 'passed'
+        line = (f'AV2 path check (check_y4m.py companion): {verdict}, {len(rows)} checks; the serve of {program.name} '
+                f'read by this libmpv with the options of the app; ' + '; '.join(speeds))
+        print(f'\n{line}')
+        if args.summary:
+            pathlib.Path(args.summary).write_text(line + '\n', encoding='utf-8')
+        return 1 if failed else 0
 
 
 class _Server(http.server.ThreadingHTTPServer):
@@ -366,6 +510,23 @@ def main(argv: list[str] | None = None) -> int:
     serve_parser = commands.add_parser('serve', help='serves the fixtures over HTTP')
     serve_parser.add_argument('--seconds', type=int, default=10)
     serve_parser.add_argument('--port-file', required=True)
+    companion_parser = commands.add_parser('companion', help='the serve of the AV2 decoder read by this libmpv')
+    companion_source = companion_parser.add_mutually_exclusive_group(required=True)
+    companion_source.add_argument('--zips', nargs='+')
+    companion_source.add_argument('--frameworks')
+    companion_source.add_argument('--system', action='store_true')
+    companion_parser.add_argument('--headers')
+    companion_parser.add_argument('--search-headers', nargs='+')
+    companion_parser.add_argument('--program', required=True)
+    companion_parser.add_argument('--stream', nargs='+', required=True)
+    companion_parser.add_argument('--summary')
+    companion_parser.add_argument('--work')
+    judge_parser = commands.add_parser('evaluate-companion', help="judges a probe's report of the AV2 path")
+    judge_parser.add_argument('report')
+    for name in ('width', 'height', 'frames', 'forward', 'back'):
+        judge_parser.add_argument(f'--{name}', type=int, required=True)
+    judge_parser.add_argument('--depth', type=int, choices=(8, 10), required=True)
+    judge_parser.add_argument('--fps', type=float, required=True)
     evaluate_parser = commands.add_parser('evaluate', help="judges a probe's report")
     evaluate_parser.add_argument('report')
     evaluate_parser.add_argument('--depth', type=int, choices=(8, 10), required=True)
@@ -375,6 +536,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == 'run':
         return run(args)
+    if args.command == 'companion':
+        return companion(args)
+    if args.command == 'evaluate-companion':
+        report = json.loads(pathlib.Path(args.report).read_text(encoding='utf-8'))
+        results = evaluate_companion(report, args.width, args.height, args.depth, args.frames, args.fps, args.forward,
+                                     args.back)
+        for what, passed, detail in results:
+            print(f"{'passed' if passed else 'FAILED'}: {what} ({detail})")
+        return 0 if all(passed for _, passed, _ in results) else 1
     if args.command == 'serve':
         return serve(args.seconds, args.port_file)
     if args.command == 'fixture':

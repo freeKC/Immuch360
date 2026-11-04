@@ -18,8 +18,10 @@ name: Immuch360 Desktop
 #                  installed app playing a video there
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
 #                  Launch Services, libmpv and its notices checked in the app, the libmpv of the app reading a y4m as
-#                  the AV2 decoder serves it (check_y4m.py), and a self check of the app on the runner (a folder and a
-#                  video on the command line, the keychain, five seconds of libmpv, the y4m over HTTP)
+#                  the AV2 decoder serves it (check_y4m.py), and when the av2 jobs run the serve of the av2-macos
+#                  archive itself, on a fixture and a 1080p clip, with the options of the app (check_y4m.py companion,
+#                  after av2-macos), and a self check of the app on the runner (a folder and a video on the command
+#                  line, the keychain, five seconds of libmpv, the y4m over HTTP)
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
 #                  fake sd-cli and the probes of a generation and of a panorama as the artifact
 #                  Immuch360-AI-tools-windows-x64, the release build, the ZIP and the installer (Inno Setup) for the
@@ -1039,8 +1041,13 @@ jobs:
   macos:
     name: macOS build, ZIP and DMG
     runs-on: macos-15
-    needs: codegen
-    if: github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')
+    # After the AV2 decoder for macOS when the av2 jobs run (its archive is read by the libmpv of the app below);
+    # without them av2-macos is skipped and this job runs as before
+    needs: [codegen, av2-macos]
+    if: >-
+      ${{ !cancelled() && needs.codegen.result == 'success'
+      && (needs.av2-macos.result == 'success' || needs.av2-macos.result == 'skipped')
+      && (github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')) }}
     timeout-minutes: 60
     env:
       # One Xcode, named here rather than the newest the image carries: the images change every week and may add a
@@ -1186,6 +1193,36 @@ jobs:
           app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
           python3 .github/desktop/libmpv-macos/check_y4m.py run --frameworks "$app/Contents/Frameworks" \
             --search-headers mobile/build/macos "$HOME/Library/Developer/Xcode/DerivedData" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # The AV2 path itself (review of lot AD4, m8): the serve of the av2-macos archive of this run, fed by the app's
+      # side in Python, read over its HTTP/1.1 connection by the frameworks of the app with the options the app opens
+      # an AV2 video with (the y4m demuxer forced, the cache of a streamed video), on each architecture this runner
+      # runs: the 8 and 10 bit fixtures and the 1080p clip of .github/desktop/av2/clips, seeks forward and back, the
+      # end, and the frames a second of the playback in the summary. When the av2 jobs run only
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: needs.av2-macos.result == 'success'
+        with:
+          pattern: Immuch360-av2-decoder-*-macos-universal.zip
+          merge-multiple: true
+          skip-decompress: true
+          path: av2-decoder
+
+      - name: libmpv of the app reads the AV2 decoder
+        if: needs.av2-macos.result == 'success'
+        run: |
+          set -o pipefail
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          archives=(av2-decoder/Immuch360-av2-decoder-*-macos-universal.zip)
+          [ ${#archives[@]} = 1 ] && [ -f "${archives[0]}" ] || { echo "::error::not one av2-macos archive"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/av2-decoder"
+          unzip -q "${archives[0]}" -d "$RUNNER_TEMP/av2-decoder"
+          chmod +x "$RUNNER_TEMP/av2-decoder/immuch360-av2"
+          python3 .github/desktop/libmpv-macos/check_y4m.py companion --frameworks "$app/Contents/Frameworks" \
+            --search-headers mobile/build/macos "$HOME/Library/Developer/Xcode/DerivedData" \
+            --program "$RUNNER_TEMP/av2-decoder/immuch360-av2" \
+            --stream mobile/test/fixtures/av2/av2-256x144-8bit.ivf:20 mobile/test/fixtures/av2/av2-256x144-10bit.ivf:20 \
+            .github/desktop/av2/clips/lighthouse-1080p30-8bit-60f.ivf:5 \
             | tee -a "$GITHUB_STEP_SUMMARY"
 
       # The Rust JPEG codec of the AI features, a framework of both slices made from what the hook of

@@ -62,8 +62,132 @@ Map<String, Object?> _goodReport(int depth) => {
   'log': '',
 };
 
+/// The report of y4m_probe.c for the serve of an AV2 companion: the 1080p clip of the CI played five times (300
+/// pictures at 30 a second), read with the options of the app, seeks to pictures 210 and 60
+Map<String, Object?> _companionReport() => {
+  'source': 'http://127.0.0.1:50123/TOKEN/video.y4m',
+  'forcedFormat': 'yuv4mpegpipe',
+  'file-format': 'yuv4mpegpipe',
+  'current-tracks/video/codec': 'rawvideo',
+  'video-params/pixelformat': 'yuv420p',
+  'video-params/w': '1920',
+  'video-params/h': '1080',
+  'container-fps': 30.0,
+  'duration': 10.0,
+  'openSeconds': 0.065,
+  'firstTime': 0.0,
+  'firstFrame': {
+    'w': 1920,
+    'h': 1080,
+    'bgr': [120.0, 96.0, 80.0],
+  },
+  'forwardTime': 7.0,
+  'forwardFrame': {
+    'w': 1920,
+    'h': 1080,
+    'bgr': [100.0, 90.0, 70.0],
+  },
+  'backTime': 2.0,
+  'backFrame': {
+    'w': 1920,
+    'h': 1080,
+    'bgr': [110.0, 95.0, 75.0],
+  },
+  'playFrom': 2.0,
+  'playSeconds': 1.55,
+  'endTime': 9.966667,
+  'frame-drop-count': '0',
+  'decoder-frame-drop-count': '0',
+  'error': null,
+  'log': '',
+};
+
 void main() {
   group('y4m check of the macOS libmpv', _tests, skip: skipCiScripts);
+  group('the AV2 path through the libmpv of the app (review of lot AD4, m8)', _companionTests, skip: skipCiScripts);
+}
+
+void _companionTests() {
+  late Directory folder;
+
+  setUp(() => folder = Directory.systemTemp.createTempSync('libmpv_av2_path_check'));
+  tearDown(() => folder.deleteSync(recursive: true));
+
+  ScriptRun evaluate(Map<String, Object?> report) {
+    final file = File(p.join(folder.path, 'report.json'))..writeAsStringSync(jsonEncode(report));
+    return runCiScript(_script, [
+      'evaluate-companion',
+      file.path,
+      '--width',
+      '1920',
+      '--height',
+      '1080',
+      '--depth',
+      '8',
+      '--frames',
+      '300',
+      '--fps',
+      '30',
+      '--forward',
+      '210',
+      '--back',
+      '60',
+    ]);
+  }
+
+  test('a libmpv that reads the 1080p stream of the companion with the options of the app passes, with its speed', () {
+    final run = evaluate(_companionReport());
+    expect(run.exitCode, 0, reason: '$run');
+    expect(run.output, isNot(contains('FAILED')));
+    // 240 pictures from 2.0 s to its last one, at 9.97 s, in 1.55 s
+    expect(run.output, contains('passed: frames a second of the untimed playback (154.8 for 30 needed)'));
+  });
+
+  test('a seek that lands on another picture, a stop before the end or a dropped picture fails', () {
+    final seek = evaluate({..._companionReport(), 'backTime': 1.9});
+    expect(seek.exitCode, 1);
+    expect(seek.output, contains('FAILED: exact seek back: frame 60'));
+    final stopped = evaluate({..._companionReport(), 'endTime': 5.0});
+    expect(stopped.output, contains('FAILED: played to the last frame, none dropped'));
+    final dropped = evaluate({..._companionReport(), 'decoder-frame-drop-count': '1'});
+    expect(dropped.exitCode, 1);
+    expect(dropped.output, contains('FAILED: played to the last frame, none dropped'));
+  });
+
+  test('a libmpv without the y4m demuxer, or a stream of another size, fails', () {
+    final missing = evaluate({
+      'source': 'http://127.0.0.1:50123/TOKEN/video.y4m',
+      'error': 'unrecognized file format',
+      'log': '[error] ffmpeg/demuxer: Requested format yuv4mpegpipe not found',
+    });
+    expect(missing.exitCode, 1);
+    expect(missing.output, contains('FAILED: demuxer yuv4mpegpipe'));
+    expect(missing.output, contains('FAILED: frames a second of the untimed playback (not measured)'));
+    final smaller = evaluate({..._companionReport(), 'video-params/w': '1280', 'video-params/h': '720'});
+    expect(smaller.output, contains('FAILED: size 1920x1080 (1280x720)'));
+  });
+
+  test('the macOS job reads the serve of the av2-macos archive on a fixture and the 1080p clip of the CI', () {
+    final workflow = File(
+      p.join(repositoryRoot, '.github', 'workflows', 'immuch360-desktop.yml'),
+    ).readAsStringSync().replaceAll('\r\n', '\n');
+    final start = workflow.indexOf('\n  macos:\n');
+    final end = workflow.indexOf(RegExp(r'\n  [a-z0-9-]+:\n'), start + 1);
+    final job = workflow.substring(start, end);
+    expect(job, contains('needs: [codegen, av2-macos]'));
+    expect(job, contains('check_y4m.py companion'));
+    expect(job, contains('mobile/test/fixtures/av2/av2-256x144-10bit.ivf'));
+    expect(job, contains('.github/desktop/av2/clips/lighthouse-1080p30-8bit-60f.ivf:5'));
+    expect(File(p.join(ciScriptsDir, 'av2', 'clips', 'lighthouse-1080p30-8bit-60f.ivf')).lengthSync(), 376066);
+  });
+
+  test('the probe takes the options of the app after its own and times the first frame and the playback', () {
+    final source = File(p.join(ciScriptsDir, 'libmpv-macos', 'y4m_probe.c')).readAsStringSync();
+    expect(source, contains('[FORMAT [OPTION=VALUE...]]'));
+    for (final key in ['"openSeconds"', '"playSeconds"', '"playFrom"']) {
+      expect(source, contains(key));
+    }
+  });
 }
 
 void _tests() {
