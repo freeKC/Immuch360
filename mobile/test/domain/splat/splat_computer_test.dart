@@ -212,6 +212,13 @@ void main() {
       'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 (0x00001F91) Direct3D11 vs_5_0 ps_5_0, D3D11)',
       'NVIDIA GeForce RTX 3060/PCIe/SSE2',
       'AMD Radeon Pro 5500M OpenGL Engine',
+      // The cards of the review of 4 November 2026, beside the chips of the processors named like them
+      'ANGLE (AMD, Radeon RX Vega (0x0000687F) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'AMD Radeon RX Vega 56',
+      'AMD Radeon HD 7970',
+      'ANGLE (Intel, Intel(R) Arc(TM) B580 Graphics (0x0000E20B) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'Intel(R) Arc(TM) A370M Graphics',
+      'Intel(R) Arc(TM) Pro B50 Graphics',
     ];
     const integrated = [
       'ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001638) Direct3D11 vs_5_0 ps_5_0, D3D11)',
@@ -223,6 +230,14 @@ void main() {
       'ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)',
       'Apple M2',
       'Adreno (TM) 740',
+      // Review of 4 November 2026: Ryzen 2000 to 5000, Panther Lake, the A-series of AMD
+      'ANGLE (AMD, AMD Radeon(TM) RX Vega 10 Graphics (0x000015D8) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'AMD Radeon RX Vega 11 Graphics',
+      'ANGLE (Intel, Intel(R) Arc(TM) B390 GPU (0x0000B080) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      'Intel(R) Arc(TM) B370 GPU',
+      'Intel(R) Arc(TM) 140V GPU (16GB)',
+      'AMD Radeon HD 8610G',
+      'AMD Radeon HD 7660D',
     ];
     for (final name in dedicated) {
       expect(splatGpuKindOfRenderer(name), SplatGpuKind.dedicated, reason: name);

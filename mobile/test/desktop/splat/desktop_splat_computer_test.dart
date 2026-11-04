@@ -49,6 +49,54 @@ void main() {
     expect(splatGpuOf(system: SplatDesktopSystem.windows, renderer: rtxRenderer).memory, isNull);
   });
 
+  test('the card the renderer names, by its device id or its name, says its kind and memory; no card named, the list '
+      'decides (review of 4 November 2026)', () {
+    // The RTX named by its device id only
+    expect(
+      splatGpuOf(
+        system: SplatDesktopSystem.windows,
+        cards: FakeGpuReports.twoCards,
+        renderer: 'ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 (0x000028A0) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+      ),
+      rtx,
+    );
+    // A name read as a dedicated card that the list says shares the memory: the list wins
+    const apu = GpuAdapter(
+      name: 'AMD Radeon RX 7900M',
+      kind: GpuKind.integrated,
+      localMemory: 2 << 30,
+      deviceId: 0x744c,
+    );
+    expect(
+      splatGpuOf(
+        system: SplatDesktopSystem.windows,
+        cards: const GpuReport(adapters: [apu]),
+        renderer: 'ANGLE (AMD, AMD Radeon RX 7900M (0x0000744C) Direct3D11 vs_5_0 ps_5_0, D3D11)',
+        highPerformance: true,
+      ).kind,
+      SplatGpuKind.integrated,
+    );
+    // A renderer read as dedicated that names no card of the list: never the memory of another card
+    const unlisted = 'ANGLE (AMD, AMD Radeon RX 7600 (0x00007480) Direct3D11 vs_5_0 ps_5_0, D3D11)';
+    expect(
+      splatGpuOf(system: SplatDesktopSystem.windows, cards: FakeGpuReports.integratedOnly, renderer: unlisted).kind,
+      SplatGpuKind.integrated,
+    );
+    expect(
+      splatGpuOf(system: SplatDesktopSystem.windows, cards: FakeGpuReports.twoCards, renderer: unlisted).kind,
+      SplatGpuKind.integrated,
+    );
+    expect(
+      splatGpuOf(
+        system: SplatDesktopSystem.windows,
+        cards: FakeGpuReports.twoCards,
+        renderer: unlisted,
+        highPerformance: true,
+      ),
+      rtx,
+    );
+  });
+
   test('a computer with one dedicated card draws with it on every system; one with none keeps the integrated chip', () {
     for (final system in [SplatDesktopSystem.windows, SplatDesktopSystem.linux]) {
       expect(

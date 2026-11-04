@@ -192,15 +192,22 @@ SplatGpuKind splatGpuKindOfRenderer(String? renderer) {
     return text.contains('tegra') ? SplatGpuKind.integrated : SplatGpuKind.dedicated;
   }
   if (text.contains('radeon') || text.contains('amd')) {
-    // Radeon RX, Radeon Pro and FirePro have their own memory; "AMD Radeon(TM) Graphics", "Radeon 780M Graphics" and
-    // "Vega 8 Graphics" are the chips of the processors
+    // Radeon RX, Radeon Pro and FirePro have their own memory; "AMD Radeon(TM) Graphics", "Radeon 780M Graphics",
+    // "Vega 8 Graphics", "RX Vega 10 Graphics" and "RX Vega 11 Graphics" (Ryzen 2000 to 5000) and the Radeon HD of the
+    // A-series ("HD 8610G", "HD 7660D") are the chips of the processors (review of 4 November 2026)
+    if (RegExp(r'rx vega \d+ graphics|radeon hd \d{4}[dg]\b').hasMatch(text)) {
+      return SplatGpuKind.integrated;
+    }
     return RegExp(r'radeon\s*(\(tm\)\s*)?(rx|pro)\b|firepro|radeon r9|radeon hd').hasMatch(text)
         ? SplatGpuKind.dedicated
         : SplatGpuKind.integrated;
   }
   if (text.contains('intel')) {
-    // The Arc cards have a model number (A380, A770, B580); "Intel(R) Arc(TM) Graphics" is the chip of the processor
-    return RegExp(r'arc\S*\s*(\(tm\)\s*)?[ab]\d{3}').hasMatch(text) ? SplatGpuKind.dedicated : SplatGpuKind.integrated;
+    // The Arc cards have a model number (A380, A370M, A770, B580, Pro B50); "Intel(R) Arc(TM) Graphics", "Arc 140V"
+    // and the Arc B370 and B390 of Panther Lake are the chips of the processors
+    return RegExp(r'arc\S*\s*(\(tm\)\s*)?(pro\s*)?(a\d{2,3}m?|b(?!3\d\d)\d{2,3})\b').hasMatch(text)
+        ? SplatGpuKind.dedicated
+        : SplatGpuKind.integrated;
   }
   if (RegExp(r'apple m\d|adreno|mali|powervr|qualcomm|immortalis|xclipse').hasMatch(text)) {
     return SplatGpuKind.integrated;
