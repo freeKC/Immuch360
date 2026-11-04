@@ -5,7 +5,9 @@
 // Two steps for the files of drones (see NetworkUploadOptions): a sphere without GPano tags may go with an XMP sidecar
 // that tells the server it is 360° (see gpanoSidecarXmp), and a video with an .SRT of the same name beside it gets the
 // place of its flight data once the server has read it, when it found none in the video (see VideoLocationService).
-// The files the server refuses (see NetworkEntry.isRefusedByServer) are skipped with their reason.
+// The files the server refuses (see NetworkEntry.isRefusedByServer) are skipped with their reason. The Gaussian splats
+// (.spz, .ply), which the server takes no more, go as splat photos through Save to Immich when it is given
+// (NetworkSplatSaver, plan of 3 November 2026, section 6.2), one at a time after the photos and videos.
 
 import 'dart:async';
 
@@ -14,6 +16,7 @@ import 'package:immich_mobile/domain/services/dji_srt.dart';
 import 'package:immich_mobile/domain/services/gpano_sidecar.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/splat_photo/splat_save_job.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/domain/services/video_location.service.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
@@ -128,14 +131,32 @@ typedef NetworkMediaInfoReader = Future<NetworkMediaInfo?> Function(NetworkFileS
 typedef VideoPlacer =
     Future<VideoPlaceOutcome> Function(String remoteId, double latitude, double longitude, {Future<void>? stop});
 
+/// Saves the splat [entry] of [fileSystem] to the server as a splat photo, its poster drawn: the job's last status;
+/// [onProgress] the part sent, from 0 to 1
+typedef NetworkSplatSaver =
+    Future<SplatSaveStatus> Function(
+      NetworkFileSystem fileSystem,
+      NetworkEntry entry, {
+      required Completer<void> cancel,
+      void Function(double share)? onProgress,
+    });
+
 class NetworkUploadService {
-  NetworkUploadService(this._uploads, this._records, this._isOnServer, {this._mediaInfo, this._placeVideo});
+  NetworkUploadService(
+    this._uploads,
+    this._records,
+    this._isOnServer, {
+    this._mediaInfo,
+    this._placeVideo,
+    this._saveSplat,
+  });
 
   final ForegroundUploadService _uploads;
   final UploadRecordStore _records;
   final RemoteAssetCheck _isOnServer;
   final NetworkMediaInfoReader? _mediaInfo;
   final VideoPlacer? _placeVideo;
+  final NetworkSplatSaver? _saveSplat;
 
   /// Sends [entries], files of [fileSystem], to the server, in their order, until [cancelToken] completes. The files
   /// recorded as sent and unchanged since, whose asset the server confirms it still has, are not read at all, and count
@@ -164,6 +185,7 @@ class NetworkUploadService {
 
     final byId = <String, NetworkEntry>{};
     final items = <NetworkUploadItem>[];
+    final splats = <NetworkEntry>[];
     for (final entry in entries) {
       // The server is asked about each file recorded: a cancel meanwhile is not kept waiting for all of them
       if (cancelToken.isCompleted) {
@@ -174,6 +196,11 @@ class NetworkUploadService {
         continue;
       }
       byId[id] = entry;
+      if (entry.isSplatCandidate && _saveSplat != null) {
+        // Saved as splat photos once the photos and videos are sent; the job looks for one already there
+        splats.add(entry);
+        continue;
+      }
       if (entry.isRefusedByServer) {
         refused.add(entry.name);
         listener.onFinished?.call(id, NetworkUploadOutcome.refused);
@@ -284,6 +311,46 @@ class NetworkUploadService {
       ),
     );
     await Future.wait(pending);
+
+    // The splats, one at a time, each its own save
+    final saveSplat = _saveSplat;
+    for (final entry in splats) {
+      if (cancelToken.isCompleted || saveSplat == null) {
+        break;
+      }
+      final id = networkUploadId(entry);
+      final SplatSaveStatus status;
+      try {
+        status = await saveSplat(
+          fileSystem,
+          entry,
+          cancel: cancelToken,
+          onProgress: (share) => listener.onProgress?.call(id, share),
+        );
+      } catch (error) {
+        failed++;
+        lastError = '$error';
+        listener.onFinished?.call(id, NetworkUploadOutcome.failed);
+        continue;
+      }
+      switch (status.state) {
+        case SplatSaveState.done:
+          sent++;
+          listener.onFinished?.call(id, NetworkUploadOutcome.sent);
+        case SplatSaveState.duplicate || SplatSaveState.alreadyThere:
+          duplicates++;
+          listener.onFinished?.call(id, NetworkUploadOutcome.duplicate);
+        case SplatSaveState.inTrash:
+          inTrash++;
+          listener.onFinished?.call(id, NetworkUploadOutcome.inTrash);
+        case SplatSaveState.cancelled:
+          break;
+        default:
+          failed++;
+          lastError = status.detail ?? status.problem?.name;
+          listener.onFinished?.call(id, NetworkUploadOutcome.failed);
+      }
+    }
 
     return NetworkUploadSummary(
       sent: sent,

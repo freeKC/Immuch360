@@ -34,12 +34,15 @@ bool splatIsListed(AsyncValue<SplatProbe> probe) {
   return !(value is SplatRefused && value.problem == SplatFileProblem.notASplat);
 }
 
-/// The tile of the splat [entry], opened with [onTap]
+/// The tile of the splat [entry], opened with [onTap]; picked with [onLongPress], [isSelected] while picking files
+/// (null otherwise): Upload to Immich sends it as a splat photo
 class SplatTile extends ConsumerWidget {
-  const SplatTile({super.key, required this.entry, required this.onTap});
+  const SplatTile({super.key, required this.entry, required this.onTap, this.onLongPress, this.isSelected});
 
   final NetworkEntry entry;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+  final bool? isSelected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,6 +58,7 @@ class SplatTile extends ConsumerWidget {
       excludeSemantics: true,
       child: RemoteFocusable(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(4)),
           child: Stack(
@@ -105,6 +109,25 @@ class SplatTile extends ConsumerWidget {
                   ),
                 ),
               ),
+              if (isSelected case final selected?)
+                Positioned.fill(
+                  child: ColoredBox(
+                    color: selected ? context.colorScheme.primary.withValues(alpha: 0.3) : Colors.transparent,
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
+                          selected ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                          key: Key(selected ? 'splat_tile_selected' : 'splat_tile_unselected'),
+                          color: selected ? context.colorScheme.primary : Colors.white,
+                          size: 22,
+                          shadows: shadows,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -116,10 +139,16 @@ class SplatTile extends ConsumerWidget {
 /// The splats of a folder, after its photos and videos: those whose head says they are splats, in the order of
 /// [entries], each opened with [onOpen]
 class SplatFileGrid extends ConsumerWidget {
-  const SplatFileGrid({super.key, required this.entries, required this.onOpen});
+  const SplatFileGrid({super.key, required this.entries, required this.onOpen, this.onSelect, this.isSelected});
 
   final List<NetworkEntry> entries;
   final void Function(NetworkEntry entry) onOpen;
+
+  /// A long press: picks the splat for Upload to Immich; null where nothing is picked (a TV)
+  final void Function(NetworkEntry entry)? onSelect;
+
+  /// While picking files: whether [entry] is picked; null otherwise
+  final bool Function(NetworkEntry entry)? isSelected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -141,7 +170,13 @@ class SplatFileGrid extends ConsumerWidget {
         itemCount: listed.length,
         itemBuilder: (context, index) {
           final entry = listed[index];
-          return SplatTile(key: ValueKey('splat:${entry.path}'), entry: entry, onTap: () => onOpen(entry));
+          return SplatTile(
+            key: ValueKey('splat:${entry.path}'),
+            entry: entry,
+            onTap: () => onOpen(entry),
+            onLongPress: onSelect == null ? null : () => onSelect!(entry),
+            isSelected: isSelected?.call(entry),
+          );
         },
       ),
     );

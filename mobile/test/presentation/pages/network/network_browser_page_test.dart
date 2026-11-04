@@ -1122,15 +1122,29 @@ void main() {
       expect(find.byType(NetworkMediaTile), findsNWidgets(3));
     });
 
-    testWidgets('a splat is never picked to be sent: Select all takes the photos and videos only', (tester) async {
+    testWidgets('Select all takes the splats too, sent as splat photos; a .ply mesh is not taken', (tester) async {
       await pumpBrowser(tester, overrides: onQuest());
 
       await tester.tap(find.byTooltip('Select'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Select every photo and video of this folder'));
+      await tester.tap(find.byTooltip('Select every photo, video and splat of this folder'));
       await tester.pumpAndSettle();
 
-      expect(find.text('3 selected'), findsOneWidget);
+      // The three photos and videos, cash.spz and axes.ply; not cube.ply
+      expect(find.text('5 selected'), findsOneWidget);
+      expect(find.byKey(const Key('splat_tile_selected')), findsNWidgets(2));
+    });
+
+    testWidgets('a long press picks a splat, a tap then leaves it out', (tester) async {
+      await pumpBrowser(tester, overrides: onQuest());
+
+      await tester.longPress(splatTileOf('cash.spz'));
+      await tester.pumpAndSettle();
+      expect(find.text('1 selected'), findsOneWidget);
+      expect(find.byKey(const Key('splat_tile_selected')), findsOneWidget);
+      await tester.tap(splatTileOf('cash.spz'));
+      await tester.pumpAndSettle();
+      expect(find.text('0 selected'), findsOneWidget);
     });
   });
 }

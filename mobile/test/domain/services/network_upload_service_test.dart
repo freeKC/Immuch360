@@ -9,6 +9,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/network_upload.service.dart';
+import 'package:immich_mobile/domain/services/splat_photo/splat_save_job.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/domain/services/video_location.service.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
@@ -167,6 +168,73 @@ void main() {
     expect(outcomes, {'nas:/a.jpg': NetworkUploadOutcome.sent, 'nas:/b.jpg': NetworkUploadOutcome.duplicate});
     expect((await records.find(file('/a.jpg')))?.remoteId, 'new-a.jpg');
     expect((await records.find(file('/b.jpg')))?.remoteId, 'old-b', reason: 'the server has it too');
+  });
+
+  test('the splats go after the photos and videos, one at a time, as splat photos through the save', () async {
+    final saved = <String>[];
+    final states = {
+      'room.spz': SplatSaveState.done,
+      'old.spz': SplatSaveState.alreadyThere,
+      'gone.ply': SplatSaveState.inTrash,
+      'cut.ply': SplatSaveState.failed,
+    };
+    final service = NetworkUploadService(
+      uploads,
+      records,
+      (remoteId) async => RemoteAssetPresence.inLibrary,
+      saveSplat: (fileSystem, entry, {required cancel, onProgress}) async {
+        saved.add(entry.name);
+        onProgress?.call(0.5);
+        final state = states[entry.name]!;
+        return SplatSaveStatus(state, detail: state == SplatSaveState.failed ? 'the scene is cut' : null);
+      },
+    );
+    final outcomes = <String, NetworkUploadOutcome>{};
+    final progress = <String, double>{};
+
+    final summary = await service.upload(
+      fileSystem,
+      [file('/room.spz'), file('/a.jpg'), file('/old.spz'), file('/gone.ply'), file('/cut.ply')],
+      cancelToken: Completer<void>(),
+      listener: NetworkUploadListener(
+        onProgress: (id, value) => progress[id] = value,
+        onFinished: (id, outcome) => outcomes[id] = outcome,
+      ),
+    );
+
+    expect(sent, [
+      ['/a.jpg'],
+    ], reason: 'no splat goes as a raw file');
+    expect(saved, ['room.spz', 'old.spz', 'gone.ply', 'cut.ply']);
+    expect(summary.sent, 2);
+    expect(summary.duplicates, 1);
+    expect(summary.inTrash, 1);
+    expect(summary.failed, 1);
+    expect(summary.lastError, 'the scene is cut');
+    expect(outcomes['nas:/room.spz'], NetworkUploadOutcome.sent);
+    expect(outcomes['nas:/old.spz'], NetworkUploadOutcome.duplicate);
+    expect(outcomes['nas:/gone.ply'], NetworkUploadOutcome.inTrash);
+    expect(outcomes['nas:/cut.ply'], NetworkUploadOutcome.failed);
+    expect(progress['nas:/room.spz'], 0.5);
+  });
+
+  test('a cancel stops before the next splat', () async {
+    final cancel = Completer<void>();
+    final saved = <String>[];
+    final service = NetworkUploadService(
+      uploads,
+      records,
+      (remoteId) async => RemoteAssetPresence.inLibrary,
+      saveSplat: (fileSystem, entry, {required cancel, onProgress}) async {
+        saved.add(entry.name);
+        cancel.complete();
+        return const SplatSaveStatus(SplatSaveState.cancelled);
+      },
+    );
+    final summary = await service.upload(fileSystem, [file('/one.spz'), file('/two.spz')], cancelToken: cancel);
+    expect(saved, ['one.spz']);
+    expect(summary.cancelled, isTrue);
+    expect(summary.failed, 0);
   });
 
   test('does not read again a file sent before, unchanged since, that the server still has', () async {

@@ -16,6 +16,7 @@ import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_save.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/repositories/asset_api.repository.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
@@ -79,6 +80,9 @@ final networkUploadServiceProvider = Provider<NetworkUploadService>(
         ref.read(networkMediaServiceProvider).detect(entry, networkFileReader(fileSystem, entry.path)),
     placeVideo: (remoteId, latitude, longitude, {stop}) =>
         ref.read(videoLocationServiceProvider).place(remoteId, latitude, longitude, stop: stop),
+    // The splats go as splat photos, their poster drawn (plan of 3 November 2026, section 6.2)
+    saveSplat: (fileSystem, entry, {required cancel, onProgress}) =>
+        saveSplatFromShare(ref, fileSystem, entry, cancel: cancel, onProgress: onProgress),
   ),
 );
 

@@ -13,6 +13,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_save_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -23,13 +24,17 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('SplatPage');
 
+/// The key of Save to Immich on the page
+const splatPageSaveKey = Key('splat_page_save');
+
 /// A Gaussian splat file of another tool (lot S5): of the share [sourceId] at [path] ([size] bytes when known), or a
 /// file of this device at [path] without a share (picked with Open a splat file). The page says what the head of the
 /// file says (its name, its size, its gaussians and format, the tool a comment of a PLY names) and offers "Explore the
 /// splat scene", which opens it in the immersive viewer of a Meta Quest 3 or 3S (under it, that the splats use an
 /// experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants), or in the splat viewer of a
-/// computer, a phone or a tablet, or greys it with its reason. A splat joins no previous and next, and is never sent to
-/// the Immich server, which takes no such file.
+/// computer, a phone or a tablet, or greys it with its reason. A splat joins no previous and next; the Immich server
+/// takes no such file, so "Save to Immich" sends it as a splat photo (plan of 3 November 2026, section 6.2): a sheet
+/// with its drawn poster, then the save.
 @RoutePage()
 class SplatPage extends ConsumerWidget {
   const SplatPage({super.key, this.sourceId, required this.path, this.size});
@@ -116,6 +121,13 @@ class SplatPage extends ConsumerWidget {
         size: size ?? _localSize(),
         probe: value,
         open: (request) => _open(context, ref, request, value),
+        save: () {
+          final size = this.size ?? _localSize();
+          if (size == null) {
+            return;
+          }
+          unawaited(showSplatSaveSheet(context, ref, SplatSaveScene(path: path, length: size, sourceId: sourceId)));
+        },
       );
     } else if (probe.hasError) {
       _log.warning('Could not read the splat $_name: ${probe.error}');
@@ -157,12 +169,21 @@ class SplatPage extends ConsumerWidget {
 }
 
 class _SplatDetails extends ConsumerWidget {
-  const _SplatDetails({required this.name, required this.size, required this.probe, required this.open});
+  const _SplatDetails({
+    required this.name,
+    required this.size,
+    required this.probe,
+    required this.open,
+    required this.save,
+  });
 
   final String name;
   final int? size;
   final SplatProbe probe;
   final Future<void> Function(GaussianSplatRequest request) open;
+
+  /// Save to Immich, as a splat photo
+  final void Function() save;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -205,6 +226,18 @@ class _SplatDetails extends ConsumerWidget {
         ],
         const SizedBox(height: 24),
         SplatButton(probe: probe, name: name, fileBytes: fileBytes, open: open),
+        // A splat this reads becomes a splat photo, the same on every device; a size is needed to copy it
+        if (head != null && size != null) ...[
+          const SizedBox(height: 12),
+          Center(
+            child: OutlinedButton.icon(
+              key: splatPageSaveKey,
+              onPressed: save,
+              icon: const Icon(Icons.cloud_upload_outlined),
+              label: Text(t.splat_save),
+            ),
+          ),
+        ],
         // The API of the splats is an experimental one of the Meta Spatial SDK (FreeKC's decision of 30 October 2026)
         if (!flat) ...[
           const SizedBox(height: 24),

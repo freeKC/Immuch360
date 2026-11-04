@@ -18,6 +18,7 @@ import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_save_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -253,6 +254,17 @@ Future<void> showSplatViewer(
     maxStdDev: phone ? splatPhoneMaxStdDev : splatComputerMaxStdDev,
     pixelRatioMax: phone ? splatPhonePixelRatioMax : splatComputerPixelRatioMax,
   );
+  // Save to Immich in the page; the scene of a splat photo is on the server already
+  final onServer =
+      source.sourceId == null && source.path.split(RegExp(r'[/\\]')).last.startsWith(SplatViewerCache.serverPrefix);
+  final saving = splatViewerSavingFor(
+    context,
+    ref,
+    source: source,
+    head: head,
+    fileBytes: fileBytes,
+    onServer: onServer,
+  );
   final progress = ValueNotifier<(SplatPrepareStep, double)?>(null);
   final cancel = SplatPrepareCancel();
   final navigator = Navigator.of(context, rootNavigator: true);
@@ -294,8 +306,10 @@ Future<void> showSplatViewer(
       cancel: cancel,
       onOpening: closeDialog,
       watchFrames: watchFrames,
+      saving: saving,
     );
   } finally {
+    saving?.viewerClosed();
     closeDialog();
     progress.dispose();
   }
