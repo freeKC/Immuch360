@@ -4,7 +4,7 @@
 // of the original, directly and through a proxy that drops Range. Never FreeKC's server: the URL must be one of ai1.
 // The assets and the album made are deleted at the end.
 //
-//   SPLAT_E2E_URL=http://192.168.4.134:2283 SPLAT_E2E_KEY=... SPLAT_E2E_PROXY=http://192.168.4.134:2285 \
+//   SPLAT_E2E_URL=http://<compat host>:2283 SPLAT_E2E_KEY=... SPLAT_E2E_PROXY=http://<compat host>:2285 \
 //   SPLAT_E2E_SCENE=room.spz SPLAT_E2E_OUT=result.json flutter test tool/splat_photo/splat_photo_e2e_test.dart
 //
 // SPLAT_E2E_CARRIER=path keeps a copy of the splat photo as the server holds it; SPLAT_E2E_KEEP=1 leaves the asset
