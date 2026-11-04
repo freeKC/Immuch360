@@ -465,7 +465,9 @@ class Companion:
             return [text for _, text in self.lines]
 
     def close(self, timeout: float = 5.0) -> tuple:
-        """Closes the standard input; the exit code and the seconds the program took to go"""
+        """Closes the standard input; the exit code and the seconds the program took to go. Its last lines are read
+        before this returns: the program may be gone while the thread that reads its output has not yet taken the line
+        it wrote last ("exit input-closed", seen missing once on a macOS runner)"""
         started = time.monotonic()
         self.pipe.close()
         try:
@@ -473,8 +475,11 @@ class Companion:
         except subprocess.TimeoutExpired:
             self.process.kill()
             self.process.wait()
+            self.reader.join(2)
             return None, timeout
-        return code, time.monotonic() - started
+        seconds = time.monotonic() - started
+        self.reader.join(2)
+        return code, seconds
 
     def kill(self):
         if self.process.poll() is None:
