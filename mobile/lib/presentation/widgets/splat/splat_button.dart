@@ -56,7 +56,7 @@ String splatRefusalText(Translations t, SplatGateVerdict verdict, String locale,
             : t.splat_too_large_device(count: splatCountText(verdict.gaussians ?? 0, locale)),
       SplatRefusal.beyondMemory => t.splat_too_large_computer(
         count: splatCountText(verdict.gaussians ?? 0, locale),
-        most: splatCountText(verdict.most ?? 0, locale),
+        most: splatCountText(splatAboutCount(verdict.most ?? 0), locale),
       ),
       SplatRefusal.v4AboveCap => t.splat_v4_above_cap(count: splatCountText(verdict.gaussians ?? 0, locale)),
       SplatRefusal.degree4 => t.splat_degree4,

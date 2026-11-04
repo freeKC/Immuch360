@@ -654,7 +654,8 @@ void main() {
 
           expect(tester.widget<FilledButton>(find.byKey(exploreSplatButtonKey)).onPressed, isNull);
           expect(
-            find.text('Too large for this computer (5,000,000 gaussians): its memory holds about 2,016,372'),
+            // Rounded down to three figures: "about" with seven was rough (review of 4 November 2026)
+            find.text('Too large for this computer (5,000,000 gaussians): its memory holds about 2,010,000'),
             findsOneWidget,
           );
           debugDefaultTargetPlatformOverride = null;

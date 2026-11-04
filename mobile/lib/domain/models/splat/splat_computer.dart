@@ -2,7 +2,7 @@
 // kept only its 1,000,000 strongest): what draws the page, how much a splat takes, and how many a computer shows whole.
 //
 // Measured on 3 November 2026 (store/m2/splat-viewer-2026-11-02/SVC-report.md; fixture
-// test/fixtures/splat_viewer/computer_measures.json): scenes of 1 to 8 million gaussians made of offset copies of the
+// test/fixtures/splat_viewer/computer_measures.json): scenes of 1 to 12 million gaussians made of offset copies of the
 // Brush room (637,401, SH degree 3) and of the InnerScene cactus (452,451), SPZ version 2, in the app's page in Chrome
 // 156 at 2482 x 1170 on a laptop with 16 GB, an RTX 4060 Laptop (8 GB) and an Intel UHD:
 //
@@ -173,6 +173,16 @@ int splatComputerMostGaussians(SplatComputer computer, {double fileBytesPerGauss
 /// How a whole splat stopped the viewer on a computer: its web view's process died for want of memory, or its graphics
 /// stopped (the page stalled, or lost its WebGL context)
 enum SplatDeath { memory, graphics }
+
+/// [most], the most gaussians a computer holds, as the refusal says it after "about": rounded down to three figures
+/// (10,336,420 is said 10,300,000; review of 4 November 2026)
+int splatAboutCount(int most) {
+  var step = 1;
+  while (most ~/ step >= 1000) {
+    step *= 10;
+  }
+  return most ~/ step * step;
+}
 
 /// What the user answered for a file whose frames were slow (the page's offer): keep [keep] of its gaussians, or keep
 /// them all ([keep] null). Or what the app keeps for a whole splat that stopped the viewer ([died]): the reduced copy

@@ -278,6 +278,15 @@ void main() {
     expect(splatWatchesFrames(device: SplatDeviceClass.computer, head: v4, cap: 2000000), isFalse);
   });
 
+  test('the most a computer holds is said rounded down to three figures', () {
+    expect(splatAboutCount(10336420), 10300000);
+    expect(splatAboutCount(5362221), 5360000);
+    expect(splatAboutCount(4194304), 4190000);
+    expect(splatAboutCount(999999), 999000);
+    expect(splatAboutCount(150000), 150000);
+    expect(splatAboutCount(0), 0);
+  });
+
   test('the answers as they are kept', () {
     expect(
       SplatFrameAnswer.fromJson(const SplatFrameAnswer.reduce(1330000).toJson()),
