@@ -107,7 +107,11 @@ final splatAnswerProvider = FutureProvider.autoDispose.family<SplatFrameAnswer?,
 /// app on Windows, ~/.cache of the app on Linux, the cache of the app on Android and macOS; never the system's
 /// temporary folder, which every copy of the app and every user share (review of 2 November 2026)
 final splatViewerCacheProvider = Provider<SplatViewerCache>(
-  (ref) => SplatViewerCache(() async => Directory(p.join((await getApplicationCacheDirectory()).path, 'splat_viewer'))),
+  (ref) => SplatViewerCache(
+    () async => Directory(p.join((await getApplicationCacheDirectory()).path, 'splat_viewer')),
+    // The scenes of the splat photos of the server: 1 GiB on phones, tablets and the headset, 4 GiB on a computer
+    serverMaxBytes: CurrentPlatform.isDesktop ? 4 << 30 : 1 << 30,
+  ),
 );
 
 /// The bytes free on the drive of a folder, for the room a preparation needs: the computers' reader of the AI

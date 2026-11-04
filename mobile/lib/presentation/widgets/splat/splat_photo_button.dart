@@ -10,7 +10,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/models/splat/splat_photo_xmp.dart';
@@ -21,6 +20,7 @@ import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_photo_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
@@ -35,20 +35,6 @@ const splatPhotoDetailsKey = Key('splat_photo_details');
 
 /// How long the line saying where to explore a scene stays, on the devices that cannot
 const splatPhotoNoticeDuration = Duration(seconds: 4);
-
-/// Opens the scene of the splat photo [asset], told by [xmp], with the [request] the gate of this device gave. Tests
-/// replace it.
-typedef SplatPhotoOpener =
-    Future<void> Function(
-      BuildContext context,
-      WidgetRef ref,
-      BaseAsset asset,
-      SplatPhotoXmp xmp,
-      GaussianSplatRequest request,
-    );
-
-/// See [SplatPhotoOpener]: nothing until the scene can be taken out of its photo
-final splatPhotoOpenerProvider = Provider<SplatPhotoOpener>((ref) => (context, ref, asset, xmp, request) async {});
 
 /// What a splat photo's [problem] says, as the greyed button and the details row say it
 String splatPhotoProblemText(Translations t, SplatPhotoProblem problem) => switch (problem) {

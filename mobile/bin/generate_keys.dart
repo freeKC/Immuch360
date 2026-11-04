@@ -156,6 +156,8 @@ const _kParamTypeOverrides = <String, String>{
   // A splat photo (plan of 3 November 2026): its gaussians and its size, written out by the caller
   'splat_photo_details.count': 'String',
   'splat_photo_details.size': 'String',
+  'splat_photo_downloading.total': 'String',
+  'splat_photo_mobile_data.size': 'String',
   // The size of an object in the splat viewer's page, written there with its unit ("1.98 m")
   'splat_kind_object.size': 'String',
   // The frames per second of the page's offer, filled in there
