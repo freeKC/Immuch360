@@ -612,7 +612,7 @@ void main() {
       final refused = _check(['--catalogue', catalogue.path]);
       expect(refused.exitCode, 1, reason: '$refused');
       expect(refused.output, contains('colmap-cpu-win-x64: licence GPL-3.0 is not one this project allows'));
-      expect(refused.output, contains('brush-vulkan-win-x64: incomplete in the catalogue (size 16354351, sha256 '));
+      expect(refused.output, contains('brush-vulkan-win-x64: incomplete in the catalogue (size 16364150, sha256 '));
     }, skip: skipCiScripts);
   });
 }

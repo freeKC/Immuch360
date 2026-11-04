@@ -283,12 +283,12 @@ UPSTREAM = (
 ENGINES = (
     Engine('sd-cpp-vulkan-win-x64', 'windows-x64'),
     Engine('sd-cpp-vulkan-linux-x64', 'linux-x64'),
-    # ai-components-4 (lot SP14). The Windows archives are signed by a run of the release workflow with with_splat and
-    # sign_test; until such a run gives them, they are published as built: signed=False here, said in MODEL-LICENSES.md
-    # and in the notes of the release. Set signed=True with the archives of that run (--from-run RUN --write).
-    Engine('colmap-cpu-win-x64', 'windows-x64', TAG_SPLATS, 'Immuch360-AI-colmap-', 'colmap.lock.json', False),
+    # ai-components-4 (lot SP14). The Windows archives are those of the run 41884480484 of the release workflow, with
+    # with_splat and sign_test: their programs signed by APROGSYS, the runtime DLLs of Microsoft keeping their own
+    # signature. The Linux archives come from the same run.
+    Engine('colmap-cpu-win-x64', 'windows-x64', TAG_SPLATS, 'Immuch360-AI-colmap-', 'colmap.lock.json', True),
     Engine('colmap-cpu-linux-x64', 'linux-x64', TAG_SPLATS, 'Immuch360-AI-colmap-', 'colmap.lock.json', False),
-    Engine('brush-vulkan-win-x64', 'windows-x64', TAG_SPLATS, 'Immuch360-AI-brush-', 'brush.lock.json', False),
+    Engine('brush-vulkan-win-x64', 'windows-x64', TAG_SPLATS, 'Immuch360-AI-brush-', 'brush.lock.json', True),
     Engine('brush-vulkan-linux-x64', 'linux-x64', TAG_SPLATS, 'Immuch360-AI-brush-', 'brush.lock.json', False),
 )
 ENGINE_ARTIFACT_PREFIX = 'Immuch360-AI-sdcpp-'

@@ -554,12 +554,9 @@ void main() {
   group('publish_ai_components.py, the splat scenes', () {
     /// The four artifacts of the CI of the tests in the cache, named by the locks of the repository; [colmapSums]
     /// replaces the SHA256SUMS.txt of the Windows archive of COLMAP, [colmapExe] its program
-    void splatArtifacts({
-      String colmapLock = '4.2.1-imm1',
-      String? colmapSums,
-      String colmapExe = 'MZ colmap of the tests',
-    }) {
-      const runtime = 'MZ runtime of the tests';
+    void splatArtifacts({String colmapLock = '4.2.1-imm1', String? colmapSums, String? colmapExe}) {
+      colmapExe ??= _signedPe('colmap');
+      final runtime = _signedPe('runtime');
       const info = 'Built by https://github.com/owner/repo/actions/runs/1\n';
       String sumOf(String text) => _sha(latin1.encode(text));
       _zip(File(p.join(cache.path, 'Immuch360-AI-colmap-$colmapLock-windows-x64.zip')), {
@@ -576,7 +573,7 @@ void main() {
       });
       _zip(File(p.join(cache.path, 'Immuch360-AI-brush-3edecbb-1-windows-x64.zip')), {
         'BUILD-INFO.txt': info,
-        'brush_app.exe': 'MZ brush of the tests',
+        'brush_app.exe': _signedPe('brush'),
       });
       _zip(File(p.join(cache.path, 'Immuch360-AI-brush-3edecbb-1-linux-x64.zip')), {
         'brush_app': '\x7fELF brush of the tests',
@@ -584,7 +581,7 @@ void main() {
       });
     }
 
-    test('the artifacts of COLMAP and Brush become ai-components-4, their Windows programs said unsigned; the dry run '
+    test('the artifacts of COLMAP and Brush become ai-components-4, their Windows programs signed; the dry run '
         'reads GitHub and sends nothing', () async {
       splatArtifacts();
 
@@ -602,22 +599,22 @@ void main() {
       expect(
         run.output,
         contains(
-          'colmap-cpu-win-x64: 2 programs and libraries, 0 with an Authenticode signature, without one: '
-          'colmap.exe, vcruntime140.dll; built by https://github.com/owner/repo/actions/runs/1',
+          'colmap-cpu-win-x64: 2 programs and libraries, 2 with an Authenticode signature; '
+          'built by https://github.com/owner/repo/actions/runs/1',
         ),
       );
       final archive = File(p.join(out.path, 'colmap-cpu-win-x64.zip')).readAsBytesSync();
       final text = catalogue.readAsStringSync();
       expect(text, contains("  installPath: 'engines/colmap-cpu-win-x64',\n  size: ${archive.length},\n"));
-      expect(text, contains("      path: 'colmap.exe',\n      size: 22,\n"));
+      expect(text, contains("      path: 'colmap.exe',\n      size: 272,\n"));
       final written = licences.readAsStringSync();
       expect(written, contains('<!-- ai-components-4 -->\n## ai-components-4: splat scenes'));
       expect(
         written,
         contains('| `colmap-cpu-win-x64.zip` | `colmap-cpu-win-x64` | ${archive.length} | `${_sha(archive)}`'),
       );
-      expect(written, contains('| BSD-3-Clause | built by our CI, not signed |'));
-      expect(written, contains('are not signed in this release'));
+      expect(written, contains('| BSD-3-Clause | built and signed by our CI |'));
+      expect(written.replaceAll('\n', ' '), contains('are signed by APROGSYS (Azure Artifact Signing)'));
       expect(checkCopy('ai-components-4').exitCode, 0);
 
       final dry = await runCiScriptAsync(
@@ -629,7 +626,7 @@ void main() {
       expect(dry.output, isNot(contains(_token)));
       expect(dry.output, contains('GET releases/tags/ai-components-4: absent (404)'));
       expect(dry.output, contains('POST <upload_url>?name=colmap-cpu-win-x64.zip: ${archive.length} bytes'));
-      expect(dry.output, contains('Their Windows programs are not signed in this release.'));
+      expect(dry.output, contains('Their Windows programs are signed.'));
       expect(dry.output, contains('dry run: --publish would make ai-components-4; nothing was sent'));
       expect(apis.requests, contains('GET /repos/owner/repo/releases/tags/ai-components-4'));
       expect(apis.requests.where((request) => !request.startsWith('GET ')), isEmpty);
@@ -659,6 +656,14 @@ void main() {
           sums.output,
           contains('colmap-cpu-win-x64: BUILD-INFO.txt differs from the SHA256SUMS.txt of its archive'),
         );
+
+        splatArtifacts(colmapExe: 'MZ colmap of the tests');
+        final unsigned = await runCiScriptAsync(_script, arguments('ai-components-4'));
+        expect(unsigned.exitCode, 1, reason: '$unsigned');
+        expect(
+          unsigned.output,
+          contains('colmap-cpu-win-x64: colmap.exe carry no signature; ENGINES says this engine is signed'),
+        );
       },
       skip: skipCiScripts,
     );
@@ -667,7 +672,7 @@ void main() {
       'a program signed after its SHA256SUMS.txt was written: the sums written again, the signature counted',
       () async {
         const info = 'Built by https://github.com/owner/repo/actions/runs/1\n';
-        const runtime = 'MZ runtime of the tests';
+        final runtime = _signedPe('runtime');
         String sumOf(String text) => _sha(latin1.encode(text));
         final signed = _signedPe('colmap signed');
         // The sums the build wrote, before sign-windows signed colmap.exe
@@ -681,13 +686,7 @@ void main() {
         final run = await runCiScriptAsync(_script, arguments('ai-components-4'));
 
         expect(run.exitCode, 0, reason: '$run');
-        expect(
-          run.output,
-          contains(
-            'colmap-cpu-win-x64: 2 programs and libraries, 1 with an Authenticode signature, without '
-            'one: vcruntime140.dll',
-          ),
-        );
+        expect(run.output, contains('colmap-cpu-win-x64: 2 programs and libraries, 2 with an Authenticode signature'));
         expect(
           run.output,
           contains('colmap-cpu-win-x64: SHA256SUMS.txt written again, colmap.exe signed since it was written'),

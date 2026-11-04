@@ -217,18 +217,18 @@ https://github.com/freeKC/Immuch360/releases/tag/ai-components-4
 
 | File | Component | Size (bytes) | SHA-256 | Licence | Source, pinned revision |
 | --- | --- | --- | --- | --- | --- |
-| `colmap-cpu-win-x64.zip` | `colmap-cpu-win-x64` | 10090414 | `775fae804f4f4ae4cf3b26045e770a07527f0ff0dc046f5a093fa25ce7fb4e2e` | BSD-3-Clause | built by our CI, not signed |
-| `colmap-cpu-linux-x64.zip` | `colmap-cpu-linux-x64` | 25856353 | `e0bcd6f675a6e295f980ced54e3609e061179e09e327809bf24be97fda5f64af` | BSD-3-Clause | built by our CI |
-| `brush-vulkan-win-x64.zip` | `brush-vulkan-win-x64` | 16354351 | `875e9308a3ea827cccb412dadf1bb1606ee15abb2d3b41029f522ccff7367202` | Apache-2.0 | built by our CI, not signed |
-| `brush-vulkan-linux-x64.zip` | `brush-vulkan-linux-x64` | 17627435 | `1eadf8ff70cc51ea4e7dee211c8b3766ec86927fca9614e76cd6f8e5255e6a72` | Apache-2.0 | built by our CI |
+| `colmap-cpu-win-x64.zip` | `colmap-cpu-win-x64` | 10100055 | `9ab1f508fdbc85e65964a7107b1c72ea680ba7c1cc4e06d1423b604b01bf7848` | BSD-3-Clause | built and signed by our CI |
+| `colmap-cpu-linux-x64.zip` | `colmap-cpu-linux-x64` | 25856357 | `ed3feff65a24c0e112e1d5218c4d49fb963b8212eabb239ae95f8f3cad878ad2` | BSD-3-Clause | built by our CI |
+| `brush-vulkan-win-x64.zip` | `brush-vulkan-win-x64` | 16364150 | `aaa3ad8bf55c4369a12b86cbcdffdcaf68f0054a42693f34e2e7679f26d55a77` | Apache-2.0 | built and signed by our CI |
+| `brush-vulkan-linux-x64.zip` | `brush-vulkan-linux-x64` | 17627739 | `24613b141da3c019ee23fed30ab43967e7a8549900ff764526d2868ba7a3d503` | Apache-2.0 | built by our CI |
 
 `colmap-cpu-win-x64.zip` holds, unpacked into `engines/colmap-cpu-win-x64`:
 
 | File | Size (bytes) | SHA-256 | Program |
 | --- | --- | --- | --- |
-| `BUILD-INFO.txt` | 1337 | `6ea120aec1e9b35ed36140aad00b12b5a71f1f0c173bac9aa685b578f4185948` | no |
-| `SHA256SUMS.txt` | 11850 | `6f82b744e5069f3181cb0ce50bcc74f733d2c6793d20d89a56263abfdf1625f8` | no |
-| `colmap.exe` | 26231296 | `7b475114081e25d316e7d6d0cfa7f9d2c20ec7d7a9fb7f63203ab50720bfb7eb` | yes |
+| `BUILD-INFO.txt` | 1337 | `e46a3339b04a5ed7a3b2ef6db1b37731051b66bab4b86229ac6309b383913f93` | no |
+| `SHA256SUMS.txt` | 11850 | `1b4995932c1f36dcbaf73d1bc125623fdd12b98c278dffca306c746f10d868ac` | no |
+| `colmap.exe` | 26246984 | `52b69e006b3dd0168d1fb4548b754f18435811e7edb00b99d84810d54c092e5b` | yes |
 | `licenses/COPYING.txt` | 1942 | `beda69d6c1e7544a470002af34c5d754497f0ad7da168556a9b20852993404c3` | no |
 | `licenses/PoissonRecon-LICENSE.txt` | 1096 | `bbcbdc44ed818f009eb4433db9ab5e6509578d0ba43ddcb662b8a0cc9c160fb3` | no |
 | `licenses/PoseLib-LICENSE.txt` | 1551 | `f2974dfc7803858e4c3d35c4d5f26291cf072b6607a561caa2fae4758bfc13d2` | no |
@@ -354,9 +354,9 @@ https://github.com/freeKC/Immuch360/releases/tag/ai-components-4
 
 | File | Size (bytes) | SHA-256 | Program |
 | --- | --- | --- | --- |
-| `BUILD-INFO.txt` | 1170 | `a646f11158e203f990e32b830f6735459493ab155076f9d04f6fc10a12fc22f7` | no |
-| `SHA256SUMS.txt` | 11519 | `ae3a03c5db572f65961226914ce477572edebf7f764aef23e0d72b0fd1cad44a` | no |
-| `colmap` | 72599544 | `0e2fdcf3f176d41fe95271c28d5c30eb4626c03871afbdd36f78fd928819ec0b` | yes |
+| `BUILD-INFO.txt` | 1170 | `88c8e89a491698586122db71c3f0b01117470e659a560a9bc6c670f8876c251d` | no |
+| `SHA256SUMS.txt` | 11519 | `f2bd59f5ec6f6eaa322f3a95c751c900c8d5e0bc2d0ef1899fa06b4708a57b12` | no |
+| `colmap` | 72599544 | `29dd48e5589100be0a6580045d1533787f46bb8ede50e868fb749446f6ce8caa` | yes |
 | `immuch360-run` | 16552 | `779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b` | yes |
 | `licenses/COPYING.txt` | 1909 | `ab30dabb4f0a6731f980108f57aa160cc8f5cebae6984e01a5d109df99669233` | no |
 | `licenses/PoissonRecon-LICENSE.txt` | 1075 | `addfdacb0d5e30f25641fc2c26cc423c541a60e16624b29d80d3490608ba4956` | no |
@@ -478,8 +478,8 @@ https://github.com/freeKC/Immuch360/releases/tag/ai-components-4
 
 | File | Size (bytes) | SHA-256 | Program |
 | --- | --- | --- | --- |
-| `BUILD-INFO.txt` | 2780 | `b7b172d23685730e1d12f27dd92b84680c9daa6caef3b0e2f0029dbc3f9ef732` | no |
-| `brush_app.exe` | 63759872 | `2d10dc03e96f28d885fa699129d28d9271a614e6a53211ef2015f894e3616a05` | yes |
+| `BUILD-INFO.txt` | 2780 | `426d3817f80d976a8dfa18b3718b3421d434726f394e0edec83cd71c0b2c14d6` | no |
+| `brush_app.exe` | 63775560 | `47064cf96a84482aa79d5f76653a152166c15ad80ad8dfbaee6d330287ccfcf0` | yes |
 | `licenses/EXTRA-NOTICES.md` | 5935 | `2b18770127e5c1212e88983220ec5a9eb8559df9033bd1b62ec89ef3307ebf31` | no |
 | `licenses/README.md` | 4527 | `07d0bba845a345ebfd2ededea5ae022e353262b2b4eab78eb929e25f9fc1ecaf` | no |
 | `licenses/THIRD-PARTY.md` | 467291 | `e5d8003e290996831420222a73dc69cee5a0653ed978170d4378db1243d9814a` | no |
@@ -491,8 +491,8 @@ https://github.com/freeKC/Immuch360/releases/tag/ai-components-4
 
 | File | Size (bytes) | SHA-256 | Program |
 | --- | --- | --- | --- |
-| `BUILD-INFO.txt` | 2463 | `d28be9920f7baa68ddda680a312ea7fde26d0313dd365fa18530dfcee4b5ce32` | no |
-| `brush_app` | 66707536 | `659b005f4c1935e53c5d4ec9e33ad27e580a08a2026deef211e8980603722f51` | yes |
+| `BUILD-INFO.txt` | 2463 | `7c001b43debec6455c7c0191a9ce004f2dbdd7d194456fc9f610e98ba0fa43d4` | no |
+| `brush_app` | 66707984 | `87573191097e23762c8ce50755dfc49d8446f8c1e446db6b137ac90e72ebb8da` | yes |
 | `immuch360-run` | 16552 | `779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b` | yes |
 | `licenses/EXTRA-NOTICES.md` | 5935 | `2b18770127e5c1212e88983220ec5a9eb8559df9033bd1b62ec89ef3307ebf31` | no |
 | `licenses/README.md` | 4527 | `07d0bba845a345ebfd2ededea5ae022e353262b2b4eab78eb929e25f9fc1ecaf` | no |
@@ -528,9 +528,9 @@ On Windows the archives hold the runtime DLLs of Visual C++ and OpenMP, redistri
 Microsoft; on Linux, `immuch360-run`, the launcher of the app (MIT). No model of any kind: neither program
 needs one.
 
-The programs of `colmap-cpu-win-x64` and `brush-vulkan-win-x64` are not signed in this release (the runtime DLLs
-of Microsoft keep their signature). Linux programs carry no signature. The app checks each archive and each of its
-files by its SHA-256 when it installs them.
+The programs and libraries of `colmap-cpu-win-x64` and `brush-vulkan-win-x64` are signed by APROGSYS (Azure
+Artifact Signing), those of Microsoft keeping their own signature. Linux programs carry no signature. The app
+checks each archive and each of its files by its SHA-256 when it installs them.
 
 <!-- end of the releases -->
 ## The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)

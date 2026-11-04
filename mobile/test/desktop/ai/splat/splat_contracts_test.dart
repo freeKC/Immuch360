@@ -390,8 +390,8 @@ void main() {
       );
     });
 
-    test('COLMAP and Brush, archives of ai-components-4 made from the artifacts of the runs 41338110566 and '
-        '41338726969, Windows and Linux', () {
+    test('COLMAP and Brush, archives of ai-components-4 made from the artifacts of the run 41884480484 of the '
+        'release workflow, Windows and Linux', () {
       expect(aiComponentsFor(AiPlatform.windowsX64, feature: AiFeature.splatScene), [
         colmapWindowsComponent,
         brushWindowsComponent,
@@ -414,19 +414,19 @@ void main() {
         expect(component.installPath, 'engines/${component.id}');
         expect(component.assetName, '${component.id}.zip');
       }
-      // The archives of the CI, byte for byte: those the test builds T1 to T3 ran from their local mirror
+      // The archives of the run 41884480484 of the release workflow, their Windows programs signed (lot SP14)
       expect(
         (colmapWindowsComponent.size, colmapWindowsComponent.sha256),
-        (10090414, '775fae804f4f4ae4cf3b26045e770a07527f0ff0dc046f5a093fa25ce7fb4e2e'),
+        (10100055, '9ab1f508fdbc85e65964a7107b1c72ea680ba7c1cc4e06d1423b604b01bf7848'),
       );
       expect(
         (brushWindowsComponent.size, brushWindowsComponent.sha256),
-        (16354351, '875e9308a3ea827cccb412dadf1bb1606ee15abb2d3b41029f522ccff7367202'),
+        (16364150, 'aaa3ad8bf55c4369a12b86cbcdffdcaf68f0054a42693f34e2e7679f26d55a77'),
       );
       expect(colmapWindowsComponent.archiveFiles, hasLength(123));
       expect(brushWindowsComponent.archiveFiles, hasLength(8));
-      expect(colmapWindowsComponent.installedSize, 27697172);
-      expect(brushWindowsComponent.installedSize, 64393915);
+      expect(colmapWindowsComponent.installedSize, 27712860);
+      expect(brushWindowsComponent.installedSize, 64409603);
       // The program each engine runs, and the licences that travel with it
       expect(colmapWindowsComponent.mainPath, 'engines/colmap-cpu-win-x64/colmap.exe');
       expect(brushWindowsComponent.mainPath, 'engines/brush-vulkan-win-x64/brush_app.exe');
@@ -460,11 +460,11 @@ void main() {
       // Complete on Linux too, though the feature is offered on Windows only in this version
       expect(
         (colmapLinuxComponent.size, colmapLinuxComponent.sha256),
-        (25856353, 'e0bcd6f675a6e295f980ced54e3609e061179e09e327809bf24be97fda5f64af'),
+        (25856357, 'ed3feff65a24c0e112e1d5218c4d49fb963b8212eabb239ae95f8f3cad878ad2'),
       );
       expect(
         (brushLinuxComponent.size, brushLinuxComponent.sha256),
-        (17627435, '1eadf8ff70cc51ea4e7dee211c8b3766ec86927fca9614e76cd6f8e5255e6a72'),
+        (17627739, '24613b141da3c019ee23fed30ab43967e7a8549900ff764526d2868ba7a3d503'),
       );
       expect(colmapLinuxComponent.archiveFiles, hasLength(119));
       expect(brushLinuxComponent.archiveFiles, hasLength(8));
