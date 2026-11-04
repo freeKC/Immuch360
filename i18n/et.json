@@ -3646,6 +3646,7 @@
   "splat_save_explain": "Sellest saab foto sinu ajajoonel, kõigis sinu seadmetes sama. Immuch360 avab stseeni sellest fotost; Immich ja teised rakendused näitavad fotot.",
   "splat_save_failed": "Immichisse ei salvestatud: {reason}",
   "splat_save_large": "{size}: mõned serverid keelduvad üle 100 MB failidest (näiteks Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Kasutad mobiilset andmesidet: saata kuni {size}",
   "splat_save_no_capture": "Vaadet ei õnnestunud jäädvustada: liigu veidi ja salvesta uuesti",
   "splat_save_ply": "Salvestatud SPZ-na: {size} {plySize} asemel, samad gaussiaanid",
   "splat_save_ply_too_large": "See PLY on selles seadmes teisendamiseks liiga suur: salvesta see arvutist",

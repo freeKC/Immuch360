@@ -3592,6 +3592,7 @@
   "splat_save_explain": "Ji tampa nuotrauka jūsų laiko skalėje, vienoda visuose jūsų įrenginiuose. Immuch360 atidaro sceną iš tos nuotraukos; Immich ir kitos programos rodo nuotrauką.",
   "splat_save_failed": "Neišsaugota Immich: {reason}",
   "splat_save_large": "{size}: kai kurie serveriai atmeta didesnius nei 100 MB failus (pavyzdžiui, Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Naudojate mobiliuosius duomenis: reikia išsiųsti iki {size}",
   "splat_save_no_capture": "Nepavyko užfiksuoti vaizdo: šiek tiek pasislinkite ir išsaugokite dar kartą",
   "splat_save_ply": "Išsaugota kaip SPZ: {size} vietoj {plySize}, tie patys Gauso elementai",
   "splat_save_ply_too_large": "Šis PLY per didelis, kad būtų konvertuotas šiame įrenginyje: išsaugokite jį iš kompiuterio",

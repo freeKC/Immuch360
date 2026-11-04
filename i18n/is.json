@@ -2711,6 +2711,7 @@
   "splat_save_explain": "Hún verður að mynd í tímalínunni þinni, eins í öllum tækjunum þínum. Immuch360 opnar senuna úr þeirri mynd; Immich og önnur forrit sýna myndina.",
   "splat_save_failed": "Ekki vistað í Immich: {reason}",
   "splat_save_large": "{size}: sumir þjónar hafna skrám yfir 100 MB (til dæmis Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Þú ert á farsímagögnum: allt að {size} til að senda",
   "splat_save_no_capture": "Ekki tókst að fanga sjónarhornið: færðu þig aðeins og vistaðu svo aftur",
   "splat_save_ply": "Vistað sem SPZ: {size} í stað {plySize}, sömu gáss-dreifingar",
   "splat_save_ply_too_large": "Þessi PLY er of stór til að umbreyta í þessu tæki: vistaðu hana úr tölvu",

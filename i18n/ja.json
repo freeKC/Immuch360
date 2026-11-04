@@ -3644,6 +3644,7 @@
   "splat_save_explain": "タイムラインの写真になり、すべてのデバイスで同じものになります。Immuch360 はその写真からシーンを開き、Immich や他のアプリは写真を表示します。",
   "splat_save_failed": "Immich に保存できませんでした: {reason}",
   "splat_save_large": "{size}: 100 MB を超えるファイルを拒否するサーバーがあります (Cloudflare Tunnel など)",
+  "splat_save_mobile_data_ply": "モバイルデータ通信中です: 送信量は最大 {size}",
   "splat_save_no_capture": "視点をキャプチャできませんでした: 少し動いてからもう一度保存してください",
   "splat_save_ply": "SPZ として保存しました: {plySize} ではなく {size}、ガウシアンは同じです",
   "splat_save_ply_too_large": "この PLY は大きすぎてこのデバイスでは変換できません: パソコンから保存してください",

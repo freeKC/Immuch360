@@ -3599,6 +3599,7 @@
   "splat_save_explain": "Ĝi fariĝas foto en via templinio, la sama en ĉiuj viaj aparatoj. Immuch360 malfermas la scenon el tiu foto; Immich kaj aliaj aplikaĵoj montras la foton.",
   "splat_save_failed": "Ne konservita en Immich: {reason}",
   "splat_save_large": "{size}: kelkaj serviloj rifuzas dosierojn pli grandajn ol 100 MB (ekzemple Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Vi uzas poŝtelefonajn datumojn: ĝis {size} por sendi",
   "splat_save_no_capture": "La vido ne povis esti kaptita: moviĝu iomete, poste konservu denove",
   "splat_save_ply": "Konservita kiel SPZ: {size} anstataŭ {plySize}, la samaj gaŭsoj",
   "splat_save_ply_too_large": "Ĉi tiu PLY estas tro granda por konverti en ĉi tiu aparato: konservu ĝin el komputilo",

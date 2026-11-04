@@ -1520,6 +1520,7 @@
   "splat_save_explain": "La diventa una foto de la toa cronologia, l'istessa in su tucc i tò dispositiv. Immuch360 el derva la scena de quella foto; Immich e i alter app mostren la foto.",
   "splat_save_failed": "Minga salvaa in Immich: {reason}",
   "splat_save_large": "{size}: quaj server refuden i file de pussee de 100 MB (Cloudflare Tunnel, per esempi)",
+  "splat_save_mobile_data_ply": "Te seet sui dati mobil: fin a {size} de mandà",
   "splat_save_no_capture": "Se pò minga ciapà la vista: moves on poo, poeu salva anmò",
   "splat_save_ply": "Salvaa come SPZ: {size} invece de {plySize}, i istess gaussian",
   "splat_save_ply_too_large": "Sto PLY l'è tròpp grand per convertill in su sto dispositiv: salvel de un computer",

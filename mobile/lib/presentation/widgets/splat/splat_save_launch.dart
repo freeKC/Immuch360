@@ -5,6 +5,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:auto_route/auto_route.dart';
@@ -13,6 +14,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/splat/splat_photo_xmp.dart';
+import 'package:immich_mobile/domain/models/splat/spz_v2_writer.dart';
 import 'package:immich_mobile/domain/services/splat_photo/splat_save_job.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
@@ -20,6 +22,7 @@ import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_photo_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -41,6 +44,20 @@ const splatSaveSheetAlbumKey = Key('splat_save_sheet_album');
 
 /// The key of "Show it" of the sheet
 const splatSaveSheetShowKey = Key('splat_save_sheet_show');
+
+/// The key of the mobile data line of the sheet
+const splatSaveSheetMobileDataKey = Key('splat_save_sheet_mobile_data');
+
+/// The line of a save over mobile data: what goes, the size of an SPZ, the most a PLY sends once converted to SPZ (from
+/// its [head], else the size of the PLY itself, which its SPZ never passes). Opening a scene asks above 10 MB on
+/// such a network; saving one says it too (review of 4 November 2026).
+String splatSaveMobileDataLine(Translations t, SplatSaveScene scene, SplatHead? head) {
+  if (!scene.isPly) {
+    return t.upload_mobile_data_warning(size: formatBytes(scene.length));
+  }
+  final most = head == null ? scene.length : math.min(scene.length, spzV2MaxBytes(head.gaussians, head.shDegree));
+  return t.splat_save_mobile_data_ply(size: formatBytes(most));
+}
 
 /// Opens the splat photo [assetId] in the asset viewer once the sync brought it to this device; until then, says
 /// where it will show ("In your timeline on {date}")
@@ -217,6 +234,9 @@ class SplatViewerSaveSession implements SplatViewerSaving {
 
   /// The album switch of the panel, as the user left it last time
   bool albumOn;
+
+  /// On a metered network when the viewer opened: the panel says what the save sends
+  bool metered = false;
   String? _up;
   var _turned = false;
   Uint8List? _poster;
@@ -239,6 +259,7 @@ class SplatViewerSaveSession implements SplatViewerSaving {
     'details': t.splat_photo_details(count: splatCountText(head.gaussians, locale), size: formatBytes(scene.length)),
     'date': t.splat_save_date(date: splatSaveDateText(scene.date, locale)),
     'warning': splatSaveSizeWarning(t, scene.length),
+    'mobileData': metered ? splatSaveMobileDataLine(t, scene, head) : null,
     'texts': {
       'save': t.splat_save,
       'title': t.splat_save_title,
@@ -361,10 +382,12 @@ SplatViewerSaveSession? splatViewerSavingFor(
     albumOn: true,
     up: source.up,
   );
-  // Read while the viewer opens, nothing awaited before it: the album switch remembered, the orientation chosen
+  // Read while the viewer opens, nothing awaited before it: the album switch remembered, the orientation chosen, the
+  // network
   unawaited(
     ref.read(splatSaveRecordsProvider).albumOn().then((on) => saving.albumOn = on, onError: (Object _) => null),
   );
+  unawaited(ref.read(splatPhotoMeteredProvider)().then((on) => saving.metered = on, onError: (Object _) => null));
   unawaited(
     ref
         .read(splatUprightStoreProvider)
@@ -474,12 +497,20 @@ class _SplatSaveSheetState extends ConsumerState<_SplatSaveSheet> {
   var _gone = false;
   SplatSaveStatus? _result;
   String? _problem;
+  var _metered = false;
 
   SplatSaveScene get scene => widget.scene;
 
   @override
   void initState() {
     super.initState();
+    unawaited(
+      ref.read(splatPhotoMeteredProvider)().then((on) {
+        if (mounted && on) {
+          setState(() => _metered = true);
+        }
+      }, onError: (Object _) => null),
+    );
     unawaited(
       widget.prepared.then((ready) {
         _file = ready.file;
@@ -605,6 +636,13 @@ class _SplatSaveSheetState extends ConsumerState<_SplatSaveSheet> {
               ),
             Text(t.splat_save_date(date: splatSaveDateText(scene.date, locale))),
             if (warning != null) Text(warning, style: TextStyle(color: theme.colorScheme.error)),
+            if (_metered && !ended)
+              ListTile(
+                key: splatSaveSheetMobileDataKey,
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.signal_cellular_alt_rounded, color: theme.colorScheme.error),
+                title: Text(splatSaveMobileDataLine(t, scene, head)),
+              ),
             const SizedBox(height: 6),
             Text('${t.splat_save_explain} ${t.splat_save_drawn}', style: theme.textTheme.bodySmall),
             SwitchListTile(

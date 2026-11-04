@@ -1611,6 +1611,7 @@
   "splat_save_explain": "તે તમારી ટાઇમલાઇનમાં એક ફોટો બને છે, તમારાં બધાં ઉપકરણો પર એકસરખો. Immuch360 તે ફોટામાંથી દૃશ્ય ખોલે છે; Immich અને અન્ય ઍપ ફોટો બતાવે છે.",
   "splat_save_failed": "Immich માં સાચવ્યું નથી: {reason}",
   "splat_save_large": "{size}: કેટલાક સર્વર 100 MB થી મોટી ફાઇલો નકારે છે (ઉદાહરણ તરીકે Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "તમે મોબાઇલ ડેટા પર છો: {size} સુધી મોકલવાનું છે",
   "splat_save_no_capture": "વ્યૂ કૅપ્ચર થઈ શક્યો નહીં: થોડું ખસો, પછી ફરીથી સાચવો",
   "splat_save_ply": "SPZ તરીકે સાચવ્યું: {plySize} ને બદલે {size}, એ જ ગૉસિયન",
   "splat_save_ply_too_large": "આ PLY આ ઉપકરણ પર રૂપાંતરિત કરવા માટે ખૂબ મોટી છે: તેને કમ્પ્યુટર પરથી સાચવો",

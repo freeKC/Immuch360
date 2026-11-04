@@ -161,6 +161,7 @@ const _kParamTypeOverrides = <String, String>{
   // The count of a splat photo's caption and the sizes of the save, written out by the caller ("150,000", "3.4 MiB")
   'splat_photo_description.count': 'String',
   'splat_save_large.size': 'String',
+  'splat_save_mobile_data_ply.size': 'String',
   'splat_save_ply.size': 'String',
   'splat_save_refused_size.size': 'String',
   // The size of an object in the splat viewer's page, written there with its unit ("1.98 m")

@@ -3389,6 +3389,7 @@
   "splat_save_explain": "यह आपकी समयरेखा में एक तस्वीर बन जाता है, आपके सभी डिवाइस पर एक जैसा। Immuch360 उस तस्वीर से दृश्य खोलता है; Immich और अन्य ऐप्स तस्वीर दिखाते हैं।",
   "splat_save_failed": "Immich में सहेजा नहीं गया: {reason}",
   "splat_save_large": "{size}: कुछ सर्वर 100 MB से बड़ी फ़ाइलें अस्वीकार करते हैं (जैसे Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "आप मोबाइल डेटा पर हैं: भेजने के लिए {size} तक",
   "splat_save_no_capture": "दृश्य कैप्चर नहीं हो सका: थोड़ा हिलें, फिर से सहेजें",
   "splat_save_ply": "SPZ के रूप में सहेजा गया: {plySize} के बजाय {size}, वही गॉसियन",
   "splat_save_ply_too_large": "यह PLY इस डिवाइस पर बदलने के लिए बहुत बड़ी है: इसे कंप्यूटर से सहेजें",

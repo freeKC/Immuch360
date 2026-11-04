@@ -1557,6 +1557,7 @@
   "splat_save_explain": "Nagiging larawan ito sa iyong timeline, pareho sa lahat ng iyong device. Binubuksan ng Immuch360 ang eksena mula sa larawang iyon; ipinapakita ng Immich at ng ibang app ang larawan.",
   "splat_save_failed": "Hindi na-save sa Immich: {reason}",
   "splat_save_large": "{size}: tumatanggi ang ilang server sa mga file na higit sa 100 MB (halimbawa ang Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Naka-mobile data ka: hanggang {size} ang ipapadala",
   "splat_save_no_capture": "Hindi makuhanan ang tanaw: gumalaw nang kaunti, pagkatapos ay i-save muli",
   "splat_save_ply": "Na-save bilang SPZ: {size} sa halip na {plySize}, parehong mga gaussian",
   "splat_save_ply_too_large": "Masyadong malaki ang PLY na ito para i-convert sa device na ito: i-save ito mula sa computer",

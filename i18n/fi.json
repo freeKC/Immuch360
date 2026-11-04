@@ -3459,6 +3459,7 @@
   "splat_save_explain": "Siitä tulee kuva aikajanallesi, sama kaikilla laitteillasi. Immuch360 avaa näkymän siitä kuvasta; Immich ja muut sovellukset näyttävät kuvan.",
   "splat_save_failed": "Ei tallennettu Immichiin: {reason}",
   "splat_save_large": "{size}: jotkin palvelimet hylkäävät yli 100 MB:n tiedostot (esimerkiksi Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Käytät mobiilidataa: enintään {size} lähetettävänä",
   "splat_save_no_capture": "Näkymää ei voitu kaapata: liiku hieman ja tallenna sitten uudelleen",
   "splat_save_ply": "Tallennettu SPZ-muodossa: {size} eikä {plySize}, samat gaussit",
   "splat_save_ply_too_large": "Tämä PLY on liian suuri muunnettavaksi tällä laitteella: tallenna se tietokoneelta",

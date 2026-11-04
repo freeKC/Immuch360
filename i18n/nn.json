@@ -2069,6 +2069,7 @@
   "splat_save_explain": "Ho blir eit bilete på tidslinja di, det same på alle einingane dine. Immuch360 opnar scena frå det biletet; Immich og andre appar viser biletet.",
   "splat_save_failed": "Ikkje lagra i Immich: {reason}",
   "splat_save_large": "{size}: nokre tenarar avviser filer over 100 MB (til dømes Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Du er på mobildata: opptil {size} å sende",
   "splat_save_no_capture": "Visinga kunne ikkje fangast: flytt deg litt og lagre på nytt",
   "splat_save_ply": "Lagra som SPZ: {size} i staden for {plySize}, dei same gaussianane",
   "splat_save_ply_too_large": "Denne PLY-fila er for stor til å konverterast på denne eininga: lagre ho frå ei datamaskin",

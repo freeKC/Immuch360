@@ -3542,6 +3542,7 @@
   "splat_save_explain": "佢會變成你時間線入面嘅一張相，喺你所有裝置都一樣。Immuch360 由嗰張相開啟場景；Immich 同其他 app 就顯示張相。",
   "splat_save_failed": "未儲存到 Immich：{reason}",
   "splat_save_large": "{size}：有啲伺服器會拒絕大過 100 MB 嘅檔案（例如 Cloudflare Tunnel）",
+  "splat_save_mobile_data_ply": "你用緊流動數據：最多要傳送 {size}",
   "splat_save_no_capture": "影唔到呢個視角：郁少少，再儲存一次",
   "splat_save_ply": "已儲存做 SPZ：{size}，而唔係 {plySize}，高斯一樣",
   "splat_save_ply_too_large": "呢個 PLY 太大，喺呢部裝置轉換唔到：請由電腦儲存",

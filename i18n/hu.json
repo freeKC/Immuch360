@@ -3646,6 +3646,7 @@
   "splat_save_explain": "Egy fotó lesz belőle az idővonalán, minden eszközén ugyanaz. Az Immuch360 ebből a fotóból nyitja meg a jelenetet; az Immich és más alkalmazások a fotót mutatják.",
   "splat_save_failed": "Nincs mentve az Immichbe: {reason}",
   "splat_save_large": "{size}: egyes szerverek elutasítják a 100 MB-nál nagyobb fájlokat (például a Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Mobiladatot használ: legfeljebb {size} küldendő",
   "splat_save_no_capture": "A nézet nem rögzíthető: mozduljon el kicsit, majd mentse újra",
   "splat_save_ply": "SPZ-ként mentve: {plySize} helyett {size}, ugyanazok a gauss-elemek",
   "splat_save_ply_too_large": "Ez a PLY túl nagy ahhoz, hogy ezen az eszközön átalakítsa: mentse számítógépről",

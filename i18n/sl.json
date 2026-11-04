@@ -3646,6 +3646,7 @@
   "splat_save_explain": "Postane fotografija na vaši časovnici, enaka na vseh vaših napravah. Immuch360 odpre sceno iz te fotografije; Immich in druge aplikacije prikažejo fotografijo.",
   "splat_save_failed": "Ni shranjeno v Immich: {reason}",
   "splat_save_large": "{size}: nekateri strežniki zavrnejo datoteke, večje od 100 MB (na primer Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Uporabljate mobilne podatke: za pošiljanje do {size}",
   "splat_save_no_capture": "Pogleda ni bilo mogoče zajeti: malo se premaknite in znova shranite",
   "splat_save_ply": "Shranjeno kot SPZ: {size} namesto {plySize}, iste gaussovke",
   "splat_save_ply_too_large": "Ta PLY je prevelik za pretvorbo v tej napravi: shranite ga z računalnika",

@@ -2858,6 +2858,7 @@
   "splat_save_explain": "Sie wird zumene Foto i dinere Zitleischte, uf allne dine Grät s gliiche. Immuch360 macht d Szene us dem Foto uf; Immich und anderi Apps zeiged s Foto.",
   "splat_save_failed": "Nöd in Immich gspeicheret: {reason}",
   "splat_save_large": "{size}: es paar Server lehned Dateie über 100 MB ab (zum Bispiel Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Du bisch mit mobile Date unterwägs: bis {size} z schicke",
   "splat_save_no_capture": "D Asicht het nöd chöne ufgno wärde: beweg di chli und speicher denn nomal",
   "splat_save_ply": "Als SPZ gspeicheret: {size} statt {plySize}, die gliiche Gauss",
   "splat_save_ply_too_large": "Die PLY isch z gross zum Umwandle uf dem Grät: speicher sie vomene Computer us",

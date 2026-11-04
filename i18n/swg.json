@@ -1520,6 +1520,7 @@
   "splat_save_explain": "Se wird a Foto en deiner Zeitleiste, s gleiche uf älle deine Geräte. Immuch360 macht d Szene aus dem Foto auf; Immich ond andre Apps zeiget s Foto.",
   "splat_save_failed": "Net en Immich gspeichert: {reason}",
   "splat_save_large": "{size}: manche Server nehmet koine Dateia über 100 MB (Cloudflare Tunnel zom Beispiel)",
+  "splat_save_mobile_data_ply": "Du bisch mit mobila Data onterwegs: bis {size} z schicka",
   "splat_save_no_capture": "D Ansicht hot sich net aufnemma lassa: beweg di a bissle ond speicher nomol",
   "splat_save_ply": "Als SPZ gspeichert: {size} statt {plySize}, de gleiche Gauß",
   "splat_save_ply_too_large": "Des PLY isch z groß zom Omwandla uf dem Gerät: speicher s vom Computer aus",

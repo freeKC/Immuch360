@@ -3647,6 +3647,7 @@
   "splat_save_explain": "Se convierte en una foto de tu cronología, la misma en todos tus dispositivos. Immuch360 abre la escena desde esa foto; Immich y otras aplicaciones muestran la foto.",
   "splat_save_failed": "No se guardó en Immich: {reason}",
   "splat_save_large": "{size}: algunos servidores rechazan archivos de más de 100 MB (Cloudflare Tunnel, por ejemplo)",
+  "splat_save_mobile_data_ply": "Estás usando datos móviles: hasta {size} por enviar",
   "splat_save_no_capture": "No se pudo capturar la vista: muévete un poco y vuelve a guardar",
   "splat_save_ply": "Guardada como SPZ: {size} en lugar de {plySize}, las mismas gaussianas",
   "splat_save_ply_too_large": "Este PLY es demasiado grande para convertirlo en este dispositivo: guárdalo desde un ordenador",

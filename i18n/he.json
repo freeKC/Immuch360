@@ -3625,6 +3625,7 @@
   "splat_save_explain": "היא הופכת לתמונה בציר הזמן שלכם, זהה בכל המכשירים שלכם. Immuch360 פותח את הסצנה מאותה תמונה; Immich ואפליקציות אחרות מציגות את התמונה.",
   "splat_save_failed": "לא נשמר ב-Immich: {reason}",
   "splat_save_large": "{size}: חלק מהשרתים דוחים קבצים מעל 100 MB (למשל Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "אתם בחבילת גלישה סלולרית: עד {size} לשליחה",
   "splat_save_no_capture": "לא ניתן היה ללכוד את המבט: זוזו מעט ואז שמרו שוב",
   "splat_save_ply": "נשמר כ-SPZ: {size} במקום {plySize}, אותם גאוסיאנים",
   "splat_save_ply_too_large": "קובץ ה-PLY הזה גדול מדי להמרה במכשיר זה: שמרו אותו ממחשב",

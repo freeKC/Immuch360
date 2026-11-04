@@ -1520,6 +1520,7 @@
   "splat_save_explain": "Dio jadi gambo dale garis maso demo, samo kat semuo peranti demo. Immuch360 buka adege daripado gambo tu; Immich nga aplikasi lain tunjuk gambo tu.",
   "splat_save_failed": "Tak simpang ko Immich: {reason}",
   "splat_save_large": "{size}: setengoh server tolak fail hok lebih 100 MB (macey Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Demo guno data mudah alih: sapa {size} nok dihanta",
   "splat_save_no_capture": "Pandange tak leh tangkap: gerak sikit, lepah tu simpang semulo",
   "splat_save_ply": "Disimpang sebagai SPZ: {size} ganti {plySize}, gaussian hok samo",
   "splat_save_ply_too_large": "PLY ni beso sangat nok tukar kat peranti ni: simpang dio daripado komputer",

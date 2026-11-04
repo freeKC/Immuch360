@@ -74,6 +74,15 @@ export function isFinal(state) {
 }
 
 /**
+ * The lines of the panel under the poster, from the "save" entry of the session and its [texts]: the name, the size
+ * and the gaussians, the date, the warning of a large scene, the line of mobile data, the explanation; the panel drops
+ * the empty ones
+ */
+export function saveLines(save, texts) {
+  return [save.name, save.details, save.date, save.warning, save.mobileData, texts.explain];
+}
+
+/**
  * The poster of the WebGL [canvas] as it is now (call right after it drew): a JPEG blob, or null when the capture
  * shows nothing. [mark] draws the mark on it.
  */
@@ -173,7 +182,7 @@ export function createSaver({ save, panel, events, capture, say }) {
     panel.showSave({
       poster: posterUrl,
       title: t.title,
-      lines: [save.name, save.details, save.date, save.warning, t.explain],
+      lines: saveLines(save, t),
       albumLabel: t.album,
       album: save.album !== false,
       cancelLabel: t.cancel,

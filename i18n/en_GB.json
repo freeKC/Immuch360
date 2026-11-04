@@ -3609,6 +3609,7 @@
   "splat_save_explain": "It becomes a photo in your timeline, the same on all your devices. Immuch360 opens the scene from that photo; Immich and other apps show the photo.",
   "splat_save_failed": "Not saved to Immich: {reason}",
   "splat_save_large": "{size}: some servers refuse files above 100 MB (Cloudflare Tunnel, for one)",
+  "splat_save_mobile_data_ply": "You are on mobile data: up to {size} to send",
   "splat_save_no_capture": "The view could not be captured: move a little, then save again",
   "splat_save_ply": "Saved as SPZ: {size} instead of {plySize}, the same gaussians",
   "splat_save_ply_too_large": "This PLY is too large to convert on this device: save it from a computer",

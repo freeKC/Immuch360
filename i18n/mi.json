@@ -1520,6 +1520,7 @@
   "splat_save_explain": "Ka huri hei whakaahua i tō rārangi wā, he ōrite i ō pūrere katoa. Ka huakina e Immuch360 te atamira i taua whakaahua; ka whakaatu a Immich me ētahi atu taupānga i te whakaahua.",
   "splat_save_failed": "Kāore i tiakina ki Immich: {reason}",
   "splat_save_large": "{size}: ka whakakāhore ētahi tūmau i ngā kōnae nui ake i te 100 MB (pērā i Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Kei te raraunga pūkoro koe: tae atu ki te {size} hei tuku",
   "splat_save_no_capture": "Kāore i taea te hopu i te tirohanga: nekehia paku, kātahi ka tiaki anō",
   "splat_save_ply": "I tiakina hei SPZ: {size} kaua ko {plySize}, ko ngā gaussian anō",
   "splat_save_ply_too_large": "He nui rawa tēnei PLY hei huri i tēnei pūrere: tiakina mai i tētahi rorohiko",

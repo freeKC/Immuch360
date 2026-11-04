@@ -150,6 +150,20 @@ void main() {
     expect(inflate(kept), inflate(made));
     expect(inflate(kept), inflate(bytesOf('scene_sh3_v2.spz')));
   });
+
+  test('the most bytes of the SPZ of a PLY, known from its head before its conversion, is never passed', () {
+    for (final name in ['sh3.ply', 'edges_sh3.ply', 'scene_sh3.ply', 'brush_sh3.ply', 'axes.ply']) {
+      final ply = bytesOf(name);
+      final head = probeSplatHead(ply, ply.length) as SplatHead;
+      expect(writeSpzV2(readSplatPly(ply)).length, lessThanOrEqualTo(spzV2MaxBytes(head.gaussians, head.shDegree)));
+    }
+    // Values spread over the range of the format
+    for (final degree in [0, 3]) {
+      final properties = [for (final name in splatPlyProperties(degree)) (name, 'float')];
+      final cloud = readSplatPly(plyOf(properties, gaussiansOf(4000, degree)));
+      expect(writeSpzV2(cloud).length, lessThanOrEqualTo(spzV2MaxBytes(4000, degree)), reason: 'degree $degree');
+    }
+  });
 }
 
 /// The CRC-32 of gzip (ISO 3309), bit by bit

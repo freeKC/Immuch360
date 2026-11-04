@@ -3438,6 +3438,7 @@
   "splat_save_explain": "Tā kļūst par fotogrāfiju jūsu laika skalā, vienādu visās jūsu ierīcēs. Immuch360 atver ainu no šīs fotogrāfijas; Immich un citas lietotnes rāda fotogrāfiju.",
   "splat_save_failed": "Nav saglabāta Immich: {reason}",
   "splat_save_large": "{size}: daži serveri noraida failus, kas lielāki par 100 MB (piemēram, Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Jūs izmantojat mobilos datus: jāsūta līdz {size}",
   "splat_save_no_capture": "Skatu neizdevās uzņemt: mazliet pakustieties un saglabājiet vēlreiz",
   "splat_save_ply": "Saglabāta kā SPZ: {size} {plySize} vietā, tie paši Gausa elementi",
   "splat_save_ply_too_large": "Šis PLY ir pārāk liels, lai to pārveidotu šajā ierīcē: saglabājiet to no datora",

@@ -4,7 +4,15 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { MARK, MARK_PATH, markBox } from '../../assets/splat_viewer/mark.js';
-import { cropRect, FINAL_STATES, isBlankCapture, isFinal, POSTER_LONG, posterSize } from '../../assets/splat_viewer/save.js';
+import {
+  cropRect,
+  FINAL_STATES,
+  isBlankCapture,
+  isFinal,
+  POSTER_LONG,
+  posterSize,
+  saveLines,
+} from '../../assets/splat_viewer/save.js';
 
 test('a landscape view is cropped to 3:2 in its middle, a portrait one to 2:3', () => {
   assert.deepEqual(cropRect(1920, 1080), { x: 150, y: 0, w: 1620, h: 1080 });
@@ -65,6 +73,20 @@ test('the states that end a save are those of the app', () => {
     assert.equal(isFinal(state), false, state);
   }
   assert.equal(FINAL_STATES.length, 6);
+});
+
+test('the panel says the line of mobile data the app gives, after the warning; none on Wi-Fi', () => {
+  const texts = { explain: 'It becomes a photo.' };
+  const save = { name: 'room.spz', details: '150k', date: 'Nov 3', warning: null };
+  assert.deepEqual(saveLines({ ...save, mobileData: 'You are on mobile data: 3.4 MiB to send' }, texts), [
+    'room.spz',
+    '150k',
+    'Nov 3',
+    null,
+    'You are on mobile data: 3.4 MiB to send',
+    'It becomes a photo.',
+  ]);
+  assert.deepEqual(saveLines(save, texts).filter(Boolean), ['room.spz', '150k', 'Nov 3', 'It becomes a photo.']);
 });
 
 test('the mark: 7 % of the short side at the bottom right, 3 % from the edges, the glyph of the tiles', () => {

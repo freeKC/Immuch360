@@ -1520,6 +1520,7 @@
   "splat_save_explain": "Dont a ra da vezañ ur skeudenn en ho kronologiezh, an hevelep hini war hoc'h holl drevnadoù. Immuch360 a zigor al leurenn diwar ar skeudenn-se; Immich hag an arloadoù all a ziskouez ar skeudenn.",
   "splat_save_failed": "N'eo ket bet enrollet en Immich: {reason}",
   "splat_save_large": "{size}: servijerioù zo a nac'h restroù brasoc'h eget 100 MB (Cloudflare Tunnel, da skouer)",
+  "splat_save_mobile_data_ply": "War ar roadennoù hezoug emaoc'h: betek {size} da gas",
   "splat_save_no_capture": "N'eus ket bet gallet tapout ar gwel: fiñvit un tamm, ha goude enrollit en-dro",
   "splat_save_ply": "Enrollet evel SPZ: {size} e-lec'h {plySize}, an hevelep gaussianoù",
   "splat_save_ply_too_large": "Re vras eo ar PLY-mañ evit bezañ amdroet war an trevnad-mañ: enrollit anezhañ diwar un urzhiataer",

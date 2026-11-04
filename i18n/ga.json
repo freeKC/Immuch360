@@ -3646,6 +3646,7 @@
   "splat_save_explain": "Éiríonn sé ina ghrianghraf i d'amlíne, an ceann céanna ar do ghléasanna go léir. Osclaíonn Immuch360 an radharc ón ngrianghraf sin; taispeánann Immich agus aipeanna eile an grianghraf.",
   "splat_save_failed": "Níor sábháladh in Immich: {reason}",
   "splat_save_large": "{size}: diúltaíonn roinnt freastalaithe do chomhaid os cionn 100 MB (Cloudflare Tunnel, mar shampla)",
+  "splat_save_mobile_data_ply": "Tá tú ar shonraí móibíleacha: suas le {size} le seoladh",
   "splat_save_no_capture": "Níorbh fhéidir an t-amharc a ghabháil: bog beagán, ansin sábháil arís",
   "splat_save_ply": "Sábháilte mar SPZ: {size} in ionad {plySize}, na gaussaigh chéanna",
   "splat_save_ply_too_large": "Tá an PLY seo rómhór le tiontú ar an ngléas seo: sábháil ó ríomhaire é",

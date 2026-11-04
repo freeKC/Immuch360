@@ -3554,6 +3554,7 @@
   "splat_save_explain": "Zure kronologiako argazki bihurtzen da, berdina zure gailu guztietan. Immuch360-k argazki horretatik irekitzen du eszena; Immich-ek eta beste aplikazioek argazkia erakusten dute.",
   "splat_save_failed": "Ez da Immich-en gorde: {reason}",
   "splat_save_large": "{size}: zerbitzari batzuek 100 MB baino handiagoko fitxategiak baztertzen dituzte (Cloudflare Tunnel, adibidez)",
+  "splat_save_mobile_data_ply": "Datu mugikorrak erabiltzen ari zara: gehienez {size} bidaltzeko",
   "splat_save_no_capture": "Ezin izan da ikuspegia hartu: mugitu pixka bat eta gorde berriro",
   "splat_save_ply": "SPZ gisa gordea: {size} {plySize} ordez, gaussiar berberak",
   "splat_save_ply_too_large": "PLY hau handiegia da gailu honetan bihurtzeko: gorde ordenagailu batetik",

@@ -2352,6 +2352,7 @@
   "splat_save_explain": "Ia menjadi foto dalam garis masa anda, sama pada semua peranti anda. Immuch360 membuka adegan daripada foto itu; Immich dan aplikasi lain menunjukkan foto.",
   "splat_save_failed": "Tidak disimpan ke Immich: {reason}",
   "splat_save_large": "{size}: sesetengah pelayan menolak fail melebihi 100 MB (contohnya Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Anda menggunakan data mudah alih: sehingga {size} untuk dihantar",
   "splat_save_no_capture": "Pandangan tidak dapat ditangkap: bergerak sedikit, kemudian simpan semula",
   "splat_save_ply": "Disimpan sebagai SPZ: {size} dan bukannya {plySize}, gaussian yang sama",
   "splat_save_ply_too_large": "PLY ini terlalu besar untuk ditukar pada peranti ini: simpannya daripada komputer",

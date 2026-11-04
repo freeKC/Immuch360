@@ -3638,6 +3638,7 @@
   "splat_save_explain": "Den bliver et billede på din tidslinje, det samme på alle dine enheder. Immuch360 åbner scenen fra det billede; Immich og andre apps viser billedet.",
   "splat_save_failed": "Ikke gemt i Immich: {reason}",
   "splat_save_large": "{size}: nogle servere afviser filer over 100 MB (for eksempel Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Du er på mobildata: op til {size} skal sendes",
   "splat_save_no_capture": "Visningen kunne ikke fanges: flyt dig lidt, og gem igen",
   "splat_save_ply": "Gemt som SPZ: {size} i stedet for {plySize}, de samme gaussianer",
   "splat_save_ply_too_large": "Denne PLY er for stor til at blive konverteret på denne enhed: gem den fra en computer",

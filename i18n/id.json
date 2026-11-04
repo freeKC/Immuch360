@@ -3645,6 +3645,7 @@
   "splat_save_explain": "Ini menjadi foto di linimasa Anda, sama di semua perangkat Anda. Immuch360 membuka adegan dari foto itu; Immich dan aplikasi lain menampilkan fotonya.",
   "splat_save_failed": "Tidak tersimpan ke Immich: {reason}",
   "splat_save_large": "{size}: beberapa server menolak berkas di atas 100 MB (misalnya Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Anda memakai data seluler: hingga {size} akan dikirim",
   "splat_save_no_capture": "Tampilan tidak dapat ditangkap: bergeserlah sedikit, lalu simpan lagi",
   "splat_save_ply": "Disimpan sebagai SPZ: {size} alih-alih {plySize}, gaussian yang sama",
   "splat_save_ply_too_large": "PLY ini terlalu besar untuk dikonversi di perangkat ini: simpan dari komputer",

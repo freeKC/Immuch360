@@ -1728,6 +1728,7 @@
   "splat_save_explain": "Ew dibe wêneyek di demnameya te de, li ser hemû amûrên te heman e. Immuch360 sehneyê ji wî wêneyî vedike; Immich û sepanên din wêneyê nîşan didin.",
   "splat_save_failed": "Li Immich nehat tomarkirin: {reason}",
   "splat_save_large": "{size}: hin server pelên ji 100 MB mezintir red dikin (mînak Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Tu li ser daneyên mobîl î: heta {size} ji bo şandinê",
   "splat_save_no_capture": "Dîtin nehat girtin: hinekî bilive, paşê dîsa tomar bike",
   "splat_save_ply": "Wekî SPZ hate tomarkirin: {size} li şûna {plySize}, heman gaussî",
   "splat_save_ply_too_large": "Ev PLY ji bo veguherandinê li ser vê amûrê pir mezin e: wê ji komputerekê tomar bike",

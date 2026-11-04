@@ -1520,6 +1520,7 @@
   "splat_save_explain": "Si gëtt eng Foto an denger Zäitleescht, déi selwecht op all denge Geräter. Immuch360 mécht d'Zeen vun dëser Foto op; Immich an aner Apps weisen d'Foto.",
   "splat_save_failed": "Net an Immich gespäichert: {reason}",
   "splat_save_large": "{size}: e puer Server refuséieren Fichiere vu méi wéi 100 MB (zum Beispill Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Du bass op mobilen Daten: bis {size} ze schécken",
   "splat_save_no_capture": "D'Usiicht konnt net festgehale ginn: beweeg dech e bëssen, dann nach eng Kéier späicheren",
   "splat_save_ply": "Als SPZ gespäichert: {size} amplaz {plySize}, déi selwecht Gaussen",
   "splat_save_ply_too_large": "Dës PLY ass ze grouss, fir op dësem Apparat ëmgewandelt ze ginn: späicher se vun engem Computer",

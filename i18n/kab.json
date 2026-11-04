@@ -1520,6 +1520,7 @@
   "splat_save_explain": "Ad yuɣal d tugna deg tegzumt-ik n wakud, yiwet deg yibenkan-ik akk. Immuch360 yeldi asayes seg tugna-nni; Immich d yisnasen niḍen sseknen tugna.",
   "splat_save_failed": "Ur yettwasekles ara deg Immich: {reason}",
   "splat_save_large": "{size}: kra n yiqeddacen ugin ifuyla yugaren 100 MB (am Cloudflare Tunnel)",
+  "splat_save_mobile_data_ply": "Aql-ak deg yisefka n uziraz: alamma d {size} ara yettwaznen",
   "splat_save_no_capture": "Ur tezmir ara ad tettwaṭṭef tmuɣli: muddu cwiṭ, syin sekles tikkelt niḍen",
   "splat_save_ply": "Yettwasekles am SPZ: {size} deg wadeg n {plySize}, gaussiyen-nni yakan",
   "splat_save_ply_too_large": "PLY-a meqqer aṭas akken ad yettwabeddel ɣef yibenk-a: sekles-it seg uselkim",

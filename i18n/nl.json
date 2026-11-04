@@ -3646,6 +3646,7 @@
   "splat_save_explain": "Ze wordt een foto in je tijdlijn, dezelfde op al je apparaten. Immuch360 opent de scène vanuit die foto; Immich en andere apps tonen de foto.",
   "splat_save_failed": "Niet opgeslagen in Immich: {reason}",
   "splat_save_large": "{size}: sommige servers weigeren bestanden groter dan 100 MB (Cloudflare Tunnel bijvoorbeeld)",
+  "splat_save_mobile_data_ply": "Je gebruikt mobiele data: tot {size} te versturen",
   "splat_save_no_capture": "Het beeld kon niet worden vastgelegd: beweeg een beetje en sla opnieuw op",
   "splat_save_ply": "Opgeslagen als SPZ: {size} in plaats van {plySize}, dezelfde gaussians",
   "splat_save_ply_too_large": "Deze PLY is te groot om op dit apparaat te converteren: sla hem op vanaf een computer",

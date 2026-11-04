@@ -3647,6 +3647,7 @@
   "splat_save_explain": "Es converteix en una foto de la teva cronologia, la mateixa a tots els teus dispositius. L’Immuch360 obre l’escena des d’aquesta foto; l’Immich i altres aplicacions mostren la foto.",
   "splat_save_failed": "No s’ha desat a l’Immich: {reason}",
   "splat_save_large": "{size}: alguns servidors rebutgen fitxers de més de 100 MB (Cloudflare Tunnel, per exemple)",
+  "splat_save_mobile_data_ply": "Estàs amb dades mòbils: fins a {size} per enviar",
   "splat_save_no_capture": "No s’ha pogut capturar la vista: mou-te una mica i torna a desar",
   "splat_save_ply": "Desada com a SPZ: {size} en lloc de {plySize}, les mateixes gaussianes",
   "splat_save_ply_too_large": "Aquest PLY és massa gran per convertir-lo en aquest dispositiu: desa’l des d’un ordinador",

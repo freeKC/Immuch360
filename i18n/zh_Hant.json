@@ -3586,6 +3586,7 @@
   "splat_save_explain": "它會成為你時間軸中的一張相片，在你的所有裝置上都相同。Immuch360 從這張相片開啟場景；Immich 和其他應用程式顯示這張相片。",
   "splat_save_failed": "未儲存至 Immich：{reason}",
   "splat_save_large": "{size}：部分伺服器會拒絕超過 100 MB 的檔案（例如 Cloudflare Tunnel）",
+  "splat_save_mobile_data_ply": "你正在使用行動數據：最多要傳送 {size}",
   "splat_save_no_capture": "無法擷取視角：稍微移動一下，然後再次儲存",
   "splat_save_ply": "已儲存為 SPZ：{size}，而非 {plySize}，高斯相同",
   "splat_save_ply_too_large": "此 PLY 太大，無法在此裝置上轉換：請從電腦儲存",
