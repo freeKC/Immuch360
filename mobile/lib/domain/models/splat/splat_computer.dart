@@ -170,25 +170,44 @@ int splatComputerMostGaussians(SplatComputer computer, {double fileBytesPerGauss
   return math.max(0, most);
 }
 
-/// What the user answered for a file whose frames were slow (the page's offer): keep [keep] of its gaussians, or keep
-/// them all ([keep] null)
-class SplatFrameAnswer {
-  const SplatFrameAnswer.reduce(int this.keep);
+/// How a whole splat stopped the viewer on a computer: its web view's process died for want of memory, or its graphics
+/// stopped (the page stalled, or lost its WebGL context)
+enum SplatDeath { memory, graphics }
 
-  const SplatFrameAnswer.whole() : keep = null;
+/// What the user answered for a file whose frames were slow (the page's offer): keep [keep] of its gaussians, or keep
+/// them all ([keep] null). Or what the app keeps for a whole splat that stopped the viewer ([died]): the reduced copy
+/// of [keep] gaussians is offered before it opens again (review of 4 November 2026)
+class SplatFrameAnswer {
+  const SplatFrameAnswer.reduce(int this.keep) : died = null;
+
+  const SplatFrameAnswer.whole() : keep = null, died = null;
+
+  const SplatFrameAnswer.died(int this.keep, SplatDeath this.died);
 
   final int? keep;
+  final SplatDeath? died;
 
-  bool get reduces => keep != null;
+  /// The user took the reduced copy of [keep]
+  bool get reduces => keep != null && died == null;
 
-  /// The answer as it is kept: {"keep": 1200000} or {"whole": true}
-  Map<String, Object?> toJson() => reduces ? {'keep': keep} : {'whole': true};
+  /// The user chose to keep every gaussian
+  bool get keepsWhole => keep == null && died == null;
+
+  /// The answer as it is kept: {"keep": 1200000}, {"whole": true}, or {"died": "memory", "keep": 1000000}
+  Map<String, Object?> toJson() => switch (died) {
+    final SplatDeath died => {'died': died.name, 'keep': keep},
+    null => reduces ? {'keep': keep} : {'whole': true},
+  };
 
   static SplatFrameAnswer? fromJson(Object? json) {
     if (json is! Map) {
       return null;
     }
     final keep = json['keep'];
+    final died = SplatDeath.values.where((death) => death.name == json['died']).firstOrNull;
+    if (json['died'] != null) {
+      return died != null && keep is int && keep > 0 ? SplatFrameAnswer.died(keep, died) : null;
+    }
     if (keep is int && keep > 0) {
       return SplatFrameAnswer.reduce(keep);
     }
@@ -196,13 +215,24 @@ class SplatFrameAnswer {
   }
 
   @override
-  bool operator ==(Object other) => other is SplatFrameAnswer && other.keep == keep;
+  bool operator ==(Object other) => other is SplatFrameAnswer && other.keep == keep && other.died == died;
 
   @override
-  int get hashCode => keep.hashCode;
+  int get hashCode => Object.hash(keep, died);
 
   @override
-  String toString() => reduces ? 'SplatFrameAnswer.reduce($keep)' : 'SplatFrameAnswer.whole()';
+  String toString() => switch (died) {
+    final SplatDeath died => 'SplatFrameAnswer.died($keep, ${died.name})',
+    null => reduces ? 'SplatFrameAnswer.reduce($keep)' : 'SplatFrameAnswer.whole()',
+  };
+}
+
+/// The reduced copy offered for a whole splat of [gaussians] that stopped the viewer: the cap of the chips that share
+/// the memory, or half the splat under it, rounded down to 10,000 and at least [splatFrameWatchFloor]; null when the
+/// splat is no larger than that
+int? splatDiedKeep(int gaussians) {
+  final keep = math.max(splatFrameWatchFloor, math.min(splatComputerGaussians, gaussians ~/ 2) ~/ 10000 * 10000);
+  return keep < gaussians ? keep : null;
 }
 
 /// A splat of this many gaussians or fewer is never offered smaller: the phones' cap

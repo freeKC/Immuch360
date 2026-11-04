@@ -99,8 +99,8 @@ void main() {
     expect(splatCardBytes(5000000), splatCardBytes(2 * layer));
     expect(splatCardBytes(2 * layer + 1), greaterThanOrEqualTo(1497 * mb));
     // A card of 2 GB: its half holds one layer, not the 5.09 million of the earlier count
-    final card2 = SplatComputer(
-      gpu: const SplatGpu(SplatGpuKind.dedicated, memory: 2048 * mb),
+    const card2 = SplatComputer(
+      gpu: SplatGpu(SplatGpuKind.dedicated, memory: 2048 * mb),
       physicalMemory: 256 << 30,
     );
     expect(splatComputerMostGaussians(card2), layer);
@@ -230,6 +230,32 @@ void main() {
     // An SPZ of version 4 is never reduced here: whole when it fits
     const v4 = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: 2000000, shDegree: 0);
     expect(gate(four, rtx, head: v4, answer: const SplatFrameAnswer.reduce(1000000)).request!.maxGaussians, 2000000);
+  });
+
+  test('a whole splat that stopped the viewer: kept as such, opened as without an answer, its copy offered first', () {
+    // Review of 4 November 2026: a page that died on a whole splat kept no answer, and the next opening died the same
+    // way. The reduced copy offered is of the cap of the chips that share the memory, or half the file under it
+    const died = SplatFrameAnswer.died(1000000, SplatDeath.memory);
+    expect(SplatFrameAnswer.fromJson(died.toJson()), died);
+    expect(
+      SplatFrameAnswer.fromJson(const SplatFrameAnswer.died(750000, SplatDeath.graphics).toJson()),
+      const SplatFrameAnswer.died(750000, SplatDeath.graphics),
+    );
+    expect(SplatFrameAnswer.fromJson({'died': 'memory'}), isNull, reason: 'no count, no offer');
+    expect(died.reduces, isFalse);
+    expect(died.keepsWhole, isFalse);
+    expect(const SplatFrameAnswer.whole().keepsWhole, isTrue);
+    expect(splatDiedKeep(12000000), splatComputerGaussians);
+    expect(splatDiedKeep(1500000), 750000);
+    expect(splatDiedKeep(200000), splatFrameWatchFloor);
+    expect(splatDiedKeep(splatFrameWatchFloor), isNull);
+    final eight = measured('rtx', 8000000);
+    expect(gate(eight, rtx, answer: died).request!.maxGaussians, 8000000, reason: 'the offer comes before, not here');
+    expect(gate(measured('intel', 4000000), intel, answer: died).request!.maxGaussians, splatComputerGaussians);
+    expect(
+      splatWatchesFrames(device: SplatDeviceClass.computer, head: headOf(eight), cap: 8000000, answer: died),
+      isFalse,
+    );
   });
 
   test('the first frames are watched on a computer only, for a splat shown whole above the phones cap', () {

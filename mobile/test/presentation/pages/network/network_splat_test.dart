@@ -575,6 +575,64 @@ void main() {
           debugDefaultTargetPlatformOverride = null;
         });
 
+        group('a whole splat that stopped the viewer last time (review of 4 November 2026)', () {
+          late SplatAnswerStore answers;
+
+          Future<void> pumpDied(WidgetTester tester) async {
+            debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+            addTearDown(() => debugDefaultTargetPlatformOverride = null);
+            answers = SplatAnswerStore(() async => throw const FileSystemException('no support folder'));
+            await answers.writeAnswer(
+              'huge.spz',
+              share.files['/huge.spz']!.length,
+              const SplatFrameAnswer.died(1000000, SplatDeath.memory),
+            );
+            viewings.answers = answers;
+            await pumpPage(
+              tester,
+              '/huge.spz',
+              with_: [
+                ...flat(computer: rtx),
+                splatAnswerStoreProvider.overrideWithValue(answers),
+              ],
+            );
+            await tester.pumpAndSettle();
+            await tester.tap(find.byKey(exploreSplatButtonKey));
+            await tester.pumpAndSettle();
+            expect(viewings.shown, isEmpty, reason: 'the offer comes first');
+            expect(find.text('This splat needed more memory than this device gives it'), findsOneWidget);
+          }
+
+          testWidgets('its reduced copy is offered before it opens, and kept once taken', (tester) async {
+            await pumpDied(tester);
+            await tester.tap(find.text('Show 1,000,000 of the 5,000,000 gaussians'));
+            await tester.pumpAndSettle();
+            expect(viewings.shown.map((viewing) => (viewing.cap, viewing.watch)), [(1000000, false)]);
+            expect(
+              await answers.answer('huge.spz', share.files['/huge.spz']!.length),
+              const SplatFrameAnswer.reduce(1000000),
+            );
+            debugDefaultTargetPlatformOverride = null;
+          });
+
+          testWidgets('keep them all opens it whole, not watched, and is kept', (tester) async {
+            await pumpDied(tester);
+            await tester.tap(find.text('Keep them all'));
+            await tester.pumpAndSettle();
+            expect(viewings.shown.map((viewing) => (viewing.cap, viewing.watch)), [(5000000, false)]);
+            expect(await answers.answer('huge.spz', share.files['/huge.spz']!.length), const SplatFrameAnswer.whole());
+            debugDefaultTargetPlatformOverride = null;
+          });
+
+          testWidgets('the offer dismissed opens nothing', (tester) async {
+            await pumpDied(tester);
+            await tester.tapAt(const Offset(4, 4));
+            await tester.pumpAndSettle();
+            expect(viewings.shown, isEmpty);
+            debugDefaultTargetPlatformOverride = null;
+          });
+        });
+
         testWidgets('a computer with too little memory refuses it with the numbers', (tester) async {
           debugDefaultTargetPlatformOverride = TargetPlatform.windows;
           addTearDown(() => debugDefaultTargetPlatformOverride = null);

@@ -60,6 +60,7 @@ class SplatPage extends ConsumerWidget {
         fileBytes: fileBytes,
         cap: splat.maxGaussians,
         watchFrames: splatWatchesFrames(device: device!, head: probe, cap: splat.maxGaussians, answer: answer),
+        answer: answer,
       );
       return;
     }

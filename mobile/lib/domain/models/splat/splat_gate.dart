@@ -86,7 +86,8 @@ int splatViewerCapOf(SplatDeviceClass device, {required bool largeSplats}) => sw
 /// A computer ([computer], lot SVC) with a dedicated graphics card, or with "Keep every gaussian", shows the splat whole
 /// up to what its memory holds (splatComputerMostGaussians), refused beyond with that number; any other keeps the cap of
 /// [splatComputerGaussians]. The user's [answer] to the page's offer for this file comes first: the count kept, or
-/// every gaussian.
+/// every gaussian; a splat that stopped the viewer opens as without an answer, its reduced copy offered before
+/// (showSplatViewer).
 SplatGateVerdict splatViewerGateOf({
   required SplatProbe probe,
   required String name,
@@ -115,14 +116,14 @@ SplatGateVerdict splatViewerGateOf({
       computer,
       fileBytesPerGaussian: head.gaussians > 0 ? fileBytes / head.gaussians : 0,
     );
-    final keep = answer?.keep;
+    final keep = answer != null && answer.reduces ? answer.keep : null;
     if (keep != null && keep < head.gaussians && !head.isZstd) {
       // The user chose the reduced copy the page offered: the reduction reads the file from the disk, whatever its size
       return SplatGateVerdict.open(_requestOf(head, name, fileBytes, math.min(keep, most)));
     }
     // A dedicated card or the setting, or the user who chose to keep them all for this file, on a computer whose
     // memory is known; never a file larger than the page ever loaded
-    if (computer.physicalMemory != null && (computer.showsWhole || answer?.reduces == false)) {
+    if (computer.physicalMemory != null && (computer.showsWhole || (answer?.keepsWhole ?? false))) {
       if (fileBytes > splatComputerMostFileBytes) {
         return SplatGateVerdict.refused(SplatRefusal.tooLarge, gaussians: head.gaussians);
       }

@@ -793,6 +793,67 @@ void main() {
       expect(await answers.answer('ranked.ply', ranked.length), const SplatFrameAnswer.whole());
     });
 
+    test('a whole splat that stopped the viewer on a computer is kept for its file, with the copy to offer', () async {
+      // Review of 4 November 2026: the next opening died the same way
+      final file = File('${folder.path}/huge.spz')..writeAsBytesSync(axes);
+      const huge = SplatHead(format: SplatFormat.spz, formatVersion: 2, gaussians: 5000000, shDegree: 0);
+      const computer = SplatViewerLook(
+        texts: {'reset': 'Reset'},
+        locale: 'en',
+        dark: true,
+        primary: '#4250af',
+        device: 'computer',
+        gyroscope: false,
+        maxStdDev: 2.828,
+        pixelRatioMax: 2,
+      );
+      Future<SplatFrameAnswer?> after(_PageHost host, {SplatViewerLook on = computer}) async {
+        await computerService(host).show(
+          source: SplatViewerSource.local(file.path),
+          head: huge,
+          fileBytes: axes.length,
+          cap: huge.gaussians,
+          look: on,
+          watchFrames: true,
+        );
+        return answers.answer('huge.spz', axes.length);
+      }
+
+      final gone = _PageHost([
+        {'type': 'close'},
+      ])..ending = SplatHostClosed.rendererGone;
+      expect(await after(gone), const SplatFrameAnswer.died(1000000, SplatDeath.memory));
+      await answers.writeAnswer('huge.spz', axes.length, const SplatFrameAnswer.whole());
+      final lost = _PageHost([
+        {'type': 'error', 'message': 'webglcontextlost'},
+        {'type': 'close'},
+      ]);
+      expect(
+        await after(lost),
+        const SplatFrameAnswer.died(1000000, SplatDeath.graphics),
+        reason: 'over "keep them all"',
+      );
+      await answers.writeAnswer('huge.spz', axes.length, const SplatFrameAnswer.whole());
+      final stalled = _PageHost([
+        {'type': 'close'},
+      ])..ending = SplatHostClosed.stalled;
+      expect(await after(stalled), const SplatFrameAnswer.died(1000000, SplatDeath.graphics));
+      await answers.writeAnswer('huge.spz', axes.length, const SplatFrameAnswer.whole());
+      expect(
+        await after(
+          _PageHost([
+            {'type': 'close'},
+          ]),
+        ),
+        const SplatFrameAnswer.whole(),
+        reason: 'a Back keeps it',
+      );
+      final phone = _PageHost([
+        {'type': 'close'},
+      ])..ending = SplatHostClosed.rendererGone;
+      expect(await after(phone, on: look), const SplatFrameAnswer.whole(), reason: 'phones keep their cap');
+    });
+
     test('no watch unless asked, nor on a reduced copy; a reduce of the whole count or more changes nothing', () async {
       final file = File('${folder.path}/ranked.ply')..writeAsBytesSync(ranked);
       final head = _head(ranked);

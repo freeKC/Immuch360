@@ -262,6 +262,8 @@ class SplatViewerService {
     var ready = false;
     // The page said what went wrong (a cut file, a share that stopped answering): it did not stay blank
     var pageError = false;
+    // The page lost its WebGL context: its graphics stopped
+    var graphicsLost = false;
     void onEvent(SplatViewerEvent event) {
       switch (event) {
         case SplatViewerReady(:final fields, :final renderer):
@@ -299,6 +301,7 @@ class SplatViewerService {
           unsupported = reason;
         case SplatViewerError(:final message):
           pageError = true;
+          graphicsLost = graphicsLost || message == 'webglcontextlost';
           _log.warning('The splat viewer page: $message');
         case SplatViewerClose():
           if (!closing) {
@@ -341,6 +344,18 @@ class SplatViewerService {
       }
       if (unsupported != null) {
         return SplatViewerOutcome(SplatViewerEnd.unsupported, unsupported: unsupported);
+      }
+      // A whole splat that stopped the viewer of a computer: kept for its file, its reduced copy offered before it
+      // opens again (review of 4 November 2026)
+      final death = switch (how) {
+        SplatHostClosed.rendererGone => SplatDeath.memory,
+        SplatHostClosed.stalled => SplatDeath.graphics,
+        _ => graphicsLost ? SplatDeath.graphics : null,
+      };
+      final offer = splatDiedKeep(head.gaussians);
+      if (death != null && offer != null && !reduced && !head.isZstd && look.device == 'computer') {
+        _log.info('$name stopped the viewer (${death.name}): its copy of $offer gaussians is offered next time');
+        unawaited(_answers?.writeAnswer(name, fileBytes, SplatFrameAnswer.died(offer, death)));
       }
       return SplatViewerOutcome(switch (how) {
         SplatHostClosed.user => SplatViewerEnd.closed,

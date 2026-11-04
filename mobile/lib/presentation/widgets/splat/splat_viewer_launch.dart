@@ -178,6 +178,7 @@ Future<void> openSplatFile(BuildContext context, WidgetRef ref, SplatFileKey key
           fileBytes: size ?? 0,
           cap: cap,
           watchFrames: device != null && splatWatchesFrames(device: device, head: probe, cap: cap, answer: answer),
+          answer: answer,
         );
         return;
       }
@@ -192,7 +193,8 @@ Future<void> openSplatFile(BuildContext context, WidgetRef ref, SplatFileKey key
 
 /// Shows [source] (its head [head], [fileBytes] long) with at most [cap] gaussians in the splat viewer: a dialog with
 /// the progress and Cancel while a splat above the cap is made ready, then the viewer; what went wrong is said after.
-/// With [watchFrames] the page watches its first frames; the reduced copy the user takes there opens right after.
+/// With [watchFrames] the page watches its first frames; the reduced copy the user takes there opens right after. A
+/// whole splat that stopped the viewer last time ([answer] died) offers its reduced copy first.
 Future<void> showSplatViewer(
   BuildContext context,
   WidgetRef ref, {
@@ -201,9 +203,35 @@ Future<void> showSplatViewer(
   required int fileBytes,
   required int cap,
   bool watchFrames = false,
+  SplatFrameAnswer? answer,
 }) async {
   final service = ref.read(splatViewerServiceProvider);
   if (service == null) {
+    return;
+  }
+  var watch = watchFrames;
+  final died = answer?.died;
+  final offer = answer?.keep;
+  if (died != null && offer != null && offer < head.gaussians && cap >= head.gaussians) {
+    final reduce = await _offerAfterDeath(context, died, keep: offer, total: head.gaussians);
+    if (reduce == null || !context.mounted) {
+      return;
+    }
+    final store = ref.read(splatAnswerStoreProvider);
+    unawaited(
+      store.writeAnswer(
+        source.name,
+        fileBytes,
+        reduce ? SplatFrameAnswer.reduce(offer) : const SplatFrameAnswer.whole(),
+      ),
+    );
+    if (reduce) {
+      await showSplatViewer(context, ref, source: source, head: head, fileBytes: fileBytes, cap: offer);
+      return;
+    }
+    watch = false;
+  }
+  if (!context.mounted) {
     return;
   }
   final t = context.t;
@@ -270,7 +298,7 @@ Future<void> showSplatViewer(
       progress: (step, done) => progress.value = (step, done),
       cancel: cancel,
       onOpening: closeDialog,
-      watchFrames: watchFrames,
+      watchFrames: watch,
     );
   } finally {
     closeDialog();
@@ -286,6 +314,36 @@ Future<void> showSplatViewer(
   if (text != null) {
     messenger?.showSnackBar(SnackBar(content: Text(text)));
   }
+}
+
+/// The offer before a whole splat that stopped the viewer last time opens again: why ([died]), the reduced copy of
+/// [keep] of the [total] gaussians, or every gaussian. True for the copy, false for every gaussian, null when
+/// dismissed
+Future<bool?> _offerAfterDeath(BuildContext context, SplatDeath died, {required int keep, required int total}) {
+  final t = context.t;
+  final locale = Localizations.localeOf(context).toLanguageTag();
+  return showDialog<bool>(
+    context: context,
+    useRootNavigator: true,
+    builder: (context) => AlertDialog(
+      content: Text(switch (died) {
+        SplatDeath.memory => t.splat_renderer_gone,
+        SplatDeath.graphics => t.splat_graphics_lost,
+      }),
+      actions: [
+        TextButton(
+          key: const Key('splat_died_keep'),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(t.splat_slow_keep),
+        ),
+        FilledButton(
+          key: const Key('splat_died_reduce'),
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(t.splat_slow_reduce(kept: splatCountText(keep, locale), total: splatCountText(total, locale))),
+        ),
+      ],
+    ),
+  );
 }
 
 String _percent(BuildContext context, double share) {
