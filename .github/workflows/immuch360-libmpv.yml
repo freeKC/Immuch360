@@ -66,10 +66,11 @@ name: Immuch360 libmpv for Windows and macOS
 # Triggers: by hand (workflow_dispatch, once this file is on the default branch); every quarter (schedule, default
 # branch only), from the head of every library, to show what a refresh of the lock would bring: it publishes nothing
 # and its summary prints the new lock lines; pushes to the desktop branch that change this file,
-# .github/desktop/libmpv/ (the lock included) or .github/desktop/libmpv-macos/, which is how the first run happens
-# before the desktop branch is merged.
-# Only a run from pinned sources publishes. No secret is used; two jobs can write: image (packages, the copy of the
-# container) and publish (contents, the release).
+# .github/desktop/libmpv/ (the lock included) or .github/desktop/libmpv-macos/, which build and check both libmpv and
+# publish nothing (review of lot AD4 of the AV2 videos, n4: the merge of a branch that touches the recipe would publish
+# two pre-releases nobody pins, as libmpv-macos-20261020-10 beside the pinned -9).
+# Only a run by hand from pinned sources, with publish, publishes. No secret is used; two jobs can write: image
+# (packages, the copy of the container) and publish (contents, the release).
 
 on:
   workflow_dispatch:
@@ -610,10 +611,9 @@ jobs:
   publish:
     name: Release
     needs: [sources, libmpv]
-    # Only pinned sources are published: never the quarterly run from the heads, and by hand only when asked
+    # Only pinned sources are published, by hand and when asked: never the quarterly run from the heads, nor a push
     if: >-
-      needs.sources.outputs.pinned == 'true' && github.event_name != 'schedule'
-      && (github.event_name != 'workflow_dispatch' || inputs.publish)
+      needs.sources.outputs.pinned == 'true' && github.event_name == 'workflow_dispatch' && inputs.publish
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -927,8 +927,9 @@ jobs:
   macos-publish:
     name: macOS release
     needs: [macos-sources, macos-libmpv]
+    # By hand and when asked only, as the Windows release
     if: >-
-      github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || inputs.publish)
+      github.event_name == 'workflow_dispatch' && inputs.publish
       && (inputs.macos_target == '' || inputs.macos_target == 'mk-out-archive-xcframeworks-macos-universal-video-default')
     runs-on: ubuntu-24.04
     timeout-minutes: 30
