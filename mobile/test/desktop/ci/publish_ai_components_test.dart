@@ -16,6 +16,13 @@ import 'ci_scripts.dart';
 const _token = 'test-token-not-a-secret';
 const _script = 'ai/publish_ai_components.py';
 
+/// --check as the gates of the desktop workflow run it on the branch of the test build AVT (lot AD6), whose catalogue
+/// carries the sums of the AV2 decoder before av2-decoder-1 is made
+ScriptRun _check(List<String> arguments) =>
+    runCiScript(_script, ['--check', ...arguments, '--test-build', 'feat-av2'], environment: _onTestBuild);
+
+const _onTestBuild = {'GITHUB_REF_NAME': 'feat-av2'};
+
 final String _catalogue = p.join(
   repositoryRoot,
   'mobile',
@@ -336,15 +343,7 @@ void main() {
       expect(run.output, contains('not published: ai-components-1 is created only with --publish'));
 
       // The offline check agrees with what was written
-      final check = runCiScript(_script, [
-        '--check',
-        '--sources',
-        sources.path,
-        '--catalogue',
-        catalogue.path,
-        '--licences',
-        licences.path,
-      ]);
+      final check = _check(['--sources', sources.path, '--catalogue', catalogue.path, '--licences', licences.path]);
       expect(check.exitCode, 0, reason: '$check');
     }, skip: skipCiScripts);
 
@@ -530,22 +529,23 @@ void main() {
       final licence = text.indexOf("  licence: 'Apache-2.0',", start);
       catalogue.writeAsStringSync(text.replaceRange(licence, licence + 24, "  licence: 'CC-BY-NC-4.0',"));
 
-      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+      final run = _check(['--catalogue', catalogue.path]);
 
       expect(run.exitCode, 1, reason: '$run');
       expect(run.output, contains('depth-anything-v2-small-onnx: licence CC-BY-NC-4.0 is not one this project allows'));
     }, skip: skipCiScripts);
 
     test('the catalogue of the app and MODEL-LICENSES.md of the repository agree, every component complete', () {
-      final run = runCiScript(_script, ['--check']);
+      final run = _check(const []);
 
       expect(run.exitCode, 0, reason: '$run');
       expect(run.output, contains('16 components in ai-components-1, ai-components-2, ai-components-3, each complete'));
+      // The branch of the test build AVT: the archives of the CI, served by a local mirror (lot AD6)
       expect(
         run.output,
         contains(
-          'the AV2 decoder waits for av2-decoder-1: av2-decoder-linux-x64, av2-decoder-macos-universal, '
-          'av2-decoder-windows-x64',
+          'the AV2 decoder carries the archives of the CI for the test build of feat-av2 (av2-decoder-1 not made): '
+          'av2-decoder-linux-x64, av2-decoder-macos-universal, av2-decoder-windows-x64',
         ),
       );
       expect(File(_licences).readAsStringSync(), contains('Date: '));
@@ -567,7 +567,12 @@ void main() {
           "  licence: 'BSD-2-Clause',",
           "  licence: 'GPL-2.0-or-later',",
         ),
-        (text.indexOf('  size: null,', linux), '  size: null,', '  size: 1100000,'),
+        // The sum of the Linux archive taken out, its size and files left
+        (
+          text.indexOf("  sha256: '9432ce17bc209e9ac544d20ebb129fb6283c323bc4af8e80f285eae5e09dccb7',", linux),
+          "  sha256: '9432ce17bc209e9ac544d20ebb129fb6283c323bc4af8e80f285eae5e09dccb7',",
+          '  sha256: null,',
+        ),
       ];
       var changed = text;
       for (final (at, old, replacement) in changes) {
@@ -576,12 +581,12 @@ void main() {
       }
       catalogue.writeAsStringSync(changed);
 
-      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path]);
+      final run = _check(['--catalogue', catalogue.path]);
 
       expect(run.exitCode, 1, reason: '$run');
       expect(
         run.output,
-        contains('av2-decoder-linux-x64: incomplete in the catalogue (size 1100000, sha256 None, 0 files)'),
+        contains('av2-decoder-linux-x64: incomplete in the catalogue (size 953205, sha256 None, 11 files)'),
       );
       expect(
         run.output,
@@ -593,6 +598,60 @@ void main() {
       );
     }, skip: skipCiScripts);
 
+    test('the sums of the AV2 decoder before av2-decoder-1 are refused but on the branch of its test build', () {
+      const decoders = 'av2-decoder-linux-x64, av2-decoder-macos-universal, av2-decoder-windows-x64';
+      // Merged into the phone and desktop branch
+      final merged = runCiScript(
+        _script,
+        ['--check', '--test-build', 'feat-av2'],
+        environment: const {'GITHUB_REF_NAME': 'immuch360'},
+      );
+      expect(merged.exitCode, 1, reason: '$merged');
+      expect(
+        merged.output,
+        contains('the AV2 decoder carries sums on immuch360: only feat-av2 may, before av2-decoder-1 is made'),
+      );
+      // Taken by a branch made from the test build
+      final taken = runCiScript(
+        _script,
+        ['--check', '--test-build', 'feat-av2'],
+        environment: const {'GITHUB_REF_NAME': 'feat-av2-ad7'},
+      );
+      expect(taken.exitCode, 1, reason: '$taken');
+      expect(taken.output, contains('the AV2 decoder carries sums on feat-av2-ad7'));
+      // On the branch itself, but without the gates saying it is the test build, or naming another branch
+      final unnamed = runCiScript(_script, ['--check'], environment: _onTestBuild);
+      expect(unnamed.exitCode, 1, reason: '$unnamed');
+      expect(unnamed.output, contains('the AV2 decoder carries sums ($decoders) with no --test-build'));
+      final other = runCiScript(_script, ['--check', '--test-build', 'immuch360'], environment: _onTestBuild);
+      expect(other.exitCode, 1, reason: '$other');
+      expect(other.output, contains('with --test-build immuch360'));
+      // As the gates run it on the branch of the test build
+      expect(_check(const []).exitCode, 0);
+
+      // Without sums, as on immuch360 until av2-decoder-1 is made, the check passes on any branch
+      final text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
+      var bare = text;
+      for (final id in ['av2-decoder-windows-x64', 'av2-decoder-linux-x64', 'av2-decoder-macos-universal']) {
+        final start = bare.indexOf("  id: '$id',");
+        final end = bare.indexOf('\n);\n', start);
+        final entry = bare
+            .substring(start, end)
+            .replaceFirst(RegExp(r'  size: \d+,'), '  size: null,')
+            .replaceFirst(RegExp(r"  sha256: '[0-9a-f]{64}',"), '  sha256: null,')
+            .replaceFirst(RegExp(r'\n  archiveFiles: \[.*\n  \],', dotAll: true), '');
+        bare = bare.replaceRange(start, end, entry);
+      }
+      catalogue.writeAsStringSync(bare);
+      final immuch360 = runCiScript(
+        _script,
+        ['--check', '--catalogue', catalogue.path],
+        environment: const {'GITHUB_REF_NAME': 'immuch360'},
+      );
+      expect(immuch360.exitCode, 0, reason: '$immuch360');
+      expect(immuch360.output, contains('the AV2 decoder waits for av2-decoder-1: $decoders'));
+    }, skip: skipCiScripts);
+
     test('says what is missing: an incomplete component, a row of MODEL-LICENSES.md', () {
       final text = File(_catalogue).readAsStringSync();
       final start = text.indexOf("  id: 'onnxruntime-1.31.0-linux-x64',");
@@ -602,7 +661,7 @@ void main() {
         File(_licences).readAsStringSync().split('\n').where((line) => !line.contains('.tflite')).join('\n'),
       );
 
-      final run = runCiScript(_script, ['--check', '--catalogue', catalogue.path, '--licences', licences.path]);
+      final run = _check(['--catalogue', catalogue.path, '--licences', licences.path]);
 
       expect(run.exitCode, 1, reason: '$run');
       expect(run.output, contains('onnxruntime-1.31.0-linux-x64: incomplete in the catalogue (size None'));

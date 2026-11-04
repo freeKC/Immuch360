@@ -959,7 +959,10 @@ const upscalerComponent = AiComponent(
 // program (on Linux with immuch360-run beside it), and in licenses/ the COPYING of dav2d, the ISC header of x86inc.asm,
 // the Alliance for Open Media Patent License 1.0, the AGPL 3.0 of the companion and the address of its source, with
 // BUILD-INFO.txt and SHA256SUMS.txt. Its size, its sum and the list of its files are written when av2-decoder-1 is made
-// (lot AD11); until then the entries are incomplete, so never offered.
+// (lot AD11); until then the entries are incomplete, so never offered, but on the branch of the test build AVT
+// (feat-av2, lot AD6): there they carry the three archives of the CI run 41607804420 of feat-av2-ad2-decoder (4bdf0fcdc)
+// as they are, served by a local mirror (IMMUCH360_AI_COMPONENTS_MIRROR), and the gate of the catalogue
+// (publish_ai_components.py --check --test-build feat-av2) refuses them on any other branch.
 
 /// The tag of the prerelease of the AV2 decoder, a release of its own: AV2 is no AI (plan, section 2.7)
 const av2DecoderReleaseTag = 'av2-decoder-1';
@@ -977,13 +980,61 @@ const av2DecoderWindowsComponent = AiComponent(
   platforms: {AiPlatform.windowsX64},
   assetName: 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip',
   installPath: 'engines/av2-decoder-windows-x64',
-  size: null,
-  sha256: null,
+  size: 791890,
+  sha256: '161c150cede23a0c3e52dc5ea319585edd089093d897ec4d60561698788aa0cc',
   compression: AiCompression.none,
   licence: 'BSD-2-Clause',
   licenceUrl: _dav2dLicenceUrl,
   features: {AiFeature.av2Video},
   releaseTag: av2DecoderReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 831,
+      sha256: '12927119defb05b749de854850e2cea32938c8ac54c0bebfe7e33442c6589bf8',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 726,
+      sha256: '970cfcdc42618d9fca0ea0524c14e1ffd8c30fee0877962c7aa2719b9a968773',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-av2.exe',
+      size: 1630720,
+      sha256: '377d0ec6c464e92f1f79ecc4558bd5829cc7f61564d012571c0bb1565be1d8f1',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'licenses/AOM-PATENTS.txt',
+      size: 5730,
+      sha256: '335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 2328,
+      sha256: '2857f3244c86103148802d50982e3a1ba1d66319225c83139e6c824c0bbd5faf',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav2d-COPYING.txt',
+      size: 1317,
+      sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
+      size: 32388,
+      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-SOURCE.txt',
+      size: 469,
+      sha256: 'f416cc864d6be7c6f443efe6c2a19d93b772b5902352c639c96d8577b594c628',
+    ),
+    AiArchiveFile(
+      path: 'licenses/x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+  ],
 );
 
 /// The AV2 decoder for Linux x64 (glibc of Ubuntu 22.04 and later), with immuch360-run
@@ -995,13 +1046,72 @@ const av2DecoderLinuxComponent = AiComponent(
   platforms: {AiPlatform.linuxX64},
   assetName: 'Immuch360-av2-decoder-30140b5-1-linux-x64.zip',
   installPath: 'engines/av2-decoder-linux-x64',
-  size: null,
-  sha256: null,
+  size: 953205,
+  sha256: '9432ce17bc209e9ac544d20ebb129fb6283c323bc4af8e80f285eae5e09dccb7',
   compression: AiCompression.none,
   licence: 'BSD-2-Clause',
   licenceUrl: _dav2dLicenceUrl,
   features: {AiFeature.av2Video},
   releaseTag: av2DecoderReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 804,
+      sha256: 'a6feb958618324a6d76aebbd1842eb6106f278c7f6159436f2c2928144f04409',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 899,
+      sha256: 'be9337755063c0bd48b1ef2da39b1317dacd91affb1623feac321b32445ec0e9',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-av2',
+      size: 2037904,
+      sha256: '0ad03cb2e53b7b66d1cd3d2d9dcdecc720076747f48a9ee994cd45c1d41c7465',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'immuch360-run',
+      size: 16552,
+      sha256: '779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'licenses/AOM-PATENTS.txt',
+      size: 5730,
+      sha256: '335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 2328,
+      sha256: '2857f3244c86103148802d50982e3a1ba1d66319225c83139e6c824c0bbd5faf',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav2d-COPYING.txt',
+      size: 1317,
+      sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
+      size: 32388,
+      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-SOURCE.txt',
+      size: 469,
+      sha256: 'f416cc864d6be7c6f443efe6c2a19d93b772b5902352c639c96d8577b594c628',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-run-MIT.txt',
+      size: 1162,
+      sha256: '21dbbb6e964787898af14a57c6e81f76249a43cd770fea87f9d308a9d33edf11',
+    ),
+    AiArchiveFile(
+      path: 'licenses/x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+  ],
 );
 
 /// The AV2 decoder for macOS: one universal program, arm64 with NEON and x86_64 with AVX2
@@ -1013,13 +1123,61 @@ const av2DecoderMacComponent = AiComponent(
   platforms: {AiPlatform.macosArm64, AiPlatform.macosX64},
   assetName: 'Immuch360-av2-decoder-30140b5-1-macos-universal.zip',
   installPath: 'engines/av2-decoder-macos-universal',
-  size: null,
-  sha256: null,
+  size: 1664304,
+  sha256: 'a6621f4e38ce0c831d0248226e4f12ccf28bd843f4a98f75b6fa98e5e9b36e1f',
   compression: AiCompression.none,
   licence: 'BSD-2-Clause',
   licenceUrl: _dav2dLicenceUrl,
   features: {AiFeature.av2Video},
   releaseTag: av2DecoderReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 796,
+      sha256: '471c35240a239cec7b10e9c143501c584e25293ac6f17421bf372ae05e4db781',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 722,
+      sha256: '5cd6aaef9c8e0c87e21153e14056a2f7e7a74471f19b94c66508b0262ab270a4',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-av2',
+      size: 3769216,
+      sha256: 'c7da26b882745c1d316243901077a2f3316d0c95d89a67698f1aea86bb31a511',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'licenses/AOM-PATENTS.txt',
+      size: 5730,
+      sha256: '335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 2328,
+      sha256: '2857f3244c86103148802d50982e3a1ba1d66319225c83139e6c824c0bbd5faf',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav2d-COPYING.txt',
+      size: 1317,
+      sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
+      size: 32388,
+      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-SOURCE.txt',
+      size: 469,
+      sha256: 'f416cc864d6be7c6f443efe6c2a19d93b772b5902352c639c96d8577b594c628',
+    ),
+    AiArchiveFile(
+      path: 'licenses/x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+  ],
 );
 
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)

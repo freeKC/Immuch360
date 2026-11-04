@@ -146,9 +146,10 @@ void main() {
     });
 
     test('a version that does not offer the decoder never says it downloads, and lists the same texts', () async {
-      // The catalogue of this branch: the entries of the decoder have no sums until av2-decoder-1
-      expect(av2DecoderComponentFor(AiPlatform.windowsX64)?.isComplete, isFalse);
-      final listed = await entries(AiPlatform.windowsX64, catalogue: aiComponents);
+      // The catalogue of every branch but that of the test build: the entries of the decoder have no sums until
+      // av2-decoder-1
+      expect(av2DecoderComponentFor(AiPlatform.windowsX64, catalogue: av2IncompleteCatalogue)?.isComplete, isFalse);
+      final listed = await entries(AiPlatform.windowsX64, catalogue: av2IncompleteCatalogue);
       expect(listed, hasLength(3));
       final dav2d = _paragraphs(listed[0]).join('\n');
       expect(dav2d, isNot(contains('downloaded')));

@@ -118,7 +118,7 @@ void main() {
   }, variant: desktop);
 
   testWidgets('a version without the sums of the decoder says it is not in this version', (tester) async {
-    service = FakeAiComponentsService();
+    service = FakeAiComponentsService(catalogue: av2IncompleteCatalogue);
     await pumpSetting(tester);
     expect(switchTile, findsOneWidget);
     expect(decoderLine(tester), 'Not in this version of the app');

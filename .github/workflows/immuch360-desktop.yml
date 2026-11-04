@@ -254,6 +254,12 @@ jobs:
       - name: The tiny models of ONNX Runtime are what their script writes
         run: python3 .github/desktop/ai/make_tiny_models.py --check
 
+      # The catalogue of the AI components and of the AV2 decoder, offline (MODEL-LICENSES.md agrees); the sums of the
+      # AV2 decoder before av2-decoder-1 on the branch of its test build alone (lot AD6): merged anywhere else, or taken
+      # by a branch made from it, they fail here until they are taken out
+      - name: The catalogue of the components, the AV2 decoder without sums but on the branch of its test build
+        run: python3 .github/desktop/ai/publish_ai_components.py --check --test-build feat-av2
+
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages
         if: ${{ !startsWith(github.ref, 'refs/heads/upstream-sync/') && !startsWith(github.head_ref, 'upstream-sync/') }}

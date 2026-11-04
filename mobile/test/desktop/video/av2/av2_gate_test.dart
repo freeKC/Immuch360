@@ -227,7 +227,7 @@ void main() {
   testWidgets('a version without the sum of the decoder says it is not in this version, with no button', (
     tester,
   ) async {
-    service = FakeAiComponentsService();
+    service = FakeAiComponentsService(catalogue: av2IncompleteCatalogue);
     await pumpGate(tester);
     expect(find.text('Not in this version of the app'), findsOneWidget);
     expect(find.text('Download and play'), findsNothing);

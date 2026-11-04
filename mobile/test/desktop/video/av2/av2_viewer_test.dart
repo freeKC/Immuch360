@@ -1,6 +1,6 @@
 // The AV2 gate in the asset viewer of a computer (av2_gate.dart, Av2ViewerScreen): a video opens with the bars of the
 // viewer hidden, and the view that a tap shows them through is what the gate replaces with its card. The card of the
-// decoder, here "Not in this version of the app" (no sums on this branch), must leave the mouse a way out: the bars
+// decoder, here "Not in this version of the app" (no sums in that catalogue), must leave the mouse a way out: the bars
 // show with it, Back closes the viewer, and a tap beside the card hides and shows the bars as a tap on a video does.
 
 import 'dart:async';
@@ -29,6 +29,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../unit/presentation/presentation_context.dart';
+import 'av2_test_components.dart';
 
 final _clip = LocalAsset(
   id: 'cosmos',
@@ -110,7 +111,9 @@ void main() {
             assetViewerProvider.overrideWith(_VideoOpened.new),
             storageRepositoryProvider.overrideWithValue(_Files()),
             // A version of the app without the sums of the decoder: the card says it is not in this version
-            av2DecoderProvider.overrideWith((ref) => Av2Decoder(FakeAiComponentsService(), AiPlatform.windowsX64)),
+            av2DecoderProvider.overrideWith(
+              (ref) => Av2Decoder(FakeAiComponentsService(catalogue: av2IncompleteCatalogue), AiPlatform.windowsX64),
+            ),
           ],
           child: Builder(
             builder: (context) => MaterialApp.router(
