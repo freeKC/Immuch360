@@ -370,6 +370,25 @@ void main() {
       expect(panorama.jobs.single.referenceMaxPixels, panoramaReducedReferencePixels);
     });
 
+    test('a release that does not end in time (a turn of the player pool held) does not hold the panorama', () async {
+      final never = Completer<GraphicsRelease>();
+      final probe = FakeGpuProbe.of(_rtx2060(7000));
+      container = containerWith(
+        probe.probe,
+        release: () => never.future,
+        settle: const Duration(milliseconds: 60),
+        settlePoll: const Duration(milliseconds: 10),
+      );
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsRelease);
+      await until((state) => state.byId(pano)!.state.isEnded);
+
+      expect(job(pano).state, ConversionState.done);
+      expect(probe.calls, 1, reason: 'the full reference fits at once');
+      never.complete(GraphicsRelease.nothing);
+    });
+
     test('the wait asked again by its timer lets go of nothing more; the user asking again does', () async {
       var released = 0;
       final card = heldCard();

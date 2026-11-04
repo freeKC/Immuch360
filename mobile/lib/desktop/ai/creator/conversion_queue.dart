@@ -187,7 +187,8 @@ class ConversionTools {
 
   /// Lets go of what the app holds of the graphics card before a job of it (graphics_release.dart); null: nothing is
   /// let go. When something was, the card is asked again every [gpuSettlePoll] for [gpuSettle] at most while that
-  /// memory comes back, until it has enough free for the preferred way.
+  /// memory comes back, until it has enough free for the preferred way. A release that takes longer than [gpuSettle]
+  /// is not waited for.
   final Future<GraphicsRelease> Function()? releaseGraphics;
   final Duration gpuSettle;
   final Duration gpuSettlePoll;
@@ -886,13 +887,18 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     if (release != null && _gpuReleased.add(id)) {
       _set(id, (job) => job.copyWith(waitingFor: () => ConversionWait.graphicsRelease));
       try {
-        final what = await release();
+        final what = await release().timeout(tools.gpuSettle);
         released = what.any;
         _log.info('Before the graphics card job $id: $what');
+      } on TimeoutException {
+        // A turn of the player pool holds it (libmpv held one for 71 s on 1 November 2026): its players go later, and
+        // the card is asked meanwhile, then again while their memory comes back
+        released = true;
+        _log.warning('The app did not let go of its share of the graphics card within ${tools.gpuSettle.inSeconds} s');
       } catch (error, stack) {
         _log.warning('The app could not let go of its share of the graphics card for $id', error, stack);
       }
-      if (state.byId(id)?.state != ConversionState.waiting) {
+      if (!_stillWaiting(id)) {
         return false;
       }
     }
@@ -904,19 +910,19 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     for (var poll = 0; poll < polls; poll++) {
       if (check is GpuBudgetUnavailable ||
           (check is GpuBudgetReady && check.reference == budget.references.first) ||
-          state.byId(id)?.state != ConversionState.waiting) {
+          !_stillWaiting(id)) {
         break;
       }
       await Future<void>.delayed(tools.gpuSettlePoll);
-      if (state.byId(id)?.state != ConversionState.waiting) {
+      if (!_stillWaiting(id)) {
         return false;
       }
       check = await _askCard(id, budget);
     }
-    final job = state.byId(id);
-    if (job == null || job.state != ConversionState.waiting) {
+    if (!_stillWaiting(id)) {
       return false;
     }
+    final job = state.byId(id)!;
     switch (check) {
       case GpuBudgetReady(:final reference, :final free, :final appHolds):
         _gpuShort = null;
@@ -958,6 +964,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         return false;
     }
   }
+
+  /// Whether the job [id] still waits for its turn, the queue not disposed meanwhile (a wait for the card awaits)
+  bool _stillWaiting(String id) => !_disposed && state.byId(id)?.state == ConversionState.waiting;
 
   /// The answer of the card for the job [id]; a question that fails is a card that did not answer
   Future<GpuBudgetCheck> _askCard(String id, GpuBudget budget) async {
