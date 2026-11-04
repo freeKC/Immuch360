@@ -4,10 +4,11 @@
 // (SQLITE_BUSY), which the Ubuntu 22.04 package container of the desktop CI met once when the video smoke opened its
 // clip at startup (run 41632950614, 3 November 2026).
 //
-// The last test opens the index on a file system of its own, in memory, which sees what the connection does with its
-// file: the time out set before its first statement.
+// The last tests open the index on a file system of their own, in memory, which sees what the connection does with its
+// file: the time out set before its first statement, and no connection left open by an open that fails.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
@@ -55,6 +56,17 @@ final class _WatchedFileSystem extends BaseVirtualFileSystem {
 
   /// The waits of SQLite's busy handler, in the order it asked for them
   final waits = <Duration>[];
+
+  /// Writes [bytes] as the whole content of the file at [path]
+  void write(String path, List<int> bytes) {
+    final (:file, outFlags: _) = xOpen(
+      Sqlite3Filename(xFullPathName(path)),
+      SqlFlag.SQLITE_OPEN_CREATE | SqlFlag.SQLITE_OPEN_READWRITE,
+    );
+    file
+      ..xWrite(Uint8List.fromList(bytes), 0)
+      ..xClose();
+  }
 
   @override
   XOpenResult xOpen(Sqlite3Filename path, int flags) {
@@ -190,6 +202,31 @@ void main() {
       // SQLite's busy handler waited between the tries, inside the switch to WAL, the first statement that reads the
       // file: the time out was set before it. Set after it, the switch fails at once and only its own retry waits
       expect(files.waits, hasLength(3));
+      expect(files.open, isEmpty);
+    });
+
+    test('a file that is not an index fails to open and leaves no connection open', () {
+      files.write(path, utf8.encode('Not an index of the folder library. ' * 120));
+
+      expect(
+        () => LibraryIndex.open(path),
+        throwsA(isA<SqliteException>().having((error) => error.resultCode, 'resultCode', SqlError.SQLITE_NOTADB)),
+      );
+      // FolderLibrary.index tries again at its next use: each failed open would leave one more connection, and on
+      // Windows one more handle that keeps the file from being deleted or replaced
+      expect(files.open, isEmpty);
+    });
+
+    test('an index whose migration fails leaves no connection open', () {
+      // An index of the first schema that lost its tables: the migration finds no files table to add a column to
+      sqlite3.open(path)
+        ..execute('PRAGMA user_version = 1')
+        ..close();
+
+      expect(
+        () => LibraryIndex.open(path),
+        throwsA(isA<SqliteException>().having((error) => error.message, 'message', contains('no such table: files'))),
+      );
       expect(files.open, isEmpty);
     });
   });

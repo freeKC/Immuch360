@@ -244,13 +244,21 @@ class LibraryIndex {
   factory LibraryIndex.open(String path) {
     Directory(p.dirname(path)).createSync(recursive: true);
     final db = sqlite3.open(path);
-    // The time out first: a connection without one fails at once on another one's lock ("database is locked") instead
-    // of waiting for it. The scan, the sync API and the main isolate open the new file together at the first start of
-    // the app, while the first of them switches it to WAL
-    db.execute('PRAGMA busy_timeout = ${_busyTimeout.inMilliseconds}');
-    _switchToWal(db);
-    db.execute('PRAGMA synchronous = NORMAL');
-    return LibraryIndex._(db, path);
+    try {
+      // The time out first: a connection without one fails at once on another one's lock ("database is locked")
+      // instead of waiting for it. The scan, the sync API and the main isolate open the new file together at the first
+      // start of the app, while the first of them switches it to WAL
+      db.execute('PRAGMA busy_timeout = ${_busyTimeout.inMilliseconds}');
+      _switchToWal(db);
+      db.execute('PRAGMA synchronous = NORMAL');
+      return LibraryIndex._(db, path);
+    } catch (_) {
+      // A file that is not an index, a lock held beyond the time out or a migration that fails: the connection goes
+      // with the error. FolderLibrary.index tries again at its next use, and each failed try would leave one more
+      // open, on Windows with a handle that keeps the file from being deleted or replaced
+      db.close();
+      rethrow;
+    }
   }
 
   static const _busyTimeout = Duration(seconds: 10);
