@@ -986,8 +986,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     super.onCreate(savedInstanceState)
     Log.i(TAG, "immersive viewer onCreate, max heap ${Runtime.getRuntime().maxMemory() / 1048576} MB")
     HttpClientManager.initialize(applicationContext)
-    cacheDir.listFiles()?.filter { it.name.startsWith(ORIGINAL_PREFIX) || it.name.startsWith(SPLAT_PREFIX) }
-      ?.forEach { it.delete() }
+    ImmersiveCacheCleaning.leftovers(cacheDir.listFiles(), listOf(ORIGINAL_PREFIX, SPLAT_PREFIX)).forEach {
+      it.delete()
+    }
     // A recreation goes on with the media shown last: the system hands back the intent that first started the viewer,
     // which knows neither a previous or next media nor a fresh open received in onNewIntent
     val saved = savedInstanceState?.getBundle(STATE_REQUEST)?.let(::requestOf)

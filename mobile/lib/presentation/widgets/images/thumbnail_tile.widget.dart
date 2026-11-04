@@ -10,6 +10,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_photo_button.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:immich_mobile/presentation/widgets/watch_progress/watch_progress_overlay.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
@@ -340,6 +341,8 @@ class _AssetTypeIcons extends StatelessWidget {
         if (asset.isAnimatedImage)
           const Padding(padding: EdgeInsets.only(right: 10.0, top: 6.0), child: _TileOverlayIcon(Icons.gif_rounded)),
         PanoramaBadge(asset: asset),
+        // A photo named like a splat photo: "3D splat", from its name alone (see splatPhotoBadgeProvider)
+        SplatPhotoBadge(asset: asset),
         // Immuch360 Desktop: "3D AI", "3D scene" or "360° AI" on a file the app made, "3D" on another photo of two
         // eyes side by side (lib/desktop/ai/library/stereo_badge.dart)
         if (CurrentPlatform.isDesktop) DesktopStereoBadge(asset: asset),

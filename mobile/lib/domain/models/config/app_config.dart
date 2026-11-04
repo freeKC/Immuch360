@@ -87,6 +87,7 @@ abstract class AppConfig with _$AppConfig {
             .viewerLargeSplats => viewer.largeSplats,
             .viewerHighPerformanceGpu => viewer.highPerformanceGpu,
             .viewerKeepAllGaussians => viewer.keepAllGaussians,
+            .viewerMarkSplatPhotos => viewer.markSplatPhotos,
             .viewerVideoSource => viewer.videoSource,
             .networkAutoEndpointSwitching => network.autoEndpointSwitching,
             .networkPreferredWifiName => network.preferredWifiName,
@@ -164,6 +165,7 @@ abstract class AppConfig with _$AppConfig {
       .viewerLargeSplats => copyWith(viewer: viewer.copyWith(largeSplats: value as bool)),
       .viewerHighPerformanceGpu => copyWith(viewer: viewer.copyWith(highPerformanceGpu: value as bool)),
       .viewerKeepAllGaussians => copyWith(viewer: viewer.copyWith(keepAllGaussians: value as bool)),
+      .viewerMarkSplatPhotos => copyWith(viewer: viewer.copyWith(markSplatPhotos: value as bool)),
       .viewerVideoSource => copyWith(viewer: viewer.copyWith(videoSource: value as VideoSourcePolicy?)),
       .networkAutoEndpointSwitching => copyWith(network: network.copyWith(autoEndpointSwitching: value as bool)),
       .networkPreferredWifiName => copyWith(

@@ -82,6 +82,10 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
   /// itself while that conversion is off), as browsers show a HEIF or a raw file
   final bool serverJpegForOriginal;
 
+  /// The preview of the server only, never the original, even with "Load original image": a splat photo, whose file
+  /// is mostly its scene (plan of 3 November 2026, section 4)
+  final bool previewOnly;
+
   const RemoteFullImageProvider({
     required this.assetId,
     required this.thumbhash,
@@ -90,6 +94,7 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
     this.edited = true,
     this.thumbnailSize,
     this.serverJpegForOriginal = false,
+    this.previewOnly = false,
   });
 
   /// The key of the original of [assetId] among the photos that did not decode in the session (see UndecodablePhotos)
@@ -157,6 +162,7 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
     final undecodable = undecodableKey(key.assetId, edited: key.edited);
     final loadOriginal =
         assetType == AssetType.image &&
+        !key.previewOnly &&
         SettingsRepository.instance.appConfig.image.loadOriginal &&
         UndecodablePhotos.instance.failureOf(undecodable) == null;
     var previewShown = false;
@@ -237,7 +243,8 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
           thumbhash == other.thumbhash &&
           isAnimated == other.isAnimated &&
           edited == other.edited &&
-          serverJpegForOriginal == other.serverJpegForOriginal;
+          serverJpegForOriginal == other.serverJpegForOriginal &&
+          previewOnly == other.previewOnly;
     }
 
     return false;
@@ -245,5 +252,10 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
 
   @override
   int get hashCode =>
-      assetId.hashCode ^ thumbhash.hashCode ^ isAnimated.hashCode ^ edited.hashCode ^ serverJpegForOriginal.hashCode;
+      assetId.hashCode ^
+      thumbhash.hashCode ^
+      isAnimated.hashCode ^
+      edited.hashCode ^
+      serverJpegForOriginal.hashCode ^
+      previewOnly.hashCode;
 }

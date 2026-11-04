@@ -23,9 +23,13 @@ final _log = Logger('SplatViewer');
 
 /// A splat to show: a file of the share [sourceId] at [path], or a file of this device at [path]
 class SplatViewerSource {
-  const SplatViewerSource.share(String this.sourceId, this.path, {this.modified});
+  const SplatViewerSource.share(String this.sourceId, this.path, {this.modified}) : _name = null, up = null;
 
-  const SplatViewerSource.local(this.path) : sourceId = null, modified = null;
+  /// A file of this device at [path]; a scene of a splat photo gives the [name] of its SPZ (SplatName), the key of Turn
+  /// upright and of a computer's answers, and the orientation the user chose before saving it ([up])
+  // The public name of the parameter, the field private
+  // ignore: prefer_initializing_formals
+  const SplatViewerSource.local(this.path, {String? name, this.up}) : sourceId = null, modified = null, _name = name;
 
   final String? sourceId;
   final String path;
@@ -33,7 +37,12 @@ class SplatViewerSource {
   /// When the share last changed the file, for the key of its reduced copy
   final DateTime? modified;
 
-  String get name => path.split(RegExp(r'[/\\]')).where((part) => part.isNotEmpty).lastOrNull ?? path;
+  /// yUp, zUp or yDown: the orientation the file opens in when the user chose none on this device
+  final String? up;
+
+  final String? _name;
+
+  String get name => _name ?? path.split(RegExp(r'[/\\]')).where((part) => part.isNotEmpty).lastOrNull ?? path;
 
   /// The source in the key of its reduced copy
   String get key => sourceId == null ? 'file:$path' : 'share:$sourceId:$path';
@@ -192,6 +201,7 @@ class SplatViewerService {
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
     bool watchFrames = false,
+    SplatViewerSaving? saving,
   }) async {
     final name = source.name;
     final ext = head.format.json;
@@ -234,7 +244,9 @@ class SplatViewerService {
     }
 
     final id = newSplatViewerSessionId();
-    final upright = await _uprights.read(name, fileBytes);
+    // What the user chose for the file on this device, else what a splat photo says was chosen before it was saved
+    final upright =
+        await _uprights.read(name, fileBytes) ?? (splatUprightValues.contains(source.up) ? source.up : null);
     final session = {
       'v': 1,
       'scene': {
@@ -255,6 +267,8 @@ class SplatViewerService {
       'texts': look.texts,
       'theme': {'dark': look.dark, 'primary': look.primary},
       'events': 'events',
+      // Save to Immich (plan of 3 November 2026, section 6.1): the panel's texts and switch, the poster and save URLs
+      'save': saving?.session,
     };
     String? unsupported;
     int? reduceTo;
@@ -308,6 +322,9 @@ class SplatViewerService {
             closing = true;
             unawaited(_host.close());
           }
+        // The session hands them to the saving
+        case SplatViewerSave() || SplatViewerCancelSave():
+          break;
       }
     }
 
@@ -325,6 +342,7 @@ class SplatViewerService {
         scene: sceneFile,
         sceneName: sceneFile == null ? null : sceneName,
         onEvent: onEvent,
+        saving: saving,
       ),
     );
     onOpening?.call();

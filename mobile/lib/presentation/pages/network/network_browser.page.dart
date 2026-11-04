@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/services/folder_contents.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -15,6 +16,7 @@ import 'package:immich_mobile/presentation/pages/network/network_shares.page.dar
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_save_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -133,6 +135,16 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   /// The photos and videos of the folder last read, for the selection
   List<NetworkEntry> _media = const [];
 
+  /// The files of this folder that may be splats: those whose head says so are picked with the photos and videos, and
+  /// sent as splat photos
+  List<NetworkEntry> _splats = const [];
+
+  /// The splats of [_splats] whose head was read and says they are splats (a .ply mesh is not)
+  List<NetworkEntry> get _readSplats => [
+    for (final entry in _splats)
+      if (ref.read(splatProbeProvider(splatFileKeyOf(entry))).valueOrNull is SplatHead) entry,
+  ];
+
   /// Whether the folder was read once, so that a share found on the network is looked for once only (see [_relocate])
   bool _readOnce = false;
 
@@ -246,6 +258,9 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     // The platform is asked whether this is a Meta Quest only for a folder that holds .spz or .ply files
     final candidates = contents.splatCandidates;
     final splats = candidates.isNotEmpty && await _splatsShown() ? candidates : const <NetworkEntry>[];
+    if (mounted) {
+      setState(() => _splats = splats);
+    }
     return (folders: contents.folders, media: media, urls: urls, splats: splats);
   }
 
@@ -321,11 +336,24 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
 
   Future<void> _upload() async {
     final selection = ref.read(networkSelectionProvider(_folderKey));
-    final entries = _media.where((entry) => selection.contains(entry.path)).toList();
+    final entries = [
+      ..._media.where((entry) => selection.contains(entry.path)),
+      ..._readSplats.where((entry) => selection.contains(entry.path)),
+    ];
     if (entries.isEmpty) {
       return;
     }
     ref.read(networkSelectionProvider(_folderKey).notifier).end();
+    // One splat alone: the sheet of Save to Immich, its poster shown first (plan of 3 November 2026, section 6.2)
+    final only = entries.length == 1 ? entries.single : null;
+    if (only != null && only.isSplatCandidate && only.size != null) {
+      await showSplatSaveSheet(
+        context,
+        ref,
+        SplatSaveScene(path: only.path, length: only.size!, sourceId: widget.sourceId, modified: only.modified),
+      );
+      return;
+    }
     await uploadNetworkEntries(context, ref, widget.sourceId, entries);
   }
 
@@ -419,7 +447,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
             tooltip: context.t.refresh,
             onPressed: () => unawaited(_refresh()),
           ),
-        if (_media.isNotEmpty && !tvMode)
+        if ((_media.isNotEmpty || _splats.isNotEmpty) && !tvMode)
           IconButton(
             icon: const Icon(Icons.checklist_rounded),
             tooltip: context.t.network_upload_select,
@@ -438,8 +466,9 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       actions: [
         IconButton(
           icon: const Icon(Icons.select_all_rounded),
-          tooltip: context.t.network_upload_select_all,
-          onPressed: () => notifier.toggleAll(_media.map((entry) => entry.path)),
+          // The splats go too where they are listed, as splat photos
+          tooltip: _splats.isEmpty ? context.t.network_upload_select_all : context.t.network_upload_select_all_splats,
+          onPressed: () => notifier.toggleAll([..._media, ..._readSplats].map((entry) => entry.path)),
         ),
       ],
     );
@@ -627,7 +656,14 @@ class _FolderView extends StatelessWidget {
             ),
           ),
         // The splats after the photos and videos, out of their order (lot S5)
-        if (folder.splats.isNotEmpty) SplatFileGrid(entries: folder.splats, onOpen: onOpenSplat),
+        if (folder.splats.isNotEmpty)
+          SplatFileGrid(
+            entries: folder.splats,
+            // A tap picks or leaves out while picking files, as on a photo
+            onOpen: (entry) => selection.isActive && onSelect != null ? onSelect!(entry) : onOpenSplat(entry),
+            onSelect: onSelect,
+            isSelected: selection.isActive ? (entry) => selection.contains(entry.path) : null,
+          ),
       ],
     );
   }

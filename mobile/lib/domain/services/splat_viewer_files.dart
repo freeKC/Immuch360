@@ -205,13 +205,27 @@ class SplatAnswerStore {
 
 /// The reduced copies of the splats (see the top of this file), in [folder]
 class SplatViewerCache {
-  SplatViewerCache(this._folder, {this.keep = 3, this.maxBytes = 1 << 30});
+  SplatViewerCache(
+    this._folder, {
+    this.keep = 3,
+    this.maxBytes = 1 << 30,
+    this.serverKeep = 5,
+    this.serverMaxBytes = 1 << 30,
+  });
 
   final Future<Directory> Function() _folder;
 
   /// The most reduced copies kept, and their most bytes together
   final int keep;
   final int maxBytes;
+
+  /// The most scenes of splat photos of the server kept (`server-<asset>-<sum>.spz`, plan of 3 November 2026, section
+  /// 5.3), and their most bytes together: apart from the reduced copies, so that neither evicts the other
+  final int serverKeep;
+  final int serverMaxBytes;
+
+  /// The prefix of the scenes of splat photos of the server
+  static const serverPrefix = 'server-';
 
   /// The name of the reduced copy of [source] (a share and a path, or a path) of [fileBytes] changed at [modified],
   /// whose content gives [fingerprint] (splatFingerprint), reduced to [cap], in [format]
@@ -264,6 +278,7 @@ class SplatViewerCache {
   Future<void> prune() async {
     final dir = await folder();
     final reduced = <(File, FileStat)>[];
+    final server = <(File, FileStat)>[];
     final now = DateTime.now();
     await for (final entity in dir.list()) {
       if (entity is! File) {
@@ -273,16 +288,24 @@ class SplatViewerCache {
       final stat = entity.statSync();
       if (name.startsWith('reduced-') && !name.endsWith('.part')) {
         reduced.add((entity, stat));
+      } else if (name.startsWith(serverPrefix) && name.endsWith('.spz')) {
+        server.add((entity, stat));
       } else if (now.difference(stat.modified) > leftoverAge) {
         await _delete(entity);
       }
     }
-    reduced.sort((a, b) => b.$2.modified.compareTo(a.$2.modified));
+    await _keepNewest(reduced, keep, maxBytes);
+    await _keepNewest(server, serverKeep, serverMaxBytes);
+  }
+
+  /// Keeps the [most] newest of [files] within [maxBytes] together
+  static Future<void> _keepNewest(List<(File, FileStat)> files, int most, int maxBytes) async {
+    files.sort((a, b) => b.$2.modified.compareTo(a.$2.modified));
     var total = 0;
-    for (var i = 0; i < reduced.length; i++) {
-      total += reduced[i].$2.size;
-      if (i >= keep || total > maxBytes) {
-        await _delete(reduced[i].$1);
+    for (var i = 0; i < files.length; i++) {
+      total += files[i].$2.size;
+      if (i >= most || total > maxBytes) {
+        await _delete(files[i].$1);
       }
     }
   }
@@ -296,8 +319,9 @@ class SplatViewerCache {
   }
 }
 
-/// The steps of the preparation of a splat above the cap
-enum SplatPrepareStep { copy, reduce }
+/// The steps of the preparation of a splat: the copy of a file of a share and the reduction of a splat above the cap;
+/// the download of the scene of a splat photo of the server (plan of 3 November 2026, section 5.3)
+enum SplatPrepareStep { download, copy, reduce }
 
 /// The bytes of each end of a file the fingerprint reads, the bytes it reads at each place between, and the number of
 /// those places; a file up to [splatFingerprintWhole] bytes is read whole

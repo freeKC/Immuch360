@@ -86,6 +86,7 @@ the gate is per desktop and is noted.
 | `lib/presentation/widgets/map/map.widget.dart:90` | Android map style | hidden: no map on the computers (deviceFeaturesProvider.maps) |
 | `lib/presentation/widgets/map/map.widget.dart:106` | iOS map style | hidden |
 | `lib/presentation/widgets/splat/splat_button.dart:69` | the verdict of a splat waits on Android until it is known whether this is a Meta Quest (splat viewer, 2 November 2026) | right: the computers take the gate of the splat viewer above it, before this line |
+| `lib/presentation/widgets/splat/splat_photo_launch.dart:92` | a splat photo's scene above 10 MB asks before it downloads over a metered network, read on Android only (3 November 2026) | right: a computer is never on a metered network for the app, it downloads at once |
 | `lib/presentation/widgets/splat/splat_viewer_launch.dart:65` | Android says to update Android System WebView, else the computer's words for WebAssembly SIMD | right: the computers get their own text |
 | `lib/presentation/widgets/splat/splat_viewer_launch.dart:81` | no web view: WebView2 on Windows, Android System WebView on Android | right: Windows is tested first, Linux and macOS say nothing more than the failure |
 | `lib/presentation/widgets/splat/splat_viewer_launch.dart:85` | idem for a web view without SIMD | right |
@@ -105,6 +106,7 @@ the gate is per desktop and is noted.
 | `lib/providers/permission.provider.dart:13` | initial notification permission state | right: notifications hidden on the computers |
 | `lib/providers/raw/raw_video.provider.dart:43` | two stream raw playback on iOS | wired (phase 2d): the computers are neither, and play two streams where libmpv loaded (`CurrentPlatform.isDesktop` term of the same expression, the 360° route stacks them or falls back) |
 | `lib/providers/raw/raw_video.provider.dart:45` | two stream raw playback on Android and Quest | wired (phase 2d): idem |
+| `lib/providers/splat/splat_photo.provider.dart:131` | where a splat photo is explored from a device of no splat class: waits on Android until it is known whether this is a Meta Quest, says "explore it elsewhere" on iOS and a TV (3 November 2026) | right: the computers have a splat class and never reach this line |
 | `lib/providers/splat/splat_viewer.provider.dart:28` | the device class of the splats: the computers first, then Android (headset, phone or tablet, not a TV) | right: `CurrentPlatform.isDesktop` is read before this line |
 | `lib/providers/splat/splat_viewer.provider.dart:50` | the host of the splat viewer: SplatViewerActivity through SplatViewerApi on Android | wired: the computers override the provider with DesktopSplatViewerHost (desktop_overrides.dart), SplatViewerApi is never called there |
 | `lib/providers/tapo/tapo_camera.provider.dart:167` | Android and iOS live view events | right: the computers' live view (`DesktopCameraLiveView`, `lib/desktop/video/camera_live_view.dart`) reports its states itself |

@@ -67,6 +67,8 @@ class UploadSource {
     required this.deviceAssetId,
     this.isFavorite = false,
     this.sidecarXmp,
+    this.headers = const {},
+    this.metadataJson,
   });
 
   /// What the callbacks get
@@ -84,6 +86,13 @@ class UploadSource {
 
   /// An XMP sidecar sent with the file (see gpanoSidecarXmp), named after it; null for none
   final String? sidecarXmp;
+
+  /// More headers of the request: the x-immich-checksum of a splat photo, which lets the server answer a duplicate
+  /// before the body is read
+  final Map<String, String> headers;
+
+  /// The metadata field of the request, a JSON list of {key, value} items (servers 2.5.0 and later); null for none
+  final String? metadataJson;
 }
 
 /// A file of a network share to send to the server, read on [fileSystem]
@@ -311,6 +320,19 @@ class ForegroundUploadService {
       },
     );
   }
+
+  /// Sends one file that is not an asset of this device and not a file of a share: the splat photo a SplatSaveJob
+  /// wrote, with its checksum header and its metadata. Stopped by [cancelToken] only.
+  Future<UploadResult> uploadSource(
+    UploadSource source, {
+    Completer<void>? cancelToken,
+    void Function(int bytes, int totalBytes)? onProgress,
+  }) => _uploadSingleFile(
+    source,
+    cancelToken: cancelToken,
+    onProgress: onProgress,
+    logContext: 'source[${source.deviceAssetId}]',
+  );
 
   /// Sends files of the network shares, one at a time: a video or a large file of an SMB share takes the stream pool
   /// of its connection (six reads at once) for itself, which a second file read meanwhile would only slow down.
@@ -687,6 +709,7 @@ class ForegroundUploadService {
         'fileModifiedAt': source.modifiedAt.toUtc().toIso8601String(),
         'isFavorite': source.isFavorite.toString(),
         'duration': '0',
+        if (source.metadataJson != null) 'metadata': source.metadataJson!,
       };
 
       final sidecarXmp = source.sidecarXmp;
@@ -695,6 +718,7 @@ class ForegroundUploadService {
         length: source.length,
         filename: source.filename,
         fields: fields,
+        headers: source.headers,
         sidecar: sidecarXmp == null ? null : (filename: gpanoSidecarName(source.filename), xmp: sidecarXmp),
         cancelToken: cancelToken,
         onProgress: onProgress,

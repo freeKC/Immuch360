@@ -1,0 +1,253 @@
+{
+ "about": "What the tests of the splat photos compare with, written by .github/desktop/ai/make_splat_photo_fixtures.py",
+ "formatVersion": 1,
+ "fixtures": {
+  "bad_sum.jpg": {
+   "bytes": 11515,
+   "sha1": "43249cf747ed3fc543d2db327ce18b143331a95c",
+   "verdict": "wrongSum",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   }
+  },
+  "cut_tail.jpg": {
+   "bytes": 11415,
+   "sha1": "7b461339065012fa345a1ce2fc4d91109f95fdb7",
+   "verdict": "notSpz",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   }
+  },
+  "head_mismatch.jpg": {
+   "bytes": 11515,
+   "sha1": "fade19b8625846076cbe1f518bc7fe7c7272a7d8",
+   "verdict": "ok",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 999,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   },
+   "head": {
+    "version": 2,
+    "gaussians": 686,
+    "shDegree": 0
+   },
+   "headMatches": false
+  },
+  "huge_claim.jpg": {
+   "bytes": 11522,
+   "sha1": "18c6dcf68c8645b013cd8ef6cee49784f73cd318",
+   "verdict": "missing",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 3000000000,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   }
+  },
+  "newer_format.jpg": {
+   "bytes": 11515,
+   "sha1": "5aa7bc9c3b5da3ea5cf363378539bff0c6c46344",
+   "verdict": "newer",
+   "packet": {
+    "formatVersion": 2,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   }
+  },
+  "newer_payload.jpg": {
+   "bytes": 11517,
+   "sha1": "3a69e19d3a1c2ee2c7adb2ad66296e2f87802fff",
+   "verdict": "newer",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz-2",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   }
+  },
+  "ok_exiftool.jpg": {
+   "bytes": 10400,
+   "sha1": "55a988f779e125be8a5983af3d5591d1fcd27df3",
+   "verdict": "ok",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   },
+   "head": {
+    "version": 2,
+    "gaussians": 686,
+    "shDegree": 0
+   },
+   "headMatches": true
+  },
+  "ok_v2.jpg": {
+   "bytes": 11515,
+   "sha1": "1da398b797273b84c2d1948d3b4bee6fdacba02e",
+   "verdict": "ok",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   },
+   "head": {
+    "version": 2,
+    "gaussians": 686,
+    "shDegree": 0
+   },
+   "headMatches": true
+  },
+  "ok_v4.jpg": {
+   "bytes": 11717,
+   "sha1": "707c27059817d254ecbf7d0bf2777448527b3e82",
+   "verdict": "ok",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 4,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 954,
+    "splatSha256": "4bacbabc03660b0a1325303aac4b8386aa9f36350fb88710f31c6384f16f169f",
+    "splatName": "axes_v4.spz"
+   },
+   "head": {
+    "version": 4,
+    "gaussians": 686,
+    "shDegree": 0
+   },
+   "headMatches": true
+  },
+  "ply_payload.jpg": {
+   "bytes": 14107,
+   "sha1": "4677c0d2ae69292a865177fa562ac5478f0b5664",
+   "verdict": "newer",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "ply",
+    "splatVersion": 1,
+    "splatGaussians": 8,
+    "splatShDegree": 3,
+    "splatLength": 3510,
+    "splatSha256": "7188e03afe6fb28c241d3823d718a6743a3157567e5ba89e693470fdb3d36269",
+    "splatName": "sh3.ply"
+   }
+  },
+  "png_with_packet.png": {
+   "bytes": 5441,
+   "sha1": "a22a95c1d780b9fee7c03261593f683b34370a09",
+   "verdict": "notCarrier",
+   "packet": null
+  },
+  "reencoded_plain.jpg": {
+   "bytes": 874,
+   "sha1": "2fc6c9a55bddedde1d375973abde67b854ef0329",
+   "verdict": "notCarrier",
+   "packet": null
+  },
+  "reencoded_with_xmp.jpg": {
+   "bytes": 6195,
+   "sha1": "00d4990a9ba89a82275b3c6f4c21b04d5c8db390",
+   "verdict": "notSpz",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   }
+  },
+  "trailer.jpg": {
+   "bytes": 11579,
+   "sha1": "698da15c9fbc03d4c69456220f7965ba4bc3c221",
+   "verdict": "notSpz",
+   "packet": {
+    "formatVersion": 1,
+    "splatFormat": "spz",
+    "splatVersion": 2,
+    "splatGaussians": 686,
+    "splatShDegree": 0,
+    "splatLength": 913,
+    "splatSha256": "7d0a8386d76ba71739422192810eae63320c989c52523a97697e9f7413d118d5",
+    "splatName": "axes_v2.spz"
+   }
+  }
+ },
+ "writer": {
+  "poster.jpg + axes_v2.spz": "ok_v2.jpg",
+  "poster_motion.jpg + axes_v2.spz": "ok_v2.jpg",
+  "poster_ultrahdr.jpg + axes_v2.spz": "ok_v2.jpg",
+  "poster.jpg + axes_v4.spz": "ok_v4.jpg"
+ },
+ "meta": {
+  "ok_v2.jpg": {
+   "name": "axes_v2.spz",
+   "date": "2026-11-03T16:53:00+01:00",
+   "software": "Immuch360 fixtures",
+   "creatorTool": "Immuch360 fixtures (test)",
+   "description": "Splat scene of 686 gaussians. Open it with Immuch360 to explore it.",
+   "poster": "card"
+  },
+  "ok_v4.jpg": {
+   "name": "axes_v4.spz",
+   "date": "2026-07-14T09:30:15-04:00",
+   "software": "Immuch360 fixtures",
+   "creatorTool": "Immuch360 fixtures (test)",
+   "description": "Scène \"splat\" de 686 gaussiennes & <axes> = ok",
+   "poster": "render",
+   "up": "yUp",
+   "latitude": 48.858222,
+   "longitude": -2.2945
+  }
+ },
+ "refused": {
+  "poster_2to1.jpg": "posterShape",
+  "poster_square.jpg": "posterShape"
+ }
+}

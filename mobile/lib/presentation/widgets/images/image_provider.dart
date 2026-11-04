@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:async/async.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/splat/splat_photo_xmp.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
@@ -218,6 +219,8 @@ ImageProvider getFullImageProvider(
       edited: edited,
       thumbnailSize: remoteThumbnailSize,
       serverJpegForOriginal: photoDecodePathOfAsset(asset) == PhotoDecodePath.serverPreview,
+      // A photo named like a splat photo: its file is mostly the scene, the preview shows the same picture
+      previewOnly: isSplatPhotoCandidate(asset.name),
     );
   }
 

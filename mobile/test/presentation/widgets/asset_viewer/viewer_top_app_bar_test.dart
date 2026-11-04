@@ -29,6 +29,8 @@ import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
+import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
+import 'package:immich_mobile/domain/models/splat/splat_photo_xmp.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
@@ -36,6 +38,7 @@ import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/splat_photo/splat_photo_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
@@ -48,6 +51,8 @@ import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dar
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_photo_button.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_photo_launch.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
@@ -72,6 +77,8 @@ import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -488,6 +495,7 @@ void main() {
     AppConfig? appConfig,
     bool horizonOs = false,
     VideoPlayerState? playerState,
+    ExifInfo? exif,
     List<Override> extraOverrides = const [],
   }) async {
     final router = RootStackRouter.build(
@@ -525,7 +533,9 @@ void main() {
             assetViewerProvider.overrideWith(
               () => _SeededAssetViewerNotifier(AssetViewerState(currentAsset: asset, showingDetails: showingDetails)),
             ),
-            assetExifProvider(asset).overrideWith((ref) => Stream.value(ExifInfo(projectionType: projectionType))),
+            assetExifProvider(
+              asset,
+            ).overrideWith((ref) => Stream.value(exif ?? ExifInfo(projectionType: projectionType))),
             currentRemoteAlbumProvider.overrideWith(_NoAlbumNotifier.new),
             readonlyModeProvider.overrideWith(() => _FixedReadonlyModeNotifier(readonly)),
             // Listed after the context overrides so it replaces their default of false
@@ -4018,6 +4028,142 @@ void main() {
 
       expect(bigScreenButton, findsOneWidget);
       expect(view3dButton, findsNothing);
+    });
+  });
+
+  group('ViewerTopAppBar "Explore the splat scene" on a splat photo (plan of 3 November 2026)', () {
+    final exploreButton = find.byKey(exploreSplatPhotoButtonKey);
+    final sum = '0' * 64;
+    SplatPhotoXmp packet({int gaussians = 150000, int length = 3612448, int formatVersion = 1}) => SplatPhotoXmp(
+      formatVersion: formatVersion,
+      splatVersion: 2,
+      splatGaussians: gaussians,
+      splatShDegree: 3,
+      splatLength: length,
+      splatSha256: sum,
+      splatName: 'salon_splat.spz',
+    );
+    late List<(BaseAsset, SplatPhotoXmp, GaussianSplatRequest)> opened;
+
+    setUp(() => opened = []);
+
+    /// A phone (or [device]) on which [asset] carries [xmp], or is still read until [reading]
+    List<Override> splat(
+      BaseAsset asset, {
+      SplatPhotoXmp? xmp,
+      Future<SplatPhotoXmp?>? reading,
+      SplatDeviceClass? device = SplatDeviceClass.phone,
+    }) => [
+      splatDeviceClassProvider.overrideWithValue(device),
+      splatPhotoProvider(asset).overrideWith((ref) => reading ?? Future.value(xmp)),
+      splatPhotoOpenerProvider.overrideWithValue((context, ref, asset, xmp, request) async {
+        opened.add((asset, xmp, request));
+      }),
+    ];
+
+    testWidgets('opens the scene with the request the gate of the phone gives from the packet', (tester) async {
+      final asset = owned(name: 'salon_splat.jpg', width: 1600, height: 1067);
+      await pumpTopBar(tester, asset, extraOverrides: splat(asset, xmp: packet()));
+
+      expect(find.byTooltip('Explore the splat scene'), findsOneWidget);
+      await tester.tap(exploreButton);
+      await tester.pumpAndSettle();
+
+      expect(opened, hasLength(1));
+      final request = opened.single.$3;
+      expect(request.name, 'salon_splat.spz');
+      expect(request.fileBytes, 3612448);
+      expect(request.gaussians, 150000);
+      expect(request.maxGaussians, splatPhoneGaussians);
+    });
+
+    testWidgets('a scene above what the device reduces is greyed with the reason, and nothing is fetched', (
+      tester,
+    ) async {
+      final asset = owned(name: 'salon_splat.jpg', width: 1600, height: 1067);
+      await pumpTopBar(tester, asset, extraOverrides: splat(asset, xmp: packet(gaussians: 5000000)));
+
+      expect(find.byTooltip('Too large for this device (5,000,000 gaussians)'), findsOneWidget);
+      expect(tester.widget<IconButton>(exploreButton).onPressed, isNull);
+      await tester.tap(exploreButton, warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(opened, isEmpty, reason: 'no tail request for a refused scene');
+    });
+
+    testWidgets('a copy smaller than its scene lost it, a packet of a newer version is greyed', (tester) async {
+      final asset = owned(name: 'salon_splat.jpg', width: 1600, height: 1067);
+      await pumpTopBar(
+        tester,
+        asset,
+        exif: const ExifInfo(fileSize: 129918),
+        extraOverrides: splat(asset, xmp: packet()),
+      );
+      expect(find.byTooltip('This copy lost its splat scene: another program saved the photo again'), findsOneWidget);
+      expect(tester.widget<IconButton>(exploreButton).onPressed, isNull);
+
+      await pumpTopBar(tester, asset, extraOverrides: splat(asset, xmp: packet(formatVersion: 2)));
+      expect(find.byTooltip('This splat photo was made by a newer version of Immuch360'), findsOneWidget);
+      expect(tester.widget<IconButton>(exploreButton).onPressed, isNull);
+    });
+
+    testWidgets('a splat photo named like a panorama stays a scene: no 360° viewer, no rotation', (tester) async {
+      final asset = owned(name: 'PANO_360_salon_splat.jpg', width: 2000, height: 1000);
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .equirectangular,
+        extraOverrides: splat(asset, reading: Completer<SplatPhotoXmp?>().future),
+      );
+      expect(panoramaButton, findsNothing, reason: 'nothing while its head is read');
+      expect(exploreButton, findsNothing);
+
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .equirectangular,
+        extraOverrides: splat(asset, xmp: packet()),
+      );
+      expect(panoramaButton, findsNothing);
+      expect(exploreButton, findsOneWidget);
+      final container = ProviderScope.containerOf(tester.element(find.byType(ViewerTopAppBar)));
+      expect(container.read(rotationModeProvider(asset)), RotationMode.none);
+
+      // Once read as an ordinary photo, the 360° viewer comes back
+      await pumpTopBar(tester, asset, projectionType: .equirectangular, extraOverrides: splat(asset));
+      expect(panoramaButton, findsOneWidget);
+      expect(exploreButton, findsNothing);
+    });
+
+    testWidgets('a TV or iOS gets no button, but the line saying where to explore it, for 4 seconds', (tester) async {
+      final asset = owned(name: 'salon_splat.jpg', width: 1600, height: 1067);
+      await pumpTopBar(tester, asset, extraOverrides: splat(asset, xmp: packet(), device: null));
+      await tester.pump();
+
+      expect(exploreButton, findsNothing);
+      const line = 'Splat scene: explore it on a computer, an Android phone or tablet, or a Meta Quest 3 or 3S';
+      expect(find.text(line), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      expect(find.text(line), findsNothing);
+    });
+
+    testWidgets('with Gaussian splats off, nothing is read nor offered', (tester) async {
+      final asset = owned(name: 'salon_splat.jpg', width: 1600, height: 1067);
+      await pumpTopBar(
+        tester,
+        asset,
+        appConfig: const AppConfig(viewer: ViewerConfig(gaussianSplats: false)),
+        extraOverrides: [
+          splatDeviceClassProvider.overrideWithValue(SplatDeviceClass.phone),
+          splatPhotoServiceProvider.overrideWithValue(
+            SplatPhotoService(
+              localFile: (_) async => throw StateError('no read with the splats off'),
+              serverReader: (_) => throw StateError('no read with the splats off'),
+            ),
+          ),
+        ],
+      );
+      expect(exploreButton, findsNothing);
     });
   });
 }

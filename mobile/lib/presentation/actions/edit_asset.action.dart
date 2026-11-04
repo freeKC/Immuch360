@@ -18,6 +18,7 @@ import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/error_handler.dart';
@@ -37,7 +38,9 @@ final _stateProvider = Provider.family.autoDispose<RemoteAsset?, ActionSource>((
         (asset) =>
             asset.isEditable &&
             !asset.name.toLowerCase().endsWith('.insp') &&
-            !ref.watch(hasEquirectangularExifProvider(asset)),
+            !ref.watch(hasEquirectangularExifProvider(asset)) &&
+            // A splat photo: an edit is a copy without its scene (plan of 3 November 2026, section 4)
+            !ref.watch(splatPhotoHoldsProvider(asset)),
       )
       .singleOrNull;
 }, dependencies: [ownedAssetsActionProvider]);

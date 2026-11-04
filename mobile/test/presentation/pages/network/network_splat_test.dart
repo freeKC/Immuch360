@@ -17,6 +17,7 @@ import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
+import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
@@ -87,6 +88,7 @@ class _Viewings implements SplatViewerService {
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
     bool watchFrames = false,
+    SplatViewerSaving? saving,
   }) async {
     shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap, look: look, watch: watchFrames));
     onOpening?.call();
@@ -121,6 +123,7 @@ class _HeldViewings implements SplatViewerService {
     SplatPrepareCancel? cancel,
     void Function()? onOpening,
     bool watchFrames = false,
+    SplatViewerSaving? saving,
   }) async {
     this.cancel = cancel;
     progress?.call(SplatPrepareStep.reduce, 0.3);

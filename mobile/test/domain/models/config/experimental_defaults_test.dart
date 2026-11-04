@@ -89,6 +89,14 @@ void main() {
       expect(config.write(SettingsKey.viewerKeepAllGaussians, false).viewer.keepAllGaussians, isFalse);
     });
 
+    test('the mark of the photos of saved splat scenes is on by default, and turns off (decision D1)', () {
+      expect(const AppConfig().viewer.markSplatPhotos, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerMarkSplatPhotos), isTrue);
+      final config = AppConfig.fromEntries({SettingsKey.viewerMarkSplatPhotos: false});
+      expect(config.viewer.markSplatPhotos, isFalse);
+      expect(config.write(SettingsKey.viewerMarkSplatPhotos, true).viewer.markSplatPhotos, isTrue);
+    });
+
     test('a stored on wins over the default of Large splats', () {
       final config = AppConfig.fromEntries({SettingsKey.viewerLargeSplats: true});
 

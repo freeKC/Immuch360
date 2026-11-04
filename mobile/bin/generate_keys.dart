@@ -153,6 +153,17 @@ const _kParamTypeOverrides = <String, String>{
   // left as {count} and {total} for the immersive viewer of the headset, which fills them in (lot S5)
   'splat_count.count': 'String',
   'splat_device_keeps.count': 'String',
+  // A splat photo (plan of 3 November 2026): its gaussians and its size, written out by the caller
+  'splat_photo_details.count': 'String',
+  'splat_photo_details.size': 'String',
+  'splat_photo_downloading.total': 'String',
+  'splat_photo_mobile_data.size': 'String',
+  // The count of a splat photo's caption and the sizes of the save, written out by the caller ("150,000", "3.4 MiB")
+  'splat_photo_description.count': 'String',
+  'splat_save_large.size': 'String',
+  'splat_save_mobile_data_ply.size': 'String',
+  'splat_save_ply.size': 'String',
+  'splat_save_refused_size.size': 'String',
   // The size of an object in the splat viewer's page, written there with its unit ("1.98 m")
   'splat_kind_object.size': 'String',
   // The frames per second of the page's offer, filled in there

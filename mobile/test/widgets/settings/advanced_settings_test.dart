@@ -341,7 +341,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('Lists the .spz and .ply splats of your shares and folders and opens them in 3D, to move through'),
+        find.text(
+          'Lists the .spz and .ply splats of your shares and folders and the splat scenes of your timeline, and opens '
+          'them in 3D, to move through',
+        ),
         findsOneWidget,
       );
       expect(find.textContaining('Meta Spatial SDK'), findsNothing);
@@ -413,6 +416,44 @@ void main() {
       await tester.pumpAndSettle();
       expect(SettingsRepository.instance.appConfig.viewer.keepAllGaussians, isTrue);
       debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('the mark of saved splat scenes: on by default on a phone and on the Quest, gone with the splats', (
+      tester,
+    ) async {
+      final markSwitch = find.descendant(
+        of: find.byKey(const Key('advanced_settings_mark_splat_photos')),
+        matching: find.byType(SwitchListTile),
+      );
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+      );
+      await tester.scrollUntilVisible(markSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.pumpAndSettle();
+      expect(find.text('Mark the photos of saved splat scenes'), findsOneWidget);
+      expect(find.text('A small 3D sign in a corner tells them apart in Immich and other apps'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(markSwitch).value, isTrue);
+      await tester.tap(markSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.markSplatPhotos, isFalse);
+
+      await tester.scrollUntilVisible(splatSwitch, -100, scrollable: find.byType(Scrollable).first);
+      await tester.pumpAndSettle();
+      await tester.tap(splatSwitch);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('advanced_settings_mark_splat_photos')), findsNothing);
+    });
+
+    testWidgets('the Quest of a GitHub build has the mark too', (tester) async {
+      await pumpOnQuest(tester);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('advanced_settings_mark_splat_photos')),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('Mark the photos of saved splat scenes'), findsOneWidget);
     });
 
     testWidgets('a phone has no Keep every gaussian: its caps stay', (tester) async {

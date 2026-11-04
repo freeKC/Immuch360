@@ -19,12 +19,14 @@ import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_save_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_splat.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
@@ -180,6 +182,29 @@ Future<T> _whileRead<T>(BuildContext context, Future<T> reading) async {
   }
 }
 
+/// The gate of the splat viewer of this computer, phone or tablet for the splat whose head said [probe], the file
+/// [name] of [fileBytes], read now (the chip and the memory of a computer, its answer for the file); null on another
+/// device. A splat photo asks it again with the head of its scene, which wins over its packet.
+Future<SplatGateVerdict?> splatViewerVerdictNow(
+  WidgetRef ref,
+  SplatProbe probe, {
+  required String name,
+  required int fileBytes,
+}) async {
+  final device = ref.read(splatDeviceClassProvider);
+  final computer = await ref.read(splatComputerNowProvider)();
+  final answer = await _answerOf(ref, device, name, fileBytes);
+  return _verdict(
+    device,
+    ref.read(appConfigProvider).viewer.largeSplats,
+    probe,
+    name,
+    fileBytes,
+    computer: computer,
+    answer: answer,
+  );
+}
+
 /// Opens the splat file of [key]: in the splat viewer at once when this device shows it, on its page otherwise
 Future<void> openSplatFile(BuildContext context, WidgetRef ref, SplatFileKey key) async {
   if (ref.read(splatFlatViewerProvider) && ref.read(splatViewerServiceProvider) != null) {
@@ -295,6 +320,17 @@ Future<void> showSplatViewer(
     maxStdDev: phone ? splatPhoneMaxStdDev : splatComputerMaxStdDev,
     pixelRatioMax: phone ? splatPhonePixelRatioMax : splatComputerPixelRatioMax,
   );
+  // Save to Immich in the page; the scene of a splat photo is on the server already
+  final onServer =
+      source.sourceId == null && source.path.split(RegExp(r'[/\\]')).last.startsWith(SplatViewerCache.serverPrefix);
+  final saving = splatViewerSavingFor(
+    context,
+    ref,
+    source: source,
+    head: head,
+    fileBytes: fileBytes,
+    onServer: onServer,
+  );
   final progress = ValueNotifier<(SplatPrepareStep, double)?>(null);
   final cancel = SplatPrepareCancel();
   final navigator = Navigator.of(context, rootNavigator: true);
@@ -313,7 +349,7 @@ Future<void> showSplatViewer(
         context: context,
         barrierDismissible: false,
         useRootNavigator: true,
-        builder: (context) => _PrepareDialog(progress: progress, onCancel: cancel.cancel),
+        builder: (context) => SplatPrepareDialog(progress: progress, onCancel: cancel.cancel),
       ).whenComplete(() {
         // Gone without closeDialog: the routes changed under it (a splat dropped on the window, or given by a later
         // start, replaces them). The preparation stops as on Back, or the viewer would open over the other page
@@ -336,8 +372,10 @@ Future<void> showSplatViewer(
       cancel: cancel,
       onOpening: closeDialog,
       watchFrames: watch,
+      saving: saving,
     );
   } finally {
+    saving?.viewerClosed();
     closeDialog();
     progress.dispose();
   }
@@ -392,11 +430,14 @@ String _percent(BuildContext context, double share) {
   }
 }
 
-class _PrepareDialog extends StatelessWidget {
-  const _PrepareDialog({required this.progress, required this.onCancel});
+/// The progress of the preparation of a splat, with Cancel: the download of the scene of a splat photo of
+/// [downloadTotal] bytes ("Downloading the splat scene: 1.2 MiB of 3.9 MiB"), the copy from a share, the reduction
+class SplatPrepareDialog extends StatelessWidget {
+  const SplatPrepareDialog({super.key, required this.progress, required this.onCancel, this.downloadTotal});
 
   final ValueNotifier<(SplatPrepareStep, double)?> progress;
   final VoidCallback onCancel;
+  final int? downloadTotal;
 
   @override
   Widget build(BuildContext context) {
@@ -415,9 +456,15 @@ class _PrepareDialog extends StatelessWidget {
           valueListenable: progress,
           builder: (context, value, _) {
             final percent = _percent(context, value?.$2 ?? 0);
-            final line = value?.$1 == SplatPrepareStep.copy
-                ? t.splat_copying_progress(percent: percent)
-                : t.splat_preparing_progress(percent: percent);
+            final total = downloadTotal;
+            final line = switch (value?.$1) {
+              SplatPrepareStep.download when total != null => t.splat_photo_downloading(
+                done: formatBytes((total * (value?.$2 ?? 0)).round()),
+                total: formatBytes(total),
+              ),
+              SplatPrepareStep.copy => t.splat_copying_progress(percent: percent),
+              _ => t.splat_preparing_progress(percent: percent),
+            };
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

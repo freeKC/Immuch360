@@ -72,6 +72,15 @@
       "bytes": 578,
       "sha256": "9abe9337984ee48a3e921e0238cf703aa2998a0b6bce57acb43a8199b8c1780b"
     },
+    "brush_sh3.ply": {
+      "bytes": 10987,
+      "sha256": "fe3e228cb60ad655fedaa38b3ea04f974266a2330356a30b93656612ded04891",
+      "format": "ply",
+      "gaussians": 40,
+      "shDegree": 3,
+      "tool": "Brush",
+      "rowBytes": 236
+    },
     "cash_register_head.spz": {
       "bytes": 65536,
       "sha256": "1ada3d901f35bf0b4e3c402952b6a01e030687370157d28c8b70e4db1ed638cd",
@@ -86,6 +95,24 @@
     "compressed.ply": {
       "bytes": 594,
       "sha256": "c71a4409ac3aa0a1f2054e45552de9c7117ffe7e37c89119e20da462cd7199d0"
+    },
+    "edges_sh3.ply": {
+      "bytes": 9069,
+      "sha256": "934d97b1d2914d98a3814fa6706b1d864c0945c85426342c947c9a986b461493",
+      "format": "ply",
+      "gaussians": 32,
+      "shDegree": 3,
+      "tool": "make_splat_fixtures.py",
+      "rowBytes": 236
+    },
+    "edges_sh3_v2.spz": {
+      "bytes": 240,
+      "sha256": "63380343d8378307e4b51405746e4883e9f293c27ee9ecc1044ae95a3818d347",
+      "format": "spz",
+      "version": 2,
+      "gaussians": 32,
+      "shDegree": 3,
+      "ply": "edges_sh3.ply"
     },
     "long_header.ply": {
       "bytes": 88581,
@@ -131,6 +158,27 @@
       "bytes": 35,
       "sha256": "47dbc94964cccf90a7f816a18a88705fd059d97df71b1abb024466dd27267ca5"
     },
+    "scene_sh3.ply": {
+      "bytes": 10625,
+      "sha256": "5bfffbe4adcc9376e6989f684564af62ddc1e51adda0356423f32c7c58c7a825",
+      "format": "ply",
+      "gaussians": 38,
+      "shDegree": 3,
+      "tool": "Immuch360 Desktop (COLMAP, Brush)",
+      "rowBytes": 236,
+      "brush": "brush_sh3.ply",
+      "scale": 0.5,
+      "note": "Immuch360 splat-v1, place, scale 0.500000 (floor)"
+    },
+    "scene_sh3_v2.spz": {
+      "bytes": 1893,
+      "sha256": "d2654acae4b5849c8a785daea8b0d23104a4f17b2c37df2b5363e627036d9d86",
+      "format": "spz",
+      "version": 2,
+      "gaussians": 38,
+      "shDegree": 3,
+      "ply": "scene_sh3.ply"
+    },
     "sh3.ply": {
       "bytes": 3510,
       "sha256": "7188e03afe6fb28c241d3823d718a6743a3157567e5ba89e693470fdb3d36269",
@@ -139,6 +187,15 @@
       "shDegree": 3,
       "tool": null,
       "rowBytes": 248
+    },
+    "sh3_v2.spz": {
+      "bytes": 163,
+      "sha256": "5b66b9e92a6fc9c3203eb3036fe36c27d8a1d2a0cf1e9d11d8fb624349d010f3",
+      "format": "spz",
+      "version": 2,
+      "gaussians": 8,
+      "shDegree": 3,
+      "ply": "sh3.ply"
     },
     "sh4_v2.spz": {
       "bytes": 413,

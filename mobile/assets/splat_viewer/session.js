@@ -37,6 +37,8 @@ export function parseSession(data) {
     theme: { dark: true, primary: '#4250af', ...(data.theme ?? {}) },
     events: typeof data.events === 'string' ? data.events : 'events',
     check: data.check === true,
+    // Save to Immich (save.js): offered or not, the server, the album switch, the texts of its panel; null without
+    save: data.save && typeof data.save === 'object' ? data.save : null,
     capture: typeof data.capture === 'string' ? data.capture : null,
   };
 }
