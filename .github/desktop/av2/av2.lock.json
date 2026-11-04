@@ -1,0 +1,72 @@
+{
+  "id": "30140b5-1",
+  "dav2d": {
+    "repository": "https://code.videolan.org/videolan/dav2d.git",
+    "commit": "30140b563596a1b14aef808ff021c90288948315",
+    "describe": "0.0.1-525-g30140b56",
+    "date": "2026-11-02T02:58:37Z",
+    "files": {
+      "COPYING": "c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b",
+      "doc/PATENTS": "335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b",
+      "src/ext/x86/x86inc.asm": "84a9cbfbd285dec8a8810820c634281fceb65ad235c6287ceb0c09bb73bd1793"
+    }
+  },
+  "components": [
+    {
+      "name": "dav2d",
+      "licence": "BSD-2-Clause",
+      "text": "dav2d-COPYING.txt",
+      "source": "COPYING"
+    },
+    {
+      "name": "x86inc.asm of the x264 project, in dav2d",
+      "licence": "ISC",
+      "text": "x86inc-ISC.txt",
+      "source": "src/ext/x86/x86inc.asm",
+      "lines": [1, 21]
+    },
+    {
+      "name": "Alliance for Open Media Patent License 1.0",
+      "licence": "LicenseRef-AOM-Patent-License-1.0",
+      "text": "AOM-PATENTS.txt",
+      "source": "doc/PATENTS"
+    },
+    {
+      "name": "immuch360-av2",
+      "licence": "AGPL-3.0-only",
+      "text": "immuch360-av2-AGPL-3.0.txt",
+      "own": "LICENSE"
+    },
+    {
+      "name": "immuch360-run",
+      "licence": "MIT",
+      "text": "immuch360-run-MIT.txt",
+      "own": "licenses/av2/immuch360-run-MIT.txt",
+      "systems": ["linux-x64"]
+    }
+  ],
+  "permissive": ["BSD-2-Clause", "BSD-3-Clause", "ISC", "MIT", "Zlib", "LicenseRef-AOM-Patent-License-1.0"],
+  "own": {"immuch360-av2": "AGPL-3.0-only", "immuch360-run": "MIT"},
+  "tools": {
+    "meson": "1.7.0",
+    "ninja": "1.13.0",
+    "nasm": {
+      "version": "2.16.03",
+      "windows-x64": {
+        "url": "https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/win64/nasm-2.16.03-win64.zip",
+        "sha256": "3ee4782247bcb874378d02f7eab4e294a84d3d15f3f6ee2de2f47a46aa7226e6"
+      },
+      "source": {
+        "url": "https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/nasm-2.16.03.tar.xz",
+        "sha256": "1412a1c760bbd05db026b6c0d1657affd6631cd0a63cddb6f73cc6d4aa616148"
+      }
+    },
+    "macosMinimum": "12.0"
+  },
+  "meson": {
+    "common": ["--buildtype=release", "--default-library=static", "-Db_ndebug=true"],
+    "windows-x64": ["-Db_vscrt=mt"],
+    "linux-x64": [],
+    "macos-universal": []
+  }
+}

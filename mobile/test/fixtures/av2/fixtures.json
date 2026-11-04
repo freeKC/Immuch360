@@ -20,7 +20,7 @@
    "binary_sha256": "82fac2746406066b78f7f68f0f1a66f93cf6b748aa13762c604f8a3692720579"
   },
   "ffmpeg": {
-   "binary": "/home/frenaud/.local/share/mise/shims/ffmpeg",
+   "binary": "ffmpeg",
    "version": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers"
   }
  },
@@ -2329,6 +2329,6 @@
   "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
   "build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2",
   "build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf",
-  "/home/frenaud/.local/share/mise/shims/ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse-256x144-8bit-12f.y4m -frames:v 2 -c:v libaom-av1 -cpu-used 8 -crf 50 -g 2 -threads 1 -f ivf fixtures/out/av1-256x144-8bit.ivf"
+  "ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse-256x144-8bit-12f.y4m -frames:v 2 -c:v libaom-av1 -cpu-used 8 -crf 50 -g 2 -threads 1 -f ivf fixtures/out/av1-256x144-8bit.ivf"
  ]
 }

@@ -181,9 +181,9 @@ must be refused as AV2 by the fourcc for `.ivf`, and by the first OBU for a Sect
 Sources (`commands-sources.txt`):
 
 ```
-/home/frenaud/.local/share/mise/shims/ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse.webm -an -sn -map 0:v:0 -vf 'select='"'"'between(n\,750\,761)'"'"',setpts=N/30/TB,scale=256:144:flags=lanczos+accurate_rnd+full_chroma_int,format=yuv420p' -r 30 -frames:v 12 -strict -1 -f yuv4mpegpipe fixtures/src/lighthouse-256x144-8bit-12f.y4m
-/home/frenaud/.local/share/mise/shims/ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse.webm -an -sn -map 0:v:0 -vf 'select='"'"'between(n\,750\,761)'"'"',setpts=N/30/TB,scale=256:144:flags=lanczos+accurate_rnd+full_chroma_int,format=yuv420p10le' -r 30 -frames:v 12 -strict -1 -f yuv4mpegpipe fixtures/src/lighthouse-256x144-10bit-12f.y4m
-/home/frenaud/.local/share/mise/shims/ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse.webm -an -sn -map 0:v:0 -vf 'select='"'"'between(n\,750\,1049)'"'"',setpts=N/30/TB,format=yuv420p' -r 30 -frames:v 300 -strict -1 -f yuv4mpegpipe fixtures/src/lighthouse-1080p30-8bit-300f.y4m
+ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse.webm -an -sn -map 0:v:0 -vf 'select='"'"'between(n\,750\,761)'"'"',setpts=N/30/TB,scale=256:144:flags=lanczos+accurate_rnd+full_chroma_int,format=yuv420p' -r 30 -frames:v 12 -strict -1 -f yuv4mpegpipe fixtures/src/lighthouse-256x144-8bit-12f.y4m
+ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse.webm -an -sn -map 0:v:0 -vf 'select='"'"'between(n\,750\,761)'"'"',setpts=N/30/TB,scale=256:144:flags=lanczos+accurate_rnd+full_chroma_int,format=yuv420p10le' -r 30 -frames:v 12 -strict -1 -f yuv4mpegpipe fixtures/src/lighthouse-256x144-10bit-12f.y4m
+ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse.webm -an -sn -map 0:v:0 -vf 'select='"'"'between(n\,750\,1049)'"'"',setpts=N/30/TB,format=yuv420p' -r 30 -frames:v 300 -strict -1 -f yuv4mpegpipe fixtures/src/lighthouse-1080p30-8bit-300f.y4m
 ```
 
 Fixtures and checks (from `fixtures.json`, paths relative to `~/av2-2026-11-02/` on ai1):
@@ -243,6 +243,6 @@ build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tm
 build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf
 build/dav2d/tools/dav2d -q -i fixtures/tmp/survey.ivf --muxer yuv -o fixtures/tmp/dec.yuv --threads 2
 build/avm-dec/avmdec --rawvideo -t 2 -o fixtures/tmp/dec.yuv fixtures/tmp/survey.ivf
-/home/frenaud/.local/share/mise/shims/ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse-256x144-8bit-12f.y4m -frames:v 2 -c:v libaom-av1 -cpu-used 8 -crf 50 -g 2 -threads 1 -f ivf fixtures/out/av1-256x144-8bit.ivf
+ffmpeg -nostdin -hide_banner -loglevel error -y -i fixtures/src/lighthouse-256x144-8bit-12f.y4m -frames:v 2 -c:v libaom-av1 -cpu-used 8 -crf 50 -g 2 -threads 1 -f ivf fixtures/out/av1-256x144-8bit.ivf
 ```
 
