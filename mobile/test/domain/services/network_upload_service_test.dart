@@ -218,6 +218,58 @@ void main() {
     expect(progress['nas:/room.spz'], 0.5);
   });
 
+  test('a splat saved before, unchanged since, whose splat photo the server still has, is not read again', () async {
+    final saved = <String>[];
+    final service = NetworkUploadService(
+      uploads,
+      records,
+      (remoteId) {
+        asked.add(remoteId);
+        return assets[remoteId]?.call() ?? Future.value(RemoteAssetPresence.inLibrary);
+      },
+      saveSplat: (fileSystem, entry, {required cancel, onProgress}) async {
+        saved.add(entry.name);
+        return SplatSaveStatus(
+          entry.name == 'old.spz' ? SplatSaveState.alreadyThere : SplatSaveState.done,
+          assetId: 'splat-${entry.name}',
+        );
+      },
+    );
+    final outcomes = <String, NetworkUploadOutcome>{};
+    Future<NetworkUploadSummary> run() => service.upload(
+      fileSystem,
+      [file('/room.spz'), file('/skull.ply'), file('/old.spz')],
+      cancelToken: Completer<void>(),
+      listener: NetworkUploadListener(onFinished: (id, outcome) => outcomes[id] = outcome),
+    );
+
+    final first = await run();
+    expect(saved, ['room.spz', 'skull.ply', 'old.spz']);
+    expect(first.sent, 2);
+    expect(first.duplicates, 1);
+    expect((await records.find(file('/room.spz')))?.remoteId, 'splat-room.spz');
+    expect((await records.find(file('/old.spz')))?.remoteId, 'splat-old.spz', reason: 'found on the server: kept too');
+
+    saved.clear();
+    asked.clear();
+    final again = await run();
+    expect(saved, isEmpty, reason: 'nothing copied from the share, converted or hashed again');
+    expect(asked, ['splat-room.spz', 'splat-skull.ply', 'splat-old.spz']);
+    expect(again.duplicates, 3);
+    expect(again.sent, 0);
+    expect(outcomes['nas:/room.spz'], NetworkUploadOutcome.duplicate);
+
+    // Its splat photo deleted on the server: saved again; in the trash: said so, not sent
+    assets['splat-room.spz'] = () async => RemoteAssetPresence.gone;
+    assets['splat-skull.ply'] = () async => RemoteAssetPresence.inTrash;
+    final third = await run();
+    expect(saved, ['room.spz']);
+    expect(third.sent, 1);
+    expect(third.inTrash, 1);
+    expect(third.duplicates, 1);
+    expect(outcomes['nas:/skull.ply'], NetworkUploadOutcome.inTrash);
+  });
+
   test('a cancel stops before the next splat', () async {
     final cancel = Completer<void>();
     final saved = <String>[];

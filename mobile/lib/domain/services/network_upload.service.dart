@@ -7,7 +7,8 @@
 // place of its flight data once the server has read it, when it found none in the video (see VideoLocationService).
 // The files the server refuses (see NetworkEntry.isRefusedByServer) are skipped with their reason. The Gaussian splats
 // (.spz, .ply), which the server takes no more, go as splat photos through Save to Immich when it is given
-// (NetworkSplatSaver, plan of 3 November 2026, section 6.2), one at a time after the photos and videos.
+// (NetworkSplatSaver, plan of 3 November 2026, section 6.2), one at a time after the photos and videos, recorded as the
+// other files with the asset of their splat photo.
 
 import 'dart:async';
 
@@ -319,6 +320,20 @@ class NetworkUploadService {
         break;
       }
       final id = networkUploadId(entry);
+      // Saved before and unchanged since, its splat photo still on the server: not copied, converted nor hashed again
+      switch (await _recordedPresence(entry)) {
+        case RemoteAssetPresence.inLibrary:
+          duplicates++;
+          listener.onFinished?.call(id, NetworkUploadOutcome.duplicate);
+          continue;
+        case RemoteAssetPresence.inTrash:
+          inTrash++;
+          listener.onFinished?.call(id, NetworkUploadOutcome.inTrash);
+          continue;
+        case RemoteAssetPresence.gone:
+        case null:
+          break;
+      }
       final SplatSaveStatus status;
       try {
         status = await saveSplat(
@@ -332,6 +347,15 @@ class NetworkUploadService {
         lastError = '$error';
         listener.onFinished?.call(id, NetworkUploadOutcome.failed);
         continue;
+      }
+      // The splat photo that holds it, recorded as for the other files
+      final assetId = status.assetId;
+      if (assetId != null &&
+          (status.state == SplatSaveState.done ||
+              status.state == SplatSaveState.duplicate ||
+              status.state == SplatSaveState.alreadyThere ||
+              status.state == SplatSaveState.inTrash)) {
+        await _record(entry, assetId, inTrash: status.state == SplatSaveState.inTrash);
       }
       switch (status.state) {
         case SplatSaveState.done:

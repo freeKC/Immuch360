@@ -280,6 +280,28 @@ void splatSaveTellEnd(
   scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(content: Text(line)));
 }
 
+/// The refusal of the PLY [name] of [size] bytes whose bytes [read] gives, when its head says it is no splat the save
+/// converts (a mesh, a point cloud, a PLY in ASCII): told from its head, before the whole file is copied from its
+/// share. Null for a PLY to save, and for an SPZ, which the job reads itself.
+Future<SplatSaveStatus?> splatShareHeadRefusal(
+  String name,
+  int size,
+  Future<Uint8List> Function(int offset, int length) read,
+) async {
+  if (!name.toLowerCase().endsWith('.ply')) {
+    return null;
+  }
+  final probe = probeSplatHead(await read(0, size < splatHeadBytes ? size : splatHeadBytes), size);
+  return switch (probe) {
+    SplatRefused(:final problem, :final detail) => SplatSaveStatus(
+      SplatSaveState.failed,
+      problem: SplatSaveProblem.unreadable,
+      detail: '${problem.name}: $detail',
+    ),
+    SplatHead() => null,
+  };
+}
+
 /// Saves the splat [entry] of the share [fileSystem] as a splat photo with a drawn poster, for "Upload to Immich" of the
 /// shares and folders (plan of 3 November 2026, section 6.2): copied into the cache, then the job, in the app's
 /// language; the album switch as the user left it. [cancel] stops it; [onProgress] the part sent.
@@ -298,6 +320,14 @@ Future<SplatSaveStatus> saveSplatFromShare(
   final size = entry.size ?? (await fileSystem.stat(entry.path)).size;
   if (size == null) {
     return const SplatSaveStatus(SplatSaveState.failed, problem: SplatSaveProblem.unreadable, detail: 'no size');
+  }
+  final refused = await splatShareHeadRefusal(
+    entry.name,
+    size,
+    (offset, length) => fileSystem.readRange(entry.path, offset, length),
+  );
+  if (refused != null) {
+    return refused;
   }
   final copy = await cache.fileFor('splat-save-copy-${DateTime.now().microsecondsSinceEpoch}-${entry.name}');
   try {

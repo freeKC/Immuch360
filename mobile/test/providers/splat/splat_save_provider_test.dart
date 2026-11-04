@@ -1,8 +1,14 @@
 // The words of a save (plan of 3 November 2026, section 6.2): what the page of the splat viewer, the sheet and the snack
-// bars say of each state of a SplatSaveJob, in the app's language.
+// bars say of each state of a SplatSaveJob, in the app's language; a PLY of a share that is no splat refused from its
+// head, before it is copied.
+
+import 'dart:io';
+import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/services/splat_photo/splat_save_job.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/splat/splat_save.provider.dart';
@@ -52,5 +58,27 @@ void main() {
       line(const SplatSaveStatus(SplatSaveState.failed, problem: SplatSaveProblem.plyTooLarge)),
       'This PLY is too large to convert on this device: save it from a computer',
     );
+  });
+
+  test('a PLY of a share that is no splat is refused from its head, before any copy', () async {
+    final reads = <(int, int)>[];
+    Future<Uint8List> Function(int, int) readerOf(Uint8List bytes) => (offset, length) async {
+      reads.add((offset, length));
+      return Uint8List.sublistView(bytes, offset, math.min(bytes.length, offset + length));
+    };
+    final mesh = File('test/fixtures/splat/mesh_cube.ply').readAsBytesSync();
+    final refused = await splatShareHeadRefusal('cube.ply', mesh.length, readerOf(mesh));
+    expect(refused?.state, SplatSaveState.failed);
+    expect(refused?.problem, SplatSaveProblem.unreadable);
+    expect(reads, [(0, math.min(mesh.length, splatHeadBytes))], reason: 'its head only');
+
+    reads.clear();
+    final ply = File('test/fixtures/splat/axes.ply').readAsBytesSync();
+    expect(await splatShareHeadRefusal('axes.ply', ply.length, readerOf(ply)), isNull);
+    // An SPZ goes to the job as before, nothing read here
+    final spz = File('test/fixtures/splat/axes_v2.spz').readAsBytesSync();
+    reads.clear();
+    expect(await splatShareHeadRefusal('axes.spz', spz.length, readerOf(spz)), isNull);
+    expect(reads, isEmpty);
   });
 }
