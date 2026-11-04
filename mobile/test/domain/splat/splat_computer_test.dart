@@ -90,6 +90,32 @@ void main() {
     }
   });
 
+  test('the card is counted by the layers Spark makes room in: past an edge, the whole next layer', () {
+    // Review of 4 November 2026. Measured on the RTX: 590 MB at 4 million, 1,046 at 6 and 1,048 at 8 (one layer
+    // more), 1,497 at 12; a count that grew with the gaussians gave 870 MB at 4,194,305 and 1,008 at 5 million
+    const layer = splatCardLayerGaussians;
+    expect(layer, 4194304);
+    expect(splatCardBytes(layer + 1), greaterThanOrEqualTo(1048 * mb));
+    expect(splatCardBytes(5000000), splatCardBytes(2 * layer));
+    expect(splatCardBytes(2 * layer + 1), greaterThanOrEqualTo(1497 * mb));
+    // A card of 2 GB: its half holds one layer, not the 5.09 million of the earlier count
+    final card2 = SplatComputer(
+      gpu: const SplatGpu(SplatGpuKind.dedicated, memory: 2048 * mb),
+      physicalMemory: 256 << 30,
+    );
+    expect(splatComputerMostGaussians(card2), layer);
+    // Whatever the card, its limit fits its half by this count, and one gaussian more does not
+    for (final memory in [1024, 2048, 3072, 4096, 6144, 8188, 12288, 16384]) {
+      final computer = SplatComputer(
+        gpu: SplatGpu(SplatGpuKind.dedicated, memory: memory * mb),
+        physicalMemory: 256 << 30,
+      );
+      final most = splatComputerMostGaussians(computer);
+      expect(splatCardBytes(most), lessThanOrEqualTo(memory * mb ~/ 2), reason: '$memory MB: $most');
+      expect(splatCardBytes(most + 1), greaterThan(memory * mb ~/ 2), reason: '$memory MB: $most');
+    }
+  });
+
   test('the measured laptop shows every scene it drew whole, 8 million included, within a third of its memory', () {
     final most = splatComputerMostGaussians(rtx, fileBytesPerGaussian: 21);
     expect(most, greaterThanOrEqualTo(8000000));

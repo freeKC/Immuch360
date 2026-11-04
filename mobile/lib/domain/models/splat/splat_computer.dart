@@ -101,10 +101,17 @@ const splatPageBytesPerGaussian = 450;
 /// gaussians of the measures fit, 10.3 million by this count, with room for the app and the system)
 const splatPageMemoryShare = 1 / 3;
 
-/// The memory of the graphics card itself for a splat: at most 150 MB and 180 bytes a gaussian in every measure (590 MB
-/// measured at 4 million against 837 MB counted here, 1,046 MB at 6 million against 1,180)
+/// The memory of the graphics card itself for a splat: at most 150 MB and 180 bytes a gaussian in every measure, the
+/// gaussians counted by the layers Spark makes room in past the first ([splatCardLayerGaussians]): 590 MB measured at
+/// 4 million against 837 MB counted here, 1,046 MB at 6 million and 1,048 at 8 against 1,590 (two layers), 1,497 at 12
+/// against 2,310 (three)
 const splatCardBaseBytes = 150 * 1024 * 1024;
 const splatCardBytesPerGaussian = 180;
+
+/// Spark makes room on the card by layers of this many gaussians (2048 x 2048): up to one layer the room grows with
+/// the count (241 MB at 1 million, 590 at 4), past it a whole layer at a time (6 and 8 million take the same 1,046 MB;
+/// review of 4 November 2026)
+const splatCardLayerGaussians = 4194304;
 
 /// The share of a dedicated card's memory a splat may take: half, the rest for the system and the other programs
 const splatCardMemoryShare = 0.5;
@@ -117,8 +124,13 @@ const splatEngineMostGaussians = 64000000;
 int splatPageBytes(int gaussians, {int fileBytes = 0}) =>
     splatPageBaseBytes + splatPageBytesPerGaussian * gaussians + 2 * fileBytes;
 
-/// The memory of the graphics card for [gaussians] gaussians (see [splatCardBaseBytes])
-int splatCardBytes(int gaussians) => splatCardBaseBytes + splatCardBytesPerGaussian * gaussians;
+/// The memory of the graphics card for [gaussians] gaussians (see [splatCardBaseBytes]): past the first layer, whole
+/// layers
+int splatCardBytes(int gaussians) => splatCardBaseBytes + splatCardBytesPerGaussian * _layered(gaussians);
+
+int _layered(int gaussians) => gaussians <= splatCardLayerGaussians
+    ? gaussians
+    : (gaussians + splatCardLayerGaussians - 1) ~/ splatCardLayerGaussians * splatCardLayerGaussians;
 
 /// The most gaussians [computer] shows whole for a file of [fileBytesPerGaussian] bytes a gaussian (21 for the SPZ of
 /// the measures, about 248 for a PLY of degree 3): what a third of its physical memory holds, what half the memory of
@@ -133,7 +145,12 @@ int splatComputerMostGaussians(SplatComputer computer, {double fileBytesPerGauss
   final card = computer.gpu.memory;
   if (computer.gpu.kind == SplatGpuKind.dedicated && card != null) {
     final room = card * splatCardMemoryShare - splatCardBaseBytes;
-    most = math.min(most, (room / splatCardBytesPerGaussian).floor());
+    final fits = (room / splatCardBytesPerGaussian).floor();
+    // Past the first layer, only whole layers fit
+    most = math.min(
+      most,
+      fits <= splatCardLayerGaussians ? fits : fits ~/ splatCardLayerGaussians * splatCardLayerGaussians,
+    );
   }
   return math.max(0, most);
 }
