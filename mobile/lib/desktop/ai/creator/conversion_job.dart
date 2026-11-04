@@ -92,6 +92,10 @@ enum ConversionWait {
   /// at the latest when the other one ends
   memory,
 
+  /// The app lets go of what it holds of the graphics card (its paused videos, its cached pictures) and waits a few
+  /// seconds for that memory to come back before it asks the card (graphics_release.dart)
+  graphicsRelease,
+
   /// Other programs hold the memory of the graphics card (gpu_budget.dart): the job starts once enough is free, asked
   /// again a little later or when the user asks for it; the memory free goes with it (ConversionJob.waitingFree)
   graphicsMemory,

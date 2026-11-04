@@ -7,7 +7,7 @@
 // the type of each job, its step in words, "step 12 of 28, about 3 min left" counted down, why a job waits, the share
 // of a scene filled in, and "Delete this version" asked as such. Phase 3: a job waiting for the memory of the graphics
 // card with what is free and Resume, the named failures of a panorama in words, and the 3D version of a generated
-// panorama under the sentence of the panorama.
+// panorama under the sentence of the panorama. Issue #13: what the app lets go of the card first.
 
 import 'dart:io';
 
@@ -693,6 +693,25 @@ void main() {
         expect(shownQueue.cardAsked, 1);
       },
     );
+
+    testWidgets('while the app lets go of its share of the card, the panel says what it lets go of', (tester) async {
+      await pumpShown(tester, [
+        job(
+          'plage.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.waiting,
+          waitingFor: ConversionWait.graphicsRelease,
+        ),
+      ]);
+
+      expect(
+        tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_waiting')))).data,
+        'Freeing the graphics card memory Immuch360 holds: paused videos and cached pictures',
+      );
+      expect(inRow('plage.jpg', find.byKey(const Key('ai_job_check_gpu'))), findsNothing);
+      expect(inRow('plage.jpg', find.byKey(const Key('ai_job_keep_waiting'))), findsNothing);
+      expect(inRow('plage.jpg', find.byKey(const Key('ai_job_cancel'))), findsOneWidget);
+    });
 
     testWidgets('the named failures of a panorama, in words', (tester) async {
       await pumpShown(tester, [

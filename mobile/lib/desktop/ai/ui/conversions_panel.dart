@@ -18,8 +18,10 @@
 // other lane holds), the part of a scene filled in, its .glb copy when one was asked for ("Also save a .glb copy"),
 // and "Delete this version" for a version that is not a 3D photo.
 //
-// The 360° panoramas (lot U3; design-final 2026-10-27, sections 4.5 and 4.7): a job of the graphics card waiting for
-// its memory says how much is free, with Resume, which asks the card again at once (checkGraphicsCardAgain); the named
+// The 360° panoramas (lot U3; design-final 2026-10-27, sections 4.5 and 4.7): a job of the graphics card first says
+// what the app lets go of the card ("Freeing the graphics card memory Immuch360 holds: paused videos and cached
+// pictures", issue #13), then, waiting for its memory, how much is free, with Resume, which asks the card again at once
+// (checkGraphicsCardAgain); the named
 // failures of a generation in their words ("The graphics card ran out of memory: close games or 3D apps and retry",
 // "Other apps use the graphics card memory: close games or 3D apps" for a graph cut into segments, "The graphics card
 // did not answer"...); the 3D version of a panorama the app generated, chained after it or chosen by itself, comes
@@ -283,6 +285,7 @@ String? conversionProgressText(Translations t, ConversionJob job, Duration? left
 /// Why a job waits while its lane is free; [free], the memory of the graphics card free when it was asked
 String conversionWaitText(Translations t, ConversionWait wait, {int? free}) => switch (wait) {
   ConversionWait.memory => t.ai_immersive_waiting_memory,
+  ConversionWait.graphicsRelease => t.ai_immersive_gpu_releasing,
   ConversionWait.graphicsMemory => t.ai_immersive_gpu_budget_wait(free: formatBytes(free ?? 0)),
 };
 

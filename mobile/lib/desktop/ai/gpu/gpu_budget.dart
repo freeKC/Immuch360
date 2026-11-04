@@ -9,8 +9,9 @@
 // Windows lowers it to what the counters of Windows leave of the card (windows/runner/gpu_probe.cpp, DedicatedUsage).
 //
 // What the app itself holds of the card counts as used in that budget, as another program's would (issue #13: 1.4 GiB
-// of an RTX 2060 of 8 GB on Linux, with a photo open): the answer that makes the job wait carries the app's share apart
-// when the probe could read it ([GpuBudgetWait.appHolds]), with the memory it needs.
+// of an RTX 2060 of 8 GB on Linux, with a photo open). The queue lets go of what it can before it asks (its paused
+// videos and its cached pictures, graphics_release.dart), and the answer that makes the job wait carries the app's
+// share apart when the probe could read it ([GpuBudgetWait.appHolds]), with the memory it needs.
 //
 // The ways to run a 360° panorama, measured on 4 November 2026 with the app's own sd-cli and its arguments (note
 // ai-gpu-budget-2026-11-04/measure.md, sections 2.3 and 2.4). stable-diffusion.cpp keeps 512 MiB of the free memory in

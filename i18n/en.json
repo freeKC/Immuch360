@@ -618,6 +618,7 @@
   "ai_immersive_gpu_no_answer": "The graphics card did not answer",
   "ai_immersive_gpu_none": "No graphics card with Vulkan found",
   "ai_immersive_gpu_not_on_mac": "Not yet on Mac",
+  "ai_immersive_gpu_releasing": "Freeing the graphics card memory Immuch360 holds: paused videos and cached pictures",
   "ai_immersive_gpu_too_small": "The graphics card has {memory} of memory, 360° panoramas need {needed}",
   "ai_immersive_hardware": "{processors} logical processors, {memory} of memory",
   "ai_immersive_hidden_filled": "Hidden areas filled: {percent}%",
