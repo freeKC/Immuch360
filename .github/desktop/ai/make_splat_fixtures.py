@@ -58,6 +58,27 @@ The fixtures:
   cash_register_head.spz, measuring_tape_head.ply   the first 65 536 bytes of two CC0 files of InnerScene
       (https://www.innerscene.com/tools/gaussian-splat-viewer, "public domain (CC0)"): heads of files of another
       writer, read with the length of the whole file; --kit downloads the whole files
+  sh3_v2.spz                 sh3.ply written as SPZ version 2 by [spz_v2_from_ply] below: the golden file of the
+                             writer of the splat scenes made on a computer (store/m2/splat-maker-2026-11-01, lots SP0 and
+                             SP3), whose decompressed bytes the Dart writer must give again
+  edges_sh3.ply, edges_sh3_v2.spz   32 gaussians of degree 3 on every edge of that packing (a position on a half step,
+                             beyond the 24 bits, a quaternion of negative or zero w, colours, scales and opacities
+                             beyond what a byte holds, harmonics on the edge of their buckets), and the same as SPZ
+                             version 2
+  brush_sh3.ply              40 gaussians of degree 3 as Brush 0.3.0 exports them (its three comments, its 59
+                             properties in alphabetical order: f_dc_0 to 2, f_rest_0, f_rest_1, f_rest_10 ...,
+                             opacity, rot_0 to 3, scale_0 to 2, x y z), with what the formats cannot carry: a NaN
+                             position and an infinite scale (left out), a quaternion of zero length (the identity), a
+                             floater past the 2048 units of the fixed point of SPZ, colours, scales and harmonics
+                             beyond what a byte holds
+  scene_sh3.ply, scene_sh3_v2.spz   brush_sh3.ply as the splat scenes made on a computer are written by [scene_ply]
+                             (store/m2/splat-maker-2026-11-01, lot SP3): its 38 finite gaussians scaled by 0.5 (their
+                             positions halved, ln 0.5 added to their log scales), in the order of 3D Gaussian Splatting,
+                             our comment first, those of Brush, the note of the scale; and that PLY as SPZ version 2. The
+                             golden files of the Dart writers: the PLY byte for byte, the SPZ by its decompressed bytes.
+                             scene_sh3_v2_dart.spz, next to them, is the SPZ the Dart writer made of brush_sh3.ply (its
+                             gzip wrapper, which the Kotlin tests read): not written here, --check inflates it and
+                             compares it with scene_sh3_v2.spz
 
 expected.json holds what the tests compare with: the header of each file, the kept indices of the reduction, and the
 percentiles 5 and 95 of the positions of the axes (the value of rank max(1, (P * N + 99) // 100) of the N sorted
@@ -528,6 +549,203 @@ def as_v2(data: bytes) -> bytes:
 
 
 # ---------------------------------------------------------------------------------------------------------------------
+# SPZ version 2 from a PLY of 3D Gaussian Splatting: the packing of the splat scenes made on a computer
+#
+# The rules of packGaussians in load-spz.cc of Niantic Labs (MIT), read on 1 November 2026, applied to the float32
+# values of the PLY in double precision, as the Dart writer computes: positions times 2^12 rounded to 24 bit fixed point
+# (clamped to its range, which Niantic does not do), alpha the sigmoid of the opacity times 255, colours f_dc times
+# 0.15 * 255 plus 127.5, scales (log + 10) times 16, the quaternion (rot_1, rot_2, rot_3, rot_0 of the PLY: x, y, z, w)
+# normalised, made positive on w, then x, y, z times 127.5 plus 127.5, the harmonics coefficient by coefficient with the
+# three colours in each (f_rest of the PLY is colour by colour), x * 128 + 128 rounded to the middle of a bucket of 8
+# for the 9 values of degree 1 and of 16 beyond. Every rounding is half away from zero (std::round), every byte clamped
+# to 0 to 255. The library of Niantic computes in single precision, so a value that falls on a half may differ by one
+# there; the golden file is this script.
+
+
+def round_away(value: float) -> int:
+    """[value] rounded to the nearest integer, a half away from zero, as std::round"""
+    return int(math.floor(abs(value) + 0.5)) * (1 if value >= 0 else -1)
+
+
+def u8(value: float) -> int:
+    """toUint8 of load-spz.cc: rounded half away from zero, clamped to a byte"""
+    return min(max(round_away(value), 0), 255)
+
+
+def quantize_sh(value: float, bucket: int) -> int:
+    """quantizeSH of load-spz.cc: x * 128 + 128 rounded, then to the middle of its bucket, clamped to a byte"""
+    q = round_away(value * 128.0) + 128
+    q = (q + bucket // 2) // bucket * bucket
+    return min(max(q, 0), 255)
+
+
+def read_ply_gaussians(data: bytes) -> tuple:
+    """The rows of a binary little endian PLY of gaussians, float32 properties in any order: (degree, a list of dicts
+    name -> value)"""
+    end = data.index(b"end_header\n") + len(b"end_header\n")
+    count, names = None, []
+    for line in data[:end].decode("ascii").split("\n"):
+        parts = line.split()
+        if parts[:2] == ["element", "vertex"]:
+            count = int(parts[2])
+        elif parts[:1] == ["property"]:
+            assert parts[1] == "float", line
+            names.append(parts[2])
+    assert data[:end].startswith(b"ply\nformat binary_little_endian 1.0\n") and count is not None
+    rest = sum(1 for name in names if name.startswith("f_rest_"))
+    degree = {0: 0, 9: 1, 24: 2, 45: 3}[rest]
+    row = struct.Struct("<" + "f" * len(names))
+    rows = [dict(zip(names, row.unpack_from(data, end + i * row.size))) for i in range(count)]
+    assert end + count * row.size == len(data)
+    return degree, rows
+
+
+def spz_v2_payload(degree: int, rows: list) -> bytes:
+    """The decompressed SPZ version 2 of [rows] (see above): the 16 bytes of its header, then its arrays"""
+    limit = (1 << 23) - 1
+    positions, alphas, colors, scales, rotations, sh = (bytearray() for _ in range(6))
+    dim = (degree + 1) ** 2 - 1
+    for g in rows:
+        for name in ("x", "y", "z"):
+            fixed = min(max(round_away(g[name] * (1 << FRACTIONAL_BITS)), -limit - 1), limit)
+            positions += struct.pack("<i", fixed)[:3]
+        alphas.append(u8(1.0 / (1.0 + math.exp(-g["opacity"])) * 255.0))
+        colors += bytes(u8(g[f"f_dc_{k}"] * (SPZ_COLOR_SCALE * 255.0) + 0.5 * 255.0) for k in range(3))
+        scales += bytes(u8((g[f"scale_{k}"] + 10.0) * 16.0) for k in range(3))
+        q = [g["rot_1"], g["rot_2"], g["rot_3"], g["rot_0"]]
+        norm = math.sqrt(sum(c * c for c in q))
+        # A quaternion of zero length turns nothing: the identity (Niantic's writer would divide by zero)
+        q = [c / norm for c in q] if norm > 0 else [0.0, 0.0, 0.0, 1.0]
+        sign = -127.5 if q[3] < 0 else 127.5
+        rotations += bytes(u8(c * sign + 127.5) for c in q[:3])
+        values = [g[f"f_rest_{channel * dim + j}"] for j in range(dim) for channel in range(3)]
+        sh += bytes(quantize_sh(value, 8 if k < 9 else 16) for k, value in enumerate(values))
+    header = spz_header(2, len(rows), degree)
+    return header + bytes(positions) + bytes(alphas) + bytes(colors) + bytes(scales) + bytes(rotations) + bytes(sh)
+
+
+def spz_v2_from_ply(data: bytes) -> bytes:
+    """The PLY [data] written as SPZ version 2, gzip without name nor date"""
+    return gzip.compress(spz_v2_payload(*read_ply_gaussians(data)), compresslevel=9, mtime=0)
+
+
+def edges_ply() -> bytes:
+    """32 gaussians of degree 3 whose values sit on the edges of the packing of SPZ version 2 (see the top of this
+    file), written as a PLY of 3D Gaussian Splatting"""
+    half = 0.5 / (1 << FRACTIONAL_BITS)
+    positions = [(half, -half, 3 * half), (2048.0, -2048.0, 4095.9), (-1.25, 0.0, 1e-9), (0.1, 0.2, 0.3)]
+    quaternions = [(1.0, 0.0, 0.0, 0.0), (-1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (-0.5, 0.5, -0.5, 0.5),
+                   (0.2, -0.4, 0.6, -0.8), (0.0, 0.0, 0.0, -2.0), (-0.1, -0.2, -0.3, -0.4), (3.0, 1.0, -1.0, 0.5)]
+    colors = [-4.0, -3.4, -3.3333333, 0.0, 1.5, 3.3333333, 3.4, 5.0]
+    log_scales = [-12.0, -10.0, -10.03125, -4.6, 0.0, 5.9375, 5.96875, 7.0]
+    opacities = [-20.0, -3.0, -0.01, 0.0, 0.5, 3.0, 9.0, 20.0]
+    sh_values = [-1.5, -1.0, -0.0625, -0.03125, -0.001, 0.0, 0.03125, 0.0625, 0.09375, 0.5, 0.9921875, 1.5]
+    head = ["ply", "format binary_little_endian 1.0", "comment Generated by make_splat_fixtures.py", "element vertex 32"]
+    head += [f"property float {n}" for n in ("x", "y", "z")]
+    head += [f"property float f_dc_{k}" for k in range(3)]
+    head += [f"property float f_rest_{k}" for k in range(45)]
+    head += ["property float opacity"] + [f"property float scale_{k}" for k in range(3)]
+    head += [f"property float rot_{k}" for k in range(4)] + ["end_header"]
+    out = bytearray(("\n".join(head) + "\n").encode("ascii"))
+    for i in range(32):
+        row = list(positions[i % 4])
+        row += [colors[(i + k) % 8] for k in range(3)]
+        row += [sh_values[(i * 5 + k) % 12] for k in range(45)]
+        row.append(opacities[i % 8])
+        row += [log_scales[(i + 3 * k) % 8] for k in range(3)]
+        row += list(quaternions[i % 8])
+        out += struct.pack(f"<{len(row)}f", *row)
+    return bytes(out)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# The splat scene made on a computer (store/m2/splat-maker-2026-11-01, lot SP3): the PLY of Brush 0.3.0 read in any
+# order, written again in the order of 3D Gaussian Splatting with the scale of the scene, then as SPZ version 2 above.
+# Only the gaussians whose values are all finite are written (a NaN or an infinity has no place in either format); the
+# positions are multiplied by the scale and its natural logarithm is added to the log scales, each value rounded to
+# float32 as the PLY stores it, so that the PLY and the SPZ hold the same gaussians. Our comment comes first, so that
+# the probe of the headset (splatToolOf) names Immuch360 Desktop, then the comments of Brush (printable ASCII only),
+# then the note of the scale.
+
+SCENE_TOOL_COMMENT = "Made with Immuch360 Desktop (COLMAP, Brush)"
+BRUSH_COMMENTS = ("Exported from Brush", "Vertical axis: y", "SH degree: 3")
+# The note of the scale of scene_sh3.ply, as the Dart side writes it for a place scaled by 0.5 from its floor
+SCENE_NOTE = "Immuch360 splat-v1, place, scale 0.500000 (floor)"
+SCENE_SCALE = 0.5
+
+
+def scene_names(degree: int) -> list:
+    """The properties of a gaussian in the order of 3D Gaussian Splatting, without normals"""
+    return (["x", "y", "z"] + [f"f_dc_{k}" for k in range(3)] + [f"f_rest_{k}" for k in range(sh_rest(degree))]
+            + ["opacity"] + [f"scale_{k}" for k in range(3)] + [f"rot_{k}" for k in range(4)])
+
+
+def ply_comments(data: bytes) -> list:
+    """The comments of the header of a PLY, printable ASCII only, the empty ones left out"""
+    end = data.index(b"end_header\n")
+    out = []
+    for line in data[:end].decode("latin-1").split("\n"):
+        if line.startswith("comment"):
+            text = "".join(ch for ch in line[len("comment"):] if " " <= ch <= "~").strip()
+            if text:
+                out.append(text)
+    return out
+
+
+def f32(value: float) -> float:
+    return struct.unpack("<f", struct.pack("<f", value))[0]
+
+
+def brush_ply() -> bytes:
+    """40 gaussians of degree 3 as Brush 0.3.0 writes them (see the top of this file)"""
+    state = 5
+
+    def rnd():
+        nonlocal state
+        state = (state * 1103515245 + 12345) % (1 << 31)
+        return state / (1 << 31)
+
+    names = sorted(scene_names(3))
+    rows = []
+    for _ in range(40):
+        g = {"x": rnd() * 6 - 3, "y": rnd() * 4 - 1, "z": rnd() * 8 - 4}
+        g.update({f"f_dc_{k}": rnd() * 8 - 4 for k in range(3)})
+        g.update({f"f_rest_{k}": rnd() * 2.4 - 1.2 for k in range(45)})
+        g["opacity"] = rnd() * 16 - 8
+        g.update({f"scale_{k}": rnd() * 13 - 12 for k in range(3)})
+        g.update({f"rot_{k}": rnd() * 2 - 1 for k in range(4)})
+        rows.append(g)
+    rows[3]["x"] = 5000.0
+    rows[7]["y"] = float("nan")
+    rows[11].update(rot_0=0.0, rot_1=0.0, rot_2=0.0, rot_3=0.0)
+    rows[23]["scale_1"] = float("-inf")
+    head = ["ply", "format binary_little_endian 1.0"] + [f"comment {c}" for c in BRUSH_COMMENTS]
+    head += [f"element vertex {len(rows)}"] + [f"property float {n}" for n in names] + ["end_header"]
+    out = bytearray(("\n".join(head) + "\n").encode("ascii"))
+    for g in rows:
+        out += struct.pack(f"<{len(names)}f", *[g[n] for n in names])
+    return bytes(out)
+
+
+def scene_ply(data: bytes, scale: float, note: str) -> bytes:
+    """The PLY [data] of Brush as the splat scenes made on a computer are written (see above)"""
+    degree, rows = read_ply_gaussians(data)
+    names = scene_names(degree)
+    kept = [g for g in rows if all(math.isfinite(g[n]) for n in names)]
+    log = math.log(scale)
+    comments = [SCENE_TOOL_COMMENT] + [c for c in ply_comments(data) if c != SCENE_TOOL_COMMENT] + [note]
+    out = bytearray(ply_header(len(kept), degree, comments=comments).encode("ascii"))
+    for g in kept:
+        row = dict(g)
+        for name in ("x", "y", "z"):
+            row[name] = f32(g[name] * scale)
+        for k in range(3):
+            row[f"scale_{k}"] = f32(g[f"scale_{k}"] + log)
+        out += struct.pack(f"<{len(names)}f", *[row[n] for n in names])
+    return bytes(out)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
 # What the tests compare with
 
 
@@ -590,6 +808,15 @@ def expected(files: dict) -> dict:
     out["headers"]["axes.ply"].update(format="ply", gaussians=len(gaussians), shDegree=0,
                                       tool="make_splat_fixtures.py", rowBytes=14 * 4)
     out["headers"]["sh3.ply"].update(format="ply", gaussians=8, shDegree=3, tool=None, rowBytes=(17 + 45) * 4)
+    out["headers"]["sh3_v2.spz"].update(format="spz", version=2, gaussians=8, shDegree=3, ply="sh3.ply")
+    out["headers"]["edges_sh3.ply"].update(format="ply", gaussians=32, shDegree=3, tool="make_splat_fixtures.py",
+                                           rowBytes=(14 + 45) * 4)
+    out["headers"]["edges_sh3_v2.spz"].update(format="spz", version=2, gaussians=32, shDegree=3, ply="edges_sh3.ply")
+    out["headers"]["brush_sh3.ply"].update(format="ply", gaussians=40, shDegree=3, tool="Brush", rowBytes=(14 + 45) * 4)
+    out["headers"]["scene_sh3.ply"].update(format="ply", gaussians=38, shDegree=3,
+                                           tool="Immuch360 Desktop (COLMAP, Brush)", rowBytes=(14 + 45) * 4,
+                                           brush="brush_sh3.ply", scale=SCENE_SCALE, note=SCENE_NOTE)
+    out["headers"]["scene_sh3_v2.spz"].update(format="spz", version=2, gaussians=38, shDegree=3, ply="scene_sh3.ply")
     for name, (source, length, sha) in INNERSCENE.items():
         out["headers"][name].update(source=INNERSCENE_URL + source, fileBytes=length, fileSha256=sha)
     out["headers"]["cash_register_head.spz"].update(format="spz", version=3, gaussians=47819, shDegree=0)
@@ -678,6 +905,12 @@ def fixtures(cache: pathlib.Path) -> dict:
     files["turns_v4.spz"] = v4_from_v3(files["turns_v3.spz"])
     files["sh4_v2.spz"] = as_v2(files["sh4_v4.spz"])
     files["axes_v1_v2.spz"] = as_v2(files["axes_v1.spz"])
+    files["sh3_v2.spz"] = spz_v2_from_ply(files["sh3.ply"])
+    files["edges_sh3.ply"] = edges_ply()
+    files["edges_sh3_v2.spz"] = spz_v2_from_ply(files["edges_sh3.ply"])
+    files["brush_sh3.ply"] = brush_ply()
+    files["scene_sh3.ply"] = scene_ply(files["brush_sh3.ply"], SCENE_SCALE, SCENE_NOTE)
+    files["scene_sh3_v2.spz"] = spz_v2_from_ply(files["scene_sh3.ply"])
     for name in INNERSCENE:
         files[name] = innerscene_head(name, cache)
     return files
@@ -737,6 +970,10 @@ def main() -> int:
             return data
         if without_v4(current) != without_v4(exp):
             bad.append("expected.json")
+        # The SPZ the Dart writer made of brush_sh3.ply, when it is there: the same decompressed bytes as the golden one
+        dart = FIXTURES / "scene_sh3_v2_dart.spz"
+        if dart.is_file() and gzip.decompress(dart.read_bytes()) != gzip.decompress(files["scene_sh3_v2.spz"]):
+            bad.append(dart.name)
         for name in bad:
             print(f"differs: {name}")
         return 1 if bad else 0
