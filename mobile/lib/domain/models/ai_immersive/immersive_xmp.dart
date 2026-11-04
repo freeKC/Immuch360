@@ -824,7 +824,9 @@ List<(String, String)> _sphereTags(int? width, int? height) => width == null || 
 
 /// The packet of a 360° panorama generated beyond the edges of a photo, `<name>_360.jpg`: an equirectangular JPEG of
 /// [width] x [height] with GPano, the photo itself pasted back where [region] says, [sourceCoverage] the fraction of
-/// the sphere it covers. No initial view is written: the viewers open on the centre column, the photo.
+/// the sphere it covers. No initial view is written: the viewers open on the centre column, the photo. A panorama made
+/// on a card with less memory free, its reference capped, says the cap ([generatorReferenceMaxPixels]): the same seed
+/// gives another image then.
 final class PanoramaXmp extends ImmersiveVersionXmp {
   const PanoramaXmp({
     super.formatVersion = immersiveFormatVersion,
@@ -841,6 +843,7 @@ final class PanoramaXmp extends ImmersiveVersionXmp {
     this.seed,
     this.steps,
     this.upscaler,
+    this.generatorReferenceMaxPixels,
     super.derivativeId,
     super.sourceName,
     super.sourceSize,
@@ -875,6 +878,7 @@ final class PanoramaXmp extends ImmersiveVersionXmp {
     required String creatorTool,
     String? derivativeId,
     List<ReliefQualityFlag> qualityFlags = const [],
+    int? generatorReferenceMaxPixels,
   }) => PanoramaXmp(
     origin: ImmersiveOrigin.generatedContent,
     pipeline: PanoV1.pipeline,
@@ -889,6 +893,7 @@ final class PanoramaXmp extends ImmersiveVersionXmp {
     seed: seed,
     steps: steps,
     upscaler: upscaler,
+    generatorReferenceMaxPixels: generatorReferenceMaxPixels,
     derivativeId: derivativeId ?? newImmersiveDerivativeId(),
     sourceName: sourceName,
     sourceSize: sourceSize,
@@ -925,6 +930,10 @@ final class PanoramaXmp extends ImmersiveVersionXmp {
   /// The upscaler by its catalogue id
   final String? upscaler;
 
+  /// The pixels the reference of the generator was capped at, on a card with less memory free; null for the
+  /// generator's own reference. Not part of [settingsKey]: like the seed, it changes the image, not the settings asked
+  final int? generatorReferenceMaxPixels;
+
   /// The fraction of the sphere invented, 1 minus [sourceCoverage]
   double? get inventedFraction => sourceCoverage == null ? null : 1 - sourceCoverage!;
 
@@ -955,6 +964,7 @@ final class PanoramaXmp extends ImmersiveVersionXmp {
     if (seed case final value?) ('Seed', '$value'),
     if (steps case final value?) ('Steps', '$value'),
     if (upscaler case final value?) ('Upscaler', value),
+    if (generatorReferenceMaxPixels case final value?) ('GeneratorReferenceMaxPixels', '$value'),
   ];
 
   @override
@@ -970,6 +980,7 @@ final class PanoramaXmp extends ImmersiveVersionXmp {
     seed,
     steps,
     upscaler,
+    generatorReferenceMaxPixels,
   ];
 
   /// The panorama fields of the packet [xmp], null when it is not ours or not of a panorama
@@ -993,6 +1004,7 @@ final class PanoramaXmp extends ImmersiveVersionXmp {
       seed: read.integer('Seed'),
       steps: read.integer('Steps'),
       upscaler: read.field('Upscaler'),
+      generatorReferenceMaxPixels: read.integer('GeneratorReferenceMaxPixels'),
       derivativeId: read.field('DerivativeId'),
       sourceName: read.field('SourceName'),
       sourceSize: read.integer('SourceSize'),

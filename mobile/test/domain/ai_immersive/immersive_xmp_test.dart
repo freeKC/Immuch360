@@ -53,7 +53,7 @@ void main() {
     qualityFlags: const [ReliefQualityFlag.hiddenAreas],
   );
 
-  PanoramaXmp panorama() => PanoramaXmp.generated(
+  PanoramaXmp panorama({int? referenceMaxPixels}) => PanoramaXmp.generated(
     width: 8192,
     height: 4096,
     region: region,
@@ -73,6 +73,7 @@ void main() {
     creatorTool: tool,
     derivativeId: 'urn:uuid:6f1c2e0a-0000-4000-8000-000000000002',
     qualityFlags: const [ReliefQualityFlag.fovGuessed],
+    generatorReferenceMaxPixels: referenceMaxPixels,
   );
 
   StereoPanoramaXmp stereoPanorama() => StereoPanoramaXmp.estimated(
@@ -201,6 +202,20 @@ void main() {
 
       expect(panorama().settingsKey, '${panorama().generatorSha256}|${panorama().generatorLoraSha256}|pano-v1|28|0');
       expect(other.settingsKey, panorama().settingsKey);
+    });
+
+    test('a panorama whose reference was capped (less memory free on the card): the cap written and read back, the '
+        'same key', () {
+      final capped = panorama(referenceMaxPixels: 819200);
+      final xml = capped.toXml();
+
+      expect(xml, contains('Immuch360:GeneratorReferenceMaxPixels="819200"'));
+      expect(PanoramaXmp.parse(xml), capped);
+      expect(PanoramaXmp.parse(xml)!.generatorReferenceMaxPixels, 819200);
+      expect(capped, isNot(panorama()));
+      expect(capped.settingsKey, panorama().settingsKey);
+      expect(panorama().toXml(), isNot(contains('GeneratorReferenceMaxPixels')), reason: 'written only when capped');
+      expect(PanoramaXmp.parse(panorama().toXml())!.generatorReferenceMaxPixels, isNull);
     });
 
     test('a 360° 3D panorama: the sum of the depth model, the pipeline, the largest shift', () {

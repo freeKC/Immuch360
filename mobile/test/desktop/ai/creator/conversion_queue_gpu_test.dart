@@ -2,7 +2,8 @@
 // in the queue: a panorama waits while other programs hold the card, with what is free, and the processor lane goes
 // on; it starts once the card is free, asked again a little later or at once; no card fails it; a panorama waiting
 // holds the next one back and only one probe runs per check; a panorama cancelled while it waits or while the probe
-// answers never runs.
+// answers never runs. Issue #13: the panorama is made the way the memory free allows (the full reference, else the
+// reduced one).
 
 import 'dart:async';
 import 'dart:io';
@@ -29,6 +30,22 @@ import '../fakes/fake_panorama_engine.dart';
 import '../fakes/fake_scene_engine.dart';
 
 const _mib = 1024 * 1024;
+
+/// An RTX 2060 of 8 GB under Linux with [freeMib] free, Immuch360 holding [appMib] of it (issue #13)
+GpuReport _rtx2060(int freeMib, {int? appMib}) => GpuReport(
+  adapters: [
+    GpuAdapter(
+      name: 'NVIDIA GeForce RTX 2060',
+      kind: GpuKind.discrete,
+      localMemory: 8192 * _mib,
+      vendorId: 0x10de,
+      apiVersion: '1.3.277',
+      budget: freeMib * _mib,
+      usage: 0,
+      appMemory: appMib == null ? null : appMib * _mib,
+    ),
+  ],
+);
 
 Future<String> _sum(String path, NativeCancelFlag cancel) async => 'c3VtCg==';
 
@@ -145,6 +162,7 @@ void main() {
       expect(job(pano).waitingFor, isNull);
       expect(job(pano).waitingFree, isNull);
       expect(panorama.jobs, hasLength(1));
+      expect(panorama.jobs.single.referenceMaxPixels, isNull, reason: 'the full reference on 7.2 GiB free');
     },
   );
 
@@ -245,6 +263,20 @@ void main() {
 
     expect(job(pano).state, ConversionState.cancelled);
     expect(panorama.jobs, isEmpty);
+  });
+
+  test('the way the card allows reaches the panorama: the full reference, else the reduced one (issue #13)', () async {
+    final probe = FakeGpuProbe([_rtx2060(7000), _rtx2060(5530, appMib: 1402)]);
+    container = containerWith(probe.probe);
+
+    final roomy = add('a.jpg', ConversionKind.panoramaFromPhoto);
+    await until((state) => state.byId(roomy)!.state.isEnded);
+    final tight = add('b.jpg', ConversionKind.panoramaFromPhoto);
+    await until((state) => state.byId(tight)!.state.isEnded);
+
+    expect(job(roomy).state, ConversionState.done);
+    expect(job(tight).state, ConversionState.done);
+    expect([for (final spec in panorama.jobs) spec.referenceMaxPixels], [null, panoramaReducedReferencePixels]);
   });
 
   test('the jobs of the processor never ask the graphics card', () async {

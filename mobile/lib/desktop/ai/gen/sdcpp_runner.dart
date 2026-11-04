@@ -6,7 +6,9 @@
 //    compare the build with it), the graphics card named by ggml's index (--backend diffusion=Vulkan<n>,vae=Vulkan<n>,
 //    te=CPU: the integrated card comes first on a laptop, so sd-cli never chooses), flash attention on (without it the
 //    attention goes to the processor and no step ends in 10 minutes), the VAE in tiles, -t the logical processors less
-//    two, -v for the line about segments;
+//    two, -v for the line about segments; and on a card with less memory free, the reference capped at 1280 x 640
+//    (--ref-image-args vae_input_max_pixels=819200, measured on 4 November 2026: 4 676 MiB on the card instead of
+//    5 388, see gpu_budget.dart);
 //  - its progress is the bar it redraws ("12/20 - 8.65s/it"): the steps of the sampling only, not the loading of the
 //    weights nor the tiles of the VAE;
 //  - a generation whose graph sd-cli cut into segments ("flux using 27 segments", when the free memory of the card is
@@ -143,6 +145,7 @@ List<String> sdCppGenerationArguments(SdCppSettings settings, GeneratorRequest r
     '--vae-tiling',
     '-r',
     request.controlPath,
+    if (request.referenceMaxPixels case final pixels?) ...['--ref-image-args', 'vae_input_max_pixels=$pixels'],
     '-W',
     '${request.width}',
     '-H',

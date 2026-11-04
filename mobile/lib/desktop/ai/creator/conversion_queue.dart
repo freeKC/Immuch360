@@ -29,7 +29,8 @@
 // Before a job of the graphics card starts, the card is asked again for the memory it has free (lot C6,
 // gpu_budget.dart): held by other programs, the job waits with what is free, the lane of the graphics card with it
 // (a second panorama would only wait the same), the processor lane going on; the card is asked again a little later,
-// or at once when the user asks (checkGraphicsCardAgain), and a card gone fails the job.
+// or at once when the user asks (checkGraphicsCardAgain), and a card gone fails the job. The job is made the way the
+// memory free allows (the full reference of the generator, else the reduced one: PanoramaReference, issue #13).
 //
 // The queue does not survive the window: closing it asks first (close_guard.dart, reasons "conversions" and
 // "generation"), and the journal of the .part files cleans up what a quit left.
@@ -277,6 +278,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// A job of the graphics card waits for its memory: no job starts on that lane until [_gpuRecheck] asks again
   var _gpuWaits = false;
   Timer? _gpuRecheck;
+
+  /// The way each panorama about to run was given by the card (gpu_budget.dart)
+  final _references = <String, PanoramaReference>{};
   var _disposed = false;
   var _lastId = 0;
 
@@ -794,13 +798,15 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       }
       _flags.remove(id);
       _stepStarted.remove(id);
+      _references.remove(id);
       cancel.free();
     }
   }
 
-  /// Whether the job [id] of the graphics card may start now: the card has the memory free (or nothing is asked of it,
-  /// tools without a budget). Otherwise the job waits with what is free and the lane with it, asked again after
-  /// ConversionTools.gpuRecheck; or it fails when no card can take it. False too when it was cancelled meanwhile.
+  /// Whether the job [id] of the graphics card may start now: the card has the memory free for one way to run it (or
+  /// nothing is asked of it, tools without a budget). Otherwise the job waits with what is free and the lane with it,
+  /// asked again after ConversionTools.gpuRecheck; or it fails when no card can take it. False too when it was
+  /// cancelled meanwhile.
   Future<bool> _graphicsCardReady(String id, ConversionTools tools) async {
     final budget = tools.gpuBudget;
     if (budget == null) {
@@ -817,7 +823,12 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       return false;
     }
     switch (check) {
-      case GpuBudgetReady():
+      case GpuBudgetReady(:final reference, :final free, :final appHolds):
+        _references[id] = reference;
+        _log.info(
+          'The graphics card has $free bytes free for $id (the app holds ${appHolds ?? 'an unknown share'}): '
+          '${reference.name} reference',
+        );
         return true;
       case GpuBudgetWait(:final free):
         _set(id, (job) => job.copyWith(waitingFor: () => ConversionWait.graphicsMemory, waitingFree: () => free));
@@ -889,6 +900,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           generator: generator,
           steps: steps,
           seed: tools.newSeed(),
+          referenceMaxPixels: _references[job.id]?.maxPixels,
         );
       case ConversionKind.stereoPanoramaFromPanorama:
         return StereoPanoramaJob(

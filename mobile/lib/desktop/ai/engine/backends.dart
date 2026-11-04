@@ -112,6 +112,7 @@ class GeneratorRequest {
     this.height = PanoV1.generationHeight,
     this.guidance = PanoV1.guidance,
     this.loraStrength = PanoV1.loraStrength,
+    this.referenceMaxPixels,
   });
 
   final String controlPath;
@@ -124,6 +125,10 @@ class GeneratorRequest {
   final int height;
   final double guidance;
   final double loraStrength;
+
+  /// The pixels the reference made from the control frame is capped at, for a card with less memory free
+  /// (gpu_budget.dart, PanoramaReference.reduced); null for the generator's own reference
+  final int? referenceMaxPixels;
 }
 
 /// Where a generation or an upscale is: the step done of [steps], and the seconds a step takes when the generator

@@ -133,7 +133,7 @@ void main() {
     stallTimeout: stall,
   );
 
-  GeneratorRequest request({int width = 1536, int height = 768}) => GeneratorRequest(
+  GeneratorRequest request({int width = 1536, int height = 768, int? referenceMaxPixels}) => GeneratorRequest(
     controlPath: p.join(folder.path, 'control.png'),
     outputPath: p.join(folder.path, 'generated.png'),
     workFolder: folder.path,
@@ -141,6 +141,7 @@ void main() {
     seed: 1002,
     width: width,
     height: height,
+    referenceMaxPixels: referenceMaxPixels,
   );
 
   SdCppGenerator generator(ProcessRunner runner, {bool checkImages = false, Duration Function()? elapsed}) =>
@@ -214,11 +215,28 @@ void main() {
       );
     });
 
+    test('a card with less memory free: the reference capped at 1280 x 640 after the control frame, as measured', () {
+      // Measure of 4 November 2026 (run C): 4 676 MiB on the card instead of 5 388, the same 1536 x 768 image size
+      final full = generator(FakeProcessRunner([])).argumentsOf(request());
+      final reduced = generator(FakeProcessRunner([])).argumentsOf(request(referenceMaxPixels: 819200));
+      final control = reduced.indexOf('-r');
+
+      expect(reduced.sublist(control, control + 4), [
+        '-r',
+        p.join(folder.path, 'control.png'),
+        '--ref-image-args',
+        'vae_input_max_pixels=819200',
+      ]);
+      expect([...reduced]..removeRange(control + 2, control + 4), full);
+      expect(full, isNot(contains('--ref-image-args')));
+    });
+
     test('every option is one the pinned sd-cli lists in its --help, and none is deprecated there', () {
       final help = File('test/fixtures/ai_immersive/sd_cli_help.txt').readAsLinesSync();
       final options = <String>{
         for (final argument in [
           ...generator(FakeProcessRunner([])).argumentsOf(request()),
+          ...generator(FakeProcessRunner([])).argumentsOf(request(referenceMaxPixels: 819200)),
           ...SdCppUpscaler(
             runner: FakeProcessRunner([]),
             settings: settings(),
