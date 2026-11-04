@@ -923,7 +923,7 @@ void main() {
           '--system',
           'windows-x64',
           '--archive',
-          p.join(root.path, 'windows-x64', names['windows-x64']!),
+          p.join(root.path, 'windows-x64', names['windows-x64']),
           '--program',
           signedExe.path,
           '--out',

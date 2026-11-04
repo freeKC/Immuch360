@@ -11,7 +11,6 @@
 //   IMMUCH360_AV2_SHARE_CLIP=/fremantle-lighthouse-1080p30-av2.ivf   the clip (this one by default)
 //   IMMUCH360_AV2_SHARE_LOG=<file>              where the log of the run is written
 
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
