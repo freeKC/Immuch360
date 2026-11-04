@@ -21,6 +21,10 @@
 // What a lease's owner does on its player (an open, a stop) goes through [PlayerLease.guard], and the pool waits for
 // it before it stops the player or gives it to another lease: an open that ended after the stop would leave a file
 // held by a parked player, or start the previous page's video in the next page's player.
+//
+// Before a job of the AI features on the graphics card (a 360° panorama), the pool lets go of every player that does
+// not play (PlayerPool.releaseForGraphicsJob, issue #13): the budget the driver gives the job counts the decoders and
+// textures of the app as used.
 
 import 'dart:async';
 
@@ -116,6 +120,47 @@ class PlayerPool {
       }
     },
   );
+
+  /// Lets go of the players that do not play before a job of the AI features on the graphics card (issue #13: an 8K
+  /// decoder holds about 1.3 GB of the card): the idle players of every kind, and the players of the leases of pages and
+  /// live views that do not play, suspended as for a hand over (their owner told first, after what it started on its
+  /// player; each gets a player again, at the same position, the next time it needs one). The player that plays on
+  /// screen stays, and so does the frame grabber at work: its grab ends within seconds and its player then waits idle.
+  /// Gives the number of players disposed, once their disposes ended.
+  Future<int> releaseForGraphicsJob() => _serial(() async {
+    if (_disposed) {
+      return 0;
+    }
+    final engines = [for (final idle in _idle.values) ...idle];
+    _idle.clear();
+    _inTransit.addAll(engines);
+    for (final lease in [..._leases]) {
+      final engine = lease._engine;
+      if (engine == null || lease.kind == PlayerKind.thumbnail || engine.playing.value) {
+        continue;
+      }
+      _log.fine('${lease.label} lets go of its player for a job on the graphics card');
+      lease._engine = null;
+      lease._suspended = true;
+      _inTransit.add(engine);
+      engines.add(engine);
+      await lease._settled();
+      try {
+        await lease._onSuspend?.call();
+      } catch (error, stackTrace) {
+        _log.warning('${lease.label} could not note where its video was', error, stackTrace);
+      }
+    }
+    var released = 0;
+    for (final engine in engines) {
+      // Not disposed here once a close took it: the close disposes it
+      if (_land(engine)) {
+        await _disposeEngine(engine);
+        released++;
+      }
+    }
+    return released;
+  });
 
   /// Disposes every player; the leases get none any more
   Future<void> dispose() => _serial(() async {
@@ -399,6 +444,9 @@ PlayerPool? _shared;
 
 /// The pool of the app's players, made on first use
 PlayerPool get desktopPlayerPool => _shared ??= PlayerPool(create: DesktopPlayer.create);
+
+/// The pool of the app's players when one was made, null before the first video: nothing of it holds the graphics card
+PlayerPool? get desktopPlayerPoolIfMade => _shared;
 
 /// Closes the app's pool when it was made (see [PlayerPool.close]): the window closes
 Future<void> closeDesktopPlayerPool({required Duration timeout}) => _shared?.close(timeout: timeout) ?? Future.value();

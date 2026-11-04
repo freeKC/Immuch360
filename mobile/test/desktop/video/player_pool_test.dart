@@ -2,7 +2,8 @@
 // does not play taken first, else the one of the lease used longest ago, handed over with its owner told first and
 // after what the owner started on it, disposed only beyond the idle limit or when its picture is lost. At the close of
 // the window every player is disposed at once, none of them waited for longer than its bound, those on their way
-// between two places included.
+// between two places included. Before a job of the AI features on the graphics card (issue #13), the players that do
+// not play are let go, the one that plays on screen and the frame grabber at work kept.
 
 import 'dart:async';
 
@@ -282,6 +283,92 @@ void main() {
 
     await players.pool.dispose();
     expect(engine.disposed, isTrue);
+  });
+
+  group('a job of the AI features on the graphics card', () {
+    test('the idle players of every kind and those of the paused pages go, their owners told; the playing one and the '
+        'grabber at work stay', () async {
+      final players = FakePlayers();
+      final events = <String>[];
+      // A page that plays on screen
+      final playing = players.pool.lease(PlayerKind.playback, label: 'viewer');
+      final playingEngine = await playing.acquire() as FakePlaybackEngine;
+      await playingEngine.play();
+      // A page paused over it, as the viewer leaves a page swiped away
+      final paused = players.pool.lease(
+        PlayerKind.playback,
+        label: 'paused',
+        onSuspend: () async => events.add('paused suspended'),
+      );
+      final pausedEngine = await paused.acquire() as FakePlaybackEngine;
+      await pausedEngine.open('/videos/8k.mp4');
+      await pausedEngine.play();
+      await pausedEngine.pause();
+      // A live view stopped, then its lease given back: its player waits idle
+      final live = players.pool.lease(PlayerKind.live, label: 'camera');
+      final liveEngine = await live.acquire() as FakePlaybackEngine;
+      await live.release();
+      // The frame grabber at work, and an idle one of a grab before
+      final grabbing = players.pool.lease(PlayerKind.thumbnail, label: 'thumbnails');
+      final grabberEngine = await grabbing.acquire() as FakePlaybackEngine;
+      expect(players.pool.idleCount(PlayerKind.live), 1);
+
+      final released = await players.pool.releaseForGraphicsJob();
+
+      expect(released, 2);
+      expect(pausedEngine.disposed, isTrue);
+      expect(liveEngine.disposed, isTrue);
+      expect(playingEngine.disposed, isFalse);
+      expect(grabberEngine.disposed, isFalse);
+      expect(playing.engine, same(playingEngine));
+      expect(grabbing.engine, same(grabberEngine));
+      expect(events, ['paused suspended']);
+      expect(paused.isSuspended, isTrue);
+      expect(paused.engine, isNull);
+      expect(players.pool.idleCount(PlayerKind.live), 0);
+      expect(players.pool.disposed, 2);
+
+      // The paused page gets a new player when it plays again
+      final back = await paused.acquire();
+      expect(back, isNot(same(pausedEngine)));
+      expect(paused.isSuspended, isFalse);
+    });
+
+    test('the pool waits for what the owner started on its player before it lets it go', () async {
+      final players = FakePlayers();
+      final lease = players.pool.lease(PlayerKind.playback, label: 'viewer');
+      final engine = await lease.acquire() as FakePlaybackEngine;
+      final opening = Completer<void>();
+      final opened = lease.guard(() async {
+        await opening.future;
+        await engine.open('/videos/a.mp4');
+      });
+
+      var done = false;
+      final release = players.pool.releaseForGraphicsJob().then((count) {
+        done = true;
+        return count;
+      });
+      await Future<void>.delayed(Duration.zero);
+      expect(done, isFalse, reason: 'the open runs first');
+      expect(engine.disposed, isFalse);
+
+      opening.complete();
+      await opened;
+      expect(await release, 1);
+      expect(engine.calls.where((call) => call.startsWith('open')), hasLength(1));
+      expect(engine.disposed, isTrue);
+      expect(lease.isSuspended, isTrue);
+    });
+
+    test('nothing to let go, and nothing once the pool is closed', () async {
+      final players = FakePlayers();
+      expect(await players.pool.releaseForGraphicsJob(), 0);
+      final lease = players.pool.lease(PlayerKind.playback, label: 'viewer');
+      await lease.acquire();
+      await players.pool.close(timeout: const Duration(seconds: 1));
+      expect(await players.pool.releaseForGraphicsJob(), 0);
+    });
   });
 
   group('the close of the window', () {
