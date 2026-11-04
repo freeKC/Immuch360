@@ -367,8 +367,7 @@ void main() {
   testWidgets('the hardware line: logical processors, memory, and the card of the 360° panoramas this build offers', (
     tester,
   ) async {
-    // The engines and the hold of this build: since ai-components-3 was published, only the splat scenes held back
-    // until ai-components-4 is
+    // The engines and the hold of this build: nothing held back since ai-components-3 and ai-components-4 were made
     await pump(
       tester,
       gate: HardwareGate(

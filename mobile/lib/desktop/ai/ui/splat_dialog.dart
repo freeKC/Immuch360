@@ -6,7 +6,7 @@
 //
 // The entry is there while the AI features and "Splat scenes (experimental)" (on by default, under the AI features)
 // are on, once this version makes splat scenes: their engine registered (lot SP6) and their group not held back
-// (aiHeldFeatureGroups holds it until ai-components-4 is published; only the branch of the test build lifts it). It
+// (aiHeldFeatureGroups held it until ai-components-4 was made, lot SP14; it holds nothing in this version). It
 // shows for a selection with a photo or a video, and in the viewer of a video, greyed with the reason of the gate when
 // the gate refuses for something the dialog cannot mend; missing components do not grey it, the dialog installs them.
 //

@@ -291,11 +291,10 @@ jobs:
       - name: The synthetic dataset of the splat scenes is what its script writes
         run: python3 .github/desktop/ai/make_splat_dataset.py --check
 
-      # The catalogue of the AI components complete, offline (MODEL-LICENSES.md agrees); the splat scenes lifted on the
-      # branch of their test build alone (lot SP8): merged anywhere else, or taken by a branch made from it, the lift
-      # fails here until AiFeatureGroup.splats is held again
-      - name: The catalogue of the AI components, the splat scenes held but on the branch of their test build
-        run: python3 .github/desktop/ai/publish_ai_components.py --check --test-build feat-splat-maker
+      # The catalogue of the AI components complete, offline (MODEL-LICENSES.md agrees), the splat scenes of
+      # ai-components-4 among them (lot SP14)
+      - name: The catalogue of the AI components
+        run: python3 .github/desktop/ai/publish_ai_components.py --check
 
       # An upstream sync brings its own Android and iOS changes; everything else on the desktop branch leaves them alone
       - name: Nothing changed under mobile/android and mobile/ios, nor in the native code of the vendored packages

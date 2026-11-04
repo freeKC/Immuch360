@@ -146,13 +146,10 @@ void main() {
             : aiComponentsPanoramasReleaseTag;
         expect(component.releaseTag, family, reason: component.id);
         expect(component.variantOf, isNull, reason: component.id);
-        // The archives of the splat scenes have no files until their release is made (lot SP0), but on the branch of
-        // the test build, whose Windows entries carry the archives of the CI (lot SP8)
+        // The archives of the splat scenes have their files since ai-components-4 is made (lot SP14)
         expect(
           component.archiveFiles.isNotEmpty,
-          component.isArchive &&
-              (component.releaseTag != aiComponentsSplatsReleaseTag ||
-                  component.platforms.contains(AiPlatform.windowsX64)),
+          component.isArchive,
           reason: '${component.id}: files of archives only',
         );
         expect(
@@ -234,8 +231,7 @@ void main() {
         expect(component.isComplete, isTrue, reason: component.id);
         expect(component.officialUrls.single, startsWith('https://'), reason: component.id);
       }
-      // Nothing held back on the branch of the test build, which lifts the splat scenes (lot SP8): the panoramas are
-      // offered where their engine runs
+      // Nothing held back since ai-components-4 is made (lot SP14): the panoramas are offered where their engine runs
       expect(aiHeldFeatureGroups, isEmpty);
       for (final platform in AiPlatform.values) {
         expect(
@@ -344,8 +340,8 @@ void main() {
     });
 
     test('the groups: each component under the first group that needs it, a shared one counted once', () {
-      // The splat scenes, lifted on the branch of the test build with the archives of the CI (lot SP8), come last with
-      // their own two programs, which no other group needs
+      // The splat scenes, offered since ai-components-4 is made (lot SP14), come last with their own two programs,
+      // which no other group needs
       final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
       expect(windows.map((group) => group.group), [
         AiFeatureGroup.photos,
@@ -381,9 +377,8 @@ void main() {
         ],
       );
       final complete = [for (final component in aiComponents) component.id == engine.id ? engine : component];
-      // A group held back is never offered, its components complete; only the splat scenes are held back by default
-      // since the publication of ai-components-3 (29 October 2026), from 1 November 2026, but on the branch of the
-      // test build (lot SP8)
+      // A group held back is never offered, its components complete; nothing is held back by default since the
+      // publication of ai-components-3 (29 October 2026) and of ai-components-4 (lot SP14)
       expect(
         aiComponentGroupsFor(
           AiPlatform.windowsX64,
@@ -392,8 +387,7 @@ void main() {
         ).map((group) => group.group),
         [AiFeatureGroup.photos, AiFeatureGroup.scenes, AiFeatureGroup.splats],
       );
-      // The branch of the test build lifts the splat scenes (lot SP8): held as on the other branches, the panoramas
-      // come last
+      // Nothing held back since ai-components-4 is made (lot SP14); the splat scenes held, the panoramas come last
       expect(aiHeldFeatureGroups, isEmpty);
       expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), [
         AiFeatureGroup.photos,

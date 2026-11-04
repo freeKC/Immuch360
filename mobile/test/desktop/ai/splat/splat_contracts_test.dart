@@ -373,10 +373,10 @@ void main() {
   });
 
   group('the feature and its components', () {
-    test('Windows only, a group of its own, lifted on the branch of the test build only', () {
+    test('Windows only, a group of its own, offered since ai-components-4 is made', () {
       expect(AiFeature.splatScene.platforms, [AiPlatform.windowsX64]);
       expect(AiFeatureGroup.splats.features, {AiFeature.splatScene});
-      // feat-splat-maker (lot SP8) lifts the hold that every other branch keeps until ai-components-4 is published
+      // Held from lot SP8 to lot SP14, until ai-components-4 was made
       expect(aiHeldFeatureGroups, isEmpty);
       expect(aiComponentsSplatsReleaseTag, 'ai-components-4');
       expect(aiComponentGroupsFor(AiPlatform.windowsX64).map((group) => group.group), contains(AiFeatureGroup.splats));
@@ -390,8 +390,8 @@ void main() {
       );
     });
 
-    test('COLMAP and Brush, archives of our CI: the Windows ones as the runs 41338110566 and 41338726969 made them, '
-        'the Linux ones not made yet', () {
+    test('COLMAP and Brush, archives of ai-components-4 made from the artifacts of the runs 41338110566 and '
+        '41338726969, Windows and Linux', () {
       expect(aiComponentsFor(AiPlatform.windowsX64, feature: AiFeature.splatScene), [
         colmapWindowsComponent,
         brushWindowsComponent,
@@ -414,7 +414,7 @@ void main() {
         expect(component.installPath, 'engines/${component.id}');
         expect(component.assetName, '${component.id}.zip');
       }
-      // Served by the local mirror of the test build, the archives of the CI as they are
+      // The archives of the CI, byte for byte: those the test builds T1 to T3 ran from their local mirror
       expect(
         (colmapWindowsComponent.size, colmapWindowsComponent.sha256),
         (10090414, '775fae804f4f4ae4cf3b26045e770a07527f0ff0dc046f5a093fa25ce7fb4e2e'),
@@ -457,10 +457,27 @@ void main() {
         );
         expect(component.archiveFiles.every((file) => RegExp(r'^[0-9a-f]{64}$').hasMatch(file.sha256)), isTrue);
       }
+      // Complete on Linux too, though the feature is offered on Windows only in this version
+      expect(
+        (colmapLinuxComponent.size, colmapLinuxComponent.sha256),
+        (25856353, 'e0bcd6f675a6e295f980ced54e3609e061179e09e327809bf24be97fda5f64af'),
+      );
+      expect(
+        (brushLinuxComponent.size, brushLinuxComponent.sha256),
+        (17627435, '1eadf8ff70cc51ea4e7dee211c8b3766ec86927fca9614e76cd6f8e5255e6a72'),
+      );
+      expect(colmapLinuxComponent.archiveFiles, hasLength(119));
+      expect(brushLinuxComponent.archiveFiles, hasLength(8));
       for (final component in [colmapLinuxComponent, brushLinuxComponent]) {
-        expect((component.size, component.sha256), (null, null), reason: component.id);
-        expect(component.archiveFiles, isEmpty, reason: component.id);
-        expect(component.isComplete, isFalse, reason: component.id);
+        expect(component.isComplete, isTrue, reason: component.id);
+        expect(
+          [
+            for (final file in component.archiveFiles)
+              if (file.executable) file.path,
+          ],
+          [component == colmapLinuxComponent ? 'colmap' : 'brush_app', 'immuch360-run'],
+          reason: component.id,
+        );
       }
       expect({for (final component in splats) component.licence}, {'BSD-3-Clause', 'Apache-2.0'});
       expect(colmapWindowsComponent.version, '4.2.1-imm1');

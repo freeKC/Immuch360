@@ -15,12 +15,8 @@ import 'ci_scripts.dart';
 const _token = 'test-token-not-a-secret';
 const _script = 'ai/publish_ai_components.py';
 
-/// --check on the branch of the test build of the splat scenes, whose catalogue lifts them (lot SP8): as the gates of
-/// the desktop workflow run it there
-ScriptRun _check(List<String> arguments) =>
-    runCiScript(_script, ['--check', ...arguments, '--test-build', 'feat-splat-maker'], environment: _onTestBuild);
-
-const _onTestBuild = {'GITHUB_REF_NAME': 'feat-splat-maker'};
+/// --check as the gates of the desktop workflow run it, on any branch since ai-components-4 is made (lot SP14)
+ScriptRun _check(List<String> arguments) => runCiScript(_script, ['--check', ...arguments]);
 
 /// Parts of 1000 bytes for a file of 2048 bytes or more, in place of 1945 MiB and 2 GiB
 const _small = ['--part-size', '1000', '--asset-limit', '2048'];
@@ -269,6 +265,32 @@ with zipfile.ZipFile(sys.argv[1], 'w', zipfile.ZIP_DEFLATED) as bundle:
   final command = python!;
   final result = Process.runSync(command.first, [...command.skip(1), '-c', make, target.path, jsonEncode(files)]);
   expect(result.exitCode, 0, reason: '${result.stdout}${result.stderr}');
+}
+
+/// A program of the tests that carries an Authenticode signature where signtool writes it: a PE file whose certificate
+/// table holds something (the script looks at its presence only, signtool verify of the job that signed at its value)
+String _signedPe(String tag) {
+  final bytes = List<int>.filled(0x110, 0);
+  bytes.setAll(0, 'MZ'.codeUnits);
+  bytes.setAll(0x3c, [0x40, 0, 0, 0]);
+  bytes.setAll(0x40, 'PE'.codeUnits);
+  // PE32+, and the certificate table (data directory 4) at 0x100, 16 bytes
+  bytes.setAll(0x58, [0x0b, 0x02]);
+  bytes.setAll(0xe8, [0x00, 0x01, 0, 0, 0x10, 0, 0, 0]);
+  bytes.setAll(0x100, tag.codeUnits.take(16));
+  return String.fromCharCodes(bytes);
+}
+
+/// The text of [member] in the zip [archive]
+String _unzipText(File archive, String member) {
+  const read = r'''
+import sys, zipfile
+sys.stdout.write(zipfile.ZipFile(sys.argv[1]).read(sys.argv[2]).decode('latin-1'))
+''';
+  final command = python!;
+  final result = Process.runSync(command.first, [...command.skip(1), '-c', read, archive.path, member]);
+  expect(result.exitCode, 0, reason: '${result.stderr}');
+  return '${result.stdout}';
 }
 
 /// The files of the Windows engine of the tests: a program and a library
@@ -527,15 +549,169 @@ void main() {
     }, skip: skipCiScripts);
   });
 
-  group('publish_ai_components.py --check, the three releases', () {
-    test('the catalogue of the app and MODEL-LICENSES.md agree; the engines of P2 are written, nothing pending', () {
+  group('publish_ai_components.py, the splat scenes', () {
+    /// The four artifacts of the CI of the tests in the cache, named by the locks of the repository; [colmapSums]
+    /// replaces the SHA256SUMS.txt of the Windows archive of COLMAP, [colmapExe] its program
+    void splatArtifacts({
+      String colmapLock = '4.2.1-imm1',
+      String? colmapSums,
+      String colmapExe = 'MZ colmap of the tests',
+    }) {
+      const runtime = 'MZ runtime of the tests';
+      const info = 'Built by https://github.com/owner/repo/actions/runs/1\n';
+      String sumOf(String text) => _sha(latin1.encode(text));
+      _zip(File(p.join(cache.path, 'Immuch360-AI-colmap-$colmapLock-windows-x64.zip')), {
+        'BUILD-INFO.txt': info,
+        'SHA256SUMS.txt':
+            colmapSums ??
+            '${sumOf(info)}  BUILD-INFO.txt\n${sumOf(colmapExe)}  colmap.exe\n${sumOf(runtime)}  vcruntime140.dll\n',
+        'colmap.exe': colmapExe,
+        'vcruntime140.dll': runtime,
+      });
+      _zip(File(p.join(cache.path, 'Immuch360-AI-colmap-4.2.1-imm1-linux-x64.zip')), {
+        'colmap': '\x7fELF colmap of the tests',
+        'immuch360-run': '\x7fELF launcher of the tests',
+      });
+      _zip(File(p.join(cache.path, 'Immuch360-AI-brush-3edecbb-1-windows-x64.zip')), {
+        'BUILD-INFO.txt': info,
+        'brush_app.exe': 'MZ brush of the tests',
+      });
+      _zip(File(p.join(cache.path, 'Immuch360-AI-brush-3edecbb-1-linux-x64.zip')), {
+        'brush_app': '\x7fELF brush of the tests',
+        'immuch360-run': '\x7fELF launcher of the tests',
+      });
+    }
+
+    test('the artifacts of COLMAP and Brush become ai-components-4, their Windows programs said unsigned; the dry run '
+        'reads GitHub and sends nothing', () async {
+      splatArtifacts();
+
+      final run = await runCiScriptAsync(_script, arguments('ai-components-4', write: true));
+
+      expect(run.exitCode, 0, reason: '$run');
+      expect(released(), {
+        'colmap-cpu-win-x64.zip',
+        'colmap-cpu-linux-x64.zip',
+        'brush-vulkan-win-x64.zip',
+        'brush-vulkan-linux-x64.zip',
+        'MODEL-LICENSES.md',
+        'SHA256SUMS',
+      });
+      expect(
+        run.output,
+        contains(
+          'colmap-cpu-win-x64: 2 programs and libraries, 0 with an Authenticode signature, without one: '
+          'colmap.exe, vcruntime140.dll; built by https://github.com/owner/repo/actions/runs/1',
+        ),
+      );
+      final archive = File(p.join(out.path, 'colmap-cpu-win-x64.zip')).readAsBytesSync();
+      final text = catalogue.readAsStringSync();
+      expect(text, contains("  installPath: 'engines/colmap-cpu-win-x64',\n  size: ${archive.length},\n"));
+      expect(text, contains("      path: 'colmap.exe',\n      size: 22,\n"));
+      final written = licences.readAsStringSync();
+      expect(written, contains('<!-- ai-components-4 -->\n## ai-components-4: splat scenes'));
+      expect(
+        written,
+        contains('| `colmap-cpu-win-x64.zip` | `colmap-cpu-win-x64` | ${archive.length} | `${_sha(archive)}`'),
+      );
+      expect(written, contains('| BSD-3-Clause | built by our CI, not signed |'));
+      expect(written, contains('are not signed in this release'));
+      expect(checkCopy('ai-components-4').exitCode, 0);
+
+      final dry = await runCiScriptAsync(
+        _script,
+        arguments('ai-components-4', extra: ['--dry-run']),
+        environment: {'GH_TOKEN': _token},
+      );
+      expect(dry.exitCode, 0, reason: '$dry');
+      expect(dry.output, isNot(contains(_token)));
+      expect(dry.output, contains('GET releases/tags/ai-components-4: absent (404)'));
+      expect(dry.output, contains('POST <upload_url>?name=colmap-cpu-win-x64.zip: ${archive.length} bytes'));
+      expect(dry.output, contains('Their Windows programs are not signed in this release.'));
+      expect(dry.output, contains('dry run: --publish would make ai-components-4; nothing was sent'));
+      expect(apis.requests, contains('GET /repos/owner/repo/releases/tags/ai-components-4'));
+      expect(apis.requests.where((request) => !request.startsWith('GET ')), isEmpty);
+    }, skip: skipCiScripts);
+
+    test(
+      'an artifact of another lock, or a SHA256SUMS.txt that disagrees with a file not signed since, is refused',
+      () async {
+        splatArtifacts(colmapLock: '4.2.0-imm9');
+        final other = await runCiScriptAsync(_script, arguments('ai-components-4'));
+        expect(other.exitCode, 1, reason: '$other');
+        expect(
+          other.output,
+          contains(
+            'the artifact Immuch360-AI-colmap-4.2.0-imm9-windows-x64.zip is not '
+            'Immuch360-AI-colmap-4.2.1-imm1-windows-x64.zip, the build of colmap.lock.json',
+          ),
+        );
+
+        File(p.join(cache.path, 'Immuch360-AI-colmap-4.2.0-imm9-windows-x64.zip')).deleteSync();
+        splatArtifacts(
+          colmapSums: '${'0' * 64}  BUILD-INFO.txt\n${'0' * 64}  colmap.exe\n${'0' * 64}  vcruntime140.dll\n',
+        );
+        final sums = await runCiScriptAsync(_script, arguments('ai-components-4'));
+        expect(sums.exitCode, 1, reason: '$sums');
+        expect(
+          sums.output,
+          contains('colmap-cpu-win-x64: BUILD-INFO.txt differs from the SHA256SUMS.txt of its archive'),
+        );
+      },
+      skip: skipCiScripts,
+    );
+
+    test(
+      'a program signed after its SHA256SUMS.txt was written: the sums written again, the signature counted',
+      () async {
+        const info = 'Built by https://github.com/owner/repo/actions/runs/1\n';
+        const runtime = 'MZ runtime of the tests';
+        String sumOf(String text) => _sha(latin1.encode(text));
+        final signed = _signedPe('colmap signed');
+        // The sums the build wrote, before sign-windows signed colmap.exe
+        splatArtifacts(
+          colmapExe: signed,
+          colmapSums:
+              '${sumOf(info)}  BUILD-INFO.txt\n${sumOf('MZ colmap of the tests')}  colmap.exe\n'
+              '${sumOf(runtime)}  vcruntime140.dll\n',
+        );
+
+        final run = await runCiScriptAsync(_script, arguments('ai-components-4'));
+
+        expect(run.exitCode, 0, reason: '$run');
+        expect(
+          run.output,
+          contains(
+            'colmap-cpu-win-x64: 2 programs and libraries, 1 with an Authenticode signature, without '
+            'one: vcruntime140.dll',
+          ),
+        );
+        expect(
+          run.output,
+          contains('colmap-cpu-win-x64: SHA256SUMS.txt written again, colmap.exe signed since it was written'),
+        );
+        final archive = File(p.join(out.path, 'colmap-cpu-win-x64.zip'));
+        final listed = _unzipText(archive, 'SHA256SUMS.txt');
+        expect(listed, contains('${sumOf(signed)}  colmap.exe\n'));
+        expect(listed, startsWith('${sumOf(info)}  BUILD-INFO.txt\n'));
+      },
+      skip: skipCiScripts,
+    );
+  });
+
+  group('publish_ai_components.py --check, the four releases', () {
+    test('the catalogue of the app and MODEL-LICENSES.md agree; the engines of P2, COLMAP and Brush are written, '
+        'nothing pending', () {
       final run = _check([]);
 
       expect(run.exitCode, 0, reason: '$run');
-      expect(run.output, contains('16 components in ai-components-1, ai-components-2, ai-components-3, each complete'));
+      expect(
+        run.output,
+        contains('20 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, each complete'),
+      );
       // Pending before lot P2 wrote them: the run of the panoramas above starts from such a catalogue
       expect(run.output, isNot(contains('pending')));
-      for (final release in ['ai-components-1', 'ai-components-2', 'ai-components-3']) {
+      for (final release in ['ai-components-1', 'ai-components-2', 'ai-components-3', 'ai-components-4']) {
         expect(_check(['--release', release]).exitCode, 0, reason: release);
       }
     }, skip: skipCiScripts);
