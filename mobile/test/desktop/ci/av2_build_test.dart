@@ -127,6 +127,111 @@ Uint8List _fatMachO(List<(int, Uint8List)> slices) {
   return out.toBytes();
 }
 
+/// The GitHub API of publish_av2_decoder.py, in memory: a run, its artifacts (redirected to a storage that must get
+/// no token), and the releases of owner/repo
+class _FakeGitHub {
+  _FakeGitHub(this.token);
+
+  final String token;
+  late final HttpServer _server;
+  final requests = <String>[];
+  Map<String, List<int>> artifacts = {};
+  String headSha = '';
+  final storageAuthorizations = <String?>[];
+  Map<String, dynamic>? created;
+  Map<String, dynamic>? patched;
+  final uploaded = <String, int>{};
+  bool published = false;
+
+  String get base => 'http://127.0.0.1:${_server.port}';
+
+  Future<void> start() async {
+    _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    _server.listen(_handle);
+  }
+
+  Future<void> stop() => _server.close(force: true);
+
+  Future<void> _handle(HttpRequest request) async {
+    final path = request.uri.path;
+    requests.add('${request.method} $path');
+    final response = request.response;
+    Future<void> send(int status, [Object? json]) async {
+      response.statusCode = status;
+      if (json != null) {
+        response.headers.contentType = ContentType.json;
+        response.write(jsonEncode(json));
+      }
+      await response.close();
+    }
+
+    if (path.startsWith('/storage/')) {
+      storageAuthorizations.add(request.headers.value('authorization'));
+      response.add(artifacts.values.elementAt(int.parse(path.split('/').last)));
+      return response.close();
+    }
+    if (request.headers.value('authorization') != 'Bearer $token') {
+      return send(401, {'message': 'Bad credentials'});
+    }
+    final bytes = await request.fold<BytesBuilder>(BytesBuilder(), (held, chunk) => held..add(chunk));
+    final raw = bytes.takeBytes();
+    String body() => utf8.decode(raw);
+    if (path == '/repos/owner/repo/actions/runs/77') {
+      return send(200, {
+        'name': 'Immuch360 Desktop release',
+        'head_branch': 'feat-av2',
+        'head_sha': headSha,
+        'event': 'workflow_dispatch',
+        'status': 'completed',
+        'conclusion': 'success',
+      });
+    }
+    if (path == '/repos/owner/repo/actions/runs/77/artifacts') {
+      final named = artifacts.keys.toList();
+      return send(200, {
+        'artifacts': [
+          for (var i = 0; i < named.length; i++) {'id': i, 'name': named[i], 'expired': false},
+          {'id': 99, 'name': 'Immuch360-av2-decoder-windows-x64-signed-SHA256SUMS', 'expired': false},
+        ],
+      });
+    }
+    final artifact = RegExp(r'^/repos/owner/repo/actions/artifacts/(\d+)/zip$').firstMatch(path);
+    if (artifact != null) {
+      response.statusCode = HttpStatus.found;
+      response.headers.set(HttpHeaders.locationHeader, '$base/storage/${artifact.group(1)}');
+      return response.close();
+    }
+    if (path == '/repos/owner/repo/releases/tags/av2-decoder-1') {
+      return published ? send(200, {'tag_name': 'av2-decoder-1'}) : send(404, {'message': 'Not Found'});
+    }
+    if (path == '/repos/owner/repo/releases' && request.method == 'GET') {
+      return send(200, []);
+    }
+    if (path == '/repos/owner/repo/releases/latest') {
+      return send(200, {'tag_name': 'v3.3.0-rc.0-32'});
+    }
+    if (path == '/repos/owner/repo/releases' && request.method == 'POST') {
+      created = jsonDecode(body()) as Map<String, dynamic>;
+      return send(201, {
+        'url': '$base/repos/owner/repo/releases/5',
+        'html_url': 'https://github.com/owner/repo/releases/tag/av2-decoder-1',
+        'upload_url': '$base/uploads/5{?name,label}',
+      });
+    }
+    if (path == '/uploads/5') {
+      final name = request.uri.queryParameters['name']!;
+      uploaded[name] = raw.length;
+      return send(201, {'name': name, 'size': raw.length});
+    }
+    if (path == '/repos/owner/repo/releases/5' && request.method == 'PATCH') {
+      patched = jsonDecode(body()) as Map<String, dynamic>;
+      published = true;
+      return send(200, {'draft': false, 'prerelease': true, 'html_url': 'https://github.com/owner/repo/releases/5'});
+    }
+    return send(404, {'message': 'Not Found'});
+  }
+}
+
 /// [unsigned], a PE file of [fakePe], as signtool leaves it once signed: the file padded to 8 bytes, a certificate
 /// table appended, the certificate directory of the optional header pointing at it and a checksum written.
 /// [changed] also changes a byte of the program, which a signature never does
@@ -769,6 +874,286 @@ void main() {
       final other = build(['help', '--output', p.join(root.path, 'other.txt')]);
       expect(other.exitCode, 1, reason: '$other');
       expect(other.output, contains('-  --depth 8'));
+    });
+  });
+
+  // Lot AD11: the prerelease av2-decoder-1 from the three archives of one run, ready but made by FreeKC's session only
+  group('publish_av2_decoder.py', () {
+    const commit = '0123456789abcdef0123456789abcdef01234567';
+    const token = 'test-token';
+    const names = {
+      'windows-x64': 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip',
+      'linux-x64': 'Immuch360-av2-decoder-30140b5-1-linux-x64.zip',
+      'macos-universal': 'Immuch360-av2-decoder-30140b5-1-macos-universal.zip',
+    };
+    const systemLibrary = '/usr/lib/libSystem.B.dylib';
+
+    /// The three archives as the run of the release workflow with with_av2 leaves them, in a folder of their own:
+    /// the Windows one signed unless [signed] is false, all built from [commit] but Linux from [linuxCommit]
+    Directory archives({bool signed = true, String linuxCommit = commit}) {
+      final root = tree({});
+      final cache = Directory(p.join(root.path, 'cache'))..createSync();
+      void pack(String system, String name, List<int> bytes, {String? launcher, String from = commit}) {
+        final folder = Directory(p.join(root.path, system))..createSync();
+        final file = File(p.join(folder.path, name))..writeAsBytesSync(bytes);
+        File(p.join(folder.path, 'tools.json')).writeAsStringSync(jsonEncode(_tools));
+        final run = build([
+          'pack',
+          '--system',
+          system,
+          '--source',
+          sources().path,
+          '--program',
+          file.path,
+          '--out',
+          system == 'windows-x64' && signed ? folder.path : cache.path,
+          '--source-commit',
+          from,
+          if (launcher != null) ...['--launcher', launcher],
+        ]);
+        expect(run.exitCode, 0, reason: '$run');
+      }
+
+      final exe = fakePe(imports: ['KERNEL32.dll', 'WS2_32.dll']);
+      pack('windows-x64', 'immuch360-av2.exe', exe);
+      if (signed) {
+        final signedExe = File(p.join(root.path, 'immuch360-av2.exe'))..writeAsBytesSync(_signedPe(exe));
+        final run = build([
+          'signed',
+          '--system',
+          'windows-x64',
+          '--archive',
+          p.join(root.path, 'windows-x64', names['windows-x64']!),
+          '--program',
+          signedExe.path,
+          '--out',
+          cache.path,
+        ]);
+        expect(run.exitCode, 0, reason: '$run');
+        File(p.join(cache.path, 'SHA256SUMS')).deleteSync();
+      }
+      final launcher = File(p.join(root.path, 'immuch360-run'))..writeAsBytesSync(_elf(['libc.so.6']));
+      pack(
+        'linux-x64',
+        'immuch360-av2',
+        _elf(['libc.so.6', 'libpthread.so.0']),
+        launcher: launcher.path,
+        from: linuxCommit,
+      );
+      pack(
+        'macos-universal',
+        'immuch360-av2',
+        _fatMachO([
+          (0x0100000C, _thinMachO(0x0100000C, [systemLibrary])),
+          (0x01000007, _thinMachO(0x01000007, [systemLibrary])),
+        ]),
+      );
+      return cache;
+    }
+
+    /// A copy of the catalogue of the app and the place of a record, for --write
+    (String, String) catalogueCopy() {
+      final root = tree({});
+      final catalogue = p.join(root.path, 'ai_components_manifest.dart');
+      File(
+        p.join(repositoryRoot, 'mobile', 'lib', 'domain', 'models', 'ai_immersive', 'ai_components_manifest.dart'),
+      ).copySync(catalogue);
+      return (catalogue, p.join(root.path, 'av2-decoder-1.json'));
+    }
+
+    Future<ScriptRun> publish(
+      Directory cache,
+      String out, {
+      required (String, String) copy,
+      List<String> extra = const [],
+      Map<String, String> environment = const {},
+    }) => runCiScriptAsync('av2/publish_av2_decoder.py', [
+      '--cache',
+      cache.path,
+      '--out',
+      out,
+      '--catalogue',
+      copy.$1,
+      '--record',
+      copy.$2,
+      '--date',
+      '2026-11-04',
+      ...extra,
+    ], environment: environment);
+
+    test('makes the files of av2-decoder-1 from the three archives and prints the entries of the catalogue', () async {
+      final cache = archives();
+      final out = p.join(tree({}).path, 'release');
+      final copy = catalogueCopy();
+      final run = await publish(cache, out, copy: copy);
+      expect(run.exitCode, 0, reason: '$run');
+      for (final name in names.values) {
+        expect(run.output, contains('$name: '));
+        expect(File(p.join(out, name)).readAsBytesSync(), File(p.join(cache.path, name)).readAsBytesSync());
+      }
+      expect(run.output, contains('Files of av2-decoder-1 in $out, built from $commit:'));
+      expect(run.output, contains('The entries of the catalogue (ai_components_manifest.dart):'));
+      expect(run.output, contains('av2-decoder-windows-x64:\n  size: '));
+      expect(run.output, contains("      path: 'immuch360-av2.exe',"));
+      // The catalogue of the branch carries the archives of lot AD2, not these, and there is no record yet
+      expect(run.output, contains('the catalogue or the record differs from these files: run with --write'));
+      expect(run.output, contains('not published: av2-decoder-1 is created only with --publish'));
+      final sums = File(p.join(out, 'SHA256SUMS')).readAsLinesSync();
+      expect(
+        [for (final line in sums) line.substring(66)],
+        ['AV2-DECODER-LICENSES.md', ...(names.values.toList()..sort())],
+      );
+      final notices = File(p.join(out, 'AV2-DECODER-LICENSES.md')).readAsStringSync();
+      expect(notices, contains('# av2-decoder-1: the AV2 decoder of Immuch360 Desktop'));
+      expect(notices, contains('Built from https://github.com/freeKC/Immuch360/tree/$commit'));
+      expect(notices, contains('| `Immuch360-av2-decoder-30140b5-1-linux-x64.zip` | `av2-decoder-linux-x64` |'));
+      expect(notices, contains('### immuch360-run-MIT.txt'));
+      expect(notices, contains('### AOM-PATENTS.txt'));
+      expect(notices, isNot(contains(' - ')));
+    });
+
+    test(
+      '--write puts the entries into the catalogue and writes the record, which the gate then takes anywhere',
+      () async {
+        final cache = archives();
+        final out = p.join(tree({}).path, 'release');
+        final copy = catalogueCopy();
+        final run = await publish(cache, out, copy: copy, extra: ['--write']);
+        expect(run.exitCode, 0, reason: '$run');
+        expect(run.output, contains('the catalogue and the record of the release agree with these files'));
+        final record = jsonDecode(File(copy.$2).readAsStringSync()) as Map<String, dynamic>;
+        expect(record['tag'], 'av2-decoder-1');
+        expect(record['commit'], commit);
+        final archivesOf = record['archives'] as Map<String, dynamic>;
+        expect(archivesOf.keys.toSet(), {
+          'av2-decoder-windows-x64',
+          'av2-decoder-linux-x64',
+          'av2-decoder-macos-universal',
+        });
+        final catalogue = File(copy.$1).readAsStringSync();
+        for (final entry in archivesOf.values.cast<Map<String, dynamic>>()) {
+          expect(catalogue, contains("  sha256: '${entry['sha256']}',"));
+          expect(catalogue, contains('  size: ${entry['size']},'));
+        }
+        // The gate of the catalogue, on the phone branch: sums equal to the record pass, others fail
+        ScriptRun gate(String record) => runCiScript(
+          'ai/publish_ai_components.py',
+          ['--check', '--catalogue', copy.$1, '--av2-record', record],
+          environment: {'GITHUB_REF_NAME': 'immuch360'},
+        );
+        final passed = gate(copy.$2);
+        expect(passed.exitCode, 0, reason: '$passed');
+        expect(
+          passed.output,
+          contains('the AV2 decoder carries the archives of av2-decoder-1 as its record gives them'),
+        );
+        final other = File(p.join(tree({}).path, 'other.json'))
+          ..writeAsStringSync(
+            jsonEncode({
+              ...record,
+              'archives': {
+                ...archivesOf,
+                'av2-decoder-linux-x64': {...archivesOf['av2-decoder-linux-x64'] as Map<String, dynamic>, 'size': 1},
+              },
+            }),
+          );
+        final refused = gate(other.path);
+        expect(refused.exitCode, 1, reason: '$refused');
+        expect(refused.output, contains('av2-decoder-linux-x64: the catalogue has'));
+        // Without a record, as on this branch until av2-decoder-1 is made: the sums are refused there
+        final none = gate(p.join(tree({}).path, 'none.json'));
+        expect(none.exitCode, 1, reason: '$none');
+        expect(none.output, contains('the AV2 decoder carries sums'));
+      },
+    );
+
+    test('an unsigned Windows program, or archives of two commits, are never published', () async {
+      final copy = catalogueCopy();
+      final unsigned = await publish(
+        archives(signed: false),
+        p.join(tree({}).path, 'release'),
+        copy: copy,
+        extra: ['--write', '--publish'],
+        environment: {'GH_TOKEN': token},
+      );
+      expect(unsigned.exitCode, 1, reason: '$unsigned');
+      expect(unsigned.output, contains('its program is not signed'));
+      expect(unsigned.output, isNot(contains('draft made')));
+      final mixed = await publish(
+        archives(linuxCommit: 'fedcba9876543210fedcba9876543210fedcba98'),
+        p.join(tree({}).path, 'release'),
+        copy: catalogueCopy(),
+      );
+      expect(mixed.exitCode, 1, reason: '$mixed');
+      expect(mixed.output, contains('not one commit'));
+    });
+
+    test('--dry-run reads GitHub only; --publish makes a prerelease that is never latest, once', () async {
+      final github = _FakeGitHub(token);
+      await github.start();
+      addTearDown(github.stop);
+      final cache = archives();
+      final copy = catalogueCopy();
+      final out = p.join(tree({}).path, 'release');
+      final environment = {'GH_TOKEN': token};
+      final api = ['--api', github.base, '--repo', 'owner/repo'];
+      expect((await publish(cache, out, copy: copy, extra: ['--write'])).exitCode, 0);
+
+      final dry = await publish(cache, out, copy: copy, extra: [...api, '--dry-run'], environment: environment);
+      expect(dry.exitCode, 0, reason: '$dry');
+      expect(dry.output, contains('dry run: --publish would send, on owner/repo:'));
+      expect(dry.output, contains('"tag_name": "av2-decoder-1", "target_commitish": "$commit"'));
+      expect(dry.output, contains('dry run: nothing was written to GitHub'));
+      expect(github.requests.where((request) => !request.startsWith('GET ')), isEmpty);
+
+      final made = await publish(cache, out, copy: copy, extra: [...api, '--publish'], environment: environment);
+      expect(made.exitCode, 0, reason: '$made');
+      expect(made.output, contains('published as a prerelease'));
+      expect(github.created!['prerelease'], isTrue);
+      expect(github.created!['draft'], isTrue);
+      expect(github.created!['make_latest'], 'false');
+      expect(github.created!['target_commitish'], commit);
+      expect(github.uploaded.keys.toSet(), {...names.values, 'AV2-DECODER-LICENSES.md', 'SHA256SUMS'});
+      expect(github.patched, {'draft': false, 'prerelease': true, 'make_latest': 'false'});
+      expect(made.output, isNot(contains(token)));
+
+      final again = await publish(cache, out, copy: copy, extra: [...api, '--publish'], environment: environment);
+      expect(again.exitCode, 1, reason: '$again');
+      expect(again.output, contains('av2-decoder-1 exists already on owner/repo'));
+    });
+
+    test('--from-run takes the three archives of the run through the API, the token sent to the API only', () async {
+      final github = _FakeGitHub(token);
+      await github.start();
+      addTearDown(github.stop);
+      final cache = archives();
+      github.artifacts = {for (final name in names.values) name: File(p.join(cache.path, name)).readAsBytesSync()};
+      github.headSha = commit;
+      final run = await publish(
+        Directory(p.join(tree({}).path, 'empty'))..createSync(),
+        p.join(tree({}).path, 'release'),
+        copy: catalogueCopy(),
+        extra: ['--api', github.base, '--repo', 'owner/repo', '--from-run', '77'],
+        environment: {'GH_TOKEN': token},
+      );
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('run 77: Immuch360 Desktop release on feat-av2 at $commit'));
+      for (final name in names.values) {
+        expect(run.output, contains('$name: '));
+      }
+      expect(github.storageAuthorizations, everyElement(isNull));
+      expect(github.storageAuthorizations, hasLength(3));
+      // A run at another commit than its archives is refused
+      github.headSha = 'fedcba9876543210fedcba9876543210fedcba98';
+      final moved = await publish(
+        Directory(p.join(tree({}).path, 'empty'))..createSync(),
+        p.join(tree({}).path, 'release'),
+        copy: catalogueCopy(),
+        extra: ['--api', github.base, '--repo', 'owner/repo', '--from-run', '77'],
+        environment: {'GH_TOKEN': token},
+      );
+      expect(moved.exitCode, 1, reason: '$moved');
+      expect(moved.output, contains('its archives were built from $commit'));
     });
   });
 
