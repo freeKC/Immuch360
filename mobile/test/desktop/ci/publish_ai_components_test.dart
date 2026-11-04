@@ -575,7 +575,8 @@ void main() {
 
       expect(run.exitCode, 0, reason: '$run');
       expect(run.output, contains('4 components in ai-components-4, each complete'));
-      final licencesText = File(_licences).readAsStringSync();
+      // A checkout on Windows may hold CRLF line ends
+      final licencesText = File(_licences).readAsStringSync().replaceAll('\r\n', '\n');
       expect(licencesText, contains('<!-- ai-components-4 -->\n## ai-components-4: splat scenes'));
       for (final asset in [
         'colmap-cpu-win-x64.zip',

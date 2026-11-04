@@ -283,12 +283,14 @@ String _signedPe(String tag) {
 
 /// The text of [member] in the zip [archive]
 String _unzipText(File archive, String member) {
+  // The bytes of the member as they are: a text stdout would end its lines with CRLF on Windows
   const read = r'''
 import sys, zipfile
-sys.stdout.write(zipfile.ZipFile(sys.argv[1]).read(sys.argv[2]).decode('latin-1'))
+sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read(sys.argv[2]))
 ''';
   final command = python!;
-  final result = Process.runSync(command.first, [...command.skip(1), '-c', read, archive.path, member]);
+  final arguments = [...command.skip(1), '-c', read, archive.path, member];
+  final result = Process.runSync(command.first, arguments, stdoutEncoding: latin1);
   expect(result.exitCode, 0, reason: '${result.stderr}');
   return '${result.stdout}';
 }
