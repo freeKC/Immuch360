@@ -3585,7 +3585,7 @@
   "splat_hint_keys_orbit": "Glissez pour tourner autour de l'objet. Glisser avec le bouton droit : décaler la vue. Molette ou flèches haut et bas : plus près ou plus loin. {keys} : marcher. R : réinitialiser. Échap : retour.",
   "splat_hint_touch": "Pouce gauche : marcher. Glisser : regarder autour. Pincer : avancer et reculer. Deux doigts : glisser. Double appui : réinitialiser.",
   "splat_hint_touch_orbit": "Glisser : tourner autour de l'objet. Pincer : plus près ou plus loin. Deux doigts : décaler la vue. Pouce gauche : marcher. Double appui : réinitialiser.",
-  "splat_keep_all_setting_subtitle": "Affiche les splats entiers jusqu'à ce que la mémoire de cet ordinateur peut contenir, même quand sa puce graphique partage cette mémoire, où un grand splat est plus lent. Une carte graphique avec sa propre mémoire les affiche entiers de toute façon",
+  "splat_keep_all_setting_subtitle": "Affiche les splats entiers dans la limite de la mémoire de cet ordinateur, même quand sa puce graphique partage cette mémoire (un grand splat est alors plus lent). Une carte graphique dotée de sa propre mémoire les affiche entiers de toute façon",
   "splat_keep_all_setting_title": "Garder toutes les gaussiennes (expérimental)",
   "splat_keys_any_layout": "W, A, S, D (Z, Q, S, D en AZERTY)",
   "splat_kind_object": "Un objet de {size}",
