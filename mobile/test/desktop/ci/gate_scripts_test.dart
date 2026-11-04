@@ -211,6 +211,16 @@ jobs:
       - run: python3 .github/desktop/desktop_release.py
 ''';
 
+/// The release workflow with the with_splat input (lot SP14): COLMAP and Brush passed to the build only, and the release
+/// job never running with it nor with sign_test
+final _releaseWithSplat = _releaseWithSdcpp
+    .replaceFirst('      with_sdcpp:\n        type: boolean\n', '      with_splat:\n        type: boolean\n')
+    .replaceFirst(
+      'sdcpp: \${{ inputs.with_sdcpp == true }}',
+      'colmap: \${{ inputs.with_splat == true }}\n      brush: \${{ inputs.with_splat == true }}',
+    )
+    .replaceFirst('!inputs.with_sdcpp', '!inputs.with_splat');
+
 const _mise = '''
 [tools]
 java = "21.0.2"
@@ -1111,6 +1121,34 @@ abstract class SyncEvents {
         }
         // Without the input, a release workflow is held to nothing more
         expect(release(_releaseWorkflow).exitCode, 0);
+      });
+
+      test('with_splat goes to the build only, as colmap and brush, and the job that writes never runs with it', () {
+        final run = release(_releaseWithSplat);
+        expect(run.exitCode, 0, reason: '$run');
+        expect(_releaseWithSplat, contains('brush: \${{ inputs.with_splat == true }}'));
+        for (final (workflow, message) in [
+          (
+            _releaseWithSplat.replaceFirst('colmap: \${{ inputs.with_splat == true }}', 'colmap: true'),
+            'the job build passes colmap: true',
+          ),
+          (
+            _releaseWithSplat.replaceFirst(
+              'brush: \${{ inputs.with_splat == true }}',
+              'brush: \${{ inputs.with_sdcpp }}',
+            ),
+            'the job build passes brush: \${{ inputs.with_sdcpp }}',
+          ),
+          (
+            _releaseWithSplat.replaceFirst(' && !inputs.with_splat', ''),
+            'the job release writes the contents and may run with with_splat',
+          ),
+        ]) {
+          expect(workflow, isNot(_releaseWithSplat));
+          final refused = release(workflow);
+          expect(refused.exitCode, 1, reason: '$refused');
+          expect(refused.output, contains(message));
+        }
       });
 
       test('lets the credentials of the signing account into the steps of sign-windows that run a command only', () {

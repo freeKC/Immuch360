@@ -36,6 +36,10 @@ with the with_sdcpp input passes it to the build and nothing else ("sdcpp: ${{ i
 job that writes the contents never runs with it or with sign_test (an "if:" that negates both): building and signing
 stable-diffusion.cpp never touches a release of the app.
 
+With --release, the with_splat input (lot SP14 of the splat maker: COLMAP and Brush signed for ai-components-4) is held
+as with_sdcpp is: passed to the build as "colmap: ${{ inputs.with_splat == true }}" and "brush: ${{ inputs.with_splat
+== true }}" and nothing else, and the job that writes the contents never runs with it.
+
 .github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
 .github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
 The Samsung TV app is held to the same: .github/workflows/immuch360-tizen.yml (its package job signs with a throwaway
@@ -200,18 +204,31 @@ def sdcpp_jobs(lines: list, owners: list) -> list:
 
 def release_sdcpp(workflow: str, lines: list, owners: list) -> list:
     """A release workflow that can build stable-diffusion.cpp never gives it to a release of the app"""
-    if not re.search(r'^\s+with_sdcpp:\s*$', workflow, re.MULTILINE):
+    return release_component(workflow, lines, owners, 'with_sdcpp', 'sdcpp')
+
+
+def release_splat(workflow: str, lines: list, owners: list) -> list:
+    """Nor COLMAP and Brush, which it builds and signs for ai-components-4"""
+    found = release_component(workflow, lines, owners, 'with_splat', 'colmap')
+    return found + [line for line in release_component(workflow, lines, owners, 'with_splat', 'brush')
+                    if line not in found]
+
+
+def release_component(workflow: str, lines: list, owners: list, flag: str, key: str) -> list:
+    """The input [flag] of a release workflow goes to the build as [key] only, and the job that writes the contents
+    never runs with it nor with sign_test"""
+    if not re.search(rf'^\s+{flag}:\s*$', workflow, re.MULTILINE):
         return []
     found = []
+    wanted = f'${{{{ inputs.{flag} == true }}}}'
     for job, body in job_lines(lines, owners).items():
         for line in body:
-            given = re.match(r'^\s+sdcpp:\s*(.+?)\s*$', line)
-            if given and given.group(1) != '${{ inputs.with_sdcpp == true }}':
-                found.append(f'the job {job} passes sdcpp: {given.group(1)}; only '
-                             '"${{ inputs.with_sdcpp == true }}" (never on a tag)')
+            given = re.match(rf'^\s+{key}:\s*(.+?)\s*$', line)
+            if given and given.group(1) != wanted:
+                found.append(f'the job {job} passes {key}: {given.group(1)}; only "{wanted}" (never on a tag)')
         if any(re.match(r'^\s+contents:\s*write\s*$', line) for line in body):
             condition = job_if(body).replace(' ', '')
-            for name in ('with_sdcpp', 'sign_test'):
+            for name in (flag, 'sign_test'):
                 if f'!inputs.{name}' not in condition:
                     found.append(f'the job {job} writes the contents and may run with {name}: its "if:" must hold '
                                  f'!inputs.{name}')
@@ -277,6 +294,7 @@ def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 
         found += signing_job_writes(lines, owners)
         found += release_triggers(workflow, tag_prefix)
         found += release_sdcpp(workflow, lines, owners)
+        found += [line for line in release_splat(workflow, lines, owners) if line not in found]
     return found
 
 

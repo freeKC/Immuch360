@@ -81,6 +81,10 @@ on:
         description: Also build stable-diffusion.cpp, for the release workflow to sign it (never for a release)
         type: boolean
         default: false
+      colmap:
+        description: Also build COLMAP (never for a release)
+        type: boolean
+        default: false
       brush:
         description: Also build Brush (never for a release)
         type: boolean
