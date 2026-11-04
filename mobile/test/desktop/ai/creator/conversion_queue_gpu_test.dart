@@ -370,6 +370,18 @@ void main() {
       expect(panorama.jobs.single.referenceMaxPixels, panoramaReducedReferencePixels);
     });
 
+    test('pictures let go without a player: the card asked once, no wait for memory that does not come back', () async {
+      final probe = FakeGpuProbe.of(_rtx2060(5500, appMib: 300));
+      container = containerWith(probe.probe, release: () async => const GraphicsRelease(pictureBytes: 128 * _mib));
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.state.isEnded);
+
+      expect(job(pano).state, ConversionState.done);
+      expect(probe.calls, 1);
+      expect(panorama.jobs.single.referenceMaxPixels, panoramaReducedReferencePixels);
+    });
+
     test('a release that does not end in time (a turn of the player pool held) does not hold the panorama', () async {
       final never = Completer<GraphicsRelease>();
       final probe = FakeGpuProbe.of(_rtx2060(7000));

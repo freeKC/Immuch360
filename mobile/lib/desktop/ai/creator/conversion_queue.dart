@@ -30,8 +30,9 @@
 // gpu_budget.dart): short, the job waits with the figures, the lane of the graphics card with it (a second panorama
 // would only wait the same), the processor lane going on; the card is asked again a little later, or at once when the
 // user asks (checkGraphicsCardAgain), and a card gone fails the job. Since issue #13, the app first lets go of what it
-// holds of the card (its paused videos, its cached pictures: graphics_release.dart), once per job, and asks the card
-// again every few seconds while that memory comes back. The job is made the way the memory free allows (the full
+// holds of the card (its paused videos, its cached pictures: graphics_release.dart), once per job, and when it closed
+// video players, asks the card again every few seconds while their memory comes back. The job is made the way the
+// memory free allows (the full
 // reference of the generator, else the reduced one, PanoramaReference). A wait that cannot end does not last: 30 s
 // after the lane first found the memory short, the job leaves the queue with the figures (gpuMemoryShort), and the
 // panoramas waiting behind it at their first answer, unless the user asked a job to keep waiting (keepWaiting).
@@ -186,9 +187,9 @@ class ConversionTools {
   final Duration gpuRecheck;
 
   /// Lets go of what the app holds of the graphics card before a job of it (graphics_release.dart); null: nothing is
-  /// let go. When something was, the card is asked again every [gpuSettlePoll] for [gpuSettle] at most while that
-  /// memory comes back, until it has enough free for the preferred way. A release that takes longer than [gpuSettle]
-  /// is not waited for.
+  /// let go. When players were closed, the card is asked again every [gpuSettlePoll] for [gpuSettle] at most while
+  /// their memory comes back, until it has enough free for the preferred way. A release that takes longer than
+  /// [gpuSettle] is not waited for.
   final Future<GraphicsRelease> Function()? releaseGraphics;
   final Duration gpuSettle;
   final Duration gpuSettlePoll;
@@ -888,7 +889,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _set(id, (job) => job.copyWith(waitingFor: () => ConversionWait.graphicsRelease));
       try {
         final what = await release().timeout(tools.gpuSettle);
-        released = what.any;
+        released = what.settles;
         _log.info('Before the graphics card job $id: $what');
       } on TimeoutException {
         // A turn of the player pool holds it (libmpv held one for 71 s on 1 November 2026): its players go later, and
@@ -903,7 +904,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       }
     }
     var check = await _askCard(id, budget);
-    // What was let go comes back within seconds: asked again until the preferred way fits, or the time is up
+    // The memory of the players closed comes back within seconds: asked again until the preferred way fits, or the
+    // time is up
     final polls = released && tools.gpuSettlePoll > Duration.zero
         ? (tools.gpuSettle.inMicroseconds / tools.gpuSettlePoll.inMicroseconds).ceil()
         : 0;

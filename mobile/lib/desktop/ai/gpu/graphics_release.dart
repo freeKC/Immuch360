@@ -5,11 +5,14 @@
 //  - the players of videos that do not play (PlayerPool.releaseForGraphicsJob): the idle ones and those of the pages
 //    and live views that are paused, each with its decoder surfaces and its texture; the video that plays stays, and
 //    so does the 360° page on screen, paused or not, their share named in the message when the job has to wait;
-//  - the pictures decoded in the image cache (a 360° photo is up to 128 MB as a texture): those on screen stay, held
-//    by their widgets, and come back decoded again when shown.
+//  - the pictures decoded in the image cache (a 360° photo is up to 128 MB as a texture): ImageCache.clear() drops its
+//    entries, and those no widget shows go with them. The pictures on screen stay, held by their widgets: the cache's
+//    list of live images is left as it is, since clearing it frees nothing (Flutter 3.47.2, ImageCache.clearLiveImages)
+//    and would only make each of them decode again while its old copy is still held.
 // The memory a player let go comes back to the card within seconds (an 8K decoder still held 1.3 GB 6 s after its
-// dispose on Windows): the queue asks the card again a few times before it decides. Nothing of the AI models is on the
-// card between two jobs: ONNX Runtime runs on the processor, and sd-cli is a program of its own for each run.
+// dispose on Windows): when players were closed, the queue asks the card again a few times before it decides; pictures
+// alone are no reason to wait. Nothing of the AI models is on the card between two jobs: ONNX Runtime runs on the
+// processor, and sd-cli is a program of its own for each run.
 
 import 'package:flutter/painting.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
@@ -18,7 +21,7 @@ import 'package:logging/logging.dart';
 final _log = Logger('GraphicsRelease');
 
 /// What the app let go of before a job on the graphics card: the video players disposed, and the bytes of the
-/// pictures dropped from the image cache
+/// pictures dropped from the image cache (those also on screen among them stay in memory, held by their widgets)
 class GraphicsRelease {
   const GraphicsRelease({this.players = 0, this.pictureBytes = 0});
 
@@ -27,8 +30,9 @@ class GraphicsRelease {
   final int players;
   final int pictureBytes;
 
-  /// Whether any memory of the card may come back
-  bool get any => players > 0 || pictureBytes > 0;
+  /// Whether the queue asks the card again while what was let go comes back (ConversionTools.gpuSettle): only once
+  /// players were disposed, whose decoders give the card back late
+  bool get settles => players > 0;
 
   @override
   String toString() => '$players video players closed, $pictureBytes bytes of pictures dropped';
@@ -47,9 +51,7 @@ Future<GraphicsRelease> releaseAppGraphics({PlayerPool? pool, ImageCache? images
   var pictureBytes = 0;
   if (images != null) {
     pictureBytes = images.currentSizeBytes;
-    images
-      ..clear()
-      ..clearLiveImages();
+    images.clear();
   }
   return GraphicsRelease(players: players, pictureBytes: pictureBytes);
 }

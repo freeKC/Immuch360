@@ -1,6 +1,7 @@
 // What the app lets go of the graphics card before a job of the AI features on it (issue #13): the players of videos
-// that do not play and the pictures of the image cache, with the count of each; nothing without a pool, and a pool
-// that fails lets the pictures go all the same.
+// that do not play and the pictures of the image cache, with the count of each, the pictures on screen left to their
+// widgets; only closed players are worth a wait for their memory; nothing without a pool, and a pool that fails lets
+// the pictures go all the same.
 
 import 'dart:ui' as ui;
 
@@ -48,7 +49,7 @@ void main() {
 
     expect(released.players, 1);
     expect(released.pictureBytes, 64 * 32 * 4);
-    expect(released.any, isTrue);
+    expect(released.settles, isTrue);
     expect(cache.currentSizeBytes, 0);
     expect(cache.currentSize, 0);
     expect(players.made.single.disposed, isTrue);
@@ -57,9 +58,32 @@ void main() {
 
   test('nothing held: nothing let go, nothing to wait for', () async {
     final released = await releaseAppGraphics(pool: FakePlayers().pool, images: ImageCache());
-    expect(released.any, isFalse);
-    expect((await releaseAppGraphics()).any, isFalse);
-    expect(GraphicsRelease.nothing.any, isFalse);
+    expect(released.settles, isFalse);
+    expect((await releaseAppGraphics()).settles, isFalse);
+    expect(GraphicsRelease.nothing.settles, isFalse);
+  });
+
+  test('the pictures on screen stay live: only the cache lets go, and pictures alone are no reason to wait', () async {
+    final cache = ImageCache();
+    await _cached(cache, 'grid', 16, 16);
+    // A 360° photo on screen: its widget still listens to it
+    final recorder = ui.PictureRecorder();
+    Canvas(recorder).drawRect(const Rect.fromLTWH(0, 0, 32, 32), Paint());
+    final image = await recorder.endRecording().toImage(32, 32);
+    final shown = OneFrameImageStreamCompleter(Future.value(ImageInfo(image: image)));
+    cache.putIfAbsent('sphere', () => shown);
+    shown.addListener(ImageStreamListener((_, _) {}));
+    await Future<void>.delayed(Duration.zero);
+    expect(cache.liveImageCount, 1);
+
+    final released = await releaseAppGraphics(pool: FakePlayers().pool, images: cache);
+
+    expect(released.pictureBytes, greaterThan(0));
+    expect(cache.currentSize, 0, reason: 'the cache let go of its entries');
+    expect(cache.liveImageCount, 1, reason: 'clearLiveImages would only make the picture on screen decode again');
+    expect(released.settles, isFalse);
+    expect(const GraphicsRelease(pictureBytes: 128 << 20).settles, isFalse);
+    expect(const GraphicsRelease(players: 1).settles, isTrue);
   });
 
   test('a pool that fails: the pictures go all the same', () async {
