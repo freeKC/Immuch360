@@ -135,6 +135,10 @@ enum ImmersiveErrorCode {
   /// The graphics card ran out of memory during the generation (told by the error output of the generator)
   gpuOutOfMemory,
 
+  /// The memory free on the graphics card stayed below what the job needs for 30 s, after the app let go of what it
+  /// could: the job left the queue rather than wait for ever, and the user may put it back to keep waiting
+  gpuMemoryShort,
+
   /// The generator ended with an error; the end of its error output goes with it
   generatorFailed,
 

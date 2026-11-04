@@ -7,7 +7,9 @@
 // the type of each job, its step in words, "step 12 of 28, about 3 min left" counted down, why a job waits, the share
 // of a scene filled in, and "Delete this version" asked as such. Phase 3: a job waiting for the memory of the graphics
 // card with what is free and Resume, the named failures of a panorama in words, and the 3D version of a generated
-// panorama under the sentence of the panorama. Issue #13: what the app lets go of the card first.
+// panorama under the sentence of the panorama. Issue #13: what the app lets go of the card first, the memory a
+// panorama needs, what is free and what the app itself holds, and a wait that left the queue with its figures and Keep
+// waiting, the failures of a generation keeping their words.
 
 import 'dart:io';
 
@@ -101,12 +103,20 @@ class _ShownQueue extends ConversionQueueNotifier {
 
   final ConversionQueueState shown;
   var cardAsked = 0;
+  final keptWaiting = <String>[];
+  final retried = <String>[];
 
   @override
   ConversionQueueState build() => shown;
 
   @override
   void checkGraphicsCardAgain() => cardAsked++;
+
+  @override
+  void keepWaiting(String id) => keptWaiting.add(id);
+
+  @override
+  void retry(String id) => retried.add(id);
 }
 
 void main() {
@@ -473,7 +483,8 @@ void main() {
       int? steps,
       Duration? remaining,
       ConversionWait? waitingFor,
-      int? waitingFree,
+      GpuShortfall? gpuShortfall,
+      bool keepsWaiting = false,
       String? parentId,
       ImmersiveErrorCode? error,
       String? message,
@@ -493,7 +504,8 @@ void main() {
       steps: steps,
       remaining: remaining,
       waitingFor: waitingFor,
-      waitingFree: waitingFree,
+      gpuShortfall: gpuShortfall,
+      keepsWaiting: keepsWaiting,
     );
 
     late _ShownQueue shownQueue;
@@ -669,7 +681,8 @@ void main() {
     });
 
     testWidgets(
-      'a panorama waiting for the memory of the graphics card: what is free, and Resume asks the card again',
+      'a panorama waiting for the memory of the graphics card: what it needs, what is free and what the app holds; '
+      'Resume asks the card again, Keep waiting keeps it in the queue',
       (tester) async {
         await pumpShown(tester, [
           job(
@@ -677,20 +690,41 @@ void main() {
             ConversionKind.panoramaFromPhoto,
             ConversionState.waiting,
             waitingFor: ConversionWait.graphicsMemory,
-            waitingFree: 2 << 30,
+            gpuShortfall: const GpuShortfall(need: 6 << 30, free: 2 << 30),
+          ),
+          job(
+            'salon.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.waiting,
+            waitingFor: ConversionWait.graphicsMemory,
+            gpuShortfall: const GpuShortfall(need: 5476083302, free: 5798625280, appHolds: 1470103552),
+            keepsWaiting: true,
           ),
           job('jardin.jpg', ConversionKind.sbsFromPhoto, ConversionState.waiting, waitingFor: ConversionWait.memory),
         ]);
 
         expect(
           tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_waiting')))).data,
-          'Other apps use the graphics card memory (2.0 GiB free): close games or 3D apps',
+          '360° panoramas need 6.0 GiB of free graphics memory, 2.0 GiB free: close games, 3D apps or videos',
+        );
+        // The figures of issue #13: an RTX 2060 of 8 GB, Immuch360 holding 1 402 MiB of it
+        expect(
+          tester.widget<Text>(inRow('salon.jpg', find.byKey(const Key('ai_job_waiting')))).data,
+          '360° panoramas need 5.1 GiB of free graphics memory, 5.4 GiB free (Immuch360 itself holds 1.4 GiB): close '
+          'games, 3D apps or videos',
         );
         expect(inRow('jardin.jpg', find.byKey(const Key('ai_job_check_gpu'))), findsNothing);
+        expect(inRow('jardin.jpg', find.byKey(const Key('ai_job_keep_waiting'))), findsNothing);
         expect(inRow('plage.jpg', find.text('Resume')), findsOneWidget);
         await tester.tap(inRow('plage.jpg', find.byKey(const Key('ai_job_check_gpu'))));
         await tester.pump();
         expect(shownQueue.cardAsked, 1);
+
+        expect(inRow('plage.jpg', find.text('Keep waiting')), findsOneWidget);
+        expect(inRow('salon.jpg', find.byKey(const Key('ai_job_keep_waiting'))), findsNothing, reason: 'asked already');
+        await tester.tap(inRow('plage.jpg', find.byKey(const Key('ai_job_keep_waiting'))));
+        await tester.pump();
+        expect(shownQueue.keptWaiting, ['plage.jpg']);
       },
     );
 
@@ -711,6 +745,80 @@ void main() {
       expect(inRow('plage.jpg', find.byKey(const Key('ai_job_check_gpu'))), findsNothing);
       expect(inRow('plage.jpg', find.byKey(const Key('ai_job_keep_waiting'))), findsNothing);
       expect(inRow('plage.jpg', find.byKey(const Key('ai_job_cancel'))), findsOneWidget);
+    });
+
+    testWidgets('a wait that left the queue: why, its figures, and Keep waiting in place of Retry', (tester) async {
+      await pumpShown(tester, [
+        job(
+          'plage.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.gpuMemoryShort,
+          message: '5261334937 bytes free of the 5476083302 needed after 30 s',
+          gpuShortfall: const GpuShortfall(need: 5476083302, free: 4900 << 20, appHolds: 1402 << 20),
+        ),
+        job(
+          'busy.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.gpuBusy,
+          message: 'sd-cli cut the generator into 27 segments',
+        ),
+      ]);
+
+      expect(
+        inRow(
+          'plage.jpg',
+          find.text(
+            'Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_gpu_short')))).data,
+        '360° panoramas need 5.1 GiB of free graphics memory, 4.8 GiB free (Immuch360 itself holds 1.4 GiB): close '
+        'games, 3D apps or videos',
+      );
+      expect(inRow('plage.jpg', find.byKey(const Key('ai_job_retry'))), findsNothing);
+      await tester.tap(inRow('plage.jpg', find.byKey(const Key('ai_job_keep_waiting'))));
+      await tester.pump();
+      expect(shownQueue.keptWaiting, ['plage.jpg']);
+
+      // A generation cut into segments keeps its words and its Retry
+      expect(
+        inRow('busy.jpg', find.text('Other apps use the graphics card memory: close games or 3D apps')),
+        findsOneWidget,
+      );
+      expect(inRow('busy.jpg', find.byKey(const Key('ai_job_keep_waiting'))), findsNothing);
+      expect(inRow('busy.jpg', find.byKey(const Key('ai_job_gpu_short'))), findsNothing);
+      await tester.tap(inRow('busy.jpg', find.byKey(const Key('ai_job_retry'))));
+      await tester.pump();
+      expect(shownQueue.retried, ['busy.jpg']);
+    });
+
+    test('the texts of the memory of the graphics card, with and without the share of the app', () {
+      loadEnglishTexts();
+      final t = StaticTranslations.instance;
+      expect(
+        gpuShortfallText(t, const GpuShortfall(need: 6 << 30, free: 5 << 30, appHolds: 0)),
+        '360° panoramas need 6.0 GiB of free graphics memory, 5.0 GiB free (Immuch360 itself holds 0 B): close games, '
+        '3D apps or videos',
+      );
+      expect(
+        conversionWaitText(t, ConversionWait.graphicsMemory),
+        '360° panoramas need 0 B of free graphics memory, 0 B free: close games, 3D apps or videos',
+      );
+      expect(conversionWaitText(t, ConversionWait.memory), 'Waiting for enough free memory');
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.gpuMemoryShort, null),
+        'Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue',
+      );
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.gpuBusy, 'cut into 27 segments'),
+        'Other apps use the graphics card memory: close games or 3D apps',
+        reason: 'the failure of a generation keeps its words',
+      );
     });
 
     testWidgets('the named failures of a panorama, in words', (tester) async {

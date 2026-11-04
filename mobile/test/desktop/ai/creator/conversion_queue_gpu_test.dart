@@ -4,7 +4,9 @@
 // holds the next one back and only one probe runs per check; a panorama cancelled while it waits or while the probe
 // answers never runs. Issue #13: before it asks, the app lets go of its share of the card, once per job, says so, and
 // asks again while that memory comes back; the panorama is made the way the memory free allows (the full reference,
-// else the reduced one).
+// else the reduced one); the wait carries what is needed, what is free and what the app holds; a wait that cannot end
+// leaves the queue with those figures within the give up time, the panoramas behind it at once, unless the user asked
+// a job to keep waiting.
 
 import 'dart:async';
 import 'dart:io';
@@ -76,6 +78,7 @@ void main() {
     Future<GraphicsRelease> Function()? release,
     Duration settle = const Duration(milliseconds: 100),
     Duration settlePoll = const Duration(milliseconds: 10),
+    Duration giveUp = const Duration(seconds: 30),
   }) {
     final made = ProviderContainer(
       overrides: [
@@ -92,6 +95,7 @@ void main() {
             releaseGraphics: release,
             gpuSettle: settle,
             gpuSettlePoll: settlePoll,
+            gpuGiveUp: giveUp,
           ),
         ),
       ],
@@ -156,7 +160,7 @@ void main() {
       await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
 
       expect(job(pano).state, ConversionState.waiting);
-      expect(job(pano).waitingFree, 2000 * _mib);
+      expect(job(pano).gpuShortfall, const GpuShortfall(need: panoramaReducedFreeGraphicsMemory, free: 2000 * _mib));
       await until((state) => state.byId(made)!.state == ConversionState.done);
       // Asked again every 30 ms meanwhile, and still held
       await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -168,7 +172,7 @@ void main() {
       await until((state) => state.byId(pano)!.state.isEnded);
       expect(job(pano).state, ConversionState.done);
       expect(job(pano).waitingFor, isNull);
-      expect(job(pano).waitingFree, isNull);
+      expect(job(pano).gpuShortfall, isNull);
       expect(panorama.jobs, hasLength(1));
       expect(panorama.jobs.single.referenceMaxPixels, isNull, reason: 'the full reference on 7.2 GiB free');
     },
@@ -271,20 +275,6 @@ void main() {
 
     expect(job(pano).state, ConversionState.cancelled);
     expect(panorama.jobs, isEmpty);
-  });
-
-  test('the way the card allows reaches the panorama: the full reference, else the reduced one (issue #13)', () async {
-    final probe = FakeGpuProbe([_rtx2060(7000), _rtx2060(5530, appMib: 1402)]);
-    container = containerWith(probe.probe);
-
-    final roomy = add('a.jpg', ConversionKind.panoramaFromPhoto);
-    await until((state) => state.byId(roomy)!.state.isEnded);
-    final tight = add('b.jpg', ConversionKind.panoramaFromPhoto);
-    await until((state) => state.byId(tight)!.state.isEnded);
-
-    expect(job(roomy).state, ConversionState.done);
-    expect(job(tight).state, ConversionState.done);
-    expect([for (final spec in panorama.jobs) spec.referenceMaxPixels], [null, panoramaReducedReferencePixels]);
   });
 
   test('the jobs of the processor never ask the graphics card, nor let go of anything', () async {
@@ -402,6 +392,146 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
       expect(released, 2);
       queue().cancel(pano);
+    });
+  });
+
+  group('a wait that cannot end (issue #13)', () {
+    test('the figures: what the panorama needs, what is free, what the app itself holds', () async {
+      container = containerWith(FakeGpuProbe.of(_rtx2060(4900, appMib: 1402)).probe, recheck: const Duration(hours: 1));
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
+
+      expect(
+        job(pano).gpuShortfall,
+        const GpuShortfall(need: panoramaReducedFreeGraphicsMemory, free: 4900 * _mib, appHolds: 1402 * _mib),
+      );
+      queue().cancel(pano);
+    });
+
+    test('leaves the queue at the give up time with its figures, and the panoramas behind it at their first answer; '
+        'the processor lane goes on', () async {
+      final probe = FakeGpuProbe.of(_rtx2060(4900, appMib: 1402));
+      container = containerWith(
+        probe.probe,
+        recheck: const Duration(milliseconds: 40),
+        giveUp: const Duration(milliseconds: 150),
+      );
+      final watch = Stopwatch()..start();
+
+      final first = add('a.jpg', ConversionKind.panoramaFromPhoto);
+      final second = add('b.jpg', ConversionKind.panoramaFromPhoto);
+      final made = add('jardin.jpg', ConversionKind.sceneFromPhoto);
+      await until((state) => state.byId(second)!.state.isEnded);
+      watch.stop();
+
+      for (final id in [first, second]) {
+        expect(job(id).state, ConversionState.failed);
+        expect(job(id).error, ImmersiveErrorCode.gpuMemoryShort);
+        expect(
+          job(id).gpuShortfall,
+          const GpuShortfall(need: panoramaReducedFreeGraphicsMemory, free: 4900 * _mib, appHolds: 1402 * _mib),
+        );
+        expect(job(id).waitingFor, isNull);
+      }
+      expect(watch.elapsedMilliseconds, greaterThanOrEqualTo(150));
+      expect(watch.elapsedMilliseconds, lessThan(2000));
+      expect(probe.calls, lessThan(10), reason: 'asked a few times, the second panorama once');
+      expect(panorama.jobs, isEmpty);
+      await until((state) => state.byId(made)!.state.isEnded);
+      expect(job(made).state, ConversionState.done);
+    });
+
+    test('Keep waiting puts it back without a time limit; it runs once the card is free', () async {
+      final card = heldCard();
+      container = containerWith(
+        card.probe,
+        recheck: const Duration(milliseconds: 20),
+        giveUp: const Duration(milliseconds: 60),
+      );
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).error, ImmersiveErrorCode.gpuMemoryShort);
+
+      queue().keepWaiting(pano);
+      expect(job(pano).state, ConversionState.waiting);
+      expect(job(pano).keepsWaiting, isTrue);
+      expect(job(pano).error, isNull);
+      await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
+      // Well past the give up time, still waiting
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      expect(job(pano).state, ConversionState.waiting);
+
+      card.free();
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).state, ConversionState.done);
+      expect(panorama.jobs, hasLength(1));
+    });
+
+    test('Keep waiting asked while it waits: it never leaves the queue', () async {
+      final card = heldCard();
+      container = containerWith(
+        card.probe,
+        recheck: const Duration(milliseconds: 20),
+        giveUp: const Duration(milliseconds: 80),
+      );
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
+      queue().keepWaiting(pano);
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+      expect(job(pano).state, ConversionState.waiting);
+      expect(job(pano).keepsWaiting, isTrue);
+
+      card.free();
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).state, ConversionState.done);
+    });
+
+    test('Retry gives it the whole time again; Keep waiting does nothing for another failure', () async {
+      final card = heldCard();
+      container = containerWith(
+        card.probe,
+        recheck: const Duration(milliseconds: 20),
+        giveUp: const Duration(milliseconds: 60),
+      );
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.state.isEnded);
+      queue().retry(pano);
+      expect(job(pano).state, ConversionState.waiting);
+      expect(job(pano).keepsWaiting, isFalse);
+      await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
+      expect(job(pano).state, ConversionState.waiting, reason: 'not failed at its first answer');
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).error, ImmersiveErrorCode.gpuMemoryShort);
+
+      final scene = add('jardin.jpg', ConversionKind.sceneFromPhoto);
+      await until((state) => state.byId(scene)!.state.isEnded);
+      queue().keepWaiting(scene);
+      expect(job(scene).state, ConversionState.done);
+    });
+
+    test('a panorama added long after a wait that ended gets the whole time', () async {
+      final card = heldCard();
+      container = containerWith(
+        card.probe,
+        recheck: const Duration(milliseconds: 20),
+        giveUp: const Duration(milliseconds: 50),
+      );
+
+      final first = add('a.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(first)!.state.isEnded);
+      expect(job(first).error, ImmersiveErrorCode.gpuMemoryShort);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      final second = add('b.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(second)!.waitingFor == ConversionWait.graphicsMemory);
+      expect(job(second).state, ConversionState.waiting, reason: 'its own wait starts');
+      card.free();
+      await until((state) => state.byId(second)!.state.isEnded);
+      expect(job(second).state, ConversionState.done);
     });
   });
 }

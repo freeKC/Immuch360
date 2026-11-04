@@ -96,9 +96,30 @@ enum ConversionWait {
   /// seconds for that memory to come back before it asks the card (graphics_release.dart)
   graphicsRelease,
 
-  /// Other programs hold the memory of the graphics card (gpu_budget.dart): the job starts once enough is free, asked
-  /// again a little later or when the user asks for it; the memory free goes with it (ConversionJob.waitingFree)
+  /// The memory free on the graphics card is short (gpu_budget.dart): the job starts once enough is free, asked again
+  /// a little later or when the user asks for it; the figures go with it (ConversionJob.gpuShortfall). Unless the user
+  /// asked it to keep waiting, it leaves the queue 30 s after it was first asked (ImmersiveErrorCode.gpuMemoryShort).
   graphicsMemory,
+}
+
+/// The memory of the graphics card when a job of it was last asked: what it needs free, what was free, and what this
+/// app itself held of the card (null when it could not be read), in bytes
+class GpuShortfall {
+  const GpuShortfall({required this.need, required this.free, this.appHolds});
+
+  final int need;
+  final int free;
+  final int? appHolds;
+
+  @override
+  bool operator ==(Object other) =>
+      other is GpuShortfall && other.need == need && other.free == free && other.appHolds == appHolds;
+
+  @override
+  int get hashCode => Object.hash(need, free, appHolds);
+
+  @override
+  String toString() => 'GpuShortfall(need $need, free $free, app ${appHolds ?? '?'})';
 }
 
 /// Where a job is: the steps of the engines between waiting and the four ends, in the order of ImmersiveStage, so
@@ -401,7 +422,8 @@ class ConversionJob {
     this.steps,
     this.remaining,
     this.waitingFor,
-    this.waitingFree,
+    this.gpuShortfall,
+    this.keepsWaiting = false,
   });
 
   final String id;
@@ -466,16 +488,20 @@ class ConversionJob {
   /// Why it still waits; null for a job that waits for its turn
   final ConversionWait? waitingFor;
 
-  /// The memory of the graphics card free when it was asked, for [ConversionWait.graphicsMemory], in bytes
-  final int? waitingFree;
+  /// The memory of the graphics card when it was last asked, for [ConversionWait.graphicsMemory] and for a job that
+  /// left the queue for it (ImmersiveErrorCode.gpuMemoryShort)
+  final GpuShortfall? gpuShortfall;
+
+  /// The user asked this job to keep waiting for the memory of the graphics card: it never leaves the queue for it
+  final bool keepsWaiting;
 
   ConversionPhase get phase => state.phase;
 
   /// From 0 to 1
   double get progress => perMille / 1000;
 
-  /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor] and [waitingFree] are given
-  /// as functions, so that they may go back to null
+  /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor] and [gpuShortfall] are
+  /// given as functions, so that they may go back to null
   ConversionJob copyWith({
     ConversionState? state,
     int? perMille,
@@ -495,7 +521,8 @@ class ConversionJob {
     int? Function()? steps,
     Duration? Function()? remaining,
     ConversionWait? Function()? waitingFor,
-    int? Function()? waitingFree,
+    GpuShortfall? Function()? gpuShortfall,
+    bool? keepsWaiting,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -525,11 +552,13 @@ class ConversionJob {
     steps: steps == null ? this.steps : steps(),
     remaining: remaining == null ? this.remaining : remaining(),
     waitingFor: waitingFor == null ? this.waitingFor : waitingFor(),
-    waitingFree: waitingFree == null ? this.waitingFree : waitingFree(),
+    gpuShortfall: gpuShortfall == null ? this.gpuShortfall : gpuShortfall(),
+    keepsWaiting: keepsWaiting ?? this.keepsWaiting,
   );
 
-  /// The job as it was added, to run again; a chained job reads again what its parent makes then
-  ConversionJob restarted() => ConversionJob(
+  /// The job as it was added, to run again; a chained job reads again what its parent makes then. [keepsWaiting]: it
+  /// waits for the memory of the graphics card as long as it takes
+  ConversionJob restarted({bool keepsWaiting = false}) => ConversionJob(
     id: id,
     source: source,
     batchIndex: batchIndex,
@@ -541,6 +570,7 @@ class ConversionJob {
     quarterTurns: quarterTurns,
     existing: existing,
     whenExists: whenExists,
+    keepsWaiting: keepsWaiting,
   );
 
   @override
