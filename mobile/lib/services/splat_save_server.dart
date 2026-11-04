@@ -34,6 +34,24 @@ class ImmichSplatSaveServer implements SplatSaveServer {
 
   http.Client get _http => _client ?? NetworkRepository.client;
 
+  /// A call of the API client, a failure of the network thrown as the SocketException the job reads as
+  /// "unreachable": the client gives it the code 400 of a refusal, told apart by its inner exception, so that an
+  /// unreachable server is never "the asset is gone" nor "the album is gone"
+  Future<T> _reach<T>(Future<T> Function() call) async {
+    try {
+      return await call();
+    } on ApiException catch (error) {
+      final inner = error.innerException;
+      if (inner is SocketException) {
+        throw inner;
+      }
+      if (inner is IOException || inner is http.ClientException) {
+        throw SocketException('$inner');
+      }
+      rethrow;
+    }
+  }
+
   @override
   Future<(int, int, int)?> version() async {
     try {
@@ -47,7 +65,7 @@ class ImmichSplatSaveServer implements SplatSaveServer {
   @override
   Future<SplatServerAsset?> asset(String id) async {
     try {
-      final asset = await _api.assetsApi.getAssetInfo(id);
+      final asset = await _reach(() => _api.assetsApi.getAssetInfo(id));
       return asset == null ? null : _of(asset);
     } on ApiException catch (error) {
       if (error.code == HttpStatus.notFound || error.code == HttpStatus.badRequest) {
@@ -67,12 +85,14 @@ class ImmichSplatSaveServer implements SplatSaveServer {
 
   @override
   Future<List<SplatServerAsset>> searchByName(String name, {int size = 50}) async {
-    final found = await _api.searchApi.searchAssets(
-      MetadataSearchDto(
-        originalFileName: Optional.present(name),
-        size: Optional.present(size),
-        withDeleted: const Optional.present(true),
-        order: const Optional.present(AssetOrder.desc),
+    final found = await _reach(
+      () => _api.searchApi.searchAssets(
+        MetadataSearchDto(
+          originalFileName: Optional.present(name),
+          size: Optional.present(size),
+          withDeleted: const Optional.present(true),
+          order: const Optional.present(AssetOrder.desc),
+        ),
       ),
     );
     return [for (final asset in found?.assets.items ?? const <AssetResponseDto>[]) _of(asset)];
@@ -115,9 +135,11 @@ class ImmichSplatSaveServer implements SplatSaveServer {
 
   @override
   Future<SplatBulkAnswer> bulkCheck(String id, String sha1) async {
-    final answer = await _api.assetsApi.checkBulkUpload(
-      AssetBulkUploadCheckDto(
-        assets: [AssetBulkUploadCheckItem(id: id, checksum: sha1)],
+    final answer = await _reach(
+      () => _api.assetsApi.checkBulkUpload(
+        AssetBulkUploadCheckDto(
+          assets: [AssetBulkUploadCheckItem(id: id, checksum: sha1)],
+        ),
       ),
     );
     final result = answer?.results.where((result) => result.id == id).firstOrNull;
@@ -138,7 +160,7 @@ class ImmichSplatSaveServer implements SplatSaveServer {
   @override
   Future<bool> albumExists(String id) async {
     try {
-      return await _api.albumsApi.getAlbumInfo(id) != null;
+      return await _reach(() => _api.albumsApi.getAlbumInfo(id)) != null;
     } on ApiException catch (error) {
       if (error.code == HttpStatus.notFound || error.code == HttpStatus.badRequest) {
         return false;
@@ -149,7 +171,7 @@ class ImmichSplatSaveServer implements SplatSaveServer {
 
   @override
   Future<String> createAlbum(String name) async {
-    final album = await _api.albumsApi.createAlbum(CreateAlbumDto(albumName: name));
+    final album = await _reach(() => _api.albumsApi.createAlbum(CreateAlbumDto(albumName: name)));
     if (album == null) {
       throw StateError('the server made no album');
     }
@@ -158,6 +180,6 @@ class ImmichSplatSaveServer implements SplatSaveServer {
 
   @override
   Future<void> addToAlbum(String albumId, String assetId) async {
-    await _api.albumsApi.addAssetsToAlbum(albumId, BulkIdsDto(ids: [assetId]));
+    await _reach(() => _api.albumsApi.addAssetsToAlbum(albumId, BulkIdsDto(ids: [assetId])));
   }
 }
