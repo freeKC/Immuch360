@@ -5,7 +5,9 @@
 //
 // * on a computer, a phone or a tablet, the splat viewer opens it, the gate asked again with the head of the SPZ itself
 //   (which wins over the packet), keyed by SplatName as the .spz of a share is, SplatUp the orientation when the user
-//   chose none on this device (lot L3);
+//   chose none on this device (lot L3); on a computer as for a splat file, the chip read under the viewer's spinner
+//   and the answer kept for the scene given to the viewer, so that a scene that stopped the viewer offers its reduced
+//   copy before it opens again (integration 41);
 // * on a Meta Quest 3 or 3S, the immersive viewer gets the file of the cache in the unchanged gaussianSplat request of
 //   version 1, with its optional up (lot L4); the headset reduces it as it does any splat.
 
@@ -264,7 +266,7 @@ Future<void> openSplatPhoto(
     return;
   }
   // The gate again with the head of the SPZ itself
-  final verdict = await splatViewerVerdictNow(ref, scene.head, name: name, fileBytes: fileBytes);
+  final verdict = await splatViewerVerdictNow(ref, scene.head, name: name, fileBytes: fileBytes, context: context);
   final open = verdict?.request;
   if (verdict != null && open == null) {
     messenger?.showSnackBar(SnackBar(content: Text(splatRefusalText(t, verdict, locale, onHeadset: false))));
@@ -286,6 +288,7 @@ Future<void> openSplatPhoto(
     fileBytes: fileBytes,
     cap: open.maxGaussians,
     watchFrames: splatWatchesFrames(device: device, head: scene.head, cap: open.maxGaussians, answer: answer),
+    answer: answer,
   );
 }
 

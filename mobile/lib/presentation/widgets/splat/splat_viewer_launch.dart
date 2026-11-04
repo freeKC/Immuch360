@@ -184,15 +184,18 @@ Future<T> _whileRead<T>(BuildContext context, Future<T> reading) async {
 
 /// The gate of the splat viewer of this computer, phone or tablet for the splat whose head said [probe], the file
 /// [name] of [fileBytes], read now (the chip and the memory of a computer, its answer for the file); null on another
-/// device. A splat photo asks it again with the head of its scene, which wins over its packet.
+/// device. A splat photo asks it again with the head of its scene, which wins over its packet. With [context], a
+/// computer is read under the spinner a splat file gets ([_whileRead]).
 Future<SplatGateVerdict?> splatViewerVerdictNow(
   WidgetRef ref,
   SplatProbe probe, {
   required String name,
   required int fileBytes,
+  BuildContext? context,
 }) async {
   final device = ref.read(splatDeviceClassProvider);
-  final computer = await ref.read(splatComputerNowProvider)();
+  final reading = ref.read(splatComputerNowProvider)();
+  final computer = context != null && context.mounted ? await _whileRead(context, reading) : await reading;
   final answer = await _answerOf(ref, device, name, fileBytes);
   return _verdict(
     device,

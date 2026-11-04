@@ -1,8 +1,11 @@
 // Opening the scene of a splat photo (plan of 3 November 2026, lots L3 and L4): taken out of the original on the
 // server into the splat viewer's cache, then the splat viewer of a phone opens the cache file under the name of its SPZ,
 // or the immersive viewer of a Meta Quest gets it in the unchanged gaussianSplat request with its up; nothing
-// downloaded at the second opening; a large scene over a metered network is asked first.
+// downloaded at the second opening; a large scene over a metered network is asked first. On a computer the chip is
+// read under the splat viewer's spinner, and a scene that stopped the viewer last time offers its reduced copy first,
+// as a splat file of a share does (integration 41).
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -15,6 +18,7 @@ import 'package:http/testing.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_gate.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/splat/splat_photo_xmp.dart';
@@ -24,6 +28,7 @@ import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_photo_launch.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -37,7 +42,7 @@ import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../widget_tester_extensions.dart';
 
 class _Viewings implements SplatViewerService {
-  final shown = <({SplatViewerSource source, SplatHead head, int fileBytes, int cap})>[];
+  final shown = <({SplatViewerSource source, SplatHead head, int fileBytes, int cap, bool watch})>[];
 
   @override
   Future<SplatViewerOutcome> show({
@@ -52,7 +57,7 @@ class _Viewings implements SplatViewerService {
     bool watchFrames = false,
     SplatViewerSaving? saving,
   }) async {
-    shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap));
+    shown.add((source: source, head: head, fileBytes: fileBytes, cap: cap, watch: watchFrames));
     onOpening?.call();
     return const SplatViewerOutcome(SplatViewerEnd.closed);
   }
@@ -293,5 +298,77 @@ void main() {
     await tester.pumpAndSettle();
     expect(requests, hasLength(1), reason: 'the server, once the copy failed');
     expect(File(viewings.shown.single.source.path).readAsBytesSync(), splatFixture('axes_v2.spz'));
+  });
+  group('on a computer, as a splat file opens (integration 41)', () {
+    const rtx = SplatComputer(
+      gpu: SplatGpu(SplatGpuKind.dedicated, name: 'NVIDIA GeForce RTX 4060 Laptop GPU', memory: 8188 << 20),
+      physicalMemory: 16013 << 20,
+    );
+    // The app's store, its file out of reach in a widget test: the answers stay in its memory
+    late SplatAnswerStore answers;
+
+    setUp(() => answers = SplatAnswerStore(() async => throw const FileSystemException('no support folder')));
+
+    List<Override> computer(Future<SplatComputer> Function() read) => [
+      ...overrides(device: SplatDeviceClass.computer),
+      splatComputerReaderProvider.overrideWithValue(read),
+      splatAnswerStoreProvider.overrideWithValue(answers),
+    ];
+
+    testWidgets('the chip and the memory are read under the splat viewer\'s spinner', (tester) async {
+      // Made by the reader, in the zone of the opening, and completed in real time below
+      Completer<SplatComputer>? reading;
+      final asset = RemoteAssetFactory.create(name: 'axes_splat.jpg', width: 48, height: 32);
+      final xmp = SplatPhotoXmp.findIn(served)!;
+      await tester.pumpConsumerWidget(
+        opener(asset, xmp, requestOf(xmp)),
+        overrides: computer(() => (reading = Completer<SplatComputer>()).future),
+      );
+
+      await tester.runAsync(() async {
+        await tester.tap(find.text('open'));
+        for (var i = 0; i < 100 && reading == null; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      });
+      expect(reading, isNotNull, reason: 'the scene is had, then the computer read');
+      await tester.pump();
+      expect(find.byKey(splatComputerReadingKey), findsOneWidget);
+      expect(viewings.shown, isEmpty);
+
+      await tester.runAsync(() async {
+        reading!.complete(rtx);
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+      });
+      await tester.pumpAndSettle();
+      expect(find.byKey(splatComputerReadingKey), findsNothing);
+      expect(viewings.shown.single.source.name, 'axes_v2.spz');
+      expect(viewings.shown.single.cap, greaterThanOrEqualTo(686));
+    });
+
+    testWidgets('a scene that stopped the viewer last time offers its reduced copy before it opens', (tester) async {
+      // The death the service keeps under the name and the length of the scene, as for a splat file
+      await tester.runAsync(
+        () => answers.writeAnswer('axes_v2.spz', 913, const SplatFrameAnswer.died(300, SplatDeath.memory)),
+      );
+      final asset = RemoteAssetFactory.create(name: 'axes_splat.jpg', width: 48, height: 32);
+      final xmp = SplatPhotoXmp.findIn(served)!;
+      await tester.pumpConsumerWidget(opener(asset, xmp, requestOf(xmp)), overrides: computer(() async => rtx));
+
+      await tester.runAsync(() async {
+        await tester.tap(find.text('open'));
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+      });
+      await tester.pumpAndSettle();
+      expect(viewings.shown, isEmpty, reason: 'the offer comes first');
+      expect(find.text('This splat needed more memory than this device gives it'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('splat_died_reduce')));
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
+      await tester.pumpAndSettle();
+      expect(viewings.shown.map((viewing) => (viewing.cap, viewing.watch)), [(300, false)]);
+      expect(await tester.runAsync(() => answers.answer('axes_v2.spz', 913)), const SplatFrameAnswer.reduce(300));
+    });
   });
 }
