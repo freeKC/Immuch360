@@ -2,7 +2,7 @@
 
 Immuch360 Desktop plays AV2 videos (`.ivf`, `.obu`) with `immuch360-av2`, a small program of ours that decodes them
 with the library of [dav2d](https://code.videolan.org/videolan/dav2d) (VideoLAN) and serves the pictures to the video
-player of the app on 127.0.0.1 only. It is not part of the app: the app downloads it the first time an AV2 video plays,
+player of the app on 127.0.0.1 only. It is not part of the app: the app downloads it when an AV2 video plays without it,
 as an archive our CI built from the sources (`.github/workflows/immuch360-desktop.yml`, jobs `av2-windows`, `av2-linux`
 and `av2-macos`; `.github/desktop/av2/av2_build.py`).
 

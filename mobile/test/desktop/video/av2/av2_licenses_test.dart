@@ -203,4 +203,18 @@ void main() {
       expect(_paragraphs(failing[0]).join('\n'), contains('until the decoder is downloaded'));
     });
   });
+
+  // Review of lot AD11, m6: the README of licenses/av2 is a public file of av2-decoder-1 (licenses/README.md in each
+  // archive, the head of AV2-DECODER-LICENSES.md), held to the rules of the texts of a release
+  test('the README the archives and AV2-DECODER-LICENSES.md carry says no "first" and holds no dash', () {
+    final readme = File(p.join(repositoryRoot, 'licenses', 'av2', 'README.md')).readAsStringSync();
+    expect(RegExp(r'\bfirst\b', caseSensitive: false).allMatches(readme).map((match) => match.group(0)), isEmpty);
+    for (final dash in ['\u2014', '\u2013', ' - ']) {
+      expect(readme, isNot(contains(dash)));
+    }
+    expect(
+      readme.replaceAll('\r\n', '\n').replaceAll('\n', ' '),
+      contains('the app downloads it when an AV2 video plays without it'),
+    );
+  });
 }

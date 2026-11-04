@@ -29,8 +29,9 @@ name: Immuch360 Desktop release
 # the signature may differ), runs the checks of its job again on the signed archive (the fixtures decoded to the MD5 of
 # avmdec, the serve checks), and puts the signed archive in place of the artifact, under the same name, with its
 # SHA256SUMS: .github/desktop/av2/publish_av2_decoder.py --from-run <run> makes the prerelease av2-decoder-1 from it and
-# the Linux and macOS archives of the same run. A release of the app never builds it, and a run with with_av2 never
-# reaches the release job.
+# the Linux and macOS archives of the same run. That run is made on feat-av2 before its merge (the gate of the catalogue
+# refuses the sums of its test build on any other branch until the record of av2-decoder-1 is written; see the head of
+# publish_av2_decoder.py). A release of the app never builds it, and a run with with_av2 never reaches the release job.
 #
 # This is the one desktop workflow that writes to the repository, its release job only, with "contents: write", and
 # the one that holds secrets, its sign-windows job only, which reads the repository and gets the three credentials of

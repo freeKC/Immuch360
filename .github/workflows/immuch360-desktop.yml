@@ -76,7 +76,7 @@ on:
         type: boolean
         default: false
       av2:
-        description: Also build the AV2 decoder (never for a release)
+        description: Also build the AV2 decoder, for the release workflow to sign it (never for a release of the app)
         type: boolean
         default: false
     outputs:

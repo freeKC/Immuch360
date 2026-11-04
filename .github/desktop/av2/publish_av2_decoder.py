@@ -20,7 +20,13 @@ av2-macos jobs of the same run, as they are. Modelled on .github/desktop/ai/publ
       is) and SHA256SUMS, and prints the entries of the catalogue with their sizes and sums. It then says whether the
       catalogue and the record of the release (.github/desktop/av2/av2-decoder-1.json) agree with these files. With
       --write, the entries are written into the catalogue (size, sha256 and archiveFiles of each archive) and the
-      record is written: the step of the release of the app that ships the AV2 videos.
+      record is written: the step of the release of the app that ships the AV2 videos. That step is made on feat-av2,
+      before it is merged, with the tests that name the sums in the same commit: until the record exists, the gate of
+      the catalogue (publish_ai_components.py --check --test-build feat-av2, in the gates of the desktop workflow that
+      the release workflow calls) refuses the sums of the test build on any other branch, so that a run of the release
+      workflow on the merged head fails its gates and signs nothing (review of lot AD11, M1). The order: the run of the
+      release workflow by hand on feat-av2 at its final head (sign_test, with_av2), --write and its commit, --dry-run
+      (exit 0), --publish, then the merge without squashing, which keeps the commit of the archives the tag names.
       With --dry-run, the release is also checked against GitHub without writing anything there: av2-decoder-1 must
       not exist yet, not even as a draft, and every request --publish would send is printed. Exit 1 when --publish
       would refuse (an unsigned Windows program, a catalogue or a record that differs from the files).
