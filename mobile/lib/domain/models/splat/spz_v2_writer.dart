@@ -115,14 +115,6 @@ Uint8List spzV2Payload(SplatCloud cloud, {int? shDegree}) {
 Uint8List writeSpzV2(SplatCloud cloud, {int? shDegree}) =>
     Uint8List.fromList(GZipCodec(level: 6).encode(spzV2Payload(cloud, shDegree: shDegree)));
 
-/// The most bytes the SPZ version 2 of [count] gaussians of degree [shDegree] takes, so that the size a PLY sends once
-/// converted is known from its head: its data whole (16 bytes, then 19 per point and 3 per coefficient of the
-/// harmonics), the most deflate makes of it (zlib's deflateBound) and the 18 bytes of the gzip frame
-int spzV2MaxBytes(int count, int shDegree) {
-  final data = 16 + count * (_spzPointBytes + 3 * splatShCoefficients(shDegree));
-  return data + (data >> 12) + (data >> 14) + (data >> 25) + 13 + 18;
-}
-
 /// [value] rounded to the nearest integer, a half away from zero (std::round), held within [low] and [high] first so
 /// that no value past the range of an integer is rounded
 int _roundAway(double value, int low, int high) {

@@ -396,6 +396,19 @@ class _DigestSink implements Sink<Digest> {
   void close() {}
 }
 
+/// The bytes of a point of SPZ version 2 before its harmonics, as the maker's writer packs them (spz_v2_writer.dart):
+/// position 9, alpha 1, colour 3, scale 3, rotation 3
+const _spzV2PointBytes = 19;
+
+/// The most bytes the SPZ version 2 that [convertSplatPlyToSpz] writes of [count] gaussians of degree [shDegree] takes,
+/// so that the size a PLY sends once converted is known from its head: its data whole (16 bytes, then 19 per point and
+/// 3 per coefficient of the harmonics), the most deflate makes of it (zlib's deflateBound) and the 18 bytes of the gzip
+/// frame
+int spzV2MaxBytes(int count, int shDegree) {
+  final data = 16 + count * (_spzV2PointBytes + 3 * splatShCoefficients(shDegree));
+  return data + (data >> 12) + (data >> 14) + (data >> 25) + 13 + 18;
+}
+
 /// The PLY [ply] as SPZ version 2 in [out], in an isolate (the maker's reader and writer)
 Future<void> convertSplatPlyToSpz(File ply, File out) => Isolate.run(() async {
   final cloud = readSplatPly(await ply.readAsBytes());

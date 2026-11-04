@@ -18,6 +18,7 @@ import 'package:immich_mobile/domain/services/splat_photo/splat_photo_tail.dart'
 import 'package:immich_mobile/domain/services/splat_photo/splat_save_job.dart';
 import 'package:immich_mobile/repositories/upload.repository.dart';
 
+import '../splat/splat_test_clouds.dart';
 import 'splat_photo_fixtures.dart';
 import 'splat_save_fakes.dart';
 
@@ -314,6 +315,21 @@ void main() {
     expect(await records.album('https://b/api'), isNull);
     final json = jsonDecode(File('${dir.path}/support/splat_saves.json').readAsStringSync()) as Map;
     expect((json['saves'] as List).length, 1);
+  });
+
+  test('the most bytes of the SPZ of a PLY, known from its head before its conversion, is never passed', () {
+    Uint8List bytesOf(String name) => File('test/fixtures/splat/$name').readAsBytesSync();
+    for (final name in ['sh3.ply', 'edges_sh3.ply', 'scene_sh3.ply', 'brush_sh3.ply', 'axes.ply']) {
+      final ply = bytesOf(name);
+      final head = probeSplatHead(ply, ply.length) as SplatHead;
+      expect(writeSpzV2(readSplatPly(ply)).length, lessThanOrEqualTo(spzV2MaxBytes(head.gaussians, head.shDegree)));
+    }
+    // Values spread over the range of the format
+    for (final degree in [0, 3]) {
+      final properties = [for (final name in splatPlyProperties(degree)) (name, 'float')];
+      final cloud = readSplatPly(plyOf(properties, gaussiansOf(4000, degree)));
+      expect(writeSpzV2(cloud).length, lessThanOrEqualTo(spzV2MaxBytes(4000, degree)), reason: 'degree $degree');
+    }
   });
 
   test('2.5.0 and later take the metadata field', () {

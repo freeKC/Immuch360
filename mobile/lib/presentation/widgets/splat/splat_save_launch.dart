@@ -14,7 +14,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/splat/splat_photo_xmp.dart';
-import 'package:immich_mobile/domain/models/splat/spz_v2_writer.dart';
 import 'package:immich_mobile/domain/services/splat_photo/splat_save_job.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
