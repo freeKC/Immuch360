@@ -44,6 +44,17 @@ test('fast frames step it back up; frames in between leave it', () => {
   assert.equal(quality.scale, 1);
 });
 
+test('frames too long for ten in 2 s step it down once they fill the window (4 fps, review of 4 November 2026)', () => {
+  const quality = new Quality(2);
+  const changes = run(quality, 230, 12, 230);
+  assert.deepEqual(changes.map((c) => c.change), ['down', 'down', 'down', 'down', 'heavy']);
+  assert.ok(changes[0].now <= 2300, `the first step after one window: ${changes[0].now}`);
+  // A single frame of 9.5 s fills it alone
+  const crawl = new Quality(2);
+  assert.equal(crawl.frame(16, 0), null);
+  assert.equal(crawl.frame(9500, 9500), 'down');
+});
+
 test('a pause starts a new window', () => {
   const quality = new Quality();
   run(quality, 30, 1.5);

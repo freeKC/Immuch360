@@ -9,7 +9,7 @@ import { Quality, median, quantile } from './adapt.js';
 import { Navigator, attachEscape, attachInput, startGyroscope } from './controls.js';
 import { DrawLoop } from './drawloop.js';
 import { createEvents } from './events.js';
-import { FrameWatch } from './framewatch.js';
+import { FrameWatch, followsOn, fpsShown, paceFrame } from './framewatch.js';
 import { createPanel } from './panel.js';
 import { boundsOf, firstView, nextUpright, openingUpright, sampleOf, verticalFov } from './placement.js';
 import { fill, readSession } from './session.js';
@@ -189,29 +189,34 @@ async function main() {
     requestDraw();
   };
 
+  // A page hidden meanwhile (a window minimized while the watch keeps the loop): the frame after it follows no other
+  let hiddenMeanwhile = false;
+  document.addEventListener('visibilitychange', () => {
+    hiddenMeanwhile = true;
+  });
+
   const frame = (now, last) => {
     if (!engine || !nav) {
       return;
     }
-    const dt = last == null ? 1 / 60 : Math.min(0.1, (now - last) / 1000);
-    const backToBack = last != null && now - last < 250;
+    const gap = last == null || hiddenMeanwhile ? null : now - last;
+    hiddenMeanwhile = false;
+    const dt = gap == null ? 1 / 60 : Math.min(0.1, gap / 1000);
     if (input.stepKeys(dt) || input.active || gyro) {
       loop.keep(now);
     }
     const { eye, look } = nav.camera();
     engine.setCamera(eye, look, verticalFov(size.width / size.height), size.width / size.height);
     engine.render();
-    if (backToBack) {
-      const ms = now - last;
-      frames.push(ms);
-      const change = quality.frame(ms, now);
+    // While the watch runs every frame counts, a long one too (framewatch.js)
+    if (followsOn(gap, watch?.watching ?? false)) {
+      frames.push(gap);
+      const { change, found } = paceFrame(quality, watch, gap, now);
       if (change === 'down' || change === 'up') {
         engine.setQuality(size.width, size.height, pixelRatio());
-        watch?.restart();
       } else if (change === 'heavy') {
         panel.say(t.heavy, 6);
       }
-      const found = watch?.frame(ms, now, quality.step === quality.scales.length - 1);
       if (found) {
         onWatched(found);
       }
@@ -280,7 +285,7 @@ async function main() {
       return;
     }
     panel.showOffer({
-      text: fill(t.slowLine, { fps: number(found.fps, 0) }),
+      text: fill(t.slowLine, { fps: number(fpsShown(found.fps), 1) }),
       reduceLabel: fill(t.slowReduce, { kept: number(found.keep, 0), total: number(session.scene.gaussians, 0) }),
       keepLabel: t.slowKeep,
       onReduce: () => events.post('reduce', { keep: found.keep }),
@@ -476,6 +481,8 @@ async function main() {
       stride,
     },
   });
+  // The watch of a computer runs from now: 30 s by the clock
+  watch?.start(performance.now());
   panel.say(hint(), 8);
   if (!document.hasFocus() && !touchFirst) {
     setTimeout(() => panel.say(t.focusHint, 4), 8500);

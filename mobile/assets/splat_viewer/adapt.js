@@ -2,7 +2,8 @@
 // tablets, 2 on computers, whose panels at 200 % were drawn at a quarter of their pixels), the drawing scale 1, then
 // 0.75, then 0.5 when the median frame stays over 22 ms for 2 s, and on down to a drawing at half a pixel per CSS
 // pixel when the session starts at 2; back up under 12 ms; one "heavy" line per opening when the median stays over
-// 50 ms at the lowest scale. Pure, tested in Node.
+// 50 ms at the lowest scale. A window decides with ten frames, or with fewer when they fill it (frames of 230 ms or
+// more, which a computer's frame watch counts: review of 4 November 2026). Pure, tested in Node.
 
 export const SCALES = [1, 0.75, 0.5, 0.375, 0.25];
 
@@ -61,7 +62,7 @@ export class Quality {
     if (this.since == null) {
       this.since = now;
     }
-    if (now - this.since < WINDOW_MS || this.frames.length < 10) {
+    if (now - this.since < WINDOW_MS || (this.frames.length < 10 && this.drawnMs() < WINDOW_MS)) {
       return null;
     }
     const middle = median(this.frames.map((frame) => frame.ms));
@@ -80,6 +81,11 @@ export class Quality {
       return 'heavy';
     }
     return null;
+  }
+
+  /** The time the frames of the window took */
+  drawnMs() {
+    return this.frames.reduce((sum, frame) => sum + frame.ms, 0);
   }
 
   /** The frames were not drawn back to back (the scene settled): the next ones start a new window */
