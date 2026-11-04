@@ -532,7 +532,7 @@ void main() {
         licence: 'MIT',
         licenceUrl: _runtimeComponent.licenceUrl,
         notices: _runtimeComponent.notices,
-        features: AiFeature.values.toSet(),
+        features: AiFeature.values.where((feature) => feature.isAi).toSet(),
       );
       depth = model('depth', {AiFeature.stereoPhoto, AiFeature.stereoPanorama});
       geometry = model('geometry', {AiFeature.scene, AiFeature.panorama});
@@ -598,6 +598,22 @@ void main() {
       expect(removal.kept, isEmpty);
       expect(service.statusOf(runtime).state, AiComponentState.notInstalled);
       expect(installedFile(runtime).existsSync(), isFalse);
+    });
+
+    test('the AV2 decoder goes by its name, the video settings ask for it; the components of the AI stay', () async {
+      final decoder = model('av2-decoder', {AiFeature.av2Video});
+      catalogue.add(decoder);
+      final service = await installed([runtime, depth, decoder]);
+
+      expect(service.groupsUsing(AiPlatform.linuxX64, runtime, besides: AiFeatureGroup.av2), [AiFeatureGroup.photos]);
+      final removal = await service.removeGroup(AiPlatform.linuxX64, AiFeatureGroup.av2);
+
+      expect(removal.outcome, AiRemoveOutcome.removed);
+      expect(removal.kept, isEmpty);
+      expect(service.statusOf(decoder).state, AiComponentState.notInstalled);
+      expect(installedFile(decoder).existsSync(), isFalse);
+      expect(service.statusOf(runtime).state, AiComponentState.installed);
+      expect(service.statusOf(depth).state, AiComponentState.installed);
     });
 
     test('refused while a conversion runs: nothing removed', () async {

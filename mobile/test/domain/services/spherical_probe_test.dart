@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_source_policy.dart';
 
 import '../../fixtures/raw/insta360.stub.dart';
 import 'spherical_probe_fixtures.dart';
@@ -623,6 +624,46 @@ void main() {
       expect((probe.codedWidth, probe.codedHeight), (3840, 2160));
       expect(probe.frameRate, 30);
     });
+
+    test(
+      'reads an AV2 track (av2E, av2e of the draft MP4 binding) as a video, named AV2 though not played yet',
+      () async {
+        for (final codec in ['av2E', 'av2e']) {
+          // The draft of 28 October 2026 gives av2E an av2C box and av2e an av2c one: unknown boxes, left alone
+          final file = mp4File(
+            mp4Moov([
+              mp4AudioTrack(trackId: 1),
+              mp4VideoTrack(
+                [mp4St3d(2)],
+                codec: codec,
+                config: mp4Box(codec == 'av2E' ? 'av2C' : 'av2c', [0x81, 0, 0, 0]),
+                width: 3840,
+                height: 2160,
+                timescale: 30,
+                timeToSample: [(60, 1)],
+                trackId: 2,
+                handlerType: 'vide',
+              ),
+            ]),
+          );
+          final probe = await probeSphericalMetadata(_reader(file));
+
+          expect(probe.codec, codec);
+          expect(videoCodecName(probe.codec!), 'AV2', reason: codec);
+          expect(probe.codecs, isNull, reason: codec);
+          expect((probe.codedWidth, probe.codedHeight), (3840, 2160), reason: codec);
+          expect(probe.frameRate, 30, reason: codec);
+          expect(probe.stereo, StereoLayout.leftRight, reason: codec);
+          expect(probe.videoTracks.map((track) => (track.trackId, track.codec)), [(2, codec)], reason: codec);
+          // A track without a usable handler is a video by its visual sample entry
+          final damaged = await probeSphericalMetadata(
+            _reader(mp4File(mp4Moov([mp4VideoTrack([], codec: codec, width: 1920, height: 1080)]))),
+          );
+          expect(damaged.videoTracks.single.isVideo, isTrue, reason: codec);
+          expect((damaged.codedWidth, damaged.codedHeight), (1920, 1080), reason: codec);
+        }
+      },
+    );
 
     test('lets the errors of the reader through', () async {
       Future<Uint8List> failing(int offset, int length) => Future.error(StateError('no network'));

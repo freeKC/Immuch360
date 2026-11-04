@@ -71,7 +71,11 @@ void main() {
       expect(aiComponents.map((component) => component.id).toSet(), hasLength(aiComponents.length));
       expect(aiComponents.map((component) => component.assetName).toSet(), hasLength(aiComponents.length));
       for (final component in aiComponents) {
-        expect(['Apache-2.0', 'MIT', 'BSD-3-Clause'], contains(component.licence), reason: component.id);
+        expect(
+          ['Apache-2.0', 'MIT', 'BSD-3-Clause', 'BSD-2-Clause'],
+          contains(component.licence),
+          reason: component.id,
+        );
         expect(component.licenceUrl, startsWith('https://'));
         final sum = component.sha256;
         if (sum != null) {
@@ -86,7 +90,7 @@ void main() {
       expect(depthModelOnnxComponent.features, {AiFeature.stereoPhoto, AiFeature.stereoPanorama});
       expect(depthModelTfliteComponent.features, {AiFeature.stereoPhoto});
       for (final runtime in aiComponents.where((component) => component.kind == AiComponentKind.runtime)) {
-        expect(runtime.features, AiFeature.values.toSet(), reason: runtime.id);
+        expect(runtime.features, AiFeature.values.where((feature) => feature.isAi).toSet(), reason: runtime.id);
       }
       for (final platform in AiPlatform.values) {
         // The phase 1 callers, which name no feature, get what they got
@@ -136,19 +140,23 @@ void main() {
     test('each component lives in the release of its family, in one asset each or in parts, no variant yet', () {
       const scenes = {'moge-2-vits-normal-onnx-immuch360', 'lama-onnx'};
       for (final component in aiComponents) {
-        final family = component.features.contains(AiFeature.stereoPhoto)
+        final av2 = component.features.contains(AiFeature.av2Video);
+        final family = av2
+            ? av2DecoderReleaseTag
+            : component.features.contains(AiFeature.stereoPhoto)
             ? aiComponentsReleaseTag
             : scenes.contains(component.id)
             ? aiComponentsScenesReleaseTag
             : aiComponentsPanoramasReleaseTag;
         expect(component.releaseTag, family, reason: component.id);
         expect(component.variantOf, isNull, reason: component.id);
+        // The archives of the AV2 decoder list their files once av2-decoder-1 is made
         expect(
           component.archiveFiles.isNotEmpty,
-          component.isArchive,
+          component.isArchive && !av2,
           reason: '${component.id}: files of archives only',
         );
-        expect(component.isArchive, component.id.startsWith('sd-cpp-'), reason: component.id);
+        expect(component.isArchive, component.id.startsWith('sd-cpp-') || av2, reason: component.id);
         // Only a file of 2 GiB or more comes in parts
         expect(component.isInParts, (component.size ?? 0) >= aiReleaseAssetLimit, reason: component.id);
       }
@@ -332,8 +340,9 @@ void main() {
     });
 
     test('the groups: each component under the first group that needs it, a shared one counted once', () {
+      final aiGroups = AiFeatureGroup.values.where((group) => group.isAi);
       final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
-      expect(windows.map((group) => group.group), AiFeatureGroup.values);
+      expect(windows.map((group) => group.group), aiGroups);
       expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
       expect(windows[1].all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
       expect(windows[1].own, [mogeGeometryComponent, lamaInpaintComponent]);
@@ -372,7 +381,7 @@ void main() {
       );
       expect(aiHeldFeatureGroups, isEmpty);
       final groups = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete);
-      expect(groups.map((group) => group.group), AiFeatureGroup.values);
+      expect(groups.map((group) => group.group), aiGroups);
       expect(groups.last.own.map((component) => component.id), [
         'sd-cpp-vulkan-win-x64',
         'migan-512-places2-onnx',
@@ -390,6 +399,94 @@ void main() {
       expect(depthModelOnnxComponent.mainPath, depthModelOnnxComponent.installPath);
       expect(depthModelOnnxComponent.installedSize, depthModelOnnxComponent.size);
     });
+
+    test(
+      'the AV2 decoder: three archives of av2-decoder-1 without sums, never offered, never in the tile of the AI',
+      () {
+        final decoders = [av2DecoderWindowsComponent, av2DecoderLinuxComponent, av2DecoderMacComponent];
+        expect(AiFeature.av2Video.isAi, isFalse);
+        expect(AiFeature.av2Video.platforms, {
+          AiPlatform.windowsX64,
+          AiPlatform.linuxX64,
+          AiPlatform.macosArm64,
+          AiPlatform.macosX64,
+        });
+        expect(AiFeatureGroup.av2.features, {AiFeature.av2Video});
+        expect(AiFeatureGroup.av2.isAi, isFalse);
+        expect(
+          AiFeatureGroup.values.where((group) => group != AiFeatureGroup.av2).every((group) => group.isAi),
+          isTrue,
+        );
+        expect(av2DecoderReleaseTag, 'av2-decoder-1');
+        for (final decoder in decoders) {
+          expect(decoder.features, {AiFeature.av2Video}, reason: decoder.id);
+          expect(decoder.kind, AiComponentKind.archive, reason: decoder.id);
+          expect(decoder.releaseTag, av2DecoderReleaseTag, reason: decoder.id);
+          // The id of .github/desktop/av2/av2.lock.json, the commit of dav2d it pins, and the artifact of the CI
+          expect(decoder.version, '30140b5-1', reason: decoder.id);
+          expect(
+            decoder.assetName,
+            'Immuch360-av2-decoder-30140b5-1-${decoder.id.substring('av2-decoder-'.length)}.zip',
+          );
+          expect(decoder.installPath, 'engines/${decoder.id}', reason: decoder.id);
+          expect(decoder.licence, 'BSD-2-Clause', reason: decoder.id);
+          expect(decoder.licenceUrl, contains('/30140b563596a1b14aef808ff021c90288948315/COPYING'), reason: decoder.id);
+          expect(decoder.officialUrls, isEmpty, reason: decoder.id);
+          // No size, no sum, no file until the release is made: never offered, never downloaded
+          expect((decoder.size, decoder.sha256), (null, null), reason: decoder.id);
+          expect(decoder.archiveFiles, isEmpty, reason: decoder.id);
+          expect(decoder.isComplete, isFalse, reason: decoder.id);
+          expect(aiComponentById(decoder.id), same(decoder));
+          expect(
+            decoder.urls().single,
+            'https://github.com/freeKC/Immuch360/releases/download/av2-decoder-1/${decoder.assetName}',
+          );
+        }
+        // One for each computer, none for the headset; never one of the components of an AI feature
+        for (final platform in AiPlatform.values) {
+          final forPlatform = aiComponentsFor(platform, feature: AiFeature.av2Video);
+          expect(forPlatform, hasLength(platform == AiPlatform.questArm64 ? 0 : 1), reason: platform.name);
+          for (final feature in AiFeature.values.where((feature) => feature.isAi)) {
+            expect(
+              aiComponentsFor(platform, feature: feature).where(decoders.contains),
+              isEmpty,
+              reason: platform.name,
+            );
+          }
+          expect(aiComponentGroupsFor(platform, only: {AiFeatureGroup.av2}), isEmpty, reason: 'incomplete');
+        }
+        expect(aiComponentsFor(AiPlatform.macosX64, feature: AiFeature.av2Video), [av2DecoderMacComponent]);
+
+        // With its sums (the branch of the test build), the video settings find the group by name; the tile of the AI
+        // still never lists it
+        const complete = AiComponent(
+          id: 'av2-decoder-windows-x64',
+          name: 'AV2 decoder',
+          version: '30140b5-1',
+          kind: AiComponentKind.archive,
+          platforms: {AiPlatform.windowsX64},
+          assetName: 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip',
+          installPath: 'engines/av2-decoder-windows-x64',
+          size: 1100000,
+          sha256: 'aa',
+          compression: AiCompression.none,
+          licence: 'BSD-2-Clause',
+          licenceUrl: 'https://example.org',
+          features: {AiFeature.av2Video},
+          releaseTag: av2DecoderReleaseTag,
+          archiveFiles: [AiArchiveFile(path: 'immuch360-av2.exe', size: 2400000, sha256: 'bb', executable: true)],
+        );
+        final catalogue = [for (final component in aiComponents) component.id == complete.id ? complete : component];
+        expect(
+          aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: catalogue).map((group) => group.group),
+          isNot(contains(AiFeatureGroup.av2)),
+        );
+        final av2 = aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: catalogue, only: {AiFeatureGroup.av2});
+        expect(av2.single.group, AiFeatureGroup.av2);
+        expect(av2.single.own, [complete]);
+        expect(complete.mainPath, 'engines/av2-decoder-windows-x64/immuch360-av2.exe');
+      },
+    );
 
     test('the 3D photo keeps the components of phase 1, which alone live in ai-components-1', () {
       // An entry of a later phase that forgets its features (the 3D photo by default) or its release (ai-components-1

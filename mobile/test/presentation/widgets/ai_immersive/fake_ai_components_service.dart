@@ -118,7 +118,11 @@ class FakeAiComponentsService extends AiComponentsService {
     if (converting) {
       return const AiGroupRemoval(AiRemoveOutcome.busy, []);
     }
-    final entry = aiComponentGroupsFor(platform, catalogue: catalogue).firstWhere((entry) => entry.group == group);
+    final entry = aiComponentGroupsFor(
+      platform,
+      catalogue: catalogue,
+      only: {group},
+    ).firstWhere((entry) => entry.group == group);
     final kept = [
       for (final component in entry.all)
         if (groupsUsing(platform, component, besides: group).isNotEmpty) component,

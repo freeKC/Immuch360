@@ -731,6 +731,7 @@ class AiComponentsService extends ChangeNotifier {
     final components = aiComponentGroupsFor(
       platform,
       catalogue: catalogue,
+      only: {group},
     ).where((entry) => entry.group == group).expand((entry) => entry.all).toList();
     final kept = [
       for (final component in components)

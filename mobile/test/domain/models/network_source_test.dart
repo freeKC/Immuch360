@@ -5,6 +5,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
@@ -21,6 +22,29 @@ void main() {
     }
     expect(_file('GS__0001.36P').isImage, isTrue);
     expect(_file('IMG_00_001.insp').isImage, isTrue);
+  });
+
+  test('lists the AV2 videos (.ivf, .obu) on the computers only, never sent to the server', () {
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+    for (final platform in [TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]) {
+      debugDefaultTargetPlatformOverride = platform;
+      for (final name in ['worldcup.ivf', 'LIGHTHOUSE.OBU']) {
+        expect(_file(name).isVideo, isTrue, reason: '$name on $platform');
+        expect(_file(name).isMedia, isTrue, reason: '$name on $platform');
+      }
+    }
+    for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+      debugDefaultTargetPlatformOverride = platform;
+      for (final name in ['worldcup.ivf', 'LIGHTHOUSE.OBU']) {
+        expect(_file(name).isMedia, isFalse, reason: '$name on $platform');
+      }
+    }
+    debugDefaultTargetPlatformOverride = null;
+    for (final name in ['worldcup.ivf', 'lighthouse.obu', 'CAM_0003_D.OSV', 'GS010013.360', 'GS__0001.36P']) {
+      expect(_file(name).isRefusedByServer, isTrue, reason: name);
+    }
+    expect(_file('clip.mp4').isRefusedByServer, isFalse);
+    expect(NetworkEntry.desktopVideoExtensions.intersection(NetworkEntry.videoExtensions), isEmpty);
   });
 
   test('leaves out the low resolution proxies', () {
