@@ -613,4 +613,68 @@ void main() {
       expect(successes, ['remote-1']);
     });
   });
+
+  group('uploadSource (the splat photos)', () {
+    List<Invocation> answerUploads(UploadResult result) {
+      final calls = <Invocation>[];
+      when(
+        () => mockUploadRepository.uploadStream(
+          openRead: any(named: 'openRead'),
+          length: any(named: 'length'),
+          filename: any(named: 'filename'),
+          fields: any(named: 'fields'),
+          headers: any(named: 'headers'),
+          cancelToken: any(named: 'cancelToken'),
+          onProgress: any(named: 'onProgress'),
+          logContext: any(named: 'logContext'),
+        ),
+      ).thenAnswer((invocation) async {
+        calls.add(invocation);
+        return result;
+      });
+      return calls;
+    }
+
+    UploadSource source({Map<String, String> headers = const {}, String? metadataJson}) => UploadSource(
+      id: 'splat',
+      filename: 'room_splat.jpg',
+      length: 5,
+      openRead: () => Stream.value(const [1, 2, 3, 4, 5]),
+      createdAt: DateTime.utc(2026, 11, 3, 15, 53),
+      modifiedAt: DateTime.utc(2026, 11, 3, 15, 53),
+      deviceAssetId: 'splat-ab12',
+      headers: headers,
+      metadataJson: metadataJson,
+    );
+
+    test('sends the checksum header and the metadata field as given, with the fields of every upload', () async {
+      final calls = answerUploads(UploadResult.success(remoteAssetId: 'remote-9'));
+      const metadata = '[{"key":"immuch360","value":{"kind":"GaussianSplat"}}]';
+
+      final result = await sut.uploadSource(
+        source(headers: const {'x-immich-checksum': 'ab12'}, metadataJson: metadata),
+      );
+
+      expect(result.remoteAssetId, 'remote-9');
+      final call = calls.single;
+      expect(call.namedArguments[#headers], {'x-immich-checksum': 'ab12'});
+      expect(call.namedArguments[#filename], 'room_splat.jpg');
+      final fields = call.namedArguments[#fields] as Map<String, String>;
+      expect(fields['metadata'], metadata);
+      expect(fields['deviceAssetId'], 'splat-ab12');
+      expect(fields['fileCreatedAt'], '2026-11-03T15:53:00.000Z');
+      expect(fields['isFavorite'], 'false');
+      expect(fields['duration'], '0');
+    });
+
+    test('no metadata field and no header when none is given, as every other upload', () async {
+      final calls = answerUploads(UploadResult.success(remoteAssetId: 'remote-9'));
+
+      await sut.uploadSource(source());
+
+      final call = calls.single;
+      expect(call.namedArguments[#headers], isEmpty);
+      expect((call.namedArguments[#fields] as Map<String, String>).containsKey('metadata'), isFalse);
+    });
+  });
 }
