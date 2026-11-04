@@ -520,6 +520,48 @@ void main() {
     expect(inRow('conversion-19', find.byKey(const Key('ai_job_splat_upright'))), findsNothing);
   });
 
+  testWidgets('an object cropped for the headset: how many of its gaussians the .spz kept, the .ply whole when one '
+      'was saved; nothing when the whole scene was kept (review of lot SPF2, M1)', (tester) async {
+    SplatResultDetails details({required int cropped, int? plyBytes}) => SplatResultDetails(
+      gaussians: 41000,
+      images: 130,
+      placed: 129,
+      subject: SplatSubject.object,
+      scale: 0.54,
+      fromVideo: true,
+      upright: SplatUpright.supportPlane,
+      cropped: cropped,
+      plyBytes: plyBytes,
+    );
+    await pumpPanel(tester, [
+      _splat('conversion-20', fromVideo: true, details: details(cropped: 89884)),
+      _splat('conversion-21', fromVideo: true, details: details(cropped: 89884, plyBytes: 30890311)),
+      _splat('conversion-22', fromVideo: true, details: details(cropped: 0)),
+    ]);
+
+    expect(
+      inRow(
+        'conversion-20',
+        find.text(
+          'Cropped to the object for the headset: 41,000 of 130,884 gaussians kept, so that it opens in front of '
+          'you.',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      inRow(
+        'conversion-21',
+        find.text(
+          'Cropped to the object for the headset: 41,000 of 130,884 gaussians kept, so that it opens in front of '
+          'you; the .ply keeps the whole scene.',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(inRow('conversion-22', find.byKey(const Key('ai_job_splat_cropped'))), findsNothing);
+  });
+
   testWidgets('the frames of a video are matched in blocks, as photos are', (tester) async {
     await pumpPanel(tester, [
       _splat('conversion-14', state: ConversionState.matching, fromVideo: true, step: 4, steps: 16),

@@ -5,8 +5,10 @@
 // filmed on a desk is set upright on the plane it stands on, found under its cameras, whatever the upright of COLMAP
 // made of it (FreeKC's repeater of 3 November lay on its side, its desk along x), and the gaussians its cameras look at
 // are brought to 1 m, the desk and the rest of the scene with them; an object with nothing under it keeps the upright
-// of COLMAP, and says so. Its review: a wall behind an object, which holds more positions than the shelf under it but
-// not twice as many, does not lay the object down.
+// of COLMAP, and says so. Its review: the copy for the headset of an object whose whole scene the headset would open as
+// a place is cropped around the point its cameras look at, so that the rule of the headset, ported here, sees an
+// object; and a wall behind an object, which holds more positions than the shelf under it but not twice as many, does
+// not lay the object down.
 
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -318,6 +320,12 @@ List<double> _axis(Float32List positions, int axis) => [
   );
 }
 
+/// The positions of [positions] whose entry of [kept] is not 0
+Float32List _keptOf(Float32List positions, Uint8List kept) => Float32List.fromList([
+  for (var i = 0; i < kept.length; i++)
+    if (kept[i] != 0) ...[positions[3 * i], positions[3 * i + 1], positions[3 * i + 2]],
+]);
+
 void main() {
   test('an object: its longest side brought to 1 m, which the headset takes for an object', () {
     final random = math.Random(4);
@@ -619,6 +627,144 @@ void main() {
       expect(again.factor, first.factor);
       expect(again.turn, first.turn);
     }
+  });
+
+  test('the rule of the headset, ported: the percentiles 5 and 95 of each axis of one position in ceil(n / 65 536), an '
+      'object under 2.5 m (SplatPlacement.kt, SplatReducer.scan)', () {
+    // Twenty positions along x, 0 to 19: the values of rank 1 and 19, so 18
+    final line = Float32List.fromList([
+      for (var i = 0; i < 20; i++) ...[i.toDouble(), 0, 0],
+    ]);
+    expect(splatHeadsetSize(line), 18);
+    // 70 000 positions: the headset reads every second one (ceil(70 000 / 65 536)), all within a metre, while the
+    // others lie 10 m away on either side
+    final positions = Float32List(3 * 70000);
+    for (var i = 0; i < 70000; i++) {
+      positions[3 * i] = i.isEven ? (i ~/ 2 % 100) / 100 : ((i ~/ 2).isEven ? -10 : 10);
+      positions[3 * i + 1] = i.isEven ? (i ~/ 2 % 7) / 10 : 0;
+    }
+    expect(splatHeadsetSize(positions), closeTo(0.9, 0.011));
+    expect(splatHeadsetSeesObject(positions), isTrue);
+    // Without its sample, every position: 20 m, a place
+    expect(_headsetSize(positions), 20);
+    expect(splatHeadsetSeesObject(Float32List.fromList(positions.sublist(0, 3 * 60000))), isFalse);
+    // 2.5 m itself is a place, as isObject reads it (size < OBJECT_LIMIT)
+    final edge = Float32List.fromList([
+      for (var i = 0; i < 101; i++) ...[2.5 * (i - 5).clamp(0, 90) / 90, 0, 0],
+    ]);
+    expect(splatHeadsetSize(edge), closeTo(2.5, 1e-6));
+    expect(splatHeadsetSeesObject(edge), isFalse);
+    expect(splatHeadsetSize(Float32List(0)), isNull);
+    expect(splatHeadsetSeesObject(Float32List(0)), isFalse);
+  });
+
+  test('an object the headset would open as a place: its copy cropped to 1.5 m around the point its cameras look at, '
+      'the box and the desk under it, which the headset opens as an object (review of lot SPF2, M1)', () {
+    final scene = _desk();
+    final scale = splatScaleOf(
+      subject: SplatSubject.object,
+      positions: scene.positions,
+      cameras: scene.cameras,
+      axes: scene.axes,
+    );
+    expect(scale.rule, SplatScaleRule.lookedAt);
+    // As written: turned, then scaled (metres)
+    final written = _times(_turned(scene.positions, scale.turn!), scale.factor);
+    expect(splatHeadsetSeesObject(written), isFalse, reason: 'the whole scene, some ten metres');
+    final crop = splatObjectCrop(written, scale)!;
+    expect(crop.radius, closeTo(splatCropRadius * SplatV1.objectSize, 1e-9));
+    expect(crop.total, scene.positions.length ~/ 3);
+    final kept = _keptOf(written, crop.kept);
+    expect(crop.count, kept.length ~/ 3);
+    expect(crop.count, lessThan(crop.total));
+    expect(splatHeadsetSeesObject(kept), isTrue);
+    expect(crop.size, closeTo(splatHeadsetSize(kept)!, 1e-9));
+    // Every point of the box kept (the points of the desk first, then those of the box), and the desk under it
+    final desk = scene.desk.length ~/ 3;
+    final box = scene.object.length ~/ 3;
+    expect([for (var i = desk; i < desk + box; i++) crop.kept[i]], everyElement(1));
+    final deskKept = [for (var i = 0; i < desk; i++) crop.kept[i]].where((k) => k != 0).length;
+    expect(deskKept, greaterThan(desk ~/ 20), reason: 'the desk around the box, 12 cm of it');
+    // The monitor 28 cm behind the box, past 1.5 m once the box is at 1 m, left out
+    final turned = _turned(scene.positions, scale.turn!);
+    final centre = _turn(scale.turn!, scale.lookedAt!.toList());
+    for (var i = 0; i < crop.total; i++) {
+      final d = math.sqrt(
+        [
+          for (var j = 0; j < 3; j++) math.pow((turned[3 * i + j] - centre[j]) * scale.factor, 2),
+        ].fold(0.0, (a, b) => a + b),
+      );
+      expect(crop.kept[i], d <= crop.radius ? 1 : 0, reason: 'gaussian $i at $d m');
+    }
+  });
+
+  test('a crop at 1.5 m that the headset would still take for a place is made at 1.2 m, under which no side reaches '
+      '2.5 m', () {
+    // In metres as written: an object of 1 m among dense surroundings 1.45 m from its middle all around, and floaters
+    final random = math.Random(12);
+    final points = <double>[];
+    for (var i = 0; i < 500; i++) {
+      points.addAll([for (var k = 0; k < 3; k++) random.nextDouble() - 0.5]);
+    }
+    for (var i = 0; i < 9000; i++) {
+      final u = random.nextDouble() * 2 * math.pi;
+      final v = math.acos(2 * random.nextDouble() - 1);
+      points.addAll([1.45 * math.sin(v) * math.cos(u), 1.45 * math.cos(v), 1.45 * math.sin(v) * math.sin(u)]);
+    }
+    for (var i = 0; i < 1000; i++) {
+      points.addAll([for (var k = 0; k < 3; k++) random.nextDouble() * 30 - 15]);
+    }
+    final written = Float32List.fromList(points);
+    final scale = SplatScale(
+      factor: 1,
+      rule: SplatScaleRule.lookedAt,
+      subject: SplatSubject.object,
+      sizeBefore: 1,
+      sceneSize: _headsetSize(written),
+      lookedAt: Float64List.fromList([0, 0, 0]),
+    );
+    final wide = _keptOf(written, Uint8List.fromList([for (var i = 0; i < written.length ~/ 3; i++) 1]));
+    expect(splatHeadsetSeesObject(wide), isFalse);
+    final crop = splatObjectCrop(written, scale)!;
+    expect(crop.radius, closeTo(splatCropSureRadius * SplatV1.objectSize, 1e-9));
+    final kept = _keptOf(written, crop.kept);
+    expect(splatHeadsetSeesObject(kept), isTrue);
+    expect([for (var i = 0; i < 500; i++) crop.kept[i]], everyElement(1), reason: 'the object kept whole');
+    expect([for (var i = 500; i < 9500; i++) crop.kept[i]], everyElement(0), reason: 'the surroundings left out');
+  });
+
+  test('nothing cropped: a place, an object whose cameras look at no one point, an object whose whole scene the '
+      'headset already takes for an object', () {
+    final room = _room(unit: 0.5, seed: 3);
+    final place = splatScaleOf(subject: SplatSubject.place, positions: room.positions, cameras: room.cameras);
+    expect(splatObjectCrop(_times(room.positions, place.factor), place), isNull);
+    final desk = _desk();
+    final blind = splatScaleOf(subject: SplatSubject.object, positions: desk.positions, cameras: desk.cameras);
+    expect(blind.rule, SplatScaleRule.objectSize);
+    expect(splatObjectCrop(_times(desk.positions, blind.factor), blind), isNull);
+    // A vase of 1 m and nothing else, its cameras around it looking at it: the scene 1.3 m, an object as it is
+    final random = math.Random(5);
+    final metres = <List<double>>[
+      for (var i = 0; i < 6000; i++)
+        [random.nextDouble() * 0.6 - 0.3, random.nextDouble(), random.nextDouble() * 0.6 - 0.3],
+    ];
+    final centres = [
+      for (var k = 0; k < 40; k++) [1.2 * math.cos(k * math.pi / 20), 0.5, 1.2 * math.sin(k * math.pi / 20)],
+    ];
+    final vase = _toColmap(metres, centres, unit: 0.1);
+    final axes = Float64List.fromList([
+      for (var k = 0; k < 40; k++) ...[-math.cos(k * math.pi / 20), 0.0, -math.sin(k * math.pi / 20)],
+    ]);
+    final alone = splatScaleOf(
+      subject: SplatSubject.object,
+      positions: vase.positions,
+      cameras: vase.cameras,
+      axes: axes,
+    );
+    expect(alone.rule, SplatScaleRule.lookedAt);
+    final written = _times(alone.turn == null ? vase.positions : _turned(vase.positions, alone.turn!), alone.factor);
+    expect(splatHeadsetSeesObject(written), isTrue);
+    expect(splatObjectCrop(written, alone), isNull);
   });
 
   test('an object on a shelf against a wall: the shelf, nearer to the upright of COLMAP, is the plane it stands on '

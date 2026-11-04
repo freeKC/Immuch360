@@ -844,9 +844,10 @@ class _JobRowState extends ConsumerState<_JobRow> {
 
   /// "Done: 150,000 gaussians, 3.4 MiB, from 150 of 150 photos" (of frames for a video), the images COLMAP could not
   /// place when they are more than one in ten (the scene said maybe incomplete instead when they are more than half),
-  /// the photos left out as blurred (the dialog cannot know them, they are found while the photos are prepared, and the
-  /// done line counts only the photos kept), the blurred frames of a video when they are many, and the .ply kept for
-  /// other 3D apps, named as the .spz written
+  /// an object cropped for the headset (how many of its gaussians the .spz kept, the .ply whole), the photos left out
+  /// as blurred (the dialog cannot know them, they are found while the photos are prepared, and the done line counts
+  /// only the photos kept), the blurred frames of a video when they are many, and the .ply kept for other 3D apps,
+  /// named as the .spz written
   List<Widget> _splatDone(Translations t, SplatResultDetails details, String? written, TextStyle secondary) {
     final bytes = written == null ? null : ref.watch(splatFileSizeProvider(written)).valueOrNull;
     final size = bytes == null ? '…' : formatBytes(bytes);
@@ -881,6 +882,15 @@ class _JobRowState extends ConsumerState<_JobRow> {
       // An object with no plane found under it keeps the upright of COLMAP, which may leave it on its side (lot SPF2)
       if (details.subject == SplatSubject.object && details.upright == SplatUpright.imageOrientation)
         Text(t.ai_immersive_splat_upright_images, key: const Key('ai_job_splat_upright'), style: secondary),
+      // The headset opens a scene of more than 2.5 m as a place: an object's .spz keeps what is around it (lot SPF2)
+      if (details.cropped > 0)
+        Text(
+          details.plyBytes == null
+              ? t.ai_immersive_splat_cropped(kept: details.gaussians, total: details.sceneGaussians)
+              : t.ai_immersive_splat_cropped_ply(kept: details.gaussians, total: details.sceneGaussians),
+          key: const Key('ai_job_splat_cropped'),
+          style: secondary,
+        ),
       if (!details.fromVideo && details.blurred > 0)
         Text(
           t.ai_immersive_splat_left_out(count: details.blurred, reason: t.ai_immersive_splat_left_out_blurred),

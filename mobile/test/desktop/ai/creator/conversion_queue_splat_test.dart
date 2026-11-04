@@ -109,6 +109,7 @@ class _ScriptedSplat implements ImmersiveEngine {
         upright: job.settings.subject == SplatSubject.object
             ? SplatUpright.supportPlane
             : SplatUpright.imageOrientation,
+        cropped: job.settings.subject == SplatSubject.object ? 88000 : 0,
       ),
       bytesWritten: 3,
       stageTimes: const {
@@ -362,7 +363,7 @@ void main() {
     });
 
     test('a .ply that cannot be saved: the scene is done all the same, the .ply said missing, how it was set upright '
-        'kept', () async {
+        'and how much of it the .spz left out kept', () async {
       container = containerWith(_ScriptedSplat());
       output.failCompanion = ImmersiveErrorCode.diskFull;
       final id = addSplat(photos(3), settings: const SplatSettings(subject: SplatSubject.object, keepPly: true));
@@ -372,6 +373,7 @@ void main() {
       expect(job(id).message, contains('.ply could not be saved'));
       expect((job(id).details! as SplatResultDetails).plyBytes, isNull);
       expect((job(id).details! as SplatResultDetails).upright, SplatUpright.supportPlane);
+      expect((job(id).details! as SplatResultDetails).cropped, 88000);
       expect(output.discarded, hasLength(1), reason: 'the .part of the .ply');
     });
 

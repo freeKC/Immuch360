@@ -858,6 +858,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
               blurred: details.blurred,
               shDegree: details.shDegree,
               upright: details.upright,
+              cropped: details.cropped,
             );
           }
         }

@@ -297,14 +297,29 @@ void main() {
 
       expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
       final details = result.details! as SplatResultDetails;
-      expect((details.gaussians, details.images, details.placed, details.subject), (2000, 24, 24, SplatSubject.object));
+      expect(
+        (details.sceneGaussians, details.images, details.placed, details.subject),
+        (2000, 24, 24, SplatSubject.object),
+      );
       expect(details.plyBytes, File(splat.plyPartPath!).lengthSync());
       expect(result.bytesWritten, File(splat.partPath).lengthSync());
       final bytes = File(splat.partPath).readAsBytesSync();
       final head = probeSplatHead(Uint8List.sublistView(bytes, 0, bytes.length.clamp(0, splatHeadBytes)), bytes.length);
       expect(head, isA<SplatHead>());
       head as SplatHead;
-      expect((head.format, head.formatVersion, head.gaussians, head.shDegree), (SplatFormat.spz, 2, 2000, 3));
+      // The scene of the fakes, an object whose whole the headset would open as a place: its .spz cropped around the
+      // point its cameras look at, said, the .ply whole (review of lot SPF2)
+      expect(details.cropped, greaterThan(0));
+      expect(
+        (head.format, head.formatVersion, head.gaussians, head.shDegree),
+        (SplatFormat.spz, 2, details.gaussians, 3),
+      );
+      final ply = File(splat.plyPartPath!).readAsBytesSync();
+      expect((probeSplatHead(ply, ply.length) as SplatHead).gaussians, 2000);
+      expect(
+        said.where((line) => line.contains('cropped to the object for the headset: ${details.gaussians} of 2000')),
+        hasLength(1),
+      );
       // The steps of a scene of photos, in their order, never going back
       final stages = [
         for (final (index, entry) in progress.indexed)

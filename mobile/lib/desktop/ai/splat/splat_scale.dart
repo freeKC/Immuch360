@@ -40,13 +40,19 @@
 // * measured on the gaussians within [splatLookedAtRadius] times the distance of the cameras of the point looked at,
 //   above the plane when there is one: their longest side between the percentiles 5 and 95, once turned. On the
 //   repeater: 1.9 units, the desk, the keyboard and the monitor left out; so the repeater at about 1 m, and the whole
-//   scene with it (about ten metres: the headset opens it as a place, around the user, SplatPlacement.kt).
+//   scene with it (about ten metres).
 //
 // The plane it stands on is, among those that hold (one per orientation, the most populated of the planes within
 // [splatSupportSameAngle] of one another), the one nearest to the upright of COLMAP, unless the most populated of all
 // holds at least twice as many positions (the review of lot SPF2): a wall 15 cm behind an object filmed from the front
 // held 30 % of the gaussians against 15 % for the shelf under it, and laid the object down where IMAGE-ORIENTATION had
 // it right; while FreeKC's desk, 94 degrees off that upright, is the only plane under his repeater.
+//
+// A whole scene of ten metres the headset opens as a place, around the user (SplatPlacement.kt: an object under 2.5 m
+// on its largest side, the rule [splatHeadsetSize] ports). So the copy for the headset of an object whose whole scene
+// the headset would take for a place keeps only the gaussians within [splatCropRadius] times the size measured of the
+// point looked at ([splatObjectCrop]: 1.5 m around the repeater, the repeater and the desk under it, 31 to 32 % of the
+// gaussians measured by the review), the .ply keeping the whole scene; 1.2 m when the headset would still see a place.
 //
 // Pure Dart, tested on synthetic clouds by splat_scale_test.dart.
 
@@ -181,6 +187,108 @@ const splatLookedAtAheadShare = 0.9;
 /// look at, a hundredth of all of them at least
 const splatLookedAtRadius = 0.5;
 const splatLookedAtMinShare = 0.01;
+
+/// The rule of the headset that places a splat (SplatPlacement.kt): an object to look at under
+/// [splatHeadsetObjectLimit] metres on its largest side, between the percentiles 5 and 95 of each axis of the positions
+/// it samples, one in ceil(n / [splatHeadsetSampleLimit]) from the first (SplatReducer.scan); a place to stand in
+/// otherwise
+const splatHeadsetObjectLimit = 2.5;
+const splatHeadsetSampleLimit = 65536;
+
+/// The copy for the headset of an object it would open as a place keeps the gaussians within [splatCropRadius] times
+/// the size measured of the point its cameras look at (1.5 m around an object of 1 m); within [splatCropSureRadius]
+/// times when the headset would still see a place (1.2 m: no side of what is kept can then reach 2.5 m)
+const splatCropRadius = 1.5;
+const splatCropSureRadius = 1.2;
+
+/// The largest side the headset measures of a splat whose gaussians have [positions] as written (x y z of each,
+/// metres), see [splatHeadsetObjectLimit]; null without any, or with one that is not finite
+double? splatHeadsetSize(Float32List positions) {
+  final n = positions.length ~/ 3;
+  final step = math.max(1, (n + splatHeadsetSampleLimit - 1) ~/ splatHeadsetSampleLimit);
+  return _longestSide(positions, step: step);
+}
+
+/// Whether the headset opens a splat whose gaussians have [positions] as written as an object in front of the user
+bool splatHeadsetSeesObject(Float32List positions) {
+  final size = splatHeadsetSize(positions);
+  return size != null && size < splatHeadsetObjectLimit;
+}
+
+/// What the copy for the headset keeps of an object ([splatObjectCrop]): the gaussians whose entry of [kept] is 1,
+/// [count] of the [total] of the scene, those within [radius] metres of the point its cameras look at, which the
+/// headset measures [size] metres on their largest side
+final class SplatCrop {
+  const SplatCrop({required this.kept, required this.count, required this.radius, required this.size});
+
+  final Uint8List kept;
+  final int count;
+  final double radius;
+  final double size;
+
+  int get total => kept.length;
+
+  /// What the log of the app says of it
+  String get said =>
+      'cropped to the object for the headset: $count of $total gaussians, within ${radius.toStringAsFixed(2)} m of '
+      'the point looked at, ${size.toStringAsFixed(2)} m';
+}
+
+/// The crop of the copy for the headset of a scene whose gaussians have [positions] as written (turned and scaled by
+/// [scale]: x y z of each, metres): for an object measured where its cameras look ([SplatScaleRule.lookedAt]) and
+/// that the headset would open as a place, the gaussians within [splatCropRadius] times its size of the point looked
+/// at, or [splatCropSureRadius] times when the headset would still see a place (see the top of this file); null when
+/// nothing is cropped, or when so few would be kept (under 30) that the scene is better whole
+SplatCrop? splatObjectCrop(Float32List positions, SplatScale scale) {
+  final point = scale.lookedAt;
+  if (scale.subject != SplatSubject.object || scale.rule != SplatScaleRule.lookedAt || point == null) {
+    return null;
+  }
+  if (splatHeadsetSize(positions) case final size? when size < splatHeadsetObjectLimit) {
+    return null;
+  }
+  final turn = scale.turn;
+  final centre = [
+    for (var i = 0; i < 3; i++)
+      scale.factor *
+          (turn == null ? point[i] : turn[3 * i] * point[0] + turn[3 * i + 1] * point[1] + turn[3 * i + 2] * point[2]),
+  ];
+  final n = positions.length ~/ 3;
+  SplatCrop? within(double radius) {
+    final kept = Uint8List(n);
+    final r2 = radius * radius;
+    var count = 0;
+    for (var i = 0; i < n; i++) {
+      final dx = positions[3 * i] - centre[0];
+      final dy = positions[3 * i + 1] - centre[1];
+      final dz = positions[3 * i + 2] - centre[2];
+      if (dx * dx + dy * dy + dz * dz <= r2) {
+        kept[i] = 1;
+        count++;
+      }
+    }
+    if (count < 30) {
+      return null;
+    }
+    final inside = Float32List(3 * count);
+    var at = 0;
+    for (var i = 0; i < n; i++) {
+      if (kept[i] != 0) {
+        inside.setRange(at, at + 3, positions, 3 * i);
+        at += 3;
+      }
+    }
+    final size = splatHeadsetSize(inside);
+    return size == null ? null : SplatCrop(kept: kept, count: count, radius: radius, size: size);
+  }
+
+  final measured = scale.sizeBefore * scale.factor;
+  final crop = within(splatCropRadius * measured);
+  if (crop == null || crop.size < splatHeadsetObjectLimit) {
+    return crop;
+  }
+  return within(splatCropSureRadius * measured);
+}
 
 /// The scale of the splat whose gaussians have [positions] (x y z of each) and whose cameras have [cameras] (x y z of
 /// each centre, in the same frame) and look along [axes] (x y z of each, unit), for what the user filmed ([subject])
@@ -620,10 +728,10 @@ List<double>? _solve(List<double> m, List<double> b) {
 }
 
 /// The largest extent of [positions] between the percentiles SplatV1.boundsLowPercentile and boundsHighPercentile of
-/// each axis, as the headset takes them (the value of rank max(1, (P * N + 99) / 100)); null without positions or with
-/// one that is not finite
-double? _longestSide(Float32List positions) {
-  final n = positions.length ~/ 3;
+/// each axis, as the headset takes them (the value of rank max(1, (P * N + 99) / 100)), of one position in [step] from
+/// the first; null without positions or with one that is not finite
+double? _longestSide(Float32List positions, {int step = 1}) {
+  final n = (positions.length ~/ 3 + step - 1) ~/ step;
   if (n == 0) {
     return null;
   }
@@ -631,7 +739,7 @@ double? _longestSide(Float32List positions) {
   final values = Float64List(n);
   for (var axis = 0; axis < 3; axis++) {
     for (var i = 0; i < n; i++) {
-      values[i] = positions[3 * i + axis];
+      values[i] = positions[3 * i * step + axis];
       if (!values[i].isFinite) {
         return null;
       }

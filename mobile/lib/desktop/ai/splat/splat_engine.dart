@@ -411,7 +411,8 @@ class SplatEngine implements ImmersiveEngine {
       report(ImmersiveStage.splatCopy, 1);
       _log.info(
         'Splat scene ${job.id}: ${written.gaussians} gaussians (${written.dropped} dropped), '
-        '${found.placed} of ${found.images} images placed, ${written.scale.note}; ${written.scale.said}',
+        '${found.placed} of ${found.images} images placed, ${written.scale.note}; ${written.scale.said}'
+        '${written.crop == null ? '' : '; ${written.crop!.said}, the .ply whole'}',
       );
       done = true;
       final made = work;
@@ -429,6 +430,7 @@ class SplatEngine implements ImmersiveEngine {
           shDegree: written.shDegree,
           plyBytes: written.plyBytes,
           upright: written.scale.upright,
+          cropped: written.cropped,
         ),
         bytesWritten: written.spzBytes,
         stageTimes: times,

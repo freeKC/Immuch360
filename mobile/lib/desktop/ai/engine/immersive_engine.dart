@@ -672,11 +672,12 @@ final class StereoPanoramaResultDetails extends ImmersiveResultDetails {
   final double filledFraction;
 }
 
-/// A splat scene: its [gaussians] (the bytes of the .spz are those of ImmersiveResult.bytesWritten), the [images] it was
-/// trained from and how many of them COLMAP [placed] ("Done: 150,000 gaussians, 3.6 MB, from 150 of 150 photos"; "24 of
-/// 150 photos could not be placed"), photos or frames of a video ([fromVideo]), the frames left out as [blurred], the
-/// scale written ([scale], metres a unit of COLMAP) for what was filmed ([subject]), how it was set [upright], and the
-/// size of the .ply when one was written
+/// A splat scene: its [gaussians] in the .spz (whose bytes are those of ImmersiveResult.bytesWritten), the [images] it
+/// was trained from and how many of them COLMAP [placed] ("Done: 150,000 gaussians, 3.6 MB, from 150 of 150 photos";
+/// "24 of 150 photos could not be placed"), photos or frames of a video ([fromVideo]), the frames left out as
+/// [blurred], the scale written ([scale], metres a unit of COLMAP) for what was filmed ([subject]), how it was set
+/// [upright], the gaussians of an object's scene the .spz left out around it ([cropped]), and the size of the .ply when
+/// one was written (the whole scene)
 final class SplatResultDetails extends ImmersiveResultDetails {
   const SplatResultDetails({
     required this.gaussians,
@@ -689,6 +690,7 @@ final class SplatResultDetails extends ImmersiveResultDetails {
     this.shDegree = SplatV1.shDegree,
     this.plyBytes,
     this.upright = SplatUpright.imageOrientation,
+    this.cropped = 0,
   });
 
   final int gaussians;
@@ -703,6 +705,13 @@ final class SplatResultDetails extends ImmersiveResultDetails {
 
   /// How the scene was set upright: an object on the plane under it, or as COLMAP turned it
   final SplatUpright upright;
+
+  /// The gaussians of the scene of an object the .spz left out, so that the headset opens it as an object in front of
+  /// the user (review of lot SPF2); 0 when the .spz holds the whole scene
+  final int cropped;
+
+  /// The gaussians of the whole scene, those of the .ply when one was written
+  int get sceneGaussians => gaussians + cropped;
 
   /// The images COLMAP could not place, left out of the scene
   int get leftOut => images - placed;

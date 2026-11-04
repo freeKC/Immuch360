@@ -1,7 +1,9 @@
 // The last step of a splat scene (lot SP3): the export of Brush read, scaled and written as the SPZ for the headset
 // and, when asked, the PLY for other 3D apps, in an isolate; the two files hold the same gaussians and the probe of
-// the headset takes both. 150 000 gaussians of degree 3 go through in seconds (under 3 s on the computer of the
-// measure, compiled; the bound here only catches a step gone slow).
+// the headset takes both, but for an object whose whole scene the headset would open as a place: its SPZ is cropped
+// around the point its cameras look at, the PLY kept whole (review of lot SPF2). 150 000 gaussians of degree 3 go
+// through in seconds (under 3 s on the computer of the measure, compiled; the bound here only catches a step gone
+// slow).
 
 import 'dart:io';
 import 'dart:math' as math;
@@ -17,6 +19,16 @@ import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/splat/spz_v2_writer.dart';
 
 import '../../../domain/splat/splat_test_clouds.dart';
+
+/// The gaussians of [cloud] whose entry of [kept] is not 0, in their order
+SplatCloud _keptRows(SplatCloud cloud, Uint8List kept) => SplatCloud(
+  count: kept.where((k) => k != 0).length,
+  shDegree: cloud.shDegree,
+  rows: Float32List.fromList([
+    for (var i = 0; i < cloud.count; i++)
+      if (kept[i] != 0) ...cloud.rows.sublist(i * cloud.stride, (i + 1) * cloud.stride),
+  ]),
+);
 
 /// [count] gaussians of degree 3 as Brush 0.3.0 exports them, on the floor and the walls of a room of 6 x 4 x 2.5 m in
 /// units of [unit] metres (y down, the floor at y = 0), and the centres of 40 cameras carried 1.5 m above the floor
@@ -211,13 +223,15 @@ void main() {
     expect(written.plyBytes, isNull);
     expect(folder.listSync().map((e) => e.uri.pathSegments.last).toSet(), {'export.ply', 'vase_splat.spz.part'});
     expect(written.scale.rule, SplatScaleRule.objectSize);
+    expect((written.crop, written.cropped), (null, 0), reason: 'no point looked at: the whole scene at 1 m');
+    expect(written.gaussians, 500);
     expect(written.shDegree, 1);
     final spz = File('${folder.path}/vase_splat.spz.part').readAsBytesSync();
     expect((probeSplatHead(spz, spz.length) as SplatHead).shDegree, 1);
   });
 
   test('an object lying on its side: both files set upright on its desk, the box standing on it at 1 m, the note '
-      'saying so', () async {
+      'saying so; the SPZ cropped around the box, which the headset opens as an object, the PLY whole', () async {
     final scene = _brushDesk(6000);
     final brush = File('${folder.path}/export_20000.ply')..writeAsBytesSync(scene.ply);
     final written = await writeSplatFiles(
@@ -250,8 +264,27 @@ void main() {
     }
 
     expect([side(0), side(1), side(2)].reduce(math.max), closeTo(SplatV1.objectSize, 0.1));
-    // The SPZ holds the same gaussians as the PLY
-    expect(gzip.decode(File('${folder.path}/repeteur_splat.spz.part').readAsBytesSync()), spzV2Payload(ply));
+    // The PLY whole, some ten metres: the headset would open it as a place
+    expect(ply.count, 6000);
+    expect(splatHeadsetSeesObject(positions), isFalse);
+    // The SPZ: the gaussians of the PLY within 1.5 m of the box, all of the box, which the headset opens as an object
+    final crop = written.crop!;
+    expect(crop.radius, closeTo(1.5, 1e-9));
+    expect(written.gaussians, crop.count);
+    expect(written.cropped, 6000 - crop.count);
+    expect(written.cropped, greaterThan(0));
+    expect([for (var i = scene.desk; i < scene.desk + scene.box; i++) crop.kept[i]], everyElement(1));
+    final spzBytes = File('${folder.path}/repeteur_splat.spz.part').readAsBytesSync();
+    expect(written.spzBytes, spzBytes.length);
+    expect(gzip.decode(spzBytes), spzV2Payload(_keptRows(ply, crop.kept)));
+    final spz = DecodedSpz(Uint8List.fromList(gzip.decode(spzBytes)));
+    expect(spz.count, crop.count);
+    expect(splatHeadsetSeesObject(Float32List.fromList(spz.positions)), isTrue, reason: 'OBJECT_LIMIT 2.5 m');
+    expect(
+      (probeSplatHead(spzBytes, spzBytes.length) as SplatHead).gaussians,
+      crop.count,
+      reason: 'what the headset reads',
+    );
   });
 
   test('an export the headset could not read, or none, fails with why', () async {
