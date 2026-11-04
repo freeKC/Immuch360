@@ -105,6 +105,9 @@ String splatAnswerKey(String name, int fileBytes) => 'splatFrames:${fileBytes > 
 /// the dedicated chip asked on a Windows computer with two)
 String splatRendererKey({required bool highPerformance}) => 'renderer:${highPerformance ? 'high' : 'default'}';
 
+/// The key of the dedicated card a renderer names, kept with its memory
+String splatCardKey(String renderer) => 'card:$renderer';
+
 /// The answers to the page's offer per file and the renderer the page last drew with (see the top of this file), in
 /// the JSON file [file] gives; read once, each change written at once
 class SplatAnswerStore {
@@ -155,6 +158,25 @@ class SplatAnswerStore {
       return;
     }
     await _write(splatRendererKey(highPerformance: highPerformance), name);
+  }
+
+  /// The dedicated card the list of the cards found for [renderer], with its memory, null when none was kept: the
+  /// next run needs no list (review of 4 November 2026)
+  Future<SplatGpu?> cardOf(String renderer) async {
+    final value = (await _load())[splatCardKey(renderer)];
+    if (value is! Map || value['memory'] is! int) {
+      return null;
+    }
+    final name = value['name'];
+    return SplatGpu(SplatGpuKind.dedicated, name: name is String ? name : null, memory: value['memory'] as int);
+  }
+
+  /// Remembers [card] as the dedicated card [renderer] names, when it changed
+  Future<void> writeCard(String renderer, SplatGpu card) async {
+    if (card.kind != SplatGpuKind.dedicated || card.memory == null || await cardOf(renderer) == card) {
+      return;
+    }
+    await _write(splatCardKey(renderer), {'name': card.name, 'memory': card.memory});
   }
 
   Future<void> _write(String key, Object? value, {bool told = false}) async {

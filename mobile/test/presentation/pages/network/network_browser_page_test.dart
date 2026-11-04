@@ -14,6 +14,7 @@ import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
+import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
@@ -30,6 +31,7 @@ import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -1089,6 +1091,41 @@ void main() {
 
       expect(find.text('splat nas /cash.spz 65536'), findsNothing, reason: 'no page on the way');
       expect(viewings.shown, [('nas', '/cash.spz', 150000)]);
+    });
+
+    testWidgets('on a computer, a tap on a splat says the computer is read, then opens it', (tester) async {
+      // Review of 4 November 2026: a tap showed nothing while the chip was read, up to 12 s
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final viewings = _Viewings();
+      final known = Completer<SplatComputer>();
+      await pumpBrowser(
+        tester,
+        overrides: [
+          appConfigProvider.overrideWithValue(const AppConfig()),
+          splatViewerServiceProvider.overrideWithValue(viewings),
+          splatComputerReaderProvider.overrideWithValue(() => known.future),
+          splatAnswerStoreProvider.overrideWithValue(
+            SplatAnswerStore(() async => throw const FileSystemException('no support folder')),
+          ),
+        ],
+      );
+
+      await tester.tap(splatTileOf('cash.spz'));
+      for (var i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.byKey(splatComputerReadingKey), findsOneWidget);
+      known.complete(
+        const SplatComputer(
+          gpu: SplatGpu(SplatGpuKind.dedicated, memory: 8 << 30),
+          physicalMemory: 16 << 30,
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(splatComputerReadingKey), findsNothing);
+      expect(viewings.shown, [('nas', '/cash.spz', 47819)]);
+      debugDefaultTargetPlatformOverride = null;
     });
 
     testWidgets('lists none on a TV, which has no splat viewer', (tester) async {

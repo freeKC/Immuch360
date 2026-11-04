@@ -460,19 +460,26 @@ void main() {
           debugDefaultTargetPlatformOverride = TargetPlatform.windows;
           addTearDown(() => debugDefaultTargetPlatformOverride = null);
           final known = Completer<SplatComputer>();
-          await pumpPage(
+          // Not settled: the spinner turns for as long as the chip is read
+          await pumpNetworkRouter(
             tester,
-            '/huge.spz',
-            with_: [...flat(), splatComputerReaderProvider.overrideWithValue(() => known.future)],
+            home: SplatPage(sourceId: _source.id, path: '/huge.spz', size: share.files['/huge.spz']!.length),
+            overrides: [...flat(), splatComputerReaderProvider.overrideWithValue(() => known.future)],
+            settle: false,
           );
-          await tester.pump();
+          for (var i = 0; i < 5; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
 
           expect(find.byKey(exploreSplatButtonKey), findsNothing);
           expect(find.byKey(splatRefusalKey), findsNothing, reason: 'never "too large" first');
+          // Review of 4 November 2026: the page said nothing while the chip was read, up to 12 s
+          expect(find.byKey(splatComputerReadingKey), findsOneWidget);
           known.complete(rtx);
           await tester.pumpAndSettle();
           expect(find.byKey(exploreSplatButtonKey), findsOneWidget);
           expect(find.byKey(splatRefusalKey), findsNothing);
+          expect(find.byKey(splatComputerReadingKey), findsNothing);
           debugDefaultTargetPlatformOverride = null;
         });
 

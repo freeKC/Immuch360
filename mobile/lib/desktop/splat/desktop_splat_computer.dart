@@ -156,11 +156,34 @@ class DesktopSplatComputer {
     } catch (error) {
       _log.fine('No renderer kept: $error');
     }
-    // A chip the page named as one that shares the memory needs no list: only a dedicated card's memory is read there
+    // A card the list found for this renderer in an earlier run is kept with it: no list needed (review of 4 November
+    // 2026). A chip the page named as one that shares the memory needs none either: only a dedicated card's memory is
+    // read there
+    SplatGpu? kept;
+    if (renderer != null && splatGpuKindOfRenderer(renderer) == SplatGpuKind.dedicated) {
+      try {
+        kept = await _answers.cardOf(renderer);
+      } catch (error) {
+        _log.fine('No card kept: $error');
+      }
+    }
     final needsCards =
-        _system != SplatDesktopSystem.macos && splatGpuKindOfRenderer(renderer) != SplatGpuKind.integrated;
+        kept == null &&
+        _system != SplatDesktopSystem.macos &&
+        splatGpuKindOfRenderer(renderer) != SplatGpuKind.integrated;
     final cards = needsCards ? await (_cards ??= _listCards()) : null;
-    final gpu = splatGpuOf(system: _system, renderer: renderer, cards: cards, highPerformance: highPerformance);
+    final gpu = kept ?? splatGpuOf(system: _system, renderer: renderer, cards: cards, highPerformance: highPerformance);
+    // The card the renderer itself names, kept for the next run
+    if (kept == null && renderer != null && gpu.kind == SplatGpuKind.dedicated && gpu.memory != null) {
+      final named = _cardNamedBy(renderer, [...?cards?.adapters]);
+      if (named != null && named.name == gpu.name) {
+        try {
+          await _answers.writeCard(renderer, gpu);
+        } catch (error) {
+          _log.fine('Card not kept: $error');
+        }
+      }
+    }
     final computer = SplatComputer(gpu: gpu, physicalMemory: _memory.read().physical);
     final told = '$computer';
     if (told != _told) {

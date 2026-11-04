@@ -18,6 +18,7 @@ import 'package:immich_mobile/domain/services/splat_viewer_files.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -146,6 +147,39 @@ Future<SplatFrameAnswer?> _answerOf(WidgetRef ref, SplatDeviceClass? device, Str
   }
 }
 
+/// [reading] (what a computer gives the splat viewer), a spinner over the page until it comes when it does not come
+/// at once (the cards listed at the first splat of a run, up to 12 s; review of 4 November 2026)
+Future<T> _whileRead<T>(BuildContext context, Future<T> reading) async {
+  var done = false;
+  var shown = false;
+  final navigator = Navigator.of(context, rootNavigator: true);
+  unawaited(
+    Future<void>.delayed(Duration.zero, () {
+      if (done || !context.mounted) {
+        return;
+      }
+      shown = true;
+      unawaited(
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          useRootNavigator: true,
+          builder: (context) => splatComputerReading(),
+        ).whenComplete(() => shown = false),
+      );
+    }),
+  );
+  try {
+    return await reading;
+  } finally {
+    done = true;
+    if (shown) {
+      shown = false;
+      navigator.pop();
+    }
+  }
+}
+
 /// Opens the splat file of [key]: in the splat viewer at once when this device shows it, on its page otherwise
 Future<void> openSplatFile(BuildContext context, WidgetRef ref, SplatFileKey key) async {
   if (ref.read(splatFlatViewerProvider) && ref.read(splatViewerServiceProvider) != null) {
@@ -154,7 +188,10 @@ Future<void> openSplatFile(BuildContext context, WidgetRef ref, SplatFileKey key
       final size = key.size ?? (key.sourceId == null ? File(key.path).lengthSync() : null);
       final name = key.path.split(RegExp(r'[/\\]')).where((part) => part.isNotEmpty).lastOrNull ?? key.path;
       final device = ref.read(splatDeviceClassProvider);
-      final computer = await ref.read(splatComputerNowProvider)();
+      if (!context.mounted) {
+        return;
+      }
+      final computer = await _whileRead(context, ref.read(splatComputerNowProvider)());
       final answer = await _answerOf(ref, device, name, size);
       final verdict = _verdict(
         device,

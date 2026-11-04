@@ -26,6 +26,19 @@ const exploreSplatButtonKey = Key('splat_explore');
 /// The key of the reason under a greyed button
 const splatRefusalKey = Key('splat_refusal');
 
+/// The spinner shown while a computer's graphics chip and memory are read, before the gate can answer (a list of the
+/// cards at the first splat of a run, up to 12 s; review of 4 November 2026)
+const splatComputerReadingKey = Key('splat_computer_reading');
+
+/// [splatComputerReadingKey]'s spinner
+Widget splatComputerReading() => const Center(
+  key: splatComputerReadingKey,
+  child: Padding(
+    padding: EdgeInsets.all(8),
+    child: SizedBox.square(dimension: 32, child: CircularProgressIndicator()),
+  ),
+);
+
 /// The reason a splat is not offered on this device, as the button says it greyed: [onHeadset] false for a computer,
 /// a phone or a tablet
 String splatRefusalText(Translations t, SplatGateVerdict verdict, String locale, {bool onHeadset = true}) =>
@@ -118,10 +131,13 @@ class SplatButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Nothing until the headset is read, so that a splat it cannot show is never offered first
+    // Nothing until the headset is read, so that a splat it cannot show is never offered first; a computer shows that
+    // it reads its chip
     final verdict = splatVerdictOf(ref, probe, name: name, fileBytes: fileBytes);
     if (verdict == null) {
-      return const SizedBox.shrink();
+      return ref.watch(splatDeviceClassProvider) == SplatDeviceClass.computer
+          ? splatComputerReading()
+          : const SizedBox.shrink();
     }
     final request = verdict.request;
     final locale = Localizations.localeOf(context).toLanguageTag();

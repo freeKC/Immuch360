@@ -185,6 +185,48 @@ void main() {
       },
     );
 
+    test('the card a renderer named is kept with it: the next run needs no list of the cards', () async {
+      // Review of 4 November 2026: the cards were listed at the first splat of every run, up to 12 s
+      await answers.writeRenderer(rtxRenderer, highPerformance: true);
+      final first = FakeGpuProbe.of(FakeGpuReports.twoCards);
+      DesktopSplatComputer reader(GpuProbe probe) => DesktopSplatComputer(
+        probe: probe,
+        answers: answers,
+        highPerformance: () => true,
+        memory: const _Memory(16 << 30),
+        system: SplatDesktopSystem.windows,
+      );
+      expect((await reader(first).read()).gpu, rtx);
+      expect(first.calls, 1);
+      final next = FakeGpuProbe.of(FakeGpuReports.twoCards);
+      final again = SplatAnswerStore(() async => File('${folder.path}/answers.json'));
+      expect(
+        (await DesktopSplatComputer(
+          probe: next,
+          answers: again,
+          highPerformance: () => true,
+          memory: const _Memory(16 << 30),
+          system: SplatDesktopSystem.windows,
+        ).read()).gpu,
+        rtx,
+      );
+      expect(next.calls, 0, reason: 'read back from the answers of the last run');
+      // Another renderer (another card, another driver) lists the cards again
+      await again.writeRenderer(
+        'ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x00002520) Direct3D11)',
+        highPerformance: true,
+      );
+      final other = FakeGpuProbe.of(FakeGpuReports.twoCards);
+      await DesktopSplatComputer(
+        probe: other,
+        answers: again,
+        highPerformance: () => true,
+        memory: const _Memory(16 << 30),
+        system: SplatDesktopSystem.windows,
+      ).read();
+      expect(other.calls, 1);
+    });
+
     test(
       'a probe that fails leaves the chip unknown, which keeps the cap of the chips that share the memory',
       () async {
