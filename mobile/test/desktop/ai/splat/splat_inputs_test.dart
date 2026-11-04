@@ -54,13 +54,26 @@ class _Member implements SplatMember {
   }
 }
 
-/// Twenty-four photos of a walk, 320 x 240, one camera
-List<_Member> _walk(int count, {Set<int> blurred = const {}, List<String>? log, TestCamera? camera}) => [
+/// Twenty-four photos of a walk, 320 x 240, one camera; those of [plain] sharp but of a wall with few edges (cells of
+/// 40 pixels instead of 3)
+List<_Member> _walk(
+  int count, {
+  Set<int> blurred = const {},
+  Set<int> plain = const {},
+  List<String>? log,
+  TestCamera? camera,
+}) => [
   for (var step = 0; step < count; step++)
     _Member(
       'IMG_${1000 + step}.JPG',
       testJpeg(
-        texturedRgba(320, 240, shift: step * 5, blur: blurred.contains(step) ? 2 : 0),
+        texturedRgba(
+          320,
+          240,
+          shift: step * 5,
+          blur: blurred.contains(step) ? 2 : 0,
+          cell: plain.contains(step) ? 40 : 3,
+        ),
         320,
         240,
         camera: camera,
@@ -281,6 +294,19 @@ void main() {
       expect(inputs.images.map((image) => image.source), isNot(contains('IMG_1005.JPG')));
       final files = Directory(images()).listSync(recursive: true).whereType<File>();
       expect(files, hasLength(22));
+    });
+
+    test('sharp photos of a plain wall, far under the median of the others, are kept as their neighbours keep them: no '
+        'floor of the median of all for photos (review of lot SPF2, m1)', () async {
+      final members = _walk(24, plain: {8, 9, 10, 11, 12, 13, 14});
+      final inputs = await prepareSplatPhotos(members, imagesFolder: images(), cancel: cancel);
+      final sources = inputs.images.map((image) => image.source).toList();
+      // Inside the run each plain photo has plain neighbours; its first and last stand beside textured ones
+      for (final step in [10, 11, 12]) {
+        expect(sources, contains('IMG_${1000 + step}.JPG'), reason: 'photo $step');
+      }
+      expect(inputs.blurred, lessThanOrEqualTo(2));
+      expect(inputs.images, hasLength(24 - inputs.blurred));
     });
 
     test('a photo the JPEG codec does not read is decoded by the engine, already upright', () async {

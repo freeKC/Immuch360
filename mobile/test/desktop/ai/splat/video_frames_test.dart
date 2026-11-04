@@ -202,6 +202,24 @@ void main() {
       },
     );
 
+    test('a run of blurred windows, each kept by its blurred neighbours, left out all the same: a frame of a video '
+        'under a quarter of the median of all is (lot SPF2)', () async {
+      const duration = Duration(seconds: 60);
+      final windows = planVideoFrames(duration, fps: 30);
+      const run = {100, 101, 102, 103, 104};
+      int windowOf(Duration time) => windows.indexWhere((window) => time >= window.start && time < window.end);
+      double sharpnessAt(Duration time) {
+        final wave = 100 + 40 * math.sin(time.inMilliseconds / 37);
+        return run.contains(windowOf(time)) ? wave / 10 : wave;
+      }
+
+      final source = _Source(duration, fps: 30, sharpnessAt: sharpnessAt);
+      final inputs = await takeVideoFrames('clip.mp4', source: source, imagesFolder: images(), cancel: cancel);
+      expect(inputs.blurred, 5, reason: 'the neighbours alone leave out the first and the last of the run');
+      expect(inputs.leftOut.map((out) => out.name), [for (final index in run) splatMomentName(source.written[index])]);
+      expect(inputs.images, hasLength(145));
+    });
+
     test('a window without any frame is left out as unreadable', () async {
       final source = _Source(
         const Duration(seconds: 30),

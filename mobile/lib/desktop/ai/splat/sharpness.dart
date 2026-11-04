@@ -2,9 +2,10 @@
 // COLMAP poor points and Brush a soft splat, and "a blurred photo is worse than none". The measure of the morning
 // (tools/pick_sharp.py) kept the sharpest frame of each window of a video by the variance of the Laplacian of a grey
 // copy of 512 pixels, and left out a window whose best stayed under half the median of its neighbours; the photos get
-// the same rule against the photos taken just before and after them. Lot SPF2 adds a floor, a quarter of the median of
-// all of them, for a run of blurred ones whose neighbours are blurred too. Pure Dart, run in the isolates that prepare
-// the images.
+// the same rule against the photos taken just before and after them. Lot SPF2 adds a floor for the frames of a video, a
+// quarter of the median of all of them, for a run of blurred ones whose neighbours are blurred too; not for photos (its
+// review: in the room of measure M1, a sharp photo of a plain wall, a lamp and a sofa, 90.0 beside a median of 418.2,
+// which COLMAP placed, would have gone). Pure Dart, run in the isolates that prepare the images.
 
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -143,15 +144,11 @@ double sharpnessOf(
 
 /// The images of [sharpness] (in the order of time) left out as blurred: those under [ratio] times the median of
 /// their neighbours, up to [reach] before and [reach] after them (pick_sharp.py), and those under [floor] times the
-/// median of all of them, which a run of blurred ones keeps from its neighbours (lot SPF2: the close-ups out of focus
-/// at the end of FreeKC's video of 3 November, nine frames from 4.9 to 28.6 beside a median of 129.9, which COLMAP
-/// never placed). An image alone is never blurred.
-Set<int> blurredAmong(
-  List<double> sharpness, {
-  double ratio = SplatV1.blurRatio,
-  int reach = 2,
-  double floor = SplatV1.blurFloorRatio,
-}) {
+/// median of all of them, which a run of blurred ones keeps from its neighbours: the frames of a video pass
+/// SplatV1.blurFloorRatio (lot SPF2: the close-ups out of focus at the end of FreeKC's video of 3 November, nine frames
+/// from 4.9 to 28.6 beside a median of 129.9, which COLMAP never placed), the photos none. An image alone is never
+/// blurred.
+Set<int> blurredAmong(List<double> sharpness, {double ratio = SplatV1.blurRatio, int reach = 2, double floor = 0}) {
   final blurred = <int>{};
   if (sharpness.length < 2) {
     return blurred;

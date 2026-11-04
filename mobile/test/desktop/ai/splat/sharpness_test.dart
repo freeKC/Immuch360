@@ -1,11 +1,13 @@
 // How sharp an image of a splat scene is (lot SP5, sharpness.dart), the rule of tools/pick_sharp.py of the measure of
 // 1 November 2026: the variance of the Laplacian of a grey copy of 512 pixels, and an image left out as blurred when it
-// stays under half the median of its neighbours (two before, two after).
+// stays under half the median of its neighbours (two before, two after); the frames of a video also under a quarter of
+// the median of all of them (lot SPF2), not the photos (its review: a sharp photo of a plain wall is low too).
 
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/splat/sharpness.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
 import 'splat_input_support.dart';
 
@@ -92,13 +94,185 @@ void main() {
       expect(blurredAmong([]), isEmpty);
     });
 
-    test('a run of blurred ones, which the neighbours keep, under a quarter of the median of all (lot SPF2)', () {
+    test('a run of blurred frames, which the neighbours keep, under a quarter of the median of all (lot SPF2); no '
+        'such floor unless asked, as for photos', () {
       // Four blurred in a row: each has blurred neighbours, the median of all (100) leaves them under its quarter
-      expect(blurredAmong([100, 100, 100, 10, 10, 10, 10, 100, 100, 100]), {3, 4, 5, 6});
+      const floor = SplatV1.blurFloorRatio;
+      expect(blurredAmong([100, 100, 100, 10, 10, 10, 10, 100, 100, 100], floor: floor), {3, 4, 5, 6});
+      expect(blurredAmong([100, 100, 100, 10, 10, 10, 10, 100, 100, 100]), {3, 6}, reason: 'the neighbours only');
       // The floor alone (no rule of the neighbours): a quarter of the median of all
-      expect(blurredAmong([100, 100, 100, 26, 26, 26, 100, 100, 100], ratio: 0), isEmpty, reason: 'a quarter is 25');
-      expect(blurredAmong([100, 100, 100, 24, 24, 24, 100, 100, 100], ratio: 0), {3, 4, 5});
-      expect(blurredAmong([100, 100, 100, 24, 24, 24, 100, 100, 100], ratio: 0, floor: 0), isEmpty);
+      expect(
+        blurredAmong([100, 100, 100, 26, 26, 26, 100, 100, 100], ratio: 0, floor: floor),
+        isEmpty,
+        reason: 'a quarter is 25',
+      );
+      expect(blurredAmong([100, 100, 100, 24, 24, 24, 100, 100, 100], ratio: 0, floor: floor), {3, 4, 5});
+      expect(blurredAmong([100, 100, 100, 24, 24, 24, 100, 100, 100], ratio: 0), isEmpty);
+    });
+
+    test('the 150 photos of the room of measure M1: the photo of a plain wall, a lamp and a sofa (DSCF4969, sharp, '
+        'placed by COLMAP) kept, a quarter of the median left to the frames of a video (review of lot SPF2, m1)', () {
+      // The sharpness of each photo in the order of time (their names), as the review took them again
+      const sharpness = <double>[
+        638.3,
+        597.5,
+        536.5,
+        493.8,
+        601.3,
+        544.6,
+        433.8,
+        470.4,
+        462.4,
+        306.7,
+        444.5,
+        512.6,
+        564.5,
+        614.5,
+        221.6,
+        431.4,
+        745.0,
+        604.5,
+        559.5,
+        587.4,
+        344.5,
+        340.0,
+        480.1,
+        551.5,
+        437.1,
+        319.6,
+        690.3,
+        667.1,
+        711.4,
+        674.8,
+        686.3,
+        602.8,
+        784.2,
+        690.1,
+        709.9,
+        670.4,
+        490.7,
+        469.0,
+        481.7,
+        489.1,
+        438.6,
+        333.8,
+        358.4,
+        276.2,
+        546.3,
+        395.2,
+        396.0,
+        487.9,
+        706.2,
+        546.2,
+        772.8,
+        747.4,
+        532.1,
+        638.0,
+        733.4,
+        406.8,
+        275.7,
+        357.2,
+        399.4,
+        444.8,
+        519.4,
+        514.9,
+        509.9,
+        550.9,
+        534.8,
+        552.4,
+        417.0,
+        328.6,
+        417.6,
+        320.8,
+        332.3,
+        333.8,
+        475.8,
+        522.0,
+        578.1,
+        580.1,
+        496.8,
+        425.1,
+        259.0,
+        452.7,
+        465.4,
+        479.5,
+        352.7,
+        323.6,
+        601.4,
+        543.3,
+        565.9,
+        461.9,
+        569.5,
+        496.7,
+        342.4,
+        252.6,
+        318.9,
+        262.7,
+        282.7,
+        233.4,
+        290.2,
+        226.6,
+        358.1,
+        350.6,
+        323.2,
+        241.8,
+        275.4,
+        247.0,
+        232.7,
+        290.1,
+        128.3,
+        258.8,
+        430.8,
+        454.2,
+        402.3,
+        481.1,
+        363.3,
+        145.7,
+        164.6,
+        144.6,
+        401.6,
+        284.2,
+        291.6,
+        361.5,
+        433.5,
+        362.7,
+        484.2,
+        662.8,
+        351.0,
+        357.0,
+        210.0,
+        175.1,
+        241.6,
+        180.8,
+        309.2,
+        242.8,
+        304.4,
+        306.3,
+        418.8,
+        245.5,
+        213.3,
+        201.9,
+        139.4,
+        561.8,
+        323.6,
+        268.0,
+        157.3,
+        48.2,
+        36.4,
+        90.0,
+        143.6,
+        189.6,
+        153.0,
+        339.9,
+      ];
+      // DSCF4969.JPG, the 146th: 90.0 beside a median of 418.2, under a quarter of it (104.6) but not under half the
+      // median of its neighbours (48.2, 36.4, 143.6, 189.6)
+      const wall = 145;
+      expect(sharpness[wall], 90.0);
+      final blurred = blurredAmong(sharpness);
+      expect(blurred, hasLength(4), reason: 'the four the neighbours leave out, as before lot SPF2');
+      expect(blurred, isNot(contains(wall)));
+      expect(blurredAmong(sharpness, floor: SplatV1.blurFloorRatio), {...blurred, wall});
     });
 
     test('FreeKC\'s video of 3 November: the 11 windows the neighbours leave out, and the run of close-ups out of '
@@ -256,7 +430,7 @@ void main() {
         136.21,
         155.03,
       ];
-      final blurred = blurredAmong(sharpness);
+      final blurred = blurredAmong(sharpness, floor: SplatV1.blurFloorRatio);
       expect(blurred.difference(_byNeighbours), {133, 134, 135, 136, 137, 138, 139, 140, 141});
       expect(blurred, containsAll(_byNeighbours));
       expect(150 - blurred.length, 130, reason: '129 of them placed by COLMAP in the diagnosis, 10 of 139 before');

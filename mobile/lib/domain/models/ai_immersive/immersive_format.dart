@@ -640,10 +640,11 @@ abstract final class SplatV1 {
   static const photoQuality = 95;
 
   /// A blurred photo or frame is left out: the variance of its Laplacian on a copy of [sharpnessSide] pixels under
-  /// [blurRatio] times the median of its neighbours, or under [blurFloorRatio] times the median of all of them (lot
-  /// SPF2: the run of nine close-ups out of focus that ended FreeKC's video of 3 November, from 4.9 to 28.6 beside a
-  /// median of 129.9, kept by their neighbours as blurred as they; a quarter leaves out those nine and keeps the next,
-  /// 34.3, where a fifth, 26.0, kept two of them)
+  /// [blurRatio] times the median of its neighbours, or, a frame of a video, under [blurFloorRatio] times the median of
+  /// all of them (lot SPF2: the run of nine close-ups out of focus that ended FreeKC's video of 3 November, from 4.9 to
+  /// 28.6 beside a median of 129.9, kept by their neighbours as blurred as they; a quarter leaves out those nine and
+  /// keeps the next, 34.3, where a fifth, 26.0, kept two of them. Not a photo: a sharp photo of a plain wall is low
+  /// too)
   static const sharpnessSide = 512;
   static const blurRatio = 0.5;
   static const blurFloorRatio = 0.25;

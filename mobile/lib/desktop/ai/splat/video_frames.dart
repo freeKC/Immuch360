@@ -208,9 +208,10 @@ Future<SplatInputs> takeVideoFrames(
       throw _writeFailed(writeFailure!);
     }
 
-    // The blurred windows, against the windows just before and after them
+    // The blurred windows, against the windows just before and after them and under a quarter of the median of all (a
+    // run of close-ups out of focus, lot SPF2)
     final order = best.keys.toList()..sort();
-    final blurred = blurredAmong([for (final index in order) best[index]!.sharpness]);
+    final blurred = blurredAmong([for (final index in order) best[index]!.sharpness], floor: SplatV1.blurFloorRatio);
     final kept = <SplatImage>[];
     for (final (position, index) in order.indexed) {
       final frame = best[index]!;
