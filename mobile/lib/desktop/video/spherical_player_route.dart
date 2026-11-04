@@ -317,6 +317,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       label: '360 video',
       prepare: _prepare,
       unprepare: _unprepare,
+      onScreen: _onScreen,
     );
     _controller.onPlaybackReady.addListener(_onReady);
     _controller.onPlaybackStatusChanged.addListener(_onStatus);
@@ -510,6 +511,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       pool: _deps.pool ?? desktopPlayerPool,
       setMpv: _setMpv,
       pluginFor: _deps.pluginFor ?? _pluginForEngine,
+      onScreen: _onScreen,
     );
     partner.failure.addListener(_onPartnerFailure);
     String? reason;
@@ -1264,6 +1266,11 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   }
 
   void _close() => unawaited(Navigator.of(context).maybePop());
+
+  /// Whether this page is on screen: until it closes, the pool leaves its players to it, paused or not, when a job on
+  /// the graphics card lets go of the others (PlayerPool.releaseForGraphicsJob). Taking the second player of a pair
+  /// would end the pair for the rest of the viewing, and a 360° video paused here would go blank.
+  bool _onScreen() => mounted && !_closed;
 
   /// The route closed: the session hears the layout and coverage shown last, and the viewer behind takes its video
   /// back

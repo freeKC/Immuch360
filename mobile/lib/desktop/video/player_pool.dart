@@ -24,7 +24,8 @@
 //
 // Before a job of the AI features on the graphics card (a 360° panorama), the pool lets go of every player that does
 // not play (PlayerPool.releaseForGraphicsJob, issue #13): the budget the driver gives the job counts the decoders and
-// textures of the app as used.
+// textures of the app as used. The players of a page on screen stay, paused or not (the 360° page tells it, for its
+// player and the second player of its pair).
 
 import 'dart:async';
 
@@ -75,9 +76,15 @@ class PlayerPool {
   int created = 0;
   int disposed = 0;
 
-  /// A lease for a page that shows (or grabs from) videos; it takes no player yet
-  PlayerLease lease(PlayerKind kind, {required String label, Future<void> Function()? onSuspend}) {
-    final lease = PlayerLease._(this, kind, label, onSuspend);
+  /// A lease for a page that shows (or grabs from) videos; it takes no player yet. [onScreen] tells whether its page
+  /// is on screen, which a job on the graphics card leaves its player to (see [releaseForGraphicsJob])
+  PlayerLease lease(
+    PlayerKind kind, {
+    required String label,
+    Future<void> Function()? onSuspend,
+    bool Function()? onScreen,
+  }) {
+    final lease = PlayerLease._(this, kind, label, onSuspend, onScreen);
     _leases.add(lease);
     return lease;
   }
@@ -124,9 +131,10 @@ class PlayerPool {
   /// Lets go of the players that do not play before a job of the AI features on the graphics card (issue #13: an 8K
   /// decoder holds about 1.3 GB of the card): the idle players of every kind, and the players of the leases of pages and
   /// live views that do not play, suspended as for a hand over (their owner told first, after what it started on its
-  /// player; each gets a player again, at the same position, the next time it needs one). The player that plays on
-  /// screen stays, and so does the frame grabber at work: its grab ends within seconds and its player then waits idle.
-  /// Gives the number of players disposed, once their disposes ended.
+  /// player; each gets a player again, at the same position, the next time it needs one). The player that plays stays,
+  /// and so do the players of a page on screen, paused or not (the 360° page and the second player of its pair, which
+  /// would otherwise end the pair for the rest of the viewing), and the frame grabber at work: its grab ends within
+  /// seconds and its player then waits idle. Gives the number of players disposed, once their disposes ended.
   Future<int> releaseForGraphicsJob() => _serial(() async {
     if (_disposed) {
       return 0;
@@ -136,7 +144,7 @@ class PlayerPool {
     _inTransit.addAll(engines);
     for (final lease in [..._leases]) {
       final engine = lease._engine;
-      if (engine == null || lease.kind == PlayerKind.thumbnail || engine.playing.value) {
+      if (engine == null || lease.kind == PlayerKind.thumbnail || engine.playing.value || lease._shown) {
         continue;
       }
       _log.fine('${lease.label} lets go of its player for a job on the graphics card');
@@ -373,7 +381,7 @@ class PlayerPool {
 
 /// The right of a page to a player of the pool, see [PlayerPool.lease]
 class PlayerLease {
-  PlayerLease._(this._pool, this.kind, this.label, this._onSuspend);
+  PlayerLease._(this._pool, this.kind, this.label, this._onSuspend, this._onScreen);
 
   final PlayerPool _pool;
   final PlayerKind kind;
@@ -381,6 +389,10 @@ class PlayerLease {
   /// Who holds it, for the log ("viewer", "network video", "thumbnails"); never a path or a URL
   final String label;
   final Future<void> Function()? _onSuspend;
+  final bool Function()? _onScreen;
+
+  /// Whether the owner says its page is on screen
+  bool get _shown => _onScreen?.call() ?? false;
 
   PlaybackEngine? _engine;
   int _lastUsed = 0;

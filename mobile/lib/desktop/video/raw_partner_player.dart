@@ -22,8 +22,19 @@ final _log = Logger('RawPartnerPlayer');
 
 /// See the top of this file
 class RawPartnerPlayer {
-  RawPartnerPlayer({required PlayerPool pool, required this._setMpv, required this._pluginFor}) {
-    _lease = pool.lease(PlayerKind.playback, label: '360 video, second stream', onSuspend: _onSuspend);
+  /// [onScreen]: whether the 360° page is on screen, where a job on the graphics card leaves this player alone
+  RawPartnerPlayer({
+    required PlayerPool pool,
+    required this._setMpv,
+    required this._pluginFor,
+    bool Function()? onScreen,
+  }) {
+    _lease = pool.lease(
+      PlayerKind.playback,
+      label: '360 video, second stream',
+      onSuspend: _onSuspend,
+      onScreen: onScreen,
+    );
   }
 
   late final PlayerLease _lease;

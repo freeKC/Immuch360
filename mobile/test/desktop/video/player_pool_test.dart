@@ -3,7 +3,8 @@
 // after what the owner started on it, disposed only beyond the idle limit or when its picture is lost. At the close of
 // the window every player is disposed at once, none of them waited for longer than its bound, those on their way
 // between two places included. Before a job of the AI features on the graphics card (issue #13), the players that do
-// not play are let go, the one that plays on screen and the frame grabber at work kept.
+// not play are let go, the one that plays, those of a page on screen (the 360° page and its pair) and the frame grabber
+// at work kept.
 
 import 'dart:async';
 
@@ -333,6 +334,58 @@ void main() {
       expect(back, isNot(same(pausedEngine)));
       expect(paused.isSuspended, isFalse);
     });
+
+    test(
+      'the players of a page on screen stay, paused or not: the 360° page and the second player of its pair',
+      () async {
+        final players = FakePlayers(maxPlayers: {PlayerKind.playback: 3});
+        final events = <String>[];
+        var shown = true;
+        // The viewer's page behind the 360° page, not on screen
+        final behind = players.pool.lease(
+          PlayerKind.playback,
+          label: 'viewer',
+          onSuspend: () async => events.add('viewer suspended'),
+          onScreen: () => false,
+        );
+        final behindEngine = await behind.acquire() as FakePlaybackEngine;
+        await behindEngine.play();
+        final page = players.pool.lease(
+          PlayerKind.playback,
+          label: '360 video',
+          onSuspend: () async => events.add('page suspended'),
+          onScreen: () => shown,
+        );
+        final pageEngine = await page.acquire() as FakePlaybackEngine;
+        await pageEngine.play();
+        final pair = players.pool.lease(
+          PlayerKind.playback,
+          label: '360 video, second stream',
+          onSuspend: () async => events.add('pair suspended'),
+          onScreen: () => shown,
+        );
+        final pairEngine = await pair.acquire(sparing: pageEngine) as FakePlaybackEngine;
+        // Each its own player, then all three paused
+        expect({behindEngine, pageEngine, pairEngine}, hasLength(3));
+        for (final engine in [behindEngine, pageEngine, pairEngine]) {
+          await engine.pause();
+        }
+
+        expect(await players.pool.releaseForGraphicsJob(), 1);
+        expect(events, ['viewer suspended']);
+        expect(behindEngine.disposed, isTrue);
+        expect(page.engine, same(pageEngine));
+        expect(pair.engine, same(pairEngine));
+        expect(page.isSuspended || pair.isSuspended, isFalse);
+        expect(pageEngine.disposed || pairEngine.disposed, isFalse);
+
+        // Once the page is closed or left, they go as any other
+        shown = false;
+        expect(await players.pool.releaseForGraphicsJob(), 2);
+        expect(events, ['viewer suspended', 'page suspended', 'pair suspended']);
+        expect(pageEngine.disposed && pairEngine.disposed, isTrue);
+      },
+    );
 
     test('the pool waits for what the owner started on its player before it lets it go', () async {
       final players = FakePlayers();
