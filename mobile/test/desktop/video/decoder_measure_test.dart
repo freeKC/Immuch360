@@ -189,6 +189,27 @@ void main() {
         expect((await ask(VideoMime.hevc, 7680, 3840, hardware: true))?.measure.smooth, isTrue);
       });
 
+      test('8K at 4320 lines without a copy: measured on a dedicated GPU while the app was built, an integrated GPU '
+          'measures it itself (2026-11-02)', () async {
+        await store.record(_measure(VideoMime.avc, 1280, 720, 'd3d11va'));
+        // The Intel figure of the report was taken with the spinner's extra frames and Windows short of memory: no
+        // answer of the build for an integrated GPU, so the original plays and this computer measures it
+        expect(await ask(VideoMime.hevc, 7680, 4320, hardware: true), isNull);
+        final dedicated = await ask(VideoMime.hevc, 7680, 4320, hardware: true, integrated: false);
+        expect((dedicated?.own, dedicated?.measure.smooth), (false, true));
+        expect(dedicated?.measure.source, 'report of 2026-11-02, RTX 4060 Laptop');
+        // 8K at 3840 lines, the 360 videos, keeps the earlier figure on both
+        expect((await ask(VideoMime.hevc, 7680, 3840, hardware: true))?.measure.smooth, isTrue);
+        expect((await ask(VideoMime.hevc, 7680, 3840, hardware: true, integrated: false))?.measure.smooth, isTrue);
+        // What this computer measured answers from then on, either way
+        await store.record(_measure(VideoMime.hevc, 7680, 4320, 'd3d11va', dropped: 13));
+        final own = await ask(VideoMime.hevc, 7680, 4320, hardware: true);
+        expect((own?.own, own?.measure.smooth), (true, false));
+        await store.record(_measure(VideoMime.hevc, 7680, 4320, 'd3d11va'));
+        final again = await ask(VideoMime.hevc, 7680, 4320, hardware: true);
+        expect((again?.own, again?.measure.smooth), (true, true));
+      });
+
       test('two streams are compared with two streams only', () async {
         await store.record(
           DecodeMeasure(

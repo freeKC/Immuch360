@@ -21,6 +21,7 @@ void main() {
   late List<LogRecord> records;
   final loader = loadLibmpv;
   final prober = DesktopGpuDecoders.prober;
+  final lister = DesktopGpuDecoders.lister;
 
   setUp(() {
     loads = 0;
@@ -29,6 +30,7 @@ void main() {
     loadLibmpv = () => loads++;
     // No plugin under flutter test: the background read of the GPU's decoders finds nothing to ask
     DesktopGpuDecoders.prober = null;
+    DesktopGpuDecoders.lister = null;
     Logger.root.level = Level.ALL;
   });
 
@@ -36,6 +38,8 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
     loadLibmpv = loader;
     DesktopGpuDecoders.prober = prober;
+    DesktopGpuDecoders.lister = lister;
+    DesktopGpuDecoders.forget();
     desktopVideoAvailable = false;
     Logger.root.level = Level.INFO;
   });

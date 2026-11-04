@@ -64,6 +64,9 @@ void setUpDesktopVideo() {
     // The decoders of the GPU in use, read in the background now (0.1 to 0.4 s, more at the driver's first start), so
     // that the question of the first video does not wait for them (gpu_decoders.dart)
     unawaited(DesktopGpuDecoders.decoders());
+    // And the cards of the computer, with the one in use, for the log of the start and the video details (no device is
+    // made on them: a dedicated GPU that sleeps stays asleep)
+    unawaited(DesktopGpuDecoders.gpus());
   } catch (error) {
     // The start goes on: photos and everything else work without the video library
     _log.severe('libmpv could not be loaded, videos will not play ($error): ${libmpvMissingHint()}');
