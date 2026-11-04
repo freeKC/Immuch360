@@ -3648,7 +3648,7 @@
   "splat_save_large": "{size}: vissa servrar avvisar filer över 100 MB (till exempel Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Du använder mobildata: upp till {size} att skicka",
   "splat_save_no_capture": "Vyn kunde inte fångas: rör dig lite och spara igen",
-  "splat_save_ply": "Sparad som SPZ: {size} i stället för {plySize}, samma gaussianer",
+  "splat_save_ply": "Sparad som SPZ: {size} i stället för {plySize}, komprimerad med en liten förlust. Behåll PLY-filen för att redigera scenen",
   "splat_save_ply_too_large": "Den här PLY-filen är för stor för att konverteras på den här enheten: spara den från en dator",
   "splat_save_preparing": "Förbereder {name} för Immich",
   "splat_save_refused_size": "Din server avvisade en så stor fil ({size}): en proxy framför den begränsar uppladdningar",

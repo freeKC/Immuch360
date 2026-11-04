@@ -2713,7 +2713,7 @@
   "splat_save_large": "{size}: sumir þjónar hafna skrám yfir 100 MB (til dæmis Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Þú ert á farsímagögnum: allt að {size} til að senda",
   "splat_save_no_capture": "Ekki tókst að fanga sjónarhornið: færðu þig aðeins og vistaðu svo aftur",
-  "splat_save_ply": "Vistað sem SPZ: {size} í stað {plySize}, sömu gáss-dreifingar",
+  "splat_save_ply": "Vistað sem SPZ: {size} í stað {plySize}, þjappað með smávægilegu tapi. Geymdu PLY-skrána til að breyta senunni",
   "splat_save_ply_too_large": "Þessi PLY er of stór til að umbreyta í þessu tæki: vistaðu hana úr tölvu",
   "splat_save_preparing": "Undirbý {name} fyrir Immich",
   "splat_save_refused_size": "Þjónninn þinn hafnaði svona stórri skrá ({size}): milliþjónn fyrir framan hann takmarkar upphleðslur",

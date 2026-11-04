@@ -1616,7 +1616,7 @@
   "splat_save_large": "{size}: کچھ سرور 100 MB سے بڑی فائلیں مسترد کرتے ہیں (مثال کے طور پر Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "آپ موبائل ڈیٹا پر ہیں: بھیجنے کو {size} تک",
   "splat_save_no_capture": "نظارہ کیپچر نہیں ہو سکا: تھوڑا سا حرکت کریں، پھر دوبارہ محفوظ کریں",
-  "splat_save_ply": "SPZ کے طور پر محفوظ ہوا: {plySize} کے بجائے {size}، وہی گاؤسین",
+  "splat_save_ply": "SPZ کے طور پر محفوظ ہوا: {plySize} کے بجائے {size}، معمولی نقصان کے ساتھ کمپریس کیا گیا۔ منظر میں ترمیم کے لیے PLY رکھیں",
   "splat_save_ply_too_large": "یہ PLY اس ڈیوائس پر تبدیل کرنے کے لیے بہت بڑی ہے: اسے کمپیوٹر سے محفوظ کریں",
   "splat_save_preparing": "Immich کے لیے {name} تیار کی جا رہی ہے",
   "splat_save_refused_size": "آپ کے سرور نے اتنی بڑی فائل ({size}) مسترد کر دی: اس کے آگے لگی پراکسی اپ لوڈز محدود کرتی ہے",

@@ -1539,7 +1539,7 @@
   "splat_save_large": "{size}: sam seva oli no akseptem ol fael we oli bigwan moa long 100 MB (Cloudflare Tunnel, olsem eksampol)",
   "splat_save_mobile_data_ply": "Yu stap long mobael data: kasem {size} blong sendem",
   "splat_save_no_capture": "I no save tekem luk: muv smol, nao seftem bakegen",
-  "splat_save_ply": "Oli seftem olsem SPZ: {size} i no {plySize}, sem ol gaussian",
+  "splat_save_ply": "Oli seftem olsem SPZ: {size} i no {plySize}, i kam smol be i lusum smol ditel. Kipim PLY blong jenisim sin ia",
   "splat_save_ply_too_large": "PLY ia i bigwan tumas blong jenisim long masin ia: seftem long wan kompiuta",
   "splat_save_preparing": "I stap redem {name} blong Immich",
   "splat_save_refused_size": "Seva blong yu i no akseptem wan fael we i bigwan olsem ({size}): wan proxy long fored blong hem i blokem ol aplod",

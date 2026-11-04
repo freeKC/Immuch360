@@ -3544,7 +3544,7 @@
   "splat_save_large": "{size}：有啲伺服器會拒絕大過 100 MB 嘅檔案（例如 Cloudflare Tunnel）",
   "splat_save_mobile_data_ply": "你用緊流動數據：最多要傳送 {size}",
   "splat_save_no_capture": "影唔到呢個視角：郁少少，再儲存一次",
-  "splat_save_ply": "已儲存做 SPZ：{size}，而唔係 {plySize}，高斯一樣",
+  "splat_save_ply": "已儲存做 SPZ：{size}，而唔係 {plySize}，壓縮時有少少損失。想編輯場景就要保留 PLY",
   "splat_save_ply_too_large": "呢個 PLY 太大，喺呢部裝置轉換唔到：請由電腦儲存",
   "splat_save_preparing": "準備緊 {name} 去 Immich",
   "splat_save_refused_size": "你嘅伺服器拒絕咗咁大嘅檔案（{size}）：佢前面嘅代理伺服器限制咗上傳",

@@ -1522,7 +1522,7 @@
   "splat_save_large": "{size}: quaj server refuden i file de pussee de 100 MB (Cloudflare Tunnel, per esempi)",
   "splat_save_mobile_data_ply": "Te seet sui dati mobil: fin a {size} de mandà",
   "splat_save_no_capture": "Se pò minga ciapà la vista: moves on poo, poeu salva anmò",
-  "splat_save_ply": "Salvaa come SPZ: {size} invece de {plySize}, i istess gaussian",
+  "splat_save_ply": "Salvaa come SPZ: {size} invece de {plySize}, compressa cont una perdita lesgera. Tegn el PLY per modificà la scena",
   "splat_save_ply_too_large": "Sto PLY l'è tròpp grand per convertill in su sto dispositiv: salvel de un computer",
   "splat_save_preparing": "Se prepara {name} per Immich",
   "splat_save_refused_size": "El tò server l'ha refudaa un file inscì grand ({size}): un proxy denanz a lu el limita i caregament",

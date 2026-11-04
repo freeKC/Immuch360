@@ -3594,7 +3594,7 @@
   "splat_save_large": "{size}: kai kurie serveriai atmeta didesnius nei 100 MB failus (pavyzdžiui, Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Naudojate mobiliuosius duomenis: reikia išsiųsti iki {size}",
   "splat_save_no_capture": "Nepavyko užfiksuoti vaizdo: šiek tiek pasislinkite ir išsaugokite dar kartą",
-  "splat_save_ply": "Išsaugota kaip SPZ: {size} vietoj {plySize}, tie patys Gauso elementai",
+  "splat_save_ply": "Išsaugota kaip SPZ: {size} vietoj {plySize}, suglaudinta su nedideliu nuostoliu. Pasilikite PLY, kad galėtumėte redaguoti sceną",
   "splat_save_ply_too_large": "Šis PLY per didelis, kad būtų konvertuotas šiame įrenginyje: išsaugokite jį iš kompiuterio",
   "splat_save_preparing": "Ruošiama {name} Immich",
   "splat_save_refused_size": "Jūsų serveris atmetė tokio dydžio failą ({size}): priešais jį esantis tarpinis serveris riboja įkėlimus",

@@ -1534,7 +1534,7 @@
   "splat_save_large": "{size}: ba'zi serverlar 100 MB dan katta fayllarni rad etadi (masalan, Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Siz mobil internetdasiz: {size} gacha yuboriladi",
   "splat_save_no_capture": "Ko'rinishni olib bo'lmadi: biroz siljing, keyin qayta saqlang",
-  "splat_save_ply": "SPZ sifatida saqlandi: {plySize} o'rniga {size}, o'sha gausslar",
+  "splat_save_ply": "SPZ sifatida saqlandi: {plySize} oʻrniga {size}, ozgina yoʻqotish bilan siqildi. Sahnani tahrirlash uchun PLY faylini saqlang",
   "splat_save_ply_too_large": "Bu PLY bu qurilmada o'zgartirish uchun juda katta: uni kompyuterdan saqlang",
   "splat_save_preparing": "{name} Immich uchun tayyorlanmoqda",
   "splat_save_refused_size": "Serveringiz bunchalik katta faylni ({size}) rad etdi: uning oldidagi proksi yuklashlarni cheklaydi",

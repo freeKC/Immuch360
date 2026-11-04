@@ -3440,7 +3440,7 @@
   "splat_save_large": "{size}: daži serveri noraida failus, kas lielāki par 100 MB (piemēram, Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Jūs izmantojat mobilos datus: jāsūta līdz {size}",
   "splat_save_no_capture": "Skatu neizdevās uzņemt: mazliet pakustieties un saglabājiet vēlreiz",
-  "splat_save_ply": "Saglabāta kā SPZ: {size} {plySize} vietā, tie paši Gausa elementi",
+  "splat_save_ply": "Saglabāta kā SPZ: {size} {plySize} vietā, saspiesta ar nelieliem zudumiem. Paturiet PLY, lai rediģētu ainu",
   "splat_save_ply_too_large": "Šis PLY ir pārāk liels, lai to pārveidotu šajā ierīcē: saglabājiet to no datora",
   "splat_save_preparing": "Sagatavo {name} Immich",
   "splat_save_refused_size": "Jūsu serveris noraidīja tik lielu failu ({size}): starpniekserveris tā priekšā ierobežo augšupielādes",

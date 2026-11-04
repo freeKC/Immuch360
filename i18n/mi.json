@@ -1522,7 +1522,7 @@
   "splat_save_large": "{size}: ka whakakāhore ētahi tūmau i ngā kōnae nui ake i te 100 MB (pērā i Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Kei te raraunga pūkoro koe: tae atu ki te {size} hei tuku",
   "splat_save_no_capture": "Kāore i taea te hopu i te tirohanga: nekehia paku, kātahi ka tiaki anō",
-  "splat_save_ply": "I tiakina hei SPZ: {size} kaua ko {plySize}, ko ngā gaussian anō",
+  "splat_save_ply": "I tiakina hei SPZ: {size} kaua ko {plySize}, kua kōpekatia me te ngaro iti. Puritia te PLY hei whakatika i te atamira",
   "splat_save_ply_too_large": "He nui rawa tēnei PLY hei huri i tēnei pūrere: tiakina mai i tētahi rorohiko",
   "splat_save_preparing": "E whakarite ana i {name} mō Immich",
   "splat_save_refused_size": "I whakakāhore tō tūmau i tētahi kōnae nui pēnei ({size}): ka herea ngā tukuake e tētahi takawaenga kei mua",

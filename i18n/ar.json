@@ -3566,7 +3566,7 @@
   "splat_save_large": "{size}: بعض الخوادم ترفض الملفات الأكبر من 100 MB (مثل Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "أنت على بيانات الجوال: حتى {size} للإرسال",
   "splat_save_no_capture": "تعذّر التقاط المنظر: تحرّك قليلًا ثم احفظ مرة أخرى",
-  "splat_save_ply": "حُفظ بصيغة SPZ: {size} بدلًا من {plySize}، بالغاوسيات نفسها",
+  "splat_save_ply": "حُفظ بصيغة SPZ: {size} بدلًا من {plySize}، مضغوطًا مع فقدان طفيف. احتفظ بملف PLY لتعديل المشهد",
   "splat_save_ply_too_large": "ملف PLY هذا أكبر من أن يُحوَّل على هذا الجهاز: احفظه من حاسوب",
   "splat_save_preparing": "جارٍ تجهيز {name} لـ Immich",
   "splat_save_refused_size": "رفض خادمك ملفًا بهذا الحجم ({size}): وكيل أمامه يحدّ من الرفع",

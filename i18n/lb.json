@@ -1522,7 +1522,7 @@
   "splat_save_large": "{size}: e puer Server refuséieren Fichiere vu méi wéi 100 MB (zum Beispill Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Du bass op mobilen Daten: bis {size} ze schécken",
   "splat_save_no_capture": "D'Usiicht konnt net festgehale ginn: beweeg dech e bëssen, dann nach eng Kéier späicheren",
-  "splat_save_ply": "Als SPZ gespäichert: {size} amplaz {plySize}, déi selwecht Gaussen",
+  "splat_save_ply": "Als SPZ gespäichert: {size} amplaz {plySize}, mat engem klenge Verloscht kompriméiert. Behal d’PLY, fir d’Zeen ze beaarbechten",
   "splat_save_ply_too_large": "Dës PLY ass ze grouss, fir op dësem Apparat ëmgewandelt ze ginn: späicher se vun engem Computer",
   "splat_save_preparing": "{name} gëtt fir Immich preparéiert",
   "splat_save_refused_size": "Däin Server huet e Fichier vun dëser Gréisst refuséiert ({size}): e Proxy virdrun limitéiert d'Eroplueden",

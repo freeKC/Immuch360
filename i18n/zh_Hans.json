@@ -3647,7 +3647,7 @@
   "splat_save_large": "{size}：部分服务器会拒绝超过 100 MB 的文件（例如 Cloudflare Tunnel）",
   "splat_save_mobile_data_ply": "你正在使用移动数据：最多需要发送 {size}",
   "splat_save_no_capture": "无法捕获视角：稍微移动一下，然后再次保存",
-  "splat_save_ply": "已保存为 SPZ：{size}，而非 {plySize}，高斯相同",
+  "splat_save_ply": "已保存为 SPZ：{size}，而非 {plySize}，压缩时有轻微损失。如需编辑场景，请保留 PLY",
   "splat_save_ply_too_large": "此 PLY 太大，无法在此设备上转换：请从电脑保存",
   "splat_save_preparing": "正在为 Immich 准备 {name}",
   "splat_save_refused_size": "你的服务器拒绝了这么大的文件（{size}）：其前面的代理限制了上传",

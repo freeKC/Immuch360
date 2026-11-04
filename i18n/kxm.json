@@ -1522,7 +1522,7 @@
   "splat_save_large": "{size}: บางเซิร์ฟเวอร์ไม่รับไฟล์ใหญ่เกิน 100 MB (เช่น Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "เจ้ากำลังใช้อินเทอร์เน็ตมือถือ: ต้องส่งสูงสุด {size}",
   "splat_save_no_capture": "จับภาพมุมมองไม่ได้: ขยับนิดหนึ่ง แล้วบันทึกใหม่",
-  "splat_save_ply": "บันทึกเป็น SPZ แล้ว: {size} แทน {plySize} เกาส์เซียนชุดเดิม",
+  "splat_save_ply": "บันทึกเป็น SPZ แล้ว: {size} แทน {plySize} บีบอัดโดยเสียรายละเอียดเล็กน้อย เก็บ PLY ไว้เพื่อแก้ไขฉาก",
   "splat_save_ply_too_large": "PLY นี้ใหญ่เกินจะแปลงในเครื่องนี้: บันทึกจากคอมพิวเตอร์",
   "splat_save_preparing": "กำลังเตรียม {name} สำหรับ Immich",
   "splat_save_refused_size": "เซิร์ฟเวอร์ของเจ้าไม่รับไฟล์ใหญ่ขนาดนี้ ({size}): พร็อกซีข้างหน้ามันจำกัดการอัปโหลด",

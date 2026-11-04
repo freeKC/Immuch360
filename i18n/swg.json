@@ -1522,7 +1522,7 @@
   "splat_save_large": "{size}: manche Server nehmet koine Dateia über 100 MB (Cloudflare Tunnel zom Beispiel)",
   "splat_save_mobile_data_ply": "Du bisch mit mobila Data onterwegs: bis {size} z schicka",
   "splat_save_no_capture": "D Ansicht hot sich net aufnemma lassa: beweg di a bissle ond speicher nomol",
-  "splat_save_ply": "Als SPZ gspeichert: {size} statt {plySize}, de gleiche Gauß",
+  "splat_save_ply": "Als SPZ gspeichert: {size} statt {plySize}, mit em kloina Verluscht komprimiert. Bhalt s PLY zom Bearbeida vo dr Szene",
   "splat_save_ply_too_large": "Des PLY isch z groß zom Omwandla uf dem Gerät: speicher s vom Computer aus",
   "splat_save_preparing": "{name} wird für Immich vorbereitet",
   "splat_save_refused_size": "Dei Server hot a so a großa Datei ({size}) abglehnt: a Proxy vor ihm begrenzt d Uploads",

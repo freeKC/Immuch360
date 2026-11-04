@@ -3648,7 +3648,7 @@
   "splat_save_large": "{size}: niektóre serwery odrzucają pliki większe niż 100 MB (na przykład Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Korzystasz z danych mobilnych: do {size} do wysłania",
   "splat_save_no_capture": "Nie udało się przechwycić widoku: przesuń się trochę i zapisz ponownie",
-  "splat_save_ply": "Zapisano jako SPZ: {size} zamiast {plySize}, te same gaussiany",
+  "splat_save_ply": "Zapisano jako SPZ: {size} zamiast {plySize}, skompresowane z niewielką stratą. Zachowaj plik PLY, aby edytować scenę",
   "splat_save_ply_too_large": "Ten plik PLY jest za duży, aby przekonwertować go na tym urządzeniu: zapisz go z komputera",
   "splat_save_preparing": "Przygotowywanie {name} dla Immich",
   "splat_save_refused_size": "Twój serwer odrzucił tak duży plik ({size}): stojący przed nim serwer proxy ogranicza przesyłanie",

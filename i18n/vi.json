@@ -3648,7 +3648,7 @@
   "splat_save_large": "{size}: một số máy chủ từ chối tệp lớn hơn 100 MB (ví dụ Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Bạn đang dùng dữ liệu di động: tối đa {size} cần gửi",
   "splat_save_no_capture": "Không thể chụp góc nhìn: di chuyển một chút rồi lưu lại",
-  "splat_save_ply": "Đã lưu dạng SPZ: {size} thay vì {plySize}, cùng các gaussian",
+  "splat_save_ply": "Đã lưu dạng SPZ: {size} thay vì {plySize}, nén với một chút suy giảm. Hãy giữ tệp PLY để chỉnh sửa cảnh",
   "splat_save_ply_too_large": "PLY này quá lớn để chuyển đổi trên thiết bị này: hãy lưu từ máy tính",
   "splat_save_preparing": "Đang chuẩn bị {name} cho Immich",
   "splat_save_refused_size": "Máy chủ của bạn từ chối tệp lớn như vậy ({size}): một proxy phía trước giới hạn việc tải lên",

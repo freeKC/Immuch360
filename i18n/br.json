@@ -1522,7 +1522,7 @@
   "splat_save_large": "{size}: servijerioù zo a nac'h restroù brasoc'h eget 100 MB (Cloudflare Tunnel, da skouer)",
   "splat_save_mobile_data_ply": "War ar roadennoù hezoug emaoc'h: betek {size} da gas",
   "splat_save_no_capture": "N'eus ket bet gallet tapout ar gwel: fiñvit un tamm, ha goude enrollit en-dro",
-  "splat_save_ply": "Enrollet evel SPZ: {size} e-lec'h {plySize}, an hevelep gaussianoù",
+  "splat_save_ply": "Enrollet evel SPZ: {size} e-lec'h {plySize}, gwasket gant un tamm koll. Mirit ar PLY evit kemmañ al leurenn",
   "splat_save_ply_too_large": "Re vras eo ar PLY-mañ evit bezañ amdroet war an trevnad-mañ: enrollit anezhañ diwar un urzhiataer",
   "splat_save_preparing": "O prientiñ {name} evit Immich",
   "splat_save_refused_size": "Nac'het he deus ho servijer ur restr ken bras ({size}): ur proksi dirazañ a vevenn ar pellgasadennoù",

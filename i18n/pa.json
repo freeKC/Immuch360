@@ -1550,7 +1550,7 @@
   "splat_save_large": "{size}: ਕੁਝ ਸਰਵਰ 100 MB ਤੋਂ ਵੱਡੀਆਂ ਫ਼ਾਈਲਾਂ ਨਾਮਨਜ਼ੂਰ ਕਰਦੇ ਹਨ (ਜਿਵੇਂ Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "ਤੁਸੀਂ ਮੋਬਾਈਲ ਡੇਟਾ 'ਤੇ ਹੋ: {size} ਤੱਕ ਭੇਜਣਾ ਹੈ",
   "splat_save_no_capture": "ਨਜ਼ਾਰਾ ਕੈਪਚਰ ਨਹੀਂ ਹੋ ਸਕਿਆ: ਥੋੜ੍ਹਾ ਹਿੱਲੋ, ਫਿਰ ਦੁਬਾਰਾ ਸੰਭਾਲੋ",
-  "splat_save_ply": "SPZ ਵਜੋਂ ਸੰਭਾਲਿਆ: {plySize} ਦੀ ਥਾਂ {size}, ਉਹੀ ਗੌਸੀਅਨ",
+  "splat_save_ply": "SPZ ਵਜੋਂ ਸੰਭਾਲਿਆ: {plySize} ਦੀ ਥਾਂ {size}, ਥੋੜ੍ਹੇ ਨੁਕਸਾਨ ਨਾਲ ਸੰਕੁਚਿਤ। ਦ੍ਰਿਸ਼ ਨੂੰ ਸੋਧਣ ਲਈ PLY ਰੱਖੋ",
   "splat_save_ply_too_large": "ਇਹ PLY ਇਸ ਡਿਵਾਈਸ ਉੱਤੇ ਬਦਲਣ ਲਈ ਬਹੁਤ ਵੱਡੀ ਹੈ: ਇਸਨੂੰ ਕੰਪਿਊਟਰ ਤੋਂ ਸੰਭਾਲੋ",
   "splat_save_preparing": "Immich ਲਈ {name} ਤਿਆਰ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ",
   "splat_save_refused_size": "ਤੁਹਾਡੇ ਸਰਵਰ ਨੇ ਇੰਨੀ ਵੱਡੀ ਫ਼ਾਈਲ ({size}) ਨਾਮਨਜ਼ੂਰ ਕਰ ਦਿੱਤੀ: ਇਸਦੇ ਅੱਗੇ ਲੱਗਿਆ ਪ੍ਰੌਕਸੀ ਅੱਪਲੋਡਾਂ ਨੂੰ ਸੀਮਿਤ ਕਰਦਾ ਹੈ",

@@ -1522,7 +1522,7 @@
   "splat_save_large": "{size}: baadhi ya seva hukataa faili zinazozidi 100 MB (kwa mfano Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Uko kwenye data ya simu: hadi {size} za kutuma",
   "splat_save_no_capture": "Mwonekano haukuweza kunaswa: sogea kidogo, kisha uhifadhi tena",
-  "splat_save_ply": "Imehifadhiwa kama SPZ: {size} badala ya {plySize}, gaussian zile zile",
+  "splat_save_ply": "Imehifadhiwa kama SPZ: {size} badala ya {plySize}, imebanwa kwa upotevu mdogo. Weka PLY ili kuhariri mandhari",
   "splat_save_ply_too_large": "PLY hii ni kubwa mno kubadilishwa kwenye kifaa hiki: ihifadhi kutoka kwa kompyuta",
   "splat_save_preparing": "Inaandaa {name} kwa Immich",
   "splat_save_refused_size": "Seva yako ilikataa faili kubwa hivi ({size}): proksi iliyo mbele yake inazuia upakiaji",

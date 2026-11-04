@@ -3649,7 +3649,7 @@
   "splat_save_large": "{size}: některé servery odmítají soubory nad 100 MB (například Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Používáte mobilní data: k odeslání až {size}",
   "splat_save_no_capture": "Pohled se nepodařilo zachytit: trochu se posuňte a uložte znovu",
-  "splat_save_ply": "Uloženo jako SPZ: {size} místo {plySize}, stejné gaussiány",
+  "splat_save_ply": "Uloženo jako SPZ: {size} místo {plySize}, komprimováno s mírnou ztrátou. Ponechte si PLY pro úpravy scény",
   "splat_save_ply_too_large": "Tento PLY je příliš velký na převod v tomto zařízení: uložte ho z počítače",
   "splat_save_preparing": "Příprava {name} pro Immich",
   "splat_save_refused_size": "Váš server odmítl soubor této velikosti ({size}): proxy před ním omezuje nahrávání",

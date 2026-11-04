@@ -3638,7 +3638,7 @@
   "splat_save_large": "{size}: unele servere refuză fișierele mai mari de 100 MB (de exemplu Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Folosiți date mobile: până la {size} de trimis",
   "splat_save_no_capture": "Vederea nu a putut fi capturată: mișcă-te puțin, apoi salvează din nou",
-  "splat_save_ply": "Salvată ca SPZ: {size} în loc de {plySize}, aceleași gaussiene",
+  "splat_save_ply": "Salvată ca SPZ: {size} în loc de {plySize}, comprimată cu o mică pierdere. Păstrați fișierul PLY pentru a edita scena",
   "splat_save_ply_too_large": "Acest PLY este prea mare pentru a fi convertit pe acest dispozitiv: salvează-l de pe un computer",
   "splat_save_preparing": "Se pregătește {name} pentru Immich",
   "splat_save_refused_size": "Serverul tău a refuzat un fișier atât de mare ({size}): un proxy aflat în fața lui limitează încărcările",

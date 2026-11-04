@@ -3391,7 +3391,7 @@
   "splat_save_large": "{size}: कुछ सर्वर 100 MB से बड़ी फ़ाइलें अस्वीकार करते हैं (जैसे Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "आप मोबाइल डेटा पर हैं: भेजने के लिए {size} तक",
   "splat_save_no_capture": "दृश्य कैप्चर नहीं हो सका: थोड़ा हिलें, फिर से सहेजें",
-  "splat_save_ply": "SPZ के रूप में सहेजा गया: {plySize} के बजाय {size}, वही गॉसियन",
+  "splat_save_ply": "SPZ के रूप में सहेजा गया: {plySize} के बजाय {size}, थोड़े नुकसान के साथ संपीड़ित। दृश्य संपादित करने के लिए PLY रखें",
   "splat_save_ply_too_large": "यह PLY इस डिवाइस पर बदलने के लिए बहुत बड़ी है: इसे कंप्यूटर से सहेजें",
   "splat_save_preparing": "Immich के लिए {name} तैयार किया जा रहा है",
   "splat_save_refused_size": "आपके सर्वर ने इतनी बड़ी फ़ाइल अस्वीकार कर दी ({size}): उसके आगे एक प्रॉक्सी अपलोड सीमित करता है",

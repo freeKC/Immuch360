@@ -1720,7 +1720,7 @@
   "splat_save_large": "{size}: sommige bedieners weier lêers groter as 100 MB (Cloudflare Tunnel, byvoorbeeld)",
   "splat_save_mobile_data_ply": "Jy is op mobiele data: tot {size} om te stuur",
   "splat_save_no_capture": "Die aansig kon nie vasgevang word nie: beweeg ’n bietjie en stoor dan weer",
-  "splat_save_ply": "As SPZ gestoor: {size} in plaas van {plySize}, dieselfde gaussiane",
+  "splat_save_ply": "As SPZ gestoor: {size} in plaas van {plySize}, saamgepers met ’n klein verlies. Hou die PLY om die toneel te wysig",
   "splat_save_ply_too_large": "Hierdie PLY is te groot om op hierdie toestel om te skakel: stoor dit vanaf ’n rekenaar",
   "splat_save_preparing": "Berei {name} vir Immich voor",
   "splat_save_refused_size": "Jou bediener het ’n lêer van hierdie grootte geweier ({size}): ’n instaanbediener voor dit beperk oplaaie",

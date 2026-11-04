@@ -2860,7 +2860,7 @@
   "splat_save_large": "{size}: es paar Server lehned Dateie über 100 MB ab (zum Bispiel Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Du bisch mit mobile Date unterwägs: bis {size} z schicke",
   "splat_save_no_capture": "D Asicht het nöd chöne ufgno wärde: beweg di chli und speicher denn nomal",
-  "splat_save_ply": "Als SPZ gspeicheret: {size} statt {plySize}, die gliiche Gauss",
+  "splat_save_ply": "Als SPZ gspeicheret: {size} statt {plySize}, mit chliinem Verluscht komprimiert. Bhalt d PLY, zum d Szene z bearbeite",
   "splat_save_ply_too_large": "Die PLY isch z gross zum Umwandle uf dem Grät: speicher sie vomene Computer us",
   "splat_save_preparing": "{name} wird für Immich vorbereitet",
   "splat_save_refused_size": "Din Server het e so grossi Datei abglehnt ({size}): en Proxy devor begrenzt d Uploads",

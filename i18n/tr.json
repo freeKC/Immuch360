@@ -3649,7 +3649,7 @@
   "splat_save_large": "{size}: bazı sunucular 100 MB üzerindeki dosyaları reddeder (örneğin Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Mobil veri kullanıyorsunuz: en fazla {size} gönderilecek",
   "splat_save_no_capture": "Görünüm yakalanamadı: biraz hareket edin, sonra yeniden kaydedin",
-  "splat_save_ply": "SPZ olarak kaydedildi: {plySize} yerine {size}, aynı gausslar",
+  "splat_save_ply": "SPZ olarak kaydedildi: {plySize} yerine {size}, hafif kayıpla sıkıştırıldı. Sahneyi düzenlemek için PLY dosyasını saklayın",
   "splat_save_ply_too_large": "Bu PLY bu cihazda dönüştürülemeyecek kadar büyük: bir bilgisayardan kaydedin",
   "splat_save_preparing": "{name} Immich için hazırlanıyor",
   "splat_save_refused_size": "Sunucunuz bu kadar büyük bir dosyayı ({size}) reddetti: önündeki bir proxy yüklemeleri sınırlıyor",

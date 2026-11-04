@@ -3647,7 +3647,7 @@
   "splat_save_large": "{size}: beberapa server menolak berkas di atas 100 MB (misalnya Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Anda memakai data seluler: hingga {size} akan dikirim",
   "splat_save_no_capture": "Tampilan tidak dapat ditangkap: bergeserlah sedikit, lalu simpan lagi",
-  "splat_save_ply": "Disimpan sebagai SPZ: {size} alih-alih {plySize}, gaussian yang sama",
+  "splat_save_ply": "Disimpan sebagai SPZ: {size} alih-alih {plySize}, dikompresi dengan sedikit kehilangan. Simpan PLY untuk mengedit adegan",
   "splat_save_ply_too_large": "PLY ini terlalu besar untuk dikonversi di perangkat ini: simpan dari komputer",
   "splat_save_preparing": "Menyiapkan {name} untuk Immich",
   "splat_save_refused_size": "Server Anda menolak berkas sebesar ini ({size}): proxy di depannya membatasi unggahan",

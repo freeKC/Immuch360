@@ -3649,7 +3649,7 @@
   "splat_save_large": "{size}: alguns servidors rebutgen fitxers de més de 100 MB (Cloudflare Tunnel, per exemple)",
   "splat_save_mobile_data_ply": "Estàs amb dades mòbils: fins a {size} per enviar",
   "splat_save_no_capture": "No s’ha pogut capturar la vista: mou-te una mica i torna a desar",
-  "splat_save_ply": "Desada com a SPZ: {size} en lloc de {plySize}, les mateixes gaussianes",
+  "splat_save_ply": "Desada com a SPZ: {size} en lloc de {plySize}, comprimida amb una lleugera pèrdua. Conserva el PLY per editar l’escena",
   "splat_save_ply_too_large": "Aquest PLY és massa gran per convertir-lo en aquest dispositiu: desa’l des d’un ordinador",
   "splat_save_preparing": "S’està preparant {name} per a l’Immich",
   "splat_save_refused_size": "El teu servidor ha rebutjat un fitxer tan gran ({size}): un servidor intermediari davant seu limita les pujades",

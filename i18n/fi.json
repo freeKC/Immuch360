@@ -3461,7 +3461,7 @@
   "splat_save_large": "{size}: jotkin palvelimet hylkäävät yli 100 MB:n tiedostot (esimerkiksi Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Käytät mobiilidataa: enintään {size} lähetettävänä",
   "splat_save_no_capture": "Näkymää ei voitu kaapata: liiku hieman ja tallenna sitten uudelleen",
-  "splat_save_ply": "Tallennettu SPZ-muodossa: {size} eikä {plySize}, samat gaussit",
+  "splat_save_ply": "Tallennettu SPZ-muodossa: {size} eikä {plySize}, pakattu pienellä häviöllä. Säilytä PLY, jos haluat muokata näkymää",
   "splat_save_ply_too_large": "Tämä PLY on liian suuri muunnettavaksi tällä laitteella: tallenna se tietokoneelta",
   "splat_save_preparing": "Valmistellaan {name} Immichiä varten",
   "splat_save_refused_size": "Palvelimesi hylkäsi näin suuren tiedoston ({size}): sen edessä oleva välityspalvelin rajoittaa latauksia",

@@ -3349,7 +3349,7 @@
   "splat_save_large": "{size}: काही सर्व्हर 100 MB पेक्षा मोठ्या फाइल नाकारतात (उदा. Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "तुम्ही मोबाइल डेटावर आहात: {size} पर्यंत पाठवायचे",
   "splat_save_no_capture": "दृश्य कॅप्चर करता आले नाही: थोडे हला, मग पुन्हा जतन करा",
-  "splat_save_ply": "SPZ म्हणून जतन केले: {plySize} ऐवजी {size}, तेच गॉसियन",
+  "splat_save_ply": "SPZ म्हणून जतन केले: {plySize} ऐवजी {size}, थोड्या हानीसह संकुचित. दृश्य संपादित करण्यासाठी PLY ठेवून द्या",
   "splat_save_ply_too_large": "ही PLY या डिव्हाइसवर रूपांतरित करण्यासाठी खूप मोठी आहे: ती संगणकावरून जतन करा",
   "splat_save_preparing": "Immich साठी {name} तयार करत आहे",
   "splat_save_refused_size": "तुमच्या सर्व्हरने इतकी मोठी फाइल नाकारली ({size}): त्याच्यासमोरील प्रॉक्सी अपलोड मर्यादित करते",

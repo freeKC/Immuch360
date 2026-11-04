@@ -3648,7 +3648,7 @@
   "splat_save_large": "{size}: egyes szerverek elutasítják a 100 MB-nál nagyobb fájlokat (például a Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Mobiladatot használ: legfeljebb {size} küldendő",
   "splat_save_no_capture": "A nézet nem rögzíthető: mozduljon el kicsit, majd mentse újra",
-  "splat_save_ply": "SPZ-ként mentve: {plySize} helyett {size}, ugyanazok a gauss-elemek",
+  "splat_save_ply": "SPZ-ként mentve: {plySize} helyett {size}, enyhe veszteséggel tömörítve. Tartsa meg a PLY-t a jelenet szerkesztéséhez",
   "splat_save_ply_too_large": "Ez a PLY túl nagy ahhoz, hogy ezen az eszközön átalakítsa: mentse számítógépről",
   "splat_save_preparing": "{name} előkészítése az Immich számára",
   "splat_save_refused_size": "A szervere elutasított egy ekkora fájlt ({size}): egy előtte álló proxy korlátozza a feltöltéseket",

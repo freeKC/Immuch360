@@ -31,7 +31,8 @@ void main() {
     expect(line(const SplatSaveStatus(SplatSaveState.done)), 'Saved to Immich, in your timeline on Nov 3, 2026');
     expect(
       line(const SplatSaveStatus(SplatSaveState.done, sceneBytes: 3 << 20), plyBytes: 12 << 20),
-      'Saved to Immich, in your timeline on Nov 3, 2026. Saved as SPZ: 3.0 MiB instead of 12.0 MiB, the same gaussians',
+      'Saved to Immich, in your timeline on Nov 3, 2026. Saved as SPZ: 3.0 MiB instead of 12.0 MiB, compressed with '
+      'a slight loss. Keep the PLY to edit the scene',
     );
     expect(
       line(SplatSaveStatus(SplatSaveState.alreadyThere, savedAt: DateTime(2026, 10, 30, 12))),

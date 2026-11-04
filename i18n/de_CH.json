@@ -1773,7 +1773,7 @@
   "splat_save_large": "{size}: Manche Server lehnen Dateien über 100 MB ab (zum Beispiel Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Du bisch mit mobile Date verbunde: bis {size} zum Sände",
   "splat_save_no_capture": "Die Ansicht konnte nicht aufgenommen werden: Bewege dich ein wenig und speichere dann erneut",
-  "splat_save_ply": "Als SPZ gespeichert: {size} statt {plySize}, dieselben Gaussschen",
+  "splat_save_ply": "Als SPZ gespeichert: {size} statt {plySize}, mit leichtem Verlust komprimiert. Behalte die PLY-Datei, um die Szene zu bearbeiten",
   "splat_save_ply_too_large": "Diese PLY ist zu gross, um sie auf diesem Gerät umzuwandeln: Speichere sie von einem Computer",
   "splat_save_preparing": "{name} wird für Immich vorbereitet",
   "splat_save_refused_size": "Dein Server hat eine so grosse Datei abgelehnt ({size}): Ein Proxy davor begrenzt Uploads",

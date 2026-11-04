@@ -3569,7 +3569,7 @@
   "splat_save_large": "{size}: neki poslužitelji odbijaju datoteke veće od 100 MB (na primjer Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Koristite mobilne podatke: za slanje do {size}",
   "splat_save_no_capture": "Pogled nije bilo moguće snimiti: malo se pomaknite pa ponovno spremite",
-  "splat_save_ply": "Spremljeno kao SPZ: {size} umjesto {plySize}, isti gausijani",
+  "splat_save_ply": "Spremljeno kao SPZ: {size} umjesto {plySize}, komprimirano uz mali gubitak. Zadržite PLY da biste uređivali scenu",
   "splat_save_ply_too_large": "Ovaj je PLY prevelik za pretvorbu na ovom uređaju: spremite ga s računala",
   "splat_save_preparing": "Priprema {name} za Immich",
   "splat_save_refused_size": "Vaš je poslužitelj odbio datoteku ove veličine ({size}): proxy ispred njega ograničava prijenose",

@@ -3624,7 +3624,7 @@
   "splat_save_large": "{size}: 일부 서버는 100 MB가 넘는 파일을 거부합니다 (예: Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "모바일 데이터 사용 중: 보낼 크기 최대 {size}",
   "splat_save_no_capture": "화면을 캡처하지 못했습니다: 조금 움직인 뒤 다시 저장하세요",
-  "splat_save_ply": "SPZ로 저장됨: {plySize} 대신 {size}, 같은 가우시안",
+  "splat_save_ply": "SPZ로 저장됨: {plySize} 대신 {size}, 약간의 손실이 있는 압축입니다. 장면을 편집하려면 PLY를 보관하세요",
   "splat_save_ply_too_large": "이 PLY는 이 기기에서 변환하기에 너무 큽니다: 컴퓨터에서 저장하세요",
   "splat_save_preparing": "Immich용으로 {name} 준비 중",
   "splat_save_refused_size": "서버가 이 크기의 파일을 거부했습니다 ({size}): 앞에 있는 프록시가 업로드를 제한합니다",

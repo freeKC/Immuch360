@@ -3601,7 +3601,7 @@
   "splat_save_large": "{size}: kelkaj serviloj rifuzas dosierojn pli grandajn ol 100 MB (ekzemple Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Vi uzas poŝtelefonajn datumojn: ĝis {size} por sendi",
   "splat_save_no_capture": "La vido ne povis esti kaptita: moviĝu iomete, poste konservu denove",
-  "splat_save_ply": "Konservita kiel SPZ: {size} anstataŭ {plySize}, la samaj gaŭsoj",
+  "splat_save_ply": "Konservita kiel SPZ: {size} anstataŭ {plySize}, densigita kun eta perdo. Gardu la PLY-dosieron por redakti la scenon",
   "splat_save_ply_too_large": "Ĉi tiu PLY estas tro granda por konverti en ĉi tiu aparato: konservu ĝin el komputilo",
   "splat_save_preparing": "Preparado de {name} por Immich",
   "splat_save_refused_size": "Via servilo rifuzis tiel grandan dosieron ({size}): prokurilo antaŭ ĝi limigas alŝutojn",

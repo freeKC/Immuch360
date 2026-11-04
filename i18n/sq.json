@@ -3100,7 +3100,7 @@
   "splat_save_large": "{size}: disa serverë refuzojnë skedarë mbi 100 MB (për shembull Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Jeni në të dhëna celulare: deri në {size} për t'u dërguar",
   "splat_save_no_capture": "Pamja nuk u kap dot: lëviz pak, pastaj ruaje sërish",
-  "splat_save_ply": "U ruajt si SPZ: {size} në vend të {plySize}, të njëjtat gausiane",
+  "splat_save_ply": "U ruajt si SPZ: {size} në vend të {plySize}, i ngjeshur me një humbje të vogël. Mbajeni PLY-në për të redaktuar skenën",
   "splat_save_ply_too_large": "Ky PLY është shumë i madh për t'u konvertuar në këtë pajisje: ruaje nga një kompjuter",
   "splat_save_preparing": "Po përgatitet {name} për Immich",
   "splat_save_refused_size": "Serveri yt refuzoi një skedar kaq të madh ({size}): një proxy përpara tij kufizon ngarkimet",

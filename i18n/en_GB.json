@@ -3611,7 +3611,7 @@
   "splat_save_large": "{size}: some servers refuse files above 100 MB (Cloudflare Tunnel, for one)",
   "splat_save_mobile_data_ply": "You are on mobile data: up to {size} to send",
   "splat_save_no_capture": "The view could not be captured: move a little, then save again",
-  "splat_save_ply": "Saved as SPZ: {size} instead of {plySize}, the same gaussians",
+  "splat_save_ply": "Saved as SPZ: {size} instead of {plySize}, compressed with a slight loss. Keep the PLY to edit the scene",
   "splat_save_ply_too_large": "This PLY is too large to convert on this device: save it from a computer",
   "splat_save_preparing": "Preparing {name} for Immich",
   "splat_save_refused_size": "Your server refused a file this large ({size}): a proxy in front of it limits uploads",

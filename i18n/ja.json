@@ -3646,7 +3646,7 @@
   "splat_save_large": "{size}: 100 MB を超えるファイルを拒否するサーバーがあります (Cloudflare Tunnel など)",
   "splat_save_mobile_data_ply": "モバイルデータ通信中です: 送信量は最大 {size}",
   "splat_save_no_capture": "視点をキャプチャできませんでした: 少し動いてからもう一度保存してください",
-  "splat_save_ply": "SPZ として保存しました: {plySize} ではなく {size}、ガウシアンは同じです",
+  "splat_save_ply": "SPZ として保存しました: {plySize} ではなく {size}、わずかな劣化を伴う圧縮です。シーンを編集するには PLY を残してください",
   "splat_save_ply_too_large": "この PLY は大きすぎてこのデバイスでは変換できません: パソコンから保存してください",
   "splat_save_preparing": "{name} を Immich 用に準備中",
   "splat_save_refused_size": "サーバーがこの大きさのファイルを拒否しました ({size}): 手前のプロキシがアップロードを制限しています",

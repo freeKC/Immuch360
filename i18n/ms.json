@@ -2354,7 +2354,7 @@
   "splat_save_large": "{size}: sesetengah pelayan menolak fail melebihi 100 MB (contohnya Cloudflare Tunnel)",
   "splat_save_mobile_data_ply": "Anda menggunakan data mudah alih: sehingga {size} untuk dihantar",
   "splat_save_no_capture": "Pandangan tidak dapat ditangkap: bergerak sedikit, kemudian simpan semula",
-  "splat_save_ply": "Disimpan sebagai SPZ: {size} dan bukannya {plySize}, gaussian yang sama",
+  "splat_save_ply": "Disimpan sebagai SPZ: {size} dan bukannya {plySize}, dimampatkan dengan sedikit kehilangan. Simpan PLY untuk mengedit adegan",
   "splat_save_ply_too_large": "PLY ini terlalu besar untuk ditukar pada peranti ini: simpannya daripada komputer",
   "splat_save_preparing": "Menyediakan {name} untuk Immich",
   "splat_save_refused_size": "Pelayan anda menolak fail sebesar ini ({size}): proksi di hadapannya mengehadkan muat naik",
