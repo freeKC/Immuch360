@@ -39,6 +39,7 @@ import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
@@ -119,6 +120,11 @@ AutoDisposeProvider<RotationMode> rotationModeProvider(BaseAsset asset) => rotat
 final rotationModeFamily = Provider.autoDispose.family<RotationMode, RotationSubject>((ref, subject) {
   final asset = subject.asset;
   if (!asset.isImage || (asset is RemoteAsset && (asset.isTrashed || asset.isLocked))) {
+    return RotationMode.none;
+  }
+  // A splat photo turns in its viewer: the editor of the server would make a copy without the scene (plan of 3
+  // November 2026, section 4); a photo named like one waits for its head
+  if (ref.watch(splatPhotoHoldsProvider(asset))) {
     return RotationMode.none;
   }
   if (ref.watch(rawMediaKindProvider(asset)) != null ||

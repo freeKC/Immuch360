@@ -21,6 +21,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.prov
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_photo_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
 import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
@@ -32,6 +33,7 @@ import 'package:immich_mobile/providers/infrastructure/current_album.provider.da
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
 import 'package:immich_mobile/utils/system_ui.utils.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 
@@ -609,6 +611,13 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// not spin the photo.
   KeyEventResult _rotate(int delta, {required bool press}) {
     final asset = ref.read(assetViewerProvider).currentAsset;
+    // A splat photo turns in its viewer: said for 4 seconds, the key taken (plan of 3 November 2026, section 4)
+    if (asset != null && press && ref.read(splatPhotoProvider(asset)).valueOrNull != null) {
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(SnackBar(content: Text(context.t.splat_photo_turn), duration: splatPhotoNoticeDuration));
+      return KeyEventResult.handled;
+    }
     if (asset == null || ref.read(rotationModeProvider(asset)) == RotationMode.none) {
       return KeyEventResult.ignored;
     }

@@ -27,6 +27,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.d
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_date_time.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_kebab_menu.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_photo_button.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
@@ -41,6 +42,7 @@ import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.da
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
@@ -85,7 +87,15 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // The asset is 360 when the server flags it, or when the user chose "View as 360°" for it. Raw files of 360°
     // cameras are stitched by the app; the button of one that does not open (the other file of a split pair missing,
     // a layout this device does not play) says why.
+    // A splat photo, or a photo named like one while its head is read, decides first (plan of 3 November 2026,
+    // section 4): "PANO_360_salon_splat.jpg" is a scene, never a panorama, and its photo is never offered in 3D
+    final splatHolds = ref.watch(splatPhotoHoldsProvider(asset));
+    final splatXmp = splatHolds ? ref.watch(splatPhotoProvider(asset)).valueOrNull : null;
+    final splatButton = splatXmp != null && ref.watch(splatPhotoExploreProvider) == SplatPhotoExplore.here
+        ? SplatPhotoButton(asset: asset, xmp: splatXmp)
+        : null;
     final hasPanoramaView =
+        !splatHolds &&
         (ref.watch(isEquirectangularProvider(asset)) || ref.watch(rawMediaKindProvider(asset)) != null) &&
         ref.watch(can360ViewProvider(asset));
     final panoramaButton = hasPanoramaView
@@ -116,14 +126,14 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // An Apple spatial photo shows its two eyes in the immersive viewer of a Meta Quest; the other devices show the left
     // eye, as for any photo. Only HEIF photos are read for a pair, and only on the headset.
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
-    final stereoPair = isHorizonOs && asset.isImage && isHeifName(asset.name)
+    final stereoPair = isHorizonOs && asset.isImage && !splatHolds && isHeifName(asset.name)
         ? ref.watch(appleSpatialInfoProvider(asset)).valueOrNull?.photo
         : null;
     // So does a flat photo holding two eyes side by side: the 3D photos a computer makes, those of other tools. Only
     // the photos whose name or frame says so are read (see FlatStereoService.isCandidate), only on the headset, and
     // never a photo shown as 360°, which keeps its own viewer (a band of the sphere has the frame of two eyes). One of
     // a newer format keeps its button, greyed with the reason.
-    final flatStereoState = isHorizonOs && asset.isImage && stereoPair == null && !hasPanoramaView
+    final flatStereoState = isHorizonOs && asset.isImage && !splatHolds && stereoPair == null && !hasPanoramaView
         ? ref.watch(flatStereoProvider(asset))
         : null;
     final flatStereo = flatStereoState?.valueOrNull;
@@ -133,7 +143,10 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // viewer, and a photo of two eyes one above the other on the stereo quad, nothing to read for either; never a media
     // shown as 360°, nor a photo the reads above found otherwise
     final flat3dByName =
-        isHorizonOs && !hasPanoramaView && ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
+        isHorizonOs &&
+        !hasPanoramaView &&
+        !splatHolds &&
+        ref.watch(appConfigProvider.select((config) => config.viewer.flat3dByName));
     final flatVideoFormat = flat3dByName ? flatStereoVideoFormatOf(asset) : null;
     final stackedPhoto = flat3dByName && asset.isImage ? stackedPhotoFormatOf(asset.name) : null;
     final stackedPhotoFormat = stereoPair == null && flatStereo == null ? stackedPhoto : null;
@@ -162,7 +175,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // "Explore the 3D scene" on a Meta Quest: a photo named like one that carries a 3D scene a computer made from it,
     // told by our packet at the head of its file; greyed with the reason the gate of the headset reads there (see
     // AiSceneButton). Nothing of the AI is needed to read a scene: the AI features off leave it.
-    final sceneState = isHorizonOs && ScenePhotoService.isCandidate(asset) && !hasPanoramaView
+    final sceneState = isHorizonOs && !splatHolds && ScenePhotoService.isCandidate(asset) && !hasPanoramaView
         ? ref.watch(scenePhotoProvider(asset))
         : null;
     final sceneXmp = sceneState?.valueOrNull;
@@ -182,7 +195,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
         stackedPhoto == null &&
         (sceneState == null || (sceneState.hasValue && sceneXmp == null)) &&
         ref.watch(rotationModeProvider(asset)) != RotationMode.none;
-    final reliefGate = isFlatPhoto ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
+    final reliefGate = isFlatPhoto && !splatHolds ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
     final reliefButton = reliefGate.visible
         ? AiReliefButton(
             gate: reliefGate,
@@ -196,7 +209,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // photo once the reads above found it flat (the AI relief may show beside it, for its 3D), a video neither 360°
     // nor told 3D by its name; never a media shown as 360°, which keeps its own viewer
     final isFlatVideo = isHorizonOs && asset.isVideo && !hasPanoramaView && flatVideoFormat == null;
-    final bigScreenButton = isFlatPhoto || isFlatVideo
+    final notSplat = !splatHolds;
+    final bigScreenButton = notSplat && (isFlatPhoto || isFlatVideo)
         ? IconButton(
             key: const Key('immersive_big_screen'),
             icon: const Icon(Icons.fit_screen_rounded),
@@ -248,6 +262,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
           duration: Durations.short2,
           child: Stack(
             children: [
+              // Where to explore the scene of a splat photo, said once on a device that cannot (a TV, iOS)
+              if (splatHolds) SplatPhotoElsewhereNotice(asset: asset),
               Positioned.fill(
                 child: IgnorePointer(
                   child: DecoratedBox(
@@ -282,6 +298,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   spatialButton != null ||
                                   view3dButton != null ||
                                   sceneButton != null ||
+                                  splatButton != null ||
                                   reliefButton != null ||
                                   bigScreenButton != null ||
                                   rotateButton != null ||
@@ -297,6 +314,7 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
                                   children: [
                                     ?view3dButton,
                                     ?sceneButton,
+                                    ?splatButton,
                                     ?reliefButton,
                                     ?bigScreenButton,
                                     ?panoramaButton,

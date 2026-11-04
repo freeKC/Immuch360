@@ -7,6 +7,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/splat_photo/splat_photo_probe.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
@@ -17,6 +18,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/video_source_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_photo_button.dart';
 import 'package:immich_mobile/providers/ai_immersive/scene_photo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/apple_spatial.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
@@ -61,6 +63,9 @@ class TechnicalDetails extends ConsumerWidget {
         // section 9.3). The Quest has its "Explore the 3D scene" button, the computers their versions; only a photo
         // named like a scene is read
         if (!CurrentPlatform.isDesktop && ScenePhotoService.isCandidate(asset)) _ScenePhotoTile(asset: asset),
+        // A photo that carries a splat scene (plan of 3 November 2026): its size and gaussians on every device, and
+        // where to explore it from one that cannot; only a photo named like one is read
+        if (SplatPhotoService.isCandidate(asset)) SplatPhotoDetailsTile(asset: asset),
         // Immuch360 Desktop: the 3D versions of a photo of the folder library, or the photo a version was made from
         // (lib/desktop/ai/library/versions_section.dart)
         if (CurrentPlatform.isDesktop && asset.isImage) DesktopVersionsTiles(asset: asset),

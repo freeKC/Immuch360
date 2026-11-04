@@ -120,6 +120,7 @@ import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.da
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:immich_mobile/utils/editor.utils.dart';
@@ -852,12 +853,15 @@ IndexedVersion? _versionOf(Ref ref, BaseAsset asset) {
 /// 3D scene and a 360° panorama ([aiFlatPhotoProvider]), a 360° photo that holds one eye for its 3D version
 /// ([aiMonoPanoramaProvider])
 final aiSourceProvider = Provider.autoDispose.family<bool, ({BaseAsset asset, ConversionKind kind})>(
-  (ref, source) => switch (source.kind) {
-    ConversionKind.sbsFromPhoto ||
-    ConversionKind.sceneFromPhoto ||
-    ConversionKind.panoramaFromPhoto => ref.watch(aiFlatPhotoProvider(source.asset)),
-    ConversionKind.stereoPanoramaFromPanorama => ref.watch(aiMonoPanoramaProvider(source.asset)),
-  },
+  // A splat photo is ours, never a source (plan of 3 November 2026, section 4)
+  (ref, source) => ref.watch(splatPhotoHoldsProvider(source.asset))
+      ? false
+      : switch (source.kind) {
+          ConversionKind.sbsFromPhoto ||
+          ConversionKind.sceneFromPhoto ||
+          ConversionKind.panoramaFromPhoto => ref.watch(aiFlatPhotoProvider(source.asset)),
+          ConversionKind.stereoPanoramaFromPanorama => ref.watch(aiMonoPanoramaProvider(source.asset)),
+        },
 );
 
 /// Whether the viewer offers "Make 3D (AI)" for [asset]: a flat photo this system can read, neither 360°, nor two eyes
