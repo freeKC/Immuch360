@@ -800,10 +800,18 @@ void main() {
     test('the texts of the memory of the graphics card, with and without the share of the app', () {
       loadEnglishTexts();
       final t = StaticTranslations.instance;
+      // Below 64 MiB the share is not said: on an Optimus laptop with the app on the Intel chip, Windows has no counter
+      // of the app on the NVIDIA card, and the probe reads 0
+      for (final small in [0, (64 << 20) - 1]) {
+        expect(
+          gpuShortfallText(t, GpuShortfall(need: 6 << 30, free: 5 << 30, appHolds: small)),
+          '360° panoramas need 6.0 GiB of free graphics memory, 5.0 GiB free: close games, 3D apps or videos',
+        );
+      }
       expect(
-        gpuShortfallText(t, const GpuShortfall(need: 6 << 30, free: 5 << 30, appHolds: 0)),
-        '360° panoramas need 6.0 GiB of free graphics memory, 5.0 GiB free (Immuch360 itself holds 0 B): close games, '
-        '3D apps or videos',
+        gpuShortfallText(t, const GpuShortfall(need: 6 << 30, free: 5 << 30, appHolds: 64 << 20)),
+        '360° panoramas need 6.0 GiB of free graphics memory, 5.0 GiB free (Immuch360 itself holds 64.0 MiB): close '
+        'games, 3D apps or videos',
       );
       expect(
         conversionWaitText(t, ConversionWait.graphicsMemory),

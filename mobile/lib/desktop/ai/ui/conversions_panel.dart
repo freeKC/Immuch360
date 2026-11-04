@@ -292,15 +292,20 @@ String conversionWaitText(Translations t, ConversionWait wait, {GpuShortfall? sh
   ConversionWait.graphicsMemory => gpuShortfallText(t, shortfall ?? const GpuShortfall(need: 0, free: 0)),
 };
 
+/// The least share of the card the app is said to hold: below it the share is left out. A 0 may be a share the system
+/// does not count rather than nothing (Windows has no counter of the app on the NVIDIA card of an Optimus laptop whose
+/// app runs on the integrated chip), and a few megabytes would not explain a shortfall
+const appGraphicsShareShownFrom = 64 * 1024 * 1024;
+
 /// "360° panoramas need 6.0 GiB of free graphics memory, 5.4 GiB free (Immuch360 itself holds 1.4 GiB): close games,
-/// 3D apps or videos"; the part of the app when it could be read
+/// 3D apps or videos"; the part of the app when it could be read, from [appGraphicsShareShownFrom]
 String gpuShortfallText(Translations t, GpuShortfall shortfall) => switch (shortfall.appHolds) {
-  final app? => t.ai_immersive_gpu_budget_need_app(
+  final app? when app >= appGraphicsShareShownFrom => t.ai_immersive_gpu_budget_need_app(
     needed: formatBytes(shortfall.need),
     free: formatBytes(shortfall.free),
     app: formatBytes(app),
   ),
-  null => t.ai_immersive_gpu_budget_need(needed: formatBytes(shortfall.need), free: formatBytes(shortfall.free)),
+  _ => t.ai_immersive_gpu_budget_need(needed: formatBytes(shortfall.need), free: formatBytes(shortfall.free)),
 };
 
 /// The words of a quality flag of a result
