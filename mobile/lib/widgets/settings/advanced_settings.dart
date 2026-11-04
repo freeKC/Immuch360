@@ -104,6 +104,11 @@ class AdvancedSettings extends HookConsumerWidget {
     useValueChanged<bool, void>(keepAllGaussians.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerKeepAllGaussians, keepAllGaussians.value));
     });
+    // The 3D sign in the photo of a splat scene saved to Immich (decision D1 of the splat photos), on by default
+    final markSplatPhotos = useState(ref.watch(appConfigProvider).viewer.markSplatPhotos);
+    useValueChanged<bool, void>(markSplatPhotos.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerMarkSplatPhotos, markSplatPhotos.value));
+    });
 
     final logLevel = Level.LEVELS[levelId.value].name;
 
@@ -260,6 +265,14 @@ class AdvancedSettings extends HookConsumerWidget {
           valueNotifier: keepAllGaussians,
           title: context.t.splat_keep_all_setting_title,
           subtitle: context.t.splat_keep_all_setting_subtitle,
+        ),
+      // Every device that saves a splat scene to Immich: the Quest's splat page, the computers, phones and tablets
+      if ((splatsInThisBuild || flatSplats) && gaussianSplats.value)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_mark_splat_photos'),
+          valueNotifier: markSplatPhotos,
+          title: context.t.splat_mark_setting_title,
+          subtitle: context.t.splat_mark_setting_subtitle,
         ),
       if (isHorizonOs) const AiReliefSettings(),
       // The kiosk mode, for the visitors of an exhibition: a Meta Quest only, like the immersive viewer it opens

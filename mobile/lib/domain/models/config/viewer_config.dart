@@ -69,6 +69,11 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// UHD, measured); a dedicated graphics card shows every gaussian whatever this says
     @Default(false) bool keepAllGaussians,
 
+    /// Experimental: a scene saved to Immich gets a small 3D sign at the bottom right of its photo (decision D1 of the
+    /// splat photos, plan of 3 November 2026), so that Immich and other apps tell it apart from a photo. On by default,
+    /// the lab rule (Settings, Advanced turns it off: the poster is then left clean)
+    @Default(true) bool markSplatPhotos,
+
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)
     VideoSourcePolicy? videoSource,

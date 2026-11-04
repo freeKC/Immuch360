@@ -3596,6 +3596,8 @@
   "splat_large_setting_title": "Large splats (experimental)",
   "splat_linux_no_picture": "The splat viewer drew nothing. With an NVIDIA graphics card, start Immuch360 with WEBKIT_DISABLE_DMABUF_RENDERER=1",
   "splat_loading": "Loading the splat",
+  "splat_mark_setting_subtitle": "A small 3D sign in a corner tells them apart in Immich and other apps",
+  "splat_mark_setting_title": "Mark the photos of saved splat scenes",
   "splat_mode_orbit": "Turn around",
   "splat_mode_walk": "Walk",
   "splat_module_cannot_read": "This device cannot show this splat: its copy for the headset is not in a form the splat module reads",
