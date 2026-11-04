@@ -1,8 +1,9 @@
 // The splat photos end to end against a compat Immich of ai1 (plan of 3 November 2026, section 10.2, lots L2, L3 and
 // L6), with the app's own classes: the save job (its drawn poster, the checks of "already there", bulk-upload-check,
 // the upload with its checksum header and its metadata item, the album), then the head read and the scene taken out
-// of the original, directly and through a proxy that drops Range. Never FreeKC's server: the URL must be one of ai1.
-// The assets and the album made are deleted at the end.
+// of the original, directly and through a proxy that drops Range. Never FreeKC's server: the URL must be a compat
+// server of the test network (plain HTTP on a private address, port 2283 or 2284) whose user holds a few fixtures,
+// never a library. The assets and the album made are deleted at the end.
 //
 //   SPLAT_E2E_URL=http://<compat host>:2283 SPLAT_E2E_KEY=... SPLAT_E2E_PROXY=http://<compat host>:2285 \
 //   SPLAT_E2E_SCENE=room.spz SPLAT_E2E_OUT=result.json flutter test tool/splat_photo/splat_photo_e2e_test.dart
@@ -198,13 +199,27 @@ class _HttpServer implements SplatSaveServer {
   }
 }
 
+/// The most assets the user of a compat server holds: its fixtures, and those of the runs of other tests
+const _compatMostAssets = 500;
+
+/// Whether [url] is a compat server of the test network: plain HTTP on a private IPv4 address (RFC 1918) at the port of
+/// a compat Immich, with no path
+bool _isCompatUrl(String url) {
+  final uri = Uri.tryParse(url);
+  if (uri == null || uri.scheme != 'http' || uri.path.isNotEmpty || uri.hasQuery) {
+    return false;
+  }
+  final private = RegExp(r'^(10\.\d{1,3}|172\.(1[6-9]|2\d|3[01])|192\.168)\.\d{1,3}\.\d{1,3}$').hasMatch(uri.host);
+  return private && (uri.port == 2283 || uri.port == 2284);
+}
+
 void main() {
   final base = _env['SPLAT_E2E_URL'] ?? '';
   final key = _env['SPLAT_E2E_KEY'] ?? '';
   final proxy = _env['SPLAT_E2E_PROXY'];
   final scenePath = _env['SPLAT_E2E_SCENE'] ?? '';
-  final skip = !RegExp(r'^http://192\.168\.4\.134:228[34]$').hasMatch(base) || key.isEmpty || scenePath.isEmpty
-      ? 'needs SPLAT_E2E_URL (a compat server of ai1), SPLAT_E2E_KEY and SPLAT_E2E_SCENE'
+  final skip = !_isCompatUrl(base) || key.isEmpty || scenePath.isEmpty
+      ? 'needs SPLAT_E2E_URL (a compat server: http://<private address>:2283 or 2284), SPLAT_E2E_KEY and SPLAT_E2E_SCENE'
       : null;
 
   test(
@@ -216,6 +231,11 @@ void main() {
       final made = <String>[];
       final albums = <String>{};
       try {
+        // A compat user holds a few fixtures; a library is somebody's server, and nothing is sent to it
+        final held = (await server._json('GET', '/assets/statistics') as Map?)?['total'] as int?;
+        if (held == null || held > _compatMostAssets) {
+          fail('$held assets on this server: a library, not a compat server; nothing sent');
+        }
         out['version'] = '${await server.version()}';
         final scene = File(scenePath);
         // A PLY is converted by the job: its SPZ is the one in the packet
