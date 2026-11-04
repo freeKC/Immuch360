@@ -993,7 +993,8 @@ void main() {
       }
       expect(run.output, contains('Files of av2-decoder-1 in $out, built from $commit:'));
       expect(run.output, contains('The entries of the catalogue (ai_components_manifest.dart):'));
-      expect(run.output, contains('av2-decoder-windows-x64:\n  size: '));
+      // The lines of an entry, as the catalogue lays them out (Windows ends the lines of the run with \r\n)
+      expect(run.output.replaceAll('\r\n', '\n'), contains('av2-decoder-windows-x64:\n  size: '));
       expect(run.output, contains("      path: 'immuch360-av2.exe',"));
       // The catalogue of the branch carries the archives of lot AD2, not these, and there is no record yet
       expect(run.output, contains('the catalogue or the record differs from these files: run with --write'));
