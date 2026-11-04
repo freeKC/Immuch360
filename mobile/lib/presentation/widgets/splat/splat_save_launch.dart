@@ -157,6 +157,8 @@ Future<SplatSaveStatus?> runSplatSave(
   if (jobs.isRunning(scene.key)) {
     return null;
   }
+  // Before anything is awaited: see forget
+  jobs.forget(scene.key);
   final software = await container.read(splatSaveSoftwareProvider.future).catchError((_) => ('Immuch360', 'Immuch360'));
   File? file;
   try {
@@ -290,6 +292,8 @@ class SplatViewerSaveSession implements SplatViewerSaving {
     if (poster == null || onServer) {
       return;
     }
+    // What the page reads until the job tells more, never the end of a save before ("Save another copy")
+    _last = const SplatSaveStatus(SplatSaveState.checking);
     unawaited(_container.read(splatSaveRecordsProvider).setAlbumOn(album).catchError((_) {}));
     final status = await runSplatSave(
       _container,

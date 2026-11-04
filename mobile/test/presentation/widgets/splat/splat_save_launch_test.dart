@@ -50,6 +50,8 @@ void main() {
     splatViewerCacheProvider.overrideWithValue(SplatViewerCache(() async => Directory('${dir.path}/cache'))),
   ];
 
+  bool isFinal(Object? state) => SplatSaveState.values.any((value) => value.name == state && value.isFinal);
+
   SplatHead headOf(File file) => probeSplatHead(file.readAsBytesSync(), file.lengthSync()) as SplatHead;
 
   testWidgets('the viewer: the page gets its texts, posts the view, saves, and reads where the save stands', (
@@ -106,6 +108,19 @@ void main() {
     expect(xmp.splatUp, 'zUp');
     expect(xmp.creatorTool, 'Immuch360 tests (linux)');
     expect(server.albums.values.single, ['asset-1']);
+
+    // Save another copy: from the event on, the page never reads the end of the save before
+    await tester.runAsync(() async {
+      saving.onEvent(const SplatViewerSave(album: true, again: true));
+      expect(saving.state()['state'], 'checking');
+      for (var i = 0; i < 100 && !isFinal(saving.state()['state']); i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    // The same view, the same file: the server holds it already
+    expect(saving.state()['state'], 'duplicate', reason: '${saving.state()}');
+    expect(saving.state()['assetId'], 'asset-1');
+    expect(server.uploads, hasLength(1));
   });
 
   testWidgets('the scene of a splat photo: on the server already, no poster taken', (tester) async {

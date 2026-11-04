@@ -65,8 +65,8 @@ final splatSaveServerProvider = Provider<SplatSaveServer? Function()>((ref) {
   };
 });
 
-/// The largest PLY this device converts: a quarter of its memory, the PLY taking about three times its size while it
-/// is read and packed; 512 MiB when the memory is not known
+/// The largest PLY this device converts: a twelfth of its memory, so that the conversion (about three times the PLY
+/// while it is read and packed) keeps to a quarter of it; 512 MiB when the memory is not known
 final splatSavePlyLimitProvider = Provider<Future<int> Function()>((ref) {
   return () async {
     int? memory;
@@ -160,6 +160,14 @@ class SplatSaveJobs extends Notifier<Map<String, SplatSaveStatus>> {
   }
 
   void cancel(String key) => _jobs[key]?.cancel();
+
+  /// Drops the last status of [key] once its job ended: a new save of the scene, while it starts (the copy of a share's
+  /// file can take a while), never shows the end of the save before, which the page would take for its own end
+  void forget(String key) {
+    if (!_jobs.containsKey(key) && state.containsKey(key)) {
+      state = {...state}..remove(key);
+    }
+  }
 }
 
 /// [request] with the words of the app's language: the caption of the packet, the line of the card, the album's name
@@ -232,6 +240,8 @@ String? splatSaveLine(
     SplatSaveState.failed => switch (status.problem) {
       SplatSaveProblem.plyTooLarge => t.splat_save_ply_too_large,
       SplatSaveProblem.refusedSize => t.splat_save_refused_size(size: formatBytes(status.carrierBytes ?? 0)),
+      // The words of the app rather than those of the socket
+      SplatSaveProblem.unreachable => t.splat_save_failed(reason: t.server_offline),
       _ => t.splat_save_failed(reason: status.detail ?? status.problem?.name ?? ''),
     },
   };
