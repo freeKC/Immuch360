@@ -65,7 +65,10 @@ COMMANDS = []  # every external command, in order, written next to the outputs
 
 
 def rel(p):
+    """[p] as the outputs write it: under ROOT, relative to it; ffmpeg by its name, never the path of this computer"""
     s = str(p)
+    if s == FFMPEG:
+        return "ffmpeg"
     return s.replace(str(ROOT) + "/", "") if s.startswith(str(ROOT) + "/") else s
 
 
@@ -97,7 +100,7 @@ def tool_versions():
             sys.exit(f"{name}: source at {head}, expected {commit}")
         info[name] = {"binary": rel(binary), "commit": head, "describe": desc, "binary_sha256": sha256(binary)}
     v = subprocess.run([FFMPEG, "-hide_banner", "-version"], capture_output=True, text=True).stdout.splitlines()[0]
-    info["ffmpeg"] = {"binary": FFMPEG, "version": v}
+    info["ffmpeg"] = {"binary": rel(FFMPEG), "version": v}
     return info
 
 
