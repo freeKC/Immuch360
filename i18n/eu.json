@@ -599,7 +599,6 @@
   "ai_immersive_glb_saved": "{folder} karpetan gordeta: {name}",
   "ai_immersive_gpu_budget_need": "360° panoramek {needed} memoria grafiko libre behar dituzte, {free} libre: itxi jokoak, 3D aplikazioak edo bideoak",
   "ai_immersive_gpu_budget_need_app": "360° panoramek {needed} memoria grafiko libre behar dituzte, {free} libre (Immuch360k berak {app} hartzen ditu): itxi jokoak, 3D aplikazioak edo bideoak",
-  "ai_immersive_gpu_budget_wait": "Beste aplikazio batzuk txartel grafikoaren memoria erabiltzen ari dira ({free} libre): itxi jokoak edo 3D aplikazioak",
   "ai_immersive_gpu_busy_warning": "Txartel grafikoa zenbait minutuz lanpetuta egongo da; jokoak eta bideoak etenka ibil daitezke",
   "ai_immersive_gpu_integrated": "Grafiko integratuek ordenagailuaren memoria partekatzen dute: motelegiak panoramentzat",
   "ai_immersive_gpu_integrated_allowed": "Saiatu grafiko integratuekin (probatu gabe)",

@@ -89,7 +89,6 @@
   "ai_immersive_glb_saved": "บันทึกไว้ใน {folder}: {name}",
   "ai_immersive_gpu_budget_need": "พาโนรามา 360° ต้องใช้หน่วยความจำกราฟิกว่าง {needed} ว่าง {free}: ปิดเกม แอป 3D หรือวิดีโอ",
   "ai_immersive_gpu_budget_need_app": "พาโนรามา 360° ต้องใช้หน่วยความจำกราฟิกว่าง {needed} ว่าง {free} (Immuch360 เองใช้ {app}): ปิดเกม แอป 3D หรือวิดีโอ",
-  "ai_immersive_gpu_budget_wait": "แอปอื่นกำลังใช้หน่วยความจำการ์ดจอ (ว่าง {free}): ปิดเกมหรือแอป 3D",
   "ai_immersive_gpu_busy_warning": "การ์ดจอจะทำงานหนักหลายนาที เกมแล้วก็วิดีโออาจกระตุก",
   "ai_immersive_gpu_integrated": "กราฟิกในตัวใช้หน่วยความจำร่วมกับคอมพิวเตอร์: ช้าเกินไปสำหรับพาโนรามา",
   "ai_immersive_gpu_integrated_allowed": "ลองใช้กราฟิกในตัว (ยังบ่ได้ทดสอบ)",

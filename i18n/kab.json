@@ -89,7 +89,6 @@
   "ai_immersive_glb_saved": "Yettwasekles deg {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Timuɣliwin 360° sran {needed} n tkatut tudlift tilellit, {free} tilellit: mdel uraren, isnasen 3D neɣ tividyutin",
   "ai_immersive_gpu_budget_need_app": "Timuɣliwin 360° sran {needed} n tkatut tudlift tilellit, {free} tilellit (Immuch360 s yiman-is yeṭṭef {app}): mdel uraren, isnasen 3D neɣ tividyutin",
-  "ai_immersive_gpu_budget_wait": "Isnasen nniḍen sseqdacen takatut n tkarḍa tudlift ({free} tilellit): mdel uraren neɣ isnasen 3D",
   "ai_immersive_gpu_busy_warning": "Takarḍa tudlift ad teqqim teṭṭef kra n tesdatin; uraren d tvidyutin zemren ad ḥebsen s tikkal",
   "ai_immersive_gpu_integrated": "Udlifen yettwasidfen beṭṭun takatut n uselkim: ẓẓayen aṭas i tmuɣliwin 360°",
   "ai_immersive_gpu_integrated_allowed": "Ɛreḍ s wudlifen yettwasidfen (ur yettwaɛreḍ ara)",

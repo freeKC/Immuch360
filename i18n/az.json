@@ -258,7 +258,6 @@
   "ai_immersive_glb_saved": "{folder} qovluğunda saxlanıldı: {name}",
   "ai_immersive_gpu_budget_need": "360° panoramalar üçün {needed} boş qrafik yaddaş lazımdır, {free} boşdur: oyunları, 3D tətbiqləri və ya videoları bağlayın",
   "ai_immersive_gpu_budget_need_app": "360° panoramalar üçün {needed} boş qrafik yaddaş lazımdır, {free} boşdur (Immuch360 özü {app} tutur): oyunları, 3D tətbiqləri və ya videoları bağlayın",
-  "ai_immersive_gpu_budget_wait": "Digər tətbiqlər qrafik kartın yaddaşından istifadə edir ({free} boşdur): oyunları və ya 3D tətbiqləri bağlayın",
   "ai_immersive_gpu_busy_warning": "Qrafik kart bir neçə dəqiqə məşğul qalır; oyunlar və videolar ilişə bilər",
   "ai_immersive_gpu_integrated": "İnteqrasiya olunmuş qrafika kompüterin yaddaşını bölüşür: panoramalar üçün çox yavaşdır",
   "ai_immersive_gpu_integrated_allowed": "İnteqrasiya olunmuş qrafikada sına (sınaqdan keçməyib)",

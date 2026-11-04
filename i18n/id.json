@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "Disimpan di {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Panorama 360° memerlukan {needed} memori grafis kosong, {free} kosong: tutup game, aplikasi 3D, atau video",
   "ai_immersive_gpu_budget_need_app": "Panorama 360° memerlukan {needed} memori grafis kosong, {free} kosong (Immuch360 sendiri memakai {app}): tutup game, aplikasi 3D, atau video",
-  "ai_immersive_gpu_budget_wait": "Aplikasi lain memakai memori kartu grafis ({free} kosong): tutup game atau aplikasi 3D",
   "ai_immersive_gpu_busy_warning": "Kartu grafis tetap sibuk selama beberapa menit; game dan video bisa tersendat",
   "ai_immersive_gpu_integrated": "Grafis terintegrasi berbagi memori komputer: terlalu lambat untuk panorama",
   "ai_immersive_gpu_integrated_allowed": "Coba di grafis terintegrasi (belum diuji)",

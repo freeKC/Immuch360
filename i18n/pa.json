@@ -117,7 +117,6 @@
   "ai_immersive_glb_saved": "{folder} ਵਿੱਚ ਸੇਵ ਕੀਤਾ: {name}",
   "ai_immersive_gpu_budget_need": "360° ਪੈਨੋਰਾਮਿਆਂ ਲਈ {needed} ਖਾਲੀ ਗ੍ਰਾਫਿਕਸ ਮੈਮਰੀ ਚਾਹੀਦੀ ਹੈ, {free} ਖਾਲੀ ਹੈ: ਗੇਮਾਂ, 3D ਐਪਾਂ ਜਾਂ ਵੀਡੀਓ ਬੰਦ ਕਰੋ",
   "ai_immersive_gpu_budget_need_app": "360° ਪੈਨੋਰਾਮਿਆਂ ਲਈ {needed} ਖਾਲੀ ਗ੍ਰਾਫਿਕਸ ਮੈਮਰੀ ਚਾਹੀਦੀ ਹੈ, {free} ਖਾਲੀ ਹੈ (Immuch360 ਖੁਦ {app} ਵਰਤ ਰਿਹਾ ਹੈ): ਗੇਮਾਂ, 3D ਐਪਾਂ ਜਾਂ ਵੀਡੀਓ ਬੰਦ ਕਰੋ",
-  "ai_immersive_gpu_budget_wait": "ਹੋਰ ਐਪਾਂ ਗ੍ਰਾਫਿਕਸ ਕਾਰਡ ਦੀ ਮੈਮਰੀ ਵਰਤ ਰਹੀਆਂ ਹਨ ({free} ਖਾਲੀ): ਗੇਮਾਂ ਜਾਂ 3D ਐਪਾਂ ਬੰਦ ਕਰੋ",
   "ai_immersive_gpu_busy_warning": "ਗ੍ਰਾਫਿਕਸ ਕਾਰਡ ਕਈ ਮਿੰਟਾਂ ਤੱਕ ਰੁੱਝਿਆ ਰਹਿੰਦਾ ਹੈ; ਗੇਮਾਂ ਅਤੇ ਵੀਡੀਓ ਅਟਕ ਸਕਦੇ ਹਨ",
   "ai_immersive_gpu_integrated": "ਇੰਟੀਗ੍ਰੇਟਿਡ ਗ੍ਰਾਫਿਕਸ ਕੰਪਿਊਟਰ ਦੀ ਮੈਮਰੀ ਸਾਂਝੀ ਕਰਦੇ ਹਨ: ਪੈਨੋਰਾਮਿਆਂ ਲਈ ਬਹੁਤ ਹੌਲੀ",
   "ai_immersive_gpu_integrated_allowed": "ਇੰਟੀਗ੍ਰੇਟਿਡ ਗ੍ਰਾਫਿਕਸ 'ਤੇ ਕੋਸ਼ਿਸ਼ ਕਰੋ (ਜਾਂਚਿਆ ਨਹੀਂ)",

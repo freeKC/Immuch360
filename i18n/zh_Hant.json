@@ -601,7 +601,6 @@
   "ai_immersive_glb_saved": "已儲存至 {folder}：{name}",
   "ai_immersive_gpu_budget_need": "360° 全景圖需要 {needed} 可用顯示記憶體，目前可用 {free}：請關閉遊戲、3D 應用程式或影片",
   "ai_immersive_gpu_budget_need_app": "360° 全景圖需要 {needed} 可用顯示記憶體，目前可用 {free}（Immuch360 本身佔用 {app}）：請關閉遊戲、3D 應用程式或影片",
-  "ai_immersive_gpu_budget_wait": "其他應用程式正在使用顯示卡記憶體（可用 {free}）：請關閉遊戲或 3D 應用程式",
   "ai_immersive_gpu_busy_warning": "顯示卡會持續忙碌數分鐘；遊戲和影片可能會卡頓",
   "ai_immersive_gpu_integrated": "內建顯示卡與電腦共用記憶體：產生全景圖太慢",
   "ai_immersive_gpu_integrated_allowed": "在內建顯示卡上嘗試（未經測試）",

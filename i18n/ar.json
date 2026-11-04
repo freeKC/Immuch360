@@ -603,7 +603,6 @@
   "ai_immersive_glb_saved": "حُفظ في {folder}: {name}",
   "ai_immersive_gpu_budget_need": "تحتاج بانوراما 360° إلى {needed} من ذاكرة الرسومات المتاحة، والمتاح {free}: أغلق الألعاب أو تطبيقات 3D أو مقاطع الفيديو",
   "ai_immersive_gpu_budget_need_app": "تحتاج بانوراما 360° إلى {needed} من ذاكرة الرسومات المتاحة، والمتاح {free} (يشغل Immuch360 نفسه {app}): أغلق الألعاب أو تطبيقات 3D أو مقاطع الفيديو",
-  "ai_immersive_gpu_budget_wait": "تطبيقات أخرى تستخدم ذاكرة بطاقة الرسومات ({free} متاح): أغلق الألعاب أو تطبيقات 3D",
   "ai_immersive_gpu_busy_warning": "تبقى بطاقة الرسومات مشغولة لعدة دقائق؛ قد تتقطع الألعاب ومقاطع الفيديو",
   "ai_immersive_gpu_integrated": "الرسومات المدمجة تتشارك ذاكرة الحاسوب: بطيئة جدًا للبانوراما",
   "ai_immersive_gpu_integrated_allowed": "التجربة على الرسومات المدمجة (غير مختبرة)",

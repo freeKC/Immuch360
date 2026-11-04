@@ -248,7 +248,6 @@
   "ai_immersive_glb_saved": "Gestoor in {folder}: {name}",
   "ai_immersive_gpu_budget_need": "360°-panoramas benodig {needed} vrye grafiese geheue, {free} vry: sluit speletjies, 3D-apps of video's",
   "ai_immersive_gpu_budget_need_app": "360°-panoramas benodig {needed} vrye grafiese geheue, {free} vry (Immuch360 self hou {app}): sluit speletjies, 3D-apps of video's",
-  "ai_immersive_gpu_budget_wait": "Ander apps gebruik die geheue van die grafiese kaart ({free} vry): sluit speletjies of 3D-apps",
   "ai_immersive_gpu_busy_warning": "Die grafiese kaart bly vir ’n paar minute besig; speletjies en video’s kan haper",
   "ai_immersive_gpu_integrated": "Geïntegreerde grafika deel die rekenaar se geheue: te stadig vir panoramas",
   "ai_immersive_gpu_integrated_allowed": "Probeer op geïntegreerde grafika (ongetoets)",

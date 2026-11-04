@@ -569,7 +569,6 @@
   "ai_immersive_glb_saved": "Tallennettu kansioon {folder}: {name}",
   "ai_immersive_gpu_budget_need": "360°-panoraamat tarvitsevat {needed} vapaata grafiikkamuistia, {free} vapaana: sulje pelit, 3D-sovellukset tai videot",
   "ai_immersive_gpu_budget_need_app": "360°-panoraamat tarvitsevat {needed} vapaata grafiikkamuistia, {free} vapaana (Immuch360 itse varaa {app}): sulje pelit, 3D-sovellukset tai videot",
-  "ai_immersive_gpu_budget_wait": "Muut sovellukset käyttävät näytönohjaimen muistia ({free} vapaana): sulje pelit tai 3D-sovellukset",
   "ai_immersive_gpu_busy_warning": "Näytönohjain on varattuna useita minuutteja; pelit ja videot voivat nykiä",
   "ai_immersive_gpu_integrated": "Integroitu grafiikka jakaa tietokoneen muistin: liian hidas panoraamoille",
   "ai_immersive_gpu_integrated_allowed": "Kokeile integroidulla grafiikalla (testaamaton)",

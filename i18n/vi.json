@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "Đã lưu trong {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Ảnh toàn cảnh 360° cần {needed} bộ nhớ đồ họa trống, còn trống {free}: hãy đóng trò chơi, ứng dụng 3D hoặc video",
   "ai_immersive_gpu_budget_need_app": "Ảnh toàn cảnh 360° cần {needed} bộ nhớ đồ họa trống, còn trống {free} (chính Immuch360 đang giữ {app}): hãy đóng trò chơi, ứng dụng 3D hoặc video",
-  "ai_immersive_gpu_budget_wait": "Ứng dụng khác đang dùng bộ nhớ card đồ họa (còn trống {free}): hãy đóng trò chơi hoặc ứng dụng 3D",
   "ai_immersive_gpu_busy_warning": "Card đồ họa sẽ bận trong vài phút; trò chơi và video có thể bị giật",
   "ai_immersive_gpu_integrated": "Đồ họa tích hợp dùng chung bộ nhớ của máy tính: quá chậm cho ảnh toàn cảnh",
   "ai_immersive_gpu_integrated_allowed": "Thử trên đồ họa tích hợp (chưa kiểm thử)",

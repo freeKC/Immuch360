@@ -603,7 +603,6 @@
   "ai_immersive_glb_saved": "Saved in {folder}: {name}",
   "ai_immersive_gpu_budget_need": "360° panoramas need {needed} of free graphics memory, {free} free: close games, 3D apps or videos",
   "ai_immersive_gpu_budget_need_app": "360° panoramas need {needed} of free graphics memory, {free} free (Immuch360 itself holds {app}): close games, 3D apps or videos",
-  "ai_immersive_gpu_budget_wait": "Other apps use the graphics card memory ({free} free): close games or 3D apps",
   "ai_immersive_gpu_busy_warning": "The graphics card stays busy for several minutes; games and videos may stutter",
   "ai_immersive_gpu_integrated": "Integrated graphics share the computer's memory: too slow for panoramas",
   "ai_immersive_gpu_integrated_allowed": "Try on integrated graphics (untested)",

@@ -547,7 +547,6 @@
   "ai_immersive_glb_saved": "Disimpan dalam {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Panorama 360° memerlukan {needed} memori grafik kosong, {free} kosong: tutup permainan, aplikasi 3D atau video",
   "ai_immersive_gpu_budget_need_app": "Panorama 360° memerlukan {needed} memori grafik kosong, {free} kosong (Immuch360 sendiri menggunakan {app}): tutup permainan, aplikasi 3D atau video",
-  "ai_immersive_gpu_budget_wait": "Aplikasi lain menggunakan memori kad grafik ({free} kosong): tutup permainan atau aplikasi 3D",
   "ai_immersive_gpu_busy_warning": "Kad grafik kekal sibuk selama beberapa minit; permainan dan video mungkin tersekat-sekat",
   "ai_immersive_gpu_integrated": "Grafik bersepadu berkongsi memori komputer: terlalu perlahan untuk panorama",
   "ai_immersive_gpu_integrated_allowed": "Cuba pada grafik bersepadu (belum diuji)",

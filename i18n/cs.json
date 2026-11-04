@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "Uloženo do {folder}: {name}",
   "ai_immersive_gpu_budget_need": "360° panoramata potřebují {needed} volné grafické paměti, volno {free}: zavřete hry, 3D aplikace nebo videa",
   "ai_immersive_gpu_budget_need_app": "360° panoramata potřebují {needed} volné grafické paměti, volno {free} (samotný Immuch360 zabírá {app}): zavřete hry, 3D aplikace nebo videa",
-  "ai_immersive_gpu_budget_wait": "Paměť grafické karty používají jiné aplikace (volno {free}): zavřete hry nebo 3D aplikace",
   "ai_immersive_gpu_busy_warning": "Grafická karta zůstane několik minut vytížená; hry a videa se mohou zadrhávat",
   "ai_immersive_gpu_integrated": "Integrovaná grafika sdílí paměť počítače: na panoramata je příliš pomalá",
   "ai_immersive_gpu_integrated_allowed": "Zkusit na integrované grafice (neotestováno)",

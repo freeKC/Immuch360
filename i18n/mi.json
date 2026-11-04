@@ -89,7 +89,6 @@
   "ai_immersive_glb_saved": "Kua penapenahia ki {folder}: {name}",
   "ai_immersive_gpu_budget_need": "E hiahia ana ngā tirohanga whānui 360° ki te {needed} o te pūmahara whakairoiro wātea, {free} e wātea ana: katia ngā kēmu, ngā taupānga 3D, ngā ataata rānei",
   "ai_immersive_gpu_budget_need_app": "E hiahia ana ngā tirohanga whānui 360° ki te {needed} o te pūmahara whakairoiro wātea, {free} e wātea ana (kei a Immuch360 tonu te {app}): katia ngā kēmu, ngā taupānga 3D, ngā ataata rānei",
-  "ai_immersive_gpu_budget_wait": "Kei te whakamahi ētahi atu taupānga i te pūmahara o te kāri whakairoiro ({free} e wātea ana): katia ngā kēmu, ngā taupānga 3D rānei",
   "ai_immersive_gpu_busy_warning": "Ka pukumahi tonu te kāri whakairoiro mō ētahi meneti; tērā pea ka hītekiteki ngā kēmu me ngā ataata",
   "ai_immersive_gpu_integrated": "Ka tiri te whakairoiro ā-roto i te pūmahara o te rorohiko: he pōturi rawa mō ngā tirohanga whānui",
   "ai_immersive_gpu_integrated_allowed": "Ngana ki te whakairoiro ā-roto (kāore anō kia whakamātauria)",

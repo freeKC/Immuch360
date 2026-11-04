@@ -180,7 +180,6 @@
   "ai_immersive_glb_saved": "{folder} માં સાચવ્યું: {name}",
   "ai_immersive_gpu_budget_need": "360° પેનોરમાને {needed} ખાલી ગ્રાફિક્સ મેમરી જોઈએ, {free} ખાલી છે: ગેમ, 3D ઍપ અથવા વીડિયો બંધ કરો",
   "ai_immersive_gpu_budget_need_app": "360° પેનોરમાને {needed} ખાલી ગ્રાફિક્સ મેમરી જોઈએ, {free} ખાલી છે (Immuch360 પોતે {app} રોકે છે): ગેમ, 3D ઍપ અથવા વીડિયો બંધ કરો",
-  "ai_immersive_gpu_budget_wait": "બીજી ઍપ ગ્રાફિક્સ કાર્ડની મેમરી વાપરે છે ({free} ખાલી): ગેમ અથવા 3D ઍપ બંધ કરો",
   "ai_immersive_gpu_busy_warning": "ગ્રાફિક્સ કાર્ડ ઘણી મિનિટો સુધી વ્યસ્ત રહે છે; ગેમ અને વીડિયો અટકી અટકીને ચાલી શકે",
   "ai_immersive_gpu_integrated": "ઇન્ટિગ્રેટેડ ગ્રાફિક્સ કમ્પ્યુટરની મેમરી વહેંચે છે: પેનોરમા માટે ખૂબ ધીમું",
   "ai_immersive_gpu_integrated_allowed": "ઇન્ટિગ્રેટેડ ગ્રાફિક્સ પર અજમાવો (ચકાસાયેલ નથી)",

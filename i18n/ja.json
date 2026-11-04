@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "{folder} に保存しました: {name}",
   "ai_immersive_gpu_budget_need": "360° パノラマには {needed} の空きグラフィックス メモリが必要ですが、空きは {free} です: ゲーム、3D アプリ、動画を閉じてください",
   "ai_immersive_gpu_budget_need_app": "360° パノラマには {needed} の空きグラフィックス メモリが必要ですが、空きは {free} です (Immuch360 自体が {app} を使用中): ゲーム、3D アプリ、動画を閉じてください",
-  "ai_immersive_gpu_budget_wait": "他のアプリがグラフィックス カードのメモリを使用しています (空き {free}): ゲームや 3D アプリを閉じてください",
   "ai_immersive_gpu_busy_warning": "グラフィックス カードが数分間使用され続けるため、ゲームや動画がカクつくことがあります",
   "ai_immersive_gpu_integrated": "内蔵グラフィックスはコンピューターのメモリを共有するため、パノラマには遅すぎます",
   "ai_immersive_gpu_integrated_allowed": "内蔵グラフィックスで試す (未検証)",

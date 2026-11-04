@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "{folder} içine kaydedildi: {name}",
   "ai_immersive_gpu_budget_need": "360° panoramalar {needed} boş grafik belleği gerektirir, {free} boş: oyunları, 3D uygulamaları veya videoları kapatın",
   "ai_immersive_gpu_budget_need_app": "360° panoramalar {needed} boş grafik belleği gerektirir, {free} boş (Immuch360'ın kendisi {app} kullanıyor): oyunları, 3D uygulamaları veya videoları kapatın",
-  "ai_immersive_gpu_budget_wait": "Ekran kartı belleğini başka uygulamalar kullanıyor ({free} boş): oyunları veya 3D uygulamaları kapatın",
   "ai_immersive_gpu_busy_warning": "Ekran kartı birkaç dakika meşgul kalır; oyunlar ve videolar takılabilir",
   "ai_immersive_gpu_integrated": "Tümleşik grafikler bilgisayarın belleğini paylaşır: panoramalar için çok yavaş",
   "ai_immersive_gpu_integrated_allowed": "Tümleşik grafiklerde dene (test edilmedi)",

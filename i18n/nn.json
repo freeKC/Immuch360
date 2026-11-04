@@ -366,7 +366,6 @@
   "ai_immersive_glb_saved": "Lagra i {folder}: {name}",
   "ai_immersive_gpu_budget_need": "360°-panorama treng {needed} ledig grafikkminne, {free} ledig: lukk spel, 3D-appar eller videoar",
   "ai_immersive_gpu_budget_need_app": "360°-panorama treng {needed} ledig grafikkminne, {free} ledig (Immuch360 sjølv brukar {app}): lukk spel, 3D-appar eller videoar",
-  "ai_immersive_gpu_budget_wait": "Andre appar brukar minnet til grafikkortet ({free} ledig): lukk spel eller 3D-appar",
   "ai_immersive_gpu_busy_warning": "Grafikkortet er opptatt i fleire minutt; spel og videoar kan hakke",
   "ai_immersive_gpu_integrated": "Integrert grafikk deler minnet til datamaskina: for sakte for panorama",
   "ai_immersive_gpu_integrated_allowed": "Prøv på integrert grafikk (ikkje testa)",

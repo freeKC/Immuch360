@@ -89,7 +89,6 @@
   "ai_immersive_glb_saved": "Imehifadhiwa katika {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Panorama za 360° zinahitaji {needed} ya kumbukumbu ya michoro iliyo wazi, {free} ziko wazi: funga michezo, programu za 3D au video",
   "ai_immersive_gpu_budget_need_app": "Panorama za 360° zinahitaji {needed} ya kumbukumbu ya michoro iliyo wazi, {free} ziko wazi (Immuch360 yenyewe inashikilia {app}): funga michezo, programu za 3D au video",
-  "ai_immersive_gpu_budget_wait": "Programu nyingine zinatumia kumbukumbu ya kadi ya michoro ({free} ziko wazi): funga michezo au programu za 3D",
   "ai_immersive_gpu_busy_warning": "Kadi ya michoro inabaki na shughuli kwa dakika kadhaa; michezo na video zinaweza kusitasita",
   "ai_immersive_gpu_integrated": "Michoro iliyojengewa ndani inatumia kumbukumbu ya kompyuta: ni polepole mno kwa panorama",
   "ai_immersive_gpu_integrated_allowed": "Jaribu kwenye michoro iliyojengewa ndani (haijajaribiwa)",

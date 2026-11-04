@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "Zapisano w {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Panoramy 360° wymagają {needed} wolnej pamięci graficznej, wolne {free}: zamknij gry, aplikacje 3D lub filmy",
   "ai_immersive_gpu_budget_need_app": "Panoramy 360° wymagają {needed} wolnej pamięci graficznej, wolne {free} (sam Immuch360 zajmuje {app}): zamknij gry, aplikacje 3D lub filmy",
-  "ai_immersive_gpu_budget_wait": "Inne aplikacje używają pamięci karty graficznej (wolne {free}): zamknij gry lub aplikacje 3D",
   "ai_immersive_gpu_busy_warning": "Karta graficzna pozostaje zajęta przez kilka minut; gry i filmy mogą się zacinać",
   "ai_immersive_gpu_integrated": "Zintegrowana grafika współdzieli pamięć komputera: za wolna na panoramy",
   "ai_immersive_gpu_integrated_allowed": "Spróbuj na zintegrowanej grafice (nieprzetestowane)",

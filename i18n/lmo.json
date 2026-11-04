@@ -89,7 +89,6 @@
   "ai_immersive_glb_saved": "Salvaa in {folder}: {name}",
   "ai_immersive_gpu_budget_need": "I panorama 360° gh'hann de besogn de {needed} de memoria grafica libera, {free} libera: sara i giugh, i app 3D o i video",
   "ai_immersive_gpu_budget_need_app": "I panorama 360° gh'hann de besogn de {needed} de memoria grafica libera, {free} libera (Immuch360 istess el dòpera {app}): sara i giugh, i app 3D o i video",
-  "ai_immersive_gpu_budget_wait": "Alter app doperen la memoria de la scheda grafica ({free} libera): sara i giugh o i app 3D",
   "ai_immersive_gpu_busy_warning": "La scheda grafica la resta ocupada per diversi minut; giugh e video poden andà a scatt",
   "ai_immersive_gpu_integrated": "La grafica integrada la spartiss la memoria del computer: tròpp lenta per i panorama",
   "ai_immersive_gpu_integrated_allowed": "Preuva su la grafica integrada (minga provaa)",

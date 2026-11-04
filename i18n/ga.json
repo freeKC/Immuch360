@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "Sábháilte i {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Teastaíonn {needed} de chuimhne ghrafaice saor ó lánléargais 360°, {free} saor: dún cluichí, aipeanna 3D nó físeáin",
   "ai_immersive_gpu_budget_need_app": "Teastaíonn {needed} de chuimhne ghrafaice saor ó lánléargais 360°, {free} saor (tá {app} ag Immuch360 féin): dún cluichí, aipeanna 3D nó físeáin",
-  "ai_immersive_gpu_budget_wait": "Úsáideann aipeanna eile cuimhne an chárta grafaice ({free} saor): dún cluichí nó aipeanna 3D",
   "ai_immersive_gpu_busy_warning": "Fanann an cárta grafaice gnóthach ar feadh roinnt nóiméad; d'fhéadfadh stadanna a bheith i gcluichí agus i bhfíseáin",
   "ai_immersive_gpu_integrated": "Roinneann grafaic chomhtháite cuimhne an ríomhaire: ró-mhall do lánléargais",
   "ai_immersive_gpu_integrated_allowed": "Bain triail as ar ghrafaic chomhtháite (gan tástáil)",

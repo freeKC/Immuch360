@@ -609,7 +609,6 @@
   "ai_immersive_glb_saved": "Salvat în {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Panoramele 360° necesită {needed} de memorie grafică liberă, {free} liber: închideți jocurile, aplicațiile 3D sau videoclipurile",
   "ai_immersive_gpu_budget_need_app": "Panoramele 360° necesită {needed} de memorie grafică liberă, {free} liber (Immuch360 însuși ocupă {app}): închideți jocurile, aplicațiile 3D sau videoclipurile",
-  "ai_immersive_gpu_budget_wait": "Alte aplicații folosesc memoria plăcii grafice ({free} liber): închideți jocurile sau aplicațiile 3D",
   "ai_immersive_gpu_busy_warning": "Placa grafică rămâne ocupată câteva minute; jocurile și videoclipurile pot sacada",
   "ai_immersive_gpu_integrated": "Grafica integrată folosește memoria computerului: prea lentă pentru panorame",
   "ai_immersive_gpu_integrated_allowed": "Încercați pe grafica integrată (netestat)",

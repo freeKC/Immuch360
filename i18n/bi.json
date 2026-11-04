@@ -102,7 +102,6 @@
   "ai_immersive_glb_saved": "I sevem long {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Ol 360° panorama oli nidim {needed} fri memori blong grafik, {free} i fri: satem ol gem, 3D app o video",
   "ai_immersive_gpu_budget_need_app": "Ol 360° panorama oli nidim {needed} fri memori blong grafik, {free} i fri (Immuch360 hem wan i holem {app}): satem ol gem, 3D app o video",
-  "ai_immersive_gpu_budget_wait": "Ol narafala app oli yusum memori blong grafik kad ({free} i fri): satem ol gem o 3D app",
   "ai_immersive_gpu_busy_warning": "Grafik kad i stap bisi blong sam minit; ol gem mo video oli maet stap stop smol",
   "ai_immersive_gpu_integrated": "Grafik we i stap insaed i serem memori blong kompiuta: i slo tumas blong ol panorama",
   "ai_immersive_gpu_integrated_allowed": "Traem long grafik we i stap insaed (i no testem yet)",

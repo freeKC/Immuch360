@@ -167,7 +167,6 @@
   "ai_immersive_glb_saved": "Na-save sa {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Kailangan ng mga 360° na panorama ng {needed} na bakanteng graphics memory, {free} ang bakante: isara ang mga laro, 3D app o video",
   "ai_immersive_gpu_budget_need_app": "Kailangan ng mga 360° na panorama ng {needed} na bakanteng graphics memory, {free} ang bakante (may hawak na {app} ang Immuch360 mismo): isara ang mga laro, 3D app o video",
-  "ai_immersive_gpu_budget_wait": "Ginagamit ng ibang app ang memory ng graphics card ({free} ang bakante): isara ang mga laro o 3D app",
   "ai_immersive_gpu_busy_warning": "Mananatiling abala ang graphics card nang ilang minuto; maaaring mag-stutter ang mga laro at video",
   "ai_immersive_gpu_integrated": "Kahati ng integrated graphics ang memory ng computer: masyadong mabagal para sa mga panorama",
   "ai_immersive_gpu_integrated_allowed": "Subukan sa integrated graphics (hindi pa nasusubukan)",

@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "{name} mentve ide: {folder}",
   "ai_immersive_gpu_budget_need": "A 360°-os panorámákhoz {needed} szabad grafikus memória kell, {free} szabad: zárja be a játékokat, a 3D alkalmazásokat vagy a videókat",
   "ai_immersive_gpu_budget_need_app": "A 360°-os panorámákhoz {needed} szabad grafikus memória kell, {free} szabad (maga az Immuch360 {app} memóriát foglal): zárja be a játékokat, a 3D alkalmazásokat vagy a videókat",
-  "ai_immersive_gpu_budget_wait": "Más alkalmazások használják a videokártya memóriáját ({free} szabad): zárja be a játékokat vagy a 3D alkalmazásokat",
   "ai_immersive_gpu_busy_warning": "A videokártya több percig foglalt marad; a játékok és a videók akadozhatnak",
   "ai_immersive_gpu_integrated": "Az integrált grafika a számítógép memóriáját használja: túl lassú a panorámákhoz",
   "ai_immersive_gpu_integrated_allowed": "Kipróbálás integrált grafikán (nem tesztelt)",

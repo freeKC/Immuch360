@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "Desat a {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Els panorames 360° necessiten {needed} de memòria gràfica lliure, {free} lliures: tanca els jocs, les aplicacions 3D o els vídeos",
   "ai_immersive_gpu_budget_need_app": "Els panorames 360° necessiten {needed} de memòria gràfica lliure, {free} lliures (el mateix Immuch360 n’ocupa {app}): tanca els jocs, les aplicacions 3D o els vídeos",
-  "ai_immersive_gpu_budget_wait": "Altres aplicacions fan servir la memòria de la targeta gràfica ({free} lliures): tanca els jocs o les aplicacions 3D",
   "ai_immersive_gpu_busy_warning": "La targeta gràfica queda ocupada uns quants minuts; els jocs i els vídeos poden anar a batzegades",
   "ai_immersive_gpu_integrated": "Els gràfics integrats comparteixen la memòria de l’ordinador: massa lents per als panorames",
   "ai_immersive_gpu_integrated_allowed": "Prova amb els gràfics integrats (no s’ha provat)",

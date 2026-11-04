@@ -610,7 +610,6 @@
   "ai_immersive_glb_saved": "נשמר ב-{folder}: {name}",
   "ai_immersive_gpu_budget_need": "פנורמות 360° צריכות {needed} של זיכרון גרפי פנוי, {free} פנויים: סגרו משחקים, אפליקציות 3D או סרטונים",
   "ai_immersive_gpu_budget_need_app": "פנורמות 360° צריכות {needed} של זיכרון גרפי פנוי, {free} פנויים (Immuch360 עצמה תופסת {app}): סגרו משחקים, אפליקציות 3D או סרטונים",
-  "ai_immersive_gpu_budget_wait": "אפליקציות אחרות משתמשות בזיכרון של כרטיס המסך ({free} פנויים): סגרו משחקים או אפליקציות 3D",
   "ai_immersive_gpu_busy_warning": "כרטיס המסך נשאר עסוק במשך כמה דקות; משחקים וסרטונים עלולים לגמגם",
   "ai_immersive_gpu_integrated": "גרפיקה משולבת חולקת את הזיכרון של המחשב: איטית מדי לפנורמות",
   "ai_immersive_gpu_integrated_allowed": "ניסיון על גרפיקה משולבת (לא נבדק)",

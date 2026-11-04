@@ -138,7 +138,6 @@
   "ai_immersive_glb_saved": "Di {folder} de hat tomarkirin: {name}",
   "ai_immersive_gpu_budget_need": "Panoramayên 360° {needed} bîra grafîkê ya vala dixwazin, {free} vala ye: lîstik, sepanên 3D an vîdyoyan bigire",
   "ai_immersive_gpu_budget_need_app": "Panoramayên 360° {needed} bîra grafîkê ya vala dixwazin, {free} vala ye (Immuch360 bi xwe {app} digire): lîstik, sepanên 3D an vîdyoyan bigire",
-  "ai_immersive_gpu_budget_wait": "Sepanên din bîra karta grafîkê bi kar tînin ({free} vala): lîstik an sepanên 3D bigire",
   "ai_immersive_gpu_busy_warning": "Karta grafîkê çend deqeyan mijûl dimîne; dibe ku lîstik û vîdyo bi navber bilîzin",
   "ai_immersive_gpu_integrated": "Grafîka yekbûyî bîra komputerê parve dike: ji bo panoramayan pir hêdî ye",
   "ai_immersive_gpu_integrated_allowed": "Li ser grafîka yekbûyî biceribîne (nehatiye ceribandin)",

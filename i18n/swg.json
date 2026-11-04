@@ -89,7 +89,6 @@
   "ai_immersive_glb_saved": "Gspeichert en {folder}: {name}",
   "ai_immersive_gpu_budget_need": "360°-Panoramen brauchat {needed} freia Grafikspeicher, {free} frei: Mach Spiele, 3D-Apps oder Videos zua",
   "ai_immersive_gpu_budget_need_app": "360°-Panoramen brauchat {needed} freia Grafikspeicher, {free} frei (Immuch360 selber belegt {app}): Mach Spiele, 3D-Apps oder Videos zua",
-  "ai_immersive_gpu_budget_wait": "Andre Apps belegat da Grafikspeicher ({free} frei): Mach Spiele oder 3D-Apps zua",
   "ai_immersive_gpu_busy_warning": "D Grafikkart bleibt a paar Minuta ausglastet; Spiele ond Videos kennat ruckla",
   "ai_immersive_gpu_integrated": "D integrierte Grafik teilt sich da Arbeitsspeicher vom Computer: z langsam für Panoramen",
   "ai_immersive_gpu_integrated_allowed": "Mit dr integrierta Grafik probiera (ned teschtet)",

@@ -89,7 +89,6 @@
   "ai_immersive_glb_saved": "Gespäichert an {folder}: {name}",
   "ai_immersive_gpu_budget_need": "360°-Panoramae brauchen {needed} fräie Grafikspäicher, {free} fräi: maach Spiller, 3D-Appen oder Videoen zou",
   "ai_immersive_gpu_budget_need_app": "360°-Panoramae brauchen {needed} fräie Grafikspäicher, {free} fräi (Immuch360 selwer benotzt {app}): maach Spiller, 3D-Appen oder Videoen zou",
-  "ai_immersive_gpu_budget_wait": "Aner Appe benotzen de Späicher vun der Grafikkaart ({free} fräi): maach Spiller oder 3D-Appen zou",
   "ai_immersive_gpu_busy_warning": "D'Grafikkaart bleift e puer Minutte beschäftegt; Spiller a Videoe kënne ruckelen",
   "ai_immersive_gpu_integrated": "Integréiert Grafik deelt de Späicher vum Computer: ze lues fir Panoramaen",
   "ai_immersive_gpu_integrated_allowed": "Op integréierter Grafik probéieren (net getest)",

@@ -89,7 +89,6 @@
   "ai_immersive_glb_saved": "Doh simpang dale {folder}: {name}",
   "ai_immersive_gpu_budget_need": "Panorama 360° perlu {needed} memori grafik kosong, {free} kosong: tutup permaine, aplikasi 3D atau video",
   "ai_immersive_gpu_budget_need_app": "Panorama 360° perlu {needed} memori grafik kosong, {free} kosong (Immuch360 sendiri guno {app}): tutup permaine, aplikasi 3D atau video",
-  "ai_immersive_gpu_budget_wait": "Aplikasi lain guno memori kad grafik ({free} kosong): tutup permaine atau aplikasi 3D",
   "ai_immersive_gpu_busy_warning": "Kad grafik kekal sibuk beberapo minit; permaine nga video mungki tersekat-sekat",
   "ai_immersive_gpu_integrated": "Grafik bersepadu kongsi memori komputer: lambat sangat untuk panorama",
   "ai_immersive_gpu_integrated_allowed": "Cubo guno grafik bersepadu (belum diuji)",
