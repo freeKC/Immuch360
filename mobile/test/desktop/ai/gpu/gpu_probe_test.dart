@@ -1,7 +1,8 @@
 // The probe of the graphics cards in its child process (lot C6; design-final 2026-10-27, section 4.7, point 1), with
 // fake processes: the flag and the file it names, the answer read then deleted, a probe that hangs stopped at 10 s, one
 // that ends without its answer, one that does not start, the Mac where nothing starts; and the index ggml gives each
-// card, after ggml_vk_instance_init of the ggml the pinned stable-diffusion.cpp builds.
+// card, after ggml_vk_instance_init of the ggml the pinned stable-diffusion.cpp builds. Issue #13: the probe is given
+// the id of the app's process, and its answer tells what the app holds of each card and, on Linux, its PCI address.
 
 import 'dart:convert';
 import 'dart:io';
@@ -24,7 +25,7 @@ class _ProbeRunner extends FakeProcessRunner {
 
   @override
   Future<RunningProcess> start(ProcessLaunch launch) async {
-    final flag = launch.arguments.single;
+    final flag = launch.arguments.first;
     if (answer != null && flag.startsWith(gpuProbeFlag)) {
       File(flag.substring(gpuProbeFlag.length)).writeAsStringSync(answer!);
     }
@@ -59,8 +60,8 @@ void main() {
 
         final launch = runner.launches.single;
         expect(launch.executable, '/opt/immuch360/immuch360');
-        expect(launch.arguments.single, startsWith('$gpuProbeFlag${folder.path}${Platform.pathSeparator}gpu-probe-'));
-        expect(launch.arguments.single, endsWith('.json'));
+        expect(launch.arguments.first, startsWith('$gpuProbeFlag${folder.path}${Platform.pathSeparator}gpu-probe-'));
+        expect(launch.arguments.first, endsWith('.json'));
         expect(launch.lowPriority, isFalse);
         expect(report.problem, isNull);
         expect(report.bestDiscrete!.name, 'NVIDIA GeForce RTX 4060 Laptop GPU');
@@ -74,7 +75,54 @@ void main() {
 
       await Future.wait([probe.probe(), probe.probe()]);
 
-      expect(runner.launches.map((launch) => launch.arguments.single).toSet(), hasLength(2));
+      expect(runner.launches.map((launch) => launch.arguments.first).toSet(), hasLength(2));
+    });
+
+    test('given the id of the app\'s process, whose share of each card it reads', () async {
+      final runner = _ProbeRunner([const FakeProcessScript()], answer: '{"adapters":[],"problem":null}');
+
+      await ProcessGpuProbe(
+        executable: '/opt/immuch360/immuch360',
+        runner: runner,
+        folder: () => folder,
+        isMacOS: false,
+        appPid: 4242,
+      ).probe();
+      await probeWith(runner).probe();
+
+      expect(runner.launches[0].arguments, hasLength(2));
+      expect(runner.launches[0].arguments[1], '${gpuProbePidFlag}4242');
+      expect(runner.launches[1].arguments[1], '$gpuProbePidFlag$pid', reason: 'this process by default');
+      expect(gpuProbePidFlag, '--immuch360-gpu-probe-pid=');
+    });
+
+    test('the share of the app and the PCI address read from the answer, through the JSON both ways', () {
+      // Built from the figures of issue #13: an RTX 2060 of 8 GB under Linux, 5.4 GiB free in the budget of the driver,
+      // Immuch360 holding 1 402 MiB of it (NVML)
+      final linux = _fixture('gpu_probe_rtx2060_linux_issue13.json');
+      final rtx2060 = linux.bestDiscrete!;
+      expect(rtx2060.appMemory, 1402 * 1024 * 1024);
+      expect(rtx2060.pci, '0000:01:00.0');
+      expect(rtx2060.freeMemory, 5530 * 1024 * 1024);
+      expect(linux.adapters.last.appMemory, isNull);
+      final again = GpuReport.fromJson(jsonDecode(jsonEncode(linux.toJson())));
+      expect(again.bestDiscrete!.appMemory, rtx2060.appMemory);
+      expect(again.bestDiscrete!.pci, rtx2060.pci);
+      expect(rtx2060.withAppMemory(7).appMemory, 7);
+      expect(rtx2060.withAppMemory(7).pci, rtx2060.pci);
+      expect(rtx2060.withAppMemory(7).freeMemory, rtx2060.freeMemory);
+
+      // The probe of this branch on the laptop of the owner, given the id of dwm: the counter of Windows for that
+      // process on the RTX 4060 (701 251 584 bytes, the figure of Get-Counter at the same time), none on the Intel
+      final windows = _fixture('gpu_probe_rtx4060_laptop_dwm_share.json');
+      expect(windows.bestDiscrete!.appMemory, 701251584);
+      expect(windows.adapters.first.appMemory, 0);
+      expect(windows.adapters.first.pci, isNull, reason: 'no PCI address from the probe of Windows');
+
+      // An older answer tells neither
+      final older = _fixture('gpu_probe_rtx4060_laptop.json').bestDiscrete!;
+      expect(older.appMemory, isNull);
+      expect(older.pci, isNull);
     });
 
     test('a probe that hangs is stopped at its time, 10 s: the graphics card did not answer', () async {

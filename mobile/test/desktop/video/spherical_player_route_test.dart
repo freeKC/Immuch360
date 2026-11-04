@@ -8,7 +8,8 @@
 // The renderer probe on the page: what it kept applies to the same kind of video once its first frame shows and never
 // as flat, a decoding that falls short plays the transcoded stream instead, a renderer that draws nothing goes flat
 // (or a tier down for its intermediate texture); a step of the chain that fails while it loads is not lost; a page
-// closed while a raw file is prepared leaves nothing of it on the pooled player.
+// closed while a raw file is prepared leaves nothing of it on the pooled player; a pair paused on screen keeps both its
+// players when a job on the graphics card lets go of the others (issue #13).
 
 import 'dart:async';
 import 'dart:io';
@@ -714,6 +715,36 @@ void main() {
       expect((step.mode, step.notice), (RawMode.oneLens, RawNotice.oneLensDecoder));
       unawaited(other.release());
       await settle(tester);
+      await close(tester);
+    });
+
+    testWidgets('paused on screen when a panorama starts: the pool leaves both players here, the pair goes on (issue '
+        '#13)', (tester) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
+      await settle(tester);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
+      final [first, second] = players.made;
+      await page(tester).controller.pause();
+      await settle(tester);
+      expect(first.playing.value || second.playing.value, isFalse);
+
+      // A batch of panoramas runs behind the 360° page: the app lets go of the players that do not play
+      int? released;
+      unawaited(players.pool.releaseForGraphicsJob().then((count) => released = count));
+      await settle(tester);
+      await settle(tester);
+
+      expect(channel.partners.last.$2, isNotNull, reason: 'the pair still drawn');
+      expect(second.calls, isNot(contains('stop')));
+      expect(first.disposed || second.disposed, isFalse);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
+      // Taking this page's player, the pool waited for its owner, which gives the second player back to the pool: a
+      // turn behind the release itself, which then never ended and held every page's player
+      expect(released, 0);
+      expect(find.byKey(const Key('spherical_notice')), findsNothing);
+      await page(tester).controller.play();
+      await settle(tester);
+      expect(second.playing.value, isTrue, reason: 'it plays again with this one');
       await close(tester);
     });
 

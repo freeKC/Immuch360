@@ -18,8 +18,12 @@
 // other lane holds), the part of a scene filled in, its .glb copy when one was asked for ("Also save a .glb copy"),
 // and "Delete this version" for a version that is not a 3D photo.
 //
-// The 360° panoramas (lot U3; design-final 2026-10-27, sections 4.5 and 4.7): a job of the graphics card waiting for
-// its memory says how much is free, with Resume, which asks the card again at once (checkGraphicsCardAgain); the named
+// The 360° panoramas (lot U3; design-final 2026-10-27, sections 4.5 and 4.7): a job of the graphics card first says
+// what the app lets go of the card ("Freeing the graphics card memory Immuch360 holds: paused videos and cached
+// pictures"), then, while the memory is short, how much the panoramas need, how much is free and, when it could be
+// read, how much Immuch360 itself holds (issue #13), with Resume, which asks the card again at once
+// (checkGraphicsCardAgain), and Keep waiting; a wait that does not end leaves the queue after 30 s with the same
+// figures, and Keep waiting puts it back to wait as long as it takes (keepWaiting); the named
 // failures of a generation in their words ("The graphics card ran out of memory: close games or 3D apps and retry",
 // "Other apps use the graphics card memory: close games or 3D apps" for a graph cut into segments, "The graphics card
 // did not answer"...); the 3D version of a panorama the app generated, chained after it or chosen by itself, comes
@@ -216,6 +220,7 @@ String conversionFailureText(Translations t, ImmersiveErrorCode code, String? me
   },
   ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,
   ImmersiveErrorCode.gpuOutOfMemory => t.ai_immersive_failed_gpu_memory,
+  ImmersiveErrorCode.gpuMemoryShort => t.ai_immersive_failed_gpu_short,
   ImmersiveErrorCode.generatorFailed => t.ai_immersive_failed_generator(message: message ?? ''),
   ImmersiveErrorCode.generatorStalled => t.ai_immersive_failed_generator_stalled,
   ImmersiveErrorCode.outputRejected => t.ai_immersive_failed_output_rejected,
@@ -280,10 +285,27 @@ String? conversionProgressText(Translations t, ConversionJob job, Duration? left
   return t.ai_immersive_time_left(time: time);
 }
 
-/// Why a job waits while its lane is free; [free], the memory of the graphics card free when it was asked
-String conversionWaitText(Translations t, ConversionWait wait, {int? free}) => switch (wait) {
+/// Why a job waits while its lane is free; [shortfall], the memory of the graphics card when it was last asked
+String conversionWaitText(Translations t, ConversionWait wait, {GpuShortfall? shortfall}) => switch (wait) {
   ConversionWait.memory => t.ai_immersive_waiting_memory,
-  ConversionWait.graphicsMemory => t.ai_immersive_gpu_budget_wait(free: formatBytes(free ?? 0)),
+  ConversionWait.graphicsRelease => t.ai_immersive_gpu_releasing,
+  ConversionWait.graphicsMemory => gpuShortfallText(t, shortfall ?? const GpuShortfall(need: 0, free: 0)),
+};
+
+/// The least share of the card the app is said to hold: below it the share is left out. A 0 may be a share the system
+/// does not count rather than nothing (Windows has no counter of the app on the NVIDIA card of an Optimus laptop whose
+/// app runs on the integrated chip), and a few megabytes would not explain a shortfall
+const appGraphicsShareShownFrom = 64 * 1024 * 1024;
+
+/// "360° panoramas need 6.0 GiB of free graphics memory, 5.4 GiB free (Immuch360 itself holds 1.4 GiB): close games,
+/// 3D apps or videos"; the part of the app when it could be read, from [appGraphicsShareShownFrom]
+String gpuShortfallText(Translations t, GpuShortfall shortfall) => switch (shortfall.appHolds) {
+  final app? when app >= appGraphicsShareShownFrom => t.ai_immersive_gpu_budget_need_app(
+    needed: formatBytes(shortfall.need),
+    free: formatBytes(shortfall.free),
+    app: formatBytes(app),
+  ),
+  _ => t.ai_immersive_gpu_budget_need(needed: formatBytes(shortfall.need), free: formatBytes(shortfall.free)),
 };
 
 /// The words of a quality flag of a result
@@ -532,7 +554,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
       Text([conversionStateText(t, job), ?stage].join('  •  '), key: const Key('ai_job_state')),
       if (job.state == ConversionState.waiting && job.waitingFor != null)
         Text(
-          conversionWaitText(t, job.waitingFor!, free: job.waitingFree),
+          conversionWaitText(t, job.waitingFor!, shortfall: job.gpuShortfall),
           key: const Key('ai_job_waiting'),
           style: secondary,
         ),
@@ -545,6 +567,10 @@ class _JobRowState extends ConsumerState<_JobRow> {
         Text(conversionSkipText(t, reason, name: job.target?.fileName), style: secondary),
       if (job.state == ConversionState.failed && job.error != null)
         Text(conversionFailureText(t, job.error!, job.message), style: TextStyle(color: colors.error)),
+      // The figures of a job that left the queue for the memory of the graphics card
+      if (job.state == ConversionState.failed && job.error == ImmersiveErrorCode.gpuMemoryShort)
+        if (job.gpuShortfall case final shortfall?)
+          Text(gpuShortfallText(t, shortfall), key: const Key('ai_job_gpu_short'), style: secondary),
       if (folder != null && !job.state.isEnded || job.state == ConversionState.done) ...[
         if (publish != null && job.state == ConversionState.done && !publish.state.isEnded)
           Text(t.ai_immersive_share_saving, key: const Key('ai_job_share_saving'), style: secondary),
@@ -602,9 +628,22 @@ class _JobRowState extends ConsumerState<_JobRow> {
           onPressed: notifier.checkGraphicsCardAgain,
           child: Text(t.ai_immersive_resume),
         ),
+      // A job waiting for the memory of the graphics card leaves the queue after 30 s, unless asked to keep waiting;
+      // one that left it goes back to wait as long as it takes
+      if ((job.state == ConversionState.waiting &&
+              job.waitingFor == ConversionWait.graphicsMemory &&
+              !job.keepsWaiting) ||
+          (job.state == ConversionState.failed && job.error == ImmersiveErrorCode.gpuMemoryShort))
+        TextButton(
+          key: const Key('ai_job_keep_waiting'),
+          onPressed: () => notifier.keepWaiting(job.id),
+          child: Text(t.ai_immersive_keep_waiting),
+        ),
       if (!job.state.isEnded)
         TextButton(key: const Key('ai_job_cancel'), onPressed: () => notifier.cancel(job.id), child: Text(t.cancel)),
-      if (job.target != null && (job.state == ConversionState.failed || job.state == ConversionState.cancelled))
+      if (job.target != null &&
+          (job.state == ConversionState.failed || job.state == ConversionState.cancelled) &&
+          job.error != ImmersiveErrorCode.gpuMemoryShort)
         TextButton(
           key: const Key('ai_job_retry'),
           onPressed: () => notifier.retry(job.id),

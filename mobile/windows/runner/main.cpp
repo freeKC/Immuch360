@@ -165,7 +165,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   // window that runs, and before any window
   std::wstring gpu_probe_output;
   if (GpuProbeRequested(&gpu_probe_output)) {
-    return RunGpuProbe(gpu_probe_output);
+    return RunGpuProbe(gpu_probe_output, GpuProbePid());
   }
 
   // Kept for the life of the process; the system releases it at exit

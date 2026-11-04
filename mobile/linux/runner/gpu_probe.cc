@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -23,10 +24,19 @@
 // (lib/desktop/ai/engine/backends.dart). The probe of Windows
 // (windows/runner/gpu_probe.cpp) is the same with the adapters of DXGI: a
 // change to one goes to the other.
+//
+// Given the id of the app's process (--immuch360-gpu-probe-pid=, issue
+// #13), it also writes what that process holds of an NVIDIA card, from NVML
+// (libnvidia-ml.so.1 of the driver, loaded here and never in the app): the
+// budget of the driver counts it as used, and the app says it apart. The
+// other cards tell the app's share in its own DRM fdinfo, which the app reads
+// itself (lib/desktop/ai/gpu/app_graphics_memory.dart) with the PCI address
+// written here (VK_EXT_pci_bus_info).
 
 namespace {
 
 constexpr char kFlag[] = "--immuch360-gpu-probe=";
+constexpr char kPidFlag[] = "--immuch360-gpu-probe-pid=";
 
 // Past this the probe ends itself (SIGALRM), a driver that hangs included;
 // the app stops waiting for it at the same time
@@ -57,6 +67,7 @@ constexpr VkStructureType kPhysicalDeviceMemoryProperties2 = 1000059006;
 constexpr VkStructureType kPhysicalDeviceIdProperties = 1000071004;
 constexpr VkStructureType kPhysicalDevice16BitStorageFeatures = 1000083000;
 constexpr VkStructureType kPhysicalDeviceDriverProperties = 1000196000;
+constexpr VkStructureType kPhysicalDevicePciBusInfoProperties = 1000212000;
 constexpr VkStructureType kPhysicalDeviceMemoryBudgetProperties = 1000237000;
 constexpr uint32_t kMemoryHeapDeviceLocal = 0x1;
 constexpr uint32_t kMaxMemoryHeaps = 16;
@@ -125,6 +136,15 @@ struct VkPhysicalDeviceDriverProperties {
   uint8_t conformanceVersion[4];
 };
 
+struct VkPhysicalDevicePCIBusInfoPropertiesEXT {
+  VkStructureType sType;
+  void* pNext;
+  uint32_t pciDomain;
+  uint32_t pciBus;
+  uint32_t pciDevice;
+  uint32_t pciFunction;
+};
+
 struct VkMemoryType {
   uint32_t propertyFlags;
   uint32_t heapIndex;
@@ -188,6 +208,8 @@ static_assert(sizeof(VkPhysicalDeviceIDProperties) == 64,
               "VkPhysicalDeviceIDProperties");
 static_assert(sizeof(VkPhysicalDeviceDriverProperties) == 536,
               "VkPhysicalDeviceDriverProperties");
+static_assert(sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT) == 32,
+              "VkPhysicalDevicePCIBusInfoPropertiesEXT");
 static_assert(sizeof(VkPhysicalDeviceMemoryProperties) == 520,
               "VkPhysicalDeviceMemoryProperties");
 static_assert(sizeof(VkPhysicalDeviceMemoryProperties2) == 536,
@@ -242,6 +264,11 @@ struct Adapter {
   std::string luid;
   int driver_id = -1;
   int storage_16bit = -1;
+  // "0000:01:00.0", empty when the card does not tell it
+  std::string pci;
+  // What the app's process holds of the card, when NVML told it
+  bool has_app_memory = false;
+  uint64_t app_memory = 0;
 };
 
 // What the probe found
@@ -356,15 +383,21 @@ Adapter ReadDevice(const InstanceFunctions& vk, VkPhysicalDevice device,
   const bool has_driver =
       core11 && (properties.apiVersion >= VkVersion(1, 2) ||
                  HasExtension(extensions, "VK_KHR_driver_properties"));
+  const bool has_pci =
+      core11 && HasExtension(extensions, "VK_EXT_pci_bus_info");
 
   VkPhysicalDeviceMemoryProperties memory = {};
   VkPhysicalDeviceMemoryBudgetPropertiesEXT budget = {};
   if (core11) {
+    VkPhysicalDevicePCIBusInfoPropertiesEXT pci = {};
+    pci.sType = kPhysicalDevicePciBusInfoProperties;
     VkPhysicalDeviceDriverProperties driver = {};
     driver.sType = kPhysicalDeviceDriverProperties;
+    driver.pNext = has_pci ? &pci : nullptr;
     VkPhysicalDeviceIDProperties id = {};
     id.sType = kPhysicalDeviceIdProperties;
-    id.pNext = has_driver ? &driver : nullptr;
+    id.pNext = has_driver ? static_cast<void*>(&driver)
+                          : (has_pci ? static_cast<void*>(&pci) : nullptr);
     VkPhysicalDeviceProperties2 properties2 = {};
     properties2.sType = kPhysicalDeviceProperties2;
     properties2.pNext = &id;
@@ -375,6 +408,13 @@ Adapter ReadDevice(const InstanceFunctions& vk, VkPhysicalDevice device,
     }
     if (has_driver) {
       adapter.driver_id = driver.driverID;
+    }
+    if (has_pci) {
+      char address[32];
+      std::snprintf(address, sizeof(address), "%04x:%02x:%02x.%x",
+                    pci.pciDomain, pci.pciBus, pci.pciDevice,
+                    pci.pciFunction);
+      adapter.pci = address;
     }
 
     VkPhysicalDevice16BitStorageFeatures storage = {};
@@ -502,6 +542,213 @@ void ReadVulkan(Report* report) {
   }
 }
 
+// The parts of NVML the probe calls, after nvml.h of the driver (the
+// NVIDIA Management Library, loaded from the driver at run time), so that the
+// build needs no CUDA toolkit
+using NvmlReturn = int;
+struct NvmlDeviceT;
+using NvmlDevice = NvmlDeviceT*;
+constexpr NvmlReturn kNvmlSuccess = 0;
+constexpr NvmlReturn kNvmlInsufficientSize = 7;
+constexpr unsigned long long kNvmlValueNotAvailable = ~0ULL;
+constexpr unsigned kNvmlUuidSize = 96;
+
+// nvmlProcessInfo_v1_t, then nvmlProcessInfo_t (v2), which the _v2 and _v3
+// functions fill
+struct NvmlProcessInfoV1 {
+  unsigned int pid;
+  unsigned long long usedGpuMemory;
+};
+struct NvmlProcessInfoV2 {
+  unsigned int pid;
+  unsigned long long usedGpuMemory;
+  unsigned int gpuInstanceId;
+  unsigned int computeInstanceId;
+};
+static_assert(sizeof(NvmlProcessInfoV1) == 16, "nvmlProcessInfo_v1_t");
+static_assert(sizeof(NvmlProcessInfoV2) == 24, "nvmlProcessInfo_t");
+
+using PFN_nvmlInit = NvmlReturn (*)();
+using PFN_nvmlShutdown = NvmlReturn (*)();
+using PFN_nvmlDeviceGetCount = NvmlReturn (*)(unsigned int*);
+using PFN_nvmlDeviceGetHandleByIndex = NvmlReturn (*)(unsigned int,
+                                                      NvmlDevice*);
+using PFN_nvmlDeviceGetUUID = NvmlReturn (*)(NvmlDevice, char*, unsigned int);
+using PFN_nvmlDeviceGetProcesses = NvmlReturn (*)(NvmlDevice, unsigned int*,
+                                                  void*);
+
+// What one list of processes of a device says of a process
+struct NvmlShare {
+  // The list answered
+  bool answered = false;
+  // The process has an entry in it
+  bool listed = false;
+  // One of its entries has a figure (NVML_VALUE_NOT_AVAILABLE is none)
+  bool measured = false;
+  uint64_t held = 0;
+};
+
+// One list of processes of a device (graphics or compute), by the newest
+// function the driver has, and what it says of the process [pid]
+NvmlShare NvmlProcesses(void* library, NvmlDevice device, const char* name,
+                        unsigned pid) {
+  struct Variant {
+    std::string symbol;
+    size_t size;
+  };
+  NvmlShare share;
+  const std::string base = name;
+  const Variant variants[] = {{base + "_v3", sizeof(NvmlProcessInfoV2)},
+                              {base + "_v2", sizeof(NvmlProcessInfoV2)},
+                              {base, sizeof(NvmlProcessInfoV1)}};
+  for (const Variant& variant : variants) {
+    const auto list = reinterpret_cast<PFN_nvmlDeviceGetProcesses>(
+        dlsym(library, variant.symbol.c_str()));
+    if (list == nullptr) {
+      continue;
+    }
+    unsigned int count = 0;
+    NvmlReturn result = list(device, &count, nullptr);
+    std::vector<unsigned char> infos;
+    for (int attempt = 0; attempt < 3 && result == kNvmlInsufficientSize;
+         attempt++) {
+      // Room for processes that start meanwhile
+      count += 8;
+      infos.assign(static_cast<size_t>(count) * variant.size, 0);
+      result = list(device, &count, infos.data());
+    }
+    if (result != kNvmlSuccess) {
+      return share;
+    }
+    share.answered = true;
+    for (unsigned int i = 0; i < count; i++) {
+      const unsigned char* info = infos.data() + i * variant.size;
+      unsigned int process = 0;
+      unsigned long long used = 0;
+      std::memcpy(&process, info, sizeof(process));
+      std::memcpy(&used, info + offsetof(NvmlProcessInfoV1, usedGpuMemory),
+                  sizeof(used));
+      if (process != pid) {
+        continue;
+      }
+      share.listed = true;
+      if (used != kNvmlValueNotAvailable) {
+        share.measured = true;
+        share.held += used;
+      }
+    }
+    return share;
+  }
+  return share;
+}
+
+// "GPU-5a1b2c3d-0e0f-..." of NVML as the hexadecimal of the UUID of Vulkan
+std::string NvmlUuidHex(const char* uuid) {
+  std::string hex;
+  const char* text = std::strncmp(uuid, "GPU-", 4) == 0 ? uuid + 4 : uuid;
+  for (; *text != '\0'; text++) {
+    const char c = *text;
+    if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')) {
+      hex.push_back(c);
+    } else if (c >= 'A' && c <= 'F') {
+      hex.push_back(static_cast<char>(c - 'A' + 'a'));
+    }
+  }
+  return hex;
+}
+
+// What the process [pid] holds of each NVIDIA card of [report], from NVML:
+// the card of Vulkan whose UUID NVML gives, or the only one when there is one
+// of each. The graphics and the compute lists may both name the process, with
+// the same memory: the larger of the two is kept. A card NVML lists that the
+// process is not in holds nothing of it; one whose lists name the process
+// only without a figure (NVML_VALUE_NOT_AVAILABLE) leaves its share unknown,
+// which is not 0.
+void ReadAppMemory(Report* report, unsigned pid) {
+  size_t nvidia = 0;
+  for (const Adapter& adapter : report->adapters) {
+    if (adapter.vendor_id == 0x10DE) {
+      nvidia++;
+    }
+  }
+  if (pid == 0 || nvidia == 0) {
+    return;
+  }
+  void* library = dlopen("libnvidia-ml.so.1", RTLD_NOW | RTLD_LOCAL);
+  if (library == nullptr) {
+    return;
+  }
+  // Left loaded: the process ends right after
+  auto init = reinterpret_cast<PFN_nvmlInit>(dlsym(library, "nvmlInit_v2"));
+  if (init == nullptr) {
+    init = reinterpret_cast<PFN_nvmlInit>(dlsym(library, "nvmlInit"));
+  }
+  const auto shutdown =
+      reinterpret_cast<PFN_nvmlShutdown>(dlsym(library, "nvmlShutdown"));
+  auto count_of = reinterpret_cast<PFN_nvmlDeviceGetCount>(
+      dlsym(library, "nvmlDeviceGetCount_v2"));
+  if (count_of == nullptr) {
+    count_of = reinterpret_cast<PFN_nvmlDeviceGetCount>(
+        dlsym(library, "nvmlDeviceGetCount"));
+  }
+  auto handle_of = reinterpret_cast<PFN_nvmlDeviceGetHandleByIndex>(
+      dlsym(library, "nvmlDeviceGetHandleByIndex_v2"));
+  if (handle_of == nullptr) {
+    handle_of = reinterpret_cast<PFN_nvmlDeviceGetHandleByIndex>(
+        dlsym(library, "nvmlDeviceGetHandleByIndex"));
+  }
+  const auto uuid_of = reinterpret_cast<PFN_nvmlDeviceGetUUID>(
+      dlsym(library, "nvmlDeviceGetUUID"));
+  if (init == nullptr || count_of == nullptr || handle_of == nullptr ||
+      uuid_of == nullptr || init() != kNvmlSuccess) {
+    return;
+  }
+  unsigned int devices = 0;
+  if (count_of(&devices) != kNvmlSuccess) {
+    devices = 0;
+  }
+  for (unsigned int index = 0; index < devices; index++) {
+    NvmlDevice device = nullptr;
+    char uuid[kNvmlUuidSize] = {};
+    if (handle_of(index, &device) != kNvmlSuccess ||
+        uuid_of(device, uuid, sizeof(uuid)) != kNvmlSuccess) {
+      continue;
+    }
+    uuid[sizeof(uuid) - 1] = '\0';
+    const std::string hex = NvmlUuidHex(uuid);
+    Adapter* card = nullptr;
+    for (Adapter& adapter : report->adapters) {
+      if (adapter.vendor_id == 0x10DE && adapter.uuid == hex) {
+        card = &adapter;
+      }
+    }
+    if (card == nullptr && devices == 1 && nvidia == 1) {
+      for (Adapter& adapter : report->adapters) {
+        if (adapter.vendor_id == 0x10DE) {
+          card = &adapter;
+        }
+      }
+    }
+    if (card == nullptr) {
+      continue;
+    }
+    const NvmlShare graphics = NvmlProcesses(
+        library, device, "nvmlDeviceGetGraphicsRunningProcesses", pid);
+    const NvmlShare compute = NvmlProcesses(
+        library, device, "nvmlDeviceGetComputeRunningProcesses", pid);
+    const bool unknown = (graphics.listed || compute.listed) &&
+                         !graphics.measured && !compute.measured;
+    if ((graphics.answered || compute.answered) && !unknown) {
+      card->has_app_memory = true;
+      card->app_memory =
+          graphics.held > compute.held ? graphics.held : compute.held;
+    }
+  }
+  if (shutdown != nullptr) {
+    shutdown();
+  }
+}
+
 void AppendString(std::string* json, const std::string& text) {
   json->push_back('"');
   for (const char c : text) {
@@ -576,6 +823,9 @@ std::string ToJson(const Report& report) {
                     ? "null"
                     : (adapter.storage_16bit == 1 ? "true" : "false"));
     json.push_back(',');
+    AppendText(&json, "pci", adapter.pci);
+    AppendOptional(&json, "appMemory", adapter.has_app_memory,
+                   adapter.app_memory);
     AppendName(&json, "source");
     AppendString(&json, adapter.source);
     json.push_back('}');
@@ -604,13 +854,26 @@ const char* GpuProbeOutput(int argc, char** argv) {
   return nullptr;
 }
 
-int RunGpuProbe(const char* output) {
+unsigned GpuProbePid(int argc, char** argv) {
+  const size_t flag_length = std::strlen(kPidFlag);
+  for (int i = 1; i < argc; i++) {
+    if (std::strncmp(argv[i], kPidFlag, flag_length) == 0) {
+      char* end = nullptr;
+      const unsigned long pid = std::strtoul(argv[i] + flag_length, &end, 10);
+      return end != nullptr && *end == '\0' ? static_cast<unsigned>(pid) : 0;
+    }
+  }
+  return 0;
+}
+
+int RunGpuProbe(const char* output, unsigned pid) {
   // Its default action ends the process, even if the app ignored it
   signal(SIGALRM, SIG_DFL);
   alarm(kLimitSeconds);
 
   Report report;
   ReadVulkan(&report);
+  ReadAppMemory(&report, pid);
   const std::string json = ToJson(report);
 
   FILE* file = std::fopen(output, "wb");

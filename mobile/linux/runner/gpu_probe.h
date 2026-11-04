@@ -12,8 +12,13 @@
 // it does not ask for the probe
 const char* GpuProbeOutput(int argc, char** argv);
 
-// Writes the JSON of the cards to [output] and gives the exit code of the
-// process: 0 once the JSON is written, whatever it found
-int RunGpuProbe(const char* output);
+// The id of the app's process after --immuch360-gpu-probe-pid=, whose share
+// of each card the probe reads; 0 when not given
+unsigned GpuProbePid(int argc, char** argv);
+
+// Writes the JSON of the cards to [output], with what the process [pid] holds
+// of each card when it can be read (0: nothing read), and gives the exit code
+// of the process: 0 once the JSON is written, whatever it found
+int RunGpuProbe(const char* output, unsigned pid);
 
 #endif  // RUNNER_GPU_PROBE_H_

@@ -31,10 +31,16 @@
 // GpuReport.fromJson reads (lib/desktop/ai/engine/backends.dart). The probe
 // of Linux (linux/runner/gpu_probe.cc) is the same without DXGI: a change to
 // one goes to the other.
+//
+// Given the id of the app's process (--immuch360-gpu-probe-pid=, issue
+// #13), it also writes what that process holds of each card, from the counter
+// Windows keeps per process (see AppDedicatedUsage): the counter of the card
+// counts it as used, and the app says it apart.
 
 namespace {
 
 constexpr wchar_t kFlag[] = L"--immuch360-gpu-probe=";
+constexpr wchar_t kPidFlag[] = L"--immuch360-gpu-probe-pid=";
 
 // Past this the probe ends itself, a driver that hangs included; the app
 // stops waiting for it at the same time
@@ -251,6 +257,9 @@ struct Adapter {
   std::string luid;
   int driver_id = -1;
   int storage_16bit = -1;
+  // What the app's process holds of the card, when Windows told it
+  bool has_app_memory = false;
+  uint64_t app_memory = 0;
 };
 
 // What the probe found
@@ -325,16 +334,10 @@ Function FromProc(FARPROC proc) {
   return reinterpret_cast<Function>(reinterpret_cast<void (*)()>(proc));
 }
 
-// What all the programs hold now of the dedicated memory of the card whose
-// LUID is [luid] (VkPhysicalDeviceIDProperties::deviceLUID: LowPart, then
-// HighPart), from the counter Windows keeps for it, the memory the Task
-// Manager shows: \GPU Adapter Memory(luid_0x<high>_0x<low>_phys_0)\Dedicated
-// Usage. The budget of VK_EXT_memory_budget leaves it out on the driver of
-// NVIDIA (lot V3, on the RTX 4060 Laptop: a second sd-cli held 4.3 GB of the
-// card, the budget of the probe stayed at 7.5 GB), so that a game would never
-// make a panorama wait. False when the counter is not there (a runner without
-// a card, an older Windows): the budget of Vulkan alone is kept then.
-bool DedicatedUsage(const uint8_t* luid, uint64_t* used) {
+// The value of one counter of the performance data of Windows, by its
+// English path; false when the counter is not there (a runner without a card,
+// an older Windows, a process that holds nothing of a card)
+bool ReadCounter(const wchar_t* path, uint64_t* read) {
   HMODULE pdh =
       ::LoadLibraryExW(L"pdh.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
   if (pdh == nullptr) {
@@ -362,28 +365,63 @@ bool DedicatedUsage(const uint8_t* luid, uint64_t* used) {
   if (open != nullptr && add != nullptr && collect != nullptr &&
       value != nullptr && close != nullptr &&
       open(nullptr, 0, &query) == ERROR_SUCCESS) {
-    uint32_t low = 0;
-    uint32_t high = 0;
-    std::memcpy(&low, luid, sizeof(low));
-    std::memcpy(&high, luid + sizeof(low), sizeof(high));
-    wchar_t path[128];
-    swprintf_s(path,
-               L"\\GPU Adapter Memory(luid_0x%08x_0x%08x_phys_0)\\Dedicated "
-               L"Usage",
-               high, low);
     PDH_HCOUNTER counter = nullptr;
     PDH_FMT_COUNTERVALUE counted = {};
     if (add(query, path, 0, &counter) == ERROR_SUCCESS &&
         collect(query) == ERROR_SUCCESS &&
         value(counter, PDH_FMT_LARGE, nullptr, &counted) == ERROR_SUCCESS &&
         counted.CStatus == ERROR_SUCCESS && counted.largeValue >= 0) {
-      *used = static_cast<uint64_t>(counted.largeValue);
+      *read = static_cast<uint64_t>(counted.largeValue);
       found = true;
     }
     close(query);
   }
   ::FreeLibrary(pdh);
   return found;
+}
+
+// The high and the low part of [luid] (VkPhysicalDeviceIDProperties::
+// deviceLUID, DXGI_ADAPTER_DESC::AdapterLuid: LowPart, then HighPart), as the
+// names of the counters write them
+void LuidParts(const uint8_t* luid, uint32_t* high, uint32_t* low) {
+  std::memcpy(low, luid, sizeof(*low));
+  std::memcpy(high, luid + sizeof(*low), sizeof(*high));
+}
+
+// What all the programs hold now of the dedicated memory of the card whose
+// LUID is [luid], from the counter Windows keeps for it, the memory the Task
+// Manager shows: \GPU Adapter Memory(luid_0x<high>_0x<low>_phys_0)\Dedicated
+// Usage. The budget of VK_EXT_memory_budget leaves it out on the driver of
+// NVIDIA (lot V3, on the RTX 4060 Laptop: a second sd-cli held 4.3 GB of the
+// card, the budget of the probe stayed at 7.5 GB), so that a game would never
+// make a panorama wait. False when the counter is not there (a runner without
+// a card, an older Windows): the budget of Vulkan alone is kept then.
+bool DedicatedUsage(const uint8_t* luid, uint64_t* used) {
+  uint32_t high = 0;
+  uint32_t low = 0;
+  LuidParts(luid, &high, &low);
+  wchar_t path[128];
+  swprintf_s(path,
+             L"\\GPU Adapter Memory(luid_0x%08x_0x%08x_phys_0)\\Dedicated "
+             L"Usage",
+             high, low);
+  return ReadCounter(path, used);
+}
+
+// What the process [pid] holds of the dedicated memory of the card whose
+// LUID is [luid]: \GPU Process Memory(pid_<pid>_luid_0x<high>_0x<low>_phys_0)
+// \Dedicated Usage, the figure the Task Manager shows per process. False when
+// the process has no counter on that card (it holds nothing of it).
+bool AppDedicatedUsage(const uint8_t* luid, DWORD pid, uint64_t* held) {
+  uint32_t high = 0;
+  uint32_t low = 0;
+  LuidParts(luid, &high, &low);
+  wchar_t path[160];
+  swprintf_s(path,
+             L"\\GPU Process Memory(pid_%lu_luid_0x%08x_0x%08x_phys_0)"
+             L"\\Dedicated Usage",
+             static_cast<unsigned long>(pid), high, low);
+  return ReadCounter(path, held);
 }
 
 template <typename Function>
@@ -657,6 +695,39 @@ void ReadDxgi(Report* report) {
   factory->Release();
 }
 
+// What the process [pid] holds of each card of [report] with a LUID, from
+// the counter Windows keeps per process (AppDedicatedUsage); on a card whose
+// own counter Windows keeps, a process without a counter of its own there
+// holds nothing of it, and nothing is told where Windows keeps no counter
+void ReadAppMemory(Report* report, DWORD pid) {
+  if (pid == 0) {
+    return;
+  }
+  for (Adapter& adapter : report->adapters) {
+    if (adapter.luid.size() != 16) {
+      continue;
+    }
+    uint8_t luid[8] = {};
+    bool valid = true;
+    for (size_t i = 0; i < sizeof(luid) && valid; i++) {
+      char* end = nullptr;
+      const std::string pair = adapter.luid.substr(i * 2, 2);
+      luid[i] = static_cast<uint8_t>(std::strtoul(pair.c_str(), &end, 16));
+      valid = end != nullptr && *end == '\0';
+    }
+    if (!valid) {
+      continue;
+    }
+    uint64_t all = 0;
+    if (!DedicatedUsage(luid, &all)) {
+      continue;
+    }
+    uint64_t held = 0;
+    adapter.has_app_memory = true;
+    adapter.app_memory = AppDedicatedUsage(luid, pid, &held) ? held : 0;
+  }
+}
+
 void AppendString(std::string* json, const std::string& text) {
   json->push_back('"');
   for (const char c : text) {
@@ -731,6 +802,8 @@ std::string ToJson(const Report& report) {
                     ? "null"
                     : (adapter.storage_16bit == 1 ? "true" : "false"));
     json.push_back(',');
+    AppendOptional(&json, "appMemory", adapter.has_app_memory,
+                   adapter.app_memory);
     AppendName(&json, "source");
     AppendString(&json, adapter.source);
     json.push_back('}');
@@ -773,7 +846,27 @@ bool GpuProbeRequested(std::wstring* output) {
   return found;
 }
 
-int RunGpuProbe(const std::wstring& output) {
+unsigned long GpuProbePid() {
+  int argc = 0;
+  wchar_t** argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
+  if (argv == nullptr) {
+    return 0;
+  }
+  const size_t flag_length = std::wcslen(kPidFlag);
+  unsigned long pid = 0;
+  for (int i = 1; i < argc; i++) {
+    if (std::wcsncmp(argv[i], kPidFlag, flag_length) == 0) {
+      wchar_t* end = nullptr;
+      const unsigned long read = std::wcstoul(argv[i] + flag_length, &end, 10);
+      pid = end != nullptr && *end == L'\0' ? read : 0;
+      break;
+    }
+  }
+  ::LocalFree(argv);
+  return pid;
+}
+
+int RunGpuProbe(const std::wstring& output, unsigned long pid) {
   HANDLE limit =
       ::CreateThread(nullptr, 0, EndPastLimit, nullptr, 0, nullptr);
   if (limit != nullptr) {
@@ -783,6 +876,7 @@ int RunGpuProbe(const std::wstring& output) {
   Report report;
   ReadVulkan(&report);
   ReadDxgi(&report);
+  ReadAppMemory(&report, static_cast<DWORD>(pid));
   const std::string json = ToJson(report);
 
   HANDLE file = ::CreateFileW(output.c_str(), GENERIC_WRITE, 0, nullptr,

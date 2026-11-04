@@ -182,6 +182,16 @@ The camera serves one download at a time. While the Tapo app browses the memory 
 
 Each wrong password counts, and after a few the camera locks for a while. The app never tries a refused password again by itself: only "Test the camera" or Retry ask the camera again. Wait for the minutes the message gives, check the passwords in the page of the camera (the TP-Link account password for the recordings, the camera account for the live view), then tap "Test the camera" once. When the camera takes the password for its settings but not for its videos, turn Third-Party Compatibility off and on again in the Tapo app, then restart the camera.
 
+## A 360° panorama waits for the graphics card
+
+A 360° panorama made by AI needs 6.0 GiB of the graphics card's memory free when it starts, or 5.1 GiB from desktop build 21 with a smaller reference image; the 3D photos and scenes need none. What each card can do, and what the app does first: [360° panoramas and the graphics card memory](user-guide.md#360-panoramas-and-the-graphics-card-memory).
+
+- **"Freeing the graphics card memory Immuch360 holds: paused videos and cached pictures"** (from desktop build 21): the app lets go of its own share of the card before it asks it; this takes up to about 20 seconds.
+- **"360° panoramas need (needed) of free graphics memory, (free) free: close games, 3D apps or videos"**, with "(Immuch360 itself holds (app))" when the app could read its own share and it is 64 MiB or more: close games, 3D apps, a browser playing a video and other AI programs, then press Resume on the panorama, or wait: the card is asked again every 15 seconds. When Immuch360 itself holds the shortfall, stop the video that plays in the app. On a laptop, if you chose "High performance" for `immuch360.exe` for 360° videos, the app sits on the card the panorama needs: switch it back while you make panoramas.
+- **"Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue"**: the memory stayed short for 30 seconds after its figures showed. "Keep waiting" puts the panorama back, to start whenever the memory is free; Retry failed gives each panorama 30 seconds again.
+- **"Other apps use the graphics card memory: close games or 3D apps"**, on a panorama that had started: the free memory dropped during the generation, which would have spoilt the image. Close what holds the card and use Retry.
+- **The figures in a bug report**: the lines of "ConversionQueue" on the Logs page give, for each panorama, the bytes free, the bytes needed and the app's share, and which reference it was made with. Before desktop build 21, the panorama waited for ever when the card had less than 6 GiB free, the app's own share included (issue #13).
+
 ## Other messages
 
 - **"The app cannot see the photos of this device"**: the photos and videos permission was refused. Tap "Allow access", or "Open the settings" to allow it there. See [Without a server or an account](user-guide.md#start-without-a-server).

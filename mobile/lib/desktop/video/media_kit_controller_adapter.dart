@@ -49,6 +49,8 @@ typedef DesktopVideoLinkOf = ({VideoLinkMeter meter, int? size})? Function(Strin
 final activeDesktopVideo = ValueNotifier<MediaKitVideoPlayerController?>(null);
 
 class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPlayerController {
+  /// [onScreen]: whether the page of this controller is on screen, where a job on the graphics card leaves its player
+  /// alone, paused or not (PlayerPool.releaseForGraphicsJob); the 360° page tells it
   MediaKitVideoPlayerController({
     required PlayerPool pool,
     required this._resolve,
@@ -57,8 +59,9 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     this._prepare,
     this._unprepare,
     this._linkOf,
+    bool Function()? onScreen,
   }) {
-    _lease = pool.lease(PlayerKind.playback, label: label, onSuspend: _onSuspend);
+    _lease = pool.lease(PlayerKind.playback, label: label, onSuspend: _onSuspend, onScreen: onScreen);
   }
 
   /// How often the link is told while a streamed video is open

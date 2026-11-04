@@ -13,8 +13,13 @@
 // Whether the command line asks for the probe, and the file it names
 bool GpuProbeRequested(std::wstring* output);
 
-// Writes the JSON of the cards to [output] and gives the exit code of the
-// process: 0 once the JSON is written, whatever it found
-int RunGpuProbe(const std::wstring& output);
+// The id of the app's process after --immuch360-gpu-probe-pid=, whose share
+// of each card the probe reads; 0 when not given
+unsigned long GpuProbePid();
+
+// Writes the JSON of the cards to [output], with what the process [pid] holds
+// of each card when it can be read (0: nothing read), and gives the exit code
+// of the process: 0 once the JSON is written, whatever it found
+int RunGpuProbe(const std::wstring& output, unsigned long pid);
 
 #endif  // RUNNER_GPU_PROBE_H_

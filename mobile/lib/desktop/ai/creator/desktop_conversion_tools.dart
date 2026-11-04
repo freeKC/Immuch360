@@ -15,7 +15,9 @@
 //
 // The gate and the queue ask the graphics cards through the probe of lot C6 (gpu_probe.dart): the gate when it looks at
 // the 360° panoramas, the queue again before each job of the graphics card, through the gate, whose answer the dialog
-// and the settings then see too.
+// and the settings then see too. Before it asks, the queue lets go of the app's paused videos and cached pictures
+// (graphics_release.dart), and on Linux it reads the app's own share of a card the probe could not read it for from
+// the DRM fdinfo of the app (app_graphics_memory.dart).
 //
 // The engine is made when a job runs, from the components installed at that moment: they may be downloaded after the
 // app started, from the conversion dialog or the settings. While it runs, or while the queue has a job under way, the
@@ -42,8 +44,10 @@ import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/dart_immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
+import 'package:immich_mobile/desktop/ai/gpu/app_graphics_memory.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
+import 'package:immich_mobile/desktop/ai/gpu/graphics_release.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/panorama/panorama_engine.dart';
@@ -802,6 +806,15 @@ ConversionTools desktopConversionTools(Ref ref) {
     gpuBudget: GpuBudget(
       probe: () => gate.gpuReport(fresh: true),
       integratedAllowed: integratedGpuAllowedOf(ref.watch(desktopAiSettingsStoreProvider)),
+      appMemoryOf: appGraphicsMemoryOf,
     ),
+    releaseGraphics: releaseDesktopGraphics,
   );
+}
+
+/// The share of the app on [card] when the probe did not read it: from the DRM fdinfo of the app on Linux, for a card
+/// that told its PCI address; null elsewhere
+Future<int?> appGraphicsMemoryOf(GpuAdapter card) async {
+  final pci = card.pci;
+  return Platform.isLinux && pci != null ? appDrmMemoryOn(pci) : null;
 }

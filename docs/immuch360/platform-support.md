@@ -146,6 +146,8 @@ Captures taken in the headset with the capture button (Meta button and trigger),
 
 **Input**: the mouse and the keyboard: F or F11 for full screen and Escape to leave it, the arrows, Home and End, I for the details; in a video Enter or Space to pause, J and L to jump 10 seconds, M for the sound; the wheel, `+` and `-` to zoom a 360° view. See [Use it on a computer](user-guide.md#use-it-on-a-computer).
 
+**AI creator** (from desktop build 13): 3D photos, 3D scenes and the 3D versions of 360° photos run on the processor and need no graphics memory. 360° panoramas need a Vulkan 1.2 graphics card with 8 GB of its own memory and 6.0 GiB of it free when a panorama starts, or 5.1 GiB from desktop build 21 with a smaller reference image; a card of 6 GB is not offered them. On a laptop, Windows runs the app on the integrated chip, which leaves the whole dedicated card to the panorama (about 7.0 GiB free on the RTX 4060 Laptop of the tests). What each card can do: [360° panoramas and the graphics card memory](user-guide.md#360-panoramas-and-the-graphics-card-memory).
+
 **Files from Windows** (from desktop build 5): "Open with" in File Explorer, files or a folder dropped on the window or on `immuch360.exe`, and paths on the command line open in the app, a 360° file in its 360° view; with the app open, they go to its window, and from desktop build 6 a file handed over while the viewer shows another one opens in its place. See step 3 of [Use it on a computer](user-guide.md#use-it-on-a-computer).
 
 ### Download and install on Windows
@@ -183,6 +185,8 @@ How macOS was checked: on the Mac of the CI only, a virtual Mac without a user. 
 **Files given to the app** (from desktop build 5): the files and folders dropped on the window on both systems; on Linux one copy runs per user, a later start handing its files to it over the session bus; on macOS the files the Finder opens with the app go to its window. On Linux, files and folders given on the command line of a first start ran under WSLg; drops and the hand over of a later start have not run. On macOS, the CI's Mac ran the command line, the Launch Services path and a file handed to the app that runs; a drop by hand has not run.
 
 **Input**: the mouse and the keyboard, with the shortcuts of Windows; on a Mac the Cmd shortcuts and the trackpad too, never tried on a Mac.
+
+**AI creator** (from desktop build 13): on both systems, 3D photos and 3D scenes on the processor. On Linux, 360° panoramas too, with the needs of Windows: a Vulkan 1.2 graphics card with 8 GB of its own memory, 6.0 GiB of it free when a panorama starts, or 5.1 GiB from desktop build 21. A desktop session (KWin, GNOME Shell, Xwayland) holds part of the card that drives the screen: in issue #13, an RTX 2060 of 8 GB under KDE on Wayland had 5.4 GiB free with Immuch360 holding 1.4 GiB of it, and the panorama waited for ever before desktop build 21, which runs it with the smaller reference from 5.1 GiB free. On a Mac, panoramas are on the roadmap. See [360° panoramas and the graphics card memory](user-guide.md#360-panoramas-and-the-graphics-card-memory).
 
 **What is missing**: on both systems, the parts written for Windows only so far: the projection pass of the 360° video player (renderer C), the probe of the graphics chip's decoders, without which the app answers from its static decoder rule, and the computer share; on Linux, the watching of folders (Refresh and rescans only); on macOS, a Developer ID signature and a notarization; on both, a run on a real computer.
 
