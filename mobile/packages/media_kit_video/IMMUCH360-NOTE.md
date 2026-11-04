@@ -221,6 +221,21 @@ Patches:
    while no size was given (no projection, H/W rendering), with the arithmetic of the Dart side
    (`(width * cap / height).round() & ~1`), so that the size Dart gives next is the same and makes no new texture.
    A size given by the configuration or by `setSize` is not capped, as before.
+12. Windows, a flat frame drawn outside the lock, when asked (`windows/video_output.{h,cc}`,
+   `windows/angle_surface_manager.h`). Upstream draws each flat frame (`ANGLESurfaceManager::Draw`: mpv's draw, then
+   `glFinish`) under the lock that `Read` takes on Flutter's raster thread to copy the texture. A frame of the graphics
+   card's decoder is drawn in a millisecond or two, but a frame decoded by the processor is uploaded by that draw: the
+   y4m of an AV2 video (Immuch360's AV2 companion, `lib/desktop/video/av2_playback.dart`), 12 MB a picture in 4K. With
+   the variable `IMMUCH360_FLAT_BACK_BUFFER` of the app's environment, a flat frame is drawn as renderer C draws (patch
+   6): into the internal texture `Read` does not copy from, finished there, then swapped under the lock; `1` for every
+   flat frame, `2` for the frames of the processor only (mpv's `video-out-params` has a `pixelformat` and no
+   `hw-pixelformat`, which a d3d11 frame names), read once per frame. Without it, upstream's single texture. Not on by
+   default: measured on the PC on 3 November 2026 (the fix round of lot AD3 of the AV2 videos, PresentMon and Flutter's
+   frame times, H.264 and AV2 runs one after the other), it changed nothing steady: at 1080p the AV2 video already
+   presented as often as H.264, and at 4K, with a decoder slower than the video, one pair of runs was better with it,
+   one the same and one worse; the Intel UHD, busy 8.4 to 13.3 ms a present with the 4K AV2 video (12.5 or more in 4
+   of those 6 runs) against 5.4 to 8.6 ms with H.264, looked like the limit rather than the lock. Kept for the next
+   measures.
 
 Not done yet (plan 20-plan-desktop.md, 2.2): the D3D11 device on the adapter Flutter uses. It is not needed on a
 laptop with two GPUs: Flutter's ANGLE, the plugin's device and display and mpv's decoder all take the adapter DXGI

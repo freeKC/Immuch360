@@ -8,9 +8,34 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
 import 'package:immich_mobile/desktop/library/thumbnail_cache.dart';
 import 'package:immich_mobile/desktop/platform/desktop_local_image_api.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
+import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:path/path.dart' as p;
 
+import '../video/fake_playback_engine.dart';
 import 'local_image_fixtures.dart';
+
+/// The AV2 videos of the app as the thumbnails meet them: [refusal] says why a video does not play now (its decoder
+/// not installed, AV2 videos off), else its companion serves it
+class _Av2Gate extends Av2Playbacks {
+  _Av2Gate(this.refusal)
+    : super(companion: () async => null, runner: (_) => throw UnimplementedError(), enabled: () => true);
+
+  final Exception? Function() refusal;
+
+  @override
+  Future<String> open(Av2Bytes bytes, {bool forThumbnail = false}) async {
+    await bytes.close();
+    final thrown = refusal();
+    if (thrown != null) {
+      throw thrown;
+    }
+    return 'http://127.0.0.1:50123/AbCdEfGhIjKlMnOp0123456789abcdef/video.y4m';
+  }
+
+  @override
+  Future<void> release(String resource) async {}
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -227,6 +252,33 @@ void main() {
       // The viewer's larger request gets the frame of the largest box
       expect(takeEncoded(await request(images, 'v1', isVideo: true, width: 0, height: 0)), frame);
       expect(grabs.last, (file.path, 1024));
+      await images.idle();
+    });
+
+    test('an AV2 video asked for before its decoder is installed, or while AV2 videos are off, gets the film tile, '
+        'then its frame once it can: it is not taken for a file without one', () async {
+      final frame = await pngOf(64, 36);
+      put('v1', 'phare.ivf', [0, 1, 2, 3]);
+      final players = FakePlayers(
+        onCreate: (engine) => engine
+          ..autoLoad = const Duration(seconds: 10)
+          ..frame = frame,
+      );
+      Exception? refusal = const Av2DecoderMissing();
+      final grabber = VideoThumbnailGrabber(pool: players.pool, av2: () => _Av2Gate(() => refusal));
+      final images = withFrames(
+        (path, box) =>
+            grabber.grab(path, time: DesktopLocalImageApi.videoFrameTime, box: (width: box, height: box, cover: true)),
+      );
+      // The order of the owner's test of the AV2 videos: the folder opened, then a video played (plan, 6.3)
+      final before = takeEncoded(await request(images, 'v1', isVideo: true));
+      expect(before, isNot(frame));
+      expect(players.made, isEmpty, reason: 'nothing to grab, nothing downloaded');
+      refusal = const Av2TurnedOff();
+      expect(takeEncoded(await request(images, 'v1', isVideo: true)), before);
+      // The first playback installed the decoder, AV2 videos on
+      refusal = null;
+      expect(takeEncoded(await request(images, 'v1', isVideo: true)), frame);
       await images.idle();
     });
 

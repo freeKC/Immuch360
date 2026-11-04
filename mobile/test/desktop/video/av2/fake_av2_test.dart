@@ -297,6 +297,50 @@ void _tests() {
     }
   });
 
+  test('takes its token from IMMUCH360_AV2_TOKEN when --token is left out, as the real one', () async {
+    // The app puts the token in the environment: every account of a computer reads a command line (lot AD2, n1)
+    const size = ['--width', '256', '--height', '144', '--bits', '8', '--fps', '30/1', '--frames', '1'];
+    const other = 'other-token-0123456789';
+
+    /// The status of a HEAD of the video with [_token], then with [other]
+    Future<(int, int)> statuses(List<String> arguments, Map<String, String> environment) async {
+      final process = await Process.start(_fake!, ['serve', ...arguments, ...size], environment: environment);
+      // Read to its end: a companion whose output is closed ends
+      final listening = Completer<String>();
+      process.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen((line) {
+        if (line.startsWith('listening ') && !listening.isCompleted) {
+          listening.complete(line);
+        }
+      });
+      final port = int.parse((await listening.future.timeout(const Duration(seconds: 10))).split(' ')[1]);
+      final client = HttpClient();
+      try {
+        Future<int> head(String token) async {
+          final response = await (await client.headUrl(Uri.parse('http://127.0.0.1:$port/$token/video.y4m'))).close();
+          await response.drain<void>();
+          return response.statusCode;
+        }
+
+        return (await head(_token), await head(other));
+      } finally {
+        client.close(force: true);
+        await process.stdin.close();
+        expect(await process.exitCode.timeout(const Duration(seconds: 5)), 0);
+      }
+    }
+
+    expect(await statuses(const [], const {'IMMUCH360_AV2_TOKEN': _token}), (200, 403));
+    final both = await statuses(const ['--token', _token], const {'IMMUCH360_AV2_TOKEN': other});
+    expect(both, (200, 403), reason: '--token wins');
+    const withoutToken = <String, String>{};
+    const notAToken = {'IMMUCH360_AV2_TOKEN': 'short'};
+    for (final environment in [withoutToken, notAToken]) {
+      final run = await Process.run(_fake!, ['serve', ...size], environment: environment);
+      expect(run.exitCode, 2, reason: '$environment');
+      expect(run.stderr, contains('IMMUCH360_AV2_TOKEN'), reason: '$environment');
+    }
+  });
+
   test('serves the whole y4m of a fixture: our header, then each picture of the pattern in its order', () async {
     final companion = await start('av2-256x144-8bit.ivf');
     await companion.listening();

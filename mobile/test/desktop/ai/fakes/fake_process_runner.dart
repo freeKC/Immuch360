@@ -4,6 +4,7 @@
 // test kills it, as a stalled generator. A real executable is tested with the compiled fake sd-cli (lot P2).
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 
@@ -31,6 +32,17 @@ class FakeRunningProcess implements RunningProcess {
   final _err = StreamController<String>();
   final _exit = Completer<int>();
   bool killed = false;
+
+  /// What was written on its standard input, in order
+  final written = <int>[];
+
+  // Closed with the input by whoever writes to it, as a pipe
+  // ignore: close_sinks
+  late final _input = StreamController<List<int>>()..stream.listen(written.addAll);
+
+  @override
+  // ignore: close_sinks
+  late final IOSink stdin = IOSink(_input);
 
   /// The exit code of a killed process, as SIGKILL leaves it
   static const killedCode = -9;

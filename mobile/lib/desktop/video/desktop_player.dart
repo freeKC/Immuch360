@@ -33,6 +33,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:image/image.dart' as img;
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
+import 'package:immich_mobile/desktop/video/player_resource_options.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as mpv;
@@ -472,6 +473,9 @@ class DesktopPlayer implements PlaybackEngine {
   /// failed: 401 Unauthorized"), which mpv's own error code does not tell
   String? _openError;
 
+  /// The options the last open set for its resource (desktopResourceOptions), taken back at the next open
+  Set<String> _resourceKeys = const {};
+
   /// Where the file of the last open starts, null for its beginning
   Duration? _openStart;
 
@@ -628,9 +632,21 @@ class DesktopPlayer implements PlaybackEngine {
     _hasVideo.value = null;
     _audioTracks.value = const [];
     _audioTrack.value = null;
-    for (final MapEntry(:key, :value) in DesktopPlayerOptions.forOpen(kind, streamed: streamed).entries) {
+    final options = DesktopPlayerOptions.forOpen(kind, streamed: streamed);
+    for (final MapEntry(:key, :value) in options.entries) {
       await _set(key, value);
     }
+    // Those of the resource itself (the y4m of an AV2 companion), those of the previous one it does not set taken back
+    final extra = desktopResourceOptions[resource] ?? const <String, String>{};
+    for (final key in _resourceKeys) {
+      if (!extra.containsKey(key) && !options.containsKey(key)) {
+        await _set(key, '');
+      }
+    }
+    for (final MapEntry(:key, :value) in extra.entries) {
+      await _set(key, value);
+    }
+    _resourceKeys = extra.keys.toSet();
     _openStart = kind != PlayerKind.live && start > Duration.zero ? start : null;
     // Not media_kit's open, which writes the address to a list file in the temporary folder for five seconds (see the
     // top of this file): a bridge URL holds its token, a live address the camera account, and both stay in memory.

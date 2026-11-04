@@ -125,6 +125,14 @@ class LocalMediaBridge implements MediaBridge {
     return target == null ? null : _traffic[(target.$1.source.id, target.$2)];
   }
 
+  /// The share and the path of the file of [url], a URL of this bridge; null for another URL or a share no longer
+  /// registered. The AV2 videos of the shares on the computers are read through it by the app itself, which feeds
+  /// their units to its decoder (lib/desktop/video/av2_playback.dart)
+  ({NetworkFileSystem fileSystem, String path})? fileOf(Uri url) {
+    final target = _target(url);
+    return target == null ? null : (fileSystem: target.$1, path: target.$2);
+  }
+
   /// The meter of the file at [path] of [sourceId], made at its first body
   VideoLinkMeter _meterOf(String sourceId, String path, int? size) {
     final key = (sourceId, path);

@@ -9,6 +9,7 @@
 // before the picture asked and the pictures before it dropped. Its pictures are a test pattern, not decoded: unit k
 // gives picture k, whose first four luma samples hold k (fakeAv2FrameOf), over a ramp that moves with k.
 //
+// serve takes its token from IMMUCH360_AV2_TOKEN when --token is left out, as the real one (the app gives it there).
 // IMMUCH360_FAKE_AV2_MODE says what it does:
 //   play       serves what it is fed (the default)
 //   silent     writes its listening line, then nothing more and never decodes: a companion that hangs
@@ -16,6 +17,7 @@
 //              damaged file
 //   no-socket  "error network no socket on 127.0.0.1", exit 4
 // IMMUCH360_FAKE_AV2_FPS sets its decoding speed in pictures per second (240 by default), which the stat lines tell;
+// --parent PID ends it when that process ends, watched on Linux only (the job object of the app does it on Windows);
 // IMMUCH360_FAKE_AV2_SIMD the level they name (avx2). Its probe reads the head of the file as the app does
 // (av2_stream.dart): an IVF gives its own size, a Section 5 stream IMMUCH360_FAKE_AV2_SIZE (256x144); the depth comes
 // from IMMUCH360_FAKE_AV2_BITS (8), since nothing is decoded. It writes its process id to the file
@@ -34,6 +36,9 @@ import 'package:immich_mobile/domain/services/y4m_layout.dart';
 
 /// The protocol of serve the fake speaks, as the first line of --version says
 const fakeAv2Protocol = 1;
+
+/// The variable of the environment that gives serve its token when --token is left out, as the app gives it
+const fakeAv2TokenVariable = 'IMMUCH360_AV2_TOKEN';
 
 /// "AV2R" read as a little endian 32-bit number: the mark of each record of the standard input
 const fakeAv2RecordMagic = 0x52325641;
@@ -322,12 +327,32 @@ class _ServeOptions {
             return _ServeOptions._('--port takes a number from 0 to 65535');
           }
           options.port = n;
+        case '--parent':
+          final n = number(value, 0xffffffff);
+          if (n == null || n == 0) {
+            return _ServeOptions._('--parent takes a process id');
+          }
+          options.parent = n;
         default:
           return _ServeOptions._('an unknown option of serve');
       }
     }
+    if ((have & 1) == 0) {
+      // The app leaves --token out and gives the token in the environment, as the real one takes it
+      final token = Platform.environment[fakeAv2TokenVariable] ?? '';
+      if (token.isNotEmpty) {
+        if (!RegExp(r'^[A-Za-z0-9_-]{16,128}$').hasMatch(token)) {
+          return _ServeOptions._('$fakeAv2TokenVariable takes 16 to 128 letters, digits, - or _');
+        }
+        options.token = token;
+        have |= 1;
+      }
+    }
+    if ((have & 1) == 0) {
+      return _ServeOptions._('serve needs a token, in the environment variable $fakeAv2TokenVariable or by --token');
+    }
     if (have != 63) {
-      return _ServeOptions._('serve needs --token, --width, --height, --bits, --fps and --frames');
+      return _ServeOptions._('serve needs --width, --height, --bits, --fps and --frames');
     }
     return options;
   }
@@ -344,6 +369,7 @@ class _ServeOptions {
   var fullRange = false;
   int? frameBytes;
   var port = 0;
+  int? parent;
 }
 
 /// A request of the player: its socket and the bytes asked, [end] included
@@ -436,6 +462,7 @@ class _Server {
       'frame=${layout.frameBytes} frames=${layout.frames}',
     );
     unawaited(_readInput());
+    _watchParent();
     listener.listen((socket) => unawaited(_accept(socket)));
     if (mode == 'silent') {
       // Hangs: no line, no picture, until the standard input closes
@@ -459,6 +486,22 @@ class _Server {
         request.socket.destroy();
       }
     }
+  }
+
+  /// --parent: the end when that process ends, as the real one does; watched where /proc tells it (Linux), the job
+  /// object of the app doing it on Windows
+  void _watchParent() {
+    final parent = options.parent;
+    if (parent == null || !Platform.isLinux) {
+      return;
+    }
+    Timer.periodic(const Duration(milliseconds: 200), (_) async {
+      if (!Directory('/proc/$parent').existsSync()) {
+        _line('exit parent-gone');
+        await stdout.flush();
+        exit(_exitOk);
+      }
+    });
   }
 
   // --- the input ---------------------------------------------------------------------------------------------------

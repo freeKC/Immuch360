@@ -7,6 +7,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
+import 'package:immich_mobile/desktop/video/video_frame_timings.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/desktop/window/close_sequence.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
@@ -35,9 +37,15 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
   late final _fullScreen = ref.read(desktopFullScreenProvider.notifier);
   bool _closing = false;
 
+  /// Stops the frame times of a playing video in the log (video_frame_timings.dart)
+  late final void Function() _stopFrameTimings;
+
   @override
   void initState() {
     super.initState();
+    // The AV2 videos of the library and of the shares get their thumbnails through it before any video opens
+    ref.read(av2PlaybacksProvider);
+    _stopFrameTimings = watchVideoFrameTimings();
     _window.addListener(this);
     unawaited(
       _window.setPreventClose(true).catchError((Object error, StackTrace stack) {
@@ -49,6 +57,7 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
 
   @override
   void dispose() {
+    _stopFrameTimings();
     _window.removeListener(this);
     super.dispose();
   }

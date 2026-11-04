@@ -8,6 +8,8 @@
 //    a journal, so that a program still alive at that id and path when the next runner opens is stopped;
 //  - runs at a lower priority when asked: "below normal" on Windows (the priority class of its job), nice 10 elsewhere
 //    (set by the launcher on Linux before the program starts its threads, process_priority.dart otherwise);
+//  - takes what the app writes on its standard input (the AV2 companion), a pipe whose breaking is never an error of
+//    the app;
 //  - gives its output and its error output line by line, a line ending at \n, \r\n or \r (sd-cli redraws its progress
 //    bar with \r), without its escape sequences, read from its start whoever listens, so that a full pipe never blocks
 //    it;
@@ -333,6 +335,9 @@ class ManagedRunningProcess implements RunningProcess {
   ManagedRunningProcess(this._process, {this._job, void Function()? onExit}) {
     _stdout = _lines(_process.stdout);
     _stderr = _lines(_process.stderr);
+    // A program that ends while the app writes to it breaks the pipe: the error goes to whoever awaits the write, never
+    // to the zone of the app
+    unawaited(_process.stdin.done.then<void>((_) {}, onError: (Object _) {}));
     _exit = _process.exitCode.then((code) {
       _closeJob();
       onExit?.call();
@@ -348,6 +353,9 @@ class ManagedRunningProcess implements RunningProcess {
 
   @override
   int get pid => _process.pid;
+
+  @override
+  io.IOSink get stdin => _process.stdin;
 
   @override
   Stream<String> get stdoutLines => _stdout;

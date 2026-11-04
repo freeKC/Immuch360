@@ -317,6 +317,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       label: '360 video',
       prepare: _prepare,
       unprepare: _unprepare,
+      decodingOf: _deps.resolve == null ? desktopAppVideoDecoding(ref) : null,
+      release: _deps.resolve == null ? desktopAppVideoRelease(ref) : null,
     );
     _controller.onPlaybackReady.addListener(_onReady);
     _controller.onPlaybackStatusChanged.addListener(_onStatus);

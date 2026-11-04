@@ -40,8 +40,10 @@ class _FakeProcess implements Process {
   @override
   Stream<List<int>> get stderr => err.stream;
 
+  // Never written to by these tests
   @override
-  IOSink get stdin => throw UnimplementedError();
+  // ignore: close_sinks
+  final IOSink stdin = IOSink(StreamController<List<int>>()..stream.drain<void>());
 
   @override
   Future<int> get exitCode => _exit.future;
@@ -324,6 +326,41 @@ void main() {
       await process.exitCode.timeout(const Duration(seconds: 1));
       expect(watch.elapsed, lessThan(const Duration(seconds: 1)));
       expect(processImageOf(process.pid), isNull);
+    }, skip: Platform.isMacOS ? 'the programs of the AI features run on Windows and Linux' : false);
+
+    test('what the app writes on the standard input reaches the program, and closing it ends its input', () async {
+      final runner = ManagedProcessRunner(journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))));
+      // A program that writes back what it reads until its input closes: sort on Windows, cat elsewhere
+      final (executable, arguments) = Platform.isWindows
+          ? (p.join(Platform.environment['SystemRoot'] ?? r'C:\Windows', 'System32', 'sort.exe'), <String>[])
+          : ('/bin/cat', <String>[]);
+      final process = await runner.start(
+        ProcessLaunch(executable: executable, arguments: arguments, lowPriority: false),
+      );
+      final lines = <String>[];
+      final read = process.stdoutLines.listen(lines.add).asFuture<void>();
+      unawaited(process.stderrLines.drain<void>());
+      process.stdin.add(utf8.encode('temporal unit 0\n'));
+      await process.stdin.flush();
+      await process.stdin.close();
+      expect(await process.exitCode.timeout(const Duration(seconds: 10)), 0);
+      await read.timeout(const Duration(seconds: 5));
+      expect(lines, ['temporal unit 0']);
+    }, skip: Platform.isMacOS ? 'the programs of the AI features run on Windows and Linux' : false);
+
+    test('a program that ends without reading its input does not fail the writes of the app', () async {
+      final runner = ManagedProcessRunner(journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))));
+      final (executable, arguments) = Platform.isWindows
+          ? ('powershell.exe', ['-NoProfile', '-Command', 'exit 0'])
+          : ('/bin/sh', ['-c', 'exit 0']);
+      final process = await runner.start(ProcessLaunch(executable: executable, arguments: arguments));
+      unawaited(process.stdoutLines.drain<void>());
+      unawaited(process.stderrLines.drain<void>());
+      expect(await process.exitCode.timeout(const Duration(seconds: 20)), 0);
+      // The pipe is broken: the app's write and flush end without an error the zone would not catch
+      process.stdin.add(List.filled(1 << 20, 65));
+      await process.stdin.flush().then<void>((_) {}, onError: (Object _) {});
+      await process.stdin.close().then<void>((_) {}, onError: (Object _) {});
     }, skip: Platform.isMacOS ? 'the programs of the AI features run on Windows and Linux' : false);
 
     test(
