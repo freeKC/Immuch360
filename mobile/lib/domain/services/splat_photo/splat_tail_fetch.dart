@@ -8,8 +8,9 @@
 //   416, or a 206 of another range: asked again without a range, then as a 200
 //
 // The bytes are written to <out>.part as they come, never held whole, their SHA-256 computed on the way; the part is
-// renamed only when the length and the sum match, deleted otherwise. A cancel aborts the request once its answer came
-// (the rule of httpRangeReader: ok_http crashes on an abort before) and leaves no .part.
+// renamed only when the length and the sum match, deleted otherwise; a tail that does not start as an SPZ is refused at
+// its first bytes, and the rest of its transfer stopped. A cancel aborts the request once its answer came (the rule of
+// httpRangeReader: ok_http crashes on an abort before) and leaves no .part.
 
 import 'dart:async';
 import 'dart:io';
@@ -116,7 +117,7 @@ Future<SplatTailFetched> fetchSplatTail({
     throw const SplatTailFetchException(SplatTailFetchProblem.damaged, 'the packet names no scene this build reads');
   }
   final part = File('${out.path}.part');
-  final sink = _TailSink(part, length: length, sha256: sha256);
+  final sink = _TailSink(part, length: length, sha256: sha256, version: xmp.splatVersion!);
   try {
     await sink.open();
     final (route, received) = switch (source) {
@@ -362,17 +363,21 @@ Future<int> _stream(
   return received;
 }
 
-/// The .part a scene is written to, its sum and its first bytes kept on the way
+/// The .part a scene is written to, its sum and its first bytes kept on the way. A tail that does not start as an SPZ
+/// of [version] is refused at its first bytes: a photo cut short, or one a gallery appended its own bytes to, keeps a
+/// size that passes, and its whole scene would come for nothing (review of 4 November 2026).
 class _TailSink {
-  _TailSink(this.part, {required this.length, required this.sha256});
+  _TailSink(this.part, {required this.length, required this.sha256, required this.version});
 
   final File part;
   final int length;
   final String sha256;
+  final int version;
   final _sum = SplatSha256();
   final _first = BytesBuilder(copy: true);
   RandomAccessFile? _handle;
   var _written = 0;
+  var _started = false;
 
   Future<void> open() async {
     await part.parent.create(recursive: true);
@@ -385,6 +390,12 @@ class _TailSink {
       _first.add(
         bytes.length <= splatHeadBytes - _first.length ? bytes : bytes.sublist(0, splatHeadBytes - _first.length),
       );
+    }
+    if (!_started && _first.length >= math.min(4, length)) {
+      if (!startsAsSpz(_first.toBytes(), version)) {
+        throw const SplatTailFetchException(SplatTailFetchProblem.damaged, 'no SPZ where the scene starts');
+      }
+      _started = true;
     }
     _written += bytes.length;
     await _handle!.writeFrom(bytes);

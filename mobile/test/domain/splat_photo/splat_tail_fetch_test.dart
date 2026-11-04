@@ -185,6 +185,49 @@ void main() {
     expect(leftovers(), ['trailer.jpg']);
   });
 
+  for (final mode in [_Mode.range, _Mode.whole]) {
+    test('a tail that is no SPZ (${mode.name}) is refused at its first bytes, the rest never comes', () async {
+      final big = _bigCarrier();
+      final out = File('${dir.path}/scene.spz');
+      for (final (what, file) in [
+        ('a gallery appended its trailer', Uint8List.fromList([...big.bytes, ...List.filled(1008, 0x41)])),
+        ('the photo lost its last byte', Uint8List.sublistView(big.bytes, 0, big.bytes.length - 1)),
+      ]) {
+        server
+          ..mode = mode
+          ..file = file
+          ..slow = true
+          ..sent = 0;
+        await expectLater(
+          fetchSplatTail(source: fromServer(), xmp: big.xmp, out: out),
+          throwsA(isA<SplatTailFetchException>().having((e) => e.problem, 'problem', SplatTailFetchProblem.damaged)),
+          reason: what,
+        );
+        // Let the server see the close
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        expect(server.sent, lessThan(big.xmp.splatLength! ~/ 4), reason: '$what: ${server.sent} bytes sent');
+        expect(leftovers(), isEmpty, reason: what);
+      }
+    });
+  }
+
+  test('a tail that is no SPZ in the copy on the device is refused at its first piece', () async {
+    final big = _bigCarrier();
+    final copy = File('${dir.path}/trailer.jpg')..writeAsBytesSync([...big.bytes, ...List.filled(1008, 0x41)]);
+    var done = 0;
+    await expectLater(
+      fetchSplatTail(
+        source: SplatTailFromFile(copy),
+        xmp: big.xmp,
+        out: File('${dir.path}/scene.spz'),
+        onProgress: (bytes, _) => done = bytes,
+      ),
+      throwsA(isA<SplatTailFetchException>().having((e) => e.problem, 'problem', SplatTailFetchProblem.damaged)),
+    );
+    expect(done, 0, reason: 'refused before its first piece is counted, not after the whole scene');
+    expect(leftovers(), ['trailer.jpg']);
+  });
+
   test('a server that dies in the middle leaves no .part', () async {
     final big = _bigCarrier();
     // The body stops with an error after 300 KB, as a connection that drops
