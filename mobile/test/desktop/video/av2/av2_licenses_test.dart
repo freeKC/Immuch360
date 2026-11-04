@@ -17,6 +17,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences
 import 'package:immich_mobile/domain/services/ai_immersive/av2_decoder_licences.dart';
 import 'package:path/path.dart' as p;
 
+import '../../ci/ci_scripts.dart';
 import 'av2_test_components.dart';
 
 String _sha256(String text) => sha256.convert(utf8.encode(text)).toString();
@@ -34,6 +35,30 @@ void main() {
       expect(av2Dav2dCommit, '30140b563596a1b14aef808ff021c90288948315');
       expect(dav2dCopying, startsWith('Copyright © 2018-2026, VideoLAN and dav2d authors'));
       expect(aomPatentLicence, startsWith('Alliance for Open Media Patent License 1.0'));
+    });
+
+    test('are those of the lock and of licenses/av2, which the archives of the decoder carry (lot AD2)', () {
+      final lock = jsonDecode(
+        File(p.join(repositoryRoot, '.github', 'desktop', 'av2', 'av2.lock.json')).readAsStringSync(),
+      );
+      final dav2d = lock['dav2d']! as Map<String, Object?>;
+      final files = dav2d['files']! as Map<String, Object?>;
+      expect(av2Dav2dCommit, dav2d['commit']);
+      expect(_sha256(dav2dCopying), files['COPYING']);
+      expect(_sha256(aomPatentLicence), files['doc/PATENTS']);
+      // A checkout may end its lines with CR LF (Windows)
+      String kept(String name) =>
+          File(p.join(repositoryRoot, 'licenses', 'av2', name)).readAsStringSync().replaceAll('\r\n', '\n');
+      expect(dav2dCopying, kept('dav2d-COPYING.txt'));
+      expect(aomPatentLicence, kept('AOM-PATENTS.txt'));
+      expect(x86incIsc, kept('x86inc-ISC.txt'));
+      expect(immuch360RunMit, kept('immuch360-run-MIT.txt'));
+      // The catalogue: its version is the id of the lock, its licence the COPYING of the commit of the lock
+      for (final component in [av2DecoderWindowsComponent, av2DecoderLinuxComponent, av2DecoderMacComponent]) {
+        expect(component.version, lock['id']);
+        expect(component.assetName, contains('-${lock['id']}-'));
+        expect(component.licenceUrl, 'https://code.videolan.org/videolan/dav2d/-/blob/${dav2d['commit']}/COPYING');
+      }
     });
 
     test('hold nothing under the GPL', () {

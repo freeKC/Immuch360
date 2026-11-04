@@ -369,6 +369,12 @@ void main() {
     expect(told, [false, true, false]);
   });
 
+  test('the libmpv of macOS the app pins reads the pictures of the decoder (lot AD4)', () {
+    expect(macosLibmpvRelease, 'libmpv-macos-20261102-12');
+    expect(macosLibmpvWithoutY4m, isNot(contains(macosLibmpvRelease)));
+    expect(av2PlaysWithMacLibmpv(macosLibmpvRelease), isTrue);
+  });
+
   testWidgets('Linux has its own decoder, offered the same way', (tester) async {
     await pumpGate(tester, platform: AiPlatform.linuxX64);
     expect(find.text('Download and play'), findsOneWidget);
