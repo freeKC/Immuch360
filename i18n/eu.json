@@ -591,8 +591,6 @@
   "ai_immersive_failed_source": "Ezin da jada originalera iritsi",
   "ai_immersive_failed_splat_memory": "Ez dago memoria nahikorik argazkiak kokatzeko: itxi beste aplikazio batzuk eta saiatu berriro, edo erabili argazki gutxiago.",
   "ai_immersive_failed_splat_no_match": "Ezin izan da bi argazki ere parekatu: ez dute leku bera behar bezain argi erakusten.",
-  "ai_immersive_failed_splat_overlap_photos": "{total} argazkitatik {placed} soilik kokatu ahal izan dira 3Dn, eta Saiatu berriro aukerak berberak kokatuko lituzke. Gehitu argazkiak: atera itzazu urrats bateko tartearekin, bakoitzak aurrekoak ikusten zuenaren zatirik handiena ikus dezan, eta saihestu horma lauak, leihoak eta ispiluak.",
-  "ai_immersive_failed_splat_overlap_video_object": "{total} fotogrametatik {placed} soilik kokatu ahal izan dira 3Dn, eta Saiatu berriro aukerak berberak kokatuko lituzke. Grabatu berriro objektua gutxienez 20 edo 30 cm-ko distantziatik, zorrotz gera dadin, jarri objektu lau bat marrazkiak dituen gainazal baten gainean (egunkari bat, oihal estanpatu bat), eta eman hainbat itzuli inguruan, bi altueratan.",
   "ai_immersive_failed_splat_overlap_video_place": "{total} fotogrametatik {placed} soilik kokatu ahal izan dira 3Dn, eta Saiatu berriro aukerak berberak kokatuko lituzke. Grabatu berriro lekua, poliki ibiliz eta hura zeharkatuz begiratuz, ez horma lauetara, leihoetara eta ispiluetara.",
   "ai_immersive_failed_splat_poses": "Argazkiak 3Dn kokatzea gelditu da: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Argazkiak kokatzeak erantzuteari utzi dio",

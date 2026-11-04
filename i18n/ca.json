@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Ja no es pot accedir a l’original",
   "ai_immersive_failed_splat_memory": "No hi ha prou memòria per col·locar les fotos: tanca altres aplicacions i torna-ho a provar, o fes servir menys fotos.",
   "ai_immersive_failed_splat_no_match": "No s’ha pogut aparellar cap parella de fotos: no mostren el mateix lloc amb prou claredat.",
-  "ai_immersive_failed_splat_overlap_photos": "Només {placed} de {total} fotos s’han pogut col·locar en 3D, i Torna-ho a provar col·locaria les mateixes. Afegeix fotos: fes-les a un pas de distància, de manera que cadascuna vegi gairebé tot el que veia l’anterior, i evita parets llises, finestres i miralls.",
-  "ai_immersive_failed_splat_overlap_video_object": "Només {placed} de {total} fotogrames s’han pogut col·locar en 3D, i Torna-ho a provar col·locaria els mateixos. Torna a filmar l’objecte a almenys 20 o 30 cm perquè quedi nítid, posa un objecte llis sobre una superfície amb dibuix (un diari, una roba estampada) i fes-hi la volta diverses vegades, a dues alçades.",
   "ai_immersive_failed_splat_overlap_video_place": "Només {placed} de {total} fotogrames s’han pogut col·locar en 3D, i Torna-ho a provar col·locaria els mateixos. Torna a filmar el lloc caminant a poc a poc, mirant a través d’ell més que no pas a parets llises, finestres i miralls.",
   "ai_immersive_failed_splat_poses": "La col·locació de les fotos en 3D s’ha aturat: {message}",
   "ai_immersive_failed_splat_poses_stalled": "La col·locació de les fotos ha deixat de respondre",

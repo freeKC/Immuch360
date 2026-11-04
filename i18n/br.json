@@ -81,8 +81,6 @@
   "ai_immersive_failed_source": "N'haller ket tizhout an orin ken",
   "ai_immersive_failed_splat_memory": "N'eus ket a-walc'h a vemor evit lakaat al luc'hskeudennoù en o lec'h: serrit arloadoù all hag adklaskit, pe implijit nebeutoc'h a luc'hskeudennoù.",
   "ai_immersive_failed_splat_no_match": "Ne oa ket tu da genglotañ div luc'hskeudenn ebet: ne ziskouezont ket al lec'h memes sklaer a-walc'h.",
-  "ai_immersive_failed_splat_overlap_photos": "N'eus bet tu da lakaat e 3D nemet {placed} luc'hskeudenn diwar {total}, ha Klask en-dro a lakafe an hevelep re. Ouzhpennit luc'hskeudennoù: tennit anezho ur paz an eil diouzh eben, pep hini o welet al lodenn vrasañ eus ar pezh a welas an hini a-raok, ha tec'hit diouzh ar mogerioù plaen, ar prenestroù hag ar melezourioù.",
-  "ai_immersive_failed_splat_overlap_video_object": "N'eus bet tu da lakaat e 3D nemet {placed} skeudenn diwar {total}, ha Klask en-dro a lakafe an hevelep re. Filmit an objed en-dro diouzh 20 betek 30 cm d'an nebeutañ, evit ma chomfe spis, lakait un objed plaen war ur gorread gant tresoù (ur gazetenn, ur gwiad moullet), ha baleit en-dro dezhañ meur a wech, war div uhelder.",
   "ai_immersive_failed_splat_overlap_video_place": "N'eus bet tu da lakaat e 3D nemet {placed} skeudenn diwar {total}, ha Klask en-dro a lakafe an hevelep re. Filmit al lec'h en-dro, en ur vale goustadik, o sellet a-dreuz dezhañ kentoc'h eget ouzh ar mogerioù plaen, ar prenestroù hag ar melezourioù.",
   "ai_immersive_failed_splat_poses": "Ehanet eo bet lakaat al luc'hskeudennoù e 3D: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Lakaat al luc'hskeudennoù n'eo ket o respont ken",

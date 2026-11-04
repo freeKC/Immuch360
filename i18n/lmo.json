@@ -81,8 +81,6 @@
   "ai_immersive_failed_source": "Se riva pu a l'original",
   "ai_immersive_failed_splat_memory": "Gh'è minga assee memoria per piazzà i foto: sara su i alter app e prova anmò, o dopra men foto.",
   "ai_immersive_failed_splat_no_match": "Nissuna coppia de foto l'è stada abinada: i foto mostren minga el stess sit in manera assee ciara.",
-  "ai_immersive_failed_splat_overlap_photos": "Domà {placed} foto su {total} hinn stade piazzade in 3D, e Preuva anmò el piazzaria i istess. Giont di foto: fai a on pass de distanza, ognuna la ved squasi tusscoss quell che vedeva quella de prima, e evita i mur unifórem, i finestr e i specc.",
-  "ai_immersive_failed_splat_overlap_video_object": "Domà {placed} fotogramma su {total} hinn staa piazzaa in 3D, e Preuva anmò el piazzaria i istess. Torna a filmà l’oget de almen 20 o 30 cm inscì che 'l resta nett, mett on oget unifórem sora ona superfizzi cont on dissegn (on giornal, on tessud stampaa) e giregh intorna pussee vòlte, a dò altezze.",
   "ai_immersive_failed_splat_overlap_video_place": "Domà {placed} fotogramma su {total} hinn staa piazzaa in 3D, e Preuva anmò el piazzaria i istess. Torna a filmà el sit caminand pian, vardand travers de lu pussee che vers i mur unifórem, i finestr e i specc.",
   "ai_immersive_failed_splat_poses": "El piazzament di foto in 3D el s'è fermaa: {message}",
   "ai_immersive_failed_splat_poses_stalled": "El piazzament di foto el respond pu",

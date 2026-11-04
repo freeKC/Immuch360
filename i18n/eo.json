@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "La originalo ne plu estas atingebla",
   "ai_immersive_failed_splat_memory": "Ne sufiĉas memoro por loki la fotojn: fermu aliajn aplikaĵojn kaj reprovu, aŭ uzu malpli da fotoj.",
   "ai_immersive_failed_splat_no_match": "Neniuj du fotoj povis esti kongruigitaj: ili ne montras la saman lokon sufiĉe klare.",
-  "ai_immersive_failed_splat_overlap_photos": "Nur {placed} el {total} fotoj povis esti lokitaj en 3D, kaj Reprovi lokus la samajn. Aldonu fotojn: faru ilin je unu paŝo for unu de la alia, tiel ke ĉiu vidu la plejparton de tio, kion vidis la antaŭa, kaj evitu unukolorajn murojn, fenestrojn kaj spegulojn.",
-  "ai_immersive_failed_splat_overlap_video_object": "Nur {placed} el {total} kadroj povis esti lokitaj en 3D, kaj Reprovi lokus la samajn. Refilmu la objekton de almenaŭ 20 ĝis 30 cm, por ke ĝi restu akra, metu unukoloran objekton sur surfacon kun desegnaĵo (gazeto, presita ŝtofo), kaj marŝu plurfoje ĉirkaŭ ĝi, je du altoj.",
   "ai_immersive_failed_splat_overlap_video_place": "Nur {placed} el {total} kadroj povis esti lokitaj en 3D, kaj Reprovi lokus la samajn. Refilmu la lokon, marŝante malrapide kaj rigardante trans ĝin prefere ol al unukoloraj muroj, fenestroj kaj speguloj.",
   "ai_immersive_failed_splat_poses": "La lokado de la fotoj en 3D haltis: {message}",
   "ai_immersive_failed_splat_poses_stalled": "La lokado de la fotoj ĉesis respondi",

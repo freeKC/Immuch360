@@ -81,8 +81,6 @@
   "ai_immersive_failed_source": "Picha asili haifikiki tena",
   "ai_immersive_failed_splat_memory": "Hakuna kumbukumbu ya kutosha kuweka picha: funga programu nyingine ujaribu tena, au tumia picha chache.",
   "ai_immersive_failed_splat_no_match": "Hakuna picha mbili zilizoweza kulinganishwa: hazionyeshi mahali pamoja kwa uwazi wa kutosha.",
-  "ai_immersive_failed_splat_overlap_photos": "Picha {placed} tu kati ya {total} ziliweza kuwekwa katika 3D, na Jaribu tena ingeweka zile zile. Ongeza picha: zipige kwa umbali wa hatua moja, kila moja ikiona sehemu kubwa ya kile ambacho ya awali iliona, na epuka kuta tupu, madirisha na vioo.",
-  "ai_immersive_failed_splat_overlap_video_object": "Fremu {placed} tu kati ya {total} ziliweza kuwekwa katika 3D, na Jaribu tena ingeweka zile zile. Rekodi kitu tena kutoka angalau 20 hadi 30 cm ili kibaki wazi, weka kitu cha rangi moja juu ya uso wenye michoro (gazeti, kitambaa chenye chapa), na kizunguke mara kadhaa, katika urefu mbili.",
   "ai_immersive_failed_splat_overlap_video_place": "Fremu {placed} tu kati ya {total} ziliweza kuwekwa katika 3D, na Jaribu tena ingeweka zile zile. Rekodi mahali tena, ukitembea polepole na kutazama upande kwa upande badala ya kuta tupu, madirisha na vioo.",
   "ai_immersive_failed_splat_poses": "Kuweka picha katika 3D kumesimama: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Kuweka picha kumeacha kujibu",

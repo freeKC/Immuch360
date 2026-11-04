@@ -539,8 +539,6 @@
   "ai_immersive_failed_source": "Fail asal tidak dapat dicapai lagi",
   "ai_immersive_failed_splat_memory": "Memori tidak mencukupi untuk meletakkan foto: tutup aplikasi lain dan cuba lagi, atau gunakan lebih sedikit foto.",
   "ai_immersive_failed_splat_no_match": "Tiada dua foto yang dapat dipadankan: foto tidak menunjukkan tempat yang sama dengan cukup jelas.",
-  "ai_immersive_failed_splat_overlap_photos": "Hanya {placed} daripada {total} foto dapat diletakkan dalam 3D, dan Cuba semula akan meletakkan foto yang sama. Tambah foto: ambil foto selang satu langkah, setiap satu melihat kebanyakan apa yang dilihat foto sebelumnya, dan elakkan dinding kosong, tingkap dan cermin.",
-  "ai_immersive_failed_splat_overlap_video_object": "Hanya {placed} daripada {total} bingkai dapat diletakkan dalam 3D, dan Cuba semula akan meletakkan bingkai yang sama. Rakam objek sekali lagi dari jarak sekurang-kurangnya 20 hingga 30 cm supaya ia kekal tajam, letakkan objek kosong di atas permukaan bercorak (surat khabar, kain bercetak), dan kelilingi objek beberapa kali, pada dua ketinggian.",
   "ai_immersive_failed_splat_overlap_video_place": "Hanya {placed} daripada {total} bingkai dapat diletakkan dalam 3D, dan Cuba semula akan meletakkan bingkai yang sama. Rakam tempat itu sekali lagi sambil berjalan perlahan, memandang merentasinya dan bukan ke dinding kosong, tingkap dan cermin.",
   "ai_immersive_failed_splat_poses": "Peletakan foto dalam 3D terhenti: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Peletakan foto berhenti memberi respons",

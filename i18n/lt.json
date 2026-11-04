@@ -601,8 +601,6 @@
   "ai_immersive_failed_source": "Originalas nebepasiekiamas",
   "ai_immersive_failed_splat_memory": "Nepakanka atminties nuotraukoms išdėstyti: uždarykite kitas programas ir bandykite dar kartą arba naudokite mažiau nuotraukų.",
   "ai_immersive_failed_splat_no_match": "Nepavyko suporuoti nė dviejų nuotraukų: jos nepakankamai aiškiai rodo tą pačią vietą.",
-  "ai_immersive_failed_splat_overlap_photos": "3D erdvėje pavyko išdėstyti tik {placed} iš {total} nuotraukų, o Bandyti iš naujo išdėstytų tas pačias. Pridėkite nuotraukų: fotografuokite žingsnio atstumu, kad kiekviena matytų didžiąją dalį to, ką matė ankstesnė, ir venkite vienspalvių sienų, langų ir veidrodžių.",
-  "ai_immersive_failed_splat_overlap_video_object": "3D erdvėje pavyko išdėstyti tik {placed} iš {total} kadrų, o Bandyti iš naujo išdėstytų tuos pačius. Vėl nufilmuokite daiktą bent iš 20 ar 30 cm atstumo, kad jis liktų ryškus, vienspalvį daiktą padėkite ant raštuoto paviršiaus (laikraščio, margo audinio) ir kelis kartus apeikite jį, dviem aukščiais.",
   "ai_immersive_failed_splat_overlap_video_place": "3D erdvėje pavyko išdėstyti tik {placed} iš {total} kadrų, o Bandyti iš naujo išdėstytų tuos pačius. Vėl nufilmuokite vietą lėtai eidami ir žiūrėdami skersai per ją, o ne į vienspalves sienas, langus ir veidrodžius.",
   "ai_immersive_failed_splat_poses": "Nuotraukų išdėstymas 3D erdvėje sustojo: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Nuotraukų išdėstymas nustojo atsakinėti",

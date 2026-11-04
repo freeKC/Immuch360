@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Ekki næst lengur í upprunalegu skrána",
   "ai_immersive_failed_splat_memory": "Ekki nóg minni til að staðsetja myndirnar: lokaðu öðrum forritum og reyndu aftur, eða notaðu færri myndir.",
   "ai_immersive_failed_splat_no_match": "Ekki tókst að para saman neinar tvær myndir: þær sýna ekki sama stað nógu skýrt.",
-  "ai_immersive_failed_splat_overlap_photos": "Aðeins {placed} af {total} ljósmyndum tókst að staðsetja í 3D, og Reyna aftur myndi staðsetja þær sömu. Bættu við myndum: taktu þær með eins skrefs millibili, þannig að hver sjái mest af því sem sú fyrri sá, og forðastu einlita veggi, glugga og spegla.",
-  "ai_immersive_failed_splat_overlap_video_object": "Aðeins {placed} af {total} römmum tókst að staðsetja í 3D, og Reyna aftur myndi staðsetja þá sömu. Taktu hlutinn aftur upp úr minnst 20 til 30 cm fjarlægð svo hann haldist skarpur, settu einlitan hlut á mynstrað yfirborð (dagblað, prentað efni) og gakktu nokkrum sinnum í kringum hann, í tveimur hæðum.",
   "ai_immersive_failed_splat_overlap_video_place": "Aðeins {placed} af {total} römmum tókst að staðsetja í 3D, og Reyna aftur myndi staðsetja þá sömu. Taktu staðinn aftur upp, gakktu hægt og horfðu þvert yfir hann frekar en á einlita veggi, glugga og spegla.",
   "ai_immersive_failed_splat_poses": "Staðsetning myndanna í 3D stöðvaðist: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Staðsetning myndanna hætti að svara",

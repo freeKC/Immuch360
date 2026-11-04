@@ -81,8 +81,6 @@
   "ai_immersive_failed_source": "Aṣli ur yettwaweḍ ara tura",
   "ai_immersive_failed_splat_memory": "Ulac tamkatut i yekfan i users n tewlafin: mdel isnasen-nniḍen syen ɛreḍ tikkelt-nniḍen, neɣ seqdec drus n tewlafin.",
   "ai_immersive_failed_splat_no_match": "Ulac snat n tewlafin i yemṣadan: ur d-skanent ara yiwen n wadeg s tbanit i yekfan.",
-  "ai_immersive_failed_splat_overlap_photos": "D {placed} kan seg {total} n tewlafin i yettwasersen deg 3D, yerna Ɛreḍ tikkelt nniḍen ad yesers tid kan. Rnu tiwlafin: ṭṭef-itent s umecwar n yiwen n wesurif, yal yiwet ad tẓer amur ameqran n wayen yeẓra tin yezwaren, syen ǧǧ iɣerban ilmawen, isfuyla d lemrayat.",
-  "ai_immersive_failed_splat_overlap_video_object": "D {placed} kan seg {total} n tugniwin i yettwasersen deg 3D, yerna Ɛreḍ tikkelt nniḍen ad yesers tid kan. Sekles taɣawsa tikkelt nniḍen seg 20 ar 30 cm ma drus, akken ad teqqim d tazeddigt, sers taɣawsa tilmawt ɣef udis yesɛan udlif (taɣmist, aceṭṭiḍ yettwasiggzen), syen zzi-as aṭas n tikkal, ɣef snat n teɣzi.",
   "ai_immersive_failed_splat_overlap_video_place": "D {placed} kan seg {total} n tugniwin i yettwasersen deg 3D, yerna Ɛreḍ tikkelt nniḍen ad yesers tid kan. Sekles adeg tikkelt nniḍen, leḥḥu s ttawil, tmuqleḍ zdat-k deg usun-is, mačči ɣer iɣerban ilmawen, isfuyla d lemrayat.",
   "ai_immersive_failed_splat_poses": "Asers n tewlafin deg 3D yeḥbes: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Asers n tewlafin ur d-yettarra ara",

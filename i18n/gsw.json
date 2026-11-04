@@ -540,8 +540,6 @@
   "ai_immersive_failed_source": "S Original isch nüme erreichbar",
   "ai_immersive_failed_splat_memory": "Nöd gnueg Arbeitsspeicher zum d Fotos platziere: Schliess anderi Apps und probier nomal, oder bruuch weniger Fotos.",
   "ai_immersive_failed_splat_no_match": "Kei zwei Fotos händ chöne zueordnet werde: Si zeiged dä glich Ort nöd dütlich gnueg.",
-  "ai_immersive_failed_splat_overlap_photos": "Nume {placed} vo {total} Fotos händ chöne in 3D platziert werde, und «Nomal probiere» würd di glyche platziere. Füeg Fotos dezue: Mach si im Abstand vomene Schritt, jedes gseht s meiste vo dem, wo s vorherige gseh hät, und vermeid eifarbigi Wänd, Fänster und Spiegel.",
-  "ai_immersive_failed_splat_overlap_video_object": "Nume {placed} vo {total} Videobilder händ chöne in 3D platziert werde, und «Nomal probiere» würd di glyche platziere. Film s Objekt nomal us mindestens 20 bis 30 cm Abstand, dass es scharf blibt, stell es eifarbigs Objekt uf e gmuschterti Flächi (e Zytig, es bedrucktes Tuech) und gang mehrmals drum ume, uf zwei Höchine.",
   "ai_immersive_failed_splat_overlap_video_place": "Nume {placed} vo {total} Videobilder händ chöne in 3D platziert werde, und «Nomal probiere» würd di glyche platziere. Film dä Ort nomal, gang langsam und lueg quer dur ihn statt uf eifarbigi Wänd, Fänster und Spiegel.",
   "ai_immersive_failed_splat_poses": "S Platziere vo de Fotos in 3D isch abbroche: {message}",
   "ai_immersive_failed_splat_poses_stalled": "S Platziere vo de Fotos git kei Antwort meh",

@@ -93,8 +93,6 @@
   "ai_immersive_failed_source": "Asl faylga endi kirib bo'lmaydi",
   "ai_immersive_failed_splat_memory": "Suratlarni joylashtirish uchun xotira yetarli emas: boshqa ilovalarni yopib, qayta urinib ko'ring yoki kamroq surat ishlating.",
   "ai_immersive_failed_splat_no_match": "Hech bir surat juftligini moslab bo'lmadi: ular bir xil joyni yetarlicha aniq ko'rsatmaydi.",
-  "ai_immersive_failed_splat_overlap_photos": "{total} ta suratdan faqat {placed} tasi 3D da joylashtirildi va Qayta urinish aynan shularni joylashtiradi. Surat qo'shing: ularni bir qadam oraliqda oling, har biri oldingisi ko'rgan narsaning ko'p qismini ko'rsin, oddiy devorlar, derazalar va oynalardan qoching.",
-  "ai_immersive_failed_splat_overlap_video_object": "{total} ta kadrdan faqat {placed} tasi 3D da joylashtirildi va Qayta urinish aynan shularni joylashtiradi. Buyumni aniq qolishi uchun kamida 20 dan 30 cm gacha masofadan qayta suratga oling, bir rangli buyumni naqshli sirt ustiga qo'ying (gazeta, bosma mato) va uning atrofida ikki balandlikda bir necha marta aylaning.",
   "ai_immersive_failed_splat_overlap_video_place": "{total} ta kadrdan faqat {placed} tasi 3D da joylashtirildi va Qayta urinish aynan shularni joylashtiradi. Joyni qayta suratga oling, sekin yuring va oddiy devorlar, derazalar va oynalarga emas, joy bo'ylab qarang.",
   "ai_immersive_failed_splat_poses": "Suratlarni 3D da joylashtirish to'xtadi: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Suratlarni joylashtirish javob bermay qoldi",

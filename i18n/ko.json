@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "원본에 더 이상 접근할 수 없습니다",
   "ai_immersive_failed_splat_memory": "사진을 배치할 메모리가 부족합니다. 다른 앱을 닫고 다시 시도하거나 사진 수를 줄이세요.",
   "ai_immersive_failed_splat_no_match": "서로 맞출 수 있는 사진 쌍이 없습니다. 같은 장소가 충분히 뚜렷하게 담겨 있지 않습니다.",
-  "ai_immersive_failed_splat_overlap_photos": "사진 {total}장 중 {placed}장만 3D로 배치할 수 있었고, 다시 시도해도 같은 사진이 배치됩니다. 사진을 추가하세요. 한 걸음씩 이동하며 찍어 각 사진이 이전 사진에 담긴 것의 대부분을 담도록 하고, 무늬 없는 벽, 창문, 거울은 피하세요.",
-  "ai_immersive_failed_splat_overlap_video_object": "프레임 {total}개 중 {placed}개만 3D로 배치할 수 있었고, 다시 시도해도 같은 프레임이 배치됩니다. 물체가 선명하게 나오도록 최소 20에서 30 cm 떨어져 다시 촬영하고, 무늬 없는 물체는 무늬가 있는 표면(신문, 무늬 있는 천) 위에 올려 두고, 두 높이에서 여러 바퀴 도세요.",
   "ai_immersive_failed_splat_overlap_video_place": "프레임 {total}개 중 {placed}개만 3D로 배치할 수 있었고, 다시 시도해도 같은 프레임이 배치됩니다. 천천히 걸으며 장소를 다시 촬영하고, 무늬 없는 벽, 창문, 거울보다는 공간을 가로질러 바라보세요.",
   "ai_immersive_failed_splat_poses": "사진을 3D로 배치하는 작업이 중단되었습니다: {message}",
   "ai_immersive_failed_splat_poses_stalled": "사진 배치가 응답하지 않습니다",

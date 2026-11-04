@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Az eredeti már nem érhető el",
   "ai_immersive_failed_splat_memory": "Nincs elég memória a fotók elhelyezéséhez: zárj be más alkalmazásokat, és próbáld újra, vagy használj kevesebb fotót.",
   "ai_immersive_failed_splat_no_match": "Egyetlen fotópárt sem sikerült egymáshoz illeszteni: nem mutatják elég tisztán ugyanazt a helyet.",
-  "ai_immersive_failed_splat_overlap_photos": "{total} fotóból csak {placed} került el 3D-ben, és az Újra ugyanezeket helyezné el. Adj hozzá fotókat: egy lépésnyire készítsd őket, hogy mindegyik lássa a legtöbbet abból, amit az előző látott, és kerüld az egyszínű falakat, ablakokat és tükröket.",
-  "ai_immersive_failed_splat_overlap_video_object": "{total} képkockából csak {placed} került el 3D-ben, és az Újra ugyanezeket helyezné el. Vedd fel újra a tárgyat legalább 20 vagy 30 cm távolságból, hogy éles maradjon, tegyél egyszínű tárgyat mintás felületre (újság, mintás textil), és járd körbe többször, két magasságban.",
   "ai_immersive_failed_splat_overlap_video_place": "{total} képkockából csak {placed} került el 3D-ben, és az Újra ugyanezeket helyezné el. Vedd fel újra a helyet lassan sétálva, a teret átlátva, ne egyszínű falak, ablakok és tükrök felé nézve.",
   "ai_immersive_failed_splat_poses": "A fotók 3D-elhelyezése leállt: {message}",
   "ai_immersive_failed_splat_poses_stalled": "A fotók elhelyezése nem válaszol",

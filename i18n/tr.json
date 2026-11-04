@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Orijinale artık erişilemiyor",
   "ai_immersive_failed_splat_memory": "Fotoğrafları yerleştirmek için yeterli bellek yok: diğer uygulamaları kapatıp yeniden deneyin ya da daha az fotoğraf kullanın.",
   "ai_immersive_failed_splat_no_match": "Hiçbir fotoğraf çifti eşleştirilemedi: aynı yeri yeterince net göstermiyorlar.",
-  "ai_immersive_failed_splat_overlap_photos": "{total} fotoğraftan yalnızca {placed} tanesi 3D olarak yerleştirilebildi ve Yeniden dene aynılarını yerleştirirdi. Fotoğraf ekleyin: onları birer adım arayla çekin, her biri bir öncekinin gördüklerinin çoğunu görsün; düz duvarlardan, pencerelerden ve aynalardan kaçının.",
-  "ai_immersive_failed_splat_overlap_video_object": "{total} kareden yalnızca {placed} tanesi 3D olarak yerleştirilebildi ve Yeniden dene aynılarını yerleştirirdi. Nesneyi net kalması için en az 20 ila 30 cm uzaktan yeniden çekin, düz renkli bir nesneyi desenli bir yüzeyin üzerine koyun (bir gazete, baskılı bir kumaş) ve etrafında iki yükseklikte birkaç kez dolaşın.",
   "ai_immersive_failed_splat_overlap_video_place": "{total} kareden yalnızca {placed} tanesi 3D olarak yerleştirilebildi ve Yeniden dene aynılarını yerleştirirdi. Yeri yeniden çekin; yavaş yürüyün ve düz duvarlara, pencerelere ve aynalara değil, mekânın içine doğru bakın.",
   "ai_immersive_failed_splat_poses": "Fotoğrafların 3D olarak yerleştirilmesi durdu: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Fotoğrafların yerleştirilmesi yanıt vermeyi bıraktı",

@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Originalen kan ikke længere nås",
   "ai_immersive_failed_splat_memory": "Ikke nok hukommelse til at placere billederne: luk andre apps og prøv igen, eller brug færre billeder.",
   "ai_immersive_failed_splat_no_match": "Ingen to billeder kunne matches: de viser ikke det samme sted tydeligt nok.",
-  "ai_immersive_failed_splat_overlap_photos": "Kun {placed} af {total} fotos kunne placeres i 3D, og Prøv igen ville placere de samme. Tilføj fotos: tag dem et skridt fra hinanden, så hvert ser det meste af det, det forrige så, og undgå ensfarvede vægge, vinduer og spejle.",
-  "ai_immersive_failed_splat_overlap_video_object": "Kun {placed} af {total} videobilleder kunne placeres i 3D, og Prøv igen ville placere de samme. Film genstanden igen fra mindst 20 til 30 cm afstand, så den forbliver skarp, stil en ensfarvet genstand på en overflade med mønster (en avis, et trykt stof), og gå flere gange rundt om den, i to højder.",
   "ai_immersive_failed_splat_overlap_video_place": "Kun {placed} af {total} videobilleder kunne placeres i 3D, og Prøv igen ville placere de samme. Film stedet igen, gå langsomt og se ud over det i stedet for på ensfarvede vægge, vinduer og spejle.",
   "ai_immersive_failed_splat_poses": "Placeringen af billederne i 3D stoppede: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Placeringen af billederne holdt op med at svare",

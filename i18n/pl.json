@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Oryginał jest już niedostępny",
   "ai_immersive_failed_splat_memory": "Za mało pamięci, by umieścić zdjęcia: zamknij inne aplikacje i spróbuj ponownie albo użyj mniejszej liczby zdjęć.",
   "ai_immersive_failed_splat_no_match": "Nie udało się dopasować żadnych dwóch zdjęć: nie pokazują wystarczająco wyraźnie tego samego miejsca.",
-  "ai_immersive_failed_splat_overlap_photos": "Tylko {placed} z {total} zdjęć udało się umieścić w 3D, a „Spróbuj ponownie” umieściłoby te same. Dodaj zdjęcia: rób je co krok, tak by każde widziało większość tego, co poprzednie, i unikaj gładkich ścian, okien i luster.",
-  "ai_immersive_failed_splat_overlap_video_object": "Tylko {placed} z {total} klatek udało się umieścić w 3D, a „Spróbuj ponownie” umieściłoby te same. Nagraj przedmiot ponownie z odległości co najmniej 20 do 30 cm, aby pozostał ostry, postaw gładki przedmiot na powierzchni ze wzorem (gazeta, zadrukowana tkanina) i obejdź go kilka razy, na dwóch wysokościach.",
   "ai_immersive_failed_splat_overlap_video_place": "Tylko {placed} z {total} klatek udało się umieścić w 3D, a „Spróbuj ponownie” umieściłoby te same. Nagraj miejsce ponownie, idąc powoli i patrząc w poprzek niego, a nie na gładkie ściany, okna i lustra.",
   "ai_immersive_failed_splat_poses": "Umieszczanie zdjęć w 3D zostało przerwane: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Umieszczanie zdjęć przestało odpowiadać",

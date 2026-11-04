@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "已无法访问原图",
   "ai_immersive_failed_splat_memory": "内存不足，无法放置照片：请关闭其他应用后重试，或减少照片数量。",
   "ai_immersive_failed_splat_no_match": "没有任何两张照片能够匹配：它们没有足够清楚地拍到同一个地方。",
-  "ai_immersive_failed_splat_overlap_photos": "{total} 张照片中只有 {placed} 张能放置到 3D 中，重试也只会放置同样的照片。请添加照片：每走一步拍一张，让每张照片都能看到上一张照片的大部分内容，并避开素色墙面、窗户和镜子。",
-  "ai_immersive_failed_splat_overlap_video_object": "{total} 帧中只有 {placed} 帧能放置到 3D 中，重试也只会放置同样的帧。请在至少 20 到 30 cm 外重新拍摄物体，使其保持清晰，把素色物体放在有图案的表面上 (报纸、印花布)，并在两个高度绕它走几圈。",
   "ai_immersive_failed_splat_overlap_video_place": "{total} 帧中只有 {placed} 帧能放置到 3D 中，重试也只会放置同样的帧。请重新拍摄这个地方，慢慢走，视线穿过整个空间，而不是对着素色墙面、窗户和镜子。",
   "ai_immersive_failed_splat_poses": "照片的 3D 放置已停止：{message}",
   "ai_immersive_failed_splat_poses_stalled": "照片放置已停止响应",

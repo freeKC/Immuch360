@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "已經存取唔到原相",
   "ai_immersive_failed_splat_memory": "記憶體唔夠，放唔到啲相：閂咗其他 app 再試，或者用少啲相。",
   "ai_immersive_failed_splat_no_match": "冇任何兩張相配得到：佢哋影得唔夠清楚係同一個地方。",
-  "ai_immersive_failed_splat_overlap_photos": "{total} 張相入面得 {placed} 張放得入 3D，試多次都係放返同一批。加多啲相：每行一步影一張，等每張都影到上一張大部分嘅內容，同埋避開淨色牆、窗同鏡。",
-  "ai_immersive_failed_splat_overlap_video_object": "{total} 格入面得 {placed} 格放得入 3D，試多次都係放返同一批。由最少 20 至 30 cm 遠再影過件物件，等佢保持清晰，將淨色物件放喺有花紋嘅表面上 (報紙、印花布)，再喺兩個高度繞住佢行幾個圈。",
   "ai_immersive_failed_splat_overlap_video_place": "{total} 格入面得 {placed} 格放得入 3D，試多次都係放返同一批。再影過個地方，慢慢行，望過成個空間，唔好對住淨色牆、窗同鏡。",
   "ai_immersive_failed_splat_poses": "喺 3D 放相嘅工作停咗：{message}",
   "ai_immersive_failed_splat_poses_stalled": "放相冇再回應",

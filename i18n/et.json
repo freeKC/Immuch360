@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Originaal pole enam kättesaadav",
   "ai_immersive_failed_splat_memory": "Fotode paigutamiseks pole piisavalt mälu: sulge teised rakendused ja proovi uuesti või kasuta vähem fotosid.",
   "ai_immersive_failed_splat_no_match": "Ühtegi kahte fotot ei õnnestunud sobitada: need ei näita sama kohta piisavalt selgelt.",
-  "ai_immersive_failed_splat_overlap_photos": "3D-sse õnnestus paigutada ainult {placed}/{total} fotot ja Proovi uuesti paigutaks samad. Lisa fotosid: tee need üksteisest sammu kaugusel, nii et igaüks näeks suurema osa sellest, mida nägi eelmine, ja väldi ühevärvilisi seinu, aknaid ja peegleid.",
-  "ai_immersive_failed_splat_overlap_video_object": "3D-sse õnnestus paigutada ainult {placed}/{total} kaadrit ja Proovi uuesti paigutaks samad. Filmi ese uuesti vähemalt 20 kuni 30 cm kauguselt, et see jääks teravaks, pane ühevärviline ese mustriga pinnale (ajaleht, trükitud riie) ja käi sellest mitu korda ümber, kahelt kõrguselt.",
   "ai_immersive_failed_splat_overlap_video_place": "3D-sse õnnestus paigutada ainult {placed}/{total} kaadrit ja Proovi uuesti paigutaks samad. Filmi koht uuesti, kõnni aeglaselt ja vaata üle selle, mitte ühevärviliste seinte, akende ja peeglite poole.",
   "ai_immersive_failed_splat_poses": "Fotode paigutamine 3D-sse peatus: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Fotode paigutamine lakkas vastamast",

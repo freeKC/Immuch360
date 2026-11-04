@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "元の写真にアクセスできなくなりました",
   "ai_immersive_failed_splat_memory": "写真を配置するためのメモリが足りません: ほかのアプリを閉じてやり直すか、写真の枚数を減らしてください。",
   "ai_immersive_failed_splat_no_match": "対応付けできる写真の組がありませんでした: 同じ場所が十分はっきり写っていません。",
-  "ai_immersive_failed_splat_overlap_photos": "{total} 枚中 {placed} 枚の写真しか 3D に配置できず、再試行しても同じ写真が配置されます。写真を追加してください: 一歩ずつ移動して撮影し、各写真に直前の写真に写っていたものの大部分が写るようにしてください。無地の壁、窓、鏡は避けてください。",
-  "ai_immersive_failed_splat_overlap_video_object": "{total} フレーム中 {placed} フレームしか 3D に配置できず、再試行しても同じフレームが配置されます。物がはっきり写るよう少なくとも 20 から 30 cm 離れて撮り直し、無地の物は模様のある面 (新聞、柄のある布) の上に置き、2 つの高さで何周か回ってください。",
   "ai_immersive_failed_splat_overlap_video_place": "{total} フレーム中 {placed} フレームしか 3D に配置できず、再試行しても同じフレームが配置されます。場所をゆっくり歩きながら撮り直し、無地の壁、窓、鏡ではなく空間を見渡すように撮ってください。",
   "ai_immersive_failed_splat_poses": "写真の 3D 配置が停止しました: {message}",
   "ai_immersive_failed_splat_poses_stalled": "写真の配置が応答しなくなりました",

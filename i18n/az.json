@@ -250,8 +250,6 @@
   "ai_immersive_failed_source": "Orijinala artıq çatmaq mümkün deyil",
   "ai_immersive_failed_splat_memory": "Fotoları yerləşdirmək üçün kifayət qədər yaddaş yoxdur: digər tətbiqləri bağlayıb yenidən cəhd edin və ya daha az foto istifadə edin.",
   "ai_immersive_failed_splat_no_match": "Heç bir foto cütü uyğunlaşdırıla bilmədi: onlar eyni yeri kifayət qədər aydın göstərmir.",
-  "ai_immersive_failed_splat_overlap_photos": "{total} fotodan yalnız {placed} foto 3D-də yerləşdirilə bildi və Yenidən cəhd et eynilərini yerləşdirərdi. Foto əlavə edin: onları bir addım aralı çəkin, hər biri əvvəlkinin gördüklərinin çoxunu görsün, düz divarlardan, pəncərələrdən və güzgülərdən qaçın.",
-  "ai_immersive_failed_splat_overlap_video_object": "{total} kadrdan yalnız {placed} kadr 3D-də yerləşdirilə bildi və Yenidən cəhd et eynilərini yerləşdirərdi. Obyekti yenidən ən azı 20 ilə 30 cm məsafədən çəkin ki, kəskin qalsın, düz rəngli obyekti naxışlı səthin üstünə qoyun (qəzet, naxışlı parça) və onun ətrafında iki hündürlükdə bir neçə dəfə dolaşın.",
   "ai_immersive_failed_splat_overlap_video_place": "{total} kadrdan yalnız {placed} kadr 3D-də yerləşdirilə bildi və Yenidən cəhd et eynilərini yerləşdirərdi. Yeri yenidən çəkin, yavaş yeriyin, düz divarlara, pəncərələrə və güzgülərə deyil, məkanın içinə baxın.",
   "ai_immersive_failed_splat_poses": "Fotoların 3D-də yerləşdirilməsi dayandı: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Fotoların yerləşdirilməsi cavab verməyi dayandırdı",

@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Ya no se puede acceder al original",
   "ai_immersive_failed_splat_memory": "No hay memoria suficiente para colocar las fotos: cierra otras aplicaciones y vuelve a intentarlo, o usa menos fotos.",
   "ai_immersive_failed_splat_no_match": "No se pudo emparejar ningún par de fotos: no muestran el mismo lugar con suficiente claridad.",
-  "ai_immersive_failed_splat_overlap_photos": "Solo {placed} de {total} fotos pudieron colocarse en 3D, y Reintentar colocaría las mismas. Añade fotos: tómalas a un paso de distancia, cada una viendo casi todo lo que veía la anterior, y evita paredes lisas, ventanas y espejos.",
-  "ai_immersive_failed_splat_overlap_video_object": "Solo {placed} de {total} fotogramas pudieron colocarse en 3D, y Reintentar colocaría los mismos. Vuelve a grabar el objeto desde al menos 20 a 30 cm para que se mantenga nítido, pon un objeto liso sobre una superficie con dibujo (un periódico, una tela estampada) y rodéalo varias veces, a dos alturas.",
   "ai_immersive_failed_splat_overlap_video_place": "Solo {placed} de {total} fotogramas pudieron colocarse en 3D, y Reintentar colocaría los mismos. Vuelve a grabar el lugar caminando despacio, mirando a través de él en vez de a paredes lisas, ventanas y espejos.",
   "ai_immersive_failed_splat_poses": "La colocación de las fotos en 3D se detuvo: {message}",
   "ai_immersive_failed_splat_poses_stalled": "La colocación de las fotos dejó de responder",

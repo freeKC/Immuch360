@@ -94,8 +94,6 @@
   "ai_immersive_failed_source": "App i no save kasem orijinal bakegen",
   "ai_immersive_failed_splat_memory": "I no gat inaf memori blong putum ol foto: klosem ol narafala app mo traem bakegen, o yusum smol foto nomo.",
   "ai_immersive_failed_splat_no_match": "I no gat tu foto we i save matsem: ol foto oli no soemaot sem ples klia inaf.",
-  "ai_immersive_failed_splat_overlap_photos": "{placed} foto nomo long {total} oli save putum long 3D, mo Traem bakegen bae i putum sem olgeta nomo. Putum moa foto: tekem olgeta wan step i stap long medel, evri foto i luk bigfala pat blong samting we foto bifo i luk, mo no tekem ol plen wol, windo mo glas.",
-  "ai_immersive_failed_splat_overlap_video_object": "{placed} pikja nomo long {total} oli save putum long 3D, mo Traem bakegen bae i putum sem olgeta nomo. Tekem video blong samting bakegen, i stap 20 kasem 30 cm longwe olsem smol, blong hem i stap klia, putum wan plen samting antap long wan ples we i gat pikja long hem (wan niuspepa, wan kaliko we i gat pikja), mo wokbaot raon long hem plante taem, long tu hae.",
   "ai_immersive_failed_splat_overlap_video_place": "{placed} pikja nomo long {total} oli save putum long 3D, mo Traem bakegen bae i putum sem olgeta nomo. Tekem video blong ples bakegen, wokbaot slo, mo luk i go long ples, i no long ol plen wol, windo mo glas.",
   "ai_immersive_failed_splat_poses": "Fasin blong putum ol foto long 3D i stop: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Fasin blong putum ol foto i no ansa bakegen",

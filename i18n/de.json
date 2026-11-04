@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Das Original ist nicht mehr erreichbar",
   "ai_immersive_failed_splat_memory": "Nicht genug Arbeitsspeicher, um die Fotos zu platzieren: Schließe andere Apps und versuche es erneut, oder verwende weniger Fotos.",
   "ai_immersive_failed_splat_no_match": "Keine zwei Fotos konnten einander zugeordnet werden: Sie zeigen denselben Ort nicht deutlich genug.",
-  "ai_immersive_failed_splat_overlap_photos": "Nur {placed} von {total} Fotos konnten in 3D platziert werden, und „Erneut versuchen“ würde dieselben platzieren. Füge Fotos hinzu: Mach sie im Abstand von einem Schritt, jedes sieht das meiste von dem, was das vorige sah, und meide einfarbige Wände, Fenster und Spiegel.",
-  "ai_immersive_failed_splat_overlap_video_object": "Nur {placed} von {total} Videobildern konnten in 3D platziert werden, und „Erneut versuchen“ würde dieselben platzieren. Filme das Objekt erneut aus mindestens 20 bis 30 cm Abstand, damit es scharf bleibt, stell ein einfarbiges Objekt auf eine gemusterte Fläche (eine Zeitung, ein bedrucktes Tuch) und geh mehrmals darum herum, auf zwei Höhen.",
   "ai_immersive_failed_splat_overlap_video_place": "Nur {placed} von {total} Videobildern konnten in 3D platziert werden, und „Erneut versuchen“ würde dieselben platzieren. Filme den Ort erneut, geh langsam und blick quer durch ihn statt auf einfarbige Wände, Fenster und Spiegel.",
   "ai_immersive_failed_splat_poses": "Das Platzieren der Fotos in 3D wurde abgebrochen: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Das Platzieren der Fotos reagiert nicht mehr",

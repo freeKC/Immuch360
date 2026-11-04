@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Không còn truy cập được ảnh gốc",
   "ai_immersive_failed_splat_memory": "Không đủ bộ nhớ để đặt các ảnh: hãy đóng các ứng dụng khác rồi thử lại, hoặc dùng ít ảnh hơn.",
   "ai_immersive_failed_splat_no_match": "Không ghép được cặp ảnh nào: các ảnh không cho thấy cùng một nơi đủ rõ.",
-  "ai_immersive_failed_splat_overlap_photos": "Chỉ {placed} trên {total} ảnh đặt được trong 3D, và Thử lại sẽ đặt đúng những ảnh đó. Thêm ảnh: chụp cách nhau một bước, mỗi ảnh thấy phần lớn những gì ảnh trước đã thấy, và tránh tường trơn, cửa sổ và gương.",
-  "ai_immersive_failed_splat_overlap_video_object": "Chỉ {placed} trên {total} khung hình đặt được trong 3D, và Thử lại sẽ đặt đúng những khung hình đó. Quay lại đồ vật từ khoảng cách ít nhất 20 đến 30 cm để nó luôn rõ nét, đặt đồ vật trơn lên một bề mặt có hoa văn (một tờ báo, một tấm vải in), và đi quanh nó vài vòng, ở hai độ cao.",
   "ai_immersive_failed_splat_overlap_video_place": "Chỉ {placed} trên {total} khung hình đặt được trong 3D, và Thử lại sẽ đặt đúng những khung hình đó. Quay lại nơi đó, đi chậm và nhìn xuyên qua không gian thay vì nhìn vào tường trơn, cửa sổ và gương.",
   "ai_immersive_failed_splat_poses": "Việc đặt ảnh trong 3D đã dừng: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Việc đặt ảnh đã ngừng phản hồi",

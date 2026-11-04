@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Izvirnik ni več dosegljiv",
   "ai_immersive_failed_splat_memory": "Ni dovolj pomnilnika za postavitev fotografij: zaprite druge aplikacije in poskusite znova ali uporabite manj fotografij.",
   "ai_immersive_failed_splat_no_match": "Nobenih dveh fotografij ni bilo mogoče povezati: istega kraja ne prikazujeta dovolj jasno.",
-  "ai_immersive_failed_splat_overlap_photos": "V 3D je bilo mogoče postaviti le {placed} od {total} fotografij in Poskusi znova bi postavil iste. Dodajte fotografije: fotografirajte en korak narazen, da vsaka vidi večino tega, kar je videla prejšnja, in se izogibajte enobarvnim stenam, oknom in ogledalom.",
-  "ai_immersive_failed_splat_overlap_video_object": "V 3D je bilo mogoče postaviti le {placed} od {total} sličic in Poskusi znova bi postavil iste. Predmet znova posnemite z razdalje vsaj 20 do 30 cm, da ostane oster, postavite enobarven predmet na vzorčasto površino (časopis, potiskano blago) in ga večkrat obhodite, na dveh višinah.",
   "ai_immersive_failed_splat_overlap_video_place": "V 3D je bilo mogoče postaviti le {placed} od {total} sličic in Poskusi znova bi postavil iste. Kraj znova posnemite, hodite počasi in glejte čezenj, ne v enobarvne stene, okna in ogledala.",
   "ai_immersive_failed_splat_poses": "Postavljanje fotografij v 3D se je ustavilo: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Postavljanje fotografij se ne odziva več",

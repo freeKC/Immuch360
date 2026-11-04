@@ -81,8 +81,6 @@
   "ai_immersive_failed_source": "S Original isch nemme erreichbar",
   "ai_immersive_failed_splat_memory": "Ned gnug Arbeitsspeicher, um d Fotos zom platziera: Mach andre Apps zua ond probier s nomol, oder nemm weniger Fotos.",
   "ai_immersive_failed_splat_no_match": "Koine zwoi Fotos hen sich zuaordna lassa: Se zeiget den gleicha Ort ned deitlich gnug.",
-  "ai_immersive_failed_splat_overlap_photos": "Bloß {placed} vo {total} Fotos hen sich en 3D platziera lassa, ond „Nomol probiera“ dät die gleiche platziera. Füeg Fotos dazu: Mach se em Abstand vo oim Schritt, jeds sieht s meischte vo dem, was s vorige gsea hot, ond lass oifarbige Wänd, Fenschter ond Spiegel weg.",
-  "ai_immersive_failed_splat_overlap_video_object": "Bloß {placed} vo {total} Videobilder hen sich en 3D platziera lassa, ond „Nomol probiera“ dät die gleiche platziera. Film s Objekt nomol aus mindeschtens 20 bis 30 cm Abstand, dass es scharf bleibt, stell a oifarbigs Objekt uff a gmuschterte Fläch (a Zeitung, a bedrucktes Tuch) ond lauf a paar Mol drom rom, uff zwoi Höha.",
   "ai_immersive_failed_splat_overlap_video_place": "Bloß {placed} vo {total} Videobilder hen sich en 3D platziera lassa, ond „Nomol probiera“ dät die gleiche platziera. Film dr Ort nomol, lauf langsam ond guck quer durch ihn statt uff oifarbige Wänd, Fenschter ond Spiegel.",
   "ai_immersive_failed_splat_poses": "S Platziera vo de Fotos en 3D isch abbrocha: {message}",
   "ai_immersive_failed_splat_poses_stalled": "S Platziera vo de Fotos gibt koi Antwort meh",

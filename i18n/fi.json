@@ -561,8 +561,6 @@
   "ai_immersive_failed_source": "Alkuperäiseen ei enää saada yhteyttä",
   "ai_immersive_failed_splat_memory": "Muisti ei riitä kuvien sijoittamiseen: sulje muita sovelluksia ja yritä uudelleen, tai käytä vähemmän kuvia.",
   "ai_immersive_failed_splat_no_match": "Mitään kahta kuvaa ei voitu yhdistää: ne eivät näytä samaa paikkaa tarpeeksi selvästi.",
-  "ai_immersive_failed_splat_overlap_photos": "Vain {placed}/{total} valokuvaa voitiin sijoittaa 3D:hen, ja Yritä uudelleen sijoittaisi samat. Lisää valokuvia: ota ne askeleen välein niin, että jokainen näkee suurimman osan siitä, mitä edellinen näki, ja vältä yksivärisiä seiniä, ikkunoita ja peilejä.",
-  "ai_immersive_failed_splat_overlap_video_object": "Vain {placed}/{total} videokuvaa voitiin sijoittaa 3D:hen, ja Yritä uudelleen sijoittaisi samat. Kuvaa esine uudelleen vähintään 20 tai 30 cm:n päästä, jotta se pysyy terävänä, aseta yksivärinen esine kuvioidulle pinnalle (sanomalehti, painettu kangas) ja kierrä sen ympäri useita kertoja, kahdelta korkeudelta.",
   "ai_immersive_failed_splat_overlap_video_place": "Vain {placed}/{total} videokuvaa voitiin sijoittaa 3D:hen, ja Yritä uudelleen sijoittaisi samat. Kuvaa paikka uudelleen kävellen hitaasti ja katsoen sen poikki eikä yksivärisiin seiniin, ikkunoihin ja peileihin.",
   "ai_immersive_failed_splat_poses": "Kuvien sijoittaminen 3D:hen pysähtyi: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Kuvien sijoittaminen lakkasi vastaamasta",

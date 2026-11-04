@@ -601,8 +601,6 @@
   "ai_immersive_failed_source": "Originalul nu mai poate fi accesat",
   "ai_immersive_failed_splat_memory": "Memorie insuficientă pentru a plasa fotografiile: închideți alte aplicații și încercați din nou sau folosiți mai puține fotografii.",
   "ai_immersive_failed_splat_no_match": "Nicio pereche de fotografii nu a putut fi asociată: nu arată același loc suficient de clar.",
-  "ai_immersive_failed_splat_overlap_photos": "Doar {placed} din {total} fotografii au putut fi plasate în 3D, iar Reîncercați le-ar plasa pe aceleași. Adăugați fotografii: faceți-le la un pas una de alta, fiecare văzând cea mai mare parte din ce vedea cea dinainte, și evitați pereții uniformi, ferestrele și oglinzile.",
-  "ai_immersive_failed_splat_overlap_video_object": "Doar {placed} din {total} cadre au putut fi plasate în 3D, iar Reîncercați le-ar plasa pe aceleași. Filmați din nou obiectul de la cel puțin 20 până la 30 cm, ca să rămână clar, puneți un obiect uniform pe o suprafață cu model (un ziar, o pânză imprimată) și înconjurați-l de mai multe ori, la două înălțimi.",
   "ai_immersive_failed_splat_overlap_video_place": "Doar {placed} din {total} cadre au putut fi plasate în 3D, iar Reîncercați le-ar plasa pe aceleași. Filmați din nou locul, mergând încet și privind de-a curmezișul lui, nu spre pereți uniformi, ferestre și oglinzi.",
   "ai_immersive_failed_splat_poses": "Plasarea fotografiilor în 3D s-a oprit: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Plasarea fotografiilor nu mai răspunde",

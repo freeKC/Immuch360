@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Originalet kan inte längre nås",
   "ai_immersive_failed_splat_memory": "Inte tillräckligt med minne för att placera fotona: stäng andra appar och försök igen, eller använd färre foton.",
   "ai_immersive_failed_splat_no_match": "Inga två foton kunde matchas: de visar inte samma plats tillräckligt tydligt.",
-  "ai_immersive_failed_splat_overlap_photos": "Bara {placed} av {total} foton kunde placeras i 3D, och Försök igen skulle placera samma. Lägg till foton: ta dem ett steg ifrån varandra, så att vart och ett ser det mesta av vad det förra såg, och undvik enfärgade väggar, fönster och speglar.",
-  "ai_immersive_failed_splat_overlap_video_object": "Bara {placed} av {total} bildrutor kunde placeras i 3D, och Försök igen skulle placera samma. Filma föremålet igen från minst 20 till 30 cm avstånd så att det förblir skarpt, ställ ett enfärgat föremål på en mönstrad yta (en tidning, ett tryckt tyg) och gå runt det flera gånger, på två höjder.",
   "ai_immersive_failed_splat_overlap_video_place": "Bara {placed} av {total} bildrutor kunde placeras i 3D, och Försök igen skulle placera samma. Filma platsen igen, gå långsamt och titta tvärs över den i stället för på enfärgade väggar, fönster och speglar.",
   "ai_immersive_failed_splat_poses": "Placeringen av fotona i 3D stoppades: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Placeringen av fotona slutade svara",

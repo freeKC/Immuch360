@@ -557,8 +557,6 @@
   "ai_immersive_failed_source": "Oriģināls vairs nav sasniedzams",
   "ai_immersive_failed_splat_memory": "Nepietiek atmiņas, lai izvietotu fotoattēlus: aizveriet citas lietotnes un mēģiniet vēlreiz vai izmantojiet mazāk fotoattēlu.",
   "ai_immersive_failed_splat_no_match": "Neizdevās savienot pārī nevienus divus fotoattēlus: tie nerāda vienu un to pašu vietu pietiekami skaidri.",
-  "ai_immersive_failed_splat_overlap_photos": "3D izdevās izvietot tikai {placed} no {total} fotoattēliem, un Mēģināt vēlreiz izvietotu tos pašus. Pievienojiet fotoattēlus: uzņemiet tos soļa attālumā, lai katrs redzētu lielāko daļu no tā, ko redzēja iepriekšējais, un izvairieties no vienkrāsainām sienām, logiem un spoguļiem.",
-  "ai_immersive_failed_splat_overlap_video_object": "3D izdevās izvietot tikai {placed} no {total} kadriem, un Mēģināt vēlreiz izvietotu tos pašus. Nofilmējiet priekšmetu vēlreiz vismaz no 20 līdz 30 cm attāluma, lai tas paliktu ass, novietojiet vienkrāsainu priekšmetu uz rakstainas virsmas (avīzes, apdrukāta auduma) un apejiet tam apkārt vairākas reizes, divos augstumos.",
   "ai_immersive_failed_splat_overlap_video_place": "3D izdevās izvietot tikai {placed} no {total} kadriem, un Mēģināt vēlreiz izvietotu tos pašus. Nofilmējiet vietu vēlreiz, ejot lēni un skatoties pāri tai, nevis uz vienkrāsainām sienām, logiem un spoguļiem.",
   "ai_immersive_failed_splat_poses": "Fotoattēlu izvietošana 3D apstājās: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Fotoattēlu izvietošana pārstāja atbildēt",

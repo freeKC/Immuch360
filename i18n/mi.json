@@ -81,8 +81,6 @@
   "ai_immersive_failed_source": "Kāore e taea te toro ki te taketake",
   "ai_immersive_failed_splat_memory": "Kāore e rawaka te pūmahara hei whakatakoto i ngā whakaahua: katia ētahi atu taupānga ka ngana anō, kia iti iho rānei ngā whakaahua.",
   "ai_immersive_failed_splat_no_match": "Kāore he takirua whakaahua i taea te whakahāngai: kāore rātou e whakaatu mārama ana i te wāhi kotahi.",
-  "ai_immersive_failed_splat_overlap_photos": "{placed} anake o ngā whakaahua {total} i taea te whakatakoto ki te 3D, ā, ka whakatakotoria anōtia ngā mea ōrite e Ngana anō. Tāpiritia he whakaahua: tangohia kia kotahi te hīkoi te tawhiti, kia kite ia whakaahua i te nuinga o ngā mea i kitea e tērā i mua, ā, karohia ngā pakitara mania, ngā matapihi me ngā whakaata.",
-  "ai_immersive_failed_splat_overlap_video_object": "{placed} anake o ngā anga {total} i taea te whakatakoto ki te 3D, ā, ka whakatakotoria anōtia ngā mea ōrite e Ngana anō. Hopukina anō te taonga mai i te 20 ki te 30 cm te tawhiti i te iti rawa, kia mārama tonu ai, whakatakotoria tētahi taonga mania ki runga i tētahi mata whai tauira (he niupepa, he kakahu tā), ā, hīkoi huri noa i a ia i ētahi wā, i ngā teitei e rua.",
   "ai_immersive_failed_splat_overlap_video_place": "{placed} anake o ngā anga {total} i taea te whakatakoto ki te 3D, ā, ka whakatakotoria anōtia ngā mea ōrite e Ngana anō. Hopukina anō te wāhi, me hīkoi pōturi, me titiro whakawhiti i a ia, kaua ki ngā pakitara mania, ngā matapihi me ngā whakaata.",
   "ai_immersive_failed_splat_poses": "Kua mutu te whakatakoto i ngā whakaahua ki te 3D: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Kua kore te whakatakoto whakaahua e urupare",

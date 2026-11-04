@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "Foto asli tidak dapat dijangkau lagi",
   "ai_immersive_failed_splat_memory": "Memori tidak cukup untuk menempatkan foto: tutup aplikasi lain lalu coba lagi, atau gunakan lebih sedikit foto.",
   "ai_immersive_failed_splat_no_match": "Tidak ada dua foto yang dapat dicocokkan: foto tidak menampilkan tempat yang sama dengan cukup jelas.",
-  "ai_immersive_failed_splat_overlap_photos": "Hanya {placed} dari {total} foto yang dapat ditempatkan dalam 3D, dan Coba lagi akan menempatkan foto yang sama. Tambahkan foto: ambil dengan jarak satu langkah, masing-masing melihat sebagian besar yang dilihat foto sebelumnya, dan hindari dinding polos, jendela, dan cermin.",
-  "ai_immersive_failed_splat_overlap_video_object": "Hanya {placed} dari {total} bingkai yang dapat ditempatkan dalam 3D, dan Coba lagi akan menempatkan bingkai yang sama. Rekam lagi benda dari jarak setidaknya 20 sampai 30 cm agar tetap tajam, letakkan benda polos di atas permukaan bermotif (koran, kain bercetak), dan kelilingi beberapa kali, pada dua ketinggian.",
   "ai_immersive_failed_splat_overlap_video_place": "Hanya {placed} dari {total} bingkai yang dapat ditempatkan dalam 3D, dan Coba lagi akan menempatkan bingkai yang sama. Rekam lagi tempat itu sambil berjalan pelan, memandang ke seberangnya, bukan ke dinding polos, jendela, dan cermin.",
   "ai_immersive_failed_splat_poses": "Penempatan foto dalam 3D berhenti: {message}",
   "ai_immersive_failed_splat_poses_stalled": "Penempatan foto berhenti merespons",

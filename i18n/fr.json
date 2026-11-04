@@ -602,8 +602,6 @@
   "ai_immersive_failed_source": "L'original n'est plus accessible",
   "ai_immersive_failed_splat_memory": "Pas assez de mémoire pour placer les photos : fermez d'autres applications et réessayez, ou utilisez moins de photos.",
   "ai_immersive_failed_splat_no_match": "Aucune paire de photos n'a pu être appariée : elles ne montrent pas assez clairement le même lieu.",
-  "ai_immersive_failed_splat_overlap_photos": "Seules {placed} photos sur {total} ont pu être placées en 3D, et Réessayer placerait les mêmes. Ajoutez des photos : prenez-les à un pas d'écart, chacune voyant l'essentiel de ce que voyait la précédente, et évitez les murs unis, les fenêtres et les miroirs.",
-  "ai_immersive_failed_splat_overlap_video_object": "Seules {placed} images sur {total} ont pu être placées en 3D, et Réessayer placerait les mêmes. Filmez de nouveau l'objet à 20 ou 30 cm au moins pour qu'il reste net, posez un objet uni sur une surface à motifs (un journal, un tissu imprimé), et faites-en plusieurs fois le tour, à deux hauteurs.",
   "ai_immersive_failed_splat_overlap_video_place": "Seules {placed} images sur {total} ont pu être placées en 3D, et Réessayer placerait les mêmes. Filmez de nouveau le lieu en marchant lentement, en regardant à travers lui plutôt que vers les murs unis, les fenêtres et les miroirs.",
   "ai_immersive_failed_splat_poses": "Le placement des photos en 3D s'est arrêté : {message}",
   "ai_immersive_failed_splat_poses_stalled": "Le placement des photos ne répond plus",
