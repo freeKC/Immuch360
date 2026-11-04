@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/video/av2_setting.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -107,6 +109,8 @@ class VideoViewerSettings extends HookConsumerWidget {
             title: context.t.setting_immersive_reverse_turn_title,
             subtitle: context.t.setting_immersive_reverse_turn_subtitle,
           ),
+        // Immuch360 Desktop: the AV2 videos, decoded by the processor (lib/desktop/video/av2_setting.dart)
+        if (CurrentPlatform.isDesktop) const Av2VideoSetting(),
         _VideoSourceSetting(
           value: shownVideoSource,
           // A tap on the source shown before any pick stores it as well: it only stood for the former switch, or for

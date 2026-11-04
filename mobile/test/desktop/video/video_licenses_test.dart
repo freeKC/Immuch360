@@ -230,4 +230,19 @@ void main() {
     expect(RegExp(r'set\(IMMUCH360_LIBMPV_TAG "([^"]+)"\)').firstMatch(cmake)?.group(1), windowsLibmpvRelease);
     expect(RegExp(r'let libmpvTag = "([^"]+)"').firstMatch(swift)?.group(1), macosLibmpvRelease);
   });
+
+  // The AV2 decoder serves libmpv a y4m over HTTP: the macOS build reads it since the overlay added the yuv4mpegpipe
+  // demuxer and the rawvideo decoder, which check_y4m.py checks on the frameworks before a release is published
+  test('the macOS libmpv pinned is the release whose build information is in the app, checked reading a y4m', () {
+    final buildInfo = File(
+      'packages/media_kit_libs_macos_video/macos/media_kit_libs_macos_video/Sources/media_kit_libs_macos_video/'
+      'licenses/libmpv/BUILDINFO-macos.txt',
+    ).readAsLinesSync();
+    expect(buildInfo, contains('release: $macosLibmpvRelease'));
+    expect(
+      buildInfo.where((line) => line.startsWith('y4m check (check_y4m.py): passed')),
+      hasLength(1),
+      reason: 'the release was built without the y4m check, or failed it',
+    );
+  });
 }

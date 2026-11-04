@@ -17,6 +17,7 @@ import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_spherical_video_api.dart';
 import 'package:immich_mobile/desktop/splat/desktop_splat_computer.dart';
 import 'package:immich_mobile/desktop/splat/desktop_splat_viewer_host.dart';
+import 'package:immich_mobile/desktop/video/av2_app.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/self_check.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -77,6 +78,9 @@ List<Override> desktopOverrides() => [
       highPerformance: () => ref.read(appConfigProvider).viewer.highPerformanceGpu,
     ).read,
   ),
+  // The screens of the AV2 videos read the probe of the companion and the speeds measured here, and Play anyway tells
+  // the playback
+  ...av2AppOverrides(),
 ];
 
 /// What wraps the app on a computer, inside MaterialApp (main.dart): the desktop keys and the window's close guard,

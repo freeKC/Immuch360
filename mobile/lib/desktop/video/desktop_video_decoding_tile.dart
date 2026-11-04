@@ -5,10 +5,15 @@
 // original is beyond this computer, that advice is about the original: on the high performance card, the original
 // would play. Nothing on the phones, nor while no video plays here: one video plays at a time on the computers
 // (activeDesktopVideo), the one of the page on screen.
+//
+// An AV2 video is decoded by the processor with the AV2 decoder, not by mpv (store/m2/av2-2026-11-02/
+// plan-2026-11-02.md, section 1.4): its line says how fast this computer decodes it against the frame rate it needs,
+// from the stat lines of the decoder (activeAv2Decoding), as it plays, and a processor without AVX2 is said.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
@@ -85,8 +90,20 @@ VideoFrameSize? originalInPlaceOfCopy(ChosenVideoSource? chosen) {
   return (decoder: decoder, advice: better == null ? null : t.video_decoding_use_high_performance(gpu: better.name));
 }
 
+/// The lines of the tile for an AV2 video that decodes as [stats] say, in [locale]: how fast this computer decodes it
+/// against what it needs (measuring until the decoder timed a run of frames), and a processor without AVX2
+({String decoder, String? advice}) av2DecodingLines(Translations t, Av2DecodingStats stats, String locale) {
+  final decoded = stats.decodedFps;
+  return (
+    decoder: decoded == null || decoded <= 0
+        ? t.av2_decoding_measuring
+        : t.av2_decoding(fps: av2FpsText(decoded, locale), needed: av2FpsText(stats.neededFps, locale, exact: true)),
+    advice: stats.lacksAvx2 ? t.av2_decoding_no_avx2 : null,
+  );
+}
+
 class DesktopVideoDecodingTile extends StatefulWidget {
-  const DesktopVideoDecodingTile({super.key, this.asset, this.decoding, this.machine});
+  const DesktopVideoDecodingTile({super.key, this.asset, this.decoding, this.av2, this.machine});
 
   /// The video of the details: what the player chose for it (chosenVideoSourcesProvider) tells when the server's copy
   /// plays in place of its original
@@ -94,6 +111,9 @@ class DesktopVideoDecodingTile extends StatefulWidget {
 
   /// How the video shown decodes; by default that of the player that played or loaded last (activeDesktopVideo)
   final ValueListenable<VideoDecoding>? decoding;
+
+  /// How fast the AV2 video playing decodes, null while none plays; by default activeAv2Decoding
+  final ValueListenable<Av2DecodingStats?>? av2;
 
   /// The cards of the computer, read once per run by default (DesktopGpuDecoders.machine)
   final Future<VideoMachine> Function()? machine;
@@ -106,7 +126,14 @@ class _DesktopVideoDecodingTileState extends State<DesktopVideoDecodingTile> {
   late final Future<VideoMachine> _machine = (widget.machine ?? DesktopGpuDecoders.machine)();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ValueListenableBuilder<Av2DecodingStats?>(
+    valueListenable: widget.av2 ?? activeAv2Decoding,
+    builder: (context, av2, _) => av2 == null
+        ? _mpv(context)
+        : _sheet(av2DecodingLines(context.t, av2, Localizations.localeOf(context).toLanguageTag())),
+  );
+
+  Widget _mpv(BuildContext context) {
     final videoId = widget.asset?.remoteId;
     if (videoId == null) {
       return _playing(null);
@@ -139,24 +166,25 @@ class _DesktopVideoDecodingTileState extends State<DesktopVideoDecodingTile> {
           machine.data ?? (inUse: null, gpus: null),
           original: original,
         );
-        if (lines == null) {
-          return const SizedBox.shrink();
-        }
-        final titleStyle = context.textTheme.labelLarge;
-        return Column(
-          key: const Key('desktop_video_decoding'),
-          children: [
-            const SizedBox(height: 16),
-            SheetTile(
-              title: context.t.video_decoding_title,
-              titleStyle: titleStyle,
-              leading: Icon(Icons.memory_rounded, size: 24, color: titleStyle?.color),
-              subtitle: [lines.decoder, ?lines.advice].join('\n'),
-              subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
-            ),
-          ],
-        );
+        return lines == null ? const SizedBox.shrink() : _sheet(lines);
       },
     ),
   );
+
+  Widget _sheet(({String decoder, String? advice}) lines) {
+    final titleStyle = context.textTheme.labelLarge;
+    return Column(
+      key: const Key('desktop_video_decoding'),
+      children: [
+        const SizedBox(height: 16),
+        SheetTile(
+          title: context.t.video_decoding_title,
+          titleStyle: titleStyle,
+          leading: Icon(Icons.memory_rounded, size: 24, color: titleStyle?.color),
+          subtitle: [lines.decoder, ?lines.advice].join('\n'),
+          subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
+        ),
+      ],
+    );
+  }
 }

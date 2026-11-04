@@ -70,7 +70,7 @@ void main() {
       for (final name in ['a.jpg', 'B.JPEG', 'c.heic', 'd.insp', 'e.dng', 'f.cr3', 'g.png', 'h.webp', 'i.36p']) {
         expect(mediaKindOfName(name), LibraryMediaKind.image, reason: name);
       }
-      for (final name in ['a.mp4', 'b.MOV', 'c.insv', 'd.360', 'e.osv', 'f.mkv', 'g.mts']) {
+      for (final name in ['a.mp4', 'b.MOV', 'c.insv', 'd.360', 'e.osv', 'f.mkv', 'g.mts', 'h.ivf', 'i.OBU']) {
         expect(mediaKindOfName(name), LibraryMediaKind.video, reason: name);
       }
       for (final name in ['a.lrv', 'b.lrf', 'c.txt', 'd.svg', 'Thumbs.db', 'desktop.ini', 'noextension']) {

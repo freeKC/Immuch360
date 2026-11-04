@@ -16,6 +16,11 @@
 // one that holds in 8 GB) and wait for P2 (the archives of stable-diffusion.cpp, built and signed by our CI) and for the
 // verdict of M3 before ai-components-3 is published: an entry without its size or sum is never offered.
 //
+// The AV2 decoder of the computers (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3) is no AI, but it downloads,
+// checks and installs as the components do: three archives of its own release, av2-decoder-1, shown in the video
+// settings and never in the tile of the AI components. Their entries carry the sizes and sums of the archives of that
+// release, as its record gives them (.github/desktop/av2/av2-decoder-1.json).
+//
 // Shared with the Meta Quest, which reads the LiteRT model from it.
 
 /// The tag of the prerelease that hosts the files of phase 1 (never "Latest": the app reads releases/latest)
@@ -44,32 +49,44 @@ enum AiPlatform { windowsX64, linuxX64, macosArm64, macosX64, questArm64 }
 enum AiComponentKind { model, runtime, archive }
 
 /// The features of the AI a component serves: the 3D photo (phase 1), the 3D scene, the 360° panorama and the 360° 3D
-/// panorama. The gate, the dialog, the tile and the engines ask for the components of one feature.
+/// panorama; and the AV2 videos, which are no AI. The gate, the dialog, the tile and the engines ask for the components
+/// of one feature.
 enum AiFeature {
   stereoPhoto([..._computers, AiPlatform.questArm64]),
   scene(_computers),
   panorama([AiPlatform.windowsX64, AiPlatform.linuxX64]),
-  stereoPanorama(_computers);
+  stereoPanorama(_computers),
+
+  /// The AV2 videos of the computers, decoded by the processor with the AV2 decoder: no AI, see [isAi]
+  av2Video(_computers);
 
   const AiFeature(this.platforms);
 
   /// Where the feature is offered: the generated panorama waits for a lot of its own on the Macs (design 4.7, point
   /// 7), and the headset computes only the 3D photo
   final List<AiPlatform> platforms;
+
+  /// Whether it is a feature of the AI, whose components the tile of the AI components shows
+  bool get isAi => this != av2Video;
 }
 
 const _computers = [AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64, AiPlatform.macosX64];
 
 /// The groups the screens show the components in (design 7.1, point 7): the 3D photos, with the 3D version of a 360°
-/// photo, which needs nothing more; the 3D scenes; the 360° panoramas. Each is installed, sized and removed as a whole.
+/// photo, which needs nothing more; the 3D scenes; the 360° panoramas; and the AV2 decoder, which the video settings
+/// show. Each is installed, sized and removed as a whole.
 enum AiFeatureGroup {
   photos({AiFeature.stereoPhoto, AiFeature.stereoPanorama}),
   scenes({AiFeature.scene}),
-  panoramas({AiFeature.panorama});
+  panoramas({AiFeature.panorama}),
+  av2({AiFeature.av2Video});
 
   const AiFeatureGroup(this.features);
 
   final Set<AiFeature> features;
+
+  /// Whether the tile of the AI components shows it: every group but that of the AV2 decoder
+  bool get isAi => features.every((feature) => feature.isAi);
 }
 
 /// The largest asset a release holds: GitHub refuses a file of 2 GiB or more
@@ -935,6 +952,232 @@ const upscalerComponent = AiComponent(
   officialUrls: ['https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth'],
 );
 
+// The AV2 decoder (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3): immuch360-av2, our companion in C on the
+// library of dav2d (VideoLAN, BSD-2-Clause) at the commit of .github/desktop/av2/av2.lock.json, whose id is the version,
+// built by the jobs av2-windows, av2-linux and av2-macos of the desktop workflow (lot AD2). Each archive holds the
+// program (on Linux with immuch360-run beside it), and in licenses/ the COPYING of dav2d, the ISC header of x86inc.asm,
+// the Alliance for Open Media Patent License 1.0, the AGPL 3.0 of the companion and the address of its source, with
+// BUILD-INFO.txt and SHA256SUMS.txt. Its size, its sum and the list of its files are those of the archives of
+// av2-decoder-1 (lot AD11): the run 41877478541 of the release workflow on feat-av2 at 592c66c4f, the Windows program
+// signed by APROGSYS, written by publish_av2_decoder.py --write with the record .github/desktop/av2/av2-decoder-1.json;
+// the gate of the catalogue (publish_ai_components.py --check) holds them to that record on every branch.
+
+/// The tag of the prerelease of the AV2 decoder, a release of its own: AV2 is no AI (plan, section 2.7)
+const av2DecoderReleaseTag = 'av2-decoder-1';
+
+/// The licence of dav2d at the pinned commit (its COPYING: BSD 2-Clause, VideoLAN and dav2d authors)
+const _dav2dLicenceUrl =
+    'https://code.videolan.org/videolan/dav2d/-/blob/30140b563596a1b14aef808ff021c90288948315/COPYING';
+
+/// The AV2 decoder for Windows x64: immuch360-av2.exe, built with the static C runtime, and its licences
+const av2DecoderWindowsComponent = AiComponent(
+  id: 'av2-decoder-windows-x64',
+  name: 'AV2 decoder',
+  version: '30140b5-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip',
+  installPath: 'engines/av2-decoder-windows-x64',
+  size: 801929,
+  sha256: '417affae04953a7e3c4bec78ce0860dd9516ac7e2efb821969a1037e7f31944d',
+  compression: AiCompression.none,
+  licence: 'BSD-2-Clause',
+  licenceUrl: _dav2dLicenceUrl,
+  features: {AiFeature.av2Video},
+  releaseTag: av2DecoderReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 954,
+      sha256: '4c3deaf2a3abf6f6f4dfc6ae5891722fde809f8a1e51659820df63fff012276b',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 726,
+      sha256: 'e4d8c247bb7eba33ec13135c1b4a69b4e33c1bd3492fecff41597eec1580ad7e',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-av2.exe',
+      size: 1646408,
+      sha256: 'f88d6c8857ae3a41a6c921d686c3d663ec8a8d97c2d023fdcafb2fc61e653fda',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'licenses/AOM-PATENTS.txt',
+      size: 5730,
+      sha256: '335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 2329,
+      sha256: '453e2f3560073abfc56750bfb0d7c569add95d5a883a44c1600870fdeca4cf21',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav2d-COPYING.txt',
+      size: 1317,
+      sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
+      size: 32388,
+      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-SOURCE.txt',
+      size: 469,
+      sha256: '6f3dba2ec4f49eec986e8564aafcce9bd0d0a871b29f3f4d3818c595c2451d4a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+  ],
+);
+
+/// The AV2 decoder for Linux x64 (glibc of Ubuntu 22.04 and later), with immuch360-run
+const av2DecoderLinuxComponent = AiComponent(
+  id: 'av2-decoder-linux-x64',
+  name: 'AV2 decoder',
+  version: '30140b5-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.linuxX64},
+  assetName: 'Immuch360-av2-decoder-30140b5-1-linux-x64.zip',
+  installPath: 'engines/av2-decoder-linux-x64',
+  size: 953204,
+  sha256: 'c3cc7d80a5a3c2e32aa32fc1977631d938a8bd8c0945a67b293de1c3edcd2832',
+  compression: AiCompression.none,
+  licence: 'BSD-2-Clause',
+  licenceUrl: _dav2dLicenceUrl,
+  features: {AiFeature.av2Video},
+  releaseTag: av2DecoderReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 804,
+      sha256: '8e1476fb32e59112bc08bb09408d00e5fa246094538bf2dd70ea2f6137b8a48c',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 899,
+      sha256: '0540cf6268dd72e1913edcecd23fb0bc976c232659cf01f839d356439588f32f',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-av2',
+      size: 2037904,
+      sha256: '89f34a0ad33658e798c0a4c0f94854cf6d3e65e66452aa6beb83206830b156f9',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'immuch360-run',
+      size: 16552,
+      sha256: '779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'licenses/AOM-PATENTS.txt',
+      size: 5730,
+      sha256: '335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 2329,
+      sha256: '453e2f3560073abfc56750bfb0d7c569add95d5a883a44c1600870fdeca4cf21',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav2d-COPYING.txt',
+      size: 1317,
+      sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
+      size: 32388,
+      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-SOURCE.txt',
+      size: 469,
+      sha256: '6f3dba2ec4f49eec986e8564aafcce9bd0d0a871b29f3f4d3818c595c2451d4a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-run-MIT.txt',
+      size: 1162,
+      sha256: '21dbbb6e964787898af14a57c6e81f76249a43cd770fea87f9d308a9d33edf11',
+    ),
+    AiArchiveFile(
+      path: 'licenses/x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+  ],
+);
+
+/// The AV2 decoder for macOS: one universal program, arm64 with NEON and x86_64 with AVX2
+const av2DecoderMacComponent = AiComponent(
+  id: 'av2-decoder-macos-universal',
+  name: 'AV2 decoder',
+  version: '30140b5-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.macosArm64, AiPlatform.macosX64},
+  assetName: 'Immuch360-av2-decoder-30140b5-1-macos-universal.zip',
+  installPath: 'engines/av2-decoder-macos-universal',
+  size: 1664297,
+  sha256: 'dfc61b6a52a616beecb4cb41915f6bf26b94b65f5e5caac7be82dbd284428084',
+  compression: AiCompression.none,
+  licence: 'BSD-2-Clause',
+  licenceUrl: _dav2dLicenceUrl,
+  features: {AiFeature.av2Video},
+  releaseTag: av2DecoderReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 796,
+      sha256: 'f4c26f346de54d74d8d44c76f31de9c7debf3b7c8b6bd9de1d96a662713c5965',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 722,
+      sha256: '7ec5499d8ab294d6dc5469f44406a49b5ec86e9be4b6dd0ea36ec67b95c0aad4',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-av2',
+      size: 3769216,
+      sha256: '0aea5c52aebae36965b76bdc0897a4b177134785197a723130a2d2759440c37b',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'licenses/AOM-PATENTS.txt',
+      size: 5730,
+      sha256: '335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 2329,
+      sha256: '453e2f3560073abfc56750bfb0d7c569add95d5a883a44c1600870fdeca4cf21',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav2d-COPYING.txt',
+      size: 1317,
+      sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
+      size: 32388,
+      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-av2-SOURCE.txt',
+      size: 469,
+      sha256: '6f3dba2ec4f49eec986e8564aafcce9bd0d0a871b29f3f4d3818c595c2451d4a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+  ],
+);
+
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)
 /// ask for it.
 const aiComponents = <AiComponent>[
@@ -954,6 +1197,9 @@ const aiComponents = <AiComponent>[
   fluxVaeComponent,
   panoramaLoraComponent,
   upscalerComponent,
+  av2DecoderWindowsComponent,
+  av2DecoderLinuxComponent,
+  av2DecoderMacComponent,
 ];
 
 /// The components [platform] needs for [feature] (the 3D photo when not given), the runtimes first, then the
@@ -1010,17 +1256,19 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
 const aiHeldFeatureGroups = <AiFeatureGroup>{};
 
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when
-/// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered)
+/// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered). The
+/// groups of the AI unless [only] names others: the AV2 decoder is asked for by name, by the video settings.
 List<AiGroupComponents> aiComponentGroupsFor(
   AiPlatform platform, {
   int? graphicsMemory,
   List<AiComponent> catalogue = aiComponents,
   Set<AiFeatureGroup> held = aiHeldFeatureGroups,
+  Set<AiFeatureGroup>? only,
 }) {
   final groups = <AiGroupComponents>[];
   final earlier = <String>{};
   for (final group in AiFeatureGroup.values) {
-    if (held.contains(group)) {
+    if (held.contains(group) || !(only?.contains(group) ?? group.isAi)) {
       continue;
     }
     final all = <AiComponent>[];

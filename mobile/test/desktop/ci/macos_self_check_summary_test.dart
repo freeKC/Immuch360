@@ -1,5 +1,6 @@
 // The summary of the self check on the macOS runner (.github/desktop/packaging/macos/self_check_summary.py): every
-// check passes on the reports of a good run, and --strict fails the step when one of them did not.
+// check passes on the reports of a good run, and --strict fails the step when one of them did not. The y4m start: the
+// 10 bit fixture of check_y4m.py over HTTP from 127.0.0.1, the stream the AV2 decoder serves, played by the app.
 
 import 'dart:convert';
 import 'dart:io';
@@ -32,6 +33,27 @@ Map<String, Object?> _folderReport({Map<String, Object?>? storage, Map<String, O
         'firstFrameMs': 180,
         'size': '1280x720',
         'hwdec-current': 'videotoolbox',
+      },
+};
+
+/// The report of the start without arguments with the y4m over HTTP as the video
+Map<String, Object?> _y4mReport({Map<String, Object?>? video}) => {
+  'platform': 'macos',
+  'firstPage': 'welcome',
+  'session': 'without a server, started',
+  'pages': ['TabShellRoute'],
+  'video':
+      video ??
+      {
+        'bundled': true,
+        'loaded': true,
+        'file': 'http://127.0.0.1:50123/fixture-10bit.y4m',
+        'playedSeconds': 4.8,
+        'firstFrameMs': 240,
+        'size': '320x180',
+        'hwdec-current': 'no',
+        'current-tracks/video/codec': 'rawvideo',
+        'frame-drop-count': 0,
       },
 };
 
@@ -69,11 +91,52 @@ void _tests() {
     write('folder', _folderReport());
     write('video', _videoReport);
     write('finder', _videoReport);
+    write('y4m', _y4mReport());
     writeLater('test-video.mp4');
     final run = runCiScript(_script, [folder.path, '--strict']);
     expect(run.exitCode, 0, reason: '$run');
     expect(run.output, isNot(contains('FAILED')));
     expect(run.output, contains('-34018'), reason: 'the data protection keychain is reported for the record');
+    expect(run.output, contains('| The y4m of the AV2 decoder (10 bit, HTTP from 127.0.0.1) played by the app'));
+  });
+
+  test('a y4m the libmpv of the app does not read, or a start without its report, fails', () {
+    write('folder', _folderReport());
+    write('video', _videoReport);
+    write('finder', _videoReport);
+    writeLater('test-video.mp4');
+    write(
+      'y4m',
+      _y4mReport(
+        video: {
+          'bundled': true,
+          'loaded': true,
+          'file': 'http://127.0.0.1:50123/fixture-10bit.y4m',
+          'error': 'PlayerEvent.failed(Failed to recognize file format.)',
+        },
+      ),
+    );
+    final run = runCiScript(_script, [folder.path, '--strict']);
+    expect(run.exitCode, 1);
+    expect(run.output, contains('Failed to recognize file format.'));
+    File(p.join(folder.path, 'y4m.json')).deleteSync();
+    File(p.join(folder.path, 'y4m.state')).deleteSync();
+    final missing = runCiScript(_script, [folder.path, '--strict']);
+    expect(missing.exitCode, 1);
+    expect(missing.output, contains('y4m: not started'));
+  });
+
+  test('a y4m played as something else than raw video fails', () {
+    write('folder', _folderReport());
+    write('video', _videoReport);
+    write('finder', _videoReport);
+    writeLater('test-video.mp4');
+    final y4m = Map<String, Object?>.of(_y4mReport()['video']! as Map<String, Object?>);
+    y4m['current-tracks/video/codec'] = 'h264';
+    write('y4m', _y4mReport(video: y4m));
+    final run = runCiScript(_script, [folder.path, '--strict']);
+    expect(run.exitCode, 1);
+    expect(run.output, contains('current-tracks/video/codec h264'));
   });
 
   test('a photo that Launch Services did not hand over fails', () {

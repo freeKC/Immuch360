@@ -246,7 +246,7 @@ void VideoOutput::Render() {
         DrawProjection(*projection);
         return;
       }
-      surface_manager_->Draw([&]() {
+      const auto draw = [&]() {
         mpv_opengl_fbo fbo{
             0,
             surface_manager_->width(),
@@ -258,7 +258,26 @@ void VideoOutput::Render() {
             {MPV_RENDER_PARAM_INVALID, nullptr},
         };
         mpv_render_context_render(render_context_, params);
-      });
+      };
+      // Immuch360: when the environment asks (IMMUCH360-NOTE.md, patch 12), a
+      // flat frame is drawn and finished into the texture Flutter does not
+      // copy from, then swapped under the lock |Read| takes on Flutter's
+      // raster thread, as renderer C does: a frame decoded by the processor
+      // is uploaded by this draw (12 MB for a 4K picture of the AV2 videos'
+      // y4m). Upstream's single texture otherwise.
+      const auto back = FlatBackBufferWanted();
+      if (back != surface_manager_->double_buffered()) {
+        surface_manager_->SetDoubleBuffered(back);
+      }
+      if (back && surface_manager_->double_buffered()) {
+        surface_manager_->MakeBackCurrent();
+        draw();
+        glFinish();
+        surface_manager_->MakeCurrent(false);
+        surface_manager_->SwapBack();
+      } else {
+        surface_manager_->Draw(draw);
+      }
     }
     // S/W
     if (pixel_buffer_ != nullptr) {
@@ -283,6 +302,46 @@ void VideoOutput::Render() {
       // Prevent any redundant exceptions if the texture is unregistered etc.
     }
   }
+}
+
+bool VideoOutput::FlatBackBufferWanted() {
+  // 1: every flat frame, 2: the frames of the processor; otherwise (and
+  // without the variable) upstream's drawing under the lock
+  static const int wanted = []() {
+    char value[4] = {0};
+    const DWORD length = ::GetEnvironmentVariableA(
+        "IMMUCH360_FLAT_BACK_BUFFER", value, static_cast<DWORD>(sizeof(value)));
+    if (length != 1u) {
+      return 0;
+    }
+    return value[0] == '1' ? 1 : value[0] == '2' ? 2 : 0;
+  }();
+  if (wanted != 2) {
+    return wanted == 1;
+  }
+  // A frame of the graphics card names its format in hw-pixelformat (d3d11);
+  // one decoded by the processor has none. One read of the parameters, as
+  // |GetVideoWidth| reads them for each frame
+  mpv_node params;
+  if (mpv_get_property(handle_, "video-out-params", MPV_FORMAT_NODE,
+                       &params) < 0) {
+    return false;
+  }
+  auto format = false;
+  auto hardware = false;
+  if (params.format == MPV_FORMAT_NODE_MAP) {
+    for (int32_t i = 0; i < params.u.list->num; i++) {
+      const char* key = params.u.list->keys[i];
+      if (strcmp(key, "pixelformat") == 0) {
+        format = true;
+      } else if (strcmp(key, "hw-pixelformat") == 0) {
+        hardware = true;
+      }
+    }
+  }
+  mpv_free_node_contents(&params);
+  // No frame yet: upstream's drawing
+  return format && !hardware;
 }
 
 void VideoOutput::SetTextureUpdateCallback(

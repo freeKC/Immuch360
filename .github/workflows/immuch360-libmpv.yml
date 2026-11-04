@@ -46,12 +46,17 @@ name: Immuch360 libmpv for Windows and macOS
 # a pinned commit (input macos_recipe_ref) with the files of .github/desktop/libmpv-macos/ over it (apply_overlay.sh):
 # its own pins stop at FFmpeg 6.0 and mpv 0.36 of 2023, so the overlay brings FFmpeg and mpv to the commits of the
 # Windows build (packages.lock.nix there, with libplacebo, which mpv now needs); the other libraries keep the recipe's
-# versions. Its default flavor, as media-kit's: mpv with -Dgpl=false, FFmpeg without GPL or nonfree parts, so LGPL. Jobs:
+# versions. Its default flavor, as media-kit's: mpv with -Dgpl=false, FFmpeg without GPL or nonfree parts, so LGPL,
+# with two FFmpeg options more that the Windows build has too (mk-pkg-ffmpeg-meson.build): the yuv4mpegpipe demuxer and
+# the rawvideo decoder, with which libmpv reads the y4m that the AV2 decoder of the app serves over HTTP. Jobs:
 #   macos-sources  every archive of the lock downloaded and checked by its SHA-256, the recipe with the overlay, the
 #                  licence texts of each library; packed for the release
 #   macos-libmpv   the Nix build on macos-15 with a pinned Xcode, for macOS 12 and later, arm64 and x86_64 in one
 #                  universal xcframework per library; the archive, one zip per xcframework for Swift Package Manager,
-#                  and BUILDINFO-macos.txt
+#                  and BUILDINFO-macos.txt; the frameworks checked first: no function looked up at run time that no
+#                  library defines (check_undefined.py), and a y4m read, 8 and 10 bit, from a file and over HTTP with
+#                  exact seeks, on each architecture the runner runs (check_y4m.py), so that nothing is published
+#                  that the AV2 path of the app cannot play
 #   macos-publish  the release libmpv-macos-<date>-<run>, a pre-release never marked latest; the run summary prints the
 #                  lines to paste into the Package.swift of mobile/packages/media_kit_libs_macos_video
 # The macOS build takes FFmpeg and mpv from packages.lock.nix, never from the ffmpeg_ref and mpv_ref inputs, which are
@@ -61,10 +66,11 @@ name: Immuch360 libmpv for Windows and macOS
 # Triggers: by hand (workflow_dispatch, once this file is on the default branch); every quarter (schedule, default
 # branch only), from the head of every library, to show what a refresh of the lock would bring: it publishes nothing
 # and its summary prints the new lock lines; pushes to the desktop branch that change this file,
-# .github/desktop/libmpv/ (the lock included) or .github/desktop/libmpv-macos/, which is how the first run happens
-# before the desktop branch is merged.
-# Only a run from pinned sources publishes. No secret is used; two jobs can write: image (packages, the copy of the
-# container) and publish (contents, the release).
+# .github/desktop/libmpv/ (the lock included) or .github/desktop/libmpv-macos/, which build and check both libmpv and
+# publish nothing (review of lot AD4 of the AV2 videos, n4: the merge of a branch that touches the recipe would publish
+# two pre-releases nobody pins, as libmpv-macos-20261020-10 beside the pinned -9).
+# Only a run by hand from pinned sources, with publish, publishes. No secret is used; two jobs can write: image
+# (packages, the copy of the container) and publish (contents, the release).
 
 on:
   workflow_dispatch:
@@ -605,10 +611,9 @@ jobs:
   publish:
     name: Release
     needs: [sources, libmpv]
-    # Only pinned sources are published: never the quarterly run from the heads, and by hand only when asked
+    # Only pinned sources are published, by hand and when asked: never the quarterly run from the heads, nor a push
     if: >-
-      needs.sources.outputs.pinned == 'true' && github.event_name != 'schedule'
-      && (github.event_name != 'workflow_dispatch' || inputs.publish)
+      needs.sources.outputs.pinned == 'true' && github.event_name == 'workflow_dispatch' && inputs.publish
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -856,11 +861,16 @@ jobs:
             # defines links all the same and is a jump to address 0 at run time. Only the IOSurface functions (the
             # process has IOSurface.framework loaded through CoreVideo) and objc_msgSend may be looked up so
             python3 "$GITHUB_WORKSPACE/immuch360/.github/desktop/libmpv-macos/check_undefined.py" ../dist/*.zip
+            # The y4m of the AV2 decoder: the demuxer and the decoder of the overlay at work, the table in the run
+            # summary, its line in BUILDINFO-macos.txt (the app's tests read it there). The shell runs with pipefail
+            python3 "$GITHUB_WORKSPACE/immuch360/.github/desktop/libmpv-macos/check_y4m.py" run --zips ../dist/*.zip \
+              --summary "$RUNNER_TEMP/y4m-check.txt" | tee -a "$GITHUB_STEP_SUMMARY"
           else
             tar -czhf "../dist/$MACOS_TARGET.tar.gz" -C result .
           fi
           {
             echo "libmpv for macOS (arm64 and x86_64, macOS 12 and later), built for Immuch360 Desktop"
+            echo "release: $TAG"
             echo "run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo "repository commit: $GITHUB_SHA"
             echo "recipe: https://github.com/$MACOS_RECIPE_REPOSITORY at $MACOS_RECIPE_REF, with .github/desktop/libmpv-macos"
@@ -876,6 +886,10 @@ jobs:
                   r'^  ([\w-]+) = \{\s*version = "([^"]*)";\s*url = "([^"]*)";\s*sha256 = "([^"]*)";', text, re.M):
               print(' '.join(entry))
           PY
+            if [ -f "$RUNNER_TEMP/y4m-check.txt" ]; then
+              echo
+              cat "$RUNNER_TEMP/y4m-check.txt"
+            fi
           } > ../dist/BUILDINFO-macos.txt
           cat ../dist/BUILDINFO-macos.txt
           (cd ../dist && shasum -a 256 ./* | sed 's# \./# #')
@@ -913,8 +927,9 @@ jobs:
   macos-publish:
     name: macOS release
     needs: [macos-sources, macos-libmpv]
+    # By hand and when asked only, as the Windows release
     if: >-
-      github.event_name != 'schedule' && (github.event_name != 'workflow_dispatch' || inputs.publish)
+      github.event_name == 'workflow_dispatch' && inputs.publish
       && (inputs.macos_target == '' || inputs.macos_target == 'mk-out-archive-xcframeworks-macos-universal-video-default')
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -961,6 +976,7 @@ jobs:
             echo "- Recipe: \`$MACOS_RECIPE_REPOSITORY\` at \`$MACOS_RECIPE_REF\` with \`.github/desktop/libmpv-macos\`: FFmpeg and mpv at the commits of the Windows build, every library and archive in \`BUILDINFO-macos.txt\`."
             echo "- Licence: GNU LGPL version 3 or later for libmpv and FFmpeg as built (mpv -Dgpl=false, FFmpeg --enable-version3 without GPL or nonfree parts); the licence texts of each library are in \`$TAG-licenses.tar.gz\`, the notices in \`licenses/NOTICES.md\` of \`mobile/packages/media_kit_libs_macos_video\` and in the app."
             echo "- Corresponding source: \`$TAG-sources.tar.xz\` (the recipe with the overlay, and every archive it builds from)."
+            echo "- Checked on the build runner: every function the frameworks look up at run time is defined (\`check_undefined.py\`), and libmpv reads a y4m, 8 and 10 bit, from a file and over HTTP with exact seeks (\`check_y4m.py\`, its line in \`BUILDINFO-macos.txt\`)."
             echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo
             echo "SHA-256:"

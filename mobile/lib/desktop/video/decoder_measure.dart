@@ -13,6 +13,10 @@
 // Beside the measures of this computer, the measures made on the laptop the desktop app was developed on
 // (phase 2a and 2b of plan 20: an i9-13980HX with an Intel UHD and an RTX 4060 Laptop) answer until this computer has
 // its own: they are the kind of GPU and decoding path, not the machine.
+//
+// The same file keeps the speed this computer decodes each format of AV2 video at with the AV2 decoder (size, depth,
+// frame rate; plan of the AV2 videos, section 1.4, lot AD3): the processor decodes them, not mpv, so they are measured
+// by the decoder itself (av2_playback.dart), and a format decoded too slowly says so before its next video plays.
 
 import 'dart:async';
 import 'dart:convert';
@@ -20,6 +24,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
@@ -280,6 +285,9 @@ class DecoderMeasureStore {
   Future<List<DecodeMeasure>>? _loading;
   Future<void> _writing = Future.value();
 
+  /// The speeds of the AV2 formats, read with [_measures]
+  List<Av2SpeedMeasure> _av2 = [];
+
   /// The measures of this computer, read from the file once
   Future<List<DecodeMeasure>> measures() async => _measures ?? await (_loading ??= _read());
 
@@ -293,6 +301,11 @@ class DecoderMeasureStore {
       }
       final content = jsonDecode(await file.readAsString());
       final list = content is Map ? content['measures'] : null;
+      final av2 = content is Map ? content['av2'] : null;
+      _av2 = [
+        for (final entry in av2 is List ? av2 : const [])
+          if (entry is Map<String, Object?>) Av2SpeedMeasure.fromJson(entry),
+      ];
       return _measures = [
         for (final entry in list is List ? list : const [])
           if (entry is Map<String, Object?>) DecodeMeasure.fromJson(entry),
@@ -315,12 +328,38 @@ class DecoderMeasureStore {
     ];
     _measures = kept.length > maxMeasures ? kept.sublist(kept.length - maxMeasures) : kept;
     _log.info('Measured: $measure, ${measure.smooth ? 'keeps up' : 'does not keep up'}');
-    final snapshot = List.of(_measures!);
-    _writing = _writing.then((_) => _write(snapshot));
+    await _save();
+  }
+
+  /// The last speed of the AV2 format [format] with the AV2 decoder [decoder] on this computer, null when none was
+  /// measured
+  Future<Av2SpeedMeasure?> av2Speed(Av2Format format, String decoder) async {
+    await measures();
+    return _av2.reversed.where((measure) => measure.decoder == decoder && measure.format.same(format)).firstOrNull;
+  }
+
+  /// Keeps [measure], in place of an earlier one of the same format; those of another version of the decoder are
+  /// dropped, a newer dav2d decoding at another speed
+  Future<void> recordAv2Speed(Av2SpeedMeasure measure) async {
+    await measures();
+    final kept = [
+      for (final earlier in _av2)
+        if (earlier.decoder == measure.decoder && !earlier.format.same(measure.format)) earlier,
+      measure,
+    ];
+    _av2 = kept.length > maxMeasures ? kept.sublist(kept.length - maxMeasures) : kept;
+    _log.info('Measured: $measure, ${av2IsTooSlow(measure) ? 'too slow for the video' : 'keeps up'}');
+    await _save();
+  }
+
+  Future<void> _save() async {
+    final snapshot = List.of(_measures ?? const <DecodeMeasure>[]);
+    final av2 = List.of(_av2);
+    _writing = _writing.then((_) => _write(snapshot, av2));
     await _writing;
   }
 
-  Future<void> _write(List<DecodeMeasure> measures) async {
+  Future<void> _write(List<DecodeMeasure> measures, List<Av2SpeedMeasure> av2) async {
     try {
       final file = await _file();
       await file.parent.create(recursive: true);
@@ -329,6 +368,7 @@ class DecoderMeasureStore {
       await temporary.writeAsString(
         jsonEncode({
           'measures': [for (final m in measures) m.toJson()],
+          if (av2.isNotEmpty) 'av2': [for (final m in av2) m.toJson()],
         }),
         flush: true,
       );
@@ -434,6 +474,7 @@ class DecoderMeasureStore {
   void forget() {
     _measures = null;
     _loading = null;
+    _av2 = [];
   }
 }
 

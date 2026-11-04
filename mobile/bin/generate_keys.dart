@@ -119,6 +119,10 @@ const _kParamTypeOverrides = <String, String>{
   'apple_spatial_details_photo.width': 'String',
   // An angle in degrees, written with its decimals by the caller as the baseline above
   'apple_spatial_fov.deg': 'String',
+  // The size of the AV2 decoder, written by the caller with formatBytes ("1.1 MiB")
+  'av2_install_body.size': 'String',
+  'av2_settings_installed.size': 'String',
+  'av2_settings_not_installed.size': 'String',
   'backup_controller_page_storage_format.total': 'String',
   'backup_controller_page_storage_format.used': 'String',
   // A size written out with its unit by the caller ("1.2 GB"), not a count

@@ -345,8 +345,23 @@ const _maxBoxesAfterMoov = 4;
 // handler come before its tables, and the tables of a long recording run to megabytes
 const _maxTrakReadLength = 256 * 1024;
 
-// Sample entries of video tracks, whose child boxes hold st3d and sv3d
-const _visualSampleEntries = {'avc1', 'avc3', 'hvc1', 'hev1', 'dvh1', 'dvhe', 'av01', 'vp08', 'vp09', 'mp4v'};
+// Sample entries of video tracks, whose child boxes hold st3d and sv3d. AV2 has two in the draft of its MP4 binding (28
+// October 2026): av2E, its configuration in an av2C box, and av2e, in band; a file with one is named AV2 (videoCodecName)
+// and not played yet by any player of the app (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 2.3, lot AD7)
+const _visualSampleEntries = {
+  'avc1',
+  'avc3',
+  'hvc1',
+  'hev1',
+  'dvh1',
+  'dvhe',
+  'av01',
+  'av2E',
+  'av2e',
+  'vp08',
+  'vp09',
+  'mp4v',
+};
 
 // Fields of a visual sample entry before its child boxes: 8 bytes of SampleEntry, then 70 of VisualSampleEntry
 const _visualSampleEntryLength = 78;

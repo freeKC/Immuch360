@@ -318,6 +318,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       prepare: _prepare,
       unprepare: _unprepare,
       onScreen: _onScreen,
+      decodingOf: _deps.resolve == null ? desktopAppVideoDecoding(ref) : null,
+      release: _deps.resolve == null ? desktopAppVideoRelease(ref) : null,
     );
     _controller.onPlaybackReady.addListener(_onReady);
     _controller.onPlaybackStatusChanged.addListener(_onStatus);

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
+import 'package:immich_mobile/desktop/video/av2_badge.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -129,6 +130,9 @@ class _ThumbnailTileState extends ConsumerState<ThumbnailTile> {
                       remoteType: widget.remoteType,
                       // The thumbnails of a TV are decoded larger than their tile (see tvThumbnailDecodeSize)
                       filterQuality: ref.watch(tvModeProvider) ? FilterQuality.medium : FilterQuality.low,
+                      // Immuch360 Desktop: the tile of an AV2 video is asked again once its decoder is installed
+                      // (lib/desktop/video/av2_badge.dart)
+                      localVariant: CurrentPlatform.isDesktop ? desktopAv2ThumbnailVariant(ref, asset) : null,
                     ),
                     // Placeholderbuilder used to hide indicators on first hero animation, since flightShuttleBuilder isn't called until both source and destination hero exist in widget tree.
                     placeholderBuilder: (context, heroSize, child) {
@@ -346,6 +350,9 @@ class _AssetTypeIcons extends StatelessWidget {
         // Immuch360 Desktop: "3D AI", "3D scene" or "360° AI" on a file the app made, "3D" on another photo of two
         // eyes side by side (lib/desktop/ai/library/stereo_badge.dart)
         if (CurrentPlatform.isDesktop) DesktopStereoBadge(asset: asset),
+        // Immuch360 Desktop: "AV2" on an AV2 video of the folders, which the processor decodes
+        // (lib/desktop/video/av2_badge.dart)
+        if (CurrentPlatform.isDesktop) DesktopAv2Badge(asset: asset),
       ],
     );
   }

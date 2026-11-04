@@ -74,6 +74,12 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// the lab rule (Settings, Advanced turns it off: the poster is then left clean)
     @Default(true) bool markSplatPhotos,
 
+    /// Immuch360 Desktop, experimental: the AV2 videos (.ivf, .obu) of the folders, the shares and "Open with" play,
+    /// decoded by the processor with the AV2 decoder downloaded at the first one (store/m2/av2-2026-11-02/
+    /// plan-2026-11-02.md, section 1.3). On by default, the lab rule (Settings, Asset Viewer, Videos turns it off: an
+    /// AV2 video then says so instead of playing)
+    @Default(true) bool av2Videos,
+
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)
     VideoSourcePolicy? videoSource,

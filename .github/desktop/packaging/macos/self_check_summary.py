@@ -5,7 +5,9 @@ The macOS job of .github/workflows/immuch360-desktop.yml starts the app three ti
 (mobile/lib/desktop/window/self_check.dart): "folder", the folder of a photo and a video on the command line, with
 the video played by libmpv for five seconds; "video", that video alone; "finder", the photo handed over by Launch
 Services as the Finder does (open -a), then the video handed to the copy that runs (finder.json.later, what the app
-showed after the report, and finder-then-video.png). Each start leaves <name>.json (the report;
+showed after the report, and finder-then-video.png); "y4m", without arguments, with the 10 bit fixture of
+.github/desktop/libmpv-macos/check_y4m.py served over HTTP from 127.0.0.1 as the video to play, the stream the AV2
+decoder of the app serves libmpv. Each start leaves <name>.json (the report;
 <name>.json.partial instead when the app ended before the last step, with the results of the steps before),
 <name>.log, <name>.state and <name>.png in the folder given; a start without arguments or self check before them
 leaves plain.state, and the crash reports of macOS (Immuch360*.ips) are copied there too.
@@ -14,8 +16,8 @@ leaves plain.state, and the crash reports of macOS (Immuch360*.ips) are copied t
 
 Prints the table of the checks. With --strict, exits 1 when one of them failed: the app ran 30 s without arguments,
 no crash was reported, it started and wrote its report both times, the secure storage gave back the secret it was
-given, libmpv was loaded and played the video, the folder opened as a page of its own, the video in the viewer, and
-the photo of the Finder's way in the viewer too, then the video handed to the copy that runs.
+given, libmpv was loaded and played the video, then the y4m as raw video, the folder opened as a page of its own, the
+video in the viewer, and the photo of the Finder's way in the viewer too, then the video handed to the copy that runs.
 """
 from __future__ import annotations
 
@@ -31,6 +33,10 @@ VIEWER_PAGE = 'AssetViewerRoute'
 TEST_VIDEO = 'test-video.mp4'
 # The video is played for five seconds from its first frame: some of it may go to the start of the decoder
 MIN_PLAYED_SECONDS = 3.0
+# The codec mpv names for the frames of a y4m
+Y4M_CODEC = 'rawvideo'
+PLAYED_KEYS = ('playedSeconds', 'firstFrameMs', 'size', 'hwdec-current', 'current-tracks/video/codec',
+               'frame-drop-count', 'error')
 
 
 def read_report(folder: pathlib.Path, name: str) -> tuple[dict | None, bool]:
@@ -63,11 +69,13 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
     folder_report, folder_complete = read_report(folder, 'folder')
     video_report, video_complete = read_report(folder, 'video')
     finder_report, finder_complete = read_report(folder, 'finder')
+    y4m_report, y4m_complete = read_report(folder, 'y4m')
 
     for name, report, complete, what in (
             ('folder', folder_report, folder_complete, 'Start with the folder on the command line'),
             ('video', video_report, video_complete, 'Start with the video on the command line'),
-            ('finder', finder_report, finder_complete, 'Start by Launch Services with the photo, as from the Finder')):
+            ('finder', finder_report, finder_complete, 'Start by Launch Services with the photo, as from the Finder'),
+            ('y4m', y4m_report, y4m_complete, 'Start without arguments, with the y4m over HTTP as the video')):
         detail = state_of(folder, name)
         if report is not None:
             if not complete:
@@ -94,9 +102,15 @@ def checks(folder: pathlib.Path) -> list[tuple[str, bool, str]]:
                      f"{video.get('ffmpegVersion', 'no FFmpeg version')}"))
     results.append((f'The test video played by libmpv for five seconds (at least {MIN_PLAYED_SECONDS:g} s of it)',
                     isinstance(played, (int, float)) and played >= MIN_PLAYED_SECONDS,
-                    ', '.join(f'{key} {video.get(key)}' for key in
-                              ('playedSeconds', 'firstFrameMs', 'size', 'hwdec-current', 'current-tracks/video/codec',
-                               'frame-drop-count', 'error') if key in video)))
+                    ', '.join(f'{key} {video.get(key)}' for key in PLAYED_KEYS if key in video)))
+    y4m = (y4m_report or {}).get('video') or {}
+    y4m_played = y4m.get('playedSeconds')
+    results.append(('The y4m of the AV2 decoder (10 bit, HTTP from 127.0.0.1) played by the app for five seconds '
+                    f'(at least {MIN_PLAYED_SECONDS:g} s of it, as {Y4M_CODEC})',
+                    isinstance(y4m_played, (int, float)) and y4m_played >= MIN_PLAYED_SECONDS
+                    and y4m.get('current-tracks/video/codec') == Y4M_CODEC,
+                    '; '.join([state_of(folder, 'y4m'), str(y4m.get('file')),
+                               ', '.join(f'{key} {y4m.get(key)}' for key in PLAYED_KEYS if key in y4m)])))
 
     folder_pages = (folder_report or {}).get('pages') or []
     results.append(('The folder of the command line opened as a page of its own', OPENED_FILES_PAGE in folder_pages,
@@ -123,8 +137,8 @@ def markdown(results: list[tuple[str, bool, str]]) -> str:
     for what, passed, detail in results:
         cell = detail.replace('|', '\\|').replace('\n', ' ')
         lines.append(f"| {what} | {'passed' if passed else 'FAILED'} | {cell} |")
-    lines += ['', 'Screen captures: `plain.png`, `folder.png`, `video.png`, `video-2s-later.png`, `finder.png` and '
-              '`finder-then-video.png` in the `macos-first-start` artifact.']
+    lines += ['', 'Screen captures: `plain.png`, `folder.png`, `video.png`, `video-2s-later.png`, `finder.png`, '
+              '`finder-then-video.png` and `y4m.png` in the `macos-first-start` artifact.']
     return '\n'.join(lines) + '\n'
 
 

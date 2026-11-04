@@ -254,7 +254,8 @@ void main() {
       photos.keys,
       containsAll(['jpg', 'jpeg', 'png', 'heic', 'heif', 'avif', 'webp', 'tif', 'tiff', 'dng', 'insp']),
     );
-    expect(videos.keys, containsAll(['mp4', 'mov', 'm4v', 'mkv', 'webm', 'insv', '360', 'osv']));
+    // The AV2 streams too (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.1), offered, never the default
+    expect(videos.keys, containsAll(['mp4', 'mov', 'm4v', 'mkv', 'webm', 'insv', '360', 'osv', 'ivf', 'obu']));
     for (final MapEntry(key: extension, value: description) in photos.entries) {
       expect(mediaKindOfName('x.$extension'), LibraryMediaKind.image, reason: extension);
       expect(description, isA<String>().having((text) => text.trim(), 'description', isNotEmpty));

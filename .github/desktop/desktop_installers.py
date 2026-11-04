@@ -103,6 +103,10 @@ LINUX_OWN_MIME = {
     'insv': ('video/x-insta360-insv', 'video/mp4'),
     '360': ('video/x-gopro-360', 'video/mp4'),
     'osv': ('video/x-dji-osv', 'video/mp4'),
+    # The AV2 streams of the reference encoder (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.1): an IVF file
+    # (the name FFmpeg gives the type) and a Section 5 stream of OBUs, neither a kind of another container
+    'ivf': ('video/x-ivf', 'application/octet-stream'),
+    'obu': ('video/x-av2-obu', 'application/octet-stream'),
 }
 # What macOS calls them: the uniform type identifiers of the system, and those the app imports (declares for itself,
 # without owning them): the raw camera files, and three types older macOS versions may not declare (the system's own
@@ -129,6 +133,8 @@ MACOS_IMPORTED = {
     'insv': ('com.aprogsys.immuch360.insv', ['public.mpeg-4']),
     '360': ('com.aprogsys.immuch360.gopro-360', ['public.mpeg-4']),
     'osv': ('com.aprogsys.immuch360.osv', ['public.mpeg-4']),
+    'ivf': ('com.aprogsys.immuch360.ivf', ['public.movie']),
+    'obu': ('com.aprogsys.immuch360.av2-obu', ['public.movie']),
 }
 
 # The libraries the Linux bundle needs from the system. Its ELF files link GTK 3 and GLib (the Flutter engine and every
@@ -472,8 +478,8 @@ def mime_package(types: dict) -> str:
             f'    <glob pattern="*.{extension}"/>\n'
             '  </mime-type>\n')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
-            '<!-- The raw files of 360° cameras, which shared-mime-info does not know, so that the file managers offer\n'
-            '     Immuch360 Desktop for them; made by .github/desktop/desktop_installers.py -->\n'
+            '<!-- The raw files of 360° cameras and the AV2 streams, which shared-mime-info does not know, so that the\n'
+            '     file managers offer Immuch360 Desktop for them; made by .github/desktop/desktop_installers.py -->\n'
             '<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">\n'
             + ''.join(entries) + '</mime-info>\n')
 

@@ -761,6 +761,36 @@ void main() {
 
         expect(player.state.status, VideoPlaybackStatus.buffering);
       });
+
+      test(
+        'a video decoded by the processor (AV2 on the computers): its frames a second, never a link that stopped',
+        () {
+          fakeAsync((async) {
+            unawaited(player.load(serverSource));
+            // cosmos 4K in 10 bits on a four-core laptop: 7 of the 24 frames a second it needs, for a minute
+            for (var s = 0; s < 60; s++) {
+              async.elapse(const Duration(seconds: 1));
+              now = now.add(const Duration(seconds: 1));
+              player.onNativeLinkChanged(
+                const NativeVideoLink(
+                  waiting: true,
+                  targetMs: 1000,
+                  loading: true,
+                  framesPerSecond: 7.4,
+                  neededFramesPerSecond: 24,
+                ),
+              );
+            }
+            final link = player.link.value!;
+            expect((link.isDecoder, link.framesPerSecond, link.neededFramesPerSecond), (true, 7.4, 24.0));
+            expect(link.ratio, closeTo(0.31, 0.01));
+            expect(link.dead, isFalse);
+            expect(link.showsRates, isTrue);
+            expect(player.failure, isNull);
+            player.dispose();
+          });
+        },
+      );
     });
   });
 

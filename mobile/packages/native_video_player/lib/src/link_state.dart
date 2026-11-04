@@ -18,6 +18,8 @@ class NativeVideoLink {
     this.loading = false,
     this.receivedBytes = 0,
     this.network = false,
+    this.framesPerSecond,
+    this.neededFramesPerSecond,
   });
 
   final bool waiting;
@@ -34,8 +36,22 @@ class NativeVideoLink {
   /// Whether the player read the video over the network (a server, the media bridge of a share)
   final bool network;
 
-  /// Media seconds the link brings per second: [bytesPerSecond] over [neededBytesPerSecond], null when either is unknown
+  /// The link is a decoder rather than the network (the AV2 videos of the computers, decoded by the processor): the
+  /// pictures it decodes per second, null until measured, against those the video needs at the speed it plays
+  final double? framesPerSecond;
+  final double? neededFramesPerSecond;
+
+  /// Whether the link is a decoder, see [framesPerSecond]
+  bool get isDecoder => neededFramesPerSecond != null;
+
+  /// Media seconds the link brings per second: [bytesPerSecond] over [neededBytesPerSecond] (or the frames of a
+  /// decoder over those the video needs), null when either is unknown
   double? get ratio {
+    if (isDecoder) {
+      final fps = framesPerSecond;
+      final needed = neededFramesPerSecond!;
+      return fps == null || needed <= 0 ? null : fps / needed;
+    }
     final rate = bytesPerSecond;
     final need = neededBytesPerSecond;
     if (rate == null || need == null || need <= 0) {
@@ -79,7 +95,9 @@ class NativeVideoLink {
       other.minimumHeldMs == minimumHeldMs &&
       other.loading == loading &&
       other.receivedBytes == receivedBytes &&
-      other.network == network;
+      other.network == network &&
+      other.framesPerSecond == framesPerSecond &&
+      other.neededFramesPerSecond == neededFramesPerSecond;
 
   @override
   int get hashCode => Object.hash(
@@ -94,10 +112,13 @@ class NativeVideoLink {
         loading,
         receivedBytes,
         network,
+        framesPerSecond,
+        neededFramesPerSecond,
       );
 
   @override
   String toString() => 'NativeVideoLink(waiting: $waiting${rebuffering ? ' after a stall' : ''}, ahead $aheadMs ms, '
       '$bytesPerSecond of $neededBytesPerSecond B/s, ${sinceProgressMs ?? '-'} ms since progress, '
-      'target $targetMs ms, loading: $loading, $receivedBytes B)';
+      'target $targetMs ms, loading: $loading, $receivedBytes B'
+      '${isDecoder ? ', decoding $framesPerSecond of $neededFramesPerSecond fps' : ''})';
 }

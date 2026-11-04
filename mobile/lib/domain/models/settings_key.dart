@@ -48,6 +48,8 @@ enum SettingsKey<T> {
   viewerKeepAllGaussians<bool>(),
   // The 3D sign in the photo of a splat scene saved to Immich: ViewerConfig.markSplatPhotos
   viewerMarkSplatPhotos<bool>(),
+  // The AV2 videos of the computers, decoded by the processor, see ViewerConfig.av2Videos
+  viewerAv2Videos<bool>(),
   // Null until the user picks a source: viewerLoadOriginalVideo tells it until then, see ViewerConfig.videoSource
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
 

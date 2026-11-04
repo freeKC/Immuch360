@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/video/av2_decoding.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
@@ -74,6 +76,29 @@ void main() {
 
     expect(text.title, 'This video cannot be played');
     expect(text.cause, startsWith('H.264 5760 x 2880 is beyond'));
+  });
+
+  testWidgets('a failure of the AV2 decoder of a computer is said in the words of the app', (tester) async {
+    final t = await translations(tester);
+    const stopped = Av2DecoderStopped('it crashed (code 0xC0000005): error decoding frame 3');
+    const refused = Av2FormatRefused('4:2:2 10-bit');
+    const slow = Av2TooSlow(fps: 5.9, needed: 24, key: '/a.ivf');
+
+    // The companion stopped while the video played; the others refused the source before the player opened it
+    final cases = {
+      stopped.message: t.av2_error_decoder_stopped(reason: stopped.reason),
+      'This video cannot be played on the computer: ${refused.message}': t.av2_error_format(format: '4:2:2 10-bit'),
+      'This video cannot be played on the computer: ${slow.message}': t.av2_too_slow(fps: '6', needed: '24'),
+      'This video cannot be played on the computer: ${const Av2TurnedOff().message}': t.av2_error_off,
+    };
+    for (final MapEntry(key: message, value: said) in cases.entries) {
+      final text = describe(t, VideoPlaybackFailure(VideoFailureKind.error, message), fromServer: false);
+      expect(text.title, 'This video cannot be played');
+      expect(text.cause, said, reason: message);
+      expect(text.advice, [t.video_failed_retry_hint]);
+    }
+    expect(const Av2TurnedOff().message, t.av2_error_off, reason: 'the English text of the app');
+    expect(av2FailureText('The video could not be opened: <url>', t), isNull);
   });
 
   testWidgets('no server advice for a copy on the device', (tester) async {

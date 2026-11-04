@@ -59,7 +59,8 @@ class AiComponentsTile extends ConsumerStatefulWidget {
 class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
   late final AiComponentsService _service = ref.read(aiComponentsServiceProvider);
 
-  /// The space the folder really takes, the .part files included; null until measured
+  /// The space the components of the AI really take, the .part files included (the AV2 decoder apart, which the
+  /// settings of the videos show); null until measured
   int? _spaceUsed;
   bool _removing = false;
 
@@ -72,7 +73,7 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
   Future<void> _refresh() async {
     try {
       await _service.load();
-      final used = await _service.spaceUsed();
+      final used = await _service.aiSpaceUsed();
       if (mounted) {
         setState(() => _spaceUsed = used);
       }
@@ -255,6 +256,7 @@ String aiFeatureGroupName(Translations t, AiFeatureGroup group) => switch (group
   AiFeatureGroup.photos => t.ai_immersive_feature_photos,
   AiFeatureGroup.scenes => t.ai_immersive_feature_scenes,
   AiFeatureGroup.panoramas => t.ai_immersive_feature_panoramas,
+  AiFeatureGroup.av2 => t.av2_decoder_name,
 };
 
 /// "3D scenes: 378 MB", the size of all the components a group needs, from the catalogue: those it shares with another
@@ -265,6 +267,8 @@ String aiFeatureGroupTitle(Translations t, AiGroupComponents group) {
     AiFeatureGroup.photos => t.ai_immersive_components_photos(size: size),
     AiFeatureGroup.scenes => t.ai_immersive_components_scenes(size: size),
     AiFeatureGroup.panoramas => t.ai_immersive_components_panoramas(size: size),
+    // Never in this tile (aiComponentGroupsFor gives the groups of the AI): the video settings show the AV2 decoder
+    AiFeatureGroup.av2 => t.av2_settings_not_installed(size: size),
   };
 }
 

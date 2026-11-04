@@ -210,6 +210,30 @@
 				<string>com.aprogsys.immuch360.osv</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>AV2 video (IVF)</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.aprogsys.immuch360.ivf</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>AV2 video (OBU stream)</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.aprogsys.immuch360.av2-obu</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
@@ -389,6 +413,48 @@
 				<key>public.mime-type</key>
 				<array>
 					<string>video/x-dji-osv</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.movie</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>AV2 video (IVF)</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.aprogsys.immuch360.ivf</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>ivf</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>video/x-ivf</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.movie</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>AV2 video (OBU stream)</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.aprogsys.immuch360.av2-obu</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>obu</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>video/x-av2-obu</string>
 				</array>
 			</dict>
 		</dict>

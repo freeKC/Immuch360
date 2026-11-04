@@ -11,6 +11,7 @@ import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/splat/splat_window_licenses.dart';
+import 'package:immich_mobile/desktop/video/av2_licenses.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
@@ -45,6 +46,8 @@ Future<void> startDesktop(List<String> args) async {
   setUpDesktopVideo();
   // The video player's native libraries on the licence page, from the texts the app carries (Windows and macOS)
   registerVideoLicenses();
+  // The AV2 decoder, dav2d and the patent licence of AV2, from its folder once installed (the three systems)
+  registerAv2Licenses(desktopAiComponentsFolder);
   // The Rust crates of the JPEG codec of the AI features, from the texts the library carries (the three systems)
   registerSbsCodecLicenses();
   // The WebView2 SDK and wil of the splat viewer's window (Windows)

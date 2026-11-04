@@ -1,0 +1,35 @@
+immuch360-av2: plays AV2 videos in Immuch360 Desktop, decoded by dav2d and served to the player as a y4m on
+127.0.0.1
+
+Usage:
+  immuch360-av2 probe FILE|- [--threads N]
+      what the start of an AV2 file holds (IVF or OBUs, - for the standard input), as one line of JSON
+  immuch360-av2 serve --token TOKEN --width W --height H --bits 8|10 --fps NUM/DEN --frames N [options]
+      decodes the temporal units of the standard input and serves the pictures as a virtual y4m at
+      http://127.0.0.1:PORT/TOKEN/video.y4m, until the standard input closes
+  immuch360-av2 --version
+  immuch360-av2 --help
+
+Options of serve:
+  --token TOKEN          16 to 128 letters, digits, - or _: the first part of the path of the video. Every
+                         account of the computer can read a command line: the app leaves --token out and sets
+                         the environment variable IMMUCH360_AV2_TOKEN instead
+  --width W --height H   the size of the pictures, as the probe found it
+  --bits 8|10            the depth of the pictures
+  --fps NUM/DEN          the frame rate the y4m header gives the player
+  --frames N             the number of pictures, one per temporal unit
+  --threads N            threads of the decoder, 0 for every logical processor (default 0)
+  --range limited|full   the colour range the y4m header gives the player (default limited)
+  --depth 8              serves 10-bit pictures as 8-bit samples
+  --frame-bytes B        stops unless a picture takes B bytes in the y4m
+  --port P               the port to listen on (default 0, any free port)
+  --parent PID           ends when the process PID ends (the app), as when the standard input closes
+
+Standard input of serve: records of a 16-byte header, little endian ("AV2R", generation, unit, length), then
+length bytes. First the index: generation 0, unit 4294967295, the random access units as 32-bit numbers.
+Then, for each line "need G U", the temporal units from U on with generation G, and a record of length 0
+after the last unit.
+Standard output of serve: listening PORT, need G U, request, stat, refused, error and exit lines; serve ends
+when they can no longer be written.
+Exit codes: 0 the standard input or output closed, or the --parent process ended, 1 internal error, 2 bad
+arguments, 3 the video cannot be decoded, 4 no socket on 127.0.0.1, 5 records that are not the protocol's.

@@ -8,9 +8,34 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
 import 'package:immich_mobile/desktop/library/thumbnail_cache.dart';
 import 'package:immich_mobile/desktop/platform/desktop_local_image_api.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
+import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:path/path.dart' as p;
 
+import '../video/fake_playback_engine.dart';
 import 'local_image_fixtures.dart';
+
+/// The AV2 videos of the app as the thumbnails meet them: [refusal] says why a video does not play now (its decoder
+/// not installed, AV2 videos off), else its companion serves it
+class _Av2Gate extends Av2Playbacks {
+  _Av2Gate(this.refusal)
+    : super(companion: () async => null, runner: (_) => throw UnimplementedError(), enabled: () => true);
+
+  final Exception? Function() refusal;
+
+  @override
+  Future<String> open(Av2Bytes bytes, {bool forThumbnail = false}) async {
+    await bytes.close();
+    final thrown = refusal();
+    if (thrown != null) {
+      throw thrown;
+    }
+    return 'http://127.0.0.1:50123/AbCdEfGhIjKlMnOp0123456789abcdef/video.y4m';
+  }
+
+  @override
+  Future<void> release(String resource) async {}
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -230,6 +255,33 @@ void main() {
       await images.idle();
     });
 
+    test('an AV2 video asked for before its decoder is installed, or while AV2 videos are off, gets the film tile, '
+        'then its frame once it can: it is not taken for a file without one', () async {
+      final frame = await pngOf(64, 36);
+      put('v1', 'phare.ivf', [0, 1, 2, 3]);
+      final players = FakePlayers(
+        onCreate: (engine) => engine
+          ..autoLoad = const Duration(seconds: 10)
+          ..frame = frame,
+      );
+      Exception? refusal = const Av2DecoderMissing();
+      final grabber = VideoThumbnailGrabber(pool: players.pool, av2: () => _Av2Gate(() => refusal));
+      final images = withFrames(
+        (path, box) =>
+            grabber.grab(path, time: DesktopLocalImageApi.videoFrameTime, box: (width: box, height: box, cover: true)),
+      );
+      // The order of the owner's test of the AV2 videos: the folder opened, then a video played (plan, 6.3)
+      final before = takeEncoded(await request(images, 'v1', isVideo: true));
+      expect(before, isNot(frame));
+      expect(players.made, isEmpty, reason: 'nothing to grab, nothing downloaded');
+      refusal = const Av2TurnedOff();
+      expect(takeEncoded(await request(images, 'v1', isVideo: true)), before);
+      // The first playback installed the decoder, AV2 videos on
+      refusal = null;
+      expect(takeEncoded(await request(images, 'v1', isVideo: true)), frame);
+      await images.idle();
+    });
+
     test('a video that gives no frame gets the film tile, and is not grabbed again in the session', () async {
       put('v1', 'broken.mp4', [0, 1, 2, 3]);
       var grabs = 0;
@@ -242,6 +294,86 @@ void main() {
       takeEncoded(await request(images, 'v1', isVideo: true));
       expect(grabs, 1);
       expect(Directory(p.join(root.path, 'thumbs')).existsSync(), isFalse, reason: 'tiles are not cached on disk');
+    });
+  });
+
+  group('AV2 videos', () {
+    final av2 = File('test/fixtures/av2/av2-256x144-8bit.ivf').readAsBytesSync();
+    final obu = File('test/fixtures/av2/av2-256x144-10bit.obu').readAsBytesSync();
+    final av1 = File('test/fixtures/av2/av1-256x144-8bit.ivf').readAsBytesSync();
+
+    setUp(() => DesktopLocalImageApi.av2FrameGrab = null);
+    tearDown(() => DesktopLocalImageApi.av2FrameGrab = null);
+
+    test('are never handed to mpv: before the decoder, the film tile says AV2, the same for every AV2 video', () async {
+      put('a1', 'clip.ivf', av2);
+      put('a2', 'clip.obu', obu);
+      put('v1', 'one.mp4', [0, 1, 2]);
+      final grabbed = <String>[];
+      final images = DesktopLocalImageApi(
+        fileForAsset: (id) async => files[id],
+        thumbnails: cache,
+        videoFrame: (path, box) async {
+          grabbed.add(path);
+          return null;
+        },
+      );
+
+      final tile = takeEncoded(await request(images, 'a1', isVideo: true));
+      expect(takeEncoded(await request(images, 'a2', isVideo: true)), tile);
+      expect(grabbed, isEmpty, reason: 'mpv has no decoder for AV2');
+      final film = takeEncoded(await request(images, 'v1', isVideo: true));
+      expect(film, isNot(tile), reason: 'the word AV2 on the tile');
+      expect(Directory(p.join(root.path, 'thumbs')).existsSync(), isFalse, reason: 'tiles are not cached on disk');
+    });
+
+    test('once the decoder is installed, a frame through it, kept in the thumbnail cache', () async {
+      final frame = await pngOf(64, 36);
+      final file = put('a1', 'clip.ivf', av2);
+      final grabs = <(String, int)>[];
+      DesktopLocalImageApi.av2FrameGrab = (path, box) async {
+        grabs.add((path, box));
+        return frame;
+      };
+      final images = DesktopLocalImageApi(
+        fileForAsset: (id) async => files[id],
+        thumbnails: cache,
+        videoFrame: (path, box) async => fail('mpv asked for an AV2 video'),
+      );
+      expect(takeEncoded(await request(images, 'a1', isVideo: true)), frame);
+      await images.idle();
+      expect(takeEncoded(await request(images, 'a1', isVideo: true)), frame);
+      expect(grabs, [(file.path, 320)]);
+    });
+
+    test('an AV2 video the decoder gives no frame of keeps the AV2 tile', () async {
+      put('a1', 'clip.ivf', av2);
+      put('a2', 'other.ivf', av2);
+      final images = DesktopLocalImageApi(
+        fileForAsset: (id) async => files[id],
+        thumbnails: cache,
+        av2Frame: (path, box) async => path.endsWith('other.ivf') ? null : await pngOf(8, 8),
+      );
+      final tile = takeEncoded(await request(images, 'a2', isVideo: true));
+      DesktopLocalImageApi.av2FrameGrab = null;
+      final before = DesktopLocalImageApi(fileForAsset: (id) async => files[id], thumbnails: cache);
+      expect(takeEncoded(await request(before, 'a2', isVideo: true)), tile);
+      await images.idle();
+    });
+
+    test('an IVF of AV1 is a video as any other', () async {
+      final file = put('v1', 'av1.ivf', av1);
+      final grabbed = <String>[];
+      final images = DesktopLocalImageApi(
+        fileForAsset: (id) async => files[id],
+        thumbnails: cache,
+        videoFrame: (path, box) async {
+          grabbed.add(path);
+          return null;
+        },
+      );
+      takeEncoded(await request(images, 'v1', isVideo: true));
+      expect(grabbed, [file.path]);
     });
   });
 

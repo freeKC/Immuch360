@@ -11,7 +11,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service
 import 'package:path/path.dart' as p;
 
 class FakeAiComponentsService extends AiComponentsService {
-  FakeAiComponentsService({Map<AiComponent, AiComponentState> states = const {}, this.space = 0})
+  FakeAiComponentsService({Map<AiComponent, AiComponentState> states = const {}, this.space = 0, super.catalogue})
     : super(folder: () async => Directory(p.join(Directory.systemTemp.path, 'no-ai-components'))) {
     for (final MapEntry(:key, :value) in states.entries) {
       _states[key.id] = AiComponentStatus(value);
@@ -20,7 +20,7 @@ class FakeAiComponentsService extends AiComponentsService {
 
   final _states = <String, AiComponentStatus>{};
 
-  /// What spaceUsed answers
+  /// What spaceUsed and aiSpaceUsed answer
   int space;
 
   /// Whether a conversion runs: removals are refused while it does
@@ -78,6 +78,9 @@ class FakeAiComponentsService extends AiComponentsService {
   Future<int> spaceUsed() async => space;
 
   @override
+  Future<int> aiSpaceUsed() async => space;
+
+  @override
   Future<void> install(AiComponent component) async {
     installs.add(component.id);
     try {
@@ -118,7 +121,11 @@ class FakeAiComponentsService extends AiComponentsService {
     if (converting) {
       return const AiGroupRemoval(AiRemoveOutcome.busy, []);
     }
-    final entry = aiComponentGroupsFor(platform, catalogue: catalogue).firstWhere((entry) => entry.group == group);
+    final entry = aiComponentGroupsFor(
+      platform,
+      catalogue: catalogue,
+      only: {group},
+    ).firstWhere((entry) => entry.group == group);
     final kept = [
       for (final component in entry.all)
         if (groupsUsing(platform, component, besides: group).isNotEmpty) component,
@@ -138,8 +145,15 @@ class FakeAiComponentsService extends AiComponentsService {
     if (removeOutcome == AiRemoveOutcome.removed) {
       space = 0;
     }
+    // As the service does, the components of no AI stay (the AV2 decoder)
+    final spared = {
+      for (final component in catalogue)
+        if (component.features.isNotEmpty && !component.features.any((feature) => feature.isAi)) component.id,
+    };
     for (final id in [..._states.keys]) {
-      _removed(id);
+      if (!spared.contains(id)) {
+        _removed(id);
+      }
     }
     return removeOutcome;
   }

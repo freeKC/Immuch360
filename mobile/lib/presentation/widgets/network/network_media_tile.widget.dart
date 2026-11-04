@@ -2,7 +2,9 @@
 // frame of it, a 360° badge on the files that declare a 360° projection, a 3D badge on the 3D photos and videos, a
 // "3D scene" badge on the photos that carry a 3D scene and a "360° AI" badge on the panoramas generated beyond the
 // edges of a photo, a badge on the files sent to the server before, the selection
-// mark and the progress of an upload, and the folder rows.
+// mark and the progress of an upload, and the folder rows. On a computer, an AV2 file (.ivf, .obu whose head says so)
+// gets the "AV2" badge of the 3D splat tiles, on a neutral tile until the AV2 decoder is installed, then on a frame
+// that the grabber takes through it.
 
 import 'dart:async';
 import 'dart:collection';
@@ -13,6 +15,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
+import 'package:immich_mobile/desktop/video/av2_badge.dart';
+import 'package:immich_mobile/desktop/video/av2_decoder.dart';
+import 'package:immich_mobile/desktop/video/av2_decoding.dart';
+import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
@@ -22,6 +28,7 @@ import 'package:immich_mobile/domain/services/network_video_thumbnail.service.da
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
@@ -437,7 +444,20 @@ class NetworkMediaTile extends ConsumerWidget {
     final uploadProgress = ref.watch(networkUploadProvider.select((upload) => upload.progress[networkUploadId(entry)]));
     final url = this.url;
     final hasThumbnail = entry.isImage && url != null && (entry.size ?? 0) <= networkThumbnailMaxFileSize;
-    final hasFrame = entry.isVideo && url != null;
+    // Immuch360 Desktop: the head of an .ivf or .obu says whether it is AV2 (lib/desktop/video/av2_decoding.dart);
+    // a frame is asked once it says no AV2 (mpv takes it), or AV2 with the AV2 decoder installed (the grabber opens
+    // it through its companion): never while it is read, nor when it could not be read
+    final av2Head = entry.isVideo && CurrentPlatform.isDesktop && isAv2VideoPath(entry.name)
+        ? ref.watch(networkAv2HeadProvider(networkMediaKey(entry)))
+        : null;
+    final isAv2 = av2Head?.valueOrNull != null;
+    final noAv2 = switch (av2Head) {
+      null => true,
+      AsyncData(:final value) => value == null,
+      _ => false,
+    };
+    final av2Frame = isAv2 && ref.watch(av2DecoderInstalledProvider);
+    final hasFrame = entry.isVideo && url != null && (noAv2 || av2Frame);
     final isSelected = this.isSelected;
     // A share whose server makes the pictures of its media (a Plex server) shows those, read through its connection
     final serverPictures = switch (ref.watch(networkConnectionsProvider).opened(entry.sourceId)) {
@@ -451,6 +471,8 @@ class NetworkMediaTile extends ConsumerWidget {
           ? '${entry.name}, ${context.t.network_upload_sent_before}'
           : inTrash
           ? '${entry.name}, ${context.t.network_upload_in_trash_mark}'
+          : isAv2
+          ? '${entry.name}, ${context.t.av2_badge}'
           : entry.name,
       button: true,
       selected: isSelected ?? false,
@@ -510,6 +532,14 @@ class NetworkMediaTile extends ConsumerWidget {
                       shadows: _shadows,
                     ),
                   ),
+                ),
+              if (isAv2)
+                Positioned(
+                  key: const Key('network_media_av2_badge'),
+                  // Where the 3D splat tiles have theirs, beside the selection mark while files are picked
+                  left: isSelected != null ? 32 : 6,
+                  top: 6,
+                  child: const Av2BadgeLabel(),
                 ),
               if (is360)
                 const Positioned(

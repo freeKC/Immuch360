@@ -2,13 +2,15 @@
 // card of the video playing, with the English texts, on the machines of video_gpu_test.dart: the development laptop
 // with the app on the RTX 4060 (the runner's export) or on the Intel UHD (Windows set to power saving for it), and a
 // computer whose cards are not known (Linux, macOS). While the server's copy of a video plays because its original is
-// beyond this computer, the advice is about the original.
+// beyond this computer, the advice is about the original. An AV2 video says how fast the processor decodes it, from the
+// stat lines of its decoder, and when the processor has no AVX2 (store/m2/av2-2026-11-02/plan-2026-11-02.md, 1.4).
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_decoding_tile.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/video_gpu.dart';
@@ -62,10 +64,12 @@ const _switched = ChosenVideoSource(
 
 void main() {
   late ValueNotifier<VideoDecoding> decoding;
+  late ValueNotifier<Av2DecodingStats?> av2;
   late ProviderContainer container;
 
   setUp(() {
     decoding = ValueNotifier((hwdec: null, size: null));
+    av2 = ValueNotifier(null);
     container = ProviderContainer();
   });
 
@@ -96,6 +100,7 @@ void main() {
                     DesktopVideoDecodingTile(
                       asset: asset,
                       decoding: given ? decoding : null,
+                      av2: given ? av2 : null,
                       machine: () async => machine,
                     ),
                   ],
@@ -233,5 +238,67 @@ void main() {
     await pumpTile(tester, (inUse: _rtx, gpus: _laptop), given: false);
     expect(find.text('loaded'), findsOneWidget);
     expect(find.byKey(const Key('desktop_video_decoding')), findsNothing);
+  });
+
+  group('an AV2 video', () {
+    testWidgets('decoded by the processor: how fast on this computer against what the video needs, as it plays', (
+      tester,
+    ) async {
+      // mpv shows the pictures of the decoder: raw video, "no" hardware decoding
+      decoding.value = (hwdec: 'no', size: _hd);
+      av2.value = const Av2DecodingStats(neededFps: 30, simd: 'avx2');
+      await pumpTile(tester, (inUse: _rtx, gpus: _laptop));
+      expect(subtitle(tester), 'AV2, decoded by the processor (experimental)');
+
+      av2.value = const Av2DecodingStats(neededFps: 30, decodedFps: 120.3, simd: 'avx2');
+      await tester.pump();
+      expect(subtitle(tester), 'AV2, decoded by the processor: 120 fps on this computer, 30 fps needed (experimental)');
+
+      av2.value = const Av2DecodingStats(neededFps: 23.976, decodedFps: 7.44, simd: 'avx512icl');
+      await tester.pump();
+      expect(
+        subtitle(tester),
+        'AV2, decoded by the processor: 7.4 fps on this computer, 23.98 fps needed (experimental)',
+      );
+    });
+
+    testWidgets('a processor without AVX2 is said; an ARM processor is not', (tester) async {
+      decoding.value = (hwdec: 'no', size: _hd);
+      av2.value = const Av2DecodingStats(neededFps: 30, decodedFps: 19, simd: 'sse41');
+      await pumpTile(tester, (inUse: null, gpus: null));
+      expect(
+        subtitle(tester),
+        'AV2, decoded by the processor: 19 fps on this computer, 30 fps needed (experimental)\n'
+        'This processor has no AVX2: AV2 decodes slowly here',
+      );
+      for (final simd in ['ssse3', 'sse2']) {
+        av2.value = Av2DecodingStats(neededFps: 30, decodedFps: 19, simd: simd);
+        await tester.pump();
+        expect(subtitle(tester), endsWith('This processor has no AVX2: AV2 decodes slowly here'), reason: simd);
+      }
+      for (final simd in ['neon', 'avx2', null]) {
+        av2.value = Av2DecodingStats(neededFps: 30, decodedFps: 19, simd: simd);
+        await tester.pump();
+        expect(subtitle(tester), isNot(contains('AVX2')), reason: '$simd');
+      }
+    });
+
+    testWidgets('the line of mpv again once the AV2 video stopped', (tester) async {
+      decoding.value = (hwdec: 'd3d11va', size: _hd);
+      av2.value = const Av2DecodingStats(neededFps: 30, decodedFps: 120, simd: 'avx2');
+      await pumpTile(tester, (inUse: _rtx, gpus: _laptop));
+      expect(subtitle(tester), startsWith('AV2, decoded by the processor'));
+      av2.value = null;
+      // The cards come a frame later: the line of mpv was not shown before
+      await tester.pumpAndSettle();
+      expect(subtitle(tester), 'Hardware, on NVIDIA GeForce RTX 4060 Laptop GPU  •  d3d11va');
+    });
+
+    testWidgets('by default, the AV2 video playing, even before mpv says how it decodes', (tester) async {
+      addTearDown(() => activeAv2Decoding.value = null);
+      activeAv2Decoding.value = const Av2DecodingStats(neededFps: 30, decodedFps: 61, simd: 'avx2');
+      await pumpTile(tester, (inUse: _rtx, gpus: _laptop), given: false);
+      expect(subtitle(tester), 'AV2, decoded by the processor: 61 fps on this computer, 30 fps needed (experimental)');
+    });
   });
 }
