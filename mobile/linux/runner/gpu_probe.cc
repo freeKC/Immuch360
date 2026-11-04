@@ -577,14 +577,26 @@ using PFN_nvmlDeviceGetUUID = NvmlReturn (*)(NvmlDevice, char*, unsigned int);
 using PFN_nvmlDeviceGetProcesses = NvmlReturn (*)(NvmlDevice, unsigned int*,
                                                   void*);
 
+// What one list of processes of a device says of a process
+struct NvmlShare {
+  // The list answered
+  bool answered = false;
+  // The process has an entry in it
+  bool listed = false;
+  // One of its entries has a figure (NVML_VALUE_NOT_AVAILABLE is none)
+  bool measured = false;
+  uint64_t held = 0;
+};
+
 // One list of processes of a device (graphics or compute), by the newest
-// function the driver has; false when none answered
-bool NvmlProcesses(void* library, NvmlDevice device, const char* name,
-                   unsigned pid, uint64_t* held) {
+// function the driver has, and what it says of the process [pid]
+NvmlShare NvmlProcesses(void* library, NvmlDevice device, const char* name,
+                        unsigned pid) {
   struct Variant {
     std::string symbol;
     size_t size;
   };
+  NvmlShare share;
   const std::string base = name;
   const Variant variants[] = {{base + "_v3", sizeof(NvmlProcessInfoV2)},
                               {base + "_v2", sizeof(NvmlProcessInfoV2)},
@@ -606,9 +618,9 @@ bool NvmlProcesses(void* library, NvmlDevice device, const char* name,
       result = list(device, &count, infos.data());
     }
     if (result != kNvmlSuccess) {
-      return false;
+      return share;
     }
-    uint64_t sum = 0;
+    share.answered = true;
     for (unsigned int i = 0; i < count; i++) {
       const unsigned char* info = infos.data() + i * variant.size;
       unsigned int process = 0;
@@ -616,14 +628,18 @@ bool NvmlProcesses(void* library, NvmlDevice device, const char* name,
       std::memcpy(&process, info, sizeof(process));
       std::memcpy(&used, info + offsetof(NvmlProcessInfoV1, usedGpuMemory),
                   sizeof(used));
-      if (process == pid && used != kNvmlValueNotAvailable) {
-        sum += used;
+      if (process != pid) {
+        continue;
+      }
+      share.listed = true;
+      if (used != kNvmlValueNotAvailable) {
+        share.measured = true;
+        share.held += used;
       }
     }
-    *held = sum;
-    return true;
+    return share;
   }
-  return false;
+  return share;
 }
 
 // "GPU-5a1b2c3d-0e0f-..." of NVML as the hexadecimal of the UUID of Vulkan
@@ -645,7 +661,9 @@ std::string NvmlUuidHex(const char* uuid) {
 // the card of Vulkan whose UUID NVML gives, or the only one when there is one
 // of each. The graphics and the compute lists may both name the process, with
 // the same memory: the larger of the two is kept. A card NVML lists that the
-// process is not in holds nothing of it.
+// process is not in holds nothing of it; one whose lists name the process
+// only without a figure (NVML_VALUE_NOT_AVAILABLE) leaves its share unknown,
+// which is not 0.
 void ReadAppMemory(Report* report, unsigned pid) {
   size_t nvidia = 0;
   for (const Adapter& adapter : report->adapters) {
@@ -714,17 +732,16 @@ void ReadAppMemory(Report* report, unsigned pid) {
     if (card == nullptr) {
       continue;
     }
-    uint64_t graphics = 0;
-    uint64_t compute = 0;
-    const bool by_graphics =
-        NvmlProcesses(library, device, "nvmlDeviceGetGraphicsRunningProcesses",
-                      pid, &graphics);
-    const bool by_compute =
-        NvmlProcesses(library, device, "nvmlDeviceGetComputeRunningProcesses",
-                      pid, &compute);
-    if (by_graphics || by_compute) {
+    const NvmlShare graphics = NvmlProcesses(
+        library, device, "nvmlDeviceGetGraphicsRunningProcesses", pid);
+    const NvmlShare compute = NvmlProcesses(
+        library, device, "nvmlDeviceGetComputeRunningProcesses", pid);
+    const bool unknown = (graphics.listed || compute.listed) &&
+                         !graphics.measured && !compute.measured;
+    if ((graphics.answered || compute.answered) && !unknown) {
       card->has_app_memory = true;
-      card->app_memory = graphics > compute ? graphics : compute;
+      card->app_memory =
+          graphics.held > compute.held ? graphics.held : compute.held;
     }
   }
   if (shutdown != nullptr) {
