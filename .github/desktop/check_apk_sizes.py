@@ -80,37 +80,29 @@ ONE_TIME_KIND_THRESHOLDS = {
     'v3.3.0-rc.0-37': {'armeabi-v7a': 1.5, 'aab': 1.5, 'universal': 1.5, 'x86_64': 1.5},
     # 3 November 2026, for Android build 41, compared with release 40: every lot waits for it (FreeKC, 3 November
     # 09:55), so its packages carry the splat viewer of the computers, phones and tablets (feat-splat-viewer), the
-    # splat maker (feat-splat-maker), the AV2 videos (the feat-av2 lots), the 8K fix and the Play deep links. No head
-    # holds them all yet: each lot's packages, signed by the release workflow, against release 40, then their sum.
-    #   The splat viewer at 7c3685e56 (run 41621849288): every APK and the AAB carry the viewer's page and engine in the
-    #   assets (Spark's WebAssembly 1,636,503 bytes, spark.module.min.js 438,236, three.js 720,032, their licence
-    #   texts), SplatViewerActivity, and the Dart of the viewing and its 37 texts in 89 languages: armeabi-v7a
-    #   +1,370,918 bytes (+1.540 %), x86_64 +1,272,610 (+1.343 %), the AAB +2,368,260 (+0.994 %), arm64-v8a
-    #   +1,272,614 (+0.858 %), the Quest APK +1,272,598 (+0.797 %), the universal APK +2,157,346 (+0.724 %).
-    #   The splat maker at 5c1fa9b9c (run 41391918586): armeabi-v7a +786,436 (+0.883 %), x86_64 +655,360 (+0.691 %), the
-    #   AAB +2,394,409 (+1.005 %), arm64-v8a +655,364 (+0.442 %), the Quest APK +655,360 (+0.410 %), the universal APK
-    #   +2,097,152 (+0.704 %).
-    #   The AV2 lots at 439a0d4fa of feat-av2-ad5-screens (run 41624297339), which holds AD1 and the 8K fix, the 8K
-    #   fix taken out: armeabi-v7a, x86_64, arm64-v8a and the Quest APK +262,144 each (+0.164 to +0.294 %), the AAB
-    #   +812,906 (+0.341 %), the universal APK +786,432 (+0.264 %). AD3 at aa540830b (run 41496245936) has the APK
-    #   sizes of AD1 to the byte.
-    #   The 8K fix at fcfa3297b (run 41469253038): armeabi-v7a +65,540 (+0.074 %), the AAB +159,171 (+0.067 %), the
-    #   universal APK +65,536 (+0.022 %), the others 0 or 4 bytes. The deep links at 694e5fb7a (run 41614539523): 176 to
-    #   189 bytes less each.
-    #   Their sum, the estimate for build 41: armeabi-v7a +2.791 %, the AAB +2.407 %, x86_64 +2.310 %, the universal
-    #   APK +1.713 %, arm64-v8a +1.476 %, the Quest APK +1.371 %.
-    # The growth is the Dart linked into libapp.so (by steps of 64 KiB) with the texts of each lot in 89 languages,
-    # and the viewer's assets. Half a point over each estimate, for the commits of the lots after those runs and the
-    # fixes of the trials: every kind gets a threshold of its own. The integration of release 41 checks its head's
-    # packages against these numbers and moves them in a script-only tail if a kind comes nearer than a quarter of a
-    # point. Build 42 compares with build 41 and the ordinary threshold again.
+    # splat photos (feat-splat-photo), the splat maker (feat-splat-maker), the AV2 videos (feat-av2), the graphics
+    # memory of the AI jobs (fix-ai-gpu-budget), the start of the library index (fix-db-startup-busy), the 8K fix and
+    # the Play deep links. The first estimate, the sum of each lot's packages (armeabi-v7a +2.791 % to the Quest APK
+    # +1.371 %), left out the commits of the lots after their runs: recomputed on 4 November 2026 from the packages of
+    # the integration head that holds the eight lots, integration-41 at 0836d0792 (Android release run 41923695671,
+    # signed by the release workflow), against the files of release 40:
+    #   armeabi-v7a 92,592,753 bytes against 89,016,860, +4.017 %; the AAB 247,028,021 against 238,259,429, +3.680 %;
+    #   x86_64 98,042,118 against 94,793,909, +3.427 %; the universal APK 306,350,540 against 298,056,059, +2.783 %;
+    #   arm64-v8a 151,606,693 against 148,358,480, +2.189 %; the Quest APK 163,010,674 against 159,762,465, +2.033 %.
+    #   Of which the splat maker, against the head before its merge (ca6fe647d, run 41900294278): +851,968 bytes for
+    #   arm64-v8a, x86_64 and the Quest APK, +950,272 for armeabi-v7a, the three libraries in the universal APK
+    #   +2,654,208, the AAB +2,866,885.
+    # The growth is the Dart linked into libapp.so (by steps of 64 KiB) with the 197 new texts in 89 languages, and the
+    # splat viewer's assets; the splat maker adds no asset, no package and nothing to the Android sources. Each kind
+    # gets the growth measured plus half a point, rounded up to a tenth, for the fixes before the release. Build 42
+    # compares with build 41 and the ordinary threshold again.
     'v3.3.0-rc.0-40': {
-        'armeabi-v7a': 3.3,
-        'aab': 3.0,
-        'x86_64': 2.9,
-        'universal': 2.3,
-        'arm64-v8a': 2.0,
-        'quest': 1.9,
+        'armeabi-v7a': 4.6,
+        'aab': 4.2,
+        'x86_64': 4.0,
+        'universal': 3.3,
+        'arm64-v8a': 2.7,
+        'quest': 2.6,
     },
 }
 
