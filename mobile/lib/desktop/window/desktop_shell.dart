@@ -7,6 +7,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/av2_badge.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/video_frame_timings.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
@@ -45,6 +46,8 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
     super.initState();
     // The AV2 videos of the library and of the shares get their thumbnails through it before any video opens
     ref.read(av2PlaybacksProvider);
+    // Every view of an AV2 video asks its thumbnail again once the AV2 decoder is installed, not its tiles alone
+    ref.read(av2ThumbnailVariantsProvider);
     _stopFrameTimings = watchVideoFrameTimings();
     _window.addListener(this);
     unawaited(

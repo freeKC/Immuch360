@@ -239,6 +239,12 @@ bool _showsFromDevice(BaseAsset asset) =>
         asset.hasRemote &&
         photoDecodePath(asset.name, fromServer: true) == PhotoDecodePath.serverPreview);
 
+/// Immuch360 Desktop: what else keys the thumbnail of a file of the device for the callers that give no variant of
+/// their own (the image of the viewer while a video opens, the overview of the timeline, the covers of the local
+/// albums), as the tiles give theirs; set by the window for the AV2 videos (av2ThumbnailVariantsProvider,
+/// lib/desktop/video/av2_badge.dart), null on the phones
+Object? Function(BaseAsset asset)? localThumbnailVariantOf;
+
 ImageProvider? getThumbnailImageProvider(
   BaseAsset asset, {
   Size size = kThumbnailResolution,
@@ -250,7 +256,7 @@ ImageProvider? getThumbnailImageProvider(
   AssetMediaSize remoteType = AssetMediaSize.thumbnail,
   bool edited = true,
 
-  /// What else keys the thumbnail of the file of the device (LocalThumbProvider.variant)
+  /// What else keys the thumbnail of the file of the device (LocalThumbProvider.variant), else [localThumbnailVariantOf]
   Object? localVariant,
 }) {
   if (_showsFromDevice(asset)) {
@@ -261,7 +267,7 @@ ImageProvider? getThumbnailImageProvider(
       assetType: asset.type,
       checksum: asset.checksum,
       decodeInDart: photoDecodePathOfAsset(asset) == PhotoDecodePath.dartTiff,
-      variant: localVariant,
+      variant: localVariant ?? localThumbnailVariantOf?.call(asset),
     );
   }
 

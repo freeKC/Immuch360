@@ -8,7 +8,10 @@
 // (desktop_local_image_api.dart). Flutter's image cache keeps the neutral one under the key of the tile, so the key of
 // an AV2 video of the library carries whether the decoder is installed (desktopAv2ThumbnailVariant): installed, the
 // tile asks for its image again and gets its frame without a restart of the app, and the neutral tile it had is
-// dropped from the cache (review of lot AD6, m1).
+// dropped from the cache (review of lot AD6, m1). The other views of the video ask its thumbnail without a variant of
+// their own (the image of the viewer while a video opens, the overview of the timeline, the covers of the local
+// albums): the window gives them the same one (av2ThumbnailVariantsProvider), so that they ask again too, at their
+// next build, whether a tile of the video was built when the decoder came or not (review of lot AD11, m2).
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -89,3 +92,25 @@ Object? desktopAv2ThumbnailVariant(WidgetRef ref, BaseAsset? asset) {
   });
   return ref.watch(av2DecoderInstalledProvider) ? av2DecoderThumbnailVariant : null;
 }
+
+/// The variant of the thumbnails of the AV2 videos for the views that give none (getThumbnailImageProvider, through
+/// localThumbnailVariantOf): [av2DecoderThumbnailVariant] for an AV2 video of the index while the AV2 decoder is
+/// installed, as its tile has. Read by the window from its start (desktop_shell.dart), which keeps it for the life of
+/// the app; the providers are read when a view asks, those of the tiles that watch them already
+final av2ThumbnailVariantsProvider = Provider<void>((ref) {
+  Object? variantOf(BaseAsset asset) {
+    final localId = asset.localId;
+    if (!asset.isVideo || localId == null) {
+      return null;
+    }
+    final isAv2 = ref.read(av2LibraryVideosProvider).valueOrNull?.contains(localId) ?? false;
+    return isAv2 && ref.read(av2DecoderInstalledProvider) ? av2DecoderThumbnailVariant : null;
+  }
+
+  localThumbnailVariantOf = variantOf;
+  ref.onDispose(() {
+    if (identical(localThumbnailVariantOf, variantOf)) {
+      localThumbnailVariantOf = null;
+    }
+  });
+});

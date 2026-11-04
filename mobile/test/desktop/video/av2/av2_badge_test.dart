@@ -13,6 +13,8 @@ import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
 import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
@@ -218,5 +220,47 @@ void main() {
         debugDefaultTargetPlatformOverride = null;
       }
     });
+
+    // Review of lot AD11, m2: the old key left the cache only for the videos whose tile was built when the decoder came;
+    // the other views ask the thumbnail without a variant of their own (the image of the viewer while a video opens,
+    // the overview of the timeline, the covers of the local albums) and kept the neutral tile until a restart
+    test(
+      'is asked again by every view of the video once the AV2 decoder is installed, its tile built then or not',
+      () async {
+        final container = ProviderContainer(
+          overrides: [
+            av2LibraryVideosProvider.overrideWith((ref) async => {'v1'}),
+            av2DecoderInstalledProvider.overrideWith((ref) => ref.watch(_installed)),
+          ],
+        );
+        LocalThumbProvider keyOf(BaseAsset asset) => getThumbnailImageProvider(asset)! as LocalThumbProvider;
+        try {
+          // The window keeps it from its start (desktop_shell.dart)
+          container.read(av2ThumbnailVariantsProvider);
+          await container.read(av2LibraryVideosProvider.future);
+          final video = _video('v1', 'clip.ivf');
+
+          final before = keyOf(video);
+          expect(before.variant, isNull, reason: 'the neutral tile, before the decoder');
+          container.read(_installed.notifier).state = true;
+          final after = keyOf(video);
+          expect(after, isNot(before), reason: 'not the key the neutral tile is kept under');
+          expect(
+            after,
+            getThumbnailImageProvider(video, localVariant: av2DecoderThumbnailVariant),
+            reason: 'the tile\'s',
+          );
+          expect(keyOf(_video('v2', 'clip.mp4')).variant, isNull, reason: 'a video the index does not say AV2');
+          expect(keyOf(_video('v1', 'clip.ivf', type: AssetType.image)).variant, isNull);
+        } finally {
+          container.dispose();
+        }
+        expect(
+          keyOf(_video('v1', 'clip.ivf')).variant,
+          isNull,
+          reason: 'without the window (a phone), never a variant',
+        );
+      },
+    );
   });
 }
