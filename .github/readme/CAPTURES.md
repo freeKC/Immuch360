@@ -103,3 +103,10 @@ Every picture of this section comes from a real output of Immuch360, made from a
   * `uc-03-ai3d.jpg`: the menu of a photo with "Make 3D (AI)" in Immuch360 Desktop 3.3.0-rc.0-desktop.19 on Linux (the published .deb, run on 1 November 2026 with a scratch profile), on the backplate IMG_0929 of "Table Mountain 1" by Greg Zaal and Rico Cilliers (CC0); and, as the photos the computer starts from, the backplates IMG_0929 of "Table Mountain 1" by Greg Zaal and Rico Cilliers, DSC08466 of "Umhlanga Sunrise" by Greg Zaal and 10 of "Meadow" by Sergej Majboroda (all CC0).
   * `uc-04-drone.jpg`: the backplate IMG_0929 of "Table Mountain 1" by Greg Zaal and Rico Cilliers (CC0) in the phone and the TV, standing for the drone's picture: not a capture.
   * The seven other cards: no capture and no photo.
+
+## How to cards, release 41
+
+* Files: `howto/splat-viewer.jpg`, `howto/splat-maker.jpg`, `howto/splat-photo.jpg` and `howto/av2-on-computer.jpg`, 1600 x 840, JPEG quality 84, for the how tos of the README that build 41 and desktop build 21 bring (the Gaussian splats on a phone, a tablet or a computer, the splat scenes made from photos or a video, the splat scenes kept on an Immich server, the AV2 videos), and its translations. Composed on 4 November 2026 like the use case cards above, from illustrations generated for the project with an AI image model the same day: no capture of the app, no text in the scenes, no logo or brand of another company, no face.
+* The row of three cards carries the platform logos of `logos/` on white chips; the AV2 card names the systems in its label instead.
+* `howto/av2-on-computer.jpg` holds, in its row, the frame at 45 s of "Orbit around Fremantle South Mole Lighthouse at sunset.webm" by JamesBromberger, Wikimedia Commons, CC0 1.0 (the film the AV2 test clips of the project come from). `howto/splat-photo.jpg` holds, on the TV of its row, a crop of its own generated picture. The two others hold no other picture.
+* Each card, with its scene, its row and its sources: [howto/SOURCES.md](howto/SOURCES.md).
