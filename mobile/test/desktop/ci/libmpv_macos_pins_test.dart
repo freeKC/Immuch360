@@ -1,10 +1,14 @@
 // The pins of the macOS libmpv build (.github/desktop/libmpv-macos/packages.lock.nix): FFmpeg, mpv, libplacebo,
 // fast_float and the Vulkan headers at the commits of the Windows build (the defaults of immuch360-libmpv.yml and
 // .github/desktop/libmpv/sources.lock), every archive pinned by its SHA-256, and the overlay script copying every file
-// of the folder that the recipe reads.
+// of the folder that the recipe reads. Then the FFmpeg options of the overlay (mk-pkg-ffmpeg-meson.build): the
+// yuv4mpegpipe demuxer and the rawvideo decoder with which libmpv reads the y4m of the AV2 decoder, in a copy of the
+// recipe's meson.build that differs from it by the lines that say Immuch360 only, and the overlay run on a recipe.
 
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -14,6 +18,8 @@ final String _macosDir = p.join(ciScriptsDir, 'libmpv-macos');
 final File _lock = File(p.join(_macosDir, 'packages.lock.nix'));
 final File _windowsLock = File(p.join(ciScriptsDir, 'libmpv', 'sources.lock'));
 final File _workflow = File(p.join(repositoryRoot, '.github', 'workflows', 'immuch360-libmpv.yml'));
+final File _ffmpegMeson = File(p.join(_macosDir, 'mk-pkg-ffmpeg-meson.build'));
+final String _overlay = p.join(_macosDir, 'apply_overlay.sh');
 
 final Object _skip = !_lock.existsSync() || !_windowsLock.existsSync() || !_workflow.existsSync()
     ? 'no libmpv pins in $ciScriptsDir'
@@ -84,16 +90,141 @@ void main() {
       }
     });
 
-    test('the overlay script copies every .nix file and patch of the folder', () {
-      final script = File(p.join(_macosDir, 'apply_overlay.sh')).readAsStringSync();
+    test('the overlay script copies every .nix file, patch and meson.build of the folder', () {
+      final script = File(_overlay).readAsStringSync();
       final files = Directory(_macosDir)
           .listSync()
           .whereType<File>()
           .map((file) => p.basename(file.path))
-          .where((name) => name.endsWith('.nix') || name.endsWith('.patch'));
+          .where((name) => name.endsWith('.nix') || name.endsWith('.patch') || name.endsWith('.build'));
+      expect(files, contains('mk-pkg-ffmpeg-meson.build'));
       for (final name in files) {
         expect(script, contains('\$here/$name'), reason: '$name is not copied over the recipe');
       }
     });
   }, skip: _skip);
+
+  group('FFmpeg of the macOS libmpv', () {
+    test('the default video flavor reads the y4m of the AV2 decoder over HTTP: yuv4mpegpipe and rawvideo', () {
+      final meson = _readMeson();
+      expect(
+        _mesonList(meson, 'video_default_options'),
+        containsAll(['--enable-demuxer=yuv4mpegpipe', '--enable-decoder=rawvideo']),
+      );
+      // The protocols are in the audio list, which the default flavor builds into the video variant too
+      expect(
+        _mesonList(meson, 'audio_default_options'),
+        containsAll(['--enable-protocol=http', '--enable-protocol=tcp']),
+      );
+      expect(
+        meson,
+        contains(
+          "if flavor == 'default'\n    options += audio_default_options\n    if variant == 'video'\n"
+          '        options += video_default_options\n',
+        ),
+      );
+    });
+
+    test('nothing GPL or nonfree in the default flavor', () {
+      final meson = _readMeson();
+      for (final list in [
+        'common_options',
+        'audio_common_options',
+        'video_common_options',
+        'audio_default_options',
+        'video_default_options',
+      ]) {
+        expect(
+          _mesonList(meson, list),
+          isNot(anyOf(contains('--enable-gpl'), contains('--enable-nonfree'))),
+          reason: list,
+        );
+      }
+    });
+
+    test("the copy is the recipe's meson.build and the lines that say Immuch360, checked by its SHA-256", () {
+      final copy = _readMeson();
+      final pin = RegExp(
+        r'^ffmpeg_meson_sha256=([0-9a-f]{64})$',
+        multiLine: true,
+      ).firstMatch(File(_overlay).readAsStringSync());
+      expect(pin, isNotNull, reason: 'apply_overlay.sh checks the SHA-256 of the meson.build it replaces');
+      expect(sha256.convert(utf8.encode(_recipeMeson(copy))).toString(), pin![1]);
+      final added = [
+        for (final line in copy.split('\n').where((line) => line.contains('Immuch360')))
+          if (RegExp(r"^\s+'([^']+)',").firstMatch(line) case final option?) option[1],
+      ];
+      expect(added, unorderedEquals(['--enable-decoder=rawvideo', '--enable-demuxer=yuv4mpegpipe']));
+    });
+  }, skip: _ffmpegMeson.existsSync() || _lock.existsSync() ? false : 'no libmpv overlay in $ciScriptsDir');
+
+  group('the overlay over a recipe', () {
+    late Directory recipe;
+    late String copy;
+
+    setUp(() {
+      copy = _readMeson();
+      const minVersion = "min_version   = '-mmacosx-version-min=10.9'\n";
+      recipe = fixtureTree({
+        for (final file in [
+          'packages.lock.nix',
+          'nix/packages/mk-pkg-ffmpeg/default.nix',
+          'nix/packages/mk-pkg-mpv/default.nix',
+          'nix/packages/mk-out-libs/default.nix',
+          'nix/packages/mk-pkg-libpng/default.nix',
+          'patches/README',
+        ])
+          file: '# the recipe\'s\n',
+        'nix/packages/mk-pkg-ffmpeg/meson.build': _recipeMeson(copy),
+        'cross-files/macos-arm64.ini': minVersion,
+        'cross-files/macos-amd64.ini': minVersion,
+      });
+    });
+    tearDown(() => recipe.deleteSync(recursive: true));
+
+    File recipeFile(String path) => File(p.joinAll([recipe.path, ...path.split('/')]));
+
+    test('puts the FFmpeg options over the meson.build it was made from', () {
+      final run = Process.runSync('bash', [_overlay, recipe.path]);
+      expect(run.exitCode, 0, reason: '${run.stdout}${run.stderr}');
+      expect(recipeFile('nix/packages/mk-pkg-ffmpeg/meson.build').readAsStringSync(), copy);
+      expect(recipeFile('packages.lock.nix').readAsStringSync(), _lock.readAsStringSync());
+      expect(recipeFile('cross-files/macos-arm64.ini').readAsStringSync(), contains('-mmacosx-version-min=12.0'));
+    });
+
+    test('refuses a recipe whose FFmpeg meson.build is not the one the copy was made from', () {
+      final meson = recipeFile('nix/packages/mk-pkg-ffmpeg/meson.build');
+      final changed = '${meson.readAsStringSync()}# a newer recipe\n';
+      meson.writeAsStringSync(changed);
+      final run = Process.runSync('bash', [_overlay, recipe.path]);
+      expect(run.exitCode, isNot(0));
+      expect('${run.stdout}${run.stderr}', contains('mk-pkg-ffmpeg/meson.build'));
+      expect(meson.readAsStringSync(), changed);
+    });
+  }, skip: _skipOverlay);
 }
+
+/// The overlay runs on the runners of the workflow (Linux and macOS); on Windows "bash" may be WSL's launcher
+final Object _skipOverlay = Platform.isWindows
+    ? 'apply_overlay.sh runs on Linux and macOS'
+    : !_ffmpegMeson.existsSync() && !_lock.existsSync()
+    ? 'no libmpv overlay in $ciScriptsDir'
+    : false;
+
+/// The FFmpeg meson.build of the overlay, with the line ends of git (a Windows checkout may write CRLF)
+String _readMeson() => _ffmpegMeson.readAsStringSync().replaceAll('\r\n', '\n');
+
+/// The quoted options of the list [name] of a meson.build
+List<String> _mesonList(String meson, String name) {
+  final list = RegExp('^$name = \\[\n(.*?)^\\]', multiLine: true, dotAll: true).firstMatch(meson);
+  if (list == null) {
+    throw StateError('no list $name in ${_ffmpegMeson.path}');
+  }
+  return [
+    for (final line in list[1]!.split('\n'))
+      if (RegExp(r"^\s+'([^']+)',").firstMatch(line) case final option?) option[1]!,
+  ];
+}
+
+/// The recipe's own meson.build as the copy holds it: the copy without its lines that say Immuch360
+String _recipeMeson(String copy) => copy.split('\n').where((line) => !line.contains('Immuch360')).join('\n');

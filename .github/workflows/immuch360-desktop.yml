@@ -17,8 +17,9 @@ name: Immuch360 Desktop
 #   linux-packages each package installed in a clean container of a distribution, its libraries checked, and the
 #                  installed app playing a video there
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
-#                  Launch Services, libmpv and its notices checked in the app, and a self check of the app on the
-#                  runner (a folder and a video on the command line, the keychain, five seconds of libmpv)
+#                  Launch Services, libmpv and its notices checked in the app, the libmpv of the app reading a y4m as
+#                  the AV2 decoder serves it (check_y4m.py), and a self check of the app on the runner (a folder and a
+#                  video on the command line, the keychain, five seconds of libmpv, the y4m over HTTP)
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
 #                  fake sd-cli and the probes of a generation and of a panorama as the artifact
 #                  Immuch360-AI-tools-windows-x64, the release build, the ZIP and the installer (Inno Setup) for the
@@ -1152,6 +1153,19 @@ jobs:
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
 
+      # The y4m that the AV2 decoder of the app serves libmpv over HTTP on 127.0.0.1: the frameworks of the app read it,
+      # 8 and 10 bit, from a file and over HTTP with exact seeks, on each architecture this runner runs
+      # (.github/desktop/libmpv-macos/check_y4m.py, as immuch360-libmpv.yml checks a release before it is published).
+      # The frameworks of the app keep no headers: mpv's client.h comes from the xcframework that Swift Package Manager
+      # downloaded for the build
+      - name: libmpv of the app reads a y4m
+        run: |
+          set -o pipefail
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          python3 .github/desktop/libmpv-macos/check_y4m.py run --frameworks "$app/Contents/Frameworks" \
+            --search-headers mobile/build/macos "$HOME/Library/Developer/Xcode/DerivedData" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+
       # The Rust JPEG codec of the AI features, a framework of both slices made from what the hook of
       # mobile/packages/immuch_sbs_codec built; the otool check above covers it with the other frameworks
       - name: The JPEG codec of the AI features in the app
@@ -1207,8 +1221,10 @@ jobs:
       # command line, with the secure storage written and read back and the video played five seconds by libmpv; then
       # the video alone, which opens in the viewer; then the photo the way the Finder opens a file ("Open with", a
       # double click): Launch Services starts the app and hands the photo over by an Apple event
-      # (AppDelegate.application(_:open:)), after which the video is handed to the copy that runs. A capture of the
-      # screen each time. The window server of a runner is not a Mac on a desk: the next step says what passed
+      # (AppDelegate.application(_:open:)), after which the video is handed to the copy that runs. Last, a start
+      # without arguments that plays the 10 bit y4m of check_y4m.py over HTTP from 127.0.0.1, the stream the AV2 decoder
+      # serves, in the app's own player. A capture of the screen each time. The window server of a runner is not a Mac
+      # on a desk: the next step says what passed
       - name: Self check on the runner
         id: self_check
         continue-on-error: true
@@ -1297,6 +1313,22 @@ jobs:
           fi
           cat "$out/finder.state"
           tail -n 40 "$out/finder.log" 2>/dev/null || true
+
+          # The y4m over HTTP, ten seconds of it, from a server on 127.0.0.1 that answers ranges as the AV2 decoder does
+          python3 .github/desktop/libmpv-macos/check_y4m.py serve --seconds 10 --port-file "$RUNNER_TEMP/y4m.port" \
+            > "$out/y4m-server.log" 2>&1 &
+          y4m_server=$!
+          for _ in $(seq 1 20); do
+            [ -s "$RUNNER_TEMP/y4m.port" ] && break
+            sleep 0.5
+          done
+          if [ -s "$RUNNER_TEMP/y4m.port" ]; then
+            IMMUCH360_SELF_CHECK_VIDEO="http://127.0.0.1:$(cat "$RUNNER_TEMP/y4m.port")/fixture-10bit.y4m" run_app y4m
+          else
+            echo "y4m: the server of the fixture did not start" > "$out/y4m.state"
+            cat "$out/y4m-server.log"
+          fi
+          kill "$y4m_server" 2>/dev/null || true
           cp "$media/test-photo.jpg" "$out/"
           # The crash reports macOS wrote meanwhile, if any (ReportCrash writes them a few seconds after the crash)
           sleep 10
