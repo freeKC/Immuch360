@@ -582,7 +582,10 @@ void main() {
       // Photos, a video of a place, a video of an object (lot SPF2): a Retry would place the same ones
       expect(
         text(ImmersiveErrorCode.notEnoughOverlap, '12/150'),
-        startsWith('Only 12 of 150 photos could be placed in 3D, and a Retry would place the same ones. Add photos'),
+        startsWith(
+          'Only 12 of 150 photos could be placed in 3D, and a Retry would place the same ones. Make the scene again '
+          'with more photos',
+        ),
       );
       expect(
         conversionFailureText(t, ImmersiveErrorCode.notEnoughOverlap, '12/150', fromVideo: true),
@@ -598,7 +601,10 @@ void main() {
           fromVideo: true,
           subject: SplatSubject.object,
         ),
-        contains('Film the object again from 20 to 30 cm away at least'),
+        allOf(
+          contains('Film the object again from 20 to 30 cm away at least'),
+          contains('if the object is plain, set it on a surface with a pattern'),
+        ),
       );
       for (final message in ['0/150', null, 'garbage']) {
         expect(

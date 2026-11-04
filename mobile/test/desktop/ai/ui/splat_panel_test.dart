@@ -452,8 +452,8 @@ void main() {
         'conversion-14',
         find.text(
           'Only 40 of 139 frames could be placed in 3D, and a Retry would place the same ones. Film the object again '
-          'from 20 to 30 cm away at least, so that it stays sharp, set a plain object on a surface with a pattern (a '
-          'newspaper, a printed cloth), and walk around it several times, at two heights.',
+          'from 20 to 30 cm away at least, so that it stays sharp, and walk around it several times, at two heights; '
+          'if the object is plain, set it on a surface with a pattern (a newspaper, a printed cloth).',
         ),
       ),
       findsOneWidget,
@@ -472,8 +472,9 @@ void main() {
       inRow(
         'conversion-16',
         find.text(
-          'Only 20 of 96 photos could be placed in 3D, and a Retry would place the same ones. Add photos: take them a '
-          'step apart, each one seeing most of what the previous one saw, and avoid plain walls, windows and mirrors.',
+          'Only 20 of 96 photos could be placed in 3D, and a Retry would place the same ones. Make the scene again '
+          'with more photos: take them a step apart, each one seeing most of what the previous one saw, and avoid '
+          'plain walls, windows and mirrors.',
         ),
       ),
       findsOneWidget,
