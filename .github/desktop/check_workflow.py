@@ -34,7 +34,9 @@ stable-diffusion.cpp never touches a release of the app.
 
 The AV2 decoder of the app (immuch360-av2 on dav2d, plan of the 2nd of November 2026, section 3) is built by the jobs
 whose names start with "av2" (av2-windows, av2-linux, av2-macos), held to the same rules: windows-2022, ubuntu-22.04
-and macos-15, an "if:" that reads inputs.av2, and no artifact Immuch360-Desktop-*.
+and macos-15, an "if:" that reads inputs.av2, and no artifact Immuch360-Desktop-*. With --release, the with_av2 input
+(lot AD11: the Windows program signed for av2-decoder-1) is held as with_sdcpp is: passed to the build as
+"av2: ${{ inputs.with_av2 == true }}" and nothing else, and the job that writes the contents never runs with it.
 
 .github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
 .github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
@@ -206,18 +208,29 @@ def component_jobs(lines: list, owners: list, prefix: str, runners: dict, what: 
 
 def release_sdcpp(workflow: str, lines: list, owners: list) -> list:
     """A release workflow that can build stable-diffusion.cpp never gives it to a release of the app"""
-    if not re.search(r'^\s+with_sdcpp:\s*$', workflow, re.MULTILINE):
+    return release_component(workflow, lines, owners, 'with_sdcpp', 'sdcpp')
+
+
+def release_av2(workflow: str, lines: list, owners: list) -> list:
+    """Nor the AV2 decoder it builds and signs for av2-decoder-1"""
+    return release_component(workflow, lines, owners, 'with_av2', 'av2')
+
+
+def release_component(workflow: str, lines: list, owners: list, flag: str, key: str) -> list:
+    """The input [flag] of a release workflow goes to the build as [key] only, and the job that writes the contents
+    never runs with it nor with sign_test"""
+    if not re.search(rf'^\s+{flag}:\s*$', workflow, re.MULTILINE):
         return []
     found = []
+    wanted = f'${{{{ inputs.{flag} == true }}}}'
     for job, body in job_lines(lines, owners).items():
         for line in body:
-            given = re.match(r'^\s+sdcpp:\s*(.+?)\s*$', line)
-            if given and given.group(1) != '${{ inputs.with_sdcpp == true }}':
-                found.append(f'the job {job} passes sdcpp: {given.group(1)}; only '
-                             '"${{ inputs.with_sdcpp == true }}" (never on a tag)')
+            given = re.match(rf'^\s+{key}:\s*(.+?)\s*$', line)
+            if given and given.group(1) != wanted:
+                found.append(f'the job {job} passes {key}: {given.group(1)}; only "{wanted}" (never on a tag)')
         if any(re.match(r'^\s+contents:\s*write\s*$', line) for line in body):
             condition = job_if(body).replace(' ', '')
-            for name in ('with_sdcpp', 'sign_test'):
+            for name in (flag, 'sign_test'):
                 if f'!inputs.{name}' not in condition:
                     found.append(f'the job {job} writes the contents and may run with {name}: its "if:" must hold '
                                  f'!inputs.{name}')
@@ -284,6 +297,7 @@ def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 
         found += signing_job_writes(lines, owners)
         found += release_triggers(workflow, tag_prefix)
         found += release_sdcpp(workflow, lines, owners)
+        found += [line for line in release_av2(workflow, lines, owners) if line not in found]
     return found
 
 

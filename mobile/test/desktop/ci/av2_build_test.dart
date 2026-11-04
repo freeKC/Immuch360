@@ -127,6 +127,28 @@ Uint8List _fatMachO(List<(int, Uint8List)> slices) {
   return out.toBytes();
 }
 
+/// [unsigned], a PE file of [fakePe], as signtool leaves it once signed: the file padded to 8 bytes, a certificate
+/// table appended, the certificate directory of the optional header pointing at it and a checksum written.
+/// [changed] also changes a byte of the program, which a signature never does
+Uint8List _signedPe(Uint8List unsigned, {bool changed = false}) {
+  final padded = (unsigned.length + 7) ~/ 8 * 8;
+  final certificate = utf8.encode('WIN_CERTIFICATE of APROGSYS, issued by Microsoft ID Verified CS EOC CA 03');
+  final bytes = Uint8List(padded + certificate.length)
+    ..setRange(0, unsigned.length, unsigned)
+    ..setRange(padded, padded + certificate.length, certificate);
+  final data = ByteData.sublistView(bytes);
+  final optional = data.getUint32(0x3C, Endian.little) + 24;
+  final directories = optional + 112;
+  data
+    ..setUint32(optional + 64, 0x0012ABCD, Endian.little)
+    ..setUint32(directories + 4 * 8, padded, Endian.little)
+    ..setUint32(directories + 4 * 8 + 4, certificate.length, Endian.little);
+  if (changed) {
+    bytes[0x200] ^= 0xFF;
+  }
+  return bytes;
+}
+
 /// The files of a ZIP archive, read by the Python of the tests (the app has no ZIP package of its own)
 Map<String, List<int>> _unzip(String path) {
   const script =
@@ -596,6 +618,116 @@ void main() {
           expect(loaded.exitCode, 1, reason: '$name: $loaded');
           expect(loaded.output, contains('(x86_64) loads /usr/local/lib/libx265.dylib, not a library of the system'));
         }
+      });
+
+      // Lot AD11: the sign-windows job of the release workflow signs the program of the archive, then puts it back
+      test(
+        'Windows: the signed program goes back into the archive with new sums, and the archive passes its check',
+        () {
+          final root = tree({});
+          final unsigned = fakePe(imports: ['KERNEL32.dll', 'WS2_32.dll']);
+          final out = Directory(p.join(root.path, 'dist'));
+          expect(pack('windows-x64', program(root, 'immuch360-av2.exe', unsigned), out: out).exitCode, 0);
+          final archive = p.join(out.path, 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip');
+          final before = _unzip(archive);
+
+          final extracted = Directory(p.join(root.path, 'to-sign'));
+          final taken = build(['program', '--system', 'windows-x64', '--archive', archive, '--out', extracted.path]);
+          expect(taken.exitCode, 0, reason: '$taken');
+          final exe = File(p.join(extracted.path, 'immuch360-av2.exe'));
+          expect(exe.readAsBytesSync(), unsigned);
+          exe.writeAsBytesSync(_signedPe(unsigned));
+
+          final signedOut = Directory(p.join(root.path, 'signed'));
+          ScriptRun sign() => build([
+            'signed',
+            '--system',
+            'windows-x64',
+            '--archive',
+            archive,
+            '--program',
+            exe.path,
+            '--out',
+            signedOut.path,
+          ]);
+          final run = sign();
+          expect(run.exitCode, 0, reason: '$run');
+          final signedArchive = File(p.join(signedOut.path, p.basename(archive)));
+          final bytes = signedArchive.readAsBytesSync();
+          final files = _unzip(signedArchive.path);
+          expect(files.keys.toSet(), before.keys.toSet());
+          expect(files['immuch360-av2.exe'], _signedPe(unsigned));
+          for (final name in before.keys.where((name) => !name.endsWith('.txt') || name.startsWith('licenses/'))) {
+            if (name != 'immuch360-av2.exe') {
+              expect(files[name], before[name], reason: name);
+            }
+          }
+          final info = utf8.decode(files['BUILD-INFO.txt']!);
+          expect(info, startsWith(utf8.decode(before['BUILD-INFO.txt']!)));
+          expect(info, contains('Signed: immuch360-av2.exe by APROGSYS with Azure Artifact Signing'));
+          final sums = utf8.decode(files['SHA256SUMS.txt']!);
+          expect(sums, isNot(utf8.decode(before['SHA256SUMS.txt']!)));
+          final digest = RegExp(r'^([0-9a-f]{64})  immuch360-av2\.exe$', multiLine: true).firstMatch(sums)!.group(1);
+          final hashed = Process.runSync(python!.first, [
+            ...python!.skip(1),
+            '-c',
+            'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())',
+            exe.path,
+          ]);
+          expect('${hashed.stdout}'.trim(), digest);
+          final listed = File(p.join(signedOut.path, 'SHA256SUMS')).readAsStringSync();
+          expect(listed, matches(RegExp(r'^[0-9a-f]{64}  Immuch360-av2-decoder-30140b5-1-windows-x64\.zip\n$')));
+          final check = build(['check', '--system', 'windows-x64', '--archive', signedArchive.path]);
+          expect(check.exitCode, 0, reason: '$check');
+          // The same signed program gives the same archive
+          expect(sign().exitCode, 0);
+          expect(signedArchive.readAsBytesSync(), bytes);
+        },
+      );
+
+      test('a program not signed, changed beyond its signature, or signed twice is not put into the archive', () {
+        final root = tree({});
+        final unsigned = fakePe(imports: ['KERNEL32.dll']);
+        final out = Directory(p.join(root.path, 'dist'));
+        expect(pack('windows-x64', program(root, 'immuch360-av2.exe', unsigned), out: out).exitCode, 0);
+        final archive = p.join(out.path, 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip');
+        ScriptRun sign(List<int> exe, String archivePath, String folder) {
+          final file = File(p.join(root.path, '$folder.exe'))..writeAsBytesSync(exe);
+          return build([
+            'signed',
+            '--system',
+            'windows-x64',
+            '--archive',
+            archivePath,
+            '--program',
+            file.path,
+            '--out',
+            p.join(root.path, folder),
+          ]);
+        }
+
+        final same = sign(unsigned, archive, 'same');
+        expect(same.exitCode, 1, reason: '$same');
+        expect(same.output, contains('is the program of the archive as it is: not signed'));
+        final changed = sign(_signedPe(unsigned, changed: true), archive, 'changed');
+        expect(changed.exitCode, 1, reason: '$changed');
+        expect(
+          changed.output,
+          contains(
+            'is not the program of Immuch360-av2-decoder-30140b5-1-windows-x64.zip with a '
+            'signature added',
+          ),
+        );
+        expect(sign(_signedPe(unsigned), archive, 'once').exitCode, 0);
+        final twice = sign(
+          _signedPe(_signedPe(unsigned)),
+          p.join(root.path, 'once', 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip'),
+          'twice',
+        );
+        expect(twice.exitCode, 1, reason: '$twice');
+        final linux = build(['program', '--system', 'linux-x64', '--archive', archive, '--out', root.path]);
+        expect(linux.exitCode, 1);
+        expect(linux.output, contains('only the Windows program is signed'));
       });
 
       test('an archive changed after the pack fails its check', () {

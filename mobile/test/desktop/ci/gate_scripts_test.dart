@@ -187,6 +187,43 @@ jobs:
       - run: python3 .github/desktop/desktop_release.py
 ''';
 
+/// The release workflow with the with_av2 input too (lot AD11 of the AV2 videos): the AV2 decoder built and its Windows
+/// program signed for av2-decoder-1, never for a release of the app
+const _releaseWithAv2 = '''
+name: Release fixture
+on:
+  push:
+    tags: ['desktop-v*']
+  workflow_dispatch:
+    inputs:
+      sign_test:
+        type: boolean
+      with_sdcpp:
+        type: boolean
+      with_av2:
+        type: boolean
+permissions: {}
+jobs:
+  build:
+    uses: ./.github/workflows/immuch360-desktop.yml
+    permissions:
+      contents: read
+    with:
+      sdcpp: \${{ inputs.with_sdcpp == true }}
+      av2: \${{ inputs.with_av2 == true }}
+  release:
+    needs: build
+    if: \${{ !inputs.sign_test && !inputs.with_sdcpp && !inputs.with_av2 }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 .github/desktop/desktop_release.py
+''';
+
 const _mise = '''
 [tools]
 java = "21.0.2"
@@ -1023,6 +1060,30 @@ abstract class SyncEvents {
         }
         // Without the input, a release workflow is held to nothing more
         expect(release(_releaseWorkflow).exitCode, 0);
+      });
+
+      test('with_av2 goes to the build only, and the job that writes never runs with it', () {
+        final run = release(_releaseWithAv2);
+        expect(run.exitCode, 0, reason: '$run');
+        for (final (workflow, message) in [
+          (
+            _releaseWithAv2.replaceFirst('av2: \${{ inputs.with_av2 == true }}', 'av2: true'),
+            'the job build passes av2: true',
+          ),
+          (
+            _releaseWithAv2.replaceFirst(' && !inputs.with_av2', ''),
+            'the job release writes the contents and may run with with_av2',
+          ),
+          (
+            _releaseWithAv2.replaceFirst('!inputs.sign_test && ', ''),
+            'the job release writes the contents and may run with sign_test',
+          ),
+        ]) {
+          expect(workflow, isNot(_releaseWithAv2));
+          final refused = release(workflow);
+          expect(refused.exitCode, 1, reason: '$refused');
+          expect(refused.output, contains(message));
+        }
       });
 
       test('lets the credentials of the signing account into the steps of sign-windows that run a command only', () {

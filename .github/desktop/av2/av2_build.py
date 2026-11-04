@@ -34,6 +34,14 @@ a name that no release of the app attaches.
   av2_build.py help --output FILE [--fixture FILE]
       the output of immuch360-av2 --help compared with mobile/test/fixtures/av2/immuch360_av2_help.txt, the text the
       app's launcher is frozen by
+  av2_build.py program --system windows-x64 --archive FILE --out DIR [--github-output]
+      the program of the archive, written in DIR for the release workflow to sign (lot AD11: av2-decoder-1)
+  av2_build.py signed --system windows-x64 --archive FILE --program FILE --out DIR [--github-output]
+      the archive again with the program signed: FILE must be the program of the archive with an Authenticode
+      signature added and nothing else changed (the two equal once the checksum of the PE header, its certificate
+      directory and the certificate table at its end are taken out); BUILD-INFO.txt says it is signed, SHA256SUMS.txt
+      gives the new sums, names sorted and dates fixed as pack writes them, and SHA256SUMS next to it in DIR names
+      the archive with its SHA-256
 
 nasm is pinned on every system, at the version of the lock: on Windows the build of nasm.us, on Linux and macOS its
 source of nasm.us built on the runner, each checked against the SHA-256 of the lock. BUILD-INFO.txt gives its version
@@ -554,6 +562,107 @@ def static_problems(system: str, files: dict, programs: set) -> list:
     return problems
 
 
+# --- the signed program of Windows ---------------------------------------------------------------------------------
+
+# What BUILD-INFO.txt of a signed archive says (signed by the sign-windows job of immuch360-desktop-release.yml)
+SIGNED_LINE = ('Signed: immuch360-av2.exe by APROGSYS with Azure Artifact Signing (Authenticode, SHA-256, RFC 3161 '
+               'timestamp of Microsoft)')
+
+
+def pe_without_signature(data: bytes) -> bytes:
+    """[data], a PE file, without what an Authenticode signature changes: the checksum of its optional header and its
+    certificate directory set to 0, and the file cut where its certificate table starts"""
+    if len(data) < 0x40 or data[:2] != b'MZ':
+        raise Failure('not a PE file')
+    pe, = struct.unpack_from('<I', data, 0x3C)
+    if data[pe:pe + 4] != b'PE\0\0':
+        raise Failure('no PE signature')
+    optional = pe + 24
+    magic, = struct.unpack_from('<H', data, optional)
+    if magic not in (0x20B, 0x10B):
+        raise Failure(f'unknown optional header {magic:#x}')
+    directories = optional + (112 if magic == 0x20B else 96)
+    count, = struct.unpack_from('<I', data, directories - 4)
+    out = bytearray(data)
+    struct.pack_into('<I', out, optional + 64, 0)
+    if count > 4:
+        table, size = struct.unpack_from('<II', data, directories + 4 * 8)
+        struct.pack_into('<II', out, directories + 4 * 8, 0, 0)
+        if table and size:
+            if table + size > len(data):
+                raise Failure('the certificate table goes beyond the end of the file')
+            out = out[:table]
+    return bytes(out)
+
+
+def only_signature_added(unsigned: bytes, signed: bytes) -> bool:
+    """Whether [signed] is [unsigned] with a signature added: the same bytes once both are without their signature,
+    but for the zeros that align the certificate table on 8 bytes"""
+    bare, bare_signed = pe_without_signature(unsigned), pe_without_signature(signed)
+    return bare_signed[:len(bare)] == bare and not bare_signed[len(bare):].strip(b'\0') \
+        and len(bare_signed) - len(bare) < 8
+
+
+def windows_archive(args, lock: dict) -> dict:
+    if args.system != 'windows-x64':
+        raise Failure('only the Windows program is signed')
+    if args.archive.name != artifact_name(lock, args.system):
+        raise Failure(f'{args.archive.name}: not {artifact_name(lock, args.system)}')
+    with zipfile.ZipFile(args.archive) as bundle:
+        files = {info.filename: bundle.read(info) for info in bundle.infolist() if not info.is_dir()}
+    if PROGRAM[args.system] not in files:
+        raise Failure(f'no {PROGRAM[args.system]} in {args.archive.name}')
+    return files
+
+
+def command_program(args) -> int:
+    lock = load_lock(args.lock)
+    files = windows_archive(args, lock)
+    name = PROGRAM[args.system]
+    args.out.mkdir(parents=True, exist_ok=True)
+    target = args.out / name
+    target.write_bytes(files[name])
+    print(f'{target}: {len(files[name])} bytes, SHA-256 {sha256(files[name])}, from {args.archive.name}')
+    if args.github_output and os.environ.get('GITHUB_OUTPUT'):
+        with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as stream:
+            stream.write(f'program={target}\n')
+    return 0
+
+
+def command_signed(args) -> int:
+    lock = load_lock(args.lock)
+    files = windows_archive(args, lock)
+    name = PROGRAM[args.system]
+    unsigned, signed = files[name], args.program.read_bytes()
+    if signed == unsigned:
+        raise Failure(f'{args.program.name} is the program of the archive as it is: not signed')
+    if not only_signature_added(unsigned, signed):
+        raise Failure(f'{args.program.name} is not the program of {args.archive.name} with a signature added')
+    info = files.get('BUILD-INFO.txt', b'').decode('utf-8')
+    if SIGNED_LINE in info:
+        raise Failure(f'{args.archive.name} is signed already')
+    files[name] = signed
+    files['BUILD-INFO.txt'] = (info.rstrip('\n') + '\n' + SIGNED_LINE + '\n').encode('utf-8')
+    files['SHA256SUMS.txt'] = sums_text(files)
+    problems = static_problems(args.system, {name: signed}, {name})
+    if problems:
+        for problem in problems:
+            print(f'::error::{problem}')
+        return 1
+    target = args.out / args.archive.name
+    write_archive(target, files, {name})
+    for entry in sorted(files):
+        print(f'{len(files[entry]):>10}  {sha256(files[entry])}  {entry}' + ('  (program)' if entry == name else ''))
+    digest = sha256(target.read_bytes())
+    (args.out / 'SHA256SUMS').write_text(f'{digest}  {target.name}\n', encoding='utf-8', newline='\n')
+    print(f'{target.name}: {target.stat().st_size} bytes, SHA-256 {digest}, {name} signed '
+          f'({len(signed) - len(unsigned)} bytes of signature)')
+    if args.github_output and os.environ.get('GITHUB_OUTPUT'):
+        with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as stream:
+            stream.write(f'archive={target}\nsha256={digest}\nsize={target.stat().st_size}\nname={target.name}\n')
+    return 0
+
+
 # --- check -----------------------------------------------------------------------------------------------------------
 
 def normalized_help(text: str) -> list:
@@ -705,11 +814,22 @@ def main(argv=None) -> int:
     shown = commands.add_parser('help')
     shown.add_argument('--output', type=pathlib.Path, required=True)
     shown.add_argument('--fixture', type=pathlib.Path, default=HELP_FIXTURE)
+    extract = commands.add_parser('program')
+    extract.add_argument('--system', choices=SYSTEMS, required=True)
+    extract.add_argument('--archive', type=pathlib.Path, required=True)
+    extract.add_argument('--out', type=pathlib.Path, required=True)
+    extract.add_argument('--github-output', action='store_true')
+    signed = commands.add_parser('signed')
+    signed.add_argument('--system', choices=SYSTEMS, required=True)
+    signed.add_argument('--archive', type=pathlib.Path, required=True)
+    signed.add_argument('--program', type=pathlib.Path, required=True)
+    signed.add_argument('--out', type=pathlib.Path, required=True)
+    signed.add_argument('--github-output', action='store_true')
     args = parser.parse_args(argv)
     try:
         return {'lock': command_lock, 'sources': command_sources, 'build': command_build,
                 'licences': command_licences, 'pack': command_pack, 'check': command_check,
-                'help': command_help}[args.command](args)
+                'help': command_help, 'program': command_program, 'signed': command_signed}[args.command](args)
     except (Failure, subprocess.CalledProcessError) as error:
         print(f'::error::{error}')
         return 1
