@@ -404,14 +404,14 @@ void main() {
     });
 
     test(
-      'the AV2 decoder: three archives of av2-decoder-1, those of the CI on the branch of the test build, never in the '
+      'the AV2 decoder: three archives of av2-decoder-1, those of its record (the Windows program signed), never in the '
       'tile of the AI',
       () {
         final decoders = [av2DecoderWindowsComponent, av2DecoderLinuxComponent, av2DecoderMacComponent];
-        const ciArchives = {
-          'av2-decoder-windows-x64': (791890, '161c150cede23a0c3e52dc5ea319585edd089093d897ec4d60561698788aa0cc'),
-          'av2-decoder-linux-x64': (953205, '9432ce17bc209e9ac544d20ebb129fb6283c323bc4af8e80f285eae5e09dccb7'),
-          'av2-decoder-macos-universal': (1664304, 'a6621f4e38ce0c831d0248226e4f12ccf28bd843f4a98f75b6fa98e5e9b36e1f'),
+        const releaseArchives = {
+          'av2-decoder-windows-x64': (801929, '417affae04953a7e3c4bec78ce0860dd9516ac7e2efb821969a1037e7f31944d'),
+          'av2-decoder-linux-x64': (953204, 'c3cc7d80a5a3c2e32aa32fc1977631d938a8bd8c0945a67b293de1c3edcd2832'),
+          'av2-decoder-macos-universal': (1664297, 'dfc61b6a52a616beecb4cb41915f6bf26b94b65f5e5caac7be82dbd284428084'),
         };
         const programs = {
           'av2-decoder-windows-x64': ['immuch360-av2.exe'],
@@ -446,9 +446,9 @@ void main() {
           expect(decoder.licence, 'BSD-2-Clause', reason: decoder.id);
           expect(decoder.licenceUrl, contains('/30140b563596a1b14aef808ff021c90288948315/COPYING'), reason: decoder.id);
           expect(decoder.officialUrls, isEmpty, reason: decoder.id);
-          // On this branch only (feat-av2, the test build AVT): the archives of the CI run 41607804420 of lot AD2 as
-          // they are, served by a local mirror; the gate of the catalogue refuses their sums on any other branch
-          expect((decoder.size, decoder.sha256), ciArchives[decoder.id], reason: decoder.id);
+          // The archives of av2-decoder-1: the run 41877478541 of the release workflow on feat-av2 at 592c66c4f, the
+          // Windows program signed, as the record of the release gives them (.github/desktop/av2/av2-decoder-1.json)
+          expect((decoder.size, decoder.sha256), releaseArchives[decoder.id], reason: decoder.id);
           expect(decoder.isComplete, isTrue, reason: decoder.id);
           expect(
             [for (final file in decoder.archiveFiles) file.path],

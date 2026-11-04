@@ -996,7 +996,7 @@ void main() {
       // The lines of an entry, as the catalogue lays them out (Windows ends the lines of the run with \r\n)
       expect(run.output.replaceAll('\r\n', '\n'), contains('av2-decoder-windows-x64:\n  size: '));
       expect(run.output, contains("      path: 'immuch360-av2.exe',"));
-      // The catalogue of the branch carries the archives of lot AD2, not these, and there is no record yet
+      // The catalogue of the branch carries the archives of av2-decoder-1, not these, and this copy has no record
       expect(run.output, contains('the catalogue or the record differs from these files: run with --write'));
       expect(run.output, contains('not published: av2-decoder-1 is created only with --publish'));
       final sums = File(p.join(out, 'SHA256SUMS')).readAsLinesSync();

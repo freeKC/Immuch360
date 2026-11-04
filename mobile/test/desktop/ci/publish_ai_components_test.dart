@@ -16,8 +16,8 @@ import 'ci_scripts.dart';
 const _token = 'test-token-not-a-secret';
 const _script = 'ai/publish_ai_components.py';
 
-/// --check as the gates of the desktop workflow run it on the branch of the test build AVT (lot AD6), whose catalogue
-/// carries the sums of the AV2 decoder before av2-decoder-1 is made
+/// --check as the gates of the desktop workflow run it on feat-av2, the branch of the test build AVT (lot AD6), whose
+/// catalogue carried the sums of the AV2 decoder before av2-decoder-1 was made and now carries those of its record
 ScriptRun _check(List<String> arguments) =>
     runCiScript(_script, ['--check', ...arguments, '--test-build', 'feat-av2'], environment: _onTestBuild);
 
@@ -540,12 +540,12 @@ void main() {
 
       expect(run.exitCode, 0, reason: '$run');
       expect(run.output, contains('16 components in ai-components-1, ai-components-2, ai-components-3, each complete'));
-      // The branch of the test build AVT: the archives of the CI, served by a local mirror (lot AD6)
+      // The archives of av2-decoder-1, as its record gives them (publish_av2_decoder.py --write, lot AD11)
       expect(
         run.output,
         contains(
-          'the AV2 decoder carries the archives of the CI for the test build of feat-av2 (av2-decoder-1 not made): '
-          'av2-decoder-linux-x64, av2-decoder-macos-universal, av2-decoder-windows-x64',
+          'the AV2 decoder carries the archives of av2-decoder-1 as its record gives them (run 41877478541, commit '
+          '592c66c4fe16b147f29386106c2af760be08e5d5)',
         ),
       );
       expect(File(_licences).readAsStringSync(), contains('Date: '));
@@ -569,8 +569,8 @@ void main() {
         ),
         // The sum of the Linux archive taken out, its size and files left
         (
-          text.indexOf("  sha256: '9432ce17bc209e9ac544d20ebb129fb6283c323bc4af8e80f285eae5e09dccb7',", linux),
-          "  sha256: '9432ce17bc209e9ac544d20ebb129fb6283c323bc4af8e80f285eae5e09dccb7',",
+          text.indexOf("  sha256: 'c3cc7d80a5a3c2e32aa32fc1977631d938a8bd8c0945a67b293de1c3edcd2832',", linux),
+          "  sha256: 'c3cc7d80a5a3c2e32aa32fc1977631d938a8bd8c0945a67b293de1c3edcd2832',",
           '  sha256: null,',
         ),
       ];
@@ -586,7 +586,7 @@ void main() {
       expect(run.exitCode, 1, reason: '$run');
       expect(
         run.output,
-        contains('av2-decoder-linux-x64: incomplete in the catalogue (size 953205, sha256 None, 11 files)'),
+        contains('av2-decoder-linux-x64: incomplete in the catalogue (size 953204, sha256 None, 11 files)'),
       );
       expect(
         run.output,
@@ -598,12 +598,15 @@ void main() {
       );
     }, skip: skipCiScripts);
 
-    test('the sums of the AV2 decoder before av2-decoder-1 are refused but on the branch of its test build', () {
+    test('the sums of the AV2 decoder are refused but on the branch of its test build until the record of '
+        'av2-decoder-1, then pass on every branch', () {
       const decoders = 'av2-decoder-linux-x64, av2-decoder-macos-universal, av2-decoder-windows-x64';
+      // The catalogue of the app with no record of the release, as before publish_av2_decoder.py --write
+      final noRecord = ['--av2-record', p.join(catalogue.parent.path, 'no-av2-decoder-1.json')];
       // Merged into the phone and desktop branch
       final merged = runCiScript(
         _script,
-        ['--check', '--test-build', 'feat-av2'],
+        ['--check', ...noRecord, '--test-build', 'feat-av2'],
         environment: const {'GITHUB_REF_NAME': 'immuch360'},
       );
       expect(merged.exitCode, 1, reason: '$merged');
@@ -614,20 +617,37 @@ void main() {
       // Taken by a branch made from the test build
       final taken = runCiScript(
         _script,
-        ['--check', '--test-build', 'feat-av2'],
+        ['--check', ...noRecord, '--test-build', 'feat-av2'],
         environment: const {'GITHUB_REF_NAME': 'feat-av2-ad7'},
       );
       expect(taken.exitCode, 1, reason: '$taken');
       expect(taken.output, contains('the AV2 decoder carries sums on feat-av2-ad7'));
       // On the branch itself, but without the gates saying it is the test build, or naming another branch
-      final unnamed = runCiScript(_script, ['--check'], environment: _onTestBuild);
+      final unnamed = runCiScript(_script, ['--check', ...noRecord], environment: _onTestBuild);
       expect(unnamed.exitCode, 1, reason: '$unnamed');
       expect(unnamed.output, contains('the AV2 decoder carries sums ($decoders) with no --test-build'));
-      final other = runCiScript(_script, ['--check', '--test-build', 'immuch360'], environment: _onTestBuild);
+      final other = runCiScript(_script, [
+        '--check',
+        ...noRecord,
+        '--test-build',
+        'immuch360',
+      ], environment: _onTestBuild);
       expect(other.exitCode, 1, reason: '$other');
       expect(other.output, contains('with --test-build immuch360'));
       // As the gates run it on the branch of the test build
-      expect(_check(const []).exitCode, 0);
+      expect(_check(noRecord).exitCode, 0);
+
+      // With the record of av2-decoder-1 the same sums pass on every branch, the gates naming the test build or not
+      for (final arguments in [
+        ['--check', '--test-build', 'feat-av2'],
+        ['--check'],
+      ]) {
+        for (final branch in ['immuch360', 'desktop', 'feat-av2-ad7']) {
+          final recorded = runCiScript(_script, arguments, environment: {'GITHUB_REF_NAME': branch});
+          expect(recorded.exitCode, 0, reason: '$branch $arguments $recorded');
+          expect(recorded.output, contains('carries the archives of av2-decoder-1 as its record gives them'));
+        }
+      }
 
       // Without sums, as on immuch360 until av2-decoder-1 is made, the check passes on any branch
       final text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
@@ -645,7 +665,7 @@ void main() {
       catalogue.writeAsStringSync(bare);
       final immuch360 = runCiScript(
         _script,
-        ['--check', '--catalogue', catalogue.path],
+        ['--check', '--catalogue', catalogue.path, ...noRecord],
         environment: const {'GITHUB_REF_NAME': 'immuch360'},
       );
       expect(immuch360.exitCode, 0, reason: '$immuch360');
