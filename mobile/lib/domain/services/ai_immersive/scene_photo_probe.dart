@@ -13,6 +13,7 @@ import 'dart:typed_data';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
+import 'package:immich_mobile/domain/services/asset_head.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:logging/logging.dart';
 
@@ -100,41 +101,15 @@ class ScenePhotoService {
     }
   }
 
-  /// The head of the file of [asset], null when it could not be read
-  Future<Uint8List?> _readHead(BaseAsset asset) async {
-    final localId = asset.localId;
-    if (localId != null) {
-      File? file;
-      try {
-        file = await _localFile(localId);
-      } catch (error) {
-        _log.fine('Copy on the device of ${asset.name} not found: $error');
-      }
-      if (file != null) {
-        try {
-          final handle = await file.open();
-          try {
-            return await handle.read(scenePhotoHeadLength).timeout(timeout);
-          } finally {
-            await handle.close();
-          }
-        } catch (error) {
-          _log.fine('Copy on the device of ${asset.name} unreadable, reading the server copy: $error');
-        }
-      }
-    }
-    final remoteId = asset.remoteId;
-    final read = remoteId == null ? null : _serverReader(remoteId);
-    if (read == null) {
-      return null;
-    }
-    try {
-      return await read(0, scenePhotoHeadLength).timeout(timeout);
-    } catch (error) {
-      _log.info('Could not read the head of ${asset.name} on the server: $error');
-      return null;
-    }
-  }
+  /// The head of the file of [asset], null when it could not be read (see readAssetHead)
+  Future<Uint8List?> _readHead(BaseAsset asset) => readAssetHead(
+    asset,
+    localFile: _localFile,
+    serverReader: _serverReader,
+    length: scenePhotoHeadLength,
+    timeout: timeout,
+    log: _log,
+  );
 
   void _remember(String key, SceneXmp? found) {
     // Removed first, so that the photo goes last, as the latest
