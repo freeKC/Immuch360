@@ -1,8 +1,8 @@
 // The memory of the graphics card read again before a job on it (lot C6; design-final 2026-10-27, section 4.7, point
 // 3): free enough, the job starts on the card the gate would take, with the answer it came from; held by other
 // programs, the job waits with what is free; no card any more, it cannot run; each check starts the probe again.
-// Issue #13: the way the panorama is made follows the memory free (the full reference from 6 GiB, the reduced one from
-// 5.1 GiB, as measured on 4 November 2026), and a wait says what it needs and what the app itself holds of the card.
+// Issue #13: a panorama starts from 3.5 GiB free with the full reference, whole from 5 716 MiB and in segments below
+// (the measure of 5 November 2026), and a wait says what it needs and what the app itself holds of the card.
 
 import 'dart:convert';
 import 'dart:io';
@@ -23,22 +23,17 @@ void main() {
   GpuBudget budget(FakeGpuProbe probe, {bool integrated = false}) =>
       GpuBudget(probe: probe.probe, integratedAllowed: () async => integrated);
 
-  test('6 GiB free for the full reference, 5.1 GiB for the reduced one: the measured thresholds and a margin', () {
-    // One segment of sd-cli from 5.54 to 5.60 GiB free with the arguments of M3, from 4.74 to 4.82 GiB with the reference
-    // capped at 1280 x 640 (measure of 4 November 2026, section 2.4)
-    expect(panoramaFreeGraphicsMemory, 6 * _gib);
-    expect(panoramaReducedFreeGraphicsMemory, 5476083302);
-    expect(PanoramaReference.full.need - 5.60 * _gib, greaterThan(0.39 * _gib));
-    expect(PanoramaReference.reduced.need - 4.82 * _gib, greaterThan(0.25 * _gib));
-    expect(PanoramaReference.full.maxPixels, isNull);
-    expect(PanoramaReference.reduced.maxPixels, 1280 * 640);
-    expect(PanoramaReference.values, [PanoramaReference.full, PanoramaReference.reduced]);
-    // The least memory a panorama starts with
-    expect(budget(FakeGpuProbe.of(FakeGpuReports.rtx4060)).need, panoramaReducedFreeGraphicsMemory);
-    expect(
-      GpuBudget(probe: FakeGpuProbe.of(FakeGpuReports.rtx4060).probe, references: const [PanoramaReference.full]).need,
-      panoramaFreeGraphicsMemory,
-    );
+  test('3.5 GiB free with the full reference: the floor of the graph cut and a margin; whole from 5 716 MiB', () {
+    // Measure of 5 November 2026, section 6: in segments down to 3 212 MiB free, a failure at 3 112, one segment from
+    // 5 716 MiB (it cut at 5 701)
+    expect(panoramaFreeGraphicsMemory, 3758096384);
+    expect(panoramaFreeGraphicsMemory - 3212 * _mib, greaterThan(0.35 * _gib));
+    expect(panoramaFreeGraphicsMemory, greaterThan(3112 * _mib));
+    expect(panoramaWholeGraphicsMemory, 5716 * _mib);
+    expect(panoramaGpuNeed.bytes, panoramaFreeGraphicsMemory);
+    expect(panoramaGpuNeed.whole, panoramaWholeGraphicsMemory);
+    expect(splatGpuNeed.whole, isNull, reason: 'a splat scene runs the same with any memory above its need');
+    expect(budget(FakeGpuProbe.of(FakeGpuReports.rtx4060)).need, panoramaFreeGraphicsMemory);
   });
 
   test('the RTX 4060 with 7.2 GiB free: ready, on that card, with the answer it came from', () async {
@@ -49,7 +44,7 @@ void main() {
     expect(ready.card.name, rtx4060Laptop.name);
     expect(ready.free, 7400 * _mib);
     expect(ready.report.adapters, hasLength(2));
-    expect(ready.reference, PanoramaReference.full);
+    expect(ready.whole, isTrue);
   });
 
   test('a game holds the card, 2.0 GiB free: the job waits, told what is free and what it needs', () async {
@@ -58,11 +53,11 @@ void main() {
     expect(check, isA<GpuBudgetWait>());
     expect((check as GpuBudgetWait).free, 2000 * _mib);
     expect(check.card.name, rtx4060Laptop.name);
-    expect(check.need, panoramaReducedFreeGraphicsMemory);
+    expect(check.need, panoramaFreeGraphicsMemory);
     expect(check.appHolds, isNull, reason: 'the fake probe reads no share of the app');
   });
 
-  group('the way a panorama is made follows the memory free', () {
+  group('a panorama starts from 3.5 GiB free, whole from 5 716 MiB', () {
     GpuReport card(int free, {int? app}) => GpuReport(
       adapters: [
         GpuAdapter(
@@ -78,44 +73,35 @@ void main() {
       ],
     );
 
-    test('6 GiB free: the full reference; just under it, the reduced one; under 5.1 GiB, a wait', () async {
+    test('5 716 MiB free: whole; a byte less: in segments; 3.5 GiB: in segments; a byte less: a wait', () async {
       Future<GpuBudgetCheck> at(int free) => budget(FakeGpuProbe.of(card(free))).check();
 
-      expect((await at(6 * _gib) as GpuBudgetReady).reference, PanoramaReference.full);
-      expect((await at(6 * _gib - 1) as GpuBudgetReady).reference, PanoramaReference.reduced);
-      expect((await at(panoramaReducedFreeGraphicsMemory) as GpuBudgetReady).reference, PanoramaReference.reduced);
-      final wait = await at(panoramaReducedFreeGraphicsMemory - 1) as GpuBudgetWait;
-      expect(wait.need, panoramaReducedFreeGraphicsMemory);
+      expect((await at(panoramaWholeGraphicsMemory) as GpuBudgetReady).whole, isTrue);
+      expect((await at(panoramaWholeGraphicsMemory - 1) as GpuBudgetReady).whole, isFalse);
+      expect((await at(panoramaFreeGraphicsMemory) as GpuBudgetReady).whole, isFalse);
+      final wait = await at(panoramaFreeGraphicsMemory - 1) as GpuBudgetWait;
+      expect(wait.need, panoramaFreeGraphicsMemory);
+      expect(wait.free, panoramaFreeGraphicsMemory - 1);
     });
 
-    test(
-      'issue #13: the RTX 2060 of 8 GB with 5.4 GiB free runs the reduced reference, which one segment holds',
-      () async {
-        // His probe said 5.4 GiB free, Immuch360 holding 1 402 MiB of the card; the reduced reference ran in one segment
-        // with that budget (run E2 of the measure)
-        final check = await budget(FakeGpuProbe.of(card(5530 * _mib, app: 1402 * _mib))).check() as GpuBudgetReady;
+    test('issue #13: the RTX 2060 of 8 GB with 5.4 GiB free starts, in segments, with the full reference', () async {
+      // His probe said 5.4 GiB free, Immuch360 holding 1 402 MiB of the card: desktop build 21 started it with the
+      // reduced reference and stopped it at "flux using N segments"; the cut gives the same image (measure of 5
+      // November 2026, his budget: 27 segments, 294 s on the RTX 4060)
+      final check = await budget(FakeGpuProbe.of(card(5530 * _mib, app: 1402 * _mib))).check() as GpuBudgetReady;
 
-        expect(check.reference, PanoramaReference.reduced);
-        expect(check.free, 5530 * _mib);
-        expect(check.appHolds, 1402 * _mib);
-      },
-    );
+      expect(check.whole, isFalse);
+      expect(check.free, 5530 * _mib);
+      expect(check.appHolds, 1402 * _mib);
+    });
 
-    test(
-      'with the full reference only, the same card waits, told the 6 GiB it needs and the share of the app',
-      () async {
-        final check =
-            await GpuBudget(
-                  probe: FakeGpuProbe.of(card(5530 * _mib, app: 1402 * _mib)).probe,
-                  references: const [PanoramaReference.full],
-                ).check()
-                as GpuBudgetWait;
+    test('the same card with 3.1 GiB free waits, told the 3.5 GiB it needs and the share of the app', () async {
+      final check = await budget(FakeGpuProbe.of(card(3174 * _mib, app: 1402 * _mib))).check() as GpuBudgetWait;
 
-        expect(check.need, panoramaFreeGraphicsMemory);
-        expect(check.free, 5530 * _mib);
-        expect(check.appHolds, 1402 * _mib);
-      },
-    );
+      expect(check.need, panoramaFreeGraphicsMemory);
+      expect(check.free, 3174 * _mib);
+      expect(check.appHolds, 1402 * _mib);
+    });
 
     test('the share of the app read apart when the probe could not read it (the DRM fdinfo on Linux)', () async {
       final asked = <String?>[];
@@ -129,7 +115,7 @@ void main() {
                         kind: GpuKind.discrete,
                         localMemory: 8 * _gib,
                         apiVersion: '1.3.287',
-                        budget: 4 * _gib,
+                        budget: 3 * _gib,
                         usage: 0,
                         pci: '0000:03:00.0',
                       ),
@@ -164,24 +150,24 @@ void main() {
     });
   });
 
-  test(
-    'the answer of the probe of Windows on the RTX 4060 while another program held 4.0 GiB: the job waits',
-    () async {
-      // V3, on the PC of the owner: the budget of Vulkan alone said 7.5 GB; the probe lowers it to what the counters of
-      // Windows leave of the card (windows/runner/gpu_probe.cpp, DedicatedUsage)
-      final report = GpuReport.fromJson(
-        jsonDecode(File('test/fixtures/ai_immersive/gpu_probe_rtx4060_laptop_busy.json').readAsStringSync())
-            as Map<String, Object?>,
-      );
-      final check = await budget(FakeGpuProbe.of(report)).check();
+  test('the answer of the probe of Windows on the RTX 4060 while another program held 4.0 GiB: 3.8 GiB free, the job '
+      'starts in segments', () async {
+    // V3, on the PC of the owner: the budget of Vulkan alone said 7.5 GB; the probe lowers it to what the counters of
+    // Windows leave of the card (windows/runner/gpu_probe.cpp, DedicatedUsage). It waited before lot 13c (6 GiB
+    // asked), and runs in segments since (3.5 GiB asked)
+    final report = GpuReport.fromJson(
+      jsonDecode(File('test/fixtures/ai_immersive/gpu_probe_rtx4060_laptop_busy.json').readAsStringSync())
+          as Map<String, Object?>,
+    );
+    final check = await budget(FakeGpuProbe.of(report)).check();
 
-      expect(check, isA<GpuBudgetWait>());
-      expect((check as GpuBudgetWait).card.name, rtx4060Laptop.name);
-      expect(check.free, 4064452608);
-    },
-  );
+    expect(check, isA<GpuBudgetReady>());
+    expect((check as GpuBudgetReady).card.name, rtx4060Laptop.name);
+    expect(check.free, 4064452608);
+    expect(check.whole, isFalse);
+  });
 
-  test('just the memory asked is enough, a byte less waits (the reduced reference)', () async {
+  test('just the memory asked is enough, a byte less waits', () async {
     GpuReport card(int free) => GpuReport(
       adapters: [
         GpuAdapter(
@@ -194,8 +180,11 @@ void main() {
         ),
       ],
     );
-    expect(await budget(FakeGpuProbe.of(card(panoramaReducedFreeGraphicsMemory))).check(), isA<GpuBudgetReady>());
-    expect(await budget(FakeGpuProbe.of(card(panoramaReducedFreeGraphicsMemory - 1))).check(), isA<GpuBudgetWait>());
+    expect(await budget(FakeGpuProbe.of(card(panoramaFreeGraphicsMemory))).check(), isA<GpuBudgetReady>());
+    expect(await budget(FakeGpuProbe.of(card(panoramaFreeGraphicsMemory - 1))).check(), isA<GpuBudgetWait>());
+    // A splat scene asked with its own need: whole whatever the memory above it
+    final splat = await budget(FakeGpuProbe.of(card(3 * _gib))).check(need: splatGpuNeed) as GpuBudgetReady;
+    expect(splat.whole, isTrue);
   });
 
   test('a card without VK_EXT_memory_budget is taken at its memory: nothing tells it is busy', () async {

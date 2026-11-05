@@ -32,12 +32,11 @@
 // would only wait the same), the processor lane going on; the card is asked again a little later, or at once when the
 // user asks (checkGraphicsCardAgain), and a card gone fails the job. Since issue #13, the app first lets go of what it
 // holds of the card (its paused videos, its cached pictures: graphics_release.dart), once per job, and when it closed
-// video players, asks the card again every few seconds while their memory comes back. The job is made the way the
-// memory free allows (the full
-// reference of the generator, else the reduced one, PanoramaReference). A wait that cannot end does not last: 30 s
-// after the lane first showed the figures of the wait, the job leaves the queue with them (gpuMemoryShort), and the
-// panoramas waiting behind it at their first answer, without a release nor a settle, unless the user asked a job to
-// keep waiting (keepWaiting).
+// video players, asks the card again every few seconds while their memory comes back, until the generator would run
+// whole (one segment, twice as fast as near the floor: GpuBudgetReady.whole) or the time is up. A wait that cannot end
+// does not last: 30 s after the lane first showed the figures of the wait, the job leaves the queue with them
+// (gpuMemoryShort), and the panoramas waiting behind it at their first answer, without a release nor a settle, unless
+// the user asked a job to keep waiting (keepWaiting).
 //
 // The queue does not survive the window: closing it asks first (close_guard.dart, reasons "conversions" and
 // "generation"), and the journal of the .part files cleans up what a quit left.
@@ -347,9 +346,6 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
   /// The jobs that let go of the app's share of the card already in this wait
   final _gpuReleased = <String>{};
-
-  /// The way each panorama about to run was given by the card (gpu_budget.dart)
-  final _references = <String, PanoramaReference>{};
   var _disposed = false;
   var _lastId = 0;
 
@@ -993,15 +989,14 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       }
       _flags.remove(id);
       _stepStarted.remove(id);
-      _references.remove(id);
       cancel.free();
     }
   }
 
   /// Whether the job [id] of the graphics card may start now: the card has the memory free that a job of [kind] needs
-  /// for one way to run it (gpuNeedOf: 6 GiB, or 5.1 GiB with the reduced reference, for a panorama; 2.5 GiB on a
-  /// dedicated card for a splat scene), or nothing is asked of it (tools without a budget). First, once per job, the
-  /// app lets go of its share of the card and the card is asked again while that memory comes back. Short, the job
+  /// (gpuNeedOf: 3.5 GiB for a panorama; 2.5 GiB on a dedicated card for a splat scene), or nothing is asked of it
+  /// (tools without a budget). First, once per job, the app lets go of its share of the card and the card is asked
+  /// again while that memory comes back, until the job would run whole (a panorama in one segment). Short, the job
   /// waits with the figures and the lane with it, asked again after ConversionTools.gpuRecheck; past
   /// ConversionTools.gpuGiveUp of the lane's wait (counted from its first figures shown), it leaves the queue with
   /// them, unless it keeps waiting, and a job behind it asks the card once, without a release; it fails when no card
@@ -1036,15 +1031,13 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       }
     }
     var check = await _askCard(id, budget, kind);
-    // The memory of the players closed comes back within seconds: asked again until the preferred way fits, or the
-    // time is up
+    // The memory of the players closed comes back within seconds: asked again until the generator would run whole, or
+    // the time is up (it may start in segments with less, slower)
     final polls = released && tools.gpuSettlePoll > Duration.zero
         ? (tools.gpuSettle.inMicroseconds / tools.gpuSettlePoll.inMicroseconds).ceil()
         : 0;
     for (var poll = 0; poll < polls; poll++) {
-      if (check is GpuBudgetUnavailable ||
-          (check is GpuBudgetReady && check.reference == budget.references.first) ||
-          !_stillWaiting(id)) {
+      if (check is GpuBudgetUnavailable || (check is GpuBudgetReady && check.whole) || !_stillWaiting(id)) {
         break;
       }
       await Future<void>.delayed(tools.gpuSettlePoll);
@@ -1058,13 +1051,12 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
     final job = state.byId(id)!;
     switch (check) {
-      case GpuBudgetReady(:final reference, :final free, :final appHolds):
+      case GpuBudgetReady(:final free, :final appHolds, :final whole):
         _gpuShort = null;
         _gpuReleased.remove(id);
-        _references[id] = reference;
         _log.info(
-          'The graphics card has $free bytes free for $id (the app holds ${appHolds ?? 'an unknown share'}): '
-          '${reference.name} reference',
+          'The graphics card has $free bytes free for $id (the app holds ${appHolds ?? 'an unknown share'})'
+          '${whole ? '' : ': the generation will run in segments, slower'}',
         );
         return true;
       case GpuBudgetWait(:final free, :final need, :final appHolds):
@@ -1172,7 +1164,6 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           generator: generator,
           steps: steps,
           seed: tools.newSeed(),
-          referenceMaxPixels: _references[job.id]?.maxPixels,
         );
       case ConversionKind.splatScene:
         final splat = job.splat;

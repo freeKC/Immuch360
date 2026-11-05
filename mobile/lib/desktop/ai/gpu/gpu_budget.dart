@@ -1,91 +1,68 @@
 // The memory of the graphics card, read again before each job on it (design-final 2026-10-27, section 4.7, point 3):
 // a game or a 3D app opened since the gate looked may hold most of it. The probe is started again (gpu_probe.dart) and
-// the card the panorama runs on (the rule of the gate, panoramaCardOf) must have the memory of one way to run the job
-// free in the budget the system gives it; otherwise the job waits, "360° panoramas need 5.1 GiB of free graphics
-// memory, 4.2 GiB free: close games, 3D apps or videos", and the queue asks again a little later, or at once when the
-// user asks for it (ConversionQueueNotifier.checkGraphicsCardAgain). A card gone since (an external card unplugged, a
-// driver removed) fails the job: "No graphics card can make this panorama". The budget of VK_EXT_memory_budget leaves
-// out what other programs hold on the driver of NVIDIA under Windows (V3: 7.5 GB with 4.3 GB held by another
-// program): the probe of Windows lowers it to what the counters of Windows leave of the card (windows/runner/
-// gpu_probe.cpp, DedicatedUsage).
+// the card the panorama runs on (the rule of the gate, panoramaCardOf) must have the memory the job needs free in the
+// budget the system gives it; otherwise the job waits, "360° panoramas need 3.5 GiB of free graphics memory, 3.1 GiB
+// free: close games, 3D apps or videos", and the queue asks again a little later, or at once when the user asks for it
+// (ConversionQueueNotifier.checkGraphicsCardAgain). A card gone since (an external card unplugged, a driver removed)
+// fails the job: "No graphics card can make this panorama". The budget of VK_EXT_memory_budget leaves out what other
+// programs hold on the driver of NVIDIA under Windows (V3: 7.5 GB with 4.3 GB held by another program): the probe of
+// Windows lowers it to what the counters of Windows leave of the card (windows/runner/gpu_probe.cpp, DedicatedUsage).
 //
 // What the app itself holds of the card counts as used in that budget, as another program's would (issue #13: 1.4 GiB
 // of an RTX 2060 of 8 GB on Linux, with a photo open). The queue lets go of what it can before it asks (its paused
 // videos and its cached pictures, graphics_release.dart), and the answer that makes the job wait carries the app's
 // share apart when the probe could read it ([GpuBudgetWait.appHolds]): the message then says it.
 //
-// The ways to run a 360° panorama, measured on 4 November 2026 with the app's own sd-cli and its arguments (note
-// ai-gpu-budget-2026-11-04/measure.md, sections 2.3 and 2.4). stable-diffusion.cpp keeps 512 MiB of the free memory in
-// reserve and cuts its graph into segments when the rest is short, which with the LoRA and the guidance spoils the
-// image (M3), and the queue then fails the job as gpuBusy; so the need is the free memory below which it cuts, plus a
-// margin for the desktop moving during the run (M3 saw a run fall into segments at its third step):
-//  - [PanoramaReference.full], the arguments of M3 (sd-cli reduces the control frame to 1456 x 720 for its reference):
-//    5 388 MiB taken on the card, one segment from 5.54 to 5.60 GiB free; 6 GiB asked, 0.4 GiB of margin;
-//  - [PanoramaReference.reduced], the reference capped at 1280 x 640 (--ref-image-args vae_input_max_pixels=819200):
-//    4 676 MiB taken, one segment from 4.74 to 4.82 GiB free, the same 6144 x 3072 panorama made 15 s sooner; 5.1 GiB
-//    asked, 0.28 GiB of margin. The image differs from the full reference's (another latent for the same seed): it is
-//    taken only when the full one does not fit, and the packet of the panorama says so (GeneratorReferenceMaxPixels).
-// Smaller outputs (1280 x 640, about 4.3 GiB taken) make a smaller panorama with a wider raw seam: not offered. The
-// other kinds of jobs, the splat scenes apart (below), run on the processor and ask nothing of the card. The answer of
-// a check that passes carries the whole report, so that the generator is given the card the check looked at
-// (ggmlVulkanIndexOf), and the way chosen.
+// The need of a 360° panorama, measured on 5 November 2026 with the app's own sd-cli and its arguments at 1536 x 768
+// (note ai-gpu-budget-2026-11-05/measure.md, sections 4 and 6): stable-diffusion.cpp keeps 512 MiB of the free memory
+// in reserve and, when the rest is short, cuts the graph of its transformer into segments, which gives the same bytes
+// as one segment, slower (294 s instead of 202 at the free memory of issue #13, about 8 min near the floor). It runs in
+// one segment from 5 716 MiB free ([panoramaWholeGraphicsMemory]), in segments down to 3 212 MiB free, and fails at
+// 3 112: [panoramaFreeGraphicsMemory] asks 3.5 GiB, 0.36 GiB above that floor for the desktop moving during the run,
+// with the full reference for every card (one image per photo and seed). The reference capped at 1280 x 640 that
+// desktop build 21 took between 5.1 and 6 GiB free is gone: the cut needs no other image, and the panoramas it made
+// say so in their packet (GeneratorReferenceMaxPixels). Smaller outputs (1280 x 640) make a smaller panorama with a
+// wider raw seam: not offered. The other kinds of jobs, the splat scenes apart (below), run on the processor and ask
+// nothing of the card. The answer of a check that passes carries the whole report, so that the generator is given the
+// card the check looked at (ggmlVulkanIndexOf), the free memory it read, and whether the generation runs whole
+// ([GpuBudgetReady.whole]), for the queue to wait a few seconds more while the app's share comes back.
 //
 // A splat scene (lot SP4) asks the same budget twice: in the queue before its job starts, and again by the runner of
 // Brush once the poses are found, some minutes later ([brushCardOf]), with the need of the splat scenes
 // (SplatV1.freeGraphicsMemory: 2.5 GiB, where M1 measured 1.0 to 1.2 GiB at the peak at 1 024 pixels) and the card
 // its own rule chooses (splatCardOf of hardware_gate.dart: a dedicated card only). The queue asks with the need of the
-// kind of each job ([gpuNeedOf], lot SP6): a panorama by the ways above, a splat scene by its one figure.
+// kind of each job ([gpuNeedOf], lot SP6): a panorama by the figures above, a splat scene by its one figure.
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
-const _gib = 1024 * 1024 * 1024;
+const _mib = 1024 * 1024;
+const _gib = 1024 * _mib;
 
-/// The memory of the graphics card a 360° panorama with its full reference needs free when it starts (see the top of
-/// this file)
-const panoramaFreeGraphicsMemory = 6 * _gib;
+/// The memory of the graphics card a 360° panorama needs free when it starts: 3.5 GiB (see the top of this file)
+const panoramaFreeGraphicsMemory = 7 * _gib ~/ 2;
 
-/// The pixels of the reference of a panorama made with less memory: 1280 x 640
-const panoramaReducedReferencePixels = 1280 * 640;
+/// The free memory from which the generator of a 360° panorama runs its transformer whole, in one segment, as measured
+/// on 5 November 2026 (5 716 MiB; it cut at 5 701); below it the generation runs in segments, slower, the same image
+const panoramaWholeGraphicsMemory = 5716 * _mib;
 
-/// The memory a 360° panorama with the reduced reference needs free when it starts: 5.1 GiB
-const panoramaReducedFreeGraphicsMemory = 51 * _gib ~/ 10;
-
-/// A way to make a 360° panorama on the card, from the one that keeps the image of M3 to the one that needs the least
-/// memory (see the top of this file)
-enum PanoramaReference {
-  /// The reference sd-cli makes itself from the control frame
-  full(null, panoramaFreeGraphicsMemory),
-
-  /// The reference capped at [panoramaReducedReferencePixels]
-  reduced(panoramaReducedReferencePixels, panoramaReducedFreeGraphicsMemory);
-
-  const PanoramaReference(this.maxPixels, this.need);
-
-  /// The cap given to sd-cli (vae_input_max_pixels), null for its own
-  final int? maxPixels;
-
-  /// The memory of the card it needs free when it starts
-  final int need;
-}
-
-/// What a kind of job needs of the graphics card: [bytes] free on the card [cardOf] chooses, or, for a kind that may
-/// run with less ([byReferences]), the memory of the first way of GpuBudget.references that fits
+/// What a kind of job needs of the graphics card: [bytes] free on the card [cardOf] chooses, and for a kind that runs
+/// faster with more ([whole], a panorama in one segment), the free memory from which it runs at its best
 class GpuNeed {
-  const GpuNeed(this.bytes, this.cardOf, {this.byReferences = false});
+  const GpuNeed(this.bytes, this.cardOf, {this.whole});
 
   final int bytes;
   final PanoramaCard Function(GpuReport report, {required bool integratedAllowed}) cardOf;
 
-  /// The job runs one of the ways of GpuBudget.references (a panorama, [bytes] being its full reference's need)
-  final bool byReferences;
+  /// The free memory from which the job runs whole; null for a kind that runs the same with any memory above [bytes]
+  final int? whole;
 }
 
-/// A 360° panorama: [panoramaFreeGraphicsMemory] on the card of panoramaCardOf, or the 5.1 GiB of its reduced
-/// reference (PanoramaReference)
-const panoramaGpuNeed = GpuNeed(panoramaFreeGraphicsMemory, panoramaCardOf, byReferences: true);
+/// A 360° panorama: [panoramaFreeGraphicsMemory] on the card of panoramaCardOf, whole from
+/// [panoramaWholeGraphicsMemory]
+const panoramaGpuNeed = GpuNeed(panoramaFreeGraphicsMemory, panoramaCardOf, whole: panoramaWholeGraphicsMemory);
 
 /// A splat scene: SplatV1.freeGraphicsMemory on the dedicated card of splatCardOf
 const splatGpuNeed = GpuNeed(SplatV1.freeGraphicsMemory, splatCardOf);
@@ -99,9 +76,9 @@ sealed class GpuBudgetCheck {
   const GpuBudgetCheck();
 }
 
-/// The card has the memory free: the job starts on it, the way [reference] says
+/// The card has the memory free: the job starts on it, [free] bytes being free
 class GpuBudgetReady extends GpuBudgetCheck {
-  const GpuBudgetReady(this.card, this.free, this.report, {this.reference = PanoramaReference.full, this.appHolds});
+  const GpuBudgetReady(this.card, this.free, this.report, {this.appHolds, this.whole = true});
 
   final GpuAdapter card;
   final int free;
@@ -109,11 +86,12 @@ class GpuBudgetReady extends GpuBudgetCheck {
   /// The answer of the probe the card comes from
   final GpuReport report;
 
-  /// The way the panorama is made with the memory free
-  final PanoramaReference reference;
-
   /// The bytes of the card this app holds, null when not read
   final int? appHolds;
+
+  /// Whether the job runs at its best with that memory (GpuNeed.whole): false for a panorama whose generator will run
+  /// in segments, slower
+  final bool whole;
 }
 
 /// The memory free is short: the job waits, [free] bytes being free now of the [need] it asks, this app holding
@@ -139,39 +117,30 @@ class GpuBudget {
   GpuBudget({
     required this.probe,
     Future<bool> Function()? integratedAllowed,
-    this.references = PanoramaReference.values,
     this._appMemoryOf,
     this._need,
     this.cardOf = panoramaCardOf,
-  }) : assert(references.isNotEmpty, 'At least one way to run the job'),
-       _integratedAllowed = integratedAllowed ?? (() async => false);
+  }) : _integratedAllowed = integratedAllowed ?? (() async => false);
 
   /// Starts the probe of the graphics cards again (the gate keeps its answer in the app)
   final Future<GpuReport> Function() probe;
   final Future<bool> Function() _integratedAllowed;
 
-  /// The ways a job may run, the one preferred first
-  final List<PanoramaReference> references;
-
   /// The share of the app on a card the probe did not read it for (the DRM fdinfo of the app on Linux)
   final Future<int?> Function(GpuAdapter card)? _appMemoryOf;
 
-  /// The one need the budget was made with (the runner of Brush asks a splat scene's); null: the ways of [references]
+  /// The one need the budget was made with (the runner of Brush asks a splat scene's); null: a panorama's
   final int? _need;
 
   /// The rule of the gate that chooses the card: that of the panoramas unless told
   final PanoramaCard Function(GpuReport report, {required bool integratedAllowed}) cardOf;
 
-  /// The least memory a job needs free on its card: the need the budget was made with, else that of the way that asks
-  /// the least
-  int get need => _need ?? _leastReference;
+  /// The memory a job needs free on its card: the need the budget was made with, else a panorama's
+  int get need => _need ?? panoramaFreeGraphicsMemory;
 
-  int get _leastReference => references.map((reference) => reference.need).reduce((a, b) => a < b ? a : b);
-
-  /// Starts the probe again and tells whether a job may start on the card now, and how: a job that [need]s its own
-  /// (the kind of the job, [gpuNeedOf]) on the card of its rule, by the first of [references] that fits for a
-  /// panorama; without [need], the one the budget was made with on the card of [GpuBudget.cardOf], by [references]
-  /// when it was made with none
+  /// Starts the probe again and tells whether a job may start on the card now: a job that [need]s its own (the kind
+  /// of the job, [gpuNeedOf]) on the card of its rule; without [need], the one the budget was made with on the card of
+  /// [GpuBudget.cardOf], a panorama's when it was made with none
   Future<GpuBudgetCheck> check({GpuNeed? need}) async {
     final report = await probe();
     final choice = (need?.cardOf ?? cardOf)(report, integratedAllowed: await _integratedAllowed());
@@ -189,19 +158,12 @@ class GpuBudget {
         appHolds = null;
       }
     }
-    // One figure: a kind that runs one way (a splat scene), or a budget made with its own need
-    final bytes = need == null ? _need : (need.byReferences ? null : need.bytes);
-    if (bytes != null) {
-      return free >= bytes
-          ? GpuBudgetReady(card, free, report, appHolds: appHolds)
-          : GpuBudgetWait(card, free, need: bytes, appHolds: appHolds);
-    }
-    for (final reference in references) {
-      if (free >= reference.need) {
-        return GpuBudgetReady(card, free, report, reference: reference, appHolds: appHolds);
-      }
-    }
-    return GpuBudgetWait(card, free, need: _leastReference, appHolds: appHolds);
+    final bytes = need?.bytes ?? this.need;
+    // A kind asked with its own need says whether it runs better with more; a budget made with one runs the same
+    final whole = need != null ? need.whole : (_need == null ? panoramaGpuNeed.whole : null);
+    return free >= bytes
+        ? GpuBudgetReady(card, free, report, appHolds: appHolds, whole: whole == null || free >= whole)
+        : GpuBudgetWait(card, free, need: bytes, appHolds: appHolds);
   }
 }
 

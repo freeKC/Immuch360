@@ -570,9 +570,9 @@ class ConversionJob {
   /// The work folder a failure left until the next scene or a day (ImmersiveResult.keptFolder), named in the panel
   final String? keptFolder;
 
-  /// A panorama: the pieces its generator runs in, the graphics card being short of memory (ImmersiveProgress.segments);
-  /// "The graphics card is short of memory, so the generation runs in 27 pieces: slower, same result" while it
-  /// generates. Null while it runs whole.
+  /// A panorama: the pieces its generator runs in, the graphics card being short of memory
+  /// (ImmersiveProgress.segments); "The graphics card is short of memory, so the generation runs in 27 pieces: slower,
+  /// same result" while it generates. Null while it runs whole.
   final int? segments;
 
   /// Whether a Retry would end the same way: a splat scene of too few images placed, whose images the mapper places

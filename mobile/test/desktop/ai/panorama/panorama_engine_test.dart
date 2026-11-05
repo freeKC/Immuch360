@@ -221,7 +221,7 @@ void main() {
     expect(whole, greaterThan(100));
   }
 
-  PanoramaJob jobOf(String path, {int turns = 0, int seed = 1002, String? sha1, int? referenceMaxPixels}) {
+  PanoramaJob jobOf(String path, {int turns = 0, int seed = 1002, String? sha1}) {
     final bytes = File(path).readAsBytesSync();
     return PanoramaJob(
       id: 'panorama-1',
@@ -234,7 +234,6 @@ void main() {
       steps: 4,
       seed: seed,
       quarterTurns: turns,
-      referenceMaxPixels: referenceMaxPixels,
     );
   }
 
@@ -305,7 +304,6 @@ void main() {
       expect((request.width, request.height), (48, 24));
       expect(request.guidance, PanoV1.guidance);
       expect(request.loraStrength, PanoV1.loraStrength);
-      expect(request.referenceMaxPixels, isNull, reason: 'the reference of M3');
       final control = img.decodePng(Uint8List.fromList(controls.single))!;
       expect((control.width, control.height), (64, 32));
       final corner = control.getPixel(0, 0);
@@ -383,39 +381,6 @@ void main() {
           isEmpty,
         );
         expect(File(job.partPath).existsSync(), isTrue);
-      },
-    );
-
-    test(
-      'made with less memory free on the card: its reference capped, the cap in its packet and its key the same',
-      () async {
-        final generator = FakeGeneratorBackend();
-        final job = jobOf(photo(), referenceMaxPixels: 819200);
-
-        final result = await engineOf(generator: generator).run(job, cancel: cancel);
-
-        expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
-        expect(generator.requests.single.referenceMaxPixels, 819200);
-        final written = File(job.partPath).readAsBytesSync();
-        final xmp = ImmersiveXmp.findIn(written)! as PanoramaXmp;
-        expect(xmp.generatorReferenceMaxPixels, 819200);
-        expect(
-          latin1.decode(written.sublist(0, 4096), allowInvalid: true),
-          contains('GeneratorReferenceMaxPixels="819200"'),
-        );
-        final fullReference = PanoramaXmp(
-          pipeline: xmp.pipeline,
-          generatorSha256: xmp.generatorSha256,
-          generatorLoraSha256: xmp.generatorLoraSha256,
-          steps: xmp.steps,
-          sourceQuarterTurns: xmp.sourceQuarterTurns,
-        );
-        expect(xmp.settingsKey, isNotNull);
-        expect(
-          xmp.settingsKey,
-          fullReference.settingsKey,
-          reason: 'the same settings as a panorama of the full reference',
-        );
       },
     );
 

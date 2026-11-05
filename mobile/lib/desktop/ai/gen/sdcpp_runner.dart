@@ -6,9 +6,7 @@
 //    compare the build with it), the graphics card named by ggml's index (--backend diffusion=Vulkan<n>,vae=Vulkan<n>,
 //    te=CPU: the integrated card comes first on a laptop, so sd-cli never chooses), flash attention on (without it the
 //    attention goes to the processor and no step ends in 10 minutes), the VAE in tiles, -t the logical processors less
-//    two, -v for the line about segments; and on a card with less memory free, the reference capped at 1280 x 640
-//    (--ref-image-args vae_input_max_pixels=819200, measured on 4 November 2026: 4 676 MiB on the card instead of
-//    5 388, see gpu_budget.dart);
+//    two, -v for the line about segments and the auto-fit plan;
 //  - its progress is the bar it redraws ("12/20 - 8.65s/it"): the steps of the sampling only, not the loading of the
 //    weights nor the tiles of the VAE;
 //  - a generation whose graph sd-cli cuts into segments ("flux using 27 segments", when the memory it may use on the
@@ -133,8 +131,8 @@ int? sdCppSegmentsOf(String line) {
 
 const _mib = 1024 * 1024;
 
-/// "[I]     Vulkan1      NVIDIA GeForce RTX 4060 Laptop GPU free   7188 MiB, budget   3072 MiB --- backend_fit.cpp:328",
-/// a card of the auto-fit plan sd-cli writes before it loads its weights (the last "free" of the line: the name of a
+/// A card of the auto-fit plan sd-cli writes before it loads its weights, "[I]     Vulkan1      NVIDIA GeForce RTX 4060
+/// Laptop GPU free   7188 MiB, budget   3072 MiB --- backend_fit.cpp:328" (the last "free" of the line: the name of a
 /// card holds no figure in MiB)
 final _plan = RegExp(r'^\[I\]\s+(Vulkan\d+)\s.*\bfree\s+(\d+) MiB, budget\s+(\d+) MiB');
 
@@ -170,7 +168,6 @@ List<String> sdCppGenerationArguments(SdCppSettings settings, GeneratorRequest r
     '--vae-tiling',
     '-r',
     request.controlPath,
-    if (request.referenceMaxPixels case final pixels?) ...['--ref-image-args', 'vae_input_max_pixels=$pixels'],
     '-W',
     '${request.width}',
     '-H',
