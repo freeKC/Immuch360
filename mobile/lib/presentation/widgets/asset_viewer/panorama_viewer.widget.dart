@@ -36,6 +36,7 @@ import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_stabilization.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -95,6 +96,11 @@ final _log = Logger('PanoramaViewer');
 /// its pair missing, a layout the player does not play) says why (see [rawVideoUnsupportedMessage]). One of two
 /// streams that the decoders of the phone may not keep up with says so, and opens anyway.
 ///
+/// A raw video whose camera recorded its motion (see [rawKindHasMotionTrack]) plays stabilised where the player can
+/// (see [videoStabilizationSupportedProvider]): the player opens at once with the switch of the stabilisation, the
+/// table is built in a background isolate meanwhile and reaches the player when ready (see [RawVideoStabilizer]); the
+/// playback never waits for it. The setting "Stabilise with the camera's gyroscope" says where the switch starts.
+///
 /// A server video whose only stream is beyond the decoders of the device (see
 /// [VideoSourceService.refusedServerStream]: a 5.7K H.264 export the server left as it is, on a TV) opens no player
 /// that would load forever: the user reads why, with the server setting that makes a copy the device plays, and may
@@ -117,6 +123,9 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final rawKind = ref.read(rawMediaKindProvider(asset));
   final rawResolver = ref.read(rawVideoResolverProvider);
   final rawInputs = ref.read(rawAssetInputsProvider);
+  final stabilizationSupported = ref.read(videoStabilizationSupportedProvider);
+  final stabilizationEnabled = ref.read(appConfigProvider).viewer.stabilizeVideos;
+  final stabilizationBuilder = ref.read(rawStabilizationBuilderProvider);
   final messenger = ScaffoldMessenger.maybeOf(context);
   final t = context.t;
   final closeLabel = context.t.close;
@@ -127,6 +136,7 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
     ...videoBufferingLabels(context.t),
     ...videoSourceLabels(context.t),
     ...rawVideoLabels(context.t),
+    ...videoStabilizationLabels(context.t),
   };
 
   try {
@@ -187,8 +197,14 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
     if (plan != null) {
       await warnOfTwoRawStreams(plan, videoSources, messenger, t);
     }
+    final url = plan?.url ?? source.url;
+    final candidate = plan != null && stabilizationSupported
+        ? RawVideoStabilizer(api: api, url: url, enabled: stabilizationEnabled, plan: plan, build: stabilizationBuilder)
+        : null;
+    final stabilizer = candidate != null && candidate.applies ? candidate : null;
+    await stabilizer?.announce();
     await api.open(
-      plan?.url ?? source.url,
+      url,
       ApiService.getRequestHeaders(),
       asset.name,
       closeLabel,
@@ -199,6 +215,10 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       plan != null ? plan.fallbackUrl : source.fallbackUrl,
       plan?.toNativeJson(),
     );
+    // Not awaited: the video plays meanwhile, the table reaches the player when ready
+    if (stabilizer != null) {
+      unawaited(stabilizer.deliver());
+    }
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for ${asset.name}', error, stackTrace);
     session.cancel();

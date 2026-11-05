@@ -1,3 +1,4 @@
+import Flutter
 import UIKit
 
 /// Opens 360° videos in [SphericalVideoViewController], full screen over the Flutter view. Pigeon calls it on the
@@ -99,4 +100,16 @@ class SphericalVideoApiImpl: SphericalVideoApi {
     }
     return top
   }
+
+  /// The stabilisation of a raw 360° video with the motion track of its camera (issue 14): the iOS player does not
+  /// apply it yet (lot d1), and Flutter sends it no table here (videoStabilizationSupportedProvider). Kept for the
+  /// protocol.
+  func setStabilization(
+    url: String,
+    enabled: Bool,
+    hasTrack: Bool,
+    presentationTimesUs: FlutterStandardTypedData?,
+    corrections: FlutterStandardTypedData?,
+    summary: String?
+  ) throws {}
 }

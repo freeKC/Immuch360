@@ -3,6 +3,7 @@
 // server's videos through the media bridge, which carries the session itself (spherical_player_route.dart).
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -59,4 +60,16 @@ class DesktopSphericalVideoApi implements SphericalVideoApi {
       ),
     );
   }
+
+  /// The 360° player of the computers does not stabilise yet (lot d2 of issue 14): nothing to keep, and Flutter does
+  /// not send it a table there (videoStabilizationSupportedProvider)
+  @override
+  Future<void> setStabilization(
+    String url,
+    bool enabled,
+    bool hasTrack,
+    Int64List? presentationTimesUs,
+    Float64List? corrections,
+    String? summary,
+  ) async {}
 }

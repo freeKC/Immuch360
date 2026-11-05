@@ -14,6 +14,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_stabilization.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -51,6 +52,20 @@ final rawVideoPlaybackSupportProvider = Provider<RawVideoPlaybackSupport>((ref) 
         (CurrentPlatform.isDesktop && desktopVideoAvailable),
   );
 });
+
+/// Whether the 360° player of this device stabilises the raw videos with the motion track of their camera (issue 14,
+/// see raw_video_stabilization.dart): the Android player of the phones, tablets and TVs (SphericalVideoActivity). The
+/// iOS player, the computers and the immersive viewer of the Meta Quest come in later lots; their setting and switch
+/// stay hidden until then, so that nothing says it stabilises where nothing does. It follows a scope that overrides the
+/// kind of device, as the settings pages of the tests do.
+final videoStabilizationSupportedProvider = Provider<bool>((ref) {
+  final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
+  return Platform.isAndroid && isHorizonOs == false;
+}, dependencies: [isHorizonOsProvider]);
+
+/// Builds the stabilisation table of a raw video: in a background isolate, the reads served from here (see
+/// [buildRawStabilizationInIsolate]); the widget tests build it in place
+final rawStabilizationBuilderProvider = Provider<RawStabilizationBuilder>((_) => buildRawStabilizationInIsolate);
 
 /// Settles how the raw videos open (see [RawVideoResolver.resolve])
 final rawVideoResolverProvider = Provider<RawVideoResolver>(
@@ -97,6 +112,17 @@ Map<String, String> rawVideoLabels(Translations t) => {
   'rawOneLensDecoder': t.raw_video_one_lens_decoder(codec: '{codec}', width: '{width}', height: '{height}'),
   'rawOneLensFile': t.raw_video_one_lens_file,
   'rawUnstitched': t.raw_video_unstitched,
+};
+
+/// Translated labels of the stabilisation for the native 360° players, under the keys they read: the switch
+/// ("stabilization"), its two states, the notice of a video that starts stabilised ("stabilizationOn") and the one of a
+/// file without a track when the user turns the switch on ("stabilizationNoTrack")
+Map<String, String> videoStabilizationLabels(Translations t) => {
+  'stabilization': t.setting_video_stabilization_title,
+  'stabilizationEnabled': t.enabled,
+  'stabilizationDisabled': t.disabled,
+  'stabilizationOn': t.video_stabilization_on,
+  'stabilizationNoTrack': t.video_stabilization_no_track,
 };
 
 /// The key of the calibration of [entry], a file of a share: its path, its size and its date tell it from any other

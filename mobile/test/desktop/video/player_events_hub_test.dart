@@ -12,6 +12,9 @@ class _Spherical implements SphericalVideoEvents {
 
   @override
   void closed(StereoLayout stereoLayout, SphereCoverage coverage) => closings.add((stereoLayout, coverage));
+
+  @override
+  void stabilizationChanged(bool enabled) {}
 }
 
 class _Spatial extends Fake implements SpatialVideoEvents {}

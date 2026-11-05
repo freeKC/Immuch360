@@ -12,6 +12,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
 /// The longest threshold of "Remember where I stopped" offered, in minutes, by steps of 5
@@ -33,6 +34,9 @@ class VideoViewerSettings extends HookConsumerWidget {
     final useResumeVideos = useState(viewer.resumeVideos);
     final useResumeMinMinutes = useState(viewer.resumeMinMinutes.clamp(0, _resumeMaxMinutes));
     final useSpatial25d = useState(viewer.spatial25d);
+    // The stabilisation of the raw 360° videos, where the 360° player of the device applies it
+    final useStabilizeVideos = useState(viewer.stabilizeVideos);
+    final stabilizationSupported = ref.watch(videoStabilizationSupportedProvider);
     final useReverseThumbstickTurn = useState(viewer.reverseThumbstickTurn);
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
     // The Spatial 2.5D player is for phones: a Meta Quest has no use for it
@@ -60,6 +64,9 @@ class VideoViewerSettings extends HookConsumerWidget {
     });
     useValueChanged<bool, void>(useSpatial25d.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerSpatial25d, useSpatial25d.value));
+    });
+    useValueChanged<bool, void>(useStabilizeVideos.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerStabilizeVideos, useStabilizeVideos.value));
     });
     useValueChanged<bool, void>(useReverseThumbstickTurn.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerReverseThumbstickTurn, useReverseThumbstickTurn.value));
@@ -101,6 +108,13 @@ class VideoViewerSettings extends HookConsumerWidget {
             valueNotifier: useSpatial25d,
             title: context.t.spatial_2_5d_experimental_title,
             subtitle: context.t.spatial_2_5d_experimental_subtitle,
+          ),
+        // Raw 360° videos whose camera recorded its motion play level and steady (issue 14)
+        if (stabilizationSupported)
+          SettingsSwitchListTile(
+            valueNotifier: useStabilizeVideos,
+            title: context.t.setting_video_stabilization_title,
+            subtitle: context.t.setting_video_stabilization_subtitle,
           ),
         // The thumbstick of the immersive viewer, which only a Meta Quest has
         if (isHorizonOs == true)

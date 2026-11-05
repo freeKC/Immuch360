@@ -46,6 +46,7 @@ import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.video.VideoFrameMetadataListener
+import androidx.media3.exoplayer.video.spherical.CameraMotionListener
 import androidx.media3.exoplayer.video.spherical.SphericalGLSurfaceView
 import androidx.media3.ui.PlayerView
 import app.alextran.immich.R
@@ -83,6 +84,10 @@ private const val MONO_ALPHA = 0.6f
 /** How long the hint for the arrows of a remote stays on screen */
 private const val REMOTE_HINT_MS = 4000L
 
+/** How long a notice of the stabilisation stays on screen, then how long it takes to fade */
+private const val STABILIZATION_NOTICE_MS = 3000L
+private const val STABILIZATION_FADE_MS = 500L
+
 /**
  * Plays an equirectangular video full screen. The spherical surface of [PlayerView] turns the view with touch
  * drags and with the orientation sensors; a tap shows the playback controls, the close button and the 3D control.
@@ -116,6 +121,13 @@ private const val REMOTE_HINT_MS = 4000L
  * pair, a GoPro .360, a DJI .osv): [TwoLensPlayback] decodes both streams and its compositor draws the stitched frame
  * into the surface of the spherical view. [RawPlaybackPlanner] decides how it plays and falls back (one lens, the
  * transcoded streams, the frame unstitched), see [plan].
+ *
+ * A raw video whose camera recorded its motion (Insta360 gyroscope, GoPro CORI, DJI attitude) is stabilised with the
+ * table Flutter builds from that track while the video plays (issue 14, see [StabilizationInbox]): each stitched frame
+ * turns by the rotation of its presentation time, given to Media3's camera motion listener just before the frame (see
+ * [CoverageFrameListener]), so the horizon stays level, the shake goes and the view follows the road. A switch next to
+ * the other controls turns it off and on, the setting of the app follows; off, the frames are the raw video again, and
+ * a CAMM track that Media3 would apply is disabled too.
  */
 @OptIn(UnstableApi::class)
 class SphericalVideoActivity : ComponentActivity() {
@@ -143,6 +155,21 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val STATE_RAW_PLAN_URLS = "raw_plan_urls"
     private const val STATE_RAW_PLAN_FALLBACK = "raw_plan_fallback"
     private const val STATE_RAW_PLAN_FIRST_FRAME_MESSAGE = "raw_plan_first_frame_message"
+    private const val STATE_STABILIZATION_ENABLED = "stabilization_enabled"
+    private const val STATE_STABILIZATION_TOUCHED = "stabilization_touched"
+    private const val STATE_STABILIZATION_TURNED_ON = "stabilization_turned_on"
+    private const val STATE_STABILIZATION_NOTICE_SHOWN = "stabilization_notice_shown"
+
+    /**
+     * Keys of the labels of the stabilisation, in the labels from Flutter: the switch ("Stabilise with the camera's
+     * gyroscope (experimental)"), its states (the app's "Enabled" and "Disabled"), the notice of a stabilised video and
+     * the one of a file without a track.
+     */
+    const val LABEL_STABILIZATION = "stabilization"
+    const val LABEL_STABILIZATION_ENABLED = "stabilizationEnabled"
+    const val LABEL_STABILIZATION_DISABLED = "stabilizationDisabled"
+    const val LABEL_STABILIZATION_ON = "stabilizationOn"
+    const val LABEL_STABILIZATION_NO_TRACK = "stabilizationNoTrack"
 
     /**
      * Keys of the messages of the raw fallbacks, in the labels from Flutter: one lens because the device cannot decode
@@ -201,6 +228,11 @@ class SphericalVideoActivity : ComponentActivity() {
       LABEL_RAW_UNSTITCHED to
         "The 360° stitching failed on this device. The video shows as the camera recorded it.",
       LABEL_REMOTE_LOOK_HINT to "Arrows to look around, OK to pause and show the controls, Back to close",
+      LABEL_STABILIZATION to "Stabilise with the camera's gyroscope (experimental)",
+      LABEL_STABILIZATION_ENABLED to "Enabled",
+      LABEL_STABILIZATION_DISABLED to "Disabled",
+      LABEL_STABILIZATION_ON to "Stabilised with the camera's gyroscope",
+      LABEL_STABILIZATION_NO_TRACK to "This video has no gyroscope track",
     )
 
     /** Key of the name of the layout, in the labels from Flutter */
@@ -319,6 +351,51 @@ class SphericalVideoActivity : ComponentActivity() {
   private lateinit var bufferingLabel: TextView
   private lateinit var bufferingIndicator: BufferingIndicator
   private lateinit var remoteHint: TextView
+  private lateinit var stabilizationButton: View
+  private lateinit var stabilizationNotice: TextView
+
+  /** The stabilisation switch and the track of the file, see [StabilizationSwitch] */
+  private val stabilization = StabilizationSwitch(enabled = true)
+
+  /**
+   * The table the frames of the current player get, null for none: off, no table (yet), or a frame that is not the
+   * stitched sphere. Read on the playback and compositor threads, see [CoverageFrameListener].
+   */
+  @Volatile
+  private var appliedStabilization: StabilizationTable? = null
+
+  /**
+   * What to add to the presentation time a frame listener gets to find the frame on the timeline of the video. Zero,
+   * except with the effect that stitches a side by side frame: Media3 1.10.0 runs those frames through its video graph
+   * on the timestamps of the buffers less the start position of the stream (MediaCodecVideoRenderer
+   * .getBufferTimestampAdjustmentUs), and its frame listener gets those, so a player started at a position p gives
+   * frame times p early. Read on the playback thread.
+   */
+  @Volatile
+  private var frameTimeBaseUs = 0L
+
+  /** A frame was drawn stabilised in this activity: the notice of the first one is posted */
+  @Volatile
+  private var stabilizedFrameReported = false
+
+  /**
+   * A rotation went to the camera motion listener of the spherical view since its last reset, by the frame listener of
+   * this player or of the one before (a player replaced after a failure, whose frames may no longer be stitched): the
+   * next frame without a table resets it. Read on the playback and compositor threads.
+   */
+  @Volatile
+  private var stabilizationTurning = false
+
+  /** Messages of Flutter about the stabilisation of the video this player plays, see [StabilizationInbox] */
+  private val stabilizationMessages: (StabilizationInbox.Message) -> Unit = { message ->
+    if (message.url == intent.getStringExtra(EXTRA_URL)) applyStabilizationMessage(message)
+  }
+
+  private val fadeStabilizationNotice = Runnable {
+    stabilizationNotice.animate().alpha(0f).setDuration(STABILIZATION_FADE_MS).withEndAction {
+      stabilizationNotice.visibility = View.GONE
+    }
+  }
 
   /** Turns the view with the arrows of a remote, null without a spherical view */
   private var remoteLook: RemoteLook? = null
@@ -463,6 +540,12 @@ class SphericalVideoActivity : ComponentActivity() {
       if (format != null && !rawJsonPresent) {
         applyDeclaredCoverage(DeclaredProjection.of(format.projectionData)?.coverage)
       }
+      // A CAMM track (camera motion) is a motion track too: the stabilisation switch shows and turns it off and on
+      val camm = tracks.groups.any { it.type == C.TRACK_TYPE_CAMERA_MOTION }
+      if (camm != stabilization.hasCamm) {
+        stabilization.hasCamm = camm
+        updateStabilization()
+      }
       // The audio track button shows when there is a choice
       val options = player?.let { audioTracks.onTracksChanged(it, tracks) }.orEmpty()
       audioButton.visibility = if (options.size >= 2) View.VISIBLE else View.GONE
@@ -581,6 +664,26 @@ class SphericalVideoActivity : ComponentActivity() {
       stereoButton.visibility = View.GONE
       coverageButton.visibility = View.GONE
     }
+
+    // The stabilisation: the switch as the user left it in this player, else as the setting Flutter sent says, and the
+    // track of the file as Flutter last told; later messages come through the inbox
+    stabilizationNotice = findViewById(R.id.spherical_video_notice)
+    stabilizationButton = findViewById<View>(R.id.spherical_video_stabilization).apply {
+      contentDescription = label(LABEL_STABILIZATION)
+      tooltipText = label(LABEL_STABILIZATION)
+      setOnClickListener { toggleStabilization() }
+    }
+    if (savedInstanceState != null && savedInstanceState.containsKey(STATE_STABILIZATION_ENABLED)) {
+      stabilization.restore(
+        enabled = savedInstanceState.getBoolean(STATE_STABILIZATION_ENABLED, true),
+        touched = savedInstanceState.getBoolean(STATE_STABILIZATION_TOUCHED),
+        turnedOnByUser = savedInstanceState.getBoolean(STATE_STABILIZATION_TURNED_ON),
+        stabilizedNoticeShown = savedInstanceState.getBoolean(STATE_STABILIZATION_NOTICE_SHOWN),
+      )
+    }
+    StabilizationInbox.latestFor(intent.getStringExtra(EXTRA_URL))?.let(::applyStabilizationMessage)
+    StabilizationInbox.listen(stabilizationMessages)
+    updateStabilization()
 
     audioTracks = AudioTrackChooser(this, labels)
     audioTracks.chosenIndex = savedInstanceState?.getInt(STATE_AUDIO_TRACK, -1) ?: -1
@@ -716,6 +819,10 @@ class SphericalVideoActivity : ComponentActivity() {
     outState.putStringArrayList(STATE_RAW_PLAN_URLS, ArrayList(plan.urls))
     outState.putBoolean(STATE_RAW_PLAN_FALLBACK, plan.fromFallback)
     outState.putString(STATE_RAW_PLAN_FIRST_FRAME_MESSAGE, plan.firstFrameMessage?.name)
+    outState.putBoolean(STATE_STABILIZATION_ENABLED, stabilization.enabled)
+    outState.putBoolean(STATE_STABILIZATION_TOUCHED, stabilization.wasTouched)
+    outState.putBoolean(STATE_STABILIZATION_TURNED_ON, stabilization.userTurnedOn)
+    outState.putBoolean(STATE_STABILIZATION_NOTICE_SHOWN, stabilization.stabilizedNoticeWasShown)
   }
 
   override fun onDestroy() {
@@ -725,6 +832,10 @@ class SphericalVideoActivity : ComponentActivity() {
     }
     sphericalView?.removeVideoSurfaceListener(videoSurfaceListener)
     remoteHint.removeCallbacks(hideRemoteHint)
+    stabilizationNotice.removeCallbacks(fadeStabilizationNotice)
+    StabilizationInbox.stopListening(stabilizationMessages)
+    // A table of an hour of video is a few megabytes: it goes with its player, unless the player comes back at once
+    if (!isChangingConfigurations) StabilizationInbox.forget(intent.getStringExtra(EXTRA_URL))
     super.onDestroy()
   }
 
@@ -787,11 +898,14 @@ class SphericalVideoActivity : ComponentActivity() {
         } else {
           it.setMediaItem(MediaItem.fromUri(url), startPosition)
         }
+        frameTimeBaseUs = frameTimeBaseFor(startPosition)
         it.playWhenReady = playWhenReady
         playerView.player = it
         attachSphericalView(it)
         it.prepare()
       }
+    // The table follows the plan (a stitched frame or not), and the CAMM track the switch
+    updateStabilization()
   }
 
   /**
@@ -879,14 +993,16 @@ class SphericalVideoActivity : ComponentActivity() {
     if (lens != null) {
       player.clearVideoSurface()
       lens.bindRendererOutputs()
-      lens.setDownstream(CoverageFrameListener(view.videoFrameMetadataListener))
+      lens.setDownstream(CoverageFrameListener(view.videoFrameMetadataListener, view.cameraMotionListener))
       player.setCameraMotionListener(view.cameraMotionListener)
       view.videoSurface?.let(::attachLensOutput)
       return
     }
     val surface = view.videoSurface
     if (surface != null) setPlayerSurface(player, surface) else player.setVideoSurface(null)
-    player.setVideoFrameMetadataListener(CoverageFrameListener(view.videoFrameMetadataListener))
+    player.setVideoFrameMetadataListener(
+      CoverageFrameListener(view.videoFrameMetadataListener, view.cameraMotionListener),
+    )
     player.setCameraMotionListener(view.cameraMotionListener)
   }
 
@@ -1227,7 +1343,9 @@ class SphericalVideoActivity : ComponentActivity() {
     currentStereoLayout()?.let { stereoLayout = it }
     declaredStereoMode = Format.NO_VALUE
     applyStereoLayout()
-    current.setMediaItem(MediaItem.fromUri(fallback), current.currentPosition.coerceAtLeast(0L))
+    val position = current.currentPosition.coerceAtLeast(0L)
+    current.setMediaItem(MediaItem.fromUri(fallback), position)
+    frameTimeBaseUs = frameTimeBaseFor(position)
     current.prepare()
     return true
   }
@@ -1292,6 +1410,88 @@ class SphericalVideoActivity : ComponentActivity() {
     redrawPausedFrame()
     showToast(coverageLabel())
   }
+
+  /**
+   * What Flutter says about the stabilisation of this video: the setting, while the user has not pressed the switch
+   * here, and the track of the file (read, being read, none). A table the player cannot use counts as none, the log
+   * tells why.
+   */
+  private fun applyStabilizationMessage(message: StabilizationInbox.Message) {
+    stabilization.onSetting(message.enabled)
+    val table = message.table
+    if (table != null) {
+      Log.i(TAG, "Stabilisation table of ${table.size} frames: ${message.summary}")
+    } else if (message.hasTrack) {
+      Log.i(TAG, "Stabilisation: Flutter reads the motion track")
+    } else {
+      Log.i(TAG, "Stabilisation: no motion track in this file")
+    }
+    stabilization.onTrack(message.hasTrack, table)?.let(::showStabilizationNotice)
+    updateStabilization()
+  }
+
+  /**
+   * Applies the switch: its button (shown for a file with a track, dimmed when off), the table the frames get (none
+   * for a frame that is not the stitched sphere), and the CAMM track of the file, disabled when off or when the table
+   * turns the frames.
+   */
+  private fun updateStabilization() {
+    stabilizationButton.visibility = if (stabilization.buttonVisible) View.VISIBLE else View.GONE
+    stabilizationButton.alpha = if (stabilization.enabled) 1f else MONO_ALPHA
+    ViewCompat.setStateDescription(
+      stabilizationButton,
+      label(if (stabilization.enabled) LABEL_STABILIZATION_ENABLED else LABEL_STABILIZATION_DISABLED),
+    )
+    val stitched = plan.mode == RawMode.EFFECT_SIDE_BY_SIDE || plan.mode == RawMode.LENSES
+    appliedStabilization = stabilization.activeTable(stitched)
+    val current = player ?: return
+    val parameters = current.trackSelectionParameters
+    val cammDisabled = stabilization.cammDisabled
+    if (parameters.disabledTrackTypes.contains(C.TRACK_TYPE_CAMERA_MOTION) != cammDisabled) {
+      current.trackSelectionParameters =
+        parameters.buildUpon().setTrackTypeDisabled(C.TRACK_TYPE_CAMERA_MOTION, cammDisabled).build()
+    }
+  }
+
+  /** The user pressed the switch: it flips, the setting of the app follows, a paused frame shows the change */
+  private fun toggleStabilization() {
+    // Keeps the controls, and so this button, on screen
+    playerView.showController()
+    val notice = stabilization.toggle()
+    Log.i(TAG, "Stabilisation turned ${if (stabilization.enabled) "on" else "off"} by the user")
+    updateStabilization()
+    SphericalVideoApiImpl.notifyStabilizationChanged(stabilization.enabled)
+    redrawPausedFrame()
+    notice?.let(::showStabilizationNotice)
+  }
+
+  /** The first frame drawn with the table: the user reads that the video is stabilised, once */
+  private fun onFirstStabilizedFrame() {
+    if (isFinishing || isDestroyed) return
+    stabilization.onStabilizedFrame()?.let(::showStabilizationNotice)
+  }
+
+  /** [notice] for a few seconds, then it fades */
+  private fun showStabilizationNotice(notice: StabilizationSwitch.Notice) {
+    val text =
+      label(
+        when (notice) {
+          StabilizationSwitch.Notice.STABILIZED -> LABEL_STABILIZATION_ON
+          StabilizationSwitch.Notice.NO_TRACK -> LABEL_STABILIZATION_NO_TRACK
+        },
+      )
+    Log.i(TAG, "Shown to the user: $text")
+    stabilizationNotice.removeCallbacks(fadeStabilizationNotice)
+    stabilizationNotice.animate().cancel()
+    stabilizationNotice.text = text
+    stabilizationNotice.alpha = 1f
+    stabilizationNotice.visibility = View.VISIBLE
+    stabilizationNotice.postDelayed(fadeStabilizationNotice, STABILIZATION_NOTICE_MS)
+  }
+
+  /** See [frameTimeBaseUs]: the start position in microseconds for the effect that stitches a side by side frame */
+  private fun frameTimeBaseFor(startPositionMs: Long): Long =
+    if (plan.mode == RawMode.EFFECT_SIDE_BY_SIDE) startPositionMs.coerceAtLeast(0L) * 1000L else 0L
 
   /**
    * Takes the coverage the video declares in place of the current one, but only when it differs from the declared
@@ -1372,9 +1572,16 @@ class SphericalVideoActivity : ComponentActivity() {
    * or of [stitchedFormat] for a raw 360° video (stitched, one lens or unstitched: whatever the file declares no
    * longer applies). Called on the playback thread, or on the compositor's thread for a lens player. Frames of the
    * same format and coverage reuse the format built for the first one.
+   *
+   * With a stabilisation table ([appliedStabilization]), the rotation of each frame goes to [motion], the camera
+   * motion listener of the same renderer, at the frame's presentation time and just before the frame: the renderer
+   * takes it with that frame (its queue is keyed on the presentation time, and clears itself when the time jumps back
+   * at a seek). Without one any more, a reset brings the frames back as they are, from the next one on.
    */
-  private inner class CoverageFrameListener(private val scene: VideoFrameMetadataListener) :
-    VideoFrameMetadataListener {
+  private inner class CoverageFrameListener(
+    private val scene: VideoFrameMetadataListener,
+    private val motion: CameraMotionListener,
+  ) : VideoFrameMetadataListener {
     private var lastFormat: Format? = null
     private var lastCoverage: SphereCoverage? = null
     private var lastProjected: Format? = null
@@ -1395,6 +1602,18 @@ class SphericalVideoActivity : ComponentActivity() {
         lastFormat = format
         lastCoverage = coverage
         lastProjected = projected
+      }
+      val table = appliedStabilization
+      if (table != null) {
+        motion.onCameraMotion(presentationTimeUs, table.angleAxisAt(presentationTimeUs + frameTimeBaseUs))
+        stabilizationTurning = true
+        if (!stabilizedFrameReported) {
+          stabilizedFrameReported = true
+          playerView.post(::onFirstStabilizedFrame)
+        }
+      } else if (stabilizationTurning) {
+        motion.onCameraMotionReset()
+        stabilizationTurning = false
       }
       scene.onVideoFrameAboutToBeRendered(presentationTimeUs, releaseTimeNs, projected, mediaFormat)
     }

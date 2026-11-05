@@ -136,6 +136,9 @@ class _Session implements SphericalVideoEvents {
 
   @override
   void closed(StereoLayout stereoLayout, SphereCoverage coverage) => closings.add((stereoLayout, coverage));
+
+  @override
+  void stabilizationChanged(bool enabled) {}
 }
 
 void main() {

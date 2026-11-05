@@ -193,6 +193,7 @@ class RawVideoPlan {
     this.secondUrl,
     this.secondFallbackUrl,
     required this.trackOrderSource,
+    this.motionTrackInput,
   });
 
   final RawMediaKind kind;
@@ -230,6 +231,11 @@ class RawVideoPlan {
 
   /// What said which lens each track holds: "single", "field80", "field131", "default", "fileName", "dji", "goPro"
   final String trackOrderSource;
+
+  /// The file that holds the motion track of the camera, for the stabilisation (raw_video_stabilization.dart): the file
+  /// opened, or for a split Insta360 pair the file of lens 0, whose trailer it is; null for a plan made without the
+  /// resolver. Not in the JSON.
+  final RawVideoInput? motionTrackInput;
 
   /// The size of the stitched equirect picture worth drawing: the frame of a side by side video, 2 H x H for fisheye
   /// tracks of H, 4 F x 2 F for EAC faces of F
@@ -710,6 +716,7 @@ class RawVideoResolver {
         // The server transcodes the first video track only: one lens, which would be drawn as both
         url: input.originalUrl ?? input.url,
         trackOrderSource: source,
+        motionTrackInput: input,
       );
     }
 
@@ -740,6 +747,7 @@ class RawVideoResolver {
         url: input.url,
         fallbackUrl: input.fallbackUrl,
         trackOrderSource: 'single',
+        motionTrackInput: input,
       );
     }
 
@@ -842,6 +850,8 @@ class RawVideoResolver {
       secondUrl: sibling.url,
       secondFallbackUrl: fallbacks ? sibling.fallbackUrl : null,
       trackOrderSource: 'fileName',
+      // The camera writes its trailer, the motion track with it, in the file of lens 0 only
+      motionTrackInput: primary,
     );
   }
 
@@ -867,6 +877,7 @@ class RawVideoResolver {
       viewToCamera: goProViewToCamera(eac),
       url: input.originalUrl ?? input.url,
       trackOrderSource: 'goPro',
+      motionTrackInput: input,
     );
   }
 
@@ -895,6 +906,7 @@ class RawVideoResolver {
       textureOfLens: const [0, 1],
       url: input.originalUrl ?? input.url,
       trackOrderSource: 'dji',
+      motionTrackInput: input,
     );
   }
 

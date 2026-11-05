@@ -7,6 +7,7 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
@@ -230,6 +231,45 @@ void main() {
         (data) => reply = data,
       );
       expect(reply, isNull);
+    });
+  });
+  group('the stabilisation switch of the native player', () {
+    test('the session hands the choice of the user to the setting', () async {
+      final stored = <bool>[];
+      final session = SphericalVideoSession(
+        createContainer().read(sphereCoverageOverridesProvider.notifier),
+        onStabilizationChanged: (enabled) async => stored.add(enabled),
+      );
+      session.stabilizationChanged(false);
+      session.stabilizationChanged(true);
+      await pumpEventQueue();
+      expect(stored, [false, true]);
+
+      // A failing store only logs
+      final failing = SphericalVideoSession(
+        createContainer().read(sphereCoverageOverridesProvider.notifier),
+        onStabilizationChanged: (_) async => throw StateError('no database'),
+      );
+      failing.stabilizationChanged(false);
+      await pumpEventQueue();
+    });
+
+    test('the session provider stores the switch of the native player in the settings, off then on', () async {
+      await SettingsRepository.ensureInitialized(db);
+      addTearDown(SettingsRepository.reset);
+      final container = createContainer();
+      container.read(sphericalVideoSessionProvider);
+      expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, isTrue, reason: 'on by default');
+
+      for (final enabled in [false, true]) {
+        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+          'dev.flutter.pigeon.immich_mobile.SphericalVideoEvents.stabilizationChanged',
+          SphericalVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[enabled]),
+          (_) {},
+        );
+        await pumpEventQueue();
+        expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, enabled);
+      }
     });
   });
 }
