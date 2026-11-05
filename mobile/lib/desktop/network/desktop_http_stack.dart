@@ -139,6 +139,13 @@ class DesktopHttpStack {
     }
   }
 
+  /// Forgets every cookie the stack keeps, as NetworkApi.clearCookies does on the phones at logout
+  Future<void> clearCookies() async {
+    if (_jar.clear()) {
+      await _saveSession();
+    }
+  }
+
   /// What a request to [url] made outside [client] needs to be accepted by the user's server, as getAuthHeaders of
   /// HttpClientManager.kt gives the players and the image fetcher: the custom headers, the cookies of [url], and
   /// Basic authentication when [url] carries a user name

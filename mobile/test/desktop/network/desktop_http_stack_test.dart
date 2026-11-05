@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/network/desktop_http_stack.dart';
 import 'package:immich_mobile/desktop/network/interface_rank.dart';
 import 'package:immich_mobile/desktop/network/trusted_certificates.dart';
+import 'package:immich_mobile/desktop/platform/desktop_network_api.dart';
 import 'package:immich_mobile/repositories/secure_storage.repository.dart';
 
 void main() {
@@ -53,6 +54,19 @@ void main() {
       expect(stack.headersFor(Uri.parse('https://photos.example.test/')), contains('cookie'));
       await stack.clearToken();
       expect(stack.headersFor(Uri.parse('https://photos.example.test/')), {'A': 'b'});
+    });
+
+    test('the logout clears the cookies, and a new stack does not bring them back', () async {
+      await stack.setRequestHeaders(const {}, ['https://photos.example.test'], 'TOKEN');
+      await DesktopNetworkApi(stack: stack).clearCookies();
+      expect(stack.headersFor(Uri.parse('https://photos.example.test/')), isEmpty);
+      final next = DesktopHttpStack(
+        secrets: const SecureStorageRepository(FlutterSecureStorage()),
+        trustedCertificates: TrustedCertificates(folder: () async => Directory('/nonexistent/immuch360-test')),
+        userAgent: () async => null,
+      );
+      await next.init();
+      expect(next.headersFor(Uri.parse('https://photos.example.test/')), isEmpty);
     });
   });
 

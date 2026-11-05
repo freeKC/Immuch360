@@ -270,6 +270,10 @@ object HttpClientManager {
     }
   }
 
+  fun clearCookies() {
+    cookieJar.clear()
+  }
+
   fun loadCookieHeader(url: String): String? {
     val httpUrl = url.toHttpUrlOrNull() ?: return null
     return cookieJar.loadForRequest(httpUrl).takeIf { it.isNotEmpty() }
@@ -471,6 +475,12 @@ object HttpClientManager {
         persist()
       }
       return store.filter { it.matches(url) }
+    }
+
+    @Synchronized
+    fun clear() {
+      store.clear()
+      persist()
     }
 
     private fun syncAuthCookies(): Boolean {
