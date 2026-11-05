@@ -130,6 +130,8 @@ void main() {
       for (final stage in [null, ImmersiveStage.reading, ImmersiveStage.fieldOfView, ImmersiveStage.loadingModels]) {
         expect(jobMemoryStillNeeded(panorama, stage), need, reason: '$stage');
       }
+      // A panorama reading its photo still needs the 8 GiB sd-cli takes in segments (lot 13c), not the 6 GiB of before
+      expect(jobMemoryStillNeeded(panorama, ImmersiveStage.reading), 8 * gib);
       for (final stage in [ImmersiveStage.generating, ImmersiveStage.upscale, ImmersiveStage.writing]) {
         expect(jobMemoryStillNeeded(panorama, stage), 0, reason: '$stage');
       }

@@ -246,7 +246,8 @@ ImmersiveStage memoryPeakOf(ImmersiveKind kind) => switch (kind) {
 
 /// What a job of [kind] at [stage] (null: not started yet) may still take beyond the memory free read now: its whole
 /// need until its models run ([memoryPeakOf]), the memory read counting little of it before (a panorama reading its
-/// photo holds nothing of its 6 GiB yet); nothing from that step on, the memory read counting it then
+/// photo holds nothing of its 8 GiB yet, [panoramaJobMemory]); nothing from that step on, the memory read counting it
+/// then
 int jobMemoryStillNeeded(ImmersiveKind kind, ImmersiveStage? stage) =>
     stage != null && stage.index >= memoryPeakOf(kind).index ? 0 : jobMemoryNeedOf(kind);
 
