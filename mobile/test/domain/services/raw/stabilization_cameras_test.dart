@@ -72,7 +72,8 @@ ByteRangeReader _reader(Uint8List file) => (offset, length) async {
 
 /// Where the display shows the down of the world of frame [i]: the correction of the table turns the camera's view
 /// direction [cameraDown] (the down of the world as the camera's view sees it) to this direction of the display
-Vec3 _shownDown(StabilizationTable table, int i, Vec3 cameraDown) => _matrix(_at(table.corrections, i)).apply(cameraDown);
+Vec3 _shownDown(StabilizationTable table, int i, Vec3 cameraDown) =>
+    _matrix(_at(table.corrections, i)).apply(cameraDown);
 
 const _displayDown = (x: 0.0, y: 1.0, z: 0.0);
 
@@ -135,7 +136,7 @@ void main() {
   group('cameraOrientationTrackOf', () {
     test('takes the inverse of the orientations, made unit long, and the gravity of the same frames', () {
       final track = _goProTrack(
-        Float32List.fromList([0.5, 0, 0, 0, 0, 2, 0, 0, double.nan, 0, 0, 0, 0.6, 0, 0.8, 0]),
+        Float32List.fromList([0.8, 0, 0, 0, 0, 2, 0, 0, double.nan, 0, 0, 0, 0.6, 0, 0.8, 0]),
         gravity: Float32List.fromList([1, 0, 0, 0, 1, 0, 0, 0, 1, double.nan, double.nan, double.nan]),
       );
 
@@ -145,7 +146,7 @@ void main() {
       orientations!;
       expect(orientations.label, 'GoPro CORI');
       expect(orientations.worldUp, isNull);
-      // Frame 0 is half long and kept; frame 1 is twice too long and frame 2 not a number: both are left out
+      // Frame 0 is a little short and kept; frame 1 is twice too long and frame 2 not a number: both are left out
       expect(orientations.times, [0, 3 / 30]);
       const expected = [1.0, 0.0, 0.0, 0.0, 0.6, 0.0, -0.8, 0.0];
       for (var k = 0; k < 8; k++) {
@@ -200,11 +201,16 @@ void main() {
       table!;
       expect(table.length, count);
       expect(table.summary.source, 'GoPro CORI');
-      expect(table.summary.levelWindowsKept, greaterThan(5));
+      // Windows of 2 s spanning at least 1 s: 4 with frames 0.834 s apart
+      expect(table.summary.levelWindowsKept, 4);
       expect(details.viewToBody.values, goProViewToGpmf.values);
       for (var i = 0; i < count; i++) {
         // The gravity the camera wrote (GRAV points down), seen from the view of the stitch
-        final grav = (x: goProSpreadGravExpected[i][0], y: goProSpreadGravExpected[i][1], z: goProSpreadGravExpected[i][2]);
+        final grav = (
+          x: goProSpreadGravExpected[i][0],
+          y: goProSpreadGravExpected[i][1],
+          z: goProSpreadGravExpected[i][2],
+        );
         final cameraDown = goProViewToGpmf.transposed.apply(grav);
         expect(_angle(_shownDown(table, i, cameraDown), _displayDown), lessThan(2.5), reason: 'frame $i');
       }
@@ -253,7 +259,11 @@ void main() {
 
       final table = stabilizationOfCameraMotion(wrong)!;
 
-      final grav = (x: goProSpreadGravExpected[5][0], y: goProSpreadGravExpected[5][1], z: goProSpreadGravExpected[5][2]);
+      final grav = (
+        x: goProSpreadGravExpected[5][0],
+        y: goProSpreadGravExpected[5][1],
+        z: goProSpreadGravExpected[5][2],
+      );
       expect(_angle(_shownDown(table, 5, goProViewToGpmf.transposed.apply(grav)), _displayDown), greaterThan(170));
     });
 
