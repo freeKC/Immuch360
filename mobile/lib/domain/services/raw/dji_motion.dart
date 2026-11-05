@@ -332,7 +332,7 @@ class _AttitudeCollector {
   _AttitudeCollector(this.delayUs);
 
   final double delayUs;
-  final List<double> _times = [];
+  final List<int> _frameIndices = [];
   final List<double> _orientations = [];
   _AttitudeRecord? _previous;
   int _frameIndex = -1;
@@ -408,7 +408,7 @@ class _AttitudeCollector {
     }
     _frameIndex = index;
     _previous = record;
-    _times.add(index.toDouble());
+    _frameIndices.add(index);
     // From the world to the body: the inverse of q times the turn from the body to the axes of the camera
     final bodyToWorld = _multiply(q, _bodyToCamera);
     var body = [bodyToWorld[0], -bodyToWorld[1], -bodyToWorld[2], -bodyToWorld[3]];
@@ -462,12 +462,12 @@ class _AttitudeCollector {
   }
 
   CameraMotionTrack? track({required bool truncated}) {
-    if (_times.isEmpty) {
+    if (_frameIndices.isEmpty) {
       return null;
     }
     final rate = _frameRate ?? _defaultFrameRate;
-    final first = _times.first;
-    final frameTimes = Float64List.fromList([for (final index in _times) (index - first) / rate]);
+    final first = _frameIndices.first;
+    final frameTimes = Float64List.fromList([for (final index in _frameIndices) (index - first) / rate]);
     if (_fromFrameQuaternions) {
       _log.info(
         'Dji motion: ${_fromRuns ? 'some' : 'all'} frames take the quaternion of the frame, without the times of the '
