@@ -582,8 +582,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     }
   }
 
-  /// Gives the second player back to the pool, the pairing ended
-  Future<void> _releasePartner() async {
+  /// Gives the second player back to the pool, the pairing ended; without [waitForPool], the pool's turn that parks it
+  /// is not awaited (see [_unprepare])
+  Future<void> _releasePartner({bool waitForPool = true}) async {
     final partner = _partner;
     if (partner == null) {
       return;
@@ -594,7 +595,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     if (renderer != null && renderer.attached) {
       await renderer.setPartner(null);
     }
-    await partner.release();
+    await partner.release(waitForPool: waitForPool);
   }
 
   Future<void> _setMpv(PlaybackEngine engine, String name, String value) async {
@@ -886,10 +887,14 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
         : PluginRenderer.forController(videoController, maxOutputHeight: DesktopPlayerOptions.maxRenderHeight);
   }
 
-  /// Before the player leaves this page: renderer C off, mpv's choice of video track back
+  /// Before the player leaves this page: renderer C off, mpv's choice of video track back. The second player of a pair
+  /// goes back to the pool without waiting for the pool's turn: this runs inside one when the pool hands this page's
+  /// player to another page (PlayerPool._takeFrom) or replaces it after a lost picture (PlayerPool._discard), and the
+  /// turn that parks the second player is queued behind it; waiting for it would hold that turn, and every later one,
+  /// for ever (lot 13b; the release before a job on the graphics card leaves a page on screen alone)
   Future<void> _unprepare(PlaybackEngine engine) async {
     _probe.stop();
-    await _releasePartner();
+    await _releasePartner(waitForPool: false);
     if (identical(engine, _rendererEngine)) {
       await _renderer?.detach();
       _renderer = null;

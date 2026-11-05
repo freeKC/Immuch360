@@ -4,7 +4,7 @@
 // the window every player is disposed at once, none of them waited for longer than its bound, those on their way
 // between two places included. Before a job of the AI features on the graphics card (issue #13), the players that do
 // not play are let go, the one that plays, those of a page on screen (the 360° page and its pair) and the frame grabber
-// at work kept.
+// at work kept. A lease released is closed at once, so that an acquire of it still queued gets no player (lot 13b).
 
 import 'dart:async';
 
@@ -284,6 +284,29 @@ void main() {
 
     await players.pool.dispose();
     expect(engine.disposed, isTrue);
+  });
+
+  test('a lease released while its acquire waits behind a turn gets no player, and takes none from another page (lot '
+      '13b: the second player of a 360° pair given back from inside a turn)', () async {
+    final players = FakePlayers();
+    final suspended = Completer<void>();
+    final first = players.pool.lease(PlayerKind.playback, label: '360 video', onSuspend: () => suspended.future);
+    final engine = await first.acquire();
+    final viewer = players.pool.lease(PlayerKind.playback, label: 'viewer');
+    // The viewer takes the paused player of the 360° page, whose owner holds the turn while it notes where it was
+    final handedOver = viewer.acquire();
+    await Future<void>.delayed(Duration.zero);
+    final second = players.pool.lease(PlayerKind.playback, label: '360 video, second stream');
+    final pairing = second.acquire();
+    final given = second.release();
+    expect(second.isClosed, isTrue, reason: 'closed at once, before its turn');
+    suspended.complete();
+
+    expect(await handedOver, same(engine));
+    await expectLater(pairing, throwsStateError);
+    await given;
+    expect(viewer.engine, same(engine), reason: 'the queued acquire took nothing from the viewer');
+    expect(players.made, hasLength(1));
   });
 
   group('a job of the AI features on the graphics card', () {
