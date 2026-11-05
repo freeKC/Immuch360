@@ -710,6 +710,8 @@
   "ai_immersive_splat_done_ply": "பிற 3D செயலிகளுக்காகவும் சேமிக்கப்பட்டது: {name} ({size})",
   "ai_immersive_splat_done_video": "முடிந்தது: {gaussians} காஸியன், {size}, {total} ஃப்ரேம்களில் {placed} இலிருந்து",
   "ai_immersive_splat_few_photos": "படங்கள் குறைவு: காட்சியில் ஓட்டைகள் இருக்கலாம். {good} முதல் {max} வரை சிறந்தது.",
+  "ai_immersive_splat_gpu_budget_need": "ஸ்ப்ளாட் காட்சிகளுக்கு {needed} காலி கிராஃபிக்ஸ் நினைவகம் தேவை, {free} காலி: விளையாட்டுகள், 3D பயன்பாடுகள் அல்லது வீடியோக்களை மூடவும்",
+  "ai_immersive_splat_gpu_budget_need_app": "ஸ்ப்ளாட் காட்சிகளுக்கு {needed} காலி கிராஃபிக்ஸ் நினைவகம் தேவை, {free} காலி (Immuch360 தானே {app} பயன்படுத்துகிறது): விளையாட்டுகள், 3D பயன்பாடுகள் அல்லது வீடியோக்களை மூடவும்",
   "ai_immersive_splat_gpu_integrated": "உள்ளமைந்த கிராஃபிக்ஸ் இன்னும் ஸ்ப்ளாட் காட்சிகளுக்கு ஆதரிக்கப்படவில்லை: Vulkan உள்ள தனி கிராஃபிக்ஸ் அட்டை தேவை",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: ஸ்ப்ளாட் காட்சிகள் கிடைக்கின்றன",
   "ai_immersive_splat_gpu_too_small": "கிராஃபிக்ஸ் அட்டையில் {memory} நினைவகம் உள்ளது, ஸ்ப்ளாட் காட்சிகளுக்கு {needed} தேவை",

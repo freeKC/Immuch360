@@ -374,6 +374,8 @@
   "ai_immersive_splat_done_ply": "Бусад 3D аппад зориулж мөн хадгаллаа: {name} ({size})",
   "ai_immersive_splat_done_video": "Дууслаа: {gaussians} гауссиан, {size}, {total} кадраас {placed}-аас",
   "ai_immersive_splat_few_photos": "Зураг цөөн байна: үзэгдэлд нүх гарч магадгүй. {good}-аас {max} нь илүү дээр.",
+  "ai_immersive_splat_gpu_budget_need": "Сплат үзэгдэлд {needed} сул график санах ой хэрэгтэй, {free} сул: тоглоом, 3D апп эсвэл видеог хаана уу",
+  "ai_immersive_splat_gpu_budget_need_app": "Сплат үзэгдэлд {needed} сул график санах ой хэрэгтэй, {free} сул (Immuch360 өөрөө {app} эзэлж байна): тоглоом, 3D апп эсвэл видеог хаана уу",
   "ai_immersive_splat_gpu_integrated": "Суурилуулсан график сплат үзэгдлийг одоогоор дэмжихгүй: Vulkan-тай тусдаа видео карт хэрэгтэй",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: сплат үзэгдэл ашиглах боломжтой",
   "ai_immersive_splat_gpu_too_small": "Видео картад {memory} санах ой байна, сплат үзэгдэлд {needed} хэрэгтэй",

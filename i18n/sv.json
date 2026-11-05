@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Sparad även för andra 3D-appar: {name} ({size})",
   "ai_immersive_splat_done_video": "Klart: {gaussians} gaussianer, {size}, från {placed} av {total} bildrutor",
   "ai_immersive_splat_few_photos": "Få foton: scenen kan få hål. {good} till {max} är bättre.",
+  "ai_immersive_splat_gpu_budget_need": "Splat-scener kräver {needed} ledigt grafikminne, {free} ledigt: stäng spel, 3D-appar eller videor",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat-scener kräver {needed} ledigt grafikminne, {free} ledigt (Immuch360 själv använder {app}): stäng spel, 3D-appar eller videor",
   "ai_immersive_splat_gpu_integrated": "Integrerad grafik stöds ännu inte för splat-scener: ett dedikerat grafikkort med Vulkan behövs",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat-scener tillgängliga",
   "ai_immersive_splat_gpu_too_small": "Grafikkortet har {memory} minne, splat-scener kräver {needed}",

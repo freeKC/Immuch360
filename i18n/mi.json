@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "Kua tiakina hoki mō ētahi atu taupānga 3D: {name} ({size})",
   "ai_immersive_splat_done_video": "Kua oti: {gaussians} gaussian, {size}, mai i ngā anga {placed} o {total}",
   "ai_immersive_splat_few_photos": "He iti ngā whakaahua: tērā pea he kōhao kei te atamira. He pai ake te {good} ki te {max}.",
+  "ai_immersive_splat_gpu_budget_need": "E hiahia ana ngā atamira splat ki te {needed} o te pūmahara whakairoiro wātea, {free} e wātea ana: katia ngā kēmu, ngā taupānga 3D, ngā ataata rānei",
+  "ai_immersive_splat_gpu_budget_need_app": "E hiahia ana ngā atamira splat ki te {needed} o te pūmahara whakairoiro wātea, {free} e wātea ana (kei a Immuch360 tonu te {app}): katia ngā kēmu, ngā taupānga 3D, ngā ataata rānei",
   "ai_immersive_splat_gpu_integrated": "Kāore anō ngā whakairoiro whakauru kia tautokona mō ngā atamira splat: me whai kāri whakairoiro motuhake me Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: kei te wātea ngā atamira splat",
   "ai_immersive_splat_gpu_too_small": "He {memory} te pūmahara o te kāri whakairoiro, me {needed} mō ngā atamira splat",

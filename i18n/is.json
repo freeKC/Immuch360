@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Einnig vistað fyrir önnur 3D forrit: {name} ({size})",
   "ai_immersive_splat_done_video": "Lokið: {gaussians} gáss-dreifingar, {size}, úr {placed} af {total} römmum",
   "ai_immersive_splat_few_photos": "Fáar myndir: senan gæti haft göt. {good} til {max} er betra.",
+  "ai_immersive_splat_gpu_budget_need": "Splatt-senur þurfa {needed} af lausu grafíkminni, {free} laust: lokaðu leikjum, 3D forritum eða myndskeiðum",
+  "ai_immersive_splat_gpu_budget_need_app": "Splatt-senur þurfa {needed} af lausu grafíkminni, {free} laust (Immuch360 sjálft heldur {app}): lokaðu leikjum, 3D forritum eða myndskeiðum",
   "ai_immersive_splat_gpu_integrated": "Innbyggð skjástýring er ekki enn studd fyrir splatt-senur: sérstakt skjákort með Vulkan þarf",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splatt-senur í boði",
   "ai_immersive_splat_gpu_too_small": "Skjákortið er með {memory} af minni, splatt-senur þurfa {needed}",

@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "Imehifadhiwa pia kwa programu nyingine za 3D: {name} ({size})",
   "ai_immersive_splat_done_video": "Imekamilika: gaussian {gaussians}, {size}, kutoka fremu {placed} kati ya {total}",
   "ai_immersive_splat_few_photos": "Picha chache: mandhari inaweza kuwa na mapengo. {good} hadi {max} ni bora zaidi.",
+  "ai_immersive_splat_gpu_budget_need": "Mandhari za splat zinahitaji {needed} ya kumbukumbu ya michoro iliyo wazi, {free} ziko wazi: funga michezo, programu za 3D au video",
+  "ai_immersive_splat_gpu_budget_need_app": "Mandhari za splat zinahitaji {needed} ya kumbukumbu ya michoro iliyo wazi, {free} ziko wazi (Immuch360 yenyewe inashikilia {app}): funga michezo, programu za 3D au video",
   "ai_immersive_splat_gpu_integrated": "Michoro iliyojengewa ndani bado haitumiki kwa mandhari za splat: kadi maalum ya michoro yenye Vulkan inahitajika",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: mandhari za splat zinapatikana",
   "ai_immersive_splat_gpu_too_small": "Kadi ya michoro ina kumbukumbu ya {memory}, mandhari za splat zinahitaji {needed}",

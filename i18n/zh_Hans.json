@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "也已为其他 3D 应用保存：{name}（{size}）",
   "ai_immersive_splat_done_video": "完成：{gaussians} 个高斯，{size}，来自 {total} 帧中的 {placed} 帧",
   "ai_immersive_splat_few_photos": "照片较少：场景可能会有空洞。{good} 到 {max} 张效果更好。",
+  "ai_immersive_splat_gpu_budget_need": "泼溅场景需要 {needed} 可用显存，当前可用 {free}：请关闭游戏、3D 应用或视频",
+  "ai_immersive_splat_gpu_budget_need_app": "泼溅场景需要 {needed} 可用显存，当前可用 {free}（Immuch360 自身占用 {app}）：请关闭游戏、3D 应用或视频",
   "ai_immersive_splat_gpu_integrated": "集成显卡暂不支持泼溅场景：需要支持 Vulkan 的独立显卡",
   "ai_immersive_splat_gpu_line": "{name}，{memory}，Vulkan {version}：可以生成泼溅场景",
   "ai_immersive_splat_gpu_too_small": "显卡只有 {memory} 显存，泼溅场景需要 {needed}",

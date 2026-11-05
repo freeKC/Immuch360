@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Diğer 3D uygulamaları için de kaydedildi: {name} ({size})",
   "ai_immersive_splat_done_video": "Bitti: {gaussians} gauss, {size}, {total} kareden {placed} tanesiyle",
   "ai_immersive_splat_few_photos": "Az fotoğraf: sahnede boşluklar olabilir. {good} ile {max} arası daha iyidir.",
+  "ai_immersive_splat_gpu_budget_need": "Splat sahneleri {needed} boş grafik belleği gerektirir, {free} boş: oyunları, 3D uygulamaları veya videoları kapatın",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat sahneleri {needed} boş grafik belleği gerektirir, {free} boş (Immuch360'ın kendisi {app} kullanıyor): oyunları, 3D uygulamaları veya videoları kapatın",
   "ai_immersive_splat_gpu_integrated": "Tümleşik grafikler splat sahneleri için henüz desteklenmiyor: Vulkan destekli ayrı bir ekran kartı gerekir",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat sahneleri kullanılabilir",
   "ai_immersive_splat_gpu_too_small": "Ekran kartında {memory} bellek var, splat sahneleri {needed} gerektirir",

@@ -337,6 +337,8 @@
   "ai_immersive_splat_done_ply": "បានរក្សាទុកសម្រាប់កម្មវិធី 3D ផ្សេងទៀតផងដែរ៖ {name} ({size})",
   "ai_immersive_splat_done_video": "រួចរាល់៖ គោស្យាន {gaussians}, {size}, ពី {placed} ក្នុងចំណោម {total} ស៊ុម",
   "ai_immersive_splat_few_photos": "រូបថតតិច៖ ឈុតឆាកអាចមានរន្ធ។ {good} ដល់ {max} គឺល្អជាង។",
+  "ai_immersive_splat_gpu_budget_need": "ឈុតឆាកស្ពឡាតត្រូវការអង្គចងចាំក្រាហ្វិកទំនេរ {needed} ទំនេរ {free}៖ សូមបិទហ្គេម កម្មវិធី 3D ឬវីដេអូ",
+  "ai_immersive_splat_gpu_budget_need_app": "ឈុតឆាកស្ពឡាតត្រូវការអង្គចងចាំក្រាហ្វិកទំនេរ {needed} ទំនេរ {free} (Immuch360 ខ្លួនឯងប្រើ {app})៖ សូមបិទហ្គេម កម្មវិធី 3D ឬវីដេអូ",
   "ai_immersive_splat_gpu_integrated": "ក្រាហ្វិកដែលភ្ជាប់មកជាមួយមិនទាន់គាំទ្រឈុតឆាកស្ពឡាតនៅឡើយទេ៖ ត្រូវការកាតក្រាហ្វិកដាច់ដោយឡែកដែលមាន Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}៖ អាចប្រើឈុតឆាកស្ពឡាតបាន",
   "ai_immersive_splat_gpu_too_small": "កាតក្រាហ្វិកមានអង្គចងចាំ {memory} ឈុតឆាកស្ពឡាតត្រូវការ {needed}",

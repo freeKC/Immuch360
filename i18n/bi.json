@@ -252,6 +252,8 @@
   "ai_immersive_splat_done_ply": "Oli sevem tu blong ol narafala 3D app: {name} ({size})",
   "ai_immersive_splat_done_video": "I finis: {gaussians} gaussian, {size}, long {placed} pikja long {total}",
   "ai_immersive_splat_few_photos": "Smol foto nomo: sin i save gat ol hol. {good} kasem {max} i moa gud.",
+  "ai_immersive_splat_gpu_budget_need": "Ol splat sin oli nidim {needed} fri memori blong grafik, {free} i fri: satem ol gem, 3D app o video",
+  "ai_immersive_splat_gpu_budget_need_app": "Ol splat sin oli nidim {needed} fri memori blong grafik, {free} i fri (Immuch360 hem wan i holem {app}): satem ol gem, 3D app o video",
   "ai_immersive_splat_gpu_integrated": "Integreted grafik i no wok yet blong ol splat sin: yu nidim wan grafik kad we i stanap hem wan wetem Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: ol splat sin oli rere",
   "ai_immersive_splat_gpu_too_small": "Grafik kad i gat {memory} memori, ol splat sin oli nidim {needed}",

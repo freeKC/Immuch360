@@ -408,6 +408,8 @@
   "ai_immersive_splat_done_ply": "Digər 3D tətbiqləri üçün də saxlanıldı: {name} ({size})",
   "ai_immersive_splat_done_video": "Hazırdır: {gaussians} qauss, {size}, {total} kadrdan {placed} kadr ilə",
   "ai_immersive_splat_few_photos": "Az foto: səhnədə boşluqlar ola bilər. {good} ilə {max} arası daha yaxşıdır.",
+  "ai_immersive_splat_gpu_budget_need": "Splat səhnələri üçün {needed} boş qrafik yaddaş lazımdır, {free} boşdur: oyunları, 3D tətbiqləri və ya videoları bağlayın",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat səhnələri üçün {needed} boş qrafik yaddaş lazımdır, {free} boşdur (Immuch360 özü {app} tutur): oyunları, 3D tətbiqləri və ya videoları bağlayın",
   "ai_immersive_splat_gpu_integrated": "Daxili qrafika splat səhnələri üçün hələ dəstəklənmir: Vulkan dəstəkli ayrıca qrafik kart lazımdır",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat səhnələri mövcuddur",
   "ai_immersive_splat_gpu_too_small": "Qrafik kartın {memory} yaddaşı var, splat səhnələri üçün {needed} lazımdır",

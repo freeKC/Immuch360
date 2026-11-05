@@ -759,6 +759,8 @@
   "ai_immersive_splat_done_ply": "Išsaugota ir kitoms 3D programoms: {name} ({size})",
   "ai_immersive_splat_done_video": "Atlikta: Gauso elementų {gaussians}, {size}, iš {placed} iš {total} kadrų",
   "ai_immersive_splat_few_photos": "Mažai nuotraukų: scenoje gali būti skylių. Geriau nuo {good} iki {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Splat scenoms reikia {needed} laisvos grafinės atminties, laisva {free}: uždarykite žaidimus, 3D programas ar vaizdo įrašus",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat scenoms reikia {needed} laisvos grafinės atminties, laisva {free} (pati Immuch360 užima {app}): uždarykite žaidimus, 3D programas ar vaizdo įrašus",
   "ai_immersive_splat_gpu_integrated": "Integruota grafika splat scenoms dar nepalaikoma: reikia atskiros vaizdo plokštės su Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat scenos prieinamos",
   "ai_immersive_splat_gpu_too_small": "Vaizdo plokštė turi {memory} atminties, splat scenoms reikia {needed}",

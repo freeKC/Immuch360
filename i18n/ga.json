@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Sábháilte freisin d’aipeanna 3D eile: {name} ({size})",
   "ai_immersive_splat_done_video": "Déanta: {gaussians} gaussach, {size}, ó {placed} as {total} fráma",
   "ai_immersive_splat_few_photos": "Beagán grianghraf: d’fhéadfadh poill a bheith sa radharc. Is fearr {good} go {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Teastaíonn {needed} de chuimhne ghrafaice saor ó radhairc splat, {free} saor: dún cluichí, aipeanna 3D nó físeáin",
+  "ai_immersive_splat_gpu_budget_need_app": "Teastaíonn {needed} de chuimhne ghrafaice saor ó radhairc splat, {free} saor (tá {app} ag Immuch360 féin): dún cluichí, aipeanna 3D nó físeáin",
   "ai_immersive_splat_gpu_integrated": "Ní thacaítear le grafaic chomhtháite do radhairc splat fós: teastaíonn cárta grafaice ar leith le Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: radhairc splat ar fáil",
   "ai_immersive_splat_gpu_too_small": "Tá {memory} cuimhne ag an gcárta grafaice, teastaíonn {needed} ó radhairc splat",

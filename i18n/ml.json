@@ -746,6 +746,8 @@
   "ai_immersive_splat_done_ply": "മറ്റ് 3D ആപ്പുകൾക്കായും സേവ് ചെയ്തു: {name} ({size})",
   "ai_immersive_splat_done_video": "പൂർത്തിയായി: {gaussians} ഗൗസിയൻ, {size}, {total} ഫ്രെയിമുകളിൽ {placed} എണ്ണത്തിൽ നിന്ന്",
   "ai_immersive_splat_few_photos": "ഫോട്ടോകൾ കുറവാണ്: ദൃശ്യത്തിൽ ദ്വാരങ്ങൾ ഉണ്ടാകാം. {good} മുതൽ {max} വരെ നല്ലതാണ്.",
+  "ai_immersive_splat_gpu_budget_need": "സ്പ്ലാറ്റ് ദൃശ്യങ്ങൾക്ക് {needed} ഒഴിവുള്ള ഗ്രാഫിക്സ് മെമ്മറി വേണം, {free} ഒഴിവുണ്ട്: ഗെയിമുകളോ 3D ആപ്പുകളോ വീഡിയോകളോ അടയ്ക്കുക",
+  "ai_immersive_splat_gpu_budget_need_app": "സ്പ്ലാറ്റ് ദൃശ്യങ്ങൾക്ക് {needed} ഒഴിവുള്ള ഗ്രാഫിക്സ് മെമ്മറി വേണം, {free} ഒഴിവുണ്ട് (Immuch360 തന്നെ {app} ഉപയോഗിക്കുന്നു): ഗെയിമുകളോ 3D ആപ്പുകളോ വീഡിയോകളോ അടയ്ക്കുക",
   "ai_immersive_splat_gpu_integrated": "ഇന്റഗ്രേറ്റഡ് ഗ്രാഫിക്സ് സ്പ്ലാറ്റ് ദൃശ്യങ്ങൾക്ക് ഇനിയും പിന്തുണയ്ക്കുന്നില്ല: Vulkan ഉള്ള പ്രത്യേക ഗ്രാഫിക്സ് കാർഡ് വേണം",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: സ്പ്ലാറ്റ് ദൃശ്യങ്ങൾ ലഭ്യമാണ്",
   "ai_immersive_splat_gpu_too_small": "ഗ്രാഫിക്സ് കാർഡിൽ {memory} മെമ്മറി ഉണ്ട്, സ്പ്ലാറ്റ് ദൃശ്യങ്ങൾക്ക് {needed} വേണം",

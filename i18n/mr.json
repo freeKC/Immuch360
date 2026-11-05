@@ -712,6 +712,8 @@
   "ai_immersive_splat_done_ply": "इतर 3D ॲप्ससाठीही जतन केले: {name} ({size})",
   "ai_immersive_splat_done_video": "पूर्ण झाले: {gaussians} गॉसियन, {size}, {total} पैकी {placed} फ्रेम्सवरून",
   "ai_immersive_splat_few_photos": "कमी फोटो: देखाव्यात छिद्रे असू शकतात. {good} ते {max} चांगले.",
+  "ai_immersive_splat_gpu_budget_need": "स्प्लॅट देखाव्यांना {needed} मोकळी ग्राफिक्स मेमरी लागते, {free} मोकळी आहे: गेम, 3D ॲप्स किंवा व्हिडिओ बंद करा",
+  "ai_immersive_splat_gpu_budget_need_app": "स्प्लॅट देखाव्यांना {needed} मोकळी ग्राफिक्स मेमरी लागते, {free} मोकळी आहे (Immuch360 स्वतः {app} वापरत आहे): गेम, 3D ॲप्स किंवा व्हिडिओ बंद करा",
   "ai_immersive_splat_gpu_integrated": "इंटिग्रेटेड ग्राफिक्सला स्प्लॅट देखाव्यांसाठी अजून समर्थन नाही: Vulkan असलेले स्वतंत्र ग्राफिक्स कार्ड लागते",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: स्प्लॅट देखावे उपलब्ध",
   "ai_immersive_splat_gpu_too_small": "ग्राफिक्स कार्डमध्ये {memory} मेमरी आहे, स्प्लॅट देखाव्यांना {needed} लागते",

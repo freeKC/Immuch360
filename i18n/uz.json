@@ -251,6 +251,8 @@
   "ai_immersive_splat_done_ply": "Boshqa 3D ilovalar uchun ham saqlandi: {name} ({size})",
   "ai_immersive_splat_done_video": "Tayyor: {gaussians} gauss, {size}, {total} ta kadrdan {placed} tasidan",
   "ai_immersive_splat_few_photos": "Suratlar kam: sahnada teshiklar bo'lishi mumkin. {good} dan {max} gacha yaxshiroq.",
+  "ai_immersive_splat_gpu_budget_need": "Splat sahnalari uchun {needed} bo'sh grafik xotira kerak, {free} bo'sh: o'yinlar, 3D ilovalar yoki videolarni yoping",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat sahnalari uchun {needed} bo'sh grafik xotira kerak, {free} bo'sh (Immuch360 o'zi {app} band qilgan): o'yinlar, 3D ilovalar yoki videolarni yoping",
   "ai_immersive_splat_gpu_integrated": "O'rnatilgan grafika splat sahnalari uchun hali qo'llab-quvvatlanmaydi: Vulkan bilan alohida videokarta kerak",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat sahnalari mavjud",
   "ai_immersive_splat_gpu_too_small": "Videokartada {memory} xotira bor, splat sahnalariga {needed} kerak",

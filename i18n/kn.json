@@ -742,6 +742,8 @@
   "ai_immersive_splat_done_ply": "ಇತರ 3D ಆ್ಯಪ್‌ಗಳಿಗಾಗಿಯೂ ಉಳಿಸಲಾಗಿದೆ: {name} ({size})",
   "ai_immersive_splat_done_video": "ಮುಗಿದಿದೆ: {gaussians} ಗಾಸಿಯನ್, {size}, {total} ಫ್ರೇಮ್‌ಗಳಲ್ಲಿ {placed} ರಿಂದ",
   "ai_immersive_splat_few_photos": "ಫೋಟೋಗಳು ಕಡಿಮೆ: ದೃಶ್ಯದಲ್ಲಿ ರಂಧ್ರಗಳಿರಬಹುದು. {good} ರಿಂದ {max} ಉತ್ತಮ.",
+  "ai_immersive_splat_gpu_budget_need": "ಸ್ಪ್ಲಾಟ್ ದೃಶ್ಯಗಳಿಗೆ {needed} ಖಾಲಿ ಗ್ರಾಫಿಕ್ಸ್ ಮೆಮೊರಿ ಬೇಕು, {free} ಖಾಲಿ ಇದೆ: ಆಟಗಳು, 3D ಆ್ಯಪ್‌ಗಳು ಅಥವಾ ವೀಡಿಯೊಗಳನ್ನು ಮುಚ್ಚಿ",
+  "ai_immersive_splat_gpu_budget_need_app": "ಸ್ಪ್ಲಾಟ್ ದೃಶ್ಯಗಳಿಗೆ {needed} ಖಾಲಿ ಗ್ರಾಫಿಕ್ಸ್ ಮೆಮೊರಿ ಬೇಕು, {free} ಖಾಲಿ ಇದೆ (Immuch360 ಸ್ವತಃ {app} ಬಳಸುತ್ತಿದೆ): ಆಟಗಳು, 3D ಆ್ಯಪ್‌ಗಳು ಅಥವಾ ವೀಡಿಯೊಗಳನ್ನು ಮುಚ್ಚಿ",
   "ai_immersive_splat_gpu_integrated": "ಅಂತರ್ನಿರ್ಮಿತ ಗ್ರಾಫಿಕ್ಸ್‌ಗೆ ಸ್ಪ್ಲಾಟ್ ದೃಶ್ಯಗಳಿಗೆ ಇನ್ನೂ ಬೆಂಬಲವಿಲ್ಲ: Vulkan ಇರುವ ಪ್ರತ್ಯೇಕ ಗ್ರಾಫಿಕ್ಸ್ ಕಾರ್ಡ್ ಬೇಕು",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: ಸ್ಪ್ಲಾಟ್ ದೃಶ್ಯಗಳು ಲಭ್ಯವಿವೆ",
   "ai_immersive_splat_gpu_too_small": "ಗ್ರಾಫಿಕ್ಸ್ ಕಾರ್ಡ್‌ನಲ್ಲಿ {memory} ಮೆಮೊರಿ ಇದೆ, ಸ್ಪ್ಲಾಟ್ ದೃಶ್ಯಗಳಿಗೆ {needed} ಬೇಕು",

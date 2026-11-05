@@ -389,6 +389,8 @@
   "ai_immersive_splat_done_ply": "შენახულია სხვა 3D აპებისთვისაც: {name} ({size})",
   "ai_immersive_splat_done_video": "მზადაა: {gaussians} გაუსიანი, {size}, {total} კადრიდან {placed}-დან",
   "ai_immersive_splat_few_photos": "ცოტა ფოტოა: სცენაში შეიძლება ხვრელები იყოს. {good}-დან {max}-მდე უკეთესია.",
+  "ai_immersive_splat_gpu_budget_need": "სპლატის სცენებს სჭირდება {needed} თავისუფალი გრაფიკული მეხსიერება, თავისუფალია {free}: დახურეთ თამაშები, 3D აპები ან ვიდეოები",
+  "ai_immersive_splat_gpu_budget_need_app": "სპლატის სცენებს სჭირდება {needed} თავისუფალი გრაფიკული მეხსიერება, თავისუფალია {free} (თავად Immuch360 იკავებს {app}): დახურეთ თამაშები, 3D აპები ან ვიდეოები",
   "ai_immersive_splat_gpu_integrated": "ჩაშენებული გრაფიკა სპლატის სცენებისთვის ჯერ არ არის მხარდაჭერილი: საჭიროა ცალკე ვიდეობარათი Vulkan-ით",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: სპლატის სცენები ხელმისაწვდომია",
   "ai_immersive_splat_gpu_too_small": "ვიდეობარათს აქვს {memory} მეხსიერება, სპლატის სცენებს სჭირდება {needed}",

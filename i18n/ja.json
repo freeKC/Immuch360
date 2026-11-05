@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "ほかの 3D アプリ用にも保存しました: {name} ({size})",
   "ai_immersive_splat_done_video": "完了: {gaussians} 個のガウシアン、{size}、{total} フレーム中 {placed} フレームから",
   "ai_immersive_splat_few_photos": "写真が少ないため、シーンに穴が開く可能性があります。{good} から {max} 枚が適しています。",
+  "ai_immersive_splat_gpu_budget_need": "スプラット シーンには {needed} の空きグラフィックス メモリが必要ですが、空きは {free} です: ゲーム、3D アプリ、動画を閉じてください",
+  "ai_immersive_splat_gpu_budget_need_app": "スプラット シーンには {needed} の空きグラフィックス メモリが必要ですが、空きは {free} です (Immuch360 自体が {app} を使用中): ゲーム、3D アプリ、動画を閉じてください",
   "ai_immersive_splat_gpu_integrated": "内蔵グラフィックスはスプラット シーンにまだ対応していません: Vulkan 対応の専用グラフィックス カードが必要です",
   "ai_immersive_splat_gpu_line": "{name}、{memory}、Vulkan {version}: スプラット シーンを利用できます",
   "ai_immersive_splat_gpu_too_small": "グラフィックス カードのメモリは {memory} ですが、スプラット シーンには {needed} 必要です",

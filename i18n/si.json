@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "වෙනත් 3D යෙදුම් සඳහාද සුරැකිණි: {name} ({size})",
   "ai_immersive_splat_done_video": "අවසන්: ගවුසියන් {gaussians}, {size}, රාමු {total} න් {placed} කින්",
   "ai_immersive_splat_few_photos": "ඡායාරූප අඩුයි: දර්ශනයේ සිදුරු තිබිය හැක. {good} සිට {max} දක්වා වඩා හොඳයි.",
+  "ai_immersive_splat_gpu_budget_need": "ස්ප්ලැට් දර්ශන සඳහා {needed} නිදහස් ග්‍රැෆික්ස් මතකයක් අවශ්‍යයි, {free} නිදහස්: ක්‍රීඩා, 3D යෙදුම් හෝ වීඩියෝ වසන්න",
+  "ai_immersive_splat_gpu_budget_need_app": "ස්ප්ලැට් දර්ශන සඳහා {needed} නිදහස් ග්‍රැෆික්ස් මතකයක් අවශ්‍යයි, {free} නිදහස් (Immuch360 විසින්ම {app} ගෙන ඇත): ක්‍රීඩා, 3D යෙදුම් හෝ වීඩියෝ වසන්න",
   "ai_immersive_splat_gpu_integrated": "ඒකාබද්ධ ග්‍රැෆික්ස් තවම ස්ප්ලැට් දර්ශන සඳහා සහාය නොදක්වයි: Vulkan සහිත වෙනම ග්‍රැෆික්ස් කාඩ්පතක් අවශ්‍යයි",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: ස්ප්ලැට් දර්ශන ලබා ගත හැක",
   "ai_immersive_splat_gpu_too_small": "ග්‍රැෆික්ස් කාඩ්පතේ මතකය {memory}, ස්ප්ලැට් දර්ශනවලට {needed} අවශ්‍යයි",

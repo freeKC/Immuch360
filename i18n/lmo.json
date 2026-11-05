@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "Salvaa anca per alter app 3D: {name} ({size})",
   "ai_immersive_splat_done_video": "Fai: {gaussians} gaussian, {size}, de {placed} fotogramma su {total}",
   "ai_immersive_splat_few_photos": "Poche foto: la scena la podaria avegh di bus. Mej de {good} a {max}.",
+  "ai_immersive_splat_gpu_budget_need": "I scene splat gh'hann de besogn de {needed} de memoria grafica libera, {free} libera: sara i giugh, i app 3D o i video",
+  "ai_immersive_splat_gpu_budget_need_app": "I scene splat gh'hann de besogn de {needed} de memoria grafica libera, {free} libera (Immuch360 istess el dòpera {app}): sara i giugh, i app 3D o i video",
   "ai_immersive_splat_gpu_integrated": "La grafica integrada l'è minga anmò supportada per i scene splat: ghe voeur ona scheda grafica dedicada con Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: scene splat disponibil",
   "ai_immersive_splat_gpu_too_small": "La scheda grafica la gh'ha {memory} de memoria, i scene splat gh'hann besogn de {needed}",

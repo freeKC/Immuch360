@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "נשמר גם לאפליקציות 3D אחרות: {name} ({size})",
   "ai_immersive_splat_done_video": "הסתיים: {gaussians} גאוסיאנים, {size}, מ־{placed} מתוך {total} פריימים",
   "ai_immersive_splat_few_photos": "מעט תמונות: בסצנה עלולים להיות חורים. {good} עד {max} עדיף.",
+  "ai_immersive_splat_gpu_budget_need": "סצנות ספלאט צריכות {needed} של זיכרון גרפי פנוי, {free} פנויים: סגרו משחקים, אפליקציות 3D או סרטונים",
+  "ai_immersive_splat_gpu_budget_need_app": "סצנות ספלאט צריכות {needed} של זיכרון גרפי פנוי, {free} פנויים (Immuch360 עצמה תופסת {app}): סגרו משחקים, אפליקציות 3D או סרטונים",
   "ai_immersive_splat_gpu_integrated": "גרפיקה משולבת עדיין לא נתמכת בסצנות ספלאט: נדרש כרטיס מסך ייעודי עם Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: סצנות ספלאט זמינות",
   "ai_immersive_splat_gpu_too_small": "לכרטיס המסך יש {memory} זיכרון, סצנות ספלאט צריכות {needed}",

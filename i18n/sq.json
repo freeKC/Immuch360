@@ -753,6 +753,8 @@
   "ai_immersive_splat_done_ply": "U ruajt edhe për aplikacione të tjera 3D: {name} ({size})",
   "ai_immersive_splat_done_video": "Përfundoi: {gaussians} gausiane, {size}, nga {placed} prej {total} pamjesh",
   "ai_immersive_splat_few_photos": "Pak foto: skena mund të ketë vrima. {good} deri në {max} është më mirë.",
+  "ai_immersive_splat_gpu_budget_need": "Skenat splat kërkojnë {needed} kujtesë grafike të lirë, {free} të lira: mbyllni lojërat, aplikacionet 3D ose videot",
+  "ai_immersive_splat_gpu_budget_need_app": "Skenat splat kërkojnë {needed} kujtesë grafike të lirë, {free} të lira (vetë Immuch360 zë {app}): mbyllni lojërat, aplikacionet 3D ose videot",
   "ai_immersive_splat_gpu_integrated": "Grafika e integruar nuk mbështetet ende për skenat splat: nevojitet një kartë grafike më vete me Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: skenat splat janë të disponueshme",
   "ai_immersive_splat_gpu_too_small": "Karta grafike ka {memory} kujtesë, skenat splat kërkojnë {needed}",

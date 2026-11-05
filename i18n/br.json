@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "Enrollet ivez evit arloadoù 3D all: {name} ({size})",
   "ai_immersive_splat_done_video": "Graet: {gaussians} gaussian, {size}, diwar {placed} skeudenn diwar {total}",
   "ai_immersive_splat_few_photos": "Nebeut a luc'hskeudennoù: toulloù a c'hallfe bezañ el leurenn. Gwelloc'h eo etre {good} ha {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Ezhomm o deus al leurennoù splat eus {needed} a vemor grafek dieub, {free} dieub: serrit ar c'hoarioù, an arloadoù 3D pe ar videoioù",
+  "ai_immersive_splat_gpu_budget_need_app": "Ezhomm o deus al leurennoù splat eus {needed} a vemor grafek dieub, {free} dieub (Immuch360 e-unan a zalc'h {app}): serrit ar c'hoarioù, an arloadoù 3D pe ar videoioù",
   "ai_immersive_splat_gpu_integrated": "N'eo ket skoret ar grafek enframmet evit al leurennoù splat c'hoazh: ezhomm ez eus eus ur gartenn c'hrafek dispartiet gant Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: leurennoù splat hegerz",
   "ai_immersive_splat_gpu_too_small": "{memory} a vemor en deus ar gartenn c'hrafek, {needed} o deus ezhomm al leurennoù splat",

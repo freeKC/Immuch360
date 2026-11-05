@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "Och fir aner 3D-Appe gespäichert: {name} ({size})",
   "ai_immersive_splat_done_video": "Fäerdeg: {gaussians} Gaussen, {size}, aus {placed} vun {total} Biller",
   "ai_immersive_splat_few_photos": "Wéineg Fotoen: D’Zeen kann Lächer hunn. {good} bis {max} si besser.",
+  "ai_immersive_splat_gpu_budget_need": "Splat-Zeene brauchen {needed} fräie Grafikspäicher, {free} fräi: maach Spiller, 3D-Appen oder Videoen zou",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat-Zeene brauchen {needed} fräie Grafikspäicher, {free} fräi (Immuch360 selwer benotzt {app}): maach Spiller, 3D-Appen oder Videoen zou",
   "ai_immersive_splat_gpu_integrated": "Integréiert Grafik gëtt fir Splat-Zeenen nach net ënnerstëtzt: Eng eege Grafikkaart mat Vulkan ass néideg",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: Splat-Zeenen disponibel",
   "ai_immersive_splat_gpu_too_small": "D’Grafikkaart huet {memory} Späicher, Splat-Zeene brauchen {needed}",

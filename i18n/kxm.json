@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "บันทึกไว้สำหรับแอป 3D อื่นด้วย: {name} ({size})",
   "ai_immersive_splat_done_video": "เสร็จแล้ว: เกาส์เซียน {gaussians} ตัว, {size}, จาก {placed} ใน {total} เฟรม",
   "ai_immersive_splat_few_photos": "รูปน้อย: ฉากอาจมีรู {good} ถึง {max} รูปจะดีกว่า",
+  "ai_immersive_splat_gpu_budget_need": "ฉากสแปลตต้องใช้หน่วยความจำกราฟิกว่าง {needed} ว่าง {free}: ปิดเกม แอป 3D หรือวิดีโอ",
+  "ai_immersive_splat_gpu_budget_need_app": "ฉากสแปลตต้องใช้หน่วยความจำกราฟิกว่าง {needed} ว่าง {free} (Immuch360 เองใช้ {app}): ปิดเกม แอป 3D หรือวิดีโอ",
   "ai_immersive_splat_gpu_integrated": "กราฟิกในตัวยังบ่รองรับฉากสแปลต: ต้องใช้การ์ดจอแยกที่รองรับ Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: ใช้ฉากสแปลตได้",
   "ai_immersive_splat_gpu_too_small": "การ์ดจอมีหน่วยความจำ {memory} แต่ฉากสแปลตต้องใช้ {needed}",

@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Más 3D-alkalmazásokhoz is mentve: {name} ({size})",
   "ai_immersive_splat_done_video": "Kész: {gaussians} gauss-elem, {size}, {total} képkockából {placed} alapján",
   "ai_immersive_splat_few_photos": "Kevés fotó: a jelenetben lyukak lehetnek. Jobb {good} és {max} között.",
+  "ai_immersive_splat_gpu_budget_need": "A splat-jelenetekhez {needed} szabad grafikus memória kell, {free} szabad: zárja be a játékokat, a 3D alkalmazásokat vagy a videókat",
+  "ai_immersive_splat_gpu_budget_need_app": "A splat-jelenetekhez {needed} szabad grafikus memória kell, {free} szabad (maga az Immuch360 {app} memóriát foglal): zárja be a játékokat, a 3D alkalmazásokat vagy a videókat",
   "ai_immersive_splat_gpu_integrated": "Az integrált grafika még nem támogatott a splat-jelenetekhez: Vulkant támogató külön videokártya kell",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat-jelenetek elérhetők",
   "ai_immersive_splat_gpu_too_small": "A videokártyának {memory} memóriája van, a splat-jelenetekhez {needed} kell",

@@ -715,6 +715,8 @@
   "ai_immersive_splat_done_ply": "Saglabāts arī citām 3D lietotnēm: {name} ({size})",
   "ai_immersive_splat_done_video": "Gatavs: Gausa elementu {gaussians}, {size}, no {placed} no {total} kadriem",
   "ai_immersive_splat_few_photos": "Maz fotoattēlu: ainā var būt caurumi. Labāk no {good} līdz {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Splat ainām vajag {needed} brīvas grafikas atmiņas, brīvs {free}: aizveriet spēles, 3D lietotnes vai video",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat ainām vajag {needed} brīvas grafikas atmiņas, brīvs {free} (pati Immuch360 aizņem {app}): aizveriet spēles, 3D lietotnes vai video",
   "ai_immersive_splat_gpu_integrated": "Integrētā grafika splat ainām vēl netiek atbalstīta: vajadzīga atsevišķa grafikas karte ar Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat ainas pieejamas",
   "ai_immersive_splat_gpu_too_small": "Grafikas kartei ir {memory} atmiņas, splat ainām vajag {needed}",

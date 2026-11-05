@@ -355,6 +355,8 @@
   "ai_immersive_splat_done_ply": "Зачувано и за други 3D апликации: {name} ({size})",
   "ai_immersive_splat_done_video": "Готово: гаусијани {gaussians}, {size}, од {placed} од {total} кадри",
   "ai_immersive_splat_few_photos": "Малку фотографии: сцената може да има дупки. Подобро од {good} до {max}.",
+  "ai_immersive_splat_gpu_budget_need": "На сплат сцените им требаат {needed} слободна графичка меморија, слободно {free}: затворете ги игрите, 3D апликациите или видеата",
+  "ai_immersive_splat_gpu_budget_need_app": "На сплат сцените им требаат {needed} слободна графичка меморија, слободно {free} (самиот Immuch360 зафаќа {app}): затворете ги игрите, 3D апликациите или видеата",
   "ai_immersive_splat_gpu_integrated": "Вградената графика сè уште не е поддржана за сплат сцени: потребна е посебна графичка картичка со Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: сплат сцените се достапни",
   "ai_immersive_splat_gpu_too_small": "Графичката картичка има {memory} меморија, на сплат сцените им требаат {needed}",

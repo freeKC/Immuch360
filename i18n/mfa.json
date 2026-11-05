@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "Simpan jugok untuk aplikasi 3D lain: {name} ({size})",
   "ai_immersive_splat_done_video": "Siap: {gaussians} gaussian, {size}, dari {placed} bingkai dari {total}",
   "ai_immersive_splat_few_photos": "Gambo sikit: adege mungkin ado lubang. {good} sapa {max} lagi molek.",
+  "ai_immersive_splat_gpu_budget_need": "Adege splat perlu {needed} memori grafik kosong, {free} kosong: tutup permaine, aplikasi 3D atau video",
+  "ai_immersive_splat_gpu_budget_need_app": "Adege splat perlu {needed} memori grafik kosong, {free} kosong (Immuch360 sendiri guno {app}): tutup permaine, aplikasi 3D atau video",
   "ai_immersive_splat_gpu_integrated": "Grafik bersepadu belum disokong untuk adege splat: keno ado kad grafik khas nga Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: adege splat ado",
   "ai_immersive_splat_gpu_too_small": "Kad grafik ado memori {memory}, adege splat keno ado {needed}",

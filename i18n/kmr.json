@@ -288,6 +288,8 @@
   "ai_immersive_splat_done_ply": "Ji bo sepanên 3D yên din jî hate tomarkirin: {name} ({size})",
   "ai_immersive_splat_done_video": "Qediya: {gaussians} gaussî, {size}, ji {placed} çarçoveyan ji {total}",
   "ai_immersive_splat_few_photos": "Wêne kêm in: dibe ku di sehneyê de qul hebin. {good} heta {max} çêtir e.",
+  "ai_immersive_splat_gpu_budget_need": "Sehneyên splatê {needed} bîra grafîkê ya vala dixwazin, {free} vala ye: lîstik, sepanên 3D an vîdyoyan bigire",
+  "ai_immersive_splat_gpu_budget_need_app": "Sehneyên splatê {needed} bîra grafîkê ya vala dixwazin, {free} vala ye (Immuch360 bi xwe {app} digire): lîstik, sepanên 3D an vîdyoyan bigire",
   "ai_immersive_splat_gpu_integrated": "Grafîkên entegre hêj ji bo sehneyên splatê nayên piştgirîkirin: karta grafîkê ya veqetandî bi Vulkan pêwîst e",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: sehneyên splatê berdest in",
   "ai_immersive_splat_gpu_too_small": "Karta grafîkê {memory} bîr heye, sehneyên splatê {needed} pêwîst dikin",

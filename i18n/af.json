@@ -398,6 +398,8 @@
   "ai_immersive_splat_done_ply": "Ook gestoor vir ander 3D-toeps: {name} ({size})",
   "ai_immersive_splat_done_video": "Klaar: {gaussians} gaussiane, {size}, uit {placed} van {total} rame",
   "ai_immersive_splat_few_photos": "Min foto’s: die toneel kan gate hê. {good} tot {max} is beter.",
+  "ai_immersive_splat_gpu_budget_need": "Splat-tonele benodig {needed} vrye grafiese geheue, {free} vry: sluit speletjies, 3D-apps of video's",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat-tonele benodig {needed} vrye grafiese geheue, {free} vry (Immuch360 self hou {app}): sluit speletjies, 3D-apps of video's",
   "ai_immersive_splat_gpu_integrated": "Geïntegreerde grafika word nog nie vir splat-tonele ondersteun nie: ’n toegewyde grafiese kaart met Vulkan is nodig",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat-tonele beskikbaar",
   "ai_immersive_splat_gpu_too_small": "Die grafiese kaart het {memory} geheue, splat-tonele benodig {needed}",

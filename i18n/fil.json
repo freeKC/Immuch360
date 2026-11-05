@@ -317,6 +317,8 @@
   "ai_immersive_splat_done_ply": "Na-save din para sa ibang 3D app: {name} ({size})",
   "ai_immersive_splat_done_video": "Tapos na: {gaussians} gaussian, {size}, mula sa {placed} sa {total} na frame",
   "ai_immersive_splat_few_photos": "Kaunti ang larawan: maaaring may butas ang eksena. Mas mabuti ang {good} hanggang {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Kailangan ng mga splat na eksena ng {needed} na bakanteng graphics memory, {free} ang bakante: isara ang mga laro, 3D app o video",
+  "ai_immersive_splat_gpu_budget_need_app": "Kailangan ng mga splat na eksena ng {needed} na bakanteng graphics memory, {free} ang bakante (may hawak na {app} ang Immuch360 mismo): isara ang mga laro, 3D app o video",
   "ai_immersive_splat_gpu_integrated": "Hindi pa suportado ang integrated graphics para sa mga splat na eksena: kailangan ng hiwalay na graphics card na may Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: available ang mga splat na eksena",
   "ai_immersive_splat_gpu_too_small": "May {memory} na memory ang graphics card, kailangan ng mga splat na eksena ng {needed}",

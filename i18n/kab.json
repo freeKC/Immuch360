@@ -239,6 +239,8 @@
   "ai_immersive_splat_done_ply": "Yettwasekles daɣen i yisnasen 3D-nniḍen: {name} ({size})",
   "ai_immersive_splat_done_video": "Immed: {gaussians} n gaussiyen, {size}, seg {placed} n tugniwin ɣef {total}",
   "ai_immersive_splat_few_photos": "Drus n tewlafin: asayes yezmer ad yesɛu tiflukin. Seg {good} ɣer {max} ifaz.",
+  "ai_immersive_splat_gpu_budget_need": "Isuyas splat sran {needed} n tkatut tudlift tilellit, {free} tilellit: mdel uraren, isnasen 3D neɣ tividyutin",
+  "ai_immersive_splat_gpu_budget_need_app": "Isuyas splat sran {needed} n tkatut tudlift tilellit, {free} tilellit (Immuch360 s yiman-is yeṭṭef {app}): mdel uraren, isnasen 3D neɣ tividyutin",
   "ai_immersive_splat_gpu_integrated": "Tudlift yettwasidfen ur tettwasefrak ara akka tura i yisuyas splat: tesriḍ takarḍa tudlift tamaẓlayt s Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: isuyas splat llan",
   "ai_immersive_splat_gpu_too_small": "Takarḍa tudlift tesɛa {memory} n tmkatut, isuyas splat sran {needed}",

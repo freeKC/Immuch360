@@ -749,6 +749,8 @@
   "ai_immersive_splat_done_ply": "Beste 3D aplikazioetarako ere gordeta: {name} ({size})",
   "ai_immersive_splat_done_video": "Eginda: {gaussians} gaussiar, {size}, {total} fotogrametatik {placed}tik abiatuta",
   "ai_immersive_splat_few_photos": "Argazki gutxi: eszenak zuloak izan ditzake. Hobe {good} eta {max} artean.",
+  "ai_immersive_splat_gpu_budget_need": "Splat eszenek {needed} memoria grafiko libre behar dituzte, {free} libre: itxi jokoak, 3D aplikazioak edo bideoak",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat eszenek {needed} memoria grafiko libre behar dituzte, {free} libre (Immuch360k berak {app} hartzen ditu): itxi jokoak, 3D aplikazioak edo bideoak",
   "ai_immersive_splat_gpu_integrated": "Grafiko integratuak oraindik ez dira onartzen splat eszenetarako: Vulkan duen txartel grafiko dedikatu bat behar da",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat eszenak erabilgarri",
   "ai_immersive_splat_gpu_too_small": "Txartel grafikoak {memory} memoria ditu, splat eszenek {needed} behar dituzte",

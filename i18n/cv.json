@@ -294,6 +294,8 @@
   "ai_immersive_splat_done_ply": "Ытти 3D приложенисем валли те упранӑ: {name} ({size})",
   "ai_immersive_splat_done_video": "Хатӗр: {gaussians} гаусиан, {size}, {total} кадртан {placed} тӑрӑх",
   "ai_immersive_splat_few_photos": "Сӑнӳкерчӗк сахал: сценӑра шӑтӑксем пулма пултараҫҫӗ. {good} пуҫласа {max} таран лайӑхрах.",
+  "ai_immersive_splat_gpu_budget_need": "Сплат сценисем валли {needed} пушӑ видеоасӑм кирлӗ, пушӑ {free}: вӑййисене, 3D приложенисене е видеосене хупӑр",
+  "ai_immersive_splat_gpu_budget_need_app": "Сплат сценисем валли {needed} пушӑ видеоасӑм кирлӗ, пушӑ {free} (Immuch360 хӑй {app} йышӑнать): вӑййисене, 3D приложенисене е видеосене хупӑр",
   "ai_immersive_splat_gpu_integrated": "Ӑшри графика сплат сценисене халлӗхе пулӑшмасть: Vulkan пур уйрӑм видеокарта кирлӗ",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: сплат сценӑсем пур",
   "ai_immersive_splat_gpu_too_small": "Видеокартӑра {memory} асам, сплат сценисене {needed} кирлӗ",

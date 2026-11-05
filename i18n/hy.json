@@ -272,6 +272,8 @@
   "ai_immersive_splat_done_ply": "Պահպանվել է նաև այլ 3D հավելվածների համար՝ {name} ({size})",
   "ai_immersive_splat_done_video": "Պատրաստ է՝ {gaussians} գաուսյան, {size}, {total} կադրից {placed}-ից",
   "ai_immersive_splat_few_photos": "Քիչ լուսանկարներ․ տեսարանում կարող են անցքեր լինել։ {good}-ից {max}-ը ավելի լավ է։",
+  "ai_immersive_splat_gpu_budget_need": "Սփլաթ տեսարաններին պետք է {needed} ազատ գրաֆիկական հիշողություն, ազատ է {free}. փակեք խաղերը, 3D հավելվածները կամ տեսանյութերը",
+  "ai_immersive_splat_gpu_budget_need_app": "Սփլաթ տեսարաններին պետք է {needed} ազատ գրաֆիկական հիշողություն, ազատ է {free} (Immuch360-ն ինքը զբաղեցնում է {app}). փակեք խաղերը, 3D հավելվածները կամ տեսանյութերը",
   "ai_immersive_splat_gpu_integrated": "Ներկառուցված գրաֆիկան դեռ չի աջակցվում սփլաթ տեսարանների համար․ անհրաժեշտ է Vulkan-ով առանձին վիդեոքարտ",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}՝ սփլաթ տեսարանները հասանելի են",
   "ai_immersive_splat_gpu_too_small": "Վիդեոքարտն ունի {memory} հիշողություն, սփլաթ տեսարաններին անհրաժեշտ է {needed}",

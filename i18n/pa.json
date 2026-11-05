@@ -267,6 +267,8 @@
   "ai_immersive_splat_done_ply": "ਹੋਰ 3D ਐਪਾਂ ਲਈ ਵੀ ਸੰਭਾਲਿਆ: {name} ({size})",
   "ai_immersive_splat_done_video": "ਹੋ ਗਿਆ: {gaussians} ਗੌਸੀਅਨ, {size}, {total} ਵਿੱਚੋਂ {placed} ਫ਼ਰੇਮਾਂ ਤੋਂ",
   "ai_immersive_splat_few_photos": "ਘੱਟ ਫ਼ੋਟੋਆਂ: ਸੀਨ ਵਿੱਚ ਮੋਰੀਆਂ ਹੋ ਸਕਦੀਆਂ ਹਨ। {good} ਤੋਂ {max} ਬਿਹਤਰ ਹੈ।",
+  "ai_immersive_splat_gpu_budget_need": "ਸਪਲੈਟ ਸੀਨਾਂ ਲਈ {needed} ਖਾਲੀ ਗ੍ਰਾਫਿਕਸ ਮੈਮਰੀ ਚਾਹੀਦੀ ਹੈ, {free} ਖਾਲੀ ਹੈ: ਗੇਮਾਂ, 3D ਐਪਾਂ ਜਾਂ ਵੀਡੀਓ ਬੰਦ ਕਰੋ",
+  "ai_immersive_splat_gpu_budget_need_app": "ਸਪਲੈਟ ਸੀਨਾਂ ਲਈ {needed} ਖਾਲੀ ਗ੍ਰਾਫਿਕਸ ਮੈਮਰੀ ਚਾਹੀਦੀ ਹੈ, {free} ਖਾਲੀ ਹੈ (Immuch360 ਖੁਦ {app} ਵਰਤ ਰਿਹਾ ਹੈ): ਗੇਮਾਂ, 3D ਐਪਾਂ ਜਾਂ ਵੀਡੀਓ ਬੰਦ ਕਰੋ",
   "ai_immersive_splat_gpu_integrated": "ਇੰਟੀਗ੍ਰੇਟਿਡ ਗ੍ਰਾਫਿਕਸ ਅਜੇ ਸਪਲੈਟ ਸੀਨਾਂ ਲਈ ਸਮਰਥਿਤ ਨਹੀਂ: Vulkan ਵਾਲਾ ਵੱਖਰਾ ਗ੍ਰਾਫਿਕਸ ਕਾਰਡ ਚਾਹੀਦਾ ਹੈ",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: ਸਪਲੈਟ ਸੀਨ ਉਪਲਬਧ ਹਨ",
   "ai_immersive_splat_gpu_too_small": "ਗ੍ਰਾਫਿਕਸ ਕਾਰਡ ਵਿੱਚ {memory} ਮੈਮਰੀ ਹੈ, ਸਪਲੈਟ ਸੀਨਾਂ ਨੂੰ {needed} ਚਾਹੀਦੀ ਹੈ",

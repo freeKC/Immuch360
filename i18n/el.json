@@ -747,6 +747,8 @@
   "ai_immersive_splat_done_ply": "Αποθηκεύτηκε και για άλλες εφαρμογές 3D: {name} ({size})",
   "ai_immersive_splat_done_video": "Έτοιμο: {gaussians} γκαουσιανές, {size}, από {placed} από {total} καρέ",
   "ai_immersive_splat_few_photos": "Λίγες φωτογραφίες: η σκηνή μπορεί να έχει κενά. Καλύτερα από {good} έως {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Οι σκηνές splat χρειάζονται {needed} ελεύθερης μνήμης γραφικών, ελεύθερα {free}: κλείστε παιχνίδια, εφαρμογές 3D ή βίντεο",
+  "ai_immersive_splat_gpu_budget_need_app": "Οι σκηνές splat χρειάζονται {needed} ελεύθερης μνήμης γραφικών, ελεύθερα {free} (το ίδιο το Immuch360 κρατά {app}): κλείστε παιχνίδια, εφαρμογές 3D ή βίντεο",
   "ai_immersive_splat_gpu_integrated": "Τα ενσωματωμένα γραφικά δεν υποστηρίζονται ακόμη για σκηνές splat: χρειάζεται ξεχωριστή κάρτα γραφικών με Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: σκηνές splat διαθέσιμες",
   "ai_immersive_splat_gpu_too_small": "Η κάρτα γραφικών έχει {memory} μνήμης, οι σκηνές splat χρειάζονται {needed}",

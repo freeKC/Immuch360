@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Também salvo para outros apps 3D: {name} ({size})",
   "ai_immersive_splat_done_video": "Pronto: {gaussians} gaussianas, {size}, a partir de {placed} de {total} quadros",
   "ai_immersive_splat_few_photos": "Poucas fotos: a cena pode ter buracos. É melhor de {good} a {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Cenas splat precisam de {needed} de memória de vídeo livre, {free} livres: feche jogos, apps 3D ou vídeos",
+  "ai_immersive_splat_gpu_budget_need_app": "Cenas splat precisam de {needed} de memória de vídeo livre, {free} livres (o próprio Immuch360 ocupa {app}): feche jogos, apps 3D ou vídeos",
   "ai_immersive_splat_gpu_integrated": "Gráficos integrados ainda não são compatíveis com cenas splat: é preciso uma placa de vídeo dedicada com Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: cenas splat disponíveis",
   "ai_immersive_splat_gpu_too_small": "A placa de vídeo tem {memory} de memória, cenas splat precisam de {needed}",

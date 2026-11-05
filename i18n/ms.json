@@ -697,6 +697,8 @@
   "ai_immersive_splat_done_ply": "Turut disimpan untuk aplikasi 3D lain: {name} ({size})",
   "ai_immersive_splat_done_video": "Selesai: {gaussians} gaussian, {size}, daripada {placed} daripada {total} bingkai",
   "ai_immersive_splat_few_photos": "Sedikit foto: adegan mungkin berlubang. {good} hingga {max} lebih baik.",
+  "ai_immersive_splat_gpu_budget_need": "Adegan splat memerlukan {needed} memori grafik kosong, {free} kosong: tutup permainan, aplikasi 3D atau video",
+  "ai_immersive_splat_gpu_budget_need_app": "Adegan splat memerlukan {needed} memori grafik kosong, {free} kosong (Immuch360 sendiri menggunakan {app}): tutup permainan, aplikasi 3D atau video",
   "ai_immersive_splat_gpu_integrated": "Grafik bersepadu belum disokong untuk adegan splat: kad grafik khusus dengan Vulkan diperlukan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: adegan splat tersedia",
   "ai_immersive_splat_gpu_too_small": "Kad grafik mempunyai memori {memory}, adegan splat memerlukan {needed}",

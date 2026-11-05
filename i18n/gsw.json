@@ -698,6 +698,8 @@
   "ai_immersive_splat_done_ply": "Au für anderi 3D-Apps gspeicheret: {name} ({size})",
   "ai_immersive_splat_done_video": "Fertig: {gaussians} Gauss, {size}, us {placed} vo {total} Bilder",
   "ai_immersive_splat_few_photos": "Wenig Fotos: D Szene chan Lücke ha. {good} bis {max} sind besser.",
+  "ai_immersive_splat_gpu_budget_need": "Splat-Szene bruuched {needed} freie Grafikspeicher, {free} frei: mach Games, 3D-Apps oder Videos zue",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat-Szene bruuched {needed} freie Grafikspeicher, {free} frei (Immuch360 sälber bruucht {app}): mach Games, 3D-Apps oder Videos zue",
   "ai_immersive_splat_gpu_integrated": "Integrierti Grafik wird für Splat-Szene no nöd unterstützt: Es bruucht e eigeni Grafikcharte mit Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: Splat-Szene verfüegbar",
   "ai_immersive_splat_gpu_too_small": "D Grafikcharte hät {memory} Speicher, Splat-Szene bruuched {needed}",

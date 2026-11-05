@@ -261,6 +261,8 @@
   "ai_immersive_splat_done_ply": "Басқа 3D қолданбалары үшін де сақталды: {name} ({size})",
   "ai_immersive_splat_done_video": "Дайын: {gaussians} гаусиан, {size}, {total} кадрдың {placed} кадрынан",
   "ai_immersive_splat_few_photos": "Фото аз: сахнада тесіктер болуы мүмкін. {good} және {max} аралығы жақсырақ.",
+  "ai_immersive_splat_gpu_budget_need": "Сплат сахналарына {needed} бос графикалық жад қажет, бос {free}: ойындарды, 3D қолданбаларын не бейнелерді жабыңыз",
+  "ai_immersive_splat_gpu_budget_need_app": "Сплат сахналарына {needed} бос графикалық жад қажет, бос {free} (Immuch360 өзі {app} алып тұр): ойындарды, 3D қолданбаларын не бейнелерді жабыңыз",
   "ai_immersive_splat_gpu_integrated": "Кірістірілген графика сплат сахналары үшін әзірге қолдау көрсетілмейді: Vulkan қолдайтын жеке бейнекарта керек",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: сплат сахналары қолжетімді",
   "ai_immersive_splat_gpu_too_small": "Бейнекартада {memory} жад бар, сплат сахналарына {needed} керек",

@@ -317,6 +317,8 @@
   "ai_immersive_splat_done_ply": "دوسری 3D ایپس کے لیے بھی محفوظ کیا گیا: {name} ({size})",
   "ai_immersive_splat_done_video": "مکمل: {gaussians} گاؤسین، {size}، {total} میں سے {placed} فریموں سے",
   "ai_immersive_splat_few_photos": "کم تصاویر: منظر میں سوراخ ہو سکتے ہیں۔ {good} سے {max} بہتر ہے۔",
+  "ai_immersive_splat_gpu_budget_need": "اسپلیٹ مناظر کو {needed} خالی گرافکس میموری درکار ہے، {free} خالی ہے: گیمز، 3D ایپس یا ویڈیوز بند کریں",
+  "ai_immersive_splat_gpu_budget_need_app": "اسپلیٹ مناظر کو {needed} خالی گرافکس میموری درکار ہے، {free} خالی ہے (Immuch360 خود {app} استعمال کر رہی ہے): گیمز، 3D ایپس یا ویڈیوز بند کریں",
   "ai_immersive_splat_gpu_integrated": "انٹیگریٹڈ گرافکس ابھی اسپلیٹ مناظر کے لیے معاون نہیں: Vulkan والا الگ گرافکس کارڈ درکار ہے",
   "ai_immersive_splat_gpu_line": "{name}، {memory}، Vulkan {version}: اسپلیٹ مناظر دستیاب ہیں",
   "ai_immersive_splat_gpu_too_small": "گرافکس کارڈ میں {memory} میموری ہے، اسپلیٹ مناظر کو {needed} درکار ہے",

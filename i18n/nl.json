@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Ook opgeslagen voor andere 3D-apps: {name} ({size})",
   "ai_immersive_splat_done_video": "Klaar: {gaussians} gaussians, {size}, uit {placed} van {total} beelden",
   "ai_immersive_splat_few_photos": "Weinig foto's: de scène kan gaten hebben. {good} tot {max} is beter.",
+  "ai_immersive_splat_gpu_budget_need": "Splatscènes hebben {needed} vrij grafisch geheugen nodig, {free} vrij: sluit games, 3D-apps of video's",
+  "ai_immersive_splat_gpu_budget_need_app": "Splatscènes hebben {needed} vrij grafisch geheugen nodig, {free} vrij (Immuch360 zelf gebruikt {app}): sluit games, 3D-apps of video's",
   "ai_immersive_splat_gpu_integrated": "Geïntegreerde graphics worden nog niet ondersteund voor splatscènes: een aparte videokaart met Vulkan is nodig",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splatscènes beschikbaar",
   "ai_immersive_splat_gpu_too_small": "De videokaart heeft {memory} geheugen, splatscènes hebben {needed} nodig",

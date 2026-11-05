@@ -609,6 +609,8 @@
   "ai_immersive_splat_done_ply": "ఇతర 3D యాప్‌ల కోసం కూడా సేవ్ చేయబడింది: {name} ({size})",
   "ai_immersive_splat_done_video": "పూర్తయింది: {gaussians} గాసియన్‌లు, {size}, {total} ఫ్రేమ్‌లలో {placed} నుండి",
   "ai_immersive_splat_few_photos": "ఫోటోలు తక్కువ: దృశ్యంలో రంధ్రాలు ఉండవచ్చు. {good} నుండి {max} వరకు మంచిది.",
+  "ai_immersive_splat_gpu_budget_need": "స్ప్లాట్ దృశ్యాలకు {needed} ఖాళీ గ్రాఫిక్స్ మెమరీ అవసరం, {free} ఖాళీ: గేమ్‌లు, 3D యాప్‌లు లేదా వీడియోలను మూసివేయండి",
+  "ai_immersive_splat_gpu_budget_need_app": "స్ప్లాట్ దృశ్యాలకు {needed} ఖాళీ గ్రాఫిక్స్ మెమరీ అవసరం, {free} ఖాళీ (Immuch360 స్వయంగా {app} ఉపయోగిస్తోంది): గేమ్‌లు, 3D యాప్‌లు లేదా వీడియోలను మూసివేయండి",
   "ai_immersive_splat_gpu_integrated": "ఇంటిగ్రేటెడ్ గ్రాఫిక్స్ స్ప్లాట్ దృశ్యాలకు ఇంకా మద్దతు లేదు: Vulkan ఉన్న ప్రత్యేక గ్రాఫిక్స్ కార్డ్ అవసరం",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: స్ప్లాట్ దృశ్యాలు అందుబాటులో ఉన్నాయి",
   "ai_immersive_splat_gpu_too_small": "గ్రాఫిక్స్ కార్డ్‌లో {memory} మెమరీ ఉంది, స్ప్లాట్ దృశ్యాలకు {needed} అవసరం",

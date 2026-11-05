@@ -753,6 +753,8 @@
   "ai_immersive_splat_done_ply": "برای برنامه‌های 3D دیگر هم ذخیره شد: {name} ({size})",
   "ai_immersive_splat_done_video": "انجام شد: {gaussians} گاوسی، {size}، از {placed} فریم از {total}",
   "ai_immersive_splat_few_photos": "عکس‌ها کم است: ممکن است صحنه سوراخ داشته باشد. {good} تا {max} بهتر است.",
+  "ai_immersive_splat_gpu_budget_need": "صحنه‌های اسپلت به {needed} حافظهٔ گرافیکی آزاد نیاز دارند، {free} آزاد است: بازی‌ها، برنامه‌های 3D یا ویدیوها را ببندید",
+  "ai_immersive_splat_gpu_budget_need_app": "صحنه‌های اسپلت به {needed} حافظهٔ گرافیکی آزاد نیاز دارند، {free} آزاد است (خود Immuch360 {app} را در اختیار دارد): بازی‌ها، برنامه‌های 3D یا ویدیوها را ببندید",
   "ai_immersive_splat_gpu_integrated": "گرافیک مجتمع هنوز برای صحنه‌های اسپلت پشتیبانی نمی‌شود: یک کارت گرافیک مجزا با Vulkan لازم است",
   "ai_immersive_splat_gpu_line": "{name}، {memory}، Vulkan {version}: صحنه‌های اسپلت در دسترس است",
   "ai_immersive_splat_gpu_too_small": "کارت گرافیک {memory} حافظه دارد، صحنه‌های اسپلت به {needed} نیاز دارند",

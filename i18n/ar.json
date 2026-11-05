@@ -753,6 +753,8 @@
   "ai_immersive_splat_done_ply": "حُفظ أيضًا لتطبيقات 3D الأخرى: {name} ({size})",
   "ai_immersive_splat_done_video": "تم: {gaussians} غاوسية، {size}، من {placed} من أصل {total} إطار",
   "ai_immersive_splat_few_photos": "الصور قليلة: قد تكون في المشهد ثغرات. من {good} إلى {max} أفضل.",
+  "ai_immersive_splat_gpu_budget_need": "تحتاج مشاهد السبلات إلى {needed} من ذاكرة الرسومات المتاحة، والمتاح {free}: أغلق الألعاب أو تطبيقات 3D أو مقاطع الفيديو",
+  "ai_immersive_splat_gpu_budget_need_app": "تحتاج مشاهد السبلات إلى {needed} من ذاكرة الرسومات المتاحة، والمتاح {free} (يشغل Immuch360 نفسه {app}): أغلق الألعاب أو تطبيقات 3D أو مقاطع الفيديو",
   "ai_immersive_splat_gpu_integrated": "الرسومات المدمجة غير مدعومة بعد لمشاهد السبلات: تلزم بطاقة رسومات مستقلة تدعم Vulkan",
   "ai_immersive_splat_gpu_line": "{name}، {memory}، Vulkan {version}: مشاهد السبلات متاحة",
   "ai_immersive_splat_gpu_too_small": "لدى بطاقة الرسومات {memory} من الذاكرة، وتحتاج مشاهد السبلات إلى {needed}",

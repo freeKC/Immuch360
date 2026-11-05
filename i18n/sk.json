@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Uložené aj pre iné 3D aplikácie: {name} ({size})",
   "ai_immersive_splat_done_video": "Hotovo: gaussiánov {gaussians}, {size}, z {placed} z {total} snímok",
   "ai_immersive_splat_few_photos": "Málo fotiek: v scéne môžu byť diery. Lepšie je {good} až {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Splat scény potrebujú {needed} voľnej grafickej pamäte, voľné {free}: zatvorte hry, 3D aplikácie alebo videá",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat scény potrebujú {needed} voľnej grafickej pamäte, voľné {free} (samotný Immuch360 zaberá {app}): zatvorte hry, 3D aplikácie alebo videá",
   "ai_immersive_splat_gpu_integrated": "Integrovaná grafika zatiaľ nie je pre splat scény podporovaná: je potrebná samostatná grafická karta s Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat scény dostupné",
   "ai_immersive_splat_gpu_too_small": "Grafická karta má {memory} pamäte, splat scény potrebujú {needed}",

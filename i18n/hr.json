@@ -753,6 +753,8 @@
   "ai_immersive_splat_done_ply": "Spremljeno i za druge 3D aplikacije: {name} ({size})",
   "ai_immersive_splat_done_video": "Gotovo: Gausijana {gaussians}, {size}, iz {placed} od {total} sličica",
   "ai_immersive_splat_few_photos": "Malo fotografija: scena može imati rupe. Bolje je od {good} do {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Splat scene trebaju {needed} slobodne grafičke memorije, slobodno je {free}: zatvorite igre, 3D aplikacije ili videozapise",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat scene trebaju {needed} slobodne grafičke memorije, slobodno je {free} (sam Immuch360 zauzima {app}): zatvorite igre, 3D aplikacije ili videozapise",
   "ai_immersive_splat_gpu_integrated": "Integrirana grafika još nije podržana za splat scene: potrebna je zasebna grafička kartica s Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat scene dostupne",
   "ai_immersive_splat_gpu_too_small": "Grafička kartica ima {memory} memorije, splat scene trebaju {needed}",

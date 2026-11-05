@@ -753,6 +753,8 @@
   "ai_immersive_splat_done_ply": "অন্য 3D অ্যাপের জন্যও সংরক্ষিত: {name} ({size})",
   "ai_immersive_splat_done_video": "সম্পন্ন: {gaussians}টি গাউসিয়ান, {size}, {total}টি ফ্রেমের মধ্যে {placed}টি থেকে",
   "ai_immersive_splat_few_photos": "ছবি কম: দৃশ্যে ফাঁক থাকতে পারে। {good} থেকে {max}টি হলে ভালো।",
+  "ai_immersive_splat_gpu_budget_need": "স্প্ল্যাট দৃশ্যের জন্য {needed} খালি গ্রাফিক্স মেমরি দরকার, {free} খালি আছে: গেম, 3D অ্যাপ বা ভিডিও বন্ধ করুন",
+  "ai_immersive_splat_gpu_budget_need_app": "স্প্ল্যাট দৃশ্যের জন্য {needed} খালি গ্রাফিক্স মেমরি দরকার, {free} খালি আছে (Immuch360 নিজেই {app} ধরে রেখেছে): গেম, 3D অ্যাপ বা ভিডিও বন্ধ করুন",
   "ai_immersive_splat_gpu_integrated": "ইন্টিগ্রেটেড গ্রাফিক্স এখনো স্প্ল্যাট দৃশ্যের জন্য সমর্থিত নয়: Vulkan সহ একটি আলাদা গ্রাফিক্স কার্ড দরকার",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: স্প্ল্যাট দৃশ্য পাওয়া যাচ্ছে",
   "ai_immersive_splat_gpu_too_small": "গ্রাফিক্স কার্ডে {memory} মেমরি আছে, স্প্ল্যাট দৃশ্যের জন্য {needed} দরকার",

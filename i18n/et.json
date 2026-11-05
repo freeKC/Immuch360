@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Salvestatud ka teiste 3D-rakenduste jaoks: {name} ({size})",
   "ai_immersive_splat_done_video": "Valmis: {gaussians} gaussiaani, {size}, {placed}/{total} kaadrist",
   "ai_immersive_splat_few_photos": "Vähe fotosid: stseenis võib olla auke. Parem on {good} kuni {max}.",
+  "ai_immersive_splat_gpu_budget_need": "Splat-stseenid vajavad {needed} vaba graafikamälu, vaba on {free}: sulge mängud, 3D-rakendused või videod",
+  "ai_immersive_splat_gpu_budget_need_app": "Splat-stseenid vajavad {needed} vaba graafikamälu, vaba on {free} (Immuch360 ise hoiab {app}): sulge mängud, 3D-rakendused või videod",
   "ai_immersive_splat_gpu_integrated": "Integreeritud graafikat splat-stseenide jaoks veel ei toetata: vaja on eraldi graafikakaarti koos Vulkaniga",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: splat-stseenid saadaval",
   "ai_immersive_splat_gpu_too_small": "Graafikakaardil on {memory} mälu, splat-stseenid vajavad {needed}",

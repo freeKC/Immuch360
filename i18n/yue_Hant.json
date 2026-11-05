@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "都已經為其他 3D app 儲存咗：{name}（{size}）",
   "ai_immersive_splat_done_video": "完成：{gaussians} 個高斯，{size}，來自 {total} 格入面嘅 {placed} 格",
   "ai_immersive_splat_few_photos": "相太少：場景可能會有窿。{good} 至 {max} 張會好啲。",
+  "ai_immersive_splat_gpu_budget_need": "潑濺場景需要 {needed} 可用顯示卡記憶體，剩 {free}：請關閉遊戲、3D App 或者影片",
+  "ai_immersive_splat_gpu_budget_need_app": "潑濺場景需要 {needed} 可用顯示卡記憶體，剩 {free}（Immuch360 自己用緊 {app}）：請關閉遊戲、3D App 或者影片",
   "ai_immersive_splat_gpu_integrated": "內置顯示晶片暫時未支援潑濺場景：要一張支援 Vulkan 嘅獨立顯示卡",
   "ai_immersive_splat_gpu_line": "{name}，{memory}，Vulkan {version}：可以整潑濺場景",
   "ai_immersive_splat_gpu_too_small": "顯示卡得 {memory} 記憶體，潑濺場景需要 {needed}",

@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "Cũng đã lưu cho các ứng dụng 3D khác: {name} ({size})",
   "ai_immersive_splat_done_video": "Xong: {gaussians} gaussian, {size}, từ {placed} trên {total} khung hình",
   "ai_immersive_splat_few_photos": "Ít ảnh: cảnh có thể có lỗ hổng. {good} đến {max} ảnh thì tốt hơn.",
+  "ai_immersive_splat_gpu_budget_need": "Cảnh splat cần {needed} bộ nhớ đồ họa trống, còn trống {free}: hãy đóng trò chơi, ứng dụng 3D hoặc video",
+  "ai_immersive_splat_gpu_budget_need_app": "Cảnh splat cần {needed} bộ nhớ đồ họa trống, còn trống {free} (chính Immuch360 đang giữ {app}): hãy đóng trò chơi, ứng dụng 3D hoặc video",
   "ai_immersive_splat_gpu_integrated": "Đồ họa tích hợp chưa được hỗ trợ cho cảnh splat: cần một card đồ họa rời có Vulkan",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: có thể tạo cảnh splat",
   "ai_immersive_splat_gpu_too_small": "Card đồ họa có {memory} bộ nhớ, cảnh splat cần {needed}",

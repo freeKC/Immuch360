@@ -760,6 +760,8 @@
   "ai_immersive_splat_done_ply": "다른 3D 앱용으로도 저장됨: {name}({size})",
   "ai_immersive_splat_done_video": "완료: 가우시안 {gaussians}개, {size}, 프레임 {total}개 중 {placed}개 사용",
   "ai_immersive_splat_few_photos": "사진이 적어 장면에 구멍이 생길 수 있습니다. {good}~{max}장이 더 좋습니다.",
+  "ai_immersive_splat_gpu_budget_need": "스플랫 장면에는 {needed}의 여유 그래픽 메모리가 필요하지만 {free} 남음: 게임, 3D 앱 또는 동영상을 닫으세요",
+  "ai_immersive_splat_gpu_budget_need_app": "스플랫 장면에는 {needed}의 여유 그래픽 메모리가 필요하지만 {free} 남음(Immuch360 자체가 {app} 사용 중): 게임, 3D 앱 또는 동영상을 닫으세요",
   "ai_immersive_splat_gpu_integrated": "내장 그래픽은 아직 스플랫 장면을 지원하지 않습니다. Vulkan을 지원하는 전용 그래픽 카드가 필요합니다",
   "ai_immersive_splat_gpu_line": "{name}, {memory}, Vulkan {version}: 스플랫 장면 사용 가능",
   "ai_immersive_splat_gpu_too_small": "그래픽 카드 메모리: {memory}, 스플랫 장면에 필요한 메모리: {needed}",
