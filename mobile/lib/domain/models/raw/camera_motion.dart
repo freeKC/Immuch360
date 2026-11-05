@@ -71,7 +71,7 @@ class CameraMotionTrack {
     this.rollingShutterMs,
     this.truncated = false,
     this.droppedSamples = 0,
-  }) : assert(frameExposures.isEmpty || frameExposures.length == frameTimes.length),
+  }) : assert(frameExposures.length == 0 || frameExposures.length == frameTimes.length),
        assert(frameOrientations == null || frameOrientations.length == 4 * frameTimes.length);
 
   final CameraMotionSource source;

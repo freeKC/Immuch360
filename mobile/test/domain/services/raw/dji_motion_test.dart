@@ -66,10 +66,10 @@ List<double> _orientation(CameraMotionTrack track, int frame) => [
   for (var k = 0; k < 4; k++) track.frameOrientations![4 * frame + k],
 ];
 
-// The angle in degrees between two orientations, whatever their signs
+// The angle in degrees between two orientations, whatever their signs and the rounding of their norms: that of a* b
 double _angle(List<double> a, List<double> b) {
-  final dot = (a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]).abs();
-  return 2 * math.acos(dot.clamp(-1.0, 1.0)) * 180 / math.pi;
+  final r = _multiply(_conjugate(a), b);
+  return 2 * math.atan2(math.sqrt(r[1] * r[1] + r[2] * r[2] + r[3] * r[3]), r[0].abs()) * 180 / math.pi;
 }
 
 // The axis of the rotation that takes the body at frame [a] to the body at frame [b], in the body frame at [a], and
@@ -78,10 +78,7 @@ double _angle(List<double> a, List<double> b) {
   final r = _multiply(_conjugate(_orientation(track, a)), _orientation(track, b));
   final sign = r[0] < 0 ? -1.0 : 1.0;
   final s = math.sqrt(r[1] * r[1] + r[2] * r[2] + r[3] * r[3]);
-  return (
-    axis: [for (var k = 1; k < 4; k++) sign * r[k] / s],
-    degrees: 2 * math.atan2(s, (r[0]).abs()) * 180 / math.pi,
-  );
+  return (axis: [for (var k = 1; k < 4; k++) sign * r[k] / s], degrees: 2 * math.atan2(s, r[0].abs()) * 180 / math.pi);
 }
 
 // A run of [count] attitude samples turning about the camera [axis] by 0.1 degree a sample from [startDegrees]
@@ -181,13 +178,12 @@ void main() {
   group('readDjiMotion, records built to measure', () {
     test('turns each camera axis (x forward, y right, z down) into its body axis', () async {
       // Body x right, y down, z along the rear lens: forward is -z, the right of the camera -x, down +y
-      const bodyAxes = {
-        (1.0, 0.0, 0.0): [0.0, 0.0, -1.0],
-        (0.0, 1.0, 0.0): [-1.0, 0.0, 0.0],
-        (0.0, 0.0, 1.0): [0.0, 1.0, 0.0],
-      };
-      for (final MapEntry(key: (x, y, z), value: bodyAxis) in bodyAxes.entries) {
-        final axis = [x, y, z];
+      const bodyAxes = [
+        ([1.0, 0.0, 0.0], [0.0, 0.0, -1.0]),
+        ([0.0, 1.0, 0.0], [-1.0, 0.0, 0.0]),
+        ([0.0, 0.0, 1.0], [0.0, 1.0, 0.0]),
+      ];
+      for (final (axis, bodyAxis) in bodyAxes) {
         final records = [
           for (var k = 0; k < 2; k++)
             djiAttitudeRecord(

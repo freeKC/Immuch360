@@ -333,7 +333,6 @@ class _AttitudeCollector {
   final List<double> _times = [];
   final List<double> _orientations = [];
   _AttitudeRecord? _previous;
-  int? _firstStampUs;
   int _frameIndex = -1;
   double? _frameRate;
   double _sampleStepUs = djiAttitudeSampleStepUs;
@@ -405,7 +404,6 @@ class _AttitudeCollector {
     if (q == null) {
       return;
     }
-    _firstStampUs ??= stamp;
     _frameIndex = index;
     _previous = record;
     _times.add(index.toDouble());
