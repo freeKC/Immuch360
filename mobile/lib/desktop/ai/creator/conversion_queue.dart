@@ -44,9 +44,11 @@
 // A splat scene (plan 2026-11-01, lot SP6) is one job for a whole selection, photos or one video (addSplat): on the lane
 // of the graphics card, since its training holds the card, its poses running on the processor meanwhile; its card asked
 // with its own need (2.5 GiB free on a dedicated card, gpuNeedOf); its spec given its photos or its video, its settings
-// and the times of its steps on this computer, from which its engine tells the time left of the whole job. Its copy for
-// the headset is the file of the job; "Also save a .ply for other 3D apps" adds a second .part, put beside the .spz
-// under the same name by a writer that writes companions (ConversionCompanionOutput), and dropped with it. Its engine
+// and the times of its steps on this computer, from which its engine tells the time left of the whole job. Its .spz is
+// the file of the job (the copy for the headset for Headset, the whole scene for Detailed and Maximum); "Also save a
+// .ply for other 3D apps" adds a second .part, and Detailed and Maximum a third for the copy for the headset
+// ("salon_splat.headset.spz", lot Q1), each put beside the .spz under the same name by a writer that writes companions
+// (ConversionCompanionOutput), and dropped with it. Its engine
 // keeps its work folder until the file is saved (ImmersiveResult.afterSaved): a destination that refuses the file
 // leaves the poses and the training for Retry.
 
@@ -126,14 +128,15 @@ abstract interface class ConversionOutput {
 }
 
 /// A writer that also writes the companion of a version: a file of another extension beside it, under the same name
-/// (the .ply of a splat scene beside its .spz)
+/// (the .ply of a splat scene beside its .spz, and the copy for the headset of a scene of Detailed or Maximum,
+/// "salon_splat.headset.spz": [companionNameBeside])
 abstract interface class ConversionCompanionOutput {
   /// The .part of the companion of [job] named [fileName], in the folder of its target. Throws a ConversionException as
   /// ConversionOutput.begin.
   Future<String> beginCompanion(ConversionJob job, String fileName);
 
-  /// Puts [partPath] beside [versionPath], the version of [job] just saved, under its name with the extension of the
-  /// companion, or the first free "name (n)" of it; returns where it went. Throws a ConversionException; the caller then
+  /// Puts [partPath] beside [versionPath], the version of [job] just saved, under its name with the end of the name of
+  /// the companion ([companionNameBeside]), or the first free "name (n)" of it; returns where it went. Throws a ConversionException; the caller then
   /// discards the .part with ConversionOutput.discard.
   Future<String> finishCompanion(
     ConversionJob job,
@@ -141,6 +144,18 @@ abstract interface class ConversionCompanionOutput {
     required String versionPath,
     required ImmersiveSource original,
   });
+}
+
+/// The name of a companion begun as [companionName] for the target [targetName], beside the version saved as
+/// [versionName]: the name of the version without its extension, then what follows the stem of the target in the name
+/// of the companion ("salon_splat (1).headset.spz" for "salon_splat.headset.spz" beside "salon_splat (1).spz"), or its
+/// extension alone when the companion is named otherwise ("salon_splat (1).ply")
+String companionNameBeside(String versionName, {required String companionName, required String targetName}) {
+  final stem = p.basenameWithoutExtension(targetName);
+  final end = companionName.startsWith(stem) && companionName.length > stem.length
+      ? companionName.substring(stem.length)
+      : p.extension(companionName);
+  return '${p.basenameWithoutExtension(versionName)}$end';
 }
 
 /// The engine of one kind of job and what the queue asks before it runs one: the key of the settings the file would
@@ -770,6 +785,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     String? part;
     // The .ply of a splat scene, beside its .spz
     String? companion;
+    // The copy for the headset of a splat scene of Detailed or Maximum, beside its .spz
+    String? headsetCopy;
     // What an unexpected error means at each step
     var failure = ImmersiveErrorCode.sourceLost;
     try {
@@ -849,6 +866,14 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           _log.warning('The writer of this build writes no .ply beside a splat scene');
         }
       }
+      if (job.splat?.settings.quality.hasHeadsetCopy ?? false) {
+        if (companions != null) {
+          headsetCopy = await companions.beginCompanion(state.byId(id) ?? job, splatHeadsetCopyNameOf(target.fileName));
+        } else {
+          // The engine then writes the copy for the headset as the .spz
+          _log.warning('The writer of this build writes no copy for the headset beside a splat scene');
+        }
+      }
 
       failure = ImmersiveErrorCode.modelFailed;
       final spec = _specOf(
@@ -860,6 +885,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         parent: parent,
         part: part,
         companion: companion,
+        headsetCopy: headsetCopy,
         timings: timings,
       );
       if (spec == null) {
@@ -913,6 +939,20 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       var details = result.details;
       String? companionMessage;
       final ply = companion;
+      final copy = headsetCopy;
+      if (copy != null && saved.outcome != ConversionSaveOutcome.skipped && companions != null) {
+        try {
+          await companions.finishCompanion(state.byId(id) ?? job, copy, versionPath: saved.path, original: original);
+          headsetCopy = null;
+        } on ConversionException catch (error) {
+          // The scene is there all the same: the job is done, the copy for the headset said missing
+          _log.warning('The copy for the headset of $id could not be saved: $error');
+          companionMessage = 'The copy for the headset could not be saved: ${error.message ?? error.code.name}';
+          if (details is SplatResultDetails) {
+            details = details.withoutHeadsetCopy();
+          }
+        }
+      }
       if (ply != null && saved.outcome != ConversionSaveOutcome.skipped && companions != null) {
         try {
           await companions.finishCompanion(state.byId(id) ?? job, ply, versionPath: saved.path, original: original);
@@ -920,20 +960,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         } on ConversionException catch (error) {
           // The scene is there all the same: the job is done, the .ply said missing
           _log.warning('The .ply of $id could not be saved: $error');
-          companionMessage = 'The .ply could not be saved: ${error.message ?? error.code.name}';
+          final said = 'The .ply could not be saved: ${error.message ?? error.code.name}';
+          companionMessage = companionMessage == null ? said : '$companionMessage. $said';
           if (details is SplatResultDetails) {
-            details = SplatResultDetails(
-              gaussians: details.gaussians,
-              images: details.images,
-              placed: details.placed,
-              subject: details.subject,
-              scale: details.scale,
-              fromVideo: details.fromVideo,
-              blurred: details.blurred,
-              shDegree: details.shDegree,
-              upright: details.upright,
-              cropped: details.cropped,
-            );
+            details = details.withoutPly();
           }
         }
       }
@@ -975,7 +1005,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _log.warning('Conversion $id failed', error, stack);
       _end(id, failure, '$error');
     } finally {
-      for (final partPath in [part, companion]) {
+      for (final partPath in [part, companion, headsetCopy]) {
         if (partPath == null) {
           continue;
         }
@@ -1114,7 +1144,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   }
 
   /// The spec of [job] for its engine; null for a panorama whose engine names no generator, and for a splat scene
-  /// without its photos. A splat scene is given its .ply ([companion]) and the times of its steps on this computer
+  /// without its photos. A splat scene is given its .ply ([companion]), its copy for the headset ([headsetCopy], Detailed
+  /// and Maximum) and the times of its steps on this computer
   /// ([timings], those of a job of 150 images, ConversionKind.timingsKey).
   ImmersiveJobSpec? _specOf(
     ConversionJob job,
@@ -1126,6 +1157,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     required String part,
     required AiTimings timings,
     String? companion,
+    String? headsetCopy,
   }) {
     final derivativeId = tools.newDerivativeId();
     final created = StereoPhotoXmp.xmpDateTime(tools.now());
@@ -1187,6 +1219,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           settings: splat.settings,
           partPath: part,
           plyPartPath: companion,
+          headsetPartPath: headsetCopy,
           derivativeId: derivativeId,
           creatorTool: tools.creatorTool,
           created: created,

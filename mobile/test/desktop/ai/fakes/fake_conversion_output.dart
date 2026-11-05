@@ -104,11 +104,16 @@ class FakeConversionOutput implements ConversionOutput, ConversionCompanionOutpu
     if (code != null) {
       throw ConversionException(code, 'Scripted failure of the rename of the companion');
     }
+    final name = companionNameBeside(
+      versionPath,
+      companionName: companions[partPath] ?? '',
+      targetName: job.target!.fileName,
+    );
     final stem = p.basenameWithoutExtension(versionPath);
-    final extension = p.extension(companions[partPath] ?? '');
-    var path = p.join(p.dirname(versionPath), '$stem$extension');
+    final end = name.substring(stem.length);
+    var path = p.join(p.dirname(versionPath), name);
     for (var n = 1; File(path).existsSync(); n++) {
-      path = p.join(p.dirname(versionPath), '$stem ($n)$extension');
+      path = p.join(p.dirname(versionPath), '$stem ($n)$end');
     }
     File(partPath).renameSync(path);
     return path;

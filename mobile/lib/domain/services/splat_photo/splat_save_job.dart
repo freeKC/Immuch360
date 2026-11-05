@@ -144,6 +144,7 @@ final class SplatSaveRequest {
     this.force = false,
     this.software = 'Immuch360',
     this.creatorTool = 'Immuch360',
+    this.quality,
   });
 
   /// The SPZ or the PLY on this device (a share's file is copied into the cache first)
@@ -183,6 +184,9 @@ final class SplatSaveRequest {
 
   final String software;
   final String creatorTool;
+
+  /// The quality of a scene of the splat maker, written as SplatQuality when known ("detailed"); null otherwise
+  final String? quality;
 }
 
 /// An asset of the server, as the job needs it
@@ -605,6 +609,7 @@ class SplatSaveJob {
       sourceSha256: sourceSha256,
       up: splatPhotoUps.contains(request.up) ? request.up : null,
       poster: posterKind,
+      quality: request.quality,
     );
     final SplatPhotoWritten written;
     try {

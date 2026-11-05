@@ -16,6 +16,7 @@ import 'package:immich_mobile/desktop/ai/splat/splat_scale.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/splat/splat_cloud.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
+import 'package:immich_mobile/domain/models/splat/splat_reducer.dart';
 import 'package:immich_mobile/domain/models/splat/spz_v2_writer.dart';
 
 import '../../../domain/splat/splat_test_clouds.dart';
@@ -148,6 +149,23 @@ SplatCloud _keptRows(SplatCloud cloud, Uint8List kept) => SplatCloud(
     axes.addAll([-look[1] / length, look[0] / length, look[2] / length]);
   }
   return (ply: out, cameras: Float64List.fromList(cameras), axes: Float64List.fromList(axes), desk: desk, box: box);
+}
+
+/// [count] gaussians of degree 0 whose strength (ln(opacity) plus the log scales) grows with their index, the opacity
+/// a logit of 0 (one half) for all: the [keep] strongest are the last [keep]. Their x is their index.
+SplatCloud _ranked(int count) {
+  final stride = splatRowValues(0);
+  final rows = Float32List(count * stride);
+  for (var i = 0; i < count; i++) {
+    final at = i * stride;
+    rows[at] = i.toDouble();
+    rows[at + 10] = 1;
+    // opacity 6, scales 7 to 9, rotation 10 to 13 (w first)
+    rows[at + 7] = -8 + 4 * i / count;
+    rows[at + 8] = -6;
+    rows[at + 9] = -6;
+  }
+  return SplatCloud(count: count, shDegree: 0, rows: rows);
 }
 
 void main() {
@@ -285,6 +303,95 @@ void main() {
       crop.count,
       reason: 'what the headset reads',
     );
+  });
+
+  test('the copy for the headset: of 200 000 gaussians, the 150 000 strongest, in their order, scored as the headset '
+      'scores them', () async {
+    final cloud = _ranked(200000);
+    final copy = splatHeadsetCopyOf(cloud);
+    expect(copy.count, SplatV1.headsetGaussians);
+    final xs = copy.positions;
+    expect([xs[0], xs[3], xs[3 * (copy.count - 1)]], [50000, 50001, 199999]);
+    // The score of the reducers of the headset and of the viewers, read from the PLY of the same gaussians
+    final ply = File('${folder.path}/ranked.ply')..writeAsBytesSync(writeSplatPly(cloud));
+    final head = probeSplatHead(ply.readAsBytesSync().sublist(0, 4096), ply.lengthSync()) as SplatHead;
+    final scores = await scoreSplat(ply, head);
+    final strengths = splatStrengths(cloud);
+    for (final i in [0, 1, 99999, 150000, 199999]) {
+      expect(strengths[i], closeTo(scores[i], 1e-4), reason: 'gaussian $i');
+    }
+    expect(selectStrongest(scores, 150000).indices.first, 50000);
+    // Under the cap: the cloud itself
+    final small = _ranked(1000);
+    expect(splatHeadsetCopyOf(small), same(small));
+  });
+
+  test('the copy for the headset: the crop of the object first, then the strongest of what it kept', () {
+    final cloud = _ranked(200000);
+    // The crop keeps the first 180 000: then their 150 000 strongest, 30 000 to 179 999
+    final first = Uint8List(200000)..fillRange(0, 180000, 1);
+    final copy = splatHeadsetCopyOf(cloud, crop: SplatCrop(kept: first, count: 180000, radius: 1.5, size: 1.1));
+    expect(copy.count, 150000);
+    expect([copy.positions[0], copy.positions[3 * 149999]], [30000, 179999]);
+    // A crop of 100 000 (every other one): all of them, none dropped for strength
+    final even = Uint8List(200000);
+    for (var i = 0; i < 200000; i += 2) {
+      even[i] = 1;
+    }
+    final cropped = splatHeadsetCopyOf(cloud, crop: SplatCrop(kept: even, count: 100000, radius: 1.5, size: 1.1));
+    expect(cropped.count, 100000);
+    expect([cropped.positions[0], cropped.positions[3], cropped.positions[3 * 99999]], [0, 2, 199998]);
+  });
+
+  test(
+    'Detailed: the .spz and the .ply hold the whole scene, the copy for the headset beside them its strongest',
+    () async {
+      final room = _brushRoom(2000, seed: 5);
+      final brush = File('${folder.path}/export_30000.ply')..writeAsBytesSync(room.ply);
+      final written = await writeSplatFiles(
+        brushPly: brush.path,
+        spzPath: '${folder.path}/salon_splat.spz.part',
+        plyPath: '${folder.path}/salon_splat.ply.part',
+        headsetPath: '${folder.path}/salon_splat.headset.spz.part',
+        subject: SplatSubject.place,
+        cameras: room.cameras,
+        maxGaussians: SplatV1.detailedMaxGaussians,
+        headsetGaussians: 1500,
+      );
+      expect((written.gaussians, written.sceneGaussians, written.headsetGaussians), (2000, 2000, 1500));
+      expect((written.crop, written.cropped, written.leftOut), (null, 0, 500));
+      final spz = File('${folder.path}/salon_splat.spz.part').readAsBytesSync();
+      final copy = File('${folder.path}/salon_splat.headset.spz.part').readAsBytesSync();
+      expect((written.spzBytes, written.headsetBytes), (spz.length, copy.length));
+      expect(written.hasHeadsetCopy, isTrue);
+      expect((probeSplatHead(spz, spz.length) as SplatHead).gaussians, 2000);
+      expect((probeSplatHead(copy, copy.length) as SplatHead).gaussians, 1500);
+      // The copy: the 1 500 strongest of the scene the .ply holds, in their order
+      final ply = readSplatPly(File('${folder.path}/salon_splat.ply.part').readAsBytesSync());
+      expect(ply.count, 2000);
+      expect(gzip.decode(copy), spzV2Payload(splatHeadsetCopyOf(ply, keep: 1500)));
+      expect(gzip.decode(spz), spzV2Payload(ply));
+    },
+  );
+
+  test('Detailed, an object: the .spz whole, the copy for the headset cropped around it', () async {
+    final scene = _brushDesk(6000, seed: 2);
+    final brush = File('${folder.path}/export_30000.ply')..writeAsBytesSync(scene.ply);
+    final written = await writeSplatFiles(
+      brushPly: brush.path,
+      spzPath: '${folder.path}/repeteur_splat.spz.part',
+      headsetPath: '${folder.path}/repeteur_splat.headset.spz.part',
+      subject: SplatSubject.object,
+      cameras: scene.cameras,
+      axes: scene.axes,
+    );
+    final crop = written.crop!;
+    expect((written.gaussians, written.sceneGaussians, written.headsetGaussians), (6000, 6000, crop.count));
+    expect(written.cropped, 6000 - crop.count);
+    final copy = File('${folder.path}/repeteur_splat.headset.spz.part').readAsBytesSync();
+    final decoded = DecodedSpz(Uint8List.fromList(gzip.decode(copy)));
+    expect(decoded.count, crop.count);
+    expect(splatHeadsetSeesObject(Float32List.fromList(decoded.positions)), isTrue);
   });
 
   test('an export the headset could not read, or none, fails with why', () async {

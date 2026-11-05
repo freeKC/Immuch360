@@ -15,8 +15,11 @@
 // taken") and what is left out with why, 200 photos at most spread evenly in time, the lenses when there are several;
 // the refusals before anything runs (fewer than 20 photos, photos and a video together, several videos, a video under
 // 10 s or over 5 min, a 360° video, too little room for the work files) and the warning under 50 photos; "What did you
-// film?", a place or an object, with how to film it, kept in desktop_ai.json; what the headset receives and "Also save
-// a .ply for other 3D apps", kept too; the components to install (COLMAP, Brush) with the free space of their drive;
+// film?", a place or an object, with how to film it, kept in desktop_ai.json; "Quality", three lines that name their
+// targets with the time and the size each would take (lot Q1: Headset, the default, Detailed, and Maximum, greyed "Same
+// as Detailed on this computer" when the memory model of splat_quality.dart leaves it at 1 920 pixels), never kept: a
+// scene of half an hour is chosen each time; what the headset receives and "Also save a .ply for other 3D apps", kept
+// too; the components to install (COLMAP, Brush) with the free space of their drive;
 // the refusal of the gate, or the card it found; the time on this computer and what a long job of the graphics card
 // does to it; the name of the scene and its file; where it goes (next to the photos or the video, or a folder of my
 // choice, the question of a network folder, the reason when it cannot go next to them); and how the headset opens it:
@@ -43,8 +46,10 @@ import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/creator/splat_members.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/power_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_quality.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_parts.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
@@ -141,10 +146,13 @@ final splatWorkSpaceShortProvider = FutureProvider.autoDispose<AiFreeSpace?>((re
 
 /// The size the copy for the headset takes: 3 612 448 bytes measured for 150 000 gaussians of degree 3 (some 24 bytes
 /// each, SPZ version 2)
-const splatSpzBytesAbout = SplatV1.maxGaussians * 24;
+const splatSpzBytesAbout = splatHeadsetCopyBytes;
 
 /// The size of the same gaussians as a .ply: 59 floats each, in the order of 3D Gaussian Splatting
-const splatPlyBytesAbout = SplatV1.maxGaussians * 59 * 4;
+const splatPlyBytesAbout = SplatV1.maxGaussians * SplatV1.plyBytesPerGaussian;
+
+/// The memory of this computer when the dialog opens, for the definition of Maximum; replaced in tests
+final splatMemoryFactsProvider = Provider<MemoryFacts Function()>((ref) => const SystemMemoryProbe().read);
 
 /// A photo, or the video, of a scene as the dialog hands it to the queue: the photo of the app it is (for its time, its
 /// thumbnail) and the source its job reads
@@ -170,6 +178,8 @@ class SplatLaunch {
     required this.keepPly,
     required this.isNetwork,
     this.images,
+    this.quality = SplatQuality.headset,
+    this.maximumResolution,
   });
 
   /// The photos in the order of their time, SplatV1.maxPhotos at most spread evenly, or the video alone; never empty
@@ -182,7 +192,8 @@ class SplatLaunch {
   /// What the panel names the job: "salon (150 photos)", or the name of the video
   final String label;
 
-  /// The folder and the file of the copy for the headset, `<name>_splat.spz` made safe for the computers
+  /// The folder and the file of the scene, `<name>_splat.spz` made safe for the computers: the copy for the headset for
+  /// Headset, the whole scene for Detailed and Maximum (their copy for the headset beside it, `<name>_splat.headset.spz`)
   final ConversionTarget target;
 
   /// "What did you film?"
@@ -197,6 +208,14 @@ class SplatLaunch {
   /// The images the dialog counted and told the time of (SplatSelectionPlan.images): the photos, or the frames of the
   /// video by its length
   final int? images;
+
+  /// "Quality", and the definition of Maximum the memory model gave (null: the same as Detailed)
+  final SplatQuality quality;
+  final int? maximumResolution;
+
+  /// The settings of the scene
+  SplatSettings get settings =>
+      SplatSettings.of(quality, subject: subject, keepPly: keepPly, maximumResolution: maximumResolution);
 }
 
 /// Hands a scene to the queue, and gives the ids of its jobs
@@ -213,7 +232,7 @@ final splatLauncherProvider = Provider<SplatLauncher>(
               lead: SplatSelectionSource(launch),
               selection: SplatSelection(
                 members: [for (final member in launch.members) splatMemberOf(member)],
-                settings: SplatSettings(subject: launch.subject, keepPly: launch.keepPly),
+                settings: launch.settings,
                 images: launch.images,
               ),
               target: launch.target,
@@ -352,6 +371,21 @@ String splatHeadsetText(
       )
     : t.ai_immersive_splat_headset_local;
 
+/// "Headset (Meta Quest, phone, tablet, PC)", the line of [quality] with its targets
+String splatQualityText(Translations t, SplatQuality quality) => switch (quality) {
+  SplatQuality.headset => t.ai_immersive_splat_quality_headset,
+  SplatQuality.detailed => t.ai_immersive_splat_quality_detailed,
+  SplatQuality.maximum => t.ai_immersive_splat_quality_maximum,
+};
+
+/// "About 33 min on this computer, a file of about 19.5 MiB": what a scene of [quality] would take, its time on this
+/// computer and the size of its .spz (the whole scene for Detailed and Maximum)
+String splatQualityEstimateText(Translations t, SplatTime time, SplatQuality quality, SplatSubject subject) =>
+    t.ai_immersive_splat_quality_estimate(
+      time: aiDurationText(t, time.total),
+      size: formatBytes(splatSpzBytesOf(quality, subject)),
+    );
+
 /// "About 13 min on this computer: 5 min on the processor to place the photos, 8 min on the graphics card to train the
 /// splat"
 String splatTimeText(Translations t, SplatTime time) => t.ai_immersive_splat_time(
@@ -451,6 +485,10 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
   DestinationSession? _session;
   var _subject = SplatSubject.place;
   var _keepPly = false;
+  var _quality = SplatQuality.headset;
+
+  /// The memory of this computer when the selection was read, for the definition of Maximum
+  MemoryFacts _memory = const MemoryFacts();
   AiDestination _saveTo = AiDestination.nextToOriginal;
   var _gestures = 0;
   var _asking = false;
@@ -507,7 +545,9 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
     if (!mounted || _closed) {
       return;
     }
+    final memory = ref.read(splatMemoryFactsProvider)();
     setState(() {
+      _memory = memory;
       _plan = plan;
       _subject = _settings.splatSubject;
       _keepPly = _settings.splatKeepPly;
@@ -656,15 +696,39 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
     return check != null && check.accepted;
   }
 
-  /// The file of the copy for the headset under the name typed
+  /// The file of the scene under the name typed
   String get _fileName => versionTargetName(ImmersiveKind.gaussianSplat, _name.text.trim());
 
-  /// The time of [plan] on this computer: the times it measured, else the defaults by its processors as the gate read
-  /// them (as measured until the gate answers)
-  SplatTime _time(SplatSelectionPlan plan) => splatTimeOf(
+  /// The file the headset opens: the scene for Headset, its copy for the headset beside it otherwise
+  String get _headsetFileName => _quality.hasHeadsetCopy ? splatHeadsetCopyNameOf(_fileName) : _fileName;
+
+  /// The definition of Maximum on this computer for [plan], null when it is the same as Detailed: the memory read when
+  /// the selection was, the physical memory of the gate when the probe gave none, the card of the gate
+  int? _maximumResolution(SplatSelectionPlan plan) {
+    final gate = ref.read(aiGateResultForProvider(AiFeature.splatScene)).valueOrNull;
+    return splatMaximumResolution(
+      images: splatImageSizesOf(plan),
+      physical: _memory.physical ?? gate?.physicalMemory,
+      available: _memory.available,
+      cardMemory: gate?.graphicsMemory,
+    );
+  }
+
+  /// The settings of a scene of [quality] of [plan]
+  SplatSettings _settingsOf(SplatSelectionPlan plan, SplatQuality quality) => SplatSettings.of(
+    quality,
+    subject: _subject,
+    keepPly: _keepPly,
+    maximumResolution: quality == SplatQuality.maximum ? _maximumResolution(plan) : null,
+  );
+
+  /// The time of [plan] on this computer for [quality] (the one chosen by default): the times it measured, else the
+  /// defaults by its processors as the gate read them (as measured until the gate answers)
+  SplatTime _time(SplatSelectionPlan plan, [SplatQuality? quality]) => splatTimeOf(
     AiTimings(_settings.timings, ref.read(aiGateResultForProvider(AiFeature.splatScene)).valueOrNull?.processors),
     images: plan.images,
     video: plan.isVideo,
+    settings: _settingsOf(plan, quality ?? _quality),
   );
 
   Future<void> _start(DestinationSession session) async {
@@ -724,6 +788,8 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
           keepPly: _keepPly,
           isNetwork: destination.isNetwork,
           images: plan.images,
+          quality: _quality,
+          maximumResolution: _quality == SplatQuality.maximum ? _maximumResolution(plan) : null,
         ),
       );
     } catch (error, stack) {
@@ -807,6 +873,7 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
                 ),
               if (plan != null && !refused) ...[
                 ..._subjectChoice(t),
+                ..._qualityChoice(t, plan),
                 const SizedBox(height: 8),
                 Text(
                   t.ai_immersive_splat_headset_copy(
@@ -822,7 +889,9 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
                   controlAffinity: ListTileControlAffinity.leading,
                   value: _keepPly,
                   title: Text(t.ai_immersive_splat_keep_ply),
-                  subtitle: Text(t.ai_immersive_splat_keep_ply_hint(size: formatBytes(splatPlyBytesAbout))),
+                  subtitle: Text(
+                    t.ai_immersive_splat_keep_ply_hint(size: formatBytes(splatPlyBytesOf(_quality, _subject))),
+                  ),
                   onChanged: _launched ? null : (on) => setState(() => _keepPly = on ?? false),
                 ),
                 ..._gate(t, gate, refusedByGate: refusedByGate, missing: missing, moving: moving),
@@ -945,6 +1014,43 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
     ConversionNote(key: const Key('ai_splat_tip_always'), text: t.ai_immersive_splat_tip_always),
   ];
 
+  /// "Quality": Headset, Detailed and Maximum, each with its targets, its time on this computer and the size of its
+  /// file; Maximum greyed "Same as Detailed on this computer" when the memory model leaves it at 1 920 pixels
+  List<Widget> _qualityChoice(Translations t, SplatSelectionPlan plan) {
+    final maximum = _maximumResolution(plan);
+    return [
+      const SizedBox(height: 8),
+      Text(t.ai_immersive_splat_quality, style: Theme.of(context).textTheme.titleSmall),
+      RadioGroup<SplatQuality>(
+        groupValue: _quality,
+        onChanged: (quality) {
+          if (quality != null && !_launched) {
+            setState(() => _quality = quality);
+          }
+        },
+        child: Column(
+          children: [
+            for (final quality in SplatQuality.values)
+              RadioListTile<SplatQuality>(
+                key: Key('ai_splat_quality_${quality.name}'),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                value: quality,
+                enabled: !_launched && (quality != SplatQuality.maximum || maximum != null),
+                title: Text(splatQualityText(t, quality)),
+                subtitle: Text(
+                  quality == SplatQuality.maximum && maximum == null
+                      ? t.ai_immersive_splat_quality_same
+                      : splatQualityEstimateText(t, _time(plan, quality), quality, _subject),
+                  key: Key('ai_splat_quality_${quality.name}_estimate'),
+                ),
+              ),
+          ],
+        ),
+      ),
+    ];
+  }
+
   /// The refusal of the gate, the components to install with the free space of their drive, or the card it found
   List<Widget> _gate(
     Translations t,
@@ -1048,7 +1154,7 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
       if (destination != null && !destination.waitsForConsent && _ready(session))
         ConversionNote(
           key: const Key('ai_splat_headset'),
-          text: splatHeadsetText(t, network: destination.isNetwork, fileName: _fileName),
+          text: splatHeadsetText(t, network: destination.isNetwork, fileName: _headsetFileName),
         ),
     ];
   }

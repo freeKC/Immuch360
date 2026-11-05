@@ -14,6 +14,7 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/splat/splat_quality.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_time.dart';
 import 'package:immich_mobile/desktop/ai/splat/video_frames.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
@@ -364,9 +365,14 @@ typedef SplatTime = ({Duration poses, Duration training, Duration total});
 /// The time of a scene of [images] photos, or frames of a video ([video]), from the times of its steps on this computer
 /// ([timings], those of 150 images), as the engine counts it when the job starts (SplatTimeModel of splat_time.dart):
 /// the preparation of the images, their points and the mapping follow the images, the matching follows its pairs
-/// (every pair, or the list of a long video), the training follows its steps, the rest stays what it is. The dialog
-/// and the panel so say the same time.
-SplatTime splatTimeOf(AiTimings timings, {required int images, required bool video}) {
+/// (every pair, or the list of a long video), the training follows its steps and its quality ([settings],
+/// splatTrainingFactorOf), the rest stays what it is. The dialog and the panel so say the same time.
+SplatTime splatTimeOf(
+  AiTimings timings, {
+  required int images,
+  required bool video,
+  SplatSettings settings = const SplatSettings(),
+}) {
   const kind = ConversionKind.splatScene;
   final key = kind.timingsKey(fromVideo: video);
   final stages = kind.stagesOf(fromVideo: video);
@@ -378,9 +384,23 @@ SplatTime splatTimeOf(AiTimings timings, {required int images, required bool vid
     stages: stages,
     images: images,
     video: video,
+    steps: settings.steps,
+    trainingFactor: splatTrainingFactorOf(settings),
   );
   final poses = stages
       .takeWhile((stage) => stage != ImmersiveStage.training)
       .fold(Duration.zero, (sum, stage) => sum + model.expected(stage));
   return (poses: poses, training: model.expected(ImmersiveStage.training), total: model.total);
+}
+
+/// The sizes of the images a scene of [plan] trains from, for the memory model of Maximum (splat_quality.dart): each
+/// photo used, or the frames of the video at its size, as many as it will take; a size the library does not know
+/// counts as 0 x 0, which leaves Maximum the same as Detailed
+List<SplatImageSize> splatImageSizesOf(SplatSelectionPlan plan) {
+  SplatImageSize sizeOf(BaseAsset asset) => (width: asset.width ?? 0, height: asset.height ?? 0);
+  if (plan.isVideo) {
+    final video = plan.used.firstOrNull;
+    return video == null ? const [] : List.filled(plan.images, sizeOf(video.asset));
+  }
+  return [for (final photo in plan.used) sizeOf(photo.asset)];
 }

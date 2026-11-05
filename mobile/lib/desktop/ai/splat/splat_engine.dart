@@ -1,7 +1,10 @@
 // The engine of the splat scenes (plan 2026-11-01, sections 2.1, 2.2 and 2.4, lot SP6): one SplatJob, photos or a
-// video, made into `<name>_splat.spz` (SPZ version 2, at most 150 000 gaussians, spherical harmonics of degree 3, the
-// scale of a place or of an object), and into the same gaussians as a .ply when asked, written to the .part files the
-// queue gives. Its steps, each reported with its counts and the time left of the whole job (splat_time.dart):
+// video, made into `<name>_splat.spz` (SPZ version 2, spherical harmonics of degree 3, the scale of a place or of an
+// object), and into the whole scene as a .ply when asked, written to the .part files the queue gives. The quality of
+// the job (lot Q1, SplatSettings.quality) sets the size of the images prepared, the steps, the cap and the definition
+// of the training: Headset writes the .spz as the copy for the headset (at most 150 000 gaussians), Detailed and
+// Maximum the whole scene, with the copy for the headset beside it (SplatJob.headsetPartPath). Its steps, each
+// reported with its counts and the time left of the whole job (splat_time.dart):
 //  1. reading: the key of the job, the SHA-1 of its settings (SplatSettings.key, the .ply apart) and of its members
 //     (name, time taken, camera), which names its work folder, splat-<16 hexadecimal digits>, under the first root of
 //     the work folders with an ASCII path (splat_work_folder.dart); the folders of the splat scenes unused for a day go
@@ -79,13 +82,15 @@ class SplatPrepared {
 }
 
 /// Prepares the images of a job into [imagesFolder] (one folder per camera under it), reading [members] one after the
-/// other: the photos, or the frames of the video when [video]. [onProgress] gets what is done of all. Throws a
+/// other: the photos, or the frames of the video when [video], [longSide] pixels at most on their longest side (the
+/// size of the quality, SplatSettings.photoLongSide). [onProgress] gets what is done of all. Throws a
 /// BackendException: cancelled once [cancel] is set, diskFull, readOnly, sourceLost...
 typedef SplatImagesMaker =
     Future<SplatPrepared> Function(
       List<SplatMember> members, {
       required bool video,
       required String imagesFolder,
+      required int longSide,
       required NativeCancelFlag cancel,
       required void Function(int done, int total) onProgress,
     });
@@ -205,6 +210,7 @@ class SplatEngine implements ImmersiveEngine {
       images: job.plannedImages ?? splatPlannedImages(job.members.length, video: job.isVideo),
       video: job.isVideo,
       steps: job.settings.steps,
+      trainingFactor: splatTrainingFactorOf(job.settings),
     );
     var stage = ImmersiveStage.reading;
     var stageStarted = _elapsed();
@@ -300,6 +306,7 @@ class SplatEngine implements ImmersiveEngine {
             members,
             video: job.isVideo,
             imagesFolder: work.images.path,
+            longSide: job.settings.photoLongSide,
             cancel: cancel,
             onProgress: (count, all) {
               // What the preparation reads, once it says (the frames of a video longer than two minutes)
@@ -401,18 +408,23 @@ class SplatEngine implements ImmersiveEngine {
         brushPly: trained.ply.path,
         spzPath: job.partPath,
         plyPath: job.plyPartPath,
+        headsetPath: job.settings.quality.hasHeadsetCopy ? job.headsetPartPath : null,
         subject: job.settings.subject,
         cameras: aligned.centres,
         axes: aligned.axes,
         shDegree: job.settings.shDegree,
         maxGaussians: job.settings.maxGaussians,
+        headsetGaussians: job.settings.headsetGaussians,
       );
       times[ImmersiveStage.splatCopy] = timeOf(ImmersiveStage.splatCopy);
       report(ImmersiveStage.splatCopy, 1);
       _log.info(
         'Splat scene ${job.id}: ${written.gaussians} gaussians (${written.dropped} dropped), '
-        '${found.placed} of ${found.images} images placed, ${written.scale.note}; ${written.scale.said}'
-        '${written.crop == null ? '' : '; ${written.crop!.said}, the .ply whole'}',
+        '${found.placed} of ${found.images} images placed, ${written.scale.note}, ${job.settings.quality.name} '
+        '(${job.settings.steps} steps, ${job.settings.trainingResolution} px); ${written.scale.said}'
+        '${written.crop == null ? '' : '; ${written.crop!.said}, the .ply whole'}'
+        '${written.hasHeadsetCopy ? '; the copy for the headset beside it: ${written.headsetGaussians} of '
+                  '${written.sceneGaussians} gaussians, ${written.headsetBytes} bytes' : ''}',
       );
       done = true;
       final made = work;
@@ -430,7 +442,10 @@ class SplatEngine implements ImmersiveEngine {
           shDegree: written.shDegree,
           plyBytes: written.plyBytes,
           upright: written.scale.upright,
-          cropped: written.cropped,
+          cropped: written.hasHeadsetCopy ? written.cropped : written.leftOut,
+          quality: job.settings.quality,
+          headsetGaussians: written.hasHeadsetCopy ? written.headsetGaussians : null,
+          headsetBytes: written.headsetBytes,
         ),
         bytesWritten: written.spzBytes,
         stageTimes: times,

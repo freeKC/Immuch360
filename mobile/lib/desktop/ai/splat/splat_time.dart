@@ -20,6 +20,11 @@
 // ([SplatTimeModel.read]: the photos taken, the windows of the video, as soon as it says how many), the steps after it
 // the images it kept ([SplatTimeModel.images]); each is measured and kept by its own count.
 //
+// The quality (lot Q1): the training of Detailed takes [SplatV1.detailedTrainingFactor] times that of Headset (4.3 to
+// 5.8 in the measure of 5 November, its 30 000 steps included), Maximum as much again times its pixels over those of
+// 1 920 ([splatTrainingFactorOf]); the times kept stay those of Headset, a training of Detailed divided by its factor
+// before it is kept, so that the next scene of either quality is told right.
+//
 // While a step runs, what is left of it is told by what it went through: the pace of its images (done of total) once a
 // tenth of them is done, blended with what was expected before; for the training, the pace of its last 1 000 steps
 // ([SplatTrainingPace]: M1 measured 19 to 20 s per 1 000 steps from the 5 000th to the end, the cap of 150 000 gaussians
@@ -108,9 +113,27 @@ Map<ImmersiveStage, Duration> splatTimingsOf(Map<String, int> milliseconds) => {
 int splatPlannedImages(int members, {required bool video}) =>
     video ? SplatV1.videoFrames : math.min(members, SplatV1.maxPhotos);
 
+/// How many times longer than the training of Headset (20 000 steps at 1 024 pixels) that of [settings] takes (see the
+/// top of this file): its steps for Headset, [SplatV1.detailedTrainingFactor] for Detailed, and for Maximum that times
+/// the pixels of its definition over those of 1 920
+double splatTrainingFactorOf(SplatSettings settings) => switch (settings.quality) {
+  SplatQuality.headset => settings.steps / SplatV1.steps,
+  SplatQuality.detailed => SplatV1.detailedTrainingFactor,
+  SplatQuality.maximum =>
+    SplatV1.detailedTrainingFactor *
+        math.pow(math.max(settings.trainingResolution, SplatV1.detailedResolution) / SplatV1.detailedResolution, 2),
+};
+
 /// How many times longer than for the reference job a step of a job of [images] images (photos, or frames of a
-/// [video]) and [steps] steps of training takes (see the top of this file)
-double splatStageScale(ImmersiveStage stage, {required int images, required bool video, int steps = SplatV1.steps}) {
+/// [video]) and [steps] steps of training takes (see the top of this file); the training [trainingFactor] times as
+/// long when given (the quality, [splatTrainingFactorOf]), else by its steps
+double splatStageScale(
+  ImmersiveStage stage, {
+  required int images,
+  required bool video,
+  int steps = SplatV1.steps,
+  double? trainingFactor,
+}) {
   final n = math.max(1, images);
   const reference = splatReferenceImages;
   return switch (stage) {
@@ -119,7 +142,7 @@ double splatStageScale(ImmersiveStage stage, {required int images, required bool
     ImmersiveStage.features ||
     ImmersiveStage.mapping => n / reference,
     ImmersiveStage.matching => colmapPairsOf(n, video: video) / colmapPairsOf(reference, video: video),
-    ImmersiveStage.training => steps / SplatV1.steps,
+    ImmersiveStage.training => trainingFactor ?? steps / SplatV1.steps,
     _ => 1,
   };
 }
@@ -169,6 +192,7 @@ class SplatTimeModel {
     required int images,
     required this.video,
     this.steps = SplatV1.steps,
+    this.trainingFactor,
     int? read,
   }) : _images = math.max(1, images),
        _read = math.max(1, read ?? images);
@@ -182,6 +206,9 @@ class SplatTimeModel {
 
   /// The steps of the training
   final int steps;
+
+  /// How many times longer than that of Headset the training takes ([splatTrainingFactorOf]); by [steps] when null
+  final double? trainingFactor;
   int _images;
   int _read;
 
@@ -202,6 +229,7 @@ class SplatTimeModel {
     images: stage == ImmersiveStage.photos || stage == ImmersiveStage.frames ? _read : _images,
     video: video,
     steps: steps,
+    trainingFactor: trainingFactor,
   );
 
   /// What [stage] is expected to take for this job

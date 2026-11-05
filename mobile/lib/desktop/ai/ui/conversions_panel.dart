@@ -881,33 +881,53 @@ class _JobRowState extends ConsumerState<_JobRow> {
     style: TextStyle(color: colors.error),
   );
 
-  /// "Done: 150,000 gaussians, 3.4 MiB, from 150 of 150 photos" (of frames for a video), the images COLMAP could not
+  /// "Done: 150,000 gaussians, 3.4 MiB, from 150 of 150 photos" (of frames for a video), and for a scene of Detailed or
+  /// Maximum both counts, the whole scene in the .spz and its copy for the headset beside it ("...; 150,000 of them in
+  /// the copy for the headset, salon_splat.headset.spz (3.4 MiB)", lot Q1); the images COLMAP could not
   /// place when they are more than one in ten (the scene said maybe incomplete instead when they are more than half),
-  /// an object cropped for the headset (how many of its gaussians the .spz kept, the .ply whole), the photos left out
-  /// as blurred (the dialog cannot know them, they are found while the photos are prepared, and the done line counts
-  /// only the photos kept), the blurred frames of a video when they are many, and the .ply kept for other 3D apps,
-  /// named as the .spz written
+  /// an object cropped for the headset (how many of its gaussians the copy for the headset kept, the .ply whole), the
+  /// photos left out as blurred (the dialog cannot know them, they are found while the photos are prepared, and the
+  /// done line counts only the photos kept), the blurred frames of a video when they are many, and the .ply kept for
+  /// other 3D apps, named as the .spz written
   List<Widget> _splatDone(Translations t, SplatResultDetails details, String? written, TextStyle secondary) {
     final bytes = written == null ? null : ref.watch(splatFileSizeProvider(written)).valueOrNull;
     final size = bytes == null ? '…' : formatBytes(bytes);
     final framesSeen = details.images + details.blurred;
+    final headsetBytes = details.headsetBytes;
+    final headsetName = written == null ? '' : splatHeadsetCopyNameOf(p.basename(written));
     return [
-      Text(
-        details.fromVideo
-            ? t.ai_immersive_splat_done_video(
-                gaussians: details.gaussians,
-                size: size,
-                placed: details.placed,
-                total: details.images,
-              )
-            : t.ai_immersive_splat_done(
-                gaussians: details.gaussians,
-                size: size,
-                placed: details.placed,
-                total: details.images,
-              ),
-        key: const Key('ai_job_splat_done'),
-      ),
+      Text(switch ((details.hasHeadsetCopy, details.fromVideo)) {
+        (true, true) => t.ai_immersive_splat_done_both_video(
+          gaussians: details.gaussians,
+          size: size,
+          placed: details.placed,
+          total: details.images,
+          headset: details.headsetCount,
+          name: headsetName,
+          headsetSize: headsetBytes == null ? '…' : formatBytes(headsetBytes),
+        ),
+        (true, false) => t.ai_immersive_splat_done_both(
+          gaussians: details.gaussians,
+          size: size,
+          placed: details.placed,
+          total: details.images,
+          headset: details.headsetCount,
+          name: headsetName,
+          headsetSize: headsetBytes == null ? '…' : formatBytes(headsetBytes),
+        ),
+        (false, true) => t.ai_immersive_splat_done_video(
+          gaussians: details.gaussians,
+          size: size,
+          placed: details.placed,
+          total: details.images,
+        ),
+        (false, false) => t.ai_immersive_splat_done(
+          gaussians: details.gaussians,
+          size: size,
+          placed: details.placed,
+          total: details.images,
+        ),
+      }, key: const Key('ai_job_splat_done')),
       if (details.isIncomplete)
         _splatIncomplete(t, details.placed, details.images, Theme.of(context).colorScheme)
       else if (details.isPartial)
@@ -924,9 +944,9 @@ class _JobRowState extends ConsumerState<_JobRow> {
       // The headset opens a scene of more than 2.5 m as a place: an object's .spz keeps what is around it (lot SPF2)
       if (details.cropped > 0)
         Text(
-          details.plyBytes == null
-              ? t.ai_immersive_splat_cropped(kept: details.gaussians, total: details.sceneGaussians)
-              : t.ai_immersive_splat_cropped_ply(kept: details.gaussians, total: details.sceneGaussians),
+          details.plyBytes == null || details.hasHeadsetCopy
+              ? t.ai_immersive_splat_cropped(kept: details.headsetCount, total: details.sceneGaussians)
+              : t.ai_immersive_splat_cropped_ply(kept: details.headsetCount, total: details.sceneGaussians),
           key: const Key('ai_job_splat_cropped'),
           style: secondary,
         ),
@@ -954,20 +974,20 @@ class _JobRowState extends ConsumerState<_JobRow> {
     ];
   }
 
-  /// "How to open it in the headset": the line of the dialog again, for the file written
+  /// "How to open it in the headset": the line of the dialog again, for the file written, or for its copy for the
+  /// headset beside it (Detailed and Maximum)
   Future<void> _showHeadsetHelp(BuildContext context, String written, {required bool isNetwork}) {
-    final gaussians = switch (widget.job.details) {
-      SplatResultDetails(:final gaussians) => gaussians,
-      _ => SplatV1.maxGaussians,
-    };
+    final details = widget.job.details;
+    final gaussians = details is SplatResultDetails ? details.headsetCount : SplatV1.maxGaussians;
+    final name = details is SplatResultDetails && details.hasHeadsetCopy
+        ? splatHeadsetCopyNameOf(p.basename(written))
+        : p.basename(written);
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         key: const Key('ai_job_splat_headset_dialog'),
         title: Text(context.t.ai_immersive_splat_how_headset),
-        content: Text(
-          splatHeadsetText(context.t, network: isNetwork, fileName: p.basename(written), gaussians: gaussians),
-        ),
+        content: Text(splatHeadsetText(context.t, network: isNetwork, fileName: name, gaussians: gaussians)),
         actions: [
           TextButton(
             key: const Key('ai_job_splat_headset_close'),

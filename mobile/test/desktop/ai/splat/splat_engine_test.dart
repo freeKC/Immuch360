@@ -125,14 +125,19 @@ class _Images {
   final int frames;
   var calls = 0;
 
+  /// The long side each preparation was asked for
+  final longSides = <int>[];
+
   Future<SplatPrepared> call(
     List<SplatMember> members, {
     required bool video,
     required String imagesFolder,
+    required int longSide,
     required NativeCancelFlag cancel,
     required void Function(int done, int total) onProgress,
   }) async {
     calls++;
+    longSides.add(longSide);
     final folder = Directory(p.join(imagesFolder, video ? 'video' : 'cam1'))..createSync(recursive: true);
     void checkCancel() {
       if (cancel.isCancelled) {
@@ -261,11 +266,14 @@ void main() {
     failureLogs: failureLogs,
   );
 
-  SplatJob job(List<SplatMember> members, {bool ply = false, SplatSettings? settings}) {
+  SplatJob job(List<SplatMember> members, {bool ply = false, bool headsetCopy = false, SplatSettings? settings}) {
     final out = Directory(p.join(folder.path, 'out'))..createSync(recursive: true);
     final spz = File(p.join(out.path, '.salon_splat.spz.1-1.immuch360.part'))..writeAsBytesSync(const []);
     final plyPart = ply
         ? (File(p.join(out.path, '.salon_splat.ply.1-2.immuch360.part'))..writeAsBytesSync(const []))
+        : null;
+    final headsetPart = headsetCopy
+        ? (File(p.join(out.path, '.salon_splat.headset.spz.1-3.immuch360.part'))..writeAsBytesSync(const []))
         : null;
     return SplatJob(
       id: 'conversion-1',
@@ -273,6 +281,7 @@ void main() {
       members: members,
       partPath: spz.path,
       plyPartPath: plyPart?.path,
+      headsetPartPath: headsetPart?.path,
       derivativeId: 'd',
       creatorTool: 'Immuch360 Desktop test',
       created: '2026-11-02T02:00:00',
@@ -362,6 +371,62 @@ void main() {
       expect(File(p.join(workFolders().single.path, aiWorkLastUsedName)).existsSync(), isTrue);
       await result.afterSaved!();
       expect(workFolders(), isEmpty);
+    },
+    skip: _skip(),
+  );
+
+  test(
+    'Detailed: the images prepared at 1 920 pixels, Brush at 1 920, the .spz whole and the copy for the headset beside '
+    'it at its cap; Headset at 1 600, one .spz',
+    () async {
+      final members = photos(24);
+      final images = _Images();
+      final said = listenToLog();
+      final splat = job(
+        members,
+        ply: true,
+        headsetCopy: true,
+        settings: const SplatSettings(
+          quality: SplatQuality.detailed,
+          steps: 1000,
+          maxGaussians: 3000,
+          trainingResolution: 1920,
+          photoLongSide: 1920,
+          headsetGaussians: 500,
+        ),
+      );
+      final result = await engine(images: images).run(splat, cancel: cancel);
+      expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+      expect(images.longSides, [1920]);
+      final details = result.details! as SplatResultDetails;
+      expect(
+        (details.quality, details.gaussians, details.sceneGaussians, details.headsetGaussians, details.hasHeadsetCopy),
+        (SplatQuality.detailed, 2000, 2000, 500, true),
+      );
+      SplatHead headOf(String path) {
+        final bytes = File(path).readAsBytesSync();
+        return probeSplatHead(Uint8List.sublistView(bytes, 0, bytes.length.clamp(0, splatHeadBytes)), bytes.length)
+            as SplatHead;
+      }
+
+      expect(headOf(splat.partPath).gaussians, 2000);
+      expect(headOf(splat.headsetPartPath!).gaussians, 500);
+      expect(details.headsetBytes, File(splat.headsetPartPath!).lengthSync());
+      expect(result.bytesWritten, File(splat.partPath).lengthSync());
+      expect(said.where((line) => line.contains('detailed (1000 steps, 1920 px)')), hasLength(1));
+      expect(
+        said.where((line) => line.contains('the copy for the headset beside it: 500 of 2000 gaussians')),
+        hasLength(1),
+      );
+      await result.afterSaved!();
+
+      // Headset: the images at 1 600, its .spz the copy for the headset, nothing beside it
+      final headset = job(photos(24), settings: const SplatSettings(steps: 1000, maxGaussians: 3000));
+      final again = await engine(images: images).run(headset, cancel: cancel);
+      expect(again.isDone, isTrue, reason: '${again.error}: ${again.message}');
+      expect(images.longSides, [1920, 1600]);
+      final kept = again.details! as SplatResultDetails;
+      expect((kept.quality, kept.hasHeadsetCopy, kept.headsetBytes), (SplatQuality.headset, false, null));
     },
     skip: _skip(),
   );

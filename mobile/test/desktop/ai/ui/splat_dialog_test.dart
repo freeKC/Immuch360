@@ -28,6 +28,7 @@ import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/power_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
@@ -278,6 +279,7 @@ void main() {
   late Set<String> videos360;
   late bool enabled;
   late int memory;
+  late MemoryFacts memoryFacts;
   late int processors;
   late _SplatAnswer splat;
   late GpuReport cards;
@@ -331,6 +333,8 @@ void main() {
     videos360 = {};
     enabled = true;
     memory = 16 * _gib;
+    // The PC of the measure of 5 November: 16 GB, 4 GiB free, the VM of WSL holding its share
+    memoryFacts = const MemoryFacts(physical: 16 * _gib, available: 4 * _gib);
     processors = 24;
     splat = _SplatAnswer.available;
     cards = FakeGpuReports.rtx4060;
@@ -396,6 +400,7 @@ void main() {
       ),
       conversionEnginesProvider.overrideWithValue(engines),
       aiPowerProbeProvider.overrideWithValue(power),
+      splatMemoryFactsProvider.overrideWithValue(() => memoryFacts),
       conversionFocalReaderProvider.overrideWithValue((source) async {
         focalReads.add(source.name);
         return focals[source.name];
@@ -684,6 +689,116 @@ void main() {
     );
     expect(launch.members.first.source, isA<LocalFileSource>());
     expect(launch.label, 'salon (150 photos)');
+  });
+
+  group('Quality', () {
+    String? estimateOf(WidgetTester tester, SplatQuality quality) =>
+        tester.widget<Text>(find.byKey(Key('ai_splat_quality_${quality.name}_estimate'))).data;
+    bool enabledOf(WidgetTester tester, SplatQuality quality) =>
+        tester.widget<RadioListTile<SplatQuality>>(find.byKey(Key('ai_splat_quality_${quality.name}'))).enabled ?? true;
+
+    testWidgets('three lines with their targets, their time and their size; Headset by default; Maximum greyed on a '
+        'computer of 16 GB with 4 GiB free', (tester) async {
+      await openDialog(tester, salon(150));
+
+      expect(find.text('Quality'), findsOneWidget);
+      expect(
+        tester.widget<RadioGroup<SplatQuality>>(find.byType(RadioGroup<SplatQuality>)).groupValue,
+        SplatQuality.headset,
+      );
+      expect(find.text('Headset (Meta Quest, phone, tablet, PC)'), findsOneWidget);
+      expect(find.text('Detailed (PC, recent phone; headset gets a reduced copy)'), findsOneWidget);
+      expect(find.text('Maximum (PC with a graphics card; headset and phone get a reduced copy)'), findsOneWidget);
+      expect(estimateOf(tester, SplatQuality.headset), 'About 13 min on this computer, a file of about 3.4 MiB');
+      expect(estimateOf(tester, SplatQuality.detailed), 'About 43 min on this computer, a file of about 19.5 MiB');
+      expect(estimateOf(tester, SplatQuality.maximum), 'Same as Detailed on this computer');
+      expect(enabledOf(tester, SplatQuality.headset), isTrue);
+      expect(enabledOf(tester, SplatQuality.detailed), isTrue);
+      expect(enabledOf(tester, SplatQuality.maximum), isFalse);
+
+      // Greyed: a tap changes nothing
+      await tapIn(tester, find.byKey(const Key('ai_splat_quality_maximum')));
+      await tester.pump();
+      expect(
+        tester.widget<RadioGroup<SplatQuality>>(find.byType(RadioGroup<SplatQuality>)).groupValue,
+        SplatQuality.headset,
+      );
+      await tapIn(tester, start());
+      await settle(tester);
+      expect(launches.single.quality, SplatQuality.headset);
+      expect(launches.single.settings, const SplatSettings());
+    });
+
+    testWidgets('Detailed: the time of the box, the size of the .ply follow; handed to the queue with its settings, '
+        'never kept for the next dialog', (tester) async {
+      final selection = salon(150);
+      await openDialog(tester, selection);
+      await tapIn(tester, find.byKey(const Key('ai_splat_quality_detailed')));
+      await tester.pump();
+
+      expect(
+        find.text(
+          'About 43 min on this computer: 5 min on the processor to place the photos, 38 min on the graphics card to '
+          'train the splat',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('The same gaussians, about 191.3 MiB'), findsOneWidget);
+      expect(find.text('For the headset: up to 150,000 gaussians, about 3.4 MiB (.spz)'), findsOneWidget);
+      await tapIn(tester, start());
+      await settle(tester);
+
+      final launch = launches.single;
+      expect(launch.quality, SplatQuality.detailed);
+      expect(launch.maximumResolution, isNull);
+      expect(launch.target.fileName, 'salon_splat.spz');
+      expect(launch.settings, SplatSettings.of(SplatQuality.detailed));
+      expect((launch.settings.photoLongSide, launch.settings.trainingResolution), (1920, 1920));
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await openDialog(tester, selection);
+      expect(
+        tester.widget<RadioGroup<SplatQuality>>(find.byType(RadioGroup<SplatQuality>)).groupValue,
+        SplatQuality.headset,
+      );
+    });
+
+    testWidgets('Maximum on a computer of 64 GB: offered, photos of 4 000 pixels trained at their definition', (
+      tester,
+    ) async {
+      memoryFacts = const MemoryFacts(physical: 64 * _gib, available: 50 * _gib);
+      await openDialog(tester, salon(150));
+
+      expect(enabledOf(tester, SplatQuality.maximum), isTrue);
+      expect(estimateOf(tester, SplatQuality.maximum), startsWith('About '));
+      expect(estimateOf(tester, SplatQuality.maximum), endsWith('a file of about 19.5 MiB'));
+      await tapIn(tester, find.byKey(const Key('ai_splat_quality_maximum')));
+      await tester.pump();
+      await tapIn(tester, start());
+      await settle(tester);
+
+      final launch = launches.single;
+      expect((launch.quality, launch.maximumResolution), (SplatQuality.maximum, 4000));
+      expect(
+        (launch.settings.trainingResolution, launch.settings.photoLongSide, launch.settings.maxGaussians),
+        (4000, 4000, SplatV1.maximumMaxGaussians),
+      );
+    });
+
+    testWidgets('Detailed in a network folder: the line of the headset names the copy beside the scene', (
+      tester,
+    ) async {
+      await openDialog(tester, salon(60, folder: p.join(nas, 'salon'), network: true));
+      await tapIn(tester, find.byKey(const Key('ai_conversion_network_yes')));
+      await settle(
+        tester,
+        until: () => find.byKey(const Key('ai_conversion_network_yes')).evaluate().isEmpty && startEnabled(tester),
+      );
+      expect(find.textContaining('then salon_splat.spz,'), findsOneWidget);
+      await tapIn(tester, find.byKey(const Key('ai_splat_quality_detailed')));
+      await tester.pump();
+      expect(find.textContaining('then salon_splat.headset.spz,'), findsOneWidget);
+    });
   });
 
   testWidgets('the photos left out with their reason, 200 at most spread in time, and the lenses', (tester) async {
