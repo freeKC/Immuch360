@@ -251,6 +251,47 @@ void main() {
       expect(splatTrainingFactorOf(SplatSettings.of(SplatQuality.maximum, maximumResolution: 3840)), 20.0);
     });
 
+    test('the training kept: that of Headset and of Detailed (measured factors), never that of Maximum', () {
+      expect(splatKeepsTrainingOf(const SplatSettings()), isTrue);
+      expect(splatKeepsTrainingOf(SplatSettings.of(SplatQuality.detailed)), isTrue);
+      expect(splatKeepsTrainingOf(SplatSettings.of(SplatQuality.maximum)), isFalse);
+      expect(splatKeepsTrainingOf(SplatSettings.of(SplatQuality.maximum, maximumResolution: 2816)), isFalse);
+      SplatTimeModel modelOf(SplatSettings settings) => SplatTimeModel(
+        reference: splatTimingsOf(splatSceneDefaultTimings),
+        stages: ImmersiveStage.splatOf(video: false),
+        images: 75,
+        video: false,
+        steps: settings.steps,
+        trainingFactor: splatTrainingFactorOf(settings),
+        keepsTraining: splatKeepsTrainingOf(settings),
+      );
+
+      const took = Duration(minutes: 40);
+      expect(modelOf(const SplatSettings()).kept(ImmersiveStage.training, took), took);
+      expect(modelOf(SplatSettings.of(SplatQuality.detailed)).kept(ImmersiveStage.training, took), took * (1 / 5));
+      // Maximum at 2 816 pixels: divided by 10.75 it would be kept as 3 min 43 s, from a scaling never measured
+      final maximum = modelOf(SplatSettings.of(SplatQuality.maximum, maximumResolution: 2816));
+      expect(maximum.normalized(ImmersiveStage.training, took).inSeconds, 223);
+      expect(maximum.kept(ImmersiveStage.training, took), isNull);
+      // Its other steps are kept as for every quality, by the images
+      expect(maximum.kept(ImmersiveStage.features, const Duration(seconds: 8)), const Duration(seconds: 16));
+
+      // What the queue keeps after a Maximum scene: the training stays what it was, the rest is merged
+      final kept = AiTimings.merged(
+        {
+          'splatScene': {'training': 450000, 'features': 15000},
+        },
+        'splatScene',
+        {
+          for (final stage in [ImmersiveStage.features, ImmersiveStage.training])
+            if (maximum.kept(stage, stage == ImmersiveStage.training ? took : const Duration(seconds: 8))
+                case final time?)
+              stage.name: time.inMilliseconds,
+        },
+      );
+      expect(kept['splatScene'], {'training': 450000, 'features': 15500});
+    });
+
     test('a one minute video: about 12 min for Headset by the defaults, Detailed some 4 times longer', () {
       const timings = AiTimings({}, 24);
       final images = splatVideoFrameCount(const Duration(minutes: 1));

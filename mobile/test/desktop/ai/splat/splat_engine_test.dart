@@ -377,7 +377,7 @@ void main() {
 
   test(
     'Detailed: the images prepared at 1 920 pixels, Brush at 1 920, the .spz whole and the copy for the headset beside '
-    'it at its cap; Headset at 1 600, one .spz',
+    'it at its cap, its training kept; Headset at 1 600, one .spz; Maximum keeps no training time',
     () async {
       final members = photos(24);
       final images = _Images();
@@ -418,6 +418,7 @@ void main() {
         said.where((line) => line.contains('the copy for the headset beside it: 500 of 2000 gaussians')),
         hasLength(1),
       );
+      expect(result.stageTimes.keys, contains(ImmersiveStage.training));
       await result.afterSaved!();
 
       // Headset: the images at 1 600, its .spz the copy for the headset, nothing beside it
@@ -427,6 +428,27 @@ void main() {
       expect(images.longSides, [1920, 1600]);
       final kept = again.details! as SplatResultDetails;
       expect((kept.quality, kept.hasHeadsetCopy, kept.headsetBytes), (SplatQuality.headset, false, null));
+      expect(again.stageTimes.keys, contains(ImmersiveStage.training));
+      await again.afterSaved!();
+
+      // Maximum: made, its steps before the training kept, its training not (a factor never measured)
+      final maximum = job(
+        photos(24),
+        headsetCopy: true,
+        settings: const SplatSettings(
+          quality: SplatQuality.maximum,
+          steps: 1000,
+          maxGaussians: 3000,
+          trainingResolution: 2816,
+          photoLongSide: 2816,
+          headsetGaussians: 500,
+        ),
+      );
+      final most = await engine(images: images).run(maximum, cancel: cancel);
+      expect(most.isDone, isTrue, reason: '${most.error}: ${most.message}');
+      expect(images.longSides, [1920, 1600, 2816]);
+      expect(most.stageTimes.keys, containsAll([ImmersiveStage.photos, ImmersiveStage.features]));
+      expect(most.stageTimes.keys, isNot(contains(ImmersiveStage.training)));
     },
     skip: _skip(),
   );

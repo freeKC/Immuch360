@@ -23,7 +23,9 @@
 // The quality (lot Q1): the training of Detailed takes [SplatV1.detailedTrainingFactor] times that of Headset (4.3 to
 // 5.8 in the measure of 5 November, its 30 000 steps included), Maximum as much again times its pixels over those of
 // 1 920 ([splatTrainingFactorOf]); the times kept stay those of Headset, a training of Detailed divided by its factor
-// before it is kept, so that the next scene of either quality is told right.
+// before it is kept, so that the next scene of either quality is told right. The training of Maximum is told by that
+// factor but never kept ([splatKeepsTrainingOf], review of lot Q1): its scaling by the pixels was never measured, and
+// one scene of it would shift the time every later scene of Headset and Detailed is told from.
 //
 // While a step runs, what is left of it is told by what it went through: the pace of its images (done of total) once a
 // tenth of them is done, blended with what was expected before; for the training, the pace of its last 1 000 steps
@@ -115,7 +117,7 @@ int splatPlannedImages(int members, {required bool video}) =>
 
 /// How many times longer than the training of Headset (20 000 steps at 1 024 pixels) that of [settings] takes (see the
 /// top of this file): its steps for Headset, [SplatV1.detailedTrainingFactor] for Detailed, and for Maximum that times
-/// the pixels of its definition over those of 1 920
+/// the pixels of its definition over those of 1 920, told only ([splatKeepsTrainingOf])
 double splatTrainingFactorOf(SplatSettings settings) => switch (settings.quality) {
   SplatQuality.headset => settings.steps / SplatV1.steps,
   SplatQuality.detailed => SplatV1.detailedTrainingFactor,
@@ -123,6 +125,11 @@ double splatTrainingFactorOf(SplatSettings settings) => switch (settings.quality
     SplatV1.detailedTrainingFactor *
         math.pow(math.max(settings.trainingResolution, SplatV1.detailedResolution) / SplatV1.detailedResolution, 2),
 };
+
+/// Whether the training of [settings], divided by [splatTrainingFactorOf], is kept as that of Headset: for Headset and
+/// Detailed, whose factors were measured; not for Maximum, whose scaling by the pixels was not (see the top of this
+/// file), the time kept staying what it was
+bool splatKeepsTrainingOf(SplatSettings settings) => settings.quality != SplatQuality.maximum;
 
 /// How many times longer than for the reference job a step of a job of [images] images (photos, or frames of a
 /// [video]) and [steps] steps of training takes (see the top of this file); the training [trainingFactor] times as
@@ -193,6 +200,7 @@ class SplatTimeModel {
     required this.video,
     this.steps = SplatV1.steps,
     this.trainingFactor,
+    this.keepsTraining = true,
     int? read,
   }) : _images = math.max(1, images),
        _read = math.max(1, read ?? images);
@@ -209,6 +217,9 @@ class SplatTimeModel {
 
   /// How many times longer than that of Headset the training takes ([splatTrainingFactorOf]); by [steps] when null
   final double? trainingFactor;
+
+  /// Whether the time of the training of this job is kept on this computer ([splatKeepsTrainingOf], [kept])
+  final bool keepsTraining;
   int _images;
   int _read;
 
@@ -292,10 +303,14 @@ class SplatTimeModel {
     return (now * 1000 / all).round().clamp(0, 1000);
   }
 
-  /// What [stage] would have taken for the reference job, having taken [took] for this one: what is kept on this
-  /// computer
+  /// What [stage] would have taken for the reference job, having taken [took] for this one
   Duration normalized(ImmersiveStage stage, Duration took) {
     final scale = _scaleOf(stage);
     return scale <= 0 ? took : took * (1 / scale);
   }
+
+  /// What is kept on this computer of [stage], having taken [took] for this job: [normalized]; null for a training
+  /// whose time is not kept ([keepsTraining]), which leaves the time kept before as it was
+  Duration? kept(ImmersiveStage stage, Duration took) =>
+      stage == ImmersiveStage.training && !keepsTraining ? null : normalized(stage, took);
 }

@@ -211,6 +211,7 @@ class SplatEngine implements ImmersiveEngine {
       video: job.isVideo,
       steps: job.settings.steps,
       trainingFactor: splatTrainingFactorOf(job.settings),
+      keepsTraining: splatKeepsTrainingOf(job.settings),
     );
     var stage = ImmersiveStage.reading;
     var stageStarted = _elapsed();
@@ -400,7 +401,11 @@ class SplatEngine implements ImmersiveEngine {
         onWaiting: (free) => _log.info('Brush waits for the graphics card: ${free ~/ (1 << 20)} MiB free'),
         onStarted: (pid) => _log.info('Brush started, process $pid'),
       );
-      times[ImmersiveStage.training] = model.normalized(ImmersiveStage.training, trained.time);
+      // Not for Maximum, whose factor was never measured: the training kept stays what it was
+      final trainingKept = model.kept(ImmersiveStage.training, trained.time);
+      if (trainingKept != null) {
+        times[ImmersiveStage.training] = trainingKept;
+      }
       checkCancel();
 
       report(ImmersiveStage.splatCopy, 0);
