@@ -764,11 +764,14 @@ abstract final class SplatV1 {
 
   /// The sizes told before a scene is made: [spzBytesPerGaussian] in the .spz (22.6 to 25.3 measured, degree 3),
   /// [plyBytesPerGaussian] in the .ply (59 floats); the gaussians of a scene of Detailed or Maximum
-  /// ([placeGaussians] for a place, 721 000 to 846 000 measured; [objectGaussians] for an object, 126 000 to 131 000)
+  /// ([placeGaussians] for a place, 721 000 to 846 000 measured; [objectGaussians] for an object, 126 000 to 131 000);
+  /// the copy for the headset of an object, cropped to it ([headsetObjectGaussians]: 40 365 for Headset, 46 432 and
+  /// 47 945 for Detailed and Maximum, 1.0 to 1.2 MB)
   static const spzBytesPerGaussian = 24;
   static const plyBytesPerGaussian = 59 * 4;
   static const placeGaussians = 850000;
   static const objectGaussians = 150000;
+  static const headsetObjectGaussians = 48000;
 
   /// A program that writes nothing for this long is stopped: an exhaustive block of COLMAP took up to 31 s, Brush
   /// writes a line every 200 steps (2 to 8 s)

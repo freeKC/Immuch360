@@ -231,6 +231,18 @@ void main() {
       expect(splatHeadsetCopyBytes, 3600000);
     });
 
+    test('the .spz of Headset for an object: the copy cropped to it, about 1.1 MiB; the .ply whole', () {
+      expect(splatPlannedGaussiansOf(SplatQuality.headset, SplatSubject.object), 48000);
+      expect(splatSpzBytesOf(SplatQuality.headset, SplatSubject.object) / 1e6, inInclusiveRange(1.0, 1.2));
+      expect(splatPlannedGaussiansOf(SplatQuality.headset, SplatSubject.place), 150000);
+      // Detailed and Maximum: the .spz holds the whole scene, an object too
+      expect(splatPlannedGaussiansOf(SplatQuality.detailed, SplatSubject.object), 150000);
+      expect(splatPlannedGaussiansOf(SplatQuality.maximum, SplatSubject.place), 850000);
+      // The .ply keeps every gaussian of the export, the crop is the copy's only
+      expect(splatPlyBytesOf(SplatQuality.headset, SplatSubject.object), 150000 * 236);
+      expect(splatPlyBytesOf(SplatQuality.detailed, SplatSubject.object), 150000 * 236);
+    });
+
     test('the training of Detailed five times that of Headset, Maximum by its pixels', () {
       expect(splatTrainingFactorOf(const SplatSettings()), 1.0);
       expect(splatTrainingFactorOf(const SplatSettings(steps: 10000)), 0.5);

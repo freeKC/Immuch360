@@ -729,6 +729,18 @@ void main() {
       expect(launches.single.settings, const SplatSettings());
     });
 
+    testWidgets('an object: the Headset line tells the copy cropped to it, Detailed the whole scene, the .ply whole', (
+      tester,
+    ) async {
+      await openDialog(tester, salon(150));
+      await tapIn(tester, find.byKey(const Key('ai_splat_subject_object')));
+      await tester.pump();
+
+      expect(estimateOf(tester, SplatQuality.headset), endsWith('a file of about 1.1 MiB'));
+      expect(estimateOf(tester, SplatQuality.detailed), endsWith('a file of about 3.4 MiB'));
+      expect(find.text('The same gaussians, about 33.8 MiB'), findsOneWidget);
+    });
+
     testWidgets('Detailed: the time of the box, the size of the .ply follow; handed to the queue with its settings, '
         'never kept for the next dialog', (tester) async {
       final selection = salon(150);

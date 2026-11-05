@@ -14,7 +14,9 @@
 //
 // The sizes: the .spz takes some 24 bytes a gaussian (22.6 to 25.3 measured), the .ply 236; Headset trains 150 000 at
 // most, Detailed and Maximum as many as the scene grows (126 000 to 131 000 for an object, 721 000 to 846 000 for a
-// place in the measure), told here as 150 000 and 850 000. Pure Dart: no Flutter.
+// place in the measure), told here as 150 000 and 850 000. The .spz of Headset is the copy for the headset: for an
+// object, the copy cropped to it (40 365 gaussians, 1.0 MB in the measure), told as 48 000 (review of lot Q1); its
+// .ply keeps the whole scene. Pure Dart: no Flutter.
 
 import 'dart:math' as math;
 
@@ -111,20 +113,28 @@ int? splatMaximumResolution({
   return found > floor ? found : null;
 }
 
-/// The gaussians a scene of [quality] of [subject] is told before it is made (see the top of this file)
-int splatPlannedGaussiansOf(SplatQuality quality, SplatSubject subject) => switch (quality) {
+/// The gaussians the whole scene of [quality] of [subject] is told before it is made, those of its .ply (see the top
+/// of this file)
+int splatSceneGaussiansOf(SplatQuality quality, SplatSubject subject) => switch (quality) {
   SplatQuality.headset => SplatV1.maxGaussians,
   SplatQuality.detailed ||
   SplatQuality.maximum => subject == SplatSubject.place ? SplatV1.placeGaussians : SplatV1.objectGaussians,
 };
 
-/// The size the .spz of a scene of [quality] of [subject] is told: the whole scene for Detailed and Maximum
+/// The gaussians the .spz of a scene of [quality] of [subject] is told before it is made: for Headset the copy for the
+/// headset, cropped to an object ([SplatV1.headsetObjectGaussians]); the whole scene for Detailed and Maximum
+int splatPlannedGaussiansOf(SplatQuality quality, SplatSubject subject) =>
+    quality == SplatQuality.headset && subject == SplatSubject.object
+    ? SplatV1.headsetObjectGaussians
+    : splatSceneGaussiansOf(quality, subject);
+
+/// The size the .spz of a scene of [quality] of [subject] is told ([splatPlannedGaussiansOf])
 int splatSpzBytesOf(SplatQuality quality, SplatSubject subject) =>
     splatPlannedGaussiansOf(quality, subject) * SplatV1.spzBytesPerGaussian;
 
-/// The size the .ply of the same scene is told
+/// The size the .ply of the same scene is told: the whole scene at every quality
 int splatPlyBytesOf(SplatQuality quality, SplatSubject subject) =>
-    splatPlannedGaussiansOf(quality, subject) * SplatV1.plyBytesPerGaussian;
+    splatSceneGaussiansOf(quality, subject) * SplatV1.plyBytesPerGaussian;
 
 /// The size of the copy for the headset: 150 000 gaussians at most
 const splatHeadsetCopyBytes = SplatV1.headsetGaussians * SplatV1.spzBytesPerGaussian;
