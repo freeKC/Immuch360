@@ -24,7 +24,8 @@
 // file may be replaced, by reading it again just before the rename: the queue has no rule of its own for that.
 //
 // A job tells "step 12 of 28" when its engine does, and its time left: the time the step tells (a generation), else
-// the times of the steps on this computer (AiTimings), which each job done keeps up to date in desktop_ai.json.
+// the times of the steps on this computer (AiTimings), which each job done keeps up to date in desktop_ai.json. A
+// panorama whose generator runs in segments, the card being short of memory, tells how many (ConversionJob.segments).
 //
 // Before a job of the graphics card starts, the card is asked again for the memory it has free (lot C6,
 // gpu_budget.dart): short, the job waits with the figures, the lane of the graphics card with it (a second panorama
@@ -1415,6 +1416,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       step: current ? () => progress.step : null,
       steps: current ? () => progress.steps : null,
       placed: progress.placed,
+      segments: progress.segments,
       remaining: () => conversionTimeLeft(
         job.kind,
         stage,

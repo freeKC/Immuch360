@@ -158,8 +158,10 @@ enum ImmersiveErrorCode {
   /// No graphics card this job can run on (none found, too small, integrated and not allowed)
   gpuUnavailable,
 
-  /// Other programs hold the memory of the graphics card: the job waits, then fails with this if it is cancelled, or
-  /// when the generator found too little of it free and cut its work into segments, which spoils the image
+  /// Other programs hold the memory of the graphics card ("Other apps use the graphics card memory: close games or 3D
+  /// apps"). No engine of this version raises it: it was a generation that sd-cli cut into segments, which goes on
+  /// since lot 13c (the same image, slower, measure of 5 November 2026); a job that finds the memory short waits, then
+  /// ends as gpuMemoryShort, and a generation short of it even in segments as gpuOutOfMemory
   gpuBusy,
 
   /// The graphics card ran out of memory during the generation (told by the error output of the generator)
@@ -589,9 +591,19 @@ class SplatPlaced {
 /// Where a job is: its step and how far, in thousandths of the whole job. A long step may also count what it goes
 /// through, [step] of [steps] (the steps of a generation, the regions filled in), with the [remaining] time when the
 /// engine can tell it: "step 12 of 28, about 3 min left". A splat scene tells the images COLMAP [placed] with every
-/// progress once they are known, so that the panel warns of a scene that may be incomplete while it trains.
+/// progress once they are known, so that the panel warns of a scene that may be incomplete while it trains. The
+/// generation of a panorama tells the [segments] its generator cut its work into, the card being short of memory
+/// (GeneratorProgress.segments), so that the panel says why it runs slower.
 class ImmersiveProgress {
-  const ImmersiveProgress(this.stage, this.perMille, {this.step, this.steps, this.remaining, this.placed});
+  const ImmersiveProgress(
+    this.stage,
+    this.perMille, {
+    this.step,
+    this.steps,
+    this.remaining,
+    this.placed,
+    this.segments,
+  });
 
   final ImmersiveStage stage;
 
@@ -602,6 +614,9 @@ class ImmersiveProgress {
   final Duration? remaining;
   final SplatPlaced? placed;
 
+  /// The pieces the generator runs in, null when it runs its work whole
+  final int? segments;
+
   @override
   bool operator ==(Object other) =>
       other is ImmersiveProgress &&
@@ -610,10 +625,11 @@ class ImmersiveProgress {
       other.step == step &&
       other.steps == steps &&
       other.remaining == remaining &&
-      other.placed == placed;
+      other.placed == placed &&
+      other.segments == segments;
 
   @override
-  int get hashCode => Object.hash(stage, perMille, step, steps, remaining, placed);
+  int get hashCode => Object.hash(stage, perMille, step, steps, remaining, placed, segments);
 
   @override
   String toString() => 'ImmersiveProgress($stage, $perMille${steps == null ? '' : ', $step of $steps'})';

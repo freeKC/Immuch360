@@ -180,9 +180,13 @@ class FakeGeneratorBackend implements GeneratorBackend {
     this.generatorSha256 = '1111111111111111111111111111111111111111111111111111111111111111',
     this.loraSha256 = '2222222222222222222222222222222222222222222222222222222222222222',
     this.secondsPerStep = 12.0,
+    this.segments,
   });
 
   final FakeGeneration outcome;
+
+  /// The segments each step tells, as sd-cli cutting its graph on a card short of memory; null: run whole
+  final int? segments;
 
   @override
   final String generatorSha256;
@@ -224,7 +228,7 @@ class FakeGeneratorBackend implements GeneratorBackend {
         await _silence.future;
         throw const BackendException(ImmersiveErrorCode.generatorStalled, 'No line for 180 s');
       }
-      onProgress?.call(GeneratorProgress(step, request.steps, secondsPerStep: secondsPerStep));
+      onProgress?.call(GeneratorProgress(step, request.steps, secondsPerStep: secondsPerStep, segments: segments));
     }
     if (outcome == FakeGeneration.error) {
       throw const BackendException(ImmersiveErrorCode.generatorFailed, 'exit code 1: [ERROR] load model failed');

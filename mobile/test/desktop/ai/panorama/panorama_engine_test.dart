@@ -365,6 +365,28 @@ void main() {
     });
 
     test(
+      'a generator that runs in segments, the card short of memory: its steps say how many, the panorama made',
+      () async {
+        final heard = <ImmersiveProgress>[];
+        final job = jobOf(photo());
+
+        final result = await engineOf(
+          generator: FakeGeneratorBackend(segments: 27),
+        ).run(job, cancel: cancel, onProgress: heard.add);
+
+        expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+        final steps = heard.where((progress) => progress.stage == ImmersiveStage.generating).toList();
+        expect(steps.map((progress) => progress.step), [1, 2, 3, 4]);
+        expect(steps.map((progress) => progress.segments), everyElement(27));
+        expect(
+          heard.where((progress) => progress.stage != ImmersiveStage.generating).map((p) => p.segments).nonNulls,
+          isEmpty,
+        );
+        expect(File(job.partPath).existsSync(), isTrue);
+      },
+    );
+
+    test(
       'made with less memory free on the card: its reference capped, the cap in its packet and its key the same',
       () async {
         final generator = FakeGeneratorBackend();
@@ -552,7 +574,6 @@ void main() {
   test('the named failures of the generator end the job at once, never made again', () async {
     for (final code in [
       ImmersiveErrorCode.gpuOutOfMemory,
-      ImmersiveErrorCode.gpuBusy,
       ImmersiveErrorCode.generatorFailed,
       ImmersiveErrorCode.generatorStalled,
     ]) {
@@ -699,34 +720,50 @@ void main() {
       );
     }
 
-    test('a panorama made, its steps heard; grey refused twice; short of memory; cut into segments', () async {
-      final runner = ManagedProcessRunner(
-        linuxLauncher: Platform.isLinux ? launcher : null,
-        journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
-      );
-      final heard = <ImmersiveProgress>[];
-      final job = jobOf(photo());
-      final made = await engineWith('ok', runner).run(job, cancel: cancel, onProgress: heard.add);
-      expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
-      expect(heard.where((progress) => progress.stage == ImmersiveStage.generating).map((progress) => progress.step), [
-        1,
-        2,
-        3,
-        4,
-      ]);
-      expect(const DartSbsCodec().decodeJpeg(File(job.partPath).readAsBytesSync()).width, 192);
+    test(
+      'a panorama made, its steps heard; cut into segments, made too; grey refused twice; short of memory',
+      () async {
+        final runner = ManagedProcessRunner(
+          linuxLauncher: Platform.isLinux ? launcher : null,
+          journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
+        );
+        final heard = <ImmersiveProgress>[];
+        final job = jobOf(photo());
+        final made = await engineWith('ok', runner).run(job, cancel: cancel, onProgress: heard.add);
+        expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
+        expect(
+          heard.where((progress) => progress.stage == ImmersiveStage.generating).map((progress) => progress.step),
+          [1, 2, 3, 4],
+        );
+        expect(const DartSbsCodec().decodeJpeg(File(job.partPath).readAsBytesSync()).width, 192);
+        expect(heard.map((progress) => progress.segments).nonNulls, isEmpty);
 
-      for (final (mode, code) in [
-        ('grey', ImmersiveErrorCode.outputRejected),
-        ('oom', ImmersiveErrorCode.gpuOutOfMemory),
-        ('segments', ImmersiveErrorCode.gpuBusy),
-      ]) {
-        final failed = await engineWith(mode, runner).run(jobOf(photo()), cancel: cancel);
-        expect(failed.error, code, reason: mode);
-      }
-      expect(runner.journal!.read(), isEmpty);
-      expect(workLeft(), isFalse);
-    }, skip: withoutFake);
+        // The graph cut into segments: the same panorama, its steps saying so (measure of 5 November 2026)
+        final cut = <ImmersiveProgress>[];
+        final inSegments = jobOf(photo());
+        final madeInSegments = await engineWith(
+          'segments',
+          runner,
+        ).run(inSegments, cancel: cancel, onProgress: cut.add);
+        expect(madeInSegments.isDone, isTrue, reason: '${madeInSegments.error}: ${madeInSegments.message}');
+        expect(
+          cut.where((progress) => progress.stage == ImmersiveStage.generating).map((progress) => progress.segments),
+          everyElement(27),
+        );
+        expect(File(inSegments.partPath).existsSync(), isTrue);
+
+        for (final (mode, code) in [
+          ('grey', ImmersiveErrorCode.outputRejected),
+          ('oom', ImmersiveErrorCode.gpuOutOfMemory),
+        ]) {
+          final failed = await engineWith(mode, runner).run(jobOf(photo()), cancel: cancel);
+          expect(failed.error, code, reason: mode);
+        }
+        expect(runner.journal!.read(), isEmpty);
+        expect(workLeft(), isFalse);
+      },
+      skip: withoutFake,
+    );
 
     test('a generator that fails, one that says nothing, one cancelled: named, stopped, gone', () async {
       final runner = ManagedProcessRunner(

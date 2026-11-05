@@ -2,7 +2,8 @@
 // (test/desktop/ai/fakes/fake_sd_cli.dart; the test and windows jobs of the desktop workflow compile it and give its path
 // in IMMUCH360_FAKE_SD_CLI), started by the launcher of the app (managed_process.dart; on Linux through immuch360-run
 // when IMMUCH360_RUN_LAUNCHER gives it). Progress, a stop within a second, the silence of 180 s on a clock that jumps,
-// a grey image, green left, the memory texts M3 read, a graph cut into segments, a failure, and an upscale.
+// a grey image, green left, the memory texts M3 read, a graph cut into segments that runs to its image, a failure, and
+// an upscale.
 
 import 'dart:async';
 import 'dart:io';
@@ -112,13 +113,12 @@ void main() {
       },
     );
 
-    test('a graph cut into segments is stopped before its first step and refused as gpuBusy', () async {
+    test('a graph cut into segments runs to its image, each of its steps saying the 27 segments', () async {
       final heard = <GeneratorProgress>[];
-      final failure = await generate('segments', onProgress: heard.add);
-      expect(failure?.code, ImmersiveErrorCode.gpuBusy);
-      expect(heard, isEmpty);
-      expect(processImageOf(childPid()!), isNull);
-      expect(File(request().outputPath).existsSync(), isFalse);
+      expect(await generate('segments', onProgress: heard.add), isNull);
+      expect(heard.map((progress) => progress.step), List.generate(20, (index) => index + 1));
+      expect(heard.every((progress) => progress.segments == 27), isTrue);
+      expect(img.decodePng(File(request().outputPath).readAsBytesSync())!.width, 192);
     });
 
     test('cancelled in the middle, it is gone within a second', () async {

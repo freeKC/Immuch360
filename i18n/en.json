@@ -619,6 +619,7 @@
   "ai_immersive_feature_splats": "Splat scenes",
   "ai_immersive_frame_only_360": "No 360° tag, 2:1 frame only: check that each is a 360° photo",
   "ai_immersive_free_space": "{free} free on {drive}",
+  "ai_immersive_generator_pieces": "{count, plural, one {The graphics card is short of memory, so the generation runs in # piece: slower, same result} other {The graphics card is short of memory, so the generation runs in # pieces: slower, same result}}",
   "ai_immersive_glb_failed": "The .glb copy could not be written: {message}",
   "ai_immersive_glb_saved": "Saved in {folder}: {name}",
   "ai_immersive_gpu_budget_need": "360° panoramas need {needed} of free graphics memory, {free} free: close games, 3D apps or videos",

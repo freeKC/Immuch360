@@ -7,12 +7,16 @@
 //   ok        the steps, then a PNG of the size asked, varied (the default)
 //   grey      the steps, then a uniform grey PNG
 //   green     the steps, then a PNG still pure green over most of it
-//   segments  "flux using 27 segments" before the steps, as when the memory of the card is short, then as ok
+//   segments  "flux using 27 segments" before the steps, as when the memory of the card is short, then as ok (the
+//             graph cut gives the same image, slower: measure of 5 November 2026)
 //   oom       the texts of the model manager of sd-cli when the memory is short, then exit 1
 //   fail      an error on the error output, then exit 1
 //   silent    the lines up to the sampling, then nothing until killed
 //   slow      as ok with steps of half a second (IMMUCH360_FAKE_SD_CLI_STEP_MS sets the step otherwise, 5 ms)
-// It writes its process id to the file IMMUCH360_FAKE_SD_CLI_PID names, when it does.
+// Before it loads its weights it writes the auto-fit plan of its one card, Vulkan0, as the pinned build does: the free
+// memory IMMUCH360_FAKE_SD_CLI_FREE_MIB says (7188 by default, the RTX 4060 Laptop of the measure) and the budget, that
+// free memory less the reserve of 512 MiB. It writes its process id to the file IMMUCH360_FAKE_SD_CLI_PID names, when
+// it does.
 //
 //   fake_sd_cli host PIDFILE
 // starts this same program in the silent mode through ManagedProcessRunner (on Linux through the launcher
@@ -66,6 +70,15 @@ Future<void> main(List<String> arguments) async {
   _out(
     "[I] loading diffusion model from '${option(['--diffusion-model']) ?? 'model.gguf'}' --- diffusion_engine.cpp:692",
   );
+  final free = int.tryParse(Platform.environment['IMMUCH360_FAKE_SD_CLI_FREE_MIB'] ?? '') ?? 7188;
+  final budget = free - 512;
+  _out('[I] auto-fit plan: --- backend_fit.cpp:323');
+  _out('[I]   devices: --- backend_fit.cpp:324');
+  _out(
+    '[I]     Vulkan0      Fake graphics card free ${'$free'.padLeft(6)} MiB, budget ${'$budget'.padLeft(6)} MiB '
+    '--- backend_fit.cpp:328',
+  );
+  _out('[I]     RAM          free   4737 MiB, params budget   2689 MiB --- backend_fit.cpp:334');
   await _bar(149, '#', (i) => '${(150 + i).toStringAsFixed(2)}MB/s', 0);
   _out('[I] generate_image ${width}x$height --- image.cpp:869');
   await _bar(40, '=', (i) => '30.30it/s', 0);

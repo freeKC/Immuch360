@@ -11,10 +11,12 @@
 //    5 388, see gpu_budget.dart);
 //  - its progress is the bar it redraws ("12/20 - 8.65s/it"): the steps of the sampling only, not the loading of the
 //    weights nor the tiles of the VAE;
-//  - a generation whose graph sd-cli cut into segments ("flux using 27 segments", when the free memory of the card is
-//    short) is stopped at once and refused as gpuBusy ("Other apps use the graphics card memory: close games or 3D
-//    apps"): with the LoRA applied at run time and the guidance, the image comes out spoilt (M3, section 2, point 2),
-//    so it never becomes a file;
+//  - a generation whose graph sd-cli cuts into segments ("flux using 27 segments", when the memory it may use on the
+//    card is short) goes on: at the 1536 x 768 of the app the cut gives the same bytes as one segment, slower (measure
+//    of 5 November 2026, ai-gpu-budget-2026-11-05/measure.md, section 4: 294 s instead of 202 with 5.5 GiB free, about
+//    8 min near the floor of 3.1 GiB; M3 saw spoilt images in segments at 1792 x 896 and 2048 x 1024 only). Each step
+//    it reports then carries the number of segments (GeneratorProgress.segments), which the panel says, and the log
+//    keeps it with the free memory and the budget sd-cli read on the card (the lines of its auto-fit plan);
 //  - a failure is named: gpuOutOfMemory when its output says the memory was short (the texts M3 read), generatorStalled
 //    after 180 s without a line, generatorFailed with the end of its error output, cancelled within a second of the
 //    flag; the process is killed in every case where it still runs (the run of a program, its watch of the silence
@@ -34,7 +36,10 @@ import 'package:immich_mobile/desktop/ai/gen/image_checks.dart';
 import 'package:immich_mobile/desktop/ai/process/sidecar_run.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
+
+final _log = Logger('SdCpp');
 
 /// The program of the engine in its folder (`engines/<id>/` of the AI components)
 String sdCliIn(String folder, {bool? windows}) =>
@@ -124,6 +129,24 @@ GeneratorProgress? sdCppBarOf(String line) {
 int? sdCppSegmentsOf(String line) {
   final match = _segments.firstMatch(line);
   return match == null ? null : int.parse(match.group(1) ?? match.group(2)!);
+}
+
+const _mib = 1024 * 1024;
+
+/// "[I]     Vulkan1      NVIDIA GeForce RTX 4060 Laptop GPU free   7188 MiB, budget   3072 MiB --- backend_fit.cpp:328",
+/// a card of the auto-fit plan sd-cli writes before it loads its weights (the last "free" of the line: the name of a
+/// card holds no figure in MiB)
+final _plan = RegExp(r'^\[I\]\s+(Vulkan\d+)\s.*\bfree\s+(\d+) MiB, budget\s+(\d+) MiB');
+
+/// What sd-cli read of the memory of the card [device] ("Vulkan1"), from the line of its auto-fit plan for that card:
+/// the bytes free and the budget it plans with (the free memory less its reserve of 512 MiB, or the one --max-vram
+/// gives); null for any other line
+({int free, int budget})? sdCppCardMemoryOf(String line, String device) {
+  final match = _plan.firstMatch(line);
+  if (match == null || match.group(1) != device) {
+    return null;
+  }
+  return (free: int.parse(match.group(2)!) * _mib, budget: int.parse(match.group(3)!) * _mib);
 }
 
 String _decimal(double value) => value.toString();
@@ -266,6 +289,11 @@ class SdCppGenerator implements GeneratorBackend {
     }
     var sampling = false;
     var done = 0;
+    var segments = 1;
+    ({int free, int budget})? read;
+    String said() => read == null
+        ? 'what it read of the card unknown'
+        : '${read!.free ~/ _mib} MiB free read on ${settings.device}, budget ${read!.budget ~/ _mib} MiB';
     await _sdCppRun(
       runner: runner,
       settings: settings,
@@ -274,13 +302,22 @@ class SdCppGenerator implements GeneratorBackend {
       cancel: cancel,
       elapsed: _elapsed,
       onLine: (line) {
-        final segments = sdCppSegmentsOf(line);
-        if (segments != null && segments > 1) {
-          return BackendException(
-            ImmersiveErrorCode.gpuBusy,
-            'sd-cli cut the generator into $segments segments, the memory of the graphics card being short: the image '
-            'would be spoilt (close games or 3D apps and retry)',
+        final plan = sdCppCardMemoryOf(line, settings.device);
+        if (plan != null) {
+          read = plan;
+          _log.info(
+            'sd-cli read ${plan.free ~/ _mib} MiB free on ${settings.device}, budget ${plan.budget ~/ _mib} MiB',
           );
+          return null;
+        }
+        // The graph cut into segments: the run goes on, slower, the same image (see the top of this file)
+        final cut = sdCppSegmentsOf(line);
+        if (cut != null) {
+          if (cut != segments) {
+            segments = cut;
+            _log.info('sd-cli runs the generator in $cut segments (${said()}): slower, the same image');
+          }
+          return null;
         }
         if (line.contains('generating image')) {
           sampling = true;
@@ -289,7 +326,14 @@ class SdCppGenerator implements GeneratorBackend {
         final bar = sampling && done < request.steps ? sdCppBarOf(line) : null;
         if (bar != null && bar.steps == request.steps && bar.step > done) {
           done = bar.step;
-          onProgress?.call(bar);
+          onProgress?.call(
+            GeneratorProgress(
+              bar.step,
+              bar.steps,
+              secondsPerStep: bar.secondsPerStep,
+              segments: segments > 1 ? segments : null,
+            ),
+          );
         }
         return null;
       },

@@ -1,5 +1,6 @@
-// The runner of sd-cli (lot P2) with the fake runner of C0: its frozen arguments, what it reads of the lines M3 saw, the
-// named failures, the stop, the silence of 180 s on a fake clock, and the checks of the image it wrote. The same runner
+// The runner of sd-cli (lot P2) with the fake runner of C0: its frozen arguments, what it reads of the lines M3 saw (and
+// the lines of the auto-fit plan of the pinned build, lot 13c), a graph cut into segments that goes on, the named
+// failures, the stop, the silence of 180 s on a fake clock, and the checks of the image it wrote. The same runner
 // against a real child process, the compiled fake sd-cli, is sdcpp_fake_cli_test.dart.
 
 import 'dart:async';
@@ -14,6 +15,7 @@ import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 import '../fakes/fake_process_runner.dart';
@@ -25,8 +27,22 @@ const _generating = '[I] generating image: 1/1 - seed 1002 --- image.cpp:920';
 const _oneSegment =
     '[V] flux compute buffer size: 2607.97 MB(VRAM) on Vulkan1 (peak across 1 segment) --- ggml_runner.cpp:1022';
 
-List<(String, {bool isError})> _generation({int steps = 20, List<String> beforeSteps = const [_oneSegment]}) => [
+/// The card lines of the auto-fit plan of the pinned build, as the measure of 5 November 2026 read them (run
+/// G_full_seg3, --max-vram 3, on the laptop of the owner: the Intel chip first, the RTX second)
+const _planIntel =
+    '[I]     Vulkan0      Intel(R) RaptorLake-S Mobile Graphics Controller free   7350 MiB, budget   3072 MiB '
+    '--- backend_fit.cpp:328';
+const _planRtx =
+    '[I]     Vulkan1      NVIDIA GeForce RTX 4060 Laptop GPU free   7188 MiB, budget   3072 MiB --- backend_fit.cpp:328';
+const _planRam = '[I]     RAM          free   4737 MiB, params budget   2689 MiB --- backend_fit.cpp:334';
+
+List<(String, {bool isError})> _generation({
+  int steps = 20,
+  List<String> plan = const [],
+  List<String> beforeSteps = const [_oneSegment],
+}) => [
   (_version, isError: false),
+  for (final line in plan) (line, isError: false),
   ('  |##################################################| 108/108 - 325.06MB/s', isError: false),
   ('  |=>                                                |  1/40 -   3.40it/s', isError: false),
   ('  |==================================================| 40/40 -  32.26it/s', isError: false),
@@ -291,6 +307,16 @@ void main() {
       expect(sdCppBarOf('[I] generating image: 1/1 - seed 1002 --- image.cpp:920'), isNull);
     });
 
+    test('the free memory and the budget sd-cli read on its card, from the line of its auto-fit plan', () {
+      expect(sdCppCardMemoryOf(_planRtx, 'Vulkan1'), (free: 7188 * 1024 * 1024, budget: 3072 * 1024 * 1024));
+      expect(sdCppCardMemoryOf(_planIntel, 'Vulkan0'), (free: 7350 * 1024 * 1024, budget: 3072 * 1024 * 1024));
+      // Another card, the memory of the computer, any other line
+      expect(sdCppCardMemoryOf(_planIntel, 'Vulkan1'), isNull);
+      expect(sdCppCardMemoryOf(_planRam, 'Vulkan1'), isNull);
+      expect(sdCppCardMemoryOf(_oneSegment, 'Vulkan1'), isNull);
+      expect(sdCppCardMemoryOf('[I] auto-fit plan: --- backend_fit.cpp:323', 'Vulkan1'), isNull);
+    });
+
     test('the segments of the graph of the generator, read from either line sd-cli writes', () {
       expect(sdCppSegmentsOf('[V] flux using 27 segments --- ggml_runner.cpp:879'), 27);
       expect(
@@ -347,29 +373,56 @@ void main() {
       },
     );
 
-    test('cut into segments, it is stopped at once and refused as gpuBusy, never a file', () async {
+    test('cut into segments, it goes on to its image, each step saying how many; the log keeps them with what sd-cli '
+        'read of the card', () async {
+      // The measure of 5 November 2026: 27 segments give the same bytes as one, slower
       final runner = FakeProcessRunner([
         FakeProcessScript(
           lines: _generation(
+            plan: [_planIntel, _planRtx, _planRam],
             beforeSteps: [
-              '[V] flux compute buffer size: 3928.82 MB(VRAM) on Vulkan1 (peak across 1 segment) --- ggml_runner.cpp:1022',
+              '[I] flux build cached graph cut plan done (taking 2 ms) --- ggml_graph_cut.cpp:1034',
               '[V] flux using 27 segments --- ggml_runner.cpp:879',
             ],
           ),
         ),
       ]);
+      final logged = <String>[];
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord.where((record) => record.loggerName == 'SdCpp').listen((record) {
+        logged.add(record.message);
+      });
+      addTearDown(() async {
+        Logger.root.level = level;
+        await listening.cancel();
+      });
       final heard = <GeneratorProgress>[];
-      await expectLater(
-        generator(runner).generate(request(), cancel: cancel, onProgress: heard.add),
-        throwsA(
-          isA<BackendException>()
-              .having((error) => error.code, 'code', ImmersiveErrorCode.gpuBusy)
-              .having((error) => error.message, 'message', contains('27 segments')),
-        ),
-      );
-      expect(runner.processes.single.killed, isTrue);
-      expect(heard, isEmpty);
-      expect(File(request().outputPath).existsSync(), isFalse);
+
+      await generator(
+        _WritingRunner(runner, image: _varied(16, 8)),
+      ).generate(request(), cancel: cancel, onProgress: heard.add);
+
+      expect(heard.map((progress) => progress.step), List.generate(20, (index) => index + 1));
+      expect(heard.every((progress) => progress.segments == 27), isTrue);
+      expect(heard.first, const GeneratorProgress(1, 20, secondsPerStep: 8.31, segments: 27));
+      expect(runner.processes.single.killed, isFalse);
+      expect(File(request().outputPath).existsSync(), isTrue);
+      const cut =
+          'sd-cli runs the generator in 27 segments (7188 MiB free read on Vulkan1, budget 3072 MiB): slower, the same image';
+      expect(logged, ['sd-cli read 7188 MiB free on Vulkan1, budget 3072 MiB', cut]);
+    });
+
+    test('in one segment, its steps say none', () async {
+      final runner = FakeProcessRunner([
+        FakeProcessScript(lines: _generation(plan: [_planRtx])),
+      ]);
+      final heard = <GeneratorProgress>[];
+      await generator(
+        _WritingRunner(runner, image: _varied(16, 8)),
+      ).generate(request(), cancel: cancel, onProgress: heard.add);
+      expect(heard, hasLength(20));
+      expect(heard.every((progress) => progress.segments == null), isTrue);
     });
 
     test('short of memory, it fails as gpuOutOfMemory with the end of its error output', () async {

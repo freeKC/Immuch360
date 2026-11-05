@@ -178,6 +178,35 @@ void main() {
     },
   );
 
+  test('a generation in segments, the card short of memory: the job says how many, until it runs again', () async {
+    panorama = FakePanoramaEngine(segments: 27, holdStage: ImmersiveStage.seam);
+    container = containerWith(FakeGpuProbe.of(FakeGpuReports.rtx4060).probe);
+    final generating = <int?>[];
+    final seen = container.listen(conversionQueueProvider, (_, next) {
+      final shown = next.jobs.single;
+      if (shown.state == ConversionState.generating) {
+        generating.add(shown.segments);
+      }
+    });
+    addTearDown(seen.close);
+
+    final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+    await panorama.reachedHold.stream.first;
+    // From the first step the generator tells (the fake engine enters the step before it tells any)
+    expect(generating.nonNulls, isNotEmpty);
+    expect(generating.skipWhile((segments) => segments == null), everyElement(27));
+    expect(job(pano).segments, 27, reason: 'kept after the generation');
+    queue().cancel(pano);
+    panorama.release();
+    await until((state) => state.byId(pano)!.state.isEnded);
+    expect(job(pano).state, ConversionState.cancelled);
+
+    queue().retry(pano);
+    expect(job(pano).state, ConversionState.waiting);
+    expect(job(pano).segments, isNull, reason: 'run again, it says what its new run tells');
+    queue().cancel(pano);
+  });
+
   test('no card any more: the panorama fails, no graphics card can make it', () async {
     container = containerWith(FakeGpuProbe.of(FakeGpuReports.noDevice).probe);
 

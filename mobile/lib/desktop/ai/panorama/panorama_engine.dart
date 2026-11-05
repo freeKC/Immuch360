@@ -18,9 +18,9 @@
 //  4. loadingModels, then generating (to 80 %): the generator (GeneratorBackend: sd-cli of lot P2, on the graphics
 //     card) with the fixed prompt, the seed of the job and its steps, and the cap of its reference when the queue found
 //     less memory free on the card (gpu_budget.dart; written in the XMP as GeneratorReferenceMaxPixels), "step 12 of
-//     20" and the time left as it goes. Its image is checked on the processor (its size, not grey, no pure green left
-//     outside the photo): a refused image is made once more with the next seed, then the job fails as outputRejected
-//     and nothing is written;
+//     20" and the time left as it goes, and the segments it runs in when the card is short of memory (slower, the same
+//     image). Its image is checked on the processor (its size, not grey, no pure green left outside the photo): a
+//     refused image is made once more with the next seed, then the job fails as outputRejected and nothing is written;
 //  5. seam (to 85 %): the panorama rolled by half a turn, the band of its seam filled in by MI-GAN, rolled back
 //     (seam.dart); the flag seam when it stays visible;
 //  6. upscale (to 95 %): widened by 32 columns wrapped from the other side, Real-ESRGAN x4 (UpscaleBackend, sd-cli),
@@ -905,6 +905,7 @@ class PanoramaEngine implements ImmersiveEngine {
 
       // 4, made once more when the image is refused
       var seed = job.seed;
+      int? segments;
       _Joined? joined;
       for (var attempt = 0; attempt < 2 && joined == null; attempt++) {
         if (cancel.isCancelled) {
@@ -935,6 +936,7 @@ class PanoramaEngine implements ImmersiveEngine {
               if (stage == ImmersiveStage.loadingModels) {
                 timed(ImmersiveStage.loadingModels);
               }
+              segments = progress.segments;
               final steps = math.max(1, progress.steps);
               tell(
                 ImmersiveProgress(
@@ -944,6 +946,7 @@ class PanoramaEngine implements ImmersiveEngine {
                   step: progress.step,
                   steps: progress.steps,
                   remaining: progress.remaining,
+                  segments: progress.segments,
                 ),
               );
             },
@@ -1079,7 +1082,8 @@ class PanoramaEngine implements ImmersiveEngine {
       );
       _log.info(
         '${job.id}: panorama of ${written.bytes} bytes, seed $seed, reference '
-        '${job.referenceMaxPixels == null ? 'full' : 'at most ${job.referenceMaxPixels} pixels'}, seam '
+        '${job.referenceMaxPixels == null ? 'full' : 'at most ${job.referenceMaxPixels} pixels'}, generated '
+        '${segments == null ? 'whole' : 'in $segments segments'}, seam '
         '${seam.before.toStringAsFixed(2)} to '
         '${seam.after.toStringAsFixed(2)} in ${seam.regions} regions; decoder ${prepared.decoder}, encoder '
         '${written.encoder}; ${_timesOf(times)}',

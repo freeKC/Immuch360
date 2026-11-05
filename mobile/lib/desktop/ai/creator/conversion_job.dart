@@ -484,6 +484,7 @@ class ConversionJob {
     this.splat,
     this.placed,
     this.keptFolder,
+    this.segments,
   });
 
   final String id;
@@ -569,6 +570,11 @@ class ConversionJob {
   /// The work folder a failure left until the next scene or a day (ImmersiveResult.keptFolder), named in the panel
   final String? keptFolder;
 
+  /// A panorama: the pieces its generator runs in, the graphics card being short of memory (ImmersiveProgress.segments);
+  /// "The graphics card is short of memory, so the generation runs in 27 pieces: slower, same result" while it
+  /// generates. Null while it runs whole.
+  final int? segments;
+
   /// Whether a Retry would end the same way: a splat scene of too few images placed, whose images the mapper places
   /// the same way every time (69 and 69, 129 and 129 in the diagnosis of 3 November); the panel offers none (lot SPF2)
   bool get retryGivesTheSame => kind == ConversionKind.splatScene && error == ImmersiveErrorCode.notEnoughOverlap;
@@ -579,8 +585,8 @@ class ConversionJob {
   double get progress => perMille / 1000;
 
   /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor] and [gpuShortfall] are
-  /// given as functions, so that they may go back to null; [placed] and [keptFolder] go back to null with [restarted]
-  /// only
+  /// given as functions, so that they may go back to null; [placed], [keptFolder] and [segments] go back to null with
+  /// [restarted] only
   ConversionJob copyWith({
     ConversionState? state,
     int? perMille,
@@ -604,6 +610,7 @@ class ConversionJob {
     bool? keepsWaiting,
     SplatPlaced? placed,
     String? keptFolder,
+    int? segments,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -639,6 +646,7 @@ class ConversionJob {
     splat: splat,
     placed: placed ?? this.placed,
     keptFolder: keptFolder ?? this.keptFolder,
+    segments: segments ?? this.segments,
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then. [keepsWaiting]: it

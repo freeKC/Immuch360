@@ -489,8 +489,10 @@ void main() {
       String? parentId,
       ImmersiveErrorCode? error,
       String? message,
+      int? segments,
     }) => ConversionJob(
       id: name,
+      segments: segments,
       source: LocalFileSource(p.join(photos, name)),
       parentId: parentId,
       error: error,
@@ -582,6 +584,43 @@ void main() {
       expect(inRow('jardin.jpg', find.text('2D to 3D SBS')), findsOneWidget);
       expect(inRow('jardin.jpg', find.text('Waiting')), findsOneWidget);
       expect(inRow('jardin.jpg', find.text('Waiting for enough free memory')), findsOneWidget);
+    });
+
+    testWidgets('a generation in pieces, the card short of memory, says so under its time left while it generates', (
+      tester,
+    ) async {
+      await pumpShown(tester, [
+        job(
+          'plage.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.generating,
+          step: 3,
+          steps: 20,
+          remaining: const Duration(minutes: 6),
+          segments: 27,
+        ),
+        job(
+          'jardin.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.generating,
+          step: 3,
+          steps: 20,
+          remaining: const Duration(minutes: 3),
+        ),
+        // Past its generation, the pieces are no longer said
+        job('mer.jpg', ConversionKind.panoramaFromPhoto, ConversionState.upscale, segments: 27),
+      ]);
+
+      expect(
+        tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_generator_pieces')))).data,
+        'The graphics card is short of memory, so the generation runs in 27 pieces: slower, same result',
+      );
+      expect(
+        top(tester, inRow('plage.jpg', find.byKey(const Key('ai_job_time_left')))),
+        lessThan(top(tester, inRow('plage.jpg', find.byKey(const Key('ai_job_generator_pieces'))))),
+      );
+      expect(inRow('jardin.jpg', find.byKey(const Key('ai_job_generator_pieces'))), findsNothing);
+      expect(inRow('mer.jpg', find.byKey(const Key('ai_job_generator_pieces'))), findsNothing);
     });
 
     testWidgets('the processor alone: no sections, the words of phase 1', (tester) async {
@@ -758,13 +797,7 @@ void main() {
           message: '5261334937 bytes free of the 5476083302 needed after 30 s',
           gpuShortfall: const GpuShortfall(need: 5476083302, free: 4900 << 20, appHolds: 1402 << 20),
         ),
-        job(
-          'busy.jpg',
-          ConversionKind.panoramaFromPhoto,
-          ConversionState.failed,
-          error: ImmersiveErrorCode.gpuBusy,
-          message: 'sd-cli cut the generator into 27 segments',
-        ),
+        job('busy.jpg', ConversionKind.panoramaFromPhoto, ConversionState.failed, error: ImmersiveErrorCode.gpuBusy),
       ]);
 
       expect(
@@ -786,7 +819,7 @@ void main() {
       await tester.pump();
       expect(shownQueue.keptWaiting, ['plage.jpg']);
 
-      // A generation cut into segments keeps its words and its Retry
+      // Another failure of the card keeps its words and its Retry
       expect(
         inRow('busy.jpg', find.text('Other apps use the graphics card memory: close games or 3D apps')),
         findsOneWidget,
@@ -905,21 +938,15 @@ void main() {
         'Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue',
       );
       expect(
-        conversionFailureText(t, ImmersiveErrorCode.gpuBusy, 'cut into 27 segments'),
+        conversionFailureText(t, ImmersiveErrorCode.gpuBusy, null),
         'Other apps use the graphics card memory: close games or 3D apps',
-        reason: 'the failure of a generation keeps its words',
+        reason: 'no generator raises it since lot 13c; its words stay true',
       );
     });
 
     testWidgets('the named failures of a panorama, in words', (tester) async {
       await pumpShown(tester, [
-        job(
-          'busy.jpg',
-          ConversionKind.panoramaFromPhoto,
-          ConversionState.failed,
-          error: ImmersiveErrorCode.gpuBusy,
-          message: 'sd-cli cut the generator into 27 segments',
-        ),
+        job('busy.jpg', ConversionKind.panoramaFromPhoto, ConversionState.failed, error: ImmersiveErrorCode.gpuBusy),
         job(
           'silent.jpg',
           ConversionKind.panoramaFromPhoto,

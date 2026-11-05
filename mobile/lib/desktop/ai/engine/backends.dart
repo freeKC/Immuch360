@@ -133,14 +133,16 @@ class GeneratorRequest {
   final int? referenceMaxPixels;
 }
 
-/// Where a generation or an upscale is: the step done of [steps], and the seconds a step takes when the generator
-/// says it
+/// Where a generation or an upscale is: the step done of [steps], the seconds a step takes when the generator says it,
+/// and the [segments] it cut its work into when the memory it may use on the card is short (sd-cli's graph cut: slower,
+/// the same image), null when it runs it whole
 class GeneratorProgress {
-  const GeneratorProgress(this.step, this.steps, {this.secondsPerStep});
+  const GeneratorProgress(this.step, this.steps, {this.secondsPerStep, this.segments});
 
   final int step;
   final int steps;
   final double? secondsPerStep;
+  final int? segments;
 
   /// The time left at this pace, null until the generator gave its pace
   Duration? get remaining => secondsPerStep == null
@@ -152,13 +154,15 @@ class GeneratorProgress {
       other is GeneratorProgress &&
       other.step == step &&
       other.steps == steps &&
-      other.secondsPerStep == secondsPerStep;
+      other.secondsPerStep == secondsPerStep &&
+      other.segments == segments;
 
   @override
-  int get hashCode => Object.hash(step, steps, secondsPerStep);
+  int get hashCode => Object.hash(step, steps, secondsPerStep, segments);
 
   @override
-  String toString() => 'GeneratorProgress($step of $steps, ${secondsPerStep}s)';
+  String toString() =>
+      'GeneratorProgress($step of $steps, ${secondsPerStep}s${segments == null ? '' : ', $segments segments'})';
 }
 
 /// Generates the panorama around a photo
@@ -167,10 +171,11 @@ abstract interface class GeneratorBackend {
   String get generatorSha256;
   String get loraSha256;
 
-  /// Writes the image of [request]. [cancel] stops the generator within a second. Throws [BackendException]:
-  /// gpuOutOfMemory, gpuBusy (the generator had too little of the memory of the card free and would spoil the image),
-  /// generatorStalled (180 s without a line), generatorFailed (with the end of the error output), outputRejected (the
-  /// image written is grey, has green left or the wrong size; it is deleted), cancelled.
+  /// Writes the image of [request]. [cancel] stops the generator within a second. A generator short of the memory of
+  /// the card cuts its work into segments and goes on, slower, the steps it reports saying so
+  /// ([GeneratorProgress.segments]). Throws [BackendException]: gpuOutOfMemory (even in segments), generatorStalled
+  /// (180 s without a line), generatorFailed (with the end of the error output), outputRejected (the image written is
+  /// grey, has green left or the wrong size; it is deleted), cancelled.
   Future<void> generate(
     GeneratorRequest request, {
     required NativeCancelFlag cancel,
