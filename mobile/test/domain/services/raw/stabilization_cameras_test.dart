@@ -88,14 +88,21 @@ Uint8List _goProFile() => goProMotionFile(
   payloadTicks: List.filled(goProSpreadFrames.length, 834),
 );
 
-/// The real frames 0, 1, 2, 300 and 301 of the DJI Osmo 360 sample
-Uint8List _djiFile() => djiOsvFile(
+/// The real frames 0, 1, 2, 300 and 301 of the DJI Osmo 360 sample, from frame [from] of them on
+Uint8List _djiFile({int from = 0}) => djiOsvFile(
   camd: djiCamdBox(
     djiMotionCamdRecords([
-      for (final (attitude, second) in djiMotionSliceRecords) (base64.decode(attitude), base64.decode(second)),
+      for (final (attitude, second) in djiMotionSliceRecords.skip(from))
+        (base64.decode(attitude), base64.decode(second)),
     ]),
   ),
 );
+
+/// The rotation from the view of the stitch of the GoPro MAX sample to its GPMF axes as the picture itself gives it,
+/// row major: fitted by Procrustes over the rotation vectors of 594 frame pairs (lots/gopro_vision.py, residual 1.01
+/// degree a pair against 2.77 without correction), before it was taken square ([goProViewToGpmf], 22 degrees off
+/// about the view's x axis, which that one turn cannot settle)
+const _goProPictureViewToGpmf = Mat3([0.0114, 0.9263, -0.3765, -0.9999, 0.0079, -0.0107, -0.007, 0.3766, 0.9263]);
 
 /// A GoPro like track of [frames] frames turning about GPMF y, its gravity along GPMF x, [orientations] given
 CameraMotionTrack _goProTrack(Float32List orientations, {Float32List? gravity}) {
@@ -189,6 +196,8 @@ void main() {
   });
 
   group('the real GoPro MAX slice to the table', () {
+    // A check that the table levels with GRAV as it should, not of the axes of the view: the shown down K B^T g is
+    // T^T G^T R(q) g whatever B, the view to GPMF rotation cancels out. The axes are checked by the turns below.
     test('keeps the down of the world at the bottom of the display at every frame, from GRAV', () async {
       final file = _goProFile();
       final track = (await readGoProMotion(_reader(file), file.length))!;
@@ -243,6 +252,75 @@ void main() {
       expect(large, greaterThan(8));
     });
 
+    test(
+      'turns the camera of the table the way the picture of the sample turned, about the same signed axis',
+      () async {
+        final file = _goProFile();
+        final track = (await readGoProMotion(_reader(file), file.length))!;
+        final orientations = track.frameOrientations!;
+        final details = StabilizationDetails();
+        stabilizationOfCameraMotion(track, details: details);
+
+        // The turn of the camera from frame 0, in the view of frame 0: the table's (C_i, the world being the view of
+        // frame 0), and the one of the picture, with the axes the picture fit gave
+        Mat3 picture(int i) => _matrix(_at(orientations, i)).transposed * _goProPictureViewToGpmf;
+        var large = 0;
+        for (var i = 1; i < goProSpreadFrames.length; i++) {
+          final table = _axisAngle(_matrix(_at(details.camera, i)).transposed);
+          final seen = _axisAngle(picture(0).transposed * picture(i));
+          if (table.degrees > 50) {
+            large++;
+            expect(table.degrees, closeTo(seen.degrees, 3), reason: 'frame ${goProSpreadFrames[i]}');
+            // 0.8 to 3.9 degrees apart on the sample (the 22 degrees of the pitch about view x left to judgement
+            // barely move an axis along x); the axes of the view rolled by 90 or 180 degrees about its forward (the
+            // MAX 2 rule) would be 90 degrees off or more
+            expect(_angle(table.axis, seen.axis), lessThan(10), reason: 'frame ${goProSpreadFrames[i]}');
+          }
+        }
+        expect(large, greaterThan(8));
+      },
+    );
+
+    test('would turn the other way with the axes of the view rolled by 180 degrees', () async {
+      final file = _goProFile();
+      final track = (await readGoProMotion(_reader(file), file.length))!;
+      final orientations = track.frameOrientations!;
+      // The view turned by 180 degrees about its forward, then into GPMF as shipped
+      final rolled = goProViewToGpmf * const Mat3([-1, 0, 0, 0, -1, 0, 0, 0, 1]);
+      expect(rolled.apply((x: 0, y: 1, z: 0)), (x: -1.0, y: 0.0, z: 0.0), reason: 'the view down to GPMF -x');
+      final details = StabilizationDetails();
+      stabilizationOfCameraMotion(track, viewToBody: rolled, details: details);
+
+      Mat3 picture(int i) => _matrix(_at(orientations, i)).transposed * _goProPictureViewToGpmf;
+      for (var i = 1; i < goProSpreadFrames.length; i++) {
+        final table = _axisAngle(_matrix(_at(details.camera, i)).transposed);
+        if (table.degrees > 50) {
+          final seen = _axisAngle(picture(0).transposed * picture(i));
+          expect(_angle(table.axis, seen.axis), greaterThan(150), reason: 'frame ${goProSpreadFrames[i]}');
+        }
+      }
+    });
+
+    test('gives no table for a GoPro whose axes were not measured, the MAX 2', () async {
+      expect(goProAxesMeasured(goProMaxName), isTrue);
+      expect(goProAxesMeasured('GoPro MAX'), isTrue);
+      expect(goProAxesMeasured(null), isTrue, reason: 'the caller checks the faces');
+      expect(goProAxesMeasured('GoPro Max2'), isFalse);
+      expect(goProAxesMeasured('GoPro MAX 2'), isFalse);
+      expect(goProAxesMeasured('HERO13 Black'), isFalse);
+
+      final max2 = goProMotionFile(
+        [
+          for (var i = 0; i < 3; i++)
+            goProPayload(cori: [goProSpreadCori[i]], grav: [goProSpreadGrav[i]], shut: [0.0003], name: 'GoPro Max2'),
+        ],
+        withVideo: false,
+        payloadTicks: List.filled(3, 834),
+      );
+      expect(await readGoProMotion(_reader(max2), max2.length), isNotNull, reason: 'the track itself reads');
+      expect(await readGoProStabilization(_reader(max2), max2.length), isNull);
+    });
+
     test('would put the sky at the bottom with GRAV taken the other way', () async {
       final file = _goProFile();
       final track = (await readGoProMotion(_reader(file), file.length))!;
@@ -287,19 +365,25 @@ void main() {
   });
 
   group('the real DJI Osmo 360 slice to the table', () {
-    test('levels every frame with the world of the attitude, whose z is down', () async {
+    test('levels every frame with the world of the attitude, whose z is down, once the correction faded in', () async {
       final file = _djiFile();
       final track = (await readDjiMotion(_reader(file), file.length))!;
       final count = djiMotionSliceFrames.length;
       final details = StabilizationDetails();
 
-      final table = stabilizationOfCameraMotion(track, details: details);
+      // Applied whole from the start: every frame levelled by the attitude
+      final whole = stabilizationOfCameraMotion(
+        track,
+        options: const StabilizationOptions(djiFadeInSeconds: 0),
+        details: details,
+      );
+      final table = stabilizationOfCameraMotion(track)!;
 
-      expect(table, isNotNull);
-      table!;
-      expect(table.length, count);
-      expect(table.summary.source, 'DJI attitude');
-      expect(table.summary.levelWindows, 0);
+      expect(whole, isNotNull);
+      whole!;
+      expect(whole.length, count);
+      expect(whole.summary.source, 'DJI attitude');
+      expect(whole.summary.levelWindows, 0);
       expect(details.viewToBody.values, djiViewToBody.values);
       final tilts = <double>[];
       for (var i = 0; i < count; i++) {
@@ -307,17 +391,64 @@ void main() {
         final body = _matrix(_at(track.frameOrientations!, i)).apply((x: 0, y: 0, z: 1));
         final cameraDown = djiViewToBody.transposed.apply(body);
         tilts.add(_angle(cameraDown, _displayDown));
-        expect(_angle(_shownDown(table, i, cameraDown), _displayDown), lessThan(1e-3), reason: 'frame $i');
+        expect(_angle(_shownDown(whole, i, cameraDown), _displayDown), lessThan(1e-3), reason: 'frame $i');
+        // Faded in over 5 s: frames 300 and 301, at 12 s, get the whole of it
+        if (i >= 3) {
+          expect(_angle(_shownDown(table, i, cameraDown), _displayDown), lessThan(1e-3), reason: 'frame $i');
+          expect(_at(table.corrections, i), _at(whole.corrections, i));
+        }
       }
       // The attitude leans by 20 degrees at the start of the ride (lot a3), 4 degrees after 12 s
       expect(tilts[0], closeTo(20.2, 0.1));
       expect(tilts[3], lessThan(5));
-      // Frames 0, 1, 2 then 300 and 301: presentation times on the clock of the camera
-      expect(table.presentationTimesUs[1], 40000);
-      expect(table.presentationTimesUs[3], 12000000);
 
       final read = (await readDjiStabilization(_reader(file), file.length))!;
       expect(read.corrections, table.corrections);
+    });
+
+    test('puts each frame at its place on the timeline of the video, as the app asks', () async {
+      // The app gives the frame duration of the video track, 40 ms at 25 frames a second
+      final file = _djiFile();
+      final table = (await readDjiStabilization(_reader(file), file.length, frameDurationUs: 40000))!;
+      expect(table.presentationTimesUs, [0, 40000, 80000, 12000000, 12040000]);
+      // Without the records of frames 0, 1 and 2: frame 300 stays at 12 s
+      final late = _djiFile(from: 3);
+      final lateTable = (await readDjiStabilization(_reader(late), late.length, frameDurationUs: 40000))!;
+      expect(lateTable.presentationTimesUs, [12000000, 12040000]);
+      // And on the times of the track without a frame duration
+      final untimed = (await readDjiStabilization(_reader(file), file.length))!;
+      expect(untimed.presentationTimesUs, [0, 40000, 80000, 12000000, 12040000]);
+    });
+
+    test('fades the correction in while the fusion settles, so that the horizon does not slide', () async {
+      // The picture of the sample is level at the start (the horizon on the centre row of the front lens, lot a3),
+      // while the attitude leans by 20 degrees: there the down of the world is the down of the view of the stitch.
+      // At 12 s the attitude has settled (within 4 degrees of the picture): its down is the down of the world.
+      final file = _djiFile();
+      final track = (await readDjiMotion(_reader(file), file.length))!;
+      Vec3 attitudeDown(int i) =>
+          djiViewToBody.transposed.apply(_matrix(_at(track.frameOrientations!, i)).apply((x: 0, y: 0, z: 1)));
+      // The down of the world in the view of the stitch: level in the picture at frames 0 to 2, the attitude's at 12 s
+      Vec3 worldDown(int i) => i < 3 ? _displayDown : attitudeDown(i);
+      double shownTilt(StabilizationTable table, int i) => _angle(_shownDown(table, i, worldDown(i)), _displayDown);
+
+      final faded = (await readDjiStabilization(_reader(file), file.length, frameDurationUs: 40000))!;
+      final whole = (await readDjiStabilization(
+        _reader(file),
+        file.length,
+        frameDurationUs: 40000,
+        options: const StabilizationOptions(djiFadeInSeconds: 0),
+      ))!;
+
+      // From frame 0 to frame 301 the shown horizon stays within a degree of level, where the lean of the fusion
+      // shown whole tilts it by 20 degrees at the start
+      for (var i = 0; i < djiMotionSliceFrames.length; i++) {
+        expect(shownTilt(faded, i), lessThan(1), reason: 'frame ${djiMotionSliceFrames[i]}');
+        expect(shownTilt(whole, i), i < 3 ? greaterThan(15) : lessThan(1), reason: 'frame ${djiMotionSliceFrames[i]}');
+      }
+      // Frame 0 is shown as the camera saw it; frame 2, 80 ms in, nearly so
+      expect(_at(faded.corrections, 0), [1, 0, 0, 0]);
+      expect(_axisAngle(_matrix(_at(faded.corrections, 2))).degrees, lessThan(0.1));
     });
   });
 

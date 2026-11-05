@@ -97,8 +97,6 @@ class CameraMotionTrack {
 
   /// The orientation the camera fused for each entry of [frameTimes], four values a frame (w, x, y, z): the unit
   /// quaternion q from the world to the camera, so that a vector of the world reads q v q^-1 in the axes of the camera,
-  /// The orientation the camera fused for each entry of [frameTimes], four values a frame (w, x, y, z): the unit
-  /// quaternion q from the world to the camera, so that a vector of the world reads q v q^-1 in the axes of the camera,
   /// and q^-1 turns the camera's vectors into the world. The axes of the camera are those of [source]. For
   /// [CameraMotionSource.goProGpmf] the world is the camera's own reference, not levelled (the GoPro's frame at the
   /// start of the capture): [frameGravity] levels it. For [CameraMotionSource.djiAttitude] the axes are the body frame

@@ -300,6 +300,20 @@ void main() {
       expect(details.times, _closeToList([-0.001, 0.104, 0.199], 1e-9));
     });
 
+    test('is null when the track does not say which entry is the first frame of the video', () {
+      final samples = _samples(-0.1, 1.1, (time) => (rate: (x: 0.0, y: 0.2, z: 0.0), acceleration: _upBody));
+      for (final origin in [CameraMotionTimeOrigin.firstFrameEntry, CameraMotionTimeOrigin.firstSample]) {
+        final track = CameraMotionTrack(
+          source: CameraMotionSource.insta360Imu,
+          timeOrigin: origin,
+          samples: samples,
+          frameTimes: Float64List.fromList([0, 0.1, 0.2]),
+          frameExposures: Float32List(3),
+        );
+        expect(stabilizationOfMotionTrack(track, downBody: _upright), isNull, reason: origin.name);
+      }
+    });
+
     test('is null without frame times or samples', () {
       final samples = _samples(0, 0.1, (time) => (rate: (x: 0.0, y: 0.0, z: 0.0), acceleration: _upBody));
       final noFrames = CameraMotionTrack(
@@ -584,8 +598,84 @@ void main() {
         final expected = _axisAngle(axis, 0.8 * (frameTimes[i] - frameTimes[0]));
         expect(_maxDifference(_matrix(_at(details.camera, i)).transposed, expected), lessThan(1e-9));
       }
-      // Frame times on the timeline: from frame 0
-      expect(table.presentationTimesUs[1], 33333);
+      // Frame times on the timeline of the video: as they are
+      expect(table.presentationTimesUs.take(2), [10000, 43333]);
+    });
+
+    test('puts the frames on the timeline of the video, a frame without a record leaving its gap', () {
+      final times = Float64List.fromList([0, 1]);
+      final orientations = Float64List.fromList([1, 0, 0, 0, ..._quaternion((x: 0, y: 1, z: 0), 0.5)]);
+      final track = CameraOrientationTrack(label: 'DJI attitude', times: times, orientations: orientations);
+      // Frame 2 has no record; frame 4 has a time a little off its place
+      final frameTimes = Float64List.fromList([0, 0.04, 0.12, 0.1601]);
+
+      final timeline = stabilizationOfOrientations(
+        track,
+        frameTimes: frameTimes,
+        viewToBody: Mat3.identity,
+        frameDurationUs: 40000,
+      )!;
+      final untimed = stabilizationOfOrientations(track, frameTimes: frameTimes, viewToBody: Mat3.identity)!;
+      // On the clock of a camera (an Insta360): frame i at i frame durations
+      final clock = stabilizationOfOrientations(
+        track,
+        frameTimes: frameTimes,
+        viewToBody: Mat3.identity,
+        frameDurationUs: 40000,
+        framesOnVideoTimeline: false,
+      )!;
+
+      expect(timeline.presentationTimesUs, [0, 40000, 120000, 160000]);
+      expect(untimed.presentationTimesUs, [0, 40000, 120000, 160100]);
+      expect(clock.presentationTimesUs, [0, 40000, 80000, 120000]);
+    });
+
+    test('fades the correction in over the first seconds when asked, from none at the first frame', () {
+      // A camera turning about its view x by 0.2 rad/s, levelled by its world (DJI)
+      final times = Float64List.fromList([for (var i = 0; i <= 120; i++) i / 20]);
+      final orientations = Float64List(4 * times.length);
+      for (var i = 0; i < times.length; i++) {
+        orientations.setAll(4 * i, _quaternion((x: 1, y: 0, z: 0), 0.2 * times[i] + 0.3));
+      }
+      final track = CameraOrientationTrack(label: 'DJI', times: times, orientations: orientations, worldUp: [0, -1, 0]);
+      final whole = stabilizationOfOrientations(track, frameTimes: times, viewToBody: Mat3.identity)!;
+      final details = StabilizationDetails();
+
+      final faded = stabilizationOfOrientations(
+        track,
+        frameTimes: times,
+        viewToBody: Mat3.identity,
+        fadeInSeconds: 2,
+        details: details,
+      )!;
+      final onClock = stabilizationOfOrientations(
+        track,
+        frameTimes: times,
+        viewToBody: Mat3.identity,
+        fadeInSeconds: 2,
+        framesOnVideoTimeline: false,
+      )!;
+
+      expect(_at(faded.corrections, 0), [1, 0, 0, 0]);
+      var last = 0.0;
+      for (var i = 1; i < times.length; i++) {
+        final share = _quaternionAngle(_at(faded.corrections, i)) / _quaternionAngle(_at(whole.corrections, i));
+        if (times[i] >= 2) {
+          expect(_at(faded.corrections, i), _at(whole.corrections, i), reason: 'frame $i');
+        } else {
+          // A smoothstep of the time, rising: 0.156 of it a quarter of the way
+          expect(share, greaterThan(last), reason: 'frame $i');
+          last = share;
+        }
+      }
+      expect(
+        _quaternionAngle(_at(faded.corrections, 10)) / _quaternionAngle(_at(whole.corrections, 10)),
+        closeTo(0.15625, 1e-6),
+      );
+      // The target of the details is the view shown: the camera's own at frame 0
+      expect(_at(details.target, 0), _closeToList(_at(details.camera, 0), 1e-12));
+      // Only on the timeline of the video
+      expect(onClock.corrections, whole.corrections);
     });
 
     test('holds the first and last orientations outside the track, and counts those frames', () {

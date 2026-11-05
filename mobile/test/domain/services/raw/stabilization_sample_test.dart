@@ -19,7 +19,9 @@ void _print(String line) {
   print(line);
 }
 
-/// The largest angle in degrees between the display's down and where the table shows the GRAV of each frame
+/// The largest angle in degrees between the display's down and where the table shows the GRAV of each frame: a check
+/// that the table levels with GRAV, not of the axes of the view, which cancel out (K B^T g = T^T G^T R(q) g whatever
+/// the view to GPMF rotation B); stabilization_cameras_test checks the axes against the turns of the picture
 double _largestGoProLevel(StabilizationTable table, Float32List gravity) {
   var largest = 0.0;
   for (var i = 0; i < table.length && 3 * i + 2 < gravity.length; i++) {

@@ -32,6 +32,14 @@
 //    K_i d, where the viewer looking at K_i d sees the world direction C_i d, so the viewer at direction e sees T_i e,
 //    the world as the target sees it. Written with the orientations from the world to the view (c = C^T, t = T^T, the
 //    way GoPro writes CORI), k = t c^-1: k x camera = target.
+// 6. Start of a DJI file. The fusion of the Osmo 360 leans in the first seconds of a ride (20 degrees at 0 s, under 1
+//    degree after 4 s on the sample, while its picture stays level, lot a3): the correction of its frames fades in
+//    from none at the first frame of the video to the whole of it after djiFadeInSeconds, so that the horizon does not
+//    slide by the lean of the fusion while it settles.
+// 7. Time of a frame. The player looks the correction up by the presentation time of each frame. GoPro and DJI give
+//    their frames on the timeline of the video (frame n at n frame durations, a frame without a record leaving a gap):
+//    with the frame duration given, each frame is put on the nearest multiple of it. The frames of an Insta360 are on
+//    the clock of the camera, which runs about 33 ppm off: frame i is at i frame durations.
 //
 // Memory: the samples go through one chunk at a time; the tables hold one orientation per frame.
 //
@@ -75,6 +83,7 @@ class StabilizationOptions {
     this.levelWindowSeconds = 2.0,
     this.levelMinNorm = 0.95,
     this.levelMaxNorm = 1.05,
+    this.djiFadeInSeconds = 5.0,
   });
 
   /// Added to the time of a frame less half its exposure to take the gyroscope at that frame, in seconds
@@ -92,6 +101,10 @@ class StabilizationOptions {
   /// Norms of the mean of a window, in g, between which it levels the view
   final double levelMinNorm;
   final double levelMaxNorm;
+
+  /// Time over which the correction of a DJI file fades in from its first frame, in seconds, while the fusion of the
+  /// camera settles (head of this file, step 6); 0 applies it whole from the start
+  final double djiFadeInSeconds;
 }
 
 /// The steps of a table frame by frame, filled when given to a builder: for the tests and the measures
@@ -181,14 +194,18 @@ StabilizationTable? stabilizationOfMotionTrack(
 /// The stabilisation table of a camera that writes its own orientation ([CameraOrientationTrack]): its orientations
 /// blended (slerp) to [frameTimes] (seconds, the clock of the track; a reader shifts its times by an offset it
 /// measured), its gravity blended the same way when it gives one, [viewToBody] the rotation from the view frame of the
-/// stitch (x right, y down, z forward) to the body frame of its orientations. [frameDurationUs] as in
-/// [readInsta360Stabilization]; null puts frame i at its time less the time of frame 0. Null without frames or
-/// orientations.
+/// stitch (x right, y down, z forward) to the body frame of its orientations. [framesOnVideoTimeline]: the frame times
+/// are on the timeline of the video (time 0 at its first frame, as GoPro and DJI give them); each frame is then at its
+/// time put on the nearest multiple of [frameDurationUs] when given, at its time otherwise. Not on it (the clock of a
+/// camera), frame i is at i times [frameDurationUs], or at its time less the time of frame 0 without it. The
+/// correction fades in over the first [fadeInSeconds] of the video (0 for none). Null without frames or orientations.
 StabilizationTable? stabilizationOfOrientations(
   CameraOrientationTrack track, {
   required Float64List frameTimes,
   required Mat3 viewToBody,
   double? frameDurationUs,
+  bool framesOnVideoTimeline = true,
+  double fadeInSeconds = 0,
   StabilizationOptions options = const StabilizationOptions(),
   StabilizationDetails? details,
 }) {
@@ -250,13 +267,14 @@ StabilizationTable? stabilizationOfOrientations(
     label: track.label,
     orientations: orientations,
     times: frameTimes,
-    presentationTimesUs: _presentationTimes(frameTimes, frameDurationUs),
+    presentationTimesUs: _presentationTimes(frameTimes, frameDurationUs, onVideoTimeline: framesOnVideoTimeline),
     frameTimes: frameTimes,
     viewToBody: viewToBody,
     windows: gravity != null && worldUp == null ? windows : null,
     worldUp: worldUp,
     options: options,
     outside: outside,
+    fadeInSeconds: framesOnVideoTimeline ? fadeInSeconds : 0,
     details: details,
   );
 }
@@ -393,13 +411,27 @@ StabilizationTable? stabilizationOfCameraMotion(
     frameTimes: track.frameTimes,
     viewToBody: toBody,
     frameDurationUs: frameDurationUs,
+    framesOnVideoTimeline: track.source != CameraMotionSource.insta360Imu,
+    fadeInSeconds: track.source == CameraMotionSource.djiAttitude ? options.djiFadeInSeconds : 0,
     options: options,
     details: details,
   );
 }
 
+/// Whether the axes of the GPMF of the GoPro named [cameraModel] (DVNM) were measured against its picture
+/// ([goProViewToGpmf]): the MAX only. The MAX 2 may follow another rule (its EAC faces are upright, the MAX's are a
+/// quarter turn off): taken with the MAX's matrix, its stabilised video could play rolled by 90 degrees. A file that
+/// does not name its camera counts as measured; the caller checks its faces (1344 pixels on the MAX).
+bool goProAxesMeasured(String? cameraModel) {
+  if (cameraModel == null) {
+    return true;
+  }
+  return cameraModel.trim().toLowerCase().replaceAll(' ', '') == 'gopromax';
+}
+
 /// Reads the GPMF track of the GoPro .360 of [fileSize] bytes that [read] reads ([readGoProMotion]) and builds its
-/// stabilisation table from CORI and GRAV, the frames on the clock of the video track. Null when the file has no CORI.
+/// stabilisation table from CORI and GRAV, the frames on the clock of the video track. Null when the file has no CORI,
+/// or when it comes from a GoPro whose axes were not measured ([goProAxesMeasured]).
 Future<StabilizationTable?> readGoProStabilization(
   ByteRangeReader read,
   int fileSize, {
@@ -411,6 +443,10 @@ Future<StabilizationTable?> readGoProStabilization(
   if (track == null) {
     return null;
   }
+  if (!goProAxesMeasured(track.cameraModel)) {
+    _log.info('Stabilization: the axes of the ${track.cameraModel} were not measured against its picture, no table');
+    return null;
+  }
   if (track.truncated) {
     _log.warning('Stabilization: the GPMF track was read in part, the last frames hold the last orientation');
   }
@@ -419,8 +455,8 @@ Future<StabilizationTable?> readGoProStabilization(
 
 /// Reads the attitude of the DJI Osmo 360 .osv of [fileSize] bytes that [read] reads ([readDjiMotion]) and builds its
 /// stabilisation table, levelled by the world of the attitude. The fusion of the camera may lean in the first seconds
-/// of a ride (20 degrees at 0 s, under 1 degree after 4 s on the sample): the start of such a file shows it. Null when
-/// the file has no attitude.
+/// of a ride (20 degrees at 0 s, under 1 degree after 4 s on the sample): the correction fades in over the first
+/// [StabilizationOptions.djiFadeInSeconds] (head of this file, step 6). Null when the file has no attitude.
 Future<StabilizationTable?> readDjiStabilization(
   ByteRangeReader read,
   int fileSize, {
@@ -576,7 +612,10 @@ class GyroStabilizer implements CameraMotionSampleSink {
     _z = z;
   }
 
-  /// The table of the frames of the track; null without frames or samples. [details], when given, gets the steps.
+  /// The table of the frames of the track; null without frames or samples, and null for a track that does not say
+  /// which entry is the first frame of the video ([CameraMotionTimeOrigin.firstFrame]): on every file measured the
+  /// first frame entry comes 4 to 8 entries before the first frame, so such a table would be 130 to 270 ms late and
+  /// add shake. [details], when given, gets the steps.
   StabilizationTable? finish({StabilizationDetails? details}) {
     final track = _track;
     if (track == null || _times.isEmpty || _samples == 0) {
@@ -586,6 +625,13 @@ class GyroStabilizer implements CameraMotionSampleSink {
             : _times.isEmpty
             ? 'no frame times'
             : 'no sample'}',
+      );
+      return null;
+    }
+    if (track.timeOrigin != CameraMotionTimeOrigin.firstFrame) {
+      _log.warning(
+        'Stabilization: the ${track.cameraModel ?? 'camera'} does not say which entry is the first frame '
+        '(${track.timeOrigin.name}), no table',
       );
       return null;
     }
@@ -605,7 +651,7 @@ class GyroStabilizer implements CameraMotionSampleSink {
       label: _label,
       orientations: _orientations,
       times: _times,
-      presentationTimesUs: _presentationTimes(track.frameTimes, frameDurationUs),
+      presentationTimesUs: _presentationTimes(track.frameTimes, frameDurationUs, onVideoTimeline: false),
       frameTimes: track.frameTimes,
       viewToBody: bodyFrame(down),
       windows: _windows,
@@ -669,14 +715,21 @@ class _LevelWindows {
   }
 }
 
-// The presentation time of each frame, in microseconds: i times the frame duration, or the frame time less the one of
-// frame 0
-Int64List _presentationTimes(Float64List frameTimes, double? frameDurationUs) {
+// The presentation time of each frame, in microseconds (head of this file, step 7). Frame times [onVideoTimeline]: the
+// time on the nearest multiple of the frame duration, or the time itself. On the clock of a camera: i times the frame
+// duration, or the frame time less the one of frame 0.
+Int64List _presentationTimes(Float64List frameTimes, double? frameDurationUs, {required bool onVideoTimeline}) {
   final times = Int64List(frameTimes.length);
   for (var i = 0; i < frameTimes.length; i++) {
-    times[i] = frameDurationUs != null
-        ? (i * frameDurationUs).round()
-        : ((frameTimes[i] - frameTimes[0]) * 1e6).round();
+    final double us;
+    if (onVideoTimeline) {
+      us = frameDurationUs != null
+          ? (frameTimes[i] * 1e6 / frameDurationUs).round() * frameDurationUs
+          : frameTimes[i] * 1e6;
+    } else {
+      us = frameDurationUs != null ? i * frameDurationUs : (frameTimes[i] - frameTimes[0]) * 1e6;
+    }
+    times[i] = us.round();
   }
   return times;
 }
@@ -696,6 +749,7 @@ StabilizationTable _buildTable({
   int outside = 0,
   int samples = 0,
   int gaps = 0,
+  double fadeInSeconds = 0,
   StabilizationDetails? details,
 }) {
   final count = times.length;
@@ -810,6 +864,7 @@ StabilizationTable _buildTable({
   var stepMax = 0.0;
   var viewStepSum = 0.0;
   var levelMax = 0.0;
+  var faded = 0;
   List<double>? lastTarget;
   List<double>? lastCorrection;
   for (var i = 0; i < count; i++) {
@@ -828,9 +883,19 @@ StabilizationTable _buildTable({
     final t = _quaternionOf(Mat3.columns(r, d, f));
     final c = _at(camera, i);
     var k = _multiply(_conjugate(t), c);
-    if (lastCorrection != null ? _dot(k, lastCorrection) < 0 : k[0] < 0) {
+    if (k[0] < 0) {
       k = [-k[0], -k[1], -k[2], -k[3]];
     }
+    final fade = _fadeIn(frameTimes[i], fadeInSeconds);
+    if (fade < 1) {
+      k = slerpQuaternion(const [1, 0, 0, 0], k, fade);
+      faded++;
+    }
+    if (lastCorrection != null && _dot(k, lastCorrection) < 0) {
+      k = [-k[0], -k[1], -k[2], -k[3]];
+    }
+    // The view the viewer gets, c k^-1: the target once the correction is whole
+    final shown = fade < 1 ? _multiply(c, _conjugate(k)) : t;
     for (var j = 0; j < 4; j++) {
       corrections[4 * i + j] = k[j];
     }
@@ -846,10 +911,13 @@ StabilizationTable _buildTable({
       stepMax = math.max(stepMax, stepAngle);
       final vector = _rotationVector(step);
       steps.setAll(3 * (i - 1), [vector.x, vector.y, vector.z]);
-      viewStepSum += _angle(_multiply(_conjugate(lastTarget!), t));
+      viewStepSum += _angle(_multiply(_conjugate(lastTarget!), shown));
     }
-    lastTarget = t;
-    target?.setAll(4 * i, _conjugate(t));
+    lastTarget = shown;
+    target?.setAll(4 * i, _conjugate(shown));
+  }
+  if (faded > 0) {
+    _log.info('Stabilization: the correction fades in over the first $faded frames, $fadeInSeconds s');
   }
 
   final summary = StabilizationSummary(
@@ -891,6 +959,16 @@ StabilizationTable _buildTable({
   );
   _log.info('Stabilization: $summary');
   return table;
+}
+
+// The share of the correction a frame at [time] seconds of the video gets: 0 at the first frame to 1 after [seconds],
+// along a smoothstep (no jump of the speed of the view at either end); 1 when [seconds] is 0
+double _fadeIn(double time, double seconds) {
+  if (seconds <= 0 || time >= seconds) {
+    return 1;
+  }
+  final x = math.max(0.0, time / seconds);
+  return x * x * (3 - 2 * x);
 }
 
 bool _isLevel(List<double> means, int j, double low, double high) {

@@ -121,6 +121,12 @@ Future<CameraMotionTrack?> readGoProMotion(
     if (truncated && collector.frames < videoTimes.length) {
       _log.info('GoPro motion: ${collector.frames} of ${videoTimes.length} frames read');
     }
+    // Entry i is frame i only while each payload holds the frames of its time: tell when one does not
+    final span = videoBounds!.last - videoBounds.first;
+    final odd = span > 0 ? collector.payloadsOffRate(videoTimes.length / span) : 0;
+    if (odd > 0) {
+      _log.warning('GoPro motion: $odd payloads hold another number of CORI entries than frames of their time');
+    }
   } else {
     timeOrigin = CameraMotionTimeOrigin.firstSample;
     frameTimes = Float64List.fromList(collector.payloadTimes);
@@ -405,6 +411,22 @@ class _Collector {
   final payloadTimes = <double>[];
   String? cameraModel;
 
+  // The CORI entries of each payload read, and its duration in seconds
+  final _payloadCounts = <int>[];
+  final _payloadDurations = <double>[];
+
+  /// The payloads but the last whose number of CORI entries differs from the frames of their duration at
+  /// [framesPerSecond] (30 a payload of 1.001 s on a 29.97 fps MAX)
+  int payloadsOffRate(double framesPerSecond) {
+    var odd = 0;
+    for (var i = 0; i + 1 < _payloadCounts.length; i++) {
+      if (_payloadCounts[i] != (_payloadDurations[i] * framesPerSecond).round()) {
+        odd++;
+      }
+    }
+    return odd;
+  }
+
   /// Frames read: CORI entries
   int get frames => orientations.length ~/ 4;
 
@@ -429,6 +451,8 @@ class _Collector {
       for (var i = 0; i < count; i++) {
         payloadTimes.add(sample.time + i * sample.duration / count);
       }
+      _payloadCounts.add(count);
+      _payloadDurations.add(sample.duration);
     }
     final grav = streams[_gravityKey];
     if (grav != null && widths[_gravityKey] == 3) {

@@ -3,12 +3,19 @@
 // The per frame records of the mdat of the camd box (field 3, see dji_osv.dart) come two per frame, one for each djmd
 // track; the first of each pair holds the attitude:
 //
-// - 1-2 (as a path inside the record): the time stamp of the frame, microseconds of the camera clock, a varint;
+// - 1-1 (as a path inside the record): the index of the record, two a frame (0, 2, 4...; absent for frame 0, the
+//   default value of protobuf); 1-2: the time stamp of the frame, microseconds of the camera clock, a varint;
 // - 3-2-1: a run of attitude samples, about 1000 a second (40 a frame at 25 frames a second): 1 the time stamp of the
 //   first sample, the low 32 bits of the same clock (it wraps every 71.6 minutes); 2 a counter; 3 repeated, one
 //   quaternion a sample, w, x, y and z as fixed32 floats; samples 1004 microseconds apart on the sample file;
 // - 2-9: one quaternion for the frame, the middle sample of the run (sample 20 of 40);
 // - 4-1-5: the frame rate, a float.
+//
+// The header record of the first track (field 1 of the mdat) holds the time stamp of the first frame of the video in
+// 1-9. Frame n of the video is the record whose stamp is n frame durations after it: a frame is counted from the first
+// frame of the file, not from the first record kept, so a record that is missing, damaged or without attitude leaves
+// a gap and the frames after it keep their place on the timeline of the video (the player looks the table up by the
+// presentation time of each frame). Without that stamp, the first record kept is frame (1-1) / 2.
 //
 // The quaternions take the axes of the camera (x forward along the front lens, y to the right, z down) to a world
 // frame whose z is down along gravity. The reader gives them in the body frame of the app (dual_fisheye_math.dart:
@@ -63,6 +70,10 @@ const _defaultFrameRate = 25.0;
 const _minSampleStepUs = 500.0;
 const _maxSampleStepUs = 2000.0;
 
+// A frame further than this from the first frame of the file (about 25 hours at 25 frames a second) is taken as a
+// stamp of another clock
+const _maxFrameIndex = 1 << 21;
+
 // A record longer than this is taken as damaged media data
 const _maxRecordLength = 1024 * 1024;
 
@@ -72,8 +83,9 @@ const _twoTo32 = 0x100000000;
 const _bodyToCamera = [0.5, 0.5, -0.5, -0.5];
 
 /// Reads the attitude of the DJI Osmo 360 video of [fileSize] bytes that [read] reads: an orientation for each frame of
-/// the video, from the world to the body frame ([CameraMotionTrack.frameOrientations]), and the time of each frame (time 0 at the first one), from the per frame records of the
-/// camd box, [chunkLength] bytes at a time, at most [maxLength] bytes of them ([CameraMotionTrack.truncated] tells when
+/// the video, from the world to the body frame ([CameraMotionTrack.frameOrientations]), and the time of each frame on
+/// the timeline of the video (time 0 at the first frame of the file, whether or not its record was kept: a frame n
+/// frame durations after it is at n / frame rate), from the per frame records of the camd box, [chunkLength] bytes at a time, at most [maxLength] bytes of them ([CameraMotionTrack.truncated] tells when
 /// there are more). The orientation of a frame is the attitude [attitudeDelayUs] microseconds after its time stamp.
 /// Null for a file without a camd box or without attitude in it. A record whose frame does not come after the one
 /// before is left out and counted in [CameraMotionTrack.droppedSamples]. Errors of [read] are not caught.
@@ -206,6 +218,7 @@ int _walkRecords(Uint8List bytes, _AttitudeCollector collector) {
 
 /// What a per frame record says of the attitude
 class _AttitudeRecord {
+  int? recordIndex;
   int? frameStampUs;
   int? runStampUs;
   final List<double> run = [];
@@ -226,6 +239,7 @@ _AttitudeRecord? _parseRecord(Uint8List bytes) {
     switch (field.number) {
       case 1:
         record.frameStampUs ??= _firstVarint(payload, 2);
+        record.recordIndex ??= _firstVarint(payload, 1) ?? 0;
       case 2:
         if (record.frameQuaternion == null) {
           final message = protoPath(payload, [9]);
@@ -345,7 +359,11 @@ class _AttitudeCollector {
   String? _firmware;
   bool _headerRead = false;
 
-  /// The first header record: the name of the camera (1-10) and its firmware (1-6)
+  // The time stamp of the first frame of the video (1-9 of the first header), microseconds of the camera clock
+  int? _startStampUs;
+
+  /// The first header record: the name of the camera (1-10), its firmware (1-6) and the time stamp of the first frame
+  /// of the video (1-9)
   void header(Uint8List bytes) {
     if (_headerRead) {
       return;
@@ -356,6 +374,10 @@ class _AttitudeCollector {
       return;
     }
     for (final field in protoFieldsLenient(info)) {
+      if (field.number == 9 && field.wireType == protoVarint) {
+        _startStampUs ??= field.integer;
+        continue;
+      }
       if (field.wireType != protoLengthDelimited) {
         continue;
       }
@@ -379,17 +401,30 @@ class _AttitudeCollector {
     _frameRate ??= record.frameRate;
     final previous = _previous;
 
-    // The frame: one after the one before, or as many as the time stamps say
-    var index = _frameIndex + 1;
+    // The frame of the video: as many frame durations after the first frame of the file as its stamp says, else after
+    // the frame before, else one after it; the first record kept without a stamp to start from is frame (1-1) / 2
+    final rate = _frameRate ?? _defaultFrameRate;
     final stamp = record.frameStampUs;
     final previousStamp = previous?.frameStampUs;
-    if (stamp != null && previousStamp != null) {
-      final frames = ((stamp - previousStamp) * (_frameRate ?? _defaultFrameRate) / 1e6).round();
-      if (frames < 1) {
-        _dropped++;
-        return;
+    final start = _startStampUs;
+    int index;
+    if (stamp != null && start != null) {
+      index = ((stamp - start) * rate / 1e6).round();
+      if (index < 0 || index > _maxFrameIndex) {
+        _log.warning('Dji motion: a frame stamp $stamp does not follow the first frame at $start, frames counted on');
+        _startStampUs = null;
+        index = _frameIndex + 1;
       }
-      index = _frameIndex + frames;
+    } else if (stamp != null && previousStamp != null) {
+      index = _frameIndex + ((stamp - previousStamp) * rate / 1e6).round();
+    } else if (previous == null) {
+      index = (record.recordIndex ?? 0) ~/ 2;
+    } else {
+      index = _frameIndex + 1;
+    }
+    if (previous != null && index <= _frameIndex) {
+      _dropped++;
+      return;
     }
 
     // The sample step, from the run before and its count
@@ -466,8 +501,10 @@ class _AttitudeCollector {
       return null;
     }
     final rate = _frameRate ?? _defaultFrameRate;
-    final first = _frameIndices.first;
-    final frameTimes = Float64List.fromList([for (final index in _frameIndices) (index - first) / rate]);
+    final frameTimes = Float64List.fromList([for (final index in _frameIndices) index / rate]);
+    if (_frameIndices.first != 0) {
+      _log.info('Dji motion: the first frame kept is frame ${_frameIndices.first} of the video');
+    }
     if (_fromFrameQuaternions) {
       _log.info(
         'Dji motion: ${_fromRuns ? 'some' : 'all'} frames take the quaternion of the frame, without the times of the '

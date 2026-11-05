@@ -242,7 +242,9 @@ void main() {
         ),
       ];
 
-      final track = (await _read(_file(djiMotionCamdRecords(_withSecondTrack(records)))))!;
+      final track = (await _read(
+        _file(djiMotionCamdRecords(_withSecondTrack(records), header: djiHeader(firstFrameStampUs: frameStamp))),
+      ))!;
 
       // Frame 0 takes the step of the sample file, 1004 us: 9161 / 1004 samples in; frame 1 the step of the runs,
       // 40000 / 25 = 1600 us: 9161 / 1600 samples in
@@ -284,6 +286,29 @@ void main() {
       expect(gap.frameTimes, [0, closeTo(0.04, 1e-12), closeTo(0.12, 1e-12)]);
       expect((repeated.frameTimes.length, repeated.droppedSamples), (2, 1));
       expect(thirty.frameTimes, [for (var k = 0; k < 4; k++) closeTo(k / 30, 1e-12)]);
+    });
+
+    test('counts the frames from the first frame of the file, so that a missing record leaves its frame out', () async {
+      final real = _realFrames();
+      // Without the record of frame 0 (a record without attitude, damaged, or cut): the others keep their place
+      final withoutFirst = (await _read(_file(djiMotionCamdRecords(real.sublist(1)))))!;
+      expect(withoutFirst.frameTimes, [
+        closeTo(0.04, 1e-12),
+        closeTo(0.08, 1e-12),
+        closeTo(12.0, 1e-12),
+        closeTo(12.04, 1e-12),
+      ]);
+      // Without the first frame stamp of the header: the index of the first record kept (1-1, two a frame), then
+      // the stamps
+      final noHeaderStamp = (await _read(
+        _file(djiMotionCamdRecords(real.sublist(1), header: djiHeader(firstFrameStampUs: null))),
+      ))!;
+      expect(noHeaderStamp.frameTimes, withoutFirst.frameTimes);
+      // Frames 0, 1 and 2 missing: frame 300 is at 12 s whatever was read before it
+      final late = (await _read(_file(djiMotionCamdRecords(real.sublist(3)))))!;
+      expect(late.frameTimes, [closeTo(12.0, 1e-12), closeTo(12.04, 1e-12)]);
+      // The same attitude, but for the sample step, measured from the runs before when there are some
+      expect(_orientation(late, 0), _sameOrientation(_orientation(withoutFirst, 2), 1e-3));
     });
 
     test('takes the quaternion of the frame without time stamps, else the middle of the run', () async {

@@ -164,12 +164,14 @@ List<int> djiConfig({List<int>? calibration, int calibrationField = 6}) => [
   ...pbBytesField(calibrationField, calibration ?? djiSampleCalibration()),
 ];
 
-/// A header record: field 1 names the schema (1), the camera (10), its serial (5) and firmware (6)
+/// A header record: field 1 names the schema (1), the camera (10), its serial (5) and firmware (6), and gives the time
+/// stamp of the first frame of the video (9, the one of the sample; null leaves it out)
 List<int> djiHeader({
   String model = djiModel,
   String serial = djiSerial,
   String firmware = djiFirmware,
   String schema = 'dvtm_oq101.proto',
+  int? firstFrameStampUs = 18471494232,
 }) => [
   ...pbBytesField(1, [
     ...pbStringField(1, schema),
@@ -177,7 +179,7 @@ List<int> djiHeader({
     ...pbStringField(3, '2.0.5'),
     ...pbStringField(5, serial),
     ...pbStringField(6, firmware),
-    ...pbVarintField(9, 18471494232),
+    if (firstFrameStampUs != null) ...pbVarintField(9, firstFrameStampUs),
     ...pbStringField(10, model),
   ]),
   ...pbBytesField(2, [1, 2, 3, 4]),
