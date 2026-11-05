@@ -36,6 +36,27 @@ const _planRtx =
     '[I]     Vulkan1      NVIDIA GeForce RTX 4060 Laptop GPU free   7188 MiB, budget   3072 MiB --- backend_fit.cpp:328';
 const _planRam = '[I]     RAM          free   4737 MiB, params budget   2689 MiB --- backend_fit.cpp:334';
 
+/// Below the floor of the cut (run F_full_2600 of the same measure, a budget of 2 600 MiB): the budget 14 MiB short
+/// for the first single block, the card itself not
+const _planBelowFloor =
+    '[I]     Vulkan1      NVIDIA GeForce RTX 4060 Laptop GPU free   7188 MiB, budget   2600 MiB --- backend_fit.cpp:328';
+const _belowFloor = [
+  (
+    '[W] [E] model manager memory on Vulkan1: reported free 6705.71 MB / total 7956.00 MB, tracked weights 121.22 MB '
+        '/ other runtime 0.00 MB / current runtime 108.00 MB --- model_manager.cpp:1788',
+    isError: false,
+  ),
+  (
+    '[W] model manager cannot make enough memory available on Vulkan1: need 2896.82 MB device / 2492.82 MB budget, '
+        'available 6705.71 MB device / 2478.82 MB budget --- model_manager.cpp:2018',
+    isError: false,
+  ),
+  ('[E] diffusion model compute failed --- diffusion_engine.cpp:2655', isError: true),
+  ('[E] Diffusion model sampling failed --- diffusion_engine.cpp:2888', isError: true),
+  ('[E] sampling for image 1/1 failed after 6.74s --- image.cpp:961', isError: true),
+  ('[E] generate failed --- main.cpp:926', isError: true),
+];
+
 List<(String, {bool isError})> _generation({
   int steps = 20,
   List<String> plan = const [],
@@ -334,6 +355,36 @@ void main() {
       expect(sdCppCardMemoryOf('[I] auto-fit plan: --- backend_fit.cpp:323', 'Vulkan1'), isNull);
     });
 
+    test(
+      'how short sd-cli was on its card, from the line of its model manager: the larger of the card and the budget',
+      () {
+        const mib = 1024 * 1024;
+        expect(sdCppShortOf(_belowFloor[1].$1, 'Vulkan1'), 14 * mib, reason: '2492.82 less 2478.82, to the byte');
+        // M3: the card 1 216.45 MiB short, no budget
+        expect(sdCppShortOf(_outOfMemory.first.$1, 'Vulkan1'), (121645 * mib + 99) ~/ 100);
+        expect(sdCppShortOf(_belowFloor[1].$1, 'Vulkan0'), isNull);
+        expect(sdCppShortOf(_belowFloor.first.$1, 'Vulkan1'), isNull);
+        expect(sdCppShortOf(_planRtx, 'Vulkan1'), isNull);
+      },
+    );
+
+    test('what sd-cli read of its card, at the head of a failure: written, then read back by the panel', () {
+      const mib = 1024 * 1024;
+      const read = GeneratorMemoryRead(free: 3584 * mib, budget: 3072 * mib, short: 14 * mib);
+      expect(read.message, 'Generator memory read: free 3584 MiB, budget 3072 MiB, short 14 MiB');
+      expect(GeneratorMemoryRead.of('${read.message}\n[E] generate failed'), read);
+      expect(
+        GeneratorMemoryRead.of('Generator memory read: free 7188 MiB, budget 6676 MiB\n[E] generate failed'),
+        const GeneratorMemoryRead(free: 7188 * mib, budget: 6676 * mib),
+      );
+      // A part of a MiB short is said a MiB
+      expect(const GeneratorMemoryRead(free: 0, short: 1).message, 'Generator memory read: free 0 MiB, short 1 MiB');
+      // Without the free memory, or without the head: nothing to say
+      expect(GeneratorMemoryRead.of('Generator memory read: short 14 MiB'), isNull);
+      expect(GeneratorMemoryRead.of('need 4109.22 MB device\nGenerator memory read: free 1 MiB'), isNull);
+      expect(GeneratorMemoryRead.of(null), isNull);
+    });
+
     test('the segments of the graph of the generator, read from either line sd-cli writes', () {
       expect(sdCppSegmentsOf('[V] flux using 27 segments --- ggml_runner.cpp:879'), 27);
       expect(
@@ -451,8 +502,74 @@ void main() {
         throwsA(
           isA<BackendException>()
               .having((error) => error.code, 'code', ImmersiveErrorCode.gpuOutOfMemory)
-              .having((error) => error.message, 'message', contains('[E] generate failed')),
+              .having((error) => error.message, 'message', contains('[E] generate failed'))
+              // No plan read: the panel keeps the words of any other program
+              .having((error) => GeneratorMemoryRead.of(error.message), 'read', isNull),
         ),
+      );
+    });
+
+    test('short of memory even in segments, below the floor as measured: what sd-cli read heads its failure', () async {
+      final runner = FakeProcessRunner([
+        FakeProcessScript(
+          lines: [
+            ..._generation(
+              steps: 0,
+              plan: [_planIntel, _planBelowFloor, _planRam],
+              beforeSteps: ['[V] flux using 27 segments --- ggml_runner.cpp:879'],
+            ),
+            ..._belowFloor,
+          ],
+          exitCode: 1,
+        ),
+      ]);
+      final warnings = <String>[];
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord
+          .where((record) => record.loggerName == 'SdCpp' && record.level >= Level.WARNING)
+          .listen((record) => warnings.add(record.message));
+      addTearDown(() async {
+        Logger.root.level = level;
+        await listening.cancel();
+      });
+
+      final failure = await generator(runner)
+          .generate(request(graphicsBudget: 2600 * 1024 * 1024), cancel: cancel)
+          .then<BackendException?>((_) => null, onError: (Object error) => error as BackendException);
+
+      expect(failure?.code, ImmersiveErrorCode.gpuOutOfMemory);
+      expect(
+        GeneratorMemoryRead.of(failure?.message),
+        const GeneratorMemoryRead(free: 7188 * 1024 * 1024, budget: 2600 * 1024 * 1024, short: 14 * 1024 * 1024),
+      );
+      expect(failure!.message.split('\n').first, 'Generator memory read: free 7188 MiB, budget 2600 MiB, short 14 MiB');
+      expect(failure.message, endsWith('[E] generate failed --- main.cpp:926'));
+      const warned =
+          'sd-cli ran out of the memory of Vulkan1 in 27 segments: Generator memory read: free 7188 MiB, budget 2600 '
+          'MiB, short 14 MiB';
+      expect(warnings, [warned]);
+    });
+
+    test('a memory error of Vulkan after the plan: the free memory sd-cli read, nothing of a shortfall', () async {
+      final runner = FakeProcessRunner([
+        FakeProcessScript(
+          lines: [
+            ..._generation(steps: 0, plan: [_planRtx]),
+            ('ggml_vulkan: vk::Device::allocateMemory: ErrorOutOfDeviceMemory', isError: true),
+            ('[E] generate failed --- main.cpp:926', isError: true),
+          ],
+          exitCode: 1,
+        ),
+      ]);
+      final failure = await generator(runner)
+          .generate(request(), cancel: cancel)
+          .then<BackendException?>((_) => null, onError: (Object error) => error as BackendException);
+
+      expect(failure?.code, ImmersiveErrorCode.gpuOutOfMemory);
+      expect(
+        GeneratorMemoryRead.of(failure?.message),
+        const GeneratorMemoryRead(free: 7188 * 1024 * 1024, budget: 3072 * 1024 * 1024),
       );
     });
 

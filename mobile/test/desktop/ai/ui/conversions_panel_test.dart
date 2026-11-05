@@ -944,6 +944,75 @@ void main() {
       );
     });
 
+    testWidgets(
+      'a generation short of memory even in pieces says what sd-cli read, with Keep waiting in place of Retry',
+      (tester) async {
+        const mib = 1024 * 1024;
+        await pumpShown(tester, [
+          job(
+            'plage.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.failed,
+            error: ImmersiveErrorCode.gpuOutOfMemory,
+            message:
+                '${const GeneratorMemoryRead(free: 3584 * mib, budget: 3072 * mib, short: 14 * mib).message}\n'
+                '[E] generate failed --- main.cpp:926',
+          ),
+          job(
+            'mer.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.failed,
+            error: ImmersiveErrorCode.gpuOutOfMemory,
+            message:
+                '${const GeneratorMemoryRead(free: 5530 * mib, budget: 5018 * mib).message}\nErrorOutOfDeviceMemory',
+          ),
+          // Words of the card alone (the upscaler, or a generator that said nothing of its plan): Retry as before
+          job(
+            'plain.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.failed,
+            error: ImmersiveErrorCode.gpuOutOfMemory,
+            message: 'need 4109.22 MB device',
+          ),
+        ]);
+
+        expect(
+          inRow(
+            'plage.jpg',
+            find.text(
+              'The graphics card ran out of memory: the generator read 3.5 GiB free and was 14.0 MiB short. Close '
+              'games, 3D apps or videos: Keep waiting puts it back in the queue',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          inRow(
+            'mer.jpg',
+            find.text(
+              'The graphics card ran out of memory: the generator read 5.4 GiB free. Close games, 3D apps or videos: '
+              'Keep waiting puts it back in the queue',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          inRow('plain.jpg', find.text('The graphics card ran out of memory: close games or 3D apps and retry')),
+          findsOneWidget,
+        );
+        for (final name in ['plage.jpg', 'mer.jpg']) {
+          expect(inRow(name, find.byKey(const Key('ai_job_retry'))), findsNothing, reason: name);
+          await tester.tap(inRow(name, find.byKey(const Key('ai_job_keep_waiting'))));
+          await tester.pump();
+        }
+        expect(shownQueue.keptWaiting, ['plage.jpg', 'mer.jpg']);
+        expect(inRow('plain.jpg', find.byKey(const Key('ai_job_keep_waiting'))), findsNothing);
+        await tester.tap(inRow('plain.jpg', find.byKey(const Key('ai_job_retry'))));
+        await tester.pump();
+        expect(shownQueue.retried, ['plain.jpg']);
+      },
+    );
+
     testWidgets('the named failures of a panorama, in words', (tester) async {
       await pumpShown(tester, [
         job('busy.jpg', ConversionKind.panoramaFromPhoto, ConversionState.failed, error: ImmersiveErrorCode.gpuBusy),

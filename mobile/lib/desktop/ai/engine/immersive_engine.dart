@@ -164,7 +164,8 @@ enum ImmersiveErrorCode {
   /// ends as gpuMemoryShort, and a generation short of it even in segments as gpuOutOfMemory
   gpuBusy,
 
-  /// The graphics card ran out of memory during the generation (told by the error output of the generator)
+  /// The graphics card ran out of memory during the generation (told by the error output of the generator); for a
+  /// panorama, even in segments: its message then starts with what sd-cli read of the card (GeneratorMemoryRead)
   gpuOutOfMemory,
 
   /// The memory free on the graphics card stayed below what the job needs for 30 s, after the app let go of what it
@@ -216,6 +217,56 @@ String splatCountsMessage(int count, int all) => '$count/$all';
 (int count, int all)? splatCountsOf(String? message) {
   final match = RegExp(r'^(\d+)/(\d+)$').firstMatch(message ?? '');
   return match == null ? null : (int.parse(match.group(1)!), int.parse(match.group(2)!));
+}
+
+/// What the generator of a panorama read of the memory of its card when that memory ran short (lot 13c): the bytes
+/// [free] on the card when it started and the [budget] it planned with (the auto-fit plan of sd-cli), and how many it
+/// was [short] of for the part it could not place (its model manager), each null when it did not say. A failure
+/// gpuOutOfMemory of the generator carries it as the first line of its message ([message]), the generator's own lines
+/// after it, so that the panel says it and offers to keep waiting.
+class GeneratorMemoryRead {
+  const GeneratorMemoryRead({this.free, this.budget, this.short});
+
+  final int? free;
+  final int? budget;
+  final int? short;
+
+  static const _head = 'Generator memory read:';
+  static const _mib = 1024 * 1024;
+
+  /// "Generator memory read: free 3584 MiB, budget 3072 MiB, short 15 MiB", the figures it has
+  String get message => [
+    _head,
+    [
+      if (free case final value?) 'free ${value ~/ _mib} MiB',
+      if (budget case final value?) 'budget ${value ~/ _mib} MiB',
+      if (short case final value?) 'short ${(value + _mib - 1) ~/ _mib} MiB',
+    ].join(', '),
+  ].join(' ');
+
+  /// The figures at the head of [message] (see [message]), null when it carries none or not the free memory
+  static GeneratorMemoryRead? of(String? message) {
+    final head = message?.split('\n').first;
+    if (head == null || !head.startsWith(_head)) {
+      return null;
+    }
+    int? figure(String name) => switch (RegExp('\\b$name (\\d+) MiB').firstMatch(head)) {
+      final match? => int.parse(match.group(1)!) * _mib,
+      null => null,
+    };
+    final read = GeneratorMemoryRead(free: figure('free'), budget: figure('budget'), short: figure('short'));
+    return read.free == null ? null : read;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is GeneratorMemoryRead && other.free == free && other.budget == budget && other.short == short;
+
+  @override
+  int get hashCode => Object.hash(free, budget, short);
+
+  @override
+  String toString() => message;
 }
 
 /// The original of a job: a file read in place, or bytes already copied (a server original, a file of a share)

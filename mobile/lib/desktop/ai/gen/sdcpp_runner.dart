@@ -19,10 +19,13 @@
 //    8 min near the floor of 3.1 GiB; M3 saw spoilt images in segments at 1792 x 896 and 2048 x 1024 only). Each step
 //    it reports then carries the number of segments (GeneratorProgress.segments), which the panel says, and the log
 //    keeps it with the free memory and the budget sd-cli read on the card (the lines of its auto-fit plan);
-//  - a failure is named: gpuOutOfMemory when its output says the memory was short (the texts M3 read), generatorStalled
-//    after 180 s without a line, generatorFailed with the end of its error output, cancelled within a second of the
-//    flag; the process is killed in every case where it still runs (the run of a program, its watch of the silence
-//    and of the flag, is SidecarRun of process/sidecar_run.dart since lot SP4, shared with COLMAP and Brush);
+//  - a failure is named: gpuOutOfMemory when its output says the memory was short (the texts M3 read; for a
+//    generation, its message then starts with what sd-cli read of the card, GeneratorMemoryRead: the free memory and
+//    the budget of its plan, and how short it was for the part it could not place, so that the panel says it and
+//    offers Keep waiting), generatorStalled after 180 s without a line, generatorFailed with the end of its error
+//    output, cancelled within a second of the flag; the process is killed in every case where it still runs (the run
+//    of a program, its watch of the silence and of the flag, is SidecarRun of process/sidecar_run.dart since lot SP4,
+//    shared with COLMAP and Brush);
 //  - the image it wrote is checked (image_checks.dart, in an isolate of its own): its size, not grey, no pure green
 //    left outside the photo; a refused image, or a file that does not decode, is deleted and outputRejected (the
 //    engine of P3 makes it once more, then gives up).
@@ -149,6 +152,32 @@ final _plan = RegExp(r'^\[I\]\s+(Vulkan\d+)\s.*\bfree\s+(\d+) MiB, budget\s+(\d+
     return null;
   }
   return (free: int.parse(match.group(2)!) * _mib, budget: int.parse(match.group(3)!) * _mib);
+}
+
+/// "[W] model manager cannot make enough memory available on Vulkan1: need 2896.82 MB device / 2492.82 MB budget,
+/// available 6705.71 MB device / 2478.82 MB budget --- model_manager.cpp:2018" (the measure of 5 November 2026 below
+/// the floor; "unlimited budget" without one, M3); ggml's MB are MiB
+final _short = RegExp(
+  r'cannot make enough memory available on (Vulkan\d+): need ([\d.]+) MB device / ([\d.]+) MB budget, '
+  r'available ([\d.]+) MB device / (?:([\d.]+) MB|unlimited) budget',
+);
+
+/// How many bytes sd-cli was short of on the card [device] for the part it could not place, from the line of its model
+/// manager: the larger shortfall of the card itself and of the budget, at least one byte; null for any other line. Its
+/// figures have two decimals: read as hundredths of a MiB, so that 2492.82 less 2478.82 is 14 MiB to the byte.
+int? sdCppShortOf(String line, String device) {
+  final match = _short.firstMatch(line);
+  if (match == null || match.group(1) != device) {
+    return null;
+  }
+  int hundredths(int group) {
+    final [whole, ...decimals] = match.group(group)!.split('.');
+    return int.parse(whole) * 100 + (decimals.isEmpty ? 0 : int.parse(decimals.first.padRight(2, '0').substring(0, 2)));
+  }
+
+  final card = hundredths(2) - hundredths(4);
+  final budget = match.group(5) == null ? card : hundredths(3) - hundredths(5);
+  return math.max(1, (math.max(card, budget) * _mib + 99) ~/ 100);
 }
 
 String _decimal(double value) => value.toString();
@@ -307,10 +336,11 @@ class SdCppGenerator implements GeneratorBackend {
     var done = 0;
     var segments = 1;
     ({int free, int budget})? read;
+    int? short;
     String said() => read == null
         ? 'what it read of the card unknown'
         : '${read!.free ~/ _mib} MiB free read on ${settings.device}, budget ${read!.budget ~/ _mib} MiB';
-    await _sdCppRun(
+    final run = _sdCppRun(
       runner: runner,
       settings: settings,
       arguments: argumentsOf(request),
@@ -318,6 +348,10 @@ class SdCppGenerator implements GeneratorBackend {
       cancel: cancel,
       elapsed: _elapsed,
       onLine: (line) {
+        if (sdCppShortOf(line, settings.device) case final lacking?) {
+          short = short == null ? lacking : math.max(short!, lacking);
+          return null;
+        }
         final plan = sdCppCardMemoryOf(line, settings.device);
         if (plan != null) {
           read = plan;
@@ -353,7 +387,21 @@ class SdCppGenerator implements GeneratorBackend {
         }
         return null;
       },
-    ).run();
+    );
+    try {
+      await run.run();
+    } on BackendException catch (error) {
+      // Short of memory even in segments: what sd-cli read goes first, for the panel and the log
+      if (error.code != ImmersiveErrorCode.gpuOutOfMemory || (read == null && short == null)) {
+        rethrow;
+      }
+      final memory = GeneratorMemoryRead(free: read?.free, budget: read?.budget, short: short);
+      _log.warning(
+        'sd-cli ran out of the memory of ${settings.device} in $segments segment${segments == 1 ? '' : 's'}: '
+        '${memory.message}',
+      );
+      throw BackendException(ImmersiveErrorCode.gpuOutOfMemory, '${memory.message}\n${error.message}');
+    }
     if (!output.existsSync()) {
       throw const BackendException(ImmersiveErrorCode.generatorFailed, 'sd-cli ended without writing its image');
     }

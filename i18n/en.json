@@ -595,6 +595,8 @@
   "ai_immersive_failed_generator_stalled": "The generator stopped responding",
   "ai_immersive_failed_gpu_busy": "Other apps use the graphics card memory: close games or 3D apps",
   "ai_immersive_failed_gpu_memory": "The graphics card ran out of memory: close games or 3D apps and retry",
+  "ai_immersive_failed_gpu_memory_read": "The graphics card ran out of memory: the generator read {free} free and was {short} short. Close games, 3D apps or videos: Keep waiting puts it back in the queue",
+  "ai_immersive_failed_gpu_memory_read_free": "The graphics card ran out of memory: the generator read {free} free. Close games, 3D apps or videos: Keep waiting puts it back in the queue",
   "ai_immersive_failed_gpu_short": "Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue",
   "ai_immersive_failed_gpu_unavailable": "No graphics card can make this panorama",
   "ai_immersive_failed_model": "The AI model failed: {message}",

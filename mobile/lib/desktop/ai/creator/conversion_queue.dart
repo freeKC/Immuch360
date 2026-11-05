@@ -522,9 +522,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     _pump();
   }
 
-  /// Puts back a job that left the queue for the memory of the graphics card, or marks one that waits for it, to wait
-  /// as long as it takes: asked again a little later each time, or at once when the user asks. Putting one back ends a
-  /// pause, as Retry does.
+  /// Puts back a job that left the queue for the memory of the graphics card, or whose generator ran out of it
+  /// (ConversionJob.canKeepWaiting), or marks one that waits for it, to wait as long as it takes: asked again a little
+  /// later each time, or at once when the user asks. Putting one back ends a pause, as Retry does.
   void keepWaiting(String id) {
     final job = state.byId(id);
     if (job == null || job.kind.lane != ConversionLane.gpu) {
@@ -534,7 +534,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _set(id, (job) => job.copyWith(keepsWaiting: true));
       return;
     }
-    if (job.state != ConversionState.failed || job.error != ImmersiveErrorCode.gpuMemoryShort) {
+    if (!job.canKeepWaiting) {
       return;
     }
     _diskFull.remove(id);

@@ -109,6 +109,11 @@ void main() {
         final memory = await generate('oom');
         expect(memory?.code, ImmersiveErrorCode.gpuOutOfMemory);
         expect(memory?.message, contains('[E] generate failed'));
+        // What it read of its card first: its plan, and the 1 216.45 MiB its model manager lacked
+        expect(
+          GeneratorMemoryRead.of(memory?.message),
+          const GeneratorMemoryRead(free: 7188 * 1024 * 1024, budget: 6676 * 1024 * 1024, short: 1217 * 1024 * 1024),
+        );
         final failed = await generate('fail');
         expect(failed?.code, ImmersiveErrorCode.generatorFailed);
         expect(failed?.message, contains('[E] load the control image failed'));

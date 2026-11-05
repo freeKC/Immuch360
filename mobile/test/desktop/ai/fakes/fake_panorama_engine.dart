@@ -15,6 +15,8 @@ class FakePanoramaEngine extends FakeStagedEngine<PanoramaJob> {
   FakePanoramaEngine({
     super.failAt,
     super.failure = ImmersiveErrorCode.generatorFailed,
+    super.failureMessage,
+    super.failingRuns,
     super.stepDelay,
     super.slowStage,
     super.slowDelay,

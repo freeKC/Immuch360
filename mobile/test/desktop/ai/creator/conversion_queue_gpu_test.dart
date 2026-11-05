@@ -643,6 +643,60 @@ void main() {
       expect(job(scene).state, ConversionState.done);
     });
 
+    test('a generation short of memory even in segments, which said what it read: Keep waiting puts it back to wait '
+        'as long as it takes, then it runs again', () async {
+      const mib = 1024 * 1024;
+      final read = const GeneratorMemoryRead(free: 3700 * mib, budget: 3188 * mib, short: 14 * mib).message;
+      panorama = FakePanoramaEngine(
+        failAt: ImmersiveStage.generating,
+        failure: ImmersiveErrorCode.gpuOutOfMemory,
+        failureMessage: '$read\n[E] generate failed --- main.cpp:926',
+        failingRuns: 1,
+      );
+      var held = false;
+      container = containerWith(
+        () async => held ? FakeGpuReports.rtx4060Busy : FakeGpuReports.rtx4060,
+        recheck: const Duration(milliseconds: 20),
+        giveUp: const Duration(milliseconds: 60),
+      );
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).error, ImmersiveErrorCode.gpuOutOfMemory);
+      expect(job(pano).canKeepWaiting, isTrue);
+
+      // A game holds the card meanwhile: put back, it waits well past the give up time
+      held = true;
+      queue().keepWaiting(pano);
+      expect(job(pano).state, ConversionState.waiting);
+      expect(job(pano).keepsWaiting, isTrue);
+      expect(job(pano).error, isNull);
+      await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      expect(job(pano).state, ConversionState.waiting);
+
+      held = false;
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).state, ConversionState.done);
+      expect(panorama.jobs, hasLength(2));
+    });
+
+    test('Keep waiting does nothing for a memory failure that read nothing of the card', () async {
+      panorama = FakePanoramaEngine(
+        failAt: ImmersiveStage.generating,
+        failure: ImmersiveErrorCode.gpuOutOfMemory,
+        failureMessage: 'ggml_vulkan: Device memory allocation of size 1073741824 failed',
+      );
+      container = containerWith(FakeGpuProbe.of(FakeGpuReports.rtx4060).probe);
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).canKeepWaiting, isFalse);
+      queue().keepWaiting(pano);
+      expect(job(pano).state, ConversionState.failed);
+      expect(job(pano).error, ImmersiveErrorCode.gpuOutOfMemory);
+    });
+
     test('a panorama added long after a wait that ended gets the whole time', () async {
       final card = heldCard();
       container = containerWith(

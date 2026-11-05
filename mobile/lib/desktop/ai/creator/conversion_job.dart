@@ -575,6 +575,15 @@ class ConversionJob {
   /// same result" while it generates. Null while it runs whole.
   final int? segments;
 
+  /// Whether the job ended for the memory of the graphics card in a way Keep waiting answers: it left the queue after
+  /// waiting for it (gpuMemoryShort), or its generator ran out of it and said what it read (gpuOutOfMemory with a
+  /// GeneratorMemoryRead, lot 13c). Keep waiting puts it back to wait as long as it takes, in place of Retry.
+  bool get canKeepWaiting =>
+      state == ConversionState.failed &&
+      kind.lane == ConversionLane.gpu &&
+      (error == ImmersiveErrorCode.gpuMemoryShort ||
+          (error == ImmersiveErrorCode.gpuOutOfMemory && GeneratorMemoryRead.of(message) != null));
+
   /// Whether a Retry would end the same way: a splat scene of too few images placed, whose images the mapper places
   /// the same way every time (69 and 69, 129 and 129 in the diagnosis of 3 November); the panel offers none (lot SPF2)
   bool get retryGivesTheSame => kind == ConversionKind.splatScene && error == ImmersiveErrorCode.notEnoughOverlap;
