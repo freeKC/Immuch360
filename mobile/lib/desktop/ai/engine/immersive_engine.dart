@@ -493,7 +493,8 @@ final class SplatJob extends ImmersiveJobSpec {
 }
 
 /// One photo to make into a 360° panorama generated beyond its edges, `<name>_360.jpg` (pano-v1): the transformer
-/// [generator] (its catalogue id, the variant the gate chose), [steps] and the [seed] drawn for this job
+/// [generator] (its catalogue id, the variant the gate chose), [steps] and the [seed] drawn for this job, and the
+/// [graphicsBudget] of its generator, from the free memory of the card read just before it (gpu_budget.dart)
 final class PanoramaJob extends ImmersiveJobSpec {
   const PanoramaJob({
     required super.id,
@@ -507,12 +508,16 @@ final class PanoramaJob extends ImmersiveJobSpec {
     required this.seed,
     super.quarterTurns = 0,
     super.exif = const ImmersiveExif(),
+    this.graphicsBudget,
   });
 
   final ImmersiveSource source;
   final String generator;
   final int steps;
   final int seed;
+
+  /// The bytes of the card the generator plans with (GeneratorRequest.graphicsBudget); null for what it reads itself
+  final int? graphicsBudget;
 
   @override
   ImmersiveKind get kind => ImmersiveKind.panorama360;

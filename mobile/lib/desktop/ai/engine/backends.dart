@@ -101,7 +101,7 @@ abstract interface class InpaintBackend {
 
 /// One generation: the control frame at [controlPath] (the photo projected on pure green), the fixed [prompt], the
 /// [steps], the [seed], the [guidance] and the strength of the LoRA; the image of [width] x [height] goes to
-/// [outputPath] (PNG), the generator works in [workFolder]
+/// [outputPath] (PNG), the generator works in [workFolder], within [graphicsBudget] bytes of the card when given
 class GeneratorRequest {
   const GeneratorRequest({
     required this.controlPath,
@@ -114,6 +114,7 @@ class GeneratorRequest {
     this.height = PanoV1.generationHeight,
     this.guidance = PanoV1.guidance,
     this.loraStrength = PanoV1.loraStrength,
+    this.graphicsBudget,
   });
 
   final String controlPath;
@@ -126,6 +127,11 @@ class GeneratorRequest {
   final int height;
   final double guidance;
   final double loraStrength;
+
+  /// The memory of the card the generator plans with, fixed for its whole run: the free memory the queue read just
+  /// before the job, less the reserve of sd-cli (gpu_budget.dart, panoramaGeneratorBudget); null for the free memory it
+  /// reads itself
+  final int? graphicsBudget;
 }
 
 /// Where a generation or an upscale is: the step done of [steps], the seconds a step takes when the generator says it,

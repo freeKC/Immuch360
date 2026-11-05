@@ -221,7 +221,7 @@ void main() {
     expect(whole, greaterThan(100));
   }
 
-  PanoramaJob jobOf(String path, {int turns = 0, int seed = 1002, String? sha1}) {
+  PanoramaJob jobOf(String path, {int turns = 0, int seed = 1002, String? sha1, int? graphicsBudget}) {
     final bytes = File(path).readAsBytesSync();
     return PanoramaJob(
       id: 'panorama-1',
@@ -234,6 +234,7 @@ void main() {
       steps: 4,
       seed: seed,
       quarterTurns: turns,
+      graphicsBudget: graphicsBudget,
     );
   }
 
@@ -304,6 +305,7 @@ void main() {
       expect((request.width, request.height), (48, 24));
       expect(request.guidance, PanoV1.guidance);
       expect(request.loraStrength, PanoV1.loraStrength);
+      expect(request.graphicsBudget, isNull, reason: 'no budget read: the free memory the generator reads itself');
       final control = img.decodePng(Uint8List.fromList(controls.single))!;
       expect((control.width, control.height), (64, 32));
       final corner = control.getPixel(0, 0);
@@ -360,6 +362,15 @@ void main() {
       expect(File(path).readAsBytesSync(), before);
       expect(workLeft(), isFalse);
       expect(result.stageTimes.keys, containsAll([ImmersiveStage.generating, ImmersiveStage.upscale]));
+    });
+
+    test('the budget the queue read for the job reaches the generator', () async {
+      final generator = FakeGeneratorBackend();
+      final result = await engineOf(
+        generator: generator,
+      ).run(jobOf(photo(), graphicsBudget: 5018 * 1024 * 1024), cancel: cancel);
+      expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+      expect(generator.requests.single.graphicsBudget, 5018 * 1024 * 1024);
     });
 
     test(

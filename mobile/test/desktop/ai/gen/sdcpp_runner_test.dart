@@ -149,7 +149,7 @@ void main() {
     stallTimeout: stall,
   );
 
-  GeneratorRequest request({int width = 1536, int height = 768}) => GeneratorRequest(
+  GeneratorRequest request({int width = 1536, int height = 768, int? graphicsBudget}) => GeneratorRequest(
     controlPath: p.join(folder.path, 'control.png'),
     outputPath: p.join(folder.path, 'generated.png'),
     workFolder: folder.path,
@@ -157,6 +157,7 @@ void main() {
     seed: 1002,
     width: width,
     height: height,
+    graphicsBudget: graphicsBudget,
   );
 
   SdCppGenerator generator(ProcessRunner runner, {bool checkImages = false, Duration Function()? elapsed}) =>
@@ -184,6 +185,8 @@ void main() {
         'diffusion=Vulkan1,vae=Vulkan1,te=CPU',
         '--flash-attn',
         'on',
+        '--conv-direct',
+        'auto,vae=on',
         '--vae-tiling',
         '-r',
         p.join(folder.path, 'control.png'),
@@ -230,11 +233,32 @@ void main() {
       );
     });
 
+    test('the budget the queue read: --max-vram after the card, in GiB rounded down to four decimals, as measured', () {
+      // The measure of 5 November 2026 gave sd-cli "2.7344" for 2 800 MiB, "3" and "4": a single value, every card
+      final full = generator(FakeProcessRunner([])).argumentsOf(request());
+      final given = generator(FakeProcessRunner([])).argumentsOf(request(graphicsBudget: 5018 * 1024 * 1024));
+      final card = given.indexOf('--backend');
+
+      expect(given.sublist(card, card + 4), [
+        '--backend',
+        'diffusion=Vulkan1,vae=Vulkan1,te=CPU',
+        '--max-vram',
+        '4.9003',
+      ]);
+      expect([...given]..removeRange(card + 2, card + 4), full);
+      expect(full, isNot(contains('--max-vram')), reason: 'no budget read: the free memory sd-cli reads itself');
+      expect(sdCppVramBudget(2800 * 1024 * 1024), '2.7343');
+      expect(sdCppVramBudget(3 * 1024 * 1024 * 1024), '3.0000');
+      expect(sdCppVramBudget(5160 * 1024 * 1024), '5.0390');
+      expect(sdCppVramBudget(16 * 1024 * 1024 * 1024 - 1), '15.9999');
+      expect(double.parse(sdCppVramBudget(4404 * 1024 * 1024)) * 1024, lessThanOrEqualTo(4404));
+    });
+
     test('every option is one the pinned sd-cli lists in its --help, and none is deprecated there', () {
       final help = File('test/fixtures/ai_immersive/sd_cli_help.txt').readAsLinesSync();
       final options = <String>{
         for (final argument in [
-          ...generator(FakeProcessRunner([])).argumentsOf(request()),
+          ...generator(FakeProcessRunner([])).argumentsOf(request(graphicsBudget: 3 * 1024 * 1024 * 1024)),
           ...SdCppUpscaler(
             runner: FakeProcessRunner([]),
             settings: settings(),
@@ -265,6 +289,15 @@ void main() {
       expect(options, isNot(contains('--diffusion-fa')));
       // The reference sd-cli makes itself, for every card since lot 13c (desktop build 21 capped it on some)
       expect(options, isNot(contains('--ref-image-args')));
+      // The two options of lot 13c in the form the build documents: a budget in GiB as a single value, and the
+      // convolution of the VAE as an assignment after auto
+      expect(options, containsAll(['--max-vram', '--conv-direct']));
+      expect(listed['--max-vram'], contains('budget in GiB'));
+      final maxVram = help.indexWhere((line) => line.startsWith('  --max-vram'));
+      expect(help.sublist(maxVram, maxVram + 4).join(' '), contains('Accepts a single value'));
+      expect(listed['--conv-direct'], contains('diffusion/vae/controlnet assignments'));
+      expect(help[help.indexWhere((line) => line.startsWith('  --conv-direct')) + 1], contains('auto,vae=off'));
+      expect(sdCppConvDirect, matches(RegExp(r'^auto,vae=(on|off)$')));
     });
 
     test('the threads are the logical processors less two, the card a Vulkan device of ggml', () {

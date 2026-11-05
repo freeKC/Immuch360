@@ -16,7 +16,8 @@
 //  3. projection (to 5 %): the control frame of 2048 x 1024, the photo at its centre and pure green elsewhere,
 //     written as a PNG to the work folder of the job, and the part of the sphere the photo covers;
 //  4. loadingModels, then generating (to 80 %): the generator (GeneratorBackend: sd-cli of lot P2, on the graphics
-//     card) with the fixed prompt, the seed of the job and its steps, "step 12 of 20" and the time left as it goes, and
+//     card) with the fixed prompt, the seed of the job and its steps, the budget of the card the queue read for it,
+//     "step 12 of 20" and the time left as it goes, and
 //     the segments it runs in when the card is short of memory (slower, the same image; desktop build 21 capped the
 //     reference instead, and wrote GeneratorReferenceMaxPixels in the XMP, which no panorama carries since). Its image
 //     is checked on the processor (its size, not grey, no pure green left outside the photo): a refused image is made
@@ -929,6 +930,7 @@ class PanoramaEngine implements ImmersiveEngine {
               steps: job.steps,
               width: sizes.generationWidth,
               height: sizes.generationHeight,
+              graphicsBudget: job.graphicsBudget,
             ),
             cancel: cancel,
             onProgress: (progress) {
@@ -1194,4 +1196,5 @@ PanoramaJob _withoutBytes(PanoramaJob job) => PanoramaJob(
   seed: job.seed,
   quarterTurns: job.quarterTurns,
   exif: job.exif,
+  graphicsBudget: job.graphicsBudget,
 );

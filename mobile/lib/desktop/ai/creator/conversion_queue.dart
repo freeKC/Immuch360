@@ -33,10 +33,11 @@
 // user asks (checkGraphicsCardAgain), and a card gone fails the job. Since issue #13, the app first lets go of what it
 // holds of the card (its paused videos, its cached pictures: graphics_release.dart), once per job, and when it closed
 // video players, asks the card again every few seconds while their memory comes back, until the generator would run
-// whole (one segment, twice as fast as near the floor: GpuBudgetReady.whole) or the time is up. A wait that cannot end
-// does not last: 30 s after the lane first showed the figures of the wait, the job leaves the queue with them
-// (gpuMemoryShort), and the panoramas waiting behind it at their first answer, without a release nor a settle, unless
-// the user asked a job to keep waiting (keepWaiting).
+// whole (one segment, twice as fast as near the floor: GpuBudgetReady.whole) or the time is up; the free memory of its
+// last answer is the budget its generator plans with, less the reserve of sd-cli (panoramaGeneratorBudget). A wait that
+// cannot end does not last: 30 s after the lane first showed the figures of the wait, the job leaves the queue with
+// them (gpuMemoryShort), and the panoramas waiting behind it at their first answer, without a release nor a settle,
+// unless the user asked a job to keep waiting (keepWaiting).
 //
 // The queue does not survive the window: closing it asks first (close_guard.dart, reasons "conversions" and
 // "generation"), and the journal of the .part files cleans up what a quit left.
@@ -346,6 +347,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
   /// The jobs that let go of the app's share of the card already in this wait
   final _gpuReleased = <String>{};
+
+  /// The free memory of the card each panorama about to run was given (the last answer of its check): its generator
+  /// plans with it less the reserve of sd-cli (panoramaGeneratorBudget)
+  final _graphicsFree = <String, int>{};
   var _disposed = false;
   var _lastId = 0;
 
@@ -989,6 +994,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       }
       _flags.remove(id);
       _stepStarted.remove(id);
+      _graphicsFree.remove(id);
       cancel.free();
     }
   }
@@ -1054,6 +1060,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       case GpuBudgetReady(:final free, :final appHolds, :final whole):
         _gpuShort = null;
         _gpuReleased.remove(id);
+        _graphicsFree[id] = free;
         _log.info(
           'The graphics card has $free bytes free for $id (the app holds ${appHolds ?? 'an unknown share'})'
           '${whole ? '' : ': the generation will run in segments, slower'}',
@@ -1164,6 +1171,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           generator: generator,
           steps: steps,
           seed: tools.newSeed(),
+          graphicsBudget: switch (_graphicsFree[job.id]) {
+            final free? => panoramaGeneratorBudget(free),
+            null => null,
+          },
         );
       case ConversionKind.splatScene:
         final splat = job.splat;

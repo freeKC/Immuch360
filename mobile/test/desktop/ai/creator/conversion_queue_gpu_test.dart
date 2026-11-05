@@ -336,8 +336,12 @@ void main() {
     }
 
     expect(made, ['done', 'done', 'done']);
-    expect(panorama.jobs, hasLength(3));
     expect(probe.calls, 3);
+    // Each generator plans with what the card had free just before, less the reserve of sd-cli
+    expect(
+      [for (final spec in panorama.jobs) spec.graphicsBudget],
+      [(7000 - 512) * _mib, (5530 - 512) * _mib, (3584 - 512) * _mib],
+    );
   });
 
   group('the app lets go of its share of the card first (issue #13)', () {
@@ -380,6 +384,7 @@ void main() {
 
       expect(job(pano).state, ConversionState.done);
       expect(probe.calls, 3, reason: 'in segments at 4.8 and 5.4 GiB free, whole at 6.2');
+      expect(panorama.jobs.single.graphicsBudget, (6400 - 512) * _mib, reason: 'the budget of the last answer');
     });
 
     test('the time is up below a whole run: the panorama starts in segments with what is free', () async {
@@ -396,7 +401,7 @@ void main() {
 
       expect(job(pano).state, ConversionState.done);
       expect(probe.calls, 6, reason: 'once, then every 10 ms for 50 ms');
-      expect(panorama.jobs, hasLength(1));
+      expect(panorama.jobs.single.graphicsBudget, (5500 - 512) * _mib);
     });
 
     test('pictures let go without a player: the card asked once, no wait for memory that does not come back', () async {

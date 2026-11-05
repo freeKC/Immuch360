@@ -14,9 +14,9 @@
 //   silent    the lines up to the sampling, then nothing until killed
 //   slow      as ok with steps of half a second (IMMUCH360_FAKE_SD_CLI_STEP_MS sets the step otherwise, 5 ms)
 // Before it loads its weights it writes the auto-fit plan of its one card, Vulkan0, as the pinned build does: the free
-// memory IMMUCH360_FAKE_SD_CLI_FREE_MIB says (7188 by default, the RTX 4060 Laptop of the measure) and the budget, that
-// free memory less the reserve of 512 MiB. It writes its process id to the file IMMUCH360_FAKE_SD_CLI_PID names, when
-// it does.
+// memory IMMUCH360_FAKE_SD_CLI_FREE_MIB says (7188 by default, the RTX 4060 Laptop of the measure) and the budget: the
+// one --max-vram gives in GiB, else that free memory less the reserve of 512 MiB. It writes its process id to the file
+// IMMUCH360_FAKE_SD_CLI_PID names, when it does.
 //
 //   fake_sd_cli host PIDFILE
 // starts this same program in the silent mode through ManagedProcessRunner (on Linux through the launcher
@@ -71,7 +71,8 @@ Future<void> main(List<String> arguments) async {
     "[I] loading diffusion model from '${option(['--diffusion-model']) ?? 'model.gguf'}' --- diffusion_engine.cpp:692",
   );
   final free = int.tryParse(Platform.environment['IMMUCH360_FAKE_SD_CLI_FREE_MIB'] ?? '') ?? 7188;
-  final budget = free - 512;
+  final maxVram = double.tryParse(option(['--max-vram']) ?? '');
+  final budget = maxVram != null && maxVram > 0 ? (maxVram * 1024).floor() : free - 512;
   _out('[I] auto-fit plan: --- backend_fit.cpp:323');
   _out('[I]   devices: --- backend_fit.cpp:324');
   _out(

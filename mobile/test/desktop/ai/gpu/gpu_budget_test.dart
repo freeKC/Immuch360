@@ -36,6 +36,14 @@ void main() {
     expect(budget(FakeGpuProbe.of(FakeGpuReports.rtx4060)).need, panoramaFreeGraphicsMemory);
   });
 
+  test('the budget sd-cli plans with: the free memory read less its own reserve of 512 MiB', () {
+    expect(panoramaGeneratorReserve, 512 * _mib);
+    expect(panoramaGeneratorBudget(5530 * _mib), 5018 * _mib);
+    expect(panoramaGeneratorBudget(panoramaFreeGraphicsMemory), 3 * _gib);
+    expect(panoramaGeneratorBudget(512 * _mib), isNull);
+    expect(panoramaGeneratorBudget(0), isNull);
+  });
+
   test('the RTX 4060 with 7.2 GiB free: ready, on that card, with the answer it came from', () async {
     final check = await budget(FakeGpuProbe.of(FakeGpuReports.twoCards)).check();
 

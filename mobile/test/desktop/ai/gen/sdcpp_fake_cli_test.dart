@@ -16,6 +16,7 @@ import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 final _fakeSdCli = Platform.environment['IMMUCH360_FAKE_SD_CLI'];
@@ -58,7 +59,7 @@ void main() {
     journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
   );
 
-  GeneratorRequest request() => GeneratorRequest(
+  GeneratorRequest request({int? graphicsBudget}) => GeneratorRequest(
     controlPath: p.join(folder.path, 'control.png'),
     outputPath: p.join(folder.path, 'generated.png'),
     workFolder: folder.path,
@@ -66,6 +67,7 @@ void main() {
     seed: 7,
     width: 192,
     height: 96,
+    graphicsBudget: graphicsBudget,
   );
 
   Future<BackendException?> generate(String mode, {void Function(GeneratorProgress)? onProgress}) =>
@@ -112,6 +114,26 @@ void main() {
         expect(failed?.message, contains('[E] load the control image failed'));
       },
     );
+
+    test('the budget the queue read reaches sd-cli: its plan says it, and the log keeps what it read', () async {
+      final logged = <String>[];
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord.where((record) => record.loggerName == 'SdCpp').listen((record) {
+        logged.add(record.message);
+      });
+      addTearDown(() async {
+        Logger.root.level = level;
+        await listening.cancel();
+      });
+
+      final failure = await SdCppGenerator(runner: runner(), settings: settings(), generatorSha256: '', loraSha256: '')
+          .generate(request(graphicsBudget: 5018 * 1024 * 1024), cancel: cancel)
+          .then<Object?>((_) => null, onError: (Object error) => error);
+
+      expect(failure, isNull);
+      expect(logged, contains('sd-cli read 7188 MiB free on Vulkan0, budget 5017 MiB'));
+    });
 
     test('a graph cut into segments runs to its image, each of its steps saying the 27 segments', () async {
       final heard = <GeneratorProgress>[];

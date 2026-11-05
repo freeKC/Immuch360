@@ -24,8 +24,9 @@
 // say so in their packet (GeneratorReferenceMaxPixels). Smaller outputs (1280 x 640) make a smaller panorama with a
 // wider raw seam: not offered. The other kinds of jobs, the splat scenes apart (below), run on the processor and ask
 // nothing of the card. The answer of a check that passes carries the whole report, so that the generator is given the
-// card the check looked at (ggmlVulkanIndexOf), the free memory it read, and whether the generation runs whole
-// ([GpuBudgetReady.whole]), for the queue to wait a few seconds more while the app's share comes back.
+// card the check looked at (ggmlVulkanIndexOf), the free memory it read (from which sd-cli is given a fixed budget,
+// [panoramaGeneratorBudget]), and whether the generation runs whole ([GpuBudgetReady.whole]), for the queue to wait a
+// few seconds more while the app's share comes back.
 //
 // A splat scene (lot SP4) asks the same budget twice: in the queue before its job starts, and again by the runner of
 // Brush once the poses are found, some minutes later ([brushCardOf]), with the need of the splat scenes
@@ -47,6 +48,16 @@ const panoramaFreeGraphicsMemory = 7 * _gib ~/ 2;
 /// The free memory from which the generator of a 360° panorama runs its transformer whole, in one segment, as measured
 /// on 5 November 2026 (5 716 MiB; it cut at 5 701); below it the generation runs in segments, slower, the same image
 const panoramaWholeGraphicsMemory = 5716 * _mib;
+
+/// What sd-cli keeps of the free memory of the card in reserve when it reads it itself (512 MiB, measure of 5 November
+/// 2026, section 1): the budget it is given is the free memory the queue read, less as much
+const panoramaGeneratorReserve = 512 * _mib;
+
+/// The fixed budget sd-cli is given for a panorama (--max-vram) when the queue read [free] bytes free on its card just
+/// before the job: [free] less [panoramaGeneratorReserve], so that sd-cli plans its segments once, at its start, where
+/// with the live free memory it may plan again in the middle of a run when the desktop moves (M3 saw a run go from one
+/// segment to 27 at its third step); null when nothing would be left
+int? panoramaGeneratorBudget(int free) => free > panoramaGeneratorReserve ? free - panoramaGeneratorReserve : null;
 
 /// What a kind of job needs of the graphics card: [bytes] free on the card [cardOf] chooses, and for a kind that runs
 /// faster with more ([whole], a panorama in one segment), the free memory from which it runs at its best

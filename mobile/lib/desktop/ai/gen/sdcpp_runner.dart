@@ -6,7 +6,11 @@
 //    compare the build with it), the graphics card named by ggml's index (--backend diffusion=Vulkan<n>,vae=Vulkan<n>,
 //    te=CPU: the integrated card comes first on a laptop, so sd-cli never chooses), flash attention on (without it the
 //    attention goes to the processor and no step ends in 10 minutes), the VAE in tiles, -t the logical processors less
-//    two, -v for the line about segments and the auto-fit plan;
+//    two, -v for the line about segments and the auto-fit plan; since lot 13c (measure of 5 November 2026, section 9),
+//    a fixed budget of the card (--max-vram in GiB, the free memory the queue read less 512 MiB, so that sd-cli plans
+//    its segments once at its start) and the convolution of the VAE pinned to its direct path (--conv-direct
+//    auto,vae=on: sd-cli times both paths at its start and took the other one in 2 runs of 32, another image by 36 to
+//    39 dB for the same photo and seed);
 //  - its progress is the bar it redraws ("12/20 - 8.65s/it"): the steps of the sampling only, not the loading of the
 //    weights nor the tiles of the VAE;
 //  - a generation whose graph sd-cli cuts into segments ("flux using 27 segments", when the memory it may use on the
@@ -149,6 +153,18 @@ final _plan = RegExp(r'^\[I\]\s+(Vulkan\d+)\s.*\bfree\s+(\d+) MiB, budget\s+(\d+
 
 String _decimal(double value) => value.toString();
 
+/// The VAE's 2D convolution on its direct path whatever sd-cli times at its start, the other modules on its own choice
+/// (the form of the pinned build's help: "on|off|auto or diffusion/vae/controlnet assignments")
+const sdCppConvDirect = 'auto,vae=on';
+
+/// [bytes] as --max-vram takes them: GiB with four decimals, rounded down so that sd-cli never plans with more than it
+/// was given ("2.7343" for 2 800 MiB; the measure of 5 November 2026 gave "2.7344", "3", "4"). A single value is the
+/// budget of every card sd-cli sees, as the measure ran it: the generator uses the one --backend names.
+String sdCppVramBudget(int bytes) {
+  final tenThousandths = bytes * 10000 ~/ (1024 * _mib);
+  return '${tenThousandths ~/ 10000}.${'${tenThousandths % 10000}'.padLeft(4, '0')}';
+}
+
 /// The arguments of one generation, frozen (M3, section 9, point 4)
 List<String> sdCppGenerationArguments(SdCppSettings settings, GeneratorRequest request) {
   final models = settings.models;
@@ -163,8 +179,11 @@ List<String> sdCppGenerationArguments(SdCppSettings settings, GeneratorRequest r
     models.loraFolder,
     '--backend',
     'diffusion=${settings.device},vae=${settings.device},te=CPU',
+    if (request.graphicsBudget case final budget?) ...['--max-vram', sdCppVramBudget(budget)],
     '--flash-attn',
     'on',
+    '--conv-direct',
+    sdCppConvDirect,
     '--vae-tiling',
     '-r',
     request.controlPath,
