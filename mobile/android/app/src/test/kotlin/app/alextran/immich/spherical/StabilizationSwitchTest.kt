@@ -21,12 +21,11 @@ class StabilizationSwitchTest {
     assertNull(switch.onTrack(hasTrack = true, table = null))
     assertEquals(StabilizationSwitch.Track.PENDING, switch.track)
     assertTrue(switch.buttonVisible)
-    assertNull(switch.activeTable(stitched = true))
+    assertNull(switch.activeTable())
 
     assertNull(switch.onTrack(hasTrack = true, table = table))
     assertEquals(StabilizationSwitch.Track.READY, switch.track)
-    assertSame(table, switch.activeTable(stitched = true))
-    assertNull("an unstitched frame is not the picture of the table", switch.activeTable(stitched = false))
+    assertSame(table, switch.activeTable())
     assertTrue("one rotation: a CAMM track would stay off", switch.cammDisabled)
 
     // The first stabilised frame says so, once
@@ -40,13 +39,13 @@ class StabilizationSwitchTest {
     switch.onTrack(hasTrack = true, table = table)
     assertNull("turned off: no notice", switch.toggle())
     assertFalse(switch.enabled)
-    assertNull(switch.activeTable(stitched = true))
+    assertNull(switch.activeTable())
     assertTrue(switch.cammDisabled)
     assertTrue("the button stays, dimmed", switch.buttonVisible)
 
     // Back on: the notice tells it at once
     assertEquals(StabilizationSwitch.Notice.STABILIZED, switch.toggle())
-    assertSame(table, switch.activeTable(stitched = true))
+    assertSame(table, switch.activeTable())
     assertNull("told already", switch.onStabilizedFrame())
   }
 
@@ -56,7 +55,9 @@ class StabilizationSwitchTest {
     switch.hasCamm = true
     assertTrue(switch.buttonVisible)
     assertFalse("on without a table: Media3 applies the CAMM track", switch.cammDisabled)
-    assertNull(switch.activeTable(stitched = false))
+    switch.stitched = false
+    assertNull(switch.activeTable())
+    assertTrue("a CAMM track turns any frame", switch.buttonVisible)
     switch.toggle()
     assertTrue("off: the CAMM track is disabled", switch.cammDisabled)
     assertEquals(StabilizationSwitch.Notice.STABILIZED, switch.toggle())
@@ -108,9 +109,65 @@ class StabilizationSwitchTest {
     switch.onSetting(true)
     assertFalse(switch.enabled)
     switch.onTrack(hasTrack = true, table = table)
-    assertNull(switch.activeTable(stitched = true))
+    assertNull(switch.activeTable())
     assertEquals(StabilizationSwitch.Notice.STABILIZED, switch.toggle())
     assertNull(switch.onStabilizedFrame())
+  }
+
+  @Test
+  fun anUnstitchedFrameHidesTheButtonOfTheTable() {
+    // The stitch fell back to the frame as the camera recorded it: the table describes nothing there
+    val switch = StabilizationSwitch(enabled = true)
+    switch.onTrack(hasTrack = true, table = table)
+    assertTrue(switch.buttonVisible)
+    switch.stitched = false
+    assertFalse("a button that would do nothing hides", switch.buttonVisible)
+    assertNull(switch.activeTable())
+    // Stitched again (a new player of the stitched plan): back
+    switch.stitched = true
+    assertTrue(switch.buttonVisible)
+    assertSame(table, switch.activeTable())
+  }
+
+  @Test
+  fun theSettingOffKeepsTheCammTrackOfAPlainVideoOff() {
+    // Flutter tells the setting before every video opens, with no track of its own for a plain 360 video
+    val switch = StabilizationSwitch(enabled = true)
+    switch.onSetting(false)
+    assertNull(switch.onTrack(hasTrack = false, table = null))
+    switch.hasCamm = true
+    assertTrue("the CAMM track shows the button", switch.buttonVisible)
+    assertFalse(switch.enabled)
+    assertTrue("off: Media3 does not apply the CAMM track", switch.cammDisabled)
+    // On in the setting: Media3 applies it
+    val on = StabilizationSwitch(enabled = true)
+    on.onSetting(true)
+    on.onTrack(hasTrack = false, table = null)
+    on.hasCamm = true
+    assertFalse(on.cammDisabled)
+  }
+
+  @Test
+  fun theInboxKeepsTheLastMessageOfEachUrlApart() {
+    try {
+      val a = StabilizationInbox.Message("file:///a.insv", true, true, table, "a")
+      val b = StabilizationInbox.Message("file:///b.insv", true, false, null, null)
+      StabilizationInbox.post(a)
+      // A late message about another video does not take the place of the one of the video that plays
+      StabilizationInbox.post(b)
+      assertEquals(a, StabilizationInbox.latestFor("file:///a.insv"))
+      assertEquals(b, StabilizationInbox.latestFor("file:///b.insv"))
+      // The last few URLs only: the oldest goes
+      for (n in 0 until StabilizationInbox.MAX_URLS) {
+        StabilizationInbox.post(b.copy(url = "file:///c$n.insv"))
+      }
+      assertNull(StabilizationInbox.latestFor("file:///a.insv"))
+      assertNull(StabilizationInbox.latestFor("file:///b.insv"))
+      assertEquals("file:///c0.insv", StabilizationInbox.latestFor("file:///c0.insv")?.url)
+      assertNull(StabilizationInbox.latestFor(null))
+    } finally {
+      for (n in 0 until StabilizationInbox.MAX_URLS) StabilizationInbox.forget("file:///c$n.insv")
+    }
   }
 
   @Test

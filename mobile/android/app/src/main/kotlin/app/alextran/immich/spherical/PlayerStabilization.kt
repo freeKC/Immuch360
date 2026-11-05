@@ -2,11 +2,16 @@ package app.alextran.immich.spherical
 
 /**
  * What Flutter tells the 360° player about the stabilisation of a video (issue 14), see
- * [SphericalVideoApi.setStabilization]: called right before the player opens, while Flutter reads the motion track,
- * then once more with the table. The player is an activity of its own that may not exist yet, or may be recreated: the
- * last message waits here for the URL it is about, and the player that plays that URL listens. Main thread only.
+ * [SphericalVideoApi.setStabilization]: called right before the player opens (the setting, and whether Flutter reads
+ * a motion track), then once more with the table of a raw video. The player is an activity of its own that may not
+ * exist yet, or may be recreated: the last message about each URL waits here, and the player that plays that URL
+ * listens. A message about another video never takes the place of the one of the video that plays. The last
+ * [MAX_URLS] URLs are kept, a table being a few MB long. Main thread only.
  */
 internal object StabilizationInbox {
+  /** URLs whose last message is kept */
+  const val MAX_URLS = 3
+
   /** [table] is null while Flutter reads the track ([hasTrack] true) and for a file without one */
   data class Message(
     val url: String,
@@ -16,17 +21,20 @@ internal object StabilizationInbox {
     val summary: String?,
   )
 
-  private var latest: Message? = null
+  // The last message about each URL, the oldest first
+  private val latest = LinkedHashMap<String, Message>()
   private var listener: ((Message) -> Unit)? = null
 
   /** Keeps [message] for the player of its URL, and hands it to the player that listens */
   fun post(message: Message) {
-    latest = message
+    latest.remove(message.url)
+    latest[message.url] = message
+    while (latest.size > MAX_URLS) latest.remove(latest.keys.first())
     listener?.invoke(message)
   }
 
   /** The last message about [url], null when there is none */
-  fun latestFor(url: String?): Message? = latest?.takeIf { it.url == url }
+  fun latestFor(url: String?): Message? = url?.let { latest[it] }
 
   /** [listener] gets every message from now on, in place of the one before; null stops it */
   fun listen(listener: ((Message) -> Unit)?) {
@@ -42,7 +50,7 @@ internal object StabilizationInbox {
 
   /** Forgets the message about [url]: its player closed */
   fun forget(url: String?) {
-    if (latest?.url == url) latest = null
+    if (url != null) latest.remove(url)
   }
 }
 
@@ -51,10 +59,11 @@ internal object StabilizationInbox {
  * frames get, whether Media3 may apply a CAMM track of the file, and which notice to show. Pure Kotlin, so that the
  * rules are tested without a device; the activity applies what it says.
  *
- * The button shows for a file with a motion track: a raw video whose track Flutter reads or has read, or a video with
- * a CAMM track, which Media3 applies itself. Off, the frames get no rotation and the CAMM track is disabled in the
- * track selection: off means the raw video for every file. On with a table, the table turns the frames and the CAMM
- * track, if any, stays disabled, so that the view gets one rotation.
+ * The button shows for a file with a motion track: a raw video whose track Flutter reads or has read while the frame
+ * shown is the stitched sphere, or a video with a CAMM track, which Media3 applies itself. Off, the frames get no
+ * rotation and the CAMM track is disabled in the track selection: off means the raw video for every file, and the
+ * switch starts at the setting Flutter sends before every video opens. On with a table, the table turns the frames
+ * and the CAMM track, if any, stays disabled, so that the view gets one rotation.
  */
 internal class StabilizationSwitch(enabled: Boolean) {
   /** What the player knows of the motion track of the file */
@@ -77,6 +86,12 @@ internal class StabilizationSwitch(enabled: Boolean) {
   /** The file has a CAMM track (camera motion), which Media3 would apply */
   var hasCamm: Boolean = false
 
+  /**
+   * The frame shown is the stitched sphere, whose picture the table describes; false for an unstitched raw frame (a
+   * fallback), where the table would do nothing
+   */
+  var stitched: Boolean = true
+
   // The user pressed the button in this player: the setting Flutter sends no longer moves the switch
   private var touched = false
 
@@ -86,19 +101,16 @@ internal class StabilizationSwitch(enabled: Boolean) {
   // "Stabilised..." showed once already in this player
   private var stabilizedNoticeShown = false
 
-  /** Whether the button shows */
+  /** Whether the button shows: for a track that turns what shows */
   val buttonVisible: Boolean
-    get() = track == Track.PENDING || track == Track.READY || hasCamm
+    get() = (stitched && (track == Track.PENDING || track == Track.READY)) || hasCamm
 
   /** Whether the CAMM track of the file must be disabled in the track selection */
   val cammDisabled: Boolean
     get() = !enabled || table != null
 
-  /**
-   * The table the frames of a player get: none when off, and none when the frame shown is not the stitched sphere
-   * ([stitched] false: an unstitched raw frame, whose picture the table does not describe)
-   */
-  fun activeTable(stitched: Boolean): StabilizationTable? = if (enabled && stitched) table else null
+  /** The table the frames of a player get: none when off, and none when the frame shown is not [stitched] */
+  fun activeTable(): StabilizationTable? = if (enabled && stitched) table else null
 
   /**
    * What Flutter said about the file (see [StabilizationInbox]): the table, or that it reads the track ([hasTrack]

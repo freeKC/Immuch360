@@ -358,33 +358,11 @@ class SphericalVideoActivity : ComponentActivity() {
   private val stabilization = StabilizationSwitch(enabled = true)
 
   /**
-   * The table the frames of the current player get, null for none: off, no table (yet), or a frame that is not the
-   * stitched sphere. Read on the playback and compositor threads, see [CoverageFrameListener].
+   * The rotation of each frame of the players of this activity: the table the frames of the current player get (null
+   * for none: off, no table yet, or a frame that is not the stitched sphere) and the time base of its frames, see
+   * [StabilizedFrames]. The notice of the first stabilised frame is posted to the main thread.
    */
-  @Volatile
-  private var appliedStabilization: StabilizationTable? = null
-
-  /**
-   * What to add to the presentation time a frame listener gets to find the frame on the timeline of the video. Zero,
-   * except with the effect that stitches a side by side frame: Media3 1.10.0 runs those frames through its video graph
-   * on the timestamps of the buffers less the start position of the stream (MediaCodecVideoRenderer
-   * .getBufferTimestampAdjustmentUs), and its frame listener gets those, so a player started at a position p gives
-   * frame times p early. Read on the playback thread.
-   */
-  @Volatile
-  private var frameTimeBaseUs = 0L
-
-  /** A frame was drawn stabilised in this activity: the notice of the first one is posted */
-  @Volatile
-  private var stabilizedFrameReported = false
-
-  /**
-   * A rotation went to the camera motion listener of the spherical view since its last reset, by the frame listener of
-   * this player or of the one before (a player replaced after a failure, whose frames may no longer be stitched): the
-   * next frame without a table resets it. Read on the playback and compositor threads.
-   */
-  @Volatile
-  private var stabilizationTurning = false
+  private val stabilizedFrames = StabilizedFrames { playerView.post(::onFirstStabilizedFrame) }
 
   /** Messages of Flutter about the stabilisation of the video this player plays, see [StabilizationInbox] */
   private val stabilizationMessages: (StabilizationInbox.Message) -> Unit = { message ->
@@ -898,7 +876,7 @@ class SphericalVideoActivity : ComponentActivity() {
         } else {
           it.setMediaItem(MediaItem.fromUri(url), startPosition)
         }
-        frameTimeBaseUs = frameTimeBaseFor(startPosition)
+        stabilizedFrames.timeBaseUs = frameTimeBaseFor(startPosition)
         it.playWhenReady = playWhenReady
         playerView.player = it
         attachSphericalView(it)
@@ -1345,7 +1323,7 @@ class SphericalVideoActivity : ComponentActivity() {
     applyStereoLayout()
     val position = current.currentPosition.coerceAtLeast(0L)
     current.setMediaItem(MediaItem.fromUri(fallback), position)
-    frameTimeBaseUs = frameTimeBaseFor(position)
+    stabilizedFrames.timeBaseUs = frameTimeBaseFor(position)
     current.prepare()
     return true
   }
@@ -1436,14 +1414,18 @@ class SphericalVideoActivity : ComponentActivity() {
    * turns the frames.
    */
   private fun updateStabilization() {
-    stabilizationButton.visibility = if (stabilization.buttonVisible) View.VISIBLE else View.GONE
     stabilizationButton.alpha = if (stabilization.enabled) 1f else MONO_ALPHA
     ViewCompat.setStateDescription(
       stabilizationButton,
       label(if (stabilization.enabled) LABEL_STABILIZATION_ENABLED else LABEL_STABILIZATION_DISABLED),
     )
-    val stitched = plan.mode == RawMode.EFFECT_SIDE_BY_SIDE || plan.mode == RawMode.LENSES
-    appliedStabilization = stabilization.activeTable(stitched)
+    stabilization.stitched = plan.mode == RawMode.EFFECT_SIDE_BY_SIDE || plan.mode == RawMode.LENSES
+    stabilizationButton.visibility = if (stabilization.buttonVisible) View.VISIBLE else View.GONE
+    val table = stabilization.activeTable()
+    if (table != null && stabilizedFrames.table !== table && (playingFallback || plan.fromFallback)) {
+      Log.i(TAG, "Stabilisation: the table of the original turns the frames of the transcoded stream")
+    }
+    stabilizedFrames.table = table
     val current = player ?: return
     val parameters = current.trackSelectionParameters
     val cammDisabled = stabilization.cammDisabled
@@ -1489,9 +1471,9 @@ class SphericalVideoActivity : ComponentActivity() {
     stabilizationNotice.postDelayed(fadeStabilizationNotice, STABILIZATION_NOTICE_MS)
   }
 
-  /** See [frameTimeBaseUs]: the start position in microseconds for the effect that stitches a side by side frame */
+  /** See [StabilizedFrames.timeBaseUs]: the start position for the effect that stitches a side by side frame */
   private fun frameTimeBaseFor(startPositionMs: Long): Long =
-    if (plan.mode == RawMode.EFFECT_SIDE_BY_SIDE) startPositionMs.coerceAtLeast(0L) * 1000L else 0L
+    StabilizedFrames.timeBaseUs(plan.mode == RawMode.EFFECT_SIDE_BY_SIDE, startPositionMs)
 
   /**
    * Takes the coverage the video declares in place of the current one, but only when it differs from the declared
@@ -1573,10 +1555,8 @@ class SphericalVideoActivity : ComponentActivity() {
    * longer applies). Called on the playback thread, or on the compositor's thread for a lens player. Frames of the
    * same format and coverage reuse the format built for the first one.
    *
-   * With a stabilisation table ([appliedStabilization]), the rotation of each frame goes to [motion], the camera
-   * motion listener of the same renderer, at the frame's presentation time and just before the frame: the renderer
-   * takes it with that frame (its queue is keyed on the presentation time, and clears itself when the time jumps back
-   * at a seek). Without one any more, a reset brings the frames back as they are, from the next one on.
+   * With a stabilisation table, the rotation of each frame goes to [motion], the camera motion listener of the same
+   * renderer, at the frame's presentation time and just before the frame (see [StabilizedFrames]).
    */
   private inner class CoverageFrameListener(
     private val scene: VideoFrameMetadataListener,
@@ -1603,19 +1583,10 @@ class SphericalVideoActivity : ComponentActivity() {
         lastCoverage = coverage
         lastProjected = projected
       }
-      val table = appliedStabilization
-      if (table != null) {
-        motion.onCameraMotion(presentationTimeUs, table.angleAxisAt(presentationTimeUs + frameTimeBaseUs))
-        stabilizationTurning = true
-        if (!stabilizedFrameReported) {
-          stabilizedFrameReported = true
-          playerView.post(::onFirstStabilizedFrame)
-        }
-      } else if (stabilizationTurning) {
-        motion.onCameraMotionReset()
-        stabilizationTurning = false
+      val frameFormat: Format = projected
+      stabilizedFrames.onFrame(presentationTimeUs, motion) {
+        scene.onVideoFrameAboutToBeRendered(presentationTimeUs, releaseTimeNs, frameFormat, mediaFormat)
       }
-      scene.onVideoFrameAboutToBeRendered(presentationTimeUs, releaseTimeNs, projected, mediaFormat)
     }
   }
 
