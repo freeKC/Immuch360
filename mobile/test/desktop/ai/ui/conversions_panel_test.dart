@@ -944,6 +944,34 @@ void main() {
       );
     });
 
+    test('on Windows, a generation short of memory says the free memory the app read, not Vulkan\'s figure', () {
+      final t = StaticTranslations.instance;
+      const mib = 1024 * 1024;
+      // sd-cli read 7 188 MiB free as Vulkan does on Windows, other programs left out (every run of the measure of 5
+      // November 2026), and was given the 4 906 MiB the probe read less its reserve (review of lot 13c)
+      const windows = GeneratorMemoryRead(free: 7188 * mib, budget: 4394 * mib, short: 14 * mib);
+      expect(windows.shownFree, 4906 * mib);
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.gpuOutOfMemory, '${windows.message}\n[E] generate failed'),
+        'The graphics card ran out of memory: the generator read 4.8 GiB free and was 14.0 MiB short. Close games, 3D '
+        'apps or videos: Keep waiting puts it back in the queue',
+      );
+      expect(
+        conversionFailureText(
+          t,
+          ImmersiveErrorCode.gpuOutOfMemory,
+          const GeneratorMemoryRead(free: 7188 * mib, budget: 4394 * mib).message,
+        ),
+        startsWith('The graphics card ran out of memory: the generator read 4.8 GiB free.'),
+      );
+      // Linux: sd-cli's own budget, its free memory less the reserve: the free memory it read
+      expect(const GeneratorMemoryRead(free: 3584 * mib, budget: 3072 * mib).shownFree, 3584 * mib);
+      // A budget sd-cli capped at the free memory it read, no budget, no free memory
+      expect(const GeneratorMemoryRead(free: 4200 * mib, budget: 4200 * mib).shownFree, 4200 * mib);
+      expect(const GeneratorMemoryRead(free: 4200 * mib).shownFree, 4200 * mib);
+      expect(const GeneratorMemoryRead(budget: 4200 * mib, short: mib).shownFree, isNull);
+    });
+
     testWidgets(
       'a generation short of memory even in pieces says what sd-cli read, with Keep waiting in place of Retry',
       (tester) async {

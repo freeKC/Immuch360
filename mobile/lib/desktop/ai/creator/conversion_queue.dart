@@ -33,8 +33,9 @@
 // user asks (checkGraphicsCardAgain), and a card gone fails the job. Since issue #13, the app first lets go of what it
 // holds of the card (its paused videos, its cached pictures: graphics_release.dart), once per job, and when it closed
 // video players, asks the card again every few seconds while their memory comes back, until the generator would run
-// whole (one segment, twice as fast as near the floor: GpuBudgetReady.whole) or the time is up; the free memory of its
-// last answer is the budget its generator plans with, less the reserve of sd-cli (panoramaGeneratorBudget). A wait that
+// whole (one segment, twice as fast as near the floor: GpuBudgetReady.whole) or the time is up; on Windows, the free
+// memory of its last answer less the reserve of sd-cli is the budget its generator is given (panoramaGeneratorBudget:
+// sd-cli's own reading there leaves other programs out), and on Linux sd-cli reads the card itself. A wait that
 // cannot end does not last: 30 s after the lane first showed the figures of the wait, the job leaves the queue with
 // them (gpuMemoryShort), and the panoramas waiting behind it at their first answer, without a release nor a settle,
 // unless the user asked a job to keep waiting (keepWaiting).
@@ -348,8 +349,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// The jobs that let go of the app's share of the card already in this wait
   final _gpuReleased = <String>{};
 
-  /// The free memory of the card each panorama about to run was given (the last answer of its check): its generator
-  /// plans with it less the reserve of sd-cli (panoramaGeneratorBudget)
+  /// The free memory of the card each panorama about to run was given (the last answer of its check): on Windows its
+  /// generator is given it less the reserve of sd-cli (panoramaGeneratorBudget)
   final _graphicsFree = <String, int>{};
   var _disposed = false;
   var _lastId = 0;
@@ -1171,9 +1172,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           generator: generator,
           steps: steps,
           seed: tools.newSeed(),
-          graphicsBudget: switch (_graphicsFree[job.id]) {
-            final free? => panoramaGeneratorBudget(free),
-            null => null,
+          graphicsBudget: switch ((_graphicsFree[job.id], tools.gpuBudget)) {
+            (final free?, final budget?) => panoramaGeneratorBudget(free, windows: budget.windows),
+            _ => null,
           },
         );
       case ConversionKind.splatScene:

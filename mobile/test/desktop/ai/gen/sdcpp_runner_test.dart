@@ -13,6 +13,7 @@ import 'package:image/image.dart' as img;
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
+import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:logging/logging.dart';
@@ -273,6 +274,24 @@ void main() {
       expect(sdCppVramBudget(5160 * 1024 * 1024), '5.0390');
       expect(sdCppVramBudget(16 * 1024 * 1024 * 1024 - 1), '15.9999');
       expect(double.parse(sdCppVramBudget(4404 * 1024 * 1024)) * 1024, lessThanOrEqualTo(4404));
+    });
+
+    test('the budget from the probe on Windows only: on Linux no --max-vram, sd-cli keeps its own reserve', () {
+      // Review of lot 13c: the probe read 4 906 MiB free. On Windows sd-cli's Vulkan figure leaves other programs out
+      // and is given the probe's less 512 MiB; on Linux both read VK_EXT_memory_budget, and a budget from the probe
+      // would drop sd-cli's reserve when sd-cli reads less
+      const probed = 4906 * 1024 * 1024;
+      final linux = generator(
+        FakeProcessRunner([]),
+      ).argumentsOf(request(graphicsBudget: panoramaGeneratorBudget(probed, windows: false)));
+      final windows = generator(
+        FakeProcessRunner([]),
+      ).argumentsOf(request(graphicsBudget: panoramaGeneratorBudget(probed, windows: true)));
+
+      expect(linux, isNot(contains('--max-vram')));
+      expect(linux, generator(FakeProcessRunner([])).argumentsOf(request()));
+      final card = windows.indexOf('--backend');
+      expect(windows.sublist(card + 2, card + 4), ['--max-vram', '4.2910']);
     });
 
     test('every option is one the pinned sd-cli lists in its --help, and none is deprecated there', () {

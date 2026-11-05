@@ -19,20 +19,26 @@
 // as one segment, slower (294 s instead of 202 at the free memory of issue #13, about 8 min near the floor). It runs in
 // one segment from 5 716 MiB free ([panoramaWholeGraphicsMemory]), in segments down to 3 212 MiB free, and fails at
 // 3 112: [panoramaFreeGraphicsMemory] asks 3.5 GiB, 0.36 GiB above that floor for the desktop moving during the run,
-// with the full reference for every card (one image per photo and seed). The reference capped at 1280 x 640 that
-// desktop build 21 took between 5.1 and 6 GiB free is gone: the cut needs no other image, and the panoramas it made
-// say so in their packet (GeneratorReferenceMaxPixels). Smaller outputs (1280 x 640) make a smaller panorama with a
-// wider raw seam: not offered. The other kinds of jobs, the splat scenes apart (below), run on the processor and ask
-// nothing of the card. The answer of a check that passes carries the whole report, so that the generator is given the
-// card the check looked at (ggmlVulkanIndexOf), the free memory it read (from which sd-cli is given a fixed budget,
-// [panoramaGeneratorBudget]), and whether the generation runs whole ([GpuBudgetReady.whole]), for the queue to wait a
-// few seconds more while the app's share comes back.
+// with the full reference for every card (one image per photo and seed). These figures come from Windows, where the low
+// memory was emulated with a budget (--max-vram) on a card sd-cli read 7 188 MiB free on: there its Vulkan reading
+// leaves other programs out, so its live check of the card never bound. On Linux that reading counts them, and the live
+// check keeps 512 MiB free beyond all sd-cli holds: the floor there is probably 3.3 to 3.45 GiB, and the edge of one
+// segment about 0.3 GiB higher, to be confirmed with the "SdCpp" lines of a Linux log (review of lot 13c). The
+// reference capped at 1280 x 640 that desktop build 21 took between 5.1 and 6 GiB free is gone: the cut needs no other
+// image, and the panoramas it made say so in their packet (GeneratorReferenceMaxPixels). Smaller outputs (1280 x 640)
+// make a smaller panorama with a wider raw seam: not offered. The other kinds of jobs, the splat scenes apart (below),
+// run on the processor and ask nothing of the card. The answer of a check that passes carries the whole report, so that
+// the generator is given the card the check looked at (ggmlVulkanIndexOf), the free memory it read (from which sd-cli
+// is given a budget on Windows, [panoramaGeneratorBudget]), and whether the generation runs whole
+// ([GpuBudgetReady.whole]), for the queue to wait a few seconds more while the app's share comes back.
 //
 // A splat scene (lot SP4) asks the same budget twice: in the queue before its job starts, and again by the runner of
 // Brush once the poses are found, some minutes later ([brushCardOf]), with the need of the splat scenes
 // (SplatV1.freeGraphicsMemory: 2.5 GiB, where M1 measured 1.0 to 1.2 GiB at the peak at 1 024 pixels) and the card
 // its own rule chooses (splatCardOf of hardware_gate.dart: a dedicated card only). The queue asks with the need of the
 // kind of each job ([gpuNeedOf], lot SP6): a panorama by the figures above, a splat scene by its one figure.
+
+import 'dart:io';
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -50,14 +56,26 @@ const panoramaFreeGraphicsMemory = 7 * _gib ~/ 2;
 const panoramaWholeGraphicsMemory = 5716 * _mib;
 
 /// What sd-cli keeps of the free memory of the card in reserve when it reads it itself (512 MiB, measure of 5 November
-/// 2026, section 1): the budget it is given is the free memory the queue read, less as much
+/// 2026, section 1): the budget it is given on Windows is the free memory the queue read, less as much
 const panoramaGeneratorReserve = 512 * _mib;
 
-/// The fixed budget sd-cli is given for a panorama (--max-vram) when the queue read [free] bytes free on its card just
-/// before the job: [free] less [panoramaGeneratorReserve], so that sd-cli plans its segments once, at its start, where
-/// with the live free memory it may plan again in the middle of a run when the desktop moves (M3 saw a run go from one
-/// segment to 27 at its third step); null when nothing would be left
-int? panoramaGeneratorBudget(int free) => free > panoramaGeneratorReserve ? free - panoramaGeneratorReserve : null;
+/// The budget sd-cli is given for a panorama (--max-vram) when the queue read [free] bytes free on its card just before
+/// the job: on Windows only, [free] less [panoramaGeneratorReserve]; null on Linux, and when nothing would be left.
+///
+/// sd-cli fixes its budget at its start either way: its auto-fit plan writes it into the limits its runner reads once,
+/// at load (the pinned build, backend_fit.cpp 466-472). Without --max-vram that budget is the free memory sd-cli reads
+/// less its reserve of 512 MiB; a positive --max-vram gives the smaller of the value and that free memory, with no
+/// reserve (backend_fit.cpp 152-157). A switch to segments in the middle of a run (M3 saw one segment become 27 at the
+/// third step) comes from another check, live at every step, which reads the card again and keeps 512 MiB free plus
+/// 128 MiB (model_manager.cpp 1770-1772): the flag does not change it.
+///
+/// On Windows, sd-cli's Vulkan reading leaves out what other programs hold (7 188 MiB in every run of the measure),
+/// while the probe lowers its own to what Windows' counters leave of the card (windows/runner/gpu_probe.cpp): the
+/// budget from the probe is the truthful one. On Linux both read VK_EXT_memory_budget a few seconds apart, and a budget
+/// from the probe could only lower sd-cli's reserve when it reads less, or let auto-fit put the transformer's weights
+/// on the card where its own reading streams them from the computer's memory: sd-cli reads the card itself there.
+int? panoramaGeneratorBudget(int free, {required bool windows}) =>
+    windows && free > panoramaGeneratorReserve ? free - panoramaGeneratorReserve : null;
 
 /// What a kind of job needs of the graphics card: [bytes] free on the card [cardOf] chooses, and for a kind that runs
 /// faster with more ([whole], a panorama in one segment), the free memory from which it runs at its best
@@ -131,7 +149,9 @@ class GpuBudget {
     this._appMemoryOf,
     this._need,
     this.cardOf = panoramaCardOf,
-  }) : _integratedAllowed = integratedAllowed ?? (() async => false);
+    bool? windows,
+  }) : _integratedAllowed = integratedAllowed ?? (() async => false),
+       windows = windows ?? Platform.isWindows;
 
   /// Starts the probe of the graphics cards again (the gate keeps its answer in the app)
   final Future<GpuReport> Function() probe;
@@ -145,6 +165,10 @@ class GpuBudget {
 
   /// The rule of the gate that chooses the card: that of the panoramas unless told
   final PanoramaCard Function(GpuReport report, {required bool integratedAllowed}) cardOf;
+
+  /// Whether the probe reads the free memory of Windows, lowered below Vulkan's figure by what other programs hold:
+  /// only then is the generator given a budget from it ([panoramaGeneratorBudget])
+  final bool windows;
 
   /// The memory a job needs free on its card: the need the budget was made with, else a panorama's
   int get need => _need ?? panoramaFreeGraphicsMemory;

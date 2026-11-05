@@ -7,10 +7,13 @@
 //    te=CPU: the integrated card comes first on a laptop, so sd-cli never chooses), flash attention on (without it the
 //    attention goes to the processor and no step ends in 10 minutes), the VAE in tiles, -t the logical processors less
 //    two, -v for the line about segments and the auto-fit plan; since lot 13c (measure of 5 November 2026, section 9),
-//    a fixed budget of the card (--max-vram in GiB, the free memory the queue read less 512 MiB, so that sd-cli plans
-//    its segments once at its start) and the convolution of the VAE pinned to its direct path (--conv-direct
+//    on Windows a budget of the card (--max-vram in GiB, the free memory the queue read less 512 MiB, where sd-cli's
+//    own Vulkan reading leaves other programs out; on Linux sd-cli reads the card itself: gpu_budget.dart,
+//    panoramaGeneratorBudget, says why) and the convolution of the VAE pinned to its direct path (--conv-direct
 //    auto,vae=on: sd-cli times both paths at its start and took the other one in 2 runs of 32, another image by 36 to
-//    39 dB for the same photo and seed);
+//    39 dB for the same photo and seed). sd-cli fixes its budget at its start with or without --max-vram; a switch to
+//    segments in the middle of a run comes from its live check of the card at every step, which the flag does not
+//    change;
 //  - its progress is the bar it redraws ("12/20 - 8.65s/it"): the steps of the sampling only, not the loading of the
 //    weights nor the tiles of the VAE;
 //  - a generation whose graph sd-cli cuts into segments ("flux using 27 segments", when the memory it may use on the
@@ -113,6 +116,9 @@ const sdCppOutOfMemoryTexts = [
   'Failed to allocate',
 ];
 
+/// Why a budget the app gave sd-cli (Windows) is the one to read: sd-cli's own free figure there is Vulkan's
+const _givenWhy = " (from the free memory Windows counts: Vulkan's figure leaves other programs out)";
+
 /// The most lines of the error output a failure carries in its message
 const sdCppErrorTailLines = 20;
 
@@ -145,7 +151,7 @@ final _plan = RegExp(r'^\[I\]\s+(Vulkan\d+)\s.*\bfree\s+(\d+) MiB, budget\s+(\d+
 
 /// What sd-cli read of the memory of the card [device] ("Vulkan1"), from the line of its auto-fit plan for that card:
 /// the bytes free and the budget it plans with (the free memory less its reserve of 512 MiB, or the one --max-vram
-/// gives); null for any other line
+/// gives, capped at the free memory); null for any other line
 ({int free, int budget})? sdCppCardMemoryOf(String line, String device) {
   final match = _plan.firstMatch(line);
   if (match == null || match.group(1) != device) {
@@ -188,13 +194,15 @@ const sdCppConvDirect = 'auto,vae=on';
 
 /// [bytes] as --max-vram takes them: GiB with four decimals, rounded down so that sd-cli never plans with more than it
 /// was given ("2.7343" for 2 800 MiB; the measure of 5 November 2026 gave "2.7344", "3", "4"). A single value is the
-/// budget of every card sd-cli sees, as the measure ran it: the generator uses the one --backend names.
+/// budget of every card sd-cli sees, as the measure ran it: the generator uses the one --backend names. sd-cli takes
+/// the smaller of it and the free memory it reads, with no reserve of its own.
 String sdCppVramBudget(int bytes) {
   final tenThousandths = bytes * 10000 ~/ (1024 * _mib);
   return '${tenThousandths ~/ 10000}.${'${tenThousandths % 10000}'.padLeft(4, '0')}';
 }
 
-/// The arguments of one generation, frozen (M3, section 9, point 4)
+/// The arguments of one generation, frozen (M3, section 9, point 4); --max-vram when the request carries a budget, which
+/// the queue gives on Windows only (GeneratorRequest.graphicsBudget)
 List<String> sdCppGenerationArguments(SdCppSettings settings, GeneratorRequest request) {
   final models = settings.models;
   return [
@@ -337,9 +345,11 @@ class SdCppGenerator implements GeneratorBackend {
     var segments = 1;
     ({int free, int budget})? read;
     int? short;
+    // A budget given (Windows): sd-cli's free memory is Vulkan's figure there, which leaves other programs out
+    final given = request.graphicsBudget != null ? ' given by the app' : '';
     String said() => read == null
         ? 'what it read of the card unknown'
-        : '${read!.free ~/ _mib} MiB free read on ${settings.device}, budget ${read!.budget ~/ _mib} MiB';
+        : '${read!.free ~/ _mib} MiB free read on ${settings.device}, budget ${read!.budget ~/ _mib} MiB$given';
     final run = _sdCppRun(
       runner: runner,
       settings: settings,
@@ -356,7 +366,8 @@ class SdCppGenerator implements GeneratorBackend {
         if (plan != null) {
           read = plan;
           _log.info(
-            'sd-cli read ${plan.free ~/ _mib} MiB free on ${settings.device}, budget ${plan.budget ~/ _mib} MiB',
+            'sd-cli read ${plan.free ~/ _mib} MiB free on ${settings.device}, budget ${plan.budget ~/ _mib} MiB$given'
+            '${given.isEmpty ? '' : _givenWhy}',
           );
           return null;
         }

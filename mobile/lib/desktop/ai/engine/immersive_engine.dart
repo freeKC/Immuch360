@@ -17,6 +17,7 @@
 // at once; its steps are those of the photos (or of the frames of the video), of COLMAP, of Brush and of the copy for
 // the headset, its failures those of placing the photos and of the training, and its result the counts the panel tells.
 
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -233,6 +234,19 @@ class GeneratorMemoryRead {
 
   static const _head = 'Generator memory read:';
   static const _mib = 1024 * 1024;
+
+  /// What sd-cli keeps in reserve of the free memory it reads when it is given no budget (gpu_budget.dart,
+  /// panoramaGeneratorReserve)
+  static const reserve = 512 * _mib;
+
+  /// The free memory the panel says: [free], or [budget] and sd-cli's [reserve] when they are less. sd-cli is given a
+  /// budget on Windows only, the free memory the app read less the reserve, and its own [free] is Vulkan's figure there,
+  /// which leaves other programs out: the panel would say "the generator read 7.0 GiB free" of a card short of
+  /// memory. Without a budget given, sd-cli's budget is its free memory less the reserve, and this is [free] itself.
+  int? get shownFree => switch ((free, budget)) {
+    (final free?, final budget?) => math.min(free, budget + reserve),
+    (final free, _) => free,
+  };
 
   /// "Generator memory read: free 3584 MiB, budget 3072 MiB, short 15 MiB", the figures it has
   String get message => [
@@ -545,7 +559,7 @@ final class SplatJob extends ImmersiveJobSpec {
 
 /// One photo to make into a 360° panorama generated beyond its edges, `<name>_360.jpg` (pano-v1): the transformer
 /// [generator] (its catalogue id, the variant the gate chose), [steps] and the [seed] drawn for this job, and the
-/// [graphicsBudget] of its generator, from the free memory of the card read just before it (gpu_budget.dart)
+/// [graphicsBudget] of its generator on Windows, from the free memory of the card read just before it (gpu_budget.dart)
 final class PanoramaJob extends ImmersiveJobSpec {
   const PanoramaJob({
     required super.id,
@@ -567,7 +581,8 @@ final class PanoramaJob extends ImmersiveJobSpec {
   final int steps;
   final int seed;
 
-  /// The bytes of the card the generator plans with (GeneratorRequest.graphicsBudget); null for what it reads itself
+  /// The bytes of the card the generator is given on Windows (GeneratorRequest.graphicsBudget); null for what it
+  /// reads itself
   final int? graphicsBudget;
 
   @override

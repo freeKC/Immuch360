@@ -128,9 +128,9 @@ class GeneratorRequest {
   final double guidance;
   final double loraStrength;
 
-  /// The memory of the card the generator plans with, fixed for its whole run: the free memory the queue read just
-  /// before the job, less the reserve of sd-cli (gpu_budget.dart, panoramaGeneratorBudget); null for the free memory it
-  /// reads itself
+  /// The budget of the card the generator is given, on Windows only: the free memory the queue read just before the
+  /// job, less the reserve of sd-cli (gpu_budget.dart, panoramaGeneratorBudget, which says why); null for the free
+  /// memory it reads itself, less its own reserve. sd-cli fixes its budget at its start either way.
   final int? graphicsBudget;
 }
 

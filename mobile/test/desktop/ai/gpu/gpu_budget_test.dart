@@ -9,6 +9,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
@@ -36,12 +37,23 @@ void main() {
     expect(budget(FakeGpuProbe.of(FakeGpuReports.rtx4060)).need, panoramaFreeGraphicsMemory);
   });
 
-  test('the budget sd-cli plans with: the free memory read less its own reserve of 512 MiB', () {
+  test('the budget sd-cli is given on Windows: the free memory read less its own reserve of 512 MiB; none on Linux', () {
     expect(panoramaGeneratorReserve, 512 * _mib);
-    expect(panoramaGeneratorBudget(5530 * _mib), 5018 * _mib);
-    expect(panoramaGeneratorBudget(panoramaFreeGraphicsMemory), 3 * _gib);
-    expect(panoramaGeneratorBudget(512 * _mib), isNull);
-    expect(panoramaGeneratorBudget(0), isNull);
+    expect(panoramaGeneratorBudget(5530 * _mib, windows: true), 5018 * _mib);
+    expect(panoramaGeneratorBudget(panoramaFreeGraphicsMemory, windows: true), 3 * _gib);
+    expect(panoramaGeneratorBudget(512 * _mib, windows: true), isNull);
+    expect(panoramaGeneratorBudget(0, windows: true), isNull);
+    // Review of lot 13c: on Linux sd-cli reads the same VK_EXT_memory_budget as the probe and keeps its own reserve; a
+    // budget from the probe could only shrink that reserve when sd-cli reads less
+    for (final free in [7000 * _mib, 5530 * _mib, panoramaFreeGraphicsMemory, 0]) {
+      expect(panoramaGeneratorBudget(free, windows: false), isNull, reason: '$free');
+    }
+    // The panel's figure of a failure counts back with the same reserve
+    expect(GeneratorMemoryRead.reserve, panoramaGeneratorReserve);
+    // The probe of Windows lowers Vulkan's figure: the budget follows the system the app runs on unless told
+    expect(GpuBudget(probe: FakeGpuProbe.of(FakeGpuReports.rtx4060).probe).windows, Platform.isWindows);
+    expect(GpuBudget(probe: FakeGpuProbe.of(FakeGpuReports.rtx4060).probe, windows: true).windows, isTrue);
+    expect(GpuBudget(probe: FakeGpuProbe.of(FakeGpuReports.rtx4060).probe, windows: false).windows, isFalse);
   });
 
   test('the RTX 4060 with 7.2 GiB free: ready, on that card, with the answer it came from', () async {

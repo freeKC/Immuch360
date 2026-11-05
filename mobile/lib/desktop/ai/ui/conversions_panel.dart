@@ -243,13 +243,14 @@ String conversionFailureText(
     _ => t.ai_immersive_failed_gpu_unavailable,
   },
   ImmersiveErrorCode.gpuBusy => t.ai_immersive_failed_gpu_busy,
-  // What sd-cli read of the card when it ran short even in segments (lot 13c), else the words of any other program
+  // What sd-cli read of the card when it ran short even in segments (lot 13c; on Windows the free memory the app read,
+  // GeneratorMemoryRead.shownFree), else the words of any other program
   ImmersiveErrorCode.gpuOutOfMemory => switch (GeneratorMemoryRead.of(message)) {
-    GeneratorMemoryRead(free: final free?, short: final short?) => t.ai_immersive_failed_gpu_memory_read(
-      free: formatBytes(free),
+    GeneratorMemoryRead(:final shownFree?, short: final short?) => t.ai_immersive_failed_gpu_memory_read(
+      free: formatBytes(shownFree),
       short: formatBytes(short),
     ),
-    GeneratorMemoryRead(free: final free?) => t.ai_immersive_failed_gpu_memory_read_free(free: formatBytes(free)),
+    GeneratorMemoryRead(:final shownFree?) => t.ai_immersive_failed_gpu_memory_read_free(free: formatBytes(shownFree)),
     _ => t.ai_immersive_failed_gpu_memory,
   },
   ImmersiveErrorCode.gpuMemoryShort => t.ai_immersive_failed_gpu_short,

@@ -79,6 +79,7 @@ void main() {
     Duration settle = const Duration(milliseconds: 100),
     Duration settlePoll = const Duration(milliseconds: 10),
     Duration giveUp = const Duration(seconds: 30),
+    bool windows = false,
   }) {
     final made = ProviderContainer(
       overrides: [
@@ -90,7 +91,7 @@ void main() {
             finder: ExistingVersionFinder(),
             creatorTool: 'Immuch360 Desktop 3.3.0 (windows)',
             memory: _Roomy(),
-            gpuBudget: GpuBudget(probe: probe),
+            gpuBudget: GpuBudget(probe: probe, windows: windows),
             gpuRecheck: recheck,
             releaseGraphics: release,
             gpuSettle: settle,
@@ -324,24 +325,34 @@ void main() {
     expect(released, 0);
   });
 
-  test('a panorama starts from 3.5 GiB free, whole or in segments, the same job for every card (issue #13)', () async {
-    final probe = FakeGpuProbe([_rtx2060(7000), _rtx2060(5530, appMib: 1402), _rtx2060(3584)]);
-    container = containerWith(probe.probe);
+  test('a panorama starts from 3.5 GiB free, whole or in segments, the same job for every card (issue #13); its '
+      'generator is given a budget on Windows only', () async {
+    for (final windows in [false, true]) {
+      panorama = FakePanoramaEngine();
+      final probe = FakeGpuProbe([_rtx2060(7000), _rtx2060(5530, appMib: 1402), _rtx2060(3584)]);
+      container = containerWith(probe.probe, windows: windows);
 
-    final made = <String>[];
-    for (final name in ['a.jpg', 'b.jpg', 'c.jpg']) {
-      final id = add(name, ConversionKind.panoramaFromPhoto);
-      await until((state) => state.byId(id)!.state.isEnded);
-      made.add(job(id).state.name);
+      final made = <String>[];
+      // Other photos for each system: those of the first are made already
+      for (final name in ['a', 'b', 'c']) {
+        final id = add('$name-${windows ? 'windows' : 'linux'}.jpg', ConversionKind.panoramaFromPhoto);
+        await until((state) => state.byId(id)!.state.isEnded);
+        made.add(job(id).state.name);
+      }
+
+      expect(made, ['done', 'done', 'done'], reason: 'windows: $windows');
+      expect(probe.calls, 3, reason: 'windows: $windows');
+      expect(
+        [for (final spec in panorama.jobs) spec.graphicsBudget],
+        windows
+            // What the card had free just before, less the reserve of sd-cli, whose own reading leaves other programs
+            // out there
+            ? [(7000 - 512) * _mib, (5530 - 512) * _mib, (3584 - 512) * _mib]
+            // Linux: sd-cli reads the card itself and keeps its own reserve (review of lot 13c)
+            : [null, null, null],
+        reason: 'windows: $windows',
+      );
     }
-
-    expect(made, ['done', 'done', 'done']);
-    expect(probe.calls, 3);
-    // Each generator plans with what the card had free just before, less the reserve of sd-cli
-    expect(
-      [for (final spec in panorama.jobs) spec.graphicsBudget],
-      [(7000 - 512) * _mib, (5530 - 512) * _mib, (3584 - 512) * _mib],
-    );
   });
 
   group('the app lets go of its share of the card first (issue #13)', () {
@@ -377,14 +388,22 @@ void main() {
         _rtx2060(5500, appMib: 800),
         _rtx2060(6400, appMib: 0),
       ]);
-      container = containerWith(probe.probe, release: () async => const GraphicsRelease(players: 2, pictureBytes: 9));
+      container = containerWith(
+        probe.probe,
+        release: () async => const GraphicsRelease(players: 2, pictureBytes: 9),
+        windows: true,
+      );
 
       final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
       await until((state) => state.byId(pano)!.state.isEnded);
 
       expect(job(pano).state, ConversionState.done);
       expect(probe.calls, 3, reason: 'in segments at 4.8 and 5.4 GiB free, whole at 6.2');
-      expect(panorama.jobs.single.graphicsBudget, (6400 - 512) * _mib, reason: 'the budget of the last answer');
+      expect(
+        panorama.jobs.single.graphicsBudget,
+        (6400 - 512) * _mib,
+        reason: 'Windows: the budget of the last answer',
+      );
     });
 
     test('the time is up below a whole run: the panorama starts in segments with what is free', () async {
@@ -394,6 +413,7 @@ void main() {
         release: () async => const GraphicsRelease(players: 1),
         settle: const Duration(milliseconds: 50),
         settlePoll: const Duration(milliseconds: 10),
+        windows: true,
       );
 
       final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
@@ -401,7 +421,7 @@ void main() {
 
       expect(job(pano).state, ConversionState.done);
       expect(probe.calls, 6, reason: 'once, then every 10 ms for 50 ms');
-      expect(panorama.jobs.single.graphicsBudget, (5500 - 512) * _mib);
+      expect(panorama.jobs.single.graphicsBudget, (5500 - 512) * _mib, reason: 'Windows');
     });
 
     test('pictures let go without a player: the card asked once, no wait for memory that does not come back', () async {
