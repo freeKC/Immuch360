@@ -1,7 +1,8 @@
 // The motion of a 360° camera as its file records it, for the stabilisation of the video at playback: the samples of
-// its gyroscope and accelerometer, or its own orientation per frame, and the time of each frame, all on the clock of the
-// video (time 0 at its first frame). See lib/domain/services/raw/insta360_motion.dart for the Insta360 trailer and
-// lib/domain/services/raw/dji_motion.dart for the attitude of the DJI Osmo 360.
+// its gyroscope and accelerometer, and the time of each frame, all on the clock of the video (time 0 at its first
+// frame), and the orientation the camera itself fused for each frame when the file has it. See
+// lib/domain/services/raw/insta360_motion.dart for the Insta360 trailer, lib/domain/services/raw/dji_motion.dart for
+// the attitude of the DJI Osmo 360.
 
 import 'dart:typed_data';
 
@@ -10,8 +11,8 @@ enum CameraMotionSource {
   /// The IMU record of an Insta360 trailer (record 3), with the time of each frame (record 4)
   insta360Imu,
 
-  /// The attitude the DJI Osmo 360 writes in the per frame records of the camd box of its .osv files: an orientation
-  /// per frame, no gyroscope samples
+  /// The attitude in the per frame records of the camd box of a DJI Osmo 360 .osv file: one orientation per frame,
+  /// already in the body frame of dual_fisheye_math.dart, its world levelled (z down); no raw samples
   djiAttitude,
 }
 
@@ -65,12 +66,12 @@ class CameraMotionTrack {
     required this.samples,
     required this.frameTimes,
     required this.frameExposures,
-    this.frameOrientations,
     this.cameraModel,
     this.firmware,
     this.rollingShutterMs,
     this.truncated = false,
     this.droppedSamples = 0,
+    this.frameOrientations,
   }) : assert(frameExposures.length == 0 || frameExposures.length == frameTimes.length),
        assert(frameOrientations == null || frameOrientations.length == 4 * frameTimes.length);
 
@@ -78,23 +79,22 @@ class CameraMotionTrack {
 
   final CameraMotionTimeOrigin timeOrigin;
 
-  /// The samples of the gyroscope and the accelerometer; empty for a camera that gives its orientation instead
-  /// ([frameOrientations])
+  /// The samples of the gyroscope and the accelerometer; empty when the file gives the orientation per frame instead
   final CameraMotionSamples samples;
 
   /// Time of each frame of the video the file lists, frame 0 first, in seconds from the first frame (so 0 for it when
   /// [timeOrigin] is [CameraMotionTimeOrigin.firstFrame]); empty when the file lists none
   final Float64List frameTimes;
 
-  /// Exposure time of each frame, in seconds; empty when the file does not give it
+  /// Exposure time of each frame, in seconds; empty when the file does not say
   final Float32List frameExposures;
 
-  /// Orientation of the camera at each frame of [frameTimes], as the camera fused it: four values a frame, the unit
-  /// quaternion w, x, y, z of the rotation from the body frame (that of [CameraMotionSamples]) to a world frame fixed in
-  /// space, so a direction v of the body at that frame is R(q) v in the world. Consecutive quaternions are on the same
-  /// side (their dot product is not negative). Null when the camera gives no orientation (the gyroscope samples are
-  /// then to be integrated). For [CameraMotionSource.djiAttitude] the world has z down along gravity, once the
-  /// camera's fusion has settled; each orientation is the one the picture of its frame was taken at (see dji_motion.dart)
+  /// The orientation the camera fused for each entry of [frameTimes], four values a frame (w, x, y, z): the unit
+  /// quaternion q from the world to the camera, so that a vector of the world reads q v q^-1 in the axes of the camera,
+  /// and q^-1 turns the camera's vectors into the world. The axes of the camera are those of [source]: for
+  /// [CameraMotionSource.djiAttitude] the body frame of [CameraMotionSamples], and a world whose z is down along gravity
+  /// once the fusion of the camera has settled (see dji_motion.dart). Consecutive quaternions are on the same side
+  /// (their dot product is not negative). Null when the file only has raw samples.
   final Float32List? frameOrientations;
 
   /// Name of the camera, "Insta360 X4"
@@ -124,7 +124,8 @@ class CameraMotionTrack {
   @override
   String toString() =>
       'CameraMotionTrack(${source.name}, $cameraModel $firmware, origin ${timeOrigin.name}, $samples, '
-      'rate ${sampleRate?.toStringAsFixed(1)} Hz, ${frameTimes.length} frames'
-      '${frameOrientations == null ? '' : ' with orientations'}, rolling shutter $rollingShutterMs ms, '
+      'rate ${sampleRate?.toStringAsFixed(1)} Hz, ${frameTimes.length} frames, '
+      'orientations: ${frameOrientations != null}, '
+      'rolling shutter $rollingShutterMs ms, '
       'truncated: $truncated, dropped: $droppedSamples)';
 }

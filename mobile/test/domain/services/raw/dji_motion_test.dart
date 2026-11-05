@@ -73,9 +73,9 @@ double _angle(List<double> a, List<double> b) {
 }
 
 // The axis of the rotation that takes the body at frame [a] to the body at frame [b], in the body frame at [a], and
-// its angle in degrees: q_a* q_b
+// its angle in degrees: p_a p_b^-1, the orientations p being from the world to the body
 ({List<double> axis, double degrees}) _relative(CameraMotionTrack track, int a, int b) {
-  final r = _multiply(_conjugate(_orientation(track, a)), _orientation(track, b));
+  final r = _multiply(_orientation(track, a), _conjugate(_orientation(track, b)));
   final sign = r[0] < 0 ? -1.0 : 1.0;
   final s = math.sqrt(r[1] * r[1] + r[2] * r[2] + r[3] * r[3]);
   return (axis: [for (var k = 1; k < 4; k++) sign * r[k] / s], degrees: 2 * math.atan2(s, r[0].abs()) * 180 / math.pi);
@@ -91,9 +91,9 @@ List<(List<int>, List<int>)> _withSecondTrack(List<List<int>> attitude) => [
   for (final (i, record) in attitude.indexed) (record, djiSecondTrackRecord(index: 2 * i)),
 ];
 
-// The body orientation the reader gives for the camera quaternion [q]: q times the turn from the body to the camera
-// axes, (0.5, 0.5, -0.5, -0.5)
-List<double> _body(List<double> q) => _multiply(q, const [0.5, 0.5, -0.5, -0.5]);
+// The orientation the reader gives for the camera quaternion [q], from the world to the body: the inverse of q times
+// the turn from the body to the camera axes, (0.5, 0.5, -0.5, -0.5)
+List<double> _body(List<double> q) => _conjugate(_multiply(q, const [0.5, 0.5, -0.5, -0.5]));
 
 Matcher _sameOrientation(List<double> expected, [double degrees = 1e-4]) => predicate<List<double>>(
   (q) => _angle(q, expected) <= degrees,

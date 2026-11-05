@@ -11,17 +11,19 @@
 // - 4-1-5: the frame rate, a float.
 //
 // The quaternions take the axes of the camera (x forward along the front lens, y to the right, z down) to a world
-// frame whose z is down along gravity. The reader turns them into the body frame of the app (dual_fisheye_math.dart:
-// x to the right, y down, z along the optical axis of lens 0, the rear lens of the Osmo 360): a body direction v is
-// q (q_c v q_c*) q* in the world, q_c = (0.5, 0.5, -0.5, -0.5).
+// frame whose z is down along gravity. The reader gives them in the body frame of the app (dual_fisheye_math.dart:
+// x to the right, y down, z along the optical axis of lens 0, the rear lens of the Osmo 360), from the world to the
+// body as the motion track has them: p = (q q_c)^-1 = q_c^-1 q^-1, q_c = (0.5, 0.5, -0.5, -0.5) the turn from the
+// body to the axes of the camera, so a body direction v is q q_c v q_c^-1 q^-1 in the world.
 //
 // Measured on a real Osmo 360 video (firmware 10.00.05.06, 585 frames at 25 frames a second, a motorbike ride) against
 // the rotation of the picture itself, from frame to frame, in both lenses: the axes above within 2 to 4 degrees, and
-// the picture fits the attitude 8 to 9 ms after the time stamp of its frame (0.28 degree a frame of residual on the
-// front lens for 0.82 degree of mean motion). The quaternion per frame (2-9), 19 ms after the time stamp, leaves 1.08
-// degree a frame: more than the motion itself, the engine shakes the camera that fast. So the orientation of a frame is
-// the attitude at its time stamp + [djiAttitudeDelayUs], interpolated in the run of its record; 2-9 is only taken
-// without the times, and the middle of the run without 2-9.
+// the picture fits the attitude 8 to 9 ms after the time stamp of its frame. There the residual is 0.27 degree a frame
+// on the front lens (0.44 on the rear one, which sees the rider), against 1.01 degree of motion of the picture. The
+// quaternion per frame (2-9), 19 ms after the time stamp, leaves 1.08 degree: worse than no correction at all, the
+// engine shakes the camera that fast. So the orientation of a frame is the attitude at its time stamp +
+// [djiAttitudeDelayUs], interpolated in the run of its record; 2-9 is only taken without the times, and the middle of
+// the run without 2-9.
 //
 // The fusion of the camera leans with the motion: on the sample, the front lens is level in the picture all along,
 // but the attitude puts it 20 degrees up at the start, 8 degrees after 2 seconds, within 4 degrees after 4 seconds
@@ -70,7 +72,7 @@ const _twoTo32 = 0x100000000;
 const _bodyToCamera = [0.5, 0.5, -0.5, -0.5];
 
 /// Reads the attitude of the DJI Osmo 360 video of [fileSize] bytes that [read] reads: an orientation for each frame of
-/// the video in the body frame, and the time of each frame (time 0 at the first one), from the per frame records of the
+/// the video, from the world to the body frame ([CameraMotionTrack.frameOrientations]), and the time of each frame (time 0 at the first one), from the per frame records of the
 /// camd box, [chunkLength] bytes at a time, at most [maxLength] bytes of them ([CameraMotionTrack.truncated] tells when
 /// there are more). The orientation of a frame is the attitude [attitudeDelayUs] microseconds after its time stamp.
 /// Null for a file without a camd box or without attitude in it. A record whose frame does not come after the one
@@ -407,8 +409,9 @@ class _AttitudeCollector {
     _frameIndex = index;
     _previous = record;
     _times.add(index.toDouble());
-    // The body frame: q times the rotation from the body to the axes of the camera
-    var body = _multiply(q, _bodyToCamera);
+    // From the world to the body: the inverse of q times the turn from the body to the axes of the camera
+    final bodyToWorld = _multiply(q, _bodyToCamera);
+    var body = [bodyToWorld[0], -bodyToWorld[1], -bodyToWorld[2], -bodyToWorld[3]];
     final count = _orientations.length;
     if (count >= 4) {
       final dot =
