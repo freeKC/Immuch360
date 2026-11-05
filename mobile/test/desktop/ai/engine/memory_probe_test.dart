@@ -96,7 +96,8 @@ void main() {
 
     test('each kind needs its own memory: the panorama most, the scene 2 GiB (M2), then the 3D photo', () {
       expect(jobMemoryNeedOf(ImmersiveKind.volumetricScene), 2 * gib);
-      expect(jobMemoryNeedOf(ImmersiveKind.panorama360), greaterThanOrEqualTo(6 * gib));
+      // sd-cli took 6.1 to 7.9 GB of the computer's memory when it cut its graph (measure of 5 November 2026)
+      expect(jobMemoryNeedOf(ImmersiveKind.panorama360), 8 * gib);
       expect(jobMemoryNeedOf(ImmersiveKind.stereoPanorama360), inInclusiveRange(gib ~/ 2, gib));
       expect(
         jobMemoryNeedOf(ImmersiveKind.stereoPhoto),
@@ -112,7 +113,7 @@ void main() {
 
       expect(fitsBeside(scene, const MemoryFacts(physical: 16 * gib, available: 3 * gib)), isTrue);
       expect(fitsBeside(scene, const MemoryFacts(physical: 16 * gib, available: 3 * gib - 1)), isFalse);
-      // A panorama beside a scene asks for its 6 GiB and more
+      // A panorama beside a scene asks for its 8 GiB and more
       expect(
         fitsBeside(
           jobMemoryNeedOf(ImmersiveKind.panorama360),
@@ -159,13 +160,13 @@ void main() {
         ),
         isTrue,
       );
-      // A panorama beside a scene still reading its photo
+      // A panorama beside a scene still reading its photo: its 8 GiB, the reserve, and what the scene may still take
       final panorama = jobMemoryNeedOf(ImmersiveKind.panorama360);
-      const eightFree = MemoryFacts(physical: 16 * gib, available: 8 * gib);
+      const nineFree = MemoryFacts(physical: 16 * gib, available: 9 * gib);
       expect(
         fitsBeside(
           panorama,
-          eightFree,
+          nineFree,
           besideNeeds: jobMemoryStillNeeded(ImmersiveKind.volumetricScene, ImmersiveStage.reading),
         ),
         isFalse,
@@ -173,7 +174,7 @@ void main() {
       expect(
         fitsBeside(
           panorama,
-          eightFree,
+          nineFree,
           besideNeeds: jobMemoryStillNeeded(ImmersiveKind.volumetricScene, ImmersiveStage.geometry),
         ),
         isTrue,

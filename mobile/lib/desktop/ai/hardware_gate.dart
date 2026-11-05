@@ -20,12 +20,14 @@
 // The 360° panorama runs on the graphics card (lot C6, design 4.7, point 2), and only there does the gate look at the
 // cards, through the probe of gpu_probe.dart (a child process; its answer kept 10 minutes, one without a card 30
 // seconds): Windows x64 or Linux x64 ("Not yet on Mac"); 14 GiB of memory seen, a computer sold with 16 GB seeing 15.6
-// (stable-diffusion.cpp holds up to 6 GiB of it, M3); a card of Vulkan 1.2 with 16 bit storage buffers, the dedicated
-// one with the most memory, an integrated one only with "Try on integrated graphics (untested)", and the loader of
-// Vulkan 1.2 too ("No graphics card with Vulkan found", "Integrated graphics share the computer's memory: too slow for
-// panoramas", "The graphics card did not answer"); the memory of that card at least what the transformer it takes asks
-// for ("The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB"). The card goes with the result, for the
-// line of the settings and for the index stable-diffusion.cpp must be given (ggmlVulkanIndexOf).
+// (stable-diffusion.cpp holds up to 6 GiB of it in one segment, M3, and up to 8 GiB when it cuts its graph into
+// segments on a card short of memory, measure of 5 November 2026: memory_probe.dart, panoramaJobMemory); a card of
+// Vulkan 1.2 with 16 bit storage buffers, the dedicated one with the most memory, an integrated one only with "Try on
+// integrated graphics (untested)", and the loader of Vulkan 1.2 too ("No graphics card with Vulkan found", "Integrated
+// graphics share the computer's memory: too slow for panoramas", "The graphics card did not answer"); the memory of
+// that card at least what the transformer it takes asks for ("The graphics card has 6.0 GiB of memory, 360° panoramas
+// need 7.5 GiB"). The card goes with the result, for the line of the settings and for the index stable-diffusion.cpp
+// must be given (ggmlVulkanIndexOf).
 //
 // The splat scenes (plan 2026-11-01, sections 2.4 and 4.1, lot SP6) are the first feature of archives alone, COLMAP
 // and Brush: no ONNX Runtime is asked for nor loaded, the rule "a runtime and a model" holding only for a feature that

@@ -534,8 +534,9 @@ void main() {
           ConversionKind.sceneFromPhoto: ConversionEngine(engine: engine, settingsKey: (_, _) => null),
         };
         container = containerWith();
-        // A panorama beside a scene asks for 6.5 GiB and the reserve: enough beside the scene once it holds its 2 GiB
-        memory.available = 8 * _gib;
+        // A panorama beside a scene asks for 8 GiB (lot 13c: sd-cli in segments) and the reserve: enough beside the
+        // scene once it holds its 2 GiB
+        memory.available = 9 * _gib;
 
         final decoding = queue().add([photo('a.jpg')], kind: ConversionKind.sceneFromPhoto).single;
         await engine.told.future;
