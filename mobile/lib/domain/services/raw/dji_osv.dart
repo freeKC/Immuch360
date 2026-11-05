@@ -1,7 +1,8 @@
 // The calibration of the DJI Osmo 360 in its raw .osv videos. The file is an MP4 (ftyp, free, mdat, moov: two square
 // HEVC video tracks, one per lens, the sound, and the djmd and dbgi metadata tracks) followed by a top level camd box,
 // itself a complete MP4 whose mdat is a flat run of length delimited protobuf fields: 1 a header, 2 a config, 3 a
-// record per frame, the first header and config being those of the first djmd track. The config holds the calibration
+// record per frame, the first header and config being those of the first djmd track. The attitude in the per frame
+// records is read by dji_motion.dart, through the same walk to the mdat of camd (findDjiCamdMdat). The config holds the calibration
 // of the lenses in its field 6, one message per slot (2-6-n): slots 1 and 2 are the lenses of video streams 0 (rear)
 // and 1 (front), 3 to 10 are zero filled, 11 to 24 hold other recording modes. Each slot is a DewarpParams of the
 // Kannala-Brandt fisheye model with five radial terms, the pose of the lens in yaw, pitch and roll, and its rotation as
@@ -78,6 +79,42 @@ class DjiOsvCalibration {
 /// then at most 256 KiB of its mdat; null when the file has no camd box or no usable calibration in it. Errors of
 /// [read] are not caught.
 Future<DjiOsvCalibration?> readDjiOsvCalibration(ByteRangeReader read) async {
+  final mdat = await findDjiCamdMdat(read);
+  if (mdat == null) {
+    return null;
+  }
+  final length = math.min(mdat.length ?? djiMaxCamdPayloadLength, djiMaxCamdPayloadLength);
+  final head = mdat.head;
+  final payload = head.length >= length ? Uint8List.sublistView(head, 0, length) : await read(mdat.start, length);
+  if (payload.isEmpty) {
+    _log.info('Osmo 360 file: its camd box has no media data');
+    return null;
+  }
+  return parseDjiCamdRecords(payload);
+}
+
+/// Where the payload of the mdat box of the camd box of an Osmo 360 file lies
+class DjiCamdMdat {
+  const DjiCamdMdat({required this.start, required this.length, required this.head});
+
+  /// Offset of the payload in the file
+  final int start;
+
+  /// Length of the payload; null when it runs to the end of a file whose size is not known
+  final int? length;
+
+  /// The first bytes of the payload, those the walk read already (none, or up to a few KiB)
+  final Uint8List head;
+
+  @override
+  String toString() => 'DjiCamdMdat(start: $start, length: $length)';
+}
+
+/// Finds the mdat box of the camd box of the Osmo 360 file that [read] reads: the top level boxes, then the child
+/// boxes of camd from a first read of 4 KiB. [fileSize] bounds a camd box, or an mdat box, that runs to the end of the
+/// file. Null without a camd box or without an mdat in it, or when the boxes are damaged. Errors of [read] are not
+/// caught.
+Future<DjiCamdMdat?> findDjiCamdMdat(ByteRangeReader read, {int? fileSize}) async {
   final boxes = await listTopLevelBoxes(read);
   final camd = boxes.lastWhereOrNull((box) => box.type == 'camd');
   if (camd == null) {
@@ -85,12 +122,11 @@ Future<DjiOsvCalibration?> readDjiOsvCalibration(ByteRangeReader read) async {
   }
   final contentStart = camd.offset + camd.headerLength;
   final size = camd.size;
-  final payload = await _mdatPayload(read, contentStart, size == null ? null : camd.offset + size);
-  if (payload == null || payload.isEmpty) {
+  final mdat = await _mdatPlace(read, contentStart, size == null ? fileSize : camd.offset + size);
+  if (mdat == null) {
     _log.info('Osmo 360 file: its camd box has no media data');
-    return null;
   }
-  return parseDjiCamdRecords(payload);
+  return mdat;
 }
 
 /// The calibration in [records], the start of the mdat of a camd box (a run of protobuf fields: 1 header, 2 config, 3
@@ -176,9 +212,9 @@ DualFisheyeCalibration nominalOsmo360() {
   );
 }
 
-// The payload of the mdat box among the children of the camd box whose content runs from [start] to [end] (to the end
-// of the file when null), at most [djiMaxCamdPayloadLength] bytes of it
-Future<Uint8List?> _mdatPayload(ByteRangeReader read, int start, int? end) async {
+// The place of the payload of the mdat box among the children of the camd box whose content runs from [start] to
+// [end] (to the end of the file when null)
+Future<DjiCamdMdat?> _mdatPlace(ByteRangeReader read, int start, int? end) async {
   final head = await read(start, end == null ? _camdHeadLength : math.min(_camdHeadLength, end - start));
   var offset = 0;
   for (var count = 0; count < _maxCamdChildren; count++) {
@@ -200,24 +236,28 @@ Future<Uint8List?> _mdatPayload(ByteRangeReader read, int start, int? end) async
       headerLength = 16;
     }
     final available = end == null ? null : end - start - offset;
-    if (size == 0) {
+    if (size == 0 && available != null) {
       // Runs to the end of camd
-      if (available == null) {
-        size = djiMaxCamdPayloadLength + headerLength;
-      } else {
-        size = available;
-      }
+      size = available;
     }
-    if (size < headerLength || (available != null && size > available)) {
+    if ((size != 0 && size < headerLength) || (available != null && size > available)) {
       return null;
     }
     if (type == 'mdat') {
       final payloadStart = offset + headerLength;
-      final length = math.min(size - headerLength, djiMaxCamdPayloadLength);
-      if (payloadStart + length <= head.length) {
-        return Uint8List.sublistView(head, payloadStart, payloadStart + length);
-      }
-      return read(start + payloadStart, length);
+      final length = size == 0 ? null : size - headerLength;
+      final inHead = payloadStart >= head.length
+          ? Uint8List(0)
+          : Uint8List.sublistView(
+              head,
+              payloadStart,
+              length == null ? head.length : math.min(head.length, payloadStart + length),
+            );
+      return DjiCamdMdat(start: start + payloadStart, length: length, head: inHead);
+    }
+    if (size == 0) {
+      // A box before mdat that runs to an unknown end
+      return null;
     }
     offset += size;
   }

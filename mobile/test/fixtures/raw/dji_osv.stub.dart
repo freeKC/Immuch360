@@ -195,6 +195,74 @@ List<int> djiCamdRecords({List<int>? header, List<int>? config}) => [
   ...pbBytesField(3, List.filled(124, 7)),
 ];
 
+/// A quaternion message: w (1), x (2), y (3), z (4) as floats
+List<int> djiQuaternion(List<double> q) => [for (var i = 0; i < 4; i++) ...pbFloatField(i + 1, q[i])];
+
+/// A per frame record of the attitude track, laid out as the camera writes it: 1 the frame (1 its index, 2 its time
+/// stamp in microseconds), 2 a few values with the quaternion of the frame in 9, 3 the run of attitude samples (3-2-1:
+/// 1 the low 32 bits of the time stamp of its first sample, 2 a counter, 3 a quaternion per sample, 4 a float), 4 the
+/// frame rate (4-1-5). A null argument leaves its field out.
+List<int> djiAttitudeRecord({
+  int? frameStampUs,
+  int index = 0,
+  int? runStampUs,
+  List<List<double>> run = const [],
+  List<double>? frameQuaternion,
+  double? frameRate = 25,
+}) => [
+  ...pbBytesField(1, [
+    if (index != 0) ...pbVarintField(1, index),
+    if (frameStampUs != null) ...pbVarintField(2, frameStampUs),
+  ]),
+  ...pbBytesField(2, [
+    ...pbBytesField(3, pbFloatField(1, 564)),
+    ...pbBytesField(9, frameQuaternion == null ? [] : djiQuaternion(frameQuaternion)),
+    ...pbBytesField(10, [...pbFloatField(2, 4.234), ...pbFloatField(3, -0.403)]),
+  ]),
+  ...pbBytesField(3, [
+    ...pbBytesField(
+      2,
+      pbBytesField(1, [
+        if (runStampUs != null) ...pbVarintField(1, runStampUs),
+        ...pbVarintField(2, 16760 + index),
+        for (final q in run) ...pbBytesField(3, djiQuaternion(q)),
+        ...pbFloatField(4, 25.416),
+      ]),
+    ),
+    ...pbBytesField(3, pbVarintField(1, 4)),
+  ]),
+  ...pbBytesField(4, [
+    ...pbBytesField(1, [
+      ...pbVarintField(1, 1),
+      ...pbStringField(4, 'Osmo OQ001'),
+      if (frameRate != null) ...pbFloatField(5, frameRate),
+    ]),
+  ]),
+];
+
+/// A per frame record of the second track: the same fields, without attitude
+List<int> djiSecondTrackRecord({int index = 0}) => [
+  ...pbBytesField(1, [if (index != 0) ...pbVarintField(1, index)]),
+  ...pbBytesField(2, pbBytesField(9, [])),
+  ...pbBytesField(3, [...pbBytesField(2, []), ...pbBytesField(3, [])]),
+];
+
+/// The records of the mdat of a camd box with the per frame records [frames] (the attitude record and the second
+/// track record of each frame, their payloads), laid out as the sample: the header and config of the first track, the
+/// first attitude record, the header and the config of the second track, then the records in order
+List<int> djiMotionCamdRecords(List<(List<int>, List<int>)> frames, {List<int>? header}) => [
+  ...pbBytesField(1, header ?? djiHeader()),
+  ...pbBytesField(2, djiConfig()),
+  for (final (i, (attitude, second)) in frames.indexed) ...[
+    ...pbBytesField(3, attitude),
+    if (i == 0) ...[
+      ...pbBytesField(1, pbBytesField(1, pbStringField(1, 'dvtm_oq101.proto'))),
+      ...pbBytesField(2, List.filled(36, 0)),
+    ],
+    ...pbBytesField(3, second),
+  ],
+];
+
 /// A camd box: a small MP4 of its own (ftyp, free, an mdat of [records], an empty moov)
 List<int> djiCamdBox(List<int> records) => mp4Box('camd', [
   ...mp4Box('ftyp', [...ascii.encode('isom'), ...mp4Zeros(4), ...ascii.encode('isomiso2')]),

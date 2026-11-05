@@ -2,7 +2,7 @@
 // its gyroscope and accelerometer, and the time of each frame, all on the clock of the video (time 0 at its first
 // frame), and the orientation the camera itself fused for each frame when the file has it. See
 // lib/domain/services/raw/insta360_motion.dart for the Insta360 trailer, lib/domain/services/raw/gopro_motion.dart for
-// the GPMF track of a GoPro.
+// the GPMF track of a GoPro, lib/domain/services/raw/dji_motion.dart for the attitude of the DJI Osmo 360.
 
 import 'dart:typed_data';
 
@@ -14,6 +14,10 @@ enum CameraMotionSource {
   /// The GPMF track of a GoPro (MAX, MAX 2, HERO8 and later): one orientation (CORI) and one gravity vector (GRAV) per
   /// frame, in the axes of the GPMF camera frame, not yet the body frame of dual_fisheye_math.dart; no raw samples
   goProGpmf,
+
+  /// The attitude in the per frame records of the camd box of a DJI Osmo 360 .osv file: one orientation per frame,
+  /// already in the body frame of dual_fisheye_math.dart, its world levelled (z down); no raw samples
+  djiAttitude,
 }
 
 /// What time 0 of a motion track is
@@ -93,9 +97,14 @@ class CameraMotionTrack {
 
   /// The orientation the camera fused for each entry of [frameTimes], four values a frame (w, x, y, z): the unit
   /// quaternion q from the world to the camera, so that a vector of the world reads q v q^-1 in the axes of the camera,
-  /// and q^-1 turns the camera's vectors into the world. The world is the camera's own reference, not levelled (the
-  /// GoPro's frame at the start of the capture): [frameGravity] levels it. The axes of the camera are those of
-  /// [source]. Null when the file only has raw samples; NaN for a frame the file says nothing of.
+  /// The orientation the camera fused for each entry of [frameTimes], four values a frame (w, x, y, z): the unit
+  /// quaternion q from the world to the camera, so that a vector of the world reads q v q^-1 in the axes of the camera,
+  /// and q^-1 turns the camera's vectors into the world. The axes of the camera are those of [source]. For
+  /// [CameraMotionSource.goProGpmf] the world is the camera's own reference, not levelled (the GoPro's frame at the
+  /// start of the capture): [frameGravity] levels it. For [CameraMotionSource.djiAttitude] the axes are the body frame
+  /// of [CameraMotionSamples], and the world's z is down along gravity once the fusion of the camera has settled (see
+  /// dji_motion.dart); consecutive quaternions are on the same side (their dot product is not negative). Null when the
+  /// file only has raw samples; NaN for a frame the file says nothing of.
   final Float32List? frameOrientations;
 
   /// The gravity vector the camera wrote for each entry of [frameTimes], three values a frame, unit, in the axes of the
