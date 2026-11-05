@@ -1063,10 +1063,10 @@ abstract class SyncEvents {
 
     test('against release 40 every kind has the one-time threshold of build 41, the release after it keeps 1 %', () {
       // Build 41 carries every lot of 3 November 2026 (the splat viewer, the splat maker, the AV2 videos, the 8K fix,
-      // the deep links): the sum of their growth against release 40 was +1.37 % (Quest) to +2.79 % (armeabi-v7a), the
-      // splat viewer's armeabi-v7a +1.540 % alone. The entry is keyed by the release compared with (second review of
-      // the splat viewer, 3 November 2026: keyed v3.3.0-rc.0-41, it never applied to build 41). The sizes come from
-      // the file, --release names the release they stand for
+      // the deep links): the packages of the integration head with the eight lots grew by +2.033 % (Quest) to +4.017 %
+      // (armeabi-v7a) against release 40 (integration-41 at 0836d0792, run 41923695671). The entry is keyed by the
+      // release compared with (second review of the splat viewer, 3 November 2026: keyed v3.3.0-rc.0-41, it never
+      // applied to build 41). The sizes come from the file, --release names the release they stand for
       const against40 = ['--release', 'v3.3.0-rc.0-40'];
       final run = check({
         'app-quest-release.apk': 101800,
@@ -1075,18 +1075,18 @@ abstract class SyncEvents {
         'Immuch360-v3.3.0-rc.0-41-release.apk': 204400,
       }, options: against40);
       expect(run.exitCode, 0, reason: '$run');
-      expect(run.output, contains('quest: one-time threshold of 1.9 % against v3.3.0-rc.0-40'));
-      expect(run.output, contains('armeabi-v7a: one-time threshold of 3.3 % against v3.3.0-rc.0-40'));
-      expect(run.output, contains('x86_64: one-time threshold of 2.9 % against v3.3.0-rc.0-40'));
-      expect(run.output, contains('(+1.800 %), ok (threshold of the quest kind: 1.9 %)'));
-      expect(run.output, contains('(+1.900 %), ok (threshold of the arm64-v8a kind: 2 %)'));
-      expect(run.output, contains('(+2.867 %), ok (threshold of the aab kind: 3 %)'));
-      expect(run.output, contains('(+2.200 %), ok (threshold of the universal kind: 2.3 %)'));
+      expect(run.output, contains('quest: one-time threshold of 2.6 % against v3.3.0-rc.0-40'));
+      expect(run.output, contains('armeabi-v7a: one-time threshold of 4.6 % against v3.3.0-rc.0-40'));
+      expect(run.output, contains('x86_64: one-time threshold of 4 % against v3.3.0-rc.0-40'));
+      expect(run.output, contains('(+1.800 %), ok (threshold of the quest kind: 2.6 %)'));
+      expect(run.output, contains('(+1.900 %), ok (threshold of the arm64-v8a kind: 2.7 %)'));
+      expect(run.output, contains('(+2.867 %), ok (threshold of the aab kind: 4.2 %)'));
+      expect(run.output, contains('(+2.200 %), ok (threshold of the universal kind: 3.3 %)'));
 
-      final over = check({'app-quest-release.apk': 102000, 'app-phone-release.aab': 154600}, options: against40);
+      final over = check({'app-quest-release.apk': 102700, 'app-phone-release.aab': 156400}, options: against40);
       expect(over.exitCode, 1, reason: '$over');
-      expect(over.output, contains('(+2.000 %), more than 1.9 % (threshold of the quest kind: 1.9 %)'));
-      expect(over.output, contains('(+3.067 %), more than 3 % (threshold of the aab kind: 3 %)'));
+      expect(over.output, contains('(+2.700 %), more than 2.6 % (threshold of the quest kind: 2.6 %)'));
+      expect(over.output, contains('(+4.267 %), more than 4.2 % (threshold of the aab kind: 4.2 %)'));
 
       // Build 42 compares with build 41 and the ordinary threshold again
       final next = check({'app-quest-release.apk': 101800}, options: ['--release', 'v3.3.0-rc.0-41']);
