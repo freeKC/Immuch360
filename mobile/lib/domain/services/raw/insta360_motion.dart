@@ -57,6 +57,16 @@ const _firstFrameToleranceUs = 1000;
 
 const _twoTo32 = 4294967296;
 
+/// Receives the samples of a motion track chunk after chunk, in time order, instead of a track that holds them all: what
+/// the stabilisation of a long recording needs (an hour of samples is about 115 MB once decoded)
+abstract interface class CameraMotionSampleSink {
+  /// Called once, before the first chunk, with the track whose samples are still to come (none in it)
+  void begin(CameraMotionTrack track);
+
+  /// The next samples, their times rising past those of the chunk before; the reader does not use these arrays again
+  void add(CameraMotionSamples chunk);
+}
+
 /// Reads the motion track of the Insta360 video of [fileSize] bytes that [read] reads: the samples of the gyroscope and
 /// the accelerometer in the body frame, and the time of each frame of the video, on the clock of the video (time 0 at
 /// its first frame, field 24). Null for a file without a version 3 trailer or without IMU samples, or when the
@@ -67,11 +77,15 @@ const _twoTo32 = 4294967296;
 /// ([CameraMotionTrack.truncated] tells when there is more). Without field 24 time 0 is the first frame entry, without
 /// frame entries the first sample (see [CameraMotionTrack.timeOrigin]). A sample whose time does not rise past the one
 /// before, or with a value that is not a finite number, is left out and counted. Errors of [read] are not caught.
+///
+/// With a [sink], the samples of each chunk go to it as they are decoded and the track returned holds none: memory
+/// stays one chunk of samples, whatever the length of the recording.
 Future<CameraMotionTrack?> readInsta360Motion(
   ByteRangeReader read,
   int fileSize, {
   int maxImuLength = insta360MaxMotionImuLength,
   int chunkLength = insta360MotionChunkLength,
+  CameraMotionSampleSink? sink,
 }) async {
   final records = await readInsta360TrailerRecords(read, fileSize, maxImuLength: 0);
   final imu = records?.imu;
@@ -92,36 +106,20 @@ Future<CameraMotionTrack?> readInsta360Motion(
 
   final entries = await _frameEntries(read, records.frames, indexed: trailer.indexed);
   final firstFrame = trailer.firstFrameTimestamp;
+  final step = math.max(1, math.max(1, chunkLength) ~/ sampleLength) * sampleLength;
   final decoder = _SampleDecoder(
     raw: trailer.isRawGyro,
     accelerometerRange: trailer.accelerometerRange ?? _defaultAccelerometerRange,
     gyroscopeRange: trailer.gyroscopeRange ?? _defaultGyroscopeRange,
-    capacity: count,
+    capacity: sink == null ? count : math.min(count, step ~/ sampleLength),
   );
   if (trailer.isRawGyro && (trailer.accelerometerRange == null || trailer.gyroscopeRange == null)) {
     _log.warning('Insta360 motion: no IMU ranges in the trailer, the ones of the X3 to X5 are taken');
   }
 
-  final step = math.max(1, math.max(1, chunkLength) ~/ sampleLength) * sampleLength;
-  final end = imu.start + count * sampleLength;
-  for (var offset = imu.start; offset < end; offset += step) {
-    final length = math.min(step, end - offset);
-    final bytes = await read(offset, length);
-    decoder.add(
-      bytes.length < length ? Uint8List.sublistView(bytes, 0, bytes.length - bytes.length % sampleLength) : bytes,
-    );
-    if (bytes.length < length) {
-      _log.warning('Insta360 motion: the IMU record ends early, ${decoder.read} of $count samples read');
-      break;
-    }
-  }
-  if (decoder.kept == 0) {
-    return null;
-  }
-
-  // Time 0: the first frame of the video, else the first frame entry, else the first sample
+  // Time 0: the first frame of the video, else the first frame entry, else the first sample (known once decoded)
   final CameraMotionTimeOrigin timeOrigin;
-  final double originUs;
+  double? originUs;
   var frames = entries;
   if (firstFrame != null) {
     timeOrigin = CameraMotionTimeOrigin.firstFrame;
@@ -136,26 +134,58 @@ Future<CameraMotionTrack?> readInsta360Motion(
     originUs = entries.first.timeUs.toDouble();
   } else {
     timeOrigin = CameraMotionTimeOrigin.firstSample;
-    originUs = decoder.firstTimeUs;
   }
 
-  final frameTimes = Float64List(frames.length);
-  final frameExposures = Float32List(frames.length);
-  for (var i = 0; i < frames.length; i++) {
-    frameTimes[i] = (frames[i].timeUs - originUs) / 1e6;
-    frameExposures[i] = frames[i].exposure;
+  CameraMotionTrack trackOf(CameraMotionSamples samples, double originUs, {required bool truncated}) {
+    final frameTimes = Float64List(frames.length);
+    final frameExposures = Float32List(frames.length);
+    for (var i = 0; i < frames.length; i++) {
+      frameTimes[i] = (frames[i].timeUs - originUs) / 1e6;
+      frameExposures[i] = frames[i].exposure;
+    }
+    return CameraMotionTrack(
+      source: CameraMotionSource.insta360Imu,
+      timeOrigin: timeOrigin,
+      samples: samples,
+      frameTimes: frameTimes,
+      frameExposures: frameExposures,
+      cameraModel: trailer.cameraModel,
+      firmware: trailer.firmware,
+      rollingShutterMs: trailer.rollingShutterMs,
+      truncated: truncated,
+      droppedSamples: decoder.dropped,
+    );
   }
-  final track = CameraMotionTrack(
-    source: CameraMotionSource.insta360Imu,
-    timeOrigin: timeOrigin,
-    samples: decoder.samples(originUs),
-    frameTimes: frameTimes,
-    frameExposures: frameExposures,
-    cameraModel: trailer.cameraModel,
-    firmware: trailer.firmware,
-    rollingShutterMs: trailer.rollingShutterMs,
+
+  final end = imu.start + count * sampleLength;
+  var begun = false;
+  for (var offset = imu.start; offset < end; offset += step) {
+    final length = math.min(step, end - offset);
+    final bytes = await read(offset, length);
+    decoder.add(
+      bytes.length < length ? Uint8List.sublistView(bytes, 0, bytes.length - bytes.length % sampleLength) : bytes,
+    );
+    if (sink != null && decoder.kept > 0) {
+      final origin = originUs ??= decoder.firstTimeUs;
+      if (!begun) {
+        begun = true;
+        sink.begin(trackOf(CameraMotionSamples.empty(), origin, truncated: false));
+      }
+      sink.add(decoder.take(origin));
+    }
+    if (bytes.length < length) {
+      _log.warning('Insta360 motion: the IMU record ends early, ${decoder.read} of $count samples read');
+      break;
+    }
+  }
+  if (decoder.total == 0) {
+    return null;
+  }
+  originUs ??= decoder.firstTimeUs;
+  final track = trackOf(
+    sink == null ? decoder.samples(originUs) : CameraMotionSamples.empty(),
+    originUs,
     truncated: available > count || decoder.read < count,
-    droppedSamples: decoder.dropped,
   );
   _log.info('Insta360 motion: $track');
   return track;
@@ -223,22 +253,38 @@ class _SampleDecoder {
   final bool raw;
   final double _accelerometerScale;
   final double _gyroscopeScale;
-  final Float64List _timesUs;
-  final Float32List _rates;
-  final Float32List _accelerations;
+
+  Float64List _timesUs;
+  Float32List _rates;
+  Float32List _accelerations;
 
   /// Samples decoded, kept or not
   int read = 0;
 
-  /// Samples kept
+  /// Samples kept in the arrays, since the last [take]
   int kept = 0;
+
+  /// Samples kept in all
+  int total = 0;
 
   /// Samples left out
   int dropped = 0;
 
-  double get firstTimeUs => _timesUs[0];
+  /// Time of the first sample kept, of the last one
+  double firstTimeUs = 0;
+  double _lastTimeUs = double.negativeInfinity;
+
+  // Whether the arrays went out with a chunk
+  bool _taken = false;
 
   void add(Uint8List bytes) {
+    if (_taken) {
+      final capacity = _timesUs.length;
+      _timesUs = Float64List(capacity);
+      _rates = Float32List(3 * capacity);
+      _accelerations = Float32List(3 * capacity);
+      _taken = false;
+    }
     final data = ByteData.sublistView(bytes);
     final sampleLength = raw ? _rawSampleLength : _sampleLength;
     for (var offset = 0; offset + sampleLength <= bytes.length && kept < _timesUs.length; offset += sampleLength) {
@@ -271,11 +317,15 @@ class _SampleDecoder {
         gy = data.getFloat64(offset + 40, Endian.little);
         gz = data.getFloat64(offset + 48, Endian.little);
       }
-      if ((kept > 0 && timeUs <= _timesUs[kept - 1]) ||
+      if (timeUs <= _lastTimeUs ||
           !(ax.isFinite && ay.isFinite && az.isFinite && gx.isFinite && gy.isFinite && gz.isFinite)) {
         dropped++;
         continue;
       }
+      if (total == 0) {
+        firstTimeUs = timeUs;
+      }
+      _lastTimeUs = timeUs;
       _timesUs[kept] = timeUs;
       // Body x = IMU x, body y = IMU z, body z = -IMU y
       final i = 3 * kept;
@@ -286,7 +336,17 @@ class _SampleDecoder {
       _accelerations[i + 1] = az;
       _accelerations[i + 2] = -ay;
       kept++;
+      total++;
     }
+  }
+
+  /// The samples kept since the last call, their times in seconds from [originUs]; the arrays are the chunk's, new
+  /// ones take the next samples
+  CameraMotionSamples take(double originUs) {
+    final chunk = samples(originUs);
+    kept = 0;
+    _taken = true;
+    return chunk;
   }
 
   /// The samples kept, their times in seconds from [originUs]

@@ -97,6 +97,25 @@ List<double> _sums(Float32List values) {
   return sums;
 }
 
+/// Keeps what a reader gives it, chunk after chunk
+class _RecordingSink implements CameraMotionSampleSink {
+  final calls = <String>[];
+  final chunks = <CameraMotionSamples>[];
+  CameraMotionTrack? track;
+
+  @override
+  void begin(CameraMotionTrack track) {
+    calls.add('begin');
+    this.track = track;
+  }
+
+  @override
+  void add(CameraMotionSamples chunk) {
+    calls.add('add');
+    chunks.add(chunk);
+  }
+}
+
 void main() {
   group('readInsta360Motion on slices of real videos', () {
     final slices = {
@@ -256,6 +275,56 @@ void main() {
       // 50 samples, 7 a read
       expect(reads.where((read) => read.$2 == 140).length, 7);
       expect(reads.where((read) => read.$2 == 20).length, 1);
+    });
+
+    test('gives the samples to a sink chunk after chunk, the same as read whole, and keeps none itself', () async {
+      final file = _x3Video(
+        metadata: _videoMetadata(),
+        imu: [
+          ..._stillSamples(gyro: (5, -7, 9), count: 30),
+          // A sample whose time does not rise, left out in the middle of a chunk
+          ...rawImuSamplesAt([1029000], [(32768, 32768, 32768, 32768, 32768, 32768)]),
+          ..._stillSamples(gyro: (1, 2, 3), count: 20, start: 1030000),
+        ],
+        frames: _frames(),
+      );
+      final whole = await _motion(file);
+      final sink = _RecordingSink();
+
+      final streamed = await readInsta360Motion(_reader(file), file.length, chunkLength: 7 * 20, sink: sink);
+
+      expect(sink.calls.first, 'begin');
+      expect(sink.calls.where((call) => call == 'begin').length, 1);
+      // 51 samples, 7 a chunk
+      expect(sink.chunks.length, 8);
+      expect(sink.track!.samples.isEmpty, isTrue);
+      expect(sink.track!.frameTimes, whole!.frameTimes);
+      expect(sink.track!.timeOrigin, whole.timeOrigin);
+      expect(Float64List.fromList([for (final chunk in sink.chunks) ...chunk.times]), whole.samples.times);
+      expect(
+        Float32List.fromList([for (final chunk in sink.chunks) ...chunk.rotationRates]),
+        whole.samples.rotationRates,
+      );
+      expect(
+        Float32List.fromList([for (final chunk in sink.chunks) ...chunk.accelerations]),
+        whole.samples.accelerations,
+      );
+      expect(streamed!.samples.isEmpty, isTrue);
+      expect(streamed.droppedSamples, 1);
+      expect(streamed.truncated, isFalse);
+      expect(streamed.frameTimes, whole.frameTimes);
+    });
+
+    test('with a sink and neither field 24 nor frames, puts time 0 on the first sample kept', () async {
+      final sink = _RecordingSink();
+      final file = _x3Video(metadata: _videoMetadata(firstFrame: null), imu: _stillSamples(start: 7000, count: 12));
+
+      final streamed = await readInsta360Motion(_reader(file), file.length, chunkLength: 5 * 20, sink: sink);
+
+      expect(streamed!.timeOrigin, CameraMotionTimeOrigin.firstSample);
+      expect(sink.track!.timeOrigin, CameraMotionTimeOrigin.firstSample);
+      expect(sink.chunks.first.times.first, 0);
+      expect(sink.chunks.last.times.last, closeTo(0.011, 1e-12));
     });
 
     test('reads at most maxImuLength bytes of samples, from the first, and says the track is cut short', () async {
