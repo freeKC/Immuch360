@@ -34,6 +34,7 @@ class RawStabilizationRequest {
     required this.fileSize,
     this.downBody,
     this.frameDurationUs,
+    this.goProFace,
   });
 
   /// The request for the raw video of [plan], whose file holding the motion track is [fileSize] bytes long: the
@@ -47,6 +48,7 @@ class RawStabilizationRequest {
       fileSize: fileSize,
       downBody: plan.kind == RawMediaKind.insta360Video ? plan.calibration?.downBody : null,
       frameDurationUs: frameRate != null && frameRate.isFinite && frameRate > 0 ? 1e6 / frameRate : null,
+      goProFace: plan.kind == RawMediaKind.goProVideo ? plan.eac?.face : null,
     );
   }
 
@@ -64,35 +66,45 @@ class RawStabilizationRequest {
   /// Duration of a frame on the timeline of the video, in microseconds; null puts the frames at the times of the track
   final double? frameDurationUs;
 
+  /// Side of the EAC faces of a GoPro .360 (1344 on the MAX, 1920 on the MAX 2); null for the other cameras
+  final int? goProFace;
+
   @override
   String toString() =>
       'RawStabilizationRequest(${kind.name}, $name, $fileSize bytes, downBody: $downBody, '
-      'frameDurationUs: $frameDurationUs)';
+      'frameDurationUs: $frameDurationUs${goProFace == null ? '' : ', goProFace: $goProFace'})';
 }
 
 /// Builds the table of a request from the reads of its file
 typedef RawStabilizationBuilder =
     Future<StabilizationTable?> Function(RawStabilizationRequest request, ByteRangeReader read);
 
+/// Side of the EAC faces of the one GoPro whose GPMF axes were measured against its picture, the MAX
+/// ([goProViewToGpmf])
+const goProMeasuredFace = 1344;
+
 /// Reads the motion track of [request] with [read] and builds its table, in this isolate: the gyroscope of an
 /// Insta360 integrated (readInsta360Stabilization), the orientations of a GoPro (readGoProStabilization) or of a DJI
-/// (readDjiStabilization). Null when the file has no track.
-Future<StabilizationTable?> buildRawStabilization(RawStabilizationRequest request, ByteRangeReader read) =>
-    switch (request.kind) {
-      RawMediaKind.insta360Video => readInsta360Stabilization(
-        read,
-        request.fileSize,
-        downBody: request.downBody,
-        frameDurationUs: request.frameDurationUs,
-      ),
-      RawMediaKind.goProVideo => readGoProStabilization(
-        read,
-        request.fileSize,
-        frameDurationUs: request.frameDurationUs,
-      ),
-      RawMediaKind.djiVideo => readDjiStabilization(read, request.fileSize, frameDurationUs: request.frameDurationUs),
-      RawMediaKind.insta360Photo => Future.value(),
-    };
+/// (readDjiStabilization). Null when the file has no track, and for a GoPro whose faces are not those of the MAX: the
+/// axes of the MAX 2 were not measured, its video could play rolled by 90 degrees (the switch hides).
+Future<StabilizationTable?> buildRawStabilization(RawStabilizationRequest request, ByteRangeReader read) {
+  final face = request.goProFace;
+  if (request.kind == RawMediaKind.goProVideo && face != null && face != goProMeasuredFace) {
+    _log.info('${request.name}: GoPro faces of $face pixels, axes not measured, no stabilisation table');
+    return Future.value();
+  }
+  return switch (request.kind) {
+    RawMediaKind.insta360Video => readInsta360Stabilization(
+      read,
+      request.fileSize,
+      downBody: request.downBody,
+      frameDurationUs: request.frameDurationUs,
+    ),
+    RawMediaKind.goProVideo => readGoProStabilization(read, request.fileSize, frameDurationUs: request.frameDurationUs),
+    RawMediaKind.djiVideo => readDjiStabilization(read, request.fileSize, frameDurationUs: request.frameDurationUs),
+    RawMediaKind.insta360Photo => Future.value(),
+  };
+}
 
 /// [buildRawStabilization] in a background isolate, which asks this isolate for each read of [read]: the bytes come
 /// back as transferable data, the table as the result of the isolate. A read that fails fails the build.
@@ -155,11 +167,12 @@ Future<StabilizationTable?> _buildWithRemoteReads(RawStabilizationRequest reques
 
 /// The table of the raw video of [plan]: its file holding the motion track ([RawVideoPlan.motionTrackInput]) opened,
 /// the table built by [build] (in a background isolate by default), the file closed. Null when the camera of the plan
-/// writes no track the app reads, when that file cannot be opened or its size is unknown, when it has no track, or when
-/// the build fails (the log tells why).
+/// writes no track the app reads, when that file cannot be opened or its size is unknown, when it has no track, when
+/// the build fails (the log tells why), or once [cancelled] says so: each read after it fails, which ends the build.
 Future<StabilizationTable?> stabilizationOfRawVideo(
   RawVideoPlan plan, {
   RawStabilizationBuilder build = buildRawStabilizationInIsolate,
+  bool Function()? cancelled,
 }) async {
   final input = plan.motionTrackInput;
   if (!rawKindHasMotionTrack(plan.kind) || input == null) {
@@ -175,7 +188,18 @@ Future<StabilizationTable?> stabilizationOfRawVideo(
     }
     final request = RawStabilizationRequest.of(plan, name: input.name, fileSize: size);
     final started = DateTime.now();
-    final table = await build(request, file.read);
+    final read = file.read;
+    final table = await build(
+      request,
+      cancelled == null
+          ? read
+          : (offset, length) {
+              if (cancelled()) {
+                throw StateError('the player closed');
+              }
+              return read(offset, length);
+            },
+    );
     final elapsed = DateTime.now().difference(started).inMilliseconds;
     _log.info(table == null ? '${input.name}: no motion track ($elapsed ms)' : '${input.name}: $table in $elapsed ms');
     return table;
@@ -213,29 +237,62 @@ class RawVideoStabilizer {
   /// Whether the camera of [plan] writes a track the app reads, in a file the plan can open
   bool get applies => rawKindHasMotionTrack(plan.kind) && plan.motionTrackInput != null;
 
+  bool _cancelled = false;
+
+  /// Whether [cancel] was called
+  bool get cancelled => _cancelled;
+
   /// The player is about to open: its switch shows while the track is read
   Future<void> announce() => _send(hasTrack: true);
 
-  /// Builds the table and hands it to the player, or tells it the file has none; completes once told
+  /// The player closed: the build stops at its next read, and nothing more is sent
+  void cancel() {
+    if (!_cancelled) {
+      _cancelled = true;
+      _log.fine('$url: the player closed, the stabilisation table is no longer built');
+    }
+  }
+
+  /// Builds the table and hands it to the player, or tells it the file has none; completes once told. Null without
+  /// telling once [cancel] was called.
   Future<StabilizationTable?> deliver() async {
-    final table = await stabilizationOfRawVideo(plan, build: build);
+    final table = await stabilizationOfRawVideo(plan, build: build, cancelled: () => _cancelled);
+    if (_cancelled) {
+      return null;
+    }
     await _send(hasTrack: table != null && !table.isEmpty, table: table);
     return table;
   }
 
-  Future<void> _send({required bool hasTrack, StabilizationTable? table}) async {
-    try {
-      final corrections = table == null ? null : Float64List.fromList(table.corrections);
-      await api.setStabilization(
-        url,
-        enabled,
-        hasTrack,
-        hasTrack ? table?.presentationTimesUs : null,
-        hasTrack ? corrections : null,
-        table?.summary.toString(),
-      );
-    } catch (error, stackTrace) {
-      _log.warning('Could not tell the 360° player about the stabilisation', error, stackTrace);
-    }
+  Future<void> _send({required bool hasTrack, StabilizationTable? table}) =>
+      _tell(api, url, enabled: enabled, hasTrack: hasTrack, table: table);
+}
+
+/// Tells the native player at [url] the stabilisation setting [enabled] for a video Flutter builds no table for, right
+/// before it opens: a plain 360° video, whose CAMM track (if any) Media3 applies itself, or a raw video without a
+/// track the app reads. The switch of the player starts at the setting, and off keeps a CAMM track off: off means the
+/// raw video for every file. A failure to tell the player never stops the playback: the log keeps it.
+Future<void> tellStabilizationSetting(SphericalVideoApi api, String url, {required bool enabled}) =>
+    _tell(api, url, enabled: enabled, hasTrack: false);
+
+Future<void> _tell(
+  SphericalVideoApi api,
+  String url, {
+  required bool enabled,
+  required bool hasTrack,
+  StabilizationTable? table,
+}) async {
+  try {
+    final corrections = table == null ? null : Float64List.fromList(table.corrections);
+    await api.setStabilization(
+      url,
+      enabled,
+      hasTrack,
+      hasTrack ? table?.presentationTimesUs : null,
+      hasTrack ? corrections : null,
+      table?.summary.toString(),
+    );
+  } catch (error, stackTrace) {
+    _log.warning('Could not tell the 360° player about the stabilisation', error, stackTrace);
   }
 }

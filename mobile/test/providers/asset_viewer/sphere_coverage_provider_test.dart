@@ -206,6 +206,34 @@ void main() {
       expect(store.tryGet(StoreKey.sphereCoverageOverrides), isNull);
     });
 
+    test('runs what waits for the player once it closes, could not open, or another one opens', () {
+      final asset = RemoteAssetFactory.create(id: 'asset-1', type: .video);
+      final container = createContainer();
+      final session = SphericalVideoSession(container.read(sphereCoverageOverridesProvider.notifier));
+      final ran = <String>[];
+
+      session.start(asset: asset, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full);
+      session.whenClosed(() => ran.add('first'));
+      expect(ran, isEmpty, reason: 'the player plays');
+      session.closed(StereoLayout.mono, SphereCoverage.full);
+      expect(ran, ['first']);
+      session.closed(StereoLayout.mono, SphereCoverage.full);
+      expect(ran, ['first'], reason: 'once');
+
+      session.start(asset: asset, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full);
+      session.whenClosed(() => ran.add('cancelled'));
+      session.cancel();
+      expect(ran, ['first', 'cancelled']);
+
+      // A player whose close was never heard: the next one that opens stops what it left, a failing action too
+      session.start(asset: asset, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full);
+      session.whenClosed(() => throw StateError('gone'));
+      session.whenClosed(() => ran.add('stale'));
+      session.start(asset: asset, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full);
+      expect(ran, ['first', 'cancelled', 'stale']);
+      expect(session.isOpen, isTrue);
+    });
+
     test('the session provider receives the closed event of the native player', () async {
       final asset = RemoteAssetFactory.create(id: 'asset-1', type: .video);
       final container = ProviderContainer(overrides: [storeServiceProvider.overrideWithValue(store)]);

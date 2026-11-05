@@ -131,20 +131,44 @@ class SphericalVideoSession implements SphericalVideoEvents {
 
   _SphericalPlayback? _playback;
 
+  // What to do once the player that opens closes
+  final _onClose = <void Function()>[];
+
   /// Whether a player is open, as far as this session knows
   bool get isOpen => _playback != null;
 
   /// The player opens on [asset] with [coverage], the remembered one or else [coverageGuess] (see
-  /// [resolveSphereView])
+  /// [resolveSphereView]). What was to be done when the player before closed is done now: it is gone.
   void start({required BaseAsset asset, required SphereCoverage coverage, required SphereCoverage coverageGuess}) {
+    _runOnClose();
     _playback = (asset: asset, coverage: coverage, coverageGuess: coverageGuess);
   }
 
+  /// [action] runs once the player that opens closes, or could not open ([cancel]), or another one opens: the build of
+  /// its stabilisation table stops, for example
+  void whenClosed(void Function() action) => _onClose.add(action);
+
   /// The player could not open: nothing will close
-  void cancel() => _playback = null;
+  void cancel() {
+    _playback = null;
+    _runOnClose();
+  }
+
+  void _runOnClose() {
+    final actions = List.of(_onClose);
+    _onClose.clear();
+    for (final action in actions) {
+      try {
+        action();
+      } catch (error, stackTrace) {
+        _log.warning('An action after the 360° player closed failed', error, stackTrace);
+      }
+    }
+  }
 
   @override
   void closed(StereoLayout stereoLayout, SphereCoverage coverage) {
+    _runOnClose();
     final playback = _playback;
     _playback = null;
     if (playback == null) {

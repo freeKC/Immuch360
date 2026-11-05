@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/raw/stabilization.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
+import 'package:immich_mobile/domain/services/raw/gopro_eac.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_stabilization.dart';
@@ -144,6 +145,32 @@ void main() {
       expect(table, isNotNull);
       expect(table!.corrections, direct!.corrections);
       expect(table.presentationTimesUs, [for (var i = 0; i < table.length; i++) (i * 1e6 / 29.97).round()]);
+    });
+
+    test('of a GoPro whose faces are not those of the MAX is none: its axes were not measured', () async {
+      final request = RawStabilizationRequest.of(
+        const RawVideoPlan(
+          kind: RawMediaKind.goProVideo,
+          layout: RawVideoLayout.twoTracks,
+          tracks: [
+            RawVideoTrack(file: 0, videoTrack: 0, width: 5952, height: 1920, frameRate: 29.97),
+            RawVideoTrack(file: 0, videoTrack: 1, width: 5952, height: 1920, frameRate: 29.97),
+          ],
+          eac: GoProEacGeometry(trackWidth: 5952, trackHeight: 1920),
+          url: 'file:///max2.360',
+          trackOrderSource: 'single',
+        ),
+        name: 'max2.360',
+        fileSize: 10,
+      );
+      expect(request.goProFace, 1920);
+      var reads = 0;
+      final table = await buildRawStabilization(request, (offset, length) async {
+        reads++;
+        return Uint8List(0);
+      });
+      expect((table, reads), (null, 0));
+      expect(request.toString(), contains('goProFace: 1920'));
     });
 
     test('of a GoPro and of a DJI come from their orientations', () async {
@@ -296,6 +323,47 @@ void main() {
       expect(player.told.single.hasTrack, isFalse);
       expect(player.told.single.enabled, isFalse);
       expect((player.told.single.times, player.told.single.corrections), (null, null));
+    });
+
+    test('stops the build when the player closes, and tells the player nothing more', () async {
+      final player = _Player();
+      final file = _File(x4);
+      late RawVideoStabilizer stabilizer;
+      var reads = 0;
+      stabilizer = RawVideoStabilizer(
+        api: player,
+        url: 'file:///x4.insv',
+        enabled: true,
+        plan: _plan(RawMediaKind.insta360Video, input: file.input('x4.insv')),
+        // The player closes after the second read
+        build: (request, read) => buildRawStabilization(request, (offset, length) async {
+          reads++;
+          final bytes = await read(offset, length);
+          if (reads == 2) {
+            stabilizer.cancel();
+          }
+          return bytes;
+        }),
+      );
+      await stabilizer.announce();
+
+      expect(await stabilizer.deliver(), isNull);
+      expect(stabilizer.cancelled, isTrue);
+      expect(reads, 3, reason: 'the read after the close fails, which ends the build');
+      expect(player.told, hasLength(1), reason: 'the announce only');
+      expect(file.closed, 1);
+    });
+
+    test('tells a video without a table the setting, so that the switch of a CAMM track starts there', () async {
+      final player = _Player();
+      await tellStabilizationSetting(player, 'https://server/video.mp4', enabled: false);
+      final told = player.told.single;
+      expect(
+        (told.url, told.enabled, told.hasTrack, told.times, told.corrections),
+        ('https://server/video.mp4', false, false, null, null),
+      );
+      // A failing player stops nothing
+      await tellStabilizationSetting(_Player(fails: true), 'u', enabled: true);
     });
 
     test('applies only to a camera with a track and a file to read, and a failing player stops nothing', () async {

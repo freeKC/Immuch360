@@ -202,7 +202,13 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
         ? RawVideoStabilizer(api: api, url: url, enabled: stabilizationEnabled, plan: plan, build: stabilizationBuilder)
         : null;
     final stabilizer = candidate != null && candidate.applies ? candidate : null;
-    await stabilizer?.announce();
+    if (stabilizer != null) {
+      // Closing the player stops the build of its table
+      session.whenClosed(stabilizer.cancel);
+      await stabilizer.announce();
+    } else if (stabilizationSupported) {
+      await tellStabilizationSetting(api, url, enabled: stabilizationEnabled);
+    }
     await api.open(
       url,
       ApiService.getRequestHeaders(),
@@ -283,6 +289,8 @@ Future<bool> openSphericalVideoUrl(
 }) async {
   // Read before the first await: the page may be gone by then
   final api = ref.read(sphericalVideoApiProvider);
+  final stabilizationSupported = ref.read(videoStabilizationSupportedProvider);
+  final stabilizationEnabled = ref.read(appConfigProvider).viewer.stabilizeVideos;
   // The session takes the events of the player; without an asset, it has nothing to remember when it closes
   ref.read(sphericalVideoSessionProvider).cancel();
   final closeLabel = context.t.close;
@@ -293,10 +301,15 @@ Future<bool> openSphericalVideoUrl(
     ...videoBufferingLabels(context.t),
     ...videoSourceLabels(context.t),
     ...rawVideoLabels(context.t),
+    ...videoStabilizationLabels(context.t),
   };
 
   try {
     await player?.suspendForExternalPlayer();
+    // No table on this path: the switch of a CAMM track starts at the setting
+    if (stabilizationSupported) {
+      await tellStabilizationSetting(api, url, enabled: stabilizationEnabled);
+    }
     await api.open(url, headers, title, closeLabel, errorMessage, layout, labels, coverage, fallbackUrl, rawProjection);
     return true;
   } catch (error, stackTrace) {
