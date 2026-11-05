@@ -9,7 +9,8 @@
 // card with what is free and Resume, the named failures of a panorama in words, and the 3D version of a generated
 // panorama under the sentence of the panorama. Issue #13: what the app lets go of the card first, the memory a
 // panorama needs, what is free and what the app itself holds, and a wait that left the queue with its figures and Keep
-// waiting, the failures of a generation keeping their words.
+// waiting, the failures of a generation keeping their words. Lot 13b: a splat scene says its own need, not the
+// panoramas'.
 
 import 'dart:io';
 
@@ -797,6 +798,59 @@ void main() {
       expect(shownQueue.retried, ['busy.jpg']);
     });
 
+    testWidgets('a splat scene waiting for the memory of the graphics card, or that left the queue for it, says its '
+        'own need, not the panoramas\' (lot 13b)', (tester) async {
+      await pumpShown(tester, [
+        job(
+          'jardin',
+          ConversionKind.splatScene,
+          ConversionState.waiting,
+          waitingFor: ConversionWait.graphicsMemory,
+          gpuShortfall: const GpuShortfall(need: 5 << 29, free: 2 << 30, appHolds: 1402 << 20),
+        ),
+        job(
+          'salon',
+          ConversionKind.splatScene,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.gpuMemoryShort,
+          message: '2147483648 bytes free of the 2684354560 needed after 30 s',
+          gpuShortfall: const GpuShortfall(need: 5 << 29, free: 2 << 30),
+        ),
+        job(
+          'plage.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.waiting,
+          waitingFor: ConversionWait.graphicsMemory,
+          gpuShortfall: const GpuShortfall(need: 6 << 30, free: 2 << 30),
+        ),
+      ]);
+
+      expect(
+        tester.widget<Text>(inRow('jardin', find.byKey(const Key('ai_job_waiting')))).data,
+        'Splat scenes need 2.5 GiB of free graphics memory, 2.0 GiB free (Immuch360 itself holds 1.4 GiB): close '
+        'games, 3D apps or videos',
+      );
+      expect(
+        tester.widget<Text>(inRow('salon', find.byKey(const Key('ai_job_gpu_short')))).data,
+        'Splat scenes need 2.5 GiB of free graphics memory, 2.0 GiB free: close games, 3D apps or videos',
+      );
+      expect(
+        inRow(
+          'salon',
+          find.text(
+            'Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(inRow('salon', find.byKey(const Key('ai_job_keep_waiting'))), findsOneWidget);
+      expect(find.textContaining('360° panoramas need'), findsOneWidget, reason: 'the panorama alone');
+      expect(
+        tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_waiting')))).data,
+        '360° panoramas need 6.0 GiB of free graphics memory, 2.0 GiB free: close games, 3D apps or videos',
+      );
+    });
+
     test('the texts of the memory of the graphics card, with and without the share of the app', () {
       loadEnglishTexts();
       final t = StaticTranslations.instance;
@@ -818,6 +872,34 @@ void main() {
         '360° panoramas need 0 B of free graphics memory, 0 B free: close games, 3D apps or videos',
       );
       expect(conversionWaitText(t, ConversionWait.memory), 'Waiting for enough free memory');
+      // Each kind of the graphics card's lane says its own need: a splat scene its own sentence, from the same floor
+      const splatNeed = GpuShortfall(need: 5 << 29, free: 1 << 30, appHolds: 64 << 20);
+      expect(
+        gpuShortfallText(t, splatNeed, kind: ConversionKind.splatScene),
+        'Splat scenes need 2.5 GiB of free graphics memory, 1.0 GiB free (Immuch360 itself holds 64.0 MiB): close '
+        'games, 3D apps or videos',
+      );
+      expect(
+        gpuShortfallText(
+          t,
+          const GpuShortfall(need: 5 << 29, free: 1 << 30, appHolds: (64 << 20) - 1),
+          kind: ConversionKind.splatScene,
+        ),
+        'Splat scenes need 2.5 GiB of free graphics memory, 1.0 GiB free: close games, 3D apps or videos',
+      );
+      expect(
+        conversionWaitText(t, ConversionWait.graphicsMemory, shortfall: splatNeed, kind: ConversionKind.splatScene),
+        gpuShortfallText(t, splatNeed, kind: ConversionKind.splatScene),
+      );
+      expect(
+        gpuShortfallText(t, splatNeed, kind: ConversionKind.panoramaFromPhoto),
+        startsWith('360° panoramas need 2.5 GiB'),
+      );
+      expect(
+        conversionWaitText(t, ConversionWait.graphicsRelease, kind: ConversionKind.splatScene),
+        'Freeing the graphics card memory Immuch360 holds: paused videos and cached pictures',
+        reason: 'the release names no kind',
+      );
       expect(
         conversionFailureText(t, ImmersiveErrorCode.gpuMemoryShort, null),
         'Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue',
