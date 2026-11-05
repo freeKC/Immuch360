@@ -9,6 +9,8 @@
 //   green     the steps, then a PNG still pure green over most of it
 //   segments  "flux using 27 segments" before the steps, as when the memory of the card is short, then as ok (the
 //             graph cut gives the same image, slower: measure of 5 November 2026)
+//   recover   as segments, with the model manager's line of a shortfall sd-cli recovers from at each of the first
+//             steps (run F_full_2700 of the measure: four such lines, then its image)
 //   oom       the texts of the model manager of sd-cli when the memory is short, then exit 1
 //   fail      an error on the error output, then exit 1
 //   silent    the lines up to the sampling, then nothing until killed
@@ -113,7 +115,7 @@ Future<void> main(List<String> arguments) async {
     await _flush();
     exit(1);
   }
-  if (mode == 'segments') {
+  if (mode == 'segments' || mode == 'recover') {
     _out('[V] flux compute buffer size: 3928.82 MB(VRAM) on Vulkan0 (peak across 1 segment) --- ggml_runner.cpp:1022');
     _out('[V] flux using 27 segments --- ggml_runner.cpp:879');
     _out(
@@ -127,7 +129,24 @@ Future<void> main(List<String> arguments) async {
     await Future<void>.delayed(const Duration(hours: 1));
     return;
   }
-  await _bar(steps, '=', (i) => '${(8.5 + i / 100).toStringAsFixed(2)}s/it', stepMs, eta: true);
+  await _bar(
+    steps,
+    '=',
+    (i) => '${(8.5 + i / 100).toStringAsFixed(2)}s/it',
+    stepMs,
+    eta: true,
+    before: mode == 'recover'
+        ? (step) {
+            if (step <= 4) {
+              stdout.write('\n');
+              _out(
+                '[W] model manager cannot make enough memory available on Vulkan0: need 687.21 MB device / 2560.04 MB '
+                'budget, available 4290.52 MB device / 2511.54 MB budget --- model_manager.cpp:2018',
+              );
+            }
+          }
+        : null,
+  );
   await _bar(55, '=', (i) => '16.95it/s', 0);
   _writePng(output, width, height, mode);
   _out('[I] generate_image completed in 198.39s --- image.cpp:1140');
@@ -141,12 +160,21 @@ void _error(String line) => stderr.write('$line\n');
 
 Future<void> _flush() => Future.wait([stdout.flush(), stderr.flush()]);
 
-/// A bar as sd-cli draws it: each step after \r, the end of the line erased, a line end after the last step
-Future<void> _bar(int total, String fill, String Function(int step) speed, int stepMs, {bool eta = false}) async {
+/// A bar as sd-cli draws it: each step after \r, the end of the line erased, a line end after the last step; [before]
+/// writes the lines of a step before its bar
+Future<void> _bar(
+  int total,
+  String fill,
+  String Function(int step) speed,
+  int stepMs, {
+  bool eta = false,
+  void Function(int step)? before,
+}) async {
   for (var step = 1; step <= total; step++) {
     if (stepMs > 0) {
       await Future<void>.delayed(Duration(milliseconds: stepMs));
     }
+    before?.call(step);
     final filled = 50 * step ~/ total;
     final bar = fill * filled + (filled < 50 ? '>' : '') + ' ' * (49 - filled).clamp(0, 50);
     final left = eta && step < total ? ' - ETA 00:${(total - step).toString().padLeft(2, '0')}' : '';

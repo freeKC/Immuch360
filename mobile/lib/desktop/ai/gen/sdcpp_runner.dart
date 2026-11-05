@@ -22,10 +22,12 @@
 //    8 min near the floor of 3.1 GiB; M3 saw spoilt images in segments at 1792 x 896 and 2048 x 1024 only). Each step
 //    it reports then carries the number of segments (GeneratorProgress.segments), which the panel says, and the log
 //    keeps it with the free memory and the budget sd-cli read on the card (the lines of its auto-fit plan);
-//  - a failure is named: gpuOutOfMemory when its output says the memory was short (the texts M3 read; for a
+//  - a failure is named: gpuOutOfMemory when its output says a part could not be placed for want of memory (the
+//    segment that failed during weight preparation, as M3 and the measure read it, or Vulkan's two texts; for a
 //    generation, its message then starts with what sd-cli read of the card, GeneratorMemoryRead: the free memory and
-//    the budget of its plan, and how short it was for the part it could not place, so that the panel says it and
-//    offers Keep waiting), generatorStalled after 180 s without a line, generatorFailed with the end of its error
+//    the budget of its plan, and how short the line of its model manager before that segment said it was, so that the
+//    panel says it and offers Keep waiting; that line alone is a warning sd-cli recovers from), generatorStalled after
+//    180 s without a line (SdCppSettings.stallTimeout, in segments too), generatorFailed with the end of its error
 //    output, cancelled within a second of the flag; the process is killed in every case where it still runs (the run
 //    of a program, its watch of the silence and of the flag, is SidecarRun of process/sidecar_run.dart since lot SP4,
 //    shared with COLMAP and Brush);
@@ -97,7 +99,12 @@ class SdCppSettings {
   /// -t: the logical processors less two, at least one
   final int threads;
 
-  /// Stopped and named generatorStalled after this long without a line on either output
+  /// Stopped and named generatorStalled after this long without a line on either output: 180 s on a dedicated card,
+  /// in segments as well. A run in segments writes one bar line a step, so its silence is a step: the slowest the
+  /// measure of 5 November 2026 saw in segments took 73 s, at the floor with the owner's app and a splat job on the
+  /// same RTX 4060 Laptop (21.7 s alone, 36.7 s with the app). A card 2.5 times slower under that load would reach
+  /// 180 s: to raise for a run in segments if a log of a slower card comes near (the generation time of the
+  /// panorama's summary line, over its 20 steps)
   final Duration stallTimeout;
 
   /// How often the cancel flag and the silence are looked at
@@ -107,14 +114,16 @@ class SdCppSettings {
   final Map<String, String> environment;
 }
 
-/// The texts of a failure that means the memory of the graphics card was short (M3, section 5: the model manager of
-/// sd-cli refuses before it allocates; the two others from Vulkan, by prudence, never seen in M3)
-const sdCppOutOfMemoryTexts = [
-  'cannot make enough memory available',
-  'failed during weight preparation',
-  'ErrorOutOfDeviceMemory',
-  'Failed to allocate',
-];
+/// The texts of a failure for want of memory of the graphics card: the segment sd-cli could not place, after its model
+/// manager could not make the memory available (M3, section 5; the measure of 5 November 2026 below the floor), and
+/// Vulkan's two, by prudence, never seen. The model manager's own line ([sdCppShortOf]) is not one of them: sd-cli
+/// recovers from it (cut runs near the floor print it several times and end well), so that a run failing later for
+/// another reason stays generatorFailed.
+const sdCppOutOfMemoryTexts = [sdCppFailedSegmentText, 'ErrorOutOfDeviceMemory', 'Failed to allocate'];
+
+/// "flux segment 7/27 (flux.single_blocks.0) failed during weight preparation --- ggml_runner.cpp:899", the line right
+/// after the model manager's shortfall it fails with
+const sdCppFailedSegmentText = 'failed during weight preparation';
 
 /// Why a budget the app gave sd-cli (Windows) is the one to read: sd-cli's own free figure there is Vulkan's
 const _givenWhy = " (from the free memory Windows counts: Vulkan's figure leaves other programs out)";
@@ -344,6 +353,9 @@ class SdCppGenerator implements GeneratorBackend {
     var done = 0;
     var segments = 1;
     ({int free, int budget})? read;
+    // The shortfall of the model manager's last line, which sd-cli may recover from, and the one of the line right
+    // before the segment that failed: the shortfall it failed with
+    int? lastShort;
     int? short;
     // A budget given (Windows): sd-cli's free memory is Vulkan's figure there, which leaves other programs out
     final given = request.graphicsBudget != null ? ' given by the app' : '';
@@ -359,7 +371,11 @@ class SdCppGenerator implements GeneratorBackend {
       elapsed: _elapsed,
       onLine: (line) {
         if (sdCppShortOf(line, settings.device) case final lacking?) {
-          short = short == null ? lacking : math.max(short!, lacking);
+          lastShort = lacking;
+          return null;
+        }
+        if (line.contains(sdCppFailedSegmentText)) {
+          short ??= lastShort;
           return null;
         }
         final plan = sdCppCardMemoryOf(line, settings.device);

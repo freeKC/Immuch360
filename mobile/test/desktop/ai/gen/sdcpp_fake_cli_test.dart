@@ -2,8 +2,8 @@
 // (test/desktop/ai/fakes/fake_sd_cli.dart; the test and windows jobs of the desktop workflow compile it and give its path
 // in IMMUCH360_FAKE_SD_CLI), started by the launcher of the app (managed_process.dart; on Linux through immuch360-run
 // when IMMUCH360_RUN_LAUNCHER gives it). Progress, a stop within a second, the silence of 180 s on a clock that jumps,
-// a grey image, green left, the memory texts M3 read, a graph cut into segments that runs to its image, a failure, and
-// an upscale.
+// a grey image, green left, the memory texts M3 read, a graph cut into segments that runs to its image (with the
+// shortfalls sd-cli recovers from too), the budget it plans with on Linux and on Windows, a failure, and an upscale.
 
 import 'dart:async';
 import 'dart:io';
@@ -187,6 +187,14 @@ void main() {
       // flag would do on Linux when sd-cli reads less than the probe
       await run(windows: true, freeMib: 4200);
       expect(logged.last, startsWith('sd-cli read 4200 MiB free on Vulkan0, budget 4200 MiB given by the app'));
+    });
+
+    test('shortfalls sd-cli recovers from in segments: the run ends well, with its image', () async {
+      final heard = <GeneratorProgress>[];
+      expect(await generate('recover', onProgress: heard.add), isNull);
+      expect(heard.map((progress) => progress.step), List.generate(20, (index) => index + 1));
+      expect(heard.every((progress) => progress.segments == 27), isTrue);
+      expect(img.decodePng(File(request().outputPath).readAsBytesSync())!.width, 192);
     });
 
     test('a graph cut into segments runs to its image, each of its steps saying the 27 segments', () async {

@@ -52,11 +52,18 @@ const _belowFloor = [
         'available 6705.71 MB device / 2478.82 MB budget --- model_manager.cpp:2018',
     isError: false,
   ),
+  ('flux segment 7/27 (flux.single_blocks.0) failed during weight preparation --- ggml_runner.cpp:899', isError: false),
   ('[E] diffusion model compute failed --- diffusion_engine.cpp:2655', isError: true),
   ('[E] Diffusion model sampling failed --- diffusion_engine.cpp:2888', isError: true),
   ('[E] sampling for image 1/1 failed after 6.74s --- image.cpp:961', isError: true),
   ('[E] generate failed --- main.cpp:926', isError: true),
 ];
+
+/// A shortfall sd-cli recovers from (run F_full_2700 of the same measure, a budget of 2 700 MiB: four such lines in
+/// segments, then its image): 48.50 MiB short of the budget
+const _recovered =
+    '[W] model manager cannot make enough memory available on Vulkan1: need 687.21 MB device / 2560.04 MB budget, '
+    'available 4290.52 MB device / 2511.54 MB budget --- model_manager.cpp:2018';
 
 List<(String, {bool isError})> _generation({
   int steps = 20,
@@ -381,6 +388,7 @@ void main() {
         expect(sdCppShortOf(_belowFloor[1].$1, 'Vulkan1'), 14 * mib, reason: '2492.82 less 2478.82, to the byte');
         // M3: the card 1 216.45 MiB short, no budget
         expect(sdCppShortOf(_outOfMemory.first.$1, 'Vulkan1'), (121645 * mib + 99) ~/ 100);
+        expect(sdCppShortOf(_recovered, 'Vulkan1'), 4850 * mib ~/ 100, reason: '2560.04 less 2511.54');
         expect(sdCppShortOf(_belowFloor[1].$1, 'Vulkan0'), isNull);
         expect(sdCppShortOf(_belowFloor.first.$1, 'Vulkan1'), isNull);
         expect(sdCppShortOf(_planRtx, 'Vulkan1'), isNull);
@@ -512,6 +520,65 @@ void main() {
       expect(heard.every((progress) => progress.segments == null), isTrue);
     });
 
+    test('shortfalls sd-cli recovers from: the run goes on to its image, nothing of a failure in the log', () async {
+      // Run F_full_2700 of the measure of 5 November 2026: four such lines in segments, then its image (exit 0)
+      final lines = _generation(
+        plan: [_planIntel, _planRtx, _planRam],
+        beforeSteps: ['[V] flux using 27 segments --- ggml_runner.cpp:879', _recovered],
+      );
+      for (final step in [' 1/20 ', ' 2/20 ', ' 3/20 ']) {
+        lines.insert(lines.indexWhere((line) => line.$1.contains(step)) + 1, (_recovered, isError: false));
+      }
+      final runner = FakeProcessRunner([FakeProcessScript(lines: lines)]);
+      final warnings = <String>[];
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord
+          .where((record) => record.loggerName == 'SdCpp' && record.level >= Level.WARNING)
+          .listen((record) => warnings.add(record.message));
+      addTearDown(() async {
+        Logger.root.level = level;
+        await listening.cancel();
+      });
+      final heard = <GeneratorProgress>[];
+
+      await generator(
+        _WritingRunner(runner, image: _varied(16, 8)),
+      ).generate(request(), cancel: cancel, onProgress: heard.add);
+
+      expect(heard.map((progress) => progress.step), List.generate(20, (index) => index + 1));
+      expect(heard.every((progress) => progress.segments == 27), isTrue);
+      expect(File(request().outputPath).existsSync(), isTrue);
+      expect(warnings, isEmpty);
+    });
+
+    test(
+      'shortfalls it recovered from, then a failure for another reason: generatorFailed, not out of memory',
+      () async {
+        final runner = FakeProcessRunner([
+          FakeProcessScript(
+            lines: [
+              ..._generation(
+                steps: 3,
+                plan: [_planRtx],
+                beforeSteps: ['[V] flux using 27 segments --- ggml_runner.cpp:879', _recovered, _recovered],
+              ),
+              ('[E] save result image 0 failed: disk full --- main.cpp:495', isError: true),
+            ],
+            exitCode: 3,
+          ),
+        ]);
+
+        final failure = await generator(runner)
+            .generate(request(), cancel: cancel)
+            .then<BackendException?>((_) => null, onError: (Object error) => error as BackendException);
+
+        expect(failure?.code, ImmersiveErrorCode.generatorFailed);
+        expect(failure?.message, endsWith('[E] save result image 0 failed: disk full --- main.cpp:495'));
+        expect(GeneratorMemoryRead.of(failure?.message), isNull);
+      },
+    );
+
     test('short of memory, it fails as gpuOutOfMemory with the end of its error output', () async {
       final runner = FakeProcessRunner([
         FakeProcessScript(lines: [..._generation(steps: 0), ..._outOfMemory], exitCode: 1),
@@ -535,7 +602,8 @@ void main() {
             ..._generation(
               steps: 0,
               plan: [_planIntel, _planBelowFloor, _planRam],
-              beforeSteps: ['[V] flux using 27 segments --- ggml_runner.cpp:879'],
+              // A larger shortfall it recovered from first: the failure says the one of the segment that failed
+              beforeSteps: ['[V] flux using 27 segments --- ggml_runner.cpp:879', _recovered],
             ),
             ..._belowFloor,
           ],

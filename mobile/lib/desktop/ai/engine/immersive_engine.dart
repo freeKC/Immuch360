@@ -222,9 +222,9 @@ String splatCountsMessage(int count, int all) => '$count/$all';
 
 /// What the generator of a panorama read of the memory of its card when that memory ran short (lot 13c): the bytes
 /// [free] on the card when it started and the [budget] it planned with (the auto-fit plan of sd-cli), and how many it
-/// was [short] of for the part it could not place (its model manager), each null when it did not say. A failure
-/// gpuOutOfMemory of the generator carries it as the first line of its message ([message]), the generator's own lines
-/// after it, so that the panel says it and offers to keep waiting.
+/// was [short] of for the part it could not place (its model manager, the line before the segment that failed), each
+/// null when it did not say. A failure gpuOutOfMemory of the generator carries it as the first line of its message
+/// ([message]), the generator's own lines after it, so that the panel says it and offers to keep waiting.
 class GeneratorMemoryRead {
   const GeneratorMemoryRead({this.free, this.budget, this.short});
 
