@@ -284,6 +284,22 @@ void main() {
       expect(_at(details.camera, table.length - 1), _closeToList(_at(details.camera, table.length - 2), 1e-12));
     });
 
+    test('takes a frame whose exposure is not a number at its time plus 4 ms', () {
+      final samples = _samples(-0.1, 0.5, (time) => (rate: (x: 0.0, y: 0.2, z: 0.0), acceleration: _upBody));
+      final track = CameraMotionTrack(
+        source: CameraMotionSource.insta360Imu,
+        timeOrigin: CameraMotionTimeOrigin.firstFrame,
+        samples: samples,
+        frameTimes: Float64List.fromList([0, 0.1, 0.2]),
+        frameExposures: Float32List.fromList([0.01, double.nan, 0.01]),
+      );
+      final details = StabilizationDetails();
+
+      stabilizationOfMotionTrack(track, downBody: _upright, details: details);
+
+      expect(details.times, _closeToList([-0.001, 0.104, 0.199], 1e-9));
+    });
+
     test('is null without frame times or samples', () {
       final samples = _samples(0, 0.1, (time) => (rate: (x: 0.0, y: 0.0, z: 0.0), acceleration: _upBody));
       final noFrames = CameraMotionTrack(

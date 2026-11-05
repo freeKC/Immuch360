@@ -311,7 +311,9 @@ class GyroStabilizer implements CameraMotionSampleSink {
     final exposures = track.frameExposures;
     _times = Float64List(frames.length);
     for (var i = 0; i < frames.length; i++) {
-      final time = frames[i] - exposures[i] / 2 + options.gyroOffsetSeconds;
+      // An exposure the file does not give counts as none
+      final exposure = i < exposures.length && exposures[i].isFinite ? exposures[i] : 0.0;
+      final time = frames[i] - exposure / 2 + options.gyroOffsetSeconds;
       // A sudden change of exposure must not take a frame before the one before it
       _times[i] = i > 0 && time < _times[i - 1] ? _times[i - 1] : time;
     }
