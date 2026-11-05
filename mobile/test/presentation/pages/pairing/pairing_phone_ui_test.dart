@@ -2,6 +2,7 @@
 // Connect page and what it says of a scan, and the confirmation sheet
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -225,6 +226,31 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('This LG TV signs in through your browser.'), findsOneWidget);
       expect(find.text('Open'), findsOneWidget);
+    });
+
+    testWidgets('on iOS the code of the webOS app leaves the TV unnamed (App Store guideline 2.3.10)', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      // Reset within the test, even when an expectation fails: the binding checks it before the tear downs run
+      try {
+        phoneScreen(tester);
+        await pump(
+          tester,
+          const ConnectScreenPage(),
+          overrides: [
+            pairedScreensProvider.overrideWith(() => _Screens([])),
+            qrScanApiProvider.overrideWithValue(
+              _FakeScanner(QrScanResult(status: QrScanStatus.scanned, text: 'http://192.168.1.40:8788/?c=K7M2Q9XR')),
+            ),
+          ],
+        );
+        await tester.tap(find.text('Scan the code'));
+        await tester.pumpAndSettle();
+        expect(find.text('This TV signs in through your browser.'), findsOneWidget);
+        expect(find.textContaining(RegExp(r'\b(LG|webOS)\b')), findsNothing);
+        expect(find.text('Open'), findsOneWidget);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
     });
   });
 

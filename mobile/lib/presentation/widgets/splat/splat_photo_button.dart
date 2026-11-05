@@ -4,7 +4,8 @@
 // gated on the packet alone (SplatPhotoXmp.head goes to the gate the .spz of a share gets) so that a scene this device
 // cannot show is greyed with the reason before a byte of it is downloaded. A copy that lost its scene, a photo of a
 // newer version or a damaged packet greys it too. Every device gets the details row; the TVs, iOS and the Quest builds
-// of the Meta Horizon Store say there where to explore the scene, and once, for 4 seconds, as the photo opens.
+// of the Meta Horizon Store say there where to explore the scene, and once, for 4 seconds, as the photo opens. On iOS
+// that line names no other mobile platform (App Store guideline 2.3.10, splatPhotoElsewhereText).
 
 import 'dart:async';
 
@@ -16,6 +17,7 @@ import 'package:immich_mobile/domain/models/splat/splat_photo_xmp.dart';
 import 'package:immich_mobile/domain/services/splat_photo/splat_photo_probe.dart';
 import 'package:immich_mobile/domain/services/splat_photo/splat_photo_tail.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
@@ -35,6 +37,16 @@ const splatPhotoDetailsKey = Key('splat_photo_details');
 
 /// How long the line saying where to explore a scene stays, on the devices that cannot
 const splatPhotoNoticeDuration = Duration(seconds: 4);
+
+/// Where the scene of a splat photo can be explored, for the details row and the line said as the photo opens; null
+/// where this device shows it ([SplatPhotoExplore.here]) or does not know yet. On iOS ([ios], this device by default)
+/// the text names no other mobile platform (App Store guideline 2.3.10): a computer or a headset.
+String? splatPhotoElsewhereText(Translations t, SplatPhotoExplore explore, {bool? ios}) => switch (explore) {
+  SplatPhotoExplore.elsewhere =>
+    (ios ?? CurrentPlatform.isIOS) ? t.splat_photo_open_elsewhere_ios : t.splat_photo_open_elsewhere,
+  SplatPhotoExplore.elsewhereStore => t.splat_photo_open_elsewhere_store,
+  SplatPhotoExplore.here || SplatPhotoExplore.unknown => null,
+};
 
 /// What a splat photo's [problem] says, as the greyed button and the details row say it
 String splatPhotoProblemText(Translations t, SplatPhotoProblem problem) => switch (problem) {
@@ -127,8 +139,7 @@ class SplatPhotoDetailsTile extends ConsumerWidget {
     }
     final lines = [
       if (problem != null) splatPhotoProblemText(t, problem),
-      if (problem == null && explore == SplatPhotoExplore.elsewhere) t.splat_photo_open_elsewhere,
-      if (problem == null && explore == SplatPhotoExplore.elsewhereStore) t.splat_photo_open_elsewhere_store,
+      if (problem == null) ?splatPhotoElsewhereText(t, explore),
       ?refusal,
       if (asset.isEdited) t.splat_photo_edited,
     ];
@@ -176,11 +187,7 @@ class _SplatPhotoElsewhereNoticeState extends ConsumerState<SplatPhotoElsewhereN
     final xmp = ref.watch(splatPhotoProvider(asset)).valueOrNull;
     final key = SplatPhotoService.keyOf(asset);
     if (xmp != null && _said != key) {
-      final text = switch (ref.watch(splatPhotoExploreProvider)) {
-        SplatPhotoExplore.elsewhere => context.t.splat_photo_open_elsewhere,
-        SplatPhotoExplore.elsewhereStore => context.t.splat_photo_open_elsewhere_store,
-        _ => null,
-      };
+      final text = splatPhotoElsewhereText(context.t, ref.watch(splatPhotoExploreProvider));
       if (text != null) {
         _said = key;
         WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -293,6 +293,11 @@ class _SpatialPhotoTile extends ConsumerWidget {
   }
 }
 
+/// Where the 3D scene of a photo is explored: a Meta Quest; on iOS ([ios], this device by default) a headset, since the
+/// iOS app names no other mobile platform (App Store guideline 2.3.10)
+String scenePhotoWhereText(Translations t, {bool? ios}) =>
+    (ios ?? CurrentPlatform.isIOS) ? t.ai_immersive_open_on_quest_ios : t.ai_immersive_open_on_quest;
+
 /// The row of a photo that carries a 3D scene a computer made from it, off the Quest: "3D scene, reconstructed from one
 /// photo", "Open it on a Meta Quest to explore it". Nothing for any other photo, nor on the headset, nor until it is
 /// known not to be one.
@@ -318,7 +323,7 @@ class _ScenePhotoTile extends ConsumerWidget {
           title: context.t.ai_immersive_version_scene,
           titleStyle: titleStyle,
           leading: Icon(Icons.threed_rotation_rounded, size: 24, color: titleStyle?.color),
-          subtitle: context.t.ai_immersive_open_on_quest,
+          subtitle: scenePhotoWhereText(context.t),
           subtitleStyle: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceSecondary),
         ),
       ],

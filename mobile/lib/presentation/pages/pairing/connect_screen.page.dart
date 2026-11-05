@@ -26,6 +26,11 @@ import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// What a scanned code of the LG webOS app says: it signs in through the browser. On iOS ([ios], this device by
+/// default) the TV goes unnamed, since the iOS app names no other platform (App Store guideline 2.3.10)
+String webOsPairingText(Translations t, {bool? ios}) =>
+    (ios ?? CurrentPlatform.isIOS) ? t.pairing_err_webos_ios : t.pairing_err_webos;
+
 @RoutePage()
 class ConnectScreenPage extends ConsumerStatefulWidget {
   const ConnectScreenPage({super.key, this.linkedAddress});
@@ -102,7 +107,7 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
         final open = await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
-            content: Text(t.pairing_err_webos),
+            content: Text(webOsPairingText(t)),
             actions: [
               TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(t.cancel)),
               FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: Text(t.open)),
