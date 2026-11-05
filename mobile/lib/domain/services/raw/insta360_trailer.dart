@@ -3,7 +3,8 @@
 // bytes, the size of the trailer (u32 LE, these 72 bytes included), its version (u32 LE, 3) and the ASCII magic
 // 8db42d694ccc418790edff439fe026bf. Each record is its payload followed by a footer of 6 bytes, its format (u8), its id
 // (u8) and the length of its payload (u32 LE). Record 1 holds the metadata as protobuf, the calibration strings among
-// them; record 3 the samples of the accelerometer and the gyroscope. Older trailers (version 2, another magic) are not
+// them; record 3 the samples of the accelerometer and the gyroscope, record 4 the time of each frame of a video on
+// their clock (see insta360_motion.dart). Older trailers (version 2, another magic) are not
 // read: such a file is taken as a flat picture.
 //
 // Two layouts of the records exist. On the X3 and older cameras they are walked backwards from the tail, the metadata
@@ -43,6 +44,7 @@ const _footerLength = 6;
 
 const _metadataRecord = 1;
 const _imuRecord = 3;
+const _frameRecord = 4;
 const _protobufFormat = 1;
 
 // The directory of an indexed trailer: the record of id 0 and format 0 right before the tail, entries of 10 bytes (id,
@@ -132,6 +134,8 @@ class Insta360Trailer {
     this.imageCategory,
     this.streamLayout,
     this.indexed = false,
+    this.firstFrameTimestamp,
+    this.rollingShutterMs,
   });
 
   /// Serial number of the camera (field 1)
@@ -198,6 +202,14 @@ class Insta360Trailer {
   /// backwards (X3 and older)
   final bool indexed;
 
+  /// Time of the first frame of a video on the clock of the IMU samples, in microseconds (field 24): one of the
+  /// entries of record 4, the ones before it being frames the camera did not keep (4 to 8 on the X3, X4 and X5)
+  final int? firstFrameTimestamp;
+
+  /// Time the sensor takes to read one frame out, top row to bottom row, in milliseconds (field 25): 15.7 on the X3,
+  /// 30.8 on the X4, 21.2 on the X5
+  final double? rollingShutterMs;
+
   @override
   String toString() =>
       'Insta360Trailer(serial: $serial, cameraModel: $cameraModel, firmware: $firmware, '
@@ -205,7 +217,8 @@ class Insta360Trailer {
       'gyroscopeRange: $gyroscopeRange, isRawGyro: $isRawGyro, meanAccelerometer: $meanAccelerometer '
       '($imuSampleCount samples), offsetV1: $offsetV1, offsetV3: $offsetV3, offsetV6: $offsetV6, '
       'group: $groupIdentity #$groupIndex, fileLayout: $fileLayout, trackOrder: $trackOrder, '
-      'imageCategory: $imageCategory, streamLayout: $streamLayout, indexed: $indexed)';
+      'imageCategory: $imageCategory, streamLayout: $streamLayout, indexed: $indexed, '
+      'firstFrameTimestamp: $firstFrameTimestamp, rollingShutterMs: $rollingShutterMs)';
 }
 
 /// The lens that video track 0 of a two-track Insta360 file holds, and what said so: field 80 of [trailer] (1: lens 1,
@@ -239,6 +252,40 @@ Future<Insta360Trailer?> readInsta360Trailer(
   ByteRangeReader read,
   int fileSize, {
   int maxImuLength = insta360MaxImuLength,
+}) async => (await _readTrailer(read, fileSize, maxImuLength: maxImuLength, withFrames: false))?.trailer;
+
+/// The place of a record of a trailer in the file: its format, the offset of its payload and the length of the payload
+typedef Insta360RecordPlace = ({int format, int start, int length});
+
+/// A trailer, with the places of the records a reader of the motion of the camera needs
+class Insta360TrailerRecords {
+  const Insta360TrailerRecords({required this.trailer, this.imu, this.frames});
+
+  final Insta360Trailer trailer;
+
+  /// The IMU samples (record 3), null when the trailer has none
+  final Insta360RecordPlace? imu;
+
+  /// The time and exposure of each frame (record 4), null when the trailer has none
+  final Insta360RecordPlace? frames;
+}
+
+/// Reads the trailer of the Insta360 file of [fileSize] bytes that [read] reads as [readInsta360Trailer] does, and
+/// finds its IMU record (3) and its frame record (4): an indexed trailer has them in its directory, an older one is
+/// walked as far as the frame record, one more footer read than [readInsta360Trailer] on an X3 video. Null for a file
+/// without a version 3 trailer. [maxImuLength] 0 reads no IMU sample (no mean accelerometer then). Errors of [read] are
+/// not caught.
+Future<Insta360TrailerRecords?> readInsta360TrailerRecords(
+  ByteRangeReader read,
+  int fileSize, {
+  int maxImuLength = insta360MaxImuLength,
+}) => _readTrailer(read, fileSize, maxImuLength: maxImuLength, withFrames: true);
+
+Future<Insta360TrailerRecords?> _readTrailer(
+  ByteRangeReader read,
+  int fileSize, {
+  required int maxImuLength,
+  required bool withFrames,
 }) async {
   if (fileSize < _tailLength) {
     return null;
@@ -263,8 +310,8 @@ Future<Insta360Trailer?> readInsta360Trailer(
   final indexed = lastFooter != null && lastFooter[0] == 0 && lastFooter[1] == 0;
   final records = indexed
       ? await _indexedRecords(bytes, lastFooter, fileSize: fileSize, payloadStart: payloadStart)
-      : await _walkedRecords(bytes, fileSize: fileSize, payloadStart: payloadStart);
-  final _Records(:metadataRecord, :imuRecord) = records;
+      : await _walkedRecords(bytes, fileSize: fileSize, payloadStart: payloadStart, withFrames: withFrames);
+  final _Records(:metadataRecord, :imuRecord, :frameRecord) = records;
 
   final metadata = _Metadata();
   if (metadataRecord != null &&
@@ -302,7 +349,7 @@ Future<Insta360Trailer?> readInsta360Trailer(
     }
   }
 
-  return Insta360Trailer(
+  final trailer = Insta360Trailer(
     serial: metadata.serial,
     cameraModel: metadata.cameraModel,
     firmware: metadata.firmware,
@@ -324,17 +371,26 @@ Future<Insta360Trailer?> readInsta360Trailer(
     imageCategory: metadata.imageCategory,
     streamLayout: metadata.streamLayout,
     indexed: indexed,
+    firstFrameTimestamp: metadata.firstFrameTimestamp,
+    rollingShutterMs: metadata.rollingShutterMs,
   );
+  return Insta360TrailerRecords(trailer: trailer, imu: imuRecord, frames: frameRecord);
 }
 
-/// The metadata and the IMU records of a trailer, the first of each
-typedef _Records = ({_Record? metadataRecord, _Record? imuRecord});
+/// The metadata, the IMU and the frame records of a trailer, the first of each
+typedef _Records = ({_Record? metadataRecord, _Record? imuRecord, _Record? frameRecord});
 
 // The records of a sequential trailer, walked backwards from the tail: each footer gives the length of the payload
-// before it
-Future<_Records> _walkedRecords(_CachedBytes bytes, {required int fileSize, required int payloadStart}) async {
+// before it. The walk stops once it has the metadata and the IMU records, and the frame record when [withFrames].
+Future<_Records> _walkedRecords(
+  _CachedBytes bytes, {
+  required int fileSize,
+  required int payloadStart,
+  required bool withFrames,
+}) async {
   _Record? metadataRecord;
   _Record? imuRecord;
+  _Record? frameRecord;
   var recordEnd = fileSize - _tailLength;
   for (var count = 0; count < _maxRecords && recordEnd - _footerLength >= payloadStart; count++) {
     final footer = await bytes.at(recordEnd - _footerLength, _footerLength);
@@ -353,13 +409,15 @@ Future<_Records> _walkedRecords(_CachedBytes bytes, {required int fileSize, requ
       metadataRecord = (format: format, start: start, length: length);
     } else if (id == _imuRecord && imuRecord == null) {
       imuRecord = (format: format, start: start, length: length);
+    } else if (id == _frameRecord && frameRecord == null && withFrames) {
+      frameRecord = (format: format, start: start, length: length);
     }
-    if (metadataRecord != null && imuRecord != null) {
+    if (metadataRecord != null && imuRecord != null && (!withFrames || frameRecord != null)) {
       break;
     }
     recordEnd = start;
   }
-  return (metadataRecord: metadataRecord, imuRecord: imuRecord);
+  return (metadataRecord: metadataRecord, imuRecord: imuRecord, frameRecord: frameRecord);
 }
 
 // The records of an indexed trailer, from its directory, the record whose footer [directoryFooter] ends next to the
@@ -372,7 +430,7 @@ Future<_Records> _indexedRecords(
   required int fileSize,
   required int payloadStart,
 }) async {
-  const none = (metadataRecord: null, imuRecord: null);
+  const none = (metadataRecord: null, imuRecord: null, frameRecord: null);
   final length = ByteData.sublistView(directoryFooter).getUint32(2, Endian.little);
   final directoryStart = fileSize - _tailLength - _footerLength - length;
   if (length % _directoryEntryLength != 0 || length > _maxDirectoryLength || directoryStart < payloadStart) {
@@ -386,6 +444,7 @@ Future<_Records> _indexedRecords(
   final data = ByteData.sublistView(directory);
   _Record? metadataRecord;
   _Record? imuRecord;
+  _Record? frameRecord;
   for (var entry = 0; entry < length; entry += _directoryEntryLength) {
     if (directory.sublist(entry, entry + _directoryEntryLength).every((byte) => byte == 0)) {
       continue;
@@ -401,9 +460,11 @@ Future<_Records> _indexedRecords(
       metadataRecord ??= (format: format, start: start, length: recordLength);
     } else if (id == _imuRecord) {
       imuRecord ??= (format: format, start: start, length: recordLength);
+    } else if (id == _frameRecord) {
+      frameRecord ??= (format: format, start: start, length: recordLength);
     }
   }
-  return (metadataRecord: metadataRecord, imuRecord: imuRecord);
+  return (metadataRecord: metadataRecord, imuRecord: imuRecord, frameRecord: frameRecord);
 }
 
 // The payload of the record [id] out of [bytes], its payload and its footer, when the footer agrees with the directory
@@ -652,7 +713,7 @@ bool _endsWithMagic(Uint8List bytes) {
   return true;
 }
 
-typedef _Record = ({int format, int start, int length});
+typedef _Record = Insta360RecordPlace;
 
 /// Bytes of the file: out of the tail read first when they are in it, else read
 class _CachedBytes {
@@ -734,6 +795,8 @@ class _Metadata {
   int? trackOrder;
   int? imageCategory;
   int? streamLayout;
+  int? firstFrameTimestamp;
+  double? rollingShutterMs;
 
   /// Reads the protobuf message [bytes]; a damaged message keeps the fields before the damage
   void decode(Uint8List bytes) {
@@ -752,6 +815,10 @@ class _Metadata {
             offsetV1Factory ??= field.string;
           case 19 when field.wireType == protoLengthDelimited:
             _decodeDimension(field.bytes!);
+          case 24 when field.wireType == protoVarint:
+            firstFrameTimestamp ??= field.integer;
+          case 25 when field.wireType != protoLengthDelimited:
+            rollingShutterMs ??= field.asDouble;
           case 26 when field.wireType == protoLengthDelimited && groupIdentity == null && groupIndex == null:
             _decodeGroup(field.bytes!);
           case 27 when field.wireType == protoLengthDelimited:

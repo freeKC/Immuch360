@@ -216,17 +216,20 @@ final insta360MinimalIndexedTail = <int>[
 ];
 
 /// An indexed trailer, as the X4 and later write it, in its inst box: the [metadata] record (protobuf), the [imu]
-/// record when given, each starting at a multiple of [padTo] bytes from the start of the records (zeros between them,
-/// as the X5 pads them to 128 KiB), then the directory of their places and its footer, then the tail. [zeroEntry]
-/// puts an entry of zeros first in the directory, [directoryLength] overrides the length its footer gives, and
-/// [badMetadataFooter] writes a footer after the metadata that does not match its entry.
+/// record and the [frames] record (id 4) when given, each starting at a multiple of [padTo] bytes from the start of the
+/// records (zeros between them, as the X5 pads them to 128 KiB), then the directory of their places and its footer,
+/// then the tail. [zeroEntry] puts an entry of zeros first in the directory, [directoryLength] overrides the length its
+/// footer gives, and [badMetadataFooter] and [badImuFooter] write a footer after the metadata or the IMU samples that
+/// does not match its entry.
 List<int> insta360IndexedTail({
   required List<int> metadata,
   List<int>? imu,
+  List<int>? frames,
   int padTo = 0,
   bool zeroEntry = false,
   int? directoryLength,
   bool badMetadataFooter = false,
+  bool badImuFooter = false,
 }) {
   final payload = <int>[];
   final entries = <int>[if (zeroEntry) ...List.filled(10, 0)];
@@ -240,7 +243,10 @@ List<int> insta360IndexedTail({
 
   add(1, 1, metadata, badFooter: badMetadataFooter);
   if (imu != null) {
-    add(3, 0, imu);
+    add(3, 0, imu, badFooter: badImuFooter);
+  }
+  if (frames != null) {
+    add(4, 0, frames);
   }
   final records = [...payload, ...entries, 0, 0, ...u32le(directoryLength ?? entries.length)];
   final trailerLength = records.length + 72;
@@ -258,6 +264,25 @@ List<int> rawImuSamples(List<(int, int, int)> accelerometer) => [
     ...u16le(32768),
     ...u16le(32768),
   ],
+];
+
+/// Raw IMU samples (20 bytes each) at the given microsecond [times], with the given raw accelerometer and gyroscope
+/// values (offset binary around 32768)
+List<int> rawImuSamplesAt(List<int> times, List<(int, int, int, int, int, int)> values) => [
+  for (var i = 0; i < times.length; i++) ...[
+    ...u64le(times[i]),
+    ...u16le(values[i].$1),
+    ...u16le(values[i].$2),
+    ...u16le(values[i].$3),
+    ...u16le(values[i].$4),
+    ...u16le(values[i].$5),
+    ...u16le(values[i].$6),
+  ],
+];
+
+/// The entries of a frame record (id 4): the microsecond time of each frame and its exposure in seconds
+List<int> insta360FrameEntries(List<int> times, {double exposure = 0.0005}) => [
+  for (final time in times) ...[...u64le(time), ...f64le(exposure)],
 ];
 
 /// IMU samples of doubles (56 bytes each) with the given accelerometer values in g and a still gyroscope
