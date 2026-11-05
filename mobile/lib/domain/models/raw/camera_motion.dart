@@ -1,6 +1,7 @@
 // The motion of a 360° camera as its file records it, for the stabilisation of the video at playback: the samples of
-// its gyroscope and accelerometer, and the time of each frame, all on the clock of the video (time 0 at its first
-// frame). See lib/domain/services/raw/insta360_motion.dart for the Insta360 trailer.
+// its gyroscope and accelerometer, or its own orientation per frame, and the time of each frame, all on the clock of the
+// video (time 0 at its first frame). See lib/domain/services/raw/insta360_motion.dart for the Insta360 trailer and
+// lib/domain/services/raw/dji_motion.dart for the attitude of the DJI Osmo 360.
 
 import 'dart:typed_data';
 
@@ -8,6 +9,10 @@ import 'dart:typed_data';
 enum CameraMotionSource {
   /// The IMU record of an Insta360 trailer (record 3), with the time of each frame (record 4)
   insta360Imu,
+
+  /// The attitude the DJI Osmo 360 writes in the per frame records of the camd box of its .osv files: an orientation
+  /// per frame, no gyroscope samples
+  djiAttitude,
 }
 
 /// What time 0 of a motion track is
@@ -60,26 +65,37 @@ class CameraMotionTrack {
     required this.samples,
     required this.frameTimes,
     required this.frameExposures,
+    this.frameOrientations,
     this.cameraModel,
     this.firmware,
     this.rollingShutterMs,
     this.truncated = false,
     this.droppedSamples = 0,
-  }) : assert(frameExposures.length == frameTimes.length);
+  }) : assert(frameExposures.isEmpty || frameExposures.length == frameTimes.length),
+       assert(frameOrientations == null || frameOrientations.length == 4 * frameTimes.length);
 
   final CameraMotionSource source;
 
   final CameraMotionTimeOrigin timeOrigin;
 
-  /// The samples of the gyroscope and the accelerometer
+  /// The samples of the gyroscope and the accelerometer; empty for a camera that gives its orientation instead
+  /// ([frameOrientations])
   final CameraMotionSamples samples;
 
   /// Time of each frame of the video the file lists, frame 0 first, in seconds from the first frame (so 0 for it when
   /// [timeOrigin] is [CameraMotionTimeOrigin.firstFrame]); empty when the file lists none
   final Float64List frameTimes;
 
-  /// Exposure time of each frame, in seconds
+  /// Exposure time of each frame, in seconds; empty when the file does not give it
   final Float32List frameExposures;
+
+  /// Orientation of the camera at each frame of [frameTimes], as the camera fused it: four values a frame, the unit
+  /// quaternion w, x, y, z of the rotation from the body frame (that of [CameraMotionSamples]) to a world frame fixed in
+  /// space, so a direction v of the body at that frame is R(q) v in the world. Consecutive quaternions are on the same
+  /// side (their dot product is not negative). Null when the camera gives no orientation (the gyroscope samples are
+  /// then to be integrated). For [CameraMotionSource.djiAttitude] the world has z down along gravity, once the
+  /// camera's fusion has settled; each orientation is the one the picture of its frame was taken at (see dji_motion.dart)
+  final Float32List? frameOrientations;
 
   /// Name of the camera, "Insta360 X4"
   final String? cameraModel;
@@ -108,6 +124,7 @@ class CameraMotionTrack {
   @override
   String toString() =>
       'CameraMotionTrack(${source.name}, $cameraModel $firmware, origin ${timeOrigin.name}, $samples, '
-      'rate ${sampleRate?.toStringAsFixed(1)} Hz, ${frameTimes.length} frames, rolling shutter $rollingShutterMs ms, '
+      'rate ${sampleRate?.toStringAsFixed(1)} Hz, ${frameTimes.length} frames'
+      '${frameOrientations == null ? '' : ' with orientations'}, rolling shutter $rollingShutterMs ms, '
       'truncated: $truncated, dropped: $droppedSamples)';
 }
