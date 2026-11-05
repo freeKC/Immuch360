@@ -109,8 +109,8 @@ class CameraMotionTrack {
 
   /// The gravity vector the camera wrote for each entry of [frameTimes], three values a frame, unit, in the axes of the
   /// camera ([source]), as the camera wrote it (GoPro GRAV: turned into the world by the inverse of the orientation, it
-  /// stays within 1.7 degrees of one direction on the sample measured). Null when the file has none; NaN for a frame
-  /// the file says nothing of.
+  /// stays within 1.7 degrees of one direction on the sample measured, and it points down, checked against the sky of
+  /// its picture). Null when the file has none; NaN for a frame the file says nothing of.
   final Float32List? frameGravity;
 
   /// Name of the camera, "Insta360 X4"

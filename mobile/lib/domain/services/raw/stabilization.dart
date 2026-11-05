@@ -10,7 +10,8 @@
 //    sin(|v| / 2) v / |v|), q the rotation from the body to the world of the first sample. A frame is taken at its
 //    record 4 time less half its exposure plus 4 ms (the offset measured against the picture, research.md section 3),
 //    inside its step with the same rate. Cameras that write their orientation (GoPro, DJI) give q themselves, blended
-//    (slerp) to the frame times.
+//    (slerp) to the frame times (cameraOrientationTrackOf), seen from the view of their stitch (goProViewToGpmf,
+//    djiViewToBody).
 // 2. View frame. The stitch shows the camera's view: B = bodyFrame(downBody), the rotation from the view (x right, y
 //    down, z forward, levelled by the gravity the stitch uses) to the body. With G = R(q_0) B for the first frame, the
 //    camera's view at frame i into the view of the first frame (the world from now on) is C_i = G^T R(q_i) B, so C_0 =
@@ -41,7 +42,9 @@ import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/raw/camera_motion.dart';
 import 'package:immich_mobile/domain/models/raw/stabilization.dart';
+import 'package:immich_mobile/domain/services/raw/dji_motion.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart' show Mat3, Vec3, bodyFrame;
+import 'package:immich_mobile/domain/services/raw/gopro_motion.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_motion.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart' show ByteRangeReader;
 import 'package:logging/logging.dart';
@@ -256,6 +259,183 @@ StabilizationTable? stabilizationOfOrientations(
     outside: outside,
     details: details,
   );
+}
+
+/// The rotation from the view frame of the stitch of a GoPro .360 (x right, y down, z forward: the view gopro_eac.dart
+/// shows, upright when the camera stands) to the axes of its GPMF camera frame (CORI, GRAV), row major: GPMF x is the
+/// view's down, y its left, z its forward. Measured on the picture of the MAX sample GS010013.360 (study of 5 November
+/// 2026, lots/gopro_vision.py and gopro_sky.py): the camera turns about GPMF y and the picture about the view's x axis,
+/// and GRAV follows the down of the sky in the picture within 3 degrees over a turn of 150 degrees once taken as
+/// pointing down. The angle about GPMF y cannot be told from that one turn (the fits give 15 to 22 degrees, the bias of
+/// the sky and the parallax of the ground nearby): the axes of the camera are taken square. The MAX 2 is assumed the
+/// same, no file was at hand.
+const goProViewToGpmf = Mat3([0, 1, 0, -1, 0, 0, 0, 0, 1]);
+
+/// The rotation from the view frame of the stitch of a DJI Osmo 360 .osv to the body frame of its attitude, row major:
+/// bodyFrame([0, 1, 0]), the view of an upright Insta360 (lot a3, the attitude checked against the picture)
+const djiViewToBody = Mat3([-1, 0, 0, 0, 1, 0, 0, 0, -1]);
+
+/// The up of the world of the DJI attitude: its z points down along gravity
+const djiWorldUp = [0.0, 0.0, -1.0];
+
+/// The orientations a camera wrote for its frames ([CameraMotionTrack.frameOrientations], from the world to the
+/// camera), as the input of [stabilizationOfOrientations]: their inverse (from the camera to the world), made unit
+/// long, at [CameraMotionTrack.frameTimes]. A frame whose orientation is not a number or far from unit long is left out
+/// (the table blends over it). The gravity of a GoPro (GRAV, which points down) goes along; the world of a DJI attitude
+/// is level already ([djiWorldUp]). Null when the track has no orientation, or none that can be used.
+CameraOrientationTrack? cameraOrientationTrackOf(CameraMotionTrack track) {
+  final source = track.frameOrientations;
+  if (source == null) {
+    return null;
+  }
+  final frames = track.frameTimes.length;
+  final gravity = track.frameGravity;
+  final kept = <int>[];
+  for (var i = 0; i < frames; i++) {
+    final w = source[4 * i];
+    final x = source[4 * i + 1];
+    final y = source[4 * i + 2];
+    final z = source[4 * i + 3];
+    final norm = math.sqrt(w * w + x * x + y * y + z * z);
+    if (norm.isFinite && norm > 0.5 && norm < 1.5) {
+      kept.add(i);
+    }
+  }
+  if (kept.isEmpty) {
+    return null;
+  }
+  if (kept.length < frames) {
+    _log.info('Stabilization: ${frames - kept.length} of $frames frames have no orientation, blended over');
+  }
+  final times = Float64List(kept.length);
+  final orientations = Float64List(4 * kept.length);
+  final down = gravity == null ? null : Float32List(3 * kept.length);
+  for (var j = 0; j < kept.length; j++) {
+    final i = kept[j];
+    times[j] = track.frameTimes[i];
+    final w = source[4 * i];
+    final x = source[4 * i + 1];
+    final y = source[4 * i + 2];
+    final z = source[4 * i + 3];
+    final norm = math.sqrt(w * w + x * x + y * y + z * z);
+    // The conjugate: from the camera to the world
+    orientations[4 * j] = w / norm;
+    orientations[4 * j + 1] = -x / norm;
+    orientations[4 * j + 2] = -y / norm;
+    orientations[4 * j + 3] = -z / norm;
+    if (down != null) {
+      down.setRange(3 * j, 3 * j + 3, gravity!, 3 * i);
+    }
+  }
+  return switch (track.source) {
+    CameraMotionSource.djiAttitude => CameraOrientationTrack(
+      label: 'DJI attitude',
+      times: times,
+      orientations: orientations,
+      worldUp: djiWorldUp,
+    ),
+    CameraMotionSource.goProGpmf => CameraOrientationTrack(
+      label: 'GoPro CORI',
+      times: times,
+      orientations: orientations,
+      gravity: down,
+    ),
+    CameraMotionSource.insta360Imu => CameraOrientationTrack(
+      label: 'Insta360 orientation',
+      times: times,
+      orientations: orientations,
+      gravity: down,
+    ),
+  };
+}
+
+/// The rotation from the view frame of the stitch to the body frame of the orientations of [source]: [goProViewToGpmf]
+/// or [djiViewToBody]; null for a source that gives raw samples (its view comes from the gravity the stitch uses)
+Mat3? viewToBodyOf(CameraMotionSource source) => switch (source) {
+  CameraMotionSource.goProGpmf => goProViewToGpmf,
+  CameraMotionSource.djiAttitude => djiViewToBody,
+  CameraMotionSource.insta360Imu => null,
+};
+
+/// The stabilisation table of any motion track: the gyroscope integrated for a track of raw samples (Insta360, see
+/// [stabilizationOfMotionTrack] for [downBody]), the orientations the camera wrote for the others (GoPro, DJI: see
+/// [cameraOrientationTrackOf] and [stabilizationOfOrientations]), seen from the view of their stitch ([viewToBody],
+/// [viewToBodyOf] when null). [frameDurationUs] as in [readInsta360Stabilization]. Null without frames or orientations.
+StabilizationTable? stabilizationOfCameraMotion(
+  CameraMotionTrack track, {
+  List<double>? downBody,
+  Mat3? viewToBody,
+  double? frameDurationUs,
+  StabilizationOptions options = const StabilizationOptions(),
+  StabilizationDetails? details,
+}) {
+  final orientations = cameraOrientationTrackOf(track);
+  if (orientations == null) {
+    if (track.samples.isEmpty) {
+      _log.info('Stabilization: ${track.source.name} has neither samples nor orientations, no table');
+      return null;
+    }
+    return stabilizationOfMotionTrack(
+      track,
+      downBody: downBody,
+      frameDurationUs: frameDurationUs,
+      options: options,
+      details: details,
+    );
+  }
+  final toBody = viewToBody ?? viewToBodyOf(track.source);
+  if (toBody == null) {
+    _log.warning('Stabilization: no view to body rotation for ${track.source.name}, no table');
+    return null;
+  }
+  return stabilizationOfOrientations(
+    orientations,
+    frameTimes: track.frameTimes,
+    viewToBody: toBody,
+    frameDurationUs: frameDurationUs,
+    options: options,
+    details: details,
+  );
+}
+
+/// Reads the GPMF track of the GoPro .360 of [fileSize] bytes that [read] reads ([readGoProMotion]) and builds its
+/// stabilisation table from CORI and GRAV, the frames on the clock of the video track. Null when the file has no CORI.
+Future<StabilizationTable?> readGoProStabilization(
+  ByteRangeReader read,
+  int fileSize, {
+  double? frameDurationUs,
+  StabilizationOptions options = const StabilizationOptions(),
+  StabilizationDetails? details,
+}) async {
+  final track = await readGoProMotion(read, fileSize);
+  if (track == null) {
+    return null;
+  }
+  if (track.truncated) {
+    _log.warning('Stabilization: the GPMF track was read in part, the last frames hold the last orientation');
+  }
+  return stabilizationOfCameraMotion(track, frameDurationUs: frameDurationUs, options: options, details: details);
+}
+
+/// Reads the attitude of the DJI Osmo 360 .osv of [fileSize] bytes that [read] reads ([readDjiMotion]) and builds its
+/// stabilisation table, levelled by the world of the attitude. The fusion of the camera may lean in the first seconds
+/// of a ride (20 degrees at 0 s, under 1 degree after 4 s on the sample): the start of such a file shows it. Null when
+/// the file has no attitude.
+Future<StabilizationTable?> readDjiStabilization(
+  ByteRangeReader read,
+  int fileSize, {
+  double? frameDurationUs,
+  StabilizationOptions options = const StabilizationOptions(),
+  StabilizationDetails? details,
+}) async {
+  final track = await readDjiMotion(read, fileSize);
+  if (track == null) {
+    return null;
+  }
+  if (track.truncated) {
+    _log.warning('Stabilization: the camd box was read in part, the last frames hold the last orientation');
+  }
+  return stabilizationOfCameraMotion(track, frameDurationUs: frameDurationUs, options: options, details: details);
 }
 
 /// Integrates the gyroscope of a motion track, chunk after chunk, into the orientation of the camera at each frame,
