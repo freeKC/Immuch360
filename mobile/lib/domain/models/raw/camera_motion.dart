@@ -1,6 +1,8 @@
 // The motion of a 360° camera as its file records it, for the stabilisation of the video at playback: the samples of
 // its gyroscope and accelerometer, and the time of each frame, all on the clock of the video (time 0 at its first
-// frame). See lib/domain/services/raw/insta360_motion.dart for the Insta360 trailer.
+// frame), and the orientation the camera itself fused for each frame when the file has it. See
+// lib/domain/services/raw/insta360_motion.dart for the Insta360 trailer, lib/domain/services/raw/gopro_motion.dart for
+// the GPMF track of a GoPro.
 
 import 'dart:typed_data';
 
@@ -8,6 +10,10 @@ import 'dart:typed_data';
 enum CameraMotionSource {
   /// The IMU record of an Insta360 trailer (record 3), with the time of each frame (record 4)
   insta360Imu,
+
+  /// The GPMF track of a GoPro (MAX, MAX 2, HERO8 and later): one orientation (CORI) and one gravity vector (GRAV) per
+  /// frame, in the axes of the GPMF camera frame, not yet the body frame of dual_fisheye_math.dart; no raw samples
+  goProGpmf,
 }
 
 /// What time 0 of a motion track is
@@ -65,21 +71,38 @@ class CameraMotionTrack {
     this.rollingShutterMs,
     this.truncated = false,
     this.droppedSamples = 0,
-  }) : assert(frameExposures.length == frameTimes.length);
+    this.frameOrientations,
+    this.frameGravity,
+  }) : assert(frameExposures.length == 0 || frameExposures.length == frameTimes.length),
+       assert(frameOrientations == null || frameOrientations.length == 4 * frameTimes.length),
+       assert(frameGravity == null || frameGravity.length == 3 * frameTimes.length);
 
   final CameraMotionSource source;
 
   final CameraMotionTimeOrigin timeOrigin;
 
-  /// The samples of the gyroscope and the accelerometer
+  /// The samples of the gyroscope and the accelerometer; empty when the file gives the orientation per frame instead
   final CameraMotionSamples samples;
 
   /// Time of each frame of the video the file lists, frame 0 first, in seconds from the first frame (so 0 for it when
   /// [timeOrigin] is [CameraMotionTimeOrigin.firstFrame]); empty when the file lists none
   final Float64List frameTimes;
 
-  /// Exposure time of each frame, in seconds
+  /// Exposure time of each frame, in seconds; empty when the file does not say, NaN for a frame it says nothing of
   final Float32List frameExposures;
+
+  /// The orientation the camera fused for each entry of [frameTimes], four values a frame (w, x, y, z): the unit
+  /// quaternion q from the world to the camera, so that a vector of the world reads q v q^-1 in the axes of the camera,
+  /// and q^-1 turns the camera's vectors into the world. The world is the camera's own reference, not levelled (the
+  /// GoPro's frame at the start of the capture): [frameGravity] levels it. The axes of the camera are those of
+  /// [source]. Null when the file only has raw samples; NaN for a frame the file says nothing of.
+  final Float32List? frameOrientations;
+
+  /// The gravity vector the camera wrote for each entry of [frameTimes], three values a frame, unit, in the axes of the
+  /// camera ([source]), as the camera wrote it (GoPro GRAV: turned into the world by the inverse of the orientation, it
+  /// stays within 1.7 degrees of one direction on the sample measured). Null when the file has none; NaN for a frame
+  /// the file says nothing of.
+  final Float32List? frameGravity;
 
   /// Name of the camera, "Insta360 X4"
   final String? cameraModel;
@@ -108,6 +131,8 @@ class CameraMotionTrack {
   @override
   String toString() =>
       'CameraMotionTrack(${source.name}, $cameraModel $firmware, origin ${timeOrigin.name}, $samples, '
-      'rate ${sampleRate?.toStringAsFixed(1)} Hz, ${frameTimes.length} frames, rolling shutter $rollingShutterMs ms, '
+      'rate ${sampleRate?.toStringAsFixed(1)} Hz, ${frameTimes.length} frames, '
+      'orientations: ${frameOrientations != null}, gravity: ${frameGravity != null}, '
+      'rolling shutter $rollingShutterMs ms, '
       'truncated: $truncated, dropped: $droppedSamples)';
 }
