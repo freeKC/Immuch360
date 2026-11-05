@@ -207,6 +207,31 @@ void main() {
     queue().cancel(pano);
   });
 
+  test('a generation sd-cli takes back to one segment in the middle: the job says none from that step on', () async {
+    // "flux using 1 segment" once the live check of sd-cli allows it (review of lot 13c): steps 1 and 2 in 27
+    panorama = FakePanoramaEngine(segmentsAt: (step) => step <= 2 ? 27 : null, holdStage: ImmersiveStage.seam);
+    container = containerWith(FakeGpuProbe.of(FakeGpuReports.rtx4060).probe);
+    final generating = <(int?, int?)>[];
+    final seen = container.listen(conversionQueueProvider, (_, next) {
+      final shown = next.jobs.single;
+      if (shown.state == ConversionState.generating && shown.step != null) {
+        generating.add((shown.step, shown.segments));
+      }
+    });
+    addTearDown(seen.close);
+
+    final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+    await panorama.reachedHold.stream.first;
+
+    final said = generating.toSet().toList();
+    expect(said.length, greaterThan(3));
+    expect(said, [for (var step = 1; step <= said.length; step++) (step, step <= 2 ? 27 : null)]);
+    expect(job(pano).segments, isNull, reason: 'whole at the end of the generation');
+    queue().cancel(pano);
+    panorama.release();
+    await until((state) => state.byId(pano)!.state.isEnded);
+  });
+
   test('no card any more: the panorama fails, no graphics card can make it', () async {
     container = containerWith(FakeGpuProbe.of(FakeGpuReports.noDevice).probe);
 

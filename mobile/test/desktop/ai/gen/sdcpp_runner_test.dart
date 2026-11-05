@@ -420,8 +420,12 @@ void main() {
         ),
         27,
       );
-      expect(sdCppSegmentsOf(_oneSegment), isNull);
+      // Whole: the plan of one segment, and the line in the singular when the live check of sd-cli lets a cut run go
+      // back to one (ggml_runner.cpp 878, review of lot 13c)
+      expect(sdCppSegmentsOf(_oneSegment), 1);
+      expect(sdCppSegmentsOf('[V] flux using 1 segment --- ggml_runner.cpp:878'), 1);
       expect(sdCppSegmentsOf('[V] vae compute buffer size: 97.00 MB(VRAM) on Vulkan1 (peak across 1 segment)'), isNull);
+      expect(sdCppSegmentsOf('flux segment 7/27 (flux.single_blocks.0) failed during weight preparation'), isNull);
     });
   });
 
@@ -518,6 +522,32 @@ void main() {
       ).generate(request(), cancel: cancel, onProgress: heard.add);
       expect(heard, hasLength(20));
       expect(heard.every((progress) => progress.segments == null), isTrue);
+    });
+
+    test('taken back to one segment in the middle, its steps say none from then on, and the log says so', () async {
+      // "flux using 1 segment" once the live check of sd-cli allows it (review of lot 13c)
+      final lines = _generation(plan: [_planRtx], beforeSteps: ['[V] flux using 27 segments --- ggml_runner.cpp:879']);
+      final third = lines.indexWhere((line) => line.$1.contains(' 3/20 '));
+      lines.insert(third, ('[V] flux using 1 segment --- ggml_runner.cpp:878', isError: false));
+      final runner = FakeProcessRunner([FakeProcessScript(lines: lines)]);
+      final logged = <String>[];
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord.where((record) => record.loggerName == 'SdCpp').listen((record) {
+        logged.add(record.message);
+      });
+      addTearDown(() async {
+        Logger.root.level = level;
+        await listening.cancel();
+      });
+      final heard = <GeneratorProgress>[];
+
+      await generator(
+        _WritingRunner(runner, image: _varied(16, 8)),
+      ).generate(request(), cancel: cancel, onProgress: heard.add);
+
+      expect(heard.map((progress) => progress.segments), [27, 27, for (var step = 3; step <= 20; step++) null]);
+      expect(logged.last, 'sd-cli runs the generator whole again (7188 MiB free read on Vulkan1, budget 3072 MiB)');
     });
 
     test('shortfalls sd-cli recovers from: the run goes on to its image, nothing of a failure in the log', () async {

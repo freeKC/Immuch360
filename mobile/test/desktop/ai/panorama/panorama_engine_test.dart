@@ -29,6 +29,7 @@ import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 import '../fakes/fake_backends.dart';
@@ -392,6 +393,35 @@ void main() {
           isEmpty,
         );
         expect(File(job.partPath).existsSync(), isTrue);
+      },
+    );
+
+    test(
+      'a generator taken back to one segment in the middle: its steps say so, the summary the most of the run',
+      () async {
+        // "flux using 1 segment" once the live check of sd-cli allows it (review of lot 13c)
+        final logged = <String>[];
+        final level = Logger.root.level;
+        Logger.root.level = Level.ALL;
+        final listening = Logger.root.onRecord.where((record) => record.loggerName == 'PanoramaEngine').listen((
+          record,
+        ) {
+          logged.add(record.message);
+        });
+        addTearDown(() async {
+          Logger.root.level = level;
+          await listening.cancel();
+        });
+        final heard = <ImmersiveProgress>[];
+
+        final result = await engineOf(
+          generator: FakeGeneratorBackend(segmentsAt: (step) => step <= 2 ? 27 : null),
+        ).run(jobOf(photo()), cancel: cancel, onProgress: heard.add);
+
+        expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+        final steps = heard.where((progress) => progress.stage == ImmersiveStage.generating).toList();
+        expect(steps.map((progress) => progress.segments), [27, 27, null, null]);
+        expect(logged.where((line) => line.contains('generated in up to 27 segments, seam')), hasLength(1));
       },
     );
 

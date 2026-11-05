@@ -28,6 +28,7 @@ class FakePanoramaEngine extends FakeStagedEngine<PanoramaJob> {
     this.region = const PhotoRegion(yaw: 0, pitch: 0, hfov: 65.4, vfov: 50.6),
     this.secondsPerStep = 12,
     this.segments,
+    this.segmentsAt,
   });
 
   /// The pace the fake generation tells, one progress per step of the job
@@ -35,6 +36,9 @@ class FakePanoramaEngine extends FakeStagedEngine<PanoramaJob> {
 
   /// The segments each step of the generation tells (a card short of memory), null for none
   final int? segments;
+
+  /// The segments a step tells, when they change in the middle of the generation; [segments] for every step otherwise
+  final int? Function(int step)? segmentsAt;
 
   /// The size of the panorama written, 2:1
   final int width;
@@ -60,7 +64,7 @@ class FakePanoramaEngine extends FakeStagedEngine<PanoramaJob> {
           step: step,
           steps: steps,
           remaining: Duration(seconds: (steps - step) * secondsPerStep),
-          segments: segments,
+          segments: segmentsAt == null ? segments : segmentsAt!(step),
         ),
     ];
   }

@@ -16,9 +16,9 @@
 //  3. projection (to 5 %): the control frame of 2048 x 1024, the photo at its centre and pure green elsewhere,
 //     written as a PNG to the work folder of the job, and the part of the sphere the photo covers;
 //  4. loadingModels, then generating (to 80 %): the generator (GeneratorBackend: sd-cli of lot P2, on the graphics
-//     card) with the fixed prompt, the seed of the job and its steps, the budget of the card the queue read for it,
-//     "step 12 of 20" and the time left as it goes, and
-//     the segments it runs in when the card is short of memory (slower, the same image; desktop build 21 capped the
+//     card) with the fixed prompt, the seed of the job and its steps, the budget of the card the queue gives it on
+//     Windows, "step 12 of 20" and the time left as it goes, and the segments it runs in when the card is short of
+//     memory (slower, the same image; the summary in the log says the most of the run; desktop build 21 capped the
 //     reference instead, and wrote GeneratorReferenceMaxPixels in the XMP, which no panorama carries since). Its image
 //     is checked on the processor (its size, not grey, no pure green left outside the photo): a refused image is made
 //     once more with the next seed, then the job fails as outputRejected and nothing is written;
@@ -937,7 +937,10 @@ class PanoramaEngine implements ImmersiveEngine {
               if (stage == ImmersiveStage.loadingModels) {
                 timed(ImmersiveStage.loadingModels);
               }
-              segments = progress.segments;
+              // The most segments of the run for its summary: sd-cli may go back to one when its live check allows
+              if ((progress.segments ?? 1) > (segments ?? 1)) {
+                segments = progress.segments;
+              }
               final steps = math.max(1, progress.steps);
               tell(
                 ImmersiveProgress(
@@ -1082,7 +1085,7 @@ class PanoramaEngine implements ImmersiveEngine {
       );
       _log.info(
         '${job.id}: panorama of ${written.bytes} bytes, seed $seed, generated '
-        '${segments == null ? 'whole' : 'in $segments segments'}, seam '
+        '${segments == null ? 'whole' : 'in up to $segments segments'}, seam '
         '${seam.before.toStringAsFixed(2)} to '
         '${seam.after.toStringAsFixed(2)} in ${seam.regions} regions; decoder ${prepared.decoder}, encoder '
         '${written.encoder}; ${_timesOf(times)}',

@@ -572,7 +572,7 @@ class ConversionJob {
 
   /// A panorama: the pieces its generator runs in, the graphics card being short of memory
   /// (ImmersiveProgress.segments); "The graphics card is short of memory, so the generation runs in 27 pieces: slower,
-  /// same result" while it generates. Null while it runs whole.
+  /// same result" while it generates. Null while it runs whole, and again when sd-cli goes back to one segment.
   final int? segments;
 
   /// Whether the job ended for the memory of the graphics card in a way Keep waiting answers: it left the queue after
@@ -593,8 +593,8 @@ class ConversionJob {
   /// From 0 to 1
   double get progress => perMille / 1000;
 
-  /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor] and [gpuShortfall] are
-  /// given as functions, so that they may go back to null; [placed], [keptFolder] and [segments] go back to null with
+  /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor], [gpuShortfall] and
+  /// [segments] are given as functions, so that they may go back to null; [placed] and [keptFolder] go back to null with
   /// [restarted] only
   ConversionJob copyWith({
     ConversionState? state,
@@ -619,7 +619,7 @@ class ConversionJob {
     bool? keepsWaiting,
     SplatPlaced? placed,
     String? keptFolder,
-    int? segments,
+    int? Function()? segments,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -655,7 +655,7 @@ class ConversionJob {
     splat: splat,
     placed: placed ?? this.placed,
     keptFolder: keptFolder ?? this.keptFolder,
-    segments: segments ?? this.segments,
+    segments: segments == null ? this.segments : segments(),
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then. [keepsWaiting]: it

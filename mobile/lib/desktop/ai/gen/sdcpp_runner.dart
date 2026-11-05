@@ -21,7 +21,8 @@
 //    of 5 November 2026, ai-gpu-budget-2026-11-05/measure.md, section 4: 294 s instead of 202 with 5.5 GiB free, about
 //    8 min near the floor of 3.1 GiB; M3 saw spoilt images in segments at 1792 x 896 and 2048 x 1024 only). Each step
 //    it reports then carries the number of segments (GeneratorProgress.segments), which the panel says, and the log
-//    keeps it with the free memory and the budget sd-cli read on the card (the lines of its auto-fit plan);
+//    keeps it with the free memory and the budget sd-cli read on the card (the lines of its auto-fit plan); when its
+//    live check lets it go back to one segment ("flux using 1 segment"), the steps say none again;
 //  - a failure is named: gpuOutOfMemory when its output says a part could not be placed for want of memory (the
 //    segment that failed during weight preparation, as M3 and the measure read it, or Vulkan's two texts; for a
 //    generation, its message then starts with what sd-cli read of the card, GeneratorMemoryRead: the free memory and
@@ -132,7 +133,7 @@ const _givenWhy = " (from the free memory Windows counts: Vulkan's figure leaves
 const sdCppErrorTailLines = 20;
 
 final _bar = RegExp(r'\|\s*(\d+)/(\d+)\s*-\s*([\d.]+)\s*(s/it|it/s)');
-final _segments = RegExp(r'\bflux (?:using (\d+) segments|compute buffer size:.*\(peak across (\d+) segments\))');
+final _segments = RegExp(r'\bflux (?:using (\d+) segments?\b|compute buffer size:.*\(peak across (\d+) segments?\))');
 
 /// A step of a bar of sd-cli: done, of how many, and the seconds of the step, or null when [line] is no such bar
 GeneratorProgress? sdCppBarOf(String line) {
@@ -145,7 +146,8 @@ GeneratorProgress? sdCppBarOf(String line) {
   return GeneratorProgress(int.parse(match.group(1)!), int.parse(match.group(2)!), secondsPerStep: seconds);
 }
 
-/// The number of segments a line says the transformer's graph was cut into, null when it says nothing of it
+/// The number of segments a line says the transformer's graph was cut into, 1 for a graph whole ("flux using 1 segment"
+/// when the live check of sd-cli lets a cut run go back to one, "peak across 1 segment"), null when it says nothing
 int? sdCppSegmentsOf(String line) {
   final match = _segments.firstMatch(line);
   return match == null ? null : int.parse(match.group(1) ?? match.group(2)!);
@@ -387,12 +389,17 @@ class SdCppGenerator implements GeneratorBackend {
           );
           return null;
         }
-        // The graph cut into segments: the run goes on, slower, the same image (see the top of this file)
+        // The graph cut into segments: the run goes on, slower, the same image (see the top of this file); back to
+        // one when the live check of sd-cli allows it
         final cut = sdCppSegmentsOf(line);
         if (cut != null) {
           if (cut != segments) {
             segments = cut;
-            _log.info('sd-cli runs the generator in $cut segments (${said()}): slower, the same image');
+            _log.info(
+              cut > 1
+                  ? 'sd-cli runs the generator in $cut segments (${said()}): slower, the same image'
+                  : 'sd-cli runs the generator whole again (${said()})',
+            );
           }
           return null;
         }
