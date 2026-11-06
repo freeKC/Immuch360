@@ -273,6 +273,23 @@ void main() {
       expect(failing.closed, 1, reason: 'closed after a failure too');
     });
 
+    test('is null without reading for a file that does not read at any position, a stream without ranges', () async {
+      final file = _File(x4);
+      final input = file.input('x4.insv');
+      final stream = RawVideoInput(
+        name: input.name,
+        key: input.key,
+        url: input.url,
+        open: input.open,
+        readsAnywhere: () => false,
+      );
+      final plan = _plan(RawMediaKind.insta360Video, input: stream);
+      expect(rawVideoHasReadableTrack(plan), isFalse);
+      expect(await stabilizationOfRawVideo(plan, build: buildRawStabilization), isNull);
+      expect(file.opened, 0);
+      expect(file.reads, isEmpty);
+    });
+
     test('is null for a photo, which has no track', () async {
       final file = _File(x4);
       expect(await stabilizationOfRawVideo(_plan(RawMediaKind.insta360Photo, input: file.input('a.insp'))), isNull);
@@ -364,6 +381,21 @@ void main() {
       );
       // A failing player stops nothing
       await tellStabilizationSetting(_Player(fails: true), 'u', enabled: true);
+    });
+
+    test('does not apply to a GoPro whose faces are not those of the MAX: its switch never shows', () {
+      final file = _File(goProSpreadVideo());
+      RawVideoPlan goPro(int face) => RawVideoPlan(
+        kind: RawMediaKind.goProVideo,
+        layout: RawVideoLayout.twoTracks,
+        tracks: [RawVideoTrack(file: 0, videoTrack: 0, width: face * 3 + 64, height: face, frameRate: 29.97)],
+        eac: GoProEacGeometry(trackWidth: face * 3 + 64, trackHeight: face),
+        url: 'file:///g.360',
+        trackOrderSource: 'single',
+        motionTrackInput: file.input('g.360'),
+      );
+      expect(RawVideoStabilizer(api: _Player(), url: 'u', enabled: true, plan: goPro(1920)).applies, isFalse);
+      expect(RawVideoStabilizer(api: _Player(), url: 'u', enabled: true, plan: goPro(1344)).applies, isTrue);
     });
 
     test('applies only to a camera with a track and a file to read, and a failing player stops nothing', () async {

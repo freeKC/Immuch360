@@ -35,7 +35,7 @@ import 'package:logging/logging.dart';
 final _log = Logger('PlexFileSystem');
 
 /// A [NetworkFileSystem] over a Plex Media Server, see [open]
-class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, NetworkRemoteEndpoint {
+class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, NetworkRemoteEndpoint, NetworkRangeReads {
   PlexFileSystem._(
     this.source,
     this._hash,
@@ -194,6 +194,10 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
 
   /// The reads of the files, keyed by part
   late final _ranges = HttpRangeReader(send: _sendRead, fail: _failRead, isClosed: () => _closed);
+
+  /// Whether the server honours range requests on the parts of its media (see [HttpRangeReader.supportsRanges])
+  @override
+  bool? get supportsRanges => _ranges.supportsRanges;
 
   static const defaultPageSize = 200;
 

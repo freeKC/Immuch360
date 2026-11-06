@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_stabilization.dart';
@@ -262,19 +263,22 @@ const rawShareSiblingListTimeout = Duration(seconds: 10);
 /// The finder of the other file of the split pair of [entry], a raw video of a share: in [folder], the listing of the
 /// page when it has one, by its name, else by its name case aside; else in a fresh listing of its folder through
 /// [connections] when given, within [rawShareSiblingListTimeout]. The file found is read through the media bridge with
-/// [bridgeClient], its probe through [media].
+/// [bridgeClient], its probe through [media]. [share], the open share of [entry] when the caller has it, tells whether
+/// the file found reads at any position, as its motion track needs (see [RawVideoInput.readsAnywhere]).
 RawSiblingFinder shareSiblingFinder({
   required NetworkEntry entry,
   List<ShareMediaItem>? folder,
   required NetworkConnections? connections,
+  NetworkFileSystem? share,
   required http.Client bridgeClient,
   required NetworkMediaService media,
 }) => (siblingName) async {
   var found = _named(folder ?? const [], siblingName);
+  var fileSystem = share;
   if (found == null && connections != null) {
     try {
-      final fileSystem = await connections.fileSystem(entry.sourceId);
-      final listed = await fileSystem.list(_parentOf(entry.path)).timeout(rawShareSiblingListTimeout);
+      final opened = fileSystem = await connections.fileSystem(entry.sourceId);
+      final listed = await opened.list(_parentOf(entry.path)).timeout(rawShareSiblingListTimeout);
       final sibling = _named([for (final item in listed) (entry: item, url: Uri())], siblingName)?.entry;
       if (sibling != null) {
         found = (entry: sibling, url: await connections.mediaUrl(entry.sourceId, sibling.path));
@@ -303,6 +307,8 @@ RawSiblingFinder shareSiblingFinder({
     url: url.toString(),
     open: () async => (size: sibling.size, read: read, close: () async {}),
     probe: info?.probe,
+    // The trailer of a split Insta360 pair is on this file: its motion track too
+    readsAnywhere: () => readsAnywhere(fileSystem, sibling),
   );
 };
 

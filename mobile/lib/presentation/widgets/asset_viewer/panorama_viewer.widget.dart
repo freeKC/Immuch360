@@ -27,6 +27,7 @@ import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
+import 'package:immich_mobile/domain/models/raw/stabilization.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/unedited_frame.dart';
@@ -43,6 +44,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
+import 'package:immich_mobile/platform/spherical_video_api.g.dart' show SphericalVideoApi;
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/presentation/widgets/drone/dji_live_transient.dart';
@@ -99,7 +101,7 @@ final _log = Logger('PanoramaViewer');
 /// A raw video whose camera recorded its motion (see [rawKindHasMotionTrack]) plays stabilised where the player can
 /// (see [videoStabilizationSupportedProvider]): the player opens at once with the switch of the stabilisation, the
 /// table is built in a background isolate meanwhile and reaches the player when ready (see [RawVideoStabilizer]); the
-/// playback never waits for it. The setting "Stabilise with the camera's gyroscope" says where the switch starts.
+/// playback never waits for it. The setting "Stabilize with the camera's gyroscope" says where the switch starts.
 ///
 /// A server video whose only stream is beyond the decoders of the device (see
 /// [VideoSourceService.refusedServerStream]: a 5.7K H.264 export the server left as it is, on a TV) opens no player
@@ -198,33 +200,27 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       await warnOfTwoRawStreams(plan, videoSources, messenger, t);
     }
     final url = plan?.url ?? source.url;
-    final candidate = plan != null && stabilizationSupported
-        ? RawVideoStabilizer(api: api, url: url, enabled: stabilizationEnabled, plan: plan, build: stabilizationBuilder)
-        : null;
-    final stabilizer = candidate != null && candidate.applies ? candidate : null;
-    if (stabilizer != null) {
-      // Closing the player stops the build of its table
-      session.whenClosed(stabilizer.cancel);
-      await stabilizer.announce();
-    } else if (stabilizationSupported) {
-      await tellStabilizationSetting(api, url, enabled: stabilizationEnabled);
-    }
-    await api.open(
-      url,
-      ApiService.getRequestHeaders(),
-      asset.name,
-      closeLabel,
-      errorMessage,
-      view.layout,
-      labels,
-      view.coverage,
-      plan != null ? plan.fallbackUrl : source.fallbackUrl,
-      plan?.toNativeJson(),
+    await openStabilizedSphericalVideo(
+      api: api,
+      session: session,
+      url: url,
+      plan: plan,
+      supported: stabilizationSupported,
+      enabled: stabilizationEnabled,
+      build: stabilizationBuilder,
+      open: () => api.open(
+        url,
+        ApiService.getRequestHeaders(),
+        asset.name,
+        closeLabel,
+        errorMessage,
+        view.layout,
+        labels,
+        view.coverage,
+        plan != null ? plan.fallbackUrl : source.fallbackUrl,
+        plan?.toNativeJson(),
+      ),
     );
-    // Not awaited: the video plays meanwhile, the table reaches the player when ready
-    if (stabilizer != null) {
-      unawaited(stabilizer.deliver());
-    }
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for ${asset.name}', error, stackTrace);
     session.cancel();
@@ -265,12 +261,53 @@ Future<bool> confirmUndecodableVideo(
   return play ?? false;
 }
 
+/// Opens the native 360° player at [url] with [open], told about the stabilisation first where the player stabilises
+/// ([supported], with the setting [enabled]). The raw video of [plan], whose camera wrote a motion track the app reads
+/// in a file read at any position (see [RawVideoStabilizer.applies]), opens with the switch of the stabilisation; its
+/// table is built by [build] (in a background isolate) meanwhile and reaches the player when ready, the playback never
+/// waiting for it, and closing the player ([session]) stops the build. Any other video is told the setting alone (see
+/// [tellStabilizationSetting]): the switch of a CAMM track starts there. The one way both the library
+/// ([openPanoramaVideo]) and the shares and folders ([openSphericalVideoUrl]) open the player.
+///
+/// Returns the delivery of the table, not to be awaited before the video plays; null when no table is built.
+Future<Future<StabilizationTable?>?> openStabilizedSphericalVideo({
+  required SphericalVideoApi api,
+  required SphericalVideoSession session,
+  required String url,
+  required RawVideoPlan? plan,
+  required bool supported,
+  required bool enabled,
+  required RawStabilizationBuilder build,
+  required Future<void> Function() open,
+}) async {
+  final candidate = plan != null && supported
+      ? RawVideoStabilizer(api: api, url: url, enabled: enabled, plan: plan, build: build)
+      : null;
+  final stabilizer = candidate != null && candidate.applies ? candidate : null;
+  if (stabilizer != null) {
+    // Closing the player stops the build of its table
+    session.whenClosed(stabilizer.cancel);
+    await stabilizer.announce();
+  } else if (supported) {
+    await tellStabilizationSetting(api, url, enabled: enabled);
+  }
+  await open();
+  if (stabilizer == null) {
+    return null;
+  }
+  // Not awaited: the video plays meanwhile, the table reaches the player when ready
+  final delivery = stabilizer.deliver();
+  unawaited(delivery);
+  return delivery;
+}
+
 /// Plays the video at [url] full screen in the native 360° player, like [openPanoramaVideo] for a video that is no
-/// asset: a file of a network share, streamed through the local media bridge for example. [title] names it in the
-/// player, [layout] and [coverage] are what the player opens with (see [resolveSphereView]); the user can change them
-/// there, and nothing is remembered. [fallbackUrl] is a stream the player switches to when it cannot play [url], null
-/// for none. [rawProjection] is the rawProjection JSON of a raw video (see [RawVideoPlan.toNativeJson]), null for an
-/// equirectangular one.
+/// asset: a file of a network share or of a folder of the device, streamed through the local media bridge. [title]
+/// names it in the player, [layout] and [coverage] are what the player opens with (see [resolveSphereView]); the user
+/// can change them there, and nothing is remembered. [fallbackUrl] is a stream the player switches to when it cannot
+/// play [url], null for none. [plan] is the plan of a raw video (its rawProjection JSON goes to the player, see
+/// [RawVideoPlan.toNativeJson]), null for an equirectangular one: one whose camera recorded its motion plays
+/// stabilised as in the library, when its share reads it at any position (see [openStabilizedSphericalVideo]).
 ///
 /// Meanwhile [player], the page's own player when there is one, is stopped (see
 /// [VideoPlayerNotifier.suspendForExternalPlayer]): the page lifts this when the app resumes, which closing the 360°
@@ -285,14 +322,16 @@ Future<bool> openSphericalVideoUrl(
   required SphereCoverage coverage,
   VideoPlayerNotifier? player,
   String? fallbackUrl,
-  String? rawProjection,
+  RawVideoPlan? plan,
 }) async {
   // Read before the first await: the page may be gone by then
   final api = ref.read(sphericalVideoApiProvider);
   final stabilizationSupported = ref.read(videoStabilizationSupportedProvider);
   final stabilizationEnabled = ref.read(appConfigProvider).viewer.stabilizeVideos;
-  // The session takes the events of the player; without an asset, it has nothing to remember when it closes
-  ref.read(sphericalVideoSessionProvider).cancel();
+  final stabilizationBuilder = ref.read(rawStabilizationBuilderProvider);
+  // The session takes the events of the player; without an asset, it has nothing to remember when it closes, but
+  // stops the build of a stabilisation table then
+  final session = ref.read(sphericalVideoSessionProvider)..cancel();
   final closeLabel = context.t.close;
   final errorMessage = context.t.errors.unable_to_play_video;
   final labels = {
@@ -306,14 +345,31 @@ Future<bool> openSphericalVideoUrl(
 
   try {
     await player?.suspendForExternalPlayer();
-    // No table on this path: the switch of a CAMM track starts at the setting
-    if (stabilizationSupported) {
-      await tellStabilizationSetting(api, url, enabled: stabilizationEnabled);
-    }
-    await api.open(url, headers, title, closeLabel, errorMessage, layout, labels, coverage, fallbackUrl, rawProjection);
+    await openStabilizedSphericalVideo(
+      api: api,
+      session: session,
+      url: url,
+      plan: plan,
+      supported: stabilizationSupported,
+      enabled: stabilizationEnabled,
+      build: stabilizationBuilder,
+      open: () => api.open(
+        url,
+        headers,
+        title,
+        closeLabel,
+        errorMessage,
+        layout,
+        labels,
+        coverage,
+        fallbackUrl,
+        plan?.toNativeJson(),
+      ),
+    );
     return true;
   } catch (error, stackTrace) {
     _log.severe('Cannot open the 360° video player for $title', error, stackTrace);
+    session.cancel();
     await player?.resumeAfterExternalPlayer();
     return false;
   }

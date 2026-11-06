@@ -79,7 +79,7 @@ BrowseAnswer parseBrowseResponse(String xml, Uri base) {
 }
 
 /// A [NetworkFileSystem] over a DLNA media server, see [open]
-class DlnaFileSystem implements NetworkFileSystem {
+class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads {
   DlnaFileSystem._(this.source, this._description, this._client, this._ownsClient, this._pageSize, this._browseTimeout);
 
   /// Reads the device description of [source], then lists its start folder (the root path of the source). Throws a
@@ -165,6 +165,10 @@ class DlnaFileSystem implements NetworkFileSystem {
 
   /// The reads of the files, keyed by object id
   late final _ranges = HttpRangeReader(send: _send, fail: _fail, isClosed: () => _closed);
+
+  /// Whether the media server honours range requests (see [HttpRangeReader.supportsRanges])
+  @override
+  bool? get supportsRanges => _ranges.supportsRanges;
 
   static const defaultPageSize = 200;
 

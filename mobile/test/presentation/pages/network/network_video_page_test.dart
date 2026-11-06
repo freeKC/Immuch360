@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
@@ -21,6 +22,7 @@ import 'package:immich_mobile/domain/models/watch_progress.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_stabilization.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
@@ -42,6 +44,7 @@ import 'package:native_video_player/native_video_player.dart';
 
 import '../../../domain/services/spherical_probe_fixtures.dart';
 import '../../../fixtures/raw/insta360.stub.dart';
+import '../../../fixtures/raw/insta360_motion_slices.dart';
 import '../../../fixtures/watch_progress.fake.dart';
 import 'network_viewer_fakes.dart';
 
@@ -50,6 +53,24 @@ class _RecordingSphericalVideoApi extends SphericalVideoApi {
 
   /// The calibration each video was opened with, null for an equirectangular one
   final List<String?> rawProjections = [];
+
+  /// What the player was told of the stabilisation, in order: whether a track comes, then the number of frames of the
+  /// table when one came ("track", "no track", "table of N frames")
+  final List<String> stabilization = [];
+
+  @override
+  Future<void> setStabilization(
+    String url,
+    bool enabled,
+    bool hasTrack,
+    Int64List? presentationTimesUs,
+    Float64List? corrections,
+    String? summary,
+  ) async {
+    stabilization.add(
+      presentationTimesUs != null ? 'table of ${presentationTimesUs.length} frames' : (hasTrack ? 'track' : 'no track'),
+    );
+  }
 
   @override
   Future<void> open(
@@ -174,6 +195,14 @@ class _RecordingVideoPlayer extends VideoPlayerNotifier {
 
 const _source = NetworkSource(id: 'nas', type: NetworkSourceType.smb, name: 'Home NAS', host: 'nas', share: 'media');
 
+/// A share over HTTP whose server answered a range request with the whole file (see NetworkRangeReads)
+class _WholeFileMemoryShare extends MemoryShare implements NetworkRangeReads {
+  _WholeFileMemoryShare(super.source, {super.files});
+
+  @override
+  bool? get supportsRanges => false;
+}
+
 void main() {
   late Drift db;
   late StoreService store;
@@ -205,6 +234,18 @@ void main() {
   final rawOneLens = mp4File(mp4Moov([mp4VideoTrack(const [], width: 2880, height: 2880)]));
   // The first lens file of a split pair: the trailer of the camera is on it only
   final rawFirstLens = insta360File([insta360Record(1, x3Metadata(), format: 1)], body: rawOneLens);
+  // An X3 ride with its motion: the frames and the gyroscope of the real X3 slice in the trailer, beside the calibration
+  final rawRide = insta360File(
+    [
+      insta360Record(4, insta360X3MotionSlice.frames),
+      insta360Record(3, insta360X3MotionSlice.imu),
+      insta360Record(1, [
+        ...x3Metadata(),
+        ...pbVarintField(24, insta360X3MotionSlice.firstFrameTimestamp),
+      ], format: 1),
+    ],
+    body: mp4File(mp4Moov([mp4VideoTrack(const [], width: 5760, height: 2880)])),
+  );
 
   setUpAll(() async {
     // Real HTTP to the test server: the widget tests answer every request with an error otherwise
@@ -234,6 +275,7 @@ void main() {
         '/VID_20240908_10_003.insv': rawOneLens,
         '/VID_20240908_00_004.insv': rawFirstLens,
         '/VID_20240908_10_004.insv': rawOneLens,
+        '/VID_20240414_00_027.insv': rawRide,
       },
     );
     // The folder of the files, where the other file of a split pair is looked for
@@ -279,6 +321,7 @@ void main() {
     VideoPlayerState? playerState,
     bool twoStreams = true,
     bool recordPlayer = true,
+    bool stabilization = false,
     List<Override> extra = const [],
   }) async {
     await pumpNetworkRouter(
@@ -307,6 +350,9 @@ void main() {
         networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
         // The players of the phones and the headset play two streams; the test runs on neither
         rawVideoPlaybackSupportProvider.overrideWithValue(RawVideoPlaybackSupport(twoStreams: twoStreams)),
+        videoStabilizationSupportedProvider.overrideWithValue(stabilization),
+        // Built in place: the widget tests run no isolate
+        rawStabilizationBuilderProvider.overrideWithValue(buildRawStabilization),
       ],
     );
   }
@@ -506,6 +552,46 @@ void main() {
     expect(playerCalls, ['suspend']);
 
     await endRealIo(tester);
+  });
+
+  group('the stabilisation of a raw video of the share', () {
+    Future<void> openRide(WidgetTester tester) async {
+      await pumpVideoPage(tester, '/VID_20240414_00_027.insv', stabilization: true);
+      await pumpUntilDetected(tester);
+      await tapRaw360(tester, () => sphericalApi.opened.isNotEmpty);
+      // The table is built once the player opened
+      for (var i = 0; i < 50 && sphericalApi.stabilization.length < 2; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pump();
+      }
+    }
+
+    testWidgets('opens at once with the switch, then hands the table of the gyroscope read from the share', (
+      tester,
+    ) async {
+      await openRide(tester);
+
+      expect(sphericalApi.opened.single['url'], server.urlOf('/VID_20240414_00_027.insv').toString());
+      expect(sphericalApi.stabilization, hasLength(2));
+      expect(sphericalApi.stabilization.first, 'track');
+      expect(sphericalApi.stabilization.last, matches(RegExp(r'^table of [1-9]\d* frames$')));
+      expect(playerCalls, ['suspend']);
+
+      await endRealIo(tester);
+    });
+
+    testWidgets('a share that answers ranges with the whole file gives no table, and the switch never shows', (
+      tester,
+    ) async {
+      share = _WholeFileMemoryShare(_source, files: share.files)..folders['/'] = share.folders['/']!;
+      server.share = share;
+      await openRide(tester);
+
+      expect(sphericalApi.opened, hasLength(1), reason: 'the video plays all the same');
+      expect(sphericalApi.stabilization, ['no track']);
+
+      await endRealIo(tester);
+    });
   });
 
   testWidgets('says which file of a split pair is missing next to it', (tester) async {

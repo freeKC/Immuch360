@@ -61,6 +61,33 @@ abstract interface class NetworkSequentialReads {
   bool get readsFromStartOnly;
 }
 
+/// A share read over plain HTTP (WebDAV, a DLNA media server, Plex), whose server may answer a range request with the
+/// whole file: reads still work then, each one transferring the file from its start up to the bytes asked for
+abstract interface class NetworkRangeReads {
+  /// Whether the server honours range requests: null until a read tells, false once it answered one with the whole
+  /// file
+  bool? get supportsRanges;
+}
+
+/// Whether [entry] of [fileSystem] reads at any position, as the motion track of a raw video needs (it sits at the end
+/// of an Insta360 file, through a GoPro or a DJI file): its size is known (a file of a DLNA or Plex server that does
+/// not tell it is streamed by the media bridge from its start, without ranges), the share does not send each file from
+/// its start (see [NetworkSequentialReads]), and its server did not answer a range request with the whole file (see
+/// [NetworkRangeReads]). Asked again at each call: a server tells whether it honours ranges at its first reads.
+bool readsAnywhere(NetworkFileSystem? fileSystem, NetworkEntry entry) {
+  final size = entry.size;
+  if (size == null || size <= 0) {
+    return false;
+  }
+  if (fileSystem case NetworkSequentialReads(readsFromStartOnly: true)) {
+    return false;
+  }
+  if (fileSystem case NetworkRangeReads(supportsRanges: false)) {
+    return false;
+  }
+  return true;
+}
+
 /// The order of [NetworkFileSystem.list]: folders first, then files, both by name without case (then with case, so
 /// that two names differing by case only keep one order)
 int compareNetworkEntries(NetworkEntry a, NetworkEntry b) {
