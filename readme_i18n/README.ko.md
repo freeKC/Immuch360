@@ -10,7 +10,7 @@
 
 기기, NAS, Immich 서버, 카메라, 드론에서 오는 평면, 360°, 3D 사진과 동영상. 계정이 필요 없습니다. Immuch360은 사진과 동영상이 있는 곳에서 바로 읽어 각 파일에 맞는 뷰어에서 재생하는 무료 오픈 소스 앱입니다: 평면으로, 둘러볼 수 있는 구체로, 3D로, 또는 헤드셋에서 사방을 둘러싸게. 휴대폰, 태블릿, TV, Meta Quest 헤드셋, 컴퓨터에서 실행됩니다.
 
-**build 33부터 41까지의 새 기능.** [영화는 멈춘 곳부터 이어서 재생됩니다](#pick-up-a-film-where-you-stopped). 영화는 더 빨리 시작되고, 느린 서버에서도 [멈추지 않고 계속 재생됩니다](#when-a-video-waits-or-will-not-play). 휴대폰과 컴퓨터에서 타임라인이 [월과 연도까지 축소됩니다](#find-a-month-or-a-year-in-a-long-timeline). Android 휴대폰이나 Meta Quest에서는 ["폴더 탐색"](#browse-a-folder-of-your-phone-or-headset)으로 기기의 폴더를 공유처럼 열 수 있고, TIFF 사진도 표시됩니다. Android TV는 [리모컨으로 날짜별 검색](#on-android-tv-and-google-tv)을 하고, Meta Quest 3 또는 3S는 [가우시안 스플랫을 엽니다](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)(실험적). 스플랫은 오른쪽 썸스틱으로 돌릴 수 있고 SPZ 버전 4도 지원됩니다. 컴퓨터는 [NAS에 있는 사진의 3D 버전을 만듭니다](#turn-one-photo-into-3d-a-scene-a-panorama). 그래픽 칩이 두 개인 Windows 노트북에서는 앱이 [이제 빠른 칩에서 실행되어](#when-a-video-waits-or-will-not-play) 8K 영화가 부드럽게 재생됩니다. 이제 가우시안 스플랫이 [컴퓨터와 Android 휴대폰, 태블릿에서 열리고](#explore-gaussian-splats-on-your-phone-tablet-or-computer), Windows 컴퓨터는 AI로 [사진이나 동영상에서 스플랫 장면을 만들며](#make-a-splat-scene-from-your-photos-or-a-video-ai), Immich 서버는 타임라인에서 열리는 [사진 안에 스플랫 장면을 보관하고](#keep-a-splat-scene-on-your-immich-server), 컴퓨터는 [AV2 동영상을 재생합니다](#play-av2-videos-on-your-computer). 모두 실험적입니다.
+**build 33부터 42까지의 새 기능.** [영화는 멈춘 곳부터 이어서 재생됩니다](#pick-up-a-film-where-you-stopped). 영화는 더 빨리 시작되고, 느린 서버에서도 [멈추지 않고 계속 재생됩니다](#when-a-video-waits-or-will-not-play). 휴대폰과 컴퓨터에서 타임라인이 [월과 연도까지 축소됩니다](#find-a-month-or-a-year-in-a-long-timeline). Android 휴대폰이나 Meta Quest에서는 ["폴더 탐색"](#browse-a-folder-of-your-phone-or-headset)으로 기기의 폴더를 공유처럼 열 수 있고, TIFF 사진도 표시됩니다. Android TV는 [리모컨으로 날짜별 검색](#on-android-tv-and-google-tv)을 하고, Meta Quest 3 또는 3S는 [가우시안 스플랫을 엽니다](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)(실험적). 스플랫은 오른쪽 썸스틱으로 돌릴 수 있고 SPZ 버전 4도 지원됩니다. 컴퓨터는 [NAS에 있는 사진의 3D 버전을 만듭니다](#turn-one-photo-into-3d-a-scene-a-panorama). 그래픽 칩이 두 개인 Windows 노트북에서는 앱이 [이제 빠른 칩에서 실행되어](#when-a-video-waits-or-will-not-play) 8K 영화가 부드럽게 재생됩니다. 이제 가우시안 스플랫이 [컴퓨터와 Android 휴대폰, 태블릿에서 열리고](#explore-gaussian-splats-on-your-phone-tablet-or-computer), Windows 컴퓨터는 AI로 [사진이나 동영상에서 스플랫 장면을 만들며](#make-a-splat-scene-from-your-photos-or-a-video-ai), Immich 서버는 타임라인에서 열리는 [사진 안에 스플랫 장면을 보관하고](#keep-a-splat-scene-on-your-immich-server), 컴퓨터는 [AV2 동영상을 재생합니다](#play-av2-videos-on-your-computer). 모두 실험적입니다. build 42부터는 Immich 라이브러리의 Insta360 원본 동영상이 Android 휴대폰, 태블릿, TV에서 [카메라 자이로스코프로 흔들림 보정되어 재생되고](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental), desktop build 22의 스플랫 장면 만들기는 가까이서 보는 장면을 위해 [상세 품질을 제공하며](#make-a-splat-scene-from-your-photos-or-a-video-ai), 360° 파노라마는 [그래픽 카드에 3.5 GiB의 여유 메모리가 있으면 시작됩니다](#turn-one-photo-into-3d-a-scene-a-panorama). 모두 실험적입니다. iPhone과 iPad 앱은 [App Store에 있으며](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965), 버전 3.3.2입니다.
 
 <p align="center">
   <sub>Immich 모바일 앱의 비공식 포크입니다. Immich나 FUTO와는 관련이 없습니다. 이름은 "I am much 360"처럼 읽힙니다.</sub>
@@ -43,6 +43,7 @@
   - [홈 카메라를 큰 화면에서 보기](#watch-your-home-cameras-on-the-big-screen)
   - [DJI 드론(실험적)](#your-dji-drone-experimental): [실시간 영상](#see-what-your-drone-sees-on-your-phone), [Quest나 Android TV에서](#watch-it-in-a-meta-quest-or-on-an-android-tv), [가져오기](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
   - [360° 카메라의 원본 파일 열기](#open-the-raw-files-of-360-cameras)
+  - [카메라 자이로스코프로 360° 동영상의 흔들림 보정하기 (실험적)](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)
   - [키 하나로 사진 회전하기](#turn-a-photo-with-one-key)
   - [컴퓨터를 미디어 플레이어로 쓰기](#use-your-computer-as-the-media-player)
   - [컴퓨터에서 AV2 동영상 재생하기](#play-av2-videos-on-your-computer)
@@ -58,6 +59,7 @@
 ## 누구를 위한 앱인가요
 
 - **360°나 3D로 촬영하고** 사진을 평면으로, 이중으로, 늘어진 채로 보는 대신 그 안을 둘러보고 싶다면: [360°, VR180, 3D](#explore-panoramas-360-vr180-and-3d).
+- **360° 카메라를 손에 들거나 자전거나 헬멧에 달고 촬영하고** Immich에 보관한 Insta360 카메라의 원본 동영상을 휴대폰과 TV에서 수평이 맞고 안정적으로 재생하고 싶다면(실험적): [카메라 자이로스코프로 흔들림 보정](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental).
 - **사진과 영화가 NAS, 컴퓨터, Plex, Immich에 있고** 아무것도 복사하지 않고 TV에서 보고 싶다면: [TV에서](#watch-on-the-tv-with-the-remote), [NAS, 공유, Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex).
 - **Meta Quest가 있고** 내 사진과 동영상 속에 들어가 보고 싶다면: [헤드셋에서](#step-inside-your-photos-and-videos-with-a-meta-quest).
 - **사진이 평면이라** 3D 카메라 없이 3D로, 헤드셋에서 몸을 기울여 들여다보는 장면으로, 또는 360° 파노라마 안에서 보고 싶다면: [사진 한 장을 3D, 장면, 파노라마로 바꾸기](#turn-one-photo-into-3d-a-scene-a-panorama), 새 기능, 내 컴퓨터에서 AI가 만듭니다.
@@ -75,16 +77,16 @@
 
 <div align="center">
 
-| 플랫폼 | 받는 곳 | 2026년 11월 5일 기준 상태 |
+| 플랫폼 | 받는 곳 | 2026년 11월 6일 기준 상태 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play(build 25; build 32는 10월 29일부터 Google 심사 중), GitHub에 build 41, [영화는 멈춘 곳부터 이어서 재생되고](#pick-up-a-film-where-you-stopped), ["폴더 탐색"](#browse-a-folder-of-your-phone-or-headset)으로 휴대폰의 폴더를 열며, 공유에서나 [Immich 타임라인에서](#keep-a-splat-scene-on-your-immich-server) [가우시안 스플랫이 열립니다](#explore-gaussian-splats-on-your-phone-tablet-or-computer)(실험적) |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | App Store | 버전 3.3.1(build 27)은 10월 22일부터 Apple 심사 대기 중, 그다음 버전 3.3.2(build 28)는 내부 테스트용 TestFlight에 있음; 그동안은 [직접 빌드](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub에 build 41: [리모컨으로 날짜별 검색](#on-android-tv-and-google-tv), QR 코드를 스캔해 [휴대폰으로 로그인](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), 동영상 플레이어에서 리모컨으로 쓰는 타임 바, 오디오, 자막, 휴대폰이 중계하는 [드론의 실시간 영상](#watch-it-in-a-meta-quest-or-on-an-android-tv)(실험적); TV 등록은 Google 심사 중 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 휴대폰과 태블릿 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play(build 40; build 41은 11월 5일부터 Google 심사 중), GitHub에 build 42, [원본 360° 동영상이 흔들림 보정되어 재생되고](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)(실험적), [영화는 멈춘 곳부터 이어서 재생되고](#pick-up-a-film-where-you-stopped), ["폴더 탐색"](#browse-a-folder-of-your-phone-or-headset)으로 휴대폰의 폴더를 열며, 공유에서나 [Immich 타임라인에서](#keep-a-splat-scene-on-your-immich-server) [가우시안 스플랫이 열립니다](#explore-gaussian-splats-on-your-phone-tablet-or-computer)(실험적) |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone과 iPad** | [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) | 버전 3.3.2가 11월 6일부터 App Store에 있음: [타임라인의 월과 연도](#find-a-month-or-a-year-in-a-long-timeline), [멈춘 곳부터 이어서 재생되는 영화](#pick-up-a-film-where-you-stopped), 휴대폰에서 하는 [TV, 헤드셋, 컴퓨터의 로그인](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), 그리고 Immich에 보관한 스플랫 장면은 그 사진으로 표시됨; 또는 [직접 빌드](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV와 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub에 build 42: [원본 360° 동영상 흔들림 보정](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)(실험적), [리모컨으로 날짜별 검색](#on-android-tv-and-google-tv), QR 코드를 스캔해 [휴대폰으로 로그인](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), 동영상 플레이어에서 리모컨으로 쓰는 타임 바, 오디오, 자막, 휴대폰이 중계하는 [드론의 실시간 영상](#watch-it-in-a-meta-quest-or-on-an-android-tv)(실험적); TV 등록은 Google 심사 중 |
 | webOS 5.0 이상의 **LG TV** | [.ipk, 버전 1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1) · LG Content Store(심사 중) | 버전 1.0.0, 10월 24일 LG Content Store에 제출, 10월 26일부터 LG 테스트 중; 10월 27일부터 GitHub에 있는 버전 1.0.1은 방향키로 사진을 확대하고 사진이 아직 로딩 중이면 알려 줌; LG가 앱을 게시할 때까지는 [Developer Mode](#lg-tvs-webos)로 설치. 버전 1.0.0은 LG Cloud Test Lab의 webOS 25 TV에서 실행됨 |
 | Tizen 5.5 이상의 **Samsung TV** | [.wgt 테스트 build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | 같은 TV 앱의 테스트 build 0.2.0, 본인의 Samsung 인증서로 서명해 [Developer mode](#samsung-tvs-tizen)에서 설치; 0.1.0은 테스터의 Samsung TV에서 실행되었고 0.2.0에는 그때 나온 수정이 들어 있음; Samsung 스토어에는 없음 |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3, 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store(build 32, 10월 30일부터 공개), GitHub에 build 41, [키오스크 모드](#kiosk-mode-for-an-exhibition-or-a-shop) 지원, Quest 3와 3S에서는 [가우시안 스플랫](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)과 평면 사진의 [AI 입체감](#turn-one-photo-into-3d-a-scene-a-panorama)도 지원(모두 실험적) |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [설치 프로그램 또는 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) | desktop build 21, 서명된 미리보기: 사진, 평면 및 360° 동영상, 공유, Plex, 카메라(시뮬레이션 카메라로 확인함), 휴대폰으로 로그인, 키 하나로 사진 회전, 89개 언어로 된 인터페이스, 그리고 [사진으로 AI가 만드는 3D 사진, 3D 장면, 360° 파노라마](#turn-one-photo-into-3d-a-scene-a-panorama)(실험적), NAS의 사진으로도; [가우시안 스플랫](#explore-gaussian-splats-on-your-phone-tablet-or-computer) 열기, [사진이나 동영상으로 만들기](#make-a-splat-scene-from-your-photos-or-a-video-ai)와 [Immich에 보관하기](#keep-a-splat-scene-on-your-immich-server), 그리고 [AV2 동영상](#play-av2-videos-on-your-computer), 모두 실험적 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS와 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) | desktop build 21, 미리보기: 사진, 360° 사진, 평면 동영상(360° 동영상은 평면으로 재생), Immich 서버와 네트워크 공유, 그리고 사진으로 AI가 만드는 [3D 사진과 3D 장면](#turn-one-photo-into-3d-a-scene-a-panorama), Linux에서는 8 GB 그래픽 카드로 360° 파노라마도, 그리고 [가우시안 스플랫](#explore-gaussian-splats-on-your-phone-tablet-or-computer)과 [AV2 동영상](#play-av2-videos-on-your-computer)(실험적, Mac에서는 아직 시험하지 않음); desktop build 11을 10월 26일 Ubuntu 24.04 컨테이너와 Mac에서 시험함; macOS에서는 서명되지 않음 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2, Pro, 3, 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store(build 40, 11월 3일부터 공개; build 41은 11월 5일부터 Meta 심사 중), GitHub에 build 42, [키오스크 모드](#kiosk-mode-for-an-exhibition-or-a-shop) 지원, Quest 3와 3S에서는 [가우시안 스플랫](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)과 평면 사진의 [AI 입체감](#turn-one-photo-into-3d-a-scene-a-panorama)도 지원(모두 실험적) |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [설치 프로그램 또는 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22) | desktop build 22, 서명된 미리보기: 사진, 평면 및 360° 동영상, 공유, Plex, 카메라(시뮬레이션 카메라로 확인함), 휴대폰으로 로그인, 키 하나로 사진 회전, 89개 언어로 된 인터페이스, 그리고 [사진으로 AI가 만드는 3D 사진, 3D 장면, 360° 파노라마](#turn-one-photo-into-3d-a-scene-a-panorama)(실험적), NAS의 사진으로도; [가우시안 스플랫](#explore-gaussian-splats-on-your-phone-tablet-or-computer) 열기, [사진이나 동영상으로 만들기](#make-a-splat-scene-from-your-photos-or-a-video-ai)와 [Immich에 보관하기](#keep-a-splat-scene-on-your-immich-server), [AV2 동영상](#play-av2-videos-on-your-computer), 그리고 desktop build 22부터 [스플랫 장면의 품질 선택](#make-a-splat-scene-from-your-photos-or-a-video-ai)과 [여유 그래픽 메모리 3.5 GiB부터 만드는 360° 파노라마](#turn-one-photo-into-3d-a-scene-a-panorama), 모두 실험적 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS와 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22) | desktop build 22, 미리보기: 사진, 360° 사진, 평면 동영상(360° 동영상은 평면으로 재생), Immich 서버와 네트워크 공유, 그리고 사진으로 AI가 만드는 [3D 사진과 3D 장면](#turn-one-photo-into-3d-a-scene-a-panorama), Linux에서는 8 GB 그래픽 카드로, 그중 3.5 GiB가 비어 있으면 360° 파노라마도, 그리고 [가우시안 스플랫](#explore-gaussian-splats-on-your-phone-tablet-or-computer)과 [AV2 동영상](#play-av2-videos-on-your-computer)(실험적, Mac에서는 아직 시험하지 않음); desktop build 11을 10월 26일 Ubuntu 24.04 컨테이너와 Mac에서 시험함; macOS에서는 서명되지 않음 |
 
 *상태는 릴리스마다 갱신되며, build별 세부 사항은 [Release status](../docs/immuch360/release-status.md)에서 확인할 수 있습니다.*
 
@@ -208,8 +210,8 @@ Plex는 라이브러리의 원본 파일을 제공하므로 360° 동영상은 3
 | 기능 | Android | iPhone, iPad | Android TV | LG webOS | Samsung Tizen | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | Immich 서버로 갤러리, 앨범, 검색 | ✅ | ✅ | ✅ 뷰어 | ✅ 뷰어 | ✅ 뷰어 | ✅ |
-| 월별, 연도별 타임라인 | ✅ | 🔜 다음 iOS 릴리스 | ❌ | ❌ | ❌ | ❌ |
-| 휴대폰으로 로그인(QR 코드) | ✅ 코드 스캔 | 🔜 다음 iOS 릴리스 | ✅ | ✅ 휴대폰 브라우저에서 | ❌ TV에서 입력 | ✅ 휴대폰에서 코드 입력 |
+| 월별, 연도별 타임라인 | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| 휴대폰으로 로그인(QR 코드) | ✅ 코드 스캔 | ✅ 코드 스캔 | ✅ | ✅ 휴대폰 브라우저에서 | ❌ TV에서 입력 | ✅ 휴대폰에서 코드 입력 |
 | 서버 없이: 기기 자체의 미디어 | ✅ | ✅ | 공유만 | ❌ | ❌ | ✅ |
 | 공유처럼 여는 기기의 폴더 | ✅ 직접 고른 폴더 | ❌ | ❌ | ❌ | ❌ | ✅ |
 | 평면 사진과 동영상 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -217,8 +219,8 @@ Plex는 라이브러리의 원본 파일을 제공하므로 360° 동영상은 3
 | 키 하나로 사진 회전 | ✅ | ✅ | ✅ 컬러 버튼 | ✅ 컬러 버튼 | ✅ | ✅ 창 |
 | 구체로 보는 360° 사진 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 몰입형 |
 | 360° 동영상 | ✅ | ✅ 타임 바 없음 | ✅ 디코딩 불가 시 메시지 | 평면만 | 평면만 | ✅ 몰입형 |
-| 영화는 멈춘 곳부터 이어서 재생 | ✅ | 🔜 다음 iOS 릴리스 | ✅ | ❌ | ❌ | ✅ 몰입형에서도 |
-| 동영상 소스: 이 기기가 디코딩하는 파일 | ✅ | 🔜 다음 iOS 릴리스 | ✅ | ❌ | ❌ | ✅ |
+| 영화는 멈춘 곳부터 이어서 재생 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ 몰입형에서도 |
+| 동영상 소스: 이 기기가 디코딩하는 파일 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 | 느린 서버: 동영상이 얼마나 기다리는지, 그리고 그 이유 | ✅ | 자체 대기 규칙 | ✅ | ❌ | ❌ | ✅ |
 | AV2 동영상 (실험적) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | 3D와 VR180 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | 사진 한쪽 눈, 동영상 평면 | 사진 한쪽 눈, 동영상 평면 | ✅ 진짜 3D |
@@ -227,24 +229,25 @@ Plex는 라이브러리의 원본 파일을 제공하므로 360° 동영상은 3
 | Spatial 2.5D(헤드 트래킹) | ✅ 실험적 | ✅ 실험적 | ❌ | ❌ | ❌ | ❌ |
 | Apple 공간 사진 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ✅ 한쪽 눈 | ❌ | ❌ | ✅ 3D |
 | 가우시안 스플랫, .spz와 .ply (실험적) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ Quest 3와 3S |
-| Immich에 사진으로 보관한 스플랫 장면 (실험적) | ✅ | 사진 | 사진 | 사진 | 사진 | ✅ Quest 3와 3S |
+| Immich에 사진으로 보관한 스플랫 장면 (실험적) | ✅ | 사진 | 사진 | 사진 | 사진 | ✅ Quest 3와 3S, 헤드셋에서는 아직 시험하지 않음 |
 | 2D 사진으로 만든 3D 사진 (AI) | ✅ 읽음, 나란히 | ✅ 읽음, 나란히 | ✅ 읽음, 나란히 | ✅ 읽음, 나란히 | ✅ 읽음, 나란히 | ✅ 헤드셋의 AI 입체감(Quest 3와 3S), 3D로 표시 |
 | 2D 사진으로 만든 3D 장면 (AI) | ✅ 읽음, 사진으로 | ✅ 읽음, 사진으로 | ✅ 읽음, 사진으로 | ✅ 읽음, 사진으로 | ✅ 읽음, 사진으로 | ✅ 3D로 둘러보기 |
 | 2D 사진으로 만든 360° 파노라마 (AI) | ✅ 읽음, AI 표시와 함께 | ✅ 360° 사진으로 읽음, 표시 🔜 | ✅ 읽음, AI 표시와 함께 | ✅ 360° 사진으로 읽음, 표시 🔜 | ✅ 360° 사진으로 읽음, 표시 🔜 | ✅ 주위 전체로 읽음, AI 표시와 함께 |
 | 공유의 사진 옆에 놓인 3D 버전 (AI) | ✅ 읽음 | ✅ 읽음 | ✅ 읽음 | ✅ 읽음 | ❌ | ✅ 읽음 |
-| 사진이나 동영상으로 만든 스플랫 장면 (AI) | ✅ 읽음 | ❌ | ❌ | ❌ | ❌ | ✅ 읽음, Quest 3와 3S |
+| 사진이나 동영상으로 만든 스플랫 장면 (AI) | ✅ 읽음 | ❌ | ❌ | ❌ | ❌ | ✅ 읽음, Quest 3와 3S, 헤드셋에서는 아직 시험하지 않음 |
 | Insta360, GoPro, DJI 원본 파일 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| 카메라 자이로스코프로 흔들림 보정된 원본 360° 동영상 (실험적) | ✅ Insta360, Immich 라이브러리에서 | 🔜 | ✅ Insta360, Immich 라이브러리에서 | ❌ | ❌ | 🔜 |
 | SMB, WebDAV, DLNA 공유 | ✅ | ✅ | ✅ | ✅ SMB는 webOS 22부터 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
 | Tapo 카메라: 녹화 영상 | ✅ | ✅ | ✅ | 🔜 2026년 12월 이전에는 불가 | ❌ | ✅ |
-| Tapo 카메라: 실시간 화면 | ✅ | 🔜 다음 iOS 릴리스 | ✅ | ✅ 영상만 | ❌ | ✅ |
+| Tapo 카메라: 실시간 화면 | ✅ | ✅ iPhone에서는 아직 시험하지 않음 | ✅ | ✅ 영상만 | ❌ | ✅ |
 | 이 기기를 네트워크에 공유 | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | 공유와 기기에서 Immich로 업로드 | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | USB로 DJI 드론이나 카드에서 가져오기(실험적) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | DJI 드론의 실시간 영상(실험적) | ✅ RC-N3 사용 | ❌ | ✅ 휴대폰이 중계 | ❌ | ❌ | ✅ 휴대폰이 중계 |
 | 어두운 테마 | 시스템 설정 따름 | 시스템 설정 따름 | ✅ 기본값 | ✅ 유일한 테마 | ✅ 유일한 테마 | 시스템 설정 따름 |
 | 입력 | 터치, 자이로스코프 | 터치, 자이로스코프 | 리모컨; 동영상 재생 중과 타임 바에서도 왼쪽과 오른쪽, 세부 정보는 Menu | 리모컨, Magic Remote | 리모컨 | 컨트롤러, 손 |
-| 받는 곳 | Google Play, APK | App Store(심사 중) | APK, Google Play(심사 중) | .ipk, LG Content Store(심사 중) | .wgt 테스트 build, 직접 서명 | Horizon Store, APK |
+| 받는 곳 | Google Play, APK | App Store | APK, Google Play(심사 중) | .ipk, LG Content Store(심사 중) | .wgt 테스트 build, 직접 서명 | Horizon Store, APK |
 
 | 기능 | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -275,6 +278,7 @@ Plex는 라이브러리의 원본 파일을 제공하므로 360° 동영상은 3
 | 공유의 사진 옆에 놓인 3D 버전 (AI) | ✅ | ✅ | ✅ 3D 사진과 장면 |
 | 사진이나 동영상으로 만든 스플랫 장면 (AI) | ✅ 4 GB 그래픽 카드 | ✅ 읽음 | ✅ 읽음, CI가 빌드함 |
 | Insta360, GoPro, DJI 원본 파일 | ✅ | ✅ 사진, 동영상 평면 | ✅ 사진, 동영상 평면 |
+| 카메라 자이로스코프로 흔들림 보정된 원본 360° 동영상 (실험적) | 🔜 | ❌ | ❌ |
 | SMB, WebDAV, DLNA 공유 | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
 | Tapo 카메라: 녹화 영상 | ✅ | 🔧 CI | 🔧 CI |
@@ -287,20 +291,20 @@ Plex는 라이브러리의 원본 파일을 제공하므로 360° 동영상은 3
 | 입력 | 마우스, 키보드 | 마우스, 키보드 | 마우스, 키보드, 트랙패드 |
 | 받는 곳 | 설치 프로그램 또는 ZIP(서명된 미리보기) | .deb, .rpm(미리보기) | DMG 또는 ZIP(서명 없는 미리보기) |
 
-*Linux와 macOS: desktop build 11을 2026년 10월 26일 Ubuntu 24.04에서, 테스트용 Immich 서버와 테스트용 공유가 있는 컨테이너 안에서 시험했고, 작성자가 Mac에서도 시험했습니다. AI 행은 desktop build 13 코드의 테스트 build로 2026년 10월 27일부터 29일까지 확인했습니다: 3D 사진은 Linux PC의 컨테이너에서 Linux 앱으로, 장면은 RTX 4060 노트북의 Windows 앱과 같은 Linux PC의 엔진으로, 360° 파노라마는 그 노트북에서 만들었습니다. build 33부터 39까지의 행: 월별, 연도별 보기는 desktop build 14를 쓴 Windows PC에서, Samba와 WebDAV 공유에 쓰는 3D 버전은 프로젝트의 빌드 머신에서, "폴더 탐색"은 Android 16 에뮬레이터에서, 스트리밍 동영상의 시작은 속도를 늦춘 연결 뒤의 Android 에뮬레이터에서, 키오스크 모드와 더 선명한 평면 화면은 build 35를 쓴 Quest 3에서, build 39의 스플랫 파일은 10월 31일 Quest 3의 스플랫 모듈에서, 영화와 동영상 소스는 프로젝트 CI와 빌드 머신의 테스트로 확인했습니다. build 41과 desktop build 21의 행: 스플랫은 Galaxy S24+, RTX 4060을 갖춘 노트북의 Windows 앱, CI 컨테이너의 Linux에서, 스플랫 장면은 그 노트북이 만든 것으로, 스플랫 사진은 테스트용 Immich 서버 3.3.0과 3.2.4로, AV2는 그 노트북, Ubuntu 22.04와 24.04 컨테이너, 그리고 화면 없이 CI의 Mac에서 확인했습니다.*
+*Linux와 macOS: desktop build 11을 2026년 10월 26일 Ubuntu 24.04에서, 테스트용 Immich 서버와 테스트용 공유가 있는 컨테이너 안에서 시험했고, 작성자가 Mac에서도 시험했습니다. AI 행은 desktop build 13 코드의 테스트 build로 2026년 10월 27일부터 29일까지 확인했습니다: 3D 사진은 Linux PC의 컨테이너에서 Linux 앱으로, 장면은 RTX 4060 노트북의 Windows 앱과 같은 Linux PC의 엔진으로, 360° 파노라마는 그 노트북에서 만들었습니다. build 33부터 39까지의 행: 월별, 연도별 보기는 desktop build 14를 쓴 Windows PC에서, Samba와 WebDAV 공유에 쓰는 3D 버전은 프로젝트의 빌드 머신에서, "폴더 탐색"은 Android 16 에뮬레이터에서, 스트리밍 동영상의 시작은 속도를 늦춘 연결 뒤의 Android 에뮬레이터에서, 키오스크 모드와 더 선명한 평면 화면은 build 35를 쓴 Quest 3에서, build 39의 스플랫 파일은 10월 31일 Quest 3의 스플랫 모듈에서, 영화와 동영상 소스는 프로젝트 CI와 빌드 머신의 테스트로 확인했습니다. build 41과 desktop build 21의 행: 스플랫은 Galaxy S24+, RTX 4060을 갖춘 노트북의 Windows 앱, CI 컨테이너의 Linux에서, 스플랫 장면은 그 노트북이 만든 것으로, 스플랫 사진은 테스트용 Immich 서버 3.3.0과 3.2.4로, AV2는 그 노트북, Ubuntu 22.04와 24.04 컨테이너, 그리고 화면 없이 CI의 Mac에서 확인했습니다. build 42와 desktop build 22의 행: 흔들림 보정은 Insta360 X3, X4, X5, GoPro MAX, DJI Osmo 360 카메라 샘플 파일의 움직임 트랙으로 프로젝트 CI와 빌드 머신의 테스트에서, 품질 선택은 그 테스트와 RTX 4060을 갖춘 노트북에서 측정한 학습으로, iPhone과 iPad 열은 App Store의 버전 3.3.2로 확인했습니다.*
 
 ✅ 해당 플랫폼의 앱에서 지원 · ❌ 제공하지 않음 · 🔜 계획 중 · 🔧 CI 소스 코드에 있고 프로젝트 CI가 해당 시스템에서 빌드하고 실행함 · 평면만: 컴퓨터용 360° 동영상 렌더러가 Windows 전용이라 동영상이 안내 메시지와 함께 평면으로 재생됨; LG TV에서는 webOS가 동영상 프레임을 구체에 넘겨줄 수 있는지 아직 측정해야 하며, 테스터의 Samsung TV에서는 브라우저가 3D 화면에 검은 동영상 프레임을 넘겼습니다. "한쪽 눈"은 3D 파일이 평면 화면에서 왼쪽 눈만 보여준다는 뜻입니다. LG와 Samsung 열은 하나의 별도 TV 앱입니다: LG 버전 1.0.0은 공유와 Plex를 실제 서버로, 카메라를 프로젝트 빌드 호스트의 모의 카메라로 확인했고, Samsung은 테스트 build 0.2.0입니다. 어디서 무엇을 확인했는지, 그리고 아직 확인해야 할 것은 [기능](../docs/immuch360/features.md), [플랫폼 지원](../docs/immuch360/platform-support.md), [호환성](../docs/immuch360/compatibility.md)에 있습니다.
 
 AI 행에서 "읽음"은 기기가 컴퓨터가 만든 것을 열기만 하고 스스로 만들지는 않는다는 뜻입니다: 3D 사진은 두 눈 이미지를 나란히 보여 주고, 장면은 작은 3D 장면 표시가 붙은 사진으로 보이며, 파노라마는 360° 뷰어에서 열립니다. AI 표시란 "AI 360°" 배지, "사진 가장자리 너머는 AI가 생성함" 문장, 원본 사진의 윤곽을 말하며, 로드맵에 따라 iPhone, iPad, LG, Samsung 앱에도 추가됩니다. 무언가를 만드는 것은 컴퓨터와 Quest뿐입니다. 이 행들에 대해 확인한 내용은 [사용 방법](#turn-one-photo-into-3d-a-scene-a-panorama)에 있습니다.
 
-- **Android 휴대폰과 태블릿**: 모든 기능을 갖춘 앱, 터치와 자이로스코프, 모든 소스 지원; build 32부터는 컴퓨터에서 만든 360° 파노라마를 AI 표시와 함께 엽니다. build 38부터는 기기의 폴더를 탐색하고, TIFF 사진을 보여주며, 영화를 멈춘 곳부터 이어서 재생합니다. build 39부터는 스트리밍 동영상이 연결이 허락하는 즉시 시작되고 기다리는 이유를 알려줍니다. build 41부터는 가우시안 스플랫과 Immich에 보관한 스플랫 장면을 엽니다(실험적).
-- **iPhone과 iPad**: 모든 기능을 갖춘 앱이지만, 360° 동영상 플레이어는 재생과 일시정지만 지원하고, Tapo 실시간 화면과 휴대폰으로 로그인하기의 휴대폰 쪽 기능은 다음 iOS 릴리스에 포함되며, Apple이 멀티캐스트 권한을 허용하기 전까지 DLNA 검색은 유니캐스트 요청을 보냅니다.
-- **Android TV와 Google TV**: 리모컨으로 조작하는 같은 APK이며 기본은 어두운 테마입니다. 뷰어 역할만 합니다: 백업, 업로드, 편집기는 숨겨져 있고 세부 정보는 읽기 전용이지만, 사진은 여전히 키 하나로 회전됩니다. 모든 검색 필터가 리모컨으로 동작합니다: 위치와 카메라는 선택지를 목록으로 열고, 날짜 필터는 모든 선택지를 보여주며, 태그, 위치, 날짜, 미디어 유형, 별점, 표시 옵션 시트는 지우기와 적용 버튼을 선택지 옆, 오른쪽으로 한 번 이동한 곳에 두고 화면 높이의 대부분을 사용합니다. 사진 그리드는 이미지 메모리를 덜 사용하며, 방향키를 누르고 있으면 최대 초당 약 10줄씩 이동합니다. build 28부터는 휴대폰에서 QR 코드나 짧은 코드로 로그인할 수 있습니다(두 에뮬레이터 사이에서 코드를 입력해 시험함). build 29부터는 동영상의 타임 바가 리모컨 포커스를 받고, 영화에는 오디오와 자막 메뉴가 생기며, 공유의 다음 파일이 자체 컨트롤과 함께 열립니다. Google TV 에뮬레이터에서 확인했으며, build 28은 10월 23일 실제 Android TV에서 실행했고, 그때 발견된 동영상 문제를 build 29에서 수정했습니다. 이 수정은 에뮬레이터에서 확인했습니다. build 30부터는 Drone 카드가 휴대폰이 중계하는 DJI 드론의 실시간 영상을 드론의 수치, 장애물 링과 함께 보여줍니다(실험적): 페어링과 화면은 10월 25일 TCL Android TV에서 시험했으며, 이전 중계 방식에서는 끊김과 초록빛이 있었습니다. 10월 26일 build 30에서는 이를 해결하는 안정 스트림 덕분에 비행 중에도 그 TV에 화면이 계속 들어왔으며, 멈춤은 7번이었습니다. build 33부터는 검색과 그 날짜 범위를 리모컨으로 쓸 수 있고, 사진의 왼쪽 아래에 날짜가 표시되며, 타임 바에서 빠르게 연달아 누르면 더 멀리 이동합니다. build 38부터는 영화가 멈춘 곳부터 이어서 재생되고 TIFF 사진도 표시됩니다.
+- **Android 휴대폰과 태블릿**: 모든 기능을 갖춘 앱, 터치와 자이로스코프, 모든 소스 지원; build 32부터는 컴퓨터에서 만든 360° 파노라마를 AI 표시와 함께 엽니다. build 38부터는 기기의 폴더를 탐색하고, TIFF 사진을 보여주며, 영화를 멈춘 곳부터 이어서 재생합니다. build 39부터는 스트리밍 동영상이 연결이 허락하는 즉시 시작되고 기다리는 이유를 알려줍니다. build 41부터는 가우시안 스플랫과 Immich에 보관한 스플랫 장면을 엽니다(실험적). build 42부터는 360° 플레이어가 Immich 라이브러리의 Insta360 원본 동영상을 카메라 자이로스코프로 흔들림 보정합니다(실험적).
+- **iPhone과 iPad**: 모든 기능을 갖춘 앱이지만, 360° 동영상 플레이어는 재생과 일시정지만 지원하고, Apple이 멀티캐스트 권한을 허용하기 전까지 DLNA 검색은 유니캐스트 요청을 보냅니다. 2026년 11월 6일부터 App Store에 있는 버전 3.3.2는 휴대폰으로 로그인하기의 휴대폰 쪽 기능, 타임라인의 월과 연도, 멈춘 곳부터 이어서 재생되는 영화, 동영상 소스, 그리고 Tapo 실시간 화면(iPhone에서는 아직 시험하지 않음)을 제공합니다.
+- **Android TV와 Google TV**: 리모컨으로 조작하는 같은 APK이며 기본은 어두운 테마입니다. 뷰어 역할만 합니다: 백업, 업로드, 편집기는 숨겨져 있고 세부 정보는 읽기 전용이지만, 사진은 여전히 키 하나로 회전됩니다. 모든 검색 필터가 리모컨으로 동작합니다: 위치와 카메라는 선택지를 목록으로 열고, 날짜 필터는 모든 선택지를 보여주며, 태그, 위치, 날짜, 미디어 유형, 별점, 표시 옵션 시트는 지우기와 적용 버튼을 선택지 옆, 오른쪽으로 한 번 이동한 곳에 두고 화면 높이의 대부분을 사용합니다. 사진 그리드는 이미지 메모리를 덜 사용하며, 방향키를 누르고 있으면 최대 초당 약 10줄씩 이동합니다. build 28부터는 휴대폰에서 QR 코드나 짧은 코드로 로그인할 수 있습니다(두 에뮬레이터 사이에서 코드를 입력해 시험함). build 29부터는 동영상의 타임 바가 리모컨 포커스를 받고, 영화에는 오디오와 자막 메뉴가 생기며, 공유의 다음 파일이 자체 컨트롤과 함께 열립니다. Google TV 에뮬레이터에서 확인했으며, build 28은 10월 23일 실제 Android TV에서 실행했고, 그때 발견된 동영상 문제를 build 29에서 수정했습니다. 이 수정은 에뮬레이터에서 확인했습니다. build 30부터는 Drone 카드가 휴대폰이 중계하는 DJI 드론의 실시간 영상을 드론의 수치, 장애물 링과 함께 보여줍니다(실험적): 페어링과 화면은 10월 25일 TCL Android TV에서 시험했으며, 이전 중계 방식에서는 끊김과 초록빛이 있었습니다. 10월 26일 build 30에서는 이를 해결하는 안정 스트림 덕분에 비행 중에도 그 TV에 화면이 계속 들어왔으며, 멈춤은 7번이었습니다. build 33부터는 검색과 그 날짜 범위를 리모컨으로 쓸 수 있고, 사진의 왼쪽 아래에 날짜가 표시되며, 타임 바에서 빠르게 연달아 누르면 더 멀리 이동합니다. build 38부터는 영화가 멈춘 곳부터 이어서 재생되고 TIFF 사진도 표시됩니다. build 42부터는 360° 플레이어가 Immich 라이브러리의 Insta360 원본 동영상을 카메라 자이로스코프로 흔들림 보정합니다(실험적).
 - **webOS 5.0 이상의 LG TV**: 리모컨과 Magic Remote용 별도 앱으로, [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos)를 기반으로 합니다: 360° 사진을 구체로 보여주는 Immich 뷰어, 키 하나로 사진 회전, 어두운 테마, 앱의 89개 언어(TV 앱 자체의 일부 문구는 아직 영어); TV에서 돌아가는 자체 서비스를 통한 네트워크 공유, Plex, Tapo 카메라의 실시간 화면(SMB는 webOS 22부터); 360° 동영상은 평면. 10월 24일 LG Content Store에 제출한 버전 1.0.0은 LG Cloud Test Lab에서 세 모델의 webOS 25 TV로 실행했습니다: 로그인, 휴대폰 로그인 페이지, 사진, 앨범, 동영상, 360° 화면, 슬라이드쇼, 검색, 모든 페이지에서의 뒤로가기. 버전 0.1.0은 테스터의 LG TV(webOS 22)에서 실행되었습니다. 공유와 Plex는 실제 서버로, 카메라는 프로젝트 빌드 호스트의 모의 카메라로 확인했습니다.
 - **Tizen 5.5 이상의 Samsung TV**: Samsung TV용으로 패키징한 LG TV 앱으로, 테스트 build 0.2.0을 직접 서명해 설치해야 합니다: 리모컨용 Immich 뷰어, 직접 입력하는 로그인(서버 주소, 그다음 이메일과 비밀번호 또는 API 키), 슬라이드쇼, 구체 위의 360° 사진, 키 하나로 사진 회전, TV가 지원하는 기능을 알려주는 정보 페이지를 제공합니다. 휴대폰으로 로그인, 공유, Plex, 카메라는 로드맵에 있고, 360° 동영상은 안내와 함께 평면으로 재생됩니다. 버전 0.1.0은 테스터의 Tizen 9 Samsung TV에서 실행되었습니다: 4K까지의 사진과 동영상은 재생되었고, 4K를 넘는 것은 디코딩되지 않았으며, TV의 브라우저는 3D 화면에 검은 동영상 프레임을 넘겼습니다. 버전 0.2.0에는 그때 나온 수정(TV 디코더를 넘는 동영상이나 멈추는 동영상에 대한 메시지, 안내와 함께 평면으로 재생되는 360° 동영상)이 들어 있으며, 프로젝트의 CI가 TV를 대신하는 브라우저에서 확인했습니다.
 - **Meta Quest 2, Pro, 3, 3S**: 창 형태의 앱과 몰입형 화면, 그리고 build 30부터 휴대폰이 중계하는 DJI 드론의 실시간 영상을 보여주는 Drone 카드(실험적)를 제공하며, 이 카드는 build 30에서 처음 테스트합니다. HEVC가 안전한 코덱이며, Quest 3에서는 H.264가 약 4096x2304에서 한계에 이릅니다. 앱은 Quest 3에서 확인했습니다. build 32부터 Quest 3 또는 3S에서는 AI 입체감이 평면 사진을 헤드셋 안에서 계산해 3D로 보여 주고, 컴퓨터에서 만든 3D 사진, 장면, 파노라마도 3D로 열립니다(실험적). build 33부터는 옮길 수 있는 평면 3D 화면과 키오스크 모드, build 38부터는 몰입형 화면에서 이어서 재생되는 영화와 TIFF 사진, build 39부터는 Quest 3와 3S에서 가우시안 스플랫을 지원합니다.
-- **Windows 10과 11**: 미리보기 단계이며, 갤러리 대신 폴더를 사용하고, 평면 및 360° 동영상을 위한 전용 플레이어(libmpv), 그래픽 칩에서 스티칭되는 원본 파일, 프로그램으로 열거나 창에 끌어다 놓은 파일과 폴더, APROGSYS가 서명한 설치 프로그램 또는 ZIP을 제공합니다. desktop build 13부터 "3D 만들기 (AI)"가 프로세서에서 사진을 3D 사진과 3D 장면으로, 8 GB 그래픽 카드에서 360° 파노라마로 바꿉니다. desktop build 16부터 "3D 만들기 (AI)"가 네트워크 공유의 사진에서도 동작하고, desktop build 17부터 이 컴퓨터가 디코딩할 수 있는 파일로 동영상이 재생되며, desktop build 18부터 영화가 멈춘 곳부터 이어서 재생되고, desktop build 19부터 느린 서버의 영화도 계속 재생되며 기다리는 이유를 알려 줍니다. desktop build 20부터는 영화가 네트워크 공유를 기다리는 중에도 창이 바로 닫힙니다. 열려 있던 영화는 멈춘 위치가 저장되고, 세션의 로그가 기록됩니다. desktop build 21부터는 그래픽 칩이 두 개인 노트북에서 앱이 빠른 그래픽 칩으로 실행되고, 동영상 세부 정보가 영화가 어떻게 디코딩되는지 알려 줍니다. 같은 build는 가우시안 스플랫을 열고, 4 GB 그래픽 카드로 사진이나 동영상에서 스플랫 장면을 만들며, AV2 동영상을 재생합니다. 모두 실험적입니다.
-- **Linux**: 프로젝트의 CI가 빌드한 .deb와 .rpm이며, Ubuntu 22.04와 24.04, Debian 12, Fedora 40과 44에 설치해 확인했습니다. 사진, 360° 사진, 그리고 시스템의 libmpv로 재생하는 평면 동영상을 지원하며(360°, 3D, 원본 동영상은 안내 메시지와 함께 평면으로 재생), desktop build 7부터는 X11 세션에서도 하드웨어 경로로 그립니다. SMB 공유는 Ubuntu 22.04와 Debian 12부터 지원합니다. 키링(GNOME Keyring 또는 KWallet)이 없어도 첫 실행 시 더 이상 25 s 동안 멈추지 않으며, 비밀번호를 세션 동안만 보관하고 설정에서 그 사실을 알려줍니다. desktop build 13부터 "3D 만들기 (AI)"가 프로세서에서 3D 사진과 장면을, 8 GB 그래픽 카드에서 360° 파노라마를 만듭니다(작은 크기로만, Intel 그래픽에서 시험함). WSLg와 컨테이너에서 확인했습니다. desktop build 16부터 "3D 만들기 (AI)"가 네트워크 공유의 사진에서도 동작하고, desktop build 17부터 이 컴퓨터가 디코딩할 수 있는 파일로 동영상이 재생되며, desktop build 18부터 영화가 멈춘 곳부터 이어서 재생되고, desktop build 19부터 느린 서버의 영화도 계속 재생되며 기다리는 이유를 알려 줍니다. desktop build 20부터는 영화가 네트워크 공유를 기다리는 중에도 창이 바로 닫힙니다. 열려 있던 영화는 멈춘 위치가 저장되고, 세션의 로그가 기록됩니다. desktop build 21부터는 가우시안 스플랫을 열고 AV2 동영상을 재생합니다(실험적).
+- **Windows 10과 11**: 미리보기 단계이며, 갤러리 대신 폴더를 사용하고, 평면 및 360° 동영상을 위한 전용 플레이어(libmpv), 그래픽 칩에서 스티칭되는 원본 파일, 프로그램으로 열거나 창에 끌어다 놓은 파일과 폴더, APROGSYS가 서명한 설치 프로그램 또는 ZIP을 제공합니다. desktop build 13부터 "3D 만들기 (AI)"가 프로세서에서 사진을 3D 사진과 3D 장면으로, 8 GB 그래픽 카드에서 360° 파노라마로 바꿉니다. desktop build 16부터 "3D 만들기 (AI)"가 네트워크 공유의 사진에서도 동작하고, desktop build 17부터 이 컴퓨터가 디코딩할 수 있는 파일로 동영상이 재생되며, desktop build 18부터 영화가 멈춘 곳부터 이어서 재생되고, desktop build 19부터 느린 서버의 영화도 계속 재생되며 기다리는 이유를 알려 줍니다. desktop build 20부터는 영화가 네트워크 공유를 기다리는 중에도 창이 바로 닫힙니다. 열려 있던 영화는 멈춘 위치가 저장되고, 세션의 로그가 기록됩니다. desktop build 21부터는 그래픽 칩이 두 개인 노트북에서 앱이 빠른 그래픽 칩으로 실행되고, 동영상 세부 정보가 영화가 어떻게 디코딩되는지 알려 줍니다. 같은 build는 가우시안 스플랫을 열고, 4 GB 그래픽 카드로 사진이나 동영상에서 스플랫 장면을 만들며, AV2 동영상을 재생합니다. 모두 실험적입니다. desktop build 22부터는 그래픽 카드에 3.5 GiB의 여유 메모리가 있으면 360° 파노라마가 시작되고, 스플랫 장면은 헤드셋, 상세, 최대의 세 가지 품질로 제공됩니다(실험적).
+- **Linux**: 프로젝트의 CI가 빌드한 .deb와 .rpm이며, Ubuntu 22.04와 24.04, Debian 12, Fedora 40과 44에 설치해 확인했습니다. 사진, 360° 사진, 그리고 시스템의 libmpv로 재생하는 평면 동영상을 지원하며(360°, 3D, 원본 동영상은 안내 메시지와 함께 평면으로 재생), desktop build 7부터는 X11 세션에서도 하드웨어 경로로 그립니다. SMB 공유는 Ubuntu 22.04와 Debian 12부터 지원합니다. 키링(GNOME Keyring 또는 KWallet)이 없어도 첫 실행 시 더 이상 25 s 동안 멈추지 않으며, 비밀번호를 세션 동안만 보관하고 설정에서 그 사실을 알려줍니다. desktop build 13부터 "3D 만들기 (AI)"가 프로세서에서 3D 사진과 장면을, 8 GB 그래픽 카드에서 360° 파노라마를 만듭니다(작은 크기로만, Intel 그래픽에서 시험함). WSLg와 컨테이너에서 확인했습니다. desktop build 16부터 "3D 만들기 (AI)"가 네트워크 공유의 사진에서도 동작하고, desktop build 17부터 이 컴퓨터가 디코딩할 수 있는 파일로 동영상이 재생되며, desktop build 18부터 영화가 멈춘 곳부터 이어서 재생되고, desktop build 19부터 느린 서버의 영화도 계속 재생되며 기다리는 이유를 알려 줍니다. desktop build 20부터는 영화가 네트워크 공유를 기다리는 중에도 창이 바로 닫힙니다. 열려 있던 영화는 멈춘 위치가 저장되고, 세션의 로그가 기록됩니다. desktop build 21부터는 가우시안 스플랫을 열고 AV2 동영상을 재생합니다(실험적). desktop build 22부터는 그래픽 카드에 3.5 GiB의 여유 메모리가 있으면 360° 파노라마가 시작됩니다.
 - **macOS**: 프로젝트의 CI가 빌드한 DMG와 ZIP이며, 유니버설이고 서명되지 않았습니다(Gatekeeper가 한 번 묻습니다). 앱이 실행되고, Finder에서 넘긴 것을 포함해 전달받은 파일과 폴더를 열며, 비밀 정보를 로그인 키체인에 보관하고, 자체 libmpv로 평면 동영상을 재생합니다. 이는 먼저 프로젝트의 CI Mac에서 확인했고, 2026년 10월 26일 작성자가 Mac에서 desktop build 11을 시험해 보았으며 잘 동작했습니다. desktop build 13부터는 프로젝트의 CI가 빌드한 Mac 앱이 3D 사진과 장면도 프로세서에서 만들며, Mac에서의 360° 파노라마는 로드맵에 있습니다. desktop build 16부터 "3D 만들기 (AI)"가 네트워크 공유의 사진에서도 동작하고, desktop build 17부터 이 컴퓨터가 디코딩할 수 있는 파일로 동영상이 재생되며, desktop build 18부터 영화가 멈춘 곳부터 이어서 재생되고, desktop build 19부터 느린 서버의 영화도 계속 재생되며 기다리는 이유를 알려 줍니다. desktop build 20부터는 영화가 네트워크 공유를 기다리는 중에도 창이 바로 닫힙니다. 열려 있던 영화는 멈춘 위치가 저장되고, 세션의 로그가 기록됩니다. desktop build 21부터는 프로젝트의 CI가 빌드한 Mac 앱도 가우시안 스플랫을 열고 AV2 동영상을 재생합니다(실험적). 아직 Mac에서 시험하지는 않았습니다.
 
 <a id="what-you-can-do"></a>
@@ -328,9 +332,10 @@ AI 행에서 "읽음"은 기기가 컴퓨터가 만든 것을 열기만 하고 �
 18. [휴대폰에서 DJI 드론의 실시간 영상 보기](#see-what-your-drone-sees-on-your-phone), 그리고 [Meta Quest나 Android TV에서](#watch-it-in-a-meta-quest-or-on-an-android-tv): DJI RC-N3 조종기를 통해, 수신만 합니다. *실험적.*
 19. [드론이나 카메라 카드의 사진과 동영상을 Immich로 가져오기](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): Android 휴대폰에서 USB로. *실험적.*
 20. [360° 카메라의 원본 파일 열기](#open-the-raw-files-of-360-cameras): Insta360, GoPro MAX, DJI Osmo 360, 앱이 스티칭합니다.
-21. [키 하나로 사진 회전하기](#turn-a-photo-with-one-key): 버튼, 키보드 키, 또는 리모컨의 컬러 버튼.
-22. [컴퓨터를 미디어 플레이어로 쓰기](#use-your-computer-as-the-media-player): 내 폴더, 연결 프로그램, 창에 끌어다 놓은 파일. *미리보기.*
-23. [컴퓨터에서 AV2 동영상 재생하기](#play-av2-videos-on-your-computer): 프로세서가 디코딩하며, 속도는 컴퓨터가 허락하는 만큼. *실험적.*
+21. [카메라 자이로스코프로 360° 동영상의 흔들림 보정하기 (실험적)](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental): Android 휴대폰, 태블릿, TV의 360° 플레이어에서 수평선은 반듯하게 유지되고 흔들림은 사라집니다.
+22. [키 하나로 사진 회전하기](#turn-a-photo-with-one-key): 버튼, 키보드 키, 또는 리모컨의 컬러 버튼.
+23. [컴퓨터를 미디어 플레이어로 쓰기](#use-your-computer-as-the-media-player): 내 폴더, 연결 프로그램, 창에 끌어다 놓은 파일. *미리보기.*
+24. [컴퓨터에서 AV2 동영상 재생하기](#play-av2-videos-on-your-computer): 프로세서가 디코딩하며, 속도는 컴퓨터가 허락하는 만큼. *실험적.*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
@@ -345,7 +350,7 @@ AI 행에서 "읽음"은 기기가 컴퓨터가 만든 것을 열기만 하고 �
 
 ### iPhone과 iPad
 
-1. App Store 버전은 Apple의 심사를 기다리고 있습니다. 게시되기 전까지는 Mac에서 Xcode로 앱을 직접 빌드하세요. [직접 빌드하기](../docs/immuch360/build.md)를 참고하세요.
+1. [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965): 버전 3.3.2, 2026년 11월 6일 게시. 또는 Mac에서 Xcode로 앱을 직접 빌드하세요. [직접 빌드하기](../docs/immuch360/build.md)를 참고하세요.
 2. "서버 없이 사용"을 탭하거나, 서버에 로그인하려면 "Immich 서버에 연결"을 탭합니다. build 24부터 둘 다 환영 페이지에 있습니다.
 
 <a id="android-tv-and-google-tv"></a>
@@ -382,18 +387,18 @@ AI 행에서 "읽음"은 기기가 컴퓨터가 만든 것을 열기만 하고 �
 <a id="windows"></a>
 ### Windows
 
-1. [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)에서 `Immuch360-Desktop-3.3.0-rc.0-desktop.21-windows-x64-setup.exe`를 다운로드하고(`SHA256SUMS.txt`로 확인 가능) 실행합니다. 설치 프로그램과 ZIP은 서명되어 있으며, Windows는 게시자로 APROGSYS를 표시합니다. 이 게시자가 SmartScreen에 아직 낯선 동안에는 한 번 더 물어볼 수 있습니다: "추가 정보"를 선택한 다음 "그래도 실행"을 선택합니다.
+1. [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)에서 `Immuch360-Desktop-3.3.0-rc.0-desktop.22-windows-x64-setup.exe`를 다운로드하고(`SHA256SUMS.txt`로 확인 가능) 실행합니다. 설치 프로그램과 ZIP은 서명되어 있으며, Windows는 게시자로 APROGSYS를 표시합니다. 이 게시자가 SmartScreen에 아직 낯선 동안에는 한 번 더 물어볼 수 있습니다: "추가 정보"를 선택한 다음 "그래도 실행"을 선택합니다.
 2. "현재 사용자에게만 설치"(관리자 권한 불필요) 또는 "모든 사용자에게 설치"를 선택한 다음, 이미 Windows 언어로 선택되어 있는 설치 프로그램의 언어를 선택합니다.
 3. 시작 메뉴에서 Immuch360 Desktop을 실행합니다. 사진과 동영상은 "연결 프로그램"에 나타나지만(파일을 마우스 오른쪽 버튼으로 클릭한 뒤 연결 프로그램), 기본 프로그램으로는 절대 지정되지 않습니다. 새 build를 처음 실행할 때는 Windows가 파일을 검사하는 동안 1분 정도 걸릴 수 있습니다.
 4. Windows 10 또는 11, 64비트. 업데이트하려면 다음 build의 설치 프로그램을 실행하세요: 로그인, 폴더, 설정은 그대로 유지됩니다. 같은 릴리스의 ZIP은 폴더 형태의 같은 프로그램이므로, 원하는 곳에 압축을 풀고 그 안의 `immuch360.exe`를 실행하면 됩니다. desktop build 4부터 8까지가 시작 시 "duplicate column name: group_date"에서 멈췄던 컴퓨터에서도 build 9는 그 데이터베이스를 열고 데이터를 그대로 유지합니다.
 
 ### Linux
 
-Ubuntu 22.04 이상과 Debian 12 이상에서는: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.21-linux-amd64.deb`; Fedora 40 이상에서는: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.21-linux-x86_64.rpm`. 두 파일 모두 [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)에 있습니다. 그런 다음 애플리케이션 목록에서 Immuch360 Desktop을 실행합니다. 미리보기 단계로, 컴퓨터의 폴더, 사진과 구체로 보는 360° 사진, 그리고 패키지가 설치하는 시스템의 libmpv로 재생하는 평면 동영상을 지원합니다(360°, 3D, 원본 동영상은 안내 메시지와 함께 평면으로 재생). SMB 공유는 Ubuntu 22.04와 Debian 12부터 동작합니다. Fedora에서는 카메라 동영상에 RPM Fusion의 FFmpeg가 필요합니다. GNOME Keyring이나 KWallet이 없으면 비밀번호는 세션 동안만 보관되며, 앱 설정에서 그 사실을 알려줍니다.
+Ubuntu 22.04 이상과 Debian 12 이상에서는: `sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.22-linux-amd64.deb`; Fedora 40 이상에서는: `sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.22-linux-x86_64.rpm`. 두 파일 모두 [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)에 있습니다. 그런 다음 애플리케이션 목록에서 Immuch360 Desktop을 실행합니다. 미리보기 단계로, 컴퓨터의 폴더, 사진과 구체로 보는 360° 사진, 그리고 패키지가 설치하는 시스템의 libmpv로 재생하는 평면 동영상을 지원합니다(360°, 3D, 원본 동영상은 안내 메시지와 함께 평면으로 재생). SMB 공유는 Ubuntu 22.04와 Debian 12부터 동작합니다. Fedora에서는 카메라 동영상에 RPM Fusion의 FFmpeg가 필요합니다. GNOME Keyring이나 KWallet이 없으면 비밀번호는 세션 동안만 보관되며, 앱 설정에서 그 사실을 알려줍니다.
 
 ### macOS
 
-`Immuch360-Desktop-3.3.0-rc.0-desktop.21-macos.dmg`를 [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)에서 받아 열고 앱을 Applications로 드래그합니다(Apple 실리콘과 Intel, macOS 12 이상). 서명되지 않아 macOS가 한 번 확인을 요청합니다. macOS 14 이하에서는 Control 키를 누른 채 클릭한 뒤 "열기"를 선택하고, macOS 15 이상에서는 "시스템 설정"의 "개인정보 보호 및 보안"에서 "무조건 열기"를 선택하세요. 작성자가 2026년 10월 26일 Mac에서 desktop build 11을 시험해 보았으며 잘 동작했습니다. 다른 Mac과 다른 macOS 버전에서의 제보를 환영합니다.
+`Immuch360-Desktop-3.3.0-rc.0-desktop.22-macos.dmg`를 [desktop 사전 릴리스](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)에서 받아 열고 앱을 Applications로 드래그합니다(Apple 실리콘과 Intel, macOS 12 이상). 서명되지 않아 macOS가 한 번 확인을 요청합니다. macOS 14 이하에서는 Control 키를 누른 채 클릭한 뒤 "열기"를 선택하고, macOS 15 이상에서는 "시스템 설정"의 "개인정보 보호 및 보안"에서 "무조건 열기"를 선택하세요. 작성자가 2026년 10월 26일 Mac에서 desktop build 11을 시험해 보았으며 잘 동작했습니다. 다른 Mac과 다른 macOS 버전에서의 제보를 환영합니다.
 
 <a id="how-to"></a>
 ## 사용 방법
@@ -491,11 +496,11 @@ Immuch360은 평면 사진과 동영상, 파노라마, 360° 사진과 동영상
 
 **확인한 것**, 2026년 10월 29일까지 이 코드의 테스트 build로: 3D 사진은 Linux PC의 컨테이너에서 Linux 앱으로, 오프라인에서도; 장면은 RTX 4060 Laptop GPU 노트북의 Windows 앱(2 min 39 s에 열 개)과 Linux PC의 엔진으로; 그 노트북에서 파노라마 네 개를 각각 4 min 16 s에서 4 min 44 s에, 3D 버전은 약 30 s에 만들었고, 취소, 강제 종료된 앱, 그래픽 카드를 점유한 다른 프로그램을 시험했으며, 테스트 중 앱의 네트워크 연결은 전혀 없었습니다.
 
-제한 사항: 360° 파노라마에는 알맞은 그래픽 카드가 있는 Windows 또는 Linux 컴퓨터가 필요하며, 그렇지 않으면 상자가 이유를 알려 줍니다("Mac에서는 아직 지원되지 않음", "Vulkan을 지원하는 그래픽 카드를 찾지 못했습니다", "내장 그래픽은 컴퓨터 메모리를 함께 사용합니다: 파노라마에는 너무 느립니다", 그래도 해 보려면 "내장 그래픽에서 시도 (테스트되지 않음)"). desktop build 21부터는 파노라마가 시작되기 전에 앱이 스스로 점유한 그래픽 메모리, 즉 일시 정지한 동영상과 캐시된 그림을 비운 다음, 카드에 6.0 GiB의 여유 메모리를, 더 작은 참조 이미지로는 5.1 GiB를 요구하고, 그만큼 비어 있지 않으면 비어 있는 양을 알려 주며 기다립니다([각 카드가 할 수 있는 일](../docs/immuch360/user-guide.md#360-panoramas-and-the-graphics-card-memory)). 파노라마 안에서 사진의 가장자리가 뚜렷한 색조 단차로 보일 수 있습니다. 대부분의 장면에 "화각을 추정함: 형태가 어긋날 수 있습니다"라고 표시됩니다. 장면에는 약 2 GB의 여유 메모리가 필요합니다(부족하면 "메모리 부족"). AI 버전을 백업하면 Immich의 중복 찾기가 사진과 그 장면을 짝지어 더 무거운 파일인 장면을 남기라고 자주 제안합니다: 원본을 남기세요. 휴대폰과 TV는 아무것도 만들지 않고, 헤드셋은 입체감만 만듭니다. 장면은 사진 한 장에서 만들며, 여러 사진이나 동영상으로는 Windows 컴퓨터가 [스플랫 장면을 만듭니다](#make-a-splat-scene-from-your-photos-or-a-video-ai).
+제한 사항: 360° 파노라마에는 알맞은 그래픽 카드가 있는 Windows 또는 Linux 컴퓨터가 필요하며, 그렇지 않으면 상자가 이유를 알려 줍니다("Mac에서는 아직 지원되지 않음", "Vulkan을 지원하는 그래픽 카드를 찾지 못했습니다", "내장 그래픽은 컴퓨터 메모리를 함께 사용합니다: 파노라마에는 너무 느립니다", 그래도 해 보려면 "내장 그래픽에서 시도 (테스트되지 않음)"). desktop build 21부터는 파노라마가 시작되기 전에 앱이 스스로 점유한 그래픽 메모리, 즉 일시 정지한 동영상과 캐시된 그림을 비우고, desktop build 22부터는 그다음 카드에 3.5 GiB의 여유 메모리를 요구하며(약 5.6 GiB 미만에서는 같은 이미지로 생성이 여러 조각으로 나뉘어 더 느리게 진행되고, 컴퓨터 메모리를 최대 8 GB까지 사용합니다), 그만큼 비어 있지 않으면 비어 있는 양을 알려 주며 기다립니다([각 카드가 할 수 있는 일](../docs/immuch360/user-guide.md#360-panoramas-and-the-graphics-card-memory)). 파노라마 안에서 사진의 가장자리가 뚜렷한 색조 단차로 보일 수 있습니다. 대부분의 장면에 "화각을 추정함: 형태가 어긋날 수 있습니다"라고 표시됩니다. 장면에는 약 2 GB의 여유 메모리가 필요합니다(부족하면 "메모리 부족"). AI 버전을 백업하면 Immich의 중복 찾기가 사진과 그 장면을 짝지어 더 무거운 파일인 장면을 남기라고 자주 제안합니다: 원본을 남기세요. 휴대폰과 TV는 아무것도 만들지 않고, 헤드셋은 입체감만 만듭니다. 장면은 사진 한 장에서 만들며, 여러 사진이나 동영상으로는 Windows 컴퓨터가 [스플랫 장면을 만듭니다](#make-a-splat-scene-from-your-photos-or-a-video-ai).
 
 **구성 요소**: 컴퓨터의 설정, "AI 및 3D"에는 기능별 구성 요소가 크기, 다운로드, 제거와 함께 나열되고, 이어서 "모든 AI 구성 요소 제거"와 다른 드라이브로 "AI 구성 요소 옮기기"가 있습니다. "AI 기능"을 끄면 AI 버튼이 모두 숨겨지고 아무것도 다운로드하지 않습니다. 각 파일은 SHA-256으로 확인합니다. Windows에서는 `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`에 있으며 제거 프로그램이 이를 지웁니다(구성 요소를 옮긴 폴더는 지우지 않음). Linux에서는 대부분의 시스템에서 `~/.local/share/immuch360/ai-components`, Mac에서는 `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`에 있습니다. Quest에서는 "AI 및 3D"가 설정, 고급에 입체감 캐시와 함께 있습니다.
 
-더 보기: [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32), [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), [desktop build 15](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-15), [desktop build 16](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-16), [desktop build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)의 릴리스 노트, 그리고 [모델, 라이선스, 출처, 체크섬](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md).
+더 보기: [build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32), [desktop build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13), [desktop build 15](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-15), [desktop build 16](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-16), [desktop build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21), [desktop build 22](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)의 릴리스 노트, 그리고 [모델, 라이선스, 출처, 체크섬](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md).
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>
@@ -503,7 +508,7 @@ Immuch360은 평면 사진과 동영상, 파노라마, 360° 사진과 동영상
 
 리모컨으로 큰 화면에서 보는 내 사진. TV 앱은 모두 같은 방식으로 동작합니다: 방향키는 선택 테두리를 움직이고, OK는 열고, 뒤로가기는 돌아가며, 360° 사진에서는 방향키로 둘러봅니다. TV에는 자체 사진이 없으므로 Immich 서버를 보여주고, Android TV와 LG TV에서는 네트워크 공유, Plex 서버, 카메라도 보여줍니다.
 
-- **Android TV와 Google TV**: Android 앱 그 자체, build 41이며, Google Play가 TV에 제공할 때까지는 GitHub에서 받습니다.
+- **Android TV와 Google TV**: Android 앱 그 자체, build 42이며, Google Play가 TV에 제공할 때까지는 GitHub에서 받습니다.
 - **webOS 5.0 이상의 LG TV**: 자체 TV 앱, 버전 1.0.0이며, LG Content Store 게시를 위해 LG 심사 중이고, 버전 1.0.1은 GitHub에 있습니다.
 - **Tizen 5.5 이상의 Samsung TV**: LG TV와 같은 TV 앱, 테스트 build 0.2.0이며, 직접 서명해 설치합니다.
 
@@ -578,7 +583,7 @@ Tizen 5.5 이상의 Samsung TV(2020년 TV부터)는 같은 TV 앱을 테스트 b
 
 안전하게 유지되는 방법: 휴대폰과 화면은 같은 홈 네트워크에 있어야 하며, 코드는 최대 2분 동안 유효하고 한 번만 사용할 수 있습니다. 휴대폰은 서버에 그 화면을 위한 새 세션을 요청하고, 화면 이름을 붙여("거실 TV의 Immuch360") 암호화해서 화면으로 보내므로, 비밀번호는 휴대폰 밖으로 절대 나가지 않습니다. "TV 또는 컴퓨터 연결"에는 이 휴대폰으로 로그인한 화면이 각각 로그아웃 버튼과 함께 나열되며, Immich에서도 계정 설정, 승인된 기기에 나열되어 그곳에서 취소할 수도 있습니다. 휴대폰에서 로그아웃하면 그 화면들도 함께 로그아웃됩니다.
 
-휴대폰 쪽 기능은 지금 Android에서 동작하며, iPhone과 iPad에서는 다음 iOS 릴리스부터 동작합니다. 휴대폰에 Immuch360이 없으면 휴대폰 카메라로 코드를 스캔하세요: 화면이 제공하는 페이지가 브라우저에서 열리며, 입력한 이메일과 비밀번호는 암호화되어 한 번만 사용됩니다. LG TV는 자체 QR 코드로 휴대폰 브라우저에서 로그인합니다. build 28부터는 휴대폰 앱의 스캐너가 이 코드를 인식해 그 페이지를 엽니다. Samsung TV는 지금은 직접 입력해 로그인합니다.
+휴대폰 쪽 기능은 Android에서 동작하며, iPhone과 iPad에서는 버전 3.3.2부터 동작합니다. 휴대폰에 Immuch360이 없으면 휴대폰 카메라로 코드를 스캔하세요: 화면이 제공하는 페이지가 브라우저에서 열리며, 입력한 이메일과 비밀번호는 암호화되어 한 번만 사용됩니다. LG TV는 자체 QR 코드로 휴대폰 브라우저에서 로그인합니다. build 28부터는 휴대폰 앱의 스캐너가 이 코드를 인식해 그 페이지를 엽니다. Samsung TV는 지금은 직접 입력해 로그인합니다.
 
 더 보기: [휴대폰으로 로그인](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [화면이 보내고 보관하는 것](../docs/immuch360/technical-details.md#sign-in-with-your-phone).
 
@@ -667,11 +672,19 @@ Vulkan을 지원하고 메모리가 4 GB 이상인 전용 그래픽 카드와 8 
 4. "장면 만들기". 패널은 프레임 추출, 사진의 3D 배치, 스플랫 학습의 각 단계를 남은 시간과 함께 보여 주며, 취소로 멈출 수 있습니다. RTX 4060을 갖춘 노트북에서 방을 찍은 사진 150장은 약 12분, 물체를 찍은 일 분짜리 동영상은 약 8분 걸립니다.
 5. 장면 `<name>_splat.spz`는 사진 옆이나 고른 폴더에 저장됩니다. 헤드셋에서 NAS나 헤드셋의 Download 폴더로부터 열거나(헤드셋의 설정, 고급에 있는 "큰 스플랫"으로 전체가 보입니다), 컴퓨터, 휴대폰 또는 태블릿의 스플랫 뷰어에서 여세요. 그곳에서 "Immich에 저장"으로 서버에 보관할 수 있습니다. 물체는 헤드셋용으로 그 주위만 잘라 내어 눈앞에 열리게 하며, .ply에는 장면 전체가 남습니다.
 
+**품질**, desktop build 22부터: "무엇을 촬영했나요?" 아래에서 상자는 세 줄을 제공하며, 각 줄은 그 품질이 맞춰진 기기와 함께 이 컴퓨터에서 걸릴 시간과 파일 크기를 알려 줍니다("이 컴퓨터에서 약 13분, 약 3.4 MiB 파일"). 상자가 열릴 때마다 "헤드셋 (Meta Quest, 휴대폰, 태블릿, PC)"이 선택됩니다.
+
+- "헤드셋 (Meta Quest, 휴대폰, 태블릿, PC)": 위 단계의 장면으로, 최대 150,000개 가우시안이며, RTX 4060을 갖춘 노트북에서 학습에 5분에서 6분이 걸립니다.
+- "상세 (PC, 최신 휴대폰; 헤드셋은 축소된 사본)": 사진과 프레임을 1,920픽셀로 준비하고 학습하며, 최대 백만 개 가우시안이라 헤드셋이 흐리게 만드는 작은 글자, 격자, 나사가 선명하게 나옵니다. 그 노트북에서 학습은 27분에서 31분이 걸리고, 파일은 물체가 3 MB, 장소가 19에서 20 MB입니다.
+- "최대 (그래픽 카드가 있는 PC; 헤드셋과 휴대폰은 축소된 사본)": 이 컴퓨터의 메모리가 감당하는 한 사진이나 동영상의 원래 크기로 만드는 상세입니다. 감당하지 못하면, 예를 들어 1080p 동영상에서는 그 줄에 "이 컴퓨터에서는 상세와 같음"이 표시됩니다.
+
+상세와 최대에서는 `<name>_splat.spz`에 컴퓨터와 휴대폰용으로 장면 전체가 담기고, 그 옆의 `<name>_splat.headset.spz`에는 가장 강한 가우시안 150,000개가 담기며, 이것이 헤드셋에서 열 사본입니다. 수치와 선택은 [사용자 가이드](../docs/immuch360/user-guide.md#splat-scenes-the-quality-choice)에 자세히 나와 있습니다.
+
 사진에 담긴 것만 재구성됩니다: 어떤 사진에도 담기지 않은 곳은 비어 있거나 흐릿하게 남습니다. 3D로 배치할 수 있는 사진이 너무 적으면 앱이 이유와 무엇을 다시 찍어야 하는지 알려 줍니다. 스플랫 장면은 전용 그래픽 카드가 있는 Windows에서 만들어집니다: 내장 그래픽, 360° 사진과 360° 동영상은 아직 지원되지 않습니다.
 
-저자의 RTX 4060 Laptop GPU 노트북에서 확인했습니다: 사진 150장으로 만든 방은 12분 18초, 저자가 휴대폰으로 직접 찍은 일 분짜리 물체 동영상은 130프레임 중 129프레임이 배치되고 물체가 똑바로 세워져 7분 47초가 걸렸습니다.
+저자의 RTX 4060 Laptop GPU 노트북에서 확인했습니다: 사진 150장으로 만든 방은 12분 18초, 저자가 휴대폰으로 직접 찍은 일 분짜리 물체 동영상은 130프레임 중 129프레임이 배치되고 물체가 똑바로 세워져 7분 47초가 걸렸습니다. 세 가지 품질은 그 노트북에서 학습 프로그램만으로 그 물체, 8K로 촬영한 장소, 사진 150장의 방에 대해 측정했고, 상자, 파일, 헤드셋용 사본은 프로젝트의 테스트로 확인했습니다. 앱 자체에서 상세나 최대 장면을 아직 만들어 보지 않았고, 이 기능으로 만든 장면을 헤드셋에서 아직 열어 보지 않았습니다.
 
-더 보기: [desktop build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)의 릴리스 노트, 그리고 [구성 요소와 체크섬](https://github.com/freeKC/Immuch360/releases/tag/ai-components-4).
+더 보기: [desktop build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)과 [desktop build 22](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)의 릴리스 노트, 그리고 [구성 요소와 체크섬](https://github.com/freeKC/Immuch360/releases/tag/ai-components-4).
 
 <a id="keep-a-splat-scene-on-your-immich-server"></a>
 ### Immich 서버에 스플랫 장면 보관하기
@@ -688,7 +701,7 @@ Immich 서버는 .spz나 .ply 파일을 받지 않습니다. Immuch360은 스플
 
 이 사진에서는 편집기와 키 하나로 회전하기가 꺼집니다: 스플랫 장면은 뷰어에서 "똑바로 세우기"로 돌립니다. Android TV, iPhone, iPad는 사진을 보여 주고 어디에서 탐색할 수 있는지 알려 주며, LG와 Samsung TV, Immich 앱은 사진을 보여 줍니다. Immich에서 편집한 사진도 장면을 유지하며, 장면은 원본에서 열립니다. 다른 프로그램이 다시 저장한 사본은, 메신저 앱이 사진을 압축할 때처럼, 장면을 잃습니다.
 
-Immich 3.3.0과 3.2.4 테스트 서버로 확인했습니다: 가우시안 38,884개에서 1,000,000개의 장면이 2초에서 7초 만에 저장되고 바이트 하나까지 그대로 다시 읽혔으며, 범위 요청을 버리는 프록시를 거쳐서도 마찬가지였습니다. 같은 장면을 두 번째로 저장하면 이미 있음을 찾아냈고, Immich 웹 앱은 사진을 표시와 함께 보여 주었습니다.
+Immich 3.3.0과 3.2.4 테스트 서버로 확인했습니다: 가우시안 38,884개에서 1,000,000개의 장면이 2초에서 7초 만에 저장되고 바이트 하나까지 그대로 다시 읽혔으며, 범위 요청을 버리는 프록시를 거쳐서도 마찬가지였습니다. 같은 장면을 두 번째로 저장하면 이미 있음을 찾아냈고, Immich 웹 앱은 사진을 표시와 함께 보여 주었습니다. 스플랫 사진을 헤드셋에서 아직 열어 보지 않았습니다.
 
 더 보기: [build 41](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-41)과 [desktop build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)의 릴리스 노트.
 
@@ -776,7 +789,7 @@ iPhone과 iPad는 시스템 디코더와 자체 대기 규칙을 그대로 씁�
 2. 설정의 Asset Viewer, Videos에서 "동영상 소스"는 이 기기가 디코딩할 수 있을 때는 원본을, 항상 원본을, 또는 항상 트랜스코딩된 스트림을 선택하도록 고를 수 있습니다.
 3. 앱이 없는 사람에게 360° 사진을 보여주려면 Immich 공유 링크로 공유하세요: Immich 웹 앱이 그 사람의 브라우저에서 구체로 보여줍니다.
 
-현재 build인 build 41은 build 28부터 40까지와 마찬가지로 2026년 10월 10일의 Immich `main`(버전 3.3.0-rc.0)을 기반으로 합니다. build 28은 같은 Immich `main`으로 빌드한 서버에서 테스트했으며, build 27은 Immich 3.2.4 서버에서도 테스트했습니다. 문제가 있으면 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려주세요.
+현재 build인 build 42는 build 28부터 41까지와 마찬가지로 2026년 10월 10일의 Immich `main`(버전 3.3.0-rc.0)을 기반으로 합니다. build 28은 같은 Immich `main`으로 빌드한 서버에서 테스트했으며, build 27은 Immich 3.2.4 서버에서도 테스트했습니다. 문제가 있으면 Immich 프로젝트가 아니라 [Issues](https://github.com/freeKC/Immuch360/issues)에 알려주세요.
 
 무엇이 같고 Immuch360이 무엇을 더하는지는 [Immich와 비교](#compared-with-immich)에 있습니다.
 
@@ -804,7 +817,7 @@ iPhone과 iPad는 시스템 디코더와 자체 대기 규칙을 그대로 씁�
 </p>
 <p align="center"><sub>일러스트입니다. Tapo 지원은 모의 카메라로 확인했습니다.</sub></p>
 
-TP-Link의 Tapo 카메라를 Tapo 앱 없이 사진 옆에서 봅니다. 앱은 카메라의 실시간 화면을 보여주고(Android 휴대폰과 태블릿, Android TV, Meta Quest, Windows, 그리고 영상만 LG TV; iPhone과 iPad는 다음 iOS 릴리스부터), 메모리 카드의 녹화 영상을 날짜별로 나열합니다(휴대폰, 태블릿, Android TV, Quest, 컴퓨터). 클립은 카메라에서 가져와 다른 동영상처럼 재생되며 Immich로 보낼 수 있습니다. 앱은 네트워크상의 카메라와만 통신하며, TP-Link의 서버와는 결코 통신하지 않고, 카메라의 어떤 설정도 바꾸지 않습니다.
+TP-Link의 Tapo 카메라를 Tapo 앱 없이 사진 옆에서 봅니다. 앱은 카메라의 실시간 화면을 보여주고(Android 휴대폰과 태블릿, Android TV, Meta Quest, Windows, 그리고 영상만 LG TV; iPhone과 iPad는 버전 3.3.2부터, 아직 시험하지 않음), 메모리 카드의 녹화 영상을 날짜별로 나열합니다(휴대폰, 태블릿, Android TV, Quest, 컴퓨터). 클립은 카메라에서 가져와 다른 동영상처럼 재생되며 Immich로 보낼 수 있습니다. 앱은 네트워크상의 카메라와만 통신하며, TP-Link의 서버와는 결코 통신하지 않고, 카메라의 어떤 설정도 바꾸지 않습니다.
 
 **모의 카메라로 확인했습니다.** 프로토콜은 펌웨어 1.3.4의 C510W 캡처를 바탕으로 작성했습니다. "카메라 테스트"가 보여주는 모델과 펌웨어를 담은 보고가 큰 도움이 됩니다.
 
@@ -891,11 +904,26 @@ Insta360 카메라의 원본 .insp 사진과 .insv 동영상(렌즈 한 개 또�
 
 1. 앱이 읽을 수 있는 곳에 원본 파일을 두세요: SMB나 WebDAV 공유, Immich 서버(.insp와 .insv만 받음), 또는 컴퓨터의 폴더. Android 휴대폰의 갤러리는 원본 파일을 목록에 표시하지 않으므로, 휴대폰에 복사한 원본 파일은 갤러리에도 앱에도 나타나지 않습니다.
 2. 파일 두 개로 이루어진 녹화는 두 파일을 함께 두세요: 앱은 첫 번째 파일 옆에서 다른 하나를 찾습니다.
-3. 파일을 열고 360°를 탭합니다. 사진에는 캘리브레이션 출처와 함께 "RAW 360° 파일, 앱에서 스티칭됨"이 표시되고, 동영상은 재생되는 동안 스티칭됩니다.
+3. 파일을 열고 360°를 탭합니다. 사진에는 캘리브레이션 출처와 함께 "RAW 360° 파일, 앱에서 스티칭됨"이 표시되고, 동영상은 재생되는 동안 스티칭됩니다. Android 휴대폰, 태블릿, TV에서는 Immich 라이브러리의 Insta360 동영상이 [카메라 자이로스코프로 흔들림 보정되어](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental) 재생되기도 합니다(실험적).
 
 Linux와 macOS는 원본 동영상을 평면으로 재생하며, 듀얼 피시아이 .dng 파일은 지금은 평면으로 표시됩니다.
 
 더 보기: [360° 카메라 원본 파일](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app).
+
+<a id="stabilise-your-360-videos-with-the-cameras-gyroscope-experimental"></a>
+### 카메라 자이로스코프로 360° 동영상의 흔들림 보정하기 (실험적)
+
+손에 들거나 자전거나 헬멧에 달고 촬영한 360° 동영상은 흔들리고 수평선이 기울어집니다. 카메라는 원본 파일에 자신의 움직임을 기록하지만, 픽셀의 흔들림은 보정하지 않습니다. build 42부터 Android 휴대폰, 태블릿, TV의 360° 플레이어는 카메라 자이로스코프가 기록한 그 움직임을 읽어 각 프레임을 되돌려 놓습니다: 수평선이 반듯하게 유지되고 흔들림이 사라지며, 방향을 틀면 화면이 길을 따라갑니다. 실험적이며 기본으로 켜져 있습니다. Immich 앱에는 이런 기능이 없습니다.
+
+1. Insta360 X3, X4 또는 X5의 원본 .insv 동영상을 Immich 서버에 백업하세요. 서버는 파일을 있는 그대로 받습니다. 파일 두 개로 이루어진 녹화는 [360° 카메라의 원본 파일 열기](#open-the-raw-files-of-360-cameras)에서처럼 두 파일을 모두 보관하세요.
+2. 타임라인에서 동영상을 열고 360°를 탭합니다: 바로 시작되며, 몇 초 동안 "카메라 자이로스코프로 흔들림 보정됨"이 표시됩니다.
+3. 플레이어 상단 바에서 오디오, 360°, 3D 버튼 옆에 있는 흔들림 보정 버튼으로 이 기능을 끄면 촬영한 그대로의 동영상을 볼 수 있고, 다시 켤 수도 있습니다. 설정, 보기 옵션, 동영상의 "카메라 자이로스코프로 흔들림 보정 (실험적)"은 이 버튼을 따르며, 다음 동영상에도 선택을 유지합니다.
+
+네트워크 공유나 기기의 폴더에서 연 동영상은 아직 흔들림 보정되지 않으며, GoPro MAX(.360)와 DJI Osmo 360(.osv) 파일도 마찬가지입니다. Immich 서버는 이 파일들을 받지 않지만, 앱은 이 파일들의 움직임도 읽습니다. 움직임 트랙이 없는 동영상은 버튼 없이 이전처럼 재생되며, 화면이 한쪽으로 돌아간 채 수평선은 반듯한 상태로 시작될 수 있습니다. iPhone, iPad, Meta Quest, 컴퓨터는 아직 흔들림 보정을 하지 않습니다.
+
+Insta360 X3, X4, X5, GoPro MAX, DJI Osmo 360 카메라 샘플 파일의 움직임 트랙으로 프로젝트의 테스트와 CI에서 확인했습니다: 자이로스코프는 화면에 보이는 움직임과 프레임당 0.1°에서 0.3° 이내로 일치하며, 이에 비해 오토바이 주행에서의 흔들림은 프레임당 0.65°에서 1.0°입니다. 휴대폰에서는 아직 시험하지 않았습니다.
+
+더 보기: [build 42](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-42)의 릴리스 노트, 그리고 Aoaodacat 님이 이 기능을 요청한 [issue 14](https://github.com/freeKC/Immuch360/issues/14).
 
 <a id="turn-a-photo-with-one-key"></a>
 ### 키 하나로 사진 회전하기
@@ -955,7 +983,7 @@ Immuch360은 Immich 모바일 앱 전체를 유지하면서 그 주변에 기능
 |---|---|
 | **같은 점** | Immich 서버와 계정: 백업, 타임라인, 앨범, 검색, 인물, 추억, 공유와 파트너, 모두 서버와 동기화됩니다. 공식 앱 옆에 나란히 설치됩니다. |
 | **서버 불필요** | 서버나 계정 없이도 기기의 사진과 동영상, 컴퓨터의 폴더, 네트워크 공유로 동작합니다. Plex와 카메라는 각자의 로그인을 쓰며, Immuch360 계정은 결코 쓰지 않습니다. |
-| **360°와 몰입형** | 구체로 보는 360° 사진과 동영상, 파노라마, VR180과 3D, Meta Quest의 몰입형 화면, 360° 배지와 360° 목록. Immich 모바일 앱의 360° 보기는 2024년 1월부터 요청되어 왔지만 아직 없습니다. |
+| **360°와 몰입형** | 구체로 보는 360° 사진과 동영상, 파노라마, VR180과 3D, Meta Quest의 몰입형 화면, 360° 배지와 360° 목록, 그리고 Android 휴대폰, 태블릿, TV에서는 카메라 자이로스코프로 흔들림 보정된 Insta360 원본 동영상(실험적). Immich 모바일 앱의 360° 보기는 2024년 1월부터 요청되어 왔지만 아직 없습니다. |
 | **사진으로 만드는 3D** | 컴퓨터에서 사진 한 장이 3D 사진, 3D 장면, 360° 파노라마가 되고, Meta Quest 3 또는 3S에서는 어떤 평면 사진도 입체감을 얻습니다: 내 컴퓨터와 헤드셋에서 AI가 만들고, 앱과 파일에 그렇게 표시하며, 원본은 절대 바뀌지 않습니다. Immich 앱은 3D로 아무것도 만들지 않습니다. |
 | **가우시안 스플랫** | Android 휴대폰과 태블릿, 컴퓨터, Meta Quest 3와 3S에서 열고, Windows 컴퓨터에서 사진이나 동영상으로 만들며, 서버가 .spz나 .ply 파일을 받지 않으므로 Immich 서버에 사진 안에 담아 보관합니다. Immich 앱은 스플랫을 열지 않습니다. |
 | **TV에서** | Android TV와 Google TV에서 같은 앱, 그리고 LG TV용 TV 앱이 있으며 이 앱은 Samsung TV용 테스트 build로도 패키징됩니다. Immich의 공식 앱은 LG TV에 설치되지 않습니다. |
@@ -984,7 +1012,7 @@ Immuch360은 [GNU AGPL v3](../LICENSE) 라이선스를 따르는 [Immich](https:
 
 360° 사진 뷰어는 dmitry-brazhenko가 작성한 업스트림 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)를 기반으로 하며, 이는 bencefr의 프로토타입인 [#30192](https://github.com/immich-app/immich/pull/30192)를 바탕으로 만들어졌습니다. 두 분 모두에게 감사드립니다. TV에서 검색 필터의 리모컨 조작 수정과 앨범 정렬은 mlc70의 [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) 작업에서 시작되었고, 액션 레일과 화면 높이의 80퍼센트를 차지하는 필터 시트는 mlc70의 [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3)에서 왔으며 작성자 정보도 그대로 유지했습니다. mlc70에게 감사드립니다. Samsung TV용으로도 패키징되는 LG webOS 앱은 Seeky91의 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos)를 기반으로 하며, MIT 라이선스로 자체 폴더에 보관되어 있습니다. Seeky91에게 감사드립니다. Tapo 카메라 기능은 [pytapo](https://github.com/JurajNyiri/pytapo), [Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control), [python-kasa](https://github.com/python-kasa/python-kasa)가 문서화한 내용을 바탕으로 작성되었습니다. Meta Quest 화면은 오픈소스가 아닌 Meta Spatial SDK를 사용하므로 이 포크에만 남아 있습니다. SMB 공유는 LGPL 2.1 이상 라이선스의 libsmb2를 사용합니다: build 27과 desktop build 7부터 모든 build에 그 고지, 라이선스 전문, 소스 압축 파일 `Immuch360-libsmb2-sources.tar.gz`가 포함되며, 이 파일은 각 릴리스에도 첨부됩니다. Windows와 macOS build에는 프로젝트가 LGPL 라이선스로 빌드한 libmpv([mpv](https://mpv.io) 라이브러리, [FFmpeg](https://ffmpeg.org) 포함)와 그 라이선스 및 소스가 함께 들어 있으며, 앱의 라이선스 페이지(프로필 메뉴 맨 아래의 라이선스)에 나열되어 있습니다. build 40부터 Quest APK에는 SPZ 버전 4 스플랫을 읽기 위해 BSD 2-Clause 라이선스의 zstd-jni 1.5.7-3과 BSD 라이선스의 zstd 1.5.7이 포함되며, 앱의 라이선스 페이지에서 "zstd-jni" 항목에 표시됩니다. build 41과 desktop build 21부터 컴퓨터, 휴대폰, 태블릿의 스플랫 뷰어에는 프로젝트의 CI가 소스에서 빌드한 Spark 2.4.0(MIT, World Labs)과 three.js 0.180.0(MIT)이 들어 있으며, [노트](../licenses/splat-viewer/README.md)에 나열되어 있습니다. 요청할 때만 사전 릴리스 [av2-decoder-1](https://github.com/freeKC/Immuch360/releases/tag/av2-decoder-1)에서 다운로드되는 AV2 디코더는 VideoLAN의 dav2d(BSD 2-Clause)를 기반으로 하며, Alliance for Open Media Patent License 1.0을 따릅니다([노트](../licenses/av2/README.md)). 이 페이지에 언급된 플랫폼들의 세부 정보와 상표에 대한 내용은 [라이선스와 상표](../docs/immuch360/platform-support.md#license-and-trademarks)에 있습니다.
 
-build 33에는 Michael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV))의 검색 탐색 기능이 그의 커밋과 함께 들어 있고, Gaurav Mukherjee ([gmfun](https://github.com/gmfun/Immuch360))의 커밋과 아이디어도 들어 있으며, [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360)의 전시용 build에서 얻은 아이디어를 우리 코드로 다시 작성해 담았습니다. 월별, 연도별 보기는 [Discussion 10](https://github.com/freeKC/Immuch360/discussions/10)에서 ChazyChaxxx 님이 요청한 것입니다. 모두에게 감사드립니다.
+build 33에는 Michael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV))의 검색 탐색 기능이 그의 커밋과 함께 들어 있고, Gaurav Mukherjee ([gmfun](https://github.com/gmfun/Immuch360))의 커밋과 아이디어도 들어 있으며, [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360)의 전시용 build에서 얻은 아이디어를 우리 코드로 다시 작성해 담았습니다. 월별, 연도별 보기는 [Discussion 10](https://github.com/freeKC/Immuch360/discussions/10)에서 ChazyChaxxx 님이 요청한 것입니다. 모두에게 감사드립니다. build 42는 [issue 14](https://github.com/freeKC/Immuch360/issues/14)에서 360° 동영상의 흔들림 보정을 요청한 Aoaodacat 님과, [issue 13](https://github.com/freeKC/Immuch360/issues/13)에 올린 보고가 desktop build 22의 파노라마 메모리 변경으로 이어진 gthrepwood 님에게 답합니다. 두 분 모두에게 감사드립니다.
 
 AI 기능은 다른 사람들이 만든 모델과 엔진을 실행하며, 이들은 요청할 때만 이 저장소의 사전 릴리스 [ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1), [ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2), [ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3), [ai-components-4](https://github.com/freeKC/Immuch360/releases/tag/ai-components-4)에서 다운로드됩니다. 각 파일과 그 출처, 라이선스, SHA-256은 [MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)에 있습니다. 만든 분들께 감사드립니다:
 
@@ -1002,14 +1030,14 @@ nomadoor의 360° LoRA는 모델 카드상 Apache 2.0이며 CC0와 퍼블릭 도
 
 아직 하지 않은 일을 가능성이 높은 순서로 적었습니다. 여기 있는 것은 약속이 아니며, [이슈 트래커](https://github.com/freeKC/Immuch360/issues)에 의견을 주시면 무엇을 먼저 할지 정하는 데 도움이 됩니다.
 
-- **스토어**: Google Play(10월 29일부터 build 31 대신 build 32 심사 중; TV 등록 심사 중), App Store(버전 3.3.1 심사 중, 그다음 build 28로 버전 3.3.2), build 40으로 Meta Horizon Store(10월 30일부터 build 32 공개 중), LG Content Store(10월 24일부터 버전 1.0.0이 LG 심사 중, 그다음 버전 1.0.1), 그리고 나중에 Samsung 스토어.
-- **AI 생성 기능**: Mac에서 360° 파노라마; Linux에서, 내장 그래픽으로, 360° 사진과 동영상으로 만드는 스플랫 장면; iOS, LG, Samsung 앱의 AI 표시; 그래픽 카드가 있는 Linux PC와 AMD, Intel 카드에서 파노라마 시험.
+- **스토어**: build 41로 Google Play(11월 5일부터 Google 심사 중; TV 등록 심사 중), build 41로 Meta Horizon Store(11월 5일부터 Meta 심사 중), 다음 build들의 iOS 버전으로 App Store, LG Content Store(10월 24일부터 버전 1.0.0이 LG 심사 중, 그다음 버전 1.0.1), 그리고 나중에 Samsung 스토어.
+- **AI 생성 기능**: Mac에서 360° 파노라마; Linux에서, 내장 그래픽으로, 360° 사진과 동영상으로 만드는 스플랫 장면; 상세와 최대 스플랫 장면의 헤드셋용 사본을 헤드셋에서 측정; iOS, LG, Samsung 앱의 AI 표시; 그래픽 카드가 있는 Linux PC와 AMD, Intel 카드에서 파노라마 시험.
 - **드론**: 1.8 m와 1.5 m/s를 넘는 높이와 속도, 그리고 줄자로 잰 장애물 거리를 증명하기 위한 야외 비행, 그다음 위성과 홈까지의 거리 표시; 헤드셋에서 확인하는 중계의 안정된 화면; LG와 Samsung TV로의 중계; 아직 시작하지 않은 iPhone과 iPad의 드론 기능; 실제 DJI Neo 2로 가져오기 페이지 테스트, 그다음 휴대폰이 녹음한 소리를 클립에 합치기. 이 테스트들 전에는 드론에 명령을 보내는 어떤 기능도 계획하지 않습니다.
 - **TV**: 실제 Android TV에서 동영상 컨트롤과 휴대폰으로 로그인하기를 포함한 build 29; 실제 LG TV에서 LG 앱의 공유, Plex, 실시간 화면, 그리고 webOS 26; 실제 Samsung TV에서 Samsung 테스트 build 0.2.0, 그다음 Samsung TV에서 휴대폰으로 로그인, 공유, Plex, 카메라; 그다음 LG TV의 구체 위 360° 동영상, 카메라 소리와 녹화 영상(2026년 12월 이전에는 불가).
 - **카메라**: 실제 카메라로 Tapo 카메라 확인.
 - **컴퓨터**: Windows PC에서 휴대폰으로 로그인하기를 포함한 모든 기능을 직접 테스트; Windows에서 웹캠을 이용한 Spatial 2.5D, 2026년 11월을 목표로 개발 중; 이어서 Linux와 macOS용 360° 동영상 렌더러, 실제 Linux PC에서 테스트; 그다음 자동 업데이트와 서명된 macOS 앱; Immich 서버가 받는 MKV, WebM, MP4 파일 속 AV2.
-- **휴대폰과 태블릿**: 다음 iOS 릴리스와 함께 iPhone과 iPad에서 Tapo 실시간 화면과 큰 화면 로그인; iOS 360° 동영상 플레이어의 타임 바, 휴대폰 360° 플레이어의 이전/다음, iOS 평면 플레이어의 오디오 트랙 및 자막 메뉴; iPhone과 iPad의 스플랫 뷰어.
-- **몰입형 미디어**: 듀얼 피시아이 .dng, GoPro와 DJI 동영상 자체 움직임 데이터로 수평 보정, 디코더가 지원하면 Quest에서 3D로 보이는 공간 동영상, 헤드셋에서 공간 사진 간 이전/다음.
+- **휴대폰과 태블릿**: iOS 360° 동영상 플레이어의 타임 바, 휴대폰 360° 플레이어의 이전/다음, iOS 평면 플레이어의 오디오 트랙 및 자막 메뉴; iPhone과 iPad의 스플랫 뷰어.
+- **몰입형 미디어**: 듀얼 피시아이 .dng, 공유와 기기 폴더에 있는 원본 동영상(GoPro MAX와 DJI Osmo 360 파일 포함)의 흔들림 보정, 그다음 iPhone과 iPad, Quest, 컴퓨터에서의 흔들림 보정, 디코더가 지원하면 Quest에서 3D로 보이는 공간 동영상, 헤드셋에서 공간 사진 간 이전/다음.
 - **소스**: 공유 폴더 파일 간 스와이프, WebDAV용 Digest 인증, 컴퓨터에서 Plex 토큰을 가져오는 QR 코드, Plex용 IPv6, H.265 Tapo 녹화, TV 홈 화면의 채널.
 - **업스트림**: 관리자가 원하는 부분을 Immich에 작은 풀 리퀘스트로 보내기, 360° 사진 뷰어부터.
 
@@ -1041,12 +1069,12 @@ nomadoor의 360° LoRA는 모델 카드상 Apache 2.0이며 CC0와 퍼블릭 도
 - **형식**: 평면 사진과 동영상(기기가 디코딩할 수 있는 것: MP4, MOV, MKV 등); 이퀴렉탱귤러 360° 사진과 동영상; 부분 파노라마(GPano 크롭); VR180; 파일에서 읽거나(st3d 박스) 프레임에서 추정한 상하 또는 좌우 스테레오스코픽 3D; Apple 공간 사진(HEIC 스테레오 쌍)과 공간 동영상(MV-HEVC, 한쪽 눈); 원본 Insta360 .insp와 .insv, GoPro .360, DJI .osv; 구체에 톤 매핑된 10비트 HLG와 PQ 소스; Android에서 앱이 디코딩하는 TIFF(8비트와 16비트, 회색조, RGB, 팔레트, CMYK, 비압축 또는 LZW, Deflate, PackBits, JPEG 압축); Meta Quest 3와 3S, 그리고 build 41과 desktop build 21부터는 Android 휴대폰과 태블릿, 컴퓨터에서, 또 앱이 Immich에 저장하는 `_splat.jpg` 사진 안에서 버전 1부터 4까지의 .spz와 바이너리 .ply 가우시안 스플랫; 컴퓨터에서 .ivf와 .obu 파일의 AV2(실험적).
 - **투영과 메타데이터**: 서버나 공유에 범위 요청을 보내 파일에서 읽어오는 GPano와 구형 메타데이터; 카메라의 초기 시점; 카메라로 인식되는 DJI 드론의 구체 사진과, Immich에서도 인식되도록 하는 선택적 .xmp 사이드카; 기기에 기억되는 "360°로 보기"; 파일이나 파일명에서 인식되는 VR180; .SRT 비행 로그에서 읽는 드론 동영상의 위치; 변환된 복사본이 아니라 원본 파일을 재생하기 때문에 그대로 보존되는 메타데이터; Immich 편집기로 저장하거나 기기에 보관하는 90° 회전(몰입형 파일에는 적용하지 않음).
 - **네이티브 재생**: Android와 TV에서는 Media3, iOS에서는 SceneKit과 AVFoundation, 헤드셋에서는 Meta Spatial SDK, Windows에서는 libmpv; 기기가 디코딩할 수 있는 것에 따라 원본 또는 트랜스코딩된 스트림을 선택; 설정의 고급 항목에 있는 기기의 동영상 디코더 목록; 오디오 트랙 선택, Android 플레이어의 자막, 버퍼링 표시기; 연결이 가져오는 양과 동영상에 필요한 양을 비교해 정하는 스트리밍 동영상의 시작, 서버가 응답하지 않는 동안 기다리는 동영상; 컴퓨터 안에서만 libmpv에 프레임을 제공하는 프로젝트의 작은 프로그램에서 VideoLAN의 dav2d가 프로세서로 디코딩하는 AV2; 시스템의 웹 뷰(WebView2, WebKitGTK, WKWebView, Android System WebView)에서 three.js 위의 Spark 2.4.0이 그리고, 앱이 기기 안에서만 제공하는 컴퓨터, 휴대폰, 태블릿의 가우시안 스플랫.
-- **기기에서 스티칭되는 원본 파일**: 사진을 위한 Flutter 프래그먼트 셰이더; 단일 트랙 동영상을 위한 플레이어 내 GPU 효과; 트랙 또는 파일마다 렌즈가 하나씩 있는 동영상을 위한 동시 하드웨어 디코더 두 개와 GPU 컴포지터(Android와 Quest에서는 OpenGL ES 3, iOS에서는 Metal, Windows에서는 데스크톱 빌드 5부터 앱이 그래픽 칩에서 프레임을 짝 맞추는 libmpv 플레이어 두 개); 카메라 자체의 캘리브레이션(Mei, V6, 등거리 모델)과 가속도계 기록; 기기가 디코더 두 개를 동시에 실행할 수 없을 때는 렌즈 한 개, 트랜스코딩된 스트림, 카메라의 LRV 복사본, 또는 스티칭되지 않은 동영상으로 폴백합니다.
+- **기기에서 스티칭되는 원본 파일**: 사진을 위한 Flutter 프래그먼트 셰이더; 단일 트랙 동영상을 위한 플레이어 내 GPU 효과; 트랙 또는 파일마다 렌즈가 하나씩 있는 동영상을 위한 동시 하드웨어 디코더 두 개와 GPU 컴포지터(Android와 Quest에서는 OpenGL ES 3, iOS에서는 Metal, Windows에서는 데스크톱 빌드 5부터 앱이 그래픽 칩에서 프레임을 짝 맞추는 libmpv 플레이어 두 개); 카메라 자체의 캘리브레이션(Mei, V6, 등거리 모델)과 가속도계 기록; 기기가 디코더 두 개를 동시에 실행할 수 없을 때는 렌즈 한 개, 트랜스코딩된 스트림, 카메라의 LRV 복사본, 또는 스티칭되지 않은 동영상으로 폴백합니다. build 42부터는 파일에서 읽은 카메라의 움직임 트랙(Insta360 자이로스코프, GoPro MAX의 방향과 중력, DJI Osmo 360의 자세)을 프레임당 회전 하나로 바꾸고, Android의 360° 플레이어가 이를 각 프레임과 함께 Media3에 넘깁니다(실험적).
 - **소스**: 기기의 갤러리; 컴퓨터의 폴더; 시스템 폴더 선택기를 통해 USB로 연결한 드론 또는 카메라 카드(Android, 실험적); 드론의 실시간 영상을 위해 케이블로 연결한 DJI RC-N3 조종기(Android, 실험적), 로컬 네트워크로 Meta Quest나 Android TV에 중계; Immich 서버; SMB 2와 3, WebDAV, DLNA/UPnP; 서버 고유의 인증서로 검증하는 HTTPS 기반 Plex; 로컬 네트워크(HTTPS와 RTSP)를 통한 Tapo 카메라; Wi-Fi에서 WebDAV 서버로 공유되는 휴대폰이나 컴퓨터; Bonjour/mDNS, 로컬 네트워크 스캔, SSDP, GDM, TP-Link 탐색으로 찾아내고 주소가 바뀌어도 계속 추적되는 서버; 시스템 폴더 선택기를 통한 Android 휴대폰, 태블릿, Meta Quest의 폴더.
 - **필요할 때 읽기**: 바이트 범위와 세션별 토큰으로 플레이어에 데이터를 제공하는 로컬 브리지; 큰 블록, 미리 읽기, 최대 6개의 SMB 연결 병렬 처리; 각 동영상의 한 프레임으로 만드는 썸네일; 기기에 아무것도 복사하지 않음.
 - **하드웨어**: 존재하는 모든 곳에서 측정된 한계(Quest 3의 H.264 상한, 소프트웨어 디코더에서 최대 2048x2048 렌즈 두 개)와 함께 사용되는 하드웨어 디코더; Windows에서는 디코딩된 각 프레임으로부터 그래픽 칩이 360° 화면을 그리며, 각 컴퓨터에서 프레임 크기를 측정하고 내장 또는 전용 그래픽 칩을 감지하며, desktop build 21부터는 칩이 두 개인 노트북에서 드라이버에 전용 칩을 요청합니다; 컴퓨터에서는 스플랫의 가우시안 수를 컴퓨터와 그래픽 카드의 메모리에 비추어 셉니다.
 - **플랫폼별 세부 사항**: 휴대폰의 자이로스코프와 Spatial 2.5D 플레이어; Quest의 몰입형 화면, 컨트롤러, 손 인식; Android TV의 리모컨 배치, 키보드 대화상자, TV 배너; 컴퓨터에서는 마우스와 키보드, 전체 화면, 단일 창, 프로그램으로 열거나 그 창에 끌어다 놓은 파일과 폴더, Windows에 디코더가 있을 때 폴더의 파일처럼 읽히는 HEIC, AVIF, TIFF와 카메라 원본 사진, 그리고 비밀번호와 토큰을 위한 Windows의 데이터 보호 기능.
-- **AI 생성 기능**: 3D 사진은 왼쪽 눈이 먼저인 전체 폭 나란히 JPEG이며, 입체감은 프로세서에서 ONNX Runtime 1.31.0(Intel Mac에서는 1.23.2)으로 실행한 Depth Anything V2 Small에서 얻음; 장면은 깊이가 끊기는 곳에서 잘린 레이어 glTF 장면을 담은 JPEG이며, MoGe-2 ViT-S와 LaMa로 만들고 .glb 내보내기 지원; 6144 x 3072의 360° 파노라마는 Vulkan 위의 stable-diffusion.cpp로 FLUX.2 klein base 4B와 360° LoRA가 생성하고, 이음매는 MI-GAN이 잇고, 디테일은 Real-ESRGAN이 높이며, 진짜 픽셀을 되돌려 놓음; 360° 사진의 위아래 3D 버전; 모든 파일에 우리 XMP(종류, 출처, 원본의 SHA-1, 품질 플래그), 장면과 파노라마에는 IPTC 디지털 소스 유형; Quest의 입체감은 LiteRT가 그래픽 칩이나 프로세서에서 계산해 캐시에 보관; 컴퓨터에서는 두 레인의 대기열과, Vulkan으로 그래픽 카드를 읽고, 파노라마 전에 앱 자신이 점유한 몫을 비우며, 다른 프로그램이 메모리를 점유하는 동안 기다리는 게이트; 각 구성 요소는 SHA-256으로 확인하고, Windows 생성기는 서명됨; SMB와 WebDAV에서 공유의 사진 옆에 쓰는 3D 버전; 사진 20장에서 200장 또는 동영상 하나로 만드는 스플랫 장면: 카메라는 프로세서에서 COLMAP 4.2.1이 배치하고, 스플랫은 Vulkan에서 Brush 0.3.0이 학습하며, 물체는 놓인 표면 위에 똑바로 세우고, 최대 150,000개 가우시안의 SPZ 버전 2로, 요청하면 .ply로도 씀.
+- **AI 생성 기능**: 3D 사진은 왼쪽 눈이 먼저인 전체 폭 나란히 JPEG이며, 입체감은 프로세서에서 ONNX Runtime 1.31.0(Intel Mac에서는 1.23.2)으로 실행한 Depth Anything V2 Small에서 얻음; 장면은 깊이가 끊기는 곳에서 잘린 레이어 glTF 장면을 담은 JPEG이며, MoGe-2 ViT-S와 LaMa로 만들고 .glb 내보내기 지원; 6144 x 3072의 360° 파노라마는 Vulkan 위의 stable-diffusion.cpp로 FLUX.2 klein base 4B와 360° LoRA가 생성하고, 이음매는 MI-GAN이 잇고, 디테일은 Real-ESRGAN이 높이며, 진짜 픽셀을 되돌려 놓음; 360° 사진의 위아래 3D 버전; 모든 파일에 우리 XMP(종류, 출처, 원본의 SHA-1, 품질 플래그), 장면과 파노라마에는 IPTC 디지털 소스 유형; Quest의 입체감은 LiteRT가 그래픽 칩이나 프로세서에서 계산해 캐시에 보관; 컴퓨터에서는 두 레인의 대기열과, Vulkan으로 그래픽 카드를 읽고, 파노라마 전에 앱 자신이 점유한 몫을 비우고, desktop build 22부터는 여유 메모리 3.5 GiB를 요구하며 약 5.6 GiB 미만에서는 생성을 여러 조각으로 나누고, 다른 프로그램이 메모리를 점유하는 동안 기다리는 게이트; 각 구성 요소는 SHA-256으로 확인하고, Windows 생성기는 서명됨; SMB와 WebDAV에서 공유의 사진 옆에 쓰는 3D 버전; 사진 20장에서 200장 또는 동영상 하나로 만드는 스플랫 장면: 카메라는 프로세서에서 COLMAP 4.2.1이 배치하고, 스플랫은 Vulkan에서 Brush 0.3.0이 학습하며, 물체는 놓인 표면 위에 똑바로 세우고, 최대 150,000개 가우시안의 SPZ 버전 2로, 또는 desktop build 22부터 상세와 최대에서는 장면 전체와 헤드셋용으로 가장 강한 가우시안 150,000개의 사본으로, 요청하면 .ply로도 씀.
 - **설계부터 지켜지는 개인정보 보호**: 계정 없음, 클라우드 없음, 분석 없음; 기기의 보안 저장소에 있는 비밀번호와 토큰(앱용 보안 저장소가 없는 LG와 Samsung TV에서는 앱 자체 저장소에 암호화되지 않은 상태로 저장); 휴대폰으로 로그인한 화면은 비밀번호가 아니라 자체 세션을 받으며, 이 세션은 홈 네트워크에서 암호화되어 전송됨(LG TV는 휴대폰 브라우저의 페이지에서 홈 네트워크를 통해 암호화되지 않은 비밀번호를 받고, 세션만 보관함); 기기에서만 사용되는 Spatial 플레이어와 코드 스캐너의 카메라; 오직 사용자의 네트워크에서만 접근하는 공유, Plex, 카메라; 기기에서 계산하는 AI, 요청할 때만 다운로드하고 SHA-256으로 확인하는 구성 요소, 꺼 둔 ONNX Runtime 원격 측정; 기기에 보관하는 영화의 시청 위치.
 
 </details>
