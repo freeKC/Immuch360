@@ -507,7 +507,7 @@ From build 16 Immuch360 stitches those files itself, on the phone, the tablet or
 2. Keep the two files of an X3 pair together: the app looks for the other file next to the first one, on the device, on the server or in the share folder. When the other one is missing, the app says "This recording is split in two files, one per lens, and (name) was not found next to it", and suggests keeping both files together or exporting the video from the camera app.
 3. Open the file and tap 360°. Raw files get the 360° button and raw photos the 360° badge. From build 18 the raw Insta360 files of the server are in the 360° list too, found by their name.
 4. A photo opens in the sphere viewer with a label at the bottom: "Raw 360° file, stitched by the app", and the source of the calibration: "lens calibration read from the file", "lens calibration of the same camera" (kept from another file of the same camera, by its serial number, or by its model for a file that only names its model), or "nominal lens values, seams possible" (the values of an X3, when nothing better is available).
-5. A video opens in the native 360° player and is stitched as it plays. Its 3D and 360°/180° buttons are hidden, since a raw video is one full sphere. The video players and the headset show no label.
+5. A video opens in the native 360° player and is stitched as it plays. Its 3D and 360°/180° buttons are hidden, since a raw video is one full sphere. The video players and the headset show no label. On Android phones, tablets and TVs, from build 42, an Insta360, GoPro MAX or DJI Osmo 360 video also plays stabilised with the motion its camera recorded (experimental), from the library, a share or a folder alike: see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental).
 6. In the headset, the immersive view gets a stitched temporary picture for a photo, and the same GPU effect as the phone for a video. There is no progress indicator yet while a raw photo is prepared.
 7. If the picture opens facing an odd direction (a photo taken with the camera lying flat, for example), drag it on a phone, or turn it in the headset with the right thumbstick or the Turn button.
 
@@ -523,6 +523,28 @@ From build 19, on Android and the Quest:
 - **When the decoder of the one lens fails** and there is no transcoded stream, the video plays unstitched instead of stopping on an error.
 - **On an Android emulator** a frame of the opposite lens no longer flashes in (each lens texture is now bound on the external texture target at every frame).
 
+### Stabilisation with the camera's gyroscope (experimental)
+
+A 360° video filmed in the hand, on a bike or on a helmet shakes, and its horizon leans. The cameras record their own motion in the raw file. From build 42, the 360° player of Android phones, tablets and TVs reads that motion and turns each frame back: the horizon stays level, the shake goes and the view follows the road when you turn. Experimental, on by default.
+
+1. Open a raw video of your Immich library, of a share (SMB, WebDAV, DLNA, Plex, the phone share) or of a folder of the device ("Browse a folder"), and tap 360°. The video starts at once: the app reads the motion in the background meanwhile, and "Stabilized with the camera's gyroscope" shows for a few seconds once it applies.
+2. The stabilisation button, in the top bar of the player next to the audio, 360° and 3D buttons, turns it off to see the video as it was filmed, and on again. "Stabilize with the camera's gyroscope (experimental)", in Settings, Asset Viewer, Videos, follows the button and keeps your choice for the next videos.
+3. The view can start turned to one side, the horizon level: drag it to the direction you want.
+
+What the app reads, camera by camera:
+
+- **Insta360** (.insv): the gyroscope and the frame times of the trailer at the end of the file. A split X3 pair takes them from its `_00_` file, whichever file you open. Checked on sample files of X3, X4 and X5 cameras.
+- **GoPro MAX** (.360): the orientation (CORI) and gravity (GRAV) tracks of the file. Checked on one GoPro MAX file: the horizon and the shake are corrected, but where the camera points near the vertical part of the turn is not, so the view can drift there. A GoPro MAX 2 file plays as before, without the button: the axes of its tracks were not measured yet.
+- **DJI Osmo 360** (.osv): the attitude of each frame. The correction fades in over the first 5 seconds, because the attitude of the first seconds can lean by up to 20 degrees: part of the shake of those seconds stays.
+
+Where the file is:
+
+- **The library, the shares and the folders** are read the same way, by small reads of the parts that hold the motion, never the whole file. Insta360 files reach the library; an Immich server refuses .360 and .osv files, so GoPro MAX and DJI Osmo 360 videos are stabilised from a share or a folder.
+- **A file that cannot be read at any position** plays as before, without the button, rather than being downloaded whole: a file of a DLNA or Plex server that does not tell its size, a server that answers a part of a file with all of it, a device that sends each file from its start.
+- **iPhone and iPad, the computers and the Meta Quest** do not stabilise yet: they level the video once, as below.
+
+What was checked: the tests of the project's CI and build host, on the motion tracks of sample files of Insta360 X3, X4 and X5, GoPro MAX (one file) and DJI Osmo 360 cameras, and the angles of the table against the picture of those files. No run on a phone or a TV is recorded yet: feedback welcome.
+
 ### How the stitching works
 
 - **What the app reads**: the calibration block the camera appends to every file (lens model, centres, orientation of each lens, size of the calibration canvas) and the accelerometer record, used to level the horizon. The Mei (unified camera) model of the calibration string V3 is used first, V6 (X6 and later firmware) with its first terms next, the older equidistant string V1 last. Nothing is guessed from the camera model when the file has its calibration. The Insta360 X5 and X6 calibration (V6, indexed trailer) and the X4 video window are read from the file.
@@ -533,7 +555,7 @@ From build 19, on Android and the Quest:
 ### Limits
 
 - **Seams**: the stitch uses the camera's calibration only, without seam optimisation, so objects close to the camera can show a seam, as in the camera's own preview.
-- **Horizon**: levelling uses the accelerometer the camera records in the file, averaged. A video is levelled once, from the start of the recording, and is not stabilised, so a handheld video keeps its shakes and its horizon may lean a little. GoPro and DJI files are not levelled (the camera's horizon is kept).
+- **Horizon**: on Android phones, tablets and TVs, from build 42, an Insta360, GoPro MAX or DJI Osmo 360 video plays stabilised, the horizon level through the whole video (see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental)). Without the stabilisation (turned off, a file without a motion track, a GoPro MAX 2, a file of a share that cannot be read at any position, iPhone and iPad, the computers, the Quest), levelling uses the accelerometer the camera records in the file, averaged: an Insta360 video is levelled once, from the start of the recording, so a handheld video keeps its shakes and its horizon may lean a little, and GoPro and DJI files keep the camera's horizon.
 - **Files without calibration**: a file without its calibration block (the members `_008` and `_009` of an X3 HDR group) uses the calibration the app kept from another file of the same camera or the same camera model, or the nominal X3 values if it has seen none.
 - **What was checked**: photos against Insta360 Studio exports of X3 files (same framing, level horizon, a yaw offset under a degree); single track videos on an Android emulator with a low resolution X3 file. The two track and two file paths were checked on real X4, X3 pair, GoPro MAX and Osmo 360 files with the app's CPU reference stitcher (level, continuous seams) and by the Android unit tests. Playback on a phone, a Quest and an iPhone is still the device test of builds 18 and 19, and raw files have not run on an iPhone yet: feedback welcome.
 - **DJI Osmo 360 files** (October 2026): a real .osv file, two 3840x3840 HEVC tracks of 10 bit (Main 10) at 25 frames a second with the camera's calibration after them, was read by the app's parsers and stitched by the CPU reference with continuous seams. On an Android 15 emulator, from a WebDAV share, it is listed with the 360° badge, but the emulator has no 10 bit HEVC decoder, so the file gets no thumbnail there and its 360° player says "Unable to play video"; a synthetic clip laid out the same way in 8 bit was listed with a thumbnail and played stitched to the end, both lenses paired, with the emulator's software decoders. A phone or a Quest with a 10 bit HEVC decoder is expected to play it with its hardware decoders, which no device run has confirmed yet. On Windows, see [Raw 360° videos](#use-it-on-a-computer) in the computer section.
