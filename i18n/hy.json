@@ -1620,7 +1620,7 @@
   "setting_notifications_notify_seconds": "{count} վայրկյան",
   "setting_tv_photo_date_time_subtitle": "Լուսանկարի ներքևի ձախ անկյունում, երբ կառավարման տարրերը երևում են",
   "setting_tv_photo_date_time_title": "Ցույց տալ լուսանկարի ամսաթիվը և ժամը",
-  "setting_video_stabilization_subtitle": "Insta360, GoPro MAX և DJI Osmo 360 տեսախցիկների չմշակված 360° տեսանյութեր. հորիզոնը մնում է հարթ, ցնցումն անհետանում է, իսկ տեսքը հետևում է ճանապարհին",
+  "setting_video_stabilization_subtitle": "Insta360, GoPro MAX և DJI Osmo 360 տեսախցիկների չմշակված 360° տեսանյութեր՝ գրադարանում, համօգտագործման մեջ կամ թղթապանակում. հորիզոնը մնում է հարթ, ցնցումն անհետանում է, իսկ տեսքը հետևում է ճանապարհին",
   "setting_video_stabilization_title": "Կայունացնել տեսախցիկի գիրոսկոպով (փորձնական)",
   "setting_video_viewer_original_video_title": "Ստիպել բնագիր տեսահոլովակը",
   "setting_video_viewer_resume_every_video": "Բոլոր տեսանյութերում",

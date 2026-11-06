@@ -1520,7 +1520,7 @@
   "setting_immersive_sharp_screens_title": "Oštriji ravni ekrani (eksperimentalno)",
   "setting_tv_photo_date_time_subtitle": "Dolje lijevo na fotografiji, dok su kontrole prikazane",
   "setting_tv_photo_date_time_title": "Prikaži datum i vrijeme fotografije",
-  "setting_video_stabilization_subtitle": "Neobrađeni 360° videozapisi s kamera Insta360, GoPro MAX i DJI Osmo 360: horizont ostaje ravan, drhtanje nestaje, a pogled prati cestu",
+  "setting_video_stabilization_subtitle": "Neobrađeni 360° videozapisi s kamera Insta360, GoPro MAX i DJI Osmo 360, u biblioteci, u dijeljenoj mapi ili u mapi: horizont ostaje ravan, drhtanje nestaje, a pogled prati cestu",
   "setting_video_stabilization_title": "Stabiliziraj žiroskopom kamere (eksperimentalno)",
   "setting_video_viewer_resume_every_video": "U svakom videu",
   "setting_video_viewer_resume_subtitle": "Dugi videozapisi, poput filmova, nastavljaju se tamo gdje ste stali i pokazuju koliko ste pogledali. Kraći uvijek počinju od početka.",

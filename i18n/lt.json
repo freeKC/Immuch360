@@ -3470,7 +3470,7 @@
   "setting_notifications_subtitle": "Koreguoti pranešimų nuostatas",
   "setting_tv_photo_date_time_subtitle": "Nuotraukos apačioje kairėje, kol rodomi valdikliai",
   "setting_tv_photo_date_time_title": "Rodyti nuotraukos datą ir laiką",
-  "setting_video_stabilization_subtitle": "Neapdoroti 360° vaizdo įrašai iš Insta360, GoPro MAX ir DJI Osmo 360 kamerų: horizontas lieka lygus, drebėjimas dingsta, o vaizdas seka kelią",
+  "setting_video_stabilization_subtitle": "Neapdoroti 360° vaizdo įrašai iš Insta360, GoPro MAX ir DJI Osmo 360 kamerų, bibliotekoje, bendrinamame aplanke arba aplanke: horizontas lieka lygus, drebėjimas dingsta, o vaizdas seka kelią",
   "setting_video_stabilization_title": "Stabilizuoti kameros giroskopu (eksperimentinis)",
   "setting_video_viewer_auto_play_subtitle": "Automatiškai pradėti leisti vaizdo įrašus juos atidarius",
   "setting_video_viewer_auto_play_title": "Groti video automatiškai",
