@@ -37,6 +37,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.da
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_calibration_store.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_stabilization.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/splat_photo/splat_photo_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
@@ -87,6 +88,8 @@ import 'package:openapi/api.dart' show RotateParameters;
 
 import '../../../desktop/ai/scene/glb_reader_test_files.dart' show tinySceneFile;
 import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
+import '../../../fixtures/raw/insta360_motion_slices.dart';
+import '../../../fixtures/raw/stabilization_videos.dart';
 import '../../../infrastructure/repository.mock.dart';
 import '../../../unit/factories/remote_asset_factory.dart';
 import '../../../unit/presentation/presentation_context.dart';
@@ -187,6 +190,9 @@ class _NominalCalibrations extends DualFisheyeCalibrationService {
   final asked = <BaseAsset>[];
   final askedInputs = <String>[];
 
+  /// The bytes of every raw file the stabilisation reads, null for no file
+  Uint8List? motionFile;
+
   @override
   Future<DualFisheyeCalibration> forAsset(BaseAsset asset, {File? localFile}) async {
     asked.add(asset);
@@ -200,7 +206,10 @@ class _NominalCalibrations extends DualFisheyeCalibrationService {
   }
 
   @override
-  Future<RawFileReader?> openAsset(BaseAsset asset, {File? localFile}) async => null;
+  Future<RawFileReader?> openAsset(BaseAsset asset, {File? localFile}) async {
+    final file = motionFile;
+    return file == null ? null : (size: file.length, read: bytesReader(file), close: () async {});
+  }
 }
 
 /// The assets the user chose to view as 360°, seeded rather than read from the store. Changes still go to the store.
@@ -362,12 +371,21 @@ void main() {
     'rawOneLensFile': 'The file of the other lens cannot be read. One lens shows: half of the sphere stays black.',
     'rawUnstitched': 'The 360° stitching failed on this device. The video shows as the camera recorded it.',
   };
+  // The switch of the stabilisation with the camera's gyroscope, its states and its notices (issue 14)
+  const englishStabilizationLabels = {
+    'stabilization': "Stabilise with the camera's gyroscope (experimental)",
+    'stabilizationEnabled': 'Enabled',
+    'stabilizationDisabled': 'Disabled',
+    'stabilizationOn': "Stabilised with the camera's gyroscope",
+    'stabilizationNoTrack': 'This video has no gyroscope track',
+  };
   const englishVideoPlayerLabels = {
     ...englishViewerLabels,
     ...englishAudioTrackLabels,
     ...englishBufferingLabels,
     ...englishSourceLabels,
     ...englishRawLabels,
+    ...englishStabilizationLabels,
   };
 
   setUp(() async {
@@ -379,6 +397,15 @@ void main() {
     when(
       () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer((_) async => calls.add('open'));
+    when(() => sphericalVideoApi.setStabilization(any(), any(), any(), any(), any(), any())).thenAnswer((
+      invocation,
+    ) async {
+      final times = invocation.positionalArguments[3] as Int64List?;
+      calls.add(
+        'stabilization ${invocation.positionalArguments[1] == true ? 'on' : 'off'} '
+        '${invocation.positionalArguments[2] == true ? (times == null ? 'pending' : '${times.length} frames') : 'none'}',
+      );
+    });
     spatialVideoApi = _MockSpatialVideoApi();
     when(
       spatialVideoApi.capabilities,
@@ -976,6 +1003,66 @@ void main() {
       expect((json['version'], json['layout']), (2, 'sideBySide'));
       expect((json['frameWidth'], json['frameHeight']), (5760, 2880));
       expect(calibrations.askedInputs, hasLength(1));
+    });
+
+    testWidgets('stabilises a raw video: the switch shows as the player opens, the table follows', (tester) async {
+      calibrations.motionFile = insta360SliceVideo(insta360X4MotionSlice, indexed: true);
+      final asset = owned(type: .video, name: 'VID_20240908_133036_00_002.insv', width: 5760, height: 2880);
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .none,
+        panoramaVideoSupported: true,
+        extraOverrides: [
+          videoStabilizationSupportedProvider.overrideWithValue(true),
+          rawStabilizationBuilderProvider.overrideWithValue(buildRawStabilization),
+        ],
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      // The player opens at once with the switch, on as the setting says; the table comes after, for the same URL
+      expect(calls, ['suspend', 'stabilization on pending', 'open', 'stabilization on 6 frames']);
+      final urls = verify(
+        () => sphericalVideoApi.setStabilization(captureAny(), any(), any(), any(), any(), any()),
+      ).captured;
+      final opened = verify(
+        () => sphericalVideoApi.open(captureAny(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
+      ).captured.single;
+      expect(urls, [opened, opened]);
+    });
+
+    testWidgets('tells the player of a raw video without a track, the switch off as set', (tester) async {
+      final asset = owned(type: .video, name: 'VID_20240908_133036_00_002.insv', width: 5760, height: 2880);
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .none,
+        panoramaVideoSupported: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(stabilizeVideos: false)),
+        extraOverrides: [
+          videoStabilizationSupportedProvider.overrideWithValue(true),
+          rawStabilizationBuilderProvider.overrideWithValue(buildRawStabilization),
+        ],
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      // No file to read the track from (the fake opens none): the switch hides again
+      expect(calls, ['suspend', 'stabilization off pending', 'open', 'stabilization off none']);
+    });
+
+    testWidgets('sends nothing about the stabilisation where the player does not apply it', (tester) async {
+      final asset = owned(type: .video, name: 'VID_20240908_133036_00_002.insv', width: 5760, height: 2880);
+      await pumpTopBar(tester, asset, projectionType: .none, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(calls, ['suspend', 'open']);
+      verifyNever(() => sphericalVideoApi.setStabilization(any(), any(), any(), any(), any(), any()));
     });
 
     testWidgets('says which file of a split recording is missing, and opens nothing', (tester) async {

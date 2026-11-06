@@ -1,6 +1,8 @@
 // The openers of the native viewers for a media that is no asset, a file of a network share played through the media
 // bridge: openSphericalVideoUrl, openSpatialVideoUrl and openImmersiveUrl.
 
+import 'dart:typed_data';
+
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +39,22 @@ import '../../../widget_tester_extensions.dart';
 class _SphericalVideoApi extends SphericalVideoApi {
   final List<Map<String, Object?>> opened = [];
 
+  /// What the player was told, in order with the openings: "stabilization", the URL, the setting, whether a track
+  /// comes and whether no table came; or "open" and the URL
+  final List<String> calls = [];
+
+  @override
+  Future<void> setStabilization(
+    String url,
+    bool enabled,
+    bool hasTrack,
+    Int64List? presentationTimesUs,
+    Float64List? corrections,
+    String? summary,
+  ) async {
+    calls.add('stabilization $url $enabled $hasTrack ${presentationTimesUs == null && corrections == null}');
+  }
+
   /// The stream given with each video opened to fall back to, null for none
   final List<String?> fallbackUrls = [];
   Exception? failure;
@@ -59,6 +77,7 @@ class _SphericalVideoApi extends SphericalVideoApi {
       throw failure;
     }
     fallbackUrls.add(fallbackUrl);
+    calls.add('open $url');
     opened.add({
       'url': url,
       'headers': headers,
@@ -184,7 +203,7 @@ void main() {
     await db.close();
   });
 
-  Future<void> pump(WidgetTester tester, {AppConfig config = const AppConfig()}) async {
+  Future<void> pump(WidgetTester tester, {AppConfig config = const AppConfig(), bool stabilization = false}) async {
     await tester.pumpConsumerWidget(
       Scaffold(
         body: Consumer(
@@ -201,6 +220,7 @@ void main() {
         spatialVideoApiProvider.overrideWithValue(spatialApi),
         immersiveApiProvider.overrideWithValue(immersiveApi),
         appConfigProvider.overrideWithValue(config),
+        videoStabilizationSupportedProvider.overrideWithValue(stabilization),
       ],
     );
   }
@@ -220,6 +240,39 @@ void main() {
   }
 
   group('openSphericalVideoUrl', () {
+    testWidgets('tells the player the stabilisation setting before it opens, where the player stabilises', (
+      tester,
+    ) async {
+      await pump(tester, config: const AppConfig(viewer: ViewerConfig(stabilizeVideos: false)), stabilization: true);
+
+      await openSphericalVideoUrl(
+        context,
+        ref,
+        url: _url,
+        title: 'trip.mp4',
+        layout: StereoLayout.mono,
+        coverage: SphereCoverage.full,
+      );
+
+      // Off, and no table of its own: a CAMM track of the file stays off in the player
+      expect(sphericalApi.calls, ['stabilization $_url false false true', 'open $_url']);
+    });
+
+    testWidgets('tells the player nothing of the stabilisation where it does not stabilise', (tester) async {
+      await pump(tester);
+
+      await openSphericalVideoUrl(
+        context,
+        ref,
+        url: _url,
+        title: 'trip.mp4',
+        layout: StereoLayout.mono,
+        coverage: SphereCoverage.full,
+      );
+
+      expect(sphericalApi.calls, ['open $_url']);
+    });
+
     testWidgets('opens the URL in the native 360° player with the layout and the coverage given', (tester) async {
       await pump(tester);
 
@@ -242,14 +295,15 @@ void main() {
         'close': 'Close',
         'layout': StereoLayout.leftRight,
         // The labels of the audio track control, of the buffering indicator, of a switch to the stream to fall back
-        // to and of a raw video too heavy for the decoders too, with the language of the app to name the track
-        // languages in
+        // to, of a raw video too heavy for the decoders and of the stabilisation switch too, with the language of
+        // the app to name the track languages in
         'labels': {
           ...sphereViewerLabels(context.t),
           ...audioTrackLabels(context.t, const Locale('en')),
           ...videoBufferingLabels(context.t),
           ...videoSourceLabels(context.t),
           ...rawVideoLabels(context.t),
+          ...videoStabilizationLabels(context.t),
         },
         'coverage': SphereCoverage.half,
       });

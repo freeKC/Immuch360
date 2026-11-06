@@ -57,6 +57,27 @@
     android:textSize="14sp"
     android:visibility="gone" />
 
+  <!-- "Stabilised with the camera's gyroscope" when a raw video starts stabilised, "This video has no gyroscope track"
+       when the user turns the stabilisation on for a file without one: for a few seconds, then it fades. Its text
+       comes from the activity. Below the hint for the arrows of a remote, not clickable. -->
+  <TextView
+    android:id="@+id/spherical_video_notice"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top|center_horizontal"
+    android:layout_marginStart="24dp"
+    android:layout_marginTop="112dp"
+    android:layout_marginEnd="24dp"
+    android:background="@drawable/video_buffering_label_background"
+    android:gravity="center"
+    android:paddingStart="12dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="4dp"
+    android:textColor="@android:color/white"
+    android:textSize="14sp"
+    android:visibility="gone" />
+
   <!-- Its buttons draw remote_focus_ring over themselves while a remote control has them focused -->
   <LinearLayout
     android:id="@+id/spherical_video_top_bar"
@@ -97,6 +118,19 @@
       android:background="?android:attr/selectableItemBackgroundBorderless"
       android:foreground="@drawable/remote_focus_ring"
       android:src="@drawable/ic_video_audio_track"
+      android:visibility="gone"
+      tools:ignore="ContentDescription" />
+
+    <!-- Stabilisation control: turns the stabilisation with the camera's gyroscope on and off. Shown by the activity for
+         a file with a motion track, dimmed when off; its description, tooltip and state come from the activity. -->
+    <ImageButton
+      android:id="@+id/spherical_video_stabilization"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_marginStart="8dp"
+      android:background="?android:attr/selectableItemBackgroundBorderless"
+      android:foreground="@drawable/remote_focus_ring"
+      android:src="@drawable/ic_video_stabilization"
       android:visibility="gone"
       tools:ignore="ContentDescription" />
 

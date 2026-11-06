@@ -32,6 +32,12 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// Videos turns it off)
     @Default(true) bool spatial25d,
 
+    /// Experimental: a raw 360° video whose camera recorded its motion (the gyroscope of an Insta360, CORI and GRAV of a
+    /// GoPro, the attitude of a DJI Osmo 360) plays stabilised, the horizon level and the shake gone, the view following
+    /// the road (issue 14). On by default, the lab rule (Settings, Asset Viewer, Videos, and the switch of the 360°
+    /// player, turn it off); the Android phones, tablets and TVs apply it
+    @Default(true) bool stabilizeVideos,
+
     /// Meta Quest immersive viewer: the right thumbstick turns 360° photos and videos the other way. Off by default,
     /// the view then turns the way the stick is pushed, as in most headset apps (Settings, Asset Viewer, Videos)
     @Default(false) bool reverseThumbstickTurn,

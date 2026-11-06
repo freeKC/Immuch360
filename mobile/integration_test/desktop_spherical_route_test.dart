@@ -40,6 +40,9 @@ class _Session implements SphericalVideoEvents {
   @override
   void closed(StereoLayout stereoLayout, SphereCoverage coverage) =>
       closings.add('${stereoLayout.name}/${coverage.name}');
+
+  @override
+  void stabilizationChanged(bool enabled) {}
 }
 
 String _hex(int pixel) => '0x${pixel.toRadixString(16).padLeft(8, '0')}';

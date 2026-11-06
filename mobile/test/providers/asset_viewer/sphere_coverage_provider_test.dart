@@ -7,6 +7,7 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
@@ -205,6 +206,34 @@ void main() {
       expect(store.tryGet(StoreKey.sphereCoverageOverrides), isNull);
     });
 
+    test('runs what waits for the player once it closes, could not open, or another one opens', () {
+      final asset = RemoteAssetFactory.create(id: 'asset-1', type: .video);
+      final container = createContainer();
+      final session = SphericalVideoSession(container.read(sphereCoverageOverridesProvider.notifier));
+      final ran = <String>[];
+
+      session.start(asset: asset, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full);
+      session.whenClosed(() => ran.add('first'));
+      expect(ran, isEmpty, reason: 'the player plays');
+      session.closed(StereoLayout.mono, SphereCoverage.full);
+      expect(ran, ['first']);
+      session.closed(StereoLayout.mono, SphereCoverage.full);
+      expect(ran, ['first'], reason: 'once');
+
+      session.start(asset: asset, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full);
+      session.whenClosed(() => ran.add('cancelled'));
+      session.cancel();
+      expect(ran, ['first', 'cancelled']);
+
+      // A player whose close was never heard: the next one that opens stops what it left, a failing action too
+      session.start(asset: asset, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full);
+      session.whenClosed(() => throw StateError('gone'));
+      session.whenClosed(() => ran.add('stale'));
+      session.start(asset: asset, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full);
+      expect(ran, ['first', 'cancelled', 'stale']);
+      expect(session.isOpen, isTrue);
+    });
+
     test('the session provider receives the closed event of the native player', () async {
       final asset = RemoteAssetFactory.create(id: 'asset-1', type: .video);
       final container = ProviderContainer(overrides: [storeServiceProvider.overrideWithValue(store)]);
@@ -230,6 +259,45 @@ void main() {
         (data) => reply = data,
       );
       expect(reply, isNull);
+    });
+  });
+  group('the stabilisation switch of the native player', () {
+    test('the session hands the choice of the user to the setting', () async {
+      final stored = <bool>[];
+      final session = SphericalVideoSession(
+        createContainer().read(sphereCoverageOverridesProvider.notifier),
+        onStabilizationChanged: (enabled) async => stored.add(enabled),
+      );
+      session.stabilizationChanged(false);
+      session.stabilizationChanged(true);
+      await pumpEventQueue();
+      expect(stored, [false, true]);
+
+      // A failing store only logs
+      final failing = SphericalVideoSession(
+        createContainer().read(sphereCoverageOverridesProvider.notifier),
+        onStabilizationChanged: (_) async => throw StateError('no database'),
+      );
+      failing.stabilizationChanged(false);
+      await pumpEventQueue();
+    });
+
+    test('the session provider stores the switch of the native player in the settings, off then on', () async {
+      await SettingsRepository.ensureInitialized(db);
+      addTearDown(SettingsRepository.reset);
+      final container = createContainer();
+      container.read(sphericalVideoSessionProvider);
+      expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, isTrue, reason: 'on by default');
+
+      for (final enabled in [false, true]) {
+        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+          'dev.flutter.pigeon.immich_mobile.SphericalVideoEvents.stabilizationChanged',
+          SphericalVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[enabled]),
+          (_) {},
+        );
+        await pumpEventQueue();
+        expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, enabled);
+      }
     });
   });
 }

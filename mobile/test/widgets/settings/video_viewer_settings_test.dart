@@ -7,6 +7,7 @@ import 'package:immich_mobile/infrastructure/repositories/settings.repository.da
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/widgets/settings/asset_viewer_settings/video_viewer_settings.dart';
 
 import '../../unit/presentation/presentation_context.dart';
@@ -73,6 +74,71 @@ void main() {
     expect(spatialSwitch, findsNothing);
     expect(find.byType(SwitchListTile), findsNWidgets(4), reason: 'the other video settings stay');
     expect(find.text('Video source'), findsOneWidget);
+  });
+
+  group("stabilisation with the camera's gyroscope", () {
+    final stabilizationSwitch = find.widgetWithText(
+      SwitchListTile,
+      "Stabilise with the camera's gyroscope (experimental)",
+    );
+
+    testWidgets('offered where the 360° player applies it, on by default', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        // Scrolled as on the settings page: the group is taller than the test screen
+        const SingleChildScrollView(child: VideoViewerSettings()),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => false),
+          videoStabilizationSupportedProvider.overrideWithValue(true),
+        ],
+      );
+
+      expect(stabilizationSwitch, findsOneWidget);
+      expect(
+        find.text(
+          'Raw 360° videos from Insta360, GoPro MAX and DJI Osmo 360 cameras: the horizon stays level, the shake goes '
+          'and the view follows the road',
+        ),
+        findsOneWidget,
+      );
+      // On by default, the lab rule
+      expect(tester.widget<SwitchListTile>(stabilizationSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, isTrue);
+    });
+
+    testWidgets('turned off and on, stored with the app settings', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const SingleChildScrollView(child: VideoViewerSettings()),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => false),
+          videoStabilizationSupportedProvider.overrideWithValue(true),
+        ],
+      );
+
+      await tester.ensureVisible(stabilizationSwitch);
+      await tester.tap(stabilizationSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, isFalse);
+      expect(tester.widget<SwitchListTile>(stabilizationSwitch).value, isFalse);
+
+      await tester.tap(stabilizationSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, isTrue);
+    });
+
+    testWidgets('left out where no player applies it yet (iOS, computers, Meta Quest)', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const SingleChildScrollView(child: VideoViewerSettings()),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => false),
+          videoStabilizationSupportedProvider.overrideWithValue(false),
+        ],
+      );
+
+      expect(stabilizationSwitch, findsNothing);
+    });
   });
 
   group('reverse thumbstick turn', () {

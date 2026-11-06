@@ -60,6 +60,21 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
         mainHandler.post(send)
       }
     }
+
+    /**
+     * Tells Flutter the user turned the stabilisation on or off in the player, so that the setting follows. The result
+     * is ignored; without an engine for the app UI the event is dropped. Main thread.
+     */
+    fun notifyStabilizationChanged(enabled: Boolean) {
+      val current = events
+      if (current == null) {
+        Log.i(TAG, "No Flutter engine to tell that the stabilisation was turned ${if (enabled) "on" else "off"}")
+        return
+      }
+      current.stabilizationChanged(enabled) { result ->
+        result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the stabilisation switch", it) }
+      }
+    }
   }
 
   /**
@@ -96,5 +111,31 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
     context.startActivity(intent)
+  }
+
+  /**
+   * The stabilisation of the video at [url] (issue 14): kept for its player, which may not have started yet, see
+   * [StabilizationInbox]. A table the player cannot use (lengths that do not match, times that do not rise, values that
+   * are not unit quaternions) counts as no track, the log tells why. Pigeon calls this on the main thread.
+   */
+  override fun setStabilization(
+    url: String,
+    enabled: Boolean,
+    hasTrack: Boolean,
+    presentationTimesUs: LongArray?,
+    corrections: DoubleArray?,
+    summary: String?,
+  ) {
+    val table =
+      if (presentationTimesUs == null && corrections == null) {
+        null
+      } else {
+        StabilizationTable.of(presentationTimesUs, corrections) { reason ->
+          Log.w(TAG, "Stabilisation table refused: $reason")
+        }
+      }
+    // A table sent but refused: the player shows the video as it is, and no switch that would do nothing
+    val usable = hasTrack && (table != null || (presentationTimesUs == null && corrections == null))
+    StabilizationInbox.post(StabilizationInbox.Message(url, enabled, usable, table, summary))
   }
 }

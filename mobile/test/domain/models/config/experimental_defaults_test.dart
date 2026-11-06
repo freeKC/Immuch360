@@ -145,6 +145,20 @@ void main() {
     });
   });
 
+  group("Stabilise with the camera's gyroscope (experimental)", () {
+    test('is on by default, the lab rule', () {
+      expect(const AppConfig().viewer.stabilizeVideos, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerStabilizeVideos), isTrue);
+    });
+
+    test('a stored off wins over the default', () {
+      final config = AppConfig.fromEntries({SettingsKey.viewerStabilizeVideos: false});
+
+      expect(config.viewer.stabilizeVideos, isFalse);
+      expect(config.write(SettingsKey.viewerStabilizeVideos, true).viewer.stabilizeVideos, isTrue);
+    });
+  });
+
   group('Remember where I stopped (the lab rule)', () {
     test('is on by default, for videos of 10 minutes or more', () {
       expect(const AppConfig().viewer.resumeVideos, isTrue);

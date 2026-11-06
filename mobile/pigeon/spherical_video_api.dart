@@ -44,10 +44,32 @@ abstract class SphericalVideoApi {
     String? fallbackUrl,
     String? rawProjection,
   );
+
+  /// The stabilisation with the motion track of the camera (issue 14) of the video at [url], for the player that plays
+  /// it or is about to: called right before [open] with [hasTrack] and no table while Flutter reads the track (the
+  /// switch shows, the video plays meanwhile), then again with the table once built, or with [hasTrack] false when the
+  /// file has none after all (the switch hides). [enabled] is the setting "Stabilise with the camera's gyroscope", on
+  /// by default; the switch of the player starts there. A [url] the player does not play is ignored.
+  ///
+  /// [presentationTimesUs] are the presentation times of the frames on the timeline of the video, in microseconds,
+  /// rising; [corrections] four values a frame (w, x, y, z): the rotation of the sphere of the stitched frame, in its
+  /// view frame (x to the right, y down, z forward), that shows the world level and steady (see
+  /// lib/domain/models/raw/stabilization.dart). [summary] tells what the table did, for the logs.
+  void setStabilization(
+    String url,
+    bool enabled,
+    bool hasTrack,
+    Int64List? presentationTimesUs,
+    Float64List? corrections,
+    String? summary,
+  );
 }
 
 @FlutterApi()
 abstract class SphericalVideoEvents {
   /// The player closed; [stereoLayout] and [coverage] are what it showed last, after the user's corrections
   void closed(StereoLayout stereoLayout, SphereCoverage coverage);
+
+  /// The user turned the stabilisation with the camera's gyroscope on or off in the player: the setting follows
+  void stabilizationChanged(bool enabled);
 }
