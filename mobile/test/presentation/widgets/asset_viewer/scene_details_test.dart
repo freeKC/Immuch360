@@ -3,6 +3,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
@@ -42,6 +43,28 @@ void main() {
     expect(row, findsOneWidget);
     expect(find.text('3D scene, reconstructed from one photo'), findsOneWidget);
     expect(find.text('Open it on a Meta Quest to explore it'), findsOneWidget);
+  });
+
+  testWidgets('on iOS it says to open it in a headset, naming no other platform (App Store guideline 2.3.10)', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    // Reset within the test, even when an expectation fails: the binding checks it before the tear downs run
+    try {
+      final photo = RemoteAssetFactory.create(name: 'salon_scene3D.jpg');
+      // isHorizonOsProvider as it is: false off Android, without asking the platform
+      await tester.pumpTestWidget(
+        context,
+        TechnicalDetails(asset: photo),
+        overrides: [scenePhotoProvider(photo).overrideWith((ref) async => sample)],
+      );
+
+      expect(row, findsOneWidget);
+      expect(find.text('Open it in a headset to explore it'), findsOneWidget);
+      expect(find.textContaining(RegExp(r'\b(Meta|Quest|Android)\b')), findsNothing);
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
   });
 
   testWidgets('nothing on the Quest, which offers "Explore the 3D scene"', (tester) async {

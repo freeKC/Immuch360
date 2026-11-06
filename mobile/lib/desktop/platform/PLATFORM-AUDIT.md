@@ -73,7 +73,9 @@ the gate is per desktop and is noted.
 | `lib/presentation/pages/asset_troubleshoot.page.dart:134` | iOS cloud details | right |
 | `lib/presentation/pages/network/phone_share.page.dart:80` | iOS foreground notice | right |
 | `lib/presentation/pages/network/phone_share.page.dart:95` | phone share tile on phones only | wired (G1): shown on the computers once computerShareAvailable is true (LAN) |
+| `lib/presentation/pages/pairing/connect_screen.page.dart:32` | a code of the LG webOS app leaves the TV unnamed on iOS, App Store guideline 2.3.10 (5 November 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider); they would get the text that names LG |
 | `lib/presentation/pages/pairing/connect_screen.page.dart:201` | iOS local network hint of an unreachable screen (sign in with your phone, October 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider) |
+| `lib/presentation/widgets/asset_viewer/asset_details/technical_details.widget.dart:299` | the 3D scene row of a photo says to open it in a headset on iOS, on a Meta Quest elsewhere, App Store guideline 2.3.10 (5 November 2026) | right: the computers name the Meta Quest, as the Android phones do |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:534` | iOS immersive mode with details | harmless: SystemChrome goes through an optional channel that the desktop embedders ignore |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:610` | iOS scroll physics, else clamping | right: clamping on the computers |
 | `lib/presentation/widgets/asset_viewer/asset_viewer.page.dart:619` | gradient under the status bar, not on iOS | right |
@@ -86,6 +88,7 @@ the gate is per desktop and is noted.
 | `lib/presentation/widgets/map/map.widget.dart:90` | Android map style | hidden: no map on the computers (deviceFeaturesProvider.maps) |
 | `lib/presentation/widgets/map/map.widget.dart:106` | iOS map style | hidden |
 | `lib/presentation/widgets/splat/splat_button.dart:69` | the verdict of a splat waits on Android until it is known whether this is a Meta Quest (splat viewer, 2 November 2026) | right: the computers take the gate of the splat viewer above it, before this line |
+| `lib/presentation/widgets/splat/splat_photo_button.dart:46` | where a splat photo is explored, said on a computer or in a headset on iOS, App Store guideline 2.3.10 (5 November 2026) | right: the computers have a splat class and explore the scene themselves, never reaching this line |
 | `lib/presentation/widgets/splat/splat_photo_launch.dart:92` | a splat photo's scene above 10 MB asks before it downloads over a metered network, read on Android only (3 November 2026) | right: a computer is never on a metered network for the app, it downloads at once |
 | `lib/presentation/widgets/splat/splat_viewer_launch.dart:65` | Android says to update Android System WebView, else the computer's words for WebAssembly SIMD | right: the computers get their own text |
 | `lib/presentation/widgets/splat/splat_viewer_launch.dart:81` | no web view: WebView2 on Windows, Android System WebView on Android | right: Windows is tested first, Linux and macOS say nothing more than the failure |
