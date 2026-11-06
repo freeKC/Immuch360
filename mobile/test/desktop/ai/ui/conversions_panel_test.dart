@@ -9,7 +9,8 @@
 // card with what is free and Resume, the named failures of a panorama in words, and the 3D version of a generated
 // panorama under the sentence of the panorama. Issue #13: what the app lets go of the card first, the memory a
 // panorama needs, what is free and what the app itself holds, and a wait that left the queue with its figures and Keep
-// waiting, the failures of a generation keeping their words.
+// waiting, the failures of a generation keeping their words. Lot 13b: a splat scene says its own need, not the
+// panoramas'.
 
 import 'dart:io';
 
@@ -488,8 +489,10 @@ void main() {
       String? parentId,
       ImmersiveErrorCode? error,
       String? message,
+      int? segments,
     }) => ConversionJob(
       id: name,
+      segments: segments,
       source: LocalFileSource(p.join(photos, name)),
       parentId: parentId,
       error: error,
@@ -581,6 +584,43 @@ void main() {
       expect(inRow('jardin.jpg', find.text('2D to 3D SBS')), findsOneWidget);
       expect(inRow('jardin.jpg', find.text('Waiting')), findsOneWidget);
       expect(inRow('jardin.jpg', find.text('Waiting for enough free memory')), findsOneWidget);
+    });
+
+    testWidgets('a generation in pieces, the card short of memory, says so under its time left while it generates', (
+      tester,
+    ) async {
+      await pumpShown(tester, [
+        job(
+          'plage.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.generating,
+          step: 3,
+          steps: 20,
+          remaining: const Duration(minutes: 6),
+          segments: 27,
+        ),
+        job(
+          'jardin.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.generating,
+          step: 3,
+          steps: 20,
+          remaining: const Duration(minutes: 3),
+        ),
+        // Past its generation, the pieces are no longer said
+        job('mer.jpg', ConversionKind.panoramaFromPhoto, ConversionState.upscale, segments: 27),
+      ]);
+
+      expect(
+        tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_generator_pieces')))).data,
+        'The graphics card is short of memory, so the generation runs in 27 pieces: slower, same result',
+      );
+      expect(
+        top(tester, inRow('plage.jpg', find.byKey(const Key('ai_job_time_left')))),
+        lessThan(top(tester, inRow('plage.jpg', find.byKey(const Key('ai_job_generator_pieces'))))),
+      );
+      expect(inRow('jardin.jpg', find.byKey(const Key('ai_job_generator_pieces'))), findsNothing);
+      expect(inRow('mer.jpg', find.byKey(const Key('ai_job_generator_pieces'))), findsNothing);
     });
 
     testWidgets('the processor alone: no sections, the words of phase 1', (tester) async {
@@ -757,13 +797,7 @@ void main() {
           message: '5261334937 bytes free of the 5476083302 needed after 30 s',
           gpuShortfall: const GpuShortfall(need: 5476083302, free: 4900 << 20, appHolds: 1402 << 20),
         ),
-        job(
-          'busy.jpg',
-          ConversionKind.panoramaFromPhoto,
-          ConversionState.failed,
-          error: ImmersiveErrorCode.gpuBusy,
-          message: 'sd-cli cut the generator into 27 segments',
-        ),
+        job('busy.jpg', ConversionKind.panoramaFromPhoto, ConversionState.failed, error: ImmersiveErrorCode.gpuBusy),
       ]);
 
       expect(
@@ -785,7 +819,7 @@ void main() {
       await tester.pump();
       expect(shownQueue.keptWaiting, ['plage.jpg']);
 
-      // A generation cut into segments keeps its words and its Retry
+      // Another failure of the card keeps its words and its Retry
       expect(
         inRow('busy.jpg', find.text('Other apps use the graphics card memory: close games or 3D apps')),
         findsOneWidget,
@@ -795,6 +829,59 @@ void main() {
       await tester.tap(inRow('busy.jpg', find.byKey(const Key('ai_job_retry'))));
       await tester.pump();
       expect(shownQueue.retried, ['busy.jpg']);
+    });
+
+    testWidgets('a splat scene waiting for the memory of the graphics card, or that left the queue for it, says its '
+        'own need, not the panoramas\' (lot 13b)', (tester) async {
+      await pumpShown(tester, [
+        job(
+          'jardin',
+          ConversionKind.splatScene,
+          ConversionState.waiting,
+          waitingFor: ConversionWait.graphicsMemory,
+          gpuShortfall: const GpuShortfall(need: 5 << 29, free: 2 << 30, appHolds: 1402 << 20),
+        ),
+        job(
+          'salon',
+          ConversionKind.splatScene,
+          ConversionState.failed,
+          error: ImmersiveErrorCode.gpuMemoryShort,
+          message: '2147483648 bytes free of the 2684354560 needed after 30 s',
+          gpuShortfall: const GpuShortfall(need: 5 << 29, free: 2 << 30),
+        ),
+        job(
+          'plage.jpg',
+          ConversionKind.panoramaFromPhoto,
+          ConversionState.waiting,
+          waitingFor: ConversionWait.graphicsMemory,
+          gpuShortfall: const GpuShortfall(need: 6 << 30, free: 2 << 30),
+        ),
+      ]);
+
+      expect(
+        tester.widget<Text>(inRow('jardin', find.byKey(const Key('ai_job_waiting')))).data,
+        'Splat scenes need 2.5 GiB of free graphics memory, 2.0 GiB free (Immuch360 itself holds 1.4 GiB): close '
+        'games, 3D apps or videos',
+      );
+      expect(
+        tester.widget<Text>(inRow('salon', find.byKey(const Key('ai_job_gpu_short')))).data,
+        'Splat scenes need 2.5 GiB of free graphics memory, 2.0 GiB free: close games, 3D apps or videos',
+      );
+      expect(
+        inRow(
+          'salon',
+          find.text(
+            'Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(inRow('salon', find.byKey(const Key('ai_job_keep_waiting'))), findsOneWidget);
+      expect(find.textContaining('360° panoramas need'), findsOneWidget, reason: 'the panorama alone');
+      expect(
+        tester.widget<Text>(inRow('plage.jpg', find.byKey(const Key('ai_job_waiting')))).data,
+        '360° panoramas need 6.0 GiB of free graphics memory, 2.0 GiB free: close games, 3D apps or videos',
+      );
     });
 
     test('the texts of the memory of the graphics card, with and without the share of the app', () {
@@ -818,26 +905,145 @@ void main() {
         '360° panoramas need 0 B of free graphics memory, 0 B free: close games, 3D apps or videos',
       );
       expect(conversionWaitText(t, ConversionWait.memory), 'Waiting for enough free memory');
+      // Each kind of the graphics card's lane says its own need: a splat scene its own sentence, from the same floor
+      const splatNeed = GpuShortfall(need: 5 << 29, free: 1 << 30, appHolds: 64 << 20);
+      expect(
+        gpuShortfallText(t, splatNeed, kind: ConversionKind.splatScene),
+        'Splat scenes need 2.5 GiB of free graphics memory, 1.0 GiB free (Immuch360 itself holds 64.0 MiB): close '
+        'games, 3D apps or videos',
+      );
+      expect(
+        gpuShortfallText(
+          t,
+          const GpuShortfall(need: 5 << 29, free: 1 << 30, appHolds: (64 << 20) - 1),
+          kind: ConversionKind.splatScene,
+        ),
+        'Splat scenes need 2.5 GiB of free graphics memory, 1.0 GiB free: close games, 3D apps or videos',
+      );
+      expect(
+        conversionWaitText(t, ConversionWait.graphicsMemory, shortfall: splatNeed, kind: ConversionKind.splatScene),
+        gpuShortfallText(t, splatNeed, kind: ConversionKind.splatScene),
+      );
+      expect(
+        gpuShortfallText(t, splatNeed, kind: ConversionKind.panoramaFromPhoto),
+        startsWith('360° panoramas need 2.5 GiB'),
+      );
+      expect(
+        conversionWaitText(t, ConversionWait.graphicsRelease, kind: ConversionKind.splatScene),
+        'Freeing the graphics card memory Immuch360 holds: paused videos and cached pictures',
+        reason: 'the release names no kind',
+      );
       expect(
         conversionFailureText(t, ImmersiveErrorCode.gpuMemoryShort, null),
         'Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue',
       );
       expect(
-        conversionFailureText(t, ImmersiveErrorCode.gpuBusy, 'cut into 27 segments'),
+        conversionFailureText(t, ImmersiveErrorCode.gpuBusy, null),
         'Other apps use the graphics card memory: close games or 3D apps',
-        reason: 'the failure of a generation keeps its words',
+        reason: 'no generator raises it since lot 13c; its words stay true',
       );
     });
 
+    test('on Windows, a generation short of memory says the free memory the app read, not Vulkan\'s figure', () {
+      final t = StaticTranslations.instance;
+      const mib = 1024 * 1024;
+      // sd-cli read 7 188 MiB free as Vulkan does on Windows, other programs left out (every run of the measure of 5
+      // November 2026), and was given the 4 906 MiB the probe read less its reserve (review of lot 13c)
+      const windows = GeneratorMemoryRead(free: 7188 * mib, budget: 4394 * mib, short: 14 * mib);
+      expect(windows.shownFree, 4906 * mib);
+      expect(
+        conversionFailureText(t, ImmersiveErrorCode.gpuOutOfMemory, '${windows.message}\n[E] generate failed'),
+        'The graphics card ran out of memory: the generator read 4.8 GiB free and was 14.0 MiB short. Close games, 3D '
+        'apps or videos: Keep waiting puts it back in the queue',
+      );
+      expect(
+        conversionFailureText(
+          t,
+          ImmersiveErrorCode.gpuOutOfMemory,
+          const GeneratorMemoryRead(free: 7188 * mib, budget: 4394 * mib).message,
+        ),
+        startsWith('The graphics card ran out of memory: the generator read 4.8 GiB free.'),
+      );
+      // Linux: sd-cli's own budget, its free memory less the reserve: the free memory it read
+      expect(const GeneratorMemoryRead(free: 3584 * mib, budget: 3072 * mib).shownFree, 3584 * mib);
+      // A budget sd-cli capped at the free memory it read, no budget, no free memory
+      expect(const GeneratorMemoryRead(free: 4200 * mib, budget: 4200 * mib).shownFree, 4200 * mib);
+      expect(const GeneratorMemoryRead(free: 4200 * mib).shownFree, 4200 * mib);
+      expect(const GeneratorMemoryRead(budget: 4200 * mib, short: mib).shownFree, isNull);
+    });
+
+    testWidgets(
+      'a generation short of memory even in pieces says what sd-cli read, with Keep waiting in place of Retry',
+      (tester) async {
+        const mib = 1024 * 1024;
+        await pumpShown(tester, [
+          job(
+            'plage.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.failed,
+            error: ImmersiveErrorCode.gpuOutOfMemory,
+            message:
+                '${const GeneratorMemoryRead(free: 3584 * mib, budget: 3072 * mib, short: 14 * mib).message}\n'
+                '[E] generate failed --- main.cpp:926',
+          ),
+          job(
+            'mer.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.failed,
+            error: ImmersiveErrorCode.gpuOutOfMemory,
+            message:
+                '${const GeneratorMemoryRead(free: 5530 * mib, budget: 5018 * mib).message}\nErrorOutOfDeviceMemory',
+          ),
+          // Words of the card alone (the upscaler, or a generator that said nothing of its plan): Retry as before
+          job(
+            'plain.jpg',
+            ConversionKind.panoramaFromPhoto,
+            ConversionState.failed,
+            error: ImmersiveErrorCode.gpuOutOfMemory,
+            message: 'need 4109.22 MB device',
+          ),
+        ]);
+
+        expect(
+          inRow(
+            'plage.jpg',
+            find.text(
+              'The graphics card ran out of memory: the generator read 3.5 GiB free and was 14.0 MiB short. Close '
+              'games, 3D apps or videos: Keep waiting puts it back in the queue',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          inRow(
+            'mer.jpg',
+            find.text(
+              'The graphics card ran out of memory: the generator read 5.4 GiB free. Close games, 3D apps or videos: '
+              'Keep waiting puts it back in the queue',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          inRow('plain.jpg', find.text('The graphics card ran out of memory: close games or 3D apps and retry')),
+          findsOneWidget,
+        );
+        for (final name in ['plage.jpg', 'mer.jpg']) {
+          expect(inRow(name, find.byKey(const Key('ai_job_retry'))), findsNothing, reason: name);
+          await tester.tap(inRow(name, find.byKey(const Key('ai_job_keep_waiting'))));
+          await tester.pump();
+        }
+        expect(shownQueue.keptWaiting, ['plage.jpg', 'mer.jpg']);
+        expect(inRow('plain.jpg', find.byKey(const Key('ai_job_keep_waiting'))), findsNothing);
+        await tester.tap(inRow('plain.jpg', find.byKey(const Key('ai_job_retry'))));
+        await tester.pump();
+        expect(shownQueue.retried, ['plain.jpg']);
+      },
+    );
+
     testWidgets('the named failures of a panorama, in words', (tester) async {
       await pumpShown(tester, [
-        job(
-          'busy.jpg',
-          ConversionKind.panoramaFromPhoto,
-          ConversionState.failed,
-          error: ImmersiveErrorCode.gpuBusy,
-          message: 'sd-cli cut the generator into 27 segments',
-        ),
+        job('busy.jpg', ConversionKind.panoramaFromPhoto, ConversionState.failed, error: ImmersiveErrorCode.gpuBusy),
         job(
           'silent.jpg',
           ConversionKind.panoramaFromPhoto,

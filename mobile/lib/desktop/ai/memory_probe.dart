@@ -193,9 +193,11 @@ int sceneJobMemoryNeed({
 }
 
 /// What the job of a 360° panorama needs of the memory of the computer at its peak: stable-diffusion.cpp took up to
-/// 6 GiB of private memory with the text encoder on the processor (M3 on the RTX 4060 Laptop), plus the pictures of the
-/// upscale and of the photo pasted back
-const panoramaJobMemory = 6 * _gib + 512 * _mib;
+/// 6 GiB of private memory with the text encoder on the processor (M3 on the RTX 4060 Laptop), and 6.1 to 7.9 GB when
+/// it cuts the graph of its transformer into segments, its weights then streamed to the card from about 2.35 GB of
+/// pinned memory (measure of 5 November 2026, section 4: 5.9 GB in one segment); the pictures of the upscale and of the
+/// photo pasted back come after it. 6.5 GiB until lot 13c, when a panorama never ran in segments.
+const panoramaJobMemory = 8 * _gib;
 
 /// What the job of a 360° 3D panorama needs at its peak: the panorama decoded and its copy (8192 x 4096, 4 bytes a
 /// pixel), the two eyes and the copy the encoder works on (4096 x 4096), the maps of the tangent views and the session
@@ -244,7 +246,8 @@ ImmersiveStage memoryPeakOf(ImmersiveKind kind) => switch (kind) {
 
 /// What a job of [kind] at [stage] (null: not started yet) may still take beyond the memory free read now: its whole
 /// need until its models run ([memoryPeakOf]), the memory read counting little of it before (a panorama reading its
-/// photo holds nothing of its 6 GiB yet); nothing from that step on, the memory read counting it then
+/// photo holds nothing of its 8 GiB yet, [panoramaJobMemory]); nothing from that step on, the memory read counting it
+/// then
 int jobMemoryStillNeeded(ImmersiveKind kind, ImmersiveStage? stage) =>
     stage != null && stage.index >= memoryPeakOf(kind).index ? 0 : jobMemoryNeedOf(kind);
 

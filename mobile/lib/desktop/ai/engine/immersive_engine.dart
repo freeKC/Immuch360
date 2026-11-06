@@ -17,6 +17,7 @@
 // at once; its steps are those of the photos (or of the frames of the video), of COLMAP, of Brush and of the copy for
 // the headset, its failures those of placing the photos and of the training, and its result the counts the panel tells.
 
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -158,11 +159,14 @@ enum ImmersiveErrorCode {
   /// No graphics card this job can run on (none found, too small, integrated and not allowed)
   gpuUnavailable,
 
-  /// Other programs hold the memory of the graphics card: the job waits, then fails with this if it is cancelled, or
-  /// when the generator found too little of it free and cut its work into segments, which spoils the image
+  /// Other programs hold the memory of the graphics card ("Other apps use the graphics card memory: close games or 3D
+  /// apps"). No engine of this version raises it: it was a generation that sd-cli cut into segments, which goes on
+  /// since lot 13c (the same image, slower, measure of 5 November 2026); a job that finds the memory short waits, then
+  /// ends as gpuMemoryShort, and a generation short of it even in segments as gpuOutOfMemory
   gpuBusy,
 
-  /// The graphics card ran out of memory during the generation (told by the error output of the generator)
+  /// The graphics card ran out of memory during the generation (told by the error output of the generator); for a
+  /// panorama, even in segments: its message then starts with what sd-cli read of the card (GeneratorMemoryRead)
   gpuOutOfMemory,
 
   /// The memory free on the graphics card stayed below what the job needs for 30 s, after the app let go of what it
@@ -214,6 +218,69 @@ String splatCountsMessage(int count, int all) => '$count/$all';
 (int count, int all)? splatCountsOf(String? message) {
   final match = RegExp(r'^(\d+)/(\d+)$').firstMatch(message ?? '');
   return match == null ? null : (int.parse(match.group(1)!), int.parse(match.group(2)!));
+}
+
+/// What the generator of a panorama read of the memory of its card when that memory ran short (lot 13c): the bytes
+/// [free] on the card when it started and the [budget] it planned with (the auto-fit plan of sd-cli), and how many it
+/// was [short] of for the part it could not place (its model manager, the line before the segment that failed), each
+/// null when it did not say. A failure gpuOutOfMemory of the generator carries it as the first line of its message
+/// ([message]), the generator's own lines after it, so that the panel says it and offers to keep waiting.
+class GeneratorMemoryRead {
+  const GeneratorMemoryRead({this.free, this.budget, this.short});
+
+  final int? free;
+  final int? budget;
+  final int? short;
+
+  static const _head = 'Generator memory read:';
+  static const _mib = 1024 * 1024;
+
+  /// What sd-cli keeps in reserve of the free memory it reads when it is given no budget (gpu_budget.dart,
+  /// panoramaGeneratorReserve)
+  static const reserve = 512 * _mib;
+
+  /// The free memory the panel says: [free], or [budget] and sd-cli's [reserve] when they are less. sd-cli is given a
+  /// budget on Windows only, the free memory the app read less the reserve, and its own [free] is Vulkan's figure there,
+  /// which leaves other programs out: the panel would say "the generator read 7.0 GiB free" of a card short of
+  /// memory. Without a budget given, sd-cli's budget is its free memory less the reserve, and this is [free] itself.
+  int? get shownFree => switch ((free, budget)) {
+    (final free?, final budget?) => math.min(free, budget + reserve),
+    (final free, _) => free,
+  };
+
+  /// "Generator memory read: free 3584 MiB, budget 3072 MiB, short 15 MiB", the figures it has
+  String get message => [
+    _head,
+    [
+      if (free case final value?) 'free ${value ~/ _mib} MiB',
+      if (budget case final value?) 'budget ${value ~/ _mib} MiB',
+      if (short case final value?) 'short ${(value + _mib - 1) ~/ _mib} MiB',
+    ].join(', '),
+  ].join(' ');
+
+  /// The figures at the head of [message] (see [message]), null when it carries none or not the free memory
+  static GeneratorMemoryRead? of(String? message) {
+    final head = message?.split('\n').first;
+    if (head == null || !head.startsWith(_head)) {
+      return null;
+    }
+    int? figure(String name) => switch (RegExp('\\b$name (\\d+) MiB').firstMatch(head)) {
+      final match? => int.parse(match.group(1)!) * _mib,
+      null => null,
+    };
+    final read = GeneratorMemoryRead(free: figure('free'), budget: figure('budget'), short: figure('short'));
+    return read.free == null ? null : read;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is GeneratorMemoryRead && other.free == free && other.budget == budget && other.short == short;
+
+  @override
+  int get hashCode => Object.hash(free, budget, short);
+
+  @override
+  String toString() => message;
 }
 
 /// The original of a job: a file read in place, or bytes already copied (a server original, a file of a share)
@@ -491,8 +558,8 @@ final class SplatJob extends ImmersiveJobSpec {
 }
 
 /// One photo to make into a 360° panorama generated beyond its edges, `<name>_360.jpg` (pano-v1): the transformer
-/// [generator] (its catalogue id, the variant the gate chose), [steps] and the [seed] drawn for this job, and the cap of
-/// its reference when the card had less memory free ([referenceMaxPixels], gpu_budget.dart)
+/// [generator] (its catalogue id, the variant the gate chose), [steps] and the [seed] drawn for this job, and the
+/// [graphicsBudget] of its generator on Windows, from the free memory of the card read just before it (gpu_budget.dart)
 final class PanoramaJob extends ImmersiveJobSpec {
   const PanoramaJob({
     required super.id,
@@ -506,7 +573,7 @@ final class PanoramaJob extends ImmersiveJobSpec {
     required this.seed,
     super.quarterTurns = 0,
     super.exif = const ImmersiveExif(),
-    this.referenceMaxPixels,
+    this.graphicsBudget,
   });
 
   final ImmersiveSource source;
@@ -514,8 +581,9 @@ final class PanoramaJob extends ImmersiveJobSpec {
   final int steps;
   final int seed;
 
-  /// The pixels the generator's reference is capped at; null for its own (the image of M3)
-  final int? referenceMaxPixels;
+  /// The bytes of the card the generator is given on Windows (GeneratorRequest.graphicsBudget); null for what it
+  /// reads itself
+  final int? graphicsBudget;
 
   @override
   ImmersiveKind get kind => ImmersiveKind.panorama360;
@@ -589,9 +657,19 @@ class SplatPlaced {
 /// Where a job is: its step and how far, in thousandths of the whole job. A long step may also count what it goes
 /// through, [step] of [steps] (the steps of a generation, the regions filled in), with the [remaining] time when the
 /// engine can tell it: "step 12 of 28, about 3 min left". A splat scene tells the images COLMAP [placed] with every
-/// progress once they are known, so that the panel warns of a scene that may be incomplete while it trains.
+/// progress once they are known, so that the panel warns of a scene that may be incomplete while it trains. The
+/// generation of a panorama tells the [segments] its generator cut its work into, the card being short of memory
+/// (GeneratorProgress.segments), so that the panel says why it runs slower.
 class ImmersiveProgress {
-  const ImmersiveProgress(this.stage, this.perMille, {this.step, this.steps, this.remaining, this.placed});
+  const ImmersiveProgress(
+    this.stage,
+    this.perMille, {
+    this.step,
+    this.steps,
+    this.remaining,
+    this.placed,
+    this.segments,
+  });
 
   final ImmersiveStage stage;
 
@@ -602,6 +680,9 @@ class ImmersiveProgress {
   final Duration? remaining;
   final SplatPlaced? placed;
 
+  /// The pieces the generator runs in, null when it runs its work whole
+  final int? segments;
+
   @override
   bool operator ==(Object other) =>
       other is ImmersiveProgress &&
@@ -610,10 +691,11 @@ class ImmersiveProgress {
       other.step == step &&
       other.steps == steps &&
       other.remaining == remaining &&
-      other.placed == placed;
+      other.placed == placed &&
+      other.segments == segments;
 
   @override
-  int get hashCode => Object.hash(stage, perMille, step, steps, remaining, placed);
+  int get hashCode => Object.hash(stage, perMille, step, steps, remaining, placed, segments);
 
   @override
   String toString() => 'ImmersiveProgress($stage, $perMille${steps == null ? '' : ', $step of $steps'})';

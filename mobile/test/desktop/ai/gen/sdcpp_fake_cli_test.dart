@@ -2,7 +2,8 @@
 // (test/desktop/ai/fakes/fake_sd_cli.dart; the test and windows jobs of the desktop workflow compile it and give its path
 // in IMMUCH360_FAKE_SD_CLI), started by the launcher of the app (managed_process.dart; on Linux through immuch360-run
 // when IMMUCH360_RUN_LAUNCHER gives it). Progress, a stop within a second, the silence of 180 s on a clock that jumps,
-// a grey image, green left, the memory texts M3 read, a graph cut into segments, a failure, and an upscale.
+// a grey image, green left, the memory texts M3 read, a graph cut into segments that runs to its image (with the
+// shortfalls sd-cli recovers from too), the budget it plans with on Linux and on Windows, a failure, and an upscale.
 
 import 'dart:async';
 import 'dart:io';
@@ -13,8 +14,10 @@ import 'package:image/image.dart' as img;
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
+import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 final _fakeSdCli = Platform.environment['IMMUCH360_FAKE_SD_CLI'];
@@ -38,26 +41,31 @@ void main() {
     folder.deleteSync(recursive: true);
   });
 
-  SdCppSettings settings({String mode = 'ok', Duration stall = const Duration(seconds: 180)}) => SdCppSettings(
-    sdCli: _fakeSdCli!,
-    models: SdCppModels(
-      diffusionModel: p.join(folder.path, 'flux-2-klein-base-4b-Q4_0.gguf'),
-      vae: p.join(folder.path, 'vae.safetensors'),
-      textEncoder: p.join(folder.path, 'Qwen3-4B-Q4_K_M.gguf'),
-      lora: p.join(folder.path, 'flux-2-klein-4B-360-erp-outpaint-lora_V1.safetensors'),
-      upscaler: p.join(folder.path, 'RealESRGAN_x4plus.pth'),
-    ),
-    device: 'Vulkan0',
-    stallTimeout: stall,
-    environment: {'IMMUCH360_FAKE_SD_CLI_MODE': mode, 'IMMUCH360_FAKE_SD_CLI_PID': p.join(folder.path, 'sd-cli.pid')},
-  );
+  SdCppSettings settings({String mode = 'ok', Duration stall = const Duration(seconds: 180), int? freeMib}) =>
+      SdCppSettings(
+        sdCli: _fakeSdCli!,
+        models: SdCppModels(
+          diffusionModel: p.join(folder.path, 'flux-2-klein-base-4b-Q4_0.gguf'),
+          vae: p.join(folder.path, 'vae.safetensors'),
+          textEncoder: p.join(folder.path, 'Qwen3-4B-Q4_K_M.gguf'),
+          lora: p.join(folder.path, 'flux-2-klein-4B-360-erp-outpaint-lora_V1.safetensors'),
+          upscaler: p.join(folder.path, 'RealESRGAN_x4plus.pth'),
+        ),
+        device: 'Vulkan0',
+        stallTimeout: stall,
+        environment: {
+          'IMMUCH360_FAKE_SD_CLI_MODE': mode,
+          'IMMUCH360_FAKE_SD_CLI_PID': p.join(folder.path, 'sd-cli.pid'),
+          if (freeMib != null) 'IMMUCH360_FAKE_SD_CLI_FREE_MIB': '$freeMib',
+        },
+      );
 
   ManagedProcessRunner runner() => ManagedProcessRunner(
     linuxLauncher: _launcher,
     journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
   );
 
-  GeneratorRequest request() => GeneratorRequest(
+  GeneratorRequest request({int? graphicsBudget}) => GeneratorRequest(
     controlPath: p.join(folder.path, 'control.png'),
     outputPath: p.join(folder.path, 'generated.png'),
     workFolder: folder.path,
@@ -65,6 +73,7 @@ void main() {
     seed: 7,
     width: 192,
     height: 96,
+    graphicsBudget: graphicsBudget,
   );
 
   Future<BackendException?> generate(String mode, {void Function(GeneratorProgress)? onProgress}) =>
@@ -106,19 +115,94 @@ void main() {
         final memory = await generate('oom');
         expect(memory?.code, ImmersiveErrorCode.gpuOutOfMemory);
         expect(memory?.message, contains('[E] generate failed'));
+        // What it read of its card first: its plan, and the 1 216.45 MiB its model manager lacked
+        expect(
+          GeneratorMemoryRead.of(memory?.message),
+          const GeneratorMemoryRead(free: 7188 * 1024 * 1024, budget: 6676 * 1024 * 1024, short: 1217 * 1024 * 1024),
+        );
         final failed = await generate('fail');
         expect(failed?.code, ImmersiveErrorCode.generatorFailed);
         expect(failed?.message, contains('[E] load the control image failed'));
       },
     );
 
-    test('a graph cut into segments is stopped before its first step and refused as gpuBusy', () async {
+    test('the budget the queue read reaches sd-cli: its plan says it, and the log keeps what it read', () async {
+      final logged = <String>[];
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord.where((record) => record.loggerName == 'SdCpp').listen((record) {
+        logged.add(record.message);
+      });
+      addTearDown(() async {
+        Logger.root.level = level;
+        await listening.cancel();
+      });
+
+      final failure = await SdCppGenerator(runner: runner(), settings: settings(), generatorSha256: '', loraSha256: '')
+          .generate(request(graphicsBudget: 5018 * 1024 * 1024), cancel: cancel)
+          .then<Object?>((_) => null, onError: (Object error) => error);
+
+      expect(failure, isNull);
+      expect(
+        logged,
+        contains(
+          'sd-cli read 7188 MiB free on Vulkan0, budget 5017 MiB given by the app (from the free memory Windows counts: '
+          "Vulkan's figure leaves other programs out)",
+        ),
+      );
+    });
+
+    test('the budget sd-cli plans with: its own reserve on Linux, the probe\'s figure on Windows, capped at what it '
+        'reads', () async {
+      // Review of lot 13c: the probe read 4 906 MiB free
+      final logged = <String>[];
+      final level = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord.where((record) => record.loggerName == 'SdCpp').listen((record) {
+        logged.add(record.message);
+      });
+      addTearDown(() async {
+        Logger.root.level = level;
+        await listening.cancel();
+      });
+      const probed = 4906 * 1024 * 1024;
+      Future<void> run({required bool windows, required int freeMib}) =>
+          SdCppGenerator(
+            runner: runner(),
+            settings: settings(freeMib: freeMib),
+            generatorSha256: '',
+            loraSha256: '',
+          ).generate(
+            request(graphicsBudget: panoramaGeneratorBudget(probed, windows: windows)),
+            cancel: cancel,
+          );
+
+      // Linux, sd-cli reading 400 MiB less than the probe a few seconds later: no --max-vram, its own reserve kept
+      await run(windows: false, freeMib: 4506);
+      expect(logged.last, 'sd-cli read 4506 MiB free on Vulkan0, budget 3994 MiB');
+      // Windows, sd-cli reading 7 188 MiB as Vulkan does, other programs left out: the probe's figure less 512 MiB
+      await run(windows: true, freeMib: 7188);
+      expect(logged.last, startsWith('sd-cli read 7188 MiB free on Vulkan0, budget 4393 MiB given by the app'));
+      // A budget above what sd-cli reads is cut down to it, with no reserve left (backend_fit.cpp 152-157): what the
+      // flag would do on Linux when sd-cli reads less than the probe
+      await run(windows: true, freeMib: 4200);
+      expect(logged.last, startsWith('sd-cli read 4200 MiB free on Vulkan0, budget 4200 MiB given by the app'));
+    });
+
+    test('shortfalls sd-cli recovers from in segments: the run ends well, with its image', () async {
       final heard = <GeneratorProgress>[];
-      final failure = await generate('segments', onProgress: heard.add);
-      expect(failure?.code, ImmersiveErrorCode.gpuBusy);
-      expect(heard, isEmpty);
-      expect(processImageOf(childPid()!), isNull);
-      expect(File(request().outputPath).existsSync(), isFalse);
+      expect(await generate('recover', onProgress: heard.add), isNull);
+      expect(heard.map((progress) => progress.step), List.generate(20, (index) => index + 1));
+      expect(heard.every((progress) => progress.segments == 27), isTrue);
+      expect(img.decodePng(File(request().outputPath).readAsBytesSync())!.width, 192);
+    });
+
+    test('a graph cut into segments runs to its image, each of its steps saying the 27 segments', () async {
+      final heard = <GeneratorProgress>[];
+      expect(await generate('segments', onProgress: heard.add), isNull);
+      expect(heard.map((progress) => progress.step), List.generate(20, (index) => index + 1));
+      expect(heard.every((progress) => progress.segments == 27), isTrue);
+      expect(img.decodePng(File(request().outputPath).readAsBytesSync())!.width, 192);
     });
 
     test('cancelled in the middle, it is gone within a second', () async {

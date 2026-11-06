@@ -425,8 +425,12 @@ class PlayerLease {
   /// Marks the lease as just used (a play, a seek), so that the pool takes another one's player first
   void touch() => _lastUsed = ++_pool._clock;
 
-  /// Gives the player back, stopped; the lease is not used again
-  Future<void> release() => _pool._release(this);
+  /// Gives the player back, stopped; the lease is not used again. Closed at once: an [acquire] still queued behind a
+  /// turn of the pool then gets no player, rather than one taken from another page and parked right after
+  Future<void> release() {
+    _closed = true;
+    return _pool._release(this);
+  }
 
   /// Runs [action], which opens or closes a file on the player of this lease, after the actions guarded before it;
   /// the pool waits for them before it stops the player or gives it to another lease. [action] checks [engine] first:

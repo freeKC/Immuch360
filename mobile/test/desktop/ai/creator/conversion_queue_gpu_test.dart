@@ -3,10 +3,10 @@
 // on; it starts once the card is free, asked again a little later or at once; no card fails it; a panorama waiting
 // holds the next one back and only one probe runs per check; a panorama cancelled while it waits or while the probe
 // answers never runs. Issue #13: before it asks, the app lets go of its share of the card, once per job, says so, and
-// asks again while that memory comes back; the panorama is made the way the memory free allows (the full reference,
-// else the reduced one); the wait carries what is needed, what is free and what the app holds; a wait that cannot end
-// leaves the queue with those figures once they were shown for the give up time, the panoramas behind it at their
-// first answer, without a release nor a settle, unless the user asked a job to keep waiting.
+// asks again while that memory comes back, until the generator would run whole; a panorama starts from 3.5 GiB free
+// with the full reference (lot 13c); the wait carries what is needed, what is free and what the app holds; a wait that
+// cannot end leaves the queue with those figures once they were shown for the give up time, the panoramas behind it at
+// their first answer, without a release nor a settle, unless the user asked a job to keep waiting.
 
 import 'dart:async';
 import 'dart:io';
@@ -79,6 +79,7 @@ void main() {
     Duration settle = const Duration(milliseconds: 100),
     Duration settlePoll = const Duration(milliseconds: 10),
     Duration giveUp = const Duration(seconds: 30),
+    bool windows = false,
   }) {
     final made = ProviderContainer(
       overrides: [
@@ -90,7 +91,7 @@ void main() {
             finder: ExistingVersionFinder(),
             creatorTool: 'Immuch360 Desktop 3.3.0 (windows)',
             memory: _Roomy(),
-            gpuBudget: GpuBudget(probe: probe),
+            gpuBudget: GpuBudget(probe: probe, windows: windows),
             gpuRecheck: recheck,
             releaseGraphics: release,
             gpuSettle: settle,
@@ -160,7 +161,7 @@ void main() {
       await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
 
       expect(job(pano).state, ConversionState.waiting);
-      expect(job(pano).gpuShortfall, const GpuShortfall(need: panoramaReducedFreeGraphicsMemory, free: 2000 * _mib));
+      expect(job(pano).gpuShortfall, const GpuShortfall(need: panoramaFreeGraphicsMemory, free: 2000 * _mib));
       await until((state) => state.byId(made)!.state == ConversionState.done);
       // Asked again every 30 ms meanwhile, and still held
       await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -174,9 +175,62 @@ void main() {
       expect(job(pano).waitingFor, isNull);
       expect(job(pano).gpuShortfall, isNull);
       expect(panorama.jobs, hasLength(1));
-      expect(panorama.jobs.single.referenceMaxPixels, isNull, reason: 'the full reference on 7.2 GiB free');
     },
   );
+
+  test('a generation in segments, the card short of memory: the job says how many, until it runs again', () async {
+    panorama = FakePanoramaEngine(segments: 27, holdStage: ImmersiveStage.seam);
+    container = containerWith(FakeGpuProbe.of(FakeGpuReports.rtx4060).probe);
+    final generating = <int?>[];
+    final seen = container.listen(conversionQueueProvider, (_, next) {
+      final shown = next.jobs.single;
+      if (shown.state == ConversionState.generating) {
+        generating.add(shown.segments);
+      }
+    });
+    addTearDown(seen.close);
+
+    final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+    await panorama.reachedHold.stream.first;
+    // From the first step the generator tells (the fake engine enters the step before it tells any)
+    expect(generating.nonNulls, isNotEmpty);
+    expect(generating.skipWhile((segments) => segments == null), everyElement(27));
+    expect(job(pano).segments, 27, reason: 'kept after the generation');
+    queue().cancel(pano);
+    panorama.release();
+    await until((state) => state.byId(pano)!.state.isEnded);
+    expect(job(pano).state, ConversionState.cancelled);
+
+    queue().retry(pano);
+    expect(job(pano).state, ConversionState.waiting);
+    expect(job(pano).segments, isNull, reason: 'run again, it says what its new run tells');
+    queue().cancel(pano);
+  });
+
+  test('a generation sd-cli takes back to one segment in the middle: the job says none from that step on', () async {
+    // "flux using 1 segment" once the live check of sd-cli allows it (review of lot 13c): steps 1 and 2 in 27
+    panorama = FakePanoramaEngine(segmentsAt: (step) => step <= 2 ? 27 : null, holdStage: ImmersiveStage.seam);
+    container = containerWith(FakeGpuProbe.of(FakeGpuReports.rtx4060).probe);
+    final generating = <(int?, int?)>[];
+    final seen = container.listen(conversionQueueProvider, (_, next) {
+      final shown = next.jobs.single;
+      if (shown.state == ConversionState.generating && shown.step != null) {
+        generating.add((shown.step, shown.segments));
+      }
+    });
+    addTearDown(seen.close);
+
+    final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+    await panorama.reachedHold.stream.first;
+
+    final said = generating.toSet().toList();
+    expect(said.length, greaterThan(3));
+    expect(said, [for (var step = 1; step <= said.length; step++) (step, step <= 2 ? 27 : null)]);
+    expect(job(pano).segments, isNull, reason: 'whole at the end of the generation');
+    queue().cancel(pano);
+    panorama.release();
+    await until((state) => state.byId(pano)!.state.isEnded);
+  });
 
   test('no card any more: the panorama fails, no graphics card can make it', () async {
     container = containerWith(FakeGpuProbe.of(FakeGpuReports.noDevice).probe);
@@ -296,18 +350,34 @@ void main() {
     expect(released, 0);
   });
 
-  test('the way the card allows reaches the panorama: the full reference, else the reduced one (issue #13)', () async {
-    final probe = FakeGpuProbe([_rtx2060(7000), _rtx2060(5530, appMib: 1402)]);
-    container = containerWith(probe.probe);
+  test('a panorama starts from 3.5 GiB free, whole or in segments, the same job for every card (issue #13); its '
+      'generator is given a budget on Windows only', () async {
+    for (final windows in [false, true]) {
+      panorama = FakePanoramaEngine();
+      final probe = FakeGpuProbe([_rtx2060(7000), _rtx2060(5530, appMib: 1402), _rtx2060(3584)]);
+      container = containerWith(probe.probe, windows: windows);
 
-    final roomy = add('a.jpg', ConversionKind.panoramaFromPhoto);
-    await until((state) => state.byId(roomy)!.state.isEnded);
-    final tight = add('b.jpg', ConversionKind.panoramaFromPhoto);
-    await until((state) => state.byId(tight)!.state.isEnded);
+      final made = <String>[];
+      // Other photos for each system: those of the first are made already
+      for (final name in ['a', 'b', 'c']) {
+        final id = add('$name-${windows ? 'windows' : 'linux'}.jpg', ConversionKind.panoramaFromPhoto);
+        await until((state) => state.byId(id)!.state.isEnded);
+        made.add(job(id).state.name);
+      }
 
-    expect(job(roomy).state, ConversionState.done);
-    expect(job(tight).state, ConversionState.done);
-    expect([for (final spec in panorama.jobs) spec.referenceMaxPixels], [null, panoramaReducedReferencePixels]);
+      expect(made, ['done', 'done', 'done'], reason: 'windows: $windows');
+      expect(probe.calls, 3, reason: 'windows: $windows');
+      expect(
+        [for (final spec in panorama.jobs) spec.graphicsBudget],
+        windows
+            // What the card had free just before, less the reserve of sd-cli, whose own reading leaves other programs
+            // out there
+            ? [(7000 - 512) * _mib, (5530 - 512) * _mib, (3584 - 512) * _mib]
+            // Linux: sd-cli reads the card itself and keeps its own reserve (review of lot 13c)
+            : [null, null, null],
+        reason: 'windows: $windows',
+      );
+    }
   });
 
   group('the app lets go of its share of the card first (issue #13)', () {
@@ -336,30 +406,39 @@ void main() {
       expect(probe.calls, 1, reason: 'nothing let go: nothing to wait for');
     });
 
-    test('what was let go comes back within seconds: the card asked again until the full reference fits', () async {
+    test('what was let go comes back within seconds: the card asked again until the generator runs whole', () async {
       // The 1.4 GiB of the app coming back to the card in two steps after the players are disposed
       final probe = FakeGpuProbe([
         _rtx2060(4900, appMib: 1400),
         _rtx2060(5500, appMib: 800),
         _rtx2060(6400, appMib: 0),
       ]);
-      container = containerWith(probe.probe, release: () async => const GraphicsRelease(players: 2, pictureBytes: 9));
+      container = containerWith(
+        probe.probe,
+        release: () async => const GraphicsRelease(players: 2, pictureBytes: 9),
+        windows: true,
+      );
 
       final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
       await until((state) => state.byId(pano)!.state.isEnded);
 
       expect(job(pano).state, ConversionState.done);
-      expect(probe.calls, 3);
-      expect(panorama.jobs.single.referenceMaxPixels, isNull, reason: 'the full reference once 6 GiB are free');
+      expect(probe.calls, 3, reason: 'in segments at 4.8 and 5.4 GiB free, whole at 6.2');
+      expect(
+        panorama.jobs.single.graphicsBudget,
+        (6400 - 512) * _mib,
+        reason: 'Windows: the budget of the last answer',
+      );
     });
 
-    test('the time is up with only the reduced reference fitting: the panorama made with it', () async {
+    test('the time is up below a whole run: the panorama starts in segments with what is free', () async {
       final probe = FakeGpuProbe.of(_rtx2060(5500, appMib: 300));
       container = containerWith(
         probe.probe,
         release: () async => const GraphicsRelease(players: 1),
         settle: const Duration(milliseconds: 50),
         settlePoll: const Duration(milliseconds: 10),
+        windows: true,
       );
 
       final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
@@ -367,7 +446,7 @@ void main() {
 
       expect(job(pano).state, ConversionState.done);
       expect(probe.calls, 6, reason: 'once, then every 10 ms for 50 ms');
-      expect(panorama.jobs.single.referenceMaxPixels, panoramaReducedReferencePixels);
+      expect(panorama.jobs.single.graphicsBudget, (5500 - 512) * _mib, reason: 'Windows');
     });
 
     test('pictures let go without a player: the card asked once, no wait for memory that does not come back', () async {
@@ -379,7 +458,7 @@ void main() {
 
       expect(job(pano).state, ConversionState.done);
       expect(probe.calls, 1);
-      expect(panorama.jobs.single.referenceMaxPixels, panoramaReducedReferencePixels);
+      expect(panorama.jobs, hasLength(1));
     });
 
     test('a release that does not end in time (a turn of the player pool held) does not hold the panorama', () async {
@@ -397,7 +476,7 @@ void main() {
       await until((state) => state.byId(pano)!.state.isEnded);
 
       expect(job(pano).state, ConversionState.done);
-      expect(probe.calls, 1, reason: 'the full reference fits at once');
+      expect(probe.calls, 1, reason: 'whole at once');
       never.complete(GraphicsRelease.nothing);
     });
 
@@ -428,21 +507,21 @@ void main() {
 
   group('a wait that cannot end (issue #13)', () {
     test('the figures: what the panorama needs, what is free, what the app itself holds', () async {
-      container = containerWith(FakeGpuProbe.of(_rtx2060(4900, appMib: 1402)).probe, recheck: const Duration(hours: 1));
+      container = containerWith(FakeGpuProbe.of(_rtx2060(3100, appMib: 1402)).probe, recheck: const Duration(hours: 1));
 
       final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
       await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
 
       expect(
         job(pano).gpuShortfall,
-        const GpuShortfall(need: panoramaReducedFreeGraphicsMemory, free: 4900 * _mib, appHolds: 1402 * _mib),
+        const GpuShortfall(need: panoramaFreeGraphicsMemory, free: 3100 * _mib, appHolds: 1402 * _mib),
       );
       queue().cancel(pano);
     });
 
     test('leaves the queue at the give up time with its figures, and the panoramas behind it at their first answer; '
         'the processor lane goes on', () async {
-      final probe = FakeGpuProbe.of(_rtx2060(4900, appMib: 1402));
+      final probe = FakeGpuProbe.of(_rtx2060(3100, appMib: 1402));
       container = containerWith(
         probe.probe,
         recheck: const Duration(milliseconds: 40),
@@ -461,7 +540,7 @@ void main() {
         expect(job(id).error, ImmersiveErrorCode.gpuMemoryShort);
         expect(
           job(id).gpuShortfall,
-          const GpuShortfall(need: panoramaReducedFreeGraphicsMemory, free: 4900 * _mib, appHolds: 1402 * _mib),
+          const GpuShortfall(need: panoramaFreeGraphicsMemory, free: 3100 * _mib, appHolds: 1402 * _mib),
         );
         expect(job(id).waitingFor, isNull);
       }
@@ -474,7 +553,7 @@ void main() {
     });
 
     test('a slow release and its settle do not eat the time: the figures show for the whole give up time', () async {
-      final probe = FakeGpuProbe.of(_rtx2060(4900, appMib: 1402));
+      final probe = FakeGpuProbe.of(_rtx2060(3100, appMib: 1402));
       container = containerWith(
         probe.probe,
         // Past the settle time (a turn of the player pool held), then the settle while the players' memory comes back
@@ -504,7 +583,7 @@ void main() {
       expect(figuresAt, isNotNull, reason: 'the wait was shown with its figures before the panorama left');
       // The queue's clock starts a moment before the figures reach the state
       expect(endedAt! - figuresAt!, greaterThanOrEqualTo(const Duration(milliseconds: 140)));
-      expect(job(pano).gpuShortfall?.free, 4900 * _mib);
+      expect(job(pano).gpuShortfall?.free, 3100 * _mib);
     });
 
     test('a panorama behind a give up asks the card once, without a release nor a settle, then leaves', () async {
@@ -514,7 +593,7 @@ void main() {
       container = containerWith(
         () async {
           asked.add(job(first).state.isEnded ? 'second' : 'first');
-          return _rtx2060(4900, appMib: 1402);
+          return _rtx2060(3100, appMib: 1402);
         },
         release: () async {
           releases++;
@@ -607,6 +686,60 @@ void main() {
       await until((state) => state.byId(scene)!.state.isEnded);
       queue().keepWaiting(scene);
       expect(job(scene).state, ConversionState.done);
+    });
+
+    test('a generation short of memory even in segments, which said what it read: Keep waiting puts it back to wait '
+        'as long as it takes, then it runs again', () async {
+      const mib = 1024 * 1024;
+      final read = const GeneratorMemoryRead(free: 3700 * mib, budget: 3188 * mib, short: 14 * mib).message;
+      panorama = FakePanoramaEngine(
+        failAt: ImmersiveStage.generating,
+        failure: ImmersiveErrorCode.gpuOutOfMemory,
+        failureMessage: '$read\n[E] generate failed --- main.cpp:926',
+        failingRuns: 1,
+      );
+      var held = false;
+      container = containerWith(
+        () async => held ? FakeGpuReports.rtx4060Busy : FakeGpuReports.rtx4060,
+        recheck: const Duration(milliseconds: 20),
+        giveUp: const Duration(milliseconds: 60),
+      );
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).error, ImmersiveErrorCode.gpuOutOfMemory);
+      expect(job(pano).canKeepWaiting, isTrue);
+
+      // A game holds the card meanwhile: put back, it waits well past the give up time
+      held = true;
+      queue().keepWaiting(pano);
+      expect(job(pano).state, ConversionState.waiting);
+      expect(job(pano).keepsWaiting, isTrue);
+      expect(job(pano).error, isNull);
+      await until((state) => state.byId(pano)!.waitingFor == ConversionWait.graphicsMemory);
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      expect(job(pano).state, ConversionState.waiting);
+
+      held = false;
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).state, ConversionState.done);
+      expect(panorama.jobs, hasLength(2));
+    });
+
+    test('Keep waiting does nothing for a memory failure that read nothing of the card', () async {
+      panorama = FakePanoramaEngine(
+        failAt: ImmersiveStage.generating,
+        failure: ImmersiveErrorCode.gpuOutOfMemory,
+        failureMessage: 'ggml_vulkan: Device memory allocation of size 1073741824 failed',
+      );
+      container = containerWith(FakeGpuProbe.of(FakeGpuReports.rtx4060).probe);
+
+      final pano = add('salon.jpg', ConversionKind.panoramaFromPhoto);
+      await until((state) => state.byId(pano)!.state.isEnded);
+      expect(job(pano).canKeepWaiting, isFalse);
+      queue().keepWaiting(pano);
+      expect(job(pano).state, ConversionState.failed);
+      expect(job(pano).error, ImmersiveErrorCode.gpuOutOfMemory);
     });
 
     test('a panorama added long after a wait that ended gets the whole time', () async {

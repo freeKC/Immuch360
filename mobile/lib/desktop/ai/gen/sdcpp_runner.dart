@@ -6,19 +6,32 @@
 //    compare the build with it), the graphics card named by ggml's index (--backend diffusion=Vulkan<n>,vae=Vulkan<n>,
 //    te=CPU: the integrated card comes first on a laptop, so sd-cli never chooses), flash attention on (without it the
 //    attention goes to the processor and no step ends in 10 minutes), the VAE in tiles, -t the logical processors less
-//    two, -v for the line about segments; and on a card with less memory free, the reference capped at 1280 x 640
-//    (--ref-image-args vae_input_max_pixels=819200, measured on 4 November 2026: 4 676 MiB on the card instead of
-//    5 388, see gpu_budget.dart);
+//    two, -v for the line about segments and the auto-fit plan; since lot 13c (measure of 5 November 2026, section 9),
+//    on Windows a budget of the card (--max-vram in GiB, the free memory the queue read less 512 MiB, where sd-cli's
+//    own Vulkan reading leaves other programs out; on Linux sd-cli reads the card itself: gpu_budget.dart,
+//    panoramaGeneratorBudget, says why) and the convolution of the VAE pinned to its direct path (--conv-direct
+//    auto,vae=on: sd-cli times both paths at its start and took the other one in 2 runs of 32, another image by 36 to
+//    39 dB for the same photo and seed). sd-cli fixes its budget at its start with or without --max-vram; a switch to
+//    segments in the middle of a run comes from its live check of the card at every step, which the flag does not
+//    change;
 //  - its progress is the bar it redraws ("12/20 - 8.65s/it"): the steps of the sampling only, not the loading of the
 //    weights nor the tiles of the VAE;
-//  - a generation whose graph sd-cli cut into segments ("flux using 27 segments", when the free memory of the card is
-//    short) is stopped at once and refused as gpuBusy ("Other apps use the graphics card memory: close games or 3D
-//    apps"): with the LoRA applied at run time and the guidance, the image comes out spoilt (M3, section 2, point 2),
-//    so it never becomes a file;
-//  - a failure is named: gpuOutOfMemory when its output says the memory was short (the texts M3 read), generatorStalled
-//    after 180 s without a line, generatorFailed with the end of its error output, cancelled within a second of the
-//    flag; the process is killed in every case where it still runs (the run of a program, its watch of the silence
-//    and of the flag, is SidecarRun of process/sidecar_run.dart since lot SP4, shared with COLMAP and Brush);
+//  - a generation whose graph sd-cli cuts into segments ("flux using 27 segments", when the memory it may use on the
+//    card is short) goes on: at the 1536 x 768 of the app the cut gives the same bytes as one segment, slower (measure
+//    of 5 November 2026, ai-gpu-budget-2026-11-05/measure.md, section 4: 294 s instead of 202 with 5.5 GiB free, about
+//    8 min near the floor of 3.1 GiB; M3 saw spoilt images in segments at 1792 x 896 and 2048 x 1024 only). Each step
+//    it reports then carries the number of segments (GeneratorProgress.segments), which the panel says, and the log
+//    keeps it with the free memory and the budget sd-cli read on the card (the lines of its auto-fit plan); when its
+//    live check lets it go back to one segment ("flux using 1 segment"), the steps say none again;
+//  - a failure is named: gpuOutOfMemory when its output says a part could not be placed for want of memory (the
+//    segment that failed during weight preparation, as M3 and the measure read it, or Vulkan's two texts; for a
+//    generation, its message then starts with what sd-cli read of the card, GeneratorMemoryRead: the free memory and
+//    the budget of its plan, and how short the line of its model manager before that segment said it was, so that the
+//    panel says it and offers Keep waiting; that line alone is a warning sd-cli recovers from), generatorStalled after
+//    180 s without a line (SdCppSettings.stallTimeout, in segments too), generatorFailed with the end of its error
+//    output, cancelled within a second of the flag; the process is killed in every case where it still runs (the run
+//    of a program, its watch of the silence and of the flag, is SidecarRun of process/sidecar_run.dart since lot SP4,
+//    shared with COLMAP and Brush);
 //  - the image it wrote is checked (image_checks.dart, in an isolate of its own): its size, not grey, no pure green
 //    left outside the photo; a refused image, or a file that does not decode, is deleted and outputRejected (the
 //    engine of P3 makes it once more, then gives up).
@@ -34,7 +47,10 @@ import 'package:immich_mobile/desktop/ai/gen/image_checks.dart';
 import 'package:immich_mobile/desktop/ai/process/sidecar_run.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
+
+final _log = Logger('SdCpp');
 
 /// The program of the engine in its folder (`engines/<id>/` of the AI components)
 String sdCliIn(String folder, {bool? windows}) =>
@@ -84,7 +100,12 @@ class SdCppSettings {
   /// -t: the logical processors less two, at least one
   final int threads;
 
-  /// Stopped and named generatorStalled after this long without a line on either output
+  /// Stopped and named generatorStalled after this long without a line on either output: 180 s on a dedicated card,
+  /// in segments as well. A run in segments writes one bar line a step, so its silence is a step: the slowest the
+  /// measure of 5 November 2026 saw in segments took 73 s, at the floor with the owner's app and a splat job on the
+  /// same RTX 4060 Laptop (21.7 s alone, 36.7 s with the app). A card 2.5 times slower under that load would reach
+  /// 180 s: to raise for a run in segments if a log of a slower card comes near (the generation time of the
+  /// panorama's summary line, over its 20 steps)
   final Duration stallTimeout;
 
   /// How often the cancel flag and the silence are looked at
@@ -94,20 +115,25 @@ class SdCppSettings {
   final Map<String, String> environment;
 }
 
-/// The texts of a failure that means the memory of the graphics card was short (M3, section 5: the model manager of
-/// sd-cli refuses before it allocates; the two others from Vulkan, by prudence, never seen in M3)
-const sdCppOutOfMemoryTexts = [
-  'cannot make enough memory available',
-  'failed during weight preparation',
-  'ErrorOutOfDeviceMemory',
-  'Failed to allocate',
-];
+/// The texts of a failure for want of memory of the graphics card: the segment sd-cli could not place, after its model
+/// manager could not make the memory available (M3, section 5; the measure of 5 November 2026 below the floor), and
+/// Vulkan's two, by prudence, never seen. The model manager's own line ([sdCppShortOf]) is not one of them: sd-cli
+/// recovers from it (cut runs near the floor print it several times and end well), so that a run failing later for
+/// another reason stays generatorFailed.
+const sdCppOutOfMemoryTexts = [sdCppFailedSegmentText, 'ErrorOutOfDeviceMemory', 'Failed to allocate'];
+
+/// "flux segment 7/27 (flux.single_blocks.0) failed during weight preparation --- ggml_runner.cpp:899", the line right
+/// after the model manager's shortfall it fails with
+const sdCppFailedSegmentText = 'failed during weight preparation';
+
+/// Why a budget the app gave sd-cli (Windows) is the one to read: sd-cli's own free figure there is Vulkan's
+const _givenWhy = " (from the free memory Windows counts: Vulkan's figure leaves other programs out)";
 
 /// The most lines of the error output a failure carries in its message
 const sdCppErrorTailLines = 20;
 
 final _bar = RegExp(r'\|\s*(\d+)/(\d+)\s*-\s*([\d.]+)\s*(s/it|it/s)');
-final _segments = RegExp(r'\bflux (?:using (\d+) segments|compute buffer size:.*\(peak across (\d+) segments\))');
+final _segments = RegExp(r'\bflux (?:using (\d+) segments?\b|compute buffer size:.*\(peak across (\d+) segments?\))');
 
 /// A step of a bar of sd-cli: done, of how many, and the seconds of the step, or null when [line] is no such bar
 GeneratorProgress? sdCppBarOf(String line) {
@@ -120,15 +146,74 @@ GeneratorProgress? sdCppBarOf(String line) {
   return GeneratorProgress(int.parse(match.group(1)!), int.parse(match.group(2)!), secondsPerStep: seconds);
 }
 
-/// The number of segments a line says the transformer's graph was cut into, null when it says nothing of it
+/// The number of segments a line says the transformer's graph was cut into, 1 for a graph whole ("flux using 1 segment"
+/// when the live check of sd-cli lets a cut run go back to one, "peak across 1 segment"), null when it says nothing
 int? sdCppSegmentsOf(String line) {
   final match = _segments.firstMatch(line);
   return match == null ? null : int.parse(match.group(1) ?? match.group(2)!);
 }
 
+const _mib = 1024 * 1024;
+
+/// A card of the auto-fit plan sd-cli writes before it loads its weights, "[I]     Vulkan1      NVIDIA GeForce RTX 4060
+/// Laptop GPU free   7188 MiB, budget   3072 MiB --- backend_fit.cpp:328" (the last "free" of the line: the name of a
+/// card holds no figure in MiB)
+final _plan = RegExp(r'^\[I\]\s+(Vulkan\d+)\s.*\bfree\s+(\d+) MiB, budget\s+(\d+) MiB');
+
+/// What sd-cli read of the memory of the card [device] ("Vulkan1"), from the line of its auto-fit plan for that card:
+/// the bytes free and the budget it plans with (the free memory less its reserve of 512 MiB, or the one --max-vram
+/// gives, capped at the free memory); null for any other line
+({int free, int budget})? sdCppCardMemoryOf(String line, String device) {
+  final match = _plan.firstMatch(line);
+  if (match == null || match.group(1) != device) {
+    return null;
+  }
+  return (free: int.parse(match.group(2)!) * _mib, budget: int.parse(match.group(3)!) * _mib);
+}
+
+/// "[W] model manager cannot make enough memory available on Vulkan1: need 2896.82 MB device / 2492.82 MB budget,
+/// available 6705.71 MB device / 2478.82 MB budget --- model_manager.cpp:2018" (the measure of 5 November 2026 below
+/// the floor; "unlimited budget" without one, M3); ggml's MB are MiB
+final _short = RegExp(
+  r'cannot make enough memory available on (Vulkan\d+): need ([\d.]+) MB device / ([\d.]+) MB budget, '
+  r'available ([\d.]+) MB device / (?:([\d.]+) MB|unlimited) budget',
+);
+
+/// How many bytes sd-cli was short of on the card [device] for the part it could not place, from the line of its model
+/// manager: the larger shortfall of the card itself and of the budget, at least one byte; null for any other line. Its
+/// figures have two decimals: read as hundredths of a MiB, so that 2492.82 less 2478.82 is 14 MiB to the byte.
+int? sdCppShortOf(String line, String device) {
+  final match = _short.firstMatch(line);
+  if (match == null || match.group(1) != device) {
+    return null;
+  }
+  int hundredths(int group) {
+    final [whole, ...decimals] = match.group(group)!.split('.');
+    return int.parse(whole) * 100 + (decimals.isEmpty ? 0 : int.parse(decimals.first.padRight(2, '0').substring(0, 2)));
+  }
+
+  final card = hundredths(2) - hundredths(4);
+  final budget = match.group(5) == null ? card : hundredths(3) - hundredths(5);
+  return math.max(1, (math.max(card, budget) * _mib + 99) ~/ 100);
+}
+
 String _decimal(double value) => value.toString();
 
-/// The arguments of one generation, frozen (M3, section 9, point 4)
+/// The VAE's 2D convolution on its direct path whatever sd-cli times at its start, the other modules on its own choice
+/// (the form of the pinned build's help: "on|off|auto or diffusion/vae/controlnet assignments")
+const sdCppConvDirect = 'auto,vae=on';
+
+/// [bytes] as --max-vram takes them: GiB with four decimals, rounded down so that sd-cli never plans with more than it
+/// was given ("2.7343" for 2 800 MiB; the measure of 5 November 2026 gave "2.7344", "3", "4"). A single value is the
+/// budget of every card sd-cli sees, as the measure ran it: the generator uses the one --backend names. sd-cli takes
+/// the smaller of it and the free memory it reads, with no reserve of its own.
+String sdCppVramBudget(int bytes) {
+  final tenThousandths = bytes * 10000 ~/ (1024 * _mib);
+  return '${tenThousandths ~/ 10000}.${'${tenThousandths % 10000}'.padLeft(4, '0')}';
+}
+
+/// The arguments of one generation, frozen (M3, section 9, point 4); --max-vram when the request carries a budget, which
+/// the queue gives on Windows only (GeneratorRequest.graphicsBudget)
 List<String> sdCppGenerationArguments(SdCppSettings settings, GeneratorRequest request) {
   final models = settings.models;
   return [
@@ -142,12 +227,14 @@ List<String> sdCppGenerationArguments(SdCppSettings settings, GeneratorRequest r
     models.loraFolder,
     '--backend',
     'diffusion=${settings.device},vae=${settings.device},te=CPU',
+    if (request.graphicsBudget case final budget?) ...['--max-vram', sdCppVramBudget(budget)],
     '--flash-attn',
     'on',
+    '--conv-direct',
+    sdCppConvDirect,
     '--vae-tiling',
     '-r',
     request.controlPath,
-    if (request.referenceMaxPixels case final pixels?) ...['--ref-image-args', 'vae_input_max_pixels=$pixels'],
     '-W',
     '${request.width}',
     '-H',
@@ -266,7 +353,18 @@ class SdCppGenerator implements GeneratorBackend {
     }
     var sampling = false;
     var done = 0;
-    await _sdCppRun(
+    var segments = 1;
+    ({int free, int budget})? read;
+    // The shortfall of the model manager's last line, which sd-cli may recover from, and the one of the line right
+    // before the segment that failed: the shortfall it failed with
+    int? lastShort;
+    int? short;
+    // A budget given (Windows): sd-cli's free memory is Vulkan's figure there, which leaves other programs out
+    final given = request.graphicsBudget != null ? ' given by the app' : '';
+    String said() => read == null
+        ? 'what it read of the card unknown'
+        : '${read!.free ~/ _mib} MiB free read on ${settings.device}, budget ${read!.budget ~/ _mib} MiB$given';
+    final run = _sdCppRun(
       runner: runner,
       settings: settings,
       arguments: argumentsOf(request),
@@ -274,13 +372,36 @@ class SdCppGenerator implements GeneratorBackend {
       cancel: cancel,
       elapsed: _elapsed,
       onLine: (line) {
-        final segments = sdCppSegmentsOf(line);
-        if (segments != null && segments > 1) {
-          return BackendException(
-            ImmersiveErrorCode.gpuBusy,
-            'sd-cli cut the generator into $segments segments, the memory of the graphics card being short: the image '
-            'would be spoilt (close games or 3D apps and retry)',
+        if (sdCppShortOf(line, settings.device) case final lacking?) {
+          lastShort = lacking;
+          return null;
+        }
+        if (line.contains(sdCppFailedSegmentText)) {
+          short ??= lastShort;
+          return null;
+        }
+        final plan = sdCppCardMemoryOf(line, settings.device);
+        if (plan != null) {
+          read = plan;
+          _log.info(
+            'sd-cli read ${plan.free ~/ _mib} MiB free on ${settings.device}, budget ${plan.budget ~/ _mib} MiB$given'
+            '${given.isEmpty ? '' : _givenWhy}',
           );
+          return null;
+        }
+        // The graph cut into segments: the run goes on, slower, the same image (see the top of this file); back to
+        // one when the live check of sd-cli allows it
+        final cut = sdCppSegmentsOf(line);
+        if (cut != null) {
+          if (cut != segments) {
+            segments = cut;
+            _log.info(
+              cut > 1
+                  ? 'sd-cli runs the generator in $cut segments (${said()}): slower, the same image'
+                  : 'sd-cli runs the generator whole again (${said()})',
+            );
+          }
+          return null;
         }
         if (line.contains('generating image')) {
           sampling = true;
@@ -289,11 +410,32 @@ class SdCppGenerator implements GeneratorBackend {
         final bar = sampling && done < request.steps ? sdCppBarOf(line) : null;
         if (bar != null && bar.steps == request.steps && bar.step > done) {
           done = bar.step;
-          onProgress?.call(bar);
+          onProgress?.call(
+            GeneratorProgress(
+              bar.step,
+              bar.steps,
+              secondsPerStep: bar.secondsPerStep,
+              segments: segments > 1 ? segments : null,
+            ),
+          );
         }
         return null;
       },
-    ).run();
+    );
+    try {
+      await run.run();
+    } on BackendException catch (error) {
+      // Short of memory even in segments: what sd-cli read goes first, for the panel and the log
+      if (error.code != ImmersiveErrorCode.gpuOutOfMemory || (read == null && short == null)) {
+        rethrow;
+      }
+      final memory = GeneratorMemoryRead(free: read?.free, budget: read?.budget, short: short);
+      _log.warning(
+        'sd-cli ran out of the memory of ${settings.device} in $segments segment${segments == 1 ? '' : 's'}: '
+        '${memory.message}',
+      );
+      throw BackendException(ImmersiveErrorCode.gpuOutOfMemory, '${memory.message}\n${error.message}');
+    }
     if (!output.existsSync()) {
       throw const BackendException(ImmersiveErrorCode.generatorFailed, 'sd-cli ended without writing its image');
     }

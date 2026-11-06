@@ -29,6 +29,7 @@ import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 import '../fakes/fake_backends.dart';
@@ -221,7 +222,7 @@ void main() {
     expect(whole, greaterThan(100));
   }
 
-  PanoramaJob jobOf(String path, {int turns = 0, int seed = 1002, String? sha1, int? referenceMaxPixels}) {
+  PanoramaJob jobOf(String path, {int turns = 0, int seed = 1002, String? sha1, int? graphicsBudget}) {
     final bytes = File(path).readAsBytesSync();
     return PanoramaJob(
       id: 'panorama-1',
@@ -234,7 +235,7 @@ void main() {
       steps: 4,
       seed: seed,
       quarterTurns: turns,
-      referenceMaxPixels: referenceMaxPixels,
+      graphicsBudget: graphicsBudget,
     );
   }
 
@@ -305,7 +306,7 @@ void main() {
       expect((request.width, request.height), (48, 24));
       expect(request.guidance, PanoV1.guidance);
       expect(request.loraStrength, PanoV1.loraStrength);
-      expect(request.referenceMaxPixels, isNull, reason: 'the reference of M3');
+      expect(request.graphicsBudget, isNull, reason: 'no budget read: the free memory the generator reads itself');
       final control = img.decodePng(Uint8List.fromList(controls.single))!;
       expect((control.width, control.height), (64, 32));
       final corner = control.getPixel(0, 0);
@@ -364,36 +365,63 @@ void main() {
       expect(result.stageTimes.keys, containsAll([ImmersiveStage.generating, ImmersiveStage.upscale]));
     });
 
-    test(
-      'made with less memory free on the card: its reference capped, the cap in its packet and its key the same',
-      () async {
-        final generator = FakeGeneratorBackend();
-        final job = jobOf(photo(), referenceMaxPixels: 819200);
+    test('the budget the queue read for the job reaches the generator', () async {
+      final generator = FakeGeneratorBackend();
+      final result = await engineOf(
+        generator: generator,
+      ).run(jobOf(photo(), graphicsBudget: 5018 * 1024 * 1024), cancel: cancel);
+      expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+      expect(generator.requests.single.graphicsBudget, 5018 * 1024 * 1024);
+    });
 
-        final result = await engineOf(generator: generator).run(job, cancel: cancel);
+    test(
+      'a generator that runs in segments, the card short of memory: its steps say how many, the panorama made',
+      () async {
+        final heard = <ImmersiveProgress>[];
+        final job = jobOf(photo());
+
+        final result = await engineOf(
+          generator: FakeGeneratorBackend(segments: 27),
+        ).run(job, cancel: cancel, onProgress: heard.add);
 
         expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
-        expect(generator.requests.single.referenceMaxPixels, 819200);
-        final written = File(job.partPath).readAsBytesSync();
-        final xmp = ImmersiveXmp.findIn(written)! as PanoramaXmp;
-        expect(xmp.generatorReferenceMaxPixels, 819200);
+        final steps = heard.where((progress) => progress.stage == ImmersiveStage.generating).toList();
+        expect(steps.map((progress) => progress.step), [1, 2, 3, 4]);
+        expect(steps.map((progress) => progress.segments), everyElement(27));
         expect(
-          latin1.decode(written.sublist(0, 4096), allowInvalid: true),
-          contains('GeneratorReferenceMaxPixels="819200"'),
+          heard.where((progress) => progress.stage != ImmersiveStage.generating).map((p) => p.segments).nonNulls,
+          isEmpty,
         );
-        final fullReference = PanoramaXmp(
-          pipeline: xmp.pipeline,
-          generatorSha256: xmp.generatorSha256,
-          generatorLoraSha256: xmp.generatorLoraSha256,
-          steps: xmp.steps,
-          sourceQuarterTurns: xmp.sourceQuarterTurns,
-        );
-        expect(xmp.settingsKey, isNotNull);
-        expect(
-          xmp.settingsKey,
-          fullReference.settingsKey,
-          reason: 'the same settings as a panorama of the full reference',
-        );
+        expect(File(job.partPath).existsSync(), isTrue);
+      },
+    );
+
+    test(
+      'a generator taken back to one segment in the middle: its steps say so, the summary the most of the run',
+      () async {
+        // "flux using 1 segment" once the live check of sd-cli allows it (review of lot 13c)
+        final logged = <String>[];
+        final level = Logger.root.level;
+        Logger.root.level = Level.ALL;
+        final listening = Logger.root.onRecord.where((record) => record.loggerName == 'PanoramaEngine').listen((
+          record,
+        ) {
+          logged.add(record.message);
+        });
+        addTearDown(() async {
+          Logger.root.level = level;
+          await listening.cancel();
+        });
+        final heard = <ImmersiveProgress>[];
+
+        final result = await engineOf(
+          generator: FakeGeneratorBackend(segmentsAt: (step) => step <= 2 ? 27 : null),
+        ).run(jobOf(photo()), cancel: cancel, onProgress: heard.add);
+
+        expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
+        final steps = heard.where((progress) => progress.stage == ImmersiveStage.generating).toList();
+        expect(steps.map((progress) => progress.segments), [27, 27, null, null]);
+        expect(logged.where((line) => line.contains('generated in up to 27 segments, seam')), hasLength(1));
       },
     );
 
@@ -552,7 +580,6 @@ void main() {
   test('the named failures of the generator end the job at once, never made again', () async {
     for (final code in [
       ImmersiveErrorCode.gpuOutOfMemory,
-      ImmersiveErrorCode.gpuBusy,
       ImmersiveErrorCode.generatorFailed,
       ImmersiveErrorCode.generatorStalled,
     ]) {
@@ -699,34 +726,50 @@ void main() {
       );
     }
 
-    test('a panorama made, its steps heard; grey refused twice; short of memory; cut into segments', () async {
-      final runner = ManagedProcessRunner(
-        linuxLauncher: Platform.isLinux ? launcher : null,
-        journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
-      );
-      final heard = <ImmersiveProgress>[];
-      final job = jobOf(photo());
-      final made = await engineWith('ok', runner).run(job, cancel: cancel, onProgress: heard.add);
-      expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
-      expect(heard.where((progress) => progress.stage == ImmersiveStage.generating).map((progress) => progress.step), [
-        1,
-        2,
-        3,
-        4,
-      ]);
-      expect(const DartSbsCodec().decodeJpeg(File(job.partPath).readAsBytesSync()).width, 192);
+    test(
+      'a panorama made, its steps heard; cut into segments, made too; grey refused twice; short of memory',
+      () async {
+        final runner = ManagedProcessRunner(
+          linuxLauncher: Platform.isLinux ? launcher : null,
+          journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))),
+        );
+        final heard = <ImmersiveProgress>[];
+        final job = jobOf(photo());
+        final made = await engineWith('ok', runner).run(job, cancel: cancel, onProgress: heard.add);
+        expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
+        expect(
+          heard.where((progress) => progress.stage == ImmersiveStage.generating).map((progress) => progress.step),
+          [1, 2, 3, 4],
+        );
+        expect(const DartSbsCodec().decodeJpeg(File(job.partPath).readAsBytesSync()).width, 192);
+        expect(heard.map((progress) => progress.segments).nonNulls, isEmpty);
 
-      for (final (mode, code) in [
-        ('grey', ImmersiveErrorCode.outputRejected),
-        ('oom', ImmersiveErrorCode.gpuOutOfMemory),
-        ('segments', ImmersiveErrorCode.gpuBusy),
-      ]) {
-        final failed = await engineWith(mode, runner).run(jobOf(photo()), cancel: cancel);
-        expect(failed.error, code, reason: mode);
-      }
-      expect(runner.journal!.read(), isEmpty);
-      expect(workLeft(), isFalse);
-    }, skip: withoutFake);
+        // The graph cut into segments: the same panorama, its steps saying so (measure of 5 November 2026)
+        final cut = <ImmersiveProgress>[];
+        final inSegments = jobOf(photo());
+        final madeInSegments = await engineWith(
+          'segments',
+          runner,
+        ).run(inSegments, cancel: cancel, onProgress: cut.add);
+        expect(madeInSegments.isDone, isTrue, reason: '${madeInSegments.error}: ${madeInSegments.message}');
+        expect(
+          cut.where((progress) => progress.stage == ImmersiveStage.generating).map((progress) => progress.segments),
+          everyElement(27),
+        );
+        expect(File(inSegments.partPath).existsSync(), isTrue);
+
+        for (final (mode, code) in [
+          ('grey', ImmersiveErrorCode.outputRejected),
+          ('oom', ImmersiveErrorCode.gpuOutOfMemory),
+        ]) {
+          final failed = await engineWith(mode, runner).run(jobOf(photo()), cancel: cancel);
+          expect(failed.error, code, reason: mode);
+        }
+        expect(runner.journal!.read(), isEmpty);
+        expect(workLeft(), isFalse);
+      },
+      skip: withoutFake,
+    );
 
     test('a generator that fails, one that says nothing, one cancelled: named, stopped, gone', () async {
       final runner = ManagedProcessRunner(

@@ -184,8 +184,11 @@ class RawPartnerPlayer {
   }
 
   /// Ends the pair and gives the player back to the pool, as the pool gave it (renderer C off, every stream and the
-  /// sound back, speed 1)
-  Future<void> release() async {
+  /// sound back, speed 1). Without [waitForPool], it returns once the player is stopped and given back, the pool's
+  /// turn that parks it queued and not awaited: the page that ends its pair from inside a turn of the pool (its own
+  /// player handed over, or lost with its picture: PlayerPool._takeFrom, PlayerPool._discard) would otherwise wait
+  /// for a turn queued behind the one that waits for it
+  Future<void> release({bool waitForPool = true}) async {
     if (_released) {
       return;
     }
@@ -207,7 +210,12 @@ class RawPartnerPlayer {
     } catch (error) {
       _log.fine('The second player was given back as it was: $error');
     }
-    await _lease.release();
+    final given = _lease.release();
     failure.dispose();
+    if (waitForPool) {
+      await given;
+    } else {
+      unawaited(given);
+    }
   }
 }

@@ -32,11 +32,16 @@ abstract class FakeStagedEngine<J extends ImmersiveJobSpec> implements Immersive
     this.slowDelay = const Duration(milliseconds: 200),
     this.holdStage,
     this.qualityFlags = const [],
+    this.failureMessage,
+    this.failingRuns,
   });
 
-  /// The step that fails, with [failure]; null for a job that ends well
+  /// The step that fails, with [failure] and [failureMessage] ("Scripted failure at" and the step when null); null for
+  /// a job that ends well. Only the first [failingRuns] runs fail when it is given, every run otherwise.
   final ImmersiveStage? failAt;
   final ImmersiveErrorCode failure;
+  final String? failureMessage;
+  final int? failingRuns;
 
   /// How long each step takes, and the one step that takes [slowDelay] instead
   final Duration stepDelay;
@@ -111,8 +116,12 @@ abstract class FakeStagedEngine<J extends ImmersiveJobSpec> implements Immersive
         progress.add(inner);
         onProgress?.call(inner);
       }
-      if (stage == failAt) {
-        return ImmersiveResult.failed(failure, message: 'Scripted failure at ${stage.name}', stageTimes: times);
+      if (stage == failAt && (failingRuns == null || jobs.length <= failingRuns!)) {
+        return ImmersiveResult.failed(
+          failure,
+          message: failureMessage ?? 'Scripted failure at ${stage.name}',
+          stageTimes: times,
+        );
       }
       if (stage == ImmersiveStage.writing) {
         written = await write(job);

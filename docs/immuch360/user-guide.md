@@ -949,30 +949,38 @@ When it is the decoding of a server video that does not keep up, not the drawing
 | Feature | Runs on | Graphics memory |
 |---|---|---|
 | 3D photo, 3D scene, 3D version of a 360° photo | the processor | none |
-| 360° panorama | a Vulkan 1.2 graphics card with 8 GB of its own memory (an 8 GB card passes; the "Make 3D (AI)" box asks 7.5 GiB of card total), in a Windows or Linux computer with 16 GB of memory | **6.0 GiB free** when it starts; from desktop build 21, **5.1 GiB free** with a smaller reference image (below) |
+| 360° panorama | a Vulkan 1.2 graphics card with 8 GB of its own memory (an 8 GB card passes; the "Make 3D (AI)" box asks 7.5 GiB of card total), in a Windows or Linux computer with 16 GB of memory, up to 8 GB of which the generation takes when it runs in pieces | **3.5 GiB free** when it starts, from desktop build 22; whole from about 5.6 GiB free, in pieces below (desktop build 21 asked 6.0 GiB, or 5.1 GiB with a smaller reference image) |
 
-The figures were measured on 4 November 2026 with the app's own stable-diffusion.cpp and its arguments, on an RTX 4060 Laptop of 8 GB: the generation takes 5.3 GiB of the card and needs 5.6 GiB free, or it splits its work into segments, which spoils the image, and the job fails with "Other apps use the graphics card memory: close games or 3D apps". Reading the reference of the photo at 1280 x 640 instead of about 1456 x 720 takes 4.6 GiB and needs 4.8 GiB free, for the same 6144 x 3072 panorama made a little sooner. Each figure the app asks keeps a margin above the measure, for the desktop moving during the run.
+The figures were measured on 5 November 2026 with the app's own stable-diffusion.cpp and its arguments, on an RTX 4060 Laptop of 8 GB under Windows. The generation takes 5.3 GiB of the card and runs whole from 5.6 GiB free. With less, stable-diffusion.cpp cuts its work into pieces: the panorama is the same image, to the byte, and takes longer. It still runs with 3.14 GiB free and fails at 3.04 GiB; the app asks 3.5 GiB, a margin for the desktop moving during the run. On Linux the generator also keeps 0.5 GiB of the card free beyond what it holds, which the Windows measure could not show: there the least it runs with is probably 3.3 to 3.45 GiB, and a whole run probably needs about 0.3 GiB more. The "SdCpp" lines of a Linux log will tell. Every card makes the same image for a given photo and seed. Desktop build 21 read a smaller reference image on cards with 5.1 to 6 GiB free, and its panoramas say so in their file (`GeneratorReferenceMaxPixels` in the XMP).
+
+| Free when the generation starts | Pieces | Generation on the RTX 4060 Laptop |
+|---|---|---|
+| 5.6 GiB and more | one | about 3.4 minutes |
+| 5.5 GiB (the card of issue #13) | 27 | about 5 minutes |
+| 4.5 GiB | 27 | about 6 minutes |
+| 3.5 GiB, the least the app starts with | 27 | about 6.5 minutes |
 
 **What a card can do.**
 
 | Card | Free when a panorama starts | 360° panorama |
 |---|---|---|
 | 6 GB | at most about 5.3 to 5.8 GiB, less what the desktop holds when the card drives the screen | not offered: "The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB" (not measured on such a card) |
-| 8 GB in a laptop, the desktop and the app on the integrated chip (the default of Windows) | about 7.0 GiB (7.02 GiB on the RTX 4060 Laptop of the tests) | runs with the full reference, 4 to 5 minutes a panorama on that laptop |
-| 8 GB, the only card, the desktop and a browser on it | 5.4 GiB in issue #13 (Linux, KDE on Wayland, an RTX 2060, Immuch360 holding 1.4 GiB of it), a little more once the app let go of its videos and cached pictures | from desktop build 21: runs with the smaller reference from 5.1 GiB, with the full one from 6.0; before, it waited for ever |
-| 12 GB and more | 9 GiB and more (an estimate) | runs with the full reference |
+| 8 GB in a laptop, the desktop on the integrated chip | about 7.0 GiB (7.02 GiB on the RTX 4060 Laptop of the tests), less the app's own share when it runs on that card: 0.2 GiB at rest, up to 0.9 GiB after a 360° video | runs whole, 4 to 5 minutes a panorama on that laptop |
+| 8 GB, the only card, the desktop and a browser on it | 5.4 GiB in issue #13 (Linux, KDE on Wayland, an RTX 2060, Immuch360 holding 1.4 GiB of it), a little more once the app let go of its videos and cached pictures | from desktop build 22: runs, in pieces below 5.6 GiB free, about 1.5 times longer; desktop build 21 stopped it with "Other apps use the graphics card memory", earlier builds waited for ever |
+| 12 GB and more | 9 GiB and more (an estimate) | runs whole |
 
-**What the app does before a panorama** (from desktop build 21):
+**What the app does before a panorama** (from desktop build 21, the figures of desktop build 22):
 
 1. It lets go of what it holds of the graphics card: the videos that are paused or no longer shown, and the pictures it keeps decoded. The panel says "Freeing the graphics card memory Immuch360 holds: paused videos and cached pictures". The video that plays stays, and so do a 360° video on screen, playing or paused, and the photo you look at. A paused video of the viewer shows an empty frame until you play it again, from where it was.
-2. When it closed video players, it asks the card again every 2 seconds for up to 10 seconds, while their memory comes back.
-3. With 6.0 GiB free it makes the panorama with the full reference, the image of the tests. With 5.1 GiB it reads the reference at 1280 x 640: the panorama has the same size, but it is another image for the same seed, and its file says so (`GeneratorReferenceMaxPixels` in its XMP).
-4. With less, the panorama waits and says what it needs, what is free and, when the app could read it, what Immuch360 itself holds: "360° panoramas need 5.1 GiB of free graphics memory, 4.8 GiB free (Immuch360 itself holds 1.4 GiB): close games, 3D apps or videos". The card is asked again every 15 seconds, or at once with Resume. The 3D photos and scenes go on meanwhile.
+2. When it closed video players, it asks the card again every 2 seconds for up to 10 seconds, while their memory comes back, until the card has the 5.6 GiB of a generation in one piece.
+3. With 3.5 GiB free it starts the panorama. On Windows it gives stable-diffusion.cpp a budget, the free memory it read less 0.5 GiB, because the generator's own reading there leaves out what other programs hold. On Linux the generator reads the card itself and keeps 0.5 GiB of it free. Either way it sets its budget when it starts, and it may still cut its work into more pieces during the run when the card fills. Below about 5.6 GiB, the panel says while it generates: "The graphics card is short of memory, so the generation runs in 27 pieces: slower, same result".
+4. With less, the panorama waits and says what it needs, what is free and, when the app could read it, what Immuch360 itself holds: "360° panoramas need 3.5 GiB of free graphics memory, 3.1 GiB free (Immuch360 itself holds 1.4 GiB): close games, 3D apps or videos". The card is asked again every 15 seconds, or at once with Resume. The 3D photos and scenes go on meanwhile.
 5. A wait that does not end leaves the queue 30 seconds after its figures first show, with the same figures and "Stopped waiting: the graphics card did not free enough memory. Keep waiting puts it back in the queue". The panoramas queued after it leave with it, each after one look at the card. "Keep waiting", on a panorama that waits or that left, keeps it in the queue as long as it takes; Retry failed gives it 30 seconds again.
+6. When stable-diffusion.cpp runs short even in pieces (another program took the memory during the run, or a card needs more than the one of the tests), the panorama fails with what the generator read: "The graphics card ran out of memory: the generator read 3.5 GiB free and was 14.0 MiB short. Close games, 3D apps or videos: Keep waiting puts it back in the queue". "Keep waiting" puts it back as in step 5.
 
 The share of the app is read on Windows from the counter the Task Manager shows per process, on Linux from NVML for an NVIDIA card and from the kernel's DRM statistics of the app for AMD and Intel cards. When it cannot be read, or is under 64 MiB, the message gives the two other figures only.
 
-- **On a laptop**, the "High performance" choice for `immuch360.exe` that helps 360° videos (see [360° videos and the graphics chip](#360-videos-and-the-graphics-chip)) also puts the app's own memory on the card the panorama uses. Switch it back while you make panoramas, or let the app free its share first.
+- **On a laptop**, the app asks the drivers for the dedicated card, for 360° videos (see [360° videos and the graphics chip](#360-videos-and-the-graphics-chip)), so its own memory counts on the card the panorama uses: 0.2 GiB at rest and up to 0.9 GiB after a 360° video, measured on desktop build 21. It lets go of what it can before a panorama. "Power saving" for `immuch360.exe` in the Windows settings should keep the app on the integrated chip while you make panoramas; this was not checked on the test laptop.
 - **Close what holds the card**: games, 3D apps, a browser playing a video, another copy of stable-diffusion.cpp or a local AI model.
 
 ### Compared with the phone apps

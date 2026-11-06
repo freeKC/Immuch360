@@ -4,9 +4,9 @@
 // that the three programs share one watch, tested once:
 //  - the program is started by a ProcessRunner (managed_process.dart in the app: a job object on Windows, immuch360-run
 //    on Linux, so that no program outlives the app), at a low priority, in the folder it is given;
-//  - each line of either output goes to the caller, which may stop the run with a failure of its own (the segments of
-//    sd-cli, another graphics card or a panic for Brush), and is remembered for the message of a failure: the last
-//    lines of the error output, or of the output when the error output said nothing;
+//  - each line of either output goes to the caller, which may stop the run with a failure of its own (another graphics
+//    card or a panic for Brush; sd-cli cutting its graph into segments goes on since lot 13c), and is remembered for
+//    the message of a failure: the last lines of the error output, or of the output when the error output said nothing;
 //  - the cancel flag and the silence are looked at every 200 ms: cancelled, the program is killed within a second;
 //    silent for longer than its program allows (180 s for sd-cli, 600 s for COLMAP, 300 s for Brush), it is killed and
 //    the run fails as stalled, with the last lines it wrote; the caller may look too at each tick (Brush, held by

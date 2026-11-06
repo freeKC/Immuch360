@@ -7,11 +7,18 @@
 //   ok        the steps, then a PNG of the size asked, varied (the default)
 //   grey      the steps, then a uniform grey PNG
 //   green     the steps, then a PNG still pure green over most of it
-//   segments  "flux using 27 segments" before the steps, as when the memory of the card is short, then as ok
+//   segments  "flux using 27 segments" before the steps, as when the memory of the card is short, then as ok (the
+//             graph cut gives the same image, slower: measure of 5 November 2026)
+//   recover   as segments, with the model manager's line of a shortfall sd-cli recovers from at each of the first
+//             steps (run F_full_2700 of the measure: four such lines, then its image)
 //   oom       the texts of the model manager of sd-cli when the memory is short, then exit 1
 //   fail      an error on the error output, then exit 1
 //   silent    the lines up to the sampling, then nothing until killed
 //   slow      as ok with steps of half a second (IMMUCH360_FAKE_SD_CLI_STEP_MS sets the step otherwise, 5 ms)
+// Before it loads its weights it writes the auto-fit plan of its one card, Vulkan0, as the pinned build does: the free
+// memory IMMUCH360_FAKE_SD_CLI_FREE_MIB says (7188 by default, the RTX 4060 Laptop of the measure) and the budget as
+// the pinned build makes it (backend_fit.cpp 152-157): a positive --max-vram in GiB capped at that free memory, with no
+// reserve; a negative one less than that free memory; without it (or 0), the free memory less the reserve of 512 MiB.
 // It writes its process id to the file IMMUCH360_FAKE_SD_CLI_PID names, when it does.
 //
 //   fake_sd_cli host PIDFILE
@@ -23,6 +30,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 // ignore: depend_on_referenced_packages
@@ -66,6 +74,20 @@ Future<void> main(List<String> arguments) async {
   _out(
     "[I] loading diffusion model from '${option(['--diffusion-model']) ?? 'model.gguf'}' --- diffusion_engine.cpp:692",
   );
+  final free = int.tryParse(Platform.environment['IMMUCH360_FAKE_SD_CLI_FREE_MIB'] ?? '') ?? 7188;
+  final maxVram = double.tryParse(option(['--max-vram']) ?? '') ?? 0;
+  final budget = switch (maxVram) {
+    > 0 => math.min((maxVram * 1024).floor(), free),
+    < 0 => math.max(0, free + (maxVram * 1024).ceil()),
+    _ => math.max(0, free - 512),
+  };
+  _out('[I] auto-fit plan: --- backend_fit.cpp:323');
+  _out('[I]   devices: --- backend_fit.cpp:324');
+  _out(
+    '[I]     Vulkan0      Fake graphics card free ${'$free'.padLeft(6)} MiB, budget ${'$budget'.padLeft(6)} MiB '
+    '--- backend_fit.cpp:328',
+  );
+  _out('[I]     RAM          free   4737 MiB, params budget   2689 MiB --- backend_fit.cpp:334');
   await _bar(149, '#', (i) => '${(150 + i).toStringAsFixed(2)}MB/s', 0);
   _out('[I] generate_image ${width}x$height --- image.cpp:869');
   await _bar(40, '=', (i) => '30.30it/s', 0);
@@ -93,7 +115,7 @@ Future<void> main(List<String> arguments) async {
     await _flush();
     exit(1);
   }
-  if (mode == 'segments') {
+  if (mode == 'segments' || mode == 'recover') {
     _out('[V] flux compute buffer size: 3928.82 MB(VRAM) on Vulkan0 (peak across 1 segment) --- ggml_runner.cpp:1022');
     _out('[V] flux using 27 segments --- ggml_runner.cpp:879');
     _out(
@@ -107,7 +129,24 @@ Future<void> main(List<String> arguments) async {
     await Future<void>.delayed(const Duration(hours: 1));
     return;
   }
-  await _bar(steps, '=', (i) => '${(8.5 + i / 100).toStringAsFixed(2)}s/it', stepMs, eta: true);
+  await _bar(
+    steps,
+    '=',
+    (i) => '${(8.5 + i / 100).toStringAsFixed(2)}s/it',
+    stepMs,
+    eta: true,
+    before: mode == 'recover'
+        ? (step) {
+            if (step <= 4) {
+              stdout.write('\n');
+              _out(
+                '[W] model manager cannot make enough memory available on Vulkan0: need 687.21 MB device / 2560.04 MB '
+                'budget, available 4290.52 MB device / 2511.54 MB budget --- model_manager.cpp:2018',
+              );
+            }
+          }
+        : null,
+  );
   await _bar(55, '=', (i) => '16.95it/s', 0);
   _writePng(output, width, height, mode);
   _out('[I] generate_image completed in 198.39s --- image.cpp:1140');
@@ -121,12 +160,21 @@ void _error(String line) => stderr.write('$line\n');
 
 Future<void> _flush() => Future.wait([stdout.flush(), stderr.flush()]);
 
-/// A bar as sd-cli draws it: each step after \r, the end of the line erased, a line end after the last step
-Future<void> _bar(int total, String fill, String Function(int step) speed, int stepMs, {bool eta = false}) async {
+/// A bar as sd-cli draws it: each step after \r, the end of the line erased, a line end after the last step; [before]
+/// writes the lines of a step before its bar
+Future<void> _bar(
+  int total,
+  String fill,
+  String Function(int step) speed,
+  int stepMs, {
+  bool eta = false,
+  void Function(int step)? before,
+}) async {
   for (var step = 1; step <= total; step++) {
     if (stepMs > 0) {
       await Future<void>.delayed(Duration(milliseconds: stepMs));
     }
+    before?.call(step);
     final filled = 50 * step ~/ total;
     final bar = fill * filled + (filled < 50 ? '>' : '') + ' ' * (49 - filled).clamp(0, 50);
     final left = eta && step < total ? ' - ETA 00:${(total - step).toString().padLeft(2, '0')}' : '';

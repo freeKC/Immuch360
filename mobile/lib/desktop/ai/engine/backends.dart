@@ -101,7 +101,7 @@ abstract interface class InpaintBackend {
 
 /// One generation: the control frame at [controlPath] (the photo projected on pure green), the fixed [prompt], the
 /// [steps], the [seed], the [guidance] and the strength of the LoRA; the image of [width] x [height] goes to
-/// [outputPath] (PNG), the generator works in [workFolder]
+/// [outputPath] (PNG), the generator works in [workFolder], within [graphicsBudget] bytes of the card when given
 class GeneratorRequest {
   const GeneratorRequest({
     required this.controlPath,
@@ -114,7 +114,7 @@ class GeneratorRequest {
     this.height = PanoV1.generationHeight,
     this.guidance = PanoV1.guidance,
     this.loraStrength = PanoV1.loraStrength,
-    this.referenceMaxPixels,
+    this.graphicsBudget,
   });
 
   final String controlPath;
@@ -128,19 +128,22 @@ class GeneratorRequest {
   final double guidance;
   final double loraStrength;
 
-  /// The pixels the reference made from the control frame is capped at, for a card with less memory free
-  /// (gpu_budget.dart, PanoramaReference.reduced); null for the generator's own reference
-  final int? referenceMaxPixels;
+  /// The budget of the card the generator is given, on Windows only: the free memory the queue read just before the
+  /// job, less the reserve of sd-cli (gpu_budget.dart, panoramaGeneratorBudget, which says why); null for the free
+  /// memory it reads itself, less its own reserve. sd-cli fixes its budget at its start either way.
+  final int? graphicsBudget;
 }
 
-/// Where a generation or an upscale is: the step done of [steps], and the seconds a step takes when the generator
-/// says it
+/// Where a generation or an upscale is: the step done of [steps], the seconds a step takes when the generator says it,
+/// and the [segments] it cut its work into when the memory it may use on the card is short (sd-cli's graph cut: slower,
+/// the same image), null when it runs it whole
 class GeneratorProgress {
-  const GeneratorProgress(this.step, this.steps, {this.secondsPerStep});
+  const GeneratorProgress(this.step, this.steps, {this.secondsPerStep, this.segments});
 
   final int step;
   final int steps;
   final double? secondsPerStep;
+  final int? segments;
 
   /// The time left at this pace, null until the generator gave its pace
   Duration? get remaining => secondsPerStep == null
@@ -152,13 +155,15 @@ class GeneratorProgress {
       other is GeneratorProgress &&
       other.step == step &&
       other.steps == steps &&
-      other.secondsPerStep == secondsPerStep;
+      other.secondsPerStep == secondsPerStep &&
+      other.segments == segments;
 
   @override
-  int get hashCode => Object.hash(step, steps, secondsPerStep);
+  int get hashCode => Object.hash(step, steps, secondsPerStep, segments);
 
   @override
-  String toString() => 'GeneratorProgress($step of $steps, ${secondsPerStep}s)';
+  String toString() =>
+      'GeneratorProgress($step of $steps, ${secondsPerStep}s${segments == null ? '' : ', $segments segments'})';
 }
 
 /// Generates the panorama around a photo
@@ -167,10 +172,11 @@ abstract interface class GeneratorBackend {
   String get generatorSha256;
   String get loraSha256;
 
-  /// Writes the image of [request]. [cancel] stops the generator within a second. Throws [BackendException]:
-  /// gpuOutOfMemory, gpuBusy (the generator had too little of the memory of the card free and would spoil the image),
-  /// generatorStalled (180 s without a line), generatorFailed (with the end of the error output), outputRejected (the
-  /// image written is grey, has green left or the wrong size; it is deleted), cancelled.
+  /// Writes the image of [request]. [cancel] stops the generator within a second. A generator short of the memory of
+  /// the card cuts its work into segments and goes on, slower, the steps it reports saying so
+  /// ([GeneratorProgress.segments]). Throws [BackendException]: gpuOutOfMemory (even in segments), generatorStalled
+  /// (180 s without a line), generatorFailed (with the end of the error output), outputRejected (the image written is
+  /// grey, has green left or the wrong size; it is deleted), cancelled.
   Future<void> generate(
     GeneratorRequest request, {
     required NativeCancelFlag cancel,

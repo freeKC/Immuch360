@@ -9,7 +9,8 @@
 // as flat, a decoding that falls short plays the transcoded stream instead, a renderer that draws nothing goes flat
 // (or a tier down for its intermediate texture); a step of the chain that fails while it loads is not lost; a page
 // closed while a raw file is prepared leaves nothing of it on the pooled player; a pair paused on screen keeps both its
-// players when a job on the graphics card lets go of the others (issue #13).
+// players when a job on the graphics card lets go of the others (issue #13); a hand over of this page's player and a
+// lost picture of it end the pair without waiting for the turn of the pool they run in (lot 13b).
 
 import 'dart:async';
 import 'dart:io';
@@ -745,6 +746,73 @@ void main() {
       await page(tester).controller.play();
       await settle(tester);
       expect(second.playing.value, isTrue, reason: 'it plays again with this one');
+      await close(tester);
+    });
+
+    testWidgets('the pool hands the player of this page to another page while it pairs: the second player goes back '
+        'without waiting for the turn of the pool, and the pool goes on (lot 13b)', (tester) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
+      await settle(tester);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
+      final [first, second] = players.made;
+      // Paused here, the second player still busy (a frame of its own on its way): the player of this page is the one
+      // that does not play, which the pool hands over first
+      await page(tester).controller.pause();
+      await settle(tester);
+      second.playing.value = true;
+
+      // The other page gets it (PlayerPool._takeFrom), the owner told inside the turn, and the owner's unprepare ends
+      // the pair
+      final other = players.pool.lease(PlayerKind.playback, label: 'viewer');
+      PlaybackEngine? taken;
+      unawaited(other.acquire().then((engine) => taken = engine));
+      await settle(tester);
+      await settle(tester);
+
+      expect(taken, same(first), reason: 'the hand over ended: it did not wait for the turn of the second player');
+      expect(channel.partners.last.$2, isNull, reason: 'the pair ended');
+      expect(second.calls, contains('stop'));
+      expect(mpv, containsAllInOrder(['vid=auto', 'aid=auto', 'sid=auto', 'speed=1']));
+      // The turn queued behind the hand over parked the second player, and the turns after it go on
+      expect(players.pool.idleCount(PlayerKind.playback), 1);
+      final third = players.pool.lease(PlayerKind.playback, label: 'network video');
+      PlaybackEngine? next;
+      unawaited(third.acquire().then((engine) => next = engine));
+      await settle(tester);
+      expect(next, isNotNull);
+      expect(first.disposed, isFalse);
+
+      unawaited(other.release());
+      unawaited(third.release());
+      await settle(tester);
+      await close(tester);
+    });
+
+    testWidgets('the player of this page loses its picture while it pairs: the pool replaces it without waiting for '
+        'the turn of the second player, and the pair plays again (lot 13b)', (tester) async {
+      await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
+      await settle(tester);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
+      final [first, second] = players.made;
+      await page(tester).controller.seekTo(3000);
+      await settle(tester);
+
+      // A driver update or a reset of the graphics card: PlayerPool._discard runs the owner's suspend inside its turn
+      first.textureLost.value = true;
+      await settle(tester);
+      await settle(tester);
+
+      expect(first.disposed, isTrue, reason: 'the turn of the discard ended');
+      expect(second.calls, contains('stop'), reason: 'the second player went back to the pool first');
+      // The page takes a player again, the second one parked meanwhile, and pairs again with a new second player
+      expect(players.made, hasLength(3));
+      expect(second.calls.where((call) => call.startsWith('open $file at 3000')), isNotEmpty);
+      expect(players.made.last.calls.where((call) => call.startsWith('open $file')), isNotEmpty);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
+      expect(channel.partners.last.$2, isNotNull, reason: 'the pair drawn again');
+      channel.counts = pairedSecond;
+      await measureStack(tester, second, dropped: 0);
+      expect(page(tester).rawStep?.mode, RawMode.paired);
       await close(tester);
     });
 
