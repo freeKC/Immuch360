@@ -235,17 +235,11 @@ void main() {
   // The first lens file of a split pair: the trailer of the camera is on it only
   final rawFirstLens = insta360File([insta360Record(1, x3Metadata(), format: 1)], body: rawOneLens);
   // An X3 ride with its motion: the frames and the gyroscope of the real X3 slice in the trailer, beside the calibration
-  final rawRide = insta360File(
-    [
-      insta360Record(4, insta360X3MotionSlice.frames),
-      insta360Record(3, insta360X3MotionSlice.imu),
-      insta360Record(1, [
-        ...x3Metadata(),
-        ...pbVarintField(24, insta360X3MotionSlice.firstFrameTimestamp),
-      ], format: 1),
-    ],
-    body: mp4File(mp4Moov([mp4VideoTrack(const [], width: 5760, height: 2880)])),
-  );
+  final rawRide = insta360File([
+    insta360Record(4, insta360X3MotionSlice.frames),
+    insta360Record(3, insta360X3MotionSlice.imu),
+    insta360Record(1, [...x3Metadata(), ...pbVarintField(24, insta360X3MotionSlice.firstFrameTimestamp)], format: 1),
+  ], body: mp4File(mp4Moov([mp4VideoTrack(const [], width: 5760, height: 2880)])));
 
   setUpAll(() async {
     // Real HTTP to the test server: the widget tests answer every request with an error otherwise

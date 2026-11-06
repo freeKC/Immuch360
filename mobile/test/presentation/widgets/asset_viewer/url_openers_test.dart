@@ -35,8 +35,8 @@ import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
-import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -298,7 +298,9 @@ RawVideoPlan _sharePlan(RawMediaKind kind, RawVideoInput input, {int goProFace =
   calibration: kind == RawMediaKind.insta360Video
       ? nominalX3(2880).copyWith(downBody: const [0.99, 0.12, -0.09])
       : null,
-  eac: kind == RawMediaKind.goProVideo ? GoProEacGeometry(trackWidth: goProFace * 3 + 64, trackHeight: goProFace) : null,
+  eac: kind == RawMediaKind.goProVideo
+      ? GoProEacGeometry(trackWidth: goProFace * 3 + 64, trackHeight: goProFace)
+      : null,
   url: input.url,
   trackOrderSource: 'single',
   motionTrackInput: input,
@@ -546,7 +548,11 @@ void main() {
       expect(opened, isTrue);
       final url = plan.url;
       // The switch shows as the player opens, the table follows: the playback never waits for it
-      expect(sphericalApi.calls, ['stabilization $url true true true', 'open $url', 'stabilization $url true true false']);
+      expect(sphericalApi.calls, [
+        'stabilization $url true true true',
+        'open $url',
+        'stabilization $url true true false',
+      ]);
       expect(sphericalApi.tableFrames.single, insta360X4StabilizationSlice.camera.length);
       expect(sphericalApi.summaries.single, contains('frames'));
       expect(sphericalApi.rawProjections.single, plan.toNativeJson(), reason: 'the plan of the raw video goes along');
@@ -594,7 +600,11 @@ void main() {
       await pump(tester, stabilization: true);
       // A DLNA or Plex server that does not tell the size, a server that answers a range with the whole file, a device
       // that sends its files from their start only
-      final shares = [_Share({'/a.insv': x4}, sizeKnown: false), _WholeFileShare({'/a.insv': x4}), _FromStartShare({'/a.insv': x4})];
+      final shares = [
+        _Share({'/a.insv': x4}, sizeKnown: false),
+        _WholeFileShare({'/a.insv': x4}),
+        _FromStartShare({'/a.insv': x4}),
+      ];
 
       for (final share in shares) {
         sphericalApi.calls.clear();
