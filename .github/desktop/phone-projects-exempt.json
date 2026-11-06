@@ -555,9 +555,25 @@
     "blob": "98bf447a264a700196aa94270c45916032417769",
     "reason": "TV lot (e66574872): a 360 video the phone app cannot play is written to the Logs page"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/PlayerStabilization.kt": {
+    "blob": "2aca75d13b8c9b535a0ccd4d7e7ff819499479f3",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the inbox of the last tables, the rules of the player switch and of the CAMM track"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideoActivity.kt": {
-    "blob": "7344d2b76a62722d728fe7864ff5b0664259c8ec",
-    "reason": "TV lot (5e7bf8e27, e66574872, cced20e83): the 360 video player of the phone app and its error view; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the 360 player starts a streamed video from its link, with the retries and the buffering line of the link"
+    "blob": "9aa45fc1a8c6c118e9212bd14272a9c3b2fb6022",
+    "reason": "TV lot (5e7bf8e27, e66574872, cced20e83): the 360 video player of the phone app and its error view; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the 360 player starts a streamed video from its link, with the retries and the buffering line of the link; Video stabilization (feat-video-stabilization, issue 14, lot c): the table of the camera turns each stitched frame through the camera motion listener, the switch in the top bar and the fading notice"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideoApiImpl.kt": {
+    "blob": "9b771c61fc7a801f1198fe98878c3fcfa2744f28",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): setStabilization of the Pigeon API, the table and the setting handed to the player"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/StabilizationTable.kt": {
+    "blob": "141c4b82f4a12449fe5d6e4ec3b9983e58f5bc1b",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the correction table: validation, search by presentation time, slerp, angle axis"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/StabilizedFrames.kt": {
+    "blob": "236590f8007b36f51e551de3a1a45016855285ea",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the rotation of each frame handed to the camera motion listener before the frame, one reset when the table goes"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/splatviewer/SplatViewerActivity.kt": {
     "blob": "af4ce35b868f9275ec8766985585c4dea623f7e7",
@@ -578,6 +594,14 @@
   "mobile/android/app/src/main/res/drawable-television/background.png": {
     "blob": "e815fd621f1968ac104bc8b687d1d19a818d00a8",
     "reason": "TV lot (651962690): dark launch background of the app on a TV"
+  },
+  "mobile/android/app/src/main/res/drawable/ic_video_stabilization.xml": {
+    "blob": "5d53d332f51bdd2f3e4a705a5fc98ddba50dc834",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the icon of the switch in the top bar of the player"
+  },
+  "mobile/android/app/src/main/res/layout/activity_spherical_video.xml": {
+    "blob": "01866bf0415e18e0212ff6251b0d60bb59426c6a",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the switch in the top bar of the player and its notice"
   },
   "mobile/android/app/src/main/res/layout/dji_flight_circle.xml": {
     "blob": "fe93f9bac633f8086bed25a0a5307dd82cb2794b",
@@ -1010,6 +1034,14 @@
   "mobile/android/app/src/quest/kotlin/app/alextran/immich/relief/DepthEstimators.kt": {
     "blob": "a23329349881097db0918c485209bb3a0b53d801",
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the depth model on LiteRT CompiledModel, the GPU in fp32 or the CPU on 4 threads, quest flavour only"
+  },
+  "mobile/android/app/src/test/kotlin/android/opengl/Matrix.kt": {
+    "blob": "f4fd675b2c54842747d0d99b6c742478b7a23cbf",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): a test copy of the four methods of android.opengl.Matrix that Media3 calls, for the unit tests"
+  },
+  "mobile/android/app/src/test/kotlin/androidx/media3/exoplayer/video/spherical/RotationQueueForTests.kt": {
+    "blob": "bf3ac09ee52a354368d8aab448dbf44641a967ba",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): reaches the package private FrameRotationQueue of Media3 in the unit tests"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/QuestStickPagingTest.kt": {
     "blob": "45985395af6e28d26010b33a95c1db2484a4e54a",
@@ -1555,6 +1587,18 @@
     "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
     "reason": "TV lot (e66574872): unit tests of PlaybackReport, run by the Kotlin unit tests job"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/StabilizationSwitchTest.kt": {
+    "blob": "78494c58e464ac2c666484200dc343ffba175625",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): unit tests of the switch rules, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/StabilizationTableTest.kt": {
+    "blob": "fd2f7bf2a58dac3acd192bdcb948dcba52fa36bf",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): unit tests of the correction table and of its sign, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/StabilizedFramesTest.kt": {
+    "blob": "d35ddbb34f931385f025b9a44eee2b52a76b1106",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): unit tests of the frames handed to Media3, run by the Kotlin unit tests job"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/splatviewer/SplatViewerRulesTest.kt": {
     "blob": "fdbabb327a151fe333fddf9d7b1127d34ddc7aa3",
     "reason": "Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules"
@@ -1638,6 +1682,10 @@
   "mobile/ios/Runner/Info.plist": {
     "blob": "f0c92b00fba8546a9c0e4fa6193116b733213477",
     "reason": "Sign in with your phone (feat-qr-pairing): the scanner in the camera text, _immuch360-pair._tcp in the Bonjour services, the local network text, the immuch360 URL scheme"
+  },
+  "mobile/ios/Runner/Spherical/SphericalVideoApiImpl.swift": {
+    "blob": "cc13e7afce92b5a6733f1c4961295dc5e9ad8afb",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the iOS stub of setStabilization of the Pigeon API (the iOS player applies no table yet)"
   },
   "mobile/packages/native_video_player/android/src/main/kotlin/me/albemala/native_video_player/NativeVideoPlayerPlugin.kt": {
     "blob": "0c6e468a8a2ffbe6700f9683ee09f92136e68c5c",
