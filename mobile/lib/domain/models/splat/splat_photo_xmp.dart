@@ -103,6 +103,7 @@ final class SplatPhotoXmp {
     this.created,
     this.creatorTool,
     this.description,
+    this.splatQuality,
   });
 
   final int formatVersion;
@@ -140,6 +141,11 @@ final class SplatPhotoXmp {
 
   /// dc:description, x-default: the caption Immich shows under the photo
   final String? description;
+
+  /// Immuch360:SplatQuality, the quality a scene the splat maker made was chosen at (lot Q1): "headset", "detailed" or
+  /// "maximum" (SplatQuality); null for a scene of another tool, or when the save was not told it. Optional: a reader
+  /// of release 41 ignores it
+  final String? splatQuality;
 
   /// Made by a newer version: a FormatVersion past 1, another payload than an SPZ, an SPZ past version 4. Shown as a
   /// photo, "made by a newer version of Immuch360"
@@ -205,6 +211,7 @@ final class SplatPhotoXmp {
         if (splatSourceSha256 case final value?) XmpAttribute('$prefix:SplatSourceSha256', value),
         if (splatUp case final value?) XmpAttribute('$prefix:SplatUp', value),
         if (splatPoster case final value?) XmpAttribute('$prefix:SplatPoster', value.name),
+        if (splatQuality case final value?) XmpAttribute('$prefix:SplatQuality', value),
       ],
       description: description,
     );
@@ -236,6 +243,7 @@ final class SplatPhotoXmp {
       created: field('Created'),
       creatorTool: xmpValueOf(xmp, xmpPrefixOf(xmp, xmpBasicNamespace) ?? 'xmp', 'CreatorTool'),
       description: xmpDescriptionOf(xmp, xmpPrefixOf(xmp, dublinCoreNamespace) ?? 'dc'),
+      splatQuality: field('SplatQuality'),
     );
   }
 
@@ -265,6 +273,7 @@ final class SplatPhotoXmp {
     created: created,
     creatorTool: creatorTool,
     description: description ?? this.description,
+    splatQuality: splatQuality,
   );
 
   @override
@@ -284,7 +293,8 @@ final class SplatPhotoXmp {
       other.origin == origin &&
       other.created == created &&
       other.creatorTool == creatorTool &&
-      other.description == description;
+      other.description == description &&
+      other.splatQuality == splatQuality;
 
   @override
   int get hashCode => Object.hash(
@@ -303,6 +313,7 @@ final class SplatPhotoXmp {
     created,
     creatorTool,
     description,
+    splatQuality,
   );
 
   @override

@@ -230,7 +230,9 @@ void main() {
     test('the key of its settings tells two scenes apart, the copy for other apps aside', () {
       const object = SplatSettings(subject: SplatSubject.object);
 
-      expect(const SplatSettings().key, 'splat-v1;place;20000;150000;3;1024;1024');
+      // The quality and the size of the images prepared since lot Q1: a folder of Headset holds images of 1 600 pixels
+      expect(const SplatSettings().key, 'splat-v1;place;20000;150000;3;1024;1024;headset;1600');
+      expect(SplatSettings.of(SplatQuality.detailed).key, 'splat-v1;place;30000;1000000;3;1920;1024;detailed;1920');
       expect(object.key, isNot(const SplatSettings().key));
       expect(const SplatSettings(keepPly: true).key, const SplatSettings().key);
       expect(const SplatSettings(keepPly: true), isNot(const SplatSettings()));

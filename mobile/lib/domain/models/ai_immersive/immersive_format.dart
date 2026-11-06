@@ -286,6 +286,14 @@ const splatNameSuffix = '_splat';
 const splatFileExtension = '.spz';
 const splatPlyExtension = '.ply';
 
+/// What follows the name of the .spz of a scene of Detailed or Maximum in the name of its copy for the headset, before
+/// the extension: "salon_splat.headset.spz" beside "salon_splat.spz" (lot Q1)
+const splatHeadsetCopySuffix = '.headset';
+
+/// The name of the copy for the headset beside the .spz named [spzName]: "salon_splat (1).spz" gives
+/// "salon_splat (1).headset.spz"
+String splatHeadsetCopyNameOf(String spzName) => '${fileStem(spzName)}$splatHeadsetCopySuffix$splatFileExtension';
+
 /// The suffixes of the names of the versions of an original: a 3D photo, a 360° 3D panorama, a 3D scene, a 360°
 /// panorama and the 3D version of a 360° photo (isDerivedNameCandidate tries each, so their order does not matter)
 const derivedNameSuffixes = [
@@ -611,6 +619,30 @@ abstract final class Relief360V1 {
 /// and so where the headset places it (a place opens around the user, an object in front of them)
 enum SplatSubject { place, object }
 
+/// The quality of a splat scene, chosen in its dialog (lot Q1, FreeKC's decision of 5 November 2026, from the measure
+/// store/m2/splat-maker-2026-11-01/quality-measure-2026-11-05.md on the RTX 4060 Laptop):
+///  - [headset]: splat-v1 as it was, 20 000 steps, at most 150 000 gaussians, images of 1 024 pixels, one .spz for the
+///    headset, phones, tablets and computers;
+///  - [detailed]: 30 000 steps, at most 1 000 000 gaussians, the images prepared and trained at 1 920 pixels; the .spz
+///    holds the whole scene, for computers and recent phones, and the headset gets a reduced copy beside it;
+///  - [maximum]: Detailed at the definition of the source, as far as the memory of the computer holds the images
+///    Brush decodes whole (SplatV1.brushMemoryBase and after), with Brush's own ceiling of gaussians; the same as
+///    Detailed when that comes back to 1 920 pixels (a video of 1080p, photos no larger, or a computer whose memory is
+///    short for more).
+/// The measure: Detailed and Maximum 4.3 to 5.8 times the training of Headset, 0.5 to 5.2 dB better on the photos
+/// (median 3.3 dB), the gaussians decided by the scene rather than by the cap (126 000 for an object, 721 000 to
+/// 846 000 for a place)
+enum SplatQuality {
+  headset,
+  detailed,
+  maximum;
+
+  /// Whether the .spz holds the whole scene and the headset gets its own copy beside it
+  bool get hasHeadsetCopy => this != headset;
+
+  static SplatQuality? fromName(String? name) => values.where((quality) => quality.name == name).firstOrNull;
+}
+
 /// The settings of splat-v1, the splat scene a computer rebuilds from 20 to 200 photos or one video: the poses of the
 /// cameras by COLMAP on the processor, the training by Brush on the graphics card, a copy for the headset trained to at
 /// most [maxGaussians] gaussians and written as SPZ version 2 (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md,
@@ -692,6 +724,54 @@ abstract final class SplatV1 {
   static const maxGaussians = 150000;
   static const shDegree = 3;
   static const trainingResolution = 1024;
+
+  /// The quality Detailed (SplatQuality.detailed): [detailedSteps] steps, at most [detailedMaxGaussians] gaussians, the
+  /// photos and the frames prepared and trained at [detailedResolution] pixels on their longest side (prepared at
+  /// [photoLongSide] the setting would change nothing: lot Q1). Maximum: the same at the definition of the source the
+  /// memory holds, up to Brush's own ceiling of [maximumMaxGaussians] (its default; no scene of the measure came near
+  /// it, nor near a million)
+  static const detailedSteps = 30000;
+  static const detailedMaxGaussians = 1000000;
+  static const detailedResolution = 1920;
+  static const maximumMaxGaussians = 10000000;
+
+  /// The copy for the headset of a scene of Detailed or Maximum: at most [headsetGaussians], the strongest ones (the
+  /// score of the reducers of the headset, opacity times volume), after the crop of an object; the Quest was measured
+  /// at 150 000 (84 and 65 images a second of 90)
+  static const headsetGaussians = maxGaussians;
+
+  /// The training of Detailed and Maximum at [detailedResolution] against that of Headset, for the time told before it
+  /// starts: 4.3 (an object), 4.6 (a room) and 5.8 (a place in 8K) in the measure, the steps included; a larger
+  /// definition by its pixels
+  static const detailedTrainingFactor = 5.0;
+
+  /// The memory model of Brush 0.3 in the measure, which decodes every image whole before it trains: its private memory
+  /// some [brushMemoryBase] plus [brushMemoryPerPixel] bytes a pixel of the images it loads plus
+  /// [brushMemoryPerGaussian] a gaussian; its graphics memory some [brushCardBase] plus [brushCardPerGaussian] a
+  /// gaussian. Maximum plans for [plannedGaussians] gaussians (846 000 at most in the measure). 8K frames took 11.4 GB
+  /// in 26 s on the PC of 16 GB of the measure and emptied the memory of Windows: never images the computer cannot hold
+  static const brushMemoryBase = 1300 * 1024 * 1024;
+  static const brushMemoryPerPixel = 5;
+  static const brushMemoryPerGaussian = 2200;
+  static const brushCardBase = 1200 * 1024 * 1024;
+  static const brushCardPerGaussian = 2000;
+  static const plannedGaussians = 1000000;
+
+  /// What Maximum may take of the memory: half of the physical memory, and of the memory free when the dialog opens
+  /// less [colmapMemoryReserve]; its definition is a multiple of [maximumResolutionStep]
+  static const maximumMemoryShare = 0.5;
+  static const maximumResolutionStep = 64;
+
+  /// The sizes told before a scene is made: [spzBytesPerGaussian] in the .spz (22.6 to 25.3 measured, degree 3),
+  /// [plyBytesPerGaussian] in the .ply (59 floats); the gaussians of a scene of Detailed or Maximum
+  /// ([placeGaussians] for a place, 721 000 to 846 000 measured; [objectGaussians] for an object, 126 000 to 131 000);
+  /// the copy for the headset of an object, cropped to it ([headsetObjectGaussians]: 40 365 for Headset, 46 432 and
+  /// 47 945 for Detailed and Maximum, 1.0 to 1.2 MB)
+  static const spzBytesPerGaussian = 24;
+  static const plyBytesPerGaussian = 59 * 4;
+  static const placeGaussians = 850000;
+  static const objectGaussians = 150000;
+  static const headsetObjectGaussians = 48000;
 
   /// A program that writes nothing for this long is stopped: an exhaustive block of COLMAP took up to 31 s, Brush
   /// writes a line every 200 steps (2 to 8 s)

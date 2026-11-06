@@ -983,6 +983,21 @@ The share of the app is read on Windows from the counter the Task Manager shows 
 - **On a laptop**, the app asks the drivers for the dedicated card, for 360° videos (see [360° videos and the graphics chip](#360-videos-and-the-graphics-chip)), so its own memory counts on the card the panorama uses: 0.2 GiB at rest and up to 0.9 GiB after a 360° video, measured on desktop build 21. It lets go of what it can before a panorama. "Power saving" for `immuch360.exe` in the Windows settings should keep the app on the integrated chip while you make panoramas; this was not checked on the test laptop.
 - **Close what holds the card**: games, 3D apps, a browser playing a video, another copy of stable-diffusion.cpp or a local AI model.
 
+### Splat scenes: the Quality choice
+
+"Make a splat scene (AI)" (see the [README](../../README.md#make-a-splat-scene-from-your-photos-or-a-video-ai)) asks for a Quality, under "What did you film?". Each line names the devices it is made for, with the time it would take on this computer and the size of its file. Headset is chosen each time the box opens: a scene of half an hour is a choice you make on purpose.
+
+| Quality | Made for | What it trains | Measured on an RTX 4060 Laptop, a one minute 1080p video |
+|---|---|---|---|
+| **Headset** | Meta Quest, phone, tablet, PC | 20,000 steps, at most 150,000 gaussians, images of 1,024 pixels | about 9 minutes from the button to the file (5 to 6 to train); .spz of 1 to 4 MB |
+| **Detailed** | PC, recent phone; the headset gets a reduced copy | 30,000 steps, at most a million gaussians, the photos and frames prepared and trained at 1,920 pixels | 27 to 31 minutes to train (4.3 to 5.8 times Headset); .spz of the whole scene 3 MB for an object, 19 to 20 MB for a place |
+| **Maximum** | PC with a graphics card; the headset and the phone get a reduced copy | Detailed at the definition of your photos or video, as far as this computer's memory holds it | the same as Detailed for a 1080p video or photos no larger |
+
+- **Which to choose.** Headset for the headset, and whenever you are in a hurry. Detailed when you will look at the scene closely on a computer or a recent phone: fine text, a grid, a screw are sharp where Headset blurs them (0.5 to 5.2 dB closer to the photos in the measure, 3.3 dB in the middle). The number of gaussians is decided by the scene, not by the cap: about 130,000 for an object, 720,000 to 850,000 for a place.
+- **The copy for the headset.** With Detailed and Maximum, `<name>_splat.spz` holds the whole scene, and `<name>_splat.headset.spz` beside it is for the headset: at most 150,000 gaussians, the strongest ones (the ones a headset would keep itself), an object cropped around it first so that it opens in front of you. Open that one in the Quest. The Done line of the panel says both counts. The .ply, when you ask for it, always holds the whole scene, about 236 bytes a gaussian (30 MB for 130,000, 200 MB for 850,000).
+- **Why Maximum is sometimes greyed.** The training program decodes every image whole before it starts: the frames of an 8K video at their own size took 11.4 GB in 26 seconds on a computer of 16 GB, and emptied its memory. So the app counts what the images would take (some 1.3 GB, plus 5 bytes a pixel, plus 2.2 KB a gaussian for a million of them) and prepares them at the largest size that fits in half the computer's memory and in the memory free when the box opens. When that comes back to 1,920 pixels, the line says "Same as Detailed on this computer". Closing other programs, or a computer with more memory, can raise it.
+- **The time.** The box starts from the times of the measure and, once this computer made a scene, from its own: placing the photos takes the same at every quality, the training of Detailed about five times that of Headset, Maximum more again by its pixels. A Maximum scene leaves the training time the box starts from as it was: how that time grows with the pixels is not measured yet. Each is an estimate: "about".
+
 ### Compared with the phone apps
 
 - **Backup runs while the app is open** (or minimised), not in the background with the window closed. Closing the window while uploads run, or while the computer is shared, asks first.

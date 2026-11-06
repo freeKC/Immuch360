@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/models/splat/splat_photo_xmp.dart';
+import 'package:immich_mobile/domain/services/splat_photo/splat_photo_exif.dart';
+import 'package:immich_mobile/domain/services/splat_photo/splat_photo_writer.dart';
 
 import 'splat_photo_fixtures.dart';
 
@@ -31,6 +33,39 @@ void main() {
       expect(xml, contains('Immuch360:FormatVersion="1"'));
       expect(xml, contains('Immuch360:Kind="GaussianSplat"'));
       expect(SplatPhotoXmp.parse(xml), packet);
+    });
+
+    test('the quality of a scene of the splat maker, when known: written, read back, kept by copyWith (lot Q1)', () {
+      expect(packet.toXml(), isNot(contains('SplatQuality')), reason: 'a scene of another tool says none');
+      const detailed = SplatPhotoXmp(
+        splatVersion: 2,
+        splatGaussians: 754752,
+        splatShDegree: 3,
+        splatLength: 18115248,
+        splatSha256: sum,
+        splatName: 'salon_splat.spz',
+        origin: splatPhotoOriginReconstructed,
+        splatQuality: 'detailed',
+      );
+      final xml = detailed.toXml();
+      expect(xml, contains('Immuch360:SplatQuality="detailed"'));
+      expect(SplatPhotoXmp.parse(xml), detailed);
+      expect(SplatPhotoXmp.parse(xml)!.copyWith(description: 'x').splatQuality, 'detailed');
+      expect(detailed, isNot(packet));
+      // The packet of a save told it
+      final saved = splatPhotoXmpOf(
+        head: const SplatHead(format: SplatFormat.spz, formatVersion: 2, gaussians: 150000, shDegree: 3),
+        length: 3612448,
+        sha256: sum,
+        meta: SplatPhotoMeta(
+          name: 'salon_splat.headset.spz',
+          date: SplatPhotoDate.of(DateTime(2026, 11, 5, 23)),
+          software: 'Immuch360 3.3.0',
+          creatorTool: 'Immuch360 3.3.0 (windows)',
+          quality: 'maximum',
+        ),
+      );
+      expect(saved.splatQuality, 'maximum');
     });
 
     test('ends with 4 KiB of whitespace before the end of the packet, in lines of 100', () {

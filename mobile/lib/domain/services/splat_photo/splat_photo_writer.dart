@@ -218,6 +218,7 @@ class SplatPhotoMeta {
     this.origin = splatPhotoOriginUnknown,
     this.latitude,
     this.longitude,
+    this.quality,
   });
 
   /// SplatName: the name of the SPZ, "salon_splat.spz" for the PLY "salon.ply" converted
@@ -242,6 +243,9 @@ class SplatPhotoMeta {
   final String origin;
   final double? latitude;
   final double? longitude;
+
+  /// SplatQuality: the quality of a scene of the splat maker ("headset", "detailed", "maximum"), when the save knows it
+  final String? quality;
 }
 
 /// The packet of a splat photo of the SPZ whose head is [head], [length] bytes summing to [sha256], told by [meta]
@@ -264,6 +268,7 @@ SplatPhotoXmp splatPhotoXmpOf({
   created: meta.date.iso,
   creatorTool: meta.creatorTool,
   description: meta.description,
+  splatQuality: meta.quality,
 );
 
 /// The head of a splat photo (everything before its scene) for [poster], the scene told by [xmp]

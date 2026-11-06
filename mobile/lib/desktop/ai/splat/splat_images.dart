@@ -1,6 +1,7 @@
 // The preparation of the images of a splat scene as the app gives it to the engine (splat_engine.dart, lot SP6): the
-// photos of lot SP5 (splat_inputs.dart: 200 at most spread in time, turned upright, reduced to 1 600 pixels, the
-// blurred ones left out, one folder per camera) or the frames of the video (video_frames.dart), taken by a player of
+// photos of lot SP5 (splat_inputs.dart: 200 at most spread in time, turned upright, reduced to the size of the quality,
+// 1 600 pixels for Headset and 1 920 for Detailed, the definition of the source the memory holds for Maximum: lot Q1,
+// the blurred ones left out, one folder per camera) or the frames of the video (video_frames.dart), taken by a player of
 // the app's libmpv made for the job and closed after it (mpv_frame_source.dart: one does not open again once closed).
 // Apart from the engine because it needs Flutter: the engine runs in a program compiled without it too.
 
@@ -14,13 +15,17 @@ import 'package:immich_mobile/desktop/ai/splat/splat_inputs.dart';
 import 'package:immich_mobile/desktop/ai/splat/video_frames.dart';
 
 /// The images of a job as the app prepares them (see the top of this file); [frameSource] makes the source of the
-/// frames of each video, [decodeOther] decodes a photo the JPEG codec does not read (the engine of the app by default)
-SplatImagesMaker appSplatImages({SplatFrameSource Function()? frameSource, OtherPhotoDecoder? decodeOther}) =>
-    (members, {required video, required imagesFolder, required cancel, required onProgress}) async {
+/// frames of each video for frames of a long side, [decodeOther] decodes a photo the JPEG codec does not read (the
+/// engine of the app by default)
+SplatImagesMaker appSplatImages({
+  SplatFrameSource Function(int longSide)? frameSource,
+  OtherPhotoDecoder? decodeOther,
+}) =>
+    (members, {required video, required imagesFolder, required longSide, required cancel, required onProgress}) async {
       try {
         final SplatInputs inputs;
         if (video) {
-          final source = (frameSource ?? MpvSplatFrameSource.new)();
+          final source = (frameSource ?? mpvSplatFrameSourceOf)(longSide);
           inputs = await takeMemberFrames(
             members.single,
             source: source,
@@ -32,6 +37,7 @@ SplatImagesMaker appSplatImages({SplatFrameSource Function()? frameSource, Other
           inputs = await prepareSplatPhotos(
             planSplatPhotos(members).taken,
             imagesFolder: imagesFolder,
+            longSide: longSide,
             cancel: cancel,
             onProgress: onProgress,
             decodeOther: decodeOther ?? decodeWithEngine,
@@ -42,3 +48,7 @@ SplatImagesMaker appSplatImages({SplatFrameSource Function()? frameSource, Other
         throw BackendException(error.code, error.message ?? error.code.name);
       }
     };
+
+/// The frames of the app's libmpv at [longSide] pixels, a larger video scaled as it is decoded beyond twice that
+SplatFrameSource mpvSplatFrameSourceOf(int longSide) =>
+    MpvSplatFrameSource(longSide: longSide, maxDecodedSide: 2 * longSide);

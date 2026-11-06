@@ -213,6 +213,7 @@ Future<SplatPrepared> _copyPhotos(
   List<SplatMember> members, {
   required bool video,
   required String imagesFolder,
+  required int longSide,
   required NativeCancelFlag cancel,
   required void Function(int done, int total) onProgress,
 }) async {

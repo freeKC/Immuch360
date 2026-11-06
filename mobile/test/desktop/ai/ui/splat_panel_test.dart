@@ -563,6 +563,111 @@ void main() {
     expect(inRow('conversion-22', find.byKey(const Key('ai_job_splat_cropped'))), findsNothing);
   });
 
+  testWidgets('a scene of Detailed: the Done line says both counts, the scene and its copy for the headset beside it; '
+      'the crop and the headset line said of the copy (lot Q1)', (tester) async {
+    sizes['/photos/salon/salon_splat.spz'] = 18115248;
+    sizes['/photos/salon/objet_splat.spz'] = 3024000;
+    await pumpPanel(
+      tester,
+      [
+        _splat(
+          'conversion-30',
+          details: const SplatResultDetails(
+            gaussians: 754752,
+            images: 125,
+            placed: 125,
+            subject: SplatSubject.place,
+            scale: 0.42,
+            quality: SplatQuality.detailed,
+            headsetGaussians: 150000,
+            headsetBytes: 3612448,
+          ),
+        ),
+        _splat(
+          'conversion-31',
+          fromVideo: true,
+          written: '/photos/salon/objet_splat.spz',
+          details: const SplatResultDetails(
+            gaussians: 126010,
+            images: 130,
+            placed: 129,
+            subject: SplatSubject.object,
+            scale: 0.54,
+            fromVideo: true,
+            upright: SplatUpright.supportPlane,
+            cropped: 79578,
+            plyBytes: 29700000,
+            quality: SplatQuality.detailed,
+            headsetGaussians: 46432,
+            headsetBytes: 1118000,
+          ),
+        ),
+      ],
+      infos: {'conversion-30': ConversionJobInfo(asset: _photo('IMG_0000.jpg'), isNetwork: true)},
+    );
+
+    expect(
+      inRow(
+        'conversion-30',
+        find.text(
+          'Done: 754,752 gaussians, 17.3 MiB, from 125 of 125 photos; 150,000 of them in the copy for the headset, '
+          'salon_splat.headset.spz (3.4 MiB)',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(inRow('conversion-30', find.byKey(const Key('ai_job_splat_cropped'))), findsNothing);
+    expect(
+      inRow(
+        'conversion-31',
+        find.text(
+          'Done: 126,010 gaussians, 2.9 MiB, from 129 of 130 frames; 46,432 of them in the copy for the headset, '
+          'objet_splat.headset.spz (1.1 MiB)',
+        ),
+      ),
+      findsOneWidget,
+    );
+    // The .spz keeps the whole scene: the crop is the copy's
+    expect(
+      inRow(
+        'conversion-31',
+        find.text(
+          'Cropped to the object for the headset: 46,432 of 126,010 gaussians kept, so that it opens in front of '
+          'you.',
+        ),
+      ),
+      findsOneWidget,
+    );
+
+    // How to open it in the headset: the copy beside the scene, at its count
+    await tester.tap(inRow('conversion-30', find.byKey(const Key('ai_job_splat_headset'))));
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('ai_job_splat_headset_dialog')),
+        matching: find.textContaining('then salon_splat.headset.spz, Explore the splat scene'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('to see all 150,000 gaussians'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('ai_job_splat_headset_close')));
+    await tester.pumpAndSettle();
+
+    const details = SplatResultDetails(
+      gaussians: 754752,
+      images: 125,
+      placed: 125,
+      subject: SplatSubject.place,
+      scale: 0.42,
+      quality: SplatQuality.detailed,
+      headsetGaussians: 150000,
+      headsetBytes: 3612448,
+    );
+    expect((details.sceneGaussians, details.headsetCount, details.hasHeadsetCopy), (754752, 150000, true));
+    expect(details.withoutHeadsetCopy().hasHeadsetCopy, isFalse);
+    expect(details.withoutPly().headsetGaussians, 150000);
+  });
+
   testWidgets('the frames of a video are matched in blocks, as photos are', (tester) async {
     await pumpPanel(tester, [
       _splat('conversion-14', state: ConversionState.matching, fromVideo: true, step: 4, steps: 16),

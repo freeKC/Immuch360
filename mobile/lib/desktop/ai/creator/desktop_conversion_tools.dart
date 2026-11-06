@@ -197,8 +197,8 @@ class SafeWriterOutput implements ConversionOutput, ConversionCompanionOutput {
     required ImmersiveSource original,
   }) async {
     final part = _parts.remove(partPath) ?? PartFile(folder: p.dirname(partPath), finalName: '', path: partPath);
-    // The name of the version as it was saved ("salon_splat (1).spz"), with the extension of the companion
-    final name = '${p.basenameWithoutExtension(versionPath)}${p.extension(part.finalName)}';
+    // The name of the version as it was saved ("salon_splat (1).spz"), with the end of the name of the companion
+    final name = companionNameBeside(versionPath, companionName: part.finalName, targetName: job.target!.fileName);
     try {
       final saved = await _writer.commit(
         PartFile(folder: p.dirname(versionPath), finalName: name, path: part.path),

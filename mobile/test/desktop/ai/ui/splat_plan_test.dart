@@ -432,8 +432,15 @@ void main() {
     final runner = FakeProcessRunner(const []);
     // The engine of the app with programs that never start: the preparation stops the job at once
     final engine = SplatEngine(
-      images: (members, {required video, required imagesFolder, required cancel, required onProgress}) async =>
-          throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled'),
+      images:
+          (
+            members, {
+            required video,
+            required imagesFolder,
+            required longSide,
+            required cancel,
+            required onProgress,
+          }) async => throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled'),
       colmap: ColmapRunner(runner: runner, colmap: 'colmap'),
       brush: BrushRunner(
         runner: runner,

@@ -97,6 +97,10 @@ class _ScriptedSplat implements ImmersiveEngine {
     if (ply != null) {
       File(ply).writeAsBytesSync(Uint8List.fromList([4, 5]));
     }
+    final headset = job.headsetPartPath;
+    if (headset != null) {
+      File(headset).writeAsBytesSync(Uint8List.fromList([6, 7, 8, 9]));
+    }
     return ImmersiveResult.made(
       details: SplatResultDetails(
         gaussians: 150000,
@@ -110,6 +114,9 @@ class _ScriptedSplat implements ImmersiveEngine {
             ? SplatUpright.supportPlane
             : SplatUpright.imageOrientation,
         cropped: job.settings.subject == SplatSubject.object ? 88000 : 0,
+        quality: job.settings.quality,
+        headsetGaussians: headset == null ? null : 150000,
+        headsetBytes: headset == null ? null : 4,
       ),
       bytesWritten: 3,
       stageTimes: const {
@@ -377,6 +384,81 @@ void main() {
       expect(output.discarded, hasLength(1), reason: 'the .part of the .ply');
     });
 
+    test(
+      'Detailed: the copy for the headset begun beside the .spz, given to the engine, saved under its name',
+      () async {
+        final engine = _ScriptedSplat();
+        container = containerWith(engine);
+        final paths = photos(3);
+        final folder = p.dirname(paths.first);
+        final id = addSplat(paths, settings: SplatSettings.of(SplatQuality.detailed, keepPly: true));
+        await until((state) => job(id).state.isEnded);
+
+        expect(job(id).state, ConversionState.done, reason: '${job(id).error} ${job(id).message}');
+        final spec = engine.specs.single;
+        expect((spec.settings.quality, spec.settings.photoLongSide), (SplatQuality.detailed, 1920));
+        expect(spec.headsetPartPath, isNotNull);
+        expect(output.companions.values, containsAll(['salon_splat.ply', 'salon_splat.headset.spz']));
+        expect(File(p.join(folder, 'salon_splat.headset.spz')).readAsBytesSync(), [6, 7, 8, 9]);
+        expect(File(p.join(folder, 'salon_splat.ply')).existsSync(), isTrue);
+        expect((job(id).details! as SplatResultDetails).headsetGaussians, 150000);
+        expect(output.discarded, isEmpty);
+
+        // Headset: no copy beside it
+        final again = addSplat(photos(3));
+        await until((state) => job(again).state.isEnded);
+        expect(engine.specs.last.headsetPartPath, isNull);
+      },
+    );
+
+    test('the copy for the headset of a scene saved as "name (1)" goes beside it as "name (1).headset.spz"', () async {
+      container = containerWith(_ScriptedSplat());
+      final paths = photos(3);
+      final folder = p.dirname(paths.first);
+      File(p.join(folder, 'salon_splat.spz')).writeAsBytesSync([9]);
+      final id = addSplat(paths, settings: SplatSettings.of(SplatQuality.maximum, maximumResolution: 3200));
+      await until((state) => job(id).state.isEnded);
+
+      expect(job(id).writtenPath, p.join(folder, 'salon_splat (1).spz'));
+      expect(File(p.join(folder, 'salon_splat (1).headset.spz')).existsSync(), isTrue);
+    });
+
+    test(
+      'a copy for the headset that cannot be saved: the scene is done all the same, the copy said missing',
+      () async {
+        container = containerWith(_ScriptedSplat());
+        output.failCompanion = ImmersiveErrorCode.diskFull;
+        final id = addSplat(photos(3), settings: SplatSettings.of(SplatQuality.detailed));
+        await until((state) => job(id).state.isEnded);
+
+        expect(job(id).state, ConversionState.done);
+        expect(job(id).message, contains('copy for the headset could not be saved'));
+        final details = job(id).details! as SplatResultDetails;
+        expect((details.hasHeadsetCopy, details.headsetBytes, details.quality), (false, null, SplatQuality.detailed));
+        expect(output.discarded, hasLength(1), reason: 'the .part of the copy');
+      },
+    );
+
+    test('the name of a companion beside the version saved', () {
+      expect(
+        companionNameBeside(
+          '/a/salon_splat (1).spz',
+          companionName: 'salon_splat.headset.spz',
+          targetName: 'salon_splat.spz',
+        ),
+        'salon_splat (1).headset.spz',
+      );
+      expect(
+        companionNameBeside('/a/salon_splat (1).spz', companionName: 'salon_splat.ply', targetName: 'salon_splat.spz'),
+        'salon_splat (1).ply',
+      );
+      expect(
+        companionNameBeside('/a/salon_splat.spz', companionName: 'other.ply', targetName: 'salon_splat.spz'),
+        'salon_splat.ply',
+      );
+      expect(splatHeadsetCopyNameOf('St. Paul_splat (2).spz'), 'St. Paul_splat (2).headset.spz');
+    });
+
     test('a scene not made drops its .spz and its .ply', () async {
       final engine = _ScriptedSplat()
         ..result = (job) => const ImmersiveResult.failed(ImmersiveErrorCode.trainingFailed, message: 'panic');
@@ -572,7 +654,7 @@ void main() {
     ProviderContainer realContainer({DesktopAiSettingsStore? settings, Duration decoding = Duration.zero}) {
       final runner = ManagedProcessRunner(linuxLauncher: _launcher);
       final engine = SplatEngine(
-        images: appSplatImages(frameSource: () => _Video(testJpeg(texturedRgba(64, 48), 64, 48), decoding: decoding)),
+        images: appSplatImages(frameSource: (_) => _Video(testJpeg(texturedRgba(64, 48), 64, 48), decoding: decoding)),
         colmap: ColmapRunner(
           runner: runner,
           colmap: _colmap,

@@ -116,10 +116,13 @@ const _kParamTypeOverrides = <String, String>{
   // The sizes of a splat scene, written with formatBytes as well ("3.6 MB" for the copy of the headset, "35 MB" for its
   // .ply)
   'ai_immersive_splat_done.size': 'String',
+  'ai_immersive_splat_done_both.size': 'String',
+  'ai_immersive_splat_done_both_video.size': 'String',
   'ai_immersive_splat_done_ply.size': 'String',
   'ai_immersive_splat_done_video.size': 'String',
   'ai_immersive_splat_headset_copy.size': 'String',
   'ai_immersive_splat_keep_ply_hint.size': 'String',
+  'ai_immersive_splat_quality_estimate.size': 'String',
   // A length in millimetres, which the caller writes with its decimals for the locale
   'apple_spatial_baseline.mm': 'String',
   // The size of each eye of a spatial photo: the digits alone, as for the frame sizes below

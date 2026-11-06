@@ -436,49 +436,108 @@ abstract interface class SplatMemberSum {
   String? get knownSha1;
 }
 
-/// The settings of one splat scene, those of SplatV1 unless the measure M1 or the user says otherwise
+/// The settings of one splat scene, those of SplatV1 unless the measure M1 or the user says otherwise: the quality
+/// chosen in the dialog (lot Q1, [SplatSettings.of]) sets the steps, the cap of the training, its definition and the
+/// size the photos or the frames are prepared at ([photoLongSide])
 class SplatSettings {
   const SplatSettings({
     this.subject = SplatSubject.place,
+    this.quality = SplatQuality.headset,
     this.steps = SplatV1.steps,
     this.maxGaussians = SplatV1.maxGaussians,
     this.shDegree = SplatV1.shDegree,
     this.trainingResolution = SplatV1.trainingResolution,
     this.siftMaxImageSize = SplatV1.siftMaxImageSize,
+    this.photoLongSide = SplatV1.photoLongSide,
     this.keepPly = false,
+    this.headsetGaussians = SplatV1.headsetGaussians,
   });
+
+  /// The settings of [quality]: Headset those of SplatV1; Detailed 30 000 steps, at most a million gaussians, the
+  /// images prepared and trained at 1 920 pixels; Maximum the same at [maximumResolution] pixels (what the memory
+  /// model gave for the source, splatMaximumResolution; 1 920 when null or less), with Brush's own ceiling
+  factory SplatSettings.of(
+    SplatQuality quality, {
+    SplatSubject subject = SplatSubject.place,
+    bool keepPly = false,
+    int? maximumResolution,
+  }) => switch (quality) {
+    SplatQuality.headset => SplatSettings(subject: subject, keepPly: keepPly),
+    SplatQuality.detailed => SplatSettings(
+      subject: subject,
+      quality: quality,
+      steps: SplatV1.detailedSteps,
+      maxGaussians: SplatV1.detailedMaxGaussians,
+      trainingResolution: SplatV1.detailedResolution,
+      photoLongSide: SplatV1.detailedResolution,
+      keepPly: keepPly,
+    ),
+    SplatQuality.maximum => SplatSettings(
+      subject: subject,
+      quality: quality,
+      steps: SplatV1.detailedSteps,
+      maxGaussians: SplatV1.maximumMaxGaussians,
+      trainingResolution: math.max(SplatV1.detailedResolution, maximumResolution ?? 0),
+      photoLongSide: math.max(SplatV1.detailedResolution, maximumResolution ?? 0),
+      keepPly: keepPly,
+    ),
+  };
 
   /// "What did you film?": a place or an object, which sets the scale
   final SplatSubject subject;
+
+  /// "Quality": Headset, Detailed or Maximum
+  final SplatQuality quality;
   final int steps;
   final int maxGaussians;
   final int shDegree;
   final int trainingResolution;
   final int siftMaxImageSize;
 
-  /// "Also save a .ply for other 3D apps": the same gaussians, at full precision, in the order of 3D Gaussian Splatting
+  /// The longest side of the photos and the frames prepared for COLMAP and Brush
+  final int photoLongSide;
+
+  /// "Also save a .ply for other 3D apps": the whole scene, at full precision, in the order of 3D Gaussian Splatting
   final bool keepPly;
 
+  /// The most gaussians of the copy for the headset: the .spz itself for Headset, the copy beside it otherwise. Not in
+  /// the key: the training is the same
+  final int headsetGaussians;
+
   /// What makes two scenes of the same photos the same, with the sums of the photos: the key of a work folder kept for
-  /// Retry (SplatV1.workKept)
+  /// Retry (SplatV1.workKept). The quality and the size of the images prepared are in it: a folder of Headset holds
+  /// images of 1 600 pixels, which Detailed would not train at 1 920
   String get key =>
       '${SplatV1.pipeline};${subject.name};$steps;$maxGaussians;$shDegree;$trainingResolution;'
-      '$siftMaxImageSize';
+      '$siftMaxImageSize;${quality.name};$photoLongSide';
 
   @override
   bool operator ==(Object other) =>
       other is SplatSettings &&
       other.subject == subject &&
+      other.quality == quality &&
       other.steps == steps &&
       other.maxGaussians == maxGaussians &&
       other.shDegree == shDegree &&
       other.trainingResolution == trainingResolution &&
       other.siftMaxImageSize == siftMaxImageSize &&
-      other.keepPly == keepPly;
+      other.photoLongSide == photoLongSide &&
+      other.keepPly == keepPly &&
+      other.headsetGaussians == headsetGaussians;
 
   @override
-  int get hashCode =>
-      Object.hash(subject, steps, maxGaussians, shDegree, trainingResolution, siftMaxImageSize, keepPly);
+  int get hashCode => Object.hash(
+    subject,
+    quality,
+    steps,
+    maxGaussians,
+    shDegree,
+    trainingResolution,
+    siftMaxImageSize,
+    photoLongSide,
+    keepPly,
+    headsetGaussians,
+  );
 }
 
 /// One photo to make into a 3D scene, `<name>_scene3D.jpg` (scene-v1). [sources] holds one photo in version 1, never
@@ -511,7 +570,9 @@ final class SceneJob extends ImmersiveJobSpec {
 /// were taken, at most SplatV1.maxPhotos photos, or the video alone ([isVideo]). [lead] is the source the scene names
 /// as its original, the first photo in time or the video, which the queue prepares as the source of every job; the
 /// engine reads the others through [members]. With [plyPartPath], the engine also writes the same gaussians as a .ply
-/// there ("Also save a .ply for other 3D apps"), renamed by the caller with the .spz. [timings] are the times of the
+/// there ("Also save a .ply for other 3D apps"), renamed by the caller with the .spz; with [headsetPartPath], a scene of
+/// Detailed or Maximum, the .spz holds the whole scene and the copy for the headset goes there (at most
+/// SplatV1.headsetGaussians, the strongest ones, an object cropped first), renamed the same way. [timings] are the times of the
 /// steps of a job of 150 images on this computer (AiTimings, lot SP6), from which the engine tells the time left of the
 /// whole job; the defaults of the plan when the queue gives none.
 final class SplatJob extends ImmersiveJobSpec {
@@ -526,6 +587,7 @@ final class SplatJob extends ImmersiveJobSpec {
     this.isVideo = false,
     this.settings = const SplatSettings(),
     this.plyPartPath,
+    this.headsetPartPath,
     this.timings = const {},
     this.plannedImages,
     super.exif = const ImmersiveExif(),
@@ -538,6 +600,9 @@ final class SplatJob extends ImmersiveJobSpec {
   final bool isVideo;
   final SplatSettings settings;
   final String? plyPartPath;
+
+  /// The .part of the copy for the headset of a scene of Detailed or Maximum; null for Headset, whose .spz is that copy
+  final String? headsetPartPath;
 
   /// The times of the steps of a job of 150 images, as this computer measured them
   final Map<ImmersiveStage, Duration> timings;
@@ -767,8 +832,9 @@ final class StereoPanoramaResultDetails extends ImmersiveResultDetails {
 /// was trained from and how many of them COLMAP [placed] ("Done: 150,000 gaussians, 3.6 MB, from 150 of 150 photos";
 /// "24 of 150 photos could not be placed"), photos or frames of a video ([fromVideo]), the frames left out as
 /// [blurred], the scale written ([scale], metres a unit of COLMAP) for what was filmed ([subject]), how it was set
-/// [upright], the gaussians of an object's scene the .spz left out around it ([cropped]), and the size of the .ply when
-/// one was written (the whole scene)
+/// [upright], the gaussians of an object's scene the copy for the headset left out around it ([cropped]), and the size
+/// of the .ply when one was written (the whole scene). A scene of Detailed or Maximum ([quality]) has its copy for the
+/// headset beside the .spz: [headsetGaussians] and [headsetBytes] (the .spz then holds the whole scene, [gaussians])
 final class SplatResultDetails extends ImmersiveResultDetails {
   const SplatResultDetails({
     required this.gaussians,
@@ -782,6 +848,9 @@ final class SplatResultDetails extends ImmersiveResultDetails {
     this.plyBytes,
     this.upright = SplatUpright.imageOrientation,
     this.cropped = 0,
+    this.quality = SplatQuality.headset,
+    this.headsetGaussians,
+    this.headsetBytes,
   });
 
   final int gaussians;
@@ -797,12 +866,58 @@ final class SplatResultDetails extends ImmersiveResultDetails {
   /// How the scene was set upright: an object on the plane under it, or as COLMAP turned it
   final SplatUpright upright;
 
-  /// The gaussians of the scene of an object the .spz left out, so that the headset opens it as an object in front of
-  /// the user (review of lot SPF2); 0 when the .spz holds the whole scene
+  /// The gaussians of the scene of an object the copy for the headset left out, so that the headset opens it as an
+  /// object in front of the user (review of lot SPF2); 0 when that copy holds the whole scene
   final int cropped;
 
-  /// The gaussians of the whole scene, those of the .ply when one was written
-  int get sceneGaussians => gaussians + cropped;
+  /// The quality chosen in the dialog
+  final SplatQuality quality;
+
+  /// The gaussians and the bytes of the copy for the headset beside the .spz; null when the .spz is that copy
+  final int? headsetGaussians;
+  final int? headsetBytes;
+
+  /// Whether the copy for the headset is a file of its own beside the .spz
+  bool get hasHeadsetCopy => headsetGaussians != null;
+
+  /// The gaussians of the whole scene, those of the .ply when one was written: those of the .spz when it holds the
+  /// whole scene, else the copy for the headset and what the crop left out
+  int get sceneGaussians => hasHeadsetCopy ? gaussians : gaussians + cropped;
+
+  /// The gaussians of the copy for the headset, the .spz or the file beside it
+  int get headsetCount => headsetGaussians ?? gaussians;
+
+  /// The same details without the .ply, which could not be saved
+  SplatResultDetails withoutPly() => SplatResultDetails(
+    gaussians: gaussians,
+    images: images,
+    placed: placed,
+    subject: subject,
+    scale: scale,
+    fromVideo: fromVideo,
+    blurred: blurred,
+    shDegree: shDegree,
+    upright: upright,
+    cropped: cropped,
+    quality: quality,
+    headsetGaussians: headsetGaussians,
+    headsetBytes: headsetBytes,
+  );
+
+  /// The same details without the copy for the headset, which could not be saved
+  SplatResultDetails withoutHeadsetCopy() => SplatResultDetails(
+    gaussians: gaussians,
+    images: images,
+    placed: placed,
+    subject: subject,
+    scale: scale,
+    fromVideo: fromVideo,
+    blurred: blurred,
+    shDegree: shDegree,
+    plyBytes: plyBytes,
+    upright: upright,
+    quality: quality,
+  );
 
   /// The images COLMAP could not place, left out of the scene
   int get leftOut => images - placed;
