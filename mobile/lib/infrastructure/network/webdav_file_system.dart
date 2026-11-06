@@ -20,7 +20,7 @@ import 'package:immich_mobile/infrastructure/network/http_range_reader.dart';
 import 'package:immich_mobile/infrastructure/network/lite_xml.dart';
 
 /// A [NetworkFileSystem] over WebDAV, see [open]
-class WebDavFileSystem implements NetworkFileSystem {
+class WebDavFileSystem implements NetworkFileSystem, NetworkRangeReads {
   WebDavFileSystem._(this.source, this._base, this._authorization, this._client, this._ownsClient);
 
   /// Connects to the WebDAV share of [source] and checks that its start folder (the root path of the source) answers
@@ -78,6 +78,7 @@ class WebDavFileSystem implements NetworkFileSystem {
 
   /// Whether the server honours range requests: null until a read tells, false when it answers them with the whole
   /// file (reads still work, but each one transfers the file from its start up to the bytes asked for)
+  @override
   bool? get supportsRanges => _ranges.supportsRanges;
 
   @override

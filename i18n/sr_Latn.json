@@ -3285,7 +3285,7 @@
   "setting_notifications_subtitle": "Izmeni notifikacije",
   "setting_tv_photo_date_time_subtitle": "Dole levo na fotografiji, dok su kontrole prikazane",
   "setting_tv_photo_date_time_title": "Prikaži datum i vreme fotografije",
-  "setting_video_stabilization_subtitle": "Neobrađeni 360° video zapisi sa kamera Insta360, GoPro MAX i DJI Osmo 360: horizont ostaje ravan, drhtanje nestaje, a pogled prati put",
+  "setting_video_stabilization_subtitle": "Neobrađeni 360° video zapisi sa kamera Insta360, GoPro MAX i DJI Osmo 360, u biblioteci, u deljenoj fascikli ili u fascikli: horizont ostaje ravan, drhtanje nestaje, a pogled prati put",
   "setting_video_stabilization_title": "Stabilizuj žiroskopom kamere (eksperimentalno)",
   "setting_video_viewer_looping_title": "Petljanje (Looping)",
   "setting_video_viewer_original_video_subtitle": "Prilikom strimovanja videa sa servera, reprodukujte original čak i kada je dostupno transkodiranje. Može dovesti do baferovanja. Video snimci dostupni lokalno se reprodukuju u originalnom kvalitetu bez obzira na ovo podešavanje.",

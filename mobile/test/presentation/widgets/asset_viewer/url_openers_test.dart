@@ -1,6 +1,8 @@
 // The openers of the native viewers for a media that is no asset, a file of a network share played through the media
 // bridge: openSphericalVideoUrl, openSpatialVideoUrl and openImmersiveUrl.
 
+import 'dart:async';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show DatabaseConnection;
@@ -12,10 +14,18 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/models/video_buffering.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
+import 'package:immich_mobile/domain/services/raw/gopro_eac.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
+import 'package:immich_mobile/domain/services/raw/raw_video_stabilization.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
@@ -26,6 +36,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/providers/asset_viewer/spatial_video.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -34,6 +45,9 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 
+import '../../../fixtures/raw/insta360_motion_slices.dart';
+import '../../../fixtures/raw/stabilization_slices.dart';
+import '../../../fixtures/raw/stabilization_videos.dart';
 import '../../../widget_tester_extensions.dart';
 
 class _SphericalVideoApi extends SphericalVideoApi {
@@ -53,7 +67,18 @@ class _SphericalVideoApi extends SphericalVideoApi {
     String? summary,
   ) async {
     calls.add('stabilization $url $enabled $hasTrack ${presentationTimesUs == null && corrections == null}');
+    if (presentationTimesUs != null) {
+      tableFrames.add(presentationTimesUs.length);
+      summaries.add(summary);
+    }
   }
+
+  /// The number of frames of each table handed to the player, and its summary
+  final List<int> tableFrames = [];
+  final List<String?> summaries = [];
+
+  /// The rawProjection JSON each video opened with, null for an equirectangular one
+  final List<String?> rawProjections = [];
 
   /// The stream given with each video opened to fall back to, null for none
   final List<String?> fallbackUrls = [];
@@ -77,6 +102,7 @@ class _SphericalVideoApi extends SphericalVideoApi {
       throw failure;
     }
     fallbackUrls.add(fallbackUrl);
+    rawProjections.add(rawProjection);
     calls.add('open $url');
     opened.add({
       'url': url,
@@ -179,6 +205,107 @@ class _RecordingVideoPlayer extends VideoPlayerNotifier {
 
 const _url = 'http://127.0.0.1:41234/token/nas/clips/trip.mp4';
 
+const _shareSource = NetworkSource(
+  id: 'nas',
+  type: NetworkSourceType.smb,
+  name: 'Home NAS',
+  host: 'nas',
+  share: 'media',
+);
+
+/// A share of files in memory, read at any position as SMB, WebDAV and the folders of the device are. [sizeKnown] false
+/// stands for a DLNA or Plex server that does not tell the size of a file: the media bridge streams it without ranges.
+/// While [gate] is set, every read waits for it.
+class _Share implements NetworkFileSystem {
+  _Share(this.files, {this.sizeKnown = true});
+
+  final Map<String, Uint8List> files;
+  final bool sizeKnown;
+  final reads = <(String, int, int)>[];
+  Completer<void>? gate;
+
+  @override
+  NetworkSource get source => _shareSource;
+
+  NetworkEntry entry(String path) =>
+      NetworkEntry(sourceId: 'nas', path: path, isDirectory: false, size: sizeKnown ? files[path]!.length : null);
+
+  @override
+  Future<List<NetworkEntry>> list(String path) async => [for (final file in files.keys) entry(file)];
+
+  @override
+  Future<NetworkEntry> stat(String path) async => entry(path);
+
+  @override
+  Future<Uint8List> readRange(String path, int offset, int length) async {
+    reads.add((path, offset, length));
+    await gate?.future;
+    final bytes = files[path]!;
+    if (offset >= bytes.length) {
+      return Uint8List(0);
+    }
+    return Uint8List.sublistView(bytes, offset, math.min(bytes.length, offset + length));
+  }
+
+  @override
+  Future<void> close() async {}
+}
+
+/// A share over HTTP whose server answered a range request with the whole file (see NetworkRangeReads)
+class _WholeFileShare extends _Share implements NetworkRangeReads {
+  _WholeFileShare(super.files);
+
+  @override
+  bool? supportsRanges = false;
+}
+
+/// A device that sends its files from their start only (see NetworkSequentialReads)
+class _FromStartShare extends _Share implements NetworkSequentialReads {
+  _FromStartShare(super.files);
+
+  @override
+  bool get readsFromStartOnly => true;
+}
+
+/// The input of [path] on [share], as the page of a share video makes it: read straight from the share, at any
+/// position as long as the share says so
+RawVideoInput _shareInput(_Share share, String path) {
+  final entry = share.entry(path);
+  return RawVideoInput(
+    name: path.substring(path.lastIndexOf('/') + 1),
+    key: 'share:$path',
+    url: 'http://127.0.0.1:41234/token/nas$path',
+    open: () async => (size: entry.size, read: networkFileReader(share, path), close: () async {}),
+    readsAnywhere: () => readsAnywhere(share, entry),
+  );
+}
+
+/// The plan of a raw video of [kind] read from [input]: an Insta360 X3 of both lenses side by side, a GoPro of two EAC
+/// tracks of faces of [goProFace] pixels (1344 on the MAX, 1920 on the MAX 2), a DJI Osmo 360 of two lens tracks
+RawVideoPlan _sharePlan(RawMediaKind kind, RawVideoInput input, {int goProFace = goProMeasuredFace}) => RawVideoPlan(
+  kind: kind,
+  layout: kind == RawMediaKind.insta360Video ? RawVideoLayout.sideBySide : RawVideoLayout.twoTracks,
+  tracks: switch (kind) {
+    RawMediaKind.goProVideo => [
+      for (final track in [0, 1])
+        RawVideoTrack(file: 0, videoTrack: track, width: goProFace * 3 + 64, height: goProFace, frameRate: 29.97),
+    ],
+    RawMediaKind.djiVideo => [
+      for (final track in [0, 1]) RawVideoTrack(file: 0, videoTrack: track, width: 3840, height: 3840, frameRate: 25),
+    ],
+    _ => [const RawVideoTrack(file: 0, videoTrack: 0, width: 5760, height: 2880, frameRate: 29.97)],
+  },
+  calibration: kind == RawMediaKind.insta360Video
+      ? nominalX3(2880).copyWith(downBody: const [0.99, 0.12, -0.09])
+      : null,
+  eac: kind == RawMediaKind.goProVideo
+      ? GoProEacGeometry(trackWidth: goProFace * 3 + 64, trackHeight: goProFace)
+      : null,
+  url: input.url,
+  trackOrderSource: 'single',
+  motionTrackInput: input,
+);
+
 void main() {
   late Drift db;
   late StoreService store;
@@ -221,8 +348,17 @@ void main() {
         immersiveApiProvider.overrideWithValue(immersiveApi),
         appConfigProvider.overrideWithValue(config),
         videoStabilizationSupportedProvider.overrideWithValue(stabilization),
+        // Built in place: the widget tests run no isolate
+        rawStabilizationBuilderProvider.overrideWithValue(buildRawStabilization),
       ],
     );
+  }
+
+  /// Lets the build of a table run to its end, its reads done in this isolate
+  Future<void> settleTable(WidgetTester tester, int calls) async {
+    for (var i = 0; i < 50 && sphericalApi.calls.length < calls; i++) {
+      await tester.pump();
+    }
   }
 
   Future<void> closeSpatialPlayer(WidgetTester tester, int positionMs, {required bool playing}) async {
@@ -367,6 +503,184 @@ void main() {
 
       expect(opened, isFalse);
       expect(player.calls, ['suspend', 'resume']);
+    });
+  });
+
+  group('the stabilisation of a raw video of a share or a folder', () {
+    final x4 = insta360SliceVideo(insta360X4MotionSlice, indexed: true);
+    final goPro = goProSpreadVideo();
+    final dji = djiSliceVideo();
+
+    /// Opens [plan] as the 360° player of a share does, through the helper both paths share, and lets the table come
+    Future<void> openPlan(WidgetTester tester, RawVideoPlan plan, {bool enabled = true}) async {
+      final delivery = await openStabilizedSphericalVideo(
+        api: sphericalApi,
+        session: ref.read(sphericalVideoSessionProvider),
+        url: plan.url,
+        plan: plan,
+        supported: true,
+        enabled: enabled,
+        build: buildRawStabilization,
+        open: () async => sphericalApi.calls.add('open ${plan.url}'),
+      );
+      await delivery;
+    }
+
+    testWidgets('an Insta360 file of a share opens at once with its switch, then gets the table of its gyroscope', (
+      tester,
+    ) async {
+      await pump(tester, stabilization: true);
+      final share = _Share({'/rides/VID_00_027.insv': x4});
+      final plan = _sharePlan(RawMediaKind.insta360Video, _shareInput(share, '/rides/VID_00_027.insv'));
+
+      final opened = await openSphericalVideoUrl(
+        context,
+        ref,
+        url: plan.url,
+        title: 'VID_00_027.insv',
+        layout: StereoLayout.mono,
+        coverage: SphereCoverage.full,
+        player: player,
+        plan: plan,
+      );
+      await settleTable(tester, 3);
+
+      expect(opened, isTrue);
+      final url = plan.url;
+      // The switch shows as the player opens, the table follows: the playback never waits for it
+      expect(sphericalApi.calls, [
+        'stabilization $url true true true',
+        'open $url',
+        'stabilization $url true true false',
+      ]);
+      expect(sphericalApi.tableFrames.single, insta360X4StabilizationSlice.camera.length);
+      expect(sphericalApi.summaries.single, contains('frames'));
+      expect(sphericalApi.rawProjections.single, plan.toNativeJson(), reason: 'the plan of the raw video goes along');
+      expect(share.reads, isNotEmpty, reason: 'the motion track is read from the share by ranges');
+      expect(player.calls, ['suspend']);
+    });
+
+    testWidgets('a GoPro MAX file and a DJI Osmo 360 file of a share get theirs too', (tester) async {
+      await pump(tester, stabilization: true);
+      final share = _Share({'/GS010013.360': goPro, '/CAM_20250903.OSV': dji});
+
+      await openPlan(tester, _sharePlan(RawMediaKind.goProVideo, _shareInput(share, '/GS010013.360')));
+      await openPlan(tester, _sharePlan(RawMediaKind.djiVideo, _shareInput(share, '/CAM_20250903.OSV')));
+
+      final goProUrl = _shareInput(share, '/GS010013.360').url;
+      final djiUrl = _shareInput(share, '/CAM_20250903.OSV').url;
+      expect(sphericalApi.calls, [
+        'stabilization $goProUrl true true true',
+        'open $goProUrl',
+        'stabilization $goProUrl true true false',
+        'stabilization $djiUrl true true true',
+        'open $djiUrl',
+        'stabilization $djiUrl true true false',
+      ]);
+      expect(sphericalApi.tableFrames, [24, 5]);
+      expect(sphericalApi.summaries[0], contains('GoPro CORI'));
+      expect(sphericalApi.summaries[1], contains('DJI attitude'));
+    });
+
+    testWidgets('the setting off still sends the table, which the switch of the player can turn on', (tester) async {
+      await pump(tester, stabilization: true);
+      final share = _Share({'/CAM_20250903.OSV': dji});
+      final plan = _sharePlan(RawMediaKind.djiVideo, _shareInput(share, '/CAM_20250903.OSV'));
+
+      await openPlan(tester, plan, enabled: false);
+
+      expect(sphericalApi.calls, [
+        'stabilization ${plan.url} false true true',
+        'open ${plan.url}',
+        'stabilization ${plan.url} false true false',
+      ]);
+    });
+
+    testWidgets('a stream without ranges gets no table, its switch hidden, and is not read', (tester) async {
+      await pump(tester, stabilization: true);
+      // A DLNA or Plex server that does not tell the size, a server that answers a range with the whole file, a device
+      // that sends its files from their start only
+      final shares = [
+        _Share({'/a.insv': x4}, sizeKnown: false),
+        _WholeFileShare({'/a.insv': x4}),
+        _FromStartShare({'/a.insv': x4}),
+      ];
+
+      for (final share in shares) {
+        sphericalApi.calls.clear();
+        final plan = _sharePlan(RawMediaKind.insta360Video, _shareInput(share, '/a.insv'));
+        await openPlan(tester, plan);
+
+        expect(sphericalApi.calls, ['stabilization ${plan.url} true false true', 'open ${plan.url}'], reason: '$share');
+        expect(share.reads, isEmpty, reason: 'no read that would take the whole file');
+      }
+      expect(sphericalApi.tableFrames, isEmpty);
+    });
+
+    test('a server that honours ranges, or has not told yet, reads anywhere', () {
+      final share = _WholeFileShare({'/a.insv': x4})..supportsRanges = true;
+      expect(readsAnywhere(share, share.entry('/a.insv')), isTrue);
+      share.supportsRanges = null;
+      expect(readsAnywhere(share, share.entry('/a.insv')), isTrue);
+      expect(readsAnywhere(null, share.entry('/a.insv')), isTrue, reason: 'the share not open yet: its size tells');
+      expect(
+        readsAnywhere(share, const NetworkEntry(sourceId: 'nas', path: '/a.insv', isDirectory: false, size: 0)),
+        isFalse,
+      );
+    });
+
+    testWidgets('a GoPro MAX 2 file gets no table, its switch never shows', (tester) async {
+      await pump(tester, stabilization: true);
+      final share = _Share({'/GS010014.360': goPro});
+      final plan = _sharePlan(RawMediaKind.goProVideo, _shareInput(share, '/GS010014.360'), goProFace: 1920);
+
+      await openPlan(tester, plan);
+
+      expect(sphericalApi.calls, ['stabilization ${plan.url} true false true', 'open ${plan.url}']);
+      expect(share.reads, isEmpty);
+    });
+
+    testWidgets('closing the player stops the build of the table: nothing more reaches the player', (tester) async {
+      await pump(tester, stabilization: true);
+      final share = _Share({'/a.insv': x4})..gate = Completer<void>();
+      final plan = _sharePlan(RawMediaKind.insta360Video, _shareInput(share, '/a.insv'));
+
+      await openSphericalVideoUrl(
+        context,
+        ref,
+        url: plan.url,
+        title: 'a.insv',
+        layout: StereoLayout.mono,
+        coverage: SphereCoverage.full,
+        plan: plan,
+      );
+      // The player closes while the first read waits on the share
+      ref.read(sphericalVideoSessionProvider).closed(StereoLayout.mono, SphereCoverage.full);
+      share.gate!.complete();
+      await settleTable(tester, 3);
+
+      expect(sphericalApi.calls, ['stabilization ${plan.url} true true true', 'open ${plan.url}']);
+      expect(share.reads, hasLength(1), reason: 'the read after the close fails, which ends the build');
+    });
+
+    testWidgets('where the player does not stabilise, a raw video of a share is opened as it was', (tester) async {
+      await pump(tester);
+      final share = _Share({'/a.insv': x4});
+      final plan = _sharePlan(RawMediaKind.insta360Video, _shareInput(share, '/a.insv'));
+
+      await openSphericalVideoUrl(
+        context,
+        ref,
+        url: plan.url,
+        title: 'a.insv',
+        layout: StereoLayout.mono,
+        coverage: SphereCoverage.full,
+        plan: plan,
+      );
+      await tester.pump();
+
+      expect(sphericalApi.calls, ['open ${plan.url}']);
+      expect(share.reads, isEmpty);
     });
   });
 

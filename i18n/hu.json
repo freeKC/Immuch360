@@ -3530,7 +3530,7 @@
   "setting_notifications_subtitle": "Értesítési beállítások módosítása",
   "setting_tv_photo_date_time_subtitle": "A fotó bal alsó sarkában, amíg a vezérlők láthatók",
   "setting_tv_photo_date_time_title": "A fotó dátumának és idejének megjelenítése",
-  "setting_video_stabilization_subtitle": "Insta360, GoPro MAX és DJI Osmo 360 kamerák nyers 360°-os videói: a horizont egyenes marad, a rázkódás eltűnik, a nézet követi az utat",
+  "setting_video_stabilization_subtitle": "Insta360, GoPro MAX és DJI Osmo 360 kamerák nyers 360°-os videói a képtárban, megosztáson vagy mappában: a horizont egyenes marad, a rázkódás eltűnik, a nézet követi az utat",
   "setting_video_stabilization_title": "Stabilizálás a kamera giroszkópjával (kísérleti)",
   "setting_video_viewer_auto_play_subtitle": "A videók automatikus lejátszása megnyitáskor",
   "setting_video_viewer_auto_play_title": "Videók automatikus lejátszása",

@@ -165,17 +165,31 @@ Future<StabilizationTable?> _buildWithRemoteReads(RawStabilizationRequest reques
   }
 }
 
+/// Whether the table of the raw video of [plan] can be built: its camera writes a track the app reads, in a file the
+/// plan can open ([RawVideoPlan.motionTrackInput]) at any position (see [RawVideoInput.readsAnywhere]: not the stream
+/// of a share without ranges, which would be read whole). Not for a GoPro whose EAC faces are not those of the MAX
+/// ([goProMeasuredFace]): no table would come, so its switch never shows.
+bool rawVideoHasReadableTrack(RawVideoPlan plan) {
+  final input = plan.motionTrackInput;
+  final face = plan.kind == RawMediaKind.goProVideo ? plan.eac?.face : null;
+  return rawKindHasMotionTrack(plan.kind) &&
+      input != null &&
+      (face == null || face == goProMeasuredFace) &&
+      (input.readsAnywhere?.call() ?? true);
+}
+
 /// The table of the raw video of [plan]: its file holding the motion track ([RawVideoPlan.motionTrackInput]) opened,
 /// the table built by [build] (in a background isolate by default), the file closed. Null when the camera of the plan
-/// writes no track the app reads, when that file cannot be opened or its size is unknown, when it has no track, when
-/// the build fails (the log tells why), or once [cancelled] says so: each read after it fails, which ends the build.
+/// writes no track the app reads, when that file cannot be opened, read at any position or its size is unknown, when it
+/// has no track, when the build fails (the log tells why), or once [cancelled] says so: each read after it fails, which
+/// ends the build.
 Future<StabilizationTable?> stabilizationOfRawVideo(
   RawVideoPlan plan, {
   RawStabilizationBuilder build = buildRawStabilizationInIsolate,
   bool Function()? cancelled,
 }) async {
   final input = plan.motionTrackInput;
-  if (!rawKindHasMotionTrack(plan.kind) || input == null) {
+  if (input == null || !rawVideoHasReadableTrack(plan)) {
     return null;
   }
   RawFileReader? file;
@@ -234,8 +248,9 @@ class RawVideoStabilizer {
   final RawVideoPlan plan;
   final RawStabilizationBuilder build;
 
-  /// Whether the camera of [plan] writes a track the app reads, in a file the plan can open
-  bool get applies => rawKindHasMotionTrack(plan.kind) && plan.motionTrackInput != null;
+  /// Whether the camera of [plan] writes a track the app reads, in a file the plan can open at any position (see
+  /// [rawVideoHasReadableTrack])
+  bool get applies => rawVideoHasReadableTrack(plan);
 
   bool _cancelled = false;
 

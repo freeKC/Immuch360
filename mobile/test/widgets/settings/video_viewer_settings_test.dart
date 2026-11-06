@@ -79,7 +79,7 @@ void main() {
   group("stabilisation with the camera's gyroscope", () {
     final stabilizationSwitch = find.widgetWithText(
       SwitchListTile,
-      "Stabilise with the camera's gyroscope (experimental)",
+      "Stabilize with the camera's gyroscope (experimental)",
     );
 
     testWidgets('offered where the 360° player applies it, on by default', (tester) async {
@@ -96,8 +96,8 @@ void main() {
       expect(stabilizationSwitch, findsOneWidget);
       expect(
         find.text(
-          'Raw 360° videos from Insta360, GoPro MAX and DJI Osmo 360 cameras: the horizon stays level, the shake goes '
-          'and the view follows the road',
+          'Raw 360° videos of Insta360, GoPro MAX and DJI Osmo 360 cameras, in the library, on a share or in a folder: '
+          'the horizon stays level, the shake goes and the view follows the road',
         ),
         findsOneWidget,
       );

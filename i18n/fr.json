@@ -3531,7 +3531,7 @@
   "setting_notifications_subtitle": "Ajustez vos préférences de notification",
   "setting_tv_photo_date_time_subtitle": "En bas à gauche de la photo, quand les commandes sont affichées",
   "setting_tv_photo_date_time_title": "Afficher la date et l'heure de la photo",
-  "setting_video_stabilization_subtitle": "Vidéos 360° brutes des caméras Insta360, GoPro MAX et DJI Osmo 360 : l'horizon reste droit, les secousses disparaissent et la vue suit la route",
+  "setting_video_stabilization_subtitle": "Vidéos 360° brutes des caméras Insta360, GoPro MAX et DJI Osmo 360, dans la bibliothèque, sur un partage ou dans un dossier : l'horizon reste droit, les secousses disparaissent et la vue suit la route",
   "setting_video_stabilization_title": "Stabiliser avec le gyroscope de la caméra (expérimental)",
   "setting_video_viewer_auto_play_subtitle": "Lancer automatiquement la lecture des vidéos lorsqu’elles sont ouvertes",
   "setting_video_viewer_auto_play_title": "Lecture automatique des vidéos",

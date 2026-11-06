@@ -73,6 +73,7 @@ class RawVideoInput {
     this.probe,
     this.width,
     this.height,
+    this.readsAnywhere,
   });
 
   /// Name of the file: the layout rules and the name of the other file of a pair
@@ -101,6 +102,12 @@ class RawVideoInput {
   /// Size of the frames the server or the device gives, for when the probe is missing
   final int? width;
   final int? height;
+
+  /// Whether [open] reads the file at any position now, as its motion track needs (see readsAnywhere of
+  /// network_file_system.dart): false for the stream of a share that does not tell its size, or whose server answers
+  /// range requests with the whole file. The video then plays without a stabilisation table, its switch hidden. Null
+  /// reads anywhere: a file of the device, the server of the library.
+  final bool Function()? readsAnywhere;
 
   @override
   String toString() => 'RawVideoInput($name, url: $url, originalUrl: $originalUrl, fallbackUrl: $fallbackUrl)';

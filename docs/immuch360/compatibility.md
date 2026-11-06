@@ -117,6 +117,7 @@ On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw 
 |---|:---:|:---:|
 | 360° photos as a sphere you look around in (drag, pinch, double tap, inertia, the camera's initial view, partial panoramas) | ❌ flat strip | ✅ |
 | Gyroscope: look around by moving the phone | ❌ | ✅ |
+| Raw 360° videos stabilised with the motion the camera recorded (Insta360, GoPro MAX, DJI Osmo 360) | ❌ | ✅ from build 42 on Android phones, tablets and TVs (experimental) |
 | 360° videos in a spherical player, with sound, seeking, audio track choice and a buffering indicator | ❌ flat video | ✅ Android and iOS (no time bar on iOS yet) |
 | 3D (stereoscopic) 360° photos and videos | ❌ doubled picture | ✅ left eye on phones, true 3D on the Quest |
 | VR180 (half sphere) photos and videos | ❌ stretched around the sphere | ✅ half sphere, 360°/180° button |
@@ -351,7 +352,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 ### Raw 360° camera files
 
 - Seams: the stitch uses the camera's calibration only, without seam optimisation: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
-- Horizon: a video is levelled once, from the start of the recording, and not stabilised; GoPro and DJI files are not levelled: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
+- Horizon and shake: from build 42, on Android phones, tablets and TVs, raw Insta360, GoPro MAX and DJI Osmo 360 videos play stabilised with the motion their camera recorded, from the library, the shares and the folders (experimental; the GoPro MAX checked on one file, its heading near the vertical not fully corrected; a GoPro MAX 2 file and a file of a share that cannot be read at any position play as before). iPhone and iPad, the computers and the Quest do not stabilise yet: there an Insta360 video is levelled once, from the start of the recording, and GoPro and DJI files keep the camera's horizon: [Stabilisation](user-guide.md#stabilisation-with-the-cameras-gyroscope-experimental).
 - Files without their calibration block use the calibration of the same camera or model, or the nominal X3 values: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - Playback on a phone, a Quest and an iPhone is still the device test of builds 18 and 19: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - The Immich server refuses .360 and .osv uploads, so those files only exist on shares and on computers: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).

@@ -16,6 +16,7 @@ import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
@@ -128,6 +129,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
   /// Reads the file straight from the share, for the plan of a raw video; null until the share is open
   ByteRangeReader? _shareReader;
+
+  /// The share, which tells whether the file reads at any position (see [readsAnywhere]); null until it is open
+  NetworkFileSystem? _shareFileSystem;
 
   /// The kind of share, for the logs; null until the share is open
   NetworkSourceType? _shareType;
@@ -450,6 +454,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final entry = await fileSystem.stat(widget.path);
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
     _shareReader = networkFileReader(fileSystem, widget.path);
+    _shareFileSystem = fileSystem;
     // What the file declares is read once the player has what it needs to play, not beside its first reads: on a slow
     // share the two read the index of the file at once (3.6 MB for a two hour film), and the film started later. A
     // page whose native player is not there a second later reads it at once
@@ -830,6 +835,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       entry: video.entry,
       folder: widget.folder?.around(video.entry, video.url).items,
       connections: ref.read(networkConnectionsProvider),
+      share: _shareFileSystem,
       bridgeClient: ref.read(networkBridgeClientProvider),
       media: ref.read(networkMediaServiceProvider),
     );
@@ -901,6 +907,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
             probe: _info?.probe,
             width: _videoSize?.width,
             height: _videoSize?.height,
+            // Asked once the plan read the share: a server tells at its first reads whether it honours ranges
+            readsAnywhere: () => readsAnywhere(_shareFileSystem, video.entry),
           ),
           findSibling: siblings,
         );
@@ -942,7 +950,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       coverage: view.coverage,
       player: _notifier,
       fallbackUrl: plan?.fallbackUrl,
-      rawProjection: plan?.toNativeJson(),
+      plan: plan,
     );
     if (!opened) {
       messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));

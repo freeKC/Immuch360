@@ -373,10 +373,10 @@ void main() {
   };
   // The switch of the stabilisation with the camera's gyroscope, its states and its notices (issue 14)
   const englishStabilizationLabels = {
-    'stabilization': "Stabilise with the camera's gyroscope (experimental)",
+    'stabilization': "Stabilize with the camera's gyroscope (experimental)",
     'stabilizationEnabled': 'Enabled',
     'stabilizationDisabled': 'Disabled',
-    'stabilizationOn': "Stabilised with the camera's gyroscope",
+    'stabilizationOn': "Stabilized with the camera's gyroscope",
     'stabilizationNoTrack': 'This video has no gyroscope track',
   };
   const englishVideoPlayerLabels = {
