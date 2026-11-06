@@ -98,7 +98,7 @@ internal class StabilizationSwitch(enabled: Boolean) {
   // The user turned the switch on in this player: a file without a track then says so
   private var turnedOnByUser = false
 
-  // "Stabilized..." showed once already in this player
+  // "Stabilised..." showed once already in this player
   private var stabilizedNoticeShown = false
 
   /** Whether the button shows: for a track that turns what shows */

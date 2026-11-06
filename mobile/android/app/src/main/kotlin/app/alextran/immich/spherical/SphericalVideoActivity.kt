@@ -161,7 +161,7 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val STATE_STABILIZATION_NOTICE_SHOWN = "stabilization_notice_shown"
 
     /**
-     * Keys of the labels of the stabilisation, in the labels from Flutter: the switch ("Stabilize with the camera's
+     * Keys of the labels of the stabilisation, in the labels from Flutter: the switch ("Stabilise with the camera's
      * gyroscope (experimental)"), its states (the app's "Enabled" and "Disabled"), the notice of a stabilised video and
      * the one of a file without a track.
      */
@@ -228,10 +228,10 @@ class SphericalVideoActivity : ComponentActivity() {
       LABEL_RAW_UNSTITCHED to
         "The 360° stitching failed on this device. The video shows as the camera recorded it.",
       LABEL_REMOTE_LOOK_HINT to "Arrows to look around, OK to pause and show the controls, Back to close",
-      LABEL_STABILIZATION to "Stabilize with the camera's gyroscope (experimental)",
+      LABEL_STABILIZATION to "Stabilise with the camera's gyroscope (experimental)",
       LABEL_STABILIZATION_ENABLED to "Enabled",
       LABEL_STABILIZATION_DISABLED to "Disabled",
-      LABEL_STABILIZATION_ON to "Stabilized with the camera's gyroscope",
+      LABEL_STABILIZATION_ON to "Stabilised with the camera's gyroscope",
       LABEL_STABILIZATION_NO_TRACK to "This video has no gyroscope track",
     )
 
