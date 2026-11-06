@@ -10,7 +10,7 @@
 
 來自你的裝置、NAS、Immich 伺服器、攝影機和無人機的平面、360° 與 3D 照片和影片。不需要帳號。Immuch360 是一款免費開源的應用程式，它直接在照片和影片所在的位置讀取它們，並以最合適的檢視器播放每一個檔案：平面顯示、成為可環顧四周的球形、以 3D 顯示，或在頭戴裝置中環繞你四周。它可在手機、平板、電視、Meta Quest 頭戴裝置和電腦上執行。
 
-**build 33 至 41 的新功能。**[電影會從你停下的地方繼續播放](#pick-up-a-film-where-you-stopped)。電影會更早開始，在慢速伺服器上也會[繼續播放而不會停下](#when-a-video-waits-or-will-not-play)。在手機和電腦上，時間軸[可以縮放到月和年](#find-a-month-or-a-year-in-a-long-timeline)。在 Android 手機或 Meta Quest 上，[「瀏覽資料夾」](#browse-a-folder-of-your-phone-or-headset)可以像共用一樣開啟裝置的資料夾，TIFF 照片也能顯示。Android TV [可以用遙控器依日期搜尋](#on-android-tv-and-google-tv)，Meta Quest 3 或 3S [可以開啟高斯潑濺](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)（實驗性），可用右搖桿轉動，並支援 SPZ 第 4 版，電腦則可以[為你 NAS 上的照片製作 3D 版本](#turn-one-photo-into-3d-a-scene-a-panorama)。在有兩顆圖形晶片的 Windows 筆記型電腦上，應用程式[現在在較快的那顆上執行](#when-a-video-waits-or-will-not-play)，因此 8K 電影播放流暢。高斯潑濺現在[可在電腦以及 Android 手機和平板上開啟](#explore-gaussian-splats-on-your-phone-tablet-or-computer)，Windows 電腦可以由 AI [用你的照片或影片製作潑濺場景](#make-a-splat-scene-from-your-photos-or-a-video-ai)，你的 Immich 伺服器可以[把它們保存在照片中](#keep-a-splat-scene-on-your-immich-server)，這些照片可從你的時間軸開啟，電腦則可以[播放 AV2 影片](#play-av2-videos-on-your-computer)，全部都是實驗性功能。
+**build 33 至 42 的新功能。**[電影會從你停下的地方繼續播放](#pick-up-a-film-where-you-stopped)。電影會更早開始，在慢速伺服器上也會[繼續播放而不會停下](#when-a-video-waits-or-will-not-play)。在手機和電腦上，時間軸[可以縮放到月和年](#find-a-month-or-a-year-in-a-long-timeline)。在 Android 手機或 Meta Quest 上，[「瀏覽資料夾」](#browse-a-folder-of-your-phone-or-headset)可以像共用一樣開啟裝置的資料夾，TIFF 照片也能顯示。Android TV [可以用遙控器依日期搜尋](#on-android-tv-and-google-tv)，Meta Quest 3 或 3S [可以開啟高斯潑濺](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)（實驗性），可用右搖桿轉動，並支援 SPZ 第 4 版，電腦則可以[為你 NAS 上的照片製作 3D 版本](#turn-one-photo-into-3d-a-scene-a-panorama)。在有兩顆圖形晶片的 Windows 筆記型電腦上，應用程式[現在在較快的那顆上執行](#when-a-video-waits-or-will-not-play)，因此 8K 電影播放流暢。高斯潑濺現在[可在電腦以及 Android 手機和平板上開啟](#explore-gaussian-splats-on-your-phone-tablet-or-computer)，Windows 電腦可以由 AI [用你的照片或影片製作潑濺場景](#make-a-splat-scene-from-your-photos-or-a-video-ai)，你的 Immich 伺服器可以[把它們保存在照片中](#keep-a-splat-scene-on-your-immich-server)，這些照片可從你的時間軸開啟，電腦則可以[播放 AV2 影片](#play-av2-videos-on-your-computer)，全部都是實驗性功能。從 build 42 起，在 Android 手機、平板和電視上，來自你的 Immich 圖庫、共用或資料夾的 Insta360、GoPro MAX 和 DJI Osmo 360 相機原始影片會[以相機陀螺儀防震播放](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)，桌面版 build 22 的潑濺製作功能[提供精細品質](#make-a-splat-scene-from-your-photos-or-a-video-ai)，適合你要近距離觀看的場景，360° 全景圖則[在顯示卡有 3.5 GiB 可用時就能開始](#turn-one-photo-into-3d-a-scene-a-panorama)，全部都是實驗性功能。iPhone 和 iPad 應用程式已[在 App Store 上](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965)，版本 3.3.2。
 
 <p align="center">
   <sub>Immich 行動應用程式的非官方分支。與 Immich 或 FUTO 無關。名稱讀起來像「I am much 360」。</sub>
@@ -43,6 +43,7 @@
   - [在大螢幕上觀看家用攝影機](#watch-your-home-cameras-on-the-big-screen)
   - [你的 DJI 無人機（實驗性）](#your-dji-drone-experimental)：[即時畫面](#see-what-your-drone-sees-on-your-phone)、[在 Quest 或 Android TV 上](#watch-it-in-a-meta-quest-or-on-an-android-tv)、[匯入](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
   - [開啟 360° 相機的原始檔案](#open-the-raw-files-of-360-cameras)
+  - [用相機陀螺儀為你的 360° 影片防震（實驗性）](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)
   - [一鍵旋轉照片](#turn-a-photo-with-one-key)
   - [把電腦當作媒體播放器](#use-your-computer-as-the-media-player)
   - [在你的電腦上播放 AV2 影片](#play-av2-videos-on-your-computer)
@@ -58,6 +59,7 @@
 ## 適合誰
 
 - **你拍攝 360° 或 3D 內容**，想在畫面中環顧四周，而不是看到平面、重影或被拉伸的畫面：[360°、VR180 和 3D](#explore-panoramas-360-vr180-and-3d)。
+- **你手持、在自行車上或在安全帽上用 360° 相機拍攝**，希望保存在 Immich、共用或資料夾中的 Insta360、GoPro MAX 或 DJI Osmo 360 相機原始影片，在手機和電視上播放時水平又穩定（實驗性）：[用相機陀螺儀防震](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)。
 - **你的照片和影片存放在 NAS、電腦、Plex 或 Immich 上**，想不複製任何檔案就在電視上觀看：[在電視上](#watch-on-the-tv-with-the-remote)、[NAS、共用和 Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
 - **你有一台 Meta Quest**，想走進自己的照片和影片：[在頭戴裝置中](#step-inside-your-photos-and-videos-with-a-meta-quest)。
 - **你的照片是平面的**，而你想在沒有 3D 相機的情況下以 3D 觀看它們，作為可以在頭戴裝置中湊近細看的場景，或置身於 360° 全景圖之中：[把一張照片變成 3D、場景、全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)，新功能，由 AI 在你自己的電腦上產生。
@@ -75,16 +77,16 @@
 
 <div align="center">
 
-| 平台 | 取得方式 | 2026 年 11 月 5 日狀態 |
+| 平台 | 取得方式 | 2026 年 11 月 6 日狀態 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play 上為 build 25（build 32 自 10 月 29 日起在 Google 審核中），GitHub 上為 build 41，[電影會從你停下的地方繼續播放](#pick-up-a-film-where-you-stopped)，[「瀏覽資料夾」](#browse-a-folder-of-your-phone-or-headset)可開啟手機的資料夾，[高斯潑濺可以開啟](#explore-gaussian-splats-on-your-phone-tablet-or-computer)，來自共用或[來自你的 Immich 時間軸](#keep-a-splat-scene-on-your-immich-server)（實驗性） |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | App Store | 3.3.1 版本（build 27）自 10 月 22 日起等待 Apple 審核，之後是 3.3.2 版本（build 28），正在 TestFlight 進行內部測試；在此之前可以[自行建置](../docs/immuch360/build.md) |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub 上為 build 41：[用遙控器依日期搜尋](#on-android-tv-and-google-tv)，掃描 QR code 即可[用手機登入](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)，影片播放器為遙控器提供進度列、音訊和字幕，還能觀看由手機轉送的[無人機即時畫面](#watch-it-in-a-meta-quest-or-on-an-android-tv)（實驗性）；電視版本上架正在 Google 審核中 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** 手機和平板 | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Play 上為 build 40（build 41 自 11 月 5 日起在 Google 審核中），GitHub 上為 build 42，[原始 360° 影片以防震方式播放](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)（實驗性），[電影會從你停下的地方繼續播放](#pick-up-a-film-where-you-stopped)，[「瀏覽資料夾」](#browse-a-folder-of-your-phone-or-headset)可開啟手機的資料夾，[高斯潑濺可以開啟](#explore-gaussian-splats-on-your-phone-tablet-or-computer)，來自共用或[來自你的 Immich 時間軸](#keep-a-splat-scene-on-your-immich-server)（實驗性） |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhone 和 iPad** | [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) | 3.3.2 版本自 11 月 6 日起在 App Store 上，帶來[時間軸中的月和年](#find-a-month-or-a-year-in-a-long-timeline)、[從你停下的地方繼續播放的電影](#pick-up-a-film-where-you-stopped)、從手機[登入電視、頭戴裝置或電腦](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)，以及保存在 Immich 中、以其照片顯示的潑濺場景；或者[自行建置](../docs/immuch360/build.md) |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TV 和 Google TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHub 上為 build 42：[防震的原始 360° 影片](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)（實驗性），[用遙控器依日期搜尋](#on-android-tv-and-google-tv)，掃描 QR code 即可[用手機登入](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)，影片播放器為遙控器提供進度列、音訊和字幕，還能觀看由手機轉送的[無人機即時畫面](#watch-it-in-a-meta-quest-or-on-an-android-tv)（實驗性）；電視版本上架正在 Google 審核中 |
 | 搭載 webOS 5.0 或更新版本的 **LG 電視** | [.ipk，版本 1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1) · LG Content Store（審核中） | 版本 1.0.0 已於 10 月 24 日提交至 LG Content Store，自 10 月 26 日起接受 LG 測試；版本 1.0.1 自 10 月 27 日起在 GitHub 上提供，可用方向鍵縮放照片，並在照片仍在載入時提示；在 LG 發布應用程式之前，可在 [Developer Mode](#lg-tvs-webos) 下安裝。版本 1.0.0 已在 LG Cloud Test Lab 的 webOS 25 電視上執行過 |
 | 搭載 Tizen 5.5 或更新版本的 **Samsung 電視** | [.wgt 測試 build](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.2.0) | 同一個電視應用程式的測試 build 0.2.0，需以你自己的 Samsung 憑證簽署，並在 [Developer mode](#samsung-tvs-tizen) 下安裝；0.1.0 已在一位測試者的 Samsung 電視上執行過，0.2.0 包含了那次執行後的修正；不在 Samsung 的商店中 |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store 上為 build 32（自 10 月 30 日起上架），GitHub 上為 build 41，附有[展示台模式](#kiosk-mode-for-an-exhibition-or-a-shop)，在 Quest 3 和 3S 上還有[高斯潑濺](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)以及為平面照片加上的 [AI 立體感](#turn-one-photo-into-3d-a-scene-a-panorama)，皆為實驗性 |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [安裝程式或 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) | 桌面版 build 21，已簽署的預覽版：照片、平面和 360° 影片、共用、Plex、攝影機（已以模擬攝影機驗證）、用手機登入、一鍵旋轉照片、89 種語言的介面，以及由 AI [用你的照片製作 3D 照片、3D 場景和 360° 全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)（實驗性），包括你 NAS 上的照片；[高斯潑濺](#explore-gaussian-splats-on-your-phone-tablet-or-computer)的開啟、[用你的照片或影片製作](#make-a-splat-scene-from-your-photos-or-a-video-ai)和[保存在 Immich 中](#keep-a-splat-scene-on-your-immich-server)，以及 [AV2 影片](#play-av2-videos-on-your-computer)，全部為實驗性 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 和 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) | 桌面版 build 21，預覽版：照片、360° 照片和平面影片（360° 影片以平面方式播放）、Immich 伺服器和網路共用，以及由 AI 用你的照片製作的 [3D 照片和 3D 場景](#turn-one-photo-into-3d-a-scene-a-panorama)，Linux 上搭配 8 GB 顯示卡時還能產生 360° 全景圖，此外還有[高斯潑濺](#explore-gaussian-splats-on-your-phone-tablet-or-computer)和 [AV2 影片](#play-av2-videos-on-your-computer)（實驗性，尚未在 Mac 上試過）；桌面版 build 11 已於 10 月 26 日在 Ubuntu 24.04 容器中和一台 Mac 上試過；macOS 版未簽署 |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3 和 3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Store 上為 build 40（自 11 月 3 日起上架；build 41 自 11 月 5 日起在 Meta 審核中），GitHub 上為 build 42，附有[展示台模式](#kiosk-mode-for-an-exhibition-or-a-shop)，在 Quest 3 和 3S 上還有[高斯潑濺](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)以及為平面照片加上的 [AI 立體感](#turn-one-photo-into-3d-a-scene-a-panorama)，皆為實驗性 |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [安裝程式或 ZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22) | 桌面版 build 22，已簽署的預覽版：照片、平面和 360° 影片、共用、Plex、攝影機（已以模擬攝影機驗證）、用手機登入、一鍵旋轉照片、89 種語言的介面，以及由 AI [用你的照片製作 3D 照片、3D 場景和 360° 全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)（實驗性），包括你 NAS 上的照片；[高斯潑濺](#explore-gaussian-splats-on-your-phone-tablet-or-computer)的開啟、[用你的照片或影片製作](#make-a-splat-scene-from-your-photos-or-a-video-ai)和[保存在 Immich 中](#keep-a-splat-scene-on-your-immich-server)、[AV2 影片](#play-av2-videos-on-your-computer)，以及從桌面版 build 22 起的[潑濺場景品質選擇](#make-a-splat-scene-from-your-photos-or-a-video-ai)和[只需 3.5 GiB 可用顯示記憶體的 360° 全景圖](#turn-one-photo-into-3d-a-scene-a-panorama)，全部為實驗性 |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOS 和 Linux** | [.deb, .rpm, DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22) | 桌面版 build 22，預覽版：照片、360° 照片和平面影片（360° 影片以平面方式播放）、Immich 伺服器和網路共用，以及由 AI 用你的照片製作的 [3D 照片和 3D 場景](#turn-one-photo-into-3d-a-scene-a-panorama)，Linux 上搭配 8 GB 顯示卡時還能產生 360° 全景圖，顯示卡只需有 3.5 GiB 可用，此外還有[高斯潑濺](#explore-gaussian-splats-on-your-phone-tablet-or-computer)和 [AV2 影片](#play-av2-videos-on-your-computer)（實驗性，尚未在 Mac 上試過）；桌面版 build 11 已於 10 月 26 日在 Ubuntu 24.04 容器中和一台 Mac 上試過；macOS 版未簽署 |
 
 *狀態會在每次發行時更新；每個 build 的詳細資訊請見[發行狀態](../docs/immuch360/release-status.md)。*
 
@@ -208,8 +210,8 @@ Plex 提供你媒體庫的原始檔案，所以 360° 影片仍是 360°，在�
 | 功能 | Android | iPhone、iPad | Android TV | LG webOS | Samsung Tizen | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | 圖庫、相簿、搜尋（搭配 Immich 伺服器） | ✅ | ✅ | ✅ 檢視器 | ✅ 檢視器 | ✅ 檢視器 | ✅ |
-| 依月和年顯示的時間軸 | ✅ | 🔜 下一個 iOS 版本 | ❌ | ❌ | ❌ | ❌ |
-| 用手機登入（QR code） | ✅ 掃描代碼 | 🔜 下一個 iOS 版本 | ✅ | ✅ 在手機的瀏覽器中 | ❌ 在電視上輸入 | ✅ 在手機上輸入代碼 |
+| 依月和年顯示的時間軸 | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| 用手機登入（QR code） | ✅ 掃描代碼 | ✅ 掃描代碼 | ✅ | ✅ 在手機的瀏覽器中 | ❌ 在電視上輸入 | ✅ 在手機上輸入代碼 |
 | 無伺服器：裝置本身的媒體 | ✅ | ✅ | 僅共用 | ❌ | ❌ | ✅ |
 | 像共用一樣開啟的裝置資料夾 | ✅ 你選擇的資料夾 | ❌ | ❌ | ❌ | ❌ | ✅ |
 | 平面照片和影片 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -217,8 +219,8 @@ Plex 提供你媒體庫的原始檔案，所以 360° 影片仍是 360°，在�
 | 一鍵旋轉照片 | ✅ | ✅ | ✅ 彩色鍵 | ✅ 彩色鍵 | ✅ | ✅ 視窗 |
 | 360° 照片（球形） | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 沉浸式 |
 | 360° 影片 | ✅ | ✅ 無進度列 | ✅ 無法解碼時顯示訊息 | 僅平面 | 僅平面 | ✅ 沉浸式 |
-| 從你停下的地方繼續播放的電影 | ✅ | 🔜 下一個 iOS 版本 | ✅ | ❌ | ❌ | ✅ 沉浸式畫面中也可以 |
-| 影片來源：此裝置能解碼的檔案 | ✅ | 🔜 下一個 iOS 版本 | ✅ | ❌ | ❌ | ✅ |
+| 從你停下的地方繼續播放的電影 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ 沉浸式畫面中也可以 |
+| 影片來源：此裝置能解碼的檔案 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 | 慢速伺服器：影片要等多久，以及原因 | ✅ | 自己的等待規則 | ✅ | ❌ | ❌ | ✅ |
 | AV2 影片（實驗性） | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | 3D 和 VR180 | ✅ 單眼 | ✅ 單眼 | ✅ 單眼 | 照片單眼，影片平面 | 照片單眼，影片平面 | ✅ 真實 3D |
@@ -227,24 +229,25 @@ Plex 提供你媒體庫的原始檔案，所以 360° 影片仍是 360°，在�
 | 空間 2.5D（頭部追蹤） | ✅ 實驗性 | ✅ 實驗性 | ❌ | ❌ | ❌ | ❌ |
 | Apple 空間照片 | ✅ 單眼 | ✅ 單眼 | ✅ 單眼 | ❌ | ❌ | ✅ 3D |
 | 高斯潑濺，.spz 和 .ply（實驗性） | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ Quest 3 和 3S |
-| 以照片形式保存在 Immich 中的潑濺場景（實驗性） | ✅ | 照片 | 照片 | 照片 | 照片 | ✅ Quest 3 和 3S |
+| 以照片形式保存在 Immich 中的潑濺場景（實驗性） | ✅ | 照片 | 照片 | 照片 | 照片 | ✅ Quest 3 和 3S，尚未在頭戴裝置中試過 |
 | 由 2D 照片製作的 3D 照片（AI） | ✅ 可讀取，左右並排 | ✅ 可讀取，左右並排 | ✅ 可讀取，左右並排 | ✅ 可讀取，左右並排 | ✅ 可讀取，左右並排 | ✅ 在頭戴裝置中產生 AI 立體感（Quest 3 和 3S），以 3D 顯示 |
 | 由 2D 照片製作的 3D 場景（AI） | ✅ 可讀取，顯示為其照片 | ✅ 可讀取，顯示為其照片 | ✅ 可讀取，顯示為其照片 | ✅ 可讀取，顯示為其照片 | ✅ 可讀取，顯示為其照片 | ✅ 以 3D 探索 |
 | 由 2D 照片製作的 360° 全景圖（AI） | ✅ 可讀取，附 AI 標示 | ✅ 以 360° 照片讀取，標示 🔜 | ✅ 可讀取，附 AI 標示 | ✅ 以 360° 照片讀取，標示 🔜 | ✅ 以 360° 照片讀取，標示 🔜 | ✅ 在你四周完整讀取，附 AI 標示 |
 | 共用照片旁的 3D 版本（AI） | ✅ 可讀取 | ✅ 可讀取 | ✅ 可讀取 | ✅ 可讀取 | ❌ | ✅ 可讀取 |
-| 由照片或影片製作的潑濺場景（AI） | ✅ 可讀取 | ❌ | ❌ | ❌ | ❌ | ✅ 可讀取，Quest 3 和 3S |
+| 由照片或影片製作的潑濺場景（AI） | ✅ 可讀取 | ❌ | ❌ | ❌ | ❌ | ✅ 可讀取，Quest 3 和 3S，尚未在頭戴裝置中試過 |
 | Insta360、GoPro 和 DJI 原始檔案 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| 以相機陀螺儀防震的原始 360° 影片（實驗性） | ✅ Insta360、GoPro MAX、DJI Osmo 360，來自你的圖庫、共用和資料夾 | 🔜 | ✅ Insta360、GoPro MAX、DJI Osmo 360，來自你的圖庫和共用 | ❌ | ❌ | 🔜 |
 | SMB、WebDAV、DLNA 共用 | ✅ | ✅ | ✅ | ✅ SMB 自 webOS 22 起 | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
 | Tapo 攝影機：錄影 | ✅ | ✅ | ✅ | 🔜 2026 年 12 月之前不會提供 | ❌ | ✅ |
-| Tapo 攝影機：即時畫面 | ✅ | 🔜 下一個 iOS 版本 | ✅ | ✅ 僅影像 | ❌ | ✅ |
+| Tapo 攝影機：即時畫面 | ✅ | ✅ 尚未在 iPhone 上試過 | ✅ | ✅ 僅影像 | ❌ | ✅ |
 | 在網路上分享此裝置 | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | 從共用和裝置上傳至 Immich | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | 透過 USB 從 DJI 無人機或記憶卡匯入（實驗性） | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | DJI 無人機即時畫面（實驗性） | ✅ 搭配 RC-N3 | ❌ | ✅ 由手機轉送 | ❌ | ❌ | ✅ 由手機轉送 |
 | 深色主題 | 跟隨系統 | 跟隨系統 | ✅ 預設 | ✅ 唯一主題 | ✅ 唯一主題 | 跟隨系統 |
 | 輸入方式 | 觸控、陀螺儀 | 觸控、陀螺儀 | 遙控器；播放影片時及在進度列上也能用左右鍵，Menu 鍵查看詳細資訊 | 遙控器、Magic Remote | 遙控器 | 控制器、雙手 |
-| 取得方式 | Google Play、APK | App Store（審核中） | APK、Google Play（審核中） | .ipk、LG Content Store（審核中） | .wgt 測試 build，由你簽署 | Horizon Store、APK |
+| 取得方式 | Google Play、APK | App Store | APK、Google Play（審核中） | .ipk、LG Content Store（審核中） | .wgt 測試 build，由你簽署 | Horizon Store、APK |
 
 | 功能 | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -275,6 +278,7 @@ Plex 提供你媒體庫的原始檔案，所以 360° 影片仍是 360°，在�
 | 共用照片旁的 3D 版本（AI） | ✅ | ✅ | ✅ 3D 照片和場景 |
 | 由照片或影片製作的潑濺場景（AI） | ✅ 4 GB 顯示卡 | ✅ 可讀取 | ✅ 可讀取，由 CI 建置 |
 | Insta360、GoPro 和 DJI 原始檔案 | ✅ | ✅ 照片，影片平面 | ✅ 照片，影片平面 |
+| 以相機陀螺儀防震的原始 360° 影片（實驗性） | 🔜 | ❌ | ❌ |
 | SMB、WebDAV、DLNA 共用 | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
 | Tapo 相機：錄影 | ✅ | 🔧 CI | 🔧 CI |
@@ -287,20 +291,20 @@ Plex 提供你媒體庫的原始檔案，所以 360° 影片仍是 360°，在�
 | 輸入方式 | 滑鼠、鍵盤 | 滑鼠、鍵盤 | 滑鼠、鍵盤、觸控式軌跡板 |
 | 取得方式 | 安裝程式或 ZIP（已簽署預覽版） | .deb、.rpm（預覽版） | DMG 或 ZIP（未簽署預覽版） |
 
-*Linux 和 macOS：桌面版 build 11 已於 2026 年 10 月 26 日在 Ubuntu 24.04 上、在一個附有測試 Immich 伺服器和測試共用的容器中試過，作者也在一台 Mac 上試過。AI 相關各列使用桌面版 build 13 程式碼的測試 build，於 2026 年 10 月 27 日至 29 日完成：3D 照片由 Linux 應用程式在一台 Linux 電腦上的容器中製作，場景由 Windows 應用程式在一台搭載 RTX 4060 的筆電上製作，也由引擎在那台 Linux 電腦上製作，360° 全景圖在那台筆電上產生。build 33 至 39 的各列：月和年檢視已在一台執行桌面版 build 14 的 Windows 電腦上驗證，3D 版本已在專案的建置主機上寫入一個 Samba 共用和一個 WebDAV 共用，「瀏覽資料夾」已在 Android 16 模擬器上驗證，串流影片的啟動已在限速連線後方的 Android 模擬器上驗證，展示台模式和更清晰的平面螢幕已在執行 build 35 的 Quest 3 中驗證，build 39 的潑濺檔案已於 10 月 31 日在 Quest 3 的潑濺模組中驗證，電影和影片來源由專案的 CI 和建置主機上的測試檢查。build 41 和桌面版 build 21 的各列：潑濺已在 Galaxy S24+ 上、在一台配備 RTX 4060 的筆記型電腦上的 Windows 應用程式中，以及在 CI 容器中的 Linux 上驗證，潑濺場景由那台筆電製作，潑濺照片已在 Immich 3.3.0 和 3.2.4 測試伺服器上驗證，AV2 則已在那台筆電上、在 Ubuntu 22.04 和 24.04 容器中驗證，並在沒有螢幕的情況下於 CI 的 Mac 上驗證。*
+*Linux 和 macOS：桌面版 build 11 已於 2026 年 10 月 26 日在 Ubuntu 24.04 上、在一個附有測試 Immich 伺服器和測試共用的容器中試過，作者也在一台 Mac 上試過。AI 相關各列使用桌面版 build 13 程式碼的測試 build，於 2026 年 10 月 27 日至 29 日完成：3D 照片由 Linux 應用程式在一台 Linux 電腦上的容器中製作，場景由 Windows 應用程式在一台搭載 RTX 4060 的筆電上製作，也由引擎在那台 Linux 電腦上製作，360° 全景圖在那台筆電上產生。build 33 至 39 的各列：月和年檢視已在一台執行桌面版 build 14 的 Windows 電腦上驗證，3D 版本已在專案的建置主機上寫入一個 Samba 共用和一個 WebDAV 共用，「瀏覽資料夾」已在 Android 16 模擬器上驗證，串流影片的啟動已在限速連線後方的 Android 模擬器上驗證，展示台模式和更清晰的平面螢幕已在執行 build 35 的 Quest 3 中驗證，build 39 的潑濺檔案已於 10 月 31 日在 Quest 3 的潑濺模組中驗證，電影和影片來源由專案的 CI 和建置主機上的測試檢查。build 41 和桌面版 build 21 的各列：潑濺已在 Galaxy S24+ 上、在一台配備 RTX 4060 的筆記型電腦上的 Windows 應用程式中，以及在 CI 容器中的 Linux 上驗證，潑濺場景由那台筆電製作，潑濺照片已在 Immich 3.3.0 和 3.2.4 測試伺服器上驗證，AV2 則已在那台筆電上、在 Ubuntu 22.04 和 24.04 容器中驗證，並在沒有螢幕的情況下於 CI 的 Mac 上驗證。build 42 和桌面版 build 22 的各列：防震由專案的 CI 和建置主機上的測試，以 Insta360 X3、X4 和 X5、GoPro MAX 及 DJI Osmo 360 相機範例檔案的動態軌道驗證，品質選擇由其測試以及在配備 RTX 4060 的筆電上對其訓練的測量驗證，iPhone 和 iPad 欄則依據 App Store 的 3.3.2 版本。*
 
 ✅ 該平台應用程式中已支援 · ❌ 該平台未提供 · 🔜 規劃中 · 🔧 CI 原始碼中已有，已由專案的 CI 在該系統上建置並啟動 · 僅平面：影片會以平面方式播放並顯示提示訊息，因為電腦上的 360° 影片渲染器目前僅支援 Windows；在 LG 電視上，webOS 能否把影片畫面交給球形渲染仍有待測量；在一位測試者的 Samsung 電視上，瀏覽器交給 3D 檢視的是黑色影格。「單眼」代表 3D 檔案在平面螢幕上只顯示左眼畫面。LG 和 Samsung 這兩欄是同一個獨立的電視應用程式：LG 版本 1.0.0，其共用和 Plex 已以真實伺服器驗證，攝影機已在專案的建置主機上以模擬攝影機驗證；以及 Samsung 測試 build 0.2.0。各項目在哪裡驗證過、還有哪些待確認，請見[功能](../docs/immuch360/features.md)、[平台支援](../docs/immuch360/platform-support.md)和[相容性](../docs/immuch360/compatibility.md)。
 
 在 AI 相關各列中，「可讀取」表示裝置開啟電腦製作的檔案，自己不產生任何內容：3D 照片以左右並排的兩眼畫面顯示，場景顯示為其照片並附一個小小的 3D 場景標記，全景圖在 360° 檢視器中開啟。它的 AI 標示包括「AI 360°」標記、「相片邊緣以外的部分由 AI 生成」這句話以及原始照片的框線，發展藍圖會把它們帶到 iPhone、iPad、LG 和 Samsung 應用程式中。只有電腦和 Quest 會產生內容。這些列的驗證情況寫在[操作說明](#turn-one-photo-into-3d-a-scene-a-panorama)中。
 
-- **Android 手機和平板**：完整版應用程式，支援觸控和陀螺儀，以及所有來源；從 build 32 起，可以開啟在電腦上產生的 360° 全景圖，並顯示其 AI 標示；從 build 38 起，它們可以瀏覽裝置資料夾、顯示 TIFF 照片、從你停下的地方繼續播放電影，從 build 39 起，串流影片會在連線允許時立即開始，並說明為何需要等待。從 build 41 起，它們可以開啟高斯潑濺，以及保存在 Immich 中的潑濺場景（實驗性）。
-- **iPhone 和 iPad**：完整版應用程式；360° 影片播放器目前只有播放和暫停功能，Tapo 即時畫面和用手機登入的手機端將隨下一個 iOS 版本推出，而在 Apple 授予多播權限之前，DLNA 搜尋會使用單播請求。
-- **Android TV 和 Google TV**：使用相同的 APK，以遙控器操作，預設為深色主題；僅作為檢視器：備份、上傳和編輯器都被隱藏，詳細資訊為唯讀，但照片仍可一鍵旋轉。所有搜尋篩選器都能用遙控器操作：位置和相機會在清單中開啟其選項，日期篩選器會顯示所有選項，而標籤、位置、日期、媒體類型、評分和顯示選項面板會把清空和套用放在選項旁邊，只要按一次右鍵即可到達，面板佔據螢幕大部分的高度。照片格線使用的影像記憶體更少，按住方向鍵時每秒最多移動約 10 列。從 build 28 起，它可以透過 QR code 或短代碼從手機登入（已在兩個模擬器之間以手動輸入代碼的方式試過）。從 build 29 起，影片的進度列可取得遙控器焦點，影片提供音訊和字幕選單，共用中的下一個檔案會以自己的控制項開啟。已在 Google TV 模擬器上驗證；build 28 於 10 月 23 日在實體 Android TV 上執行過，在那裡發現的影片問題已在 build 29 中修正，這些修正已在模擬器上驗證。從 build 30 起，它的 Drone 卡片會顯示由手機轉送的 DJI 無人機即時畫面，並附有無人機的數值和障礙物環（實驗性）：配對和畫面已於 10 月 25 日在一台 TCL Android TV 上試過，先前的轉送方式出現卡頓和偏綠；10 月 26 日，使用 build 30，為此推出的穩定串流讓那台電視在飛行中持續收到畫面，期間卡住 7 次。從 build 33 起，搜尋及其日期範圍可以用遙控器操作，照片會在左下角顯示日期，在進度列上快速連按會跳得更遠；從 build 38 起，電影會從你停下的地方繼續播放，TIFF 照片也能顯示。
+- **Android 手機和平板**：完整版應用程式，支援觸控和陀螺儀，以及所有來源；從 build 32 起，可以開啟在電腦上產生的 360° 全景圖，並顯示其 AI 標示；從 build 38 起，它們可以瀏覽裝置資料夾、顯示 TIFF 照片、從你停下的地方繼續播放電影，從 build 39 起，串流影片會在連線允許時立即開始，並說明為何需要等待。從 build 41 起，它們可以開啟高斯潑濺，以及保存在 Immich 中的潑濺場景（實驗性）。從 build 42 起，360° 播放器會用相機陀螺儀，為來自你的 Immich 圖庫、共用或裝置資料夾的 Insta360、GoPro MAX 和 DJI Osmo 360 相機原始影片防震（實驗性）。
+- **iPhone 和 iPad**：完整版應用程式；360° 影片播放器目前只有播放和暫停功能，而在 Apple 授予多播權限之前，DLNA 搜尋會使用單播請求。3.3.2 版本自 2026 年 11 月 6 日起在 App Store 上，帶來用手機登入的手機端、時間軸的月和年、從你停下的地方繼續播放的電影、影片來源以及 Tapo 即時畫面，後者尚未在 iPhone 上試過。
+- **Android TV 和 Google TV**：使用相同的 APK，以遙控器操作，預設為深色主題；僅作為檢視器：備份、上傳和編輯器都被隱藏，詳細資訊為唯讀，但照片仍可一鍵旋轉。所有搜尋篩選器都能用遙控器操作：位置和相機會在清單中開啟其選項，日期篩選器會顯示所有選項，而標籤、位置、日期、媒體類型、評分和顯示選項面板會把清空和套用放在選項旁邊，只要按一次右鍵即可到達，面板佔據螢幕大部分的高度。照片格線使用的影像記憶體更少，按住方向鍵時每秒最多移動約 10 列。從 build 28 起，它可以透過 QR code 或短代碼從手機登入（已在兩個模擬器之間以手動輸入代碼的方式試過）。從 build 29 起，影片的進度列可取得遙控器焦點，影片提供音訊和字幕選單，共用中的下一個檔案會以自己的控制項開啟。已在 Google TV 模擬器上驗證；build 28 於 10 月 23 日在實體 Android TV 上執行過，在那裡發現的影片問題已在 build 29 中修正，這些修正已在模擬器上驗證。從 build 30 起，它的 Drone 卡片會顯示由手機轉送的 DJI 無人機即時畫面，並附有無人機的數值和障礙物環（實驗性）：配對和畫面已於 10 月 25 日在一台 TCL Android TV 上試過，先前的轉送方式出現卡頓和偏綠；10 月 26 日，使用 build 30，為此推出的穩定串流讓那台電視在飛行中持續收到畫面，期間卡住 7 次。從 build 33 起，搜尋及其日期範圍可以用遙控器操作，照片會在左下角顯示日期，在進度列上快速連按會跳得更遠；從 build 38 起，電影會從你停下的地方繼續播放，TIFF 照片也能顯示。從 build 42 起，360° 播放器會用相機陀螺儀，為來自你的 Immich 圖庫或共用的 Insta360、GoPro MAX 和 DJI Osmo 360 相機原始影片防震（實驗性）。
 - **搭載 webOS 5.0 或更新版本的 LG 電視**：獨立的應用程式，適用於遙控器和 Magic Remote，以 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) 為基礎建置：一個 Immich 檢視器，360° 照片以球形顯示，照片可一鍵旋轉，深色主題，支援應用程式的 89 種語言（電視應用程式本身的少數文字目前仍為英文）；透過它在電視上的自有服務支援網路共用、Plex 和 Tapo 攝影機的即時畫面（SMB 自 webOS 22 起）；360° 影片以平面方式播放。版本 1.0.0 已於 10 月 24 日提交至 LG Content Store，並在 LG Cloud Test Lab 中三種機型的 webOS 25 電視上執行過：登入、手機登入頁面、照片、相簿、一段影片、360° 檢視、投影片播放、一次搜尋，以及從每個頁面返回。版本 0.1.0 已在一位測試者的 LG 電視（webOS 22）上執行過。共用和 Plex 已以真實伺服器驗證，攝影機已在專案的建置主機上以模擬攝影機驗證。
 - **搭載 Tizen 5.5 或更新版本的 Samsung 電視**：為 Samsung 電視打包的 LG 電視應用程式，測試 build 0.2.0，需自行簽署和安裝：一個供遙控器使用的 Immich 檢視器，手動輸入登入（伺服器位址，然後是電子郵件和密碼或 API 金鑰），支援投影片播放、球形上的 360° 照片、一鍵旋轉照片，以及一個說明電視支援哪些功能的「關於」頁面；用手機登入、共用、Plex 和攝影機在它的發展藍圖中；360° 影片以平面方式播放，並顯示提示。版本 0.1.0 已在一位測試者搭載 Tizen 9 的 Samsung 電視上執行過：4K 以內的照片和影片可以播放，超過 4K 的都無法解碼，電視的瀏覽器交給 3D 檢視的是黑色影格。版本 0.2.0 包含了那次執行後的修正（超出電視解碼器能力或卡住的影片會顯示訊息，360° 影片以平面方式播放並顯示提示），已由專案的 CI 在代替電視的瀏覽器中驗證。
 - **Meta Quest 2、Pro、3 和 3S**：應用程式以視窗形式顯示，並提供沉浸式畫面，從 build 30 起還有一張 Drone 卡片，可顯示由手機轉送的 DJI 無人機即時畫面（實驗性），已首次隨 build 30 測試；HEVC 是可靠的編碼格式，H.264 在 Quest 3 上的上限約為 4096x2304；應用程式已在 Quest 3 上驗證。從 build 32 起，在 Quest 3 或 3S 上，AI 立體感可將平面照片以 3D 顯示，計算在頭戴裝置內完成；在電腦上製作的 3D 照片、場景和全景圖也會以 3D 開啟（實驗性）。從 build 33 起，有可移動的平面 3D 螢幕和展示台模式；從 build 38 起，沉浸式畫面中有會繼續播放的電影和 TIFF 照片；從 build 39 起，Quest 3 和 3S 上有高斯潑濺。
-- **Windows 10 和 11**：預覽版，用資料夾取代圖庫，配備自己的影片播放器（libmpv）播放平面和 360° 影片，原始檔案由顯示晶片拼接，檔案和資料夾可以用應用程式開啟，或拖放到視窗上，並提供安裝程式或 ZIP，由 APROGSYS 簽署；從桌面版 build 13 起，「製作 3D（AI）」可在處理器上把你的照片變成 3D 照片和 3D 場景，在 8 GB 顯示卡上變成 360° 全景圖。從桌面版 build 16 起，「製作 3D（AI）」也可用於網路共用中的照片，從桌面版 build 17 起，影片會以這台電腦能解碼的檔案播放，從桌面版 build 18 起，電影會從你停下的地方繼續播放，從桌面版 build 19 起，慢速伺服器上的電影會繼續播放並說明等待的原因。從桌面版 build 20 起，即使有電影正在等待網路共用，視窗也會立即關閉：開啟中的電影會保存停下的位置，本次工作階段的記錄檔也會寫入。從桌面版 build 21 起，在有兩顆圖形晶片的筆記型電腦上，應用程式在較快的圖形晶片上執行，影片詳細資訊會說明電影是如何解碼的。同一個 build 可以開啟高斯潑濺、在 4 GB 顯示卡上用你的照片或影片製作潑濺場景，並播放 AV2 影片，全部為實驗性功能。
-- **Linux**：由專案的 CI 建置的 .deb 和 .rpm，已在 Ubuntu 22.04 和 24.04、Debian 12 以及 Fedora 40 和 44 上安裝並驗證；透過系統的 libmpv 顯示照片、360° 照片並播放平面影片（360°、3D 和原始影片會以平面方式播放並顯示提示訊息），從桌面版 build 7 起在 X11 工作階段中也走硬體繪製路徑；SMB 共用從 Ubuntu 22.04 和 Debian 12 起可用；在沒有金鑰圈（GNOME Keyring 或 KWallet）的情況下，應用程式第一次啟動時不再凍結 25 s：它只會在本次工作階段中保存密碼，並在設定中說明；從桌面版 build 13 起，「製作 3D（AI）」可在處理器上製作 3D 照片和場景，在 8 GB 顯示卡上產生 360° 全景圖（僅以小尺寸在 Intel 顯示晶片上試過）；已在 WSLg 和容器中驗證。從桌面版 build 16 起，「製作 3D（AI）」也可用於網路共用中的照片，從桌面版 build 17 起，影片會以這台電腦能解碼的檔案播放，從桌面版 build 18 起，電影會從你停下的地方繼續播放，從桌面版 build 19 起，慢速伺服器上的電影會繼續播放並說明等待的原因。從桌面版 build 20 起，即使有電影正在等待網路共用，視窗也會立即關閉：開啟中的電影會保存停下的位置，本次工作階段的記錄檔也會寫入。從桌面版 build 21 起，它可以開啟高斯潑濺並播放 AV2 影片（實驗性）。
+- **Windows 10 和 11**：預覽版，用資料夾取代圖庫，配備自己的影片播放器（libmpv）播放平面和 360° 影片，原始檔案由顯示晶片拼接，檔案和資料夾可以用應用程式開啟，或拖放到視窗上，並提供安裝程式或 ZIP，由 APROGSYS 簽署；從桌面版 build 13 起，「製作 3D（AI）」可在處理器上把你的照片變成 3D 照片和 3D 場景，在 8 GB 顯示卡上變成 360° 全景圖。從桌面版 build 16 起，「製作 3D（AI）」也可用於網路共用中的照片，從桌面版 build 17 起，影片會以這台電腦能解碼的檔案播放，從桌面版 build 18 起，電影會從你停下的地方繼續播放，從桌面版 build 19 起，慢速伺服器上的電影會繼續播放並說明等待的原因。從桌面版 build 20 起，即使有電影正在等待網路共用，視窗也會立即關閉：開啟中的電影會保存停下的位置，本次工作階段的記錄檔也會寫入。從桌面版 build 21 起，在有兩顆圖形晶片的筆記型電腦上，應用程式在較快的圖形晶片上執行，影片詳細資訊會說明電影是如何解碼的。同一個 build 可以開啟高斯潑濺、在 4 GB 顯示卡上用你的照片或影片製作潑濺場景，並播放 AV2 影片，全部為實驗性功能。從桌面版 build 22 起，360° 全景圖在顯示卡有 3.5 GiB 可用時就能開始，潑濺場景也有三種品質：頭戴裝置、精細和最高（實驗性）。
+- **Linux**：由專案的 CI 建置的 .deb 和 .rpm，已在 Ubuntu 22.04 和 24.04、Debian 12 以及 Fedora 40 和 44 上安裝並驗證；透過系統的 libmpv 顯示照片、360° 照片並播放平面影片（360°、3D 和原始影片會以平面方式播放並顯示提示訊息），從桌面版 build 7 起在 X11 工作階段中也走硬體繪製路徑；SMB 共用從 Ubuntu 22.04 和 Debian 12 起可用；在沒有金鑰圈（GNOME Keyring 或 KWallet）的情況下，應用程式第一次啟動時不再凍結 25 s：它只會在本次工作階段中保存密碼，並在設定中說明；從桌面版 build 13 起，「製作 3D（AI）」可在處理器上製作 3D 照片和場景，在 8 GB 顯示卡上產生 360° 全景圖（僅以小尺寸在 Intel 顯示晶片上試過）；已在 WSLg 和容器中驗證。從桌面版 build 16 起，「製作 3D（AI）」也可用於網路共用中的照片，從桌面版 build 17 起，影片會以這台電腦能解碼的檔案播放，從桌面版 build 18 起，電影會從你停下的地方繼續播放，從桌面版 build 19 起，慢速伺服器上的電影會繼續播放並說明等待的原因。從桌面版 build 20 起，即使有電影正在等待網路共用，視窗也會立即關閉：開啟中的電影會保存停下的位置，本次工作階段的記錄檔也會寫入。從桌面版 build 21 起，它可以開啟高斯潑濺並播放 AV2 影片（實驗性）。從桌面版 build 22 起，360° 全景圖在顯示卡有 3.5 GiB 可用時就能開始。
 - **macOS**：由專案的 CI 建置的 DMG 和 ZIP，通用二進位檔，未簽署（Gatekeeper 會詢問一次）；應用程式可以啟動，能開啟交給它的檔案和資料夾（包括來自 Finder 的），將機密資訊保存在登入鑰匙圈中，並以自帶的 libmpv 播放平面影片，以上最初在專案的 CI Mac 上驗證；2026 年 10 月 26 日，作者在一台 Mac 上試用了桌面版 build 11，運作正常。從桌面版 build 13 起，由專案的 CI 建置的 Mac 應用程式同樣在處理器上製作 3D 照片和場景，Mac 上的 360° 全景圖在發展藍圖中。從桌面版 build 16 起，「製作 3D（AI）」也可用於網路共用中的照片，從桌面版 build 17 起，影片會以這台電腦能解碼的檔案播放，從桌面版 build 18 起，電影會從你停下的地方繼續播放，從桌面版 build 19 起，慢速伺服器上的電影會繼續播放並說明等待的原因。從桌面版 build 20 起，即使有電影正在等待網路共用，視窗也會立即關閉：開啟中的電影會保存停下的位置，本次工作階段的記錄檔也會寫入。從桌面版 build 21 起，由專案的 CI 建置的 Mac 應用程式也可以開啟高斯潑濺並播放 AV2 影片（實驗性），尚未在 Mac 上試過。
 
 <a id="what-you-can-do"></a>
@@ -328,9 +332,10 @@ Plex 提供你媒體庫的原始檔案，所以 360° 影片仍是 360°，在�
 18. [在手機上觀看 DJI 無人機的即時畫面](#see-what-your-drone-sees-on-your-phone)，以及[在 Meta Quest 或 Android TV 上觀看](#watch-it-in-a-meta-quest-or-on-an-android-tv)：透過 DJI RC-N3 遙控器，僅接收。*實驗性。*
 19. [把無人機或相機記憶卡中的照片和影片匯入 Immich](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)：透過 USB，從 Android 手機操作。*實驗性。*
 20. [開啟 360° 相機的原始檔案](#open-the-raw-files-of-360-cameras)：Insta360、GoPro MAX 和 DJI Osmo 360，由應用程式拼接。
-21. [一鍵旋轉照片](#turn-a-photo-with-one-key)：一個按鈕、一個鍵盤按鍵或遙控器上的一個彩色鍵。
-22. [把電腦當作媒體播放器](#use-your-computer-as-the-media-player)：你的資料夾、「開啟檔案」、拖放到視窗上的檔案。*預覽版。*
-23. [在你的電腦上播放 AV2 影片](#play-av2-videos-on-your-computer)：由處理器解碼，速度取決於你的電腦所能達到的程度。*實驗性。*
+21. [用相機陀螺儀為你的 360° 影片防震（實驗性）](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)：在 Android 手機、平板和電視的 360° 播放器中，地平線保持水平，震動消失。
+22. [一鍵旋轉照片](#turn-a-photo-with-one-key)：一個按鈕、一個鍵盤按鍵或遙控器上的一個彩色鍵。
+23. [把電腦當作媒體播放器](#use-your-computer-as-the-media-player)：你的資料夾、「開啟檔案」、拖放到視窗上的檔案。*預覽版。*
+24. [在你的電腦上播放 AV2 影片](#play-av2-videos-on-your-computer)：由處理器解碼，速度取決於你的電腦所能達到的程度。*實驗性。*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
@@ -345,7 +350,7 @@ Plex 提供你媒體庫的原始檔案，所以 360° 影片仍是 360°，在�
 
 ### iPhone 和 iPad
 
-1. App Store 版本正在等待 Apple 審核。在正式上架之前，可以在 Mac 上使用 Xcode 自行建置應用程式，詳見[自行建置](../docs/immuch360/build.md)。
+1. [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965)：版本 3.3.2，於 2026 年 11 月 6 日發布。或者在 Mac 上使用 Xcode 自行建置應用程式，詳見[自行建置](../docs/immuch360/build.md)。
 2. 點一下「不連線伺服器使用」，或點一下「連線到 Immich 伺服器」以登入你的伺服器；從 build 24 開始，這兩個選項都在歡迎頁面上。
 
 <a id="android-tv-and-google-tv"></a>
@@ -382,18 +387,18 @@ Plex 提供你媒體庫的原始檔案，所以 360° 影片仍是 360°，在�
 <a id="windows"></a>
 ### Windows
 
-1. 從[桌面版預發行版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)下載 `Immuch360-Desktop-3.3.0-rc.0-desktop.21-windows-x64-setup.exe`（可用 `SHA256SUMS.txt` 驗證），然後開啟它。安裝程式和 ZIP 都已簽署；Windows 會顯示發行者為 APROGSYS。由於這個發行者對 SmartScreen 來說還很新，它仍可能詢問一次：選擇「其他資訊」，再選擇「仍要執行」。
+1. 從[桌面版預發行版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)下載 `Immuch360-Desktop-3.3.0-rc.0-desktop.22-windows-x64-setup.exe`（可用 `SHA256SUMS.txt` 驗證），然後開啟它。安裝程式和 ZIP 都已簽署；Windows 會顯示發行者為 APROGSYS。由於這個發行者對 SmartScreen 來說還很新，它仍可能詢問一次：選擇「其他資訊」，再選擇「仍要執行」。
 2. 選擇「僅為我安裝」（不需要系統管理員權限）或「為所有使用者安裝」，然後選擇安裝程式的語言，預設已選取 Windows 目前使用的語言。
 3. 從開始功能表啟動 Immuch360 Desktop。照片和影片可以在「開啟方式」中找到它（按右鍵點擊檔案，選擇開啟方式）；它絕不會把自己設為預設程式。新 build 第一次啟動可能需要長達一分鐘，因為 Windows 需要掃描檔案。
 4. Windows 10 或 11，64 位元。要更新時，只要開啟下一個 build 的安裝程式：你的登入狀態、資料夾和設定都會保留。同一版本的 ZIP 是同一個應用程式的資料夾形式，可以解壓縮到任何位置，再從裡面啟動 `immuch360.exe`。在桌面版 build 4 至 8 啟動時因「duplicate column name: group_date」而停止的電腦上，build 9 能開啟該資料庫並保留你的資料。
 
 ### Linux
 
-在 Ubuntu 22.04 或更新版本和 Debian 12 或更新版本上：`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.21-linux-amd64.deb`；在 Fedora 40 或更新版本上：`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.21-linux-x86_64.rpm`，兩者都來自[桌面版預發行版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)。然後從應用程式中啟動 Immuch360 Desktop。這是預覽版：支援電腦的資料夾、照片和以球形顯示的 360° 照片，並透過系統的 libmpv（由套件一併安裝）播放平面影片（360°、3D 和原始影片以平面方式播放並顯示訊息）；SMB 共用從 Ubuntu 22.04 和 Debian 12 起可用。在 Fedora 上，相機影片需要 RPM Fusion 的 FFmpeg。若沒有 GNOME Keyring 或 KWallet，密碼只會在本次工作階段中保存，應用程式的設定中也會說明這一點。
+在 Ubuntu 22.04 或更新版本和 Debian 12 或更新版本上：`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.22-linux-amd64.deb`；在 Fedora 40 或更新版本上：`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.22-linux-x86_64.rpm`，兩者都來自[桌面版預發行版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)。然後從應用程式中啟動 Immuch360 Desktop。這是預覽版：支援電腦的資料夾、照片和以球形顯示的 360° 照片，並透過系統的 libmpv（由套件一併安裝）播放平面影片（360°、3D 和原始影片以平面方式播放並顯示訊息）；SMB 共用從 Ubuntu 22.04 和 Debian 12 起可用。在 Fedora 上，相機影片需要 RPM Fusion 的 FFmpeg。若沒有 GNOME Keyring 或 KWallet，密碼只會在本次工作階段中保存，應用程式的設定中也會說明這一點。
 
 ### macOS
 
-從[桌面版預發行版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)開啟 `Immuch360-Desktop-3.3.0-rc.0-desktop.21-macos.dmg`，將應用程式拖到「應用程式」資料夾（支援 Apple silicon 和 Intel，macOS 12 或更新版本）。它未簽署，因此 macOS 會詢問你一次：在 macOS 14 或更早版本中，按住 Control 點擊它並選擇開啟；在 macOS 15 或更新版本中，則要在「系統設定」的「隱私權與安全性」中選擇「仍要打開」。作者於 2026 年 10 月 26 日在一台 Mac 上試用了桌面版 build 11，運作正常；歡迎回報其他 Mac 和 macOS 版本上的情況。
+從[桌面版預發行版](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)開啟 `Immuch360-Desktop-3.3.0-rc.0-desktop.22-macos.dmg`，將應用程式拖到「應用程式」資料夾（支援 Apple silicon 和 Intel，macOS 12 或更新版本）。它未簽署，因此 macOS 會詢問你一次：在 macOS 14 或更早版本中，按住 Control 點擊它並選擇開啟；在 macOS 15 或更新版本中，則要在「系統設定」的「隱私權與安全性」中選擇「仍要打開」。作者於 2026 年 10 月 26 日在一台 Mac 上試用了桌面版 build 11，運作正常；歡迎回報其他 Mac 和 macOS 版本上的情況。
 
 <a id="how-to"></a>
 ## 操作說明
@@ -491,11 +496,11 @@ Immuch360 能辨識平面照片和影片、全景、360° 照片和影片、VR18
 
 **已驗證的內容**，截至 2026 年 10 月 29 日，使用這些程式碼的測試 build：3D 照片由 Linux 應用程式在一台 Linux 電腦上的容器中製作，離線也可以；場景由 Windows 應用程式在一台搭載 RTX 4060 Laptop GPU 的筆電上製作（十個場景用時 2 分 39 秒），也由引擎在 Linux 電腦上製作；在那台筆電上產生了四張全景圖，每張用時 4 分 16 秒到 4 分 44 秒，它們的 3D 版本約 30 秒，並測試了取消、強制結束應用程式、另一個程式占用顯示卡的情況，測試期間應用程式沒有任何網路連線。
 
-限制：360° 全景圖需要一台配備合適顯示卡的 Windows 或 Linux 電腦，否則對話框會說明原因（「Mac 上尚未支援」、「找不到支援 Vulkan 的顯示卡」、「內建顯示卡與電腦共用記憶體：產生全景圖太慢」，並提供「在內建顯示卡上嘗試（未經測試）」讓你仍可一試）；從桌面版 build 21 起，全景圖開始前，應用程式會先釋放它自己佔用的顯示記憶體，即暫停的影片和快取的圖片，然後要求顯示卡上有 6.0 GiB 可用，或使用較小的參考圖片時要求 5.1 GiB，否則會等待，並說明可用的記憶體有多少（[每張顯示卡能做什麼](../docs/immuch360/user-guide.md#360-panoramas-and-the-graphics-card-memory)）；在全景圖中，你照片的邊緣可能顯出明顯的色調斷層；大多數場景會顯示「視野為推測值：形狀可能有偏差」；一個場景需要約 2 GB 可用記憶體（否則顯示「記憶體不足」）；如果備份了 AI 版本，Immich 的重複項目尋找功能會把每張照片和其場景配成一對，並常常建議保留場景這個較大的檔案：請保留原始照片。手機和電視不產生任何內容，頭戴裝置只產生立體感；場景來自一張照片，而由多張照片或一段影片，Windows 電腦可以[製作潑濺場景](#make-a-splat-scene-from-your-photos-or-a-video-ai)。
+限制：360° 全景圖需要一台配備合適顯示卡的 Windows 或 Linux 電腦，否則對話框會說明原因（「Mac 上尚未支援」、「找不到支援 Vulkan 的顯示卡」、「內建顯示卡與電腦共用記憶體：產生全景圖太慢」，並提供「在內建顯示卡上嘗試（未經測試）」讓你仍可一試）；從桌面版 build 21 起，全景圖開始前，應用程式會先釋放它自己佔用的顯示記憶體，即暫停的影片和快取的圖片，而從桌面版 build 22 起，接著要求顯示卡上有 3.5 GiB 可用（低於約 5.6 GiB 時，產生過程會分段進行，速度較慢，圖片相同，並最多佔用電腦 8 GB 記憶體），否則會等待，並說明可用的記憶體有多少（[每張顯示卡能做什麼](../docs/immuch360/user-guide.md#360-panoramas-and-the-graphics-card-memory)）；在全景圖中，你照片的邊緣可能顯出明顯的色調斷層；大多數場景會顯示「視野為推測值：形狀可能有偏差」；一個場景需要約 2 GB 可用記憶體（否則顯示「記憶體不足」）；如果備份了 AI 版本，Immich 的重複項目尋找功能會把每張照片和其場景配成一對，並常常建議保留場景這個較大的檔案：請保留原始照片。手機和電視不產生任何內容，頭戴裝置只產生立體感；場景來自一張照片，而由多張照片或一段影片，Windows 電腦可以[製作潑濺場景](#make-a-splat-scene-from-your-photos-or-a-video-ai)。
 
 **元件**：在電腦上，「設定」中的「AI 與 3D」會列出每項功能的元件及其大小，以及「下載」和「移除」，然後是「移除所有 AI 元件」和把元件移到另一個磁碟的「移動 AI 元件」；關閉「AI 功能」會隱藏所有 AI 按鈕，並且不會下載任何內容。每個檔案都以其 SHA-256 驗證。在 Windows 上，它們位於 `%LOCALAPPDATA%\com.aprogsys\Immuch360 Desktop\ai-components`，解除安裝程式會刪除這個資料夾（不會刪除你把元件移去的資料夾）；在 Linux 上，大多數系統中位於 `~/.local/share/immuch360/ai-components`，在 Mac 上位於 `~/Library/Application Support/com.aprogsys.immuch360.desktop/ai-components`。在 Quest 中，「AI 與 3D」位於「設定」、「進階」中，旁邊是立體感快取。
 
-更多資訊：[build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32)、[桌面版 build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13)、[桌面版 build 15](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-15)、[桌面版 build 16](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-16) 和[桌面版 build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) 的說明，以及[模型、其授權、來源和校驗值](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)。
+更多資訊：[build 32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32)、[桌面版 build 13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13)、[桌面版 build 15](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-15)、[桌面版 build 16](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-16)、[桌面版 build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) 和[桌面版 build 22](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22) 的說明，以及[模型、其授權、來源和校驗值](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)。
 
 <a id="watch-on-the-tv-and-on-the-computer"></a>
 <a id="watch-on-the-tv-with-the-remote"></a>
@@ -503,7 +508,7 @@ Immuch360 能辨識平面照片和影片、全景、360° 照片和影片、VR18
 
 在大螢幕上用遙控器看照片。所有電視應用程式的操作方式都一樣：方向鍵移動選框，OK 鍵開啟，返回鍵返回，在 360° 照片中則用方向鍵環顧四周。電視本身沒有照片，因此它顯示的是你的 Immich 伺服器，在 Android TV 和 LG 電視上還包括你的網路共用、Plex 伺服器和攝影機。
 
-- **Android TV 和 Google TV**：就是 Android 應用程式本身，build 41，在 Google Play 於電視上提供之前從 GitHub 取得。
+- **Android TV 和 Google TV**：就是 Android 應用程式本身，build 42，在 Google Play 於電視上提供之前從 GitHub 取得。
 - **搭載 webOS 5.0 或更新版本的 LG 電視**：一個獨立的電視應用程式，版本 1.0.0 正在接受 LG 針對 LG Content Store 的審核，版本 1.0.1 在 GitHub 上提供。
 - **搭載 Tizen 5.5 或更新版本的 Samsung 電視**：與 LG 電視相同的電視應用程式，測試 build 0.2.0，需自行簽署和安裝。
 
@@ -578,7 +583,7 @@ Immich 自己的應用程式無法安裝在 LG 電視上。Immuch360 為搭載 w
 
 安全機制：手機和螢幕必須位於同一個家用網路中，代碼最多有效兩分鐘，且只能使用一次。手機會向你的伺服器為該螢幕申請一個新的工作階段，以該螢幕的名稱命名（「Immuch360 on Living room TV」），並加密傳送給螢幕，因此你的密碼絕不會離開手機。「連接電視或電腦」會列出這支手機登入過的螢幕，每個都有「登出」，Immich 也會在「帳號設定」、「已授權裝置」中列出它們，你也可以在那裡撤銷。手機登出時，這些螢幕也會一併登出。
 
-手機端目前可在 Android 上使用，iPhone 和 iPad 則從下一個 iOS 版本開始支援。如果手機上沒有 Immuch360，可以用手機的相機掃描該代碼：瀏覽器會開啟一個由螢幕提供的頁面，讓你輸入電子郵件和密碼，這些資訊經過加密且只使用一次。LG 電視使用自己的 QR code 登入，在手機的瀏覽器中完成；從 build 28 起，手機應用程式的掃描器能辨識這個 QR code 並開啟該頁面。Samsung 電視目前需手動輸入登入。
+手機端可在 Android 上使用，iPhone 和 iPad 則從 3.3.2 版本開始支援。如果手機上沒有 Immuch360，可以用手機的相機掃描該代碼：瀏覽器會開啟一個由螢幕提供的頁面，讓你輸入電子郵件和密碼，這些資訊經過加密且只使用一次。LG 電視使用自己的 QR code 登入，在手機的瀏覽器中完成；從 build 28 起，手機應用程式的掃描器能辨識這個 QR code 並開啟該頁面。Samsung 電視目前需手動輸入登入。
 
 更多資訊：[用手機登入](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、[螢幕會傳送和保留哪些資料](../docs/immuch360/technical-details.md#sign-in-with-your-phone)。
 
@@ -667,11 +672,19 @@ Immich 自己的應用程式無法安裝在 LG 電視上。Immuch360 為搭載 w
 4. 「製作場景」。面板會顯示每個步驟：擷取畫面、把照片放到 3D 空間中、訓練潑濺，以及剩餘時間，「取消」可停止它。在配備 RTX 4060 的筆記型電腦上，一個房間的 150 張照片約需 12 分鐘，一段一分鐘的物體影片約需 8 分鐘。
 5. 場景 `<name>_splat.spz` 會放在照片旁邊或你的資料夾中。可在頭戴裝置中從你的 NAS 或其 Download 資料夾開啟（頭戴裝置「設定」、「進階」中的「大型潑濺」會完整顯示），或在電腦、手機或平板的潑濺檢視器中開啟，在那裡「儲存至 Immich」會把它保存在你的伺服器上。物體會為頭戴裝置裁切到其周圍，讓它在你面前開啟；.ply 則保留整個場景。
 
+**品質**，從桌面版 build 22 起：在「你拍攝的是什麼？」下方，對話框提供三行選項，每行都列出它適用的裝置，以及在這台電腦上所需的時間和其檔案大小（「在此電腦上約 13 分鐘，檔案約 3.4 MiB」）。每次開啟對話框時，都會選取「頭戴裝置（Meta Quest、手機、平板、PC）」。
+
+- 「頭戴裝置（Meta Quest、手機、平板、PC）」：上述步驟的場景，最多 150,000 個高斯，在配備 RTX 4060 的筆記型電腦上訓練 5 到 6 分鐘。
+- 「精細（PC、新款手機；頭戴裝置取得縮小的副本）」：照片和畫面以 1,920 像素準備和訓練，最多一百萬個高斯，讓細小的文字、格柵或螺絲在頭戴裝置品質會模糊之處清晰呈現。在那台筆電上，訓練需 27 到 31 分鐘，物體的檔案為 3 MB，地點的檔案為 19 到 20 MB。
+- 「最高（配備顯示卡的 PC；頭戴裝置和手機取得縮小的副本）」：以你照片或影片的完整尺寸製作的精細品質，在這台電腦的記憶體容許範圍內；若無法容納，例如 1080p 影片，該行會顯示「在此電腦上與精細相同」。
+
+選擇精細和最高時，`<name>_splat.spz` 保存整個場景，供電腦和手機使用，旁邊的 `<name>_splat.headset.spz` 則包含其中最強的 150,000 個高斯，是要在頭戴裝置中開啟的副本。數據和選擇的詳細說明請見[使用者指南](../docs/immuch360/user-guide.md#splat-scenes-the-quality-choice)。
+
 只有照片拍到的部分會被重建：沒有任何照片拍到的地方會保持空白或模糊。當能放到 3D 空間中的照片太少時，應用程式會說明原因以及需要重拍什麼。潑濺場景在配備獨立顯示卡的 Windows 上製作：內建顯示晶片、360° 照片和 360° 影片暫不支援。
 
-已在作者配備 RTX 4060 Laptop GPU 的筆記型電腦上驗證：一個房間用 150 張照片花了 12 分 18 秒，他自己用手機拍攝的一段一分鐘物體影片，130 張畫面中有 129 張已放置，物體也已擺正，花了 7 分 47 秒。
+已在作者配備 RTX 4060 Laptop GPU 的筆記型電腦上驗證：一個房間用 150 張照片花了 12 分 18 秒，他自己用手機拍攝的一段一分鐘物體影片，130 張畫面中有 129 張已放置，物體也已擺正，花了 7 分 47 秒。三種品質已在那台筆電上僅用訓練程式測量過，對象是那個物體、一個以 8K 拍攝的地點和一個有 150 張照片的房間，對話框、檔案和頭戴裝置副本則由專案的測試驗證；應用程式本身尚未製作過任何精細或最高場景，製作功能產生的場景也尚未在頭戴裝置中開啟過。
 
-更多資訊：[桌面版 build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) 的說明，以及[元件及其校驗值](https://github.com/freeKC/Immuch360/releases/tag/ai-components-4)。
+更多資訊：[桌面版 build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) 和[桌面版 build 22](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22) 的說明，以及[元件及其校驗值](https://github.com/freeKC/Immuch360/releases/tag/ai-components-4)。
 
 <a id="keep-a-splat-scene-on-your-immich-server"></a>
 ### 把潑濺場景保存在你的 Immich 伺服器上
@@ -688,7 +701,7 @@ Immich 伺服器不接受 .spz 或 .ply 檔案。Immuch360 會把潑濺場景保
 
 這些照片的編輯器和一鍵旋轉已停用：潑濺場景在其檢視器中用「擺正」轉動。Android TV、iPhone 和 iPad 會顯示照片並說明可在哪裡探索它；LG 和 Samsung 電視以及 Immich 應用程式會顯示照片。在 Immich 中編輯過的照片會保留其場景，場景從原始檔案開啟；由其他程式重新儲存的副本，例如通訊應用程式壓縮照片時，會失去場景。
 
-已對照 Immich 3.3.0 和 3.2.4 的測試伺服器驗證：38,884 到 1,000,000 個高斯的場景在 2 到 7 秒內儲存完成，並逐位元組讀回，經過會丟棄範圍請求的代理伺服器時也一樣；第二次儲存同一場景時會發現它已經存在；照片在 Immich 網頁應用程式中帶著其標記顯示。
+已對照 Immich 3.3.0 和 3.2.4 的測試伺服器驗證：38,884 到 1,000,000 個高斯的場景在 2 到 7 秒內儲存完成，並逐位元組讀回，經過會丟棄範圍請求的代理伺服器時也一樣；第二次儲存同一場景時會發現它已經存在；照片在 Immich 網頁應用程式中帶著其標記顯示。尚未在頭戴裝置中開啟過任何潑濺照片。
 
 更多資訊：[build 41](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-41) 和[桌面版 build 21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21) 的說明。
 
@@ -776,7 +789,7 @@ iPhone 和 iPad 保留其系統解碼器和自己的等待規則。已在 Androi
 2. 在設定、資源檢視器、影片中，「影片來源」可以設定成：此裝置能解碼時使用原始檔案、永遠使用原始檔案，或永遠使用轉碼串流。
 3. 若想將 360° 照片展示給沒有安裝此應用程式的人，可以透過 Immich 共用連結分享：Immich 網頁版會在他們的瀏覽器中以球形顯示該照片。
 
-目前的 build，也就是 build 41，和 build 28 至 40 一樣是基於 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0）；build 28 已針對以同一個 Immich `main` 建置的伺服器進行測試，build 27 也已針對 Immich 3.2.4 伺服器進行測試。若發現問題，請在 [Issues](https://github.com/freeKC/Immuch360/issues) 回報，而不要回報給 Immich 專案。
+目前的 build，也就是 build 42，和 build 28 至 41 一樣是基於 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0）；build 28 已針對以同一個 Immich `main` 建置的伺服器進行測試，build 27 也已針對 Immich 3.2.4 伺服器進行測試。若發現問題，請在 [Issues](https://github.com/freeKC/Immuch360/issues) 回報，而不要回報給 Immich 專案。
 
 哪些維持不變、Immuch360 增加了什麼，請見[與 Immich 比較](#compared-with-immich)。
 
@@ -804,7 +817,7 @@ iPhone 和 iPad 保留其系統解碼器和自己的等待規則。已在 Androi
 </p>
 <p align="center"><sub>插畫。Tapo 支援已以模擬攝影機驗證。</sub></p>
 
-TP-Link 的 Tapo 攝影機，就在你的照片旁邊，不需要 Tapo 應用程式。應用程式可以顯示攝影機的即時畫面（Android 手機和平板、Android TV、Meta Quest、Windows，以及僅影像的 LG 電視；iPhone 和 iPad 從下一個 iOS 版本起），並依日期列出記憶卡中的錄影內容（手機、平板、Android TV、Quest 和電腦）。影片片段會從攝影機取得，像一般影片一樣播放，也可以傳送到 Immich。應用程式只會與你網路上的攝影機通訊，絕不會連接 TP-Link 的伺服器，也從不更改攝影機上的任何設定。
+TP-Link 的 Tapo 攝影機，就在你的照片旁邊，不需要 Tapo 應用程式。應用程式可以顯示攝影機的即時畫面（Android 手機和平板、Android TV、Meta Quest、Windows，以及僅影像的 LG 電視；iPhone 和 iPad 從 3.3.2 版本起，尚未在其上試過），並依日期列出記憶卡中的錄影內容（手機、平板、Android TV、Quest 和電腦）。影片片段會從攝影機取得，像一般影片一樣播放，也可以傳送到 Immich。應用程式只會與你網路上的攝影機通訊，絕不會連接 TP-Link 的伺服器，也從不更改攝影機上的任何設定。
 
 **已以模擬攝影機驗證。** 通訊協定是根據韌體 1.3.4 的 C510W 的封包擷取撰寫的。附上「測試攝影機」所顯示型號和韌體的回報會很有幫助。
 
@@ -891,11 +904,26 @@ Insta360 相機的原始 .insp 照片和 .insv 影片（一個或兩個鏡頭，
 
 1. 把原始檔案放在應用程式能讀取的位置：SMB 或 WebDAV 共用、你的 Immich 伺服器（僅接受 .insp 和 .insv），或電腦的資料夾。Android 手機的圖庫不會列出原始檔案，因此複製到手機上的原始檔案既不會出現在圖庫中，也不會出現在應用程式中。
 2. 由兩個檔案組成的錄影，請把這兩個檔案放在一起：應用程式會在第一個檔案旁邊尋找另一個。
-3. 開啟檔案並點一下 360°。照片會顯示「Raw 360° file, stitched by the app」及其校準資料來源；影片則在播放時拼接。
+3. 開啟檔案並點一下 360°。照片會顯示「Raw 360° file, stitched by the app」及其校準資料來源；影片則在播放時拼接。在 Android 手機、平板和電視上，Insta360、GoPro MAX 或 DJI Osmo 360 影片也會[以相機陀螺儀防震播放](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)（實驗性）。
 
 Linux 和 macOS 會以平面方式播放原始影片，雙魚眼 .dng 檔案目前也以平面方式顯示。
 
 更多資訊：[360° 相機原始檔案](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app)。
+
+<a id="stabilise-your-360-videos-with-the-cameras-gyroscope-experimental"></a>
+### 用相機陀螺儀為你的 360° 影片防震（實驗性）
+
+手持、在自行車上或在安全帽上拍攝的 360° 影片會晃動，地平線也會傾斜。相機會在原始檔案中記錄自身的動態，但不會為其像素防震。從 build 42 起，Android 手機、平板和電視的 360° 播放器會讀取這些由相機陀螺儀記錄的動態，並把每個畫面轉回來：地平線保持水平，震動消失，你轉彎時視角會隨道路前進。這是實驗性功能，預設為開啟。Immich 應用程式沒有類似的功能。
+
+1. 把原始影片放在應用程式能讀取的地方：你的 Immich 伺服器會原樣接收 Insta360 X3、X4 或 X5 的 .insv 影片，網路共用或裝置資料夾還能存放 Immich 伺服器不接收的 GoPro MAX（.360）和 DJI Osmo 360（.osv）影片。由兩個檔案組成的錄影，請把這兩個檔案放在一起，就像[開啟 360° 相機的原始檔案](#open-the-raw-files-of-360-cameras)中說明的那樣。
+2. 從時間軸、共用或[「瀏覽資料夾」](#browse-a-folder-of-your-phone-or-headset)開啟影片並點一下 360°：影片會立即開始，並顯示「已使用相機陀螺儀防震」幾秒鐘。
+3. 播放器頂部列中、在音訊、360° 和 3D 按鈕旁的防震按鈕，可以關閉防震，讓你看到拍攝時的原貌，也可以再次開啟。「設定」、「項目檢視器」、「影片」中的「使用相機陀螺儀防震 (實驗性)」會跟隨此按鈕，並為之後的影片保留你的選擇。
+
+GoPro MAX 影片已用一個檔案驗證：地平線和晃動會被修正，但相機幾乎垂直朝上或朝下時除外，此時會殘留部分晃動。DJI Osmo 360 影片在開頭 5 秒內從原始畫面過渡到防震畫面，因為相機在這幾秒的紀錄可能傾斜達 20°。GoPro MAX 2 影片照常播放，不會顯示按鈕；應用程式無法在任意位置讀取的檔案也一樣：不告知檔案大小的 DLNA 或 Plex 伺服器上的檔案、要求一部分時卻傳送整個檔案的伺服器、每個檔案都從頭傳送的裝置。沒有動態軌道的影片會照常播放，不會顯示按鈕，視角可能一開始就轉向一側，地平線保持水平。iPhone、iPad、Meta Quest 和電腦尚未支援防震。
+
+在六個 Insta360 檔案上測量：陀螺儀與畫面中看到的動態相符，每格誤差在 0.1 到 0.3° 之內，而騎乘機車時的晃動為每格 0.65 到 1.0°。已由專案的測試和 CI，以 Insta360 X3、X4 和 X5、GoPro MAX（一個檔案）及 DJI Osmo 360 相機範例檔案的動態軌道驗證，檔案從 Immich 圖庫和共用讀取。尚無在手機或電視上播放防震畫面的紀錄。
+
+更多資訊：[build 42](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-42) 的說明，以及 Aoaodacat 提出此要求的 [issue 14](https://github.com/freeKC/Immuch360/issues/14)。
 
 <a id="turn-a-photo-with-one-key"></a>
 ### 一鍵旋轉照片
@@ -955,7 +983,7 @@ Immuch360 保留了完整的 Immich 行動應用程式，並加入周邊的功�
 |---|---|
 | **相同** | 你的 Immich 伺服器和帳號：備份、時間軸、相簿、搜尋、人物、回憶、分享和夥伴，全部與你的伺服器同步。可與官方應用程式並存安裝。 |
 | **不需要伺服器** | 也可以在沒有伺服器或帳號的情況下執行，使用裝置上的照片和影片、電腦的資料夾和網路共用；Plex 和攝影機使用各自的登入方式，從不使用 Immuch360 帳號。 |
-| **360° 與沉浸式** | 360° 照片和影片以球形顯示，全景、VR180 和 3D，Meta Quest 中的沉浸式畫面，360° 標記和 360° 清單。Immich 行動應用程式中的 360° 檢視自 2024 年 1 月起就有人要求，至今仍未提供。 |
+| **360° 與沉浸式** | 360° 照片和影片以球形顯示，全景、VR180 和 3D，Meta Quest 中的沉浸式畫面，360° 標記和 360° 清單，在 Android 手機、平板和電視上還有以相機陀螺儀防震的 Insta360、GoPro MAX 和 DJI Osmo 360 相機原始影片（實驗性）。Immich 行動應用程式中的 360° 檢視自 2024 年 1 月起就有人要求，至今仍未提供。 |
 | **用你的照片製作 3D** | 在電腦上，一張照片可以變成 3D 照片、3D 場景或 360° 全景圖，在 Meta Quest 3 或 3S 中，任何平面照片都能獲得立體感：由 AI 在你自己的電腦和頭戴裝置上產生，在應用程式和檔案中都有相應標示，原始照片永遠不會被修改。Immich 應用程式無法製作任何 3D 內容。 |
 | **高斯潑濺** | 可在 Android 手機和平板、電腦以及 Meta Quest 3 和 3S 上開啟，可在 Windows 電腦上用你的照片或影片製作，並保存在你 Immich 伺服器上的一張照片中，因為伺服器不接受 .spz 或 .ply 檔案。Immich 應用程式無法開啟任何潑濺。 |
 | **在電視上** | Android TV 和 Google TV 上是同一個應用程式，LG 電視則有一個電視應用程式，它也以測試 build 的形式打包給 Samsung 電視使用。Immich 自己的應用程式無法安裝在 LG 電視上。 |
@@ -984,7 +1012,7 @@ Immuch360 是 [Immich](https://github.com/immich-app/immich) 行動應用程式�
 
 360° 照片檢視器是基於 dmitry-brazhenko 提出的上游 pull request [immich-app/immich#31169](https://github.com/immich-app/immich/pull/31169)，而該 pull request 本身又是建立在 bencefr 於 [#30192](https://github.com/immich-app/immich/pull/30192) 中提出的原型之上；在此感謝兩位的貢獻。以遙控器操作搜尋篩選器的修正，以及電視上的相簿排序，源自 mlc70 在 [mlc70/Immuch-Android-TV#1](https://github.com/mlc70/Immuch-Android-TV/pull/1) 中的成果，而操作列以及佔螢幕高度 80% 的篩選面板則來自 mlc70 的 [mlc70/Immuch-Android-TV#3](https://github.com/mlc70/Immuch-Android-TV/pull/3)，並保留了其作者資訊；感謝 mlc70。LG webOS 應用程式也打包供 Samsung 電視使用，它以 Seeky91 的 [immich-tv-webos](https://github.com/Seeky91/immich-tv-webos) 為基礎建置，採用 MIT 授權，保留在其自己的資料夾中；感謝 Seeky91。Tapo 相機功能是依據 [pytapo](https://github.com/JurajNyiri/pytapo)、[Home Assistant Tapo Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) 和 [python-kasa](https://github.com/python-kasa/python-kasa) 所記載的內容撰寫而成。Meta Quest 畫面依賴 Meta Spatial SDK，由於它並非開放原始碼，因此只會保留在這個分支中。SMB 共用使用 libsmb2，採用 LGPL 2.1 或更新版本授權：從 build 27 和桌面版 build 7 起，每個 build 都附有其聲明、授權條款文字和原始碼封存檔 `Immuch360-libsmb2-sources.tar.gz`，這個檔案也會附加在每個發行版本中。Windows 和 macOS 的 build 隨附由本專案建置的 libmpv（[mpv](https://mpv.io) 的函式庫，搭配 [FFmpeg](https://ffmpeg.org)），採用 LGPL 授權，並附有其授權條款和原始碼，列在應用程式的授權頁面中（個人資料選單底部的「授權」）。從 build 40 起，Quest APK 隨附 zstd-jni 1.5.7-3（BSD 2-Clause）以及採用其 BSD 授權的 zstd 1.5.7，用於讀取 SPZ 第 4 版的潑濺，應用程式的授權頁面會在「zstd-jni」項目下列出它們。從 build 41 和桌面版 build 21 起，電腦、手機和平板的潑濺檢視器隨附 Spark 2.4.0（MIT，World Labs），由專案的 CI 從其原始碼建置，以及 three.js 0.180.0（MIT），列在[其說明](../licenses/splat-viewer/README.md)中；AV2 解碼器只在你要求時從預發行版 [av2-decoder-1](https://github.com/freeKC/Immuch360/releases/tag/av2-decoder-1) 下載，以 VideoLAN 的 dav2d（BSD 2-Clause）為基礎建置，採用 Alliance for Open Media Patent License 1.0（[其說明](../licenses/av2/README.md)）。本頁提及平台的詳細資訊和商標說明請見[授權和商標](../docs/immuch360/platform-support.md#license-and-trademarks)。
 
-build 33 帶來了 Michael Cloutier（[mlc70](https://github.com/mlc70/Immuch-Android-TV)）的搜尋導覽及其 commit，Gaurav Mukherjee（[gmfun](https://github.com/gmfun/Immuch360)）的 commit 和構想，以及 [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) 展覽用 build 的構想，並在我們的程式碼上重新撰寫；月和年檢視回應了 ChazyChaxxx 在 [Discussion 10](https://github.com/freeKC/Immuch360/discussions/10) 中的請求。感謝他們。
+build 33 帶來了 Michael Cloutier（[mlc70](https://github.com/mlc70/Immuch-Android-TV)）的搜尋導覽及其 commit，Gaurav Mukherjee（[gmfun](https://github.com/gmfun/Immuch360)）的 commit 和構想，以及 [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) 展覽用 build 的構想，並在我們的程式碼上重新撰寫；月和年檢視回應了 ChazyChaxxx 在 [Discussion 10](https://github.com/freeKC/Immuch360/discussions/10) 中的請求。感謝他們。build 42 回應了 Aoaodacat 在 [issue 14](https://github.com/freeKC/Immuch360/issues/14) 中提出的 360° 影片防震請求，以及 gthrepwood 在 [issue 13](https://github.com/freeKC/Immuch360/issues/13) 中的回報，這些回報促成了桌面版 build 22 的全景圖記憶體改進；感謝兩位。
 
 AI 功能執行的是他人製作的模型和引擎，只在你要求時從本儲存庫的預發行版 [ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1)、[ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2)、[ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3) 和 [ai-components-4](https://github.com/freeKC/Immuch360/releases/tag/ai-components-4) 下載；每個檔案及其來源、授權和 SHA-256 都列在 [MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md) 中。感謝它們的作者：
 
@@ -1002,14 +1030,14 @@ nomadoor 的 360° LoRA 在其模型卡上標示為 Apache 2.0，訓練資料為
 
 尚未完成的工作，最可能先做的排在前面。這裡的內容都不是承諾，[問題追蹤器](https://github.com/freeKC/Immuch360/issues)中的回饋有助於決定先做什麼。
 
-- **商店**：Google Play（build 32 自 10 月 29 日起審核中，取代 build 31；電視版本上架審核中）、App Store（版本 3.3.1 審核中，之後是搭配 build 28 的版本 3.3.2）、搭配 build 40 的 Meta Horizon Store（自 10 月 30 日起上架 build 32）、LG Content Store（版本 1.0.0 自 10 月 24 日起由 LG 審核中，之後是版本 1.0.1），之後是 Samsung 商店。
-- **AI 創作功能**：Mac 上的 360° 全景圖；在 Linux 上、以內建顯示晶片以及用 360° 照片和影片製作的潑濺場景；iOS、LG 和 Samsung 應用程式中的 AI 標示；在搭載顯示卡的 Linux 電腦以及 AMD 和 Intel 顯示卡上試用全景圖。
+- **商店**：搭配 build 41 的 Google Play（自 11 月 5 日起在 Google 審核中；電視版本上架審核中）、搭配 build 41 的 Meta Horizon Store（自 11 月 5 日起在 Meta 審核中）、搭配後續 build 之 iOS 版本的 App Store、LG Content Store（版本 1.0.0 自 10 月 24 日起由 LG 審核中，之後是版本 1.0.1），之後是 Samsung 商店。
+- **AI 創作功能**：Mac 上的 360° 全景圖；在 Linux 上、以內建顯示晶片以及用 360° 照片和影片製作的潑濺場景；在頭戴裝置中測量精細和最高潑濺場景的頭戴裝置副本；iOS、LG 和 Samsung 應用程式中的 AI 標示；在搭載顯示卡的 Linux 電腦以及 AMD 和 Intel 顯示卡上試用全景圖。
 - **無人機**：進行一次戶外飛行，以捲尺驗證 1.8 m 和 1.5 m/s 以上的高度和速度以及障礙物距離，然後顯示衛星和與返航點的距離；在頭戴裝置中驗證轉送的穩定畫面；轉送到 LG 和 Samsung 電視；iPhone 和 iPad 上的無人機功能，尚未開始；以一台實體 DJI Neo 2 測試匯入頁面，然後把手機錄製的聲音合併到其影片片段中。在完成這些測試之前，不規劃任何向無人機傳送指令的功能。
 - **電視**：在實體 Android TV 上測試 build 29，包括其影片控制項和用手機登入；在實體 LG 電視上測試 LG 應用程式的共用、Plex 和即時畫面，以及 webOS 26；在實體 Samsung 電視上測試 Samsung 測試 build 0.2.0，接著是 Samsung 電視上的用手機登入、共用、Plex 和攝影機；接著是 LG 電視球形上的 360° 影片、攝影機的聲音及其錄影（2026 年 12 月之前不會提供）。
 - **攝影機**：以實體攝影機驗證 Tapo 攝影機。
 - **電腦**：在 Windows 電腦上手動測試每個功能，包括用手機登入；Windows 上搭配網路攝影機的 Spatial 2.5D，開發中，預計於 2026 年 11 月推出；然後是 Linux 和 macOS 上的 360° 影片渲染器，並在實體 Linux 電腦上測試；接著是自動更新和已簽署的 macOS 應用程式；Immich 伺服器可接受的 MKV、WebM 和 MP4 檔案中的 AV2。
-- **手機和平板**：隨下一個 iOS 版本為 iPhone 和 iPad 推出 Tapo 即時畫面和大螢幕登入；iOS 的 360° 影片播放器加入進度列、手機的 360° 播放器加入上一個和下一個、iOS 平面播放器加入音軌和字幕選單；iPhone 和 iPad 上的潑濺檢視器。
-- **沉浸式媒體**：雙魚眼 .dng 檔案、根據 GoPro 和 DJI 影片自身的動態資料進行水平校正、在解碼器允許的情況下於 Quest 上以 3D 顯示空間影片、在頭戴裝置中於空間照片之間切換上一個和下一個。
+- **手機和平板**：iOS 的 360° 影片播放器加入進度列、手機的 360° 播放器加入上一個和下一個、iOS 平面播放器加入音軌和字幕選單；iPhone 和 iPad 上的潑濺檢視器。
+- **沉浸式媒體**：雙魚眼 .dng 檔案、iPhone 和 iPad、Quest 和電腦上原始影片的防震，以及 GoPro MAX 2 檔案的防震、在解碼器允許的情況下於 Quest 上以 3D 顯示空間影片、在頭戴裝置中於空間照片之間切換上一個和下一個。
 - **來源**：在共用資料夾的檔案之間滑動切換、WebDAV 的 Digest 驗證、透過 QR code 從電腦取得 Plex 權杖、Plex 的 IPv6 支援、H.265 格式的 Tapo 錄影，以及電視主畫面上的頻道功能。
 - **上游**：針對維護者需要的部分，向 Immich 提交小型 pull request，從 360° 相片檢視器開始。
 
@@ -1041,12 +1069,12 @@ nomadoor 的 360° LoRA 在其模型卡上標示為 Apache 2.0，訓練資料為
 - **格式**：平面照片和影片（裝置可解碼的格式：MP4、MOV、MKV 等）；等距矩形 360° 照片和影片；部分全景（GPano 裁切）；VR180；上下或左右排列的立體 3D，可由檔案讀取（st3d box）或由畫面推測；Apple 空間照片（HEIC 立體對）和空間影片（MV-HEVC，單眼）；Insta360 的 .insp 和 .insv 原始檔案、GoPro 的 .360、DJI 的 .osv；10 位元 HLG 和 PQ 來源會在球形上進行色調對應；在 Android 上由應用程式解碼的 TIFF（8 位元和 16 位元、灰階、RGB、調色盤和 CMYK，未壓縮或採用 LZW、Deflate、PackBits 或 JPEG 壓縮）；Meta Quest 3 和 3S 上，以及從 build 41 和桌面版 build 21 起在 Android 手機和平板與電腦上，第 1 至 4 版的 .spz 以及二進位 .ply 高斯潑濺，也包括應用程式儲存至 Immich 的 `_splat.jpg` 照片中的潑濺；電腦上 .ivf 和 .obu 檔案中的 AV2（實驗性）。
 - **投影和中繼資料**：從檔案讀取 GPano 和球形中繼資料，在伺服器或共用上以範圍請求的方式讀取；相機拍攝時的初始視角；依相機辨識 DJI 無人機的球形全景，並可選擇附上 .xmp 附屬檔案，讓 Immich 也能標記它們；裝置會記住「以 360° 檢視」的設定；VR180 可由檔案本身或檔名辨識；無人機影片的拍攝地點從其 .SRT 飛行記錄中讀取；由於播放的永遠是原始檔案而非轉換後的複本，中繼資料會完整保留；90° 旋轉會透過 Immich 編輯器儲存或保留在裝置上，絕不會套用到沉浸式檔案。
 - **原生播放**：Android 和電視上使用 Media3，iOS 上使用 SceneKit 和 AVFoundation，頭戴裝置中使用 Meta Spatial SDK，Windows 上使用 libmpv；會根據裝置可解碼的格式選擇原始檔案或轉碼串流；在設定、進階中可查看裝置的影片解碼器清單；並提供音軌選擇、Android 播放器中的字幕和緩衝指示；依連線能提供的速度和影片所需的速度決定串流影片何時開始，以及在伺服器沉默時等待的影片；AV2 由 VideoLAN 的 dav2d 在處理器上解碼，在本專案的一個小程式中進行，該程式只在電腦本機上把畫面提供給 libmpv；電腦、手機和平板上的高斯潑濺由系統網頁檢視（WebView2、WebKitGTK、WKWebView、Android System WebView）中基於 three.js 的 Spark 2.4.0 繪製，僅由應用程式在裝置本機上提供。
-- **在裝置上拼接的原始檔案**：照片使用 Flutter 片元著色器；單軌影片在播放器中使用 GPU 效果；每條軌道或每個檔案只有一個鏡頭的影片，會同時使用兩個硬體解碼器和一個 GPU 合成器（Android 和 Quest 上使用 OpenGL ES 3，iOS 上使用 Metal，而在 Windows 上，從桌面版 build 5 開始，使用兩個 libmpv 播放器，應用程式會在顯示晶片上將它們的畫面配對）；相機自身的校準資料（Mei、V6 和等距模型）以及加速度感測器記錄；當裝置無法同時執行兩個解碼器時，會回退到單鏡頭、轉碼串流、相機的 LRV 複本或未拼接的影片。
+- **在裝置上拼接的原始檔案**：照片使用 Flutter 片元著色器；單軌影片在播放器中使用 GPU 效果；每條軌道或每個檔案只有一個鏡頭的影片，會同時使用兩個硬體解碼器和一個 GPU 合成器（Android 和 Quest 上使用 OpenGL ES 3，iOS 上使用 Metal，而在 Windows 上，從桌面版 build 5 開始，使用兩個 libmpv 播放器，應用程式會在顯示晶片上將它們的畫面配對）；相機自身的校準資料（Mei、V6 和等距模型）以及加速度感測器記錄；當裝置無法同時執行兩個解碼器時，會回退到單鏡頭、轉碼串流、相機的 LRV 複本或未拼接的影片。從 build 42 起，會從檔案中讀取相機的動態軌道（Insta360 陀螺儀、GoPro MAX 的方向和重力、DJI Osmo 360 的姿態），並轉換為每格一個旋轉，由 Android 的 360° 播放器隨每格畫面交給 Media3（實驗性）。
 - **來源**：裝置的圖庫；電腦的資料夾；透過 USB 和系統資料夾選擇器連接的無人機或相機記憶卡（Android，實驗性）；以傳輸線連接的 DJI RC-N3 遙控器，用於無人機的即時畫面（Android，實驗性），畫面可透過區域網路轉送到 Meta Quest 或 Android TV；Immich 伺服器；SMB 2 和 3、WebDAV、DLNA/UPnP；透過 HTTPS 連接的 Plex，並驗證伺服器自己的憑證；區域網路上的 Tapo 攝影機（HTTPS 和 RTSP）；透過 Wi-Fi 以 WebDAV 伺服器形式分享的手機或電腦；由 Bonjour/mDNS、區域網路掃描、SSDP、GDM 和 TP-Link 探索機制找到的伺服器，並在其位址變更時持續追蹤；透過系統資料夾選擇器開啟手機、平板或 Android Meta Quest 的資料夾。
 - **隨需讀取**：本機橋接機制會以位元組範圍和每個工作階段的權杖為播放器提供資料；採用大區塊、預先讀取，SMB 最多可同時使用六個連線；縮圖取自每部影片的其中一個畫面；不會在裝置上複製任何內容。
 - **硬體**：只要有硬體解碼器就會使用，並依實測結果設定限制（例如 Quest 3 的 H.264 上限，軟體解碼器最多支援兩個 2048x2048 鏡頭）；在 Windows 上，360° 畫面由顯示晶片根據每個已解碼畫面繪製，畫面大小會在每台電腦上實測，並偵測是內建還是獨立顯示晶片，從桌面版 build 21 起，在有兩顆圖形晶片的筆記型電腦上會向驅動程式要求使用獨立的那顆；在電腦上，潑濺的高斯數量會與電腦及其顯示卡的記憶體比對計算。
 - **平台特性**：手機上的陀螺儀和 Spatial 2.5D 播放器；Quest 上的沉浸式畫面、控制器和雙手操作；Android TV 上的遙控器版面配置、鍵盤對話框和電視橫幅；電腦上的滑鼠和鍵盤、全螢幕、單一視窗、可用應用程式開啟或拖放到視窗上的檔案和資料夾，讀取方式與資料夾中的一般檔案相同，還有 HEIC、AVIF、TIFF 和相機 RAW 照片（取決於 Windows 是否有對應的解碼器），以及 Windows 用來保護密碼和權杖的資料保護功能。
-- **AI 創作功能**：3D 照片為全寬左右並排的 JPEG，左眼在前，立體感由 Depth Anything V2 Small 透過處理器上的 ONNX Runtime 1.31.0 估算（Intel Mac 上為 1.23.2）；場景為一個承載 glTF 分層場景的 JPEG，各層在深度斷開處切開，來自 MoGe-2 ViT-S 和 LaMa，可匯出為 .glb；360° 全景圖為 6144 x 3072，由 FLUX.2 klein base 4B 和一個 360° LoRA 透過 Vulkan 上的 stable-diffusion.cpp 產生，接縫由 MI-GAN 銜接，細節由 Real-ESRGAN 提升，再放回真實像素；360° 照片的 3D 版本，上下排列；每個檔案都附有我們的 XMP（類型、來源、原始照片的 SHA-1、品質旗標），場景和全景圖還附有 IPTC 數位來源類型；Quest 的立體感由 LiteRT 在其顯示晶片或處理器上計算，並保存在快取中；在電腦上，有一個兩條通道的佇列，以及一個透過 Vulkan 讀取顯示卡狀態、在全景圖開始前釋放應用程式自身占用的部分、並在其他程式占用其記憶體時等待的閘門；每個元件都以其 SHA-256 驗證，Windows 上的產生器已簽署；共用照片的 3D 版本在 SMB 和 WebDAV 上寫在其旁邊；潑濺場景由 20 到 200 張照片或一段影片製作，相機位置由 COLMAP 4.2.1 在處理器上確定，潑濺由 Brush 0.3.0 在 Vulkan 上訓練，物體會在其所立的表面上擺正，寫成最多 150,000 個高斯的第 2 版 SPZ，需要時另寫一個 .ply。
+- **AI 創作功能**：3D 照片為全寬左右並排的 JPEG，左眼在前，立體感由 Depth Anything V2 Small 透過處理器上的 ONNX Runtime 1.31.0 估算（Intel Mac 上為 1.23.2）；場景為一個承載 glTF 分層場景的 JPEG，各層在深度斷開處切開，來自 MoGe-2 ViT-S 和 LaMa，可匯出為 .glb；360° 全景圖為 6144 x 3072，由 FLUX.2 klein base 4B 和一個 360° LoRA 透過 Vulkan 上的 stable-diffusion.cpp 產生，接縫由 MI-GAN 銜接，細節由 Real-ESRGAN 提升，再放回真實像素；360° 照片的 3D 版本，上下排列；每個檔案都附有我們的 XMP（類型、來源、原始照片的 SHA-1、品質旗標），場景和全景圖還附有 IPTC 數位來源類型；Quest 的立體感由 LiteRT 在其顯示晶片或處理器上計算，並保存在快取中；在電腦上，有一個兩條通道的佇列，以及一個透過 Vulkan 讀取顯示卡狀態、在全景圖開始前釋放應用程式自身占用的部分、從桌面版 build 22 起要求其有 3.5 GiB 可用並在低於約 5.6 GiB 時將產生過程分段、並在其他程式占用其記憶體時等待的閘門；每個元件都以其 SHA-256 驗證，Windows 上的產生器已簽署；共用照片的 3D 版本在 SMB 和 WebDAV 上寫在其旁邊；潑濺場景由 20 到 200 張照片或一段影片製作，相機位置由 COLMAP 4.2.1 在處理器上確定，潑濺由 Brush 0.3.0 在 Vulkan 上訓練，物體會在其所立的表面上擺正，寫成最多 150,000 個高斯的第 2 版 SPZ，或從桌面版 build 22 起，選擇精細和最高時，寫成整個場景以及其中最強的 150,000 個高斯供頭戴裝置使用的副本，需要時另寫一個 .ply。
 - **從設計上保護隱私**：不需帳號、不使用雲端、不進行分析；密碼和權杖儲存在裝置的安全儲存空間中（LG 和 Samsung 電視沒有供應用程式使用的安全儲存空間，因此儲存在應用程式自己的儲存空間中，未加密）；從手機登入的螢幕會取得自己的工作階段，在家用網路上加密傳送，絕不會傳送密碼（LG 電視會從手機瀏覽器中的一個頁面取得密碼，在家用網路上未加密傳送，並只保留工作階段）；空間播放器和代碼掃描器使用的相機僅在裝置本機運作；共用、Plex 和相機都只會在你的網路上連線；AI 在裝置上計算，其元件只在你要求時下載並以 SHA-256 驗證，ONNX Runtime 的遙測已關閉；你電影的觀看記錄，保存在裝置上。
 
 </details>
