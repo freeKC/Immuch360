@@ -42,9 +42,10 @@ const List<(String, String)> kWidgetNames = [
 
 const int kMinMonthsToEnableScrubberSnap = 12;
 
-const String kImmichAppStoreLink = "https://github.com/freeKC/Immuch360/releases";
-const String kImmichPlayStoreLink = "https://github.com/freeKC/Immuch360/releases";
+const String kImmichAppStoreLink = "https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965";
+const String kImmichPlayStoreLink = "https://play.google.com/store/apps/details?id=com.aprogsys.immuch360";
 const String kImmichLatestRelease = "https://github.com/freeKC/Immuch360/releases/latest";
+const String kImmichServerLatestRelease = "https://github.com/immich-app/immich/releases/latest";
 
 /// Hides the debug banner of debug builds, for store screenshots taken on a simulator
 /// (`--dart-define=IMMUCH_SCREENSHOTS=true`).

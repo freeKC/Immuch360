@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show appFlavor;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -25,14 +26,14 @@ class ServerUpdateNotification extends HookConsumerWidget {
     Future<bool> openUpdateLink() {
       String url;
       if (serverInfoState.versionStatus == VersionStatus.serverOutOfDate) {
-        url = kImmichLatestRelease;
+        url = kImmichServerLatestRelease;
       } else {
         if (Platform.isIOS) {
           url = kImmichAppStoreLink;
-        } else if (Platform.isAndroid) {
+        } else if (Platform.isAndroid && appFlavor != 'quest') {
           url = kImmichPlayStoreLink;
         } else {
-          // Fallback to latest release for other/unknown platforms
+          // Fallback to latest release for other/unknown platforms, and for the Quest build (no Google Play there)
           url = kImmichLatestRelease;
         }
       }
