@@ -24,7 +24,8 @@
 // The splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, section 2.3) take two programs built by our CI
 // from pinned sources, COLMAP 4.2.1 without its GPL parts (lot SP1) and Brush 0.3.0 without the LPIPS weights (lot
 // SP2), as archives of ai-components-4, made by .github/desktop/ai/publish_ai_components.py from the artifacts of the
-// runs 41338110566 (COLMAP) and 41338726969 (Brush) for its publication (lot SP14).
+// run 41884480484 of the release workflow (with_splat and sign_test: colmap.exe and brush_app.exe signed by APROGSYS)
+// for its publication (lot SP14).
 //
 // Shared with the Meta Quest, which reads the LiteRT model from it.
 
@@ -1192,9 +1193,10 @@ const av2DecoderMacComponent = AiComponent(
 // The two programs of a splat scene, each an archive of ai-components-4 built by our CI for Windows x64 and Linux x64
 // (plan 2026-11-01, section 2.3): COLMAP for the poses of the cameras, on the processor, and Brush for the training, on
 // the graphics card by Vulkan. Their size, their sum and the list of their files are written by
-// .github/desktop/ai/publish_ai_components.py --release ai-components-4 from the artifacts of the CI (COLMAP of the
-// run 41338110566, Brush of the run 41338726969: the archives the test builds T1 to T3 ran, byte for byte), each file
-// with its size and SHA-256, colmap.exe and brush_app.exe the programs the engines run. Neither has an official
+// .github/desktop/ai/publish_ai_components.py --release ai-components-4 from the artifacts of the CI (both programs
+// and both systems from the run 41884480484 of the release workflow, a new build of the same locks after the test
+// builds T1 to T3, colmap.exe and brush_app.exe of the Windows archives signed by APROGSYS), each file with its size
+// and SHA-256, colmap.exe and brush_app.exe the programs the engines run. Neither has an official
 // source: the official binaries of COLMAP carry SiftGPU (non commercial), LSD (AGPL 3) and the GPL parts of CHOLMOD,
 // and those of Brush the LPIPS weights, whose origin is not written. The Linux entries are complete too, but the
 // splat scenes are offered on Windows only in this version (AiFeature.splatScene).

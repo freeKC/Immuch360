@@ -988,7 +988,7 @@ The figures were measured on 5 November 2026 with the app's own stable-diffusion
 |---|---|---|
 | 6 GB | at most about 5.3 to 5.8 GiB, less what the desktop holds when the card drives the screen | not offered: "The graphics card has 6.0 GiB of memory, 360° panoramas need 7.5 GiB" (not measured on such a card) |
 | 8 GB in a laptop, the desktop on the integrated chip | about 7.0 GiB (7.02 GiB on the RTX 4060 Laptop of the tests), less the app's own share when it runs on that card: 0.2 GiB at rest, up to 0.9 GiB after a 360° video | runs whole, 4 to 5 minutes a panorama on that laptop |
-| 8 GB, the only card, the desktop and a browser on it | 5.4 GiB in issue #13 (Linux, KDE on Wayland, an RTX 2060, Immuch360 holding 1.4 GiB of it), a little more once the app let go of its videos and cached pictures | from desktop build 22: runs, in pieces below 5.6 GiB free, about 1.5 times longer; desktop build 21 stopped it with "Other apps use the graphics card memory", earlier builds waited for ever |
+| 8 GB, the only card, the desktop and a browser on it | 5.4 GiB in issue #13 (Linux, KDE on Wayland, an RTX 2060, Immuch360 holding 1.4 GiB of it), a little more once the app let go of its videos and cached pictures | from desktop build 22: runs, in pieces below 5.6 GiB free, about 1.5 times longer (measured on Windows; on that card, the tester of issue #13 wrote on 7 November 2026 that it works as expected); desktop build 21 stopped it with "Other apps use the graphics card memory", earlier builds waited for ever |
 | 12 GB and more | 9 GiB and more (an estimate) | runs whole |
 
 **What the app does before a panorama** (from desktop build 21, the figures of desktop build 22):
