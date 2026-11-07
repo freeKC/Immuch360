@@ -1683,6 +1683,14 @@
     "blob": "f0c92b00fba8546a9c0e4fa6193116b733213477",
     "reason": "Sign in with your phone (feat-qr-pairing): the scanner in the camera text, _immuch360-pair._tcp in the Bonjour services, the local network text, the immuch360 URL scheme"
   },
+  "mobile/ios/Runner/Runner.entitlements": {
+    "blob": "9f15cc4fc2c5ff9d318ccb243e558187f2817e3f",
+    "reason": "Release 43 (alignment, 7 November 2026): the associated domains entry applinks:my.immich.app removed, inert since the apple-app-site-association file of that domain names Immich's team only; not yet on the phone branch"
+  },
+  "mobile/ios/Runner/RunnerProfile.entitlements": {
+    "blob": "b7930d562b69585edbfa24e02c2cf0fc5ff312ff",
+    "reason": "Release 43 (alignment, 7 November 2026): the associated domains entry applinks:my.immich.app removed, inert since the apple-app-site-association file of that domain names Immich's team only; not yet on the phone branch"
+  },
   "mobile/ios/Runner/Spherical/SphericalVideoApiImpl.swift": {
     "blob": "cc13e7afce92b5a6733f1c4961295dc5e9ad8afb",
     "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the iOS stub of setStabilization of the Pigeon API (the iOS player applies no table yet)"
