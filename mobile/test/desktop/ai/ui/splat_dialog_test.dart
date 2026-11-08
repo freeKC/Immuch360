@@ -1097,10 +1097,7 @@ void main() {
       until: () => find.byKey(const Key('ai_conversion_network_yes')).evaluate().isEmpty && startEnabled(tester),
     );
     expect(
-      find.text(
-        "In the headset: open this folder in Network shares, then salon_splat.spz, Explore the splat scene. Turn on "
-        "Large splats (experimental) in the headset's settings to see all 150,000 gaussians.",
-      ),
+      find.text('In the headset: open this folder in Network shares, then salon_splat.spz, Explore the splat scene.'),
       findsOneWidget,
     );
     await tapIn(tester, start());

@@ -353,22 +353,12 @@ String splatLeftOutReasonText(Translations t, SplatLeftOutReason reason) => swit
   SplatLeftOutReason.unreachable => t.ai_immersive_failed_source,
 };
 
-/// How the headset opens the scene written as [fileName] with [gaussians]: from Network shares when its folder is on
-/// the network ([network]), else the sentence that says the headset cannot see the folder. "Share this computer" serves
-/// the media of the library only, never a .spz.
-String splatHeadsetText(
-  Translations t, {
-  required bool network,
-  required String fileName,
-  int gaussians = SplatV1.maxGaussians,
-}) => network
-    ? t.ai_immersive_splat_headset_network(
-        shares: t.network_shares,
-        name: fileName,
-        explore: t.splat_explore,
-        large: t.splat_large_setting_title,
-        gaussians: gaussians,
-      )
+/// How the headset opens the scene written as [fileName]: from Network shares when its folder is on the network
+/// ([network]), else the sentence that says the headset cannot see the folder. "Share this computer" serves the media
+/// of the library only, never a .spz. No word of Large splats: the scene for the headset holds SplatV1.maxGaussians
+/// at most, which the headset shows whole by default since 8 November 2026 (splatSafeGaussians)
+String splatHeadsetText(Translations t, {required bool network, required String fileName}) => network
+    ? t.ai_immersive_splat_headset_network(shares: t.network_shares, name: fileName, explore: t.splat_explore)
     : t.ai_immersive_splat_headset_local;
 
 /// "Headset (Meta Quest, phone, tablet, PC)", the line of [quality] with its targets

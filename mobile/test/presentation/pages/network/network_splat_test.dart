@@ -243,7 +243,7 @@ void main() {
         'gaussians': 47819,
         'shDegree': 0,
         'fileBytes': 65536,
-        'maxGaussians': 50000,
+        'maxGaussians': 150000,
         'tool': null,
         'name': 'cash.spz',
       });
@@ -296,29 +296,29 @@ void main() {
       expect(find.text('686 gaussians, PLY, made with make_splat_fixtures.py'), findsOneWidget);
     });
 
-    testWidgets('a splat beyond the count says the headset keeps its 50,000 strongest gaussians by default', (
+    testWidgets('a splat beyond the count says the headset keeps its 150,000 strongest gaussians by default', (
       tester,
     ) async {
       await pumpPage(tester, '/cactus.spz');
 
       expect(find.text('452,451 gaussians, SPZ version 3'), findsOneWidget);
-      expect(find.text('The headset keeps its 50,000 strongest gaussians'), findsOneWidget);
+      expect(find.text('The headset keeps its 150,000 strongest gaussians'), findsOneWidget);
       await tester.tap(find.byKey(exploreSplatButtonKey));
       await tester.pumpAndSettle();
-      expect(jsonDecode(immersiveApi.opened.single.stereoPair!)['maxGaussians'], 50000);
+      expect(jsonDecode(immersiveApi.opened.single.stereoPair!)['maxGaussians'], 150000);
     });
 
-    testWidgets('with Large splats turned on, the headset keeps 150,000', (tester) async {
+    testWidgets('with Large splats turned on, the headset keeps 200,000', (tester) async {
       await pumpPage(
         tester,
         '/cactus.spz',
         with_: overrides(config: const AppConfig(viewer: ViewerConfig(largeSplats: true))),
       );
 
-      expect(find.text('The headset keeps its 150,000 strongest gaussians'), findsOneWidget);
+      expect(find.text('The headset keeps its 200,000 strongest gaussians'), findsOneWidget);
       await tester.tap(find.byKey(exploreSplatButtonKey));
       await tester.pumpAndSettle();
-      expect(jsonDecode(immersiveApi.opened.single.stereoPair!)['maxGaussians'], 150000);
+      expect(jsonDecode(immersiveApi.opened.single.stereoPair!)['maxGaussians'], 200000);
     });
 
     FilledButton button(WidgetTester tester) => tester.widget<FilledButton>(find.byKey(exploreSplatButtonKey));

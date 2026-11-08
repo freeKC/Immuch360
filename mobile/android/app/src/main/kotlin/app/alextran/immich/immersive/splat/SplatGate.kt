@@ -86,17 +86,22 @@ internal sealed interface SplatVerdict {
  */
 internal object SplatGate {
   /**
-   * The count by default (design-final 2026-10-27, decision D7), unchanged after the measure on a Quest 3 of 8 November
-   * 2026 (build 43, a room cut to its strongest gaussians, seen from a fixed pose): 91 frames a second on the 90 Hz
-   * display (median, 90 at least), the GPU 84 % busy. No count above 150 000 was measured that day
+   * The count by default, 50 000 until 8 November 2026 (design-final 2026-10-27, decision D7), the advice of the SDK
+   * since. From run b2 of store/m2/quest-splat-cap-2026-11-08/prepare.md (a Quest 3 with build 43, a room of Brush
+   * cut to its 150 000 strongest gaussians and shown whole): 91 frames a second on the 90 Hz display (median, 90 at
+   * least from 5 s after it was shown), the GPU 84 % busy and 8.4 ms of GPU time a frame, the load of the 50 000 of
+   * run b1 in the same report. One run of about a minute each, the headset still on its stand without tracking, the
+   * scene seen from a fixed pose
    */
-  const val SAFE_GAUSSIANS = 50_000
+  const val SAFE_GAUSSIANS = 150_000
 
   /**
-   * The most Large splats shows, the advice of the SDK: in the same measure 150 000 gaussians shown whole ran at 91
-   * frames a second (median, 88 at least) with the GPU load of 50 000
+   * The most Large splats shows, from the bench of 31 October 2026 on a Quest 3
+   * (store/m2/quest-splats-device-2026-10-31/bench-2026-10-31.md, the headset still): a room of 200 000 gaussians
+   * around the viewer ran at 90 frames a second of 90, the GPU 92 % busy, a thin margin, and a cactus of 452 451 fell
+   * to 47 to 49. The series above 200 000 on the headset is still to run
    */
-  const val LARGE_GAUSSIANS = 150_000
+  const val LARGE_GAUSSIANS = 200_000
 
   const val MAX_REDUCIBLE_GAUSSIANS = 4_000_000L
   const val MAX_REDUCIBLE_BYTES = 1L shl 30

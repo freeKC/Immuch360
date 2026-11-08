@@ -737,7 +737,8 @@ abstract final class SplatV1 {
 
   /// The copy for the headset of a scene of Detailed or Maximum: at most [headsetGaussians], the strongest ones (the
   /// score of the reducers of the headset, opacity times volume), after the crop of an object; the Quest was measured
-  /// at 150 000 (84 and 65 images a second of 90)
+  /// at 150 000 (84 and 65 images a second of 90). It equals the count the headset shows by default since 8 November
+  /// 2026 (splatSafeGaussians), so the copy opens there whole, with Large splats or without
   static const headsetGaussians = maxGaussians;
 
   /// The training of Detailed and Maximum at [detailedResolution] against that of Headset, for the time told before it

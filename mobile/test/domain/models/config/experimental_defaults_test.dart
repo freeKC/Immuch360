@@ -3,8 +3,8 @@ import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
 
 // The settings the app labels experimental are on by default, and each can still be turned off; Large splats is an
-// exception, off by default (decision D7 of the splats, unchanged after the measure on a Quest 3 of 8 November 2026),
-// and Keep every gaussian another, off on the computers whose graphics chip shares their memory (lot SVC)
+// exception, off by default (decision D7 of the splats: 150 000 gaussians by default since 8 November 2026, 200 000
+// with it), and Keep every gaussian another, off on the computers whose graphics chip shares their memory (lot SVC)
 void main() {
   group('DJI drones (experimental)', () {
     test('is on by default', () {
@@ -82,7 +82,7 @@ void main() {
       expect(defaultConfig.read(SettingsKey.viewerGaussianSplats), isTrue);
     });
 
-    test('Large splats is off by default: 50,000 gaussians, unchanged after the measure of 8 November 2026 (D7)', () {
+    test('Large splats is off by default: 150,000 gaussians since 8 November 2026, 200,000 with it (D7)', () {
       expect(const AppConfig().viewer.largeSplats, isFalse);
       expect(defaultConfig.read(SettingsKey.viewerLargeSplats), isFalse);
     });
