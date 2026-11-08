@@ -256,13 +256,21 @@ object AppHealth {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
           null
         } else {
-          readTrace(exit)?.let { TombstoneReader.read(it) ?: "The tombstone of the crash could not be read." }
-            ?: "No tombstone kept by the system."
+          readTrace(exit)?.let { nativeCrashText(it) } ?: "No tombstone kept by the system."
         }
       ApplicationExitInfo.REASON_CRASH ->
         JavaCrashRecorder.take(healthFolder, exit.timestamp) ?: "No Java stack recorded for this crash."
       else -> null
     }
+
+  /**
+   * The text of a native crash out of its tombstone [bytes]: what [TombstoneReader] reads of it, then, on a line of its
+   * own, the tag of a crash family the app knows ([TombstoneSummary.familyTag]), such as the JNI calls of
+   * package:ok_http of November 2026
+   */
+  fun nativeCrashText(bytes: ByteArray): String =
+    (TombstoneReader.read(bytes) ?: "The tombstone of the crash could not be read.") +
+      (TombstoneSummary.familyTag(bytes)?.let { "\n$it" } ?: "")
 
   @RequiresApi(Build.VERSION_CODES.R)
   private fun readTrace(exit: ApplicationExitInfo): ByteArray? =

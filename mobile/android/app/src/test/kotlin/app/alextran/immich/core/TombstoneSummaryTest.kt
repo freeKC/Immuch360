@@ -295,6 +295,30 @@ class TombstoneSummaryTest {
     )
   }
 
+  @Test
+  fun `the native crash text of AppHealth ends with the family tag of a JNI call of package jni, and only then`() {
+    // What the Logs page shows of a native crash: the text of TombstoneReader, then the F2 tag on a line of its own
+    val p1 = AppHealth.nativeCrashText(p1Tombstone())
+    assertEquals(TombstoneReader.read(p1Tombstone()) + "\n" + TombstoneSummary.F2_TAG, p1)
+    assertTrue(p1, p1.contains("libdartjni.so"))
+
+    val abort =
+      Proto()
+        .varint(6, 9)
+        .message(10, signal(6, "SIGABRT", -6, "SI_TKILL"))
+        .message(16, threadEntry(9, thread(9, "main", listOf(frame(0x5f3c4, "/system/lib64/libc.so", "abort", 164)))))
+        .toByteArray()
+    val text = AppHealth.nativeCrashText(abort)
+    assertEquals(TombstoneReader.read(abort), text)
+    assertFalse(text, text.contains("[F2"))
+
+    // Bytes that are no tombstone: the sentence of an unreadable one, and no tag
+    val noise = "not a tombstone".toByteArray()
+    val unreadable = AppHealth.nativeCrashText(noise)
+    assertFalse(unreadable, unreadable.contains("[F2"))
+    assertEquals(TombstoneReader.read(noise) ?: "The tombstone of the crash could not be read.", unreadable)
+  }
+
   /** The size of the memory map and log buffer fields at the end of [p1Tombstone] */
   private fun mappingsAndLogsSize(): Int =
     Proto()

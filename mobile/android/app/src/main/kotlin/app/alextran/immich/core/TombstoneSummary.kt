@@ -16,9 +16,8 @@ import java.io.InputStream
  * name only: no content of the app's memory and no path of the device goes into the text. Pure Kotlin, without the
  * protobuf library: the JVM tests read it as the app does.
  *
- * AppHealth, which reads why the app ended, belongs to the observability lot of release 44; that lot reads the whole
- * tombstone itself (TombstoneReader). Where both are merged, the native crash text of AppHealth gains the family line
- * with [familyTag] on the same bytes.
+ * AppHealth, which reads why the app ended, reads the whole tombstone with TombstoneReader; its native crash text
+ * (AppHealth.nativeCrashText) ends with the family line of [familyTag] on the same bytes.
  */
 object TombstoneSummary {
   const val MAX_FRAMES = 8
