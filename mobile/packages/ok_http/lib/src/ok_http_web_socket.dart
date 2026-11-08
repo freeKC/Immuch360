@@ -137,21 +137,27 @@ class OkHttpWebSocket implements WebSocket {
       throw ArgumentError.value(
           url, 'url', 'only ws: and wss: schemes are supported');
     }
-    final requestBuilder =
-        bindings.Request$Builder().url$1(url.toString().toJString());
+    // Immuch360: the JNI objects of the opening request are held in locals and
+    // released after their last synchronous use, as in OkHttpClient.send (see
+    // IMMUCH360-NOTE.md)
+    final requestBuilder = bindings.Request$Builder();
+    final jUrl = url.toString().toJString();
+    requestBuilder.url$1(jUrl).release();
+    jUrl.release();
 
     if (protocols != null) {
-      requestBuilder.addHeader('Sec-WebSocket-Protocol'.toJString(),
-          protocols.join(', ').toJString());
+      final jName = 'Sec-WebSocket-Protocol'.toJString();
+      final jValue = protocols.join(', ').toJString();
+      requestBuilder.addHeader(jName, jValue).release();
+      jName.release();
+      jValue.release();
     }
 
     var openCompleter = Completer<WebSocket>();
 
-    _client.newWebSocket(
-        requestBuilder.build(),
-        bindings.WebSocketListenerProxy(
-            bindings.WebSocketListenerProxy$WebSocketListener.implement(
-                bindings.$WebSocketListenerProxy$WebSocketListener(
+    final listener =
+        bindings.WebSocketListenerProxy$WebSocketListener.implement(
+            bindings.$WebSocketListenerProxy$WebSocketListener(
           onOpen: (webSocket, response) {
             _webSocket = webSocket;
 
@@ -171,7 +177,8 @@ class OkHttpWebSocket implements WebSocket {
           },
           onMessage: (bindings.WebSocket webSocket, JString string) {
             if (_events.isClosed) return;
-            _events.add(TextDataReceived(string.toDartString()));
+            _events.add(
+                TextDataReceived(string.toDartString(releaseOriginal: true)));
           },
           onMessage$1:
               (bindings.WebSocket webSocket, bindings.ByteString byteString) {
@@ -185,7 +192,8 @@ class OkHttpWebSocket implements WebSocket {
 
             if (_events.isClosed) return;
 
-            _events.add(CloseReceived(i, string.toDartString()));
+            _events.add(
+                CloseReceived(i, string.toDartString(releaseOriginal: true)));
             await _events.close();
           },
           onFailure: (bindings.WebSocket webSocket, JObject throwable,
@@ -193,6 +201,7 @@ class OkHttpWebSocket implements WebSocket {
             if (_events.isClosed) return;
 
             var throwableString = throwable.toString();
+            throwable.release();
 
             // If the throwable is:
             // - java.net.ProtocolException: Control frames must be final.
@@ -213,7 +222,14 @@ class OkHttpWebSocket implements WebSocket {
             }
             openCompleter.completeError(error);
           },
-        ))));
+        ));
+    final listenerProxy = bindings.WebSocketListenerProxy(listener);
+    listener.release();
+    final request = requestBuilder.build();
+    requestBuilder.release();
+    _client.newWebSocket(request, listenerProxy).release();
+    request.release();
+    listenerProxy.release();
 
     return openCompleter.future;
   }

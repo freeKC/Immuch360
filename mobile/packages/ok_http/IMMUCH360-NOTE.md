@@ -33,6 +33,22 @@ bindings are generated again with a jnigen older than 0.17, run `python3 tool/ho
 and checks that no receiver use is left); `mobile/test/infrastructure/ok_http_receivers_test.dart` fails while one is.
 This change can go once the bindings come from jnigen 0.17 or later.
 
+JNI objects released after use (same family, `Immuch360` comments in `lib/src/ok_http_client.dart` and
+`lib/src/ok_http_web_socket.dart`). `OkHttpClient.send` used to chain calls on temporaries and leave every object it
+made (the builders, each `addHeader` result, the strings, the per request client, the response, its headers, each
+chunk of the body, the exceptions) to the Dart garbage collector. Each one is now held in a local and released right
+after its last synchronous use. A release is itself a use, so the object stays reachable through every call before
+it, the helpers of package:jni 0.15 included, which call Java on `this` without keeping it (`JObject.toString` of an
+exception, the `JMap` of `toMultimap`, `JString.toDartString` without `releaseOriginal`); and the global references
+go at once, which also stops their growth reported in immich-app/immich#30972. The call, the request body and the
+reader of the response are used by callbacks after `send` returns: `_RequestObjects` releases them together once the
+call is over (body read to its end, failure, or refused response) and the streaming of the request body has ended;
+an abort that comes later leaves the finished call alone. A chunk of the response body is copied with one
+`getRange` instead of one JNI call per byte. In `ok_http_web_socket.dart`, `_connect` does the same for the opening
+request, and the text of a message, of a close reason and of a failure is read before the object is released. The
+callbacks and listeners handed to Java are released on the Dart side once Java holds them: their port lives as long
+as the Java proxy does (`PortCleaner` of package:jni), not as long as the Dart reference.
+
 When upstream Immich moves the ok_http ref of `mobile/pubspec.yaml`, copy `pkgs/ok_http` of the new ref here and apply
 the changes below again (every change is marked `Immuch360`). The copy can go once upstream ok_http follows a relative
 `Location` itself.
