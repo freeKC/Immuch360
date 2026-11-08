@@ -797,7 +797,7 @@ void main() {
       expect(runner.launches, hasLength(1));
     });
 
-    test('the plan of its device naming another card: gpuUnavailable, with the list or without it', () async {
+    test('the plan of its device naming another card than its list: gpuUnavailable', () async {
       // Listed as Vulkan1, planned as the Intel chip
       const planned =
           '[I]     Vulkan1      Intel(R) RaptorLake-S Mobile Graphics Controller free   7350 MiB, budget   6674 MiB '
@@ -807,16 +807,20 @@ void main() {
           lines: _generation(listed: [_listedIntel, _listedRtx], plan: [planned]),
         ),
       ]);
-      final withList = await failureOf(listed, device: 'Vulkan1');
-      expect(withList?.code, ImmersiveErrorCode.gpuUnavailable);
-      expect(withList?.message, contains('Intel(R) RaptorLake-S Mobile Graphics Controller'));
+      final failure = await failureOf(listed, device: 'Vulkan1');
+      expect(failure?.code, ImmersiveErrorCode.gpuUnavailable);
+      expect(failure?.message, contains('Intel(R) RaptorLake-S Mobile Graphics Controller'));
       expect(listed.launches, hasLength(1));
-      // No list: the plan stands in for it, and the Intel chip is no RTX 4060
+    });
+
+    test('no list, the plan of its device naming another card: gpuUnavailable', () async {
+      // The plan stands in for the list, and the Intel chip is no RTX 4060
       final unlisted = FakeProcessRunner([
         FakeProcessScript(lines: _generation(plan: [_planIntel])),
       ]);
-      final withoutList = await failureOf(unlisted);
-      expect(withoutList?.code, ImmersiveErrorCode.gpuUnavailable);
+      final failure = await failureOf(unlisted);
+      expect(failure?.code, ImmersiveErrorCode.gpuUnavailable);
+      expect(failure?.message, contains('Intel(R) RaptorLake-S Mobile Graphics Controller'));
       expect(unlisted.launches, hasLength(1));
     });
 
