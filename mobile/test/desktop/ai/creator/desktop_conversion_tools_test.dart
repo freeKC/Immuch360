@@ -802,7 +802,7 @@ void _panoramaEngineTests(Directory Function() root) {
       expect(settings.environment, isEmpty, reason: 'the app never sets GGML_VK_VISIBLE_DEVICES');
     });
 
-    test('on sd-cli, the generator and the upscaler of a job share its card', () async {
+    test('on sd-cli: one card for the generator and the upscaler of a job, the logs of a failure kept', () async {
       final flag = NativeCancelFlag();
       addTearDown(flag.free);
       installAll(AiPlatform.windowsX64);
@@ -810,13 +810,15 @@ void _panoramaEngineTests(Directory Function() root) {
       final work = AiWorkFolders(Directory(p.join(root().path, aiWorkFolderName)));
       final journal = ProcessJournal(File(p.join(root().path, 'processes.json')));
       final session = AiProcessSession(folders: work, journal: journal);
+      final logs = Directory(p.join(root().path, 'logs'));
 
-      final engine = DesktopPanoramaEngine.sdCppEngineFor(made.single, session) as PanoramaEngine;
+      final engine = DesktopPanoramaEngine.sdCppEngineFor(made.single, session, failureLogs: logs) as PanoramaEngine;
       final generator = engine.generator as SdCppGenerator;
       final upscaler = engine.upscaler as SdCppUpscaler;
       expect(upscaler.device, same(generator.device));
       expect(generator.device.name, 'Vulkan1');
       expect(generator.device.settings.card?.name, 'NVIDIA GeForce RTX 4060 Laptop GPU');
+      expect(engine.failureLogs, same(logs));
     });
 
     test('on Linux: through immuch360-run of the archive', () async {
