@@ -627,11 +627,19 @@ ImmersiveErrorCode panoramaRefusalCode(AiGateReason? reason) => switch (reason) 
 /// opened by the step that needs them. A panorama asked while a component is missing fails with componentsMissing,
 /// never downloads anything; one without a card that can make it fails with gpuUnavailable and the reason of the gate.
 class DesktopPanoramaEngine implements ImmersiveEngine, KeptAiEngine {
-  DesktopPanoramaEngine({required this.gate, AiProcessSession Function()? session, this.create})
-    : _openSession = session ?? AiProcessSession.new;
+  DesktopPanoramaEngine({
+    required this.gate,
+    AiProcessSession Function()? session,
+    Future<Directory> Function()? failureLogs,
+    this.create,
+  }) : _openSession = session ?? AiProcessSession.new,
+       _failureLogs = failureLogs ?? appLogsDirectory;
 
   final HardwareGate gate;
   final AiProcessSession Function() _openSession;
+
+  /// The logs folder of the app, where a panorama that failed leaves the log of sd-cli (PanoramaEngine.failureLogs)
+  final Future<Directory> Function() _failureLogs;
 
   /// Makes the engine of a job from its setup; null: PanoramaEngine on sd-cli ([sdCppEngineFor])
   final ImmersiveEngine Function(PanoramaSetup setup)? create;
@@ -642,8 +650,9 @@ class DesktopPanoramaEngine implements ImmersiveEngine, KeptAiEngine {
   bool get isRunning => _running;
 
   /// PanoramaEngine on sd-cli, through a runner of the session of the programs of the app; its generator and its
-  /// upscaler share the card of the job, which sd-cli's own list settles (SdCppDevice)
-  static ImmersiveEngine sdCppEngineFor(PanoramaSetup setup, AiProcessSession session) {
+  /// upscaler share the card of the job, which sd-cli's own list settles (SdCppDevice); a job that fails leaves the
+  /// log of sd-cli in [failureLogs]
+  static ImmersiveEngine sdCppEngineFor(PanoramaSetup setup, AiProcessSession session, {Directory? failureLogs}) {
     final runner = session.runner(linuxLauncher: setup.linuxLauncher);
     final device = SdCppDevice(setup.settings);
     return PanoramaEngine(
@@ -664,6 +673,7 @@ class DesktopPanoramaEngine implements ImmersiveEngine, KeptAiEngine {
       folders: session.folders,
       requiredFiles: setup.requiredFiles,
       decodeOther: (bytes, {maxWidth}) => decodeWithEngine(bytes, maxWidth: maxWidth),
+      failureLogs: failureLogs,
     );
   }
 
@@ -685,7 +695,12 @@ class DesktopPanoramaEngine implements ImmersiveEngine, KeptAiEngine {
       }
       final setup = panoramaSetupOf(found);
       final create = this.create;
-      engine = create == null ? sdCppEngineFor(setup, _session ??= _openSession()) : create(setup);
+      if (create == null) {
+        final session = _session ??= _openSession();
+        engine = sdCppEngineFor(setup, session, failureLogs: await _failureLogs());
+      } else {
+        engine = create(setup);
+      }
       return await engine.run(job, cancel: cancel, onProgress: onProgress);
     } on PanoramaSetupRefused catch (refused) {
       return ImmersiveResult.failed(refused.code, message: refused.message);
