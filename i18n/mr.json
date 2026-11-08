@@ -3418,7 +3418,7 @@
   "splat_kind_object": "{size} आकाराची वस्तू",
   "splat_kind_place": "एक ठिकाण",
   "splat_large_notice": "मोठा स्प्लॅट: तो अडखळू शकतो",
-  "splat_large_setting_subtitle": "1,50,000 ऐवजी 2,00,000 पर्यंत गॉसियन दाखवते: मोठा स्प्लॅट अडखळू शकतो",
+  "splat_large_setting_subtitle": "3,00,000 ऐवजी 10,00,000 पर्यंत गॉसियन दाखवते: मोठा स्प्लॅट अडखळू शकतो",
   "splat_large_setting_subtitle_phone": "1,50,000 ऐवजी 5,00,000 पर्यंत गॉसियन दाखवते: मोठा स्प्लॅट अडखळू शकतो",
   "splat_large_setting_title": "मोठे स्प्लॅट (प्रायोगिक)",
   "splat_linux_no_picture": "स्प्लॅट व्ह्यूअरने काहीही काढले नाही. NVIDIA ग्राफिक्स कार्ड असल्यास Immuch360 WEBKIT_DISABLE_DMABUF_RENDERER=1 सह सुरू करा",

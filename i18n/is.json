@@ -2782,7 +2782,7 @@
   "splat_kind_object": "Hlutur af stærðinni {size}",
   "splat_kind_place": "Staður",
   "splat_large_notice": "Stórt splat: það getur hikstað",
-  "splat_large_setting_subtitle": "Sýnir allt að 200.000 gáss-dreifingar í stað 150.000: stórt splat getur hikstað",
+  "splat_large_setting_subtitle": "Sýnir allt að 1.000.000 gáss-dreifingar í stað 300.000: stórt splat getur hikstað",
   "splat_large_setting_subtitle_phone": "Sýnir allt að 500.000 gáss-dreifingar í stað 150.000: stórt splat getur hikstað",
   "splat_large_setting_title": "Stór splöt (tilraun)",
   "splat_linux_no_picture": "Splatskoðarinn teiknaði ekkert. Með NVIDIA-skjákorti skaltu ræsa Immuch360 með WEBKIT_DISABLE_DMABUF_RENDERER=1",

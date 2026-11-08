@@ -2929,7 +2929,7 @@
   "splat_kind_object": "Es Objekt vo {size}",
   "splat_kind_place": "En Ort",
   "splat_large_notice": "Grosse Splat: er cha ruckle",
-  "splat_large_setting_subtitle": "Zeigt bis zu 200'000 Gauss statt 150'000: en grosse Splat cha ruckle",
+  "splat_large_setting_subtitle": "Zeigt bis zu 1'000'000 Gauss statt 300'000: en grosse Splat cha ruckle",
   "splat_large_setting_subtitle_phone": "Zeigt bis zu 500'000 Gauss statt 150'000: en grosse Splat cha ruckle",
   "splat_large_setting_title": "Grossi Splats (experimentell)",
   "splat_linux_no_picture": "De Splat-Viewer hät nüt zeichnet. Mit ere NVIDIA-Grafikchartä Immuch360 mit WEBKIT_DISABLE_DMABUF_RENDERER=1 starte",

@@ -756,7 +756,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('The same gaussians, about 191.3 MiB'), findsOneWidget);
-      expect(find.text('For the headset: up to 150,000 gaussians, about 3.4 MiB (.spz)'), findsOneWidget);
+      // The copy for the headset beside the scene, 300 000 at most since 8 November 2026
+      expect(find.text('For the headset: up to 300,000 gaussians, about 6.9 MiB (.spz)'), findsOneWidget);
       await tapIn(tester, start());
       await settle(tester);
 

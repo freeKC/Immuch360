@@ -3716,7 +3716,7 @@
   "splat_kind_object": "{size} 的物体",
   "splat_kind_place": "一个地点",
   "splat_large_notice": "大型泼溅：可能会卡顿",
-  "splat_large_setting_subtitle": "最多显示 200,000 个高斯，而非 150,000 个：大型泼溅可能会卡顿",
+  "splat_large_setting_subtitle": "最多显示 1,000,000 个高斯，而非 300,000 个：大型泼溅可能会卡顿",
   "splat_large_setting_subtitle_phone": "最多显示 500,000 个高斯，而非 150,000 个：大型泼溅可能会卡顿",
   "splat_large_setting_title": "大型泼溅（实验性）",
   "splat_linux_no_picture": "泼溅查看器没有绘制任何内容。使用 NVIDIA 显卡时，请以 WEBKIT_DISABLE_DMABUF_RENDERER=1 启动 Immuch360",

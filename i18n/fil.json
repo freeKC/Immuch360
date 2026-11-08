@@ -1701,7 +1701,7 @@
   "splat_kind_object": "Isang object na {size}",
   "splat_kind_place": "Isang lugar",
   "splat_large_notice": "Malaking splat: maaaring mag-stutter",
-  "splat_large_setting_subtitle": "Nagpapakita ng hanggang 200,000 gaussian sa halip na 150,000: maaaring mag-stutter ang malaking splat",
+  "splat_large_setting_subtitle": "Nagpapakita ng hanggang 1,000,000 gaussian sa halip na 300,000: maaaring mag-stutter ang malaking splat",
   "splat_large_setting_subtitle_phone": "Nagpapakita ng hanggang 500,000 gaussian sa halip na 150,000: maaaring mag-stutter ang malaking splat",
   "splat_large_setting_title": "Malalaking splat (eksperimental)",
   "splat_linux_no_picture": "Walang naiguhit ang splat viewer. Kung NVIDIA ang graphics card, simulan ang Immuch360 nang may WEBKIT_DISABLE_DMABUF_RENDERER=1",

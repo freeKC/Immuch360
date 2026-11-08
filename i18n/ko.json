@@ -3693,7 +3693,7 @@
   "splat_kind_object": "{size} 크기의 물체",
   "splat_kind_place": "장소",
   "splat_large_notice": "큰 스플랫: 끊길 수 있습니다",
-  "splat_large_setting_subtitle": "가우시안을 150,000개 대신 최대 200,000개까지 표시합니다. 큰 스플랫은 끊길 수 있습니다",
+  "splat_large_setting_subtitle": "가우시안을 300,000개 대신 최대 1,000,000개까지 표시합니다. 큰 스플랫은 끊길 수 있습니다",
   "splat_large_setting_subtitle_phone": "가우시안을 150,000개 대신 최대 500,000개까지 표시합니다. 큰 스플랫은 끊길 수 있습니다",
   "splat_large_setting_title": "큰 스플랫 (실험적)",
   "splat_linux_no_picture": "스플랫 뷰어에 아무것도 그려지지 않았습니다. NVIDIA 그래픽 카드라면 WEBKIT_DISABLE_DMABUF_RENDERER=1 로 Immuch360을 시작하세요",

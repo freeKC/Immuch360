@@ -3649,7 +3649,7 @@
   "splat_kind_object": "Аб'ект памерам {size}",
   "splat_kind_place": "Месца",
   "splat_large_notice": "Вялікі сплат: магчымыя тармажэнні",
-  "splat_large_setting_subtitle": "Паказвае да 200 000 гаўсіян замест 150 000: вялікі сплат можа тармазіць",
+  "splat_large_setting_subtitle": "Паказвае да 1 000 000 гаўсіян замест 300 000: вялікі сплат можа тармазіць",
   "splat_large_setting_subtitle_phone": "Паказвае да 500 000 гаўсіян замест 150 000: вялікі сплат можа тармазіць",
   "splat_large_setting_title": "Вялікія сплаты (эксперыментальна)",
   "splat_linux_no_picture": "Праглядальнік сплатаў нічога не намаляваў. З відэакартай NVIDIA запускайце Immuch360 з WEBKIT_DISABLE_DMABUF_RENDERER=1",

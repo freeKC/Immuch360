@@ -3716,7 +3716,7 @@
   "splat_kind_object": "Objek berukuran {size}",
   "splat_kind_place": "Sebuah tempat",
   "splat_large_notice": "Splat besar: mungkin tersendat",
-  "splat_large_setting_subtitle": "Menampilkan hingga 200.000 gaussian, bukan 150.000: splat besar mungkin tersendat",
+  "splat_large_setting_subtitle": "Menampilkan hingga 1.000.000 gaussian, bukan 300.000: splat besar mungkin tersendat",
   "splat_large_setting_subtitle_phone": "Menampilkan hingga 500.000 gaussian, bukan 150.000: splat besar mungkin tersendat",
   "splat_large_setting_title": "Splat besar (eksperimental)",
   "splat_linux_no_picture": "Penampil splat tidak menggambar apa pun. Dengan kartu grafis NVIDIA, jalankan Immuch360 dengan WEBKIT_DISABLE_DMABUF_RENDERER=1",

@@ -3625,7 +3625,7 @@
   "splat_kind_object": "{size} neurriko objektu bat",
   "splat_kind_place": "Leku bat",
   "splat_large_notice": "Splat handia: etenak izan ditzake",
-  "splat_large_setting_subtitle": "Gehienez 200.000 gaussiar erakusten ditu, 150.000 beharrean: splat handi batek etenak izan ditzake",
+  "splat_large_setting_subtitle": "Gehienez 1.000.000 gaussiar erakusten ditu, 300.000 beharrean: splat handi batek etenak izan ditzake",
   "splat_large_setting_subtitle_phone": "Gehienez 500.000 gaussiar erakusten ditu, 150.000 beharrean: splat handi batek etenak izan ditzake",
   "splat_large_setting_title": "Splat handiak (esperimentala)",
   "splat_linux_no_picture": "Splat ikustaileak ez du ezer marraztu. NVIDIA txartel grafiko batekin, abiarazi Immuch360 WEBKIT_DISABLE_DMABUF_RENDERER=1 erabiliz",

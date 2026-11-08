@@ -1591,7 +1591,7 @@
   "splat_kind_object": "Bende saiz {size}",
   "splat_kind_place": "Satu tepat",
   "splat_large_notice": "Splat beso: buleh tesekat-sekat",
-  "splat_large_setting_subtitle": "Tunjuk sapa 200,000 gaussian ganti 150,000: splat beso buleh tesekat-sekat",
+  "splat_large_setting_subtitle": "Tunjuk sapa 1,000,000 gaussian ganti 300,000: splat beso buleh tesekat-sekat",
   "splat_large_setting_subtitle_phone": "Tunjuk sapa 500,000 gaussian ganti 150,000: splat beso buleh tesekat-sekat",
   "splat_large_setting_title": "Splat beso (cubo-cubo)",
   "splat_linux_no_picture": "Penengok splat dok lukis gapo-gapo. Kalu guno kad grafik NVIDIA, mulo Immuch360 nge WEBKIT_DISABLE_DMABUF_RENDERER=1",

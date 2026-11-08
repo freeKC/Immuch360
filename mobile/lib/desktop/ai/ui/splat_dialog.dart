@@ -144,9 +144,9 @@ final splatWorkSpaceShortProvider = FutureProvider.autoDispose<AiFreeSpace?>((re
   return temporary == null || temporary.free >= splatWorkSpaceNeeded ? null : temporary;
 });
 
-/// The size the copy for the headset takes: 3 612 448 bytes measured for 150 000 gaussians of degree 3 (some 24 bytes
-/// each, SPZ version 2)
-const splatSpzBytesAbout = splatHeadsetCopyBytes;
+/// The size the headset's .spz of a scene of [quality] takes ([splatHeadsetGaussiansOf]): some 24 bytes a gaussian of
+/// degree 3, SPZ version 2 (3 612 448 bytes measured for 150 000)
+int splatHeadsetSpzBytesOf(SplatQuality quality) => splatHeadsetGaussiansOf(quality) * SplatV1.spzBytesPerGaussian;
 
 /// The size of the same gaussians as a .ply: 59 floats each, in the order of 3D Gaussian Splatting
 const splatPlyBytesAbout = SplatV1.maxGaussians * SplatV1.plyBytesPerGaussian;
@@ -355,8 +355,9 @@ String splatLeftOutReasonText(Translations t, SplatLeftOutReason reason) => swit
 
 /// How the headset opens the scene written as [fileName]: from Network shares when its folder is on the network
 /// ([network]), else the sentence that says the headset cannot see the folder. "Share this computer" serves the media
-/// of the library only, never a .spz. No word of Large splats: the scene for the headset holds SplatV1.maxGaussians
-/// at most, which the headset shows whole by default since 8 November 2026 (splatSafeGaussians)
+/// of the library only, never a .spz. No word of Large splats: the scene of Headset holds SplatV1.maxGaussians at
+/// most and the copy of Detailed and Maximum SplatV1.headsetGaussians, both within the 300 000 the headset shows by
+/// default since 8 November 2026 (splatSafeGaussians)
 String splatHeadsetText(Translations t, {required bool network, required String fileName}) => network
     ? t.ai_immersive_splat_headset_network(shares: t.network_shares, name: fileName, explore: t.splat_explore)
     : t.ai_immersive_splat_headset_local;
@@ -867,8 +868,8 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
                 const SizedBox(height: 8),
                 Text(
                   t.ai_immersive_splat_headset_copy(
-                    gaussians: SplatV1.maxGaussians,
-                    size: formatBytes(splatSpzBytesAbout),
+                    gaussians: splatHeadsetGaussiansOf(_quality),
+                    size: formatBytes(splatHeadsetSpzBytesOf(_quality)),
                   ),
                   key: const Key('ai_splat_headset_copy'),
                 ),

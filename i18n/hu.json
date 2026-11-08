@@ -3717,7 +3717,7 @@
   "splat_kind_object": "Egy {size} méretű objektum",
   "splat_kind_place": "Egy hely",
   "splat_large_notice": "Nagy splat: akadozhat",
-  "splat_large_setting_subtitle": "150 000 helyett legfeljebb 200 000 gauss-elemet mutat: egy nagy splat akadozhat",
+  "splat_large_setting_subtitle": "300 000 helyett legfeljebb 1 000 000 gauss-elemet mutat: egy nagy splat akadozhat",
   "splat_large_setting_subtitle_phone": "150 000 helyett legfeljebb 500 000 gauss-elemet mutat: egy nagy splat akadozhat",
   "splat_large_setting_title": "Nagy splatek (kísérleti)",
   "splat_linux_no_picture": "A splatnézegető semmit sem rajzolt. NVIDIA grafikus kártyával indítsa az Immuch360-at a WEBKIT_DISABLE_DMABUF_RENDERER=1 beállítással",

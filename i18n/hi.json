@@ -3460,7 +3460,7 @@
   "splat_kind_object": "{size} की एक वस्तु",
   "splat_kind_place": "एक जगह",
   "splat_large_notice": "बड़ा स्प्लैट: यह अटक सकता है",
-  "splat_large_setting_subtitle": "1,50,000 की जगह 2,00,000 तक गॉसियन दिखाता है: बड़ा स्प्लैट अटक सकता है",
+  "splat_large_setting_subtitle": "3,00,000 की जगह 10,00,000 तक गॉसियन दिखाता है: बड़ा स्प्लैट अटक सकता है",
   "splat_large_setting_subtitle_phone": "1,50,000 की जगह 5,00,000 तक गॉसियन दिखाता है: बड़ा स्प्लैट अटक सकता है",
   "splat_large_setting_title": "बड़े स्प्लैट (प्रयोगात्मक)",
   "splat_linux_no_picture": "स्प्लैट व्यूअर ने कुछ नहीं बनाया। NVIDIA ग्राफ़िक्स कार्ड हो तो Immuch360 को WEBKIT_DISABLE_DMABUF_RENDERER=1 के साथ शुरू करें",

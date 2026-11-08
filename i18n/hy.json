@@ -1706,7 +1706,7 @@
   "splat_kind_object": "{size} չափի օբյեկտ",
   "splat_kind_place": "Վայր",
   "splat_large_notice": "Մեծ սփլաթ. կարող է դանդաղել",
-  "splat_large_setting_subtitle": "Ցույց է տալիս մինչև 200 000 գաուսյան 150 000-ի փոխարեն. մեծ սփլաթը կարող է դանդաղել",
+  "splat_large_setting_subtitle": "Ցույց է տալիս մինչև 1 000 000 գաուսյան 300 000-ի փոխարեն. մեծ սփլաթը կարող է դանդաղել",
   "splat_large_setting_subtitle_phone": "Ցույց է տալիս մինչև 500 000 գաուսյան 150 000-ի փոխարեն. մեծ սփլաթը կարող է դանդաղել",
   "splat_large_setting_title": "Մեծ սփլաթներ (փորձնական)",
   "splat_linux_no_picture": "Սփլաթների դիտիչը ոչինչ չնկարեց։ NVIDIA վիդեոքարտով գործարկեք Immuch360-ը WEBKIT_DISABLE_DMABUF_RENDERER=1-ով",

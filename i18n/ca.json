@@ -3718,7 +3718,7 @@
   "splat_kind_object": "Un objecte de {size}",
   "splat_kind_place": "Un lloc",
   "splat_large_notice": "Splat gran: pot anar a batzegades",
-  "splat_large_setting_subtitle": "Mostra fins a 200.000 gaussianes en lloc de 150.000: un splat gran pot anar a batzegades",
+  "splat_large_setting_subtitle": "Mostra fins a 1.000.000 gaussianes en lloc de 300.000: un splat gran pot anar a batzegades",
   "splat_large_setting_subtitle_phone": "Mostra fins a 500.000 gaussianes en lloc de 150.000: un splat gran pot anar a batzegades",
   "splat_large_setting_title": "Splats grans (experimental)",
   "splat_linux_no_picture": "El visor de splats no ha dibuixat res. Amb una targeta gràfica NVIDIA, inicieu Immuch360 amb WEBKIT_DISABLE_DMABUF_RENDERER=1",

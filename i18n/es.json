@@ -3718,7 +3718,7 @@
   "splat_kind_object": "Un objeto de {size}",
   "splat_kind_place": "Un lugar",
   "splat_large_notice": "Splat grande: puede ir a saltos",
-  "splat_large_setting_subtitle": "Muestra hasta 200.000 gaussianas en lugar de 150.000: un splat grande puede ir a saltos",
+  "splat_large_setting_subtitle": "Muestra hasta 1.000.000 gaussianas en lugar de 300.000: un splat grande puede ir a saltos",
   "splat_large_setting_subtitle_phone": "Muestra hasta 500.000 gaussianas en lugar de 150.000: un splat grande puede ir a saltos",
   "splat_large_setting_title": "Splats grandes (experimental)",
   "splat_linux_no_picture": "El visor de splats no ha dibujado nada. Con una tarjeta gráfica NVIDIA, inicia Immuch360 con WEBKIT_DISABLE_DMABUF_RENDERER=1",

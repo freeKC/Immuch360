@@ -86,22 +86,21 @@ internal sealed interface SplatVerdict {
  */
 internal object SplatGate {
   /**
-   * The count by default, 50 000 until 8 November 2026 (design-final 2026-10-27, decision D7), the advice of the SDK
-   * since. From run b2 of store/m2/quest-splat-cap-2026-11-08/prepare.md (a Quest 3 with build 43, a room of Brush
-   * cut to its 150 000 strongest gaussians and shown whole): 91 frames a second on the 90 Hz display (median, 90 at
-   * least from 5 s after it was shown), the GPU 84 % busy and 8.4 ms of GPU time a frame, the load of the 50 000 of
-   * run b1 in the same report. One run of about a minute each, the headset still on its stand without tracking, the
-   * scene seen from a fixed pose
+   * The count by default: 50 000 until 8 November 2026 (design-final 2026-10-27, decision D7), then 300 000 from the
+   * series of store/m2/quest-splat-cap-2026-11-08/series.md. On a Quest 3, a room of Brush cut to its 300 000
+   * strongest gaussians and shown whole ran at 91 frames a second on the 90 Hz display (median, 86 at least from 5 s
+   * after it was shown), thermal status 0, the largest count measured at the rate of the display (500 000 fell to
+   * 83). The GPU headroom is thin: 94 % busy, 9.47 ms of the 11.1 ms of a frame (86 % and 8.62 ms at 150 000). The
+   * headset stood still on its stand without tracking, the scene seen from a fixed pose, 45 s a file
    */
-  const val SAFE_GAUSSIANS = 150_000
+  const val SAFE_GAUSSIANS = 300_000
 
   /**
-   * The most Large splats shows, from the bench of 31 October 2026 on a Quest 3
-   * (store/m2/quest-splats-device-2026-10-31/bench-2026-10-31.md, the headset still): a room of 200 000 gaussians
-   * around the viewer ran at 90 frames a second of 90, the GPU 92 % busy, a thin margin, and a cactus of 452 451 fell
-   * to 47 to 49. The series above 200 000 on the headset is still to run
+   * The most Large splats shows, from the same series: 1 000 000 gaussians shown whole ran at 77 frames a second
+   * (median, 75 at least), the GPU 93 % busy, the app holding about 1.4 GB (PSS), thermal status 0; 1 274 802, the
+   * whole room and the largest file measured, ran at 72. Larger splats are reduced to their 1 000 000 strongest
    */
-  const val LARGE_GAUSSIANS = 200_000
+  const val LARGE_GAUSSIANS = 1_000_000
 
   const val MAX_REDUCIBLE_GAUSSIANS = 4_000_000L
   const val MAX_REDUCIBLE_BYTES = 1L shl 30

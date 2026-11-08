@@ -2140,7 +2140,7 @@
   "splat_kind_object": "Eit objekt på {size}",
   "splat_kind_place": "Ein stad",
   "splat_large_notice": "Stor splat: han kan hakke",
-  "splat_large_setting_subtitle": "Viser opptil 200 000 gaussianar i staden for 150 000: ein stor splat kan hakke",
+  "splat_large_setting_subtitle": "Viser opptil 1 000 000 gaussianar i staden for 300 000: ein stor splat kan hakke",
   "splat_large_setting_subtitle_phone": "Viser opptil 500 000 gaussianar i staden for 150 000: ein stor splat kan hakke",
   "splat_large_setting_title": "Store splattar (eksperimentelt)",
   "splat_linux_no_picture": "Splatvisinga teikna ingenting. Med eit NVIDIA-skjermkort startar du Immuch360 med WEBKIT_DISABLE_DMABUF_RENDERER=1",

@@ -3715,7 +3715,7 @@
   "splat_kind_object": "{size} のオブジェクト",
   "splat_kind_place": "場所",
   "splat_large_notice": "大きなスプラット: カクつくことがあります",
-  "splat_large_setting_subtitle": "150,000 個ではなく最大 200,000 個のガウシアンを表示します。大きなスプラットはカクつくことがあります",
+  "splat_large_setting_subtitle": "300,000 個ではなく最大 1,000,000 個のガウシアンを表示します。大きなスプラットはカクつくことがあります",
   "splat_large_setting_subtitle_phone": "150,000 個ではなく最大 500,000 個のガウシアンを表示します。大きなスプラットはカクつくことがあります",
   "splat_large_setting_title": "大きなスプラット (試験運用)",
   "splat_linux_no_picture": "スプラットビューアーに何も描画されませんでした。NVIDIA のグラフィックスカードでは、WEBKIT_DISABLE_DMABUF_RENDERER=1 を付けて Immuch360 を起動してください",

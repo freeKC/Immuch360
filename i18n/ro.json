@@ -3707,7 +3707,7 @@
   "splat_kind_object": "Un obiect de {size}",
   "splat_kind_place": "Un loc",
   "splat_large_notice": "Splat mare: poate sacada",
-  "splat_large_setting_subtitle": "Afișează până la 200.000 de gaussiene în loc de 150.000: un splat mare poate sacada",
+  "splat_large_setting_subtitle": "Afișează până la 1.000.000 de gaussiene în loc de 300.000: un splat mare poate sacada",
   "splat_large_setting_subtitle_phone": "Afișează până la 500.000 de gaussiene în loc de 150.000: un splat mare poate sacada",
   "splat_large_setting_title": "Splaturi mari (experimental)",
   "splat_linux_no_picture": "Vizualizatorul de splaturi nu a desenat nimic. Cu o placă grafică NVIDIA, porniți Immuch360 cu WEBKIT_DISABLE_DMABUF_RENDERER=1",

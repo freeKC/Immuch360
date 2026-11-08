@@ -3717,7 +3717,7 @@
   "splat_kind_object": "Ett objekt på {size}",
   "splat_kind_place": "En plats",
   "splat_large_notice": "Stor splat: den kan hacka",
-  "splat_large_setting_subtitle": "Visar upp till 200 000 gaussianer i stället för 150 000: en stor splat kan hacka",
+  "splat_large_setting_subtitle": "Visar upp till 1 000 000 gaussianer i stället för 300 000: en stor splat kan hacka",
   "splat_large_setting_subtitle_phone": "Visar upp till 500 000 gaussianer i stället för 150 000: en stor splat kan hacka",
   "splat_large_setting_title": "Stora splattar (experimentellt)",
   "splat_linux_no_picture": "Splatvisaren ritade ingenting. Med ett NVIDIA-grafikkort startar du Immuch360 med WEBKIT_DISABLE_DMABUF_RENDERER=1",

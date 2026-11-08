@@ -1761,7 +1761,7 @@
   "splat_kind_object": "{size} ölçülü obyekt",
   "splat_kind_place": "Məkan",
   "splat_large_notice": "Böyük splat: ilişə bilər",
-  "splat_large_setting_subtitle": "150.000 əvəzinə 200.000-ə qədər qauss göstərir: böyük splat ilişə bilər",
+  "splat_large_setting_subtitle": "300.000 əvəzinə 1.000.000-a qədər qauss göstərir: böyük splat ilişə bilər",
   "splat_large_setting_subtitle_phone": "150.000 əvəzinə 500.000-ə qədər qauss göstərir: böyük splat ilişə bilər",
   "splat_large_setting_title": "Böyük splatlar (eksperimental)",
   "splat_linux_no_picture": "Splat baxıcısı heç nə çəkmədi. NVIDIA qrafik kartı ilə Immuch360-ı WEBKIT_DISABLE_DMABUF_RENDERER=1 ilə başladın",

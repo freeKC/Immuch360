@@ -3718,7 +3718,7 @@
   "splat_kind_object": "{size} boyutunda bir nesne",
   "splat_kind_place": "Bir yer",
   "splat_large_notice": "Büyük splat: takılabilir",
-  "splat_large_setting_subtitle": "150.000 yerine en çok 200.000 gauss gösterir: büyük bir splat takılabilir",
+  "splat_large_setting_subtitle": "300.000 yerine en çok 1.000.000 gauss gösterir: büyük bir splat takılabilir",
   "splat_large_setting_subtitle_phone": "150.000 yerine en çok 500.000 gauss gösterir: büyük bir splat takılabilir",
   "splat_large_setting_title": "Büyük splatler (deneysel)",
   "splat_linux_no_picture": "Splat görüntüleyici hiçbir şey çizmedi. NVIDIA ekran kartıyla Immuch360'ı WEBKIT_DISABLE_DMABUF_RENDERER=1 ile başlatın",

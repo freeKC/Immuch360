@@ -3092,7 +3092,7 @@
   "splat_kind_object": "Објекат величине {size}",
   "splat_kind_place": "Место",
   "splat_large_notice": "Велики сплат: може да сецка",
-  "splat_large_setting_subtitle": "Приказује до 200.000 гаусијана уместо 150.000: велики сплат може да сецка",
+  "splat_large_setting_subtitle": "Приказује до 1.000.000 гаусијана уместо 300.000: велики сплат може да сецка",
   "splat_large_setting_subtitle_phone": "Приказује до 500.000 гаусијана уместо 150.000: велики сплат може да сецка",
   "splat_large_setting_title": "Велики сплатови (експериментално)",
   "splat_linux_no_picture": "Прегледач сплатова није ништа исцртао. Са NVIDIA графичком картицом покрените Immuch360 са WEBKIT_DISABLE_DMABUF_RENDERER=1",

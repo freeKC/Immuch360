@@ -3718,7 +3718,7 @@
   "splat_kind_object": "Objekt o velikosti {size}",
   "splat_kind_place": "Místo",
   "splat_large_notice": "Velký splat: může se trhat",
-  "splat_large_setting_subtitle": "Zobrazí až 200 000 gaussiánů místo 150 000: velký splat se může trhat",
+  "splat_large_setting_subtitle": "Zobrazí až 1 000 000 gaussiánů místo 300 000: velký splat se může trhat",
   "splat_large_setting_subtitle_phone": "Zobrazí až 500 000 gaussiánů místo 150 000: velký splat se může trhat",
   "splat_large_setting_title": "Velké splaty (experimentální)",
   "splat_linux_no_picture": "Prohlížeč splatů nic nevykreslil. S grafickou kartou NVIDIA spusťte Immuch360 s WEBKIT_DISABLE_DMABUF_RENDERER=1",

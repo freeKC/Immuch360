@@ -1789,7 +1789,7 @@
   "splat_kind_object": "'n Voorwerp van {size}",
   "splat_kind_place": "'n Plek",
   "splat_large_notice": "Groot splat: dit kan haper",
-  "splat_large_setting_subtitle": "Wys tot 200 000 gaussiane in plaas van 150 000: 'n groot splat kan haper",
+  "splat_large_setting_subtitle": "Wys tot 1 000 000 gaussiane in plaas van 300 000: 'n groot splat kan haper",
   "splat_large_setting_subtitle_phone": "Wys tot 500 000 gaussiane in plaas van 150 000: 'n groot splat kan haper",
   "splat_large_setting_title": "Groot splats (eksperimenteel)",
   "splat_linux_no_picture": "Die splat-kyker het niks geteken nie. Met ’n NVIDIA-grafiese kaart, begin Immuch360 met WEBKIT_DISABLE_DMABUF_RENDERER=1",

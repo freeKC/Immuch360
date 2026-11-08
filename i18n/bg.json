@@ -3716,7 +3716,7 @@
   "splat_kind_object": "Обект с размер {size}",
   "splat_kind_place": "Място",
   "splat_large_notice": "Голям сплат: може да насича",
-  "splat_large_setting_subtitle": "Показва до 200 000 гаусиани вместо 150 000: голям сплат може да насича",
+  "splat_large_setting_subtitle": "Показва до 1 000 000 гаусиани вместо 300 000: голям сплат може да насича",
   "splat_large_setting_subtitle_phone": "Показва до 500 000 гаусиани вместо 150 000: голям сплат може да насича",
   "splat_large_setting_title": "Големи сплатове (експериментално)",
   "splat_linux_no_picture": "Визуализаторът на сплатове не начерта нищо. С видеокарта NVIDIA стартирайте Immuch360 с WEBKIT_DISABLE_DMABUF_RENDERER=1",

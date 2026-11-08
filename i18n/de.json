@@ -3718,7 +3718,7 @@
   "splat_kind_object": "Ein Objekt von {size}",
   "splat_kind_place": "Ein Ort",
   "splat_large_notice": "Großer Splat: er kann ruckeln",
-  "splat_large_setting_subtitle": "Zeigt bis zu 200.000 Gaußsche statt 150.000: ein großer Splat kann ruckeln",
+  "splat_large_setting_subtitle": "Zeigt bis zu 1.000.000 Gaußsche statt 300.000: ein großer Splat kann ruckeln",
   "splat_large_setting_subtitle_phone": "Zeigt bis zu 500.000 Gaußsche statt 150.000: ein großer Splat kann ruckeln",
   "splat_large_setting_title": "Große Splats (experimentell)",
   "splat_linux_no_picture": "Der Splat-Viewer hat nichts gezeichnet. Mit einer NVIDIA-Grafikkarte Immuch360 mit WEBKIT_DISABLE_DMABUF_RENDERER=1 starten",

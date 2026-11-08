@@ -3169,7 +3169,7 @@
   "splat_kind_object": "Një objekt prej {size}",
   "splat_kind_place": "Një vend",
   "splat_large_notice": "Splat i madh: mund të ngecë",
-  "splat_large_setting_subtitle": "Shfaq deri në 200.000 gausiane në vend të 150.000: një splat i madh mund të ngecë",
+  "splat_large_setting_subtitle": "Shfaq deri në 1.000.000 gausiane në vend të 300.000: një splat i madh mund të ngecë",
   "splat_large_setting_subtitle_phone": "Shfaq deri në 500.000 gausiane në vend të 150.000: një splat i madh mund të ngecë",
   "splat_large_setting_title": "Splate të mëdha (eksperimentale)",
   "splat_linux_no_picture": "Shikuesi i splateve nuk vizatoi asgjë. Me një kartë grafike NVIDIA, nisni Immuch360 me WEBKIT_DISABLE_DMABUF_RENDERER=1",

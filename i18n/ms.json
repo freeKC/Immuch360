@@ -2423,7 +2423,7 @@
   "splat_kind_object": "Objek bersaiz {size}",
   "splat_kind_place": "Sebuah tempat",
   "splat_large_notice": "Splat besar: mungkin tersekat-sekat",
-  "splat_large_setting_subtitle": "Memaparkan sehingga 200,000 gaussian dan bukannya 150,000: splat besar mungkin tersekat-sekat",
+  "splat_large_setting_subtitle": "Memaparkan sehingga 1,000,000 gaussian dan bukannya 300,000: splat besar mungkin tersekat-sekat",
   "splat_large_setting_subtitle_phone": "Memaparkan sehingga 500,000 gaussian dan bukannya 150,000: splat besar mungkin tersekat-sekat",
   "splat_large_setting_title": "Splat besar (eksperimen)",
   "splat_linux_no_picture": "Pemapar splat tidak melukis apa-apa. Dengan kad grafik NVIDIA, mulakan Immuch360 dengan WEBKIT_DISABLE_DMABUF_RENDERER=1",

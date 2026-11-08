@@ -3717,7 +3717,7 @@
   "splat_kind_object": "Een object van {size}",
   "splat_kind_place": "Een plek",
   "splat_large_notice": "Grote splat: kan haperen",
-  "splat_large_setting_subtitle": "Toont tot 200.000 gaussians in plaats van 150.000: een grote splat kan haperen",
+  "splat_large_setting_subtitle": "Toont tot 1.000.000 gaussians in plaats van 300.000: een grote splat kan haperen",
   "splat_large_setting_subtitle_phone": "Toont tot 500.000 gaussians in plaats van 150.000: een grote splat kan haperen",
   "splat_large_setting_title": "Grote splats (experimenteel)",
   "splat_linux_no_picture": "De splatviewer heeft niets getekend. Start Immuch360 met een NVIDIA-videokaart met WEBKIT_DISABLE_DMABUF_RENDERER=1",

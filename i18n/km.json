@@ -1689,7 +1689,7 @@
   "splat_kind_object": "វត្ថុទំហំ {size}",
   "splat_kind_place": "ទីកន្លែង",
   "splat_large_notice": "ស្ពឡាតធំ៖ វាអាចគាំងៗ",
-  "splat_large_setting_subtitle": "បង្ហាញគោស្យានរហូតដល់ 200,000 ជំនួសឱ្យ 150,000៖ ស្ពឡាតធំអាចគាំងៗ",
+  "splat_large_setting_subtitle": "បង្ហាញគោស្យានរហូតដល់ 1,000,000 ជំនួសឱ្យ 300,000៖ ស្ពឡាតធំអាចគាំងៗ",
   "splat_large_setting_subtitle_phone": "បង្ហាញគោស្យានរហូតដល់ 500,000 ជំនួសឱ្យ 150,000៖ ស្ពឡាតធំអាចគាំងៗ",
   "splat_large_setting_title": "ស្ពឡាតធំៗ (សាកល្បង)",
   "splat_linux_no_picture": "កម្មវិធីមើលស្ពឡាតមិនបានគូរអ្វីទេ។ ជាមួយកាតក្រាហ្វិក NVIDIA សូមចាប់ផ្តើម Immuch360 ជាមួយ WEBKIT_DISABLE_DMABUF_RENDERER=1",

@@ -3718,7 +3718,7 @@
   "splat_kind_object": "Объект размером {size}",
   "splat_kind_place": "Место",
   "splat_large_notice": "Большой сплат: возможны подтормаживания",
-  "splat_large_setting_subtitle": "Показывает до 200 000 гауссиан вместо 150 000: большой сплат может подтормаживать",
+  "splat_large_setting_subtitle": "Показывает до 1 000 000 гауссиан вместо 300 000: большой сплат может подтормаживать",
   "splat_large_setting_subtitle_phone": "Показывает до 500 000 гауссиан вместо 150 000: большой сплат может подтормаживать",
   "splat_large_setting_title": "Большие сплаты (экспериментально)",
   "splat_linux_no_picture": "Просмотрщик сплатов ничего не нарисовал. С видеокартой NVIDIA запускайте Immuch360 с WEBKIT_DISABLE_DMABUF_RENDERER=1",

@@ -1608,7 +1608,7 @@
   "splat_kind_object": "Wan samting we i gat saes {size}",
   "splat_kind_place": "Wan ples",
   "splat_large_notice": "Bigfala splat: maet i stop smol",
-  "splat_large_setting_subtitle": "I soem kasem 200,000 gaussian i no 150,000 nomo: wan bigfala splat maet i stop smol",
+  "splat_large_setting_subtitle": "I soem kasem 1,000,000 gaussian i no 300,000 nomo: wan bigfala splat maet i stop smol",
   "splat_large_setting_subtitle_phone": "I soem kasem 500,000 gaussian i no 150,000 nomo: wan bigfala splat maet i stop smol",
   "splat_large_setting_title": "Ol bigfala splat (stil testem)",
   "splat_linux_no_picture": "Splat viewer i no droem wan samting. Wetem wan NVIDIA grafik kad, statem Immuch360 wetem WEBKIT_DISABLE_DMABUF_RENDERER=1",

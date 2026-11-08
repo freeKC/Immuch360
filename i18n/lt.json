@@ -3663,7 +3663,7 @@
   "splat_kind_object": "{size} dydžio objektas",
   "splat_kind_place": "Vieta",
   "splat_large_notice": "Didelis splatas: gali strigti",
-  "splat_large_setting_subtitle": "Rodo iki 200 000 Gauso elementų vietoj 150 000: didelis splatas gali strigti",
+  "splat_large_setting_subtitle": "Rodo iki 1 000 000 Gauso elementų vietoj 300 000: didelis splatas gali strigti",
   "splat_large_setting_subtitle_phone": "Rodo iki 500 000 Gauso elementų vietoj 150 000: didelis splatas gali strigti",
   "splat_large_setting_title": "Dideli splatai (eksperimentinis)",
   "splat_linux_no_picture": "Splatų peržiūros programa nieko nenupiešė. Su NVIDIA vaizdo plokšte paleiskite Immuch360 su WEBKIT_DISABLE_DMABUF_RENDERER=1",

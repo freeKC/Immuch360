@@ -1591,7 +1591,7 @@
   "splat_kind_object": "En Objet vu {size}",
   "splat_kind_place": "Eng Plaz",
   "splat_large_notice": "Grousse Splat: e kann hänken",
-  "splat_large_setting_subtitle": "Weist bis zu 200.000 Gaussen amplaz 150.000: e grousse Splat kann hänken",
+  "splat_large_setting_subtitle": "Weist bis zu 1.000.000 Gaussen amplaz 300.000: e grousse Splat kann hänken",
   "splat_large_setting_subtitle_phone": "Weist bis zu 500.000 Gaussen amplaz 150.000: e grousse Splat kann hänken",
   "splat_large_setting_title": "Grouss Splats (experimentell)",
   "splat_linux_no_picture": "De Splat-Viewer huet näischt gezeechent. Mat enger NVIDIA-Grafikkaart Immuch360 mat WEBKIT_DISABLE_DMABUF_RENDERER=1 starten",

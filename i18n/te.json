@@ -2687,7 +2687,7 @@
   "splat_kind_object": "{size} పరిమాణంలోని ఒక వస్తువు",
   "splat_kind_place": "ఒక ప్రదేశం",
   "splat_large_notice": "పెద్ద స్ప్లాట్: ఇది ఆగి ఆగి కదలవచ్చు",
-  "splat_large_setting_subtitle": "1,50,000 బదులు 2,00,000 వరకు గాసియన్‌లను చూపిస్తుంది: పెద్ద స్ప్లాట్ ఆగి ఆగి కదలవచ్చు",
+  "splat_large_setting_subtitle": "3,00,000 బదులు 10,00,000 వరకు గాసియన్‌లను చూపిస్తుంది: పెద్ద స్ప్లాట్ ఆగి ఆగి కదలవచ్చు",
   "splat_large_setting_subtitle_phone": "1,50,000 బదులు 5,00,000 వరకు గాసియన్‌లను చూపిస్తుంది: పెద్ద స్ప్లాట్ ఆగి ఆగి కదలవచ్చు",
   "splat_large_setting_title": "పెద్ద స్ప్లాట్‌లు (ప్రయోగాత్మకం)",
   "splat_linux_no_picture": "స్ప్లాట్ వ్యూయర్ ఏమీ గీయలేదు. NVIDIA గ్రాఫిక్స్ కార్డ్ ఉంటే Immuch360 ను WEBKIT_DISABLE_DMABUF_RENDERER=1 తో ప్రారంభించండి",

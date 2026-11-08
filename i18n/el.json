@@ -3628,7 +3628,7 @@
   "splat_kind_object": "Ένα αντικείμενο {size}",
   "splat_kind_place": "Ένας τόπος",
   "splat_large_notice": "Μεγάλο splat: μπορεί να κολλάει",
-  "splat_large_setting_subtitle": "Εμφανίζει έως 200.000 γκαουσιανές αντί για 150.000: ένα μεγάλο splat μπορεί να κολλάει",
+  "splat_large_setting_subtitle": "Εμφανίζει έως 1.000.000 γκαουσιανές αντί για 300.000: ένα μεγάλο splat μπορεί να κολλάει",
   "splat_large_setting_subtitle_phone": "Εμφανίζει έως 500.000 γκαουσιανές αντί για 150.000: ένα μεγάλο splat μπορεί να κολλάει",
   "splat_large_setting_title": "Μεγάλα splat (πειραματικό)",
   "splat_linux_no_picture": "Η προβολή splat δεν σχεδίασε τίποτα. Με κάρτα γραφικών NVIDIA, ξεκινήστε το Immuch360 με WEBKIT_DISABLE_DMABUF_RENDERER=1",

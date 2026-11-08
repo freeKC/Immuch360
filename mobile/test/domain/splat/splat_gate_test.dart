@@ -38,16 +38,16 @@ void main() {
             gaussians: 452451,
             shDegree: 0,
             fileBytes: 6824362,
-            maxGaussians: 150000,
+            maxGaussians: 300000,
             name: 'gsplat-cactus.spz',
           ),
         ),
       );
     }
-    expect(gate(large: true).request!.maxGaussians, 200000);
-    // The default from run b2 on a Quest 3 of 8 November 2026, Large splats from the bench of 31 October 2026
-    expect(splatSafeGaussians, 150000);
-    expect(splatLargeGaussians, 200000);
+    expect(gate(large: true).request!.maxGaussians, 1000000);
+    // The counts of the series on a Quest 3 of 8 November 2026
+    expect(splatSafeGaussians, 300000);
+    expect(splatLargeGaussians, 1000000);
   });
 
   test(
@@ -95,7 +95,7 @@ void main() {
     expect(kit.request!.gaussians, 686);
     // Reduced beyond the count, refused beyond what the headset reduces, as any splat
     const cactus = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: 452451, shDegree: 0);
-    expect(gate(probe: cactus).request!.maxGaussians, 150000);
+    expect(gate(probe: cactus).request!.maxGaussians, 300000);
     const huge = SplatHead(format: SplatFormat.spz, formatVersion: 4, gaussians: 9000000, shDegree: 0);
     expect(gate(probe: huge).refusal, SplatRefusal.tooLarge);
     // After the flavour and the headset

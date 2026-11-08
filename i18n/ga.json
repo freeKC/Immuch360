@@ -3717,7 +3717,7 @@
   "splat_kind_object": "Rud de mhéid {size}",
   "splat_kind_place": "Áit",
   "splat_large_notice": "Splat mór: d'fhéadfadh sé stadach a bheith ann",
-  "splat_large_setting_subtitle": "Taispeánann sé suas le 200,000 gaussach in ionad 150,000: d'fhéadfadh splat mór a bheith stadach",
+  "splat_large_setting_subtitle": "Taispeánann sé suas le 1,000,000 gaussach in ionad 300,000: d'fhéadfadh splat mór a bheith stadach",
   "splat_large_setting_subtitle_phone": "Taispeánann sé suas le 500,000 gaussach in ionad 150,000: d'fhéadfadh splat mór a bheith stadach",
   "splat_large_setting_title": "Splatanna móra (turgnamhach)",
   "splat_linux_no_picture": "Níor tharraing amharcóir na splatanna aon rud. Le cárta grafaice NVIDIA, tosaigh Immuch360 le WEBKIT_DISABLE_DMABUF_RENDERER=1",

@@ -3635,7 +3635,7 @@
   "splat_kind_object": "جسم بحجم {size}",
   "splat_kind_place": "مكان",
   "splat_large_notice": "سبلات كبير: قد يتقطع",
-  "splat_large_setting_subtitle": "يعرض حتى 200,000 غاوسية بدلًا من 150,000: قد يتقطع السبلات الكبير",
+  "splat_large_setting_subtitle": "يعرض حتى 1,000,000 غاوسية بدلًا من 300,000: قد يتقطع السبلات الكبير",
   "splat_large_setting_subtitle_phone": "يعرض حتى 500,000 غاوسية بدلًا من 150,000: قد يتقطع السبلات الكبير",
   "splat_large_setting_title": "سبلات كبيرة (تجريبي)",
   "splat_linux_no_picture": "لم يرسم عارض السبلات شيئًا. مع بطاقة رسومات NVIDIA، شغّل Immuch360 مع WEBKIT_DISABLE_DMABUF_RENDERER=1",

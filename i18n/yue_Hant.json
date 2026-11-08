@@ -3613,7 +3613,7 @@
   "splat_kind_object": "{size} 嘅物件",
   "splat_kind_place": "一個地方",
   "splat_large_notice": "大型潑濺：可能會窒",
-  "splat_large_setting_subtitle": "最多顯示 200,000 個高斯，唔係 150,000 個：大型潑濺可能會窒",
+  "splat_large_setting_subtitle": "最多顯示 1,000,000 個高斯，唔係 300,000 個：大型潑濺可能會窒",
   "splat_large_setting_subtitle_phone": "最多顯示 500,000 個高斯，唔係 150,000 個：大型潑濺可能會窒",
   "splat_large_setting_title": "大型潑濺（實驗性）",
   "splat_linux_no_picture": "潑濺檢視器乜都冇畫到。如果用 NVIDIA 顯示卡，請用 WEBKIT_DISABLE_DMABUF_RENDERER=1 啟動 Immuch360",

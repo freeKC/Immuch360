@@ -3689,7 +3689,7 @@
   "splat_kind_object": "วัตถุขนาด {size}",
   "splat_kind_place": "สถานที่",
   "splat_large_notice": "สแปลตขนาดใหญ่: อาจกระตุก",
-  "splat_large_setting_subtitle": "แสดงเกาส์เซียนได้สูงสุด 200,000 ตัวแทน 150,000 ตัว สแปลตขนาดใหญ่อาจกระตุก",
+  "splat_large_setting_subtitle": "แสดงเกาส์เซียนได้สูงสุด 1,000,000 ตัวแทน 300,000 ตัว สแปลตขนาดใหญ่อาจกระตุก",
   "splat_large_setting_subtitle_phone": "แสดงเกาส์เซียนได้สูงสุด 500,000 ตัวแทน 150,000 ตัว สแปลตขนาดใหญ่อาจกระตุก",
   "splat_large_setting_title": "สแปลตขนาดใหญ่ (ทดลอง)",
   "splat_linux_no_picture": "ตัวดูสแปลตไม่ได้วาดอะไรเลย หากใช้การ์ดจอ NVIDIA ให้เปิด Immuch360 ด้วย WEBKIT_DISABLE_DMABUF_RENDERER=1",

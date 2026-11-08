@@ -3718,7 +3718,7 @@
   "splat_kind_object": "An object of {size}",
   "splat_kind_place": "A place",
   "splat_large_notice": "Large splat: it may stutter",
-  "splat_large_setting_subtitle": "Shows up to 200,000 gaussians instead of 150,000: a large splat may stutter",
+  "splat_large_setting_subtitle": "Shows up to 1,000,000 gaussians instead of 300,000: a large splat may stutter",
   "splat_large_setting_subtitle_phone": "Shows up to 500,000 gaussians instead of 150,000: a large splat may stutter",
   "splat_large_setting_title": "Large splats (experimental)",
   "splat_linux_no_picture": "The splat viewer drew nothing. With an NVIDIA graphics card, start Immuch360 with WEBKIT_DISABLE_DMABUF_RENDERER=1",

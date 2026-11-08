@@ -3718,7 +3718,7 @@
   "splat_kind_object": "Un objet de {size}",
   "splat_kind_place": "Un lieu",
   "splat_large_notice": "Grand splat : il peut saccader",
-  "splat_large_setting_subtitle": "Affiche jusqu'à 200 000 gaussiennes au lieu de 150 000 : un grand splat peut saccader",
+  "splat_large_setting_subtitle": "Affiche jusqu'à 1 000 000 gaussiennes au lieu de 300 000 : un grand splat peut saccader",
   "splat_large_setting_subtitle_phone": "Affiche jusqu'à 500 000 gaussiennes au lieu de 150 000 : un grand splat peut saccader",
   "splat_large_setting_title": "Grands splats (expérimental)",
   "splat_linux_no_picture": "Le visualiseur de splats n'a rien dessiné. Avec une carte graphique NVIDIA, lancez Immuch360 avec WEBKIT_DISABLE_DMABUF_RENDERER=1",

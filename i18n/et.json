@@ -3717,7 +3717,7 @@
   "splat_kind_object": "Objekt suurusega {size}",
   "splat_kind_place": "Koht",
   "splat_large_notice": "Suur splat: võib hakkida",
-  "splat_large_setting_subtitle": "Näitab kuni 200 000 gaussiaani 150 000 asemel: suur splat võib hakkida",
+  "splat_large_setting_subtitle": "Näitab kuni 1 000 000 gaussiaani 300 000 asemel: suur splat võib hakkida",
   "splat_large_setting_subtitle_phone": "Näitab kuni 500 000 gaussiaani 150 000 asemel: suur splat võib hakkida",
   "splat_large_setting_title": "Suured splatid (katseline)",
   "splat_linux_no_picture": "Splatide vaatur ei joonistanud midagi. NVIDIA graafikakaardiga käivita Immuch360 koos WEBKIT_DISABLE_DMABUF_RENDERER=1",
