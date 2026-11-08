@@ -34,8 +34,8 @@ fun ImageDecoder.Source.decodeBitmapSized(header: IntArray, sizeOf: (Int, Int) -
 
 /**
  * What the logs and Dart are told of a decode that failed with [error]: its class and message, the size of the image
- * ([header], 0 when its header was not read), the [target] asked, the [bytes] of the file, and the memory of the app and
- * of the device when [context] is given
+ * ([header], 0 when its header was not read), the [target] asked, the [bytes] of the file, and the memory of the app
+ * and of the device when [context] is given
  */
 fun describeDecodeFailure(
   error: Throwable,

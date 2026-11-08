@@ -6,9 +6,9 @@ import java.nio.ByteBuffer
  * The encoded images Flutter's engine decodes with codecs of its own: JPEG, PNG, GIF, WebP, BMP and ICO. Any other
  * buffer the engine hands to Android's ImageDecoder through FlutterJNI.decodeImage, which allocates the full size
  * bitmap and aborts the app on any exception other than an IOException (an OutOfMemoryError on a large HEIF, AVIF or
- * raw photo: the crash M1 of the Meta Quest store, 8 November 2026). So the fallback of [RemoteImagesImpl] hands Flutter
- * the encoded bytes of the first kind only. Each check is as strict as the engine's codec, or stricter, and follows
- * encoded_image_probe.dart on the Dart side: the tests of both read the same table of first bytes.
+ * raw photo: the crash M1 of the Meta Quest store, 8 November 2026). So the fallback of [RemoteImagesImpl] hands
+ * Flutter the encoded bytes of the first kind only. Each check is as strict as the engine's codec, or stricter, and
+ * follows encoded_image_probe.dart on the Dart side: the tests of both read the same table of first bytes.
  */
 object EngineImageFormats {
   /** How many first bytes are read */
