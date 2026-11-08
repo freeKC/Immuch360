@@ -2,6 +2,7 @@ package app.alextran.immich.core
 
 import android.app.ActivityManager
 import android.app.ActivityManager.RunningAppProcessInfo
+import android.app.Application
 import android.app.ApplicationExitInfo
 import android.content.Context
 import android.os.Build
@@ -175,6 +176,10 @@ object AppHealth {
   }
 
   private fun collect(context: Context) {
+    // In the main process of the app only: a process of a library would read the same ends again
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && Application.getProcessName() != context.packageName) {
+      return
+    }
     val healthFolder = folder(context)
     val pendingFolder = File(healthFolder, PENDING_FOLDER)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
