@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
 
 /// The licence of LiteRT 2.3.0 as its packages carry it (the Apache License 2.0, with the BSD terms of the parts that
@@ -53,7 +54,7 @@ bool _isLibraryName(String line) =>
 /// other builds list nothing. The notices are 1.9 MB: cut by library, each entry is parsed on its own when the page of
 /// LiteRT opens, and the asset is not kept in the cache of the bundle
 Stream<LicenseEntry> liteRtLicenses({String? flavor = appFlavor, AssetBundle? bundle}) async* {
-  if (flavor != 'quest') {
+  if (flavor != kQuestFlavor) {
     return;
   }
   final assets = bundle ?? rootBundle;

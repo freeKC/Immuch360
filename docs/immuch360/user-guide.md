@@ -260,6 +260,8 @@ From build 19, the app sends the SSDP search for media servers to the multicast 
 
 Folders and files are listed with the server's Browse action, page by page, and named by their titles: a file gets the extension of its type when its title has none, and a second file with the same title in a folder becomes `name (2)`. Audio is left out. Thumbnails are the album art or the small pictures the server makes, loaded by the app itself, with the app's own thumbnail when the server has none. A file plays from the original the server offers, rather than a converted copy when it offers both, read with range requests, so seeking works.
 
+A media server lists only the files it indexed, and media servers usually pick them by their extension: the raw files of 360° cameras (.insv, .insp, .360, .osv) and the splat files (.ply, .spz) usually do not show in a DLNA share, even when they sit in its folders. Put them on an SMB or WebDAV share, or in a folder of the device ("Browse a folder" on an Android phone, a tablet or a Meta Quest, the folders of a computer), where the app lists them itself.
+
 Checked against minidlna and Gerbera; discovery on a real network, Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest are the device test of build 19.
 
 ### A share that moved
@@ -273,7 +275,7 @@ From build 20 a Plex server found again at another address of the network moves 
 - **SMB**: SMB 2 and 3 only, no SMB 1.
 - **WebDAV**: Basic authentication only (Digest is not supported yet); a self signed HTTPS certificate must be installed on the device.
 - **Finding servers**: the network scan and the DLNA, Plex and Tapo searches look at the local /24 network only, and need the local network permission on iOS. On iPhone and iPad the DLNA search sends the unicast requests only, until Apple grants the app the multicast entitlement, and some servers do not answer them (minidlna on Linux): add those by their description address.
-- **DLNA**: a server that only offers a converted copy of a file gives that copy; a folder lists 20,000 entries at most.
+- **DLNA**: a server that only offers a converted copy of a file gives that copy; a folder lists 20,000 entries at most; the raw files of 360° cameras and the splat files usually do not show, see [DLNA media servers](#dlna-media-servers).
 - **Thumbnails**: photo thumbnails decode the whole file, and photos over 30 MB get none.
 - **Players**: the audio track choice is not in the flat player yet. On a phone there is no swiping from one file of a folder to the next yet (the Quest immersive view has previous and next for the 360° files of the folder). The 3D or 180° choice made on a network file is not remembered.
 - **Uploads**: they run only while the app is open, and a file the server already has is sent in full before the server reports it as a duplicate.
@@ -503,7 +505,7 @@ From build 16 Immuch360 stitches those files itself, on the phone, the tablet or
 
 ### Watch a raw file
 
-1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv, and refuses .360 and .osv), the folders of a computer in Immuch360 Desktop, and from build 19 the phone share and the DLNA servers that list these files (not checked yet). The gallery of an Android device does not list them: Android files .insv, .insp, .360, .lrv and .osv as other files, not as photos or videos (seen on an Android 12 emulator for the five, and on Android 15 for .osv), so a raw file copied to the phone shows neither in its gallery nor in the app. A raw photo renamed .jpg is still found raw by the app; a raw video renamed .mp4 shows as a plain video, since the app knows raw videos by their name.
+1. Put the raw files where the app reads them: an SMB or WebDAV share, your Immich server (it takes .insp and .insv, and refuses .360 and .osv), the folders of a computer in Immuch360 Desktop, and from build 19 the phone share and the DLNA servers that list these files (not checked yet; media servers usually do not index them, see [DLNA media servers](#dlna-media-servers)). The gallery of an Android device does not list them: Android files .insv, .insp, .360, .lrv and .osv as other files, not as photos or videos (seen on an Android 12 emulator for the five, and on Android 15 for .osv), so a raw file copied to the phone shows neither in its gallery nor in the app. A raw photo renamed .jpg is still found raw by the app; a raw video renamed .mp4 shows as a plain video, since the app knows raw videos by their name.
 2. Keep the two files of an X3 pair together: the app looks for the other file next to the first one, on the device, on the server or in the share folder. When the other one is missing, the app says "This recording is split in two files, one per lens, and (name) was not found next to it", and suggests keeping both files together or exporting the video from the camera app.
 3. Open the file and tap 360°. Raw files get the 360° button and raw photos the 360° badge. From build 18 the raw Insta360 files of the server are in the 360° list too, found by their name.
 4. A photo opens in the sphere viewer with a label at the bottom: "Raw 360° file, stitched by the app", and the source of the calibration: "lens calibration read from the file", "lens calibration of the same camera" (kept from another file of the same camera, by its serial number, or by its model for a file that only names its model), or "nominal lens values, seams possible" (the values of an X3, when nothing better is available).
@@ -764,7 +766,7 @@ From build 20 the same Android app runs on Android TV and Google TV, with the re
 
 LG TVs run webOS, not Android: they have an app of their own, in a first test build, see [LG webOS TVs](platform-support.md#lg-webos-tvs).
 
-To install the app on a TV, see [Install it on the TV](platform-support.md#install-it-on-the-tv): until Google Play offers it on TVs, the universal APK of the Releases page, installed with adb.
+To install the app on a TV, see [Install it on the TV](platform-support.md#install-it-on-the-tv): Google Play on the TV, or the universal APK of the Releases page, installed with adb.
 
 ### First start
 
@@ -803,7 +805,7 @@ Settings, Preferences, "Remote control layout": "Large focus frames and remote c
 - **Videos**: the decoders of the TV decide what plays, with the same Video source setting and decoder check as on a phone (see [Video details and decoders](#video-details-decoders-and-why-a-video-stutters)); not measured on a real TV yet. A video beyond them still does not play; from build 27 the app says so, see [When a video does not play](#when-a-video-does-not-play).
 - **The details** do not open with Menu or a held OK in the video page of a share and in the 360° photo viewer, and "Custom range" of the date filter was not tried with the remote.
 - **Real TVs**: the app ran on a real Android TV for the first time on 21 October 2026, with build 25 or 26: photos and 360° photos went well, and its five problems (videos, controls, 360° videos, the white pages, one freeze) led to build 27, which was checked by automated tests and on the Google TV emulator, not on a real TV yet. Builds 21 and 22 were tried on the emulator: the login, the timeline, the albums, a flat photo, a video, the 360° sphere viewer and the 360° video player, the 360° list, an SMB share, the add menu with its network share, Plex and camera choices, the share form, Settings and the remote navigation fixes; the Plex and Tapo pages themselves were not opened there. Of the TV fixes of build 23, only the bottom margin of the Photos tab was seen on the emulator, the others are covered by automated tests; the search filters of build 26 were tried there with the remote, and so were the videos, the theme, the details, the filters and the rotation of build 27. To be confirmed on a real TV: the direction in which the arrows turn a 360° video, the keyboard of the TV (Gboard) in the text dialog, the OK key of infrared remotes, the margins and the banner on the TV home screen. Reports are welcome.
-- **Google Play on TVs** waits for Google's review of the TV release; until then, the APK.
+- **Google Play on TVs**: Google Play offers the app on Android TV and Google TV (read in the Play Console on 8 November 2026); the APK stays the way without Google Play.
 - **Other TVs**: Fire TV is not tested, and there is no Apple TV version.
 
 ## Find your 360° shots: the 360° list
