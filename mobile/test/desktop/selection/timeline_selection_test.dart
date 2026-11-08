@@ -4,13 +4,15 @@
 // the menu of the whole selection with "Upload to Immich" first, which sends every photo of the selection, then the AI
 // entries in the order of the sheet; "N selected" in the bar; Command on macOS. The assets an album holds already are
 // never taken, and a right click on the page that picks them adds. What the user does while Control A loads wins once
-// it ends; a Shift click finds its anchor again after photos arrived above it. A phone, the read only mode and the
-// remote control layout on a computer keep the timeline as it was.
+// it ends; a Shift click finds its anchor again after photos arrived above it. A Control click keeps the place of a
+// scrolled timeline, though Control also turns the wheel into the zoom. A phone, the read only mode and the remote
+// control layout on a computer keep the timeline as it was.
 
 import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,7 @@ import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/timeline/overview/timeline_wheel_zoom.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/timeline.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -404,6 +407,41 @@ void main() {
       // "Make a splat scene (AI)" acts on the same selection
       final seen = ProviderScope.containerOf(tester.element(splat)).read(assetsActionProvider(ActionSource.timeline));
       expect({for (final asset in seen.toList()) asset.name}, {'p1.jpg', 'p2.jpg'});
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a Control click on a scrolled timeline keeps its place while Control is held and after', (
+      tester,
+    ) async {
+      await pumpTimeline(tester, assets: photos(300));
+      final timeline = find.byType(Timeline);
+      final scrollable = find.descendant(of: timeline, matching: find.byType(Scrollable)).first;
+      ScrollPosition position() => tester.state<ScrollableState>(scrollable).position;
+      position().jumpTo(position().maxScrollExtent / 2);
+      await settle(tester);
+      final offset = position().pixels;
+      expect(offset, greaterThan(0));
+      // The photo nearest to the middle of the screen
+      final middle = tester.getCenter(timeline).dy;
+      final names = [
+        for (final element in find.byType(ThumbnailTile).evaluate())
+          if ((element.widget as ThumbnailTile).asset case final asset?) asset.name.split('.').first,
+      ];
+      final name = minBy(names, (candidate) => (tester.getCenter(tileNamed(candidate)).dy - middle).abs())!;
+
+      await withKeys(tester, [LogicalKeyboardKey.controlLeft], () async {
+        await settle(tester);
+        // The timeline zoom: while Control is held, the list refuses the wheel, which zooms instead
+        final list = find.descendant(of: timeline, matching: find.byType(CustomScrollView)).first;
+        expect(tester.widget<CustomScrollView>(list).physics, isA<TimelineWheelZoomPhysics>());
+        expect(position().pixels, offset, reason: 'Control down keeps the place');
+        await click(tester, tileNamed(name));
+        await settle(tester);
+        expect(position().pixels, offset, reason: 'the click too');
+      });
+      await settle(tester);
+      expect(position().pixels, offset, reason: 'Control up too');
+      expect(selected(tester), {name});
       debugDefaultTargetPlatformOverride = null;
     });
 
