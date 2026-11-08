@@ -27,7 +27,7 @@
 // graphics share the computer's memory: too slow for panoramas", "The graphics card did not answer"); the memory of
 // that card at least what the transformer it takes asks for ("The graphics card has 6.0 GiB of memory, 360° panoramas
 // need 7.5 GiB"). The card goes with the result, for the line of the settings and for the index stable-diffusion.cpp
-// must be given (ggmlVulkanIndexOf).
+// is given first (ggmlVulkanIndexOf, a guess its own list confirms or corrects, sdcpp_runner.dart).
 //
 // The splat scenes (plan 2026-11-01, sections 2.4 and 4.1, lot SP6) are the first feature of archives alone, COLMAP
 // and Brush: no ONNX Runtime is asked for nor loaded, the rule "a runtime and a model" holding only for a feature that
@@ -244,7 +244,9 @@ PanoramaCard panoramaCardOf(GpuReport report, {required bool integratedAllowed})
     return (card: null, refusal: AiGateReason.gpuNone);
   }
   // Only the cards ggml numbers: a card seen through two drivers (the same UUID or LUID) is the one of the driver ggml
-  // keeps, whose index sd-cli is given (ggmlVulkanIndexOf); the other one has no index there
+  // keeps, whose index sd-cli is given first (ggmlVulkanIndexOf, then sd-cli's own list); the other one has no index
+  // there. An integrated card is chosen only when no dedicated one is numbered and integratedAllowed: it is never
+  // taken in place of a dedicated one, by the gate nor by the check of sd-cli's list
   final numbered = ggmlVulkanDevices(report);
   GpuAdapter? best(GpuKind kind) {
     GpuAdapter? found;

@@ -4,8 +4,10 @@
 // pasted back to the pixel, a photo much larger than the frame reduced to its density first, the seam and its flag,
 // the field of view from the EXIF, MoGe-2 or the guess, the turns of the photo, a refused image made once more then
 // refused, the named failures of the generator, the cancel, the components, the source changed, a photo that is not a
-// JPEG (decoded again for the paste back); the steps sent to isolates of their own as the app runs them; then the same
-// chain through the runner of lot P2 and the compiled fake sd-cli (IMMUCH360_FAKE_SD_CLI).
+// JPEG (decoded again for the paste back); the steps sent to isolates of their own as the app runs them; what a failure
+// leaves in the logs since release 44 (one warning with the step, the code and the end of sd-cli's output, and the log
+// of sd-cli kept in the logs folder of the app, the five newest); then the same chain through the runner of lot P2 and
+// the compiled fake sd-cli (IMMUCH360_FAKE_SD_CLI).
 
 import 'dart:convert';
 import 'dart:io';
@@ -247,6 +249,8 @@ void main() {
     PanoramaPhotoDecoder? decodeOther,
     List<SbsCodec> Function()? codecs,
     PanoramaCompute compute = panoramaInline,
+    Directory? failureLogs,
+    DateTime Function() clock = DateTime.now,
   }) => PanoramaEngine(
     generator: generator ?? FakeGeneratorBackend(),
     upscaler: upscaler ?? FakeUpscaleBackend(),
@@ -257,7 +261,26 @@ void main() {
     codecs: codecs ?? _dartCodecs,
     compute: compute,
     sizes: _sizes,
+    failureLogs: failureLogs,
+    clock: clock,
   );
+
+  /// The messages of the logger [name] at [level] and above, from now to the end of the test
+  List<String> recorded(String name, Level level) {
+    final heard = <String>[];
+    final before = Logger.root.level;
+    Logger.root.level = Level.ALL;
+    final listening = Logger.root.onRecord.listen((record) {
+      if (record.loggerName == name && record.level >= level) {
+        heard.add(record.message);
+      }
+    });
+    addTearDown(() async {
+      Logger.root.level = before;
+      await listening.cancel();
+    });
+    return heard;
+  }
 
   bool workLeft() => work.root.existsSync() && work.root.listSync().isNotEmpty;
 
@@ -695,6 +718,114 @@ void main() {
     expect(workLeft(), isFalse);
   });
 
+  group('what a failure leaves in the logs', () {
+    // The end of sd-cli's output a failure carries, as the runner of sd-cli gives it
+    const said =
+        'sd-cli wrote nothing for 180 s and was stopped; its last lines:\n[I] loading the transformer\n'
+        '[V] Initializing backend: Vulkan0\n[I] generating image: 1/1 - seed 1002';
+    const stalled = BackendException(ImmersiveErrorCode.generatorStalled, said);
+    const failure = BackendException(ImmersiveErrorCode.generatorFailed, 'sd-cli ended with 1: [E] line two');
+
+    test('one warning with the step, the code and the last lines of sd-cli; none for a cancel', () async {
+      final warnings = recorded('PanoramaEngine', Level.WARNING);
+      final engine = engineOf(generator: _Logging(const [], failure: stalled));
+      final result = await engine.run(jobOf(photo()), cancel: cancel);
+
+      expect(result.error, ImmersiveErrorCode.generatorStalled);
+      expect(warnings, ['panorama-1: failed at loadingModels: generatorStalled: $said']);
+
+      warnings.clear();
+      final cancelled = await engineOf().run(
+        jobOf(photo()),
+        cancel: cancel,
+        onProgress: (progress) {
+          if (progress.stage == ImmersiveStage.generating && progress.step == 2) {
+            cancel.cancel();
+          }
+        },
+      );
+      expect(cancelled.error, ImmersiveErrorCode.cancelled);
+      expect(warnings, isEmpty);
+    });
+
+    test('an unexpected error: one warning, with the error and its stack, not two', () async {
+      final warnings = <LogRecord>[];
+      final before = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord.listen((record) {
+        if (record.loggerName == 'PanoramaEngine' && record.level >= Level.WARNING) {
+          warnings.add(record);
+        }
+      });
+      addTearDown(() async {
+        Logger.root.level = before;
+        await listening.cancel();
+      });
+      final generator = _Logging(const [], failure: const FormatException('a reply that does not read'));
+
+      final result = await engineOf(generator: generator).run(jobOf(photo()), cancel: cancel);
+
+      expect(result.error, ImmersiveErrorCode.modelFailed);
+      expect(warnings, hasLength(1));
+      expect(warnings.single.message, startsWith('panorama-1: failed at loadingModels: modelFailed: FormatException'));
+      expect(warnings.single.error, isA<FormatException>());
+      expect(warnings.single.stackTrace, isNotNull);
+    });
+
+    test('the log of sd-cli kept in one file of the logs folder after a failure, none after a success', () async {
+      final logs = Directory(p.join(folder.path, 'app-logs'));
+      final generator = _Logging(const ['[I] line one', '[E] line two'], failure: failure);
+      DateTime clock() => DateTime(2026, 11, 8, 17, 7, 12);
+
+      final engine = engineOf(generator: generator, failureLogs: logs, clock: clock);
+      final failed = await engine.run(jobOf(photo()), cancel: cancel);
+
+      expect(failed.error, ImmersiveErrorCode.generatorFailed);
+      final kept = [for (final entry in logs.listSync()) p.basename(entry.path)];
+      expect(kept, ['panorama-panorama-1-2026-11-08T17-07-12.log']);
+      expect(kept.single, isNot(contains(':')));
+      final text = File(p.join(logs.path, kept.single)).readAsStringSync();
+      const header = 'Panorama panorama-1 (salon.jpg) failed: generatorFailed: sd-cli ended with 1: [E] line two\n';
+      expect(text, startsWith(header));
+      expect(text, contains('The last step the panel showed: loadingModels\nSeed 1002, 4 steps\n'));
+      expect(text, contains('===== sd-cli.log, '));
+      expect(text, endsWith('[I] line one\n[E] line two\n'));
+      expect(workLeft(), isFalse);
+
+      // A panorama made: nothing more in the folder
+      final success = engineOf(generator: _Logging(const ['[I] all went well']), failureLogs: logs);
+      final made = await success.run(jobOf(photo()), cancel: cancel);
+      expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
+      expect(logs.listSync(), hasLength(1));
+    });
+
+    test('six failures: the five newest kept, a log of a splat scene beside them untouched', () async {
+      final logs = Directory(p.join(folder.path, 'app-logs'))..createSync();
+      final splat = File(p.join(logs.path, 'splat-0123456789abcdef-2026-11-01T10-00-00.log'));
+      splat.writeAsStringSync('COLMAP and Brush');
+
+      for (var minute = 0; minute < 6; minute++) {
+        final generator = _Logging(['[I] run $minute'], failure: failure);
+        DateTime clock() => DateTime(2026, 11, 8, 18, minute);
+        final engine = engineOf(generator: generator, failureLogs: logs, clock: clock);
+        final result = await engine.run(jobOf(photo()), cancel: cancel);
+        expect(result.error, ImmersiveErrorCode.generatorFailed);
+      }
+
+      final names = [for (final entry in logs.listSync()) p.basename(entry.path)];
+      names.sort();
+      expect(names, [
+        'panorama-panorama-1-2026-11-08T18-01-00.log',
+        'panorama-panorama-1-2026-11-08T18-02-00.log',
+        'panorama-panorama-1-2026-11-08T18-03-00.log',
+        'panorama-panorama-1-2026-11-08T18-04-00.log',
+        'panorama-panorama-1-2026-11-08T18-05-00.log',
+        'splat-0123456789abcdef-2026-11-01T10-00-00.log',
+      ]);
+      expect(splat.readAsStringSync(), 'COLMAP and Brush');
+    });
+  });
+
   group('through the runner of sd-cli and the compiled fake sd-cli', () {
     final fake = Platform.environment['IMMUCH360_FAKE_SD_CLI'];
     final launcher = Platform.environment['IMMUCH360_RUN_LAUNCHER'];
@@ -835,6 +966,37 @@ class _Watching implements GeneratorBackend {
   }) {
     onRequest(request);
     return inner.generate(request, cancel: cancel, onProgress: onProgress);
+  }
+}
+
+/// A generator that writes [lines] to the log of its job, as sd-cli does, then fails with [failure], or makes its image
+/// as the fake does when there is none
+class _Logging implements GeneratorBackend {
+  _Logging(this.lines, {this.failure});
+
+  final List<String> lines;
+  final Exception? failure;
+  final _inner = FakeGeneratorBackend();
+
+  @override
+  String get generatorSha256 => _inner.generatorSha256;
+
+  @override
+  String get loraSha256 => _inner.loraSha256;
+
+  @override
+  Future<void> generate(
+    GeneratorRequest request, {
+    required NativeCancelFlag cancel,
+    void Function(GeneratorProgress progress)? onProgress,
+  }) async {
+    final logs = Directory(p.join(request.workFolder, 'logs'))..createSync(recursive: true);
+    File(p.join(logs.path, 'sd-cli.log')).writeAsStringSync('${lines.join('\n')}\n', mode: FileMode.append);
+    final error = failure;
+    if (error != null) {
+      throw error;
+    }
+    await _inner.generate(request, cancel: cancel, onProgress: onProgress);
   }
 }
 

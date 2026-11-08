@@ -28,9 +28,10 @@
 // image, and the panoramas it made say so in their packet (GeneratorReferenceMaxPixels). Smaller outputs (1280 x 640)
 // make a smaller panorama with a wider raw seam: not offered. The other kinds of jobs, the splat scenes apart (below),
 // run on the processor and ask nothing of the card. The answer of a check that passes carries the whole report, so that
-// the generator is given the card the check looked at (ggmlVulkanIndexOf), the free memory it read (from which sd-cli
-// is given a budget on Windows, [panoramaGeneratorBudget]), and whether the generation runs whole
-// ([GpuBudgetReady.whole]), for the queue to wait a few seconds more while the app's share comes back.
+// the generator is given the card the check looked at (the guess of ggmlVulkanIndexOf, which sd-cli's own list confirms
+// or corrects), the free memory it read (from which sd-cli is given a budget on Windows, [panoramaGeneratorBudget]),
+// and whether the generation runs whole ([GpuBudgetReady.whole]), for the queue to wait a few seconds more while the
+// app's share comes back.
 //
 // A splat scene (lot SP4) asks the same budget twice: in the queue before its job starts, and again by the runner of
 // Brush once the poses are found, some minutes later ([brushCardOf]), with the need of the splat scenes

@@ -14,8 +14,12 @@
 //
 //   panorama_probe --sd-cli FILE --models DIR --ort LIBRARY --moge FILE --migan FILE --out DIR PHOTO...
 //                  [--device Vulkan1] [--steps 20] [--seed 1002] [--threads N] [--cancel-at STEP]
+//                  [--card NAME [--integrated]]
 // The models are found in DIR by the names M3 used, each replaceable by --diffusion-model, --vae, --llm, --lora and
-// --upscaler. Each photo gives <out>/<name>_360.jpg.
+// --upscaler. Each photo gives <out>/<name>_360.jpg. With --card, the name of the chosen card as the probe of the app
+// reads it (an integrated chip with --integrated), each run of sd-cli is checked against the list it prints at its
+// start and started again on the index it gives that card, the generator and the upscaler of a photo sharing it, as in
+// the app since release 44 (sdcpp_runner.dart); without it, no check.
 
 import 'dart:convert';
 import 'dart:io';
@@ -39,9 +43,12 @@ void _event(String name, [Map<String, Object?> values = const {}]) =>
 Future<void> main(List<String> arguments) async {
   final options = <String, String>{};
   final photos = <String>[];
+  var integrated = false;
   for (var i = 0; i < arguments.length; i++) {
     final name = arguments[i];
-    if (name.startsWith('--') && i + 1 < arguments.length) {
+    if (name == '--integrated') {
+      integrated = true;
+    } else if (name.startsWith('--') && i + 1 < arguments.length) {
       options[name.substring(2)] = arguments[++i];
     } else {
       photos.add(name);
@@ -64,16 +71,19 @@ Future<void> main(List<String> arguments) async {
       upscaler: model('upscaler', 'RealESRGAN_x4plus.pth'),
     ),
     device: options['device'] ?? 'Vulkan1',
+    card: options['card'] == null ? null : SdCppCard(name: options['card']!, integrated: integrated),
     threads: options['threads'] == null ? null : int.parse(options['threads']!),
   );
+  final device = SdCppDevice(settings);
   final engine = PanoramaEngine(
     generator: SdCppGenerator(
       runner: runner,
       settings: settings,
       generatorSha256: fluxTransformerComponent.sha256!,
       loraSha256: panoramaLoraComponent.sha256!,
+      device: device,
     ),
-    upscaler: SdCppUpscaler(runner: runner, settings: settings, modelSha256: upscalerComponent.sha256!),
+    upscaler: SdCppUpscaler(runner: runner, settings: settings, modelSha256: upscalerComponent.sha256!, device: device),
     models: OrtPanoramaModelsSpec(
       libraryPath: need('ort'),
       miganPath: need('migan'),

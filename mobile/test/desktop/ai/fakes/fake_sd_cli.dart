@@ -15,10 +15,18 @@
 //   fail      an error on the error output, then exit 1
 //   silent    the lines up to the sampling, then nothing until killed
 //   slow      as ok with steps of half a second (IMMUCH360_FAKE_SD_CLI_STEP_MS sets the step otherwise, 5 ms)
-// Before it loads its weights it writes the auto-fit plan of its one card, Vulkan0, as the pinned build does: the free
-// memory IMMUCH360_FAKE_SD_CLI_FREE_MIB says (7188 by default, the RTX 4060 Laptop of the measure) and the budget as
-// the pinned build makes it (backend_fit.cpp 152-157): a positive --max-vram in GiB capped at that free memory, with no
-// reserve; a negative one less than that free memory; without it (or 0), the free memory less the reserve of 512 MiB.
+// At its start it lists its Vulkan devices as ggml does ("ggml_vulkan: N = name (driver) | uma: U | ..."): one card,
+// "Fake graphics card", or those IMMUCH360_FAKE_SD_CLI_DEVICES gives, "name (driver)|uma" separated by ";" (the laptop
+// of the owner, release 44: "Intel(R) RaptorLake-S Mobile Graphics Controller (Intel Corporation)|1;NVIDIA GeForce RTX
+// 4060 Laptop GPU (NVIDIA)|0"). Its list goes to the output, so that the order the tests read it in is fixed: the real
+// one likely writes it on the error output (ggml's default logger), which the runner reads too. Like the pinned build
+// (backend_fit.cpp of stable-diffusion.cpp be48649, lines 399 and 435), it ends with 1 and "backend 'Vulkan2' was not
+// found" when --backend names a device beyond its list, before its plan.
+// Before it loads its weights it writes the auto-fit plan of each of its devices, Vulkan0 first, as the pinned build
+// does: the free memory IMMUCH360_FAKE_SD_CLI_FREE_MIB says (7188 by default, the RTX 4060 Laptop of the measure) and
+// the budget as the pinned build makes it (backend_fit.cpp 152-157): a positive --max-vram in GiB capped at that free
+// memory, with no reserve; a negative one less than that free memory; without it (or 0), the free memory less the
+// reserve of 512 MiB; then the placement it settled on, the --backend it was given.
 // It writes its process id to the file IMMUCH360_FAKE_SD_CLI_PID names, when it does.
 //
 //   fake_sd_cli host PIDFILE
@@ -60,9 +68,20 @@ Future<void> main(List<String> arguments) async {
   final stepMs =
       int.tryParse(Platform.environment['IMMUCH360_FAKE_SD_CLI_STEP_MS'] ?? '') ?? (mode == 'slow' ? 500 : 5);
   final output = option(['-o', '--output']) ?? 'output.png';
+  final devices = _devices(Platform.environment['IMMUCH360_FAKE_SD_CLI_DEVICES']);
   _out('[V] version: stable-diffusion.cpp version unknown, commit be48649 --- main.cpp:694');
-  _out('ggml_vulkan: Found 1 Vulkan devices:');
-  _out('ggml_vulkan: 0 = Fake graphics card (Immuch360) | uma: 0 | fp16: 1 | bf16: 1 | warp size: 32');
+  _out('ggml_vulkan: Found ${devices.length} Vulkan devices:');
+  for (final (index, device) in devices.indexed) {
+    _out('ggml_vulkan: $index = ${device.listed} | uma: ${device.uma ? 1 : 0} | fp16: 1 | bf16: 1 | warp size: 32');
+  }
+  final backend = option(['--backend']) ?? '';
+  for (final named in RegExp(r'Vulkan(\d+)').allMatches(backend)) {
+    if (int.parse(named.group(1)!) >= devices.length) {
+      _error("[E] backend '${named.group(0)}' was not found --- backend_fit.cpp:435");
+      await _flush();
+      exit(1);
+    }
+  }
   if (option(['-M', '--mode']) == 'upscale') {
     await _upscale(option(['-i', '--init-img'])!, output, stepMs);
     return;
@@ -83,11 +102,14 @@ Future<void> main(List<String> arguments) async {
   };
   _out('[I] auto-fit plan: --- backend_fit.cpp:323');
   _out('[I]   devices: --- backend_fit.cpp:324');
-  _out(
-    '[I]     Vulkan0      Fake graphics card free ${'$free'.padLeft(6)} MiB, budget ${'$budget'.padLeft(6)} MiB '
-    '--- backend_fit.cpp:328',
-  );
+  for (final (index, device) in devices.indexed) {
+    _out(
+      '[I]     ${'Vulkan$index'.padRight(12)} ${device.name.padRight(32)} free ${'$free'.padLeft(6)} MiB, budget '
+      '${'$budget'.padLeft(6)} MiB --- backend_fit.cpp:328',
+    );
+  }
   _out('[I]     RAM          free   4737 MiB, params budget   2689 MiB --- backend_fit.cpp:334');
+  _out('[I] auto-fit: --backend "$backend" --params-backend "te=disk" --- backend_fit.cpp:477');
   await _bar(149, '#', (i) => '${(150 + i).toStringAsFixed(2)}MB/s', 0);
   _out('[I] generate_image ${width}x$height --- image.cpp:869');
   await _bar(40, '=', (i) => '30.30it/s', 0);
@@ -155,6 +177,30 @@ Future<void> main(List<String> arguments) async {
 }
 
 void _out(String line) => stdout.write('$line\n');
+
+/// A Vulkan device of the fake: its line in the list (its name and its driver), its name, and uma for an integrated
+/// chip
+typedef _Device = ({String listed, String name, bool uma});
+
+/// The devices IMMUCH360_FAKE_SD_CLI_DEVICES gives (see the top of this file), the one fake card without it
+List<_Device> _devices(String? given) {
+  if (given == null || given.trim().isEmpty) {
+    return const [(listed: 'Fake graphics card (Immuch360)', name: 'Fake graphics card', uma: false)];
+  }
+  return [
+    for (final entry in given.split(';'))
+      if (entry.trim().isNotEmpty) _deviceOf(entry.trim()),
+  ];
+}
+
+/// "name (driver)|uma"
+_Device _deviceOf(String entry) {
+  final bar = entry.lastIndexOf('|');
+  final listed = bar < 0 ? entry : entry.substring(0, bar);
+  final driver = listed.lastIndexOf(' (');
+  final name = driver < 0 ? listed : listed.substring(0, driver);
+  return (listed: listed, name: name, uma: bar >= 0 && entry.substring(bar + 1).trim() == '1');
+}
 
 void _error(String line) => stderr.write('$line\n');
 
