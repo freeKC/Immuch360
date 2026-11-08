@@ -154,7 +154,16 @@ class PhotoViewGestureRecognizer extends ScaleGestureRecognizer {
 
   @override
   void handleEvent(PointerEvent event) {
-    if (validateAxis != null && !disableScaleGestures) {
+    // The axis check models the pointers that go down, move and go up. A trackpad's pan and zoom events (the two finger
+    // gestures of a laptop's touchpad) reach this recognizer too, since the scale recognizer tracks them, and on a
+    // photo nobody had clicked yet they came before anything set the starting point of the check: its null check
+    // failed on each new photo (8 November 2026). They go to the scale recognizer, as they did after a first click.
+    final modelled =
+        event is PointerDownEvent ||
+        event is PointerMoveEvent ||
+        event is PointerUpEvent ||
+        event is PointerCancelEvent;
+    if (validateAxis != null && !disableScaleGestures && modelled) {
       bool didChangeConfiguration = false;
       if (event is PointerMoveEvent) {
         if (!event.synthesized) {
@@ -203,17 +212,30 @@ class PhotoViewGestureRecognizer extends ScaleGestureRecognizer {
   }
 
   void _decideIfWeAcceptEvent(PointerEvent event) {
-    final move = _initialFocalPoint! - _currentFocalPoint!;
+    final initialFocalPoint = _initialFocalPoint;
+    final currentFocalPoint = _currentFocalPoint;
+    final initialSpan = _initialSpan;
+    final currentSpan = _currentSpan;
+    final hitDetector = this.hitDetector;
+    // Nothing to compare yet: no pointer went down on this photo
+    if (initialFocalPoint == null ||
+        currentFocalPoint == null ||
+        initialSpan == null ||
+        currentSpan == null ||
+        hitDetector == null) {
+      return;
+    }
+    final move = initialFocalPoint - currentFocalPoint;
 
     // Accept gesture if movement is possible in the direction the user is swiping
     final bool isHorizontalGesture = move.dx.abs() > move.dy.abs();
     final bool shouldMove = isHorizontalGesture
-        ? hitDetector!.shouldMove(move, Axis.horizontal)
-        : hitDetector!.shouldMove(move, Axis.vertical);
+        ? hitDetector.shouldMove(move, Axis.horizontal)
+        : hitDetector.shouldMove(move, Axis.vertical);
 
     if (shouldMove || _pointerLocations.keys.length > 1) {
-      final double spanDelta = (_currentSpan! - _initialSpan!).abs();
-      final double focalPointDelta = (_currentFocalPoint! - _initialFocalPoint!).distance;
+      final double spanDelta = (currentSpan - initialSpan).abs();
+      final double focalPointDelta = (currentFocalPoint - initialFocalPoint).distance;
       // warning: do not compare `focalPointDelta` to `kPanSlop`
       // `ScaleGestureRecognizer` uses `kPanSlop`, but `HorizontalDragGestureRecognizer` uses `kTouchSlop`
       // and PhotoView recognizer may compete with the `HorizontalDragGestureRecognizer` from a containing `PageView`
