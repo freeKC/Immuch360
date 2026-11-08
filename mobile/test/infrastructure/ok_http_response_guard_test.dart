@@ -18,19 +18,19 @@ void main() {
     late Completer<StreamedResponse> completer;
     late List<String> steps;
     late List<ClientException> told;
-    StreamController<List<int>>? body;
+    late StreamController<List<int>>? Function() bodyStream;
 
     setUp(() {
       completer = Completer<StreamedResponse>();
       steps = [];
       told = [];
-      body = null;
+      bodyStream = () => null;
     });
 
     void guard(void Function() handle) => guardResponseCallback(
       completer: completer,
       url: url,
-      bodyStream: () => body,
+      bodyStream: bodyStream,
       handle: handle,
       closeResponse: () => steps.add('close the response'),
       callOver: () => steps.add('end the call'),
@@ -55,7 +55,8 @@ void main() {
 
     test('an error of the callback completes the request with a ClientException, and nothing is thrown', () async {
       // The body stream the callback made before its error, which the caller never gets
-      final controller = body = StreamController<List<int>>();
+      final controller = StreamController<List<int>>();
+      bodyStream = () => controller;
       final outcome = expectLater(
         completer.future,
         throwsA(
@@ -88,7 +89,8 @@ void main() {
     });
 
     test('an error after the request was answered goes into the body stream, which is closed', () async {
-      final controller = body = StreamController<List<int>>();
+      final controller = StreamController<List<int>>();
+      bodyStream = () => controller;
       final events = expectLater(controller.stream, emitsInOrder([emitsError(isA<ClientException>()), emitsDone]));
       final response = StreamedResponse(controller.stream, 200);
 
