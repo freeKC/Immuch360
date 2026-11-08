@@ -558,8 +558,8 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   }
 
   /// The decoder refused, while it played, the server file [chosen] of [videoId] that the decoder check did not rule
-  /// out ([error], from the token [message]: a decoder that did not start, or that gave no picture). The refusal is kept
-  /// for the session (see RuntimeVideoRefusals) and the source made again, as when a file is forced: the server's
+  /// out ([error], from the token [message]: a decoder that did not start, or that gave no picture). The refusal is
+  /// kept for the session (see RuntimeVideoRefusals) and the source made again, as when a file is forced: the server's
   /// other file plays from where the video was, with a word, when runtimeFallback says it may do better; otherwise the
   /// video fails as before, the panel naming the server's copy when it is beyond the decoders too. Once per viewer:
   /// the other file failing in turn reaches the panel. Nothing fails meanwhile, so that no panel shows before the
