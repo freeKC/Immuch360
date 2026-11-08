@@ -16,6 +16,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import app.alextran.immich.MainActivity
 import app.alextran.immich.R
+import app.alextran.immich.core.HttpClientManager
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
@@ -59,9 +60,9 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
   /// closed the databases (or at a cap), see BackgroundTeardown
   private val teardown = BackgroundTeardown<Result>(
     slot = engineSlot,
-    schedule = { delayMs, action -> mainHandler.postDelayed(action, delayMs) },
-    finishWork = ::finishWork,
-    destroyEngine = ::destroyEngine,
+    schedule = { delayMs, action -> mainHandler.postDelayed({ action() }, delayMs) },
+    finishWork = this::finishWork,
+    destroyEngine = this::destroyEngine,
   )
 
   /// When startWork began and when the cancel was asked, for the durations of the phases in the log
@@ -76,9 +77,10 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
     /// Held from the start of a run until its engine is destroyed, which can be after its work finished
     private val engineSlot = BackgroundEngineSlot()
 
-    /// What must not hold the main thread: the wait for a foreground promotion before a result
+    /// What must not hold the main thread: the HTTP clients built before an engine, the wait for a foreground
+    /// promotion before a result
     private val offMainThread: ExecutorService = Executors.newCachedThreadPool { runnable ->
-      Thread(runnable, "BackgroundWorkerTeardown").apply { isDaemon = true }
+      Thread(runnable, "BackgroundWorkerStartEnd").apply { isDaemon = true }
     }
   }
 
@@ -123,33 +125,34 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
       val notificationConfig = BackgroundWorkerPreferences(ctx).getNotificationConfig()
       showNotification(notificationConfig.first, notificationConfig.second)
 
-      loader.ensureInitializationCompleteAsync(ctx, null, mainHandler) {
-        phase("Flutter loader ready")
-        if (isStopped || teardown.isEnding) {
-          return@ensureInitializationCompleteAsync
+      // The engine starts once the loader and the HTTP clients are both ready. The clients (OkHttp with the trust store
+      // of the system, Cronet through Play services) are built on a worker thread: built by registerPlugins, they held
+      // the main thread, where the Dart of this engine runs as well, at every background start (an ANR on a TV)
+      var loaderReady = false
+      var httpReady = false
+      val startWhenReady = {
+        if (loaderReady && httpReady) {
+          startEngine(loader)
         }
-
-        engine = FlutterEngine(ctx)
-        FlutterEngineCache.getInstance().put(BackgroundWorkerApiImpl.ENGINE_CACHE_KEY, engine!!)
-
-        // Register custom plugins
-        MainActivity.registerPlugins(ctx, engine!!)
-        flutterApi =
-          BackgroundWorkerFlutterApi(binaryMessenger = engine!!.dartExecutor.binaryMessenger)
-        BackgroundWorkerBgHostApi.setUp(
-          binaryMessenger = engine!!.dartExecutor.binaryMessenger,
-          api = this
-        )
-        teardown.engineStarted()
-        phase("engine started")
-
-        engine!!.dartExecutor.executeDartEntrypoint(
-          DartExecutor.DartEntrypoint(
-            loader.findAppBundlePath(),
-            "package:immich_mobile/domain/services/background_worker.service.dart",
-            "backgroundSyncNativeEntrypoint"
-          )
-        )
+      }
+      offMainThread.execute {
+        val httpStart = SystemClock.elapsedRealtime()
+        try {
+          HttpClientManager.initialize(ctx)
+        } catch (error: Throwable) {
+          // registerPlugins builds them again on the main thread, as it always did
+          Log.w(TAG, "Building the HTTP clients off the main thread failed", error)
+        }
+        mainHandler.post {
+          httpReady = true
+          phase("HTTP clients ready", httpStart)
+          startWhenReady()
+        }
+      }
+      loader.ensureInitializationCompleteAsync(ctx, null, mainHandler) {
+        loaderReady = true
+        phase("Flutter loader ready")
+        startWhenReady()
       }
 
       return completionHandler
@@ -157,6 +160,38 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
       teardown.complete(Result.failure())
       throw error
     }
+  }
+
+  /** Creates the engine of this run and starts its Dart, on the main thread, unless the run stopped meanwhile */
+  private fun startEngine(loader: FlutterLoader) {
+    if (isStopped || teardown.isEnding) {
+      return
+    }
+
+    val engineStart = SystemClock.elapsedRealtime()
+    val engine = FlutterEngine(ctx)
+    this.engine = engine
+    FlutterEngineCache.getInstance().put(BackgroundWorkerApiImpl.ENGINE_CACHE_KEY, engine)
+    phase("engine created", engineStart)
+
+    // Register custom plugins
+    val pluginsStart = SystemClock.elapsedRealtime()
+    MainActivity.registerPlugins(ctx, engine)
+    flutterApi = BackgroundWorkerFlutterApi(binaryMessenger = engine.dartExecutor.binaryMessenger)
+    BackgroundWorkerBgHostApi.setUp(
+      binaryMessenger = engine.dartExecutor.binaryMessenger,
+      api = this
+    )
+    teardown.engineStarted()
+    phase("plugins registered", pluginsStart)
+
+    engine.dartExecutor.executeDartEntrypoint(
+      DartExecutor.DartEntrypoint(
+        loader.findAppBundlePath(),
+        "package:immich_mobile/domain/services/background_worker.service.dart",
+        "backgroundSyncNativeEntrypoint"
+      )
+    )
   }
 
   /**
@@ -170,6 +205,7 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
     if (teardown.isEnding) {
       return
     }
+    phase("work started")
     flutterApi?.onAndroidUpload(maxMinutesArg = 20) { handleHostResult(it) }
   }
 
