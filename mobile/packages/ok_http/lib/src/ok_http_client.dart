@@ -245,7 +245,7 @@ class OkHttpClient extends BaseClient {
   /// Creates an [OkHttpClient] from a JNI global reference pointer.
   ///
   /// The [pointer] must be a valid JNI global reference to an `okhttp3.OkHttpClient`
-  /// Java object. The reference is NOT released when [close] is called - the
+  /// Java object. The reference is NOT released when [close] is called; the
   /// caller is responsible for releasing the global reference when done.
   ///
   /// This is useful for sharing a pre-configured client across Dart and native
@@ -333,7 +333,7 @@ class OkHttpClient extends BaseClient {
 
   @override
   void close() {
-    // If we don't own the client, we don't shut it down - it's managed
+    // If we don't own the client, we don't shut it down: it's managed
     // externally. We just mark this wrapper as closed.
     if (!_isClosed && _ownsClient) {
       // Refer to OkHttp documentation for the shutdown procedure:

@@ -95,7 +95,7 @@ class OkHttpWebSocket implements WebSocket {
   ///
   /// The [pointer] must be a valid JNI global reference to an
   /// `okhttp3.OkHttpClient` Java object. The client's lifecycle is managed
-  /// externally - when this WebSocket is closed, it will NOT shut down the
+  /// externally: when this WebSocket is closed, it will NOT shut down the
   /// client's resources or release the global reference.
   ///
   /// The URL supplied in [url] must use the scheme ws or wss.
