@@ -23,3 +23,36 @@ Kotlin side that Dart does not call need nothing.
 When upstream Immich moves the ok_http ref of `mobile/pubspec.yaml`, copy `pkgs/ok_http` of the new ref here and apply
 the changes below again (every change is marked `Immuch360`). The copy can go once upstream ok_http follows a relative
 `Location` itself.
+
+What differs from upstream, to apply again when a newer commit is copied here:
+
+1. Redirects (8 November 2026), `android/src/main/kotlin/com/example/ok_http/RedirectInterceptor.kt`. The loop of
+   upstream gave the raw `Location` header to `Request.Builder.url`, which only takes absolute http and https URLs: a
+   relative `Location` (`/api/...`, allowed by RFC 9110 section 10.2.2, sent by some reverse proxies and sign in
+   gateways) threw an IllegalArgumentException on OkHttp's dispatcher thread, which OkHttp rethrows there, and the
+   app ended (Meta Horizon build 3030023; upstream Immich issues 28535 and 30132). The loop now follows OkHttp's own
+   rules (RetryAndFollowUpInterceptor of OkHttp 4.12) but for one:
+   - the `Location` is resolved against the request URL (`HttpUrl.resolve`); a missing one, or one that is not an
+     http or https URL, is not followed and the caller gets the redirect;
+   - `maxRedirects` is clamped to 0..20 (OkHttp's own limit); reaching it closes the answer and throws
+     `IOException("Redirect limit exceeded")`, the text the Dart side maps, so the package:http conformance cases
+     keep their results;
+   - 303 after any method but GET, HEAD and PROPFIND is followed with a GET without body, `Content-Type`,
+     `Content-Length` and `Transfer-Encoding`;
+   - 300, 301, 302, 307 and 308 keep the method and the body. This is the one difference from OkHttp, which turns
+     301 and 302 into a GET: RFC 9110 allows keeping them, upstream ok_http and upstream Immich keep them, and a GET
+     would break a sign in sent to http:// behind a 301 to https://. OkHttp's rule is one condition away
+     (`code != 307 && code != 308` instead of `code == 303`);
+   - a one-shot body (`StreamingRequestBody`, the streamed and multipart uploads) is never sent again: the caller
+     gets the redirect;
+   - `Authorization` is dropped when the scheme, the host or the port changes;
+   - any RuntimeException of the interceptor or below becomes an IOException with it as the cause, which the Dart
+     side gets as a `ClientException` instead of the app ending;
+   - `onRedirectReceived` gets the resolved URL;
+   - `RedirectInterceptor.onUnusualRedirect` (new, null by default) is told, once per process for each host of the
+     request, status and kind, of a relative `Location` that was resolved, a `Location` that could not be, and a
+     one-shot body that stopped a redirect, in a text without query string or user info. The app sets it in
+     `MainActivity.registerPlugins` to `AppHealth.report("network", text)`, which writes it to the Logs page.
+
+   Tests: `mobile/android/app/src/test/kotlin/app/alextran/immich/core/OkHttpRedirectTest.kt` (the plugin is on the
+   app's test classpath).
