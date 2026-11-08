@@ -676,6 +676,7 @@
   "desktop_secrets_session_only_keyring_refused": "Açar dəsti onları rədd etdi, buna görə tətbiqin parolları və digər gizli məlumatları o bağlananda unudulur. Açar dəstinin kilidini açın və ya gnome-keyring yaxud KWallet quraşdırın, sonra tətbiqi yenidən başladın.",
   "desktop_secrets_session_only_no_keyring": "Heç bir açar dəsti cavab vermədi, buna görə tətbiqin parolları və digər gizli məlumatları o bağlananda unudulur. Onları saxlamaq üçün gnome-keyring və ya KWallet quraşdırın.",
   "desktop_secrets_session_only_title": "Gizli məlumatlar yalnız bu sessiya üçün saxlanılır",
+  "desktop_selection_hint": "{modifier}+klik əlavə edir və ya çıxarır, Shift+klik aralıq əlavə edir, sağ klik əməliyyatları açır, {modifier}+A hamısını seçir, Esc təmizləyir",
   "desktop_spatial_unavailable": "Spatial 2.5D Immuch360 Desktop-a sonrakı versiyada gələcək",
   "desktop_tapo_live_later": "Canlı görüntü Immuch360 Desktop-a sonrakı versiyada gələcək.",
   "desktop_this_computer": "Bu kompüter",

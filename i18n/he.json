@@ -1390,6 +1390,7 @@
   "desktop_secrets_session_only_keyring_refused": "מחזיק המפתחות סירב לשמור אותם, ולכן הסיסמאות ושאר הסודות של האפליקציה יישכחו כשהיא תיסגר. בטלו את נעילת מחזיק המפתחות, או התקינו gnome-keyring או KWallet, ואז הפעילו מחדש את האפליקציה.",
   "desktop_secrets_session_only_no_keyring": "אף מחזיק מפתחות לא ענה, ולכן הסיסמאות ושאר הסודות של האפליקציה יישכחו כשהיא תיסגר. התקינו gnome-keyring או KWallet כדי לשמור אותם.",
   "desktop_secrets_session_only_title": "הסודות נשמרים לסשן הזה בלבד",
+  "desktop_selection_hint": "{modifier}+לחיצה מוסיפה או מסירה, Shift+לחיצה מוסיפה טווח, לחיצה ימנית פותחת את הפעולות, {modifier}+A בוחר הכול, Esc מנקה",
   "desktop_spatial_unavailable": "Spatial 2.5D יגיע ל-Immuch360 Desktop בגרסה מאוחרת יותר",
   "desktop_tapo_live_later": "התצוגה החיה תגיע ל-Immuch360 Desktop בגרסה מאוחרת יותר.",
   "desktop_this_computer": "המחשב הזה",

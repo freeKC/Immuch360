@@ -1390,6 +1390,7 @@
   "desktop_secrets_session_only_keyring_refused": "キーリングに拒否されたため、アプリのパスワードやその他のシークレットは終了時に消去されます。キーリングのロックを解除するか、gnome-keyring または KWallet をインストールしてから、アプリを再起動してください。",
   "desktop_secrets_session_only_no_keyring": "キーリングが応答しないため、アプリのパスワードやその他のシークレットは終了時に消去されます。保持するには gnome-keyring または KWallet をインストールしてください。",
   "desktop_secrets_session_only_title": "シークレットはこのセッションのみ保持されます",
+  "desktop_selection_hint": "{modifier}+クリックで追加または解除、Shift+クリックで範囲を追加、右クリックで操作を開く、{modifier}+Aですべて選択、Escで選択を解除",
   "desktop_spatial_unavailable": "Spatial 2.5D は今後のバージョンで Immuch360 Desktop に対応します",
   "desktop_tapo_live_later": "ライブ映像は今後のバージョンで Immuch360 Desktop に対応します。",
   "desktop_this_computer": "このコンピューター",

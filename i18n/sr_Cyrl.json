@@ -1152,6 +1152,7 @@
   "desktop_secrets_session_only_keyring_refused": "Складиште кључева их је одбило, па се шифре и остале тајне апликације заборављају када се она затвори. Откључајте складиште кључева или инсталирајте gnome-keyring или KWallet, па поново покрените апликацију.",
   "desktop_secrets_session_only_no_keyring": "Ниједно складиште кључева се није одазвало, па се шифре и остале тајне апликације заборављају када се она затвори. Инсталирајте gnome-keyring или KWallet да бисте их сачували.",
   "desktop_secrets_session_only_title": "Тајне се чувају само за ову сесију",
+  "desktop_selection_hint": "{modifier}+клик додаје или уклања, Shift+клик додаје опсег, десни клик отвара радње, {modifier}+A бира све, Esc поништава избор",
   "desktop_spatial_unavailable": "Spatial 2.5D стиже у Immuch360 Desktop у каснијој верзији",
   "desktop_tapo_live_later": "Приказ уживо стиже у Immuch360 Desktop у каснијој верзији.",
   "desktop_this_computer": "Овај рачунар",

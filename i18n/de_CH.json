@@ -758,6 +758,7 @@
   "desktop_secrets_session_only_keyring_refused": "De Schlüsselbund het si abglehnt, drum vergisst d App ihri Passwörter und anderi Gheimnis, wänn si gschlosse wird. Entsperr de Schlüsselbund oder installier gnome-keyring oder KWallet, und start d App dänn nöi.",
   "desktop_secrets_session_only_no_keyring": "Kein Schlüsselbund het antwortet, drum vergisst d App ihri Passwörter und anderi Gheimnis, wänn si gschlosse wird. Installier gnome-keyring oder KWallet, zum si z bhalte.",
   "desktop_secrets_session_only_title": "Gheimnis nur für die Sitzig gspeicheret",
+  "desktop_selection_hint": "{modifier}+Klick fügt hinzu oder entfernt, Umschalt+Klick fügt einen Bereich hinzu, Rechtsklick öffnet die Aktionen, {modifier}+A wählt alles aus, Esc hebt die Auswahl auf",
   "desktop_spatial_unavailable": "Spatial 2.5D chunnt i ere spötere Version uf Immuch360 Desktop",
   "desktop_tapo_live_later": "D Live-Aasicht chunnt i ere spötere Version uf Immuch360 Desktop.",
   "desktop_this_computer": "Dä Computer",

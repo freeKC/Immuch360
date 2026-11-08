@@ -1388,6 +1388,7 @@
   "desktop_secrets_session_only_keyring_refused": "Lyklakippan hafnaði þeim, svo lykilorð og önnur leyndarmál forritsins gleymast þegar því er lokað. Opnaðu lyklakippuna, eða settu upp gnome-keyring eða KWallet, og endurræstu svo forritið.",
   "desktop_secrets_session_only_no_keyring": "Engin lyklakippa svaraði, svo lykilorð og önnur leyndarmál forritsins gleymast þegar því er lokað. Settu upp gnome-keyring eða KWallet til að geyma þau.",
   "desktop_secrets_session_only_title": "Leyndarmál aðeins geymd fyrir þessa lotu",
+  "desktop_selection_hint": "{modifier}+smellur bætir við eða fjarlægir, Shift+smellur bætir við bili, hægrismellur opnar aðgerðirnar, {modifier}+A velur allt, Esc hreinsar",
   "desktop_spatial_unavailable": "Spatial 2.5D kemur í Immuch360 Desktop í síðari útgáfu",
   "desktop_tapo_live_later": "Bein mynd kemur í Immuch360 Desktop í síðari útgáfu.",
   "desktop_this_computer": "Þessi tölva",

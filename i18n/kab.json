@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "Tasarut n tsura tugi-ten, ihi awalen uffiren d tbaḍnin-nniḍen n usnas ttwattun mi ara yemdel. Ldi tasarut n tsura, neɣ sebded gnome-keyring neɣ KWallet, syen ales asekker i usnas.",
   "desktop_secrets_session_only_no_keyring": "Ulac tasarut n tsura i d-yerran, ihi awalen uffiren d tbaḍnin-nniḍen n usnas ttwattun mi ara yemdel. Sebded gnome-keyring neɣ KWallet akken ad ttwaḥerzen.",
   "desktop_secrets_session_only_title": "Tibaḍnin ttwaḥerzent i tɣimit-a kan",
+  "desktop_selection_hint": "{modifier}+asiti yernu neɣ yekkes, Shift+asiti yernu azilal, asiti ayfus yeldi tigawin, {modifier}+A yefren kullec, Esc yesfeḍ",
   "desktop_spatial_unavailable": "Spatial 2.5D ad d-yas ɣer Immuch360 Desktop deg lqem ara d-yasen",
   "desktop_tapo_live_later": "Tamuɣli tusridt ad d-tas ɣer Immuch360 Desktop deg lqem ara d-yasen.",
   "desktop_this_computer": "Aselkim-a",

@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "Dr Schlüsselbund hot se abglehnt, drom vergisst d App ihre Passwörter ond andre Geheimnis, wenn se zuagmacht wird. Entsperr dr Schlüsselbund oder installier gnome-keyring oder KWallet, no start d App nei.",
   "desktop_secrets_session_only_no_keyring": "Koi Schlüsselbund hot gantwortet, drom vergisst d App ihre Passwörter ond andre Geheimnis, wenn se zuagmacht wird. Installier gnome-keyring oder KWallet, dass se bleibat.",
   "desktop_secrets_session_only_title": "Geheimnis bloß für die Sitzong bhalta",
+  "desktop_selection_hint": "{modifier}+Klick duad dazua oder weg, Shift+Klick duad en Bereich dazua, Rechtsklick machd d Aktiona uff, {modifier}+A wählt älles aus, Esc löscht d Auswahl",
   "desktop_spatial_unavailable": "Spatial 2.5D kommt en ra schpätera Version uff Immuch360 Desktop",
   "desktop_tapo_live_later": "S Live-Bild kommt en ra schpätera Version uff Immuch360 Desktop.",
   "desktop_this_computer": "Der Computer",

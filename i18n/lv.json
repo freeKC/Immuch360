@@ -1320,6 +1320,7 @@
   "desktop_secrets_session_only_keyring_refused": "Atslēgu saišķis tos atteica, tāpēc lietotnes paroles un citi noslēpumi tiek aizmirsti, kad tā tiek aizvērta. Atbloķējiet atslēgu saišķi vai instalējiet gnome-keyring vai KWallet, pēc tam restartējiet lietotni.",
   "desktop_secrets_session_only_no_keyring": "Neatbildēja neviens atslēgu saišķis, tāpēc lietotnes paroles un citi noslēpumi tiek aizmirsti, kad tā tiek aizvērta. Lai tos paturētu, instalējiet gnome-keyring vai KWallet.",
   "desktop_secrets_session_only_title": "Noslēpumi saglabāti tikai šai sesijai",
+  "desktop_selection_hint": "{modifier}+klikšķis pievieno vai noņem, Shift+klikšķis pievieno diapazonu, labais klikšķis atver darbības, {modifier}+A atlasa visu, Esc notīra",
   "desktop_spatial_unavailable": "Spatial 2.5D Immuch360 Desktop būs pieejams vēlākā versijā",
   "desktop_tapo_live_later": "Tiešraides attēls Immuch360 Desktop būs pieejams vēlākā versijā.",
   "desktop_this_computer": "Šis dators",

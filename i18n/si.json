@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "යතුරු ගබඩාව ඒවා ප්‍රතික්ෂේප කළේය, එබැවින් යෙදුමේ මුරපද සහ අනෙකුත් රහස් එය වසා දැමූ විට අමතක වේ. යතුරු ගබඩාව අගුළු හරින්න, නැතහොත් gnome-keyring හෝ KWallet ස්ථාපනය කරන්න, ඉන්පසු යෙදුම නැවත ආරම්භ කරන්න.",
   "desktop_secrets_session_only_no_keyring": "කිසිදු යතුරු ගබඩාවක් ප්‍රතිචාර නොදැක්වීය, එබැවින් යෙදුමේ මුරපද සහ අනෙකුත් රහස් එය වසා දැමූ විට අමතක වේ. ඒවා තබා ගැනීමට gnome-keyring හෝ KWallet ස්ථාපනය කරන්න.",
   "desktop_secrets_session_only_title": "රහස් මෙම සැසිය සඳහා පමණක් තබා ඇත",
+  "desktop_selection_hint": "{modifier}+ක්ලික් එකතු කරයි හෝ ඉවත් කරයි, Shift+ක්ලික් පරාසයක් එකතු කරයි, දකුණු ක්ලික් ක්‍රියා විවෘත කරයි, {modifier}+A සියල්ල තෝරයි, Esc හිස් කරයි",
   "desktop_spatial_unavailable": "Spatial 2.5D පසු අනුවාදයකදී Immuch360 Desktop වෙත පැමිණේ",
   "desktop_tapo_live_later": "සජීවී දර්ශනය පසු අනුවාදයකදී Immuch360 Desktop වෙත පැමිණේ.",
   "desktop_this_computer": "මෙම පරිගණකය",

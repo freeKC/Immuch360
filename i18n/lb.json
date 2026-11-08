@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "De Schlësselbond huet se refuséiert, dofir ginn d'Passwierder an déi aner Geheimnisser vun der App vergiess, wann se zougemaach gëtt. Spär de Schlësselbond op, oder installéier gnome-keyring oder KWallet, a start d'App dann nei.",
   "desktop_secrets_session_only_no_keyring": "Kee Schlësselbond huet geäntwert, dofir ginn d'Passwierder an déi aner Geheimnisser vun der App vergiess, wann se zougemaach gëtt. Installéier gnome-keyring oder KWallet, fir se ze behalen.",
   "desktop_secrets_session_only_title": "Geheimnisser just fir dës Sessioun gehalen",
+  "desktop_selection_hint": "{modifier}+Klick setzt derbäi oder hëlt ewech, Shift+Klick setzt e Beräich derbäi, Rietsklick mécht d'Aktiounen op, {modifier}+A wielt alles, Esc läscht d'Auswiel",
   "desktop_spatial_unavailable": "Spatial 2.5D kënnt an enger spéiderer Versioun op Immuch360 Desktop",
   "desktop_tapo_live_later": "D'Live-Bild kënnt an enger spéiderer Versioun op Immuch360 Desktop.",
   "desktop_this_computer": "Dëse Computer",

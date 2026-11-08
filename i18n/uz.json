@@ -519,6 +519,7 @@
   "desktop_secrets_session_only_keyring_refused": "Kalitlar ombori rad etdi, shuning uchun ilovaning parollari va boshqa maxfiy ma'lumotlari u yopilganda unutiladi. Kalitlar omborini qulfdan chiqaring yoki gnome-keyring yoxud KWallet o'rnating, so'ng ilovani qayta ishga tushiring.",
   "desktop_secrets_session_only_no_keyring": "Hech qaysi kalitlar ombori javob bermadi, shuning uchun ilovaning parollari va boshqa maxfiy ma'lumotlari u yopilganda unutiladi. Ularni saqlab qolish uchun gnome-keyring yoki KWallet o'rnating.",
   "desktop_secrets_session_only_title": "Maxfiy ma'lumotlar faqat shu seans uchun saqlanadi",
+  "desktop_selection_hint": "{modifier}+bosish qo'shadi yoki olib tashlaydi, Shift+bosish oraliq qo'shadi, o'ng tugma amallarni ochadi, {modifier}+A hammasini tanlaydi, Esc tozalaydi",
   "desktop_spatial_unavailable": "Spatial 2.5D Immuch360 Desktop'ga keyingi versiyada keladi",
   "desktop_tapo_live_later": "Jonli tasvir Immuch360 Desktop'ga keyingi versiyada keladi.",
   "desktop_this_computer": "Bu kompyuter",

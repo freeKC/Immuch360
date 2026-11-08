@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "L'anell de claus els ha rebutjat, així que les contrasenyes i altres secrets de l'app s'obliden quan es tanca. Desbloqueja l'anell de claus, o instal·la gnome-keyring o KWallet, i després reinicia l'app.",
   "desktop_secrets_session_only_no_keyring": "No ha respost cap anell de claus, així que les contrasenyes i altres secrets de l'app s'obliden quan es tanca. Instal·la gnome-keyring o KWallet per conservar-los.",
   "desktop_secrets_session_only_title": "Secrets conservats només durant aquesta sessió",
+  "desktop_selection_hint": "{modifier}+clic afegeix o treu, Maj+clic afegeix un interval, el clic dret obre les accions, {modifier}+A ho selecciona tot, Esc esborra la selecció",
   "desktop_spatial_unavailable": "Spatial 2.5D arribarà a Immuch360 Desktop en una versió posterior",
   "desktop_tapo_live_later": "La visualització en directe arribarà a Immuch360 Desktop en una versió posterior.",
   "desktop_this_computer": "Aquest ordinador",

@@ -528,6 +528,7 @@
   "desktop_secrets_session_only_keyring_refused": "किरिङले तिनलाई अस्वीकार गर्‍यो, त्यसैले एप बन्द हुँदा यसका पासवर्ड र अन्य गोप्य कुराहरू बिर्सिन्छन्। किरिङ अनलक गर्नुहोस्, वा gnome-keyring वा KWallet इन्स्टल गर्नुहोस्, अनि एप पुनः सुरु गर्नुहोस्।",
   "desktop_secrets_session_only_no_keyring": "कुनै किरिङले जवाफ दिएन, त्यसैले एप बन्द हुँदा यसका पासवर्ड र अन्य गोप्य कुराहरू बिर्सिन्छन्। तिनलाई राख्न gnome-keyring वा KWallet इन्स्टल गर्नुहोस्।",
   "desktop_secrets_session_only_title": "गोप्य कुराहरू यो सत्रका लागि मात्र राखिएका छन्",
+  "desktop_selection_hint": "{modifier}+क्लिकले थप्छ वा हटाउँछ, Shift+क्लिकले दायरा थप्छ, दायाँ क्लिकले कार्यहरू खोल्छ, {modifier}+A ले सबै चयन गर्छ, Esc ले खाली गर्छ",
   "desktop_spatial_unavailable": "Spatial 2.5D पछिको संस्करणमा Immuch360 Desktop मा आउनेछ",
   "desktop_tapo_live_later": "प्रत्यक्ष दृश्य पछिको संस्करणमा Immuch360 Desktop मा आउनेछ।",
   "desktop_this_computer": "यो कम्प्युटर",

@@ -621,6 +621,7 @@
   "desktop_secrets_session_only_keyring_refused": "Kilîtdankê ew red kirin, ji ber vê yekê şîfre û nehêniyên din ên sepanê dema ku ew tê girtin tên jibîrkirin. Kilîtdankê veke, an gnome-keyring an KWallet saz bike, paşê sepanê ji nû ve dest pê bike.",
   "desktop_secrets_session_only_no_keyring": "Tu kilîtdankê bersiv neda, ji ber vê yekê şîfre û nehêniyên din ên sepanê dema ku ew tê girtin tên jibîrkirin. Ji bo parastina wan gnome-keyring an KWallet saz bike.",
   "desktop_secrets_session_only_title": "Nehênî tenê ji bo vê danişînê tên parastin",
+  "desktop_selection_hint": "{modifier}+klîk lê zêde dike an jê dike, Shift+klîk rêzekê lê zêde dike, klîka rastê çalakiyan vedike, {modifier}+A hemûyan hildibijêre, Esc paqij dike",
   "desktop_spatial_unavailable": "Spatial 2.5D di guhertoyeke paşîn de tê Immuch360 Desktop",
   "desktop_tapo_live_later": "Dîtina zindî di guhertoyeke paşîn de tê Immuch360 Desktop.",
   "desktop_this_computer": "Ev komputer",

@@ -1390,6 +1390,7 @@
   "desktop_secrets_session_only_keyring_refused": "O chaveiro rexeitounos, así que os contrasinais e outros segredos da app esquécense ao pechala. Desbloquea o chaveiro, ou instala gnome-keyring ou KWallet, e reinicia a app.",
   "desktop_secrets_session_only_no_keyring": "Ningún chaveiro respondeu, así que os contrasinais e outros segredos da app esquécense ao pechala. Instala gnome-keyring ou KWallet para conservalos.",
   "desktop_secrets_session_only_title": "Segredos gardados só durante esta sesión",
+  "desktop_selection_hint": "{modifier}+clic engade ou quita, Shift+clic engade un intervalo, o clic dereito abre as accións, {modifier}+A selecciona todo, Esc borra a selección",
   "desktop_spatial_unavailable": "Spatial 2.5D chegará a Immuch360 Desktop nunha versión posterior",
   "desktop_tapo_live_later": "A vista en directo chegará a Immuch360 Desktop nunha versión posterior.",
   "desktop_this_computer": "Este ordenador",

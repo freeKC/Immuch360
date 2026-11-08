@@ -1388,6 +1388,7 @@
   "desktop_secrets_session_only_keyring_refused": "Raktinė jas atmetė, todėl programos slaptažodžiai ir kitos paslaptys pamirštami ją uždarius. Atrakinkite raktinę arba įdiekite gnome-keyring ar KWallet, tada iš naujo paleiskite programą.",
   "desktop_secrets_session_only_no_keyring": "Neatsakė jokia raktinė, todėl programos slaptažodžiai ir kitos paslaptys pamirštami ją uždarius. Įdiekite gnome-keyring arba KWallet, kad jie būtų išsaugoti.",
   "desktop_secrets_session_only_title": "Paslaptys saugomos tik šiai sesijai",
+  "desktop_selection_hint": "{modifier}+spustelėjimas prideda arba pašalina, Shift+spustelėjimas prideda intervalą, dešinysis spustelėjimas atveria veiksmus, {modifier}+A pažymi viską, Esc išvalo",
   "desktop_spatial_unavailable": "Spatial 2.5D Immuch360 Desktop programoje atsiras vėlesnėje versijoje",
   "desktop_tapo_live_later": "Tiesioginis vaizdas Immuch360 Desktop programoje atsiras vėlesnėje versijoje.",
   "desktop_this_computer": "Šis kompiuteris",

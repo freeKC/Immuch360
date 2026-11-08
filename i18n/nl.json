@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "De sleutelbos heeft ze geweigerd, dus de wachtwoorden en andere geheimen van de app worden vergeten als hij sluit. Ontgrendel de sleutelbos, of installeer gnome-keyring of KWallet, en start de app opnieuw.",
   "desktop_secrets_session_only_no_keyring": "Er antwoordde geen sleutelbos, dus de wachtwoorden en andere geheimen van de app worden vergeten als hij sluit. Installeer gnome-keyring of KWallet om ze te bewaren.",
   "desktop_secrets_session_only_title": "Geheimen alleen voor deze sessie bewaard",
+  "desktop_selection_hint": "{modifier}+klik voegt toe of haalt weg, Shift+klik voegt een reeks toe, rechtsklik opent de acties, {modifier}+A selecteert alles, Esc wist de selectie",
   "desktop_spatial_unavailable": "Spatial 2.5D komt in een latere versie naar Immuch360 Desktop",
   "desktop_tapo_live_later": "Het livebeeld komt in een latere versie naar Immuch360 Desktop.",
   "desktop_this_computer": "Deze computer",

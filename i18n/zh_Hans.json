@@ -1390,6 +1390,7 @@
   "desktop_secrets_session_only_keyring_refused": "密钥环拒绝了保存，因此应用的密码和其他机密信息会在关闭时被遗忘。请解锁密钥环，或安装 gnome-keyring 或 KWallet，然后重启应用。",
   "desktop_secrets_session_only_no_keyring": "没有密钥环响应，因此应用的密码和其他机密信息会在关闭时被遗忘。请安装 gnome-keyring 或 KWallet 以保留它们。",
   "desktop_secrets_session_only_title": "机密信息仅在本次会话中保留",
+  "desktop_selection_hint": "{modifier}+点击添加或移除，Shift+点击添加一个范围，右键打开操作，{modifier}+A 全选，Esc 清除选择",
   "desktop_spatial_unavailable": "Spatial 2.5D 将在以后的版本中登陆 Immuch360 Desktop",
   "desktop_tapo_live_later": "实时画面将在以后的版本中登陆 Immuch360 Desktop。",
   "desktop_this_computer": "此电脑",

@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Anahtarlık bunları reddetti, bu yüzden uygulamanın şifreleri ve diğer gizli bilgileri uygulama kapanınca unutulur. Anahtarlığın kilidini açın veya gnome-keyring ya da KWallet kurun, ardından uygulamayı yeniden başlatın.",
   "desktop_secrets_session_only_no_keyring": "Hiçbir anahtarlık yanıt vermedi, bu yüzden uygulamanın şifreleri ve diğer gizli bilgileri uygulama kapanınca unutulur. Bunları saklamak için gnome-keyring veya KWallet kurun.",
   "desktop_secrets_session_only_title": "Gizli bilgiler yalnızca bu oturum için saklanıyor",
+  "desktop_selection_hint": "{modifier}+tıklama ekler veya çıkarır, Shift+tıklama bir aralık ekler, sağ tıklama işlemleri açar, {modifier}+A tümünü seçer, Esc temizler",
   "desktop_spatial_unavailable": "Spatial 2.5D, Immuch360 Desktop'a daha sonraki bir sürümde gelecek",
   "desktop_tapo_live_later": "Canlı görüntü, Immuch360 Desktop'a daha sonraki bir sürümde gelecek.",
   "desktop_this_computer": "Bu bilgisayar",

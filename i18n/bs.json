@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "Privjesak ključeva ih je odbio, pa se lozinke i druge tajne aplikacije zaboravljaju kada se ona zatvori. Otključajte privjesak ključeva ili instalirajte gnome-keyring ili KWallet, zatim ponovo pokrenite aplikaciju.",
   "desktop_secrets_session_only_no_keyring": "Nijedan privjesak ključeva nije odgovorio, pa se lozinke i druge tajne aplikacije zaboravljaju kada se ona zatvori. Instalirajte gnome-keyring ili KWallet da biste ih zadržali.",
   "desktop_secrets_session_only_title": "Tajne se čuvaju samo za ovu sesiju",
+  "desktop_selection_hint": "{modifier}+klik dodaje ili uklanja, Shift+klik dodaje raspon, desni klik otvara radnje, {modifier}+A odabire sve, Esc briše odabir",
   "desktop_spatial_unavailable": "Spatial 2.5D stiže u Immuch360 Desktop u kasnijoj verziji",
   "desktop_tapo_live_later": "Prikaz uživo stiže u Immuch360 Desktop u kasnijoj verziji.",
   "desktop_this_computer": "Ovaj računar",

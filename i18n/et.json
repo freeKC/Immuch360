@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Võtmehoidja keeldus neist, seega unustatakse rakenduse paroolid ja muud saladused selle sulgemisel. Ava võtmehoidja lukust või paigalda gnome-keyring või KWallet, seejärel taaskäivita rakendus.",
   "desktop_secrets_session_only_no_keyring": "Ükski võtmehoidja ei vastanud, seega unustatakse rakenduse paroolid ja muud saladused selle sulgemisel. Nende säilitamiseks paigalda gnome-keyring või KWallet.",
   "desktop_secrets_session_only_title": "Saladused hoitakse ainult selle seansi jaoks",
+  "desktop_selection_hint": "{modifier}+klõps lisab või eemaldab, Shift+klõps lisab vahemiku, paremklõps avab toimingud, {modifier}+A valib kõik, Esc tühjendab",
   "desktop_spatial_unavailable": "Spatial 2.5D jõuab Immuch360 Desktopi mõnes hilisemas versioonis",
   "desktop_tapo_live_later": "Otsepilt jõuab Immuch360 Desktopi mõnes hilisemas versioonis.",
   "desktop_this_computer": "See arvuti",

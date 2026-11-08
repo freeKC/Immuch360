@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Il portachiavi li ha rifiutati, quindi le password e gli altri segreti dell'app vengono dimenticati alla chiusura. Sblocca il portachiavi, o installa gnome-keyring o KWallet, poi riavvia l'app.",
   "desktop_secrets_session_only_no_keyring": "Nessun portachiavi ha risposto, quindi le password e gli altri segreti dell'app vengono dimenticati alla chiusura. Installa gnome-keyring o KWallet per conservarli.",
   "desktop_secrets_session_only_title": "Segreti conservati solo per questa sessione",
+  "desktop_selection_hint": "{modifier}+clic aggiunge o toglie, Maiusc+clic aggiunge un intervallo, il clic destro apre le azioni, {modifier}+A seleziona tutto, Esc annulla la selezione",
   "desktop_spatial_unavailable": "Spatial 2.5D arriverà su Immuch360 Desktop in una versione successiva",
   "desktop_tapo_live_later": "La visione dal vivo arriverà su Immuch360 Desktop in una versione successiva.",
   "desktop_this_computer": "Questo computer",

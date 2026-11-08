@@ -1366,6 +1366,7 @@
   "desktop_secrets_session_only_keyring_refused": "Η κλειδοθήκη τα απέρριψε, οπότε οι κωδικοί και τα άλλα μυστικά της εφαρμογής ξεχνιούνται όταν κλείσει. Ξεκλειδώστε την κλειδοθήκη ή εγκαταστήστε το gnome-keyring ή το KWallet και μετά επανεκκινήστε την εφαρμογή.",
   "desktop_secrets_session_only_no_keyring": "Καμία κλειδοθήκη δεν απάντησε, οπότε οι κωδικοί και τα άλλα μυστικά της εφαρμογής ξεχνιούνται όταν κλείσει. Εγκαταστήστε το gnome-keyring ή το KWallet για να διατηρούνται.",
   "desktop_secrets_session_only_title": "Μυστικά μόνο για αυτή τη συνεδρία",
+  "desktop_selection_hint": "{modifier}+κλικ προσθέτει ή αφαιρεί, Shift+κλικ προσθέτει ένα εύρος, το δεξί κλικ ανοίγει τις ενέργειες, {modifier}+A επιλέγει όλα, Esc καθαρίζει",
   "desktop_spatial_unavailable": "Το Spatial 2.5D έρχεται στο Immuch360 Desktop σε μεταγενέστερη έκδοση",
   "desktop_tapo_live_later": "Η ζωντανή εικόνα έρχεται στο Immuch360 Desktop σε μεταγενέστερη έκδοση.",
   "desktop_this_computer": "Αυτός ο υπολογιστής",

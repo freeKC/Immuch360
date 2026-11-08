@@ -679,6 +679,7 @@
   "desktop_secrets_session_only_keyring_refused": "Түлхүүрийн сан тэдгээрийг татгалзсан тул аппын нууц үг болон бусад нууц мэдээлэл апп хаагдахад мартагдана. Түлхүүрийн санг тайлах эсвэл gnome-keyring, KWallet суулгаад аппыг дахин эхлүүлнэ үү.",
   "desktop_secrets_session_only_no_keyring": "Түлхүүрийн сан хариу өгсөнгүй тул аппын нууц үг болон бусад нууц мэдээлэл апп хаагдахад мартагдана. Тэдгээрийг хадгалахын тулд gnome-keyring эсвэл KWallet суулгана уу.",
   "desktop_secrets_session_only_title": "Нууц мэдээллийг зөвхөн энэ сешнд хадгална",
+  "desktop_selection_hint": "{modifier}+дарах нэмэх эсвэл хасах, Shift+дарах мужийг нэмэх, баруун товч үйлдлүүдийг нээх, {modifier}+A бүгдийг сонгох, Esc цэвэрлэх",
   "desktop_spatial_unavailable": "Spatial 2.5D дараагийн хувилбарт Immuch360 Desktop-д ирнэ",
   "desktop_tapo_live_later": "Шууд дүрс дараагийн хувилбарт Immuch360 Desktop-д ирнэ.",
   "desktop_this_computer": "Энэ компьютер",

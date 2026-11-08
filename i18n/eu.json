@@ -1368,6 +1368,7 @@
   "desktop_secrets_session_only_keyring_refused": "Gako-sortak ukatu egin ditu, beraz aplikazioaren pasahitzak eta beste sekretuak ahaztu egiten dira aplikazioa ixtean. Desblokeatu gako-sorta, edo instalatu gnome-keyring edo KWallet, eta berrabiarazi aplikazioa.",
   "desktop_secrets_session_only_no_keyring": "Ez du gako-sortarik erantzun, beraz aplikazioaren pasahitzak eta beste sekretuak ahaztu egiten dira aplikazioa ixtean. Instalatu gnome-keyring edo KWallet gordetzeko.",
   "desktop_secrets_session_only_title": "Sekretuak saio honetarako soilik gordeta",
+  "desktop_selection_hint": "{modifier}+klikak gehitu edo kendu egiten du, Shift+klikak tarte bat gehitzen du, eskuineko klikak ekintzak irekitzen ditu, {modifier}+A guztia hautatzen du, Esc garbitzen du",
   "desktop_spatial_unavailable": "Spatial 2.5D geroagoko bertsio batean iritsiko da Immuch360 Desktopera",
   "desktop_tapo_live_later": "Zuzeneko ikuspegia geroagoko bertsio batean iritsiko da Immuch360 Desktopera.",
   "desktop_this_computer": "Ordenagailu hau",

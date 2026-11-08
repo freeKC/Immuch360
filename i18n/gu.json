@@ -598,6 +598,7 @@
   "desktop_secrets_session_only_keyring_refused": "કીરિંગે તેમને નકાર્યા, તેથી ઍપ બંધ થાય ત્યારે તેના પાસવર્ડ અને બીજી ગુપ્ત માહિતી ભૂલી જવાય છે. કીરિંગ અનલૉક કરો, અથવા gnome-keyring કે KWallet ઇન્સ્ટોલ કરો, પછી ઍપ ફરી શરૂ કરો.",
   "desktop_secrets_session_only_no_keyring": "કોઈ કીરિંગે જવાબ આપ્યો નહીં, તેથી ઍપ બંધ થાય ત્યારે તેના પાસવર્ડ અને બીજી ગુપ્ત માહિતી ભૂલી જવાય છે. તેમને રાખવા માટે gnome-keyring કે KWallet ઇન્સ્ટોલ કરો.",
   "desktop_secrets_session_only_title": "ગુપ્ત માહિતી ફક્ત આ સત્ર માટે રાખી છે",
+  "desktop_selection_hint": "{modifier}+ક્લિક ઉમેરે છે અથવા દૂર કરે છે, Shift+ક્લિક શ્રેણી ઉમેરે છે, જમણું ક્લિક ક્રિયાઓ ખોલે છે, {modifier}+A બધું પસંદ કરે છે, Esc સાફ કરે છે",
   "desktop_spatial_unavailable": "Spatial 2.5D પછીના સંસ્કરણમાં Immuch360 Desktop પર આવશે",
   "desktop_tapo_live_later": "લાઇવ વ્યૂ પછીના સંસ્કરણમાં Immuch360 Desktop પર આવશે.",
   "desktop_this_computer": "આ કમ્પ્યુટર",

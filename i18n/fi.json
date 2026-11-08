@@ -1330,6 +1330,7 @@
   "desktop_secrets_session_only_keyring_refused": "Avainnippu hylkäsi ne, joten sovelluksen salasanat ja muut salaisuudet unohdetaan, kun se suljetaan. Avaa avainnipun lukitus tai asenna gnome-keyring tai KWallet ja käynnistä sovellus uudelleen.",
   "desktop_secrets_session_only_no_keyring": "Mikään avainnippu ei vastannut, joten sovelluksen salasanat ja muut salaisuudet unohdetaan, kun se suljetaan. Asenna gnome-keyring tai KWallet säilyttääksesi ne.",
   "desktop_secrets_session_only_title": "Salaisuudet säilytetään vain tämän istunnon ajan",
+  "desktop_selection_hint": "{modifier}+napsautus lisää tai poistaa, Shift+napsautus lisää alueen, hiiren oikea painike avaa toiminnot, {modifier}+A valitsee kaikki, Esc tyhjentää",
   "desktop_spatial_unavailable": "Spatial 2.5D tulee Immuch360 Desktopiin myöhemmässä versiossa",
   "desktop_tapo_live_later": "Live-kuva tulee Immuch360 Desktopiin myöhemmässä versiossa.",
   "desktop_this_computer": "Tämä tietokone",

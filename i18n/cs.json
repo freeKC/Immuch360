@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Klíčenka je odmítla, takže hesla a další tajné údaje aplikace se po jejím zavření zapomenou. Odemkněte klíčenku, nebo nainstalujte gnome-keyring či KWallet, a pak aplikaci restartujte.",
   "desktop_secrets_session_only_no_keyring": "Neodpověděla žádná klíčenka, takže hesla a další tajné údaje aplikace se po jejím zavření zapomenou. Aby se uchovaly, nainstalujte gnome-keyring nebo KWallet.",
   "desktop_secrets_session_only_title": "Tajné údaje uchovány jen pro tuto relaci",
+  "desktop_selection_hint": "{modifier}+klik přidá nebo odebere, Shift+klik přidá rozsah, pravé tlačítko otevře akce, {modifier}+A vybere vše, Esc zruší výběr",
   "desktop_spatial_unavailable": "Spatial 2.5D přijde do Immuch360 Desktop v pozdější verzi",
   "desktop_tapo_live_later": "Živý obraz přijde do Immuch360 Desktop v pozdější verzi.",
   "desktop_this_computer": "Tento počítač",

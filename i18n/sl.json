@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Zbirka ključev jih je zavrnila, zato se gesla in druge skrivnosti aplikacije ob zaprtju pozabijo. Odklenite zbirko ključev ali namestite gnome-keyring ali KWallet, nato znova zaženite aplikacijo.",
   "desktop_secrets_session_only_no_keyring": "Nobena zbirka ključev se ni odzvala, zato se gesla in druge skrivnosti aplikacije ob zaprtju pozabijo. Če jih želite ohraniti, namestite gnome-keyring ali KWallet.",
   "desktop_secrets_session_only_title": "Skrivnosti so shranjene samo za to sejo",
+  "desktop_selection_hint": "{modifier}+klik doda ali odstrani, Shift+klik doda obseg, desni klik odpre dejanja, {modifier}+A izbere vse, Esc počisti izbor",
   "desktop_spatial_unavailable": "Spatial 2.5D pride v Immuch360 Desktop v poznejši različici",
   "desktop_tapo_live_later": "Slika v živo pride v Immuch360 Desktop v poznejši različici.",
   "desktop_this_computer": "Ta računalnik",

@@ -529,6 +529,7 @@
   "desktop_secrets_session_only_keyring_refused": "Кілттер қоймасы оларды қабылдамады, сондықтан қолданбаның құпиясөздері мен басқа құпия деректері ол жабылғанда ұмытылады. Кілттер қоймасының құлпын ашыңыз немесе gnome-keyring не KWallet орнатыңыз, содан кейін қолданбаны қайта іске қосыңыз.",
   "desktop_secrets_session_only_no_keyring": "Ешбір кілттер қоймасы жауап бермеді, сондықтан қолданбаның құпиясөздері мен басқа құпия деректері ол жабылғанда ұмытылады. Оларды сақтау үшін gnome-keyring не KWallet орнатыңыз.",
   "desktop_secrets_session_only_title": "Құпия деректер тек осы сеансқа сақталады",
+  "desktop_selection_hint": "{modifier}+шерту қосады немесе алып тастайды, Shift+шерту ауқымды қосады, оң жақ шерту әрекеттерді ашады, {modifier}+A барлығын таңдайды, Esc тазалайды",
   "desktop_spatial_unavailable": "Spatial 2.5D Immuch360 Desktop қолданбасына кейінгі нұсқада келеді",
   "desktop_tapo_live_later": "Тікелей көрініс Immuch360 Desktop қолданбасына кейінгі нұсқада келеді.",
   "desktop_this_computer": "Бұл компьютер",

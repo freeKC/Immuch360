@@ -1038,6 +1038,7 @@
   "desktop_secrets_session_only_keyring_refused": "కీరింగ్ వాటిని తిరస్కరించింది, కాబట్టి యాప్ మూసివేసినప్పుడు దాని పాస్‌వర్డ్‌లు మరియు ఇతర రహస్యాలు మర్చిపోబడతాయి. కీరింగ్‌ను అన్‌లాక్ చేయండి, లేదా gnome-keyring లేదా KWallet ను ఇన్‌స్టాల్ చేయండి, ఆపై యాప్‌ను రీస్టార్ట్ చేయండి.",
   "desktop_secrets_session_only_no_keyring": "ఏ కీరింగ్ స్పందించలేదు, కాబట్టి యాప్ మూసివేసినప్పుడు దాని పాస్‌వర్డ్‌లు మరియు ఇతర రహస్యాలు మర్చిపోబడతాయి. వాటిని ఉంచుకోవడానికి gnome-keyring లేదా KWallet ను ఇన్‌స్టాల్ చేయండి.",
   "desktop_secrets_session_only_title": "రహస్యాలు ఈ సెషన్‌కు మాత్రమే ఉంచబడతాయి",
+  "desktop_selection_hint": "{modifier}+క్లిక్ జోడిస్తుంది లేదా తీసివేస్తుంది, Shift+క్లిక్ ఒక పరిధిని జోడిస్తుంది, కుడి క్లిక్ చర్యలను తెరుస్తుంది, {modifier}+A అన్నీ ఎంచుకుంటుంది, Esc క్లియర్ చేస్తుంది",
   "desktop_spatial_unavailable": "Spatial 2.5D తర్వాతి వెర్షన్‌లో Immuch360 Desktop కు వస్తుంది",
   "desktop_tapo_live_later": "లైవ్ వీక్షణ తర్వాతి వెర్షన్‌లో Immuch360 Desktop కు వస్తుంది.",
   "desktop_this_computer": "ఈ కంప్యూటర్",

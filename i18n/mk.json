@@ -675,6 +675,7 @@
   "desktop_secrets_session_only_keyring_refused": "Привезокот за клучеви ги одби, па лозинките и другите тајни на апликацијата се забораваат кога таа ќе се затвори. Отклучете го привезокот или инсталирајте gnome-keyring или KWallet, потоа рестартирајте ја апликацијата.",
   "desktop_secrets_session_only_no_keyring": "Ниеден привезок за клучеви не одговори, па лозинките и другите тајни на апликацијата се забораваат кога таа ќе се затвори. Инсталирајте gnome-keyring или KWallet за да се зачуваат.",
   "desktop_secrets_session_only_title": "Тајните се чуваат само за оваа сесија",
+  "desktop_selection_hint": "{modifier}+клик додава или отстранува, Shift+клик додава опсег, десен клик ги отвора дејствата, {modifier}+A избира сè, Esc го чисти изборот",
   "desktop_spatial_unavailable": "Spatial 2.5D доаѓа во Immuch360 Desktop во подоцнежна верзија",
   "desktop_tapo_live_later": "Сликата во живо доаѓа во Immuch360 Desktop во подоцнежна верзија.",
   "desktop_this_computer": "Овој компјутер",

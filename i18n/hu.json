@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "A kulcstartó elutasította őket, ezért az alkalmazás a jelszavait és más titkait bezáráskor elfelejti. Oldja fel a kulcstartót, vagy telepítse a gnome-keyring vagy a KWallet csomagot, majd indítsa újra az alkalmazást.",
   "desktop_secrets_session_only_no_keyring": "Egyetlen kulcstartó sem válaszolt, ezért az alkalmazás a jelszavait és más titkait bezáráskor elfelejti. A megőrzésükhöz telepítse a gnome-keyring vagy a KWallet csomagot.",
   "desktop_secrets_session_only_title": "Titkok csak erre a munkamenetre",
+  "desktop_selection_hint": "{modifier}+kattintás hozzáad vagy eltávolít, Shift+kattintás tartományt ad hozzá, a jobb kattintás megnyitja a műveleteket, {modifier}+A mindent kijelöl, Esc törli a kijelölést",
   "desktop_spatial_unavailable": "A Spatial 2.5D egy későbbi verzióban érkezik az Immuch360 Desktopba",
   "desktop_tapo_live_later": "Az élő kép egy későbbi verzióban érkezik az Immuch360 Desktopba.",
   "desktop_this_computer": "Ez a számítógép",
