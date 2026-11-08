@@ -105,7 +105,7 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
 
         // Decode natively when the caller wants pixels: Flutter's fallback decoder copies
         // 10-bit bitmaps (RGBA_1010102) as if they were rgba8888, garbling colors. Decode on a
-        // dedicated pool - the fetch callback threads are shared with video streaming. An
+        // dedicated pool: the fetch callback threads are shared with video streaming. An
         // OutOfMemoryError gets one retry at half the size. When the decode fails, Flutter gets
         // the encoded bytes only in a format its engine decodes with a codec of its own: any other
         // goes to Android's ImageDecoder at its full size inside the engine, which aborts the app on
