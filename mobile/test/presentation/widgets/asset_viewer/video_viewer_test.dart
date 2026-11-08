@@ -667,8 +667,10 @@ void main() {
             VideoSourceService(decoderApi, probeTranscoded: (_) async => copyProbe),
           ),
           appConfigProvider.overrideWithValue(appConfig),
-          // Read from the config above: overridden with it, in the scope of the viewer
+          // Read from the config above: overridden with it, in the scope of the viewer (the failure panel reads the TV
+          // layout)
           loopVideoProvider.overrideWithValue(false),
+          tvModeProvider.overrideWithValue(false),
           originalDownloadsProvider.overrideWithValue(downloads),
           videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
           ...overrides,
