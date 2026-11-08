@@ -26,6 +26,13 @@ class LogService {
 
   Timer? _flushTimer;
 
+  /// The unbuffered inserts not finished yet: dispose() and flush() wait for them, so that the cleanup of an isolate
+  /// or a background engine does not close the logs database under its own last lines
+  final Set<Future<void>> _pendingInserts = {};
+
+  /// How long dispose() and flush() wait for those inserts; a logs database that stays locked longer gives them up
+  static const _pendingInsertsTimeout = Duration(seconds: 10);
+
   late final StreamSubscription<LogRecord> _logSubscription;
 
   static LogService? _instance;
@@ -86,8 +93,30 @@ class LogService {
       _msgBuffer.add(record);
       _flushTimer ??= Timer(const Duration(seconds: 5), () => unawaited(_flushBuffer()));
     } else {
-      unawaited(_logRepository.insert(record));
+      _insertUnbuffered(record);
     }
+  }
+
+  void _insertUnbuffered(LogMessage record) {
+    final insert = _logRepository.insert(record).then<void>(
+      (_) {},
+      onError: (Object error) => dPrint(() => 'Failed to write a log record: $error'),
+    );
+    _pendingInserts.add(insert);
+    unawaited(insert.whenComplete(() => _pendingInserts.remove(insert)));
+  }
+
+  Future<void> _waitForPendingInserts() async {
+    if (_pendingInserts.isEmpty) {
+      return;
+    }
+    await Future.wait(_pendingInserts.toList()).timeout(
+      _pendingInsertsTimeout,
+      onTimeout: () {
+        dPrint(() => 'Gave up waiting for ${_pendingInserts.length} log records');
+        return const [];
+      },
+    );
   }
 
   Future<void> setLogLevel(LogLevel level) async {
@@ -107,9 +136,10 @@ class LogService {
     await _logRepository.deleteAll();
   }
 
-  Future<void> flush() {
+  Future<void> flush() async {
     _flushTimer?.cancel();
-    return _flushBuffer();
+    await _flushBuffer();
+    await _waitForPendingInserts();
   }
 
   Future<void> dispose() async {
@@ -117,6 +147,7 @@ class LogService {
     _flushTimer = null;
     await _logSubscription.cancel();
     await _flushBuffer();
+    await _waitForPendingInserts();
     // Allow a subsequent init() (e.g. when a worker isolate is reused) to
     // create a fresh instance instead of returning this disposed one.
     if (identical(_instance, this)) {

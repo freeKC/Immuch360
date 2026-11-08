@@ -19,6 +19,7 @@ import 'package:immich_mobile/domain/services/sync_stream.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
+import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/sync.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/services/background_upload.service.dart';
@@ -42,6 +43,8 @@ void main() {
   late MockHashService mockHashService;
   late MockSyncStreamService mockRemoteSyncService;
   late MockBackgroundUploadService mockBackgroundUploadService;
+  late MockDataController mockDataController;
+  late MockNativeSyncApi mockNativeSyncApi;
   late Drift db;
 
   setUpAll(() async {
@@ -61,7 +64,11 @@ void main() {
     await db.close();
   });
 
-  setUp(() {
+  setUp(() async {
+    // The cleanup of an earlier test disposed the store: it comes back from the database
+    await StoreService.init(storeRepository: StoreRepository(db), listenUpdates: false);
+    await Store.populateCache();
+
     mockLocalSyncService = MockLocalSyncService();
     mockHashService = MockHashService();
     final mockUserService = MockUserService();
@@ -75,11 +82,17 @@ void main() {
     when(() => mockBackgroundUploadService.getActiveTasks(kBackupGroup)).thenAnswer((_) async => []);
     when(() => mockBackgroundUploadService.uploadBackupCandidates(any())).thenAnswer((_) async {});
     when(() => mockBackgroundUploadService.resume()).thenAnswer((_) async {});
+    mockDataController = MockDataController();
+    when(() => mockDataController.close()).thenAnswer((_) async {});
+    mockNativeSyncApi = MockNativeSyncApi();
+    when(() => mockNativeSyncApi.cancelHashing()).thenAnswer((_) async {});
 
     sut = BackgroundWorkerBgService(
-      dataController: MockDataController(),
+      dataController: mockDataController,
       apiService: MockApiService(),
       overrides: [
+        // The cleanup goes through to the close of the databases
+        nativeSyncApiProvider.overrideWithValue(mockNativeSyncApi),
         localSyncServiceProvider.overrideWithValue(mockLocalSyncService),
         syncStreamServiceProvider.overrideWithValue(mockRemoteSyncService),
         hashServiceProvider.overrideWithValue(mockHashService),
@@ -152,6 +165,86 @@ void main() {
       verifyNever(() => mockRemoteSyncService.sync());
       verifyNever(() => mockHashService.hashAssets());
       verifyNever(() => mockBackgroundUploadService.getActiveTasks(any()));
+    });
+  });
+
+  // The native side destroys the engine on the answer of cancel(): until then the databases stay open for the work
+  // still running, and they close once
+  group('cancel', () {
+    test('during the Android upload closes the databases once, after the running local sync returned', () async {
+      final localSync = Completer<void>();
+      when(() => mockLocalSyncService.sync()).thenAnswer((_) => localSync.future);
+      when(() => mockRemoteSyncService.sync()).thenAnswer((_) async => true);
+
+      final upload = sut.onAndroidUpload(20);
+      await pumpEventQueue();
+      final cancel = sut.cancel();
+      await pumpEventQueue();
+      verifyNever(() => mockDataController.close());
+
+      localSync.complete();
+      await cancel;
+      await upload;
+      verify(() => mockDataController.close()).called(1);
+      // Cancelled: nothing more starts after the local sync
+      verifyNever(() => mockRemoteSyncService.sync());
+    });
+
+    test('during the iOS upload closes the databases once, after the running local sync returned', () async {
+      final localSync = Completer<void>();
+      when(() => mockLocalSyncService.sync()).thenAnswer((_) => localSync.future);
+      when(() => mockRemoteSyncService.sync()).thenAnswer((_) async => true);
+
+      final upload = sut.onIosUpload(true, 20);
+      await pumpEventQueue();
+      final cancel = sut.cancel();
+      await pumpEventQueue();
+      verifyNever(() => mockDataController.close());
+
+      localSync.complete();
+      await cancel;
+      await upload;
+      verify(() => mockDataController.close()).called(1);
+    });
+
+    test('before any work closes the databases at once', () async {
+      await sut.cancel();
+
+      verify(() => mockDataController.close()).called(1);
+    });
+
+    test('closes the databases at the wait limit when the running sync never returns', () {
+      fakeAsync((async) {
+        when(() => mockLocalSyncService.sync()).thenAnswer((_) => Completer<void>().future);
+        unawaited(sut.onAndroidUpload(20));
+        async.flushMicrotasks();
+
+        var answered = false;
+        unawaited(sut.cancel().then((_) => answered = true));
+        async.elapse(BackgroundWorkerBgService.cancelWaitLimit - const Duration(seconds: 1));
+        verifyNever(() => mockDataController.close());
+        expect(answered, isFalse);
+
+        async.elapse(const Duration(seconds: 2));
+        verify(() => mockDataController.close()).called(1);
+        expect(answered, isTrue);
+      });
+    });
+
+    test('twice closes the databases once', () async {
+      await Future.wait([sut.cancel(), sut.cancel()]);
+
+      verify(() => mockDataController.close()).called(1);
+    });
+
+    test('makes an upload asked afterwards answer once the cleanup is done, without running', () async {
+      final cancel = sut.cancel();
+      final upload = sut.onAndroidUpload(20);
+
+      expect(await upload, isFalse);
+      await cancel;
+      verifyNever(() => mockLocalSyncService.sync());
+      verify(() => mockDataController.close()).called(1);
     });
   });
 }

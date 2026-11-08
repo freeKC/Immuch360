@@ -61,6 +61,11 @@ class BackgroundWorkerFgService {
 }
 
 class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
+  /// How long cancel() waits for init() and the running upload to stop before it cleans up all the same. The answer
+  /// to cancel() means that no database work is left in this engine: the native side destroys the engine on it.
+  @visibleForTesting
+  static const cancelWaitLimit = Duration(seconds: 20);
+
   ProviderContainer? _ref;
   final DataController _dataController;
   final BackgroundWorkerBgHostApi _backgroundHostApi;
@@ -71,6 +76,16 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   late HashService _hashService;
 
   bool _isCleanedUp = false;
+
+  /// init(), then the upload asked by the native side, for cancel() to wait for
+  Future<void>? _initFuture;
+  Future<void>? _workFuture;
+
+  /// The one cleanup, shared by the end of an upload and cancel()
+  Future<void>? _cleanupFuture;
+
+  /// The one stop asked by the native side
+  Future<void>? _cancelFuture;
 
   BackgroundWorkerBgService({
     required this._dataController,
@@ -97,7 +112,12 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   /// the index of the device to keep fresh
   bool get _hasServerSession => dbStore.Store.tryGet(StoreKey.accessToken) != null;
 
-  Future<void> init() async {
+  /// Cancelled or cleaned up: nothing new starts
+  bool get _isStopping => _isCleanedUp || _cancellationToken.isCompleted;
+
+  Future<void> init() => _initFuture ??= _init();
+
+  Future<void> _init() async {
     try {
       await Future.wait(
         [
@@ -120,6 +140,12 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
 
       configureFileDownloaderNotifications();
 
+      // Cancelled while starting: cancel() cleans up once this returns, there is nothing to run
+      if (_isStopping) {
+        _logger.info("Background worker cancelled while starting, nothing to run");
+        return;
+      }
+
       // Notify the host that the background worker service has been initialized and is ready to use
       unawaited(_backgroundHostApi.onInitialized());
     } catch (error, stack) {
@@ -129,7 +155,17 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   }
 
   @override
-  Future<bool> onAndroidUpload(int? maxMinutes) async {
+  Future<bool> onAndroidUpload(int? maxMinutes) {
+    if (_isStopping) {
+      _logger.info("Android background upload asked after a cancel, skipped");
+      return _afterStop().then((_) => false);
+    }
+    final work = _androidUpload(maxMinutes);
+    _workFuture = work;
+    return work;
+  }
+
+  Future<bool> _androidUpload(int? maxMinutes) async {
     final hashTimeout = Duration(minutes: _isBackupEnabled ? 3 : 6);
     final backupTimeout = maxMinutes != null ? Duration(minutes: maxMinutes - 1) : null;
     await _optimizeDB();
@@ -141,7 +177,17 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   }
 
   @override
-  Future<void> onIosUpload(bool isRefresh, int? maxSeconds) async {
+  Future<void> onIosUpload(bool isRefresh, int? maxSeconds) {
+    if (_isStopping) {
+      _logger.info("iOS background upload asked after a cancel, skipped");
+      return _afterStop();
+    }
+    final work = _iosUpload(isRefresh, maxSeconds);
+    _workFuture = work;
+    return work;
+  }
+
+  Future<void> _iosUpload(bool isRefresh, int? maxSeconds) async {
     _logger.info('iOS background upload started with maxSeconds: ${maxSeconds}s');
     final sw = Stopwatch()..start();
     try {
@@ -209,7 +255,12 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
         return false;
       }
 
-      if (!await _syncAssets(hashTimeout: hashTimeout)) {
+      final synced = await _syncAssets(hashTimeout: hashTimeout);
+      if (_isStopping) {
+        _logger.info("$debugLabel cancelled before the backup");
+        return true;
+      }
+      if (!synced) {
         _logger.warning("Remote sync did not complete successfully, skipping backup");
         return true;
       }
@@ -239,14 +290,42 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
     }
   }
 
+  /// Stops the work, then cleans up: the running upload and init() are waited for (up to [cancelWaitLimit]) before
+  /// the databases close, so that its answer means no database work is left in this engine
   @override
-  Future<void> cancel() async {
+  Future<void> cancel() => _cancelFuture ??= _cancel();
+
+  Future<void> _cancel() async {
     _logger.warning("Background worker cancelled");
+    if (!_cancellationToken.isCompleted) {
+      _cancellationToken.complete();
+    }
     try {
+      await _waitForRunningWork();
       await _cleanup();
     } catch (error, stack) {
       dPrint(() => 'Failed to cleanup background worker: $error with stack: $stack');
     }
+  }
+
+  /// Completes once the stop already under way is done: an answer to the native side sent earlier could end the
+  /// engine under the cleanup. Never starts one itself.
+  Future<void> _afterStop() => _cancelFuture ?? _cleanupFuture ?? Future.value();
+
+  Future<void> _waitForRunningWork() async {
+    final running = [_initFuture, _workFuture].nonNulls.map((work) => work.then<void>((_) {}, onError: (Object _) {}));
+    if (running.isEmpty) {
+      return;
+    }
+    final sw = Stopwatch()..start();
+    await Future.wait(running).timeout(
+      cancelWaitLimit,
+      onTimeout: () {
+        _logger.warning("The background work did not stop within ${cancelWaitLimit.inSeconds}s, cleaning up anyway");
+        return const [];
+      },
+    );
+    dPrint(() => 'Background work stopped ${sw.elapsedMilliseconds}ms after the cancel');
   }
 
   Future<void> _optimizeDB() async {
@@ -257,7 +336,10 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
     }
   }
 
-  Future<void> _cleanup() async {
+  /// The cleanup runs once; a second call (cancel() after the end of an upload) waits for the same one
+  Future<void> _cleanup() => _cleanupFuture ??= _runCleanup();
+
+  Future<void> _runCleanup() async {
     await runZonedGuarded(_handleCleanup, (error, stack) {
       dPrint(() => "Error during background worker cleanup: $error, $stack");
     });
@@ -269,31 +351,41 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
       return;
     }
 
-    try {
-      _isCleanedUp = true;
-      final nativeSyncApi = _ref?.read(nativeSyncApiProvider);
+    _isCleanedUp = true;
+    final sw = Stopwatch()..start();
+    _logger.info("Cleaning up background worker");
+    if (!_cancellationToken.isCompleted) {
+      _cancellationToken.complete();
+    }
 
-      _logger.info("Cleaning up background worker");
-      if (!_cancellationToken.isCompleted) {
-        _cancellationToken.complete();
-      }
-
-      // Workers share one sqlite connection, so DB teardown must wait until every worker has stopped using it.
-      await Future.wait([if (nativeSyncApi != null) nativeSyncApi.cancelHashing()]);
-      await workerManagerPatch.dispose().catchError((_) async {});
-      await Future.wait([LogService.I.dispose(), dbStore.Store.dispose()]);
-      await _dataController.close();
-
+    // Each step on its own: one that fails must not leave the databases open, since destroying the engine would then
+    // close them through the native finalizers, under statements that may still run.
+    // Workers share one sqlite connection, so DB teardown must wait until every worker has stopped using it.
+    await _cleanupStep('hashing', () async {
+      await _ref?.read(nativeSyncApiProvider).cancelHashing();
+    });
+    await _cleanupStep('worker isolates', () => workerManagerPatch.dispose());
+    await _cleanupStep('logs', () => LogService.I.dispose());
+    await _cleanupStep('store', () => dbStore.Store.dispose());
+    await _cleanupStep('databases', () => _dataController.close());
+    await _cleanupStep('providers', () async {
       _ref?.dispose();
-      _ref = null;
+    });
+    _ref = null;
+    dPrint(() => 'Background worker cleaned up in ${sw.elapsedMilliseconds}ms');
+  }
+
+  Future<void> _cleanupStep(String name, Future<void> Function() step) async {
+    try {
+      await step();
     } catch (error, stack) {
-      dPrint(() => 'Failed to cleanup background worker: $error with stack: $stack');
+      dPrint(() => 'Failed to clean up the $name of the background worker: $error with stack: $stack');
     }
   }
 
   Future<bool> _handleBackup({required Future<bool> remoteSync}) async {
     final needsRetry = await runZonedGuarded(() async {
-      if (_isCleanedUp) {
+      if (_isStopping) {
         return false;
       }
 
@@ -330,12 +422,12 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
 
   Future<bool> _syncAssets({Duration? hashTimeout}) async {
     await _localSyncService.sync();
-    if (_isCleanedUp) {
+    if (_isStopping) {
       return false;
     }
 
     final isSuccess = await _remoteSyncService.sync();
-    if (_isCleanedUp) {
+    if (_isStopping) {
       return isSuccess;
     }
 

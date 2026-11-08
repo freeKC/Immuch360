@@ -10,15 +10,27 @@ import 'package:sqlite_async/sqlite_async.dart';
 /// have their own file the same way.
 @DriftDatabase(tables: [WatchProgressEntity])
 class DriftWatch extends $DriftWatch {
-  DriftWatch.fromExecutor(super.executor);
+  /// The sqlite_async connection under drift, closed after drift (see Drift.close)
+  final SqliteConnection? _connection;
 
-  DriftWatch.sqlite(SqliteConnection db) : super(SqliteAsyncDriftConnection(db));
+  DriftWatch.fromExecutor(super.executor) : _connection = null;
+
+  DriftWatch.sqlite(SqliteConnection db) : _connection = db, super(SqliteAsyncDriftConnection(db));
 
   /// The name of its file, without the extension
   static const fileName = 'immuch_watch';
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  Future<void> close() async {
+    try {
+      await super.close();
+    } finally {
+      await _connection?.close();
+    }
+  }
 
   @override
   MigrationStrategy get migration => MigrationStrategy(

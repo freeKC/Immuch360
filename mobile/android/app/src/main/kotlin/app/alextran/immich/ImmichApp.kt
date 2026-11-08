@@ -25,5 +25,8 @@ class ImmichApp : Application() {
       if (BackgroundEngineLock.connectEngines > 0) return@postDelayed
       BackgroundWorkerApiImpl.enqueueBackgroundWorker(this)
     }, 15000)
+    // The Flutter injector of the process, taken here on the main thread before any activity or worker starts
+    // (FlutterInjectorPin)
+    FlutterInjectorPin.pin(this)
   }
 }

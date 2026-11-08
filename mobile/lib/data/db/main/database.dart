@@ -113,17 +113,30 @@ import 'package:sqlite_async/sqlite_async.dart';
 class Drift extends $Drift {
   final SqliteConnectionPool? _updatePool;
 
+  /// The sqlite_async connection under drift, which drift_sqlite_async leaves open when drift closes
+  final SqliteConnection? _connection;
+
   @visibleForTesting
-  Drift(super.executor) : _updatePool = null;
+  Drift(super.executor) : _updatePool = null, _connection = null;
 
   Drift.sqlite(SqliteConnection db, SqliteConnectionPool updatePool)
     : _updatePool = updatePool,
+      _connection = db,
       super(DatabaseConnection(SqliteAsyncQueryExecutor(db), streamQueries: _DriftPoolStreamQueries(updatePool)));
 
+  /// Closes drift and its stream queries, then the update pool, then the sqlite_async connection. Left open, the
+  /// connection was only released by the native finalizers of the isolate when it ended (a background engine destroyed,
+  /// a worker isolate retired), which return its leases while a statement isolate may still be running on them. Its
+  /// close waits for the statements in flight, aborts the requests still queued and ends its statement isolates; it
+  /// closes this client only, the other isolates and engines of the process keep the shared pool.
   @override
   Future<void> close() async {
-    await super.close();
-    _updatePool?.close();
+    try {
+      await super.close();
+    } finally {
+      await _updatePool?.close();
+      await _connection?.close();
+    }
   }
 
   Future<void> reset() async {
@@ -471,9 +484,19 @@ final class _DriftPoolStreamQueries extends StreamQueryStore {
 
   final SqliteConnectionPool _pool;
 
+  /// Set by close(), before the pool closes: a write that ends after it has no stream to refresh, as in drift's own
+  /// store, and the other clients of the file hear of its commit from the pool itself
+  bool _closed = false;
+
+  @override
+  Future<void> close() {
+    _closed = true;
+    return super.close();
+  }
+
   @override
   void handleTableUpdates(Set<TableUpdate> updates) {
-    if (updates.isEmpty) {
+    if (updates.isEmpty || _closed) {
       return;
     }
     _pool.dispatchUpdateNotification([for (final update in updates) update.table]);
