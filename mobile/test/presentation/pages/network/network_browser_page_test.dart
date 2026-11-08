@@ -30,6 +30,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
@@ -747,9 +748,10 @@ void main() {
     final server = find.byKey(const Key('network_media_server_thumbnail'));
     expect(server, findsNWidgets(3));
     expect(find.descendant(of: tileOf('huge.jpg'), matching: server), findsOneWidget);
-    final image = tester.widget<Image>(find.descendant(of: tileOf('flat.jpg'), matching: server)).image as ResizeImage;
-    expect(image.width, 256);
-    expect((image.imageProvider as NetworkImage).url, art);
+    final image =
+        tester.widget<Image>(find.descendant(of: tileOf('flat.jpg'), matching: server)).image as GuardedNetworkImage;
+    expect(image.maxWidth, 256);
+    expect(image.url, art);
     expect(thumbnails, [
       Uri.parse('http://127.0.0.1:1234/token/nas/pano.jpg'),
     ], reason: 'no bridge read for the others');

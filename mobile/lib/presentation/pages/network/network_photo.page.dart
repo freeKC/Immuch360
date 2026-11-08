@@ -34,6 +34,7 @@ import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dar
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/tiff_views.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
@@ -58,14 +59,16 @@ const _maxFlatSize = 4096;
 
 /// The image of a photo of a share for the flat view, through the media bridge at [url]. A TIFF on a device without
 /// TIFF decoder, by its name or the type its share gives ([mimeType]), is decoded in Dart (see NetworkTiffImage), unless
-/// its file ([size] bytes) is larger than the device reads.
+/// its file ([size] bytes) is larger than the device reads. On Android a HEIF, AVIF or raw file is decoded by the
+/// native decoder at the same size, never by the fallback decoder of the engine (see GuardedNetworkImage).
 ImageProvider networkPhotoImage(Uri url, {String? mimeType, int? size}) => isDartTiffUrl(url, mimeType: mimeType)
     ? NetworkTiffImage(url, maxSide: math.min(_maxFlatSize, TiffBudget.current.maxViewerSide), size: size)
-    : ResizeImage(
-        NetworkImage(url.toString()),
-        width: _maxFlatSize,
-        height: _maxFlatSize,
-        policy: ResizeImagePolicy.fit,
+    : GuardedNetworkImage(
+        url.toString(),
+        source: 'sharePage',
+        maxWidth: _maxFlatSize,
+        maxHeight: _maxFlatSize,
+        undecodableKey: undecodableShareKey(url),
       );
 
 /// The image of a photo of a share for the 360° viewer, through the media bridge at [url]: at most 8192 x 4096 pixels,
@@ -78,7 +81,13 @@ ImageProvider networkPanoramaImage(Uri url, {bool lowRam = false, String? mimeTy
   if (isDartTiffUrl(url, mimeType: mimeType)) {
     return NetworkTiffImage(url, maxSide: math.min(width, TiffBudget.current.maxViewerSide), size: size);
   }
-  return ResizeImage(NetworkImage(url.toString()), width: width, height: height, policy: ResizeImagePolicy.fit);
+  return GuardedNetworkImage(
+    url.toString(),
+    source: 'share360',
+    maxWidth: width,
+    maxHeight: height,
+    undecodableKey: undecodableShareKey(url),
+  );
 }
 
 /// A photo of a share and its media bridge URL
