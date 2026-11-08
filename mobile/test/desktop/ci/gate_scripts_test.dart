@@ -302,40 +302,48 @@ version = "3.47.2"
 ''';
 
 /// A small ELF file as keep_android_symbols.py reads it: 64 or 32 bit, little endian, with a GNU build ID note holding
-/// [buildId] (hexadecimal) and, when [symtab], a symbol table section
-List<int> _elf(String buildId, {bool is64 = true, bool symtab = true}) {
+/// [buildId] (hexadecimal; no note when empty), a .text section holding [text] when it is not empty, and a symbol
+/// table section when [symtab]
+List<int> _elf(String buildId, {bool is64 = true, bool symtab = true, String text = ''}) {
   final id = [for (var i = 0; i < buildId.length; i += 2) int.parse(buildId.substring(i, i + 2), radix: 16)];
+  // The note: owner GNU, type NT_GNU_BUILD_ID
+  final note = id.isEmpty ? <int>[] : [4, 0, 0, 0, id.length, 0, 0, 0, 3, 0, 0, 0, ...'GNU'.codeUnits, 0, ...id];
+  final code = text.codeUnits;
+  final symbols = List.filled(symtab ? 24 : 0, 0);
+  final names = [0, ...'.text'.codeUnits, 0];
   final word = is64 ? 8 : 4;
   final headerSize = is64 ? 64 : 52;
-  final noteSize = 16 + id.length;
-  final symbolsSize = symtab ? 24 : 0;
-  final sections = [(0, 0, 0), (7, headerSize, noteSize), if (symtab) (2, headerSize + noteSize, symbolsSize)];
+  final textAt = headerSize + note.length;
+  final symbolsAt = textAt + code.length;
+  final namesAt = symbolsAt + symbols.length;
+  // Name, type (SHT_NOTE 7, SHT_PROGBITS 1, SHT_SYMTAB 2, SHT_STRTAB 3), offset and size of each section
+  final sections = [
+    (0, 0, 0, 0),
+    if (note.isNotEmpty) (0, 7, headerSize, note.length),
+    if (code.isNotEmpty) (1, 1, textAt, code.length),
+    if (symtab) (0, 2, symbolsAt, symbols.length),
+    (0, 3, namesAt, names.length),
+  ];
   final bytes = <int>[];
   void put(int value, int size) => bytes.addAll([for (var i = 0; i < size; i++) (value >> (8 * i)) & 0xFF]);
 
-  // The header of a shared object, its section headers after the note and the symbols
+  // The header of a shared object, its section headers at the end, the names last of them
   bytes.addAll([0x7F, 0x45, 0x4C, 0x46, if (is64) 2 else 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
   put(3, 2);
   put(is64 ? 183 : 40, 2);
   put(1, 4);
   put(0, word * 2);
-  put(headerSize + noteSize + symbolsSize, word);
+  put(namesAt + names.length, word);
   put(0, 4);
   put(headerSize, 2);
   put(is64 ? 56 : 32, 2);
   put(0, 2);
   put(is64 ? 64 : 40, 2);
   put(sections.length, 2);
-  put(0, 2);
-  // The note: owner GNU, type NT_GNU_BUILD_ID
-  put(4, 4);
-  put(id.length, 4);
-  put(3, 4);
-  bytes.addAll([...'GNU'.codeUnits, 0, ...id]);
-  bytes.addAll(List.filled(symbolsSize, 0));
-  // The section headers: the null one, the note (SHT_NOTE), the symbol table (SHT_SYMTAB)
-  for (final (type, offset, size) in sections) {
-    put(0, 4);
+  put(sections.length - 1, 2);
+  bytes.addAll([...note, ...code, ...symbols, ...names]);
+  for (final (name, type, offset, size) in sections) {
+    put(name, 4);
     put(type, 4);
     put(0, word * 2);
     put(offset, word);
@@ -1625,14 +1633,19 @@ abstract class SyncEvents {
         }
       }
       _zip(p.join(root.path, 'app.aab'), bundle);
+      // libsqlite3.so and libsmb2.so have no build ID, as the libraries of the build hooks
       _zip(p.join(root.path, 'quest.apk'), {
         'lib/arm64-v8a/libapp.so': _elf(apkAppId, symtab: false),
         'lib/arm64-v8a/libflutter.so': _elf(flutterId, symtab: false),
+        'lib/arm64-v8a/libsqlite3.so': _elf('', symtab: false, text: '0123456789abcdef'),
+        'lib/arm64-v8a/libsmb2.so': _elf('', symtab: false, text: 'the shipped code'),
       });
       final symbols = {
         'arm64-v8a/libapp.so.sym': _elf(questAppId),
         'arm64-v8a/libflutter.so.sym': _elf(flutterId),
         'arm64-v8a/libnot_shipped.so.sym': _elf('ab' * 20),
+        'arm64-v8a/libsqlite3.so.sym': _elf('', text: '0123456789abcdef'),
+        'arm64-v8a/libsmb2.so.sym': _elf('', text: 'another build...'),
       };
       if (!intermediates) {
         _zip(p.join(root.path, 'native-debug-symbols.zip'), symbols);
@@ -1720,6 +1733,13 @@ abstract class SyncEvents {
       // The 32 bit symbol table of the bundle is read as the 64 bit ones are
       expect(library(kept, 'phone', 'armeabi-v7a', 'libapp.so')['gnu_build_id'], phoneAppId);
       expect(library(kept, 'phone', 'x86_64', 'libapp.so')['breakpad_id'], '2feda55f4c225df7be04e04e9e1d56720');
+      // A library without a build ID is kept when its code is the APK's, with the Breakpad ID of its .text: the first
+      // 16 bytes "0123456789abcdef" as a GUID, its first three fields byte swapped
+      final sqlite = library(kept, 'quest', 'arm64-v8a', 'libsqlite3.so');
+      expect(sqlite['gnu_build_id'], isNull);
+      expect(sqlite['breakpad_id'], '333231303534373638396162636465660');
+      expect(run.output, contains('libsmb2.so: build ID None of the symbol file, None in quest.apk, and another'));
+      expect(File(p.join(symbols, 'quest', 'arm64-v8a', 'libsmb2.so')).existsSync(), isFalse);
       final mappings = (kept['mappings']! as List).cast<Map<String, Object?>>();
       expect(mappings.map((x) => x['file']), ['phone/mapping.txt', 'quest/mapping.txt']);
       expect(mappings.first['compiler_version'], '8.11.26');
@@ -1766,6 +1786,7 @@ abstract class SyncEvents {
       final same = verify(root);
       expect(same.exitCode, 0, reason: '$same');
       expect(same.output, contains('quest.apk: libapp.so build ID $questAppId as the symbols'));
+      expect(same.output, contains('quest.apk: libsqlite3.so without build ID, its .text as the symbols'));
       expect(same.output, contains('app.aab: R8 mapping and libapp.so.sym of arm64-v8a, armeabi-v7a, x86_64 present'));
 
       _zip(p.join(root.path, 'quest.apk'), {'lib/arm64-v8a/libapp.so': _elf(phoneAppId, symtab: false)});

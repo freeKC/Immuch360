@@ -13,8 +13,10 @@ R8 mapping and the symbol tables of the native libraries turn them back into nam
   (ovr-platform-util --debug-symbols-dir). This script keeps its mapping and the symbol tables of its native libraries,
   renamed to the names of the libraries (quest/arm64-v8a/libapp.so), from AGP's native-debug-symbols.zip, or from the
   unstripped libraries of AGP's intermediates when the build made no zip. Each kept file must have the GNU build ID of
-  the library in the APK: a store matches symbols by it. libapp.so must match and hold a symbol table, or the script
-  fails; another library that does not match, or holds no symbol table, is left out with a note.
+  the library in the APK: a store matches symbols by it. A library built without a build ID (the Rust core, SQLite
+  and libsmb2 of the build hooks, in November 2026) is kept when its .text equals the APK's: Breakpad, whose IDs the
+  Meta traces show, then derives the ID of both from that code. libapp.so must match by build ID and hold a symbol
+  table, or the script fails; another library that does not match, or holds no symbol table, is left out with a note.
 
 What it writes in --out: phone/mapping.txt (or one mapping per phone build with a warning, when the three phone builds
 of the workflow did not give the same file), quest/mapping.txt, quest/arm64-v8a/*.so, manifest.json (the label, the
@@ -56,10 +58,12 @@ DART_LIBRARY = 'libapp.so'
 PHONE_BUNDLE_MAPPING = 'phone-bundle.txt'
 QUEST_MAPPING = 'quest.txt'
 
+SHT_PROGBITS = 1
 SHT_SYMTAB = 2
 SHT_NOTE = 7
 PT_NOTE = 4
 NT_GNU_BUILD_ID = 3
+NOT_ELF = {'build_id': None, 'symtab': False, 'text_sha256': None, 'text_id': None}
 
 README = """\
 Symbols and mappings of the Android build {label} (commit {commit}, version code {version_code}).
@@ -90,9 +94,10 @@ ID in manifest.json, then
 
 
 def elf_info(data: bytes) -> dict | None:
-    """The GNU build ID (hexadecimal, None when there is none) and whether a symbol table is present, of the ELF file
-    [data]; None when it is not an ELF file. Notes are read from the note sections, or from the PT_NOTE segments of a
-    file without section headers."""
+    """What identifies the ELF file [data], None when it is not one: its GNU build ID (hexadecimal, None when it has
+    none), whether it has a symbol table, and the SHA-256 and the Breakpad identifier of its .text section (None
+    without one), which identify a library built without a build ID. Notes are read from the note sections, or from
+    the PT_NOTE segments of a file without section headers."""
     if len(data) < 52 or data[:4] != b'\x7fELF':
         return None
     is64 = data[4] == 2
@@ -100,22 +105,20 @@ def elf_info(data: bytes) -> dict | None:
     try:
         if is64:
             phoff, shoff = struct.unpack_from(endian + 'QQ', data, 0x20)
-            phentsize, phnum, shentsize, shnum = struct.unpack_from(endian + 'HHHH', data, 0x36)
+            phentsize, phnum, shentsize, shnum, shstrndx = struct.unpack_from(endian + 'HHHHH', data, 0x36)
         else:
             phoff, shoff = struct.unpack_from(endian + 'II', data, 0x1C)
-            phentsize, phnum, shentsize, shnum = struct.unpack_from(endian + 'HHHH', data, 0x2A)
-        note_ranges = []
-        symtab = False
+            phentsize, phnum, shentsize, shnum, shstrndx = struct.unpack_from(endian + 'HHHHH', data, 0x2A)
+        sections = []
         for i in range(shnum if shoff else 0):
             at = shoff + i * shentsize
             if is64:
-                _, kind, _, _, offset, size = struct.unpack_from(endian + 'IIQQQQ', data, at)
+                name, kind, _, _, offset, size = struct.unpack_from(endian + 'IIQQQQ', data, at)
             else:
-                _, kind, _, _, offset, size = struct.unpack_from(endian + 'IIIIII', data, at)
-            if kind == SHT_NOTE:
-                note_ranges.append((offset, size))
-            elif kind == SHT_SYMTAB and size > 0:
-                symtab = True
+                name, kind, _, _, offset, size = struct.unpack_from(endian + 'IIIIII', data, at)
+            sections.append((name, kind, offset, size))
+        note_ranges = [(offset, size) for _, kind, offset, size in sections if kind == SHT_NOTE]
+        symtab = any(kind == SHT_SYMTAB and size > 0 for _, kind, _, size in sections)
         if not note_ranges:
             for i in range(phnum if phoff else 0):
                 at = phoff + i * phentsize
@@ -130,7 +133,30 @@ def elf_info(data: bytes) -> dict | None:
     build_id = None
     for offset, size in note_ranges:
         build_id = build_id or _gnu_build_id(data[offset:offset + size], endian)
-    return {'build_id': build_id, 'symtab': symtab}
+    text_at, text_size = 0, 0
+    if shstrndx < len(sections):
+        names_at = sections[shstrndx][2]
+        for name, kind, offset, size in sections:
+            if kind == SHT_PROGBITS and data[names_at + name:names_at + name + 6] == b'.text\0':
+                text_at, text_size = (offset, size) if 0 < offset + size <= len(data) else (0, 0)
+                break
+    return {
+        'build_id': build_id,
+        'symtab': symtab,
+        'text_sha256': hashlib.sha256(data[text_at:text_at + text_size]).hexdigest() if text_size else None,
+        'text_id': _text_identifier(data, text_at, text_size) if text_size else None,
+    }
+
+
+def _text_identifier(data: bytes, at: int, size: int) -> str:
+    """Breakpad's identifier of a file without a build ID: the first 4096 bytes of .text XORed by blocks of 16, the
+    last block read whole even past the section, as Breakpad's HashElfTextSection does"""
+    identifier = bytearray(16)
+    for block in range(0, min(size, 4096), 16):
+        chunk = data[at + block:at + block + 16].ljust(16, b'\0')
+        for i in range(16):
+            identifier[i] ^= chunk[i]
+    return identifier.hex()
 
 
 def _gnu_build_id(notes: bytes, endian: str) -> str | None:
@@ -148,12 +174,14 @@ def _gnu_build_id(notes: bytes, endian: str) -> str | None:
     return None
 
 
-def breakpad_id(build_id: str | None) -> str | None:
+def breakpad_id(build_id: str | None, text_id: str | None = None) -> str | None:
     """The Breakpad ID of a GNU build ID, as Meta's crash traces show it (BreakpadBuildId): the first 16 bytes as a
-    GUID, its first three fields byte swapped, then the age 0. fdf0a0a6f673cdcf... gives a6a0f0fd73f6cfcd..."""
-    if not build_id:
+    GUID, its first three fields byte swapped, then the age 0. fdf0a0a6f673cdcf... gives a6a0f0fd73f6cfcd... Without a
+    build ID, the same form of the identifier of the .text section ([text_id]), as Breakpad computes it"""
+    identifier = build_id or text_id
+    if not identifier:
         return None
-    raw = bytes.fromhex(build_id)[:16].ljust(16, b'\0')
+    raw = bytes.fromhex(identifier)[:16].ljust(16, b'\0')
     guid = raw[3::-1] + raw[5:3:-1] + raw[7:5:-1] + raw[8:]
     return guid.hex() + '0'
 
@@ -207,7 +235,7 @@ def apk_libraries(apk: pathlib.Path, abi: str) -> dict[str, dict]:
         for name in archive.namelist():
             match = re.fullmatch(rf'lib/{re.escape(abi)}/([^/]+\.so)', name)
             if match:
-                found[match.group(1)] = elf_info(archive.read(name)) or {'build_id': None, 'symtab': False}
+                found[match.group(1)] = elf_info(archive.read(name)) or dict(NOT_ELF)
     return found
 
 
@@ -277,14 +305,14 @@ def keep(args: argparse.Namespace) -> int:
             match = re.fullmatch(rf'{re.escape(SYMBOLS_PREFIX)}([^/]+)/([^/]+\.so)\.sym', name)
             if not match:
                 continue
-            info = elf_info(archive.read(name)) or {'build_id': None, 'symtab': False}
+            info = elf_info(archive.read(name)) or dict(NOT_ELF)
             manifest['libraries'].append({
                 'flavour': 'phone',
                 'abi': match.group(1),
                 'name': match.group(2),
                 'file': f'{bundle.name}!{name}',
                 'gnu_build_id': info['build_id'],
-                'breakpad_id': breakpad_id(info['build_id']),
+                'breakpad_id': breakpad_id(info['build_id'], info['text_id']),
                 'symtab': info['symtab'],
                 'size': archive.getinfo(name).file_size,
             })
@@ -356,16 +384,21 @@ def keep(args: argparse.Namespace) -> int:
         errors.append(f'no symbol file of {DART_LIBRARY} for the Quest build ({source})')
     folder = out / 'quest' / QUEST_ABI
     for name, data in sorted(candidates.items()):
-        info = elf_info(data) or {'build_id': None, 'symtab': False}
+        info = elf_info(data) or dict(NOT_ELF)
         shipped = in_apk.get(name)
         dart = name == DART_LIBRARY
         if shipped is None:
             notes.append(f'{name}: not in {apk.name}, left out')
             continue
-        if not info['build_id'] or info['build_id'] != shipped['build_id']:
+        # The GNU build ID; for a library built without one (no note in the APK either), its .text: the symbol table
+        # of AGP keeps the code of the library as it is, and a store computes the same Breakpad ID from it
+        by_text = not info['build_id'] and not shipped['build_id'] and not dart
+        same = info['text_sha256'] == shipped['text_sha256'] if by_text else info['build_id'] == shipped['build_id']
+        if not same or not (info['build_id'] or info['text_sha256']):
             message = (
-                f'{name}: build ID {info["build_id"]} of the symbol file, {shipped["build_id"]} in {apk.name}: '
-                'a store would not match them'
+                f'{name}: build ID {info["build_id"]} of the symbol file, {shipped["build_id"]} in {apk.name}'
+                + (', and another .text' if by_text else '')
+                + ': a store would not match them'
             )
             if dart:
                 errors.append(message)
@@ -380,18 +413,23 @@ def keep(args: argparse.Namespace) -> int:
             continue
         folder.mkdir(parents=True, exist_ok=True)
         (folder / name).write_bytes(data)
+        breakpad = breakpad_id(info['build_id'], info['text_id'])
         manifest['libraries'].append({
             'flavour': 'quest',
             'abi': QUEST_ABI,
             'name': name,
             'file': f'quest/{QUEST_ABI}/{name}',
             'gnu_build_id': info['build_id'],
-            'breakpad_id': breakpad_id(info['build_id']),
+            'breakpad_id': breakpad,
+            'text_sha256': info['text_sha256'],
             'symtab': True,
             'size': len(data),
             'sha256': hashlib.sha256(data).hexdigest(),
         })
-        print(f'kept quest/{QUEST_ABI}/{name}: build ID {info["build_id"]}, Breakpad {breakpad_id(info["build_id"])}')
+        if by_text:
+            print(f'kept quest/{QUEST_ABI}/{name}: no build ID, the .text of the APK\'s, Breakpad {breakpad} from it')
+        else:
+            print(f'kept quest/{QUEST_ABI}/{name}: build ID {info["build_id"]}, Breakpad {breakpad}')
     for note in notes:
         print(note)
 
@@ -427,13 +465,19 @@ def verify(args: argparse.Namespace) -> int:
         if not any(x['name'] == DART_LIBRARY for x in kept):
             errors.append(f'the manifest keeps no Quest {DART_LIBRARY}')
         for library in kept:
-            shipped = (in_apk.get(library['name']) or {}).get('build_id')
-            if shipped != library['gnu_build_id']:
+            shipped = in_apk.get(library['name']) or dict(NOT_ELF)
+            if library['gnu_build_id'] is None and library.get('text_sha256'):
+                if shipped['build_id'] is None and shipped['text_sha256'] == library['text_sha256']:
+                    print(f'{apk.name}: {library["name"]} without build ID, its .text as the symbols')
+                else:
+                    errors.append(f'{apk.name}: {library["name"]} is not the library of the symbols (.text)')
+            elif shipped['build_id'] != library['gnu_build_id']:
                 errors.append(
-                    f'{apk.name}: {library["name"]} has build ID {shipped}, the symbols {library["gnu_build_id"]}'
+                    f'{apk.name}: {library["name"]} has build ID {shipped["build_id"]}, '
+                    f'the symbols {library["gnu_build_id"]}'
                 )
             else:
-                print(f'{apk.name}: {library["name"]} build ID {shipped} as the symbols')
+                print(f'{apk.name}: {library["name"]} build ID {shipped["build_id"]} as the symbols')
     if args.bundle:
         bundle = pathlib.Path(args.bundle)
         with zipfile.ZipFile(bundle) as archive:
@@ -453,11 +497,12 @@ def build_ids(args: argparse.Namespace) -> int:
     status = 0
     for name in args.files:
         info = elf_info(pathlib.Path(name).read_bytes())
-        if not info or not info['build_id']:
-            print(f'{name}: no GNU build ID')
+        if not info or not (info['build_id'] or info['text_id']):
+            print(f'{name}: no GNU build ID nor .text')
             status = 1
         else:
-            print(f'{name}: GNU {info["build_id"]} Breakpad {breakpad_id(info["build_id"])} symtab {info["symtab"]}')
+            breakpad = breakpad_id(info['build_id'], info['text_id'])
+            print(f'{name}: GNU {info["build_id"]} Breakpad {breakpad} symtab {info["symtab"]}')
     return status
 
 
