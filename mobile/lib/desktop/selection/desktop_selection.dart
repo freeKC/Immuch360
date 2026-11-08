@@ -444,8 +444,8 @@ class DesktopSelectionScopeState<T> extends ConsumerState<DesktopSelectionScope<
     }
   }
 
-  /// A right click on [item] at [globalPosition]: the item joins the selection as [DesktopSelectionController.prepareMenu]
-  /// says, then the menu of the whole selection opens there
+  /// A right click on [item] at [globalPosition]: the item joins the selection as
+  /// [DesktopSelectionController.prepareMenu] says, then the menu of the whole selection opens there
   void openMenu(int index, T item, Offset? globalPosition) {
     controller.prepareMenu(index, item, add: desktopAddKeyPressed());
     final box = context.findRenderObject();

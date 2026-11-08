@@ -1,8 +1,8 @@
-// The selection of a folder of a share on a computer (the rules are in desktop_selection.dart): Control, Shift and right
-// clicks on its photos and videos, Control A and Escape, written into networkSelectionProvider of the folder, in the
-// order of the grid. A folder ignores the keys and opens. The menu of a right click sends the selection to the Immich
-// server, as the bar at the bottom of the page does. A Shift click finds its anchor again by its path: a refresh may
-// have brought files above it.
+// The selection of a folder of a share on a computer (the rules are in desktop_selection.dart): Control, Shift and
+// right clicks on its photos and videos, Control A and Escape, written into networkSelectionProvider of the folder, in
+// the order of the grid. A folder ignores the keys and opens. The menu of a right click sends the selection to the
+// Immich server, as the bar at the bottom of the page does. A Shift click finds its anchor again by its path: a refresh
+// may have brought files above it.
 
 import 'dart:math' as math;
 
