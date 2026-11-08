@@ -18,6 +18,7 @@ Each line links to the section that explains it. The limits by design, such as t
 - **A raw video of a share that cannot be read at any position is not stabilised** (a DLNA or Plex server that does not tell the size of the file, a server that sends whole files): [Stabilisation](user-guide.md#stabilisation-with-the-cameras-gyroscope-experimental).
 - **Objects close to a 360° camera can show a seam** in a raw file stitched by the app: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - **WebDAV servers that only offer Digest authentication** are refused: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
+- **A DLNA server lists only the files it indexed**: the raw files of 360° cameras (.insv, .insp, .360, .osv) and the splat files (.ply, .spz) usually do not show there; put them on an SMB or WebDAV share or in a folder of the device: [DLNA media servers](user-guide.md#dlna-media-servers).
 - **Photos over 30 MB get no thumbnail in a share**: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - **A file the server already has is sent in full** before the server reports it as a duplicate: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - **Plex: IPv4 addresses only**, and no relay away from home: [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
@@ -67,7 +68,6 @@ Each line links to the section that explains it. The limits by design, such as t
 - **Signing in with OAuth is not possible** on a TV: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **On a TV with little memory, 360° photos are shown at 4096x2048 at most** (from build 27, a TV with 3 GB of memory or less counts as one): [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - **Fire TV is not tested**, and there is no Apple TV version: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- **Google Play on TVs** waits for Google's review of the TV listing: [Release status](release-status.md).
 
 ## LG webOS TVs
 
