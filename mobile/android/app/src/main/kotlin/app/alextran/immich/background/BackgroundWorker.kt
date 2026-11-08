@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.ForegroundInfo
@@ -23,6 +24,8 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.embedding.engine.loader.FlutterLoader
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
@@ -49,18 +52,38 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
   /// to the WorkManager that the task has finished, either successfully or with failure.
   private val completionHandler: SettableFuture<Result> = SettableFuture.create()
 
-  /// Flag to track whether the background task has completed to prevent duplicate completions
-  private var isComplete = false
-
   private val notificationManager =
     ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
   private var foregroundFuture: ListenableFuture<Void>? = null
 
+  private val mainHandler = Handler(Looper.getMainLooper())
+
+  /// The end of this run in order: the work finished within 5 s of a stop, the engine destroyed only once its Dart has
+  /// closed the databases (or at a cap), see BackgroundTeardown
+  private val teardown = BackgroundTeardown<Result>(
+    slot = engineSlot,
+    schedule = { delayMs, action -> mainHandler.postDelayed(action, delayMs) },
+    finishWork = ::finishWork,
+    destroyEngine = ::destroyEngine,
+  )
+
+  /// When startWork began and when the cancel was asked, for the durations of the phases in the log
+  private var startedAt = 0L
+  private var cancelAskedAt = 0L
+
   companion object {
     private const val NOTIFICATION_CHANNEL_ID = "immich::background_worker::notif"
     private const val NOTIFICATION_ID = 100
     private val activeWorker = AtomicReference<BackgroundWorker?>(null)
+
+    /// Held from the start of a run until its engine is destroyed, which can be after its work finished
+    private val engineSlot = BackgroundEngineSlot()
+
+    /// What must not hold the main thread: the wait for a foreground promotion before a result
+    private val offMainThread: ExecutorService = Executors.newCachedThreadPool { runnable ->
+      Thread(runnable, "BackgroundWorkerTeardown").apply { isDaemon = true }
+    }
   }
 
   override fun startWork(): ListenableFuture<Result> {
@@ -75,7 +98,16 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
       return Futures.immediateFuture(Result.success())
     }
 
+    // The engine of an earlier run is still alive, its Dart may still be closing the databases: no second engine
+    // meanwhile, WorkManager runs this work again later
+    if (!teardown.tryStart()) {
+      Log.i(TAG, "The previous background engine is still being torn down, retrying later")
+      activeWorker.compareAndSet(this, null)
+      return Futures.immediateFuture(Result.retry())
+    }
+
     try {
+      startedAt = SystemClock.elapsedRealtime()
       Log.i(TAG, "Starting background upload worker")
 
       if (!loader.initialized()) {
@@ -91,8 +123,9 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
       val notificationConfig = BackgroundWorkerPreferences(ctx).getNotificationConfig()
       showNotification(notificationConfig.first, notificationConfig.second)
 
-      loader.ensureInitializationCompleteAsync(ctx, null, Handler(Looper.getMainLooper())) {
-        if (isStopped || isComplete) {
+      loader.ensureInitializationCompleteAsync(ctx, null, mainHandler) {
+        phase("Flutter loader ready")
+        if (isStopped || teardown.isEnding) {
           return@ensureInitializationCompleteAsync
         }
 
@@ -107,6 +140,8 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
           binaryMessenger = engine!!.dartExecutor.binaryMessenger,
           api = this
         )
+        teardown.engineStarted()
+        phase("engine started")
 
         engine!!.dartExecutor.executeDartEntrypoint(
           DartExecutor.DartEntrypoint(
@@ -119,7 +154,7 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
 
       return completionHandler
     } catch (error: Throwable) {
-      activeWorker.compareAndSet(this, null)
+      teardown.complete(Result.failure())
       throw error
     }
   }
@@ -130,6 +165,11 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
    * This method acts as a bridge between the native Android background task system and Flutter.
    */
   override fun onInitialized() {
+    phase("Dart initialized")
+    // Stopped while Dart was starting: the cancel is on its way, no upload
+    if (teardown.isEnding) {
+      return
+    }
     flutterApi?.onAndroidUpload(maxMinutesArg = 20) { handleHostResult(it) }
   }
 
@@ -162,29 +202,30 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
   }
 
   override fun close() {
-    if (isComplete) {
+    mainHandler.postAtFrontOfQueue { stop(Result.failure()) }
+  }
+
+  /**
+   * Stops the run, on the main thread. Dart is asked to cancel: it waits for its running work, closes the databases and
+   * answers. The work is finished on that answer or after 5 s, the engine destroyed on that answer or after 60 s
+   * (BackgroundTeardown): destroyed earlier, the isolate of the engine would end with database work in flight.
+   */
+  private fun stop(result: Result) {
+    if (!teardown.cancel(result)) {
       return
     }
-
+    cancelAskedAt = SystemClock.elapsedRealtime()
+    phase("cancel asked")
     val api = flutterApi
     if (api == null) {
-      Handler(Looper.getMainLooper()).postAtFrontOfQueue {
-        complete(Result.failure())
-      }
+      teardown.dartAnswered()
       return
     }
-
-    Handler(Looper.getMainLooper()).postAtFrontOfQueue {
-      api.cancel {
-        complete(Result.failure())
-      }
+    api.cancel { answer ->
+      val outcome = if (answer.isSuccess) "confirmed" else "failed (${answer.exceptionOrNull()})"
+      phase("Dart cleanup $outcome after the cancel", cancelAskedAt)
+      teardown.dartAnswered()
     }
-
-    waitForForegroundPromotion()
-
-    Handler(Looper.getMainLooper()).postDelayed({
-      complete(Result.failure())
-    }, 5000)
   }
 
   /**
@@ -197,47 +238,67 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
     close()
   }
 
+  /// The answer of Dart to onAndroidUpload, which comes after its own cleanup
   private fun handleHostResult(result: kotlin.Result<Boolean>) {
-    if (isComplete) {
+    if (teardown.isWorkFinished) {
       return
     }
 
     result.fold(
       onSuccess = { needsRetry ->
+        phase("work ended")
         // The connected worker cannot enqueue itself while it is running, so it retries in place
         if (needsRetry && !tags.contains(BackgroundWorkerApiImpl.RETRY_TAG)) {
           BackgroundWorkerApiImpl.enqueueBackgroundWorkerWhenConnected(ctx)
-          complete(Result.success())
+          teardown.complete(Result.success())
         } else {
-          complete(if (needsRetry) Result.retry() else Result.success())
+          teardown.complete(if (needsRetry) Result.retry() else Result.success())
         }
       },
-      onFailure = { _ -> onStopped() }
+      onFailure = { _ -> stop(Result.failure()) }
     )
   }
 
   /**
-   * Cleans up resources by destroying the Flutter engine context and invokes the completion handler.
-   * This method ensures that the background task is marked as complete, releases the Flutter engine,
-   * and notifies the caller of the task's success or failure. This is the final step in the
-   * background task lifecycle and should only be called once per task instance.
-   *
-   * - Parameter success: Indicates whether the background task completed successfully
+   * Gives WorkManager the result of this run, once (see BackgroundTeardown). The engine may still be alive. A pending
+   * foreground promotion is waited for first, off the main thread since that wait blocks.
    */
-  private fun complete(success: Result) {
-    Log.d(TAG, "About to complete BackupWorker with result: $success")
-    isComplete = true
-    if (engine != null) {
-      MainActivity.cancelPlugins(engine!!)
-    }
-    engine?.destroy()
-    engine = null
-    flutterApi = null
+  private fun finishWork(result: Result) {
+    Log.d(TAG, "About to complete BackupWorker with result: $result")
     notificationManager.cancel(NOTIFICATION_ID)
-    FlutterEngineCache.getInstance().remove(BackgroundWorkerApiImpl.ENGINE_CACHE_KEY)
     activeWorker.compareAndSet(this, null)
-    waitForForegroundPromotion()
-    completionHandler.set(success)
+    offMainThread.execute {
+      waitForForegroundPromotion()
+      completionHandler.set(result)
+    }
+  }
+
+  /** Destroys the engine of this run, once, after the cleanup of its Dart or at the cap (see BackgroundTeardown) */
+  private fun destroyEngine() {
+    val engine = this.engine ?: return
+    this.engine = null
+    flutterApi = null
+    MainActivity.cancelPlugins(engine)
+    engine.destroy()
+    val cache = FlutterEngineCache.getInstance()
+    if (cache.get(BackgroundWorkerApiImpl.ENGINE_CACHE_KEY) === engine) {
+      cache.remove(BackgroundWorkerApiImpl.ENGINE_CACHE_KEY)
+    }
+    if (cancelAskedAt > 0L) {
+      phase("engine destroyed after the cancel", cancelAskedAt)
+    } else {
+      phase("engine destroyed")
+    }
+  }
+
+  /**
+   * Logs a phase of this run with the time since its start, and since [since] when it is set: how long a step held the
+   * main thread at a background start (a TV), how long Dart took to clean up after a cancel
+   */
+  private fun phase(name: String, since: Long = 0L) {
+    val now = SystemClock.elapsedRealtime()
+    val took = if (since > 0L) " (took ${now - since} ms)" else ""
+    Log.i(TAG, "Phase: $name at ${now - startedAt} ms$took")
   }
 
   /**
