@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
@@ -60,7 +61,7 @@ class AiReliefSettings extends HookConsumerWidget {
             .write(.aiReliefQuestMode, mesh25d.value ? ReliefViewMode.mesh25d : ReliefViewMode.stereo),
       ),
     );
-    final computesReliefs = ref.watch(appFlavorProvider) == questFlavor;
+    final computesReliefs = ref.watch(appFlavorProvider) == kQuestFlavor;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
