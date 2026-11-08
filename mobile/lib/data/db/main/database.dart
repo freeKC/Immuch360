@@ -123,7 +123,7 @@ class Drift extends $Drift {
   @override
   Future<void> close() async {
     await super.close();
-    _updatePool?.close();
+    await _updatePool?.close();
   }
 
   Future<void> reset() async {

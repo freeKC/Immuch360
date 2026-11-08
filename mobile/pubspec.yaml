@@ -75,9 +75,11 @@ dependencies:
   share_plus: ^10.1.4
   sliver_tools: ^0.2.12
   stream_transform: ^2.1.1
-  sqlite3: ^3.4.0
-  sqlite_async: 0.14.2
-  sqlite3_connection_pool: ^0.2.7
+  sqlite3: ^3.5.2
+  # 0.14.8 lends a statement isolate the connection through ShareableAsyncConnection of the pool 0.2.17, no longer by
+  # its raw address, which a dying isolate could close under the statement; kept exact, as upstream does
+  sqlite_async: 0.14.8
+  sqlite3_connection_pool: ^0.2.17
   timezone: ^0.9.4
   url_launcher: ^6.3.2
   uuid: ^4.6.0
