@@ -274,9 +274,10 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
     close()
   }
 
-  /// The answer of Dart to onAndroidUpload, which comes after its own cleanup
+  /// The answer of Dart to onAndroidUpload, which comes after its own cleanup. After a stop, the answer to the cancel
+  /// ends the run instead (BackgroundTeardown).
   private fun handleHostResult(result: kotlin.Result<Boolean>) {
-    if (teardown.isWorkFinished) {
+    if (teardown.isEnding) {
       return
     }
 

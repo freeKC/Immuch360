@@ -237,10 +237,12 @@ void main() {
       verify(() => mockDataController.close()).called(1);
     });
 
-    test('makes an upload asked afterwards return at once', () async {
-      await sut.cancel();
+    test('makes an upload asked afterwards answer once the cleanup is done, without running', () async {
+      final cancel = sut.cancel();
+      final upload = sut.onAndroidUpload(20);
 
-      expect(await sut.onAndroidUpload(20), isFalse);
+      expect(await upload, isFalse);
+      await cancel;
       verifyNever(() => mockLocalSyncService.sync());
       verify(() => mockDataController.close()).called(1);
     });

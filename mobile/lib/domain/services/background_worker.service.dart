@@ -84,6 +84,9 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   /// The one cleanup, shared by the end of an upload and cancel()
   Future<void>? _cleanupFuture;
 
+  /// The one stop asked by the native side
+  Future<void>? _cancelFuture;
+
   BackgroundWorkerBgService({
     required this._dataController,
     required ApiService apiService,
@@ -155,7 +158,7 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   Future<bool> onAndroidUpload(int? maxMinutes) {
     if (_isStopping) {
       _logger.info("Android background upload asked after a cancel, skipped");
-      return Future.value(false);
+      return _afterStop().then((_) => false);
     }
     final work = _androidUpload(maxMinutes);
     _workFuture = work;
@@ -177,7 +180,7 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   Future<void> onIosUpload(bool isRefresh, int? maxSeconds) {
     if (_isStopping) {
       _logger.info("iOS background upload asked after a cancel, skipped");
-      return Future.value();
+      return _afterStop();
     }
     final work = _iosUpload(isRefresh, maxSeconds);
     _workFuture = work;
@@ -290,7 +293,9 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
   /// Stops the work, then cleans up: the running upload and init() are waited for (up to [cancelWaitLimit]) before
   /// the databases close, so that its answer means no database work is left in this engine
   @override
-  Future<void> cancel() async {
+  Future<void> cancel() => _cancelFuture ??= _cancel();
+
+  Future<void> _cancel() async {
     _logger.warning("Background worker cancelled");
     if (!_cancellationToken.isCompleted) {
       _cancellationToken.complete();
@@ -302,6 +307,10 @@ class BackgroundWorkerBgService extends BackgroundWorkerFlutterApi {
       dPrint(() => 'Failed to cleanup background worker: $error with stack: $stack');
     }
   }
+
+  /// Completes once the stop already under way is done: an answer to the native side sent earlier could end the
+  /// engine under the cleanup. Never starts one itself.
+  Future<void> _afterStop() => _cancelFuture ?? _cleanupFuture ?? Future.value();
 
   Future<void> _waitForRunningWork() async {
     final running = [_initFuture, _workFuture].nonNulls.map((work) => work.then<void>((_) {}, onError: (Object _) {}));
