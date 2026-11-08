@@ -541,8 +541,14 @@ class PanoramaSetupRefused implements Exception {
 }
 
 /// The engine of a panorama as the gate [found] it available: sd-cli of the archive of this system, the card the gate
-/// chose given to it by its index among the cards ggml numbers (`Vulkan<n>`, never with GGML_VK_VISIBLE_DEVICES: review
-/// of lot P2, point 4), the models of the catalogue by their id. Throws [PanoramaSetupRefused].
+/// chose given to it by its index among the cards ggml numbers (`Vulkan<n>`), the models of the catalogue by their id.
+/// That index is a guess from the order of the probe, which runs in the app's process: since desktop build 21 that
+/// process asks the drivers for the high performance card, and on the laptop of the owner the probe put the RTX 4060
+/// first where sd-cli.exe lists the Intel chip first (8 November 2026). So the card goes with it by name and kind
+/// ([SdCppCard]), and sd-cli's own list decides at its start (sdcpp_runner.dart). Never GGML_VK_VISIBLE_DEVICES: each
+/// of its numbers is an index into the Vulkan devices of sd-cli's own process, so the probe's index there would hide
+/// the right card on that laptop, and it is not to be mixed with `Vulkan<n>` (review of lot P2, point 4). Throws
+/// [PanoramaSetupRefused].
 PanoramaSetup panoramaSetupOf(AiGateResult found) {
   final platform = found.platform!;
   final card = found.gpu;
@@ -576,6 +582,7 @@ PanoramaSetup panoramaSetupOf(AiGateResult found) {
         upscaler: need(upscalerComponent).path,
       ),
       device: 'Vulkan$index',
+      card: SdCppCard(name: card.name, integrated: card.kind == GpuKind.integrated),
       stallTimeout: card.kind == GpuKind.integrated ? panoramaIntegratedStallTimeout : const Duration(seconds: 180),
     ),
     models: OrtPanoramaModelsSpec(
@@ -634,17 +641,25 @@ class DesktopPanoramaEngine implements ImmersiveEngine, KeptAiEngine {
   @override
   bool get isRunning => _running;
 
-  /// PanoramaEngine on sd-cli, through a runner of the session of the programs of the app
+  /// PanoramaEngine on sd-cli, through a runner of the session of the programs of the app; its generator and its
+  /// upscaler share the card of the job, which sd-cli's own list settles (SdCppDevice)
   static ImmersiveEngine sdCppEngineFor(PanoramaSetup setup, AiProcessSession session) {
     final runner = session.runner(linuxLauncher: setup.linuxLauncher);
+    final device = SdCppDevice(setup.settings);
     return PanoramaEngine(
       generator: SdCppGenerator(
         runner: runner,
         settings: setup.settings,
         generatorSha256: setup.transformer.sha256!,
         loraSha256: panoramaLoraComponent.sha256!,
+        device: device,
       ),
-      upscaler: SdCppUpscaler(runner: runner, settings: setup.settings, modelSha256: upscalerComponent.sha256!),
+      upscaler: SdCppUpscaler(
+        runner: runner,
+        settings: setup.settings,
+        modelSha256: upscalerComponent.sha256!,
+        device: device,
+      ),
       models: setup.models,
       folders: session.folders,
       requiredFiles: setup.requiredFiles,
