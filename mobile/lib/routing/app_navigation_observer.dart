@@ -8,6 +8,7 @@ import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.da
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/routing/route_opening_key_gate.dart';
+import 'package:immich_mobile/utils/app_health.dart';
 
 class AppNavigationObserver extends AutoRouterObserver {
   /// Riverpod Instance
@@ -26,6 +27,8 @@ class AppNavigationObserver extends AutoRouterObserver {
         ref.read(previousRouteDataProvider.notifier).state = previousRoute?.settings;
       }),
     );
+    // The page Android keeps with the process, for the report of its end (AppHealthReports)
+    AppHealthReports.setPage(route.settings.name);
     _keepAFocus(route, opening: true);
   }
 
@@ -33,8 +36,12 @@ class AppNavigationObserver extends AutoRouterObserver {
   void didPop(Route route, Route? previousRoute) {
     ref.invalidate(inLockedViewProvider);
     ref.invalidate(isAssetViewerOpenProvider);
+    AppHealthReports.setPage(previousRoute?.settings.name);
     _keepAFocus(previousRoute);
   }
+
+  @override
+  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) => AppHealthReports.setPage(route.name);
 
   /// In the remote control layout an item always has the focus (the TV guidelines), or the first arrow is lost: a
   /// page that focuses nothing by itself gets its first item, and so does a page that comes back without the item it

@@ -3,6 +3,8 @@ name: Immuch360 Android release
 # Builds the signed Android APKs of the fork and attaches them to a GitHub Release, with the archive of the sources of
 # libsmb2 (LGPL-2.1-or-later), the SMB library inside every APK, which the APKs also carry as an asset.
 # Triggered by pushing a tag like v3.3.0-1, or manually.
+# Each build also keeps the R8 mappings and the native symbol tables that turn the store crash traces back into names,
+# as the symbols artifact (kept 90 days, not attached to the release, see the step "Symbols and mappings").
 # The Kotlin unit tests of the app (phone flavour, debug) and the compilation of the quest flavour run with every
 # build, and alone on every push of a branch that changes mobile/android (the path filter does not apply to tags).
 
@@ -151,11 +153,19 @@ jobs:
             BUILD_NUMBER="--build-number=$((3029998 + ${BASH_REMATCH[1]}))"
             echo "Android version code ${BUILD_NUMBER#--build-number=} for tag ${GITHUB_REF_NAME}"
           fi
+          # The R8 mapping of each build, copied before the next build of the flavour writes over it; the step
+          # "Symbols and mappings" keeps them
+          maps="$RUNNER_TEMP/mappings"
+          mkdir -p "$maps"
           mise exec -- flutter build apk --release --flavor phone $BUILD_NUMBER
+          cp build/app/outputs/mapping/phoneRelease/mapping.txt "$maps/phone-universal.txt"
           mise exec -- flutter build apk --release --flavor phone --split-per-abi --target-platform android-arm,android-arm64,android-x64 $BUILD_NUMBER
+          cp build/app/outputs/mapping/phoneRelease/mapping.txt "$maps/phone-split.txt"
           mise exec -- flutter build appbundle --release --flavor phone $BUILD_NUMBER
+          cp build/app/outputs/mapping/phoneRelease/mapping.txt "$maps/phone-bundle.txt"
           mise exec -- flutter build apk --release --flavor quest --target-platform android-arm64 --android-project-arg arm64only=true $BUILD_NUMBER
-          ls -la build/app/outputs/flutter-apk/ build/app/outputs/bundle/phoneRelease/
+          cp build/app/outputs/mapping/questRelease/mapping.txt "$maps/quest.txt"
+          ls -la build/app/outputs/flutter-apk/ build/app/outputs/bundle/phoneRelease/ "$maps"
 
       # Google Play's Deep links page reads the manifest of the build, with the entries of the libraries: no web link of
       # a domain the project does not own, no autoVerify, DEFAULT and BROWSABLE on every VIEW filter of a custom scheme
@@ -208,6 +218,34 @@ jobs:
             echo "$package: $assets holds the notice, the licence texts and the sources"
           done
           cp "$sources" Immuch360-libsmb2-sources.tar.gz
+
+      # The R8 mappings and the native symbol tables that turn the obfuscated Java frames and the native offsets of the
+      # store crash traces back into names (.github/desktop/keep_android_symbols.py). The App Bundle carries those of
+      # the phones in BUNDLE-METADATA, where Google Play reads them: checked here, the release stops when the bundle
+      # lacks its R8 mapping or the libapp.so.sym (the Dart code) of an ABI. The Quest APK carries none: its mapping
+      # and the symbol tables of its libraries are kept, named as the libraries, with the build IDs of the APK, for the
+      # upload to the Meta Horizon Store. Not attached to the release (the phone files are already in the .aab, the
+      # asset list stays for users): the symbols artifact below, kept 90 days, and a copy on the owner's disk
+      - name: Symbols and mappings
+        id: symbols
+        run: |
+          apks=mobile/build/app/outputs/flutter-apk
+          python3 .github/desktop/keep_android_symbols.py keep --out symbols --mappings "$RUNNER_TEMP/mappings" \
+            --bundle "$apks/Immuch360-${GITHUB_REF_NAME}.aab" \
+            --quest-apk "$apks/Immuch360-${GITHUB_REF_NAME}-quest-release.apk" \
+            --quest-symbols mobile/build/app/outputs/native-debug-symbols/questRelease/native-debug-symbols.zip \
+            --intermediates mobile/build/app/intermediates --label "$GITHUB_REF_NAME" --commit "$GITHUB_SHA"
+          du -sh symbols symbols/*
+
+      - name: Upload the symbols
+        # Also when the step above failed, to read what it kept
+        if: ${{ !cancelled() && steps.symbols.outcome != 'skipped' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbols
+          path: symbols/
+          retention-days: 90
+          if-no-files-found: error
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

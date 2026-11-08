@@ -1171,12 +1171,14 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+      # The minidumps of the Logs page are read with them as long as a build is in use: 90 days for a release (tag),
+      # as the symbols of the Android builds
       - name: Upload the debug symbols
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: immuch360-desktop-windows-x64-symbols
           path: dist/symbols/
-          retention-days: 14
+          retention-days: ${{ startsWith(github.ref, 'refs/tags/') && 90 || 14 }}
           if-no-files-found: ignore
 
       # The desktop tests of the first step skip what needs the DLLs of a build (libmpv, ANGLE, the decoder probe),

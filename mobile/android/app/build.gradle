@@ -113,6 +113,13 @@ android {
       signingConfig hasKeystore ? signingConfigs.release : signingConfigs.debug
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
       versionNameSuffix "-immuch360"
+      // The symbol tables of the native libraries, libapp.so (the Dart code) first, which turn the native frames of the
+      // store crash traces into names: in BUNDLE-METADATA of the App Bundle, where Google Play reads them, and for an
+      // APK in build/outputs/native-debug-symbols/<variant>/native-debug-symbols.zip, which the release workflow keeps
+      // for the Quest build (.github/desktop/keep_android_symbols.py). The symbol tables only: libapp.so has no DWARF
+      ndk {
+        debugSymbolLevel 'SYMBOL_TABLE'
+      }
 
       def prNumber = System.getenv("PR_NUMBER")
       if (prNumber) {
