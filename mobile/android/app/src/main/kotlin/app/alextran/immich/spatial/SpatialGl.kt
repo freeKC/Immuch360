@@ -167,11 +167,9 @@ internal object SpatialGl {
     }
   }
 
-  /** True when the current context lists the extension [name] */
-  fun hasExtension(name: String): Boolean {
-    val extensions = GLES30.glGetString(GLES30.GL_EXTENSIONS) ?: return false
-    return extensions.split(' ').contains(name)
-  }
+  /** True when the current context lists the extension [name], as an exact token (see GpuTimerPolicy.hasExtension) */
+  fun hasExtension(name: String): Boolean =
+    GpuTimerPolicy.hasExtension(GLES30.glGetString(GLES30.GL_EXTENSIONS), name)
 }
 
 /** Storage of a render target: the internal format, the pixel format and the pixel type of glTexImage2D */
