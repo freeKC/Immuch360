@@ -1,8 +1,9 @@
 // The selection of a folder of a share on a computer (the rules are in desktop_selection.dart): Control, Shift and
 // right clicks on its photos and videos, Control A and Escape, written into networkSelectionProvider of the folder, in
-// the order of the grid. A folder ignores the keys and opens. The menu of a right click sends the selection to the
-// Immich server, as the bar at the bottom of the page does. A Shift click finds its anchor again by its path: a refresh
-// may have brought files above it.
+// the order of the grid. Control A takes the splat files listed after the photos and videos too, as Select all of the
+// bar does; a click on a splat tile keeps the behaviour of that tile. A folder ignores the keys and opens. The menu of
+// a right click sends the selection to the Immich server, as the bar at the bottom of the page does. A Shift click
+// finds its anchor again by its path: a refresh may have brought files above it.
 
 import 'dart:math' as math;
 
@@ -18,7 +19,7 @@ import 'package:immich_mobile/providers/network/network_selection.provider.dart'
 /// The scope of the photos and videos of a share folder, which its page reaches from a click on a tile
 typedef DesktopNetworkSelectionKey = GlobalKey<DesktopSelectionScopeState<NetworkEntry>>;
 
-/// The picked files of [folder], whose photos and videos are [_media] in the order of the grid
+/// The picked files of [folder], whose photos and videos, then splat files, are [_media] in the order of the grid
 class NetworkFolderSelectable implements DesktopSelectable<NetworkEntry> {
   NetworkFolderSelectable(this._ref, this.folder, this._media);
 
@@ -30,7 +31,7 @@ class NetworkFolderSelectable implements DesktopSelectable<NetworkEntry> {
 
   NetworkSelectionNotifier get _notifier => _ref.read(networkSelectionProvider(folder).notifier);
 
-  /// Where [entry] is in the grid, -1 when it is not a photo or video of it
+  /// Where [entry] is in the grid, -1 when it is not one of its photos, videos or splat files
   int indexOf(NetworkEntry entry) => _media().indexWhere((media) => media.path == entry.path);
 
   @override
@@ -89,8 +90,8 @@ class NetworkFolderSelectable implements DesktopSelectable<NetworkEntry> {
 }
 
 /// The grid of a share folder, [child], selected in with the keyboard and the mouse on a computer while [enabled] (not
-/// in the remote control layout); [child] itself on a phone. [media] gives the photos and videos of the folder in the
-/// order of the grid, [onUpload] sends the picked ones.
+/// in the remote control layout); [child] itself on a phone. [media] gives the photos and videos of the folder, then
+/// the splat files listed after them, in the order of the grid; [onUpload] sends the picked ones.
 Widget withDesktopNetworkSelection({
   required DesktopNetworkSelectionKey key,
   required NetworkFolderKey folder,

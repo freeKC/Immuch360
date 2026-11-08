@@ -153,7 +153,8 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   /// Whether the share is being looked for on the network, for the message of the page
   bool _relocating = false;
 
-  /// Immuch360 Desktop: the clicks and keys of a selection on the photos and videos (lib/desktop/selection)
+  /// Immuch360 Desktop: the clicks and keys of a selection on the photos and videos, Control A on the splats too
+  /// (lib/desktop/selection)
   final _desktopSelection = DesktopNetworkSelectionKey();
 
   NetworkFolderKey get _folderKey => (sourceId: widget.sourceId, path: widget.path);
@@ -499,7 +500,8 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
               return withDesktopNetworkSelection(
                 key: _desktopSelection,
                 folder: _folderKey,
-                media: () => _media,
+                // The splats whose head was read come after the photos and videos, as Select all of the bar takes them
+                media: () => [..._media, ..._readSplats],
                 enabled: !tvMode,
                 onUpload: () => unawaited(_upload()),
                 child: _FolderView(

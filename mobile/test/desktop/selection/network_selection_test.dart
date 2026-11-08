@@ -1,11 +1,12 @@
 // The selection of a folder of a share on a computer (lib/desktop/selection/network_selection.dart), in the real
 // browser under the window shell: Control click picks without opening, Shift click picks the range in the order of the
-// grid, Control A picks every photo and video, Escape stops picking, a right click opens the menu whose "Upload to
-// Immich" sends the picked files in the order of the grid, or says that a server is needed. A folder opens whatever the
-// keys; a Shift click finds its anchor again after a refresh brought files above it. A phone, and the remote control
-// layout on a computer, keep the browser as it was.
+// grid, Control A picks every photo and video, and the splat files listed after them as Select all does, Escape stops
+// picking, a right click opens the menu whose "Upload to Immich" sends the picked files in the order of the grid, or
+// says that a server is needed. A folder opens whatever the keys; a Shift click finds its anchor again after a refresh
+// brought files above it. A phone, and the remote control layout on a computer, keep the browser as it was.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:drift/drift.dart' show DatabaseConnection;
@@ -19,6 +20,7 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
@@ -27,6 +29,8 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -154,24 +158,29 @@ void main() {
     await db.close();
   });
 
-  Future<RootStackRouter> pumpBrowser(WidgetTester tester, {bool shell = true, bool tvMode = false}) =>
-      pumpNetworkRouter(
-        tester,
-        home: NetworkBrowserPage(sourceId: source.id, path: '/'),
-        builder: shell ? (context, child) => DesktopShell(child: child!) : null,
-        overrides: [
-          desktopWindowProvider.overrideWithValue(FakeSelectionWindow()),
-          storeServiceProvider.overrideWithValue(store),
-          overrideConnections((ref) => FakeConnections(ref, share)),
-          networkThumbnailImageProvider.overrideWithValue(_PendingImage.new),
-          uploadRecordStoreProvider.overrideWithValue(_MemoryRecords()),
-          foregroundUploadServiceProvider.overrideWithValue(uploads),
-          toastServiceProvider.overrideWithValue(_Toasts()),
-          tvModeProvider.overrideWithValue(tvMode),
-          // The bar of a selection builds "Make 3D (AI)" on a computer (share_conversion.dart): off here
-          aiFeaturesEnabledProvider.overrideWith((ref) => false),
-        ],
-      );
+  Future<RootStackRouter> pumpBrowser(
+    WidgetTester tester, {
+    bool shell = true,
+    bool tvMode = false,
+    List<Override> overrides = const [],
+  }) => pumpNetworkRouter(
+    tester,
+    home: NetworkBrowserPage(sourceId: source.id, path: '/'),
+    builder: shell ? (context, child) => DesktopShell(child: child!) : null,
+    overrides: [
+      desktopWindowProvider.overrideWithValue(FakeSelectionWindow()),
+      storeServiceProvider.overrideWithValue(store),
+      overrideConnections((ref) => FakeConnections(ref, share)),
+      networkThumbnailImageProvider.overrideWithValue(_PendingImage.new),
+      uploadRecordStoreProvider.overrideWithValue(_MemoryRecords()),
+      foregroundUploadServiceProvider.overrideWithValue(uploads),
+      toastServiceProvider.overrideWithValue(_Toasts()),
+      tvModeProvider.overrideWithValue(tvMode),
+      // The bar of a selection builds "Make 3D (AI)" on a computer (share_conversion.dart): off here
+      aiFeaturesEnabledProvider.overrideWith((ref) => false),
+      ...overrides,
+    ],
+  );
 
   Finder tileOf(String name) =>
       find.byWidgetPredicate((widget) => widget is NetworkMediaTile && widget.entry.name == name);
@@ -254,6 +263,23 @@ void main() {
       expect(picked(tester).isActive, isFalse);
       expect(find.byKey(const Key('network_media_unselected')), findsNothing);
       expect(find.text('Home NAS'), findsOneWidget, reason: 'the bar of the folder is back');
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Control A picks the splat files listed after the photos and videos too, as Select all does', (
+      tester,
+    ) async {
+      share.files['/cash.spz'] = File('test/fixtures/splat/cash_register_head.spz').readAsBytesSync();
+      share.folders['/'] = [...share.folders['/']!, share.file('/cash.spz')];
+      // A computer lists the splats of a share for its splat viewer, with the settings of the app
+      await pumpBrowser(tester, overrides: [appConfigProvider.overrideWithValue(const AppConfig())]);
+      expect(find.byType(SplatTile), findsOneWidget);
+
+      expect(await withShortcut(tester, LogicalKeyboardKey.keyA), isTrue);
+      await tester.pumpAndSettle();
+      expect(picked(tester).paths, {'/a.jpg', '/b.jpg', '/c.jpg', '/d.jpg', '/cash.spz'});
+      expect(find.text(t.network_upload_selected(count: 5)), findsOneWidget);
+      expect(find.byKey(const Key('splat_tile_selected')), findsOneWidget);
       debugDefaultTargetPlatformOverride = null;
     });
 
