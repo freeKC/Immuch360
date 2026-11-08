@@ -34,6 +34,8 @@ import app.alextran.immich.immersive.isHorizonOsDevice
 import app.alextran.immich.pairing.QrScanApi
 import app.alextran.immich.pairing.QrScanApiImpl
 import app.alextran.immich.images.LocalImagesImpl
+import app.alextran.immich.images.NativeImageDecodeApi
+import app.alextran.immich.images.NativeImageDecodeImpl
 import app.alextran.immich.images.RemoteImageApi
 import app.alextran.immich.images.RemoteImagesImpl
 import app.alextran.immich.permission.PermissionApi
@@ -189,6 +191,7 @@ class MainActivity : FlutterFragmentActivity() {
       PermissionApi.setUp(messenger, permissionApiImpl)
       LocalImageApi.setUp(messenger, LocalImagesImpl(ctx))
       RemoteImageApi.setUp(messenger, RemoteImagesImpl(ctx))
+      NativeImageDecodeApi.setUp(messenger, NativeImageDecodeImpl(ctx))
 
       BackgroundWorkerFgHostApi.setUp(messenger, BackgroundWorkerApiImpl(ctx))
       ConnectivityApi.setUp(messenger, ConnectivityApiImpl(ctx))

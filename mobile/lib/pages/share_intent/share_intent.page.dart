@@ -7,6 +7,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/upload/share_intent_attachment.model.dart';
 import 'package:immich_mobile/pages/common/large_leading_tile.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/url_helper.dart';
@@ -89,7 +90,7 @@ class ShareIntentPage extends ConsumerWidget {
                   ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
                     child: attachment.isImage
-                        ? Image.file(attachment.file, width: 64, height: 64, fit: BoxFit.cover)
+                        ? ShareIntentThumbnail(path: attachment.path)
                         : const SizedBox(
                             width: 64,
                             height: 64,
@@ -208,5 +209,32 @@ class UploadStatusIcon extends StatelessWidget {
     };
 
     return statusIcon;
+  }
+}
+
+/// The picture of a file shared to the app, [path]: decoded at most 128 pixels on a side (two times the 64 it shows
+/// at), by the engine for its own formats and, on Android, by the native decoder for the others (a HEIF, an AVIF, a raw
+/// file), never at its full size by the fallback decoder of the engine (see GuardedFileImage); a document when no
+/// decoder of the device reads it
+class ShareIntentThumbnail extends StatelessWidget {
+  const ShareIntentThumbnail({super.key, required this.path});
+
+  final String path;
+
+  static const size = 64.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image(
+      image: GuardedFileImage(path, source: 'shareIntent', maxWidth: 128, maxHeight: 128),
+      width: size,
+      height: size,
+      fit: BoxFit.cover,
+      errorBuilder: (_, _, _) => const SizedBox(
+        width: size,
+        height: size,
+        child: Center(child: Icon(Icons.insert_drive_file_outlined, color: Colors.white)),
+      ),
+    );
   }
 }

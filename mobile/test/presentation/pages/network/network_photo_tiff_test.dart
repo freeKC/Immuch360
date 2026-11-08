@@ -28,6 +28,7 @@ import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
@@ -276,11 +277,11 @@ void main() {
     await pumpRealIo(tester, showsDecodedPhoto);
 
     expect(showsDecodedPhoto(), isTrue);
-    expect(networkPhotoImage(server.urlOf('/beach.jpg')), isA<ResizeImage>());
+    expect(networkPhotoImage(server.urlOf('/beach.jpg')), isA<GuardedNetworkImage>());
     expect(networkPhotoImage(server.urlOf('/plan.TIFF')), isA<NetworkTiffImage>());
     // The name tells nothing, the type of the share (DLNA, Plex, WebDAV) does
     expect(networkPhotoImage(server.urlOf('/scan_0001'), mimeType: 'image/tiff'), isA<NetworkTiffImage>());
-    expect(networkPhotoImage(server.urlOf('/scan_0001')), isA<ResizeImage>());
+    expect(networkPhotoImage(server.urlOf('/scan_0001')), isA<GuardedNetworkImage>());
 
     await endRealIo(tester);
   });
