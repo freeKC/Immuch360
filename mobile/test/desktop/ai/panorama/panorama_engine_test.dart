@@ -224,17 +224,10 @@ void main() {
     expect(whole, greaterThan(100));
   }
 
-  PanoramaJob jobOf(
-    String path, {
-    int turns = 0,
-    int seed = 1002,
-    String? sha1,
-    int? graphicsBudget,
-    String id = 'panorama-1',
-  }) {
+  PanoramaJob jobOf(String path, {int turns = 0, int seed = 1002, String? sha1, int? graphicsBudget}) {
     final bytes = File(path).readAsBytesSync();
     return PanoramaJob(
-      id: id,
+      id: 'panorama-1',
       source: ImmersiveSource(name: p.basename(path), size: bytes.length, sha1: sha1 ?? _sha1Of(bytes), path: path),
       partPath: p.join(folder.path, '.salon_360.jpg.42-1.immuch360.part'),
       derivativeId: 'derivative-1',
@@ -730,15 +723,16 @@ void main() {
     const said =
         'sd-cli wrote nothing for 180 s and was stopped; its last lines:\n[I] loading the transformer\n'
         '[V] Initializing backend: Vulkan0\n[I] generating image: 1/1 - seed 1002';
+    const stalled = BackendException(ImmersiveErrorCode.generatorStalled, said);
+    const failure = BackendException(ImmersiveErrorCode.generatorFailed, 'sd-cli ended with 1: [E] line two');
 
     test('one warning with the step, the code and the last lines of sd-cli; none for a cancel', () async {
       final warnings = recorded('PanoramaEngine', Level.WARNING);
-      final stalled = await engineOf(
-        generator: _Logging(const [], failure: const BackendException(ImmersiveErrorCode.generatorStalled, said)),
-      ).run(jobOf(photo(), id: 'conversion-3'), cancel: cancel);
+      final engine = engineOf(generator: _Logging(const [], failure: stalled));
+      final result = await engine.run(jobOf(photo()), cancel: cancel);
 
-      expect(stalled.error, ImmersiveErrorCode.generatorStalled);
-      expect(warnings, ['conversion-3: failed at loadingModels: generatorStalled: $said']);
+      expect(result.error, ImmersiveErrorCode.generatorStalled);
+      expect(warnings, ['panorama-1: failed at loadingModels: generatorStalled: $said']);
 
       warnings.clear();
       final cancelled = await engineOf().run(
@@ -767,10 +761,9 @@ void main() {
         Logger.root.level = before;
         await listening.cancel();
       });
+      final generator = _Logging(const [], failure: const FormatException('a reply that does not read'));
 
-      final result = await engineOf(
-        generator: _Logging(const [], failure: const FormatException('a reply that does not read')),
-      ).run(jobOf(photo()), cancel: cancel);
+      final result = await engineOf(generator: generator).run(jobOf(photo()), cancel: cancel);
 
       expect(result.error, ImmersiveErrorCode.modelFailed);
       expect(warnings, hasLength(1));
@@ -781,34 +774,27 @@ void main() {
 
     test('the log of sd-cli kept in one file of the logs folder after a failure, none after a success', () async {
       final logs = Directory(p.join(folder.path, 'app-logs'));
-      final failed = await engineOf(
-        generator: _Logging(
-          const ['[I] line one', '[E] line two'],
-          failure: const BackendException(ImmersiveErrorCode.generatorFailed, 'sd-cli ended with 1: [E] line two'),
-        ),
-        failureLogs: logs,
-        clock: () => DateTime(2026, 11, 8, 17, 7, 12),
-      ).run(jobOf(photo(), id: 'conversion-1'), cancel: cancel);
+      final generator = _Logging(const ['[I] line one', '[E] line two'], failure: failure);
+      DateTime clock() => DateTime(2026, 11, 8, 17, 7, 12);
+
+      final engine = engineOf(generator: generator, failureLogs: logs, clock: clock);
+      final failed = await engine.run(jobOf(photo()), cancel: cancel);
 
       expect(failed.error, ImmersiveErrorCode.generatorFailed);
       final kept = [for (final entry in logs.listSync()) p.basename(entry.path)];
-      expect(kept, ['panorama-conversion-1-2026-11-08T17-07-12.log']);
+      expect(kept, ['panorama-panorama-1-2026-11-08T17-07-12.log']);
       expect(kept.single, isNot(contains(':')));
       final text = File(p.join(logs.path, kept.single)).readAsStringSync();
-      expect(
-        text,
-        startsWith('Panorama conversion-1 (salon.jpg) failed: generatorFailed: sd-cli ended with 1: [E] line two\n'),
-      );
+      const header = 'Panorama panorama-1 (salon.jpg) failed: generatorFailed: sd-cli ended with 1: [E] line two\n';
+      expect(text, startsWith(header));
       expect(text, contains('The last step the panel showed: loadingModels\nSeed 1002, 4 steps\n'));
       expect(text, contains('===== sd-cli.log, '));
       expect(text, endsWith('[I] line one\n[E] line two\n'));
       expect(workLeft(), isFalse);
 
       // A panorama made: nothing more in the folder
-      final made = await engineOf(
-        generator: _Logging(const ['[I] all went well']),
-        failureLogs: logs,
-      ).run(jobOf(photo(), id: 'conversion-2'), cancel: cancel);
+      final success = engineOf(generator: _Logging(const ['[I] all went well']), failureLogs: logs);
+      final made = await success.run(jobOf(photo()), cancel: cancel);
       expect(made.isDone, isTrue, reason: '${made.error}: ${made.message}');
       expect(logs.listSync(), hasLength(1));
     });
@@ -819,24 +805,21 @@ void main() {
       splat.writeAsStringSync('COLMAP and Brush');
 
       for (var minute = 0; minute < 6; minute++) {
-        final result = await engineOf(
-          generator: _Logging(
-            ['[I] run $minute'],
-            failure: const BackendException(ImmersiveErrorCode.generatorFailed, 'sd-cli ended with 1'),
-          ),
-          failureLogs: logs,
-          clock: () => DateTime(2026, 11, 8, 18, minute),
-        ).run(jobOf(photo(), id: 'conversion-${minute + 1}'), cancel: cancel);
+        final generator = _Logging(['[I] run $minute'], failure: failure);
+        DateTime clock() => DateTime(2026, 11, 8, 18, minute);
+        final engine = engineOf(generator: generator, failureLogs: logs, clock: clock);
+        final result = await engine.run(jobOf(photo()), cancel: cancel);
         expect(result.error, ImmersiveErrorCode.generatorFailed);
       }
 
       final names = [for (final entry in logs.listSync()) p.basename(entry.path)];
-      expect(names..sort(), [
-        'panorama-conversion-2-2026-11-08T18-01-00.log',
-        'panorama-conversion-3-2026-11-08T18-02-00.log',
-        'panorama-conversion-4-2026-11-08T18-03-00.log',
-        'panorama-conversion-5-2026-11-08T18-04-00.log',
-        'panorama-conversion-6-2026-11-08T18-05-00.log',
+      names.sort();
+      expect(names, [
+        'panorama-panorama-1-2026-11-08T18-01-00.log',
+        'panorama-panorama-1-2026-11-08T18-02-00.log',
+        'panorama-panorama-1-2026-11-08T18-03-00.log',
+        'panorama-panorama-1-2026-11-08T18-04-00.log',
+        'panorama-panorama-1-2026-11-08T18-05-00.log',
         'splat-0123456789abcdef-2026-11-01T10-00-00.log',
       ]);
       expect(splat.readAsStringSync(), 'COLMAP and Brush');
