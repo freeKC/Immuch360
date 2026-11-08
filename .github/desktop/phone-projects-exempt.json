@@ -364,7 +364,7 @@
     "reason": "Image decode guard (fix-crash-image-decode, crash M1 of the Meta Quest store, 8 November 2026): NativeImageDecodeApi, the bounded native decoder of the images the engine has no codec of its own for, every failure an error of the call; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/images/RemoteImagesImpl.kt": {
-    "blob": "e3f2893af574289b8d2efe07b3e943fa5b777175",
+    "blob": "845b60827479fa59c969356036a220e10e246cda",
     "reason": "Image decode guard (fix-crash-image-decode, crash M1 of the Meta Quest store, 8 November 2026): the native decode keeps and logs its failure, retries once at half the size after an OutOfMemoryError, and hands Flutter the encoded bytes only in a format of the engine's own codecs; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreen.kt": {
