@@ -54,6 +54,66 @@ abstract final class FakeGpuReports {
   /// A laptop with its integrated graphics and its dedicated card: the dedicated one is used
   static const twoCards = GpuReport(adapters: [irisXe, rtx4060Laptop]);
 
+  /// The laptop of the owner as the published desktop build 21 probed it on 5 November 2026 (probe-rest.json of the
+  /// measure of that day, the same boot and LUIDs as the probe of 4 November): the RTX 4060 first in the order of the
+  /// app's process, which asks the drivers for the high performance card, then the Intel chip twice (the same UUID);
+  /// sd-cli.exe lists the Intel chip first (8 November 2026)
+  static const laptopDesktop21 = GpuReport(
+    instanceVersion: '1.4.341',
+    adapters: [
+      GpuAdapter(
+        name: 'NVIDIA GeForce RTX 4060 Laptop GPU',
+        kind: GpuKind.discrete,
+        localMemory: 8342470656,
+        vendorId: 0x10de,
+        deviceId: 10400,
+        driverVersion: '616.56',
+        apiVersion: '1.4.351',
+        budget: 7083073536,
+        usage: 0,
+        vulkanIndex: 0,
+        uuid: 'fd998b3e3a9f88e8ee08866cc94e5a10',
+        luid: '9769010000000000',
+        driverId: 4,
+        storage16Bit: true,
+        appMemory: 231608320,
+      ),
+      GpuAdapter(
+        name: 'Intel(R) RaptorLake-S Mobile Graphics Controller',
+        kind: GpuKind.integrated,
+        localMemory: 8395239424,
+        vendorId: 0x8086,
+        deviceId: 42888,
+        driverVersion: '101.7088',
+        apiVersion: '1.4.323',
+        budget: 7707041997,
+        usage: 0,
+        vulkanIndex: 1,
+        uuid: '868088a7040000000002000000000000',
+        luid: 'f764010000000000',
+        driverId: 5,
+        storage16Bit: true,
+        appMemory: 0,
+      ),
+      GpuAdapter(
+        name: 'Intel(R) RaptorLake-S Mobile Graphics Controller',
+        kind: GpuKind.integrated,
+        localMemory: 8395239424,
+        vendorId: 0x8086,
+        deviceId: 42888,
+        driverVersion: '101.7088',
+        apiVersion: '1.4.323',
+        budget: 7707041997,
+        usage: 0,
+        vulkanIndex: 2,
+        uuid: '868088a7040000000002000000000000',
+        luid: 'fb0b020000000000',
+        driverId: 5,
+        storage16Bit: true,
+      ),
+    ],
+  );
+
   /// The RTX 4060 while a game holds most of its memory: 2.1 GB free
   static const rtx4060Busy = GpuReport(
     adapters: [

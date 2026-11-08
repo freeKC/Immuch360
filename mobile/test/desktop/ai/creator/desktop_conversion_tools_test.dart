@@ -17,7 +17,10 @@ import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
+import 'package:immich_mobile/desktop/ai/panorama/panorama_engine.dart';
+import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -778,9 +781,43 @@ void _panoramaEngineTests(Directory Function() root) {
         expect(setup.transformer, same(fluxTransformerComponent));
         expect(setup.linuxLauncher, isNull);
         expect(setup.card.name, contains('RTX 4060'));
+        expect(settings.card?.name, 'NVIDIA GeForce RTX 4060 Laptop GPU');
+        expect(settings.card?.integrated, isFalse);
         expect(counted.single.disposed, isTrue, reason: 'one engine per job: the card is asked again before each one');
       },
     );
+
+    test('the laptop of the owner as desktop build 21 probed it: the guess Vulkan0 and the card to find', () async {
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      installAll(AiPlatform.windowsX64);
+      cards = FakeGpuReports.laptopDesktop21;
+
+      expect((await engineOf().run(job(), cancel: flag)).isDone, isTrue);
+      final settings = made.single.settings;
+      // The guess from the order of the app's process, the RTX 4060 first: sd-cli's own list puts it right at its start
+      expect(settings.device, 'Vulkan0');
+      expect(settings.card?.name, 'NVIDIA GeForce RTX 4060 Laptop GPU');
+      expect(settings.card?.integrated, isFalse);
+      expect(settings.environment, isEmpty, reason: 'the app never sets GGML_VK_VISIBLE_DEVICES');
+    });
+
+    test('on sd-cli, the generator and the upscaler of a job share its card', () async {
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      installAll(AiPlatform.windowsX64);
+      expect((await engineOf().run(job(), cancel: flag)).isDone, isTrue);
+      final work = AiWorkFolders(Directory(p.join(root().path, aiWorkFolderName)));
+      final journal = ProcessJournal(File(p.join(root().path, 'processes.json')));
+      final session = AiProcessSession(folders: work, journal: journal);
+
+      final engine = DesktopPanoramaEngine.sdCppEngineFor(made.single, session) as PanoramaEngine;
+      final generator = engine.generator as SdCppGenerator;
+      final upscaler = engine.upscaler as SdCppUpscaler;
+      expect(upscaler.device, same(generator.device));
+      expect(generator.device.name, 'Vulkan1');
+      expect(generator.device.settings.card?.name, 'NVIDIA GeForce RTX 4060 Laptop GPU');
+    });
 
     test('on Linux: through immuch360-run of the archive', () async {
       final flag = NativeCancelFlag();
@@ -801,6 +838,8 @@ void _panoramaEngineTests(Directory Function() root) {
       expect(result.isDone, isTrue, reason: '${result.error} ${result.message}');
       expect(made.single.settings.stallTimeout, panoramaIntegratedStallTimeout);
       expect(made.single.settings.device, 'Vulkan0');
+      expect(made.single.settings.card?.name, 'Intel(R) Iris(R) Xe Graphics (TGL GT2)');
+      expect(made.single.settings.card?.integrated, isTrue, reason: 'allowed by "Try on integrated graphics"');
     });
 
     test(

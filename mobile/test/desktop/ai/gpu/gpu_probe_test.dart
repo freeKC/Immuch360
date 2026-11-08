@@ -203,6 +203,15 @@ void main() {
       expect(ggmlVulkanIndexOf(laptop, laptop.bestDiscrete!), 1);
     });
 
+    test('the laptop of the owner as desktop builds 21 to 23 probe it: the RTX 4060 first, guessed Vulkan0', () {
+      // The probe runs in the app's executable, which asks the drivers for the high performance card since desktop
+      // build 21 (5 November 2026, probe-rest.json); sd-cli.exe lists the Intel chip first and the RTX 4060 as 1 on
+      // the same laptop (8 November 2026). The guess is put right by sd-cli's own list (sdcpp_runner.dart)
+      const laptop = FakeGpuReports.laptopDesktop21;
+      expect(names(laptop), ['NVIDIA GeForce RTX 4060 Laptop GPU', 'Intel(R) RaptorLake-S Mobile Graphics Controller']);
+      expect(ggmlVulkanIndexOf(laptop, laptop.bestDiscrete!), 0);
+    });
+
     test('ai1: the Iris Xe Vulkan0, llvmpipe left out', () {
       final ai1 = _fixture('gpu_probe_iris_xe_mesa.json');
       expect(names(ai1), ['Intel(R) Iris(R) Xe Graphics (TGL GT2)']);
