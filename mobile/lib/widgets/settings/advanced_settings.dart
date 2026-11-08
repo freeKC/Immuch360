@@ -85,7 +85,8 @@ class AdvancedSettings extends HookConsumerWidget {
       unawaited(ref.read(settingsProvider).write(.viewerSharpFlatScreens, sharpFlatScreens.value));
     });
     // The Gaussian splat files of other tools in the immersive viewer of a Meta Quest 3 or 3S, experimental and on by
-    // default, and the larger count of Large splats, off by default until a measure in the headset
+    // default, and the larger count of Large splats, off by default (decision D7, unchanged after the measure on a
+    // Quest 3 of 8 November 2026)
     final gaussianSplats = useState(ref.watch(appConfigProvider).viewer.gaussianSplats);
     useValueChanged<bool, void>(gaussianSplats.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerGaussianSplats, gaussianSplats.value));

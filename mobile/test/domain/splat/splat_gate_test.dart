@@ -44,8 +44,10 @@ void main() {
         ),
       );
     }
-    expect(splatLargeGaussians, 2000000);
-    expect(gate(large: true).request!.maxGaussians, splatLargeGaussians);
+    expect(gate(large: true).request!.maxGaussians, 150000);
+    // The counts of the measure on a Quest 3 of 8 November 2026
+    expect(splatSafeGaussians, 50000);
+    expect(splatLargeGaussians, 150000);
   });
 
   test(

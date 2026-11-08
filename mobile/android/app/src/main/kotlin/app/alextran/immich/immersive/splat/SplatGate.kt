@@ -68,9 +68,9 @@ internal sealed interface SplatVerdict {
  *    rewritten as version 2 by the preparation, version 2 included ([SplatModuleFormat], [SplatReducer]); a version 4
  *    (ZSTD) needs the decoder of the quest flavour ([SplatZstd]), without which it is not in this version.
  * 5. The heat: THERMAL_STATUS_SEVERE or worse refused, as for the scenes.
- * 6. The count: at most the count of the request ([SAFE_GAUSSIANS] until a measure in the headset, [LARGE_GAUSSIANS]
- *    with Large splats, never more). Beyond it the splat is reduced to that count ([SplatReducer]), up to
- *    [MAX_REDUCIBLE_GAUSSIANS] gaussians and [MAX_REDUCIBLE_BYTES].
+ * 6. The count: at most the count of the request ([SAFE_GAUSSIANS] by default, [LARGE_GAUSSIANS] with Large splats,
+ *    never more). Beyond it the splat is reduced to that count ([SplatReducer]), up to [MAX_REDUCIBLE_GAUSSIANS]
+ *    gaussians and [MAX_REDUCIBLE_BYTES].
  * 7. The memory: the free memory (ActivityManager.MemoryInfo.availMem) holds what the module loads, [MEMORY_FACTOR]
  *    times the larger of the file it reads and its gaussians decoded, plus what the reducer holds while it reads the
  *    whole file ([memoryNeeded]): a large capture reduced to 150 000 gaussians weighs what it shows, not its source.
@@ -85,14 +85,18 @@ internal sealed interface SplatVerdict {
  * Pure JVM, tested by SplatGateTest. The Dart side greys the button for the reasons it can know first (splat_gate.dart).
  */
 internal object SplatGate {
-  /** The count until a measure in the headset says more (design-final 2026-10-27, decision D7) */
+  /**
+   * The count by default (design-final 2026-10-27, decision D7), unchanged after the measure on a Quest 3 of 8 November
+   * 2026 (build 43, a room cut to its strongest gaussians, seen from a fixed pose): 91 frames a second on the 90 Hz
+   * display (median, 90 at least), the GPU 84 % busy. No count above 150 000 was measured that day
+   */
   const val SAFE_GAUSSIANS = 50_000
 
   /**
-   * The most Large splats shows: lifted from the advice of the SDK (150 000) to 2 000 000 for a measure in the headset
-   * (8 November 2026), the free memory and the heat still checked for every splat
+   * The most Large splats shows, the advice of the SDK: in the same measure 150 000 gaussians shown whole ran at 91
+   * frames a second (median, 88 at least) with the GPU load of 50 000
    */
-  const val LARGE_GAUSSIANS = 2_000_000
+  const val LARGE_GAUSSIANS = 150_000
 
   const val MAX_REDUCIBLE_GAUSSIANS = 4_000_000L
   const val MAX_REDUCIBLE_BYTES = 1L shl 30

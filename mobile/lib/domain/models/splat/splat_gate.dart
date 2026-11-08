@@ -2,13 +2,13 @@
 // viewer of the computers, phones and tablets (splatViewerGateOf). The headset's: whether "Explore the splat scene" is
 // offered, or greyed with its reason, from the head of the file alone (spec 10.2 of the AI immersive design: a refused
 // button stays visible, greyed with its reason). The splat module of the Meta Spatial SDK runs on the Quest 3 and 3S
-// only and is in the APK of the quest flavour only; the count the headset shows is 50 000 gaussians until a measure
-// in the headset, 2 000 000 with Large splats in the build of that measure (150 000 before, the advice of the SDK),
-// and a splat that holds more is reduced in the headset up to 4 million gaussians and 1 GiB. The splat module reads
-// SPZ version 2 only and aborts the app on any other (measured on a Quest 3 on 31 October 2026): the headset writes
-// every SPZ again as version 2, versions 2 and 4 included (a version 2 cut or short of its data aborts it too;
-// version 4 is ZSTD, which the quest flavour decompresses, FreeKC's report of 1 November 2026). The immersive viewer
-// checks again (SplatGate.kt), with the free memory and the heat of the headset.
+// only and is in the APK of the quest flavour only; the count the headset shows is 50 000 gaussians, 150 000 with
+// Large splats (the advice of the SDK; both ran at 91 frames a second on a Quest 3 on 8 November 2026), and a splat
+// that holds more is reduced in the headset up to 4 million gaussians and 1 GiB. The splat module reads SPZ version 2
+// only and aborts the app on any other (measured on a Quest 3 on 31 October 2026): the headset writes every SPZ again
+// as version 2, versions 2 and 4 included (a version 2 cut or short of its data aborts it too; version 4 is ZSTD,
+// which the quest flavour decompresses, FreeKC's report of 1 November 2026). The immersive viewer checks again
+// (SplatGate.kt), with the free memory and the heat of the headset.
 
 import 'dart:math' as math;
 
@@ -16,12 +16,15 @@ import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.da
 import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 
-/// The count of gaussians until a measure in the headset (decision D7 of design-final 2026-10-27)
+/// The count of gaussians the headset shows by default (decision D7 of design-final 2026-10-27), unchanged after the
+/// measure on a Quest 3 of 8 November 2026 (build 43, a room of 1 274 802 gaussians cut to its strongest, seen from a
+/// fixed pose): 50 000 ran at 91 frames a second on the 90 Hz display (median, 90 at least), the GPU 84 % busy and
+/// 8.3 ms of GPU time a frame. No count above 150 000 was measured that day
 const splatSafeGaussians = 50000;
 
-/// The most Large splats shows: lifted from the advice of the Meta Spatial SDK (150 000) to 2 000 000 for a measure in
-/// the headset (8 November 2026), the memory and the heat of the headset still checked by SplatGate.kt
-const splatLargeGaussians = 2000000;
+/// The most Large splats shows, the advice of the Meta Spatial SDK: in the same measure 150 000 gaussians shown whole
+/// ran at 91 frames a second (median, 88 at least) with the GPU load of 50 000 (84 % busy, 8.4 ms a frame)
+const splatLargeGaussians = 150000;
 
 /// The most gaussians and bytes the headset reduces
 const splatMaxReducibleGaussians = 4000000;
