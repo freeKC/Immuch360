@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "El portachiav i ha refudaa, inscì i password e i alter secrett de l'app vegnen desmentegaa quand la se serra. Sbloca el portachiav, o installa gnome-keyring o KWallet, poeu fà ripartì l'app.",
   "desktop_secrets_session_only_no_keyring": "Nissun portachiav l'ha rispost, inscì i password e i alter secrett de l'app vegnen desmentegaa quand la se serra. Installa gnome-keyring o KWallet per tegnij.",
   "desktop_secrets_session_only_title": "Secrett tegnuu domà per sta session",
+  "desktop_selection_hint": "{modifier}+clic el giunta o el tœu via, Shift+clic el giunta un interval, el clic drizz el derva i azzion, {modifier}+A el seleziona tusscoss, Esc el netta",
   "desktop_spatial_unavailable": "Spatial 2.5D el riva su Immuch360 Desktop in d'ona version pussee innanz",
   "desktop_tapo_live_later": "La vista dal viv la riva su Immuch360 Desktop in d'ona version pussee innanz.",
   "desktop_this_computer": "Sto computer",

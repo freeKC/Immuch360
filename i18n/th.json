@@ -1382,6 +1382,7 @@
   "desktop_secrets_session_only_keyring_refused": "คีย์ริงปฏิเสธข้อมูลเหล่านี้ รหัสผ่านและข้อมูลลับอื่น ๆ ของแอปจึงจะถูกลืมเมื่อปิดแอป ปลดล็อกคีย์ริง หรือติดตั้ง gnome-keyring หรือ KWallet แล้วรีสตาร์ทแอป",
   "desktop_secrets_session_only_no_keyring": "ไม่มีคีย์ริงตอบสนอง รหัสผ่านและข้อมูลลับอื่น ๆ ของแอปจึงจะถูกลืมเมื่อปิดแอป ติดตั้ง gnome-keyring หรือ KWallet เพื่อเก็บไว้",
   "desktop_secrets_session_only_title": "เก็บข้อมูลลับไว้สำหรับเซสชันนี้เท่านั้น",
+  "desktop_selection_hint": "{modifier}+คลิก เพิ่มหรือเอาออก, Shift+คลิก เพิ่มเป็นช่วง, คลิกขวา เปิดการทำงาน, {modifier}+A เลือกทั้งหมด, Esc ล้างการเลือก",
   "desktop_spatial_unavailable": "Spatial 2.5D จะมาถึง Immuch360 Desktop ในเวอร์ชันถัดไป",
   "desktop_tapo_live_later": "ภาพสดจะมาถึง Immuch360 Desktop ในเวอร์ชันถัดไป",
   "desktop_this_computer": "คอมพิวเตอร์นี้",

@@ -836,6 +836,7 @@
   "desktop_secrets_session_only_keyring_refused": "Nøkkelringen avviste dei, så passorda og dei andre løyndomane til appen vert gløymde når han lukkar seg. Lås opp nøkkelringen, eller installer gnome-keyring eller KWallet, og start så appen på nytt.",
   "desktop_secrets_session_only_no_keyring": "Ingen nøkkelring svarte, så passorda og dei andre løyndomane til appen vert gløymde når han lukkar seg. Installer gnome-keyring eller KWallet for å ta vare på dei.",
   "desktop_secrets_session_only_title": "Løyndomar tekne vare på berre for denne økta",
+  "desktop_selection_hint": "{modifier}+klikk legg til eller fjernar, Shift+klikk legg til eit område, høgreklikk opnar handlingane, {modifier}+A vel alle, Esc tømmer",
   "desktop_spatial_unavailable": "Spatial 2.5D kjem til Immuch360 Desktop i ein seinare versjon",
   "desktop_tapo_live_later": "Direktebiletet kjem til Immuch360 Desktop i ein seinare versjon.",
   "desktop_this_computer": "Denne datamaskina",

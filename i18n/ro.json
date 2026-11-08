@@ -1387,6 +1387,7 @@
   "desktop_secrets_session_only_keyring_refused": "Inelul de chei le-a refuzat, așa că parolele și celelalte secrete ale aplicației sunt uitate la închiderea ei. Deblocați inelul de chei sau instalați gnome-keyring ori KWallet, apoi reporniți aplicația.",
   "desktop_secrets_session_only_no_keyring": "Niciun inel de chei nu a răspuns, așa că parolele și celelalte secrete ale aplicației sunt uitate la închiderea ei. Instalați gnome-keyring sau KWallet pentru a le păstra.",
   "desktop_secrets_session_only_title": "Secrete păstrate doar pentru această sesiune",
+  "desktop_selection_hint": "{modifier}+clic adaugă sau elimină, Shift+clic adaugă un interval, clicul dreapta deschide acțiunile, {modifier}+A selectează tot, Esc golește selecția",
   "desktop_spatial_unavailable": "Spatial 2.5D va veni în Immuch360 Desktop într-o versiune ulterioară",
   "desktop_tapo_live_later": "Vizualizarea live va veni în Immuch360 Desktop într-o versiune ulterioară.",
   "desktop_this_computer": "Acest computer",

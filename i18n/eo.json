@@ -1390,6 +1390,7 @@
   "desktop_secrets_session_only_keyring_refused": "La ŝlosilaro rifuzis ilin, do la pasvortoj kaj aliaj sekretoj de la aplikaĵo estas forgesataj kiam ĝi fermiĝas. Malŝlosu la ŝlosilaron, aŭ instalu gnome-keyring aŭ KWallet, poste restartigu la aplikaĵon.",
   "desktop_secrets_session_only_no_keyring": "Neniu ŝlosilaro respondis, do la pasvortoj kaj aliaj sekretoj de la aplikaĵo estas forgesataj kiam ĝi fermiĝas. Instalu gnome-keyring aŭ KWallet por konservi ilin.",
   "desktop_secrets_session_only_title": "Sekretoj konservataj nur por ĉi tiu seanco",
+  "desktop_selection_hint": "{modifier}+klako aldonas aŭ forigas, Shift+klako aldonas intervalon, dekstra klako malfermas la agojn, {modifier}+A elektas ĉiujn, Esc malplenigas",
   "desktop_spatial_unavailable": "Spatial 2.5D venos al Immuch360 Desktop en posta versio",
   "desktop_tapo_live_later": "La viva vido venos al Immuch360 Desktop en posta versio.",
   "desktop_this_computer": "Ĉi tiu komputilo",

@@ -1390,6 +1390,7 @@
   "desktop_secrets_session_only_keyring_refused": "Keyring menolaknya, jadi sandi dan rahasia lain aplikasi dilupakan saat aplikasi ditutup. Buka kunci keyring, atau pasang gnome-keyring atau KWallet, lalu mulai ulang aplikasi.",
   "desktop_secrets_session_only_no_keyring": "Tidak ada keyring yang menjawab, jadi sandi dan rahasia lain aplikasi dilupakan saat aplikasi ditutup. Pasang gnome-keyring atau KWallet untuk menyimpannya.",
   "desktop_secrets_session_only_title": "Rahasia disimpan untuk sesi ini saja",
+  "desktop_selection_hint": "{modifier}+klik menambah atau menghapus, Shift+klik menambah rentang, klik kanan membuka tindakan, {modifier}+A memilih semua, Esc mengosongkan",
   "desktop_spatial_unavailable": "Spatial 2.5D akan hadir di Immuch360 Desktop pada versi berikutnya",
   "desktop_tapo_live_later": "Tampilan langsung akan hadir di Immuch360 Desktop pada versi berikutnya.",
   "desktop_this_computer": "Komputer ini",

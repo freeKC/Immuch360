@@ -1372,6 +1372,7 @@
   "desktop_secrets_session_only_keyring_refused": "رفضتها حلقة المفاتيح، لذا تُنسى كلمات مرور التطبيق وأسراره الأخرى عند إغلاقه. افتح قفل حلقة المفاتيح، أو ثبّت gnome-keyring أو KWallet، ثم أعد تشغيل التطبيق.",
   "desktop_secrets_session_only_no_keyring": "لم تستجب أي حلقة مفاتيح، لذا تُنسى كلمات مرور التطبيق وأسراره الأخرى عند إغلاقه. ثبّت gnome-keyring أو KWallet للاحتفاظ بها.",
   "desktop_secrets_session_only_title": "الأسرار محفوظة لهذه الجلسة فقط",
+  "desktop_selection_hint": "{modifier}+نقرة تضيف أو تزيل، Shift+نقرة تضيف نطاقًا، النقر بالزر الأيمن يفتح الإجراءات، {modifier}+A يحدد الكل، Esc يمسح التحديد",
   "desktop_spatial_unavailable": "سيصل Spatial 2.5D إلى Immuch360 Desktop في إصدار لاحق",
   "desktop_tapo_live_later": "سيصل العرض المباشر إلى Immuch360 Desktop في إصدار لاحق.",
   "desktop_this_computer": "هذا الحاسوب",

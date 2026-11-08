@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "O porta-chaves recusou-os, por isso as palavras-passe e outros segredos da app são esquecidos quando esta fecha. Desbloqueie o porta-chaves, ou instale gnome-keyring ou KWallet, e depois reinicie a app.",
   "desktop_secrets_session_only_no_keyring": "Nenhum porta-chaves respondeu, por isso as palavras-passe e outros segredos da app são esquecidos quando esta fecha. Instale gnome-keyring ou KWallet para os guardar.",
   "desktop_secrets_session_only_title": "Segredos guardados só para esta sessão",
+  "desktop_selection_hint": "{modifier}+clique adiciona ou retira, Shift+clique adiciona um intervalo, o clique direito abre as ações, {modifier}+A seleciona tudo, Esc limpa a seleção",
   "desktop_spatial_unavailable": "Spatial 2.5D chega ao Immuch360 Desktop numa versão posterior",
   "desktop_tapo_live_later": "A visualização em direto chega ao Immuch360 Desktop numa versão posterior.",
   "desktop_this_computer": "Este computador",

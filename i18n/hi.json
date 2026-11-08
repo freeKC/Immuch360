@@ -1305,6 +1305,7 @@
   "desktop_secrets_session_only_keyring_refused": "कीरिंग ने इन्हें अस्वीकार कर दिया, इसलिए ऐप के पासवर्ड और अन्य गोपनीय जानकारी ऐप बंद होने पर भुला दी जाती है। कीरिंग अनलॉक करें, या gnome-keyring या KWallet इंस्टॉल करें, फिर ऐप दोबारा शुरू करें।",
   "desktop_secrets_session_only_no_keyring": "किसी कीरिंग ने जवाब नहीं दिया, इसलिए ऐप के पासवर्ड और अन्य गोपनीय जानकारी ऐप बंद होने पर भुला दी जाती है। इन्हें रखने के लिए gnome-keyring या KWallet इंस्टॉल करें।",
   "desktop_secrets_session_only_title": "गोपनीय जानकारी केवल इस सत्र के लिए रखी गई",
+  "desktop_selection_hint": "{modifier}+क्लिक जोड़ता या हटाता है, Shift+क्लिक एक श्रेणी जोड़ता है, राइट क्लिक कार्रवाइयाँ खोलता है, {modifier}+A सब चुनता है, Esc साफ़ करता है",
   "desktop_spatial_unavailable": "Spatial 2.5D, Immuch360 Desktop के बाद के संस्करण में आएगा",
   "desktop_tapo_live_later": "लाइव व्यू Immuch360 Desktop के बाद के संस्करण में आएगा।",
   "desktop_this_computer": "यह कंप्यूटर",

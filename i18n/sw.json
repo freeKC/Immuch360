@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "Mnyororo wa funguo umezikataa, kwa hivyo manenosiri na siri zingine za programu zinasahaulika inapofungwa. Fungua mnyororo wa funguo, au sakinisha gnome-keyring au KWallet, kisha anzisha programu upya.",
   "desktop_secrets_session_only_no_keyring": "Hakuna mnyororo wa funguo uliojibu, kwa hivyo manenosiri na siri zingine za programu zinasahaulika inapofungwa. Sakinisha gnome-keyring au KWallet ili kuzihifadhi.",
   "desktop_secrets_session_only_title": "Siri zinahifadhiwa kwa kipindi hiki pekee",
+  "desktop_selection_hint": "{modifier}+bofya huongeza au huondoa, Shift+bofya huongeza masafa, kubofya kulia hufungua vitendo, {modifier}+A huchagua vyote, Esc hufuta",
   "desktop_spatial_unavailable": "Spatial 2.5D itakuja kwenye Immuch360 Desktop katika toleo la baadaye",
   "desktop_tapo_live_later": "Mwonekano wa moja kwa moja utakuja kwenye Immuch360 Desktop katika toleo la baadaye.",
   "desktop_this_computer": "Kompyuta hii",

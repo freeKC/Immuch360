@@ -1370,6 +1370,7 @@
   "desktop_secrets_session_only_keyring_refused": "Сховішча ключоў іх адхіліла, таму паролі і іншыя сакрэты праграмы забываюцца пры яе закрыцці. Разблакуйце сховішча ключоў або ўсталюйце gnome-keyring ці KWallet, потым перазапусціце праграму.",
   "desktop_secrets_session_only_no_keyring": "Ніводнае сховішча ключоў не адказала, таму паролі і іншыя сакрэты праграмы забываюцца пры яе закрыцці. Усталюйце gnome-keyring або KWallet, каб іх захоўваць.",
   "desktop_secrets_session_only_title": "Сакрэты захоўваюцца толькі на гэты сеанс",
+  "desktop_selection_hint": "{modifier}+пстрычка дадае або прыбірае, Shift+пстрычка дадае дыяпазон, пстрычка правай кнопкай адкрывае дзеянні, {modifier}+A выбірае ўсё, Esc ачышчае",
   "desktop_spatial_unavailable": "Spatial 2.5D з’явіцца ў Immuch360 Desktop у наступнай версіі",
   "desktop_tapo_live_later": "Прамы эфір з’явіцца ў Immuch360 Desktop у наступнай версіі.",
   "desktop_this_computer": "Гэты камп’ютар",

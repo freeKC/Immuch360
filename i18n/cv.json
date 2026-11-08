@@ -566,6 +566,7 @@
   "desktop_secrets_session_only_keyring_refused": "Ҫӑрасен управӑшӗ вӗсене йышӑнмарӗ, ҫавӑнпа приложени хупӑнсан унӑн парольсем тата ытти вӑрттӑнлӑхсем манӑҫаҫҫӗ. Ҫӑрасен управӑшне уҫӑр е gnome-keyring е KWallet лартӑр, унтан приложение ҫӗнӗрен уҫӑр.",
   "desktop_secrets_session_only_no_keyring": "Ҫӑрасен управӑшӗ хуравламарӗ, ҫавӑнпа приложени хупӑнсан унӑн парольсем тата ытти вӑрттӑнлӑхсем манӑҫаҫҫӗ. Вӗсене упрас тесен gnome-keyring е KWallet лартӑр.",
   "desktop_secrets_session_only_title": "Вӑрттӑнлӑхсем ҫак сеанс валли ҫеҫ упранаҫҫӗ",
+  "desktop_selection_hint": "{modifier}+пусни хушать е кӑларать, Shift+пусни ретне хушать, сылтӑм кнопкӑпа пусни ӗҫсене уҫать, {modifier}+A пурне те суйлать, Esc тасатать",
   "desktop_spatial_unavailable": "Spatial 2.5D Immuch360 Desktop валли каярахри версире килӗ",
   "desktop_tapo_live_later": "Тӳрӗ эфир Immuch360 Desktop валли каярахри версире килӗ.",
   "desktop_this_computer": "Ку компьютер",

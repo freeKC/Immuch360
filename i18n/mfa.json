@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "Keyring tolak dio, jadi kato lalue nga rahsia lain aplikasi ni dilupoke bilo dio ditutup. Bukak kunci keyring, atau pasang gnome-keyring atau KWallet, lepah tu mulo balik aplikasi.",
   "desktop_secrets_session_only_no_keyring": "Takdok keyring hok jawab, jadi kato lalue nga rahsia lain aplikasi ni dilupoke bilo dio ditutup. Pasang gnome-keyring atau KWallet nok simpang dio.",
   "desktop_secrets_session_only_title": "Rahsia disimpang untuk sesi ni jah",
+  "desktop_selection_hint": "{modifier}+klik tamboh ke buang, Shift+klik tamboh julat, klik kana buka tindake, {modifier}+A pilih gok, Esc kosongke",
   "desktop_spatial_unavailable": "Spatial 2.5D akan tiba di Immuch360 Desktop dale versi akan datang",
   "desktop_tapo_live_later": "Paparan langsung akan tiba di Immuch360 Desktop dale versi akan datang.",
   "desktop_this_computer": "Komputer ni",

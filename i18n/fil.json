@@ -595,6 +595,7 @@
   "desktop_secrets_session_only_keyring_refused": "Tinanggihan ng keyring ang mga ito, kaya nakakalimutan ang mga password at iba pang lihim ng app kapag isinara ito. I-unlock ang keyring, o i-install ang gnome-keyring o KWallet, pagkatapos ay i-restart ang app.",
   "desktop_secrets_session_only_no_keyring": "Walang keyring na sumagot, kaya nakakalimutan ang mga password at iba pang lihim ng app kapag isinara ito. I-install ang gnome-keyring o KWallet para maitago ang mga ito.",
   "desktop_secrets_session_only_title": "Itinatago ang mga lihim para sa session na ito lang",
+  "desktop_selection_hint": "{modifier}+click para magdagdag o mag-alis, Shift+click para magdagdag ng saklaw, right click para buksan ang mga aksyon, {modifier}+A para piliin lahat, Esc para i-clear",
   "desktop_spatial_unavailable": "Darating ang Spatial 2.5D sa Immuch360 Desktop sa susunod na bersyon",
   "desktop_tapo_live_later": "Darating ang live view sa Immuch360 Desktop sa susunod na bersyon.",
   "desktop_this_computer": "Ang computer na ito",

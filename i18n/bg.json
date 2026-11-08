@@ -1390,6 +1390,7 @@
   "desktop_secrets_session_only_keyring_refused": "Хранилището за ключове ги отказа, затова паролите и другите тайни на приложението се забравят при затварянето му. Отключете хранилището за ключове или инсталирайте gnome-keyring или KWallet, след това рестартирайте приложението.",
   "desktop_secrets_session_only_no_keyring": "Никое хранилище за ключове не отговори, затова паролите и другите тайни на приложението се забравят при затварянето му. Инсталирайте gnome-keyring или KWallet, за да ги запазите.",
   "desktop_secrets_session_only_title": "Тайните се пазят само за тази сесия",
+  "desktop_selection_hint": "{modifier}+щракване добавя или премахва, Shift+щракване добавя диапазон, десният бутон отваря действията, {modifier}+A избира всичко, Esc изчиства",
   "desktop_spatial_unavailable": "Spatial 2.5D идва в Immuch360 Desktop в по-късна версия",
   "desktop_tapo_live_later": "Изгледът на живо идва в Immuch360 Desktop в по-късна версия.",
   "desktop_this_computer": "Този компютър",

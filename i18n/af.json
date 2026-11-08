@@ -693,6 +693,7 @@
   "desktop_secrets_session_only_keyring_refused": "Die sleutelring het hulle geweier, dus word die wagwoorde en ander geheime van die app vergeet wanneer dit sluit. Ontsluit die sleutelring, of installeer gnome-keyring of KWallet, en herbegin dan die app.",
   "desktop_secrets_session_only_no_keyring": "Geen sleutelring het geantwoord nie, dus word die wagwoorde en ander geheime van die app vergeet wanneer dit sluit. Installeer gnome-keyring of KWallet om hulle te hou.",
   "desktop_secrets_session_only_title": "Geheime slegs vir hierdie sessie gehou",
+  "desktop_selection_hint": "{modifier}+klik voeg by of haal uit, Shift+klik voeg 'n reeks by, regsklik open die aksies, {modifier}+A kies alles, Esc maak skoon",
   "desktop_spatial_unavailable": "Spatial 2.5D kom in 'n latere weergawe na Immuch360 Desktop",
   "desktop_tapo_live_later": "Die regstreekse beeld kom in 'n latere weergawe na Immuch360 Desktop.",
   "desktop_this_computer": "Hierdie rekenaar",

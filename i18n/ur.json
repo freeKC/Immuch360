@@ -591,6 +591,7 @@
   "desktop_secrets_session_only_keyring_refused": "کی رنگ نے انکار کر دیا، اس لیے ایپ کے پاس ورڈ اور دوسرے راز ایپ بند ہونے پر بھول جاتے ہیں۔ کی رنگ کو ان لاک کریں، یا gnome-keyring یا KWallet انسٹال کریں، پھر ایپ دوبارہ شروع کریں۔",
   "desktop_secrets_session_only_no_keyring": "کسی کی رنگ نے جواب نہیں دیا، اس لیے ایپ کے پاس ورڈ اور دوسرے راز ایپ بند ہونے پر بھول جاتے ہیں۔ انہیں محفوظ رکھنے کے لیے gnome-keyring یا KWallet انسٹال کریں۔",
   "desktop_secrets_session_only_title": "راز صرف اس سیشن کے لیے محفوظ ہیں",
+  "desktop_selection_hint": "{modifier}+کلک شامل کرتا یا ہٹاتا ہے، Shift+کلک ایک حد شامل کرتا ہے، دائیں کلک کارروائیاں کھولتا ہے، {modifier}+A سب منتخب کرتا ہے، Esc صاف کرتا ہے",
   "desktop_spatial_unavailable": "Spatial 2.5D بعد کے ورژن میں Immuch360 Desktop پر آئے گا",
   "desktop_tapo_live_later": "براہ راست منظر بعد کے ورژن میں Immuch360 Desktop پر آئے گا۔",
   "desktop_this_computer": "یہ کمپیوٹر",

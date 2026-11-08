@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Связка ключей отказала, поэтому пароли и другие секреты приложения забываются при его закрытии. Разблокируйте связку ключей или установите gnome-keyring или KWallet, затем перезапустите приложение.",
   "desktop_secrets_session_only_no_keyring": "Связка ключей не ответила, поэтому пароли и другие секреты приложения забываются при его закрытии. Установите gnome-keyring или KWallet, чтобы сохранять их.",
   "desktop_secrets_session_only_title": "Секреты хранятся только в этом сеансе",
+  "desktop_selection_hint": "{modifier}+щелчок добавляет или убирает, Shift+щелчок добавляет диапазон, правый щелчок открывает действия, {modifier}+A выбирает всё, Esc сбрасывает выбор",
   "desktop_spatial_unavailable": "Spatial 2.5D появится в Immuch360 Desktop в одной из следующих версий",
   "desktop_tapo_live_later": "Прямой эфир появится в Immuch360 Desktop в одной из следующих версий.",
   "desktop_this_computer": "Этот компьютер",

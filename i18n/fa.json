@@ -1378,6 +1378,7 @@
   "desktop_secrets_session_only_keyring_refused": "کی‌رینگ آن‌ها را نپذیرفت، پس گذرواژه‌ها و دیگر رازهای برنامه هنگام بستن آن فراموش می‌شوند. قفل کی‌رینگ را باز کنید، یا gnome-keyring یا KWallet را نصب کنید، سپس برنامه را دوباره اجرا کنید.",
   "desktop_secrets_session_only_no_keyring": "هیچ کی‌رینگی پاسخ نداد، پس گذرواژه‌ها و دیگر رازهای برنامه هنگام بستن آن فراموش می‌شوند. برای نگه داشتن آن‌ها gnome-keyring یا KWallet را نصب کنید.",
   "desktop_secrets_session_only_title": "رازها فقط برای این نشست نگه داشته می‌شوند",
+  "desktop_selection_hint": "{modifier}+کلیک اضافه یا حذف می‌کند، Shift+کلیک یک بازه را اضافه می‌کند، کلیک راست کارها را باز می‌کند، {modifier}+A همه را انتخاب می‌کند، Esc پاک می‌کند",
   "desktop_spatial_unavailable": "Spatial 2.5D در نسخه‌ای بعدی به Immuch360 Desktop می‌آید",
   "desktop_tapo_live_later": "نمای زنده در نسخه‌ای بعدی به Immuch360 Desktop می‌آید.",
   "desktop_this_computer": "این رایانه",

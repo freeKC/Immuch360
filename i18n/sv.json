@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Nyckelringen nekade dem, så appens lösenord och andra hemligheter glöms när den stängs. Lås upp nyckelringen, eller installera gnome-keyring eller KWallet, och starta sedan om appen.",
   "desktop_secrets_session_only_no_keyring": "Ingen nyckelring svarade, så appens lösenord och andra hemligheter glöms när den stängs. Installera gnome-keyring eller KWallet för att behålla dem.",
   "desktop_secrets_session_only_title": "Hemligheter sparas bara under den här sessionen",
+  "desktop_selection_hint": "{modifier}+klick lägger till eller tar bort, Shift+klick lägger till ett intervall, högerklick öppnar åtgärderna, {modifier}+A markerar alla, Esc rensar",
   "desktop_spatial_unavailable": "Spatial 2.5D kommer till Immuch360 Desktop i en senare version",
   "desktop_tapo_live_later": "Livebilden kommer till Immuch360 Desktop i en senare version.",
   "desktop_this_computer": "Den här datorn",

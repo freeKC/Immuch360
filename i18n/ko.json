@@ -1389,6 +1389,7 @@
   "desktop_secrets_session_only_keyring_refused": "키링이 거부하여 앱의 비밀번호와 기타 비밀 정보는 앱을 닫으면 지워집니다. 키링 잠금을 해제하거나 gnome-keyring 또는 KWallet을 설치한 다음 앱을 다시 시작하세요.",
   "desktop_secrets_session_only_no_keyring": "응답한 키링이 없어 앱의 비밀번호와 기타 비밀 정보는 앱을 닫으면 지워집니다. 유지하려면 gnome-keyring 또는 KWallet을 설치하세요.",
   "desktop_secrets_session_only_title": "비밀 정보가 이번 세션에만 유지됨",
+  "desktop_selection_hint": "{modifier}+클릭으로 추가 또는 제거, Shift+클릭으로 범위 추가, 오른쪽 클릭으로 작업 열기, {modifier}+A로 모두 선택, Esc로 선택 해제",
   "desktop_spatial_unavailable": "Spatial 2.5D는 이후 버전에서 Immuch360 Desktop에 제공됩니다",
   "desktop_tapo_live_later": "실시간 화면은 이후 버전에서 Immuch360 Desktop에 제공됩니다.",
   "desktop_this_computer": "이 컴퓨터",

@@ -1378,6 +1378,7 @@
   "desktop_secrets_session_only_keyring_refused": "Mbajtësi i çelësave i refuzoi, ndaj fjalëkalimet dhe sekretet e tjera të aplikacionit harrohen kur ai mbyllet. Shkyçni mbajtësin e çelësave, ose instaloni gnome-keyring ose KWallet, pastaj rinisni aplikacionin.",
   "desktop_secrets_session_only_no_keyring": "Asnjë mbajtës çelësash nuk u përgjigj, ndaj fjalëkalimet dhe sekretet e tjera të aplikacionit harrohen kur ai mbyllet. Instaloni gnome-keyring ose KWallet për t'i ruajtur.",
   "desktop_secrets_session_only_title": "Sekretet ruhen vetëm për këtë seancë",
+  "desktop_selection_hint": "{modifier}+klikimi shton ose heq, Shift+klikimi shton një varg, klikimi i djathtë hap veprimet, {modifier}+A përzgjedh të gjitha, Esc pastron",
   "desktop_spatial_unavailable": "Spatial 2.5D vjen në Immuch360 Desktop në një version të mëvonshëm",
   "desktop_tapo_live_later": "Pamja e drejtpërdrejtë vjen në Immuch360 Desktop në një version të mëvonshëm.",
   "desktop_this_computer": "Ky kompjuter",

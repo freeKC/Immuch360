@@ -567,6 +567,7 @@
   "desktop_secrets_session_only_keyring_refused": "Բանալիների պահոցը մերժեց դրանք, ուստի հավելվածի գաղտնաբառերը և այլ գաղտնիքները մոռացվում են նրա փակվելիս։ Բացեք բանալիների պահոցը կամ տեղադրեք gnome-keyring կամ KWallet, ապա վերագործարկեք հավելվածը։",
   "desktop_secrets_session_only_no_keyring": "Բանալիների ոչ մի պահոց չպատասխանեց, ուստի հավելվածի գաղտնաբառերը և այլ գաղտնիքները մոռացվում են նրա փակվելիս։ Տեղադրեք gnome-keyring կամ KWallet՝ դրանք պահելու համար։",
   "desktop_secrets_session_only_title": "Գաղտնիքները պահվում են միայն այս աշխատաշրջանի համար",
+  "desktop_selection_hint": "{modifier}+սեղմում՝ ավելացնում կամ հանում է, Shift+սեղմում՝ ավելացնում է միջակայք, աջ սեղմում՝ բացում է գործողությունները, {modifier}+A՝ ընտրում է բոլորը, Esc՝ մաքրում է",
   "desktop_spatial_unavailable": "Spatial 2.5D-ն Immuch360 Desktop-ին կհասնի ավելի ուշ տարբերակում",
   "desktop_tapo_live_later": "Ուղիղ դիտումը Immuch360 Desktop-ին կհասնի ավելի ուշ տարբերակում։",
   "desktop_this_computer": "Այս համակարգիչը",

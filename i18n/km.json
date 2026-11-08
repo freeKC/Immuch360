@@ -605,6 +605,7 @@
   "desktop_secrets_session_only_keyring_refused": "ឃ្លាំងសោបានបដិសេធពួកវា ដូច្នេះពាក្យសម្ងាត់ និងអាថ៌កំបាំងផ្សេងទៀតរបស់កម្មវិធីនឹងត្រូវបំភ្លេចនៅពេលវាបិទ។ សូមដោះសោឃ្លាំងសោ ឬដំឡើង gnome-keyring ឬ KWallet រួចចាប់ផ្ដើមកម្មវិធីឡើងវិញ។",
   "desktop_secrets_session_only_no_keyring": "គ្មានឃ្លាំងសោណាឆ្លើយតបទេ ដូច្នេះពាក្យសម្ងាត់ និងអាថ៌កំបាំងផ្សេងទៀតរបស់កម្មវិធីនឹងត្រូវបំភ្លេចនៅពេលវាបិទ។ ដំឡើង gnome-keyring ឬ KWallet ដើម្បីរក្សាទុកពួកវា។",
   "desktop_secrets_session_only_title": "អាថ៌កំបាំងត្រូវបានរក្សាទុកសម្រាប់វគ្គនេះតែប៉ុណ្ណោះ",
+  "desktop_selection_hint": "{modifier}+ចុច បន្ថែម ឬដកចេញ, Shift+ចុច បន្ថែមជួរ, ចុចស្ដាំ បើកសកម្មភាព, {modifier}+A ជ្រើសរើសទាំងអស់, Esc សម្អាត",
   "desktop_spatial_unavailable": "Spatial 2.5D នឹងមកដល់ Immuch360 Desktop នៅក្នុងកំណែក្រោយ",
   "desktop_tapo_live_later": "ទិដ្ឋភាពផ្សាយផ្ទាល់នឹងមកដល់ Immuch360 Desktop នៅក្នុងកំណែក្រោយ។",
   "desktop_this_computer": "កុំព្យូទ័រនេះ",

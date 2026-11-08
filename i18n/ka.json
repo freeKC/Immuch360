@@ -712,6 +712,7 @@
   "desktop_secrets_session_only_keyring_refused": "გასაღებების საცავმა ისინი უარყო, ამიტომ აპის პაროლები და სხვა საიდუმლოებები დახურვისას დაიკარგება. განბლოკეთ გასაღებების საცავი ან დააინსტალირეთ gnome-keyring ან KWallet, შემდეგ გადატვირთეთ აპი.",
   "desktop_secrets_session_only_no_keyring": "გასაღებების საცავმა არ უპასუხა, ამიტომ აპის პაროლები და სხვა საიდუმლოებები დახურვისას დაიკარგება. მათ შესანახად დააინსტალირეთ gnome-keyring ან KWallet.",
   "desktop_secrets_session_only_title": "საიდუმლოებები ინახება მხოლოდ ამ სესიისთვის",
+  "desktop_selection_hint": "{modifier}+დაწკაპება ამატებს ან აშორებს, Shift+დაწკაპება ამატებს დიაპაზონს, მარჯვენა დაწკაპება ხსნის მოქმედებებს, {modifier}+A ირჩევს ყველაფერს, Esc ასუფთავებს",
   "desktop_spatial_unavailable": "Spatial 2.5D Immuch360 Desktop-ში მომდევნო ვერსიაში გამოჩნდება",
   "desktop_tapo_live_later": "პირდაპირი ხედი Immuch360 Desktop-ში მომდევნო ვერსიაში გამოჩნდება.",
   "desktop_this_computer": "ეს კომპიუტერი",

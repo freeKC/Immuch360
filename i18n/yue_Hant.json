@@ -1390,6 +1390,7 @@
   "desktop_secrets_session_only_keyring_refused": "鑰匙圈拒絕咗佢哋，所以 App 一關，App 嘅密碼同其他機密資料就會唔記得。請解鎖鑰匙圈，或者安裝 gnome-keyring 或 KWallet，然後重新開 App。",
   "desktop_secrets_session_only_no_keyring": "冇鑰匙圈回應，所以 App 一關，App 嘅密碼同其他機密資料就會唔記得。安裝 gnome-keyring 或 KWallet 就可以保留佢哋。",
   "desktop_secrets_session_only_title": "機密資料只會保留喺今次工作階段",
+  "desktop_selection_hint": "{modifier}+撳一下加入或者移除，Shift+撳一下加入一段範圍，撳右鍵打開動作，{modifier}+A 揀曬，Esc 清除",
   "desktop_spatial_unavailable": "Spatial 2.5D 會喺之後嘅版本嚟到 Immuch360 Desktop",
   "desktop_tapo_live_later": "直播畫面會喺之後嘅版本嚟到 Immuch360 Desktop。",
   "desktop_this_computer": "呢部電腦",

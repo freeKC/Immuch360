@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Kho khóa đã từ chối chúng, nên mật khẩu và các thông tin bí mật khác của ứng dụng sẽ bị quên khi ứng dụng đóng. Hãy mở khóa kho khóa, hoặc cài gnome-keyring hoặc KWallet, rồi khởi động lại ứng dụng.",
   "desktop_secrets_session_only_no_keyring": "Không có kho khóa nào phản hồi, nên mật khẩu và các thông tin bí mật khác của ứng dụng sẽ bị quên khi ứng dụng đóng. Hãy cài gnome-keyring hoặc KWallet để giữ chúng.",
   "desktop_secrets_session_only_title": "Thông tin bí mật chỉ được giữ trong phiên này",
+  "desktop_selection_hint": "{modifier}+nhấp để thêm hoặc bỏ, Shift+nhấp để thêm một dải, nhấp chuột phải để mở các thao tác, {modifier}+A để chọn tất cả, Esc để xóa lựa chọn",
   "desktop_spatial_unavailable": "Spatial 2.5D sẽ có trên Immuch360 Desktop trong một phiên bản sau",
   "desktop_tapo_live_later": "Hình ảnh trực tiếp sẽ có trên Immuch360 Desktop trong một phiên bản sau.",
   "desktop_this_computer": "Máy tính này",

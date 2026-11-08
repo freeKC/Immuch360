@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "El llavero los rechazó, así que las contraseñas y demás secretos de la app se olvidan al cerrarla. Desbloquea el llavero, o instala gnome-keyring o KWallet, y reinicia la app.",
   "desktop_secrets_session_only_no_keyring": "Ningún llavero respondió, así que las contraseñas y demás secretos de la app se olvidan al cerrarla. Instala gnome-keyring o KWallet para conservarlos.",
   "desktop_secrets_session_only_title": "Secretos guardados solo para esta sesión",
+  "desktop_selection_hint": "{modifier}+clic añade o quita, Mayús+clic añade un intervalo, el clic derecho abre las acciones, {modifier}+A selecciona todo, Esc borra la selección",
   "desktop_spatial_unavailable": "Spatial 2.5D llegará a Immuch360 Desktop en una versión posterior",
   "desktop_tapo_live_later": "La vista en directo llegará a Immuch360 Desktop en una versión posterior.",
   "desktop_this_computer": "Este ordenador",

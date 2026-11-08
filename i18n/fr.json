@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Le trousseau les a refusés : les mots de passe et autres secrets de l'application sont donc oubliés à sa fermeture. Déverrouillez le trousseau, ou installez gnome-keyring ou KWallet, puis redémarrez l'application.",
   "desktop_secrets_session_only_no_keyring": "Aucun trousseau n'a répondu : les mots de passe et autres secrets de l'application sont donc oubliés à sa fermeture. Installez gnome-keyring ou KWallet pour les garder.",
   "desktop_secrets_session_only_title": "Secrets gardés pour cette session seulement",
+  "desktop_selection_hint": "{modifier}+clic ajoute ou retire, Maj+clic ajoute une plage, le clic droit ouvre les actions, {modifier}+A sélectionne tout, Échap vide la sélection",
   "desktop_spatial_unavailable": "Le Spatial 2.5D arrivera dans une prochaine version d'Immuch360 Desktop",
   "desktop_tapo_live_later": "La vue en direct arrivera dans une prochaine version d'Immuch360 Desktop.",
   "desktop_this_computer": "Cet ordinateur",

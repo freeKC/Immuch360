@@ -1312,6 +1312,7 @@
   "desktop_secrets_session_only_keyring_refused": "கீரிங் அவற்றை மறுத்தது, எனவே பயன்பாட்டின் கடவுச்சொற்களும் பிற ரகசியங்களும் அது மூடும்போது மறக்கப்படும். கீரிங்கைத் திறக்கவும், அல்லது gnome-keyring அல்லது KWallet ஐ நிறுவவும், பிறகு பயன்பாட்டை மீண்டும் தொடங்கவும்.",
   "desktop_secrets_session_only_no_keyring": "எந்தக் கீரிங்கும் பதிலளிக்கவில்லை, எனவே பயன்பாட்டின் கடவுச்சொற்களும் பிற ரகசியங்களும் அது மூடும்போது மறக்கப்படும். அவற்றை வைத்திருக்க gnome-keyring அல்லது KWallet ஐ நிறுவவும்.",
   "desktop_secrets_session_only_title": "ரகசியங்கள் இந்த அமர்வுக்கு மட்டும் வைக்கப்படுகின்றன",
+  "desktop_selection_hint": "{modifier}+கிளிக் சேர்க்கும் அல்லது நீக்கும், Shift+கிளிக் ஒரு வரம்பைச் சேர்க்கும், வலது கிளிக் செயல்களைத் திறக்கும், {modifier}+A அனைத்தையும் தேர்ந்தெடுக்கும், Esc அழிக்கும்",
   "desktop_spatial_unavailable": "Spatial 2.5D பிந்தைய பதிப்பில் Immuch360 Desktop க்கு வரும்",
   "desktop_tapo_live_later": "நேரலைக் காட்சி பிந்தைய பதிப்பில் Immuch360 Desktop க்கு வரும்.",
   "desktop_this_computer": "இந்தக் கணினி",

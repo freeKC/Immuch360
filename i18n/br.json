@@ -507,6 +507,7 @@
   "desktop_secrets_session_only_keyring_refused": "An alc'hwezier en deus o nac'het, setu e vez disoñjet gerioù-tremen ha sekredoù all an arload pa vez serret. Dibrennit an alc'hwezier, pe staliit gnome-keyring pe KWallet, ha goude adloc'hit an arload.",
   "desktop_secrets_session_only_no_keyring": "Alc'hwezier ebet n'en deus respontet, setu e vez disoñjet gerioù-tremen ha sekredoù all an arload pa vez serret. Staliit gnome-keyring pe KWallet evit o mirout.",
   "desktop_secrets_session_only_title": "Sekredoù miret evit an estez-mañ hepken",
+  "desktop_selection_hint": "{modifier}+klik a ouzhpenn pe a lam, Shift+klik a ouzhpenn ur steudad, klik dehou a zigor an oberoù, {modifier}+A a ziuz pep tra, Esc a skarzh",
   "desktop_spatial_unavailable": "Spatial 2.5D a zeuio en Immuch360 Desktop en ur stumm diwezhatoc'h",
   "desktop_tapo_live_later": "Ar gwel war-eeun a zeuio en Immuch360 Desktop en ur stumm diwezhatoc'h.",
   "desktop_this_computer": "An urzhiataer-mañ",

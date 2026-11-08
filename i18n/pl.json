@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Pęk kluczy je odrzucił, więc hasła i inne sekrety aplikacji zostaną zapomniane po jej zamknięciu. Odblokuj pęk kluczy albo zainstaluj gnome-keyring lub KWallet, a następnie uruchom aplikację ponownie.",
   "desktop_secrets_session_only_no_keyring": "Żaden pęk kluczy nie odpowiedział, więc hasła i inne sekrety aplikacji zostaną zapomniane po jej zamknięciu. Zainstaluj gnome-keyring lub KWallet, aby je zachować.",
   "desktop_secrets_session_only_title": "Sekrety zachowane tylko na tę sesję",
+  "desktop_selection_hint": "{modifier}+kliknięcie dodaje lub usuwa, Shift+kliknięcie dodaje zakres, prawy przycisk otwiera akcje, {modifier}+A zaznacza wszystko, Esc czyści zaznaczenie",
   "desktop_spatial_unavailable": "Spatial 2.5D pojawi się w Immuch360 Desktop w późniejszej wersji",
   "desktop_tapo_live_later": "Podgląd na żywo pojawi się w Immuch360 Desktop w późniejszej wersji.",
   "desktop_this_computer": "Ten komputer",

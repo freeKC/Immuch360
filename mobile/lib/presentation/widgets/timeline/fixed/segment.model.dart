@@ -5,9 +5,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/selection/timeline_selection.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
@@ -340,6 +342,10 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
     int? heroOffset,
     Size remoteSize,
   ) async {
+    // Immuch360 Desktop: Control, Shift and the clicks while selecting go to the selection (lib/desktop/selection)
+    if (CurrentPlatform.isDesktop && desktopTimelineClick(ctx, asset, assetIndex)) {
+      return;
+    }
     final multiSelectState = ref.read(multiSelectProvider);
 
     if (multiSelectState.forceEnable || multiSelectState.isEnabled) {
@@ -373,6 +379,9 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
 
     ref.read(hapticFeedbackProvider.notifier).heavyImpact();
     ref.read(multiSelectProvider.notifier).toggleAssetSelection(asset);
+    if (CurrentPlatform.isDesktop) {
+      desktopTimelineAnchor(context, asset, assetIndex);
+    }
   }
 
   bool _getLockSelectionStatus(WidgetRef ref) {
@@ -407,7 +416,7 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
       _focusWhenBackFromViewer(context);
     }
 
-    return RepaintBoundary(
+    final tile = RepaintBoundary(
       // The remote of a TV reaches the tile: the arrows focus it, OK opens it
       child: RemoteFocusable(
         focusNode: _focusNode,
@@ -428,5 +437,7 @@ class _AssetTileWidgetState extends ConsumerState<_AssetTileWidget> {
         ),
       ),
     );
+    // Immuch360 Desktop: a right click opens the menu of the selection (lib/desktop/selection)
+    return withDesktopTimelineTile(context, asset, assetIndex, tile, locked: lockSelection);
   }
 }

@@ -1391,6 +1391,7 @@
   "desktop_secrets_session_only_keyring_refused": "Dhiúltaigh an fáinne eochracha dóibh, mar sin déantar dearmad ar phasfhocail agus ar rúin eile na haipe nuair a dhúntar í. Díghlasáil an fáinne eochracha, nó suiteáil gnome-keyring nó KWallet, ansin atosaigh an aip.",
   "desktop_secrets_session_only_no_keyring": "Níor fhreagair aon fháinne eochracha, mar sin déantar dearmad ar phasfhocail agus ar rúin eile na haipe nuair a dhúntar í. Suiteáil gnome-keyring nó KWallet chun iad a choinneáil.",
   "desktop_secrets_session_only_title": "Rúin coinnithe don seisiún seo amháin",
+  "desktop_selection_hint": "Cuireann {modifier}+cliceáil leis nó baineann sé, cuireann Shift+cliceáil raon leis, osclaíonn cliceáil dheas na gníomhartha, roghnaíonn {modifier}+A gach rud, glanann Esc",
   "desktop_spatial_unavailable": "Tiocfaidh Spatial 2.5D chuig Immuch360 Desktop i leagan níos déanaí",
   "desktop_tapo_live_later": "Tiocfaidh an radharc beo chuig Immuch360 Desktop i leagan níos déanaí.",
   "desktop_this_computer": "An ríomhaire seo",

@@ -1197,6 +1197,7 @@
   "desktop_secrets_session_only_keyring_refused": "Rantai kunci menolaknya, jadi kata laluan dan rahsia lain apl ini dilupakan apabila apl ditutup. Buka kunci rantai kunci, atau pasang gnome-keyring atau KWallet, kemudian mulakan semula apl.",
   "desktop_secrets_session_only_no_keyring": "Tiada rantai kunci yang menjawab, jadi kata laluan dan rahsia lain apl ini dilupakan apabila apl ditutup. Pasang gnome-keyring atau KWallet untuk menyimpannya.",
   "desktop_secrets_session_only_title": "Rahsia disimpan untuk sesi ini sahaja",
+  "desktop_selection_hint": "{modifier}+klik menambah atau membuang, Shift+klik menambah julat, klik kanan membuka tindakan, {modifier}+A memilih semua, Esc mengosongkan",
   "desktop_spatial_unavailable": "Spatial 2.5D akan tiba di Immuch360 Desktop dalam versi akan datang",
   "desktop_tapo_live_later": "Paparan langsung akan tiba di Immuch360 Desktop dalam versi akan datang.",
   "desktop_this_computer": "Komputer ini",

@@ -520,6 +520,7 @@
   "desktop_secrets_session_only_keyring_refused": "Keyring i no akseptem olgeta, taswe ol pasword mo ol narafala sikret blong ap oli lus taem hem i klos. Openem lok blong keyring, o instolem gnome-keyring o KWallet, afta statem ap bakegen.",
   "desktop_secrets_session_only_no_keyring": "I no gat keyring i ansa, taswe ol pasword mo ol narafala sikret blong ap oli lus taem hem i klos. Instolem gnome-keyring o KWallet blong kipim olgeta.",
   "desktop_secrets_session_only_title": "Ol sikret oli stap blong sesen ia nomo",
+  "desktop_selection_hint": "{modifier}+klik i putum o tekemaot, Shift+klik i putum wan laen, raet klik i openem ol aksen, {modifier}+A i jusum evriwan, Esc i klinim",
   "desktop_spatial_unavailable": "Spatial 2.5D bambae i kam long Immuch360 Desktop long wan nekis vesen",
   "desktop_tapo_live_later": "Luk laef bambae i kam long Immuch360 Desktop long wan nekis vesen.",
   "desktop_this_computer": "Kompiuta ia",
