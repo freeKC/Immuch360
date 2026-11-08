@@ -278,6 +278,59 @@ void main() {
     });
   });
 
+  group('a decoder that refused the original while it played (a TV, 8 November 2026)', () {
+    // The decoder check accepted the HEVC original, the decoder refused it, and the server's copy is beyond the
+    // decoders too: no switch, and the panel says what to change in Immich
+    const refusedWithCopyBeyond = VideoPlaybackFailure(
+      VideoFailureKind.error,
+      'immuch360-playback-error:decoder:video/hevc:5760:2880',
+      VideoSourceRefusal(codec: 'H.264', width: 5760, height: 2880, maxWidth: 4096, maxHeight: 2304),
+    );
+    const copyLine =
+        "The server's copy (H.264 5760 x 2880) is beyond the decoders of this device too: in Immich, lower the target "
+        'resolution of the video transcoding, then run Transcode videos';
+
+    testWidgets("names the server's copy beyond the decoders in place of the server advice", (tester) async {
+      final t = await translations(tester);
+
+      final text = describe(t, refusedWithCopyBeyond);
+
+      expect(text.title, 'This video cannot be played');
+      expect(text.cause, 'This device cannot decode this video (HEVC 5760 x 2880)');
+      expect(text.advice, [copyLine, t.video_failed_retry_hint]);
+      expect(text.advice, isNot(contains(t.video_failed_server_hint)));
+    });
+
+    testWidgets('the panel shows the copy line, and the notices of a switch read as asked', (tester) async {
+      await tester.pumpConsumerWidget(
+        Builder(
+          builder: (context) => VideoFailurePanel(
+            asset: RemoteAssetFactory.create(type: .video),
+            failure: refusedWithCopyBeyond,
+            fromServer: true,
+          ),
+        ),
+        overrides: [
+          videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('This device cannot decode this video (HEVC 5760 x 2880)'), findsOneWidget);
+      expect(find.text(copyLine), findsOneWidget);
+      final t = StaticTranslations.instance;
+      expect(find.text(t.video_failed_server_hint), findsNothing);
+      expect(
+        const VideoSourceNotice(.copyAfterRefusal, codec: 'HEVC', width: 5760, height: 2880).message(t),
+        "Playing the server's copy: the original (HEVC 5760 x 2880) was refused by this device's decoder",
+      );
+      expect(
+        const VideoSourceNotice(.originalAfterRefusal, codec: 'H.264', width: 1920, height: 960).message(t),
+        "Playing the original: the server's copy (H.264 1920 x 960) was refused by this device's decoder",
+      );
+    });
+  });
+
   group('the 360° player of a video beyond the decoders', () {
     Future<Future<bool>> openDialog(WidgetTester tester) async {
       late Future<bool> answer;

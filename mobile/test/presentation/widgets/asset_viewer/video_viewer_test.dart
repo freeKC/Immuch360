@@ -615,6 +615,181 @@ void main() {
     });
   });
 
+  group('a decoder that refuses at run time (a TV, 8 November 2026)', () {
+    // The decoder check accepts the HEVC original, and the TV's decoder refuses it as it starts: the server's copy
+    // plays once, with a word, rather than the failure panel
+    final serverOnly = RemoteAssetFactory.create(type: .video);
+    const appConfig = AppConfig(viewer: ViewerConfig(videoSource: .preferOriginalWithinDecoder));
+    const hevcOriginal = SphericalProbe(codec: 'hvc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+    const refusedHevc = 'immuch360-playback-error:decoder:video/hevc:5760:2880';
+    const copyNotice =
+        "Playing the server's copy: the original (HEVC 5760 x 2880) was refused by this device's decoder";
+    late _FakeOriginalDownloads downloads;
+    // The key of the viewer: a new one is a new viewer of the same video
+    late ValueNotifier<int> viewer;
+    late SphericalProbe? copyProbe;
+
+    setUp(() {
+      when(() => context.service.asset.service.getAsset(serverOnly)).thenAnswer((_) async => serverOnly);
+      probes.result = hevcOriginal;
+      downloads = _FakeOriginalDownloads()..streamsAnswer = true;
+      viewer = ValueNotifier(0);
+      copyProbe = null;
+    });
+
+    NativeVideoViewerState stateOf(WidgetTester tester) => tester.state(find.byType(NativeVideoViewer));
+
+    ProviderContainer containerOf(WidgetTester tester) =>
+        ProviderScope.containerOf(tester.element(find.byType(NativeVideoViewer)));
+
+    // The native player of the viewer on screen, once its source is made
+    Future<_FakePlayerController> attach(WidgetTester tester) async {
+      await stateOf(tester).videoSource;
+      final controller = _FakePlayerController();
+      stateOf(tester).attachController(controller);
+      await tester.pump();
+      await tester.pump();
+      return controller;
+    }
+
+    Future<_FakePlayerController> pumpOnScreen(WidgetTester tester, {List<Override> overrides = const []}) async {
+      await tester.pumpTestWidget(
+        context,
+        ValueListenableBuilder<int>(
+          valueListenable: viewer,
+          builder: (_, key, _) =>
+              NativeVideoViewer(key: ValueKey(key), asset: serverOnly, image: const SizedBox(), isCurrent: true),
+        ),
+        overrides: [
+          storageRepositoryProvider.overrideWithValue(storage),
+          sphericalProbeServiceProvider.overrideWithValue(probes),
+          videoSourceServiceProvider.overrideWithValue(
+            VideoSourceService(decoderApi, probeTranscoded: (_) async => copyProbe),
+          ),
+          appConfigProvider.overrideWithValue(appConfig),
+          // Read from the config above: overridden with it, in the scope of the viewer
+          loopVideoProvider.overrideWithValue(false),
+          originalDownloadsProvider.overrideWithValue(downloads),
+          videoDecodeDetailsProvider.overrideWith((ref, asset) async => (probe: null, verdict: null, bitRate: null)),
+          ...overrides,
+        ],
+        expectSettle: false,
+      );
+      return attach(tester);
+    }
+
+    // The native player sends the token of an error, and the viewer decides
+    Future<void> fail(WidgetTester tester, _FakePlayerController controller, String token) async {
+      controller.onError.value = token;
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+    }
+
+    Future<void> leave(WidgetTester tester) async {
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+    }
+
+    testWidgets('plays the server copy in place of the refused original, says why, and shows no panel', (tester) async {
+      final controller = await pumpOnScreen(tester);
+      expect(controller.loaded.single.path, endsWith('/assets/${serverOnly.id}/original'));
+
+      await fail(tester, controller, refusedHevc);
+
+      expect(controller.loaded, hasLength(2));
+      expect(controller.loaded.last.path, endsWith('/assets/${serverOnly.id}/video/playback'));
+      expect(find.text(copyNotice), findsOneWidget);
+      expect(find.byKey(const Key('video_failure_panel')), findsNothing);
+      // The details of the video say which file plays, and offer the original again
+      final chosen = containerOf(tester).read(chosenVideoSourcesProvider)[serverOnly.id];
+      expect(chosen?.kind, VideoSourceKind.transcoded);
+      expect(chosen?.notice, const VideoSourceNotice(.copyAfterRefusal, codec: 'HEVC', width: 5760, height: 2880));
+
+      await leave(tester);
+    });
+
+    testWidgets('shows the panel when the copy fails in turn, without going back to the original', (tester) async {
+      final controller = await pumpOnScreen(tester);
+      await fail(tester, controller, refusedHevc);
+
+      await fail(tester, controller, 'immuch360-playback-error:decoder:video/avc:1920:960');
+
+      expect(controller.loaded, hasLength(2));
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+      expect(find.text('This device cannot decode this video (H.264 1920 x 960)'), findsOneWidget);
+
+      await leave(tester);
+    });
+
+    testWidgets('a new viewer of the same video plays the copy at once, with why', (tester) async {
+      final first = await pumpOnScreen(tester);
+      await fail(tester, first, refusedHevc);
+      ScaffoldMessenger.of(tester.element(find.byType(NativeVideoViewer))).removeCurrentSnackBar();
+
+      viewer.value = 1;
+      await tester.pump();
+      final second = await attach(tester);
+
+      expect(second.loaded.single.path, endsWith('/assets/${serverOnly.id}/video/playback'));
+      expect(find.text(copyNotice), findsOneWidget);
+
+      await leave(tester);
+    });
+
+    testWidgets('a copy beyond the decoders too: the panel names it, in place of the server advice', (tester) async {
+      // A server that transcodes to H.264 at the original size, and decoders that stop H.264 at 4096 x 2304
+      decoderApi.quest = true;
+      copyProbe = const SphericalProbe(codec: 'avc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+      final controller = await pumpOnScreen(tester);
+
+      await fail(tester, controller, refusedHevc);
+
+      expect(controller.loaded, hasLength(1), reason: 'no 10 s of a copy the decoders cannot take');
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+      expect(find.text('This device cannot decode this video (HEVC 5760 x 2880)'), findsOneWidget);
+      expect(
+        find.text(
+          "The server's copy (H.264 5760 x 2880) is beyond the decoders of this device too: in Immich, lower the "
+          'target resolution of the video transcoding, then run Transcode videos',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('set the transcode policy'), findsNothing);
+
+      await leave(tester);
+    });
+
+    testWidgets('a copy forced in the details fails with the panel, as it would before', (tester) async {
+      final controller = await pumpOnScreen(
+        tester,
+        overrides: [
+          videoSourceOverridesProvider.overrideWith((ref) => VideoSourceOverrides()..force(serverOnly.id, .transcoded)),
+        ],
+      );
+      expect(controller.loaded.single.path, endsWith('/assets/${serverOnly.id}/video/playback'));
+
+      await fail(tester, controller, 'immuch360-playback-error:decoder:video/avc:1920:960');
+
+      expect(controller.loaded, hasLength(1));
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+
+      await leave(tester);
+    });
+
+    testWidgets('a link that stopped is no refusal of the decoder: the panel, without a switch', (tester) async {
+      final controller = await pumpOnScreen(tester);
+
+      await fail(tester, controller, 'immuch360-playback-error:stalled::0:0');
+
+      expect(controller.loaded, hasLength(1));
+      expect(find.byKey(const Key('video_failure_panel')), findsOneWidget);
+      expect(containerOf(tester).read(runtimeVideoRefusalsProvider.notifier).of(serverOnly.id), isEmpty);
+
+      await leave(tester);
+    });
+  });
+
   group('an original that cannot stream, downloaded before it plays', () {
     // FreeKC's server: no Range on /original, the MP4 index at the end. The original plays (the device decodes it), so
     // the in-app player downloads it with its progress, for the video on screen only
