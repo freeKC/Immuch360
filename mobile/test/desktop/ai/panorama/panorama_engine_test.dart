@@ -277,9 +277,11 @@ void main() {
     final heard = <String>[];
     final before = Logger.root.level;
     Logger.root.level = Level.ALL;
-    final listening = Logger.root.onRecord
-        .where((record) => record.loggerName == name && record.level >= level)
-        .listen((record) => heard.add(record.message));
+    final listening = Logger.root.onRecord.listen((record) {
+      if (record.loggerName == name && record.level >= level) {
+        heard.add(record.message);
+      }
+    });
     addTearDown(() async {
       Logger.root.level = before;
       await listening.cancel();
@@ -756,9 +758,11 @@ void main() {
       final warnings = <LogRecord>[];
       final before = Logger.root.level;
       Logger.root.level = Level.ALL;
-      final listening = Logger.root.onRecord
-          .where((record) => record.loggerName == 'PanoramaEngine' && record.level >= Level.WARNING)
-          .listen(warnings.add);
+      final listening = Logger.root.onRecord.listen((record) {
+        if (record.loggerName == 'PanoramaEngine' && record.level >= Level.WARNING) {
+          warnings.add(record);
+        }
+      });
       addTearDown(() async {
         Logger.root.level = before;
         await listening.cancel();
@@ -775,7 +779,7 @@ void main() {
       expect(warnings.single.stackTrace, isNotNull);
     });
 
-    test('the log of sd-cli kept as one file of the logs folder after a failure; none after a panorama made', () async {
+    test('the log of sd-cli kept in one file of the logs folder after a failure, none after a success', () async {
       final logs = Directory(p.join(folder.path, 'app-logs'));
       final failed = await engineOf(
         generator: _Logging(

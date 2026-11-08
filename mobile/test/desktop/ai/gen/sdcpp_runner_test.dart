@@ -93,8 +93,9 @@ const _rtx = SdCppCard(name: 'NVIDIA GeForce RTX 4060 Laptop GPU', integrated: f
 const _intel = SdCppCard(name: 'Intel(R) RaptorLake-S Mobile Graphics Controller', integrated: true);
 
 /// A device line of the list for the cases no PC printed
-String _line(int index, String name, {bool uma = false, String driver = 'NVIDIA'}) =>
-    'ggml_vulkan: $index = $name ($driver) | uma: ${uma ? 1 : 0} | fp16: 1 | bf16: 1 | warp size: 32';
+String _line(int index, String name, {bool uma = false, String driver = 'NVIDIA'}) {
+  return 'ggml_vulkan: $index = $name ($driver) | uma: ${uma ? 1 : 0} | fp16: 1 | bf16: 1 | warp size: 32';
+}
 
 /// The list as sd-cli prints it at its start: its count, then its devices, on the error output (ggml's default logger)
 List<(String, {bool isError})> _listing(List<String> devices) => [
@@ -246,22 +247,21 @@ void main() {
   );
 
   /// The laptop of the owner: sd-cli given [device] for [card]
-  SdCppSettings laptop({String device = 'Vulkan0', SdCppCard card = _rtx}) => SdCppSettings(
-    sdCli: settings().sdCli,
-    models: settings().models,
-    device: device,
-    card: card,
-    threads: 30,
-  );
+  SdCppSettings laptop({String device = 'Vulkan0', SdCppCard card = _rtx}) {
+    final base = settings();
+    return SdCppSettings(sdCli: base.sdCli, models: base.models, device: device, card: card, threads: 30);
+  }
 
   /// The messages of the logger [name] at [level] and above, from now to the end of the test
   List<String> recorded(String name, {Level level = Level.ALL}) {
     final heard = <String>[];
     final before = Logger.root.level;
     Logger.root.level = Level.ALL;
-    final listening = Logger.root.onRecord
-        .where((record) => record.loggerName == name && record.level >= level)
-        .listen((record) => heard.add(record.message));
+    final listening = Logger.root.onRecord.listen((record) {
+      if (record.loggerName == name && record.level >= level) {
+        heard.add(record.message);
+      }
+    });
     addTearDown(() async {
       Logger.root.level = before;
       await listening.cancel();
@@ -736,10 +736,11 @@ void main() {
     });
 
     test('a list still at odds once started again: gpuUnavailable after two launches, never three', () async {
+      // The order turned between the two runs: the card is never where sd-cli was told to run
+      final turned = [_line(0, _rtx.name), _line(1, _intel.name, uma: true)];
       final runner = FakeProcessRunner([
         FakeProcessScript(lines: _generation(listed: [_listedIntel, _listedRtx])),
-        // The order turned between the two runs: the card is never where sd-cli was told to run
-        FakeProcessScript(lines: _generation(listed: [_line(0, _rtx.name), _line(1, _intel.name, uma: true)])),
+        FakeProcessScript(lines: _generation(listed: turned)),
       ]);
       final failure = await failureOf(runner);
       expect(failure?.code, ImmersiveErrorCode.gpuUnavailable);
