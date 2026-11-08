@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/camera/camera_badges.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 
 /// m:ss, or h:mm:ss for an hour and more
 String cameraDurationText(Duration duration) {
@@ -97,8 +98,9 @@ class _ClipThumbnailState extends State<_ClipThumbnail> {
                 child: Icon(Icons.videocam_outlined, color: context.colorScheme.onSurfaceVariant),
               );
             }
-            return Image.memory(
-              bytes,
+            // The camera's JPEG; anything else no decoder of the device reads shows the empty tile
+            return Image(
+              image: GuardedMemoryImage(bytes, source: 'cameraClip', maxWidth: 384, maxHeight: 384),
               fit: BoxFit.cover,
               gaplessPlayback: true,
               errorBuilder: (context, error, stackTrace) =>

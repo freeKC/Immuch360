@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:async/async.dart';
@@ -10,6 +9,7 @@ import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
@@ -183,10 +183,12 @@ ImageProvider getFullImageProvider(
   // Create new provider and cache it
   final ImageProvider provider;
   if (localFilePath != null) {
-    // A TIFF opened with "Open with" on a device without TIFF decoder: decoded in Dart (see photoDecodePath)
+    // A TIFF opened with "Open with" on a device without TIFF decoder: decoded in Dart (see photoDecodePath). Any other
+    // file by the engine for its own formats, and on Android by the native decoder for the others (a HEIF, an AVIF, a
+    // raw file), at most the largest texture: never by the fallback decoder of the engine (see GuardedFileImage)
     provider = photoDecodePath(localFilePath, fromServer: false) == PhotoDecodePath.dartTiff
         ? FileTiffImage(localFilePath)
-        : FileImage(File(localFilePath));
+        : GuardedFileImage(localFilePath, source: 'openWith', undecodableKey: 'open:$localFilePath');
   } else if (_showsFromDevice(asset)) {
     final id = asset is LocalAsset ? asset.id : (asset as RemoteAsset).localId!;
     provider = LocalFullImageProvider(
