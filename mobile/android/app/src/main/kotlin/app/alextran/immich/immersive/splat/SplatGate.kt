@@ -88,8 +88,11 @@ internal object SplatGate {
   /** The count until a measure in the headset says more (design-final 2026-10-27, decision D7) */
   const val SAFE_GAUSSIANS = 50_000
 
-  /** The advice of the SDK, the most Large splats shows */
-  const val LARGE_GAUSSIANS = 150_000
+  /**
+   * The most Large splats shows: lifted from the advice of the SDK (150 000) to 2 000 000 for a measure in the headset
+   * (8 November 2026), the free memory and the heat still checked for every splat
+   */
+  const val LARGE_GAUSSIANS = 2_000_000
 
   const val MAX_REDUCIBLE_GAUSSIANS = 4_000_000L
   const val MAX_REDUCIBLE_BYTES = 1L shl 30

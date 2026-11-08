@@ -44,7 +44,8 @@ void main() {
         ),
       );
     }
-    expect(gate(large: true).request!.maxGaussians, 150000);
+    expect(splatLargeGaussians, 2000000);
+    expect(gate(large: true).request!.maxGaussians, splatLargeGaussians);
   });
 
   test(

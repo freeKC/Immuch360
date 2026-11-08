@@ -308,17 +308,20 @@ void main() {
       expect(jsonDecode(immersiveApi.opened.single.stereoPair!)['maxGaussians'], 50000);
     });
 
-    testWidgets('with Large splats turned on, the headset keeps 150,000', (tester) async {
+    testWidgets('with Large splats turned on, the headset shows the 452,451 gaussians whole, under its 2,000,000', (
+      tester,
+    ) async {
       await pumpPage(
         tester,
         '/cactus.spz',
         with_: overrides(config: const AppConfig(viewer: ViewerConfig(largeSplats: true))),
       );
 
-      expect(find.text('The headset keeps its 150,000 strongest gaussians'), findsOneWidget);
+      expect(find.text('452,451 gaussians, SPZ version 3'), findsOneWidget);
+      expect(find.textContaining('strongest gaussians'), findsNothing);
       await tester.tap(find.byKey(exploreSplatButtonKey));
       await tester.pumpAndSettle();
-      expect(jsonDecode(immersiveApi.opened.single.stereoPair!)['maxGaussians'], 150000);
+      expect(jsonDecode(immersiveApi.opened.single.stereoPair!)['maxGaussians'], 2000000);
     });
 
     FilledButton button(WidgetTester tester) => tester.widget<FilledButton>(find.byKey(exploreSplatButtonKey));

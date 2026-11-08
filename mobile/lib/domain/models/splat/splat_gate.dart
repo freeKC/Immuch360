@@ -3,12 +3,12 @@
 // offered, or greyed with its reason, from the head of the file alone (spec 10.2 of the AI immersive design: a refused
 // button stays visible, greyed with its reason). The splat module of the Meta Spatial SDK runs on the Quest 3 and 3S
 // only and is in the APK of the quest flavour only; the count the headset shows is 50 000 gaussians until a measure
-// in the headset, 150 000 with Large splats (the advice of the SDK), and a splat that holds more is reduced in the
-// headset up to 4 million gaussians and 1 GiB. The splat module reads SPZ version 2 only and aborts the app on any
-// other (measured on a Quest 3 on 31 October 2026): the headset writes every SPZ again as version 2, versions 2 and 4
-// included (a version 2 cut or short of its data aborts it too; version 4 is ZSTD, which the quest flavour
-// decompresses, FreeKC's report of 1 November 2026). The immersive viewer checks again (SplatGate.kt), with the free
-// memory and the heat of the headset.
+// in the headset, 2 000 000 with Large splats in the build of that measure (150 000 before, the advice of the SDK),
+// and a splat that holds more is reduced in the headset up to 4 million gaussians and 1 GiB. The splat module reads
+// SPZ version 2 only and aborts the app on any other (measured on a Quest 3 on 31 October 2026): the headset writes
+// every SPZ again as version 2, versions 2 and 4 included (a version 2 cut or short of its data aborts it too;
+// version 4 is ZSTD, which the quest flavour decompresses, FreeKC's report of 1 November 2026). The immersive viewer
+// checks again (SplatGate.kt), with the free memory and the heat of the headset.
 
 import 'dart:math' as math;
 
@@ -19,8 +19,9 @@ import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 /// The count of gaussians until a measure in the headset (decision D7 of design-final 2026-10-27)
 const splatSafeGaussians = 50000;
 
-/// The advice of the Meta Spatial SDK, the most Large splats shows
-const splatLargeGaussians = 150000;
+/// The most Large splats shows: lifted from the advice of the Meta Spatial SDK (150 000) to 2 000 000 for a measure in
+/// the headset (8 November 2026), the memory and the heat of the headset still checked by SplatGate.kt
+const splatLargeGaussians = 2000000;
 
 /// The most gaussians and bytes the headset reduces
 const splatMaxReducibleGaussians = 4000000;
