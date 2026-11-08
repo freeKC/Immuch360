@@ -81,11 +81,13 @@ void main() {
 
   testWidgets('a touchpad pinch zooms a photo nobody touched', (tester) async {
     await pumpPhoto(tester);
-    final before = controller.scale!;
+    // The photo contained in its box
+    final before = controller.scale;
+    expect(before, isNotNull);
 
     await pinchWithTouchpad(tester);
 
-    expect(controller.scale, greaterThan(before * 1.5), reason: 'the pinch reached the scale recognizer');
+    expect(controller.scale, closeTo(before! * 2, 0.01), reason: 'the pinch reached the scale recognizer');
   });
 
   testWidgets('a touch drag after the touchpad pinch runs as before', (tester) async {
