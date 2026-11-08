@@ -9,12 +9,16 @@
 //   ended     how the generation ended: done, or the code of its failure and its message
 //   gone      whether sd-cli still runs at its id after the end (it must not)
 //   upscale   with --upscale, the image wrapped by 32 columns on each side and upscaled x4, as measure M3 did
+//   device    the device sd-cli ran on, after the check of its list when --card is given
 // The test of the job object is outside: kill this program (taskkill /F) while sd-cli runs, then look for sd-cli.
 //
 //   sdcpp_probe --sd-cli FILE --models DIR --control PNG --out DIR [--device Vulkan1] [--steps 20] [--seed 1002]
-//               [--cancel-at STEP] [--upscale] [--threads N] [--prompt TEXT]
+//               [--cancel-at STEP] [--upscale] [--threads N] [--prompt TEXT] [--card NAME [--integrated]]
 // The models are found in DIR by the names M3 used, each replaceable by --diffusion-model, --vae, --llm, --lora and
-// --upscaler.
+// --upscaler. With --card, the name of the chosen card as the probe of the app reads it (an integrated chip with
+// --integrated), each run is checked against the list sd-cli prints at its start and started again on the index it
+// gives that card, as the app does since release 44 (sdcpp_runner.dart); without it, no check. The runs are written to
+// <out>/logs/sd-cli.log.
 
 import 'dart:convert';
 import 'dart:io';
@@ -62,8 +66,8 @@ Future<void> main(List<String> arguments) async {
     if (!name.startsWith('--')) {
       continue;
     }
-    if (name == '--upscale') {
-      flags.add('upscale');
+    if (name == '--upscale' || name == '--integrated') {
+      flags.add(name.substring(2));
     } else if (i + 1 < arguments.length) {
       options[name.substring(2)] = arguments[++i];
     }
@@ -86,6 +90,7 @@ Future<void> main(List<String> arguments) async {
       upscaler: model('upscaler', 'RealESRGAN_x4plus.pth'),
     ),
     device: options['device'] ?? 'Vulkan1',
+    card: options['card'] == null ? null : SdCppCard(name: options['card']!, integrated: flags.contains('integrated')),
     threads: options['threads'] == null ? null : int.parse(options['threads']!),
   );
   final steps = int.parse(options['steps'] ?? '${PanoV1.steps}');
@@ -129,6 +134,7 @@ Future<void> main(List<String> arguments) async {
       if (cancelledAt != null) 'afterCancelMs': _clock.elapsedMilliseconds - cancelledAt!,
     });
   }
+  _event('device', {'device': generator.device.name});
   for (final pid in runner.pids) {
     _event('gone', {'pid': pid, 'gone': processImageOf(pid) == null});
   }
@@ -143,7 +149,7 @@ Future<void> main(List<String> arguments) async {
     File(input).writeAsBytesSync(img.encodePng(wrapped));
     final started = _clock.elapsedMilliseconds;
     try {
-      await SdCppUpscaler(runner: runner, settings: settings, modelSha256: '').upscale(
+      await SdCppUpscaler(runner: runner, settings: settings, modelSha256: '', device: generator.device).upscale(
         UpscaleRequest(inputPath: input, outputPath: p.join(out.path, 'upscaled.png'), workFolder: out.path),
         cancel: cancel,
       );
