@@ -9,6 +9,8 @@ import app.alextran.immich.background.BackgroundWorkerApiImpl
 class ImmichApp : Application() {
   override fun onCreate() {
     super.onCreate()
+    // The Flutter injector of the process, taken on the main thread before any activity or worker (FlutterInjectorPin)
+    FlutterInjectorPin.pin(this)
     // After the process is killed (by user or system), the first trigger (taking a new picture) is lost.
     // Thus, the BackupWorker is not started. If the system kills the process after each initialization
     // (because of low memory etc.), the backup is never performed.

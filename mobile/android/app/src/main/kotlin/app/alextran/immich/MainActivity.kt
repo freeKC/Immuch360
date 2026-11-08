@@ -3,6 +3,7 @@ package app.alextran.immich
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.os.ext.SdkExtensions
 import android.view.MotionEvent
 import app.alextran.immich.background.BackgroundEngineLock
@@ -99,6 +100,12 @@ class MainActivity : FlutterFragmentActivity() {
       DjiLinkVideoViewFactory.VIEW_TYPE,
       DjiLinkVideoViewFactory(),
     )
+  }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    // Before super, which reads the Flutter loader to start the engine (see FlutterInjectorPin)
+    FlutterInjectorPin.checkBeforeActivity(this)
+    super.onCreate(savedInstanceState)
   }
 
   override fun onResume() {

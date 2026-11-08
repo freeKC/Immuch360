@@ -35,10 +35,6 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
   ListenableWorker(context, params), BackgroundWorkerBgHostApi {
   private val ctx: Context = context.applicationContext
 
-  /// The Flutter loader that loads the native Flutter library and resources.
-  /// This must be initialized before starting the Flutter engine.
-  private var loader: FlutterLoader = FlutterInjector.instance().flutterLoader()
-
   /// The Flutter engine created specifically for background execution.
   /// This is a separate instance from the main Flutter engine that handles the UI.
   /// It operates in its own isolate and doesn't share memory with the main engine.
@@ -110,6 +106,10 @@ class BackgroundWorker(context: Context, params: WorkerParameters) :
       startedAt = SystemClock.elapsedRealtime()
       Log.i(TAG, "Starting background upload worker")
 
+      // The Flutter loader that loads the native Flutter library and resources, taken here on the main thread and
+      // never in the constructor, which WorkManager runs on its own thread: a first FlutterInjector.instance() there
+      // could build a second injector while MainActivity starts (see FlutterInjectorPin)
+      val loader = FlutterInjector.instance().flutterLoader()
       if (!loader.initialized()) {
         loader.startInitialization(ctx)
       }
