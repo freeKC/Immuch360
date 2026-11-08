@@ -1,11 +1,11 @@
 // The selection of a timeline on a computer (lib/desktop/selection/timeline_selection.dart), in a real Timeline under
 // the window shell: Control click selects without opening, Shift click adds a range from the last click (or from a long
 // press), Control A selects the whole timeline in one change of the selection, Escape clears it, a right click opens
-// the menu of the whole selection with "Upload to Immich" first, which sends every photo of the selection; "N selected"
-// in the bar; Command on macOS. The assets an album holds already are never taken, and a right click on the page that
-// picks them adds. What the user does while Control A loads wins once it ends; a Shift click finds its anchor again
-// after photos arrived above it. A phone, the read only mode and the remote control layout on a computer keep the
-// timeline as it was.
+// the menu of the whole selection with "Upload to Immich" first, which sends every photo of the selection, then the AI
+// entries in the order of the sheet; "N selected" in the bar; Command on macOS. The assets an album holds already are
+// never taken, and a right click on the page that picks them adds. What the user does while Control A loads wins once
+// it ends; a Shift click finds its anchor again after photos arrived above it. A phone, the read only mode and the
+// remote control layout on a computer keep the timeline as it was.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -18,7 +18,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
@@ -95,7 +98,7 @@ void main() {
   }
 
   /// The timeline of [assets] on its own page under the window shell (none on a phone), and a viewer to open; [assets]
-  /// read again whenever [service] says the timeline changed, when given
+  /// read again whenever [service] says the timeline changed, when given; the AI features off unless [ai]
   Future<RootStackRouter> pumpTimeline(
     WidgetTester tester, {
     List<BaseAsset> assets = const [],
@@ -105,6 +108,7 @@ void main() {
     bool readOnly = false,
     MultiSelectState? selection,
     TimelineOrigin origin = TimelineOrigin.main,
+    bool ai = false,
   }) async {
     tester.view
       ..physicalSize = const Size(1600, 2400)
@@ -149,7 +153,13 @@ void main() {
         readonlyModeProvider.overrideWith(() => _ReadOnly(readOnly)),
         foregroundUploadServiceProvider.overrideWithValue(context.service.upload),
         toastServiceProvider.overrideWithValue(context.service.toast),
-        aiFeaturesEnabledProvider.overrideWith((ref) => false),
+        aiFeaturesEnabledProvider.overrideWith((ref) => ai),
+        // The AI features on: "Make 3D (AI)" and "Make a splat scene (AI)" offered, their gates still reading
+        if (ai) ...[
+          offeredConversionKindsProvider.overrideWith((ref) => const [ConversionKind.sbsFromPhoto]),
+          aiSplatScenesOnProvider.overrideWith((ref) => true),
+          aiGateResultForProvider.overrideWith((ref, _) => Completer<AiGateResult>().future),
+        ],
         if (selection != null) multiSelectProvider.overrideWith(() => MultiSelectNotifier(selection)),
       ],
     );
@@ -375,6 +385,28 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    testWidgets('with the AI features on, "Make 3D (AI)" then "Make a splat scene (AI)" follow Upload to Immich', (
+      tester,
+    ) async {
+      await pumpTimeline(tester, assets: photos(30), ai: true);
+      await clickWith(tester, [LogicalKeyboardKey.controlLeft], 1);
+      await clickWith(tester, [LogicalKeyboardKey.controlLeft], 2);
+
+      await rightClick(tester, tile(2));
+      await settle(tester);
+      final upload = find.byKey(const Key('desktop_selection_upload'));
+      final make3d = find.byKey(const Key('ai_make_3d'));
+      final splat = find.byKey(const Key('ai_make_splat'));
+      expect(find.descendant(of: make3d, matching: find.text(t.ai_immersive_make_3d)), findsOneWidget);
+      expect(find.descendant(of: splat, matching: find.text(t.ai_immersive_splat_make)), findsOneWidget);
+      expect(tester.getTopLeft(upload).dy, lessThan(tester.getTopLeft(make3d).dy), reason: 'Upload to Immich first');
+      expect(tester.getTopLeft(make3d).dy, lessThan(tester.getTopLeft(splat).dy), reason: 'as in the sheet');
+      // "Make a splat scene (AI)" acts on the same selection
+      final seen = ProviderScope.containerOf(tester.element(splat)).read(assetsActionProvider(ActionSource.timeline));
+      expect({for (final asset in seen.toList()) asset.name}, {'p1.jpg', 'p2.jpg'});
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('a right click elsewhere selects that photo alone, with Control it joins; Escape closes the menu, '
         'then clears', (tester) async {
       await pumpTimeline(tester, assets: photos(30));
@@ -491,11 +523,12 @@ void main() {
       );
       expect(find.byKey(const Key('desktop_selection_upload')), findsNothing);
       expect(find.byType(DesktopMakeImmersiveButton), findsNothing);
+      expect(find.byType(DesktopMakeSplatButton), findsNothing);
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('the locked folder offers no "Make 3D (AI)" in the menu', (tester) async {
-      await pumpTimeline(tester, assets: photos(12), origin: TimelineOrigin.lockedFolder);
+    testWidgets('the locked folder offers no AI entry in the menu', (tester) async {
+      await pumpTimeline(tester, assets: photos(12), origin: TimelineOrigin.lockedFolder, ai: true);
       await rightClick(tester, tile(1));
       await settle(tester);
       expect(
@@ -504,6 +537,7 @@ void main() {
         reason: 'as the sheet of the locked folder',
       );
       expect(find.byType(DesktopMakeImmersiveButton), findsNothing);
+      expect(find.byType(DesktopMakeSplatButton), findsNothing);
       debugDefaultTargetPlatformOverride = null;
     });
 

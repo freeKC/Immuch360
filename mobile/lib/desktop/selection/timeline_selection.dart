@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
@@ -218,8 +219,8 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
     if (ref.watch(multiSelectProvider.select((state) => state.forceEnable)) || origin == TimelineOrigin.trash) {
       return const [];
     }
-    // No 3D version of the photos of the locked folder, as in the viewer
-    final make3d = origin != TimelineOrigin.lockedFolder && !ref.watch(inLockedViewProvider);
+    // No AI entry for the photos of the locked folder, as in the viewer
+    final ai = origin != TimelineOrigin.lockedFolder && !ref.watch(inLockedViewProvider);
     Widget? entry(ActionBuilder action, String key) {
       final item = action.create(context, ref);
       if (item == null) {
@@ -235,7 +236,11 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
 
     return [
       ?entry(const UploadAction(source: ActionSource.timeline), 'desktop_selection_upload'),
-      if (make3d) const DesktopMakeImmersiveButton(source: ActionSource.timeline, menuItem: true),
+      // The AI entries, "Make 3D (AI)" then "Make a splat scene (AI)" as in the sheet of the selection
+      if (ai) ...[
+        const DesktopMakeImmersiveButton(source: ActionSource.timeline, menuItem: true),
+        const DesktopMakeSplatButton(source: ActionSource.timeline, menuItem: true),
+      ],
       ?entry(const DownloadAction(source: ActionSource.timeline), 'desktop_selection_download'),
       // "Save to a folder" on Linux, the share sheet of the system elsewhere
       ?entry(const ShareAction(source: ActionSource.timeline), 'desktop_selection_share'),
