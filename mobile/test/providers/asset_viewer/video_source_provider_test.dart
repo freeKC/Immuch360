@@ -9,6 +9,7 @@ import 'package:http/testing.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/exif.model.dart';
+import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
@@ -650,6 +651,200 @@ void main() {
       expect(await container.read(serverHasCopyProvider('video-1').future), isTrue);
       respond = (request) async => sized(request, original: 1000, transcoded: 1000);
       expect(await container.read(serverHasCopyProvider('video-2').future), isFalse);
+    });
+  });
+
+  group('VideoSourceService.serverSource after a refusal of the decoder (a TV, 8 November 2026)', () {
+    // The decoder check accepts the HEVC original, the decoder refuses it as it starts: the copy plays next time
+    const original = '$server/assets/video-1/original';
+    const transcoded = '$server/assets/video-1/video/playback';
+    const hevcOriginal = SphericalProbe(codec: 'hvc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+    const h264SmallCopy = SphericalProbe(codec: 'avc1', codedWidth: 1920, codedHeight: 960, frameRate: 29.97);
+    const h264FullSizeCopy = SphericalProbe(codec: 'avc1', codedWidth: 5760, codedHeight: 2880, frameRate: 29.97);
+    const refusedOriginal = {
+      VideoSourceKind.original: NativePlaybackError(.decoder, mime: 'video/hevc', width: 5760, height: 2880),
+    };
+
+    late SphericalProbe? copyProbe;
+    late List<String> copyProbes;
+    late int originalProbes;
+    late VideoSourceService service;
+
+    setUp(() {
+      copyProbe = h264SmallCopy;
+      copyProbes = [];
+      originalProbes = 0;
+      service = VideoSourceService(
+        api,
+        client: () => MockClient((request) {
+          sizeRequests.add(request);
+          return respond(request);
+        }),
+        probeTranscoded: (videoId) async {
+          copyProbes.add(videoId);
+          return copyProbe;
+        },
+        timeout: const Duration(milliseconds: 100),
+        sizeTimeout: const Duration(milliseconds: 100),
+      );
+    });
+
+    Future<SphericalProbe?> probeOriginal() async {
+      originalProbes++;
+      return hevcOriginal;
+    }
+
+    test('looks at the copy although the original decodes, and plays it with why', () async {
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: hevcOriginal,
+        refusedAtRuntime: refusedOriginal,
+      );
+
+      expect(source.url, transcoded);
+      expect(source.fallbackUrl, isNull, reason: 'the other file is the fallback already');
+      expect(source.notice, const VideoSourceNotice(.copyAfterRefusal, codec: 'HEVC', width: 5760, height: 2880));
+      expect(source.afterRefusal?.next, VideoSourceKind.transcoded);
+      expect(source.hasCopy, isTrue);
+      expect(copyProbes, ['video-1']);
+      expect(sizeRequests, isNotEmpty, reason: 'whether the server has a copy of its own');
+    });
+
+    test('asks whether the server has a copy even for a frame every decoder takes', () async {
+      // Without a copy of its own, the server's playback stream is the original: no switch to the same file
+      respond = (request) async => sized(request, original: 1000, transcoded: 1000);
+
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: hevcOriginal,
+        width: 1920,
+        height: 1080,
+        refusedAtRuntime: refusedOriginal,
+      );
+
+      expect(source.url, original);
+      expect(source.afterRefusal?.next, isNull);
+      expect(copyProbes, isEmpty, reason: 'no copy to read');
+    });
+
+    test('stays on the original when the server has no copy of its own', () async {
+      respond = (request) async => sized(request, original: 1000, transcoded: 1000);
+
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: hevcOriginal,
+        refusedAtRuntime: refusedOriginal,
+      );
+
+      expect(source.url, original);
+      expect(source.notice, isNull);
+      expect(source.afterRefusal?.next, isNull);
+      expect(source.afterRefusal?.copyBeyondDecoders, isNull);
+      expect(source.hasCopy, isFalse);
+    });
+
+    test('stays on the original when the copy is beyond the decoders, and gives its refusal', () async {
+      api.quest = true;
+      copyProbe = h264FullSizeCopy;
+
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: hevcOriginal,
+        refusedAtRuntime: refusedOriginal,
+      );
+
+      expect(source.url, original);
+      expect(source.afterRefusal?.next, isNull);
+      expect(
+        source.afterRefusal?.copyBeyondDecoders,
+        const VideoSourceRefusal(codec: 'H.264', width: 5760, height: 2880, maxWidth: 4096, maxHeight: 2304),
+      );
+    });
+
+    test('under "Always the transcoded stream", reads the original late after a refused copy and plays it', () async {
+      const refusedCopy = {
+        VideoSourceKind.transcoded: NativePlaybackError(.noFrame, mime: 'video/avc', width: 1920, height: 960),
+      };
+      var streamsAsked = 0;
+
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .alwaysTranscoded,
+        probeOriginal: probeOriginal,
+        refusedAtRuntime: refusedCopy,
+        originalStreams: () async {
+          streamsAsked++;
+          return true;
+        },
+      );
+
+      expect(originalProbes, 1);
+      expect(streamsAsked, 1);
+      expect(source.url, original);
+      expect(source.notice, const VideoSourceNotice(.originalAfterRefusal, codec: 'H.264', width: 1920, height: 960));
+
+      // An original the server cannot stream would download whole first: the copy stays
+      final kept = await service.serverSource(
+        videoId: 'video-1',
+        policy: .alwaysTranscoded,
+        probeOriginal: probeOriginal,
+        refusedAtRuntime: refusedCopy,
+        originalStreams: () async => false,
+      );
+      expect(kept.url, transcoded);
+      expect(kept.afterRefusal?.next, isNull);
+    });
+
+    test('plays a forced file whatever the decoder said of it', () async {
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: hevcOriginal,
+        forced: .original,
+        refusedAtRuntime: refusedOriginal,
+      );
+
+      expect(source.url, original);
+      expect(source.afterRefusal?.next, isNull);
+      expect(copyProbes, isEmpty, reason: 'the copy plays no part');
+    });
+
+    test('chooses as before without a refusal', () async {
+      final source = await service.serverSource(
+        videoId: 'video-1',
+        policy: .preferOriginalWithinDecoder,
+        probe: hevcOriginal,
+      );
+
+      expect(source.url, original);
+      expect(source.afterRefusal, isNull);
+      expect(copyProbes, isEmpty);
+    });
+
+    test('RuntimeVideoRefusals keeps the refused files per video, and forgets the oldest past 100', () {
+      final refusals = RuntimeVideoRefusals();
+      addTearDown(refusals.dispose);
+      const decoder = NativePlaybackError(.decoder, mime: 'video/hevc', width: 5760, height: 2880);
+      const noFrame = NativePlaybackError(.noFrame, mime: 'video/avc', width: 1920, height: 960);
+
+      expect(refusals.of('video-1'), isEmpty);
+      refusals.record('video-1', .original, decoder);
+      refusals.record('video-1', .transcoded, noFrame);
+      expect(refusals.of('video-1'), {VideoSourceKind.original: decoder, VideoSourceKind.transcoded: noFrame});
+      expect(refusals.of('video-2'), isEmpty, reason: 'per video, never per format');
+
+      for (var i = 2; i <= RuntimeVideoRefusals.maxEntries; i++) {
+        refusals.record('video-$i', .original, decoder);
+      }
+      expect(refusals.of('video-1'), isNotEmpty);
+      refusals.record('video-101', .original, decoder);
+      expect(refusals.of('video-1'), isEmpty, reason: 'the oldest is forgotten');
+      expect(refusals.of('video-2'), isNotEmpty);
+      expect(refusals.of('video-101'), isNotEmpty);
     });
   });
 

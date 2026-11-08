@@ -54,6 +54,14 @@ enum VideoSourceNoticeKind {
 
   /// A file of the device or of a network share is beyond what the device decodes: it plays, and may not
   beyondDecoders,
+
+  /// The server's copy plays because the device's decoder refused the original while it played, although its decoder
+  /// check accepted it (see runtimeFallback): the notice tells of the original
+  copyAfterRefusal,
+
+  /// The original plays because the device's decoder refused the server's copy while it played (see runtimeFallback):
+  /// the notice tells of the copy
+  originalAfterRefusal,
 }
 
 /// A message about the file chosen: its [kind], and the file it is about (the one beyond what the device decodes), of
