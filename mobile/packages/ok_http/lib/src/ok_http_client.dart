@@ -387,9 +387,12 @@ class OkHttpClient extends BaseClient {
     final callback =
         bindings.WriteCallback.implement(bindings.$WriteCallback(
       onWriteComplete: () => writeCompleter.complete(),
-      onError: (e) => writeCompleter.completeError(
-        ClientException(e.toString()),
-      ),
+      onError: (e) {
+        // Immuch360: the exception is released after its text is read
+        final message = e.toString();
+        e.release();
+        writeCompleter.completeError(ClientException(message));
+      },
     ));
     try {
       await for (final chunk in bodyStream) {
@@ -456,9 +459,24 @@ class OkHttpClient extends BaseClient {
 
     final responseCompleter = Completer<StreamedResponse>();
 
-    var reqBuilder = bindings.Request$Builder().url$1(requestUrl.toJString());
+    // Immuch360: every JNI object made for this request is held in a local
+    // and released right after its last synchronous use, instead of being
+    // left to a garbage collection. A release is itself a use, so the object
+    // stays reachable through every call before it, the helpers of
+    // package:jni included (the text of an exception, the map of the
+    // headers), and its global reference goes at once. The call, the request
+    // body and the reader of the response live until the request is over
+    // (_RequestObjects). See IMMUCH360-NOTE.md.
+    final reqBuilder = bindings.Request$Builder();
+    final jUrl = requestUrl.toJString();
+    reqBuilder.url$1(jUrl).release();
+    jUrl.release();
     request.headers.forEach((headerName, headerValue) {
-      reqBuilder.addHeader(headerName.toJString(), headerValue.toJString());
+      final jName = headerName.toJString();
+      final jValue = headerValue.toJString();
+      reqBuilder.addHeader(jName, jValue).release();
+      jName.release();
+      jValue.release();
     });
 
     // OkHttp doesn't allow a non-null RequestBody for GET and HEAD requests.
@@ -467,7 +485,9 @@ class OkHttpClient extends BaseClient {
     if (requestMethod != 'GET' && requestMethod != 'HEAD') {
       if (request is Request) {
         final requestBody = await bodyStream.toBytes();
-        reqBody = bindings.RequestBody.create$10(JByteArray.from(requestBody));
+        final jRequestBody = JByteArray.from(requestBody);
+        reqBody = bindings.RequestBody.create$10(jRequestBody);
+        jRequestBody.release();
         profile?.requestData.bodySink.add(requestBody);
       } else {
         reqBody = bindings.StreamingRequestBody(
@@ -480,7 +500,9 @@ class OkHttpClient extends BaseClient {
       reqBody = null;
     }
 
-    reqBuilder.method(requestMethod.toJString(), reqBody);
+    final jMethod = requestMethod.toJString();
+    reqBuilder.method(jMethod, reqBody).release();
+    jMethod.release();
 
     // To configure the client per-request, we create a new client with the
     // builder associated with `_client`.
@@ -490,51 +512,92 @@ class OkHttpClient extends BaseClient {
     // `followRedirects` is set to `false` to handle redirects manually.
     // (Since OkHttp sets a hard limit of 20 redirects.)
     // https://github.com/square/okhttp/blob/54238b4c713080c3fd32fb1a070fb5d6814c9a09/okhttp/src/main/kotlin/okhttp3/internal/http/RetryAndFollowUpInterceptor.kt#L350
-    final reqConfiguredClient = bindings.RedirectInterceptor.Companion
-        .addRedirectInterceptor(
-            _client.newBuilder().followRedirects(false),
-            maxRedirects,
-            followRedirects, bindings.RedirectReceivedCallback.implement(
-                bindings.$RedirectReceivedCallback(
-          onRedirectReceived: (response, newLocation) {
-            profile?.responseData.addRedirect(HttpProfileRedirectData(
-              statusCode: response.code(),
-              method: response
-                  .request()
-                  .method()
-                  .toDartString(releaseOriginal: true),
-              location: newLocation.toDartString(releaseOriginal: true),
-            ));
-          },
-        )))
-        .callTimeout(configuration.callTimeout.inMilliseconds,
-            bindings.TimeUnit.MILLISECONDS)
-        .connectTimeout(configuration.connectTimeout.inMilliseconds,
-            bindings.TimeUnit.MILLISECONDS)
-        .readTimeout(configuration.readTimeout.inMilliseconds,
-            bindings.TimeUnit.MILLISECONDS)
-        .writeTimeout(configuration.writeTimeout.inMilliseconds,
-            bindings.TimeUnit.MILLISECONDS)
-        .build();
+    final redirectCallback = bindings.RedirectReceivedCallback.implement(
+        bindings.$RedirectReceivedCallback(
+      onRedirectReceived: (response, newLocation) {
+        final requestProfile = profile;
+        if (requestProfile != null) {
+          final redirectRequest = response.request();
+          requestProfile.responseData.addRedirect(HttpProfileRedirectData(
+            statusCode: response.code(),
+            method:
+                redirectRequest.method().toDartString(releaseOriginal: true),
+            location: newLocation.toDartString(releaseOriginal: true),
+          ));
+          redirectRequest.release();
+        } else {
+          newLocation.release();
+        }
+        response.release();
+      },
+    ));
+    final clientBuilder = _client.newBuilder();
+    clientBuilder.followRedirects(false).release();
+    final interceptor = bindings.RedirectInterceptor.Companion;
+    final configuredBuilder = interceptor.addRedirectInterceptor(
+        clientBuilder, maxRedirects, followRedirects, redirectCallback);
+    interceptor.release();
+    redirectCallback.release();
+    final milliseconds = bindings.TimeUnit.MILLISECONDS;
+    configuredBuilder
+        .callTimeout(configuration.callTimeout.inMilliseconds, milliseconds)
+        .release();
+    configuredBuilder
+        .connectTimeout(
+            configuration.connectTimeout.inMilliseconds, milliseconds)
+        .release();
+    configuredBuilder
+        .readTimeout(configuration.readTimeout.inMilliseconds, milliseconds)
+        .release();
+    configuredBuilder
+        .writeTimeout(configuration.writeTimeout.inMilliseconds, milliseconds)
+        .release();
+    milliseconds.release();
+    final reqConfiguredClient = configuredBuilder.build();
+    configuredBuilder.release();
+    clientBuilder.release();
 
     // `enqueue()` schedules the request to be executed in the future.
     // https://square.github.io/okhttp/5.x/okhttp/okhttp3/-call/enqueue.html
     StreamController<List<int>>? respBodyStreamController;
-    bindings.AsyncInputStreamReader? reader;
 
-    final call = reqConfiguredClient.newCall(reqBuilder.build())
-      ..enqueue(bindings.Callback.implement(bindings.$Callback(
-        onResponse: (bindings.Call call, bindings.Response response) {
-          reader = bindings.AsyncInputStreamReader();
+    final builtRequest = reqBuilder.build();
+    reqBuilder.release();
+    final call = reqConfiguredClient.newCall(builtRequest);
+    builtRequest.release();
+    reqConfiguredClient.release();
+    final requestObjects = _RequestObjects(
+      call: call,
+      body: reqBody,
+      streaming: reqBody is bindings.StreamingRequestBody,
+    );
+
+    final responseCallback = bindings.Callback.implement(bindings.$Callback(
+      onResponse: (bindings.Call responseCall, bindings.Response response) {
+        try {
+          final reader =
+              requestObjects.reader = bindings.AsyncInputStreamReader();
           final bodyStreamController =
               respBodyStreamController = StreamController<List<int>>();
 
           var responseHeaders = <String, String>{};
 
-          response.headers().toMultimap().forEach((key, value) {
-            responseHeaders[key.toDartString(releaseOriginal: true)] =
-                value.join(',');
-          });
+          final headers = response.headers();
+          final multimap = headers.toMultimap();
+          final names = multimap.keys;
+          for (final name in names) {
+            final values = multimap[name]!;
+            final count = values.length;
+            final joined = [
+              for (var i = 0; i < count; ++i)
+                values[i].toDartString(releaseOriginal: true),
+            ].join(',');
+            values.release();
+            responseHeaders[name.toDartString(releaseOriginal: true)] = joined;
+          }
+          names.release();
+          multimap.release();
+          headers.release();
 
           int? contentLength;
           if (responseHeaders.containsKey('content-length')) {
@@ -545,45 +608,59 @@ class OkHttpClient extends BaseClient {
             if (contentLength == null || contentLength < 0) {
               responseCompleter.completeError(ClientException(
                   'Invalid content-length header', request.url));
+              requestObjects.callOver();
               return;
             }
           }
 
-          reader!.readAsync(
-              response.body()!.byteStream(),
-              bindings.DataCallback.implement(
-                bindings.$DataCallback(
-                  onDataRead: (bytesRead) {
-                    if (bodyStreamController.isClosed) return;
-                    final data = Uint8List(bytesRead.length);
-                    for (var i = 0; i < bytesRead.length; ++i) {
-                      data[i] = bytesRead[i];
-                    }
+          final dataCallback = bindings.DataCallback.implement(
+            bindings.$DataCallback(
+              onDataRead: (bytesRead) {
+                if (bodyStreamController.isClosed) {
+                  bytesRead.release();
+                  return;
+                }
+                // Immuch360: one copy of the chunk, not one JNI call per byte
+                final length = bytesRead.length;
+                final data = length == 0
+                    ? Uint8List(0)
+                    : Uint8List.fromList(bytesRead.getRange(0, length));
+                bytesRead.release();
 
-                    bodyStreamController.sink.add(data);
-                    profile?.responseData.bodySink.add(data);
-                  },
-                  onFinished: () {
-                    if (bodyStreamController.isClosed) return;
-                    bodyStreamController.sink.close();
-                    if (!profileRespClosed) {
-                      profile?.responseData.close();
-                      profileRespClosed = true;
-                    }
-                  },
-                  onError: (iOException) {
-                    if (bodyStreamController.isClosed) return;
-                    var exception =
-                        ClientException(iOException.toString(), request.url);
+                bodyStreamController.sink.add(data);
+                profile?.responseData.bodySink.add(data);
+              },
+              onFinished: () {
+                // The reader calls this last, after an error too: the call is
+                // over
+                requestObjects.callOver();
+                if (bodyStreamController.isClosed) return;
+                bodyStreamController.sink.close();
+                if (!profileRespClosed) {
+                  profile?.responseData.close();
+                  profileRespClosed = true;
+                }
+              },
+              onError: (iOException) {
+                final message = iOException.toString();
+                iOException.release();
+                if (bodyStreamController.isClosed) return;
+                var exception = ClientException(message, request.url);
 
-                    bodyStreamController.sink.addError(exception);
-                    addProfileError(profile, exception);
-                    profileRespClosed = true;
+                bodyStreamController.sink.addError(exception);
+                addProfileError(profile, exception);
+                profileRespClosed = true;
 
-                    bodyStreamController.sink.close();
-                  },
-                ),
-              ));
+                bodyStreamController.sink.close();
+              },
+            ),
+          );
+          final responseBody = response.body()!;
+          final byteStream = responseBody.byteStream();
+          reader.readAsync(byteStream, dataCallback).release();
+          byteStream.release();
+          responseBody.release();
+          dataCallback.release();
 
           responseCompleter.complete(StreamedResponse(
             bodyStreamController.stream,
@@ -609,11 +686,16 @@ class OkHttpClient extends BaseClient {
                 response.message().toDartString(releaseOriginal: true)
             ..startTime = DateTime.now()
             ..statusCode = response.code();
-        },
-        onFailure: (bindings.Call call, JObject ioException) {
+        } finally {
+          response.release();
+          responseCall.release();
+        }
+      },
+      onFailure: (bindings.Call failedCall, JObject ioException) {
+        try {
           if (reqBody is bindings.StreamingRequestBody) reqBody.cancel();
           if (responseCompleter.isCompleted) return;
-          if (call.isCanceled()) {
+          if (failedCall.isCanceled()) {
             final error = RequestAbortedException(request.url);
             responseCompleter.completeError(error);
             addProfileError(profile, error);
@@ -628,14 +710,25 @@ class OkHttpClient extends BaseClient {
           responseCompleter.completeError(exception);
           addProfileError(profile, exception);
           profileRespClosed = true;
-        },
-      )));
+        } finally {
+          ioException.release();
+          failedCall.release();
+          requestObjects.callOver();
+        }
+      },
+    ));
+    call.enqueue(responseCallback);
+    responseCallback.release();
 
     // Register abort trigger to cancel the OkHttp call.
     if (request case Abortable(:final abortTrigger?)) {
       unawaited(abortTrigger.whenComplete(() {
-        call.cancel();
-        if (reqBody is bindings.StreamingRequestBody) reqBody.cancel();
+        // Immuch360: once the request is over its JNI objects are released,
+        // and there is nothing left to cancel
+        if (!requestObjects.isReleased) {
+          call.cancel();
+          if (reqBody is bindings.StreamingRequestBody) reqBody.cancel();
+        }
         if (!responseCompleter.isCompleted) {
           final error = RequestAbortedException(request.url);
           responseCompleter.completeError(error);
@@ -659,10 +752,53 @@ class OkHttpClient extends BaseClient {
     // synchronizes the two sides.
     if (reqBody is bindings.StreamingRequestBody) {
       unawaited(
-          _streamBody(bodyStream, reqBody, call, responseCompleter, profile));
+          _streamBody(bodyStream, reqBody, call, responseCompleter, profile)
+              .whenComplete(requestObjects.streamOver));
     }
 
     return responseCompleter.future;
+  }
+}
+
+/// Immuch360: the JNI objects of one request that callbacks still use after
+/// [OkHttpClient.send] returns: the call, the request body and the reader of
+/// the response body. They are released together, once, when the call is over
+/// (the response body read to its end, the call failed, or the response
+/// refused) and the streaming of the request body, if any, has ended. An abort
+/// that comes later finds them released and leaves the call alone, which is
+/// over by then.
+class _RequestObjects {
+  final bindings.Call call;
+  final bindings.RequestBody? body;
+  bindings.AsyncInputStreamReader? reader;
+  bool _callOver = false;
+  bool _streamOver;
+  bool _released = false;
+
+  _RequestObjects({
+    required this.call,
+    required this.body,
+    required bool streaming,
+  }) : _streamOver = !streaming;
+
+  bool get isReleased => _released;
+
+  void callOver() {
+    _callOver = true;
+    _releaseWhenDone();
+  }
+
+  void streamOver() {
+    _streamOver = true;
+    _releaseWhenDone();
+  }
+
+  void _releaseWhenDone() {
+    if (_released || !_callOver || !_streamOver) return;
+    _released = true;
+    reader?.release();
+    body?.release();
+    call.release();
   }
 }
 
