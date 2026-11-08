@@ -403,7 +403,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 - The decoders of a real TV are not measured yet, and a video beyond them does not play: from build 27 the app says why instead of loading forever: [When a video does not play](user-guide.md#when-a-video-does-not-play).
 - From build 27, Left and Right go to the next item while a video plays and OK shows the controls first, where Google's quality guidelines for TV apps ask that they seek and pause: [Known issues](known-issues.md#android-tv-and-google-tv).
 - Tried on the Google TV emulator (builds 21, 22, 26 and 27, without the Plex and Tapo pages, and one fix of build 23); build 25 or 26 ran once on a real TV, build 27 not yet: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- Google Play offers the app on Android TV and Google TV (read in the Play Console on 8 November 2026); the APK otherwise: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- Google Play offers the app on Android TV and Google TV; the APK otherwise: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - Fire TV is not tested, and there is no Apple TV version: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 
 ### LG webOS TVs
