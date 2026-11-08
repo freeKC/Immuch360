@@ -137,8 +137,6 @@ the gate is per desktop and is noted.
 | `lib/utils/migration.dart:60` | Android date migration | right |
 | `lib/widgets/asset_viewer/detail_panel/exif_map.dart:48` | Android map link | hidden: no map on the computers (G1) |
 | `lib/widgets/asset_viewer/detail_panel/exif_map.dart:57` | iOS map link | hidden |
-| `lib/widgets/common/app_bar_dialog/server_update_notification.dart:30` | App Store link, else Play, else the release | right: the latest release on the computers until the desktop update check (phase 4) |
-| `lib/widgets/common/app_bar_dialog/server_update_notification.dart:32` | idem | right |
 | `lib/widgets/common/mesmerizing_sliver_app_bar.dart:55` | iOS back icon | right |
 | `lib/widgets/common/person_sliver_app_bar.dart:79` | iOS back icon | right |
 | `lib/widgets/common/remote_album_sliver_app_bar.dart:74` | iOS back icon | right |
