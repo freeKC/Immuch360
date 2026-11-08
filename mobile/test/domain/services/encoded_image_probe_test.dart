@@ -3,7 +3,6 @@
 // probe and the Kotlin fallback of RemoteImagesImpl agree byte for byte.
 
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
