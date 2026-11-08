@@ -24,6 +24,7 @@ import 'package:jni/jni.dart';
 
 import 'jni/bindings.dart' as bindings;
 import 'jni/bindings.dart' show PrivateKey, X509Certificate;
+import 'response_guard.dart';
 
 class _JavaIOException extends IOException {
   final String _message;
@@ -574,7 +575,7 @@ class OkHttpClient extends BaseClient {
 
     final responseCallback = bindings.Callback.implement(bindings.$Callback(
       onResponse: (bindings.Call responseCall, bindings.Response response) {
-        try {
+        void handle() {
           final reader =
               requestObjects.reader = bindings.AsyncInputStreamReader();
           final bodyStreamController =
@@ -606,10 +607,10 @@ class OkHttpClient extends BaseClient {
             // To be conformant with RFC 2616 14.13, we need to check if the
             // content-length is a non-negative integer.
             if (contentLength == null || contentLength < 0) {
-              responseCompleter.completeError(ClientException(
-                  'Invalid content-length header', request.url));
-              requestObjects.callOver();
-              return;
+              // Immuch360: guardResponseCallback completes the request with
+              // this error, closes the response and ends the call
+              throw ClientException(
+                  'Invalid content-length header', request.url);
             }
           }
 
@@ -648,8 +649,12 @@ class OkHttpClient extends BaseClient {
                 var exception = ClientException(message, request.url);
 
                 bodyStreamController.sink.addError(exception);
-                addProfileError(profile, exception);
-                profileRespClosed = true;
+                // Immuch360: the profile may be closed already, by an error
+                // of the response callback
+                if (!profileRespClosed) {
+                  addProfileError(profile, exception);
+                  profileRespClosed = true;
+                }
 
                 bodyStreamController.sink.close();
               },
@@ -686,6 +691,27 @@ class OkHttpClient extends BaseClient {
                 response.message().toDartString(releaseOriginal: true)
             ..startTime = DateTime.now()
             ..statusCode = response.code();
+        }
+
+        // Immuch360: nothing may be thrown back to Java from here, where
+        // OkHttp throws it again on its dispatcher thread and the app ends. A
+        // response that comes after an abort, or any error of handle, is dealt
+        // with by guardResponseCallback.
+        try {
+          guardResponseCallback(
+            completer: responseCompleter,
+            url: request.url,
+            bodyStream: () => respBodyStreamController,
+            handle: handle,
+            closeResponse: response.close,
+            callOver: requestObjects.callOver,
+            onError: (error) {
+              if (!profileRespClosed) {
+                addProfileError(profile, error);
+                profileRespClosed = true;
+              }
+            },
+          );
         } finally {
           response.release();
           responseCall.release();

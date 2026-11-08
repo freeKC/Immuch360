@@ -1,11 +1,15 @@
 // Lab stress test of crash family F2 of release 44: a SIGSEGV in libdartjni under globalEnv_CallObjectMethod while
 // package:ok_http sends a request (Play P1 to P3, Meta M6). The likely cause is the JNI global reference of a call's
 // receiver deleted by its Dart finalizer while the call runs: a garbage collection of the isolate group in that
-// window. This test makes such collections frequent while requests run, Android only, by hand on an emulator (never
-// in the CI, which has none, and never on a device of the owner):
+// window. This test makes such collections frequent while requests run, Android only, on an emulator: the workflow
+// immuch360-android-lab.yml runs it on one of the CI, or by hand (never on a device of the owner):
 //
 //   adb -s emulator-5554 shell setprop debug.checkjni 1
 //   flutter test integration_test/ok_http_receiver_stress_test.dart -d emulator-5554 --flavor phone
+//
+// The second test sends requests whose abort races the answer, the case where upstream's onResponse threw "Future
+// already completed" back to OkHttp's dispatcher thread, which ended the app (immich-app/immich#31333). Its pass is
+// that the app lives: no FATAL EXCEPTION in logcat, which the workflow checks.
 //
 // With CheckJNI, a deleted or reused global reference no longer decodes silently to null: ART aborts with
 // "JNI DETECTED ERROR IN APPLICATION" naming the reference and the JNI function (CallObjectMethodV, called from
@@ -38,6 +42,14 @@ const _allocators = 3;
 
 const _bodySize = 16 * 1024;
 const _echoSize = 3000;
+
+/// Requests whose abort races the answer of the local server, sent 8 at once
+const _racingAborts = 3000;
+
+const _nowSize = 512;
+
+/// The abort triggers of the racing requests that the server fires once their answer is sent, by request index
+final _abortWhenAnswered = <String, Completer<void>>{};
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -86,6 +98,8 @@ void main() {
 
         await Future.wait([for (var i = 0; i < _concurrency; ++i) sendAll(), for (var i = 0; i < 4; ++i) runFresh()]);
 
+        // ignore: avoid_print
+        print('OKHTTP_LAB receivers: $answered answered, $aborted aborted, $fresh isolates, ${failures.length} failed');
         expect(failures, isEmpty, reason: failures.take(10).join('\n'));
         expect(answered + aborted, _requests);
         expect(fresh, _freshIsolates);
@@ -101,6 +115,77 @@ void main() {
     skip: !Platform.isAndroid,
     timeout: const Timeout(Duration(minutes: 30)),
   );
+
+  test(
+    'an abort that races the answer never throws back into the thread of OkHttp',
+    () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      final subscription = server.listen((request) => unawaited(_serve(request)));
+      final base = 'http://127.0.0.1:${server.port}';
+      final failures = <String>[];
+      var answered = 0;
+      var aborted = 0;
+      final client = OkHttpClient();
+      try {
+        var next = 0;
+        Future<void> sendAll() async {
+          while (next < _racingAborts) {
+            final index = next++;
+            try {
+              if (await _sendRacing(client, base, index)) {
+                answered++;
+              } else {
+                aborted++;
+              }
+            } catch (error) {
+              failures.add('request $index: $error');
+            }
+          }
+        }
+
+        await Future.wait([for (var i = 0; i < _concurrency; ++i) sendAll()]);
+
+        // ignore: avoid_print
+        print('OKHTTP_LAB racing aborts: $answered answered, $aborted aborted, ${failures.length} failed');
+        expect(failures, isEmpty, reason: failures.take(10).join('\n'));
+        expect(answered + aborted, _racingAborts);
+        expect(aborted, greaterThan(0));
+      } finally {
+        client.close();
+        await subscription.cancel();
+        await server.close(force: true);
+      }
+    },
+    skip: !Platform.isAndroid,
+    timeout: const Timeout(Duration(minutes: 20)),
+  );
+}
+
+/// Sends racing request [index] to /now, aborted by a trigger already completed, by one completed after a turn of
+/// the event loop, or by one the server completes from 0 to 5 ms after the answer is sent, so that the abort lands on
+/// either side of OkHttp's onResponse. True when answered, false when aborted; throws on anything else
+Future<bool> _sendRacing(http.Client client, String base, int index) async {
+  final key = '$index';
+  final Future<void> trigger;
+  switch (index % 3) {
+    case 0:
+      trigger = Future<void>.value();
+    case 1:
+      trigger = Future<void>.delayed(Duration.zero);
+    default:
+      trigger = (_abortWhenAnswered[key] = Completer<void>()).future;
+  }
+  final request = http.AbortableRequest('GET', Uri.parse('$base/now'), abortTrigger: trigger)..headers['x-abort'] = key;
+  try {
+    final response = await http.Response.fromStream(await client.send(request));
+    _check(response.statusCode == 200 && response.bodyBytes.length == _nowSize, 'racing abort $index');
+    return true;
+  } on http.RequestAbortedException {
+    return false;
+  } finally {
+    // A request that ended before the server fired its trigger leaves the trigger behind
+    _abortWhenAnswered.remove(key)?.complete();
+  }
 }
 
 /// Sends request [index] of the mix the app sends: a download, a redirect, a body in one piece, a streamed body, an
@@ -192,6 +277,14 @@ Future<void> _serve(HttpRequest request) async {
       case '/slow':
         await Future<void>.delayed(const Duration(milliseconds: 50));
         response.add(Uint8List(_bodySize));
+      case '/now':
+        response.add(Uint8List(_nowSize));
+        await response.close();
+        final key = request.headers.value('x-abort');
+        final lag = (int.tryParse(key ?? '') ?? 0) ~/ 3 % 21;
+        await Future<void>.delayed(Duration(microseconds: 250 * lag));
+        _abortWhenAnswered.remove(key)?.complete();
+        return;
       default:
         response.statusCode = HttpStatus.notFound;
     }

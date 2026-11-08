@@ -49,6 +49,21 @@ request, and the text of a message, of a close reason and of a failure is read b
 callbacks and listeners handed to Java are released on the Dart side once Java holds them: their port lives as long
 as the Java proxy does (`PortCleaner` of package:jni), not as long as the Dart reference.
 
+Errors of the response callback (review of the release 44 crash lot, `Immuch360` comments in
+`lib/src/ok_http_client.dart`, file `lib/src/response_guard.dart`). `Callback.onResponse` is a synchronous proxy of
+package:jni: OkHttp's dispatcher thread waits for Dart, a Dart error goes back to it as a `DartException` in an
+`UndeclaredThrowableException`, `RealCall.AsyncCall.run` rethrows any `Throwable` there, and the app ends, as with the
+relative redirect below. Upstream completes the request there without checking it, so a response that comes after an
+abort (the uploads, the sync and several sources of the app abort their requests) or after the streaming of the request
+body failed threw "Future already completed" back to Java (immich-app/immich#31333). `guardResponseCallback` now runs
+the callback: the response of a request already completed is closed and the call ended, and nothing else runs; any error
+of the callback completes the request with a `ClientException`, or goes into the body stream when the request was
+already completed, then the response is closed and the call ended; nothing is thrown back. A refused `Content-Length`
+goes the same way, so its response is closed too. Tests: the guard in Dart without JNI and its use in `onResponse`,
+`mobile/test/infrastructure/ok_http_response_guard_test.dart`; aborts racing the answer, in
+`mobile/integration_test/ok_http_receiver_stress_test.dart`, which `.github/workflows/immuch360-android-lab.yml` runs on
+an emulator of the CI with CheckJNI on.
+
 When upstream Immich moves the ok_http ref of `mobile/pubspec.yaml`, copy `pkgs/ok_http` of the new ref here and apply
 the changes below again (every change is marked `Immuch360`). The copy can go once upstream ok_http follows a relative
 `Location` itself.
