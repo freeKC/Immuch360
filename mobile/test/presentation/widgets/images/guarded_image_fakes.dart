@@ -41,7 +41,7 @@ class FakeNativeDecoder extends NativeImageDecodeApi {
 }
 
 /// The error of the native decoder of Android for a photo it could not hold
-PlatformException outOfMemory() => PlatformException(
+PlatformException outOfMemory() => const PlatformException(
   code: undecodableImageCode,
   message: 'java.lang.OutOfMemoryError: OOM allocating Bitmap with dimensions 32768 x 16384',
 );

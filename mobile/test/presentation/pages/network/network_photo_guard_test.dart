@@ -153,10 +153,10 @@ void main() {
     await run(tester, turns: 10);
 
     expect(decodedPhotos(), hasLength(3), reason: 'the three tiles show their photo');
-    expect(native.calls.map((call) => (call.kind, call.maxWidth, call.maxHeight)), unorderedEquals([
-      (EncodedImageKind.heif, 800, 800),
-      (EncodedImageKind.tiff, 800, 800),
-    ]));
+    expect(
+      native.calls.map((call) => (call.kind, call.maxWidth, call.maxHeight)),
+      unorderedEquals([(EncodedImageKind.heif, 800, 800), (EncodedImageKind.tiff, 800, 800)]),
+    );
     for (final path in ['/Photos/IMG_0001.HEIC', '/Photos/DSC_0002.DNG', '/Photos/beach.jpg']) {
       expect(wholeReads(path), 1, reason: path);
     }
