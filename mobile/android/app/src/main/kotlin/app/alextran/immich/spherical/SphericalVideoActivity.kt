@@ -55,6 +55,7 @@ import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.DualFisheyeEffect
 import app.alextran.immich.core.HttpClientManager
+import app.alextran.immich.core.PlaybackErrors
 import app.alextran.immich.core.PlayerLink
 import app.alextran.immich.core.StreamingLoadControl
 import app.alextran.immich.core.VideoDecoders
@@ -106,7 +107,9 @@ private const val STABILIZATION_FADE_MS = 500L
  *
  * With a fallback URL (the server's transcoded stream), the original gives way to it once: when its codec and size are
  * above what the device decodes (see [VideoDecoders]), checked as soon as its tracks are known, or when it fails. The
- * transcoded stream starts where the original stopped; the error shows only if it fails too.
+ * transcoded stream starts where the original stopped; the error shows only if it fails too. The user reads why when
+ * the decoder list said no, or when the decoder refused the original while it played (a decoder that did not start, or
+ * that gave no picture, see [PlaybackErrors.Kind.refusedByDecoder]); after any other failure the switch is silent.
  *
  * On close (button, system back, or the system destroying the activity), Flutter gets [SphericalVideoEvents.closed]
  * with the layout and the coverage shown last, so that the corrections of the user can be remembered for the asset.
@@ -552,8 +555,16 @@ class SphericalVideoActivity : ComponentActivity() {
         if (!replanned) reportFailure(error)
         return
       }
-      // PlayerView shows the error while the player stays in error: the transcoded stream gets its chance first
-      if (!switchToFallback("the original failed (${error.errorCodeName})")) reportFailure(error)
+      // PlayerView shows the error while the player stays in error: the transcoded stream gets its chance first. What
+      // the decoder refused is read before the switch, which replaces the player's format
+      val format = videoFormatOf(error)
+      val decoderFed = (player?.totalBufferedDuration ?: 0L) >= StreamingLoadControl.DECODER_FED_MS
+      val kind = PlaybackErrors.kindOf(error, videoKnown = format != null, decoderGotMedia = decoderFed)
+      if (!switchToFallback("the original failed (${error.errorCodeName})")) {
+        reportFailure(error)
+        return
+      }
+      if (kind?.refusedByDecoder == true && format != null) showSwitchAfterRefusal(format)
     }
   }
 
@@ -1203,6 +1214,23 @@ class SphericalVideoActivity : ComponentActivity() {
       showToast(message, Toast.LENGTH_LONG)
     } else {
       Log.i(TAG, "No label from Flutter for the switch to the transcoded stream")
+    }
+  }
+
+  /**
+   * The decoder refused the original of [format] while it played (it did not start, or gave no picture), and the
+   * transcoded stream plays in its place: the user reads why, when Flutter sent the label and the size is known (a TV,
+   * 8 November 2026). Other failures switch silently: the words would not be true of a network error.
+   */
+  private fun showSwitchAfterRefusal(format: Format) {
+    if (format.width <= 0 || format.height <= 0) return
+    val codec = VideoDecoders.codecName(format.sampleMimeType)
+    val message =
+      VideoDecoders.decoderLabel(labels, VideoDecoders.LABEL_SWITCHED_AFTER_REFUSAL, codec, format.width, format.height)
+    if (message != null) {
+      showToast(message, Toast.LENGTH_LONG)
+    } else {
+      Log.i(TAG, "No label from Flutter for the switch after a refusal of the decoder")
     }
   }
 

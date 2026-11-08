@@ -12,8 +12,10 @@ import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/apple_spatial.service.dart';
+import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_link_rule.dart';
+import 'package:immich_mobile/domain/services/video_runtime_fallback.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -113,6 +115,11 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
   // Where the video plays from, for the logs, and whether that is the server, for the failure panel
   String _sourceLabel = 'no source yet';
   bool _fromServer = false;
+  // What the source made last chose for a server video, null for a file of the device (see _tryOtherStream)
+  ChosenVideoSource? _chosen;
+  // Whether this viewer tried the server's other file after the decoder refused the one it played: once, so that a
+  // second refusal reaches the failure panel rather than going back and forth
+  bool _triedOtherStream = false;
   // Resumes a film and saves where it is, for the video loaded (see widget.watchProgress)
   VideoWatchRecorder? _recorder;
   // The link of the video, followed for the slow link word (see _onLink): held, so that dispose reads no ref
@@ -238,6 +245,8 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       return;
     }
     _log.info('${widget.asset.name}: ${overrides[videoId]} forced, its source made again');
+    // A file the user forces is a choice of its own: a refusal of the decoder may try the other file again
+    _triedOtherStream = false;
     videoSource = _createSource();
     final source = await videoSource;
     if (source == null || !mounted || _controller == null) {
@@ -270,6 +279,7 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     _sourceNotice = null;
     _refusal = null;
     _downloadFirst = null;
+    _chosen = null;
 
     final videoAsset = await ref.read(assetServiceProvider).getAsset(widget.asset) ?? widget.asset;
     if (!mounted) {
@@ -330,13 +340,17 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       }
 
       // The original or the server's transcoded stream, decodability first, then as the settings say, or the file the
-      // user forced in the details. This player has no stream to fall back to: the choice is made here, before it
-      // loads (the H.264 copy at 5760 x 2880 of 30 October, which a Quest 3 cannot decode, would stall for 10 s)
+      // user forced in the details. The choice is made here, before it loads (the H.264 copy at 5760 x 2880 of 30
+      // October, which a Quest 3 cannot decode, would stall for 10 s). The native player has no stream of its own to
+      // fall back to: when the decoder refuses the file while it plays, the source is made again (see
+      // _tryOtherStream), and the files refused in this session decide with the rest
       final policy = ref.read(appConfigProvider).viewer.videoSourcePolicy;
       final probes = ref.read(sphericalProbeServiceProvider);
       final videoSources = ref.read(videoSourceServiceProvider);
+      final downloads = ref.read(originalDownloadsProvider);
       final videoId = remoteAsset.livePhotoVideoId ?? remoteAsset.id;
       _forced = ref.read(videoSourceOverridesProvider)[videoId];
+      final refusedAtRuntime = ref.read(runtimeVideoRefusalsProvider.notifier).of(videoId);
       final probe = policy.readsTheFile ? await probes.probe(remoteAsset) : null;
       final source = await videoSources.serverSource(
         videoId: videoId,
@@ -346,11 +360,14 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
         forced: _forced,
         width: remoteAsset.livePhotoVideoId == null ? remoteAsset.width : null,
         height: remoteAsset.livePhotoVideoId == null ? remoteAsset.height : null,
+        refusedAtRuntime: refusedAtRuntime,
+        originalStreams: () => downloads.streams(videoId),
       );
       if (!mounted) {
         return null;
       }
       ref.read(chosenVideoSourcesProvider.notifier).record(videoId, source);
+      _chosen = source;
       // An original from a server that cannot stream it (no Range, the MP4 index at the end), whatever chose it (the
       // decoders, the settings, the details): downloaded once the video is on screen, rather than read to its end by
       // the player before its first frame, as the immersive viewer does. A refused video loads nothing
@@ -365,9 +382,11 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       _refusal = source.refusal;
       _fromServer = true;
       _sourceLabel = source.url.endsWith('/original') ? 'the server original' : 'the server transcoded stream';
+      final afterRefusal = source.afterRefusal;
       _log.info(
         '${videoAsset.name} plays from $_sourceLabel under $policy'
-        '${_forced != null ? ', $_forced forced' : ''}${_refusal != null ? ', refused: $_refusal' : ''}',
+        '${_forced != null ? ', $_forced forced' : ''}${_refusal != null ? ', refused: $_refusal' : ''}'
+        '${afterRefusal != null ? ', after a refusal of the decoder: ${afterRefusal.reason}' : ''}',
       );
 
       return await VideoSource.init(
@@ -512,8 +531,9 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     _notifier.onNativeStatusChanged();
   }
 
-  /// The native player could not play the video: the viewer says why instead of loading forever. The message goes
-  /// back to null, so that the same error after a retry is heard again.
+  /// The native player could not play the video: the viewer says why instead of loading forever, or first tries the
+  /// server's other file when the decoder refused a server video (see [_tryOtherStream]). The message goes back to
+  /// null, so that the same error after a retry is heard again.
   void _onPlaybackError() {
     final controller = _controller;
     final message = controller?.onError.value;
@@ -521,7 +541,74 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
       return;
     }
     scheduleMicrotask(() => controller.onError.value = null);
+    final error = NativePlaybackError.parse(message);
+    final chosen = _chosen;
+    final videoId = _serverVideoId;
+    if (error != null &&
+        isDecoderRefusal(error) &&
+        chosen != null &&
+        videoId != null &&
+        _fromServer &&
+        !_triedOtherStream &&
+        !_notifier.isSuspendedForExternalPlayer) {
+      unawaited(_tryOtherStream(videoId, chosen, error, message));
+      return;
+    }
     _notifier.onNativeError(message);
+  }
+
+  /// The decoder refused, while it played, the server file [chosen] of [videoId] that the decoder check did not rule
+  /// out ([error], from the token [message]: a decoder that did not start, or that gave no picture). The refusal is kept
+  /// for the session (see RuntimeVideoRefusals) and the source made again, as when a file is forced: the server's
+  /// other file plays from where the video was, with a word, when runtimeFallback says it may do better; otherwise the
+  /// video fails as before, the panel naming the server's copy when it is beyond the decoders too. Once per viewer:
+  /// the other file failing in turn reaches the panel. Nothing fails meanwhile, so that no panel shows before the
+  /// switch.
+  Future<void> _tryOtherStream(
+    String videoId,
+    ChosenVideoSource chosen,
+    NativePlaybackError error,
+    String message,
+  ) async {
+    _triedOtherStream = true;
+    final notifier = _notifier;
+    final name = widget.asset.name;
+    final refused = _sourceLabel;
+    ref.read(runtimeVideoRefusalsProvider.notifier).record(videoId, chosen.kind, error);
+    final player = ref.read(videoPlayerProvider(widget.asset.id));
+    // Asked to play: it played, or play was pressed before the decoder failed; otherwise the autoplay setting decides
+    // once the other file is ready
+    final play =
+        player.status == VideoPlaybackStatus.playing ||
+        (_isVideoReady && player.status == VideoPlaybackStatus.buffering);
+    videoSource = _createSource();
+    final source = await videoSource;
+    final next = _chosen;
+    if (!mounted) {
+      return;
+    }
+    if (source == null || next == null || next.kind == chosen.kind || next.refusal != null || _controller == null) {
+      // The file stays: its notice was told when it loaded, and nothing loads again
+      _sourceNotice = null;
+      _refusal = null;
+      final afterRefusal = next?.afterRefusal;
+      _log.info(
+        '$name: the decoder refused $refused while it played ($error), nothing else to play: '
+        '${afterRefusal?.reason ?? 'no source'}',
+      );
+      notifier.onNativeError(message, copyRefusal: afterRefusal?.copyBeyondDecoders);
+      return;
+    }
+    _log.info('$name: the decoder refused $refused while it played ($error), $_sourceLabel plays in its place');
+    // An original downloaded before it played is no longer needed by this viewer
+    final held = _heldDownload;
+    if (held != null && next.kind != VideoSourceKind.original) {
+      _heldDownload = null;
+      unawaited(held.downloads.release(held.videoId));
+    }
+    final position = player.position;
+    _reloadAt = position > Duration.zero ? position : null;
+    await _apply(source, play: play && widget.isCurrent);
   }
 
   void _onStatus(VideoPlaybackStatus? previous, VideoPlaybackStatus status) {

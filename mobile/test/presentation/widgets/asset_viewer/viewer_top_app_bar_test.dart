@@ -348,6 +348,9 @@ void main() {
     'sourceSwitched':
         'Playing the transcoded stream: the original ({codec} {width} x {height}) exceeds what this '
         'device decodes',
+    // The same switch after the decoder refused the original while it played (8 November 2026)
+    'sourceSwitchedAfterRefusal':
+        "Playing the server's copy: the original ({codec} {width} x {height}) was refused by this device's decoder",
     'sourceUndecodable': '{codec} {width} x {height} is beyond the video decoders of this device: it may not play',
     'errorDecoder': 'This device cannot decode this video ({codec} {width} x {height})',
     'errorNoFrame':
