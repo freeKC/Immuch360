@@ -333,7 +333,7 @@ class OkHttpRedirectTest {
 
     assertEquals(
       listOf(
-        "Redirect 302 of GET https://relative.example/.well-known/immich to a relative Location, followed to " +
+        "Redirect 302 of GET https://relative.example/.well-known/immich to a relative Location, resolved to " +
           "https://relative.example/api/i",
         "Redirect 302 of GET https://unusable.example/auth not followed: its Location app.immich://callback/oauth " +
           "is not an http or https URL",

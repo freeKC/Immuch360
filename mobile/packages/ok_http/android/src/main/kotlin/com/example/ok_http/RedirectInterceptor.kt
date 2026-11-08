@@ -145,7 +145,7 @@ class RedirectInterceptor {
                 builder.removeHeader("Authorization")
             }
             if (location.toHttpUrlOrNull() == null) {
-                report(request, response, "relative") { "to a relative Location, followed to ${describe(url)}" }
+                report(request, response, "relative") { "to a relative Location, resolved to ${describe(url)}" }
             }
             return builder.build()
         }
