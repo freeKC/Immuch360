@@ -196,6 +196,11 @@ dependency_overrides:
       url: https://github.com/mertalev/native
       ref: '2915556701f4734a784222f290a82adb1b101682' # https://github.com/dart-lang/native/pull/3458
       path: pkgs/objective_c/
+  # Copy of package:ok_http of github.com/mertalev/http at 549c24b0a4d3881a9a44b70f4873450d43c1c4af, the git ref of the
+  # dependency above (BSD 3-Clause), with its redirect interceptor rewritten: a relative Location ended the app (see its
+  # IMMUCH360-NOTE.md). When upstream moves the ref above, copy the new one and apply the patch again
+  ok_http:
+    path: packages/ok_http
 
 flutter:
   uses-material-design: true

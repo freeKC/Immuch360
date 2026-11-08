@@ -57,6 +57,7 @@ import app.alextran.immich.videodecoder.VideoDecoderApiImpl
 import app.alextran.immich.videothumbnail.VideoThumbnailApi
 import app.alextran.immich.videothumbnail.VideoThumbnailApiImpl
 import app.alextran.immich.viewintent.ViewIntentPlugin
+import com.example.ok_http.RedirectInterceptor
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 
@@ -169,6 +170,9 @@ class MainActivity : FlutterFragmentActivity() {
       NativeVideoPlayerPlugin.errorToken = FlatPlayerErrors::token
       // Its player starts a streamed video from the measured link, and tells Flutter what that link brings
       NativeVideoPlayerPlugin.playerSetup = { context -> FlatPlayerSetup(context) }
+      // The redirects the HTTP client of Dart (package:ok_http) did not expect, on the Logs page: a relative Location
+      // it resolved, one it could not follow, an upload a redirect stopped. Static too, and holds nothing
+      RedirectInterceptor.onUnusualRedirect = { text -> AppHealth.report("network", text) }
       flutterEngine.plugins.add(NetworkApiPlugin())
 
       val messenger = flutterEngine.dartExecutor.binaryMessenger

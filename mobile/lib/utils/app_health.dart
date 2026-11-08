@@ -9,10 +9,10 @@ import 'package:logging/logging.dart';
 /// What Android tells of the app's health (AppHealth.kt): the stalls of the main thread, which also runs Dart, with
 /// its stack and the memory at that moment, and why the app ended the last times (not responding, a crash, the low
 /// memory killer) with the build that ran, where the app stood and what Android kept of the end (the threads of an
-/// ANR, the tombstone of a native crash, the stack of a Java crash), and the videos the 360° player could not play,
-/// with what it saw of them. Written to the Logs page at warning level, where a TV user can read them; logcat alone
-/// had them before, or nothing. A stall gets the state of the image cache of the moment it is written, the first
-/// suspect.
+/// ANR, the tombstone of a native crash, the stack of a Java crash), the videos the 360° player could not play, with
+/// what it saw of them, and the redirects the HTTP client did not expect. Written to the Logs page at warning level,
+/// where a TV user can read them; logcat alone had them before, or nothing. A stall gets the state of the image cache
+/// of the moment it is written, the first suspect.
 ///
 /// Android keeps the report of an end in a file until it is in the log: once written and the log flushed to the
 /// database, "reportsWritten" gives their ids back, and only then are the files deleted, so that a death in between
@@ -78,8 +78,8 @@ class AppHealthReports {
     await channel.invokeMethod<void>('reportsWritten', ids);
   }
 
-  /// Writes [report], a map of its kind ("stall", "exit" or "video") and its text, to the logs; false when it is not
-  /// a report
+  /// Writes [report], a map of its kind ("stall", "exit", "video" or "network") and its text, to the logs; false when
+  /// it is not a report
   @visibleForTesting
   static bool write(Object? report) {
     if (report is! Map) {

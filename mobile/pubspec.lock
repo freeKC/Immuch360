@@ -1259,12 +1259,10 @@ packages:
   ok_http:
     dependency: "direct main"
     description:
-      path: "pkgs/ok_http"
-      ref: "549c24b0a4d3881a9a44b70f4873450d43c1c4af"
-      resolved-ref: "549c24b0a4d3881a9a44b70f4873450d43c1c4af"
-      url: "https://github.com/mertalev/http"
-    source: git
-    version: "0.1.1-wip"
+      path: "packages/ok_http"
+      relative: true
+    source: path
+    version: "0.1.1-wip+immuch360"
   openapi:
     dependency: "direct main"
     description:
