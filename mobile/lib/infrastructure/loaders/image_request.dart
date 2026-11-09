@@ -92,8 +92,8 @@ abstract class ImageRequest {
 
     // On Android, the engine gets only the formats of its own codecs: it hands any other to Android's decoder at the
     // full size of the image, and aborts the app on an OutOfMemoryError there (see encoded_image_probe.dart). The
-    // native decoder had its turn before (RemoteImagesImpl), or the bytes were asked encoded for an animation, which
-    // only the engine's codecs play
+    // native decoder had its turn before (RemoteImagesImpl, from Android 9; below it the engine has no Android decoder
+    // either), or the bytes were asked encoded for an animation, which only the engine's codecs play
     final kind = sniffEncodedImage(pointer.asTypedList(math.min(length, encodedImageProbeLength)));
     if (encodedImageRoute(kind) != EncodedImageRoute.engine) {
       freePlatformBuffer(pointer);

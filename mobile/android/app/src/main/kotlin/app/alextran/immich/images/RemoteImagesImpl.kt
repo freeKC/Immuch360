@@ -80,6 +80,14 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
     // Shared, process-lifetime pool: RemoteImagesImpl is re-created per FlutterEngine, so a
     // per-instance pool would leak threads across engine restarts.
     private val decodeExecutor = Executors.newFixedThreadPool(2)
+
+    /**
+     * Whether a photo of the server is decoded here rather than handed to Flutter encoded: when the caller wants
+     * pixels ([preferEncoded] false), from Android 9 ([sdk], the API level), where ImageDecoder and decodeBitmapSized
+     * are, as for NativeImageDecodeImpl. Upstream decodes here from Android 10: since Dart keeps a HEIF or raw
+     * original away from the engine (crash M1 of the Meta Quest store), Android 9 would stay on its preview.
+     */
+    fun decodesHere(preferEncoded: Boolean, sdk: Int): Boolean = !preferEncoded && sdk >= Build.VERSION_CODES.P
   }
 
   override fun requestImage(
@@ -110,7 +118,7 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
         // the encoded bytes only in a format its engine decodes with a codec of its own: any other
         // goes to Android's ImageDecoder at its full size inside the engine, which aborts the app on
         // an OutOfMemoryError (crash M1 of the Meta Quest store), so it fails here instead.
-        if (!preferEncoded && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (decodesHere(preferEncoded, Build.VERSION.SDK_INT)) {
           decodeExecutor.execute {
             val header = IntArray(2)
             var failure: Throwable? = null
