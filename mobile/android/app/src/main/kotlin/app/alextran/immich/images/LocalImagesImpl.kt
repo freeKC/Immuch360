@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.exifinterface.media.ExifInterface
 import app.alextran.immich.NativeBuffer
 import app.alextran.immich.NativeImage
+import app.alextran.immich.checkAllocated
 import kotlin.math.*
 import java.io.IOException
 import java.util.concurrent.Executors
@@ -96,7 +97,8 @@ fun Bitmap.toNativeBuffer(): Map<String, Long>  {
   // Other non-8888 configs (e.g. HDR F16) still need Skia's convert; 8-bit is copied as-is.
   val bitmap = toArgb8888()
   val size = bitmap.width * bitmap.height * 4
-  val pointer = NativeBuffer.allocate(size)
+  // An OutOfMemoryError when malloc gives nothing, the bitmap recycled first: the callers retry at half the size
+  val pointer = checkAllocated(NativeBuffer.allocate(size), size.toLong()) { bitmap.recycle() }
   try {
     val buffer = NativeBuffer.wrap(pointer, size)
     bitmap.copyPixelsToBuffer(buffer)
