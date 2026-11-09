@@ -13,9 +13,12 @@ name: Immuch360 iOS store captures
 #          the Maestro flows of .maestro/store (run_captures.sh); the PNG files and the record of the device as an
 #          artifact
 #
-# It reads the repository only, keeps no token in the checkout and uses no secret.
+# It reads the repository only, keeps no token in the checkout and uses no secret. A workflow that is not on the
+# default branch cannot be dispatched by hand, so a push to the branch of the captures (ios-captures-*) runs it too.
 
 on:
+  push:
+    branches: ['ios-captures-*']
   workflow_dispatch:
     inputs:
       devices:
@@ -135,8 +138,8 @@ jobs:
       - name: Wanted in this run
         id: wanted
         env:
-          DEVICES: ${{ inputs.devices }}
-          LANGUAGES: ${{ inputs.languages }}
+          DEVICES: ${{ inputs.devices || 'iphone ipad' }}
+          LANGUAGES: ${{ inputs.languages || 'en fr' }}
           DEVICE: ${{ matrix.device }}
           LANGUAGE: ${{ matrix.language }}
         run: |
