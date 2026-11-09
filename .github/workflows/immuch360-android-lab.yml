@@ -5,18 +5,29 @@ name: Immuch360 Android lab
 # verdict says whether the app's "-Xcheck:jni" line was seen. First the stress test of the vendored ok_http (crash
 # families F1 and F2 of release 44): its JNI references through collections of the isolate group, and aborts that
 # race OkHttp's answers. Then upstream's background sync teardown test, which syncs from a fake server through the
-# app's own client and aborts a running sync: its result is reported, not required. The job fails when the stress test
-# fails or when logcat holds a crash of the app (.github/android-lab/check_logcat.py), and keeps logcat and the test
-# output as the android-lab artifact.
-# Runs on a push that changes the vendored ok_http, the stress test or this lab, and by hand. Actions pinned to a commit
-# and runner label pinned, read-only, no secret, as the desktop workflow (check_workflow.py).
+# app's own client and aborts a running sync: its result is reported, not required. Then the lab tests against the
+# fake Immich server that run_lab.sh starts on the runner (.github/android-lab/fake_immich.py, at 10.0.2.2 from the
+# emulator): lab_server_smoke_test.dart (sign in through relative 302 redirects, the timeline, Load original on a HEIC
+# and an AVIF, the native decoder, an upload) and lab_background_worker_test.dart (a background run that ends, one
+# cancelled by opening the app). The job fails when a required test or one of their scenarios fails, or when logcat
+# holds a crash, an ANR or a death of the app (.github/android-lab/check_logcat.py), and keeps logcat, the test output
+# and the requests of the fake server as the android-lab artifact.
+# Runs on a push that changes the vendored ok_http, the native image decoders, the background worker, the lab tests or
+# this lab, and by hand. Actions pinned to a commit and runner label pinned, read-only, no secret, as the desktop
+# workflow (check_workflow.py).
 
 on:
   push:
     branches: ['**']
     paths:
       - 'mobile/packages/ok_http/**'
+      - 'mobile/android/app/src/main/kotlin/app/alextran/immich/images/**'
+      - 'mobile/android/app/src/main/kotlin/app/alextran/immich/background/**'
+      - 'mobile/lib/domain/services/background_worker.service.dart'
       - 'mobile/integration_test/ok_http_receiver_stress_test.dart'
+      - 'mobile/integration_test/lab_*.dart'
+      - 'mobile/integration_test/test_utils/lab_server.dart'
+      - 'mobile/test/fixtures/android_lab/**'
       - '.github/android-lab/**'
       - '.github/workflows/immuch360-android-lab.yml'
   workflow_dispatch:
@@ -30,13 +41,19 @@ concurrency:
 
 jobs:
   lab:
-    name: ok_http under CheckJNI on an emulator
+    name: Lab tests under CheckJNI on an emulator
     runs-on: ubuntu-24.04
-    timeout-minutes: 100
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      # Every JSON answer and sync event of the fake server against the OpenAPI schemas, before anything is built
+      - name: Fake Immich server answers the API
+        run: |
+          python3 .github/android-lab/fake_immich.py --check --fixtures mobile/test/fixtures/android_lab \
+            --spec open-api/immich-openapi-specs.json
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
@@ -72,6 +89,13 @@ jobs:
           mise //mobile:install:ci
           mise //mobile:codegen
 
+      # The lab tests compile only on the emulator, late in the job: their errors and lints show here first
+      - name: Analyze the lab tests
+        working-directory: mobile
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: mise exec -- dart analyze --fatal-infos integration_test
+
       # Built before the emulator starts, so that Gradle and the emulator do not share the memory of the runner: the
       # test runs below build the same debug app again, and only the Dart of each test file is compiled then
       - name: Debug build of the app for the emulator
@@ -100,6 +124,8 @@ jobs:
           api-level: 34
           target: google_apis
           arch: x86_64
+          # A phone screen (412 x 915 points) for the timeline and the viewer of the lab tests
+          profile: pixel_6
           cores: 3
           ram-size: 4096M
           disk-size: 6G
