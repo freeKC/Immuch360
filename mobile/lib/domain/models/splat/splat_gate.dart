@@ -12,6 +12,7 @@
 
 import 'dart:math' as math;
 
+import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
@@ -36,9 +37,6 @@ const splatMaxReducibleBytes = 1 << 30;
 
 /// Build.DEVICE of the Quest 2 and the Quest Pro, which the splat module does not run on
 const splatOlderDevices = {'hollywood', 'seacliff'};
-
-/// The flavour of the APK of the headset, the only one with the splat module
-const splatQuestFlavor = 'quest';
 
 /// Why a splat is not offered
 enum SplatRefusal {
@@ -235,7 +233,7 @@ SplatGateVerdict splatGateOf({
   required String? device,
   required bool inThisBuild,
 }) {
-  if (flavor != splatQuestFlavor || !inThisBuild) {
+  if (flavor != kQuestFlavor || !inThisBuild) {
     return const SplatGateVerdict.refused(SplatRefusal.notInThisVersion);
   }
   if (splatOlderDevices.contains(device)) {
