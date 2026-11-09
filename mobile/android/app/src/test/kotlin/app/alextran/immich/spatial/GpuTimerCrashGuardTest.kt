@@ -14,6 +14,9 @@ class GpuTimerCrashGuardTest {
     var bad: List<String> = emptyList()
     val writes = mutableListOf<String>()
 
+    /** How Android says the process that armed the key ended; it says nothing by default, as before Android 11 */
+    var end = ArmedProcessEnd.UNKNOWN
+
     override fun armedKey(): String? = armed
 
     override fun setArmedKey(key: String?, synchronous: Boolean) {
@@ -27,6 +30,8 @@ class GpuTimerCrashGuardTest {
       bad = keys.toList()
       writes.add("bad ${keys.size}")
     }
+
+    override fun armedProcessEnd(): ArmedProcessEnd = end
   }
 
   private val store = MemoryStore()
@@ -51,6 +56,30 @@ class GpuTimerCrashGuardTest {
     assertEquals(KEY, next.takeTripped())
     assertNull("the notice is given once", next.takeTripped())
     assertNull("the leftover is cleared once moved", store.armed)
+  }
+
+  @Test
+  fun `a process that crashed armed blocks that key in the next one`() {
+    process().arm(KEY)
+    store.end = ArmedProcessEnd.CRASH
+    val next = process()
+    assertTrue(next.blocked(KEY))
+    assertEquals(KEY, next.takeTripped())
+    assertEquals(listOf(KEY), store.bad)
+  }
+
+  @Test
+  fun `a process ended by the user or the system clears the key, blocks nothing and says nothing`() {
+    // A swipe from the recent apps or a force stop while the player is visible: no onStop, so no disarm
+    process().arm(KEY)
+    store.end = ArmedProcessEnd.OTHER
+    val next = process()
+    assertFalse(next.blocked(KEY))
+    assertNull("no notice on the Logs page", next.takeTripped())
+    assertNull("the leftover is cleared", store.armed)
+    assertTrue(store.bad.isEmpty())
+    store.end = ArmedProcessEnd.UNKNOWN
+    assertFalse("cleared for the later processes too", process().blocked(KEY))
   }
 
   @Test
