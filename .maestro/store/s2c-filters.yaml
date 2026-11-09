@@ -1,0 +1,27 @@
+# App Store captures, flow 2c, on the 360° list: the 3D items, then the videos only (the runner then reads the first
+# tile for flow 2d).
+appId: com.aprogsys.immuch360.dev.debug
+---
+- extendedWaitUntil:
+    visible: "(?s).*[0-9]+ (items?|éléments?).*"
+    timeout: 15000
+    optional: true
+- tapOn:
+    text: "3D"
+    optional: true
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 5000
+    optional: true
+- takeScreenshot: s05-list-3d
+- tapOn:
+    text: "3D"
+    optional: true
+- tapOn:
+    text: "(Videos|Vidéos)"
+    optional: true
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 6000
+    optional: true
+- takeScreenshot: s05-list-videos

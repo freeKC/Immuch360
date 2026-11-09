@@ -1,11 +1,14 @@
 # App Store captures, flow 5: a film of the share played for 40 s, moved on along its time bar, left, then opened
 # again: it resumes where it was left and says so for a few seconds ("Resumed at ...").
-# SHARE_NAME, FILMS (folder), FILM (the name of the file without its extension).
+# SHARE_NAME, FILMS (folder), FILM (the name of the file without its extension), KIND (iphone or ipad).
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - launchApp
+- tapOn:
+    text: "(Allow|Autoriser)"
+    optional: true
 - extendedWaitUntil:
-    visible: ".*(Library|Bibliothèque).*"
+    visible: "(?s).*(Library|Bibliothèque).*"
     timeout: 90000
 - repeat:
     times: 3
@@ -13,7 +16,7 @@ appId: com.aprogsys.immuch360.dev.debug
       notVisible: "(Network shares|Partages réseau)"
     commands:
       - tapOn:
-          text: ".*(Library|Bibliothèque).*"
+          text: "(?s).*(Library|Bibliothèque).*"
           optional: true
       - extendedWaitUntil:
           visible: "(Network shares|Partages réseau)"
@@ -57,10 +60,22 @@ appId: com.aprogsys.immuch360.dev.debug
 - tapOn:
     point: "50%,45%"
 - takeScreenshot: s10-film-controls
-- swipe:
-    start: "${SEEK_FROM}"
-    end: "${SEEK_TO}"
-    duration: 900
+- runFlow:
+    when:
+      true: ${KIND == 'ipad'}
+    commands:
+      - swipe:
+          start: "4%,92%"
+          end: "58%,92%"
+          duration: 900
+- runFlow:
+    when:
+      true: ${KIND == 'iphone'}
+    commands:
+      - swipe:
+          start: "6%,89%"
+          end: "58%,89%"
+          duration: 900
 - takeScreenshot: s10-film-seek
 - extendedWaitUntil:
     visible: "never shown 0f3a"

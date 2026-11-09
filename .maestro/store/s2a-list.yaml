@@ -1,0 +1,40 @@
+# App Store captures, flow 2a: the list of the 360° photos and videos of the device, with its filters. The runner then
+# reads the screen (maestro hierarchy) to find its first tile for flow 2b.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- tapOn:
+    text: "(Allow|Autoriser)"
+    optional: true
+- extendedWaitUntil:
+    visible: "(?s).*(Library|Bibliothèque).*"
+    timeout: 120000
+- repeat:
+    times: 3
+    while:
+      notVisible: "(Network shares|Partages réseau)"
+    commands:
+      - tapOn:
+          text: "(?s).*(Library|Bibliothèque).*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(Network shares|Partages réseau)"
+          timeout: 10000
+          optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "(?s).*[0-9]+ (items?|éléments?).*"
+    commands:
+      - tapOn:
+          text: "360°"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(?s).*[0-9]+ (items?|éléments?).*"
+          timeout: 15000
+          optional: true
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 12000
+    optional: true
+- takeScreenshot: s03-list

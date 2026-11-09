@@ -30,9 +30,9 @@ case "$LANG_CODE" in
 esac
 case "$KIND" in
   iphone) TYPES="iPhone 17 Pro Max|iPhone 16 Pro Max"; SIZE=1320x2868
-          LIST_TILE="12%,63%"; FACE="92%,9%"; SEEK_FROM="6%,89%"; SEEK_TO="58%,89%" ;;
+          TILE_GUESS="12%,63%"; TILE_GUESS_3="12%,58%"; FACE_GUESS="92%,9%"; FACE_GUESS_3="93%,7.5%" ;;
   ipad)   TYPES="iPad Pro 13-inch (M5)|iPad Pro 13-inch (M4)"; SIZE=2064x2752
-          LIST_TILE="12%,47%"; FACE="97%,4%"; SEEK_FROM="4%,92%"; SEEK_TO="58%,92%" ;;
+          TILE_GUESS="12%,47%"; TILE_GUESS_3="8%,44%"; FACE_GUESS="97%,4%"; FACE_GUESS_3="96%,5.5%" ;;
   *) echo "device iphone or ipad, not $KIND"; exit 2 ;;
 esac
 
@@ -61,10 +61,25 @@ xcrun simctl boot "$UDID"
 xcrun simctl bootstatus "$UDID" -b
 xcrun simctl spawn "$UDID" defaults read -g AppleLanguages | tr -d '\n '; echo
 xcrun simctl ui "$UDID" appearance dark
-# 9:41, the date of Apple's own captures on an iPad status bar
-xcrun simctl status_bar "$UDID" override --time "2007-01-09T09:41:00Z" --dataNetwork wifi --wifiMode active \
-  --wifiBars 3 --cellularMode active --cellularBars 4 --operatorName "" --batteryState charged --batteryLevel 100 \
-  || xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --batteryLevel 100
+# 9:41 (with the date of Apple's own captures on an iPad status bar), full battery; set again before each flow
+status_bar() {
+  local ok=
+  for args in "--time 2007-01-09T09:41:00Z --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState charged --batteryLevel 100" \
+              "--time 9:41 --batteryState charged --batteryLevel 100" "--time 9:41"; do
+    # shellcheck disable=SC2086
+    if xcrun simctl status_bar "$UDID" override $args >> "$OUT/logs/status-bar.txt" 2>&1; then
+      ok=1
+      break
+    fi
+  done
+  [ -n "$ok" ] || echo "status bar override refused" >> "$OUT/logs/status-bar.txt"
+  if [ "$KIND" = iphone ]; then
+    xcrun simctl status_bar "$UDID" override --cellularMode active --cellularBars 4 \
+      >> "$OUT/logs/status-bar.txt" 2>&1 || true
+  fi
+}
+status_bar
+xcrun simctl status_bar "$UDID" list 2>&1 | head -20
 
 xcrun simctl install "$UDID" "$APP"
 xcrun simctl privacy "$UDID" grant photos "$BUNDLE" || true
@@ -109,39 +124,75 @@ curl -s -X PROPFIND -H 'Depth: 1' http://127.0.0.1:8765/ | head -c 1500; echo
 
 export PATH="$PATH:$HOME/.maestro/bin"
 export MAESTRO_CLI_NO_ANALYTICS=1
-export MAESTRO_DRIVER_STARTUP_TIMEOUT=240000
 cd "$OUT/maestro"
 
-# A screenshot of the simulator every 1.5 s while a flow runs whose moments are short (the sphere, the film resumed)
+# A screenshot of the simulator every 2 s while a flow runs whose moments are short (the sphere, the film resumed)
 burst() {
   local name=$1 i=0
   while [ -f "$OUT/burst.on" ]; do
     i=$((i + 1))
     xcrun simctl io "$UDID" screenshot --type=png "$OUT/sim/$name-burst-$(printf %03d $i).png" > /dev/null 2>&1
-    sleep 1.5
+    sleep 2
   done
 }
 
-for flow in s1-start s2-list-sphere s3-device-only s4-share s5-film s6-timeline; do
-  case "$flow" in
-    s2-list-sphere|s5-film) touch "$OUT/burst.on"; burst "$flow" & BURST_PID=$! ;;
-    *) BURST_PID= ;;
-  esac
-  echo "::group::flow $flow"
+run_flow() {
+  local flow=$1 status
+  shift
+  status_bar
+  echo "::group::flow $flow $*"
   maestro --device "$UDID" test \
-    -e "LIST_TILE=$LIST_TILE" -e "FACE=$FACE" -e "SHARE_NAME=$SHARE_NAME" -e "HOLIDAYS=$HOLIDAYS" \
-    -e "FILMS=$FILMS" -e "FILM=$FILM" -e "SEEK_FROM=$SEEK_FROM" -e "SEEK_TO=$SEEK_TO" \
+    -e "SHARE_NAME=$SHARE_NAME" -e "HOLIDAYS=$HOLIDAYS" -e "FILMS=$FILMS" -e "FILM=$FILM" -e "KIND=$KIND" "$@" \
     --debug-output "$OUT/logs/debug-$flow" --test-output-dir "$OUT/logs/test-$flow" \
     "$HERE/$flow.yaml" > "$OUT/logs/$flow.log" 2>&1
   status=$?
   tail -40 "$OUT/logs/$flow.log"
   echo "::endgroup::"
-  rm -f "$OUT/burst.on"
-  [ -n "$BURST_PID" ] && wait "$BURST_PID" 2>/dev/null
   echo "flow $flow: exit $status" | tee -a "$OUT/flows.txt"
   xcrun simctl io "$UDID" screenshot --type=png "$OUT/sim/after-$flow.png" > /dev/null 2>&1
-  maestro --device "$UDID" hierarchy > "$OUT/logs/hierarchy-after-$flow.json" 2> /dev/null || true
+}
+
+# The screen as Maestro reads it, for the points the flows tap
+hierarchy() {
+  maestro --device "$UDID" hierarchy > "$OUT/logs/hierarchy-$1.json" 2> "$OUT/logs/hierarchy-$1.err" || true
+}
+
+burst_on() { touch "$OUT/burst.on"; burst "$1" & BURST_PID=$!; }
+burst_off() { rm -f "$OUT/burst.on"; wait "$BURST_PID" 2>/dev/null; }
+
+# The driver of Maestro (an XCTest runner) takes minutes to start the first time on a new simulator: started once
+# here, with a long timeout, before the first flow
+export MAESTRO_DRIVER_STARTUP_TIMEOUT=900000
+for attempt in 1 2; do
+  maestro --device "$UDID" hierarchy > "$OUT/logs/hierarchy-warmup-$attempt.json" 2> "$OUT/logs/warmup-$attempt.err" \
+    && break
+  tail -5 "$OUT/logs/warmup-$attempt.err"
 done
+
+run_flow s1-start
+run_flow s2a-list
+hierarchy list
+TILE=$(python3 "$HERE/find_point.py" tile "$OUT/logs/hierarchy-list.json")
+echo "first tile of the 360° list: ${TILE:-not found, guesses only}" | tee -a "$OUT/flows.txt"
+burst_on s2b
+run_flow s2b-sphere -e "TILE=${TILE:-$TILE_GUESS}" -e "TILE_2=$TILE_GUESS" -e "TILE_3=$TILE_GUESS_3"
+burst_off
+run_flow s2c-filters
+hierarchy videos
+TILE=$(python3 "$HERE/find_point.py" tile "$OUT/logs/hierarchy-videos.json")
+echo "first tile of the videos: ${TILE:-not found, guesses only}" | tee -a "$OUT/flows.txt"
+run_flow s2d-video -e "TILE=${TILE:-$TILE_GUESS}" -e "TILE_2=$TILE_GUESS"
+run_flow s3a-photos
+hierarchy photos
+FACE=$(python3 "$HERE/find_point.py" face "$OUT/logs/hierarchy-photos.json")
+echo "face button: ${FACE:-not found, guesses only}" | tee -a "$OUT/flows.txt"
+run_flow s3b-device-only -e "FACE=${FACE:-$FACE_GUESS}" -e "FACE_2=$FACE_GUESS" -e "FACE_3=$FACE_GUESS_3"
+run_flow s4-share
+burst_on s5
+run_flow s5-film
+burst_off
+run_flow s6-timeline
+hierarchy timeline
 
 # The screenshots of the flows, wherever Maestro put them
 find "$OUT/logs" "$HERE" "$HOME/.maestro/tests" -name 's[0-9][0-9]-*.png' -exec cp -n {} "$OUT/maestro/" \; 2>/dev/null

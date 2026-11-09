@@ -1,0 +1,34 @@
+# App Store captures, flow 2d, on the 360° list filtered on videos: the first one (the 360° video of Pink Sunrise)
+# playing. TILE: the point the runner read from the screen, TILE_2: a guess.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- tapOn:
+    point: "${TILE}"
+- extendedWaitUntil:
+    notVisible: "(?s).*[0-9]+ (items?|éléments?).*"
+    timeout: 8000
+    optional: true
+- runFlow:
+    when:
+      visible: "(?s).*[0-9]+ (items?|éléments?).*"
+    commands:
+      - tapOn:
+          point: "${TILE_2}"
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 6000
+    optional: true
+- takeScreenshot: s06-video-a
+- tapOn:
+    text: "(Play|Lancer)"
+    optional: true
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 4000
+    optional: true
+- takeScreenshot: s06-video-b
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 4000
+    optional: true
+- takeScreenshot: s06-video-c

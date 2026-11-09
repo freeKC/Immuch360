@@ -3,8 +3,11 @@
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - launchApp
+- tapOn:
+    text: "(Allow|Autoriser)"
+    optional: true
 - extendedWaitUntil:
-    visible: ".*(Library|Bibliothèque).*"
+    visible: "(?s).*(Library|Bibliothèque).*"
     timeout: 90000
 - repeat:
     times: 3
@@ -12,7 +15,7 @@ appId: com.aprogsys.immuch360.dev.debug
       notVisible: "(Network shares|Partages réseau)"
     commands:
       - tapOn:
-          text: ".*(Library|Bibliothèque).*"
+          text: "(?s).*(Library|Bibliothèque).*"
           optional: true
       - extendedWaitUntil:
           visible: "(Network shares|Partages réseau)"

@@ -1,24 +1,24 @@
 # App Store captures of release 44 (workflow immuch360-ios-captures.yml), flow 1: the first launch, "Use without a
 # server", then the device indexed and its 360° files read. English and French labels, the language of the simulator.
+# The app was just installed, its access to the photos granted by simctl: no clearState, which would drop that grant.
 appId: com.aprogsys.immuch360.dev.debug
 ---
-- launchApp:
-    clearState: true
+- launchApp
 # iOS asks for the notifications at the first launch
 - tapOn:
     text: "(Allow|Autoriser)"
     optional: true
 - extendedWaitUntil:
-    visible: "(Use without a server|Utiliser sans serveur).*"
-    timeout: 120000
+    visible: "(?s)(Use without a server|Utiliser sans serveur).*"
+    timeout: 180000
 - tapOn:
     text: "(Allow|Autoriser)"
     optional: true
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s01-welcome
-- tapOn: "(Use without a server|Utiliser sans serveur).*"
-# The photo library, unless granted before the launch
+- tapOn: "(?s)(Use without a server|Utiliser sans serveur).*"
+# The photo library, unless the grant held
 - tapOn:
     text: "(Allow Full Access|Autoriser l.acc.s complet)"
     optional: true
@@ -26,8 +26,8 @@ appId: com.aprogsys.immuch360.dev.debug
     text: "(Allow Access to All Photos|Autoriser l.acc.s . toutes les photos)"
     optional: true
 - extendedWaitUntil:
-    visible: ".*(Library|Bibliothèque).*"
-    timeout: 90000
+    visible: "(?s).*(Library|Bibliothèque).*"
+    timeout: 120000
 - tapOn:
     text: "(Allow|Autoriser)"
     optional: true

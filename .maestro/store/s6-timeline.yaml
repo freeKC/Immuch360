@@ -2,11 +2,14 @@
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - launchApp
+- tapOn:
+    text: "(Allow|Autoriser)"
+    optional: true
 - extendedWaitUntil:
-    visible: ".*(Library|Bibliothèque).*"
+    visible: "(?s).*(Library|Bibliothèque).*"
     timeout: 90000
 - tapOn:
-    text: ".*Photos.*"
+    text: "(?s).*Photos.*"
     optional: true
 - extendedWaitUntil:
     visible: "never shown 0f3a"

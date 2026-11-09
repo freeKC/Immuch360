@@ -1,0 +1,15 @@
+# App Store captures, flow 3a: the Photos tab, for the runner to find the face button of its app bar.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- tapOn:
+    text: "(Allow|Autoriser)"
+    optional: true
+- extendedWaitUntil:
+    visible: "(?s).*(Library|Bibliothèque).*"
+    timeout: 120000
+- tapOn:
+    text: "(?s).*Photos.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 5000
