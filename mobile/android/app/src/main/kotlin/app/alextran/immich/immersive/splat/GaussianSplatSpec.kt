@@ -10,13 +10,13 @@ import kotlinx.serialization.json.longOrNull
 /**
  * The gaussianSplat request (the stereoPair JSON of ImmersiveApi.open for a splat file of another tool, lot S5, see
  * GaussianSplatRequest on the Dart side and mobile/test/fixtures/ai_immersive/gaussian_splat_contract_v1.json): the
- * [format] and [formatVersion] of the file, its [gaussians] and the degree of its spherical harmonics as its head said
- * to Flutter, its size in [fileBytes], the most gaussians the headset shows ([maxGaussians], 50 000, or 150 000 with
- * Large splats), the [tool] a comment of a PLY names, and the file [name], under which the orientation the user chose
- * is remembered. The viewer reads the head of the file again, which wins over this JSON. The scene of a splat photo
- * of the Immich server (plan of 3 November 2026, lot L4) comes as a file of the app's cache with the optional [up], the
- * orientation chosen before it was saved, taken when the user chose none for the file on the headset; release 40 reads
- * the same request and ignores it.
+ * [format] and [formatVersion] of the file, its [gaussians] and the degree of its spherical harmonics as its head
+ * said to Flutter, its size in [fileBytes], the most gaussians the headset shows ([maxGaussians], 300 000, or
+ * 1 000 000 with Large splats), the [tool] a comment of a PLY names, and the file [name], under which the orientation
+ * the user chose is remembered. The viewer reads the head of the file again, which wins over this JSON. The scene of
+ * a splat photo of the Immich server (plan of 3 November 2026, lot L4) comes as a file of the app's cache with the
+ * optional [up], the orientation chosen before it was saved, taken when the user chose none for the file on the
+ * headset; release 40 reads the same request and ignores it.
  */
 internal data class GaussianSplatSpec(
   val format: SplatFormat,

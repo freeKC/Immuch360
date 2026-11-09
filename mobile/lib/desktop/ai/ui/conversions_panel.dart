@@ -1021,7 +1021,6 @@ class _JobRowState extends ConsumerState<_JobRow> {
   /// headset beside it (Detailed and Maximum)
   Future<void> _showHeadsetHelp(BuildContext context, String written, {required bool isNetwork}) {
     final details = widget.job.details;
-    final gaussians = details is SplatResultDetails ? details.headsetCount : SplatV1.maxGaussians;
     final name = details is SplatResultDetails && details.hasHeadsetCopy
         ? splatHeadsetCopyNameOf(p.basename(written))
         : p.basename(written);
@@ -1030,7 +1029,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
       builder: (context) => AlertDialog(
         key: const Key('ai_job_splat_headset_dialog'),
         title: Text(context.t.ai_immersive_splat_how_headset),
-        content: Text(splatHeadsetText(context.t, network: isNetwork, fileName: name, gaussians: gaussians)),
+        content: Text(splatHeadsetText(context.t, network: isNetwork, fileName: name)),
         actions: [
           TextButton(
             key: const Key('ai_job_splat_headset_close'),

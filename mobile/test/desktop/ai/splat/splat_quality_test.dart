@@ -47,7 +47,7 @@ void main() {
         (headset.steps, headset.maxGaussians, headset.trainingResolution, headset.photoLongSide, headset.quality),
         (20000, 150000, 1024, 1600, SplatQuality.headset),
       );
-      expect(headset.headsetGaussians, 150000);
+      expect(headset.headsetGaussians, 300000);
       expect(SplatQuality.headset.hasHeadsetCopy, isFalse);
       expect(const SplatSelection(members: []).settings.quality, SplatQuality.headset);
     });
@@ -58,7 +58,7 @@ void main() {
         (detailed.steps, detailed.maxGaussians, detailed.trainingResolution, detailed.photoLongSide),
         (30000, 1000000, 1920, 1920),
       );
-      expect((detailed.subject, detailed.keepPly, detailed.headsetGaussians), (SplatSubject.object, true, 150000));
+      expect((detailed.subject, detailed.keepPly, detailed.headsetGaussians), (SplatSubject.object, true, 300000));
       expect(SplatQuality.detailed.hasHeadsetCopy, isTrue);
     });
 
@@ -228,7 +228,13 @@ void main() {
       expect(splatSpzBytesOf(SplatQuality.maximum, SplatSubject.object), 150000 * 24);
       expect(splatPlyBytesOf(SplatQuality.detailed, SplatSubject.place) / 1e6, closeTo(200, 2));
       expect(splatPlyBytesOf(SplatQuality.headset, SplatSubject.place) / 1e6, closeTo(35.4, 0.1));
-      expect(splatHeadsetCopyBytes, 3600000);
+      expect(splatHeadsetCopyBytes, 7200000);
+    });
+
+    test('what the headset gets: the Headset scene, trained to 150 000, or the copy of 300 000 of the others', () {
+      expect(splatHeadsetGaussiansOf(SplatQuality.headset), 150000);
+      expect(splatHeadsetGaussiansOf(SplatQuality.detailed), 300000);
+      expect(splatHeadsetGaussiansOf(SplatQuality.maximum), 300000);
     });
 
     test('the .spz of Headset for an object: the copy cropped to it, about 1.1 MiB; the .ply whole', () {

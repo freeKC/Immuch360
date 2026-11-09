@@ -756,7 +756,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('The same gaussians, about 191.3 MiB'), findsOneWidget);
-      expect(find.text('For the headset: up to 150,000 gaussians, about 3.4 MiB (.spz)'), findsOneWidget);
+      // The copy for the headset beside the scene, 300 000 at most since 8 November 2026
+      expect(find.text('For the headset: up to 300,000 gaussians, about 6.9 MiB (.spz)'), findsOneWidget);
       await tapIn(tester, start());
       await settle(tester);
 
@@ -1097,10 +1098,7 @@ void main() {
       until: () => find.byKey(const Key('ai_conversion_network_yes')).evaluate().isEmpty && startEnabled(tester),
     );
     expect(
-      find.text(
-        "In the headset: open this folder in Network shares, then salon_splat.spz, Explore the splat scene. Turn on "
-        "Large splats (experimental) in the headset's settings to see all 150,000 gaussians.",
-      ),
+      find.text('In the headset: open this folder in Network shares, then salon_splat.spz, Explore the splat scene.'),
       findsOneWidget,
     );
     await tapIn(tester, start());

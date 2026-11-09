@@ -58,9 +58,10 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// by default (Settings, Advanced turns it off)
     @Default(true) bool gaussianSplats,
 
-    /// Meta Quest, experimental: a splat shows up to 150 000 gaussians, the advice of the Meta Spatial SDK, rather than
-    /// the 50 000 of the first measures, with a passing word that it may stutter. Off by default, unlike the other
-    /// experimental settings: 50 000 until a measure in the headset says more (decision D7 of the splats, kept by
+    /// Meta Quest, experimental: a splat shows up to 1 000 000 gaussians rather than the 300 000 of the default, with
+    /// a passing word that it may stutter. Both from the series of 8 November 2026 on a Quest 3
+    /// (store/m2/quest-splat-cap-2026-11-08/series.md): 1 000 000 ran at 77 frames a second (median, 75 at least),
+    /// 300 000 at 91. Off by default, unlike the other experimental settings (decision D7 of the splats, kept by
     /// FreeKC on 30 October 2026); Settings, Advanced turns it on
     @Default(false) bool largeSplats,
 

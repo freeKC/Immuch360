@@ -277,6 +277,12 @@ void main() {
       expect(find.text('Large splats (experimental)'), findsOneWidget);
       expect(tester.widget<SwitchListTile>(splatSwitch).value, isTrue);
       expect(tester.widget<SwitchListTile>(largeSwitch).value, isFalse);
+      await tester.ensureVisible(largeSwitch);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Shows up to 1,000,000 gaussians instead of 300,000: a large splat may stutter'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Gaussian splats turns off, Large splats going with it; Large splats turns on', (tester) async {

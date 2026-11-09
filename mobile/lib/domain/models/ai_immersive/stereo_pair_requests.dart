@@ -425,7 +425,7 @@ const gaussianSplatVersion = 1;
 /// A Gaussian splat file of another tool (.spz or .ply) for the immersive viewer of a Meta Quest 3 or 3S (lot S5,
 /// GaussianSplatSpec on the Kotlin side): what the head of the file said (its [format] as SplatFormat names it, its
 /// [formatVersion], [gaussians] and [shDegree]), its size in [fileBytes], the most gaussians the headset shows
-/// ([maxGaussians], 50 000, or 150 000 with Large splats), the [tool] a comment of a PLY names, and the file [name],
+/// ([maxGaussians], 300 000, or 1 000 000 with Large splats), the [tool] a comment of a PLY names, and the file [name],
 /// under which the headset remembers the orientation the user chose. The viewer reads the head of the file again,
 /// which wins over this JSON; frozen in test/fixtures/ai_immersive/gaussian_splat_contract_v1.json. The scene of a
 /// splat photo (plan of 3 November 2026, lot L4) adds the optional [up], the orientation chosen before it was saved,

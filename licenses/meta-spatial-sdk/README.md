@@ -68,5 +68,6 @@ What goes with it:
    new key of a rotation keeps the older certificate in the lineage the app reads, so it never moves an APK out of its
    build. `SplatBuildTest` checks the gate with both certificates, as their APKs carry them, with two debug keys and
    with keys it does not know.
-3. **Large splats off by default.** A splat shows 50,000 gaussians at most; Large splats (150,000) is a setting the
+3. **Large splats off by default.** A splat shows 300,000 gaussians at most since 8 November 2026 (50,000 before),
+   twice the 150,000 the SDK advises, from a series measured on a Quest 3; Large splats (1,000,000) is a setting the
    user turns on.

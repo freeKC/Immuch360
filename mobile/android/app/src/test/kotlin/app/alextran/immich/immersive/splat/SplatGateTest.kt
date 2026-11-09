@@ -8,9 +8,9 @@ import org.junit.Test
 
 /**
  * The gate of the splats in the headset (lot S5): Quest 3 and 3S only, the flavour with the splat module, the count
- * the headset takes (50 000 until measured, 150 000 with Large splats), the reduction beyond it within its limits,
- * the free memory and the heat; every SPZ, version 4 (ZSTD) included, rewritten as version 2, the only one the module
- * reads.
+ * the headset takes (300 000 by default and 1 000 000 with Large splats, from the series on a Quest 3 of 8 November
+ * 2026), the reduction beyond it within its limits, the free memory and the heat; every SPZ, version 4 (ZSTD)
+ * included, rewritten as version 2, the only one the module reads.
  */
 class SplatGateTest {
   private val spz = SplatProbe.Spz(version = 3, gaussians = 47_819, shDegree = 0, fractionalBits = 12, flags = 0)
@@ -67,23 +67,78 @@ class SplatGateTest {
   }
 
   @Test
-  fun `beyond the count the splat is reduced to it, Large splats taking it to 150 000 with a warning`() {
-    assertEquals(SplatVerdict.Open(452_451, keep = 50_000, large = false), check(probe = spz(452_451)))
+  fun `beyond the count the splat is reduced to it, Large splats taking it to 1 000 000 with a warning`() {
+    // The counts of the series on a Quest 3 of 8 November 2026, both under the most the headset reduces
+    assertEquals(300_000, SplatGate.SAFE_GAUSSIANS)
+    assertEquals(1_000_000, SplatGate.LARGE_GAUSSIANS)
+    assertTrue(SplatGate.LARGE_GAUSSIANS < SplatGate.MAX_REDUCIBLE_GAUSSIANS)
+    assertEquals(SplatVerdict.Open(452_451, keep = 300_000, large = false), check(probe = spz(452_451)))
+    // With Large splats the cactus opens whole, said to be large; beyond the Large count, reduced to it
     assertEquals(
-      SplatVerdict.Open(452_451, keep = 150_000, large = true),
+      SplatVerdict.Open(452_451, keep = null, large = true),
       check(probe = spz(452_451), cap = SplatGate.LARGE_GAUSSIANS),
     )
-    // Between the two, whole with Large splats, said to be large
-    assertEquals(SplatVerdict.Open(60_000, keep = null, large = true), check(probe = spz(60_000), cap = 150_000))
+    assertEquals(
+      SplatVerdict.Open(1_274_802, keep = 1_000_000, large = true),
+      check(probe = spz(1_274_802), cap = SplatGate.LARGE_GAUSSIANS),
+    )
     // At the count itself, whole
-    assertEquals(SplatVerdict.Open(50_000, keep = null, large = false), check(probe = spz(50_000)))
-    // A count asked beyond the advice of the SDK is taken as the advice
-    assertEquals(SplatVerdict.Open(452_451, keep = 150_000, large = true), check(probe = spz(452_451), cap = 900_000))
+    assertEquals(SplatVerdict.Open(300_000, keep = null, large = false), check(probe = spz(300_000)))
+    // Requests of the former counts, 50 000 and 150 000, are still reduced to them
+    assertEquals(SplatVerdict.Open(452_451, keep = 50_000, large = false), check(probe = spz(452_451), cap = 50_000))
+    assertEquals(SplatVerdict.Open(452_451, keep = 150_000, large = false), check(probe = spz(452_451), cap = 150_000))
+    // A count asked beyond the Large count is taken as the Large count
+    assertEquals(
+      SplatVerdict.Open(2_500_000, keep = 1_000_000, large = true),
+      check(probe = spz(2_500_000), cap = 3_000_000),
+    )
+  }
+
+  @Test
+  fun `1 000 000 gaussians shown whole with Large splats still need the free memory for them and a cool headset`() {
+    // 1 000 000 gaussians of degree 3 decoded weigh 236 bytes each, three times that for the module: 708 MB
+    val large = SplatProbe.Spz(version = 2, gaussians = 1_000_000, shDegree = 3, fractionalBits = 12, flags = 0)
+    val fileBytes = 1_000_000L * 64
+    val needed = SplatGate.memoryNeeded(large, fileBytes, keep = null)
+    assertEquals(3 * 1_000_000L * 236, needed)
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_MEMORY),
+      check(probe = large, fileBytes = fileBytes, cap = SplatGate.LARGE_GAUSSIANS, memory = needed - 1),
+    )
+    assertEquals(
+      SplatVerdict.Open(1_000_000, keep = null, large = true),
+      check(probe = large, fileBytes = fileBytes, cap = SplatGate.LARGE_GAUSSIANS, memory = needed),
+    )
+    val severe = SplatGate.THERMAL_STATUS_SEVERE
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.TOO_WARM),
+      check(probe = large, fileBytes = fileBytes, cap = SplatGate.LARGE_GAUSSIANS, thermal = severe),
+    )
+  }
+
+  @Test
+  fun `300 000 gaussians shown whole by default need the free memory for them and a cool headset`() {
+    val shown = SplatProbe.Spz(version = 2, gaussians = 300_000, shDegree = 3, fractionalBits = 12, flags = 0)
+    val fileBytes = 300_000L * 64
+    val needed = SplatGate.memoryNeeded(shown, fileBytes, keep = null)
+    assertEquals(3 * 300_000L * 236, needed)
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_MEMORY),
+      check(probe = shown, fileBytes = fileBytes, memory = needed - 1),
+    )
+    assertEquals(
+      SplatVerdict.Open(300_000, keep = null, large = false),
+      check(probe = shown, fileBytes = fileBytes, memory = needed),
+    )
+    assertEquals(
+      SplatVerdict.Refused(SplatRefusal.TOO_WARM),
+      check(probe = shown, fileBytes = fileBytes, thermal = SplatGate.THERMAL_STATUS_SEVERE),
+    )
   }
 
   @Test
   fun `the reduction stops at 4 million gaussians and 1 GiB`() {
-    assertEquals(SplatVerdict.Open(4_000_000, keep = 50_000, large = false), check(probe = spz(4_000_000)))
+    assertEquals(SplatVerdict.Open(4_000_000, keep = 300_000, large = false), check(probe = spz(4_000_000)))
     assertEquals(SplatVerdict.Refused(SplatRefusal.TOO_LARGE, 4_000_001), check(probe = spz(4_000_001)))
     assertEquals(
       SplatVerdict.Refused(SplatRefusal.TOO_LARGE, 452_451),
@@ -96,7 +151,7 @@ class SplatGateTest {
     // FreeKC's report of 1 November 2026: axes_v4.spz was refused. Its ZSTD streams are read in the quest flavour and
     // the splat written again as version 2, the only version the module reads (Quest 3, 31 October 2026)
     assertEquals(SplatVerdict.Open(686, keep = null, large = false), check(probe = spz(686, version = 4)))
-    assertEquals(SplatVerdict.Open(452_451, keep = 50_000, large = false), check(probe = spz(452_451, version = 4)))
+    assertEquals(SplatVerdict.Open(452_451, keep = 300_000, large = false), check(probe = spz(452_451, version = 4)))
     assertEquals(SplatVerdict.Refused(SplatRefusal.TOO_LARGE, 9_000_000), check(probe = spz(9_000_000, version = 4)))
     assertEquals(SplatVerdict.Refused(SplatRefusal.TOO_WARM), check(probe = spz(686, version = 4), thermal = 4))
     assertEquals(
@@ -179,15 +234,16 @@ class SplatGateTest {
     // The case of the review: 4 million gaussians of degree 3 in a PLY of 992 MB, 2.5 GB free
     val ply = SplatProbe.Ply(4_000_000, 3, null, 1_500, 248, emptyList())
     val fileBytes = 1_500L + 4_000_000L * 248
-    val verdict = check(probe = ply, fileBytes = fileBytes, cap = SplatGate.LARGE_GAUSSIANS, memory = 2_500_000_000L)
-    assertEquals(SplatVerdict.Open(4_000_000, keep = 150_000, large = true), verdict)
+    // A request of 150 000, the Large count of release 43
+    val verdict = check(probe = ply, fileBytes = fileBytes, cap = 150_000, memory = 2_500_000_000L)
+    assertEquals(SplatVerdict.Open(4_000_000, keep = 150_000, large = false), verdict)
     // Three times the 37 MB the module reads, and the 9 bytes a gaussian the reducer holds for the 4 million
     val needed = SplatGate.memoryNeeded(ply, fileBytes, keep = 150_000)
     val loaded = 37_200_057L + SplatGate.REDUCED_SLACK_BYTES
     assertEquals(3 * loaded + 36_000_000L + SplatGate.REDUCER_OVERHEAD_BYTES, needed)
     assertEquals(
       SplatVerdict.Refused(SplatRefusal.NOT_ENOUGH_MEMORY),
-      check(probe = ply, fileBytes = fileBytes, cap = SplatGate.LARGE_GAUSSIANS, memory = needed - 1),
+      check(probe = ply, fileBytes = fileBytes, cap = 150_000, memory = needed - 1),
     )
     // Shown whole, the same splat would weigh its 4 million gaussians: the reduction is what lets it in
     assertTrue(SplatGate.memoryNeeded(ply, fileBytes, keep = null) > 2_500_000_000L)
@@ -196,12 +252,15 @@ class SplatGateTest {
   @Test
   fun `the cache holds the reduced copy or the copy named after the format, and a download before it starts`() {
     val reserve = SplatGate.CACHE_RESERVE_BYTES
-    // 452 451 gaussians in 6 824 362 bytes reduced to 50 000: about a ninth of the file, plus the slack of a header
-    val reduced = SplatGate.cacheBytesWritten(6_824_362, 452_451, 50_000, copiesWhole = false)
-    assertEquals(754_155L + SplatGate.REDUCED_SLACK_BYTES, reduced)
+    // 452 451 gaussians in 6 824 362 bytes reduced to 300 000: about two thirds of the file, plus the slack of a header
+    val reduced = SplatGate.cacheBytesWritten(6_824_362, 452_451, 300_000, copiesWhole = false)
+    assertEquals(4_524_929L + SplatGate.REDUCED_SLACK_BYTES, reduced)
+    // And to 50 000, a request of the former default: about a ninth
+    val former = SplatGate.cacheBytesWritten(6_824_362, 452_451, 50_000, copiesWhole = false)
+    assertEquals(754_155L + SplatGate.REDUCED_SLACK_BYTES, former)
     val big = spz(452_451)
     assertEquals(
-      SplatVerdict.Open(452_451, keep = 50_000, large = false),
+      SplatVerdict.Open(452_451, keep = 300_000, large = false),
       check(probe = big, fileBytes = 6_824_362, freeSpace = reduced + reserve),
     )
     assertEquals(
@@ -281,7 +340,7 @@ class SplatGateTest {
 
   @Test
   fun `a PLY is reduced as an SPZ of version 3`() {
-    val ply = SplatProbe.Ply(200_000, 0, null, 400, 56, emptyList())
-    assertEquals(SplatVerdict.Open(200_000, keep = 50_000, large = false), check(probe = ply, fileBytes = 11_200_400))
+    val ply = SplatProbe.Ply(400_000, 0, null, 400, 56, emptyList())
+    assertEquals(SplatVerdict.Open(400_000, keep = 300_000, large = false), check(probe = ply, fileBytes = 22_400_400))
   }
 }
