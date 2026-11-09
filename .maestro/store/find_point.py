@@ -3,7 +3,8 @@
 
   find_point.py tile HIERARCHY   a point inside the first tile of a grid grouped by day: 40 points right of the left
                                  edge and 40 points below the first date header (a text with a year, below the top
-                                 quarter of the screen), where the first thumbnail starts
+                                 quarter of the screen, with the month header above it when they are read as one),
+                                 where the first thumbnail starts
   find_point.py face HIERARCHY   the middle of the rightmost small element of the app bar (the face button of a
                                  session without a server has no label): below the status bar, in the top seventh
 """
@@ -41,8 +42,9 @@ def main():
     W = max(x1 for _, _, x1, _, _ in items)
     H = max(y1 for _, _, _, y1, _ in items)
     if mode == 'tile':
+        # a month header and the first day header may be read as one element ("October\nSat, Oct 24, 2026")
         heads = [(y0, y1) for x0, y0, x1, y1, t in items
-                 if re.search(r'\b20\d\d\b', t) and y0 > H * 0.25 and (y1 - y0) < 80 and x0 < W * 0.3]
+                 if re.search(r'\b20\d\d\b', t) and y0 > H * 0.25 and (y1 - y0) < 180 and x0 < W * 0.3]
         if heads:
             y0, y1 = min(heads)
             print(f'40,{y1 + 40}')
