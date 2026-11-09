@@ -42,8 +42,9 @@ class RedirectInterceptor {
         /**
          * Immuch360: told of the unusual redirects, in a text that carries no query string and no user info: a
          * relative `Location` that was resolved, a `Location` that is not an http or https URL, a streamed body that
-         * stopped a redirect. Once per process for each host of the request, status and kind. Called on an OkHttp
-         * thread; null by default, so that the plugin needs nothing of the app (the app sets it, the tests too).
+         * stopped a redirect, an `Authorization` header left behind (which explains a 401 that follows). Once per
+         * process for each host of the request, status and kind. Called on an OkHttp thread; null by default, so that
+         * the plugin needs nothing of the app (the app sets it, the tests too).
          */
         @Volatile
         var onUnusualRedirect: ((String) -> Unit)? = null
@@ -54,16 +55,19 @@ class RedirectInterceptor {
          * Adds a redirect interceptor to the OkHttpClient.Builder
          *
          * Immuch360: the loop follows OkHttp's own rules (RetryAndFollowUpInterceptor of OkHttp 4.12) but for the
-         * method of 301 and 302. A relative `Location` is resolved against the request (RFC 9110 section 10.2.2): the
-         * raw header given to `Request.Builder.url` threw an IllegalArgumentException on OkHttp's dispatcher thread,
-         * which ended the app. A missing `Location`, or one that is not an http or https URL, is not followed: the
-         * caller gets the redirect. 303 turns any method but GET, HEAD and PROPFIND into a GET without body; 300,
-         * 301, 302, 307 and 308 keep the method and the body, as before and as RFC 9110 allows (OkHttp turns 301 and
-         * 302 into a GET, which would lose a sign in sent to http:// behind a redirect to https://). A one-shot body
-         * (the streamed uploads, [StreamingRequestBody]) is never sent twice: the caller gets the redirect.
-         * `Authorization` is dropped when the scheme, the host or the port changes. Any RuntimeException of the
-         * chain becomes an IOException, which the caller gets as a failed request: OkHttp rethrows anything else on
-         * its dispatcher thread, and the app ends.
+         * method of 301 and 302 and for `Authorization` on an upgrade to https. A relative `Location` is resolved
+         * against the request (RFC 9110 section 10.2.2): the raw header given to `Request.Builder.url` threw an
+         * IllegalArgumentException on OkHttp's dispatcher thread, which ended the app. A missing `Location`, or one
+         * that is not an http or https URL, is not followed: the caller gets the redirect. 303 turns any method but
+         * GET, HEAD and PROPFIND into a GET without body; 300, 301, 302, 307 and 308 keep the method and the body, as
+         * before and as RFC 9110 allows (OkHttp turns 301 and 302 into a GET, which would lose a sign in sent to
+         * http:// behind a redirect to https://). A one-shot body (the streamed uploads, [StreamingRequestBody]) is
+         * never sent twice: the caller gets the redirect.
+         * `Authorization` follows to the same host on the same scheme and port, and on an upgrade from http to https
+         * of the same host (port 80 to 443, or the same port); it is dropped on another host or port and on a
+         * downgrade from https to http, a drop told to [onUnusualRedirect]. Any RuntimeException of the chain becomes
+         * an IOException, which the caller gets as a failed request: OkHttp rethrows anything else on its dispatcher
+         * thread, and the app ends.
          *
          * @param clientBuilder The `OkHttpClient.Builder` to add the interceptor to
          * @param maxRedirects The maximum number of redirects to follow (Immuch360: 0 to [MAX_REDIRECTS])
@@ -141,13 +145,33 @@ class RedirectInterceptor {
                 }
                 return null
             }
-            if (url.scheme != request.url.scheme || url.host != request.url.host || url.port != request.url.port) {
+            if (request.header("Authorization") != null && !keepsAuthorization(request.url, url)) {
                 builder.removeHeader("Authorization")
+                report(request, response, "authorization") {
+                    "to ${describe(url)}: Authorization not sent to another host, port or scheme"
+                }
             }
             if (location.toHttpUrlOrNull() == null) {
                 report(request, response, "relative") { "to a relative Location, resolved to ${describe(url)}" }
             }
             return builder.build()
+        }
+
+        /**
+         * Immuch360: whether the credentials of a request to [from] go on to [to]. OkHttp keeps them on the same
+         * scheme, host and port only. An upgrade from http to https of the same host keeps them too, so that a server
+         * URL in http behind a redirect to https still signs in: port 80 to 443, or the same port on both. Another
+         * host, another port, and a downgrade from https to http drop them.
+         */
+        private fun keepsAuthorization(from: HttpUrl, to: HttpUrl): Boolean {
+            if (to.host != from.host) {
+                return false
+            }
+            if (to.scheme == from.scheme) {
+                return to.port == from.port
+            }
+            val upgrade = from.scheme == "http" && to.scheme == "https"
+            return upgrade && (to.port == from.port || (from.port == 80 && to.port == 443))
         }
 
         private fun report(request: Request, response: Response, kind: String, what: () -> String) {

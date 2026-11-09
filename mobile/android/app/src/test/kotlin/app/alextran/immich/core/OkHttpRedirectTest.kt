@@ -122,7 +122,7 @@ class OkHttpRedirectTest {
   }
 
   @Test
-  fun `Authorization follows on the same origin only, not to another host, port or scheme`() {
+  fun `Authorization follows on the same origin, not to another host or port nor down to http`() {
     for (target in listOf("https://other.example/c", "https://immich.example:8443/c", "http://immich.example/c")) {
       val server = FakeServer(
         "https://immich.example/a" to Answer(302, "https://immich.example/b"),
@@ -140,6 +140,79 @@ class OkHttpRedirectTest {
         server.seen.map { it.headers["Authorization"] },
       )
     }
+  }
+
+  @Test
+  fun `Authorization follows an upgrade from http to https of the same host, port 80 to 443 or the same port`() {
+    // A server URL in http behind a 301 or 308 to https, as reverse proxies send: the sign in goes on
+    for ((from, to) in listOf(
+      "http://immich.example/api/users/me" to "https://immich.example/api/users/me",
+      "http://immich.example:2283/api/users/me" to "https://immich.example:2283/api/users/me",
+    )) {
+      for (status in listOf(301, 308)) {
+        val server = FakeServer(from to Answer(status, to), to to Answer(200))
+        val request = Request.Builder().url(from).header("Authorization", "Basic dXNlcjpwYXNz").build()
+
+        val response = client(server).newCall(request).execute()
+
+        assertEquals("$status $from", 200, response.code)
+        assertEquals(
+          "$status $from",
+          listOf("Basic dXNlcjpwYXNz", "Basic dXNlcjpwYXNz"),
+          server.seen.map { it.headers["Authorization"] },
+        )
+      }
+    }
+  }
+
+  @Test
+  fun `an upgrade to https on another port or of another host leaves Authorization behind`() {
+    for ((from, to) in listOf(
+      "http://immich.example:2283/a" to "https://immich.example/a",
+      "http://immich.example/a" to "https://immich.example:8443/a",
+      "http://immich.example/a" to "https://photos.example/a",
+    )) {
+      val server = FakeServer(from to Answer(301, to), to to Answer(200))
+      val request = Request.Builder().url(from).header("Authorization", "Bearer secret").build()
+
+      val response = client(server).newCall(request).execute()
+
+      assertEquals(to, 200, response.code)
+      assertEquals(to, listOf("Bearer secret", null), server.seen.map { it.headers["Authorization"] })
+    }
+  }
+
+  @Test
+  fun `a dropped Authorization is reported once, a kept one is not`() {
+    val reports = CopyOnWriteArrayList<String>()
+    RedirectInterceptor.onUnusualRedirect = { reports.add(it) }
+    val server = FakeServer(
+      "http://kept.example/a" to Answer(301, "https://kept.example/a"),
+      "https://kept.example/a" to Answer(200),
+      "https://dropped.example/a?token=abc" to Answer(302, "http://dropped.example/b?key=secret"),
+      "http://dropped.example/b?key=secret" to Answer(200),
+      "https://anonymous.example/a" to Answer(302, "https://elsewhere.example/a"),
+      "https://elsewhere.example/a" to Answer(200),
+    )
+    val client = client(server)
+    fun send(url: String, authorization: String?) {
+      val builder = Request.Builder().url(url)
+      authorization?.let { builder.header("Authorization", it) }
+      client.newCall(builder.build()).execute()
+    }
+
+    send("http://kept.example/a", "Bearer secret")
+    send("https://dropped.example/a?token=abc", "Bearer secret")
+    send("https://dropped.example/a?token=abc", "Bearer secret")
+    send("https://anonymous.example/a", null)
+
+    assertEquals(
+      listOf(
+        "Redirect 302 of GET https://dropped.example/a to http://dropped.example/b: Authorization not sent to " +
+          "another host, port or scheme",
+      ),
+      reports,
+    )
   }
 
   @Test
