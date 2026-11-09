@@ -43,7 +43,7 @@ State on 22 October 2026: build 28 (version 3.3.0-rc.0, build number 3030026) fo
 - **GitHub**: build 28 (`v3.3.0-rc.0-28`) with the universal, per ABI and Quest APKs, the AAB and the libsmb2 source archive; desktop build 8 as a [pre-release](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8): the Windows installer and ZIP, signed, the Linux .deb and .rpm, the macOS DMG and ZIP, the libsmb2 source archive; webOS 0.2.0 as a [pre-release](https://github.com/freeKC/Immuch360/releases/tag/webos-v0.2.0): the .ipk for LG TVs in Developer Mode.
 - **Google Play, phones and tablets**: build 25 (3030023) public since 20 October 2026, after build 23 (3030021) and the new listing, public since 14 October 2026; build 28 (3030026) sent for Google's review after its release, in place of build 27 (3030025), which had replaced build 26 there.
 - **Google Play, Android TV**: by 8 November 2026 Google Play offers the app on Android TV and Google TV, with the build of the phones; the TV release went to Google's review on 9 October.
-- **App Store**: version 3.3.1 waiting for review since 14 October 2026, sent again with build 27 on 22 October 2026, after version 3.3.0 was rejected on 13 October under guideline 4.3(a); version 3.3.2, with build 28, follows. TestFlight has build 27.
+- **App Store**: version 3.3.1, first sent on 14 October 2026 and sent again with build 27 on 22 October 2026, was waiting for review, after version 3.3.0 was rejected on 13 October under guideline 4.3(a). Published since: version 3.3.1 on 5 November 2026, version 3.3.2 (iOS build 35, made from build 41) on 6 November 2026, version 3.3.3 (iOS build 36, made from build 43) on 9 November 2026.
 - **Meta Horizon Store**: public since 7 October 2026 ([store page](https://www.meta.com/experiences/immuch360/1384208401440714/)); build 23, its version 2, published on 18 October 2026; version 3, with build 25, public since 22 October 2026; version 4, with build 28, submitted to Meta.
 - **Linux and macOS**: early previews in the desktop pre-releases, from desktop build 5.
 
@@ -242,7 +242,7 @@ The marks follow the levels above: `yes` is shipped, `untested` is shipped but n
 
 | Cameras | Android phone and tablet | iPhone and iPad | Android TV and Google TV | Meta Quest | Windows | Linux | macOS |
 |---|---|---|---|---|---|---|---|
-| Tapo live view | untested (b20) | planned (3.3.2) | untested (b20) | untested (b20) | preview (d3) | CI build only | CI build only |
+| Tapo live view | untested (b20) | untested (3.3.2) | untested (b20) | untested (b20) | preview (d3) | CI build only | CI build only |
 | Tapo recordings | untested (b20) | untested (b20) | untested (b20) | untested (b20) | preview (d2) | CI build only | CI build only |
 | Tapo clip sent to Immich | untested (b20) | untested (b20) | no | untested (b20) | preview (d2) | CI build only | CI build only |
 
@@ -268,7 +268,7 @@ The marks follow the levels above: `yes` is shipped, `untested` is shipped but n
 | Mouse, keys and window | n/a | n/a | n/a | n/a | preview (d1) | preview (d5) | CI build only |
 | Files opened with the program, drops on the window | n/a | n/a | n/a | n/a | preview (d5) | preview (d6) | CI run (d6) |
 | Sign in with your phone: the screen | n/a | n/a | yes (b28) | untested (b28) | preview (d8) | CI build only | CI build only |
-| Sign in with your phone: the phone | yes (b28) | planned (3.3.2) | n/a | n/a | n/a | n/a | n/a |
+| Sign in with your phone: the phone | yes (b28) | untested (3.3.2) | n/a | n/a | n/a | n/a | n/a |
 
 ### Sign in with your phone (b28, d8)
 

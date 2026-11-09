@@ -386,7 +386,7 @@ From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows 
 3. A phone shows SD on the page and HD in full screen; the Quest shows HD. Back leaves full screen first.
 4. Below the picture come the model and firmware and the memory card, such as "Memory card: (used) used of (total)" or "No memory card".
 
-On iPhone and iPad, the live view comes with the next iOS release (3.3.2, made from build 28, not public yet): the app turns the stream of the camera into a live HLS playlist on the device, played by the system player a few seconds behind the camera, with its sound, and an H.265 camera says so in its tile ("SD" may still play). Until that release, the live view says "The live view comes to iPhone and iPad in a later version. The recordings play here already." On LG TVs, from webOS 0.2.0, the live view is video only, see [LG webOS TVs](platform-support.md#lg-webos-tvs). Without the camera account the page says "Add the camera account to see the live view."
+On iPhone and iPad, the live view comes with version 3.3.2, published on 6 November 2026 and not tried on an iPhone yet: the app turns the stream of the camera into a live HLS playlist on the device, played by the system player a few seconds behind the camera, with its sound, and an H.265 camera says so in its tile ("SD" may still play). Before that version, the live view said "The live view comes to iPhone and iPad in a later version. The recordings play here already." On LG TVs, from webOS 0.2.0, the live view is video only, see [LG webOS TVs](platform-support.md#lg-webos-tvs). Without the camera account the page says "Add the camera account to see the live view."
 
 ### Play and keep the recordings
 

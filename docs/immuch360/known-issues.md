@@ -41,8 +41,8 @@ Each line links to the section that explains it. The limits by design, such as t
 ## iPhone and iPad
 
 - **The 360° video player has play and pause only**, no time bar yet: [360° photos and videos](user-guide.md#play-a-360-video).
-- **No Tapo live view in the published builds yet**: it comes with version 3.3.2, built from build 28, a few seconds behind the camera; the recordings play: [Tapo cameras](user-guide.md#watch-it-live).
-- **The phone does not sign in big screens yet**: "Connect a TV or computer" comes with version 3.3.2 too. Its scanner and the live view were compiled on a GitHub macOS runner and have not run on an iPhone yet: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
+- **The Tapo live view has not run on an iPhone yet**: it comes with version 3.3.2, published on 6 November 2026, a few seconds behind the camera; the recordings play: [Tapo cameras](user-guide.md#watch-it-live).
+- **The phone's sign in of big screens has not run on an iPhone yet**: "Connect a TV or computer" and its scanner come with version 3.3.2 too: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **The DLNA, Plex and Tapo searches send unicast requests only** until Apple grants the multicast entitlement, and some servers do not answer them (minidlna on Linux): [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - **The MKV and AVI files of a share do not open**: [Formats and sources](compatibility.md#formats-and-sources-by-platform).
 - **The photos stored only in iCloud** are skipped by the 360° scan until they are downloaded: [Without a server](user-guide.md#without-a-server-or-an-account).
@@ -50,7 +50,6 @@ Each line links to the section that explains it. The limits by design, such as t
 - **Raw files have not run on an iPhone yet**: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - **The iPhone side of the phone share has not run on an iPhone yet**: [Share this phone](user-guide.md#share-this-phone-on-the-network).
 - **Spatial 2.5D is checked on a Galaxy S24+ only**, and iPhone feedback is welcome: [Spatial 2.5D](user-guide.md#formats-privacy-and-limits).
-- **No App Store version yet**: version 3.3.1, sent again with build 27 on 22 October 2026, waits for Apple's review, first sent on 14 October 2026: [Release status](release-status.md).
 
 ## Android TV and Google TV
 
