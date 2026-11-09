@@ -12,3 +12,4 @@ gradients and shapes, no photo of anyone, no work of a third party, so free of a
   convert base.png -resize 240x160 -quality 80 lab_thumbnail.jpg    the thumbnail of every photo, 240 x 160
   convert -size 6000x3000 gradient:'#0b3d2e-#e8d5a3' -fill '#8e44ad' -draw "circle 1500,1500 1500,700" \
     -fill '#2980b9' -draw "rectangle 3500,800 5200,2200" -quality 50 lab_large.avif    6000 x 3000, for the bound
+  the same drawing with -quality 50 lab_large.heic                                   6000 x 3000, for the bound

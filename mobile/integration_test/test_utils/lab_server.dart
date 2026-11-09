@@ -23,6 +23,7 @@ import 'package:immich_mobile/pages/login/welcome.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
+import 'package:immich_mobile/providers/sync_status.provider.dart';
 import 'package:immich_mobile/utils/app_health.dart';
 import 'package:immich_mobile/utils/bootstrap.dart';
 import 'package:immich_mobile/utils/migration.dart';
@@ -243,7 +244,11 @@ Future<void> startLabApp(WidgetTester tester) async {
   await BackgroundWorkerLockService(PlatformApis.backgroundWorkerLock()).lock();
   await EasyLocalization.ensureInitialized();
   final (dataController, apiService) = await Bootstrap.initDomain();
+  // initApp sets the app's FlutterError.onError, which the test binding must keep: its own reports the failures of
+  // the test (with the app's, a failure ended in an assertion of the binding and a wait until the test's timeout)
+  final testOnError = FlutterError.onError;
   await app.initApp();
+  FlutterError.onError = testOnError;
   await workerManagerPatch.init(dynamicSpawning: true, isolatesCount: max(Platform.numberOfProcessors - 1, 5));
   await migrateDatabaseIfNeeded(dataController.db, PlatformApis.nativeSync(), PlatformApis.permission());
   unawaited(AppHealthReports.listen());
@@ -273,6 +278,27 @@ Future<String> signInThroughLabServer(WidgetTester tester, LabServer server) asy
   await completeSignIn(page, page);
   await pumpUntil(tester, () => find.byType(TabShellPage).evaluate().isNotEmpty, reason: 'the timeline page');
   return endpoint;
+}
+
+/// Waits until no sync of the app has run for [quiet]: a sync still running when the test ends is cancelled as the
+/// providers are disposed, and that cancel leaves an error no one handles (BackgroundSyncManager.cancel)
+Future<void> waitForQuietSyncs(WidgetTester tester, {Duration quiet = const Duration(seconds: 3)}) async {
+  final container = labContainer(tester);
+  DateTime? quietSince;
+  await pumpUntil(
+    tester,
+    () {
+      final status = container.read(syncStatusProvider);
+      if (status.isRemoteSyncing || status.isLocalSyncing || status.isHashing || status.isCloudIdSyncing) {
+        quietSince = null;
+        return false;
+      }
+      final since = quietSince ??= DateTime.now();
+      return DateTime.now().difference(since) >= quiet;
+    },
+    reason: 'the syncs of the app quiet for ${quiet.inSeconds} s',
+    timeout: const Duration(seconds: 90),
+  );
 }
 
 /// The provider container of the app, found from the timeline page

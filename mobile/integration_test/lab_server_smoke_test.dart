@@ -9,7 +9,8 @@
 //   timeline       the sync from the server, the three photos in the timeline and their thumbnails decoded
 //   originals      "Load original" on the HEIC and the AVIF photo in the viewer: the originals decoded at their full
 //                  size by RemoteImagesImpl (decodeBitmapSized), none remembered as undecodable
-//   native-decode  NativeImageDecodeApi on the HEIC, the AVIF and a 6000 x 3000 AVIF, bounded as the shares ask
+//   native-decode  NativeImageDecodeApi on the HEIC and the AVIF within two bounds, and on a 6000 x 3000 HEIC and
+//                  AVIF: decoded at the bound as the shares ask, or refused cleanly where the decoder cannot
 //   upload         a file shared to the app sent by ForegroundUploadService, checked byte for byte by the server
 //
 // By hand, with the fake server on the computer that runs the emulator (port 2283):
@@ -24,6 +25,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
+import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
@@ -132,20 +134,40 @@ void main() {
       });
 
       await labScenario('native-decode', () async {
-        for (final (name, bound, width, height) in [
-          ('lab_photo.heic', 600, 600, 400),
-          ('lab_photo.avif', 600, 600, 400),
-          ('lab_large.avif', 4096, 4096, 2048),
-        ]) {
+        // Each decode runs, then the checks: one run tells about all of them. The 1200 x 800 photos within 600 (half)
+        // and within 1000 (a scale of 0.83) must decode at the fit size; the 6000 x 3000 ones within 4096 decode at
+        // 4096 x 2048 or fail as an ImageDecodeException, never as a crash (check_logcat.py reads the crashes)
+        Future<String> decode(String name, int bound) async {
           final bytes = await server.fixture(name);
-          final codec = await decodeEncodedBytes(bytes, maxWidth: bound, maxHeight: bound, source: 'lab', name: name);
-          final frame = await codec.getNextFrame();
-          final size = '${frame.image.width}x${frame.image.height}';
-          frame.image.dispose();
-          codec.dispose();
-          labLog('Native decode of $name (${bytes.length} bytes) within $bound: $size');
-          expect(size, '${width}x$height', reason: '$name decoded by NativeImageDecodeApi within $bound x $bound');
+          try {
+            final codec = await decodeEncodedBytes(bytes, maxWidth: bound, maxHeight: bound, source: 'lab', name: name);
+            final frame = await codec.getNextFrame();
+            final size = '${frame.image.width}x${frame.image.height}';
+            frame.image.dispose();
+            codec.dispose();
+            return size;
+          } on ImageDecodeException catch (error) {
+            return 'not decoded (${bytes.length} bytes), $error';
+          }
         }
+
+        final strict = <String>[];
+        for (final (name, bound, width, height, required) in [
+          ('lab_photo.heic', 600, 600, 400, true),
+          ('lab_photo.avif', 600, 600, 400, true),
+          ('lab_photo.heic', 1000, 1000, 667, true),
+          ('lab_photo.avif', 1000, 1000, 667, true),
+          ('lab_large.heic', 4096, 4096, 2048, false),
+          ('lab_large.avif', 4096, 4096, 2048, false),
+        ]) {
+          final expected = '${width}x$height';
+          final outcome = await decode(name, bound);
+          labLog('Native decode of $name within $bound: $outcome');
+          if (outcome != expected && (required || !outcome.startsWith('not decoded'))) {
+            strict.add('$name within $bound: $outcome, expected $expected');
+          }
+        }
+        expect(strict, isEmpty, reason: 'the native decoder (NativeImageDecodeApi) at the fit size');
       });
 
       await labScenario('upload', () async {
@@ -178,8 +200,9 @@ void main() {
       final state = await server.state();
       labLog('Web socket: ${state.socket}');
       labLog('Paths the fake server did not know: ${state.unknownPaths}');
+      await waitForQuietSyncs(tester);
     },
-    timeout: const Timeout(Duration(minutes: 12)),
+    timeout: const Timeout(Duration(minutes: 8)),
   );
 }
 

@@ -132,7 +132,9 @@ void main() {
         }
         await foreground.disable();
       }
+      // The syncs of the resume end before the test does, which would cancel them
+      await waitForQuietSyncs(tester);
     },
-    timeout: const Timeout(Duration(minutes: 12)),
+    timeout: const Timeout(Duration(minutes: 8)),
   );
 }

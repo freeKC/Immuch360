@@ -71,7 +71,7 @@ ASSETS = [
 ]
 THUMBNAILS = {"thumbnail": "lab_thumbnail.jpg", "preview": "lab_preview.jpg", "fullsize": "lab_preview.jpg"}
 FIXTURES = ["lab_photo.jpg", "lab_photo.heic", "lab_photo.avif", "lab_thumbnail.jpg", "lab_preview.jpg",
-            "lab_large.avif"]
+            "lab_large.heic", "lab_large.avif"]
 FIXTURE_TYPES = {".jpg": "image/jpeg", ".heic": "image/heic", ".avif": "image/avif"}
 
 # The permissions the app asks in a dialog, which a test on the emulator cannot answer
