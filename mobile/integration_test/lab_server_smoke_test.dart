@@ -5,7 +5,8 @@
 // check_logcat.py fails the job on a crash, a CheckJNI abort, an ANR or a process death of the app while it runs.
 //
 //   redirect       sign in through relative 302 Locations: /.well-known/immich, /api/server/ping and the POST of the
-//                  sign in (RedirectInterceptor of the vendored ok_http, crash F1), with the AppHealth line it writes
+//                  sign in (RedirectInterceptor of the vendored ok_http, crash F1), with the AppHealth line it writes,
+//                  and the session cookie of that sign in sent afterwards (the fake server asks it, as Immich does)
 //   timeline       the sync from the server, the three photos in the timeline and their thumbnails decoded
 //   originals      "Load original" on the HEIC and the AVIF photo in the viewer: the originals decoded at their full
 //                  size by RemoteImagesImpl (decodeBitmapSized), none remembered as undecodable
@@ -69,6 +70,8 @@ void main() {
         expectOne('POST', '/api/auth/login-target', 201, 'the sign in sent again, as a POST with its body');
         final signIn = state.matching('POST', '/api/auth/login-target', status: 201).first;
         expect(signIn.json['email'], state.user['email'], reason: 'the body of the sign in kept through the 302');
+        // The fake server asks the session cookie its sign in set, as Immich does: the user came, so it was sent
+        expectOne('GET', '/api/users/me', 200, 'the session cookie set behind the 302 sent with the next requests');
         final report = await host.waitFor(
           mark,
           r'AppHealth\s*: Redirect 302 of GET http://10\.0\.2\.2:\d+/\.well-known/immich to a relative Location, '

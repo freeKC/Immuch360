@@ -8,8 +8,11 @@ socket open, as Immich 3.3.5 (the version of media.freekc.fr):
 
 - GET /.well-known/immich answers 302 with the relative Location /lab/well-known/immich, which gives the API endpoint;
   GET /api/server/ping answers 302 with the relative Location ping-target (so /api/server/ping-target); POST
-  /api/auth/login answers 302 with the relative Location /api/auth/login-target, where the sign in is checked. The
-  app's OkHttp resolves those Locations itself (RedirectInterceptor of mobile/packages/ok_http, crash F1 of release 44).
+  /api/auth/login answers 302 with the relative Location /api/auth/login-target, where the sign in is checked and the
+  session cookies are set as Immich sets them (immich_access_token and the two others). The app's OkHttp resolves those
+  Locations itself (RedirectInterceptor of mobile/packages/ok_http, crash F1 of release 44). As on Immich, the rest of
+  /api answers 401 without the session: every client of the app has to carry it (Dart, the image fetcher, the upload,
+  the web socket, the background engine).
 - POST /api/sync/stream streams the user and the three photos; after POST /lab/hold-next-sync the next stream sends the
   same events and stays open until the client closes it or POST /lab/release-syncs, as a slow server does while a
   background run is cancelled. Which side closed each stream is recorded.
@@ -75,6 +78,10 @@ FIXTURES = ["lab_photo.jpg", "lab_photo.heic", "lab_photo.avif", "lab_thumbnail.
 FIXTURE_TYPES = {".jpg": "image/jpeg", ".heic": "image/heic", ".avif": "image/avif"}
 
 # The permissions the app asks in a dialog, which a test on the emulator cannot answer
+# What Immich answers without a session; the rest of /api asks for the cookie the sign in sets, as Immich does
+PUBLIC_PATHS = {"/api/server/ping", "/api/server/ping-target", "/api/server/version", "/api/server/features",
+                "/api/server/config", "/api/server/media-types", "/api/auth/login", "/api/auth/login-target"}
+
 PERMISSIONS = [
     "android.permission.READ_MEDIA_IMAGES",
     "android.permission.READ_MEDIA_VIDEO",
@@ -337,6 +344,7 @@ class Handler(BaseHTTPRequestHandler):
         self.entry = {"t": self.state.now(), "method": self.command, "path": url.path, "query": url.query,
                       "auth": TOKEN in (self.headers.get("x-immich-user-token", "") +
                                         self.headers.get("Authorization", "") + self.headers.get("Cookie", "")),
+                      "cookie": "immich_access_token=" in self.headers.get("Cookie", ""),
                       "agent": self.headers.get("User-Agent", "")}
         try:
             self.body = self.read_body()
@@ -388,6 +396,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def dispatch(self):
         method, path = self.command, self.url_path
+        if path.startswith("/api/") and path not in PUBLIC_PATHS and not self.entry["auth"]:
+            return self.send(401, json.dumps({"message": "Authentication required", "statusCode": 401,
+                                              "error": "Unauthorized"}).encode())
         simple = {
             ("GET", "/lab/well-known/immich"): "wellKnown",
             ("GET", "/api/server/ping-target"): "ping",
@@ -441,7 +452,19 @@ class Handler(BaseHTTPRequestHandler):
         if credentials.get("email") != EMAIL or credentials.get("password") != PASSWORD:
             return self.send(401, json.dumps({"message": "Incorrect email or password", "statusCode": 401,
                                               "error": "Unauthorized"}).encode())
-        return self.answer("login", status=201)
+        # The cookies of Immich's sign in (server/src/utils/response.ts): no Secure attribute over http
+        cookies = {"immich_access_token": (TOKEN, True), "immich_auth_type": ("password", True),
+                   "immich_is_authenticated": ("true", False)}
+        self.entry["status"] = 201
+        self.send_response(201)
+        for name, (value, http_only) in cookies.items():
+            self.send_header("Set-Cookie", f"{name}={value}; Max-Age=34560000; Path=/; SameSite=Lax"
+                                           f"{'; HttpOnly' if http_only else ''}")
+        body = json.dumps(self.state.answers["login"][1]).encode()
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     # The jsonlines of a sync, chunked; a held stream stays open after its events
     def sync_stream(self):
