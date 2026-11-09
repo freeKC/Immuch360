@@ -254,6 +254,14 @@ class TombstoneSummaryTest {
         override fun read(): Int = throw IOException("trace gone")
       }
     assertEquals(TombstoneSummary.UNREADABLE, TombstoneSummary.read(failing))
+    // Nor an Error: the reader runs on the thread that reads why the app ended, which an uncaught Error would end
+    val outOfMemory =
+      object : InputStream() {
+        override fun read(): Int = throw OutOfMemoryError("trace too large")
+
+        override fun read(buffer: ByteArray, offset: Int, length: Int): Int = throw OutOfMemoryError("trace too large")
+      }
+    assertEquals(TombstoneSummary.UNREADABLE, TombstoneSummary.read(outOfMemory))
     // Every cut before the end of the crashing thread is unreadable, none throws
     val crashingThreadEnd = whole.size - mappingsAndLogsSize()
     for (cut in 0 until crashingThreadEnd) {

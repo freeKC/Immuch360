@@ -78,20 +78,23 @@ object TombstoneSummary {
     frame.library == "libapp.so" ||
       (frame.library.endsWith(".apk") && frame.functionName.isEmpty())
 
-  /** The tag of the crash family of the tombstone [bytes] ([F2_TAG]), null for none or when unreadable; never throws */
+  /**
+   * The tag of the crash family of the tombstone [bytes] ([F2_TAG]), null for none or when unreadable; never throws,
+   * not even an Error (it runs on the thread that reads why the app ended, which an uncaught Error would end)
+   */
   fun familyTag(bytes: ByteArray): String? =
     try {
       parse(bytes.copyOf(minOf(bytes.size, MAX_BYTES)))?.family
-    } catch (_: Exception) {
+    } catch (_: Throwable) {
       null
     }
 
-  /** The text of the tombstone in [input], or [UNREADABLE]; never throws */
+  /** The text of the tombstone in [input], or [UNREADABLE]; never throws, not even an Error */
   fun read(input: InputStream): String =
     try {
       val bytes = readAtMost(input, MAX_BYTES)
       parse(bytes)?.let { describe(it) } ?: UNREADABLE
-    } catch (_: Exception) {
+    } catch (_: Throwable) {
       UNREADABLE
     }
 

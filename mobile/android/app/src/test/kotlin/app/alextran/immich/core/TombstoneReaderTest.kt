@@ -46,6 +46,14 @@ class TombstoneReaderTest {
       key(number, 4)
     }
 
+    /** [depth] groups of proto2 one inside the other, closed when [closed] */
+    fun nestedGroups(number: Int, depth: Int, closed: Boolean = true) = apply {
+      repeat(depth) { key(number, 3) }
+      if (closed) {
+        repeat(depth) { key(number, 4) }
+      }
+    }
+
     /** One unknown field of each wire type */
     fun unknownFields() = varint(90, 300).fixed64(91, -1L).string(92, "unknown").fixed32(93, 7).group(94)
 
@@ -190,6 +198,28 @@ class TombstoneReaderTest {
         "Crashing thread 7 \"main\":\n" +
         "  #00 pc 000000000190041c  base.apk (offset 0x3988000)",
       TombstoneReader.read(tombstone.toByteArray()),
+    )
+  }
+
+  @Test
+  fun `groups nested a few deep are skipped, deeper ones stop the reading without a stack overflow`() {
+    val tombstone =
+      Proto()
+        .varint(1, 1)
+        .varint(6, 7)
+        .message(10, signal(11, "SIGSEGV", 1, "SEGV_MAPERR", 0x18))
+        .nestedGroups(94, 3)
+        .message(16, Proto().varint(1, 7).message(2, thread(7, "main", listOf(frame(0x9c4b4, "libc.so")))))
+
+    val text = TombstoneReader.read(tombstone.toByteArray())!!
+
+    assertTrue(text, text.endsWith("Crashing thread 7 \"main\":\n  #00 pc 000000000009c4b4  libc.so"))
+
+    // A hundred thousand groups opened: once read recursively, a StackOverflowError on the thread that reads the ends
+    val deep = segvHead().nestedGroups(94, 100_000, closed = false).toByteArray()
+    assertEquals(
+      "Signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault address 0x18\nCause: null pointer dereference",
+      TombstoneReader.read(deep),
     )
   }
 

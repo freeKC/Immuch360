@@ -53,6 +53,20 @@ class AppHealthTest {
   }
 
   @Test
+  fun `details that cannot be read give a notice, an Error included, so that the end is still reported`() {
+    assertEquals("Threads at the ANR", AppHealth.detailsOrNotice { "Threads at the ANR" })
+    assertNull(AppHealth.detailsOrNotice { null })
+    assertEquals(
+      "The details of this end could not be read (OutOfMemoryError).",
+      AppHealth.detailsOrNotice { throw OutOfMemoryError("Failed to allocate a 8388624 byte allocation") },
+    )
+    assertEquals(
+      "The details of this end could not be read (StackOverflowError).",
+      AppHealth.detailsOrNotice { throw StackOverflowError() },
+    )
+  }
+
+  @Test
   fun `an end gives its reason, its memory and the trace of an ANR`() {
     val details = "Threads at the ANR:\n\"main\""
     val text = AppHealth.describeExit("not responding (ANR)", 0L, "Input dispatching timed out", 512_000, 640_000, details = details)

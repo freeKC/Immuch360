@@ -171,7 +171,8 @@ object AppHealth {
     files.execute {
       try {
         collect(appContext)
-      } catch (error: Exception) {
+      } catch (error: Throwable) {
+        // An Error too (out of memory on a large trace): uncaught on this thread, it would end the app at each start
         Log.w(TAG, "Cannot read why the app ended last time", error)
       }
     }
@@ -240,7 +241,7 @@ object AppHealth {
       importance = exit.importance,
       build = summary.build ?: "build not recorded, now ${currentBuild()}",
       state = summary.state,
-      details = details(exit, healthFolder),
+      details = detailsOrNotice { details(exit, healthFolder) },
     )
   }
 
@@ -261,6 +262,18 @@ object AppHealth {
       ApplicationExitInfo.REASON_CRASH ->
         JavaCrashRecorder.take(healthFolder, exit.timestamp) ?: "No Java stack recorded for this crash."
       else -> null
+    }
+
+  /**
+   * The details [read] gives of an end, or a notice when reading them failed, an Error included (a trace too large for
+   * the memory left): the end is reported and marked as read all the same, so that the next start does not stumble on
+   * it again
+   */
+  fun detailsOrNotice(read: () -> String?): String? =
+    try {
+      read()
+    } catch (error: Throwable) {
+      "The details of this end could not be read (${error.javaClass.simpleName})."
     }
 
   /**

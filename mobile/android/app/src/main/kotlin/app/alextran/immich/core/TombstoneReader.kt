@@ -12,8 +12,9 @@ import java.util.Locale
  * skipped unread: no memory content of the app leaves the reader.
  *
  * A small protobuf wire reader: varints, length delimited fields, fixed 32 and 64 bit values; the fields it does not
- * know are skipped (groups too), and it stops at the first malformed or truncated field with what it read so far. It
- * never throws.
+ * know are skipped (groups too, [MAX_GROUP_DEPTH] deep at most), and it stops at the first malformed or truncated field
+ * with what it read so far. It never throws, not even an Error (out of memory, a stack overflow): it runs on the thread
+ * that reads why the app ended, where an uncaught Error would end the app at each start.
  *
  * The frames of the Dart code are offsets in libapp.so ("base.apk (offset 0x...)" or "base.apk!libapp.so"): the
  * symbols of the build that the release workflow keeps name them (llvm-symbolizer --obj=libapp.so 0x<pc>), found by
@@ -26,6 +27,9 @@ object TombstoneReader {
   private const val MAX_FUNCTION_NAME = 200
   private const val MAX_ABORT_MESSAGE = 1000
 
+  // Groups inside groups skipped at most: deeper is malformed, rather than a StackOverflowError of the reader
+  private const val MAX_GROUP_DEPTH = 32
+
   // Architecture of tombstone.proto: the 64 bit ones print their pc on 16 digits, as debuggerd does
   private val ARCH_64 = setOf(1, 3, 4)
 
@@ -34,12 +38,12 @@ object TombstoneReader {
     val tombstone = Tombstone()
     try {
       parseTombstone(Input(bytes, 0, minOf(bytes.size, MAX_INPUT_BYTES)), tombstone)
-    } catch (_: RuntimeException) {
+    } catch (_: Throwable) {
       // Truncated, or not a tombstone (Malformed), or anything else: what was read so far, never a crash of the app
     }
     return try {
       format(tombstone)
-    } catch (_: RuntimeException) {
+    } catch (_: Throwable) {
       null
     }
   }
@@ -254,14 +258,17 @@ object TombstoneReader {
           }
         }
         // A group (proto2 only, not in tombstone.proto): skipped whole
-        3 -> skipGroup(input, number)
+        3 -> skipGroup(input, number, 1)
         // The end of a group that did not start, or the wire types 6 and 7, which do not exist
         else -> throw Malformed()
       }
     }
   }
 
-  private fun skipGroup(input: Input, group: Int) {
+  private fun skipGroup(input: Input, group: Int, depth: Int) {
+    if (depth > MAX_GROUP_DEPTH) {
+      throw Malformed()
+    }
     while (true) {
       val key = varint(input)
       val number = (key ushr 3).toInt()
@@ -276,7 +283,7 @@ object TombstoneReader {
           }
           input.at += length.toInt()
         }
-        3 -> skipGroup(input, number)
+        3 -> skipGroup(input, number, depth + 1)
         4 -> if (number == group) return else throw Malformed()
         else -> throw Malformed()
       }
