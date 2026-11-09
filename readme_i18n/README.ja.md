@@ -12,7 +12,7 @@
 
 デバイス、NAS、Immichサーバー、カメラ、ドローンにあるフラット、360°、3Dの写真と動画を。アカウントは不要です。Immuch360は無料のオープンソースアプリで、写真や動画を保存場所にあるまま読み込み、それぞれに合ったビューアーで再生します。フラットに、見回せる球体として、3Dで、あるいはヘッドセットで周囲全体に表示します。スマートフォン、タブレット、テレビ、Meta Questヘッドセット、コンピューターで動作します。アプリのウェブサイト[immuch360.com](https://immuch360.com/ja/)では、各画面でできることを89言語で紹介しています。
 
-**ビルド33から43の新機能。** [映画は止めたところから続きを再生します](#pick-up-a-film-where-you-stopped)。映画はより早く始まり、遅いサーバーからでも[止まらずに再生が続きます](#when-a-video-waits-or-will-not-play)。スマートフォンとコンピューターでは、タイムラインが[月と年までズームアウトします](#find-a-month-or-a-year-in-a-long-timeline)。AndroidスマートフォンやMeta Questでは、[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)でデバイスのフォルダーを共有のように開けて、TIFF写真も表示されます。Android TVは[リモコンで日付から検索でき](#on-android-tv-and-google-tv)、Meta Quest 3または3Sは[ガウシアンスプラットを開け](#explore-gaussian-splats-in-a-meta-quest-3-or-3s) (実験的)、右スティックでの回転とSPZバージョン4にも対応し、コンピューターは[NASの写真の3D版を作成します](#turn-one-photo-into-3d-a-scene-a-panorama)。グラフィックスチップを二つ持つWindowsノートPCでは、アプリが[速い方のチップで動くようになり](#when-a-video-waits-or-will-not-play)、8Kの映画も滑らかに再生されます。ガウシアンスプラットは[コンピューターとAndroidのスマートフォンやタブレットで開けるようになり](#explore-gaussian-splats-on-your-phone-tablet-or-computer)、WindowsコンピューターはAIで[写真や動画からスプラットシーンを作成し](#make-a-splat-scene-from-your-photos-or-a-video-ai)、あなたのImmichサーバーは[それを写真の中に保管し](#keep-a-splat-scene-on-your-immich-server)、その写真はタイムラインから開けます。コンピューターは[AV2動画を再生します](#play-av2-videos-on-your-computer)。いずれも実験的です。ビルド42からは、Immichライブラリ、共有、フォルダーにあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画が、Androidのスマートフォン、タブレット、テレビで[カメラのジャイロスコープで手ぶれ補正されて再生され](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)、デスクトップビルド22のスプラットシーンの作成では、近くで見るシーン向けに[「詳細」の品質を選べ](#make-a-splat-scene-from-your-photos-or-a-video-ai)、360°パノラマは[グラフィックスカードに3.5 GiBの空きがあれば始まります](#turn-one-photo-into-3d-a-scene-a-panorama)。いずれも実験的です。iPhoneとiPadのアプリは[App Storeで公開されています](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) (バージョン3.3.2)。ビルド43からは、アプリの更新通知がスマートフォンとタブレットでGoogle PlayまたはApp Storeを開きます。アプリのウェブサイト[immuch360.com](https://immuch360.com/ja/)は11月7日に公開されました。
+**ビルド33から44の新機能。** [映画は止めたところから続きを再生します](#pick-up-a-film-where-you-stopped)。映画はより早く始まり、遅いサーバーからでも[止まらずに再生が続きます](#when-a-video-waits-or-will-not-play)。スマートフォンとコンピューターでは、タイムラインが[月と年までズームアウトします](#find-a-month-or-a-year-in-a-long-timeline)。AndroidスマートフォンやMeta Questでは、[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)でデバイスのフォルダーを共有のように開けて、TIFF写真も表示されます。Android TVは[リモコンで日付から検索でき](#on-android-tv-and-google-tv)、Meta Quest 3または3Sは[ガウシアンスプラットを開け](#explore-gaussian-splats-in-a-meta-quest-3-or-3s) (実験的)、右スティックでの回転とSPZバージョン4にも対応し、コンピューターは[NASの写真の3D版を作成します](#turn-one-photo-into-3d-a-scene-a-panorama)。グラフィックスチップを二つ持つWindowsノートPCでは、アプリが[速い方のチップで動くようになり](#when-a-video-waits-or-will-not-play)、8Kの映画も滑らかに再生されます。ガウシアンスプラットは[コンピューターとAndroidのスマートフォンやタブレットで開けるようになり](#explore-gaussian-splats-on-your-phone-tablet-or-computer)、WindowsコンピューターはAIで[写真や動画からスプラットシーンを作成し](#make-a-splat-scene-from-your-photos-or-a-video-ai)、あなたのImmichサーバーは[それを写真の中に保管し](#keep-a-splat-scene-on-your-immich-server)、その写真はタイムラインから開けます。コンピューターは[AV2動画を再生します](#play-av2-videos-on-your-computer)。いずれも実験的です。ビルド42からは、Immichライブラリ、共有、フォルダーにあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画が、Androidのスマートフォン、タブレット、テレビで[カメラのジャイロスコープで手ぶれ補正されて再生され](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)、デスクトップビルド22のスプラットシーンの作成では、近くで見るシーン向けに[「詳細」の品質を選べ](#make-a-splat-scene-from-your-photos-or-a-video-ai)、360°パノラマは[グラフィックスカードに3.5 GiBの空きがあれば始まります](#turn-one-photo-into-3d-a-scene-a-panorama)。いずれも実験的です。iPhoneとiPadのアプリは[App Storeで公開されています](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) (バージョン3.3.3)。ビルド43からは、アプリの更新通知がスマートフォンとタブレットでGoogle PlayまたはApp Storeを開きます。アプリのウェブサイト[immuch360.com](https://immuch360.com/ja/)は11月7日に公開されました。ビルド44とデスクトップビルド24からは、Meta Quest 3または3Sが[最大300,000個のガウシアンのスプラットを表示し](#explore-gaussian-splats-in-a-meta-quest-3-or-3s) (実験的)、コンピューターは[CtrlとShiftで複数の写真や動画を選択でき](#use-your-computer-as-the-media-player)、デコーダーが動画を受け付けないテレビは[サーバーのもう一方のファイルを自動で再生し](#when-a-video-waits-or-will-not-play)、グラフィックスカードを二つ持つノートPCでは選ばれた方のカードでパノラマが動き (実験的)、Questとコンピューターでは更新通知がそれぞれのストアまたはダウンロードページを開きます。ほかにも多くの修正があります。
 
 <p align="center">
   <sub>Immichモバイルアプリの非公式フォークです。ImmichやFUTOとの提携関係はありません。この名前は「I am much 360」と読むことができます。</sub>
@@ -79,16 +79,16 @@
 
 <div align="center">
 
-| プラットフォーム | 入手方法 | 2026 年 11 月 8 日時点の状況 |
+| プラットフォーム | 入手方法 | 2026 年 11 月時点の状況 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** スマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playで提供中 (ビルド40。ビルド42に代わってビルド43が11月8日からGoogleの審査中)、GitHubでビルド43。[RAW 360°動画を手ぶれ補正して再生し](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental) (実験的)、[映画は止めたところから続きを再生し](#pick-up-a-film-where-you-stopped)、[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)でスマートフォンのフォルダーを開け、共有から、または[Immichのタイムラインから](#keep-a-splat-scene-on-your-immich-server)、[ガウシアンスプラットを開けます](#explore-gaussian-splats-on-your-phone-tablet-or-computer) (実験的) |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhoneとiPad** | [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) | 11月6日からApp Storeでバージョン3.3.2を提供中。[タイムラインの月と年](#find-a-month-or-a-year-in-a-long-timeline)、[止めたところから続きを再生する映画](#pick-up-a-film-where-you-stopped)、スマートフォンからの[テレビ、ヘッドセット、コンピューターへのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、Immichに保管したスプラットシーンの写真としての表示に対応しています。バージョン3.3.3はApp Storeを開く更新通知が付いた同じアプリで、11月8日にAppleへ提出しました。[自分でビルド](../docs/immuch360/build.md)することもできます |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TVとGoogle TV** | [APK](#android-tv-and-google-tv) · Google Play | GitHubでビルド43: [手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental) (実験的)、[リモコンでの日付検索](#on-android-tv-and-google-tv)、QRコードを読み取る[スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、動画プレーヤーでリモコンから使えるタイムバー、音声、字幕、スマートフォンが中継する[ドローンのライブ映像](#watch-it-in-a-meta-quest-or-on-an-android-tv) (実験的)。TV版の掲載はGoogleの審査中 |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** スマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playで提供中 (ビルド40。ビルド44をGoogleの審査に提出済み)、GitHubでビルド44。[RAW 360°動画を手ぶれ補正して再生し](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental) (実験的)、[映画は止めたところから続きを再生し](#pick-up-a-film-where-you-stopped)、[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)でスマートフォンのフォルダーを開け、共有から、または[Immichのタイムラインから](#keep-a-splat-scene-on-your-immich-server)、[ガウシアンスプラットを開けます](#explore-gaussian-splats-on-your-phone-tablet-or-computer) (実験的) |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhoneとiPad** | [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) | 11月9日からApp Storeでバージョン3.3.3を提供中。[タイムラインの月と年](#find-a-month-or-a-year-in-a-long-timeline)、[止めたところから続きを再生する映画](#pick-up-a-film-where-you-stopped)、スマートフォンからの[テレビ、ヘッドセット、コンピューターへのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、Immichに保管したスプラットシーンの写真としての表示、App Storeを開く更新通知に対応しています。バージョン3.3.4は3.3.3の内容にビルド44の修正を加えたもので、ビルド44とともにAppleへ送りました。[自分でビルド](../docs/immuch360/build.md)することもできます |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TVとGoogle TV** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](#android-tv-and-google-tv) | Android TVとGoogle TVでアプリを提供するGoogle Play、そしてGitHubでビルド44: [手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental) (実験的)、[リモコンでの日付検索](#on-android-tv-and-google-tv)、QRコードを読み取る[スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、動画プレーヤーでリモコンから使えるタイムバー、音声、字幕、スマートフォンが中継する[ドローンのライブ映像](#watch-it-in-a-meta-quest-or-on-an-android-tv) (実験的) |
 | **LGテレビ** (webOS 5.0以降) | [.ipk、バージョン1.0.1](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.1) · LG Content Store (審査中) | バージョン1.0.0は10月24日にLG Content Storeへ申請し、10月26日からLGのテスト中です。10月27日からGitHubにあるバージョン1.0.1は、矢印キーで写真をズームでき、写真がまだ読み込み中であることを表示します。LGがアプリを公開するまでは[Developer Mode](#lg-tvs-webos)でインストールします。バージョン1.0.0はLGのCloud Test LabのwebOS 25テレビで動作しました |
 | **Samsungテレビ** (Tizen 5.5以降) | [.wgtテストビルド](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.3.0) | 同じテレビアプリのテストビルド0.3.0。ご自身のSamsung証明書で署名し、[Developer mode](#samsung-tvs-tizen)でインストールします。0.1.0はテスターのSamsungテレビで動作し、0.2.0にはそのときに見つかった問題の修正が入っており、0.3.0ではLGバージョン1.0.1の写真のズームと「読み込み中」の表示が加わりました (Samsungテレビではまだ動作させていません)。Samsungのストアにはありません |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3、3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storeで提供中 (ビルド41、11月7日から公開。ビルド42は11月7日からMetaの審査中)、GitHubでビルド43。[キオスクモード](#kiosk-mode-for-an-exhibition-or-a-shop)に対応し、Quest 3と3Sでは[ガウシアンスプラット](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)と平面写真の[AIによる立体感](#turn-one-photo-into-3d-a-scene-a-panorama)にも対応 (いずれも実験的) |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [インストーラーまたはZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-23) | デスクトップビルド23、署名付きプレビュー：写真、フラットおよび360°動画、共有、Plex、カメラ (シミュレートしたカメラで確認済み)、スマートフォンでのログイン、キー1つでの写真の回転、89言語のインターフェース、そしてAIによる[写真からの3D写真、3Dシーン、360°パノラマの作成](#turn-one-photo-into-3d-a-scene-a-panorama) (実験的、NASの写真からも);[ガウシアンスプラット](#explore-gaussian-splats-on-your-phone-tablet-or-computer)の表示、[写真や動画からの作成](#make-a-splat-scene-from-your-photos-or-a-video-ai)、[Immichへの保管](#keep-a-splat-scene-on-your-immich-server)、[AV2動画](#play-av2-videos-on-your-computer)、そしてデスクトップビルド22からは[スプラットシーンの品質の選択](#make-a-splat-scene-from-your-photos-or-a-video-ai)と[グラフィックスメモリの空き3.5 GiBからの360°パノラマ](#turn-one-photo-into-3d-a-scene-a-panorama) (いずれも実験的) |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOSとLinux** | [.deb、.rpm、DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-23) | デスクトップビルド23、プレビュー: 写真、360°写真、フラット動画 (360°動画はフラットで再生)、Immichサーバー、ネットワーク共有に対応し、AIによる写真からの[3D写真と3Dシーン](#turn-one-photo-into-3d-a-scene-a-panorama)の作成、Linuxでは8 GBのグラフィックスカード (そのうち3.5 GiBの空きから) での360°パノラマにも対応し、[ガウシアンスプラット](#explore-gaussian-splats-on-your-phone-tablet-or-computer)と[AV2動画](#play-av2-videos-on-your-computer)にも対応 (実験的、Macではまだ試していません)。デスクトップビルド11を10月26日にUbuntu 24.04のコンテナとMacで試しました。macOSでは署名なし |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3、3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storeで提供中 (ビルド41、11月7日から公開。ビルド42は11月7日からMetaの審査中。その後にビルド44)、GitHubでビルド44。[キオスクモード](#kiosk-mode-for-an-exhibition-or-a-shop)に対応し、Quest 3と3Sでは[ガウシアンスプラット](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)と平面写真の[AIによる立体感](#turn-one-photo-into-3d-a-scene-a-panorama)にも対応 (いずれも実験的) |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [インストーラーまたはZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-24) | デスクトップビルド24、署名付きプレビュー：写真、フラットおよび360°動画、共有、Plex、カメラ (シミュレートしたカメラで確認済み)、スマートフォンでのログイン、キー1つでの写真の回転、89言語のインターフェース、そしてAIによる[写真からの3D写真、3Dシーン、360°パノラマの作成](#turn-one-photo-into-3d-a-scene-a-panorama) (実験的、NASの写真からも);[ガウシアンスプラット](#explore-gaussian-splats-on-your-phone-tablet-or-computer)の表示、[写真や動画からの作成](#make-a-splat-scene-from-your-photos-or-a-video-ai)、[Immichへの保管](#keep-a-splat-scene-on-your-immich-server)、[AV2動画](#play-av2-videos-on-your-computer)、そしてデスクトップビルド22からは[スプラットシーンの品質の選択](#make-a-splat-scene-from-your-photos-or-a-video-ai)と[グラフィックスメモリの空き3.5 GiBからの360°パノラマ](#turn-one-photo-into-3d-a-scene-a-panorama) (いずれも実験的) |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOSとLinux** | [.deb、.rpm、DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-24) | デスクトップビルド24、プレビュー: 写真、360°写真、フラット動画 (360°動画はフラットで再生)、Immichサーバー、ネットワーク共有に対応し、AIによる写真からの[3D写真と3Dシーン](#turn-one-photo-into-3d-a-scene-a-panorama)の作成、Linuxでは8 GBのグラフィックスカード (そのうち3.5 GiBの空きから) での360°パノラマにも対応し、[ガウシアンスプラット](#explore-gaussian-splats-on-your-phone-tablet-or-computer)と[AV2動画](#play-av2-videos-on-your-computer)にも対応 (実験的、Macではまだ試していません)。デスクトップビルド11を10月26日にUbuntu 24.04のコンテナとMacで試しました。macOSでは署名なし |
 
 *ステータスはリリースごとに更新されます。ビルドごとの詳細は[リリースステータス](../docs/immuch360/release-status.md)に記載されています。ウェブサイト[immuch360.com](https://immuch360.com/ja/)では、各画面でできること、機能ごとの使い方、ストアへのリンクを89言語で紹介しています。*
 
@@ -249,7 +249,7 @@ Plexはライブラリの元のファイルを渡すので、360°動画は360°
 | DJIドローンのライブ映像 (実験的) | ✅ RC-N3で | ❌ | ✅ スマートフォンが中継 | ❌ | ❌ | ✅ スマートフォンが中継 |
 | ダークテーマ | システムに従う | システムに従う | ✅ 既定 | ✅ 唯一のテーマ | ✅ 唯一のテーマ | システムに従う |
 | 入力 | タッチ、ジャイロスコープ | タッチ、ジャイロスコープ | リモコン。動画再生中とそのタイムバーでも左右キー、詳細はMenuキー | リモコン、Magic Remote | リモコン | コントローラー、手 |
-| 入手先 | Google Play、APK | App Store | APK、Google Play (審査中) | .ipk、LG Content Store (審査中) | .wgtテストビルド、ご自身で署名 | Horizon Store、APK |
+| 入手先 | Google Play、APK | App Store | Google Play、APK | .ipk、LG Content Store (審査中) | .wgtテストビルド、ご自身で署名 | Horizon Store、APK |
 
 | 機能 | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -287,6 +287,7 @@ Plexはライブラリの元のファイルを渡すので、360°動画は360°
 | Tapoカメラ: ライブ映像 | ✅ | 🔧 CI | 🔧 CI |
 | このデバイスをネットワークで共有 | ✅ | ❌ | ❌ |
 | 共有やデバイスからImmichにアップロード | ✅ | ✅ | ✅ |
+| Ctrl+クリック、Shift+クリック、Ctrl+Aでの複数の写真の選択、右クリックでの操作 | ✅ | ✅ | ✅ Commandで、Macではまだ試していません |
 | USB経由でDJIドローンやカードから取り込み (実験的) | ❌ | ❌ | ❌ |
 | DJIドローンのライブ映像 (実験的) | ❌ | ❌ | ❌ |
 | ダークテーマ | システムに従う | システムに従う | システムに従う |
@@ -300,7 +301,7 @@ Plexはライブラリの元のファイルを渡すので、360°動画は360°
 AIの行の「開く」は、コンピューターが作ったものをデバイスが開くだけで、デバイス自身は何も作らないという意味です: 3D写真は2つの目を左右に並べて表示し、シーンは小さな3D SCENEマーク付きの写真として表示され、パノラマは360°ビューアーで開きます。AIラベルとは「AI 360°」バッジ、「写真の端の外側は AI が生成」という文、元の写真の輪郭のことで、iPhone、iPad、LG、Samsungのアプリにはロードマップで追加されます。何かを作るのはコンピューターとQuestだけです。これらの行のために確認した内容は[ハウツー](#turn-one-photo-into-3d-a-scene-a-panorama)にあります。
 
 - **Androidスマートフォンとタブレット**: 完全版のアプリで、タッチとジャイロスコープに対応し、すべてのソースを使えます。ビルド32からは、コンピューターで作った360°パノラマをAIラベル付きで開けます。ビルド38からはデバイスのフォルダーを参照し、TIFF写真を表示し、映画を止めたところから続きを再生します。ビルド39からはストリーミング動画が接続の許す限りすぐに始まり、待っている理由を表示します。ビルド41からはガウシアンスプラットと、Immichに保管されたスプラットシーンを開けます (実験的)。ビルド42からは、360°プレーヤーが、Immichライブラリ、共有、デバイスのフォルダーにあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画を、カメラのジャイロスコープで手ぶれ補正します (実験的)。
-- **iPhoneとiPad**: 完全版のアプリです。360°動画プレーヤーは再生と一時停止のみに対応し、DLNA検索はAppleがマルチキャストの権限を許可するまでユニキャストでリクエストを送信します。2026年11月6日からApp Storeで公開中のバージョン3.3.2では、スマートフォンでのログインのスマートフォン側、タイムラインの月と年、止めたところから続きを再生する映画、動画のソース、Tapoのライブ映像に対応しました (iPhoneではまだ試していません)。2026年11月8日にAppleへ提出したバージョン3.3.3は、App Storeを開く更新通知が付いた同じアプリです。
+- **iPhoneとiPad**: 完全版のアプリです。360°動画プレーヤーは再生と一時停止のみに対応し、DLNA検索はAppleがマルチキャストの権限を許可するまでユニキャストでリクエストを送信します。2026年11月6日に公開されたバージョン3.3.2では、スマートフォンでのログインのスマートフォン側、タイムラインの月と年、止めたところから続きを再生する映画、動画のソース、Tapoのライブ映像に対応しました (iPhoneではまだ試していません)。2026年11月9日からApp Storeで公開中のバージョン3.3.3は、App Storeを開く更新通知が付いた同じアプリです。ビルド44とともにAppleへ送ったバージョン3.3.4は、3.3.3の内容にビルド44の修正を加えたものです。
 - **Android TVとGoogle TV**: 同じAPKをリモコンで操作し、既定でダークテーマです。ビューアー専用で、バックアップ、アップロード、エディターは表示されず、詳細は読み取り専用ですが、写真はキー1つで回転できます。すべての検索フィルターがリモコンで使えます。場所とカメラは選択肢をリストで開き、日付フィルターはすべての選択肢を表示し、タグ、場所、日付、メディアの種類、星評価、表示オプションのシートは、選択肢の横の右に1つ移動した位置にクリアと適用を置き、画面の高さのほとんどを使います。写真グリッドは画像メモリの使用量を減らし、矢印を押し続けても移動は最大で毎秒約10行です。ビルド28からは、スマートフォンからQRコードまたは短いコードでログインできます (2台のエミュレーター間でコードを入力して試しました)。ビルド29からは、動画のタイムバーにリモコンのフォーカスが移り、映画に音声と字幕のメニューが付き、共有の次のファイルは専用のコントロール付きで開きます。Google TVエミュレーターで確認済みです。ビルド28は10月23日に実機のAndroid TVで動作し、そこで見つかった動画の問題はビルド29で修正しました。修正はエミュレーターで確認済みです。ビルド30からは、Droneカードに、スマートフォンが中継するDJIドローンのライブ映像が、ドローンの数値と障害物リングとともに表示されます (実験的)。ペアリングと映像は10月25日にTCLのAndroid TVで試しましたが、以前の中継ではカクつきと緑がかった色が出ました。10月26日、ビルド30では、これに対応する安定ストリームにより、そのテレビは飛行中も映像を表示し続けました。フリーズは7回でした。ビルド33からは、検索とその日付範囲がリモコンで使え、写真の左下に日付が表示され、タイムバーの素早い連打でより遠くへ移動します。ビルド38からは、映画を止めたところから続きを再生し、TIFF写真も表示されます。ビルド42からは、360°プレーヤーが、Immichライブラリや共有にあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画を、カメラのジャイロスコープで手ぶれ補正します (実験的)。
 - **LGテレビ (webOS 5.0以降)**: リモコンとMagic Remote向けの別アプリで、[immich-tv-webos](https://github.com/Seeky91/immich-tv-webos)をベースにしています。360°写真を球体で表示し、キー1つで写真を回転でき、ダークテーマとアプリの89言語に対応したImmichビューアーです (テレビアプリ独自のわずかなテキストは今のところ英語)。ネットワーク共有、Plex、Tapoカメラのライブ映像は、テレビ上の独自サービスを通じて利用します (SMBはwebOS 22から)。360°動画はフラットです。10月24日にLG Content Storeへ申請したバージョン1.0.0は、LGのCloud Test Labで3機種のwebOS 25テレビで動作しました: ログイン、スマートフォンでのログインページ、写真、アルバム、動画、360°ビュー、スライドショー、検索、すべてのページからの戻る操作です。バージョン0.1.0はテスターのLGテレビ (webOS 22) で動作しました。共有とPlexは実際のサーバーに対して、カメラはシミュレートしたカメラに対して、プロジェクトのビルドホストで確認済みです。
 - **Samsungテレビ (Tizen 5.5以降)**: LGテレビアプリをSamsungテレビ向けにパッケージしたテストビルド0.3.0で、ご自身で署名してインストールします。リモコン向けのImmichビューアーで、入力によるログイン (サーバーのアドレス、次にメールアドレスとパスワード、またはAPIキー)、スライドショー、球体での360°写真、キー1つでの写真の回転、テレビの対応状況を示す「このテレビについて」ページに対応します。スマートフォンでのログイン、共有、Plex、カメラはロードマップにあります。360°動画は通知を表示してフラットで再生します。バージョン0.1.0はTizen 9のテスターのSamsungテレビで動作しました: 4Kまでの写真と動画は再生でき、4Kを超えるものはデコードできず、テレビのブラウザーは3Dビューに黒い動画フレームを渡しました。バージョン0.2.0にはそのときの修正 (テレビのデコーダーの上限を超える動画や途中で止まる動画へのメッセージ、通知付きでフラット再生される360°動画) が入っており、プロジェクトのCIがテレビの代わりとなるブラウザーで確認しました。テストビルド0.3.0では、LGバージョン1.0.1の写真のズームと「読み込み中」の表示が加わりました (Samsungテレビではまだ動作させていません)。
@@ -336,7 +337,7 @@ AIの行の「開く」は、コンピューターが作ったものをデバイ
 20. [360°カメラのRAWファイルを開く](#open-the-raw-files-of-360-cameras): Insta360、GoPro MAX、DJI Osmo 360のファイルを、アプリがスティッチします。
 21. [カメラのジャイロスコープで360°動画を手ぶれ補正する (実験的)](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental): Androidのスマートフォン、タブレット、テレビの360°プレーヤーで、水平線をまっすぐにし、揺れを取り除きます。
 22. [キー1つで写真を回転する](#turn-a-photo-with-one-key): ボタン、キーボードのキー、またはリモコンのカラーキーで。
-23. [コンピューターをメディアプレーヤーとして使う](#use-your-computer-as-the-media-player): 自分のフォルダー、プログラムから開く、ウィンドウへのファイルのドロップ。*プレビュー。*
+23. [コンピューターをメディアプレーヤーとして使う](#use-your-computer-as-the-media-player): 自分のフォルダー、プログラムから開く、ウィンドウへのファイルのドロップ、Ctrl、Shift、Ctrl+Aでの複数の写真の選択。*プレビュー。*
 24. [コンピューターでAV2動画を再生する](#play-av2-videos-on-your-computer): プロセッサーでデコードし、コンピューターが許す限りの速さで再生します。*実験的。*
 
 <a id="install"></a>
@@ -352,13 +353,13 @@ AIの行の「開く」は、コンピューターが作ったものをデバイ
 
 ### iPhoneとiPad
 
-1. [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965): バージョン3.3.2、2026年11月6日公開。バージョン3.3.3 (App Storeを開く更新通知が付いた同じアプリ) は2026年11月8日にAppleへ提出しました。または、Mac上のXcodeでアプリをビルドしてください。[自分でビルドする](../docs/immuch360/build.md)を参照してください。
+1. [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965): バージョン3.3.3、2026年11月9日公開。バージョン3.3.2 (2026年11月6日) のアプリにApp Storeを開く更新通知を付けたものです。バージョン3.3.4 (3.3.3の内容にビルド44の修正を加えたもの) はビルド44とともにAppleへ送りました。または、Mac上のXcodeでアプリをビルドしてください。[自分でビルドする](../docs/immuch360/build.md)を参照してください。
 2. 「サーバーなしで使用」をタップするか、サーバーにログインするには「Immichサーバーに接続」をタップします。どちらもビルド24からウェルカムページにあります。
 
 <a id="android-tv-and-google-tv"></a>
 ### Android TVとGoogle TV
 
-1. Google Playがテレビでアプリを提供するまでは、[Releases](https://github.com/freeKC/Immuch360/releases)ページの汎用版`Immuch360-v<version>-release.apk`を使用してください。
+1. Google PlayはAndroid TVとGoogle TVでアプリを提供しています：テレビのGoogle PlayでImmuch360を検索してください。Google Playがない場合は、[Releases](https://github.com/freeKC/Immuch360/releases)ページの汎用版`Immuch360-v<version>-release.apk`を使用してください。
 2. テレビで開発者向けオプションと USB デバッグをオンにします（Google TV の場合：設定、システム、デバイス情報で「Android TV OS ビルド」を 7 回選択し、その後 設定、システム、開発者向けオプション。名前はテレビによって異なります）。
 3. 同じネットワーク上のコンピューターから、adb（Android SDK Platform Tools）で `adb connect <address of the TV>` を実行し、テレビに表示される確認を承認してから、`adb install -r Immuch360-v<version>-release.apk` を実行します。
 4. アプリはバナー付きでテレビのアプリ一覧に表示されます。次のリリースも同じ方法でインストールします：`-r` によってログインと設定が保持されます。
@@ -384,23 +385,23 @@ AIの行の「開く」は、コンピューターが作ったものをデバイ
 
 1. [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/)から: ストア版で、Metaが各申請を審査するたびに更新されます。
 2. または、デベロッパーモードでadbかSideQuestを使って[リリース](https://github.com/freeKC/Immuch360/releases)の`-quest-release.apk`ファイルをサイドロードします: `adb install -r Immuch360-v<version>-quest-release.apk`を実行し、ヘッドセットのライブラリで「不明なソース」を開きます。
-3. ストア版とGitHubのAPKは異なる鍵で署名されています。一方から他方に切り替えるには、先にアプリをアンインストールする必要があり、その際ログイン情報、設定、ネットワーク共有の一覧が失われます。
+3. ストア版とGitHubのAPKは異なる鍵で署名されています。一方から他方に切り替えるには、先にアプリをアンインストールする必要があり、その際ログイン情報、設定、ネットワーク共有の一覧が失われます。ビルド44からは、プロフィールメニューにあるアプリの更新通知が、ストア版ではHorizon Storeのページを、GitHubのAPKではReleasesページを開きます。
 
 <a id="windows"></a>
 ### Windows
 
-1. [デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-23)から`Immuch360-Desktop-3.3.0-rc.0-desktop.23-windows-x64-setup.exe`をダウンロードし (`SHA256SUMS.txt`で確認できます)、開きます。インストーラーとZIPは署名済みで、Windowsには発行元としてAPROGSYSが表示されます。発行元がSmartScreenにとってまだ新しいうちは、一度だけ確認されることがあります。その場合は「詳細情報」、続いて「実行」を選びます。
+1. [デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-24)から`Immuch360-Desktop-3.3.0-rc.0-desktop.24-windows-x64-setup.exe`をダウンロードし (`SHA256SUMS.txt`で確認できます)、開きます。インストーラーとZIPは署名済みで、Windowsには発行元としてAPROGSYSが表示されます。発行元がSmartScreenにとってまだ新しいうちは、一度だけ確認されることがあります。その場合は「詳細情報」、続いて「実行」を選びます。
 2. 「Install for me only」(管理者権限不要) または「Install for all users」を選び、続いてインストーラーの言語を選びます。Windowsの言語がすでに選択されています。
 3. スタートメニューからImmuch360 Desktopを起動します。写真や動画は「プログラムから開く」に表示されます (ファイルを右クリックし、プログラムから開く)。既定のプログラムに設定されることはありません。新しいビルドを初めて起動する際は、Windowsがファイルをスキャンするため最大1分ほどかかることがあります。
-4. Windows 10または11、64ビット。更新するには、次のビルドのインストーラーを開きます：ログイン、フォルダー、設定はそのまま保持されます。同じリリースのZIPは同じプログラムをフォルダーの形にしたもので、どこにでも解凍して`immuch360.exe`を起動できます。デスクトップビルド4から8が起動時に「duplicate column name: group_date」で止まっていたコンピューターでも、ビルド9はそのデータベースを開き、データを保持します。
+4. Windows 10または11、64ビット。更新するには、次のビルドのインストーラーを開きます：ログイン、フォルダー、設定はそのまま保持されます。デスクトップビルド24からは、プロフィールメニューの更新通知がウェブサイトの[ダウンロードページ](https://immuch360.com/ja/download/)を開きます。同じリリースのZIPは同じプログラムをフォルダーの形にしたもので、どこにでも解凍して`immuch360.exe`を起動できます。デスクトップビルド4から8が起動時に「duplicate column name: group_date」で止まっていたコンピューターでも、ビルド9はそのデータベースを開き、データを保持します。
 
 ### Linux
 
-Ubuntu 22.04以降とDebian 12以降では`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.23-linux-amd64.deb`を、Fedora 40以降では`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.23-linux-x86_64.rpm`を実行します。どちらも[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-23)にあります。その後、アプリケーション一覧からImmuch360 Desktopを起動します。プレビューです：コンピューターのフォルダー、写真と360°写真の球体表示、そしてパッケージがインストールするシステムのlibmpvによるフラット動画に対応します (360°、3D、RAWの動画はメッセージを表示してフラットで再生)。SMB共有はUbuntu 22.04とDebian 12以降で使えます。Fedoraでは、カメラの動画にRPM FusionのFFmpegが必要です。GNOME KeyringやKWalletがない場合、パスワードはそのセッションの間だけ保持され、アプリの設定にその旨が表示されます。
+Ubuntu 22.04以降とDebian 12以降では`sudo apt install ./Immuch360-Desktop-3.3.0-rc.0-desktop.24-linux-amd64.deb`を、Fedora 40以降では`sudo dnf install ./Immuch360-Desktop-3.3.0-rc.0-desktop.24-linux-x86_64.rpm`を実行します。どちらも[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-24)にあります。その後、アプリケーション一覧からImmuch360 Desktopを起動します。プレビューです：コンピューターのフォルダー、写真と360°写真の球体表示、そしてパッケージがインストールするシステムのlibmpvによるフラット動画に対応します (360°、3D、RAWの動画はメッセージを表示してフラットで再生)。SMB共有はUbuntu 22.04とDebian 12以降で使えます。Fedoraでは、カメラの動画にRPM FusionのFFmpegが必要です。GNOME KeyringやKWalletがない場合、パスワードはそのセッションの間だけ保持され、アプリの設定にその旨が表示されます。
 
 ### macOS
 
-[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-23)から`Immuch360-Desktop-3.3.0-rc.0-desktop.23-macos.dmg`を開き、アプリをアプリケーションにドラッグします (Apple SiliconとIntel、macOS 12以降)。署名されていないため、macOSが一度だけ確認を求めます。macOS 14以前ではControlキーを押しながらクリックして開くを選び、macOS 15以降ではシステム設定、プライバシーとセキュリティで「このまま開く」を選びます。2026年10月26日に作者がMacでデスクトップビルド11を試し、動作しました。ほかのMacやmacOSのバージョンからの報告を歓迎します。
+[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-24)から`Immuch360-Desktop-3.3.0-rc.0-desktop.24-macos.dmg`を開き、アプリをアプリケーションにドラッグします (Apple SiliconとIntel、macOS 12以降)。署名されていないため、macOSが一度だけ確認を求めます。macOS 14以前ではControlキーを押しながらクリックして開くを選び、macOS 15以降ではシステム設定、プライバシーとセキュリティで「このまま開く」を選びます。2026年10月26日に作者がMacでデスクトップビルド11を試し、動作しました。ほかのMacやmacOSのバージョンからの報告を歓迎します。
 
 <a id="how-to"></a>
 ## 使い方
@@ -510,7 +511,7 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 
 大画面に写真を、リモコンで。テレビアプリはどれも同じように動作します: 矢印キーで枠を動かし、OKで開き、戻るで戻り、360°写真では矢印キーで見回します。テレビ自体には写真がないため、Immichサーバーを表示し、Android TVとLGテレビではネットワーク共有、Plexサーバー、カメラも表示します。
 
-- **Android TVとGoogle TV**: Androidアプリそのもの (ビルド43) を、Google Playがテレビで提供するまではGitHubから入手します。
+- **Android TVとGoogle TV**: Androidアプリそのもので、Android TVとGoogle TV向けにGoogle Playで提供され、GitHubではビルド44です。
 - **LGテレビ (webOS 5.0以降)**: 専用のテレビアプリ (バージョン1.0.0) で、LG Content Store向けにLGの審査中です。GitHubにはバージョン1.0.1があります。
 - **Samsungテレビ (Tizen 5.5以降)**: LGテレビと同じテレビアプリのテストビルド0.3.0で、ご自身で署名してインストールします。
 
@@ -527,7 +528,7 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
   <img src="../.github/readme/tv-b21-sphere.jpg" width="440" alt="Google TVの球体ビューアー: 湖畔の360°パノラマ、左上に閉じるボタン、右上にズームアウト、ズームイン、360°、3Dの各ボタンがあり、リモコンの矢印で操作する">
 </p>
 
-1. adbでAPKをインストールします。[インストール](#android-tv-and-google-tv)を参照してください。ウェルカムページで、共有、Plexサーバーまたはカメラの場合は「ネットワーク共有またはメディアサーバーを追加」、「サーバーなしで使用」、「Immichサーバーに接続」のいずれかを選びます。「Immichサーバーに接続」のページでは、QRコードをスマートフォンで読み取るとテレビがログインします ([スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)を参照)。
+1. テレビでGoogle Playからアプリをインストールするか、adbでAPKをインストールします。[インストール](#android-tv-and-google-tv)を参照してください。ウェルカムページで、共有、Plexサーバーまたはカメラの場合は「ネットワーク共有またはメディアサーバーを追加」、「サーバーなしで使用」、「Immichサーバーに接続」のいずれかを選びます。「Immichサーバーに接続」のページでは、QRコードをスマートフォンで読み取るとテレビがログインします ([スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)を参照)。
 2. ビューアーでは、リモコンの再生/一時停止、巻き戻し、早送り、前へ、次へのキーが使えます。動画の再生中にOKを押すと、再生/一時停止が選択された状態でコントロールが表示され、もう一度OKを押すと一時停止します。その後に-10秒と+10秒のボタン、映画にある場合は音声と字幕のボタンが続きます。ビルド29からは、再生ボタンから下キーでタイムバーに移動できます。左右キーは1回押すごとに10秒移動し、押し続けるとより速く移動し、OKで再生または一時停止します。コントロールと日付は最後のキー操作から5秒後に隠れ、その後は左右キーで前後のファイルに移動します。共有では、そのファイルは専用のページで開き、それを操作するコントロールが付きます。テレビでは動画がループ再生されなくなりました。ループさせるには、設定、アセットビューアー、動画、動画をループするをオンにします。
 3. Menuキー、Infoキー、またはOKの長押しで、写真や動画の詳細を読み取り専用で開きます: 日付、場所、カメラ、コーデック、サイズ、ビットレートです。テレビがデコードできない動画は、読み込みを続ける代わりに、そのコーデック、サイズ、テレビのデコーダーの上限を示してその旨を表示します。デコーダーの上限を超える360°動画は、360°プレーヤーを開く前に確認を求め、その理由はプロフィールメニューのログページに記録されます。
 4. リモコンでの検索: 結果から「戻る」で検索に戻り、検索欄にフォーカスが移ります。「撮影日」の「期間を指定」では、まず開始と終了の年を選び、次に月と日を選びます。「アルバム」では「クリア」が検索欄の隣にあります。これはMichael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV)) の作業で、本人のコミットを取り込んでいます。
@@ -629,7 +630,7 @@ Meta Questでは同じアプリがウィンドウとして動作し、ライブ�
 
 1. .spzまたは.plyのスプラットをSMBまたはWebDAVの共有、またはヘッドセットのフォルダーに置きます (「フォルダを参照」、または「ネットワーク共有」の+メニューの「スプラットファイルを開く」)。写真と動画の後に、「3D スプラット」のバッジとガウシアンの数付きで表示されます。
 2. 1つを開き、「スプラットのシーンを探索」を選びます。物は目の高さで目の前に立ち、場所はまわりに広がります。左スティックで中をすり抜け、右スティックでは、たどり着いた場所を保ったままビューを自分のまわりに30°ずつ回します (「サムスティックの回転を反転」で逆向きになります)。A、Xまたはグリップで表示されるパネルの「リセット」で今立っている位置から置き直し、「向きを直す」で横倒しや逆さまのものを回転させ、そのファイルについて記憶します。
-3. スプラットに表示されるガウシアンは最大50,000個で、それより大きいものは最も強い50,000個を表示します (「452,451 個中 50,000 個のガウシアンに削減」)。「設定」の「詳細設定」にある「大きなスプラット (試験運用)」では150,000個まで表示できます。
+3. スプラットに表示されるガウシアンは最大300,000個で、それより大きいものは最も強い300,000個を表示します (「452,451 個中 300,000 個のガウシアンに削減」)。「設定」の「詳細設定」にある「大きなスプラット (試験運用)」では1,000,000個まで表示できます。
 4. ヘッドセットはバイナリの.plyファイルとバージョン1から4までのSPZを読み込みます。バージョン4はビルド40から対応しています。
 
 ガウシアンスプラットは Meta Spatial SDK の試験運用版 API を使用しており、Meta はこの API をサポートも保証もしていません。不具合の責任はすべて Immuch360 にあります。Quest 2やQuest Proではスプラットは一覧に表示され、「スプラットのシーンを探索」では「ガウシアンスプラットには Meta Quest 3 または 3S が必要です」と表示されます。試せるファイル: [InnerSceneのスプラットビューアーのページ](https://www.innerscene.com/tools/gaussian-splat-viewer)にあるCC0のサンプル。
@@ -672,7 +673,7 @@ Galaxy S24+で確認しました。テストのスプラットはほぼすぐに
 2. ライブラリまたはフォルダーで写真や動画を選び、「スプラット シーンを作成 (AI)」を選んで、撮影したものを指定します: 「場所: 部屋、通り、庭」または「物 (周りを歩いて撮影)」。ダイアログには、除外する写真とその理由、ヘッドセットが受け取るもの (最大150,000個のガウシアン)、このコンピューターでのおおよその所要時間、ファイルの保存先 (写真の隣、または選んだフォルダー) が表示されます。「ほかの 3D アプリ用に .ply も保存する」で、同じガウシアンを.plyとしても保存します。
 3. ダイアログが二つのコンポーネントを提示し、一度だけダウンロードします: プロセッサー上で写真を3D空間に配置する[COLMAP](../licenses/colmap/README.md) 4.2.1 (BSD 3 Clause、約10 MB) と、グラフィックスカード上でスプラットを学習する[Brush](../licenses/brush/README.md) 0.3.0 (Apache 2.0、約16 MB) です。どちらもプロジェクトのCIがソースからビルドし、APROGSYSが署名し、SHA-256で検証します。その後はオフラインで動作します。
 4. 「シーンを作成」。パネルにはフレームの取り出し、写真の3D配置、スプラットの学習という各ステップが残り時間とともに表示され、「キャンセル」で止められます。RTX 4060搭載のノートPCでは、部屋の写真150枚で約12分、物を撮った一分の動画で8分です。
-5. シーン`<name>_splat.spz`は写真の隣か、選んだフォルダーに保存されます。ヘッドセットではNASまたはDownloadフォルダーから開くか (ヘッドセットの「設定」の「詳細設定」にある「大きなスプラット」ですべてが表示されます)、コンピューター、スマートフォン、タブレットのスプラットビューアーで開きます。ビューアーでは「Immich に保存」でサーバーに保管できます。物はヘッドセット用にそのまわりで切り抜かれ、目の前で開くようになります。.plyにはシーン全体が残ります。
+5. シーン`<name>_splat.spz`は写真の隣か、選んだフォルダーに保存されます。ヘッドセットではNASまたはDownloadフォルダーから開くか (そこではシーン全体が表示されます)、コンピューター、スマートフォン、タブレットのスプラットビューアーで開きます。ビューアーでは「Immich に保存」でサーバーに保管できます。物はヘッドセット用にそのまわりで切り抜かれ、目の前で開くようになります。.plyにはシーン全体が残ります。
 
 **品質** (デスクトップビルド22から): 「何を撮影しましたか?」の下に、ダイアログは三つの行を表示します。各行には対象のデバイスと、このコンピューターでかかる時間、ファイルのサイズが示されます (「このコンピューターで約 13分、約 3.4 MiB のファイル」)。ダイアログを開くたびに「ヘッドセット (Meta Quest、スマートフォン、タブレット、PC)」が選ばれています。
 
@@ -680,7 +681,7 @@ Galaxy S24+で確認しました。テストのスプラットはほぼすぐに
 - 「詳細 (PC、最近のスマートフォン。ヘッドセットには縮小版のコピー)」: 写真とフレームを1,920ピクセルで準備して学習し、最大百万個のガウシアンを使います。そのため、「ヘッドセット」ではぼやける細かい文字、格子、ねじもくっきり出ます。このノートPCでは学習に27から31分かかり、ファイルは物で3 MB、場所で19から20 MBです。
 - 「最大 (グラフィックス カード搭載の PC。ヘッドセットとスマートフォンには縮小版のコピー)」: 写真や動画のフルサイズでの「詳細」で、このコンピューターのメモリが許す限りです。許さない場合は、1080pの動画のように、行に「このコンピューターでは詳細と同じ」と表示されます。
 
-「詳細」と「最大」では、`<name>_splat.spz`にコンピューターとスマートフォン向けのシーン全体が入り、隣の`<name>_splat.headset.spz`には最も強い150,000個のガウシアンが入ります。これがヘッドセットで開くコピーです。数値と選び方は[ユーザーガイド](../docs/immuch360/user-guide.md#splat-scenes-the-quality-choice)で詳しく説明しています。
+「詳細」と「最大」では、`<name>_splat.spz`にコンピューターとスマートフォン向けのシーン全体が入り、隣の`<name>_splat.headset.spz`には最も強い300,000個のガウシアンが入ります。これがヘッドセットで開くコピーです。数値と選び方は[ユーザーガイド](../docs/immuch360/user-guide.md#splat-scenes-the-quality-choice)で詳しく説明しています。
 
 写真に写ったものだけが再構成されます: どの写真にも写っていない場所は空白またはぼやけたままです。3D空間に配置できる写真が少なすぎるときは、アプリがその理由と撮り直すべきものを示します。スプラットシーンは専用のグラフィックスカードを備えたWindowsで作成されます: 内蔵グラフィックス、360°写真、360°動画にはまだ対応していません。
 
@@ -725,6 +726,8 @@ Immich 3.3.0と3.2.4のテストサーバーで確認しました: 38,884から1
 5. Immichサーバーを接続している場合、フォルダー内のファイルを選択して「Immichにアップロード」をタップすると、サーバーに送信できます。
 
 プレーヤーは、アプリ内部のブリッジを通じてバイト範囲指定で必要なバイトだけを読み込むため、シークが機能し、デバイスには何も保存されません。SMBの動画は最大6つの接続を並列で使って読み込まれ、スムーズに再生されます。ビルド29からは、M2TSで記録された映画 (Blu-ray、AVCHDビデオカメラ、テレビレコーダー) を、SMBやWebDAVの共有、およびトランスポートストリームとして一覧表示するDLNAサーバーからAndroidアプリで再生でき、サイズを0と表示するDLNAサーバーでも空の動画にならなくなりました。
+
+DLNAメディアサーバーが一覧に表示するのは、インデックスに登録したファイルだけです。360°カメラのRAWファイル (.insv、.360、.osv) やスプラットのファイル (.ply、.spz) は通常そこに表示されないため、SMBまたはWebDAVの共有か、デバイスのフォルダーから開いてください。
 
 **Plex Media Server、plex.tv不要**: アプリは1度だけ貼り付けるトークンを使ってサーバーと直接ペアリングし、ライブラリの元のファイルをそのまま読み込むため、360°は360°のまま、自宅でも、ポート転送を設定していれば外出先でも利用できます。LGテレビでは、plex.tv/linkでコードを使ってPlexにログインします。
 
@@ -772,7 +775,7 @@ Immichライブラリのビューアー、ネットワーク共有とデバイ�
 
 サーバーやNASの映画は、このデバイスがデコードできるファイルから再生されます。待つ必要があるときは、その理由と時間を表示します。
 
-- **デコードできるファイルを再生します。** Immichは動画のオリジナルを保存し、トランスコードするとコピーも作ります。アプリはこのデバイスがデコードできるほうを再生します: 「オリジナルを再生しています: サーバーのコピー (H.264 5760 x 2880) はこのデバイスのデコーダーの能力を超えています」。サーバーがそのオリジナルをストリーミングできない場合、アプリは先にダウンロードします (「再生のためにオリジナルをダウンロードしています: 45 %」)。どちらのファイルもデコードできない場合は、Immichで何を変えればよいかを表示します。動画の上で上にスワイプすると、「動画のソース」カードに再生中のファイルとその理由が表示され、ボタンでもう一方を再生できます。
+- **デコードできるファイルを再生します。** Immichは動画のオリジナルを保存し、トランスコードするとコピーも作ります。アプリはこのデバイスがデコードできるほうを再生します: 「オリジナルを再生しています: サーバーのコピー (H.264 5760 x 2880) はこのデバイスのデコーダーの能力を超えています」。サーバーがそのオリジナルをストリーミングできない場合、アプリは先にダウンロードします (「再生のためにオリジナルをダウンロードしています: 45 %」)。どちらのファイルもデコードできない場合は、Immichで何を変えればよいかを表示します。ビルド44からAndroidでは、デバイスが対応すると示したファイルをデコーダーが受け付けない場合 (テレビのHEVCデコーダーで5760 x 2880のとき)、アプリはもう一方のファイルを一度再生し、その旨を表示して、アプリを閉じるまでその選択を保持します。動画の上で上にスワイプすると、「動画のソース」カードに再生中のファイルとその理由が表示され、ボタンでもう一方を再生できます。
 - **接続が遅いとき。** 読み込み表示の下に「読み込み中: この動画に必要な 8.1 Mbit/s のうち 2 Mbit/s」と「約 37 秒で開始します」が表示されます。アプリは接続が運んでくる分を待ってから、より長い区間を再生します。「サーバーはこの動画を 2 Mbit/s で送信していますが、8.1 Mbit/s 必要です: ときどき止まります」には対処法も添えられます: Immichの Administration、Video transcoding で、目標解像度または最大ビットレートを下げます。
 - **サーバーが止まったとき。** 「サーバーがこの動画の送信を止めました。サーバーが応答すると再生が続きます」: 映画はサーバーを待ち、応答があるとすぐに再生を続けます。共有でも同じです。
 - **グラフィックスチップを二つ持つノートPC。** デスクトップビルド21から、Windowsアプリは速い方のチップで動きます: 作者のノートPCでは、内蔵チップで毎秒15から19枚の画像しか出ず、黒い画像も混じっていた8K HEVCの映画が、今は黒い画像なしで毎秒約30枚表示されます。再生中の映画の詳細 (Iキー) では、「動画のデコード」がグラフィックスカードとデコーダーを示し (「ハードウェア (NVIDIA GeForce RTX 4060 Laptop GPU) • d3d11va」)、4Kや8Kの映画で、Windowsのグラフィックス設定の「省電力」がアプリを内蔵チップに留めているときは、「高パフォーマンス」を選ぶ場所を示します: Windowsの「設定」、「システム」、「ディスプレイ」、「グラフィックス」を開き、そのあとアプリを再起動します。バッテリー駆動では、そこで「省電力」にするとアプリは内蔵チップに留まって電力を節約しますが、4Kと8Kの再生は犠牲になります。内蔵チップでは、8Kはデスクトップビルド20より良く再生されますが、滑らかではありません: 毎秒約23枚で、黒い画像が少し混じります。
@@ -791,7 +794,7 @@ iPhoneとiPadは、システムのデコーダーと独自の待機ルールを�
 2. 設定、アセットビューアー、動画の「動画のソース」で、このデバイスがデコードできる場合は元のファイル、常に元のファイル、常にトランスコード済みストリームのいずれかを選べます。
 3. アプリを持っていない人に360°写真を見せるには、Immichの共有リンクで共有します。Immichウェブアプリがブラウザ上で球体として表示します。
 
-現在のビルド、ビルド43は、ビルド28から42と同じく2026年10月10日時点のImmichの`main`ブランチ (バージョン3.3.0-rc.0) をベースにしています。ビルド28は同じImmichの`main`からビルドしたサーバーでテストされ、ビルド27はImmich 3.2.4サーバーでもテストされています。問題は、Immichプロジェクトではなく[Issues](https://github.com/freeKC/Immuch360/issues)に報告してください。
+現在のビルド、ビルド44は、ビルド28から43と同じく2026年10月10日時点のImmichの`main`ブランチ (バージョン3.3.0-rc.0) をベースにしています。ビルド28は同じImmichの`main`からビルドしたサーバーでテストされ、ビルド27はImmich 3.2.4サーバーでもテストされています。問題は、Immichプロジェクトではなく[Issues](https://github.com/freeKC/Immuch360/issues)に報告してください。
 
 何が同じで、Immuch360が何を加えるかは、[Immichとの比較](#compared-with-immich)にあります。
 
@@ -956,6 +959,7 @@ Windowsコンピューターでは、Immuch360 Desktopがサーバーなしで�
 1. プレビューをインストールするか、ZIPを展開して`immuch360.exe`を起動します。[インストール](#windows)を参照してください。ウェルカムページで「サーバーなしで使用」を選ぶとフォルダーの選択が開き、「Immichサーバーに接続」を選ぶと、スマートフォン用のQRコード付きのログインページが開きます。
 2. プログラムで開いた、またはウィンドウにドロップした写真、動画、フォルダーはすぐに開き、360°のものは360°ビューで開きます。複数のファイルは1つのページにまとめて開きます。写真や動画は「プログラムから開く」に表示されますが、アプリが自分を既定のプログラムにすることはありません。
 3. ビューアーではキーボードで操作できます: Spaceで再生と一時停止、JとLで戻ると進む、Fで全画面、RとShift+Rで写真を回転します。
+4. 多くの写真や動画をまとめてアップロード、共有、変換するには、デスクトップビルド24から、ファイルマネージャーと同じように選択します。タイムライン、アルバム、コンピューターや共有のフォルダーで、Ctrl+クリックで写真や動画を追加または除外し、Shift+クリックで最後にクリックしたものからすべてを追加し、Ctrl+Aでグリッド全体を選択し、Escで選択を解除します。右クリックで選択全体の操作が開き、先頭は「Immichにアップロード」です。プロジェクトのテストでWindowsとLinuxで確認済みです。MacではCtrlの代わりにCommandを使いますが、まだ試していません。
 
 詳細: [Windowsコンピューターで](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview)、[プラットフォームサポート](../docs/immuch360/platform-support.md)。
 
@@ -1032,7 +1036,7 @@ nomadoorの360° LoRAは、そのカードによればApache 2.0で、CC0とパ�
 
 まだ実現していないことを、可能性の高い順に並べています。ここにあるものは約束ではありません。[Issue トラッカー](https://github.com/freeKC/Immuch360/issues) でのフィードバックが、何を優先するかを決める助けになります。
 
-- **各ストア**: ビルド43のGoogle Play (ビルド42に代わって11月8日からGoogleの審査中。TV版の掲載も審査中)、ビルド42のMeta Horizon Store (11月7日からMetaの審査中) とその後のビルド43、バージョン3.3.3のApp Store (11月8日にAppleへ提出)、LG Content Store (バージョン1.0.0が10月24日からLGの審査中、その後バージョン1.0.1)、そして後日Samsungのストア。
+- **各ストア**: ビルド44のGoogle Play (Googleの審査に提出済み)、ビルド42のMeta Horizon Store (11月7日からMetaの審査中) とその後のビルド44、ビルド44のバージョン3.3.4のApp Store (3.3.3は11月9日に公開)、LG Content Store (バージョン1.0.0が10月24日からLGの審査中、その後バージョン1.0.1)、そして後日Samsungのストア。
 - **AIクリエイター**: Macでの360°パノラマ。Linuxでのスプラットシーンの作成、内蔵グラフィックスでの作成、360°写真と動画からの作成。「詳細」と「最大」のスプラットシーンのヘッドセット用コピーのヘッドセットでの計測。iOS、LG、SamsungアプリでのAIラベル。グラフィックスカード搭載のLinux PC、およびAMDとIntelのカードでのパノラマの試行。
 - **ドローン**: 1.8 mと1.5 m/sを超える高度と速度、および障害物までの距離を巻き尺で裏付けるための屋外飛行、続いて衛星とホームからの距離の表示。中継の安定した映像をヘッドセットで確認すること。LGとSamsungのテレビへの中継。iPhoneとiPadでのドローン (未着手)。実機のDJI Neo 2での取り込みページのテスト、続いてスマートフォンが録音した音声をクリップに統合すること。これらのテストより前に、ドローンにコマンドを送る機能を計画することはありません。
 - **テレビ**: 動画のコントロールとスマートフォンでのログインを含む、実機のAndroid TVでのビルド29のテスト。実機のLGテレビでのLGアプリの共有、Plex、ライブ映像のテストと、webOS 26。実機のSamsungテレビでのSamsungテストビルド0.3.0のテスト、続いてSamsungテレビでのスマートフォンでのログイン、共有、Plex、カメラ。その後、LGテレビの球体での360°動画、カメラの音声とその録画 (早くても2026年12月) です。
@@ -1070,13 +1074,13 @@ nomadoorの360° LoRAは、そのカードによればApache 2.0で、CC0とパ�
 
 - **フォーマット**: フラットな写真や動画 (デバイスがデコードできる形式: MP4、MOV、MKVなど)、正距円筒図法の360°写真や動画、部分的なパノラマ (GPanoクロップ)、VR180、上下または左右の立体視3D (ファイルのst3dボックスから読み取る、またはフレームから推測)、Appleの空間写真 (HEICステレオペア) と空間動画 (MV-HEVC、片目)、Insta360の.inspと.insv、GoProの.360、DJIの.osvのRAWファイル、球体上でトーンマッピングされる10bit HLGおよびPQソース。AndroidでアプリがデコードするTIFF (8ビットと16ビット、グレー、RGB、パレット、CMYK、非圧縮またはLZW、Deflate、PackBits、JPEG圧縮)。Meta Quest 3と3Sでの、そしてビルド41とデスクトップビルド21からはAndroidのスマートフォンとタブレットとコンピューターでの、バージョン1から4までの.spzとバイナリ.plyのガウシアンスプラット、およびアプリがImmichに保存する`_splat.jpg`写真の中のガウシアンスプラット。コンピューターでの.ivfと.obuファイルのAV2 (実験的)。
 - **投影とメタデータ**: サーバーや共有に対してはレンジリクエストで、GPanoや球面メタデータをファイルから読み取ります。カメラの初期視点を維持し、DJIドローンの球体写真はカメラから識別し、Immichでも認識されるよう任意で.xmpサイドカーを添えます。「360°で表示」の設定はデバイスに記憶され、VR180はファイルまたはファイル名から認識されます。ドローン動画の撮影場所は.SRTフライトログから読み取ります。常に元のファイルを再生するため、変換されたコピーではなくメタデータがそのまま保持されます。90°の回転はImmichのエディター経由で保存するかデバイス上に保持し、イマーシブなファイルには適用しません。
-- **ネイティブ再生**: AndroidとTVはMedia3、iOSはSceneKitとAVFoundation、ヘッドセットはMeta Spatial SDK、Windowsはlibmpvを使用します。デバイスがデコードできる形式に応じて元のファイルかトランスコード済みストリームを選択でき、デバイスの動画デコーダー一覧は設定、高度な設定で確認できます。音声トラックの選択、Androidプレーヤーでの字幕、バッファリング表示にも対応します。接続が運ぶ量と動画に必要な量を比べて決めるストリーミング動画の開始と、サーバーが応答しない間に待つ動画。AV2はVideoLANのdav2dでプロセッサー上でデコードし、プロジェクトの小さなプログラムがフレームをコンピューター上でのみlibmpvに渡します。コンピューター、スマートフォン、タブレットのガウシアンスプラットは、システムのWebビュー (WebView2、WebKitGTK、WKWebView、Android System WebView) 内でthree.js上のSpark 2.4.0が描画し、アプリがデバイス上でのみ配信します。
+- **ネイティブ再生**: AndroidとTVはMedia3、iOSはSceneKitとAVFoundation、ヘッドセットはMeta Spatial SDK、Windowsはlibmpvを使用します。デバイスがデコードできる形式に応じて元のファイルかトランスコード済みストリームを選択し、ビルド44からAndroidでは再生中のものをデコーダーが受け付けない場合にもう一方に切り替えます。デバイスの動画デコーダー一覧は設定、高度な設定で確認できます。音声トラックの選択、Androidプレーヤーでの字幕、バッファリング表示にも対応します。接続が運ぶ量と動画に必要な量を比べて決めるストリーミング動画の開始と、サーバーが応答しない間に待つ動画。AV2はVideoLANのdav2dでプロセッサー上でデコードし、プロジェクトの小さなプログラムがフレームをコンピューター上でのみlibmpvに渡します。コンピューター、スマートフォン、タブレットのガウシアンスプラットは、システムのWebビュー (WebView2、WebKitGTK、WKWebView、Android System WebView) 内でthree.js上のSpark 2.4.0が描画し、アプリがデバイス上でのみ配信します。
 - **デバイス上でスティッチされるRAWファイル**: 写真にはFlutterのフラグメントシェーダーを使用し、単一トラックの動画ではプレーヤー内のGPUエフェクトを使用します。トラックまたはファイルごとに1レンズの動画では、2つのハードウェアデコーダーを同時に使い、GPUコンポジタで合成します (AndroidとQuestではOpenGL ES 3、iOSではMetal、Windowsではデスクトップ版ビルド5以降、2つのlibmpvプレーヤーのフレームをアプリがグラフィックチップ上でペアリングします)。カメラ自体のキャリブレーション (Mei、V6、等距離モデル) と加速度センサーの記録も使用します。デバイスが2つのデコーダーを同時に実行できない場合は、1レンズ、トランスコード済みストリーム、カメラのLRVコピー、またはスティッチされていない動画にフォールバックします。ビルド42からは、カメラのモーショントラック (Insta360のジャイロスコープ、GoPro MAXの向きと重力、DJI Osmo 360の姿勢) をファイルから読み取ってフレームごとに一つの回転に変換し、Androidの360°プレーヤーがそれを各フレームとともにMedia3に渡します (実験的)。
 - **ソース**: デバイスのギャラリー、コンピューターのフォルダー、システムのフォルダーピッカー経由でUSB接続したドローンまたはカメラのカード (Android、実験的)、ドローンのライブ映像用にケーブルで接続したDJI RC-N3コントローラー (Android、実験的、ローカルネットワーク経由でMeta QuestやAndroid TVに中継)、Immichサーバー、SMB 2および3、WebDAV、DLNA/UPnP、サーバー自身の証明書で検証するHTTPS経由のPlex、ローカルネットワーク上のTapoカメラ (HTTPSとRTSP)、Wi-Fi上でWebDAVサーバーとして共有されたスマートフォンやコンピューター。サーバーはBonjour/mDNS、ローカルネットワークスキャン、SSDP、GDM、TP-Linkのディスカバリーで見つけ、アドレスが変わっても追跡します。システムのフォルダーピッカーを使ったAndroidスマートフォン、タブレット、Meta Questのフォルダー。
 - **オンデマンド読み込み**: ローカルブリッジがバイト範囲とセッションごとのトークンでプレーヤーにデータを提供します。大きなブロック単位の先読みと、最大6つのSMB接続の並列処理に対応し、各動画のフレームからサムネイルを生成し、デバイスには何もコピーされません。
 - **ハードウェア**: 存在する場合は必ずハードウェアデコーダーを使用し、実測した上限に従います (Quest 3のH.264の上限、ソフトウェアデコーダーでは最大2048x2048の2レンズまで)。Windowsでは、デコードされた各フレームから360°ビューをグラフィックチップで描画し、各コンピューターでフレームサイズを計測し、統合型または専用のグラフィックチップを検出し、デスクトップビルド21からは、チップを二つ持つノートPCでドライバーに専用チップを要求します。コンピューターでは、スプラットのガウシアンをコンピューターとそのグラフィックスカードのメモリと照らし合わせて数えます。
-- **プラットフォーム固有の機能**: スマートフォンではジャイロスコープとSpatial 2.5Dプレーヤー、Questではイマーシブビュー、コントローラー、手、Android TVではリモコン用レイアウト、キーボードダイアログ、TVバナーです。コンピューターでは、マウスとキーボード、フルスクリーン、1つのウィンドウに対応し、プログラムで開いた、またはそのウィンドウにドロップしたファイルやフォルダーはフォルダー内のファイルと同じように読み込まれ、Windowsにデコーダーがあればフォルダー内のHEIC、AVIF、TIFF、カメラRAW写真も読み込めるほか、パスワードとトークンにはWindowsのデータ保護が使われます。
-- **AIクリエイター**: 3D写真は全幅の左右並びJPEGで左目が先、立体感はプロセッサー上のONNX Runtime 1.31.0 (Intel Macでは1.23.2) によるDepth Anything V2 Smallから。シーンは、奥行きが途切れる位置で切り分けたレイヤー構造のglTFシーンを内包したJPEGで、MoGe-2 ViT-SとLaMaから作成し、.glbエクスポート付き。360°パノラマは6144 x 3072で、Vulkan上のstable-diffusion.cppを通じてFLUX.2 klein base 4Bと360° LoRAが生成し、継ぎ目をMI-GANでつなぎ、Real-ESRGANで細部を高め、本物のピクセルを元に戻します。360°写真の3D版は上下形式。すべてのファイルに私たちのXMP (種類、由来、元の写真のSHA-1、品質フラグ)、シーンとパノラマにはIPTCのデジタルソースタイプ。Questの立体感はLiteRTでグラフィックスチップまたはプロセッサー上で計算し、キャッシュに保存。コンピューターでは2レーンのキューと、Vulkan経由でグラフィックスカードを読み取り、パノラマの前にアプリ自身が使っている分を解放し、デスクトップビルド22からは3.5 GiBの空きを求め (約5.6 GiB未満では生成を分割)、他のプログラムがメモリを使っている間は待つゲート。各コンポーネントはSHA-256で検証し、Windowsのジェネレーターは署名済み。共有の写真の隣にSMBとWebDAVで書き込む3D版。20から200枚の写真または動画からのスプラットシーン: カメラはプロセッサー上のCOLMAP 4.2.1が配置し、スプラットはVulkan上のBrush 0.3.0が学習し、物は置かれている面の上にまっすぐ立て、最大150,000個のガウシアンのバージョン2のSPZとして、またはデスクトップビルド22からは「詳細」と「最大」でシーン全体と、ヘッドセット用に最も強い150,000個のガウシアンのコピーとして書き込み、求めに応じて.plyとしても書き込みます。
+- **プラットフォーム固有の機能**: スマートフォンではジャイロスコープとSpatial 2.5Dプレーヤー、Questではイマーシブビュー、コントローラー、手、Android TVではリモコン用レイアウト、キーボードダイアログ、TVバナーです。コンピューターでは、マウスとキーボード、デスクトップビルド24からのCtrl+クリック、Shift+クリック、Ctrl+Aでの選択、フルスクリーン、1つのウィンドウに対応し、プログラムで開いた、またはそのウィンドウにドロップしたファイルやフォルダーはフォルダー内のファイルと同じように読み込まれ、Windowsにデコーダーがあればフォルダー内のHEIC、AVIF、TIFF、カメラRAW写真も読み込めるほか、パスワードとトークンにはWindowsのデータ保護が使われます。
+- **AIクリエイター**: 3D写真は全幅の左右並びJPEGで左目が先、立体感はプロセッサー上のONNX Runtime 1.31.0 (Intel Macでは1.23.2) によるDepth Anything V2 Smallから。シーンは、奥行きが途切れる位置で切り分けたレイヤー構造のglTFシーンを内包したJPEGで、MoGe-2 ViT-SとLaMaから作成し、.glbエクスポート付き。360°パノラマは6144 x 3072で、Vulkan上のstable-diffusion.cppを通じてFLUX.2 klein base 4Bと360° LoRAが生成し、継ぎ目をMI-GANでつなぎ、Real-ESRGANで細部を高め、本物のピクセルを元に戻します。360°写真の3D版は上下形式。すべてのファイルに私たちのXMP (種類、由来、元の写真のSHA-1、品質フラグ)、シーンとパノラマにはIPTCのデジタルソースタイプ。Questの立体感はLiteRTでグラフィックスチップまたはプロセッサー上で計算し、キャッシュに保存。コンピューターでは2レーンのキューと、Vulkan経由でグラフィックスカードを読み取り、パノラマの前にアプリ自身が使っている分を解放し、デスクトップビルド22からは3.5 GiBの空きを求め (約5.6 GiB未満では生成を分割)、他のプログラムがメモリを使っている間は待ち、デスクトップビルド24からはジェネレーター自身のカード一覧で名前から見つけたそのカードでジェネレーターを動かすゲート。各コンポーネントはSHA-256で検証し、Windowsのジェネレーターは署名済み。共有の写真の隣にSMBとWebDAVで書き込む3D版。20から200枚の写真または動画からのスプラットシーン: カメラはプロセッサー上のCOLMAP 4.2.1が配置し、スプラットはVulkan上のBrush 0.3.0が学習し、物は置かれている面の上にまっすぐ立て、最大150,000個のガウシアンのバージョン2のSPZとして、またはデスクトップビルド22からは「詳細」と「最大」でシーン全体と、ヘッドセット用に最も強い300,000個のガウシアンのコピーとして書き込み、求めに応じて.plyとしても書き込みます。
 - **設計レベルでのプライバシー**: アカウントなし、クラウドなし、解析なし。パスワードとトークンはデバイスのセキュアストレージに保存されます (LGとSamsungのテレビにはアプリ用のものがないため、アプリ自身のストレージに暗号化せずに保存します)。スマートフォンからログインした画面には専用のセッションが自宅のネットワーク上で暗号化して送られ、パスワードが送られることはありません (LGテレビはスマートフォンのブラウザーのページからパスワードを受け取ります。これは自宅のネットワーク上で暗号化されずに送られ、テレビはセッションだけを保持します)。Spatialプレーヤーとコードスキャナーのカメラはデバイス上でのみ使用され、共有、Plex、カメラへのアクセスはあなたのネットワーク内に限られます。AIはデバイス上で計算し、そのコンポーネントは求めたときだけダウンロードしてSHA-256で検証し、ONNX Runtimeのテレメトリはオフにしています。デバイス上に保存する映画の視聴位置。
 
 </details>
