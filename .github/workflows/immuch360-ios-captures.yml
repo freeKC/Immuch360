@@ -41,8 +41,29 @@ env:
   XCODE_VERSION: '26.3'
 
 jobs:
+  # .maestro/store/reuse-run.txt, when it holds the id of an earlier run of this workflow, makes the captures take the
+  # media and the app of that run: a change of the flows only does not wait for a new build
+  plan:
+    name: Media and app, new or of an earlier run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      reuse: ${{ steps.reuse.outputs.run }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run whose artifacts to take
+        id: reuse
+        run: |
+          run=$(tr -cd '0-9' < .maestro/store/reuse-run.txt 2>/dev/null || true)
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "media and app: ${run:-built by this run}"
+
   media:
     name: CC0 media of the captures
+    needs: plan
+    if: needs.plan.outputs.reuse == ''
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
@@ -72,6 +93,8 @@ jobs:
 
   build:
     name: iOS simulator build (debug)
+    needs: plan
+    if: needs.plan.outputs.reuse == ''
     runs-on: macos-15
     timeout-minutes: 90
     steps:
@@ -126,9 +149,17 @@ jobs:
 
   capture:
     name: Captures ${{ matrix.device }} ${{ matrix.language }}
-    needs: [media, build]
+    needs: [plan, media, build]
+    if: >-
+      always() && needs.plan.result == 'success' &&
+      (needs.plan.outputs.reuse != '' || (needs.media.result == 'success' && needs.build.result == 'success'))
     runs-on: macos-15
+    permissions:
+      contents: read
+      actions: read
     timeout-minutes: 80
+    env:
+      MAESTRO_CLI_NO_ANALYTICS: '1'
     strategy:
       fail-fast: false
       matrix:
@@ -165,12 +196,16 @@ jobs:
         if: steps.wanted.outputs.run == 'true'
         with:
           name: app-simulator
+          run-id: ${{ needs.plan.outputs.reuse || github.run_id }}
+          github-token: ${{ github.token }}
           path: ${{ runner.temp }}/app
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         if: steps.wanted.outputs.run == 'true'
         with:
           name: store-media
+          run-id: ${{ needs.plan.outputs.reuse || github.run_id }}
+          github-token: ${{ github.token }}
           path: ${{ runner.temp }}/store-media
 
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1

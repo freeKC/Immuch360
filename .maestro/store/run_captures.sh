@@ -37,20 +37,7 @@ case "$KIND" in
 esac
 
 # The newest iOS runtime, and the first device type of TYPES it supports
-read -r RUNTIME DEVTYPE < <(TYPES="$TYPES" python3 - <<'PY'
-import json, os, subprocess
-runtimes = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'runtimes', '-j']))['runtimes']
-ios = [r for r in runtimes if r.get('platform') == 'iOS' and r.get('isAvailable')]
-ios.sort(key=lambda r: [int(x) for x in r['version'].split('.')])
-for rt in reversed(ios):
-    supported = {d['name']: d['identifier'] for d in rt.get('supportedDeviceTypes', [])}
-    for name in os.environ['TYPES'].split('|'):
-        if name in supported:
-            print(rt['identifier'], supported[name])
-            raise SystemExit
-raise SystemExit('no runtime supports ' + os.environ['TYPES'])
-PY
-)
+read -r RUNTIME DEVTYPE < <(TYPES="$TYPES" python3 "$HERE/pick_device.py")
 echo "runtime $RUNTIME, device type $DEVTYPE"
 UDID=$(xcrun simctl create "Store $KIND $LANG_CODE" "$DEVTYPE" "$RUNTIME")
 echo "$UDID" > "$OUT/udid.txt"
