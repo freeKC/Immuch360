@@ -4,20 +4,48 @@
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - launchApp
-# iOS asks for the notifications at the first launch
-- tapOn:
-    text: "(Allow|Autoriser)"
-    optional: true
+# iOS asks for the notifications at the first launch, over the welcome page, whose texts then leave the accessibility
+# tree: the prompt is answered until the page shows (it may come a while after the launch)
+- repeat:
+    times: 12
+    while:
+      notVisible: "(?s)(Use without a server|Utiliser sans serveur).*"
+    commands:
+      - tapOn:
+          text: "(Allow|Autoriser)"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(?s)(Use without a server|Utiliser sans serveur).*"
+          timeout: 15000
+          optional: true
 - extendedWaitUntil:
     visible: "(?s)(Use without a server|Utiliser sans serveur).*"
-    timeout: 180000
+    timeout: 60000
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 4000
+    optional: true
 - tapOn:
     text: "(Allow|Autoriser)"
     optional: true
 - waitForAnimationToEnd:
     timeout: 5000
 - takeScreenshot: s01-welcome
-- tapOn: "(?s)(Use without a server|Utiliser sans serveur).*"
+- repeat:
+    times: 4
+    while:
+      notVisible: "(?s).*(Library|Bibliothèque).*"
+    commands:
+      - tapOn:
+          text: "(Allow|Autoriser)"
+          optional: true
+      - tapOn:
+          text: "(?s)(Use without a server|Utiliser sans serveur).*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(?s).*(Library|Bibliothèque).*"
+          timeout: 20000
+          optional: true
 # The photo library, unless the grant held
 - tapOn:
     text: "(Allow Full Access|Autoriser l.acc.s complet)"

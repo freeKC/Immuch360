@@ -1,6 +1,7 @@
-# App Store captures, flow 5: a film of the share played for 40 s, moved on along its time bar, left, then opened
-# again: it resumes where it was left and says so for a few seconds ("Resumed at ...").
-# SHARE_NAME, FILMS (folder), FILM (the name of the file without its extension), KIND (iphone or ipad).
+# App Store captures, flow 5b, after flow 5a: the app started again (the film page shows no control to a tap on the
+# simulator, so the film is left where its page saved it, every 5 s while it played), the film opened again: it
+# resumes where it was left and says so for a few seconds ("Resumed at ...").
+# SHARE_NAME, FILMS (folder), FILM (the name of the file without its extension).
 appId: com.aprogsys.immuch360.dev.debug
 ---
 - launchApp
@@ -9,7 +10,7 @@ appId: com.aprogsys.immuch360.dev.debug
     optional: true
 - extendedWaitUntil:
     visible: "(?s).*(Library|Bibliothèque).*"
-    timeout: 90000
+    timeout: 120000
 - repeat:
     times: 3
     while:
@@ -50,56 +51,16 @@ appId: com.aprogsys.immuch360.dev.debug
 - extendedWaitUntil:
     visible: "${FILM}.*"
     timeout: 20000
-- tapOn: "${FILM}.*"
 - extendedWaitUntil:
     visible: "never shown 0f3a"
-    timeout: 40000
+    timeout: 3000
     optional: true
-- takeScreenshot: s10-film-playing
-# The controls hide while it plays: a tap shows them, then a drag along the time bar, at the heights it may have
-- tapOn:
-    point: "50%,45%"
-- takeScreenshot: s10-film-controls
-- runFlow:
-    when:
-      true: ${KIND == 'ipad'}
-    commands:
-      - swipe:
-          start: "4%,92%"
-          end: "58%,92%"
-          duration: 900
-- runFlow:
-    when:
-      true: ${KIND == 'iphone'}
-    commands:
-      - swipe:
-          start: "6%,89%"
-          end: "58%,89%"
-          duration: 900
-- takeScreenshot: s10-film-seek
-- extendedWaitUntil:
-    visible: "never shown 0f3a"
-    timeout: 4000
-    optional: true
-- runFlow:
-    when:
-      notVisible: "(Back|Retour)"
-    commands:
-      - tapOn:
-          point: "50%,45%"
-- tapOn:
-    text: "(Back|Retour)"
-    optional: true
-- extendedWaitUntil:
-    visible: "${FILM}.*"
-    timeout: 10000
-    optional: true
-- takeScreenshot: s10-film-left
+- takeScreenshot: s10-film-tile
 - tapOn: "${FILM}.*"
 - takeScreenshot: s11-resumed-a
 - extendedWaitUntil:
-    visible: "(Resumed at|Reprise à).*"
-    timeout: 8000
+    visible: "(?s)(Resumed at|Reprise à).*"
+    timeout: 10000
     optional: true
 - takeScreenshot: s11-resumed-b
 - extendedWaitUntil:

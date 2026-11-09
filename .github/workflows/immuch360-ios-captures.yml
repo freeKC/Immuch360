@@ -31,9 +31,11 @@ on:
 permissions:
   contents: read
 
+# Each run on its own: a run is stopped by hand (the REST API), never by the next push, so that the captures of a job
+# still running are kept
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.run_id }}
+  cancel-in-progress: false
 
 env:
   MISE_YES: '1'
@@ -151,7 +153,7 @@ jobs:
     name: Captures ${{ matrix.device }} ${{ matrix.language }}
     needs: [plan, media, build]
     if: >-
-      always() && needs.plan.result == 'success' &&
+      !cancelled() && needs.plan.result == 'success' &&
       (needs.plan.outputs.reuse != '' || (needs.media.result == 'success' && needs.build.result == 'success'))
     runs-on: macos-15
     permissions:

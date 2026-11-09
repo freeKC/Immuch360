@@ -1,0 +1,58 @@
+# App Store captures, flow 5a: a film of the share played for two and a half minutes (flow 5b opens it again).
+# SHARE_NAME, FILMS (folder), FILM (the name of the file without its extension).
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- tapOn:
+    text: "(Allow|Autoriser)"
+    optional: true
+- extendedWaitUntil:
+    visible: "(?s).*(Library|Bibliothèque).*"
+    timeout: 90000
+- repeat:
+    times: 3
+    while:
+      notVisible: "(Network shares|Partages réseau)"
+    commands:
+      - tapOn:
+          text: "(?s).*(Library|Bibliothèque).*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(Network shares|Partages réseau)"
+          timeout: 10000
+          optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "(${SHARE_NAME}|127\\.0\\.0\\.1).*"
+    commands:
+      - tapOn:
+          text: "(Network shares|Partages réseau)"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(${SHARE_NAME}|127\\.0\\.0\\.1).*"
+          timeout: 10000
+          optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "${FILMS}"
+    commands:
+      - tapOn:
+          text: "(${SHARE_NAME}|127\\.0\\.0\\.1).*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "${FILMS}"
+          timeout: 20000
+          optional: true
+- tapOn: "${FILMS}"
+- extendedWaitUntil:
+    visible: "${FILM}.*"
+    timeout: 20000
+- tapOn: "${FILM}.*"
+# Played for two and a half minutes: the page saves where the film is every 5 s while it plays
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 150000
+    optional: true
+- takeScreenshot: s10-film-playing

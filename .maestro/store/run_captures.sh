@@ -188,8 +188,9 @@ FACE=$(python3 "$HERE/find_point.py" face "$OUT/logs/hierarchy-photos.json")
 echo "face button: ${FACE:-not found, guesses only}" | tee -a "$OUT/flows.txt"
 run_flow s3b-device-only -e "FACE=${FACE:-$FACE_GUESS}" -e "FACE_2=$FACE_GUESS" -e "FACE_3=$FACE_GUESS_3"
 run_flow s4-share
-burst_on s5
-run_flow s5-film
+run_flow s5a-film-play
+burst_on s5b
+run_flow s5b-film-resume
 burst_off
 run_flow s6-timeline
 hierarchy timeline
