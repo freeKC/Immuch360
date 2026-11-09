@@ -98,6 +98,42 @@ void main() {
       expect(engineDecodes, 0);
     });
 
+    test('a side left unbounded or at the default is bounded by the side the budget of the device allows', () async {
+      addTearDown(() => TiffBudget.current = TiffBudget.large);
+      const side = guardedImageMaxSide;
+      await sizeOf(decodeEncodedBytes(heic, maxWidth: side, maxHeight: 0, source: 'test'));
+      TiffBudget.current = TiffBudget.small;
+      await sizeOf(decodeEncodedBytes(heic, maxWidth: side, maxHeight: side, source: 'test'));
+      await sizeOf(decodeEncodedBytes(heic, maxWidth: 384, maxHeight: 0, source: 'test'));
+      await sizeOf(decodeEncodedBytes(heic, maxWidth: 8191, maxHeight: 4095, source: 'test'));
+
+      expect(native.calls.map((call) => (call.maxWidth, call.maxHeight)), [
+        (8192, 8192),
+        (4096, 4096),
+        (384, 4096),
+        (8191, 4095),
+      ]);
+    });
+
+    test('the native decodes wait for a turn, as many at once as the budget of the device allows', () async {
+      addTearDown(() => TiffBudget.current = TiffBudget.large);
+      TiffBudget.current = TiffBudget.small;
+      final held = _HeldNativeDecoder();
+      nativeImageDecodeApi = held;
+
+      final first = sizeOf(decodeEncodedBytes(heic, maxWidth: 800, maxHeight: 800, source: 'test'));
+      final second = sizeOf(decodeEncodedBytes(avif, maxWidth: 800, maxHeight: 800, source: 'test'));
+      await pumpEventQueue();
+      expect(held.calls.map((call) => call.kind), [EncodedImageKind.heif], reason: 'one decode at once on a TV');
+
+      held.releaseNext();
+      expect(await first, (40, 30));
+      await pumpEventQueue();
+      expect(held.calls.map((call) => call.kind), [EncodedImageKind.heif, EncodedImageKind.avif]);
+      held.releaseNext();
+      expect(await second, (40, 30));
+    });
+
     test('the image the native decoder gives is the size it answers', () async {
       native = FakeNativeDecoder(width: 800, height: 400);
       nativeImageDecodeApi = native;
@@ -206,4 +242,22 @@ void main() {
     final wide = fitTargetSize(256, 0);
     expect((wide(1024, 512).width, wide(1024, 512).height), (256, 128));
   });
+}
+
+/// A native decoder that answers only when the test lets it, one call after the other
+class _HeldNativeDecoder extends FakeNativeDecoder {
+  final _held = <Completer<void>>[];
+
+  @override
+  Future<Map<String, int>> decodeEncoded(int pointer, int length, int maxWidth, int maxHeight) async {
+    // The fake reads the head and records the call before its first await, while the caller holds the bytes
+    final answer = super.decodeEncoded(pointer, length, maxWidth, maxHeight);
+    final release = Completer<void>();
+    _held.add(release);
+    await release.future;
+    return answer;
+  }
+
+  /// Lets the oldest call that waits answer
+  void releaseNext() => _held.removeAt(0).complete();
 }

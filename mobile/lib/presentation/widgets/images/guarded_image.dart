@@ -33,6 +33,11 @@ const guardedImageMaxSide = 16384;
 /// The native decoder of Android (NativeImageDecodeApi); the tests put a fake in its place
 NativeImageDecodeApi nativeImageDecodeApi = NativeImageDecodeApi();
 
+/// The bound of a side of a native decode: [side] as the caller asked, but a side left unbounded (0 or less) or at
+/// the default of the guarded images ([guardedImageMaxSide]) is bounded by the long side the device's budget lets a
+/// viewer decode (TiffBudget.maxViewerSide: 8192, or 4096 on a TV or a device low on memory)
+int nativeDecodeSide(int side) => side <= 0 || side >= guardedImageMaxSide ? TiffBudget.current.maxViewerSide : side;
+
 /// The size the engine decodes an image at to fit in [maxWidth] x [maxHeight] (0 or less for no bound on that side),
 /// never larger than the image, its aspect ratio kept: the rule of ResizeImage with ResizeImagePolicy.fit
 ui.TargetImageSizeCallback fitTargetSize(int maxWidth, int maxHeight) => (width, height) {
@@ -57,7 +62,8 @@ ui.TargetImageSizeCallback fitTargetSize(int maxWidth, int maxHeight) => (width,
 
 /// [bytes], an encoded image, decoded where encodedImageRoute says: by the engine through [decode] (the image
 /// decoder of a provider, or the engine's own), at the size [getTargetSize] tells or else within [maxWidth] x
-/// [maxHeight] (0 for no bound on a side); by the native decoder of Android within the same bounds; by the Dart TIFF
+/// [maxHeight] (0 for no bound on a side); by the native decoder of Android within the same bounds, a side left
+/// unbounded or at the default bounded by the budget of the device (see [nativeDecodeSide]); by the Dart TIFF
 /// decoder for a TIFF whose [name] or [mimeType] says so. Throws an [ImageDecodeException] for bytes that are no image
 /// of this device or that the native decoder did not decode, a TiffDecodeException for a TIFF that did not decode.
 /// [source] names the caller in the logs.
@@ -77,13 +83,24 @@ Future<ui.Codec> decodeEncodedBytes(
       final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
       return decode(buffer, getTargetSize: getTargetSize ?? fitTargetSize(maxWidth, maxHeight));
     case EncodedImageRoute.native:
-      final pointer = malloc<Uint8>(math.max(1, bytes.length));
-      try {
-        pointer.asTypedList(bytes.length).setAll(0, bytes);
-        return await _decodeNatively(pointer, bytes.length, kind, maxWidth, maxHeight, source);
-      } finally {
-        malloc.free(pointer);
-      }
+      // In a turn of the decoders that the TIFF route takes too, as many at once as the device's budget allows: a
+      // decode holds the bitmap, its native copy and the engine's copy, 512 MiB each at 16384 x 8192
+      return inTiffTurn(() async {
+        final pointer = malloc<Uint8>(math.max(1, bytes.length));
+        try {
+          pointer.asTypedList(bytes.length).setAll(0, bytes);
+          return await _decodeNatively(
+            pointer,
+            bytes.length,
+            kind,
+            nativeDecodeSide(maxWidth),
+            nativeDecodeSide(maxHeight),
+            source,
+          );
+        } finally {
+          malloc.free(pointer);
+        }
+      });
     case EncodedImageRoute.dartTiff:
       final longSide = math.max(maxWidth, maxHeight);
       final maxSide = longSide > 0

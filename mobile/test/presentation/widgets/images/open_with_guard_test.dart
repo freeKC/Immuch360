@@ -1,7 +1,8 @@
 // A photo opened from another app ("Open with") on Android: it went whole to the engine (FileImage), whose fallback
 // decoder decodes a HEIF, an AVIF or a raw file at its full size and aborts the app on an OutOfMemoryError (crash M1
-// of the Meta Quest store, 8 November 2026). Now such a file goes to the native decoder, at most the largest texture,
-// a JPEG stays with the engine, and a file that is no image says it did not decode.
+// of the Meta Quest store, 8 November 2026). Now such a file goes to the native decoder, at most the long side the
+// budget of the device lets a viewer decode, a JPEG stays with the engine, and a file that is no image says it did not
+// decode.
 
 import 'dart:io';
 
@@ -72,13 +73,14 @@ void main() {
     }
   }
 
-  testWidgets('a HEIC opened from another app is decoded natively, at most the largest texture', (tester) async {
+  testWidgets('a HEIC opened from another app is decoded natively, at most the side of the budget', (tester) async {
     final file = File('${dir.path}/IMG_0001.HEIC')..writeAsBytesSync(heic);
     await pumpOpened(tester, file.path);
     await settle(tester);
 
     expect((shown()!.image!.width, shown()!.image!.height), (40, 30));
-    expect(native.calls, [(kind: EncodedImageKind.heif, length: heic.length, maxWidth: 16384, maxHeight: 16384)]);
+    // The budget of the tests is the large one: 8192 pixels on the long side, 4096 on a TV
+    expect(native.calls, [(kind: EncodedImageKind.heif, length: heic.length, maxWidth: 8192, maxHeight: 8192)]);
     await tester.pumpWidget(const SizedBox());
   });
 
