@@ -8,7 +8,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -151,8 +150,8 @@ class LabServer {
       jsonDecode(utf8.decode(await _call('GET', '/lab/host/$id'))) as Map<String, dynamic>;
 }
 
-/// The commands the fake server runs on the emulator for the tests: they print "LAB_HOST <id> <command>" to logcat and
-/// wait for the server to say it is done
+/// The commands the fake server runs on the emulator for the tests: they print `LAB_HOST id command` lines to logcat
+/// and wait for the server to say it is done
 class LabHost {
   LabHost(this.server);
 
