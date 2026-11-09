@@ -248,6 +248,9 @@ jobs:
           if-no-files-found: error
 
       - name: Upload artifacts
+        # Also when the symbols check stopped the release, to read the very files it refused; the GitHub Release job
+        # needs a successful build job, so a failed check still publishes nothing
+        if: ${{ !cancelled() && steps.symbols.outcome != 'skipped' }}
         uses: actions/upload-artifact@v4
         with:
           name: apks
