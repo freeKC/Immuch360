@@ -82,6 +82,9 @@ object HttpClientManager {
   private const val KEEP_ALIVE_DURATION_MINUTES = 5L
   private const val MAX_REQUESTS_PER_HOST = 64
 
+  // Read outside the lock by initialize: volatile, so that a thread that sees it true also sees the client, the
+  // preferences and the Cronet engine written before it (the background worker initializes off the main thread)
+  @Volatile
   private var initialized = false
   private val clientChangedListeners = mutableListOf<() -> Unit>()
 
