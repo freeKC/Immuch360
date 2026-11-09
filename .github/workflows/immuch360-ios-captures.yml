@@ -1,0 +1,205 @@
+name: Immuch360 iOS store captures
+
+# Captures of the iOS app for the App Store, on the iOS simulator of a GitHub macOS runner (the repository is public,
+# its minutes cost nothing): the iPhone 17 Pro Max (1320 x 2868) and the iPad Pro 13-inch (2064 x 2752), in English and
+# in French, dark appearance, status bar at 9:41. Run by hand only.
+#
+# media    downloads the CC0 photos and the film clip (Poly Haven, Wikimedia Commons) and makes the library and the share
+#          of the captures (.maestro/store/media.py): dated photos, 360° photos, a 3D 360° photo, a VR180 clip, a 360°
+#          video, a film of 12 min 30 s; their sources and authors in manifest.json
+# build    the app for the simulator, debug, --dart-define=IMMUCH_SCREENSHOTS=true (no debug banner), after the steps of
+#          immuch360-ios-check.yml
+# capture  per device and language: a new simulator, the library added, the share served over WebDAV on the runner,
+#          the Maestro flows of .maestro/store (run_captures.sh); the PNG files and the record of the device as an
+#          artifact
+#
+# It reads the repository only, keeps no token in the checkout and uses no secret.
+
+on:
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: 'Devices, space separated: iphone ipad'
+        default: 'iphone ipad'
+      languages:
+        description: 'Languages, space separated: en fr'
+        default: 'en fr'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MISE_YES: '1'
+  MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+  XCODE_VERSION: '26.3'
+
+jobs:
+  media:
+    name: CC0 media of the captures
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: ffmpeg, Pillow, numpy and the Spatial Media Metadata Injector
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg
+          python3 -m venv "$RUNNER_TEMP/py"
+          "$RUNNER_TEMP/py/bin/pip" install -q pillow numpy
+          # spatialmedia is not on PyPI: the tool of its repository, at a fixed commit
+          "$RUNNER_TEMP/py/bin/pip" install -q "git+https://github.com/google/spatial-media.git@2308497c39bb604a7c3ba56ac17e302f2b1b6a96"
+
+      - name: Library and share
+        run: |
+          "$RUNNER_TEMP/py/bin/python" .maestro/store/media.py "$RUNNER_TEMP/store-media"
+          du -sh "$RUNNER_TEMP/store-media"/*
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: store-media
+          path: ${{ runner.temp }}/store-media
+          retention-days: 7
+
+  build:
+    name: iOS simulator build (debug)
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Xcode with the iOS 26 SDK
+        run: |
+          xcode="/Applications/Xcode_$XCODE_VERSION.app"
+          if [ ! -d "$xcode" ]; then
+            echo "::error::No Xcode $XCODE_VERSION on this runner image"
+            ls /Applications | grep "^Xcode" || true
+            exit 1
+          fi
+          sudo xcode-select -s "$xcode/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install toolchains (Flutter 3.47.2, Java 21, OpenAPI generator)
+        run: |
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+
+      - name: Flutter dependencies and code generation
+        run: |
+          mise //mobile:install:ci
+          mise //mobile:codegen
+
+      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+        run: xcodebuild -downloadComponent MetalToolchain
+
+      - name: iOS simulator build
+        working-directory: mobile
+        run: |
+          mise exec -- flutter build ios --simulator --debug --dart-define=IMMUCH_SCREENSHOTS=true
+          app=$(ls -d build/ios/iphonesimulator/*.app | head -1)
+          ditto -c -k --keepParent "$app" "$RUNNER_TEMP/app-simulator.zip"
+          ls -la "$RUNNER_TEMP/app-simulator.zip"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: app-simulator
+          path: ${{ runner.temp }}/app-simulator.zip
+          retention-days: 7
+
+  capture:
+    name: Captures ${{ matrix.device }} ${{ matrix.language }}
+    needs: [media, build]
+    runs-on: macos-15
+    timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [iphone, ipad]
+        language: [en, fr]
+    steps:
+      - name: Wanted in this run
+        id: wanted
+        env:
+          DEVICES: ${{ inputs.devices }}
+          LANGUAGES: ${{ inputs.languages }}
+          DEVICE: ${{ matrix.device }}
+          LANGUAGE: ${{ matrix.language }}
+        run: |
+          if [[ " $DEVICES " == *" $DEVICE "* && " $LANGUAGES " == *" $LANGUAGE "* ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.wanted.outputs.run == 'true'
+        with:
+          persist-credentials: false
+
+      - name: Xcode with the iOS 26 simulators
+        if: steps.wanted.outputs.run == 'true'
+        run: |
+          sudo xcode-select -s "/Applications/Xcode_$XCODE_VERSION.app/Contents/Developer"
+          xcodebuild -version
+          xcrun simctl list runtimes
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: steps.wanted.outputs.run == 'true'
+        with:
+          name: app-simulator
+          path: ${{ runner.temp }}/app
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: steps.wanted.outputs.run == 'true'
+        with:
+          name: store-media
+          path: ${{ runner.temp }}/store-media
+
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        if: steps.wanted.outputs.run == 'true'
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Maestro and a WebDAV server
+        if: steps.wanted.outputs.run == 'true'
+        run: |
+          curl -fsSL --retry 4 "https://get.maestro.mobile.dev" | bash
+          "$HOME/.maestro/bin/maestro" --version
+          python3 -m venv "$RUNNER_TEMP/dav"
+          "$RUNNER_TEMP/dav/bin/pip" install -q wsgidav cheroot
+          cd "$RUNNER_TEMP/app" && ditto -x -k app-simulator.zip . && ls
+
+      - name: Captures
+        if: steps.wanted.outputs.run == 'true'
+        env:
+          DEVICE: ${{ matrix.device }}
+          LANGUAGE: ${{ matrix.language }}
+        run: |
+          app=$(ls -d "$RUNNER_TEMP"/app/*.app | head -1)
+          bash .maestro/store/run_captures.sh "$DEVICE" "$LANGUAGE" "$app" \
+            "$RUNNER_TEMP/store-media" "$RUNNER_TEMP/captures"
+          cp "$RUNNER_TEMP/store-media/manifest.json" "$RUNNER_TEMP/captures/media-manifest.json"
+          echo "commit: $GITHUB_SHA, run $GITHUB_RUN_ID" >> "$RUNNER_TEMP/captures/sim-device.txt"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always() && steps.wanted.outputs.run == 'true'
+        with:
+          name: captures-${{ matrix.device }}-${{ matrix.language }}
+          path: ${{ runner.temp }}/captures
+          retention-days: 14

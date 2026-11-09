@@ -1,0 +1,15 @@
+# App Store captures, flow 6: the Photos tab again, every thumbnail made by now.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*(Library|Bibliothèque).*"
+    timeout: 90000
+- tapOn:
+    text: ".*Photos.*"
+    optional: true
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 10000
+    optional: true
+- takeScreenshot: s12-timeline

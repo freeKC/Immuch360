@@ -1,0 +1,120 @@
+# App Store captures, flow 4: a WebDAV share of the runner added through "Add a share", then its holiday folder.
+# SHARE_NAME, HOLIDAYS: the names of the share and of the folder, in the language of the run.
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*(Library|Bibliothèque).*"
+    timeout: 90000
+- repeat:
+    times: 3
+    while:
+      notVisible: "(Network shares|Partages réseau)"
+    commands:
+      - tapOn:
+          text: ".*(Library|Bibliothèque).*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(Network shares|Partages réseau)"
+          timeout: 10000
+          optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "(Add a share|Ajouter un partage)"
+    commands:
+      - tapOn:
+          text: "(Network shares|Partages réseau)"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(Add a share|Ajouter un partage)"
+          timeout: 10000
+          optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "(A network share|Un partage réseau).*"
+    commands:
+      - tapOn:
+          text: "(Add a share|Ajouter un partage)"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(A network share|Un partage réseau).*"
+          timeout: 10000
+          optional: true
+- tapOn: "(A network share|Un partage réseau).*"
+- extendedWaitUntil:
+    visible: "(Server name or address|Nom ou adresse du serveur).*"
+    timeout: 20000
+- scrollUntilVisible:
+    element:
+      text: "(Name|Nom)"
+    direction: DOWN
+    optional: true
+- runFlow:
+    when:
+      visible: "(Name|Nom)"
+    commands:
+      - tapOn: "(Name|Nom)"
+      - inputText:
+          text: "${SHARE_NAME}"
+          optional: true
+- scrollUntilVisible:
+    element:
+      text: "(Server name or address|Nom ou adresse du serveur).*"
+    direction: DOWN
+    optional: true
+- tapOn: "(Server name or address|Nom ou adresse du serveur|nas\\.local, 192\\.168\\.1\\.20).*"
+- inputText: "http://127.0.0.1:8765/"
+- hideKeyboard:
+    optional: true
+- takeScreenshot: s08-form
+- scrollUntilVisible:
+    element:
+      text: "(Save|Sauvegarder)"
+    direction: DOWN
+    timeout: 20000
+- tapOn: "(Save|Sauvegarder)"
+- extendedWaitUntil:
+    visible: "(${SHARE_NAME}|127\\.0\\.0\\.1).*"
+    timeout: 20000
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 4000
+- takeScreenshot: s08-shares
+- repeat:
+    times: 3
+    while:
+      notVisible: "${HOLIDAYS}"
+    commands:
+      - tapOn:
+          text: "(${SHARE_NAME}|127\\.0\\.0\\.1).*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "${HOLIDAYS}"
+          timeout: 20000
+          optional: true
+- takeScreenshot: s09-share-root
+- repeat:
+    times: 3
+    while:
+      visible: "${HOLIDAYS}"
+    commands:
+      - tapOn:
+          text: "${HOLIDAYS}"
+          optional: true
+      - extendedWaitUntil:
+          notVisible: "${HOLIDAYS}"
+          timeout: 8000
+          optional: true
+# The thumbnails are made from the files of the share, and their 360° badges read from them
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 25000
+    optional: true
+- takeScreenshot: s09-holidays-a
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 12000
+    optional: true
+- takeScreenshot: s09-holidays-b

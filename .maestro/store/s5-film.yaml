@@ -1,0 +1,94 @@
+# App Store captures, flow 5: a film of the share played for 40 s, moved on along its time bar, left, then opened
+# again: it resumes where it was left and says so for a few seconds ("Resumed at ...").
+# SHARE_NAME, FILMS (folder), FILM (the name of the file without its extension).
+appId: com.aprogsys.immuch360.dev.debug
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*(Library|Bibliothèque).*"
+    timeout: 90000
+- repeat:
+    times: 3
+    while:
+      notVisible: "(Network shares|Partages réseau)"
+    commands:
+      - tapOn:
+          text: ".*(Library|Bibliothèque).*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(Network shares|Partages réseau)"
+          timeout: 10000
+          optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "(${SHARE_NAME}|127\\.0\\.0\\.1).*"
+    commands:
+      - tapOn:
+          text: "(Network shares|Partages réseau)"
+          optional: true
+      - extendedWaitUntil:
+          visible: "(${SHARE_NAME}|127\\.0\\.0\\.1).*"
+          timeout: 10000
+          optional: true
+- repeat:
+    times: 3
+    while:
+      notVisible: "${FILMS}"
+    commands:
+      - tapOn:
+          text: "(${SHARE_NAME}|127\\.0\\.0\\.1).*"
+          optional: true
+      - extendedWaitUntil:
+          visible: "${FILMS}"
+          timeout: 20000
+          optional: true
+- tapOn: "${FILMS}"
+- extendedWaitUntil:
+    visible: "${FILM}.*"
+    timeout: 20000
+- tapOn: "${FILM}.*"
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 40000
+    optional: true
+- takeScreenshot: s10-film-playing
+# The controls hide while it plays: a tap shows them, then a drag along the time bar, at the heights it may have
+- tapOn:
+    point: "50%,45%"
+- takeScreenshot: s10-film-controls
+- swipe:
+    start: "${SEEK_FROM}"
+    end: "${SEEK_TO}"
+    duration: 900
+- takeScreenshot: s10-film-seek
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 4000
+    optional: true
+- runFlow:
+    when:
+      notVisible: "(Back|Retour)"
+    commands:
+      - tapOn:
+          point: "50%,45%"
+- tapOn:
+    text: "(Back|Retour)"
+    optional: true
+- extendedWaitUntil:
+    visible: "${FILM}.*"
+    timeout: 10000
+    optional: true
+- takeScreenshot: s10-film-left
+- tapOn: "${FILM}.*"
+- takeScreenshot: s11-resumed-a
+- extendedWaitUntil:
+    visible: "(Resumed at|Reprise à).*"
+    timeout: 8000
+    optional: true
+- takeScreenshot: s11-resumed-b
+- extendedWaitUntil:
+    visible: "never shown 0f3a"
+    timeout: 1500
+    optional: true
+- takeScreenshot: s11-resumed-c
