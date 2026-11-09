@@ -41,6 +41,26 @@ flutter build apk --config-only
 cd android && ./gradlew :app:testPhoneDebugUnitTest -Ptarget-platform=android-x64
 ```
 
+**Symbols and mappings of the release builds** (from build 44): the stores show the crashes of the app with shortened Java names (R8) and native frames as offsets; two kinds of files turn them back into names. The App Bundle carries both for the phones in `BUNDLE-METADATA`: the R8 mapping (`com.android.tools.build.obfuscation/proguard.map`) and the symbol table of each native library of each ABI (`com.android.tools.build.debugsymbols/<abi>/libX.so.sym`, `libapp.so.sym` being the Dart code), which Google Play reads by itself. The Quest APK carries neither, and the Meta Horizon Store reads only what is uploaded with a build. So every manual or tag run of the release workflow keeps a `symbols` artifact for 90 days, written by `.github/desktop/keep_android_symbols.py`:
+
+- `phone/mapping.txt`, the R8 mapping of the phone APKs and of the bundle (all three when the three phone builds did not give the same file, with a warning);
+- `quest/mapping.txt` and `quest/arm64-v8a/*.so`, the R8 mapping and the symbol tables of the native libraries of the Quest APK, named as the libraries, from AGP's `native-debug-symbols.zip` (the `ndk { debugSymbolLevel 'SYMBOL_TABLE' }` of the release build type) or, when the build made none, from the unstripped libraries of AGP's intermediates; each one has the GNU build ID of the library in the APK, or, for a library built without one (SQLite and libsmb2 of the build hooks), the same `.text`, from which Breakpad derives the ID of both;
+- `manifest.json`, with the GNU build ID of each library (the `BuildId` of an Android trace), its Breakpad ID (the `BreakpadBuildId` of a Meta trace), its size and SHA-256, and the SHA-256 and R8 version of each mapping, and `README.txt`.
+
+The step stops the release when the bundle lacks its R8 mapping or the `libapp.so.sym` of one of its ABIs (the Flutter tool lost that file once, flutter/flutter#188119, and Google Play would then show the Dart frames as offsets), when the phone mapping kept is not the bundle's `proguard.map`, or when the Quest `libapp.so` kept has no symbol table or not the build ID of the APK. The artifact is not attached to the release: the phone files are already in the `.aab`, and the list of files of a release stays for users. `--split-debug-info` is not used: the Dart stack traces the app writes to its own log keep their function names.
+
+To read a trace of a build with its files:
+
+```bash
+retrace quest/mapping.txt trace.txt        # Java frames; R8 8.11 or later, or cmdline-tools/latest/bin/retrace (it warns about the map version and works)
+python3 .github/desktop/keep_android_symbols.py build-id libapp.so      # the GNU and Breakpad IDs of a library
+llvm-symbolizer --obj=quest/arm64-v8a/libapp.so 0x190041c                # a Dart frame "#04 pc 000000000190041c ... (BuildId: ...)" of that build
+unzip Immuch360-<tag>.aab 'BUNDLE-METADATA/com.android.tools.build.debugsymbols/*'   # the phone symbol tables
+python3 .github/desktop/keep_android_symbols.py verify --manifest manifest.json --apk Immuch360-<tag>-quest-release.apk --bundle Immuch360-<tag>.aab
+```
+
+The last command checks a downloaded or re-signed Quest APK against the symbols (re-signing leaves the libraries as they are) and the metadata of the bundle, before an upload to a store. The Meta Horizon Store takes the symbols with the build (`ovr-platform-util upload-quest-build ... --debug-symbols-dir quest/arm64-v8a --debug-symbols-pattern '*.so'`), or later for a build already uploaded (`ovr-platform-util upload-debug-symbols --parent <build id> ...`).
+
 **libsmb2 and its source** (from build 27): the SMB shares use libsmb2, under the GNU LGPL, whose corresponding source travels with every build. `mise run codegen` runs the task `codegen:libsmb2-sources`, which packs it with `.github/desktop/libsmb2/pack_sources.py` (the pinned commit of libsmb2-scripts, read from git, the libsmb2 archive it names, checked by its SHA-256, `build_linux.sh` and a README) into `mobile/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz`, ignored by git, next to the notice and the licence texts that every build carries as assets. The archive is the same, byte for byte, wherever it is packed (the Linux runners and the Mac of the CI gave the same file). A build made without the code generation works, without the archive: the release workflows check that every APK, the App Bundle, the Windows ZIP, the .deb, the .rpm and the macOS app hold it, with the notice and the texts, and Codemagic checks the IPA. When the upstream sources do not answer, the packer takes the same files from the release [libsmb2-inputs-f0688e7](https://github.com/freeKC/Immuch360/releases/tag/libsmb2-inputs-f0688e7) of the project.
 
 Immuch360 Desktop, the computer version, builds from the same sources, the `immuch360` branch: with Flutter for Windows, the steps are in [Build it yourself on Windows](#build-it-yourself-on-windows), and for Linux and macOS in [macOS and Linux](#macos-and-linux). How the installer and the packages are made is in [Packages of Immuch360 Desktop](#packages-of-immuch360-desktop). The app for LG webOS TVs builds from the `webos/` folder with Node.js, see [LG webOS TVs](#lg-webos-tvs).

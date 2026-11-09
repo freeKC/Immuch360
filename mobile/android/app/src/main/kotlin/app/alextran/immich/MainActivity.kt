@@ -3,6 +3,7 @@ package app.alextran.immich
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.os.ext.SdkExtensions
 import android.view.MotionEvent
 import app.alextran.immich.background.BackgroundEngineLock
@@ -34,6 +35,8 @@ import app.alextran.immich.immersive.isHorizonOsDevice
 import app.alextran.immich.pairing.QrScanApi
 import app.alextran.immich.pairing.QrScanApiImpl
 import app.alextran.immich.images.LocalImagesImpl
+import app.alextran.immich.images.NativeImageDecodeApi
+import app.alextran.immich.images.NativeImageDecodeImpl
 import app.alextran.immich.images.RemoteImageApi
 import app.alextran.immich.images.RemoteImagesImpl
 import app.alextran.immich.permission.PermissionApi
@@ -57,6 +60,7 @@ import app.alextran.immich.videodecoder.VideoDecoderApiImpl
 import app.alextran.immich.videothumbnail.VideoThumbnailApi
 import app.alextran.immich.videothumbnail.VideoThumbnailApiImpl
 import app.alextran.immich.viewintent.ViewIntentPlugin
+import com.example.ok_http.RedirectInterceptor
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 
@@ -99,6 +103,12 @@ class MainActivity : FlutterFragmentActivity() {
       DjiLinkVideoViewFactory.VIEW_TYPE,
       DjiLinkVideoViewFactory(),
     )
+  }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    // Before super, which reads the Flutter loader to start the engine (see FlutterInjectorPin)
+    FlutterInjectorPin.checkBeforeActivity(this)
+    super.onCreate(savedInstanceState)
   }
 
   override fun onResume() {
@@ -169,6 +179,9 @@ class MainActivity : FlutterFragmentActivity() {
       NativeVideoPlayerPlugin.errorToken = FlatPlayerErrors::token
       // Its player starts a streamed video from the measured link, and tells Flutter what that link brings
       NativeVideoPlayerPlugin.playerSetup = { context -> FlatPlayerSetup(context) }
+      // The redirects the HTTP client of Dart (package:ok_http) did not expect, on the Logs page: a relative Location
+      // it resolved, one it could not follow, an upload a redirect stopped. Static too, and holds nothing
+      RedirectInterceptor.onUnusualRedirect = { text -> AppHealth.report("network", text) }
       flutterEngine.plugins.add(NetworkApiPlugin())
 
       val messenger = flutterEngine.dartExecutor.binaryMessenger
@@ -185,6 +198,7 @@ class MainActivity : FlutterFragmentActivity() {
       PermissionApi.setUp(messenger, permissionApiImpl)
       LocalImageApi.setUp(messenger, LocalImagesImpl(ctx))
       RemoteImageApi.setUp(messenger, RemoteImagesImpl(ctx))
+      NativeImageDecodeApi.setUp(messenger, NativeImageDecodeImpl(ctx))
 
       BackgroundWorkerFgHostApi.setUp(messenger, BackgroundWorkerApiImpl(ctx))
       ConnectivityApi.setUp(messenger, ConnectivityApiImpl(ctx))

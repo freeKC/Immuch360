@@ -1,6 +1,6 @@
 // The keys a computer adds to those of a remote control (design 4.1 and 4.2): plus and minus by the character typed
-// whatever the layout, letters only while no text field has the keyboard, the window keys of the shell, the back
-// button of a mouse. The phones keep their sets unchanged.
+// whatever the layout, letters only while no text field has the keyboard, the window keys of the shell (select all
+// among them), the back button of a mouse. The phones keep their sets unchanged.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -196,6 +196,34 @@ void main() {
       expect(desktopWindowKeyOf(_down(LogicalKeyboardKey.keyF), typing: false), DesktopWindowKey.toggleFullScreen);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Control A selects all on Windows and Linux, Command A on macOS, never while typing', (tester) async {
+      for (final platform in _desktops) {
+        debugDefaultTargetPlatformOverride = platform;
+        final mac = platform == TargetPlatform.macOS;
+        final selectKey = mac ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft;
+        final otherKey = mac ? LogicalKeyboardKey.controlLeft : LogicalKeyboardKey.metaLeft;
+        final a = _down(LogicalKeyboardKey.keyA, character: 'a');
+        expect(desktopWindowKeyOf(a, typing: false), isNull, reason: '${platform.name}: A alone');
+
+        await tester.sendKeyDownEvent(selectKey);
+        expect(desktopWindowKeyOf(a, typing: false), DesktopWindowKey.selectAll, reason: platform.name);
+        expect(
+          desktopWindowKeyOf(a, typing: true),
+          isNull,
+          reason: '${platform.name}: the text field selects its text',
+        );
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        expect(desktopWindowKeyOf(a, typing: false), isNull, reason: '${platform.name}: with Shift');
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyUpEvent(selectKey);
+
+        await tester.sendKeyDownEvent(otherKey);
+        expect(desktopWindowKeyOf(a, typing: false), isNull, reason: '${platform.name}: the other modifier');
+        await tester.sendKeyUpEvent(otherKey);
+      }
       debugDefaultTargetPlatformOverride = null;
     });
   });

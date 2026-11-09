@@ -13,6 +13,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -195,9 +196,9 @@ void main() {
   testWidgets('the URL of a DLNA picture keeps its way, whatever the connection makes', (tester) async {
     await pumpTile(tester, entry('/Photos/flat.jpg', thumbnailUrl: 'http://192.0.2.10:8200/AlbumArt/22-1.jpg'));
 
-    final image = tester.widget<Image>(serverPicture).image as ResizeImage;
-    expect(image.width, 256);
-    expect((image.imageProvider as NetworkImage).url, 'http://192.0.2.10:8200/AlbumArt/22-1.jpg');
+    final image = tester.widget<Image>(serverPicture).image as GuardedNetworkImage;
+    expect(image.maxWidth, 256);
+    expect(image.url, 'http://192.0.2.10:8200/AlbumArt/22-1.jpg');
     expect(share.asked, isEmpty);
   });
 

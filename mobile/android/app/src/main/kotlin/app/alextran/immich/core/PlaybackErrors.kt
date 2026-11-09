@@ -24,7 +24,15 @@ object PlaybackErrors {
     DECODER("decoder", LABEL_DECODER),
     NO_FRAME("noFrame", LABEL_NO_FRAME),
     STALLED("stalled", LABEL_STALLED),
-    STOPPED("stopped", null),
+    STOPPED("stopped", null);
+
+    /**
+     * Whether the decoder refused the video or gave no picture for it: what another file of the video may get past,
+     * and what a player that switches to the server's copy says it switched for. Not a video the network brings too
+     * slowly, nor one that stopped for another reason.
+     */
+    val refusedByDecoder: Boolean
+      get() = this == DECODER || this == NO_FRAME
   }
 
   /**

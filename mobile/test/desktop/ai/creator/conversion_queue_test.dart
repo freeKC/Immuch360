@@ -2,7 +2,8 @@
 // the states in the words of the spec, one job at a time, a failure that stays with its photo, the pause of a disk
 // full and Resume, Retry and Retry failed, a version with the same settings skipped, made again or replaced, Cancel and
 // Cancel all, Clear finished. The writer of lot A5b is reduced here to what the queue relies on: a .part with a dot
-// name next to the target, renamed at the end, "name (1)" when the name is taken.
+// name next to the target, renamed at the end, "name (1)" when the name is taken. Since release 44 each failure but a
+// cancel writes one warning to the log of the app: the job, its kind, its code and the first line of its message.
 
 import 'dart:async';
 import 'dart:convert';
@@ -21,6 +22,7 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 import '../fakes/fake_immersive_engine.dart';
@@ -66,6 +68,31 @@ class _Engines implements ImmersiveEngine {
 
   @override
   Future<void> dispose() async {}
+}
+
+/// An engine that fails with [code] and [message] at once, as a real one tells a failure: a result, never an exception
+class _Failing extends FakeImmersiveEngine {
+  _Failing(this.code, this.message);
+
+  final ImmersiveErrorCode code;
+  final String message;
+
+  @override
+  Future<ImmersiveResult> run(
+    ImmersiveJob job, {
+    required NativeCancelFlag cancel,
+    void Function(ImmersiveProgress progress)? onProgress,
+  }) async => ImmersiveResult.failed(code, message: message);
+}
+
+/// An engine that breaks its word and throws
+class _Throwing extends FakeImmersiveEngine {
+  @override
+  Future<ImmersiveResult> run(
+    ImmersiveJob job, {
+    required NativeCancelFlag cancel,
+    void Function(ImmersiveProgress progress)? onProgress,
+  }) async => throw StateError('The engine broke');
 }
 
 /// The writer of the 3D photos, reduced to what the queue relies on: SafeWriter.commit of lot A5b, which replaces a
@@ -473,6 +500,69 @@ void main() {
     expect(output.discarded, [output.begun[1]]);
     expect(leftInFolder({'a.jpg', 'b.jpg', 'c.jpg'}), ['a_3D_LRF_Full_SBS.jpg', 'c_3D_LRF_Full_SBS.jpg']);
     expect(current().isPaused, isFalse);
+  });
+
+  group('a failure in the log of the app', () {
+    late List<LogRecord> warnings;
+
+    setUp(() {
+      warnings = [];
+      final before = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      final listening = Logger.root.onRecord
+          .where((record) => record.loggerName == 'ConversionQueue' && record.level >= Level.WARNING)
+          .listen(warnings.add);
+      addTearDown(() async {
+        Logger.root.level = before;
+        await listening.cancel();
+      });
+    });
+
+    List<String> said() => [for (final record in warnings) record.message];
+
+    test('an engine that failed: one warning, the job, its kind, its code and the first line of its message', () async {
+      const stalled = 'sd-cli wrote nothing for 180 s and was stopped; its last lines:';
+      engines.byName['b.jpg'] = _Failing(ImmersiveErrorCode.generatorStalled, '$stalled\n[I] one\n[I] two');
+      final ids = queue().add([photo('a.jpg'), photo('b.jpg')]);
+      await allEnded();
+
+      expect(job(ids[1]).error, ImmersiveErrorCode.generatorStalled);
+      expect(said(), ['Conversion ${ids[1]} (sbsFromPhoto) failed: generatorStalled: $stalled']);
+    });
+
+    test('a disk full at the rename: one warning', () async {
+      output.failFinish = ImmersiveErrorCode.diskFull;
+      final id = queue().add([photo('a.jpg')]).single;
+      await until((state) => state.isPaused);
+
+      expect(said(), ['Conversion $id (sbsFromPhoto) failed: diskFull: Scripted failure of the rename']);
+    });
+
+    test('a cancel: no warning', () async {
+      final hold = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+      engines.byName['a.jpg'] = hold;
+      final held = hold.reachedHold.stream.first;
+      final id = queue().add([photo('a.jpg')]).single;
+      await held;
+      queue().cancel(id);
+      hold.release();
+      await allEnded();
+
+      expect(job(id).state, ConversionState.cancelled);
+      expect(said(), isEmpty);
+    });
+
+    test('an engine that throws: one warning, with the error and its stack, not two', () async {
+      engines.byName['a.jpg'] = _Throwing();
+      final id = queue().add([photo('a.jpg')]).single;
+      await allEnded();
+
+      expect(job(id).state, ConversionState.failed);
+      expect(warnings, hasLength(1));
+      expect(warnings.single.message, 'Conversion $id failed');
+      expect(warnings.single.error, isA<StateError>());
+      expect(warnings.single.stackTrace, isNotNull);
+    });
   });
 
   test('a disk full pauses the queue; Resume runs that photo again and goes on', () async {

@@ -1,0 +1,142 @@
+name: Immuch360 Android lab
+
+# The lab tests of mobile/integration_test that need Android, on an emulator of the runner (never on a device of the
+# owner). The app is a debug build: ART runs a debuggable app with CheckJNI on, debug.checkjni is set as well, and the
+# verdict says whether the app's "-Xcheck:jni" line was seen. First the stress test of the vendored ok_http (crash
+# families F1 and F2 of release 44): its JNI references through collections of the isolate group, and aborts that
+# race OkHttp's answers. Then upstream's background sync teardown test, which syncs from a fake server through the
+# app's own client and aborts a running sync: its result is reported, not required. Then the lab tests against the
+# fake Immich server that run_lab.sh starts on the runner (.github/android-lab/fake_immich.py, at 10.0.2.2 from the
+# emulator): lab_server_smoke_test.dart (sign in through relative 302 redirects, the timeline, Load original on a HEIC
+# and an AVIF, the native decoder, an upload) and lab_background_worker_test.dart (a background run that ends, one
+# cancelled by opening the app). The job fails when a required test or one of their scenarios fails, or when logcat
+# holds a crash, an ANR or a death of the app (.github/android-lab/check_logcat.py), and keeps logcat, the test output
+# and the requests of the fake server as the android-lab artifact.
+# Runs on a push that changes the vendored ok_http, the native image decoders, the background worker, the lab tests or
+# this lab, and by hand. Actions pinned to a commit and runner label pinned, read-only, no secret, as the desktop
+# workflow (check_workflow.py).
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'mobile/packages/ok_http/**'
+      - 'mobile/android/app/src/main/kotlin/app/alextran/immich/images/**'
+      - 'mobile/android/app/src/main/kotlin/app/alextran/immich/background/**'
+      - 'mobile/lib/domain/services/background_worker.service.dart'
+      - 'mobile/integration_test/ok_http_receiver_stress_test.dart'
+      - 'mobile/integration_test/lab_*.dart'
+      - 'mobile/integration_test/test_utils/lab_server.dart'
+      - 'mobile/test/fixtures/android_lab/**'
+      - '.github/android-lab/**'
+      - '.github/workflows/immuch360-android-lab.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-lab-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lab:
+    name: Lab tests under CheckJNI on an emulator
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Every JSON answer and sync event of the fake server against the OpenAPI schemas, before anything is built
+      - name: Fake Immich server answers the API
+        run: |
+          python3 .github/android-lab/fake_immich.py --check --fixtures mobile/test/fixtures/android_lab \
+            --spec open-api/immich-openapi-specs.json
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install toolchains (Flutter 3.47.2, Java 21, OpenAPI generator)
+        env:
+          MISE_YES: '1'
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          # The SDK and NDK of the release workflow, whose notes say why the NDK is pinned
+          packages: 'platforms;android-36 build-tools;36.0.0 ndk;28.2.13676358'
+
+      - name: Same NDK for the build hooks and Gradle
+        run: |
+          ndk="$ANDROID_HOME/ndk/28.2.13676358"
+          test -x "$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
+          { echo "ANDROID_NDK_HOME=$ndk"; echo "ANDROID_NDK_ROOT=$ndk"; echo "ANDROID_NDK=$ndk"; } >> "$GITHUB_ENV"
+
+      - name: Flutter dependencies and code generation
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          mise //mobile:install:ci
+          mise //mobile:codegen
+
+      # The lab tests compile only on the emulator, late in the job: their errors and lints show here first
+      - name: Analyze the lab tests
+        working-directory: mobile
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: mise exec -- dart analyze --fatal-infos integration_test
+
+      # Built before the emulator starts, so that Gradle and the emulator do not share the memory of the runner: the
+      # test runs below build the same debug app again, and only the Dart of each test file is compiled then
+      - name: Debug build of the app for the emulator
+        working-directory: mobile
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          mise exec -- flutter build apk --debug --flavor phone --target-platform android-x64 \
+            -t integration_test/ok_http_receiver_stress_test.dart
+          cd android && mise exec -- ./gradlew --stop
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # reactivecircus/android-emulator-runner (Apache-2.0) creates the AVD, boots it with KVM, runs the script and
+      # stops it; it runs each line of the script on its own, hence one line that calls the lab script
+      - name: Lab tests on the emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          # A phone screen (412 x 915 points) for the timeline and the viewer of the lab tests
+          profile: pixel_6
+          cores: 3
+          ram-size: 4096M
+          disk-size: 6G
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: bash .github/android-lab/run_lab.sh
+
+      - name: Lab logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android-lab
+          path: ${{ runner.temp }}/android-lab/
+          if-no-files-found: ignore

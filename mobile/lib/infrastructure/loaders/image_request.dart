@@ -7,6 +7,7 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/services/encoded_image_probe.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 
@@ -26,6 +27,10 @@ class ImageDecodeException implements Exception {
   String toString() => 'ImageDecodeException: $cause';
 }
 
+/// The code of the error of the platform for a photo its native decoder did not decode, an OutOfMemoryError included
+/// (UNDECODABLE_IMAGE of NativeImageDecodeImpl.kt): its bytes came, so it is an [ImageDecodeException]
+const undecodableImageCode = 'UndecodableImage';
+
 /// A codec of one frame holding [pixels], a TIFF decoded in Dart (see decodeTiff)
 Future<ui.Codec> codecOfTiffPixels(TiffPixels pixels) async {
   final buffer = await ui.ImmutableBuffer.fromUint8List(pixels.rgba);
@@ -42,6 +47,14 @@ Future<ui.Codec> codecOfTiffPixels(TiffPixels pixels) async {
 
 abstract class ImageRequest {
   static int _nextRequestId = 0;
+
+  /// What makes the engine's descriptor of encoded bytes, ImageDescriptor.encoded; the tests count its calls
+  @visibleForTesting
+  static Future<ui.ImageDescriptor> Function(ui.ImmutableBuffer buffer) describeEncoded = ui.ImageDescriptor.encoded;
+
+  /// What frees a buffer of the platform, malloc's free; the tests count its calls
+  @visibleForTesting
+  static void Function(Pointer<Uint8> pointer) freePlatformBuffer = malloc.free;
 
   final int requestId = _nextRequestId++;
   bool _isCancelled = false;
@@ -73,15 +86,25 @@ abstract class ImageRequest {
   }) async {
     final pointer = Pointer<Uint8>.fromAddress(address);
     if (_isCancelled) {
-      malloc.free(pointer);
+      freePlatformBuffer(pointer);
       return null;
+    }
+
+    // On Android, the engine gets only the formats of its own codecs: it hands any other to Android's decoder at the
+    // full size of the image, and aborts the app on an OutOfMemoryError there (see encoded_image_probe.dart). The
+    // native decoder had its turn before (RemoteImagesImpl, from Android 9; below it the engine has no Android decoder
+    // either), or the bytes were asked encoded for an animation, which only the engine's codecs play
+    final kind = sniffEncodedImage(pointer.asTypedList(math.min(length, encodedImageProbeLength)));
+    if (encodedImageRoute(kind) != EncodedImageRoute.engine) {
+      freePlatformBuffer(pointer);
+      throw ImageDecodeException(UnsupportedEncodedImage(kind, length));
     }
 
     final ui.ImmutableBuffer buffer;
     try {
       buffer = await ImmutableBuffer.fromUint8List(pointer.asTypedList(length));
     } finally {
-      malloc.free(pointer);
+      freePlatformBuffer(pointer);
     }
 
     if (_isCancelled) {
@@ -91,7 +114,7 @@ abstract class ImageRequest {
 
     final ui.ImageDescriptor descriptor;
     try {
-      descriptor = await ui.ImageDescriptor.encoded(buffer);
+      descriptor = await describeEncoded(buffer);
     } catch (error) {
       // The bytes came, the engine does not read them (a format it has no decoder for, a damaged file)
       throw ImageDecodeException(error);

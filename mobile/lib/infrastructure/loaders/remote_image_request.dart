@@ -14,9 +14,7 @@ class RemoteImageRequest extends ImageRequest {
       return null;
     }
 
-    final info = await remoteImageApi.requestImage(
-      uri,
-      requestId: requestId,
+    final info = await _request(
       preferEncoded: false,
       width: decodeSize?.width.ceil(),
       height: decodeSize?.height.ceil(),
@@ -46,19 +44,32 @@ class RemoteImageRequest extends ImageRequest {
       return null;
     }
 
-    final info = await remoteImageApi.requestImage(
-      uri,
-      requestId: requestId,
-      preferEncoded: true,
-      width: null,
-      height: null,
-    );
+    final info = await _request(preferEncoded: true);
     if (info == null) {
       return null;
     }
 
     final (codec, _) = await _codecFromEncodedPlatformImage(info['pointer']!, info['length']!) ?? (null, null);
     return codec;
+  }
+
+  // The photo from the platform; one its native decoder did not decode (an OutOfMemoryError included) came, and is an
+  // ImageDecodeException, which the viewers remember (see UndecodablePhotos)
+  Future<Map<String, int>?> _request({required bool preferEncoded, int? width, int? height}) async {
+    try {
+      return await remoteImageApi.requestImage(
+        uri,
+        requestId: requestId,
+        preferEncoded: preferEncoded,
+        width: width,
+        height: height,
+      );
+    } on PlatformException catch (error) {
+      if (error.code == undecodableImageCode) {
+        throw ImageDecodeException(error);
+      }
+      rethrow;
+    }
   }
 
   @override

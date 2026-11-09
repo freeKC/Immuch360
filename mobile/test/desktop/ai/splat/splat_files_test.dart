@@ -308,8 +308,8 @@ void main() {
   test('the copy for the headset: of 200 000 gaussians, the 150 000 strongest, in their order, scored as the headset '
       'scores them', () async {
     final cloud = _ranked(200000);
-    final copy = splatHeadsetCopyOf(cloud);
-    expect(copy.count, SplatV1.headsetGaussians);
+    final copy = splatHeadsetCopyOf(cloud, keep: 150000);
+    expect(copy.count, 150000);
     final xs = copy.positions;
     expect([xs[0], xs[3], xs[3 * (copy.count - 1)]], [50000, 50001, 199999]);
     // The score of the reducers of the headset and of the viewers, read from the PLY of the same gaussians
@@ -321,16 +321,20 @@ void main() {
       expect(strengths[i], closeTo(scores[i], 1e-4), reason: 'gaussian $i');
     }
     expect(selectStrongest(scores, 150000).indices.first, 50000);
-    // Under the cap: the cloud itself
+    // Under the cap: the cloud itself; the copy holds 300 000 since 8 November 2026, the count the headset shows by
+    // default, so these 200 000 stay whole
     final small = _ranked(1000);
     expect(splatHeadsetCopyOf(small), same(small));
+    expect(SplatV1.headsetGaussians, 300000);
+    expect(splatHeadsetCopyOf(cloud), same(cloud));
   });
 
   test('the copy for the headset: the crop of the object first, then the strongest of what it kept', () {
     final cloud = _ranked(200000);
     // The crop keeps the first 180 000: then their 150 000 strongest, 30 000 to 179 999
     final first = Uint8List(200000)..fillRange(0, 180000, 1);
-    final copy = splatHeadsetCopyOf(cloud, crop: SplatCrop(kept: first, count: 180000, radius: 1.5, size: 1.1));
+    final crop = SplatCrop(kept: first, count: 180000, radius: 1.5, size: 1.1);
+    final copy = splatHeadsetCopyOf(cloud, crop: crop, keep: 150000);
     expect(copy.count, 150000);
     expect([copy.positions[0], copy.positions[3 * 149999]], [30000, 179999]);
     // A crop of 100 000 (every other one): all of them, none dropped for strength
@@ -338,7 +342,11 @@ void main() {
     for (var i = 0; i < 200000; i += 2) {
       even[i] = 1;
     }
-    final cropped = splatHeadsetCopyOf(cloud, crop: SplatCrop(kept: even, count: 100000, radius: 1.5, size: 1.1));
+    final cropped = splatHeadsetCopyOf(
+      cloud,
+      crop: SplatCrop(kept: even, count: 100000, radius: 1.5, size: 1.1),
+      keep: 150000,
+    );
     expect(cropped.count, 100000);
     expect([cropped.positions[0], cropped.positions[3], cropped.positions[3 * 99999]], [0, 2, 199998]);
   });

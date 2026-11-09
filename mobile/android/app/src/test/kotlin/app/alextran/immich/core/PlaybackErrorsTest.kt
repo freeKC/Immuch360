@@ -6,6 +6,7 @@ import app.alextran.immich.core.PlaybackErrors.Kind
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PlaybackErrorsTest {
@@ -92,6 +93,15 @@ class PlaybackErrorsTest {
     }
     // A timeout of another kind than the stuck checks
     assertNull(PlaybackErrors.kindOf(timeout, null, true, true))
+  }
+
+  @Test
+  fun `a decoder that refused or gave no picture is a refusal of the decoder, a stall or a stop is not`() {
+    // What the 360° player of phones and TVs says it switched to the server's copy for (a TV, 8 November 2026)
+    assertTrue(Kind.DECODER.refusedByDecoder)
+    assertTrue(Kind.NO_FRAME.refusedByDecoder)
+    assertFalse(Kind.STALLED.refusedByDecoder)
+    assertFalse(Kind.STOPPED.refusedByDecoder)
   }
 
   @Test

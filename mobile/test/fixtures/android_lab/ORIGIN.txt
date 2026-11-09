@@ -1,0 +1,15 @@
+The images the fake Immich server of the Android lab serves (.github/android-lab/fake_immich.py). Drawn for the lab
+on 9 November 2026 with ImageMagick 6.9.11 and its libheif 1.12 coder (x265 for the HEIC, libaom for the AVIF): flat
+gradients and shapes, no photo of anyone, no work of a third party, so free of any right (CC0).
+
+  convert -size 1200x800 gradient:'#1d4e89-#f6c445' \( -size 1200x800 radial-gradient:'#ffffff80-#00000000' \) \
+    -compose over -composite -fill '#c0392b' -draw "circle 360,400 360,220" \
+    -fill '#27ae60' -draw "rectangle 700,250 1000,550" base.png
+  convert base.png -quality 85 lab_photo.jpg          the JPEG original, 1200 x 800
+  convert base.png -quality 60 lab_photo.heic         the HEIC original (ftyp heic, mif1), 1200 x 800
+  convert base.png -quality 60 lab_photo.avif         the AVIF original (ftyp avif, mif1), 1200 x 800
+  convert base.png -resize 720x480 -quality 80 lab_preview.jpg      the preview of every photo, 720 x 480
+  convert base.png -resize 240x160 -quality 80 lab_thumbnail.jpg    the thumbnail of every photo, 240 x 160
+  convert -size 6000x3000 gradient:'#0b3d2e-#e8d5a3' -fill '#8e44ad' -draw "circle 1500,1500 1500,700" \
+    -fill '#2980b9' -draw "rectangle 3500,800 5200,2200" -quality 50 lab_large.avif    6000 x 3000, for the bound
+  the same drawing with -quality 50 lab_large.heic                                   6000 x 3000, for the bound

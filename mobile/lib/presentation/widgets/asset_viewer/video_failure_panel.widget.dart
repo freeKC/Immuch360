@@ -19,10 +19,12 @@ typedef VideoFailureText = ({String title, String? cause, List<String> advice});
 /// not known). A video nothing on the server decodes says so with what to change in Immich; a link that stopped
 /// sending says so, and that the video plays on by itself; a file beyond the decoders of the device is the cause
 /// whatever the player said; an error the native player put in the words of the app (see NativePlaybackError) is said
-/// in ours, with the codec and the size of what played. Only what was measured is said: a slow link is never a
-/// failure, and the bit rate of the file is no cause. The text of Media3 never shows. [fromServer]: the video came from
-/// the server, which can make a copy the device plays. [remote]: the remote control layout of a TV, where the viewer
-/// has no menu at the top (Info is a key of the remote).
+/// in ours, with the codec and the size of what played, and, after a decoder that refused the original, the server's
+/// copy beyond the decoders too in place of the hint about the server's transcoding, which made that copy (see
+/// runtimeFallback). Only what was measured is said: a slow link is never a failure, and the bit rate of the file is no
+/// cause. The text of Media3 never shows. [fromServer]: the video came from the server, which can make a copy the
+/// device plays. [remote]: the remote control layout of a TV, where the viewer has no menu at the top (Info is a key of
+/// the remote).
 VideoFailureText describeVideoFailure(
   VideoPlaybackFailure failure,
   VideoDecodeDetails? details,
@@ -65,7 +67,14 @@ VideoFailureText describeVideoFailure(
   if (native != null) {
     final nativeCodec = native.codec;
     final known = nativeCodec != null && native.width > 0 && native.height > 0;
-    final serverHint = [if (fromServer) t.video_failed_server_hint];
+    // After a refused original, the server's copy beyond the decoders too: the server makes a copy already, too large
+    // for this device, and that is what to change in Immich
+    final serverHint = [
+      if (refusal != null)
+        t.video_error_copy_beyond_decoders(codec: refusal.codec, width: '${refusal.width}', height: '${refusal.height}')
+      else if (fromServer)
+        t.video_failed_server_hint,
+    ];
     switch (native.kind) {
       case NativePlaybackErrorKind.noFrame when known:
         return (

@@ -1,6 +1,7 @@
 // Files the user keeps on a computer: "Save to a folder" where Linux has no share sheet, and "Save logs to a file",
 // which also gathers the crash reports of the native code and the logs the features keep beside them (the programs of a
-// splat scene that failed). The folder or the file is chosen with the system's dialogs (file_pickers.dart).
+// splat scene or of a 360° panorama that failed). The folder or the file is chosen with the system's dialogs
+// (file_pickers.dart).
 
 import 'dart:io';
 
@@ -76,7 +77,8 @@ Future<Directory> crashDumpDirectory() async =>
 const maxCrashDumpsSaved = 10;
 
 /// The logs folder of the app, beside the crash reports in its cache folder: the logs of the programs of a splat scene
-/// that failed (splat_work_folder.dart, keepSplatFailureLogs), which "Save logs to a file" takes with the log
+/// that failed (splat_work_folder.dart, keepSplatFailureLogs) and of a 360° panorama that failed (panorama_logs.dart,
+/// keepPanoramaFailureLogs), five of each kept, which "Save logs to a file" takes with the log
 Future<Directory> appLogsDirectory() async => Directory(p.join((await getApplicationCacheDirectory()).path, 'logs'));
 
 /// How many of the logs of [appLogsDirectory] go with the log, the latest ones

@@ -3,6 +3,7 @@
   "DjiLinkApi": "DJI link diagnostics, Android phones and the Meta Quest build only: djiLinkSupportedProvider answers false off Android, so the page and its tile never show on the computers",
   "DocumentTreeApi": "DJI drone page and Open a splat file, Android phones only: droneImportSupportedProvider answers false off Android, so the drone page and its tile never show on the computers, and pickSplatFile opens the file dialog of the computer instead",
   "ImmersiveApi": "Meta Quest immersive viewer: isHorizonOsProvider answers false off Android before calling it",
+  "NativeImageDecodeApi": "Bounded native decode of the encoded images the engine has no codec of its own for (HEIF, AVIF, raw files), Android only: encodedImageRoute answers engine off Android, so the computers never call it",
   "QrScanApi": "QR code scanner of Connect a TV or computer (sign in with your phone), phones and tablets only: the Settings card and the Connect page are not offered on the big screens (isBigScreenProvider is true on every computer), which are signed in, not signing in",
   "SplatViewerApi": "Splat viewer of the Android phones and tablets: splatViewerHostProvider makes PigeonSplatViewerHost on Android only, and the computers override it with DesktopSplatViewerHost (lib/desktop/splat/desktop_splat_viewer_host.dart), a window of desktop_webview_window",
   "TvApi": "Android TV: readTvDeviceInfo answers \"not a TV\" off Android before calling it"

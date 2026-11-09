@@ -68,9 +68,9 @@ internal sealed interface SplatVerdict {
  *    rewritten as version 2 by the preparation, version 2 included ([SplatModuleFormat], [SplatReducer]); a version 4
  *    (ZSTD) needs the decoder of the quest flavour ([SplatZstd]), without which it is not in this version.
  * 5. The heat: THERMAL_STATUS_SEVERE or worse refused, as for the scenes.
- * 6. The count: at most the count of the request ([SAFE_GAUSSIANS] until a measure in the headset, [LARGE_GAUSSIANS]
- *    with Large splats, never more). Beyond it the splat is reduced to that count ([SplatReducer]), up to
- *    [MAX_REDUCIBLE_GAUSSIANS] gaussians and [MAX_REDUCIBLE_BYTES].
+ * 6. The count: at most the count of the request ([SAFE_GAUSSIANS] by default, [LARGE_GAUSSIANS] with Large splats,
+ *    never more). Beyond it the splat is reduced to that count ([SplatReducer]), up to [MAX_REDUCIBLE_GAUSSIANS]
+ *    gaussians and [MAX_REDUCIBLE_BYTES].
  * 7. The memory: the free memory (ActivityManager.MemoryInfo.availMem) holds what the module loads, [MEMORY_FACTOR]
  *    times the larger of the file it reads and its gaussians decoded, plus what the reducer holds while it reads the
  *    whole file ([memoryNeeded]): a large capture reduced to 150 000 gaussians weighs what it shows, not its source.
@@ -85,11 +85,22 @@ internal sealed interface SplatVerdict {
  * Pure JVM, tested by SplatGateTest. The Dart side greys the button for the reasons it can know first (splat_gate.dart).
  */
 internal object SplatGate {
-  /** The count until a measure in the headset says more (design-final 2026-10-27, decision D7) */
-  const val SAFE_GAUSSIANS = 50_000
+  /**
+   * The count by default: 50 000 until 8 November 2026 (design-final 2026-10-27, decision D7), then 300 000 from the
+   * series of store/m2/quest-splat-cap-2026-11-08/series.md. On a Quest 3, a room of Brush cut to its 300 000
+   * strongest gaussians and shown whole ran at 91 frames a second on the 90 Hz display (median, 86 at least from 5 s
+   * after it was shown), thermal status 0, the largest count measured at the rate of the display (500 000 fell to
+   * 83). The GPU headroom is thin: 94 % busy, 9.47 ms of the 11.1 ms of a frame (86 % and 8.62 ms at 150 000). The
+   * headset stood still on its stand without tracking, the scene seen from a fixed pose, 45 s a file
+   */
+  const val SAFE_GAUSSIANS = 300_000
 
-  /** The advice of the SDK, the most Large splats shows */
-  const val LARGE_GAUSSIANS = 150_000
+  /**
+   * The most Large splats shows, from the same series: 1 000 000 gaussians shown whole ran at 77 frames a second
+   * (median, 75 at least), the GPU 93 % busy, the app holding about 1.4 GB (PSS), thermal status 0; 1 274 802, the
+   * whole room and the largest file measured, ran at 72. Larger splats are reduced to their 1 000 000 strongest
+   */
+  const val LARGE_GAUSSIANS = 1_000_000
 
   const val MAX_REDUCIBLE_GAUSSIANS = 4_000_000L
   const val MAX_REDUCIBLE_BYTES = 1L shl 30

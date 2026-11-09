@@ -42,6 +42,11 @@
 // the seam); the generator and the upscaler stop within a second of it. A cancelled or failed job leaves the .part as
 // it found it, and the work folder (`<temp>/immuch360-ai/<job>/`) is deleted at the end of every job. The original is
 // never opened for writing.
+//
+// A failure that is not a cancel writes one warning (since release 44): the job, the step the panel showed, the code
+// and the message, which for sd-cli carries the end of its output. Before the work folder goes, the logs its programs
+// wrote there (sd-cli.log) are kept in [PanoramaEngine.failureLogs] (in the app, its logs folder) as one file that
+// "Save logs to a file" takes (panorama_logs.dart, the five newest).
 
 import 'dart:async';
 import 'dart:io';
@@ -62,6 +67,7 @@ import 'package:immich_mobile/desktop/ai/gen/image_checks.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/panorama/control_image.dart';
 import 'package:immich_mobile/desktop/ai/panorama/erp_projection.dart';
+import 'package:immich_mobile/desktop/ai/panorama/panorama_logs.dart';
 import 'package:immich_mobile/desktop/ai/panorama/panorama_prompt.dart';
 import 'package:immich_mobile/desktop/ai/panorama/paste_back.dart';
 import 'package:immich_mobile/desktop/ai/panorama/photo_fov.dart';
@@ -772,6 +778,8 @@ class PanoramaEngine implements ImmersiveEngine {
     this.loraId = _loraId,
     this.upscalerId = _upscalerId,
     this.writePart = writePartFile,
+    this.failureLogs,
+    this.clock = DateTime.now,
   }) : folders = folders ?? AiWorkFolders.system();
 
   /// The generator and the upscaler, on the graphics card
@@ -797,6 +805,13 @@ class PanoramaEngine implements ImmersiveEngine {
   final String loraId;
   final String upscalerId;
   final PartWriter writePart;
+
+  /// Where a job that failed (a cancel is none) leaves the logs of its programs (keepPanoramaFailureLogs): in the app,
+  /// its logs folder; null: none kept (the measure program, most tests)
+  final Directory? failureLogs;
+
+  /// The time of a failure, in the name of its log
+  final DateTime Function() clock;
 
   Future<void> _last = Future.value();
   var _running = false;
@@ -829,8 +844,16 @@ class PanoramaEngine implements ImmersiveEngine {
       onProgress?.call(progress);
     }
 
-    ImmersiveResult failed(ImmersiveErrorCode code, [String? message]) =>
-        ImmersiveResult.failed(code, message: message, stageTimes: times);
+    // The failure of the job, kept for its logs; a cancel is none
+    (ImmersiveErrorCode, String?)? failure;
+    ImmersiveResult failed(ImmersiveErrorCode code, [String? message, Object? error, StackTrace? stack]) {
+      if (code != ImmersiveErrorCode.cancelled) {
+        failure = (code, message);
+        final said = message == null ? code.name : '${code.name}: $message';
+        _log.warning('${job.id}: failed at ${stage.name}: $said', error, stack);
+      }
+      return ImmersiveResult.failed(code, message: message, stageTimes: times);
+    }
 
     if (_disposed) {
       return failed(ImmersiveErrorCode.modelFailed, 'The engine was disposed');
@@ -839,6 +862,7 @@ class PanoramaEngine implements ImmersiveEngine {
     Directory? folder;
     bool? partExisted;
     var made = false;
+    var seed = job.seed;
     final watch = Stopwatch()..start();
     void timed(ImmersiveStage stage) {
       times[stage] = (times[stage] ?? Duration.zero) + watch.elapsed;
@@ -905,7 +929,6 @@ class PanoramaEngine implements ImmersiveEngine {
       _log.info('${job.id}: ${prepared.fov}, ${(100 * prepared.coverage).toStringAsFixed(2)} % of the sphere');
 
       // 4, made once more when the image is refused
-      var seed = job.seed;
       int? segments;
       _Joined? joined;
       for (var attempt = 0; attempt < 2 && joined == null; attempt++) {
@@ -1096,17 +1119,50 @@ class PanoramaEngine implements ImmersiveEngine {
     } on BackendException catch (error) {
       return failed(error.code, error.message);
     } catch (error, stack) {
-      _log.warning('The panorama ${job.id} failed', error, stack);
-      return failed(ImmersiveErrorCode.modelFailed, '$error');
+      return failed(ImmersiveErrorCode.modelFailed, '$error', error, stack);
     } finally {
       final existed = partExisted;
       if (existed != null && !made) {
         _restorePart(job.partPath, existed);
       }
       if (folder != null) {
+        await _keepLogs(job, folder, failure, stage: stage, seed: seed);
         folders.delete(folder);
       }
       _running = false;
+    }
+  }
+
+  /// After a failure that is not a cancel: the logs the programs of [job] wrote into its work [folder] kept in
+  /// [failureLogs] before the folder goes (panorama_logs.dart); nothing after a panorama made or a cancel
+  Future<void> _keepLogs(
+    PanoramaJob job,
+    Directory folder,
+    (ImmersiveErrorCode, String?)? failure, {
+    required ImmersiveStage stage,
+    required int seed,
+  }) async {
+    final into = failureLogs;
+    if (failure == null || into == null) {
+      return;
+    }
+    final (code, message) = failure;
+    try {
+      final kept = await keepPanoramaFailureLogs(
+        folder,
+        into,
+        jobId: job.id,
+        now: clock(),
+        header:
+            'Panorama ${job.id} (${job.source.name}) failed: ${code.name}: ${message ?? ''}\n'
+            'The last step the panel showed: ${stage.name}\nSeed $seed, ${job.steps} steps',
+      );
+      if (kept != null) {
+        _log.info('The logs of the programs of panorama ${job.id} are kept in ${kept.path}');
+      }
+    } catch (error) {
+      // The failure is told all the same: a run never throws
+      _log.warning('The logs of the programs of panorama ${job.id} could not be kept: $error');
     }
   }
 

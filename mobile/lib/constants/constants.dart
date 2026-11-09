@@ -42,10 +42,21 @@ const List<(String, String)> kWidgetNames = [
 
 const int kMinMonthsToEnableScrubberSnap = 12;
 
+/// The --flavor of the headset APK (build.sh on ai1 and immuch360-release.yml build it with --flavor quest), the only
+/// one with LiteRT and the splat module.
+const String kQuestFlavor = 'quest';
+
 const String kImmichAppStoreLink = "https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965";
 const String kImmichPlayStoreLink = "https://play.google.com/store/apps/details?id=com.aprogsys.immuch360";
 const String kImmichLatestRelease = "https://github.com/freeKC/Immuch360/releases/latest";
 const String kImmichServerLatestRelease = "https://github.com/immich-app/immich/releases/latest";
+
+/// The page of the app on the Meta Horizon Store, where the store build of the Quest is updated.
+const String kHorizonStoreLink = "https://www.meta.com/experiences/immuch360/1384208401440714/";
+
+/// The download page of the website, with the installers of the computers (the GitHub Latest release is the Android
+/// one and holds no desktop file).
+const String kWebsiteDownloadLink = "https://immuch360.com/download/";
 
 /// Hides the debug banner of debug builds, for store screenshots taken on a simulator
 /// (`--dart-define=IMMUCH_SCREENSHOTS=true`).

@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.CancellationSignal
 import android.os.OperationCanceledException
+import android.util.Log
 import android.util.Size
 import androidx.exifinterface.media.ExifInterface
 import app.alextran.immich.INITIAL_BUFFER_SIZE
@@ -64,16 +65,29 @@ private fun isRawMime(contentType: String?): Boolean {
 class RemoteImagesImpl(context: Context) : RemoteImageApi {
   private val requestMap = ConcurrentHashMap<Long, RemoteRequest>()
 
+  // For the memory of the device in the logs of a failed decode
+  private val context: Context = context.applicationContext
+
   init {
     ImageFetcherManager.initialize(context)
   }
 
   companion object {
+    private const val TAG = "RemoteImages"
+
     val CANCELLED = Result.success<Map<String, Long>?>(null)
 
     // Shared, process-lifetime pool: RemoteImagesImpl is re-created per FlutterEngine, so a
     // per-instance pool would leak threads across engine restarts.
     private val decodeExecutor = Executors.newFixedThreadPool(2)
+
+    /**
+     * Whether a photo of the server is decoded here rather than handed to Flutter encoded: when the caller wants
+     * pixels ([preferEncoded] false), from Android 9 ([sdk], the API level), where ImageDecoder and decodeBitmapSized
+     * are, as for NativeImageDecodeImpl. Upstream decodes here from Android 10: since Dart keeps a HEIF or raw
+     * original away from the engine (crash M1 of the Meta Quest store), Android 9 would stay on its preview.
+     */
+    fun decodesHere(preferEncoded: Boolean, sdk: Int): Boolean = !preferEncoded && sdk >= Build.VERSION_CODES.P
   }
 
   override fun requestImage(
@@ -99,33 +113,26 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
 
         // Decode natively when the caller wants pixels: Flutter's fallback decoder copies
         // 10-bit bitmaps (RGBA_1010102) as if they were rgba8888, garbling colors. Decode on a
-        // dedicated pool - the fetch callback threads are shared with video streaming. On any
-        // decode failure (including OOM on huge originals), hand Flutter the encoded bytes as
-        // before.
-        if (!preferEncoded && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        // dedicated pool: the fetch callback threads are shared with video streaming. An
+        // OutOfMemoryError gets one retry at half the size. When the decode fails, Flutter gets
+        // the encoded bytes only in a format its engine decodes with a codec of its own: any other
+        // goes to Android's ImageDecoder at its full size inside the engine, which aborts the app on
+        // an OutOfMemoryError (crash M1 of the Meta Quest store), so it fails here instead.
+        if (decodesHere(preferEncoded, Build.VERSION.SDK_INT)) {
           decodeExecutor.execute {
+            val header = IntArray(2)
+            var failure: Throwable? = null
             val res = if (signal.isCanceled) null else try {
-              // The embedded preview a raw decodes to has no orientation, so read the container's.
-              val orientation = if (isRawMime(contentType)) {
-                readRawOrientation(NativeBuffer.wrap(buffer.pointer, buffer.offset), buffer.offset)
-              } else {
-                ExifInterface.ORIENTATION_NORMAL
+              decodeFetched(buffer, contentType, width, height, header, 1.0)
+            } catch (_: OutOfMemoryError) {
+              try {
+                decodeFetched(buffer, contentType, width, height, header, 0.5)
+              } catch (retry: Throwable) {
+                failure = retry
+                null
               }
-              val target = when (orientation) {
-                ExifInterface.ORIENTATION_TRANSPOSE,
-                ExifInterface.ORIENTATION_ROTATE_90,
-                ExifInterface.ORIENTATION_TRANSVERSE,
-                ExifInterface.ORIENTATION_ROTATE_270 -> Size(height?.toInt() ?: 0, width?.toInt() ?: 0)
-                else -> Size(width?.toInt() ?: 0, height?.toInt() ?: 0)
-              }
-              val source = ImageDecoder.createSource(NativeBuffer.wrap(buffer.pointer, buffer.offset))
-              val bitmap = source.decodeBitmap(target, exactSize = true)
-              if (orientation == ExifInterface.ORIENTATION_NORMAL || orientation == ExifInterface.ORIENTATION_UNDEFINED) {
-                bitmap.toNativeBuffer()
-              } else {
-                rotateToNativeBuffer(bitmap, orientation)
-              }
-            } catch (_: Throwable) {
+            } catch (error: Throwable) {
+              failure = error
               null
             }
             requestMap.remove(requestId)
@@ -140,14 +147,24 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
                 buffer.free()
                 callback(CANCELLED)
               }
-              else -> callback(
-                Result.success(
-                  mapOf(
-                    "pointer" to buffer.pointer,
-                    "length" to buffer.offset.toLong()
+              isEngineDecodable(buffer) -> {
+                val message = describeFailure(failure, header, width, height, buffer, contentType)
+                Log.w(TAG, "Not decoded here, handed to Flutter: $message")
+                callback(
+                  Result.success(
+                    mapOf(
+                      "pointer" to buffer.pointer,
+                      "length" to buffer.offset.toLong()
+                    )
                   )
                 )
-              )
+              }
+              else -> {
+                val message = describeFailure(failure, header, width, height, buffer, contentType)
+                Log.w(TAG, "Not decoded: $message")
+                buffer.free()
+                callback(Result.failure(FlutterError(UNDECODABLE_IMAGE, message, null)))
+              }
             }
           }
           return@fetch
@@ -169,6 +186,55 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
         callback(result)
       }
     )
+  }
+
+  // The photo [buffer] holds decoded at the cover of [width] x [height] (the full size without them), times [factor]
+  private fun decodeFetched(
+    buffer: NativeByteBuffer,
+    contentType: String?,
+    width: Long?,
+    height: Long?,
+    header: IntArray,
+    factor: Double,
+  ): Map<String, Long> {
+    // The embedded preview a raw decodes to has no orientation, so read the container's.
+    val orientation = if (isRawMime(contentType)) {
+      readRawOrientation(NativeBuffer.wrap(buffer.pointer, buffer.offset), buffer.offset)
+    } else {
+      ExifInterface.ORIENTATION_NORMAL
+    }
+    val target = when (orientation) {
+      ExifInterface.ORIENTATION_TRANSPOSE,
+      ExifInterface.ORIENTATION_ROTATE_90,
+      ExifInterface.ORIENTATION_TRANSVERSE,
+      ExifInterface.ORIENTATION_ROTATE_270 -> Size(height?.toInt() ?: 0, width?.toInt() ?: 0)
+      else -> Size(width?.toInt() ?: 0, height?.toInt() ?: 0)
+    }
+    val source = ImageDecoder.createSource(NativeBuffer.wrap(buffer.pointer, buffer.offset))
+    val bitmap = source.decodeBitmapSized(header) { fullWidth, fullHeight ->
+      NativeDecodeSize.cover(fullWidth, fullHeight, target.width, target.height, factor)
+    }
+    return if (orientation == ExifInterface.ORIENTATION_NORMAL || orientation == ExifInterface.ORIENTATION_UNDEFINED) {
+      bitmap.toNativeBuffer()
+    } else {
+      rotateToNativeBuffer(bitmap, orientation)
+    }
+  }
+
+  private fun isEngineDecodable(buffer: NativeByteBuffer): Boolean =
+    EngineImageFormats.isEngineDecodable(NativeBuffer.wrap(buffer.pointer, buffer.offset), buffer.offset)
+
+  private fun describeFailure(
+    failure: Throwable?,
+    header: IntArray,
+    width: Long?,
+    height: Long?,
+    buffer: NativeByteBuffer,
+    contentType: String?,
+  ): String {
+    val target = if (width != null && height != null) "${width}x$height" else "full size"
+    val error = failure ?: IllegalStateException("no decode")
+    return "${describeDecodeFailure(error, header, target, buffer.offset, context)}, ${contentType ?: "no type"}"
   }
 
   override fun cancelRequest(requestId: Long) {

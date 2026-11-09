@@ -7,10 +7,22 @@ import 'package:sqlite_async/sqlite_async.dart';
 
 @DriftDatabase(tables: [LogMessageEntity])
 class DriftLogger extends $DriftLogger {
-  // ignore: unused-code
-  DriftLogger.fromExecutor(super.executor);
+  /// The sqlite_async connection under drift, closed after drift (see Drift.close)
+  final SqliteConnection? _connection;
 
-  DriftLogger.sqlite(SqliteConnection db) : super(SqliteAsyncDriftConnection(db));
+  // ignore: unused-code
+  DriftLogger.fromExecutor(super.executor) : _connection = null;
+
+  DriftLogger.sqlite(SqliteConnection db) : _connection = db, super(SqliteAsyncDriftConnection(db));
+
+  @override
+  Future<void> close() async {
+    try {
+      await super.close();
+    } finally {
+      await _connection?.close();
+    }
+  }
 
   @override
   int get schemaVersion => 1;

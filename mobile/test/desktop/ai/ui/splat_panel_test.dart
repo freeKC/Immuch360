@@ -260,10 +260,7 @@ void main() {
     await tester.tap(inRow('conversion-2', find.byKey(const Key('ai_job_splat_headset'))));
     await tester.pumpAndSettle();
     expect(
-      find.text(
-        'In the headset: open this folder in Network shares, then salon_splat.spz, Explore the splat scene. Turn on '
-        "Large splats (experimental) in the headset's settings to see all 148,211 gaussians.",
-      ),
+      find.text('In the headset: open this folder in Network shares, then salon_splat.spz, Explore the splat scene.'),
       findsOneWidget,
     );
   });
@@ -649,7 +646,8 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.textContaining('to see all 150,000 gaussians'), findsOneWidget);
+    // The headset shows its copy whole by default: no word of Large splats
+    expect(find.textContaining("headset's settings"), findsNothing);
     await tester.tap(find.byKey(const Key('ai_job_splat_headset_close')));
     await tester.pumpAndSettle();
 

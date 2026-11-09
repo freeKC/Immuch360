@@ -104,7 +104,7 @@ internal object SplatTexts {
     }
   }
 
-  /** "Reduced to 50,000 of 452,451 gaussians" */
+  /** "Reduced to 300,000 of 452,451 gaussians" */
   fun reducedLine(labels: Map<String, String>, kept: Int, total: Long, locale: Locale = Locale.getDefault()): String =
     label(labels, LABEL_REDUCED).replace(KEPT, number(kept.toLong(), locale)).replace(TOTAL, number(total, locale))
 

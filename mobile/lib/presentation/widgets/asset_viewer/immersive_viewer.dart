@@ -75,6 +75,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.pag
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
@@ -280,11 +281,14 @@ Future<bool> showImmersiveRequest(
 // Decoded width of a raw photo before it is stitched: one pixel under the largest texture, as for the panorama viewer
 const _rawPhotoDecodeWidth = dualFisheyeMaxOutputWidth - 1;
 
-/// The image of a photo on the device for the stitcher: [file] decoded at most [maxWidth] pixels wide
+/// The image of a photo on the device for the stitcher: [file] decoded at most [maxWidth] pixels wide, by the engine
+/// for its own formats (a .insp is a JPEG), by the native decoder of Android for the others (see decodeEncodedFile)
 Future<ui.Image> decodeImageFile(File file, {int maxWidth = _rawPhotoDecodeWidth}) async {
-  final buffer = await ui.ImmutableBuffer.fromFilePath(file.path);
-  final codec = await ui.instantiateImageCodecWithSize(
-    buffer,
+  final codec = await decodeEncodedFile(
+    file.path,
+    maxWidth: maxWidth,
+    maxHeight: 0,
+    source: 'rawStitchFile',
     getTargetSize: (width, height) => width > maxWidth
         ? ui.TargetImageSize(width: maxWidth, height: math.max(1, (height * maxWidth / width).round()))
         : ui.TargetImageSize(width: width, height: height),
@@ -455,11 +459,11 @@ class RawImmersiveMedia {
       );
     }
     final calibration = await calibrations.forReader(key, read: read, fileSize: entry.size, isPhoto: true);
-    final image = ResizeImage(
-      NetworkImage(url.toString()),
-      width: _rawPhotoDecodeWidth,
-      height: _rawPhotoDecodeWidth ~/ 2,
-      policy: ResizeImagePolicy.fit,
+    final image = GuardedNetworkImage(
+      url.toString(),
+      source: 'rawStitch',
+      maxWidth: _rawPhotoDecodeWidth,
+      maxHeight: _rawPhotoDecodeWidth ~/ 2,
     );
     final photo = await photoUrl('$key:${calibration.source.name}', calibration, () => loadImage(image));
     return ImmersiveRequest(url: photo, isVideo: false, title: entry.name, view: raw360SphereView);

@@ -136,5 +136,10 @@ int splatSpzBytesOf(SplatQuality quality, SplatSubject subject) =>
 int splatPlyBytesOf(SplatQuality quality, SplatSubject subject) =>
     splatSceneGaussiansOf(quality, subject) * SplatV1.plyBytesPerGaussian;
 
-/// The size of the copy for the headset: 150 000 gaussians at most
+/// The size of the copy for the headset of Detailed and Maximum: [SplatV1.headsetGaussians] at most (300 000)
 const splatHeadsetCopyBytes = SplatV1.headsetGaussians * SplatV1.spzBytesPerGaussian;
+
+/// The most gaussians the headset gets of a scene of [quality]: the scene of Headset itself, trained to
+/// [SplatV1.maxGaussians] at most, or the copy for the headset of Detailed and Maximum, [SplatV1.headsetGaussians]
+int splatHeadsetGaussiansOf(SplatQuality quality) =>
+    quality.hasHeadsetCopy ? SplatV1.headsetGaussians : SplatV1.maxGaussians;

@@ -38,6 +38,7 @@ the gate is per desktop and is noted.
 | `lib/domain/services/background_worker.service.dart:375` | Android background engine | right: idem |
 | `lib/domain/services/background_worker.service.dart:381` | Android background engine | right: idem |
 | `lib/domain/services/device_permission.service.dart:17` | iOS photos permission, else the Android version | wired (G1): the computers ask .photos of DesktopPermissionRepository; LIB may answer denied until a folder is chosen |
+| `lib/domain/services/encoded_image_probe.dart:258` | Android only: the engine gets the formats of its own codecs, the others go to the native decoder at a bounded size or are refused, because the engine of Android decodes them through FlutterJNI.decodeImage at full size and aborts on an OutOfMemoryError (fix-crash-image-decode, 8 November 2026) | right: the engines of the computers have no such fallback; every buffer goes to the engine there, as before, and NativeImageDecodeApi is never called |
 | `lib/domain/services/hash.service.dart:61` | Android trashed assets | right: no trash on the computers |
 | `lib/domain/services/local_sync.service.dart:48` | Android media management | right |
 | `lib/domain/services/local_sync.service.dart:83` | Android full album sync (deletions not detected natively) | iOS like path on the computers: LIB must report removed folders in getMediaChanges, or ask for this branch |
@@ -137,8 +138,6 @@ the gate is per desktop and is noted.
 | `lib/utils/migration.dart:60` | Android date migration | right |
 | `lib/widgets/asset_viewer/detail_panel/exif_map.dart:48` | Android map link | hidden: no map on the computers (G1) |
 | `lib/widgets/asset_viewer/detail_panel/exif_map.dart:57` | iOS map link | hidden |
-| `lib/widgets/common/app_bar_dialog/server_update_notification.dart:30` | App Store link, else Play, else the release | right: the latest release on the computers until the desktop update check (phase 4) |
-| `lib/widgets/common/app_bar_dialog/server_update_notification.dart:32` | idem | right |
 | `lib/widgets/common/mesmerizing_sliver_app_bar.dart:55` | iOS back icon | right |
 | `lib/widgets/common/person_sliver_app_bar.dart:79` | iOS back icon | right |
 | `lib/widgets/common/remote_album_sliver_app_bar.dart:74` | iOS back icon | right |
@@ -187,3 +186,7 @@ or `deviceFeaturesProvider` so that the phones run exactly as before:
 | `lib/services/immich_logger.service.dart`, `lib/pages/common/app_log.page.dart` | "Save logs to a file"; file names without colons |
 | `lib/utils/action_button.utils.dart` | "Delete from device" not offered |
 | `lib/routing/router.dart` | `FoldersRoute`, registered on the computers only so that the phone builds leave out the folders page and the library behind it |
+| `lib/presentation/widgets/timeline/fixed/segment.model.dart`, `lib/presentation/widgets/timeline/timeline.widget.dart` | the selection by keyboard and mouse (`lib/desktop/selection`): Control, Shift and the clicks while selecting go to `desktopTimelineClick`, a long press anchors the next Shift click, a right click on a tile opens the menu of the selection (`withDesktopTimelineTile`), the grid outside the remote control layout in `withDesktopTimelineSelection` for Control A and Escape |
+| `lib/presentation/widgets/timeline/multi_select_status_button.widget.dart` | "12 selected" instead of the bare count, with the keys and clicks of a selection as its hint |
+| `lib/presentation/pages/network/network_browser.page.dart` | the same on the photos and videos of a share folder (`withDesktopNetworkSelection`, `desktopNetworkClick`, `desktopNetworkAnchor`, `withDesktopNetworkTile`), the hint on the count |
+| `lib/presentation/widgets/bottom_sheet/general_bottom_sheet.widget.dart`, `lib/presentation/widgets/bottom_sheet/local_album_bottom_sheet.widget.dart` | `withDesktopSelectionActions`: "Upload to Immich" first, "Make 3D (AI)" then "Make a splat scene (AI)" added last |
