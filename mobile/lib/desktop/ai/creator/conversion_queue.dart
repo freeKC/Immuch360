@@ -759,7 +759,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       tools = ref.read(conversionToolsProvider);
     } catch (error, stack) {
       _log.severe('The tools of the conversions are missing', error, stack);
-      _end(id, ImmersiveErrorCode.modelFailed, '$error');
+      _end(id, ImmersiveErrorCode.modelFailed, '$error', null, true);
       return;
     }
     final kindEngine = tools.engineFor(job.kind);
@@ -1006,7 +1006,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _end(id, error.code, error.message);
     } catch (error, stack) {
       _log.warning('Conversion $id failed', error, stack);
-      _end(id, failure, '$error');
+      _end(id, failure, '$error', null, true);
     } finally {
       for (final partPath in [part, companion, headsetCopy]) {
         if (partPath == null) {
@@ -1406,11 +1406,19 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// Ends a job that made no file: cancelled, or failed with [code]; a disk full pauses the queue
-  void _end(String id, ImmersiveErrorCode code, [String? message, String? keptFolder]) {
+  /// Ends a job that made no file: cancelled, or failed with [code]; a disk full pauses the queue. A failure writes one
+  /// warning (since release 44: an engine tells its failures in its result, which nothing wrote before): the job, its
+  /// kind, its code and the first line of [message], the engine of a panorama writing the whole message with the end of
+  /// sd-cli's output; none when the caller [logged] it already, with its stack
+  void _end(String id, ImmersiveErrorCode code, [String? message, String? keptFolder, bool logged = false]) {
     if (code == ImmersiveErrorCode.cancelled) {
       _set(id, (job) => job.copyWith(state: ConversionState.cancelled, remaining: () => null));
       return;
+    }
+    if (!logged) {
+      final kind = (_disposed ? null : state.byId(id))?.kind.name ?? 'unknown kind';
+      final said = message == null ? '' : ': ${_firstLineOf(message)}';
+      _log.warning('Conversion $id ($kind) failed: ${code.name}$said');
     }
     _set(
       id,
@@ -1470,6 +1478,13 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
     state = state.copyWith(jobs: [for (final job in state.jobs) job.id == id ? change(job) : job]);
   }
+}
+
+/// The first line of [message], at most 300 characters: the rest of a failure of sd-cli is the end of its output, which
+/// the engine of the panoramas writes once
+String _firstLineOf(String message) {
+  final line = message.split('\n').first.trim();
+  return line.length > 300 ? '${line.substring(0, 300)}...' : line;
 }
 
 /// The fields of the original with the Software of the app: the file is made by it, whatever made the original

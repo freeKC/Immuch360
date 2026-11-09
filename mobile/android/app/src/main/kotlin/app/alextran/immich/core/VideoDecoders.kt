@@ -82,6 +82,13 @@ object VideoDecoders {
   const val LABEL_SWITCHED = "sourceSwitched"
 
   /**
+   * Key of the message shown when the player switches to the transcoded stream because the decoder refused the
+   * original, or gave no picture for it, while it played, although the decoder list said it decodes it: the same
+   * "{codec}", "{width}" and "{height}", filled in from the original the decoder refused.
+   */
+  const val LABEL_SWITCHED_AFTER_REFUSAL = "sourceSwitchedAfterRefusal"
+
+  /**
    * Keys of the other messages about the decoders, with the same "{codec}", "{width}" and "{height}": the original is
    * beyond what the device decodes and there is no transcoded stream to switch to ([LABEL_UNDECODABLE]), a decoder
    * refused the video ([LABEL_ERROR_DECODER]), a decoder took the video but gave no picture ([LABEL_ERROR_NO_FRAME]).

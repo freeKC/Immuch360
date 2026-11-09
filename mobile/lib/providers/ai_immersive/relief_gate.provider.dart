@@ -13,14 +13,12 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart' show appFlavor;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('ReliefGate');
-
-/// The flavour of the headset APK, the only one that carries LiteRT
-const questFlavor = 'quest';
 
 /// Build.DEVICE of the headsets the relief was made for: Quest 3 and Quest 3S
 const reliefQuestHeadsets = {'eureka', 'panther'};
@@ -103,7 +101,7 @@ ReliefGate reliefGateOf({
   if (!horizonOs || !enabled) {
     return ReliefGate.hidden;
   }
-  if (flavor != questFlavor) {
+  if (flavor != kQuestFlavor) {
     return const ReliefGate.refused(ReliefRefusal.build);
   }
   if (facts == null) {
@@ -143,7 +141,7 @@ final reliefGateProvider = Provider.autoDispose<ReliefGate>((ref) {
     flavor: flavor,
     facts: facts,
   );
-  if (!horizonOs || !config.enabled || flavor != questFlavor) {
+  if (!horizonOs || !config.enabled || flavor != kQuestFlavor) {
     return gate(null);
   }
   final facts = ref.watch(reliefDeviceFactsProvider);

@@ -86,7 +86,6 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_parts.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
-import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
@@ -107,7 +106,6 @@ import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.da
 import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart' show isSideBySideFrame;
 import 'package:immich_mobile/entities/store.entity.dart';
-import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
@@ -988,15 +986,6 @@ class DesktopMakeImmersiveButton extends ConsumerWidget {
     return refusal == null ? button : Tooltip(key: const Key('ai_make_3d_refused'), message: refusal, child: button);
   }
 }
-
-/// The [actions] of the bottom sheet of a selection, with "Make 3D (AI)" and "Make a splat scene (AI)" on a computer
-List<Widget> withDesktopSelectionActions(List<Widget> actions) => [
-  ...actions,
-  if (CurrentPlatform.isDesktop) ...[
-    const DesktopMakeImmersiveButton(source: ActionSource.timeline),
-    const DesktopMakeSplatButton(source: ActionSource.timeline),
-  ],
-];
 
 /// Opens the conversion dialog for [assets], on the type [kind] when it takes one of them ("Make the 3D version" of a
 /// panorama); once photos were handed to the queue, the panel of the conversions shows and the selection ends

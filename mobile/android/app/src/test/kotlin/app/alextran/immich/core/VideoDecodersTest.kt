@@ -188,6 +188,21 @@ class VideoDecodersTest {
   }
 
   @Test
+  fun `the label of a switch after a refusal of the decoder gets the codec and the size of the original`() {
+    // The key Flutter sends it under (videoSourceLabels) and the original a TV's decoder refused on 8 November 2026
+    assertEquals("sourceSwitchedAfterRefusal", VideoDecoders.LABEL_SWITCHED_AFTER_REFUSAL)
+    val labels =
+      mapOf(
+        VideoDecoders.LABEL_SWITCHED_AFTER_REFUSAL to
+          "Playing the server's copy: the original ({codec} {width} x {height}) was refused by this device's decoder"
+      )
+    assertEquals(
+      "Playing the server's copy: the original (HEVC 5760 x 2880) was refused by this device's decoder",
+      VideoDecoders.decoderLabel(labels, VideoDecoders.LABEL_SWITCHED_AFTER_REFUSAL, "HEVC", 5760, 2880),
+    )
+  }
+
+  @Test
   fun `a label without placeholders shows as it is`() {
     val labels = mapOf(VideoDecoders.LABEL_SWITCHED to "Playing the transcoded stream")
     assertEquals(

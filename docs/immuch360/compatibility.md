@@ -295,7 +295,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 - SMB 2 and 3 only, no SMB 1: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - WebDAV: Basic authentication only, no Digest yet; a self signed HTTPS certificate must be installed on the device: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - Finding servers: the local /24 network only, the local network permission on iOS, and on iPhone and iPad unicast requests only, which some servers do not answer (minidlna on Linux): [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
-- DLNA: a server that only offers a converted copy gives that copy; a folder lists 20,000 entries at most: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
+- DLNA: a server that only offers a converted copy gives that copy; a folder lists 20,000 entries at most; only the files the server indexed show, which usually leaves out the raw files of 360° cameras and the splat files: [DLNA media servers](user-guide.md#dlna-media-servers).
 - Thumbnails: a photo thumbnail decodes the whole file, and photos over 30 MB get none: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - Players: no audio track choice in the flat player, no swiping from one file of a folder to the next on a phone, and the 3D or 180° choice made on a network file is not remembered: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - Uploads run only while the app is open, and a file the server already has is sent in full before the server reports it as a duplicate: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
@@ -403,7 +403,7 @@ Every limit the [user guide](user-guide.md) gives, in one list. Each item links 
 - The decoders of a real TV are not measured yet, and a video beyond them does not play: from build 27 the app says why instead of loading forever: [When a video does not play](user-guide.md#when-a-video-does-not-play).
 - From build 27, Left and Right go to the next item while a video plays and OK shows the controls first, where Google's quality guidelines for TV apps ask that they seek and pause: [Known issues](known-issues.md#android-tv-and-google-tv).
 - Tried on the Google TV emulator (builds 21, 22, 26 and 27, without the Plex and Tapo pages, and one fix of build 23); build 25 or 26 ran once on a real TV, build 27 not yet: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
-- Google Play on TVs waits for Google's review; until then, the APK: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
+- Google Play offers the app on Android TV and Google TV; the APK otherwise: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 - Fire TV is not tested, and there is no Apple TV version: [Watch on your TV](user-guide.md#watch-on-your-tv-android-tv-and-google-tv).
 
 ### LG webOS TVs

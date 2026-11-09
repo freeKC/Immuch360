@@ -9,8 +9,10 @@ import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/video_details.dart';
+import 'package:immich_mobile/domain/services/video_runtime_fallback.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -39,7 +41,9 @@ String serverTranscodedVideoUrl(String videoId) =>
 /// plays, that the server's copy is beyond the decoders (the immersive viewer says it when it has to download the
 /// original rather than stream the copy); null otherwise. [kind] is the file [url] is, and [hasCopy] whether the
 /// server has a copy of its own to choose (false when its playback stream is the original itself), null when the choice
-/// did not need to know (see [serverHasCopyProvider]).
+/// did not need to know (see [serverHasCopyProvider]). [afterRefusal] is what [runtimeFallback] decided when the
+/// device's decoder refused the file chosen first while it played: the other file, or why there is none (with the
+/// server's copy beyond the decoders, for the failure panel); null without such a refusal.
 class ChosenVideoSource {
   const ChosenVideoSource({
     required this.url,
@@ -49,6 +53,7 @@ class ChosenVideoSource {
     this.copyBeyondDecoders,
     this.kind = VideoSourceKind.original,
     this.hasCopy,
+    this.afterRefusal,
   });
 
   final String url;
@@ -58,11 +63,12 @@ class ChosenVideoSource {
   final VideoSourceNotice? copyBeyondDecoders;
   final VideoSourceKind kind;
   final bool? hasCopy;
+  final RuntimeFallback? afterRefusal;
 
   @override
   String toString() =>
       'ChosenVideoSource(url: $url, fallbackUrl: $fallbackUrl, notice: $notice, refusal: $refusal, '
-      'copyBeyondDecoders: $copyBeyondDecoders)';
+      'copyBeyondDecoders: $copyBeyondDecoders${afterRefusal != null ? ', after a refusal: $afterRefusal' : ''})';
 }
 
 /// Asks the native decoder check whether the device decodes the video a probe describes, and keeps the answers in
@@ -255,6 +261,11 @@ class VideoSourceService {
   /// copy is looked at even when the original plays, never to be a fallback that does not decode. [width] x [height]
   /// is the frame of the video as the server records it: within [smallLongSide] x [smallShortSide], the copy is not
   /// looked at, every decoder taking it.
+  ///
+  /// [refusedAtRuntime]: the files of this video the device's decoder refused while they played, in this session (see
+  /// [RuntimeVideoRefusals]). When the file chosen is one of them, [runtimeFallback] decides whether the other one
+  /// plays in its place, with a notice; [originalStreams] tells whether the server streams the original, which a
+  /// refused copy needs before the original takes its place. Callers that give neither choose as before.
   Future<ChosenVideoSource> serverSource({
     required String videoId,
     required VideoSourcePolicy policy,
@@ -264,14 +275,20 @@ class VideoSourceService {
     bool wantsFallback = false,
     int? width,
     int? height,
+    Map<VideoSourceKind, NativePlaybackError> refusedAtRuntime = const {},
+    Future<bool> Function()? originalStreams,
   }) async {
     var original = VideoCandidate.of(probe, policy.readsTheFile ? await verdict(probe) : null);
     final forcedKind = forced ?? (policy == VideoSourcePolicy.alwaysOriginal ? VideoSourceKind.original : null);
+    // A file the decoder refused while it played: whether the server has a copy of its own, and what it is, decide
+    // whether the other file plays (see runtimeFallback). A forced file plays whatever happens
+    final afterRuntimeRefusal = forcedKind == null && refusedAtRuntime.isNotEmpty;
     // The copy matters when it may play or be the fallback; under the original forced it plays no part
     final copyMatters = switch (forcedKind) {
       VideoSourceKind.original => false,
       VideoSourceKind.transcoded => true,
-      null => policy == VideoSourcePolicy.alwaysTranscoded || wantsFallback || original.undecodable,
+      null =>
+        policy == VideoSourcePolicy.alwaysTranscoded || wantsFallback || original.undecodable || afterRuntimeRefusal,
     };
     final small =
         width != null &&
@@ -279,16 +296,40 @@ class VideoSourceService {
         math.max(width, height) <= smallLongSide &&
         math.min(width, height) <= smallShortSide;
     VideoCandidate? copy = VideoCandidate.unknown;
-    final copyAsked = copyMatters && !(small && !original.undecodable);
+    final copyAsked = copyMatters && (afterRuntimeRefusal || !(small && !original.undecodable));
     if (copyAsked) {
       copy = await transcodeIsOriginal(videoId) ? null : await _copyCandidate(videoId);
     }
-    // The original read late, under "Always the transcoded stream", once the choice depends on it
-    if (original.verdict == null && forcedKind == null && (copy == null || copy.undecodable)) {
+    // The original read late, under "Always the transcoded stream", once the choice depends on it: the copy does not
+    // decode, or the decoder refused it while it played
+    final copyRefused = afterRuntimeRefusal && refusedAtRuntime.containsKey(VideoSourceKind.transcoded);
+    if (original.verdict == null && forcedKind == null && (copy == null || copy.undecodable || copyRefused)) {
       final late = probe ?? await probeOriginal?.call();
       original = VideoCandidate.of(late, await verdict(late));
     }
-    final choice = chooseVideoSource(policy: policy, original: original, copy: copy, forced: forced);
+    var choice = chooseVideoSource(policy: policy, original: original, copy: copy, forced: forced);
+    // The file chosen was refused while it played: the other one, when it may do better
+    final refusedError = refusedAtRuntime[choice.kind];
+    RuntimeFallback? afterRefusal;
+    if (refusedError != null && choice.refusal == null) {
+      final originalMayPlay = choice.kind == VideoSourceKind.transcoded && original.verdict?.supported == true;
+      final streams = originalStreams;
+      afterRefusal = runtimeFallback(
+        refused: choice.kind,
+        error: refusedError,
+        original: original,
+        copy: copy,
+        forced: forcedKind != null,
+        refusedBefore: refusedAtRuntime.keys.toSet(),
+        originalStreams: !originalMayPlay || streams == null || await streams(),
+      );
+      final next = afterRefusal.next;
+      // No fallback for the native player: the other file is the fallback already
+      if (next != null) {
+        choice = VideoSourceChoice(next, notice: afterRefusal.notice);
+      }
+      _log.info('$videoId: ${choice.kind == next ? 'switched' : 'kept'} after a refusal of the decoder, $afterRefusal');
+    }
     if (original.verdict != null || copy?.verdict != null) {
       _log.info(
         '$videoId under $policy${forced != null ? ', $forced forced' : ''}: $choice; original $original, copy $copy',
@@ -307,6 +348,7 @@ class VideoSourceService {
       kind: choice.kind,
       // Not asked when the choice did not depend on it: what the fallback asked, if anything, else unknown
       hasCopy: copyAsked ? copy != null : _knownHasCopy(videoId),
+      afterRefusal: afterRefusal,
     );
   }
 
@@ -389,6 +431,37 @@ final chosenVideoSourcesProvider = StateNotifierProvider<ChosenVideoSources, Map
   (_) => ChosenVideoSources(),
 );
 
+/// The files of each server video that the device's decoder refused while they played (a decoder or noFrame token of
+/// the flat player, see isDecoderRefusal), by video id, for as long as the app runs: the in-app player plays the
+/// server's other file at once the next time (see runtimeFallback). Kept per video, never per format: a decoder that
+/// fails to start for lack of resources (a TV whose only hardware instance another player still holds) reports the
+/// same error, and would send every video of that format to the copy until the app closes.
+class RuntimeVideoRefusals extends StateNotifier<Map<String, Map<VideoSourceKind, NativePlaybackError>>> {
+  RuntimeVideoRefusals() : super(const {});
+
+  /// Past this many videos, the ones refused first are forgotten
+  static const maxEntries = 100;
+
+  /// The files of [videoId] refused so far, with what the decoder said of each; empty when none was
+  Map<VideoSourceKind, NativePlaybackError> of(String videoId) => state[videoId] ?? const {};
+
+  /// The decoder refused the file [kind] of [videoId] while it played ([error])
+  void record(String videoId, VideoSourceKind kind, NativePlaybackError error) {
+    final next = {...state}
+      ..remove(videoId)
+      ..[videoId] = {...of(videoId), kind: error};
+    while (next.length > maxEntries) {
+      next.remove(next.keys.first);
+    }
+    state = next;
+  }
+}
+
+final runtimeVideoRefusalsProvider =
+    StateNotifierProvider<RuntimeVideoRefusals, Map<String, Map<VideoSourceKind, NativePlaybackError>>>(
+      (_) => RuntimeVideoRefusals(),
+    );
+
 /// What the details of a video tell about its file: what its probe found, whether the device decodes it, and its bit
 /// rate, each null when unknown
 typedef VideoDecodeDetails = ({SphericalProbe? probe, DecodeVerdict? verdict, VideoBitRate? bitRate});
@@ -434,11 +507,17 @@ final videoDecodersProvider = FutureProvider.autoDispose<List<DecoderInfo>>(
 
 /// Translated messages of the native 360° and Spatial 2.5D players about the decoders, under the keys they read
 /// (VideoDecoders.LABEL_SWITCHED and the others on Android): the switch to the transcoded stream when the device cannot
-/// decode the original, the original that plays anyway with nothing to switch to, and the errors of a decoder that
-/// refused the video or gave no picture, and of a video that does not load. "{codec}", "{width}" and "{height}" stay
-/// as they are: the players fill them in from the track they could not decode.
+/// decode the original, the same switch after the decoder refused the original while it played, the original that
+/// plays anyway with nothing to switch to, and the errors of a decoder that refused the video or gave no picture, and
+/// of a video that does not load. "{codec}", "{width}" and "{height}" stay as they are: the players fill them in from
+/// the track they could not decode.
 Map<String, String> videoSourceLabels(Translations t) => {
   'sourceSwitched': t.video_source_switched(codec: '{codec}', width: '{width}', height: '{height}'),
+  'sourceSwitchedAfterRefusal': t.video_source_copy_after_decoder(
+    codec: '{codec}',
+    width: '{width}',
+    height: '{height}',
+  ),
   'sourceUndecodable': t.video_source_undecodable(codec: '{codec}', width: '{width}', height: '{height}'),
   'errorDecoder': t.video_error_decoder(codec: '{codec}', width: '{width}', height: '{height}'),
   'errorNoFrame': t.video_error_no_frame(codec: '{codec}', width: '{width}', height: '{height}'),
@@ -468,6 +547,12 @@ extension VideoSourceNoticeMessage on VideoSourceNotice {
       VideoSourceNoticeKind.originalOverCopy => t.video_source_original_plays(codec: codec, width: w, height: h),
       VideoSourceNoticeKind.copyForced => t.video_source_copy_forced(codec: codec, width: w, height: h),
       VideoSourceNoticeKind.beyondDecoders => t.video_source_undecodable(codec: codec, width: w, height: h),
+      VideoSourceNoticeKind.copyAfterRefusal => t.video_source_copy_after_decoder(codec: codec, width: w, height: h),
+      VideoSourceNoticeKind.originalAfterRefusal => t.video_source_original_after_decoder(
+        codec: codec,
+        width: w,
+        height: h,
+      ),
     };
   }
 }

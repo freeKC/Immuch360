@@ -1,7 +1,10 @@
 // The runner of sd-cli (lot P2) with the fake runner of C0: its frozen arguments, what it reads of the lines M3 saw
 // (and the lines of the auto-fit plan of the pinned build, lot 13c), a graph cut into segments that goes on, the named
-// failures, the stop, the silence of 180 s on a fake clock, and the checks of the image it wrote. The same runner
-// against a real child process, the compiled fake sd-cli, is sdcpp_fake_cli_test.dart.
+// failures, the stop, the silence of 180 s on a fake clock, and the checks of the image it wrote. Since release 44, the
+// card it runs on: the list sd-cli prints at its start (the lines of the laptop of the owner, 8 November 2026), the
+// verdict on it, a run started again on the index sd-cli gives the chosen card, shared with the upscaler of the job and
+// kept for the session, and the refusals. The same runner against a real child process, the compiled fake sd-cli, is
+// sdcpp_fake_cli_test.dart.
 
 import 'dart:async';
 import 'dart:io';
@@ -65,12 +68,76 @@ const _recovered =
     '[W] model manager cannot make enough memory available on Vulkan1: need 687.21 MB device / 2560.04 MB budget, '
     'available 4290.52 MB device / 2511.54 MB budget --- model_manager.cpp:2018';
 
+/// The list sd-cli printed on the laptop of the owner before it loaded anything (panorama-vulkan-2026-11-08,
+/// sd-cli-2.log, lines 2 to 4, given the --backend diffusion=Vulkan0 of desktop build 23): the Intel chip first, where
+/// the probe of the app put the RTX 4060 first
+const _listedIntel =
+    'ggml_vulkan: 0 = Intel(R) RaptorLake-S Mobile Graphics Controller (Intel Corporation) | uma: 1 | fp16: 1 '
+    '| bf16: 0 | fp4: 0 | warp size: 32 | shared memory: 32768 | int dot: 1 | matrix cores: none';
+const _listedRtx =
+    'ggml_vulkan: 1 = NVIDIA GeForce RTX 4060 Laptop GPU (NVIDIA) | uma: 0 | fp16: 1 | bf16: 1 | fp4: 0 '
+    '| warp size: 32 | shared memory: 49152 | int dot: 1 | matrix cores: NV_coopmat2';
+
+/// The list of sd-cli-4.log, with the workaround of the owner (GGML_VK_VISIBLE_DEVICES=1): the RTX 4060 alone, as 0
+const _listedRtxAlone =
+    'ggml_vulkan: 0 = NVIDIA GeForce RTX 4060 Laptop GPU (NVIDIA) | uma: 0 | fp16: 1 | bf16: 1 | fp4: 0 '
+    '| warp size: 32 | shared memory: 49152 | int dot: 1 | matrix cores: NV_coopmat2';
+
+/// The line of the RTX 4060 alone in the auto-fit plan of that run
+const _planRtxAlone =
+    '[I]     Vulkan0      NVIDIA GeForce RTX 4060 Laptop GPU free   7188 MiB, budget   6674 MiB '
+    '--- backend_fit.cpp:328';
+
+/// The cards the gate chooses on that laptop: the RTX 4060, or the Intel chip when "Try on integrated graphics" is on
+const _rtx = SdCppCard(name: 'NVIDIA GeForce RTX 4060 Laptop GPU', integrated: false);
+const _intel = SdCppCard(name: 'Intel(R) RaptorLake-S Mobile Graphics Controller', integrated: true);
+
+/// A device line of the list for the cases no PC printed
+String _line(int index, String name, {bool uma = false, String driver = 'NVIDIA'}) {
+  return 'ggml_vulkan: $index = $name ($driver) | uma: ${uma ? 1 : 0} | fp16: 1 | bf16: 1 | warp size: 32';
+}
+
+/// The list as sd-cli prints it at its start: its count, then its devices, on the error output (ggml's default logger)
+List<(String, {bool isError})> _listing(List<String> devices) => [
+  ('ggml_vulkan: Found ${devices.length} Vulkan devices:', isError: true),
+  for (final device in devices) (device, isError: true),
+];
+
+/// A device of the list as the tests write it, "index|name|driver|uma"; null for a line that is none
+String? _deviceOf(String line) {
+  final device = ggmlVulkanDeviceOf(line);
+  return device == null ? null : '${device.index}|${device.name}|${device.driver}|${device.uma}';
+}
+
+/// A card of the auto-fit plan as the tests write it, "device|name|free MiB|budget MiB"; null for a line that is none
+String? _planOf(String line) {
+  final plan = sdCppPlanCardOf(line);
+  return plan == null ? null : '${plan.device}|${plan.name}|${plan.free >> 20}|${plan.budget >> 20}';
+}
+
+/// The verdict on the device lines [lines] for [card], sd-cli given the index [given]
+SdCppDeviceVerdict _verdictOf(List<String> lines, SdCppCard card, int given, {String? visibleDevices}) {
+  final listed = [for (final line in lines) ggmlVulkanDeviceOf(line)!];
+  return sdCppDeviceVerdict(listed, card, given, visibleDevices: visibleDevices);
+}
+
+/// A verdict as the tests write it: "run 1", "restart 0", "refuse", and " by kind" when no name matched
+String _said(SdCppDeviceVerdict verdict) {
+  final device = verdict.device;
+  return '${verdict.action.name}${device == null ? '' : ' ${device.index}'}${verdict.byKind ? ' by kind' : ''}';
+}
+
+/// The --backend a launch was given
+String _backendOf(ProcessLaunch launch) => launch.arguments[launch.arguments.indexOf('--backend') + 1];
+
 List<(String, {bool isError})> _generation({
   int steps = 20,
+  List<String> listed = const [],
   List<String> plan = const [],
   List<String> beforeSteps = const [_oneSegment],
 }) => [
   (_version, isError: false),
+  if (listed.isNotEmpty) ..._listing(listed),
   for (final line in plan) (line, isError: false),
   ('  |##################################################| 108/108 - 325.06MB/s', isError: false),
   ('  |=>                                                |  1/40 -   3.40it/s', isError: false),
@@ -157,6 +224,7 @@ void main() {
   setUp(() {
     folder = Directory.systemTemp.createTempSync('sdcpp-runner-');
     cancel = NativeCancelFlag();
+    SdCppDevice.forgetLearned();
   });
 
   tearDown(() {
@@ -177,6 +245,29 @@ void main() {
     threads: 30,
     stallTimeout: stall,
   );
+
+  /// The laptop of the owner: sd-cli given [device] for [card]
+  SdCppSettings laptop({String device = 'Vulkan0', SdCppCard card = _rtx}) {
+    final base = settings();
+    return SdCppSettings(sdCli: base.sdCli, models: base.models, device: device, card: card, threads: 30);
+  }
+
+  /// The messages of the logger [name] at [level] and above, from now to the end of the test
+  List<String> recorded(String name, {Level level = Level.ALL}) {
+    final heard = <String>[];
+    final before = Logger.root.level;
+    Logger.root.level = Level.ALL;
+    final listening = Logger.root.onRecord.listen((record) {
+      if (record.loggerName == name && record.level >= level) {
+        heard.add(record.message);
+      }
+    });
+    addTearDown(() async {
+      Logger.root.level = before;
+      await listening.cancel();
+    });
+    return heard;
+  }
 
   GeneratorRequest request({int width = 1536, int height = 768, int? graphicsBudget}) => GeneratorRequest(
     controlPath: p.join(folder.path, 'control.png'),
@@ -429,6 +520,325 @@ void main() {
     });
   });
 
+  group('the cards sd-cli lists', () {
+    test('a device: its index, its name with parentheses of its own, its driver, and uma for an integrated chip', () {
+      expect(_deviceOf(_listedIntel), '0|Intel(R) RaptorLake-S Mobile Graphics Controller|Intel Corporation|true');
+      expect(_deviceOf(_listedRtx), '1|NVIDIA GeForce RTX 4060 Laptop GPU|NVIDIA|false');
+      expect(_deviceOf(_listedRtxAlone), '0|NVIDIA GeForce RTX 4060 Laptop GPU|NVIDIA|false');
+      // The one card of the fake sd-cli, and a name of Mesa that carries parentheses of its own
+      expect(
+        _deviceOf('ggml_vulkan: 0 = Fake graphics card (Immuch360) | uma: 0 | fp16: 1 | bf16: 1 | warp size: 32'),
+        '0|Fake graphics card|Immuch360|false',
+      );
+      expect(
+        _deviceOf('ggml_vulkan: 1 = AMD Radeon RX 7600 (RADV NAVI33) (radv) | uma: 0 | fp16: 1 | bf16: 0'),
+        '1|AMD Radeon RX 7600 (RADV NAVI33)|radv|false',
+      );
+      expect(_deviceOf('ggml_vulkan: Found 2 Vulkan devices:'), isNull);
+      expect(_deviceOf(_version), isNull);
+    });
+
+    test('the count before the list: "Found 2" gives 2, "No devices found." 0, any other line none', () {
+      expect(ggmlVulkanCountOf('ggml_vulkan: Found 2 Vulkan devices:'), 2);
+      expect(ggmlVulkanCountOf('ggml_vulkan: Found 1 Vulkan devices:'), 1);
+      expect(ggmlVulkanCountOf('ggml_vulkan: No devices found.'), 0);
+      expect(ggmlVulkanCountOf(_listedRtx), isNull);
+      expect(ggmlVulkanCountOf(_version), isNull);
+    });
+
+    test('a card of the auto-fit plan: its device, its name, its free memory and its budget', () {
+      expect(_planOf(_planIntel), 'Vulkan0|Intel(R) RaptorLake-S Mobile Graphics Controller|7350|3072');
+      expect(_planOf(_planRtx), 'Vulkan1|NVIDIA GeForce RTX 4060 Laptop GPU|7188|3072');
+      // A short name padded to 32 columns, as the pinned build writes it, and a line without a name
+      expect(
+        _planOf('[I]     Vulkan0      Fake graphics card               free   7188 MiB, budget   6676 MiB --- x.cpp:1'),
+        'Vulkan0|Fake graphics card|7188|6676',
+      );
+      expect(_planOf('[I]     Vulkan0      free   7188 MiB, budget   6676 MiB'), 'Vulkan0||7188|6676');
+      expect(_planOf(_planRam), isNull);
+      expect(_planOf('[I] auto-fit plan: --- backend_fit.cpp:323'), isNull);
+      // What the generator reads of its card, as before
+      expect(sdCppCardMemoryOf(_planRtx, 'Vulkan1'), (free: 7188 * 1024 * 1024, budget: 3072 * 1024 * 1024));
+      expect(sdCppCardMemoryOf(_planIntel, 'Vulkan1'), isNull);
+    });
+  });
+
+  group('the verdict on the list', () {
+    test('the laptop of 8 November, the RTX 4060 chosen: given Vulkan0, started again on 1; given Vulkan1, run', () {
+      expect(_said(_verdictOf([_listedIntel, _listedRtx], _rtx, 0)), 'restart 1');
+      expect(_said(_verdictOf([_listedIntel, _listedRtx], _rtx, 1)), 'run 1');
+    });
+
+    test('the workaround of the owner still set, the RTX 4060 alone as 0: given Vulkan1, started again on 0', () {
+      expect(_said(_verdictOf([_listedRtxAlone], _rtx, 1)), 'restart 0');
+      expect(_said(_verdictOf([_listedRtxAlone], _rtx, 0)), 'run 0');
+    });
+
+    test('a dedicated card with only the Intel chip listed: refused, the list and the variable of the user said', () {
+      final refused = _verdictOf([_listedIntel], _rtx, 0, visibleDevices: '0');
+      expect(_said(refused), 'refuse');
+      expect(refused.refusal, contains('NVIDIA GeForce RTX 4060 Laptop GPU'));
+      expect(refused.refusal, contains('0 = Intel(R) RaptorLake-S Mobile Graphics Controller, integrated'));
+      expect(refused.refusal, contains('GGML_VK_VISIBLE_DEVICES=0'));
+      expect(_verdictOf([_listedIntel], _rtx, 0).refusal, isNot(contains('GGML_VK_VISIBLE_DEVICES')));
+    });
+
+    test('the integrated chip allowed by the switch: given Vulkan0, run; given Vulkan1, started again on 0', () {
+      expect(_said(_verdictOf([_listedIntel, _listedRtx], _intel, 0)), 'run 0');
+      expect(_said(_verdictOf([_listedIntel, _listedRtx], _intel, 1)), 'restart 0');
+      // Never the RTX 4060 for the integrated chip
+      expect(_said(_verdictOf([_listedRtxAlone], _intel, 0)), 'refuse');
+    });
+
+    test('two identical dedicated cards: the one given, else the first of them', () {
+      const card = SdCppCard(name: 'NVIDIA GeForce RTX 4090', integrated: false);
+      final twins = [_line(0, card.name), _line(1, card.name)];
+      expect(_said(_verdictOf(twins, card, 1)), 'run 1');
+      expect(_said(_verdictOf(twins, card, 0)), 'run 0');
+      final afterIntel = [
+        _line(0, 'Intel(R) UHD Graphics 770', uma: true, driver: 'Intel Corporation'),
+        _line(1, card.name),
+        _line(2, card.name),
+      ];
+      expect(_said(_verdictOf(afterIntel, card, 0)), 'restart 1');
+      expect(_said(_verdictOf(afterIntel, card, 2)), 'run 2');
+    });
+
+    test('a name that differs in case and spaces only is the same card', () {
+      const spaced = SdCppCard(name: '  nvidia geforce  RTX 4060 laptop gpu ', integrated: false);
+      expect(_said(_verdictOf([_listedIntel, _listedRtx], spaced, 1)), 'run 1');
+      expect(_said(_verdictOf([_listedIntel, _listedRtx], spaced, 0)), 'restart 1');
+    });
+
+    test('no name matching and a single dedicated device listed: taken by its kind, which the log warns of', () {
+      final renamed = [_listedIntel, _line(1, 'NVIDIA GeForce RTX 4060 Laptop')];
+      expect(_said(_verdictOf(renamed, _rtx, 1)), 'run 1 by kind');
+      expect(_said(_verdictOf(renamed, _rtx, 0)), 'restart 1 by kind');
+      // Two dedicated devices and neither name: refused; an integrated chip is never taken by its kind
+      expect(_said(_verdictOf([...renamed, _line(2, 'Another card')], _rtx, 1)), 'refuse');
+      const otherIntel = SdCppCard(name: 'Intel(R) Graphics', integrated: true);
+      expect(_said(_verdictOf([_listedIntel, _listedRtx], otherIntel, 0)), 'refuse');
+    });
+
+    test('an empty list: refused, saying so', () {
+      final refused = _verdictOf(const [], _rtx, 0);
+      expect(_said(refused), 'refuse');
+      expect(refused.refusal, contains('no Vulkan device'));
+    });
+  });
+
+  group('the card a generation runs on', () {
+    // A generation on the laptop of the owner, sd-cli listing the Intel chip first: given Vulkan0, started again on
+    // Vulkan1
+    Future<(SdCppGenerator, FakeProcessRunner, List<GeneratorProgress>)> restarted() async {
+      final runner = FakeProcessRunner([
+        FakeProcessScript(
+          lines: _generation(listed: [_listedIntel, _listedRtx], plan: [_planIntel, _planRtx]),
+        ),
+      ]);
+      final generator = SdCppGenerator(
+        runner: _WritingRunner(runner, image: _varied(16, 8)),
+        settings: laptop(),
+        generatorSha256: '',
+        loraSha256: '',
+        checkImages: false,
+      );
+      final heard = <GeneratorProgress>[];
+      await generator.generate(request(), cancel: cancel, onProgress: heard.add);
+      return (generator, runner, heard);
+    }
+
+    // The failure of a generation on [runner] for the laptop of the owner, null when it made its image
+    Future<BackendException?> failureOf(ProcessRunner runner, {String device = 'Vulkan0'}) async {
+      final generator = SdCppGenerator(
+        runner: runner,
+        settings: laptop(device: device),
+        generatorSha256: '',
+        loraSha256: '',
+        checkImages: false,
+      );
+      try {
+        await generator.generate(request(), cancel: cancel);
+        return null;
+      } on BackendException catch (error) {
+        return error;
+      }
+    }
+
+    test('the Intel chip listed first: stopped before any step, started again on Vulkan1, the image made', () async {
+      final logged = recorded('SdCpp');
+      final (generator, runner, heard) = await restarted();
+
+      expect(runner.launches, hasLength(2));
+      expect(runner.processes.first.killed, isTrue);
+      expect(_backendOf(runner.launches.first), 'diffusion=Vulkan0,vae=Vulkan0,te=CPU');
+      expect(_backendOf(runner.launches.last), 'diffusion=Vulkan1,vae=Vulkan1,te=CPU');
+      expect(heard.map((progress) => progress.step), List.generate(20, (index) => index + 1));
+      expect(File(request().outputPath).existsSync(), isTrue);
+      expect(generator.device.name, 'Vulkan1');
+      expect(generator.argumentsOf(request()), contains('diffusion=Vulkan1,vae=Vulkan1,te=CPU'));
+      // The restart warned of once, the card named once, and the plan of the card it runs on with its name
+      const again = 'sd-cli lists NVIDIA GeForce RTX 4060 Laptop GPU as Vulkan1, not Vulkan0: started again on Vulkan1';
+      expect(logged.where((line) => line.startsWith(again)), hasLength(1));
+      const named =
+          'sd-cli lists the chosen card, NVIDIA GeForce RTX 4060 Laptop GPU, as Vulkan1 (0 = Intel(R) RaptorLake-S '
+          'Mobile Graphics Controller, integrated; 1 = NVIDIA GeForce RTX 4060 Laptop GPU)';
+      expect(logged.where((line) => line == named), hasLength(1));
+      const read = 'sd-cli read 7188 MiB free on Vulkan1 (NVIDIA GeForce RTX 4060 Laptop GPU), budget 3072 MiB';
+      expect(logged, contains(read));
+      // Both runs in the log of the job, each after a line of its own
+      final log = File(p.join(folder.path, 'logs', 'sd-cli.log')).readAsLinesSync();
+      expect(log.where((line) => line.startsWith('===== ')), hasLength(2));
+      expect(log.where((line) => line.contains('sd-cli on Vulkan1, attempt 2: generation, seed 1002')), hasLength(1));
+      expect(log.where((line) => line == _listedRtx), hasLength(2));
+    });
+
+    test('the upscaler of the job starts on that card, and so does the next job of the session', () async {
+      final (generator, _, _) = await restarted();
+      final input = p.join(folder.path, 'wrapped.png');
+      File(input).writeAsBytesSync(img.encodePng(_varied(20, 10)));
+      final upscaleLines = [
+        (_version, isError: false),
+        ..._listing([_listedIntel, _listedRtx]),
+        ('[I] upscaling from (20 x 10) to (80 x 40) --- upscaler.cpp:214', isError: false),
+      ];
+      final upscaling = FakeProcessRunner([FakeProcessScript(lines: upscaleLines)]);
+      final upscaler = SdCppUpscaler(
+        runner: _WritingRunner(upscaling, image: _varied(80, 40)),
+        settings: laptop(),
+        modelSha256: '',
+        device: generator.device,
+      );
+      await upscaler.upscale(
+        UpscaleRequest(inputPath: input, outputPath: p.join(folder.path, 'x4.png'), workFolder: folder.path),
+        cancel: cancel,
+      );
+      expect(upscaling.launches, hasLength(1));
+      expect(_backendOf(upscaling.launches.single), 'Vulkan1');
+
+      // The next job of the session, with the same sd-cli and card: Vulkan1 from the start, run there
+      final next = FakeProcessRunner([
+        FakeProcessScript(
+          lines: _generation(listed: [_listedIntel, _listedRtx], plan: [_planIntel, _planRtx]),
+        ),
+      ]);
+      final again = SdCppGenerator(
+        runner: _WritingRunner(next, image: _varied(16, 8)),
+        settings: laptop(),
+        generatorSha256: '',
+        loraSha256: '',
+        checkImages: false,
+      );
+      expect(again.device.name, 'Vulkan1');
+      await again.generate(request(), cancel: cancel);
+      expect(next.launches, hasLength(1));
+      expect(_backendOf(next.launches.single), 'diffusion=Vulkan1,vae=Vulkan1,te=CPU');
+    });
+
+    test('a list still at odds once started again: gpuUnavailable after two launches, never three', () async {
+      // The order turned between the two runs: the card is never where sd-cli was told to run
+      final turned = [_line(0, _rtx.name), _line(1, _intel.name, uma: true)];
+      final runner = FakeProcessRunner([
+        FakeProcessScript(lines: _generation(listed: [_listedIntel, _listedRtx])),
+        FakeProcessScript(lines: _generation(listed: turned)),
+      ]);
+      final failure = await failureOf(runner);
+      expect(failure?.code, ImmersiveErrorCode.gpuUnavailable);
+      expect(failure?.message, contains('still lists'));
+      expect(runner.launches, hasLength(2));
+      expect(runner.processes.every((process) => process.killed), isTrue);
+    });
+
+    test('a list without the chosen card: gpuUnavailable after one launch, the list in its message', () async {
+      final runner = FakeProcessRunner([
+        FakeProcessScript(lines: _generation(listed: [_listedIntel])),
+      ]);
+      final failure = await failureOf(runner);
+      expect(failure?.code, ImmersiveErrorCode.gpuUnavailable);
+      expect(failure?.message, contains('0 = Intel(R) RaptorLake-S Mobile Graphics Controller, integrated'));
+      expect(runner.launches, hasLength(1));
+      expect(runner.processes.single.killed, isTrue);
+    });
+
+    test('no list at all: one warning, and the run goes on to its image', () async {
+      final warnings = recorded('SdCpp', level: Level.WARNING);
+      final runner = FakeProcessRunner([FakeProcessScript(lines: _generation())]);
+      final heard = <GeneratorProgress>[];
+      final generator = SdCppGenerator(
+        runner: _WritingRunner(runner, image: _varied(16, 8)),
+        settings: laptop(),
+        generatorSha256: '',
+        loraSha256: '',
+        checkImages: false,
+      );
+      await generator.generate(request(), cancel: cancel, onProgress: heard.add);
+      expect(heard, hasLength(20));
+      expect(runner.launches, hasLength(1));
+      expect(warnings, hasLength(1));
+      expect(warnings.single, startsWith('sd-cli did not list its devices: the card could not be checked'));
+    });
+
+    test('no list but the plan of its device naming the chosen card: run on, no warning', () async {
+      final warnings = recorded('SdCpp', level: Level.WARNING);
+      final runner = FakeProcessRunner([
+        FakeProcessScript(lines: _generation(plan: [_planRtxAlone])),
+      ]);
+      expect(await failureOf(_WritingRunner(runner, image: _varied(16, 8))), isNull);
+      expect(runner.launches, hasLength(1));
+      expect(warnings, isEmpty);
+    });
+
+    test('cancelled while the first run is stopped: cancelled, never started again', () async {
+      final runner = FakeProcessRunner([
+        FakeProcessScript(lines: _generation(listed: [_listedIntel, _listedRtx])),
+      ]);
+      final failure = await failureOf(_KillHook(runner, () => cancel.cancel()));
+      expect(failure?.code, ImmersiveErrorCode.cancelled);
+      expect(runner.launches, hasLength(1));
+    });
+
+    test('the plan of its device naming another card than its list: gpuUnavailable', () async {
+      // Listed as Vulkan1, planned as the Intel chip
+      const planned =
+          '[I]     Vulkan1      Intel(R) RaptorLake-S Mobile Graphics Controller free   7350 MiB, budget   6674 MiB '
+          '--- backend_fit.cpp:328';
+      final listed = FakeProcessRunner([
+        FakeProcessScript(
+          lines: _generation(listed: [_listedIntel, _listedRtx], plan: [planned]),
+        ),
+      ]);
+      final failure = await failureOf(listed, device: 'Vulkan1');
+      expect(failure?.code, ImmersiveErrorCode.gpuUnavailable);
+      expect(failure?.message, contains('Intel(R) RaptorLake-S Mobile Graphics Controller'));
+      expect(listed.launches, hasLength(1));
+    });
+
+    test('no list, the plan of its device naming another card: gpuUnavailable', () async {
+      // The plan stands in for the list, and the Intel chip is no RTX 4060
+      final unlisted = FakeProcessRunner([
+        FakeProcessScript(lines: _generation(plan: [_planIntel])),
+      ]);
+      final failure = await failureOf(unlisted);
+      expect(failure?.code, ImmersiveErrorCode.gpuUnavailable);
+      expect(failure?.message, contains('Intel(R) RaptorLake-S Mobile Graphics Controller'));
+      expect(unlisted.launches, hasLength(1));
+    });
+
+    test('the plan read before the list, the list on the other output: the list decides, Vulkan1', () async {
+      final lines = [
+        (_version, isError: false),
+        (_planIntel, isError: false),
+        (_planRtx, isError: false),
+        ..._listing([_listedIntel, _listedRtx]),
+        ..._generation().skip(1),
+      ];
+      final runner = FakeProcessRunner([FakeProcessScript(lines: lines)]);
+      expect(await failureOf(_WritingRunner(runner, image: _varied(16, 8))), isNull);
+      expect(runner.launches, hasLength(2));
+      expect(_backendOf(runner.launches.last), 'diffusion=Vulkan1,vae=Vulkan1,te=CPU');
+    });
+  });
+
   group('a generation', () {
     test('reports the 20 steps of the sampling only, with the pace, and checks nothing when told not to', () async {
       final runner = FakeProcessRunner([FakeProcessScript(lines: _generation())]);
@@ -509,7 +919,10 @@ void main() {
       expect(File(request().outputPath).existsSync(), isTrue);
       const cut =
           'sd-cli runs the generator in 27 segments (7188 MiB free read on Vulkan1, budget 3072 MiB): slower, the same image';
-      expect(logged, ['sd-cli read 7188 MiB free on Vulkan1, budget 3072 MiB', cut]);
+      expect(logged, [
+        'sd-cli read 7188 MiB free on Vulkan1 (NVIDIA GeForce RTX 4060 Laptop GPU), budget 3072 MiB',
+        cut,
+      ]);
     });
 
     test('in one segment, its steps say none', () async {
@@ -950,4 +1363,43 @@ void main() {
 class _FailingRunner implements ProcessRunner {
   @override
   Future<RunningProcess> start(ProcessLaunch launch) async => throw const ProcessException('sd-cli', [], 'not found');
+}
+
+/// The runner [inner], whose processes call [onKill] when they are killed, before they go
+class _KillHook implements ProcessRunner {
+  _KillHook(this.inner, this.onKill);
+
+  final ProcessRunner inner;
+  final void Function() onKill;
+
+  @override
+  Future<RunningProcess> start(ProcessLaunch launch) async => _Killed(await inner.start(launch), onKill);
+}
+
+class _Killed implements RunningProcess {
+  _Killed(this.inner, this.onKill);
+
+  final RunningProcess inner;
+  final void Function() onKill;
+
+  @override
+  int get pid => inner.pid;
+
+  @override
+  IOSink get stdin => inner.stdin;
+
+  @override
+  Stream<String> get stdoutLines => inner.stdoutLines;
+
+  @override
+  Stream<String> get stderrLines => inner.stderrLines;
+
+  @override
+  Future<int> get exitCode => inner.exitCode;
+
+  @override
+  void kill() {
+    onKill();
+    inner.kill();
+  }
 }

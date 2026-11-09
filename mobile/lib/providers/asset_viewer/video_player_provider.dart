@@ -139,7 +139,9 @@ class VideoLinkView {
 }
 
 /// Why a video does not play: its [kind], the native player's own [message] for an error (technical, not translated:
-/// for the logs and as the last resort of the failure panel), and the [refusal] of a video nothing decodes
+/// for the logs and as the last resort of the failure panel), and the [refusal] of a video nothing decodes. For an
+/// error, [refusal] is the server's copy the player could not switch to after the decoder refused the original, the
+/// copy being beyond the decoders too (see runtimeFallback); null otherwise.
 class VideoPlaybackFailure {
   const VideoPlaybackFailure(this.kind, [this.message, this.refusal]);
 
@@ -447,12 +449,13 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     _fail(VideoPlaybackFailure(VideoFailureKind.refused, null, refusal));
   }
 
-  /// The native player reported an error ([message]): the video fails until it is loaded again
-  void onNativeError(String message) {
+  /// The native player reported an error ([message]): the video fails until it is loaded again. [copyRefusal]: the
+  /// server's copy is beyond the decoders too, so the player could not switch to it (the failure panel says so)
+  void onNativeError(String message, {VideoSourceRefusal? copyRefusal}) {
     if (!mounted || _suspended) {
       return;
     }
-    _fail(VideoPlaybackFailure(VideoFailureKind.error, message));
+    _fail(VideoPlaybackFailure(VideoFailureKind.error, message, copyRefusal));
   }
 
   void _onStalled() {

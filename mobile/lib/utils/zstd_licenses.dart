@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
 
 /// The licences of zstd-jni 1.5.7-3 (BSD 2-Clause) and of zstd 1.5.7 built into its native library (its BSD licence),
@@ -15,7 +16,7 @@ const zstdLicenseHeader =
 /// (android/app/build.gradle, questImplementation), so the other builds list nothing; a build without the asset lists
 /// nothing rather than failing the page
 Stream<LicenseEntry> zstdLicenses({String? flavor = appFlavor, AssetBundle? bundle}) async* {
-  if (flavor != 'quest') {
+  if (flavor != kQuestFlavor) {
     return;
   }
   try {

@@ -17,11 +17,20 @@
 //
 // stable-diffusion.cpp must be told which card to run on: left to choose, ggml numbers the cards its own way, and on a
 // laptop the integrated graphics come first (M3: Vulkan0 the Intel, Vulkan1 the RTX 4060). [ggmlVulkanDevices] follows
-// ggml_vk_instance_init of the ggml the pinned stable-diffusion.cpp builds (ggml a5915eb, src/ggml-vulkan/ggml-vulkan.cpp
-// 5300 to 5440) on what the probe read: the dedicated and integrated cards with 16 bit storage buffers in the order of
-// the loader, a card seen twice (same UUID, or same LUID) kept once by the driver ggml prefers, and when there is none,
-// the first card that is not a processor. Setting GGML_VK_VISIBLE_DEVICES to [GpuAdapter.vulkanIndex] instead makes
-// that card Vulkan0 whatever ggml would do: the safer of the two for the launcher of lot P2.
+// ggml_vk_instance_init of the ggml the pinned stable-diffusion.cpp builds (ggml a5915eb,
+// src/ggml-vulkan/ggml-vulkan.cpp 5300 to 5440) on what the probe read: the dedicated and integrated cards with 16 bit
+// storage buffers in the order of the loader, a card seen twice (same UUID, or same LUID) kept once by the driver ggml
+// prefers, and when there is none, the first card that is not a processor. That index is a first guess only: the probe
+// runs in the app's executable, and the order of the loader moves with the process. Since desktop build 21 (98d56e7b4)
+// the Windows runner exports the requests for the high performance card (NvOptimusEnablement,
+// AmdPowerXpressRequestHighPerformance); on the laptop of the owner the probe of the published desktop build 21 put the
+// RTX 4060 at vulkanIndex 0 (5 November 2026), a probe compiled apart, without the export, put the Intel chip there on
+// the same boot (4 November), as the app at 9f9a305 did (3 November), and sd-cli.exe lists the Intel chip as 0 and the
+// RTX 4060 as 1 (8 November): proven. How the export turns the order (NVIDIA's handling of it, or the loader sorting by
+// the preference of DXGI) is likely, not proven. So sd-cli's own list decides at its start, and a run is started again
+// on the index it gives the chosen card (sdcpp_runner.dart, SdCppDevice). GGML_VK_VISIBLE_DEVICES is no way out: each
+// of its numbers is an index into the Vulkan devices of sd-cli's own process (ggml-vulkan.cpp 5304 to 5322), so the
+// probe's index there would name the Intel chip on that laptop; the app never sets it.
 
 import 'dart:async';
 import 'dart:convert';

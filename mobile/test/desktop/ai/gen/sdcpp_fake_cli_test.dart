@@ -4,6 +4,8 @@
 // when IMMUCH360_RUN_LAUNCHER gives it). Progress, a stop within a second, the silence of 180 s on a clock that jumps,
 // a grey image, green left, the memory texts M3 read, a graph cut into segments that runs to its image (with the
 // shortfalls sd-cli recovers from too), the budget it plans with on Linux and on Windows, a failure, and an upscale.
+// Since release 44, the list of the laptop of the owner (IMMUCH360_FAKE_SD_CLI_DEVICES, the Intel chip first): the run
+// started again on the RTX 4060, both runs in the log of the job.
 
 import 'dart:async';
 import 'dart:io';
@@ -23,6 +25,13 @@ import 'package:path/path.dart' as p;
 final _fakeSdCli = Platform.environment['IMMUCH360_FAKE_SD_CLI'];
 final _launcher = Platform.environment['IMMUCH360_RUN_LAUNCHER'];
 
+/// The laptop of the owner as sd-cli.exe lists its cards (panorama-vulkan-2026-11-08, sd-cli-2.log): the Intel chip
+/// first, the RTX 4060 second
+const _laptop =
+    'Intel(R) RaptorLake-S Mobile Graphics Controller (Intel Corporation)|1;'
+    'NVIDIA GeForce RTX 4060 Laptop GPU (NVIDIA)|0';
+const _rtx = SdCppCard(name: 'NVIDIA GeForce RTX 4060 Laptop GPU', integrated: false);
+
 void main() {
   late Directory folder;
   late NativeCancelFlag cancel;
@@ -30,6 +39,7 @@ void main() {
   setUp(() {
     folder = Directory.systemTemp.createTempSync('sdcpp-fake-cli-');
     cancel = NativeCancelFlag();
+    SdCppDevice.forgetLearned();
     // A control frame of 2048 x 1024: the photo in the middle, pure green around it
     final control = img.Image(width: 256, height: 128)..clear(img.ColorRgb8(0, 255, 0));
     img.fillRect(control, x1: 96, y1: 40, x2: 159, y2: 87, color: img.ColorRgb8(120, 90, 70));
@@ -41,24 +51,32 @@ void main() {
     folder.deleteSync(recursive: true);
   });
 
-  SdCppSettings settings({String mode = 'ok', Duration stall = const Duration(seconds: 180), int? freeMib}) =>
-      SdCppSettings(
-        sdCli: _fakeSdCli!,
-        models: SdCppModels(
-          diffusionModel: p.join(folder.path, 'flux-2-klein-base-4b-Q4_0.gguf'),
-          vae: p.join(folder.path, 'vae.safetensors'),
-          textEncoder: p.join(folder.path, 'Qwen3-4B-Q4_K_M.gguf'),
-          lora: p.join(folder.path, 'flux-2-klein-4B-360-erp-outpaint-lora_V1.safetensors'),
-          upscaler: p.join(folder.path, 'RealESRGAN_x4plus.pth'),
-        ),
-        device: 'Vulkan0',
-        stallTimeout: stall,
-        environment: {
-          'IMMUCH360_FAKE_SD_CLI_MODE': mode,
-          'IMMUCH360_FAKE_SD_CLI_PID': p.join(folder.path, 'sd-cli.pid'),
-          if (freeMib != null) 'IMMUCH360_FAKE_SD_CLI_FREE_MIB': '$freeMib',
-        },
-      );
+  SdCppSettings settings({
+    String mode = 'ok',
+    Duration stall = const Duration(seconds: 180),
+    int? freeMib,
+    String device = 'Vulkan0',
+    String? devices,
+    SdCppCard? card,
+  }) => SdCppSettings(
+    sdCli: _fakeSdCli!,
+    models: SdCppModels(
+      diffusionModel: p.join(folder.path, 'flux-2-klein-base-4b-Q4_0.gguf'),
+      vae: p.join(folder.path, 'vae.safetensors'),
+      textEncoder: p.join(folder.path, 'Qwen3-4B-Q4_K_M.gguf'),
+      lora: p.join(folder.path, 'flux-2-klein-4B-360-erp-outpaint-lora_V1.safetensors'),
+      upscaler: p.join(folder.path, 'RealESRGAN_x4plus.pth'),
+    ),
+    device: device,
+    card: card,
+    stallTimeout: stall,
+    environment: {
+      'IMMUCH360_FAKE_SD_CLI_MODE': mode,
+      'IMMUCH360_FAKE_SD_CLI_PID': p.join(folder.path, 'sd-cli.pid'),
+      'IMMUCH360_FAKE_SD_CLI_DEVICES': ?devices,
+      if (freeMib != null) 'IMMUCH360_FAKE_SD_CLI_FREE_MIB': '$freeMib',
+    },
+  );
 
   ManagedProcessRunner runner() => ManagedProcessRunner(
     linuxLauncher: _launcher,
@@ -146,10 +164,13 @@ void main() {
       expect(
         logged,
         contains(
-          'sd-cli read 7188 MiB free on Vulkan0, budget 5017 MiB given by the app (from the free memory Windows counts: '
-          "Vulkan's figure leaves other programs out)",
+          'sd-cli read 7188 MiB free on Vulkan0 (Fake graphics card), budget 5017 MiB given by the app (from the free '
+          "memory Windows counts: Vulkan's figure leaves other programs out)",
         ),
       );
+      // The placement sd-cli settled on
+      const placed = 'sd-cli auto-fit: --backend "diffusion=Vulkan0,vae=Vulkan0,te=CPU" --params-backend "te=disk"';
+      expect(logged, contains(placed));
     });
 
     test('the budget sd-cli plans with: its own reserve on Linux, the probe\'s figure on Windows, capped at what it '
@@ -177,16 +198,19 @@ void main() {
             cancel: cancel,
           );
 
+      String lastRead() => logged.lastWhere((line) => line.startsWith('sd-cli read '));
       // Linux, sd-cli reading 400 MiB less than the probe a few seconds later: no --max-vram, its own reserve kept
       await run(windows: false, freeMib: 4506);
-      expect(logged.last, 'sd-cli read 4506 MiB free on Vulkan0, budget 3994 MiB');
+      expect(lastRead(), 'sd-cli read 4506 MiB free on Vulkan0 (Fake graphics card), budget 3994 MiB');
       // Windows, sd-cli reading 7 188 MiB as Vulkan does, other programs left out: the probe's figure less 512 MiB
       await run(windows: true, freeMib: 7188);
-      expect(logged.last, startsWith('sd-cli read 7188 MiB free on Vulkan0, budget 4393 MiB given by the app'));
+      expect(lastRead(), startsWith('sd-cli read 7188 MiB free on Vulkan0 (Fake graphics card), budget 4393 MiB '));
+      expect(lastRead(), contains('MiB given by the app'));
       // A budget above what sd-cli reads is cut down to it, with no reserve left (backend_fit.cpp 152-157): what the
       // flag would do on Linux when sd-cli reads less than the probe
       await run(windows: true, freeMib: 4200);
-      expect(logged.last, startsWith('sd-cli read 4200 MiB free on Vulkan0, budget 4200 MiB given by the app'));
+      expect(lastRead(), startsWith('sd-cli read 4200 MiB free on Vulkan0 (Fake graphics card), budget 4200 MiB '));
+      expect(lastRead(), contains('MiB given by the app'));
     });
 
     test('shortfalls sd-cli recovers from in segments: the run ends well, with its image', () async {
@@ -254,6 +278,47 @@ void main() {
       expect(failure?.code, ImmersiveErrorCode.generatorStalled);
       expect(watch.elapsed, lessThan(const Duration(seconds: 10)));
       expect(processImageOf(childPid()!), isNull);
+    });
+
+    test('the list of the laptop of the owner, the Intel chip first: started again on the RTX 4060, which makes the '
+        'image; both runs in the log of the job', () async {
+      final generator = SdCppGenerator(
+        runner: runner(),
+        settings: settings(devices: _laptop, card: _rtx),
+        generatorSha256: '',
+        loraSha256: '',
+      );
+      final heard = <GeneratorProgress>[];
+      final failure = await generator
+          .generate(request(), cancel: cancel, onProgress: heard.add)
+          .then<Object?>((_) => null, onError: (Object error) => error);
+
+      expect(failure, isNull);
+      expect(heard.map((progress) => progress.step), List.generate(20, (index) => index + 1));
+      expect(img.decodePng(File(request().outputPath).readAsBytesSync())!.width, 192);
+      expect(generator.device.name, 'Vulkan1');
+      final log = File(p.join(folder.path, 'logs', 'sd-cli.log')).readAsLinesSync();
+      expect(log.where((line) => line.startsWith('===== ')), hasLength(2));
+      expect(log.where((line) => line == 'ggml_vulkan: Found 2 Vulkan devices:'), hasLength(2));
+      expect(log, contains(startsWith('[I] auto-fit: --backend "diffusion=Vulkan1,vae=Vulkan1,te=CPU"')));
+      expect(ProcessJournal(File(p.join(folder.path, 'processes.json'))).read(), isEmpty);
+    });
+
+    test('given a device beyond its list, the fake ends as the pinned build does; the list puts it right', () async {
+      final generator = SdCppGenerator(
+        runner: runner(),
+        settings: settings(device: 'Vulkan2', devices: _laptop, card: _rtx),
+        generatorSha256: '',
+        loraSha256: '',
+      );
+      final failure = await generator
+          .generate(request(), cancel: cancel)
+          .then<Object?>((_) => null, onError: (Object error) => error);
+
+      expect(failure, isNull);
+      expect(generator.device.name, 'Vulkan1');
+      final log = File(p.join(folder.path, 'logs', 'sd-cli.log')).readAsStringSync();
+      expect(log, contains("[E] backend 'Vulkan2' was not found"));
     });
 
     test('an upscale: four times its input, its tiles reported', () async {
