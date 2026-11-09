@@ -30,7 +30,6 @@ import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/utils/provider_utils.dart';
 import 'package:immich_mobile/widgets/forms/login/sign_in_completion.dart';
 import 'package:immich_mobile/wm_executor.dart';
-import 'package:logging/logging.dart';
 
 /// The names of the photos of the fake server's timeline
 const labTimelineNames = ['lab_jpeg.jpg', 'lab_heic.heic', 'lab_avif.avif'];
@@ -253,16 +252,6 @@ Future<void> startLabApp(WidgetTester tester) async {
   await workerManagerPatch.init(dynamicSpawning: true, isolatesCount: max(Platform.numberOfProcessors - 1, 5));
   await migrateDatabaseIfNeeded(dataController.db, PlatformApis.nativeSync(), PlatformApis.permission());
   unawaited(AppHealthReports.listen());
-  final signOut = _splashSignOut = Completer<void>();
-  late final StreamSubscription<LogRecord> records;
-  records = Logger.root.onRecord.listen((record) {
-    if (record.loggerName == 'AuthService' && record.message.startsWith('Error logging out')) {
-      if (!signOut.isCompleted) {
-        signOut.complete();
-      }
-      unawaited(records.cancel());
-    }
-  });
   await tester.pumpWidget(
     ProviderScope(
       overrides: Store.overrideWith(dataController: dataController, apiService: apiService),
@@ -273,29 +262,20 @@ Future<void> startLabApp(WidgetTester tester) async {
 
 final _firstPage = find.byWidgetPredicate((widget) => widget is WelcomePage || widget is LoginPage);
 
-/// The end of the sign out the splash page starts for a profile without a session, which it does not wait for: its
-/// request fails before any server is set ("Error logging out" of AuthService), then it clears the local session
-/// (AuthService.clearLocalData). A sign in that starts before that end has its new session cleared, and the sign out
-/// writes to the AuthNotifier the sign in replaced (seen in lab run 42592031581): a person does not sign in that fast
-Completer<void>? _splashSignOut;
+/// How long the tests let the sign out run that the splash page starts for a profile without a session, which it
+/// does not wait for: it ends by clearing the local session (AuthService.clearLocalData), so a sign in that starts
+/// before that end has its new session cleared and the sign out writes to the AuthNotifier the sign in replaced (seen
+/// in lab run 42592031581, where it reached its request about two seconds after the splash); a person does not sign
+/// in that fast. Without a server it writes no log line to wait for (AuthApiRepository.logout returns at once).
+const _splashSignOutTime = Duration(seconds: 6);
 
 /// Signs in through the fake server as the login form does (the server URL, the server's settings, the credentials),
 /// then completes the sign in as every sign in of the app does (completeSignIn: permission, sync, timeline). Returns
 /// the API endpoint the app resolved.
 Future<String> signInThroughLabServer(WidgetTester tester, LabServer server) async {
   await pumpUntil(tester, () => _firstPage.evaluate().isNotEmpty, reason: 'the welcome page after the splash');
-  final signOut = _splashSignOut;
-  if (signOut != null) {
-    final deadline = DateTime.now().add(const Duration(seconds: 20));
-    await pumpUntil(
-      tester,
-      () => signOut.isCompleted || DateTime.now().isAfter(deadline),
-      reason: 'the sign out of the splash page',
-    );
-    labLog(signOut.isCompleted ? 'The sign out of the splash page ended' : 'No end of the splash sign out in 20 s');
-    // Its clearLocalData runs after that line
-    await tester.pump(const Duration(seconds: 2));
-  }
+  final settled = DateTime.now().add(_splashSignOutTime);
+  await pumpUntil(tester, () => DateTime.now().isAfter(settled), reason: 'the sign out of the splash page');
   final user = (await server.state()).user;
   // The page is a consumer widget: its element is the WidgetRef its build gets
   WidgetRef pageRef() => tester.element(_firstPage.first) as ConsumerStatefulElement;
