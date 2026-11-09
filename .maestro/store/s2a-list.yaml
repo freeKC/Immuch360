@@ -6,6 +6,7 @@ appId: com.aprogsys.immuch360.dev.debug
 - tapOn:
     text: "(Allow|Autoriser)"
     optional: true
+    retryTapIfNoChange: false
 - extendedWaitUntil:
     visible: "(?s).*(Library|Bibliothèque).*"
     timeout: 120000
