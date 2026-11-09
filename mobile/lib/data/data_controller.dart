@@ -77,10 +77,13 @@ class DataController {
   // TODO(rewrite): Remove once all repositories have been migrated
   DriftLogger get logDb => _logDb;
 
+  /// Closes both databases and their sqlite_async connections (see Drift.close), the logs even when the main one fails
   Future<void> close() async {
-    await _db.close();
-
-    // Close after the primary DB to ensure all logs are captured
-    await _logDb.close();
+    try {
+      await _db.close();
+    } finally {
+      // Close after the primary DB to ensure all logs are captured
+      await _logDb.close();
+    }
   }
 }

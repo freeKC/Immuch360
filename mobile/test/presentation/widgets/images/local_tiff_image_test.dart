@@ -16,6 +16,7 @@ import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/platform/local_image_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
@@ -168,10 +169,10 @@ void main() {
     }
   });
 
-  test('a TIFF opened with "Open with" is decoded in Dart, any other file by the engine', () {
+  test('a TIFF opened with "Open with" is decoded in Dart, any other file where its first bytes say', () {
     final asset = devicePhoto('44', 'scan.tif');
     expect(getFullImageProvider(asset, localFilePath: '/storage/emulated/0/Download/scan.tif'), isA<FileTiffImage>());
-    expect(getFullImageProvider(asset, localFilePath: '/storage/emulated/0/Download/a.jpg'), isA<FileImage>());
+    expect(getFullImageProvider(asset, localFilePath: '/storage/emulated/0/Download/a.jpg'), isA<GuardedFileImage>());
   });
 
   test('a TIFF of the device that the server has too shows as the JPEG the server made, not its file decoded', () {

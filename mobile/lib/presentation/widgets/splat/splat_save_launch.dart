@@ -21,6 +21,7 @@ import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_photo_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
@@ -46,6 +47,30 @@ const splatSaveSheetShowKey = Key('splat_save_sheet_show');
 
 /// The key of the mobile data line of the sheet
 const splatSaveSheetMobileDataKey = Key('splat_save_sheet_mobile_data');
+
+/// The key of what the sheet shows when its poster does not decode
+const splatSavePosterPlaceholderKey = Key('splat_save_poster_placeholder');
+
+/// The poster of the sheet: a JPEG the viewer or the app draws, decoded where its first bytes say (see
+/// GuardedMemoryImage), never by the fallback decoder of the engine; a placeholder when no decoder reads it
+class SplatSavePosterImage extends StatelessWidget {
+  const SplatSavePosterImage({super.key, required this.poster});
+
+  final Uint8List poster;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image(
+      image: GuardedMemoryImage(poster, source: 'splatPoster'),
+      fit: BoxFit.contain,
+      errorBuilder: (_, _, _) => const AspectRatio(
+        key: splatSavePosterPlaceholderKey,
+        aspectRatio: 1.5,
+        child: Center(child: Icon(Icons.image_not_supported_outlined)),
+      ),
+    );
+  }
+}
 
 /// The line of a save over mobile data: what goes, the size of an SPZ, the most a PLY sends once converted to SPZ (from
 /// its [head], else the size of the PLY itself, which its SPZ never passes). Opening a scene asks above 10 MB on
@@ -625,7 +650,7 @@ class _SplatSaveSheetState extends ConsumerState<_SplatSaveSheet> {
             else if (_poster != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.memory(_poster!, fit: BoxFit.contain),
+                child: SplatSavePosterImage(poster: _poster!),
               ),
             const SizedBox(height: 10),
             Text(scene.name, style: theme.textTheme.titleMedium),

@@ -40,6 +40,8 @@ data class SpatialStats(
   val disparityHeight: Int,
   val quality: Quality,
   val viewpoint: Float,
+  /** How the render time is measured: "GPU", or "CPU (why the GPU timers do not run)" */
+  val timing: String,
 )
 
 /**
@@ -55,8 +57,16 @@ data class SpatialStats(
  * a new surface when the GL context is recreated. Anything that goes wrong in the spatial passes falls back to the
  * left eye, so the video stays visible. When no program can read the video at all, the renderer gives no surface
  * and calls [onUnavailable] instead.
+ *
+ * The adaptive quality measures the render time with GPU timer queries where [GpuTimerPolicy] allows them (never on
+ * ARM Mali, nor on a driver on which a process died while they ran, see [gpuTimerGuard], nor when [gpuTimersWanted]
+ * is false), and on the CPU around glFinish otherwise. Call [onPaused] once GLSurfaceView.onPause has returned.
  */
-class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurfaceView.Renderer {
+class SpatialRenderer(
+  private val onVideoSurface: (Surface) -> Unit,
+  private val gpuTimerGuard: GpuTimerCrashGuard? = null,
+  private val gpuTimersWanted: Boolean = true,
+) : GLSurfaceView.Renderer {
   private companion object {
     const val TAG = SpatialGl.TAG
 
@@ -93,10 +103,6 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
 
     /** Without GPU timers, one frame in this many is timed on the CPU around glFinish */
     const val CPU_TIMING_PERIOD = 15L
-
-    /** GL_EXT_disjoint_timer_query */
-    const val GL_TIME_ELAPSED_EXT = 0x88BF
-    const val GL_GPU_DISJOINT_EXT = 0x8FBB
 
     const val NANOS_PER_SECOND = 1_000_000_000L
 
@@ -156,6 +162,12 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
    * no video surface, so the caller should hand the video back to another player.
    */
   @Volatile var onUnavailable: (() -> Unit)? = null
+
+  /**
+   * Optional, called on the GL thread with one sentence for the Logs page when the previous process ended while its
+   * GPU timers ran: they then stay off on that driver.
+   */
+  @Volatile var onGpuTimerNotice: ((String) -> Unit)? = null
 
   private val lock = Any()
   private val mainHandler = Handler(Looper.getMainLooper())
@@ -239,13 +251,8 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
   private var settleRuns = 0
 
   // Timing
-  private var timerSupported = false
-  private var timerChecked = false
-  private val queries = IntArray(4)
-  private val queryPending = BooleanArray(4)
-  private var nextQuery = 0
-  private var activeQuery = -1
-  private val queryResult = IntArray(1)
+  private val timer = GpuFrameTimer(GlesTimerGl(), gpuTimerGuard) { Log.w(TAG, it) }
+  private val timingSink: (Float) -> Unit = { addTimingSample(it) }
   private var cpuTimingStart = 0L
   private var frameCount = 0L
   private var windowStart = 0L
@@ -279,6 +286,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     disparityHeight = disparityHeight,
     quality = activeQuality ?: quality,
     viewpoint = viewpoint,
+    timing = timer.timing,
   )
 
   /**
@@ -292,6 +300,8 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
       released = true
       if (EGL14.eglGetCurrentContext() != EGL14.EGL_NO_CONTEXT) releaseGlObjects()
       forgetGlObjects()
+      // No timed frame follows: the crash guard is disarmed even when the context was not current here
+      timer.onPaused()
       surfaceTexture?.setOnFrameAvailableListener(null)
       surfaceTexture?.release()
       surfaceTexture = null
@@ -324,9 +334,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
         return
       }
       mapFormat = pickMapFormat()
-      timerSupported = SpatialGl.hasExtension("GL_EXT_disjoint_timer_query")
-      timerChecked = false
-      if (timerSupported) GLES30.glGenQueries(queries.size, queries, 0)
+      startGpuTimer()
 
       videoTexture = SpatialGl.createExternalTexture()
       if (videoTexture == 0) {
@@ -357,6 +365,18 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     synchronized(lock) {
       viewWidth = width
       viewHeight = height
+      // A new window surface, also on a resume with the context kept: no query is read across it
+      timer.voidPending()
+    }
+  }
+
+  /**
+   * The activity stopped, after GLSurfaceView.onPause has returned (the GL thread is parked): the GPU timers stop
+   * until the next frame, and the crash guard is disarmed, so that a process killed in the background never counts.
+   */
+  fun onPaused() {
+    synchronized(lock) {
+      timer.onPaused()
     }
   }
 
@@ -377,16 +397,18 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     val now = System.nanoTime()
     frameCount++
     framesInWindow++
-    val cpuTiming = !timerSupported && frameCount % CPU_TIMING_PERIOD == 0L
+    val cpuTiming = !timer.active && frameCount % CPU_TIMING_PERIOD == 0L
     if (cpuTiming) {
       GLES30.glFinish()
       cpuTimingStart = System.nanoTime()
     }
-    beginGpuTimer()
+    // Neither throws: a failure turns the GPU timer off and the next frames time on the CPU
+    timer.collect(timingSink)
+    timer.begin()
     try {
       renderPasses(texture, now)
     } finally {
-      endGpuTimer()
+      timer.end()
       if (cpuTiming) {
         GLES30.glFinish()
         addTimingSample((System.nanoTime() - cpuTimingStart) / 1_000_000f)
@@ -558,6 +580,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     if (current != null && current.width == eyeWidth && current.height == eyeHeight) return false
     if (current == null && eyeTargetsFailed) return false
 
+    timer.settleBeforeDelete()
     releaseEyeTargets()
     val left = SpatialGl.createTarget(eyeWidth, eyeHeight, TargetFormat.RGBA8, GLES30.GL_LINEAR)
     val right = SpatialGl.createTarget(eyeWidth, eyeHeight, TargetFormat.RGBA8, GLES30.GL_LINEAR)
@@ -719,6 +742,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
       return true
     }
 
+    timer.settleBeforeDelete()
     releaseDisparityTargets()
     val gray = TargetFormat.RGBA8
     val nearest = GLES30.GL_NEAREST
@@ -732,6 +756,7 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     blurred = SpatialGl.createTarget(width, height, mapFormat, GLES30.GL_LINEAR)
     val all = listOf(grayLeft, grayRight, rawLeft, rawRight, maps[0], maps[1], blurTemp, blurred)
     if (all.any { it == null }) {
+      timer.settleBeforeDelete()
       releaseDisparityTargets()
       if (quality != Quality.LOW) {
         // Keep the spatial view: the next frame retries at the lowest tier, and this one is never tried again
@@ -980,46 +1005,36 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
 
   // Timing and adaptive quality
 
-  private fun beginGpuTimer() {
-    activeQuery = -1
-    if (!timerSupported) return
-    collectGpuTimers()
-    val slot = nextQuery
-    if (queryPending[slot]) return
-    if (!timerChecked) SpatialGl.clearErrors()
-    GLES30.glBeginQuery(GL_TIME_ELAPSED_EXT, queries[slot])
-    if (!timerChecked) {
-      timerChecked = true
-      if (GLES30.glGetError() != GLES30.GL_NO_ERROR) {
-        Log.w(TAG, "GPU timer queries refused, timing on the CPU")
-        timerSupported = false
-        return
+  /**
+   * Decides once per context whether the GPU timers run (see [GpuTimerPolicy] and [GpuTimerCrashGuard]), and logs
+   * the driver with the verdict in one line, which a bug report then carries.
+   */
+  private fun startGpuTimer() {
+    val vendor = GLES30.glGetString(GLES30.GL_VENDOR)
+    val rendererName = GLES30.glGetString(GLES30.GL_RENDERER)
+    val version = GLES30.glGetString(GLES30.GL_VERSION)
+    val extensions = GLES30.glGetString(GLES30.GL_EXTENSIONS)
+    val driverKey = GpuTimerPolicy.driverKey(rendererName, version)
+    var crashedBefore = false
+    val guard = gpuTimerGuard
+    if (guard != null) {
+      try {
+        crashedBefore = guard.blocked(driverKey)
+        guard.takeTripped()?.let { tripped ->
+          onGpuTimerNotice?.invoke(
+            "The Spatial 2.5D player ended while its GPU timers ran on $tripped. They stay off on this driver, " +
+              "the player measures its frames on the CPU.",
+          )
+        }
+      } catch (e: RuntimeException) {
+        // Unreadable: keep the timers off rather than run them unguarded
+        Log.w(TAG, "GPU timer crash guard unreadable", e)
+        crashedBefore = true
       }
     }
-    activeQuery = slot
-  }
-
-  private fun endGpuTimer() {
-    val slot = activeQuery
-    if (slot < 0) return
-    GLES30.glEndQuery(GL_TIME_ELAPSED_EXT)
-    queryPending[slot] = true
-    nextQuery = (slot + 1) % queries.size
-    activeQuery = -1
-  }
-
-  /** Reads the finished timer queries; a disjoint event (frequency change, context switch) voids them */
-  private fun collectGpuTimers() {
-    GLES30.glGetIntegerv(GL_GPU_DISJOINT_EXT, queryResult, 0)
-    val disjoint = queryResult[0] != 0
-    for (slot in queries.indices) {
-      if (!queryPending[slot]) continue
-      GLES30.glGetQueryObjectuiv(queries[slot], GLES30.GL_QUERY_RESULT_AVAILABLE, queryResult, 0)
-      if (queryResult[0] == 0) continue
-      GLES30.glGetQueryObjectuiv(queries[slot], GLES30.GL_QUERY_RESULT, queryResult, 0)
-      queryPending[slot] = false
-      if (!disjoint) addTimingSample((queryResult[0].toLong() and 0xffffffffL) / 1_000_000f)
-    }
+    val verdict = GpuTimerPolicy.decide(vendor, rendererName, extensions, crashedBefore, gpuTimersWanted)
+    Log.i(TAG, "Spatial GL: $vendor | $rendererName | $version, GPU timers ${verdict.reason}")
+    timer.start(verdict, driverKey)
   }
 
   private fun addTimingSample(milliseconds: Float) {
@@ -1128,6 +1143,8 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
 
   /** Deletes every GL object; the renderer's context must be current */
   private fun releaseGlObjects() {
+    // The queries first: none is left in flight on a deleted target
+    timer.release()
     releaseEyeTargets()
     releaseDisparityTargets()
     val programs = listOf(
@@ -1138,7 +1155,6 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     SpatialGl.deleteTexture(videoTexture)
     if (vertexArray != 0) GLES30.glDeleteVertexArrays(1, intArrayOf(vertexArray), 0)
     if (cornerBuffer != 0) GLES30.glDeleteBuffers(1, intArrayOf(cornerBuffer), 0)
-    if (timerSupported) GLES30.glDeleteQueries(queries.size, queries, 0)
   }
 
   /** Drops the handles without deleting them, for a context that is already gone */
@@ -1177,8 +1193,6 @@ class SpatialRenderer(private val onVideoSurface: (Surface) -> Unit) : GLSurface
     mapFov = Float.NaN
     stepUpBlockedUntil.fill(Long.MIN_VALUE)
     hasVideoFrame = false
-    queryPending.fill(false)
-    activeQuery = -1
-    nextQuery = 0
+    timer.forget()
   }
 }

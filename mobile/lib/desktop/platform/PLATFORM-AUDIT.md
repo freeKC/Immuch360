@@ -38,6 +38,7 @@ the gate is per desktop and is noted.
 | `lib/domain/services/background_worker.service.dart:375` | Android background engine | right: idem |
 | `lib/domain/services/background_worker.service.dart:381` | Android background engine | right: idem |
 | `lib/domain/services/device_permission.service.dart:17` | iOS photos permission, else the Android version | wired (G1): the computers ask .photos of DesktopPermissionRepository; LIB may answer denied until a folder is chosen |
+| `lib/domain/services/encoded_image_probe.dart:258` | Android only: the engine gets the formats of its own codecs, the others go to the native decoder at a bounded size or are refused, because the engine of Android decodes them through FlutterJNI.decodeImage at full size and aborts on an OutOfMemoryError (fix-crash-image-decode, 8 November 2026) | right: the engines of the computers have no such fallback; every buffer goes to the engine there, as before, and NativeImageDecodeApi is never called |
 | `lib/domain/services/hash.service.dart:61` | Android trashed assets | right: no trash on the computers |
 | `lib/domain/services/local_sync.service.dart:48` | Android media management | right |
 | `lib/domain/services/local_sync.service.dart:83` | Android full album sync (deletions not detected natively) | iOS like path on the computers: LIB must report removed folders in getMediaChanges, or ask for this branch |

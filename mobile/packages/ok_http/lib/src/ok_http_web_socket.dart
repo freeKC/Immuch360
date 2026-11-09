@@ -1,0 +1,302 @@
+// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+import 'dart:async';
+import 'dart:convert';
+import 'dart:ffi';
+import 'dart:typed_data';
+
+import 'package:jni/jni.dart';
+import 'package:web_socket/web_socket.dart';
+
+import 'jni/bindings.dart' as bindings;
+
+extension on List<int> {
+  JByteArray toJByteArray() => JByteArray(length)..setRange(0, length, this);
+}
+
+/// A [WebSocket] implemented using the OkHttp library's
+/// [WebSocket](https://square.github.io/okhttp/5.x/okhttp/okhttp3/-web-socket/index.html)
+/// API.
+///
+/// > [!NOTE]
+/// > The [WebSocket] interface is currently experimental and may change in the
+/// > future.
+///
+/// Example usage of [OkHttpWebSocket]:
+/// ```dart
+/// import 'package:ok_http/ok_http.dart';
+/// import 'package:web_socket/web_socket.dart';
+///
+/// void main() async {
+///   final socket = await OkHttpWebSocket.connect(
+///       Uri.parse('wss://ws.postman-echo.com/raw'));
+///
+///   socket.events.listen((e) async {
+///     switch (e) {
+///       case TextDataReceived(text: final text):
+///         print('Received Text: $text');
+///         await socket.close();
+///       case BinaryDataReceived(data: final data):
+///         print('Received Binary: $data');
+///       case CloseReceived(code: final code, reason: final reason):
+///         print('Connection to server closed: $code [$reason]');
+///     }
+///   });
+/// }
+/// ```
+///
+/// > [!TIP]
+/// > [`AdapterWebSocketChannel`](https://pub.dev/documentation/web_socket_channel/latest/adapter_web_socket_channel/AdapterWebSocketChannel-class.html)
+/// > can be used to adapt a [OkHttpWebSocket] into a
+/// > [`WebSocketChannel`](https://pub.dev/documentation/web_socket_channel/latest/web_socket_channel/WebSocketChannel-class.html).
+class OkHttpWebSocket implements WebSocket {
+  late bindings.OkHttpClient _client;
+  late final bindings.WebSocket _webSocket;
+  final _events = StreamController<WebSocketEvent>();
+  String? _protocol;
+
+  /// Whether this WebSocket owns the underlying client.
+  ///
+  /// If `true`, [_okHttpClientClose] will shut down the client's resources.
+  /// If `false`, the client is managed externally and won't be closed.
+  final bool _ownsClient;
+
+  /// Private constructor to prevent direct instantiation.
+  ///
+  /// Used by [connect] to create a new WebSocket connection, which requires a
+  /// [bindings.OkHttpClient] instance (see [_connect]), and cannot be accessed
+  /// statically.
+  OkHttpWebSocket._() : _ownsClient = true {
+    // Add the WebSocketInterceptor to prevent response parsing errors.
+    _client = bindings.WebSocketInterceptor.Companion
+        .addWSInterceptor(bindings.OkHttpClient$Builder())
+        .build();
+  }
+
+  /// Private constructor for use with an external client.
+  OkHttpWebSocket._fromClient(this._client) : _ownsClient = false;
+
+  /// Create a new WebSocket connection using `OkHttp`'s
+  /// [WebSocket](https://square.github.io/okhttp/5.x/okhttp/okhttp3/-web-socket/index.html)
+  /// API.
+  ///
+  /// The URL supplied in [url] must use the scheme ws or wss.
+  ///
+  /// If provided, the [protocols] argument indicates the subprotocols that
+  /// the peer is able to select. See
+  /// [RFC-6455 1.9](https://datatracker.ietf.org/doc/html/rfc6455#section-1.9).
+  static Future<WebSocket> connect(Uri url,
+          {Iterable<dynamic>? protocols}) async =>
+      OkHttpWebSocket._()._connect(url, protocols);
+
+  /// Create a new WebSocket connection from a JNI global reference pointer.
+  ///
+  /// The [pointer] must be a valid JNI global reference to an
+  /// `okhttp3.OkHttpClient` Java object. The client's lifecycle is managed
+  /// externally: when this WebSocket is closed, it will NOT shut down the
+  /// client's resources or release the global reference.
+  ///
+  /// The URL supplied in [url] must use the scheme ws or wss.
+  ///
+  /// If provided, the [protocols] argument indicates the subprotocols that
+  /// the peer is able to select. See
+  /// [RFC-6455 1.9](https://datatracker.ietf.org/doc/html/rfc6455#section-1.9).
+  ///
+  /// Example:
+  /// ```dart
+  /// // Get a JNI global reference from native code
+  /// final pointer = Pointer<Void>.fromAddress(globalRefAddress);
+  /// final webSocket = await OkHttpWebSocket.connectFromJniGlobalRef(
+  ///   pointer,
+  ///   Uri.parse('wss://example.com/socket'),
+  ///   protocols: ['v1'],
+  /// );
+  ///
+  /// // Use the WebSocket
+  /// webSocket.events.listen((event) { /* ... */ });
+  ///
+  /// // Closing the WebSocket does NOT release the global reference
+  /// await webSocket.close();
+  /// ```
+  static Future<WebSocket> connectFromJniGlobalRef(
+    Pointer<Void> pointer,
+    Uri url, {
+    Iterable<dynamic>? protocols,
+  }) {
+    final client = bindings.OkHttpClient.fromReference(
+      // ignore: invalid_use_of_internal_member
+      JGlobalReference(Jni.env.NewGlobalRef(pointer)),
+    );
+    return OkHttpWebSocket._fromClient(client)._connect(url, protocols);
+  }
+
+  Future<WebSocket> _connect(Uri url, Iterable<dynamic>? protocols) async {
+    if (!url.isScheme('ws') && !url.isScheme('wss')) {
+      throw ArgumentError.value(
+          url, 'url', 'only ws: and wss: schemes are supported');
+    }
+    // Immuch360: the JNI objects of the opening request are held in locals and
+    // released after their last synchronous use, as in OkHttpClient.send (see
+    // IMMUCH360-NOTE.md)
+    final requestBuilder = bindings.Request$Builder();
+    final jUrl = url.toString().toJString();
+    requestBuilder.url$1(jUrl).release();
+    jUrl.release();
+
+    if (protocols != null) {
+      final jName = 'Sec-WebSocket-Protocol'.toJString();
+      final jValue = protocols.join(', ').toJString();
+      requestBuilder.addHeader(jName, jValue).release();
+      jName.release();
+      jValue.release();
+    }
+
+    var openCompleter = Completer<WebSocket>();
+
+    final listener =
+        bindings.WebSocketListenerProxy$WebSocketListener.implement(
+            bindings.$WebSocketListenerProxy$WebSocketListener(
+          onOpen: (webSocket, response) {
+            _webSocket = webSocket;
+
+            var protocolHeader =
+                response.header$1('sec-websocket-protocol'.toJString());
+            if (protocolHeader != null) {
+              _protocol = protocolHeader.toDartString(releaseOriginal: true);
+              if (!(protocols?.contains(_protocol) ?? true)) {
+                openCompleter
+                    .completeError(WebSocketException('Protocol mismatch. '
+                        'Expected one of $protocols, but received $_protocol'));
+                return;
+              }
+            }
+
+            openCompleter.complete(this);
+          },
+          onMessage: (bindings.WebSocket webSocket, JString string) {
+            if (_events.isClosed) return;
+            _events.add(
+                TextDataReceived(string.toDartString(releaseOriginal: true)));
+          },
+          onMessage$1:
+              (bindings.WebSocket webSocket, bindings.ByteString byteString) {
+            if (_events.isClosed) return;
+            _events.add(BinaryDataReceived(
+                Uint8List.fromList(byteString.toByteArray().toList())));
+          },
+          onClosing:
+              (bindings.WebSocket webSocket, int i, JString string) async {
+            _okHttpClientClose();
+
+            if (_events.isClosed) return;
+
+            _events.add(
+                CloseReceived(i, string.toDartString(releaseOriginal: true)));
+            await _events.close();
+          },
+          onFailure: (bindings.WebSocket webSocket, JObject throwable,
+              bindings.Response? response) {
+            if (_events.isClosed) return;
+
+            var throwableString = throwable.toString();
+            throwable.release();
+
+            // If the throwable is:
+            // - java.net.ProtocolException: Control frames must be final.
+            // - java.io.EOFException
+            // - java.net.SocketException: Socket closed
+            // Then the connection was closed abnormally.
+            if (throwableString.contains(RegExp(
+                r'(java\.net\.ProtocolException: Control frames must be final\.|java\.io\.EOFException|java\.net\.SocketException: Socket closed)'))) {
+              _events.add(CloseReceived(1006, 'abnormal close'));
+              unawaited(_events.close());
+              return;
+            }
+            var error = WebSocketException(
+                'Connection ended unexpectedly $throwableString');
+            if (openCompleter.isCompleted) {
+              _events.addError(error);
+              return;
+            }
+            openCompleter.completeError(error);
+          },
+        ));
+    final listenerProxy = bindings.WebSocketListenerProxy(listener);
+    listener.release();
+    final request = requestBuilder.build();
+    requestBuilder.release();
+    _client.newWebSocket(request, listenerProxy).release();
+    request.release();
+    listenerProxy.release();
+
+    return openCompleter.future;
+  }
+
+  @override
+  Future<void> close([int? code, String? reason]) async {
+    if (_events.isClosed) {
+      throw WebSocketConnectionClosed();
+    }
+
+    if (code != null && code != 1000 && !(code >= 3000 && code <= 4999)) {
+      throw ArgumentError('Invalid argument: $code, close code must be 1000 or '
+          'in the range 3000-4999');
+    }
+    if (reason != null && utf8.encode(reason).length > 123) {
+      throw ArgumentError.value(reason, 'reason',
+          'reason must be <= 123 bytes long when encoded as UTF-8');
+    }
+
+    unawaited(_events.close());
+
+    // When no code is provided, cause an abnormal closure to send 1005.
+    if (code == null) {
+      _webSocket.cancel();
+      return;
+    }
+
+    _webSocket.close(code, reason?.toJString());
+  }
+
+  @override
+  Stream<WebSocketEvent> get events => _events.stream;
+
+  @override
+  String get protocol => _protocol ?? '';
+
+  @override
+  void sendBytes(Uint8List b) {
+    if (_events.isClosed) {
+      throw WebSocketConnectionClosed();
+    }
+    _webSocket.send$1(bindings.ByteString.of(b.toJByteArray()));
+  }
+
+  @override
+  void sendText(String s) {
+    if (_events.isClosed) {
+      throw WebSocketConnectionClosed();
+    }
+    _webSocket.send(s.toJString());
+  }
+
+  /// Closes the OkHttpClient using the recommended shutdown procedure.
+  ///
+  /// Only closes the client if this WebSocket owns it (i.e., was not created
+  /// with [connectFromJniGlobalRef]).
+  ///
+  /// https://square.github.io/okhttp/5.x/okhttp/okhttp3/-ok-http-client/index.html#:~:text=Shutdown
+  void _okHttpClientClose() {
+    if (!_ownsClient) return;
+
+    _client.dispatcher().executorService().shutdown();
+    _client.connectionPool().evictAll();
+    var cache = _client.cache();
+    if (cache != null) {
+      cache.close();
+    }
+    _client.release();
+  }
+}

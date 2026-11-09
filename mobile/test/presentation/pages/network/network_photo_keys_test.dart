@@ -24,6 +24,7 @@ import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -163,8 +164,8 @@ void main() {
     final shown = tester
         .widgetList<Image>(find.byType(Image))
         .map((image) => image.image)
-        .whereType<ResizeImage>()
-        .map((image) => (image.imageProvider as NetworkImage).url)
+        .whereType<GuardedNetworkImage>()
+        .map((image) => image.url)
         .toList();
     expect(shown, ['http://127.0.0.1:1234/token/nas/b.jpg'], reason: 'the next photo, not the first one');
   });

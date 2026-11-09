@@ -301,6 +301,80 @@ java = "21.0.2"
 version = "3.47.2"
 ''';
 
+/// A small ELF file as keep_android_symbols.py reads it: 64 or 32 bit, little endian, with a GNU build ID note holding
+/// [buildId] (hexadecimal; no note when empty), a .text section holding [text] when it is not empty, and a symbol
+/// table section when [symtab]
+List<int> _elf(String buildId, {bool is64 = true, bool symtab = true, String text = ''}) {
+  final id = [for (var i = 0; i < buildId.length; i += 2) int.parse(buildId.substring(i, i + 2), radix: 16)];
+  // The note: owner GNU, type NT_GNU_BUILD_ID
+  final note = id.isEmpty ? <int>[] : [4, 0, 0, 0, id.length, 0, 0, 0, 3, 0, 0, 0, ...'GNU'.codeUnits, 0, ...id];
+  final code = text.codeUnits;
+  final symbols = List.filled(symtab ? 24 : 0, 0);
+  final names = [0, ...'.text'.codeUnits, 0];
+  final word = is64 ? 8 : 4;
+  final headerSize = is64 ? 64 : 52;
+  final textAt = headerSize + note.length;
+  final symbolsAt = textAt + code.length;
+  final namesAt = symbolsAt + symbols.length;
+  // Name, type (SHT_NOTE 7, SHT_PROGBITS 1, SHT_SYMTAB 2, SHT_STRTAB 3), offset and size of each section
+  final sections = [
+    (0, 0, 0, 0),
+    if (note.isNotEmpty) (0, 7, headerSize, note.length),
+    if (code.isNotEmpty) (1, 1, textAt, code.length),
+    if (symtab) (0, 2, symbolsAt, symbols.length),
+    (0, 3, namesAt, names.length),
+  ];
+  final bytes = <int>[];
+  void put(int value, int size) => bytes.addAll([for (var i = 0; i < size; i++) (value >> (8 * i)) & 0xFF]);
+
+  // The header of a shared object, its section headers at the end, the names last of them
+  bytes.addAll([0x7F, 0x45, 0x4C, 0x46, if (is64) 2 else 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  put(3, 2);
+  put(is64 ? 183 : 40, 2);
+  put(1, 4);
+  put(0, word * 2);
+  put(namesAt + names.length, word);
+  put(0, 4);
+  put(headerSize, 2);
+  put(is64 ? 56 : 32, 2);
+  put(0, 2);
+  put(is64 ? 64 : 40, 2);
+  put(sections.length, 2);
+  put(sections.length - 1, 2);
+  bytes.addAll([...note, ...code, ...symbols, ...names]);
+  for (final (name, type, offset, size) in sections) {
+    put(name, 4);
+    put(type, 4);
+    put(0, word * 2);
+    put(offset, word);
+    put(size, word);
+    put(0, 8 + word * 2);
+  }
+  return bytes;
+}
+
+/// Writes the zip [path] holding [entries] (names with forward slashes, their bytes), with the zipfile module of the
+/// Python that runs the scripts
+void _zip(String path, Map<String, List<int>> entries) {
+  final staging = Directory.systemTemp.createTempSync('immuch360_zip_');
+  try {
+    for (final entry in entries.entries) {
+      final file = File(p.joinAll([staging.path, ...entry.key.split('/')]));
+      file.parent.createSync(recursive: true);
+      file.writeAsBytesSync(entry.value);
+    }
+    final command = python!;
+    final tops = {for (final name in entries.keys) name.split('/').first};
+    final arguments = [...command.skip(1), '-m', 'zipfile', '-c', path, ...tops];
+    final result = Process.runSync(command.first, arguments, workingDirectory: staging.path);
+    if (result.exitCode != 0) {
+      throw StateError('zipfile: ${result.stdout}${result.stderr}');
+    }
+  } finally {
+    staging.deleteSync(recursive: true);
+  }
+}
+
 void main() {
   final folders = <Directory>[];
 
@@ -1521,6 +1595,204 @@ abstract class SyncEvents {
           expect(refused.output, contains(message));
         }
       });
+    });
+  }, skip: skipCiScripts);
+
+  group('keep_android_symbols.py', () {
+    // GNU build IDs: libflutter.so of the Quest builds 28 and 41, whose Breakpad form the M1 trace of the Meta Horizon
+    // Store shows, the libapp.so of a phone build and the one of a Quest build
+    const flutterId = 'fdf0a0a6f673cdcfc6c0e5f8dc7c8828d63fb3b6';
+    const phoneAppId = '5fa5ed2f224cf75dbe04e04e9e1d5672';
+    const questAppId = '3f3463a721a991e5367f9a2331cac0d4';
+    const mapping = '# compiler: R8\n# compiler_version: 8.11.26\n# pg_map_id: 5a1d2c3\napp.alextran.immich.A -> a:\n';
+    const symbolsPath = 'BUNDLE-METADATA/com.android.tools.build.debugsymbols';
+
+    /// The files of a release build as the workflow hands them to the script: the mappings of the four builds (each
+    /// [mapping] unless [mappings] gives another), the bundle with [proguardMap] and the libapp.so.sym of
+    /// [symbolAbis], the Quest APK whose libapp.so has [apkAppId], and the native-debug-symbols.zip of the Quest build,
+    /// or the unstripped libraries of the intermediates instead when [intermediates]
+    Directory build({
+      Map<String, String> mappings = const {},
+      String proguardMap = mapping,
+      List<String> symbolAbis = const ['arm64-v8a', 'armeabi-v7a', 'x86_64'],
+      String apkAppId = questAppId,
+      bool intermediates = false,
+    }) {
+      final root = tree({});
+      for (final name in const ['phone-universal', 'phone-split', 'phone-bundle', 'quest']) {
+        writeFiles(root, {'mappings/$name.txt': mappings[name] ?? mapping});
+      }
+      final bundle = <String, List<int>>{
+        'base/manifest/AndroidManifest.xml': [0x12, 0x0B, ...'versionCode'.codeUnits, 0x1A, 7, ...'3030042'.codeUnits],
+        'BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map': utf8.encode(proguardMap),
+      };
+      for (final abi in const ['arm64-v8a', 'armeabi-v7a', 'x86_64']) {
+        bundle['base/lib/$abi/libapp.so'] = utf8.encode('stripped');
+        if (symbolAbis.contains(abi)) {
+          bundle['$symbolsPath/$abi/libapp.so.sym'] = _elf(phoneAppId, is64: abi != 'armeabi-v7a');
+        }
+      }
+      _zip(p.join(root.path, 'app.aab'), bundle);
+      // libsqlite3.so and libsmb2.so have no build ID, as the libraries of the build hooks
+      _zip(p.join(root.path, 'quest.apk'), {
+        'lib/arm64-v8a/libapp.so': _elf(apkAppId, symtab: false),
+        'lib/arm64-v8a/libflutter.so': _elf(flutterId, symtab: false),
+        'lib/arm64-v8a/libsqlite3.so': _elf('', symtab: false, text: '0123456789abcdef'),
+        'lib/arm64-v8a/libsmb2.so': _elf('', symtab: false, text: 'the shipped code'),
+      });
+      final symbols = {
+        'arm64-v8a/libapp.so.sym': _elf(questAppId),
+        'arm64-v8a/libflutter.so.sym': _elf(flutterId),
+        'arm64-v8a/libnot_shipped.so.sym': _elf('ab' * 20),
+        'arm64-v8a/libsqlite3.so.sym': _elf('', text: '0123456789abcdef'),
+        'arm64-v8a/libsmb2.so.sym': _elf('', text: 'another build...'),
+      };
+      if (!intermediates) {
+        _zip(p.join(root.path, 'native-debug-symbols.zip'), symbols);
+        return root;
+      }
+      for (final entry in symbols.entries) {
+        final name = p.basenameWithoutExtension(entry.key);
+        final library = 'intermediates/merged_native_libs/questRelease/merge/out/lib/arm64-v8a/$name';
+        final file = File(p.joinAll([root.path, ...library.split('/')]));
+        file.parent.createSync(recursive: true);
+        file.writeAsBytesSync(entry.value);
+      }
+      return root;
+    }
+
+    ScriptRun keep(Directory root) {
+      return runCiScript('keep_android_symbols.py', [
+        'keep',
+        '--out',
+        p.join(root.path, 'symbols'),
+        '--mappings',
+        p.join(root.path, 'mappings'),
+        '--bundle',
+        p.join(root.path, 'app.aab'),
+        '--quest-apk',
+        p.join(root.path, 'quest.apk'),
+        '--quest-symbols',
+        p.join(root.path, 'native-debug-symbols.zip'),
+        '--intermediates',
+        p.join(root.path, 'intermediates'),
+        '--label',
+        'v3.3.0-rc.0-44',
+        '--commit',
+        '0123abc',
+      ]);
+    }
+
+    ScriptRun verify(Directory root) {
+      return runCiScript('keep_android_symbols.py', [
+        'verify',
+        '--manifest',
+        p.join(root.path, 'symbols', 'manifest.json'),
+        '--apk',
+        p.join(root.path, 'quest.apk'),
+        '--bundle',
+        p.join(root.path, 'app.aab'),
+      ]);
+    }
+
+    Map<String, Object?> manifest(Directory root) {
+      final file = File(p.join(root.path, 'symbols', 'manifest.json'));
+      return jsonDecode(file.readAsStringSync()) as Map<String, Object?>;
+    }
+
+    Map<String, Object?> library(Map<String, Object?> manifest, String flavour, String abi, String name) {
+      final libraries = (manifest['libraries']! as List).cast<Map<String, Object?>>();
+      return libraries.singleWhere((x) => x['flavour'] == flavour && x['abi'] == abi && x['name'] == name);
+    }
+
+    test('keeps the mappings and the Quest symbols, named as the libraries, with their GNU and Breakpad IDs', () {
+      final root = build();
+      final run = keep(root);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('phone mapping: the 3 phone builds gave the same file, kept once'));
+      expect(run.output, contains('Quest symbols from: AGP native-debug-symbols.zip'));
+      expect(run.output, contains('libnot_shipped.so: not in quest.apk, left out'));
+
+      final symbols = p.join(root.path, 'symbols');
+      expect(File(p.join(symbols, 'quest', 'arm64-v8a', 'libapp.so')).readAsBytesSync(), _elf(questAppId));
+      expect(File(p.join(symbols, 'quest', 'arm64-v8a', 'libnot_shipped.so')).existsSync(), isFalse);
+      expect(File(p.join(symbols, 'phone', 'mapping.txt')).readAsStringSync(), mapping);
+      expect(File(p.join(symbols, 'quest', 'mapping.txt')).readAsStringSync(), mapping);
+      final readme = File(p.join(symbols, 'README.txt')).readAsStringSync();
+      expect(readme, contains('build v3.3.0-rc.0-44 (commit 0123abc, version code 3030042)'));
+
+      final kept = manifest(root);
+      expect(kept['version_code'], '3030042');
+      expect(kept['commit'], '0123abc');
+      // The Breakpad ID of libflutter.so is the one of the M1 trace of the Meta Horizon Store
+      final flutter = library(kept, 'quest', 'arm64-v8a', 'libflutter.so');
+      expect(flutter['gnu_build_id'], flutterId);
+      expect(flutter['breakpad_id'], 'a6a0f0fd73f6cfcdc6c0e5f8dc7c88280');
+      expect(flutter['symtab'], isTrue);
+      expect(library(kept, 'quest', 'arm64-v8a', 'libapp.so')['file'], 'quest/arm64-v8a/libapp.so');
+      // The 32 bit symbol table of the bundle is read as the 64 bit ones are
+      expect(library(kept, 'phone', 'armeabi-v7a', 'libapp.so')['gnu_build_id'], phoneAppId);
+      expect(library(kept, 'phone', 'x86_64', 'libapp.so')['breakpad_id'], '2feda55f4c225df7be04e04e9e1d56720');
+      // A library without a build ID is kept when its code is the APK's, with the Breakpad ID of its .text: the first
+      // 16 bytes "0123456789abcdef" as a GUID, its first three fields byte swapped
+      final sqlite = library(kept, 'quest', 'arm64-v8a', 'libsqlite3.so');
+      expect(sqlite['gnu_build_id'], isNull);
+      expect(sqlite['breakpad_id'], '333231303534373638396162636465660');
+      expect(run.output, contains('libsmb2.so: build ID None of the symbol file, None in quest.apk, and another'));
+      expect(File(p.join(symbols, 'quest', 'arm64-v8a', 'libsmb2.so')).existsSync(), isFalse);
+      final mappings = (kept['mappings']! as List).cast<Map<String, Object?>>();
+      expect(mappings.map((x) => x['file']), ['phone/mapping.txt', 'quest/mapping.txt']);
+      expect(mappings.first['compiler_version'], '8.11.26');
+    });
+
+    test('takes the unstripped libraries of the intermediates when the build made no native-debug-symbols.zip', () {
+      final root = build(intermediates: true);
+      final run = keep(root);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('Quest symbols from: AGP intermediates, unstripped libraries'));
+      expect(File(p.join(root.path, 'symbols', 'quest', 'arm64-v8a', 'libapp.so')).readAsBytesSync(), _elf(questAppId));
+    });
+
+    test('fails when the mapping of the bundle build is not the proguard.map of the bundle', () {
+      final run = keep(build(proguardMap: '$mapping# another build\n'));
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('is not the proguard.map of the bundle'));
+    });
+
+    test('fails when the bundle lacks the libapp.so.sym of an ABI', () {
+      final run = keep(build(symbolAbis: const ['arm64-v8a', 'x86_64']));
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('the bundle holds no $symbolsPath/armeabi-v7a/libapp.so.sym'));
+    });
+
+    test('fails when the libapp.so of the Quest APK has another build ID than its symbols', () {
+      final run = keep(build(apkAppId: phoneAppId));
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('libapp.so: build ID $questAppId of the symbol file, $phoneAppId in quest.apk'));
+    });
+
+    test('keeps each phone mapping with a warning when the phone builds gave different ones', () {
+      final root = build(mappings: {'phone-split': '$mapping# the split build\n'});
+      final run = keep(root);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('::warning::the phone builds gave different R8 mappings, each one is kept'));
+      final phone = Directory(p.join(root.path, 'symbols', 'phone')).listSync().map((x) => p.basename(x.path));
+      expect(phone, unorderedEquals(['mapping-bundle.txt', 'mapping-split.txt', 'mapping-universal.txt']));
+    });
+
+    test('verify checks a downloaded Quest APK and bundle against the manifest', () {
+      final root = build();
+      expect(keep(root).exitCode, 0);
+      final same = verify(root);
+      expect(same.exitCode, 0, reason: '$same');
+      expect(same.output, contains('quest.apk: libapp.so build ID $questAppId as the symbols'));
+      expect(same.output, contains('quest.apk: libsqlite3.so without build ID, its .text as the symbols'));
+      expect(same.output, contains('app.aab: R8 mapping and libapp.so.sym of arm64-v8a, armeabi-v7a, x86_64 present'));
+
+      _zip(p.join(root.path, 'quest.apk'), {'lib/arm64-v8a/libapp.so': _elf(phoneAppId, symtab: false)});
+      final other = verify(root);
+      expect(other.exitCode, 1, reason: '$other');
+      expect(other.output, contains('quest.apk: libapp.so has build ID $phoneAppId, the symbols $questAppId'));
     });
   }, skip: skipCiScripts);
 

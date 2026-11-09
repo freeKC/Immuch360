@@ -57,6 +57,7 @@ import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import app.alextran.immich.R
+import app.alextran.immich.core.AppHealth
 import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.BufferingIndicator
 import app.alextran.immich.core.HttpClientManager
@@ -547,7 +548,9 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
       windowDisplay =
         (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) display else null) ?: windowManager.defaultDisplay
 
-      renderer = SpatialRenderer { surface -> onVideoSurface(surface) }
+      // The crash guard of the process keeps the GPU timers off on a driver that crashed while they ran
+      renderer = SpatialRenderer({ surface -> onVideoSurface(surface) }, PreferencesGpuTimerGuardStore.guard(this))
+      renderer.onGpuTimerNotice = { AppHealth.report("video", it) }
       renderer.projection = projection
       renderer.halfSphere = halfSphere
       renderer.quality = Quality.MEDIUM
@@ -671,6 +674,8 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     handler.removeCallbacks(progressRunnable)
     handler.removeCallbacks(statsRunnable)
     glView.onPause()
+    // The GL thread is parked: the GPU timers stop and their crash guard is disarmed
+    renderer.onPaused()
     stopped = true
     super.onStop()
   }
@@ -1512,9 +1517,10 @@ class SpatialVideoActivity : ComponentActivity(), HeadTracker.Listener {
     }
     statsText.text = String.format(
       Locale.ROOT,
-      "render %.0f fps %.1f ms\ndisparity %.0f fps %dx%d %s\nviewpoint %.2f%s layout %s\n%s",
+      "render %.0f fps %.1f ms timing %s\ndisparity %.0f fps %dx%d %s\nviewpoint %.2f%s layout %s\n%s",
       stats.renderFps,
       stats.renderMs,
+      stats.timing,
       stats.disparityFps,
       stats.disparityWidth,
       stats.disparityHeight,

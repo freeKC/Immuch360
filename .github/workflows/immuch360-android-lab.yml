@@ -1,0 +1,116 @@
+name: Immuch360 Android lab
+
+# The lab tests of mobile/integration_test that need Android, on an emulator of the runner (never on a device of the
+# owner). The app is a debug build: ART runs a debuggable app with CheckJNI on, debug.checkjni is set as well, and the
+# verdict says whether the app's "-Xcheck:jni" line was seen. First the stress test of the vendored ok_http (crash
+# families F1 and F2 of release 44): its JNI references through collections of the isolate group, and aborts that
+# race OkHttp's answers. Then upstream's background sync teardown test, which syncs from a fake server through the
+# app's own client and aborts a running sync: its result is reported, not required. The job fails when the stress test
+# fails or when logcat holds a crash of the app (.github/android-lab/check_logcat.py), and keeps logcat and the test
+# output as the android-lab artifact.
+# Runs on a push that changes the vendored ok_http, the stress test or this lab, and by hand. Actions pinned to a commit
+# and runner label pinned, read-only, no secret, as the desktop workflow (check_workflow.py).
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'mobile/packages/ok_http/**'
+      - 'mobile/integration_test/ok_http_receiver_stress_test.dart'
+      - '.github/android-lab/**'
+      - '.github/workflows/immuch360-android-lab.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-lab-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lab:
+    name: ok_http under CheckJNI on an emulator
+    runs-on: ubuntu-24.04
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install toolchains (Flutter 3.47.2, Java 21, OpenAPI generator)
+        env:
+          MISE_YES: '1'
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          mise install node java "npm:@openapitools/openapi-generator-cli"
+          cd mobile && mise install
+          mise exec -- flutter --version
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          # The SDK and NDK of the release workflow, whose notes say why the NDK is pinned
+          packages: 'platforms;android-36 build-tools;36.0.0 ndk;28.2.13676358'
+
+      - name: Same NDK for the build hooks and Gradle
+        run: |
+          ndk="$ANDROID_HOME/ndk/28.2.13676358"
+          test -x "$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
+          { echo "ANDROID_NDK_HOME=$ndk"; echo "ANDROID_NDK_ROOT=$ndk"; echo "ANDROID_NDK=$ndk"; } >> "$GITHUB_ENV"
+
+      - name: Flutter dependencies and code generation
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          mise //mobile:install:ci
+          mise //mobile:codegen
+
+      # Built before the emulator starts, so that Gradle and the emulator do not share the memory of the runner: the
+      # test runs below build the same debug app again, and only the Dart of each test file is compiled then
+      - name: Debug build of the app for the emulator
+        working-directory: mobile
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        run: |
+          mise exec -- flutter build apk --debug --flavor phone --target-platform android-x64 \
+            -t integration_test/ok_http_receiver_stress_test.dart
+          cd android && mise exec -- ./gradlew --stop
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # reactivecircus/android-emulator-runner (Apache-2.0) creates the AVD, boots it with KVM, runs the script and
+      # stops it; it runs each line of the script on its own, hence one line that calls the lab script
+      - name: Lab tests on the emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        env:
+          MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          cores: 3
+          ram-size: 4096M
+          disk-size: 6G
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: bash .github/android-lab/run_lab.sh
+
+      - name: Lab logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android-lab
+          path: ${{ runner.temp }}/android-lab/
+          if-no-files-found: ignore

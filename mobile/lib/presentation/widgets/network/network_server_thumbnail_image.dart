@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 
 /// The server picture of [entry], about [size] pixels on its long side, loaded through [source]. Known to the image
 /// cache by the file and the size alone (its source id, path, size and date), not by the connection, which is opened
@@ -59,9 +60,13 @@ class NetworkServerThumbnailImage extends ImageProvider<NetworkServerThumbnailIm
         // Fails the load, so that the tile shows its own picture instead
         throw StateError('No server picture for ${entry.path}');
       }
-      final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
-      return await decode(
-        buffer,
+      // The formats of the engine to the engine; on Android any other to the native decoder, at most the size asked
+      return await decodeEncodedBytes(
+        bytes,
+        maxWidth: size,
+        maxHeight: size,
+        source: 'plexPicture',
+        decode: decode,
         getTargetSize: (width, height) => width >= height
             ? (width > size ? ui.TargetImageSize(width: size) : const ui.TargetImageSize())
             : (height > size ? ui.TargetImageSize(height: size) : const ui.TargetImageSize()),

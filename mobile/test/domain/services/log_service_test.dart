@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/constants/constants.dart';
@@ -142,6 +144,53 @@ void main() {
 
         verifyNever(() => mockLogRepo.insertAll(captureAny()));
       });
+    });
+  });
+
+  group("Log Service unbuffered inserts in flight:", () {
+    late Completer<bool> insert;
+    late LogService unbuffered;
+
+    setUp(() async {
+      insert = Completer<bool>();
+      when(() => mockLogRepo.insert(any())).thenAnswer((_) => insert.future);
+      unbuffered = await LogService.create(
+        logRepository: mockLogRepo,
+        settingsRepository: mockSettingsRepository,
+        shouldBuffer: false,
+      );
+      Logger(_kInfoLog.logger!).info(_kInfoLog.message);
+    });
+
+    test('dispose() completes only after the insert completes', () async {
+      var disposed = false;
+      final dispose = unbuffered.dispose().then((_) => disposed = true);
+
+      await pumpEventQueue();
+      expect(disposed, isFalse);
+
+      insert.complete(true);
+      await dispose;
+      expect(disposed, isTrue);
+    });
+
+    test('flush() completes only after the insert completes', () async {
+      addTearDown(unbuffered.dispose);
+      var flushed = false;
+      final flush = unbuffered.flush().then((_) => flushed = true);
+
+      await pumpEventQueue();
+      expect(flushed, isFalse);
+
+      insert.complete(true);
+      await flush;
+      expect(flushed, isTrue);
+    });
+
+    test('dispose() does not wait for an insert that failed', () async {
+      insert.completeError(StateError('database closed'));
+
+      await unbuffered.dispose();
     });
   });
 

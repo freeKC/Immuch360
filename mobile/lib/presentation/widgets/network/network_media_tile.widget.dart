@@ -32,6 +32,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/tiff_image_completer.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
@@ -132,16 +133,25 @@ class NetworkThumbnailImage extends ImageProvider<NetworkThumbnailImage> {
       if (bytes.isEmpty) {
         throw NetworkImageLoadException(statusCode: response.statusCode, uri: url);
       }
-      final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
       try {
-        return await decode(
-          buffer,
+        // On Android a HEIF, AVIF or raw file goes to the native decoder, twice the width on its long side: never to
+        // the fallback decoder of the engine, which decodes at the full size and aborts the app out of memory
+        return await decodeEncodedBytes(
+          bytes,
+          maxWidth: width * 2,
+          maxHeight: width * 2,
+          source: 'shareTile',
+          decode: decode,
           getTargetSize: (intrinsicWidth, _) =>
               intrinsicWidth > width ? ui.TargetImageSize(width: width) : const ui.TargetImageSize(),
+          name: url.pathSegments.lastOrNull,
         );
       } catch (error) {
-        // Read whole and not decoded by the engine: the same next time, so once per session
-        UndecodablePhotos.instance.remember(undecodableShareKey(url), ImageDecodeException(error));
+        // Read whole and not decoded: the same next time, so once per session
+        UndecodablePhotos.instance.remember(
+          undecodableShareKey(url),
+          error is ImageDecodeException ? error : ImageDecodeException(error),
+        );
         rethrow;
       }
     } catch (_) {
@@ -587,7 +597,7 @@ Widget _withServerThumbnail(NetworkEntry entry, Widget picture, NetworkThumbnail
   final thumbnailUrl = entry.thumbnailUrl;
   if (thumbnailUrl != null) {
     return _ServerThumbnail(
-      image: ResizeImage(NetworkImage(thumbnailUrl), width: _ServerThumbnail.size),
+      image: GuardedNetworkImage(thumbnailUrl, source: 'dlnaPicture', maxWidth: _ServerThumbnail.size, maxHeight: 0),
       fallback: picture,
     );
   }
