@@ -108,7 +108,7 @@ void main() {
     'Colorful interface',
     'Enabled',
     'Use original (large)',
-    'Use thumbnail (small)',
+    'Use preview (small)',
     'Automatic',
     'On',
     'Off',

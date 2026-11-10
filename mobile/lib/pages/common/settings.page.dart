@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/data/store/passkey.dart';
 import 'package:immich_mobile/desktop/settings/computer_settings.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -103,6 +104,10 @@ enum SettingSection {
   };
 
   static Iterable<SettingSection> visible(WidgetRef ref) {
+    // Immuch360: the passkeys are off (kPasskeysAvailable), so neither the session nor the server is asked
+    if (!kPasskeysAvailable) {
+      return values.where((section) => section != passkeys);
+    }
     final isLoggedIn = ref.watch(authProvider).isAuthenticated;
     final isPasskeyEnabled = ref.watch(Store.passkeys.enabled()).valueOrNull ?? false;
     return values.where((section) => section != passkeys || (isLoggedIn && isPasskeyEnabled));
