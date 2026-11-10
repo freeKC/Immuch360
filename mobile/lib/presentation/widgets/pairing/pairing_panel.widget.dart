@@ -95,6 +95,11 @@ class _PairingPanelState extends ConsumerState<PairingPanel> {
       }
       return;
     }
+    // A phone linked itself through the panel of Play from a phone: nothing was signed in here
+    if (view.signedIn == null && view.linkedPhone != null) {
+      _completing = false;
+      return;
+    }
     final signedIn = view.signedIn;
     if (signedIn != null && signedIn.user.isNotEmpty && signedIn.phone != null) {
       ImmichToast.show(

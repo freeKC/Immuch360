@@ -3228,6 +3228,8 @@
   "play_link_confirm_title": "Laisser ce téléphone lancer des films sur {device} ?",
   "play_link_done": "{device} est associé : ouvrez un film, puis Lire sur",
   "play_link_err_lost": "{device} n'a pas répondu. Affichez un nouveau code dessus et réessayez.",
+  "play_link_phone_list_title": "Écrans où ce téléphone lance des films",
+  "play_link_phone_remove_confirm": "Supprimer {device} ? Ce téléphone ne pourra plus y lancer de films.",
   "play_link_progress": "Association de {device}…",
   "play_link_screen_linked": "{phone} peut maintenant lancer des films ici",
   "play_link_screen_linking": "Association…",

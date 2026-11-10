@@ -15,6 +15,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_pairing.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -375,6 +376,24 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
     }
   }
 
+  /// Removes a screen this phone plays films on: it can no longer be chosen in Play on
+  Future<void> _removeLinked(LinkedPeer screen) async {
+    final t = context.t;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        content: Text(t.play_link_phone_remove_confirm(device: screen.name)),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(t.cancel)),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: Text(t.remove)),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(linkedScreensProvider.notifier).remove(screen.id);
+    }
+  }
+
   Future<void> _signOut(PairedScreen screen) async {
     final t = context.t;
     final confirmed = await showDialog<bool>(
@@ -410,6 +429,7 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
     });
     final t = context.t;
     final screens = ref.watch(pairedScreensProvider);
+    final linked = ref.watch(linkedScreensProvider).valueOrNull ?? const <LinkedPeer>[];
     final theme = context.textTheme;
     final dates = DateFormat.yMMMd(context.locale.toLanguageTag());
     return Scaffold(
@@ -470,6 +490,21 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
               ),
           const SizedBox(height: ImmichSpacing.md),
           Text(t.pairing_connected_footer, style: theme.bodySmall),
+          // The screens this phone plays films on (play on the TV), each removable: the link ends on this side
+          if (linked.isNotEmpty) ...[
+            const SizedBox(height: ImmichSpacing.xl),
+            Text(t.play_link_phone_list_title, style: theme.titleMedium),
+            const SizedBox(height: ImmichSpacing.sm),
+            for (final screen in linked)
+              ListTile(
+                key: ValueKey('play_linked_${screen.id}'),
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(pairingKindIcon(screen.kind)),
+                title: Text(screen.name),
+                subtitle: Text(t.play_from_phone_linked_since(date: dates.format(screen.linkedAt.toLocal()))),
+                trailing: TextButton(onPressed: () => unawaited(_removeLinked(screen)), child: Text(t.remove)),
+              ),
+          ],
         ],
       ),
     );

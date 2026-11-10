@@ -3228,6 +3228,8 @@
   "play_link_confirm_title": "Let this phone play films on {device}?",
   "play_link_done": "{device} is linked: open a film, then Play on",
   "play_link_err_lost": "{device} did not answer. Show a new code on it and try again.",
+  "play_link_phone_list_title": "Screens this phone plays films on",
+  "play_link_phone_remove_confirm": "Remove {device}? This phone will no longer play films on it.",
   "play_link_progress": "Linking {device}…",
   "play_link_screen_linked": "{phone} can play films here now",
   "play_link_screen_linking": "Linking…",
