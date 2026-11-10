@@ -284,7 +284,12 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
         () => _rewalkOnce((again) async {
           var entry = _entries[target];
           if (entry == null) {
-            await _listingOf(_parentOf(target), again);
+            final itemKey = _itemKeyOf(target);
+            if (itemKey != null) {
+              await _resolveItem(itemKey);
+            } else {
+              await _listingOf(_parentOf(target), again);
+            }
             entry = _entries[target];
           }
           if (entry == null) {
@@ -333,6 +338,64 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
         }),
       ),
     );
+  }
+
+  /// The folder of the items asked by their rating key ([pathOfItem]): no section is named so, its dot keeps it out
+  /// of the names Plex gives
+  static const itemFolder = '/.item';
+
+  /// The path of the item [ratingKey] of the server, its first part, under [itemFolder]
+  /// (`/.item/<ratingKey>/<file name>`), which the media bridge, the players and the watch records then take like any
+  /// other: a film a phone asked this screen to play ("Play on the TV"). Found again by its key when the connection
+  /// forgot it. Not found when the server has no such item, or one without a file.
+  Future<String> pathOfItem(String ratingKey) {
+    if (!RegExp(r'^[0-9]{1,12}$').hasMatch(ratingKey)) {
+      return Future.error(_notFound);
+    }
+    return _guard(() => _onServer(() => _resolveItem(ratingKey)));
+  }
+
+  /// The rating key of the file at [path], when this connection listed it: what a phone sends a screen to play
+  String? ratingKeyOf(String path) {
+    final node = _nodes[normalizePath(path)];
+    return node is _File ? node.file.ratingKey : null;
+  }
+
+  Future<String> _resolveItem(String ratingKey) async {
+    final PlexListingPage page;
+    try {
+      page = await _plex.getJson(
+        _endpoint.base.resolve('/library/metadata/${Uri.encodeComponent(ratingKey)}'),
+        parsePlexListing,
+      );
+    } on PlexHttpStatus catch (error) {
+      throw error.status == 404 || error.status == 400 ? _notFound : error;
+    }
+    final file = page.items.whereType<PlexFileItem>().firstOrNull;
+    if (file == null) {
+      throw _notFound;
+    }
+    final path = '$itemFolder/$ratingKey/${file.fileName.replaceAll('/', '_')}';
+    _nodes[path] = _File(file);
+    final known = _entries[path];
+    _entries[path] = NetworkEntry(
+      sourceId: source.id,
+      path: path,
+      isDirectory: false,
+      size: file.size ?? (known?.isDirectory == false ? known?.size : null),
+      modified: file.addedAt,
+      mimeType: file.mimeType,
+      width: file.width,
+      height: file.height,
+      durationMs: file.durationMs,
+    );
+    return path;
+  }
+
+  /// The rating key of a path under [itemFolder], null for any other path
+  static String? _itemKeyOf(String path) {
+    final match = RegExp(r'^/\.item/([0-9]{1,12})/[^/]+$').firstMatch(path);
+    return match?.group(1);
   }
 
   /// The picture the photo transcoder of the server makes of [entry], about [size] pixels on its long side; null when
@@ -544,7 +607,12 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
   Future<PlexFileItem> _fileOf(String path, bool again) async {
     var node = _nodes[path];
     if (node == null) {
-      await _listingOf(_parentOf(path), again);
+      final itemKey = _itemKeyOf(path);
+      if (itemKey != null) {
+        await _resolveItem(itemKey);
+      } else {
+        await _listingOf(_parentOf(path), again);
+      }
       node = _nodes[path];
     }
     if (node == null) {

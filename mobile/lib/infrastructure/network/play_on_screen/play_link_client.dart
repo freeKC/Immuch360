@@ -277,6 +277,15 @@ class PhoneHandover {
     return PhoneHandover._(connection, handover);
   }
 
+  /// The user of the phone cancelled: the question goes from the screen. Never throws.
+  Future<void> cancel() async {
+    try {
+      await _connection.send({'type': 'handoverCancel'});
+    } catch (_) {
+      // The screen's question ends by itself after two minutes
+    }
+  }
+
   /// The user of the phone accepted: [server] and [token] go, and the answer comes once the user of the screen
   /// answered and the screen checked the server
   Future<HandoverResult> send(HandedPlexServer server, String token) async {

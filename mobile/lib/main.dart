@@ -37,6 +37,7 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_player.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
@@ -335,6 +336,8 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     unawaited(djiForgetRetiredSettings(ref.read(storeServiceProvider)));
     // Meta Quest detection, asked once: 360 media open in the immersive viewer there
     unawaited(ref.read(isHorizonOsProvider.future));
+    // Play from a phone: a big screen listens for its linked phones while the app is in front (play on the TV)
+    ref.read(screenPlayerProvider);
     // Whether this build offers the Gaussian splats, from the certificate of the APK: not the Meta Horizon Store build
     unawaited(ref.read(splatsInThisBuildProvider.future));
   }

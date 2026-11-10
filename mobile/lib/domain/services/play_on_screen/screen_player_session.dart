@@ -369,6 +369,16 @@ class ScreenPlayerSession {
         return _handoverHello(session, message);
       case 'handoverServer':
         return _handoverServer(session, message);
+      case 'handoverCancel':
+        // The user of the phone cancelled on its sheet: the question goes from the screen
+        final pending = session.handover;
+        if (pending != null && !pending.done) {
+          pending.done = true;
+          if (!pending.cancel.isCompleted) {
+            pending.cancel.complete();
+          }
+        }
+        return {'status': 'ok'};
       default:
         return {'status': 'unknown'};
     }
