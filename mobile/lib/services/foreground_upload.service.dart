@@ -423,7 +423,12 @@ class ForegroundUploadService {
             ? '${entry.name} is still being written on the share (${entry.size} bytes listed, $size when its upload '
                   'started, then fewer could be read): send it again once it is complete'
             : result.errorMessage ?? 'Upload failed with status ${result.statusCode}';
-        _logger.warning("Error(${result.statusCode}) uploading ${entry.path} from a share: $errorMessage");
+        // The error goes as the error of the record, as upstream's upload lines (211773f778): LogService then hides
+        // the server's host and IP that an HTTP client error prints on their own
+        _logger.warning(
+          "Error(${result.statusCode}) uploading ${entry.path} from a share",
+          isBeingWritten ? errorMessage : result.error ?? errorMessage,
+        );
         callbacks.onError?.call(id, errorMessage);
         if (errorMessage == "Quota has been exceeded!") {
           shouldAbortNetworkUpload = true;
@@ -727,7 +732,7 @@ class ForegroundUploadService {
         logContext: logContext,
       );
     } catch (e) {
-      return UploadResult.error(errorMessage: e.toString());
+      return UploadResult(isSuccess: false, isCancelled: false, errorMessage: e.toString(), error: e);
     }
   }
 
