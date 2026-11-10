@@ -40,11 +40,14 @@ void main() {
   }
 
   group('enabled', () {
-    test('is true when the OS supports passkeys and the server has them on', () async {
+    // Immuch360: kPasskeysAvailable keeps them off (passkeys bound to my.immich.app and the keys of Immich)
+    test('is false in Immuch360 even when the OS and the server have them, without asking either', () async {
       when(() => hostApi.isSupported()).thenAnswer((_) async => true);
       when(() => api.isEnabled()).thenAnswer((_) async => true);
 
-      expect(await createContainer().read(Store.passkeys.enabled().future), isTrue);
+      expect(await createContainer().read(Store.passkeys.enabled().future), isFalse);
+      verifyNever(() => hostApi.isSupported());
+      verifyNever(() => api.isEnabled());
     });
 
     test('is false when the OS has no passkeys', () async {
