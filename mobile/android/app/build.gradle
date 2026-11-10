@@ -168,8 +168,9 @@ dependencies {
   implementation libs.glide
   implementation libs.kotlinx.serialization.json
   implementation libs.credentials
-  // The Google Play services side of Credential Manager (passkeys, off by PASSKEYS above): in the phone flavour only,
-  // the Quest build ships no Google Play services code
+  // The Google Play services provider of Credential Manager (passkeys, off by PASSKEYS above): in the phone flavour
+  // only, so the quest flavour gets no credentials-play-services-auth and none of the gms auth, fido and identity
+  // modules it brings
   phoneImplementation libs.credentials.play.services.auth
 
   ksp libs.glide.ksp
