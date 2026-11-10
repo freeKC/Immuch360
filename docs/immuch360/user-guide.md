@@ -12,6 +12,7 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"I have no server, and I do not want an account."** See [Without a server or an account](#without-a-server-or-an-account).
 - **"I want to watch the videos of my NAS, on the phone or in the headset, without copying them."** See [Network shares](#network-shares-a-nas-a-computer-or-a-media-server).
 - **"Plex plays my 360° videos flat, and I want my Plex library in the headset, on the TV and away from home."** See [Plex Media Server, without plex.tv](#plex-media-server-without-plextv).
+- **"I want a film of my Plex server on the phone or in the headset for the plane."** See [Download a film to this device](#download-a-film-to-this-device).
 - **"My photos are on my phone, and I have no computer or NAS to put them on for the headset."** See [Share this phone on the network](#share-this-phone-on-the-network).
 - **"I want to see my Tapo camera and last night's clips without the Tapo app, and keep a clip in Immich."** See [Tapo cameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"My drone videos are not on the Immich map, and I want the files of my DJI drone on my server without a computer."** See [DJI drones](#dji-drones-photos-and-videos-over-usb-experimental).
@@ -304,6 +305,25 @@ From build 20 Immuch360 pairs with your Plex Media Server directly, without plex
 3. 360° and 3D are found by reading the files themselves, as on any share: 360° photos get the 360° badge, Apple spatial ones the 3D badge.
 4. Open a photo or video as on any share: 360°, 3D, 360°/180°, Spatial 2.5D on a phone, the immersive view in the Quest, the remote on a TV. A video is read as the original file, with byte ranges through the app's local bridge, so seeking works and its 360° and 3D metadata reach the players intact.
 5. Select files and tap "Upload to Immich" to send them to your server, as from any share (see [Send files of a share to Immich](#send-files-of-a-share-to-immich)).
+
+### Download a film to this device
+
+You want a film of your Plex server on the phone, the tablet or the headset for a trip, without a connection. From build 45 a video of a Plex server can be copied to the device, whole and as it is on the server.
+
+1. Open the video, then its menu (⋮): "Download to this device". In the folder view, select one or more videos and tap the download button next to "Upload to Immich".
+2. A sheet tells the size of the original file, the free room on the device and where the copy goes. A film that does not fit, with 512 MB kept free, cannot start. On mobile data, with "Download only on Wi-Fi" on, "Download over mobile data this time" lets it start at once; otherwise it waits for the Wi-Fi. Tap Download.
+3. The copy runs in the background, one film at a time. On Android a notification shows the film, the percentage and the time left, with Pause and Cancel, and the copy goes on with the screen off. A lost link does not lose it: the copy goes on where it stopped, with the rest of the file only.
+4. The tile of the film shows a ring while it is copied and a check once it is on the device. The menu of its page then offers "Delete the copy on this device".
+5. Network shares, "Downloaded films", lists the copies with the room they take. Tap one to play it from the device, with or without the server, in the usual player: the place where you stopped is the same as for the film read from the server. Each copy can be deleted, or all of them, and the copies under way pause, resume or cancel there. "Download only on Wi-Fi" is at the top, on by default.
+
+Where the copies go:
+
+- **Android phones, tablets and the Meta Quest**: the app's own storage, never the gallery, so the backup to Immich does not send the film. Uninstalling the app deletes them.
+- **iPhone and iPad**: the app's storage too, out of the iCloud backup. Keep the app open while a film downloads: iOS pauses it in the background, and the copy goes on when the app comes back. iOS may remove the copies when the device runs out of room; the list then drops them.
+- **Computers**: the download folder of the app (Downloads/Immuch360 by default, see the settings), under the name of the file on the server.
+- **TVs**: no download; a TV reads the server.
+
+The original file only: a smaller copy made by Plex is a later option. A shared Plex account whose owner turned off "Allow Downloads" gets "This Plex account may not download films."; the app asks the file the way Plex asks a download, so the owner's choice holds.
 
 ### Away from home
 

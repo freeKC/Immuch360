@@ -25,7 +25,7 @@ void main() {
     fake = FakeFilmEnvironment(root, FakeDownloadShare({}));
   });
   tearDown(() async {
-    await fake.network.close();
+    await fake.close();
     await root.delete(recursive: true);
   });
 

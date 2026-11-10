@@ -27,7 +27,7 @@ class _Server {
   final List<int> cuts = [];
 
   /// Throws this at the next opens, once each
-  final List<Object> failures = [];
+  final List<Exception> failures = [];
 
   /// Bytes per chunk of the body
   int chunk = 100;

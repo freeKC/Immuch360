@@ -66,7 +66,7 @@ class FakeDownloadShare implements NetworkFileSystem, NetworkFileDownloads {
     final controller = StreamController<List<int>>();
     unawaited(() async {
       if (held != null) {
-        await Future.any([held.future, if (abort != null) abort]);
+        await Future.any([held.future, ?abort]);
       }
       if (!controller.isClosed) {
         controller.add(Uint8List.sublistView(data, from));
@@ -111,6 +111,8 @@ class FakeFilmEnvironment {
   List<NetworkCapability> capabilities = const [NetworkCapability.wifi, NetworkCapability.unmetered];
 
   Directory get films => Directory('${root.path}${Platform.pathSeparator}films');
+
+  Future<void> close() => network.close();
 
   FilmDownloadEnvironment get environment => FilmDownloadEnvironment(
     fileSystem: (sourceId) async => share,

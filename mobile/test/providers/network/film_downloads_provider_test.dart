@@ -2,6 +2,7 @@
 // storage, the Wi-Fi rule, pause, resume, cancel from the notification, delete, the list kept for the next start, and a
 // copy cut by the end of the app going on.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -30,7 +31,7 @@ void main() {
       container.dispose();
     }
     containers.clear();
-    await fake.network.close();
+    await fake.close();
     await root.delete(recursive: true);
   });
 

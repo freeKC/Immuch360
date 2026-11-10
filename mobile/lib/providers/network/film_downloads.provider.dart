@@ -214,7 +214,20 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
       _log.warning('The downloaded films could not be read', error, stackTrace);
       state = state.copyWith(loaded: true);
     }
-    _env.keepAlive.listen(onPause: _pauseRunning, onCancel: _cancelRunning);
+    try {
+      _env.keepAlive.listen(onPause: _pauseRunning, onCancel: _cancelRunning);
+    } catch (error) {
+      _log.info('The actions of the notification are not heard: ${error.runtimeType}');
+    }
+    unawaited(_pump());
+  }
+
+  /// Hears the changes of the network from the first copy on: the pages that only read the list (the tiles, the
+  /// shares page) open no stream of the platform
+  void _listenToNetwork() {
+    if (_network != null) {
+      return;
+    }
     try {
       _network = _env.networkChanges().listen(
         (_) => unawaited(_onNetworkChanged()),
@@ -223,7 +236,6 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     } catch (error) {
       _log.info('The changes of the network are not heard: ${error.runtimeType}');
     }
-    unawaited(_pump());
   }
 
   /// The whole copy of the film at [path] of the share [sourceId], null when there is none
@@ -435,6 +447,7 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
           if (!film.isActive) {
             continue;
           }
+          _listenToNetwork();
           if (await _mayRun(film)) {
             next = film;
             break;

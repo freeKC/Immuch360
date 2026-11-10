@@ -492,7 +492,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// The whole copy of the film on this device, served by the media bridge under a random id like the generated media,
   /// with the entry the share listed when it was copied; null when there is none
   Future<_Video?> _offlineVideo(NetworkMediaService service, http.Client client) async {
-    if (!filmDownloadSourceType(ref.read(networkSourceProvider(widget.sourceId))?.type)) {
+    // A Plex film, or a film of a server removed since, whose copy stays on the device
+    final source = ref.read(networkSourceProvider(widget.sourceId));
+    if (source != null && !filmDownloadSourceType(source.type)) {
       return null;
     }
     final downloads = ref.read(filmDownloadsProvider.notifier);
