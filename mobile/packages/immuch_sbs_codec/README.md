@@ -6,7 +6,7 @@ its EXIF, XMP and ICC segments. package:image does the same in Dart; this crate 
 the Dart encoder takes seconds (a 48 Mpx pair: 4.7 s with package:image, 0.4 to 1.3 s here, measured on an i9 laptop
 and on a loaded i5 build machine).
 
-- `rust/`: the crate, a Cargo workspace of its own with its lock and its toolchain (1.98.0, as upstream's
+- `rust/`: the crate, a Cargo workspace of its own with its lock and its toolchain (1.99.1, as upstream's
   `native/crates/native_core_ffi`), out of upstream's `native/` tree. zune-jpeg (MIT OR Apache-2.0 OR Zlib) decodes,
   jpeg-encoder ((MIT OR Apache-2.0) AND IJG) encodes. A narrow C interface: `isc_decode`, `isc_encode`, `isc_free`,
   and `isc_abi_version` and `isc_licenses`. A panic is caught at the boundary and returned as a status.

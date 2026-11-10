@@ -76,7 +76,7 @@ No secret lives in this repository: the Android signing key is stored as encrypt
 
 ## Build it yourself on Windows
 
-You need Windows 10 or 11 on x64, Flutter 3.47.2 for Windows, Visual Studio 2022 or its Build Tools with the "Desktop development with C++" workload, Developer Mode turned on in the Windows settings (Flutter needs it for the plugins), and Python 3 for the bundle script. The build also compiles the native core of Immich, written in Rust: install rustup and the toolchain that `native/crates/native_core_ffi/rust-toolchain.toml` names (1.98.0 today), as the CI does.
+You need Windows 10 or 11 on x64, Flutter 3.47.2 for Windows, Visual Studio 2022 or its Build Tools with the "Desktop development with C++" workload, Developer Mode turned on in the Windows settings (Flutter needs it for the plugins), and Python 3 for the bundle script. The build also compiles the native core of Immich, written in Rust: install rustup and the toolchain that `native/crates/native_core_ffi/rust-toolchain.toml` names (1.99.1 today), as the CI does.
 
 1. Get the sources and run the code generation. The main branch, `immuch360`, builds the computer version too: there is no branch to switch to. The code generation uses Java and Node, so run it on Linux, macOS or in WSL; with WSL, keep the clone on a Windows drive, which WSL sees under `/mnt/c` or `/mnt/d`:
 
@@ -127,7 +127,7 @@ bash ../.github/desktop/libsmb2/build_linux.sh /tmp/libsmb2 && export IMMUCH360_
 flutter build linux --release -t lib/main_desktop.dart
 
 # macOS, with Xcode 26.3 and the macOS 26 SDK; the native core of Immich is built for both slices:
-mise exec -- rustup target add --toolchain 1.98.0 aarch64-apple-darwin x86_64-apple-darwin
+mise exec -- rustup target add --toolchain 1.99.1 aarch64-apple-darwin x86_64-apple-darwin
 flutter build macos --release -t lib/main_desktop.dart
 ```
 
