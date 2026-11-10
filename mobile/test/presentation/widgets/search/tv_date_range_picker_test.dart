@@ -7,6 +7,7 @@ import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/widgets/search/tv_date_range_picker.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   late DateTimeRange? result;
@@ -252,6 +253,21 @@ void main() {
       expect(find.byKey(const Key('tv_date_range_apply')).hitTestable(), findsOneWidget);
     });
   }
+
+  testWidgets('the dates read in en_US when intl has no date data for the app language (Maori)', (tester) async {
+    // The locale main.dart gives intl; the Material texts of Maori come from upstream's fallback delegates of the app
+    await initializeDateFormatting();
+    Intl.defaultLocale = 'mi';
+    addTearDown(() => Intl.defaultLocale = null);
+    await openRange(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.text('January 15, 2026'), findsOneWidget);
+    expect(value('start_month', 'Jan'), findsOneWidget);
+
+    await choose(tester, 'start_month', 'March');
+    expect(tester.takeException(), isNull);
+    expect(value('start_month', 'Mar'), findsOneWidget);
+  });
 
   testWidgets('the dialog speaks the language of the app', (tester) async {
     await openRange(tester, locale: const Locale('fr'));

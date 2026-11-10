@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_asset_loader.dart';
@@ -34,7 +35,8 @@ class OverviewHost {
 }
 
 /// The name of a month with its year, as the headers of the grid write it: "October 2024"
-String overviewMonthTitle(DateTime date) => toBeginningOfSentenceCase(DateFormat.yMMMM().format(date));
+String overviewMonthTitle(DateTime date) =>
+    toBeginningOfSentenceCase(DateFormat.yMMMM(resolvedDateTimeLocale()).format(date));
 
 /// One month of the timeline
 class OverviewMonthBlock extends StatelessWidget {
@@ -200,7 +202,7 @@ class OverviewYearCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = DateTime(year, month);
-    final name = DateFormat.MMM().format(date);
+    final name = DateFormat.MMM(resolvedDateTimeLocale()).format(date);
     final colors = context.colorScheme;
     final content = this.content;
     if (content == null) {

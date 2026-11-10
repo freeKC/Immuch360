@@ -10,6 +10,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/camera/camera_badges.widget.dart';
@@ -331,7 +332,7 @@ class _Recordings extends ConsumerWidget {
       );
     }
     final days = ref.watch(tapoCameraDaysProvider(source.id));
-    final locale = context.locale.toLanguageTag();
+    final locale = resolvedDateTimeLocale();
     final children = <Widget>[header];
     switch (days) {
       case AsyncData(:final value) when value.isEmpty:
