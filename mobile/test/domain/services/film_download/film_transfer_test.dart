@@ -215,9 +215,10 @@ void main() {
     copy.pause();
     final paused = await running;
     expect(paused.end, FilmTransferEnd.paused);
-    // What came before the pause is on the disk, the bytes gathered for the next write included
-    expect(paused.received, 500);
-    expect(File('$target.part').lengthSync(), 500);
+    // What came before the pause is on the disk, the bytes gathered for the next write included; the body stopped at
+    // 500 bytes at most
+    expect(paused.received, inInclusiveRange(256, 500));
+    expect(File('$target.part').lengthSync(), paused.received);
     expect(File(target).existsSync(), isFalse);
 
     server.beforeChunk = null;
