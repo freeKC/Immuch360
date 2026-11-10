@@ -293,18 +293,15 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
   /// panel of "Play from a phone") a phone only links itself for "Play on the TV".
   Future<void> show(ScreenSignInActions actions, {bool linkOnly = false}) async {
     _actions = actions;
-    if (_linkOnly != linkOnly && _server != null) {
-      _linkOnly = linkOnly;
-      await _start();
-      return;
-    }
+    // A panel of the other kind while one listens: its code and its purpose are no longer those shown
+    final changed = _linkOnly != linkOnly;
     _linkOnly = linkOnly;
     _shown++;
     if (_shown == 1) {
       await _lifecycle?.cancel();
       _lifecycle = _environment.lifecycle().listen(_onLifecycle);
     }
-    if (_server == null && !_background) {
+    if ((_server == null || changed) && !_background) {
       await _start();
     }
   }
