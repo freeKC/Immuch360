@@ -168,7 +168,8 @@ class _SyncStatusAndActionsState extends ConsumerState<SyncStatusAndActions> {
                     }
                     rethrow;
                   }
-                  unawaited(router.replaceAll([const LoginRoute()]));
+                  // Immuch360: the reset signs out, so it ends on the welcome page as the Sign out button does
+                  unawaited(router.replaceAll([const WelcomeRoute()]));
                 },
                 child: Text(context.t.confirm, style: TextStyle(color: context.colorScheme.error)),
               ),

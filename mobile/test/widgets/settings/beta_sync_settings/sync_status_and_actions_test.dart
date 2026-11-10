@@ -95,25 +95,26 @@ void main() {
       await tester.pump();
     }
 
-    void expectWipedOnLoginPage() {
+    void expectWipedOnWelcomePage() {
       verify(drift.reset).called(1);
       expect(StoreService.I.tryGet(StoreKey.serverEndpoint), isNull);
       final routes = verify(() => router.replaceAll(captureAny())).captured.single as List<PageRouteInfo>;
-      expect(routes.single.routeName, LoginRoute.name);
+      // Immuch360: the welcome page, as after Sign out (use without a server, pairing)
+      expect(routes.map((route) => route.routeName), [WelcomeRoute.name]);
     }
 
-    testWidgets('logs out, empties the store and opens the login page', (tester) async {
+    testWidgets('logs out, empties the store and opens the welcome page', (tester) async {
       await confirmReset(tester);
 
       expect(auth?.loggedOut, isTrue);
-      expectWipedOnLoginPage();
+      expectWipedOnWelcomePage();
     });
 
-    testWidgets('still empties the store and opens the login page when logout fails', (tester) async {
+    testWidgets('still empties the store and opens the welcome page when logout fails', (tester) async {
       await confirmReset(tester, Exception('settings write failed'));
 
       expect(auth?.loggedOut, isTrue);
-      expectWipedOnLoginPage();
+      expectWipedOnWelcomePage();
     });
   });
 }
