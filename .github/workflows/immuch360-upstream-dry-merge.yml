@@ -13,9 +13,6 @@ name: Immuch360 upstream dry merge
 # Read-only, no secret, runner and actions pinned, under the rules of .github/desktop/check_workflow.py (its first
 # step). Nothing to install: the git and the Python 3 of the runner image do it all.
 on:
-  # Temporary: the first run of the job on its own branch, removed once it is green
-  push:
-    branches: ['ci-dry-merge-45']
   schedule:
     - cron: '47 6 * * 1'
   workflow_dispatch:
