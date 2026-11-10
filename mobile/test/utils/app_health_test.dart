@@ -9,6 +9,7 @@ import 'package:logging/logging.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../infrastructure/repository.mock.dart';
+import '../service.mocks.dart';
 
 class _FakeLogMessage extends Fake implements LogMessage {}
 
@@ -79,7 +80,11 @@ void main() {
         return true;
       });
       when(() => settingsRepository.appConfig).thenReturn(const AppConfig(logLevel: LogLevel.info));
-      logService = await LogService.init(logRepository: logRepository, settingsRepository: settingsRepository);
+      logService = await LogService.init(
+        logRepository: logRepository,
+        settingsRepository: settingsRepository,
+        storeService: MockStoreService(),
+      );
     });
 
     tearDownAll(() => logService.dispose());

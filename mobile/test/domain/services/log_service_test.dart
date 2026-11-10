@@ -185,6 +185,7 @@ void main() {
       unbuffered = await LogService.create(
         logRepository: mockLogRepo,
         settingsRepository: mockSettingsRepository,
+        storeService: StoreService.I,
         shouldBuffer: false,
       );
       Logger(_kInfoLog.logger!).info(_kInfoLog.message);

@@ -21,6 +21,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as p;
 
 import '../../infrastructure/repository.mock.dart';
+import '../../service.mocks.dart';
 
 /// The save dialog of the system, answered by the test
 class _Pickers implements FilePickers {
@@ -74,6 +75,7 @@ void main() {
     logService = await LogService.init(
       logRepository: logRepository,
       settingsRepository: settingsRepository,
+      storeService: MockStoreService(),
       shouldBuffer: false,
     );
   });
