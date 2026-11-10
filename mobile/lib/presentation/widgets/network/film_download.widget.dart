@@ -22,14 +22,15 @@ import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
 /// Whether this screen copies films: never on a TV (see filmDownloadOffered)
-final filmDownloadOfferedProvider = Provider.autoDispose<bool>(
-  (ref) => filmDownloadOffered(
+final filmDownloadOfferedProvider = Provider.autoDispose<bool>((ref) {
+  final platform = filmDownloadPlatform();
+  return filmDownloadOffered(
     tvMode: ref.watch(tvModeProvider),
-    isAndroid: CurrentPlatform.isAndroid,
-    isIOS: CurrentPlatform.isIOS,
-    isDesktop: CurrentPlatform.isDesktop,
-  ),
-);
+    isAndroid: platform.isAndroid,
+    isIOS: platform.isIOS,
+    isDesktop: platform.isDesktop,
+  );
+});
 
 /// Whether [entry] of the share [sourceId] can be downloaded here: a video of a Plex server, on a screen that copies
 /// films. [watch] in a build method, read elsewhere (a menu being opened).
@@ -51,7 +52,7 @@ String filmDownloadStatusText(BuildContext context, FilmDownload film, {double? 
   final size = film.size;
   final progress = size == null
       ? formatBytes(film.received)
-      : t.film_download_progress(done: formatBytes(film.received), total: formatBytes(size));
+      : t.film_download_progress(done: formatBytes(film.received), whole: formatBytes(size));
   return switch (film.state) {
     FilmDownloadState.done => size == null ? t.film_downloaded : '${t.film_downloaded} · ${formatBytes(size)}',
     FilmDownloadState.running => [
@@ -112,7 +113,7 @@ Future<void> startFilmDownload(BuildContext context, WidgetRef ref, NetworkEntry
       free: free,
       folder: folder,
       askMobileData: onMobileData && wifiOnly,
-      keepOpen: filmDownloadNeedsAppOpen(isIOS: CurrentPlatform.isIOS),
+      keepOpen: filmDownloadNeedsAppOpen(isIOS: filmDownloadPlatform().isIOS),
     ),
   );
   if (choice == null) {
@@ -175,8 +176,8 @@ class _FilmDownloadSheetState extends State<FilmDownloadSheet> {
           children: [
             Text(widget.title, style: context.textTheme.titleLarge, maxLines: 2, overflow: TextOverflow.ellipsis),
             const SizedBox(height: 12),
-            if (size != null) Text(t.film_download_original(size: formatBytes(size))),
-            if (free != null) Text(t.film_download_free(size: formatBytes(free)), style: secondary),
+            if (size != null) Text(t.film_download_original(bytes: formatBytes(size))),
+            if (free != null) Text(t.film_download_free(bytes: formatBytes(free)), style: secondary),
             if (room == FilmDownloadRoom.notEnough && size != null && free != null)
               Padding(
                 key: const Key('film_download_no_space'),
@@ -419,7 +420,7 @@ class DownloadedFilmsTile extends ConsumerWidget {
       title: Text(context.t.films_downloaded),
       subtitle: Text(
         '${context.t.films_downloaded_count(count: count)} · '
-        '${context.t.films_downloaded_size(size: formatBytes(downloads.bytesOnDevice))}',
+        '${context.t.films_downloaded_size(bytes: formatBytes(downloads.bytesOnDevice))}',
       ),
       trailing: const Icon(Icons.chevron_right_rounded),
       onTap: () => unawaited(context.pushRoute(const DownloadedFilmsRoute())),

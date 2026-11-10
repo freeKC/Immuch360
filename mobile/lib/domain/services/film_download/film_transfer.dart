@@ -143,6 +143,9 @@ class FilmTransfer {
   int _received = 0;
   int? _total;
 
+  /// Whether the request under way wrote bytes
+  bool _progressed = false;
+
   /// Stops the copy and keeps its bytes for later
   void pause() => _halt(FilmTransferEnd.paused);
 
@@ -173,18 +176,21 @@ class FilmTransfer {
       if (stopped != null) {
         return _ended(stopped, partial);
       }
+      _progressed = false;
       try {
         final completed = await _once(partial);
         if (completed) {
           await _finish(partial);
           return FilmTransferResult(FilmTransferEnd.completed, received: _received, total: _total, identity: identity);
         }
-        // Bytes came, the link then dropped: the tries start again
-        tries = 0;
       } catch (error) {
         final stopped = _stop;
         if (stopped != null) {
           return _ended(stopped, partial);
+        }
+        if (_progressed) {
+          // Bytes came, then the link dropped: a long copy over a weak link goes on as long as it moves
+          tries = 0;
         }
         final kind = filmDownloadFailureOf(error);
         if (!kind.retry || tries >= retryDelays.length) {
@@ -260,6 +266,7 @@ class FilmTransfer {
         while (await body.moveNext().timeout(idleTimeout)) {
           pending.add(body.current);
           if (pending.length >= writeChunk) {
+            _progressed = true;
             _received += pending.length;
             await file.writeFrom(pending.takeBytes());
             onProgress?.call(_received, total);
@@ -270,6 +277,7 @@ class FilmTransfer {
         }
       } finally {
         if (pending.isNotEmpty) {
+          _progressed = true;
           _received += pending.length;
           await file.writeFrom(pending.takeBytes());
           onProgress?.call(_received, total);

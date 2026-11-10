@@ -80,9 +80,25 @@ FilmDownloadNoticeTexts defaultFilmDownloadTexts(FilmDownload film, int received
   );
 }
 
+/// The platform as Download sees it, read in this one place (PLATFORM-AUDIT.md): an Android service, an iPhone kept
+/// open, the download folder of a computer
+typedef FilmDownloadPlatform = ({bool isAndroid, bool isIOS, bool isDesktop});
+
+FilmDownloadPlatform filmDownloadPlatform() =>
+    (isAndroid: CurrentPlatform.isAndroid, isIOS: CurrentPlatform.isIOS, isDesktop: CurrentPlatform.isDesktop);
+
+/// What keeps a copy running: the foreground service on Android, nothing elsewhere
+FilmDownloadKeepAlive filmDownloadKeepAliveOf(FilmDownloadPlatform platform) {
+  if (platform.isAndroid) {
+    return AndroidFilmDownloadKeepAlive();
+  }
+  return PlainFilmDownloadKeepAlive(isDesktop: platform.isDesktop);
+}
+
 final filmDownloadEnvironmentProvider = Provider<FilmDownloadEnvironment>((ref) {
-  final isDesktop = CurrentPlatform.isDesktop;
-  final kind = filmDownloadFolderKind(isIOS: CurrentPlatform.isIOS, isDesktop: isDesktop);
+  final platform = filmDownloadPlatform();
+  final isDesktop = platform.isDesktop;
+  final kind = filmDownloadFolderKind(isIOS: platform.isIOS, isDesktop: isDesktop);
   Future<Directory> indexFolder() async =>
       Directory('${(await getApplicationSupportDirectory()).path}${Platform.pathSeparator}$filmDownloadFolderName');
   return FilmDownloadEnvironment(
@@ -97,9 +113,7 @@ final filmDownloadEnvironmentProvider = Provider<FilmDownloadEnvironment>((ref) 
     },
     capabilities: () => ref.read(connectivityApiProvider).getCapabilities(),
     networkChanges: () => Connectivity().onConnectivityChanged.map<void>((_) {}),
-    keepAlive: CurrentPlatform.isAndroid
-        ? AndroidFilmDownloadKeepAlive()
-        : PlainFilmDownloadKeepAlive(isDesktop: isDesktop),
+    keepAlive: filmDownloadKeepAliveOf(platform),
     isDesktop: isDesktop,
   );
 });
@@ -338,10 +352,16 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     await _deleteFiles(film);
   }
 
-  /// Deletes every copy
+  /// Deletes every copy: the list empties at once, then the files go
   Future<void> deleteAll() async {
-    for (final film in [...state.films]) {
-      await delete(film.id);
+    final films = [...state.films];
+    if (_runningId != null) {
+      _transfer?.cancel();
+    }
+    state = state.copyWith(films: const []);
+    _saveSoon(now: true);
+    for (final film in films) {
+      await _deleteFiles(film);
     }
   }
 

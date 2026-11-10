@@ -62,6 +62,10 @@ class FilmDownloadService : Service() {
       return START_NOT_STICKY
     }
     acquireLocks()
+    if (running !== this) {
+      // The lab test of the downloads waits for this line (integration_test/lab_plex_download_test.dart)
+      Log.i(TAG, "Foreground service started")
+    }
     running = this
     return START_NOT_STICKY
   }
@@ -83,6 +87,7 @@ class FilmDownloadService : Service() {
     if (running === this) {
       running = null
     }
+    Log.i(TAG, "Foreground service stopped")
     releaseLocks()
     super.onDestroy()
   }

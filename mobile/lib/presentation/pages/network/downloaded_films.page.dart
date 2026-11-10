@@ -57,7 +57,7 @@ class DownloadedFilmsPage extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Text(
                 '${t.films_downloaded_count(count: downloads.done.length)} · '
-                '${t.films_downloaded_size(size: formatBytes(downloads.bytesOnDevice))}',
+                '${t.films_downloaded_size(bytes: formatBytes(downloads.bytesOnDevice))}',
                 key: const Key('downloaded_films_total'),
                 style: context.textTheme.titleSmall?.copyWith(color: context.primaryColor),
               ),
