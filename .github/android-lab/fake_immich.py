@@ -23,7 +23,9 @@ socket open, as Immich 3.3.5 (the version of media.freekc.fr):
 
 Every JSON answer and every sync event is checked against the schemas of open-api/immich-openapi-specs.json when the
 server starts (--check runs that check alone and exits), so a change of the API that the fake answers no longer follow
-fails here rather than as a puzzling test failure.
+fails here rather than as a puzzling test failure. A required key the fake leaves out passes only when
+mobile/lib/utils/openapi_patching.dart gives the app a default for it: a 3.3.5 server does not send the keys newer specs
+require (featureLevel, backups), and the app fills them, which the lab then runs through.
 
 The tests also print "LAB_HOST <id> <command> [argument]" lines to logcat; with --serial the server follows logcat
 through adb and runs them on the emulator: "grant" (the media and notification permissions the app would ask in a
@@ -117,15 +119,15 @@ def json_answers():
     features = {key: False for key in (
         "configFile", "duplicateDetection", "email", "facialRecognition", "importFaces", "map", "oauth",
         "oauthAutoLaunch", "ocr", "realtimeTranscoding", "reverseGeocoding", "search", "sidecar", "smartSearch")}
-    # backups: required by the spec since upstream v3.4.0 (the FUTO backups of the web app, off here)
-    features.update(backups=False, passwordLogin=True, trash=True)
+    # No backups key: a 3.3.5 server has none (required since upstream v3.4.0; openapi_patching.dart gives false)
+    features.update(passwordLogin=True, trash=True)
     return {
         "wellKnown": (None, {"api": {"endpoint": "/api"}}),
         "ping": ("ServerPingResponse", {"res": "pong"}),
         "version": ("ServerVersionResponseDto",
-                    # featureLevel: required since upstream v3.4.0; 1 is the level below the passkeys
-                    {"featureLevel": 1, "major": VERSION[0], "minor": VERSION[1], "patch": VERSION[2],
-                     "prerelease": None}),
+                    # No featureLevel: a 3.3.5 server has none (required since upstream v3.4.0; the app's patch
+                    # gives 0, below the passkeys)
+                    {"major": VERSION[0], "minor": VERSION[1], "patch": VERSION[2], "prerelease": None}),
         "features": ("ServerFeaturesDto", features),
         "config": ("ServerConfigDto", {
             "externalDomain": "", "isInitialized": True, "isOnboarded": True, "loginPageMessage": "",
@@ -188,17 +190,54 @@ def sync_events(files):
 UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 
-def schema_errors(spec, value, schema, where):
-    """What in [value] does not follow [schema] of the OpenAPI document [spec]: required keys, types, enums, formats"""
+PATCHES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "mobile", "lib", "utils",
+                       "openapi_patching.dart")
+
+
+def openapi_patches(path=PATCHES):
+    """The keys openApiPatches of openapi_patching.dart fills per DTO when a server leaves them out: {dto: {key, ...}}"""
+    with open(path, encoding="utf-8") as handle:
+        text = handle.read()
+    start = text.index("openApiPatches = {") + len("openApiPatches = ")
+    patches, dto, depth, index = {}, None, 0, start
+    while index < len(text):
+        char = text[index]
+        if char == "'":
+            end = text.index("'", index + 1)
+            literal = text[index + 1:end]
+            index = end + 1
+            if text[index:].lstrip().startswith(":"):
+                if depth == 1:
+                    dto = literal
+                    patches[dto] = set()
+                elif depth == 2 and dto:
+                    # A dotted key fills one key inside its parent, not the whole parent
+                    if "." not in literal:
+                        patches[dto].add(literal)
+            continue
+        if char in "{([":
+            depth += 1
+        elif char in "})]":
+            depth -= 1
+            if depth == 0:
+                break
+        index += 1
+    return patches
+
+
+def schema_errors(spec, value, schema, where, patches=None, name=None):
+    """What in [value] does not follow [schema] of the OpenAPI document [spec]: required keys, types, enums, formats.
+    A required key missing from [value] passes when [patches] (openapi_patches) fills it for the DTO [name]."""
     schemas = spec["components"]["schemas"]
     if "$ref" in schema:
-        return schema_errors(spec, value, schemas[schema["$ref"].split("/")[-1]], where)
+        ref = schema["$ref"].split("/")[-1]
+        return schema_errors(spec, value, schemas[ref], where, patches, ref)
     if "allOf" in schema:
         if value is None and schema.get("nullable"):
             return []
         errors = []
         for part in schema["allOf"]:
-            errors += schema_errors(spec, value, part, where)
+            errors += schema_errors(spec, value, part, where, patches, name)
         return errors
     if value is None:
         return [] if schema.get("nullable") else [f"{where}: null where the schema does not allow it"]
@@ -209,17 +248,18 @@ def schema_errors(spec, value, schema, where):
     if kind == "object" or "properties" in schema:
         if not isinstance(value, dict):
             return [f"{where}: not an object"]
+        filled = (patches or {}).get(name, set())
         for key in schema.get("required", []):
-            if key not in value:
+            if key not in value and key not in filled:
                 errors.append(f"{where}: required key {key} missing")
         for key, item in value.items():
             if key in schema.get("properties", {}):
-                errors += schema_errors(spec, item, schema["properties"][key], f"{where}.{key}")
+                errors += schema_errors(spec, item, schema["properties"][key], f"{where}.{key}", patches)
     elif kind == "array":
         if not isinstance(value, list):
             return [f"{where}: not an array"]
         for index, item in enumerate(value):
-            errors += schema_errors(spec, item, schema["items"], f"{where}[{index}]")
+            errors += schema_errors(spec, item, schema["items"], f"{where}[{index}]", patches)
     elif kind == "string":
         if not isinstance(value, str):
             return [f"{where}: {value!r} is not a string"]
@@ -242,24 +282,25 @@ def schema_errors(spec, value, schema, where):
     return errors
 
 
-def check_answers(spec, files):
-    """The errors of every JSON answer and sync event against the schemas"""
+def check_answers(spec, files, patches=None):
+    """The errors of every JSON answer and sync event against the schemas, the app's defaults ([patches]) applied"""
+    patches = openapi_patches() if patches is None else patches
     errors = []
     for name, (schema, value) in json_answers().items():
         if schema is None:
             continue
         if schema.startswith("["):
             item = {"$ref": f"#/components/schemas/{schema[1:-1]}"}
-            errors += schema_errors(spec, value, {"type": "array", "items": item}, name)
+            errors += schema_errors(spec, value, {"type": "array", "items": item}, name, patches)
         else:
-            errors += schema_errors(spec, value, {"$ref": f"#/components/schemas/{schema}"}, name)
+            errors += schema_errors(spec, value, {"$ref": f"#/components/schemas/{schema}"}, name, patches)
     entity_types = spec["components"]["schemas"]["SyncEntityType"]["enum"]
     for kind, schema, data, _ in sync_events(files):
         if kind not in entity_types:
             errors.append(f"sync {kind}: not a SyncEntityType of the specification")
-        errors += schema_errors(spec, data, {"$ref": f"#/components/schemas/{schema}"}, f"sync {kind}")
+        errors += schema_errors(spec, data, {"$ref": f"#/components/schemas/{schema}"}, f"sync {kind}", patches)
     upload = {"id": str(uuid.uuid4()), "status": "created"}
-    errors += schema_errors(spec, upload, {"$ref": "#/components/schemas/AssetMediaResponseDto"}, "upload")
+    errors += schema_errors(spec, upload, {"$ref": "#/components/schemas/AssetMediaResponseDto"}, "upload", patches)
     return errors
 
 

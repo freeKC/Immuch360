@@ -28,6 +28,8 @@ on:
       - 'mobile/integration_test/lab_*.dart'
       - 'mobile/integration_test/test_utils/lab_server.dart'
       - 'mobile/test/fixtures/android_lab/**'
+      # The fake leaves out the keys this file fills, as a 3.3.5 server does
+      - 'mobile/lib/utils/openapi_patching.dart'
       - '.github/android-lab/**'
       - '.github/workflows/immuch360-android-lab.yml'
   workflow_dispatch:
