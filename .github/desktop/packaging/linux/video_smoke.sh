@@ -7,7 +7,8 @@
 #     one reference frame, which every distribution decodes: Fedora's FFmpeg has no H.264 decoder of its own and goes
 #     through OpenH264, which refuses the Main and High profiles of most cameras (RPM Fusion's FFmpeg decodes them);
 #   - media_kit_video made a video output for the player (its line "VideoOutput: H/W rendering" or "S/W rendering"),
-#     on the hardware path when EXPECT_RENDERING is H/W (mobile/packages/media_kit_video/IMMUCH360-NOTE.md, patch 10);
+#     on the hardware path when EXPECT_RENDERING is H/W (IMMUCH360-NOTE.md of media_kit_video in
+#     immuch360/media_kit_360, patch 10);
 #   - without a session bus, the app keeps its secrets for the session without asking libsecret and its log says so
 #     (lib/desktop/platform/linux_secret_storage.dart): no libsecret error, no keyring error in the log;
 #   - neither media_kit_video nor the app's log (its database, read with sqlite3) holds an error of the players or of

@@ -6,7 +6,7 @@
 //   (plan 2.7);
 // - making a player costs a libmpv start and a texture: a page swiped to takes the idle one;
 // - media_kit #1449: each Player.dispose() on Windows took one COM reference off the window's thread, and drag and
-//   drop died after four. The vendored media_kit gives it back (packages/media_kit/IMMUCH360-NOTE.md). The pool
+//   drop died after four. Our media_kit gives it back (IMMUCH360-NOTE.md of media_kit_360's media_kit). The pool
 //   disposes beyond its idle limit, when a picture is lost, and before each job of the AI features on the graphics
 //   card, which disposes the idle players and those that are paused and not on screen (see the end of this comment):
 //   each panorama disposes what is idle or paused then, so drag and drop rests on the vendored fix, not yet tried

@@ -1,7 +1,7 @@
 // What the 360° player of the computers draws (design 2.3 and 2.4): the parameters SphericalVideoApi.open carries for
 // the phones' native players (the stereo layout, the eye, the coverage, the rawProjection JSON of a raw camera file),
 // and the view the user turns (yaw, pitch, field of view). Renderer C takes them as uniforms of its pass
-// (render/plugin_renderer.dart): nothing of mpv changes while the view moves (DP1, 2026-10-09).
+// (package:media_kit_video/sphere.dart): nothing of mpv changes while the view moves (DP1, 2026-10-09).
 //
 // Raw files of 360 cameras: a file whose two lenses are side by side in one track plays stitched. A file of two
 // tracks (an X4, a GoPro .360) or a pair of files (an X3 pair) has its two streams stacked side by side in one frame,
@@ -13,9 +13,9 @@ import 'dart:ui' show Offset;
 
 import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:media_kit_video/sphere.dart';
 
 /// The view of the sphere, in degrees: [yaw] positive to the right of the frame's centre, [pitch] positive up (the
 /// longitude and latitude of the photo sphere), [fov] the vertical field of view
@@ -154,7 +154,7 @@ class ProjectionParams {
   PluginProjection toPlugin({RawFrame? frame}) {
     final streams = rawStreams;
     if (streams == null) {
-      return PluginProjection.equirect(layout: layout, coverage: coverage, eye: eye);
+      return PluginProjection.equirect(layout: layout.toPlugin(), coverage: coverage.toPlugin(), eye: eye);
     }
     return rawProjectionFor(streams, frame ?? RawFrame.streams([for (var i = 0; i < streams.tracks.length; i++) i]));
   }
@@ -172,4 +172,21 @@ class ProjectionParams {
 
   @override
   String toString() => 'ProjectionParams(${layout.name}, ${eye.name}, ${coverage.name}${isRaw ? ', raw' : ''})';
+}
+
+/// The stereo layout of the app as renderer C of media_kit_video names it
+extension StereoLayoutPlugin on StereoLayout {
+  PluginStereoLayout toPlugin() => switch (this) {
+    StereoLayout.mono => PluginStereoLayout.mono,
+    StereoLayout.topBottom => PluginStereoLayout.topBottom,
+    StereoLayout.leftRight => PluginStereoLayout.leftRight,
+  };
+}
+
+/// The coverage of the sphere of the app as renderer C of media_kit_video names it
+extension SphereCoveragePlugin on SphereCoverage {
+  PluginCoverage toPlugin() => switch (this) {
+    SphereCoverage.full => PluginCoverage.full,
+    SphereCoverage.half => PluginCoverage.half,
+  };
 }

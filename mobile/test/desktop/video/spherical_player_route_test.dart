@@ -27,7 +27,6 @@ import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/desktop/video/spherical_player_route.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -36,7 +35,7 @@ import 'package:immich_mobile/domain/services/player_events_hub.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart' show SphericalVideoEvents;
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:media_kit_video/sphere.dart';
 
 import 'fake_playback_engine.dart';
 

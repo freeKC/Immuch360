@@ -1,8 +1,8 @@
 // The y4m check of the macOS libmpv (.github/desktop/libmpv-macos/check_y4m.py): its fixtures are y4m as the AV2
 // decoder writes them, a report of a libmpv that reads them passes every check, and the reports of a libmpv without
 // the demuxer, of 10 bit read as 8, of a seek to the wrong frame, of a seek read through instead of asked for, or of a
-// dropped frame fail. The probe itself needs a libmpv: the workflows run it (immuch360-libmpv.yml on the frameworks it
-// builds, immuch360-desktop.yml on those of the app).
+// dropped frame fail. The probe itself needs a libmpv: the workflows run it (immuch360/libmpv-builds on the frameworks
+// it builds, immuch360-desktop.yml on those of the app).
 
 import 'dart:convert';
 import 'dart:io';
@@ -167,19 +167,35 @@ void _companionTests() {
     expect(smaller.output, contains('FAILED: size 1920x1080 (1280x720)'));
   });
 
-  test('the macOS job reads the serve of the av2-macos archive on a fixture and the 1080p clip of the CI', () {
-    final workflow = File(
-      p.join(repositoryRoot, '.github', 'workflows', 'immuch360-desktop.yml'),
-    ).readAsStringSync().replaceAll('\r\n', '\n');
-    final start = workflow.indexOf('\n  macos:\n');
-    final end = workflow.indexOf(RegExp(r'\n  [a-z0-9-]+:\n'), start + 1);
-    final job = workflow.substring(start, end);
-    expect(job, contains('needs: [codegen, av2-macos]'));
-    expect(job, contains('check_y4m.py companion'));
-    expect(job, contains('mobile/test/fixtures/av2/av2-256x144-10bit.ivf'));
-    expect(job, contains('.github/desktop/av2/clips/lighthouse-1080p30-8bit-60f.ivf:5'));
-    expect(File(p.join(ciScriptsDir, 'av2', 'clips', 'lighthouse-1080p30-8bit-60f.ivf')).lengthSync(), 376066);
-  });
+  test(
+    'the macOS job reads the serve of the archive the app downloads on fixtures and the 1080p clip of the release',
+    () {
+      final workflow = File(
+        p.join(repositoryRoot, '.github', 'workflows', 'immuch360-desktop.yml'),
+      ).readAsStringSync().replaceAll('\r\n', '\n');
+      final start = workflow.indexOf('\n  macos:\n');
+      final end = workflow.indexOf(RegExp(r'\n  [a-z0-9-]+:\n'), start + 1);
+      final job = workflow.substring(start, end);
+      expect(job, contains('    needs: codegen\n'));
+      // The archive of the catalogue, checked against the copy of the manifest of its release, and the tools of the
+      // repository at the same tag
+      expect(job, contains(".github/desktop/ai/av2-companion-*.json"));
+      expect(job, contains("archive = manifest['archives']['av2-decoder-macos-universal']"));
+      expect(job, contains('repository: \${{ steps.av2.outputs.repository }}'));
+      expect(job, contains('ref: \${{ steps.av2.outputs.tag }}'));
+      expect(job, contains('check_y4m.py companion'));
+      expect(job, contains('--av2-scripts av2-companion/tools'));
+      expect(job, contains('mobile/test/fixtures/av2/av2-256x144-10bit.ivf'));
+      expect(job, contains('av2-companion/clips/lighthouse-1080p30-8bit-60f.ivf:5'));
+      expect(
+        Directory(p.join(ciScriptsDir, 'ai'))
+            .listSync()
+            .map((file) => p.basename(file.path))
+            .where((name) => name.startsWith('av2-companion-') && name.endsWith('.json')),
+        ['av2-companion-1.0.1.json'],
+      );
+    },
+  );
 
   test('the probe takes the options of the app after its own and times the first frame and the playback', () {
     final source = File(p.join(ciScriptsDir, 'libmpv-macos', 'y4m_probe.c')).readAsStringSync();

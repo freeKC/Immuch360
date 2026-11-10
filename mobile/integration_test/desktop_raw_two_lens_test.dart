@@ -26,9 +26,9 @@ import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
+import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/desktop/video/spherical_player_route.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
@@ -40,6 +40,7 @@ import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/providers/raw/dual_fisheye.provider.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/sphere.dart';
 
 /// Range reads of a file of this computer
 RawFileReader _fileReader(File file) {
@@ -169,6 +170,7 @@ void main() {
               : renderer = PluginRenderer.forController(
                   videoController,
                   maxOutputHeight: DesktopPlayerOptions.maxRenderHeight,
+                  adapter: DesktopGpuDecoders.pluginAdapter,
                 );
         },
         twoStreams: () => twoStreams,

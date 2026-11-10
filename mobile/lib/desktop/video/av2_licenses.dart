@@ -1,9 +1,9 @@
 // The AV2 decoder on the licence page of Immuch360 Desktop (store/m2/av2-2026-11-02/plan-2026-11-02.md, sections 2.6
 // and 3), on the three systems: dav2d (BSD 2-Clause) with x86inc.asm (ISC), the Alliance for Open Media Patent License
-// 1.0 the AV2 implementations come with, immuch360-av2 (AGPL 3.0, the licence of the app) and, on Linux, immuch360-run
-// (MIT). Once the decoder is installed the texts come from the licenses/ folder of its archive (engines/<id>/licenses in
-// the folder of the components): the texts the jobs of the CI compared with the sources, with the AGPL of
-// immuch360-av2 and the commit it was built from. Before that, from the texts the app keeps
+// 1.0 the AV2 implementations come with, immuch360-av2 (MIT, github.com/immuch360/av2-companion) and, on Linux,
+// immuch360-run (MIT). Once the decoder is installed the texts come from the licenses/ folder of its archive
+// (engines/<id>/licenses in the folder of the components): the texts the jobs of the CI of av2-companion compared with
+// the sources, with the MIT licence of immuch360-av2 and the commit it was built from. Before that, from the texts the app keeps
 // (av2_decoder_licences.dart), since the decoder is offered at the first AV2 video; a version that does not offer it
 // (no sums in its catalogue) never says it downloads. Nothing under the GPL.
 
@@ -100,7 +100,7 @@ Stream<LicenseEntry> av2LicenseEntries(
     const [Av2LicensePackages.companion],
     [
       av2CompanionNotice,
-      if (licenses != null) ...[text('immuch360-av2-SOURCE.txt', ''), text('immuch360-av2-AGPL-3.0.txt', '')],
+      if (licenses != null) ...[text('immuch360-av2-SOURCE.txt', ''), text('immuch360-av2-MIT.txt', '')],
     ].where((paragraph) => paragraph.trim().isNotEmpty).join('\n\n'),
   );
   if (component.platforms.contains(AiPlatform.linuxX64)) {

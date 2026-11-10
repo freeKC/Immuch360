@@ -157,7 +157,7 @@ void main() {
             : aiComponentsPanoramasReleaseTag;
         expect(component.releaseTag, family, reason: component.id);
         expect(component.variantOf, isNull, reason: component.id);
-        // Every archive lists its files: the AV2 decoder's as the record of av2-decoder-1 gives them (lot AD11), the
+        // Every archive lists its files: the AV2 decoder's as the manifest of av2-companion v1.0.1 gives them, the
         // splat scenes' since ai-components-4 is made (lot SP14)
         expect(
           component.archiveFiles.isNotEmpty,
@@ -175,6 +175,14 @@ void main() {
       expect(aiComponentsScenesReleaseTag, 'ai-components-2');
       expect(aiComponentsPanoramasReleaseTag, 'ai-components-3');
       expect(aiComponentsReleaseBaseOf(aiComponentsReleaseTag), aiComponentsReleaseBase);
+      // Every component but the AV2 decoder is in a release of the app's repository
+      for (final component in aiComponents) {
+        expect(
+          component.releaseRepository,
+          component.features.contains(AiFeature.av2Video) ? 'immuch360/av2-companion' : 'freeKC/Immuch360',
+          reason: component.id,
+        );
+      }
       expect(mogeGeometryComponent.urls(), [
         'https://github.com/freeKC/Immuch360/releases/download/ai-components-2/moge_2_vits_normal_immuch360.onnx',
       ]);
@@ -430,89 +438,78 @@ void main() {
       expect(depthModelOnnxComponent.installedSize, depthModelOnnxComponent.size);
     });
 
-    test(
-      'the AV2 decoder: three archives of av2-decoder-1, those of its record (the Windows program signed), never in the '
-      'tile of the AI',
-      () {
-        final decoders = [av2DecoderWindowsComponent, av2DecoderLinuxComponent, av2DecoderMacComponent];
-        const releaseArchives = {
-          'av2-decoder-windows-x64': (801929, '417affae04953a7e3c4bec78ce0860dd9516ac7e2efb821969a1037e7f31944d'),
-          'av2-decoder-linux-x64': (953204, 'c3cc7d80a5a3c2e32aa32fc1977631d938a8bd8c0945a67b293de1c3edcd2832'),
-          'av2-decoder-macos-universal': (1664297, 'dfc61b6a52a616beecb4cb41915f6bf26b94b65f5e5caac7be82dbd284428084'),
-        };
-        const programs = {
-          'av2-decoder-windows-x64': ['immuch360-av2.exe'],
-          'av2-decoder-linux-x64': ['immuch360-av2', 'immuch360-run'],
-          'av2-decoder-macos-universal': ['immuch360-av2'],
-        };
-        expect(AiFeature.av2Video.isAi, isFalse);
-        expect(AiFeature.av2Video.platforms, {
-          AiPlatform.windowsX64,
-          AiPlatform.linuxX64,
-          AiPlatform.macosArm64,
-          AiPlatform.macosX64,
-        });
-        expect(AiFeatureGroup.av2.features, {AiFeature.av2Video});
-        expect(AiFeatureGroup.av2.isAi, isFalse);
+    test('the AV2 decoder: three archives of av2-companion v1.0.1, those of its manifest (the Windows program signed), '
+        'never in the tile of the AI', () {
+      final decoders = [av2DecoderWindowsComponent, av2DecoderLinuxComponent, av2DecoderMacComponent];
+      const releaseArchives = {
+        'av2-decoder-windows-x64': (791323, '56a23c1d22d2ae5352329a8344d23574a7ca8df3f48716c0d2858a1e38e7fe6e'),
+        'av2-decoder-linux-x64': (942607, 'd9ba78ff359ab2ec730b3448bb1d1b75eb2744a697bb0059a28aa6e3618dd959'),
+        'av2-decoder-macos-universal': (1653707, 'c25da3e20a3ac7754264440c19c6f416b3495fc583bf71309f5e8a5ba8af1007'),
+      };
+      const programs = {
+        'av2-decoder-windows-x64': ['immuch360-av2.exe'],
+        'av2-decoder-linux-x64': ['immuch360-av2', 'immuch360-run'],
+        'av2-decoder-macos-universal': ['immuch360-av2'],
+      };
+      expect(AiFeature.av2Video.isAi, isFalse);
+      expect(AiFeature.av2Video.platforms, {
+        AiPlatform.windowsX64,
+        AiPlatform.linuxX64,
+        AiPlatform.macosArm64,
+        AiPlatform.macosX64,
+      });
+      expect(AiFeatureGroup.av2.features, {AiFeature.av2Video});
+      expect(AiFeatureGroup.av2.isAi, isFalse);
+      expect(AiFeatureGroup.values.where((group) => group != AiFeatureGroup.av2).every((group) => group.isAi), isTrue);
+      expect(av2DecoderReleaseTag, 'v1.0.1');
+      expect(av2DecoderRepository, 'immuch360/av2-companion');
+      for (final decoder in decoders) {
+        expect(decoder.features, {AiFeature.av2Video}, reason: decoder.id);
+        expect(decoder.kind, AiComponentKind.archive, reason: decoder.id);
+        expect(decoder.releaseTag, av2DecoderReleaseTag, reason: decoder.id);
+        expect(decoder.releaseRepository, av2DecoderRepository, reason: decoder.id);
+        // The id of the lock of av2-companion, the commit of dav2d it pins, and the asset of its release
+        expect(decoder.version, '30140b5-1', reason: decoder.id);
+        expect(decoder.assetName, 'Immuch360-av2-decoder-30140b5-1-${decoder.id.substring('av2-decoder-'.length)}.zip');
+        expect(decoder.installPath, 'engines/${decoder.id}', reason: decoder.id);
+        expect(decoder.licence, 'BSD-2-Clause', reason: decoder.id);
+        expect(decoder.licenceUrl, contains('/30140b563596a1b14aef808ff021c90288948315/COPYING'), reason: decoder.id);
+        expect(decoder.officialUrls, isEmpty, reason: decoder.id);
+        // The archives of av2-companion v1.0.1: the run 42843116104 of its CI at 6d9e3c32f, the Windows program
+        // signed, as the manifest of the release gives them (.github/desktop/ai/av2-companion-1.0.1.json)
+        expect((decoder.size, decoder.sha256), releaseArchives[decoder.id], reason: decoder.id);
+        expect(decoder.isComplete, isTrue, reason: decoder.id);
         expect(
-          AiFeatureGroup.values.where((group) => group != AiFeatureGroup.av2).every((group) => group.isAi),
-          isTrue,
+          [for (final file in decoder.archiveFiles) file.path],
+          containsAll(['BUILD-INFO.txt', 'licenses/dav2d-COPYING.txt', 'licenses/AOM-PATENTS.txt']),
+          reason: decoder.id,
         );
-        expect(av2DecoderReleaseTag, 'av2-decoder-1');
-        for (final decoder in decoders) {
-          expect(decoder.features, {AiFeature.av2Video}, reason: decoder.id);
-          expect(decoder.kind, AiComponentKind.archive, reason: decoder.id);
-          expect(decoder.releaseTag, av2DecoderReleaseTag, reason: decoder.id);
-          // The id of .github/desktop/av2/av2.lock.json, the commit of dav2d it pins, and the artifact of the CI
-          expect(decoder.version, '30140b5-1', reason: decoder.id);
-          expect(
-            decoder.assetName,
-            'Immuch360-av2-decoder-30140b5-1-${decoder.id.substring('av2-decoder-'.length)}.zip',
-          );
-          expect(decoder.installPath, 'engines/${decoder.id}', reason: decoder.id);
-          expect(decoder.licence, 'BSD-2-Clause', reason: decoder.id);
-          expect(decoder.licenceUrl, contains('/30140b563596a1b14aef808ff021c90288948315/COPYING'), reason: decoder.id);
-          expect(decoder.officialUrls, isEmpty, reason: decoder.id);
-          // The archives of av2-decoder-1: the run 41877478541 of the release workflow on feat-av2 at 592c66c4f, the
-          // Windows program signed, as the record of the release gives them (.github/desktop/av2/av2-decoder-1.json)
-          expect((decoder.size, decoder.sha256), releaseArchives[decoder.id], reason: decoder.id);
-          expect(decoder.isComplete, isTrue, reason: decoder.id);
-          expect(
-            [for (final file in decoder.archiveFiles) file.path],
-            containsAll(['BUILD-INFO.txt', 'licenses/dav2d-COPYING.txt', 'licenses/AOM-PATENTS.txt']),
-            reason: decoder.id,
-          );
-          expect(
-            [for (final file in decoder.archiveFiles.where((file) => file.executable)) file.path],
-            programs[decoder.id],
-            reason: decoder.id,
-          );
-          expect(decoder.mainPath, 'engines/${decoder.id}/${programs[decoder.id]!.first}', reason: decoder.id);
-          expect(aiComponentById(decoder.id), same(decoder));
-          expect(
-            decoder.urls().single,
-            'https://github.com/freeKC/Immuch360/releases/download/av2-decoder-1/${decoder.assetName}',
-          );
+        expect(
+          [for (final file in decoder.archiveFiles.where((file) => file.executable)) file.path],
+          programs[decoder.id],
+          reason: decoder.id,
+        );
+        expect(decoder.mainPath, 'engines/${decoder.id}/${programs[decoder.id]!.first}', reason: decoder.id);
+        expect(aiComponentById(decoder.id), same(decoder));
+        expect(
+          decoder.urls().single,
+          'https://github.com/immuch360/av2-companion/releases/download/v1.0.1/${decoder.assetName}',
+        );
+      }
+      // One for each computer, none for the headset; never one of the components of an AI feature
+      for (final platform in AiPlatform.values) {
+        final forPlatform = aiComponentsFor(platform, feature: AiFeature.av2Video);
+        expect(forPlatform, hasLength(platform == AiPlatform.questArm64 ? 0 : 1), reason: platform.name);
+        for (final feature in AiFeature.values.where((feature) => feature.isAi)) {
+          expect(aiComponentsFor(platform, feature: feature).where(decoders.contains), isEmpty, reason: platform.name);
         }
-        // One for each computer, none for the headset; never one of the components of an AI feature
-        for (final platform in AiPlatform.values) {
-          final forPlatform = aiComponentsFor(platform, feature: AiFeature.av2Video);
-          expect(forPlatform, hasLength(platform == AiPlatform.questArm64 ? 0 : 1), reason: platform.name);
-          for (final feature in AiFeature.values.where((feature) => feature.isAi)) {
-            expect(
-              aiComponentsFor(platform, feature: feature).where(decoders.contains),
-              isEmpty,
-              reason: platform.name,
-            );
-          }
-          // The video settings find its group by name; the tile of the AI never lists it
-          final av2 = aiComponentGroupsFor(platform, only: {AiFeatureGroup.av2});
-          expect(av2.map((group) => group.own), platform == AiPlatform.questArm64 ? isEmpty : [forPlatform]);
-          expect(aiComponentGroupsFor(platform).map((group) => group.group), isNot(contains(AiFeatureGroup.av2)));
-        }
-        expect(aiComponentsFor(AiPlatform.macosX64, feature: AiFeature.av2Video), [av2DecoderMacComponent]);
-      },
-    );
+        // The video settings find its group by name; the tile of the AI never lists it
+        final av2 = aiComponentGroupsFor(platform, only: {AiFeatureGroup.av2});
+        expect(av2.map((group) => group.own), platform == AiPlatform.questArm64 ? isEmpty : [forPlatform]);
+        expect(aiComponentGroupsFor(platform).map((group) => group.group), isNot(contains(AiFeatureGroup.av2)));
+      }
+      expect(aiComponentsFor(AiPlatform.macosX64, feature: AiFeature.av2Video), [av2DecoderMacComponent]);
+    });
 
     test('the 3D photo keeps the components of phase 1, which alone live in ai-components-1', () {
       // An entry of a later phase that forgets its features (the 3D photo by default) or its release (ai-components-1

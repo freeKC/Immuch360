@@ -17,12 +17,8 @@ const _token = 'test-token-not-a-secret';
 const _script = 'ai/publish_ai_components.py';
 
 /// --check as the gates of the desktop workflow run it, on any branch: ai-components-4 is made (lot SP14), and the sums
-/// of the AV2 decoder are those of the record of av2-decoder-1 (lot AD11)
+/// of the AV2 decoder are those of the manifest of its release, immuch360/av2-companion v1.0.1
 ScriptRun _check(List<String> arguments) => runCiScript(_script, ['--check', ...arguments]);
-
-/// On feat-av2, the branch of the test build AVT (lot AD6), whose catalogue carried the sums of the AV2 decoder before
-/// av2-decoder-1 was made
-const _onTestBuild = {'GITHUB_REF_NAME': 'feat-av2'};
 
 final String _catalogue = p.join(
   repositoryRoot,
@@ -544,12 +540,12 @@ void main() {
         run.output,
         contains('20 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, each complete'),
       );
-      // The archives of av2-decoder-1, as its record gives them (publish_av2_decoder.py --write, lot AD11)
+      // The archives of av2-companion v1.0.1, as the manifest of the release gives them
       expect(
         run.output,
         contains(
-          'the AV2 decoder carries the archives of av2-decoder-1 as its record gives them (run 41877478541, commit '
-          '592c66c4fe16b147f29386106c2af760be08e5d5)',
+          'the AV2 decoder carries the archives of immuch360/av2-companion v1.0.1 as its manifest gives them (run '
+          '42843116104, commit 6d9e3c32f9bc8d0cad79c108c54c10f99c305851)',
         ),
       );
       expect(File(_licences).readAsStringSync(), contains('Date: '));
@@ -573,8 +569,8 @@ void main() {
         ),
         // The sum of the Linux archive taken out, its size and files left
         (
-          text.indexOf("  sha256: 'c3cc7d80a5a3c2e32aa32fc1977631d938a8bd8c0945a67b293de1c3edcd2832',", linux),
-          "  sha256: 'c3cc7d80a5a3c2e32aa32fc1977631d938a8bd8c0945a67b293de1c3edcd2832',",
+          text.indexOf("  sha256: 'd9ba78ff359ab2ec730b3448bb1d1b75eb2744a697bb0059a28aa6e3618dd959',", linux),
+          "  sha256: 'd9ba78ff359ab2ec730b3448bb1d1b75eb2744a697bb0059a28aa6e3618dd959',",
           '  sha256: null,',
         ),
       ];
@@ -590,97 +586,90 @@ void main() {
       expect(run.exitCode, 1, reason: '$run');
       expect(
         run.output,
-        contains('av2-decoder-linux-x64: incomplete in the catalogue (size 953204, sha256 None, 11 files)'),
+        contains('av2-decoder-linux-x64: incomplete in the catalogue (size 942607, sha256 None, 11 files)'),
       );
       expect(
         run.output,
         contains('av2-decoder-linux-x64: licence GPL-2.0-or-later, the AV2 decoder is under BSD-2-Clause'),
       );
-      expect(
-        run.output,
-        contains('av2-decoder-macos-universal: in ai-components-3, the AV2 decoder is in av2-decoder-1'),
-      );
+      expect(run.output, contains('av2-decoder-macos-universal: in ai-components-3, the AV2 decoder is in v1.0.1'));
     }, skip: skipCiScripts);
 
-    test('the sums of the AV2 decoder are refused but on the branch of its test build until the record of '
-        'av2-decoder-1, then pass on every branch', () {
-      const decoders = 'av2-decoder-linux-x64, av2-decoder-macos-universal, av2-decoder-windows-x64';
-      // The catalogue of the app with no record of the release, as before publish_av2_decoder.py --write
-      final noRecord = ['--av2-record', p.join(catalogue.parent.path, 'no-av2-decoder-1.json')];
-      // Merged into the phone and desktop branch
-      final merged = runCiScript(
-        _script,
-        ['--check', ...noRecord, '--test-build', 'feat-av2'],
-        environment: const {'GITHUB_REF_NAME': 'immuch360'},
-      );
-      expect(merged.exitCode, 1, reason: '$merged');
-      expect(
-        merged.output,
-        contains('the AV2 decoder carries sums on immuch360: only feat-av2 may, before av2-decoder-1 is made'),
-      );
-      // Taken by a branch made from the test build
-      final taken = runCiScript(
-        _script,
-        ['--check', ...noRecord, '--test-build', 'feat-av2'],
-        environment: const {'GITHUB_REF_NAME': 'feat-av2-ad7'},
-      );
-      expect(taken.exitCode, 1, reason: '$taken');
-      expect(taken.output, contains('the AV2 decoder carries sums on feat-av2-ad7'));
-      // On the branch itself, but without the gates saying it is the test build, or naming another branch
-      final unnamed = runCiScript(_script, ['--check', ...noRecord], environment: _onTestBuild);
-      expect(unnamed.exitCode, 1, reason: '$unnamed');
-      expect(unnamed.output, contains('the AV2 decoder carries sums ($decoders) with no --test-build'));
-      final other = runCiScript(_script, [
-        '--check',
-        ...noRecord,
-        '--test-build',
-        'immuch360',
-      ], environment: _onTestBuild);
-      expect(other.exitCode, 1, reason: '$other');
-      expect(other.output, contains('with --test-build immuch360'));
-      // As the gates ran it on the branch of the test build
-      final onTestBuild = runCiScript(_script, [
-        '--check',
-        ...noRecord,
-        '--test-build',
-        'feat-av2',
-      ], environment: _onTestBuild);
-      expect(onTestBuild.exitCode, 0, reason: '$onTestBuild');
-
-      // With the record of av2-decoder-1 the same sums pass on every branch, the gates naming the test build or not
-      for (final arguments in [
-        ['--check', '--test-build', 'feat-av2'],
-        ['--check'],
-      ]) {
-        for (final branch in ['immuch360', 'desktop', 'feat-av2-ad7']) {
-          final recorded = runCiScript(_script, arguments, environment: {'GITHUB_REF_NAME': branch});
-          expect(recorded.exitCode, 0, reason: '$branch $arguments $recorded');
-          expect(recorded.output, contains('carries the archives of av2-decoder-1 as its record gives them'));
+    test(
+      'the sums of the AV2 decoder pass when they are those of the manifest of its release, or when it has none',
+      () {
+        const decoders = 'av2-decoder-linux-x64, av2-decoder-macos-universal, av2-decoder-windows-x64';
+        final text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
+        final windows = text.indexOf("  id: 'av2-decoder-windows-x64',");
+        ScriptRun checked(String changed, [List<String> more = const []]) {
+          catalogue.writeAsStringSync(changed);
+          return _check(['--catalogue', catalogue.path, ...more]);
         }
-      }
 
-      // Without sums, as on immuch360 until av2-decoder-1 is made, the check passes on any branch
-      final text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
-      var bare = text;
-      for (final id in ['av2-decoder-windows-x64', 'av2-decoder-linux-x64', 'av2-decoder-macos-universal']) {
-        final start = bare.indexOf("  id: '$id',");
-        final end = bare.indexOf('\n);\n', start);
-        final entry = bare
-            .substring(start, end)
-            .replaceFirst(RegExp(r'  size: \d+,'), '  size: null,')
-            .replaceFirst(RegExp(r"  sha256: '[0-9a-f]{64}',"), '  sha256: null,')
-            .replaceFirst(RegExp(r'\n  archiveFiles: \[.*\n  \],', dotAll: true), '');
-        bare = bare.replaceRange(start, end, entry);
-      }
-      catalogue.writeAsStringSync(bare);
-      final immuch360 = runCiScript(
-        _script,
-        ['--check', '--catalogue', catalogue.path, ...noRecord],
-        environment: const {'GITHUB_REF_NAME': 'immuch360'},
-      );
-      expect(immuch360.exitCode, 0, reason: '$immuch360');
-      expect(immuch360.output, contains('the AV2 decoder waits for av2-decoder-1: $decoders'));
-    }, skip: skipCiScripts);
+        // Another sum of the Windows archive, as a catalogue made from another build would carry
+        final archive = RegExp(r"  sha256: '([0-9a-f]{64})',").firstMatch(text.substring(windows))!;
+        final otherArchive = checked(
+          text.replaceRange(windows + archive.start, windows + archive.end, "  sha256: '${'0' * 64}',"),
+        );
+        expect(otherArchive.exitCode, 1, reason: '$otherArchive');
+        expect(otherArchive.output, contains('av2-decoder-windows-x64: the catalogue has'));
+        expect(otherArchive.output, contains('the manifest of v1.0.1'));
+
+        // Another sum of the program inside the archive
+        final program = text.indexOf("      path: 'immuch360-av2.exe',", windows);
+        final file = RegExp(r"      sha256: '([0-9a-f]{64})',").firstMatch(text.substring(program))!;
+        final otherFile = checked(
+          text.replaceRange(program + file.start, program + file.end, "      sha256: '${'1' * 64}',"),
+        );
+        expect(otherFile.exitCode, 1, reason: '$otherFile');
+        expect(
+          otherFile.output,
+          contains('av2-decoder-windows-x64: the files of its archive are not those of the manifest of v1.0.1'),
+        );
+
+        // In a release of the app's repository, as the builds before 45 had it
+        final otherRepository = checked(
+          text.replaceFirst('  releaseRepository: av2DecoderRepository,', "  releaseRepository: 'freeKC/Immuch360',"),
+        );
+        expect(otherRepository.exitCode, 1, reason: '$otherRepository');
+        expect(
+          otherRepository.output,
+          contains(
+            'av2-decoder-windows-x64: in a release of freeKC/Immuch360, the AV2 decoder is in those of '
+            'immuch360/av2-companion',
+          ),
+        );
+
+        // Sums without the manifest they come from
+        final noRecord = ['--av2-record', p.join(catalogue.parent.path, 'no-av2-companion.json')];
+        final unrecorded = checked(text, noRecord);
+        expect(unrecorded.exitCode, 1, reason: '$unrecorded');
+        expect(
+          unrecorded.output,
+          contains(
+            'the AV2 decoder carries sums but av2-companion-1.0.1.json is not the manifest of '
+            'immuch360/av2-companion v1.0.1',
+          ),
+        );
+
+        // Without sums, a version that does not offer the decoder, the check passes, manifest or not
+        var bare = text;
+        for (final id in ['av2-decoder-windows-x64', 'av2-decoder-linux-x64', 'av2-decoder-macos-universal']) {
+          final start = bare.indexOf("  id: '$id',");
+          final end = bare.indexOf('\n);\n', start);
+          final entry = bare
+              .substring(start, end)
+              .replaceFirst(RegExp(r'  size: \d+,'), '  size: null,')
+              .replaceFirst(RegExp(r"  sha256: '[0-9a-f]{64}',"), '  sha256: null,')
+              .replaceFirst(RegExp(r'\n  archiveFiles: \[.*\n  \],', dotAll: true), '');
+          bare = bare.replaceRange(start, end, entry);
+        }
+        final notOffered = checked(bare, noRecord);
+        expect(notOffered.exitCode, 0, reason: '$notOffered');
+        expect(notOffered.output, contains('the AV2 decoder is not offered (no sums): $decoders'));
+      },
+      skip: skipCiScripts,
+    );
 
     test('says what is missing: an incomplete component, a row of MODEL-LICENSES.md', () {
       final text = File(_catalogue).readAsStringSync();

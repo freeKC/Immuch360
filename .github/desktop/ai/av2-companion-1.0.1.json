@@ -1,0 +1,222 @@
+{
+  "name": "av2-companion",
+  "tag": "v1.0.1",
+  "version": "1.0.1",
+  "repository": "https://github.com/immuch360/av2-companion",
+  "commit": "6d9e3c32f9bc8d0cad79c108c54c10f99c305851",
+  "run": "42843116104",
+  "date": "2026-11-10",
+  "protocol": 1,
+  "lock": "30140b5-1",
+  "dav2d": {
+    "repository": "https://code.videolan.org/videolan/dav2d.git",
+    "commit": "30140b563596a1b14aef808ff021c90288948315",
+    "describe": "0.0.1-525-g30140b56"
+  },
+  "archives": {
+    "av2-decoder-windows-x64": {
+      "system": "windows-x64",
+      "assetName": "Immuch360-av2-decoder-30140b5-1-windows-x64.zip",
+      "url": "https://github.com/immuch360/av2-companion/releases/download/v1.0.1/Immuch360-av2-decoder-30140b5-1-windows-x64.zip",
+      "size": 791323,
+      "sha256": "56a23c1d22d2ae5352329a8344d23574a7ca8df3f48716c0d2858a1e38e7fe6e",
+      "signature": "Authenticode, APROGSYS (Azure Artifact Signing)",
+      "archiveFiles": [
+        {
+          "path": "BUILD-INFO.txt",
+          "size": 947,
+          "sha256": "d0d299db55c3effb5df3c23fc268b2473f1313a4149a84461b99ebd43ae6d562",
+          "executable": false
+        },
+        {
+          "path": "SHA256SUMS.txt",
+          "size": 721,
+          "sha256": "1888a3b9f8034bcab61f583d162fbf9da9435732c360a7857d526a1b0c769482",
+          "executable": false
+        },
+        {
+          "path": "immuch360-av2.exe",
+          "size": 1646408,
+          "sha256": "3bd58ab4b8aa389327fe6bcadc763f5fd0501707866b0a95674434c19282168e",
+          "executable": true
+        },
+        {
+          "path": "licenses/AOM-PATENTS.txt",
+          "size": 5730,
+          "sha256": "335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b",
+          "executable": false
+        },
+        {
+          "path": "licenses/README.md",
+          "size": 2160,
+          "sha256": "114dcbb91027be7c751257176173e949f3554f1c1fc2ba1e17cef847a14ece91",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav2d-COPYING.txt",
+          "size": 1317,
+          "sha256": "c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b",
+          "executable": false
+        },
+        {
+          "path": "licenses/immuch360-av2-MIT.txt",
+          "size": 1063,
+          "sha256": "e97493fbff4a1a7096ad1061d303faeafe7234a48b7f86331dfe01e80119fc96",
+          "executable": false
+        },
+        {
+          "path": "licenses/immuch360-av2-SOURCE.txt",
+          "size": 359,
+          "sha256": "b23bffa9fefb8cecc5f700faef5053f297edf64536ccaec1409282d7990c5c8b",
+          "executable": false
+        },
+        {
+          "path": "licenses/x86inc-ISC.txt",
+          "size": 1162,
+          "sha256": "1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c",
+          "executable": false
+        }
+      ]
+    },
+    "av2-decoder-linux-x64": {
+      "system": "linux-x64",
+      "assetName": "Immuch360-av2-decoder-30140b5-1-linux-x64.zip",
+      "url": "https://github.com/immuch360/av2-companion/releases/download/v1.0.1/Immuch360-av2-decoder-30140b5-1-linux-x64.zip",
+      "size": 942607,
+      "sha256": "d9ba78ff359ab2ec730b3448bb1d1b75eb2744a697bb0059a28aa6e3618dd959",
+      "signature": "none",
+      "archiveFiles": [
+        {
+          "path": "BUILD-INFO.txt",
+          "size": 797,
+          "sha256": "6592f75533ed00755c1eb916f1369181a5e0afef5849abe009d7c2d56bfd3c3b",
+          "executable": false
+        },
+        {
+          "path": "SHA256SUMS.txt",
+          "size": 894,
+          "sha256": "6d32fbfd36bc4460a5ec045a952b6e13358a75c3007b3965a9a49fb527ba2023",
+          "executable": false
+        },
+        {
+          "path": "immuch360-av2",
+          "size": 2037904,
+          "sha256": "030825530e07b926ce7b634f181a3fcd0f2b0c2db1544cc1f078f1572112d185",
+          "executable": true
+        },
+        {
+          "path": "immuch360-run",
+          "size": 16552,
+          "sha256": "779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b",
+          "executable": true
+        },
+        {
+          "path": "licenses/AOM-PATENTS.txt",
+          "size": 5730,
+          "sha256": "335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b",
+          "executable": false
+        },
+        {
+          "path": "licenses/README.md",
+          "size": 2160,
+          "sha256": "114dcbb91027be7c751257176173e949f3554f1c1fc2ba1e17cef847a14ece91",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav2d-COPYING.txt",
+          "size": 1317,
+          "sha256": "c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b",
+          "executable": false
+        },
+        {
+          "path": "licenses/immuch360-av2-MIT.txt",
+          "size": 1063,
+          "sha256": "e97493fbff4a1a7096ad1061d303faeafe7234a48b7f86331dfe01e80119fc96",
+          "executable": false
+        },
+        {
+          "path": "licenses/immuch360-av2-SOURCE.txt",
+          "size": 359,
+          "sha256": "b23bffa9fefb8cecc5f700faef5053f297edf64536ccaec1409282d7990c5c8b",
+          "executable": false
+        },
+        {
+          "path": "licenses/immuch360-run-MIT.txt",
+          "size": 1156,
+          "sha256": "e1ca99633c8cb8df3e8189b0c4b804e91b6dca413ae4022ea3d905e0f94ef191",
+          "executable": false
+        },
+        {
+          "path": "licenses/x86inc-ISC.txt",
+          "size": 1162,
+          "sha256": "1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c",
+          "executable": false
+        }
+      ]
+    },
+    "av2-decoder-macos-universal": {
+      "system": "macos-universal",
+      "assetName": "Immuch360-av2-decoder-30140b5-1-macos-universal.zip",
+      "url": "https://github.com/immuch360/av2-companion/releases/download/v1.0.1/Immuch360-av2-decoder-30140b5-1-macos-universal.zip",
+      "size": 1653707,
+      "sha256": "c25da3e20a3ac7754264440c19c6f416b3495fc583bf71309f5e8a5ba8af1007",
+      "signature": "ad hoc",
+      "archiveFiles": [
+        {
+          "path": "BUILD-INFO.txt",
+          "size": 789,
+          "sha256": "92a2658149dc3c7cb330c324ec1ddf79be13b908b7dea74abca9cb0533667b84",
+          "executable": false
+        },
+        {
+          "path": "SHA256SUMS.txt",
+          "size": 717,
+          "sha256": "b4149c3a840b8d7904dcb5ca67bd29be93d4bb410206552724e59ed8042c0f93",
+          "executable": false
+        },
+        {
+          "path": "immuch360-av2",
+          "size": 3769216,
+          "sha256": "f87e5490c8d634ddd3554f6631097fdd24186c9209ef1e2aeb0d448259ff62fd",
+          "executable": true
+        },
+        {
+          "path": "licenses/AOM-PATENTS.txt",
+          "size": 5730,
+          "sha256": "335eca574598bf4ca181b12f708d6669e5a5e78c8e1513e5b35fa1f03901484b",
+          "executable": false
+        },
+        {
+          "path": "licenses/README.md",
+          "size": 2160,
+          "sha256": "114dcbb91027be7c751257176173e949f3554f1c1fc2ba1e17cef847a14ece91",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav2d-COPYING.txt",
+          "size": 1317,
+          "sha256": "c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b",
+          "executable": false
+        },
+        {
+          "path": "licenses/immuch360-av2-MIT.txt",
+          "size": 1063,
+          "sha256": "e97493fbff4a1a7096ad1061d303faeafe7234a48b7f86331dfe01e80119fc96",
+          "executable": false
+        },
+        {
+          "path": "licenses/immuch360-av2-SOURCE.txt",
+          "size": 359,
+          "sha256": "b23bffa9fefb8cecc5f700faef5053f297edf64536ccaec1409282d7990c5c8b",
+          "executable": false
+        },
+        {
+          "path": "licenses/x86inc-ISC.txt",
+          "size": 1162,
+          "sha256": "1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c",
+          "executable": false
+        }
+      ]
+    }
+  }
+}

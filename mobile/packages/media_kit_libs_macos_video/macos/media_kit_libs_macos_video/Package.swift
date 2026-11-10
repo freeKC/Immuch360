@@ -1,7 +1,7 @@
 // swift-tools-version: 5.9
 // The macOS libraries of media_kit for Immuch360 Desktop: libmpv and the libraries it needs, one xcframework each,
-// from a libmpv-macos-* release of freeKC/Immuch360, built from published sources by
-// .github/workflows/immuch360-libmpv.yml (see ../../IMMUCH360-NOTE.md and ../../NOTICES.md). Swift Package Manager
+// from a libmpv-macos-* release of github.com/immuch360/libmpv-builds (those of freeKC/Immuch360 up to desktop build
+// 24), built from published sources (see ../../IMMUCH360-NOTE.md and ../../NOTICES.md). Swift Package Manager
 // downloads each zip once and checks it by its SHA-256 before the app links it. Same targets and products as
 // media-kit's package, so media_kit_video finds Mpv as before; Placebo.framework is new (mpv needs libplacebo since
 // 0.37).
@@ -10,28 +10,28 @@ import PackageDescription
 
 // The pins: paste the lines the run summary of the release prints ("Lines for the Package.swift of the libs package")
 // IMMUCH360_LIBMPV_PINS_BEGIN
-let libmpvTag = "libmpv-macos-20261102-12"
-let libmpvArtifactBase = "https://github.com/freeKC/Immuch360/releases/download/\(libmpvTag)/libmpv-xcframeworks_libmpv-macos-20261102-12_macos-universal-video-default"
+let libmpvTag = "libmpv-macos-20261110-1"
+let libmpvArtifactBase = "https://github.com/immuch360/libmpv-builds/releases/download/\(libmpvTag)/libmpv-xcframeworks_libmpv-macos-20261110-1_macos-universal-video-default"
 let libmpvChecksums: [String: String] = [
-    "Ass": "4a6d013abcc21ee401216a1a1c4536dbb1b966d187976f72b3905c55964c8eb4",
-    "Avcodec": "f47b663a9db1d377335f98d3188bfaf0ea6dc045f4346614c00be5701fdab800",
-    "Avfilter": "791c40006fff342a8addb3d94e9da87e06122f9f89d1ff97af28ea919ce46c0a",
-    "Avformat": "a6075f4e1782fdfdc64da27edacc58d9b1ef64942384c2b70ceb834dc4d153d6",
-    "Avutil": "a0e195f4936ae111737d3e015f1e7b96368b1c973879f19d7eea777521ecb928",
-    "Dav1d": "a9fd60789aab9994a72fe83a9a4d762c8fbb2eb88c7069b158ec3cde97cec0df",
-    "Freetype": "68ea706de116c81db517195bdc948931c9cf0a38e4c63ad4d4743932304a7841",
-    "Fribidi": "0f00c60c3ecb2af9ae1051d0aef7486a953b073c9f69f00953992ee724e4bce6",
-    "Harfbuzz": "aea80b9defacd1eb535d66f5c9298b529064030853d59bdfe6bf2be8cc2e77a4",
-    "Mbedcrypto": "7660205825ea4304a6346793c27fbbba85de5844cc08cbfd478c74fa2567e6eb",
-    "Mbedtls": "365092f0004c79f17fe7730dd494d7ce3c5b54f963e22f12784444df896bb7e1",
-    "Mbedx509": "ddc4c9876953c079b4925155c9d22371b1593f50bdc200b1696ca632e2eef3f3",
-    "Mpv": "a1c0e0bbc62dffbf84f174364047b814bc0cfc4829823e2e7a81fb4ab96d83b8",
-    "Placebo": "528238e77774cb78a8512144aacb072a4d10ed1d192f6ba56c2984fa1524fa90",
-    "Png16": "9d573ed3c720b93d7ee59302a56d1a69aeab86ed9de1f4f6805180b70a1c9d25",
-    "Swresample": "282e0d3fcef8f5ab1d6c5b9846cfc791073f07011e5f588b52187e901d4141d1",
-    "Swscale": "2a262c546aa3f516455bdf7e8d2823259a980f279d55936ae0b3d5a288ecb1b9",
-    "Uchardet": "e13ac7688fe5565611c1bc2003d2f63e5255dcc237eedbbf33254b45a87ff568",
-    "Xml2": "37cafd50d292c8acca3557c2484de29cbee7d6a6aca681fa99ec9fd8a1059fcf",
+    "Ass": "2de30b60fdcce3f85d3370b9bf7805fb9d71e1f96b046d5ed324695e5483aa8b",
+    "Avcodec": "01849c94db5cecffeec4681c7a62d3c5942738ea3dd8a81d9a08f5d19125682e",
+    "Avfilter": "b925c64aca8f106330885add2a088296bf742f66aaee94db3b4aa8be62e053ce",
+    "Avformat": "300fd6dbd93296de000f4ca4a1f2f6250284128c76075d6d1673a652db29e113",
+    "Avutil": "9d3262c4bd84cbfb886bf280c63ad85dac288e34683cb2ddb074d9b0bd125359",
+    "Dav1d": "90fcc693db4ed885db0bdd5c810124f014656d300769c421c584eed0e5725e7c",
+    "Freetype": "6ef37991b69fd18c1abf2d6eb6e6e013cbf7a4b7ec142b9612e9e1fe63964ee7",
+    "Fribidi": "8d4f2399029dcaeb08e3c0c2986c018fa4d60b6801e5dbfc19e1f5bf5f5303f8",
+    "Harfbuzz": "c8d56f7a74c18fd61ac67d86f30ff323eb66757590961d01c74ac92eee2ab305",
+    "Mbedcrypto": "eb728befa9bad2cfc8bb0eee873f9efd88663346a6cb519af10dc6f957e93e7d",
+    "Mbedtls": "ed2dce2ff47b778d5fd46d21f2806cc7b7e1f681980ab24ff0d2c0bac217eed5",
+    "Mbedx509": "e07fb7c5add93744db057c67b10762d1b41d97f8b6160db45a3f2f4688604d7c",
+    "Mpv": "27819f9b3f4b26f524484b409b5d99123de0f6d5a7d32eb18ac9a9c2ec70ca1e",
+    "Placebo": "d1fe457f99fa0437224e6c68f9252d6dec7df53c709dcb03a4bd6d0b929a115a",
+    "Png16": "0925e53ffa55f63abbe96bbff160a225cd39698d695d5ce11c6e8a239b0b5b0e",
+    "Swresample": "4197263e41cd35f8ac60e70ef2343f1e030302eda112aae2d0eb71a8b660d703",
+    "Swscale": "4e6d9e1b94e6e2e5ecfc2a5d4c0175428dc8b12227078c34a5e9ad1d9dd372e9",
+    "Uchardet": "7813a5a655c6011718b51becef18142883b3faf3d04ed28a4c59b76343909b7f",
+    "Xml2": "ee43f72e135fb7f106d5099fe3b805fcf9522685387d5da252bca7acc625781e",
 ]
 // IMMUCH360_LIBMPV_PINS_END
 

@@ -1,11 +1,11 @@
-libmpv for macOS (arm64 and x86_64, macOS 12 and later), built for Immuch360 Desktop
-release: libmpv-macos-20261102-12
-run: https://github.com/freeKC/Immuch360/actions/runs/41452970040
-repository commit: 9d79e0b168b8a58c12a5778841dbc2dc2b6471cd
-recipe: https://github.com/media-kit/libmpv-darwin-build at aadae8ce295dd15a222839c361c4c984ce9befb2, with .github/desktop/libmpv-macos
+libmpv for macOS (arm64 and x86_64, macOS 12 and later), built by immuch360/libmpv-builds
+release: libmpv-macos-20261110-1
+run: https://github.com/immuch360/libmpv-builds/actions/runs/42837177719
+repository commit: c8812d7a8d8732f5d1f77ee3cad5877e308476fd
+recipe: https://github.com/media-kit/libmpv-darwin-build at aadae8ce295dd15a222839c361c4c984ce9befb2, with macos/
 package: mk-out-archive-xcframeworks-macos-universal-video-default
 Xcode: Xcode 16.4 Build version 16F6 
-Nix: nix (Determinate Nix 3.24.1) 2.35.3
+Nix: nix (Determinate Nix 3.24.2) 2.35.3
 
 Archives of packages.lock.nix (name, version, URL, SHA-256 of the archive):
 dav1d 1.2.1 https://code.videolan.org/videolan/dav1d/-/archive/1.2.1/dav1d-1.2.1.tar.bz2 a4003623cdc0109dec3aac8435520aa3fb12c4d69454fa227f2658cdb6dab5fa

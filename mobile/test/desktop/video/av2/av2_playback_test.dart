@@ -569,7 +569,7 @@ void main() {
       expect(session.decoding, (fps: null, needed: 30.0, failure: null));
 
       // A player that reads at the pace of the video from the start: no run long enough for the companion to measure
-      // (mobile/native/av2/README.md, stat), so the pictures decoded a second while it serves
+      // (the README of immuch360/av2-companion, stat), so the pictures decoded a second while it serves
       process.say('stat decoded=4 served=3 fps=0.0 simd=avx2 gen=1 frame=3 serving=1');
       await _until(() => session.stat.value?.decoded == 4);
       expect(session.speed.value, isNull, reason: 'one line says no speed');
