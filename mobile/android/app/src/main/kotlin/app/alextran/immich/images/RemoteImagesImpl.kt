@@ -88,6 +88,13 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
      * original away from the engine (crash M1 of the Meta Quest store), Android 9 would stay on its preview.
      */
     fun decodesHere(preferEncoded: Boolean, sdk: Int): Boolean = !preferEncoded && sdk >= Build.VERSION_CODES.P
+
+    /**
+     * A JPEG XL the core did not decode, of [length] bytes: UNDECODABLE_IMAGE like the other photos not decoded here,
+     * so that Dart keeps the preview and remembers the photo for the session (UndecodablePhotos)
+     */
+    fun undecodableJpegXl(length: Int, contentType: String?): FlutterError =
+      FlutterError(UNDECODABLE_IMAGE, "JPEG XL not decoded by the core, $length bytes, ${contentType ?: "no type"}", null)
   }
 
   override fun requestImage(
@@ -127,6 +134,7 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
               cancelled,
               info
             )
+            val length = buffer.offset
             buffer.free()
             requestMap.remove(requestId)
             callback(
@@ -140,7 +148,7 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
                   )
                 )
                 signal.isCanceled -> CANCELLED
-                else -> Result.failure(IOException("Failed to decode JPEG XL image"))
+                else -> Result.failure(undecodableJpegXl(length, contentType))
               }
             )
           }
