@@ -1,6 +1,6 @@
 // A small Plex Media Server on 127.0.0.1 for the tests of the Plex client: /identity, the sections, the folder view
-// with its paging headers, the albums of a photo section, the parts with or without Range support, the photo
-// transcoder, the account and the preferences. Every answer but /identity wants the test token in its header, as a
+// with its paging headers, the albums of a photo section, one item by its rating key (/library/metadata/{id}), the
+// parts with or without Range support, the photo transcoder, the account and the preferences. Every answer but /identity wants the test token in its header, as a
 // real server does, and answers 401 in HTML otherwise. The values are the synthetic ones of test/fixtures/plex.
 
 import 'dart:convert';
@@ -116,7 +116,13 @@ class FakePlexServer {
   final Map<String, String> redirects = {};
 
   /// The sizes of the parts, by part id
-  final Map<int, int> partSizes = {11: 1000, 12: 600, 21: 5000, 22: 3000, 31: 10, 51: 300, 52: 400};
+  final Map<int, int> partSizes = {11: 1000, 12: 600, 21: 5000, 22: 3000, 31: 10, 51: 300, 52: 400, 77: 2048};
+
+  /// The items asked by their rating key, the answer of /library/metadata/{id} (a film with its streams); any other
+  /// key answers 404, as Plex does
+  final Map<String, Object?> items = {
+    '77': jsonDecode(File('test/fixtures/plex/metadata_item.json').readAsStringSync()),
+  };
 
   /// The pictures of the photo transcoder, by thumb path
   final Map<String, Uint8List> thumbnails = {
@@ -197,6 +203,15 @@ class FakePlexServer {
       final part = RegExp(r'^/library/parts/(\d+)/').firstMatch(uri.path);
       if (part != null) {
         return await _part(request, int.parse(part.group(1)!));
+      }
+      final item = RegExp(r'^/library/metadata/(\d+)$').firstMatch(uri.path);
+      if (item != null && !listings.containsKey(full)) {
+        final answer = items[item.group(1)];
+        if (answer == null) {
+          response.statusCode = 404;
+          return await response.close();
+        }
+        return await _json(response, answer);
       }
       final listing = listings[full];
       if (listing == null) {

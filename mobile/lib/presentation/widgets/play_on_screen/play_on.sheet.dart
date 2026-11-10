@@ -250,21 +250,29 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
     final t = context.t;
     final busy = _busy == screen.id;
     final idle = _busy == null;
+    final line = Text(_rowLine(t, screen, state));
+    // Under the line rather than beside it: "Add (server) to (screen)" is longer than a trailing button may be
+    final addServer = state == PlayScreenRowState.withoutServer && address != null
+        ? Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton.icon(
+              key: ValueKey('play_on_add_server_${screen.id}'),
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              icon: const Icon(Icons.dns_rounded),
+              onPressed: idle ? () => unawaited(_addServer(screen, address)) : null,
+              label: Text(t.play_handover_button(server: widget.request.serverName, device: screen.name)),
+            ),
+          )
+        : null;
     return ListTile(
       key: ValueKey('play_on_${screen.id}'),
       leading: Icon(pairingKindIcon(screen.kind)),
       title: Text(screen.name),
-      subtitle: Text(_rowLine(t, screen, state)),
+      subtitle: addServer == null
+          ? line
+          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [line, addServer]),
       enabled: state != PlayScreenRowState.notAnnounced,
-      trailing: busy
-          ? const SizedBox.square(dimension: 24, child: CircularProgressIndicator(strokeWidth: 3))
-          : state == PlayScreenRowState.withoutServer && address != null
-          ? TextButton(
-              key: ValueKey('play_on_add_server_${screen.id}'),
-              onPressed: idle ? () => unawaited(_addServer(screen, address)) : null,
-              child: Text(t.play_handover_button(server: widget.request.serverName, device: screen.name)),
-            )
-          : null,
+      trailing: busy ? const SizedBox.square(dimension: 24, child: CircularProgressIndicator(strokeWidth: 3)) : null,
       onTap: state == PlayScreenRowState.ready && address != null && idle
           ? () => unawaited(_play(screen, address))
           : null,

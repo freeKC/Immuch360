@@ -231,15 +231,6 @@ class _TabletLayout extends HookConsumerWidget {
                     onTap: () => context.pushRoute(ConnectScreenRoute()),
                   ),
                 ),
-              if (ref.watch(isBigScreenProvider))
-                SliverToBoxAdapter(
-                  child: ListTile(
-                    key: const Key('settings_play_from_phone'),
-                    title: Text(context.t.play_from_phone_title),
-                    leading: const Icon(Icons.cast_connected_rounded),
-                    onTap: () => context.pushRoute(const PlayFromPhoneRoute()),
-                  ),
-                ),
               ...sections.map(
                 (s) => SliverToBoxAdapter(
                   child: ListTile(
@@ -252,6 +243,16 @@ class _TabletLayout extends HookConsumerWidget {
                   ),
                 ),
               ),
+              // After the sections: the rows a remote walks through keep their places
+              if (ref.watch(isBigScreenProvider))
+                SliverToBoxAdapter(
+                  child: ListTile(
+                    key: const Key('settings_play_from_phone'),
+                    title: Text(context.t.play_from_phone_title),
+                    leading: const Icon(Icons.cast_connected_rounded),
+                    onTap: () => context.pushRoute(const PlayFromPhoneRoute()),
+                  ),
+                ),
               SliverToBoxAdapter(
                 child: ListTile(
                   title: Text(context.t.whats_new),

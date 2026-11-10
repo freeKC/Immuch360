@@ -424,4 +424,84 @@ void main() {
     await plex.close();
     await expectLater(plex.list('/Movies'), throwsA(isA<NetworkFileSystemException>()));
   });
+
+  group('items by their rating key (Play on the TV)', () {
+    const itemPath = '/.item/77/Title 77 (2019).mkv';
+    int metadataRequests() => server.requests.where((r) => r.path == '/library/metadata/77').length;
+
+    test('the path of the first part under /.item, with what the item tells', () async {
+      final plex = await open();
+      expect(await plex.pathOfItem('77'), itemPath);
+      final request = server.requests.lastWhere((r) => r.path == '/library/metadata/77');
+      expect(request.headers['x-plex-token'], plexTestToken);
+      expect(request.query, isNull, reason: 'the token goes in the header only');
+      final entry = await plex.stat(itemPath);
+      expect(entry.isDirectory, isFalse);
+      expect(entry.size, 2048);
+      expect(entry.durationMs, 7260000);
+      expect(entry.width, 1920);
+      expect(entry.mimeType, 'video/x-matroska');
+      expect(entry.sourceId, '0123456789abcdef');
+      expect(plex.ratingKeyOf(itemPath), '77');
+    });
+
+    test('reads the part through the item path, as the media bridge does', () async {
+      final plex = await open();
+      final path = await plex.pathOfItem('77');
+      final whole = plexPartBytes(77, 2048);
+      expect(await plex.readRange(path, 10, 20), whole.sublist(10, 30));
+      expect(await plex.readRange(path, 2040, 100), whole.sublist(2040));
+      final read = server.requests.lastWhere((r) => r.path.startsWith('/library/parts/77/'));
+      expect(read.headers['x-plex-token'], plexTestToken);
+    });
+
+    test('an item the server does not have is not found', () async {
+      final plex = await open();
+      await expectLater(
+        plex.pathOfItem('78'),
+        throwsA(isA<NetworkFileSystemException>().having((e) => e.isNotFound, 'isNotFound', isTrue)),
+      );
+    });
+
+    test('a key that is no rating key is refused without a request', () async {
+      final plex = await open();
+      final before = server.requests.length;
+      for (final key in ['', '7a', '../sections', '1234567890123', '77/children']) {
+        await expectLater(
+          plex.pathOfItem(key),
+          throwsA(isA<NetworkFileSystemException>().having((e) => e.isNotFound, 'isNotFound', isTrue)),
+        );
+      }
+      expect(server.requests.length, before);
+    });
+
+    test('a path of an item not asked yet is found by its key', () async {
+      final plex = await open();
+      expect((await plex.stat(itemPath)).size, 2048);
+      expect(await plex.readRange(itemPath, 0, 4), plexPartBytes(77, 2048).sublist(0, 4));
+      expect(metadataRequests(), 1);
+    });
+
+    test('found again once the connection forgot its keys', () async {
+      final plex = await open();
+      final path = await plex.pathOfItem('77');
+      await plex.list('/Movies');
+      // A part gone: the connection forgets every key it had and walks again
+      server.partSizes.remove(11);
+      await expectLater(plex.readRange('/Movies/a.mp4', 0, 10), throwsA(isA<NetworkFileSystemException>()));
+      expect(plex.ratingKeyOf(path), isNull, reason: 'forgotten with the other keys');
+      expect(await plex.readRange(path, 0, 4), plexPartBytes(77, 2048).sublist(0, 4));
+      expect(metadataRequests(), 2);
+      expect(plex.ratingKeyOf(path), '77');
+    });
+
+    test('the rating key of a file listed in a folder, none for a folder or an unknown path', () async {
+      final plex = await open();
+      await plex.list('/Movies');
+      expect(plex.ratingKeyOf('/Movies/a.mp4'), '11');
+      expect(plex.ratingKeyOf('Movies/a.mp4/'), '11');
+      expect(plex.ratingKeyOf('/Movies/Holidays'), isNull);
+      expect(plex.ratingKeyOf('/Movies/nothing.mp4'), isNull);
+    });
+  });
 }
