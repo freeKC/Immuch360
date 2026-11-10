@@ -51,6 +51,7 @@ import 'package:immich_mobile/utils/cache/custom_image_cache.dart';
 import 'package:immich_mobile/utils/cache/widgets_binding.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:immich_mobile/utils/libsmb2_license.dart';
+import 'package:immich_mobile/utils/fallback_localizations.dart';
 import 'package:immich_mobile/utils/licenses.dart';
 import 'package:immich_mobile/utils/litert_licenses.dart';
 import 'package:immich_mobile/utils/meta_spatial_licenses.dart';
@@ -118,6 +119,7 @@ Future<void> runImmich({Future<void> Function()? beforeStart}) async {
       ),
     );
   } catch (error, stack) {
+    Logger('main').severe('Failed to start', error, stack);
     runApp(BootstrapErrorWidget(error: error.toString(), stack: stack.toString()));
   }
 }
@@ -365,7 +367,7 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         title: 'Immich',
         debugShowCheckedModeBanner: !kScreenshotMode,
         scaffoldMessengerKey: scaffoldMessengerKey,
-        localizationsDelegates: context.localizationDelegates,
+        localizationsDelegates: [...context.localizationDelegates, ...fallbackLocalizationDelegates],
         supportedLocales: context.supportedLocales,
         locale: context.locale,
         themeMode: ref.watch(appThemeModeProvider),

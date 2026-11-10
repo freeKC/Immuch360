@@ -43,6 +43,9 @@ android {
     versionCode flutter.versionCode
     versionName flutter.versionName
     resValue "string", "app_name", "Immuch360"
+    // Passkeys of upstream (PasskeyPlugin.kt reads this field): off in Immuch360, the server binds mobile passkeys to
+    // my.immich.app and to the signing certificates of Immich, which our package and key are not
+    buildConfigField "boolean", "PASSKEYS", "false"
     // Android TV and Google TV launcher entry; added to the map, which already holds Flutter's applicationName (a
     // plain = would drop it)
     manifestPlaceholders += [tvLauncherCategory: "android.intent.category.LEANBACK_LAUNCHER"]
@@ -164,6 +167,10 @@ dependencies {
   implementation libs.guava
   implementation libs.glide
   implementation libs.kotlinx.serialization.json
+  implementation libs.credentials
+  // The Google Play services side of Credential Manager (passkeys, off by PASSKEYS above): in the phone flavour only,
+  // the Quest build ships no Google Play services code
+  phoneImplementation libs.credentials.play.services.auth
 
   ksp libs.glide.ksp
   coreLibraryDesugaring libs.desugar.jdk.libs
@@ -216,4 +223,6 @@ dependencies {
 // This is uncommented in F-Droid build script
 //f configurations.all {
 //f     exclude group: 'com.google.android.gms'
+//f     exclude group: 'androidx.credentials', module: 'credentials-play-services-auth'
 //f }
+//f android.defaultConfig.buildConfigField "boolean", "PASSKEYS", "false"

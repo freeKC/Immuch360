@@ -2478,7 +2478,6 @@
   "immersive_view_big_screen": "Shiko në një ekran të madh",
   "immersive_viewer_open_failed": "Shikuesi imersiv nuk u hap dot",
   "immich_logo": "Logoja e Immich",
-  "immich_web_interface": "Ndërfaqja Web e Immich",
   "import_from_json": "Importo nga JSON",
   "import_path": "Shtegu i importimit",
   "in_albums": "Në {count, plural, one {# album} other {# albume}}",

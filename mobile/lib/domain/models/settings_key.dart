@@ -79,6 +79,7 @@ enum SettingsKey<T> {
   timelineTilesPerRow<int>(),
   timelineGroupAssetsBy<GroupAssetsBy>(codec: EnumCodec(GroupAssetsBy.values)),
   timelineStorageIndicator<bool>(),
+  timelineSmoothScrubbing<bool>(),
 
   // Log
   logLevel<LogLevel>(codec: EnumCodec(LogLevel.values)),

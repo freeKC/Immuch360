@@ -39,6 +39,7 @@ import app.alextran.immich.images.NativeImageDecodeApi
 import app.alextran.immich.images.NativeImageDecodeImpl
 import app.alextran.immich.images.RemoteImageApi
 import app.alextran.immich.images.RemoteImagesImpl
+import app.alextran.immich.passkey.PasskeyPlugin
 import app.alextran.immich.permission.PermissionApi
 import app.alextran.immich.permission.PermissionApiImpl
 import app.alextran.immich.phoneshare.PhoneShareApi
@@ -74,6 +75,8 @@ class MainActivity : FlutterFragmentActivity() {
     // The DJI drone page: folders picked in the system picker (a drone, a controller or a card over USB), for the
     // engine of the app UI only: the background engines never open the page
     flutterEngine.plugins.add(DocumentTreePlugin())
+    // The passkeys of upstream: registered so that its channel answers, but off (BuildConfig.PASSKEYS false)
+    flutterEngine.plugins.add(PasskeyPlugin())
     // Only the engine of the app UI hears when the 360° and Spatial 2.5D players close, not the background engines
     SphericalVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SpatialVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)

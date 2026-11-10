@@ -25,8 +25,10 @@ import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/services/immich_logger.service.dart';
 import 'package:immich_mobile/theme/color_scheme.dart';
 import 'package:immich_mobile/theme/theme_data.dart';
+import 'package:immich_mobile/utils/fallback_localizations.dart';
 import 'package:immich_mobile/widgets/common/immich_logo.dart';
 import 'package:immich_mobile/widgets/common/immich_title_text.dart';
 import 'package:logging/logging.dart';
@@ -52,7 +54,7 @@ class BootstrapErrorWidget extends StatelessWidget {
         builder: (lCtx) => MaterialApp(
           title: 'Immich',
           debugShowCheckedModeBanner: !kScreenshotMode,
-          localizationsDelegates: lCtx.localizationDelegates,
+          localizationsDelegates: [...lCtx.localizationDelegates, ...fallbackLocalizationDelegates],
           supportedLocales: lCtx.supportedLocales,
           locale: lCtx.locale,
           themeMode: ThemeMode.system,
@@ -79,9 +81,12 @@ class BootstrapErrorWidget extends StatelessWidget {
                     ),
                   ),
                   const Divider(height: 1),
-                  const SafeArea(
+                  SafeArea(
                     top: false,
-                    child: Padding(padding: EdgeInsets.fromLTRB(24, 16, 24, 16), child: _BottomPanel()),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                      child: _BottomPanel(startupError: '$error\n\n$stack'),
+                    ),
                   ),
                 ],
               ),
@@ -94,7 +99,9 @@ class BootstrapErrorWidget extends StatelessWidget {
 }
 
 class _BottomPanel extends StatefulWidget {
-  const _BottomPanel();
+  final String startupError;
+
+  const _BottomPanel({required this.startupError});
 
   @override
   State<_BottomPanel> createState() => _BottomPanelState();
@@ -158,8 +165,8 @@ class _BottomPanelState extends State<_BottomPanel> {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.center,
           children: [
             _ActionLink(
               icon: Icons.chat_bubble_outline,
@@ -178,6 +185,11 @@ class _BottomPanelState extends State<_BottomPanel> {
                 Uri.parse('https://github.com/freeKC/Immuch360/issues'),
                 mode: LaunchMode.externalApplication,
               ),
+            ),
+            _ActionLink(
+              icon: Icons.share_outlined,
+              label: context.t.share_logs,
+              onTap: () => ImmichLogger.shareLogs(context, startupError: widget.startupError),
             ),
             if (!_cleared)
               _ActionLink(
@@ -301,21 +313,8 @@ class SplashScreenPageState extends ConsumerState<SplashScreenPage> {
       return;
     }
 
-    unawaited(
-      ref
-          .read(authProvider.notifier)
-          .setOpenApiServiceEndpoint()
-          .then(logConnectionInfo)
-          .whenComplete(() => resumeSession()),
-    );
-  }
-
-  void logConnectionInfo(String? endpoint) {
-    if (endpoint == null) {
-      return;
-    }
-
-    log.info("Resuming session at $endpoint");
+    // resumeSession resolves the endpoint itself and no longer waits for it to start (upstream 081e40db2d)
+    unawaited(resumeSession());
   }
 
   Future<void> resumeSession() async {
@@ -335,13 +334,28 @@ class SplashScreenPageState extends ConsumerState<SplashScreenPage> {
       final backupNotifier = ref.read(backupProvider.notifier);
       final lifeCycle = ref.read(appStateProvider.notifier);
       final viewIntentHandler = ref.read(viewIntentHandlerProvider);
+      final authNotifier = ref.read(authProvider.notifier);
 
       unawaited(
-        ref
-            .read(authProvider.notifier)
-            .saveAuthInfo(accessToken: accessToken)
+        authNotifier
+            .setOpenApiServiceEndpoint()
+            .catchError((Object error, StackTrace stackTrace) {
+              log.warning('Failed to resolve server endpoint', error, stackTrace);
+              return null;
+            })
+            .then((_) async {
+              if (Store.tryGet(StoreKey.accessToken) != accessToken) {
+                return false;
+              }
+              await authNotifier.saveAuthInfo(accessToken: accessToken);
+              return true;
+            })
             .then(
-              (_) async {
+              (sessionResumed) async {
+                if (!sessionResumed) {
+                  return;
+                }
+
                 try {
                   wsProvider.connect();
                   unawaited(infoProvider.getServerInfo());

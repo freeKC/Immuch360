@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/segment.model.dart';
@@ -60,9 +61,11 @@ class Scrubber extends ConsumerStatefulWidget {
   ConsumerState createState() => ScrubberState();
 }
 
-/// The label under the finger: the month and the year ("Oct 2024"), the year alone when the timeline shows years
+/// The label under the finger: the month and the year ("Oct 2024"), the year alone when the timeline shows years. In
+/// a locale intl has date data for (resolvedDateTimeLocale): DateFormat throws on the others
 @visibleForTesting
-DateFormat scrubberLabelFormat({required bool years}) => years ? DateFormat.y() : DateFormat.yMMM();
+DateFormat scrubberLabelFormat({required bool years}) =>
+    years ? DateFormat.y(resolvedDateTimeLocale()) : DateFormat.yMMM(resolvedDateTimeLocale());
 
 /// The thumb slows down once the finger stays still on it ([kScrubberSlowStillDistance]) for [kScrubberSlowHold]
 const kScrubberSlowHold = Duration(milliseconds: 300);

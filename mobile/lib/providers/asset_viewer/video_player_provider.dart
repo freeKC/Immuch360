@@ -910,12 +910,23 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
 
     final position = Duration(milliseconds: playbackInfo.position);
+    var status = _mapStatus(playbackInfo.status);
+    if (playbackInfo.status == PlaybackStatus.stopped && state.status != VideoPlaybackStatus.completed) {
+      // Never played yet, not completed = we show the resume button instead of the replay button
+      status = VideoPlaybackStatus.paused;
+    }
+
+    if (status != VideoPlaybackStatus.playing) {
+      // No playback = no loading indicator needed
+      _bufferingTimer?.cancel();
+    }
+
     state = state.copyWith(
       // Media3 is ready again after each seek: the ready of a seek before the last one tells an old position
       position: _takesPlayerPosition(position) ? position : state.position,
       duration: Duration(milliseconds: videoInfo.duration),
       // A player in error stays failed until it is loaded again; a stall ends here
-      status: _failedOnError ? VideoPlaybackStatus.failed : _mapStatus(playbackInfo.status),
+      status: _failedOnError ? VideoPlaybackStatus.failed : status,
     );
 
     _ready = true;

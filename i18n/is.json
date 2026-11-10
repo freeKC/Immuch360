@@ -2425,7 +2425,6 @@
   "immersive_view_big_screen": "Skoða á stórum skjá",
   "immersive_viewer_open_failed": "Ekki tókst að opna sýndarveruleikaskoðarann",
   "immich_logo": "Immich merkið",
-  "immich_web_interface": "Vefviðmót Immich",
   "import_from_json": "Flytja inn úr JSON",
   "import_path": "Slóð innflutnings",
   "in_albums": "Í {count, plural, one {# safni} other {# söfnum}}",

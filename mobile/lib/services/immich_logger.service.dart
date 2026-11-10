@@ -2,9 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
+import 'package:immich_mobile/data/db/logger/database.dart';
+import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/desktop/files/save_to_folder.dart';
+import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/infrastructure/repositories/log.repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -17,8 +21,28 @@ import 'package:share_plus/share_plus.dart';
 /// Logs can be shared by calling the `shareLogs` method, which will open a share dialog
 /// and generate a csv file.
 abstract final class ImmichLogger {
-  /// [toFile]: on a computer, keep the logs as a file the user saves (lib/desktop/files) rather than share them
-  static Future<void> shareLogs(BuildContext context, {bool toFile = false}) async {
+  // the startup error screen can show before the log service starts, and then the startup error was not logged
+  static Future<List<LogMessage>> _read(String? startupError) async {
+    try {
+      return await LogService.I.getMessages();
+    } on LoggerUnInitializedException {
+      final logs = DriftLogger.sqlite(await openSqliteConnection(name: 'immich_logs'));
+      try {
+        return [
+          // if the log service had started, main would have logged this already
+          if (startupError != null)
+            LogMessage(message: startupError, level: LogLevel.severe, createdAt: DateTime.now()),
+          ...await LogRepository(logs).getAll(),
+        ];
+      } finally {
+        await logs.close();
+      }
+    }
+  }
+
+  /// [toFile]: on a computer, keep the logs as a file the user saves (lib/desktop/files) rather than share them.
+  /// [startupError]: the error of the startup error screen, written first when the log service did not start
+  static Future<void> shareLogs(BuildContext context, {bool toFile = false, String? startupError}) async {
     final tempDir = await getTemporaryDirectory();
     // Windows refuses the colons of an ISO 8601 time in a file name
     final dateTime = CurrentPlatform.isDesktop ? fileNameDate(DateTime.now()) : DateTime.now().toIso8601String();
@@ -27,7 +51,7 @@ abstract final class ImmichLogger {
     final io = logFile.openWrite();
     try {
       // Write messages
-      for (final m in await LogService.I.getMessages()) {
+      for (final m in await _read(startupError)) {
         final created = m.createdAt;
         final level = m.level.name.padRight(8);
         final logger = (m.logger ?? "<UNKNOWN_LOGGER>").padRight(20);

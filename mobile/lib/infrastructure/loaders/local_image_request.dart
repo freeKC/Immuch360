@@ -34,16 +34,20 @@ class LocalImageRequest extends ImageRequest {
     // The computers answer with the encoded file, decoded here at the requested size; the phones decode natively. At
     // most 16384 pixels on the long side, the original too, as Android and iOS decode
     if (info case {'pointer': final int pointer, 'length': final int length}) {
-      final encoded = await _fromEncodedPlatformImage(
-        pointer,
-        length,
-        decodeSize: ui.Size(width.toDouble(), height.toDouble()),
-        maxLongSide: _desktopMaxPixelSize,
+      final encoded = await _firstFrame(
+        await _codecFromEncodedPlatformImage(
+          pointer,
+          length,
+          decodeSize: ui.Size(width.toDouble(), height.toDouble()),
+          maxLongSide: _desktopMaxPixelSize,
+        ),
       );
       return encoded == null ? null : ImageInfo(image: encoded.image, scale: scale);
     }
 
-    final frame = await _fromDecodedPlatformImage(info["pointer"]!, info["width"]!, info["height"]!, info["rowBytes"]!);
+    final frame = await _firstFrame(
+      await _codecFromDecodedPlatformImage(info["pointer"]!, info["width"]!, info["height"]!, info["rowBytes"]!),
+    );
     return frame == null ? null : ImageInfo(image: frame.image, scale: scale);
   }
 

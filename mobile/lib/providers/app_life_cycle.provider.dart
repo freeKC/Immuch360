@@ -109,8 +109,7 @@ class AppLifeCycleNotifier extends StateNotifier<AppLifeCycleEnum> {
     // Needs to be logged in
     if (isAuthenticated) {
       // switch endpoint if needed
-      final endpoint = await _ref.read(authProvider.notifier).setOpenApiServiceEndpoint();
-      _log.info("Using server URL: $endpoint");
+      await _ref.read(authProvider.notifier).setOpenApiServiceEndpoint();
 
       await _ref.read(serverInfoProvider.notifier).getServerVersion();
       // A big screen a phone signed in: back to its sign-in page if the phone signed it out meanwhile

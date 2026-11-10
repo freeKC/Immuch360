@@ -7,6 +7,7 @@ import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -117,7 +118,7 @@ class AppLogPage extends HookWidget {
               style: TextStyle(fontSize: 14.0, color: context.colorScheme.onSurface, fontFamily: "GoogleSansCode"),
             ),
             subtitle: Text(
-              "at ${DateFormat("HH:mm:ss.SSS").format(logMessage.createdAt)} in ${logMessage.logger}",
+              "at ${DateFormat("HH:mm:ss.SSS", resolvedDateTimeLocale()).format(logMessage.createdAt)} in ${logMessage.logger}",
               style: TextStyle(fontSize: 12.0, color: context.colorScheme.onSurfaceSecondary),
             ),
             leading: buildLeadingIcon(logMessage.level),

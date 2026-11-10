@@ -315,6 +315,7 @@ class ForegroundUploadService {
         if (result.isSuccess) {
           onSuccess?.call(fileId, result.remoteAssetId!);
         } else if (!result.isCancelled && result.errorMessage != null) {
+          _logger.warning("Error(${result.statusCode}) uploading $fileId", result.error ?? result.errorMessage);
           onError?.call(fileId, result.errorMessage!);
         }
       },
@@ -660,7 +661,8 @@ class ForegroundUploadService {
       } else if (result.errorMessage != null) {
         _logger.severe(
           () =>
-              "Error(${result.statusCode}) uploading ${asset.localId} | $originalFileName | Created on ${asset.createdAt} | ${result.errorMessage}",
+              "Error(${result.statusCode}) uploading ${asset.localId} | $originalFileName | Created on ${asset.createdAt}",
+          result.error ?? result.errorMessage,
         );
 
         callbacks.onError?.call(asset.localId!, result.errorMessage!);

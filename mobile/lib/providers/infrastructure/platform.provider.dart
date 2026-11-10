@@ -5,6 +5,7 @@ import 'package:immich_mobile/platform/connectivity_api.g.dart';
 import 'package:immich_mobile/platform/local_image_api.g.dart';
 import 'package:immich_mobile/platform/native_sync_api.g.dart';
 import 'package:immich_mobile/platform/network_api.g.dart';
+import 'package:immich_mobile/platform/passkey_api.g.dart';
 import 'package:immich_mobile/platform/permission_api.g.dart';
 import 'package:immich_mobile/platform/remote_image_api.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
@@ -26,6 +27,8 @@ final permissionApiProvider = Provider<PermissionApi>((_) => PlatformApis.permis
 final connectivityApiProvider = Provider<ConnectivityApi>((_) => PlatformApis.connectivity());
 
 final sphericalVideoApiProvider = Provider<SphericalVideoApi>((_) => PlatformApis.sphericalVideo());
+
+final passkeyHostApiProvider = Provider<PasskeyHostApi>((_) => PlatformApis.passkeyHost());
 
 final spatialVideoApiProvider = Provider<SpatialVideoApi>((_) => PlatformApis.spatialVideo());
 

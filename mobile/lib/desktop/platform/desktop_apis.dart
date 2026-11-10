@@ -9,6 +9,7 @@ import 'package:immich_mobile/desktop/platform/desktop_background_worker_api.dar
 import 'package:immich_mobile/desktop/platform/desktop_connectivity_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_local_image_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_network_api.dart';
+import 'package:immich_mobile/desktop/platform/desktop_passkey_host_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_remote_image_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_share_files_api.dart';
@@ -24,6 +25,7 @@ import 'package:immich_mobile/platform/connectivity_api.g.dart';
 import 'package:immich_mobile/platform/local_image_api.g.dart';
 import 'package:immich_mobile/platform/native_sync_api.g.dart';
 import 'package:immich_mobile/platform/network_api.g.dart';
+import 'package:immich_mobile/platform/passkey_api.g.dart';
 import 'package:immich_mobile/platform/permission_api.g.dart';
 import 'package:immich_mobile/platform/phone_share_api.g.dart';
 import 'package:immich_mobile/platform/remote_image_api.g.dart';
@@ -75,6 +77,9 @@ abstract final class PlatformApis {
       CurrentPlatform.isDesktop ? _remoteImage ??= DesktopRemoteImageApi() : RemoteImageApi();
 
   static NetworkApi network() => CurrentPlatform.isDesktop ? _network ??= DesktopNetworkApi() : NetworkApi();
+
+  /// The passkeys of upstream, off in Immuch360: the computers answer that they have none
+  static PasskeyHostApi passkeyHost() => CurrentPlatform.isDesktop ? DesktopPasskeyHostApi() : PasskeyHostApi();
 
   /// "Share this phone on the network" on the phones, "Share this computer on the network" on the computers
   static PhoneShareApi phoneShare() =>
