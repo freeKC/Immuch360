@@ -990,6 +990,9 @@ const av2DecoderRepository = 'immuch360/av2-companion';
 /// The release of [av2DecoderRepository] the app takes the AV2 decoder from
 const av2DecoderReleaseTag = 'v1.0.1';
 
+/// Where the files of [av2DecoderReleaseTag] are downloaded from: the [AiComponent.releaseBase] of its three entries
+const av2DecoderReleaseBase = 'https://github.com/immuch360/av2-companion/releases/download/$av2DecoderReleaseTag/';
+
 /// The licence of dav2d at the pinned commit (its COPYING: BSD 2-Clause, VideoLAN and dav2d authors)
 const _dav2dLicenceUrl =
     'https://code.videolan.org/videolan/dav2d/-/blob/30140b563596a1b14aef808ff021c90288948315/COPYING';

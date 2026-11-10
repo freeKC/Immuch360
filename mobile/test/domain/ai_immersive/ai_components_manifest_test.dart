@@ -463,11 +463,13 @@ void main() {
       expect(AiFeatureGroup.values.where((group) => group != AiFeatureGroup.av2).every((group) => group.isAi), isTrue);
       expect(av2DecoderReleaseTag, 'v1.0.1');
       expect(av2DecoderRepository, 'immuch360/av2-companion');
+      expect(av2DecoderReleaseBase, 'https://github.com/immuch360/av2-companion/releases/download/v1.0.1/');
       for (final decoder in decoders) {
         expect(decoder.features, {AiFeature.av2Video}, reason: decoder.id);
         expect(decoder.kind, AiComponentKind.archive, reason: decoder.id);
         expect(decoder.releaseTag, av2DecoderReleaseTag, reason: decoder.id);
         expect(decoder.releaseRepository, av2DecoderRepository, reason: decoder.id);
+        expect(decoder.releaseBase, av2DecoderReleaseBase, reason: decoder.id);
         // The id of the lock of av2-companion, the commit of dav2d it pins, and the asset of its release
         expect(decoder.version, '30140b5-1', reason: decoder.id);
         expect(decoder.assetName, 'Immuch360-av2-decoder-30140b5-1-${decoder.id.substring('av2-decoder-'.length)}.zip');
