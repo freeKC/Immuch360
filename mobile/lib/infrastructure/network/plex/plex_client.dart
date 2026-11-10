@@ -62,7 +62,13 @@ enum PlexFailure {
 /// A failure of a Plex server, told in English like the failures of every share, with its [failure] for the pages that
 /// put it into the user's language. Never holds the token, an address, a path or a title.
 class PlexFileSystemException extends NetworkFileSystemException {
-  const PlexFileSystemException(super.message, this.failure, {super.isAuthentication, super.isNotFound});
+  const PlexFileSystemException(
+    super.message,
+    this.failure, {
+    super.isAuthentication,
+    super.isNotFound,
+    super.isDownloadForbidden,
+  });
 
   final PlexFailure failure;
 }

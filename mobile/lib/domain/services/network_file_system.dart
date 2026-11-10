@@ -10,7 +10,12 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 
 /// Thrown by the file systems for anything the user may act on: wrong credentials, host unreachable, missing file.
 class NetworkFileSystemException implements Exception {
-  const NetworkFileSystemException(this.message, {this.isAuthentication = false, this.isNotFound = false});
+  const NetworkFileSystemException(
+    this.message, {
+    this.isAuthentication = false,
+    this.isNotFound = false,
+    this.isDownloadForbidden = false,
+  });
 
   final String message;
 
@@ -19,6 +24,9 @@ class NetworkFileSystemException implements Exception {
 
   /// The path does not exist
   final bool isNotFound;
+
+  /// The server owner forbids this account to download files (Plex: "Allow Downloads" off for a shared user)
+  final bool isDownloadForbidden;
 
   @override
   String toString() => 'NetworkFileSystemException: $message';
@@ -68,6 +76,45 @@ abstract interface class NetworkRangeReads {
   /// file
   bool? get supportsRanges;
 }
+
+/// A share whose server gives a whole file for a copy on this device (a Plex server, request 5 of the Plex films study:
+/// "Download"), as a stream from an offset so that a copy cut short goes on where it stopped
+abstract interface class NetworkFileDownloads {
+  /// The file at [path] from byte [from] on. The server may start over from byte 0 when it does not honour the range
+  /// ([NetworkDownloadStream.start] says where the bytes begin). [abort] stops the request and its body. Throws a
+  /// [NetworkFileSystemException] when the server refuses (a Plex account without the right to download: its failure
+  /// says so) or cannot be reached.
+  Future<NetworkDownloadStream> openDownload(String path, {int from = 0, Future<void>? abort});
+}
+
+/// The answer of [NetworkFileDownloads.openDownload]
+class NetworkDownloadStream {
+  const NetworkDownloadStream({
+    required this.start,
+    required this.total,
+    required this.identity,
+    required this.bytes,
+    this.fileName,
+  });
+
+  /// The offset of the first byte of [bytes]: the one asked, or 0 when the server sent the whole file
+  final int start;
+
+  /// The size of the whole file, null when the server does not tell it
+  final int? total;
+
+  /// What changes when the file on the server changes (for Plex the key of the part, which holds its change stamp): a
+  /// copy started under another identity starts over
+  final String identity;
+
+  /// The name the server gives the file, null when it gives none
+  final String? fileName;
+
+  final Stream<List<int>> bytes;
+}
+
+/// Whether [error] says that the server owner forbids downloads to this account
+bool isDownloadForbidden(Object error) => error is NetworkFileSystemException && error.isDownloadForbidden;
 
 /// Whether [entry] of [fileSystem] reads at any position, as the motion track of a raw video needs (it sits at the end
 /// of an Insta360 file, through a GoPro or a DJI file): its size is known (a file of a DLNA or Plex server that does

@@ -28,6 +28,8 @@ import app.alextran.immich.djilink.DjiLinkController
 import app.alextran.immich.djilink.DjiLinkVideoViewFactory
 import app.alextran.immich.documenttree.DocumentTreePlugin
 import me.albemala.native_video_player.NativeVideoPlayerPlugin
+import app.alextran.immich.filmdownload.FilmDownloadApi
+import app.alextran.immich.filmdownload.FilmDownloadApiImpl
 import app.alextran.immich.images.LocalImageApi
 import app.alextran.immich.immersive.ImmersiveApi
 import app.alextran.immich.immersive.ImmersiveApiImpl
@@ -82,6 +84,10 @@ class MainActivity : FlutterFragmentActivity() {
     // The Stop action of the phone share notification, for the engine that runs the share
     PhoneShareApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     val messenger = flutterEngine.dartExecutor.binaryMessenger
+    // Download of a Plex film: its foreground service, and the Pause and Cancel of its notification, for the engine of
+    // the app UI, which runs the copy
+    FilmDownloadApi.setUp(messenger, FilmDownloadApiImpl(this))
+    FilmDownloadApiImpl.attachEvents(messenger)
     // TV detection and the native text dialog of the remote control layout: they need this activity
     TvApi.setUp(messenger, TvApiImpl(this))
     // The scanner of "Connect a TV or computer": it opens activities, so it needs this one
@@ -128,6 +134,8 @@ class MainActivity : FlutterFragmentActivity() {
     ImmersiveApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SplatViewerApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     PhoneShareApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    FilmDownloadApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
+    FilmDownloadApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     // The TV dialog must not keep this activity once it is gone
     TvApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     QrScanApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)

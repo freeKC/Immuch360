@@ -12,6 +12,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
 import 'package:immich_mobile/presentation/widgets/device_folders/device_folders_section.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/drone/drone_import.provider.dart';
@@ -172,6 +173,8 @@ class NetworkSharesPage extends ConsumerWidget {
               ? Column(
                   children: [
                     const PhoneShareTile(),
+                    // Films copied from a Plex server removed since stay reachable
+                    const DownloadedFilmsTile(),
                     Expanded(child: _NoShares(onAdd: add)),
                   ],
                 )
@@ -189,6 +192,8 @@ class NetworkSharesPage extends ConsumerWidget {
                       ),
                     ),
                     for (final source in shares) _NetworkShareTile(source: source, tvMode: tvMode),
+                    // The films copied from a Plex server, where films are copied (not on a TV)
+                    const DownloadedFilmsTile(),
                     if (cameras.isNotEmpty) ...[
                       Padding(
                         key: const Key('network_shares_cameras_header'),
