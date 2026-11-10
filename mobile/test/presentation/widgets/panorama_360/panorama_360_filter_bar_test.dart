@@ -7,6 +7,7 @@ import 'package:immich_mobile/domain/models/panorama_360.model.dart';
 import 'package:immich_mobile/presentation/widgets/panorama_360/panorama_360_filter_bar.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/panorama_360.provider.dart';
+import 'package:intl/intl.dart';
 
 import '../../../unit/presentation/presentation_context.dart';
 
@@ -215,6 +216,26 @@ void main() {
 
     expect(filterOf(tester).period, isNull);
     expect(find.text('Date'), findsOneWidget);
+  });
+
+  testWidgets('labels a month and a range when intl has no date formats for the app language', (tester) async {
+    // Maori is an app language intl 0.20 has no date data for: the labels fall back to en_US, no ArgumentError
+    await pumpBar(tester);
+    Intl.defaultLocale = 'mi';
+    addTearDown(() => Intl.defaultLocale = null);
+    final filter = ProviderScope.containerOf(
+      tester.element(find.byType(Panorama360FilterBar)),
+    ).read(panorama360FilterProvider.notifier);
+
+    filter.setPeriod(const Panorama360Month(2024, 9));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('September 2024'), findsOneWidget);
+
+    filter.setPeriod(Panorama360Range(DateTime(2024, 8, 3), DateTime(2024, 9, 14)));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Aug 3, 2024 to Sep 14, 2024'), findsOneWidget);
   });
 
   testWidgets('tells when no media matches the filters', (tester) async {
