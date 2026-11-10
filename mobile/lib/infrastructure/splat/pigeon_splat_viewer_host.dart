@@ -4,6 +4,8 @@
 
 import 'dart:async';
 
+import 'package:immich_mobile/domain/models/rate_app.dart';
+import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_host.dart';
 import 'package:immich_mobile/platform/splat_viewer_api.g.dart';
 import 'package:logging/logging.dart';
@@ -53,6 +55,7 @@ class PigeonSplatViewerHost implements SplatViewerHost {
     final viewing = ++_viewing;
     final ended = Completer<SplatHostClosed>();
     _ended = ended;
+    RateAppSignals.viewingOpened(RateAppViewing.splat);
     try {
       await _api.open(pageUrl.toString(), title, viewing);
     } catch (error) {
@@ -79,6 +82,7 @@ class PigeonSplatViewerHost implements SplatViewerHost {
       _log.fine('That was the viewing $viewing; the viewing $_viewing goes on');
       return;
     }
+    RateAppSignals.viewingClosed(RateAppViewing.splat, normal: reason == 'user');
     _end(switch (reason) {
       'rendererGone' => SplatHostClosed.rendererGone,
       'noWebView' => SplatHostClosed.noWebView,

@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/player_events_hub.dart';
+import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
@@ -142,6 +144,7 @@ class SphericalVideoSession implements SphericalVideoEvents {
   void start({required BaseAsset asset, required SphereCoverage coverage, required SphereCoverage coverageGuess}) {
     _runOnClose();
     _playback = (asset: asset, coverage: coverage, coverageGuess: coverageGuess);
+    RateAppSignals.viewingOpened(RateAppViewing.sphericalVideo);
   }
 
   /// [action] runs once the player that opens closes, or could not open ([cancel]), or another one opens: the build of
@@ -151,6 +154,7 @@ class SphericalVideoSession implements SphericalVideoEvents {
   /// The player could not open: nothing will close
   void cancel() {
     _playback = null;
+    RateAppSignals.viewingClosed(RateAppViewing.sphericalVideo, normal: false);
     _runOnClose();
   }
 
@@ -171,6 +175,7 @@ class SphericalVideoSession implements SphericalVideoEvents {
     _runOnClose();
     final playback = _playback;
     _playback = null;
+    RateAppSignals.viewingClosed(RateAppViewing.sphericalVideo);
     if (playback == null) {
       _log.warning('The 360° player closed, but no playback was started');
       return;

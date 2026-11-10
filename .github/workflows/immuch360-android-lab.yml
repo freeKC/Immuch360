@@ -11,10 +11,11 @@ name: Immuch360 Android lab
 # and an AVIF, the native decoder, an upload) and lab_background_worker_test.dart (a background run that ends, one
 # cancelled by opening the app). The job fails when a required test or one of their scenarios fails, or when logcat
 # holds a crash, an ANR or a death of the app (.github/android-lab/check_logcat.py), and keeps logcat, the test output
-# and the requests of the fake server as the android-lab artifact.
-# Runs on a push that changes the vendored ok_http, the native image decoders, the background worker, the lab tests or
-# this lab, and by hand. Actions pinned to a commit and runner label pinned, read-only, no secret, as the desktop
-# workflow (check_workflow.py).
+# and the requests of the fake server as the android-lab artifact. Last, lab_rate_app_test.dart: the invitation to rate
+# the app in the app signed in on the fake server (too early, due once, held by a crash of the build).
+# Runs on a push that changes the vendored ok_http, the native image decoders, the background worker, the invitation to
+# rate the app, the lab tests or this lab, and by hand. Actions pinned to a commit and runner label pinned, read-only,
+# no secret, as the desktop workflow (check_workflow.py).
 
 on:
   push:
@@ -24,6 +25,10 @@ on:
       - 'mobile/android/app/src/main/kotlin/app/alextran/immich/images/**'
       - 'mobile/android/app/src/main/kotlin/app/alextran/immich/background/**'
       - 'mobile/lib/domain/services/background_worker.service.dart'
+      - 'mobile/lib/domain/models/rate_app.dart'
+      - 'mobile/lib/domain/services/rate_app.service.dart'
+      - 'mobile/lib/providers/rate_app.provider.dart'
+      - 'mobile/lib/presentation/widgets/rate_app/**'
       - 'mobile/integration_test/ok_http_receiver_stress_test.dart'
       - 'mobile/integration_test/lab_*.dart'
       - 'mobile/integration_test/test_utils/lab_server.dart'
@@ -43,7 +48,7 @@ jobs:
   lab:
     name: Lab tests under CheckJNI on an emulator
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

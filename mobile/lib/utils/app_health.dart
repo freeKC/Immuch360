@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
+import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:logging/logging.dart';
 
@@ -89,6 +90,12 @@ class AppHealthReports {
     if (text is! String) {
       return false;
     }
+    switch (report['kind']) {
+      case 'exit':
+        RateAppSignals.exitReported(text);
+      case 'video':
+        RateAppSignals.videoProblem();
+    }
     if (report['kind'] != 'stall') {
       _log.warning(text);
       return true;
@@ -108,6 +115,7 @@ class AppHealthReports {
     }
     _page = name;
     unawaited(_sendState());
+    RateAppSignals.pageShown();
   }
 
   static void _onLifecycleState(AppLifecycleState state) =>

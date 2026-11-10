@@ -37,6 +37,7 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
+import 'package:immich_mobile/providers/rate_app.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
@@ -337,6 +338,8 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     unawaited(ref.read(isHorizonOsProvider.future));
     // Whether this build offers the Gaussian splats, from the certificate of the APK: not the Meta Horizon Store build
     unawaited(ref.read(splatsInThisBuildProvider.future));
+    // The invitation to rate the app, in the builds of the stores only (lib/providers/rate_app.provider.dart)
+    unawaited(startRateApp(ref));
   }
 
   @override

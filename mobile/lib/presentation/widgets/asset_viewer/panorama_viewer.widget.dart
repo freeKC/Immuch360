@@ -26,6 +26,7 @@ import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/models/raw/stabilization.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -33,6 +34,7 @@ import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/unedited_frame.dart';
 import 'package:immich_mobile/domain/models/video_audio_track.dart';
 import 'package:immich_mobile/domain/models/video_buffering.dart';
+import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_stitcher.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
@@ -862,6 +864,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    RateAppSignals.viewingOpened(RateAppViewing.panorama);
     // Back on a TV depends on where the focus is
     _appBarFocus.addListener(_onAppBarFocus);
   }
@@ -1154,6 +1157,7 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    RateAppSignals.viewingClosed(RateAppViewing.panorama);
     _inertia.dispose();
     _keyTurn.dispose();
     _lookHintTimer?.cancel();

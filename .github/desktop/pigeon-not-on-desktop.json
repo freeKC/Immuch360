@@ -6,5 +6,6 @@
   "NativeImageDecodeApi": "Bounded native decode of the encoded images the engine has no codec of its own for (HEIF, AVIF, raw files), Android only: encodedImageRoute answers engine off Android, so the computers never call it",
   "QrScanApi": "QR code scanner of Connect a TV or computer (sign in with your phone), phones and tablets only: the Settings card and the Connect page are not offered on the big screens (isBigScreenProvider is true on every computer), which are signed in, not signing in",
   "SplatViewerApi": "Splat viewer of the Android phones and tablets: splatViewerHostProvider makes PigeonSplatViewerHost on Android only, and the computers override it with DesktopSplatViewerHost (lib/desktop/splat/desktop_splat_viewer_host.dart), a window of desktop_webview_window",
+  "StoreReviewApi": "Review prompt of Google Play and the App Store and the Meta Horizon Store page, for the invitation to rate the app: rateAppChannelProvider answers none on the computers, so rateAppServiceProvider starts no invitation there and never calls it",
   "TvApi": "Android TV: readTvDeviceInfo answers \"not a TV\" off Android before calling it"
 }

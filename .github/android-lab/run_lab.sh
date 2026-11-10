@@ -3,7 +3,8 @@
 # the runner is up, from the root of the repository: debug.checkjni set, logcat recorded, the fake Immich server of the
 # lab tests started on the runner (fake_immich.py, port 2283, which the emulator reaches at 10.0.2.2 and which runs the
 # LAB_HOST commands of the tests), then the stress test of the vendored ok_http (required), upstream's background sync
-# teardown test (reported only), the lab smoke test and the background run test (required), and at the end logcat read
+# teardown test (reported only), the lab smoke test, the background run test and the invitation to rate the app
+# (required), and at the end logcat read
 # by check_logcat.py, whose verdict is the result of the step: a crash, an ANR or a death of the app in any scenario
 # fails it. Never on a device of the owner.
 set -uo pipefail
@@ -47,6 +48,7 @@ run stress integration_test/ok_http_receiver_stress_test.dart
 run teardown integration_test/background_sync_teardown_test.dart
 run smoke integration_test/lab_server_smoke_test.dart
 run background integration_test/lab_background_worker_test.dart
+run rate integration_test/lab_rate_app_test.dart
 
 curl -sf "http://127.0.0.1:$port/lab/state" > "$out/server-state.json" || true
 kill "$server" 2>/dev/null || true
@@ -55,6 +57,6 @@ kill "$logcat" 2>/dev/null || true
 wait "$logcat" 2>/dev/null || true
 
 python3 .github/android-lab/check_logcat.py --app "$app" --results "$out/results.txt" \
-  --required stress --required smoke --required background \
-  --scenarios redirect,timeline,originals,native-decode,upload,background-end,background-cancel \
+  --required stress --required smoke --required background --required rate \
+  --scenarios redirect,timeline,originals,native-decode,upload,background-end,background-cancel,rate-early,rate-due,rate-crash \
   --out "$out" "$out/logcat.txt"

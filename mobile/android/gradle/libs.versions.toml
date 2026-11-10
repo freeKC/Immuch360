@@ -24,6 +24,7 @@ junit = "4.13.2"
 zxing-embedded = "4.3.0"
 litert = "2.3.0"
 zstd-jni = "1.5.7-3"
+play-review = "2.0.2"
 
 [libraries]
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
@@ -59,6 +60,7 @@ zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", ve
 litert = { module = "com.google.ai.edge.litert:litert", version.ref = "litert" }
 litert-gpu = { module = "com.google.ai.edge.litert:litert-gpu", version.ref = "litert" }
 zstd-jni = { module = "com.github.luben:zstd-jni", version.ref = "zstd-jni" }
+play-review = { module = "com.google.android.play:review", version.ref = "play-review" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
