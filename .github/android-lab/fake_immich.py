@@ -117,12 +117,15 @@ def json_answers():
     features = {key: False for key in (
         "configFile", "duplicateDetection", "email", "facialRecognition", "importFaces", "map", "oauth",
         "oauthAutoLaunch", "ocr", "realtimeTranscoding", "reverseGeocoding", "search", "sidecar", "smartSearch")}
-    features.update(passwordLogin=True, trash=True)
+    # backups: required by the spec since upstream v3.4.0 (the FUTO backups of the web app, off here)
+    features.update(backups=False, passwordLogin=True, trash=True)
     return {
         "wellKnown": (None, {"api": {"endpoint": "/api"}}),
         "ping": ("ServerPingResponse", {"res": "pong"}),
         "version": ("ServerVersionResponseDto",
-                    {"major": VERSION[0], "minor": VERSION[1], "patch": VERSION[2], "prerelease": None}),
+                    # featureLevel: required since upstream v3.4.0; 1 is the level below the passkeys
+                    {"featureLevel": 1, "major": VERSION[0], "minor": VERSION[1], "patch": VERSION[2],
+                     "prerelease": None}),
         "features": ("ServerFeaturesDto", features),
         "config": ("ServerConfigDto", {
             "externalDomain": "", "isInitialized": True, "isOnboarded": True, "loginPageMessage": "",
