@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/server/passkey.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/data/store/passkey.dart';
 import 'package:immich_mobile/models/auth/login_response.model.dart';
 import 'package:immich_mobile/models/server_info/server_version.model.dart';
 import 'package:immich_mobile/platform/passkey_api.g.dart';
@@ -40,7 +41,10 @@ void main() {
   }
 
   group('enabled', () {
-    // Immuch360: kPasskeysAvailable keeps them off (passkeys bound to my.immich.app and the keys of Immich)
+    // Immuch360: kPasskeysAvailable keeps them off (passkeys bound to my.immich.app and the keys of Immich). The gate
+    // alone would make the three cases after this one pass, so they wait for the switch and come back with it
+    const offInImmuch360 = kPasskeysAvailable ? null : 'passkeys off in Immuch360 (kPasskeysAvailable)';
+
     test('is false in Immuch360 even when the OS and the server have them, without asking either', () async {
       when(() => hostApi.isSupported()).thenAnswer((_) async => true);
       when(() => api.isEnabled()).thenAnswer((_) async => true);
@@ -55,7 +59,7 @@ void main() {
 
       expect(await createContainer().read(Store.passkeys.enabled().future), isFalse);
       verifyNever(() => api.isEnabled());
-    });
+    }, skip: offInImmuch360);
 
     test('is false below the passkeys feature level, without asking the server', () async {
       when(() => hostApi.isSupported()).thenAnswer((_) async => true);
@@ -63,14 +67,14 @@ void main() {
 
       expect(await createContainer(supportsPasskeys: false).read(Store.passkeys.enabled().future), isFalse);
       verifyNever(() => api.isEnabled());
-    });
+    }, skip: offInImmuch360);
 
     test('is false when the passkey config request fails', () async {
       when(() => hostApi.isSupported()).thenAnswer((_) async => true);
       when(() => api.isEnabled()).thenThrow(ApiException(500, 'Internal Server Error'));
 
       expect(await createContainer().read(Store.passkeys.enabled().future), isFalse);
-    });
+    }, skip: offInImmuch360);
   });
 
   group('create', () {
