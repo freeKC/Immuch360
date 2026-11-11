@@ -295,6 +295,27 @@ void main() {
       expect(stored.map((m) => m.message), rows.values);
     });
 
+    test('Replaces the stored access token in the error of a line, as the splash logs a refused session', () async {
+      await StoreService.I.put(StoreKey.serverUrl, 'https://immich.example.com');
+      await StoreService.I.put(StoreKey.accessToken, accessToken);
+      when(
+        () => mockSettingsRepository.appConfig,
+      ).thenReturn(const AppConfig(network: NetworkConfig(externalEndpointList: ['https://immich.example.com'])));
+
+      Logger('Test').severe(
+        'Failed to update auth info with the stored access token',
+        ApiException(401, 'GET https://immich.example.com/api/users/me with $accessToken: Invalid user token'),
+      );
+      await sut.flush();
+
+      final stored = verify(() => mockLogRepo.insertAll(captureAny())).captured.single as List<LogMessage>;
+      expect(stored.single.message, 'Failed to update auth info with the stored access token');
+      expect(
+        stored.single.error,
+        'ApiException 401: GET [EXTERNAL ENDPOINT 1]/api/users/me with [ACCESS TOKEN]: Invalid user token',
+      );
+    });
+
     test('Hides the host and ip in http client errors', () async {
       when(
         () => mockSettingsRepository.appConfig,
