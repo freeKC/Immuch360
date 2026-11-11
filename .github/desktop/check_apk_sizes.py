@@ -104,6 +104,27 @@ ONE_TIME_KIND_THRESHOLDS = {
         'arm64-v8a': 2.7,
         'quest': 2.6,
     },
+    # 11 November 2026, for Android build 45 (Immuch360 3.4.0), compared with release 44. The packages of the release
+    # 45 lot with its translations, i18n-45 at 566b3405e (release-45-int at 7f540cb37 and the 157 texts of the lots in
+    # 87 more languages; Android release run 43025445051), against the files of release 44:
+    #   x86_64 103,011,900 bytes against 98,672,807, +4.397 %; the AAB 261,006,369 against 248,789,996, +4.910 %;
+    #   armeabi-v7a 97,036,047 against 93,270,390, +4.037 %; the universal APK 319,954,690 against 308,160,873,
+    #   +3.827 %; arm64-v8a 156,110,595 against 152,164,718, +2.593 %; the Quest APK 167,429,950 against 163,568,699,
+    #   +2.361 %.
+    # Most of it is the Rust core of the upstream v3.4.0 merge, whose JPEG XL decoder takes libnative_core_ffi.so from
+    # 446,480 to 2,345,248 bytes on arm64-v8a and from 319,088 to 1,808,580 on armeabi-v7a (feat-jxl-45); then the
+    # Dart and Kotlin of the lots (the Plex films page and film page, the download with its service, Play on, the
+    # invitation to rate with Play Review in the phone flavour), about 0.8 MB on each ABI at 7f540cb37 (run
+    # 43006628395), and the translations, about 0.9 MB more on each. Each kind gets the growth measured plus half a
+    # point, rounded up to a tenth. Build 46 compares with build 45 and the ordinary threshold again.
+    'v3.3.0-rc.0-44': {
+        'aab': 5.5,
+        'x86_64': 4.9,
+        'armeabi-v7a': 4.6,
+        'universal': 4.4,
+        'arm64-v8a': 3.1,
+        'quest': 2.9,
+    },
 }
 
 
