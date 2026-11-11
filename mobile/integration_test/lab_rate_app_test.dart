@@ -125,7 +125,11 @@ void main() {
       for (final state in [AppLifecycleState.hidden, AppLifecycleState.inactive, AppLifecycleState.resumed]) {
         tester.binding.handleAppLifecycleStateChanged(state);
       }
-      await tester.pump(const Duration(milliseconds: 500));
+      // The app's own resume (AppLifeCycleNotifier: the endpoint, the server version, the syncs after half a second)
+      // ends before the next pause: a pause during a resume, then another resume, ends on a null check of that
+      // notifier (lab run 42984724234), as it would on a device switched away and back that fast
+      await tester.pump(const Duration(seconds: 1));
+      await waitForQuietSyncs(tester);
     }
 
     /// A viewing of 25 seconds of the clock that ends well, then the pause on the timeline and the decision
