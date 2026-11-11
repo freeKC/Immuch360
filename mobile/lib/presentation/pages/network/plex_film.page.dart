@@ -11,6 +11,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_client.dart';
 import 'package:immich_mobile/presentation/pages/network/film_page_actions.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
@@ -222,7 +223,14 @@ class _Backdrop extends ConsumerWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (bytes != null) Image.memory(bytes, fit: BoxFit.cover, gaplessPlayback: true),
+          if (bytes != null)
+            Image(
+              image: GuardedMemoryImage(bytes, source: 'plexFilmBackdrop', maxWidth: pixels, maxHeight: pixels),
+              fit: BoxFit.cover,
+              gaplessPlayback: true,
+              // A picture no decoder of the device reads leaves the scrim alone
+              errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+            ),
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -325,15 +333,26 @@ class _Poster extends ConsumerWidget {
           width: width,
           height: width * 3 / 2,
           child: picture != null
-              ? Image.memory(picture, fit: BoxFit.cover, gaplessPlayback: true)
-              : ColoredBox(
-                  color: context.colorScheme.surfaceContainerHighest,
-                  child: const Icon(Icons.movie_outlined, size: 40),
-                ),
+              ? Image(
+                  image: GuardedMemoryImage(picture, source: 'plexFilmPoster', maxWidth: w, maxHeight: w * 3 ~/ 2),
+                  fit: BoxFit.cover,
+                  gaplessPlayback: true,
+                  errorBuilder: (context, error, stackTrace) => const _PosterPlaceholder(),
+                )
+              : const _PosterPlaceholder(),
         ),
       ),
     );
   }
+}
+
+/// The poster's place while it loads, when the server has none, or when no decoder of the device reads it
+class _PosterPlaceholder extends StatelessWidget {
+  const _PosterPlaceholder();
+
+  @override
+  Widget build(BuildContext context) =>
+      ColoredBox(color: context.colorScheme.surfaceContainerHighest, child: const Icon(Icons.movie_outlined, size: 40));
 }
 
 /// Play, or Resume at the place where the film was left (on this device, else in a Plex app) with Play from the
