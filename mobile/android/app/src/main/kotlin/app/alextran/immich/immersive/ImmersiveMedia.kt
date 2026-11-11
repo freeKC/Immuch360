@@ -10,7 +10,9 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.os.Build
 import android.util.Log
+import app.alextran.immich.images.JpegXlDecode
 import java.io.File
+import java.io.IOException
 import java.net.URI
 import java.nio.ByteBuffer
 import kotlin.math.min
@@ -230,6 +232,7 @@ internal object ImmersiveMedia {
   }
 
   fun decodeFile(file: File): Bitmap? {
+    if (isJpegXlFile(file)) return decodeJpegXl(file.readBytes())
     val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
     BitmapFactory.decodeFile(file.absolutePath, bounds)
     if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
@@ -240,6 +243,7 @@ internal object ImmersiveMedia {
   }
 
   fun decodeBytes(bytes: ByteArray): Bitmap? {
+    if (JpegXlDecode.isJpegXl(bytes)) return decodeJpegXl(bytes)
     val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
     BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
     if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
@@ -247,6 +251,25 @@ internal object ImmersiveMedia {
       return null
     }
     return BitmapFactory.decodeByteArray(bytes, 0, bytes.size, optionsFor(bounds))?.let(::fitWithin)
+  }
+
+  /**
+   * Whether [file] starts as JPEG XL: the previews of an Immich 3.4.0 server whose admin picked JPEG XL, or a JPEG XL
+   * original, which BitmapFactory and ImageDecoder do not read
+   */
+  private fun isJpegXlFile(file: File): Boolean =
+    runCatching {
+      file.inputStream().use { input ->
+        val head = ByteArray(16)
+        JpegXlDecode.isJpegXl(head, maxOf(0, input.read(head)))
+      }
+    }.getOrDefault(false)
+
+  // A JPEG XL by the Rust core (JpegXlDecode), within the largest texture of the sphere
+  private fun decodeJpegXl(bytes: ByteArray): Bitmap? {
+    val bitmap = JpegXlDecode.decodeBitmap(bytes, MAX_TEXTURE_WIDTH, MAX_TEXTURE_HEIGHT)
+    Log.d(TAG, "decode JPEG XL, ${bytes.size} bytes: ${bitmap?.let { "${it.width}x${it.height}" } ?: "not decoded"}")
+    return bitmap
   }
 
   private fun optionsFor(bounds: BitmapFactory.Options): BitmapFactory.Options {
@@ -296,9 +319,13 @@ internal object ImmersiveMedia {
    * decode.
    */
   fun decodeForRelief(bytes: ByteArray, quarterTurns: Int): Bitmap? {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
     val turns = quarterTurns and 3
-    val decoded =
+    // A JPEG XL by the Rust core, within the box of an eye once turned, as reliefDecodeSize bounds the others
+    val decoded = if (JpegXlDecode.isJpegXl(bytes)) {
+      val (boxWidth, boxHeight) = turnedSize(StereoHeicDecoder.MAX_EYE_WIDTH, StereoHeicDecoder.MAX_EYE_HEIGHT, turns)
+      JpegXlDecode.decodeBitmap(bytes, boxWidth, boxHeight) ?: throw IOException("JPEG XL not decoded by the core")
+    } else {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
       ImageDecoder.decodeBitmap(ImageDecoder.createSource(ByteBuffer.wrap(bytes))) { decoder, info, _ ->
         decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
         decoder.setTargetColorSpace(ColorSpace.get(ColorSpace.Named.SRGB))
@@ -306,6 +333,7 @@ internal object ImmersiveMedia {
         if (width != info.size.width || height != info.size.height) decoder.setTargetSize(width, height)
         Log.d(TAG, "relief photo ${info.mimeType} ${info.size.width}x${info.size.height}, decoded at ${width}x$height")
       }
+    }
     if (turns == 0 && !decoded.hasAlpha() && decoded.config == Bitmap.Config.ARGB_8888) return decoded
     try {
       val (width, height) = turnedSize(decoded.width, decoded.height, turns)
@@ -331,6 +359,10 @@ internal object ImmersiveMedia {
    * its transparency, if any, is left to the caller. Null before Android 9; throws when the image does not decode.
    */
   fun decodeUpright(bytes: ByteArray, maxWidth: Int, maxHeight: Int): Bitmap? {
+    // A JPEG XL by the Rust core, within the same box
+    if (JpegXlDecode.isJpegXl(bytes)) {
+      return JpegXlDecode.decodeBitmap(bytes, maxWidth, maxHeight) ?: throw IOException("JPEG XL not decoded by the core")
+    }
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
     return ImageDecoder.decodeBitmap(ImageDecoder.createSource(ByteBuffer.wrap(bytes))) { decoder, info, _ ->
       decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE

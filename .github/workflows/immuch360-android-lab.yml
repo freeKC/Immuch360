@@ -10,12 +10,17 @@ name: Immuch360 Android lab
 # emulator): lab_server_smoke_test.dart (sign in through relative 302 redirects, the timeline, Load original on a HEIC
 # and an AVIF, the native decoder, an upload) and lab_background_worker_test.dart (a background run that ends, one
 # cancelled by opening the app). The job fails when a required test or one of their scenarios fails, or when logcat
-# holds a crash, an ANR or a death of the app (.github/android-lab/check_logcat.py), and keeps logcat, the test output
-# and the requests of the fake server as the android-lab artifact. Last, lab_rate_app_test.dart: the invitation to rate
-# the app in the app signed in on the fake server (too early, due once, held by a crash of the build).
-# Runs on a push that changes the vendored ok_http, the native image decoders, the background worker, the invitation to
-# rate the app, the lab tests or this lab, and by hand. Actions pinned to a commit and runner label pinned, read-only,
-# no secret, as the desktop workflow (check_workflow.py).
+# holds a crash, an ANR or a death of the app, or a "Not decoded" line of the app in a JPEG XL scenario
+# (.github/android-lab/check_logcat.py), and keeps logcat, the test output and the requests of both runs of the fake
+# server as the android-lab artifact. After the background run: lab_plex_download_test.dart (a film copied from a Plex
+# server inside the app, paused, resumed, in the background) and lab_rate_app_test.dart (the invitation to rate the
+# app in the app signed in on the fake server: too early, due once, held by a crash of the build). Then the fake server
+# again, answering as a server whose admin picked JPEG XL for the thumbnails and previews, a choice of Immich 3.4.0
+# (--image-format jxl: image/jxl files, a 360 photo among the photos), for lab_jxl_server_test.dart (the timeline, the
+# viewer, the 360° viewer and the native decoder on JPEG XL, decoded by the Rust core).
+# Runs on a push that changes the vendored ok_http, the native image decoders and the Dart that routes the images to
+# them, the background worker, the invitation to rate the app, the lab tests or this lab, and by hand. Actions pinned
+# to a commit and runner label pinned, read-only, no secret, as the desktop workflow (check_workflow.py).
 
 on:
   push:
@@ -23,6 +28,13 @@ on:
     paths:
       - 'mobile/packages/ok_http/**'
       - 'mobile/android/app/src/main/kotlin/app/alextran/immich/images/**'
+      - 'mobile/android/app/src/main/kotlin/app/alextran/immich/NativeImage.kt'
+      - 'mobile/android/app/src/main/kotlin/app/alextran/immich/NativeBuffer.kt'
+      # The Dart that sends each image to its decoder, and the Rust core that decodes JPEG XL
+      - 'mobile/lib/domain/services/encoded_image_probe.dart'
+      - 'mobile/lib/presentation/widgets/images/guarded_image.dart'
+      - 'mobile/lib/infrastructure/loaders/**'
+      - 'native/crates/**'
       - 'mobile/android/app/src/main/kotlin/app/alextran/immich/background/**'
       - 'mobile/lib/domain/services/background_worker.service.dart'
       - 'mobile/lib/domain/models/rate_app.dart'
@@ -50,17 +62,22 @@ jobs:
   lab:
     name: Lab tests under CheckJNI on an emulator
     runs-on: ubuntu-24.04
-    timeout-minutes: 50
+    # 60 since release 45: the Plex download, the invitation to rate and the JPEG XL run (three more test files on the
+    # emulator; the rating lot alone took 31 minutes)
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      # Every JSON answer and sync event of the fake server against the OpenAPI schemas, before anything is built
+      # Every JSON answer and sync event of the fake server against the OpenAPI schemas, before anything is built, in
+      # both formats of its thumbnails
       - name: Fake Immich server answers the API
         run: |
-          python3 .github/android-lab/fake_immich.py --check --fixtures mobile/test/fixtures/android_lab \
-            --spec open-api/immich-openapi-specs.json
+          for format in jpeg jxl; do
+            python3 .github/android-lab/fake_immich.py --check --fixtures mobile/test/fixtures/android_lab \
+              --spec open-api/immich-openapi-specs.json --image-format "$format"
+          done
 
       - name: Install mise
         uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4

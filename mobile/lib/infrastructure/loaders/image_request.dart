@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/encoded_image_probe.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
+import 'package:immich_mobile/infrastructure/loaders/core_image_decoder.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 
 part 'local_image_request.dart';
@@ -59,6 +60,9 @@ abstract class ImageRequest {
   final int requestId = _nextRequestId++;
   bool _isCancelled = false;
 
+  /// The decode of the Rust core in progress (JPEG XL on the computers), stopped by [cancel]
+  CoreDecodeHandle? _coreDecode;
+
   // ignore: unused-code
   bool get isCancelled => _isCancelled;
 
@@ -73,6 +77,7 @@ abstract class ImageRequest {
       return;
     }
     _isCancelled = true;
+    _coreDecode?.stop();
     return _onCancelled();
   }
 
@@ -95,7 +100,11 @@ abstract class ImageRequest {
     // native decoder had its turn before (RemoteImagesImpl, from Android 9; below it the engine has no Android decoder
     // either), or the bytes were asked encoded for an animation, which only the engine's codecs play
     final kind = sniffEncodedImage(pointer.asTypedList(math.min(length, encodedImageProbeLength)));
-    if (encodedImageRoute(kind) != EncodedImageRoute.engine) {
+    final route = encodedImageRoute(kind);
+    if (route == EncodedImageRoute.core) {
+      return _codecFromCore(pointer, length, decodeSize: decodeSize, maxLongSide: maxLongSide);
+    }
+    if (route != EncodedImageRoute.engine) {
       freePlatformBuffer(pointer);
       throw ImageDecodeException(UnsupportedEncodedImage(kind, length));
     }
@@ -139,6 +148,46 @@ abstract class ImageRequest {
       return null;
     }
 
+    return (codec, descriptor);
+  }
+
+  /// Immuch360 Desktop: the JPEG XL of [length] bytes at [pointer] (a buffer of the platform, freed here) decoded by
+  /// the Rust core (core_image_decoder.dart) to cover [decodeSize], within [maxLongSide] on the long side: the
+  /// thumbnails and previews of a server set to JPEG XL, which the engine of the computers does not decode. Null once
+  /// cancelled, an [ImageDecodeException] when the core gave no picture.
+  Future<(ui.Codec, ui.ImageDescriptor)?> _codecFromCore(
+    Pointer<Uint8> pointer,
+    int length, {
+    ui.Size? decodeSize,
+    int? maxLongSide,
+  }) async {
+    final handle = _coreDecode = CoreDecodeHandle();
+    final ui.ImageDescriptor? descriptor;
+    try {
+      descriptor = await decodeWithCore(
+        pointer,
+        length,
+        targetWidth: decodeSize == null || decodeSize.width <= 0 ? 0 : decodeSize.width.ceil(),
+        targetHeight: decodeSize == null || decodeSize.height <= 0 ? 0 : decodeSize.height.ceil(),
+        maxPixelSize: maxLongSide ?? coreMaxPixelSize,
+        handle: handle,
+      );
+    } on CoreDecodeException catch (error) {
+      throw ImageDecodeException(error);
+    } finally {
+      _coreDecode = null;
+      freePlatformBuffer(pointer);
+    }
+    if (descriptor == null || _isCancelled) {
+      descriptor?.dispose();
+      return null;
+    }
+    final codec = await descriptor.instantiateCodec();
+    if (_isCancelled) {
+      descriptor.dispose();
+      codec.dispose();
+      return null;
+    }
     return (codec, descriptor);
   }
 
