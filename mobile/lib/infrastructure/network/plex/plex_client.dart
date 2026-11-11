@@ -55,6 +55,14 @@ enum PlexFailure {
   /// 403: a shared or managed user without the right to a library or to downloads
   tokenForbidden,
 
+  /// A server that answered in this run of the app, or whose machine answers at home, refuses or drops the connections
+  /// or answers nothing in time: its listener stopped, or it restarts. Never a reason to set up remote access.
+  stoppedAnswering,
+
+  /// The server knows the film, but cannot read its file now (404 on the part while the metadata is there: the volume
+  /// holding the films is not mounted, after a reboot of a NAS)
+  fileUnreadable,
+
   /// Anything else the server answered
   failed,
 }
@@ -68,9 +76,40 @@ class PlexFileSystemException extends NetworkFileSystemException {
     super.isAuthentication,
     super.isNotFound,
     super.isDownloadForbidden,
+    super.isFileUnreadable,
+    this.sourceId,
   });
 
   final PlexFailure failure;
+
+  /// The source of the server, for the pages that try again once it answers; null when not known
+  final String? sourceId;
+
+  /// Whether the server stopped answering (see [PlexFailure.stoppedAnswering])
+  bool get isStoppedAnswering => failure == PlexFailure.stoppedAnswering;
+}
+
+/// The failure of a server that stopped answering, see [PlexFailure.stoppedAnswering]
+PlexFileSystemException plexStoppedAnswering({String? sourceId, String reason = ''}) => PlexFileSystemException(
+  'The Plex server stopped answering$reason',
+  PlexFailure.stoppedAnswering,
+  sourceId: sourceId,
+);
+
+/// The failure of a film whose file the server cannot read now, see [PlexFailure.fileUnreadable]
+const plexFileUnreadable = PlexFileSystemException(
+  "The Plex server cannot read this film's file right now",
+  PlexFailure.fileUnreadable,
+  isFileUnreadable: true,
+);
+
+/// A request stopped by its caller (the abort future it gave completed): no failure of the server, and no failure for
+/// the user either. Passed through as it is by the file system.
+class PlexRequestCancelled implements Exception {
+  const PlexRequestCancelled();
+
+  @override
+  String toString() => 'The request was cancelled';
 }
 
 /// An answer with another status than the one expected; its body was dropped unread
@@ -83,8 +122,18 @@ class PlexHttpStatus implements Exception {
   String toString() => 'HTTP $status';
 }
 
-/// The exception the user gets for [error] of a request to a Plex server. [outsideHome] tells which address failed.
-NetworkFileSystemException plexErrorOf(Object error, {bool outsideHome = false}) => switch (error) {
+/// The exception the user gets for [error] of a request to a Plex server. [outsideHome] tells which address failed;
+/// [reachedBefore], that the server answered in this run of the app: a failure of the network is then a server that
+/// stopped answering ([PlexFailure.stoppedAnswering]), not one to reach from outside home. [sourceId] goes with it.
+NetworkFileSystemException plexErrorOf(
+  Object error, {
+  bool outsideHome = false,
+  bool reachedBefore = false,
+  String? sourceId,
+}) => switch (error) {
+  // No address answered after the server did: it stopped, wherever the phone is
+  PlexFileSystemException(failure: PlexFailure.unreachable || PlexFailure.unreachableOutsideHome) when reachedBefore =>
+    plexStoppedAnswering(sourceId: sourceId),
   NetworkFileSystemException() => error,
   PlexHttpStatus(status: 401) => const PlexFileSystemException(
     'The Plex server refused the token',
@@ -120,18 +169,24 @@ NetworkFileSystemException plexErrorOf(Object error, {bool outsideHome = false})
   SocketException() ||
   TimeoutException() ||
   HttpException() ||
+  http.ClientException() when reachedBefore => plexStoppedAnswering(sourceId: sourceId, reason: _reasonOf(error)),
+  SocketException() ||
+  TimeoutException() ||
+  HttpException() ||
   http.ClientException() => _unreachable(outsideHome, error),
   // The type only: the message of an unexpected error may hold anything
   _ => PlexFileSystemException('The Plex server could not be read (${error.runtimeType})', PlexFailure.failed),
 };
 
+/// The reason of a failure of the network, without the address the system puts in its own message
+String _reasonOf(Object error) => switch (error) {
+  SocketException(:final osError?) => ' (${osError.message})',
+  TimeoutException() || http.RequestAbortedException() => ' (no answer in time)',
+  _ => '',
+};
+
 PlexFileSystemException _unreachable(bool outsideHome, Object error) {
-  // The reason without the address the system puts in its own message
-  final reason = switch (error) {
-    SocketException(:final osError?) => ' (${osError.message})',
-    TimeoutException() || http.RequestAbortedException() => ' (no answer in time)',
-    _ => '',
-  };
+  final reason = _reasonOf(error);
   return outsideHome
       ? PlexFileSystemException(
           'Your Plex server cannot be reached from outside your home network$reason. Turn on remote access with a '
@@ -151,7 +206,9 @@ bool isPlexNetworkFailure(Object error) =>
     // An answer that did not come in time too: the request is aborted then
     error is http.ClientException ||
     (error is PlexFileSystemException &&
-        (error.failure == PlexFailure.unreachable || error.failure == PlexFailure.unreachableOutsideHome));
+        (error.failure == PlexFailure.unreachable ||
+            error.failure == PlexFailure.unreachableOutsideHome ||
+            error.failure == PlexFailure.stoppedAnswering));
 
 /// The requests to one Plex server, whatever its address: the URIs are given whole, and [_http] is the pinned client
 /// of its hash (a plain one in the tests)
@@ -208,8 +265,8 @@ class PlexClient {
     };
   }
 
-  /// Sends one request to [uri], aborted when [abort] completes or when no answer comes within [answerTimeout]. A
-  /// redirect is an error: its body is dropped and a [PlexHttpStatus] thrown.
+  /// Sends one request to [uri], aborted when [abort] completes or when no answer comes within [timeout] (by default
+  /// [answerTimeout]). A redirect is an error: its body is dropped and a [PlexHttpStatus] thrown.
   Future<http.StreamedResponse> send(
     String method,
     Uri uri, {
@@ -217,6 +274,7 @@ class PlexClient {
     bool withToken = true,
     String accept = 'application/json',
     Future<void>? abort,
+    Duration? timeout,
   }) async {
     final trigger = Completer<void>();
     void fire() {
@@ -225,7 +283,11 @@ class PlexClient {
       }
     }
 
-    final timer = Timer(answerTimeout, fire);
+    var timedOut = false;
+    final timer = Timer(timeout ?? answerTimeout, () {
+      timedOut = true;
+      fire();
+    });
     unawaited(abort?.whenComplete(fire));
     final request = http.AbortableRequest(method, uri, abortTrigger: trigger.future)
       ..followRedirects = false
@@ -234,6 +296,12 @@ class PlexClient {
     final http.StreamedResponse response;
     try {
       response = await _http.send(request);
+    } on http.RequestAbortedException {
+      // No answer in time is a failure of the server; an abort of the caller is none
+      if (timedOut) {
+        throw TimeoutException('No answer in time', timeout ?? answerTimeout);
+      }
+      throw const PlexRequestCancelled();
     } finally {
       timer.cancel();
     }

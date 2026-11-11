@@ -641,7 +641,9 @@ final screenPlexHandoverProvider = Provider<Future<HandoverResult> Function(Hand
         result = switch (error.failure) {
           PlexFailure.tokenRefused || PlexFailure.tokenForbidden => HandoverResult.tokenRefused,
           PlexFailure.otherServer || PlexFailure.wrongCertificate || PlexFailure.notPlex => HandoverResult.otherServer,
-          PlexFailure.unreachable || PlexFailure.unreachableOutsideHome => HandoverResult.unreachable,
+          PlexFailure.unreachable ||
+          PlexFailure.unreachableOutsideHome ||
+          PlexFailure.stoppedAnswering => HandoverResult.unreachable,
           _ => HandoverResult.failed,
         };
         if (result == HandoverResult.tokenRefused) {

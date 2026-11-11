@@ -57,6 +57,11 @@ class FilmTransferException implements Exception {
     if (error.isDownloadForbidden) {
       return (failure: FilmDownloadFailure.forbidden, retry: false);
     }
+    if (error.isFileUnreadable) {
+      // The server lists the film but cannot read its file: it may come back (a volume mounted again), so the copy
+      // tries again with the waits of a lost link, then tells why
+      return (failure: FilmDownloadFailure.unreadable, retry: true);
+    }
     if (error.isNotFound) {
       return (failure: FilmDownloadFailure.gone, retry: false);
     }
@@ -255,10 +260,22 @@ class FilmTransfer {
       await _drop(answer);
       return true;
     }
-    final file = await partial.open(mode: FileMode.append);
+    final RandomAccessFile file;
     try {
-      await file.truncate(have);
-      await file.setPosition(have);
+      file = await partial.open(mode: FileMode.append);
+    } catch (_) {
+      // The body is never read: its transfer stops, rather than its connection staying open until the server ends it
+      await _drop(answer);
+      rethrow;
+    }
+    try {
+      try {
+        await file.truncate(have);
+        await file.setPosition(have);
+      } catch (_) {
+        await _drop(answer);
+        rethrow;
+      }
       final body = StreamIterator(answer.bytes);
       _body = body;
       final pending = BytesBuilder(copy: false);

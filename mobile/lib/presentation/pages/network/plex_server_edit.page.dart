@@ -610,6 +610,8 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
     PlexFailure.notPlex => context.t.plex_server_not_plex,
     PlexFailure.tokenRefused => context.t.plex_token_refused,
     PlexFailure.tokenForbidden => context.t.plex_token_forbidden,
+    PlexFailure.stoppedAnswering => context.t.plex_server_stopped_answering,
+    PlexFailure.fileUnreadable => context.t.plex_film_file_unreadable,
     PlexFailure.failed => context.t.network_share_failed(error: error.message),
   };
 

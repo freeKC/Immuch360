@@ -638,7 +638,7 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
           listenable: list,
           builder: (context, _) => Column(
             children: [
-              if (list.hasFailures) _FailureBar(onRetry: list.retryFailures),
+              if (list.hasFailures) _FailureBar(failure: list.lastFailure, onRetry: list.retryFailures),
               Expanded(child: _grid(list, layout, tvMode: tvMode)),
             ],
           ),
@@ -846,29 +846,41 @@ class _YearHeader extends StatelessWidget {
 
 /// Above the grid when pages of films could not be read: Retry reads them again as their rows show
 class _FailureBar extends StatelessWidget {
-  const _FailureBar({required this.onRetry});
+  const _FailureBar({required this.failure, required this.onRetry});
 
+  /// What the last page failed with: a Plex server that stopped answering says so
+  final Object? failure;
   final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      key: const Key('plex_films_failures'),
-      color: context.colorScheme.errorContainer,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Row(
-          children: [
-            Icon(Icons.cloud_off_rounded, size: 18, color: context.colorScheme.onErrorContainer),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                context.t.plex_films_page_failed,
-                style: TextStyle(color: context.colorScheme.onErrorContainer),
+    return PlexServerBackListener(
+      error: failure,
+      onBack: onRetry,
+      child: Material(
+        key: const Key('plex_films_failures'),
+        color: context.colorScheme.errorContainer,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            children: [
+              Icon(Icons.cloud_off_rounded, size: 18, color: context.colorScheme.onErrorContainer),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  (failure == null ? null : plexFailureText(context, failure!)) ?? context.t.plex_films_page_failed,
+                  style: TextStyle(color: context.colorScheme.onErrorContainer),
+                ),
               ),
-            ),
-            TextButton(onPressed: onRetry, child: Text(context.t.retry)),
-          ],
+              TextButton(
+                onPressed: () {
+                  retryPlexServersNow();
+                  onRetry();
+                },
+                child: Text(context.t.retry),
+              ),
+            ],
+          ),
         ),
       ),
     );

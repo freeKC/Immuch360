@@ -15,6 +15,7 @@ class NetworkFileSystemException implements Exception {
     this.isAuthentication = false,
     this.isNotFound = false,
     this.isDownloadForbidden = false,
+    this.isFileUnreadable = false,
   });
 
   final String message;
@@ -27,6 +28,10 @@ class NetworkFileSystemException implements Exception {
 
   /// The server owner forbids this account to download files (Plex: "Allow Downloads" off for a shared user)
   final bool isDownloadForbidden;
+
+  /// The server still lists the file but cannot read it now (Plex: 404 on the part of a film it knows, when the volume
+  /// holding the films is not mounted): worth trying again later, unlike [isNotFound]
+  final bool isFileUnreadable;
 
   @override
   String toString() => 'NetworkFileSystemException: $message';

@@ -75,6 +75,7 @@ String filmDownloadFailureText(BuildContext context, FilmDownloadFailure? failur
   FilmDownloadFailure.noSpace => context.t.film_download_disk_full,
   FilmDownloadFailure.unreachable => context.t.film_download_unreachable,
   FilmDownloadFailure.gone => context.t.film_download_gone,
+  FilmDownloadFailure.unreadable => context.t.film_download_unreadable,
   FilmDownloadFailure.failed || null => context.t.download_failed,
 };
 

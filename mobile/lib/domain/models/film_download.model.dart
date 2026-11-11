@@ -39,6 +39,9 @@ enum FilmDownloadFailure {
   /// The file is no longer on the server
   gone,
 
+  /// The server knows the film but cannot read its file now (a volume not mounted after a reboot of the NAS)
+  unreadable,
+
   /// Anything else
   failed,
 }
