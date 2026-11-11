@@ -45,6 +45,9 @@ struct RawStitchUniforms {
   float4 range1;
   float4 colorMatrix0;  // source 0: Cr to R, Cb to G, Cr to G, Cb to B
   float4 colorMatrix1;
+  float4 stabilization0;  // xyz: rows of K^T, the stabilisation of this frame (identity when none), see
+  float4 stabilization1;  // rawStitchStabilized
+  float4 stabilization2;
 };
 
 struct RawStitchVertexOut {
@@ -68,6 +71,13 @@ static inline float3 rawStitchViewDirection(float2 pixel, float4 settings) {
   float longitude = (uv.x * 2.0 - 1.0) * M_PI_F;
   float latitude = M_PI_2_F - uv.y * M_PI_F;
   return float3(cos(latitude) * sin(longitude), -sin(latitude), cos(latitude) * cos(longitude));
+}
+
+// The stabilisation with the motion track of the camera (issue 14, StabilizationTable.swift): the stitched picture
+// turned by K, the correction of this frame, so that the point at direction d of the stitch shows at K d. The output
+// pixel of direction e therefore shows the stitch at K^T e; the rows are those of K^T, the identity when nothing turns.
+static inline float3 rawStitchStabilized(float3 e, constant RawStitchUniforms& u) {
+  return float3(dot(u.stabilization0.xyz, e), dot(u.stabilization1.xyz, e), dot(u.stabilization2.xyz, e));
 }
 
 // Gamma encoded RGB of a biplanar 4:2:0 picture at uv; the chroma plane holds Cb in r and Cr in g
@@ -125,7 +135,7 @@ fragment float4 rawStitchFisheyeFragment(RawStitchVertexOut fragmentIn [[stage_i
                                          texture2d<float> chroma0 [[texture(1)]],
                                          texture2d<float> luma1 [[texture(2)]],
                                          texture2d<float> chroma1 [[texture(3)]]) {
-  float3 viewDirection = rawStitchViewDirection(fragmentIn.position.xy, u.settings);
+  float3 viewDirection = rawStitchStabilized(rawStitchViewDirection(fragmentIn.position.xy, u.settings), u);
   int model = int(u.settings.x + 0.5);
   float3 colorSum = float3(0.0);
   float weightSum = 0.0;
@@ -186,7 +196,7 @@ fragment float4 rawStitchEacFragment(RawStitchVertexOut fragmentIn [[stage_in]],
                                      texture2d<float> chroma0 [[texture(1)]],
                                      texture2d<float> luma1 [[texture(2)]],
                                      texture2d<float> chroma1 [[texture(3)]]) {
-  float3 viewDirection = rawStitchViewDirection(fragmentIn.position.xy, u.settings);
+  float3 viewDirection = rawStitchStabilized(rawStitchViewDirection(fragmentIn.position.xy, u.settings), u);
   float3 c = float3(dot(u.camera0.xyz, viewDirection), dot(u.camera1.xyz, viewDirection),
                     dot(u.camera2.xyz, viewDirection));
   int best = 0;
