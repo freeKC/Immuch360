@@ -150,14 +150,7 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
       return;
     }
 
-    final previewRequest = loader.request = RemoteImageRequest(
-      uri: getThumbnailUrlForRemoteId(
-        key.assetId,
-        type: AssetMediaSize.preview,
-        thumbhash: key.thumbhash,
-        edited: key.edited,
-      ),
-    );
+    final previewRequest = loader.request = _previewRequest(key);
     // An original that did not decode in this session is not read again: the preview is the last image then
     final undecodable = undecodableKey(key.assetId, edited: key.edited);
     final loadOriginal =
@@ -179,16 +172,17 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
       return;
     }
 
-    final originalRequest = loader.request = RemoteImageRequest(
-      uri: key.serverJpegForOriginal
-          ? getThumbnailUrlForRemoteId(
+    // An original this device does not decode (see serverJpegForOriginal): the full size JPEG of the server instead
+    final originalRequest = loader.request = key.serverJpegForOriginal
+        ? RemoteImageRequest(
+            uri: getThumbnailUrlForRemoteId(
               key.assetId,
               type: AssetMediaSize.fullsize,
               thumbhash: key.thumbhash,
               edited: key.edited,
-            )
-          : getOriginalUrlForRemoteId(key.assetId, edited: key.edited),
-    );
+            ),
+          )
+        : _originalRequest(key);
     // Over a preview, an original that does not decode leaves the preview on screen, and is not tried again
     yield* loader.loadRequest(
       originalRequest,
@@ -205,14 +199,7 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
       return;
     }
 
-    final previewRequest = loader.request = RemoteImageRequest(
-      uri: getThumbnailUrlForRemoteId(
-        key.assetId,
-        type: AssetMediaSize.preview,
-        thumbhash: key.thumbhash,
-        edited: key.edited,
-      ),
-    );
+    final previewRequest = loader.request = _previewRequest(key);
     yield* loader.loadRequest(previewRequest, decode, isFinal: false);
 
     if (loader.isCancelled) {
@@ -220,9 +207,7 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
     }
 
     // always try original for animated, since previews don't support animation
-    final originalRequest = loader.request = RemoteImageRequest(
-      uri: getOriginalUrlForRemoteId(key.assetId, edited: key.edited),
-    );
+    final originalRequest = loader.request = _originalRequest(key);
     final codec = await loader.loadCodecRequest(originalRequest, isFinal: true);
     if (codec == null) {
       if (loader.isCancelled) {
@@ -232,6 +217,18 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
     }
     yield codec;
   }
+
+  RemoteImageRequest _previewRequest(RemoteFullImageProvider key) => RemoteImageRequest(
+    uri: getThumbnailUrlForRemoteId(
+      key.assetId,
+      type: AssetMediaSize.preview,
+      thumbhash: key.thumbhash,
+      edited: key.edited,
+    ),
+  );
+
+  RemoteImageRequest _originalRequest(RemoteFullImageProvider key) =>
+      RemoteImageRequest(uri: getOriginalUrlForRemoteId(key.assetId, edited: key.edited));
 
   @override
   bool operator ==(Object other) {

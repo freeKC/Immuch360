@@ -12,6 +12,8 @@ import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/domain/services/pairing/screen_pairing_session.dart';
 import 'package:immich_mobile/domain/services/pairing/screen_sign_in.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_pairing.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/network/pairing/pairing_client.dart';
@@ -257,5 +259,99 @@ void main() {
     expect(Store.tryGet(StoreKey.pairingScreenLabel), 'Lounge');
     expect(await listening(shown.port!), isFalse);
     expect(announcementsStopped, 1);
+  });
+
+  group('play on the TV: a phone links itself', () {
+    late List<LinkedPeer> kept;
+    late ProviderContainer linking;
+
+    setUp(() {
+      kept = [];
+      final base = container.read(screenPairingEnvironmentProvider);
+      linking = ProviderContainer(
+        overrides: [
+          screenPairingEnvironmentProvider.overrideWithValue(
+            ScreenPairingEnvironment(
+              localAddresses: base.localAddresses,
+              publicNetworkOnly: base.publicNetworkOnly,
+              advertise: base.advertise,
+              networkChanges: base.networkChanges,
+              lifecycle: base.lifecycle,
+              deviceName: base.deviceName,
+              kind: base.kind,
+              os: base.os,
+              appVersion: base.appVersion,
+              page: base.page,
+              advertisedAddress: base.advertisedAddress,
+              preferredPort: 0,
+              installId: () async => '00112233aabbccdd',
+              keepLinkedPhone: (phone) async => kept.add(phone),
+            ),
+          ),
+        ],
+      );
+    });
+
+    tearDown(() => linking.dispose());
+
+    PhonePairingService phoneFor(ScreenPairingView shown) => PhonePairingService(
+      client: PairingHttpClient(
+        addressOf: (_, _) => Uri(scheme: 'http', host: '127.0.0.1', port: shown.port),
+      ),
+      sessions: _Immich(),
+    );
+
+    test('Play from a phone: the hello says purpose link, the phone links without any session', () async {
+      final app = _App();
+      await linking.read(screenPairingProvider.notifier).show(app, linkOnly: true);
+      await settle();
+      final shown = linking.read(screenPairingProvider);
+      final phone = phoneFor(shown);
+      final hello = await phone.hello(parsePairingText(shown.qrText!) as PairingTarget);
+      expect(hello.device.linkOnly, isTrue);
+
+      final offer = PlayLinkOffer(phoneId: 'aabbccdd00112233', phoneName: "Fred's Pixel");
+      final answer = await phone.link(hello, offer.toJson());
+      await settle();
+      final screen = offer.accepted(answer, now: DateTime(2026, 11, 10));
+      expect(screen?.id, '00112233aabbccdd');
+      expect(screen?.name, 'Living room TV');
+      expect(screen?.kind, PairingScreenKind.tv);
+      expect(kept.single.id, 'aabbccdd00112233');
+      expect(kept.single.key, offer.key);
+      expect(app.tokens, isEmpty);
+      expect(linking.read(screenPairingProvider).phase, ScreenPairingPhase.signedIn);
+      expect(linking.read(screenPairingProvider).linkedPhone, "Fred's Pixel");
+      expect(await listening(shown.port!), isFalse);
+    });
+
+    test('a sign in with the switch on links the phone too, under the same hello', () async {
+      final app = _App();
+      await linking.read(screenPairingProvider.notifier).show(app);
+      await settle();
+      final shown = linking.read(screenPairingProvider);
+      final phone = phoneFor(shown);
+      final hello = await phone.hello(parsePairingText(shown.qrText!) as PairingTarget);
+      expect(hello.device.linkOnly, isFalse);
+      final offer = PlayLinkOffer(phoneId: 'aabbccdd00112233', phoneName: "Fred's Pixel");
+      final result = await phone.signIn(
+        hello,
+        label: 'Lounge',
+        account: const PhonePairingAccount(
+          server: 'https://photos.example.com',
+          endpoints: ['https://photos.example.com/api'],
+          headers: {},
+          userName: 'Fred',
+          userEmail: 'fred@example.com',
+          phoneName: "Fred's Pixel",
+        ),
+        link: offer.toJson(),
+      );
+      await settle();
+      expect(result.signedIn, isTrue);
+      expect(app.tokens, ['token-for-the-screen']);
+      expect(offer.accepted(result.linkAnswer, now: DateTime(2026, 11, 10))?.id, '00112233aabbccdd');
+      expect(kept.single.name, "Fred's Pixel");
+    });
   });
 }

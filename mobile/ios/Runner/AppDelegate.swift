@@ -24,6 +24,9 @@ import native_video_player
     AppDelegate.registerPlugins(with: engineBridge.pluginRegistry, messenger: messenger)
     // The scanner of "Connect a TV or computer" shows a view controller: the app's engine only, not the background ones
     QrScanApiSetup.setUp(binaryMessenger: messenger, api: QrScanApiImpl())
+    PasskeyHostApiSetup.setUp(binaryMessenger: messenger, api: PasskeyHostApiImpl())
+    // The review prompt of the App Store (the invitation to rate the app): the app's engine only, it needs a scene
+    StoreReviewApiSetup.setUp(binaryMessenger: messenger, api: StoreReviewApiImpl())
   }
 
   public static func registerPlugins(with registry: FlutterPluginRegistry, messenger: FlutterBinaryMessenger) {

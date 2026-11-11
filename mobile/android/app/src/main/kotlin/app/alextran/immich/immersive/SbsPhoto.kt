@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.Log
+import app.alextran.immich.images.JpegXlDecode
 import kotlinx.serialization.json.JsonObject
 
 /**
@@ -133,6 +134,19 @@ internal object SbsPhoto {
    * decoded or holds no two eyes. Off the main thread. Logs the sizes and the sample size, for the headset checks.
    */
   fun decode(bytes: ByteArray, spec: SbsPhotoSpec): Pair<Bitmap, SbsSplit>? {
+    // A JPEG XL (the preview of a server set to JPEG XL, or the original) by the Rust core, within the largest texture
+    if (JpegXlDecode.isJpegXl(bytes)) {
+      val frame =
+        JpegXlDecode.decodeBitmap(bytes, ImmersiveMedia.MAX_TEXTURE_WIDTH, ImmersiveMedia.MAX_TEXTURE_HEIGHT)
+          ?: return null
+      try {
+        val split = split(frame.width, frame.height, spec) ?: return null
+        Log.i(TAG, "side by side photo: JPEG XL decoded by the core at ${frame.width}x${frame.height}")
+        return compose(frame, split) to split
+      } finally {
+        frame.recycle()
+      }
+    }
     val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
     BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
     if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {

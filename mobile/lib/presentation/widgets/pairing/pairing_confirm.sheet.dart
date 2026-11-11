@@ -8,7 +8,10 @@ import 'package:immich_ui/immich_ui.dart';
 
 /// What the user chose on the confirmation sheet
 class PairingConfirmChoice {
-  const PairingConfirmChoice({required this.label, required this.sendHeaders});
+  const PairingConfirmChoice({required this.label, required this.sendHeaders, this.link = false});
+
+  /// "Also let this phone play films on it": the link of "Play on the TV" goes with the session
+  final bool link;
 
   /// The name the user kept or typed for the screen
   final String label;
@@ -89,6 +92,9 @@ class _PairingConfirmSheetState extends State<PairingConfirmSheet> {
   late final TextEditingController _name = TextEditingController(text: widget.device.label);
   bool _sendHeaders = true;
 
+  /// On by default, the lab rule
+  bool _link = true;
+
   @override
   void dispose() {
     _name.dispose();
@@ -98,7 +104,7 @@ class _PairingConfirmSheetState extends State<PairingConfirmSheet> {
   void _confirm() {
     final label = cleanPairingLabel(_name.text) ?? cleanPairingLabel(widget.device.label);
     if (label != null) {
-      Navigator.of(context).pop(PairingConfirmChoice(label: label, sendHeaders: _sendHeaders));
+      Navigator.of(context).pop(PairingConfirmChoice(label: label, sendHeaders: _sendHeaders, link: _link));
     }
   }
 
@@ -210,6 +216,14 @@ class _PairingConfirmSheetState extends State<PairingConfirmSheet> {
                 title: Text(t.pairing_confirm_headers(count: widget.headerNames.length)),
                 subtitle: Text(t.pairing_confirm_headers_hint(names: widget.headerNames.join(', ')), style: quiet),
               ),
+            SwitchListTile(
+              key: const Key('pairing_confirm_link'),
+              contentPadding: EdgeInsets.zero,
+              value: _link,
+              onChanged: (value) => setState(() => _link = value),
+              title: Text(t.play_link_confirm_switch),
+              subtitle: Text(t.play_link_confirm_switch_hint, style: quiet),
+            ),
             if (widget.notOnPhoneNetwork) warning(t.pairing_confirm_not_your_network),
             const SizedBox(height: ImmichSpacing.lg),
             Row(

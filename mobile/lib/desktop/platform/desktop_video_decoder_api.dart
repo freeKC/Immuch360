@@ -18,10 +18,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:logging/logging.dart';
+import 'package:media_kit_video/sphere.dart';
 
 final _log = Logger('DesktopVideoDecoderApi');
 

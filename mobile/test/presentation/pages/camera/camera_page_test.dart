@@ -18,6 +18,8 @@ import 'package:immich_mobile/platform/camera_live_api.g.dart';
 import 'package:immich_mobile/presentation/pages/camera/camera.page.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/tapo/tapo_camera.provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 import 'camera_fakes.dart';
 
@@ -170,6 +172,16 @@ void main() {
     await tester.tap(find.byKey(const Key('camera_day_2026-09-17')));
     await tester.pumpAndSettle();
     expect(find.text('day $cameraId 2026-09-17'), findsOneWidget);
+  });
+
+  testWidgets('the months and the days in en_US when intl has no date data for the app language', (tester) async {
+    await initializeDateFormatting();
+    Intl.defaultLocale = 'mi';
+    addTearDown(() => Intl.defaultLocale = null);
+    await pump(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.text('September 2026'), findsOneWidget);
+    expect(find.text('Friday, September 18, 2026'), findsOneWidget);
   });
 
   testWidgets('reads nothing from the camera without the TP-Link password', (tester) async {

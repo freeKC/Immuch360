@@ -152,6 +152,16 @@ void main() {
       expect(jar.cookieHeaderFor(external), 'other=1');
       expect(jar.clearAuthCookies(), isFalse);
     });
+
+    test('clear forgets every cookie, as the native jars do at logout', () {
+      jar.setServerUrls([external]);
+      jar.setToken('T');
+      jar.saveFromResponse(external, [setCookie('other=1; Path=/')]);
+      expect(jar.clear(), isTrue);
+      expect(jar.cookies, isEmpty);
+      expect(jar.cookieHeaderFor(external), isNull);
+      expect(jar.clear(), isFalse);
+    });
   });
 
   test('what is saved comes back, without what expired meanwhile', () {

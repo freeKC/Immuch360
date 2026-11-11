@@ -1,5 +1,6 @@
 // The audio track and subtitle menus of the flat player of the phones, TVs and headsets: shown for a video with two
-// audio tracks or more, or with subtitles, reached with the remote, and what they ask of the player.
+// audio tracks or more, or with subtitles, reached with the remote, and what they ask of the player; for a film of a
+// media server, the names it gives the tracks and what it hears of a pick.
 
 import 'dart:async';
 
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/domain/models/video_track_naming.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
@@ -54,6 +56,31 @@ const _forced = NativeVideoTrack(
   isForced: true,
 );
 
+/// A side file of subtitles the app gave the player, as Media3 lists it once merged with the film
+const _sidecar = NativeVideoTrack(
+  type: NativeVideoTrackType.text,
+  groupIndex: 5,
+  trackIndex: 0,
+  language: 'fr',
+  languageName: 'French',
+  label: 'Film.fr.srt',
+  id: '1:immuch-sub-7',
+);
+
+/// A media server that names some tracks, recording the picks it hears of
+class _Naming implements VideoTrackNaming {
+  _Naming(this.labels);
+
+  final Map<VideoTrackRef, String> labels;
+  final picks = <(VideoTrackKind, VideoTrackRef?)>[];
+
+  @override
+  String? labelOf(VideoTrackRef track) => labels[track];
+
+  @override
+  void picked(VideoTrackKind kind, VideoTrackRef? track) => picks.add((kind, track));
+}
+
 /// A player whose tracks are [listed], recording what is asked of it
 class _TrackPlayer extends VideoPlayerNotifier {
   _TrackPlayer(this.listed, this.calls) {
@@ -97,6 +124,7 @@ void main() {
     List<NativeVideoTrack> tracks, {
     bool tvMode = false,
     ValueListenable<bool>? shown,
+    VideoTrackNaming? naming,
   }) async {
     calls = [];
     player = _TrackPlayer(tracks, calls);
@@ -131,7 +159,9 @@ void main() {
                       valueListenable: shown ?? ValueNotifier(true),
                       builder: (context, show, _) => Align(
                         alignment: Alignment.bottomCenter,
-                        child: show ? const NetworkVideoControls(playerKey: 'film') : const SizedBox.shrink(),
+                        child: show
+                            ? NetworkVideoControls(playerKey: 'film', trackNaming: naming)
+                            : const SizedBox.shrink(),
                       ),
                     );
                   },
@@ -287,6 +317,83 @@ void main() {
       ]),
       ['Track 1, Mono', "DE, Director's commentary, 7.1", 'Japanese, 4 channels'],
     );
+  });
+
+  testWidgets('a film of a media server: the names it gives, the player\'s own elsewhere, and each pick told', (
+    tester,
+  ) async {
+    const frenchAudio = VideoTrackRef(kind: VideoTrackKind.audio, ordinal: 1, language: 'fr');
+    const sidecar = VideoTrackRef(kind: VideoTrackKind.subtitle, sidecarId: 'immuch-sub-7', language: 'fr');
+    final naming = _Naming({frenchAudio: 'Français (AC3 5.1)', sidecar: 'Français (SRT)'});
+    await pump(tester, const [_english, _french, _subtitles, _sidecar], naming: naming);
+
+    await tester.tap(audioMenu);
+    await tester.pumpAndSettle();
+    expect(find.text('English, Stereo, Default'), findsOneWidget, reason: 'a track the server does not name');
+    expect(find.text('Français (AC3 5.1)'), findsOneWidget);
+    expect(find.text('French, 5.1'), findsNothing);
+    await tester.tap(find.text('Français (AC3 5.1)'));
+    await tester.pumpAndSettle();
+    expect(calls, ['select audio 2']);
+    expect(naming.picks, [(VideoTrackKind.audio, frenchAudio)]);
+
+    await tester.tap(subtitleMenu);
+    await tester.pumpAndSettle();
+    expect(find.text('French'), findsOneWidget, reason: 'the subtitles of the file, unnamed by the server');
+    await tester.tap(find.text('Français (SRT)'));
+    await tester.pumpAndSettle();
+    await tester.tap(subtitleMenu);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Off'));
+    await tester.pumpAndSettle();
+    expect(calls, ['select audio 2', 'select text 5', 'off text']);
+    expect(naming.picks, [
+      (VideoTrackKind.audio, frenchAudio),
+      (VideoTrackKind.subtitle, sidecar),
+      (VideoTrackKind.subtitle, null),
+    ]);
+  });
+
+  test('the tracks as a media server knows them: by their place in the file, a side file by its id', () {
+    const second = NativeVideoTrack(type: NativeVideoTrackType.text, groupIndex: 6, trackIndex: 0, language: 'de');
+    expect(videoTrackRefs(const [_subtitles, _sidecar, second]), const [
+      VideoTrackRef(kind: VideoTrackKind.subtitle, ordinal: 0, language: 'fr'),
+      VideoTrackRef(kind: VideoTrackKind.subtitle, sidecarId: 'immuch-sub-7', language: 'fr'),
+      VideoTrackRef(kind: VideoTrackKind.subtitle, ordinal: 1, language: 'de'),
+    ]);
+    expect(videoTrackRefs(const [_english, _french]), const [
+      VideoTrackRef(kind: VideoTrackKind.audio, ordinal: 0, language: 'en'),
+      VideoTrackRef(kind: VideoTrackKind.audio, ordinal: 1, language: 'fr'),
+    ]);
+  });
+
+  test('a side file of subtitles goes to the player with the video, and comes back with its id', () {
+    const subtitle = VideoSubtitle(
+      uri: 'http://127.0.0.1:41000/token/plex/streams/12.srt',
+      mimeType: 'application/x-subrip',
+      language: 'fr',
+      label: 'Français',
+      id: 'immuch-sub-12',
+    );
+    expect(subtitle.toMap(), {
+      'uri': 'http://127.0.0.1:41000/token/plex/streams/12.srt',
+      'mimeType': 'application/x-subrip',
+      'language': 'fr',
+      'label': 'Français',
+      'id': 'immuch-sub-12',
+    });
+    final source = VideoSource(
+      path: 'http://127.0.0.1:41000/token/plex/film.mkv',
+      type: VideoSourceType.network,
+      headers: const {},
+      subtitles: const [subtitle],
+    );
+    expect(source.toJson().containsKey('subtitles'), isFalse, reason: 'the API sends them itself');
+    expect(
+      NativeVideoTrack.fromMap({'type': 'text', 'group': 4, 'track': 0, 'id': '1:immuch-sub-12'})?.id,
+      '1:immuch-sub-12',
+    );
+    expect(sidecarIdOfTrack('1:immuch-sub-12'), 'immuch-sub-12');
   });
 
   test('a track as the Android player sends it', () {

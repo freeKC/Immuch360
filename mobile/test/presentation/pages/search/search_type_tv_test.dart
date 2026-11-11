@@ -8,8 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/search.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/infrastructure/repositories/remote_asset.repository.dart';
 import 'package:immich_mobile/models/server_info/server_features.model.dart';
 import 'package:immich_mobile/presentation/pages/search/paginated_search.provider.dart';
 import 'package:immich_mobile/presentation/pages/search/search.page.dart';
@@ -21,6 +23,12 @@ import 'package:mocktail/mocktail.dart';
 import '../../../unit/presentation/presentation_context.dart';
 
 class _SearchService extends Mock implements SearchService {}
+
+/// No asset of the results is deleted or archived meanwhile (PaginatedSearchNotifier watches them since v3.4.0)
+class _NoDeletedAssets extends Fake implements RemoteAssetRepository {
+  @override
+  Stream<Set<String>> watchDeletedAssetIds(Iterable<String> ids, AssetVisibility visibility) => const Stream.empty();
+}
 
 /// A server with [features]
 class _ServerInfo extends ServerInfoNotifier {
@@ -65,7 +73,9 @@ void main() {
             ...context.overrides,
             tvModeProvider.overrideWithValue(tvMode),
             serverInfoProvider.overrideWith((ref) => _ServerInfo(context.service.serverInfo, features)),
-            paginatedSearchProvider.overrideWith((ref) => PaginatedSearchNotifier(_SearchService())),
+            paginatedSearchProvider.overrideWith(
+              (ref) => PaginatedSearchNotifier(_SearchService(), _NoDeletedAssets()),
+            ),
           ],
           child: Builder(
             builder: (context) => MaterialApp(

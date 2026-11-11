@@ -54,7 +54,7 @@ const plexShownSectionTypes = {'photo', 'movie', 'show'};
 
 /// A library of the server, from /library/sections
 class PlexSection {
-  const PlexSection({required this.key, required this.title, required this.type});
+  const PlexSection({required this.key, required this.title, required this.type, this.agent, this.language});
 
   /// The id of the section in /library/sections/{key}/...
   final String key;
@@ -63,8 +63,23 @@ class PlexSection {
   /// photo, movie or show
   final String type;
 
+  /// What matches its items: "tv.plex.agents.movie" for films, "tv.plex.agents.none" for other videos
+  final String? agent;
+
+  /// The language of its metadata, set on the server ("fr", "en-US"): the language of the synopsis of its films
+  final String? language;
+
   bool get isPhoto => type == 'photo';
+
+  /// A library of films, which opens on its films page (plex_film_list.dart) and whose items open the film page
+  /// (plex_films.dart, isPlexFilmLibrary): a movie section whose agent matches films. "Other videos" (personal
+  /// media, nothing matched), where the 360° files live, keep the folder view and open the player.
+  bool get isFilms => type == 'movie' && !plexPersonalMediaAgents.contains(agent);
 }
+
+/// The agents of the libraries of personal media: "Other videos" and the like, whose items are files without a film
+/// behind them (FreeKC's 360° clips), matched by no agent. Their items open the player directly, never the film page.
+const plexPersonalMediaAgents = {'com.plexapp.agents.none', 'tv.plex.agents.none'};
 
 /// The sections of /library/sections whose media the app shows, in server order
 List<PlexSection> parsePlexSections(Object? json) {
@@ -75,7 +90,15 @@ List<PlexSection> parsePlexSections(Object? json) {
     if (key == null || type is! String || !plexShownSectionTypes.contains(type)) {
       continue;
     }
-    sections.add(PlexSection(key: key, title: _string(element['title']) ?? key, type: type));
+    sections.add(
+      PlexSection(
+        key: key,
+        title: _string(element['title']) ?? key,
+        type: type,
+        agent: _string(element['agent']),
+        language: _string(element['language']),
+      ),
+    );
   }
   return sections;
 }
@@ -120,6 +143,9 @@ class PlexFileItem extends PlexListItem {
     this.durationMs,
     this.thumb,
     this.ratingKey,
+    this.title,
+    this.year,
+    this.isPoster = false,
   });
 
   /// The request path of the bytes of the file (/library/parts/{id}/{changestamp}/file.{ext})
@@ -141,6 +167,14 @@ class PlexFileItem extends PlexListItem {
   /// The request path of the picture the server keeps of the item, for its photo transcoder
   final String? thumb;
   final String? ratingKey;
+
+  /// What Plex calls the item ("Le Fabuleux Destin d'Amélie Poulain"), shown under its picture and in the title of its
+  /// page instead of the file name; never part of a path, never in a log
+  final String? title;
+  final int? year;
+
+  /// Whether [thumb] is a poster of 2:3 (a film), asked of the photo transcoder at that shape
+  final bool isPoster;
 
   @override
   String get name => safeEntryName(fileName);
@@ -193,12 +227,19 @@ bool _isListingKey(String key) {
   return path.endsWith('/folder') || path.endsWith('/children');
 }
 
+/// The files of one element of a listing, a Part of a Media each (see [PlexFileItem]); empty for a folder or an item
+/// without media
+List<PlexFileItem> plexPartsOf(Map<String, Object?> element) => _partsOf(element);
+
 List<PlexFileItem> _partsOf(Map<String, Object?> element) {
   final medias = element['Media'];
   if (medias is! List) {
     return const [];
   }
   final title = _string(element['title']) ?? '';
+  final year = _int(element['year']);
+  final type = _string(element['type']);
+  final isPoster = type == 'movie' || type == 'episode' || type == 'show' || type == 'season';
   final added = element['addedAt'];
   final addedAt = added is int && added > 0 ? DateTime.fromMillisecondsSinceEpoch(added * 1000, isUtc: true) : null;
   final files = <PlexFileItem>[];
@@ -230,6 +271,9 @@ List<PlexFileItem> _partsOf(Map<String, Object?> element) {
           durationMs: _int(part['duration']) ?? _int(media['duration']),
           thumb: _string(element['thumb']),
           ratingKey: _string(element['ratingKey']),
+          title: title.trim().isEmpty ? null : title.trim(),
+          year: year != null && year > 0 ? year : null,
+          isPoster: isPoster,
         ),
       );
     }

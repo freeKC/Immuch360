@@ -3,8 +3,8 @@
 // already carries, with where their sources are. Flutter's licence page lists the Dart packages only.
 //
 // Windows: the licenses folder next to immuch360.exe (.github/desktop/windows_bundle.py): NOTICES.md and the LGPL,
-// GPL, Apache and ANGLE texts of mobile/packages/media_kit_video/windows, and in licenses/libmpv the BUILDINFO.txt and
-// the licence texts of each library of the fork's libmpv build. macOS: the licenses folder of the resource bundle of
+// GPL, Apache and ANGLE texts of the windows folder of media_kit_video (github.com/immuch360/media_kit_360), and in
+// licenses/libmpv the BUILDINFO.txt and the licence texts of each library of the project's libmpv build. macOS: the licenses folder of the resource bundle of
 // media_kit_libs_macos_video in the app, the same layout with BUILDINFO-macos.txt. Linux is not concerned: the app
 // uses the system's libmpv and ships none. A build run from its build folder, before the bundle script, has no such
 // folder and adds nothing.
@@ -17,14 +17,15 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
 import 'package:path/path.dart' as p;
 
-/// The libmpv releases of https://github.com/freeKC/Immuch360 the desktop builds take their libraries from, as pinned
-/// by mobile/packages/media_kit_libs_windows_video/windows/CMakeLists.txt (IMMUCH360_LIBMPV_TAG) and
+/// The libmpv releases of https://github.com/immuch360/libmpv-builds the desktop builds take their libraries from (those
+/// of freeKC/Immuch360 up to desktop build 24), as pinned by windows/CMakeLists.txt of media_kit_libs_windows_video
+/// (github.com/immuch360/media_kit_360, IMMUCH360_LIBMPV_TAG) and by
 /// mobile/packages/media_kit_libs_macos_video/macos/media_kit_libs_macos_video/Package.swift (libmpvTag); a test keeps
 /// them equal
-const windowsLibmpvRelease = 'libmpv-windows-20261009-3';
-const macosLibmpvRelease = 'libmpv-macos-20261102-12';
+const windowsLibmpvRelease = 'libmpv-windows-20261110-1';
+const macosLibmpvRelease = 'libmpv-macos-20261110-1';
 
-const _releases = 'https://github.com/freeKC/Immuch360/releases/tag';
+const _releases = 'https://github.com/immuch360/libmpv-builds/releases/tag';
 
 /// The system whose layout the licence folder has
 enum VideoLicenseSystem { windows, macos }
@@ -93,7 +94,7 @@ Stream<LicenseEntry> _videoLicenseEntries(Directory folder, VideoLicenseSystem s
   // fallback of IMMUCH360_LIBMPV_FROM_CI) the notice itself says where the sources are
   final source = buildInfo != null
       ? 'Source: the corresponding source of libmpv and of every library built into it is the file '
-            '$release-sources.tar.xz of the release $release of Immuch360, $_releases/$release, built by the run '
+            '$release-sources.tar.xz of the release $release of libmpv-builds, $_releases/$release, built by the run '
             'that $buildInfoName names. $buildInfoName, below, gives the commit or the archive of each library.'
       : 'Source: the notice below says where the sources of this build of libmpv are.';
   final intro =

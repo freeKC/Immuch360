@@ -13,3 +13,22 @@ gradients and shapes, no photo of anyone, no work of a third party, so free of a
   convert -size 6000x3000 gradient:'#0b3d2e-#e8d5a3' -fill '#8e44ad' -draw "circle 1500,1500 1500,700" \
     -fill '#2980b9' -draw "rectangle 3500,800 5200,2200" -quality 50 lab_large.avif    6000 x 3000, for the bound
   the same drawing with -quality 50 lab_large.heic                                   6000 x 3000, for the bound
+
+The JPEG XL files of the run of the fake server that answers as a server set to JPEG XL thumbnails and previews
+(fake_immich.py --image-format jxl), drawn on 10 November 2026 with the same ImageMagick and encoded by ffmpeg 5.1.8
+(Debian 12) with its libjxl encoder, distance 2, effort 7. The 360 photo is a 2:1 drawing of flat gradients and shapes,
+CC0 as the others.
+
+  convert base.png -depth 8 -resize 720x480 preview.png
+  convert base.png -depth 8 -resize 240x160 thumbnail.png
+  ffmpeg -i preview.png -pix_fmt rgb24 -c:v libjxl -distance 2 -effort 7 -frames:v 1 -f image2 lab_preview.jxl
+                                                                            the preview of every photo, 720 x 480
+  ffmpeg -i thumbnail.png -pix_fmt rgb24 -c:v libjxl -distance 2 -effort 7 -frames:v 1 -f image2 lab_thumbnail.jxl
+                                                                            the thumbnail of every photo, 240 x 160
+  convert -size 2400x1200 gradient:'#87ceeb-#2e7d32' -fill '#f4d03f' -draw "circle 600,350 600,250" \
+    -fill '#8e44ad' -draw "rectangle 1300,500 1700,900" -fill '#e67e22' -draw "polygon 2000,900 2200,500 2350,900" \
+    -depth 8 base360.png
+  convert base360.png -quality 80 lab_360.jpg        the JPEG original of the 360 photo, 2400 x 1200
+  convert base360.png -resize 1440x720 p360.png; ffmpeg -i p360.png ... lab_360_preview.jxl     its preview, 1440 x 720
+  convert base360.png -resize 320x160 t360.png; ffmpeg -i t360.png ... lab_360_thumbnail.jxl   its thumbnail, 320 x 160
+  (the ffmpeg options of the 360 files are the ones above)

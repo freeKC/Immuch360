@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/user.model.dart';
 import 'package:immich_mobile/extensions/asyncvalue_extensions.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
+import 'package:immich_mobile/presentation/pages/network/plex_films_library.page.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_card.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_album_thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
@@ -67,10 +71,31 @@ class LibraryActionButtonGrid extends ConsumerWidget {
       autofocus: ref.watch(tvModeProvider),
     );
 
+    // The films of the Plex servers (lot A1 of the films study), when the app has one; the rail of a TV has no Films
+    // entry, this button is the way there
+    final hasPlex = ref.watch(
+      networkSourcesProvider.select((sources) => sources.any((source) => source.type == NetworkSourceType.plex)),
+    );
+    final filmsButton = hasPlex
+        ? _ActionButton(
+            key: const Key('library_plex_films'),
+            icon: Icons.movie_outlined,
+            onTap: () => unawaited(openPlexFilms(context, ref)),
+            label: context.t.plex_films_button,
+          )
+        : null;
+
     if (!hasServer) {
       return SliverPadding(
         padding: const EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 12),
-        sliver: SliverToBoxAdapter(child: Row(children: [panoramaButton])),
+        sliver: SliverToBoxAdapter(
+          child: Row(
+            children: [
+              panoramaButton,
+              if (filmsButton != null) ...[const SizedBox(width: 8), filmsButton],
+            ],
+          ),
+        ),
       );
     }
 
@@ -106,15 +131,18 @@ class LibraryActionButtonGrid extends ConsumerWidget {
                 ),
               ],
             ),
-            if (isTrashEnable) ...[
+            if (isTrashEnable || filmsButton != null) ...[
               const SizedBox(height: 8),
               Row(
                 children: [
-                  _ActionButton(
-                    icon: Icons.delete_outline_rounded,
-                    onTap: () => context.pushRoute(const TrashRoute()),
-                    label: context.t.trash,
-                  ),
+                  if (isTrashEnable)
+                    _ActionButton(
+                      icon: Icons.delete_outline_rounded,
+                      onTap: () => context.pushRoute(const TrashRoute()),
+                      label: context.t.trash,
+                    ),
+                  if (isTrashEnable && filmsButton != null) const SizedBox(width: 8),
+                  ?filmsButton,
                 ],
               ),
             ],
@@ -126,7 +154,13 @@ class LibraryActionButtonGrid extends ConsumerWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.icon, required this.onTap, required this.label, this.autofocus = false});
+  const _ActionButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+    required this.label,
+    this.autofocus = false,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
@@ -549,8 +583,19 @@ final sharedWithPartnerProvider = StreamProvider.autoDispose<Iterable<Partner>>(
   return ref.watch(partnerServiceProvider).search(currentUser.id, .sharedWith);
 });
 
+class _QuickAccessItem {
+  final Widget leading;
+  final String title;
+  final VoidCallback onTap;
+  final EdgeInsetsGeometry? contentPadding;
+
+  const _QuickAccessItem({required this.leading, required this.title, required this.onTap, this.contentPadding});
+}
+
 class _QuickAccessButtonList extends ConsumerWidget {
   const _QuickAccessButtonList();
+
+  static const _tileRadius = 20.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -562,13 +607,38 @@ class _QuickAccessButtonList extends ConsumerWidget {
     final partnerSharedWithAsync = ref.watch(sharedWithPartnerProvider);
     final partners = partnerSharedWithAsync.valueOrNull ?? [];
 
+    final items = [
+      _QuickAccessItem(
+        leading: const Icon(Icons.folder_outlined, size: 26),
+        title: context.t.folders,
+        onTap: () => context.pushRoute(FolderRoute()),
+      ),
+      _QuickAccessItem(
+        leading: const Icon(Icons.lock_outline_rounded, size: 26),
+        title: context.t.locked_folder,
+        onTap: () => context.pushRoute(const LockedFolderRoute()),
+      ),
+      _QuickAccessItem(
+        leading: const Icon(Icons.group_outlined, size: 26),
+        title: context.t.partners,
+        onTap: () => context.pushRoute(const PartnerRoute()),
+      ),
+      for (final partner in partners)
+        _QuickAccessItem(
+          contentPadding: const EdgeInsets.only(left: 12.0, right: 18.0),
+          leading: PartnerUserAvatar(userId: partner.id, name: partner.name),
+          title: context.t.partner_list_user_photos(user: partner.name),
+          onTap: () => context.pushRoute(PartnerDetailRoute(partner: partner)),
+        ),
+    ];
+
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16, top: 12, right: 16, bottom: 32),
       sliver: SliverToBoxAdapter(
         child: DecoratedBox(
           decoration: BoxDecoration(
             border: Border.all(color: context.colorScheme.onSurface.withAlpha(10), width: 1),
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            borderRadius: const BorderRadius.all(Radius.circular(_tileRadius)),
             gradient: LinearGradient(
               colors: [
                 context.colorScheme.primary.withAlpha(10),
@@ -579,45 +649,30 @@ class _QuickAccessButtonList extends ConsumerWidget {
               end: Alignment.bottomCenter,
             ),
           ),
-          child: ListView(
+          child: ListView.builder(
             shrinkWrap: true,
             padding: EdgeInsets.zero,
             physics: const NeverScrollableScrollPhysics(),
-            children: [
-              ListTile(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              final isFirst = index == 0;
+              final isLast = index == items.length - 1;
+              return ListTile(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(20),
-                    topRight: const Radius.circular(20),
-                    bottomLeft: Radius.circular(partners.isEmpty ? 20 : 0),
-                    bottomRight: Radius.circular(partners.isEmpty ? 20 : 0),
+                    topLeft: Radius.circular(isFirst ? _tileRadius : 0),
+                    topRight: Radius.circular(isFirst ? _tileRadius : 0),
+                    bottomLeft: Radius.circular(isLast ? _tileRadius : 0),
+                    bottomRight: Radius.circular(isLast ? _tileRadius : 0),
                   ),
                 ),
-                leading: const Icon(Icons.folder_outlined, size: 26),
-                title: Text(
-                  context.t.folders,
-                  style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
-                ),
-                onTap: () => context.pushRoute(FolderRoute()),
-              ),
-              ListTile(
-                leading: const Icon(Icons.lock_outline_rounded, size: 26),
-                title: Text(
-                  context.t.locked_folder,
-                  style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
-                ),
-                onTap: () => context.pushRoute(const LockedFolderRoute()),
-              ),
-              ListTile(
-                leading: const Icon(Icons.group_outlined, size: 26),
-                title: Text(
-                  context.t.partners,
-                  style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
-                ),
-                onTap: () => context.pushRoute(const PartnerRoute()),
-              ),
-              _PartnerList(partners: partners.toList()),
-            ],
+                contentPadding: item.contentPadding,
+                leading: item.leading,
+                title: Text(item.title, style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500)),
+                onTap: item.onTap,
+              );
+            },
           ),
         ),
       ),
@@ -655,41 +710,6 @@ class _ConnectServerEntry extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PartnerList extends StatelessWidget {
-  const _PartnerList({required this.partners});
-
-  final List<Partner> partners;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: partners.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        final partner = partners[index];
-        final isLastItem = index == partners.length - 1;
-        return ListTile(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(isLastItem ? 20 : 0),
-              bottomRight: Radius.circular(isLastItem ? 20 : 0),
-            ),
-          ),
-          contentPadding: const EdgeInsets.only(left: 12.0, right: 18.0),
-          leading: PartnerUserAvatar(userId: partner.id, name: partner.name),
-          title: Text(
-            context.t.partner_list_user_photos(user: partner.name),
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
-          onTap: () => context.pushRoute(PartnerDetailRoute(partner: partner)),
-        );
-      },
     );
   }
 }

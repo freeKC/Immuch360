@@ -9,6 +9,7 @@ import 'package:immich_mobile/desktop/platform/desktop_background_worker_api.dar
 import 'package:immich_mobile/desktop/platform/desktop_connectivity_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_local_image_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_network_api.dart';
+import 'package:immich_mobile/desktop/platform/desktop_passkey_host_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_permission_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_remote_image_api.dart';
 import 'package:immich_mobile/desktop/platform/desktop_share_files_api.dart';
@@ -55,6 +56,7 @@ void main() {
           PlatformApis.localImage(),
           PlatformApis.remoteImage(),
           PlatformApis.network(),
+          PlatformApis.passkeyHost(),
           PlatformApis.phoneShare(),
           PlatformApis.viewIntent(),
         ];
@@ -88,6 +90,7 @@ void main() {
         expect(PlatformApis.localImage(), isA<DesktopLocalImageApi>());
         expect(PlatformApis.remoteImage(), isA<DesktopRemoteImageApi>());
         expect(PlatformApis.network(), isA<DesktopNetworkApi>());
+        expect(PlatformApis.passkeyHost(), isA<DesktopPasskeyHostApi>());
         expect(PlatformApis.phoneShare(), isA<DesktopShareFilesApi>());
         expect(PlatformApis.viewIntent(), isA<DesktopViewIntentHostApi>());
       }
@@ -153,6 +156,13 @@ void main() {
       expect(await DesktopViewIntentHostApi().consumeViewIntent(), isNull);
       await Future<void>.delayed(DesktopOpenRequests.together);
       expect(DesktopOpenRequests.take(), [r'C:\photos\VID_1.insv', r'C:\photos\IMG_2.jpg']);
+    });
+
+    test('no passkey prompt on the computers', () async {
+      final api = DesktopPasskeyHostApi();
+      expect(await api.isSupported(), isFalse);
+      expect(await api.register('{}'), isNull);
+      expect(await api.authenticate('{}'), isNull);
     });
 
     test('the client certificate is kept by the network API', () async {

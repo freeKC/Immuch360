@@ -43,9 +43,18 @@ class MemoryShare implements NetworkFileSystem {
 
   static final modified = DateTime.utc(2026, 10, 1, 12);
 
-  /// A file entry of this share, with the size of its bytes in [files]
-  NetworkEntry file(String path) =>
-      NetworkEntry(sourceId: source.id, path: path, isDirectory: false, size: files[path]?.length, modified: modified);
+  /// The titles a media server gives some files (a Plex film), by path
+  final Map<String, String> titles = {};
+
+  /// A file entry of this share, with the size of its bytes in [files] and its title in [titles]
+  NetworkEntry file(String path) => NetworkEntry(
+    sourceId: source.id,
+    path: path,
+    isDirectory: false,
+    size: files[path]?.length,
+    modified: modified,
+    title: titles[path],
+  );
 
   NetworkEntry folder(String path) => NetworkEntry(sourceId: source.id, path: path, isDirectory: true);
 
@@ -142,8 +151,8 @@ Uint8List fakePhoto([String xmp = '']) =>
 /// GPano tags of an equirectangular photo
 const equirectangularXmp = '<rdf:Description GPano:ProjectionType="equirectangular"/>';
 
-/// Pumps [home] under a real router where the network browser route renders the real page, and the photo, video and
-/// splat routes the real page when in [pages], else a stub telling where they were opened. Returns the router. [builder]
+/// Pumps [home] under a real router where the network browser route renders the real page, and the photo, video,
+/// films, film and splat routes the real page when in [pages], else a stub telling where they were opened. Returns the router. [builder]
 /// wraps the navigator, as the TV shell does in the app.
 Future<RootStackRouter> pumpNetworkRouter(
   WidgetTester tester, {
@@ -191,6 +200,32 @@ Future<RootStackRouter> pumpNetworkRouter(
               (data) {
                 final args = data.argsAs<NetworkVideoRouteArgs>();
                 return Text('video ${args.sourceId} ${args.path}');
+              },
+        ),
+      ),
+      // The films page of a film library of a Plex server (lot A1 of the films study)
+      AutoRoute(
+        path: '/plex-films',
+        page: PageInfo(
+          PlexFilmsLibraryRoute.name,
+          builder:
+              pages[PlexFilmsLibraryRoute.name] ??
+              (data) {
+                final args = data.argsAs<PlexFilmsLibraryRouteArgs>();
+                return Text('films ${args.sourceId} ${args.sectionKey} ${args.title} ${args.folderPath}');
+              },
+        ),
+      ),
+      // The page of a film of a Plex server (lot A2 of the films study)
+      AutoRoute(
+        path: '/plex-film',
+        page: PageInfo(
+          PlexFilmRoute.name,
+          builder:
+              pages[PlexFilmRoute.name] ??
+              (data) {
+                final args = data.argsAs<PlexFilmRouteArgs>();
+                return Text('film ${args.sourceId} ${args.ratingKey} ${args.path}');
               },
         ),
       ),

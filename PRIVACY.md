@@ -7,9 +7,10 @@ Immuch360 is a free and open source fork of the Immich mobile app, for phones an
 - **Nothing goes to the developer.** The app has no advertising, no analytics and no crash reporting service run by the developer. Nothing is sent to the developer of Immuch360.
 - **With a server.** The app talks to the Immich server address you enter at login, and to the map tile service that server is configured to use when you open the map (by default the tile service of the Immich project). Your photos, videos, albums, account and settings are stored on that server and on your device.
 - **Backup.** With backup enabled, the app uploads the photos and videos you select from your device to your server. Backup is off until you turn it on.
-- **Without a server.** "Use without a server" opens the app on the photos and videos of the device, with no account. No server is contacted in this mode. The app uses the network only for the shares you open and for the phone share, if you turn it on.
+- **Without a server.** "Use without a server" opens the app on the photos and videos of the device, with no account. No server is contacted in this mode. The app uses the network only for the shares you open, for the phone share, if you turn it on, and, when you open the page of a Plex film, for Wikipedia (see "Film details from Wikipedia" below).
 - **Network shares.** You can add SMB, WebDAV and DLNA shares, such as a NAS, a computer or a media server. The app plays their files live, through a bridge inside the app that only listens on the device itself (127.0.0.1). The files are not copied to the device. The list of shares and their passwords stay on the device.
-- **Plex media servers.** When you add a Plex server, the app talks only to the server address you enter, with the token you give it, and reads its libraries live. The token stays on the device, in the secure storage of the system (on LG TVs, see [LG TVs (webOS)](#lg-tvs-webos)), and is deleted when you remove the server.
+- **Plex media servers.** When you add a Plex server, the app talks only to the server address you enter, with the token you give it, and reads its libraries live. The token stays on the device, in the secure storage of the system (on LG TVs, see [LG TVs (webOS)](#lg-tvs-webos)), and is deleted when you remove the server. What the server tells of your films (their synopsis, cast and files) is shown on the device and never kept or sent anywhere else. The one thing the app writes to your server is the audio track and the subtitles you pick for a film, so that the Plex apps start with the same choice.
+- **Film details from Wikipedia.** When you open the page of a film of a Plex server, the app asks Wikidata and Wikipedia, run by the Wikimedia Foundation, for the article about that film in your language. It sends the film's IMDb or TMDB number and the title of the article, never your Plex token, your server's address or anything else of your library; Wikimedia sees the address of your connection, as for any website. The articles found are kept on the device for 30 days, 500 films at most. Wikimedia's privacy policy (https://foundation.wikimedia.org/wiki/Policy:Privacy_policy) applies to these requests. Turn it off in Settings, Advanced, "Film details from Wikipedia", or in the menu of a film page: no request then goes to Wikimedia, and the kept articles are deleted.
 - **Tapo cameras.** When you add a Tapo camera, the app talks to the camera on your network with the camera account you give it: the live view is read as a video stream from the camera, and the recordings of its memory card are listed and played from the camera. The camera account password stays on the device, in the secure storage of the system (on LG TVs, see [LG TVs (webOS)](#lg-tvs-webos)). The app contacts no cloud service of the camera maker. A recording goes to your Immich server only when you ask the app to send it.
 - **Upload from a share.** When you are connected to a server, you can pick files of a share and send them to your Immich server. The app streams them from the share to the server, without a copy on the device. It only does so when you ask.
 - **Share this phone on the network.** When you turn it on, the phone serves its photos and videos, read only, to the devices of your local network that give the user name and password the app generated, such as your headset. It is off at every start of the app. It stops with its switch, with Stop, after an hour without any request, and when the app is closed. On iPhone and iPad it pauses while the app is in the background.
@@ -22,6 +23,7 @@ Immuch360 is a free and open source fork of the Immich mobile app, for phones an
 - **Video decoders.** The decoder checks only read the list of video decoders of the device.
 - **Location.** The app can read your location and camera metadata only as embedded in your own photos, to display them; it does not track your location.
 - **Logs.** Log lines stay on the device unless you share or copy them yourself.
+- **The invitation to rate the app.** Only the store builds ask, at most twice, after a few good viewings over several days: the Google Play build through Google Play's own card, the App Store build through Apple's own prompt, and the Meta Horizon Store build with one sentence of the app, Not now or Rate (which opens the store page). The builds of GitHub and the computers never ask. The counts that decide when to ask (opens, days, viewings, the asks and their answers) stay on the device, in the app's database, and the app sends nothing about them; a rating you give goes to that store, under its own terms.
 
 ## Data stored on the device
 
@@ -110,7 +112,7 @@ The camera is used only while the experimental Spatial 2.5D mode is active, wher
 
 ## Third parties
 
-Your Immich server is operated by you or by the person who gave you an account; its own privacy rules apply. The same goes for the shares and media servers you add. When you open the map, the tile service your server is configured to use, by default the one of the Immich project, receives the requests for the map tiles. The app contains no third party advertising or tracking SDK. On Meta Quest headsets it uses the Meta Spatial SDK to render the immersive view; that library runs locally. Your Plex server and your Tapo cameras are yours: the app talks to them on your network only, and their makers' own privacy rules apply to their products.
+Your Immich server is operated by you or by the person who gave you an account; its own privacy rules apply. The same goes for the shares and media servers you add. When you open the map, the tile service your server is configured to use, by default the one of the Immich project, receives the requests for the map tiles. The app contains no third party advertising or tracking SDK. On Meta Quest headsets it uses the Meta Spatial SDK to render the immersive view; that library runs locally. Your Plex server and your Tapo cameras are yours: the app talks to them on your network only, and their makers' own privacy rules apply to their products. The film pages of Plex films ask Wikimedia for the film's article, as described above, unless you turn that off.
 
 ## Your rights
 
@@ -122,6 +124,10 @@ Questions about this policy: open an issue at https://github.com/freeKC/Immuch36
 
 ## Changes
 
+11 November 2026: added the invitation to rate the app of the store builds (who asks, what stays on the device).
+
+10 November 2026: added the film details from Wikipedia of the Plex film pages (what goes to Wikimedia, what stays on the device, the switch), and the audio and subtitle track the app saves on your Plex server.
+
 24 October 2026: added Samsung TVs (Tizen): what the Samsung TV app keeps on the TV and that it is not encrypted, that it talks only to your Immich server, what its About page reads from the TV, and its privileges.
 
 23 October 2026: added LG TVs (webOS): what the TV app keeps on the TV and that it is not encrypted, the page of the phone sign in and what it sends unencrypted, the service that reads the shares, the discovery on the local network (each address only on Scan again), the Plex sign in through plex.tv.
@@ -132,4 +138,4 @@ Questions about this policy: open an issue at https://github.com/freeKC/Immuch36
 
 6 October 2026: added the mode without a server, network shares, upload from a share, Share this phone on the network, raw camera files, Apple spatial photos, the data stored on the device, the data on your network and the new permissions. The camera and Face ID permissions now say what they are used for in this app. The previous version, of 30 September 2026, covered the server mode only.
 
-Last updated: 24 October 2026.
+Last updated: 11 November 2026.

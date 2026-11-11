@@ -14,14 +14,20 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_pairing.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/pairing/pairing_client.dart';
 import 'package:immich_mobile/platform/qr_scan_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/pairing/pairing_confirm.sheet.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_link_confirm.sheet.dart';
+import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -145,6 +151,10 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
     } on PairingException catch (error) {
       return _showError(_helloError(t, error.failure, target.host));
     }
+    // A screen that shows "Play from a phone": a link for "Play on the TV", nothing signed in
+    if (hello.device.linkOnly) {
+      return _linkNow(hello, target);
+    }
     final account = await ref.read(phonePairingAccountProvider)();
     final onNetwork = await _onPhoneNetwork(target.host);
     if (!mounted) {
@@ -168,6 +178,10 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
 
     final screens = ref.read(pairedScreensProvider.notifier);
     String? listed;
+    final offer = choice.link ? await _offer() : null;
+    if (!mounted) {
+      return unawaited(service.cancel(hello));
+    }
     final progress = _showProgress(t.pairing_progress(device: label));
     final PhonePairingResult result;
     try {
@@ -176,6 +190,7 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
         label: label,
         account: account,
         sendHeaders: choice.sendHeaders,
+        link: offer?.toJson(),
         // Listed before the session leaves the phone: if the app dies meanwhile, the user still sees it and can sign
         // it out; the refresh at the next start drops it when the server no longer has it
         onSession: (sessionId, name) {
@@ -204,7 +219,14 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
       return;
     }
     if (result.signedIn && sessionId != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.pairing_done(device: label))));
+      final linked = offer?.accepted(result.linkAnswer, now: DateTime.now());
+      if (linked != null) {
+        // Under the name the user gave it on the sheet
+        await ref.read(linkedScreensProvider.notifier).add(linked.renamed(label));
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.pairing_done(device: label))));
+      }
       return;
     }
     final server = Uri.tryParse(account.server)?.host ?? account.server;
@@ -220,6 +242,60 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
       PhonePairingStatus.lost ||
       PhonePairingStatus.refused ||
       PhonePairingStatus.signedIn => t.pairing_err_lost(device: label),
+    });
+  }
+
+  /// The link of "Play on the TV" this phone offers a screen
+  Future<PlayLinkOffer> _offer() async => PlayLinkOffer(
+    phoneId: await phoneShareInstallId(ref.read(storeServiceProvider)),
+    phoneName: await phoneShareDeviceName(),
+  );
+
+  /// The screen shows "Play from a phone": its check number on a sheet, then the link alone
+  Future<void> _linkNow(PairingHello hello, PairingTarget target) async {
+    final t = context.t;
+    final service = ref.read(phonePairingServiceProvider);
+    final confirmed = await showPlayLinkConfirmSheet(
+      context,
+      device: hello.device,
+      address: target.host,
+      check: hello.check,
+    );
+    if (!confirmed || !mounted) {
+      return unawaited(service.cancel(hello));
+    }
+    final offer = await _offer();
+    if (!mounted) {
+      return unawaited(service.cancel(hello));
+    }
+    final name = hello.device.label.isEmpty ? t.pairing_kind_tv : hello.device.label;
+    final progress = _showProgress(t.play_link_progress(device: name));
+    Object? answer;
+    PairingFailure? failure;
+    try {
+      answer = await service.link(hello, offer.toJson());
+    } on PairingException catch (error) {
+      failure = error.failure;
+    } finally {
+      progress.close();
+    }
+    final linked = offer.accepted(answer, now: DateTime.now());
+    if (linked != null) {
+      await ref.read(linkedScreensProvider.notifier).add(linked);
+    }
+    if (!mounted) {
+      return;
+    }
+    if (linked != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.play_link_done(device: linked.name))));
+      return;
+    }
+    await _showError(switch (failure) {
+      PairingFailure.busy => t.pairing_err_busy(device: name),
+      PairingFailure.rejected => t.pairing_err_wrong_code,
+      PairingFailure.expired => t.pairing_err_expired,
+      PairingFailure.used => t.pairing_err_used,
+      _ => t.play_link_err_lost(device: name),
     });
   }
 
@@ -301,6 +377,24 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
     }
   }
 
+  /// Removes a screen this phone plays films on: it can no longer be chosen in Play on
+  Future<void> _removeLinked(LinkedPeer screen) async {
+    final t = context.t;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        content: Text(t.play_link_phone_remove_confirm(device: screen.name)),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(t.cancel)),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: Text(t.remove)),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(linkedScreensProvider.notifier).remove(screen.id);
+    }
+  }
+
   Future<void> _signOut(PairedScreen screen) async {
     final t = context.t;
     final confirmed = await showDialog<bool>(
@@ -336,8 +430,9 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
     });
     final t = context.t;
     final screens = ref.watch(pairedScreensProvider);
+    final linked = ref.watch(linkedScreensProvider).valueOrNull ?? const <LinkedPeer>[];
     final theme = context.textTheme;
-    final dates = DateFormat.yMMMd(context.locale.toLanguageTag());
+    final dates = DateFormat.yMMMd(resolvedDateTimeLocale());
     return Scaffold(
       appBar: AppBar(title: Text(t.pairing_connect_title)),
       body: ListView(
@@ -396,6 +491,21 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
               ),
           const SizedBox(height: ImmichSpacing.md),
           Text(t.pairing_connected_footer, style: theme.bodySmall),
+          // The screens this phone plays films on (play on the TV), each removable: the link ends on this side
+          if (linked.isNotEmpty) ...[
+            const SizedBox(height: ImmichSpacing.xl),
+            Text(t.play_link_phone_list_title, style: theme.titleMedium),
+            const SizedBox(height: ImmichSpacing.sm),
+            for (final screen in linked)
+              ListTile(
+                key: ValueKey('play_linked_${screen.id}'),
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(pairingKindIcon(screen.kind)),
+                title: Text(screen.name),
+                subtitle: Text(t.play_from_phone_linked_since(date: dates.format(screen.linkedAt.toLocal()))),
+                trailing: TextButton(onPressed: () => unawaited(_removeLinked(screen)), child: Text(t.remove)),
+              ),
+          ],
         ],
       ),
     );

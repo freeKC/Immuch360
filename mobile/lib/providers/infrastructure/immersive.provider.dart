@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/services/immersive_navigation.service.dart';
+import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:logging/logging.dart';
@@ -146,6 +148,7 @@ class ImmersiveSession implements ImmersiveEvents {
     _cancelRequest();
     final id = ++_lastOpeningId;
     _opening = (id: id, navigator: navigator);
+    RateAppSignals.viewingOpened(RateAppViewing.immersive);
     return id;
   }
 
@@ -154,6 +157,7 @@ class ImmersiveSession implements ImmersiveEvents {
     if (isCurrent(openingId)) {
       _cancelRequest();
       _opening = null;
+      RateAppSignals.viewingClosed(RateAppViewing.immersive, normal: false);
     }
   }
 
@@ -235,6 +239,7 @@ class ImmersiveSession implements ImmersiveEvents {
     }
     final navigator = _opening?.navigator;
     _opening = null;
+    RateAppSignals.viewingClosed(RateAppViewing.immersive);
     // A search still running for this viewer stops, showing nothing
     _cancelRequest();
     if (navigator == null) {

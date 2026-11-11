@@ -26,6 +26,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart'
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/repositories/asset_media.repository.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
+import 'package:immich_mobile/utils/camera.utils.dart';
 
 const _kSeparator = '  •  ';
 
@@ -144,7 +145,7 @@ class TechnicalDetails extends ConsumerWidget {
   static String _getFileInfo(BaseAsset asset, ExifInfo? exifInfo) {
     final height = asset.height;
     final width = asset.width;
-    final resolution = (width != null && height != null) ? "$width x $height" : null;
+    final resolution = (width != null && height != null) ? "$width × $height" : null;
     final fileSize = exifInfo?.fileSize != null ? formatBytes(exifInfo!.fileSize!) : null;
 
     return switch ((fileSize, resolution)) {
@@ -159,12 +160,7 @@ class TechnicalDetails extends ConsumerWidget {
     if (exifInfo == null) {
       return null;
     }
-    return switch ((exifInfo.make, exifInfo.model)) {
-      (null, null) => null,
-      (final String make, null) => make,
-      (null, final String model) => model,
-      (final String make, final String model) => '$make $model',
-    };
+    return getCameraName(exifInfo.make, exifInfo.model);
   }
 
   static String? _getCameraInfoSubtitle(ExifInfo? exifInfo) {
@@ -359,7 +355,7 @@ class _AppleSpatialTile extends StatelessWidget {
 }
 
 /// The codec of the video track [probe] describes, with the name of its profile and its codecs string, its coded frame
-/// size and its frame rate when known ("HEVC Main 10 (hvc1.2.4.L153)  •  5760 x 2880  •  29.97 fps"); null when the
+/// size and its frame rate when known ("HEVC Main 10 (hvc1.2.4.L153)  •  5760 × 2880  •  29.97 fps"); null when the
 /// probe found no video track
 @visibleForTesting
 String? videoCodecSummary(SphericalProbe? probe) {
@@ -375,7 +371,7 @@ String? videoCodecSummary(SphericalProbe? probe) {
   final frameRate = probe.frameRate;
   return [
     codecs == null ? name : '$name ($codecs)',
-    if (width != null && height != null) '$width x $height',
+    if (width != null && height != null) '$width × $height',
     if (frameRate != null) '${formatFrameRate(frameRate)} fps',
   ].join(_kSeparator);
 }

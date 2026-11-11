@@ -1,0 +1,54 @@
+{
+  "MediaContainer": {
+    "size": 1,
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "Metadata": [
+      {
+        "ratingKey": "77",
+        "key": "/library/metadata/77",
+        "guid": "plex://movie/000000000000000000000077",
+        "type": "movie",
+        "title": "Title 77",
+        "year": 2019,
+        "contentRating": "12",
+        "summary": "A made up film.",
+        "duration": 7260000,
+        "addedAt": 1600000077,
+        "updatedAt": 1700000000,
+        "thumb": "/library/metadata/77/thumb/1700000000",
+        "Media": [
+          {
+            "id": 77,
+            "duration": 7260000,
+            "bitrate": 8000,
+            "width": 1920,
+            "height": 800,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "h264",
+            "container": "mkv",
+            "Part": [
+              {
+                "id": 77,
+                "key": "/library/parts/77/1700000000/file.mkv",
+                "duration": 7260000,
+                "file": "/data/movies/Title 77 (2019)/Title 77 (2019).mkv",
+                "size": 2048,
+                "container": "mkv",
+                "Stream": [
+                  {"id": 701, "streamType": 1, "codec": "h264", "index": 0},
+                  {"id": 702, "streamType": 2, "codec": "eac3", "index": 1, "languageCode": "fra", "selected": true},
+                  {"id": 703, "streamType": 2, "codec": "aac", "index": 2, "languageCode": "eng"},
+                  {"id": 704, "streamType": 3, "codec": "srt", "index": 3, "languageCode": "fra"}
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

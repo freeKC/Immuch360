@@ -1,5 +1,5 @@
 // What stands where the phones put NativeVideoPlayerView (design 2.2): the texture of a pooled media_kit player,
-// drawn by the vendored media_kit_video, without media_kit's own controls (the pages keep VideoControls and
+// drawn by media_kit_video of media_kit_360, without media_kit's own controls (the pages keep VideoControls and
 // NetworkVideoControls). It hands the pages a MediaKitVideoPlayerController through the same onViewReady the native
 // view calls, after its first frame as a platform view does, and disposes it with itself, as the native view does.
 //

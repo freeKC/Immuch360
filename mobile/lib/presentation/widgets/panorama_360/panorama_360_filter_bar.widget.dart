@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/panorama_360.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -134,17 +135,16 @@ class _ChipRow extends StatelessWidget {
   }
 }
 
-String _locale(BuildContext context) => context.locale.toLanguageTag();
-
+// The date locale of intl, en_US when intl has no date formats for the app language (Kabyle, Maori, Cantonese...)
 String _monthLabel(BuildContext context, int year, int month) =>
-    DateFormat.yMMMM(_locale(context)).format(DateTime(year, month));
+    DateFormat.yMMMM(resolvedDateTimeLocale()).format(DateTime(year, month));
 
 String _periodLabel(BuildContext context, Panorama360Period period) => switch (period) {
   Panorama360Year(:final year) => '$year',
   Panorama360Month(:final year, :final month) => _monthLabel(context, year, month),
   Panorama360Range(:final first, :final last) => context.t.search_filter_date_interval(
-    start: DateFormat.yMMMd(_locale(context)).format(first),
-    end: DateFormat.yMMMd(_locale(context)).format(last),
+    start: DateFormat.yMMMd(resolvedDateTimeLocale()).format(first),
+    end: DateFormat.yMMMd(resolvedDateTimeLocale()).format(last),
   ),
 };
 

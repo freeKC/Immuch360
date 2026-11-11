@@ -20,6 +20,7 @@
 // access-references is off on every player from its creation (DesktopPlayerOptions.common).
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io' show Platform;
 import 'dart:isolate';
@@ -94,6 +95,56 @@ class DesktopAudioTrack {
   String toString() => 'DesktopAudioTrack($id, $language, $channels channels)';
 }
 
+/// A subtitle track of the video, as the subtitle menu lists it: one of the file, or a side file of subtitles the app
+/// added to it ([PlaybackEngine.addExternalSubtitle])
+@immutable
+class DesktopSubtitleTrack {
+  const DesktopSubtitleTrack({
+    required this.id,
+    this.title,
+    this.language,
+    this.codec,
+    this.isDefault,
+    this.isForced,
+    this.external,
+  });
+
+  /// mpv's track id ("1", "2", ...)
+  final String id;
+  final String? title;
+
+  /// The language the file declares, an ISO 639 code ("eng", "fre"), null when none
+  final String? language;
+  final String? codec;
+  final bool? isDefault;
+
+  /// Whether the file marks it as forced (the lines of the parts in another language), null when mpv does not say
+  final bool? isForced;
+
+  /// The address of the side file it was read from (a media bridge URL, which holds the bridge's token: never logged),
+  /// null for a track of the file
+  final String? external;
+
+  bool get isExternal => external != null;
+
+  @override
+  bool operator ==(Object other) =>
+      other is DesktopSubtitleTrack &&
+      other.id == id &&
+      other.title == title &&
+      other.language == language &&
+      other.codec == codec &&
+      other.isDefault == isDefault &&
+      other.isForced == isForced &&
+      other.external == external;
+
+  @override
+  int get hashCode => Object.hash(id, title, language, codec, isDefault, isForced, external);
+
+  @override
+  String toString() => 'DesktopSubtitleTrack($id, $language${isExternal ? ', external' : ''})';
+}
+
 /// The size of the decoded frames, rotation applied
 typedef VideoFrameSize = ({int width, int height});
 
@@ -161,6 +212,13 @@ abstract class PlaybackEngine {
   /// The id of the audio track that plays, null for none or not known yet
   ValueListenable<String?> get audioTrack;
 
+  /// The subtitle tracks of the open file, the side files added to it ([addExternalSubtitle]) among them; none until
+  /// it is open
+  ValueListenable<List<DesktopSubtitleTrack>> get subtitleTracks;
+
+  /// The id of the subtitle track shown, null for none
+  ValueListenable<String?> get subtitleTrack;
+
   Stream<PlayerEvent> get events;
 
   /// Opens [resource], a path of this computer or a media bridge URL (for [PlayerKind.live], the RTSP address of a
@@ -182,6 +240,14 @@ abstract class PlaybackEngine {
   Future<void> setVolume(double volume);
   Future<void> setLoop(bool loop);
   Future<void> setAudioTrack(String id);
+
+  /// Shows the subtitle track [id] of [subtitleTracks], or none for null
+  Future<void> setSubtitleTrack(String? id);
+
+  /// Adds the side file of subtitles at [uri] (a media bridge URL, SubRip) to the open file, named [title] in
+  /// [language], and shows it: it is then one of [subtitleTracks], with [uri] as its [DesktopSubtitleTrack.external],
+  /// until the next open. mpv opens no such file by itself (sub-auto, see DesktopPlayerOptions.common).
+  Future<void> addExternalSubtitle(String uri, {String? title, String? language});
 
   /// The frame on screen as a JPEG scaled into [box], null when no frame is there yet
   Future<Uint8List?> grabFrame(FrameBox box);
@@ -262,8 +328,9 @@ abstract final class DesktopPlayerOptions {
     'network-timeout': kind == PlayerKind.live ? '$liveTimeoutSeconds' : '30',
     // A URL of the bridge is never handed to youtube-dl, whose hook would start a process for any http URL
     'ytdl': 'no',
-    // No other file is opened next to the video (external subtitles or audio): the decoders stay bounded, and a
-    // share is not listed for them
+    // No other file is opened next to the video by mpv itself (external subtitles or audio): the decoders stay
+    // bounded, and a share is not listed for them. The side files of subtitles of a film of a media server are added
+    // by the app, one at a time, when the user picks one (PlaybackEngine.addExternalSubtitle).
     'sub-auto': 'no',
     'audio-file-auto': 'no',
     // The downscale stays media_kit's bilinear one (dscale, correct-downscaling), although a 5.7K or 8K video is then
@@ -404,7 +471,7 @@ class DesktopPlayer implements PlaybackEngine {
 
   /// Makes a player of [kind]: the libmpv instance, and for [PlayerKind.playback] and [PlayerKind.live] its texture
   static Future<DesktopPlayer> create(PlayerKind kind) async {
-    // Read by the vendored media_kit_video when it sizes each texture (its IMMUCH360-NOTE.md, patch 3)
+    // Read by media_kit_video of media_kit_360 when it sizes each texture (its IMMUCH360-NOTE.md, patch 3)
     VideoController.maxOutputHeight ??= DesktopPlayerOptions.maxRenderHeight;
     final player = Player(
       configuration: PlayerConfiguration(
@@ -464,6 +531,19 @@ class DesktopPlayer implements PlaybackEngine {
   final _hwdec = ValueNotifier<String?>(null);
   final _audioTracks = ValueNotifier<List<DesktopAudioTrack>>(const []);
   final _audioTrack = ValueNotifier<String?>(null);
+  final _subtitleTracks = ValueNotifier<List<DesktopSubtitleTrack>>(const []);
+  final _subtitleTrack = ValueNotifier<String?>(null);
+
+  /// The subtitle tracks of the file as media_kit lists them last, and what it leaves out of them, read from mpv's
+  /// track-list: the forced flag and the side file of each (see [_readSubtitleFlags])
+  List<SubtitleTrack> _fileSubtitles = const [];
+  Map<String, ({bool forced, String? file})> _subtitleFlags = const {};
+
+  /// The side files added since the open, by the id mpv gave their track
+  final _externalSubtitles = <String, String>{};
+
+  /// Bumped by each listing of the tracks and each open, so that a read of mpv's track-list that ends late is dropped
+  int _subtitleListing = 0;
   final _events = StreamController<PlayerEvent>.broadcast();
   final _subscriptions = <StreamSubscription<Object?>>[];
   final _removers = <void Function()>[];
@@ -505,6 +585,10 @@ class DesktopPlayer implements PlaybackEngine {
   @override
   ValueListenable<String?> get audioTrack => _audioTrack;
   @override
+  ValueListenable<List<DesktopSubtitleTrack>> get subtitleTracks => _subtitleTracks;
+  @override
+  ValueListenable<String?> get subtitleTrack => _subtitleTrack;
+  @override
   Stream<PlayerEvent> get events => _events.stream;
 
   Future<void> _setUp() async {
@@ -538,6 +622,14 @@ class DesktopPlayer implements PlaybackEngine {
                 isDefault: track.isDefault,
               ),
         ];
+        _fileSubtitles = [
+          for (final track in tracks.subtitle)
+            if (!_isPseudoTrack(track.id)) track,
+        ];
+        _publishSubtitles();
+        if (_fileSubtitles.isNotEmpty) {
+          unawaited(_readSubtitleFlags());
+        }
       }),
       stream.track.listen((track) => _audioTrack.value = _isPseudoTrack(track.audio.id) ? null : track.audio.id),
       stream.log.listen((log) {
@@ -551,8 +643,8 @@ class DesktopPlayer implements PlaybackEngine {
         }
       }),
     ]);
-    // The vendored media_kit_video gives the texture id 0 when its graphics device was lost (its IMMUCH360-NOTE.md,
-    // patch 4); a texture id is never 0 otherwise on Windows
+    // media_kit_video of media_kit_360 gives the texture id 0 when its graphics device was lost (its
+    // IMMUCH360-NOTE.md, patch 4); a texture id is never 0 otherwise on Windows
     final controller = videoController;
     if (controller != null && CurrentPlatform.isWindows) {
       void onTexture() => _textureLost.value = controller.id.value == 0;
@@ -579,6 +671,14 @@ class DesktopPlayer implements PlaybackEngine {
         _hwdec.value = value.trim().isEmpty ? null : value.trim();
       });
     }
+    if (kind == PlayerKind.playback) {
+      // The subtitle track mpv shows, whoever chose it: mpv on its own at the open, the menu, a side file added.
+      // media_kit's own track state keeps what was asked last, the address for a side file.
+      await _native.observeProperty('sid', (value) async {
+        final id = value.trim();
+        _subtitleTrack.value = id.isEmpty || _isPseudoTrack(id) ? null : id;
+      });
+    }
     await _native.observeEvent(mpv.mpv_event_id.MPV_EVENT_PLAYBACK_RESTART, (_) async {
       _emit(const PlayerEvent(PlayerEventKind.restarted));
     });
@@ -594,6 +694,43 @@ class DesktopPlayer implements PlaybackEngine {
   }
 
   static bool _isPseudoTrack(String id) => id == 'auto' || id == 'no';
+
+  /// Tells the subtitle tracks of the file as they are known now, when they changed
+  void _publishSubtitles() {
+    final tracks = [
+      for (final track in _fileSubtitles)
+        DesktopSubtitleTrack(
+          id: track.id,
+          title: track.title,
+          language: track.language,
+          codec: track.codec,
+          isDefault: track.isDefault,
+          isForced: _subtitleFlags[track.id]?.forced,
+          external: _externalSubtitles[track.id] ?? _subtitleFlags[track.id]?.file,
+        ),
+    ];
+    if (!listEquals(tracks, _subtitleTracks.value)) {
+      _subtitleTracks.value = tracks;
+    }
+  }
+
+  /// Reads the forced flag and the side file of each subtitle track from mpv's track-list, which media_kit's tracks
+  /// do not carry; a libmpv that does not give it leaves the tracks as media_kit lists them
+  Future<void> _readSubtitleFlags() async {
+    final listing = ++_subtitleListing;
+    final String trackList;
+    try {
+      trackList = await _native.getProperty('track-list');
+    } catch (error) {
+      _log.fine('No track list from mpv: ${redactPlayerText('$error')}');
+      return;
+    }
+    if (_disposed || listing != _subtitleListing) {
+      return;
+    }
+    _subtitleFlags = subtitleTrackFlags(trackList);
+    _publishSubtitles();
+  }
 
   /// mpv's words for an error code ("loading failed", "unrecognized file format"): no path, no URL
   static String _errorText(int code) {
@@ -632,6 +769,7 @@ class DesktopPlayer implements PlaybackEngine {
     _hasVideo.value = null;
     _audioTracks.value = const [];
     _audioTrack.value = null;
+    _clearSubtitles();
     final options = DesktopPlayerOptions.forOpen(kind, streamed: streamed);
     for (final MapEntry(:key, :value) in options.entries) {
       await _set(key, value);
@@ -671,6 +809,18 @@ class DesktopPlayer implements PlaybackEngine {
     _hasVideo.value = null;
     _audioTracks.value = const [];
     _audioTrack.value = null;
+    _clearSubtitles();
+  }
+
+  /// The subtitles of the file that closes go with it, the side files added to it too (mpv drops them at the next
+  /// loadfile)
+  void _clearSubtitles() {
+    _subtitleListing++;
+    _fileSubtitles = const [];
+    _subtitleFlags = const {};
+    _externalSubtitles.clear();
+    _subtitleTracks.value = const [];
+    _subtitleTrack.value = null;
   }
 
   @override
@@ -721,6 +871,42 @@ class DesktopPlayer implements PlaybackEngine {
   }
 
   @override
+  Future<void> setSubtitleTrack(String? id) async {
+    if (id == null) {
+      await _player.setSubtitleTrack(SubtitleTrack.no());
+      return;
+    }
+    final track = _player.state.tracks.subtitle.where((track) => track.id == id).firstOrNull;
+    if (track != null) {
+      await _player.setSubtitleTrack(track);
+    } else {
+      // A side file added a moment ago, which media_kit does not list yet: mpv has it
+      await _set('sid', id);
+    }
+  }
+
+  @override
+  Future<void> addExternalSubtitle(String uri, {String? title, String? language}) async {
+    // mpv's sub-add with its select flag: the file is read, becomes a track and is shown
+    await _player.setSubtitleTrack(SubtitleTrack.uri(uri, title: title, language: language));
+    // The track it became is the one shown now, whatever order mpv's track-list arrives in
+    final String id;
+    try {
+      id = (await _native.getProperty('sid')).trim();
+    } catch (error) {
+      _log.fine('No subtitle track from mpv: ${redactPlayerText('$error')}');
+      return;
+    }
+    if (id.isEmpty || _isPseudoTrack(id)) {
+      _log.warning('The side file of subtitles could not be read');
+      return;
+    }
+    _externalSubtitles[id] = uri;
+    _subtitleTrack.value = id;
+    _publishSubtitles();
+  }
+
+  @override
   Future<Uint8List?> grabFrame(FrameBox box) async {
     if (_disposed) {
       return null;
@@ -757,6 +943,31 @@ class DesktopPlayer implements PlaybackEngine {
       _log.fine('Could not silence a player: $error');
     }
   }
+}
+
+/// What media_kit leaves out of the subtitle tracks, by mpv's track id: the forced flag and, for a side file added to
+/// the video, its address; from [trackList], mpv's track-list as text (JSON). Nothing for a text that does not read.
+@visibleForTesting
+Map<String, ({bool forced, String? file})> subtitleTrackFlags(String trackList) {
+  final Object? tracks;
+  try {
+    tracks = jsonDecode(trackList);
+  } on FormatException {
+    return const {};
+  }
+  if (tracks is! List) {
+    return const {};
+  }
+  return {
+    for (final track in tracks)
+      if (track is Map && track['type'] == 'sub' && track['id'] is int)
+        '${track['id']}': (
+          forced: track['forced'] == true,
+          file: track['external'] == true && track['external-filename'] is String
+              ? track['external-filename'] as String
+              : null,
+        ),
+  };
 }
 
 /// What mpv's loadfile is given for [resource]: a URL as it is (a bridge URL, a camera's RTSP address); a path of

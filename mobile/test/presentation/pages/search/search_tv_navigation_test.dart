@@ -12,6 +12,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/search_result.model.dart';
 import 'package:immich_mobile/domain/services/search.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/infrastructure/repositories/remote_asset.repository.dart';
 import 'package:immich_mobile/models/search/search_filter.model.dart';
 import 'package:immich_mobile/models/server_info/server_features.model.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
@@ -36,6 +37,12 @@ class _NoResults extends Fake implements SearchService {
     asked.add(filter);
     return null;
   }
+}
+
+/// No asset of the results is deleted or archived meanwhile (PaginatedSearchNotifier watches them since v3.4.0)
+class _NoDeletedAssets extends Fake implements RemoteAssetRepository {
+  @override
+  Stream<Set<String>> watchDeletedAssetIds(Iterable<String> ids, AssetVisibility visibility) => const Stream.empty();
 }
 
 class _MockTvApi extends Mock implements TvApi {}
@@ -87,7 +94,9 @@ void main() {
             tvModeProvider.overrideWithValue(tvMode),
             tvApiProvider.overrideWithValue(tvApi),
             serverInfoProvider.overrideWith((ref) => _ServerInfo(context.service.serverInfo, features)),
-            paginatedSearchProvider.overrideWith((ref) => PaginatedSearchNotifier(_NoResults(asked))),
+            paginatedSearchProvider.overrideWith(
+              (ref) => PaginatedSearchNotifier(_NoResults(asked), _NoDeletedAssets()),
+            ),
           ],
           child: Builder(
             builder: (context) => MaterialApp(

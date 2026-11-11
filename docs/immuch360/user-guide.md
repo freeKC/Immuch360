@@ -12,6 +12,7 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"I have no server, and I do not want an account."** See [Without a server or an account](#without-a-server-or-an-account).
 - **"I want to watch the videos of my NAS, on the phone or in the headset, without copying them."** See [Network shares](#network-shares-a-nas-a-computer-or-a-media-server).
 - **"Plex plays my 360° videos flat, and I want my Plex library in the headset, on the TV and away from home."** See [Plex Media Server, without plex.tv](#plex-media-server-without-plextv).
+- **"I want a film of my Plex server on the phone or in the headset for the plane."** See [Download a film to this device](#download-a-film-to-this-device).
 - **"My photos are on my phone, and I have no computer or NAS to put them on for the headset."** See [Share this phone on the network](#share-this-phone-on-the-network).
 - **"I want to see my Tapo camera and last night's clips without the Tapo app, and keep a clip in Immich."** See [Tapo cameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"My drone videos are not on the Immich map, and I want the files of my DJI drone on my server without a computer."** See [DJI drones](#dji-drones-photos-and-videos-over-usb-experimental).
@@ -107,7 +108,7 @@ On LG TVs the webOS app has the same keys and the same rule, see [LG webOS TVs](
 4. A 360° video has the 360° button in the top bar, which opens the [360° player](#play-a-360-video); on a phone or a tablet the Spatial button follows it while that setting is on, see [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 5. Swipe up for the details of the video: the codec, the size, the frame rate, the bit rate, the picture, and whether this device decodes it, see [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters).
 
-The player plays the file stored on the device when there is one, the file of a network share through the app's local bridge, and otherwise the server's original or its transcoded stream, as Settings, Asset Viewer, Videos, "Video source" says (see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)). The choice of the audio track is in the 360°, Spatial and computer players, not in the flat player of phones yet.
+The player plays the file stored on the device when there is one, the file of a network share through the app's local bridge, and otherwise the server's original or its transcoded stream, as Settings, Asset Viewer, Videos, "Video source" says (see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)). The audio track and subtitle menus are in the flat player of Android phones, tablets, TVs and the Quest window (from build 29), for the tracks inside the file; the 360°, Spatial and computer players have the audio track choice. iPhones and iPads have no track menu yet.. From build 45 a film of a Plex server also offers the subtitle files Plex knows beside it, under the names Plex gives its tracks, see [Films of a Plex library](#films-of-a-plex-library-from-build-45).
 
 ### On a TV, in a headset and on a computer
 
@@ -277,7 +278,7 @@ From build 20 a Plex server found again at another address of the network moves 
 - **Finding servers**: the network scan and the DLNA, Plex and Tapo searches look at the local /24 network only, and need the local network permission on iOS. On iPhone and iPad the DLNA search sends the unicast requests only, until Apple grants the app the multicast entitlement, and some servers do not answer them (minidlna on Linux): add those by their description address.
 - **DLNA**: a server that only offers a converted copy of a file gives that copy; a folder lists 20,000 entries at most; the raw files of 360° cameras and the splat files usually do not show, see [DLNA media servers](#dlna-media-servers).
 - **Thumbnails**: photo thumbnails decode the whole file, and photos over 30 MB get none.
-- **Players**: the audio track choice is not in the flat player yet. On a phone there is no swiping from one file of a folder to the next yet (the Quest immersive view has previous and next for the 360° files of the folder). The 3D or 180° choice made on a network file is not remembered.
+- **Players**: the flat player of iPhones and iPads has no audio or subtitle menu yet. On a phone there is no swiping from one file of a folder to the next yet (the Quest immersive view has previous and next for the 360° files of the folder). The 3D or 180° choice made on a network file is not remembered.
 - **Uploads**: they run only while the app is open, and a file the server already has is sent in full before the server reports it as a duplicate.
 
 ## Plex Media Server, without plex.tv
@@ -305,6 +306,70 @@ From build 20 Immuch360 pairs with your Plex Media Server directly, without plex
 4. Open a photo or video as on any share: 360°, 3D, 360°/180°, Spatial 2.5D on a phone, the immersive view in the Quest, the remote on a TV. A video is read as the original file, with byte ranges through the app's local bridge, so seeking works and its 360° and 3D metadata reach the players intact.
 5. Select files and tap "Upload to Immich" to send them to your server, as from any share (see [Send files of a share to Immich](#send-files-of-a-share-to-immich)).
 
+### Every film of a Plex library, by year (from build 45)
+
+You want every film of your library in one place, newest first, with its title under its poster, and to find one by typing a few letters, rather than walking the folders of the disk. From build 45 a Plex film library opens on its films page.
+
+1. Open your Plex server in Network shares, then its film library, or tap **Films** in the Library tab (it shows once the app has a Plex server, and asks which library when there are several).
+2. Every film is in one list, under a header per year with its number of films, newest year first; the films without a year come last, under "Year unknown". The posters load as you scroll, 100 films at a time, with the title and the year under each.
+3. Drag the scrubber on the right edge, which shows once the list moves, to jump to a year.
+4. Type in "Search a title": the films whose title holds the text show 300 ms after you stop typing, with what the server's own search adds for a misspelt title. The × button or Back clears the search.
+5. The filter button of the bar opens the filters of the library (Year, Audience, Not watched, see [Films of a Plex library](#films-of-a-plex-library-from-build-45)): the list keeps the films that match, still newest year first, and the button shows that filters are on.
+6. Tap a poster to open the film's page (see [Films of a Plex library](#films-of-a-plex-library-from-build-45)), where Play starts it. A long press opens its menu: Play, which starts the film at once, "Download to this device" (not on a TV), "Play on…" (phones and tablets) and Upload to Immich.
+7. The menu of the page has "Show the folders", the folder view as before, where the title of each film now shows under its picture. Libraries of other videos, where 360° clips usually are, keep the folder view.
+
+On each screen:
+- **Phones and tablets**: pinch to change the number of posters a row.
+- **Android TV**: seven posters a row, the first one focused, no scrubber; OK on the search field opens the TV keyboard.
+- **Meta Quest window**: the tablet layout, with the system keyboard.
+- **Computers**: Ctrl (Command on a Mac) and the mouse wheel change the number of posters a row; Ctrl F, Command F or / go to the search field, Escape clears it; the whole title shows when the pointer rests on it.
+
+Limits of build 45: the page was checked against a simulated server built from Plex's documentation, not yet against a real Plex Media Server, and whether the server's search ignores accents depends on the server.
+
+### Films of a Plex library (from build 45)
+
+You want to know what a film is before it starts, to pick its language and its subtitles, and to find a film for tonight without walking the folders of the disk. From build 45, a film of a Plex film library opens its own page, its tracks carry the names Plex gives them, and the library has filters. Libraries of other videos (where your 360° clips usually are) keep opening the player directly.
+
+1. **The film page**: tap a poster on the films page of a film library, or a film in its folder view. The page shows what your server holds of it at once: the poster and the background, the title and the original title, a line such as "2001 · 2 h 02 · 12 and over · Comedy, Romance", the ratings as text, the tagline and the synopsis (More shows all of it), the director, the writers and the cast, then the file: its resolution, its size, its audio and subtitle languages. The menu (⋮) has "Show the folders", which opens the folder of the film in the folder view (on a TV, a button after Play), and Upload to Immich.
+2. **Play or resume**: Play starts the film. When you stopped it before, here or in a Plex app, the button reads "Resume at 1:12:03", with "Play from the start" next to it.
+3. **From Wikipedia**: under the rest, the opening of the film's Wikipedia article in the language of the app, or the nearest one that has it (marked with its language when it is another), with "Read on Wikipedia" and its licence line. The article is found by the film's IMDb or TMDB number that Plex gives, never by its title, so it is never another film. It loads after the rest and never delays Play. Turn it off in the ⋮ of the page, or in Settings, Advanced, "Film details from Wikipedia": no request then goes to Wikimedia, and the articles kept on the device are deleted.
+4. **Audio and subtitles**: in the player, the Audio and Subtitles menus show the names Plex gives the tracks ("Français (AC3 5.1)", "English (SRT External)"), and the Subtitles menu also lists the subtitle files Plex knows beside the film (a `.srt` next to it on the disk, or one Plex downloaded), which no player sees inside the file. The film starts with the tracks you picked last in Plex. The track you pick is saved on the film in your server, so the Plex apps start with it too.
+5. **Filters**: the filter button of the films page opens Year (each decade, ticked whole or opened onto its years), Audience and Not watched; within one kind the choices add up, between kinds they narrow the list, and the films page keeps the films that match. In the folder view of a film library ("Show the folders"), the same button also offers Order (year, newest or oldest first, title, recently added); "Show the films" lists the films that match, with their count and Clear above them; Back or Clear brings the folders back.
+6. **Download and Play on**: the row after Play has "Download to this device" (not on a TV, see [Download a film to this device](#download-a-film-to-this-device)) and, on a phone or a tablet, "Play on…" (see [Play a film on your TV from your phone](#play-a-film-on-your-tv-from-your-phone)).
+7. **Audience**: the ages come from the ratings Plex stores, in the rating system of the library's country: "All audiences", "10 and over", "12 and over", "16 and over", "18 and over" and "Not rated", several at a time. A rating the app does not know is offered as Plex writes it. It is a filter, not a parental lock.
+
+On each screen:
+- **Phones and tablets**: the page in one column on a phone, two columns on a tablet in landscape; the filters in a sheet.
+- **Android TV**: the focus starts on Play, the synopsis and the Wikipedia text scroll with the remote, "Read on Wikipedia" shows the address to open on a phone, the filters open in a dialog, and Back returns to the film you opened. The Wikipedia switch is in Settings, Advanced.
+- **Meta Quest window**: the page in two columns; the film plays in the flat player of the window with its menus. A film that opens in the immersive viewer (360° or 3D by its name) has no track menu there.
+- **Computers**: the page in two columns, Enter or Space on Play; the Subtitles menu sits next to Audio in the player.
+- **iPhone and iPad**: the page and the filters, but no track menu yet, and MKV films do not play there.
+
+Limits of build 45:
+- The film page, the filters and the subtitle files were checked against a simulated server built from Plex's documentation, not yet against a real Plex Media Server.
+- The pictures of the cast are on Plex's own servers, which the app never contacts: the page shows their initials.
+- Subtitles drawn as pictures (PGS, VobSub) beside a film are not offered: only Plex's transcoder can burn them in, which the app does not use.
+- A count next to a year or a rating shows only when the server tells it.
+
+### Download a film to this device
+
+You want a film of your Plex server on the phone, the tablet or the headset for a trip, without a connection. From build 45 a video of a Plex server can be copied to the device, whole and as it is on the server.
+
+1. Tap "Download to this device" on the page of the film, or long press its poster on the films page, or open the video, then its menu (⋮): "Download to this device". In the folder view, select one or more videos and tap the download button next to "Upload to Immich".
+2. A sheet tells the size of the original file, the free room on the device and where the copy goes. A film that does not fit, with 512 MB kept free, cannot start. On mobile data, with "Download only on Wi-Fi" on, "Download over mobile data this time" lets it start at once; otherwise it waits for the Wi-Fi. Tap Download.
+3. The copy runs in the background, one film at a time. On Android a notification shows the film, the percentage and the time left, with Pause and Cancel, and the copy goes on with the screen off. A lost link does not lose it: the copy goes on where it stopped, with the rest of the file only.
+4. The tile of the film shows a ring while it is copied and a check once it is on the device. The menu of its page then offers "Delete the copy on this device".
+5. Network shares, "Downloaded films", lists the copies with the room they take. Tap one to play it from the device, with or without the server, in the usual player: the place where you stopped is the same as for the film read from the server. Each copy can be deleted, or all of them, and the copies under way pause, resume or cancel there. "Download only on Wi-Fi" is at the top, on by default. The same list opens from Settings, "Free up space", when you look for room on a phone.
+
+Where the copies go:
+
+- **Android phones, tablets and the Meta Quest**: the app's own storage, never the gallery, so the backup to Immich does not send the film. Uninstalling the app deletes them.
+- **iPhone and iPad**: the app's storage too, out of the iCloud backup. Keep the app open while a film downloads: iOS pauses it in the background, and the copy goes on when the app comes back. iOS may remove the copies when the device runs out of room; the list then drops them.
+- **Computers**: the download folder of the app (Downloads/Immuch360 by default, see the settings), under the name of the file on the server.
+- **TVs**: no download; a TV reads the server.
+
+The original file only: a smaller copy made by Plex is a later option. A shared Plex account whose owner turned off "Allow Downloads" gets "This Plex account may not download films."; the app asks the file the way Plex asks a download, so the owner's choice holds.
+
 ### Away from home
 
 Each time it opens the server, the app tries the address at home first and, 400 ms later, the address outside home. The first one that answers with your server is used; when it is the address outside home, the folder page shows a globe icon labelled "Connected through the address outside home".
@@ -318,6 +383,20 @@ The address the server tells is learned again at each connection at home. When i
 - **The original files**: the app reads the files themselves, never a copy converted by Plex, so the 360°, 3D and VR180 metadata stay intact and the app's viewers use them, where the Plex apps show these files flat.
 - **No plex.tv**: the app talks to your server only, always over HTTPS. The server is checked through its own plex.direct certificate, tied to the id of the server, before the token is sent. The token stays on the device, in its secure storage, and goes only to your server, in a request header.
 - **Compared with adding the same server as DLNA**: the folders as on the disk, the thumbnails of Plex, access from outside home and a secure connection.
+
+### Play a film on your TV from your phone
+
+From build 45 and desktop build 25, a Plex film chosen on the phone plays on the TV, in the Quest window or on a computer, in Immuch360 there, and the remote of the TV stays in charge. The phone sends which film and where it is, never your token: the TV plays it with its own access to the same server.
+
+1. **Link the phone and the TV once.** When you sign the TV in with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), leave "Also let this phone play films on it" on. A TV used without Immich: on the TV, Settings, "Play from a phone", "Link a phone", then on the phone Settings, "Connect a TV or computer" and scan the code. Both show the same six digits; tap Link.
+2. **Keep Immuch360 open on the TV.** Android does not let a message from the network bring a closed app to the front.
+3. **On the phone, open the film** in your Plex server: "Play on…" on its page (or in the menu of a long press on its poster), or the cast icon of the video page. The sheet lists "This phone" and your screens: "Ready", "Open Immuch360 on it" (or "Put on the headset and open Immuch360"), or "Does not have (server) yet". Tap a ready screen.
+4. **The TV plays it** full screen in its usual player, at the phone's position, with its audio and subtitle languages, and says "From (your phone)". A film already playing on the TV is replaced. The Quest asks first ("(phone) wants to play (film)", Play or Not now), since someone may be wearing it; a TV or a computer asks too when "Ask before a phone plays" is on.
+5. **The phone becomes a remote**: play or pause, minus 10 s, plus 30 s, the position, Audio and Subtitles (the tracks the TV lists), "Stop on the screen", and "Continue on this phone", which stops the TV and goes on from there on the phone. What you do with the TV's remote shows on the phone a moment later. Leave the film's page and a small bar stays at the bottom of every page, with play or pause and Stop: tap the title to open the film's page again, which leaves the phone's player paused.
+
+**A TV that does not have your Plex server yet** says so on its row, with "Add (server) to (screen)". Tap it: the phone and the TV show the same six digits, the TV asks "Add (server) from (phone)?", and the phone warns that the TV gets the same full access to your Plex server as the phone. Once you accepted on both, the TV checks the server (its certificate, its identity, its libraries) and keeps it, and the film starts. This also spares typing the token with the remote. Removing the server on the TV forgets it there; the token stays valid on the server.
+
+**Limits**: the phone and the screen on the same home network; Immuch360 open on the screen; phones and tablets send, a TV, the Quest window and a computer receive (on Windows not on a network marked as public); Plex films only in this build. Checked with both sides in tests on a computer; the device test with a phone and a TV is the one of build 45.
 
 ### Limits
 
@@ -1032,7 +1111,7 @@ The share of the app is read on Windows from the counter the Task Manager shows 
 - **One window**: opening the app a second time brings the first window back instead of starting a second copy.
 - **Nothing is deleted from your folders**: "Delete from device" is hidden, and Delete removes only the server copy, until the app can send files to the Windows recycle bin.
 - **Mouse and keyboard** in place of touch and the gyroscope; from desktop build 24, Ctrl+click, Shift+click and Ctrl+A select as in a file manager.
-- **One video player for every source**: libmpv plays the videos of the server, the folders, the shares and Plex alike, and its flat player already has the audio track menu that the flat player of phones does not have yet.
+- **One video player for every source**: libmpv plays the videos of the server, the folders, the shares and Plex alike, and its flat player has the audio track menu, as the flat player of Android phones, tablets and TVs has since build 29, and from desktop build 25 a Subtitles menu next to it, which also offers the subtitle files Plex knows beside a film.
 - **360° videos in the window** (from desktop build 3): the 360° player is a page of the app, not a separate native player, with a time bar, 10 second jumps and the sound button. Raw videos with one lens per track or per file play in two players from desktop build 5, as phones run two decoders (desktop builds 3 and 4 stacked them side by side in one player); the phones' fallback steps are the same, with the stack and the camera's LRV copy added.
 - **The Tapo live view** (from desktop build 3) plays on the computer as on Android; iPhones and iPads get it with the next iOS release.
 
@@ -1123,9 +1202,10 @@ What it does on Linux, from desktop build 6: the welcome page; without a server,
 ## Privacy
 
 - **Nothing goes to the developer**: the app talks to the Immich server you choose (and, when you open the map, to the map tile service that server uses), has no advertising, no analytics and no crash reporting service run by the developer, and sends nothing to the developer of Immuch360.
-- **Without a server**, no server is contacted: the app uses the network only for the shares, Plex servers and cameras you open, and for the phone share, if you turn it on.
+- **Without a server**, no server is contacted: the app uses the network only for the shares, Plex servers and cameras you open, for the phone share, if you turn it on, and, when you open the page of a Plex film, for Wikipedia.
 - **Network shares**: the share list is kept on the device and never sent to a server; passwords go to the device keychain or keystore.
-- **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app never contacts plex.tv.
+- **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app never contacts plex.tv. From build 45 the app writes one thing to your server: the audio track and subtitles you pick for a film. What the server holds of your films is shown on the device and never kept or sent anywhere else.
+- **Film details from Wikipedia** (from build 45): when you open the page of a Plex film, the app asks Wikidata and Wikipedia, run by the Wikimedia Foundation, for the article about that film in your language. It sends the film's IMDb or TMDB number and the title of the article, never your Plex token, your server's address or anything else of your library. The articles found are kept on the device for 30 days. Wikimedia's privacy policy applies to these requests. Turn it off in Settings, Advanced, "Film details from Wikipedia", which also deletes the kept articles.
 - **Tapo cameras** (from build 20): the TP-Link account password and the camera account password stay in the secure storage of the device; the app talks to the camera on the local network only, never to the servers of TP-Link; fetched clips stay in the cache of the app and are deleted with the camera.
 - **TV**: whether the device is a TV is read on the device; nothing is sent.
 - **Sign in with your phone** (from build 28): the big screen listens on your home network only while its sign-in page shows a code; the phone asks your server for a session of its own for that screen and sends it encrypted, never your password; the camera of the phone reads the code on the device, and its images are never stored or sent. The list "Connected by this phone" stays on the phone.

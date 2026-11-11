@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:async/async.dart';
 import 'package:auto_route/auto_route.dart';
@@ -6,6 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/video/av2_gate.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
@@ -18,6 +21,7 @@ import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -25,17 +29,23 @@ import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_tracks.dart';
 import 'package:immich_mobile/presentation/actions/watch_progress.action.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_buffering.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_controls.widget.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on.sheet.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/remote_play_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
@@ -45,10 +55,14 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
 import 'package:logging/logging.dart';
@@ -103,7 +117,7 @@ String unrecognizedVideoReport({
 /// and right seek while it plays and go to the previous or next file while it is paused.
 @RoutePage()
 class NetworkVideoPage extends ConsumerStatefulWidget {
-  const NetworkVideoPage({super.key, required this.sourceId, required this.path, this.folder});
+  const NetworkVideoPage({super.key, required this.sourceId, required this.path, this.folder, this.startAt});
 
   final String sourceId;
 
@@ -112,6 +126,10 @@ class NetworkVideoPage extends ConsumerStatefulWidget {
 
   /// The photos and videos of the folder the video was opened from, null when it was opened on its own
   final NetworkFolderMedia? folder;
+
+  /// Where the first load starts, in place of where the film was left: the position a phone sent with "Play on the
+  /// TV" (screen_player.provider.dart)
+  final Duration? startAt;
 
   @override
   ConsumerState<NetworkVideoPage> createState() => NetworkVideoPageState();
@@ -136,6 +154,11 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// The kind of share, for the logs; null until the share is open
   NetworkSourceType? _shareType;
 
+  /// The copy of the film on this device plays instead of the share (see [_offlineVideo]): the id it is served under
+  /// by the media bridge, and that bridge
+  String? _offlineId;
+  MediaBridge? _offlineBridge;
+
   NativeVideoPlayerController? _controller;
   bool _isVideoReady = false;
   bool _shouldPlayOnForeground = true;
@@ -150,8 +173,18 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// Resumes a film and saves where it is, for the video loaded (see VideoWatchRecorder)
   VideoWatchRecorder? _recorder;
 
+  /// The tracks of a film of a Plex server: its subtitle files, the names Plex gives its tracks, and the pick written
+  /// back (see PlexFilmTracks); null for any other video
+  PlexFilmTracks? _plexTracks;
+
+  /// Whether the tracks Plex has for the account were picked in the player, once per load
+  bool _plexChoiceApplied = false;
+
   /// The film resumed where it was left, said for a few seconds (see ResumeNotice)
   ResumeNoticeEvent? _resumeNotice;
+
+  /// [NetworkVideoPage.startAt] was used: a Retry resumes as usual
+  bool _startAtUsed = false;
 
   /// The page itself, which takes the keys of a remote while no button has the focus
   final _rootFocus = FocusNode(debugLabel: 'Network video');
@@ -208,8 +241,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // Where the film is, as the page goes: Back, or the previous or next file in its place
     _recorder?.dispose();
     _recorder = null;
+    _plexTracks?.dispose();
+    _plexTracks = null;
     _removeListeners();
     _appBarFocus.removeListener(_onAppBarFocus);
+    final offlineId = _offlineId;
+    if (offlineId != null) {
+      _offlineBridge?.unregisterGenerated(offlineId);
+    }
     _rootFocus.dispose();
     _appBarFocus.dispose();
     _actionsFocus.dispose();
@@ -449,15 +488,75 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final connections = ref.read(networkConnectionsProvider);
     final service = ref.read(networkMediaServiceProvider);
     final client = ref.read(networkBridgeClientProvider);
+    // A film downloaded to this device plays from there, with or without the server (request 5 of the Plex films
+    // study): its watch progress is the one of the film on the share, by the same entry
+    final offline = await _offlineVideo(service, client);
+    if (offline != null) {
+      return offline;
+    }
     final fileSystem = await connections.fileSystem(widget.sourceId);
     _shareType = fileSystem.source.type;
+    final bridge = ref.read(mediaBridgeProvider);
     final entry = await fileSystem.stat(widget.path);
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
+    // A film of a Plex server: its subtitle files and the names of its tracks, before the player is given the film
+    final tracks = await _plexTracksOf(fileSystem, bridge);
+    _plexTracks?.dispose();
+    _plexTracks = tracks;
+    _plexChoiceApplied = false;
+    if (!mounted) {
+      tracks?.dispose();
+      _plexTracks = null;
+    }
     _shareReader = networkFileReader(fileSystem, widget.path);
     _shareFileSystem = fileSystem;
     // What the file declares is read once the player has what it needs to play, not beside its first reads: on a slow
     // share the two read the index of the file at once (3.6 MB for a two hour film), and the film started later. A
     // page whose native player is not there a second later reads it at once
+    _detectLater = () => _detect(service, entry, httpRangeReader(client, url));
+    _detectTimer?.cancel();
+    _detectTimer = Timer(detectWithoutPlayer, () {
+      _detectTimer = null;
+      _detectWhenIdle(now: _controller == null);
+    });
+    return (entry: entry, url: url);
+  }
+
+  /// The whole copy of the film on this device, served by the media bridge under a random id like the generated media,
+  /// with the entry the share listed when it was copied; null when there is none
+  Future<_Video?> _offlineVideo(NetworkMediaService service, http.Client client) async {
+    // A Plex film, or a film of a server removed since, whose copy stays on the device
+    final source = ref.read(networkSourceProvider(widget.sourceId));
+    if (source != null && !filmDownloadSourceType(source.type)) {
+      return null;
+    }
+    final downloads = ref.read(filmDownloadsProvider.notifier);
+    final bridge = ref.read(mediaBridgeProvider);
+    final File? copy;
+    try {
+      copy = await downloads.completedCopy(widget.sourceId, widget.path);
+    } catch (error) {
+      _log.fine('The copies on this device could not be read: ${error.runtimeType}');
+      return null;
+    }
+    if (copy == null || !mounted) {
+      return null;
+    }
+    final film = ref.read(filmDownloadsProvider).of(widget.sourceId, widget.path);
+    if (film == null) {
+      return null;
+    }
+    await bridge.start();
+    final id = _offlineId ??= 'film-${Random.secure().nextInt(1 << 32).toRadixString(16)}';
+    final dot = film.fileName.lastIndexOf('.');
+    final name = 'film${dot > 0 ? film.fileName.substring(dot).toLowerCase() : ''}';
+    final entry = film.entry;
+    bridge.registerGenerated(id, _DownloadedFilm(copy, name, entry.guessedMimeType));
+    _offlineBridge = bridge;
+    final url = bridge.urlFor(id, '/$name');
+    _shareReader = null;
+    _shareFileSystem = null;
+    _log.info('Playing the copy of the film on this device');
     _detectLater = () => _detect(service, entry, httpRangeReader(client, url));
     _detectTimer?.cancel();
     _detectTimer = Timer(detectWithoutPlayer, () {
@@ -533,13 +632,78 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
-  static Future<VideoSource?> _sourceOf(Future<_Video> video) async {
+  Future<VideoSource?> _sourceOf(Future<_Video> video) async {
     try {
       final url = (await video).url;
-      return await VideoSource.init(path: url.toString(), type: VideoSourceType.network);
+      return await VideoSource.init(
+        path: url.toString(),
+        type: VideoSourceType.network,
+        // The subtitle files beside a Plex film, served by the bridge
+        subtitles: _plexTracks?.subtitles ?? const [],
+      );
     } catch (_) {
       // The page shows why
       return null;
+    }
+  }
+
+  /// The tracks of the Plex film at the page's path (see PlexFilmTracks); null for any other video, and when Plex
+  /// does not tell them within [plexTracksWait]: the film then plays with the tracks of its file only
+  Future<PlexFilmTracks?> _plexTracksOf(NetworkFileSystem fileSystem, MediaBridge bridge) async {
+    if (fileSystem is! PlexFileSystem) {
+      return null;
+    }
+    final item = fileSystem.itemAt(widget.path);
+    if (item == null) {
+      return null;
+    }
+    try {
+      final details = await fileSystem.filmDetails(item.ratingKey).timeout(plexTracksWait);
+      final part = details.partOf(item.partId);
+      if (part == null || part.streams.isEmpty) {
+        return null;
+      }
+      return await PlexFilmTracks.load(PlexFileSystemTracks(fileSystem), part, bridge).timeout(plexTracksWait);
+    } catch (error) {
+      _log.info('The tracks of the Plex film are not known: ${error.runtimeType}');
+      return null;
+    }
+  }
+
+  /// Longest wait for what Plex tells of the tracks of a film before it plays
+  static const plexTracksWait = Duration(seconds: 4);
+
+  /// Picks the audio track and the subtitles Plex has for the account (chosen in a Plex app, or in this one before),
+  /// once per load, when the player lists them: the film starts as it does in Plex
+  Future<void> _applyPlexChoice() async {
+    final tracks = _plexTracks;
+    if (tracks == null || _plexChoiceApplied) {
+      return;
+    }
+    final listed = await _notifier.tracks();
+    if (!mounted || listed.isEmpty || _plexChoiceApplied || !identical(tracks, _plexTracks)) {
+      return;
+    }
+    _plexChoiceApplied = true;
+    final audio = listed.where((track) => track.type == NativeVideoTrackType.audio).toList();
+    final text = listed.where((track) => track.type == NativeVideoTrackType.text).toList();
+    final audioRefs = videoTrackRefs(audio);
+    final selectedAudio = tracks.selectedAudio;
+    if (selectedAudio != null) {
+      final index = audioRefs.indexWhere((ref) => tracks.streamOf(ref)?.id == selectedAudio.id);
+      if (index >= 0 && !audio[index].selected) {
+        await _notifier.selectTrack(audio[index]);
+      }
+    }
+    final subtitle = tracks.selectedSubtitle;
+    if (subtitle != null && !text.any((track) => track.selected)) {
+      final textRefs = videoTrackRefs(text);
+      final index = textRefs.indexWhere(
+        (ref) => subtitle.isSidecar ? ref.sidecarId == subtitle.sidecarId : ref.ordinal == subtitle.ordinal,
+      );
+      if (index >= 0 && (subtitle.isSidecar || tracks.streamOf(textRefs[index]) != null)) {
+        await _notifier.selectTrack(text[index]);
+      }
     }
   }
 
@@ -647,6 +811,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // Read before the first await: the page may be gone by then
     final loop = ref.read(loopVideoProvider);
     final notifier = _notifier;
+    // The position a phone sent wins over where the film was left: the recorder finds a restore waiting
+    final startAt = widget.startAt;
+    if (startAt != null && !_startAtUsed) {
+      _startAtUsed = true;
+      notifier.seekWhenReady(startAt);
+    }
     // A film resumes where it was left, once ready, and plays once whatever Looping says
     final recorder = await _startRecorder(notifier, entry);
     if (recorder == null) {
@@ -709,6 +879,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (lifecycleState == AppLifecycleState.paused || lifecycleState == AppLifecycleState.hidden) {
       return;
     }
+    // Opened again while the film plays on a screen from this phone: the mini controller is in charge, the phone's
+    // player waits for Continue on this phone
+    final remote = ref.read(remotePlaybackProvider);
+    if (remote != null && remote.playsOnScreen(widget.sourceId, widget.path)) {
+      return;
+    }
     if (ref.read(appConfigProvider).viewer.autoPlayVideo) {
       await _notifier.play();
     }
@@ -735,6 +911,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   void _onTracksChanged() {
     if (mounted) {
       _notifier.onNativeTracksChanged();
+      unawaited(_applyPlexChoice());
     }
   }
 
@@ -1016,6 +1193,47 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
+  /// The film as "Play on..." sends it: the Plex server, the rating key, where the phone's player is and its tracks;
+  /// null for a file of another share, or one the connection does not know the key of
+  PlayOnRequest? _playOnRequest() {
+    final fileSystem = _shareFileSystem;
+    final playback = ref.read(videoPlayerProvider(_playerKey));
+    final tracks = _notifier.lastTracks;
+    final audio = tracks.where((track) => track.type == NativeVideoTrackType.audio && track.selected).firstOrNull;
+    final text = tracks.where((track) => track.type == NativeVideoTrackType.text && track.selected).firstOrNull;
+    final hasText = tracks.any((track) => track.type == NativeVideoTrackType.text);
+    return PlayOnRequest.of(
+      source: ref.read(networkSourceProvider(widget.sourceId)),
+      fileSystem: fileSystem is PlexFileSystem ? fileSystem : null,
+      path: widget.path,
+      title: _name,
+      offsetMs: playback.status == VideoPlaybackStatus.completed ? 0 : playback.position.inMilliseconds,
+      audio: audio?.language == null ? null : PlayTrackChoice(language: audio!.language),
+      subtitle: text?.language != null
+          ? PlayTrackChoice(language: text!.language)
+          : (hasText ? const PlayTrackChoice(off: true) : null),
+    );
+  }
+
+  /// "Play on...": the sheet of the linked screens; the phone's player pauses once the film plays on one
+  Future<void> _playOn() async {
+    final request = _playOnRequest();
+    if (request == null) {
+      return;
+    }
+    final playing = await showPlayOnSheet(context, request);
+    if (playing && mounted) {
+      await _notifier.pause();
+    }
+  }
+
+  /// "Continue on this phone": the screen stopped at [position], the phone's player goes on from there
+  void _continueHere(Duration position) {
+    final notifier = _notifier;
+    notifier.seekTo(position);
+    unawaited(notifier.play());
+  }
+
   Future<void> _openSpatial(_Video video) async {
     final playback = ref.read(videoPlayerProvider(_playerKey));
     final wasPlaying =
@@ -1051,6 +1269,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // The flat 3D videos told by their file name on a Meta Quest, experimental and on by default (Settings, Advanced)
     final flat3dByName = isHorizonOs == true && ref.watch(appConfigProvider.select((c) => c.viewer.flat3dByName));
     final canUpload = !tvMode && ref.watch(hasServerProvider);
+    final canPlayOn = !tvMode && isHorizonOs == false && !CurrentPlatform.isDesktop;
+    // The film plays on a screen from this page: the mini controller in place of the controls
+    final remote = ref.watch(
+      remotePlaybackProvider.select(
+        (playback) => playback != null && playback.isOf(widget.sourceId, widget.path) ? playback : null,
+      ),
+    );
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
     // The page covers the screen, under the app bar too: from the menu, Left would land on it rather than on the Back
     // button. Out of the directional moves while the app bar has the focus (set here, not while the focus changes);
@@ -1074,6 +1299,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         // compares by value: the save of the film every 5 s while it plays rebuilds nothing here
         final watchKey = video == null ? null : WatchKey.ofEntry(video.entry);
         final watchRule = ref.watch(watchRuleProvider);
+        // Download to this device, a Plex film on a screen that copies films (see filmDownloadMenuItems)
+        final canDownload = video != null && canDownloadFilm(ref, widget.sourceId, video.entry);
         final watchActions = watchKey == null
             ? (restart: false, unwatch: false)
             : ref.watch(watchProgressProvider.select((rows) => watchActionsFor(rows.find(watchKey), watchRule)));
@@ -1085,7 +1312,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
           centerTitle: false,
           // On a TV, Back on the app bar only hides it: the Back button leaves the page itself
           leading: tvMode ? remoteBackButton(context) : null,
-          title: Text(_name, maxLines: 1, overflow: TextOverflow.ellipsis),
+          // The title of a Plex film rather than its file name, which a screen reader says too
+          title: Text(
+            video?.entry.shownName ?? _name,
+            key: const Key('network_video_title'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           actions: [
             Focus(
               focusNode: _actionsFocus,
@@ -1111,8 +1344,32 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                       tooltip: context.t.spatial_2_5d,
                       onPressed: () => unawaited(_openSpatial(video)),
                     ),
+                  // Played from the copy on this device
+                  if (_offlineId != null)
+                    Tooltip(
+                      key: const Key('network_video_offline'),
+                      message: context.t.film_download_offline,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Icon(Icons.offline_pin_rounded),
+                      ),
+                    ),
+                  // Play on a linked screen: a Plex film, from a phone or a tablet (a TV, the Quest and the computers
+                  // are the screens)
+                  if (video != null && canPlayOn && _shareType == NetworkSourceType.plex)
+                    IconButton(
+                      key: const Key('network_video_play_on'),
+                      icon: const Icon(Icons.cast_rounded),
+                      tooltip: context.t.play_on_title,
+                      onPressed: () => unawaited(_playOn()),
+                    ),
                   if (video != null &&
-                      (menu360 || menuSpatial || canUpload || watchActions.restart || watchActions.unwatch))
+                      (menu360 ||
+                          menuSpatial ||
+                          canUpload ||
+                          canDownload ||
+                          watchActions.restart ||
+                          watchActions.unwatch))
                     PopupMenuButton<void>(
                       tooltip: context.t.more,
                       itemBuilder: (context) => [
@@ -1154,6 +1411,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                               contentPadding: EdgeInsets.zero,
                             ),
                           ),
+                        // The page's own context: the sheet and the dialog open once the menu is gone
+                        if (canDownload) ...filmDownloadMenuItems(this.context, ref, video.entry),
                         if (canUpload)
                           PopupMenuItem<void>(
                             // One upload from the shares at a time
@@ -1194,10 +1453,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
               ),
             ),
           ),
+          bottomNavigationBar: remote == null ? null : RemotePlayBar(playback: remote, onContinueHere: _continueHere),
           body: video != null
               // Immuch360 Desktop: an AV2 file plays once its decoder is there, its setting on and its speed told
               // (lib/desktop/video/av2_gate.dart); a phone says it plays on the computers
-              ? Av2ShareGate(file: networkMediaKey(video.entry), child: _buildPlayer())
+              ? Av2ShareGate(
+                  file: networkMediaKey(video.entry),
+                  child: _buildPlayer(remote: remote != null),
+                )
               : snapshot.connectionState != ConnectionState.done
               ? const NetworkLoadingView(color: Colors.white70)
               : Focus(
@@ -1224,7 +1487,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     );
   }
 
-  Widget _buildPlayer() {
+  /// [remote]: the film plays on a screen, whose mini controller replaces the controls
+  Widget _buildPlayer({bool remote = false}) {
     // https://github.com/flutter/flutter/issues/97499: iOS platform views are only disposed in frames containing
     // platform views. The player leaves the tree as soon as the route transitions away, as in the asset viewer.
     final isRouteActive = ModalRoute.of(context)?.isActive ?? true;
@@ -1276,18 +1540,35 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
             right: 0,
             child: Center(child: ResumeNotice(notice: _resumeNotice)),
           ),
-          if (_showControls && error == null)
+          if (_showControls && error == null && !remote)
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
               child: SafeArea(
                 top: false,
-                child: NetworkVideoControls(playerKey: _playerKey, playFocusNode: _playFocus),
+                child: NetworkVideoControls(
+                  playerKey: _playerKey,
+                  playFocusNode: _playFocus,
+                  // The names Plex gives the tracks of a film, and the pick written back to it
+                  trackNaming: _plexTracks,
+                ),
               ),
             ),
         ],
       ),
     );
   }
+}
+
+/// The copy of a film on this device, as the media bridge serves it: one file under one name
+class _DownloadedFilm extends GeneratedMedia {
+  _DownloadedFilm(this._file, this._name, this._contentType);
+
+  final File _file;
+  final String _name;
+  final String _contentType;
+
+  @override
+  GeneratedFile? file(String name) => name == _name ? GeneratedFile.disk(_file, _contentType) : null;
 }

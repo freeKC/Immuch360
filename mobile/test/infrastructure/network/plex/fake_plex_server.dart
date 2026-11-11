@@ -1,7 +1,11 @@
 // A small Plex Media Server on 127.0.0.1 for the tests of the Plex client: /identity, the sections, the folder view
-// with its paging headers, the albums of a photo section, the parts with or without Range support, the photo
-// transcoder, the account and the preferences. Every answer but /identity wants the test token in its header, as a
-// real server does, and answers 401 in HTML otherwise. The values are the synthetic ones of test/fixtures/plex.
+// with its paging headers, the albums of a photo section, one item by its rating key (/library/metadata/{id}), the
+// parts with or without Range support (and download=1 refused when asked), the photo transcoder, the account and the
+// preferences; the films of a film library (/all?type=1 with its title filter, the metadata of a film, the hub search)
+// and, for the film page (lot A2), the full item of a film (/library/metadata/{ratingKey}), the filters of a library
+// and their values (as listings), the subtitle files beside a film (/library/streams/{id}.srt) and the track picks
+// (PUT /library/parts/{id}). Every answer but /identity wants the test token in its header, as a real server does,
+// and answers 401 in HTML otherwise. The values are the synthetic ones of test/fixtures/plex.
 
 import 'dart:convert';
 import 'dart:io';
@@ -55,6 +59,40 @@ Map<String, Object?> plexFile(
   ],
 };
 
+/// A film of a film library as /library/sections/{section}/all?type=1 lists it, with one file (part [id] + 1000)
+Map<String, Object?> plexFilmElement(int id, String title, int? year, {String section = '1'}) => {
+  'ratingKey': '$id',
+  'key': '/library/metadata/$id',
+  'type': 'movie',
+  'title': title,
+  'titleSort': title,
+  'year': ?year,
+  'librarySectionID': int.parse(section),
+  'thumb': '/library/metadata/$id/thumb/1700000000',
+  'addedAt': 1600000000 + id,
+  'duration': 6000000,
+  'summary': 'A made up synopsis.',
+  'Media': [
+    {
+      'id': id,
+      'duration': 6000000,
+      'width': 1920,
+      'height': 800,
+      'container': 'mkv',
+      'Part': [
+        {
+          'id': 1000 + id,
+          'key': '/library/parts/${1000 + id}/1700000000/file.mkv',
+          'file': '/data/movies/$title/$title.mkv',
+          'size': 1000 + id,
+          'container': 'mkv',
+          'duration': 6000000,
+        },
+      ],
+    },
+  ],
+};
+
 /// The bytes of part [id], [size] long: each byte tells its offset, so that a read shows where it came from
 Uint8List plexPartBytes(int id, int size) => Uint8List.fromList([for (var i = 0; i < size; i++) (i * 7 + id) % 256]);
 
@@ -79,6 +117,9 @@ class FakePlexServer {
   /// Answers 403 to everything but /identity, like a server to a user without the right to read
   bool forbidden = false;
   bool supportRanges = true;
+
+  /// Answers 403 to the parts asked with download=1, like a server to a shared user without "Allow Downloads"
+  bool downloadForbidden = false;
 
   /// Waits this long before answering /identity
   Duration identityDelay = Duration.zero;
@@ -109,6 +150,21 @@ class FakePlexServer {
   /// Leaves totalSize out of the listings
   bool withTotals = true;
 
+  /// The films of the film libraries by section key, in the order of their sort: what /library/sections/{key}/all
+  /// with type=1 lists (paged, narrowed by title= as "contains" without case, trimmed by excludeElements), what
+  /// /library/metadata/{ratingKey} gives when [metadata] has no answer for it
+  final Map<String, List<Map<String, Object?>>> films = {};
+
+  /// The answer of /hubs/search; null for a server without it, which answers 404
+  Object? hubs;
+
+  /// The answers of /library/metadata/{ratingKey}, by ratingKey; then [items], then the films of [films]; 404 for any
+  /// other
+  final Map<String, Object?> metadata = {};
+
+  /// The subtitle files of /library/streams/{id}.srt, by stream id; 404 for any other
+  final Map<int, Uint8List> subtitles = {};
+
   /// Statuses forced for some paths (without the query) or paths with their query
   final Map<String, int> statuses = {'/library/sections/2/folder': 404};
 
@@ -116,7 +172,13 @@ class FakePlexServer {
   final Map<String, String> redirects = {};
 
   /// The sizes of the parts, by part id
-  final Map<int, int> partSizes = {11: 1000, 12: 600, 21: 5000, 22: 3000, 31: 10, 51: 300, 52: 400};
+  final Map<int, int> partSizes = {11: 1000, 12: 600, 21: 5000, 22: 3000, 31: 10, 51: 300, 52: 400, 77: 2048};
+
+  /// The items asked by their rating key, the answer of /library/metadata/{id} (a film with its streams); any other
+  /// key answers 404, as Plex does
+  final Map<String, Object?> items = {
+    '77': jsonDecode(File('test/fixtures/plex/metadata_item.json').readAsStringSync()),
+  };
 
   /// The pictures of the photo transcoder, by thumb path
   final Map<String, Uint8List> thumbnails = {
@@ -175,6 +237,29 @@ class FakePlexServer {
         response.write('<html><body>$status</body></html>');
         return await response.close();
       }
+      final item = RegExp(r'^/library/metadata/(\d+)$').firstMatch(uri.path);
+      if (item != null && !listings.containsKey(full)) {
+        final body = metadata[item.group(1)] ?? items[item.group(1)] ?? _filmMetadata(item.group(1)!);
+        if (body == null) {
+          response.statusCode = 404;
+          return await response.close();
+        }
+        return await _json(response, body);
+      }
+      final subtitle = RegExp(r'^/library/streams/(\d+)\.srt$').firstMatch(uri.path);
+      if (subtitle != null) {
+        final bytes = subtitles[int.parse(subtitle.group(1)!)];
+        if (bytes == null) {
+          response.statusCode = 404;
+          return await response.close();
+        }
+        response.headers.contentType = ContentType('application', 'x-subrip');
+        response.add(bytes);
+        return await response.close();
+      }
+      if (request.method == 'PUT' && RegExp(r'^/library/parts/\d+$').hasMatch(uri.path)) {
+        return await response.close();
+      }
       switch (uri.path) {
         case '/library/sections':
           return await _json(response, jsonDecode(File('test/fixtures/plex/sections.json').readAsStringSync()));
@@ -198,6 +283,31 @@ class FakePlexServer {
       if (part != null) {
         return await _part(request, int.parse(part.group(1)!));
       }
+      final section = RegExp(r'^/library/sections/([^/]+)/all$').firstMatch(uri.path);
+      final sectionFilms = section == null ? null : films[section.group(1)];
+      if (sectionFilms != null && uri.queryParameters['type'] == '1') {
+        final title = uri.queryParameters['title']?.toLowerCase();
+        final light = uri.queryParameters.containsKey('excludeElements');
+        final matching = [
+          for (final film in sectionFilms)
+            if (title == null || '${film['title']}'.toLowerCase().contains(title))
+              light
+                  ? {
+                      for (final e in film.entries)
+                        if (e.value is! List && e.key != 'summary') e.key: e.value,
+                    }
+                  : film,
+        ];
+        return await _page(response, headers, matching);
+      }
+      if (uri.path == '/hubs/search') {
+        final answer = hubs;
+        if (answer == null) {
+          response.statusCode = 404;
+          return await response.close();
+        }
+        return await _json(response, answer);
+      }
       final listing = listings[full];
       if (listing == null) {
         // A key the server does not know: an empty listing, as Plex answers a parent id it no longer has
@@ -205,20 +315,39 @@ class FakePlexServer {
           'MediaContainer': {'size': 0, 'offset': 0, if (withTotals) 'totalSize': 0},
         });
       }
-      final start = int.tryParse(headers['x-plex-container-start'] ?? '') ?? 0;
-      final size = int.tryParse(headers['x-plex-container-size'] ?? '') ?? listing.length;
-      final page = listing.skip(start).take(size).toList();
-      return await _json(response, {
-        'MediaContainer': {
-          'size': page.length,
-          'offset': start,
-          if (withTotals) 'totalSize': listing.length,
-          'Metadata': page,
-        },
-      });
+      return await _page(response, headers, listing);
     } catch (_) {
       // The client went away
     }
+  }
+
+  /// What /library/metadata/{ratingKey} gives for a film of [films], null when none has [ratingKey]
+  Object? _filmMetadata(String ratingKey) {
+    final found = [
+      for (final list in films.values)
+        for (final film in list)
+          if (film['ratingKey'] == ratingKey) film,
+    ];
+    return found.isEmpty
+        ? null
+        : {
+            'MediaContainer': {'size': found.length, 'Metadata': found},
+          };
+  }
+
+  /// The page of [listing] the X-Plex-Container-* headers ask for
+  Future<void> _page(HttpResponse response, Map<String, String> headers, List<Map<String, Object?>> listing) {
+    final start = int.tryParse(headers['x-plex-container-start'] ?? '') ?? 0;
+    final size = int.tryParse(headers['x-plex-container-size'] ?? '') ?? listing.length;
+    final page = listing.skip(start).take(size).toList();
+    return _json(response, {
+      'MediaContainer': {
+        'size': page.length,
+        'offset': start,
+        if (withTotals) 'totalSize': listing.length,
+        'Metadata': page,
+      },
+    });
   }
 
   Future<void> _json(HttpResponse response, Object? body) async {
@@ -232,6 +361,10 @@ class FakePlexServer {
     final size = partSizes[id];
     if (size == null) {
       response.statusCode = 404;
+      return response.close();
+    }
+    if (downloadForbidden && request.uri.queryParameters['download'] == '1') {
+      response.statusCode = 403;
       return response.close();
     }
     final bytes = plexPartBytes(id, size);

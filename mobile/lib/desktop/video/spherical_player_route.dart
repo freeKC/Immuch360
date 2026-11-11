@@ -4,7 +4,7 @@
 //
 // The page plays through the same pooled player and controller adapter as the flat player (a 360° video is one
 // player of the pool, reused rather than made again: an 8K player decoding without copy keeps about 1.3 GB of GPU
-// memory after its disposal, DP1 section 3.4), and draws through renderer C (render/plugin_renderer.dart), turned on
+// memory after its disposal, DP1 section 3.4), and draws through renderer C (media_kit_video/sphere.dart), turned on
 // before each open of the file so that the first frame is already the view. The view moves by uniforms of the
 // plugin's pass only, at most once per Flutter frame however fast the mouse moves (DP1: nothing of mpv changes while
 // the view moves, so no 30 a second cap is needed); a paused video is redrawn by the plugin alone.
@@ -39,14 +39,13 @@ import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
+import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/desktop/video/projection_params.dart';
 import 'package:immich_mobile/desktop/video/raw_partner_player.dart';
 import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
-import 'package:immich_mobile/desktop/video/render/renderer_probe.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/desktop/video/spherical_controls.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
@@ -60,6 +59,7 @@ import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart'
 import 'package:logging/logging.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:media_kit_video/sphere.dart';
 import 'package:native_video_player/native_video_player.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -884,7 +884,11 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     final videoController = engine.videoController;
     return videoController == null
         ? null
-        : PluginRenderer.forController(videoController, maxOutputHeight: DesktopPlayerOptions.maxRenderHeight);
+        : PluginRenderer.forController(
+            videoController,
+            maxOutputHeight: DesktopPlayerOptions.maxRenderHeight,
+            adapter: DesktopGpuDecoders.pluginAdapter,
+          );
   }
 
   /// Before the player leaves this page: renderer C off, mpv's choice of video track back. The second player of a pair

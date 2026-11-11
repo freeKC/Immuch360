@@ -59,21 +59,17 @@ per release, the other sections kept as they are) and SHA256SUMS.
       published as a prerelease that is never "Latest" (the app reads releases/latest); its tag starts with no "v", so
       no release workflow runs on it (the upstream workflows that run on a published release are disabled in the
       fork). A release that exists already is never touched.
-  publish_ai_components.py --check [--release TAG] [--test-build BRANCH]
+  publish_ai_components.py --check [--release TAG]
       offline, for the four releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
       be pending, said), in the release of its family, its file, parts and sums are those of the tables below, and
       MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart);
-      and, whatever TAG, the three archives of the AV2 decoder (av2-decoder-1, not made by this script): in their
-      release, under BSD-2-Clause, with no size, no sum and no file until that release is made, or all of them. Until
-      it is made, only the branch of the test build AVT (AV2_TEST_BUILD, lot AD6) carries their sums: the archives of
-      the CI as they are, served by a local mirror. A catalogue with them is refused unless --test-build names that
-      branch and the branch checked is it (GITHUB_REF_NAME in the CI, else the branch of the checkout): merged into
-      another branch, or taken by a branch made from it, the sums fail the gate until they are taken out again. Once
-      .github/desktop/av2/publish_av2_decoder.py --write has written the entries of av2-decoder-1 and its record
-      (.github/desktop/av2/av2-decoder-1.json, lot AD11), sums equal to that record pass on every branch, and any
-      other sums fail. The engines of ai-components-4, COLMAP and Brush, are checked as those of ai-components-3 (lot
-      SP14; before it, lot SP8 held them back, lifted on the branch of their test build only, which nothing needs any
-      more).
+      and, whatever TAG, the three archives of the AV2 decoder (a release of immuch360/av2-companion, not made by this
+      script): in that release (TAG_AV2 of AV2_REPOSITORY), under BSD-2-Clause, with no size, no sum and no file (a
+      version that does not offer the decoder), or all of them, equal to the manifest of that release, whose copy is
+      .github/desktop/ai/av2-companion-<version>.json (AV2_RECORD): the asset, its size and SHA-256, and every file
+      of the archive with its size, SHA-256 and mode; any other sums fail. The engines of ai-components-4, COLMAP
+      and Brush, are checked as those of ai-components-3 (lot SP14; before it, lot SP8 held them back, lifted on the
+      branch of their test build only, which nothing needs any more).
 
 Without --publish nothing leaves this computer; the network is used only to download the files and to read the cards
 and the artifacts. --sources FILE replaces the addresses and upstream sums of the tables below (the tests serve small
@@ -124,17 +120,17 @@ SUMS = 'SHA256SUMS'
 ASSET_LIMIT = 2 * 1024 ** 3
 PART_SIZE = 1945 * 1024 * 1024
 ALLOWED_LICENCES = ('Apache-2.0', 'MIT', 'BSD-3-Clause')
-# The AV2 decoder of the computers (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3): archives built by the jobs
-# av2-windows, av2-linux and av2-macos of the desktop workflow, in a release of their own that this script does not
-# make; their entries share the catalogue, so --check holds them to the rules of an archive
-TAG_AV2 = 'av2-decoder-1'
+# The AV2 decoder of the computers (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3): archives built, checked,
+# signed and released by github.com/immuch360/av2-companion (its own repository since build 45 of the app; the builds
+# before took the prerelease av2-decoder-1 of this repository), which this script does not make; their entries share
+# the catalogue, so --check holds them to the rules of an archive and to the manifest of their release
+TAG_AV2 = 'v1.0.1'
+AV2_REPOSITORY = 'immuch360/av2-companion'
 AV2_DECODERS = ('av2-decoder-windows-x64', 'av2-decoder-linux-x64', 'av2-decoder-macos-universal')
 AV2_LICENCES = ('BSD-2-Clause',)
-# The only branch whose catalogue may carry the sums of the AV2 decoder before av2-decoder-1 is made: the archives of the
-# CI as they are, served by the local mirror of the test build AVT (store/m2/av2-2026-11-02/plan-2026-11-02.md, lot AD6)
-AV2_TEST_BUILD = 'feat-av2'
-# The record of av2-decoder-1 that publish_av2_decoder.py --write makes: the archive of each entry, with its size and sum
-AV2_RECORD = ROOT / '.github' / 'desktop' / 'av2' / 'av2-decoder-1.json'
+# The copy of av2-companion-<version>.json, an asset of that release: the archive of each entry with its URL, size,
+# sum and files
+AV2_RECORD = ROOT / '.github' / 'desktop' / 'ai' / 'av2-companion-1.0.1.json'
 LICENCES_NAME = 'MODEL-LICENSES.md'
 ORT_RELEASES = 'https://github.com/microsoft/onnxruntime/releases/download'
 USER_AGENT = 'immuch360-ai-components'
@@ -383,6 +379,7 @@ def read_catalogue(text: str) -> dict:
         if isinstance(fields.get('notices'), str):
             fields['notices'] = notices.get(fields['notices'])
         fields.setdefault('releaseTag', TAG)
+        fields.setdefault('releaseRepository', REPO)
         fields['parts'] = [(asset, int(size), digest) for asset, size, digest in PART.findall(
             list_field(body, 'parts') or '')]
         fields['archiveFiles'] = [(path, int(size), digest, executable == 'true') for path, size, digest, executable
@@ -1490,19 +1487,6 @@ def hexadecimal(digest) -> bool:
     return isinstance(digest, str) and re.fullmatch(r'[0-9a-f]{64}', digest) is not None
 
 
-def current_branch() -> str | None:
-    """The branch checked: GITHUB_REF_NAME in the CI, else the branch of the checkout; None when neither says"""
-    name = os.environ.get('GITHUB_REF_NAME', '').strip()
-    if name:
-        return name
-    try:
-        result = subprocess.run(['git', 'branch', '--show-current'], cwd=ROOT, capture_output=True, text=True,
-                                timeout=30)
-    except (OSError, subprocess.SubprocessError):
-        return None
-    return (result.stdout.strip() or None) if result.returncode == 0 else None
-
-
 def av2_with_sums(catalogue: dict) -> list:
     """The entries of the AV2 decoder that carry a size, a sum or files"""
     return sorted(component_id for component_id in AV2_DECODERS if component_id in catalogue and (
@@ -1510,29 +1494,26 @@ def av2_with_sums(catalogue: dict) -> list:
         or bool(catalogue[component_id]['archiveFiles'])))
 
 
-def av2_sums_refusal(with_sums: list, test_build: str | None, branch: str | None) -> str | None:
-    """Why a catalogue whose AV2 decoder carries sums ([with_sums]) before av2-decoder-1 is refused on [branch] with
-    --test-build [test_build]; None when it carries none, or on the branch of the test build named so"""
-    if not with_sums or (test_build == AV2_TEST_BUILD and branch == AV2_TEST_BUILD):
-        return None
-    if test_build != AV2_TEST_BUILD:
-        given = f'--test-build {test_build}' if test_build else 'no --test-build'
-        return (f'the AV2 decoder carries sums ({", ".join(with_sums)}) with {given}: only the branch of its test build '
-                f'may, before {TAG_AV2} is made (--test-build {AV2_TEST_BUILD}); take them out before this catalogue '
-                f'goes anywhere else')
-    return (f'the AV2 decoder carries sums on {branch or "a branch that is not known"}: only {AV2_TEST_BUILD} may, '
-            f'before {TAG_AV2} is made; take them out (size, sha256 and files null) before merging')
-
-
-def av2_record_findings(catalogue: dict, record: dict) -> list:
-    """How the AV2 decoder of the catalogue differs from the record of av2-decoder-1"""
+def av2_record_findings(catalogue: dict, record: dict | None) -> list:
+    """How the AV2 decoder of the catalogue differs from the manifest of its release ([record], AV2_RECORD)"""
+    if not record or record.get('tag') != TAG_AV2 or record.get('repository') != f'https://github.com/{AV2_REPOSITORY}':
+        return [f'the AV2 decoder carries sums but {AV2_RECORD.name} is not the manifest of {AV2_REPOSITORY} {TAG_AV2}']
     found = []
-    archives = record.get('archives', {}) if record.get('tag') == TAG_AV2 else {}
+    archives = record.get('archives', {})
     for component_id in AV2_DECODERS:
-        entry, recorded = catalogue.get(component_id, {}), archives.get(component_id)
+        entry, recorded = catalogue.get(component_id, {}), archives.get(component_id) or {}
         held = {'assetName': entry.get('assetName'), 'size': entry.get('size'), 'sha256': entry.get('sha256')}
-        if recorded != held:
-            found.append(f'{component_id}: the catalogue has {held}, the record of {TAG_AV2} {recorded}')
+        expected = {key: recorded.get(key) for key in held}
+        if held != expected:
+            found.append(f'{component_id}: the catalogue has {held}, the manifest of {TAG_AV2} {expected}')
+            continue
+        url = f'https://github.com/{AV2_REPOSITORY}/releases/download/{TAG_AV2}/{entry.get("assetName")}'
+        if recorded.get('url') != url:
+            found.append(f'{component_id}: the manifest of {TAG_AV2} serves it from {recorded.get("url")}, not {url}')
+        files = sorted((file['path'], file['size'], file['sha256'], file['executable'])
+                       for file in recorded.get('archiveFiles', []))
+        if sorted(entry.get('archiveFiles', [])) != files:
+            found.append(f'{component_id}: the files of its archive are not those of the manifest of {TAG_AV2}')
     return found
 
 
@@ -1557,6 +1538,9 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
             continue
         if component.get('releaseTag') != TAG_AV2:
             found.append(f'{component_id}: in {component.get("releaseTag")}, the AV2 decoder is in {TAG_AV2}')
+        if component.get('releaseRepository') != AV2_REPOSITORY:
+            found.append(f'{component_id}: in a release of {component.get("releaseRepository")}, the AV2 decoder is in '
+                         f'those of {AV2_REPOSITORY}')
         if component.get('licence') not in AV2_LICENCES:
             found.append(f'{component_id}: licence {component.get("licence")}, the AV2 decoder is under '
                          f'{", ".join(AV2_LICENCES)}')
@@ -1579,6 +1563,9 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
             continue
         if component.get('releaseTag') != release:
             found.append(f'{component_id}: in {component.get("releaseTag")}, its family is in {release}')
+        if component.get('releaseRepository') != REPO:
+            found.append(f'{component_id}: in a release of {component.get("releaseRepository")}, its family is in '
+                         f'those of {REPO}')
         size, digest = component.get('size'), component.get('sha256')
         if component.get('licence') not in ALLOWED_LICENCES:
             found.append(f'{component_id}: licence {component.get("licence")} is not one this project allows')
@@ -1843,9 +1830,6 @@ def main(argv=None) -> int:
     parser.add_argument('--publish', action='store_true', help='create the prerelease on GitHub')
     parser.add_argument('--dry-run', action='store_true', help='what --publish would do, read only (GET requests)')
     parser.add_argument('--check', action='store_true', help='check the catalogue and MODEL-LICENSES.md, offline')
-    parser.add_argument('--test-build', help=f'the branch whose catalogue may carry the sums of the AV2 decoder before '
-                        f'{TAG_AV2} ({AV2_TEST_BUILD}), given by the gates of the desktop workflow; refused on any '
-                        'other branch')
     parser.add_argument('--token-file', type=pathlib.Path, help='a file holding the token')
     parser.add_argument('--sources', type=pathlib.Path, help=argparse.SUPPRESS)
     parser.add_argument('--catalogue', type=pathlib.Path, default=CATALOGUE, help=argparse.SUPPRESS)
@@ -1886,13 +1870,8 @@ def main(argv=None) -> int:
         found, pending = check(catalogue, licences, args.sources, releases)
         with_sums = av2_with_sums(catalogue)
         record = json.loads(args.av2_record.read_text(encoding='utf-8')) if args.av2_record.is_file() else None
-        published = bool(record) and bool(with_sums) and not av2_record_findings(catalogue, record)
-        if record and with_sums and not published and args.test_build != AV2_TEST_BUILD:
+        if with_sums:
             found[0:0] = av2_record_findings(catalogue, record)
-        refusal = None if published else av2_sums_refusal(with_sums, args.test_build,
-                                                            current_branch() if with_sums else None)
-        if refusal:
-            found.insert(0, refusal)
         for line in found:
             print(f'publish_ai_components: {line}')
         if found:
@@ -1902,11 +1881,9 @@ def main(argv=None) -> int:
         decoders = sorted(component for component in pending if component in AV2_DECODERS)
         print(f'{len(counted)} components in {", ".join(releases)}, each complete and named with its size and SHA-256 '
               f'in {LICENCES_NAME}' + (f'; pending for lot P2: {", ".join(engines)}' if engines else '')
-              + (f'; the AV2 decoder waits for {TAG_AV2}: {", ".join(decoders)}' if decoders else '')
-              + (f'; the AV2 decoder carries the archives of {TAG_AV2} as its record gives them (run '
-                 f'{record.get("run")}, commit {record.get("commit")})' if published else
-                 f'; the AV2 decoder carries the archives of the CI for the test build of {AV2_TEST_BUILD} '
-                 f'({TAG_AV2} not made): {", ".join(with_sums)}' if with_sums else ''))
+              + (f'; the AV2 decoder is not offered (no sums): {", ".join(decoders)}' if decoders else '')
+              + (f'; the AV2 decoder carries the archives of {AV2_REPOSITORY} {TAG_AV2} as its manifest gives them '
+                 f'(run {record.get("run")}, commit {record.get("commit")})' if with_sums else ''))
         return 0
     if args.out is None:
         print('--out DIR is needed (or --check)')

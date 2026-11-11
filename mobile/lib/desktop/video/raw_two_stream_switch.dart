@@ -37,10 +37,10 @@ import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:logging/logging.dart';
+import 'package:media_kit_video/sphere.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 

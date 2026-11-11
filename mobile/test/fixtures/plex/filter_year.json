@@ -1,0 +1,23 @@
+{
+  "MediaContainer": {
+    "size": 3,
+    "allowSync": false,
+    "Directory": [
+      {
+        "fastKey": "/library/sections/1/all?year=2001",
+        "key": "2001",
+        "title": "2001"
+      },
+      {
+        "fastKey": "/library/sections/1/all?year=1994",
+        "key": "1994",
+        "title": "1994"
+      },
+      {
+        "fastKey": "/library/sections/1/all?year=1999",
+        "key": "1999",
+        "title": "1999"
+      }
+    ]
+  }
+}

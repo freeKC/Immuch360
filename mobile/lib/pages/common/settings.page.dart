@@ -4,12 +4,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/data/store/passkey.dart';
 import 'package:immich_mobile/desktop/settings/computer_settings.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
+import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
@@ -23,6 +26,7 @@ import 'package:immich_mobile/widgets/settings/free_up_space_settings.dart';
 import 'package:immich_mobile/widgets/settings/language_settings.dart';
 import 'package:immich_mobile/widgets/settings/networking_settings/networking_settings.dart';
 import 'package:immich_mobile/widgets/settings/notification_setting.dart';
+import 'package:immich_mobile/widgets/settings/passkey_settings.dart';
 import 'package:immich_mobile/widgets/settings/preference_settings/preference_setting.dart';
 import 'package:immich_ui/immich_ui.dart';
 
@@ -34,6 +38,7 @@ enum SettingSection {
   languages(Icons.language),
   networking(Icons.wifi),
   notifications(Icons.notifications_none_rounded),
+  passkeys(Icons.key_outlined),
   preferences(Icons.interests_outlined),
   timeline(Icons.auto_awesome_mosaic_outlined),
   beta(Icons.sync_outlined),
@@ -49,6 +54,7 @@ enum SettingSection {
     SettingSection.languages => t.language,
     SettingSection.networking => t.networking_settings,
     SettingSection.notifications => t.notifications,
+    SettingSection.passkeys => t.passkeys(count: 2),
     SettingSection.preferences => t.preferences_settings_title,
     SettingSection.timeline => t.asset_list_settings_title,
     SettingSection.beta => t.sync_status,
@@ -63,6 +69,7 @@ enum SettingSection {
     SettingSection.languages => t.setting_languages_subtitle,
     SettingSection.networking => t.networking_subtitle,
     SettingSection.notifications => t.setting_notifications_subtitle,
+    SettingSection.passkeys => t.manage_your_passkeys,
     SettingSection.preferences => t.preferences_settings_subtitle,
     SettingSection.timeline => t.asset_list_settings_subtitle,
     SettingSection.beta => t.sync_status_subtitle,
@@ -77,6 +84,7 @@ enum SettingSection {
     SettingSection.languages => const LanguageSettings(),
     SettingSection.networking => const NetworkingSettings(),
     SettingSection.notifications => const NotificationSetting(),
+    SettingSection.passkeys => const PasskeySettings(),
     SettingSection.preferences => const PreferenceSetting(),
     SettingSection.timeline => const AssetListSettings(),
     SettingSection.beta => const SyncStatusAndActions(),
@@ -95,6 +103,16 @@ enum SettingSection {
     _ => false,
   };
 
+  static Iterable<SettingSection> visible(WidgetRef ref) {
+    // Immuch360: the passkeys are off (kPasskeysAvailable), so neither the session nor the server is asked
+    if (!kPasskeysAvailable) {
+      return values.where((section) => section != passkeys);
+    }
+    final isLoggedIn = ref.watch(authProvider).isAuthenticated;
+    final isPasskeyEnabled = ref.watch(Store.passkeys.enabled()).valueOrNull ?? false;
+    return values.where((section) => section != passkeys || (isLoggedIn && isPasskeyEnabled));
+  }
+
   const SettingSection(this.icon);
 
   /// Whether the section exists on this device: "This computer" on the computers only, where free up space and the
@@ -106,9 +124,11 @@ enum SettingSection {
   };
 }
 
-/// The sections to list, without the server ones when there is no server
-List<SettingSection> _visibleSections(bool hasServer) =>
-    SettingSection.values.where((section) => section.isOnThisDevice && (hasServer || !section.needsServer)).toList();
+/// The sections to list: those upstream shows (passkeys only when signed in with them on), without the server ones
+/// when there is no server
+List<SettingSection> _visibleSections(WidgetRef ref, bool hasServer) => SettingSection.visible(
+  ref,
+).where((section) => section.isOnThisDevice && (hasServer || !section.needsServer)).toList();
 
 @RoutePage()
 class SettingsPage extends StatelessWidget {
@@ -128,7 +148,7 @@ class _MobileLayout extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hasServer = ref.watch(hasServerProvider);
-    final List<Widget> settings = _visibleSections(hasServer)
+    final List<Widget> settings = _visibleSections(ref, hasServer)
         .expand(
           (setting) => setting == SettingSection.beta
               ? [
@@ -172,6 +192,19 @@ class _MobileLayout extends ConsumerWidget {
         ),
       );
     }
+    if (ref.watch(isBigScreenProvider)) {
+      // A big screen plays the films its linked phones send it (play on the TV), with or without a server
+      settings.insert(
+        hasServer ? 0 : 1,
+        SettingsCard(
+          key: const Key('settings_play_from_phone'),
+          icon: Icons.cast_connected_rounded,
+          title: context.t.play_from_phone_title,
+          subtitle: context.t.play_from_phone_subtitle,
+          onTap: () => context.pushRoute(const PlayFromPhoneRoute()),
+        ),
+      );
+    }
     settings.add(
       SettingsCard(
         icon: Icons.auto_awesome_outlined,
@@ -189,7 +222,7 @@ class _TabletLayout extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hasServer = ref.watch(hasServerProvider);
-    final sections = _visibleSections(hasServer);
+    final sections = _visibleSections(ref, hasServer);
     final selectedSection = useState<SettingSection>(sections.first);
     final shownSection = sections.contains(selectedSection.value) ? selectedSection.value : sections.first;
     final tvMode = ref.watch(tvModeProvider);
@@ -230,6 +263,16 @@ class _TabletLayout extends HookConsumerWidget {
                   ),
                 ),
               ),
+              // After the sections: the rows a remote walks through keep their places
+              if (ref.watch(isBigScreenProvider))
+                SliverToBoxAdapter(
+                  child: ListTile(
+                    key: const Key('settings_play_from_phone'),
+                    title: Text(context.t.play_from_phone_title),
+                    leading: const Icon(Icons.cast_connected_rounded),
+                    onTap: () => context.pushRoute(const PlayFromPhoneRoute()),
+                  ),
+                ),
               SliverToBoxAdapter(
                 child: ListTile(
                   title: Text(context.t.whats_new),

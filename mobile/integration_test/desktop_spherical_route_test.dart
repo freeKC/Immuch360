@@ -22,8 +22,8 @@ import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
+import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/desktop/video/spherical_player_route.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -32,7 +32,7 @@ import 'package:immich_mobile/domain/services/player_events_hub.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart' show SphericalVideoEvents;
 import 'package:integration_test/integration_test.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:media_kit_video/sphere.dart';
 
 class _Session implements SphericalVideoEvents {
   final closings = <String>[];
@@ -128,6 +128,7 @@ void main() {
           return renderer = PluginRenderer.forController(
             videoController,
             maxOutputHeight: DesktopPlayerOptions.maxRenderHeight,
+            adapter: DesktopGpuDecoders.pluginAdapter,
           );
         },
         appVersion: () async => 'v360-route-harness',

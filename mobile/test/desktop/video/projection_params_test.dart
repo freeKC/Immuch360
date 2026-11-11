@@ -6,10 +6,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/projection_params.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:media_kit_video/sphere.dart';
 
 // Example A of the projections design (an X3 file, both lenses side by side), as raw_video_plan_test.dart has it
 const _exampleA =

@@ -55,14 +55,25 @@ class PairingException implements Exception {
 
 /// What the screen tells of itself
 class PairingScreenDevice {
-  const PairingScreenDevice({required this.label, required this.kind, required this.os, required this.app});
+  const PairingScreenDevice({
+    required this.label,
+    required this.kind,
+    required this.os,
+    required this.app,
+    this.linkOnly = false,
+  });
 
   factory PairingScreenDevice.fromJson(Map<String, Object?> json) => PairingScreenDevice(
     label: _shortText(json['label']) ?? '',
     kind: PairingScreenKind.fromWire(json['kind']),
     os: _shortText(json['os']) ?? '',
     app: _shortText(json['app']) ?? '',
+    linkOnly: json['purpose'] == 'link',
   );
+
+  /// The screen shows "Play from a phone": the phone links itself for "Play on the TV" and signs nothing in (the
+  /// purpose of its device bytes, which its proof covers)
+  final bool linkOnly;
 
   final String label;
   final PairingScreenKind kind;

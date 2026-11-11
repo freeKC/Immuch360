@@ -186,6 +186,14 @@ class DesktopCookieJar {
     return _store.length != before;
   }
 
+  /// Forgets every cookie, of the user's server and of any other host, as the native jars do at logout
+  /// (clearCookies of HttpClientManager.kt and URLSessionManager.swift); true when there were some
+  bool clear() {
+    final changed = _store.isNotEmpty;
+    _store.clear();
+    return changed;
+  }
+
   /// The cookies [url] gets, longest paths first as RFC 6265 asks
   List<StoredCookie> loadForRequest(Uri url) {
     final now = _clock();

@@ -72,12 +72,15 @@ import 'package:immich_mobile/presentation/pages/locked_folder.page.dart';
 import 'package:immich_mobile/presentation/pages/map.page.dart';
 import 'package:immich_mobile/presentation/pages/memory.page.dart';
 import 'package:immich_mobile/presentation/pages/memory_list.page.dart';
+import 'package:immich_mobile/presentation/pages/network/downloaded_films.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_share_edit.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_video.page.dart';
 import 'package:immich_mobile/presentation/pages/network/phone_share.page.dart';
+import 'package:immich_mobile/presentation/pages/network/plex_film.page.dart';
+import 'package:immich_mobile/presentation/pages/network/plex_films_library.page.dart';
 import 'package:immich_mobile/presentation/pages/network/plex_server_edit.page.dart';
 import 'package:immich_mobile/presentation/pages/network/splat.page.dart';
 import 'package:immich_mobile/presentation/pages/pairing/connect_screen.page.dart';
@@ -88,6 +91,7 @@ import 'package:immich_mobile/presentation/pages/people_collection.page.dart';
 import 'package:immich_mobile/presentation/pages/person.page.dart';
 import 'package:immich_mobile/presentation/pages/place.page.dart';
 import 'package:immich_mobile/presentation/pages/place_detail.page.dart';
+import 'package:immich_mobile/presentation/pages/play_on_screen/play_from_phone.page.dart';
 import 'package:immich_mobile/presentation/pages/profile/profile_picture_crop.page.dart';
 import 'package:immich_mobile/presentation/pages/recently_added.page.dart';
 import 'package:immich_mobile/presentation/pages/recently_taken.page.dart';
@@ -242,8 +246,12 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: NetworkSharesRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: NetworkShareEditRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: NetworkBrowserRoute.page, guards: [_authGuard]),
+    AutoRoute(page: PlexFilmsLibraryRoute.page, guards: [_authGuard]),
     AutoRoute(page: NetworkPhotoRoute.page, guards: [_authGuard]),
     AutoRoute(page: NetworkVideoRoute.page, guards: [_authGuard]),
+    // The page of a film of a Plex server, by its ratingKey, between its poster and the player (lot A2, R8)
+    AutoRoute(page: PlexFilmRoute.page, guards: [_authGuard]),
+    AutoRoute(page: DownloadedFilmsRoute.page, guards: [_authGuard, _duplicateGuard]),
     // A Gaussian splat file of another tool, of a share or picked on a Meta Quest (lot S5)
     AutoRoute(page: SplatRoute.page, guards: [_authGuard, _duplicateGuard]),
     // A Plex Media Server is a share with a page of its own to pair it; a Tapo camera has its own pages, since it is
@@ -259,6 +267,8 @@ class AppRouter extends RootStackRouter {
     // Connect a TV or computer: a phone signs a big screen in (sign in with your phone)
     AutoRoute(page: ConnectScreenRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: EnterCodeRoute.page, guards: [_authGuard, _duplicateGuard]),
+    // Play from a phone: a big screen lets its linked phones play films on it (play on the TV)
+    AutoRoute(page: PlayFromPhoneRoute.page, guards: [_authGuard, _duplicateGuard]),
     // The DJI live video: the live screen of a phone with its remote plugged in, the watch page of a headset, and the
     // Diagnostics page reached from their Advanced
     AutoRoute(page: DjiLiveRoute.page, guards: [_authGuard, _duplicateGuard]),

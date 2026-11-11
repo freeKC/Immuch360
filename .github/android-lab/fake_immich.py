@@ -20,10 +20,19 @@ socket open, as Immich 3.3.5 (the version of media.freekc.fr):
   POST /api/assets reads the multipart upload and records its fields, its size and its SHA-1.
 - GET /lab/state gives the requests, the streams, the uploads and the web socket to the tests; GET /lab/fixture/<name>
   serves a fixture file.
+- With --image-format jxl, the server answers as one whose admin picked JPEG XL for the thumbnails and previews (a
+  choice of Immich 3.4.0): the thumbnail, preview and fullsize sizes of /thumbnail are JPEG XL files with the type
+  image/jxl, the originals are unchanged. The timeline is another one then: the three photos under other ids and names
+  (so that nothing the app kept from the first run answers for them) and a 360 photo, flagged EQUIRECTANGULAR in its
+  exif as the server flags a photo with GPano tags. The version stays 3.3.5: the app decodes what the thumbnails are,
+  whatever the version says, and a newer version would bring the notice of a newer server into the screens the tests
+  read.
 
 Every JSON answer and every sync event is checked against the schemas of open-api/immich-openapi-specs.json when the
 server starts (--check runs that check alone and exits), so a change of the API that the fake answers no longer follow
-fails here rather than as a puzzling test failure.
+fails here rather than as a puzzling test failure. A required key the fake leaves out passes only when
+mobile/lib/utils/openapi_patching.dart gives the app a default for it: a 3.3.5 server does not send the keys newer specs
+require (featureLevel, backups), and the app fills them, which the lab then runs through.
 
 The tests also print "LAB_HOST <id> <command> [argument]" lines to logcat; with --serial the server follows logcat
 through adb and runs them on the emulator: "grant" (the media and notification permissions the app would ask in a
@@ -73,9 +82,31 @@ ASSETS = [
      "mime": "image/avif", "width": 1200, "height": 800, "date": "2026-11-01T10:00:00.000Z"},
 ]
 THUMBNAILS = {"thumbnail": "lab_thumbnail.jpg", "preview": "lab_preview.jpg", "fullsize": "lab_preview.jpg"}
+
+# The photos of the JPEG XL run (--image-format jxl): the same files under other ids and names, and a 360 photo; each
+# size of /thumbnail is a JPEG XL file, the 360 photo with its own
+JXL_ASSETS = [
+    {"id": "4b1c7d0e-1f2a-4c3b-8d4e-5f6a7b8c9d14", "file": "lab_360.jpg", "name": "lab_jxl_360.jpg",
+     "mime": "image/jpeg", "width": 2400, "height": 1200, "date": "2026-11-04T10:00:00.000Z",
+     "projection": "EQUIRECTANGULAR",
+     "thumbnails": {"thumbnail": "lab_360_thumbnail.jxl", "preview": "lab_360_preview.jxl",
+                    "fullsize": "lab_360_preview.jxl"}},
+    {"id": "4b1c7d0e-1f2a-4c3b-8d4e-5f6a7b8c9d11", "file": "lab_photo.jpg", "name": "lab_jxl_jpeg.jpg",
+     "mime": "image/jpeg", "width": 1200, "height": 800, "date": "2026-11-03T10:00:00.000Z"},
+    {"id": "4b1c7d0e-1f2a-4c3b-8d4e-5f6a7b8c9d12", "file": "lab_photo.heic", "name": "lab_jxl_heic.heic",
+     "mime": "image/heic", "width": 1200, "height": 800, "date": "2026-11-02T10:00:00.000Z"},
+    {"id": "4b1c7d0e-1f2a-4c3b-8d4e-5f6a7b8c9d13", "file": "lab_photo.avif", "name": "lab_jxl_avif.avif",
+     "mime": "image/avif", "width": 1200, "height": 800, "date": "2026-11-01T10:00:00.000Z"},
+]
+JXL_THUMBNAILS = {"thumbnail": "lab_thumbnail.jxl", "preview": "lab_preview.jxl", "fullsize": "lab_preview.jxl"}
+
+# The photos and the files of /thumbnail of each --image-format, with the type of those files
+IMAGE_FORMATS = {"jpeg": (ASSETS, THUMBNAILS, "image/jpeg"), "jxl": (JXL_ASSETS, JXL_THUMBNAILS, "image/jxl")}
+
 FIXTURES = ["lab_photo.jpg", "lab_photo.heic", "lab_photo.avif", "lab_thumbnail.jpg", "lab_preview.jpg",
-            "lab_large.heic", "lab_large.avif"]
-FIXTURE_TYPES = {".jpg": "image/jpeg", ".heic": "image/heic", ".avif": "image/avif"}
+            "lab_large.heic", "lab_large.avif", "lab_360.jpg", "lab_thumbnail.jxl", "lab_preview.jxl",
+            "lab_360_thumbnail.jxl", "lab_360_preview.jxl"]
+FIXTURE_TYPES = {".jpg": "image/jpeg", ".heic": "image/heic", ".avif": "image/avif", ".jxl": "image/jxl"}
 
 # The permissions the app asks in a dialog, which a test on the emulator cannot answer
 # What Immich answers without a session; the rest of /api asks for the cookie the sign in sets, as Immich does
@@ -117,11 +148,14 @@ def json_answers():
     features = {key: False for key in (
         "configFile", "duplicateDetection", "email", "facialRecognition", "importFaces", "map", "oauth",
         "oauthAutoLaunch", "ocr", "realtimeTranscoding", "reverseGeocoding", "search", "sidecar", "smartSearch")}
+    # No backups key: a 3.3.5 server has none (required since upstream v3.4.0; openapi_patching.dart gives false)
     features.update(passwordLogin=True, trash=True)
     return {
         "wellKnown": (None, {"api": {"endpoint": "/api"}}),
         "ping": ("ServerPingResponse", {"res": "pong"}),
         "version": ("ServerVersionResponseDto",
+                    # No featureLevel: a 3.3.5 server has none (required since upstream v3.4.0; the app's patch
+                    # gives 0, below the passkeys)
                     {"major": VERSION[0], "minor": VERSION[1], "patch": VERSION[2], "prerelease": None}),
         "features": ("ServerFeaturesDto", features),
         "config": ("ServerConfigDto", {
@@ -151,8 +185,9 @@ def json_answers():
     }
 
 
-def sync_events(files):
-    """The events of a sync stream: (type, schema, data, ack). [files] gives the bytes of the originals."""
+def sync_events(files, assets=ASSETS):
+    """The events of a sync stream: (type, schema, data, ack). [files] gives the bytes of the originals, [assets] the
+    photos."""
     events = [
         ("AuthUserV2", "SyncAuthUserV2", {
             "avatarColor": "primary", "deletedAt": None, "email": EMAIL, "hasProfileImage": False, "id": USER_ID,
@@ -162,7 +197,7 @@ def sync_events(files):
             "avatarColor": "primary", "deletedAt": None, "email": EMAIL, "hasProfileImage": False, "id": USER_ID,
             "name": NAME, "profileChangedAt": CREATED}),
     ]
-    for asset in ASSETS:
+    for asset in assets:
         checksum = base64.b64encode(hashlib.sha1(files[asset["file"]]).digest()).decode()
         events.append(("AssetV2", "SyncAssetV2", {
             "checksum": checksum, "createdAt": asset["date"], "deletedAt": None, "duration": None,
@@ -170,14 +205,14 @@ def sync_events(files):
             "id": asset["id"], "isEdited": False, "isFavorite": False, "libraryId": None, "livePhotoVideoId": None,
             "localDateTime": asset["date"], "originalFileName": asset["name"], "ownerId": USER_ID, "stackId": None,
             "thumbhash": None, "type": "IMAGE", "visibility": "timeline", "width": asset["width"]}))
-    for asset in ASSETS:
+    for asset in assets:
         exif = {key: None for key in (
             "city", "country", "description", "exposureTime", "fNumber", "focalLength", "fps", "iso", "latitude",
             "lensModel", "longitude", "make", "model", "orientation", "profileDescription", "projectionType",
             "rating", "state", "timeZone")}
         exif.update(assetId=asset["id"], dateTimeOriginal=asset["date"], modifyDate=asset["date"],
                     exifImageWidth=asset["width"], exifImageHeight=asset["height"],
-                    fileSizeInByte=len(files[asset["file"]]))
+                    fileSizeInByte=len(files[asset["file"]]), projectionType=asset.get("projection"))
         events.append(("AssetExifV1", "SyncAssetExifV1", exif))
     return [(kind, schema, data, f"{kind}|lab-{index}") for index, (kind, schema, data) in enumerate(events)]
 
@@ -185,17 +220,54 @@ def sync_events(files):
 UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 
-def schema_errors(spec, value, schema, where):
-    """What in [value] does not follow [schema] of the OpenAPI document [spec]: required keys, types, enums, formats"""
+PATCHES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "mobile", "lib", "utils",
+                       "openapi_patching.dart")
+
+
+def openapi_patches(path=PATCHES):
+    """The keys openApiPatches of openapi_patching.dart fills per DTO when a server leaves them out: {dto: {key, ...}}"""
+    with open(path, encoding="utf-8") as handle:
+        text = handle.read()
+    start = text.index("openApiPatches = {") + len("openApiPatches = ")
+    patches, dto, depth, index = {}, None, 0, start
+    while index < len(text):
+        char = text[index]
+        if char == "'":
+            end = text.index("'", index + 1)
+            literal = text[index + 1:end]
+            index = end + 1
+            if text[index:].lstrip().startswith(":"):
+                if depth == 1:
+                    dto = literal
+                    patches[dto] = set()
+                elif depth == 2 and dto:
+                    # A dotted key fills one key inside its parent, not the whole parent
+                    if "." not in literal:
+                        patches[dto].add(literal)
+            continue
+        if char in "{([":
+            depth += 1
+        elif char in "})]":
+            depth -= 1
+            if depth == 0:
+                break
+        index += 1
+    return patches
+
+
+def schema_errors(spec, value, schema, where, patches=None, name=None):
+    """What in [value] does not follow [schema] of the OpenAPI document [spec]: required keys, types, enums, formats.
+    A required key missing from [value] passes when [patches] (openapi_patches) fills it for the DTO [name]."""
     schemas = spec["components"]["schemas"]
     if "$ref" in schema:
-        return schema_errors(spec, value, schemas[schema["$ref"].split("/")[-1]], where)
+        ref = schema["$ref"].split("/")[-1]
+        return schema_errors(spec, value, schemas[ref], where, patches, ref)
     if "allOf" in schema:
         if value is None and schema.get("nullable"):
             return []
         errors = []
         for part in schema["allOf"]:
-            errors += schema_errors(spec, value, part, where)
+            errors += schema_errors(spec, value, part, where, patches, name)
         return errors
     if value is None:
         return [] if schema.get("nullable") else [f"{where}: null where the schema does not allow it"]
@@ -206,17 +278,18 @@ def schema_errors(spec, value, schema, where):
     if kind == "object" or "properties" in schema:
         if not isinstance(value, dict):
             return [f"{where}: not an object"]
+        filled = (patches or {}).get(name, set())
         for key in schema.get("required", []):
-            if key not in value:
+            if key not in value and key not in filled:
                 errors.append(f"{where}: required key {key} missing")
         for key, item in value.items():
             if key in schema.get("properties", {}):
-                errors += schema_errors(spec, item, schema["properties"][key], f"{where}.{key}")
+                errors += schema_errors(spec, item, schema["properties"][key], f"{where}.{key}", patches)
     elif kind == "array":
         if not isinstance(value, list):
             return [f"{where}: not an array"]
         for index, item in enumerate(value):
-            errors += schema_errors(spec, item, schema["items"], f"{where}[{index}]")
+            errors += schema_errors(spec, item, schema["items"], f"{where}[{index}]", patches)
     elif kind == "string":
         if not isinstance(value, str):
             return [f"{where}: {value!r} is not a string"]
@@ -239,24 +312,26 @@ def schema_errors(spec, value, schema, where):
     return errors
 
 
-def check_answers(spec, files):
-    """The errors of every JSON answer and sync event against the schemas"""
+def check_answers(spec, files, patches=None, assets=ASSETS):
+    """The errors of every JSON answer and sync event against the schemas, the app's defaults ([patches]) applied,
+    for the photos [assets]"""
+    patches = openapi_patches() if patches is None else patches
     errors = []
     for name, (schema, value) in json_answers().items():
         if schema is None:
             continue
         if schema.startswith("["):
             item = {"$ref": f"#/components/schemas/{schema[1:-1]}"}
-            errors += schema_errors(spec, value, {"type": "array", "items": item}, name)
+            errors += schema_errors(spec, value, {"type": "array", "items": item}, name, patches)
         else:
-            errors += schema_errors(spec, value, {"$ref": f"#/components/schemas/{schema}"}, name)
+            errors += schema_errors(spec, value, {"$ref": f"#/components/schemas/{schema}"}, name, patches)
     entity_types = spec["components"]["schemas"]["SyncEntityType"]["enum"]
-    for kind, schema, data, _ in sync_events(files):
+    for kind, schema, data, _ in sync_events(files, assets):
         if kind not in entity_types:
             errors.append(f"sync {kind}: not a SyncEntityType of the specification")
-        errors += schema_errors(spec, data, {"$ref": f"#/components/schemas/{schema}"}, f"sync {kind}")
+        errors += schema_errors(spec, data, {"$ref": f"#/components/schemas/{schema}"}, f"sync {kind}", patches)
     upload = {"id": str(uuid.uuid4()), "status": "created"}
-    errors += schema_errors(spec, upload, {"$ref": "#/components/schemas/AssetMediaResponseDto"}, "upload")
+    errors += schema_errors(spec, upload, {"$ref": "#/components/schemas/AssetMediaResponseDto"}, "upload", patches)
     return errors
 
 
@@ -265,7 +340,7 @@ def check_answers(spec, files):
 
 
 class LabState:
-    def __init__(self, files, out):
+    def __init__(self, files, out, image_format="jpeg"):
         self.lock = threading.Lock()
         self.started = time.monotonic()
         self.files = files
@@ -279,7 +354,9 @@ class LabState:
         self.stopping = threading.Event()
         self.host = {}
         self.answers = json_answers()
-        self.events = sync_events(files)
+        self.image_format = image_format
+        self.assets, self.thumbnails, self.thumbnail_type = IMAGE_FORMATS[image_format]
+        self.events = sync_events(files, self.assets)
 
     def now(self):
         return round(time.monotonic() - self.started, 3)
@@ -297,7 +374,8 @@ class LabState:
             return {
                 "requests": list(self.requests), "streams": [dict(s) for s in self.streams],
                 "uploads": list(self.uploads), "socket": dict(self.socket), "holdNextSync": self.hold_next_sync,
-                "assets": [{k: a[k] for k in ("id", "name", "mime", "width", "height")} for a in ASSETS],
+                "imageFormat": self.image_format,
+                "assets": [{k: a[k] for k in ("id", "name", "mime", "width", "height")} for a in self.assets],
                 "user": {"id": USER_ID, "email": EMAIL, "password": PASSWORD},
             }
 
@@ -520,13 +598,16 @@ class Handler(BaseHTTPRequestHandler):
         return "release" if self.state.release.is_set() else "server"
 
     def asset_file(self, asset_id, kind):
-        asset = next((a for a in ASSETS if a["id"] == asset_id), None)
+        state = self.state
+        asset = next((a for a in state.assets if a["id"] == asset_id), None)
         if asset is None:
             return self.not_found()
         if kind == "thumbnail":
             size = (self.query.get("size") or ["thumbnail"])[0]
-            name, mime = THUMBNAILS.get(size, THUMBNAILS["thumbnail"]), "image/jpeg"
+            thumbnails = asset.get("thumbnails", state.thumbnails)
+            name, mime = thumbnails.get(size, thumbnails["thumbnail"]), state.thumbnail_type
             self.entry["size"] = size
+            self.entry["type"] = mime
         else:
             name, mime = asset["file"], asset["mime"]
         self.entry["asset"] = asset["name"]
@@ -809,23 +890,27 @@ def main():
     parser.add_argument("--adb")
     parser.add_argument("--serial")
     parser.add_argument("--package", default="com.aprogsys.immuch360.debug")
+    parser.add_argument("--image-format", choices=sorted(IMAGE_FORMATS), default="jpeg",
+                        help="the format of the thumbnails and previews: jpeg, or jxl as a server set to JPEG XL")
     parser.add_argument("--check", action="store_true", help="check the answers against the schemas and exit")
     args = parser.parse_args()
 
     with open(args.spec, encoding="utf-8") as handle:
         spec = json.load(handle)
     files = load_files(args.fixtures)
-    errors = check_answers(spec, files)
+    assets = IMAGE_FORMATS[args.image_format][0]
+    errors = check_answers(spec, files, assets=assets)
     for error in errors:
         print(f"::error::fake Immich answer: {error}")
     if errors or args.check:
         print(f"Fake Immich answers against {os.path.basename(args.spec)}: {len(errors)} errors, "
-              f"{len(json_answers())} answers and {len(sync_events(files))} sync events checked")
+              f"{len(json_answers())} answers and {len(sync_events(files, assets))} sync events checked "
+              f"({args.image_format} thumbnails)")
         return 1 if errors else 0
 
     if args.out:
         os.makedirs(args.out, exist_ok=True)
-    state = LabState(files, args.out)
+    state = LabState(files, args.out, args.image_format)
     Handler.state = state
     server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
     server.daemon_threads = True
@@ -839,7 +924,8 @@ def main():
         raise KeyboardInterrupt
 
     signal.signal(signal.SIGTERM, stop)
-    print(f"Fake Immich {'.'.join(map(str, VERSION))} on 127.0.0.1:{args.port}", flush=True)
+    print(f"Fake Immich {'.'.join(map(str, VERSION))} on 127.0.0.1:{args.port}, {args.image_format} thumbnails and "
+          f"previews, {len(state.assets)} photos", flush=True)
     try:
         server.serve_forever(poll_interval=0.25)
     except KeyboardInterrupt:

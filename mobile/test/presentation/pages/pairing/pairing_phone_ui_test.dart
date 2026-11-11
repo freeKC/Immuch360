@@ -121,6 +121,34 @@ void main() {
     });
   });
 
+  group('the Settings card of Play from a phone', () {
+    final card = find.byKey(const Key('settings_play_from_phone'));
+
+    for (final hasServer in [true, false]) {
+      testWidgets('on a big screen, ${hasServer ? 'with' : 'without'} a server', (tester) async {
+        phoneScreen(tester);
+        await pump(
+          tester,
+          const SettingsPage(),
+          overrides: [hasServerProvider.overrideWithValue(hasServer), isBigScreenProvider.overrideWithValue(true)],
+        );
+        expect(card, findsOneWidget);
+        expect(find.text('Play from a phone'), findsOneWidget);
+        expect(find.text('Let your phones play their films on this screen'), findsOneWidget);
+      });
+    }
+
+    testWidgets('not on a phone, which plays on the screens', (tester) async {
+      phoneScreen(tester);
+      await pump(
+        tester,
+        const SettingsPage(),
+        overrides: [hasServerProvider.overrideWithValue(true), isBigScreenProvider.overrideWithValue(false)],
+      );
+      expect(card, findsNothing);
+    });
+  });
+
   group('the Connect page', () {
     testWidgets('lists the screens this phone signed in, with Sign out', (tester) async {
       phoneScreen(tester);
@@ -329,6 +357,32 @@ void main() {
       await tester.pumpAndSettle();
       expect(choice?.sendHeaders, isFalse);
       expect(choice?.label, 'Living room TV');
+    });
+
+    testWidgets('also links the phone for Play on the TV, unless the user turns it off', (tester) async {
+      phoneScreen(tester);
+      PairingConfirmChoice? choice;
+      await open(tester, (value) => choice = value);
+      final link = find.byKey(const Key('pairing_confirm_link'));
+      expect(find.text('Also let this phone play films on it'), findsOneWidget);
+      expect(find.text('Then Play on, from a film of a Plex server'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(link).value, isTrue, reason: 'on by default, the lab rule');
+      await tester.ensureVisible(find.byKey(const Key('pairing_confirm_button')));
+      await tester.tap(find.byKey(const Key('pairing_confirm_button')));
+      await tester.pumpAndSettle();
+      expect(choice?.link, isTrue);
+
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(link);
+      await tester.tap(link);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(link).value, isFalse);
+      await tester.ensureVisible(find.byKey(const Key('pairing_confirm_button')));
+      await tester.tap(find.byKey(const Key('pairing_confirm_button')));
+      await tester.pumpAndSettle();
+      expect(choice?.link, isFalse);
+      expect(choice?.sendHeaders, isTrue);
     });
 
     testWidgets('warns of a screen off the phone network', (tester) async {

@@ -10,8 +10,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/data/store/passkey.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/models/auth/login_response.model.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
@@ -22,6 +24,7 @@ import 'package:immich_mobile/providers/oauth.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/utils/error_handler.dart';
 import 'package:immich_mobile/utils/provider_utils.dart';
 import 'package:immich_mobile/utils/semver.dart';
 import 'package:immich_mobile/utils/url_helper.dart';
@@ -67,6 +70,7 @@ class LoginForm extends HookConsumerWidget {
     final passwordFocusNode = useFocusNode();
     final isOauthEnable = useState<bool>(false);
     final isPasswordLoginEnable = useState<bool>(false);
+    final isPasskeyEnable = useState<bool>(false);
     final oAuthButtonLabel = useState<String>('OAuth');
     final serverInfo = ref.watch(serverInfoProvider);
     final warningMessage = useState<String?>(null);
@@ -120,11 +124,17 @@ class LoginForm extends HookConsumerWidget {
         }
 
         final serverInfo = ref.read(serverInfoProvider);
+        final passkeyEnabled = await ref.read(PasskeyStore.instance.enabled().future);
+        if (!context.mounted) {
+          return;
+        }
+
         final features = serverInfo.serverFeatures;
         final config = serverInfo.serverConfig;
 
         isOauthEnable.value = features.oauthEnabled;
         isPasswordLoginEnable.value = features.passwordLogin;
+        isPasskeyEnable.value = passkeyEnabled;
         oAuthButtonLabel.value = config.oauthButtonText.isNotEmpty ? config.oauthButtonText : 'OAuth';
 
         serverEndpoint.value = endpoint;
@@ -190,6 +200,16 @@ class LoginForm extends HookConsumerWidget {
       serverEndpointController.text = 'http://10.1.15.216:2283/api';
     }
 
+    Future<void> onLogin(LoginResponse result) async {
+      if (result.shouldChangePassword && !result.isAdmin && isPasswordLoginEnable.value) {
+        unawaited(context.pushRoute(const ChangePasswordRoute()));
+        passwordController.clear();
+        return;
+      }
+
+      await completeSignIn(context, ref);
+    }
+
     Future<void> login() async {
       TextInput.finishAutofillContext();
 
@@ -203,13 +223,7 @@ class LoginForm extends HookConsumerWidget {
           return;
         }
 
-        if (result.shouldChangePassword && !result.isAdmin) {
-          unawaited(context.pushRoute(const ChangePasswordRoute()));
-          passwordController.clear();
-        } else {
-          await completeSignIn(context, ref);
-          return;
-        }
+        await onLogin(result);
       } catch (error) {
         if (!context.mounted) {
           return;
@@ -307,7 +321,7 @@ class LoginForm extends HookConsumerWidget {
               .saveAuthInfo(accessToken: loginResponseDto.accessToken);
 
           if (isSuccess && context.mounted) {
-            await completeSignIn(context, ref, connectWebsocket: false);
+            await completeSignIn(context, ref);
             return;
           }
         } catch (error, stack) {
@@ -336,6 +350,30 @@ class LoginForm extends HookConsumerWidget {
           gravity: ToastGravity.TOP,
         );
         return;
+      }
+    }
+
+    Future<void> passkeyLogin() async {
+      invalidateAllApiRepositoryProviders(ref);
+
+      try {
+        final result = await ref.read(authProvider.notifier).passkeyLogin();
+        if (result != null && context.mounted) {
+          await onLogin(result);
+        }
+      } catch (error, stack) {
+        log.severe('Error logging in with passkey', error, stack);
+
+        if (!context.mounted) {
+          return;
+        }
+
+        ImmichToast.show(
+          context: context,
+          msg: serverErrorMessage(error) ?? context.t.errors.something_went_wrong,
+          toastType: ToastType.error,
+          gravity: ToastGravity.TOP,
+        );
       }
     }
 
@@ -494,7 +532,20 @@ class LoginForm extends HookConsumerWidget {
                           )
                         : const SizedBox.shrink(),
                   ),
-                if (!isOauthEnable.value && !isPasswordLoginEnable.value) Center(child: Text(context.t.login_disabled)),
+                if (isPasskeyEnable.value)
+                  ImmichForm(
+                    onSubmit: passkeyLogin,
+                    submitText: context.t.login_with_passkey,
+                    submitIcon: Icons.key_outlined,
+                    builder: (context, _) => isPasswordLoginEnable.value || isOauthEnable.value
+                        ? Padding(
+                            padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 12.0),
+                            child: Divider(color: context.colorScheme.onSurface, height: 5),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                if (!isOauthEnable.value && !isPasswordLoginEnable.value && !isPasskeyEnable.value)
+                  Center(child: Text(context.t.login_disabled)),
                 ImmichTextButton(
                   labelText: context.t.back,
                   icon: Icons.arrow_back,

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/camera/camera_badges.widget.dart';
 import 'package:immich_mobile/presentation/widgets/camera/camera_clip_tile.widget.dart';
@@ -81,7 +82,7 @@ class _CameraDayPageState extends ConsumerState<CameraDayPage> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.locale.toLanguageTag();
+    final locale = resolvedDateTimeLocale();
     final date = DateTime.tryParse(widget.day);
     final source = ref.watch(networkSourceProvider(widget.sourceId));
     final recordings = ref.watch(tapoRecordingsProvider(widget.sourceId)).valueOrNull;

@@ -47,9 +47,9 @@ void main() {
     ));
 
     expect(find.text('Codec'), findsOneWidget);
-    expect(find.text('HEVC Main (hvc1.1.6.L183)  •  7680 x 3840  •  29.97 fps'), findsOneWidget);
+    expect(find.text('HEVC Main (hvc1.1.6.L183)  •  7680 × 3840  •  29.97 fps'), findsOneWidget);
     expect(find.text('Decodes on this device'), findsOneWidget);
-    expect(find.text('Yes  •  Hardware  •  Up to 8192 x 4320'), findsOneWidget);
+    expect(find.text('Yes  •  Hardware  •  Up to 8192 × 4320'), findsOneWidget);
   });
 
   testWidgets('tells that the device does not decode a video, and its largest frame', (tester) async {
@@ -60,7 +60,7 @@ void main() {
       bitRate: null,
     ));
 
-    expect(find.text('No  •  Up to 4096 x 4096'), findsOneWidget);
+    expect(find.text('No  •  Up to 4096 × 4096'), findsOneWidget);
   });
 
   testWidgets('tells which profile no decoder takes', (tester) async {
@@ -78,7 +78,7 @@ void main() {
       bitRate: null,
     ));
 
-    expect(find.text('No  •  No decoder for Main 10  •  Up to 4096 x 4096'), findsOneWidget);
+    expect(find.text('No  •  No decoder for Main 10  •  Up to 4096 × 4096'), findsOneWidget);
   });
 
   testWidgets('shows the bit rate of the video tracks', (tester) async {
@@ -128,7 +128,7 @@ void main() {
     );
     await pumpDetails(tester, video, (probe: hlg, verdict: null, bitRate: null));
 
-    expect(find.text('HEVC Main 10 (hvc1.2.4.L153)  •  5760 x 2880'), findsOneWidget);
+    expect(find.text('HEVC Main 10 (hvc1.2.4.L153)  •  5760 × 2880'), findsOneWidget);
     expect(find.text('Picture'), findsOneWidget);
     expect(find.text('10 bit  •  HDR, HLG  •  BT.2020'), findsOneWidget);
     expect(find.byIcon(Icons.hdr_on_outlined), findsOneWidget);
@@ -197,7 +197,7 @@ void main() {
       videoCodecSummary(
         const SphericalProbe(codec: 'av01', codecs: 'av01.0.13M.10', codedWidth: 3840, codedHeight: 2160),
       ),
-      'AV1 Main (av01.0.13M.10)  •  3840 x 2160',
+      'AV1 Main (av01.0.13M.10)  •  3840 × 2160',
     );
     expect(
       videoCodecSummary(const SphericalProbe(codec: 'dvh1', codecs: 'dvh1.08.06', frameRate: 30)),

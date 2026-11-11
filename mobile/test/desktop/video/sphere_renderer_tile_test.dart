@@ -8,10 +8,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/constants/locales.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer_tile.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:media_kit_video/sphere.dart';
 
 void main() {
   late Directory folder;

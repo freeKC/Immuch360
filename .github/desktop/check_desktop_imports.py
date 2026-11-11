@@ -20,7 +20,8 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 FORBIDDEN = (
-    # Video and camera (phases 2 and 3)
+    # Video (github.com/immuch360/media_kit_360 by git tag, the macOS libs in mobile/packages) and camera (phases 2
+    # and 3)
     'media_kit',
     'media_kit_video',
     'media_kit_libs_windows_video',

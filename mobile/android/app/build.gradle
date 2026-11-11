@@ -43,6 +43,9 @@ android {
     versionCode flutter.versionCode
     versionName flutter.versionName
     resValue "string", "app_name", "Immuch360"
+    // Passkeys of upstream (PasskeyPlugin.kt reads this field): off in Immuch360, the server binds mobile passkeys to
+    // my.immich.app and to the signing certificates of Immich, which our package and key are not
+    buildConfigField "boolean", "PASSKEYS", "false"
     // Android TV and Google TV launcher entry; added to the map, which already holds Flutter's applicationName (a
     // plain = would drop it)
     manifestPlaceholders += [tvLauncherCategory: "android.intent.category.LEANBACK_LAUNCHER"]
@@ -164,6 +167,11 @@ dependencies {
   implementation libs.guava
   implementation libs.glide
   implementation libs.kotlinx.serialization.json
+  implementation libs.credentials
+  // The Google Play services provider of Credential Manager (passkeys, off by PASSKEYS above): in the phone flavour
+  // only, so the quest flavour gets no credentials-play-services-auth and none of the gms auth, fido and identity
+  // modules it brings
+  phoneImplementation libs.credentials.play.services.auth
 
   ksp libs.glide.ksp
   coreLibraryDesugaring libs.desugar.jdk.libs
@@ -209,6 +217,12 @@ dependencies {
   // take its jar, which carries the native library of each desktop system
   questImplementation "com.github.luben:zstd-jni:${libs.versions.zstd.jni.get()}@aar"
 
+  // The review card of Google Play, for the invitation to rate the app (review/StoreReviews.kt of src/phone): Play
+  // In-App Review 2.0.2, under the Play Core Software Development Kit Terms of Service, in the phone flavour only, which
+  // already ships Google Play services (location, through geolocator). The quest flavour has no Google Play: its
+  // invitation opens the Meta Horizon Store page instead, without this library
+  phoneImplementation libs.play.review
+
   testImplementation libs.junit
   testImplementation libs.zstd.jni
 }
@@ -216,4 +230,6 @@ dependencies {
 // This is uncommented in F-Droid build script
 //f configurations.all {
 //f     exclude group: 'com.google.android.gms'
+//f     exclude group: 'androidx.credentials', module: 'credentials-play-services-auth'
 //f }
+//f android.defaultConfig.buildConfigField "boolean", "PASSKEYS", "false"

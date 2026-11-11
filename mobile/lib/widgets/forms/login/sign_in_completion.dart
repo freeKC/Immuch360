@@ -20,8 +20,8 @@ import 'package:immich_mobile/routing/router.dart';
 
 /// The steps after a sign in, the same for the password form, OAuth and a big screen signed in by a phone: the
 /// gallery permission, on Android the media management asked for synced deletions, the sync, the websocket, the end of
-/// a session without a server, then the timeline. [connectWebsocket] is false for OAuth, as it always was.
-Future<void> completeSignIn(BuildContext context, WidgetRef ref, {bool connectWebsocket = true}) async {
+/// a session without a server, then the timeline. OAuth connects the websocket too, as upstream does since v3.4.0.
+Future<void> completeSignIn(BuildContext context, WidgetRef ref) async {
   await ref.read(galleryPermissionNotifier.notifier).requestGalleryPermission();
   if (_isSyncRemoteDeletionsMode()) {
     if (!context.mounted) {
@@ -34,9 +34,7 @@ Future<void> completeSignIn(BuildContext context, WidgetRef ref, {bool connectWe
     return;
   }
 
-  if (connectWebsocket) {
-    ref.read(websocketProvider.notifier).connect();
-  }
+  ref.read(websocketProvider.notifier).connect();
   unawaited(ref.read(featureMessageServiceProvider).markSeen());
   await ref.read(localSessionProvider.notifier).leave();
   if (!context.mounted) {

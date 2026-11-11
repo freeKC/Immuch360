@@ -1,5 +1,6 @@
 package app.alextran.immich.images
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -23,5 +24,16 @@ class RemoteImagesDecodeGateTest {
     assertFalse(RemoteImagesImpl.decodesHere(preferEncoded = false, sdk = 27))
     assertFalse(RemoteImagesImpl.decodesHere(preferEncoded = true, sdk = 28))
     assertFalse(RemoteImagesImpl.decodesHere(preferEncoded = true, sdk = 36))
+  }
+
+  @Test
+  fun `a JPEG XL the core did not decode reaches Dart as an undecodable photo`() {
+    // Dart turns this code into an ImageDecodeException, which keeps the preview on screen (UndecodablePhotos)
+    val error = RemoteImagesImpl.undecodableJpegXl(length = 1234, contentType = "image/jxl")
+    assertEquals(UNDECODABLE_IMAGE, error.code)
+    assertEquals("UndecodableImage", error.code)
+    assertTrue(error.message!!.contains("1234 bytes"))
+    assertTrue(error.message!!.contains("image/jxl"))
+    assertTrue(RemoteImagesImpl.undecodableJpegXl(length = 0, contentType = null).message!!.contains("no type"))
   }
 }

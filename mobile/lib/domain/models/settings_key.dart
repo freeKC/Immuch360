@@ -54,6 +54,8 @@ enum SettingsKey<T> {
   viewerAv2Videos<bool>(),
   // Null until the user picks a source: viewerLoadOriginalVideo tells it until then, see ViewerConfig.videoSource
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
+  // The Wikipedia block of the film page of a Plex film, see ViewerConfig.filmWikipedia
+  viewerFilmWikipedia<bool>(),
 
   // Network
   networkAutoEndpointSwitching<bool>(),
@@ -79,6 +81,7 @@ enum SettingsKey<T> {
   timelineTilesPerRow<int>(),
   timelineGroupAssetsBy<GroupAssetsBy>(codec: EnumCodec(GroupAssetsBy.values)),
   timelineStorageIndicator<bool>(),
+  timelineSmoothScrubbing<bool>(),
 
   // Log
   logLevel<LogLevel>(codec: EnumCodec(LogLevel.values)),

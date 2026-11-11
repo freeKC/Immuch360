@@ -44,6 +44,10 @@ class FakePlaybackEngine implements PlaybackEngine {
   final ValueNotifier<List<DesktopAudioTrack>> audioTracks = ValueNotifier(const []);
   @override
   final ValueNotifier<String?> audioTrack = ValueNotifier(null);
+  @override
+  final ValueNotifier<List<DesktopSubtitleTrack>> subtitleTracks = ValueNotifier(const []);
+  @override
+  final ValueNotifier<String?> subtitleTrack = ValueNotifier(null);
 
   final _events = StreamController<PlayerEvent>.broadcast(sync: true);
 
@@ -92,6 +96,12 @@ class FakePlaybackEngine implements PlaybackEngine {
     position.value = start;
     videoSize.value = null;
     hasVideo.value = null;
+    // mpv drops the side files of subtitles added to the file before
+    subtitleTracks.value = [
+      for (final track in subtitleTracks.value)
+        if (!track.isExternal) track,
+    ];
+    subtitleTrack.value = null;
     final length = autoLoad;
     if (length != null) {
       scheduleMicrotask(() => load(length, size: autoSize));
@@ -152,6 +162,27 @@ class FakePlaybackEngine implements PlaybackEngine {
   Future<void> setAudioTrack(String id) async {
     calls.add('audio $id');
     audioTrack.value = id;
+  }
+
+  @override
+  Future<void> setSubtitleTrack(String? id) async {
+    calls.add('subtitle ${id ?? 'off'}');
+    subtitleTrack.value = id;
+  }
+
+  /// The id mpv gives the next side file of subtitles added
+  int nextSubtitleId = 10;
+
+  @override
+  Future<void> addExternalSubtitle(String uri, {String? title, String? language}) async {
+    calls.add('add subtitle $uri');
+    final id = '${nextSubtitleId++}';
+    subtitleTracks.value = [
+      ...subtitleTracks.value,
+      // media_kit's sub-add names a file without a title "external", and gives "auto" for no language
+      DesktopSubtitleTrack(id: id, title: title ?? 'external', language: language ?? 'auto', external: uri),
+    ];
+    subtitleTrack.value = id;
   }
 
   @override

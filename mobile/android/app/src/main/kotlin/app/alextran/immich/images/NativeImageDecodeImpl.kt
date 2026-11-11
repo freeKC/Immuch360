@@ -59,7 +59,8 @@ fun describeDecodeFailure(
  * AVIF, the raw files, JPEG XL), which the engine would decode at their full size through FlutterJNI.decodeImage and
  * abort the app on an OutOfMemoryError (crash M1 of the Meta Quest store, 8 November 2026). Here the bytes stay where
  * Dart put them (no copy into the Java heap), the size is bounded, an OutOfMemoryError gets one retry at half the size,
- * and every failure is an error of the call, never an exception that reaches the engine.
+ * and every failure is an error of the call, never an exception that reaches the engine. JPEG XL, which ImageDecoder
+ * does not read, goes to the Rust core (JpegXlDecode), from any Android version.
  */
 class NativeImageDecodeImpl(context: Context) : NativeImageDecodeApi {
   private val ctx: Context = context.applicationContext
@@ -78,6 +79,11 @@ class NativeImageDecodeImpl(context: Context) : NativeImageDecodeApi {
     maxHeight: Long,
     callback: (Result<Map<String, Long>>) -> Unit
   ) {
+    // JPEG XL, which ImageDecoder does not read, by the Rust core, on every Android version
+    if (pointer != 0L && length in 2..Int.MAX_VALUE.toLong() && JpegXlDecode.isJpegXl(pointer, length.toInt())) {
+      executor.execute { callback(decodeJpegXl(pointer, length.toInt(), maxWidth.toInt(), maxHeight.toInt())) }
+      return
+    }
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P || pointer == 0L || length <= 0 || length > Int.MAX_VALUE) {
       val reason = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) "no ImageDecoder before Android 9" else "no bytes"
       callback(Result.failure(FlutterError(UNDECODABLE_IMAGE, "$reason, $length bytes", null)))
@@ -99,6 +105,26 @@ class NativeImageDecodeImpl(context: Context) : NativeImageDecodeApi {
         failure(error, header, target, length.toInt())
       }
       callback(result)
+    }
+  }
+
+  // The JPEG XL at [pointer] by the core within [maxWidth] x [maxHeight] (JpegXlDecode: the long side bounded, one
+  // retry at half the size); an OutOfMemoryError of the scaling step gets the same retry as the other decodes
+  private fun decodeJpegXl(pointer: Long, length: Int, maxWidth: Int, maxHeight: Int): Result<Map<String, Long>> {
+    val target = "${maxWidth}x$maxHeight"
+    val header = IntArray(2)
+    return try {
+      JpegXlDecode.decodeWithin(pointer, length, maxWidth, maxHeight)?.let { Result.success(it.toMap()) }
+        ?: failure(IllegalStateException("JPEG XL not decoded by the core"), header, target, length)
+    } catch (_: OutOfMemoryError) {
+      try {
+        JpegXlDecode.decodeWithin(pointer, length, maxWidth / 2, maxHeight / 2)?.let { Result.success(it.toMap()) }
+          ?: failure(IllegalStateException("JPEG XL not decoded by the core"), header, "$target then half", length)
+      } catch (retry: Throwable) {
+        failure(retry, header, "$target then half", length)
+      }
+    } catch (error: Throwable) {
+      failure(error, header, target, length)
     }
   }
 

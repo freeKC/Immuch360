@@ -25,6 +25,7 @@ import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/pages/common/splash_screen.page.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/remote_play_dock.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
@@ -37,9 +38,12 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_player.provider.dart';
+import 'package:immich_mobile/providers/rate_app.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
+import 'package:immich_mobile/repositories/asset_media.repository.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/deep_link.service.dart';
@@ -50,12 +54,14 @@ import 'package:immich_mobile/utils/bootstrap.dart';
 import 'package:immich_mobile/utils/cache/custom_image_cache.dart';
 import 'package:immich_mobile/utils/cache/widgets_binding.dart';
 import 'package:immich_mobile/utils/debug_print.dart';
+import 'package:immich_mobile/utils/fallback_localizations.dart';
 import 'package:immich_mobile/utils/libsmb2_license.dart';
 import 'package:immich_mobile/utils/licenses.dart';
 import 'package:immich_mobile/utils/litert_licenses.dart';
 import 'package:immich_mobile/utils/meta_spatial_licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/utils/pairing_licenses.dart';
+import 'package:immich_mobile/utils/play_review_licenses.dart';
 import 'package:immich_mobile/utils/splat_viewer_licenses.dart';
 import 'package:immich_mobile/utils/zstd_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
@@ -118,6 +124,7 @@ Future<void> runImmich({Future<void> Function()? beforeStart}) async {
       ),
     );
   } catch (error, stack) {
+    Logger('main').severe('Failed to start', error, stack);
     runApp(BootstrapErrorWidget(error: error.toString(), stack: stack.toString()));
   }
 }
@@ -185,6 +192,9 @@ Future<void> initApp() async {
   // Spark, three.js and the crates of Spark's WebAssembly, of the splat viewer of the computers, phones and tablets
   // (lib/utils/splat_viewer_licenses.dart)
   LicenseRegistry.addLicense(splatViewerLicenses);
+  // Google Play In-App Review, Google Play's card to rate the app, in the phone flavour
+  // (lib/utils/play_review_licenses.dart)
+  LicenseRegistry.addLicense(playReviewLicenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {
@@ -329,14 +339,19 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
 
     ref.read(viewIntentHandlerProvider).init();
     ref.read(shareIntentUploadProvider.notifier).init();
+    unawaited(ref.read(assetMediaRepositoryProvider).cleanupStaleShareFiles());
     // A DJI remote plugged in with "Open this screen when the remote is plugged in" on (on by default on a phone)
     unawaited(ref.read(djiAttachLaunchProvider).check());
     // The DJI settings an earlier build kept under keys no longer read
     unawaited(djiForgetRetiredSettings(ref.read(storeServiceProvider)));
     // Meta Quest detection, asked once: 360 media open in the immersive viewer there
     unawaited(ref.read(isHorizonOsProvider.future));
+    // Play from a phone: a big screen listens for its linked phones while the app is in front (play on the TV)
+    ref.read(screenPlayerProvider);
     // Whether this build offers the Gaussian splats, from the certificate of the APK: not the Meta Horizon Store build
     unawaited(ref.read(splatsInThisBuildProvider.future));
+    // The invitation to rate the app, in the builds of the stores only (lib/providers/rate_app.provider.dart)
+    unawaited(startRateApp(ref));
   }
 
   @override
@@ -365,7 +380,7 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         title: 'Immich',
         debugShowCheckedModeBanner: !kScreenshotMode,
         scaffoldMessengerKey: scaffoldMessengerKey,
-        localizationsDelegates: context.localizationDelegates,
+        localizationsDelegates: [...context.localizationDelegates, ...fallbackLocalizationDelegates],
         supportedLocales: context.supportedLocales,
         locale: context.locale,
         themeMode: ref.watch(appThemeModeProvider),
@@ -384,7 +399,11 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
             // turned on and off in place, so that the open page takes the other layout without a new start of the app
             child: ImmichThemeProvider(
               colorScheme: context.colorScheme,
-              child: TvShell(enabled: tvMode, child: app),
+              // A film that plays on a screen from this phone: its mini controller at the bottom of every page
+              child: TvShell(
+                enabled: tvMode,
+                child: RemotePlayDock(child: app),
+              ),
             ),
           );
         },

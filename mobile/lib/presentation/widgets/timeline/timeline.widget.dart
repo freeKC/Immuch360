@@ -729,6 +729,8 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
     final overviewAvailable = widget.withScrubber && !tvMode && loadedSegments != null && _hasDates(loadedSegments);
     final level = overviewAvailable ? _level : TimelineZoomLevel.grid;
     final wheelZoomHeld = !tvMode && _zoomModifier.value;
+    final smoothScrubbing = ref.watch(appConfigProvider.select((config) => config.timeline.smoothScrubbing));
+    final snapToMonth = widget.snapToMonth && !smoothScrubbing;
 
     return PopScope(
       canPop: !isMultiSelectEnabled && level == TimelineZoomLevel.grid,
@@ -837,7 +839,7 @@ class _SliverTimelineState extends ConsumerState<_SliverTimeline> with WidgetsBi
                       final Widget timeline;
                       if (widget.withScrubber) {
                         timeline = Scrubber(
-                          snapToMonth: widget.snapToMonth,
+                          snapToMonth: snapToMonth,
                           layoutSegments: segments,
                           timelineHeight: maxHeight,
                           topPadding: topPadding,

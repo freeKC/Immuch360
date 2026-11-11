@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/video_track_naming.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -11,12 +12,16 @@ import 'package:native_video_player/native_video_player.dart';
 /// viewer and of the share video page, for the player of [videoPlayerProvider] under [playerKey]: the audio menu for a
 /// video with two audio tracks or more, the subtitle menu, with Off, for a video with subtitles. Reached with the
 /// remote like the other buttons of the controls. Nothing where the player lists no tracks (iOS); the computers have
-/// their own audio track menu (DesktopAudioTrackButton).
+/// their own audio track menu (DesktopAudioTrackButton). A film of a media server shows the names the server gives
+/// its tracks, and the server hears of each pick ([naming]).
 class VideoTrackButtons extends ConsumerStatefulWidget {
-  const VideoTrackButtons({super.key, required this.playerKey, this.shadows});
+  const VideoTrackButtons({super.key, required this.playerKey, this.shadows, this.naming});
 
   final String playerKey;
   final List<Shadow>? shadows;
+
+  /// The names a media server gives the tracks and its hook for a pick, null for the player's own names
+  final VideoTrackNaming? naming;
 
   @override
   ConsumerState<VideoTrackButtons> createState() => _VideoTrackButtonsState();
@@ -88,12 +93,30 @@ class _VideoTrackButtonsState extends ConsumerState<VideoTrackButtons> {
     }
   }
 
+  /// Plays [track] (null: subtitles off), then tells the media server, if any, which track of [kind] that is ([ref])
+  Future<void> _pick(VideoTrackKind kind, NativeVideoTrack? track, VideoTrackRef? ref) async {
+    if (track == null) {
+      await _notifier.disableTracks(NativeVideoTrackType.text);
+    } else {
+      await _notifier.selectTrack(track);
+    }
+    widget.naming?.picked(kind, ref);
+  }
+
+  /// The lines of [tracks], the names of [naming] first where it gives one
+  List<String> _labels(Translations t, List<NativeVideoTrack> tracks, List<VideoTrackRef> refs) {
+    final naming = widget.naming;
+    return [for (final (index, label) in videoTrackLabels(t, tracks).indexed) naming?.labelOf(refs[index]) ?? label];
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.t;
     final audio = _tracks.where((track) => track.type == NativeVideoTrackType.audio).toList();
     final subtitles = _tracks.where((track) => track.type == NativeVideoTrackType.text).toList();
     final subtitlesOn = subtitles.any((track) => track.selected);
+    final audioRefs = videoTrackRefs(audio);
+    final subtitleRefs = videoTrackRefs(subtitles);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -104,9 +127,9 @@ class _VideoTrackButtonsState extends ConsumerState<VideoTrackButtons> {
             iconSize: 28,
             padding: const EdgeInsets.all(12),
             icon: Icon(Icons.audiotrack_outlined, color: Colors.white, shadows: widget.shadows),
-            onSelected: (index) => unawaited(_notifier.selectTrack(audio[index])),
+            onSelected: (index) => unawaited(_pick(VideoTrackKind.audio, audio[index], audioRefs[index])),
             itemBuilder: (context) => [
-              for (final (index, label) in videoTrackLabels(t, audio).indexed)
+              for (final (index, label) in _labels(t, audio, audioRefs).indexed)
                 _trackItem(index, label, checked: audio[index].selected),
             ],
           ),
@@ -122,11 +145,13 @@ class _VideoTrackButtonsState extends ConsumerState<VideoTrackButtons> {
               shadows: widget.shadows,
             ),
             onSelected: (index) => unawaited(
-              index < 0 ? _notifier.disableTracks(NativeVideoTrackType.text) : _notifier.selectTrack(subtitles[index]),
+              index < 0
+                  ? _pick(VideoTrackKind.subtitle, null, null)
+                  : _pick(VideoTrackKind.subtitle, subtitles[index], subtitleRefs[index]),
             ),
             itemBuilder: (context) => [
               _trackItem(-1, t.video_subtitles_off, checked: !subtitlesOn),
-              for (final (index, label) in videoTrackLabels(t, subtitles).indexed)
+              for (final (index, label) in _labels(t, subtitles, subtitleRefs).indexed)
                 _trackItem(index, label, checked: subtitles[index].selected),
             ],
           ),
@@ -179,6 +204,24 @@ class _FocusWhenOpenState extends State<_FocusWhenOpen> {
 
   @override
   Widget build(BuildContext context) => widget.child;
+}
+
+/// [tracks], all of one kind, as a media server knows them (VideoTrackNaming): an audio track by its place among the
+/// audio tracks; a subtitle track from a side file the app gave the player by the id of that file (sidecarIdOfTrack),
+/// one of the file by its place among the subtitle tracks of the file, the side files left out of the count
+List<VideoTrackRef> videoTrackRefs(List<NativeVideoTrack> tracks) {
+  var ordinal = 0;
+  return [
+    for (final track in tracks)
+      if (track.type == NativeVideoTrackType.text && sidecarIdOfTrack(track.id) != null)
+        VideoTrackRef(kind: VideoTrackKind.subtitle, sidecarId: sidecarIdOfTrack(track.id), language: track.language)
+      else
+        VideoTrackRef(
+          kind: track.type == NativeVideoTrackType.audio ? VideoTrackKind.audio : VideoTrackKind.subtitle,
+          ordinal: ordinal++,
+          language: track.language,
+        ),
+  ];
 }
 
 /// The lines of [tracks], all of one kind, in their menu: the name of the language of each, its name in the file when

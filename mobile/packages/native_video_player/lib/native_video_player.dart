@@ -6,4 +6,5 @@ export 'src/playback_status.dart';
 export 'src/video_info.dart';
 export 'src/video_source.dart';
 export 'src/video_source_type.dart';
+export 'src/video_subtitle.dart';
 export 'src/video_track.dart';

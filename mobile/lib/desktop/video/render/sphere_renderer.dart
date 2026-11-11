@@ -1,9 +1,10 @@
 // Which renderer draws the 360° player of the computers, and at which tier (design 2.3 and 2.8, decision DP1 of
 // 2026-10-09, docs 20-desktop-dp1.md section 4.3):
-// - renderer C (render/plugin_renderer.dart) first, at the start tier of its GPU (full on a dedicated one, 2880 on an
+// - renderer C (media_kit_video/sphere.dart) first, at the start tier of its GPU (full on a dedicated one, 2880 on an
 //   integrated one), then, once the video's first frame tells what kind of video it is, at the tier the renderer
 //   probe kept for that kind of video on this GPU and this version of the app;
-// - a tier down each time the probe says the current one does not keep up (render/renderer_probe.dart);
+// - a tier down each time the probe says the current one does not keep up (RendererProbe of
+//   media_kit_video/sphere.dart);
 // - the flat player, with a message, when C cannot start (no OpenGL ES 3.0, no shared texture) or does not keep up
 //   even at its lowest tier.
 //
@@ -26,8 +27,8 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:logging/logging.dart';
+import 'package:media_kit_video/sphere.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 

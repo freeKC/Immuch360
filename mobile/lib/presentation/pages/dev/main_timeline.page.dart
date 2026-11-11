@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/presentation/widgets/feature_message/feature_message_dialog.widget.dart';
 import 'package:immich_mobile/presentation/widgets/local_session/local_session_permission_banner.dart';
 import 'package:immich_mobile/presentation/widgets/memory/memory_lane.widget.dart';
@@ -32,6 +33,7 @@ class _MainTimelinePageState extends ConsumerState<MainTimelinePage> {
       }
 
       await service.markSeen();
+      RateAppSignals.noticeShown();
       if (!mounted) {
         return;
       }

@@ -149,7 +149,7 @@ it draws, and it dithers to 8 bits since the plugin tells it the format.
 One fragment program per kind of frame draws one triangle that covers the output. The program is compiled and linked
 when the projection is set, not at the first frame: a driver that refuses it is known at once, with the shader log as
 the reason, and the player goes back to flat. The sources are in
-[projection_shaders.h](../../mobile/packages/media_kit_video/windows/projection_shaders.h).
+[projection_shaders.h](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/windows/projection_shaders.h).
 
 - **Equirectangular.** Mono, or one eye of a stereo frame (top and bottom, or side by side; the left eye by default, as
   on phones). The eye is a rectangle of the frame. The coverage is a rectangle of the sphere: the whole sphere for
@@ -203,7 +203,7 @@ view turned, and paused while the view turned. The test by hand with real camera
 ### The renderer probe
 
 The probe measures each 360° video on its own playback rather than on a test clip, since the cost depends on the video
-as much as on the GPU ([renderer_probe.dart](../../mobile/lib/desktop/video/render/renderer_probe.dart)).
+as much as on the GPU ([renderer_probe.dart](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/lib/src/sphere/renderer_probe.dart)).
 
 - **What it measures.** Over the first 5 seconds of playback, paused and buffering time left out, read once a second:
   the draws that had a new frame of mpv, against the video's frame rate (60 at most), the time each draw took, and the
@@ -272,7 +272,7 @@ decodes stream 0 with the sound; a second player of the pool decodes stream 1 al
 first one's play, pause and seeks
 ([raw_partner_player.dart](../../mobile/lib/desktop/video/raw_partner_player.dart)). Each stream is decoded by the GPU
 without a copy, 10 bit included, as for a flat video. The plugin pairs the two outputs (the media_kit_video plugin's
-[IMMUCH360-NOTE.md](../../mobile/packages/media_kit_video/IMMUCH360-NOTE.md), patch 7):
+[IMMUCH360-NOTE.md](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/IMMUCH360-NOTE.md), patch 7):
 
 - **One share group.** The ANGLE contexts of the players share their objects, so the first player's context reads
   the second player's intermediate texture, and the stitch pass reads lens 1 from it.
@@ -313,7 +313,7 @@ other left no leak on the test laptop, with the 2024 libmpv.
 - **Disposing one costs too.** A player decoding 8K without a copy kept about 1.3 GB of GPU memory after its disposal
   (0.5 GB for 4K), at least for the 6 seconds measured, so the 360° player opens each new file on the same player. And
   with media_kit #1449, each `Player.dispose()` on Windows took a COM reference off the window's thread, which broke
-  drag and drop after four. The vendored media_kit gives it back.
+  drag and drop after four. Our media_kit (media_kit_360) gives it back.
 - **Limits.** Two players that show video, one frame grabber for thumbnails, two live camera views, one idle player
   kept per kind. A player that does not play is taken back first, and its page gets one again at the same position.
 - **A lost device.** After a driver reset, a GPU switch or some sleeps, the plugin tells Dart once. The pool disposes
@@ -367,10 +367,10 @@ this device", in the same page, lists what the GPU decodes. Windows picks the GP
 
 | What                                   | Where                                                                                                                                                                                                                                                                                                                                                                            |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The native renderer                    | [projection_renderer.cc](../../mobile/packages/media_kit_video/windows/projection_renderer.cc), [projection_shaders.h](../../mobile/packages/media_kit_video/windows/projection_shaders.h), [video_output.cc](../../mobile/packages/media_kit_video/windows/video_output.cc), [angle_surface_manager.cc](../../mobile/packages/media_kit_video/windows/angle_surface_manager.cc) |
-| Its Dart calls                         | [projection_output.dart](../../mobile/packages/media_kit_video/lib/src/projection_output.dart): `VideoOutputManager.SetProjection`, `SetView` and `ProjectionStats` on the plugin's method channel, by player handle                                                                                                                                                             |
-| Tiers, start tier, view updates        | [plugin_renderer.dart](../../mobile/lib/desktop/video/render/plugin_renderer.dart) (`PluginTier`, `settleDelay`)                                                                                                                                                                                                                                                                 |
-| Probe thresholds                       | [renderer_probe.dart](../../mobile/lib/desktop/video/render/renderer_probe.dart) (`RendererProbeLimits`)                                                                                                                                                                                                                                                                         |
+| The native renderer                    | [projection_renderer.cc](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/windows/projection_renderer.cc), [projection_shaders.h](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/windows/projection_shaders.h), [video_output.cc](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/windows/video_output.cc), [angle_surface_manager.cc](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/windows/angle_surface_manager.cc) |
+| Its Dart calls                         | [projection_output.dart](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/lib/src/projection_output.dart): `VideoOutputManager.SetProjection`, `SetView` and `ProjectionStats` on the plugin's method channel, by player handle                                                                                                                                                             |
+| Tiers, start tier, view updates        | [plugin_renderer.dart](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/lib/src/sphere/plugin_renderer.dart) (`PluginTier`, `settleDelay`)                                                                                                                                                                                                                                                                 |
+| Probe thresholds                       | [renderer_probe.dart](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/lib/src/sphere/renderer_probe.dart) (`RendererProbeLimits`)                                                                                                                                                                                                                                                                         |
 | The choice and the stored measures     | [sphere_renderer.dart](../../mobile/lib/desktop/video/render/sphere_renderer.dart), [sphere_renderer_tile.dart](../../mobile/lib/desktop/video/render/sphere_renderer_tile.dart)                                                                                                                                                                                                 |
 | The 360° player page and its fallbacks | [spherical_player_route.dart](../../mobile/lib/desktop/video/spherical_player_route.dart), [projection_params.dart](../../mobile/lib/desktop/video/projection_params.dart)                                                                                                                                                                                                       |
 | Raw videos in two streams              | [raw_two_streams.dart](../../mobile/lib/desktop/video/raw_two_streams.dart), [raw_two_stream_switch.dart](../../mobile/lib/desktop/video/raw_two_stream_switch.dart), [raw_partner_player.dart](../../mobile/lib/desktop/video/raw_partner_player.dart)                                                                                                                          |
@@ -384,8 +384,9 @@ this device", in the same page, lists what the GPU decodes. Windows picks the GP
 | Decoder measure: drops that still keep up          | 1 in 20, and always 3 |
 | Decoder measure: a failure is tried again after    | 14 days               |
 
-On Windows, `mobile/test/desktop/video/plugin_shaders_windows_test.dart` compiles the three programs in ANGLE's
-OpenGL ES 3.0 and checks that the equirectangular pass looks where the view looks. The measurement harness,
+On Windows, `packages/media_kit_video/test/sphere/plugin_shaders_windows_test.dart` of
+[immuch360/media_kit_360](https://github.com/immuch360/media_kit_360) compiles the three programs in ANGLE's OpenGL ES
+3.0 and checks that the equirectangular pass looks where the view looks (its CI runs it on every change). The measurement harness,
 `mobile/integration_test/desktop_video_measure_test.dart`, plays clips in a window and records frame times, drops and
 memory. `IMMUCH360_MEASURE_RENDERER=c` runs it through renderer C, and its header lists the other variables.
 
@@ -418,27 +419,30 @@ memory. `IMMUCH360_MEASURE_RENDERER=c` runs it through renderer C, and its heade
 
 ## Licenses and credits
 
-- **media_kit** (MIT, [media-kit/media-kit](https://github.com/media-kit/media-kit)): `media_kit`, `media_kit_video`
-  and `media_kit_libs_windows_video` are vendored from commit `c533e44` of `main` (30 August 2026). The patched
-  `media_kit_video` keeps its MIT `LICENSE`, and its six patches are described in its
-  [IMMUCH360-NOTE.md](../../mobile/packages/media_kit_video/IMMUCH360-NOTE.md): an OpenGL ES 3.0 context on Windows,
+- **media_kit** (MIT, [media-kit/media-kit](https://github.com/media-kit/media-kit)): `media_kit`, `media_kit_video`,
+  `media_kit_libs_windows_video` and `media_kit_libs_linux` come from
+  [immuch360/media_kit_360](https://github.com/immuch360/media_kit_360) (MIT, taken by git tag since desktop build
+  25, vendored in this repository before), our fork of commit `c533e44` of `main` (30 August 2026), with the Dart
+  side of renderer C (`package:media_kit_video/sphere.dart`). The patched `media_kit_video` keeps its MIT `LICENSE`,
+  and its six patches are described in its
+  [IMMUCH360-NOTE.md](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/IMMUCH360-NOTE.md): an OpenGL ES 3.0 context on Windows,
   the EGL display of Linux taken from GDK (#1404), a fixed texture size that stays with a cap of the output height, a
   lost Direct3D device reported to Dart, a texture no longer replaced while Flutter reads it, and renderer C itself.
-  The native libraries of the Windows build are listed in [NOTICES.md](../../mobile/packages/media_kit_video/windows/NOTICES.md).
+  The native libraries of the Windows build are listed in [NOTICES.md](https://github.com/immuch360/media_kit_360/blob/v1.0.1/packages/media_kit_video/windows/NOTICES.md).
 - **libmpv**, the library of [mpv](https://mpv.io), with [FFmpeg](https://ffmpeg.org) inside it. mpv is built with
   `-Dgpl=false` (LGPL 2.1 or later) and FFmpeg with `--disable-gpl --disable-nonfree --enable-version3`, so
   `libmpv-2.dll` as built is under the GNU LGPL 3 or later, loaded at run time and replaceable. Today the ZIPs carry
   media-kit's archive of 21 October 2024 (mpv v0.39.0-179-g0f78584518, FFmpeg N-117622-g8d940a07d), pinned by
-  SHA-256. The fork's own build,
-  [immuch360-libmpv.yml](../../.github/workflows/immuch360-libmpv.yml), compiles mpv `0b7ed670` and FFmpeg `5b9a3ad7`
-  with the recipe of `Predidit/libmpv-win32-video-cmake`, every other library pinned in
-  [.github/desktop/libmpv/sources.lock](../../.github/desktop/libmpv/sources.lock), and publishes the sources with each
+  SHA-256. The project's own build, the workflow of
+  [immuch360/libmpv-builds](https://github.com/immuch360/libmpv-builds) (in this repository up to desktop build 24),
+  compiles mpv `0b7ed670` and FFmpeg `5b9a3ad7` with the recipe of `Predidit/libmpv-win32-video-cmake`, every other
+  library pinned in [windows/sources.lock](https://github.com/immuch360/libmpv-builds/blob/v1.0.0/windows/sources.lock), and publishes the sources with each
   release. The switch `IMMUCH360_LIBMPV_FROM_CI` of `media_kit_libs_windows_video` turns it on.
 - **ANGLE** (BSD-3-Clause), OpenGL ES over Direct3D 11, from `alexmercerind/flutter-windows-ANGLE-OpenGL-ES` v1.0.1,
   with SwiftShader and the Vulkan loader (Apache-2.0) and Microsoft's `d3dcompiler_47.dll`.
 - **mpv360** by kasper93 (MIT) showed the shader hook technique that renderer A followed.
-- **The app's own code**, the Dart side of the renderer and `immuch_desktop_video` included, is under the
-  [GNU AGPL v3](../../LICENSE), like Immich.
+- **The app's own code**, `immuch_desktop_video` included, is under the [GNU AGPL v3](../../LICENSE), like Immich;
+  the Dart side of renderer C and its probe are MIT, in media_kit_360.
 - The libmpv build carries FreeType and libjpeg-turbo, whose licences ask for these lines. Portions of this software
   are copyright © The FreeType Project (https://freetype.org). All rights reserved. This software is based in part on
   the work of the Independent JPEG Group.

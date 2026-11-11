@@ -3,6 +3,7 @@ package app.alextran.immich.widget
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import app.alextran.immich.images.JpegXlDecode
 import app.alextran.immich.widget.model.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -15,6 +16,9 @@ import java.net.URL
 import java.net.URLEncoder
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+/** The long side a JPEG XL preview of the widget is decoded at, at most: the default preview size of the server */
+private const val WIDGET_MAX_SIDE = 1440
 
 class ImmichAPI(cfg: ServerConfig) {
 
@@ -104,6 +108,11 @@ class ImmichAPI(cfg: ServerConfig) {
     val url = buildRequestURL("/assets/${asset.id}/thumbnail", listOf("size" to "preview", "edited" to "true"))
     val connection = url.openConnection()
     val data = connection.getInputStream().readBytes()
+    // Immuch360: the preview of a server set to JPEG XL by the Rust core, at most the long side of a server preview
+    if (JpegXlDecode.isJpegXl(data)) {
+      return@withContext JpegXlDecode.decodeBitmap(data, WIDGET_MAX_SIDE, WIDGET_MAX_SIDE)
+        ?: throw Exception("JPEG XL not decoded by the core")
+    }
     BitmapFactory.decodeByteArray(data, 0, data.size)
       ?: throw Exception("Invalid image data")
   }

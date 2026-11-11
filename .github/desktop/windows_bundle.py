@@ -18,9 +18,11 @@ drivers then run the app on the high performance one, which an 8K video needs.
 
 The video player's files (libmpv-2.dll, under the LGPL; ANGLE, BSD-3-Clause; SwiftShader and the Vulkan loader,
 Apache-2.0) must travel with their licences, and the README is not in the ZIP: when the folder holds them, NOTICES.md
-and the licence texts next to it (--notices, by default mobile/packages/media_kit_video/windows) go into licenses/.
-When libmpv-2.dll is a build of the fork's workflow (immuch360-libmpv.yml: its archive, extracted by the Windows build
-in build/windows/<arch>/libmpv, holds the same DLL with BUILDINFO.txt and licenses/), those go into licenses/libmpv/.
+and the licence texts next to it (--notices, by default the windows folder of media_kit_video, where pub put it:
+github.com/immuch360/media_kit_360 by git tag, read from mobile/.dart_tool/package_config.json) go into licenses/.
+When libmpv-2.dll is a build of the project's workflow (a release of immuch360/libmpv-builds: its archive, extracted by
+the Windows build in build/windows/<arch>/libmpv, holds the same DLL with BUILDINFO.txt and licenses/), those go into
+licenses/libmpv/.
 Any other libmpv-2.dll, media-kit's archive of 2024 by default, has no corresponding source the fork can give, so a ZIP
 for a release (--public, or a version info that is a release label such as 3.3.0-rc.0-20 or 3.3.0-rc.0-desktop.4,
 which desktop_version.py gives a release tag only) is refused with it, unless the owner decides otherwise with
@@ -54,6 +56,8 @@ import shutil
 import struct
 import subprocess
 import sys
+import urllib.parse
+import urllib.request
 import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -73,7 +77,9 @@ API_SET = re.compile(r'(?i)^(api|ext)-ms-')
 FIXED_FILE_INFO = struct.pack('<II', 0xFEEF04BD, 0x00010000)
 # The files media_kit_libs_windows_video bundles for the video player, which its notices cover
 VIDEO_FILES = ('libmpv-2.dll', 'libegl.dll', 'libglesv2.dll', 'vk_swiftshader.dll', 'vulkan-1.dll')
-NOTICES_DIR = ROOT / 'mobile' / 'packages' / 'media_kit_video' / 'windows'
+# The package whose windows folder holds the notices of the video player (NOTICES.md and licenses/)
+NOTICES_PACKAGE = 'media_kit_video'
+PACKAGE_CONFIG = ROOT / 'mobile' / '.dart_tool' / 'package_config.json'
 LICENCE_TEXTS = ('NOTICES.md', 'licenses/LGPL-3.0.txt', 'licenses/GPL-3.0.txt', 'licenses/Apache-2.0.txt',
                  'licenses/ANGLE-BSD-3-Clause.txt')
 # libsmb2 (LGPL-2.1-or-later), which dart_smb2 bundles as libsmb2.dll: its notice and licence texts, also shown on the
@@ -404,7 +410,11 @@ def bundle(args) -> int:
         if libmpv_dir is None and len(args.release.resolve().parents) > 1:
             libmpv_dir = args.release.resolve().parents[1] / 'libmpv'
         fork = fork_libmpv(folder, libmpv_dir) if 'libmpv-2.dll' in names else None
-        missing = copy_notices(folder, args.notices, fork)
+        notices = args.notices
+        if notices is None:
+            root = package_root(NOTICES_PACKAGE)
+            notices = root / 'windows' if root else PACKAGE_CONFIG.parent / NOTICES_PACKAGE / 'windows'
+        missing = copy_notices(folder, notices, fork)
         if missing:
             print('the licences of the video player must travel with it, not found: ' + ', '.join(missing))
             return 2
@@ -451,7 +461,8 @@ def bundle(args) -> int:
         if not args.accept_2024_libmpv:
             print("no ZIP: a release ZIP would carry a libmpv-2.dll (LGPL) that is not a build of the fork's workflow, "
                   'whose corresponding source the fork cannot give. Build with IMMUCH360_LIBMPV_FROM_CI on (a pinned '
-                  'release of immuch360-libmpv.yml), or pass --accept-2024-libmpv if the owner decided to publish it')
+                  'release of immuch360/libmpv-builds), or pass --accept-2024-libmpv if the owner decided to publish '
+                  'it')
             return 1
         print("warning: release ZIP with a libmpv-2.dll that is not the fork's build (--accept-2024-libmpv)")
     if args.zip:
@@ -459,6 +470,23 @@ def bundle(args) -> int:
         print(f'zip: {args.zip} ({args.zip.stat().st_size / 1e6:.1f} MB), SHA-256 {digest}')
     return 0
 
+
+
+def package_root(name: str, config: pathlib.Path = PACKAGE_CONFIG) -> pathlib.Path | None:
+    """The folder of the package [name] of the app as flutter pub get resolved it ([config]): in the pub cache for a git
+    or hosted dependency (the media_kit packages of github.com/immuch360/media_kit_360), in mobile/packages for a path
+    one; None when pub get was not run or the app has no such package"""
+    try:
+        packages = json.loads(config.read_text(encoding='utf-8'))['packages']
+    except (OSError, ValueError, KeyError):
+        return None
+    for package in packages:
+        if package.get('name') == name:
+            uri = package.get('rootUri', '')
+            if uri.startswith('file:'):
+                return pathlib.Path(urllib.request.url2pathname(urllib.parse.urlparse(uri).path))
+            return (config.parent / uri).resolve()
+    return None
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -473,8 +501,9 @@ def main(argv=None) -> int:
     parser.add_argument('--symbols', type=pathlib.Path, help='move the .pdb files here instead of dropping them')
     parser.add_argument('--info', action='append', default=[], metavar='KEY=VALUE', help='a line of BUILD-INFO.txt')
     parser.add_argument('--file-version', help='the version each executable must carry, A.B.C.D (3.3.0.20)')
-    parser.add_argument('--notices', type=pathlib.Path, default=NOTICES_DIR,
-                        help='the folder of NOTICES.md and licenses/ of the video player')
+    parser.add_argument('--notices', type=pathlib.Path,
+                        help='the folder of NOTICES.md and licenses/ of the video player (by default the windows '
+                        'folder of media_kit_video as flutter pub get resolved it)')
     parser.add_argument('--libsmb2-notices', type=pathlib.Path, default=LIBSMB2_NOTICES_DIR,
                         help='the folder of the notice and licence texts of libsmb2')
     parser.add_argument('--libmpv', type=pathlib.Path,

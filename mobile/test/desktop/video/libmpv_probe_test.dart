@@ -1,7 +1,7 @@
 // The libmpv of the Windows build, checked without a window (plan 2.4, V-READY): it loads, a player plays mpv's
 // reference pattern, and mpv renders in an OpenGL ES 3.0 context of the ANGLE that comes with
-// media_kit_libs_windows_video, which is what the patch of the vendored media_kit_video asks for
-// (packages/media_kit_video/IMMUCH360-NOTE.md). Windows only, after a Windows build of the app:
+// media_kit_libs_windows_video, which is what the patch of our media_kit_video asks for (IMMUCH360-NOTE.md of
+// packages/media_kit_video in github.com/immuch360/media_kit_360). Windows only, after a Windows build of the app:
 //   flutter build windows --debug -t lib/main_desktop.dart
 //   flutter test test/desktop/video/libmpv_probe_test.dart
 // IMMUCH360_BUILD_DIR may name another folder holding libmpv-2.dll, libEGL.dll and libGLESv2.dll.

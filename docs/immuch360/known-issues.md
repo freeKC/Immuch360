@@ -33,6 +33,7 @@ Each line links to the section that explains it. The limits by design, such as t
 - **Raw files copied to the phone are not listed**: Android files .insv, .insp, .360, .lrv and .osv as other files, not as photos or videos, so they stay out of the gallery and of the app; play them from a share or a computer: [Watch a raw file](user-guide.md#watch-a-raw-file).
 - **A phone serving a Quest 3** with "Share this phone on the network" is not checked on a device yet: [Share this phone](user-guide.md#share-this-phone-on-the-network).
 - **Plex playback on a phone** is not checked on a device yet: [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
+- **Plex film download** ran against a fake Plex server only (the Android lab), not against a real server nor on a device yet: [Download a film](user-guide.md#download-a-film-to-this-device).
 - **Apple spatial videos play one eye**, since Android has no public way to decode the second view: [Apple spatial photos and videos](user-guide.md#everywhere-else).
 - **The DJI drone page is experimental and not checked with a real drone yet** (from build 27): it ran on an Android phone emulator with synthetic files; a real DJI Neo 2, a USB drive or card reader, a device in File transfer mode (MTP) and an unplug in the middle of a large file are still to try: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
 - **DJI: the sound recorded by the phone is not merged**: a drone keeps that sound in a separate .m4a file, which DJI Fly merges when it downloads the clip; the app sends the video without it and says so on the tile: [DJI drones](user-guide.md#dji-drones-photos-and-videos-over-usb-experimental).
@@ -45,6 +46,7 @@ Each line links to the section that explains it. The limits by design, such as t
 - **The phone's sign in of big screens has not run on an iPhone yet**: "Connect a TV or computer" and its scanner come with version 3.3.2 too: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **The DLNA, Plex and Tapo searches send unicast requests only** until Apple grants the multicast entitlement, and some servers do not answer them (minidlna on Linux): [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - **The MKV and AVI files of a share do not open**: [Formats and sources](compatibility.md#formats-and-sources-by-platform).
+- **A Plex film downloads only while the app is open**: iOS pauses the copy in the background, and it goes on when the app comes back: [Download a film](user-guide.md#download-a-film-to-this-device).
 - **The photos stored only in iCloud** are skipped by the 360° scan until they are downloaded: [Without a server](user-guide.md#without-a-server-or-an-account).
 - **The phone share runs only while the app is in front**: [Share this phone](user-guide.md#share-this-phone-on-the-network).
 - **Raw files have not run on an iPhone yet**: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).

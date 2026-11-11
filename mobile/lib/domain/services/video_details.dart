@@ -39,16 +39,17 @@ VideoBitRate? videoBitRateOf({SphericalProbe? probe, int? fileSize, int? duratio
 /// "210 Mbit/s", "4.5 Mbit/s", "850 kbit/s", with the decimal separator of [locale]
 String formatBitRate(int bitsPerSecond, Translations t, {required String locale}) {
   if (bitsPerSecond < 1000000) {
-    return t.technical_details_bit_rate_kbps(value: _decimalFormat(locale).format((bitsPerSecond / 1000).round()));
+    return t.technical_details_bit_rate_kbps(value: decimalFormatOf(locale).format((bitsPerSecond / 1000).round()));
   }
   final mbps = bitsPerSecond / 1000000;
   // One decimal below 10 Mbit/s, where it tells a phone recording from another; none above, where it is noise
-  final format = _decimalFormat(locale)..maximumFractionDigits = mbps < 10 ? 1 : 0;
+  final format = decimalFormatOf(locale)..maximumFractionDigits = mbps < 10 ? 1 : 0;
   return t.technical_details_bit_rate_mbps(value: format.format(mbps));
 }
 
-// The number format of [locale], the English one for a language intl has no number symbols for
-NumberFormat _decimalFormat(String locale) {
+/// The number format of [locale], the English one for a language intl has no number symbols for (mi, kab, kxm, lmo,
+/// swg among the app's languages), where NumberFormat throws
+NumberFormat decimalFormatOf(String locale) {
   try {
     return NumberFormat.decimalPattern(locale);
   } on ArgumentError {

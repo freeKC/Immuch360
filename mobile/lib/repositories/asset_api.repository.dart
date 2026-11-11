@@ -2,6 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart' hide AssetEditAction;
 import 'package:immich_mobile/domain/models/stack.model.dart';
+import 'package:immich_mobile/domain/models/tag.model.dart';
 import 'package:immich_mobile/domain/services/network_upload.service.dart' show RemoteAssetPresence;
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/repositories/api.repository.dart';
@@ -65,6 +66,11 @@ class AssetApiRepository extends ApiRepository {
 
     // we need to get the MIME of the thumbnail once that gets added to the API
     return response.originalMimeType.orElse(null);
+  }
+
+  Future<List<Tag>> getAssetTags(String assetId) async {
+    final response = await checkNull(_api.getAssetInfo(assetId));
+    return response.tags.orElse(null)?.map((tag) => Tag(id: tag.id, value: tag.value)).toList() ?? const [];
   }
 
   Future<String> getChecksum(String id) async {

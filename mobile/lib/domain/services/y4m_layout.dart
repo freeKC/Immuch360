@@ -1,13 +1,13 @@
 // The virtual y4m the AV2 companion serves to the player of the app (store/m2/av2-2026-11-02/plan-2026-11-02.md,
-// section 2.1, point 4; mobile/native/av2/README.md): a header written by us, then each picture as "FRAME\n" and its
-// samples, 4:2:0, one byte per sample in 8 bits, or 10 bits in 16-bit little endian words. Its length is known before
-// anything is decoded, so the player opens it as a file of a known size and seeks by byte ranges. The header is ours
-// because the dav2d program writes a wrong frame rate for the files of avmenc (16.3 frames per second for WorldCup,
-// which is 30: measure of 2 November, section 5): the rate comes from the container.
+// section 2.1, point 4; the README of immuch360/av2-companion): a header written by us, then each picture as "FRAME\n"
+// and its samples, 4:2:0, one byte per sample in 8 bits, or 10 bits in 16-bit little endian words. Its length is known
+// before anything is decoded, so the player opens it as a file of a known size and seeks by byte ranges. The header is
+// ours because the dav2d program writes a wrong frame rate for the files of avmenc (16.3 frames per second for
+// WorldCup, which is 30: measure of 2 November, section 5): the rate comes from the container.
 //
-// The same layout as the y4m_layout of the companion (mobile/native/av2/src/stream.c): the app checks the "listening"
-// line of the companion against it and reads the "request" lines with it, and the fake companion of the tests serves
-// it. Pure Dart, without Flutter.
+// The same layout as the y4m_layout of the companion (src/stream.c of immuch360/av2-companion): the app checks the
+// "listening" line of the companion against it and reads the "request" lines with it, and the fake companion of the
+// tests serves it. Pure Dart, without Flutter.
 
 /// The bytes before the samples of each picture
 const y4mFrameMarker = 'FRAME\n';

@@ -19,7 +19,8 @@ the AV2 decoder's stream. Every check must pass:
 
   check_y4m.py run (--zips ZIP... | --frameworks DIR | --system) [--headers DIR] [--search-headers DIR...]
                    [--summary FILE] [--work DIR]
-      --zips        the xcframework zips of a build of immuch360-libmpv.yml (Mpv and the libraries it loads)
+      --zips        the xcframework zips of a macOS release of immuch360/libmpv-builds (Mpv and the libraries it
+                    loads)
       --frameworks  a folder of .framework, such as Contents/Frameworks of the app
       --system      the libmpv of the system, by pkg-config (Linux)
       --headers     the folder of mpv's client.h when the frameworks have no headers (the app's are stripped);
@@ -35,9 +36,10 @@ the AV2 decoder's stream. Every check must pass:
   check_y4m.py evaluate REPORT --depth 8|10 [--http --ranges START...]
       judges the JSON a probe printed (the tests give it reports of their own); exit 1 when a check failed
   check_y4m.py companion (--zips ZIP... | --frameworks DIR | --system) [--headers DIR] [--search-headers DIR...]
-                         --program FILE --stream FILE[:TIMES]... [--summary FILE] [--work DIR]
-      the AV2 path itself (review of lot AD4, m8): the serve of immuch360-av2 (the program of an av2-* archive), fed
-      by the app's side in Python (.github/desktop/av2/av2_serve_check.py), on each stream given (played TIMES times
+                         --program FILE --av2-scripts DIR --stream FILE[:TIMES]... [--summary FILE] [--work DIR]
+      the AV2 path itself (review of lot AD4, m8): the serve of immuch360-av2 (the program of an archive of
+      immuch360/av2-companion), fed by the app's side in Python (av2_serve_check.py of DIR, the tools/ folder of
+      av2-companion at the tag of that archive), on each stream given (played TIMES times
       in a row), read by the probe over its HTTP/1.1 connection with the options the app opens an AV2 video with
       (the y4m demuxer forced, the cache of a streamed video and av2CacheBytes, the wait after a stall): the demuxer
       and decoder, the size, rate and length of the stream, a first frame, exact seeks forward and back, the end
@@ -60,8 +62,6 @@ import threading
 
 HERE = pathlib.Path(__file__).resolve().parent
 PROBE_SOURCE = HERE / 'y4m_probe.c'
-# The app's side of the AV2 decoder, for the companion check
-AV2_SCRIPTS = HERE.parent / 'av2'
 
 # The fixtures: big enough frames that a seek goes back to the server, few enough that both stay small
 WIDTH = 320
@@ -225,7 +225,7 @@ def evaluate_companion(report: dict, width: int, height: int, depth: int, frames
 
 
 def companion(args) -> int:
-    sys.path.insert(0, str(AV2_SCRIPTS))
+    sys.path.insert(0, str(pathlib.Path(args.av2_scripts).resolve()))
     import av2_serve_check as serve_check  # noqa: E402
 
     program = pathlib.Path(args.program).resolve()
@@ -518,6 +518,8 @@ def main(argv: list[str] | None = None) -> int:
     companion_parser.add_argument('--headers')
     companion_parser.add_argument('--search-headers', nargs='+')
     companion_parser.add_argument('--program', required=True)
+    companion_parser.add_argument('--av2-scripts', required=True,
+                                  help='the tools/ folder of immuch360/av2-companion (av2_serve_check.py)')
     companion_parser.add_argument('--stream', nargs='+', required=True)
     companion_parser.add_argument('--summary')
     companion_parser.add_argument('--work')

@@ -99,7 +99,10 @@ enum PhonePairingStatus {
 }
 
 class PhonePairingResult {
-  const PhonePairingResult({required this.status, this.sessionId, this.label, this.triedAddresses});
+  const PhonePairingResult({required this.status, this.sessionId, this.label, this.triedAddresses, this.linkAnswer});
+
+  /// What the screen answered to the link of "Play on the TV" sent with the session, when it was
+  final Object? linkAnswer;
 
   final PhonePairingStatus status;
 
@@ -167,6 +170,7 @@ class PhonePairingService {
     required PhonePairingAccount account,
     bool sendHeaders = true,
     Future<void> Function(String sessionId, String label)? onSession,
+    Map<String, Object?>? link,
   }) async {
     final name = cleanPairingLabel(label) ?? cleanPairingLabel(hello.device.label) ?? 'TV';
     final ({String id, String token}) session;
@@ -196,6 +200,7 @@ class PhonePairingService {
         'user': {'name': account.userName, 'email': account.userEmail},
         'phone': account.phoneName,
         'issuedAt': _clock().toUtc().toIso8601String(),
+        'link': ?link,
       });
     } catch (error) {
       await _forget(session.id);
@@ -229,7 +234,14 @@ class PhonePairingService {
       return PhonePairingResult(status: status, triedAddresses: tried is int ? tried : null);
     }
     _log.info('Pairing: the screen signed in');
-    return PhonePairingResult(status: status, sessionId: session.id, label: name);
+    return PhonePairingResult(status: status, sessionId: session.id, label: name, linkAnswer: answer['link']);
+  }
+
+  /// Links the screen of [hello], whose panel shows "Play from a phone", with [link] (PlayLinkOffer.toJson): gives
+  /// what the screen answered for it. Throws [PairingException].
+  Future<Object?> link(PairingHello hello, Map<String, Object?> link) async {
+    final answer = await _client.send(hello, {'link': link});
+    return answer['link'];
   }
 
   /// Signs a screen this phone connected out of the server
