@@ -16,6 +16,7 @@ import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_pairing.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_tv_auth.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/plex_server_edit.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
@@ -25,6 +26,7 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:immich_mobile/providers/network/plex_pairing.provider.dart';
+import 'package:immich_mobile/providers/network/plex_tv_auth.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/secure_storage.service.dart';
 
@@ -119,6 +121,61 @@ class _FakePairing implements PlexPairing {
   }
 }
 
+/// plex.tv for the page: the states of each sign in are sent by the test, and the servers of the account answered
+class _FakePlexTv implements PlexTvAuth {
+  final List<bool> signIns = [];
+  final List<StreamController<PlexTvSignInState>> flows = [];
+  final List<String> serversAskedWith = [];
+  List<PlexTvServer> serverList = const [];
+  PlexTvException? serversError;
+
+  StreamController<PlexTvSignInState> get flow => flows.last;
+
+  @override
+  Stream<PlexTvSignInState> signIn({
+    required bool strong,
+    Duration interval = const Duration(seconds: 2),
+    int maxTransientErrors = 3,
+    Future<void> Function(Duration)? wait,
+  }) {
+    signIns.add(strong);
+    final controller = StreamController<PlexTvSignInState>();
+    flows.add(controller);
+    return controller.stream;
+  }
+
+  @override
+  Future<List<PlexTvServer>> servers(String accountToken) async {
+    serversAskedWith.add(accountToken);
+    final error = serversError;
+    if (error != null) {
+      throw error;
+    }
+    return serverList;
+  }
+
+  @override
+  Future<String> clientIdentifier() async => '00112233445566778899aabbccddeeff';
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const _accountToken = 'ACCOUNT-TOKEN-0000000';
+const _serverToken = 'SERVER-TOKEN-00000000';
+
+PlexTvServer _plexTvServer(String name, String machine, {bool owned = true, String host = '192-168-1-20'}) =>
+    PlexTvServer(
+      name: name,
+      clientIdentifier: machine,
+      owned: owned,
+      accessToken: _serverToken,
+      connections: [
+        PlexTvConnection(uri: 'https://$host.$_hash.plex.direct:32400', local: true),
+        const PlexTvConnection(uri: 'https://203-0-113-7.$_hash.plex.direct:32401'),
+      ],
+    );
+
 String _jwt(DateTime expires) {
   String part(Object json) => base64Url.encode(utf8.encode(jsonEncode(json))).replaceAll('=', '');
   return '${part({'alg': 'EdDSA'})}.${part({'exp': expires.millisecondsSinceEpoch ~/ 1000})}.c2ln';
@@ -130,6 +187,8 @@ void main() {
   late FakeSecureStorage secureStorage;
   late _FakeDiscovery discovery;
   late _FakePairing pairing;
+  late _FakePlexTv plexTv;
+  late List<Uri> opened;
 
   setUp(() async {
     db = Drift(DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true));
@@ -137,6 +196,8 @@ void main() {
     secureStorage = FakeSecureStorage();
     discovery = _FakeDiscovery();
     pairing = _FakePairing();
+    plexTv = _FakePlexTv();
+    opened = [];
   });
 
   tearDown(() async {
@@ -164,6 +225,11 @@ void main() {
         mediaBridgeProvider.overrideWithValue(FakeMediaBridge()),
         networkDiscoveryServiceProvider.overrideWithValue(discovery),
         plexPairingProvider.overrideWithValue(pairing),
+        plexTvAuthProvider.overrideWithValue(plexTv),
+        plexTvOpenBrowserProvider.overrideWithValue((url) async {
+          opened.add(url);
+          return true;
+        }),
         if (tv) tvModeProvider.overrideWith((ref) => true),
       ],
       pages: {
@@ -575,6 +641,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining('The token stays valid on the server'), findsOneWidget);
+      expect(find.textContaining("revoke the app's access on plex.tv"), findsOneWidget);
       await tap(tester, find.text('Remove').last);
 
       expect(find.text('shares list'), findsOneWidget);
@@ -596,6 +663,167 @@ void main() {
       find.descendant(of: find.byWidget(focused!.context!.widget), matching: field('plex_server_address')),
       findsOneWidget,
     );
+  });
+
+  group('sign in with Plex, the second way', () {
+    // The spinners of the waiting states never settle: a few frames instead
+    Future<void> frames(WidgetTester tester) async {
+      for (var i = 0; i < 6; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+    }
+
+    Future<void> send(WidgetTester tester, PlexTvSignInState state) async {
+      plexTv.flow.add(state);
+      await frames(tester);
+    }
+
+    Future<void> press(WidgetTester tester, Finder target) async {
+      await tester.ensureVisible(target);
+      await tester.pump();
+      await tester.tap(target);
+      await frames(tester);
+    }
+
+    PlexTvPin pin({bool strong = true}) => PlexTvPin(
+      id: 7,
+      code: strong ? 'c' * 25 : 'AB12',
+      expiresAt: DateTime.now().add(const Duration(minutes: 15)),
+      strong: strong,
+    );
+
+    testWidgets('sits beside the manual entry, says it talks to plex.tv once, and asks nothing before a tap', (
+      tester,
+    ) async {
+      await pumpPage(tester);
+      expect(field('plex_signin_panel'), findsOneWidget);
+      expect(
+        find.text('This step talks to plex.tv once to get your token. The app then talks to your server only.'),
+        findsOneWidget,
+      );
+      expect(field('plex_server_address'), findsOneWidget, reason: 'the manual entry stays');
+      expect(field('plex_token'), findsOneWidget);
+      expect(plexTv.signIns, isEmpty);
+      expect(opened, isEmpty);
+    });
+
+    testWidgets('on a phone: the plex.tv page opens, the server picked fills the page, is tested and saved', (
+      tester,
+    ) async {
+      plexTv.serverList = [
+        _plexTvServer('Living room', _machine),
+        _plexTvServer('Friend server', 'f' * 40, owned: false, host: '192-168-1-99'),
+      ];
+      await pumpPage(tester);
+      await press(tester, field('plex_signin_start'));
+      expect(plexTv.signIns, [true], reason: 'a strong PIN for the auth page');
+
+      await send(tester, const PlexTvRequesting());
+      expect(find.text('Asking plex.tv for a code'), findsOneWidget);
+      final strong = pin();
+      await send(tester, PlexTvWaiting(strong));
+      await send(tester, PlexTvWaiting(strong));
+      expect(opened, hasLength(1), reason: 'opened once, however many times the state comes');
+      expect(opened.single.host, 'app.plex.tv');
+      expect(opened.single.fragment, contains('code=${'c' * 25}'));
+      await press(tester, field('plex_signin_open'));
+      expect(opened, hasLength(2), reason: 'opened again on demand');
+
+      await send(tester, const PlexTvAuthorised(_accountToken));
+      expect(plexTv.serversAskedWith, [_accountToken]);
+      expect(find.text('Choose your server'), findsOneWidget);
+      expect(find.text('Shared with you'), findsOneWidget);
+
+      await press(tester, field('plex_signin_server_$_machine'));
+      expect(pairing.lookedUp.single.$1.hash, _hash, reason: 'the pinned look up, with the hash of plex.direct');
+      expect(pairing.lookedUp.single.$1.text, '192.168.1.20:32400', reason: 'the address at home first');
+      expect(textOf(tester, 'plex_server_address'), '192.168.1.20:32400');
+      expect(textOf(tester, 'plex_token'), _serverToken, reason: 'the token of the server');
+      expect(pairing.tested.single.$2, _serverToken);
+      expect(find.text('Connected: 3 libraries'), findsOneWidget);
+      expect(field('plex_signin_done'), findsOneWidget);
+      expect(find.textContaining('To sign out, remove the server in the app.'), findsOneWidget);
+      expect(isEnabled(tester, 'plex_save'), isTrue);
+
+      await press(tester, field('plex_save'));
+      final saved = storedSources().single;
+      expect((saved.host, saved.discoveryId, saved.plex?.hash), ('192.168.1.20', _machine, _hash));
+      expect(secureStorage.values, {saved.secretKey: _serverToken});
+      expect(store.tryGet(StoreKey.networkSourcesExtra), isNot(contains(_accountToken)));
+    });
+
+    testWidgets('on a TV: the 4 character code and a QR code of plex.tv/link, no browser', (tester) async {
+      plexTv.serverList = [_plexTvServer('Living room', _machine)];
+      await pumpPage(tester, tv: true);
+      await press(tester, field('plex_signin_start'));
+      expect(plexTv.signIns, [false]);
+
+      await send(tester, PlexTvWaiting(pin(strong: false)));
+      expect(tester.widget<SelectableText>(field('plex_signin_code')).data, 'AB12');
+      expect(field('plex_signin_qr'), findsOneWidget);
+      expect(find.textContaining('open plex.tv/link and enter this code'), findsOneWidget);
+      expect(opened, isEmpty);
+
+      await send(tester, const PlexTvAuthorised(_accountToken));
+      expect(pairing.lookedUp, hasLength(1), reason: 'a single server is reached at once');
+      expect(textOf(tester, 'plex_token'), _serverToken);
+    });
+
+    testWidgets('an expired code offers a new one; a failure of plex.tv says so; Cancel goes back', (tester) async {
+      await pumpPage(tester);
+      await press(tester, field('plex_signin_start'));
+      await send(tester, PlexTvWaiting(pin()));
+      await send(tester, const PlexTvExpired());
+      expect(find.text('The code ended before it was confirmed.'), findsOneWidget);
+
+      await press(tester, find.text('Get a new code'));
+      expect(plexTv.signIns, hasLength(2));
+      await send(tester, const PlexTvFailed(PlexTvException(PlexTvFailure.unreachable)));
+      expect(find.textContaining('plex.tv does not answer'), findsOneWidget);
+
+      await press(tester, field('plex_signin_restart'));
+      expect(plexTv.signIns, hasLength(3));
+      await press(tester, field('plex_signin_cancel'));
+      expect(field('plex_signin_start'), findsOneWidget);
+      expect(plexTv.flow.hasListener, isFalse, reason: 'the questions stop with the subscription');
+    });
+
+    testWidgets('a server none of whose addresses answers stays in the list with the reason', (tester) async {
+      plexTv.serverList = [_plexTvServer('Living room', _machine), _plexTvServer('Cabin', 'c' * 40)];
+      pairing.lookUpError = const PlexFileSystemException('No answer', PlexFailure.unreachable);
+      await pumpPage(tester);
+      await press(tester, field('plex_signin_start'));
+      await send(tester, const PlexTvAuthorised(_accountToken));
+      await press(tester, field('plex_signin_server_$_machine'));
+
+      expect(pairing.lookedUp.map((entry) => entry.$1.text), ['192.168.1.20:32400', '203.0.113.7:32401']);
+      expect(find.text('The Plex server does not answer at this address.'), findsOneWidget);
+      expect(textOf(tester, 'plex_token'), isEmpty);
+      expect(isEnabled(tester, 'plex_save'), isFalse);
+    });
+
+    testWidgets('an account without a server says so', (tester) async {
+      await pumpPage(tester);
+      await press(tester, field('plex_signin_start'));
+      await send(tester, const PlexTvAuthorised(_accountToken));
+      expect(find.text('This Plex account has no Plex Media Server.'), findsOneWidget);
+    });
+
+    testWidgets('is not offered on the page of a server already added', (tester) async {
+      const source = NetworkSource(
+        id: 'plex1',
+        type: NetworkSourceType.plex,
+        name: 'Test Plex',
+        host: '192.168.1.20',
+        useTls: true,
+        discoveryId: _machine,
+        plex: PlexServerInfo(hash: _hash),
+      );
+      await store.put(StoreKey.networkSourcesExtra, NetworkSource.encodeStored([source], const []));
+      secureStorage.values[source.secretKey] = _token;
+      await pumpPage(tester, source: source);
+      expect(field('plex_signin_panel'), findsNothing);
+    });
   });
 
   group('leaving with unsaved changes', () {
