@@ -1,10 +1,10 @@
 // Immuch360: the 360° sphere in WebGL 1, a port of the equirectangular pass of renderer C
-// (mobile/packages/media_kit_video/windows/projection_shaders.h, kFragmentEquirect and kFragmentMain, and
-// projection_renderer.cc, SetUniforms). One triangle covers the canvas; each pixel becomes a ray of the view, turned
-// into a longitude and a latitude read from the equirectangular frame. Black outside the crop (a partial panorama, or
-// the back half of a VR180 media); one eye of a 3D frame. At rest, a Catmull-Rom read in nine bilinear reads, or four
-// reads per pixel where the frame is minified (no mipmaps for frames of any size in WebGL 1); while the view moves,
-// one bilinear read.
+// (packages/media_kit_video/windows/projection_shaders.h of immuch360/media_kit_360, kFragmentEquirect and
+// kFragmentMain, and projection_renderer.cc, SetUniforms). One triangle covers the canvas; each pixel becomes a ray of
+// the view, turned into a longitude and a latitude read from the equirectangular frame. Black outside the crop (a
+// partial panorama, or the back half of a VR180 media); one eye of a 3D frame. At rest, a Catmull-Rom read in nine
+// bilinear reads, or four reads per pixel where the frame is minified (no mipmaps for frames of any size in WebGL 1);
+// while the view moves, one bilinear read.
 //
 // Changes from GLSL ES 3.00 to WebGL 1 (GLSL ES 1.00): texture2D, the size of the texture as a uniform (no
 // textureSize), gl_FragColor, the triangle from a vertex buffer (no gl_VertexID), and y up in normalised device
