@@ -21,7 +21,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/presentation/widgets/rate_app/rate_app_dialog.dart';
+import 'package:immich_mobile/providers/feature_message.provider.dart';
 import 'package:immich_mobile/providers/rate_app.provider.dart';
+import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/app_health.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -57,6 +59,8 @@ void main() {
   testWidgets('the invitation to rate: too early, due once, and held by a crash of the build', (tester) async {
     final server = LabServer.fromEnvironment();
     final store = _LabStore();
+    // The sign in asks the photo and notification permissions in a system dialog, which a test cannot answer
+    labLog('Fake server ${server.url}, permissions: ${await LabHost(server).grant()}');
     await startLabApp(
       tester,
       overrides: [
@@ -70,9 +74,38 @@ void main() {
     await signInThroughLabServer(tester, server);
     await waitForLabTimeline(tester, server);
     final container = labContainer(tester);
+    final router = container.read(appRouterProvider);
     final dialog = find.byKey(RateAppDialog.dialogKey);
 
     RateAppService service() => RateAppSignals.service ?? fail('no invitation service registered');
+
+    /// What the invitation sees of the screen, for a wait that fails
+    String screenNow() =>
+        'routes ${router.stackData.map((route) => route.name).toList()}, '
+        'root can pop ${router.navigatorKey.currentState?.canPop()}, ${WidgetsBinding.instance.lifecycleState}, '
+        'decision ${RateAppSignals.service?.lastDecision}, state ${RateAppSignals.service?.state.encode()}';
+
+    // The What's new notice of a fresh install shows once over the timeline: closed as a tap outside closes it, so that
+    // the tabs are alone as the invitation needs
+    await pumpUntil(
+      tester,
+      () => !container.read(featureMessageServiceProvider).shouldShow(),
+      reason: 'the What\'s new notice seen',
+      timeout: const Duration(seconds: 20),
+    );
+    await tester.pump(const Duration(seconds: 1));
+    for (var i = 0; i < 3 && (router.navigatorKey.currentState?.canPop() ?? false); i++) {
+      labLog('RateApp lab: closing what shows over the tabs (${screenNow()})');
+      router.navigatorKey.currentState!.pop();
+      await tester.pump(const Duration(seconds: 1));
+    }
+    await pumpUntil(
+      tester,
+      () => container.read(rateAppScreenProvider).browsing,
+      reason: 'the tabs alone, as the invitation needs',
+      timeout: const Duration(seconds: 20),
+      describe: screenNow,
+    );
 
     /// The service started again on [state], as at the start of the app
     Future<RateAppService> restart(RateAppState state) async {
@@ -107,6 +140,7 @@ void main() {
         () => service().lastDecision != null,
         reason: 'a decision after the pause on the timeline (before: $before)',
         timeout: const Duration(seconds: 20),
+        describe: screenNow,
       );
       await tester.pump(const Duration(milliseconds: 500));
       labLog('RateApp lab: ${service().lastDecision}, ${service().state.encode()}');
@@ -138,22 +172,30 @@ void main() {
       RateAppSignals.viewingOpened(RateAppViewing.immersive);
       _now = _now.add(const Duration(seconds: 25));
       RateAppSignals.viewingClosed(RateAppViewing.immersive);
-      await pumpUntil(tester, () => dialog.evaluate().isNotEmpty, reason: 'the invitation over the timeline');
+      await pumpUntil(
+        tester,
+        () => dialog.evaluate().isNotEmpty,
+        reason: 'the invitation over the timeline',
+        describe: screenNow,
+      );
       expect(dialog, findsOneWidget);
       expect(service().lastDecision, 'due');
       await tester.tap(find.byKey(RateAppDialog.notNowKey));
       await pumpUntil(tester, () => dialog.evaluate().isEmpty, reason: 'the invitation closed by Not now');
+      // Kept in the app's store, as the next start reads it: the store keeps a value once it is written
+      RateAppState kept() => RateAppState.decode(container.read(rateAppMemoryProvider).read());
       await pumpUntil(
         tester,
-        () => service().state.asks.isNotEmpty,
-        reason: 'the answer kept',
+        () => kept().asks.isNotEmpty,
+        reason: 'the answer kept in the app\'s store',
         timeout: const Duration(seconds: 10),
+        describe: screenNow,
       );
       expect(service().state.asks.single.answer, RateAppAnswer.notNow);
+      expect(kept().asks.single.answer, RateAppAnswer.notNow);
       expect((store.reviews, store.pages), (0, 0));
-      // Kept in the app's store, as the next start reads it
-      final kept = RateAppState.decode(container.read(rateAppMemoryProvider).read());
-      expect(kept.asks.single.answer, RateAppAnswer.notNow);
+      // The ask ends once its answer is kept; the next viewing comes after
+      await tester.pump(const Duration(milliseconds: 500));
       expect(await viewing(), 'asked in this build');
       expect(dialog, findsNothing);
     });
@@ -190,5 +232,5 @@ void main() {
     });
 
     await waitForQuietSyncs(tester);
-  });
+  }, timeout: const Timeout(Duration(minutes: 8)));
 }
