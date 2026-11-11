@@ -91,6 +91,14 @@
       android:exported="false"
       android:foregroundServiceType="connectedDevice" />
 
+    <!-- Download of a Plex film: keeps the Dart copy running while the screen is off, with a notification that tells
+         the progress and offers Pause and Cancel. Started by the app only, see filmdownload/FilmDownloadService.kt; it
+         never sees the address of the server nor its token -->
+    <service
+      android:name=".filmdownload.FilmDownloadService"
+      android:exported="false"
+      android:foregroundServiceType="dataSync" />
+
     <!-- DJI link, Send to a headset: keeps the phone relaying the drone's picture to a headset on the Wi-Fi while its
          screen is locked. Started by the app only, see djilink/DjiLinkRelayService.kt; it sends nothing to the remote -->
     <service

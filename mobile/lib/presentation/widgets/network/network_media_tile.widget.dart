@@ -34,6 +34,7 @@ import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
 import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/tiff_image_completer.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
@@ -41,7 +42,9 @@ import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.da
 import 'package:immich_mobile/presentation/widgets/watch_progress/watch_progress_overlay.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
 import 'package:path/path.dart' as p;
@@ -469,6 +472,9 @@ class NetworkMediaTile extends ConsumerWidget {
     final av2Frame = isAv2 && ref.watch(av2DecoderInstalledProvider);
     final hasFrame = entry.isVideo && url != null && (noAv2 || av2Frame);
     final isSelected = this.isSelected;
+    // A film of a Plex server copied to this device, or being copied (see FilmDownloadMark)
+    final mayBeDownloaded =
+        entry.isVideo && filmDownloadSourceType(ref.watch(networkSourceProvider(entry.sourceId))?.type);
     // A share whose server makes the pictures of its media (a Plex server) shows those, read through its connection
     final serverPictures = switch (ref.watch(networkConnectionsProvider).opened(entry.sourceId)) {
       final NetworkThumbnailSource source => source,
@@ -517,6 +523,7 @@ class NetworkMediaTile extends ConsumerWidget {
                   bottom: 6,
                   child: Icon(Icons.play_circle_outline_rounded, color: Colors.white, size: 20, shadows: _shadows),
                 ),
+              if (mayBeDownloaded) Positioned(left: 30, bottom: 8, child: FilmDownloadMark(entry: entry)),
               if (stereoBadge != null)
                 Positioned(
                   key: Key(switch (stereoBadge) {

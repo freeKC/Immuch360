@@ -19,6 +19,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart'
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
@@ -29,6 +30,7 @@ import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dar
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_selection.provider.dart';
@@ -450,6 +452,38 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     }
   }
 
+  /// Whether the picked films may be downloaded to this device: videos of a Plex server, where films are copied
+  bool _canDownloadSelection(NetworkSource? source, {required bool tvMode}) =>
+      !tvMode &&
+      ref.watch(filmDownloadOfferedProvider) &&
+      filmDownloadSourceType(source?.type) &&
+      _media.any((entry) => entry.isVideo);
+
+  /// Downloads the picked videos: one through the sheet that tells its size and the free room, several straight into
+  /// the queue (Download only on Wi-Fi holds them on mobile data)
+  Future<void> _downloadSelection() async {
+    final selection = ref.read(networkSelectionProvider(_folderKey));
+    final videos = [
+      for (final entry in _media)
+        if (entry.isVideo && selection.contains(entry.path)) entry,
+    ];
+    if (videos.isEmpty) {
+      return;
+    }
+    ref.read(networkSelectionProvider(_folderKey).notifier).end();
+    if (videos.length == 1) {
+      await startFilmDownload(context, ref, videos.single);
+      return;
+    }
+    final downloads = ref.read(filmDownloadsProvider.notifier);
+    for (final entry in videos) {
+      await downloads.download(entry);
+    }
+    if (mounted) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.t.film_download_started)));
+    }
+  }
+
   Future<void> _upload() async {
     final selection = ref.read(networkSelectionProvider(_folderKey));
     final entries = [
@@ -528,6 +562,14 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
             ? _SelectionBar(
                 count: selection.paths.length,
                 onUpload: () => unawaited(_upload()),
+                downloadAction: _canDownloadSelection(source, tvMode: tvMode)
+                    ? IconButton.filledTonal(
+                        key: const Key('network_browser_download'),
+                        icon: const Icon(Icons.download_rounded),
+                        tooltip: context.t.film_download_action,
+                        onPressed: selection.paths.isEmpty ? null : () => unawaited(_downloadSelection()),
+                      )
+                    : null,
                 // Immuch360 Desktop: "Make 3D (AI)" next to Upload to Immich (lib/desktop/ai/ui/share_conversion.dart)
                 desktopAction: CurrentPlatform.isDesktop
                     ? DesktopShareMakeImmersiveButton(
@@ -697,11 +739,14 @@ class _Caption extends StatelessWidget {
 /// At the bottom of the browser while picking files: the button that sends them to the server, or why there is none;
 /// on a computer, "Make 3D (AI)" next to it ([desktopAction])
 class _SelectionBar extends ConsumerWidget {
-  const _SelectionBar({required this.count, required this.onUpload, this.desktopAction});
+  const _SelectionBar({required this.count, required this.onUpload, this.desktopAction, this.downloadAction});
 
   final int count;
   final VoidCallback onUpload;
   final Widget? desktopAction;
+
+  /// Download to this device, for the films of a Plex server (see FilmDownloadsNotifier)
+  final Widget? downloadAction;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -737,13 +782,14 @@ extension on _SelectionBar {
   /// [upload] alone, or with the action of a computer after it
   Widget _withDesktopAction(Widget upload) {
     final action = desktopAction;
-    return action == null
+    final download = downloadAction;
+    return action == null && download == null
         ? upload
         : Row(
             children: [
               Expanded(child: upload),
-              const SizedBox(width: 12),
-              action,
+              if (download != null) ...[const SizedBox(width: 12), download],
+              if (action != null) ...[const SizedBox(width: 12), action],
             ],
           );
   }

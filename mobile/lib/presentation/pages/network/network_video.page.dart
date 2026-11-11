@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:async/async.dart';
 import 'package:auto_route/auto_route.dart';
@@ -6,6 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/video/av2_gate.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
@@ -35,6 +38,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.d
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_buffering.widget.dart';
@@ -51,7 +55,9 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
@@ -140,6 +146,11 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// The kind of share, for the logs; null until the share is open
   NetworkSourceType? _shareType;
 
+  /// The copy of the film on this device plays instead of the share (see [_offlineVideo]): the id it is served under
+  /// by the media bridge, and that bridge
+  String? _offlineId;
+  MediaBridge? _offlineBridge;
+
   NativeVideoPlayerController? _controller;
   bool _isVideoReady = false;
   bool _shouldPlayOnForeground = true;
@@ -223,6 +234,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _plexTracks = null;
     _removeListeners();
     _appBarFocus.removeListener(_onAppBarFocus);
+    final offlineId = _offlineId;
+    if (offlineId != null) {
+      _offlineBridge?.unregisterGenerated(offlineId);
+    }
     _rootFocus.dispose();
     _appBarFocus.dispose();
     _actionsFocus.dispose();
@@ -462,6 +477,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final connections = ref.read(networkConnectionsProvider);
     final service = ref.read(networkMediaServiceProvider);
     final client = ref.read(networkBridgeClientProvider);
+    // A film downloaded to this device plays from there, with or without the server (request 5 of the Plex films
+    // study): its watch progress is the one of the film on the share, by the same entry
+    final offline = await _offlineVideo(service, client);
+    if (offline != null) {
+      return offline;
+    }
     final fileSystem = await connections.fileSystem(widget.sourceId);
     _shareType = fileSystem.source.type;
     final bridge = ref.read(mediaBridgeProvider);
@@ -481,6 +502,50 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // What the file declares is read once the player has what it needs to play, not beside its first reads: on a slow
     // share the two read the index of the file at once (3.6 MB for a two hour film), and the film started later. A
     // page whose native player is not there a second later reads it at once
+    _detectLater = () => _detect(service, entry, httpRangeReader(client, url));
+    _detectTimer?.cancel();
+    _detectTimer = Timer(detectWithoutPlayer, () {
+      _detectTimer = null;
+      _detectWhenIdle(now: _controller == null);
+    });
+    return (entry: entry, url: url);
+  }
+
+  /// The whole copy of the film on this device, served by the media bridge under a random id like the generated media,
+  /// with the entry the share listed when it was copied; null when there is none
+  Future<_Video?> _offlineVideo(NetworkMediaService service, http.Client client) async {
+    // A Plex film, or a film of a server removed since, whose copy stays on the device
+    final source = ref.read(networkSourceProvider(widget.sourceId));
+    if (source != null && !filmDownloadSourceType(source.type)) {
+      return null;
+    }
+    final downloads = ref.read(filmDownloadsProvider.notifier);
+    final bridge = ref.read(mediaBridgeProvider);
+    final File? copy;
+    try {
+      copy = await downloads.completedCopy(widget.sourceId, widget.path);
+    } catch (error) {
+      _log.fine('The copies on this device could not be read: ${error.runtimeType}');
+      return null;
+    }
+    if (copy == null || !mounted) {
+      return null;
+    }
+    final film = ref.read(filmDownloadsProvider).of(widget.sourceId, widget.path);
+    if (film == null) {
+      return null;
+    }
+    await bridge.start();
+    final id = _offlineId ??= 'film-${Random.secure().nextInt(1 << 32).toRadixString(16)}';
+    final dot = film.fileName.lastIndexOf('.');
+    final name = 'film${dot > 0 ? film.fileName.substring(dot).toLowerCase() : ''}';
+    final entry = film.entry;
+    bridge.registerGenerated(id, _DownloadedFilm(copy, name, entry.guessedMimeType));
+    _offlineBridge = bridge;
+    final url = bridge.urlFor(id, '/$name');
+    _shareReader = null;
+    _shareFileSystem = null;
+    _log.info('Playing the copy of the film on this device');
     _detectLater = () => _detect(service, entry, httpRangeReader(client, url));
     _detectTimer?.cancel();
     _detectTimer = Timer(detectWithoutPlayer, () {
@@ -1163,6 +1228,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         // compares by value: the save of the film every 5 s while it plays rebuilds nothing here
         final watchKey = video == null ? null : WatchKey.ofEntry(video.entry);
         final watchRule = ref.watch(watchRuleProvider);
+        // Download to this device, a Plex film on a screen that copies films (see filmDownloadMenuItems)
+        final canDownload = video != null && canDownloadFilm(ref, widget.sourceId, video.entry);
         final watchActions = watchKey == null
             ? (restart: false, unwatch: false)
             : ref.watch(watchProgressProvider.select((rows) => watchActionsFor(rows.find(watchKey), watchRule)));
@@ -1206,8 +1273,23 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                       tooltip: context.t.spatial_2_5d,
                       onPressed: () => unawaited(_openSpatial(video)),
                     ),
+                  // Played from the copy on this device
+                  if (_offlineId != null)
+                    Tooltip(
+                      key: const Key('network_video_offline'),
+                      message: context.t.film_download_offline,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Icon(Icons.offline_pin_rounded),
+                      ),
+                    ),
                   if (video != null &&
-                      (menu360 || menuSpatial || canUpload || watchActions.restart || watchActions.unwatch))
+                      (menu360 ||
+                          menuSpatial ||
+                          canUpload ||
+                          canDownload ||
+                          watchActions.restart ||
+                          watchActions.unwatch))
                     PopupMenuButton<void>(
                       tooltip: context.t.more,
                       itemBuilder: (context) => [
@@ -1249,6 +1331,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                               contentPadding: EdgeInsets.zero,
                             ),
                           ),
+                        // The page's own context: the sheet and the dialog open once the menu is gone
+                        if (canDownload) ...filmDownloadMenuItems(this.context, ref, video.entry),
                         if (canUpload)
                           PopupMenuItem<void>(
                             // One upload from the shares at a time
@@ -1390,4 +1474,16 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       ),
     );
   }
+}
+
+/// The copy of a film on this device, as the media bridge serves it: one file under one name
+class _DownloadedFilm extends GeneratedMedia {
+  _DownloadedFilm(this._file, this._name, this._contentType);
+
+  final File _file;
+  final String _name;
+  final String _contentType;
+
+  @override
+  GeneratedFile? file(String name) => name == _name ? GeneratedFile.disk(_file, _contentType) : null;
 }

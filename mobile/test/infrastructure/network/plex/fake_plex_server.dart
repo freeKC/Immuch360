@@ -1,11 +1,11 @@
 // A small Plex Media Server on 127.0.0.1 for the tests of the Plex client: /identity, the sections, the folder view
-// with its paging headers, the albums of a photo section, the parts with or without Range support, the photo
-// transcoder, the account and the preferences; the films of a film library (/all?type=1 with its title filter, the
-// metadata of a film, the hub search) and, for the film page (lot A2), the full item of a film
-// (/library/metadata/{ratingKey}), the filters of a library and their values (as listings), the subtitle files beside a
-// film (/library/streams/{id}.srt) and the track picks (PUT /library/parts/{id}). Every answer but /identity wants the
-// test token in its header, as a
-// real server does, and answers 401 in HTML otherwise. The values are the synthetic ones of test/fixtures/plex.
+// with its paging headers, the albums of a photo section, the parts with or without Range support (and download=1
+// refused when asked), the photo transcoder, the account and the preferences; the films of a film library (/all?type=1
+// with its title filter, the metadata of a film, the hub search) and, for the film page (lot A2), the full item of a
+// film (/library/metadata/{ratingKey}), the filters of a library and their values (as listings), the subtitle files
+// beside a film (/library/streams/{id}.srt) and the track picks (PUT /library/parts/{id}). Every answer but /identity
+// wants the test token in its header, as a real server does, and answers 401 in HTML otherwise. The values are the
+// synthetic ones of test/fixtures/plex.
 
 import 'dart:convert';
 import 'dart:io';
@@ -117,6 +117,9 @@ class FakePlexServer {
   /// Answers 403 to everything but /identity, like a server to a user without the right to read
   bool forbidden = false;
   bool supportRanges = true;
+
+  /// Answers 403 to the parts asked with download=1, like a server to a shared user without "Allow Downloads"
+  bool downloadForbidden = false;
 
   /// Waits this long before answering /identity
   Duration identityDelay = Duration.zero;
@@ -351,6 +354,10 @@ class FakePlexServer {
     final size = partSizes[id];
     if (size == null) {
       response.statusCode = 404;
+      return response.close();
+    }
+    if (downloadForbidden && request.uri.queryParameters['download'] == '1') {
+      response.statusCode = 403;
       return response.close();
     }
     final bytes = plexPartBytes(id, size);

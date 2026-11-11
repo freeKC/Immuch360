@@ -45,7 +45,13 @@ final _log = Logger('PlexFileSystem');
 
 /// A [NetworkFileSystem] over a Plex Media Server, see [open]
 class PlexFileSystem
-    implements NetworkFileSystem, NetworkThumbnailSource, NetworkRemoteEndpoint, NetworkRangeReads, PlexFilmsSource {
+    implements
+        NetworkFileSystem,
+        NetworkThumbnailSource,
+        NetworkRemoteEndpoint,
+        NetworkRangeReads,
+        NetworkFileDownloads,
+        PlexFilmsSource {
   PlexFileSystem._(
     this.source,
     this._hash,
@@ -343,6 +349,74 @@ class PlexFileSystem
           } on PlexHttpStatus catch (error) {
             throw error.status == 404 || error.status == 410 ? const _Stale() : error;
           }
+        }),
+      ),
+    );
+  }
+
+  /// The part of the file at [path] for a copy on this device: `GET {Part.key}?download=1` with the token in its header,
+  /// from [from] with a Range header. With download=1 the server gives the original file at a fair share of the
+  /// bandwidth its playbacks leave, and answers 403 to an account whose owner forbids downloads, which a plain read of
+  /// the part would get round: the copy asks it that way so that the owner's choice holds. The identity of the copy is
+  /// the key of the part, which holds its change stamp, and the size the listing gave: a file replaced on the server
+  /// starts the copy over.
+  @override
+  Future<NetworkDownloadStream> openDownload(String path, {int from = 0, Future<void>? abort}) {
+    RangeError.checkNotNegative(from, 'from');
+    final target = normalizePath(path);
+    return _guard(
+      () => _onServer(
+        () => _rewalkOnce((again) async {
+          final file = await _fileOf(target, again);
+          final part = _endpoint.base.resolve(file.partKey);
+          final uri = part.replace(queryParameters: {...part.queryParameters, 'download': '1'});
+          final response = await _plex.send(
+            'GET',
+            uri,
+            accept: '*/*',
+            abort: abort,
+            headers: {'accept-encoding': 'identity', if (from > 0) 'range': 'bytes=$from-'},
+          );
+          final status = response.statusCode;
+          final identity = plexDownloadIdentity(file);
+          if (status == 416) {
+            // Nothing left after [from]: the copy holds the whole file, or the file got shorter (its identity tells)
+            await discardHttpBody(response);
+            final total = int.tryParse(
+              RegExp(r'/\s*(\d+)\s*$').firstMatch(response.headers['content-range'] ?? '')?.group(1) ?? '',
+            );
+            return NetworkDownloadStream(
+              start: from,
+              total: total ?? file.size,
+              identity: identity,
+              fileName: file.fileName,
+              bytes: const Stream.empty(),
+            );
+          }
+          if (status == 404 || status == 410) {
+            await discardHttpBody(response);
+            throw const _Stale();
+          }
+          if (status == 403) {
+            await discardHttpBody(response);
+            throw _downloadForbidden;
+          }
+          if (status != 200 && status != 206) {
+            await discardHttpBody(response);
+            throw PlexHttpStatus(status);
+          }
+          final range = status == 206 ? parseContentRange(response.headers['content-range']) : null;
+          if (status == 206 && range == null) {
+            await discardHttpBody(response);
+            throw const PlexFileSystemException('The Plex server sent a part it did not name', PlexFailure.failed);
+          }
+          return NetworkDownloadStream(
+            start: range?.start ?? 0,
+            total: range?.total ?? response.contentLength ?? file.size,
+            identity: identity,
+            fileName: file.fileName,
+            bytes: response.stream,
+          );
         }),
       ),
     );
@@ -1231,6 +1305,13 @@ class PlexFileSystem
     }
   }
 
+  static const _downloadForbidden = PlexFileSystemException(
+    'The owner of the Plex server does not allow this account to download',
+    PlexFailure.tokenForbidden,
+    isAuthentication: true,
+    isDownloadForbidden: true,
+  );
+
   static const _notFound = PlexFileSystemException(
     'This item is no longer on the Plex server',
     PlexFailure.failed,
@@ -1344,6 +1425,20 @@ class PlexFileSystem
       }
     }
   }
+}
+
+/// The identity of a copy of [file] (see NetworkDownloadStream.identity): the key of its part, whose change stamp
+/// moves when the file changes, and its size when the listing gives it
+String plexDownloadIdentity(PlexFileItem file) => '${file.partKey}|${file.size ?? ''}';
+
+/// The first offset and the total of a Content-Range header ("bytes 100-199/1000"), the total null when it is "*";
+/// null when the header is missing or malformed
+({int start, int? total})? parseContentRange(String? header) {
+  final match = RegExp(r'^\s*bytes\s+(\d+)-(\d+)/(\d+|\*)\s*$').firstMatch(header ?? '');
+  if (match == null) {
+    return null;
+  }
+  return (start: int.parse(match.group(1)!), total: int.tryParse(match.group(3)!));
 }
 
 /// The address outside home of a Plex server: the one typed by the user, through the port typed, else the port the
