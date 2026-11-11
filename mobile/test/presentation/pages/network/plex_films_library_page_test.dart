@@ -17,6 +17,7 @@ import 'package:immich_mobile/presentation/pages/network/network_browser.page.da
 import 'package:immich_mobile/presentation/pages/network/plex_films_library.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/plex_film_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/plex_film_list.provider.dart';
@@ -181,6 +182,20 @@ void main() {
       matchesSemantics(label: 'Élan du matin, 2021', isButton: true, hasTapAction: true, hasLongPressAction: true),
     );
     expect(find.byKey(const Key('plex_films_scrubber')), findsOneWidget);
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -100));
+    await tester.pump();
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('plex_films_scrubber')),
+        matching: find.byIcon(Icons.unfold_more_rounded),
+      ),
+      findsOneWidget,
+      reason: 'drawn, and see-through while hidden',
+    );
+    final opacity = tester.widget<AnimatedOpacity>(
+      find.descendant(of: find.byKey(const Key('plex_films_scrubber')), matching: find.byType(AnimatedOpacity)),
+    );
+    expect(opacity.opacity, 0, reason: 'four films fit on the screen: no scrubber');
   });
 
   testWidgets('the search shows the titles that hold the text, and Clear or Back shows every film again', (
@@ -262,6 +277,38 @@ void main() {
     expect(find.byKey(const Key('plex_films_scrubber')), findsNothing);
     final focused = FocusManager.instance.primaryFocus?.context;
     expect(focused?.findAncestorWidgetOfExactType<PlexFilmTile>()?.film.title, 'Film 0');
+  });
+
+  testWidgets('on a TV the arrows go from poster to poster, and Up from the first row to the search field', (
+    tester,
+  ) async {
+    share = _PlexShare([for (var i = 0; i < 20; i++) _film(i + 1, 'Film $i', 2020)]);
+    await pumpFilms(tester, tvMode: true, size: const Size(960, 540));
+    String? focusedFilm() =>
+        FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<PlexFilmTile>()?.film.title;
+
+    expect(focusedFilm(), 'Film 0');
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
+    expect(focusedFilm(), 'Film 1');
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    expect(focusedFilm(), 'Film 8', reason: 'seven a row');
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pumpAndSettle();
+    expect(focusedFilm(), isNull);
+    final focused = FocusManager.instance.primaryFocus!.context!;
+    expect(
+      find
+              .descendant(of: find.byWidget(focused.widget), matching: find.byKey(const Key('plex_films_search')))
+              .evaluate()
+              .isNotEmpty ||
+          focused.findAncestorWidgetOfExactType<TvTextEntry>() != null,
+      isTrue,
+      reason: 'the search field, which OK opens in the TV keyboard dialog',
+    );
   });
 
   testWidgets('the scrubber shows once the list moves, and dragged it moves the list and tells the year', (

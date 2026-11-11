@@ -886,7 +886,9 @@ class _PlexFilmsScrubberState extends State<PlexFilmsScrubber> {
   }
 
   bool _onScroll(ScrollNotification notification) {
-    if (notification.depth != 0) {
+    final metrics = notification.metrics;
+    // A list of less than three screens scrolls through without it
+    if (notification.depth != 0 || metrics.maxScrollExtent < 2 * metrics.viewportDimension) {
       return false;
     }
     if (!_shown) {
