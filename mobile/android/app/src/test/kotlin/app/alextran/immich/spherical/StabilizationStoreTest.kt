@@ -26,13 +26,13 @@ class StabilizationStoreTest {
 
   private val url = "https://immich.example/api/assets/1/video/playback?key=secret"
 
-  /** A message of the six frames of the real X5 slice, as setStabilization posts it */
+  /** A message of the first six frames of the real X5 file, as setStabilization posts it */
   private fun message(
     url: String = this.url,
     enabled: Boolean = true,
     summary: String? = "X5, 6 frames",
   ): StabilizationInbox.Message {
-    val x5 = StabilizationSliceTables.x5
+    val x5 = StabilizationFileTables.x5
     val times = longArrayOf(0, 33367, 66733, 100100, 133467, 166834)
     val corrections = DoubleArray(24)
     times.forEachIndexed { i, time -> x5.quaternionAt(time).copyInto(corrections, 4 * i) }

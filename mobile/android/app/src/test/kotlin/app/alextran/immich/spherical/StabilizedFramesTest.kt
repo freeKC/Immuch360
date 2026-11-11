@@ -390,12 +390,15 @@ class StabilizedFramesTest {
   }
 
   @Test
-  fun theRealTablesOfAnX5AndOfAGoProEndOnTheirOwnHeading() {
-    for ((name, table) in listOf("X5" to StabilizationSliceTables.x5, "GoPro" to StabilizationSliceTables.gopro)) {
-      val times = LongArray(table.size) { table.firstTimeUs + it * HeadingFade.frameStepUs(table) }
-      times[times.size - 1] = table.lastTimeUs
+  fun theRealTablesOfAnX5AndOfAGoProShowTheirOwnHeadingAfterOneSecond() {
+    for ((name, table, heading) in
+      listOf(
+        Triple("X5", StabilizationFileTables.x5, 48.7),
+        Triple("GoPro", StabilizationFileTables.goPro, 19.0),
+      )) {
+      val times = LongArray(table.size) { if (it == table.size - 1) table.lastTimeUs else it * 33_367L }
       val expected = times.map { meant(table.quaternionAt(it)) }
-      // Before: the correction as it is
+      // Before: the correction as it is, the whole video off by the heading of its first frame
       val queue = RotationQueueForTests()
       val matrix = FloatArray(16)
       val before =
@@ -404,12 +407,15 @@ class StabilizedFramesTest {
           queue.pollRotationMatrix(matrix, times[i])
           angleBetween(rotationPart(matrix), expected[i])
         }
-      // Now, with a hold of two frames and a fade of two, the slices being short
-      val frames = StabilizedFrames(holdUs = 0, minHoldFrames = 2, fadeUs = 2 * HeadingFade.frameStepUs(table))
+      for (i in times.indices) assertEquals("$name frame $i before", heading, before[i], 0.1)
+      // Now: level from the first frame, the heading of the table from frame 38 on (9 frames held, 30 to come back)
+      val frames = StabilizedFrames()
       frames.table = table
-      val after = play(frames, RotationQueueForTests(), times).mapIndexed { i, m -> angleBetween(m!!, expected[i]) }
-      assertTrue("$name: off by ${before.last()} degrees before", before.last() > 5.0)
-      for (i in 3 until times.size) assertEquals("$name frame $i", 0.0, after[i], 0.01)
+      val drawn = play(frames, RotationQueueForTests(), times)
+      for (i in times.indices) {
+        assertEquals("$name frame $i level", 0.0, levelError(drawn[i]!!, expected[i]), 1e-3)
+        if (i >= 38) assertEquals("$name frame $i", 0.0, angleBetween(drawn[i]!!, expected[i]), 0.01)
+      }
     }
   }
 
