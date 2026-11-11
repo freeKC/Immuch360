@@ -399,6 +399,37 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
   /// The section of [key] once listed, null before
   PlexSection? sectionOf(String key) => _sections[key];
 
+  /// The folder of the library [sectionKey] at the root of the share, where its folder view starts ("Show the folders"
+  /// of the film page); the root is listed first when this connection has not listed it. Null for a library the server
+  /// no longer lists.
+  Future<String?> sectionFolder(String sectionKey) async {
+    String? known() {
+      for (final MapEntry(key: path, value: node) in _nodes.entries) {
+        if (node is _Folder && !node.isRoot && !node.belowSection && node.section?.key == sectionKey) {
+          return path;
+        }
+      }
+      return null;
+    }
+
+    final found = known();
+    if (found != null) {
+      return found;
+    }
+    await list('/');
+    return known();
+  }
+
+  /// Where "Show the folders" of the film page goes for the file [path] of a film of the library [sectionKey]: the
+  /// folder the file was listed in, or, for a path of [plexFilmPath], the folder of its library; null when neither is
+  /// known
+  Future<String?> folderOfFilm(String? path, String? sectionKey) async {
+    if (path != null && parsePlexFilmPath(path) == null) {
+      return _parentOf(normalizePath(path));
+    }
+    return sectionKey == null ? null : sectionFolder(sectionKey);
+  }
+
   /// The full item of the film [ratingKey] (/library/metadata/{ratingKey}?includeGuids=1): its texts, people, ids and
   /// the streams of its files. Not found once the server no longer has it.
   Future<PlexFilmDetails> filmDetails(String ratingKey) => _guard(() => _onServer(() => _detailsOf(ratingKey)));

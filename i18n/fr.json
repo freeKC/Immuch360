@@ -3195,6 +3195,7 @@
   "plex_film_rating_audience": "Public {value}",
   "plex_film_rating_critics": "Critiques {value}",
   "plex_film_resume_at": "Reprendre à {position}",
+  "plex_film_show_folders": "Afficher les dossiers",
   "plex_film_subtitles": "Sous-titres : {languages}",
   "plex_film_wikipedia_attribution": "D'après l'article Wikipédia « {title} », CC BY-SA 4.0",
   "plex_film_wikipedia_read": "Lire sur Wikipédia",

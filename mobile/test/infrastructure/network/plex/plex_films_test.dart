@@ -353,6 +353,17 @@ void main() {
       expect(plex.itemAt('/Movies/Holidays'), isNull);
     });
 
+    test('Show the folders: the folder of a listed file, the folder of the library for a film path', () async {
+      final plex = await open();
+      final filmPath = plexFilmPath(sectionKey: '1', ratingKey: '401', partId: 4010, name: 'A Made Up Film (2001).mkv');
+      // The root is listed on the way when this connection has not listed it
+      expect(await plex.folderOfFilm(filmPath, '1'), '/Movies');
+      expect(await plex.folderOfFilm('/Movies/Holidays/Film.mkv', '1'), '/Movies/Holidays');
+      expect(await plex.folderOfFilm(null, '1'), '/Movies');
+      expect(await plex.folderOfFilm(filmPath, '99'), isNull, reason: 'a library the server no longer lists');
+      expect(await plex.folderOfFilm(null, null), isNull);
+    });
+
     test('lists the films a query keeps, under their own paths, with the query on /all', () async {
       const query = PlexFilmsQuery(decades: {2000}, contentRatings: {'fr/12'});
       final key = Uri(path: '/library/sections/1/all', queryParameters: query.toQueryParameters()).toString();

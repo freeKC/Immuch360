@@ -119,6 +119,19 @@ void main() {
     expect(find.byKey(const Key('plex_film_menu')), findsNothing);
   });
 
+  testWidgets('Show the folders is in the menu, and a button of the row on a TV', (tester) async {
+    await pumpPage(tester);
+    expect(find.byKey(const Key('plex_film_show_folders')), findsNothing);
+    await tester.tap(find.byKey(const Key('plex_film_menu')));
+    await tester.pumpAndSettle();
+    expect(find.text('Show the folders'), findsOneWidget);
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
+    await pumpPage(tester, tvMode: true, size: const Size(1920, 1080), ratio: 2);
+    expect(find.byKey(const Key('plex_film_show_folders')), findsOneWidget);
+    expect(find.text('Show the folders'), findsOneWidget);
+  });
+
   testWidgets('puts the poster and the buttons beside the texts on a wide screen', (tester) async {
     await pumpPage(tester, size: const Size(2048, 1280), ratio: 2);
     final play = tester.getCenter(find.byKey(const Key('plex_film_play')));

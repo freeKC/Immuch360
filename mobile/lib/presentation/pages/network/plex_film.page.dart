@@ -123,6 +123,15 @@ class _FilmMenu extends ConsumerWidget {
           onTap: () => unawaited(setFilmWikipedia(ref, !wikipedia)),
           child: Text(context.t.plex_film_wikipedia_setting_title),
         ),
+        PopupMenuItem<void>(
+          key: const Key('plex_film_show_folders'),
+          onTap: () => unawaited(showPlexFilmFolders(context, ref, sourceId: sourceId, film: film, path: path)),
+          child: ListTile(
+            leading: const Icon(Icons.folder_open_rounded),
+            title: Text(context.t.plex_film_show_folders),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
         if (canUpload)
           PopupMenuItem<void>(
             enabled: !isUploading,
@@ -399,9 +408,40 @@ class _Buttons extends ConsumerWidget {
             onPressed: () => play(fromStart: true),
           ),
         ...extra,
+        // A TV has no menu in the bar: the folders are a button of the row
+        if (ref.watch(tvModeProvider))
+          TextButton.icon(
+            key: const Key('plex_film_show_folders'),
+            icon: const Icon(Icons.folder_open_rounded),
+            label: Text(t.plex_film_show_folders),
+            onPressed: () => unawaited(showPlexFilmFolders(context, ref, sourceId: sourceId, film: film, path: path)),
+          ),
       ],
     );
   }
+}
+
+/// "Show the folders": the folder view of the share around the film, the folder its file was listed in, or the folder
+/// of its library for a film opened by its own path (a filtered list, the films page); Back returns to the film page
+Future<void> showPlexFilmFolders(
+  BuildContext context,
+  WidgetRef ref, {
+  required String sourceId,
+  required PlexFilmDetails film,
+  required String? path,
+}) async {
+  final String? folder;
+  try {
+    final fileSystem = await ref.read(plexFilmFileSystemProvider(sourceId).future);
+    folder = await fileSystem?.folderOfFilm(path, film.sectionKey);
+  } catch (_) {
+    // The server does not answer: the page stays, its own error shows at the next read
+    return;
+  }
+  if (folder == null || !context.mounted) {
+    return;
+  }
+  await context.pushRoute(NetworkBrowserRoute(sourceId: sourceId, path: folder));
 }
 
 /// The tagline, the synopsis, the people, the file and the Wikipedia block
