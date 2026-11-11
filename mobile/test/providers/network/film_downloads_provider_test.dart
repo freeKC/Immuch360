@@ -32,7 +32,20 @@ void main() {
     }
     containers.clear();
     await fake.close();
-    await root.delete(recursive: true);
+    // A disposed list may still land its last writes (the save of films.json, the bytes of a copy being paused): under
+    // the load of the whole suite they came while the folder was being deleted ("Directory not empty"), so the delete
+    // is tried again for a moment
+    for (var attempt = 1; ; attempt++) {
+      try {
+        await root.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        if (attempt == 40) {
+          rethrow;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
   Future<(ProviderContainer, FilmDownloadsNotifier)> start() async {
