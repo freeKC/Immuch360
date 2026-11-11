@@ -107,7 +107,7 @@ On LG TVs the webOS app has the same keys and the same rule, see [LG webOS TVs](
 4. A 360° video has the 360° button in the top bar, which opens the [360° player](#play-a-360-video); on a phone or a tablet the Spatial button follows it while that setting is on, see [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 5. Swipe up for the details of the video: the codec, the size, the frame rate, the bit rate, the picture, and whether this device decodes it, see [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters).
 
-The player plays the file stored on the device when there is one, the file of a network share through the app's local bridge, and otherwise the server's original or its transcoded stream, as Settings, Asset Viewer, Videos, "Video source" says (see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)). The choice of the audio track is in the 360°, Spatial and computer players, not in the flat player of phones yet.
+The player plays the file stored on the device when there is one, the file of a network share through the app's local bridge, and otherwise the server's original or its transcoded stream, as Settings, Asset Viewer, Videos, "Video source" says (see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)). The audio track and subtitle menus are in the flat player of Android phones, tablets, TVs and the Quest window (from build 29), for the tracks inside the file; the 360°, Spatial and computer players have the audio track choice. iPhones and iPads have no track menu yet.
 
 ### On a TV, in a headset and on a computer
 
@@ -277,7 +277,7 @@ From build 20 a Plex server found again at another address of the network moves 
 - **Finding servers**: the network scan and the DLNA, Plex and Tapo searches look at the local /24 network only, and need the local network permission on iOS. On iPhone and iPad the DLNA search sends the unicast requests only, until Apple grants the app the multicast entitlement, and some servers do not answer them (minidlna on Linux): add those by their description address.
 - **DLNA**: a server that only offers a converted copy of a file gives that copy; a folder lists 20,000 entries at most; the raw files of 360° cameras and the splat files usually do not show, see [DLNA media servers](#dlna-media-servers).
 - **Thumbnails**: photo thumbnails decode the whole file, and photos over 30 MB get none.
-- **Players**: the audio track choice is not in the flat player yet. On a phone there is no swiping from one file of a folder to the next yet (the Quest immersive view has previous and next for the 360° files of the folder). The 3D or 180° choice made on a network file is not remembered.
+- **Players**: the flat player of iPhones and iPads has no audio or subtitle menu yet. On a phone there is no swiping from one file of a folder to the next yet (the Quest immersive view has previous and next for the 360° files of the folder). The 3D or 180° choice made on a network file is not remembered.
 - **Uploads**: they run only while the app is open, and a file the server already has is sent in full before the server reports it as a duplicate.
 
 ## Plex Media Server, without plex.tv
@@ -304,6 +304,25 @@ From build 20 Immuch360 pairs with your Plex Media Server directly, without plex
 3. 360° and 3D are found by reading the files themselves, as on any share: 360° photos get the 360° badge, Apple spatial ones the 3D badge.
 4. Open a photo or video as on any share: 360°, 3D, 360°/180°, Spatial 2.5D on a phone, the immersive view in the Quest, the remote on a TV. A video is read as the original file, with byte ranges through the app's local bridge, so seeking works and its 360° and 3D metadata reach the players intact.
 5. Select files and tap "Upload to Immich" to send them to your server, as from any share (see [Send files of a share to Immich](#send-files-of-a-share-to-immich)).
+
+### Every film of a Plex library, by year (from build 45)
+
+You want every film of your library in one place, newest first, with its title under its poster, and to find one by typing a few letters, rather than walking the folders of the disk. From build 45 a Plex film library opens on its films page.
+
+1. Open your Plex server in Network shares, then its film library, or tap **Films** in the Library tab (it shows once the app has a Plex server, and asks which library when there are several).
+2. Every film is in one list, under a header per year with its number of films, newest year first; the films without a year come last, under "Year unknown". The posters load as you scroll, 100 films at a time, with the title and the year under each.
+3. Drag the scrubber on the right edge, which shows once the list moves, to jump to a year.
+4. Type in "Search a title": the films whose title holds the text show 300 ms after you stop typing, with what the server's own search adds for a misspelt title. The × button or Back clears the search.
+5. Tap a poster to play the film. A long press opens its menu: Play, and Upload to Immich.
+6. The menu of the page has "Show the folders", the folder view as before, where the title of each film now shows under its picture. Libraries of other videos, where 360° clips usually are, keep the folder view.
+
+On each screen:
+- **Phones and tablets**: pinch to change the number of posters a row.
+- **Android TV**: seven posters a row, the first one focused, no scrubber; OK on the search field opens the TV keyboard.
+- **Meta Quest window**: the tablet layout, with the system keyboard.
+- **Computers**: Ctrl (Command on a Mac) and the mouse wheel change the number of posters a row; Ctrl F, Command F or / go to the search field, Escape clears it; the whole title shows when the pointer rests on it.
+
+Limits of build 45: the page was checked against a simulated server built from Plex's documentation, not yet against a real Plex Media Server, and whether the server's search ignores accents depends on the server.
 
 ### Away from home
 
@@ -1032,7 +1051,7 @@ The share of the app is read on Windows from the counter the Task Manager shows 
 - **One window**: opening the app a second time brings the first window back instead of starting a second copy.
 - **Nothing is deleted from your folders**: "Delete from device" is hidden, and Delete removes only the server copy, until the app can send files to the Windows recycle bin.
 - **Mouse and keyboard** in place of touch and the gyroscope; from desktop build 24, Ctrl+click, Shift+click and Ctrl+A select as in a file manager.
-- **One video player for every source**: libmpv plays the videos of the server, the folders, the shares and Plex alike, and its flat player already has the audio track menu that the flat player of phones does not have yet.
+- **One video player for every source**: libmpv plays the videos of the server, the folders, the shares and Plex alike, and its flat player has the audio track menu, as the flat player of Android phones, tablets and TVs has since build 29.
 - **360° videos in the window** (from desktop build 3): the 360° player is a page of the app, not a separate native player, with a time bar, 10 second jumps and the sound button. Raw videos with one lens per track or per file play in two players from desktop build 5, as phones run two decoders (desktop builds 3 and 4 stacked them side by side in one player); the phones' fallback steps are the same, with the stack and the camera's LRV copy added.
 - **The Tapo live view** (from desktop build 3) plays on the computer as on Android; iPhones and iPads get it with the next iOS release.
 

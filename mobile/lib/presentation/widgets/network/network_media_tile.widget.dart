@@ -476,14 +476,16 @@ class NetworkMediaTile extends ConsumerWidget {
     };
     Widget withServerThumbnail(Widget picture) => _withServerThumbnail(entry, picture, serverPictures);
 
+    // The title of a Plex film rather than its file name
+    final name = entry.shownName;
     return Semantics(
       label: wasSent
-          ? '${entry.name}, ${context.t.network_upload_sent_before}'
+          ? '$name, ${context.t.network_upload_sent_before}'
           : inTrash
-          ? '${entry.name}, ${context.t.network_upload_in_trash_mark}'
+          ? '$name, ${context.t.network_upload_in_trash_mark}'
           : isAv2
-          ? '${entry.name}, ${context.t.av2_badge}'
-          : entry.name,
+          ? '$name, ${context.t.av2_badge}'
+          : name,
       button: true,
       selected: isSelected ?? false,
       onTap: onTap,
@@ -507,7 +509,7 @@ class NetworkMediaTile extends ConsumerWidget {
               else
                 // A photo too large to read for a thumbnail still shows the picture its server made of it
                 withServerThumbnail(
-                  _Placeholder(icon: entry.isVideo ? Icons.movie_outlined : Icons.image_outlined, name: entry.name),
+                  _Placeholder(icon: entry.isVideo ? Icons.movie_outlined : Icons.image_outlined, name: name),
                 ),
               if (entry.isVideo)
                 const Positioned(

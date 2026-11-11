@@ -279,6 +279,7 @@ class NetworkEntry {
     this.width,
     this.height,
     this.durationMs,
+    this.title,
   });
 
   final String sourceId;
@@ -303,6 +304,13 @@ class NetworkEntry {
 
   /// Length of a video
   final int? durationMs;
+
+  /// What a media server calls the file, shown instead of its name: the title of a Plex film, under its poster, in the
+  /// title of its page and in what a screen reader says. Not part of the path, not stored; null for the other shares.
+  final String? title;
+
+  /// [title] when the server gives one, else the file name
+  String get shownName => title ?? name;
 
   String get name =>
       path.endsWith('/') && path.length > 1 ? path.substring(0, path.length - 1).split('/').last : path.split('/').last;

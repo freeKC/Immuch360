@@ -1,0 +1,181 @@
+{
+  "MediaContainer": {
+    "size": 3,
+    "Hub": [
+      {
+        "title": "Movies",
+        "type": "movie",
+        "hubIdentifier": "movie",
+        "context": "",
+        "size": 2,
+        "more": false,
+        "style": "shelf",
+        "Metadata": [
+          {
+            "ratingKey": "302",
+            "key": "/library/metadata/302",
+            "guid": "plex://movie/000000000000000000000302",
+            "studio": "Example Studio",
+            "type": "movie",
+            "title": "Élan du matin",
+            "librarySectionTitle": "Movies",
+            "librarySectionID": 1,
+            "librarySectionKey": "/library/sections/1",
+            "contentRating": "fr/12",
+            "summary": "A made up synopsis.",
+            "audienceRating": 7.5,
+            "tagline": "A made up tagline.",
+            "thumb": "/library/metadata/302/thumb/1700000000",
+            "art": "/library/metadata/302/art/1700000000",
+            "duration": 6600000,
+            "addedAt": 1690000302,
+            "updatedAt": 1700000000,
+            "Media": [
+              {
+                "id": 4302,
+                "duration": 6600000,
+                "bitrate": 8000,
+                "width": 1920,
+                "height": 800,
+                "aspectRatio": 2.35,
+                "audioChannels": 6,
+                "audioCodec": "ac3",
+                "videoCodec": "h264",
+                "videoResolution": "1080",
+                "container": "mkv",
+                "videoFrameRate": "24p",
+                "Part": [
+                  {
+                    "id": 4302,
+                    "key": "/library/parts/4302/1700000000/file.mkv",
+                    "duration": 6600000,
+                    "file": "/data/movies/Élan du matin (2021)/Élan du matin (2021).mkv",
+                    "size": 4000004302,
+                    "container": "mkv"
+                  }
+                ]
+              }
+            ],
+            "Genre": [
+              {
+                "tag": "Comedy"
+              }
+            ],
+            "Country": [
+              {
+                "tag": "France"
+              }
+            ],
+            "Director": [
+              {
+                "tag": "A. Director"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "An Actor"
+              }
+            ],
+            "year": 2021,
+            "originallyAvailableAt": "2021-04-25",
+            "originalTitle": "Morning Drive",
+            "viewOffset": 1200000
+          },
+          {
+            "ratingKey": "901",
+            "key": "/library/metadata/901",
+            "guid": "plex://movie/000000000000000000000901",
+            "studio": "Example Studio",
+            "type": "movie",
+            "title": "Elan",
+            "librarySectionTitle": "Kids",
+            "librarySectionID": 3,
+            "librarySectionKey": "/library/sections/3",
+            "contentRating": "PG-13",
+            "summary": "A made up synopsis.",
+            "audienceRating": 7.5,
+            "tagline": "A made up tagline.",
+            "thumb": "/library/metadata/901/thumb/1700000000",
+            "art": "/library/metadata/901/art/1700000000",
+            "duration": 6600000,
+            "addedAt": 1690000901,
+            "updatedAt": 1700000000,
+            "Media": [
+              {
+                "id": 4901,
+                "duration": 6600000,
+                "bitrate": 8000,
+                "width": 1920,
+                "height": 800,
+                "aspectRatio": 2.35,
+                "audioChannels": 6,
+                "audioCodec": "ac3",
+                "videoCodec": "h264",
+                "videoResolution": "1080",
+                "container": "mkv",
+                "videoFrameRate": "24p",
+                "Part": [
+                  {
+                    "id": 4901,
+                    "key": "/library/parts/4901/1700000000/file.mkv",
+                    "duration": 6600000,
+                    "file": "/data/movies/Elan (2003)/Elan (2003).mkv",
+                    "size": 4000004901,
+                    "container": "mkv"
+                  }
+                ]
+              }
+            ],
+            "Genre": [
+              {
+                "tag": "Comedy"
+              }
+            ],
+            "Country": [
+              {
+                "tag": "France"
+              }
+            ],
+            "Director": [
+              {
+                "tag": "A. Director"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "An Actor"
+              }
+            ],
+            "year": 2003,
+            "originallyAvailableAt": "2003-04-25"
+          }
+        ]
+      },
+      {
+        "title": "Actors",
+        "type": "actor",
+        "hubIdentifier": "actor",
+        "context": "",
+        "size": 1,
+        "more": false,
+        "style": "shelf",
+        "Directory": [
+          {
+            "key": "/library/people/1",
+            "tag": "An Actor",
+            "type": "tag"
+          }
+        ]
+      },
+      {
+        "title": "Shows",
+        "type": "show",
+        "hubIdentifier": "show",
+        "context": "",
+        "size": 0,
+        "more": false,
+        "style": "shelf"
+      }
+    ]
+  }
+}

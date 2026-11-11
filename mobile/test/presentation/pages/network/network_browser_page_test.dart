@@ -261,6 +261,29 @@ void main() {
     );
   }
 
+  testWidgets('the files a media server titles show their title under the picture and to a screen reader', (
+    tester,
+  ) async {
+    share.titles['/Holidays/beach.jpg'] = 'Beach Day';
+    share.folders['/Holidays'] = [share.file('/Holidays/beach.jpg')];
+    await pumpBrowser(tester, path: '/Holidays');
+
+    expect(find.byKey(const Key('network_media_caption')), findsOneWidget);
+    expect(find.text('Beach Day'), findsOneWidget);
+    expect(tester.getSemantics(tileOf('beach.jpg')).label, 'Beach Day');
+    final tile = tester.getSize(tileOf('beach.jpg'));
+    expect(tile.height, closeTo(tile.width, 0.01), reason: 'the square picture, the caption under it');
+    expect(tester.getTopLeft(find.text('Beach Day')).dy, greaterThan(tester.getBottomLeft(tileOf('beach.jpg')).dy - 1));
+  });
+
+  testWidgets('the files of a share without titles keep their square cells and no caption', (tester) async {
+    await pumpBrowser(tester);
+
+    expect(find.byKey(const Key('network_media_caption')), findsNothing);
+    final tile = tester.getSize(tileOf('flat.jpg'));
+    expect(tile.height, tile.width);
+  });
+
   testWidgets('shows the folders first, then a grid of the photos and videos, without the other files', (tester) async {
     await pumpBrowser(tester);
 

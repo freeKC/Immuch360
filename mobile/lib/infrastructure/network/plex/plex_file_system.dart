@@ -28,6 +28,7 @@ import 'package:immich_mobile/infrastructure/network/http_range_reader.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:logging/logging.dart';
@@ -35,7 +36,8 @@ import 'package:logging/logging.dart';
 final _log = Logger('PlexFileSystem');
 
 /// A [NetworkFileSystem] over a Plex Media Server, see [open]
-class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, NetworkRemoteEndpoint, NetworkRangeReads {
+class PlexFileSystem
+    implements NetworkFileSystem, NetworkThumbnailSource, NetworkRemoteEndpoint, NetworkRangeReads, PlexFilmsSource {
   PlexFileSystem._(
     this.source,
     this._hash,
@@ -284,7 +286,7 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
         () => _rewalkOnce((again) async {
           var entry = _entries[target];
           if (entry == null) {
-            await _listingOf(_parentOf(target), again);
+            await _findUnlisted(target, again);
             entry = _entries[target];
           }
           if (entry == null) {
@@ -340,17 +342,22 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
   @override
   Future<Uint8List?> thumbnail(NetworkEntry entry, int size) {
     final node = _nodes[normalizePath(entry.path)];
-    final thumb = node is _File ? node.file.thumb : null;
-    if (thumb == null) {
+    final file = node is _File ? node.file : null;
+    final thumb = file?.thumb;
+    if (file == null || thumb == null) {
       return Future.value(null);
     }
     final side = size.clamp(_minThumbnailSize, _maxThumbnailSize);
+    // A film's poster is 2:3: asked at that shape, [size] being its height, rather than as a square that is cropped.
+    // The films of a film library only, which have their title: the frames of "Other videos" stay square.
+    final poster = file.isPoster && _entries[normalizePath(entry.path)]?.title != null;
+    final width = poster ? max(_minThumbnailSize, (side * 2 / 3).round()) : side;
     return _guard(
       () => _onServer(() {
         final uri = _endpoint.base
             .resolve('/photo/:/transcode')
             .replace(
-              queryParameters: {'width': '$side', 'height': '$side', 'minSize': '1', 'upscale': '0', 'url': thumb},
+              queryParameters: {'width': '$width', 'height': '$side', 'minSize': '1', 'upscale': '0', 'url': thumb},
             );
         return _plex.getBytes(uri);
       }),
@@ -544,7 +551,7 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
   Future<PlexFileItem> _fileOf(String path, bool again) async {
     var node = _nodes[path];
     if (node == null) {
-      await _listingOf(_parentOf(path), again);
+      await _findUnlisted(path, again);
       node = _nodes[path];
     }
     if (node == null) {
@@ -749,6 +756,9 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
             width: item.width,
             height: item.height,
             durationMs: item.durationMs,
+            // The film's title under its picture and in the title of its page, not the name of the file: in a film
+            // library only, "Other videos" keeping the names of their files
+            title: item.isPoster && (parent.section?.isFilms ?? false) ? item.title : null,
           );
       }
       _entries[path] = entry;
@@ -781,6 +791,7 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
         width: entry.width,
         height: entry.height,
         durationMs: entry.durationMs,
+        title: entry.title,
       );
     }
     return size;
@@ -901,6 +912,139 @@ class PlexFileSystem implements NetworkFileSystem, NetworkThumbnailSource, Netwo
   static String _parentOf(String path) {
     final slash = path.lastIndexOf('/');
     return slash <= 0 ? '/' : path.substring(0, slash);
+  }
+
+  // The films of the film libraries (plex_film_list.dart): read page by page, their files under paths of their own
+
+  /// The library whose folder is [path] at the root of the share, once the root was listed; null for any other path
+  PlexSection? sectionAt(String path) {
+    final node = _nodes[normalizePath(path)];
+    return node is _Folder && !node.isRoot && !node.belowSection ? node.section : null;
+  }
+
+  @override
+  PlexSection? filmLibraryAt(String path) {
+    final section = sectionAt(path);
+    return section != null && section.isFilms ? section : null;
+  }
+
+  @override
+  String get filmsSourceId => source.id;
+
+  @override
+  Future<List<({PlexSection section, String folderPath})>> filmLibraries() async {
+    await list('/');
+    return [
+      for (final MapEntry(key: path, value: node) in _nodes.entries)
+        if (node is _Folder && !node.isRoot && !node.belowSection && (node.section?.isFilms ?? false))
+          (section: node.section!, folderPath: path),
+    ];
+  }
+
+  @override
+  Future<List<int?>> filmYears(PlexFilmListQuery query) => _guard(
+    () => _onServer(() async {
+      final years = <int?>[];
+      var start = 0;
+      while (start < PlexFilmListQuery.maxFilms) {
+        final page = await _plex.getJson(
+          _filmsUri(query, light: true),
+          parsePlexYearsPage,
+          headers: {'x-plex-container-start': '$start', 'x-plex-container-size': '${PlexFilmListQuery.yearsPageSize}'},
+        );
+        years.addAll(page.years);
+        if (page.count <= 0) {
+          break;
+        }
+        start += page.count;
+        final total = page.totalSize;
+        if (total == null ? page.count < PlexFilmListQuery.yearsPageSize : start >= total) {
+          break;
+        }
+      }
+      return years;
+    }),
+  );
+
+  @override
+  Future<PlexFilmListPage> filmsPage(PlexFilmListQuery query, {required int start, required int size}) => _guard(
+    () => _onServer(() async {
+      final page = await _plex.getJson(
+        _filmsUri(query),
+        parsePlexFilmListPage,
+        headers: {'x-plex-container-start': '$start', 'x-plex-container-size': '$size'},
+      );
+      _recordFilms(query.sectionKey, page.films);
+      return page;
+    }),
+  );
+
+  /// The server's own search, which "performs spell checking, looks for partial matches" and is meant to be called as
+  /// the user types; a server without it (404, 400) finds nothing
+  @override
+  Future<List<PlexFilm>> searchFilms(String sectionKey, String text) => _guard(
+    () => _onServer(() async {
+      final uri = _endpoint.base
+          .resolve('/hubs/search')
+          .replace(queryParameters: {'query': text, 'sectionId': sectionKey, 'limit': '$_searchLimit'});
+      try {
+        final films = await _plex.getJson(uri, _hubFilmsOf(sectionKey));
+        _recordFilms(sectionKey, films);
+        return films;
+      } on PlexHttpStatus catch (error) {
+        if (error.status == 404 || error.status == 400 || error.status == 501) {
+          return const <PlexFilm>[];
+        }
+        rethrow;
+      }
+    }),
+  );
+
+  /// The films a spelling tolerant search adds at most, per hub
+  static const _searchLimit = 30;
+
+  /// The parser of a search of [sectionKey], made apart from this connection: it may run in another isolate
+  static List<PlexFilm> Function(Object? json) _hubFilmsOf(String sectionKey) =>
+      (json) => parsePlexHubFilms(json, sectionKey);
+
+  Uri _filmsUri(PlexFilmListQuery query, {bool light = false}) =>
+      _endpoint.base.resolve(query.path).replace(queryParameters: query.queryParameters(light: light));
+
+  /// Records the files of [films] under their paths (see plexFilmPartPath), for the reads, the bridge and the pictures
+  void _recordFilms(String sectionKey, List<PlexFilm> films) {
+    for (final film in films) {
+      for (final part in film.parts) {
+        final path = plexFilmPartPath(sectionKey, film.ratingKey, part);
+        _nodes[path] = _File(part);
+        // A size found by stat stays, unless the server tells one now
+        final known = _entries[path]?.size;
+        _entries[path] = plexFilmPartEntry(source.id, path, part, title: film.title, knownSize: known);
+      }
+    }
+  }
+
+  /// Finds what [path] names when this connection has not met it: a film through its metadata (a page reopened after
+  /// the connection was), anything else in the listing of its parent
+  Future<void> _findUnlisted(String path, bool again) async {
+    final film = plexFilmPathParts(path);
+    if (film == null) {
+      await _listingOf(_parentOf(path), again);
+      return;
+    }
+    final PlexFilmListPage found;
+    try {
+      found = await _plex.getJson(
+        _endpoint.base.resolve('/library/metadata/${Uri.encodeComponent(film.ratingKey)}'),
+        parsePlexFilmListPage,
+      );
+    } on PlexHttpStatus catch (error) {
+      // A film removed, or added again under another id
+      throw error.status == 404 || error.status == 410 ? _notFound : error;
+    }
+    _recordFilms(film.sectionKey, [
+      for (final item in found.films)
+        if (item.ratingKey == film.ratingKey) item,
+    ]);
   }
 }
 

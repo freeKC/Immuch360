@@ -1085,7 +1085,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
           centerTitle: false,
           // On a TV, Back on the app bar only hides it: the Back button leaves the page itself
           leading: tvMode ? remoteBackButton(context) : null,
-          title: Text(_name, maxLines: 1, overflow: TextOverflow.ellipsis),
+          // The title of a Plex film rather than its file name, which a screen reader says too
+          title: Text(
+            video?.entry.shownName ?? _name,
+            key: const Key('network_video_title'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           actions: [
             Focus(
               focusNode: _actionsFocus,

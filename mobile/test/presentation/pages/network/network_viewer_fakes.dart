@@ -43,9 +43,18 @@ class MemoryShare implements NetworkFileSystem {
 
   static final modified = DateTime.utc(2026, 10, 1, 12);
 
-  /// A file entry of this share, with the size of its bytes in [files]
-  NetworkEntry file(String path) =>
-      NetworkEntry(sourceId: source.id, path: path, isDirectory: false, size: files[path]?.length, modified: modified);
+  /// The titles a media server gives some files (a Plex film), by path
+  final Map<String, String> titles = {};
+
+  /// A file entry of this share, with the size of its bytes in [files] and its title in [titles]
+  NetworkEntry file(String path) => NetworkEntry(
+    sourceId: source.id,
+    path: path,
+    isDirectory: false,
+    size: files[path]?.length,
+    modified: modified,
+    title: titles[path],
+  );
 
   NetworkEntry folder(String path) => NetworkEntry(sourceId: source.id, path: path, isDirectory: true);
 
@@ -191,6 +200,19 @@ Future<RootStackRouter> pumpNetworkRouter(
               (data) {
                 final args = data.argsAs<NetworkVideoRouteArgs>();
                 return Text('video ${args.sourceId} ${args.path}');
+              },
+        ),
+      ),
+      // The films page of a film library of a Plex server (lot A1 of the films study)
+      AutoRoute(
+        path: '/plex-films',
+        page: PageInfo(
+          PlexFilmsLibraryRoute.name,
+          builder:
+              pages[PlexFilmsLibraryRoute.name] ??
+              (data) {
+                final args = data.argsAs<PlexFilmsLibraryRouteArgs>();
+                return Text('films ${args.sourceId} ${args.sectionKey} ${args.title} ${args.folderPath}');
               },
         ),
       ),
