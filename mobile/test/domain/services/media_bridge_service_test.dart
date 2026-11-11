@@ -789,6 +789,19 @@ void main() {
       expect((await _send(deeper)).status, HttpStatus.notFound);
     });
 
+    test('media fetched when asked: its file, 404 for none, 502 when the fetch fails', () async {
+      final fetched = _FetchedMedia({'film.m3u8': GeneratedFile(_playlistBytes, 'application/vnd.apple.mpegurl')});
+      bridge.registerGenerated('f0e1d2c3b4a5968778695a4b', fetched);
+      final playlist = await _send(bridge.urlFor('f0e1d2c3b4a5968778695a4b', 'film.m3u8'));
+      expect(playlist.status, HttpStatus.ok);
+      expect(playlist.body, _playlistBytes);
+      expect(playlist.header(HttpHeaders.contentTypeHeader), 'application/vnd.apple.mpegurl');
+      expect((await _send(bridge.urlFor('f0e1d2c3b4a5968778695a4b', '7.ts'))).status, HttpStatus.notFound);
+      fetched.fails = true;
+      expect((await _send(bridge.urlFor('f0e1d2c3b4a5968778695a4b', 'film.m3u8'))).status, HttpStatus.badGateway);
+      expect(fetched.asked, ['film.m3u8', '7.ts', 'film.m3u8']);
+    });
+
     test('nothing once unregistered; the shares are still served', () async {
       bridge.unregisterGenerated('a1b2c3d4e5f6a7b8c9d0e1f2');
       expect((await _send(bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'live.m3u8'))).status, HttpStatus.notFound);
@@ -1484,4 +1497,26 @@ void main() {
       });
     },
   );
+}
+
+/// Generated media whose files come from an await, as a conversion of the Plex server fetches them
+class _FetchedMedia implements GeneratedMediaFetch {
+  _FetchedMedia(this.files);
+
+  final Map<String, GeneratedFile> files;
+  final asked = <String>[];
+  bool fails = false;
+
+  @override
+  Future<GeneratedFile?> fetch(String name) async {
+    asked.add(name);
+    await Future<void>.delayed(Duration.zero);
+    if (fails) {
+      throw const SocketException('the server is gone');
+    }
+    return files[name];
+  }
+
+  @override
+  GeneratedFile? file(String name) => throw StateError('a fetched media is never asked synchronously');
 }

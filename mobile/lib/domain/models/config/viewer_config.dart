@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/domain/models/film_player_preference.dart';
 
 part 'viewer_config.freezed.dart';
 
@@ -92,6 +93,16 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// R8). On by default, the lab rule (Settings, Advanced, and the menu of the film page, turn it off: no request then
     /// goes to Wikimedia, and the kept articles are deleted)
     @Default(true) bool filmWikipedia,
+
+    /// Which player plays a film of a Plex server (release 46): the app chooses from the film's streams by default,
+    /// the device's own player when it decodes them all, libmpv otherwise where the build has it (the Meta Quest
+    /// build); Settings, Advanced and the menu of the video page pick one (see film_player_choice.dart)
+    @Default(FilmPlayerPreference.automatic) FilmPlayerPreference filmPlayer,
+
+    /// Experimental: a Plex film that neither the device nor libmpv decodes is converted by the Plex server (its
+    /// transcoder, HLS), which also takes over a film whose player failed. On by default, the lab rule (Settings,
+    /// Advanced turns it off: such a film then says why it does not play)
+    @Default(true) bool plexConversion,
 
     /// Which file of a server video the players load, null until the user picks one in the settings: the source then
     /// follows [loadOriginalVideo], which the choice replaces (see videoSourcePolicy)

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/desktop/video/desktop_subtitle_track_button.dart';
+import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/domain/models/video_track_naming.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -24,7 +25,13 @@ const _shadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0,
 /// subtitle menus follow, for a video that has several audio tracks or subtitles (VideoTrackButtons,
 /// DesktopAudioTrackButton, DesktopSubtitleTrackButton), with the names a media server gives them ([trackNaming]).
 class NetworkVideoControls extends ConsumerWidget {
-  const NetworkVideoControls({super.key, required this.playerKey, this.playFocusNode, this.trackNaming});
+  const NetworkVideoControls({
+    super.key,
+    required this.playerKey,
+    this.playFocusNode,
+    this.trackNaming,
+    this.mpvController,
+  });
 
   final String playerKey;
 
@@ -34,6 +41,10 @@ class NetworkVideoControls extends ConsumerWidget {
   /// The names a media server gives the audio and subtitle tracks of the film, and its hook for a pick; null for the
   /// players' own names
   final VideoTrackNaming? trackNaming;
+
+  /// libmpv's controller where it plays the film on a phone or a headset (the Meta Quest build, film_player_choice.dart):
+  /// its own audio and subtitle menus, those of the computers, in place of the native player's
+  final MediaKitVideoPlayerController? mpvController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,6 +82,9 @@ class NetworkVideoControls extends ConsumerWidget {
               if (CurrentPlatform.isDesktop) ...[
                 DesktopAudioTrackButton(shadows: _shadows, naming: trackNaming),
                 DesktopSubtitleTrackButton(shadows: _shadows, naming: trackNaming),
+              ] else if (mpvController != null) ...[
+                DesktopAudioTrackButton(shadows: _shadows, naming: trackNaming, controller: mpvController),
+                DesktopSubtitleTrackButton(shadows: _shadows, naming: trackNaming, controller: mpvController),
               ],
               if (tvMode) ...[
                 IconButton(
@@ -93,7 +107,7 @@ class NetworkVideoControls extends ConsumerWidget {
                 ),
               ],
               // The audio tracks and the subtitles of the player of the phones, TVs and headsets
-              if (!CurrentPlatform.isDesktop)
+              if (!CurrentPlatform.isDesktop && mpvController == null)
                 VideoTrackButtons(playerKey: playerKey, shadows: _shadows, naming: trackNaming),
               const Spacer(),
               if (seekSeries != null) VideoSeekHint(series: seekSeries, shadows: _shadows),

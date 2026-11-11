@@ -29,6 +29,7 @@ import 'package:immich_mobile/services/app_settings.service.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:immich_mobile/utils/hooks/app_settings_update_hook.dart';
 import 'package:immich_mobile/widgets/settings/custom_proxy_headers_settings/custom_proxy_headers_settings.dart';
+import 'package:immich_mobile/widgets/settings/film_player_settings.dart';
 import 'package:immich_mobile/widgets/settings/ssl_client_cert_settings.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
@@ -225,6 +226,8 @@ class AdvancedSettings extends HookConsumerWidget {
         title: context.t.plex_film_wikipedia_setting_title,
         subtitle: context.t.plex_film_wikipedia_setting_subtitle,
       ),
+      // The player of a Plex film and the server's conversion, on Android (release 46)
+      const FilmPlayerSettings(),
       if (isHorizonOs)
         SettingsSwitchListTile(
           key: const Key('advanced_settings_flat_3d'),

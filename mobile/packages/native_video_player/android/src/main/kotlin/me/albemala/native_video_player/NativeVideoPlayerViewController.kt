@@ -19,6 +19,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
@@ -131,7 +132,11 @@ class NativeVideoPlayerViewController(
                     ?: DefaultHttpDataSource.Factory().setDefaultRequestProperties(videoSource.headers)
                 // Immuch360: a video with side files of subtitles goes through the default factory, which merges a
                 // source for each file with the video's; one without keeps the progressive source it always had
-                val factory: MediaSource.Factory = if (videoSource.subtitles.isEmpty()) {
+                // Immuch360: an HLS playlist (a film the Plex server converts, served by the app's bridge as
+                // film.m3u8) goes through the HLS source (patch 4)
+                val factory: MediaSource.Factory = if (isHlsPlaylist(videoSource.path)) {
+                    HlsMediaSource.Factory(dataSource)
+                } else if (videoSource.subtitles.isEmpty()) {
                     ProgressiveMediaSource.Factory(dataSource)
                 } else {
                     DefaultMediaSourceFactory(dataSource)
@@ -144,6 +149,10 @@ class NativeVideoPlayerViewController(
         player.prepare()
         startLinkUpdates()
     }
+
+    /** Immuch360: whether [path] names an HLS playlist (its path, the query left out, ends with .m3u8) */
+    private fun isHlsPlaylist(path: String): Boolean =
+        Uri.parse(path).path?.lowercase()?.endsWith(".m3u8") == true
 
     /**
      * Immuch360: the media item of [videoSource], with its side files of subtitles when it has some (patch 3). They

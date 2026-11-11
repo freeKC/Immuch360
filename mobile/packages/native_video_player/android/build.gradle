@@ -52,5 +52,7 @@ android {
  dependencies {
      implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
      implementation("androidx.media3:media3-exoplayer:1.9.2")
+     // Immuch360: the films a Plex server converts, as HLS (IMMUCH360-NOTE.md, patch 4)
+     implementation("androidx.media3:media3-exoplayer-hls:1.9.2")
      implementation("androidx.media3:media3-ui:1.9.2")
  }

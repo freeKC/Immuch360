@@ -31,6 +31,7 @@ import me.albemala.native_video_player.NativeVideoPlayerPlugin
 import app.alextran.immich.filmdownload.FilmDownloadApi
 import app.alextran.immich.filmdownload.FilmDownloadApiImpl
 import app.alextran.immich.images.LocalImageApi
+import app.alextran.immich.mpv.MpvPlayers
 import app.alextran.immich.immersive.ImmersiveApi
 import app.alextran.immich.immersive.ImmersiveApiImpl
 import app.alextran.immich.immersive.isHorizonOsDevice
@@ -62,6 +63,7 @@ import app.alextran.immich.tv.TvApi
 import app.alextran.immich.tv.TvApiImpl
 import app.alextran.immich.videodecoder.VideoDecoderApi
 import app.alextran.immich.videodecoder.VideoDecoderApiImpl
+import app.alextran.immich.videodecoder.MediaDecoderTypes
 import app.alextran.immich.videothumbnail.VideoThumbnailApi
 import app.alextran.immich.videothumbnail.VideoThumbnailApiImpl
 import app.alextran.immich.viewintent.ViewIntentPlugin
@@ -107,6 +109,10 @@ class MainActivity : FlutterFragmentActivity() {
     CameraLiveApi.setUp(messenger, CameraLiveApiImpl(cameraLiveViews))
     // The stalls of the main thread and why the app ended last time, for the Logs page
     AppHealth.attach(this, messenger)
+    // The decoders of the device, for the choice of a film's player (release 46), and libmpv, in the quest flavour only
+    // (MpvPlayers of src/quest; nothing in src/phone)
+    MediaDecoderTypes.attach(messenger)
+    MpvPlayers.register(flutterEngine, this)
     // DJI link diagnostics: a DJI remote controller plugged in as a USB accessory, read and counted. Nothing is sent
     // to an aircraft from here; the page is where the pilot sees what arrives.
     DjiLinkApi.setUp(messenger, DjiLinkApiImpl(this))

@@ -264,8 +264,13 @@ class PlexClient {
   }
 
   /// GETs the bytes at [uri]: null for a 404, a [PlexHttpStatus] for any other status but 200
-  Future<Uint8List?> getBytes(Uri uri, {String accept = 'image/jpeg', int maxSize = maxPictureSize}) async {
-    final response = await send('GET', uri, accept: accept);
+  Future<Uint8List?> getBytes(
+    Uri uri, {
+    String accept = 'image/jpeg',
+    int maxSize = maxPictureSize,
+    Map<String, String> headers = const {},
+  }) async {
+    final response = await send('GET', uri, accept: accept, headers: headers);
     if (response.statusCode == 404) {
       await discardHttpBody(response);
       return null;
