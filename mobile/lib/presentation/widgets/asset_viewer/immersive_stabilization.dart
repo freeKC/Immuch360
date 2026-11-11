@@ -64,9 +64,17 @@ class ImmersiveStabilization {
   /// Shows [request] with [show] (ImmersiveApi.open, or showAdjacent whose answer [shown] reads: false when the viewer
   /// did not show it), told about its stabilisation first. Returns what [show] returned.
   Future<T> around<T>(ImmersiveRequest request, Future<T> Function() show, {bool Function(T result)? shown}) async {
-    final plan = request.rawPlan;
-    if (!supported || !request.isVideo || plan == null) {
+    if (!supported) {
       return show();
+    }
+    final plan = request.rawPlan;
+    if (!request.isVideo || plan == null) {
+      // A photo or a plain video: nothing to tell, but the build of a raw video shown before stops once it is shown
+      final result = await show();
+      if (shown == null || shown(result)) {
+        session.mediaReplaced();
+      }
+      return result;
     }
     final candidate = RawVideoStabilizer(
       send: _send,
@@ -83,16 +91,19 @@ class ImmersiveStabilization {
       await tellStabilizationSettingWith(_send, request.url, enabled: enabled);
     }
     final result = await show();
+    final replaced = shown == null || shown(result);
+    if (replaced) {
+      // The media shown before goes away: the build of its table stops
+      session.mediaReplaced();
+    }
     if (stabilizer == null) {
       return result;
     }
-    if (shown != null && !shown(result)) {
+    if (!replaced) {
       // The viewer kept the media it showed: this one's table is not built
       stabilizer.cancel();
       return result;
     }
-    // The media shown before goes away: the build of its table stops
-    session.mediaReplaced();
     session.whenMediaGone(stabilizer.cancel);
     // Not awaited: the video plays meanwhile, the table reaches the viewer when ready
     final delivery = stabilizer.deliver();

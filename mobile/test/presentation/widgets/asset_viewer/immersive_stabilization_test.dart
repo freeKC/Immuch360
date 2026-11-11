@@ -7,8 +7,6 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/raw/stabilization.dart';
-import 'package:immich_mobile/domain/models/sphere_coverage.dart';
-import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
@@ -24,9 +22,8 @@ typedef _Told = ({String url, bool enabled, bool hasTrack, int frames});
 
 /// The viewer: what it is told about the stabilisation, what it opens and shows, all in one list in order
 class _Viewer extends ImmersiveApi {
-  _Viewer({this.showsAdjacent = true});
-
-  bool showsAdjacent;
+  // Whether showAdjacent shows the media; a test sets false for a viewer that keeps its own
+  bool showsAdjacent = true;
   final events = <Object>[];
 
   List<_Told> get told => events.whereType<_Told>().toList();
@@ -220,6 +217,23 @@ void main() {
       'show ${second.url}',
       (url: second.url, enabled: true, hasTrack: true, frames: 4),
     ]);
+  });
+
+  test('stops the build of a raw video once a photo is shown in its place', () async {
+    final stabilizer = stabilization();
+    await stabilizer.around(_video('VID_a.insv', plan: _plan('VID_a.insv')), () async => viewer.events.add('open'));
+    final firstDelivery = stabilizer.lastDelivery!;
+
+    await showImmersiveRequest(
+      viewer,
+      9,
+      const ImmersiveRequest(url: 'file:///photo.jpg', isVideo: false, title: 'photo', view: raw360SphereView),
+      stabilization: stabilizer,
+    );
+    buildOf('VID_a.insv').complete(_table(3));
+
+    expect(await firstDelivery, isNull);
+    expect(viewer.told, hasLength(1), reason: 'the announcement only');
   });
 
   test('builds no table for a media the viewer did not show, and keeps the build of the one it shows', () async {

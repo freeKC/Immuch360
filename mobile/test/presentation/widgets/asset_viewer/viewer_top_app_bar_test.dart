@@ -1260,7 +1260,12 @@ void main() {
         ).captured;
         expect(captured, [
           expected,
-          {...englishGeneratedPanoramaLabels, ...englishPlaybackLabels, ...englishViewerLabels},
+          {
+            ...englishGeneratedPanoramaLabels,
+            ...englishPlaybackLabels,
+            ...englishStabilizationLabels,
+            ...englishViewerLabels,
+          },
           ImmersiveSphereCoverage.full,
         ], reason: '$type $width x $height');
         // Only a photo that looks 3D is checked for a partial panorama
