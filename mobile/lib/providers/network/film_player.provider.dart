@@ -2,10 +2,10 @@
 // the device (asked once per run) and libmpv (the Meta Quest build of release 46).
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/android_mpv.dart';
 import 'package:immich_mobile/domain/services/film_player/device_decoder_types.dart';
 import 'package:immich_mobile/domain/services/film_player/film_decoders.dart';
 import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
-import 'package:immich_mobile/infrastructure/mpv/android_mpv.dart';
 
 class FilmPlayers {
   FilmPlayers({required this._decoderTypes, required this._mpvReady});

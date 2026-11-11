@@ -5,10 +5,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/video/android_mpv.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
-import 'package:immich_mobile/infrastructure/mpv/android_mpv.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:native_video_player/native_video_player.dart';
