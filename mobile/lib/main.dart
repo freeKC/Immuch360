@@ -57,6 +57,7 @@ import 'package:immich_mobile/utils/litert_licenses.dart';
 import 'package:immich_mobile/utils/meta_spatial_licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/utils/pairing_licenses.dart';
+import 'package:immich_mobile/utils/play_review_licenses.dart';
 import 'package:immich_mobile/utils/splat_viewer_licenses.dart';
 import 'package:immich_mobile/utils/zstd_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
@@ -186,6 +187,9 @@ Future<void> initApp() async {
   // Spark, three.js and the crates of Spark's WebAssembly, of the splat viewer of the computers, phones and tablets
   // (lib/utils/splat_viewer_licenses.dart)
   LicenseRegistry.addLicense(splatViewerLicenses);
+  // Google Play In-App Review, Google Play's card to rate the app, in the phone flavour
+  // (lib/utils/play_review_licenses.dart)
+  LicenseRegistry.addLicense(playReviewLicenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {
