@@ -14,8 +14,9 @@ import org.junit.Test
 /**
  * The relief of a flat photo in the immersive view of the Quest (design 3.4, 3.6 and 3.7): the map from the cache or
  * from the model, the right eye of relief-v1, on the thread of the relief; "Stop relief", a hot headset, a new photo
- * or the end of the viewer drop it, a pass of the model goes to its end and its result is thrown away; the model is
- * closed 60 s after the last relief. A fake engine, a fake thread with its own clock, and a real cache folder.
+ * or the end of the viewer drop it, a pass of the model goes to its end and its map goes to the cache; the first relief
+ * on a headset is shown from the CPU map and the GPU check runs after it; the model is closed 60 s after the last
+ * relief. A fake engine, a fake thread with its own clock, and a real cache folder.
  */
 class ReliefJobTest {
   private val folder: File = Files.createTempDirectory("relief-job").toFile()
@@ -167,7 +168,7 @@ class ReliefJobTest {
   }
 
   /** What the viewer is told, in order */
-  private class Recorder : ReliefListener<FakePhoto, FakeEye> {
+  private class Recorder(val onDoneSeen: () -> Unit = {}) : ReliefListener<FakePhoto, FakeEye> {
     val stages = mutableListOf<ReliefStage>()
     val done = mutableListOf<ReliefResult<FakePhoto, FakeEye>>()
     val flat = mutableListOf<Pair<ReliefStop, String>>()
@@ -178,6 +179,7 @@ class ReliefJobTest {
 
     override fun onDone(result: ReliefResult<FakePhoto, FakeEye>) {
       done += result
+      onDoneSeen()
     }
 
     override fun onFlat(reason: ReliefStop, detail: String) {
@@ -242,9 +244,10 @@ class ReliefJobTest {
     assertTrue(recorder.flat.isEmpty())
     val result = recorder.done.single()
     assertFalse(run.running)
-    // The first relief on this headset checks the GPU against the CPU: the same map, the GPU is kept
+    // The first relief on this headset is the CPU's; the GPU is checked against it afterwards, the same map, kept
+    assertEquals(DepthPath.CPU, result.path)
     assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), engine.opened)
-    assertEquals(DepthPath.GPU, result.path)
+    assertEquals(DepthPath.GPU, DepthPathMemory(store, "eureka/release-keys", engine.engine).path(MODEL_ID))
     assertFalse(result.fromCache)
     // The viewer owns both now: nothing released
     assertEquals(0, photo.released)
@@ -492,7 +495,7 @@ class ReliefJobTest {
   }
 
   @Test
-  fun `a pass stopped while it runs goes to its end and its map is thrown away`() {
+  fun `a pass stopped while it runs goes to its end and its map goes to the cache`() {
     val job = job()
     val photo = FakePhoto(64, 48)
     val recorder = Recorder()
@@ -506,9 +509,160 @@ class ReliefJobTest {
     assertEquals(listOf(ReliefStop.STOPPED to ""), recorder.flat)
     assertTrue(recorder.done.isEmpty())
     assertEquals(listOf(ReliefStage.PREPARING, ReliefStage.ESTIMATING), recorder.stages)
+    // No right eye made for a relief nobody waits for, but the finished map is kept
     assertTrue(eyes.isEmpty())
-    assertNull(cache.read(KEY))
+    assertNotNull(cache.read(KEY))
     assertEquals(1, photo.released)
+    assertTrue(logs.joinToString("\n"), logs.any { it.contains("its map kept in the cache") })
+
+    // Asked again, the relief of that photo comes from the cache, without the model
+    engine.duringPass = {}
+    val again = Recorder()
+    start(job, FakePhoto(64, 48), again)
+    worker.runDue()
+    assertEquals(1, engine.passes)
+    assertTrue(again.done.single().fromCache)
+  }
+
+  @Test
+  fun `Stop relief during the first relief on a headset keeps the map, and the GPU check still runs`() {
+    // FreeKC's Quest 3 on 30 October 2026: "Stop relief" at 3 s of a first relief threw the finished map away
+    val job = job(preferred = DepthPath.GPU)
+    val recorder = Recorder()
+    lateinit var run: ReliefRun
+    engine.duringPass = { path -> if (path == DepthPath.CPU) job.stop(run) }
+
+    run = start(job, FakePhoto(64, 48), recorder)
+    worker.runDue()
+
+    assertEquals(listOf(ReliefStop.STOPPED to ""), recorder.flat)
+    assertNotNull(cache.read(KEY))
+    assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), engine.opened)
+    assertEquals(DepthPath.GPU, DepthPathMemory(store, "eureka/release-keys", engine.engine).path(MODEL_ID))
+  }
+
+  @Test
+  fun `the first relief on a headset is shown after the CPU pass, before the GPU is opened`() {
+    val job = job(preferred = DepthPath.GPU)
+    var openedWhenShown: List<DepthPath>? = null
+    var passesWhenShown = -1
+    val recorder = Recorder {
+      openedWhenShown = engine.opened.toList()
+      passesWhenShown = engine.passes
+    }
+
+    start(job, FakePhoto(64, 48), recorder)
+    worker.runDue()
+
+    // Shown after one pass: 2.5 s on this fake clock, where the CPU and the GPU together took 3.2 s
+    assertEquals(listOf(DepthPath.CPU), openedWhenShown)
+    assertEquals(1, passesWhenShown)
+    assertEquals(DepthPath.CPU, recorder.done.single().path)
+    // Then the check, on the same thread: the GPU opened, compared, kept, and left open for the next photo
+    assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), engine.opened)
+    assertEquals(2, engine.passes)
+    assertEquals(1, engine.openNow)
+    assertTrue(logs.joinToString("\n"), logs.any { it.contains("GPU check after the relief: SAME, GPU kept") })
+    // The next photo takes the GPU, with no CPU pass
+    val next = Recorder()
+    start(job, FakePhoto(64, 48), next, request(OTHER_KEY))
+    worker.runDue()
+    assertEquals(DepthPath.GPU, next.done.single().path)
+    assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), engine.opened)
+    assertEquals(3, engine.passes)
+  }
+
+  @Test
+  fun `a photo asked during the first relief goes before the GPU check`() {
+    val job = job(preferred = DepthPath.GPU)
+    val second = Recorder()
+    var asked = false
+    engine.duringPass = { path ->
+      if (path == DepthPath.CPU && !asked) {
+        asked = true
+        start(job, FakePhoto(48, 64), second, request(OTHER_KEY))
+      }
+    }
+    start(job, FakePhoto(64, 48), Recorder())
+    worker.runDue()
+
+    // The second photo was not held up by the check: the CPU again, then one check
+    assertEquals(DepthPath.CPU, second.done.single().path)
+    assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), engine.opened)
+    assertEquals(3, engine.passes)
+    assertNotNull(cache.read(KEY))
+    assertNotNull(cache.read(OTHER_KEY))
+    assertEquals(DepthPath.GPU, DepthPathMemory(store, "eureka/release-keys", engine.engine).path(MODEL_ID))
+  }
+
+  @Test
+  fun `the GPU check waits while the headset is too warm, and runs after a later relief`() {
+    val job = job(preferred = DepthPath.GPU)
+    // Hot once the relief started: the relief ends, the check does not run
+    engine.duringPass = { thermal = ReliefJob.THERMAL_STATUS_SEVERE }
+    start(job, FakePhoto(64, 48), Recorder())
+    worker.runDue()
+    assertEquals(listOf(DepthPath.CPU), engine.opened)
+    assertNull(DepthPathMemory(store, "eureka/release-keys", engine.engine).path(MODEL_ID))
+    assertTrue(logs.joinToString("\n"), logs.any { it.contains("the GPU check waits") })
+
+    engine.duringPass = {}
+    thermal = 0
+    val next = Recorder()
+    start(job, FakePhoto(64, 48), next, request(OTHER_KEY))
+    worker.runDue()
+    assertEquals(DepthPath.CPU, next.done.single().path)
+    assertEquals(listOf(DepthPath.CPU, DepthPath.GPU), engine.opened)
+    assertEquals(DepthPath.GPU, DepthPathMemory(store, "eureka/release-keys", engine.engine).path(MODEL_ID))
+  }
+
+  @Test
+  fun `the end of the viewer before the GPU check leaves no decision and opens no GPU`() {
+    val job = job(preferred = DepthPath.GPU)
+    engine.duringPass = { job.close() }
+    start(job, FakePhoto(64, 48), Recorder())
+    worker.runDue()
+
+    assertEquals(listOf(DepthPath.CPU), engine.opened)
+    assertEquals(0, engine.openNow)
+    assertNull(DepthPathMemory(store, "eureka/release-keys", engine.engine).path(MODEL_ID))
+    assertEquals(0, worker.pending)
+  }
+
+  @Test
+  fun `a GPU check that runs out of memory is dropped, and the relief already shown stays`() {
+    val job = job(preferred = DepthPath.GPU)
+    engine.duringPass = { path -> if (path == DepthPath.GPU) throw OutOfMemoryError("test") }
+    val recorder = Recorder()
+    start(job, FakePhoto(64, 48), recorder)
+    worker.runDue()
+
+    assertEquals(DepthPath.CPU, recorder.done.single().path)
+    assertTrue(recorder.flat.isEmpty())
+    assertEquals(0, engine.openNow)
+    assertNull(DepthPathMemory(store, "eureka/release-keys", engine.engine).path(MODEL_ID))
+    assertTrue(logs.joinToString("\n"), logs.any { it.contains("out of memory during the GPU check") })
+  }
+
+  @Test
+  fun `a 2 to 1 flat photo gets its relief like any other`() {
+    // The rule of release 46: a photo the panel opens flat gets the relief whatever its shape; a 2:1 frame is never
+    // taken for a 360 degree photo here, only its metadata says so, on the panel's side (isEquirectangularProvider).
+    // An 8192 x 4096 photo comes decoded at 2560 x 1280 and keeps its proportions in the input: a map of 686 x 343.
+    val job = job()
+    val photo = FakePhoto(256, 128)
+    val recorder = Recorder()
+
+    start(job, photo, recorder)
+    worker.runDue()
+
+    val result = recorder.done.single()
+    assertTrue(recorder.flat.isEmpty())
+    assertEquals(686 to 343, result.map.width to result.map.height)
+    assertEquals(128, result.eye.rows)
+    assertArrayEquals(expectedEye(photo, result.map), result.eye.pixels)
+    // Nearer to the right: the right eye differs from the photo, it is not a flat copy
+    assertFalse(photo.pixels.contentEquals(result.eye.pixels))
   }
 
   @Test
