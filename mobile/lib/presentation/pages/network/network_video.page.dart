@@ -25,12 +25,15 @@ import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_tracks.dart';
 import 'package:immich_mobile/presentation/actions/watch_progress.action.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
@@ -45,6 +48,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -150,6 +154,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// Resumes a film and saves where it is, for the video loaded (see VideoWatchRecorder)
   VideoWatchRecorder? _recorder;
 
+  /// The tracks of a film of a Plex server: its subtitle files, the names Plex gives its tracks, and the pick written
+  /// back (see PlexFilmTracks); null for any other video
+  PlexFilmTracks? _plexTracks;
+
+  /// Whether the tracks Plex has for the account were picked in the player, once per load
+  bool _plexChoiceApplied = false;
+
   /// The film resumed where it was left, said for a few seconds (see ResumeNotice)
   ResumeNoticeEvent? _resumeNotice;
 
@@ -208,6 +219,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // Where the film is, as the page goes: Back, or the previous or next file in its place
     _recorder?.dispose();
     _recorder = null;
+    _plexTracks?.dispose();
+    _plexTracks = null;
     _removeListeners();
     _appBarFocus.removeListener(_onAppBarFocus);
     _rootFocus.dispose();
@@ -451,8 +464,18 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final client = ref.read(networkBridgeClientProvider);
     final fileSystem = await connections.fileSystem(widget.sourceId);
     _shareType = fileSystem.source.type;
+    final bridge = ref.read(mediaBridgeProvider);
     final entry = await fileSystem.stat(widget.path);
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
+    // A film of a Plex server: its subtitle files and the names of its tracks, before the player is given the film
+    final tracks = await _plexTracksOf(fileSystem, bridge);
+    _plexTracks?.dispose();
+    _plexTracks = tracks;
+    _plexChoiceApplied = false;
+    if (!mounted) {
+      tracks?.dispose();
+      _plexTracks = null;
+    }
     _shareReader = networkFileReader(fileSystem, widget.path);
     _shareFileSystem = fileSystem;
     // What the file declares is read once the player has what it needs to play, not beside its first reads: on a slow
@@ -533,13 +556,78 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
-  static Future<VideoSource?> _sourceOf(Future<_Video> video) async {
+  Future<VideoSource?> _sourceOf(Future<_Video> video) async {
     try {
       final url = (await video).url;
-      return await VideoSource.init(path: url.toString(), type: VideoSourceType.network);
+      return await VideoSource.init(
+        path: url.toString(),
+        type: VideoSourceType.network,
+        // The subtitle files beside a Plex film, served by the bridge
+        subtitles: _plexTracks?.subtitles ?? const [],
+      );
     } catch (_) {
       // The page shows why
       return null;
+    }
+  }
+
+  /// The tracks of the Plex film at the page's path (see PlexFilmTracks); null for any other video, and when Plex
+  /// does not tell them within [plexTracksWait]: the film then plays with the tracks of its file only
+  Future<PlexFilmTracks?> _plexTracksOf(NetworkFileSystem fileSystem, MediaBridge bridge) async {
+    if (fileSystem is! PlexFileSystem) {
+      return null;
+    }
+    final item = fileSystem.itemAt(widget.path);
+    if (item == null) {
+      return null;
+    }
+    try {
+      final details = await fileSystem.filmDetails(item.ratingKey).timeout(plexTracksWait);
+      final part = details.partOf(item.partId);
+      if (part == null || part.streams.isEmpty) {
+        return null;
+      }
+      return await PlexFilmTracks.load(PlexFileSystemTracks(fileSystem), part, bridge).timeout(plexTracksWait);
+    } catch (error) {
+      _log.info('The tracks of the Plex film are not known: ${error.runtimeType}');
+      return null;
+    }
+  }
+
+  /// Longest wait for what Plex tells of the tracks of a film before it plays
+  static const plexTracksWait = Duration(seconds: 4);
+
+  /// Picks the audio track and the subtitles Plex has for the account (chosen in a Plex app, or in this one before),
+  /// once per load, when the player lists them: the film starts as it does in Plex
+  Future<void> _applyPlexChoice() async {
+    final tracks = _plexTracks;
+    if (tracks == null || _plexChoiceApplied) {
+      return;
+    }
+    final listed = await _notifier.tracks();
+    if (!mounted || listed.isEmpty || _plexChoiceApplied || !identical(tracks, _plexTracks)) {
+      return;
+    }
+    _plexChoiceApplied = true;
+    final audio = listed.where((track) => track.type == NativeVideoTrackType.audio).toList();
+    final text = listed.where((track) => track.type == NativeVideoTrackType.text).toList();
+    final audioRefs = videoTrackRefs(audio);
+    final selectedAudio = tracks.selectedAudio;
+    if (selectedAudio != null) {
+      final index = audioRefs.indexWhere((ref) => tracks.streamOf(ref)?.id == selectedAudio.id);
+      if (index >= 0 && !audio[index].selected) {
+        await _notifier.selectTrack(audio[index]);
+      }
+    }
+    final subtitle = tracks.selectedSubtitle;
+    if (subtitle != null && !text.any((track) => track.selected)) {
+      final textRefs = videoTrackRefs(text);
+      final index = textRefs.indexWhere(
+        (ref) => subtitle.isSidecar ? ref.sidecarId == subtitle.sidecarId : ref.ordinal == subtitle.ordinal,
+      );
+      if (index >= 0 && (subtitle.isSidecar || tracks.streamOf(textRefs[index]) != null)) {
+        await _notifier.selectTrack(text[index]);
+      }
     }
   }
 
@@ -735,6 +823,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   void _onTracksChanged() {
     if (mounted) {
       _notifier.onNativeTracksChanged();
+      unawaited(_applyPlexChoice());
     }
   }
 
@@ -1289,7 +1378,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
               bottom: 0,
               child: SafeArea(
                 top: false,
-                child: NetworkVideoControls(playerKey: _playerKey, playFocusNode: _playFocus),
+                child: NetworkVideoControls(
+                  playerKey: _playerKey,
+                  playFocusNode: _playFocus,
+                  // The names Plex gives the tracks of a film, and the pick written back to it
+                  trackNaming: _plexTracks,
+                ),
               ),
             ),
         ],

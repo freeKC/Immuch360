@@ -8,6 +8,13 @@
 // are on the disk, never through the transcoder of Plex, which would drop the 360° and 3D metadata the app reads. The
 // thumbnails come from the photo transcoder of the server, read in Dart with the token (see NetworkThumbnailSource).
 //
+// The films of a movie library also have paths of their own, whatever lists them (plexFilmPath:
+// /.films/{section}/{ratingKey}/{partId}/{name}), found through /library/metadata/{ratingKey} when this connection has
+// not met them: the film page, a filtered list of films and the films page of lot A1 open the same file the same way.
+// Next to the files, the film page and the players read what the server tells of a film (filmDetails, the filters of
+// a library, the subtitle files beside a film) and write back the audio and subtitle track the user picks
+// (selectStreams), the only write the app makes to a Plex server.
+//
 // Rule of every share client of the app: no URL of the server crosses a pigeon call to Kotlin or Swift, nor reaches an
 // image widget. The players and viewers only ever get the http://127.0.0.1 URLs of the media bridge. Logs tell request
 // kinds, statuses and timings, never the token, an address, a path or a title.
@@ -29,6 +36,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:logging/logging.dart';
@@ -167,6 +175,9 @@ class PlexFileSystem
   /// The folders and files behind the paths listed so far, the root as the list of the sections
   final Map<String, _Node> _nodes = {'/': _Folder.root()};
 
+  /// The sections listed so far, by key: kept when the keys are forgotten, a section key does not change at a rescan
+  final Map<String, PlexSection> _sections = {};
+
   /// The entries of the paths listed so far, for [stat], with the sizes found by [stat] itself
   final Map<String, NetworkEntry> _entries = {};
 
@@ -286,7 +297,7 @@ class PlexFileSystem
         () => _rewalkOnce((again) async {
           var entry = _entries[target];
           if (entry == null) {
-            await _findUnlisted(target, again);
+            await _meet(target, again);
             entry = _entries[target];
           }
           if (entry == null) {
@@ -363,6 +374,322 @@ class PlexFileSystem
       }),
     );
   }
+
+  /// The Plex item behind [path]: its ratingKey, its file and its library, from what this connection listed or from a
+  /// path of [plexFilmPath]; null for a folder, a path not met yet that is no film path, or a file without ratingKey
+  PlexItemRef? itemAt(String path) {
+    final target = normalizePath(path);
+    final node = _nodes[target];
+    if (node is _File) {
+      final ratingKey = node.file.ratingKey;
+      return ratingKey == null
+          ? null
+          : PlexItemRef(ratingKey: ratingKey, partId: node.file.partId, section: node.section, path: target);
+    }
+    final film = parsePlexFilmPath(target);
+    return film == null
+        ? null
+        : PlexItemRef(
+            ratingKey: film.ratingKey,
+            partId: film.partId,
+            section: _sections[film.sectionKey],
+            path: target,
+          );
+  }
+
+  /// The library whose folder is at [path] (a folder of the root), null for any other path
+  PlexSection? sectionAt(String path) {
+    final node = _nodes[normalizePath(path)];
+    return node is _Folder && !node.isRoot && !node.belowSection ? node.section : null;
+  }
+
+  /// The section of [key] once listed, null before
+  PlexSection? sectionOf(String key) => _sections[key];
+
+  /// The folder of the library [sectionKey] at the root of the share, where its folder view starts ("Show the folders"
+  /// of the film page); the root is listed first when this connection has not listed it. Null for a library the server
+  /// no longer lists.
+  Future<String?> sectionFolder(String sectionKey) async {
+    String? known() {
+      for (final MapEntry(key: path, value: node) in _nodes.entries) {
+        if (node is _Folder && !node.isRoot && !node.belowSection && node.section?.key == sectionKey) {
+          return path;
+        }
+      }
+      return null;
+    }
+
+    final found = known();
+    if (found != null) {
+      return found;
+    }
+    await list('/');
+    return known();
+  }
+
+  /// Where "Show the folders" of the film page goes for the file [path] of a film of the library [sectionKey]: the
+  /// folder the file was listed in, or, for a path of [plexFilmPath], the folder of its library; null when neither is
+  /// known
+  Future<String?> folderOfFilm(String? path, String? sectionKey) async {
+    if (path != null && parsePlexFilmPath(path) == null) {
+      return _parentOf(normalizePath(path));
+    }
+    return sectionKey == null ? null : sectionFolder(sectionKey);
+  }
+
+  /// The full item of the film [ratingKey] (/library/metadata/{ratingKey}?includeGuids=1): its texts, people, ids and
+  /// the streams of its files. Not found once the server no longer has it.
+  Future<PlexFilmDetails> filmDetails(String ratingKey) => _guard(() => _onServer(() => _detailsOf(ratingKey)));
+
+  Future<PlexFilmDetails> _detailsOf(String ratingKey) async {
+    final uri = _endpoint.base
+        .resolve('/library/metadata/${Uri.encodeComponent(ratingKey)}')
+        .replace(queryParameters: const {'includeGuids': '1'});
+    final PlexFilmDetails? details;
+    try {
+      details = await _plex.getJson(uri, parsePlexFilmDetails);
+    } on PlexHttpStatus catch (error) {
+      throw error.status == 404 || error.status == 410 ? const _Stale() : error;
+    }
+    if (details == null) {
+      throw const _Stale();
+    }
+    final section = details.sectionKey;
+    if (section != null && !_sections.containsKey(section)) {
+      // The film page may open before the root was listed (a film of the films page of lot A1)
+      unawaited(_learnSections());
+    }
+    return details;
+  }
+
+  /// Lists the sections once, for a film met by its path before the root: their agent and language
+  Future<void> _learnSections() async {
+    try {
+      final sections = await _plex.getJson(_endpoint.base.resolve('/library/sections'), parsePlexSections);
+      for (final section in sections) {
+        _sections[section.key] = section;
+      }
+    } catch (error) {
+      _log.fine('The sections could not be read: ${plexErrorKind(error)}');
+    }
+  }
+
+  /// One page of the films of the library [sectionKey] that [query] keeps, each with the path of [plexFilmPath] of its
+  /// first file, recorded so that its tile, its page and the players open it at once
+  Future<PlexFilmsResult> films(String sectionKey, PlexFilmsQuery query, {int start = 0, int size = defaultPageSize}) =>
+      _guard(
+        () => _onServer(() async {
+          final uri = _endpoint.base
+              .resolve('/library/sections/${Uri.encodeComponent(sectionKey)}/all')
+              .replace(queryParameters: query.toQueryParameters());
+          final PlexFilmsPage page;
+          try {
+            page = await _plex.getJson(
+              uri,
+              parsePlexFilmsPage,
+              headers: {'x-plex-container-start': '$start', 'x-plex-container-size': '$size'},
+            );
+          } on PlexHttpStatus catch (error) {
+            throw error.status == 404 || error.status == 410 ? const _Stale() : error;
+          }
+          final section = _sections[sectionKey];
+          final entries = <NetworkEntry>[];
+          for (final item in page.items) {
+            final path = plexFilmPath(
+              sectionKey: sectionKey,
+              ratingKey: item.ratingKey,
+              partId: item.partId,
+              name: item.fileName,
+            );
+            entries.add(_recordFilm(path, _fileItemOf(item), section));
+          }
+          return PlexFilmsResult(entries: entries, items: page.items, count: page.count, totalSize: page.totalSize);
+        }),
+      );
+
+  /// Every film of [sectionKey] that [query] keeps, [max] at most, page after page
+  Future<List<({NetworkEntry entry, PlexFilmItem item})>> allFilms(
+    String sectionKey,
+    PlexFilmsQuery query, {
+    int max = maxEntriesPerFolder,
+  }) async {
+    final found = <({NetworkEntry entry, PlexFilmItem item})>[];
+    var start = 0;
+    while (found.length < max) {
+      final page = await films(sectionKey, query, start: start, size: _pageSize);
+      for (final (index, entry) in page.entries.indexed) {
+        found.add((entry: entry, item: page.items[index]));
+      }
+      if (page.count <= 0) {
+        break;
+      }
+      start += page.count;
+      final total = page.totalSize;
+      if (total == null ? page.count < _pageSize : start >= total) {
+        break;
+      }
+    }
+    return found.length > max ? found.sublist(0, max) : found;
+  }
+
+  /// The filters the library [sectionKey] offers (/library/sections/{key}/filters)
+  Future<List<PlexSectionFilter>> sectionFilters(String sectionKey) => _guard(
+    () => _onServer(
+      () => _plex.getJson(
+        _endpoint.base.resolve('/library/sections/${Uri.encodeComponent(sectionKey)}/filters'),
+        parsePlexSectionFilters,
+      ),
+    ),
+  );
+
+  /// The values of [filter] of the library [sectionKey], from its key as the server gave it
+  Future<List<PlexFilterChoice>> filterChoices(String sectionKey, PlexSectionFilter filter) => _guard(
+    () => _onServer(() {
+      final key = _keyBase.resolve('/library/sections/${Uri.encodeComponent(sectionKey)}/').resolve(filter.key);
+      return _plex.getJson(
+        _endpoint.base.resolve(key.hasQuery ? '${key.path}?${key.query}' : key.path),
+        parsePlexFilterChoices,
+      );
+    }),
+  );
+
+  /// A picture of the server ([serverPath], the thumb or art of an item) through its photo transcoder, [width] by
+  /// [height] at most; null for an address outside the server (the pictures of the cast on Plex's own servers, which
+  /// the device never loads) or a 404
+  Future<Uint8List?> picture(String serverPath, {required int width, required int height}) {
+    if (!serverPath.startsWith('/')) {
+      return Future.value(null);
+    }
+    final w = width.clamp(_minThumbnailSize, _maxThumbnailSize);
+    final h = height.clamp(_minThumbnailSize, _maxThumbnailSize);
+    return _guard(
+      () => _onServer(() {
+        final uri = _endpoint.base
+            .resolve('/photo/:/transcode')
+            .replace(
+              queryParameters: {'width': '$w', 'height': '$h', 'minSize': '1', 'upscale': '0', 'url': serverPath},
+            );
+        return _plex.getBytes(uri);
+      }),
+    );
+  }
+
+  /// The subtitle file [stream] beside a film, converted to SubRip by the server (GET /library/streams/{id}.srt with
+  /// format=srt); null when the server has no such file. Small: [maxSubtitleSize] at most.
+  Future<Uint8List?> subtitleFile(PlexStream stream) {
+    if (!stream.isSidecar || !stream.isTextSubtitle) {
+      return Future.value(null);
+    }
+    return _guard(
+      () => _onServer(() {
+        final uri = _endpoint.base
+            .resolve('/library/streams/${stream.id}.srt')
+            .replace(queryParameters: const {'format': 'srt'});
+        return _plex.getBytes(uri, accept: '*/*', maxSize: maxSubtitleSize);
+      }),
+    );
+  }
+
+  /// Largest subtitle file read
+  static const maxSubtitleSize = 4 * 1024 * 1024;
+
+  /// Tells the server which audio track and which subtitles the account picked for the part [partId] (PUT
+  /// /library/parts/{id} with allParts=1): Plex's own apps start with the same choice. [subtitleStreamId] 0 turns the
+  /// subtitles off; a null one is left as it is.
+  Future<void> selectStreams(int partId, {int? audioStreamId, int? subtitleStreamId}) {
+    if (audioStreamId == null && subtitleStreamId == null) {
+      return Future.value();
+    }
+    return _guard(
+      () => _onServer(() async {
+        final uri = _endpoint.base
+            .resolve('/library/parts/$partId')
+            .replace(
+              queryParameters: {
+                'audioStreamID': ?audioStreamId?.toString(),
+                'subtitleStreamID': ?subtitleStreamId?.toString(),
+                'allParts': '1',
+              },
+            );
+        final response = await _plex.send('PUT', uri);
+        await discardHttpBody(response);
+        if (response.statusCode != 200 && response.statusCode != 204) {
+          throw PlexHttpStatus(response.statusCode);
+        }
+      }),
+    );
+  }
+
+  /// Makes [path] known to this connection when it was not listed: a path of [plexFilmPath] through the item of its
+  /// film, any other through the listing of its parent
+  Future<void> _meet(String path, bool again) async {
+    final film = parsePlexFilmPath(path);
+    if (film == null) {
+      await _listingOf(_parentOf(path), again);
+      return;
+    }
+    final details = await _detailsOf(film.ratingKey);
+    final part = details.parts.where((part) => part.id == film.partId).firstOrNull;
+    if (part == null) {
+      // The film has other files now: the path is not there any more
+      throw const _Stale();
+    }
+    final media = details.mediaOf(part);
+    final added = _entries[path]?.modified;
+    final item = PlexFileItem(
+      partKey: part.key,
+      fileName: part.fileName ?? path.split('/').last,
+      partId: part.id,
+      size: part.size,
+      addedAt: added,
+      mimeType: plexMimeTypeOf(part.container),
+      width: media?.width,
+      height: media?.height,
+      durationMs: part.durationMs ?? details.durationMs,
+      thumb: details.thumb,
+      ratingKey: details.ratingKey,
+      title: details.title,
+      year: details.year,
+      isPoster: true,
+    );
+    _recordFilm(path, item, details.sectionKey == null ? null : _sections[details.sectionKey]);
+  }
+
+  NetworkEntry _recordFilm(String path, PlexFileItem item, PlexSection? section) {
+    _nodes[path] = _File(item, section);
+    final known = _entries[path];
+    final entry = NetworkEntry(
+      sourceId: source.id,
+      path: path,
+      isDirectory: false,
+      size: item.size ?? known?.size,
+      modified: item.addedAt ?? known?.modified,
+      mimeType: item.mimeType,
+      width: item.width,
+      height: item.height,
+      durationMs: item.durationMs,
+      title: item.title,
+    );
+    _entries[path] = entry;
+    return entry;
+  }
+
+  static PlexFileItem _fileItemOf(PlexFilmItem film) => PlexFileItem(
+    partKey: film.partKey,
+    fileName: film.fileName,
+    partId: film.partId,
+    size: film.size,
+    addedAt: film.addedAt,
+    mimeType: film.mimeType,
+    width: film.width,
+    height: film.height,
+    durationMs: film.durationMs,
+    thumb: film.thumb,
+    ratingKey: film.ratingKey,
+    title: film.title,
+    year: film.year,
+    isPoster: true,
+  );
 
   @override
   Future<void> close() async {
@@ -551,7 +878,7 @@ class PlexFileSystem
   Future<PlexFileItem> _fileOf(String path, bool again) async {
     var node = _nodes[path];
     if (node == null) {
-      await _findUnlisted(path, again);
+      await _meet(path, again);
       node = _nodes[path];
     }
     if (node == null) {
@@ -657,6 +984,7 @@ class PlexFileSystem
     final sections = await _plex.getJson(_endpoint.base.resolve('/library/sections'), parsePlexSections);
     final entries = <NetworkEntry>[];
     for (final (:item, :name) in plexSectionEntryNames(sections)) {
+      _sections[item.key] = item;
       final path = '/$name';
       final known = _nodes[path];
       // A section that switched to its albums stays so
@@ -743,7 +1071,7 @@ class PlexFileSystem
           _nodes[path] = _Folder(key: key, section: parent.section, albums: parent.albums, belowSection: true);
           entry = NetworkEntry(sourceId: source.id, path: path, isDirectory: true);
         case PlexFileItem():
-          _nodes[path] = _File(item);
+          _nodes[path] = _File(item, parent.section);
           // A size found by stat stays, unless the server tells one now
           final known = _entries[path];
           entry = NetworkEntry(
@@ -916,12 +1244,6 @@ class PlexFileSystem
 
   // The films of the film libraries (plex_film_list.dart): read page by page, their files under paths of their own
 
-  /// The library whose folder is [path] at the root of the share, once the root was listed; null for any other path
-  PlexSection? sectionAt(String path) {
-    final node = _nodes[normalizePath(path)];
-    return node is _Folder && !node.isRoot && !node.belowSection ? node.section : null;
-  }
-
   @override
   PlexSection? filmLibraryAt(String path) {
     final section = sectionAt(path);
@@ -1015,36 +1337,12 @@ class PlexFileSystem
     for (final film in films) {
       for (final part in film.parts) {
         final path = plexFilmPartPath(sectionKey, film.ratingKey, part);
-        _nodes[path] = _File(part);
+        _nodes[path] = _File(part, _sections[sectionKey]);
         // A size found by stat stays, unless the server tells one now
         final known = _entries[path]?.size;
         _entries[path] = plexFilmPartEntry(source.id, path, part, title: film.title, knownSize: known);
       }
     }
-  }
-
-  /// Finds what [path] names when this connection has not met it: a film through its metadata (a page reopened after
-  /// the connection was), anything else in the listing of its parent
-  Future<void> _findUnlisted(String path, bool again) async {
-    final film = plexFilmPathParts(path);
-    if (film == null) {
-      await _listingOf(_parentOf(path), again);
-      return;
-    }
-    final PlexFilmListPage found;
-    try {
-      found = await _plex.getJson(
-        _endpoint.base.resolve('/library/metadata/${Uri.encodeComponent(film.ratingKey)}'),
-        parsePlexFilmListPage,
-      );
-    } on PlexHttpStatus catch (error) {
-      // A film removed, or added again under another id
-      throw error.status == 404 || error.status == 410 ? _notFound : error;
-    }
-    _recordFilms(film.sectionKey, [
-      for (final item in found.films)
-        if (item.ratingKey == film.ratingKey) item,
-    ]);
   }
 }
 
@@ -1104,9 +1402,12 @@ class _Folder extends _Node {
 }
 
 class _File extends _Node {
-  _File(this.file);
+  _File(this.file, this.section);
 
   final PlexFileItem file;
+
+  /// The library it was listed in, null when not known
+  final PlexSection? section;
 }
 
 /// The server does not know a key it gave any more: 404 on a listing or a part
@@ -1115,4 +1416,35 @@ class _Stale implements Exception {
 
   @override
   String toString() => 'Stale Plex key';
+}
+
+/// The Plex item behind a path of a [PlexFileSystem] (see [PlexFileSystem.itemAt])
+class PlexItemRef {
+  const PlexItemRef({required this.ratingKey, required this.path, this.partId, this.section});
+
+  final String ratingKey;
+
+  /// The path it was asked for
+  final String path;
+
+  /// Its file, null when the listing did not tell
+  final int? partId;
+
+  /// Its library, null when not known yet
+  final PlexSection? section;
+
+  /// Whether a tap on it opens the film page: an item of a library of films, or of a library not known yet that
+  /// [path] says is a film
+  bool get opensFilmPage => section?.isFilms ?? parsePlexFilmPath(path) != null;
+}
+
+/// One page of [PlexFileSystem.films]: the entries of the films, their paths those of [plexFilmPath], and the films
+/// themselves in the same order
+class PlexFilmsResult {
+  const PlexFilmsResult({required this.entries, required this.items, required this.count, this.totalSize});
+
+  final List<NetworkEntry> entries;
+  final List<PlexFilmItem> items;
+  final int count;
+  final int? totalSize;
 }

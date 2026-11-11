@@ -54,7 +54,8 @@ object VideoTracks {
     /**
      * What the app is told of one track: its [type], [group] and [track] indexes, its language code and the name of
      * that language in [displayLocale], its name in the file ([label]), its channels (audio, 0 when unknown), whether
-     * it plays, and the default and forced flags of the file
+     * it plays, and the default and forced flags of the file. Its [id] in the player (Format.id) only when it has one:
+     * a side file of subtitles has the one the app gave it (patch 3), which tells it from the tracks of the file.
      */
     fun entry(
         type: String,
@@ -66,9 +67,10 @@ object VideoTracks {
         selected: Boolean,
         selectionFlags: Int,
         displayLocale: Locale,
+        id: String? = null,
     ): Map<String, Any?> {
         val code = languageOf(language)
-        return mapOf(
+        val entry = mapOf(
             "type" to type,
             "group" to group,
             "track" to track,
@@ -80,6 +82,8 @@ object VideoTracks {
             "isDefault" to (selectionFlags and C.SELECTION_FLAG_DEFAULT != 0),
             "isForced" to (selectionFlags and C.SELECTION_FLAG_FORCED != 0),
         )
+        val trackId = id?.takeIf { it.isNotBlank() } ?: return entry
+        return entry + ("id" to trackId)
     }
 
     /** The audio and subtitle tracks of [tracks] the device can play, in the order of the file */
@@ -104,6 +108,7 @@ object VideoTracks {
                         group.isTrackSelected(index),
                         format.selectionFlags,
                         displayLocale,
+                        format.id,
                     )
                 }
         }

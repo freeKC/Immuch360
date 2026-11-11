@@ -107,7 +107,7 @@ On LG TVs the webOS app has the same keys and the same rule, see [LG webOS TVs](
 4. A 360° video has the 360° button in the top bar, which opens the [360° player](#play-a-360-video); on a phone or a tablet the Spatial button follows it while that setting is on, see [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 5. Swipe up for the details of the video: the codec, the size, the frame rate, the bit rate, the picture, and whether this device decodes it, see [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters).
 
-The player plays the file stored on the device when there is one, the file of a network share through the app's local bridge, and otherwise the server's original or its transcoded stream, as Settings, Asset Viewer, Videos, "Video source" says (see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)). The audio track and subtitle menus are in the flat player of Android phones, tablets, TVs and the Quest window (from build 29), for the tracks inside the file; the 360°, Spatial and computer players have the audio track choice. iPhones and iPads have no track menu yet.
+The player plays the file stored on the device when there is one, the file of a network share through the app's local bridge, and otherwise the server's original or its transcoded stream, as Settings, Asset Viewer, Videos, "Video source" says (see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)). The audio track and subtitle menus are in the flat player of Android phones, tablets, TVs and the Quest window (from build 29), for the tracks inside the file; the 360°, Spatial and computer players have the audio track choice. iPhones and iPads have no track menu yet.. From build 45 a film of a Plex server also offers the subtitle files Plex knows beside it, under the names Plex gives its tracks, see [Films of a Plex library](#films-of-a-plex-library-from-build-45).
 
 ### On a TV, in a headset and on a computer
 
@@ -323,6 +323,30 @@ On each screen:
 - **Computers**: Ctrl (Command on a Mac) and the mouse wheel change the number of posters a row; Ctrl F, Command F or / go to the search field, Escape clears it; the whole title shows when the pointer rests on it.
 
 Limits of build 45: the page was checked against a simulated server built from Plex's documentation, not yet against a real Plex Media Server, and whether the server's search ignores accents depends on the server.
+
+### Films of a Plex library (from build 45)
+
+You want to know what a film is before it starts, to pick its language and its subtitles, and to find a film for tonight without walking the folders of the disk. From build 45, a film of a Plex film library opens its own page, its tracks carry the names Plex gives them, and the library has filters. Libraries of other videos (where your 360° clips usually are) keep opening the player directly.
+
+1. **The film page**: tap a film in a film library. The page shows what your server holds of it at once: the poster and the background, the title and the original title, a line such as "2001 · 2 h 02 · 12 and over · Comedy, Romance", the ratings as text, the tagline and the synopsis (More shows all of it), the director, the writers and the cast, then the file: its resolution, its size, its audio and subtitle languages. The menu (⋮) has "Show the folders", which opens the folder of the film in the folder view (on a TV, a button after Play), and Upload to Immich.
+2. **Play or resume**: Play starts the film. When you stopped it before, here or in a Plex app, the button reads "Resume at 1:12:03", with "Play from the start" next to it.
+3. **From Wikipedia**: under the rest, the opening of the film's Wikipedia article in the language of the app, or the nearest one that has it (marked with its language when it is another), with "Read on Wikipedia" and its licence line. The article is found by the film's IMDb or TMDB number that Plex gives, never by its title, so it is never another film. It loads after the rest and never delays Play. Turn it off in the ⋮ of the page, or in Settings, Advanced, "Film details from Wikipedia": no request then goes to Wikimedia, and the articles kept on the device are deleted.
+4. **Audio and subtitles**: in the player, the Audio and Subtitles menus show the names Plex gives the tracks ("Français (AC3 5.1)", "English (SRT External)"), and the Subtitles menu also lists the subtitle files Plex knows beside the film (a `.srt` next to it on the disk, or one Plex downloaded), which no player sees inside the file. The film starts with the tracks you picked last in Plex. The track you pick is saved on the film in your server, so the Plex apps start with it too.
+5. **Filters**: in a film library, the filter button of the bar opens Order (year, newest or oldest first, title, recently added), Year (each decade, ticked whole or opened onto its years), Audience and Not watched. Within one kind the choices add up, between kinds they narrow the list. "Show the films" lists the films that match, with their count and Clear above them; Back or Clear brings the folders back.
+6. **Audience**: the ages come from the ratings Plex stores, in the rating system of the library's country: "All audiences", "10 and over", "12 and over", "16 and over", "18 and over" and "Not rated", several at a time. A rating the app does not know is offered as Plex writes it. It is a filter, not a parental lock.
+
+On each screen:
+- **Phones and tablets**: the page in one column on a phone, two columns on a tablet in landscape; the filters in a sheet.
+- **Android TV**: the focus starts on Play, the synopsis and the Wikipedia text scroll with the remote, "Read on Wikipedia" shows the address to open on a phone, the filters open in a dialog, and Back returns to the film you opened. The Wikipedia switch is in Settings, Advanced.
+- **Meta Quest window**: the page in two columns; the film plays in the flat player of the window with its menus. A film that opens in the immersive viewer (360° or 3D by its name) has no track menu there.
+- **Computers**: the page in two columns, Enter or Space on Play; the Subtitles menu sits next to Audio in the player.
+- **iPhone and iPad**: the page and the filters, but no track menu yet, and MKV films do not play there.
+
+Limits of build 45:
+- The film page, the filters and the subtitle files were checked against a simulated server built from Plex's documentation, not yet against a real Plex Media Server.
+- The pictures of the cast are on Plex's own servers, which the app never contacts: the page shows their initials.
+- Subtitles drawn as pictures (PGS, VobSub) beside a film are not offered: only Plex's transcoder can burn them in, which the app does not use.
+- A count next to a year or a rating shows only when the server tells it.
 
 ### Away from home
 
@@ -1051,7 +1075,7 @@ The share of the app is read on Windows from the counter the Task Manager shows 
 - **One window**: opening the app a second time brings the first window back instead of starting a second copy.
 - **Nothing is deleted from your folders**: "Delete from device" is hidden, and Delete removes only the server copy, until the app can send files to the Windows recycle bin.
 - **Mouse and keyboard** in place of touch and the gyroscope; from desktop build 24, Ctrl+click, Shift+click and Ctrl+A select as in a file manager.
-- **One video player for every source**: libmpv plays the videos of the server, the folders, the shares and Plex alike, and its flat player has the audio track menu, as the flat player of Android phones, tablets and TVs has since build 29.
+- **One video player for every source**: libmpv plays the videos of the server, the folders, the shares and Plex alike, and its flat player has the audio track menu, as the flat player of Android phones, tablets and TVs has since build 29, and from desktop build 25 a Subtitles menu next to it, which also offers the subtitle files Plex knows beside a film.
 - **360° videos in the window** (from desktop build 3): the 360° player is a page of the app, not a separate native player, with a time bar, 10 second jumps and the sound button. Raw videos with one lens per track or per file play in two players from desktop build 5, as phones run two decoders (desktop builds 3 and 4 stacked them side by side in one player); the phones' fallback steps are the same, with the stack and the camera's LRV copy added.
 - **The Tapo live view** (from desktop build 3) plays on the computer as on Android; iPhones and iPads get it with the next iOS release.
 
@@ -1142,9 +1166,10 @@ What it does on Linux, from desktop build 6: the welcome page; without a server,
 ## Privacy
 
 - **Nothing goes to the developer**: the app talks to the Immich server you choose (and, when you open the map, to the map tile service that server uses), has no advertising, no analytics and no crash reporting service run by the developer, and sends nothing to the developer of Immuch360.
-- **Without a server**, no server is contacted: the app uses the network only for the shares, Plex servers and cameras you open, and for the phone share, if you turn it on.
+- **Without a server**, no server is contacted: the app uses the network only for the shares, Plex servers and cameras you open, for the phone share, if you turn it on, and, when you open the page of a Plex film, for Wikipedia.
 - **Network shares**: the share list is kept on the device and never sent to a server; passwords go to the device keychain or keystore.
-- **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app never contacts plex.tv.
+- **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app never contacts plex.tv. From build 45 the app writes one thing to your server: the audio track and subtitles you pick for a film. What the server holds of your films is shown on the device and never kept or sent anywhere else.
+- **Film details from Wikipedia** (from build 45): when you open the page of a Plex film, the app asks Wikidata and Wikipedia, run by the Wikimedia Foundation, for the article about that film in your language. It sends the film's IMDb or TMDB number and the title of the article, never your Plex token, your server's address or anything else of your library. The articles found are kept on the device for 30 days. Wikimedia's privacy policy applies to these requests. Turn it off in Settings, Advanced, "Film details from Wikipedia", which also deletes the kept articles.
 - **Tapo cameras** (from build 20): the TP-Link account password and the camera account password stay in the secure storage of the device; the app talks to the camera on the local network only, never to the servers of TP-Link; fetched clips stay in the cache of the app and are deleted with the camera.
 - **TV**: whether the device is a TV is read on the device; nothing is sent.
 - **Sign in with your phone** (from build 28): the big screen listens on your home network only while its sign-in page shows a code; the phone asks your server for a session of its own for that screen and sends it encrypted, never your password; the camera of the phone reads the code on the device, and its images are never stored or sent. The list "Connected by this phone" stays on the phone.

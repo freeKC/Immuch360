@@ -1,7 +1,10 @@
 // A small Plex Media Server on 127.0.0.1 for the tests of the Plex client: /identity, the sections, the folder view
 // with its paging headers, the albums of a photo section, the parts with or without Range support, the photo
 // transcoder, the account and the preferences; the films of a film library (/all?type=1 with its title filter, the
-// metadata of a film, the hub search). Every answer but /identity wants the test token in its header, as a
+// metadata of a film, the hub search) and, for the film page (lot A2), the full item of a film
+// (/library/metadata/{ratingKey}), the filters of a library and their values (as listings), the subtitle files beside a
+// film (/library/streams/{id}.srt) and the track picks (PUT /library/parts/{id}). Every answer but /identity wants the
+// test token in its header, as a
 // real server does, and answers 401 in HTML otherwise. The values are the synthetic ones of test/fixtures/plex.
 
 import 'dart:convert';
@@ -146,11 +149,17 @@ class FakePlexServer {
 
   /// The films of the film libraries by section key, in the order of their sort: what /library/sections/{key}/all
   /// with type=1 lists (paged, narrowed by title= as "contains" without case, trimmed by excludeElements), what
-  /// /library/metadata/{ratingKey} gives
+  /// /library/metadata/{ratingKey} gives when [metadata] has no answer for it
   final Map<String, List<Map<String, Object?>>> films = {};
 
   /// The answer of /hubs/search; null for a server without it, which answers 404
   Object? hubs;
+
+  /// The answers of /library/metadata/{ratingKey}, by ratingKey; then the films of [films]; 404 for any other
+  final Map<String, Object?> metadata = {};
+
+  /// The subtitle files of /library/streams/{id}.srt, by stream id; 404 for any other
+  final Map<int, Uint8List> subtitles = {};
 
   /// Statuses forced for some paths (without the query) or paths with their query
   final Map<String, int> statuses = {'/library/sections/2/folder': 404};
@@ -218,6 +227,29 @@ class FakePlexServer {
         response.write('<html><body>$status</body></html>');
         return await response.close();
       }
+      final item = RegExp(r'^/library/metadata/(\d+)$').firstMatch(uri.path);
+      if (item != null) {
+        final body = metadata[item.group(1)] ?? _filmMetadata(item.group(1)!);
+        if (body == null) {
+          response.statusCode = 404;
+          return await response.close();
+        }
+        return await _json(response, body);
+      }
+      final subtitle = RegExp(r'^/library/streams/(\d+)\.srt$').firstMatch(uri.path);
+      if (subtitle != null) {
+        final bytes = subtitles[int.parse(subtitle.group(1)!)];
+        if (bytes == null) {
+          response.statusCode = 404;
+          return await response.close();
+        }
+        response.headers.contentType = ContentType('application', 'x-subrip');
+        response.add(bytes);
+        return await response.close();
+      }
+      if (request.method == 'PUT' && RegExp(r'^/library/parts/\d+$').hasMatch(uri.path)) {
+        return await response.close();
+      }
       switch (uri.path) {
         case '/library/sections':
           return await _json(response, jsonDecode(File('test/fixtures/plex/sections.json').readAsStringSync()));
@@ -258,21 +290,6 @@ class FakePlexServer {
         ];
         return await _page(response, headers, matching);
       }
-      final metadata = RegExp(r'^/library/metadata/(\d+)$').firstMatch(uri.path);
-      if (metadata != null && films.isNotEmpty) {
-        final found = [
-          for (final list in films.values)
-            for (final film in list)
-              if (film['ratingKey'] == metadata.group(1)) film,
-        ];
-        if (found.isEmpty) {
-          response.statusCode = 404;
-          return await response.close();
-        }
-        return await _json(response, {
-          'MediaContainer': {'size': found.length, 'Metadata': found},
-        });
-      }
       if (uri.path == '/hubs/search') {
         final answer = hubs;
         if (answer == null) {
@@ -292,6 +309,20 @@ class FakePlexServer {
     } catch (_) {
       // The client went away
     }
+  }
+
+  /// What /library/metadata/{ratingKey} gives for a film of [films], null when none has [ratingKey]
+  Object? _filmMetadata(String ratingKey) {
+    final found = [
+      for (final list in films.values)
+        for (final film in list)
+          if (film['ratingKey'] == ratingKey) film,
+    ];
+    return found.isEmpty
+        ? null
+        : {
+            'MediaContainer': {'size': found.length, 'Metadata': found},
+          };
   }
 
   /// The page of [listing] the X-Plex-Container-* headers ask for

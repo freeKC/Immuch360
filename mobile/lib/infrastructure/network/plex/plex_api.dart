@@ -71,12 +71,14 @@ class PlexSection {
 
   bool get isPhoto => type == 'photo';
 
-  /// A library of films, which opens on its films page (plex_film_list.dart): a movie section whose agent matches
-  /// films. "Other videos" (personal media, nothing matched), where the 360° files live, keep the folder view.
+  /// A library of films, which opens on its films page (plex_film_list.dart) and whose items open the film page
+  /// (plex_films.dart, isPlexFilmLibrary): a movie section whose agent matches films. "Other videos" (personal
+  /// media, nothing matched), where the 360° files live, keep the folder view and open the player.
   bool get isFilms => type == 'movie' && !plexPersonalMediaAgents.contains(agent);
 }
 
-/// The agents of the movie sections of personal media ("Other videos"), whose items no agent matched
+/// The agents of the libraries of personal media: "Other videos" and the like, whose items are files without a film
+/// behind them (FreeKC's 360° clips), matched by no agent. Their items open the player directly, never the film page.
 const plexPersonalMediaAgents = {'com.plexapp.agents.none', 'tv.plex.agents.none'};
 
 /// The sections of /library/sections whose media the app shows, in server order

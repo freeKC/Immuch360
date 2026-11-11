@@ -61,13 +61,16 @@ class NativeVideoPlayerApi {
     throw UnsupportedError('Unrecognized method ${call.method}');
   }
 
-  /// Loads [videoSource], at [startPositionMs] when given (Immuch360: Android starts there; iOS at its start)
+  /// Loads [videoSource], at [startPositionMs] when given (Immuch360: Android starts there; iOS at its start), with
+  /// its side files of subtitles (Immuch360: Android lists them; iOS ignores the key)
   Future<void> loadVideoSource(VideoSource videoSource, {int? startPositionMs}) async {
     await _channel.invokeMethod<void>(
       'loadVideoSource',
       {
         ...videoSource.toJson(),
         if (startPositionMs != null && startPositionMs > 0) 'startPositionMs': startPositionMs,
+        if (videoSource.subtitles.isNotEmpty)
+          'subtitles': [for (final subtitle in videoSource.subtitles) subtitle.toMap()],
       },
     );
   }

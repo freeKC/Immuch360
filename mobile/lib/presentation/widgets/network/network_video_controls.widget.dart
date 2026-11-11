@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
+import 'package:immich_mobile/desktop/video/desktop_subtitle_track_button.dart';
+import 'package:immich_mobile/domain/models/video_track_naming.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -20,14 +22,18 @@ const _shadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0,
 /// the remote: left and right on it seek, further at each press of a quick series and faster while held (see
 /// VideoTimeBar, RemoteSeekSeries), the step of the last press beside the time (VideoSeekHint). The audio track and
 /// subtitle menus follow, for a video that has several audio tracks or subtitles (VideoTrackButtons,
-/// DesktopAudioTrackButton).
+/// DesktopAudioTrackButton, DesktopSubtitleTrackButton), with the names a media server gives them ([trackNaming]).
 class NetworkVideoControls extends ConsumerWidget {
-  const NetworkVideoControls({super.key, required this.playerKey, this.playFocusNode});
+  const NetworkVideoControls({super.key, required this.playerKey, this.playFocusNode, this.trackNaming});
 
   final String playerKey;
 
   /// The focus of the play button, for the page to put the remote there
   final FocusNode? playFocusNode;
+
+  /// The names a media server gives the audio and subtitle tracks of the film, and its hook for a pick; null for the
+  /// players' own names
+  final VideoTrackNaming? trackNaming;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,8 +67,11 @@ class NetworkVideoControls extends ConsumerWidget {
                     : AnimatedPlayPause(color: Colors.white, playing: isPlaying, shadows: _shadows),
                 onPressed: notifier.toggle,
               ),
-              // The computers' player lists the audio tracks of a video that has several
-              if (CurrentPlatform.isDesktop) const DesktopAudioTrackButton(shadows: _shadows),
+              // The computers' player lists the audio tracks of a video that has several, and its subtitles
+              if (CurrentPlatform.isDesktop) ...[
+                DesktopAudioTrackButton(shadows: _shadows, naming: trackNaming),
+                DesktopSubtitleTrackButton(shadows: _shadows, naming: trackNaming),
+              ],
               if (tvMode) ...[
                 IconButton(
                   key: const Key('network_video_seek_back'),
@@ -84,7 +93,8 @@ class NetworkVideoControls extends ConsumerWidget {
                 ),
               ],
               // The audio tracks and the subtitles of the player of the phones, TVs and headsets
-              if (!CurrentPlatform.isDesktop) VideoTrackButtons(playerKey: playerKey, shadows: _shadows),
+              if (!CurrentPlatform.isDesktop)
+                VideoTrackButtons(playerKey: playerKey, shadows: _shadows, naming: trackNaming),
               const Spacer(),
               if (seekSeries != null) VideoSeekHint(series: seekSeries, shadows: _shadows),
               IgnorePointer(

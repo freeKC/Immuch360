@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_cache.dart';
+import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_client.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/platform/video_decoder_api.g.dart';
 import 'package:immich_mobile/presentation/pages/video_decoders.page.dart';
@@ -13,6 +17,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart'
 import 'package:immich_mobile/providers/drone/dji_link.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/wikipedia.provider.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
 
 import '../../presentation/pages/drone/dji_link_fakes.dart';
@@ -113,6 +118,43 @@ void main() {
     });
   });
 
+  group('Film details from Wikipedia (experimental)', () {
+    final wikipediaSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_film_wikipedia')),
+      matching: find.byType(SwitchListTile),
+    );
+
+    testWidgets('reads on by default, on every screen, and turns off, the kept articles with it', (tester) async {
+      final cache = MemoryWikipediaFilmCache();
+      await cache.write('kept', null);
+      final client = WikipediaFilmClient(
+        client: MockClient((request) async => http.Response('{}', 500)),
+        userAgent: WikipediaFilmClient.userAgentFor('test'),
+        cache: cache,
+      );
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+          wikipediaFilmClientProvider.overrideWith((ref) async => client),
+        ],
+      );
+      await tester.scrollUntilVisible(wikipediaSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(wikipediaSwitch);
+      await tester.pumpAndSettle();
+      expect(find.text('Film details from Wikipedia'), findsOneWidget);
+      expect(tester.widget<SwitchListTile>(wikipediaSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.viewer.filmWikipedia, isTrue);
+
+      await tester.tap(wikipediaSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(wikipediaSwitch).value, isFalse);
+      expect(SettingsRepository.instance.appConfig.viewer.filmWikipedia, isFalse);
+      expect(await cache.read('kept'), isNull, reason: 'off, the articles kept on the device are deleted');
+    });
+  });
+
   group('3D by file name (experimental)', () {
     final flat3dSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_flat_3d')),
@@ -132,6 +174,9 @@ void main() {
         ],
       );
       await tester.scrollUntilVisible(flat3dSwitch, 100, scrollable: find.byType(Scrollable).first);
+      // Whole on screen, whatever the switches above it
+      await tester.ensureVisible(flat3dSwitch);
+      await tester.pumpAndSettle();
     }
 
     testWidgets('reads on by default, and says which names it reads', (tester) async {

@@ -1,0 +1,18 @@
+{
+  "MediaContainer": {
+    "size": 2,
+    "allowSync": false,
+    "Directory": [
+      {
+        "fastKey": "/library/sections/1/all?decade=2000",
+        "key": "2000",
+        "title": "2000s"
+      },
+      {
+        "fastKey": "/library/sections/1/all?decade=1990",
+        "key": "1990",
+        "title": "1990s"
+      }
+    ]
+  }
+}
