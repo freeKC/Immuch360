@@ -422,6 +422,66 @@ class PlexFileSystem
     );
   }
 
+  /// The folder of the items asked by their rating key ([pathOfItem]): no section is named so, its dot keeps it out
+  /// of the names Plex gives
+  static const itemFolder = '/.item';
+
+  /// The path of the item [ratingKey] of the server, its first part, under [itemFolder]
+  /// (`/.item/<ratingKey>/<file name>`), which the media bridge, the players and the watch records then take like any
+  /// other: a film a phone asked this screen to play ("Play on the TV"). Found again by its key when the connection
+  /// forgot it. Not found when the server has no such item, or one without a file.
+  Future<String> pathOfItem(String ratingKey) {
+    if (!RegExp(r'^[0-9]{1,12}$').hasMatch(ratingKey)) {
+      return Future.error(_notFound);
+    }
+    return _guard(() => _onServer(() => _resolveItem(ratingKey)));
+  }
+
+  /// The rating key of the file at [path], when this connection listed it: what a phone sends a screen to play
+  String? ratingKeyOf(String path) {
+    final node = _nodes[normalizePath(path)];
+    return node is _File ? node.file.ratingKey : null;
+  }
+
+  Future<String> _resolveItem(String ratingKey) async {
+    final PlexListingPage page;
+    try {
+      page = await _plex.getJson(
+        _endpoint.base.resolve('/library/metadata/${Uri.encodeComponent(ratingKey)}'),
+        parsePlexListing,
+      );
+    } on PlexHttpStatus catch (error) {
+      throw error.status == 404 || error.status == 400 ? _notFound : error;
+    }
+    final file = page.items.whereType<PlexFileItem>().firstOrNull;
+    if (file == null) {
+      throw _notFound;
+    }
+    final path = '$itemFolder/$ratingKey/${file.fileName.replaceAll('/', '_')}';
+    _nodes[path] = _File(file, null);
+    final known = _entries[path];
+    _entries[path] = NetworkEntry(
+      sourceId: source.id,
+      path: path,
+      isDirectory: false,
+      size: file.size ?? (known?.isDirectory == false ? known?.size : null),
+      modified: file.addedAt,
+      mimeType: file.mimeType,
+      width: file.width,
+      height: file.height,
+      durationMs: file.durationMs,
+      // A film's title for the screen's player, as the films of a film library have (lot A1)
+      title: file.isPoster ? file.title : null,
+    );
+    return path;
+  }
+
+  /// The rating key of a path under [itemFolder], null for any other path
+  static String? _itemKeyOf(String path) {
+    final match = RegExp(r'^/\.item/([0-9]{1,12})/[^/]+$').firstMatch(path);
+    return match?.group(1);
+  }
+
   /// The picture the photo transcoder of the server makes of [entry], about [size] pixels on its long side; null when
   /// the entry has none (a folder, a path not listed by this connection) or the server answers 404
   @override
@@ -695,8 +755,13 @@ class PlexFileSystem
   }
 
   /// Makes [path] known to this connection when it was not listed: a path of [plexFilmPath] through the item of its
-  /// film, any other through the listing of its parent
+  /// film, a path of [pathOfItem] through its rating key, any other through the listing of its parent
   Future<void> _meet(String path, bool again) async {
+    final itemKey = _itemKeyOf(path);
+    if (itemKey != null) {
+      await _resolveItem(itemKey);
+      return;
+    }
     final film = parsePlexFilmPath(path);
     if (film == null) {
       await _listingOf(_parentOf(path), again);

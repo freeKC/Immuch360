@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
@@ -81,8 +82,9 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
   }
 
   Future<void> _add(MdnsService service) async {
-    // A phone that sends a drone's picture to headsets (DJI link) announces itself under the same type: not a screen
-    if (service.attributes['kind'] == 'drone') {
+    // A phone that sends a drone's picture to headsets (DJI link) announces itself under the same type, and so does
+    // the listener of "Play on the TV" of a screen already linked: neither shows a code
+    if (service.attributes['kind'] == 'drone' || service.attributes['kind'] == playLinkKind) {
       return;
     }
     final host = isPrivatePairingIPv4(service.host) ? service.host : await lookupIPv4(service.host);

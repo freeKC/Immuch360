@@ -91,6 +91,7 @@ import 'package:immich_mobile/presentation/pages/people_collection.page.dart';
 import 'package:immich_mobile/presentation/pages/person.page.dart';
 import 'package:immich_mobile/presentation/pages/place.page.dart';
 import 'package:immich_mobile/presentation/pages/place_detail.page.dart';
+import 'package:immich_mobile/presentation/pages/play_on_screen/play_from_phone.page.dart';
 import 'package:immich_mobile/presentation/pages/profile/profile_picture_crop.page.dart';
 import 'package:immich_mobile/presentation/pages/recently_added.page.dart';
 import 'package:immich_mobile/presentation/pages/recently_taken.page.dart';
@@ -266,6 +267,8 @@ class AppRouter extends RootStackRouter {
     // Connect a TV or computer: a phone signs a big screen in (sign in with your phone)
     AutoRoute(page: ConnectScreenRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: EnterCodeRoute.page, guards: [_authGuard, _duplicateGuard]),
+    // Play from a phone: a big screen lets its linked phones play films on it (play on the TV)
+    AutoRoute(page: PlayFromPhoneRoute.page, guards: [_authGuard, _duplicateGuard]),
     // The DJI live video: the live screen of a phone with its remote plugged in, the watch page of a headset, and the
     // Diagnostics page reached from their Advanced
     AutoRoute(page: DjiLiveRoute.page, guards: [_authGuard, _duplicateGuard]),

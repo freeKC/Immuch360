@@ -19,13 +19,17 @@ import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/screen_pairing_session.dart';
 import 'package:immich_mobile/domain/services/pairing/screen_sign_in.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_pairing.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/pairing/pairing_server.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -66,6 +70,7 @@ class ScreenPairingView {
     this.port,
     this.signedIn,
     this.checks = const [],
+    this.linkedPhone,
   });
 
   final ScreenPairingPhase phase;
@@ -92,6 +97,9 @@ class ScreenPairingView {
   /// The check numbers of the phones that said hello and wait for their user (pairingCheckNumber)
   final List<String> checks;
 
+  /// The phone that linked itself for "Play on the TV" in this pairing, once it did
+  final String? linkedPhone;
+
   ScreenPairingView copyWith({
     ScreenPairingPhase? phase,
     ScreenPairingProblem? problem,
@@ -111,6 +119,7 @@ class ScreenPairingView {
     port: port ?? this.port,
     signedIn: signedIn ?? this.signedIn,
     checks: checks,
+    linkedPhone: linkedPhone,
   );
 
   @override
@@ -137,6 +146,8 @@ class ScreenPairingEnvironment {
     this.compute,
     this.advertisedAddress,
     this.preferredPort = pairingDefaultPort,
+    this.installId,
+    this.keepLinkedPhone,
   });
 
   /// The addresses the listener serves and shows, the first one in the code
@@ -161,6 +172,12 @@ class ScreenPairingEnvironment {
   /// host:port to put in the code instead of the device's own (debug builds, two emulators)
   final String? advertisedAddress;
   final int preferredPort;
+
+  /// The install id of this screen, which a phone linked for "Play on the TV" knows it by; null: no link is taken
+  final Future<String> Function()? installId;
+
+  /// Keeps a phone that linked itself for "Play on the TV"; null: no link is taken
+  final Future<void> Function(LinkedPeer phone)? keepLinkedPhone;
 }
 
 Future<R> _isolateCompute<A, R>(R Function(A argument) work, A argument) => Isolate.run(() => work(argument));
@@ -234,6 +251,8 @@ final screenPairingEnvironmentProvider = Provider<ScreenPairingEnvironment>((ref
     page: _loadPage,
     compute: _isolateCompute,
     advertisedAddress: kDebugMode && _debugAdvertise.isNotEmpty ? _debugAdvertise : null,
+    installId: () => phoneShareInstallId(ref.read(storeServiceProvider)),
+    keepLinkedPhone: (phone) => ref.read(linkedPhonesProvider.notifier).add(phone),
   );
 });
 
@@ -244,6 +263,10 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
   ScreenPairingSession? _session;
   PairingServer? _server;
   ScreenSignIn? _signIn;
+  LinkingPairingSignIn? _linking;
+
+  /// The panel of "Play from a phone" shows: a phone links itself, nobody signs in
+  bool _linkOnly = false;
   Future<void> Function()? _stopAdvertising;
   StreamSubscription<ScreenPairingState>? _states;
   StreamSubscription<AppLifecycleState>? _lifecycle;
@@ -266,15 +289,19 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
     return const ScreenPairingView();
   }
 
-  /// The panel shows: listen until it goes. [actions] signs the screen in with what arrives.
-  Future<void> show(ScreenSignInActions actions) async {
+  /// The panel shows: listen until it goes. [actions] signs the screen in with what arrives; with [linkOnly] (the
+  /// panel of "Play from a phone") a phone only links itself for "Play on the TV".
+  Future<void> show(ScreenSignInActions actions, {bool linkOnly = false}) async {
     _actions = actions;
+    // A panel of the other kind while one listens: its code and its purpose are no longer those shown
+    final changed = _linkOnly != linkOnly;
+    _linkOnly = linkOnly;
     _shown++;
     if (_shown == 1) {
       await _lifecycle?.cancel();
       _lifecycle = _environment.lifecycle().listen(_onLifecycle);
     }
-    if (_server == null && !_background) {
+    if ((_server == null || changed) && !_background) {
       await _start();
     }
   }
@@ -348,12 +375,30 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
         label = (await _environment.deviceName()).trim();
         await Store.put(StoreKey.pairingScreenLabel, label);
       }
-      final device = {'label': label, 'kind': kind.wire, 'os': _environment.os, 'app': await _environment.appVersion()};
+      final linkOnly = _linkOnly;
+      final device = {
+        'label': label,
+        'kind': kind.wire,
+        'os': _environment.os,
+        'app': await _environment.appVersion(),
+        if (linkOnly) 'purpose': pairingPurposeLink,
+      };
       final session = ScreenPairingSession(device: device, compute: _environment.compute);
       final signIn = ScreenSignIn(actions);
+      final installId = _environment.installId;
+      final keepLinkedPhone = _environment.keepLinkedPhone;
+      final screenLabel = label;
+      final linking = installId == null || keepLinkedPhone == null
+          ? null
+          : LinkingPairingSignIn(
+              inner: linkOnly ? null : signIn,
+              linkOnly: linkOnly,
+              screen: () async => (id: await installId(), name: screenLabel, kind: kind),
+              keep: keepLinkedPhone,
+            );
       final server = PairingServer(
         session: session,
-        signIn: signIn,
+        signIn: linking ?? signIn,
         page: await _environment.page(),
         device: device,
         servedAddresses: _environment.localAddresses,
@@ -367,7 +412,8 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
       }
       _session = session;
       _server = server;
-      _signIn = signIn;
+      _signIn = linkOnly ? null : signIn;
+      _linking = linking;
       _address = addresses.first;
       state = ScreenPairingView(kind: kind, port: port);
       _states = session.states.listen((sessionState) => _onSession(sessionState, kind, port));
@@ -424,9 +470,15 @@ class ScreenPairingController extends Notifier<ScreenPairingView> {
     final (host, shownPort) = _advertised(port);
     if (sessionState.phase == ScreenPairingPhase.signedIn) {
       final signedIn = _signIn?.signedIn;
+      final linkedPhone = _linking?.linkedPhone;
       _generation++;
       unawaited(_bringDown());
-      state = ScreenPairingView(kind: kind, phase: ScreenPairingPhase.signedIn, signedIn: signedIn);
+      state = ScreenPairingView(
+        kind: kind,
+        phase: ScreenPairingPhase.signedIn,
+        signedIn: signedIn,
+        linkedPhone: linkedPhone,
+      );
       return;
     }
     if (sessionState.phase == ScreenPairingPhase.paused) {

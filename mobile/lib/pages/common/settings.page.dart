@@ -192,6 +192,19 @@ class _MobileLayout extends ConsumerWidget {
         ),
       );
     }
+    if (ref.watch(isBigScreenProvider)) {
+      // A big screen plays the films its linked phones send it (play on the TV), with or without a server
+      settings.insert(
+        hasServer ? 0 : 1,
+        SettingsCard(
+          key: const Key('settings_play_from_phone'),
+          icon: Icons.cast_connected_rounded,
+          title: context.t.play_from_phone_title,
+          subtitle: context.t.play_from_phone_subtitle,
+          onTap: () => context.pushRoute(const PlayFromPhoneRoute()),
+        ),
+      );
+    }
     settings.add(
       SettingsCard(
         icon: Icons.auto_awesome_outlined,
@@ -250,6 +263,16 @@ class _TabletLayout extends HookConsumerWidget {
                   ),
                 ),
               ),
+              // After the sections: the rows a remote walks through keep their places
+              if (ref.watch(isBigScreenProvider))
+                SliverToBoxAdapter(
+                  child: ListTile(
+                    key: const Key('settings_play_from_phone'),
+                    title: Text(context.t.play_from_phone_title),
+                    leading: const Icon(Icons.cast_connected_rounded),
+                    onTap: () => context.pushRoute(const PlayFromPhoneRoute()),
+                  ),
+                ),
               SliverToBoxAdapter(
                 child: ListTile(
                   title: Text(context.t.whats_new),

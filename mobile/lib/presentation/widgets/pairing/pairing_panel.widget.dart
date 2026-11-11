@@ -40,9 +40,13 @@ import 'package:openapi/api.dart';
 /// See the top of this file. [compact] for a narrow window: a smaller code, no steps. In a dialog too: the timeline
 /// replaces the sign-in page and the dialog with it.
 class PairingPanel extends ConsumerStatefulWidget {
-  const PairingPanel({super.key, this.compact = false});
+  const PairingPanel({super.key, this.compact = false, this.linkOnly = false, this.onLinked});
 
   final bool compact;
+
+  /// "Play from a phone": a phone links itself for "Play on the TV", nobody signs in; [onLinked] hears its name
+  final bool linkOnly;
+  final void Function(String phone)? onLinked;
 
   @override
   ConsumerState<PairingPanel> createState() => _PairingPanelState();
@@ -57,7 +61,7 @@ class _PairingPanelState extends ConsumerState<PairingPanel> {
   void initState() {
     super.initState();
     _controller = ref.read(screenPairingProvider.notifier);
-    unawaited(_controller.show(AppScreenSignInActions(ref)));
+    unawaited(_controller.show(AppScreenSignInActions(ref), linkOnly: widget.linkOnly));
     // The countdown of the code
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) {
@@ -78,6 +82,24 @@ class _PairingPanelState extends ConsumerState<PairingPanel> {
       return;
     }
     _completing = true;
+    if (widget.linkOnly) {
+      final phone = view.linkedPhone;
+      if (phone != null) {
+        ImmichToast.show(
+          context: context,
+          msg: context.t.play_link_screen_linked(phone: phone),
+          toastType: ToastType.success,
+          gravity: ToastGravity.TOP,
+        );
+        widget.onLinked?.call(phone);
+      }
+      return;
+    }
+    // A phone linked itself through the panel of Play from a phone: nothing was signed in here
+    if (view.signedIn == null && view.linkedPhone != null) {
+      _completing = false;
+      return;
+    }
     final signedIn = view.signedIn;
     if (signedIn != null && signedIn.user.isNotEmpty && signedIn.phone != null) {
       ImmichToast.show(
@@ -104,6 +126,7 @@ class _PairingPanelState extends ConsumerState<PairingPanel> {
     return PairingPanelContent(
       view: view,
       compact: widget.compact,
+      linkOnly: widget.linkOnly,
       now: DateTime.now(),
       onShowNewCode: () => unawaited(_controller.showNewCode()),
     );
@@ -118,12 +141,16 @@ class PairingPanelContent extends StatelessWidget {
     required this.now,
     required this.onShowNewCode,
     this.compact = false,
+    this.linkOnly = false,
   });
 
   final ScreenPairingView view;
   final DateTime now;
   final VoidCallback onShowNewCode;
   final bool compact;
+
+  /// The panel of "Play from a phone": its title says so, and the browser page (a sign in) is not offered
+  final bool linkOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +275,17 @@ class PairingPanelContent extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(t.pairing_screen_title, style: theme.titleMedium, textAlign: TextAlign.center),
+        Text(
+          linkOnly
+              ? switch (view.kind) {
+                  PairingScreenKind.headset => t.play_link_screen_title_headset,
+                  PairingScreenKind.computer => t.play_link_screen_title_computer,
+                  PairingScreenKind.tv => t.play_link_screen_title_tv,
+                }
+              : t.pairing_screen_title,
+          style: theme.titleMedium,
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: ImmichSpacing.sm),
         if (showsCode) ...[
           if (sideBySide)
@@ -281,7 +318,7 @@ class PairingPanelContent extends StatelessWidget {
             for (final step in steps) Text(step, style: theme.bodySmall, textAlign: TextAlign.center),
             if (headset) Text(t.pairing_screen_headset_hint, style: theme.bodySmall, textAlign: TextAlign.center),
           ],
-          if (typedUrl != null) ...[
+          if (typedUrl != null && !linkOnly) ...[
             const SizedBox(height: ImmichSpacing.xs),
             Text(
               t.pairing_screen_no_app(url: typedUrl),
@@ -326,7 +363,8 @@ class PairingPanelContent extends StatelessWidget {
   String? _status(Translations t) => switch (view.phase) {
     ScreenPairingPhase.waiting => t.pairing_screen_waiting,
     ScreenPairingPhase.confirmOnPhone => t.pairing_screen_confirm_on_phone,
-    ScreenPairingPhase.signingIn || ScreenPairingPhase.signedIn => t.pairing_screen_signing_in,
+    ScreenPairingPhase.signingIn ||
+    ScreenPairingPhase.signedIn => linkOnly ? t.play_link_screen_linking : t.pairing_screen_signing_in,
     ScreenPairingPhase.paused || ScreenPairingPhase.stopped => null,
   };
 

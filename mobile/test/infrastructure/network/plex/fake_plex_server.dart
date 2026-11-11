@@ -1,11 +1,11 @@
 // A small Plex Media Server on 127.0.0.1 for the tests of the Plex client: /identity, the sections, the folder view
-// with its paging headers, the albums of a photo section, the parts with or without Range support (and download=1
-// refused when asked), the photo transcoder, the account and the preferences; the films of a film library (/all?type=1
-// with its title filter, the metadata of a film, the hub search) and, for the film page (lot A2), the full item of a
-// film (/library/metadata/{ratingKey}), the filters of a library and their values (as listings), the subtitle files
-// beside a film (/library/streams/{id}.srt) and the track picks (PUT /library/parts/{id}). Every answer but /identity
-// wants the test token in its header, as a real server does, and answers 401 in HTML otherwise. The values are the
-// synthetic ones of test/fixtures/plex.
+// with its paging headers, the albums of a photo section, one item by its rating key (/library/metadata/{id}), the
+// parts with or without Range support (and download=1 refused when asked), the photo transcoder, the account and the
+// preferences; the films of a film library (/all?type=1 with its title filter, the metadata of a film, the hub search)
+// and, for the film page (lot A2), the full item of a film (/library/metadata/{ratingKey}), the filters of a library
+// and their values (as listings), the subtitle files beside a film (/library/streams/{id}.srt) and the track picks
+// (PUT /library/parts/{id}). Every answer but /identity wants the test token in its header, as a real server does,
+// and answers 401 in HTML otherwise. The values are the synthetic ones of test/fixtures/plex.
 
 import 'dart:convert';
 import 'dart:io';
@@ -158,7 +158,8 @@ class FakePlexServer {
   /// The answer of /hubs/search; null for a server without it, which answers 404
   Object? hubs;
 
-  /// The answers of /library/metadata/{ratingKey}, by ratingKey; then the films of [films]; 404 for any other
+  /// The answers of /library/metadata/{ratingKey}, by ratingKey; then [items], then the films of [films]; 404 for any
+  /// other
   final Map<String, Object?> metadata = {};
 
   /// The subtitle files of /library/streams/{id}.srt, by stream id; 404 for any other
@@ -171,7 +172,13 @@ class FakePlexServer {
   final Map<String, String> redirects = {};
 
   /// The sizes of the parts, by part id
-  final Map<int, int> partSizes = {11: 1000, 12: 600, 21: 5000, 22: 3000, 31: 10, 51: 300, 52: 400};
+  final Map<int, int> partSizes = {11: 1000, 12: 600, 21: 5000, 22: 3000, 31: 10, 51: 300, 52: 400, 77: 2048};
+
+  /// The items asked by their rating key, the answer of /library/metadata/{id} (a film with its streams); any other
+  /// key answers 404, as Plex does
+  final Map<String, Object?> items = {
+    '77': jsonDecode(File('test/fixtures/plex/metadata_item.json').readAsStringSync()),
+  };
 
   /// The pictures of the photo transcoder, by thumb path
   final Map<String, Uint8List> thumbnails = {
@@ -231,8 +238,8 @@ class FakePlexServer {
         return await response.close();
       }
       final item = RegExp(r'^/library/metadata/(\d+)$').firstMatch(uri.path);
-      if (item != null) {
-        final body = metadata[item.group(1)] ?? _filmMetadata(item.group(1)!);
+      if (item != null && !listings.containsKey(full)) {
+        final body = metadata[item.group(1)] ?? items[item.group(1)] ?? _filmMetadata(item.group(1)!);
         if (body == null) {
           response.statusCode = 404;
           return await response.close();

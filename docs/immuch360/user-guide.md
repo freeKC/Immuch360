@@ -382,6 +382,20 @@ The address the server tells is learned again at each connection at home. When i
 - **No plex.tv**: the app talks to your server only, always over HTTPS. The server is checked through its own plex.direct certificate, tied to the id of the server, before the token is sent. The token stays on the device, in its secure storage, and goes only to your server, in a request header.
 - **Compared with adding the same server as DLNA**: the folders as on the disk, the thumbnails of Plex, access from outside home and a secure connection.
 
+### Play a film on your TV from your phone
+
+From build 45 and desktop build 25, a Plex film chosen on the phone plays on the TV, in the Quest window or on a computer, in Immuch360 there, and the remote of the TV stays in charge. The phone sends which film and where it is, never your token: the TV plays it with its own access to the same server.
+
+1. **Link the phone and the TV once.** When you sign the TV in with your phone (see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)), leave "Also let this phone play films on it" on. A TV used without Immich: on the TV, Settings, "Play from a phone", "Link a phone", then on the phone Settings, "Connect a TV or computer" and scan the code. Both show the same six digits; tap Link.
+2. **Keep Immuch360 open on the TV.** Android does not let a message from the network bring a closed app to the front.
+3. **On the phone, open the film** in your Plex server, then the cast icon, "Play on…". The sheet lists "This phone" and your screens: "Ready", "Open Immuch360 on it" (or "Put on the headset and open Immuch360"), or "Does not have (server) yet". Tap a ready screen.
+4. **The TV plays it** full screen in its usual player, at the phone's position, with its audio and subtitle languages, and says "From (your phone)". A film already playing on the TV is replaced. The Quest asks first ("(phone) wants to play (film)", Play or Not now), since someone may be wearing it; a TV or a computer asks too when "Ask before a phone plays" is on.
+5. **The phone becomes a remote**: play or pause, minus 10 s, plus 30 s, the position, Audio and Subtitles (the tracks the TV lists), "Stop on the screen", and "Continue on this phone", which stops the TV and goes on from there on the phone. What you do with the TV's remote shows on the phone a moment later. Leave the film's page and a small bar stays at the bottom of every page, with play or pause and Stop: tap the title to open the film's page again, which leaves the phone's player paused.
+
+**A TV that does not have your Plex server yet** says so on its row, with "Add (server) to (screen)". Tap it: the phone and the TV show the same six digits, the TV asks "Add (server) from (phone)?", and the phone warns that the TV gets the same full access to your Plex server as the phone. Once you accepted on both, the TV checks the server (its certificate, its identity, its libraries) and keeps it, and the film starts. This also spares typing the token with the remote. Removing the server on the TV forgets it there; the token stays valid on the server.
+
+**Limits**: the phone and the screen on the same home network; Immuch360 open on the screen; phones and tablets send, a TV, the Quest window and a computer receive (on Windows not on a network marked as public); Plex films only in this build. Checked with both sides in tests on a computer; the device test with a phone and a TV is the one of build 45.
+
 ### Limits
 
 - **Claimed servers only**: the server must be claimed in Plex (signed in to a Plex account once), which gives it its plex.direct certificate. Otherwise the page says "This address answers without a Plex certificate. Claim the server in Plex, or add it as an SMB, WebDAV or DLNA share."

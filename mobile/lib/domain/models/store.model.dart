@@ -150,6 +150,14 @@ enum StoreKey<T> {
   /// device
   djiObstacleShapeFrame<bool>._(5051),
 
+  /// "Play from a phone" was turned off on this big screen (a TV, the Quest window, a computer): on by default, the
+  /// lab rule. 5460 and on are the numbers of the play on the TV lot of release 45, apart from the lots of that night
+  playFromPhoneOff<bool>._(5460),
+
+  /// "Ask before a phone plays" on a TV or a computer: off by default (the phone's user chose the film); the Quest
+  /// always asks
+  playFromPhoneAsk<bool>._(5461),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),
