@@ -155,6 +155,36 @@ void main() {
         4,
       );
     });
+
+    test('the values PMS 1.42.1 sends percent encoded are kept as the films hold them', () {
+      final values = parsePlexFilterChoices({
+        'MediaContainer': {
+          'Directory': [
+            for (final (key, title) in [
+              ('fr%2F12', 'fr/12'),
+              ('fr%2F12%20avec%20avertissement', 'fr/12 avec avertissement'),
+              ('Not%20Rated', 'Not Rated'),
+              ('13%2B', '13+'),
+              ('PG-13', 'PG-13'),
+              ('100%zz', '100%zz'),
+            ])
+              {'fastKey': '/library/sections/1/all?contentRating=$key', 'key': key, 'title': title},
+          ],
+        },
+      });
+      expect(
+        [for (final value in values) value.key],
+        ['fr/12', 'fr/12 avec avertissement', 'Not Rated', '13+', 'PG-13', '100%zz'],
+      );
+      expect(values.first.title, 'fr/12');
+      expect(audienceBandOf(values.first.key), AudienceBand.age12, reason: 'the band reads the decoded value');
+      final query = PlexFilmsQuery(contentRatings: {values.first.key, values[2].key}).toQueryParameters();
+      expect(
+        Uri(path: '/all', queryParameters: query).query,
+        contains('contentRating=Not+Rated%2Cfr%2F12'),
+        reason: 'encoded once, by the query',
+      );
+    });
   });
 
   group('PlexFilmsQuery', () {
@@ -209,6 +239,16 @@ void main() {
         'ca/14A': AudienceBand.age16,
         'NR': AudienceBand.unrated,
         'Not Rated': AudienceBand.unrated,
+        // The French values of a library of PMS 1.42.1 (11 November 2026)
+        'fr/TP': AudienceBand.all,
+        'fr/Tous publics avec avertissement': AudienceBand.all,
+        'fr/12 avec avertissement': AudienceBand.age12,
+        'fr/Accord parental': AudienceBand.age12,
+        'fr/NR': AudienceBand.unrated,
+        'fr/Not Rated': AudienceBand.unrated,
+        'None': AudienceBand.unrated,
+        'fr/14+': AudienceBand.age16,
+        '13+': AudienceBand.age16,
       };
       for (final MapEntry(:key, :value) in bands.entries) {
         expect(audienceBandOf(key), value, reason: key);
