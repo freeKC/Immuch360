@@ -1,0 +1,71 @@
+name: Immuch360 upstream dry merge
+# Every Monday at 06:47 UTC, and by hand: what a merge of upstream Immich would meet today, before anyone starts one
+# (plan 23 section 4, decision 12 of 10 November 2026). The release branch of the fork (immuch360, or the branch given
+# by hand) is merged in memory with upstream main and with the newest upstream release tag (vX.Y.Z, no rc) by
+# .github/desktop/upstream_dry_merge.py, with git merge-tree --write-tree as in the sync study of 10 November 2026.
+# Its report goes to the run summary and to the upstream-dry-merge artifact (kept 90 days, with the numbers as JSON):
+# the commits behind, the files and hunks in conflict by top level directory and by mobile/ subdirectory, the
+# conflicted files with the semantic ones flagged (the heuristic is in the head of the script), the files both sides
+# changed that merged cleanly, the upstream mobile fixes since the merge base, and the desktop checklist of
+# upstream_sync_report.py. It is an alert: nothing is pushed, no branch or tag is created on any remote, and the clone
+# of the runner keeps the upstream tags under refs/upstream-tags/, apart from the fork's own v* tags. Conflicts are the
+# normal result and never fail the job; it fails only when the script or git fails.
+# Read-only, no secret, runner and actions pinned, under the rules of .github/desktop/check_workflow.py (its first
+# step). Nothing to install: the git and the Python 3 of the runner image do it all.
+on:
+  schedule:
+    - cron: '47 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      ours:
+        description: 'Branch of this repository to merge upstream into'
+        type: string
+        default: immuch360
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  dry-merge:
+    name: Dry merge of upstream main and of the newest upstream release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # Every branch with its whole history: the merge base with upstream lies back in it, and the merge reads
+          # the content of every file both sides changed (no blob filter, which would fetch them one by one)
+          fetch-depth: 0
+
+      - name: The workflow follows the rules of check_workflow.py
+        run: python3 .github/desktop/check_workflow.py --workflow .github/workflows/immuch360-upstream-dry-merge.yml
+
+      - name: The doctests of the report script
+        run: python3 -B -m doctest .github/desktop/upstream_dry_merge.py
+
+      # Read only: the public repository of Immich, its main and its v* tags, into refs of this clone alone
+      - name: Fetch upstream main and its release tags
+        run: |
+          git remote add upstream https://github.com/immich-app/immich.git
+          git fetch --no-tags --no-write-fetch-head upstream \
+            '+refs/heads/main:refs/remotes/upstream/main' '+refs/tags/v*:refs/upstream-tags/v*'
+          git rev-parse --short=10 upstream/main
+
+      - name: Dry merges (report in the run summary)
+        env:
+          OURS: ${{ inputs.ours || 'immuch360' }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/upstream-dry-merge"
+          python3 -B .github/desktop/upstream_dry_merge.py --ours "origin/$OURS" --main upstream/main \
+            --tags refs/upstream-tags/ --report "$RUNNER_TEMP/upstream-dry-merge/upstream-dry-merge.md" \
+            --json "$RUNNER_TEMP/upstream-dry-merge/upstream-dry-merge.json" --summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep the report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: upstream-dry-merge
+          path: ${{ runner.temp }}/upstream-dry-merge/
+          retention-days: 90
+          if-no-files-found: error
