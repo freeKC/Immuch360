@@ -72,82 +72,85 @@ class _PlayFromPhonePageState extends ConsumerState<PlayFromPhonePage> {
           };
     return Scaffold(
       appBar: AppBar(title: Text(t.play_from_phone_title)),
-      body: ListView(
-        padding: const EdgeInsets.all(ImmichSpacing.lg),
-        children: [
-          Text(t.play_from_phone_intro, style: theme.bodyLarge),
-          const SizedBox(height: ImmichSpacing.md),
-          SwitchListTile(
-            key: const Key('play_from_phone_switch'),
-            autofocus: true,
-            contentPadding: EdgeInsets.zero,
-            value: enabled,
-            title: Text(t.play_from_phone_switch),
-            subtitle: status == null ? null : Text(status, key: const Key('play_from_phone_status')),
-            onChanged: (value) {
-              ref.read(playFromPhoneEnabledProvider.notifier).state = value;
-              unawaited(Store.put(StoreKey.playFromPhoneOff, !value));
-            },
-          ),
-          if (headset)
-            Padding(
-              padding: const EdgeInsets.only(bottom: ImmichSpacing.sm),
-              child: Text(t.play_from_phone_headset_asks, style: theme.bodySmall),
-            )
-          else
+      // Above a navigation bar at the bottom of the screen
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(ImmichSpacing.lg),
+          children: [
+            Text(t.play_from_phone_intro, style: theme.bodyLarge),
+            const SizedBox(height: ImmichSpacing.md),
             SwitchListTile(
-              key: const Key('play_from_phone_ask'),
+              key: const Key('play_from_phone_switch'),
+              autofocus: true,
               contentPadding: EdgeInsets.zero,
-              value: ask,
-              title: Text(t.play_from_phone_ask_switch),
+              value: enabled,
+              title: Text(t.play_from_phone_switch),
+              subtitle: status == null ? null : Text(status, key: const Key('play_from_phone_status')),
               onChanged: (value) {
-                ref.read(playFromPhoneAskProvider.notifier).state = value;
-                unawaited(Store.put(StoreKey.playFromPhoneAsk, value));
+                ref.read(playFromPhoneEnabledProvider.notifier).state = value;
+                unawaited(Store.put(StoreKey.playFromPhoneOff, !value));
               },
             ),
-          const SizedBox(height: ImmichSpacing.md),
-          Text(t.play_from_phone_linked_title, style: theme.titleMedium),
-          const SizedBox(height: ImmichSpacing.sm),
-          if (phones.isEmpty)
-            Text(t.play_from_phone_linked_empty, style: theme.bodyMedium)
-          else
-            for (final phone in phones)
-              ListTile(
-                key: ValueKey('play_from_phone_${phone.id}'),
+            if (headset)
+              Padding(
+                padding: const EdgeInsets.only(bottom: ImmichSpacing.sm),
+                child: Text(t.play_from_phone_headset_asks, style: theme.bodySmall),
+              )
+            else
+              SwitchListTile(
+                key: const Key('play_from_phone_ask'),
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.smartphone_rounded),
-                title: Text(phone.name),
-                subtitle: Text(t.play_from_phone_linked_since(date: dates.format(phone.linkedAt.toLocal()))),
-                trailing: TextButton(onPressed: () => unawaited(_remove(phone)), child: Text(t.remove)),
+                value: ask,
+                title: Text(t.play_from_phone_ask_switch),
+                onChanged: (value) {
+                  ref.read(playFromPhoneAskProvider.notifier).state = value;
+                  unawaited(Store.put(StoreKey.playFromPhoneAsk, value));
+                },
               ),
-          const SizedBox(height: ImmichSpacing.lg),
-          if (_linking)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(ImmichSpacing.md),
-                child: PairingPanel(
-                  linkOnly: true,
-                  onLinked: (_) {
-                    if (mounted) {
-                      setState(() => _linking = false);
-                    }
-                  },
+            const SizedBox(height: ImmichSpacing.md),
+            Text(t.play_from_phone_linked_title, style: theme.titleMedium),
+            const SizedBox(height: ImmichSpacing.sm),
+            if (phones.isEmpty)
+              Text(t.play_from_phone_linked_empty, style: theme.bodyMedium)
+            else
+              for (final phone in phones)
+                ListTile(
+                  key: ValueKey('play_from_phone_${phone.id}'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.smartphone_rounded),
+                  title: Text(phone.name),
+                  subtitle: Text(t.play_from_phone_linked_since(date: dates.format(phone.linkedAt.toLocal()))),
+                  trailing: TextButton(onPressed: () => unawaited(_remove(phone)), child: Text(t.remove)),
+                ),
+            const SizedBox(height: ImmichSpacing.lg),
+            if (_linking)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(ImmichSpacing.md),
+                  child: PairingPanel(
+                    linkOnly: true,
+                    onLinked: (_) {
+                      if (mounted) {
+                        setState(() => _linking = false);
+                      }
+                    },
+                  ),
+                ),
+              )
+            else
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FilledButton.icon(
+                  key: const Key('play_from_phone_link'),
+                  icon: const Icon(Icons.qr_code_2_rounded),
+                  label: Text(t.play_from_phone_link_button),
+                  onPressed: () => setState(() => _linking = true),
                 ),
               ),
-            )
-          else
-            Align(
-              alignment: Alignment.centerLeft,
-              child: FilledButton.icon(
-                key: const Key('play_from_phone_link'),
-                icon: const Icon(Icons.qr_code_2_rounded),
-                label: Text(t.play_from_phone_link_button),
-                onPressed: () => setState(() => _linking = true),
-              ),
-            ),
-          const SizedBox(height: ImmichSpacing.md),
-          Text(t.play_from_phone_footer, style: theme.bodySmall),
-        ],
+            const SizedBox(height: ImmichSpacing.md),
+            Text(t.play_from_phone_footer, style: theme.bodySmall),
+          ],
+        ),
       ),
     );
   }

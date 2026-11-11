@@ -7,6 +7,7 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/plex_films.provider.dart';
 
 import '../../../unit/presentation/presentation_context.dart';
+import '../../system_navigation_bar.dart';
 
 const _options = PlexFilmFilterOptions(
   years: [
@@ -34,12 +35,21 @@ void main() {
   tearDown(() => context.dispose());
 
   /// Opens the filters from a button, the query they give back in [result]
-  Future<List<PlexFilmsQuery?>> open(WidgetTester tester, {bool tvMode = false, PlexFilmsQuery? current}) async {
+  Future<List<PlexFilmsQuery?>> open(
+    WidgetTester tester, {
+    bool tvMode = false,
+    bool navigationBar = false,
+    PlexFilmsQuery? current,
+  }) async {
     final results = <PlexFilmsQuery?>[];
-    // A phone, or a 1080p TV
-    tester.view.physicalSize = tvMode ? const Size(1920, 1080) : const Size(1080, 2400);
-    tester.view.devicePixelRatio = tvMode ? 2 : 2.5;
-    addTearDown(tester.view.reset);
+    // A phone, with its navigation bar at the bottom or not, or a 1080p TV
+    if (navigationBar) {
+      screenWithNavigationBar(tester, ratio: 2.5);
+    } else {
+      tester.view.physicalSize = tvMode ? const Size(1920, 1080) : const Size(1080, 2400);
+      tester.view.devicePixelRatio = tvMode ? 2 : 2.5;
+      addTearDown(tester.view.reset);
+    }
     await tester.pumpTestWidget(
       context,
       Consumer(
@@ -121,6 +131,16 @@ void main() {
     final query = results.single!;
     expect(query.isFiltered, isFalse);
     expect(query.sort, PlexFilmSort.title, reason: 'Clear leaves the order');
+  });
+
+  testWidgets('keeps Clear and Show the films above the navigation bar of a phone, the list scrolling above them', (
+    tester,
+  ) async {
+    await open(tester, navigationBar: true);
+    expectAboveNavigationBar(tester, find.byKey(const Key('plex_film_filters_clear')));
+    expectAboveNavigationBar(tester, find.byKey(const Key('plex_film_filters_apply')));
+    final list = tester.getRect(find.byKey(const Key('plex_film_filters')));
+    expect(list.bottom, lessThanOrEqualTo(tester.getRect(find.byKey(const Key('plex_film_filters_apply'))).top));
   });
 
   testWidgets('opens in a dialog on a TV', (tester) async {

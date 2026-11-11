@@ -13,6 +13,7 @@ import 'package:immich_mobile/infrastructure/network/network_discovery_probes.da
 import 'package:immich_mobile/presentation/pages/pairing/enter_code.page.dart';
 
 import '../../../test_utils.dart';
+import '../../system_navigation_bar.dart';
 
 void main() {
   setUpAll(TestUtils.init);
@@ -66,6 +67,25 @@ void main() {
     expect(find.text('Immuch360 on Galaxy S24+'), findsNothing);
 
     // The page looks for screens for two minutes at most: its timer ends with it
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(minutes: 3));
+  });
+
+  testWidgets('ends with Next above the navigation bar of the phone', (tester) async {
+    screenWithNavigationBar(tester);
+    await pump(tester, [
+      for (var i = 1; i <= 10; i++)
+        MdnsService(
+          name: 'Immuch360 on TV $i',
+          type: '_immuch360-pair._tcp',
+          host: '192.168.1.${20 + i}',
+          port: 8361,
+          attributes: const {'v': '1', 'kind': 'tv'},
+        ),
+    ]);
+    await scrollToEnd(tester, find.byType(Scrollable).first);
+    expectAboveNavigationBar(tester, find.byKey(const Key('pairing_code_continue')));
+
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(minutes: 3));
   });

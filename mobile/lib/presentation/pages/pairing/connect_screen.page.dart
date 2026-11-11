@@ -435,78 +435,81 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
     final dates = DateFormat.yMMMd(resolvedDateTimeLocale());
     return Scaffold(
       appBar: AppBar(title: Text(t.pairing_connect_title)),
-      body: ListView(
-        padding: const EdgeInsets.all(ImmichSpacing.lg),
-        children: [
-          Text(t.pairing_connect_subtitle, style: theme.bodyLarge),
-          if (_linked case final linked?) ...[
-            const SizedBox(height: ImmichSpacing.md),
-            Text(
-              t.pairing_link_hint(address: linked),
-              key: const Key('pairing_link_hint'),
-              style: theme.bodyMedium,
-            ),
-          ],
-          const SizedBox(height: ImmichSpacing.lg),
-          FilledButton.icon(
-            key: const Key('pairing_scan'),
-            icon: const Icon(Icons.qr_code_scanner_rounded),
-            label: Text(t.pairing_scan_button),
-            onPressed: _busy ? null : () => unawaited(_scan()),
-          ),
-          const SizedBox(height: ImmichSpacing.sm),
-          OutlinedButton.icon(
-            key: const Key('pairing_enter_code'),
-            icon: const Icon(Icons.keyboard_rounded),
-            label: Text(t.pairing_enter_code),
-            onPressed: _busy ? null : () => unawaited(_enterCode()),
-          ),
-          if (_busy)
-            const Padding(
-              padding: EdgeInsets.only(top: ImmichSpacing.md),
-              child: LinearProgressIndicator(),
-            ),
-          const SizedBox(height: ImmichSpacing.xl),
-          Text(t.pairing_connected_title, style: theme.titleMedium),
-          const SizedBox(height: ImmichSpacing.sm),
-          if (screens.isEmpty)
-            Text(t.pairing_connected_empty, style: theme.bodyMedium)
-          else
-            for (final screen in screens)
-              ListTile(
-                key: ValueKey('paired_${screen.sessionId}'),
-                contentPadding: EdgeInsets.zero,
-                leading: Icon(pairingKindIcon(screen.kind)),
-                title: Text(screen.label),
-                subtitle: Text(
-                  [
-                    t.pairing_connected_since(date: dates.format(screen.at.toLocal())),
-                    if (screen.lastSeen case final lastSeen?) '${t.last_seen} ${dates.format(lastSeen.toLocal())}',
-                  ].join(' · '),
-                ),
-                trailing: TextButton(
-                  onPressed: () => unawaited(_signOut(screen)),
-                  child: Text(t.pairing_sign_out_device),
-                ),
+      // Above the navigation bar of the phone
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(ImmichSpacing.lg),
+          children: [
+            Text(t.pairing_connect_subtitle, style: theme.bodyLarge),
+            if (_linked case final linked?) ...[
+              const SizedBox(height: ImmichSpacing.md),
+              Text(
+                t.pairing_link_hint(address: linked),
+                key: const Key('pairing_link_hint'),
+                style: theme.bodyMedium,
               ),
-          const SizedBox(height: ImmichSpacing.md),
-          Text(t.pairing_connected_footer, style: theme.bodySmall),
-          // The screens this phone plays films on (play on the TV), each removable: the link ends on this side
-          if (linked.isNotEmpty) ...[
-            const SizedBox(height: ImmichSpacing.xl),
-            Text(t.play_link_phone_list_title, style: theme.titleMedium),
+            ],
+            const SizedBox(height: ImmichSpacing.lg),
+            FilledButton.icon(
+              key: const Key('pairing_scan'),
+              icon: const Icon(Icons.qr_code_scanner_rounded),
+              label: Text(t.pairing_scan_button),
+              onPressed: _busy ? null : () => unawaited(_scan()),
+            ),
             const SizedBox(height: ImmichSpacing.sm),
-            for (final screen in linked)
-              ListTile(
-                key: ValueKey('play_linked_${screen.id}'),
-                contentPadding: EdgeInsets.zero,
-                leading: Icon(pairingKindIcon(screen.kind)),
-                title: Text(screen.name),
-                subtitle: Text(t.play_from_phone_linked_since(date: dates.format(screen.linkedAt.toLocal()))),
-                trailing: TextButton(onPressed: () => unawaited(_removeLinked(screen)), child: Text(t.remove)),
+            OutlinedButton.icon(
+              key: const Key('pairing_enter_code'),
+              icon: const Icon(Icons.keyboard_rounded),
+              label: Text(t.pairing_enter_code),
+              onPressed: _busy ? null : () => unawaited(_enterCode()),
+            ),
+            if (_busy)
+              const Padding(
+                padding: EdgeInsets.only(top: ImmichSpacing.md),
+                child: LinearProgressIndicator(),
               ),
+            const SizedBox(height: ImmichSpacing.xl),
+            Text(t.pairing_connected_title, style: theme.titleMedium),
+            const SizedBox(height: ImmichSpacing.sm),
+            if (screens.isEmpty)
+              Text(t.pairing_connected_empty, style: theme.bodyMedium)
+            else
+              for (final screen in screens)
+                ListTile(
+                  key: ValueKey('paired_${screen.sessionId}'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(pairingKindIcon(screen.kind)),
+                  title: Text(screen.label),
+                  subtitle: Text(
+                    [
+                      t.pairing_connected_since(date: dates.format(screen.at.toLocal())),
+                      if (screen.lastSeen case final lastSeen?) '${t.last_seen} ${dates.format(lastSeen.toLocal())}',
+                    ].join(' · '),
+                  ),
+                  trailing: TextButton(
+                    onPressed: () => unawaited(_signOut(screen)),
+                    child: Text(t.pairing_sign_out_device),
+                  ),
+                ),
+            const SizedBox(height: ImmichSpacing.md),
+            Text(t.pairing_connected_footer, style: theme.bodySmall),
+            // The screens this phone plays films on (play on the TV), each removable: the link ends on this side
+            if (linked.isNotEmpty) ...[
+              const SizedBox(height: ImmichSpacing.xl),
+              Text(t.play_link_phone_list_title, style: theme.titleMedium),
+              const SizedBox(height: ImmichSpacing.sm),
+              for (final screen in linked)
+                ListTile(
+                  key: ValueKey('play_linked_${screen.id}'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(pairingKindIcon(screen.kind)),
+                  title: Text(screen.name),
+                  subtitle: Text(t.play_from_phone_linked_since(date: dates.format(screen.linkedAt.toLocal()))),
+                  trailing: TextButton(onPressed: () => unawaited(_removeLinked(screen)), child: Text(t.remove)),
+                ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
