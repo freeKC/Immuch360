@@ -13,6 +13,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -615,6 +616,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final reliefMode = reliefGate.visible
         ? ref.watch(appConfigProvider.select((config) => config.aiImmersive.questMode))
         : ReliefViewMode.stereo;
+    final reliefStrength = reliefGate.visible
+        ? ref.watch(appConfigProvider.select((config) => config.aiImmersive.questStrength))
+        : ReliefStrength.normal;
     final page = FutureBuilder<_Photo>(
       future: _photo,
       builder: (context, snapshot) {
@@ -744,6 +748,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                     AiReliefButton(
                       gate: reliefGate,
                       mode: reliefMode,
+                      strength: reliefStrength,
                       target: ReliefTarget(
                         identity: () async => reliefIdentityOfShareFile(
                           sourceId: widget.sourceId,

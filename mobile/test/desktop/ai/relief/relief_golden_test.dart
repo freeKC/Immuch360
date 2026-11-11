@@ -1,6 +1,7 @@
 // The Dart of relief-v1 against its golden fixture, made by .github/desktop/ai/make_relief_golden.py: the same right
-// eye within one unit per channel and the same mask of filled pixels, on the four cases. The steps in between are held
-// exactly, so that a difference shows where it starts.
+// eye within one unit per channel and the same mask of filled pixels, on the six cases, among them the Subtle and the
+// Strong relief strengths of the app (1.5 % and 3 %). The steps in between are held exactly, so that a difference shows
+// where it starts.
 
 import 'dart:convert';
 import 'dart:io';
@@ -11,6 +12,7 @@ import 'package:immich_mobile/desktop/ai/relief/relief_flags.dart';
 import 'package:immich_mobile/desktop/ai/relief/relief_map.dart';
 import 'package:immich_mobile/desktop/ai/relief/right_eye.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 
 void main() {
   final golden =
@@ -37,8 +39,12 @@ void main() {
     return rgba;
   }
 
-  test('the fixture has the four cases and the sizes this test reads', () {
-    expect(cases.map((entry) => entry['name']), ['production', 'strong', 'flat', 'dark']);
+  test('the fixture has the six cases and the sizes this test reads', () {
+    expect(cases.map((entry) => entry['name']), ['production', 'strong', 'flat', 'dark', 'subtle', 'pronounced']);
+    // The three relief strengths of the app are there, each at its parallax
+    for (final strength in ReliefStrength.values) {
+      expect(cases.where((entry) => entry['parallax'] == strength.parallax && entry['convergence'] == 0.5), isNotEmpty);
+    }
     expect([eyeWidth, eyeHeight, mapWidth, mapHeight], [32, 8, 16, 4]);
   });
 

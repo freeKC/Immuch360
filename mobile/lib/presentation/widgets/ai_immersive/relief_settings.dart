@@ -1,9 +1,9 @@
 // The AI settings of the Meta Quest, in the advanced settings (design-final 2026-10-26, sections 3.3, 3.5, 3.7 and 5):
 // the switch of the AI features (on by default, off hides every AI button and downloads nothing), the untested switch
 // of the Quest 2 and Pro, whether a relief opens in 2.5D (experimental, off: stereo stays the default until FreeKC's
-// comfort session), the relief cache with its size and Clear, and the AI components (lot A3b) with their sizes,
-// licences and Remove. The 2.5D switch, the cache and the components come with the quest flavour only, the one that
-// computes reliefs.
+// comfort session), the relief strength (Subtle, Normal or Strong, release 46), the relief cache with its size and
+// Clear, and the AI components (lot A3b) with their sizes, licences and Remove. The 2.5D switch, the strength, the
+// cache and the components come with the quest flavour only, the one that computes reliefs.
 
 import 'dart:async';
 import 'dart:io';
@@ -12,12 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_strength_choice.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
@@ -61,6 +63,11 @@ class AiReliefSettings extends HookConsumerWidget {
             .write(.aiReliefQuestMode, mesh25d.value ? ReliefViewMode.mesh25d : ReliefViewMode.stereo),
       ),
     );
+    final strength = useState(ref.watch(appConfigProvider).aiImmersive.questStrength);
+    useValueChanged<ReliefStrength, void>(
+      strength.value,
+      (_, _) => unawaited(ref.read(settingsProvider).write(.aiReliefStrength, strength.value)),
+    );
     final computesReliefs = ref.watch(appFlavorProvider) == kQuestFlavor;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -88,6 +95,14 @@ class AiReliefSettings extends HookConsumerWidget {
             enabled: enabled.value,
             title: t.ai_immersive_relief_25d,
             subtitle: t.ai_immersive_relief_25d_subtitle,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+            child: ReliefStrengthChoice(
+              key: const Key('advanced_settings_ai_relief_strength'),
+              value: strength.value,
+              onChanged: enabled.value ? (value) => strength.value = value : null,
+            ),
           ),
           const ReliefCacheTile(),
           // A relief runs in the immersive viewer, never under the settings: nothing to stop before a removal. With

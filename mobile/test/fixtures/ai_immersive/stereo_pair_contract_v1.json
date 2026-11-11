@@ -1,5 +1,5 @@
 {
-  "about": "The stereoPair JSON of ImmersiveApi.open for flat 3D photos, version 1 (design-final 2026-10-26, section 4.1). The Dart tests write each request and compare it with this file; the Kotlin tests read it. A depthRelief request names its mode only for 2.5D (mesh25d); without it, or with a mode a reader does not know, the relief first shows in stereo. cacheKeys gives the text of each relief cache key and its SHA-256: the mode is not part of it, the map is the same. volumetricScene holds the request of a 3D scene of phase 2 (design-final 2026-10-27, section 8.5): the scene is the glb-layers-v1 tail of the file, sceneLength bytes long, checked by sceneSha256; flags may be empty. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat.",
+  "about": "The stereoPair JSON of ImmersiveApi.open for flat 3D photos, version 1 (design-final 2026-10-26, section 4.1). The Dart tests write each request and compare it with this file; the Kotlin tests read it. A depthRelief request names its mode only for 2.5D (mesh25d); without it, or with a mode a reader does not know, the relief first shows in stereo. cacheKeys gives the text of each relief cache key and its SHA-256: the mode is not part of it, the map is the same. The parallax is the relief strength the user picked (release 46): 0.015 Subtle, 0.02 Normal (every request before), 0.03 Strong; each strength has a key of its own. volumetricScene holds the request of a 3D scene of phase 2 (design-final 2026-10-27, section 8.5): the scene is the glb-layers-v1 tail of the file, sceneLength bytes long, checked by sceneSha256; flags may be empty. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat.",
   "sbsPhoto": [
     {
       "name": "ours",
@@ -66,6 +66,34 @@
         "convergence": 0.5,
         "quarterTurns": 0,
         "mode": "mesh25d"
+      }
+    },
+    {
+      "name": "a photo of the server, Strong relief",
+      "request": {
+        "kind": "depthRelief",
+        "version": 1,
+        "model": "/data/user/0/com.aprogsys.immuch360/files/ai-components/models/depth-anything-v2-small/depth_anything_v2_small.tflite",
+        "modelSize": 99530468,
+        "modelId": "depth-anything-v2-small@651415f1",
+        "cacheKey": "6bd6fdcc560fb8ab7f9f2165ad3a812cc2bb158c7240479227eedccb238db7f6",
+        "parallax": 0.03,
+        "convergence": 0.5,
+        "quarterTurns": 0
+      }
+    },
+    {
+      "name": "a photo of the server, Subtle relief",
+      "request": {
+        "kind": "depthRelief",
+        "version": 1,
+        "model": "/data/user/0/com.aprogsys.immuch360/files/ai-components/models/depth-anything-v2-small/depth_anything_v2_small.tflite",
+        "modelSize": 99530468,
+        "modelId": "depth-anything-v2-small@651415f1",
+        "cacheKey": "092a29d9cdb699caf0f0a513d40c6a78dbd3ea332a4822d6993598ae3a77573e",
+        "parallax": 0.015,
+        "convergence": 0.5,
+        "quarterTurns": 0
       }
     }
   ],
@@ -147,6 +175,26 @@
       "quarterTurns": 1,
       "text": "share:nas-photos:/Photos/2026/salon été.jpg:4182311:1793092320000|depth-anything-v2-small@651415f1|relief-v1|0.02|0.5|1",
       "key": "c50073109b15a039ecce095402c90213f4d7be326a366f2831c189182d0fe668"
+    },
+    {
+      "identity": "sha1:X8tYgvibyzHDDN2yXGU/ft1XxeM=",
+      "modelId": "depth-anything-v2-small@651415f1",
+      "pipeline": "relief-v1",
+      "parallax": 0.03,
+      "convergence": 0.5,
+      "quarterTurns": 0,
+      "text": "sha1:X8tYgvibyzHDDN2yXGU/ft1XxeM=|depth-anything-v2-small@651415f1|relief-v1|0.03|0.5|0",
+      "key": "6bd6fdcc560fb8ab7f9f2165ad3a812cc2bb158c7240479227eedccb238db7f6"
+    },
+    {
+      "identity": "sha1:X8tYgvibyzHDDN2yXGU/ft1XxeM=",
+      "modelId": "depth-anything-v2-small@651415f1",
+      "pipeline": "relief-v1",
+      "parallax": 0.015,
+      "convergence": 0.5,
+      "quarterTurns": 0,
+      "text": "sha1:X8tYgvibyzHDDN2yXGU/ft1XxeM=|depth-anything-v2-small@651415f1|relief-v1|0.015|0.5|0",
+      "key": "092a29d9cdb699caf0f0a513d40c6a78dbd3ea332a4822d6993598ae3a77573e"
     }
   ],
   "unknown": [

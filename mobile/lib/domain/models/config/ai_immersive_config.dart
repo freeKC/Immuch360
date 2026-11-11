@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 
 part 'ai_immersive_config.freezed.dart';
@@ -21,5 +22,9 @@ abstract class AiImmersiveConfig with _$AiImmersiveConfig {
     /// FreeKC's comfort session decides; 2.5D (experimental) when "Open AI reliefs in 2.5D" is on. The 3D button of
     /// the quad switches between 3D, 2.5D and 2D whatever this says.
     @Default(ReliefViewMode.stereo) ReliefViewMode questMode,
+
+    /// "Relief strength" of the AI reliefs of the Meta Quest: Normal by default, the parallax of every earlier
+    /// version. Each strength is a request and a relief cache entry of its own (see ReliefStrength).
+    @Default(ReliefStrength.normal) ReliefStrength questStrength,
   }) = _AiImmersiveConfig;
 }

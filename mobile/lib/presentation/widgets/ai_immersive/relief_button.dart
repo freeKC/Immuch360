@@ -14,6 +14,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/asset_edit.model.dart';
@@ -104,13 +105,21 @@ ReliefTarget assetReliefTarget(
 }
 
 /// See the top of this file. [gate] says whether it is offered or greyed; a hidden gate shows nothing. [mode] is the
-/// view the relief first shows in, the aiReliefQuestMode setting.
+/// view the relief first shows in, the aiReliefQuestMode setting; [strength] its parallax, the aiReliefStrength
+/// setting.
 class AiReliefButton extends ConsumerStatefulWidget {
-  const AiReliefButton({super.key, required this.gate, required this.target, this.mode = ReliefViewMode.stereo});
+  const AiReliefButton({
+    super.key,
+    required this.gate,
+    required this.target,
+    this.mode = ReliefViewMode.stereo,
+    this.strength = ReliefStrength.normal,
+  });
 
   final ReliefGate gate;
   final ReliefTarget target;
   final ReliefViewMode mode;
+  final ReliefStrength strength;
 
   @override
   ConsumerState<AiReliefButton> createState() => _AiReliefButtonState();
@@ -164,11 +173,15 @@ class _AiReliefButtonState extends ConsumerState<AiReliefButton> {
         identity: identity,
         quarterTurns: quarterTurns,
         mode: widget.mode,
+        strength: widget.strength,
       );
       if (!mounted) {
         return;
       }
-      _log.info('AI relief of key ${request.cacheKey}, ${request.quarterTurns} quarter turns, ${request.mode.json}');
+      _log.info(
+        'AI relief of key ${request.cacheKey}, ${request.quarterTurns} quarter turns, ${request.mode.json}, '
+        '${widget.strength.name} (parallax ${request.parallax})',
+      );
       await widget.target.open(StereoPhotoRequest.relief(request));
     } catch (error, stack) {
       _log.warning('Could not ask for the AI relief', error, stack);

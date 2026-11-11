@@ -14,6 +14,7 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:path/path.dart' as p;
 
@@ -439,6 +440,32 @@ void main() {
 
       expect(reads, isNot(contains('salon_3D_LRF_Full_SBS.jpg')));
       expect(found.versions, isEmpty);
+    });
+
+    test('the relief strength of a 3D photo is read from its head, never from a file kept online only', () async {
+      final strong = p.join(photos, 'salon_3D_LRF_Full_SBS (5).jpg');
+      File(strong).writeAsBytesSync(fakeSbsJpeg(xmp: versionXmp(original, parallax: 0.03)));
+      final subtle = p.join(photos, 'salon_3D_LRF_Full_SBS (6).jpg');
+      File(subtle).writeAsBytesSync(fakeSbsJpeg(xmp: versionXmp(original, parallax: 0.015)));
+
+      expect(await readVersionReliefStrength(p.join(photos, 'salon_3D_LRF_Full_SBS.jpg')), ReliefStrength.normal);
+      expect(await readVersionReliefStrength(strong), ReliefStrength.strong);
+      expect(await readVersionReliefStrength(subtle), ReliefStrength.subtle);
+      // Another tool's side by side photo, a file gone
+      expect(await readVersionReliefStrength(p.join(photos, 'salon_LRF_Full_SBS.jpg')), isNull);
+      expect(await readVersionReliefStrength(p.join(photos, 'gone.jpg')), isNull);
+
+      final reads = <String>[];
+      final kept = await readVersionReliefStrength(
+        strong,
+        readHead: (path) {
+          reads.add(path);
+          return readFileHead(path);
+        },
+        attributes: (path) => fileAttributeRecallOnDataAccess,
+      );
+      expect(kept, isNull);
+      expect(reads, isEmpty);
     });
 
     test('a neighbour that cannot be read costs only itself', () async {

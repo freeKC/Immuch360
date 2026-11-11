@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
@@ -29,6 +30,19 @@ void main() {
   final modelPath = p.posix.join(files, aiComponentsFolderName, depthModelTfliteComponent.installPath);
 
   group('the depthRelief request', () {
+    test('carries the parallax of the relief strength, each strength with a cache key of its own', () {
+      final identity = cacheKeys[0]['identity'] as String;
+      DepthReliefRequest at(ReliefStrength strength) =>
+          questReliefRequest(modelPath: modelPath, identity: identity, quarterTurns: 0, strength: strength);
+
+      // Normal is the request of every earlier version, and the default
+      expect(at(ReliefStrength.normal), questReliefRequest(modelPath: modelPath, identity: identity, quarterTurns: 0));
+      expect(jsonDecode(at(ReliefStrength.normal).toJsonString()), request(0));
+      expect(jsonDecode(at(ReliefStrength.strong).toJsonString()), request(3));
+      expect(jsonDecode(at(ReliefStrength.subtle).toJsonString()), request(4));
+      expect({for (final strength in ReliefStrength.values) at(strength).cacheKey}, hasLength(3));
+    });
+
     test('of a photo of the server is the JSON of the contract', () {
       final relief = questReliefRequest(
         modelPath: modelPath,

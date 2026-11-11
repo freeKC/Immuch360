@@ -20,18 +20,23 @@ const _created = '2026-10-27T10:12:00+01:00';
 const _creatorTool = 'Immuch360 Desktop 3.3.0 (linux)';
 
 /// The packet of a version of the original whose bytes are [original]
-StereoPhotoXmp versionXmp(List<int> original, {String name = 'salon.jpg', int quarterTurns = 0}) =>
-    StereoPhotoXmp.estimated(
-      eyeWidth: 8,
-      eyeHeight: 6,
-      depthModelSha256: depthModelOnnxSha256,
-      sourceName: name,
-      sourceSize: original.length,
-      sourceSha1: sha1Base64(original),
-      sourceQuarterTurns: quarterTurns,
-      created: _created,
-      creatorTool: _creatorTool,
-    );
+StereoPhotoXmp versionXmp(
+  List<int> original, {
+  String name = 'salon.jpg',
+  int quarterTurns = 0,
+  double parallax = 0.02,
+}) => StereoPhotoXmp.estimated(
+  eyeWidth: 8,
+  eyeHeight: 6,
+  depthModelSha256: depthModelOnnxSha256,
+  sourceName: name,
+  sourceSize: original.length,
+  sourceSha1: sha1Base64(original),
+  sourceQuarterTurns: quarterTurns,
+  created: _created,
+  creatorTool: _creatorTool,
+  parallax: parallax,
+);
 
 /// The packet of a 3D scene made from the original whose bytes are [original], around the scene of
 /// test/fixtures/ai_immersive/tiny_scene3D.jpg

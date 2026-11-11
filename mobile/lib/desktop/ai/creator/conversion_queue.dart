@@ -73,6 +73,7 @@ import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -164,7 +165,13 @@ String companionNameBeside(String versionName, {required String companionName, r
 /// carry, to find a version made with the same settings, and for a panorama the generator and its steps. The 3D photo
 /// has its own (ConversionTools.engine); desktop_conversion_tools.dart registers the others, the tests the fakes.
 class ConversionEngine {
-  const ConversionEngine({required this.engine, required this.settingsKey, this.generator, this.steps});
+  const ConversionEngine({
+    required this.engine,
+    required this.settingsKey,
+    this.reliefSettingsKey,
+    this.generator,
+    this.steps,
+  });
 
   /// Runs the specs of this kind only
   final ImmersiveEngine engine;
@@ -172,6 +179,19 @@ class ConversionEngine {
   /// The settingsKey the XMP of the file of a job would carry, the job reading [source] (the original, or the panorama
   /// of a chained job) with [quarterTurns]; null when it cannot be told before the run: no version is looked for then
   final FutureOr<String?> Function(ImmersiveSource source, int quarterTurns) settingsKey;
+
+  /// The settingsKey of a 3D photo made with the relief [strength] of its job; null for the kinds that have no relief
+  /// strength, whose key is [settingsKey]
+  final FutureOr<String?> Function(ImmersiveSource source, int quarterTurns, ReliefStrength strength)?
+  reliefSettingsKey;
+
+  /// The settingsKey the file of [job] would carry, the job reading [source]
+  FutureOr<String?> settingsKeyOf(ConversionJob job, ImmersiveSource source) {
+    final relief = reliefSettingsKey;
+    return relief == null
+        ? settingsKey(source, job.quarterTurns)
+        : relief(source, job.quarterTurns, job.reliefStrength);
+  }
 
   /// A panorama: the transformer by its catalogue id (the variant the gate chose) and the steps of the generation
   final String? generator;
@@ -260,6 +280,8 @@ class ConversionTools {
     engine: engine,
     settingsKey: (source, quarterTurns) =>
         versionSettingsKey(depthModelSha256: depthModelSha256, quarterTurns: quarterTurns),
+    reliefSettingsKey: (source, quarterTurns, strength) =>
+        versionSettingsKey(depthModelSha256: depthModelSha256, parallax: strength.parallax, quarterTurns: quarterTurns),
   );
 
   /// The engine of the jobs of [kind], null when this build has none
@@ -387,8 +409,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// Adds a batch of [kind], "1 of n" to "n of n", each photo with what to do when a version with the same settings
   /// exists and when the name of its file is taken; a request with a reason to skip is added skipped. With
   /// [alsoStereo], each panorama that runs is followed by its 3D version, chained after it, in the same folder. With
-  /// [fromVideo], a splat scene is made from a video (ConversionJob.fromVideo). Gives the ids of the jobs, each chained
-  /// job right after its panorama.
+  /// [fromVideo], a splat scene is made from a video (ConversionJob.fromVideo). A 3D photo is made with
+  /// [reliefStrength]; the other kinds do not read it. Gives the ids of the jobs, each chained job right after its
+  /// panorama.
   List<String> add(
     List<ConversionRequest> requests, {
     ConversionKind kind = ConversionKind.sbsFromPhoto,
@@ -396,6 +419,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     AiWhenExists whenExists = AiWhenExists.keepBoth,
     bool alsoStereo = false,
     bool fromVideo = false,
+    ReliefStrength reliefStrength = ReliefStrength.normal,
   }) {
     if (requests.isEmpty) {
       return const [];
@@ -411,6 +435,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         batchSize: requests.length,
         target: request.target,
         quarterTurns: request.quarterTurns & 3,
+        reliefStrength: kind == ConversionKind.sbsFromPhoto ? reliefStrength : ReliefStrength.normal,
         existing: existing,
         whenExists: whenExists,
         state: request.skip == null ? ConversionState.waiting : ConversionState.skipped,
@@ -1170,6 +1195,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           source: source,
           partPath: part,
           quarterTurns: job.quarterTurns,
+          parallax: job.reliefStrength.parallax,
           derivativeId: derivativeId,
           creatorTool: tools.creatorTool,
           created: created,
@@ -1324,7 +1350,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     PanoramaXmp? parent,
   }) async {
     try {
-      final key = await kindEngine.settingsKey(source, job.quarterTurns);
+      final key = await kindEngine.settingsKeyOf(job, source);
       final panoramaId = parent?.derivativeId;
       if (key == null || (parent != null && panoramaId == null)) {
         return null;

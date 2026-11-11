@@ -305,7 +305,10 @@ class ReliefJobTest {
     val map = ReliefMap(16, 12, ShortArray(16 * 12) { i -> ((i % 16) * 4000).toShort() })
     assertNotNull(cache.write(KEY, map))
 
-    for ((parallax, convergence) in listOf(0.06 to ReliefV1.CONVERGENCE, ReliefV1.PARALLAX to 0.3)) {
+    // 0.015 and 0.03: the Subtle and Strong relief strengths the app offers (release 46)
+    val settings =
+      listOf(0.06 to ReliefV1.CONVERGENCE, ReliefV1.PARALLAX to 0.3, 0.015 to ReliefV1.CONVERGENCE, 0.03 to 0.5)
+    for ((parallax, convergence) in settings) {
       val recorder = Recorder()
       start(job, photo, recorder, ReliefRequest(model, MODEL_SIZE, MODEL_ID, KEY, parallax, convergence))
       worker.runDue()
