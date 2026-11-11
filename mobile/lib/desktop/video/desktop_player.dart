@@ -404,7 +404,7 @@ class DesktopPlayer implements PlaybackEngine {
 
   /// Makes a player of [kind]: the libmpv instance, and for [PlayerKind.playback] and [PlayerKind.live] its texture
   static Future<DesktopPlayer> create(PlayerKind kind) async {
-    // Read by the vendored media_kit_video when it sizes each texture (its IMMUCH360-NOTE.md, patch 3)
+    // Read by media_kit_video of media_kit_360 when it sizes each texture (its IMMUCH360-NOTE.md, patch 3)
     VideoController.maxOutputHeight ??= DesktopPlayerOptions.maxRenderHeight;
     final player = Player(
       configuration: PlayerConfiguration(
@@ -551,8 +551,8 @@ class DesktopPlayer implements PlaybackEngine {
         }
       }),
     ]);
-    // The vendored media_kit_video gives the texture id 0 when its graphics device was lost (its IMMUCH360-NOTE.md,
-    // patch 4); a texture id is never 0 otherwise on Windows
+    // media_kit_video of media_kit_360 gives the texture id 0 when its graphics device was lost (its
+    // IMMUCH360-NOTE.md, patch 4); a texture id is never 0 otherwise on Windows
     final controller = videoController;
     if (controller != null && CurrentPlatform.isWindows) {
       void onTexture() => _textureLost.value = controller.id.value == 0;

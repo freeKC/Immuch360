@@ -3,9 +3,10 @@
 //
 // Where the library comes from: on Windows the project's own build, next to the executable
 // (media_kit_libs_windows_video); on Linux the system's, libmpv.so.2 or libmpv.so.1, which the .deb and the .rpm
-// depend on (libmpv2 or libmpv1, mpv-libs on Fedora: .github/desktop/desktop_installers.py) and which the vendored
-// media_kit_video finds at run time too (its IMMUCH360-NOTE.md, patch 8); on macOS the project's own build again,
-// Mpv.framework in the app's Frameworks folder (media_kit_libs_macos_video, .github/workflows/immuch360-libmpv.yml).
+// depend on (libmpv2 or libmpv1, mpv-libs on Fedora: .github/desktop/desktop_installers.py) and which the patched
+// media_kit_video of github.com/immuch360/media_kit_360 finds at run time too (its IMMUCH360-NOTE.md, patch 8); on
+// macOS the project's own build again, Mpv.framework in the app's Frameworks folder (media_kit_libs_macos_video, a
+// release of github.com/immuch360/libmpv-builds).
 // The app ships no libmpv on Linux.
 
 import 'dart:async';
@@ -22,7 +23,7 @@ bool _available = false;
 
 /// Whether libmpv was loaded at start: on Windows (media_kit_libs_windows_video, next to the executable), on Linux
 /// (the system's libmpv.so.2 or libmpv.so.1) and on macOS (Mpv.framework in the app's Frameworks folder, the project's
-/// own build of .github/workflows/immuch360-libmpv.yml), unless the library failed to load.
+/// own build from github.com/immuch360/libmpv-builds), unless the library failed to load.
 bool get desktopVideoAvailable => _available;
 
 /// For the tests of the pages on a computer, which have no libmpv: with a pool of fake players they play as if it
