@@ -47,4 +47,16 @@ void main() {
     );
     expect(videoLoadingText(const VideoLinkView(waiting: true, neededFramesPerSecond: 24), t, locale: 'en'), isNull);
   });
+
+  test('a language intl has no numbers for (mi, kab, kxm, lmo, swg) gets the digits of English', () {
+    final t = StaticTranslations.instance;
+    const view = VideoLinkView(waiting: true, framesPerSecond: 1200, neededFramesPerSecond: 2400);
+    for (final locale in ['mi', 'kab', 'kxm', 'lmo', 'swg']) {
+      expect(
+        videoLoadingText(view, t, locale: locale),
+        'Decoding: 1,200 of the 2,400 frames per second this video needs',
+        reason: locale,
+      );
+    }
+  });
 }
