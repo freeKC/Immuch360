@@ -118,37 +118,33 @@ class RemoteImagesImpl(context: Context) : RemoteImageApi {
           return@fetch callback(CANCELLED)
         }
 
-        // Neither Android nor Flutter can decode JPEG XL, so this applies to encoded requests too.
-        if (mimeType(contentType) == "image/jxl") {
+        // Neither Android nor Flutter can decode JPEG XL, so this applies to encoded requests too. Immuch360: by its
+        // type or by its first bytes (a server or a proxy that sends another type), through JpegXlDecode, which
+        // retries at half the size when the core gives nothing.
+        if (mimeType(contentType) == "image/jxl" || JpegXlDecode.isJpegXl(buffer.pointer, buffer.offset)) {
           decodeExecutor.execute {
-            val info = IntArray(3)
             // The fetch is done, so cancelling now stops the decode instead.
             val cancelled = ByteBuffer.allocateDirect(1)
             signal.setOnCancelListener { NativeImage.cancel(cancelled) }
-            val pointer = if (signal.isCanceled) 0L else NativeImage.decode(
+            val pixels = if (signal.isCanceled) null else JpegXlDecode.decode(
               buffer.pointer,
               buffer.offset,
               width?.toInt() ?: 0,
               height?.toInt() ?: 0,
               MAX_PIXEL_SIZE,
               cancelled,
-              info
             )
             val length = buffer.offset
             buffer.free()
             requestMap.remove(requestId)
             callback(
               when {
-                pointer != 0L -> Result.success(
-                  mapOf(
-                    "pointer" to pointer,
-                    "width" to info[0].toLong(),
-                    "height" to info[1].toLong(),
-                    "rowBytes" to info[2].toLong()
-                  )
-                )
+                pixels != null -> Result.success(pixels.toMap())
                 signal.isCanceled -> CANCELLED
-                else -> Result.failure(undecodableJpegXl(length, contentType))
+                else -> {
+                  Log.w(TAG, "JPEG XL not decoded by the core, $length bytes, ${contentType ?: "no type"}")
+                  Result.failure(undecodableJpegXl(length, contentType))
+                }
               }
             )
           }
