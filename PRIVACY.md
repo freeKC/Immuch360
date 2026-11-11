@@ -23,6 +23,7 @@ Immuch360 is a free and open source fork of the Immich mobile app, for phones an
 - **Video decoders.** The decoder checks only read the list of video decoders of the device.
 - **Location.** The app can read your location and camera metadata only as embedded in your own photos, to display them; it does not track your location.
 - **Logs.** Log lines stay on the device unless you share or copy them yourself.
+- **The invitation to rate the app.** Only the store builds ask, at most twice, after a few good viewings over several days: the Google Play build through Google Play's own card, the App Store build through Apple's own prompt, and the Meta Horizon Store build with one sentence of the app, Not now or Rate (which opens the store page). The builds of GitHub and the computers never ask. The counts that decide when to ask (opens, days, viewings, the asks and their answers) stay on the device, in the app's database, and the app sends nothing about them; a rating you give goes to that store, under its own terms.
 
 ## Data stored on the device
 
@@ -123,6 +124,8 @@ Questions about this policy: open an issue at https://github.com/freeKC/Immuch36
 
 ## Changes
 
+11 November 2026: added the invitation to rate the app of the store builds (who asks, what stays on the device).
+
 10 November 2026: added the film details from Wikipedia of the Plex film pages (what goes to Wikimedia, what stays on the device, the switch), and the audio and subtitle track the app saves on your Plex server.
 
 24 October 2026: added Samsung TVs (Tizen): what the Samsung TV app keeps on the TV and that it is not encrypted, that it talks only to your Immich server, what its About page reads from the TV, and its privileges.
@@ -135,4 +138,4 @@ Questions about this policy: open an issue at https://github.com/freeKC/Immuch36
 
 6 October 2026: added the mode without a server, network shares, upload from a share, Share this phone on the network, raw camera files, Apple spatial photos, the data stored on the device, the data on your network and the new permissions. The camera and Face ID permissions now say what they are used for in this app. The previous version, of 30 September 2026, covered the server mode only.
 
-Last updated: 10 November 2026.
+Last updated: 11 November 2026.
