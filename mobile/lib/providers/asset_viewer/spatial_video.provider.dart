@@ -3,9 +3,11 @@ import 'dart:math' as math;
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
@@ -98,15 +100,20 @@ class SpatialVideoSession implements SpatialVideoEvents {
       coverageGuess: coverageGuess,
       player: player,
     );
+    RateAppSignals.viewingOpened(RateAppViewing.spatialVideo);
   }
 
   /// The player could not open: nothing will close
-  void cancel() => _playback = null;
+  void cancel() {
+    _playback = null;
+    RateAppSignals.viewingClosed(RateAppViewing.spatialVideo, normal: false);
+  }
 
   @override
   void closed(int positionMs, bool wasPlaying, SpatialStereoLayout layout, SpatialProjection projection) {
     final playback = _playback;
     _playback = null;
+    RateAppSignals.viewingClosed(RateAppViewing.spatialVideo);
     if (playback == null) {
       _log.warning('The Spatial 2.5D player closed, but no playback was started');
       return;

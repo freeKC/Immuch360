@@ -239,8 +239,9 @@ Future<void> waitUntil(
 Finder labTile(String name) =>
     find.byWidgetPredicate((widget) => widget is ThumbnailTile && widget.asset?.name == name);
 
-/// Starts the app as runImmich of lib/main.dart does, without its binding and its runApp: the test binding is the app's
-Future<void> startLabApp(WidgetTester tester) async {
+/// Starts the app as runImmich of lib/main.dart does, without its binding and its runApp: the test binding is the app's.
+/// [overrides] replace providers of the app for a test (the store and the clock of the invitation to rate the app)
+Future<void> startLabApp(WidgetTester tester, {List<Override> overrides = const []}) async {
   await BackgroundWorkerLockService(PlatformApis.backgroundWorkerLock()).lock();
   await EasyLocalization.ensureInitialized();
   final (dataController, apiService) = await Bootstrap.initDomain();
@@ -254,7 +255,10 @@ Future<void> startLabApp(WidgetTester tester) async {
   unawaited(AppHealthReports.listen());
   await tester.pumpWidget(
     ProviderScope(
-      overrides: Store.overrideWith(dataController: dataController, apiService: apiService),
+      overrides: [
+        ...Store.overrideWith(dataController: dataController, apiService: apiService),
+        ...overrides,
+      ],
       child: const app.MainWidget(),
     ),
   );

@@ -47,6 +47,8 @@ import app.alextran.immich.permission.PermissionApiImpl
 import app.alextran.immich.phoneshare.PhoneShareApi
 import app.alextran.immich.phoneshare.PhoneShareApiImpl
 import app.alextran.immich.phoneshare.PhoneShareService
+import app.alextran.immich.review.StoreReviewApi
+import app.alextran.immich.review.StoreReviewApiImpl
 import app.alextran.immich.spatial.SpatialVideoApi
 import app.alextran.immich.spatial.SpatialVideoApiImpl
 import app.alextran.immich.spherical.SphericalVideoApi
@@ -95,6 +97,8 @@ class MainActivity : FlutterFragmentActivity() {
     TvApi.setUp(messenger, TvApiImpl(this))
     // The scanner of "Connect a TV or computer": it opens activities, so it needs this one
     QrScanApi.setUp(messenger, QrScanApiImpl(this))
+    // The review prompt of the store and the store page (the invitation to rate the app): they need this activity
+    StoreReviewApi.setUp(messenger, StoreReviewApiImpl(this))
     // The thumbstick paging of the asset viewer, on a Meta Quest only: a phone or a TV keeps its scroll events
     stickPaging = QuestStickPaging.attach(messenger, isHorizonOsDevice())
     // Live view of the Tapo cameras: a platform view and the API that feeds it
@@ -142,6 +146,7 @@ class MainActivity : FlutterFragmentActivity() {
     // The TV dialog must not keep this activity once it is gone
     TvApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     QrScanApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
+    StoreReviewApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     CameraLiveApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     DjiLinkApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     DjiLinkController.detachEvents()

@@ -39,6 +39,7 @@ import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_player.provider.dart';
+import 'package:immich_mobile/providers/rate_app.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
@@ -60,6 +61,7 @@ import 'package:immich_mobile/utils/litert_licenses.dart';
 import 'package:immich_mobile/utils/meta_spatial_licenses.dart';
 import 'package:immich_mobile/utils/migration.dart';
 import 'package:immich_mobile/utils/pairing_licenses.dart';
+import 'package:immich_mobile/utils/play_review_licenses.dart';
 import 'package:immich_mobile/utils/splat_viewer_licenses.dart';
 import 'package:immich_mobile/utils/zstd_licenses.dart';
 import 'package:immich_mobile/wm_executor.dart';
@@ -190,6 +192,9 @@ Future<void> initApp() async {
   // Spark, three.js and the crates of Spark's WebAssembly, of the splat viewer of the computers, phones and tablets
   // (lib/utils/splat_viewer_licenses.dart)
   LicenseRegistry.addLicense(splatViewerLicenses);
+  // Google Play In-App Review, Google Play's card to rate the app, in the phone flavour
+  // (lib/utils/play_review_licenses.dart)
+  LicenseRegistry.addLicense(playReviewLicenses);
 }
 
 class ImmichApp extends ConsumerStatefulWidget {
@@ -345,6 +350,8 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     ref.read(screenPlayerProvider);
     // Whether this build offers the Gaussian splats, from the certificate of the APK: not the Meta Horizon Store build
     unawaited(ref.read(splatsInThisBuildProvider.future));
+    // The invitation to rate the app, in the builds of the stores only (lib/providers/rate_app.provider.dart)
+    unawaited(startRateApp(ref));
   }
 
   @override

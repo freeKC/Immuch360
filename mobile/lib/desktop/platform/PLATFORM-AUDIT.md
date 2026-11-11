@@ -109,6 +109,9 @@ the gate is per desktop and is noted.
 | `lib/providers/network/phone_share.provider.dart:390` | iOS pause in background | right: a computer keeps sharing |
 | `lib/providers/network/phone_share.provider.dart:407` | Android notification permission | right |
 | `lib/providers/permission.provider.dart:13` | initial notification permission state | right: notifications hidden on the computers |
+| `lib/providers/rate_app.provider.dart:34` | the store of the build, for the invitation to rate the app: phones, tablets and the Quest only | right: the computers resolve to no store before reading anything, and start no invitation |
+| `lib/providers/rate_app.provider.dart:38` | Horizon OS asked on Android only | right: not reached on the computers |
+| `lib/providers/rate_app.provider.dart:57` | the crash marker of the foreground on iOS | right: not reached on the computers, which start no invitation |
 | `lib/providers/raw/raw_video.provider.dart:43` | two stream raw playback on iOS | wired (phase 2d): the computers are neither, and play two streams where libmpv loaded (`CurrentPlatform.isDesktop` term of the same expression, the 360° route stacks them or falls back) |
 | `lib/providers/raw/raw_video.provider.dart:45` | two stream raw playback on Android and Quest | wired (phase 2d): idem |
 | `lib/providers/raw/raw_video.provider.dart:63` | the stabilisation of raw videos with the motion track of their camera (issue 14, lot c) on the Android player | right: the computers are not Android, so the setting and the switch of the player stay hidden there and no table is built; the 360° route of the computers comes with lot d2 |

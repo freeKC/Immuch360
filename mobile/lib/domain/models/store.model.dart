@@ -158,6 +158,10 @@ enum StoreKey<T> {
   /// always asks
   playFromPhoneAsk<bool>._(5461),
 
+  /// The invitation to rate the app: its opens, viewings, crashes and asks, one JSON object (RateAppState of
+  /// lib/domain/models/rate_app.dart). Sign out keeps it, an uninstall removes it
+  rateAppState<String>._(5052),
+
   // Legacy keys that have been migrated to the new metadata store
   legacyBackupRequireCharging<bool>._(7),
   legacyBackupTriggerDelay<int>._(8),

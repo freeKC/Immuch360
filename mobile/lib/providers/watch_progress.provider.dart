@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/watch/database.dart';
+import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/models/watch_progress.dart';
+import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/infrastructure/repositories/watch_progress.repository.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:logging/logging.dart';
@@ -150,6 +152,9 @@ class WatchProgressStore extends Notifier<WatchProgressRows> {
     // Nothing to change: no row before nor after, or a save that told nothing (no duration)
     if (row == null ? previous == null : row == previous && previous?.key == key.key) {
       return;
+    }
+    if (row != null && row.watched && previous?.watched != true) {
+      RateAppSignals.succeeded(RateAppViewing.film);
     }
     _put(key, row, previous);
   }

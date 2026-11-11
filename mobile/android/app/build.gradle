@@ -217,6 +217,12 @@ dependencies {
   // take its jar, which carries the native library of each desktop system
   questImplementation "com.github.luben:zstd-jni:${libs.versions.zstd.jni.get()}@aar"
 
+  // The review card of Google Play, for the invitation to rate the app (review/StoreReviews.kt of src/phone): Play
+  // In-App Review 2.0.2, under the Play Core Software Development Kit Terms of Service, in the phone flavour only, which
+  // already ships Google Play services (location, through geolocator). The quest flavour has no Google Play: its
+  // invitation opens the Meta Horizon Store page instead, without this library
+  phoneImplementation libs.play.review
+
   testImplementation libs.junit
   testImplementation libs.zstd.jni
 }
