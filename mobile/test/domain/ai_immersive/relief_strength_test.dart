@@ -61,11 +61,28 @@ void main() {
       }
     });
 
+    test('is read from a later relief pipeline too, whose parallax means the same', () {
+      const v2 = StereoPhotoXmp(origin: ImmersiveOrigin.estimatedDepth, pipeline: 'relief-v2', parallax: 0.03);
+
+      expect(reliefStrengthOfXmp(v2), ReliefStrength.strong);
+    });
+
     test('is none for a parallax of no strength, another pipeline, or a file of another tool', () {
       expect(reliefStrengthOfXmp(ours(parallax: 0.025)), isNull);
       expect(
         reliefStrengthOfXmp(
-          const StereoPhotoXmp(origin: ImmersiveOrigin.estimatedDepth, pipeline: 'relief-v2', parallax: 0.03),
+          const StereoPhotoXmp(origin: ImmersiveOrigin.estimatedDepth, pipeline: 'depth-warp', parallax: 0.03),
+        ),
+        isNull,
+      );
+      expect(
+        reliefStrengthOfXmp(
+          const StereoPhotoXmp(
+            kind: ImmersiveKind.stereoPanorama360,
+            origin: ImmersiveOrigin.estimatedDepth,
+            pipeline: 'relief-360-v1',
+            parallax: 0.02,
+          ),
         ),
         isNull,
       );

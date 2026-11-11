@@ -33,11 +33,12 @@ enum ReliefStrength {
       values.where((strength) => strength.name == name).firstOrNull ?? ReliefStrength.normal;
 }
 
-/// The strength a 3D photo of ours was made with, as its XMP tells: a relief estimated by relief-v1 with the parallax
-/// of one of the strengths; null for any other file (another kind, another pipeline, another tool, another parallax)
+/// The strength a 3D photo of ours was made with, as its XMP tells: a relief estimated by relief-v1, or a later
+/// relief-vN whose parallax means the same, with the parallax of one of the strengths; null for any other file
+/// (another kind, another pipeline, another tool, another parallax)
 ReliefStrength? reliefStrengthOfXmp(StereoPhotoXmp xmp) =>
     xmp.kind == ImmersiveKind.stereoPhoto &&
         xmp.origin == ImmersiveOrigin.estimatedDepth &&
-        xmp.pipeline == ReliefV1.pipeline
+        (xmp.pipeline?.startsWith('relief-v') ?? false)
     ? ReliefStrength.ofParallax(xmp.parallax)
     : null;
