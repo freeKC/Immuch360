@@ -192,7 +192,8 @@ Future<ui.ImageDescriptor> _descriptorOf((int, int, int, int) pixels, int length
 }
 
 // One call of the core on a helper isolate: the address of its pixels, their width, height and bits per sample, or
-// null when it gave none
+// null when it gave none. A build without the core's library (its functions not found) is a CoreDecodeException too,
+// so that the photo shows as one that does not decode instead of failing again at each request
 Future<(int, int, int, int)?> _decodeOnHelper(
   Pointer<Uint8> data,
   int length,
@@ -200,9 +201,24 @@ Future<(int, int, int, int)?> _decodeOnHelper(
   int targetHeight,
   int maxPixelSize,
   Pointer<Bool> flag,
-) {
+) async {
   final dataAddress = data.address;
   final flagAddress = flag.address;
+  try {
+    return await _decodeOnIsolate(dataAddress, length, targetWidth, targetHeight, maxPixelSize, flagAddress);
+  } on ArgumentError catch (error) {
+    throw CoreDecodeException(length, 'the core is not available: ${error.message}');
+  }
+}
+
+Future<(int, int, int, int)?> _decodeOnIsolate(
+  int dataAddress,
+  int length,
+  int targetWidth,
+  int targetHeight,
+  int maxPixelSize,
+  int flagAddress,
+) {
   return Isolate.run(() {
     final info = calloc<_CoreImageInfo>();
     try {
