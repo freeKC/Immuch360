@@ -1741,7 +1741,7 @@
   "video_decoders_copied": "Eilet",
   "video_decoders_copy": "Eilañ",
   "video_decoders_hardware": "Periant",
-  "video_decoders_max": "Betek {width} x {height}",
+  "video_decoders_max": "Betek {width} × {height}",
   "video_decoders_profiles": "Aeladoù: {profiles}",
   "video_decoders_software": "Meziant",
   "video_decoders_subtitle": "Petra a ziskod ar benveg-mañ, hervez ar c'hodek hag ar vent, evit kompren perak e chom a-sav ur video 360°",

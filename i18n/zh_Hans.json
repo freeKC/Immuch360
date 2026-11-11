@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "已复制",
   "video_decoders_copy": "复制",
   "video_decoders_hardware": "硬件",
-  "video_decoders_max": "最高 {width} x {height}",
+  "video_decoders_max": "最高 {width} × {height}",
   "video_decoders_profiles": "配置文件：{profiles}",
   "video_decoders_software": "软件",
   "video_decoders_subtitle": "按编解码器和尺寸列出此设备能解码的内容，以了解 360° 视频为何卡顿",

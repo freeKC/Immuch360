@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "コピーしました",
   "video_decoders_copy": "コピー",
   "video_decoders_hardware": "ハードウェア",
-  "video_decoders_max": "最大 {width} x {height}",
+  "video_decoders_max": "最大 {width} × {height}",
   "video_decoders_profiles": "プロファイル: {profiles}",
   "video_decoders_software": "ソフトウェア",
   "video_decoders_subtitle": "360°動画がカクつく理由を把握するための、このデバイスがデコードできるコーデックとサイズ",

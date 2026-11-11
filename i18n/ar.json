@@ -3973,7 +3973,7 @@
   "video_decoders_copied": "تم النسخ",
   "video_decoders_copy": "نسخ",
   "video_decoders_hardware": "عتادي",
-  "video_decoders_max": "حتى {width} x {height}",
+  "video_decoders_max": "حتى {width} × {height}",
   "video_decoders_profiles": "الملفات التعريفية: {profiles}",
   "video_decoders_software": "برمجي",
   "video_decoders_subtitle": "ما يفك هذا الجهاز ترميزه، حسب الترميز والحجم، لفهم سبب تقطع فيديو 360°",

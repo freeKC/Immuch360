@@ -2381,7 +2381,7 @@
   "video_decoders_copied": "Kopiert",
   "video_decoders_copy": "Kopier",
   "video_decoders_hardware": "Maskinvare",
-  "video_decoders_max": "Opptil {width} x {height}",
+  "video_decoders_max": "Opptil {width} × {height}",
   "video_decoders_profiles": "Profilar: {profiles}",
   "video_decoders_software": "Programvare",
   "video_decoders_subtitle": "Kva denne eininga dekodar, etter kodek og storleik, for å forstå kvifor ein 360°-video hakkar",

@@ -1832,7 +1832,7 @@
   "video_decoders_copied": "કૉપિ થયું",
   "video_decoders_copy": "કૉપિ કરો",
   "video_decoders_hardware": "હાર્ડવેર",
-  "video_decoders_max": "{width} x {height} સુધી",
+  "video_decoders_max": "{width} × {height} સુધી",
   "video_decoders_profiles": "પ્રોફાઇલ: {profiles}",
   "video_decoders_software": "સૉફ્ટવેર",
   "video_decoders_subtitle": "આ ઉપકરણ કોડેક અને કદ પ્રમાણે શું ડીકોડ કરે છે, જેથી સમજાય કે 360° વિડિયો કેમ અટકે છે",

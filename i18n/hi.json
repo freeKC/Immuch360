@@ -3784,7 +3784,7 @@
   "video_decoders_copied": "कॉपी किया गया",
   "video_decoders_copy": "कॉपी करें",
   "video_decoders_hardware": "हार्डवेयर",
-  "video_decoders_max": "{width} x {height} तक",
+  "video_decoders_max": "{width} × {height} तक",
   "video_decoders_profiles": "प्रोफ़ाइल: {profiles}",
   "video_decoders_software": "सॉफ़्टवेयर",
   "video_decoders_subtitle": "यह डिवाइस कोडेक और आकार के अनुसार क्या डिकोड करता है, ताकि समझ सकें कि कोई 360° वीडियो क्यों अटकता है",

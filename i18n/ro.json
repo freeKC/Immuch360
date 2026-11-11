@@ -4063,7 +4063,7 @@
   "video_decoders_copied": "Copiat",
   "video_decoders_copy": "Copiază",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Până la {width} x {height}",
+  "video_decoders_max": "Până la {width} × {height}",
   "video_decoders_profiles": "Profiluri: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Ce decodează acest dispozitiv, după codec și dimensiune, pentru a înțelege de ce un videoclip 360° merge sacadat",

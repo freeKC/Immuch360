@@ -4061,7 +4061,7 @@
   "video_decoders_copied": "Disalin",
   "video_decoders_copy": "Salin",
   "video_decoders_hardware": "Perangkat keras",
-  "video_decoders_max": "Hingga {width} x {height}",
+  "video_decoders_max": "Hingga {width} × {height}",
   "video_decoders_profiles": "Profil: {profiles}",
   "video_decoders_software": "Perangkat lunak",
   "video_decoders_subtitle": "Apa yang dapat didekode perangkat ini, menurut kodek dan ukuran, untuk memahami mengapa video 360° tersendat",

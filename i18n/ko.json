@@ -4085,7 +4085,7 @@
   "video_decoders_copied": "복사됨",
   "video_decoders_copy": "복사",
   "video_decoders_hardware": "하드웨어",
-  "video_decoders_max": "최대 {width} x {height}",
+  "video_decoders_max": "최대 {width} × {height}",
   "video_decoders_profiles": "프로필: {profiles}",
   "video_decoders_software": "소프트웨어",
   "video_decoders_subtitle": "360° 동영상이 끊기는 이유를 파악할 수 있도록, 이 기기가 코덱과 크기별로 디코딩할 수 있는 항목",

@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "Copiato",
   "video_decoders_copy": "Copia",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Fino a {width} x {height}",
+  "video_decoders_max": "Fino a {width} × {height}",
   "video_decoders_profiles": "Profili: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Cosa decodifica questo dispositivo, per codec e dimensione, per capire perché un video a 360° scatta",

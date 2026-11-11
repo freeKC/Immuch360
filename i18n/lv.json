@@ -3841,7 +3841,7 @@
   "video_decoders_copied": "Nokopēts",
   "video_decoders_copy": "Kopēt",
   "video_decoders_hardware": "Aparatūra",
-  "video_decoders_max": "Līdz {width} x {height}",
+  "video_decoders_max": "Līdz {width} × {height}",
   "video_decoders_profiles": "Profili: {profiles}",
   "video_decoders_software": "Programmatūra",
   "video_decoders_subtitle": "Ko šī ierīce dekodē pēc kodeka un izmēra, lai saprastu, kāpēc 360° video raustās",

@@ -4085,7 +4085,7 @@
   "video_decoders_copied": "Skopiowano",
   "video_decoders_copy": "Kopiuj",
   "video_decoders_hardware": "Sprzętowy",
-  "video_decoders_max": "Do {width} x {height}",
+  "video_decoders_max": "Do {width} × {height}",
   "video_decoders_profiles": "Profile: {profiles}",
   "video_decoders_software": "Programowy",
   "video_decoders_subtitle": "Co dekoduje to urządzenie, według kodeka i rozdzielczości, aby zrozumieć, dlaczego wideo 360° się zacina",

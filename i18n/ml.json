@@ -3961,7 +3961,7 @@
   "video_decoders_copied": "പകർത്തി",
   "video_decoders_copy": "പകർത്തുക",
   "video_decoders_hardware": "ഹാർഡ്‌വെയർ",
-  "video_decoders_max": "{width} x {height} വരെ",
+  "video_decoders_max": "{width} × {height} വരെ",
   "video_decoders_profiles": "പ്രൊഫൈലുകൾ: {profiles}",
   "video_decoders_software": "സോഫ്റ്റ്‌വെയർ",
   "video_decoders_subtitle": "ഒരു 360° വീഡിയോ എന്തുകൊണ്ട് മുറിഞ്ഞുപോകുന്നു എന്ന് മനസ്സിലാക്കാൻ, കോഡെക്കും വലുപ്പവും അനുസരിച്ച് ഈ ഉപകരണം എന്ത് ഡീകോഡ് ചെയ്യുന്നു",

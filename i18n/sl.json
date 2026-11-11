@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "Kopirano",
   "video_decoders_copy": "Kopiraj",
   "video_decoders_hardware": "Strojno",
-  "video_decoders_max": "Do {width} x {height}",
+  "video_decoders_max": "Do {width} × {height}",
   "video_decoders_profiles": "Profili: {profiles}",
   "video_decoders_software": "Programsko",
   "video_decoders_subtitle": "Kaj ta naprava dekodira glede na kodek in velikost, da razumete, zakaj se video 360° zatika",

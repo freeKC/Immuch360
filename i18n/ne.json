@@ -1762,7 +1762,7 @@
   "video_decoders_copied": "प्रतिलिपि गरियो",
   "video_decoders_copy": "प्रतिलिपि गर्नुहोस्",
   "video_decoders_hardware": "हार्डवेयर",
-  "video_decoders_max": "{width} x {height} सम्म",
+  "video_decoders_max": "{width} × {height} सम्म",
   "video_decoders_profiles": "प्रोफाइलहरू: {profiles}",
   "video_decoders_software": "सफ्टवेयर",
   "video_decoders_subtitle": "360° भिडियो किन अड्किन्छ भनेर बुझ्न, कोडेक र आकार अनुसार यो उपकरणले के डिकोड गर्छ",

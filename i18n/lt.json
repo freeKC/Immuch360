@@ -4001,7 +4001,7 @@
   "video_decoders_copied": "Nukopijuota",
   "video_decoders_copy": "Kopijuoti",
   "video_decoders_hardware": "Aparatinė įranga",
-  "video_decoders_max": "Iki {width} x {height}",
+  "video_decoders_max": "Iki {width} × {height}",
   "video_decoders_profiles": "Profiliai: {profiles}",
   "video_decoders_software": "Programinė įranga",
   "video_decoders_subtitle": "Ką šis įrenginys dekoduoja pagal kodeką ir dydį, kad suprastumėte, kodėl 360° vaizdo įrašas stringa",

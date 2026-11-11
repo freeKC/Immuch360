@@ -4085,7 +4085,7 @@
   "video_decoders_copied": "Скопировано",
   "video_decoders_copy": "Копировать",
   "video_decoders_hardware": "Аппаратный",
-  "video_decoders_max": "До {width} x {height}",
+  "video_decoders_max": "До {width} × {height}",
   "video_decoders_profiles": "Профили: {profiles}",
   "video_decoders_software": "Программный",
   "video_decoders_subtitle": "Что декодирует это устройство, по кодекам и размерам, чтобы понять, почему видео 360° подтормаживает",

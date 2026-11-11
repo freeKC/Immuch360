@@ -2013,7 +2013,7 @@
   "video_decoders_copied": "Gekopieer",
   "video_decoders_copy": "Kopieer",
   "video_decoders_hardware": "Hardeware",
-  "video_decoders_max": "Tot {width} x {height}",
+  "video_decoders_max": "Tot {width} × {height}",
   "video_decoders_profiles": "Profiele: {profiles}",
   "video_decoders_software": "Sagteware",
   "video_decoders_subtitle": "Wat hierdie toestel dekodeer, volgens kodek en grootte, om te verstaan waarom ’n 360°-video hakkel",

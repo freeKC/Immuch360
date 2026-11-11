@@ -1741,7 +1741,7 @@
   "video_decoders_copied": "Yettwanɣel",
   "video_decoders_copy": "Nɣel",
   "video_decoders_hardware": "Arrum",
-  "video_decoders_max": "Alamma d {width} x {height}",
+  "video_decoders_max": "Alamma d {width} × {height}",
   "video_decoders_profiles": "Imaɣnuten: {profiles}",
   "video_decoders_software": "Aseɣzan",
   "video_decoders_subtitle": "Ayen yeɣra yibenk-a, s codec d tiddi, akken ad tfehmeḍ ayɣer tavidyut 360° tettḥebbis",

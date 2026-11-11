@@ -4085,7 +4085,7 @@
   "video_decoders_copied": "Copiado",
   "video_decoders_copy": "Copiar",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Ata {width} x {height}",
+  "video_decoders_max": "Ata {width} × {height}",
   "video_decoders_profiles": "Perfís: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "O que decodifica este dispositivo, por códec e tamaño, para entender por que un vídeo 360° vai a saltos",

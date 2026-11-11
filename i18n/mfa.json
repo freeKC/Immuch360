@@ -1741,7 +1741,7 @@
   "video_decoders_copied": "Doh salin",
   "video_decoders_copy": "Salin",
   "video_decoders_hardware": "Perkakasan",
-  "video_decoders_max": "Sampa {width} x {height}",
+  "video_decoders_max": "Sampa {width} × {height}",
   "video_decoders_profiles": "Profil: {profiles}",
   "video_decoders_software": "Perisian",
   "video_decoders_subtitle": "Gapo hok peranti ni buleh nyahkod, ikut kodek nga saiz, nok pehe bakpo video 360° tersekat-sekat",

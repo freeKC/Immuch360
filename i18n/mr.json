@@ -3726,7 +3726,7 @@
   "video_decoders_copied": "कॉपी झाले",
   "video_decoders_copy": "कॉपी करा",
   "video_decoders_hardware": "हार्डवेअर",
-  "video_decoders_max": "{width} x {height} पर्यंत",
+  "video_decoders_max": "{width} × {height} पर्यंत",
   "video_decoders_profiles": "प्रोफाइल: {profiles}",
   "video_decoders_software": "सॉफ्टवेअर",
   "video_decoders_subtitle": "360° व्हिडिओ का अडखळतो हे समजण्यासाठी, कोडेक आणि आकारानुसार हे डिव्हाइस काय डीकोड करते",

@@ -3985,7 +3985,7 @@
   "video_decoders_copied": "Скапіравана",
   "video_decoders_copy": "Капіраваць",
   "video_decoders_hardware": "Апаратны",
-  "video_decoders_max": "Да {width} x {height}",
+  "video_decoders_max": "Да {width} × {height}",
   "video_decoders_profiles": "Профілі: {profiles}",
   "video_decoders_software": "Праграмны",
   "video_decoders_subtitle": "Што дэкадуе гэтая прылада, па кодэку і памеры, каб зразумець, чаму відэа 360° тармозіць",

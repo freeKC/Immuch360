@@ -4066,7 +4066,7 @@
   "video_decoders_copied": "Kopyalandı",
   "video_decoders_copy": "Kopyala",
   "video_decoders_hardware": "Donanım",
-  "video_decoders_max": "En fazla {width} x {height}",
+  "video_decoders_max": "En fazla {width} × {height}",
   "video_decoders_profiles": "Profiller: {profiles}",
   "video_decoders_software": "Yazılım",
   "video_decoders_subtitle": "Bir 360° videonun neden takıldığını anlamak için bu cihazın codec ve boyuta göre neleri çözebildiği",

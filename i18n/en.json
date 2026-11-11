@@ -4107,7 +4107,7 @@
   "video_decoders_copied": "Copied",
   "video_decoders_copy": "Copy",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Up to {width} x {height}",
+  "video_decoders_max": "Up to {width} × {height}",
   "video_decoders_profiles": "Profiles: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "What this device decodes, by codec and size, to understand why a 360° video stutters",

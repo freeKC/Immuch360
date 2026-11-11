@@ -3867,7 +3867,7 @@
   "video_decoders_copied": "Kopioitu",
   "video_decoders_copy": "Kopioi",
   "video_decoders_hardware": "Laitteisto",
-  "video_decoders_max": "Enintään {width} x {height}",
+  "video_decoders_max": "Enintään {width} × {height}",
   "video_decoders_profiles": "Profiilit: {profiles}",
   "video_decoders_software": "Ohjelmisto",
   "video_decoders_subtitle": "Mitä tämä laite dekoodaa koodekin ja koon mukaan, jotta ymmärrät, miksi 360°-video nykii",
