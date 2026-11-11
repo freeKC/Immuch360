@@ -316,6 +316,35 @@ void main() {
     await _until(() => playback()?.lost ?? false, within: const Duration(seconds: 15));
   }, timeout: const Timeout(Duration(seconds: 30)));
 
+  test('the request of a film: its Plex server by machine identifier, never for another kind of share', () {
+    final film = PlayOnRequest.ofItem(source: _source, ratingKey: '77', title: 'Title 77', offsetMs: 4200, path: '/a');
+    expect(film?.sourceId, 'source-1');
+    expect(film?.server, _machine, reason: 'the machine identifier in lower case, as the screen matches it');
+    expect(film?.serverName, 'Home Plex');
+    expect(film?.item.toJson(), {
+      'kind': 'plex',
+      'server': _machine,
+      'item': '77',
+      'serverName': 'Home Plex',
+      'title': 'Title 77',
+      'offsetMs': 4200,
+    });
+    expect(film?.path, '/a');
+    expect(PlayOnRequest.ofItem(source: _source, ratingKey: '77', offsetMs: -5)?.offsetMs, 0);
+    expect(PlayOnRequest.ofItem(source: _source, ratingKey: ''), isNull);
+    expect(PlayOnRequest.ofItem(source: null, ratingKey: '77'), isNull);
+    const share = NetworkSource(
+      id: 'source-2',
+      type: NetworkSourceType.smb,
+      name: 'NAS',
+      host: '192.168.1.31',
+      discoveryId: _machine,
+    );
+    expect(PlayOnRequest.ofItem(source: share, ratingKey: '77'), isNull);
+    const unknown = NetworkSource(id: 'source-3', type: NetworkSourceType.plex, name: 'Plex', host: '192.168.1.32');
+    expect(PlayOnRequest.ofItem(source: unknown, ratingKey: '77'), isNull);
+  });
+
   group('Add (server) to (screen)', () {
     test('both users accept: the server and the phone token reach the screen, the same check on both', () async {
       container.read(screensWithoutServerProvider.notifier).state = {

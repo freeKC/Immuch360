@@ -126,9 +126,35 @@ class PlayOnRequest {
     PlayTrackChoice? audio,
     PlayTrackChoice? subtitle,
   }) {
-    final server = source?.discoveryId;
     final ratingKey = fileSystem?.ratingKeyOf(path);
-    if (source == null || source.type != NetworkSourceType.plex || server == null || ratingKey == null) {
+    if (ratingKey == null) {
+      return null;
+    }
+    return ofItem(
+      source: source,
+      ratingKey: ratingKey,
+      title: title,
+      offsetMs: offsetMs,
+      audio: audio,
+      subtitle: subtitle,
+      path: path,
+    );
+  }
+
+  /// The request for the item [ratingKey] of the source: the film page, which knows the item (its ratingKey, its
+  /// title, where it was left) and the file Play opens as [path]; null when the source is no Plex server or does not
+  /// know its machine identifier
+  static PlayOnRequest? ofItem({
+    required NetworkSource? source,
+    required String ratingKey,
+    String? title,
+    int offsetMs = 0,
+    PlayTrackChoice? audio,
+    PlayTrackChoice? subtitle,
+    String? path,
+  }) {
+    final server = source?.discoveryId;
+    if (source == null || source.type != NetworkSourceType.plex || server == null || ratingKey.isEmpty) {
       return null;
     }
     return PlayOnRequest(
@@ -137,7 +163,7 @@ class PlayOnRequest {
       serverName: source.name,
       ratingKey: ratingKey,
       title: title,
-      offsetMs: offsetMs,
+      offsetMs: offsetMs < 0 ? 0 : offsetMs,
       audio: audio,
       subtitle: subtitle,
       path: path,
