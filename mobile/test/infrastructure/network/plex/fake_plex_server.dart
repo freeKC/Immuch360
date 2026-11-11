@@ -3,7 +3,7 @@
 // parts with or without Range support (and download=1 refused when asked), the photo transcoder, the account and the
 // preferences; the films of a film library (/all?type=1 with its title filter, the metadata of a film, the hub search)
 // and, for the film page (lot A2), the full item of a film (/library/metadata/{ratingKey}), the filters of a library
-// and their values (as listings), the subtitle files beside a film (/library/streams/{id}.srt) and the track picks
+// and their values (as listings), the subtitle files beside a film (/library/streams/{id}) and the track picks
 // (PUT /library/parts/{id}). Every answer but /identity wants the test token in its header, as a real server does,
 // and answers 401 in HTML otherwise. The values are the synthetic ones of test/fixtures/plex.
 
@@ -162,7 +162,8 @@ class FakePlexServer {
   /// other
   final Map<String, Object?> metadata = {};
 
-  /// The subtitle files of /library/streams/{id}.srt, by stream id; 404 for any other
+  /// The subtitle files beside a film, by stream id, served at /library/streams/{id} as they are on the disk, in UTF-8
+  /// with encoding=utf-8 (a Latin-1 file converted), as PMS 1.42.1 does; 404 for any other path or id
   final Map<int, Uint8List> subtitles = {};
 
   /// Statuses forced for some paths (without the query) or paths with their query
@@ -246,14 +247,18 @@ class FakePlexServer {
         }
         return await _json(response, body);
       }
-      final subtitle = RegExp(r'^/library/streams/(\d+)\.srt$').firstMatch(uri.path);
+      final subtitle = RegExp(r'^/library/streams/(\d+)$').firstMatch(uri.path);
       if (subtitle != null) {
-        final bytes = subtitles[int.parse(subtitle.group(1)!)];
+        var bytes = subtitles[int.parse(subtitle.group(1)!)];
         if (bytes == null) {
           response.statusCode = 404;
           return await response.close();
         }
-        response.headers.contentType = ContentType('application', 'x-subrip');
+        if (uri.queryParameters['encoding'] == 'utf-8' && !_isUtf8(bytes)) {
+          bytes = Uint8List.fromList(utf8.encode(latin1.decode(bytes)));
+        }
+        // As PMS 1.42.1 sends them: the file as it is on the disk, labelled text/html
+        response.headers.contentType = ContentType.html;
         response.add(bytes);
         return await response.close();
       }
@@ -389,5 +394,14 @@ class FakePlexServer {
     response.contentLength = last - start + 1;
     response.add(bytes.sublist(start, last + 1));
     return response.close();
+  }
+}
+
+bool _isUtf8(Uint8List bytes) {
+  try {
+    utf8.decode(bytes);
+    return true;
+  } on FormatException {
+    return false;
   }
 }

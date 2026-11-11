@@ -74,8 +74,8 @@ class PlexStream {
   /// A subtitle file of its own beside the film, which the players do not see in the file
   bool get isSidecar => type == PlexStreamType.subtitle && key != null;
 
-  /// A subtitle a player can draw from a text file: the side files Plex can convert to SubRip (image subtitles, PGS
-  /// and VobSub, need burning in by the transcoder, which the app does not ask for)
+  /// A subtitle a player can draw from a text file: the side files that are not pictures (image subtitles, PGS and
+  /// VobSub, need burning in by the transcoder, which the app does not ask for)
   bool get isTextSubtitle => type == PlexStreamType.subtitle && !_imageSubtitleCodecs.contains(codec?.toLowerCase());
 
   /// The line of its menu: the server's longer line, else its shorter one, else its language

@@ -244,9 +244,9 @@ abstract class PlaybackEngine {
   /// Shows the subtitle track [id] of [subtitleTracks], or none for null
   Future<void> setSubtitleTrack(String? id);
 
-  /// Adds the side file of subtitles at [uri] (a media bridge URL, SubRip) to the open file, named [title] in
-  /// [language], and shows it: it is then one of [subtitleTracks], with [uri] as its [DesktopSubtitleTrack.external],
-  /// until the next open. mpv opens no such file by itself (sub-auto, see DesktopPlayerOptions.common).
+  /// Adds the side file of subtitles at [uri] (a media bridge URL, SubRip, WebVTT or ASS) to the open file, named
+  /// [title] in [language], and shows it: it is then one of [subtitleTracks], with [uri] as its
+  /// [DesktopSubtitleTrack.external], until the next open. mpv opens no such file by itself (sub-auto, see DesktopPlayerOptions.common).
   Future<void> addExternalSubtitle(String uri, {String? title, String? language});
 
   /// The frame on screen as a JPEG scaled into [box], null when no frame is there yet

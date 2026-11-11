@@ -708,8 +708,13 @@ class PlexFileSystem
     );
   }
 
-  /// The subtitle file [stream] beside a film, converted to SubRip by the server (GET /library/streams/{id}.srt with
-  /// format=srt); null when the server has no such file. Small: [maxSubtitleSize] at most.
+  /// The subtitle file [stream] beside a film, as it is on the server's disk, in UTF-8 (GET /library/streams/{id}, its
+  /// key, with encoding=utf-8); null when the server has no such file. Small: [maxSubtitleSize] at most.
+  ///
+  /// Read on a Plex Media Server 1.42.1 (11 November 2026, 26 side files): format=srt converts nothing, a path with an
+  /// extension other than the stream's codec answers 404 (a .srt path for a file Plex calls WebVTT), and
+  /// encoding=utf-8 turns a Latin-1 file into UTF-8 and leaves a UTF-8 one as it is. The text's own format is read by
+  /// subtitleTextFormatOf: a file Plex calls WebVTT from its name may hold SubRip or ASS text.
   Future<Uint8List?> subtitleFile(PlexStream stream) {
     if (!stream.isSidecar || !stream.isTextSubtitle) {
       return Future.value(null);
@@ -717,8 +722,8 @@ class PlexFileSystem
     return _guard(
       () => _onServer(() {
         final uri = _endpoint.base
-            .resolve('/library/streams/${stream.id}.srt')
-            .replace(queryParameters: const {'format': 'srt'});
+            .resolve('/library/streams/${stream.id}')
+            .replace(queryParameters: const {'encoding': 'utf-8'});
         return _plex.getBytes(uri, accept: '*/*', maxSize: maxSubtitleSize);
       }),
     );
