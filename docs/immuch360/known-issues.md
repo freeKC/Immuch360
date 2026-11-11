@@ -95,7 +95,7 @@ Each line links to the section that explains it. The limits by design, such as t
 - **A partial panorama is spread over the full sphere** in the immersive view, unless its GPano crop covers about half the width and the whole height: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **The initial view the camera recorded (GPano) is not used** by the immersive view: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **No audio track choice in the immersive view**: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
-- **The store version is build 25**, until Meta approves version 4, with build 28: [Release status](release-status.md).
+- **The store version can be a build behind the GitHub APK** while Meta reviews the next one: [Release status](release-status.md).
 - **Sign in with your phone and the DJI link page have not run in a headset yet** (from build 28). Whether a Quest offers the USB accessory mode a DJI remote controller needs is the first question the DJI link page answers: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [DJI link](user-guide.md#dji-link-diagnostics-experimental).
 
 ## Windows
