@@ -12,13 +12,18 @@ internal object StabilizationInbox {
   /** URLs whose last message is kept */
   const val MAX_URLS = 3
 
-  /** [table] is null while Flutter reads the track ([hasTrack] true) and for a file without one */
+  /**
+   * [table] is null while Flutter reads the track ([hasTrack] true) and for a file without one. [timesUs] and
+   * [corrections] are the arrays the table was made of (not copies), for [StabilizationStore].
+   */
   data class Message(
     val url: String,
     val enabled: Boolean,
     val hasTrack: Boolean,
     val table: StabilizationTable?,
     val summary: String?,
+    val timesUs: LongArray? = null,
+    val corrections: DoubleArray? = null,
   )
 
   // The last message about each URL, the oldest first

@@ -70,7 +70,9 @@ import app.alextran.immich.core.raw.RawTrack
 import app.alextran.immich.core.raw.TwoLensPlayback
 import app.alextran.immich.tv.isLowRamDevice
 import app.alextran.immich.tv.isTelevision
+import java.io.File
 import java.lang.reflect.Field
+import kotlin.concurrent.thread
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -162,6 +164,7 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val STATE_STABILIZATION_TOUCHED = "stabilization_touched"
     private const val STATE_STABILIZATION_TURNED_ON = "stabilization_turned_on"
     private const val STATE_STABILIZATION_NOTICE_SHOWN = "stabilization_notice_shown"
+    private const val STATE_STABILIZATION_SAVED = "stabilization_saved"
 
     /**
      * Keys of the labels of the stabilisation, in the labels from Flutter: the switch ("Stabilise with the camera's
@@ -366,6 +369,12 @@ class SphericalVideoActivity : ComponentActivity() {
    * [StabilizedFrames]. The notice of the first stabilised frame is posted to the main thread.
    */
   private val stabilizedFrames = StabilizedFrames { playerView.post(::onFirstStabilizedFrame) }
+
+  /** The table of this video on disk, for this player restored after the process died, see [StabilizationStore] */
+  private val stabilizationStore by lazy { StabilizationStore(File(cacheDir, "stabilization")) }
+
+  /** The table of this video was written to [stabilizationStore], kept across a recreation */
+  private var stabilizationSaved = false
 
   /** Messages of Flutter about the stabilisation of the video this player plays, see [StabilizationInbox] */
   private val stabilizationMessages: (StabilizationInbox.Message) -> Unit = { message ->
@@ -670,9 +679,11 @@ class SphericalVideoActivity : ComponentActivity() {
         stabilizedNoticeShown = savedInstanceState.getBoolean(STATE_STABILIZATION_NOTICE_SHOWN),
       )
     }
+    stabilizationSaved = savedInstanceState?.getBoolean(STATE_STABILIZATION_SAVED) == true
     StabilizationInbox.latestFor(intent.getStringExtra(EXTRA_URL))?.let(::applyStabilizationMessage)
     StabilizationInbox.listen(stabilizationMessages)
     updateStabilization()
+    if (savedInstanceState != null) restoreStabilizationTable()
 
     audioTracks = AudioTrackChooser(this, labels)
     audioTracks.chosenIndex = savedInstanceState?.getInt(STATE_AUDIO_TRACK, -1) ?: -1
@@ -812,6 +823,8 @@ class SphericalVideoActivity : ComponentActivity() {
     outState.putBoolean(STATE_STABILIZATION_TOUCHED, stabilization.wasTouched)
     outState.putBoolean(STATE_STABILIZATION_TURNED_ON, stabilization.userTurnedOn)
     outState.putBoolean(STATE_STABILIZATION_NOTICE_SHOWN, stabilization.stabilizedNoticeWasShown)
+    saveStabilizationTable()
+    outState.putBoolean(STATE_STABILIZATION_SAVED, stabilizationSaved)
   }
 
   override fun onDestroy() {
@@ -823,8 +836,9 @@ class SphericalVideoActivity : ComponentActivity() {
     remoteHint.removeCallbacks(hideRemoteHint)
     stabilizationNotice.removeCallbacks(fadeStabilizationNotice)
     StabilizationInbox.stopListening(stabilizationMessages)
-    // A table of an hour of video is a few megabytes: it goes with its player, unless the player comes back at once
-    if (!isChangingConfigurations) StabilizationInbox.forget(intent.getStringExtra(EXTRA_URL))
+    // A table of an hour of video is a few megabytes: it goes with its player once closed. Destroyed by the system
+    // without closing, the player may come back: the table waits for it, in the inbox, and on disk if it was saved
+    if (isFinishing) forgetStabilizationTable()
     super.onDestroy()
   }
 
@@ -1435,6 +1449,54 @@ class SphericalVideoActivity : ComponentActivity() {
     stabilization.onTrack(message.hasTrack, table)?.let(::showStabilizationNotice)
     // A table that arrives while the video is paused shows on the frame on screen at once
     if (updateStabilization()) redrawPausedFrame()
+    // A table that arrives in the background is saved at once: the process may die before the player comes back
+    if (table != null && !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) saveStabilizationTable()
+  }
+
+  /**
+   * Writes the table of this video to disk, once, for this player restored after the process died (see
+   * [StabilizationStore]); off the main thread, a table of an hour of video being a few megabytes
+   */
+  private fun saveStabilizationTable() {
+    if (stabilizationSaved) return
+    val message = StabilizationInbox.latestFor(intent.getStringExtra(EXTRA_URL)) ?: return
+    if (message.table == null) return
+    stabilizationSaved = true
+    val store = stabilizationStore
+    thread(name = "stabilization-save") {
+      if (!store.save(message)) Log.w(TAG, "Stabilisation table not saved")
+    }
+  }
+
+  /**
+   * After the process died, the table Flutter had sent comes back from the disk: Flutter is not running to send it
+   * again (the system restores this player alone). Read off the main thread, applied as a message of the inbox.
+   */
+  private fun restoreStabilizationTable() {
+    val url = intent.getStringExtra(EXTRA_URL) ?: return
+    if (StabilizationInbox.latestFor(url) != null) return
+    val store = stabilizationStore
+    thread(name = "stabilization-load") {
+      val message = store.load(url) { reason -> Log.w(TAG, "Stabilisation table on disk refused: $reason") }
+      if (message != null) {
+        runOnUiThread {
+          if (isDestroyed || StabilizationInbox.latestFor(url) != null) return@runOnUiThread
+          Log.i(TAG, "Stabilisation table of ${message.table?.size} frames back from the disk")
+          stabilizationSaved = true
+          StabilizationInbox.post(message)
+        }
+      }
+    }
+  }
+
+  /** The player closed: its table goes, from the inbox and from the disk */
+  private fun forgetStabilizationTable() {
+    val url = intent.getStringExtra(EXTRA_URL) ?: return
+    StabilizationInbox.forget(url)
+    if (stabilizationSaved) {
+      val store = stabilizationStore
+      thread(name = "stabilization-delete") { store.delete(url) }
+    }
   }
 
   /**
