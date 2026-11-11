@@ -54,7 +54,7 @@ const plexShownSectionTypes = {'photo', 'movie', 'show'};
 
 /// A library of the server, from /library/sections
 class PlexSection {
-  const PlexSection({required this.key, required this.title, required this.type, this.agent});
+  const PlexSection({required this.key, required this.title, required this.type, this.agent, this.language});
 
   /// The id of the section in /library/sections/{key}/...
   final String key;
@@ -63,19 +63,21 @@ class PlexSection {
   /// photo, movie or show
   final String type;
 
-  /// What matches its items: "tv.plex.agents.movie" (Plex Movie) for a film library, "tv.plex.agents.none" or
-  /// "com.plexapp.agents.none" for "Other videos" (personal media, nothing matched); null when the server does not say
+  /// What matches its items: "tv.plex.agents.movie" for films, "tv.plex.agents.none" for other videos
   final String? agent;
+
+  /// The language of its metadata, set on the server ("fr", "en-US"): the language of the synopsis of its films
+  final String? language;
 
   bool get isPhoto => type == 'photo';
 
-  /// A film library, which opens on its films page (plex_films.dart): a movie section whose agent matches films. "Other
-  /// videos", where the 360° files live, and a section whose agent is not told keep the folder view.
-  bool get isMovieLibrary {
-    final agent = this.agent;
-    return type == 'movie' && agent != null && agent.isNotEmpty && !agent.endsWith('.none');
-  }
+  /// A library of films, which opens on its films page (plex_film_list.dart): a movie section whose agent matches
+  /// films. "Other videos" (personal media, nothing matched), where the 360° files live, keep the folder view.
+  bool get isFilms => type == 'movie' && !plexPersonalMediaAgents.contains(agent);
 }
+
+/// The agents of the movie sections of personal media ("Other videos"), whose items no agent matched
+const plexPersonalMediaAgents = {'com.plexapp.agents.none', 'tv.plex.agents.none'};
 
 /// The sections of /library/sections whose media the app shows, in server order
 List<PlexSection> parsePlexSections(Object? json) {
@@ -87,7 +89,13 @@ List<PlexSection> parsePlexSections(Object? json) {
       continue;
     }
     sections.add(
-      PlexSection(key: key, title: _string(element['title']) ?? key, type: type, agent: _string(element['agent'])),
+      PlexSection(
+        key: key,
+        title: _string(element['title']) ?? key,
+        type: type,
+        agent: _string(element['agent']),
+        language: _string(element['language']),
+      ),
     );
   }
   return sections;

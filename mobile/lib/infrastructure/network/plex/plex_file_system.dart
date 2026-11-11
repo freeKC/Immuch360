@@ -28,7 +28,7 @@ import 'package:immich_mobile/infrastructure/network/http_range_reader.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
-import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:logging/logging.dart';
@@ -348,8 +348,10 @@ class PlexFileSystem
       return Future.value(null);
     }
     final side = size.clamp(_minThumbnailSize, _maxThumbnailSize);
-    // A film's poster is 2:3: asked at that shape, [size] being its height, rather than as a square that is cropped
-    final width = file.isPoster ? max(_minThumbnailSize, (side * 2 / 3).round()) : side;
+    // A film's poster is 2:3: asked at that shape, [size] being its height, rather than as a square that is cropped.
+    // The films of a film library only, which have their title: the frames of "Other videos" stay square.
+    final poster = file.isPoster && _entries[normalizePath(entry.path)]?.title != null;
+    final width = poster ? max(_minThumbnailSize, (side * 2 / 3).round()) : side;
     return _guard(
       () => _onServer(() {
         final uri = _endpoint.base
@@ -754,8 +756,9 @@ class PlexFileSystem
             width: item.width,
             height: item.height,
             durationMs: item.durationMs,
-            // The film's title under its picture and in the title of its page, not the name of the file
-            title: item.isPoster ? item.title : null,
+            // The film's title under its picture and in the title of its page, not the name of the file: in a film
+            // library only, "Other videos" keeping the names of their files
+            title: item.isPoster && (parent.section?.isFilms ?? false) ? item.title : null,
           );
       }
       _entries[path] = entry;
@@ -911,12 +914,18 @@ class PlexFileSystem
     return slash <= 0 ? '/' : path.substring(0, slash);
   }
 
-  // The films of the film libraries (plex_films.dart): read page by page, their files under paths of their own
+  // The films of the film libraries (plex_film_list.dart): read page by page, their files under paths of their own
 
   /// The library whose folder is [path] at the root of the share, once the root was listed; null for any other path
   PlexSection? sectionAt(String path) {
     final node = _nodes[normalizePath(path)];
     return node is _Folder && !node.isRoot && !node.belowSection ? node.section : null;
+  }
+
+  @override
+  PlexSection? filmLibraryAt(String path) {
+    final section = sectionAt(path);
+    return section != null && section.isFilms ? section : null;
   }
 
   @override
@@ -927,21 +936,21 @@ class PlexFileSystem
     await list('/');
     return [
       for (final MapEntry(key: path, value: node) in _nodes.entries)
-        if (node is _Folder && !node.isRoot && !node.belowSection && (node.section?.isMovieLibrary ?? false))
+        if (node is _Folder && !node.isRoot && !node.belowSection && (node.section?.isFilms ?? false))
           (section: node.section!, folderPath: path),
     ];
   }
 
   @override
-  Future<List<int?>> filmYears(PlexFilmsQuery query) => _guard(
+  Future<List<int?>> filmYears(PlexFilmListQuery query) => _guard(
     () => _onServer(() async {
       final years = <int?>[];
       var start = 0;
-      while (start < PlexFilmsQuery.maxFilms) {
+      while (start < PlexFilmListQuery.maxFilms) {
         final page = await _plex.getJson(
           _filmsUri(query, light: true),
           parsePlexYearsPage,
-          headers: {'x-plex-container-start': '$start', 'x-plex-container-size': '${PlexFilmsQuery.yearsPageSize}'},
+          headers: {'x-plex-container-start': '$start', 'x-plex-container-size': '${PlexFilmListQuery.yearsPageSize}'},
         );
         years.addAll(page.years);
         if (page.count <= 0) {
@@ -949,7 +958,7 @@ class PlexFileSystem
         }
         start += page.count;
         final total = page.totalSize;
-        if (total == null ? page.count < PlexFilmsQuery.yearsPageSize : start >= total) {
+        if (total == null ? page.count < PlexFilmListQuery.yearsPageSize : start >= total) {
           break;
         }
       }
@@ -958,11 +967,11 @@ class PlexFileSystem
   );
 
   @override
-  Future<PlexFilmsPage> filmsPage(PlexFilmsQuery query, {required int start, required int size}) => _guard(
+  Future<PlexFilmListPage> filmsPage(PlexFilmListQuery query, {required int start, required int size}) => _guard(
     () => _onServer(() async {
       final page = await _plex.getJson(
         _filmsUri(query),
-        parsePlexFilmsPage,
+        parsePlexFilmListPage,
         headers: {'x-plex-container-start': '$start', 'x-plex-container-size': '$size'},
       );
       _recordFilms(query.sectionKey, page.films);
@@ -998,14 +1007,14 @@ class PlexFileSystem
   static List<PlexFilm> Function(Object? json) _hubFilmsOf(String sectionKey) =>
       (json) => parsePlexHubFilms(json, sectionKey);
 
-  Uri _filmsUri(PlexFilmsQuery query, {bool light = false}) =>
+  Uri _filmsUri(PlexFilmListQuery query, {bool light = false}) =>
       _endpoint.base.resolve(query.path).replace(queryParameters: query.queryParameters(light: light));
 
-  /// Records the files of [films] under their paths (see plexFilmPath), for the reads, the bridge and the pictures
+  /// Records the files of [films] under their paths (see plexFilmPartPath), for the reads, the bridge and the pictures
   void _recordFilms(String sectionKey, List<PlexFilm> films) {
     for (final film in films) {
       for (final part in film.parts) {
-        final path = plexFilmPath(sectionKey, film.ratingKey, part);
+        final path = plexFilmPartPath(sectionKey, film.ratingKey, part);
         _nodes[path] = _File(part);
         // A size found by stat stays, unless the server tells one now
         final known = _entries[path]?.size;
@@ -1017,16 +1026,16 @@ class PlexFileSystem
   /// Finds what [path] names when this connection has not met it: a film through its metadata (a page reopened after
   /// the connection was), anything else in the listing of its parent
   Future<void> _findUnlisted(String path, bool again) async {
-    final film = parsePlexFilmPath(path);
+    final film = plexFilmPathParts(path);
     if (film == null) {
       await _listingOf(_parentOf(path), again);
       return;
     }
-    final PlexFilmsPage found;
+    final PlexFilmListPage found;
     try {
       found = await _plex.getJson(
         _endpoint.base.resolve('/library/metadata/${Uri.encodeComponent(film.ratingKey)}'),
-        parsePlexFilmsPage,
+        parsePlexFilmListPage,
       );
     } on PlexHttpStatus catch (error) {
       // A film removed, or added again under another id

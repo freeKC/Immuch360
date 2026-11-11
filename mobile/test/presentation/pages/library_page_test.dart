@@ -4,12 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/models/server_info/server_features.model.dart';
 import 'package:immich_mobile/presentation/pages/library.page.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
+import 'package:immich_mobile/providers/network/plex_film_list.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/app_bar_dialog/app_bar_profile_info.dart';
@@ -34,6 +40,55 @@ class _LocalSession extends LocalSessionNotifier {
   bool build() => true;
 }
 
+/// The shares of the app, whatever the Store says
+class _Sources extends NetworkSourcesNotifier {
+  _Sources(this.sources);
+
+  final List<NetworkSource> sources;
+
+  @override
+  List<NetworkSource> build() => sources;
+}
+
+const _plex = NetworkSource(
+  id: 'plex',
+  type: NetworkSourceType.plex,
+  name: 'Home Plex',
+  host: '192.0.2.20',
+  plex: PlexServerInfo(hash: '0123456789abcdef0123456789abcdef'),
+);
+
+/// A Plex server with the film library [libraries]
+class _Films implements PlexFilmsSource {
+  _Films(this.libraries);
+
+  final List<PlexSection> libraries;
+
+  @override
+  String get filmsSourceId => _plex.id;
+
+  @override
+  bool get isOutsideHome => false;
+
+  @override
+  Future<List<({PlexSection section, String folderPath})>> filmLibraries() async => [
+    for (final section in libraries) (section: section, folderPath: '/${section.title}'),
+  ];
+
+  @override
+  PlexSection? filmLibraryAt(String path) => null;
+
+  @override
+  Future<List<int?>> filmYears(PlexFilmListQuery query) async => const [];
+
+  @override
+  Future<PlexFilmListPage> filmsPage(PlexFilmListQuery query, {required int start, required int size}) async =>
+      const PlexFilmListPage(films: [], count: 0, offset: 0);
+
+  @override
+  Future<List<PlexFilm>> searchFilms(String sectionKey, String text) async => const [];
+}
+
 void main() {
   late PresentationContext context;
 
@@ -55,6 +110,8 @@ void main() {
     bool trash = true,
     bool local = false,
     Widget library = const Scaffold(body: CustomScrollView(slivers: [LibraryActionButtonGrid()])),
+    List<NetworkSource>? sources,
+    List<Override> overrides = const [],
   }) async {
     final router = RootStackRouter.build(
       routes: [
@@ -79,6 +136,16 @@ void main() {
           path: '/login',
           page: PageInfo(LoginRoute.name, builder: (_) => const Text('login page')),
         ),
+        AutoRoute(
+          path: '/plex-films',
+          page: PageInfo(
+            PlexFilmsLibraryRoute.name,
+            builder: (data) {
+              final args = data.argsAs<PlexFilmsLibraryRouteArgs>();
+              return Text('films ${args.sourceId} ${args.sectionKey} ${args.title} ${args.folderPath}');
+            },
+          ),
+        ),
       ],
     );
 
@@ -94,6 +161,8 @@ void main() {
         child: ProviderScope(
           overrides: [
             ...context.overrides,
+            ...overrides,
+            if (sources != null) networkSourcesProvider.overrideWith(() => _Sources(sources)),
             if (!trash) serverInfoProvider.overrideWith((ref) => _NoTrashServerInfo(context.service.serverInfo)),
             if (local) ...[
               localSessionProvider.overrideWith(_LocalSession.new),
@@ -158,6 +227,57 @@ void main() {
 
       expect(panoramaEntry, findsOneWidget);
       expect(find.widgetWithText(FilledButton, 'Trash'), findsNothing);
+    });
+  });
+
+  group('Library Films entry', () {
+    const movies = PlexSection(key: '1', title: 'Movies', type: 'movie', agent: 'tv.plex.agents.movie');
+    const kids = PlexSection(key: '3', title: 'Kids', type: 'movie', agent: 'tv.plex.agents.movie');
+    final filmsEntry = find.widgetWithText(FilledButton, 'Films');
+
+    testWidgets('is not there without a Plex server', (tester) async {
+      await pumpLibraryButtons(tester, sources: const []);
+
+      expect(filmsEntry, findsNothing);
+    });
+
+    testWidgets('opens the only film library of the Plex server on its films page', (tester) async {
+      await pumpLibraryButtons(
+        tester,
+        sources: const [_plex],
+        overrides: [
+          plexFilmsSourceProvider.overrideWithValue((id) async => _Films(const [movies])),
+        ],
+      );
+
+      expect(filmsEntry, findsOneWidget);
+      await tester.tap(filmsEntry);
+      await tester.pumpAndSettle();
+
+      expect(find.text('films plex 1 Movies /Movies'), findsOneWidget);
+    });
+
+    testWidgets('asks which library when there are several, and says when there is none', (tester) async {
+      var libraries = const [movies, kids];
+      await pumpLibraryButtons(
+        tester,
+        sources: const [_plex],
+        overrides: [plexFilmsSourceProvider.overrideWithValue((id) async => _Films(libraries))],
+      );
+
+      await tester.tap(filmsEntry);
+      await tester.pumpAndSettle();
+      expect(find.text('Choose a film library'), findsOneWidget);
+      await tester.tap(find.text('Kids'));
+      await tester.pumpAndSettle();
+      expect(find.text('films plex 3 Kids /Kids'), findsOneWidget);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      libraries = const [];
+      await tester.tap(filmsEntry);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('No film library on your Plex servers'), findsOneWidget);
     });
   });
 

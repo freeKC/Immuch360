@@ -13,10 +13,11 @@
 
 import 'package:collection/collection.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/infrastructure/network/entry_names.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
 
 /// The order of a films list, as Plex sorts it
-enum PlexFilmSort {
+enum PlexFilmListSort {
   /// The default of the films page: the newest year first, then the titles in Plex's order ("The", "Le", "La" left
   /// out of it) within a year
   yearNewest('year:desc,titleSort'),
@@ -24,7 +25,7 @@ enum PlexFilmSort {
   /// The oldest year first
   yearOldest('year,titleSort');
 
-  const PlexFilmSort(this.plex);
+  const PlexFilmListSort(this.plex);
 
   /// The value of the sort parameter of /all
   final String plex;
@@ -32,11 +33,16 @@ enum PlexFilmSort {
 
 /// What a films list asks the server for: the films of the section [sectionKey], in the order [sort], those whose
 /// title holds [title] when it is given, narrowed by [filters]
-class PlexFilmsQuery {
-  const PlexFilmsQuery({required this.sectionKey, this.sort = PlexFilmSort.yearNewest, this.title, this.filters = const {}});
+class PlexFilmListQuery {
+  const PlexFilmListQuery({
+    required this.sectionKey,
+    this.sort = PlexFilmListSort.yearNewest,
+    this.title,
+    this.filters = const {},
+  });
 
   final String sectionKey;
-  final PlexFilmSort sort;
+  final PlexFilmListSort sort;
 
   /// The text typed in the search field; Plex's "=" on a text field means "contains"
   final String? title;
@@ -79,30 +85,33 @@ class PlexFilmsQuery {
     'includeCollections': '0',
     for (final MapEntry(:key, :value) in filters.entries)
       if (!_own.contains(key)) key: value,
-    if (searchedTitle case final text?) 'title': text,
+    'title': ?searchedTitle,
     if (light) 'excludeElements': lightElements,
     if (light) 'excludeFields': lightFields,
   };
 
-  PlexFilmsQuery copyWith({PlexFilmSort? sort, String? title, bool clearTitle = false, Map<String, String>? filters}) =>
-      PlexFilmsQuery(
-        sectionKey: sectionKey,
-        sort: sort ?? this.sort,
-        title: clearTitle ? null : (title ?? this.title),
-        filters: filters ?? this.filters,
-      );
+  PlexFilmListQuery copyWith({
+    PlexFilmListSort? sort,
+    String? title,
+    bool clearTitle = false,
+    Map<String, String>? filters,
+  }) => PlexFilmListQuery(
+    sectionKey: sectionKey,
+    sort: sort ?? this.sort,
+    title: clearTitle ? null : (title ?? this.title),
+    filters: filters ?? this.filters,
+  );
 
   @override
   bool operator ==(Object other) =>
-      other is PlexFilmsQuery &&
+      other is PlexFilmListQuery &&
       other.sectionKey == sectionKey &&
       other.sort == sort &&
       other.searchedTitle == searchedTitle &&
       const MapEquality<String, String>().equals(other.filters, filters);
 
   @override
-  int get hashCode =>
-      Object.hash(sectionKey, sort, searchedTitle, const MapEquality<String, String>().hash(filters));
+  int get hashCode => Object.hash(sectionKey, sort, searchedTitle, const MapEquality<String, String>().hash(filters));
 }
 
 /// One film of a listing: what its poster, its caption and its page need, and its files
@@ -154,12 +163,11 @@ class PlexFilm {
 
 /// The film of one element of a listing, null when it is no film (a collection, a folder) or has no id
 PlexFilm? parsePlexFilm(Map<String, Object?> element) {
-  final ratingKey = _string(element['ratingKey']);
-  final type = _string(element['type']);
-  final title = _string(element['title'])?.trim();
-  if (ratingKey == null || (type != null && type != 'movie') || title == null || title.isEmpty) {
+  if (!_isFilm(element)) {
     return null;
   }
+  final ratingKey = _string(element['ratingKey'])!;
+  final title = _string(element['title'])!.trim();
   final added = _int(element['addedAt']);
   final year = _int(element['year']);
   return PlexFilm(
@@ -180,8 +188,8 @@ PlexFilm? parsePlexFilm(Map<String, Object?> element) {
 }
 
 /// One page of films
-class PlexFilmsPage {
-  const PlexFilmsPage({required this.films, required this.count, required this.offset, this.totalSize});
+class PlexFilmListPage {
+  const PlexFilmListPage({required this.films, required this.count, required this.offset, this.totalSize});
 
   final List<PlexFilm> films;
 
@@ -193,10 +201,10 @@ class PlexFilmsPage {
   final int? totalSize;
 }
 
-PlexFilmsPage parsePlexFilmsPage(Object? json) {
+PlexFilmListPage parsePlexFilmListPage(Object? json) {
   final elements = _metadata(json);
   final container = _container(json);
-  return PlexFilmsPage(
+  return PlexFilmListPage(
     films: [for (final element in elements) ?parsePlexFilm(element)],
     count: elements.length,
     offset: _int(container?['offset']) ?? 0,
@@ -213,7 +221,7 @@ PlexYearsPage parsePlexYearsPage(Object? json) {
   return (
     years: [
       for (final element in elements)
-        if (_string(element['type']) case null || 'movie') _positiveYear(element['year']),
+        if (_isFilm(element)) _positiveYear(element['year']),
     ],
     count: elements.length,
     offset: _int(container?['offset']) ?? 0,
@@ -298,7 +306,7 @@ List<PlexFilmYear> plexFilmYears(Iterable<int?> years) {
 
 /// [a] before [b] in [sort], for the lists made on the device (a search): Plex's sort title, case left aside, films
 /// without a year last
-int comparePlexFilms(PlexFilm a, PlexFilm b, PlexFilmSort sort) {
+int comparePlexFilms(PlexFilm a, PlexFilm b, PlexFilmListSort sort) {
   final ya = a.year;
   final yb = b.year;
   if (ya != yb) {
@@ -308,14 +316,14 @@ int comparePlexFilms(PlexFilm a, PlexFilm b, PlexFilmSort sort) {
     if (yb == null) {
       return -1;
     }
-    return sort == PlexFilmSort.yearOldest ? ya.compareTo(yb) : yb.compareTo(ya);
+    return sort == PlexFilmListSort.yearOldest ? ya.compareTo(yb) : yb.compareTo(ya);
   }
   return (a.titleSort ?? a.title).toLowerCase().compareTo((b.titleSort ?? b.title).toLowerCase());
 }
 
 /// The results of a search: the films whose title holds the text ([contains], from /all?title=), then those the
 /// server's spelling tolerant search adds ([hubs], from /hubs/search), each once, in the order of [sort]
-List<PlexFilm> mergePlexSearch(List<PlexFilm> contains, List<PlexFilm> hubs, PlexFilmSort sort) {
+List<PlexFilm> mergePlexSearch(List<PlexFilm> contains, List<PlexFilm> hubs, PlexFilmListSort sort) {
   final seen = <String>{};
   final films = [
     for (final film in [...contains, ...hubs])
@@ -325,45 +333,37 @@ List<PlexFilm> mergePlexSearch(List<PlexFilm> contains, List<PlexFilm> hubs, Ple
   return films;
 }
 
-/// The first folder of the paths of the films, hidden from every listing (a dot name)
-const plexFilmsFolder = '/.films';
+/// The first folder of the paths of the films, hidden from every listing (a dot name); the same paths as the film page
+/// of lot A2 builds (its plexFilmsFolder)
+const plexFilmsRoot = '/.films';
 
-/// The path of the file [part] of [film] in the section [sectionKey]: /.films/<section>/<ratingKey>/<partId>/<file>
-String plexFilmPath(String sectionKey, String ratingKey, PlexFileItem part) =>
-    '$plexFilmsFolder/${Uri.encodeComponent(sectionKey)}/${Uri.encodeComponent(ratingKey)}/${part.partId ?? 0}/'
-    '${part.name}';
+/// The path of the file [part] of the film [ratingKey] in the section [sectionKey]:
+/// /.films/{section}/{ratingKey}/{partId}/{file name}, the same whatever lists it (the films page, a search, the film
+/// page). PlexFileSystem finds the film behind it through /library/metadata/{ratingKey} when it has not met it.
+String plexFilmPartPath(String sectionKey, String ratingKey, PlexFileItem part) =>
+    '$plexFilmsRoot/${safeEntryName(sectionKey)}/${safeEntryName(ratingKey)}/${part.partId ?? 0}/'
+    '${safeEntryName(part.name)}';
 
-/// What a path of [plexFilmPath] names, null for any other path
-({String sectionKey, String ratingKey, int partId})? parsePlexFilmPath(String path) {
-  if (!path.startsWith('$plexFilmsFolder/')) {
+/// What a path of [plexFilmPartPath] names, null for any other path (a Plex ratingKey is a number)
+({String sectionKey, String ratingKey, int partId})? plexFilmPathParts(String path) {
+  final segments = path.split('/').where((segment) => segment.isNotEmpty).toList();
+  if (segments.length != 5 || '/${segments.first}' != plexFilmsRoot) {
     return null;
   }
-  final segments = path.substring(plexFilmsFolder.length + 1).split('/');
-  if (segments.length != 4 || segments.any((segment) => segment.isEmpty)) {
+  final partId = int.tryParse(segments[3]);
+  if (partId == null || !RegExp(r'^\d+$').hasMatch(segments[2])) {
     return null;
   }
-  final partId = int.tryParse(segments[2]);
-  if (partId == null) {
-    return null;
-  }
-  try {
-    return (
-      sectionKey: Uri.decodeComponent(segments[0]),
-      ratingKey: Uri.decodeComponent(segments[1]),
-      partId: partId,
-    );
-  } on ArgumentError {
-    return null;
-  }
+  return (sectionKey: segments[1], ratingKey: segments[2], partId: partId);
 }
 
-/// The entry of the file a film plays (its first part), at its path of [plexFilmPath]; null for a film without a file
+/// The entry of the file a film plays (its first part), at its path of [plexFilmPartPath]; null for a film without a file
 NetworkEntry? plexFilmEntry(String sourceId, String sectionKey, PlexFilm film) {
   final part = film.part;
   if (part == null) {
     return null;
   }
-  return plexFilmPartEntry(sourceId, plexFilmPath(sectionKey, film.ratingKey, part), part, title: film.title);
+  return plexFilmPartEntry(sourceId, plexFilmPartPath(sectionKey, film.ratingKey, part), part, title: film.title);
 }
 
 /// The entry of the file [part] at [path], with the title the server gives
@@ -392,11 +392,11 @@ abstract interface class PlexFilmsSource {
   /// Whether the server is read through its address outside home
   bool get isOutsideHome;
 
-  /// The year of every film of [query] in its order, from the light pass (pages of [PlexFilmsQuery.yearsPageSize])
-  Future<List<int?>> filmYears(PlexFilmsQuery query);
+  /// The year of every film of [query] in its order, from the light pass (pages of [PlexFilmListQuery.yearsPageSize])
+  Future<List<int?>> filmYears(PlexFilmListQuery query);
 
   /// The films of [query] from [start], [size] of them at most; their files get their paths in the file system
-  Future<PlexFilmsPage> filmsPage(PlexFilmsQuery query, {required int start, required int size});
+  Future<PlexFilmListPage> filmsPage(PlexFilmListQuery query, {required int start, required int size});
 
   /// The films of the section that the server's spelling tolerant search finds for [text]; empty when the server has
   /// no such search
@@ -404,6 +404,21 @@ abstract interface class PlexFilmsSource {
 
   /// The film libraries of the server, with the path of the folder of each at the root of the share
   Future<List<({PlexSection section, String folderPath})>> filmLibraries();
+
+  /// The film library whose folder is [path] at the root of the share, once the root was listed: what the folder view
+  /// opens on its films page rather than on its folders; null for any other path
+  PlexSection? filmLibraryAt(String path);
+}
+
+/// Whether [element] of a listing is a film the list shows: one rule for the light pass and the pages, so that the
+/// index of a film among the years is its index among the pages
+bool _isFilm(Map<String, Object?> element) {
+  final type = _string(element['type']);
+  final title = _string(element['title'])?.trim();
+  return _string(element['ratingKey']) != null &&
+      (type == null || type == 'movie') &&
+      title != null &&
+      title.isNotEmpty;
 }
 
 Map<String, Object?>? _container(Object? json) {

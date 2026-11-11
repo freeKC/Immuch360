@@ -393,8 +393,9 @@ void main() {
       final beach = (await plex.list('/Movies/Holidays')).firstWhere((e) => e.name == 'beach.mp4');
       expect(await plex.thumbnail(beach, 256), Uint8List.fromList([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]));
       final request = server.requests.lastWhere((r) => r.path == '/photo/:/transcode');
+      // A film of a film library: its poster asked at 2:3
       expect(Uri(query: request.query).queryParameters, {
-        'width': '256',
+        'width': '171',
         'height': '256',
         'minSize': '1',
         'upscale': '0',

@@ -1,0 +1,294 @@
+{
+  "MediaContainer": {
+    "size": 4,
+    "totalSize": 4,
+    "offset": 0,
+    "allowSync": true,
+    "art": "/:/resources/movie-fanart.jpg",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "00000000-0000-0000-0000-000000000001",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1700000000,
+    "thumb": "/:/resources/movie.png",
+    "title1": "Movies",
+    "title2": "All Movies",
+    "viewGroup": "movie",
+    "Metadata": [
+      {
+        "ratingKey": "301",
+        "key": "/library/metadata/301",
+        "guid": "plex://movie/000000000000000000000301",
+        "studio": "Example Studio",
+        "type": "movie",
+        "title": "The Example Night",
+        "librarySectionTitle": "Movies",
+        "librarySectionID": 1,
+        "librarySectionKey": "/library/sections/1",
+        "contentRating": "PG-13",
+        "summary": "A made up synopsis.",
+        "audienceRating": 7.5,
+        "tagline": "A made up tagline.",
+        "thumb": "/library/metadata/301/thumb/1700000000",
+        "art": "/library/metadata/301/art/1700000000",
+        "duration": 6600000,
+        "addedAt": 1690000301,
+        "updatedAt": 1700000000,
+        "Media": [
+          {
+            "id": 4301,
+            "duration": 6600000,
+            "bitrate": 8000,
+            "width": 1920,
+            "height": 800,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "Part": [
+              {
+                "id": 4301,
+                "key": "/library/parts/4301/1700000000/file.mkv",
+                "duration": 6600000,
+                "file": "/data/movies/The Example Night (2021)/The Example Night (2021).mkv",
+                "size": 4000004301,
+                "container": "mkv"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "France"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "A. Director"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "An Actor"
+          }
+        ],
+        "year": 2021,
+        "originallyAvailableAt": "2021-04-25",
+        "titleSort": "Example Night",
+        "viewCount": 1
+      },
+      {
+        "ratingKey": "302",
+        "key": "/library/metadata/302",
+        "guid": "plex://movie/000000000000000000000302",
+        "studio": "Example Studio",
+        "type": "movie",
+        "title": "Élan du matin",
+        "librarySectionTitle": "Movies",
+        "librarySectionID": 1,
+        "librarySectionKey": "/library/sections/1",
+        "contentRating": "fr/12",
+        "summary": "A made up synopsis.",
+        "audienceRating": 7.5,
+        "tagline": "A made up tagline.",
+        "thumb": "/library/metadata/302/thumb/1700000000",
+        "art": "/library/metadata/302/art/1700000000",
+        "duration": 6600000,
+        "addedAt": 1690000302,
+        "updatedAt": 1700000000,
+        "Media": [
+          {
+            "id": 4302,
+            "duration": 6600000,
+            "bitrate": 8000,
+            "width": 1920,
+            "height": 800,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "Part": [
+              {
+                "id": 4302,
+                "key": "/library/parts/4302/1700000000/file.mkv",
+                "duration": 6600000,
+                "file": "/data/movies/Élan du matin (2021)/Élan du matin (2021).mkv",
+                "size": 4000004302,
+                "container": "mkv"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "France"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "A. Director"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "An Actor"
+          }
+        ],
+        "year": 2021,
+        "originallyAvailableAt": "2021-04-25",
+        "originalTitle": "Morning Drive",
+        "viewOffset": 1200000
+      },
+      {
+        "ratingKey": "303",
+        "key": "/library/metadata/303",
+        "guid": "plex://movie/000000000000000000000303",
+        "studio": "Example Studio",
+        "type": "movie",
+        "title": "Ten Rooms",
+        "librarySectionTitle": "Movies",
+        "librarySectionID": 1,
+        "librarySectionKey": "/library/sections/1",
+        "contentRating": "PG-13",
+        "summary": "A made up synopsis.",
+        "audienceRating": 7.5,
+        "tagline": "A made up tagline.",
+        "thumb": "/library/metadata/303/thumb/1700000000",
+        "art": "/library/metadata/303/art/1700000000",
+        "duration": 6600000,
+        "addedAt": 1690000303,
+        "updatedAt": 1700000000,
+        "Media": [
+          {
+            "id": 4303,
+            "duration": 6600000,
+            "bitrate": 8000,
+            "width": 1920,
+            "height": 800,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "Part": [
+              {
+                "id": 4303,
+                "key": "/library/parts/4303/1700000000/file.mkv",
+                "duration": 6600000,
+                "file": "/data/movies/Ten Rooms (2019)/Ten Rooms (2019).mkv",
+                "size": 4000004303,
+                "container": "mkv"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "France"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "A. Director"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "An Actor"
+          }
+        ],
+        "year": 2019,
+        "originallyAvailableAt": "2019-04-25"
+      },
+      {
+        "ratingKey": "304",
+        "key": "/library/metadata/304",
+        "guid": "plex://movie/000000000000000000000304",
+        "studio": "Example Studio",
+        "type": "movie",
+        "title": "Home cut",
+        "librarySectionTitle": "Movies",
+        "librarySectionID": 1,
+        "librarySectionKey": "/library/sections/1",
+        "summary": "A made up synopsis.",
+        "audienceRating": 7.5,
+        "tagline": "A made up tagline.",
+        "thumb": "/library/metadata/304/thumb/1700000000",
+        "art": "/library/metadata/304/art/1700000000",
+        "duration": 6600000,
+        "addedAt": 1690000304,
+        "updatedAt": 1700000000,
+        "Media": [
+          {
+            "id": 4304,
+            "duration": 6600000,
+            "bitrate": 8000,
+            "width": 1920,
+            "height": 800,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "Part": [
+              {
+                "id": 4304,
+                "key": "/library/parts/4304/1700000000/file.mkv",
+                "duration": 6600000,
+                "file": "/data/movies/Home cut.mkv",
+                "size": 4000004304,
+                "container": "mkv"
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Country": [
+          {
+            "tag": "France"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "A. Director"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "An Actor"
+          }
+        ]
+      }
+    ]
+  }
+}

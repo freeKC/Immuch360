@@ -6,12 +6,12 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
-import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:logging/logging.dart';
 
@@ -32,11 +32,11 @@ final plexFilmsSourceProvider = Provider<PlexFilmsSourceOpener>((ref) {
 });
 
 /// The library of a films page: the source of its server and its section
-typedef PlexFilmsKey = ({String sourceId, String sectionKey});
+typedef PlexFilmLibraryKey = ({String sourceId, String sectionKey});
 
 /// The filters of the films page of a library, parameters of /all read from the filters the server gives (the chips
 /// of lot A2 set them); empty for every film. Kept while the page is open.
-final plexFilmFiltersProvider = StateProvider.autoDispose.family<Map<String, String>, PlexFilmsKey>(
+final plexFilmFiltersProvider = StateProvider.autoDispose.family<Map<String, String>, PlexFilmLibraryKey>(
   (ref, key) => const {},
 );
 
@@ -45,6 +45,16 @@ final plexFilmMenuActionsProvider = Provider<List<PlexFilmMenuAction>>((ref) => 
 
 /// The film a menu action is for
 typedef PlexFilmMenuTarget = ({String sourceId, String sectionKey, PlexFilm film, NetworkEntry entry});
+
+/// The page a tap on a poster opens; null for the video page of today, which plays the film at once
+typedef PlexFilmOpenRoute = PageRouteInfo? Function(PlexFilmMenuTarget target);
+
+/// What a tap on a poster of the films page opens: the film page of lot A2 once the integration wires it here
+/// (PlexFilmRoute with the source, the ratingKey and the path of the entry), the video page until then
+final plexFilmOpenRouteProvider = Provider<PlexFilmOpenRoute>(
+  (ref) =>
+      (_) => null,
+);
 
 /// One line of the long press menu of a film
 class PlexFilmMenuAction {
@@ -104,8 +114,8 @@ class PagedPlexFilms extends PlexFilmsList {
   /// The years of [query] from its light pass, and its first page, asked together: the page shows once both came
   static Future<PagedPlexFilms> load(
     PlexFilmsSource source,
-    PlexFilmsQuery query, {
-    int pageSize = PlexFilmsQuery.pageSize,
+    PlexFilmListQuery query, {
+    int pageSize = PlexFilmListQuery.pageSize,
     int maxConcurrent = 2,
   }) async {
     final watch = Stopwatch()..start();
@@ -127,7 +137,7 @@ class PagedPlexFilms extends PlexFilmsList {
   }
 
   final PlexFilmsSource _source;
-  final PlexFilmsQuery query;
+  final PlexFilmListQuery query;
   final int pageSize;
   final int maxConcurrent;
 
@@ -241,7 +251,7 @@ class StaticPlexFilms extends PlexFilmsList {
 /// spelling tolerant search adds when no filter is on (its search knows no filter); [maxContains] of the first at most
 const plexSearchMaxContains = 500;
 
-Future<StaticPlexFilms> searchPlexFilms(PlexFilmsSource source, PlexFilmsQuery query) async {
+Future<StaticPlexFilms> searchPlexFilms(PlexFilmsSource source, PlexFilmListQuery query) async {
   final text = query.searchedTitle;
   if (text == null) {
     return StaticPlexFilms(const []);
@@ -251,14 +261,14 @@ Future<StaticPlexFilms> searchPlexFilms(PlexFilmsSource source, PlexFilmsQuery q
   final contains = <PlexFilm>[];
   var start = 0;
   while (start < plexSearchMaxContains) {
-    final page = await source.filmsPage(query, start: start, size: PlexFilmsQuery.pageSize);
+    final page = await source.filmsPage(query, start: start, size: PlexFilmListQuery.pageSize);
     contains.addAll(page.films);
     if (page.count <= 0) {
       break;
     }
     start += page.count;
     final total = page.totalSize;
-    if (total == null ? page.count < PlexFilmsQuery.pageSize : start >= total) {
+    if (total == null ? page.count < PlexFilmListQuery.pageSize : start >= total) {
       break;
     }
   }

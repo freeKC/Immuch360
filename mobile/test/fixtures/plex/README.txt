@@ -14,3 +14,9 @@ of the documentation ranges, titles and paths of no real library). Nothing of th
 
 Hand written, the captured server having no photo library or player: photo_all.json, album_children.json (after
 python-plexapi), gdm_player_answer.txt, folder_no_total.json, folder_empty.json.
+
+Hand written after the Plex Media Server API reference 1.2.3 (developer.plex.tv/pms, Library and Search) and
+python-plexapi, no server being asked (lot A1 of the films study, 11 November 2026); titles, ids and paths made up:
+- films_all_page.json: a page of /library/sections/1/all?type=1&sort=year:desc,titleSort, a film without a year last.
+- films_years_light.json: the same list trimmed by excludeElements and excludeFields (the light pass of the years).
+- hubs_search.json: /hubs/search?query=elan&sectionId=1, a film of another library in the movie hub, an actor hub.

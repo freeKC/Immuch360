@@ -14,6 +14,7 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
@@ -316,6 +317,27 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       ref.read(networkSelectionProvider(_folderKey).notifier).toggle(entry.path);
       return;
     }
+    // A film library of a Plex server opens on its films page, whose menu shows its folders
+    if (entry.isDirectory) {
+      final folderPath = _withoutTrailingSlash(entry.path);
+      final films = switch (ref.read(networkConnectionsProvider).opened(widget.sourceId)) {
+        final PlexFilmsSource source => source.filmLibraryAt(folderPath),
+        _ => null,
+      };
+      if (films != null) {
+        unawaited(
+          context.pushRoute(
+            PlexFilmsLibraryRoute(
+              sourceId: widget.sourceId,
+              sectionKey: films.key,
+              title: films.title,
+              folderPath: folderPath,
+            ),
+          ),
+        );
+        return;
+      }
+    }
     // The photo and video pages get the folder around the file, for previous and next in the immersive viewer
     final media = entry.isDirectory
         ? null
@@ -537,6 +559,45 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   }
 }
 
+/// A tile with its name under it, the title a media server gives when it gives one (a Plex film): the grids whose
+/// files have titles. The tile says the name to a screen reader, the caption does not repeat it.
+class _Caption extends StatelessWidget {
+  const _Caption({required this.entry, required this.child});
+
+  final NetworkEntry entry;
+  final Widget child;
+
+  /// The height of the caption under the picture, two lines, with the text scale of [scaler]
+  static double heightOf(TextScaler scaler) => 6 + 2 * scaler.scale(12) * 1.25 + 2;
+
+  @override
+  Widget build(BuildContext context) {
+    final caption = ExcludeSemantics(
+      child: Container(
+        // Two lines whatever the title, so that the picture above stays square
+        height: heightOf(MediaQuery.textScalerOf(context)),
+        alignment: AlignmentDirectional.topStart,
+        padding: const EdgeInsets.fromLTRB(2, 6, 2, 0),
+        child: Text(
+          entry.shownName,
+          key: const Key('network_media_caption'),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 12, height: 1.25, color: context.colorScheme.onSurface),
+        ),
+      ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: child),
+        // The whole title when the pointer rests on it
+        if (CurrentPlatform.isDesktop) Tooltip(message: entry.shownName, child: caption) else caption,
+      ],
+    );
+  }
+}
+
 /// At the bottom of the browser while picking files: the button that sends them to the server, or why there is none;
 /// on a computer, "Make 3D (AI)" next to it ([desktopAction])
 class _SelectionBar extends ConsumerWidget {
@@ -655,26 +716,38 @@ class _FolderView extends StatelessWidget {
         if (media.isNotEmpty)
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 24),
-            sliver: SliverGrid.builder(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 160,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
-              ),
-              itemCount: media.length,
-              itemBuilder: (context, index) {
-                final entry = media[index];
-                final tile = NetworkMediaTile(
-                  key: ValueKey(entry.path),
-                  entry: entry,
-                  url: folder.urls[entry.path],
-                  onTap: () => onOpen(entry),
-                  onLongPress: onSelect == null ? null : () => onSelect!(entry),
-                  isSelected: selection.isActive ? selection.contains(entry.path) : null,
-                  autofocus: focusFirst && folders.isEmpty && index == 0,
+            // The films of a Plex server have their title under the picture, the square kept above it; the other
+            // shares keep their square cells
+            sliver: SliverLayoutBuilder(
+              builder: (context, constraints) {
+                final captioned = media.any((entry) => entry.title != null);
+                final caption = captioned ? _Caption.heightOf(MediaQuery.textScalerOf(context)) : 0.0;
+                final columns = (constraints.crossAxisExtent / (160 + 4)).ceil().clamp(1, 1000);
+                final cell = (constraints.crossAxisExtent - (columns - 1) * 4) / columns;
+                return SliverGrid.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 160,
+                    mainAxisSpacing: 4,
+                    crossAxisSpacing: 4,
+                    mainAxisExtent: captioned ? cell + caption : null,
+                  ),
+                  itemCount: media.length,
+                  itemBuilder: (context, index) {
+                    final entry = media[index];
+                    final tile = NetworkMediaTile(
+                      key: ValueKey(entry.path),
+                      entry: entry,
+                      url: folder.urls[entry.path],
+                      onTap: () => onOpen(entry),
+                      onLongPress: onSelect == null ? null : () => onSelect!(entry),
+                      isSelected: selection.isActive ? selection.contains(entry.path) : null,
+                      autofocus: focusFirst && folders.isEmpty && index == 0,
+                    );
+                    // Immuch360 Desktop: a right click opens the menu of the selection
+                    final shown = withDesktopNetworkTile(context, entry, tile);
+                    return captioned ? _Caption(entry: entry, child: shown) : shown;
+                  },
                 );
-                // Immuch360 Desktop: a right click opens the menu of the selection
-                return withDesktopNetworkTile(context, entry, tile);
               },
             ),
           ),

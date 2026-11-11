@@ -1,0 +1,9 @@
+Immuch360
+Copyright © 2026 the Immuch360 and Immich contributors
+
+Immuch360 is a fork of Immich (https://github.com/immich-app/immich), licensed under the GNU Affero General Public
+License version 3, see LICENSE. Parts of it keep the notices and licences of their own authors, in their files and in
+the licence page of the app.
+
+Immuch360 reads Plex Media Server through its public API. Plex is a trademark of Plex, Inc. Immuch360 is not
+affiliated with or endorsed by Plex, Inc.

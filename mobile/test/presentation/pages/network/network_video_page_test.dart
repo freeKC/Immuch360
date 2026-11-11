@@ -402,6 +402,17 @@ void main() {
     await endRealIo(tester);
   });
 
+  testWidgets('a film a media server titles shows its title in the bar rather than its file name', (tester) async {
+    share.titles['/holiday.mp4'] = 'A Holiday Film';
+    await pumpVideoPage(tester, '/holiday.mp4');
+    await pumpUntilDetected(tester);
+
+    expect(find.text('A Holiday Film'), findsOneWidget);
+    expect(find.text('holiday.mp4'), findsNothing);
+
+    await endRealIo(tester);
+  });
+
   testWidgets('a file the player does not recognize as a video: a sentence, and what the bridge sent in the logs', (
     tester,
   ) async {

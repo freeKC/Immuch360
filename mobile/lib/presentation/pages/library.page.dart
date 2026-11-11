@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/user.model.dart';
 import 'package:immich_mobile/extensions/asyncvalue_extensions.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
+import 'package:immich_mobile/presentation/pages/network/plex_films_library.page.dart';
 import 'package:immich_mobile/presentation/widgets/drone/drone_card.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_album_thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
@@ -67,10 +71,31 @@ class LibraryActionButtonGrid extends ConsumerWidget {
       autofocus: ref.watch(tvModeProvider),
     );
 
+    // The films of the Plex servers (lot A1 of the films study), when the app has one; the rail of a TV has no Films
+    // entry, this button is the way there
+    final hasPlex = ref.watch(
+      networkSourcesProvider.select((sources) => sources.any((source) => source.type == NetworkSourceType.plex)),
+    );
+    final filmsButton = hasPlex
+        ? _ActionButton(
+            key: const Key('library_plex_films'),
+            icon: Icons.movie_outlined,
+            onTap: () => unawaited(openPlexFilms(context, ref)),
+            label: context.t.plex_films_button,
+          )
+        : null;
+
     if (!hasServer) {
       return SliverPadding(
         padding: const EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 12),
-        sliver: SliverToBoxAdapter(child: Row(children: [panoramaButton])),
+        sliver: SliverToBoxAdapter(
+          child: Row(
+            children: [
+              panoramaButton,
+              if (filmsButton != null) ...[const SizedBox(width: 8), filmsButton],
+            ],
+          ),
+        ),
       );
     }
 
@@ -106,15 +131,18 @@ class LibraryActionButtonGrid extends ConsumerWidget {
                 ),
               ],
             ),
-            if (isTrashEnable) ...[
+            if (isTrashEnable || filmsButton != null) ...[
               const SizedBox(height: 8),
               Row(
                 children: [
-                  _ActionButton(
-                    icon: Icons.delete_outline_rounded,
-                    onTap: () => context.pushRoute(const TrashRoute()),
-                    label: context.t.trash,
-                  ),
+                  if (isTrashEnable)
+                    _ActionButton(
+                      icon: Icons.delete_outline_rounded,
+                      onTap: () => context.pushRoute(const TrashRoute()),
+                      label: context.t.trash,
+                    ),
+                  if (isTrashEnable && filmsButton != null) const SizedBox(width: 8),
+                  ?filmsButton,
                 ],
               ),
             ],
@@ -126,7 +154,13 @@ class LibraryActionButtonGrid extends ConsumerWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.icon, required this.onTap, required this.label, this.autofocus = false});
+  const _ActionButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+    required this.label,
+    this.autofocus = false,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
