@@ -11,13 +11,15 @@ ActivityManager killed for any other reason than the force stop of the test tool
 
 The lab tests write "LAB_SCENARIO start <name>" and then "LAB_SCENARIO passed <name>" (or "failed") to logcat: each
 crash, ANR or death goes to the scenario that was running, and a scenario named in --scenarios fails when it has one,
-when it did not pass, or when it never started. The exit status of each test file comes from the file the lab script
-writes (name=status lines): the files named in --required must have passed, the others are reported only. The script
-also says whether ART turned CheckJNI on for the app (its "-Xcheck:jni" line), copies the lines of the tests
-(OKHTTP_LAB, LAB_SCENARIO and the lines the lab tests log) and the lines of the native parts they check
-(BackgroundWorker, BackgroundEngineLock, AppHealth, RemoteImages, NativeImageDecode) to highlights.txt. Exit status 1
-on a crash, an ANR or a death, a required test or scenario that failed, or an app that never started. A summary goes
-to GITHUB_STEP_SUMMARY when set.
+when it did not pass, or when it never started. A scenario whose name starts with a prefix given by --not-decoded (the
+JPEG XL scenarios) also fails on a line of the app that says an image was not decoded ("Not decoded", "JPEG XL not
+decoded", UnsupportedEncodedImage): a viewer would show that image blank. The exit status of each test file comes
+from the file the lab script writes (name=status lines): the files named in --required must have passed, the others
+are reported only. The script also says whether ART turned CheckJNI on for the app (its "-Xcheck:jni" line), copies
+the lines of the tests (OKHTTP_LAB, LAB_SCENARIO and the lines the lab tests log) and the lines of the native parts
+they check (BackgroundWorker, BackgroundEngineLock, AppHealth, RemoteImages, NativeImageDecode) to highlights.txt.
+Exit status 1 on a crash, an ANR or a death, an image of such a scenario not decoded, a required test or scenario
+that failed, or an app that never started. A summary goes to GITHUB_STEP_SUMMARY when set.
 """
 
 import argparse
@@ -38,8 +40,10 @@ CRASHES = (
     "DoubleReleaseError",
 )
 SCENARIO = re.compile(r"LAB_SCENARIO (start|passed|failed) (\S+)")
+# A line of the app saying that an image was not decoded (RemoteImagesImpl, NativeImageDecodeImpl, the image loaders)
+NOT_DECODED = re.compile(r"Not decoded|JPEG XL not decoded|UnsupportedEncodedImage")
 HIGHLIGHT_TAGS = ("BackgroundWorker", "BackgroundEngineLock", "AppHealth", "RemoteImages", "NativeImageDecode")
-HIGHLIGHT_TEXT = ("OKHTTP_LAB", "LAB_SCENARIO", "LAB_HOST", "Native decode of", "Original of", "Thumbnail of",
+HIGHLIGHT_TEXT = ("OKHTTP_LAB", "LAB_SCENARIO", "LAB_HOST", "Native decode of", "Original of", "Thumbnail of", "JXL ",
                   "Upload:", "Background run ended", "Cancelled run", "Web socket:", "Paths the fake server",
                   "Redirect report", "Saved lab_")
 
@@ -59,9 +63,10 @@ def is_app(process, app):
     return process == app or process.startswith(app + ":")
 
 
-def scan(lines, app):
+def scan(lines, app, not_decoded=()):
     """The pids of the app, the problem lines (number, kind, line, scenario), the CheckJNI lines, the highlights and
-    the scenarios in the order they started, each with its state"""
+    the scenarios in the order they started, each with its state. In a scenario whose name starts with one of
+    [not_decoded], a line of the app that says an image was not decoded is a problem too."""
     pids = set()
     problems = []
     checkjni = []
@@ -109,6 +114,9 @@ def scan(lines, app):
             continue
         if any(pattern in message for pattern in CRASHES) or level == "F":
             problem("crash")
+        elif current and current.startswith(tuple(not_decoded)) and NOT_DECODED.search(message) \
+                and "LAB_SCENARIO" not in message:
+            problem("not decoded")
         if "Xcheck:jni" in message:
             checkjni.append(line)
         if tag in HIGHLIGHT_TAGS or any(text in message for text in HIGHLIGHT_TEXT):
@@ -134,13 +142,16 @@ def main():
     parser.add_argument("--app", required=True)
     parser.add_argument("--results")
     parser.add_argument("--required", action="append", default=[])
-    parser.add_argument("--scenarios", default="", help="the scenarios that must pass, separated by commas")
+    parser.add_argument("--scenarios", action="append", default=[],
+                        help="the scenarios that must pass, separated by commas; may be given more than once")
+    parser.add_argument("--not-decoded", action="append", default=[],
+                        help="a prefix of the scenarios that also fail on a line saying an image was not decoded")
     parser.add_argument("--out")
     args = parser.parse_args()
 
     with open(args.logcat, encoding="utf-8", errors="replace") as handle:
         lines = handle.readlines()
-    pids, problems, checkjni, highlights, scenarios = scan(lines, args.app)
+    pids, problems, checkjni, highlights, scenarios = scan(lines, args.app, args.not_decoded)
     results = read_results(args.results)
 
     failed = []
@@ -157,19 +168,24 @@ def main():
     for name in args.required:
         if name not in results:
             failed.append(f"the test {name} did not run")
-    for name in [n for n in args.scenarios.split(",") if n]:
+    for name in [n for group in args.scenarios for n in group.split(",") if n]:
         scenario = scenarios.get(name)
         if scenario is None:
             report.append(f"Scenario {name}: never started")
             failed.append(f"the scenario {name} never started")
             continue
-        report.append(f"Scenario {name}: {scenario['state']}, {scenario['problems']} crash, ANR or death lines")
+        report.append(f"Scenario {name}: {scenario['state']}, {scenario['problems']} crash, ANR, death or not decoded "
+                      "lines")
         if scenario["state"] != "passed" or scenario["problems"]:
-            failed.append(f"the scenario {name} {'failed' if scenario['state'] != 'passed' else 'had a crash'}")
+            failed.append(f"the scenario {name} "
+                          f"{'failed' if scenario['state'] != 'passed' else 'had a crash or an image not decoded'}")
     report.extend(line.split(": ", 1)[-1] for line in highlights if "OKHTTP_LAB" in line)
-    report.append(f"Crash, ANR and death lines of the app: {len(problems)}")
-    if problems:
+    report.append(f"Crash, ANR, death and not decoded lines of the app: {len(problems)}")
+    if any(kind != "not decoded" for _, kind, _, _ in problems):
         failed.append("the app crashed, stopped answering or died")
+    if any(kind == "not decoded" for _, kind, _, _ in problems):
+        failed.append("an image of a JPEG XL scenario was not decoded")
+    if problems:
         context = []
         for number, kind, _, scenario in problems[:20]:
             context.append(f"--- logcat line {number}: {kind}, scenario {scenario or 'none'}")
