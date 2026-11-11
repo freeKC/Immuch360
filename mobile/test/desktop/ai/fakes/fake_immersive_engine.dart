@@ -130,6 +130,7 @@ class FakeImmersiveEngine implements ImmersiveEngine {
     parallax: job.parallax,
     convergence: job.convergence,
     qualityFlags: qualityFlags,
+    pipeline: job.relief.pipeline,
   );
 
   @override

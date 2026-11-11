@@ -335,6 +335,7 @@ void main() {
   group('the engine of the app', () {
     late _Components components;
     late List<AiGateResult> made;
+    late List<File?> migans;
     late List<_CountingEngine> counted;
 
     DesktopAiEngine engineOf() => DesktopAiEngine(
@@ -343,8 +344,9 @@ void main() {
         facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 << 30),
         loadRuntime: (path) async => (version: '1.31.0', error: null),
       ),
-      create: (gate) {
+      create: (gate, migan) {
         made.add(gate);
+        migans.add(migan);
         final engine = _CountingEngine();
         counted.add(engine);
         return engine;
@@ -363,7 +365,26 @@ void main() {
     setUp(() {
       components = _Components(root.path);
       made = [];
+      migans = [];
       counted = [];
+    });
+
+    test('MI-GAN goes with the model when it is installed, never asked for when it is not (relief-v2)', () async {
+      final engine = engineOf();
+      final flag = NativeCancelFlag();
+      addTearDown(flag.free);
+      components.install(onnxRuntimeLinuxComponent);
+      components.install(depthModelOnnxComponent);
+
+      expect((await engine.run(job(), cancel: flag)).isDone, isTrue);
+      expect(migans, [null], reason: 'a 3D photo without MI-GAN: relief-v2 keeps the fill of relief-v1');
+
+      components.install(miganInpaintComponent);
+      expect((await engine.run(job(), cancel: flag)).isDone, isTrue);
+      expect(made, hasLength(2), reason: 'made again once MI-GAN is there');
+      expect(migans.last!.path, components.fileOf(miganInpaintComponent).path);
+      expect((await engine.run(job(), cancel: flag)).isDone, isTrue);
+      expect(made, hasLength(2), reason: 'kept while the same files serve');
     });
 
     test('without its components, a job ends as components missing, and no model is made', () async {

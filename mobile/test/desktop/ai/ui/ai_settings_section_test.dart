@@ -32,6 +32,7 @@ import 'package:immich_mobile/desktop/ai/ui/ai_settings_section.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -332,6 +333,21 @@ void main() {
     expect(tester.widget<SwitchListTile>(find.byKey(const Key('ai_settings_skip_existing'))).value, isFalse);
   });
 
+  testWidgets('the relief quality of the 3D photos: relief-v2 by default, relief-v1 offered', (tester) async {
+    await pump(tester);
+    expect(
+      tester.widget<RadioGroup<ReliefVersion>>(find.byType(RadioGroup<ReliefVersion>)).groupValue,
+      defaultReliefVersion,
+    );
+    expect(find.text('v1, fast'), findsOneWidget);
+    expect(find.text('v2, better edges (experimental)'), findsOneWidget);
+
+    await tapIn(tester, find.byKey(const Key('ai_settings_relief_v1')));
+    expect((await keptSettings(tester)).reliefVersion, ReliefVersion.v1);
+    await tapIn(tester, find.byKey(const Key('ai_settings_relief_v2')));
+    expect((await keptSettings(tester)).reliefVersion, ReliefVersion.v2);
+  });
+
   testWidgets('the network folders allowed are listed, and each can be taken back', (tester) async {
     await tester.runAsync(
       () =>
@@ -469,7 +485,7 @@ void main() {
         facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 << 30),
         loadRuntime: (path) async => (version: '1.31.0', error: null),
       ),
-      create: (_) => held,
+      create: (_, _) => held,
     );
     late WidgetRef widgetRef;
     await tester.pumpConsumerWidget(
@@ -542,7 +558,7 @@ void main() {
       facts: () => const AiHardwareFacts(abi: Abi.linuxX64, processors: 8, physicalMemory: 16 << 30),
       loadRuntime: (path) async => (version: '1.31.0', error: null),
     );
-    final photos = DesktopAiEngine(gate: gate, create: (_) => photoModel);
+    final photos = DesktopAiEngine(gate: gate, create: (_, _) => photoModel);
     final scenes = DesktopSceneEngine(gate: gate, create: (_) => sceneModel);
     final panoramas = DesktopStereoPanoramaEngine(gate: gate, create: (_) => stereoModel ?? FakeStereoPanoramaEngine());
     return (

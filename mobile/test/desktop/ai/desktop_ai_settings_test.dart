@@ -154,6 +154,15 @@ void main() {
     });
   });
 
+  test('the relief quality of the 3D photos: its default, kept, and a name this build does not know', () async {
+    expect((await store.read()).reliefVersion, defaultReliefVersion);
+    await store.write(const DesktopAiSettings(reliefVersion: ReliefVersion.v1));
+    expect((await store.read()).reliefVersion, ReliefVersion.v1);
+    expect(jsonDecode(file().readAsStringSync())['reliefVersion'], 'v1');
+    file().writeAsStringSync(jsonEncode({'reliefVersion': 'v9'}));
+    expect((await store.read()).reliefVersion, defaultReliefVersion);
+  });
+
   test('changes made at once are all kept', () async {
     await Future.wait([
       store.update((settings) => settings.copyWith(networkRootsAllowed: [...settings.networkRootsAllowed, 'one'])),

@@ -23,9 +23,16 @@ class ReliefCancelledException implements Exception {
   String toString() => 'ReliefCancelledException';
 }
 
+/// d at each pixel of an eye, row after row: what the right eye is drawn from
+abstract interface class EyeDepthRows {
+  /// Writes d of the row [y] of the eye into [out], which holds a value per pixel of the row
+  void sampleRow(int y, Float64List out);
+}
+
 /// d at each pixel of an eye of [eyeWidth] x [eyeHeight], read bilinearly at the centre of the pixel from [map]:
 /// u = (x + 0.5) * w / L - 0.5, the edges repeated, and a + (b - a) * f so that equal neighbours give their value
-class EyeDepthSampler {
+/// (relief-v1)
+class EyeDepthSampler implements EyeDepthRows {
   EyeDepthSampler(this.map, this.eyeWidth, this.eyeHeight)
     : _left = Int32List(eyeWidth),
       _right = Int32List(eyeWidth),
@@ -51,6 +58,7 @@ class EyeDepthSampler {
   final Float64List _fx;
 
   /// Writes d of the row [y] of the eye into [out], which holds [eyeWidth] values
+  @override
   void sampleRow(int y, Float64List out) {
     final h = map.height;
     final w = map.width;
@@ -89,7 +97,9 @@ class RightEye {
 /// apart) into [target] (rows from [targetOffset], [targetStride] bytes apart, alpha 255), from [map], d between 0
 /// and 1 (see reliefMapOf), with the parallax B and the convergence c of relief-v1: the pixel x moves to
 /// x + B * L * (c - d). [holes], when given, receives 1 for each filled pixel and 0 for the others, row after row.
-/// [isCancelled] is read before every 64th row and throws [ReliefCancelledException] when true; [onRows] hears the
+/// [rows], when given, gives d at each pixel instead of the bilinear reading of [map] (relief-v2). [eyeDepth], when
+/// given, receives the depth of each pixel of the right eye out of 255 (round(255 * d)), a filled pixel taking that of
+/// the background it was filled from. [isCancelled] is read before every 64th row and throws [ReliefCancelledException] when true; [onRows] hears the
 /// rows done every 64 rows and at the end. [left] is only read.
 RightEye writeRightEye({
   required Uint8List left,
@@ -104,6 +114,8 @@ RightEye writeRightEye({
   int targetOffset = 0,
   int? targetStride,
   Uint8List? holes,
+  EyeDepthRows? rows,
+  Uint8List? eyeDepth,
   bool Function()? isCancelled,
   void Function(int rows)? onRows,
 }) {
@@ -114,6 +126,9 @@ RightEye writeRightEye({
   if (holes != null && holes.length != width * height) {
     throw ArgumentError('The mask of an eye of $width x $height has ${width * height} cells, not ${holes.length}');
   }
+  if (eyeDepth != null && eyeDepth.length != width * height) {
+    throw ArgumentError('The depths of an eye of $width x $height are ${width * height}, not ${eyeDepth.length}');
+  }
   if (!parallax.isFinite || parallax < 0 || parallax > 1) {
     throw ArgumentError.value(parallax, 'parallax', 'A fraction of the width of the eye, 0 to 1');
   }
@@ -121,7 +136,7 @@ RightEye writeRightEye({
     throw ArgumentError.value(convergence, 'convergence', 'A depth, 0 to 1');
   }
 
-  final sampler = EyeDepthSampler(map, width, height);
+  final sampler = rows ?? EyeDepthSampler(map, width, height);
   final d = Float64List(width);
   final t = Float64List(width);
   final depth = Float64List(width);
@@ -202,6 +217,10 @@ RightEye writeRightEye({
       } else {
         from = before >= 0 ? before : after;
       }
+      if (eyeDepth != null) {
+        final background = from >= 0 ? _depthByte(depth[from]) : 0;
+        eyeDepth.fillRange(y * width + start, y * width + end + 1, background);
+      }
       for (var column = start; column <= end; column++) {
         colour[column * 3] = from >= 0 ? colour[from * 3] : 0.0;
         colour[column * 3 + 1] = from >= 0 ? colour[from * 3 + 1] : 0.0;
@@ -219,6 +238,9 @@ RightEye writeRightEye({
         target[at + 2] = _toByte(colour[x * 3 + 2]);
         if (holes != null) {
           holes[y * width + x] = 0;
+        }
+        if (eyeDepth != null) {
+          eyeDepth[y * width + x] = _depthByte(depth[x]);
         }
       } else {
         final previous = x > 0 ? x - 1 : 0;
@@ -310,6 +332,8 @@ ReliefEyeResult reliefV1RightEye({
     p98: map.p98,
   );
 }
+
+int _depthByte(double d) => math.min(255, math.max(0, (255 * d + 0.5).floor()));
 
 int _toByte(double value) => math.min(255, math.max(0, (value + 0.5).floor()));
 

@@ -235,6 +235,47 @@ void main() {
       expect(_copy(model: depthModelTfliteSha256).settingsKey, isNot(key));
     });
 
+    test('relief-v2: its pipeline and the model that filled the holes are written and read back, not compared', () {
+      final made = StereoPhotoXmp.estimated(
+        eyeWidth: 4000,
+        eyeHeight: 3000,
+        depthModelSha256: depthModelOnnxSha256,
+        sourceName: 'salon.jpg',
+        sourceSize: 4182311,
+        sourceSha1: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=',
+        sourceQuarterTurns: 0,
+        created: '2026-11-12T01:00:00+01:00',
+        creatorTool: 'Immuch360 Desktop 3.4.1 (windows)',
+        derivativeId: 'urn:uuid:6f1c2e0a-0000-4000-8000-000000000046',
+        pipeline: ReliefV2.pipeline,
+        inpaintModel: 'migan-512-places2-onnx',
+        inpaintModelSha256: '6f1f3530a1a2324b19752018ce756088b07973cda8d7d890034ace5c8a48c40b',
+      );
+      final xml = made.toXml();
+      expect(xml, contains('Immuch360:Pipeline="relief-v2"'));
+      expect(xml, contains('Immuch360:InpaintModel="migan-512-places2-onnx"'));
+      final read = StereoPhotoXmp.parse(xml)!;
+      expect(read, made);
+      expect(read.settingsKey, '$depthModelOnnxSha256|relief-v2|0.02|0.5|0');
+      final without = StereoPhotoXmp.parse(
+        StereoPhotoXmp.estimated(
+          eyeWidth: 4000,
+          eyeHeight: 3000,
+          depthModelSha256: depthModelOnnxSha256,
+          sourceName: 'salon.jpg',
+          sourceSize: 4182311,
+          sourceSha1: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=',
+          sourceQuarterTurns: 0,
+          created: '2026-11-12T01:00:00+01:00',
+          creatorTool: 'Immuch360 Desktop 3.4.1 (windows)',
+          pipeline: ReliefV2.pipeline,
+        ).toXml(),
+      )!;
+      expect((without.inpaintModel, without.inpaintModelSha256), (null, null));
+      expect(without.settingsKey, read.settingsKey, reason: 'MI-GAN installed or not is not a setting of the user');
+      expect(_sample.inpaintModel, isNull, reason: 'a packet of relief-v1 has none');
+    });
+
     test('found in the head of a JPEG, in its APP1 segment', () {
       final head = Uint8List.fromList([
         0xff, 0xd8, //

@@ -60,6 +60,7 @@ import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/panorama/panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/panorama/stereo_panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
+import 'package:immich_mobile/desktop/ai/scene/migan_inpaint.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
@@ -248,13 +249,15 @@ abstract interface class KeptAiEngine {
 }
 
 /// The engine of the 3D photos, made from the components installed when a job runs: DartImmersiveEngine on ONNX
-/// Runtime and Depth Anything V2 Small, kept from one job to the next while the same files serve
+/// Runtime and Depth Anything V2 Small, kept from one job to the next while the same files serve. MI-GAN, when the
+/// component is installed (it comes with the 360° panoramas), fills the holes of relief-v2; it is never asked for: a
+/// computer without it makes relief-v2 with the fill of relief-v1.
 class DesktopAiEngine implements ImmersiveEngine, KeptAiEngine {
-  DesktopAiEngine({required this.gate, ImmersiveEngine Function(AiGateResult gate)? create})
+  DesktopAiEngine({required this.gate, ImmersiveEngine Function(AiGateResult gate, File? migan)? create})
     : _create = create ?? onnxEngineFor;
 
   final HardwareGate gate;
-  final ImmersiveEngine Function(AiGateResult gate) _create;
+  final ImmersiveEngine Function(AiGateResult gate, File? migan) _create;
 
   ImmersiveEngine? _engine;
   String? _files;
@@ -263,8 +266,8 @@ class DesktopAiEngine implements ImmersiveEngine, KeptAiEngine {
   @override
   bool get isRunning => _running;
 
-  /// DartImmersiveEngine on the files [gate] found, their sizes those of the catalogue
-  static ImmersiveEngine onnxEngineFor(AiGateResult gate) {
+  /// DartImmersiveEngine on the files [gate] found, their sizes those of the catalogue, with [migan] when installed
+  static ImmersiveEngine onnxEngineFor(AiGateResult gate, File? migan) {
     final components = aiComponentsFor(gate.platform!);
     final runtime = components.firstWhere((component) => component.kind == AiComponentKind.runtime);
     final model = components.firstWhere((component) => component.kind == AiComponentKind.model);
@@ -274,7 +277,31 @@ class DesktopAiEngine implements ImmersiveEngine, KeptAiEngine {
       librarySize: runtime.size,
       modelSize: model.size,
       modelSha256: model.sha256 ?? depthModelOnnxSha256,
+      inpaint: migan == null
+          ? null
+          : OrtReliefMiganSpec(
+              libraryPath: gate.runtimeFile!.path,
+              modelPath: migan.path,
+              modelName: miganInpaintComponent.id,
+              modelSha256: miganInpaintComponent.sha256!,
+            ),
+      inpaintSize: miganInpaintComponent.size,
     );
+  }
+
+  /// MI-GAN for the holes of relief-v2 when it is installed and intact, null otherwise. Looked for at every job, of
+  /// either version, so that a job of relief-v1 between two of relief-v2 keeps the same engine. Never downloads it.
+  Future<File?> _miganOf(AiGateResult found) async {
+    final platform = found.platform;
+    if (platform == null || !miganInpaintComponent.platforms.contains(platform)) {
+      return null;
+    }
+    try {
+      return await gate.components.verifiedFile(miganInpaintComponent);
+    } catch (error) {
+      _log.warning('MI-GAN could not be looked for: $error');
+      return null;
+    }
   }
 
   @override
@@ -292,11 +319,12 @@ class DesktopAiEngine implements ImmersiveEngine, KeptAiEngine {
           _ => ImmersiveErrorCode.modelFailed,
         }, message: found.message ?? found.reason?.name);
       }
-      final files = '${found.runtimeFile!.path}|${found.modelFile!.path}';
+      final migan = await _miganOf(found);
+      final files = '${found.runtimeFile!.path}|${found.modelFile!.path}|${migan?.path}';
       var engine = _engine;
       if (engine == null || files != _files) {
         await engine?.dispose();
-        engine = _engine = _create(found);
+        engine = _engine = _create(found, migan);
         _files = files;
       }
       return await engine.run(job, cancel: cancel, onProgress: onProgress);

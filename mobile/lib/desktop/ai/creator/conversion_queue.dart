@@ -258,9 +258,27 @@ class ConversionTools {
 
   late final _sbs = ConversionEngine(
     engine: engine,
-    settingsKey: (source, quarterTurns) =>
-        versionSettingsKey(depthModelSha256: depthModelSha256, quarterTurns: quarterTurns),
+    settingsKey: (source, quarterTurns) async => versionSettingsKey(
+      depthModelSha256: depthModelSha256,
+      quarterTurns: quarterTurns,
+      relief: await reliefVersion(),
+    ),
   );
+
+  /// "Relief quality" of the 3D photos now (desktop_ai.json); relief-v1 without a store of settings (the tests, the
+  /// builds that keep none) and when it cannot be read
+  Future<ReliefVersion> reliefVersion() async {
+    final store = settings;
+    if (store == null) {
+      return ReliefVersion.v1;
+    }
+    try {
+      return (await store.read()).reliefVersion;
+    } catch (error) {
+      _log.warning('The relief quality could not be read: $error');
+      return ReliefVersion.v1;
+    }
+  }
 
   /// The engine of the jobs of [kind], null when this build has none
   ConversionEngine? engineFor(ConversionKind kind) =>
@@ -794,6 +812,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     var failure = ImmersiveErrorCode.sourceLost;
     try {
       final timings = AiTimings(await _measuredTimings(tools), tools.processors);
+      // The relief of a 3D photo, as the key of its versions reads it too
+      final relief = job.kind == ConversionKind.sbsFromPhoto ? await tools.reliefVersion() : ReliefVersion.v1;
       final target = job.target!;
       final input = job.inputPath;
       final ImmersiveSource source;
@@ -890,6 +910,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         companion: companion,
         headsetCopy: headsetCopy,
         timings: timings,
+        relief: relief,
       );
       if (spec == null) {
         _end(id, ImmersiveErrorCode.componentsMissing, 'No generator for ${job.kind.name} in this build');
@@ -1159,6 +1180,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     required AiTimings timings,
     String? companion,
     String? headsetCopy,
+    ReliefVersion relief = ReliefVersion.v1,
   }) {
     final derivativeId = tools.newDerivativeId();
     final created = StereoPhotoXmp.xmpDateTime(tools.now());
@@ -1173,6 +1195,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           derivativeId: derivativeId,
           creatorTool: tools.creatorTool,
           created: created,
+          relief: relief,
           exif: exif,
         );
       case ConversionKind.sceneFromPhoto:

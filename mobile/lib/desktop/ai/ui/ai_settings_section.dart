@@ -46,6 +46,7 @@ import 'package:immich_mobile/desktop/files/download_folder.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
@@ -238,6 +239,7 @@ class DesktopAiSettingsSection extends ConsumerWidget {
           ListTile(title: Text(t.ai_immersive_unavailable_system, style: secondary)),
         if (enabled && settings != null) ...[
           _SaveTo(settings: settings),
+          _ReliefQuality(settings: settings),
           _WhenExists(settings: settings),
           SwitchListTile(
             key: const Key('ai_settings_skip_existing'),
@@ -323,6 +325,48 @@ class _SaveTo extends ConsumerWidget {
                   child: Text(t.change),
                 ),
               ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// "Relief quality of 3D photos": relief-v1 or relief-v2 (lot I3 of release 46). A change makes the next 3D photos
+/// with it; "Make a new version" then sits beside the earlier one, the pipeline being part of the key of the versions.
+class _ReliefQuality extends ConsumerWidget {
+  const _ReliefQuality({required this.settings});
+
+  final DesktopAiSettings settings;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
+    return Column(
+      key: const Key('ai_settings_relief_quality'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListTile(title: Text(t.ai_immersive_relief_quality)),
+        RadioGroup<ReliefVersion>(
+          groupValue: settings.reliefVersion,
+          onChanged: (value) {
+            if (value != null) {
+              unawaited(_update(ref, (kept) => kept.copyWith(reliefVersion: value)));
+            }
+          },
+          child: Column(
+            children: [
+              for (final (choice, label, subtitle) in [
+                (ReliefVersion.v1, t.ai_immersive_relief_v1, t.ai_immersive_relief_v1_subtitle),
+                (ReliefVersion.v2, t.ai_immersive_relief_v2, t.ai_immersive_relief_v2_subtitle),
+              ])
+                RadioListTile<ReliefVersion>(
+                  key: Key('ai_settings_relief_${choice.name}'),
+                  value: choice,
+                  title: Text(label),
+                  subtitle: Text(subtitle),
+                ),
             ],
           ),
         ),

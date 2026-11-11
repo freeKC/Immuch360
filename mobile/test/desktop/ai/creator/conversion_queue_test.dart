@@ -741,6 +741,44 @@ void main() {
       expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
     });
 
+    test('relief-v2 in the settings: the job makes relief-v2, and a version of relief-v1 does not skip it', () async {
+      final settings = Directory(p.join(root.path, 'settings'))..createSync();
+      final store = DesktopAiSettingsStore(settingsDirectory: () async => settings);
+      await store.write(const DesktopAiSettings(reliefVersion: ReliefVersion.v2));
+      container.dispose();
+      container = ProviderContainer(
+        overrides: [
+          conversionToolsProvider.overrideWithValue(
+            ConversionTools(
+              engine: engines,
+              output: output,
+              finder: ExistingVersionFinder(index: index, listFolder: (folder) => listFolder(folder)),
+              creatorTool: 'Immuch360 Desktop 3.4.1 (linux)',
+              settings: store,
+              now: () => DateTime(2026, 11, 12, 1),
+              newDerivativeId: () => 'urn:uuid:00000000-0000-4000-8000-${(++derivatives).toString().padLeft(12, '0')}',
+            ),
+          ),
+        ],
+      );
+      final request = photo('salon.jpg');
+      version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg');
+
+      final id = queue().add([request]).single;
+      await allEnded();
+
+      expect(job(id).state, ConversionState.done);
+      expect(engines.fallback.jobs.single.relief, ReliefVersion.v2);
+      final written = StereoPhotoXmp.findIn(File(job(id).writtenPath!).readAsBytesSync())!;
+      expect(written.pipeline, 'relief-v2');
+
+      // A second batch skips the photo now: its relief-v2 version has the same settings
+      final again = queue().add([photo('salon.jpg')]).single;
+      await allEnded();
+      expect(job(again).state, ConversionState.skipped);
+      expect(job(again).existingVersionPath, job(id).writtenPath);
+    });
+
     test('Make a new version keeps the old one and gives the new one its own DerivativeId', () async {
       final request = photo('salon.jpg');
       final existing = version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg');
