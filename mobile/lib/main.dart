@@ -25,6 +25,7 @@ import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/pages/common/splash_screen.page.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/remote_play_dock.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
@@ -387,7 +388,8 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
             // turned on and off in place, so that the open page takes the other layout without a new start of the app
             child: ImmichThemeProvider(
               colorScheme: context.colorScheme,
-              child: TvShell(enabled: tvMode, child: app),
+              // A film that plays on a screen from this phone: its mini controller at the bottom of every page
+              child: TvShell(enabled: tvMode, child: RemotePlayDock(child: app)),
             ),
           );
         },

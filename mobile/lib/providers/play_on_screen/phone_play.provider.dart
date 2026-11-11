@@ -186,6 +186,13 @@ class RemotePlayback {
       state.phase == ScreenPlayPhase.ended ||
       state.phase == ScreenPlayPhase.failed;
 
+  /// Whether this is the file at [path] of the source [sourceId] (its page shows the whole controller)
+  bool isOf(String sourceId, String path) => request.sourceId == sourceId && request.path == path;
+
+  /// Whether the screen still plays the file at [path] of [sourceId]: its page opened again leaves the phone's player
+  /// waiting
+  bool playsOnScreen(String sourceId, String path) => isOf(sourceId, path) && !ended && !lost;
+
   RemotePlayback withState(ScreenPlayState state, {bool lost = false}) =>
       RemotePlayback(screen: screen, request: request, state: state, lost: lost);
 }

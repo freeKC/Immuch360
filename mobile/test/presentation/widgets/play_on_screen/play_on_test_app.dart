@@ -16,7 +16,13 @@ void playOnPhoneScreen(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-Future<void> pumpPlayOn(WidgetTester tester, Widget home, {List<Override> overrides = const []}) async {
+/// [builder]: around the navigator, as the builder of the app (the dock of the mini controller)
+Future<void> pumpPlayOn(
+  WidgetTester tester,
+  Widget home, {
+  List<Override> overrides = const [],
+  TransitionBuilder? builder,
+}) async {
   await tester.pumpWidget(
     EasyLocalization(
       supportedLocales: locales.values.toList(),
@@ -34,6 +40,7 @@ Future<void> pumpPlayOn(WidgetTester tester, Widget home, {List<Override> overri
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
+            builder: builder,
             home: home,
           ),
         ),

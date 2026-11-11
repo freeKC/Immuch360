@@ -22,6 +22,27 @@ String playPositionText(int milliseconds) {
   return hours > 0 ? '$hours:$minutes:$seconds' : '$minutes:$seconds';
 }
 
+/// What the screen does, in one line: "Playing on Living room TV"
+String remotePlayPhaseLine(Translations t, RemotePlayback playback) {
+  final screen = playback.screen.name;
+  if (playback.lost) {
+    return t.play_bar_lost(device: screen);
+  }
+  final state = playback.state;
+  return switch (state.phase) {
+    ScreenPlayPhase.asking => t.play_bar_asking(device: screen),
+    ScreenPlayPhase.opening || ScreenPlayPhase.buffering => t.play_bar_opening(device: screen),
+    ScreenPlayPhase.playing || ScreenPlayPhase.paused => t.play_bar_playing_on(device: screen),
+    ScreenPlayPhase.ended => t.play_bar_ended(device: screen),
+    ScreenPlayPhase.idle => t.play_bar_stopped(device: screen),
+    ScreenPlayPhase.failed => t.play_bar_failed(device: screen),
+  };
+}
+
+/// How many of these bars are on a page: the dock at the bottom of the app keeps out of their way
+/// (remote_play_dock.widget.dart)
+final remotePlayBarsShownProvider = StateProvider<int>((_) => 0);
+
 class RemotePlayBar extends ConsumerStatefulWidget {
   const RemotePlayBar({super.key, required this.playback, this.onContinueHere});
 
@@ -40,20 +61,29 @@ class _RemotePlayBarState extends ConsumerState<RemotePlayBar> {
 
   RemotePlaybackController get _controller => ref.read(remotePlaybackProvider.notifier);
 
-  String _phaseLine(Translations t, RemotePlayback playback) {
-    final screen = playback.screen.name;
-    if (playback.lost) {
-      return t.play_bar_lost(device: screen);
-    }
-    final state = playback.state;
-    return switch (state.phase) {
-      ScreenPlayPhase.asking => t.play_bar_asking(device: screen),
-      ScreenPlayPhase.opening || ScreenPlayPhase.buffering => t.play_bar_opening(device: screen),
-      ScreenPlayPhase.playing || ScreenPlayPhase.paused => t.play_bar_playing_on(device: screen),
-      ScreenPlayPhase.ended => t.play_bar_ended(device: screen),
-      ScreenPlayPhase.idle => t.play_bar_stopped(device: screen),
-      ScreenPlayPhase.failed => t.play_bar_failed(device: screen),
-    };
+  late final StateController<int> _shown;
+
+  @override
+  void initState() {
+    super.initState();
+    // Counted after the frame, and let go after the frame: the dock is an ancestor of the page
+    final shown = _shown = ref.read(remotePlayBarsShownProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (shown.mounted) {
+        shown.state++;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    final shown = _shown;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (shown.mounted) {
+        shown.state--;
+      }
+    });
+    super.dispose();
   }
 
   Future<void> _chooseTrack(PlayTrackKind kind) async {
@@ -123,7 +153,7 @@ class _RemotePlayBarState extends ConsumerState<RemotePlayBar> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _phaseLine(t, playback),
+                          remotePlayPhaseLine(t, playback),
                           key: const Key('remote_play_bar_phase'),
                           style: theme.labelMedium?.copyWith(color: scheme.primary),
                           maxLines: 1,

@@ -728,6 +728,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (lifecycleState == AppLifecycleState.paused || lifecycleState == AppLifecycleState.hidden) {
       return;
     }
+    // Opened again while the film plays on a screen from this phone: the mini controller is in charge, the phone's
+    // player waits for Continue on this phone
+    final remote = ref.read(remotePlaybackProvider);
+    if (remote != null && remote.playsOnScreen(widget.sourceId, widget.path)) {
+      return;
+    }
     if (ref.read(appConfigProvider).viewer.autoPlayVideo) {
       await _notifier.play();
     }
@@ -1115,10 +1121,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // The film plays on a screen from this page: the mini controller in place of the controls
     final remote = ref.watch(
       remotePlaybackProvider.select(
-        (playback) =>
-            playback != null && playback.request.sourceId == widget.sourceId && playback.request.path == widget.path
-            ? playback
-            : null,
+        (playback) => playback != null && playback.isOf(widget.sourceId, widget.path) ? playback : null,
       ),
     );
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
