@@ -10,11 +10,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/domain/models/film_download.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/presentation/pages/network/downloaded_films.page.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 
 import '../../../providers/network/film_download_fakes.dart';
+
+/// These shares, whatever the Store says
+class _Sources extends NetworkSourcesNotifier {
+  _Sources(this.sources);
+
+  final List<NetworkSource> sources;
+
+  @override
+  List<NetworkSource> build() => sources;
+}
 
 void main() {
   late Directory root;
@@ -51,9 +64,18 @@ void main() {
   );
 
   /// Writes [films] as the kept list, with their files, and reads it into a container
-  Future<ProviderContainer> seed(WidgetTester tester, List<FilmDownload> films) async {
+  Future<ProviderContainer> seed(
+    WidgetTester tester,
+    List<FilmDownload> films, {
+    List<NetworkSource> sources = const [],
+    bool offered = true,
+  }) async {
     final container = ProviderContainer(
-      overrides: [filmDownloadEnvironmentProvider.overrideWithValue(fake.environment)],
+      overrides: [
+        filmDownloadEnvironmentProvider.overrideWithValue(fake.environment),
+        networkSourcesProvider.overrideWith(() => _Sources(sources)),
+        filmDownloadOfferedProvider.overrideWithValue(offered),
+      ],
     );
     addTearDown(container.dispose);
     await tester.runAsync(() async {
@@ -79,7 +101,11 @@ void main() {
     return container;
   }
 
-  Future<void> pumpPage(WidgetTester tester, ProviderContainer container) async {
+  Future<void> pumpPage(
+    WidgetTester tester,
+    ProviderContainer container, {
+    Widget home = const DownloadedFilmsPage(),
+  }) async {
     await tester.pumpWidget(
       EasyLocalization(
         supportedLocales: locales.values.toList(),
@@ -97,7 +123,7 @@ void main() {
               localizationsDelegates: context.localizationDelegates,
               supportedLocales: context.supportedLocales,
               locale: context.locale,
-              home: const DownloadedFilmsPage(),
+              home: home,
             ),
           ),
         ),
@@ -169,5 +195,82 @@ void main() {
     await tester.tap(find.byKey(const Key('downloaded_films_delete_all_confirm')));
     await tester.pumpAndSettle();
     expect(container.read(filmDownloadsProvider).films, isEmpty);
+  });
+
+  group('the Downloaded films tile of the shares page and of Free up space', () {
+    const tile = Scaffold(body: DownloadedFilmsTile());
+
+    testWidgets('shows the count and the room once a Plex server is there', (tester) async {
+      final container = await seed(
+        tester,
+        [film('a1', 'Heat', FilmDownloadState.done, received: 2 * 1024 * 1024)],
+        sources: const [filmTestSource],
+      );
+      await pumpPage(tester, container, home: tile);
+      expect(find.byKey(const Key('downloaded_films_tile')), findsOneWidget);
+      expect(find.text('Downloaded films'), findsOneWidget);
+      expect(find.text('1 film · 2.0 MiB on this device'), findsOneWidget);
+    });
+
+    testWidgets('shows a copy kept after its server was removed', (tester) async {
+      final container = await seed(tester, [film('a1', 'Heat', FilmDownloadState.done, received: 2 * 1024 * 1024)]);
+      await pumpPage(tester, container, home: tile);
+      expect(find.byKey(const Key('downloaded_films_tile')), findsOneWidget);
+    });
+
+    testWidgets('is not there without a Plex server nor a copy, nor on a TV', (tester) async {
+      final none = await seed(tester, const []);
+      await pumpPage(tester, none, home: tile);
+      expect(find.byKey(const Key('downloaded_films_tile')), findsNothing);
+
+      final onTv = await seed(tester, const [], sources: const [filmTestSource], offered: false);
+      await pumpPage(tester, onTv, home: tile);
+      expect(find.byKey(const Key('downloaded_films_tile')), findsNothing);
+    });
+  });
+
+  group('the Download action of the film page', () {
+    final heat = filmTestEntry('/Movies/Heat.mkv', 2 * 1024 * 1024);
+
+    Widget row(NetworkEntry? entry) => Scaffold(
+      body: Consumer(
+        builder: (context, ref, _) => Row(
+          children: [
+            const Text('Play'),
+            if (filmDownloadPageAction(ref, entry, title: 'Heat') case final Widget action) action,
+          ],
+        ),
+      ),
+    );
+
+    testWidgets('offers Download for a film of a Plex server, then shows it downloaded', (tester) async {
+      final none = await seed(tester, const [], sources: const [filmTestSource]);
+      await pumpPage(tester, none, home: row(heat));
+      expect(find.byKey(const Key('film_download_button')), findsOneWidget);
+      expect(find.text('Download'), findsOneWidget);
+
+      final done = await seed(
+        tester,
+        [film('a1', 'Heat', FilmDownloadState.done, received: 2 * 1024 * 1024)],
+        sources: const [filmTestSource],
+      );
+      await pumpPage(tester, done, home: row(heat));
+      expect(find.text('Downloaded'), findsOneWidget);
+    });
+
+    testWidgets('leaves no place while the file is unknown, on a TV, or for a share that is not Plex', (tester) async {
+      final plex = await seed(tester, const [], sources: const [filmTestSource]);
+      await pumpPage(tester, plex, home: row(null));
+      expect(find.byType(FilmDownloadButton), findsNothing);
+
+      final onTv = await seed(tester, const [], sources: const [filmTestSource], offered: false);
+      await pumpPage(tester, onTv, home: row(heat));
+      expect(find.byType(FilmDownloadButton), findsNothing);
+
+      const smb = NetworkSource(id: 'plex-1', type: NetworkSourceType.smb, name: 'NAS', host: '192.0.2.21');
+      final share = await seed(tester, const [], sources: const [smb]);
+      await pumpPage(tester, share, home: row(heat));
+      expect(find.byType(FilmDownloadButton), findsNothing);
+    });
   });
 }

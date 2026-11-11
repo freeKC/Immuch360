@@ -314,7 +314,7 @@ You want a film of your Plex server on the phone, the tablet or the headset for 
 2. A sheet tells the size of the original file, the free room on the device and where the copy goes. A film that does not fit, with 512 MB kept free, cannot start. On mobile data, with "Download only on Wi-Fi" on, "Download over mobile data this time" lets it start at once; otherwise it waits for the Wi-Fi. Tap Download.
 3. The copy runs in the background, one film at a time. On Android a notification shows the film, the percentage and the time left, with Pause and Cancel, and the copy goes on with the screen off. A lost link does not lose it: the copy goes on where it stopped, with the rest of the file only.
 4. The tile of the film shows a ring while it is copied and a check once it is on the device. The menu of its page then offers "Delete the copy on this device".
-5. Network shares, "Downloaded films", lists the copies with the room they take. Tap one to play it from the device, with or without the server, in the usual player: the place where you stopped is the same as for the film read from the server. Each copy can be deleted, or all of them, and the copies under way pause, resume or cancel there. "Download only on Wi-Fi" is at the top, on by default.
+5. Network shares, "Downloaded films", lists the copies with the room they take. Tap one to play it from the device, with or without the server, in the usual player: the place where you stopped is the same as for the film read from the server. Each copy can be deleted, or all of them, and the copies under way pause, resume or cancel there. "Download only on Wi-Fi" is at the top, on by default. The same list opens from Settings, "Free up space", when you look for room on a phone.
 
 Where the copies go:
 

@@ -360,6 +360,16 @@ class FilmDownloadButton extends ConsumerWidget {
   }
 }
 
+/// The Download action of a film page, for the row after Play of lot A2 (its filmPageActions): the button for the file
+/// [entry] of the film, null where films are not copied (a TV), for a share that is not Plex, and while the file is not
+/// known yet, so that the row keeps no empty place. [title] is the Plex title of the film. Called in a build method.
+Widget? filmDownloadPageAction(WidgetRef ref, NetworkEntry? entry, {String? title}) {
+  if (entry == null || !canDownloadFilm(ref, entry.sourceId, entry)) {
+    return null;
+  }
+  return FilmDownloadButton(entry: entry, title: title);
+}
+
 /// The mark of a tile whose film is on this device, or being copied: a check, or a small ring with the progress
 class FilmDownloadMark extends ConsumerWidget {
   const FilmDownloadMark({super.key, required this.entry});

@@ -329,10 +329,11 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     _saveSoon(now: true);
   }
 
-  /// Puts a stopped or failed copy back in the queue
+  /// Puts a stopped or failed copy back in the queue. Asked while the copy is still stopping after a pause, it goes
+  /// on once the transfer has stopped, from its bytes.
   void resume(String id, {bool mobileDataThisTime = false}) {
     final film = state.byId(id);
-    if (film == null || film.isDone || _runningId == id) {
+    if (film == null || film.isDone || (_runningId == id && film.state == FilmDownloadState.running)) {
       return;
     }
     _update(
@@ -379,7 +380,10 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
 
   /// "Download only on Wi-Fi"
   Future<void> setWifiOnly(bool value) async {
-    await ready;
+    // The switch moves at once once the list is read
+    if (!state.loaded) {
+      await ready;
+    }
     state = state.copyWith(wifiOnly: value, bytesPerSecond: _speed);
     _saveSoon(now: true);
     await _onNetworkChanged();

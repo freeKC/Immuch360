@@ -130,13 +130,30 @@ void main() {
     fake.share.hold = Completer<void>();
     final film = await notifier.download(filmTestEntry('/Movies/Heat.mkv', 3000));
     await waitUntil(() => container.read(filmDownloadsProvider).byId(film.id)?.state == FilmDownloadState.running);
+    // The read of the list stopped the service once already
+    final stopsBefore = fake.keepAlive.stops;
     notifier.pause(film.id);
-    await waitUntil(() => fake.keepAlive.stops > 0);
+    await waitUntil(() => fake.keepAlive.stops > stopsBefore);
     expect(container.read(filmDownloadsProvider).byId(film.id)?.state, FilmDownloadState.paused);
 
     fake.share.hold = null;
     notifier.resume(film.id);
     await waitUntil(() => container.read(filmDownloadsProvider).byId(film.id)?.isDone ?? false);
+    expect(await File(film.localPath).readAsBytes(), filmTestBytes(3000));
+  });
+
+  test('resume tapped while the paused copy is still stopping goes on once it has stopped', () async {
+    final (container, notifier) = await start();
+    fake.share.hold = Completer<void>();
+    final film = await notifier.download(filmTestEntry('/Movies/Heat.mkv', 3000));
+    await waitUntil(() => container.read(filmDownloadsProvider).byId(film.id)?.state == FilmDownloadState.running);
+    notifier.pause(film.id);
+    fake.share.hold = null;
+    // At once, before the transfer has heard the pause
+    notifier.resume(film.id);
+    expect(container.read(filmDownloadsProvider).byId(film.id)?.state, FilmDownloadState.queued);
+    await waitUntil(() => container.read(filmDownloadsProvider).byId(film.id)?.isDone ?? false);
+    expect(await File(film.localPath).readAsBytes(), filmTestBytes(3000));
   });
 
   test('Cancel of the notification stops the copy and takes it off the list', () async {
