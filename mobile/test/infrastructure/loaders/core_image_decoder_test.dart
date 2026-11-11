@@ -5,7 +5,6 @@
 
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:ffi/ffi.dart';
@@ -16,8 +15,8 @@ import 'package:immich_mobile/domain/services/encoded_image_probe.dart';
 import 'package:immich_mobile/infrastructure/loaders/core_image_decoder.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/platform/remote_image_api.g.dart';
-import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
+import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 
 const _fixtures = 'test/fixtures/android_lab';
 
