@@ -590,16 +590,32 @@ class PlexFilterChoice {
   final int? count;
 }
 
-/// The values of a filter, from GET of its key (a Directory each)
+/// The values of a filter, from GET of its key (a Directory each). PMS 1.42.1 sends the key of a value percent
+/// encoded ("fr%2F12", "Not%20Rated", "13%2B", the title being "fr/12"): the value is kept decoded, as the films hold
+/// it, so that the audience bands read it and the query encodes it once.
 List<PlexFilterChoice> parsePlexFilterChoices(Object? json) => [
   for (final element in _elements(json))
     if (_string(element['key']) case final String key)
       PlexFilterChoice(
-        key: key,
-        title: _string(element['title']) ?? key,
+        key: _decodedValue(key),
+        title: _string(element['title']) ?? _decodedValue(key),
         count: _int(element['size']) ?? _int(element['count']),
       ),
 ];
+
+/// [key] without its percent encoding; as it came when it is not valid percent encoding
+String _decodedValue(String key) {
+  if (!key.contains('%')) {
+    return key;
+  }
+  try {
+    return Uri.decodeComponent(key);
+  } on ArgumentError {
+    return key;
+  } on FormatException {
+    return key;
+  }
+}
 
 /// How a filtered list of films is ordered
 enum PlexFilmSort {

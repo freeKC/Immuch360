@@ -5,7 +5,7 @@
     "Directory": [
       {
         "fastKey": "/library/sections/1/all?contentRating=fr%2F12",
-        "key": "fr/12",
+        "key": "fr%2F12",
         "title": "fr/12"
       },
       {
@@ -25,7 +25,7 @@
       },
       {
         "fastKey": "/library/sections/1/all?contentRating=xx%2FQ",
-        "key": "xx/Q",
+        "key": "xx%2FQ",
         "title": "xx/Q"
       }
     ]
