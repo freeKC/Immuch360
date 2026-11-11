@@ -12,6 +12,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/tag.action.dart';
 import 'package:immich_mobile/presentation/pages/search/paginated_search.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
@@ -70,7 +71,11 @@ class _TagDetailsState extends ConsumerState<TagDetails> {
     }
 
     final tags = ref.watch(Store.tags.forAsset(asset.id)).valueOrNull ?? const <Tag>[];
-    final tagAction = const TagAction(source: .viewer).create(context, ref);
+    // With the remote control layout the details are read only (no remove, no "Add tag") and every tag shows: OK on a
+    // chip opens its search, Down goes through the chips and the focus ring frames each one, where a chip under the
+    // fade of the collapsed list would take the focus out of sight
+    final readOnly = ref.watch(tvModeProvider);
+    final tagAction = readOnly ? null : const TagAction(source: .viewer).create(context, ref);
     final tagBackground = context.primaryColor.withAlpha(25);
     final tagBorder = context.colorScheme.outlineVariant;
     final tagText = context.colorScheme.onSurface;
@@ -80,7 +85,7 @@ class _TagDetailsState extends ConsumerState<TagDetails> {
       highlightColor: Colors.transparent,
       hoverColor: brandColor.withValues(alpha: 0.15),
     );
-    final isCollapsed = !_isExpanded;
+    final isCollapsed = !_isExpanded && !readOnly;
 
     final tagWrap = Theme(
       data: chipTheme,
@@ -101,10 +106,12 @@ class _TagDetailsState extends ConsumerState<TagDetails> {
               shape: const StadiumBorder(),
               side: BorderSide(color: tagBorder),
               deleteIcon: Icon(Icons.close, size: 16, color: tagText),
-              onDeleted: switch (UntagAction(source: .viewer, tagId: tag.id).create(context, ref)) {
-                final action? => () async => await action.onAction(),
-                null => null,
-              },
+              onDeleted: readOnly
+                  ? null
+                  : switch (UntagAction(source: .viewer, tagId: tag.id).create(context, ref)) {
+                      final action? => () async => await action.onAction(),
+                      null => null,
+                    },
               deleteButtonTooltipMessage: context.t.remove_tag,
             ),
         ],
@@ -148,7 +155,7 @@ class _TagDetailsState extends ConsumerState<TagDetails> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              if (_hasOverflow)
+              if (_hasOverflow && !readOnly)
                 ActionChip(
                   label: Text(
                     _isExpanded ? context.t.show_less : context.t.view_more,
