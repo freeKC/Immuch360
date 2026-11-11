@@ -48,6 +48,9 @@ const _allowed = <String, Map<String, int>>{
     'ImmutableBuffer.fromUint8List': 1,
     'decode(buffer': 1,
   },
+  // The raw pixels the Rust core decoded from a JPEG XL (the core route of the computers), which ImageDescriptor.raw
+  // reads without any decoder
+  'lib/infrastructure/loaders/core_image_decoder.dart': {'ImmutableBuffer.fromUint8List': 1},
   // The decoder handed to the loadImage of a provider of the app (thumbnails, previews: ImageRequest)
   'lib/presentation/widgets/images/progressive_image.widget.dart': {'instantiateImageCodec': 1},
   // RemoteImageRequest.load, whose encoded answers go through the probe in ImageRequest

@@ -91,7 +91,10 @@ void main() {
     }
 
     test('reads only the first 64 bytes, whatever follows', () {
-      final heic = Uint8List.fromList([..._ftyp('heic', ['mif1', 'heic']), ...List.filled(1 << 16, 0x3C)]);
+      final heic = Uint8List.fromList([
+        ..._ftyp('heic', ['mif1', 'heic']),
+        ...List.filled(1 << 16, 0x3C),
+      ]);
       expect(sniffEncodedImage(heic), EncodedImageKind.heif);
 
       // A blank page longer than the probe tells nothing
@@ -201,10 +204,46 @@ void main() {
       expect(onAndroid(EncodedImageKind.jpeg, name: 'scan.tif'), EncodedImageRoute.engine);
     });
 
-    test('off Android, the engine for every buffer, as before', () {
+    test('on iOS, the engine for every buffer, as before', () {
       for (final kind in EncodedImageKind.values) {
-        final route = encodedImageRoute(kind, name: 'scan.tif', isAndroid: false);
+        final route = encodedImageRoute(kind, name: 'scan.tif', isAndroid: false, isDesktop: false);
         expect(route, EncodedImageRoute.engine, reason: kind.name);
+      }
+    });
+
+    test('on the computers, JPEG XL by the Rust core, every other buffer by the engine as before', () {
+      for (final kind in EncodedImageKind.values) {
+        expect(
+          encodedImageRoute(kind, name: 'scan.tif', mimeType: 'image/jxl', isAndroid: false, isDesktop: true),
+          kind == EncodedImageKind.jxl ? EncodedImageRoute.core : EncodedImageRoute.engine,
+          reason: kind.name,
+        );
+      }
+    });
+
+    test('on Android, JPEG XL goes to the native decoder, which hands it to the Rust core, whatever it is named', () {
+      for (final (name, mimeType) in <(String?, String?)>[
+        (null, null),
+        ('preview.jxl', 'image/jxl'),
+        ('scan.tif', null),
+        ('photo.jpg', 'image/jpeg'),
+      ]) {
+        expect(
+          encodedImageRoute(EncodedImageKind.jxl, name: name, mimeType: mimeType, isAndroid: true, isDesktop: true),
+          EncodedImageRoute.native,
+          reason: '$name $mimeType',
+        );
+      }
+    });
+
+    test('the bytes of a JPEG XL server preview are routed as JPEG XL', () {
+      final bare = Uint8List.fromList([0xFF, 0x0A, 0xFA, 0x7F, 0x01, 0x90, 0x08]);
+      final container = Uint8List.fromList([0, 0, 0, 0x0C, ...'JXL '.codeUnits, 0x0D, 0x0A, 0x87, 0x0A, 0, 0, 0, 0x14]);
+      for (final bytes in [bare, container]) {
+        final kind = sniffEncodedImage(bytes);
+        expect(kind, EncodedImageKind.jxl);
+        expect(encodedImageRoute(kind, isAndroid: false, isDesktop: true), EncodedImageRoute.core);
+        expect(encodedImageRoute(kind, isAndroid: true), EncodedImageRoute.native);
       }
     });
 
@@ -218,6 +257,11 @@ void main() {
           reason: platform.name,
         );
         expect(encodedImageRoute(EncodedImageKind.jpeg), EncodedImageRoute.engine, reason: platform.name);
+        expect(encodedImageRoute(EncodedImageKind.jxl), switch (platform) {
+          TargetPlatform.android => EncodedImageRoute.native,
+          TargetPlatform.windows || TargetPlatform.linux || TargetPlatform.macOS => EncodedImageRoute.core,
+          _ => EncodedImageRoute.engine,
+        }, reason: platform.name);
       }
     });
   });

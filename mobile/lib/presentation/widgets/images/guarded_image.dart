@@ -4,9 +4,10 @@
 // codecs by the engine, as before; HEIF, AVIF, the raw files and the unknown by the native decoder at a bounded size
 // (NativeImageDecodeApi); a TIFF named so by the Dart TIFF decoder; text, videos and empty files refused. So no buffer
 // reaches the fallback decoder of the engine, which decodes at the full size and aborts the app on an OutOfMemoryError
-// (crash M1 of the Meta Quest store, 8 November 2026). Off Android the engine decodes every buffer, as before. A
-// failure is an ImageDecodeException, which the viewers show as a photo that does not decode, and remember for the
-// session when they give a key (see UndecodablePhotos).
+// (crash M1 of the Meta Quest store, 8 November 2026). Off Android the engine decodes every buffer, as before, except
+// JPEG XL on the computers, which the Rust core decodes (core_image_decoder.dart); on Android the native decoder hands
+// JPEG XL to the same core. A failure is an ImageDecodeException, which the viewers show as a photo that does not
+// decode, and remember for the session when they give a key (see UndecodablePhotos).
 
 import 'dart:async';
 import 'dart:ffi';
@@ -20,6 +21,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/domain/services/encoded_image_probe.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
+import 'package:immich_mobile/infrastructure/loaders/core_image_decoder.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/platform/native_image_decode_api.g.dart';
 import 'package:logging/logging.dart';
@@ -101,6 +103,17 @@ Future<ui.Codec> decodeEncodedBytes(
           malloc.free(pointer);
         }
       });
+    case EncodedImageRoute.core:
+      return inTiffTurn(
+        () => _decodeWithCore(
+          bytes,
+          kind,
+          maxWidth,
+          maxHeight,
+          getTargetSize ?? fitTargetSize(maxWidth, maxHeight),
+          source,
+        ),
+      );
     case EncodedImageRoute.dartTiff:
       final longSide = math.max(maxWidth, maxHeight);
       final maxSide = longSide > 0
@@ -198,6 +211,37 @@ Future<ui.Codec> _decodeNatively(
   return descriptor.instantiateCodec();
 }
 
+// [bytes], a JPEG XL on a computer, decoded by the Rust core (core_image_decoder.dart), its long side within the larger
+// bound and the budget of the device, then by the engine at the size [getTargetSize] tells (within [maxWidth] x
+// [maxHeight] unless the caller says otherwise): a codec of a frame
+Future<ui.Codec> _decodeWithCore(
+  Uint8List bytes,
+  EncodedImageKind kind,
+  int maxWidth,
+  int maxHeight,
+  ui.TargetImageSizeCallback getTargetSize,
+  String source,
+) async {
+  final longSide = math.max(nativeDecodeSide(maxWidth), nativeDecodeSide(maxHeight));
+  final ui.ImageDescriptor? descriptor;
+  try {
+    descriptor = await decodeBytesWithCore(bytes, maxPixelSize: longSide);
+  } on CoreDecodeException catch (error) {
+    _log.warning('Not decoded ($source): ${kind.name}, ${bytes.length} bytes, $error');
+    throw ImageDecodeException(error);
+  }
+  if (descriptor == null) {
+    throw ImageDecodeException(CoreDecodeException(bytes.length, 'stopped'));
+  }
+  final target = getTargetSize(descriptor.width, descriptor.height);
+  _log.info(
+    'Decoded by the core ($source): ${kind.name}, ${bytes.length} bytes, ${descriptor.width}x${descriptor.height}, '
+    'shown at ${target.width ?? descriptor.width}x${target.height ?? descriptor.height}',
+  );
+  // The codec reads the pixels of the descriptor when its frame is asked for, later: the descriptor goes with it
+  return descriptor.instantiateCodec(targetWidth: target.width, targetHeight: target.height);
+}
+
 /// Remembers for the session that the photo [key] did not decode, when [error] says its bytes are the reason
 void _rememberUndecodable(String? key, Object error) {
   if (key != null && error is Exception && (error is ImageDecodeException || error is TiffDecodeException)) {
@@ -225,18 +269,17 @@ class GuardedMemoryImage extends ImageProvider<GuardedMemoryImage> {
   Future<GuardedMemoryImage> obtainKey(ImageConfiguration configuration) => SynchronousFuture(this);
 
   @override
-  ImageStreamCompleter loadImage(GuardedMemoryImage key, ImageDecoderCallback decode) =>
-      MultiFrameImageStreamCompleter(
-        codec: decodeEncodedBytes(
-          key.bytes,
-          maxWidth: key.maxWidth,
-          maxHeight: key.maxHeight,
-          source: key.source,
-          decode: decode,
-        ),
-        scale: 1,
-        debugLabel: 'GuardedMemoryImage(${describeIdentity(key.bytes)})',
-      );
+  ImageStreamCompleter loadImage(GuardedMemoryImage key, ImageDecoderCallback decode) => MultiFrameImageStreamCompleter(
+    codec: decodeEncodedBytes(
+      key.bytes,
+      maxWidth: key.maxWidth,
+      maxHeight: key.maxHeight,
+      source: key.source,
+      decode: decode,
+    ),
+    scale: 1,
+    debugLabel: 'GuardedMemoryImage(${describeIdentity(key.bytes)})',
+  );
 
   @override
   bool operator ==(Object other) =>

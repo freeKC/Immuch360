@@ -77,6 +77,10 @@ enum EncodedImageRoute {
   /// By the Dart TIFF decoder (see photoDecodePath)
   dartTiff,
 
+  /// By the Rust core of upstream through dart:ffi (core_image_decoder.dart): JPEG XL on the computers, whose engine
+  /// has no codec for it. The phones reach the same core through their platform code (the native route on Android)
+  core,
+
   /// Nowhere: it is no image the device decodes, an ImageDecodeException
   refuse,
 }
@@ -250,12 +254,25 @@ bool engineDecodesKind(EncodedImageKind kind) => switch (kind) {
   _ => false,
 };
 
-/// Where an encoded image of [kind] is decoded on this device ([isAndroid] stands for the platform in the tests). Off
-/// Android, by the engine, as before. On Android: by the engine for its own formats; by the Dart TIFF decoder for a
-/// TIFF whose name ([name]) or type ([mimeType]) says TIFF, as photoDecodePath decides; refused for text, a video and
-/// no bytes; by the native decoder for the others (HEIF, AVIF, raw files, TIFF based raw files, JPEG XL, the unknown).
-EncodedImageRoute encodedImageRoute(EncodedImageKind kind, {String? name, String? mimeType, bool? isAndroid}) {
-  if (!(isAndroid ?? CurrentPlatform.isAndroid) || engineDecodesKind(kind)) {
+/// Where an encoded image of [kind] is decoded on this device ([isAndroid] and [isDesktop] stand for the platform in
+/// the tests). On the computers, JPEG XL by the Rust core (the thumbnails and previews of an Immich 3.4.0 server set
+/// to JPEG XL), the others by the engine, as before; on iOS, by the engine. On Android: by the engine for its own
+/// formats; by the Dart TIFF decoder for a TIFF whose name ([name]) or type ([mimeType]) says TIFF, as photoDecodePath
+/// decides; refused for text, a video and no bytes; by the native decoder for the others (HEIF, AVIF, raw files, TIFF
+/// based raw files, JPEG XL, which it hands to the Rust core, the unknown).
+EncodedImageRoute encodedImageRoute(
+  EncodedImageKind kind, {
+  String? name,
+  String? mimeType,
+  bool? isAndroid,
+  bool? isDesktop,
+}) {
+  if (!(isAndroid ?? CurrentPlatform.isAndroid)) {
+    return kind == EncodedImageKind.jxl && (isDesktop ?? CurrentPlatform.isDesktop)
+        ? EncodedImageRoute.core
+        : EncodedImageRoute.engine;
+  }
+  if (engineDecodesKind(kind)) {
     return EncodedImageRoute.engine;
   }
   return switch (kind) {
