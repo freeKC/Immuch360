@@ -1,6 +1,8 @@
 // A small Plex Media Server on 127.0.0.1 for the tests of the Plex client: /identity, the sections, the folder view
 // with its paging headers, the albums of a photo section, the parts with or without Range support, the photo
-// transcoder, the account and the preferences. Every answer but /identity wants the test token in its header, as a
+// transcoder, the account and the preferences; for the films (lot A2), the full item of a film
+// (/library/metadata/{ratingKey}), the filters of a library and their values (as listings), the subtitle files beside a
+// film (/library/streams/{id}.srt) and the track picks (PUT /library/parts/{id}). Every answer but /identity wants the test token in its header, as a
 // real server does, and answers 401 in HTML otherwise. The values are the synthetic ones of test/fixtures/plex.
 
 import 'dart:convert';
@@ -109,6 +111,12 @@ class FakePlexServer {
   /// Leaves totalSize out of the listings
   bool withTotals = true;
 
+  /// The answers of /library/metadata/{ratingKey}, by ratingKey; 404 for any other
+  final Map<String, Object?> metadata = {};
+
+  /// The subtitle files of /library/streams/{id}.srt, by stream id; 404 for any other
+  final Map<int, Uint8List> subtitles = {};
+
   /// Statuses forced for some paths (without the query) or paths with their query
   final Map<String, int> statuses = {'/library/sections/2/folder': 404};
 
@@ -173,6 +181,29 @@ class FakePlexServer {
         response.statusCode = status;
         response.headers.contentType = ContentType.html;
         response.write('<html><body>$status</body></html>');
+        return await response.close();
+      }
+      final item = RegExp(r'^/library/metadata/(\d+)$').firstMatch(uri.path);
+      if (item != null) {
+        final body = metadata[item.group(1)];
+        if (body == null) {
+          response.statusCode = 404;
+          return await response.close();
+        }
+        return await _json(response, body);
+      }
+      final subtitle = RegExp(r'^/library/streams/(\d+)\.srt$').firstMatch(uri.path);
+      if (subtitle != null) {
+        final bytes = subtitles[int.parse(subtitle.group(1)!)];
+        if (bytes == null) {
+          response.statusCode = 404;
+          return await response.close();
+        }
+        response.headers.contentType = ContentType('application', 'x-subrip');
+        response.add(bytes);
+        return await response.close();
+      }
+      if (request.method == 'PUT' && RegExp(r'^/library/parts/\d+$').hasMatch(uri.path)) {
         return await response.close();
       }
       switch (uri.path) {

@@ -1,0 +1,36 @@
+{
+  "MediaContainer": {
+    "size": 4,
+    "allowSync": false,
+    "Directory": [
+      {
+        "filter": "genre",
+        "filterType": "string",
+        "key": "/library/sections/1/genre",
+        "title": "Genre",
+        "type": "filter"
+      },
+      {
+        "filter": "year",
+        "filterType": "integer",
+        "key": "/library/sections/1/year",
+        "title": "Year",
+        "type": "filter"
+      },
+      {
+        "filter": "decade",
+        "filterType": "integer",
+        "key": "/library/sections/1/decade",
+        "title": "Decade",
+        "type": "filter"
+      },
+      {
+        "filter": "contentRating",
+        "filterType": "string",
+        "key": "/library/sections/1/contentRating",
+        "title": "Content Rating",
+        "type": "filter"
+      }
+    ]
+  }
+}

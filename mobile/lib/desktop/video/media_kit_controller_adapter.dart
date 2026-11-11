@@ -141,7 +141,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   final onError = ValueNotifier<String?>(null);
 
   /// The track API of the Android player, never used here: the computers list their audio tracks with [audioTracks]
-  /// (DesktopAudioTrackButton)
+  /// (DesktopAudioTrackButton) and their subtitles with [subtitleTracks] (DesktopSubtitleTrackButton)
   @override
   final onTracksChanged = ChangeNotifier();
 
@@ -152,6 +152,9 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   final _buffering = ValueNotifier(false);
   final _audioTracks = ValueNotifier<List<DesktopAudioTrack>>(const []);
   final _audioTrack = ValueNotifier<String?>(null);
+  final _subtitleTracks = ValueNotifier<List<DesktopSubtitleTrack>>(const []);
+  final _subtitleTrack = ValueNotifier<String?>(null);
+  final _externalSubtitles = ValueNotifier<List<VideoSubtitle>>(const []);
   final _decoding = ValueNotifier<({String? hwdec, VideoFrameSize? size})>((hwdec: null, size: null));
 
   /// The texture the view draws, null while the controller holds no player
@@ -165,6 +168,16 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
 
   /// The id of the audio track that plays
   ValueListenable<String?> get audioTrack => _audioTrack;
+
+  /// The subtitle tracks of the open file, with the side files of [externalSubtitles] added to it so far
+  ValueListenable<List<DesktopSubtitleTrack>> get subtitleTracks => _subtitleTracks;
+
+  /// The id of the subtitle track shown, null for none
+  ValueListenable<String?> get subtitleTrack => _subtitleTrack;
+
+  /// The side files of subtitles of the video (VideoSource.subtitles), which the player reads only once picked
+  /// ([selectExternalSubtitle])
+  ValueListenable<List<VideoSubtitle>> get externalSubtitles => _externalSubtitles;
 
   /// How mpv decodes the video of the player held now (PlaybackEngine.hwdec) and the size of its frames, for the Video
   /// decoding line of the details (desktop_video_decoding_tile.dart); nothing while no player is held
@@ -212,6 +225,14 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   bool _ready = false;
   bool _restarted = false;
   bool _audioChosen = false;
+
+  /// What the user picked in the subtitle menu for this video: a track of the file by its id, a side file, or none
+  /// (both null); null before any pick, mpv's own choice then. Picked again once the file opens again (the pool took
+  /// the player, a replay), which drops the side files added.
+  ({String? id, VideoSubtitle? external})? _subtitleChoice;
+
+  /// The side files added to the file open now, by their address: each is added once per open
+  final _addedSubtitles = <String>{};
   Timer? _readyTimer;
   Timer? _positionTimer;
   bool _positionPending = false;
@@ -261,6 +282,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _resource = null;
     _resumeAt = null;
     _audioChosen = false;
+    _subtitleChoice = null;
+    _externalSubtitles.value = const [];
     _pausedWhenReady = start > Duration.zero;
     onLinkChanged.value = null;
     _resumeWaitMs = null;
@@ -280,6 +303,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     }
     _resource = resource;
     _videoSource = videoSource;
+    // Bridge URLs already, which mpv reads as they are
+    _externalSubtitles.value = List.unmodifiable(videoSource.subtitles);
     final engine = await _engineForUse();
     if (engine == null || generation != _generation) {
       return;
@@ -409,6 +434,62 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     await _engine?.setAudioTrack(id);
   }
 
+  /// Shows the subtitle track [id] of [subtitleTracks], none for null
+  Future<void> selectSubtitleTrack(String? id) async {
+    final track = id == null ? null : _subtitleTracks.value.where((track) => track.id == id).firstOrNull;
+    if (id != null && track == null) {
+      return;
+    }
+    final subtitle = track?.external == null
+        ? null
+        : _externalSubtitles.value.where((subtitle) => subtitle.uri == track!.external).firstOrNull;
+    _subtitleChoice = subtitle != null ? (id: null, external: subtitle) : (id: id, external: null);
+    await _engine?.setSubtitleTrack(id);
+  }
+
+  /// Shows [subtitle], one of [externalSubtitles]: the player reads it the first time, then shows its track
+  Future<void> selectExternalSubtitle(VideoSubtitle subtitle) async {
+    _subtitleChoice = (id: null, external: subtitle);
+    final engine = _engine;
+    if (engine != null && !_unloaded) {
+      await _showExternal(engine, subtitle);
+    }
+  }
+
+  /// The track [subtitle] became once added to the open file, null before
+  DesktopSubtitleTrack? subtitleTrackOf(VideoSubtitle subtitle) =>
+      _subtitleTracks.value.where((track) => track.external == subtitle.uri).firstOrNull;
+
+  Future<void> _showExternal(PlaybackEngine engine, VideoSubtitle subtitle) async {
+    final added = subtitleTrackOf(subtitle);
+    if (added != null) {
+      await engine.setSubtitleTrack(added.id);
+      return;
+    }
+    if (!_addedSubtitles.add(subtitle.uri)) {
+      // Being added: its track shows once mpv read it
+      return;
+    }
+    try {
+      await engine.addExternalSubtitle(subtitle.uri, title: subtitle.label, language: subtitle.language);
+    } catch (error) {
+      _addedSubtitles.remove(subtitle.uri);
+      _log.warning('The side file of subtitles could not be added: ${redactPlayerText('$error')}');
+    }
+  }
+
+  /// The pick of the subtitle menu again, in a file that opened again
+  void _restoreSubtitle(PlaybackEngine engine) {
+    final choice = _subtitleChoice;
+    if (choice == null) {
+      return;
+    }
+    final external = choice.external;
+    unawaited(
+      _onEngine(engine, () => external != null ? _showExternal(engine, external) : engine.setSubtitleTrack(choice.id)),
+    );
+  }
+
   @override
   void dispose() {
     if (_disposed) {
@@ -521,6 +602,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
         if (!current()) {
           return _openDropped(engine, generation, start);
         }
+        // The side files added to the file before are gone with it
+        _addedSubtitles.clear();
         await engine.open(resource, start: start, streamed: resource.startsWith('http'));
         _startLink();
         return true;
@@ -602,6 +685,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.buffering.addListener(_onBuffering);
     engine.audioTracks.addListener(_onAudioTracks);
     engine.audioTrack.addListener(_onAudioTrack);
+    engine.subtitleTracks.addListener(_onSubtitleTracks);
+    engine.subtitleTrack.addListener(_onSubtitleTrack);
     engine.hwdec.addListener(_onDecoding);
     engine.videoSize.addListener(_onDecoding);
     _events = engine.events.listen(_onEvent);
@@ -627,6 +712,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.buffering.removeListener(_onBuffering);
     engine.audioTracks.removeListener(_onAudioTracks);
     engine.audioTrack.removeListener(_onAudioTrack);
+    engine.subtitleTracks.removeListener(_onSubtitleTracks);
+    engine.subtitleTrack.removeListener(_onSubtitleTrack);
     engine.hwdec.removeListener(_onDecoding);
     engine.videoSize.removeListener(_onDecoding);
     unawaited(_events?.cancel());
@@ -641,7 +728,10 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   void _onEvent(PlayerEvent event) {
     switch (event.kind) {
       case PlayerEventKind.loaded:
-        break;
+        final engine = _engine;
+        if (engine != null && !_unloaded) {
+          _restoreSubtitle(engine);
+        }
       case PlayerEventKind.restarted:
         final seek = _seekWatch;
         if (seek != null && _restarted && !_unloaded) {
@@ -820,6 +910,10 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   }
 
   void _onAudioTrack() => _audioTrack.value = _engine?.audioTrack.value;
+
+  void _onSubtitleTracks() => _subtitleTracks.value = _engine?.subtitleTracks.value ?? const [];
+
+  void _onSubtitleTrack() => _subtitleTrack.value = _engine?.subtitleTrack.value;
 
   void _onDecoding() => _decoding.value = (hwdec: _engine?.hwdec.value, size: _engine?.videoSize.value);
 

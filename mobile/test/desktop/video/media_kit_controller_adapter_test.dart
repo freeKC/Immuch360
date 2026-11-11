@@ -2,7 +2,7 @@
 // NativeVideoPlayerController for what VideoPlayerNotifier and the two pages do (load, play, pause, stop, seek, loop,
 // volume, speed, ended, error), the readiness that waits for a frame of the new file, the suspension by the pool and
 // the resume at the position, a file that can no longer be read, a page that goes while its video opens, a lost
-// picture, the audio tracks.
+// picture, the audio tracks, the subtitles and the side files of subtitles of a video.
 
 import 'dart:async';
 
@@ -752,6 +752,63 @@ void main() {
     engine.audioTracks.value = List.of(tracks);
     expect(engine.calls.last, 'audio 2', reason: 'the French track again');
   });
+
+  test(
+    'subtitles: the side files of the video, each added once when picked, and the pick again in a file reopened',
+    () async {
+      const french = VideoSubtitle(
+        uri: 'http://127.0.0.1:41000/Zq8secretBridgeToken/plex-1/library/streams/12.srt',
+        mimeType: 'application/x-subrip',
+        language: 'fr',
+        label: 'Français',
+        id: 'immuch-sub-12',
+      );
+      final video = controller();
+      await video.loadVideoSource(
+        await VideoSource.init(path: _bridgeUrl, type: VideoSourceType.network, subtitles: const [french]),
+      );
+      await pumpEventQueue();
+      final engine = players.made.single;
+      expect(video.externalSubtitles.value, [french]);
+      expect(engine.calls.where((call) => call.contains('subtitle')), isEmpty, reason: 'read only once picked');
+      engine.subtitleTracks.value = const [DesktopSubtitleTrack(id: '1', language: 'eng')];
+      expect(video.subtitleTracks.value, engine.subtitleTracks.value);
+      expect(video.subtitleTrackOf(french), isNull);
+
+      await video.selectExternalSubtitle(french);
+      expect(engine.calls.last, 'add subtitle ${french.uri}');
+      expect(video.subtitleTrackOf(french)?.id, '10');
+      expect(video.subtitleTrack.value, '10');
+      await video.selectSubtitleTrack('1');
+      expect(engine.calls.last, 'subtitle 1');
+      await video.selectExternalSubtitle(french);
+      expect(engine.calls.last, 'subtitle 10', reason: 'added once, then shown by its track');
+
+      // A replay after a stop opens the file again, without the side file: it is added again, as picked
+      await video.stop();
+      await video.play();
+      await pumpEventQueue();
+      expect(engine.calls.where((call) => call.startsWith('add subtitle')), hasLength(2));
+      expect(video.subtitleTrack.value, '11');
+
+      // Off stays off in the next open, and a track of the file stays picked
+      await video.selectSubtitleTrack(null);
+      expect(engine.calls.last, 'subtitle off');
+      await video.stop();
+      await video.play();
+      await pumpEventQueue();
+      expect(engine.calls.skipWhile((call) => !call.startsWith('open')).skip(1), contains('subtitle off'));
+      await video.selectSubtitleTrack('1');
+      await video.selectSubtitleTrack('7');
+      expect(engine.calls.last, 'subtitle 1', reason: 'a track the file does not have is left alone');
+
+      // Another video: its own side files, and mpv's own choice until a pick
+      await video.loadVideoSource(await _network(_bridgeUrl));
+      await pumpEventQueue();
+      expect(video.externalSubtitles.value, isEmpty);
+      expect(engine.calls.last, isNot(startsWith('subtitle')));
+    },
+  );
 
   test('buffering follows mpv', () async {
     final video = controller();

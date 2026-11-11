@@ -14,10 +14,14 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/plex_film_filter_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_save_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
@@ -157,6 +161,21 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   /// (lib/desktop/selection)
   final _desktopSelection = DesktopNetworkSelectionKey();
 
+  /// The filters of a library of films of a Plex server, while the page shows the films they keep instead of the
+  /// folders (lot A2, request 7); null for the folder view
+  PlexFilmsQuery? _filmQuery;
+
+  /// The library of films of a Plex server whose folder this is, null for any other folder: the page offers its
+  /// filters
+  PlexSection? get _filmSection {
+    final connection = ref.read(networkConnectionsProvider).opened(widget.sourceId);
+    if (connection is! PlexFileSystem) {
+      return null;
+    }
+    final section = connection.sectionAt(widget.path);
+    return section != null && section.isFilms ? section : null;
+  }
+
   NetworkFolderKey get _folderKey => (sourceId: widget.sourceId, path: widget.path);
 
   @override
@@ -250,6 +269,11 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     // a new visit read it through a new one, which answers once the folder is back
     await connections.closeIfUnplugged(widget.sourceId);
     final fileSystem = await connections.fileSystem(widget.sourceId);
+    final query = _filmQuery;
+    final section = fileSystem is PlexFileSystem ? fileSystem.sectionAt(widget.path) : null;
+    if (query != null && section != null && fileSystem is PlexFileSystem) {
+      return _readFilms(fileSystem, section, query);
+    }
     // Hidden entries (".DS_Store", "._IMG.JPG" resource forks, ".thumbnails") and files of other kinds are left out, the
     // same for every folder source (see FolderContents)
     final contents = FolderContents.of(await fileSystem.list(widget.path));
@@ -268,6 +292,52 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       setState(() => _splats = splats);
     }
     return (folders: contents.folders, media: media, urls: urls, splats: splats);
+  }
+
+  /// The films of [section] that [query] keeps, in the server's order, in place of the folders: each under its own path
+  /// (plexFilmPath), which its page and the players open
+  Future<_Folder> _readFilms(PlexFileSystem fileSystem, PlexSection section, PlexFilmsQuery query) async {
+    final connections = ref.read(networkConnectionsProvider);
+    final films = await fileSystem.allFilms(section.key, query);
+    final media = [for (final film in films) film.entry];
+    final urls = <String, Uri>{};
+    for (final entry in media) {
+      urls[entry.path] = await connections.mediaUrl(widget.sourceId, entry.path);
+    }
+    if (mounted) {
+      setState(() {
+        _media = media;
+        _splats = const [];
+      });
+    }
+    return (folders: const <NetworkEntry>[], media: media, urls: urls, splats: const <NetworkEntry>[]);
+  }
+
+  /// Opens the filters of the library of films of this folder; the films they keep show in place of the folders, the
+  /// folders again once they are cleared
+  Future<void> _openFilmFilters(PlexSection section) async {
+    final picked = await showPlexFilmFilters(
+      context,
+      ref,
+      sourceId: widget.sourceId,
+      sectionKey: section.key,
+      current: _filmQuery ?? const PlexFilmsQuery(),
+    );
+    if (picked == null || !mounted) {
+      return;
+    }
+    _setFilmQuery(picked.isFiltered || picked.sort != PlexFilmSort.yearNewest ? picked : null);
+  }
+
+  void _setFilmQuery(PlexFilmsQuery? query) {
+    if (query == _filmQuery) {
+      return;
+    }
+    ref.read(networkSelectionProvider(_folderKey).notifier).end();
+    setState(() {
+      _filmQuery = query;
+      _folder = _load();
+    });
   }
 
   /// Whether the splats of other tools are listed (see networkSplatsEnabledProvider), once the platform told whether
@@ -314,6 +384,17 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     if (selection.isActive && !entry.isDirectory) {
       // A tap picks or leaves out while picking files
       ref.read(networkSelectionProvider(_folderKey).notifier).toggle(entry.path);
+      return;
+    }
+    // A film of a Plex library of films opens its page first (lot A2, request 8); other videos play at once
+    final connection = ref.read(networkConnectionsProvider).opened(widget.sourceId);
+    final film = !entry.isDirectory && entry.isVideo && connection is PlexFileSystem
+        ? connection.itemAt(entry.path)
+        : null;
+    if (film != null && film.opensFilmPage) {
+      unawaited(
+        context.pushRoute(PlexFilmRoute(sourceId: widget.sourceId, ratingKey: film.ratingKey, path: entry.path)),
+      );
       return;
     }
     // The photo and video pages get the folder around the file, for previous and next in the immersive viewer
@@ -403,11 +484,16 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     final tvMode = ref.watch(tvModeProvider);
 
     return PopScope(
-      // Back while picking files stops picking first
-      canPop: !selection.isActive,
+      // Back while picking files stops picking first, and on the films a filter keeps, goes back to the folders
+      canPop: !selection.isActive && _filmQuery == null,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
+        if (didPop) {
+          return;
+        }
+        if (selection.isActive) {
           selectionNotifier.end();
+        } else {
+          _setFilmQuery(null);
         }
       },
       child: Scaffold(
@@ -451,6 +537,14 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
             key: const Key('network_browser_remote_endpoint'),
             message: context.t.network_share_remote_endpoint,
             child: const Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Icon(Icons.public)),
+          ),
+        // The filters of a library of films of a Plex server (lot A2, request 7)
+        if (_filmSection case final PlexSection section)
+          IconButton(
+            key: const Key('network_browser_plex_filters'),
+            icon: Icon(_filmQuery == null ? Icons.filter_list_rounded : Icons.filter_alt_rounded),
+            tooltip: context.t.filters,
+            onPressed: () => unawaited(_openFilmFilters(section)),
           ),
         // Pull to refresh is a gesture: a remote control gets a button
         if (tvMode)
@@ -511,6 +605,8 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
                   onOpenSplat: _openSplat,
                   onSelect: tvMode ? null : _select,
                   focusFirst: tvMode,
+                  filmsFiltered: _filmQuery != null,
+                  onClearFilms: () => _setFilmQuery(null),
                 ),
               );
             }
@@ -615,7 +711,13 @@ class _FolderView extends StatelessWidget {
     required this.onOpenSplat,
     required this.onSelect,
     this.focusFirst = false,
+    this.filmsFiltered = false,
+    this.onClearFilms,
   });
+
+  /// The films a filter of a Plex library keeps, in place of its folders: their count and Clear above them
+  final bool filmsFiltered;
+  final VoidCallback? onClearFilms;
 
   final _Folder folder;
   final NetworkSelection selection;
@@ -634,12 +736,32 @@ class _FolderView extends StatelessWidget {
   Widget build(BuildContext context) {
     final folders = folder.folders;
     final media = folder.media;
+    final filtered = filmsFiltered
+        ? _FilmsFilteredBar(count: media.length, onClear: onClearFilms, autofocus: focusFirst && media.isEmpty)
+        : null;
     if (folders.isEmpty && media.isEmpty && folder.splats.isEmpty) {
-      return const _Filled(child: NetworkEmptyFolderView());
+      return filtered == null
+          ? const _Filled(child: NetworkEmptyFolderView())
+          : _Filled(
+              child: Column(
+                children: [
+                  filtered,
+                  Expanded(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(context.t.plex_films_filter_empty, textAlign: TextAlign.center),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
     }
     return CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
+        if (filtered != null) SliverToBoxAdapter(child: filtered),
         SliverList.builder(
           itemCount: folders.length,
           itemBuilder: (context, index) {
@@ -688,6 +810,36 @@ class _FolderView extends StatelessWidget {
             isSelected: selection.isActive ? (entry) => selection.contains(entry.path) : null,
           ),
       ],
+    );
+  }
+}
+
+/// Above the films a filter of a Plex library keeps: how many, and Clear, which brings the folders back
+class _FilmsFilteredBar extends StatelessWidget {
+  const _FilmsFilteredBar({required this.count, required this.onClear, this.autofocus = false});
+
+  final int count;
+  final VoidCallback? onClear;
+  final bool autofocus;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      key: const Key('network_browser_films_filtered'),
+      padding: const EdgeInsets.fromLTRB(16, 8, 8, 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(context.t.plex_films_filter_count(count: count), style: context.textTheme.titleSmall),
+          ),
+          TextButton.icon(
+            autofocus: autofocus,
+            icon: const Icon(Icons.filter_alt_off_rounded),
+            label: Text(context.t.clear),
+            onPressed: onClear,
+          ),
+        ],
+      ),
     );
   }
 }

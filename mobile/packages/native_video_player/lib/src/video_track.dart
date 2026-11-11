@@ -22,6 +22,7 @@ class NativeVideoTrack {
     this.selected = false,
     this.isDefault = false,
     this.isForced = false,
+    this.id,
   });
 
   /// A track as the platform sends it, null for one that does not read
@@ -47,6 +48,7 @@ class NativeVideoTrack {
       selected: map['selected'] as bool? ?? false,
       isDefault: map['isDefault'] as bool? ?? false,
       isForced: map['isForced'] as bool? ?? false,
+      id: map['id'] as String?,
     );
   }
 
@@ -75,6 +77,10 @@ class NativeVideoTrack {
   /// Whether the file marks it as forced (subtitles for the parts in another language)
   final bool isForced;
 
+  /// Its id in the player (Media3's Format.id), null when it has none: a side file of subtitles has the one the app
+  /// gave it (VideoSubtitle.id) behind the prefix of its period ("1:immuch-sub-3")
+  final String? id;
+
   @override
   bool operator ==(Object other) =>
       other is NativeVideoTrack &&
@@ -87,7 +93,8 @@ class NativeVideoTrack {
       other.channels == channels &&
       other.selected == selected &&
       other.isDefault == isDefault &&
-      other.isForced == isForced;
+      other.isForced == isForced &&
+      other.id == id;
 
   @override
   int get hashCode => Object.hash(
@@ -101,6 +108,7 @@ class NativeVideoTrack {
         selected,
         isDefault,
         isForced,
+        id,
       );
 
   @override

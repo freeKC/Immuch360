@@ -11,6 +11,7 @@ import 'dart:io' show InternetAddress, InternetAddressType;
 
 import 'package:immich_mobile/infrastructure/network/entry_names.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart' show plexPersonalMediaAgents;
 
 /// Who answers at an address, from /identity (no token needed)
 class PlexIdentity {
@@ -54,7 +55,7 @@ const plexShownSectionTypes = {'photo', 'movie', 'show'};
 
 /// A library of the server, from /library/sections
 class PlexSection {
-  const PlexSection({required this.key, required this.title, required this.type});
+  const PlexSection({required this.key, required this.title, required this.type, this.agent, this.language});
 
   /// The id of the section in /library/sections/{key}/...
   final String key;
@@ -63,7 +64,16 @@ class PlexSection {
   /// photo, movie or show
   final String type;
 
+  /// What matches its items: "tv.plex.agents.movie" for films, "tv.plex.agents.none" for other videos
+  final String? agent;
+
+  /// The language of its metadata, set on the server ("fr", "en-US"): the language of the synopsis of its films
+  final String? language;
+
   bool get isPhoto => type == 'photo';
+
+  /// A library of films, whose items open the film page (see isPlexFilmLibrary)
+  bool get isFilms => type == 'movie' && !plexPersonalMediaAgents.contains(agent);
 }
 
 /// The sections of /library/sections whose media the app shows, in server order
@@ -75,7 +85,15 @@ List<PlexSection> parsePlexSections(Object? json) {
     if (key == null || type is! String || !plexShownSectionTypes.contains(type)) {
       continue;
     }
-    sections.add(PlexSection(key: key, title: _string(element['title']) ?? key, type: type));
+    sections.add(
+      PlexSection(
+        key: key,
+        title: _string(element['title']) ?? key,
+        type: type,
+        agent: _string(element['agent']),
+        language: _string(element['language']),
+      ),
+    );
   }
   return sections;
 }

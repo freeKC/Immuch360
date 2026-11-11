@@ -14,3 +14,9 @@ of the documentation ranges, titles and paths of no real library). Nothing of th
 
 Hand written, the captured server having no photo library or player: photo_all.json, album_children.json (after
 python-plexapi), gdm_player_answer.txt, folder_no_total.json, folder_empty.json.
+
+Hand written for the films (lot A2, 10 November 2026), after the official reference (https://developer.plex.tv/pms/,
+schemas metadata, media, part, stream, filter) and python-plexapi, no capture of a server yet: metadata_film.json (the
+full item of a film with includeGuids: Guid, Genre, Director, Writer, Role, the streams of its file with a subtitle
+inside it, a SubRip file beside it and an image subtitle file), section_filters.json, filter_year.json,
+filter_decade.json, filter_content_rating.json (the filters of a library and their values, Directory elements).

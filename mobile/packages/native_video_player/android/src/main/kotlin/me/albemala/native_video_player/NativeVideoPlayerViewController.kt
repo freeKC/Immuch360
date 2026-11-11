@@ -1,6 +1,7 @@
 package me.albemala.native_video_player
 
 import android.content.Context
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.view.SurfaceView
@@ -18,6 +19,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.SubtitleView
@@ -114,7 +117,7 @@ class NativeVideoPlayerViewController(
     }
 
     override fun loadVideoSource(videoSource: VideoSource) {
-        val mediaItem = MediaItem.fromUri(videoSource.path)
+        val mediaItem = mediaItemOf(videoSource)
         // Immuch360: a film that resumes loads at its place, rather than at its start and then seeks there
         val start = videoSource.startPositionMs?.takeIf { it > 0 }
         setup?.onLoad()
@@ -126,7 +129,13 @@ class NativeVideoPlayerViewController(
             VideoSourceType.Network -> {
                 val dataSource = dataSourceFactory?.invoke(videoSource.headers)
                     ?: DefaultHttpDataSource.Factory().setDefaultRequestProperties(videoSource.headers)
-                val factory = ProgressiveMediaSource.Factory(dataSource)
+                // Immuch360: a video with side files of subtitles goes through the default factory, which merges a
+                // source for each file with the video's; one without keeps the progressive source it always had
+                val factory: MediaSource.Factory = if (videoSource.subtitles.isEmpty()) {
+                    ProgressiveMediaSource.Factory(dataSource)
+                } else {
+                    DefaultMediaSourceFactory(dataSource)
+                }
                 setup?.loadErrorPolicy?.let { factory.setLoadErrorHandlingPolicy(it) }
                 val mediaSource = factory.createMediaSource(mediaItem)
                 if (start != null) player.setMediaSource(mediaSource, start) else player.setMediaSource(mediaSource)
@@ -134,6 +143,30 @@ class NativeVideoPlayerViewController(
         }
         player.prepare()
         startLinkUpdates()
+    }
+
+    /**
+     * Immuch360: the media item of [videoSource], with its side files of subtitles when it has some (patch 3). They
+     * carry no selection flag, so they start off like the subtitles of the file (VideoTracks.initialParameters), and
+     * the id the app gave each, which Media3 keeps in the Format.id of its track behind the prefix of its period.
+     */
+    private fun mediaItemOf(videoSource: VideoSource): MediaItem {
+        if (videoSource.subtitles.isEmpty()) {
+            return MediaItem.fromUri(videoSource.path)
+        }
+        val subtitles = videoSource.subtitles.map { subtitle ->
+            MediaItem.SubtitleConfiguration.Builder(Uri.parse(subtitle.uri))
+                .setMimeType(subtitle.mimeType)
+                .setLanguage(subtitle.language)
+                .setLabel(subtitle.label)
+                .setId(subtitle.id)
+                .setSelectionFlags(0)
+                .build()
+        }
+        return MediaItem.Builder()
+            .setUri(videoSource.path)
+            .setSubtitleConfigurations(subtitles)
+            .build()
     }
 
     override fun getVideoInfo(): VideoInfo {

@@ -1,0 +1,207 @@
+{
+  "MediaContainer": {
+    "size": 1,
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "00000000-0000-0000-0000-000000000001",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1700000000,
+    "Metadata": [
+      {
+        "ratingKey": "401",
+        "key": "/library/metadata/401",
+        "guid": "plex://movie/000000000000000000000191",
+        "slug": "a-made-up-film",
+        "studio": "Test Studio",
+        "type": "movie",
+        "title": "A Made Up Film",
+        "originalTitle": "Un film inventé",
+        "librarySectionTitle": "Movies",
+        "librarySectionID": 1,
+        "librarySectionKey": "/library/sections/1",
+        "contentRating": "fr/12",
+        "summary": "Made up for the tests. Nothing of it is real, and it goes on long enough to need More on a phone.",
+        "rating": 9.1,
+        "audienceRating": 8.4,
+        "viewOffset": 4323000,
+        "viewCount": 1,
+        "lastViewedAt": 1700000500,
+        "year": 2001,
+        "tagline": "Nothing is real.",
+        "thumb": "/library/metadata/401/thumb/1700000000",
+        "art": "/library/metadata/401/art/1700000000",
+        "duration": 7320000,
+        "originallyAvailableAt": "2001-04-25",
+        "addedAt": 1600000401,
+        "updatedAt": 1700000401,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 4010,
+            "duration": 7320000,
+            "bitrate": 8200,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 4010,
+                "key": "/library/parts/4010/1700000000/file.mkv",
+                "duration": 7320000,
+                "file": "/data/movies/A Made Up Film (2001)/A Made Up Film (2001).mkv",
+                "size": 8804682956,
+                "container": "mkv",
+                "videoProfile": "high",
+                "Stream": [
+                  {
+                    "id": 40101,
+                    "streamType": 1,
+                    "default": true,
+                    "codec": "h264",
+                    "index": 0,
+                    "bitrate": 7000,
+                    "height": 1080,
+                    "width": 1920,
+                    "displayTitle": "1080p (H.264)",
+                    "extendedDisplayTitle": "1080p (H.264)"
+                  },
+                  {
+                    "id": 40102,
+                    "streamType": 2,
+                    "selected": true,
+                    "default": true,
+                    "codec": "ac3",
+                    "index": 1,
+                    "channels": 6,
+                    "language": "Français",
+                    "languageTag": "fr",
+                    "languageCode": "fra",
+                    "displayTitle": "Français (AC3 5.1)",
+                    "extendedDisplayTitle": "Français (AC3 5.1)"
+                  },
+                  {
+                    "id": 40103,
+                    "streamType": 2,
+                    "codec": "ac3",
+                    "index": 2,
+                    "channels": 6,
+                    "language": "English",
+                    "languageTag": "en",
+                    "languageCode": "eng",
+                    "displayTitle": "English (AC3 5.1)",
+                    "extendedDisplayTitle": "English (AC3 5.1)"
+                  },
+                  {
+                    "id": 40104,
+                    "streamType": 3,
+                    "codec": "srt",
+                    "index": 3,
+                    "language": "English",
+                    "languageTag": "en",
+                    "languageCode": "eng",
+                    "displayTitle": "English (SRT)",
+                    "extendedDisplayTitle": "English (SRT)"
+                  },
+                  {
+                    "id": 40105,
+                    "streamType": 3,
+                    "selected": true,
+                    "forced": true,
+                    "key": "/library/streams/40105",
+                    "codec": "srt",
+                    "language": "Français",
+                    "languageTag": "fr",
+                    "languageCode": "fra",
+                    "displayTitle": "Français (SRT External)",
+                    "extendedDisplayTitle": "Français Forced (SRT External)"
+                  },
+                  {
+                    "id": 40106,
+                    "streamType": 3,
+                    "key": "/library/streams/40106",
+                    "codec": "pgs",
+                    "language": "Deutsch",
+                    "languageTag": "de",
+                    "languageCode": "deu",
+                    "displayTitle": "Deutsch (PGS External)",
+                    "extendedDisplayTitle": "Deutsch (PGS External)"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "id": 1,
+            "filter": "genre=1",
+            "tag": "Comedy"
+          },
+          {
+            "id": 2,
+            "filter": "genre=2",
+            "tag": "Romance"
+          }
+        ],
+        "Country": [
+          {
+            "id": 3,
+            "filter": "country=3",
+            "tag": "France"
+          }
+        ],
+        "Director": [
+          {
+            "id": 4,
+            "filter": "director=4",
+            "tag": "Jeanne Exemple",
+            "thumb": "https://metadata-static.plex.tv/0/people/0.jpg"
+          }
+        ],
+        "Writer": [
+          {
+            "id": 5,
+            "filter": "writer=5",
+            "tag": "Paul Exemple"
+          }
+        ],
+        "Role": [
+          {
+            "id": 6,
+            "filter": "actor=6",
+            "tag": "Alice Test",
+            "role": "Amélie",
+            "thumb": "https://metadata-static.plex.tv/1/people/1.jpg"
+          },
+          {
+            "id": 7,
+            "filter": "actor=7",
+            "tag": "Bob Sample",
+            "role": "Nino"
+          }
+        ],
+        "Guid": [
+          {
+            "id": "imdb://tt0000401"
+          },
+          {
+            "id": "tmdb://401"
+          },
+          {
+            "id": "tvdb://401"
+          }
+        ]
+      }
+    ]
+  }
+}

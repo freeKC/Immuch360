@@ -42,3 +42,22 @@ What differs from upstream, to apply again when a newer commit is copied here (e
    - `NativeVideoPlayerPlugin.kt`: the hook `errorToken`, set by the app (`MainActivity.registerPlugins`, with
      `FlatPlayerErrors.token`), which gives what to send Flutter for an error, null to send the text as before.
    - `NativeVideoPlayerViewController.kt`: `onPlayerError` sends that token when there is one.
+
+3. Side files of subtitles, and the ids of the tracks (10 November 2026). A film of a media server (Plex) often has
+   its subtitles in files next to it (`Film.fr.srt`, or subtitles the server downloaded), which the player never saw:
+   only the tracks inside the file were listed. The app serves those files over its media bridge (http://127.0.0.1)
+   and hands them to the player with the video.
+   - Dart: `lib/src/video_subtitle.dart` (new, exported): `VideoSubtitle` (`uri`, `mimeType`, `language`, `label`,
+     `id`, the id Media3 gives its track, "immuch-sub-<n>" from the app). `VideoSource.subtitles` (empty by default,
+     outside the JSON: the generated `video_source.g.dart` is upstream's) and the `subtitles` argument of
+     `VideoSource.init`; `NativeVideoPlayerApi.loadVideoSource` sends them under the key `subtitles` when there are
+     some. `NativeVideoTrack.id`: the Format.id of the track, read from the key `id`.
+   - `platform_interface/VideoSource.kt`: `VideoSubtitle`, read from `subtitles`.
+   - `NativeVideoPlayerViewController.kt`: a video with side files gets a `MediaItem` with a
+     `MediaItem.SubtitleConfiguration` for each (address, MIME type, language, label, id, no selection flag, so that
+     they start off like the subtitles of the file); a network video with some goes through a
+     `DefaultMediaSourceFactory` over the same data source (with the load error policy of the app), which merges a
+     source for each file with the video's. A video without side files loads as before (`ProgressiveMediaSource`).
+   - `VideoTracks.kt`: the map of a track has `id` (its Format.id) when it has one. Media3 prefixes the id of a
+     merged track with its period ("1:immuch-sub-3"), which the app strips (`sidecarIdOfTrack`).
+   - iOS: nothing; it ignores the key `subtitles`.

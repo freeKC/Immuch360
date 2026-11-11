@@ -22,6 +22,7 @@ import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/readonly_mode.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/network/plex_films.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_viewer.provider.dart';
 import 'package:immich_mobile/repositories/permission.repository.dart';
 import 'package:immich_mobile/services/app_settings.service.dart';
@@ -73,6 +74,11 @@ class AdvancedSettings extends HookConsumerWidget {
     // The splat viewer of the computers, phones and tablets (not a TV): the same switch, its own words and caps
     final splatDevice = ref.watch(splatDeviceClassProvider);
     final flatSplats = splatDevice == SplatDeviceClass.phone || splatDevice == SplatDeviceClass.computer;
+    // The Wikipedia block of the page of a Plex film, experimental and on by default; off, the kept articles go too
+    final filmWikipedia = useState(ref.watch(appConfigProvider).viewer.filmWikipedia);
+    useValueChanged<bool, void>(filmWikipedia.value, (_, _) {
+      unawaited(setFilmWikipedia(ref, filmWikipedia.value));
+    });
     // The flat 3D media told by their file name in the immersive viewer of a Meta Quest, experimental and on by default
     final flat3dByName = useState(ref.watch(appConfigProvider).viewer.flat3dByName);
     useValueChanged<bool, void>(flat3dByName.value, (_, _) {
@@ -213,6 +219,12 @@ class AdvancedSettings extends HookConsumerWidget {
           title: context.t.dji_live_setting_title,
           subtitle: television ? context.t.dji_live_setting_subtitle_tv : context.t.dji_live_setting_subtitle,
         ),
+      SettingsSwitchListTile(
+        key: const Key('advanced_settings_film_wikipedia'),
+        valueNotifier: filmWikipedia,
+        title: context.t.plex_film_wikipedia_setting_title,
+        subtitle: context.t.plex_film_wikipedia_setting_subtitle,
+      ),
       if (isHorizonOs)
         SettingsSwitchListTile(
           key: const Key('advanced_settings_flat_3d'),

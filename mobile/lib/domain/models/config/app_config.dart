@@ -91,6 +91,7 @@ abstract class AppConfig with _$AppConfig {
             .viewerMarkSplatPhotos => viewer.markSplatPhotos,
             .viewerAv2Videos => viewer.av2Videos,
             .viewerVideoSource => viewer.videoSource,
+            .viewerFilmWikipedia => viewer.filmWikipedia,
             .networkAutoEndpointSwitching => network.autoEndpointSwitching,
             .networkPreferredWifiName => network.preferredWifiName,
             .networkLocalEndpoint => network.localEndpoint,
@@ -171,6 +172,7 @@ abstract class AppConfig with _$AppConfig {
       .viewerMarkSplatPhotos => copyWith(viewer: viewer.copyWith(markSplatPhotos: value as bool)),
       .viewerAv2Videos => copyWith(viewer: viewer.copyWith(av2Videos: value as bool)),
       .viewerVideoSource => copyWith(viewer: viewer.copyWith(videoSource: value as VideoSourcePolicy?)),
+      .viewerFilmWikipedia => copyWith(viewer: viewer.copyWith(filmWikipedia: value as bool)),
       .networkAutoEndpointSwitching => copyWith(network: network.copyWith(autoEndpointSwitching: value as bool)),
       .networkPreferredWifiName => copyWith(
         network: network.copyWith(preferredWifiName: .fromNullable(value as String?)),

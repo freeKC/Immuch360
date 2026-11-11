@@ -1,0 +1,33 @@
+{
+  "MediaContainer": {
+    "size": 5,
+    "allowSync": false,
+    "Directory": [
+      {
+        "fastKey": "/library/sections/1/all?contentRating=fr%2F12",
+        "key": "fr/12",
+        "title": "fr/12"
+      },
+      {
+        "fastKey": "/library/sections/1/all?contentRating=PG-13",
+        "key": "PG-13",
+        "title": "PG-13"
+      },
+      {
+        "fastKey": "/library/sections/1/all?contentRating=G",
+        "key": "G",
+        "title": "G"
+      },
+      {
+        "fastKey": "/library/sections/1/all?contentRating=NR",
+        "key": "NR",
+        "title": "NR"
+      },
+      {
+        "fastKey": "/library/sections/1/all?contentRating=xx%2FQ",
+        "key": "xx/Q",
+        "title": "xx/Q"
+      }
+    ]
+  }
+}
