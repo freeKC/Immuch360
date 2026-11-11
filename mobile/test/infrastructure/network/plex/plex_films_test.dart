@@ -239,6 +239,16 @@ void main() {
         'ca/14A': AudienceBand.age16,
         'NR': AudienceBand.unrated,
         'Not Rated': AudienceBand.unrated,
+        // The French values of a library of PMS 1.42.1 (11 November 2026)
+        'fr/TP': AudienceBand.all,
+        'fr/Tous publics avec avertissement': AudienceBand.all,
+        'fr/12 avec avertissement': AudienceBand.age12,
+        'fr/Accord parental': AudienceBand.age12,
+        'fr/NR': AudienceBand.unrated,
+        'fr/Not Rated': AudienceBand.unrated,
+        'None': AudienceBand.unrated,
+        'fr/14+': AudienceBand.age16,
+        '13+': AudienceBand.age16,
       };
       for (final MapEntry(:key, :value) in bands.entries) {
         expect(audienceBandOf(key), value, reason: key);

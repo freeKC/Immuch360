@@ -734,6 +734,11 @@ AudienceBand? audienceBandOf(String? contentRating) {
   final country = slash > 0 ? raw.substring(0, slash).toLowerCase() : null;
   final value = (slash > 0 ? raw.substring(slash + 1) : raw).trim();
   final upper = value.toUpperCase();
+  // France: "12 avec avertissement", "Tous publics avec avertissement" (with a warning) are in the band of the rating
+  final warned = RegExp(r'^(.+?)\s+AVEC AVERTISSEMENT$').firstMatch(upper)?.group(1);
+  if (warned != null) {
+    return audienceBandOf(country == null ? warned : '$country/$warned');
+  }
   final named = _namedBands[upper] ?? (country == null ? null : _countryBands['$country/$upper']);
   if (named != null) {
     return named;
@@ -777,11 +782,16 @@ const _namedBands = {
   'NOT RATED': AudienceBand.unrated,
   'UNRATED': AudienceBand.unrated,
   'UNKNOWN': AudienceBand.unrated,
+  // The value of the films without a rating in the content rating filter of PMS 1.42.1
+  'NONE': AudienceBand.unrated,
   // France and the United Kingdom
   'U': AudienceBand.all,
   'TP': AudienceBand.all,
   'TOUS PUBLICS': AudienceBand.all,
   'UC': AudienceBand.all,
+  // "Accord parental" of the older French ratings: "souhaitable" was under 10, "indispensable" under 12; the higher
+  // one, so that no film lands in a younger band than its rating
+  'ACCORD PARENTAL': AudienceBand.age12,
   '12A': AudienceBand.age12,
   'R18': AudienceBand.age18,
   // Australia
