@@ -983,7 +983,7 @@ class SphericalVideoActivity : ComponentActivity() {
       player.clearVideoSurface()
       lens.bindRendererOutputs()
       lens.setDownstream(CoverageFrameListener(view.videoFrameMetadataListener, view.cameraMotionListener))
-      player.setCameraMotionListener(view.cameraMotionListener)
+      player.setCameraMotionListener(stabilizedFrames.forwardingResets(view.cameraMotionListener))
       view.videoSurface?.let(::attachLensOutput)
       return
     }
@@ -992,7 +992,7 @@ class SphericalVideoActivity : ComponentActivity() {
     player.setVideoFrameMetadataListener(
       CoverageFrameListener(view.videoFrameMetadataListener, view.cameraMotionListener),
     )
-    player.setCameraMotionListener(view.cameraMotionListener)
+    player.setCameraMotionListener(stabilizedFrames.forwardingResets(view.cameraMotionListener))
   }
 
   /**
@@ -1433,15 +1433,16 @@ class SphericalVideoActivity : ComponentActivity() {
       Log.i(TAG, "Stabilisation: no motion track in this file")
     }
     stabilization.onTrack(message.hasTrack, table)?.let(::showStabilizationNotice)
-    updateStabilization()
+    // A table that arrives while the video is paused shows on the frame on screen at once
+    if (updateStabilization()) redrawPausedFrame()
   }
 
   /**
    * Applies the switch: its button (shown for a file with a track, dimmed when off), the table the frames get (none
    * for a frame that is not the stitched sphere), and the CAMM track of the file, disabled when off or when the table
-   * turns the frames.
+   * turns the frames. True when the frames get another table than before (a paused frame does not show it yet).
    */
-  private fun updateStabilization() {
+  private fun updateStabilization(): Boolean {
     stabilizationButton.alpha = if (stabilization.enabled) 1f else MONO_ALPHA
     ViewCompat.setStateDescription(
       stabilizationButton,
@@ -1453,14 +1454,15 @@ class SphericalVideoActivity : ComponentActivity() {
     if (table != null && stabilizedFrames.table !== table && (playingFallback || plan.fromFallback)) {
       Log.i(TAG, "Stabilisation: the table of the original turns the frames of the transcoded stream")
     }
-    stabilizedFrames.table = table
-    val current = player ?: return
+    val changed = stabilizedFrames.changeTable(table)
+    val current = player ?: return changed
     val parameters = current.trackSelectionParameters
     val cammDisabled = stabilization.cammDisabled
     if (parameters.disabledTrackTypes.contains(C.TRACK_TYPE_CAMERA_MOTION) != cammDisabled) {
       current.trackSelectionParameters =
         parameters.buildUpon().setTrackTypeDisabled(C.TRACK_TYPE_CAMERA_MOTION, cammDisabled).build()
     }
+    return changed
   }
 
   /** The user pressed the switch: it flips, the setting of the app follows, a paused frame shows the change */
