@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/video/desktop_stabilization.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -55,13 +56,16 @@ final rawVideoPlaybackSupportProvider = Provider<RawVideoPlaybackSupport>((ref) 
 });
 
 /// Whether the 360° player of this device stabilises the raw videos with the motion track of their camera (issue 14,
-/// see raw_video_stabilization.dart): the Android player of the phones, tablets and TVs (SphericalVideoActivity). The
-/// iOS player, the computers and the immersive viewer of the Meta Quest come in later lots; their setting and switch
-/// stay hidden until then, so that nothing says it stabilises where nothing does. It follows a scope that overrides the
-/// kind of device, as the settings pages of the tests do.
+/// see raw_video_stabilization.dart): the Android player of the phones, tablets and TVs (SphericalVideoActivity), and
+/// the player of the computers where renderer C draws the 360° view, Windows with libmpv loaded
+/// (desktop_stabilization.dart; Linux and macOS play these videos flat). The iOS player and the immersive viewer of
+/// the Meta Quest come in later lots; their setting and switch stay hidden until then, so that nothing says it
+/// stabilises where nothing does. It follows a scope that overrides the kind of device, as the settings pages of the
+/// tests do.
 final videoStabilizationSupportedProvider = Provider<bool>((ref) {
   final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
-  return Platform.isAndroid && isHorizonOs == false;
+  return (Platform.isAndroid && isHorizonOs == false) ||
+      desktopStabilizationSupported(videoAvailable: desktopVideoAvailable);
 }, dependencies: [isHorizonOsProvider]);
 
 /// Builds the stabilisation table of a raw video: in a background isolate, the reads served from here (see
