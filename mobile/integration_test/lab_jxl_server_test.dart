@@ -176,8 +176,9 @@ void main() {
         isNull,
         reason: '$_sphereName not undecodable',
       );
-      // The 360° viewer, then the viewer
-      for (var pops = 0; pops < 4 && find.byType(AssetViewerPage).evaluate().isNotEmpty; pops++) {
+      // The 360° viewer, then the viewer, popped until the timeline shows again: the viewer under the 360° viewer is
+      // offstage, so a finder of the viewer finds nothing while the 360° viewer covers it
+      for (var pops = 0; pops < 4 && labTile(_sphereName).evaluate().isEmpty; pops++) {
         await router.maybePop();
         await tester.pump(const Duration(milliseconds: 500));
       }
