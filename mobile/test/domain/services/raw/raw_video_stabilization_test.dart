@@ -297,6 +297,42 @@ void main() {
     });
   });
 
+  test('asks for the settings of the phone by default, and for the headset ones of the Meta Quest when given', () async {
+    final phone = RawStabilizationRequest.of(_plan(RawMediaKind.insta360Video), name: 'a.insv', fileSize: 5);
+    expect(phone.options.headingTimeConstant, 1);
+    expect(phone.options.headingMaxDegreesPerSecond, isNull);
+    final headset = RawStabilizationRequest.of(
+      _plan(RawMediaKind.goProVideo),
+      name: 'GS010013.360',
+      fileSize: 5,
+      options: StabilizationOptions.headset,
+    );
+    expect(headset.options.headingTimeConstant, 2);
+    expect(headset.options.headingMaxDegreesPerSecond, 30);
+    expect(headset.toString(), contains('at most 30.0 degrees/s'));
+
+    // Through the stabiliser of another player (the immersive viewer): its settings reach the build, its messages its
+    // sender
+    final requests = <RawStabilizationRequest>[];
+    final told = <(String, bool, bool)>[];
+    final file = _File(x4);
+    final stabilizer = RawVideoStabilizer(
+      send: (url, enabled, hasTrack, times, corrections, summary) async => told.add((url, enabled, hasTrack)),
+      url: 'u',
+      enabled: true,
+      plan: _plan(RawMediaKind.insta360Video, input: file.input('x4.insv')),
+      build: (request, read) async {
+        requests.add(request);
+        return null;
+      },
+      options: StabilizationOptions.headset,
+    );
+    await stabilizer.announce();
+    await stabilizer.deliver();
+    expect(requests.single.options.headingMaxDegreesPerSecond, 30);
+    expect(told, [('u', true, true), ('u', true, false)]);
+  });
+
   group('RawVideoStabilizer', () {
     test('announces the track before the player opens, then delivers the table', () async {
       final player = _Player();

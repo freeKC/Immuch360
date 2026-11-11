@@ -55,14 +55,21 @@ final rawVideoPlaybackSupportProvider = Provider<RawVideoPlaybackSupport>((ref) 
 });
 
 /// Whether the 360° player of this device stabilises the raw videos with the motion track of their camera (issue 14,
-/// see raw_video_stabilization.dart): the Android player of the phones, tablets and TVs (SphericalVideoActivity). The
-/// iOS player, the computers and the immersive viewer of the Meta Quest come in later lots; their setting and switch
-/// stay hidden until then, so that nothing says it stabilises where nothing does. It follows a scope that overrides the
-/// kind of device, as the settings pages of the tests do.
+/// see raw_video_stabilization.dart): the Android player of the phones, tablets and TVs (SphericalVideoActivity), and
+/// the immersive viewer of the Meta Quest (lot d3, turned inside its stitch, see ImmersiveStabilization), once the
+/// kind of device is known. The iOS player and the computers come in later lots; their setting and switch stay hidden
+/// until then, so that nothing says it stabilises where nothing does. It follows a scope that overrides the kind of
+/// device, as the settings pages of the tests do.
 final videoStabilizationSupportedProvider = Provider<bool>((ref) {
   final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
-  return Platform.isAndroid && isHorizonOs == false;
+  return videoStabilizationSupportedOn(isIOS: Platform.isIOS, isAndroid: Platform.isAndroid, isHorizonOs: isHorizonOs);
 }, dependencies: [isHorizonOsProvider]);
+
+/// The rule of [videoStabilizationSupportedProvider]: on Android, the phones, tablets and TVs ([isHorizonOs] false)
+/// and the Meta Quest (true), once the kind of device is known (null while it is asked); not yet on iOS ([isIOS], the
+/// lot of the iPhones and iPads) nor on the computers
+bool videoStabilizationSupportedOn({required bool isIOS, required bool isAndroid, required bool? isHorizonOs}) =>
+    isAndroid && isHorizonOs != null;
 
 /// Builds the stabilisation table of a raw video: in a background isolate, the reads served from here (see
 /// [buildRawStabilizationInIsolate]); the widget tests build it in place

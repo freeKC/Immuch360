@@ -14,6 +14,7 @@ import androidx.media3.exoplayer.Renderer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.video.VideoFrameMetadataListener
+import app.alextran.immich.spherical.StabilizedStitch
 
 /**
  * A player for the decoded streams of a raw 360° video, stitched by a [TwoLensCompositor]: one ExoPlayer whose lens
@@ -99,6 +100,14 @@ private constructor(
 
   /** The phone's spherical view, told about each stitched frame before it is presented. */
   fun setDownstream(listener: VideoFrameMetadataListener?) = compositor.setDownstream(listener)
+
+  /**
+   * Turns the stitched picture by [stitch] frame by frame (the stabilisation of the Meta Quest's viewer), or not with
+   * null: the phone's player turns its sphere instead and never sets it.
+   */
+  fun setStabilization(stitch: StabilizedStitch?) {
+    compositor.stabilization = stitch
+  }
 
   /** The player first, so that the decoders leave the compositor's Surfaces, then the compositor. */
   fun release() {

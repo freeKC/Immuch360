@@ -72,6 +72,7 @@ import 'package:immich_mobile/infrastructure/repositories/network.repository.dar
 import 'package:immich_mobile/infrastructure/repositories/storage.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_stabilization.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/file_tiff_image.dart';
@@ -148,7 +149,8 @@ String _immersiveVideoId(BaseAsset asset, String remoteId) =>
 /// [chooseVideoSource]). [rawProjection] is the rawProjection
 /// JSON of a raw video (see [RawVideoPlan.toNativeJson]), null for an equirectangular media and for a raw photo, which
 /// comes stitched. [stereoPair] is the JSON of the two eyes of an Apple spatial photo, which the viewer shows on a flat
-/// quad in front of the user rather than on a sphere; null for any other media.
+/// quad in front of the user rather than on a sphere; null for any other media. [rawPlan] is the plan of a raw video,
+/// whose motion track gives the table of its stabilisation (see ImmersiveStabilization); null for any other media.
 class ImmersiveRequest {
   const ImmersiveRequest({
     required this.url,
@@ -161,6 +163,7 @@ class ImmersiveRequest {
     this.sourceRefusal,
     this.rawProjection,
     this.stereoPair,
+    this.rawPlan,
   });
 
   final String url;
@@ -173,6 +176,7 @@ class ImmersiveRequest {
   final VideoSourceRefusal? sourceRefusal;
   final String? rawProjection;
   final String? stereoPair;
+  final RawVideoPlan? rawPlan;
 
   /// Whether the viewer may be showing this media at [url]: the URL it was given, or the stream it switched to
   bool isShownAt(String url) => this.url == url || fallbackUrl == url;
@@ -199,6 +203,9 @@ class ImmersiveRequest {
 /// [watchMinDurationMs] is the threshold of "Remember where I stopped" (see ImmersiveWatch), -1 off and for the kiosk:
 /// a film plays once and the viewer reports where it is. [startNotice] is said once the video plays ("Resumed at
 /// 42:10"), null for nothing.
+///
+/// [stabilization] tells the viewer about the stabilisation of a raw video first (see ImmersiveStabilization); null
+/// for none.
 Future<void> openImmersiveRequest(
   ImmersiveApi api,
   ImmersiveRequest request, {
@@ -211,6 +218,36 @@ Future<void> openImmersiveRequest(
   String? kiosk,
   int watchMinDurationMs = -1,
   String? startNotice,
+  ImmersiveStabilization? stabilization,
+}) {
+  Future<void> open() => _openImmersiveRequest(
+    api,
+    request,
+    stereoLabels: stereoLabels,
+    openingId: openingId,
+    startPosition: startPosition,
+    reverseThumbstickTurn: reverseThumbstickTurn,
+    sharpFlatScreens: sharpFlatScreens,
+    gaussianSplats: gaussianSplats,
+    kiosk: kiosk,
+    watchMinDurationMs: watchMinDurationMs,
+    startNotice: startNotice,
+  );
+  return stabilization == null ? open() : stabilization.around(request, open);
+}
+
+Future<void> _openImmersiveRequest(
+  ImmersiveApi api,
+  ImmersiveRequest request, {
+  required Map<String, String> stereoLabels,
+  required int openingId,
+  required Duration startPosition,
+  required bool reverseThumbstickTurn,
+  required bool sharpFlatScreens,
+  required bool gaussianSplats,
+  required String? kiosk,
+  required int watchMinDurationMs,
+  required String? startNotice,
 }) => api.open(
   request.url,
   request.headers,
@@ -250,18 +287,33 @@ ImmersiveWatch readImmersiveWatch(WidgetRef ref) => ImmersiveWatch(
 Map<String, String> immersiveOpeningLabels(Map<String, String> stereoLabels) => {
   ...generatedPanoramaViewerLabels(StaticTranslations.instance),
   ...immersivePlaybackLabels(StaticTranslations.instance),
+  ...videoStabilizationLabels(StaticTranslations.instance),
   ...stereoLabels,
 };
 
 /// Shows [request] in place of the media of the immersive viewer that asked for another one with [requestId] (see
 /// [ImmersiveAdjacentRequest.show]), through [api]. True when the viewer shows it; never starts the viewer. A video
-/// starts at [startPosition], where a film was left, with [startNotice] said once it plays.
+/// starts at [startPosition], where a film was left, with [startNotice] said once it plays. [stabilization] tells the
+/// viewer about the stabilisation of a raw video first (see ImmersiveStabilization); null for none.
 Future<bool> showImmersiveRequest(
   ImmersiveApi api,
   int requestId,
   ImmersiveRequest request, {
   Duration startPosition = Duration.zero,
   String? startNotice,
+  ImmersiveStabilization? stabilization,
+}) {
+  Future<bool> show() =>
+      _showImmersiveRequest(api, requestId, request, startPosition: startPosition, startNotice: startNotice);
+  return stabilization == null ? show() : stabilization.around(request, show, shown: (shown) => shown);
+}
+
+Future<bool> _showImmersiveRequest(
+  ImmersiveApi api,
+  int requestId,
+  ImmersiveRequest request, {
+  required Duration startPosition,
+  required String? startNotice,
 }) => api.showAdjacent(
   requestId,
   request.url,
@@ -363,6 +415,7 @@ class RawImmersiveMedia {
     this.loadAssetImage = loadRawAssetImage,
     this.loadImage = loadProvidedImage,
     this.stitchPhoto = stitchedPhotoFile,
+    this.stabilization,
   }) : files = files ?? StitchedPhotoFiles.temporary();
 
   /// Reads the services from the providers, and what the scan of the device found raw as it is now. Call it before the
@@ -375,6 +428,7 @@ class RawImmersiveMedia {
       kindOf: (asset) => rawMediaKindOfAsset(asset, isFoundRaw: (localId) => records[localId]?.raw360 ?? false),
       resolver: ref.read(rawVideoResolverProvider),
       assetInputs: forAssets ? ref.read(rawAssetInputsProvider) : null,
+      stabilization: ImmersiveStabilization.read(ref),
     );
   }
 
@@ -391,6 +445,9 @@ class RawImmersiveMedia {
 
   /// Where the stitched photos go
   final StitchedPhotoFiles files;
+
+  /// Tells the viewer about the stabilisation of the raw videos it shows (issue 14, lot d3); null for none
+  final ImmersiveStabilization? stabilization;
 
   /// The photo of an asset to stitch, from its file on the device when given (see [loadRawAssetImage])
   final Future<ui.Image> Function(BaseAsset asset, File? localFile) loadAssetImage;
@@ -456,6 +513,7 @@ class RawImmersiveMedia {
         view: raw360SphereView,
         fallbackUrl: plan.fallbackUrl,
         rawProjection: plan.toNativeJson(),
+        rawPlan: plan,
       );
     }
     final calibration = await calibrations.forReader(key, read: read, fileSize: entry.size, isPhoto: true);
@@ -721,6 +779,7 @@ class ImmersiveAssetResolver {
         sourceNotice: plan.url == source.url ? source.notice ?? source.copyBeyondDecoders : null,
         sourceRefusal: plan.url == source.url ? source.refusal : null,
         rawProjection: plan.toNativeJson(),
+        rawPlan: plan,
       );
     }
 
@@ -855,6 +914,7 @@ class ImmersiveAssetResolver {
     gaussianSplats: gaussianSplats,
     watchMinDurationMs: watch?.minDurationMs ?? -1,
     startNotice: startNotice,
+    stabilization: raw?.stabilization,
   );
 }
 
@@ -1237,6 +1297,7 @@ Future<void> openImmersiveUrl(
   final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
   final sharpFlatScreens = ref.read(appConfigProvider).viewer.sharpFlatScreens;
   final gaussianSplats = ref.read(appConfigProvider).viewer.gaussianSplats;
+  final stabilization = ImmersiveStabilization.read(ref);
   await player?.suspendForExternalPlayer();
   final openingId = session.start(navigator);
   try {
@@ -1251,6 +1312,7 @@ Future<void> openImmersiveUrl(
       gaussianSplats: gaussianSplats,
       watchMinDurationMs: watchMinDurationMs,
       startNotice: startNotice,
+      stabilization: stabilization,
     );
   } catch (_) {
     session.cancel(openingId);
@@ -1385,6 +1447,7 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
           resolved,
           startPosition: start ?? Duration.zero,
           startNotice: start == null ? null : watch?.noticeOf(start),
+          stabilization: _resolver.raw?.stabilization,
         ),
       );
       if (shown) {
@@ -1706,6 +1769,7 @@ class FolderImmersiveNavigator implements ImmersiveNavigator {
           shownRequest,
           startPosition: start ?? Duration.zero,
           startNotice: start == null ? null : _watch?.noticeOf(start),
+          stabilization: _raw?.stabilization,
         ),
       );
       if (shown) {

@@ -98,6 +98,15 @@ class StabilizationTable private constructor(private val timesUs: LongArray, pri
   /** The correction at [timeUs] as the angle axis Media3's CameraMotionListener takes (see the class) */
   fun angleAxisAt(timeUs: Long): FloatArray = StabilizationMath.angleAxis(quaternionAt(timeUs))
 
+  /**
+   * The correction at [timeUs] as the stitch shaders take it (the immersive viewer of the Meta Quest, which turns the
+   * picture inside the stitch rather than the sphere): the mat3 uniform uStabilization of RawStitchShaders, column
+   * major, that turns the view direction e of each output pixel into the direction of the stitched view it shows. The
+   * point at direction d is shown at K d, so the pixel at e shows the point at K^T e: the uniform is K^T, see
+   * [StabilizationMath.stitchMatrix]. StabilizedStitchTest pins it with the checks of StabilizationTableTest.
+   */
+  fun stitchMatrixAt(timeUs: Long): FloatArray = StabilizationMath.stitchMatrix(quaternionAt(timeUs))
+
   private fun quaternion(frame: Int): DoubleArray = corrections.copyOfRange(4 * frame, 4 * frame + 4)
 }
 
@@ -143,5 +152,20 @@ internal object StabilizationMath {
     val angle = 2 * atan2(length, w)
     val scale = angle / length
     return floatArrayOf((x * scale).toFloat(), (y * scale).toFloat(), (z * scale).toFloat())
+  }
+
+  /**
+   * The transpose of the rotation matrix K of the unit quaternion [q] (w, x, y, z), as GLSL reads a mat3 uniform
+   * uploaded without transpose (column major): column c of K^T is row c of K, so the nine values are the rows of K one
+   * after the other. A new array each time.
+   */
+  fun stitchMatrix(q: DoubleArray): FloatArray {
+    val (w, x, y, z) = q
+    // The rows of K
+    return floatArrayOf(
+      (1 - 2 * (y * y + z * z)).toFloat(), (2 * (x * y - w * z)).toFloat(), (2 * (x * z + w * y)).toFloat(),
+      (2 * (x * y + w * z)).toFloat(), (1 - 2 * (x * x + z * z)).toFloat(), (2 * (y * z - w * x)).toFloat(),
+      (2 * (x * z - w * y)).toFloat(), (2 * (y * z + w * x)).toFloat(), (1 - 2 * (x * x + y * y)).toFloat(),
+    )
   }
 }

@@ -65,6 +65,24 @@ class RawStitchShadersTest {
   }
 
   @Test
+  fun `every program turns the output view by the stabilisation before the lenses`() {
+    // The Quest's stabilisation (issue 14, lot d3) turns the view direction of each output pixel; the identity the
+    // owners set at build keeps the stitch as before
+    val sources =
+      RawKind.entries.flatMap { kind -> colors.map { RawStitchShaders.fragmentEs3(kind, it) } } +
+        RawStitchShaders.fragmentEs1SideBySide()
+    for (source in sources) {
+      assertTrue(declared(source).contains(RawStitchShaders.STABILIZATION_UNIFORM))
+      assertTrue(source.contains("uniform mat3 uStabilization;"))
+      // Every call of a stitch takes the turned direction, never the raw one
+      assertFalse(Regex("""stitch(Fisheye|Eac)\(viewDirection""").containsMatchIn(source))
+      assertTrue(Regex("""stitch(Fisheye|Eac)\(uStabilization \* viewDirection""").containsMatchIn(source))
+    }
+    assertTrue(RawStitchShaders.STABILIZATION_UNIFORM in RawStitchShaders.uniformsOf(RawKind.EAC_GOPRO, colors[0]))
+    assertTrue(RawStitchShaders.STABILIZATION_UNIFORM in RawStitchShaders.SIDE_BY_SIDE_UNIFORMS)
+  }
+
+  @Test
   fun `the variants define what they read`() {
     val hlgYuv =
       RawStitchShaders.fragmentEs3(RawKind.DUAL_FISHEYE, RawStitchShaders.Color(true, RawStitchShaders.ToneMap.HLG))
@@ -75,7 +93,7 @@ class RawStitchShadersTest {
       RawStitchShaders.fragmentEs3(RawKind.EAC_GOPRO, RawStitchShaders.Color(false, RawStitchShaders.ToneMap.PQ))
     assertFalse(pqRgb.contains("GL_EXT_YUV_target"))
     assertTrue(pqRgb.contains("#define TONE_MAP_PQ"))
-    assertTrue(pqRgb.contains("stitchEac(viewDirection(vOut))"))
+    assertTrue(pqRgb.contains("stitchEac(uStabilization * viewDirection(vOut))"))
     val oldDriver =
       RawStitchShaders.fragmentEs3(RawKind.DUAL_FISHEYE, RawStitchShaders.Color.SDR, essl3External = false)
     assertTrue(oldDriver.contains("#extension GL_OES_EGL_image_external : require"))
