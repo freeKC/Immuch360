@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
@@ -15,14 +18,19 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/plex_films_library.page.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/plex_film_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
+import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/providers/network/plex_film_list.provider.dart';
+import 'package:immich_mobile/providers/network/plex_films.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 
+import '../../../providers/network/film_download_fakes.dart';
 import 'network_viewer_fakes.dart';
 
 const _source = NetworkSource(
@@ -35,10 +43,11 @@ const _source = NetworkSource(
   plex: PlexServerInfo(hash: '0123456789abcdef0123456789abcdef'),
 );
 
-PlexFilm _film(int id, String title, int? year) => PlexFilm(
+PlexFilm _film(int id, String title, int? year, {int viewCount = 0}) => PlexFilm(
   ratingKey: '$id',
   title: title,
   year: year,
+  viewCount: viewCount,
   parts: [
     PlexFileItem(
       partKey: '/library/parts/${1000 + id}/1/file.mkv',
@@ -60,16 +69,18 @@ class _PlexShare extends MemoryShare implements PlexFilmsSource {
   final List<PlexFilm> films;
   final List<String> searched = [];
 
+  /// The queries of the light pass of the years, one per reading of the list
+  final List<PlexFilmListQuery> asked = [];
+
   static const movies = PlexSection(key: '1', title: 'Movies', type: 'movie', agent: 'tv.plex.agents.movie');
 
   List<PlexFilm> _of(PlexFilmListQuery query) {
     final text = query.searchedTitle?.toLowerCase();
-    return text == null
-        ? films
-        : [
-            for (final f in films)
-              if (f.title.toLowerCase().contains(text)) f,
-          ];
+    final unwatched = query.queryParameters()['unwatched'] == '1';
+    return [
+      for (final f in films)
+        if ((text == null || f.title.toLowerCase().contains(text)) && (!unwatched || f.viewCount == 0)) f,
+    ];
   }
 
   @override
@@ -79,7 +90,10 @@ class _PlexShare extends MemoryShare implements PlexFilmsSource {
   bool get isOutsideHome => false;
 
   @override
-  Future<List<int?>> filmYears(PlexFilmListQuery query) async => [for (final f in _of(query)) f.year];
+  Future<List<int?>> filmYears(PlexFilmListQuery query) async {
+    asked.add(query);
+    return [for (final f in _of(query)) f.year];
+  }
 
   @override
   Future<PlexFilmListPage> filmsPage(PlexFilmListQuery query, {required int start, required int size}) async {
@@ -115,7 +129,7 @@ void main() {
     share = _PlexShare([
       _film(1, 'The Example Night', 2021),
       _film(2, 'Élan du matin', 2021),
-      _film(3, 'Ten Rooms', 2019),
+      _film(3, 'Ten Rooms', 2019, viewCount: 1),
       _film(4, 'Home cut', null),
     ]);
     share.folders['/'] = [share.folder('/Movies'), share.folder('/Home videos')];
@@ -255,6 +269,75 @@ void main() {
     await tester.tap(tileOf('Home cut'));
     await tester.pumpAndSettle();
     expect(find.text('photo plex /film/4'), findsOneWidget);
+  });
+
+  testWidgets('a tap opens the film page of lot A2, for the file Play opens there', (tester) async {
+    await pumpFilms(tester);
+    await tester.tap(tileOf('Ten Rooms'));
+    await tester.pumpAndSettle();
+    expect(find.text('film plex 3 /.films/1/3/1003/Ten Rooms.mkv'), findsOneWidget);
+  });
+
+  testWidgets('the filter button opens the filters of lot A2 without an order, and the list keeps what they keep', (
+    tester,
+  ) async {
+    await pumpFilms(
+      tester,
+      overrides: [plexFilmFilterOptionsProvider.overrideWith((ref, key) async => const PlexFilmFilterOptions())],
+    );
+    expect(tileOf('Ten Rooms'), findsOneWidget);
+    expect(find.byIcon(Icons.filter_list_rounded), findsOneWidget);
+    await tester.tap(find.byKey(const Key('plex_films_filters')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('plex_film_filters')), findsOneWidget);
+    // The films page orders its years newest first: the sheet offers no other order
+    expect(find.byKey(const Key('plex_film_sort_title')), findsNothing);
+    await tester.tap(find.byKey(const Key('plex_film_unwatched')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('plex_film_filters_apply')));
+    await tester.pumpAndSettle();
+    final parameters = share.asked.last.queryParameters();
+    expect(parameters['unwatched'], '1');
+    expect(parameters['sort'], 'year:desc,titleSort');
+    expect(tileOf('Ten Rooms'), findsNothing);
+    expect(tileOf('The Example Night'), findsOneWidget);
+    expect(find.byIcon(Icons.filter_alt_rounded), findsOneWidget);
+  });
+
+  testWidgets('the menu of a film offers Download and Play on on a phone, neither on a TV', (tester) async {
+    final root = Directory.systemTemp.createTempSync('films_menu_');
+    addTearDown(() => root.deleteSync(recursive: true));
+    final films = FakeFilmEnvironment(root, FakeDownloadShare({}));
+    addTearDown(films.close);
+    await pumpFilms(
+      tester,
+      overrides: [
+        filmDownloadEnvironmentProvider.overrideWithValue(films.environment),
+        filmDownloadOfferedProvider.overrideWithValue(true),
+        isHorizonOsProvider.overrideWith((ref) async => false),
+      ],
+    );
+    // The app asks once at its start whether it runs on a Quest (main.dart)
+    unawaited(
+      ProviderScope.containerOf(tester.element(find.byType(PlexFilmsLibraryPage))).read(isHorizonOsProvider.future),
+    );
+    await tester.pump();
+    await tester.longPress(tileOf('Ten Rooms'));
+    await tester.pumpAndSettle();
+    final download = find.byKey(ValueKey('plex_film_menu_${Icons.download_rounded.codePoint}'));
+    final playOn = find.byKey(ValueKey('plex_film_menu_${Icons.cast_rounded.codePoint}'));
+    expect(download, findsOneWidget);
+    expect(playOn, findsOneWidget);
+    expect(find.text('Download to this device'), findsOneWidget);
+  });
+
+  testWidgets('the menu of a film on a TV has Play and no Download nor Play on', (tester) async {
+    await pumpFilms(tester, tvMode: true);
+    await tester.longPress(tileOf('Ten Rooms'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('plex_film_menu_play')), findsOneWidget);
+    expect(find.byKey(ValueKey('plex_film_menu_${Icons.download_rounded.codePoint}')), findsNothing);
+    expect(find.byKey(ValueKey('plex_film_menu_${Icons.cast_rounded.codePoint}')), findsNothing);
   });
 
   testWidgets('the page menu shows the folders of the library', (tester) async {

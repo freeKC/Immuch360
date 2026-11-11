@@ -21,7 +21,8 @@ import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
-/// Whether this screen copies films: never on a TV (see filmDownloadOffered)
+/// Whether this screen copies films: never on a TV (see filmDownloadOffered). Its dependency is declared so that a
+/// scope that sets the TV mode (a test of a page holding the button) gets its own.
 final filmDownloadOfferedProvider = Provider.autoDispose<bool>((ref) {
   final platform = filmDownloadPlatform();
   return filmDownloadOffered(
@@ -30,7 +31,7 @@ final filmDownloadOfferedProvider = Provider.autoDispose<bool>((ref) {
     isIOS: platform.isIOS,
     isDesktop: platform.isDesktop,
   );
-});
+}, dependencies: [tvModeProvider]);
 
 /// Whether [entry] of the share [sourceId] can be downloaded here: a video of a Plex server, on a screen that copies
 /// films. [watch] in a build method, read elsewhere (a menu being opened).

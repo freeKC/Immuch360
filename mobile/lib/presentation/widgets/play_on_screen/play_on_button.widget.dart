@@ -14,9 +14,16 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
 
-/// Whether this device sends films to screens: a phone or a tablet, Android or iOS
-bool canPlayOnScreens(WidgetRef ref) =>
-    !CurrentPlatform.isDesktop && !ref.watch(tvModeProvider) && ref.watch(isHorizonOsProvider).valueOrNull == false;
+/// Whether this device sends films to screens: a phone or a tablet, Android or iOS. [watch] in a build method, read
+/// elsewhere (a menu being opened).
+bool canPlayOnScreens(WidgetRef ref, {bool watch = true}) {
+  if (CurrentPlatform.isDesktop) {
+    return false;
+  }
+  final tvMode = watch ? ref.watch(tvModeProvider) : ref.read(tvModeProvider);
+  final horizonOs = watch ? ref.watch(isHorizonOsProvider) : ref.read(isHorizonOsProvider);
+  return !tvMode && horizonOs.valueOrNull == false;
+}
 
 class PlayOnButton extends ConsumerWidget {
   const PlayOnButton({super.key, required this.request, this.onPlaying, this.tonal = true});

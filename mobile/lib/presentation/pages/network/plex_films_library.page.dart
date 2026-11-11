@@ -24,10 +24,12 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/plex_film_filter_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/plex_film_tile.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/overview/timeline_wheel_zoom.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
@@ -157,6 +159,10 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
   Object? _searchError;
   bool _searching = false;
   String _lastText = '';
+
+  /// The filters of the sheet of lot A2 (plexFilmFiltersProvider holds their parameters of /all), the order left to
+  /// this page: year, newest first
+  PlexFilmsQuery _filters = const PlexFilmsQuery();
 
   /// Columns added to the default of the width, by a pinch or by Ctrl and the wheel
   int _columnsDelta = 0;
@@ -326,8 +332,7 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
     return entry == null ? null : (sourceId: widget.sourceId, sectionKey: widget.sectionKey, film: film, entry: entry);
   }
 
-  /// Opens the film at [index]: the page another lot gives (the film page), else the video page with the films around
-  /// it for previous and next
+  /// Opens the film at [index]: the page another lot gives (the film page of lot A2), else the video page
   Future<void> _open(PlexFilmsList list, int index) async {
     final target = _targetAt(list, index);
     if (target == null) {
@@ -336,6 +341,15 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
     final route = ref.read(plexFilmOpenRouteProvider)(target);
     if (route != null) {
       unawaited(context.pushRoute(route));
+      return;
+    }
+    await _play(list, index);
+  }
+
+  /// Plays the film at [index] in the video page, with the films around it for previous and next
+  Future<void> _play(PlexFilmsList list, int index) async {
+    final target = _targetAt(list, index);
+    if (target == null) {
       return;
     }
     final source = _source!;
@@ -394,7 +408,7 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
         key: const Key('plex_film_menu_play'),
         icon: Icons.play_arrow_rounded,
         label: context.t.play,
-        run: () => _open(list, index),
+        run: () => _play(list, index),
       ),
       for (final action in extra)
         (
@@ -447,6 +461,24 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
     }
   }
 
+  /// The filter sheet of lot A2: the films that match its choices, read again from the server
+  Future<void> _openFilters() async {
+    final picked = await showPlexFilmFilters(
+      context,
+      ref,
+      sourceId: widget.sourceId,
+      sectionKey: widget.sectionKey,
+      current: _filters,
+      sorts: const [PlexFilmSort.yearNewest],
+    );
+    if (picked == null || !mounted || picked == _filters) {
+      return;
+    }
+    setState(() => _filters = picked);
+    // The page keeps its own order and type: the films page drops them from these parameters (PlexFilmListQuery)
+    ref.read(plexFilmFiltersProvider(_key).notifier).state = picked.isFiltered ? picked.toQueryParameters() : const {};
+  }
+
   void _onPageAction(_PageAction action) {
     switch (action) {
       case _PageAction.showFolders:
@@ -464,7 +496,7 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
 
   @override
   Widget build(BuildContext context) {
-    // The chips of the filters (lot A2) set the parameters of /all: the list is read again with them
+    // The filter sheet (lot A2) sets the parameters of /all: the list is read again with them
     ref.listen(plexFilmFiltersProvider(_key), (_, _) => unawaited(_load()));
     final tvMode = ref.watch(tvModeProvider);
     final source = ref.watch(networkSourceProvider(widget.sourceId));
@@ -488,6 +520,13 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
             elevation: 0,
             centerTitle: false,
             actions: [
+              // The filters of lot A2: year or decade, audience, not watched
+              IconButton(
+                key: const Key('plex_films_filters'),
+                icon: Icon(_filters.isFiltered ? Icons.filter_alt_rounded : Icons.filter_list_rounded),
+                tooltip: context.t.filters,
+                onPressed: () => unawaited(_openFilters()),
+              ),
               PopupMenuButton<_PageAction>(
                 key: const Key('plex_films_menu'),
                 onSelected: _onPageAction,
@@ -580,7 +619,11 @@ class _PlexFilmsLibraryPageState extends ConsumerState<PlexFilmsLibraryPage> {
     if (list.count == 0) {
       return _Message(
         icon: searching ? Icons.search_off_rounded : Icons.movie_outlined,
-        text: searching ? context.t.plex_films_no_results(text: _searched) : context.t.plex_films_empty,
+        text: searching
+            ? context.t.plex_films_no_results(text: _searched)
+            : _filters.isFiltered
+            ? context.t.plex_films_filter_empty
+            : context.t.plex_films_empty,
       );
     }
     return LayoutBuilder(

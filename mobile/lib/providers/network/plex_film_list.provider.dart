@@ -12,7 +12,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
+import 'package:immich_mobile/presentation/pages/network/plex_film_menu_actions.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('PlexFilms');
@@ -34,14 +36,14 @@ final plexFilmsSourceProvider = Provider<PlexFilmsSourceOpener>((ref) {
 /// The library of a films page: the source of its server and its section
 typedef PlexFilmLibraryKey = ({String sourceId, String sectionKey});
 
-/// The filters of the films page of a library, parameters of /all read from the filters the server gives (the chips
-/// of lot A2 set them); empty for every film. Kept while the page is open.
+/// The filters of the films page of a library, parameters of /all read from the filters the server gives (the filter
+/// sheet of lot A2 sets them, its PlexFilmsQuery.toQueryParameters); empty for every film. Kept while the page is open.
 final plexFilmFiltersProvider = StateProvider.autoDispose.family<Map<String, String>, PlexFilmLibraryKey>(
   (ref, key) => const {},
 );
 
-/// What a long press on a film offers beside Play, added by other lots (Download, Play on the TV): empty in this one
-final plexFilmMenuActionsProvider = Provider<List<PlexFilmMenuAction>>((ref) => const []);
+/// What a long press on a film offers beside Play, added by other lots: Download (lot B) and "Play on..." (lot C)
+final plexFilmMenuActionsProvider = Provider<List<PlexFilmMenuAction>>((ref) => plexFilmMenuActions);
 
 /// The film a menu action is for
 typedef PlexFilmMenuTarget = ({String sourceId, String sectionKey, PlexFilm film, NetworkEntry entry});
@@ -49,11 +51,11 @@ typedef PlexFilmMenuTarget = ({String sourceId, String sectionKey, PlexFilm film
 /// The page a tap on a poster opens; null for the video page of today, which plays the film at once
 typedef PlexFilmOpenRoute = PageRouteInfo? Function(PlexFilmMenuTarget target);
 
-/// What a tap on a poster of the films page opens: the film page of lot A2 once the integration wires it here
-/// (PlexFilmRoute with the source, the ratingKey and the path of the entry), the video page until then
+/// What a tap on a poster of the films page opens: the film page of lot A2, for the file Play opens there (the path
+/// of the entry, the same as plexFilmPath of lot A2 builds, so that both pages share one watch record)
 final plexFilmOpenRouteProvider = Provider<PlexFilmOpenRoute>(
   (ref) =>
-      (_) => null,
+      (target) => PlexFilmRoute(sourceId: target.sourceId, ratingKey: target.film.ratingKey, path: target.entry.path),
 );
 
 /// One line of the long press menu of a film

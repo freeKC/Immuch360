@@ -6,6 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_client.dart';
+import 'package:immich_mobile/presentation/pages/network/film_page_actions.dart';
+import 'package:immich_mobile/presentation/pages/network/film_page_download_action.dart';
+import 'package:immich_mobile/presentation/pages/network/film_page_play_on.dart';
 import 'package:immich_mobile/presentation/pages/network/plex_film.page.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/plex_films.provider.dart';
@@ -68,6 +71,10 @@ void main() {
     await tester.pumpAndSettle();
     return asked;
   }
+
+  test('the row after Play takes Download (lot B), then Play on (lot C)', () {
+    expect(filmPageActions, [filmPageDownloadAction, playOnFilmAction]);
+  });
 
   testWidgets('shows what Plex holds of the film, and Resume where a Plex app stopped', (tester) async {
     await pumpPage(tester);

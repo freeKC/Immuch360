@@ -27,8 +27,9 @@ Future<PlexFilmsQuery?> showPlexFilmFilters(
   required String sourceId,
   required String sectionKey,
   required PlexFilmsQuery current,
+  List<PlexFilmSort> sorts = PlexFilmSort.values,
 }) {
-  final sheet = PlexFilmFilterSheet(sourceId: sourceId, sectionKey: sectionKey, initial: current);
+  final sheet = PlexFilmFilterSheet(sourceId: sourceId, sectionKey: sectionKey, initial: current, sorts: sorts);
   if (ref.read(tvModeProvider)) {
     return showDialog<PlexFilmsQuery>(
       context: context,
@@ -47,18 +48,28 @@ Future<PlexFilmsQuery?> showPlexFilmFilters(
 
 /// The choices of the filters, the order first, then Apply and Clear at the bottom
 class PlexFilmFilterSheet extends ConsumerStatefulWidget {
-  const PlexFilmFilterSheet({super.key, required this.sourceId, required this.sectionKey, required this.initial});
+  const PlexFilmFilterSheet({
+    super.key,
+    required this.sourceId,
+    required this.sectionKey,
+    required this.initial,
+    this.sorts = PlexFilmSort.values,
+  });
 
   final String sourceId;
   final String sectionKey;
   final PlexFilmsQuery initial;
+
+  /// The orders offered; one alone is no choice, and the sheet shows no Order (the films page of lot A1 orders its
+  /// years newest first)
+  final List<PlexFilmSort> sorts;
 
   @override
   ConsumerState<PlexFilmFilterSheet> createState() => _PlexFilmFilterSheetState();
 }
 
 class _PlexFilmFilterSheetState extends ConsumerState<PlexFilmFilterSheet> {
-  late PlexFilmSort _sort = widget.initial.sort;
+  late PlexFilmSort _sort = widget.sorts.contains(widget.initial.sort) ? widget.initial.sort : widget.sorts.first;
   late final Set<int> _years = {...widget.initial.years};
   late final Set<int> _decades = {...widget.initial.decades};
   late bool _unwatched = widget.initial.unwatched;
@@ -109,8 +120,8 @@ class _PlexFilmFilterSheetState extends ConsumerState<PlexFilmFilterSheet> {
                 key: const Key('plex_film_filters'),
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 children: [
-                  _Heading(t.plex_films_filter_sort),
-                  for (final sort in PlexFilmSort.values)
+                  if (widget.sorts.length > 1) _Heading(t.plex_films_filter_sort),
+                  for (final sort in widget.sorts.length > 1 ? widget.sorts : const <PlexFilmSort>[])
                     RadioListTile<PlexFilmSort>(
                       key: Key('plex_film_sort_${sort.name}'),
                       value: sort,

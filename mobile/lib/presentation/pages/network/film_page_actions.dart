@@ -7,6 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
+import 'package:immich_mobile/presentation/pages/network/film_page_download_action.dart';
+import 'package:immich_mobile/presentation/pages/network/film_page_play_on.dart';
 
 /// What an action of the film page knows of the film
 class FilmPageContext {
@@ -28,5 +30,5 @@ class FilmPageContext {
 /// Builds one button of the row after Play for [film], null to show none (a TV has no Download, for instance)
 typedef FilmPageActionBuilder = Widget? Function(BuildContext context, WidgetRef ref, FilmPageContext film);
 
-/// The actions of the row after Play, in order. Empty in lot A2.
-const List<FilmPageActionBuilder> filmPageActions = [];
+/// The actions of the row after Play, in order: Download (lot B), then "Play on..." (lot C)
+const List<FilmPageActionBuilder> filmPageActions = [filmPageDownloadAction, playOnFilmAction];
