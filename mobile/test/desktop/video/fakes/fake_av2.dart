@@ -1,9 +1,9 @@
 // A fake immuch360-av2, the AV2 companion of Immuch360 Desktop, compiled into a real program by `dart compile exe` (the
 // test and windows jobs of the desktop workflow, or by hand) and given to the tests by IMMUCH360_FAKE_AV2, so that the
 // playback of lot AD3 is tested against a real child process before the companion of lot AD2 is built, and without
-// decoding anything. It takes the arguments, reads the records and writes the lines of the real one
-// (mobile/native/av2/README.md of lot AD2): probe, serve, --version, --help; the index record, then the temporal units
-// of each generation after a line "need G U", and a record of length 0 after the last unit; the lines listening, need,
+// decoding anything. It takes the arguments, reads the records and writes the lines of the real one (the README of
+// immuch360/av2-companion of lot AD2): probe, serve, --version, --help; the index record, then the temporal units of
+// each generation after a line "need G U", and a record of length 0 after the last unit; the lines listening, need,
 // request, stat, refused, error and exit; the exit codes 0 to 5. It serves the same virtual y4m over HTTP on 127.0.0.1
 // (y4m_layout.dart), one request at a time, a new one ending the one being served, with the restart at the access point
 // before the picture asked and the pictures before it dropped. Its pictures are a test pattern, not decoded: unit k

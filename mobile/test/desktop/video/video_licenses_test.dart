@@ -8,6 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
 import 'package:path/path.dart' as p;
 
+import '../../test_utils/package_root.dart';
+
 /// The texts of the Windows folder; a checkout on Windows gives NOTICES.md CRLF line ends
 const _windowsFolder = {
   'NOTICES.md': '# Notices: the native libraries of the video player\r\n\r\nlibmpv-2.dll: LGPL 3 or later.\r\n',
@@ -118,7 +120,7 @@ void main() {
     expect(libmpv.first, contains('libmpv-2.dll'));
     expect(libmpv[1], startsWith('Source: '));
     expect(libmpv[1], contains('$windowsLibmpvRelease-sources.tar.xz'));
-    expect(libmpv[1], contains('https://github.com/freeKC/Immuch360/releases/tag/$windowsLibmpvRelease'));
+    expect(libmpv[1], contains('https://github.com/immuch360/libmpv-builds/releases/tag/$windowsLibmpvRelease'));
     expect(libmpv, contains('# Notices: the native libraries of the video player'));
     expect(libmpv, contains('BUILDINFO.txt:'));
     expect(libmpv, contains('GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007'));
@@ -142,7 +144,7 @@ void main() {
     expect(entries.map((entry) => entry.packages.join(', ')), ['libmpv', 'fribidi (libmpv)', 'mbedtls (libmpv)']);
     final libmpv = _paragraphs(entries.first);
     expect(libmpv.first, contains('Mpv'));
-    expect(libmpv[1], contains('https://github.com/freeKC/Immuch360/releases/tag/$macosLibmpvRelease'));
+    expect(libmpv[1], contains('https://github.com/immuch360/libmpv-builds/releases/tag/$macosLibmpvRelease'));
     expect(libmpv[1], contains('BUILDINFO-macos.txt'));
     expect(libmpv, contains('BUILDINFO-macos.txt:'));
     expect(_paragraphs(entries[1]), contains('GNU LESSER GENERAL PUBLIC LICENSE Version 2.1, February 1999'));
@@ -222,7 +224,10 @@ void main() {
   });
 
   test('the releases named are those the builds download', () {
-    final cmake = File('packages/media_kit_libs_windows_video/windows/CMakeLists.txt').readAsStringSync();
+    // The Windows libs package comes from media_kit_360 by git tag: its folder in the pub cache
+    final cmake = File(
+      p.join(packageRoot('media_kit_libs_windows_video'), 'windows', 'CMakeLists.txt'),
+    ).readAsStringSync();
     final swift = File(
       'packages/media_kit_libs_macos_video/macos/media_kit_libs_macos_video/Package.swift',
     ).readAsStringSync();

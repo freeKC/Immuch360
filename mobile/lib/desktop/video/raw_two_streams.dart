@@ -23,7 +23,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
+import 'package:media_kit_video/sphere.dart';
 
 /// A decoded stream of a raw file, as its rawProjection JSON lists it: a video track of the file opened ([file] 0) or
 /// of the other file of a split pair ([file] 1)

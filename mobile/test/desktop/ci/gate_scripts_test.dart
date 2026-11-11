@@ -118,41 +118,6 @@ const _sdcppJobs = r'''
       - run: python3 .github/desktop/ai/sdcpp_build.py pack --system linux-x64
 ''';
 
-/// The three jobs of the desktop workflow that build the AV2 decoder (lot AD2 of the AV2 plan)
-const _av2Jobs = r'''
-  av2-windows:
-    runs-on: windows-2022
-    needs: codegen
-    if: ${{ inputs.av2 || needs.codegen.outputs.av2_lock_changed == 'true' }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - run: python .github/desktop/av2/av2_build.py pack --system windows-x64
-      - name: Upload the archive
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          path: dist/${{ steps.lock.outputs.artifact }}
-  av2-linux:
-    runs-on: ubuntu-22.04
-    needs: codegen
-    if: ${{ inputs.av2 || needs.codegen.outputs.av2_lock_changed == 'true' }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - run: python3 .github/desktop/av2/av2_build.py pack --system linux-x64
-  av2-macos:
-    runs-on: macos-15
-    needs: codegen
-    if: ${{ inputs.av2 || needs.codegen.outputs.av2_lock_changed == 'true' }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - run: python3 .github/desktop/av2/av2_build.py pack --system macos-universal
-''';
-
 /// The two jobs of the desktop workflow that build COLMAP (lot SP1 of the splat maker), as immuch360-desktop.yml has them
 const _colmapJobs = r'''
   colmap-windows:
@@ -236,43 +201,6 @@ jobs:
   release:
     needs: build
     if: \${{ !inputs.sign_test && !inputs.with_sdcpp }}
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - run: python3 .github/desktop/desktop_release.py
-''';
-
-/// The release workflow with the with_av2 input too (lot AD11 of the AV2 videos): the AV2 decoder built and its Windows
-/// program signed for av2-decoder-1, never for a release of the app
-const _releaseWithAv2 = '''
-name: Release fixture
-on:
-  push:
-    tags: ['desktop-v*']
-  workflow_dispatch:
-    inputs:
-      sign_test:
-        type: boolean
-      with_sdcpp:
-        type: boolean
-      with_av2:
-        type: boolean
-permissions: {}
-jobs:
-  build:
-    uses: ./.github/workflows/immuch360-desktop.yml
-    permissions:
-      contents: read
-    with:
-      sdcpp: \${{ inputs.with_sdcpp == true }}
-      av2: \${{ inputs.with_av2 == true }}
-  release:
-    needs: build
-    if: \${{ !inputs.sign_test && !inputs.with_sdcpp && !inputs.with_av2 }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -1292,41 +1220,6 @@ abstract class SyncEvents {
       }
     });
 
-    test('the jobs of the AV2 decoder: on the images of the desktop builds, when asked, never as a package', () {
-      const good = '$_goodWorkflow$_sdcppJobs$_av2Jobs';
-      final run = check(good);
-      expect(run.exitCode, 0, reason: '$run');
-      for (final (workflow, message) in [
-        (
-          good.replaceFirst(
-            'runs-on: macos-15\n    needs: codegen\n    if: \${{ inputs.av2',
-            'runs-on: macos-26\n    needs: codegen\n    if: \${{ inputs.av2',
-          ),
-          'the job av2-macos runs on macos-26: the AV2 decoder builds on macos-15',
-        ),
-        (
-          good.replaceFirst(
-            "    if: \${{ inputs.av2 || needs.codegen.outputs.av2_lock_changed == 'true' }}\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3 .github/desktop/av2/av2_build.py pack --system linux-x64",
-            "    if: \${{ inputs.sdcpp }}\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n        with:\n          persist-credentials: false\n      - run: python3 .github/desktop/av2/av2_build.py pack --system linux-x64",
-          ),
-          'the job av2-linux runs on every event: its "if:" must read inputs.av2',
-        ),
-        (
-          good.replaceFirst(
-            '          path: dist/\${{ steps.lock.outputs.artifact }}\n  av2-linux:',
-            '          name: Immuch360-Desktop-av2.zip\n          path: dist/\${{ steps.lock.outputs.artifact }}\n  av2-linux:',
-          ),
-          'the job av2-windows uploads Immuch360-Desktop-av2.zip',
-        ),
-        (good.replaceFirst('  av2-macos:', '  av2-android:'), 'the job av2-android builds the AV2 decoder on no known'),
-      ]) {
-        expect(workflow, isNot(good));
-        final refused = check(workflow);
-        expect(refused.exitCode, 1, reason: '$refused');
-        expect(refused.output, contains(message));
-      }
-    });
-
     test('the jobs of COLMAP: on the images of the desktop builds, when asked, never as a package', () {
       const good = '$_goodWorkflow$_sdcppJobs$_colmapJobs';
       final run = check(good);
@@ -1504,30 +1397,6 @@ abstract class SyncEvents {
         }
         // Without the input, a release workflow is held to nothing more
         expect(release(_releaseWorkflow).exitCode, 0);
-      });
-
-      test('with_av2 goes to the build only, and the job that writes never runs with it', () {
-        final run = release(_releaseWithAv2);
-        expect(run.exitCode, 0, reason: '$run');
-        for (final (workflow, message) in [
-          (
-            _releaseWithAv2.replaceFirst('av2: \${{ inputs.with_av2 == true }}', 'av2: true'),
-            'the job build passes av2: true',
-          ),
-          (
-            _releaseWithAv2.replaceFirst(' && !inputs.with_av2', ''),
-            'the job release writes the contents and may run with with_av2',
-          ),
-          (
-            _releaseWithAv2.replaceFirst('!inputs.sign_test && ', ''),
-            'the job release writes the contents and may run with sign_test',
-          ),
-        ]) {
-          expect(workflow, isNot(_releaseWithAv2));
-          final refused = release(workflow);
-          expect(refused.exitCode, 1, reason: '$refused');
-          expect(refused.output, contains(message));
-        }
       });
 
       test('with_splat goes to the build only, as colmap and brush, and the job that writes never runs with it', () {

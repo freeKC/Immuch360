@@ -1,6 +1,7 @@
 // The AV2 videos of the computers (store/m2/av2-2026-11-02/plan-2026-11-02.md, sections 1.4 and 2.1 to 2.3; lot AD3),
-// played through the companion immuch360-av2 (mobile/native/av2, lot AD2), which decodes them with dav2d and serves the
-// pictures to the player of the app as a y4m on 127.0.0.1, so that no decoded byte crosses the app:
+// played through the companion immuch360-av2 (github.com/immuch360/av2-companion, lot AD2), which decodes them with
+// dav2d and serves the pictures to the player of the app as a y4m on 127.0.0.1, so that no decoded byte crosses the
+// app:
 //  1. the head of the file says AV2 (av2_stream.dart; an IVF of AV1 or VP9 goes to mpv as any video), the probe of the
 //     companion says its format, and what this version does not play (4:2:2, 4:4:4, 12 bits) is refused by its name;
 //  2. the app reads the container (IVF or OBUs) and cuts it into temporal units, the random access points found in the
@@ -166,7 +167,7 @@ class _ShareBytes implements Av2Bytes {
 /// The colour description of a stream, CICP codes (ITU-T H.273, as AV1 and AV2 write them)
 typedef Av2Colour = ({int primaries, int transfer, int matrix});
 
-/// What the probe of the companion says of the start of a file (mobile/native/av2/README.md, probe)
+/// What the probe of the companion says of the start of a file (the README of immuch360/av2-companion, probe)
 @immutable
 class Av2Probe {
   const Av2Probe({
@@ -447,16 +448,16 @@ const av2SidecarProgram = SidecarProgram(
 
 final _protocolLine = RegExp(r'^(listening|need|request|stat|refused|exit|error) |^\{');
 
-/// Whether a line of the companion may say why it ended: not a line of its protocol (mobile/native/av2/README.md,
-/// standard output), which says where it was, nor the probe's JSON, nor its error line, which is the reason itself
-/// (Av2Session._errorText); the review of lot AD3 saw "immuch360-av2 ended with -9: listening 52771 ... / request
-/// bytes=0-... / need 1 0" in three lines of the failure panel
+/// Whether a line of the companion may say why it ended: not a line of its protocol (the README of
+/// immuch360/av2-companion, standard output), which says where it was, nor the probe's JSON, nor its error line, which
+/// is the reason itself (Av2Session._errorText); the review of lot AD3 saw "immuch360-av2 ended with -9: listening
+/// 52771 ... / request bytes=0-... / need 1 0" in three lines of the failure panel
 bool av2LineSaysWhy(String line) => !_protocolLine.hasMatch(line);
 
 /// Why the companion ended, in words, from its exit code [code] when no error line of its own said it: a signal on
 /// Linux and macOS, which Dart gives as a negative code; on Windows the code TerminateProcess leaves (-1, Process.kill
 /// and the Task Manager's end of a task) or an exception of the system (0xC0000005); or one of its own exit codes
-/// (mobile/native/av2/README.md, exit codes)
+/// (the README of immuch360/av2-companion, exit codes)
 String av2EndedReason(int code, {bool? windows}) {
   if (windows ?? io.Platform.isWindows) {
     final status = code & 0xffffffff;
@@ -501,7 +502,7 @@ const av2RecordMagic = 0x52325641;
 /// The unit number of the record of the index
 const av2IndexUnit = 0xffffffff;
 
-/// The 16-byte header of a record of the standard input (mobile/native/av2/README.md), then [payload]
+/// The 16-byte header of a record of the standard input (the README of immuch360/av2-companion), then [payload]
 Uint8List av2Record(int generation, int unit, List<int> payload) {
   final record = Uint8List(16 + payload.length);
   ByteData.sublistView(record)
@@ -607,8 +608,8 @@ final _companionUrl = RegExp(r'^http://127\.0\.0\.1:\d{1,5}/[A-Za-z0-9_-]{16,128
 /// Whether [resource] is the y4m of an AV2 companion: http://127.0.0.1:PORT/TOKEN/video.y4m
 bool isAv2CompanionUrl(String resource) => _companionUrl.hasMatch(resource);
 
-/// The variable of the companion's environment that holds its token (mobile/native/av2/README.md, serve): every account
-/// of a computer can read the command line of a process, only its own account its environment
+/// The variable of the companion's environment that holds its token (the README of immuch360/av2-companion, serve):
+/// every account of a computer can read the command line of a process, only its own account its environment
 const av2TokenVariable = 'IMMUCH360_AV2_TOKEN';
 
 /// A token of the companion: 32 letters and digits drawn by the system's generator

@@ -1,7 +1,6 @@
-// The AV2 decoder as the test build will offer it: the entries of the catalogue with a size, a sum and the files of
-// the archive (those of the run 41463914157 of lot AD2 for Windows), which the entries of the app lack until
-// av2-decoder-1 is published (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3) but on the branch of the test build
-// AVT (feat-av2, lot AD6); and as the other branches have it, without them.
+// The AV2 decoder of the tests: the entries of the catalogue with a size, a sum and the files of an archive of their
+// own (made like those of the run 41463914157 of lot AD2 for Windows), and without them, as a version that does not
+// offer the decoder has it (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3).
 
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 
@@ -23,6 +22,7 @@ AiComponent completeAv2Decoder(AiComponent entry, {int size = 790281, int progra
   licenceUrl: entry.licenceUrl,
   features: entry.features,
   releaseTag: entry.releaseTag,
+  releaseRepository: entry.releaseRepository,
   archiveFiles: [
     AiArchiveFile(
       path: entry.id.contains('windows') ? 'immuch360-av2.exe' : 'immuch360-av2',
@@ -44,8 +44,8 @@ final av2CompleteCatalogue = [
 /// The complete entry for Windows x64
 final av2WindowsComplete = av2CompleteCatalogue.firstWhere((component) => component.id == 'av2-decoder-windows-x64');
 
-/// [entry] without its size, its sum and its files, as the catalogue of the app has it before av2-decoder-1 is published
-/// (every branch but that of the test build AVT)
+/// [entry] without its size, its sum and its files, as the catalogue of a version that does not offer the decoder has
+/// it
 AiComponent incompleteAv2Decoder(AiComponent entry) => AiComponent(
   id: entry.id,
   name: entry.name,
@@ -61,6 +61,7 @@ AiComponent incompleteAv2Decoder(AiComponent entry) => AiComponent(
   licenceUrl: entry.licenceUrl,
   features: entry.features,
   releaseTag: entry.releaseTag,
+  releaseRepository: entry.releaseRepository,
 );
 
 /// The catalogue of the app with the three entries of the AV2 decoder without sums: a version that does not offer it

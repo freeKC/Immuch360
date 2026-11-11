@@ -1,10 +1,10 @@
-// The AV2 decoder of this computer as the screens show it (store/m2/av2-2026-11-02/plan-2026-11-02.md, sections 1.3
-// and 3): the entry of the catalogue for this computer (av2-decoder-windows-x64, -linux-x64, -macos-universal), whether
-// this version of the app offers it (an entry with its size, its sum and its files: the branch of the test build and,
-// later, the release av2-decoder-1), its state, and its sizes. It downloads, checks and installs as the AI components
-// do (AiComponentsService: the SHA-256 always checked, the mirror of IMMUCH360_AI_COMPONENTS_MIRROR, the licences next
-// to it), but its screens are those of the videos: the card of the player and the settings of the videos, never the
-// tile of the AI components.
+// The AV2 decoder of this computer as the screens show it (store/m2/av2-2026-11-02/plan-2026-11-02.md, sections 1.3 and
+// 3): the entry of the catalogue for this computer (av2-decoder-windows-x64, -linux-x64, -macos-universal), whether
+// this version of the app offers it (an entry with its size, its sum and its files: a release of
+// github.com/immuch360/av2-companion since build 45, the prerelease av2-decoder-1 before), its state, and its sizes. It
+// downloads, checks and installs as the AI components do (AiComponentsService: the SHA-256 always checked, the mirror
+// of IMMUCH360_AI_COMPONENTS_MIRROR, the licences next to it), but its screens are those of the videos: the card of the
+// player and the settings of the videos, never the tile of the AI components.
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/ui/ai_settings_section.dart';
@@ -37,7 +37,7 @@ class Av2Decoder {
   late final AiComponent? component = av2DecoderComponentFor(platform, catalogue: service.catalogue);
 
   /// Whether this version offers it: an entry with its size, its sum and its files. Without one, nothing is ever
-  /// downloaded (the branches before the test build, and the builds before av2-decoder-1 is published)
+  /// downloaded (the builds before the decoder had a release of its own)
   bool get offered => component?.isComplete ?? false;
 
   /// Its state; not installed where there is no entry

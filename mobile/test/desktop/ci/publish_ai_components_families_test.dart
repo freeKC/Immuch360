@@ -16,7 +16,7 @@ const _token = 'test-token-not-a-secret';
 const _script = 'ai/publish_ai_components.py';
 
 /// --check as the gates of the desktop workflow run it, on any branch: ai-components-4 is made (lot SP14), and the sums
-/// of the AV2 decoder are those of the record of av2-decoder-1 (lot AD11)
+/// of the AV2 decoder are those of the manifest of its release, immuch360/av2-companion v1.0.1
 ScriptRun _check(List<String> arguments) => runCiScript(_script, ['--check', ...arguments]);
 
 /// Parts of 1000 bytes for a file of 2048 bytes or more, in place of 1945 MiB and 2 GiB

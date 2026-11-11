@@ -7,9 +7,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:media_kit_video/sphere.dart';
 
 /// The name of [choice] in the settings
 String sphereRendererChoiceLabel(Translations t, SphereRendererChoice choice) => switch (choice) {

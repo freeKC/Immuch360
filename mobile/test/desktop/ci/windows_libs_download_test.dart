@@ -10,13 +10,10 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-final String _function = p.join(
-  Directory.current.path,
-  'packages',
-  'media_kit_libs_windows_video',
-  'windows',
-  'download_and_verify.cmake',
-);
+import '../../test_utils/package_root.dart';
+
+// The Windows libs package comes from media_kit_360 by git tag: its folder in the pub cache
+final String _function = p.join(packageRoot('media_kit_libs_windows_video'), 'windows', 'download_and_verify.cmake');
 
 bool _hasCmake() {
   try {

@@ -15,8 +15,8 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:logging/logging.dart';
+import 'package:media_kit_video/sphere.dart';
 
 final _log = Logger('RawPartnerPlayer');
 

@@ -1,9 +1,9 @@
-// The fake AV2 companion (test/desktop/video/fakes/fake_av2.dart) compiled by `dart compile exe`, whose path the test and
-// windows jobs of the desktop workflow give in IMMUCH360_FAKE_AV2: it must speak the protocol of immuch360-av2
-// (mobile/native/av2/README.md of lot AD2) for the playback of lot AD3 to be tested on it. Here the app's side is played
-// by hand, the fixtures of lot AD0 cut by av2_stream.dart: the index, the units of each "need G U", the y4m read over
-// HTTP whole and from the middle of a picture after a seek, the refusals, the end when the standard input closes, and
-// the modes that hang and that fail.
+// The fake AV2 companion (test/desktop/video/fakes/fake_av2.dart) compiled by `dart compile exe`, whose path the test
+// and windows jobs of the desktop workflow give in IMMUCH360_FAKE_AV2: it must speak the protocol of immuch360-av2 (the
+// README of immuch360/av2-companion of lot AD2) for the playback of lot AD3 to be tested on it. Here the app's side is
+// played by hand, the fixtures of lot AD0 cut by av2_stream.dart: the index, the units of each "need G U", the y4m read
+// over HTTP whole and from the middle of a picture after a seek, the refusals, the end when the standard input closes,
+// and the modes that hang and that fail.
 
 import 'dart:async';
 import 'dart:convert';

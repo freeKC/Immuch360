@@ -55,7 +55,7 @@
 //                                  phases: each change of glsl-shader-opts kept about 40 MB until the player closed
 //                                  on 2026-10-09, and the PC ran out of memory (the owner's desktop crashed)
 //   IMMUCH360_MEASURE_RENDERER     "c": renderer C of the vendored media_kit_video draws an equirectangular view
-//                                  (render/plugin_renderer.dart, DP1); the view changes of each phase go through the
+//                                  (media_kit_video/sphere.dart, DP1); the view changes of each phase go through the
 //                                  plugin (yaw from IMMUCH360_MEASURE_PARAM, pitch and fov from _PARAM_FIXED), and each
 //                                  phase records the plugin's draws (with a new frame of mpv, or the view alone) and
 //                                  their times; with IMMUCH360_MEASURE_REDRAW, the paused phase shows whether a view
@@ -116,9 +116,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
+import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
-import 'package:immich_mobile/desktop/video/render/plugin_renderer.dart';
 import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
@@ -131,6 +131,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:media_kit_video/sphere.dart';
 import 'package:native_video_player/native_video_player.dart' show VideoSource, VideoSourceType;
 import 'package:path/path.dart' as p;
 
@@ -1328,7 +1329,11 @@ class _Harness {
       }
       if (config.pluginRenderer) {
         // Attached before the file opens, as the 360 page does, so that the first texture already is the view
-        plugin = PluginRenderer.forController(controller, maxOutputHeight: config.maxRenderHeight);
+        plugin = PluginRenderer.forController(
+          controller,
+          maxOutputHeight: config.maxRenderHeight,
+          adapter: DesktopGpuDecoders.pluginAdapter,
+        );
         final attached = await plugin.attach(
           projection: PluginProjection.equirect(),
           outputSize: tester.view.physicalSize,

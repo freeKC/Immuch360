@@ -8,13 +8,14 @@ app, in `Contents/Resources/media_kit_libs_macos_video_media_kit_libs_macos_vide
 
 ## Which build the app carries
 
-The frameworks of a `libmpv-macos-*` release of https://github.com/freeKC/Immuch360, built by
-`.github/workflows/immuch360-libmpv.yml` of that repository for macOS 12 and later, arm64 and x86_64 in each framework.
+The frameworks of a `libmpv-macos-*` release of https://github.com/immuch360/libmpv-builds (since desktop build 25;
+those of https://github.com/freeKC/Immuch360 before), built by `.github/workflows/build.yml` of that repository for
+macOS 12 and later, arm64 and x86_64 in each framework.
 The release named in `Package.swift` (`libmpvTag`) lists every library with its version and the SHA-256 of its source
 archive in `BUILDINFO-macos.txt`, also copied in `libmpv/` next to this file.
 
 The recipe is media-kit's own (https://github.com/media-kit/libmpv-darwin-build, a Nix build) at a pinned commit, with
-the files of `.github/desktop/libmpv-macos/` over it: FFmpeg, mpv, libplacebo, fast_float and the Vulkan headers at the
+the files of `macos/` of libmpv-builds over it: FFmpeg, mpv, libplacebo, fast_float and the Vulkan headers at the
 commits of the Windows build of the app, the other libraries at the versions of the recipe, FFmpeg with two components
 more than the recipe lists, the y4m demuxer (`yuv4mpegpipe`) and the raw video decoder (`rawvideo`), as in the Windows
 build, libpng with one line changed for the SDK of Xcode 16, mpv with its macOS clipboard left out (it needs mpv's

@@ -11,6 +11,7 @@ import 'package:immich_mobile/desktop/video/video_gpu.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immuch_desktop_video/immuch_desktop_video.dart';
 import 'package:logging/logging.dart';
+import 'package:media_kit_video/sphere.dart';
 
 final _log = Logger('DesktopGpuDecoders');
 
@@ -63,6 +64,10 @@ abstract final class DesktopGpuDecoders {
 
   /// The GPU in use, null where it is not known
   static Future<GpuAdapter?> adapter() async => (await decoders())?.adapter;
+
+  /// The GPU in use as renderer C (package:media_kit_video/sphere.dart) takes it for its start tier, null where it is
+  /// not known: the package reads no GPU of its own
+  static Future<PluginGpu?> pluginAdapter() async => (await adapter())?.toPlugin();
 
   /// The GPUs of the computer and the ones Windows prefers, null where nothing lists them or the list failed. Read once
   /// per run, without any device made on the GPUs, and once more after a failure; the first read logs them with the one
@@ -169,4 +174,9 @@ abstract final class DesktopGpuDecoders {
     _listRetried = false;
     _checks.clear();
   }
+}
+
+/// The GPU of DXGI as renderer C of media_kit_video takes it: its name, its device id and its kind
+extension GpuAdapterPlugin on GpuAdapter {
+  PluginGpu toPlugin() => PluginGpu(name: name, deviceId: deviceId, integrated: integrated, software: software);
 }

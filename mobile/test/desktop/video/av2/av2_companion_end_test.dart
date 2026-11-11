@@ -34,7 +34,7 @@ void main() {
     expect(av2EndedReason(0xc0000409, windows: true), 'it crashed (code 0xC0000409)');
   });
 
-  test("an exit code in words: the companion's own (mobile/native/av2/README.md)", () {
+  test("an exit code in words: the companion's own (the README of immuch360/av2-companion)", () {
     for (final windows in [true, false]) {
       expect(av2EndedReason(1, windows: windows), 'it ran short of memory or threads (code 1)');
       expect(av2EndedReason(2, windows: windows), 'it did not understand the app (code 2)');

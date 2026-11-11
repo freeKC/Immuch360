@@ -17,9 +17,10 @@
 // verdict of M3 before ai-components-3 is published: an entry without its size or sum is never offered.
 //
 // The AV2 decoder of the computers (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3) is no AI, but it downloads,
-// checks and installs as the components do: three archives of its own release, av2-decoder-1, shown in the video
-// settings and never in the tile of the AI components. Their entries carry the sizes and sums of the archives of that
-// release, as its record gives them (.github/desktop/av2/av2-decoder-1.json).
+// checks and installs as the components do: three archives of a release of its own repository,
+// github.com/immuch360/av2-companion, shown in the video settings and never in the tile of the AI components. Their
+// entries carry the sizes and sums of the archives of that release, as its manifest gives them (a copy in
+// .github/desktop/ai/av2-companion-1.0.1.json).
 //
 // The splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, section 2.3) take two programs built by our CI
 // from pinned sources, COLMAP 4.2.1 without its GPL parts (lot SP1) and Brush 0.3.0 without the LPIPS weights (lot
@@ -37,8 +38,12 @@ const aiComponentsScenesReleaseTag = 'ai-components-2';
 const aiComponentsPanoramasReleaseTag = 'ai-components-3';
 const aiComponentsSplatsReleaseTag = 'ai-components-4';
 
-/// Where the files of the release [tag] are downloaded from
-String aiComponentsReleaseBaseOf(String tag) => 'https://github.com/freeKC/Immuch360/releases/download/$tag/';
+/// The repository whose releases host the components, but the AV2 decoder ([av2DecoderRepository])
+const aiComponentsRepository = 'freeKC/Immuch360';
+
+/// Where the files of the release [tag] of [repository] are downloaded from
+String aiComponentsReleaseBaseOf(String tag, {String repository = aiComponentsRepository}) =>
+    'https://github.com/$repository/releases/download/$tag/';
 
 /// Where the files of [aiComponentsReleaseTag] are downloaded from
 const aiComponentsReleaseBase = 'https://github.com/freeKC/Immuch360/releases/download/$aiComponentsReleaseTag/';
@@ -165,6 +170,7 @@ class AiComponent {
     this.notices,
     this.features = const {AiFeature.stereoPhoto},
     this.releaseTag = aiComponentsReleaseTag,
+    this.releaseRepository = aiComponentsRepository,
     this.parts = const [],
     this.archiveFiles = const [],
     this.variantOf,
@@ -211,6 +217,12 @@ class AiComponent {
 
   /// The release that hosts it
   final String releaseTag;
+
+  /// The repository of that release ("freeKC/Immuch360", "immuch360/av2-companion")
+  final String releaseRepository;
+
+  /// Where the files of its release are downloaded from
+  String get releaseBase => aiComponentsReleaseBaseOf(releaseTag, repository: releaseRepository);
 
   /// The parts of a file of 2 GiB or more, empty for a file in one asset
   final List<AiComponentPart> parts;
@@ -283,16 +295,13 @@ class AiComponent {
     if (mirror != null && mirror.isNotEmpty) {
       return [_joined(mirror, assetName)];
     }
-    return [_joined(release ?? aiComponentsReleaseBaseOf(releaseTag), assetName), ...officialUrls];
+    return [_joined(release ?? releaseBase, assetName), ...officialUrls];
   }
 
   /// The address of each part, in order: in the mirror when one is given, else in the release
   List<String> partUrls({String? mirror, String? release}) => [
     for (final part in parts)
-      _joined(
-        mirror != null && mirror.isNotEmpty ? mirror : release ?? aiComponentsReleaseBaseOf(releaseTag),
-        part.assetName,
-      ),
+      _joined(mirror != null && mirror.isNotEmpty ? mirror : release ?? releaseBase, part.assetName),
   ];
 }
 
@@ -965,17 +974,24 @@ const upscalerComponent = AiComponent(
 );
 
 // The AV2 decoder (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 3): immuch360-av2, our companion in C on the
-// library of dav2d (VideoLAN, BSD-2-Clause) at the commit of .github/desktop/av2/av2.lock.json, whose id is the version,
-// built by the jobs av2-windows, av2-linux and av2-macos of the desktop workflow (lot AD2). Each archive holds the
-// program (on Linux with immuch360-run beside it), and in licenses/ the COPYING of dav2d, the ISC header of x86inc.asm,
-// the Alliance for Open Media Patent License 1.0, the AGPL 3.0 of the companion and the address of its source, with
-// BUILD-INFO.txt and SHA256SUMS.txt. Its size, its sum and the list of its files are those of the archives of
-// av2-decoder-1 (lot AD11): the run 41877478541 of the release workflow on feat-av2 at 592c66c4f, the Windows program
-// signed by APROGSYS, written by publish_av2_decoder.py --write with the record .github/desktop/av2/av2-decoder-1.json;
-// the gate of the catalogue (publish_ai_components.py --check) holds them to that record on every branch.
+// library of dav2d (VideoLAN, BSD-2-Clause) at the commit of its lock, whose id is the version, built, checked and
+// released by github.com/immuch360/av2-companion (MIT, its own repository since build 45 of the app; the builds before
+// took the prerelease av2-decoder-1 of this repository). Each archive holds the program (on Linux with immuch360-run
+// beside it), and in licenses/ the COPYING of dav2d, the ISC header of x86inc.asm, the Alliance for Open Media Patent
+// License 1.0, the MIT licence of the companion and the address of its source, with BUILD-INFO.txt and
+// SHA256SUMS.txt. Its size, its sum and the list of its files are those of the archives of the release v1.0.1 (run
+// 42843116104 of av2-companion at 6d9e3c32f, the Windows program signed by APROGSYS), as its manifest
+// av2-companion-1.0.1.json gives them; the gate of the catalogue (publish_ai_components.py --check) holds them to the
+// copy of that manifest in .github/desktop/ai on every branch.
 
-/// The tag of the prerelease of the AV2 decoder, a release of its own: AV2 is no AI (plan, section 2.7)
-const av2DecoderReleaseTag = 'av2-decoder-1';
+/// The repository of the AV2 decoder, whose releases host its archives: AV2 is no AI (plan, section 2.7)
+const av2DecoderRepository = 'immuch360/av2-companion';
+
+/// The release of [av2DecoderRepository] the app takes the AV2 decoder from
+const av2DecoderReleaseTag = 'v1.0.1';
+
+/// Where the files of [av2DecoderReleaseTag] are downloaded from: the [AiComponent.releaseBase] of its three entries
+const av2DecoderReleaseBase = 'https://github.com/immuch360/av2-companion/releases/download/$av2DecoderReleaseTag/';
 
 /// The licence of dav2d at the pinned commit (its COPYING: BSD 2-Clause, VideoLAN and dav2d authors)
 const _dav2dLicenceUrl =
@@ -990,28 +1006,29 @@ const av2DecoderWindowsComponent = AiComponent(
   platforms: {AiPlatform.windowsX64},
   assetName: 'Immuch360-av2-decoder-30140b5-1-windows-x64.zip',
   installPath: 'engines/av2-decoder-windows-x64',
-  size: 801929,
-  sha256: '417affae04953a7e3c4bec78ce0860dd9516ac7e2efb821969a1037e7f31944d',
+  size: 791323,
+  sha256: '56a23c1d22d2ae5352329a8344d23574a7ca8df3f48716c0d2858a1e38e7fe6e',
   compression: AiCompression.none,
   licence: 'BSD-2-Clause',
   licenceUrl: _dav2dLicenceUrl,
   features: {AiFeature.av2Video},
   releaseTag: av2DecoderReleaseTag,
+  releaseRepository: av2DecoderRepository,
   archiveFiles: [
     AiArchiveFile(
       path: 'BUILD-INFO.txt',
-      size: 954,
-      sha256: '4c3deaf2a3abf6f6f4dfc6ae5891722fde809f8a1e51659820df63fff012276b',
+      size: 947,
+      sha256: 'd0d299db55c3effb5df3c23fc268b2473f1313a4149a84461b99ebd43ae6d562',
     ),
     AiArchiveFile(
       path: 'SHA256SUMS.txt',
-      size: 726,
-      sha256: 'e4d8c247bb7eba33ec13135c1b4a69b4e33c1bd3492fecff41597eec1580ad7e',
+      size: 721,
+      sha256: '1888a3b9f8034bcab61f583d162fbf9da9435732c360a7857d526a1b0c769482',
     ),
     AiArchiveFile(
       path: 'immuch360-av2.exe',
       size: 1646408,
-      sha256: 'f88d6c8857ae3a41a6c921d686c3d663ec8a8d97c2d023fdcafb2fc61e653fda',
+      sha256: '3bd58ab4b8aa389327fe6bcadc763f5fd0501707866b0a95674434c19282168e',
       executable: true,
     ),
     AiArchiveFile(
@@ -1021,8 +1038,8 @@ const av2DecoderWindowsComponent = AiComponent(
     ),
     AiArchiveFile(
       path: 'licenses/README.md',
-      size: 2329,
-      sha256: '453e2f3560073abfc56750bfb0d7c569add95d5a883a44c1600870fdeca4cf21',
+      size: 2160,
+      sha256: '114dcbb91027be7c751257176173e949f3554f1c1fc2ba1e17cef847a14ece91',
     ),
     AiArchiveFile(
       path: 'licenses/dav2d-COPYING.txt',
@@ -1030,14 +1047,14 @@ const av2DecoderWindowsComponent = AiComponent(
       sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
     ),
     AiArchiveFile(
-      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
-      size: 32388,
-      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+      path: 'licenses/immuch360-av2-MIT.txt',
+      size: 1063,
+      sha256: 'e97493fbff4a1a7096ad1061d303faeafe7234a48b7f86331dfe01e80119fc96',
     ),
     AiArchiveFile(
       path: 'licenses/immuch360-av2-SOURCE.txt',
-      size: 469,
-      sha256: '6f3dba2ec4f49eec986e8564aafcce9bd0d0a871b29f3f4d3818c595c2451d4a',
+      size: 359,
+      sha256: 'b23bffa9fefb8cecc5f700faef5053f297edf64536ccaec1409282d7990c5c8b',
     ),
     AiArchiveFile(
       path: 'licenses/x86inc-ISC.txt',
@@ -1056,28 +1073,29 @@ const av2DecoderLinuxComponent = AiComponent(
   platforms: {AiPlatform.linuxX64},
   assetName: 'Immuch360-av2-decoder-30140b5-1-linux-x64.zip',
   installPath: 'engines/av2-decoder-linux-x64',
-  size: 953204,
-  sha256: 'c3cc7d80a5a3c2e32aa32fc1977631d938a8bd8c0945a67b293de1c3edcd2832',
+  size: 942607,
+  sha256: 'd9ba78ff359ab2ec730b3448bb1d1b75eb2744a697bb0059a28aa6e3618dd959',
   compression: AiCompression.none,
   licence: 'BSD-2-Clause',
   licenceUrl: _dav2dLicenceUrl,
   features: {AiFeature.av2Video},
   releaseTag: av2DecoderReleaseTag,
+  releaseRepository: av2DecoderRepository,
   archiveFiles: [
     AiArchiveFile(
       path: 'BUILD-INFO.txt',
-      size: 804,
-      sha256: '8e1476fb32e59112bc08bb09408d00e5fa246094538bf2dd70ea2f6137b8a48c',
+      size: 797,
+      sha256: '6592f75533ed00755c1eb916f1369181a5e0afef5849abe009d7c2d56bfd3c3b',
     ),
     AiArchiveFile(
       path: 'SHA256SUMS.txt',
-      size: 899,
-      sha256: '0540cf6268dd72e1913edcecd23fb0bc976c232659cf01f839d356439588f32f',
+      size: 894,
+      sha256: '6d32fbfd36bc4460a5ec045a952b6e13358a75c3007b3965a9a49fb527ba2023',
     ),
     AiArchiveFile(
       path: 'immuch360-av2',
       size: 2037904,
-      sha256: '89f34a0ad33658e798c0a4c0f94854cf6d3e65e66452aa6beb83206830b156f9',
+      sha256: '030825530e07b926ce7b634f181a3fcd0f2b0c2db1544cc1f078f1572112d185',
       executable: true,
     ),
     AiArchiveFile(
@@ -1093,8 +1111,8 @@ const av2DecoderLinuxComponent = AiComponent(
     ),
     AiArchiveFile(
       path: 'licenses/README.md',
-      size: 2329,
-      sha256: '453e2f3560073abfc56750bfb0d7c569add95d5a883a44c1600870fdeca4cf21',
+      size: 2160,
+      sha256: '114dcbb91027be7c751257176173e949f3554f1c1fc2ba1e17cef847a14ece91',
     ),
     AiArchiveFile(
       path: 'licenses/dav2d-COPYING.txt',
@@ -1102,19 +1120,19 @@ const av2DecoderLinuxComponent = AiComponent(
       sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
     ),
     AiArchiveFile(
-      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
-      size: 32388,
-      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+      path: 'licenses/immuch360-av2-MIT.txt',
+      size: 1063,
+      sha256: 'e97493fbff4a1a7096ad1061d303faeafe7234a48b7f86331dfe01e80119fc96',
     ),
     AiArchiveFile(
       path: 'licenses/immuch360-av2-SOURCE.txt',
-      size: 469,
-      sha256: '6f3dba2ec4f49eec986e8564aafcce9bd0d0a871b29f3f4d3818c595c2451d4a',
+      size: 359,
+      sha256: 'b23bffa9fefb8cecc5f700faef5053f297edf64536ccaec1409282d7990c5c8b',
     ),
     AiArchiveFile(
       path: 'licenses/immuch360-run-MIT.txt',
-      size: 1162,
-      sha256: '21dbbb6e964787898af14a57c6e81f76249a43cd770fea87f9d308a9d33edf11',
+      size: 1156,
+      sha256: 'e1ca99633c8cb8df3e8189b0c4b804e91b6dca413ae4022ea3d905e0f94ef191',
     ),
     AiArchiveFile(
       path: 'licenses/x86inc-ISC.txt',
@@ -1133,28 +1151,29 @@ const av2DecoderMacComponent = AiComponent(
   platforms: {AiPlatform.macosArm64, AiPlatform.macosX64},
   assetName: 'Immuch360-av2-decoder-30140b5-1-macos-universal.zip',
   installPath: 'engines/av2-decoder-macos-universal',
-  size: 1664297,
-  sha256: 'dfc61b6a52a616beecb4cb41915f6bf26b94b65f5e5caac7be82dbd284428084',
+  size: 1653707,
+  sha256: 'c25da3e20a3ac7754264440c19c6f416b3495fc583bf71309f5e8a5ba8af1007',
   compression: AiCompression.none,
   licence: 'BSD-2-Clause',
   licenceUrl: _dav2dLicenceUrl,
   features: {AiFeature.av2Video},
   releaseTag: av2DecoderReleaseTag,
+  releaseRepository: av2DecoderRepository,
   archiveFiles: [
     AiArchiveFile(
       path: 'BUILD-INFO.txt',
-      size: 796,
-      sha256: 'f4c26f346de54d74d8d44c76f31de9c7debf3b7c8b6bd9de1d96a662713c5965',
+      size: 789,
+      sha256: '92a2658149dc3c7cb330c324ec1ddf79be13b908b7dea74abca9cb0533667b84',
     ),
     AiArchiveFile(
       path: 'SHA256SUMS.txt',
-      size: 722,
-      sha256: '7ec5499d8ab294d6dc5469f44406a49b5ec86e9be4b6dd0ea36ec67b95c0aad4',
+      size: 717,
+      sha256: 'b4149c3a840b8d7904dcb5ca67bd29be93d4bb410206552724e59ed8042c0f93',
     ),
     AiArchiveFile(
       path: 'immuch360-av2',
       size: 3769216,
-      sha256: '0aea5c52aebae36965b76bdc0897a4b177134785197a723130a2d2759440c37b',
+      sha256: 'f87e5490c8d634ddd3554f6631097fdd24186c9209ef1e2aeb0d448259ff62fd',
       executable: true,
     ),
     AiArchiveFile(
@@ -1164,8 +1183,8 @@ const av2DecoderMacComponent = AiComponent(
     ),
     AiArchiveFile(
       path: 'licenses/README.md',
-      size: 2329,
-      sha256: '453e2f3560073abfc56750bfb0d7c569add95d5a883a44c1600870fdeca4cf21',
+      size: 2160,
+      sha256: '114dcbb91027be7c751257176173e949f3554f1c1fc2ba1e17cef847a14ece91',
     ),
     AiArchiveFile(
       path: 'licenses/dav2d-COPYING.txt',
@@ -1173,14 +1192,14 @@ const av2DecoderMacComponent = AiComponent(
       sha256: 'c8380b7afd97b17c2d645122001f534d877d6b2612c1138acb9c41f7750c9c7b',
     ),
     AiArchiveFile(
-      path: 'licenses/immuch360-av2-AGPL-3.0.txt',
-      size: 32388,
-      sha256: 'a3bad629f67f442b23b5224419e49edafc32e6b9c876b89464f7aafe6091ccde',
+      path: 'licenses/immuch360-av2-MIT.txt',
+      size: 1063,
+      sha256: 'e97493fbff4a1a7096ad1061d303faeafe7234a48b7f86331dfe01e80119fc96',
     ),
     AiArchiveFile(
       path: 'licenses/immuch360-av2-SOURCE.txt',
-      size: 469,
-      sha256: '6f3dba2ec4f49eec986e8564aafcce9bd0d0a871b29f3f4d3818c595c2451d4a',
+      size: 359,
+      sha256: 'b23bffa9fefb8cecc5f700faef5053f297edf64536ccaec1409282d7990c5c8b',
     ),
     AiArchiveFile(
       path: 'licenses/x86inc-ISC.txt',

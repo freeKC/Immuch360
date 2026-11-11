@@ -1,11 +1,11 @@
 // The licence texts of the AV2 decoder (store/m2/av2-2026-11-02/plan-2026-11-02.md, sections 0.5 and 3), kept in the
 // app as those of the other components are (ai_component_licences.dart): the licence dialog of the decoder and the
 // licence page show them before it is downloaded, and the licences of the archive (its licenses/ folder, built by the
-// jobs av2-windows, av2-linux and av2-macos from licenses/av2 of the repository) once it is installed. Each text is the
-// file of the sources at the commit of dav2d the decoder is built from (.github/desktop/av2/av2.lock.json):
-// COPYING (BSD 2-Clause), the header of src/ext/x86/x86inc.asm (ISC) and doc/PATENTS, the Alliance for Open Media
-// Patent License 1.0, as dav2d ships it (its typographic quotes and the typo "PARTRY" kept); a test compares their
-// SHA-256 with those of the lock. Nothing under the GPL.
+// CI of github.com/immuch360/av2-companion from the licenses/ of that repository) once it is installed. Each text is
+// the file of the sources at the commit of dav2d the decoder is built from (the lock of av2-companion): COPYING (BSD
+// 2-Clause), the header of src/ext/x86/x86inc.asm (ISC) and doc/PATENTS, the Alliance for Open Media Patent License
+// 1.0, as dav2d ships it (its typographic quotes and the typo "PARTRY" kept); a test compares their SHA-256 with those
+// of the files of the archives in the catalogue. Nothing under the GPL.
 
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 
@@ -173,9 +173,8 @@ const aomPatentLicence = r'''Alliance for Open Media Patent License 1.0
 
 ''';
 
-/// immuch360-run, the launcher of the Linux archive: MIT
-const immuch360RunMit =
-    r'''immuch360-run (.github/desktop/ai/immuch360_run.c of Immuch360), the launcher of the Linux archive
+/// immuch360-run, the launcher of the Linux archive (launcher/ of github.com/immuch360/av2-companion): MIT
+const immuch360RunMit = r'''immuch360-run (launcher/immuch360_run.c of av2-companion), the launcher of the Linux archive
 
 Copyright (c) 2026 FreeKC (Immuch360)
 
@@ -195,10 +194,10 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 
 /// What immuch360-av2 itself is under, and where its source is
 const av2CompanionNotice =
-    'immuch360-av2, the AV2 decoder of Immuch360 Desktop, is a program of Immuch360 under the GNU Affero General '
-    'Public License version 3, the licence of the app, built on the library of dav2d by VideoLAN at commit '
-    '$av2Dav2dCommit. Its source: mobile/native/av2 of https://github.com/freeKC/Immuch360; the archive of the '
-    'decoder names the commit it was built from (licenses/immuch360-av2-SOURCE.txt).';
+    'immuch360-av2, the AV2 decoder of Immuch360 Desktop, is free software under the MIT licence (Copyright (c) 2026 '
+    'FreeKC), built on the library of dav2d by VideoLAN at commit $av2Dav2dCommit. Its source: '
+    'https://github.com/immuch360/av2-companion; the archive of the decoder names the commit it was built from '
+    '(licenses/immuch360-av2-SOURCE.txt) and holds the text of its licence (licenses/immuch360-av2-MIT.txt).';
 
 /// The licence text of the AV2 decoder [component]: what it is, then the licences of dav2d, of x86inc.asm and the patent
 /// licence, and on Linux that of immuch360-run

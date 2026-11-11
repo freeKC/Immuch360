@@ -92,17 +92,17 @@ dependencies:
   # Immuch360 Desktop: the window of the splat viewer (WebView2, WebKitGTK, WKWebView), already brought by
   # flutter_web_auth_2; a patched copy in packages/ (dependency_overrides below), used under lib/desktop/ only
   desktop_webview_window: ^0.3.0
-  # Immuch360 Desktop: video through libmpv, used under lib/desktop/ only. The four packages are copies of one
-  # media-kit commit in packages/ (dependency_overrides below, changes in their IMMUCH360-NOTE.md); the libmpv and ANGLE
-  # libraries come with the Windows libs package, whose plugin declares windows only; the Linux libs package, linux
-  # only, bundles nothing (libmpv is the system's) and switches the texture plugin on. Never media_kit_libs_video: it
-  # brings the Android and iOS libs packages, which would put libmpv into the phone apps
+  # Immuch360 Desktop: video through libmpv, used under lib/desktop/ only. The four packages come from
+  # github.com/immuch360/media_kit_360 by tag (dependency_overrides below, changes in their IMMUCH360-NOTE.md); the
+  # libmpv and ANGLE libraries come with the Windows libs package, whose plugin declares windows only; the Linux libs
+  # package, linux only, bundles nothing (libmpv is the system's) and switches the texture plugin on. Never
+  # media_kit_libs_video: it brings the Android and iOS libs packages, which would put libmpv into the phone apps
   media_kit: ^1.2.6
   media_kit_video: ^2.0.1
   media_kit_libs_windows_video: ^1.0.11
   media_kit_libs_linux: ^1.2.1
-  # Immuch360 Desktop: the macOS libmpv frameworks, the fork's own build (.github/workflows/immuch360-libmpv.yml) in a
-  # copy of media-kit's macOS libs package whose plugin declares macos only (see its IMMUCH360-NOTE.md)
+  # Immuch360 Desktop: the macOS libmpv frameworks, a release of github.com/immuch360/libmpv-builds, in a copy of
+  # media-kit's macOS libs package whose plugin declares macos only (see its IMMUCH360-NOTE.md)
   media_kit_libs_macos_video:
     path: packages/media_kit_libs_macos_video
   # Immuch360 Desktop: the decoders of the GPU in use (Direct3D 11 on Windows, through dart:ffi), the fork's own
@@ -177,18 +177,33 @@ dependency_overrides:
   # the ATL component of Visual Studio (see packages/flutter_secure_storage_windows)
   flutter_secure_storage_windows:
     path: packages/flutter_secure_storage_windows
-  # Immuch360 Desktop: copies of github.com/media-kit/media-kit at c533e446755f51cf53c7e57aea873f2aa5355f81 (the newest
-  # commit of main on 2026-10-08): media_kit without its web asset, which every app build would bundle, phones
-  # included; media_kit_video with the computers as its only plugin platforms and two patches; the Windows libs package
-  # with a build fix; the Linux libs package without its mimalloc download (see their IMMUCH360-NOTE.md)
+  # Immuch360 Desktop: the four packages of github.com/immuch360/media_kit_360 (MIT), our fork of
+  # github.com/media-kit/media-kit at c533e446755f51cf53c7e57aea873f2aa5355f81 (the newest commit of main on
+  # 2026-10-08), taken by tag: media_kit without its web asset, which every app build would bundle, phones included;
+  # media_kit_video with the computers as its only plugin platforms, its patches and the 360 renderer
+  # (package:media_kit_video/sphere.dart); the Windows libs package with the libmpv of
+  # github.com/immuch360/libmpv-builds pinned by SHA-256; the Linux libs package without its mimalloc download (see
+  # their IMMUCH360-NOTE.md). Overrides, as the dependencies above name the hosted versions
   media_kit:
-    path: packages/media_kit
+    git:
+      url: https://github.com/immuch360/media_kit_360
+      ref: v1.0.1
+      path: packages/media_kit
   media_kit_libs_linux:
-    path: packages/media_kit_libs_linux
+    git:
+      url: https://github.com/immuch360/media_kit_360
+      ref: v1.0.1
+      path: packages/media_kit_libs_linux
   media_kit_libs_windows_video:
-    path: packages/media_kit_libs_windows_video
+    git:
+      url: https://github.com/immuch360/media_kit_360
+      ref: v1.0.1
+      path: packages/media_kit_libs_windows_video
   media_kit_video:
-    path: packages/media_kit_video
+    git:
+      url: https://github.com/immuch360/media_kit_360
+      ref: v1.0.1
+      path: packages/media_kit_video
   # Copy of immich-app/native_video_player at cdf621bdb7edaf996e118a58a48f6441187d79c6, the git ref of the dependency
   # (MIT), with an audio and subtitle track API and the subtitles drawn on Android (see its IMMUCH360-NOTE.md)
   native_video_player:
