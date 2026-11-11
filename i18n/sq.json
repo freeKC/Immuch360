@@ -3331,7 +3331,7 @@
   "video_decoders_copied": "U kopjua",
   "video_decoders_copy": "Kopjo",
   "video_decoders_hardware": "Harduer",
-  "video_decoders_max": "Deri në {width} x {height}",
+  "video_decoders_max": "Deri në {width} × {height}",
   "video_decoders_profiles": "Profilet: {profiles}",
   "video_decoders_software": "Softuer",
   "video_decoders_subtitle": "Çfarë dekodon kjo pajisje, sipas kodekut dhe madhësisë, për të kuptuar pse një video 360° ngec",

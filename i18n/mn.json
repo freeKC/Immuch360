@@ -1945,7 +1945,7 @@
   "video_decoders_copied": "Хуулсан",
   "video_decoders_copy": "Хуулах",
   "video_decoders_hardware": "Техник хангамж",
-  "video_decoders_max": "{width} x {height} хүртэл",
+  "video_decoders_max": "{width} × {height} хүртэл",
   "video_decoders_profiles": "Профайлууд: {profiles}",
   "video_decoders_software": "Программ хангамж",
   "video_decoders_subtitle": "360° видео яагаад гацдагийг ойлгохын тулд энэ төхөөрөмж кодек, хэмжээгээр юуг декод хийдэг вэ",

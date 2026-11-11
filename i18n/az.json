@@ -1912,7 +1912,7 @@
   "video_decoders_copied": "Kopyalandı",
   "video_decoders_copy": "Kopyala",
   "video_decoders_hardware": "Aparat",
-  "video_decoders_max": "{width} x {height} qədər",
+  "video_decoders_max": "{width} × {height} qədər",
   "video_decoders_profiles": "Profillər: {profiles}",
   "video_decoders_software": "Proqram",
   "video_decoders_subtitle": "360° videonun niyə ilişdiyini anlamaq üçün bu cihazın kodek və ölçüyə görə nəyi dekodladığı",

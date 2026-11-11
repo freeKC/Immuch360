@@ -3960,7 +3960,7 @@
   "video_decoders_copied": "Kopiatuta",
   "video_decoders_copy": "Kopiatu",
   "video_decoders_hardware": "Hardwarea",
-  "video_decoders_max": "Gehienez {width} x {height}",
+  "video_decoders_max": "Gehienez {width} × {height}",
   "video_decoders_profiles": "Profilak: {profiles}",
   "video_decoders_software": "Softwarea",
   "video_decoders_subtitle": "Gailu honek zer deskodetzen duen, kodek eta tamainaren arabera, 360° bideo bat zergatik doan etenka ulertzeko",

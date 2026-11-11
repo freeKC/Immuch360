@@ -1741,7 +1741,7 @@
   "video_decoders_copied": "Copiaa",
   "video_decoders_copy": "Copia",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Fin a {width} x {height}",
+  "video_decoders_max": "Fin a {width} × {height}",
   "video_decoders_profiles": "Profii: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Quell che sto dispositiv el decodifica, per codec e dimension, per capì perché on video a 360° el va a scatt",

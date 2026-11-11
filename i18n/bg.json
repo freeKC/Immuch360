@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "Копирано",
   "video_decoders_copy": "Копирай",
   "video_decoders_hardware": "Хардуерен",
-  "video_decoders_max": "До {width} x {height}",
+  "video_decoders_max": "До {width} × {height}",
   "video_decoders_profiles": "Профили: {profiles}",
   "video_decoders_software": "Софтуерен",
   "video_decoders_subtitle": "Какво декодира това устройство, по кодек и размер, за да разберете защо 360° видео насича",

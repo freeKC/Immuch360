@@ -4085,7 +4085,7 @@
   "video_decoders_copied": "Másolva",
   "video_decoders_copy": "Másolás",
   "video_decoders_hardware": "Hardveres",
-  "video_decoders_max": "Legfeljebb {width} x {height}",
+  "video_decoders_max": "Legfeljebb {width} × {height}",
   "video_decoders_profiles": "Profilok: {profiles}",
   "video_decoders_software": "Szoftveres",
   "video_decoders_subtitle": "Mit dekódol ez az eszköz kodek és méret szerint, hogy kiderüljön, miért akad egy 360°-os videó",

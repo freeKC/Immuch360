@@ -4063,7 +4063,7 @@
   "video_decoders_copied": "הועתק",
   "video_decoders_copy": "העתק",
   "video_decoders_hardware": "חומרה",
-  "video_decoders_max": "עד {width} x {height}",
+  "video_decoders_max": "עד {width} × {height}",
   "video_decoders_profiles": "פרופילים: {profiles}",
   "video_decoders_software": "תוכנה",
   "video_decoders_subtitle": "מה המכשיר הזה מפענח, לפי קודק וגודל, כדי להבין מדוע סרטון 360° מגמגם",

@@ -3080,7 +3080,7 @@
   "video_decoders_copied": "Kopiert",
   "video_decoders_copy": "Kopiere",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Bis {width} x {height}",
+  "video_decoders_max": "Bis {width} × {height}",
   "video_decoders_profiles": "Profil: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Was das Grät nach Codec und Grössi dekodiert, zum verstah, werum es 360°-Video ruckelt",

@@ -4085,7 +4085,7 @@
   "video_decoders_copied": "Copiat",
   "video_decoders_copy": "Copia",
   "video_decoders_hardware": "Maquinari",
-  "video_decoders_max": "Fins a {width} x {height}",
+  "video_decoders_max": "Fins a {width} × {height}",
   "video_decoders_profiles": "Perfils: {profiles}",
   "video_decoders_software": "Programari",
   "video_decoders_subtitle": "Què descodifica aquest dispositiu, per còdec i mida, per entendre per què un vídeo 360° va a batzegades",

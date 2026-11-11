@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "Gekopieerd",
   "video_decoders_copy": "Kopiëren",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Tot {width} x {height}",
+  "video_decoders_max": "Tot {width} × {height}",
   "video_decoders_profiles": "Profielen: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Wat dit apparaat kan decoderen, per codec en formaat, om te begrijpen waarom een 360°-video hapert",

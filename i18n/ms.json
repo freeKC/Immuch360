@@ -2590,7 +2590,7 @@
   "video_decoders_copied": "Disalin",
   "video_decoders_copy": "Salin",
   "video_decoders_hardware": "Perkakasan",
-  "video_decoders_max": "Sehingga {width} x {height}",
+  "video_decoders_max": "Sehingga {width} × {height}",
   "video_decoders_profiles": "Profil: {profiles}",
   "video_decoders_software": "Perisian",
   "video_decoders_subtitle": "Apa yang dinyahkod oleh peranti ini, mengikut kodek dan saiz, untuk memahami mengapa video 360° tersekat-sekat",

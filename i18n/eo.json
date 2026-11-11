@@ -3849,7 +3849,7 @@
   "video_decoders_copied": "Kopiita",
   "video_decoders_copy": "Kopii",
   "video_decoders_hardware": "Aparatara",
-  "video_decoders_max": "Ĝis {width} x {height}",
+  "video_decoders_max": "Ĝis {width} × {height}",
   "video_decoders_profiles": "Profiloj: {profiles}",
   "video_decoders_software": "Programara",
   "video_decoders_subtitle": "Kion ĉi tiu aparato malkodas, laŭ kodeko kaj grandeco, por kompreni kial 360°-video haltetas",

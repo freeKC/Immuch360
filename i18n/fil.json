@@ -1851,7 +1851,7 @@
   "video_decoders_copied": "Nakopya",
   "video_decoders_copy": "Kopyahin",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Hanggang {width} x {height}",
+  "video_decoders_max": "Hanggang {width} × {height}",
   "video_decoders_profiles": "Mga profile: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Ano ang nade-decode ng device na ito, ayon sa codec at laki, para maunawaan kung bakit pumapalya ang isang 360° na video",

@@ -47,6 +47,10 @@ class DesktopNetworkApi implements NetworkApi {
   Future<void> setRequestHeaders(Map<String, String> headers, List<String> serverUrls, String? token) =>
       _http.setRequestHeaders(headers, serverUrls, token);
 
+  /// The logout: every cookie of the stack goes, the session ones and those of the other hosts
+  @override
+  Future<void> clearCookies() => _http.clearCookies();
+
   /// The app group of the iOS widgets: none on a computer
   @override
   Future<String> getAppGroupId() async => '';

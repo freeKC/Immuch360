@@ -1993,7 +1993,7 @@
   "video_decoders_copied": "Kopiert",
   "video_decoders_copy": "Kopieren",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Bis zu {width} x {height}",
+  "video_decoders_max": "Bis zu {width} × {height}",
   "video_decoders_profiles": "Profile: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Was dieses Gerät nach Codec und Grösse dekodiert, um zu verstehen, warum ein 360°-Video ruckelt",

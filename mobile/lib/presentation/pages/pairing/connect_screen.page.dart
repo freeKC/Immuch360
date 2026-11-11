@@ -15,6 +15,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/pairing/pairing_client.dart';
@@ -337,7 +338,7 @@ class _ConnectScreenPageState extends ConsumerState<ConnectScreenPage> {
     final t = context.t;
     final screens = ref.watch(pairedScreensProvider);
     final theme = context.textTheme;
-    final dates = DateFormat.yMMMd(context.locale.toLanguageTag());
+    final dates = DateFormat.yMMMd(resolvedDateTimeLocale());
     return Scaffold(
       appBar: AppBar(title: Text(t.pairing_connect_title)),
       body: ListView(

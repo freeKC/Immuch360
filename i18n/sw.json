@@ -1741,7 +1741,7 @@
   "video_decoders_copied": "Imenakiliwa",
   "video_decoders_copy": "Nakili",
   "video_decoders_hardware": "Maunzi",
-  "video_decoders_max": "Hadi {width} x {height}",
+  "video_decoders_max": "Hadi {width} × {height}",
   "video_decoders_profiles": "Wasifu: {profiles}",
   "video_decoders_software": "Programu",
   "video_decoders_subtitle": "Kile ambacho kifaa hiki kinasimbua, kwa kodeki na ukubwa, ili kuelewa kwa nini video ya 360° inakwama",

@@ -76,9 +76,9 @@ void main() {
     expect(find.text('H.264  •  video/avc'), findsOneWidget);
     expect(find.text('HEVC  •  video/hevc'), findsOneWidget);
     expect(find.text('c2.qti.avc.decoder'), findsOneWidget);
-    expect(find.text('Hardware  •  Up to 4096 x 2304  •  60 fps'), findsOneWidget);
-    expect(find.text('Hardware  •  Up to 8192 x 4320  •  30 fps'), findsOneWidget);
-    expect(find.text('Software  •  Up to 4080 x 4080'), findsOneWidget, reason: 'no frame rate when unknown');
+    expect(find.text('Hardware  •  Up to 4096 × 2304  •  60 fps'), findsOneWidget);
+    expect(find.text('Hardware  •  Up to 8192 × 4320  •  30 fps'), findsOneWidget);
+    expect(find.text('Software  •  Up to 4080 × 4080'), findsOneWidget, reason: 'no frame rate when unknown');
     // The H.264 decoders together, under their codec
     final avc = tester.getTopLeft(find.text('H.264  •  video/avc')).dy;
     final hevc = tester.getTopLeft(find.text('HEVC  •  video/hevc')).dy;
@@ -137,7 +137,7 @@ void main() {
 
     expect(find.text('Profiles: Main L6.1, Main 10 L6.1'), findsOneWidget);
     expect(find.textContaining('Profiles:'), findsOneWidget, reason: 'no line for a decoder that lists none');
-    expect(find.text('Hardware  •  Up to 8192 x 4320  •  30 fps'), findsNWidgets(2));
+    expect(find.text('Hardware  •  Up to 8192 × 4320  •  30 fps'), findsNWidgets(2));
   });
 
   test('puts the profiles in the report', () {

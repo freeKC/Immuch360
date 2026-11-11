@@ -4017,7 +4017,7 @@
   "video_decoders_copied": "কপি হয়েছে",
   "video_decoders_copy": "কপি করুন",
   "video_decoders_hardware": "হার্ডওয়্যার",
-  "video_decoders_max": "{width} x {height} পর্যন্ত",
+  "video_decoders_max": "{width} × {height} পর্যন্ত",
   "video_decoders_profiles": "প্রোফাইল: {profiles}",
   "video_decoders_software": "সফটওয়্যার",
   "video_decoders_subtitle": "এই ডিভাইস কোডেক ও আকার অনুযায়ী কী ডিকোড করে, যাতে বোঝা যায় কেন একটি 360° ভিডিও আটকে আটকে চলে",

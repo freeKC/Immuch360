@@ -2931,7 +2931,7 @@
   "video_decoders_copied": "Afritað",
   "video_decoders_copy": "Afrita",
   "video_decoders_hardware": "Vélbúnaður",
-  "video_decoders_max": "Allt að {width} x {height}",
+  "video_decoders_max": "Allt að {width} × {height}",
   "video_decoders_profiles": "Snið: {profiles}",
   "video_decoders_software": "Hugbúnaður",
   "video_decoders_subtitle": "Hvað þetta tæki afkóðar, eftir merkjamáli og stærð, til að skilja hvers vegna 360° myndskeið hikstar",

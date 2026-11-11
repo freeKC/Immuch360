@@ -2194,7 +2194,7 @@
   "video_decoders_copied": "დაკოპირდა",
   "video_decoders_copy": "კოპირება",
   "video_decoders_hardware": "აპარატული",
-  "video_decoders_max": "{width} x {height}-მდე",
+  "video_decoders_max": "{width} × {height}-მდე",
   "video_decoders_profiles": "პროფილები: {profiles}",
   "video_decoders_software": "პროგრამული",
   "video_decoders_subtitle": "რას დეკოდირებს ეს მოწყობილობა, კოდეკისა და ზომის მიხედვით, რათა გაიგოთ, რატომ ჭედავს 360° ვიდეო",

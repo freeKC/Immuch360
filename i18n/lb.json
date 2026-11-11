@@ -1741,7 +1741,7 @@
   "video_decoders_copied": "Kopéiert",
   "video_decoders_copy": "Kopéieren",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Bis {width} x {height}",
+  "video_decoders_max": "Bis {width} × {height}",
   "video_decoders_profiles": "Profiler: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Wat dësen Apparat dekodéiert, no Codec a Gréisst, fir ze verstoen, firwat e 360°-Video ruckelt",

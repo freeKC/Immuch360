@@ -4039,7 +4039,7 @@
   "video_decoders_copied": "คัดลอกแล้ว",
   "video_decoders_copy": "คัดลอก",
   "video_decoders_hardware": "ฮาร์ดแวร์",
-  "video_decoders_max": "สูงสุด {width} x {height}",
+  "video_decoders_max": "สูงสุด {width} × {height}",
   "video_decoders_profiles": "โปรไฟล์: {profiles}",
   "video_decoders_software": "ซอฟต์แวร์",
   "video_decoders_subtitle": "สิ่งที่อุปกรณ์นี้ถอดรหัสได้ แยกตามโคเดกและขนาด เพื่อให้เข้าใจว่าทำไมวิดีโอ 360° จึงกระตุก",

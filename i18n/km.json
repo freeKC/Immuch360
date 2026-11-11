@@ -1839,7 +1839,7 @@
   "video_decoders_copied": "បានចម្លង",
   "video_decoders_copy": "ចម្លង",
   "video_decoders_hardware": "ផ្នែករឹង",
-  "video_decoders_max": "រហូតដល់ {width} x {height}",
+  "video_decoders_max": "រហូតដល់ {width} × {height}",
   "video_decoders_profiles": "ប្រវត្តិរូប៖ {profiles}",
   "video_decoders_software": "ផ្នែកទន់",
   "video_decoders_subtitle": "អ្វីដែលឧបករណ៍នេះឌិកូដបាន តាមកូដិក និងទំហំ ដើម្បីយល់ពីមូលហេតុដែលវីដេអូ 360° គាំង",

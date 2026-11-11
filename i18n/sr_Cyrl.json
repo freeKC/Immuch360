@@ -3378,7 +3378,7 @@
   "video_decoders_copied": "Копирано",
   "video_decoders_copy": "Копирај",
   "video_decoders_hardware": "Хардверски",
-  "video_decoders_max": "До {width} x {height}",
+  "video_decoders_max": "До {width} × {height}",
   "video_decoders_profiles": "Профили: {profiles}",
   "video_decoders_software": "Софтверски",
   "video_decoders_subtitle": "Шта овај уређај декодира, по кодеку и величини, да бисте разумели зашто 360° видео застајкује",

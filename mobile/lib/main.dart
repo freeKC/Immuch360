@@ -40,6 +40,7 @@ import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
 import 'package:immich_mobile/providers/theme.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_handler.provider.dart';
+import 'package:immich_mobile/repositories/asset_media.repository.dart';
 import 'package:immich_mobile/routing/app_navigation_observer.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/deep_link.service.dart';
@@ -331,6 +332,7 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
 
     ref.read(viewIntentHandlerProvider).init();
     ref.read(shareIntentUploadProvider.notifier).init();
+    unawaited(ref.read(assetMediaRepositoryProvider).cleanupStaleShareFiles());
     // A DJI remote plugged in with "Open this screen when the remote is plugged in" on (on by default on a phone)
     unawaited(ref.read(djiAttachLaunchProvider).check());
     // The DJI settings an earlier build kept under keys no longer read

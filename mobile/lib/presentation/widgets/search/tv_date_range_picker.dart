@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_choice_dialog.widget.dart';
 import 'package:intl/intl.dart';
@@ -68,7 +69,7 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
       ],
       _DatePart.month => [
         for (var month = 1; month <= 12; month++)
-          TvChoice<int>(value: month, label: DateFormat.MMMM().format(DateTime(2020, month))),
+          TvChoice<int>(value: month, label: DateFormat.MMMM(resolvedDateTimeLocale()).format(DateTime(2020, month))),
       ],
       _DatePart.day => [
         for (var day = 1; day <= _daysInMonth(current.year, current.month); day++)
@@ -149,7 +150,7 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
               ),
             ),
             const SizedBox(width: 16),
-            Text(DateFormat.yMMMMd().format(date)),
+            Text(DateFormat.yMMMMd(resolvedDateTimeLocale()).format(date)),
           ],
         ),
         const SizedBox(height: 8),
@@ -161,7 +162,7 @@ class _TvSearchDateRangeDialogState extends State<_TvSearchDateRangeDialog> {
               start: start,
               part: _DatePart.month,
               caption: context.t.month,
-              value: DateFormat.MMM().format(date),
+              value: DateFormat.MMM(resolvedDateTimeLocale()).format(date),
             ),
             const SizedBox(width: 8),
             _partButton(start: start, part: _DatePart.day, caption: context.t.day, value: date.day.toString()),

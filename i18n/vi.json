@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "Đã sao chép",
   "video_decoders_copy": "Sao chép",
   "video_decoders_hardware": "Phần cứng",
-  "video_decoders_max": "Tối đa {width} x {height}",
+  "video_decoders_max": "Tối đa {width} × {height}",
   "video_decoders_profiles": "Cấu hình: {profiles}",
   "video_decoders_software": "Phần mềm",
   "video_decoders_subtitle": "Những gì thiết bị này giải mã được, theo codec và kích thước, để hiểu vì sao video 360° bị giật",

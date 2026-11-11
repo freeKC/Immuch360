@@ -8,6 +8,7 @@ import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -18,6 +19,7 @@ import 'package:immich_mobile/infrastructure/repositories/settings.repository.da
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/repositories/upload.repository.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
+import 'package:logging/logging.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../api.mocks.dart';
@@ -457,6 +459,28 @@ void main() {
       );
 
       expect(errors, ['boom']);
+    });
+
+    test('logs the error of a failed send as the error of the record, never inside its text', () async {
+      share.statSizes['/Holidays/trip.mp4'] = 3000;
+      final failure = ClientException('Failed to connect to photos.example.test/203.0.113.9:443');
+      stubUploads(
+        answer: (_) async =>
+            UploadResult(isSuccess: false, isCancelled: false, errorMessage: failure.toString(), error: failure),
+      );
+      final level = Logger.root.level;
+      addTearDown(() => Logger.root.level = level);
+      Logger.root.level = Level.ALL;
+      final records = <LogRecord>[];
+      final subscription = Logger.root.onRecord.listen(records.add);
+      addTearDown(subscription.cancel);
+
+      await sut.uploadNetworkFiles([item('/Holidays/trip.mp4', listedSize: 1000)], cancelToken: Completer<void>());
+
+      final record = records.singleWhere((r) => r.message.contains('from a share'));
+      expect(record.message, isNot(contains('203.0.113.9')));
+      expect(record.message, isNot(contains('photos.example.test')));
+      expect(record.error, same(failure));
     });
 
     test('sends one file at a time', () async {

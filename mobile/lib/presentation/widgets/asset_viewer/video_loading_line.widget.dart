@@ -46,8 +46,8 @@ String? videoLoadingText(VideoLinkView? view, Translations t, {required String l
   }
   final rates = view.isDecoder
       ? t.av2_decoding_rate(
-          got: NumberFormat.decimalPattern(locale).format(view.framesPerSecond!.round()),
-          need: NumberFormat.decimalPattern(locale).format(view.neededFramesPerSecond!.round()),
+          got: decimalFormatOf(locale).format(view.framesPerSecond!.round()),
+          need: decimalFormatOf(locale).format(view.neededFramesPerSecond!.round()),
         )
       : t.video_loading_rate(
           got: formatBitRate(view.bitsPerSecond!, t, locale: locale),

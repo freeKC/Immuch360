@@ -4023,7 +4023,7 @@
   "video_decoders_copied": "Скопійовано",
   "video_decoders_copy": "Копіювати",
   "video_decoders_hardware": "Апаратний",
-  "video_decoders_max": "До {width} x {height}",
+  "video_decoders_max": "До {width} × {height}",
   "video_decoders_profiles": "Профілі: {profiles}",
   "video_decoders_software": "Програмний",
   "video_decoders_subtitle": "Що декодує цей пристрій, за кодеком і розміром, щоб зрозуміти, чому відео 360° пригальмовує",

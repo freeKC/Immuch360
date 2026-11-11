@@ -388,8 +388,9 @@ class SplashScreenPageState extends ConsumerState<SplashScreenPage> {
                 }
               },
               onError: (exception) {
-                // Never the token itself: a screen whose session was revoked would write it to the log
-                log.severe('Failed to update auth info with the stored access token: ${exception.runtimeType}');
+                // The error as upstream logs it: LogService (89d2de1274) replaces the stored token, still there at
+                // this point, the server addresses and the header values, so a revoked session never writes its token
+                log.severe('Failed to update auth info with the stored access token', exception);
                 if (!mounted) {
                   return;
                 }

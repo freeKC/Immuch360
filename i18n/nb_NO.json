@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "Kopiert",
   "video_decoders_copy": "Kopier",
   "video_decoders_hardware": "Maskinvare",
-  "video_decoders_max": "Opptil {width} x {height}",
+  "video_decoders_max": "Opptil {width} × {height}",
   "video_decoders_profiles": "Profiler: {profiles}",
   "video_decoders_software": "Programvare",
   "video_decoders_subtitle": "Hva denne enheten dekoder, etter kodek og størrelse, for å forstå hvorfor en 360°-video hakker",

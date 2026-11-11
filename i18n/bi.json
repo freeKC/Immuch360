@@ -1774,7 +1774,7 @@
   "video_decoders_copied": "I kopi finis",
   "video_decoders_copy": "Kopi",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Kasem {width} x {height}",
+  "video_decoders_max": "Kasem {width} × {height}",
   "video_decoders_profiles": "Ol profael: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Wanem divaes ia i save ridim, folem codec mo saes, blong save from wanem wan 360° video i stap stop stop",

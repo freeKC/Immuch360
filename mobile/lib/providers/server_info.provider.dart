@@ -69,7 +69,11 @@ class ServerInfoNotifier extends StateNotifier<ServerInfo> {
       return;
     }
 
-    if (clientVersion < serverVersion && clientVersion.differenceType(serverVersion) != SemVerType.patch) {
+    // "App update available" only when the server is a major release ahead: Immuch360 follows upstream at its own
+    // pace, so a newer minor (a 3.5.0 server for app 3.4.0) or a prerelease of the same release (app 3.4.0-rc.0 on a
+    // 3.4.0 server) would ask everyone for an update the stores do not have yet, and the API stays compatible within a
+    // major
+    if (clientVersion < serverVersion && clientVersion.differenceType(serverVersion) == SemVerType.major) {
       state = state.copyWith(versionStatus: VersionStatus.clientOutOfDate);
       return;
     }

@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "Copié",
   "video_decoders_copy": "Copier",
   "video_decoders_hardware": "Matériel",
-  "video_decoders_max": "Jusqu'à {width} x {height}",
+  "video_decoders_max": "Jusqu'à {width} × {height}",
   "video_decoders_profiles": "Profils : {profiles}",
   "video_decoders_software": "Logiciel",
   "video_decoders_subtitle": "Ce que cet appareil décode, par codec et par taille, pour comprendre pourquoi une vidéo 360° saccade",

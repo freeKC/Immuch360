@@ -2053,7 +2053,7 @@
   "video_decoders_copied": "Копирано",
   "video_decoders_copy": "Копирај",
   "video_decoders_hardware": "Хардвер",
-  "video_decoders_max": "До {width} x {height}",
+  "video_decoders_max": "До {width} × {height}",
   "video_decoders_profiles": "Профили: {profiles}",
   "video_decoders_software": "Софтвер",
   "video_decoders_subtitle": "Што декодира овој уред, по кодек и големина, за да разберете зошто едно 360° видео сецка",

@@ -355,7 +355,7 @@ class _AppleSpatialTile extends StatelessWidget {
 }
 
 /// The codec of the video track [probe] describes, with the name of its profile and its codecs string, its coded frame
-/// size and its frame rate when known ("HEVC Main 10 (hvc1.2.4.L153)  •  5760 x 2880  •  29.97 fps"); null when the
+/// size and its frame rate when known ("HEVC Main 10 (hvc1.2.4.L153)  •  5760 × 2880  •  29.97 fps"); null when the
 /// probe found no video track
 @visibleForTesting
 String? videoCodecSummary(SphericalProbe? probe) {
@@ -371,7 +371,7 @@ String? videoCodecSummary(SphericalProbe? probe) {
   final frameRate = probe.frameRate;
   return [
     codecs == null ? name : '$name ($codecs)',
-    if (width != null && height != null) '$width x $height',
+    if (width != null && height != null) '$width × $height',
     if (frameRate != null) '${formatFrameRate(frameRate)} fps',
   ].join(_kSeparator);
 }

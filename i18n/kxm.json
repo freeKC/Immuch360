@@ -1741,7 +1741,7 @@
   "video_decoders_copied": "ก๊อปปี้แล้ว",
   "video_decoders_copy": "ก๊อปปี้",
   "video_decoders_hardware": "ฮาร์ดแวร์",
-  "video_decoders_max": "สูงสุด {width} x {height}",
+  "video_decoders_max": "สูงสุด {width} × {height}",
   "video_decoders_profiles": "โปรไฟล์: {profiles}",
   "video_decoders_software": "ซอฟต์แวร์",
   "video_decoders_subtitle": "สิ่งที่เครื่องนี้ถอดรหัสได้ ตามโคเดกแล้วก็ขนาด เพื่อเข้าใจว่าเป็นหยังวิดีโอ 360° จึงกระตุก",

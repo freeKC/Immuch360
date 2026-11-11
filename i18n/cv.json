@@ -1829,7 +1829,7 @@
   "video_decoders_copied": "Копиленӗ",
   "video_decoders_copy": "Копиле",
   "video_decoders_hardware": "Аппаратлӑ",
-  "video_decoders_max": "{width} x {height} таран",
+  "video_decoders_max": "{width} × {height} таран",
   "video_decoders_profiles": "Профильсем: {profiles}",
   "video_decoders_software": "Программӑллӑ",
   "video_decoders_subtitle": "Ку хатӗр мӗне декодлать, кодекпа виҫе тӑрӑх, 360° видео мӗншӗн чарӑна-чарӑна выляннине ӑнланма",

@@ -4085,7 +4085,7 @@
   "video_decoders_copied": "Skopírované",
   "video_decoders_copy": "Kopírovať",
   "video_decoders_hardware": "Hardvérový",
-  "video_decoders_max": "Do {width} x {height}",
+  "video_decoders_max": "Do {width} × {height}",
   "video_decoders_profiles": "Profily: {profiles}",
   "video_decoders_software": "Softvérový",
   "video_decoders_subtitle": "Čo toto zariadenie dekóduje podľa kodeku a veľkosti, aby ste pochopili, prečo sa 360° video seká",

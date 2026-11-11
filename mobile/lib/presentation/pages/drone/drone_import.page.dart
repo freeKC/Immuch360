@@ -15,6 +15,7 @@ import 'package:immich_mobile/domain/services/drone_import_grouping.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
+import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/dji_link_api.g.dart';
 import 'package:immich_mobile/platform/document_tree_api.g.dart';
@@ -696,7 +697,7 @@ class _DayHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.locale.toLanguageTag();
+    final locale = resolvedDateTimeLocale();
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(

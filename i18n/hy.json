@@ -1866,7 +1866,7 @@
   "video_decoders_copied": "Պատճենվեց",
   "video_decoders_copy": "Պատճենել",
   "video_decoders_hardware": "Ապարատային",
-  "video_decoders_max": "Մինչև {width} x {height}",
+  "video_decoders_max": "Մինչև {width} × {height}",
   "video_decoders_profiles": "Պրոֆիլներ՝ {profiles}",
   "video_decoders_software": "Ծրագրային",
   "video_decoders_subtitle": "Ինչ է վերծանում այս սարքը՝ ըստ կոդեկի և չափի, հասկանալու համար, թե ինչու է 360° տեսանյութը կանգ առնում",

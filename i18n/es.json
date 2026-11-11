@@ -4082,7 +4082,7 @@
   "video_decoders_copied": "Copiado",
   "video_decoders_copy": "Copiar",
   "video_decoders_hardware": "Hardware",
-  "video_decoders_max": "Hasta {width} x {height}",
+  "video_decoders_max": "Hasta {width} × {height}",
   "video_decoders_profiles": "Perfiles: {profiles}",
   "video_decoders_software": "Software",
   "video_decoders_subtitle": "Lo que este dispositivo decodifica, por códec y tamaño, para entender por qué un vídeo 360° se entrecorta",

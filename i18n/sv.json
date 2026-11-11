@@ -4083,7 +4083,7 @@
   "video_decoders_copied": "Kopierat",
   "video_decoders_copy": "Kopiera",
   "video_decoders_hardware": "Hårdvara",
-  "video_decoders_max": "Upp till {width} x {height}",
+  "video_decoders_max": "Upp till {width} × {height}",
   "video_decoders_profiles": "Profiler: {profiles}",
   "video_decoders_software": "Mjukvara",
   "video_decoders_subtitle": "Vad den här enheten avkodar, per codec och storlek, för att förstå varför en 360°-video hackar",
