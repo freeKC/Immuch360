@@ -202,8 +202,10 @@ void main() {
     });
 
     test('covers the cases the ports must meet', () {
-      expect(cases.map((entry) => entry['name']), ['production', 'strong', 'flat', 'dark']);
+      expect(cases.map((entry) => entry['name']), ['production', 'strong', 'flat', 'dark', 'subtle', 'pronounced']);
       expect(named('production')['filledPixels'], 0);
+      // The Subtle and Strong relief strengths of the app (release 46)
+      expect([named('subtle')['parallax'], named('pronounced')['parallax']], [0.015, 0.03]);
       expect(named('strong')['flags'], ['hiddenAreas']);
       expect(named('flat')['flags'], ['lowRelief']);
       expect(named('dark')['flags'], ['lowRelief', 'dark']);

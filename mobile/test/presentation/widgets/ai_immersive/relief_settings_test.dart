@@ -1,6 +1,7 @@
 // The AI settings of the Meta Quest in the advanced settings: the switch of the AI features, the untested switch of
-// the Quest 2 and Pro, the relief cache with its size and Clear on a folder of the test, and the components of the
-// headset; the cache and the components with the quest flavour only, nothing of it off Horizon OS.
+// the Quest 2 and Pro, the relief strength, the relief cache with its size and Clear on a folder of the test, and the
+// components of the headset; the strength, the cache and the components with the quest flavour only, nothing of it off
+// Horizon OS.
 
 import 'dart:io';
 
@@ -8,10 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_settings.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_strength_choice.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
@@ -52,6 +55,7 @@ void main() {
     of: find.byKey(const Key('advanced_settings_ai_relief_25d')),
     matching: find.byType(SwitchListTile),
   );
+  final strengthChoice = find.byKey(const Key('advanced_settings_ai_relief_strength'));
   final cacheTile = find.byKey(const Key('ai_relief_cache_tile'));
   final clearButton = find.byKey(const Key('ai_relief_cache_clear'));
 
@@ -165,6 +169,48 @@ void main() {
     expect(SettingsRepository.instance.appConfig.aiImmersive.questMode, ReliefViewMode.stereo);
   });
 
+  testWidgets('the relief strength reads Normal, keeps Strong or Subtle, and waits for the AI features', (
+    tester,
+  ) async {
+    SegmentedButton<ReliefStrength> segments() => tester.widget<SegmentedButton<ReliefStrength>>(
+      find.descendant(of: strengthChoice, matching: find.byType(SegmentedButton<ReliefStrength>)),
+    );
+    await pumpSettings(tester);
+    await scrollTo(tester, strengthChoice);
+
+    expect(find.text('Relief strength'), findsOneWidget);
+    expect(
+      find.text(
+        'How far near objects stand out from the background. Strong is more striking and can tire the eyes sooner.',
+      ),
+      findsOneWidget,
+    );
+    for (final label in ['Subtle', 'Normal', 'Strong']) {
+      expect(find.descendant(of: strengthChoice, matching: find.text(label)), findsOneWidget);
+    }
+    expect(segments().selected, {ReliefStrength.normal});
+    expect(SettingsRepository.instance.appConfig.aiImmersive.questStrength, ReliefStrength.normal);
+
+    await tester.tap(find.byKey(reliefStrengthSegmentKey(ReliefStrength.strong)));
+    await tester.pumpAndSettle();
+    expect(segments().selected, {ReliefStrength.strong});
+    expect(SettingsRepository.instance.appConfig.aiImmersive.questStrength, ReliefStrength.strong);
+
+    await tester.tap(find.byKey(reliefStrengthSegmentKey(ReliefStrength.subtle)));
+    await tester.pumpAndSettle();
+    expect(SettingsRepository.instance.appConfig.aiImmersive.questStrength, ReliefStrength.subtle);
+
+    // With the AI features off, it does not move
+    await scrollTo(tester, aiSwitch);
+    await tester.tap(aiSwitch);
+    await tester.pumpAndSettle();
+    await scrollTo(tester, strengthChoice);
+    expect(segments().onSelectionChanged, isNull);
+    await tester.tap(find.byKey(reliefStrengthSegmentKey(ReliefStrength.normal)), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(SettingsRepository.instance.appConfig.aiImmersive.questStrength, ReliefStrength.subtle);
+  });
+
   testWidgets('the relief cache shows its size, and Clear removes its maps and nothing else', (tester) async {
     writeMap('${'a' * 64}.u16', 710712);
     writeMap('${'b' * 64}.u16', 710712);
@@ -232,6 +278,7 @@ void main() {
 
     expect(aiSwitch, findsOneWidget);
     expect(meshSwitch, findsNothing);
+    expect(strengthChoice, findsNothing);
     expect(cacheTile, findsNothing);
     expect(find.byType(AiComponentsTile), findsNothing);
   });

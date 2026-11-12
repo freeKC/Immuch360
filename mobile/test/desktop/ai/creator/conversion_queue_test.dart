@@ -21,6 +21,7 @@ import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -253,7 +254,14 @@ void main() {
   }
 
   /// A 3D photo of ours made from the original at [originalPath], at [name] in [folder], the photos folder by default
-  String version(String originalPath, String name, {int turns = 0, String id = 'urn:uuid:old', String? folder}) {
+  String version(
+    String originalPath,
+    String name, {
+    int turns = 0,
+    String id = 'urn:uuid:old',
+    String? folder,
+    double parallax = 0.02,
+  }) {
     final bytes = File(originalPath).readAsBytesSync();
     final xmp = StereoPhotoXmp.estimated(
       eyeWidth: 8,
@@ -266,6 +274,7 @@ void main() {
       created: '2026-10-20T09:00:00+02:00',
       creatorTool: 'Immuch360 Desktop 3.3.0 (linux)',
       derivativeId: id,
+      parallax: parallax,
     );
     return (File(p.join(folder ?? photos, name))..writeAsBytesSync(fakeSbsJpeg(xmp: xmp))).path;
   }
@@ -739,6 +748,52 @@ void main() {
 
       expect(job(id).state, ConversionState.done);
       expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
+    });
+
+    test('made with another relief strength does not count: the new strength goes beside it', () async {
+      final request = photo('salon.jpg');
+      version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg');
+
+      final id = queue().add([request], reliefStrength: ReliefStrength.strong).single;
+      await allEnded();
+
+      expect(job(id).state, ConversionState.done);
+      expect(job(id).reliefStrength, ReliefStrength.strong);
+      expect(engines.fallback.jobs.single.parallax, 0.03);
+      expect(job(id).writtenPath, p.join(photos, 'salon_3D_LRF_Full_SBS (1).jpg'));
+      final written = StereoPhotoXmp.findIn(File(job(id).writtenPath!).readAsBytesSync())!;
+      expect(written.parallax, 0.03);
+      expect(reliefStrengthOfXmp(written), ReliefStrength.strong);
+    });
+
+    test('made with the same relief strength is skipped, whichever strength it is', () async {
+      final request = photo('salon.jpg');
+      final existing = version(p.join(photos, 'salon.jpg'), 'salon_3D_LRF_Full_SBS.jpg', parallax: 0.015);
+
+      final skipped = queue().add([request], reliefStrength: ReliefStrength.subtle).single;
+      await allEnded();
+      expect(job(skipped).skipReason, ConversionSkipReason.sameSettingsExists);
+      expect(job(skipped).existingVersionPath, existing);
+
+      // The Subtle version does not hold a Normal one back
+      final made = queue().add([photo('salon.jpg')]).single;
+      await allEnded();
+      expect(job(made).state, ConversionState.done);
+      expect(engines.fallback.jobs.single.parallax, 0.02);
+    });
+
+    test('the relief strength is for 3D photos only, and goes with a Retry', () async {
+      engines.byName['a.jpg'] = _Failing(ImmersiveErrorCode.modelFailed, 'once');
+      final id = queue().add([photo('a.jpg')], reliefStrength: ReliefStrength.subtle).single;
+      await allEnded();
+      expect(job(id).state, ConversionState.failed);
+
+      engines.byName.clear();
+      queue().retry(id);
+      await allEnded();
+      expect(job(id).state, ConversionState.done);
+      expect(job(id).reliefStrength, ReliefStrength.subtle);
+      expect(engines.fallback.jobs.single.parallax, 0.015);
     });
 
     test('Make a new version keeps the old one and gives the new one its own DerivativeId', () async {

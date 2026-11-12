@@ -1,6 +1,6 @@
 // The rows of the details panel of a computer for the versions of a photo: "Versions" on an original, each one with
 // what it is in the words of its honesty label and its folder, greyed on a drive that is not connected; "Made from" or
-// "Original not found" on a version; a row that opens its file; "Export for other 3D apps (.glb)" on a 3D scene, on
+// "Original not found" on a version; the relief strength of a 3D photo ("Relief: Strong"); a row that opens its file; "Export for other 3D apps (.glb)" on a 3D scene, on
 // its row and on its own; "Make the 3D version" on a 360° panorama the app generated, on its row and on its own; and
 // nothing of it on a phone.
 
@@ -18,6 +18,7 @@ import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_details/technical_details.widget.dart';
 import 'package:path/path.dart' as p;
@@ -70,8 +71,12 @@ void main() {
   late List<String> madeStereo;
   late bool aiOn;
   late List<ConversionKind> offered;
+  late Map<String, ReliefStrength> strengths;
+  late List<String> strengthsRead;
 
   setUp(() async {
+    strengths = {};
+    strengthsRead = [];
     context = await PresentationContext.create();
     opened = [];
     madeStereo = [];
@@ -98,6 +103,10 @@ void main() {
         aiFeaturesEnabledProvider.overrideWith((ref) => aiOn),
         offeredConversionKindsProvider.overrideWith((ref) => offered),
         versionStereoMakerProvider.overrideWithValue((context, ref, panorama) async => madeStereo.add(panorama.name)),
+        versionReliefStrengthProvider.overrideWith((ref, path) async {
+          strengthsRead.add(path);
+          return strengths[path];
+        }),
       ],
     );
   }
@@ -137,6 +146,54 @@ void main() {
     await tester.tap(find.textContaining('Unavailable'));
     await tester.pump();
     expect(opened, [moved]);
+  });
+
+  testWidgets('a 3D photo tells its relief strength, read from the file; one on a drive not connected is not read', (
+    tester,
+  ) async {
+    strengths[here] = ReliefStrength.strong;
+    strengths[moved] = ReliefStrength.subtle;
+    strengths[away] = ReliefStrength.strong;
+    await pump(
+      tester,
+      DesktopVersionsTiles(asset: photo),
+      photo,
+      PhotoVersions(
+        versions: [
+          _file(here, origin: IndexedOrigin.estimated),
+          _file(moved, origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto),
+          _file(away, origin: IndexedOrigin.estimated, available: false),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('3D photo, relief estimated by AI\nRelief: Strong\n${p.dirname(here)}'), findsOneWidget);
+    expect(find.text('3D photo, relief estimated by AI\nRelief: Subtle\n${p.dirname(moved)}'), findsOneWidget);
+    expect(
+      find.text('3D photo, relief estimated by AI\nUnavailable: its drive is not connected\n${p.dirname(away)}'),
+      findsOneWidget,
+    );
+    expect(strengthsRead, unorderedEquals([here, moved]));
+  });
+
+  testWidgets('a 3D photo of ours tells its relief strength beside what it was made from', (tester) async {
+    strengths[here] = ReliefStrength.normal;
+    await pump(
+      tester,
+      DesktopVersionsTiles(asset: photo),
+      photo,
+      PhotoVersions(
+        self: _file(here, origin: IndexedOrigin.estimated),
+        original: _file(original),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Made from salon.jpg'), findsOneWidget);
+    expect(find.text('3D photo, relief estimated by AI  •  Relief: Normal'), findsOneWidget);
+    // The original is no 3D photo: nothing is read for it
+    expect(strengthsRead, [here]);
   });
 
   testWidgets('a version tells the photo it was made from and opens it', (tester) async {

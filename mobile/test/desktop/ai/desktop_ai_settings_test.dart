@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:path/path.dart' as p;
 
 void main() {
@@ -151,6 +152,35 @@ void main() {
         'sceneFromPhoto': {'geometry': 2100},
       });
       expect(settings.comfyUiUrl, isNull);
+    });
+  });
+
+  group('the relief strength of the 3D photos (release 46)', () {
+    test('Normal by default, the parallax of every earlier version', () async {
+      expect((await store.read()).reliefStrength, ReliefStrength.normal);
+      // A file of an earlier version has no strength
+      file().writeAsStringSync(jsonEncode({'skipExisting': false}));
+      expect((await store.read()).reliefStrength, ReliefStrength.normal);
+    });
+
+    test('kept by its name and read back, the other settings left as they are', () async {
+      await store.write(const DesktopAiSettings(skipExisting: false));
+      await store.update((settings) => settings.copyWith(reliefStrength: ReliefStrength.strong));
+
+      final kept = jsonDecode(file().readAsStringSync()) as Map<String, dynamic>;
+      expect(kept['reliefStrength'], 'strong');
+      final read = await store.read();
+      expect(read.reliefStrength, ReliefStrength.strong);
+      expect(read.skipExisting, isFalse);
+      expect(read, const DesktopAiSettings(skipExisting: false, reliefStrength: ReliefStrength.strong));
+      expect(read, isNot(const DesktopAiSettings(skipExisting: false)));
+    });
+
+    test('a strength this build does not know reads Normal', () async {
+      for (final value in ['extreme', 3, null, '']) {
+        file().writeAsStringSync(jsonEncode({'reliefStrength': value}));
+        expect((await store.read()).reliefStrength, ReliefStrength.normal, reason: '$value');
+      }
     });
   });
 

@@ -24,7 +24,9 @@
 // already, a format this system cannot read); says where the 3D photos go (next to the original, or a folder of my
 // choice with its path and Change, with the reason when the original cannot receive a file), asks the question of a
 // network folder when one is involved, and what to do when a 3D version exists; tells that the rotation the user chose
-// is applied. Convert hands the photos to the queue and shows the panel of the conversions.
+// is applied. A 3D photo has its relief strength, Subtle, Normal or Strong (release 46), the one chosen last by default:
+// each strength is a version of its own, so a photo is skipped only for a version with the same strength. Convert
+// hands the photos to the queue and shows the panel of the conversions.
 //
 // The folders are checked as the dialog opens, by the partial file of the first job of each folder (lot A5b): its job
 // takes it over at the launch, and those no job takes are deleted when the dialog closes. A folder of the library is
@@ -93,6 +95,7 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -110,6 +113,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_strength_choice.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart' show readGPanoFile;
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
@@ -1073,6 +1077,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   /// "Also make the 3D version" of each panorama, as kept in desktop_ai.json
   var _alsoStereo = true;
 
+  /// The relief strength of the 3D photos, the one chosen last as kept in desktop_ai.json
+  var _strength = ReliefStrength.normal;
+
   /// The part of the panoramas of the selection the AI invents, in percent, the smallest of them; null until read
   int? _invented;
 
@@ -1146,6 +1153,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     _settings = await _store.read();
     _existing = _settings.skipExisting ? ExistingVersionChoice.skip : ExistingVersionChoice.newVersion;
     _alsoStereo = _settings.alsoStereoPanorama;
+    _strength = _settings.reliefStrength;
     _offered = ref.read(offeredConversionKindsProvider);
     _reading = true;
     List<_Photo>? photos;
@@ -1555,7 +1563,14 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final output = ref.read(safeWriterOutputProvider);
     final ids = ref
         .read(conversionQueueProvider.notifier)
-        .add(requests, kind: kind, existing: _existing, whenExists: settings.whenExists, alsoStereo: alsoStereo);
+        .add(
+          requests,
+          kind: kind,
+          existing: _existing,
+          whenExists: settings.whenExists,
+          alsoStereo: alsoStereo,
+          reliefStrength: _strength,
+        );
     // The copies of the photos of a share go with their jobs; those of the photos skipped go now
     _releaseShareSources(
       kept: {
@@ -1601,13 +1616,19 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     _close();
     final skipExisting = _existing == ExistingVersionChoice.skip;
     final stereoKept = kind == ConversionKind.panoramaFromPhoto ? _alsoStereo : settings.alsoStereoPanorama;
+    final strengthKept = kind == ConversionKind.sbsFromPhoto ? _strength : settings.reliefStrength;
     if (settings.skipExisting != skipExisting ||
         settings.lastType != kind.name ||
-        settings.alsoStereoPanorama != stereoKept) {
+        settings.alsoStereoPanorama != stereoKept ||
+        settings.reliefStrength != strengthKept) {
       unawaited(
         _store.update(
-          (kept) =>
-              kept.copyWith(skipExisting: skipExisting, lastType: () => kind.name, alsoStereoPanorama: stereoKept),
+          (kept) => kept.copyWith(
+            skipExisting: skipExisting,
+            lastType: () => kind.name,
+            alsoStereoPanorama: stereoKept,
+            reliefStrength: strengthKept,
+          ),
         ),
       );
     }
@@ -1673,6 +1694,15 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 ),
               const SizedBox(height: 4),
               Text(t.ai_immersive_no_guarantee, style: Theme.of(context).textTheme.bodySmall),
+              if (kind == ConversionKind.sbsFromPhoto) ...[
+                const SizedBox(height: 12),
+                ReliefStrengthChoice(
+                  key: const Key('ai_conversion_relief_strength'),
+                  value: _strength,
+                  onChanged: busy || _launched ? null : (strength) => setState(() => _strength = strength),
+                ),
+                const SizedBox(height: 4),
+              ],
               if (time != null) ConversionNote(key: const Key('ai_conversion_time'), text: time),
               if (kind.lane == ConversionLane.gpu)
                 ConversionNote(key: const Key('ai_conversion_gpu_busy'), text: t.ai_immersive_gpu_busy_warning),

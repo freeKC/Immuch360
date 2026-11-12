@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 
@@ -40,15 +41,16 @@ String reliefIdentityOfShareFile({required String sourceId, required String path
     );
 
 /// The depthRelief request of a photo of [identity] that the user sees turned by [quarterTurns] clockwise from its
-/// unedited file, the headset reading [model] at [modelPath]: the settings of relief-v1, the key of its depth map in
-/// the cache, which a new model, a new setting or another turn misses by itself, and the view the relief first shows
-/// in, [mode] (the same map for both)
+/// unedited file, the headset reading [model] at [modelPath]: the settings of relief-v1 with the parallax of
+/// [strength], the key of its depth map in the cache, which a new model, another strength or another turn misses by
+/// itself, and the view the relief first shows in, [mode] (the same map for both)
 DepthReliefRequest questReliefRequest({
   required String modelPath,
   AiComponent model = depthModelTfliteComponent,
   required String identity,
   required int quarterTurns,
   ReliefViewMode mode = ReliefViewMode.stereo,
+  ReliefStrength strength = ReliefStrength.normal,
 }) {
   final modelId = depthModelId(model.sha256!);
   final turns = quarterTurns & 3;
@@ -56,8 +58,8 @@ DepthReliefRequest questReliefRequest({
     model: modelPath,
     modelSize: model.size!,
     modelId: modelId,
-    cacheKey: reliefCacheKey(identity: identity, modelId: modelId, quarterTurns: turns),
-    parallax: ReliefV1.parallax,
+    cacheKey: reliefCacheKey(identity: identity, modelId: modelId, parallax: strength.parallax, quarterTurns: turns),
+    parallax: strength.parallax,
     convergence: ReliefV1.convergence,
     quarterTurns: turns,
     mode: mode,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
 import 'package:immich_mobile/domain/models/config/album_config.dart';
@@ -137,6 +138,7 @@ abstract class AppConfig with _$AppConfig {
             .aiImmersiveEnabled => aiImmersive.enabled,
             .aiImmersiveOlderHeadsets => aiImmersive.olderHeadsets,
             .aiReliefQuestMode => aiImmersive.questMode,
+            .aiReliefStrength => aiImmersive.questStrength,
             .kioskEnabled => kiosk.enabled,
             .kioskMedia => kiosk.media,
             .kioskEndText => kiosk.endText,
@@ -223,6 +225,7 @@ abstract class AppConfig with _$AppConfig {
       .aiImmersiveEnabled => copyWith(aiImmersive: aiImmersive.copyWith(enabled: value as bool)),
       .aiImmersiveOlderHeadsets => copyWith(aiImmersive: aiImmersive.copyWith(olderHeadsets: value as bool)),
       .aiReliefQuestMode => copyWith(aiImmersive: aiImmersive.copyWith(questMode: value as ReliefViewMode)),
+      .aiReliefStrength => copyWith(aiImmersive: aiImmersive.copyWith(questStrength: value as ReliefStrength)),
       .kioskEnabled => copyWith(kiosk: kiosk.copyWith(enabled: value as bool)),
       .kioskMedia => copyWith(kiosk: kiosk.copyWith(media: value as String?)),
       .kioskEndText => copyWith(kiosk: kiosk.copyWith(endText: value as String?)),

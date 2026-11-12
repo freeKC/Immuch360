@@ -42,6 +42,7 @@ import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
@@ -49,6 +50,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service
 import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
+import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_strength_choice.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
@@ -678,6 +680,43 @@ void main() {
     await settle(tester);
   });
 
+  testWidgets('the relief strength: Normal by default; the one chosen reaches the queue and the file, and is kept', (
+    tester,
+  ) async {
+    SegmentedButton<ReliefStrength> segments() => tester.widget<SegmentedButton<ReliefStrength>>(
+      find.descendant(
+        of: find.byKey(const Key('ai_conversion_relief_strength')),
+        matching: find.byType(SegmentedButton<ReliefStrength>),
+      ),
+    );
+    original('salon.jpg');
+    final container = await openDialog(tester, [_photo('salon.jpg')]);
+
+    expect(find.text('Relief strength'), findsOneWidget);
+    expect(segments().selected, {ReliefStrength.normal});
+    // The honesty label stays as it was
+    expect(find.text('Relief estimated by AI from a single photo'), findsOneWidget);
+
+    await tapIn(tester, find.byKey(reliefStrengthSegmentKey(ReliefStrength.strong)));
+    await tester.pump();
+    expect(segments().selected, {ReliefStrength.strong});
+    await tapIn(tester, convert());
+    await settle(tester);
+
+    final job = container.read(conversionQueueProvider).jobs.single;
+    expect(job.reliefStrength, ReliefStrength.strong);
+    expect(engine.jobs.single.parallax, 0.03);
+    expect((await keptSettings(tester)).reliefStrength, ReliefStrength.strong);
+    engine.release();
+    await settle(tester);
+    expect(container.read(conversionQueueProvider).jobs.single.state, ConversionState.done);
+
+    // The next dialog starts with the strength chosen last
+    await tester.pumpWidget(const SizedBox.shrink());
+    await openDialog(tester, [_photo('salon.jpg')]);
+    expect(segments().selected, {ReliefStrength.strong});
+  });
+
   testWidgets('while the album of the generated photos is not out of the backup, the library is left alone', (
     tester,
   ) async {
@@ -751,6 +790,7 @@ void main() {
         expect(chosenType(tester), ConversionKind.sceneFromPhoto);
         expect(find.text('Reconstructed from one photo, explore within its limits'), findsOneWidget);
         expect(find.text('Relief estimated by AI from a single photo'), findsNothing);
+        expect(find.byKey(const Key('ai_conversion_relief_strength')), findsNothing, reason: 'a 3D photo only');
         expect(find.text('About 23 s per photo'), findsOneWidget, reason: 'the timings of M2');
         expect(find.byKey(const Key('ai_conversion_install')), findsOneWidget);
         expect(find.text('MoGe-2 ViT-S'), findsOneWidget);
