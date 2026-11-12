@@ -39,7 +39,15 @@ void main() {
 
   test('the fixture is that of relief-v2, with its seven cases and the settings of the app', () {
     expect(golden['pipeline'], ReliefV2.pipeline);
-    expect(cases.map((entry) => entry['name']), ['production', 'strong', 'flat', 'dark', 'subtle', 'pronounced', 'edge']);
+    expect(cases.map((entry) => entry['name']), [
+      'production',
+      'strong',
+      'flat',
+      'dark',
+      'subtle',
+      'pronounced',
+      'edge',
+    ]);
     expect([eyeWidth, eyeHeight, mapWidth, mapHeight], [32, 8, 16, 4]);
     expect(golden['rangeSigma'], ReliefV2.rangeSigma);
     expect(golden['spatialSigma'], ReliefV2.spatialSigma);

@@ -6,8 +6,10 @@ import 'package:immich_mobile/providers/network/film_player.provider.dart';
 const _quest = {'video/avc', 'video/hevc', 'audio/eac3', 'audio/ac3', 'audio/mp4a-latm', 'audio/mpeg'};
 const _dts = FilmStreams(container: 'mkv', videoCodec: 'h264', audioCodec: 'dca');
 
-FilmPlayers _players({Set<String>? types = _quest, bool mpv = true}) =>
-    FilmPlayers(decoderTypes: DeviceDecoderTypes(read: () async => types), mpvReady: () async => mpv);
+FilmPlayers _players({Set<String>? types = _quest, bool mpv = true}) => FilmPlayers(
+  decoderTypes: DeviceDecoderTypes(read: () async => types),
+  mpvReady: () async => mpv,
+);
 
 void main() {
   test('the device decoders and libmpv of the build choose the player', () async {
