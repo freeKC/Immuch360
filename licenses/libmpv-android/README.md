@@ -43,15 +43,26 @@ The texts ship in the quest APK as `mobile/assets/licenses/libmpv-android/` (an 
 `pubspec.yaml`), and the licence page of the app shows them under "libmpv" there (`mobile/lib/utils/
 mpv_android_licenses.dart`, registered in `main.dart`). The other builds do not ship libmpv and list nothing.
 
-## Source (to settle before the Meta Horizon Store build)
+## Source
 
-The corresponding source of this libmpv is what the build scripts of libmpv-android-video-build `v1.1.7` fetch
-(`buildscripts/`, each library at a pinned version or commit). The LGPL lets the source be offered through a third
-party's server as long as the app's publisher makes sure it stays available. The computers do better: their libmpv
-is built by github.com/immuch360/libmpv-builds, whose release carries the source tarball. The same for Android
-(a `libmpv-android-*` release of libmpv-builds, built from the same scripts, with its `-sources.tar.xz`) is the step
-to take before the quest build that carries libmpv goes to the Meta Horizon Store; until then the GitHub release of
-the Quest APK points to media-kit's release.
+The corresponding source of this libmpv is on the release
+[libmpv-android-20261112-1](https://github.com/immuch360/libmpv-builds/releases/tag/libmpv-android-20261112-1) of
+github.com/immuch360/libmpv-builds (its `android/` folder, 12 November 2026):
+
+* `libmpv-android-20261112-1-sources.tar.xz`: the recipe at `v1.1.7` (commit `fe8c3ac1a9`) with its three patches,
+  and each library it builds into `libmpv.so` and the helper at the commit the recipe built (mpv `78d43740f5`, FFmpeg
+  `n6.0`, Mbed TLS `v3.4.0`, dav1d `1.2.0`, libxml2 `v2.10.3`, FreeType `VER-2-13-0`, FriBidi `v1.0.12`, HarfBuzz
+  `7.2.0`, libass `0.17.1`, media-kit-android-helper `42054e5d47`), with the script that rebuilds the jars from it.
+  mpv and FFmpeg are also attached alone, the licence texts in `libmpv-android-20261112-1-licenses.tar.gz`.
+* The same release re-hosts media-kit's four `default-<abi>.jar` and their debug symbols, the same bytes (the arm64 one
+  has the SHA-256 above), so the binary and its source sit together under one tag. The Gradle task still downloads
+  from media-kit's release; both serve the same file, checked by the same SHA-256.
+* Checked in the files themselves before publishing: FFmpeg configured `--disable-gpl --disable-nonfree
+  --enable-version3`, its six libraries reporting `LGPL version 3 or later`, mpv `-Dgpl=false`, no x264 or x265
+  code; the recipe's GPL flavour (`encoders-gpl`, libx264) is not built. So the LGPL offer holds.
+
+The licence page of the Quest build names that release (`mpvAndroidSourceRelease` in
+`mobile/lib/utils/mpv_android_licenses.dart`).
 
 ## What it adds
 
