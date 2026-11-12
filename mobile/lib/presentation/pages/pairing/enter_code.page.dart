@@ -164,80 +164,83 @@ class _EnterCodePageState extends ConsumerState<EnterCodePage> {
     final typed = _found.isEmpty || _selected == null;
     return Scaffold(
       appBar: AppBar(title: Text(t.pairing_enter_code_title)),
-      body: ListView(
-        padding: const EdgeInsets.all(ImmichSpacing.lg),
-        children: [
-          Text(t.pairing_enter_code_screens, style: theme.titleMedium),
-          const SizedBox(height: ImmichSpacing.sm),
-          if (_found.isEmpty)
-            Text(t.pairing_enter_code_none_found, style: theme.bodyMedium)
-          else
-            RadioGroup<String>(
-              groupValue: _selected,
-              onChanged: (value) => setState(() => _selected = value),
-              child: Column(
-                children: [
-                  for (final screen in _found)
-                    RadioListTile<String>(
-                      key: ValueKey('pairing_found_${screen.key}'),
-                      value: screen.key,
-                      title: Text(screen.name),
-                      subtitle: Text(screen.host),
-                      secondary: Icon(pairingKindIcon(screen.kind)),
-                    ),
-                ],
+      // Above the navigation bar of the phone
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(ImmichSpacing.lg),
+          children: [
+            Text(t.pairing_enter_code_screens, style: theme.titleMedium),
+            const SizedBox(height: ImmichSpacing.sm),
+            if (_found.isEmpty)
+              Text(t.pairing_enter_code_none_found, style: theme.bodyMedium)
+            else
+              RadioGroup<String>(
+                groupValue: _selected,
+                onChanged: (value) => setState(() => _selected = value),
+                child: Column(
+                  children: [
+                    for (final screen in _found)
+                      RadioListTile<String>(
+                        key: ValueKey('pairing_found_${screen.key}'),
+                        value: screen.key,
+                        title: Text(screen.name),
+                        subtitle: Text(screen.host),
+                        secondary: Icon(pairingKindIcon(screen.kind)),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          if (_found.isNotEmpty && !typed)
-            TextButton(onPressed: () => setState(() => _selected = null), child: Text(t.pairing_enter_code_address)),
-          if (typed) ...[
+            if (_found.isNotEmpty && !typed)
+              TextButton(onPressed: () => setState(() => _selected = null), child: Text(t.pairing_enter_code_address)),
+            if (typed) ...[
+              const SizedBox(height: ImmichSpacing.md),
+              TextField(
+                key: const Key('pairing_address'),
+                controller: _address,
+                keyboardType: TextInputType.url,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  labelText: t.pairing_enter_code_address,
+                  hintText: 'http://192.168.1.23:8361/p',
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            ],
             const SizedBox(height: ImmichSpacing.md),
             TextField(
-              key: const Key('pairing_address'),
-              controller: _address,
-              keyboardType: TextInputType.url,
+              key: const Key('pairing_code_field'),
+              controller: _code,
               autocorrect: false,
+              enableSuggestions: false,
+              textCapitalization: TextCapitalization.characters,
+              inputFormatters: [LengthLimitingTextInputFormatter(14)],
+              style: const TextStyle(fontFamily: 'GoogleSansCode', fontSize: 22, letterSpacing: 2),
               decoration: InputDecoration(
-                labelText: t.pairing_enter_code_address,
-                hintText: 'http://192.168.1.23:8361/p',
+                labelText: t.pairing_enter_code_code,
+                hintText: 'K7M2Q 9XRTH',
                 border: const OutlineInputBorder(),
               ),
+              onSubmitted: (_) => unawaited(_continue()),
+            ),
+            if (_error case final error?)
+              Padding(
+                padding: const EdgeInsets.only(top: ImmichSpacing.sm),
+                child: Text(
+                  error,
+                  key: const Key('pairing_code_error'),
+                  style: TextStyle(color: context.colorScheme.error),
+                ),
+              ),
+            const SizedBox(height: ImmichSpacing.lg),
+            FilledButton(
+              key: const Key('pairing_code_continue'),
+              onPressed: _busy ? null : () => unawaited(_continue()),
+              child: _busy
+                  ? const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  : Text(t.next),
             ),
           ],
-          const SizedBox(height: ImmichSpacing.md),
-          TextField(
-            key: const Key('pairing_code_field'),
-            controller: _code,
-            autocorrect: false,
-            enableSuggestions: false,
-            textCapitalization: TextCapitalization.characters,
-            inputFormatters: [LengthLimitingTextInputFormatter(14)],
-            style: const TextStyle(fontFamily: 'GoogleSansCode', fontSize: 22, letterSpacing: 2),
-            decoration: InputDecoration(
-              labelText: t.pairing_enter_code_code,
-              hintText: 'K7M2Q 9XRTH',
-              border: const OutlineInputBorder(),
-            ),
-            onSubmitted: (_) => unawaited(_continue()),
-          ),
-          if (_error case final error?)
-            Padding(
-              padding: const EdgeInsets.only(top: ImmichSpacing.sm),
-              child: Text(
-                error,
-                key: const Key('pairing_code_error'),
-                style: TextStyle(color: context.colorScheme.error),
-              ),
-            ),
-          const SizedBox(height: ImmichSpacing.lg),
-          FilledButton(
-            key: const Key('pairing_code_continue'),
-            onPressed: _busy ? null : () => unawaited(_continue()),
-            child: _busy
-                ? const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : Text(t.next),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -36,47 +36,51 @@ class PlayLinkConfirmSheet extends StatelessWidget {
     final theme = context.textTheme;
     final scheme = context.colorScheme;
     final name = device.label.isEmpty ? playScreenKindName(t, device.kind) : device.label;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(ImmichSpacing.lg, 0, ImmichSpacing.lg, ImmichSpacing.lg),
-      child: SingleChildScrollView(
-        child: Column(
-          key: const Key('play_link_confirm_sheet'),
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(t.play_link_confirm_title(device: name), style: theme.titleLarge),
-            const SizedBox(height: ImmichSpacing.xs),
-            Row(
-              children: [
-                Icon(pairingKindIcon(device.kind), size: 18, color: scheme.onSurfaceVariant),
-                const SizedBox(width: ImmichSpacing.xs),
-                Expanded(
-                  child: Text(
-                    t.pairing_confirm_where(kind: playScreenKindName(t, device.kind), address: address),
-                    style: theme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+    // Above the navigation bar of the phone
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(ImmichSpacing.lg, 0, ImmichSpacing.lg, ImmichSpacing.lg),
+        child: SingleChildScrollView(
+          child: Column(
+            key: const Key('play_link_confirm_sheet'),
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(t.play_link_confirm_title(device: name), style: theme.titleLarge),
+              const SizedBox(height: ImmichSpacing.xs),
+              Row(
+                children: [
+                  Icon(pairingKindIcon(device.kind), size: 18, color: scheme.onSurfaceVariant),
+                  const SizedBox(width: ImmichSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      t.pairing_confirm_where(kind: playScreenKindName(t, device.kind), address: address),
+                      style: theme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: ImmichSpacing.md),
-            PlayCheckNumber(check: check, hint: t.pairing_confirm_check),
-            const SizedBox(height: ImmichSpacing.md),
-            Text(t.play_link_confirm_body(device: name)),
-            const SizedBox(height: ImmichSpacing.lg),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(t.cancel)),
-                const SizedBox(width: ImmichSpacing.sm),
-                FilledButton.icon(
-                  key: const Key('play_link_confirm_button'),
-                  icon: const Icon(Icons.cast_rounded),
-                  label: Text(t.play_link_confirm_button),
-                  onPressed: () => Navigator.of(context).pop(true),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(height: ImmichSpacing.md),
+              PlayCheckNumber(check: check, hint: t.pairing_confirm_check),
+              const SizedBox(height: ImmichSpacing.md),
+              Text(t.play_link_confirm_body(device: name)),
+              const SizedBox(height: ImmichSpacing.lg),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(t.cancel)),
+                  const SizedBox(width: ImmichSpacing.sm),
+                  FilledButton.icon(
+                    key: const Key('play_link_confirm_button'),
+                    icon: const Icon(Icons.cast_rounded),
+                    label: Text(t.play_link_confirm_button),
+                    onPressed: () => Navigator.of(context).pop(true),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

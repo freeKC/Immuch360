@@ -14,6 +14,7 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/plex_films.provider.dart';
 
 import '../../../unit/presentation/presentation_context.dart';
+import '../../system_navigation_bar.dart';
 
 PlexFilmDetails _film() =>
     parsePlexFilmDetails(jsonDecode(File('test/fixtures/plex/metadata_film.json').readAsStringSync()))!;
@@ -38,11 +39,16 @@ void main() {
     double ratio = 2.5,
     WikipediaFilmSummary? summary,
     PlexFilmDetails? film,
+    bool navigationBar = false,
   }) async {
     final asked = <PlexWikipediaKey>[];
-    tester.view.physicalSize = size;
-    tester.view.devicePixelRatio = ratio;
-    addTearDown(tester.view.reset);
+    if (navigationBar) {
+      screenWithNavigationBar(tester, size: size, ratio: ratio);
+    } else {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = ratio;
+      addTearDown(tester.view.reset);
+    }
     // A new tree each time: the providers start afresh
     await tester.pumpWidget(const SizedBox());
     await tester.pumpTestWidget(
@@ -103,6 +109,15 @@ void main() {
     expect(find.text('A Made Up Film is a 2001 comedy made up for the tests.'), findsOneWidget);
     expect(find.text('From the Wikipedia article "A Made Up Film", CC BY-SA 4.0'), findsOneWidget);
     expect(find.text('Read on Wikipedia'), findsOneWidget);
+  });
+
+  testWidgets('ends above the navigation bar of the phone, Read on Wikipedia last', (tester) async {
+    await pumpPage(tester, summary: _summary, navigationBar: true);
+    await scrollToEnd(
+      tester,
+      find.descendant(of: find.byKey(const Key('plex_film_page')), matching: find.byType(Scrollable)).first,
+    );
+    expectAboveNavigationBar(tester, find.byKey(const Key('plex_film_wikipedia_link')));
   });
 
   testWidgets('shows no Wikipedia block without an article, nor for an item without numbers', (tester) async {

@@ -135,111 +135,118 @@ class _PairingConfirmSheetState extends State<PairingConfirmSheet> {
       ),
     );
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        ImmichSpacing.lg,
-        0,
-        ImmichSpacing.lg,
-        ImmichSpacing.lg + MediaQuery.viewInsetsOf(context).bottom,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          key: const Key('pairing_confirm_sheet'),
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(t.pairing_confirm_title(device: device), style: theme.titleLarge),
-            const SizedBox(height: ImmichSpacing.xs),
-            Row(
-              children: [
-                Icon(pairingKindIcon(widget.device.kind), size: 18, color: scheme.onSurfaceVariant),
-                const SizedBox(width: ImmichSpacing.xs),
-                Expanded(
-                  child: Text(
-                    t.pairing_confirm_where(kind: _kind(t, widget.device.kind), address: widget.address),
-                    key: const Key('pairing_confirm_where'),
-                    style: theme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+    // Above the navigation bar of the phone, and above the keyboard, which takes the bar's place
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          ImmichSpacing.lg,
+          0,
+          ImmichSpacing.lg,
+          ImmichSpacing.lg + MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            key: const Key('pairing_confirm_sheet'),
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(t.pairing_confirm_title(device: device), style: theme.titleLarge),
+              const SizedBox(height: ImmichSpacing.xs),
+              Row(
+                children: [
+                  Icon(pairingKindIcon(widget.device.kind), size: 18, color: scheme.onSurfaceVariant),
+                  const SizedBox(width: ImmichSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      t.pairing_confirm_where(kind: _kind(t, widget.device.kind), address: widget.address),
+                      key: const Key('pairing_confirm_where'),
+                      style: theme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: ImmichSpacing.md),
+              // What ties this sheet to the screen in front of the user: the same number shows there
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer,
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(ImmichSpacing.md),
+                  child: Column(
+                    children: [
+                      Text(
+                        t.pairing_confirm_check,
+                        textAlign: TextAlign.center,
+                        style: theme.bodyMedium?.copyWith(color: scheme.onPrimaryContainer),
+                      ),
+                      const SizedBox(height: ImmichSpacing.xs),
+                      Text(
+                        formatPairingCheckNumber(widget.check),
+                        key: const Key('pairing_confirm_check'),
+                        style: TextStyle(
+                          fontFamily: 'GoogleSansCode',
+                          fontSize: 30,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2,
+                          color: scheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: ImmichSpacing.md),
-            // What ties this sheet to the screen in front of the user: the same number shows there
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: scheme.primaryContainer,
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(ImmichSpacing.md),
-                child: Column(
-                  children: [
-                    Text(
-                      t.pairing_confirm_check,
-                      textAlign: TextAlign.center,
-                      style: theme.bodyMedium?.copyWith(color: scheme.onPrimaryContainer),
-                    ),
-                    const SizedBox(height: ImmichSpacing.xs),
-                    Text(
-                      formatPairingCheckNumber(widget.check),
-                      key: const Key('pairing_confirm_check'),
-                      style: TextStyle(
-                        fontFamily: 'GoogleSansCode',
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2,
-                        color: scheme.onPrimaryContainer,
-                      ),
-                    ),
-                  ],
+              const SizedBox(height: ImmichSpacing.md),
+              Text(t.pairing_confirm_body(device: device, server: widget.server, user: widget.user)),
+              const SizedBox(height: ImmichSpacing.md),
+              TextField(
+                key: const Key('pairing_confirm_name'),
+                controller: _name,
+                maxLength: maxLabelLength,
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                  labelText: t.pairing_confirm_name_label,
+                  border: const OutlineInputBorder(),
                 ),
+                onSubmitted: (_) => _confirm(),
               ),
-            ),
-            const SizedBox(height: ImmichSpacing.md),
-            Text(t.pairing_confirm_body(device: device, server: widget.server, user: widget.user)),
-            const SizedBox(height: ImmichSpacing.md),
-            TextField(
-              key: const Key('pairing_confirm_name'),
-              controller: _name,
-              maxLength: maxLabelLength,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(labelText: t.pairing_confirm_name_label, border: const OutlineInputBorder()),
-              onSubmitted: (_) => _confirm(),
-            ),
-            Text(t.pairing_confirm_cascade, style: quiet),
-            if (widget.headerNames.isNotEmpty)
+              Text(t.pairing_confirm_cascade, style: quiet),
+              if (widget.headerNames.isNotEmpty)
+                SwitchListTile(
+                  key: const Key('pairing_confirm_headers'),
+                  contentPadding: EdgeInsets.zero,
+                  value: _sendHeaders,
+                  onChanged: (value) => setState(() => _sendHeaders = value),
+                  title: Text(t.pairing_confirm_headers(count: widget.headerNames.length)),
+                  subtitle: Text(t.pairing_confirm_headers_hint(names: widget.headerNames.join(', ')), style: quiet),
+                ),
               SwitchListTile(
-                key: const Key('pairing_confirm_headers'),
+                key: const Key('pairing_confirm_link'),
                 contentPadding: EdgeInsets.zero,
-                value: _sendHeaders,
-                onChanged: (value) => setState(() => _sendHeaders = value),
-                title: Text(t.pairing_confirm_headers(count: widget.headerNames.length)),
-                subtitle: Text(t.pairing_confirm_headers_hint(names: widget.headerNames.join(', ')), style: quiet),
+                value: _link,
+                onChanged: (value) => setState(() => _link = value),
+                title: Text(t.play_link_confirm_switch),
+                subtitle: Text(t.play_link_confirm_switch_hint, style: quiet),
               ),
-            SwitchListTile(
-              key: const Key('pairing_confirm_link'),
-              contentPadding: EdgeInsets.zero,
-              value: _link,
-              onChanged: (value) => setState(() => _link = value),
-              title: Text(t.play_link_confirm_switch),
-              subtitle: Text(t.play_link_confirm_switch_hint, style: quiet),
-            ),
-            if (widget.notOnPhoneNetwork) warning(t.pairing_confirm_not_your_network),
-            const SizedBox(height: ImmichSpacing.lg),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(t.cancel)),
-                const SizedBox(width: ImmichSpacing.sm),
-                FilledButton.icon(
-                  key: const Key('pairing_confirm_button'),
-                  icon: const Icon(Icons.login_rounded),
-                  label: Text(t.pairing_confirm_button),
-                  onPressed: _confirm,
-                ),
-              ],
-            ),
-          ],
+              if (widget.notOnPhoneNetwork) warning(t.pairing_confirm_not_your_network),
+              const SizedBox(height: ImmichSpacing.lg),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(t.cancel)),
+                  const SizedBox(width: ImmichSpacing.sm),
+                  FilledButton.icon(
+                    key: const Key('pairing_confirm_button'),
+                    icon: const Icon(Icons.login_rounded),
+                    label: Text(t.pairing_confirm_button),
+                    onPressed: _confirm,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
