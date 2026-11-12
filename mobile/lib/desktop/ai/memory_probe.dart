@@ -137,10 +137,13 @@ int jobMemoryNeed({
   required int eyeWidth,
   required int eyeHeight,
   bool sessionOpen = true,
+  bool inpaint = false,
+  bool inpaintOpen = false,
 }) {
   final source = sourceWidth * sourceHeight;
   final eye = eyeWidth * eyeHeight;
   return 2 * 4 * source + // decoded, then turned or reduced
+      (inpaint ? 3 * eye + (inpaintOpen ? 0 : reliefInpaintSessionMemory) : 0) + // relief-v2 with MI-GAN
       2 * 4 * eye + // the pair
       2 * 4 * eye + // the copy the encoder works on
       2 * eye + // the JPEG, generously
@@ -150,6 +153,9 @@ int jobMemoryNeed({
 }
 
 const _mib = 1024 * 1024;
+
+/// What the session of MI-GAN holds for the holes of relief-v2: the model is 28 MB, its regions 512 pixels at most
+const reliefInpaintSessionMemory = 256 * _mib;
 const _gib = 1024 * _mib;
 
 /// What the job of a 3D scene needs at its peak: MoGe-2 ViT-S at 2 500 tokens took 1.35 GB with the arena of ONNX

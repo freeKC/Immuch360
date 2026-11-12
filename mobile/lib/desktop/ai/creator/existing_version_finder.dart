@@ -23,16 +23,17 @@ import 'package:path/path.dart' as p;
 final _log = Logger('ExistingVersionFinder');
 
 /// What two 3D photos of one original are compared on, as [StereoPhotoXmp.settingsKey] gives it for a file: the model
-/// file, the pipeline, the parallax, the convergence and the quarter turns. The other kinds have theirs, see the
+/// file, the pipeline ([relief]), the parallax, the convergence and the quarter turns. The other kinds have theirs, see the
 /// settingsKey of SceneXmp, PanoramaXmp and StereoPanoramaXmp.
 String versionSettingsKey({
   required String depthModelSha256,
   double parallax = ReliefV1.parallax,
   double convergence = ReliefV1.convergence,
   int quarterTurns = 0,
+  ReliefVersion relief = ReliefVersion.v1,
 }) => StereoPhotoXmp(
   depthModelSha256: depthModelSha256,
-  pipeline: ReliefV1.pipeline,
+  pipeline: relief.pipeline,
   parallax: parallax,
   convergence: convergence,
   sourceQuarterTurns: quarterTurns & 3,

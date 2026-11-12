@@ -22,6 +22,7 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/ai_worker.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/scene/migan_inpaint.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:logging/logging.dart';
@@ -107,13 +108,20 @@ class DartImmersiveEngine implements ImmersiveEngine {
     String modelSha256 = depthModelOnnxSha256,
     SbsCodecChoice codec = SbsCodecChoice.auto,
     Duration keepSession = aiSessionKeep,
+    OrtReliefMiganSpec? inpaint,
+    int? inpaintSize,
   }) => DartImmersiveEngine(
     setup: AiWorkerSetup(
       backend: OrtBackendSpec(libraryPath: libraryPath, modelPath: modelPath, modelSha256: modelSha256),
       codec: codec,
       keepSession: keepSession,
+      inpaint: inpaint,
     ),
-    requiredFiles: {libraryPath: librarySize, modelPath: modelSize},
+    requiredFiles: {
+      libraryPath: librarySize,
+      modelPath: modelSize,
+      if (inpaint != null) inpaint.modelPath: inpaintSize,
+    },
   );
 
   /// What the worker is made with
@@ -308,5 +316,6 @@ ImmersiveJob _withoutBytes(ImmersiveJob job) => ImmersiveJob(
   maxEyeWidth: job.maxEyeWidth,
   parallax: job.parallax,
   convergence: job.convergence,
+  relief: job.relief,
   exif: job.exif,
 );

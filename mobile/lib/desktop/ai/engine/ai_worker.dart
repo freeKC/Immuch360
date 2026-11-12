@@ -36,6 +36,7 @@ import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
+import 'package:immich_mobile/desktop/ai/scene/migan_inpaint.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:logging/logging.dart';
@@ -243,9 +244,13 @@ class AiWorkerSetup {
     this.keepSession = aiSessionKeep,
     this.memory = const SystemMemoryProbe(),
     this.priority,
+    this.inpaint,
   });
 
   final DepthBackendSpec backend;
+
+  /// MI-GAN for the holes of relief-v2 when it is installed, null otherwise (the fill of relief-v1 then)
+  final ReliefInpaintSpec? inpaint;
   final SbsCodecChoice codec;
 
   /// The session is given back after this long without a job
@@ -676,6 +681,7 @@ void _workerMain((AiWorkerSetup, SendPort) start) {
         codecs: setup.codec.codecs(),
         memory: setup.memory,
         priority: ComputePriority(setup.priority ?? ThreadPriorityPlatform.system()),
+        inpaint: setup.inpaint,
       );
       return tools.run(
         job.job,

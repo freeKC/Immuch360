@@ -383,6 +383,7 @@ final class ImmersiveJob extends ImmersiveJobSpec {
     this.maxEyeWidth = ReliefV1.maxEyeWidth,
     this.parallax = ReliefV1.parallax,
     this.convergence = ReliefV1.convergence,
+    this.relief = ReliefVersion.v1,
     super.exif = const ImmersiveExif(),
   });
 
@@ -391,9 +392,12 @@ final class ImmersiveJob extends ImmersiveJobSpec {
   /// A wider photo is reduced so that one eye is this wide at most, and the job says so
   final int maxEyeWidth;
 
-  /// The settings of relief-v1
+  /// The settings of relief-v1, which relief-v2 keeps
   final double parallax;
   final double convergence;
+
+  /// The right eye made: relief-v1, or relief-v2 ("Relief quality" in the settings)
+  final ReliefVersion relief;
 
   @override
   ImmersiveKind get kind => ImmersiveKind.stereoPhoto;

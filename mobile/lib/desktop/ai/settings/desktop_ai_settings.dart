@@ -7,7 +7,8 @@
 // the jobs this computer finished. The splat scenes (plan 2026-11-01, lot SP0) add their switch "Splat scenes
 // (experimental)", on by default as every experimental feature of the app, what the user said they filmed last, and
 // "Also save a .ply for other 3D apps", off by default. Release 46 adds the relief strength the dialog chose last for a
-// 3D photo (Normal by default, the parallax of every earlier version). Kept in desktop_ai.json of the support folder, beside
+// 3D photo (Normal by default, the parallax of every earlier version) and "Relief quality" of the 3D photos (relief-v1
+// or relief-v2, lot I3), its default [defaultReliefVersion]. Kept in desktop_ai.json of the support folder, beside
 // desktop_files.json and written the same way: a whole new file renamed over the old one, so a crash never leaves half
 // a setting. Keys this build does not know (a newer version) are kept as they are.
 //
@@ -40,6 +41,9 @@ enum AiWhenExists {
 /// conversion writes into a folder of the library (design 4.3).
 enum AiGeneratedAlbumState { pending, excluded }
 
+/// "Relief quality" of a computer where the user never chose it (lot I3 of release 46, see its measure)
+const defaultReliefVersion = ReliefVersion.v2;
+
 /// The settings in desktop_ai.json
 class DesktopAiSettings {
   const DesktopAiSettings({
@@ -61,6 +65,7 @@ class DesktopAiSettings {
     this.splatSubject = SplatSubject.place,
     this.splatKeepPly = false,
     this.reliefStrength = ReliefStrength.normal,
+    this.reliefVersion = defaultReliefVersion,
   });
 
   final AiDestination destination;
@@ -115,6 +120,9 @@ class DesktopAiSettings {
   /// of a later version reads as Normal here
   final ReliefStrength reliefStrength;
 
+  /// "Relief quality" of the 3D photos: relief-v1 (fast) or relief-v2 (better edges)
+  final ReliefVersion reliefVersion;
+
   DesktopAiSettings copyWith({
     AiDestination? destination,
     String? Function()? folder,
@@ -134,6 +142,7 @@ class DesktopAiSettings {
     SplatSubject? splatSubject,
     bool? splatKeepPly,
     ReliefStrength? reliefStrength,
+    ReliefVersion? reliefVersion,
   }) => DesktopAiSettings(
     destination: destination ?? this.destination,
     folder: folder == null ? this.folder : folder(),
@@ -153,6 +162,7 @@ class DesktopAiSettings {
     splatSubject: splatSubject ?? this.splatSubject,
     splatKeepPly: splatKeepPly ?? this.splatKeepPly,
     reliefStrength: reliefStrength ?? this.reliefStrength,
+    reliefVersion: reliefVersion ?? this.reliefVersion,
   );
 
   Map<String, Object?> toJson() => {
@@ -174,6 +184,7 @@ class DesktopAiSettings {
     'splatSubject': splatSubject.name,
     'splatKeepPly': splatKeepPly,
     'reliefStrength': reliefStrength.name,
+    'reliefVersion': reliefVersion.name,
   };
 
   /// The settings of [json], a default for each value that is missing or not understood
@@ -231,6 +242,7 @@ class DesktopAiSettings {
       splatSubject: named(SplatSubject.values, json['splatSubject'], defaults.splatSubject),
       splatKeepPly: flag('splatKeepPly', defaults.splatKeepPly),
       reliefStrength: ReliefStrength.named(json['reliefStrength']),
+      reliefVersion: named(ReliefVersion.values, json['reliefVersion'], defaults.reliefVersion),
     );
   }
 
@@ -254,7 +266,8 @@ class DesktopAiSettings {
       other.splatScenes == splatScenes &&
       other.splatSubject == splatSubject &&
       other.splatKeepPly == splatKeepPly &&
-      other.reliefStrength == reliefStrength;
+      other.reliefStrength == reliefStrength &&
+      other.reliefVersion == reliefVersion;
 
   @override
   int get hashCode => Object.hash(
@@ -276,6 +289,7 @@ class DesktopAiSettings {
     splatSubject,
     splatKeepPly,
     reliefStrength,
+    reliefVersion,
   );
 }
 

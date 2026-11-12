@@ -17,6 +17,7 @@ import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
@@ -119,4 +120,81 @@ class OrtMiganInpaint implements InpaintBackend {
 
   @override
   void close() {}
+}
+
+/// How a worker makes the filling of the holes of relief-v2 (relief_v2.dart): a plain object sent to the worker
+/// isolate, where [open] runs, the model given back by the close() of what it opened
+abstract interface class ReliefInpaintSpec {
+  /// Immuch360:InpaintModel of the files it fills, the id of its component
+  String get modelName;
+
+  /// Immuch360:InpaintModelSha256
+  String get modelSha256;
+
+  /// Throws [BackendException] when the model cannot be opened
+  InpaintBackend open();
+}
+
+/// MI-GAN on ONNX Runtime for the holes of relief-v2: the holes keep the fill of relief-v1 under them (paintHoles
+/// false), which is the background beside each hole, so what the pipeline blends at the edge of a hole is background
+class OrtReliefMiganSpec implements ReliefInpaintSpec {
+  const OrtReliefMiganSpec({
+    required this.libraryPath,
+    required this.modelPath,
+    required this.modelName,
+    required this.modelSha256,
+  });
+
+  final String libraryPath;
+  final String modelPath;
+
+  @override
+  final String modelName;
+
+  @override
+  final String modelSha256;
+
+  @override
+  InpaintBackend open() {
+    final priority = ComputePriority(ThreadPriorityPlatform.system());
+    try {
+      // Loaded first, so that what loading starts is not taken for a thread of the session
+      final runtime = OrtRuntime.load(libraryPath);
+      final session = priority.lowerThreadsBornDuring(() => runtime.openSession(modelPath)).value;
+      final refusal = miganRefusalOf(session.inputs, session.outputs);
+      if (refusal != null) {
+        session.close();
+        throw BackendException(ImmersiveErrorCode.modelFailed, refusal);
+      }
+      return _SessionInpaint(
+        OrtMiganInpaint(session: () => session, modelSha256: modelSha256, paintHoles: false),
+        session,
+      );
+    } on OrtException catch (error) {
+      throw BackendException(ImmersiveErrorCode.modelFailed, error.message);
+    }
+  }
+}
+
+/// A filling that gives its session back when closed
+class _SessionInpaint implements InpaintBackend {
+  _SessionInpaint(this.inner, this.session);
+
+  final InpaintBackend inner;
+  final OrtSession session;
+
+  @override
+  int get regionMax => inner.regionMax;
+
+  @override
+  String get modelSha256 => inner.modelSha256;
+
+  @override
+  Uint8List fill(InpaintRegion region) => inner.fill(region);
+
+  @override
+  void close() {
+    inner.close();
+    session.close();
+  }
 }

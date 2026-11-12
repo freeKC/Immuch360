@@ -121,6 +121,12 @@ void main() {
     );
     expect(versionSettingsKey(depthModelSha256: depthModelTfliteSha256), isNot(sameSettings));
     expect(versionSettingsKey(depthModelSha256: depthModelOnnxSha256, parallax: 0.03), isNot(sameSettings));
+    // relief-v2 is a version of its own: "Make a new version" sits beside the relief-v1 one, a skip never mixes them
+    expect(
+      versionSettingsKey(depthModelSha256: depthModelOnnxSha256, relief: ReliefVersion.v2),
+      '$depthModelOnnxSha256|relief-v2|0.02|0.5|0',
+    );
+    expect(versionSettingsKey(depthModelSha256: depthModelOnnxSha256, relief: ReliefVersion.v1), sameSettings);
   });
 
   group('versionsOf', () {
