@@ -1,6 +1,7 @@
 {
   "mobile/lib/constants/constants.dart": 1,
   "mobile/lib/infrastructure/network/plex/plex_client.dart": 2,
+  "mobile/lib/infrastructure/network/plex/plex_tv_auth.dart": 2,
   "mobile/lib/infrastructure/network/upnp/ssdp.dart": 1,
   "mobile/lib/infrastructure/repositories/local_album.repository.dart": 2,
   "mobile/lib/presentation/actions/lock.action.dart": 1,

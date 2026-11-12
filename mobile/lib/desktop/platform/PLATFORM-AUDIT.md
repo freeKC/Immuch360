@@ -52,6 +52,8 @@ the gate is per desktop and is noted.
 | `lib/domain/utils/migrate_cloud_ids.dart:32` | iOS cloud ids | right |
 | `lib/infrastructure/network/plex/plex_client.dart:184` | Plex platform header, else Platform.operatingSystem | right: "windows", "linux", "macos" |
 | `lib/infrastructure/network/plex/plex_client.dart:186` | idem | right |
+| `lib/infrastructure/network/plex/plex_tv_auth.dart:306` | plex.tv platform header of "Sign in with Plex", else Platform.operatingSystem | right: "windows", "linux", "macos", as the Plex client |
+| `lib/infrastructure/network/plex/plex_tv_auth.dart:308` | idem | right |
 | `lib/infrastructure/network/upnp/ssdp.dart:60` | Android multicast socket option | right; LAN checks multicast on Windows |
 | `lib/infrastructure/network/upnp/ssdp.dart:69` | SSDP user agent, else Platform.operatingSystem | right |
 | `lib/infrastructure/repositories/local_album.repository.dart:70` | iOS assets unique to the album, else every asset of it | right: a file is in one folder |
