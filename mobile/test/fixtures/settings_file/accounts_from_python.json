@@ -1,0 +1,24 @@
+{
+  "format": "immuch360-settings",
+  "version": 1,
+  "app": {
+    "name": "Immuch360",
+    "version": "3.4.1",
+    "build": "3030044",
+    "platform": "android"
+  },
+  "createdAt": "2026-11-11T22:00:00.000Z",
+  "level": "accounts",
+  "encryption": {
+    "kdf": {
+      "name": "argon2id",
+      "memoryKiB": 19456,
+      "iterations": 2,
+      "parallelism": 1,
+      "salt": "AAECAwQFBgcICQoLDA0ODw=="
+    },
+    "cipher": "aes-256-gcm",
+    "nonce": "ZGVmZ2hpamtsbW5v"
+  },
+  "payload": "60pcit0FdF+hamrWbGtuMuvn56TtSdjrpvC08k517Ro7kTsR1pJJ+xNxabsp0ddciRhi+nir1Q1ienmxSgq1TXfLnJwz9IIz4v0skP3wlwziOp0jL0a0mfS3R3ysBOWafgQuHWqiUBQFBzcwJmcUlshEkNsLGGt16gxv+Wb0kNOXTfPMJ5eEeqAO6ILwqBDA59/oRN9DflKpYugqB4Czyc8CNEK9d+/V43c50UI00mv+GuQvfQC16L5G3HfrkNvfT17KmIjL2pQSOUWNvhrRg8BucDy9ku4T93A6HicGmuXvMQEVppmaUN/iweCX1GRfzpQBG/YTIncMtRQ0Mx8NoD6rWp6ImDez1MUpK4f0pDzdapwq4lyhrUzwbPQ5qSOKPjK0vI1btyHQFbCXFi1Psd2fGMhy3JEBbY4xEI6+as4LlDZxGeNhg0599GLnCyBc6V5xXHFSS+//dp7rASkG+SAlSQ6deED5x59Bzdye34EV5w/T4Aln7BTaJm8JELQMzt11T64qN3hKGTU7MzbTQ5eZp3uGVgm1lpcLrqxXQDXvBArw8ygcKHBT1GFKpJ5lZTLCFHu1gHacxGTt+4lHk9Fi26aEzLQCyQXVxk+iOE/qbFBGwtpFcxXcQMQXYOfkRKwVJ2OyWzCL4AuNunNakg27p7PKBcemhPDiapf9zh69v4ECjJ9VtPUW3acg/c+fASCMcES/0WyoIn05y3oTtYqmjJfTFAtS/KJwKTGrXlGTJC5QSNBxiqFVs/K+fAIVe68RWzR5Awn9BrqN2jo18VN4okS2Po5ZEO3WTSZu44shRiDPnswearo="
+}

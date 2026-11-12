@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/settings_file/settings_file.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/models/upload/share_intent_attachment.model.dart';
+import 'package:immich_mobile/presentation/pages/settings_file/settings_file_import.page.dart';
 import 'package:immich_mobile/providers/infrastructure/toast.provider.dart';
+import 'package:immich_mobile/providers/settings_file/settings_file_io.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/foreground_upload.service.dart';
 import 'package:immich_mobile/services/share_intent_service.dart';
@@ -29,6 +33,25 @@ bool isCompanionFileName(String fileName) {
   return dot >= 0 && NetworkEntry.companionExtensions.contains(fileName.substring(dot + 1).toLowerCase());
 }
 
+/// The text of the file at [path] when it is a settings file (a .json file that says so), null otherwise
+String? readSettingsFileAttachment(String path) {
+  if (!path.toLowerCase().endsWith('.json')) {
+    return null;
+  }
+  try {
+    final file = File(path);
+    if (file.lengthSync() > settingsFileMaxBytes) {
+      return null;
+    }
+    final text = file.readAsStringSync();
+    return SettingsFile.looksLikeSettingsFile(text) ? text : null;
+  } on FileSystemException {
+    return null;
+  } on FormatException {
+    return null;
+  }
+}
+
 class ShareIntentUploadStateNotifier extends StateNotifier<List<ShareIntentAttachment>> {
   final AppRouter router;
   final ForegroundUploadService _foregroundUploadService;
@@ -44,7 +67,21 @@ class ShareIntentUploadStateNotifier extends StateNotifier<List<ShareIntentAttac
     _shareIntentService.init();
   }
 
-  void onSharedMedia(List<ShareIntentAttachment> shared) {
+  void onSharedMedia(List<ShareIntentAttachment> received) {
+    // A settings file shared to the app (on iOS: Files, Share, Immuch360) opens the restore page, never an upload
+    var shared = received;
+    for (final attachment in received) {
+      final text = readSettingsFileAttachment(attachment.path);
+      if (text != null) {
+        shared = received.where((other) => other != attachment).toList();
+        unawaited(
+          router.navigatorKey.currentState?.push(
+            MaterialPageRoute<void>(builder: (_) => SettingsFileImportPage(initialText: text)),
+          ),
+        );
+        break;
+      }
+    }
     // A file manager may share the .LRF proxy of a DJI video as a video, or its .SRT along with it: the server refuses
     // them, and they are no media of their own
     final attachments = shared.where((attachment) => !isCompanionFileName(attachment.fileName)).toList();

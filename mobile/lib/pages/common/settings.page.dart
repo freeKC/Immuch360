@@ -28,6 +28,7 @@ import 'package:immich_mobile/widgets/settings/networking_settings/networking_se
 import 'package:immich_mobile/widgets/settings/notification_setting.dart';
 import 'package:immich_mobile/widgets/settings/passkey_settings.dart';
 import 'package:immich_mobile/widgets/settings/preference_settings/preference_setting.dart';
+import 'package:immich_mobile/widgets/settings/settings_file_settings.dart';
 import 'package:immich_ui/immich_ui.dart';
 
 enum SettingSection {
@@ -41,6 +42,8 @@ enum SettingSection {
   passkeys(Icons.key_outlined),
   preferences(Icons.interests_outlined),
   timeline(Icons.auto_awesome_mosaic_outlined),
+  // Immuch360: export and import of the settings (issue 16), with and without a server
+  settingsFile(Icons.settings_backup_restore_rounded),
   beta(Icons.sync_outlined),
   thisComputer(Icons.computer_outlined);
 
@@ -57,6 +60,7 @@ enum SettingSection {
     SettingSection.passkeys => t.passkeys(count: 2),
     SettingSection.preferences => t.preferences_settings_title,
     SettingSection.timeline => t.asset_list_settings_title,
+    SettingSection.settingsFile => t.settings_file_title,
     SettingSection.beta => t.sync_status,
     SettingSection.thisComputer => t.desktop_this_computer,
   };
@@ -72,6 +76,7 @@ enum SettingSection {
     SettingSection.passkeys => t.manage_your_passkeys,
     SettingSection.preferences => t.preferences_settings_subtitle,
     SettingSection.timeline => t.asset_list_settings_subtitle,
+    SettingSection.settingsFile => t.settings_file_subtitle,
     SettingSection.beta => t.sync_status_subtitle,
     SettingSection.thisComputer => t.desktop_this_computer_subtitle,
   };
@@ -87,6 +92,7 @@ enum SettingSection {
     SettingSection.passkeys => const PasskeySettings(),
     SettingSection.preferences => const PreferenceSetting(),
     SettingSection.timeline => const AssetListSettings(),
+    SettingSection.settingsFile => const SettingsFileSettings(),
     SettingSection.beta => const SyncStatusAndActions(),
     // Built on a computer only (isOnThisDevice), and tested here as well so that the phone builds, where the condition
     // is a constant, leave out the section and the desktop settings it holds

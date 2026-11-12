@@ -20,6 +20,7 @@ import 'package:immich_mobile/domain/services/feature_message.service.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/pages/login/welcome.page.dart';
 import 'package:immich_mobile/platform/view_intent_api.g.dart';
+import 'package:immich_mobile/presentation/pages/settings_file/settings_file_import.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
 import 'package:immich_mobile/providers/gallery_permission.provider.dart';
@@ -291,6 +292,40 @@ void main() {
       findsOneWidget,
     );
     expect(find.byKey(const Key('welcome_pairing')), findsNothing);
+  });
+
+  testWidgets('"Restore settings from a file" sits under the choices and opens the restore page', (tester) async {
+    phoneScreen(tester);
+    await pumpWelcome(tester);
+    final link = find.byKey(const Key('welcome_restore_settings'));
+    expect(link, findsOneWidget);
+    expect(tester.getRect(link).top, greaterThan(tester.getRect(server).bottom));
+
+    await tester.ensureVisible(link);
+    await tester.pumpAndSettle();
+    await tester.tap(link);
+    await tester.pumpAndSettle();
+    expect(find.byType(SettingsFileImportPage), findsOneWidget);
+    await goBack(tester);
+    expect(find.byType(SettingsFileImportPage), findsNothing);
+    expect(server, findsOneWidget);
+  });
+
+  testWidgets('a TV has the restore link too, on the page at once inside the overscan margins', (tester) async {
+    tvScreen(tester);
+    await pumpWelcome(tester, tvMode: true);
+    final rect = tester.getRect(find.byKey(const Key('welcome_restore_settings')));
+    final area = Rect.fromLTRB(
+      TvShell.overscan.left,
+      TvShell.overscan.top,
+      960 - TvShell.overscan.right,
+      540 - TvShell.overscan.bottom,
+    );
+    expect(
+      area.contains(rect.topLeft) && area.contains(rect.bottomRight - const Offset(0.5, 0.5)),
+      isTrue,
+      reason: 'the link at $rect, outside $area',
+    );
   });
 
   testWidgets('"Use without a server" opens the photos and videos of this device', (tester) async {
