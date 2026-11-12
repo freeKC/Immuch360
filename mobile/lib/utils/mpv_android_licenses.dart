@@ -25,15 +25,22 @@ const mpvAndroidLicenseFiles = [
   ('media_kit-LICENSE.txt', 'media_kit (media_kit_video and media_kit_libs_android_video)'),
 ];
 
+/// The release of github.com/immuch360/libmpv-builds that re-hosts this libmpv, unchanged, with its corresponding
+/// source (licenses/libmpv-android/README.md of the repository)
+const mpvAndroidSourceRelease = 'libmpv-android-20261112-1';
+
 /// What the licence page says before the texts
 const mpvAndroidLicenseHeader =
     'libmpv, which plays on Meta Quest the films the headset cannot decode: mpv 0.36 (git 78d43740f5) and FFmpeg 6.0 '
     '(libavcodec 60.3.100), with dav1d, libass, FreeType, FriBidi, HarfBuzz, libxml2 and Mbed TLS built in, as built '
     'by https://github.com/media-kit/libmpv-android-video-build release v1.1.7 (default-arm64-v8a.jar), a dynamic '
     'library (libmpv.so) under the GNU Lesser General Public License version 3 or later as a whole (mpv built with '
-    '-Dgpl=false, FFmpeg with --disable-gpl --enable-version3). Source: the build scripts of that release name the '
-    'source of each library. With the Java and Dart '
-    'code of media_kit (MIT).';
+    '-Dgpl=false, FFmpeg with --disable-gpl --enable-version3). Source: the corresponding source of libmpv and of '
+    'every library built into it is the file $mpvAndroidSourceRelease-sources.tar.xz of the release '
+    '$mpvAndroidSourceRelease of libmpv-builds, '
+    'https://github.com/immuch360/libmpv-builds/releases/tag/$mpvAndroidSourceRelease, which also holds these '
+    'libraries, unchanged, with their SHA-256 and a script that rebuilds them. With the Java and Dart code of '
+    'media_kit (MIT).';
 
 /// The entry of the licence page for libmpv, under "libmpv". Only the APK of the quest flavour ships it
 /// (android/app/build.gradle), so the other builds list nothing; a build without the assets lists nothing rather than
