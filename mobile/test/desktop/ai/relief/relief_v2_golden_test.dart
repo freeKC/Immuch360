@@ -1,6 +1,7 @@
 // The Dart of relief-v2 without MI-GAN against its golden fixture, made by .github/desktop/ai/make_relief_v2_golden.py:
 // d at each pixel of the eye within 1e-9, the right eye within one unit per channel, the same mask of filled pixels and
-// the same flags, on the four cases of relief-v1 and the case of a sharp edge under a soft ramp of the model.
+// the same flags, on the six cases of relief-v1 (Subtle and Pronounced from the relief strength lot) and the case of a
+// sharp edge under a soft ramp of the model.
 
 import 'dart:convert';
 import 'dart:io';
@@ -36,9 +37,9 @@ void main() {
     return rgba;
   }
 
-  test('the fixture is that of relief-v2, with its five cases and the settings of the app', () {
+  test('the fixture is that of relief-v2, with its seven cases and the settings of the app', () {
     expect(golden['pipeline'], ReliefV2.pipeline);
-    expect(cases.map((entry) => entry['name']), ['production', 'strong', 'flat', 'dark', 'edge']);
+    expect(cases.map((entry) => entry['name']), ['production', 'strong', 'flat', 'dark', 'subtle', 'pronounced', 'edge']);
     expect([eyeWidth, eyeHeight, mapWidth, mapHeight], [32, 8, 16, 4]);
     expect(golden['rangeSigma'], ReliefV2.rangeSigma);
     expect(golden['spatialSigma'], ReliefV2.spatialSigma);
