@@ -187,6 +187,8 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
     // nor two eyes side by side: the one-key rotation tells all but the last, and the flat 3D check the last, nor two
     // eyes one above the other by its name while "3D by file name" is on), its relief estimated by the headset itself;
     // not the preview of a 3D scene, which has its own button, nor a photo named like one while its head is read.
+    // A 2:1 photo is a flat one like any other unless its metadata says 360° (a projection, a 360° camera): its shape
+    // alone never makes it 360° (see isEquirectangularProvider), so it gets the relief on the flat quad.
     // Greyed with its reason where the gate refuses; nothing with the AI features off (see reliefGateProvider).
     final isFlatPhoto =
         flatStereoState != null &&

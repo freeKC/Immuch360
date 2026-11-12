@@ -9,8 +9,11 @@ import java.util.concurrent.CancellationException
 // and the viewer puts both eyes on the stereo quad. All of it runs on one thread of its own at background priority (a
 // HandlerThread the viewer gives, immersive/ReliefHost.kt), so that the scene keeps its frames. "Stop relief", a
 // headset that gets too warm, a new photo or the end of the viewer drop the relief: the photo stays flat, a pass of
-// the model cannot be cut and goes to its end, its map thrown away. The model stays open from one photo to the next
-// and is closed 60 s after the last relief, to give its memory back (about 375 MB on the CPU path, q0-measures 2).
+// the model cannot be cut and goes to its end, and its map goes to the cache all the same (release 46), so that the
+// next relief of that photo takes a fraction of a second. The first relief on a headset shows the CPU map and leaves
+// the GPU parity check for after it (GpuParityCheck), posted on the same thread once the relief is shown. The model
+// stays open from one photo to the next and is closed 60 s after the last relief, to give its memory back (about
+// 375 MB on the CPU path, q0-measures 2).
 // The headset checks again what the panel checked before asking (design 3.5): an engine in this version, the memory,
 // the heat. Plain JVM code, without Android: the thread, the photo, the eye, the heat and the memory come from the
 // viewer, so that the unit tests run it with fakes.
@@ -188,6 +191,36 @@ class ReliefJob(
   }
 
   /**
+   * The GPU parity check a first relief left, after the relief was shown (see [GpuParityCheck]): not on a headset too
+   * warm, where it stays for the next relief, nor once the viewer ends. Anything going wrong drops it: the next
+   * session checks again.
+   */
+  private val parityCheck = Runnable {
+    if (closed || !parity.checkPending) return@Runnable
+    worker.cancel(idleClose)
+    try {
+      if (thermalStatus() >= THERMAL_STATUS_SEVERE) {
+        log("relief: the GPU check waits, the headset is too warm")
+        return@Runnable
+      }
+      val started = nanoTime()
+      val result = parity.runPendingCheck()
+      if (result != null) {
+        log("relief: GPU check after the relief: ${result.verdict}, ${result.chosen} kept, in ${elapsedMs(started)} ms")
+      }
+    } catch (e: OutOfMemoryError) {
+      parity.dropPendingCheck()
+      parity.close()
+      log("relief: out of memory during the GPU check: $e")
+    } catch (e: Exception) {
+      parity.dropPendingCheck()
+      log("relief: the GPU check failed: $e")
+    } finally {
+      if (!closed && parity.openPath != null) worker.postDelayed(idleClose, idleCloseMs)
+    }
+  }
+
+  /**
    * Starts the relief of [photo], which the job owns from now on, and drops the relief of the photo before. The right
    * eye is written in what [newEye] makes, on the thread of the relief. A refusal of the headset (no engine, not
    * enough memory, too warm) comes as [ReliefListener.onFlat] without the thread.
@@ -295,16 +328,17 @@ class ReliefJob(
         if (run.stopped) return
         stage(run, listener, ReliefStage.ESTIMATING)
         val pass = parity.estimate(request.model, request.modelId, input)
-        if (run.stopped) {
-          log("relief: stopped during the pass on ${pass.path}, its map thrown away")
-          return
-        }
         val frame = input.frame
         val normalized =
           ReliefSynthesizer.normalize(ReliefPreprocess.cropDepth(pass.depth, frame), frame.width, frame.height)
         // The eye is made from the map as the cache keeps it: the same eye now and when the photo comes back
         map = ReliefMap.quantize(frame.width, frame.height, normalized.values)
         cache.write(request.cacheKey, map)
+        if (run.stopped) {
+          // A finished map is worth keeping: the next relief of this photo reads it in a fraction of a second
+          log("relief: stopped during the pass on ${pass.path}, its map kept in the cache")
+          return
+        }
         lowRelief = normalized.lowRelief
         path = pass.path
       }
@@ -357,6 +391,11 @@ class ReliefJob(
     } finally {
       if (photoHeld) photo.release()
       if (!closed && parity.openPath != null) worker.postDelayed(idleClose, idleCloseMs)
+      // After the relief was handed to the viewer (or stopped): the check never delays what the user waits for
+      if (!closed && parity.checkPending) {
+        worker.cancel(parityCheck)
+        worker.post(parityCheck)
+      }
     }
   }
 

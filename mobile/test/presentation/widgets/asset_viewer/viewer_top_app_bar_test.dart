@@ -3602,6 +3602,55 @@ void main() {
       expect(reliefButton, findsNothing);
     });
 
+    // The rule for a 2:1 photo (release 46): its shape alone never makes it 360°, only its metadata does (see
+    // isEquirectangularProvider). FreeKC's Quest 3 gave an 8192 x 4096 photo without such metadata a relief on the
+    // flat quad on 30 October 2026, which is that rule.
+    RemoteAsset wide() =>
+        owned(name: 'wide.jpg', width: 8192, height: 4096).copyWith(checksum: 'X8tYgvibyzHDDN2yXGU/ft1XxeM=');
+
+    testWidgets('is offered for a 2:1 photo whose metadata says nothing of 360°', (tester) async {
+      final asset = wide();
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        exif: const ExifInfo(width: 8192, height: 4096, make: 'Canon', model: 'Canon EOS R6'),
+        extraOverrides: headset(asset),
+      );
+
+      expect(panoramaButton, findsNothing);
+      expect(reliefButton, findsOneWidget);
+      expect(tester.widget<IconButton>(reliefButton).onPressed, isNotNull);
+    });
+
+    testWidgets('is not shown for a 2:1 photo whose metadata says 360°: an equirectangular projection', (tester) async {
+      final asset = wide();
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        exif: const ExifInfo(width: 8192, height: 4096, projectionType: ProjectionType.equirectangular),
+        extraOverrides: headset(asset),
+      );
+
+      expect(panoramaButton, findsOneWidget);
+      expect(reliefButton, findsNothing);
+    });
+
+    testWidgets('is not shown for a 2:1 photo of a 360° camera that wrote no projection', (tester) async {
+      final asset = wide();
+      await pumpTopBar(
+        tester,
+        asset,
+        horizonOs: true,
+        exif: const ExifInfo(width: 8192, height: 4096, make: 'GoPro', model: 'GoPro Max'),
+        extraOverrides: headset(asset),
+      );
+
+      expect(panoramaButton, findsOneWidget);
+      expect(reliefButton, findsNothing);
+    });
+
     testWidgets('is not shown for a photo of two eyes side by side, which has "View in 3D"', (tester) async {
       final asset = salon(name: 'salon_3D_LRF_Full_SBS.jpg');
       await pumpTopBar(
