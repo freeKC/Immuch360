@@ -1006,6 +1006,30 @@ void main() {
       expect((await _send(bridge.urlFor('nas1', '/sub/clip.mp4'))).status, HttpStatus.internalServerError);
     });
 
+    test('a file the share knows but cannot read now answers 503, and its page is told why', () async {
+      const unreadable = NetworkFileSystemException('Cannot read the file now', isFileUnreadable: true);
+      share.statErrors['/photo.jpg'] = unreadable;
+      final reply = await _send(bridge.urlFor('nas1', '/photo.jpg'));
+      expect(reply.status, HttpStatus.serviceUnavailable);
+      expect(bridge.recentFailure('nas1', '/photo.jpg'), same(unreadable));
+      expect(bridge.recentFailure('nas1', 'photo.jpg'), same(unreadable), reason: 'the path as the page holds it');
+      expect(bridge.recentFailure('nas1', '/sub/clip.mp4'), isNull);
+      expect(bridge.recentFailure('nas2', '/photo.jpg'), isNull);
+    });
+
+    test('the failure behind a 500 is kept for the page of the player, until the file reads or it is old', () async {
+      const stopped = NetworkFileSystemException('The server stopped answering');
+      share.statErrors['/sub/clip.mp4'] = stopped;
+      expect((await _send(bridge.urlFor('nas1', '/sub/clip.mp4'))).status, HttpStatus.internalServerError);
+      expect(bridge.recentFailure('nas1', '/sub/clip.mp4'), same(stopped));
+      now = now.add(LocalMediaBridge.failureMemory + const Duration(seconds: 1));
+      expect(bridge.recentFailure('nas1', '/sub/clip.mp4'), isNull, reason: 'too old to explain a failure now');
+      now = now.subtract(LocalMediaBridge.failureMemory);
+      share.statErrors.remove('/sub/clip.mp4');
+      expect((await _send(bridge.urlFor('nas1', '/sub/clip.mp4'))).status, HttpStatus.ok);
+      expect(bridge.recentFailure('nas1', '/sub/clip.mp4'), isNull, reason: 'the file read since');
+    });
+
     test('only GET and HEAD are served', () async {
       final reply = await _send(bridge.urlFor('nas1', '/photo.jpg'), method: 'DELETE');
       expect(reply.status, HttpStatus.methodNotAllowed);

@@ -18,6 +18,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
+import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
@@ -78,6 +79,12 @@ typedef _Video = ({NetworkEntry entry, Uri url});
 /// obfuscated names tells the user nothing
 bool isUnrecognizedVideoError(String error) =>
     error.contains('None of the available extractors') || error.contains('UnrecognizedInputFormat');
+
+/// Whether [error], a message of the native player, is a fault of its own reader of the file rather than of the file or
+/// the share: Media3 wraps what a loader throws unexpectedly as "Unexpected" and the name of the exception, and its checkNotNull
+/// reads "Attempt to invoke virtual method 'java.lang.Class java.lang.Object.getClass()' on a null object reference"
+/// once minified. Seen on 11 November 2026 on a Dolby Vision profile 5 MKV film on the Quest (Media3 1.10.0).
+bool isPlayerReaderFault(String error) => RegExp(r'^\s*Unexpected [A-Za-z]+(Exception|Error)\b').hasMatch(error);
 
 /// The line of the logs about a file of a share that the player did not recognize as a video: the kind of share, the
 /// type and the size the share gave, and the first bytes the media bridge sent ([head], null when they could not be
@@ -164,8 +171,19 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   bool _shouldPlayOnForeground = true;
   bool _showControls = true;
 
-  /// What the native player reported when it could not play the video
-  String? _playerError;
+  /// What the native player reported when it could not play the video: its words, or the failure of the share the
+  /// media bridge met for it (a Plex server that stopped answering, a film whose file the server cannot read)
+  Object? _playerError;
+
+  /// Whether the page waits for the first bytes of a Plex film for longer than [waitingNoticeAfter] (see
+  /// [_waitForPlexStart]): it says so, with Cancel
+  bool _waitingForServer = false;
+
+  /// Completed by Cancel, or when the page goes: stops the wait for the first bytes
+  Completer<void>? _startCancel;
+
+  /// After how long the wait for the first bytes of a Plex film is told
+  static const waitingNoticeAfter = Duration(seconds: 2);
 
   /// The frame size, once the native player read it: the 3D layout is guessed from it
   ({int width, int height})? _videoSize;
@@ -243,6 +261,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _recorder = null;
     _plexTracks?.dispose();
     _plexTracks = null;
+    _cancelStartWait();
     _removeListeners();
     _appBarFocus.removeListener(_onAppBarFocus);
     final offlineId = _offlineId;
@@ -498,6 +517,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _shareType = fileSystem.source.type;
     final bridge = ref.read(mediaBridgeProvider);
     final entry = await fileSystem.stat(widget.path);
+    // A Plex film: its first bytes before the player, which gives up long before a server slow to start one
+    if (fileSystem is PlexFileSystem) {
+      await _waitForPlexStart(fileSystem);
+    }
     final url = await connections.mediaUrl(widget.sourceId, widget.path);
     // A film of a Plex server: its subtitle files and the names of its tracks, before the player is given the film
     final tracks = await _plexTracksOf(fileSystem, bridge);
@@ -668,6 +691,55 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       _log.info('The tracks of the Plex film are not known: ${error.runtimeType}');
       return null;
     }
+  }
+
+  /// Waits for the first bytes of the Plex film of the page (PlexFileSystem.waitForFirstBytes): a server that just
+  /// mounted its films again takes over a minute to send them, which the player would take for a failure. Past
+  /// [waitingNoticeAfter] the page says it waits for the server, with Cancel. A failure goes to the page as the
+  /// failure of the load: the server stopped answering, or cannot read the file.
+  Future<void> _waitForPlexStart(PlexFileSystem fileSystem) async {
+    _cancelStartWait();
+    final cancel = _startCancel = Completer<void>();
+    final notice = Timer(waitingNoticeAfter, () {
+      if (mounted && identical(_startCancel, cancel)) {
+        setState(() => _waitingForServer = true);
+      }
+    });
+    final watch = Stopwatch()..start();
+    try {
+      await fileSystem.waitForFirstBytes(widget.path, cancel: cancel.future);
+    } finally {
+      notice.cancel();
+      if (identical(_startCancel, cancel)) {
+        _startCancel = null;
+      }
+      if (watch.elapsed > waitingNoticeAfter) {
+        _log.info('The Plex server sent the start of the film after ${watch.elapsed.inSeconds} s');
+      }
+      if (mounted && _waitingForServer) {
+        setState(() => _waitingForServer = false);
+      }
+    }
+  }
+
+  void _cancelStartWait() {
+    final cancel = _startCancel;
+    _startCancel = null;
+    if (cancel != null && !cancel.isCompleted) {
+      cancel.complete();
+    }
+  }
+
+  /// Cancel of the wait for the server: the wait stops and the page goes
+  void _onCancelStartWait() {
+    _cancelStartWait();
+    unawaited(context.maybePop());
+  }
+
+  /// The failure of the share the media bridge met for the video of the page lately, null when none
+  NetworkFileSystemException? _bridgeFailure() {
+    final bridge = ref.read(mediaBridgeProvider);
+    return bridge is LocalMediaBridge ? bridge.recentFailure(widget.sourceId, widget.path) : null;
   }
 
   /// Longest wait for what Plex tells of the tracks of a film before it plays
@@ -920,14 +992,22 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final error = controller?.onError.value;
     if (controller != null && error != null && mounted) {
       _log.warning('Could not play $_name: $error');
+      // The media bridge answered the player an error for a failure of the share ("Response code: 500" is all the
+      // player tells): the page says what the share met, with Retry, rather than the player's words
+      final shareFailure = _bridgeFailure();
       // The extractor list of Media3 tells the user nothing: a sentence, and what the player got in the logs. An error
       // the native player put in the words of the app (NativePlaybackError) is said in ours, never as its token
-      final unrecognized = isUnrecognizedVideoError(error);
-      final shown = unrecognized
-          ? context.t.network_video_unrecognized
-          : NativePlaybackError.parse(error) != null
-          ? _nativeErrorText(error)
-          : error;
+      final unrecognized = shareFailure == null && isUnrecognizedVideoError(error);
+      final readerFault = shareFailure == null && isPlayerReaderFault(error);
+      final Object shown =
+          shareFailure ??
+          (readerFault
+              ? context.t.network_video_reader_fault
+              : unrecognized
+              ? context.t.network_video_unrecognized
+              : NativePlaybackError.parse(error) != null
+              ? _nativeErrorText(error)
+              : error);
       setState(() => _playerError = shown);
       if (unrecognized) {
         unawaited(_logUnrecognized());
@@ -1462,7 +1542,17 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                   child: _buildPlayer(remote: remote != null),
                 )
               : snapshot.connectionState != ConnectionState.done
-              ? const NetworkLoadingView(color: Colors.white70)
+              ? (_waitingForServer
+                    ? Focus(
+                        focusNode: _errorFocus,
+                        child: NetworkLoadingView(
+                          color: Colors.white70,
+                          message: context.t.plex_film_waiting_for_server,
+                          detail: context.t.plex_film_waiting_for_server_detail,
+                          onCancel: _onCancelStartWait,
+                        ),
+                      )
+                    : const NetworkLoadingView(color: Colors.white70))
               : Focus(
                   focusNode: _errorFocus,
                   child: NetworkErrorView(
