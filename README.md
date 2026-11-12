@@ -707,7 +707,7 @@ The players read the bytes they need through a bridge inside the app, with byte 
 
 A DLNA media server lists only the files it indexed: the raw files of 360° cameras (.insv, .360, .osv) and the splat files (.ply, .spz) usually do not show there, so open them from an SMB or WebDAV share or a folder of the device.
 
-**Plex Media Server, without plex.tv**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home. On an LG TV, Plex is signed in with a code on plex.tv/link.
+**Plex Media Server, plex.tv optional**: the app pairs with your server directly, with a token you paste once, and reads the original files of your libraries live, so 360° stays 360°, at home and, through your port forwarding, away from home. From build 46, "Sign in with Plex" on the same page is the other way: a code confirmed on plex.tv fills in your server and its token, and the app then talks to your server only. On an LG TV, Plex is signed in with a code on plex.tv/link.
 
 More: [network shares](docs/immuch360/user-guide.md#network-shares-a-nas-a-computer-or-a-media-server), [share this phone on the network](docs/immuch360/user-guide.md#share-this-phone-on-the-network), [DLNA media servers](docs/immuch360/user-guide.md#dlna-media-servers), [Plex Media Server](docs/immuch360/user-guide.md#plex-media-server-without-plextv).
 
