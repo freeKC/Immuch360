@@ -1,7 +1,8 @@
 // "Play on...": the sheet of a film on a phone or a tablet. "This phone" first, then the linked screens with their
 // state: Ready (announced nearby), "Open Immuch360 on it" (linked, not announced; "Put on the headset and open
 // Immuch360" for the Quest), "Does not have (server) yet" (it said so), with "Add (server) to (screen)". Footer
-// "Add a screen", the Connect page. With no linked screen, how to link one.
+// "Add a screen", the Connect page. With no linked screen, how to link one. Then the Cast devices nearby
+// (experimental, cast_group.widget.dart), with the controls of a cast under way.
 
 import 'dart:async';
 
@@ -12,23 +13,37 @@ import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/cast/cast_group.widget.dart';
 import 'package:immich_mobile/presentation/widgets/pairing/pairing_confirm.sheet.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/play_handover.sheet.dart';
+import 'package:immich_mobile/providers/cast/cast_play.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
 
-/// Opens the sheet for [request]; true once the film plays on a screen (the page then shows the mini controller)
-Future<bool> showPlayOnSheet(BuildContext context, PlayOnRequest request) async =>
-    await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (_) => PlayOnSheet(request: request),
-    ) ??
-    false;
+/// Opens the sheet for [request]; true once the film plays on a screen (the page then shows the mini controller) or
+/// is cast to a Cast device (the dock shows its controls): the phone's player then pauses
+Future<bool> showPlayOnSheet(BuildContext context, PlayOnRequest request) async {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final playing =
+      await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (_) => PlayOnSheet(request: request),
+      ) ??
+      false;
+  if (playing) {
+    return true;
+  }
+  final cast = container.read(castPlaybackProvider);
+  return cast != null &&
+      cast.live &&
+      cast.request.sourceId == request.sourceId &&
+      cast.request.ratingKey == request.ratingKey;
+}
 
 /// What a row of the sheet says of a screen
 enum PlayScreenRowState { ready, notAnnounced, withoutServer }
@@ -216,6 +231,7 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
                     nearby[screen.id],
                   ),
               ],
+              CastGroup(request: widget.request, screenHosts: {for (final address in nearby.values) address.host}),
               if (message != null)
                 Padding(
                   padding: const EdgeInsets.all(ImmichSpacing.sm),
