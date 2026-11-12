@@ -489,7 +489,7 @@
   "cast_group_hint": "Chromecast, Google TV d tiliẓriyin s Cast yeddan deg-sent. Tiliɣri-a tettazen-asent asaru: eǧǧ Immuch360 yeldi fell-as mi ara iteddu usaru.",
   "cast_group_title": "Ibenkan Cast",
   "cast_lost": "{device} ur d-yettarra ara dayen",
-  "cast_may_not_play": "Ahat ur t-yettурар ara: {reasons}",
+  "cast_may_not_play": "Ahat ur t-yetturar ara: {reasons}",
   "cast_none": "Ulac ibenk Cast i yettwafen deg uẓeṭṭa-a",
   "cast_opening": "Alday ɣef {device}…",
   "cast_playing_on": "Tuzna ɣer {device}",
