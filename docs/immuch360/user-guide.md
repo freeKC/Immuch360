@@ -28,6 +28,7 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"I want my 360° photos and my Immich library on my Windows PC, with the photos and videos of its folders, my NAS and my Plex server, and the PC shared with my headset."** See [On a Windows computer](#on-a-windows-computer-immuch360-desktop-preview) (a preview: photos and flat videos, and from desktop build 3 360°, 3D, VR180 and raw 360° videos and the Tapo live view).
 - **"Typing my server address and password with a TV remote, or in the headset, takes ages."** See [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **"I want my DJI drone's video in my Quest one day, and I can help test."** See [DJI link diagnostics](#dji-link-diagnostics-experimental).
+- **"I reinstalled the app, or moved from the Google Play build to the GitHub one, and lost my servers, shares and backup folders."** See [Keep your settings in a file](#keep-your-settings-in-a-file-from-build-46).
 - **"Do I keep what the Immich app does?"** Yes, with two small changes, see [Everything else is Immich](#everything-else-is-immich).
 
 When a feature is recent, the text says from which build it is there. The GitHub release always has the newest build, the stores follow later: see [Where to get it](release-status.md#where-to-get-it).
@@ -53,6 +54,7 @@ When a feature is recent, the text says from which build it is there. The GitHub
 - [Watch on your TV (Android TV and Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
 - [Find your 360° shots: the 360° list](#find-your-360-shots-the-360-list)
 - [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters)
+- [Keep your settings in a file (from build 46)](#keep-your-settings-in-a-file-from-build-46)
 - [Everything else is Immich](#everything-else-is-immich)
 - [On a Windows computer: Immuch360 Desktop (preview)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Install it on a computer: Windows, Linux and macOS](#install-it-on-a-computer-windows-linux-and-macos)
@@ -976,6 +978,28 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 ### Originals that cannot stream
 
 When the server ignores HTTP Range requests on the original and the MP4 index (moov) is at the end of the file, the whole file would have to download before the first frame, so the app falls back to the server playback stream. A reverse proxy in front of Immich that buffers the responses or strips the Range headers can cause this.
+
+## Keep your settings in a file (from build 46)
+
+The Google Play build and the GitHub build are signed with different keys, so Android installs one over the other only after an uninstall, which deletes the app's data. A reinstall, the store's "Restore the app" on the Quest, or a new phone do the same. Before that, save the app's settings to a file; after it, restore them.
+
+### Save them
+
+Settings, Settings file, Export the settings. Pick what the file holds:
+
+- **Settings only**: the Immich server address, the shares, Plex servers and cameras without their passwords, the settings, the choices made in the viewers, and the albums chosen or excluded for backup. Anyone who has the file can read it.
+- **Settings, accounts and passwords**: also the session of your Immich account and the passwords of the shares, the Plex tokens and the camera passwords. The whole file is then encrypted with a passphrase you type twice (AES-256-GCM, key derived with Argon2id). Without the passphrase nobody can open it, and it cannot be recovered.
+
+Then Share (to your cloud drive, an email to yourself, Quick Share; on iPhone and iPad, "Save to Files") or Save to a file (Android, the Quest, the TVs and the computers). The file stays on the device until you do one of those.
+
+### Restore them
+
+On the welcome screen, "Restore settings from a file", or in Settings, Settings file. Choose the file (on iPhone and iPad: open it in the Files app, Share, Immuch360), type the passphrase if it has one, and read what it holds before anything is written. Merge adds the file's servers, sources and settings and keeps what the app has; Replace removes the app's sources, settings and backup album choices first. A report tells what was restored and what was not, and why.
+
+- The account is restored only when the app is signed in to no server. It comes back as the session of the app that made the file: if that app is still in use, signing out on one signs out the other. An expired session leads to the sign in form, with the server address filled in.
+- Backup albums are found again by their id, else by their name. On a new install they are chosen once the app has read the device's photos.
+- Never in the file: the Play on links between your phone and your TVs, the DJI relay codes, this install's identity for Plex and for the phone share, the locked folder PIN, downloaded films and what the app learned on its own (caches, the scan of the device). Link the TVs again with one scan.
+- On a TV without a file picker, restore the settings on your phone, then sign the TV in with the phone.
 
 ## Everything else is Immich
 

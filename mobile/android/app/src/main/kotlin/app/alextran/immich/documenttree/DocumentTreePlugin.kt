@@ -66,6 +66,9 @@ private const val PICK_REQUEST = 0x4454
 // Request code of the file picker (pickFile), "DU"
 private const val PICK_FILE_REQUEST = 0x4455
 
+// Request code of the save dialog (saveFile), "DV"
+private const val SAVE_FILE_REQUEST = 0x4456
+
 // A provider that lists a folder in batches (MTP) is waited for while new files keep coming: until none came for
 // LOADING_QUIET_MS, at most LOADING_CAP_MS in all; LOADING_LOOK_MS between two looks at it
 private const val LOADING_QUIET_MS = 10_000L
@@ -127,6 +130,11 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
 
   /// A file picker open: where its copy goes, how large it may be, and who waits for it
   private class PendingFilePick(val folder: String, val maxBytes: Long, val callback: (Result<PickedFile?>) -> Unit)
+
+  /// A save dialog open: the file to copy into the document chosen, and who waits for it
+  private class PendingFileSave(val sourcePath: String, val callback: (Result<Boolean>) -> Unit)
+
+  private var pendingFileSave: PendingFileSave? = null
 
   // The files open for reading, the least recently used first; the closer of the idle ones runs while one is open
   private val openFiles = LinkedHashMap<String, OpenFile>(4, 0.75f, true)
@@ -242,6 +250,10 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
       onFilePicked(resultCode, data)
       return true
     }
+    if (requestCode == SAVE_FILE_REQUEST) {
+      onFileSaveChosen(resultCode, data)
+      return true
+    }
     if (requestCode != PICK_REQUEST) {
       return false
     }
@@ -287,6 +299,60 @@ class DocumentTreePlugin : FlutterPlugin, ActivityAware, PluginRegistry.Activity
     } catch (e: ActivityNotFoundException) {
       pendingFilePick = null
       callback(Result.failure(FlutterError("no_picker", "This device has no file picker", null)))
+    }
+  }
+
+  override fun saveFile(
+    sourcePath: String,
+    suggestedName: String,
+    mimeType: String,
+    callback: (Result<Boolean>) -> Unit
+  ) {
+    val current = activity
+    if (current == null) {
+      callback(Result.failure(FlutterError("no_activity", "The save dialog needs the app on screen", null)))
+      return
+    }
+    if (pendingFileSave != null) {
+      callback(Result.failure(FlutterError("busy", "The save dialog is open already", null)))
+      return
+    }
+    val intent =
+      Intent(Intent.ACTION_CREATE_DOCUMENT)
+        .addCategory(Intent.CATEGORY_OPENABLE)
+        .setType(mimeType)
+        .putExtra(Intent.EXTRA_TITLE, suggestedName)
+    pendingFileSave = PendingFileSave(sourcePath, callback)
+    try {
+      current.startActivityForResult(intent, SAVE_FILE_REQUEST)
+    } catch (e: ActivityNotFoundException) {
+      pendingFileSave = null
+      callback(Result.failure(FlutterError("no_picker", "This device has no save dialog", null)))
+    }
+  }
+
+  /** The document the save dialog gave, written from the file off the main thread */
+  private fun onFileSaveChosen(resultCode: Int, data: Intent?) {
+    val pending = pendingFileSave ?: return
+    pendingFileSave = null
+    val uri = data?.data
+    val ctx = context
+    if (resultCode != Activity.RESULT_OK || uri == null || ctx == null) {
+      pending.callback(Result.success(false))
+      return
+    }
+    ioScope.launch {
+      pending.callback(
+        try {
+          // "wt": a document the provider already had (the user picked an existing file) is truncated, not appended to
+          val output = ctx.contentResolver.openOutputStream(uri, "wt") ?: throw IOException("No stream for the document")
+          output.use { out -> File(pending.sourcePath).inputStream().use { input -> input.copyTo(out) } }
+          Result.success(true)
+        } catch (e: Exception) {
+          Log.w(TAG, "The file could not be saved: ${e.message}")
+          Result.failure(FlutterError("write_failed", e.message ?: e.javaClass.simpleName, null))
+        }
+      )
     }
   }
 

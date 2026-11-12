@@ -23,7 +23,15 @@ class _Session extends LocalSessionNotifier {
 
 void main() {
   const serverSections = ['Backup', 'Free Up Space', 'Networking', 'Notifications', 'Sync Status'];
-  const deviceSections = ['Advanced', 'Asset Viewer', 'Language', 'Preferences', 'Photo Grid', "What's new"];
+  const deviceSections = [
+    'Advanced',
+    'Asset Viewer',
+    'Language',
+    'Preferences',
+    'Photo Grid',
+    'Settings file',
+    "What's new",
+  ];
   final connectCard = find.widgetWithText(SettingsCard, 'Connect to a server');
 
   /// Pumps the settings page on a phone sized screen, under a router whose login route renders a stub page

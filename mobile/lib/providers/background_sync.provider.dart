@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/utils/background_sync.dart';
 import 'package:immich_mobile/providers/backup/backup.provider.dart';
+import 'package:immich_mobile/providers/settings_file/settings_file.provider.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
 
 final backgroundSyncProvider = Provider<BackgroundSyncManager>((ref) {
@@ -25,7 +28,11 @@ final backgroundSyncProvider = Provider<BackgroundSyncManager>((ref) {
     },
     onRemoteSyncError: syncStatusNotifier.errorRemoteSync,
     onLocalSyncStart: syncStatusNotifier.startLocalSync,
-    onLocalSyncComplete: syncStatusNotifier.completeLocalSync,
+    onLocalSyncComplete: () {
+      syncStatusNotifier.completeLocalSync();
+      // The backup albums a settings file restored before this device's albums were listed (issue 16)
+      unawaited(ref.read(settingsFileServiceProvider).applyPendingBackupAlbums());
+    },
     onLocalSyncError: syncStatusNotifier.errorLocalSync,
     onHashingStart: syncStatusNotifier.startHashJob,
     onHashingComplete: syncStatusNotifier.completeHashJob,
