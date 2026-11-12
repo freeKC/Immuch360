@@ -3,6 +3,8 @@ package app.alextran.immich.spherical
 import androidx.media3.exoplayer.video.spherical.CameraMotionListener
 import androidx.media3.exoplayer.video.spherical.RotationQueueForTests
 import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -246,5 +248,253 @@ class StabilizedFramesTest {
       assertEquals(1.0, m[0][0] * m[0][0] + m[2][0] * m[2][0], 1e-5)
       assertEquals(m[0][0], m[2][2], 1e-6)
     }
+  }
+
+  // The recentre of Media3 (fix-stab-android-46): the frames start without their heading, then show the table exactly
+
+  /** The Hamilton product a b of two quaternions (w, x, y, z): b, then a */
+  private fun times(a: DoubleArray, b: DoubleArray) =
+    doubleArrayOf(
+      a[0] * b[0] - a[1] * b[1] - a[2] * b[2] - a[3] * b[3],
+      a[0] * b[1] + a[1] * b[0] + a[2] * b[3] - a[3] * b[2],
+      a[0] * b[2] - a[1] * b[3] + a[2] * b[0] + a[3] * b[1],
+      a[0] * b[3] + a[1] * b[2] - a[2] * b[1] + a[3] * b[0],
+    )
+
+  private val xAxis = doubleArrayOf(1.0, 0.0, 0.0)
+  private val yAxis = doubleArrayOf(0.0, 1.0, 0.0)
+
+  /** What Media3 is meant to draw for the correction [k]: F K F, F = diag(1, -1, -1) (see the test above) */
+  private fun meant(k: DoubleArray): Array<DoubleArray> {
+    val m = matrixOf(k)
+    val f = doubleArrayOf(1.0, -1.0, -1.0)
+    return Array(3) { r -> DoubleArray(3) { c -> f[r] * m[r][c] * f[c] } }
+  }
+
+  /**
+   * The angle in degrees between two rotations (row major 3 x 3), from their distance: |A - B| = 2 sqrt(2)
+   * sin(angle / 2), which keeps its precision for small angles (an arc cosine of the trace loses it in the float
+   * matrices of Media3)
+   */
+  private fun angleBetween(a: Array<DoubleArray>, b: Array<DoubleArray>): Double {
+    var squares = 0.0
+    for (r in 0 until 3) for (c in 0 until 3) squares += (a[r][c] - b[r][c]) * (a[r][c] - b[r][c])
+    return Math.toDegrees(2 * asin((sqrt(squares) / (2 * sqrt(2.0))).coerceAtMost(1.0)))
+  }
+
+  /**
+   * How far the vertical of the display drawn from [drawn] is from the one of [meant], in degrees: the level. M^T y is
+   * the direction of the sphere drawn straight up; the recentre of Media3 turns about that y and leaves it.
+   */
+  private fun levelError(drawn: Array<DoubleArray>, meant: Array<DoubleArray>): Double {
+    var squares = 0.0
+    for (c in 0 until 3) squares += (drawn[1][c] - meant[1][c]) * (drawn[1][c] - meant[1][c])
+    return Math.toDegrees(2 * asin((sqrt(squares) / 2).coerceAtMost(1.0)))
+  }
+
+  /** A camera motion listener in front of Media3's own queue */
+  private fun listenerOf(queue: RotationQueueForTests) =
+    object : CameraMotionListener {
+      override fun onCameraMotion(timeUs: Long, rotation: FloatArray) = queue.setRotation(timeUs, rotation)
+
+      override fun onCameraMotionReset() = queue.reset()
+    }
+
+  /**
+   * Plays the frames at [timesUs] through [frames] into [queue] and returns what Media3 draws for each of them, null
+   * for a frame the renderer did not draw ([drawn] says which it draws: it may miss the first ones)
+   */
+  private fun play(
+    frames: StabilizedFrames,
+    queue: RotationQueueForTests,
+    timesUs: LongArray,
+    motion: CameraMotionListener = listenerOf(queue),
+    drawn: (Int) -> Boolean = { true },
+  ): List<Array<DoubleArray>?> {
+    val matrix = FloatArray(16)
+    return timesUs.indices.map { i ->
+      var shown: Array<DoubleArray>? = null
+      frames.onFrame(timesUs[i], motion) {
+        if (drawn(i)) {
+          assertTrue("a rotation for frame $i", queue.pollRotationMatrix(matrix, timesUs[i]))
+          shown = rotationPart(matrix)
+        }
+      }
+      shown
+    }
+  }
+
+  /**
+   * 60 frames 33,366 us apart (29.97 frames a second) of a correction that shows the front 49 degrees to the right and
+   * 10 degrees down, shaking
+   */
+  private val turnedTimes = LongArray(60) { it * 33_366L }
+  private val turnedCorrections =
+    Array(60) { i ->
+      val shake = 1.5 * sin(i * 0.9)
+      times(quaternion(yAxis, (49 + shake) * degree), quaternion(xAxis, (10 - shake) * degree))
+    }
+  private val turned = StabilizationTable.of(turnedTimes, DoubleArray(240) { turnedCorrections[it / 4][it % 4] })!!
+
+  @Test
+  fun media3AloneDrawsEveryFrameTurnedByTheHeadingOfTheFirstOne() {
+    // What the player did before: the correction as it is, so the whole video shows 49 degrees off the table
+    val queue = RotationQueueForTests()
+    val matrix = FloatArray(16)
+    for (i in turnedTimes.indices) {
+      queue.setRotation(turnedTimes[i], turned.angleAxisAt(turnedTimes[i]))
+      assertTrue(queue.pollRotationMatrix(matrix, turnedTimes[i]))
+      val drawn = rotationPart(matrix)
+      val error = angleBetween(drawn, meant(turnedCorrections[i]))
+      assertEquals("frame $i, off by the heading of frame 0", 49.0, error, 1.0)
+      assertEquals("frame $i keeps its level", 0.0, levelError(drawn, meant(turnedCorrections[i])), 1e-3)
+    }
+  }
+
+  @Test
+  fun theViewStartsWithoutTheHeadingThenShowsTheTableExactly() {
+    val frames = StabilizedFrames()
+    frames.table = turned
+    val drawn = play(frames, RotationQueueForTests(), turnedTimes)
+    // 300 ms (9 frames) without the heading, then 1 s (30 frames) to bring it back
+    val hold = 9
+    val exactFrom = hold + 30 - 1
+    for (i in turnedTimes.indices) {
+      val error = angleBetween(drawn[i]!!, meant(turnedCorrections[i]))
+      assertEquals("frame $i is level", 0.0, levelError(drawn[i]!!, meant(turnedCorrections[i])), 1e-3)
+      when {
+        // The heading of each frame taken off: the front where the camera points, about 49 degrees from the table
+        i < hold -> assertEquals("frame $i without its heading", 49.0, error, 2.0)
+        i >= exactFrom -> assertEquals("frame $i shows the table", 0.0, error, 0.01)
+      }
+      if (i > 0) {
+        val before = angleBetween(drawn[i - 1]!!, meant(turnedCorrections[i - 1]))
+        // The share rises by at most 1.5 / 30 a frame (2.5 of the 49 degrees), plus the shake of the heading taken off
+        assertTrue("frame $i: the heading comes back smoothly (${error - before} degrees)", abs(error - before) < 4.0)
+      }
+    }
+  }
+
+  @Test
+  fun theTableIsExactWhicheverOfTheFirstFramesMedia3DrawsFirst() {
+    // The renderer misses the first frames (busy, or frames dropped by its SurfaceTexture), and one more later on
+    for (firstDrawn in listOf(1, 3, 8)) {
+      val frames = StabilizedFrames()
+      frames.table = turned
+      val drawn = play(frames, RotationQueueForTests(), turnedTimes) { it >= firstDrawn && it != 20 }
+      for (i in 38 until turnedTimes.size) {
+        val error = angleBetween(drawn[i]!!, meant(turnedCorrections[i]))
+        assertEquals("first drawn $firstDrawn, frame $i", 0.0, error, 0.01)
+      }
+    }
+  }
+
+  @Test
+  fun theRealTablesOfAnX5AndOfAGoProShowTheirOwnHeadingAfterOneSecond() {
+    for ((name, table, heading) in
+      listOf(
+        Triple("X5", StabilizationFileTables.x5, 48.7),
+        Triple("GoPro", StabilizationFileTables.goPro, 19.0),
+      )) {
+      val times = LongArray(table.size) { if (it == table.size - 1) table.lastTimeUs else it * 33_367L }
+      val expected = times.map { meant(table.quaternionAt(it)) }
+      // Before: the correction as it is, the whole video off by the heading of its first frame
+      val queue = RotationQueueForTests()
+      val matrix = FloatArray(16)
+      val before =
+        times.indices.map { i ->
+          queue.setRotation(times[i], table.angleAxisAt(times[i]))
+          queue.pollRotationMatrix(matrix, times[i])
+          angleBetween(rotationPart(matrix), expected[i])
+        }
+      for (i in times.indices) assertEquals("$name frame $i before", heading, before[i], 0.1)
+      // Now: level from the first frame, the heading of the table from frame 38 on (9 frames held, 30 to come back)
+      val frames = StabilizedFrames()
+      frames.table = table
+      val drawn = play(frames, RotationQueueForTests(), times)
+      for (i in times.indices) {
+        assertEquals("$name frame $i level", 0.0, levelError(drawn[i]!!, expected[i]), 1e-3)
+        if (i >= 38) assertEquals("$name frame $i", 0.0, angleBetween(drawn[i]!!, expected[i]), 0.01)
+      }
+    }
+  }
+
+  @Test
+  fun theSwitchOffAndOnAgainStartsWithoutTheHeadingAgain() {
+    val queue = RotationQueueForTests()
+    val frames = StabilizedFrames()
+    frames.table = turned
+    play(frames, queue, turnedTimes)
+    // Off: one reset, the frames as they are
+    frames.table = null
+    play(frames, queue, longArrayOf(2_000_000)) { false }
+    frames.table = turned
+    val drawn = play(frames, queue, turnedTimes)
+    assertEquals("without its heading again", 49.0, angleBetween(drawn[0]!!, meant(turnedCorrections[0])), 2.0)
+    assertEquals(0.0, angleBetween(drawn.last()!!, meant(turnedCorrections.last())), 0.01)
+  }
+
+  @Test
+  fun aResetOfTheQueueByMedia3ItselfStartsWithoutTheHeadingAgain() {
+    // The camera motion renderer of a file with a CAMM track resets the queue at a seek and when its track goes
+    val queue = RotationQueueForTests()
+    val frames = StabilizedFrames()
+    frames.table = turned
+    val forwarding = frames.forwardingResets(listenerOf(queue))
+    play(frames, queue, turnedTimes)
+    forwarding.onCameraMotionReset()
+    var drawn = play(frames, queue, turnedTimes)
+    assertEquals(0.0, angleBetween(drawn.last()!!, meant(turnedCorrections.last())), 0.01)
+
+    // The same reset not passed on: Media3 recentres on a frame that has its heading, the table is off for good
+    play(frames, queue, turnedTimes)
+    queue.reset()
+    drawn = play(frames, queue, turnedTimes)
+    assertTrue(angleBetween(drawn.last()!!, meant(turnedCorrections.last())) > 40.0)
+  }
+
+  @Test
+  fun changingTheTableSaysWhetherAPausedFrameMustBeDrawnAgain() {
+    val frames = StabilizedFrames()
+    assertFalse("no table, still none", frames.changeTable(null))
+    assertTrue("the table arrives", frames.changeTable(turned))
+    assertFalse("the same table", frames.changeTable(turned))
+    assertTrue("the switch off", frames.changeTable(null))
+  }
+
+  @Test
+  fun theHeadingIsTheTurnAboutTheVerticalOfTheFrontShown() {
+    for (yaw in listOf(-170.0, -49.0, 0.0, 19.0, 120.0)) {
+      for (tilt in listOf(-30.0, 0.0, 10.0)) {
+        val q = times(quaternion(yAxis, yaw * degree), quaternion(xAxis, tilt * degree))
+        assertEquals("yaw $yaw tilt $tilt", yaw, Math.toDegrees(HeadingFade.heading(q)), 1e-9)
+        // Taken off, the heading is gone and the level stays
+        val off = HeadingFade.shown(q, HeadingFade.heading(q), 0.0)
+        assertEquals(0.0, HeadingFade.heading(off), 1e-12)
+        assertEquals(0.0, levelError(meant(off), meant(q)), 1e-6)
+        assertTrue("all of it is q itself", HeadingFade.shown(q, HeadingFade.heading(q), 1.0) === q)
+        val half = HeadingFade.shown(q, HeadingFade.heading(q), 0.5)
+        assertEquals(yaw / 2, Math.toDegrees(HeadingFade.heading(half)), 1e-9)
+      }
+    }
+    // Unwrapped next to the heading before, a turn through the back moves by a little, not by a whole turn
+    assertEquals(181.0, Math.toDegrees(HeadingFade.unwrap(-179 * degree, 179 * degree)), 1e-9)
+    assertEquals(-179.0, Math.toDegrees(HeadingFade.unwrap(-179 * degree, null)), 1e-9)
+  }
+
+  @Test
+  fun theShareOfTheHeadingHoldsThenRisesSmoothly() {
+    assertEquals(listOf(0.0, 0.0, 0.0), (0 until 3).map { HeadingFade.share(it, holdFrames = 3, fadeFrames = 4) })
+    val fade = (3 until 8).map { HeadingFade.share(it, holdFrames = 3, fadeFrames = 4) }
+    assertTrue("rising: $fade", fade.zipWithNext().all { (a, b) -> b >= a })
+    assertEquals(1.0, fade[3], 0.0)
+    assertEquals(1.0, fade[4], 0.0)
+    assertEquals(1.0, HeadingFade.share(0, holdFrames = 0, fadeFrames = 0), 0.0)
+    assertEquals(9, HeadingFade.frames(StabilizedFrames.HOLD_US, 33_366))
+    assertEquals(30, HeadingFade.frames(StabilizedFrames.FADE_US, 33_366))
+    assertEquals(10, HeadingFade.frames(StabilizedFrames.HOLD_US, 33_333))
+    assertEquals(33_366L, HeadingFade.frameStepUs(turned))
+    val identities = DoubleArray(12) { if (it % 4 == 0) 1.0 else 0.0 }
+    assertEquals(33_000L, HeadingFade.frameStepUs(StabilizationTable.of(longArrayOf(0, 33_000, 66_000), identities)!!))
   }
 }

@@ -136,6 +136,16 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
       }
     // A table sent but refused: the player shows the video as it is, and no switch that would do nothing
     val usable = hasTrack && (table != null || (presentationTimesUs == null && corrections == null))
-    StabilizationInbox.post(StabilizationInbox.Message(url, enabled, usable, table, summary))
+    StabilizationInbox.post(
+      StabilizationInbox.Message(
+        url,
+        enabled,
+        usable,
+        table,
+        summary,
+        timesUs = presentationTimesUs.takeIf { table != null },
+        corrections = corrections.takeIf { table != null },
+      ),
+    )
   }
 }
