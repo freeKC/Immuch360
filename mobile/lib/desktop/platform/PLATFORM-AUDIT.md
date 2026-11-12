@@ -119,7 +119,8 @@ the gate is per desktop and is noted.
 | `lib/providers/rate_app.provider.dart:57` | the crash marker of the foreground on iOS | right: not reached on the computers, which start no invitation |
 | `lib/providers/raw/raw_video.provider.dart:43` | two stream raw playback on iOS | wired (phase 2d): the computers are neither, and play two streams where libmpv loaded (`CurrentPlatform.isDesktop` term of the same expression, the 360° route stacks them or falls back) |
 | `lib/providers/raw/raw_video.provider.dart:45` | two stream raw playback on Android and Quest | wired (phase 2d): idem |
-| `lib/providers/raw/raw_video.provider.dart:72` | the stabilisation of raw videos with the motion track of their camera (issue 14): the Android player (lot c), the immersive viewer of the Meta Quest (lot d3), the iOS player (lot d1), and the computers where renderer C draws the 360° view (lot d2, `desktopStabilizationSupported`, desktop_stabilization.dart) | Windows: on, the table goes to renderer C of media_kit_360 v1.1.0, which turns each frame drawn by its own correction; Linux and macOS: hidden, the 360° videos play flat there and no table is built; the computers are neither Android nor iOS, so the phone term is false there |
+| `lib/providers/raw/raw_video.provider.dart:73` | the stabilisation of raw videos with the motion track of their camera (issue 14): the Android player (lot c), the immersive viewer of the Meta Quest (lot d3), the iOS player (lot d1), and the computers where renderer C draws the 360° view (lot d2, `desktopStabilizationSupported`, desktop_stabilization.dart) | Windows: on, the table goes to renderer C of media_kit_360 v1.1.0, which turns each frame drawn by its own correction; Linux and macOS: hidden, the 360° videos play flat there and no table is built; the computers are neither Android nor iOS, so the phone term is false there |
+| `lib/providers/raw/raw_video.provider.dart:74` | idem (the Android term of the same call) | right |
 | `lib/providers/splat/splat_photo.provider.dart:131` | where a splat photo is explored from a device of no splat class: waits on Android until it is known whether this is a Meta Quest, says "explore it elsewhere" on iOS and a TV (3 November 2026) | right: the computers have a splat class and never reach this line |
 | `lib/providers/splat/splat_viewer.provider.dart:28` | the device class of the splats: the computers first, then Android (headset, phone or tablet, not a TV) | right: `CurrentPlatform.isDesktop` is read before this line |
 | `lib/providers/splat/splat_viewer.provider.dart:50` | the host of the splat viewer: SplatViewerActivity through SplatViewerApi on Android | wired: the computers override the provider with DesktopSplatViewerHost (desktop_overrides.dart), SplatViewerApi is never called there |
@@ -157,6 +158,11 @@ the gate is per desktop and is noted.
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:184` | iOS cloud ids | right |
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:363` | Android trash tools | right |
 | `lib/widgets/settings/free_up_space_settings.dart:539` | iOS cloud option | hidden: free up space is not offered on the computers (G1) |
+| `lib/providers/settings_file/settings_file_io.dart:77` | the settings file (issue 16): picking a file on Android | right: `CurrentPlatform.isDesktop` term of the same line, the computers pick with their file dialog |
+| `lib/providers/settings_file/settings_file_io.dart:80` | the settings file: saving a file on Android | right: idem, the computers save with their file dialog |
+| `lib/providers/settings_file/settings_file_io.dart:94` | the settings file: the Android picker (DocumentTreeApi) | right: the computers took the branch before it |
+| `lib/providers/settings_file/settings_file_io.dart:117` | the settings file: the copy in the cache deleted after the read, on Android | right: the computers read the file where it is and delete nothing |
+| `lib/providers/settings_file/settings_file_io.dart:138` | the settings file: no save dialog off Android | right: the computers returned before it |
 
 ## Desktop gates added outside these lines
 
