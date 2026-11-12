@@ -10,10 +10,14 @@
 // (or a tier down for its intermediate texture); a step of the chain that fails while it loads is not lost; a page
 // closed while a raw file is prepared leaves nothing of it on the pooled player; a pair paused on screen keeps both its
 // players when a job on the graphics card lets go of the others (issue #13); a hand over of this page's player and a
-// lost picture of it end the pair without waiting for the turn of the pool they run in (lot 13b).
+// lost picture of it end the pair without waiting for the turn of the pool they run in (lot 13b). A raw video
+// stabilised with its camera's motion (issue 14, lot d2): its table goes to renderer C once, the button of the player
+// turns it off and on and the setting follows, a notice fades after a few seconds, and nothing shows where the view
+// is not the stitched sphere.
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
@@ -23,6 +27,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
+import 'package:immich_mobile/desktop/video/desktop_stabilization.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
@@ -68,6 +73,20 @@ const _pair =
     '"k1":0.388,"k2":1.295,"k3":-3.968,"k4":0.0,"k5":0.0,"p1":0.0,"p2":0.0,'
     '"viewToLens":[-1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,-1.0]},'
     '{"texture":0,"region":[0.0,0.0,1.0,1.0],"cx":8933.2,"cy":2998.62,"fx":4615.53,"fy":4615.53,"xi":1.94817,'
+    '"k1":0.393,"k2":1.256,"k3":-3.907,"k4":0.0,"k5":0.0,"p1":0.0,"p2":0.0,'
+    '"viewToLens":[1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0]}]}';
+
+// One X3 file, both lenses side by side in one stream (example A of raw_video_plan_test.dart, shortened)
+const _sideBySide =
+    '{"version":2,"kind":"dualFisheye","layout":"sideBySide","camera":"Insta360 X3","frameWidth":5760,'
+    '"frameHeight":2880,"tracks":[{"file":0,"videoTrack":0,"trackId":1,"width":5760,"height":2880,"codec":"hvc1",'
+    '"codecs":"hvc1.1.6.L153","bitDepth":8}],"secondUrl":null,"secondFallbackUrl":null,"trackOrder":null,'
+    '"trackOrderSource":"single","calibrationSource":"file","gravitySource":"imu","model":"mei","canvasSquare":5952.0,'
+    '"maxTheta":100.0,"blendStart":85.0,"blendEnd":95.0,"lenses":['
+    '{"texture":0,"region":[0.0,0.0,0.5,1.0],"cx":2967.48,"cy":2999.85,"fx":4627.54,"fy":4627.46,"xi":1.94817,'
+    '"k1":0.388,"k2":1.295,"k3":-3.968,"k4":0.0,"k5":0.0,"p1":0.0,"p2":0.0,'
+    '"viewToLens":[-1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,-1.0]},'
+    '{"texture":0,"region":[0.5,0.0,0.5,1.0],"cx":8933.2,"cy":2998.62,"fx":4615.53,"fy":4615.53,"xi":1.94817,'
     '"k1":0.393,"k2":1.256,"k3":-3.907,"k4":0.0,"k5":0.0,"p1":0.0,"p2":0.0,'
     '"viewToLens":[1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0]}]}';
 
@@ -129,16 +148,33 @@ class _Channel implements PluginChannel {
     final refused = refusePartner;
     return refused == null ? const ProjectionResult(ok: true) : ProjectionResult(ok: false, reason: refused);
   }
+
+  /// The stabilisation calls: the switch, whether the table was replaced, the table
+  final stabilizations = <(bool, bool, PluginStabilization?)>[];
+
+  @override
+  Future<StabilizationResult> setStabilization(
+    int handle, {
+    required bool enabled,
+    required bool replaceTable,
+    PluginStabilization? table,
+  }) async {
+    stabilizations.add((enabled, replaceTable, table));
+    return const StabilizationResult(ok: true);
+  }
 }
 
 class _Session implements SphericalVideoEvents {
   final closings = <(StereoLayout, SphereCoverage)>[];
 
+  /// The switch of the stabilisation as the user turned it in the player
+  final stabilizations = <bool>[];
+
   @override
   void closed(StereoLayout stereoLayout, SphereCoverage coverage) => closings.add((stereoLayout, coverage));
 
   @override
-  void stabilizationChanged(bool enabled) {}
+  void stabilizationChanged(bool enabled) => stabilizations.add(enabled);
 }
 
 void main() {
@@ -182,6 +218,7 @@ void main() {
     bool pairing = false,
     String? refusePartner,
     bool pluginSupported = true,
+    DesktopStabilizationInbox? stabilization,
   }) {
     // Made in the test's own zone: the pool's futures then complete as the test pumps
     players = FakePlayers(onCreate: (engine) => engine.autoLoad = silent ? null : const Duration(seconds: 60));
@@ -218,6 +255,7 @@ void main() {
       pluginSupported: pluginSupported,
       memoryMB: () => 100,
       hwdecCurrent: (_) async => hwdec,
+      stabilization: stabilization ?? DesktopStabilizationInbox(),
     );
   }
 
@@ -234,6 +272,7 @@ void main() {
     bool pairing = false,
     String? refusePartner,
     bool pluginSupported = true,
+    DesktopStabilizationInbox? stabilization,
   }) async {
     tester.view.physicalSize = const Size(1600, 900);
     tester.view.devicePixelRatio = 1;
@@ -248,6 +287,7 @@ void main() {
       pairing: pairing,
       refusePartner: refusePartner,
       pluginSupported: pluginSupported,
+      stabilization: stabilization,
     );
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -1079,5 +1119,121 @@ void main() {
     expect(mpv.sublist(mpv.length - 4), ['lavfi-complex=', 'external-files=', 'hwdec=auto-safe', 'vid=auto']);
     expect(mpv, isNot(contains('keepaspect=no')));
     expect(players.pool.idleCount(PlayerKind.playback), 1);
+  });
+  group('a raw video stabilised with its camera\'s motion (issue 14, lot d2)', () {
+    const url = '/videos/x3.insv';
+    const args = SphericalPlayerArgs(url: url, title: 'x3.insv', rawProjection: _sideBySide);
+    late DesktopStabilizationInbox inbox;
+
+    setUp(() => inbox = DesktopStabilizationInbox());
+
+    PluginStabilization table() => PluginStabilization(
+      timesUs: Int64List.fromList([0, 33367, 66733]),
+      corrections: Float64List.fromList([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]),
+    );
+
+    Future<void> showControls(WidgetTester tester) async {
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.addPointer(location: const Offset(800, 450));
+      await mouse.moveTo(const Offset(805, 452));
+      await tester.pump();
+      await mouse.removePointer();
+      await tester.pump();
+    }
+
+    double noticeOpacity(WidgetTester tester) => tester
+        .widget<AnimatedOpacity>(
+          find.ancestor(
+            of: find.byKey(const Key('spherical_stabilization_notice')),
+            matching: find.byType(AnimatedOpacity),
+          ),
+        )
+        .opacity;
+
+    testWidgets('a table built before the open goes with the attach, once; the button turns it off and on, the '
+        'setting follows', (tester) async {
+      final built = table();
+      inbox.post(DesktopStabilizationMessage(url: url, enabled: true, hasTrack: true, table: built));
+      await pumpLauncher(tester, args, stabilization: inbox);
+      expect(page(tester).rendering, isNot(const SphereRendering.flat(FlatReason.refused)));
+      expect(channel.setups.last.kind, ProjectionKind.fisheyePair);
+      expect(channel.stabilizations, [(true, true, built)]);
+      expect(page(tester).stabilization.active, isTrue);
+      // The notice says it, then fades
+      expect(find.byKey(const Key('spherical_stabilization_notice')), findsOneWidget);
+      expect(noticeOpacity(tester), 1);
+      await tester.pump(DesktopSphericalPlayerPageState.stabilizationNoticeTime + const Duration(milliseconds: 100));
+      expect(noticeOpacity(tester), 0);
+
+      await showControls(tester);
+      await tester.tap(find.byKey(const Key('spherical_stabilization')));
+      await tester.pump();
+      expect(channel.stabilizations.last, (false, false, built), reason: 'the switch alone, the table stays');
+      expect(session.stabilizations, [false], reason: 'the setting of the app follows, as on Android');
+      await tester.tap(find.byKey(const Key('spherical_stabilization')));
+      await tester.pump();
+      expect(channel.stabilizations.last, (true, false, built));
+      expect(session.stabilizations, [false, true]);
+      expect(noticeOpacity(tester), 1, reason: 'turned on: the notice again');
+
+      await close(tester);
+      expect(channel.stabilizations.last, (false, true, null), reason: 'the table leaves with the player');
+      expect(inbox.latestFor(url), isNull, reason: 'the player closed: its messages go');
+    });
+
+    testWidgets('the table comes while the video plays: the button shows while the track is read', (tester) async {
+      inbox.post(const DesktopStabilizationMessage(url: url, enabled: true, hasTrack: true));
+      await pumpLauncher(tester, args, stabilization: inbox);
+      await showControls(tester);
+      expect(find.byKey(const Key('spherical_stabilization')), findsOneWidget);
+      expect(channel.stabilizations, isEmpty, reason: 'no table yet');
+
+      final built = table();
+      inbox.post(DesktopStabilizationMessage(url: url, enabled: true, hasTrack: true, table: built));
+      await tester.pump();
+      expect(channel.stabilizations, [(true, true, built)]);
+      // Another video's message does not reach this player
+      inbox.post(
+        DesktopStabilizationMessage(url: '/videos/other.insv', enabled: false, hasTrack: true, table: table()),
+      );
+      await tester.pump();
+      expect(channel.stabilizations, hasLength(1));
+      await close(tester);
+    });
+
+    testWidgets('the setting off: the table waits in the player, off, until the button', (tester) async {
+      final built = table();
+      inbox.post(DesktopStabilizationMessage(url: url, enabled: false, hasTrack: true, table: built));
+      await pumpLauncher(tester, args, stabilization: inbox);
+      expect(channel.stabilizations, [(false, true, built)]);
+      expect(find.byKey(const Key('spherical_stabilization_notice')), findsNothing);
+      await showControls(tester);
+      await tester.tap(find.byKey(const Key('spherical_stabilization')));
+      await tester.pump();
+      expect(channel.stabilizations.last, (true, false, built));
+      await close(tester);
+    });
+
+    testWidgets('a file without a track after all: no button, and nothing said unless the user asked', (tester) async {
+      inbox.post(const DesktopStabilizationMessage(url: url, enabled: true, hasTrack: true));
+      await pumpLauncher(tester, args, stabilization: inbox);
+      inbox.post(const DesktopStabilizationMessage(url: url, enabled: true, hasTrack: false));
+      await tester.pump();
+      await showControls(tester);
+      expect(find.byKey(const Key('spherical_stabilization')), findsNothing);
+      expect(find.byKey(const Key('spherical_stabilization_notice')), findsNothing);
+      expect(channel.stabilizations, isEmpty);
+      await close(tester);
+    });
+
+    testWidgets('without renderer C (Linux, macOS) the view is flat: no button, no table sent', (tester) async {
+      inbox.post(DesktopStabilizationMessage(url: url, enabled: true, hasTrack: true, table: table()));
+      await pumpLauncher(tester, args, stabilization: inbox, pluginSupported: false);
+      await showControls(tester);
+      expect(page(tester).rendering!.isFlat, isTrue);
+      expect(find.byKey(const Key('spherical_stabilization')), findsNothing);
+      expect(channel.stabilizations, isEmpty);
+      await close(tester);
+    });
   });
 }

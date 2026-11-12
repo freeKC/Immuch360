@@ -152,6 +152,8 @@ class SphericalControlsModel {
     required this.onMute,
     required this.onLayout,
     required this.onCoverage,
+    this.stabilization,
+    this.onStabilization,
   });
 
   final String title;
@@ -175,6 +177,11 @@ class SphericalControlsModel {
   final VoidCallback onMute;
   final VoidCallback onLayout;
   final VoidCallback onCoverage;
+
+  /// The switch of the stabilisation with the camera's gyroscope (desktop_stabilization.dart): on or off, null when
+  /// the video has no track to stabilise with (no button)
+  final bool? stabilization;
+  final VoidCallback? onStabilization;
 }
 
 /// The overlay of the controls, see the top of this file
@@ -311,6 +318,15 @@ class SphericalControls extends StatelessWidget {
             ),
           ),
         ],
+        if (model.stabilization case final on?)
+          IconButton(
+            key: const Key('spherical_stabilization'),
+            tooltip: '${t.setting_video_stabilization_title}: ${on ? t.enabled : t.disabled}',
+            onPressed: model.onStabilization,
+            isSelected: on,
+            // Dimmed while off, as the Android player's button
+            icon: Icon(Icons.video_stable, color: on ? Colors.white : Colors.white54, shadows: _shadows),
+          ),
         DesktopAudioTrackButton(controller: model.controller, shadows: _shadows),
         const DesktopFullScreenButton(),
       ],

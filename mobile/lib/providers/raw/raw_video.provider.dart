@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/video/desktop_stabilization.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -58,16 +59,22 @@ final rawVideoPlaybackSupportProvider = Provider<RawVideoPlaybackSupport>((ref) 
 /// raw_video_stabilization.dart), once the kind of device is known ([isHorizonOs], null while it is asked): the Android
 /// player of the phones, tablets and TVs (SphericalVideoActivity), the immersive viewer of the Meta Quest (lot d3,
 /// turned inside its stitch, see ImmersiveStabilization), and the iOS player of the iPhones and iPads, which turns each
-/// frame in its Metal stitch (RawStitchCompositor). The computers come in a later lot; their setting and switch stay
-/// hidden until then, so that nothing says it stabilises where nothing does.
+/// frame in its Metal stitch (RawStitchCompositor). The computers are told apart by [videoStabilizationSupportedProvider].
 bool videoStabilizationSupportedOn({required bool isIOS, required bool isAndroid, required bool? isHorizonOs}) =>
     isIOS || (isAndroid && isHorizonOs != null);
 
-/// [videoStabilizationSupportedOn] for this device. It follows a scope that overrides the kind of device, as the
-/// settings pages of the tests do.
+/// [videoStabilizationSupportedOn] for this device, and the player of the computers where renderer C draws the 360°
+/// view, Windows with libmpv loaded (lot d2, desktop_stabilization.dart; Linux and macOS play these videos flat, so
+/// their setting and switch stay hidden, and nothing says it stabilises where nothing does). It follows a scope that
+/// overrides the kind of device, as the settings pages of the tests do.
 final videoStabilizationSupportedProvider = Provider<bool>((ref) {
   final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
-  return videoStabilizationSupportedOn(isIOS: Platform.isIOS, isAndroid: Platform.isAndroid, isHorizonOs: isHorizonOs);
+  return videoStabilizationSupportedOn(
+        isIOS: Platform.isIOS,
+        isAndroid: Platform.isAndroid,
+        isHorizonOs: isHorizonOs,
+      ) ||
+      desktopStabilizationSupported(videoAvailable: desktopVideoAvailable);
 }, dependencies: [isHorizonOsProvider]);
 
 /// Builds the stabilisation table of a raw video: in a background isolate, the reads served from here (see
