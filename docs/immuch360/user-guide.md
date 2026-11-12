@@ -13,11 +13,13 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"I want to watch the videos of my NAS, on the phone or in the headset, without copying them."** See [Network shares](#network-shares-a-nas-a-computer-or-a-media-server).
 - **"Plex plays my 360° videos flat, and I want my Plex library in the headset, on the TV and away from home."** See [Plex Media Server, without plex.tv](#plex-media-server-without-plextv).
 - **"I want a film of my Plex server on the phone or in the headset for the plane."** See [Download a film to this device](#download-a-film-to-this-device).
+- **"My Quest will not play some films of my Plex server (DTS sound, an old AVI), or the server stops answering."** See [A film this device cannot decode](#a-film-this-device-cannot-decode-from-build-46) and [When the Plex server stops answering](#when-the-plex-server-stops-answering-from-build-46).
 - **"My photos are on my phone, and I have no computer or NAS to put them on for the headset."** See [Share this phone on the network](#share-this-phone-on-the-network).
 - **"I want to see my Tapo camera and last night's clips without the Tapo app, and keep a clip in Immich."** See [Tapo cameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"My drone videos are not on the Immich map, and I want the files of my DJI drone on my server without a computer."** See [DJI drones](#dji-drones-photos-and-videos-over-usb-experimental).
 - **"My photo is sideways, and I want to turn it with one key, on the phone, the TV or the computer."** See [Turn a photo with one key](#turn-a-photo-with-one-key).
 - **"My Insta360 files need the Insta360 app before I can watch them"** (and the GoPro .360 and DJI .osv files too). See [Raw 360° camera files](#raw-360-camera-files-without-the-cameras-app).
+- **"My 360° videos filmed on a bike or a helmet shake, and their horizon leans."** See [Stabilisation with the camera's gyroscope](#stabilisation-with-the-cameras-gyroscope-experimental).
 - **"My 3D videos look doubled, and my VR180 videos are stretched all around."** See [3D and VR180](#3d-and-vr180-photos-and-videos) and [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"I have spatial photos from my iPhone."** See [Apple spatial photos and videos](#apple-spatial-photos-and-videos).
 - **"It works on the phone, but I want it in the Quest."** See [In the Meta Quest 3 headset](#in-the-meta-quest-3-headset).
@@ -328,7 +330,7 @@ On each screen:
 - **Meta Quest window**: the tablet layout, with the system keyboard.
 - **Computers**: Ctrl (Command on a Mac) and the mouse wheel change the number of posters a row; Ctrl F, Command F or / go to the search field, Escape clears it; the whole title shows when the pointer rests on it.
 
-Limits of build 45: the page was checked against a simulated server built from Plex's documentation, not yet against a real Plex Media Server, and whether the server's search ignores accents depends on the server.
+Limits of build 45: the page was checked against a simulated server built from Plex's documentation, then in a Quest 3 with build 45 against a real Plex Media Server (the year headers, a search, a year filter), and whether the server's search ignores accents depends on the server.
 
 ### Films of a Plex library (from build 45)
 
@@ -349,11 +351,35 @@ On each screen:
 - **Computers**: the page in two columns, Enter or Space on Play; the Subtitles menu sits next to Audio in the player.
 - **iPhone and iPad**: the page and the filters, but no track menu yet, and MKV films do not play there.
 
-Limits of build 45:
-- The film page, the filters and the subtitle files were checked against a simulated server built from Plex's documentation, not yet against a real Plex Media Server.
+Limits of builds 45 and 46:
+- The film page, the filters and the subtitle files were checked against a simulated server built from Plex's documentation, then the film page in a Quest 3 with build 45 against a real Plex Media Server. From build 46 the subtitle files beside a film were checked against a real server with 26 such files: a file Plex names `.vtt` that holds ASS or SubRip text, and a SubRip file written in Latin-1, whose accents showed wrong, now play as they are.
 - The pictures of the cast are on Plex's own servers, which the app never contacts: the page shows their initials.
 - Subtitles drawn as pictures (PGS, VobSub) beside a film are not offered: only Plex's transcoder can burn them in, which the app does not use.
 - A count next to a year or a rating shows only when the server tells it.
+
+### A film this device cannot decode (from build 46)
+
+You pick a film and the player stops: a DTS sound track, a DivX 3 AVI of the 2000s, WMV, a 10 bit H.264 file, or TrueHD sound, which the decoders of the device do not know. From build 46 the app picks the player of a Plex film before it starts, from what the server says of its streams. Experimental, on by default.
+
+- **The device's own player** plays the film when its decoders know every stream (the subtitles do not count).
+- **mpv, in a Meta Quest**: the Quest build carries libmpv, which keeps the hardware video decoding of the headset (mediacodec-copy) and decodes in software what the hardware lacks: DTS, DivX 3, WMA and WMV, MPEG-4 part 2 beyond its simple profile, 10 bit H.264. The phone, tablet and TV builds do not carry it.
+- **The Plex server's conversion**, on every Android device: a film that neither the device nor mpv decodes (TrueHD sound, VC-1 video) is converted by your Plex server, with its processor or graphics card, and played as a stream. "Let the Plex server convert what this device cannot play (experimental)", in Settings, Advanced, is on by default; the player then shows "Converted by the Plex server".
+- **When a player fails anyway**, before or during the film, the app hands the film to the next one and says so for a few seconds: "This device could not play the film: mpv takes over", or "This device could not play the film: the Plex server converts it". A failure of the link or of the server never hands the film over, since another player could not fix it (see [When the Plex server stops answering](#when-the-plex-server-stops-answering-from-build-46)).
+- **Choose the player yourself**, on the Quest: "Player: Automatic" in the menu of the video page, for that film, or "Film player" in Settings, Advanced, for every film: Automatic, Device (the decoders of this device only) or mpv.
+
+Limits: the conversion turns HEVC into H.264 1080p, starts at 0 and seeks to where you stopped, and seeking far ahead in it relies on the server starting its conversion again, not tried yet. TrueHD, VC-1 and the PGS subtitles of Blu-ray discs are not in the libmpv of the Quest. iPhone, iPad and the computers keep their own player (the computers play with libmpv already). The colours of a Dolby Vision profile 5 film played by mpv are still to be checked in a headset. Checked by the project's tests, and the conversion decision asked of a real Plex server, read only; no conversion was played end to end, and nothing was tried on a device yet.
+
+### When the Plex server stops answering (from build 46)
+
+A Plex server that restarts, or whose disk of films went offline after a restart of the NAS, used to give "Response code: 500" or advice about remote access. From build 46:
+
+- **"The Plex server stopped answering"**, with Retry, when a server reached during this run of the app stops answering: the app no longer asks to set up remote access, stops sending requests in bursts, checks the server every few seconds by itself, and reloads the page once the server answers.
+- **"The Plex server cannot read this film's file right now"**, on the film page, in the player and for a download, when the server still knows the film but cannot read its file: the disk or folder holding the films may be offline on the server. Retry once it is back; a download goes on from where it stopped. It replaces "This film is no longer on the Plex server" in that case.
+- **"Waiting for the server…"**, with Cancel, when the server is slow to send the start of a film: the app waits up to three minutes, since just after a restart it can take more than a minute.
+- **The reason of the server**, with Retry, in place of "Response code: 500" when a playback error comes from the server.
+- **A fault of the player itself**, seen with some Dolby Vision MKV films on Android: the message says that the file and the server are fine and that Retry will not help. In the Quest, the Automatic player then hands the film to mpv (see [A film this device cannot decode](#a-film-this-device-cannot-decode-from-build-46)).
+
+Limits: a server that is already down when the app starts still gets the advice of a server never reached. Checked by the project's tests, after the outages of a real Plex server seen in a Quest 3 with build 45; no device run with build 46 yet.
 
 ### Download a film to this device
 
@@ -384,7 +410,7 @@ The address the server tells is learned again at each connection at home. When i
 
 ### Compared with Plex and with the DLNA type
 
-- **The original files**: the app reads the files themselves, never a copy converted by Plex, so the 360°, 3D and VR180 metadata stay intact and the app's viewers use them, where the Plex apps show these files flat.
+- **The original files**: the app reads the files themselves, not a copy converted by Plex, so the 360°, 3D and VR180 metadata stay intact and the app's viewers use them, where the Plex apps show these files flat. From build 46, a film that no player of an Android device decodes can be converted by the server, when you allow it: see [A film this device cannot decode](#a-film-this-device-cannot-decode-from-build-46).
 - **No plex.tv**: the app talks to your server only, always over HTTPS, and to plex.tv only during "Sign in with Plex" if you choose it. The server is checked through its own plex.direct certificate, tied to the id of the server, before the token is sent. The token stays on the device, in its secure storage, and goes only to your server, in a request header.
 - **Compared with adding the same server as DLNA**: the folders as on the disk, the thumbnails of Plex, access from outside home and a secure connection.
 
@@ -594,7 +620,7 @@ From build 16 Immuch360 stitches those files itself, on the phone, the tablet or
 2. Keep the two files of an X3 pair together: the app looks for the other file next to the first one, on the device, on the server or in the share folder. When the other one is missing, the app says "This recording is split in two files, one per lens, and (name) was not found next to it", and suggests keeping both files together or exporting the video from the camera app.
 3. Open the file and tap 360°. Raw files get the 360° button and raw photos the 360° badge. From build 18 the raw Insta360 files of the server are in the 360° list too, found by their name.
 4. A photo opens in the sphere viewer with a label at the bottom: "Raw 360° file, stitched by the app", and the source of the calibration: "lens calibration read from the file", "lens calibration of the same camera" (kept from another file of the same camera, by its serial number, or by its model for a file that only names its model), or "nominal lens values, seams possible" (the values of an X3, when nothing better is available).
-5. A video opens in the native 360° player and is stitched as it plays. Its 3D and 360°/180° buttons are hidden, since a raw video is one full sphere. The video players and the headset show no label. On Android phones, tablets and TVs from build 42, and in a Meta Quest from build 46, an Insta360, GoPro MAX or DJI Osmo 360 video also plays stabilised with the motion its camera recorded (experimental), from the library, a share or a folder alike: see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental).
+5. A video opens in the native 360° player and is stitched as it plays. Its 3D and 360°/180° buttons are hidden, since a raw video is one full sphere. The video players and the headset show no label. On Android phones, tablets and TVs from build 42, and on iPhone and iPad, in a Meta Quest and on Windows from build 46 and desktop build 26, an Insta360, GoPro MAX or DJI Osmo 360 video also plays stabilised with the motion its camera recorded (experimental), from the library, a share or a folder alike: see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental).
 6. In the headset, the immersive view gets a stitched temporary picture for a photo, and the same GPU effect as the phone for a video. There is no progress indicator yet while a raw photo is prepared.
 7. If the picture opens facing an odd direction (a photo taken with the camera lying flat, for example), drag it on a phone, or turn it in the headset with the right thumbstick or the Turn button.
 
@@ -612,11 +638,11 @@ From build 19, on Android and the Quest:
 
 ### Stabilisation with the camera's gyroscope (experimental)
 
-A 360° video filmed in the hand, on a bike or on a helmet shakes, and its horizon leans. The cameras record their own motion in the raw file. From build 42, the 360° player of Android phones, tablets and TVs reads that motion and turns each frame back: the horizon stays level, the shake goes and the view follows the road when you turn. Experimental, on by default.
+A 360° video filmed in the hand, on a bike or on a helmet shakes, and its horizon leans. The cameras record their own motion in the raw file. From build 42, the 360° player of Android phones, tablets and TVs reads that motion and turns each frame back: the horizon stays level, the shake goes and the view follows the road when you turn. Experimental, on by default. From build 46 and desktop build 26, the 360° player of iPhone and iPad, the immersive view of a Meta Quest and the 360° player of Windows do it too.
 
 1. Open a raw video of your Immich library, of a share (SMB, WebDAV, DLNA, Plex, the phone share) or of a folder of the device ("Browse a folder"), and tap 360°. The video starts at once: the app reads the motion in the background meanwhile, and "Stabilized with the camera's gyroscope" shows for a few seconds once it applies.
-2. The stabilisation button, in the top bar of the player next to the audio, 360° and 3D buttons, turns it off to see the video as it was filmed, and on again. "Stabilize with the camera's gyroscope (experimental)", in Settings, Asset Viewer, Videos, follows the button and keeps your choice for the next videos.
-3. The view can start turned to one side, the horizon level: drag it to the direction you want.
+2. The stabilisation button, in the top bar of the player next to the audio, 360° and 3D buttons, turns it off to see the video as it was filmed, and on again. "Stabilize with the camera's gyroscope (experimental)", in Settings, Asset Viewer, Videos, follows the button and keeps your choice for the next videos. On iPhone and iPad the button is in the top bar of the 360° player too, and on Windows at the top of the 360° player; in a Meta Quest, see below.
+3. On Android, from build 46, the view starts level with the camera's front and turns within about a second to the heading the stabilisation follows; before, it could stay up to 49 degrees off on an Insta360 X5 ride, 19 on a GoPro MAX. Drag it to look elsewhere. A video whose motion is read while it is paused shows its stabilised frame at once, and a player that Android closed in the background comes back stabilised.
 
 What the app reads, camera by camera:
 
@@ -629,9 +655,11 @@ Where the file is:
 - **The library, the shares and the folders** are read the same way, by small reads of the parts that hold the motion, never the whole file. Insta360 files reach the library; an Immich server refuses .360 and .osv files, so GoPro MAX and DJI Osmo 360 videos are stabilised from a share or a folder.
 - **A file that cannot be read at any position** plays as before, without the button, rather than being downloaded whole: a file of a DLNA or Plex server that does not tell its size, a server that answers a part of a file with all of it, a device that sends each file from its start.
 - **In a Meta Quest**, from build 46, the immersive viewer stabilises the same videos, from the same places (experimental, on by default). It turns the picture inside its stitch, frame by frame, so the sphere around you stays put. The view follows the camera's heading more slowly than on a phone, over about 2 seconds and never faster than 30 degrees a second, since in a headset a sudden turn of the world is worse than the shake. The "Stabilize with the camera's gyroscope (experimental)" button of the viewer's panel turns it off and on, and the setting of the app follows it.
-- **iPhone and iPad and the computers** do not stabilise yet: they level the video once, as below.
+- **On iPhone and iPad**, from version 3.4.1 of build 46, the 360° player stabilises the same videos of your library and your shares (experimental, on by default): the Metal stitch turns each frame at its own time, with the button in the top bar and the notices of Android. Built and checked by the CI on macOS, with Swift tests of the stitch; not seen on an iPhone yet.
+- **On Windows**, from desktop build 26, the 360° player stabilises them too (experimental, on by default), from your folders, your library and your shares: its drawing pass turns each frame at the time of that frame, which mpv gives within one frame (measured on 18,052 draws of test clips on Windows and 14,336 on Linux); the first frame of a video and the first frame after a seek can be one frame off. The button is at the top of the player, and the setting in the settings of the app. It comes with media_kit_360 v1.1.0. Not watched on a real camera file on a computer yet.
+- **Linux and macOS** do not stabilise yet: their 360° player plays these videos flat.
 
-What was checked: the tests of the project's CI and build host, on the motion tracks of sample files of Insta360 X3, X4 and X5, GoPro MAX (one file) and DJI Osmo 360 cameras, and the angles of the table against the picture of those files. For the Meta Quest, the tests also check that the turn inside the stitch shows each point where the phone's player shows it. No run on a phone, a TV or a headset is recorded yet: feedback welcome.
+What was checked: the tests of the project's CI and build host, on the motion tracks of sample files of Insta360 X3, X4 and X5, GoPro MAX (one file) and DJI Osmo 360 cameras, and the angles of the table against the picture of those files. For the Meta Quest, the tests also check that the turn inside the stitch shows each point where the phone's player shows it. No run on a phone, a TV, an iPhone, a headset or a computer is recorded yet: feedback welcome.
 
 ### How the stitching works
 
@@ -643,7 +671,7 @@ What was checked: the tests of the project's CI and build host, on the motion tr
 ### Limits
 
 - **Seams**: the stitch uses the camera's calibration only, without seam optimisation, so objects close to the camera can show a seam, as in the camera's own preview.
-- **Horizon**: on Android phones, tablets and TVs from build 42, and in a Meta Quest from build 46, an Insta360, GoPro MAX or DJI Osmo 360 video plays stabilised, the horizon level through the whole video (see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental)). Without the stabilisation (turned off, a file without a motion track, a GoPro MAX 2, a file of a share that cannot be read at any position, iPhone and iPad, the computers), levelling uses the accelerometer the camera records in the file, averaged: an Insta360 video is levelled once, from the start of the recording, so a handheld video keeps its shakes and its horizon may lean a little, and GoPro and DJI files keep the camera's horizon.
+- **Horizon**: on Android phones, tablets and TVs from build 42, and on iPhone and iPad, in a Meta Quest and on Windows from build 46 and desktop build 26, an Insta360, GoPro MAX or DJI Osmo 360 video plays stabilised, the horizon level through the whole video (see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental)). Without the stabilisation (turned off, a file without a motion track, a GoPro MAX 2, a file of a share that cannot be read at any position, Linux and macOS), levelling uses the accelerometer the camera records in the file, averaged: an Insta360 video is levelled once, from the start of the recording, so a handheld video keeps its shakes and its horizon may lean a little, and GoPro and DJI files keep the camera's horizon.
 - **Files without calibration**: a file without its calibration block (the members `_008` and `_009` of an X3 HDR group) uses the calibration the app kept from another file of the same camera or the same camera model, or the nominal X3 values if it has seen none.
 - **What was checked**: photos against Insta360 Studio exports of X3 files (same framing, level horizon, a yaw offset under a degree); single track videos on an Android emulator with a low resolution X3 file. The two track and two file paths were checked on real X4, X3 pair, GoPro MAX and Osmo 360 files with the app's CPU reference stitcher (level, continuous seams) and by the Android unit tests. Playback on a phone, a Quest and an iPhone is still the device test of builds 18 and 19, and raw files have not run on an iPhone yet: feedback welcome.
 - **DJI Osmo 360 files** (October 2026): a real .osv file, two 3840x3840 HEVC tracks of 10 bit (Main 10) at 25 frames a second with the camera's calibration after them, was read by the app's parsers and stitched by the CPU reference with continuous seams. On an Android 15 emulator, from a WebDAV share, it is listed with the 360° badge, but the emulator has no 10 bit HEVC decoder, so the file gets no thumbnail there and its 360° player says "Unable to play video"; a synthetic clip laid out the same way in 8 bit was listed with a thumbnail and played stitched to the end, both lenses paired, with the emulator's software decoders. A phone or a Quest with a 10 bit HEVC decoder is expected to play it with its hardware decoders, which no device run has confirmed yet. On Windows, see [Raw 360° videos](#use-it-on-a-computer) in the computer section.
@@ -783,6 +811,17 @@ These captures were taken with the app in French, before build 14. The panel now
 ### If the picture does not face you
 
 Turn it with the right thumbstick (or the Turn button of the info panel) until its centre is in front of you. The angle shows as "Image turned to N degrees", on the panel or on the one line overlay when the panel is hidden: please post that number in an [issue](https://github.com/freeKC/Immuch360/issues), with your camera model, so that it can become the default. The starting orientation is not confirmed for every camera yet.
+
+### The AI relief of a flat photo (Quest 3 and 3S, experimental)
+
+From build 32, "AI relief" in the top bar of a flat photo shows it in 3D in a Quest 3 or 3S, its relief estimated by AI in the headset (see the [README](../../README.md#turn-one-photo-into-3d-a-scene-a-panorama)). From build 46:
+
+- **Relief strength**: Settings, Advanced, "AI and 3D", "Relief strength": Subtle, Normal (the relief of the earlier builds, the default) or Strong, how far near objects stand out from the background; Strong is more striking and can tire the eyes sooner. A photo shown at another strength computes its relief again, about 2 seconds on a Quest 3.
+- **A sooner first relief**: the first relief after an install or a system update shows in about 4 s instead of about 7, from the depth map of the processor; the graphics chip is checked against it afterwards, once per system update, and then makes the reliefs. Measured on a Quest 3 on 30 October 2026: the depth pass takes under a second on the graphics chip (0.84 to 0.96 s) against 3.2 s on the processor, a whole relief about 2 s, and a photo that comes back 0.2 s.
+- **"Stop relief"** keeps a depth map that was being finished, so asking for that photo again takes a fraction of a second.
+- **A photo with a 2:1 frame** gets the relief like any flat photo, and opens in 360° when its metadata says it is a 360° photo.
+
+Checked by the project's tests and CI; not seen in a headset with build 46 yet.
 
 ### Limits of the immersive view
 
@@ -1034,7 +1073,7 @@ To download and install the preview, see [Install it on a computer](#install-it-
 - **Turn a photo** (from desktop build 7): R, Shift+R, or the rotate button of the top bar, see [Turn a photo with one key](#turn-a-photo-with-one-key).
 - **Flat videos** (from desktop build 2): the videos of your folders, of your Immich server (the original or the transcoded stream, see [Video details and decoders](#video-details-decoders-and-why-a-video-stutters)), of SMB, WebDAV and DLNA shares, of Plex servers and the Tapo recordings play in the window, with the controls of the phones (play, pause, the time bar), a buffering indicator, and a menu of the audio tracks for a video that has several. The videos of your folders and of the shares show a frame of the video as their thumbnail, instead of a film icon.
 - **360°, 3D and VR180 videos** (from desktop build 3): the 360° button opens them in the app's 360° player, in the window or in full screen, from every source of flat videos, turned with the mouse and the keyboard, with the 3D and 360°/180° buttons of the phones (a 3D video shows its left eye, as on phones), seeking, the audio track menu and a buffering indicator.
-- **Raw 360° videos** (from desktop build 3): Insta360 .insv files, with both lenses in one track, in two tracks (X4 and later) or in two files (X3 pairs), GoPro .360 and DJI .osv files, stitched by the app on the graphics chip as they play, with the calibration of the file, as on phones. From desktop build 5 the files with one lens per track or per file play in two players, one per lens, as phones run two decoders.
+- **Raw 360° videos** (from desktop build 3): Insta360 .insv files, with both lenses in one track, in two tracks (X4 and later) or in two files (X3 pairs), GoPro .360 and DJI .osv files, stitched by the app on the graphics chip as they play, with the calibration of the file, as on phones. From desktop build 5 the files with one lens per track or per file play in two players, one per lens, as phones run two decoders. From desktop build 26, Windows plays them stabilised with the camera's gyroscope (experimental), see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental).
 - **Network shares**: Samba (SMB), WebDAV and DLNA media servers, and Plex servers without plex.tv, browsed as on phones: their photos open and their videos play. For Tapo cameras, the recordings of the memory card: the list, fetching a clip and playing it; and from desktop build 3 the live view.
 - **Share this computer on the network**: the albums, months and 360° media of your folders, read only, for a Meta Quest or another device at home, as a phone shares itself. It exists on Windows only.
 - **Files**: downloads from the server go into a folder you choose, Share opens the Windows share panel, and the Logs page has "Save logs to a file".
@@ -1117,6 +1156,12 @@ The share of the app is read on Windows from the counter the Task Manager shows 
 
 - **On a laptop**, the app asks the drivers for the dedicated card, for 360° videos (see [360° videos and the graphics chip](#360-videos-and-the-graphics-chip)), so its own memory counts on the card the panorama uses: 0.2 GiB at rest and up to 0.9 GiB after a 360° video, measured on desktop build 21. It lets go of what it can before a panorama. "Power saving" for `immuch360.exe` in the Windows settings should keep the app on the integrated chip while you make panoramas; this was not checked on the test laptop.
 - **Close what holds the card**: games, 3D apps, a browser playing a video, another copy of stable-diffusion.cpp or a local AI model.
+
+### 3D photos: the relief strength and quality (from desktop build 26)
+
+In "Make 3D (AI)", the 3D photo type offers "Relief strength": Subtle, Normal or Strong, a parallax of 1.5, 2 or 3 % of the photo. Normal is the relief of the earlier builds and the default, and the box keeps the last choice. Each strength makes a version of its own: a photo is skipped when a version with the same settings exists, the strength included, so a Strong version is made next to a Normal one. The details of a 3D photo say "Relief: Strong" on its "Made from" row and on each 3D photo row of the original.
+
+In Settings, "AI and 3D", "Relief quality of 3D photos" offers "v2, better edges (experimental)", the default, and "v1, fast", the relief of the earlier builds and the one the Quest makes. v2 makes the depth follow the edges of the photo, the depth map enlarged under the guidance of the photo's colours, so that an object no longer drags a halo of background with it; when the components of the 360° panoramas are installed, MI-GAN fills the areas the new eye reveals behind the objects, and without them those areas are filled as by v1. A v2 version is a version of its own next to a v1 one. Measured on one photo of 10 Mpx on a laptop with 24 threads: v2 takes about 0.25 s more, and the MI-GAN fill about 7 s more. Checked by the project's tests and CI, the depth against a reference written apart; no 3D photo of v2 was looked at in a headset yet.
 
 ### Splat scenes: the Quality choice
 
