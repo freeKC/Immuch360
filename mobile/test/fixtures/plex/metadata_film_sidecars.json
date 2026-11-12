@@ -1,0 +1,134 @@
+{
+  "MediaContainer": {
+    "size": 1,
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Films",
+    "librarySectionUUID": "00000000-0000-0000-0000-000000000001",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1700000000,
+    "Metadata": [
+      {
+        "ratingKey": "501",
+        "key": "/library/metadata/501",
+        "guid": "plex://movie/0000000000000000000000ab",
+        "slug": "side-files",
+        "studio": "Studio",
+        "type": "movie",
+        "title": "Side Files",
+        "librarySectionTitle": "Films",
+        "librarySectionID": 1,
+        "librarySectionKey": "/library/sections/1",
+        "contentRating": "fr/12",
+        "summary": "A made up film with three subtitle files beside it.",
+        "year": 2001,
+        "thumb": "/library/metadata/501/thumb/1700000000",
+        "art": "/library/metadata/501/art/1700000000",
+        "duration": 5664051,
+        "originallyAvailableAt": "2001-01-01",
+        "addedAt": 1700000000,
+        "updatedAt": 1700000000,
+        "Media": [
+          {
+            "id": 5011,
+            "duration": 5664051,
+            "bitrate": 2484,
+            "width": 1280,
+            "height": 720,
+            "aspectRatio": 2.35,
+            "audioChannels": 2,
+            "audioCodec": "mp2",
+            "videoCodec": "h264",
+            "videoResolution": "720",
+            "container": "mp4",
+            "videoFrameRate": "24p",
+            "optimizedForStreaming": 0,
+            "has64bitOffsets": false,
+            "videoProfile": "high",
+            "hasVoiceActivity": false,
+            "Part": [
+              {
+                "id": 5010,
+                "key": "/library/parts/5010/1700000000/file.mp4",
+                "duration": 5664051,
+                "file": "/data/films/Side Files (2001).mp4",
+                "size": 1760000000,
+                "container": "mp4",
+                "has64bitOffsets": false,
+                "optimizedForStreaming": false,
+                "videoProfile": "high",
+                "Stream": [
+                  {
+                    "id": 50101,
+                    "streamType": 1,
+                    "default": true,
+                    "codec": "h264",
+                    "index": 0,
+                    "bitrate": 2100,
+                    "height": 720,
+                    "width": 1280,
+                    "profile": "high",
+                    "streamIdentifier": "1",
+                    "displayTitle": "720p",
+                    "extendedDisplayTitle": "720p (H.264)"
+                  },
+                  {
+                    "id": 50102,
+                    "streamType": 2,
+                    "selected": true,
+                    "default": true,
+                    "codec": "mp2",
+                    "index": 1,
+                    "channels": 2,
+                    "bitrate": 384,
+                    "language": "Français",
+                    "languageTag": "fr",
+                    "languageCode": "fra",
+                    "samplingRate": 48000,
+                    "streamIdentifier": "2",
+                    "displayTitle": "Français (MP2 Stereo)",
+                    "extendedDisplayTitle": "Français (MP2 Stereo)"
+                  },
+                  {
+                    "id": 50103,
+                    "key": "/library/streams/50103",
+                    "streamType": 3,
+                    "canAutoSync": false,
+                    "codec": "srt",
+                    "language": "English",
+                    "languageTag": "en",
+                    "languageCode": "eng",
+                    "format": "srt",
+                    "displayTitle": "English",
+                    "extendedDisplayTitle": "English (SRT External)"
+                  },
+                  {
+                    "id": 50104,
+                    "key": "/library/streams/50104",
+                    "streamType": 3,
+                    "canAutoSync": false,
+                    "codec": "srt",
+                    "format": "srt",
+                    "displayTitle": "Unknown",
+                    "extendedDisplayTitle": "Unknown (SRT External)"
+                  },
+                  {
+                    "id": 50105,
+                    "key": "/library/streams/50105",
+                    "streamType": 3,
+                    "canAutoSync": false,
+                    "codec": "vtt",
+                    "format": "vtt",
+                    "displayTitle": "Unknown",
+                    "extendedDisplayTitle": "Unknown (VTT External)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

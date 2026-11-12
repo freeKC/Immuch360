@@ -1,14 +1,15 @@
-// The audio and subtitle tracks of a Plex film for the players of the app (request 3 of 10 November 2026): the
-// subtitle files Plex knows beside the film (a .srt next to it on the disk, or one Plex downloaded), which a player
-// never sees in the file, served by the media bridge from memory; the names Plex gives every track ("Français (AC3
-// 5.1)", "English (SRT External)") in the menus; the track Plex has for the account, chosen first; and the choice made
-// in a menu written back to Plex (PUT /library/parts/{id}), so that the Plex apps start with it too.
+// The audio and subtitle tracks of a Plex film for the players of the app (request 3 of 10 November 2026): the subtitle
+// files Plex knows beside the film (a .srt next to it on the disk, or one Plex downloaded), which a player never sees
+// in the file, served by the media bridge from memory in the format of their text; the names Plex gives every track
+// ("Français (AC3 5.1)", "English (SRT External)") in the menus; the track Plex has for the account, chosen first; and
+// the choice made in a menu written back to Plex (PUT /library/parts/{id}), so that the Plex apps start with it too.
 //
 // A player knows the tracks inside the file by its own indexes. They are matched to Plex's streams by their order
 // among the tracks of their kind, and only when the counts and the languages agree: a track is never given the name
 // of another one. The side files are told by their id (videoSidecarIdPrefix and the stream id).
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -42,6 +43,48 @@ class PlexFileSystemTracks implements PlexTrackServer {
       fileSystem.selectStreams(partId, audioStreamId: audioStreamId, subtitleStreamId: subtitleStreamId);
 }
 
+/// The text formats of subtitle files the players read (Media3's parsers on Android, libmpv on the computers): its MIME
+/// type and the extension of its name on the bridge
+enum SubtitleTextFormat {
+  subRip('application/x-subrip', 'srt'),
+  webVtt('text/vtt', 'vtt'),
+  ssa('text/x-ssa', 'ass');
+
+  const SubtitleTextFormat(this.mimeType, this.extension);
+
+  final String mimeType;
+  final String extension;
+}
+
+final _subRipStart = RegExp(r'^\d+[ \t]*\r?\n[ \t]*\d{1,2}:\d{2}:\d{2}[,.]\d{1,3}[ \t]*-->');
+
+/// The format of the subtitle text [bytes] (UTF-8, a byte order mark allowed), read from its first lines: a Plex
+/// Media Server names a side file's format from its extension, and a .vtt file of a real library held ASS text, another
+/// one SubRip text. Text it does not recognise keeps the format of [codec], Plex's; null for none a player reads (SAMI,
+/// for instance) and for an empty file.
+SubtitleTextFormat? subtitleTextFormatOf(Uint8List bytes, {String? codec}) {
+  if (bytes.isEmpty) {
+    return null;
+  }
+  final head = utf8.decode(bytes.length > 1024 ? bytes.sublist(0, 1024) : bytes, allowMalformed: true);
+  final text = (head.startsWith('\uFEFF') ? head.substring(1) : head).trimLeft();
+  if (text.startsWith('WEBVTT')) {
+    return SubtitleTextFormat.webVtt;
+  }
+  if (text.toLowerCase().startsWith('[script info]')) {
+    return SubtitleTextFormat.ssa;
+  }
+  if (_subRipStart.hasMatch(text)) {
+    return SubtitleTextFormat.subRip;
+  }
+  return switch (codec?.toLowerCase()) {
+    'srt' || 'subrip' => SubtitleTextFormat.subRip,
+    'vtt' || 'webvtt' => SubtitleTextFormat.webVtt,
+    'ass' || 'ssa' => SubtitleTextFormat.ssa,
+    _ => null,
+  };
+}
+
 /// The tracks of one file of a Plex film while its page plays it; [dispose] takes its subtitle files off the bridge
 class PlexFilmTracks implements VideoTrackNaming {
   PlexFilmTracks._(this._server, this.part, this._bridge, this._mediaId, this.subtitles);
@@ -67,23 +110,29 @@ class PlexFilmTracks implements VideoTrackNaming {
             }),
     ]);
     final files = <String, GeneratedFile>{};
-    final subtitles = <VideoSubtitle>[];
+    final subtitles = <(String, VideoSubtitle)>[];
     final mediaId = _randomId();
     for (final (stream, bytes) in read) {
       if (bytes == null || bytes.isEmpty) {
         continue;
       }
-      final name = '${stream.id}.srt';
-      files[name] = GeneratedFile(bytes, 'application/x-subrip; charset=utf-8');
-      subtitles.add(
+      final format = subtitleTextFormatOf(bytes, codec: stream.codec);
+      if (format == null) {
+        _log.info('A subtitle file of the film is in no format the players read (${stream.codec}): left out');
+        continue;
+      }
+      final name = '${stream.id}.${format.extension}';
+      files[name] = GeneratedFile(bytes, '${format.mimeType}; charset=utf-8');
+      subtitles.add((
+        name,
         VideoSubtitle(
           uri: '',
-          mimeType: 'application/x-subrip',
+          mimeType: format.mimeType,
           language: stream.languageTag ?? stream.languageCode,
           label: stream.label,
           id: '$videoSidecarIdPrefix${stream.id}',
         ),
-      );
+      ));
     }
     final List<VideoSubtitle> served;
     if (files.isEmpty) {
@@ -91,9 +140,9 @@ class PlexFilmTracks implements VideoTrackNaming {
     } else {
       bridge.registerGenerated(mediaId, _SubtitleFiles(files));
       served = [
-        for (final subtitle in subtitles)
+        for (final (name, subtitle) in subtitles)
           VideoSubtitle(
-            uri: bridge.urlFor(mediaId, '${subtitle.id!.substring(videoSidecarIdPrefix.length)}.srt').toString(),
+            uri: bridge.urlFor(mediaId, name).toString(),
             mimeType: subtitle.mimeType,
             language: subtitle.language,
             label: subtitle.label,

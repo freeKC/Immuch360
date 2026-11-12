@@ -1,8 +1,9 @@
 // The Plex films lots of release 45 (films page, film page and filters, download) against a real Plex Media Server,
 // through the app's own Plex layer (PlexFileSystem, the films list, the film details, the Wikipedia client). Skipped
 // unless IMMUCH_NET_TESTS=1, IMMUCH_PLEX_URL (the https://<ipv4-dashes>.<hash>.plex.direct:<port> address of the
-// server) and IMMUCH_PLEX_TOKEN are set, as plex_integration_test.dart. The shell loads them from the secrets file,
-// which never goes into the repository, and never into the CI.
+// server) and IMMUCH_PLEX_TOKEN are set, as plex_integration_test.dart (IMMUCH_PLEX_SIDECAR_FILM, the rating key of a
+// film with a subtitle file beside it, is optional). The shell loads them from the secrets file, which never goes into
+// the repository, and never into the CI.
 //
 // Read only. Every request goes through a recording client that answers any method but GET and HEAD itself (the PUT
 // of the track write back is checked on its URL, never sent) and bounds every download=1 request to its first 64 KiB.
@@ -28,6 +29,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart'
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_pairing.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_tracks.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_cache.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_client.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_languages.dart';
@@ -112,6 +114,8 @@ void main() {
   final token = environment['IMMUCH_PLEX_TOKEN'] ?? '';
   final enabled = environment['IMMUCH_NET_TESTS'] == '1' && url.isNotEmpty && token.isNotEmpty;
   final Object skip = enabled ? false : 'needs IMMUCH_NET_TESTS=1, IMMUCH_PLEX_URL and IMMUCH_PLEX_TOKEN';
+  // Optional: the rating key of a film with subtitle files beside it, read first by test 7 (few films have one)
+  final sidecarFilm = environment['IMMUCH_PLEX_SIDECAR_FILM'];
 
   late PlexServerFound server;
   late _Recorder recorder;
@@ -394,6 +398,7 @@ void main() {
       final library = main!;
       final random = Random(45);
       final candidates = [
+        ...library.films.where((film) => film.ratingKey == sidecarFilm),
         ...library.films.take(15),
         ...List.generate(25, (_) => library.films[random.nextInt(library.films.length)]),
       ];
@@ -456,14 +461,21 @@ void main() {
         final before = recorder.requests.length;
         final bytes = await _inTime(() => plex.subtitleFile(sidecar), missed);
         final sent = recorder.requests.sublist(before).last;
-        final text = bytes == null ? '' : utf8.decode(bytes, allowMalformed: true);
+        final format = bytes == null ? null : subtitleTextFormatOf(bytes, codec: sidecar.codec);
+        var utf8Text = bytes != null;
+        try {
+          utf8.decode(bytes ?? const []);
+        } on FormatException {
+          utf8Text = false;
+        }
         _report(
           'subtitle file (${sidecar.codec}): path form ${_shape(sent.url.path)}, query ${sent.url.queryParameters.keys}, '
-          'key form ${_shape(sidecar.key!)}, ${bytes?.length} bytes, SubRip ${text.contains('-->')}',
+          'key form ${_shape(sidecar.key!)}, ${bytes?.length} bytes, format ${format?.name}, UTF-8 $utf8Text',
         );
-        expect(sent.url.path, '/library/streams/${sidecar.id}.srt');
-        expect(sent.url.queryParameters.keys, isNot(contains('X-Plex-Token')));
-        expect(text, contains('-->'));
+        expect(sent.url.path, '/library/streams/${sidecar.id}');
+        expect(sent.url.queryParameters, {'encoding': 'utf-8'});
+        expect(format, isNotNull);
+        expect(utf8Text, isTrue);
       } else {
         _report('no film with a text subtitle file beside among those read');
       }
@@ -741,7 +753,7 @@ void main() {
   );
 }
 
-/// The form of a request path, its numbers and names left out: "/library/streams/#.srt"
+/// The form of a request path, its numbers and names left out: "/library/streams/#"
 String _shape(String path) =>
     path.replaceAll(RegExp(r'\d+'), '#').replaceAll(RegExp(r'/[^/]*\.(?!srt)[^/.]+$'), '/file');
 

@@ -450,16 +450,42 @@ void main() {
       expect(server.requests.length, before, reason: 'nothing sent anywhere');
     });
 
-    test('reads a text subtitle file beside a film as SubRip, never an image one', () async {
+    test('reads a text subtitle file beside a film from its key, never an image one', () async {
       server.subtitles[40105] = Uint8List.fromList(utf8.encode('1\n00:00:01,000 --> 00:00:02,000\nBonjour\n'));
       final plex = await open();
       final part = (await plex.filmDetails('401')).parts.single;
       final subtitles = part.streamsOf(PlexStreamType.subtitle);
       expect(utf8.decode((await plex.subtitleFile(subtitles[1]))!), contains('Bonjour'));
-      final request = server.requests.lastWhere((r) => r.path == '/library/streams/40105.srt');
-      expect(request.query, 'format=srt');
+      final request = server.requests.lastWhere((r) => r.path == '/library/streams/40105');
+      expect(Uri.splitQueryString(request.query!), {'encoding': 'utf-8'});
+      expect(request.headers['x-plex-token'], plexTestToken, reason: 'the token as a header, never in the address');
       expect(await plex.subtitleFile(subtitles[2]), isNull, reason: 'PGS is an image subtitle');
       expect(await plex.subtitleFile(subtitles[0]), isNull, reason: 'inside the file');
+    });
+
+    // The side files of a Plex Media Server 1.42.1 (11 November 2026): served as they are on the disk at their key, a
+    // .srt path for a file Plex calls WebVTT answered 404, and three SubRip files of 24 were Latin-1
+    test('reads every side file of a real server: WebVTT by name, Latin-1 in UTF-8', () async {
+      server.metadata['501'] = _fixture('metadata_film_sidecars.json');
+      server.subtitles[50103] = Uint8List.fromList(utf8.encode('1\n00:01:20,874 --> 00:01:22,917\nHow do you feel?\n'));
+      server.subtitles[50104] = Uint8List.fromList(latin1.encode('1\n00:00:01,000 --> 00:00:02,000\nÉté à la mer\n'));
+      server.subtitles[50105] = Uint8List.fromList([
+        0xEF,
+        0xBB,
+        0xBF,
+        ...utf8.encode('[Script Info]\nScriptType: v4.00+\n'),
+      ]);
+      final plex = await open();
+      final sidecars = (await plex.filmDetails('501')).parts.single.streamsOf(PlexStreamType.subtitle);
+      expect(
+        [for (final stream in sidecars) (stream.codec, stream.isSidecar, stream.isTextSubtitle)],
+        [('srt', true, true), ('srt', true, true), ('vtt', true, true)],
+      );
+      expect(utf8.decode((await plex.subtitleFile(sidecars[0]))!), contains('How do you feel?'));
+      expect(utf8.decode((await plex.subtitleFile(sidecars[1]))!), contains('Été à la mer'));
+      expect(utf8.decode((await plex.subtitleFile(sidecars[2]))!), contains('[Script Info]'));
+      final paths = [for (final r in server.requests.where((r) => r.path.startsWith('/library/streams/'))) r.path];
+      expect(paths, ['/library/streams/50103', '/library/streams/50104', '/library/streams/50105']);
     });
 
     test('writes the track picked back to the part, 0 for subtitles off', () async {
