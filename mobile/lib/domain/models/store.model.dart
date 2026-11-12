@@ -158,6 +158,12 @@ enum StoreKey<T> {
   /// always asks
   playFromPhoneAsk<bool>._(5461),
 
+  /// Backup album choices restored from a settings file before this device's albums were listed (a new install,
+  /// before its first scan): a JSON object {"replace": bool, "albums": [{id, name, selection}]}, applied and removed
+  /// after the next scan of the device (see SettingsFileService.applyPendingBackupAlbums). 5480 and on are the
+  /// numbers of the settings file lot of release 46
+  pendingBackupAlbums<String>._(5480),
+
   /// The invitation to rate the app: its opens, viewings, crashes and asks, one JSON object (RateAppState of
   /// lib/domain/models/rate_app.dart). Sign out keeps it, an uninstall removes it
   rateAppState<String>._(5052),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/film_player_preference.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/models/value_codec.dart';
@@ -56,6 +58,10 @@ enum SettingsKey<T> {
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
   // The Wikipedia block of the film page of a Plex film, see ViewerConfig.filmWikipedia
   viewerFilmWikipedia<bool>(),
+  // The player of a Plex film and the server's conversion of what the device cannot play, see ViewerConfig.filmPlayer
+  // and ViewerConfig.plexConversion
+  viewerFilmPlayer<FilmPlayerPreference>(codec: EnumCodec(FilmPlayerPreference.values)),
+  viewerPlexConversion<bool>(),
 
   // Network
   networkAutoEndpointSwitching<bool>(),
@@ -136,6 +142,9 @@ enum SettingsKey<T> {
   // How the immersive viewer of the Meta Quest first shows an AI relief: stereo by default, 2.5D (experimental) when
   // "Open AI reliefs in 2.5D" is on, see AiImmersiveConfig.questMode
   aiReliefQuestMode<ReliefViewMode>(codec: EnumCodec(ReliefViewMode.values)),
+  // "Relief strength" of the AI reliefs of the Meta Quest: Normal by default, the parallax of every earlier version,
+  // see AiImmersiveConfig.questStrength
+  aiReliefStrength<ReliefStrength>(codec: EnumCodec(ReliefStrength.values)),
 
   // Settings, Advanced, "Kiosk mode (experimental)" of the Meta Quest, see KioskConfig: the switch, on by default; the
   // media the app opens at its start (KioskMedia.encode, none by default: the app starts as usual); the end card text

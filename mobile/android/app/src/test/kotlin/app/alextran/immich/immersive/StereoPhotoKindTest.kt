@@ -7,6 +7,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -114,9 +115,24 @@ class StereoPhotoKindTest {
     val keys = contract.getValue("cacheKeys").jsonArray.map { it.jsonObject.getValue("key").jsonPrimitive.content }
     val read =
       requests("depthRelief").values.map { (StereoPhotoKind.parse(it) as StereoPhotoKind.DepthRelief).spec.cacheKey }
-    // The request in 2.5D is the photo of the server again
+    // The request in 2.5D is the photo of the server again; each relief strength has a key of its own
     assertEquals(keys, read.distinct())
-    assertEquals(3, read.size)
+    assertEquals(5, read.size)
+  }
+
+  @Test
+  fun `a relief request carries the parallax of its relief strength, the rest of the photo of the server`() {
+    val requests = requests("depthRelief")
+    val server = StereoPhotoKind.parse(requests.getValue("a photo of the server")) as StereoPhotoKind.DepthRelief
+    for ((name, parallax) in listOf("Strong" to 0.03, "Subtle" to 0.015)) {
+      val read =
+        StereoPhotoKind.parse(requests.getValue("a photo of the server, $name relief")) as StereoPhotoKind.DepthRelief
+
+      assertEquals(name, parallax, read.spec.parallax, 0.0)
+      assertEquals(name, server.spec.copy(parallax = parallax, cacheKey = read.spec.cacheKey), read.spec)
+      assertNotEquals(name, server.spec.cacheKey, read.spec.cacheKey)
+      assertTrue(name, read.isEstimatedRelief)
+    }
   }
 
   @Test
@@ -261,7 +277,7 @@ class StereoPhotoKindTest {
   fun `the contract file is the one of the Dart tests`() {
     // Both groups the viewer reads are there, so that an empty file cannot pass the tests above
     assertEquals(2, (contract.getValue("sbsPhoto").jsonArray).size)
-    assertEquals(3, (contract.getValue("depthRelief").jsonArray).size)
+    assertEquals(5, (contract.getValue("depthRelief").jsonArray).size)
     assertEquals(2, (contract.getValue("volumetricScene").jsonArray).size)
     assertTrue(contract.getValue("unknown").jsonArray.all { it is JsonObject })
   }

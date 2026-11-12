@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
@@ -47,5 +48,31 @@ void main() {
     expect(SettingsKey.aiReliefQuestMode.name, 'aiReliefQuestMode');
     expect(SettingsKey.aiReliefQuestMode.encode(ReliefViewMode.mesh25d), 'mesh25d');
     expect(SettingsKey.aiReliefQuestMode.decode('stereo'), ReliefViewMode.stereo);
+  });
+
+  test('an AI relief of the Quest has the Normal strength by default, the parallax of the earlier versions', () {
+    expect(const AiImmersiveConfig().questStrength, ReliefStrength.normal);
+    expect(defaultConfig.read(SettingsKey.aiReliefStrength), ReliefStrength.normal);
+  });
+
+  test('the relief strength is kept by its name and writes its own field only', () {
+    final config = AppConfig.fromEntries({
+      SettingsKey.aiReliefQuestMode: ReliefViewMode.mesh25d,
+      SettingsKey.aiReliefStrength: ReliefStrength.strong,
+    });
+
+    expect(config.aiImmersive.questStrength, ReliefStrength.strong);
+    expect(config.read(SettingsKey.aiReliefStrength), ReliefStrength.strong);
+    expect(
+      config.write(SettingsKey.aiReliefStrength, ReliefStrength.subtle).aiImmersive.questMode,
+      ReliefViewMode.mesh25d,
+    );
+    expect(
+      config.write(SettingsKey.aiReliefQuestMode, ReliefViewMode.stereo).aiImmersive.questStrength,
+      ReliefStrength.strong,
+    );
+    expect(SettingsKey.aiReliefStrength.name, 'aiReliefStrength');
+    expect(SettingsKey.aiReliefStrength.encode(ReliefStrength.subtle), 'subtle');
+    expect(SettingsKey.aiReliefStrength.decode('strong'), ReliefStrength.strong);
   });
 }

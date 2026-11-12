@@ -15,6 +15,7 @@ class NetworkFileSystemException implements Exception {
     this.isAuthentication = false,
     this.isNotFound = false,
     this.isDownloadForbidden = false,
+    this.isFileUnreadable = false,
   });
 
   final String message;
@@ -27,6 +28,10 @@ class NetworkFileSystemException implements Exception {
 
   /// The server owner forbids this account to download files (Plex: "Allow Downloads" off for a shared user)
   final bool isDownloadForbidden;
+
+  /// The server still lists the file but cannot read it now (Plex: 404 on the part of a film it knows, when the volume
+  /// holding the films is not mounted): worth trying again later, unlike [isNotFound]
+  final bool isFileUnreadable;
 
   @override
   String toString() => 'NetworkFileSystemException: $message';
@@ -177,6 +182,13 @@ abstract class MediaBridge {
 abstract class GeneratedMedia {
   /// The file [name] (one path segment), null when there is none (or no longer)
   GeneratedFile? file(String name);
+}
+
+/// Generated media whose files are fetched when a player asks for them, from a server the app reads in Dart: the
+/// playlist and the segments of a film the Plex server converts (PlexConversion). [GeneratedMedia.file] is not asked.
+abstract class GeneratedMediaFetch implements GeneratedMedia {
+  /// The file [name] (one path segment), null when there is none; throws when it could not be fetched
+  Future<GeneratedFile?> fetch(String name);
 }
 
 /// Generated media that also takes small posts: the events the page of the splat viewer sends to the app

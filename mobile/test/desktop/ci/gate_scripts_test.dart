@@ -1030,6 +1030,26 @@ abstract class SyncEvents {
       expect(byHand.output, contains('aab: one-time threshold of 3.5 % against v3.3.0-rc.0-31'));
     });
 
+    test('against release 45 every kind has the one-time threshold of build 46, the Quest the largest (libmpv)', () {
+      // Release 46 puts libmpv in the Quest APK alone, about +7.67 % against release 45, then the Dart and Kotlin of its
+      // lots and the translations of its texts in every package (measured on 12 November 2026 at the integration).
+      // The sizes come from the file, --release names the release
+      const against45 = ['--release', 'v3.4.0-45'];
+      final run = check({
+        'app-quest-release.apk': 109300,
+        'app-arm64-v8a-phone-release.apk': 101800,
+      }, options: against45);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('quest: one-time threshold of 9.5 % against v3.4.0-45'));
+      expect(run.output, contains('(+9.300 %), ok (threshold of the quest kind: 9.5 %)'));
+      expect(run.output, contains('(+1.800 %), ok (threshold of the arm64-v8a kind: 1.9 %)'));
+
+      final over = check({'app-quest-release.apk': 109600, 'app-phone-release.aab': 154650}, options: against45);
+      expect(over.exitCode, 1, reason: '$over');
+      expect(over.output, contains('(+9.600 %), more than 9.5 % (threshold of the quest kind: 9.5 %)'));
+      expect(over.output, contains('(+3.100 %), more than 3 % (threshold of the aab kind: 3 %)'));
+    });
+
     test('against release 35 the Quest APK has the one-time threshold of the splats, the phone packages keep 1 %', () {
       // The release of the Gaussian splats: the splat module is in the Quest APK alone, +0.908 % against release 35 on
       // 30 October 2026, 0.09 point under 1 %. The sizes come from the file, --release names the release they stand for

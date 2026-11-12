@@ -16,3 +16,10 @@
 # which R8 cannot see: its classes keep their names and members (the AAR carries no rules of its own).
 -keep class com.github.luben.zstd.** { *; }
 ##---------------End: zstd-jni ----------
+
+##---------------Begin: media_kit on Android (libmpv, release 46) ----------
+# The texture output of media_kit_video and the helper of media_kit_libs_android_video (src/quest/java): the helper's
+# native methods are bound by name from libmediakitandroidhelper.so, which also calls back openFileDescriptorJava, and
+# VideoOutput finds the helper's methods by reflection: their classes keep their names and members.
+-keep class com.alexmercerind.** { *; }
+##---------------End: media_kit on Android ----------

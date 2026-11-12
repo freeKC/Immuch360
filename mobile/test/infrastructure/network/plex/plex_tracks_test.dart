@@ -27,8 +27,13 @@ class _FakeServer implements PlexTrackServer {
       picks.add((partId: partId, audio: audioStreamId, subtitle: subtitleStreamId));
 }
 
-PlexFilmPart _part() =>
-    parsePlexFilmDetails(jsonDecode(File('test/fixtures/plex/metadata_film.json').readAsStringSync()))!.parts.single;
+PlexFilmPart _part([String fixture = 'metadata_film.json']) =>
+    parsePlexFilmDetails(jsonDecode(File('test/fixtures/plex/$fixture').readAsStringSync()))!.parts.single;
+
+Uint8List _text(String text, {bool bom = false}) => Uint8List.fromList([
+  if (bom) ...[0xEF, 0xBB, 0xBF],
+  ...utf8.encode(text),
+]);
 
 VideoTrackRef _audio(int ordinal, [String? language]) =>
     VideoTrackRef(kind: VideoTrackKind.audio, ordinal: ordinal, language: language);
@@ -60,6 +65,68 @@ void main() {
     expect(answer.body, contains('Bonjour'));
     tracks.dispose();
     expect((await http.get(url)).statusCode, 404, reason: 'gone from the bridge with the page');
+  });
+
+  // The three side files of a film on a Plex Media Server 1.42.1 (11 November 2026): the file Plex calls WebVTT from
+  // its name held ASS text, another one SubRip text
+  test('gives each side file the format of its text, whatever its name says', () async {
+    server.files[50103] = _text('1\n00:01:20,874 --> 00:01:22,917\nHow do you feel?\n');
+    server.files[50104] = _text('1\r\n00:00:01,000 --> 00:00:02,000\r\nÉté\r\n', bom: true);
+    server.files[50105] = _text('[Script Info]\nScriptType: v4.00+\n', bom: true);
+    final tracks = await PlexFilmTracks.load(server, _part('metadata_film_sidecars.json'), bridge);
+    expect(
+      [for (final subtitle in tracks.subtitles) (subtitle.id, subtitle.mimeType, subtitle.language)],
+      [
+        ('${videoSidecarIdPrefix}50103', 'application/x-subrip', 'en'),
+        ('${videoSidecarIdPrefix}50104', 'application/x-subrip', null),
+        ('${videoSidecarIdPrefix}50105', 'text/x-ssa', null),
+      ],
+    );
+    expect(
+      [for (final subtitle in tracks.subtitles) Uri.parse(subtitle.uri).pathSegments.last],
+      ['50103.srt', '50104.srt', '50105.ass'],
+    );
+    final ass = await http.get(Uri.parse(tracks.subtitles[2].uri));
+    expect(ass.statusCode, 200);
+    expect(ass.headers['content-type'], startsWith('text/x-ssa'));
+    expect(utf8.decode(ass.bodyBytes), contains('[Script Info]'));
+    expect(
+      tracks.labelOf(const VideoTrackRef(kind: VideoTrackKind.subtitle, sidecarId: 'immuch-sub-50105')),
+      'Unknown (VTT External)',
+    );
+    tracks.dispose();
+  });
+
+  test('text the app does not recognise keeps the format Plex gives it, or is left out', () async {
+    final json = jsonDecode(File('test/fixtures/plex/metadata_film_sidecars.json').readAsStringSync()) as Map;
+    final streams = json['MediaContainer']['Metadata'][0]['Media'][0]['Part'][0]['Stream'] as List;
+    (streams.last as Map)['codec'] = 'smi';
+    final part = parsePlexFilmDetails(json)!.parts.single;
+    server.files[50103] = _text('WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nHello\n');
+    server.files[50104] = _text('<SAMI><BODY><SYNC Start=1000><P>Hello</SAMI>');
+    server.files[50105] = _text('<SAMI><BODY><SYNC Start=1000><P>Hello</SAMI>');
+    final tracks = await PlexFilmTracks.load(server, part, bridge);
+    expect(
+      [for (final subtitle in tracks.subtitles) (subtitle.id, subtitle.mimeType)],
+      [('${videoSidecarIdPrefix}50103', 'text/vtt'), ('${videoSidecarIdPrefix}50104', 'application/x-subrip')],
+    );
+    tracks.dispose();
+  });
+
+  test('subtitleTextFormatOf', () {
+    expect(subtitleTextFormatOf(_text('1\n00:00:01,000 --> 00:00:02,000\nA\n')), SubtitleTextFormat.subRip);
+    expect(subtitleTextFormatOf(_text('\n\n12\r\n0:00:01.000 --> 0:00:02.000\r\nA\r\n')), SubtitleTextFormat.subRip);
+    expect(
+      subtitleTextFormatOf(_text('WEBVTT - a title\n\n00:01.000 --> 00:02.000\nA\n', bom: true)),
+      SubtitleTextFormat.webVtt,
+    );
+    expect(subtitleTextFormatOf(_text('[Script Info]\nTitle: A\n', bom: true)), SubtitleTextFormat.ssa);
+    expect(subtitleTextFormatOf(_text('[script info]\n')), SubtitleTextFormat.ssa);
+    expect(subtitleTextFormatOf(_text('<SAMI>')), isNull);
+    expect(subtitleTextFormatOf(_text('<SAMI>'), codec: 'srt'), SubtitleTextFormat.subRip);
+    expect(subtitleTextFormatOf(_text('<SAMI>'), codec: 'ASS'), SubtitleTextFormat.ssa);
+    expect(subtitleTextFormatOf(_text('<SAMI>'), codec: 'smi'), isNull);
+    expect(subtitleTextFormatOf(Uint8List(0), codec: 'srt'), isNull);
   });
 
   test('a subtitle file that does not come is left out, the film plays without it', () async {

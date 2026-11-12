@@ -73,6 +73,7 @@ class SphericalVideoApiImpl: SphericalVideoApi {
 
     let player = SphericalVideoViewController(
       url: videoUrl,
+      stabilizationKey: url,
       fallbackUrl: fallback,
       headers: headers,
       title: title,
@@ -101,9 +102,10 @@ class SphericalVideoApiImpl: SphericalVideoApi {
     return top
   }
 
-  /// The stabilisation of a raw 360° video with the motion track of its camera (issue 14): the iOS player does not
-  /// apply it yet (lot d1), and Flutter sends it no table here (videoStabilizationSupportedProvider). Kept for the
-  /// protocol.
+  /// The stabilisation of a raw 360° video with the motion track of its camera (issue 14), for the player of [url]
+  /// that plays it or is about to (see StabilizationInbox): the setting, whether Flutter reads a track, then its table.
+  /// A table sent but refused (lengths, order, norms) counts as no track: the player shows the video as it is, and no
+  /// switch that would do nothing.
   func setStabilization(
     url: String,
     enabled: Bool,
@@ -111,5 +113,26 @@ class SphericalVideoApiImpl: SphericalVideoApi {
     presentationTimesUs: FlutterStandardTypedData?,
     corrections: FlutterStandardTypedData?,
     summary: String?
-  ) throws {}
+  ) throws {
+    var table: StabilizationTable?
+    if presentationTimesUs != nil || corrections != nil {
+      table = StabilizationTable.of(
+        timesUs: presentationTimesUs.map { Self.values($0.data, as: Int64.self) },
+        corrections: corrections.map { Self.values($0.data, as: Double.self) }
+      ) { reason in
+        print("Stabilisation table refused: \(reason)")
+      }
+    }
+    let usable = hasTrack && (table != nil || (presentationTimesUs == nil && corrections == nil))
+    StabilizationInbox.shared.post(
+      StabilizationInbox.Message(url: url, enabled: enabled, hasTrack: usable, table: table, summary: summary))
+  }
+
+  /// The values of a typed list of Flutter (Int64List, Float64List): native byte order, as the standard codec
+  /// writes them; copied, so that the alignment of the bytes does not matter
+  private static func values<T: Numeric>(_ data: Data, as type: T.Type) -> [T] {
+    var values = [T](repeating: 0, count: data.count / MemoryLayout<T>.stride)
+    _ = values.withUnsafeMutableBytes { data.copyBytes(to: $0) }
+    return values
+  }
 }

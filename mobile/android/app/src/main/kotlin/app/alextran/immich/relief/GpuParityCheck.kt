@@ -7,6 +7,9 @@ import kotlin.math.abs
 // Which path the depth model of the Meta Quest takes on this headset (design-final 2026-10-26, section 3.2 points 3 and
 // 4). The model card of the LiteRT export asks to check the GPU against the CPU on the target device, so the first
 // relief runs the model on both with the same input and compares the two maps: the GPU is kept only when they agree.
+// Since release 46 the first relief shows the CPU map as soon as it exists and the GPU pass of the check runs after
+// it, while the user already looks at the relief (FreeKC's Quest 3, 30 October 2026: about 6 s before anything showed,
+// a "Stop relief" pressed at 3 s, the finished map thrown away).
 // The decision is kept in the app's preferences against the system build, the engine and the model, on the model of
 // DecoderMemory (djilink/DecoderPolicy.kt): a system update, a new engine or a new model checks again. A GPU that will
 // not load or fails its first pass means the CPU: design 3.2 point 3 asks for the CPU whenever the accelerator fails.
@@ -36,15 +39,16 @@ enum class ParityVerdict {
   GPU_FAILED,
 }
 
-/** The parity check that ran during a pass: what it found, the path it chose, and the comparison when there was one */
+/** The parity check run after a first relief: what it found, the path it chose, and the comparison if there was one */
 class ParityResult(val verdict: ParityVerdict, val chosen: DepthPath, val comparison: DepthComparison?)
 
 /**
  * A depth map of the model: [depth] as the engine gave it ([ReliefPreprocess.INPUT_WIDTH] x
- * [ReliefPreprocess.INPUT_HEIGHT], to cut back with [ReliefPreprocess.cropDepth]), the [path] it came from, the time
- * of that pass, and the parity check when it ran during this pass
+ * [ReliefPreprocess.INPUT_HEIGHT], to cut back with [ReliefPreprocess.cropDepth]), the [path] it came from, and the
+ * time of that pass. The first relief on a headset is the CPU's; [GpuParityCheck.runPendingCheck] compares the GPU to
+ * it afterwards.
  */
-class DepthPass(val depth: FloatArray, val path: DepthPath, val elapsedMs: Long, val parity: ParityResult?)
+class DepthPass(val depth: FloatArray, val path: DepthPath, val elapsedMs: Long)
 
 /** The app's own preferences, behind an interface so that the tests keep them in memory */
 interface DepthPathStore {
@@ -96,12 +100,15 @@ class DepthPathMemory(
 /**
  * The depth model of the headset, on the path this headset should take, at most one model open at a time.
  *
- * 1. **First relief** (no decision in [memory]): the model runs on the CPU, is closed, then runs on the GPU with the
- *    same input. The two maps, cut back to the photo and normalised by relief-v1 step 1, are compared: mean difference
- *    [MAX_MEAN_ERROR] at most and 99th percentile [MAX_P99_ERROR] at most keep the GPU, open for the next photos;
- *    otherwise the CPU is kept. The CPU goes first so that the model kept is the one left open, and so that two
- *    models (about 375 MB each on the CPU, q0-measures 2) are never loaded together. This first relief costs one CPU
- *    pass more, once per system build.
+ * 1. **First relief** (no decision in [memory]): the model runs on the CPU and its map is given at once, so the
+ *    relief shows after one pass (about 3.9 s in all on a Quest 3 by [Q0Quest3], against about 7 s with both passes
+ *    first). The input and the CPU map are kept ([checkPending]); [runPendingCheck], which the relief job calls once
+ *    the relief is shown, closes the CPU model, runs the GPU with the same input and compares the two maps, cut back to
+ *    the photo and normalised by relief-v1 step 1: mean difference [MAX_MEAN_ERROR] at most and 99th percentile
+ *    [MAX_P99_ERROR] at most keep the GPU, open for the next photos; otherwise the CPU is kept. The map shown first is
+ *    always the CPU's, the reference, so a GPU that differs never shows. Two models (about 375 MB each on the CPU,
+ *    q0-measures 2) are never loaded together. A check not run (the viewer closed first, a hot headset) leaves no
+ *    decision: the next first relief keeps a new one. This costs one CPU pass more, once per system build.
  * 2. **GPU remembered**: the GPU model opens; if it will not load or fails before a first good pass in this session,
  *    the photo and the rest of the session go to the CPU and the decision is forgotten, so that the next session
  *    runs the parity check again: a passing failure (the GPU memory held by the immersive scene, an OpenGL context
@@ -128,8 +135,10 @@ class GpuParityCheck(
     const val MAX_P99_ERROR = 0.05
 
     /**
-     * The path tried first. Provisional: Q0 could not measure the Quest 3 (q0-measures-2026-10-26.md, section 4 point
-     * 4). If the GPU through OpenGL takes more than 1.5 s and the CPU less than 5 s, this becomes CPU.
+     * The path tried first, the GPU, confirmed by the Q0 measure of a Quest 3. The rule written before any headset was
+     * measured (q0-measures-2026-10-26.md, section 4 point 4): if the GPU through OpenGL takes more than 1.5 s and the
+     * CPU less than 5 s, this becomes CPU. The recorded reference, [Q0Quest3], is well inside it: the GPU pass under
+     * one second, three to four times faster than the CPU, and the same map.
      */
     val PREFERRED_PATH = DepthPath.GPU
 
@@ -151,6 +160,40 @@ class GpuParityCheck(
     }
   }
 
+  /**
+   * Q0 on a Quest 3, LiteRT 2.3.0, depth-anything-v2-small@651415f1, photos of 3840 x 2160 decoded at 2560 x 1440:
+   * measured on 30 October 2026 by FreeKC in his own session with build 33 (device-tests-33,
+   * logcat-freekc-20261030-1020.txt), filed in release 46 as the recorded reference. Every figure is a log line of
+   * the app; the same log goes on to 31 October and 1 November with GPU passes of 830 to 982 ms and whole reliefs of
+   * 1691 to 2313 ms.
+   */
+  object Q0Quest3 {
+    /** "depth model: GPU pass in 841 ms" and "955 ms" */
+    const val GPU_PASS_MS_MIN = 841L
+    const val GPU_PASS_MS_MAX = 955L
+
+    /** "depth model: CPU pass in 3221 ms", the CPU pass of the parity check of the first relief */
+    const val CPU_PASS_MS = 3221L
+
+    /** "depth model: open on CPU in 140 ms" */
+    const val CPU_OPEN_MS = 140L
+
+    /** "depth model: open on GPU in 2053 ms" the first time; 579 and 701 ms later that day */
+    const val GPU_FIRST_OPEN_MS = 2053L
+
+    /** "GPU kept ..., mean 0.0000, 99th percentile 0.0000": the two maps the same to four decimals */
+    const val PARITY_MEAN = 0.0
+    const val PARITY_P99 = 0.0
+
+    /** "whole relief in 2108 ms" and "2097 ms" once the GPU was kept, the depth pass in it */
+    const val WHOLE_RELIEF_MS_MIN = 2097L
+    const val WHOLE_RELIEF_MS_MAX = 2108L
+
+    /** "whole relief in 186 ms" and "214 ms": the depth map from the relief cache */
+    const val CACHED_RELIEF_MS_MIN = 186L
+    const val CACHED_RELIEF_MS_MAX = 214L
+  }
+
   private var open: DepthEstimator? = null
   private var openModel: File? = null
 
@@ -159,6 +202,15 @@ class GpuParityCheck(
 
   /** The model of this session whose GPU failed after good passes: the rest of the session is on the CPU */
   private var gpuDroppedFor: String? = null
+
+  /** What the GPU of a first relief is compared with: its model, its input and the CPU map cut back to the photo */
+  private class PendingCheck(val model: File, val modelId: String, val input: ReliefInput, val cpuMap: FloatArray)
+
+  private var pending: PendingCheck? = null
+
+  /** A first relief gave the CPU map: [runPendingCheck] has the GPU to compare with it */
+  val checkPending: Boolean
+    get() = pending != null
 
   /** The path of the open model, null when none is open */
   val openPath: DepthPath?
@@ -186,8 +238,49 @@ class GpuParityCheck(
     }
   }
 
-  /** Frees the model; what this session learnt of the GPU stays until the object goes */
+  /**
+   * Runs the check a first relief left ([checkPending]): the GPU with the same input as the CPU pass, and the two maps
+   * compared. Within both thresholds the GPU is remembered and stays open for the next photo; otherwise, or when the
+   * GPU will not load or fails, the CPU is remembered and the GPU closed. Null when no check waits. Nothing it finds
+   * changes the relief already shown, which is the CPU's. A failure of the CPU side cannot happen here.
+   */
+  fun runPendingCheck(): ParityResult? {
+    val check = pending ?: return null
+    pending = null
+    val modelId = check.modelId
+    val frame = check.input.frame
+    // Opening the GPU model closes the CPU one first
+    val gpu =
+      try {
+        pass(check.model, DepthPath.GPU, check.input)
+      } catch (e: DepthEstimatorException) {
+        // The CPU took the same file: whatever the GPU says, the accelerator failed
+        closeOpen()
+        log("depth model: the GPU failed (${e.message}), the CPU is kept for $modelId")
+        memory.remember(modelId, DepthPath.CPU)
+        return ParityResult(ParityVerdict.GPU_FAILED, DepthPath.CPU, null)
+      }
+    val comparison = compare(ReliefPreprocess.cropDepth(gpu.depth, frame), check.cpuMap, frame.width, frame.height)
+    if (comparison.matches) {
+      log("depth model: GPU kept for $modelId, $comparison")
+      memory.remember(modelId, DepthPath.GPU)
+      gpuPassedFor = modelId
+      return ParityResult(ParityVerdict.SAME, DepthPath.GPU, comparison)
+    }
+    closeOpen()
+    log("depth model: the GPU map differs from the CPU map ($comparison), the CPU is kept for $modelId")
+    memory.remember(modelId, DepthPath.CPU)
+    return ParityResult(ParityVerdict.DIFFERENT, DepthPath.CPU, comparison)
+  }
+
+  /** Drops the check a first relief left, if any: the next first relief keeps a new one */
+  fun dropPendingCheck() {
+    pending = null
+  }
+
+  /** Frees the model and drops a check not run; what this session learnt of the GPU stays until the object goes */
   override fun close() {
+    pending = null
     closeOpen()
   }
 
@@ -212,37 +305,20 @@ class GpuParityCheck(
   }
 
   private fun firstRelief(model: File, modelId: String, input: ReliefInput): DepthPass {
-    log("depth model: first relief with $modelId on ${engine.engine}, the GPU is checked against the CPU")
-    // Opening the GPU model closes the CPU one first
+    log(
+      "depth model: first relief with $modelId on ${engine.engine}: the CPU map is shown, " +
+        "the GPU is checked against it afterwards"
+    )
     val cpu = pass(model, DepthPath.CPU, input)
-    val gpu =
-      try {
-        pass(model, DepthPath.GPU, input)
-      } catch (e: DepthEstimatorException) {
-        // The CPU took the same file: whatever the GPU says, the accelerator failed
-        closeOpen()
-        log("depth model: the GPU failed (${e.message}), the CPU is kept for $modelId")
-        memory.remember(modelId, DepthPath.CPU)
-        return cpu.withParity(ParityVerdict.GPU_FAILED, null)
-      }
-    val frame = input.frame
-    val comparison =
-      compare(
-        ReliefPreprocess.cropDepth(gpu.depth, frame),
-        ReliefPreprocess.cropDepth(cpu.depth, frame),
-        frame.width,
-        frame.height,
+    // Copies: the job fills the same input buffer for the next photo, and an engine may give its own output buffer
+    pending =
+      PendingCheck(
+        model,
+        modelId,
+        ReliefInput(input.tensor.copyOf(), input.frame),
+        ReliefPreprocess.cropDepth(cpu.depth, input.frame),
       )
-    if (comparison.matches) {
-      log("depth model: GPU kept for $modelId, $comparison")
-      memory.remember(modelId, DepthPath.GPU)
-      gpuPassedFor = modelId
-      return gpu.withParity(ParityVerdict.SAME, comparison)
-    }
-    closeOpen()
-    log("depth model: the GPU map differs from the CPU map ($comparison), the CPU is kept for $modelId")
-    memory.remember(modelId, DepthPath.CPU)
-    return cpu.withParity(ParityVerdict.DIFFERENT, comparison)
+    return cpu
   }
 
   /** One pass on [path], the model of that path opened first unless it is the open one */
@@ -262,7 +338,7 @@ class GpuParityCheck(
       throw DepthEstimatorException(DepthFailure.WRONG_MODEL, path, "a map of ${depth.size} values, not $DEPTH_SIZE")
     }
     log("depth model: $path pass in $elapsedMs ms")
-    return DepthPass(depth, path, elapsedMs, null)
+    return DepthPass(depth, path, elapsedMs)
   }
 
   private fun openOn(model: File, path: DepthPath): DepthEstimator {
@@ -274,10 +350,6 @@ class GpuParityCheck(
     openModel = model
     return estimator
   }
-
-  /** This pass, chosen by the parity check */
-  private fun DepthPass.withParity(verdict: ParityVerdict, comparison: DepthComparison?) =
-    DepthPass(depth, path, elapsedMs, ParityResult(verdict, path, comparison))
 
   private fun closeOpen() {
     val estimator = open

@@ -157,19 +157,23 @@ class _PlexFilmFilterSheetState extends ConsumerState<PlexFilmFilterSheet> {
               ),
             ),
             const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: OverflowBar(
-                alignment: MainAxisAlignment.spaceBetween,
-                overflowAlignment: OverflowBarAlignment.end,
-                children: [
-                  TextButton(key: const Key('plex_film_filters_clear'), onPressed: _clear, child: Text(t.clear)),
-                  FilledButton(
-                    key: const Key('plex_film_filters_apply'),
-                    onPressed: () => Navigator.of(context).pop(_query(options)),
-                    child: Text(t.plex_films_filter_apply),
-                  ),
-                ],
+            // Above the navigation bar of the phone: the safe area of the sheet covers its top only
+            SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: OverflowBar(
+                  alignment: MainAxisAlignment.spaceBetween,
+                  overflowAlignment: OverflowBarAlignment.end,
+                  children: [
+                    TextButton(key: const Key('plex_film_filters_clear'), onPressed: _clear, child: Text(t.clear)),
+                    FilledButton(
+                      key: const Key('plex_film_filters_apply'),
+                      onPressed: () => Navigator.of(context).pop(_query(options)),
+                      child: Text(t.plex_films_filter_apply),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

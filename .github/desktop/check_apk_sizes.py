@@ -125,6 +125,28 @@ ONE_TIME_KIND_THRESHOLDS = {
         'arm64-v8a': 3.1,
         'quest': 2.9,
     },
+    # 11 and 12 November 2026, for Android build 46 (Immuch360 3.4.1), compared with release 45. The Quest APK alone
+    # carries libmpv (lot feat-plex-mpv-46: the films the headset cannot decode, src/quest and app/build.gradle), the
+    # arm64 libraries of media-kit's libmpv-android-video-build v1.1.7 read from default-arm64-v8a.jar (SHA-256
+    # 4363dfa5..., licenses/libmpv-android/README.md): libmpv.so 12,369,680 bytes and libmediakitandroidhelper.so
+    # 386,696, stored uncompressed and aligned on 16 KiB, about +12.84 MB, +7.67 % on its own. Every package also gets
+    # Media3's HLS module and the Dart and Kotlin of the fourteen lots. Measured on the packages of release-46-int at
+    # 21e2edc136 (CI run 43138752304), before the translations: arm64-v8a 157,160,071 bytes (+0.672 %), armeabi-v7a
+    # 98,151,059 (+1.149 %), the Quest 181,280,798 (+8.273 %), universal 323,035,782 (+0.963 %), x86_64 104,061,376
+    # (+1.019 %), the AAB 263,764,778 (+1.057 %). The translations of the 147 new texts in 88 languages come after: in
+    # release 45, 157 texts added 0.92 MB to each single ABI APK and the Quest's, 1.06 MB to armeabi-v7a, 2.90 MB to the
+    # universal APK and 3.17 MB to the AAB; the English of the 46 texts is 1.16 times as long, so the same growth times
+    # 1.16 is counted in. Each kind gets that estimate plus half a point, rounded up to a tenth; the measure of the
+    # translation pass's packages confirms it (or moves it, with its reason). Build 47 compares with build 46 and the
+    # ordinary threshold again.
+    'v3.4.0-45': {
+        'quest': 9.5,
+        'armeabi-v7a': 3.0,
+        'aab': 3.0,
+        'universal': 2.6,
+        'x86_64': 2.6,
+        'arm64-v8a': 1.9,
+    },
 }
 
 

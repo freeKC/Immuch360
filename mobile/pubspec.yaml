@@ -2,7 +2,7 @@ name: immich_mobile
 description: Immich - selfhosted backup media file on mobile phone
 
 publish_to: 'none'
-version: 3.4.0+3030043
+version: 3.4.1+3030044
 
 environment:
   sdk: '>=3.12.0 <4.0.0'
@@ -187,22 +187,22 @@ dependency_overrides:
   media_kit:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.0.1
+      ref: v1.1.0
       path: packages/media_kit
   media_kit_libs_linux:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.0.1
+      ref: v1.1.0
       path: packages/media_kit_libs_linux
   media_kit_libs_windows_video:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.0.1
+      ref: v1.1.0
       path: packages/media_kit_libs_windows_video
   media_kit_video:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.0.1
+      ref: v1.1.0
       path: packages/media_kit_video
   # Copy of immich-app/native_video_player at cdf621bdb7edaf996e118a58a48f6441187d79c6, the git ref of the dependency
   # (MIT), with an audio and subtitle track API and the subtitles drawn on Android (see its IMMUCH360-NOTE.md)
@@ -236,6 +236,11 @@ flutter:
     # zstd-jni, which reads the Gaussian splats of SPZ version 4 on the Quest, is in the APK of the quest flavour only,
     # and so is its licence (lib/utils/zstd_licenses.dart)
     - path: assets/licenses/zstd-jni/
+      flavors:
+        - quest
+    # libmpv, which plays the films the headset cannot decode, is in the APK of the quest flavour only, and so are its
+    # licence texts (lib/utils/mpv_android_licenses.dart)
+    - path: assets/licenses/libmpv-android/
       flavors:
         - quest
     # The licence of the Meta Spatial SDK, which every Android APK ships, and the notices of its native libraries

@@ -5,7 +5,9 @@
 // another folder of the library stays linked, a deleted one leaves the index with the next scan, and one on a drive
 // that is not connected is still listed, greyed. Where the sum of the original is not known yet (it is computed for
 // the folders chosen for the backup only), the rule of derived_file_rule.dart falls back to the folder, the name and
-// the SourceName and SourceSize of the XMP, reading the head of eight neighbours at most.
+// the SourceName and SourceSize of the XMP, reading the head of eight neighbours at most. The relief strength of a 3D
+// photo ("Relief: Strong", release 46) is read apart, from the head of each 3D photo the details show, so that finding
+// the versions still reads no file the index knows.
 
 import 'dart:typed_data';
 
@@ -18,6 +20,7 @@ import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/library/placeholder_check.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:logging/logging.dart';
@@ -243,3 +246,28 @@ final photoVersionsProvider = FutureProvider.autoDispose.family<PhotoVersions, B
     return PhotoVersions.none;
   }
 });
+
+/// The relief strength of the 3D photo at [path], from the XMP in its head; null for a file kept online only (never
+/// downloaded for it), one that cannot be read, and any file that is not a 3D photo of ours with one of the strengths
+Future<ReliefStrength?> readVersionReliefStrength(
+  String path, {
+  VersionHeadReader readHead = readFileHead,
+  FileAttributesReader? attributes,
+}) async {
+  try {
+    if (isCloudPlaceholderFile(path, reader: attributes)) {
+      return null;
+    }
+    final head = await readHead(path);
+    final xmp = head == null ? null : StereoPhotoXmp.findIn(head);
+    return xmp == null ? null : reliefStrengthOfXmp(xmp);
+  } catch (error) {
+    _log.fine('Could not read the relief strength of $path: $error');
+    return null;
+  }
+}
+
+/// The relief strength of the 3D photo at a path, read when the details show its row; replaced in tests
+final versionReliefStrengthProvider = FutureProvider.autoDispose.family<ReliefStrength?, String>(
+  (ref, path) => readVersionReliefStrength(path),
+);

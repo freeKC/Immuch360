@@ -52,6 +52,8 @@ the gate is per desktop and is noted.
 | `lib/domain/utils/migrate_cloud_ids.dart:32` | iOS cloud ids | right |
 | `lib/infrastructure/network/plex/plex_client.dart:184` | Plex platform header, else Platform.operatingSystem | right: "windows", "linux", "macos" |
 | `lib/infrastructure/network/plex/plex_client.dart:186` | idem | right |
+| `lib/infrastructure/network/plex/plex_tv_auth.dart:306` | plex.tv platform header of "Sign in with Plex", else Platform.operatingSystem | right: "windows", "linux", "macos", as the Plex client |
+| `lib/infrastructure/network/plex/plex_tv_auth.dart:308` | idem | right |
 | `lib/infrastructure/network/upnp/ssdp.dart:60` | Android multicast socket option | right; LAN checks multicast on Windows |
 | `lib/infrastructure/network/upnp/ssdp.dart:69` | SSDP user agent, else Platform.operatingSystem | right |
 | `lib/infrastructure/repositories/local_album.repository.dart:70` | iOS assets unique to the album, else every asset of it | right: a file is in one folder |
@@ -72,6 +74,9 @@ the gate is per desktop and is noted.
 | `lib/presentation/actions/lock.action.dart:63` | Android dialog text, else iOS text | iOS text on the computers; harmless (local files are not deleted on the computers), UX may add a computer text |
 | `lib/presentation/actions/share.action.dart:32` | Android share icon, else the iOS one | cosmetic: the iOS share icon on the computers; UX |
 | `lib/presentation/pages/asset_troubleshoot.page.dart:134` | iOS cloud details | right |
+| `lib/presentation/pages/network/network_video.page.dart:605` | the player of a film is chosen on Android only (film_player_choice.dart, release 46), behind `CurrentPlatform.isDesktop` | right: the computers keep `DesktopVideoView` and the file, no choice, no conversion |
+| `lib/presentation/pages/network/network_video.page.dart:649` | idem, for the copy of a film on the device | right |
+| `lib/presentation/pages/network/network_video.page.dart:1213` | a failed player hands the film over on Android only, behind `CurrentPlatform.isDesktop` | right: the computers show the error as before |
 | `lib/presentation/pages/network/phone_share.page.dart:80` | iOS foreground notice | right |
 | `lib/presentation/pages/network/phone_share.page.dart:95` | phone share tile on phones only | wired (G1): shown on the computers once computerShareAvailable is true (LAN) |
 | `lib/presentation/pages/pairing/connect_screen.page.dart:32` | a code of the LG webOS app leaves the TV unnamed on iOS, App Store guideline 2.3.10 (5 November 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider); they would get the text that names LG |
@@ -114,7 +119,8 @@ the gate is per desktop and is noted.
 | `lib/providers/rate_app.provider.dart:57` | the crash marker of the foreground on iOS | right: not reached on the computers, which start no invitation |
 | `lib/providers/raw/raw_video.provider.dart:43` | two stream raw playback on iOS | wired (phase 2d): the computers are neither, and play two streams where libmpv loaded (`CurrentPlatform.isDesktop` term of the same expression, the 360° route stacks them or falls back) |
 | `lib/providers/raw/raw_video.provider.dart:45` | two stream raw playback on Android and Quest | wired (phase 2d): idem |
-| `lib/providers/raw/raw_video.provider.dart:63` | the stabilisation of raw videos with the motion track of their camera (issue 14, lot c) on the Android player | right: the computers are not Android, so the setting and the switch of the player stay hidden there and no table is built; the 360° route of the computers comes with lot d2 |
+| `lib/providers/raw/raw_video.provider.dart:73` | the stabilisation of raw videos with the motion track of their camera (issue 14): the Android player (lot c), the immersive viewer of the Meta Quest (lot d3), the iOS player (lot d1), and the computers where renderer C draws the 360° view (lot d2, `desktopStabilizationSupported`, desktop_stabilization.dart) | Windows: on, the table goes to renderer C of media_kit_360 v1.1.0, which turns each frame drawn by its own correction; Linux and macOS: hidden, the 360° videos play flat there and no table is built; the computers are neither Android nor iOS, so the phone term is false there |
+| `lib/providers/raw/raw_video.provider.dart:74` | idem (the Android term of the same call) | right |
 | `lib/providers/splat/splat_photo.provider.dart:131` | where a splat photo is explored from a device of no splat class: waits on Android until it is known whether this is a Meta Quest, says "explore it elsewhere" on iOS and a TV (3 November 2026) | right: the computers have a splat class and never reach this line |
 | `lib/providers/splat/splat_viewer.provider.dart:28` | the device class of the splats: the computers first, then Android (headset, phone or tablet, not a TV) | right: `CurrentPlatform.isDesktop` is read before this line |
 | `lib/providers/splat/splat_viewer.provider.dart:50` | the host of the splat viewer: SplatViewerActivity through SplatViewerApi on Android | wired: the computers override the provider with DesktopSplatViewerHost (desktop_overrides.dart), SplatViewerApi is never called there |
@@ -147,10 +153,16 @@ the gate is per desktop and is noted.
 | `lib/widgets/common/remote_album_sliver_app_bar.dart:74` | iOS back icon | right |
 | `lib/widgets/forms/login/sign_in_completion.dart:49` | Android media management (moved from the login form, sign in with your phone) | right |
 | `lib/widgets/settings/advanced_settings.dart:49` | Android 12 check | right |
+| `lib/widgets/settings/film_player_settings.dart:29` | the film player and the server conversion settings on Android only, behind `CurrentPlatform.isDesktop` (release 46) | hidden: not shown on the computers |
 | `lib/widgets/settings/backup_settings/backup_settings.dart:29` | Android background options | right; the computers show desktop_backup_while_open instead of the cellular options (G1) |
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:184` | iOS cloud ids | right |
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:363` | Android trash tools | right |
 | `lib/widgets/settings/free_up_space_settings.dart:539` | iOS cloud option | hidden: free up space is not offered on the computers (G1) |
+| `lib/providers/settings_file/settings_file_io.dart:77` | the settings file (issue 16): picking a file on Android | right: `CurrentPlatform.isDesktop` term of the same line, the computers pick with their file dialog |
+| `lib/providers/settings_file/settings_file_io.dart:80` | the settings file: saving a file on Android | right: idem, the computers save with their file dialog |
+| `lib/providers/settings_file/settings_file_io.dart:94` | the settings file: the Android picker (DocumentTreeApi) | right: the computers took the branch before it |
+| `lib/providers/settings_file/settings_file_io.dart:117` | the settings file: the copy in the cache deleted after the read, on Android | right: the computers read the file where it is and delete nothing |
+| `lib/providers/settings_file/settings_file_io.dart:138` | the settings file: no save dialog off Android | right: the computers returned before it |
 
 ## Desktop gates added outside these lines
 

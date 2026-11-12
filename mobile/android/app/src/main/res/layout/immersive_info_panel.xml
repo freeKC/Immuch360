@@ -290,6 +290,21 @@
       android:textSize="17sp"
       android:visibility="gone" />
 
+    <!-- Stabilisation with the camera's gyroscope of a raw 360° video (issue 14), its state in its text, shown for a
+         file with a motion track. A click turns it on or off; off, the video plays as before -->
+    <Button
+      android:id="@+id/immersive_stabilization"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginEnd="12dp"
+      android:layout_weight="1"
+      android:ellipsize="end"
+      android:maxLines="2"
+      android:textAllCaps="false"
+      android:textSize="17sp"
+      android:visibility="gone" />
+
     <Button
       android:id="@+id/immersive_back"
       android:layout_width="wrap_content"

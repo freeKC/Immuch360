@@ -95,6 +95,7 @@ import app.alextran.immich.relief.ReliefResult
 import app.alextran.immich.relief.ReliefRun
 import app.alextran.immich.relief.ReliefStage
 import app.alextran.immich.relief.ReliefStop
+import app.alextran.immich.spherical.StabilizationSwitch
 import com.meta.spatial.core.Entity
 import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
@@ -664,6 +665,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var meshTextureCoordinates: FloatArray? = null
   private val mainHandler = Handler(Looper.getMainLooper())
 
+  /**
+   * The stabilisation of a raw 360° video with the motion track of its camera (issue 14, lot d3), turned inside the
+   * stitch: its switch, the table the stitch of the players gets, the notices (see [ImmersiveStabilization])
+   */
+  private val stabilization =
+    ImmersiveStabilization(
+      postToMain = { action -> mainHandler.post { action() } },
+      onChanged = { updateStabilizationButton() },
+      onNotice = { notice -> showStabilizationNotice(notice) },
+      onToggled = { enabled -> onStabilizationToggled(enabled) },
+    )
+
   // 3D scene of a photo, see showScene and SceneView
   /** The scene of the photo shown, null for any other media and until its textures are decoded. */
   private var sceneView: SceneView? = null
@@ -739,6 +752,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var coverageView: Button? = null
   /** Turns the sphere by 90 degrees; hidden for a spatial photo, which has no sphere. */
   private var turnButton: View? = null
+  /** The stabilisation with the camera's gyroscope of a raw video, see [stabilization]; hidden for any other media. */
+  private var stabilizationButton: Button? = null
   private var playPauseButton: Button? = null
   /** Time bar row of a video: 10 seconds back, the bar, the time, 10 seconds forward. Hidden for a photo. */
   private var seekRow: View? = null
@@ -1005,6 +1020,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         )
     }
     liveViewer = this
+    stabilization.listen()
   }
 
   /**
@@ -1301,6 +1317,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     flat3dAnnounced = false
     // Each media places its own flat screen
     screenPlace = null
+    stabilization.onMedia(media?.url, media?.isRawVideo == true)
     if (media == null) {
       showError(getString(R.string.immersive_error_nothing))
       return
@@ -1355,6 +1372,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoView = root.findViewById(R.id.immersive_stereo)
     coverageView = root.findViewById(R.id.immersive_coverage)
     turnButton = root.findViewById(R.id.immersive_turn)
+    stabilizationButton = root.findViewById(R.id.immersive_stabilization)
     playPauseButton = root.findViewById(R.id.immersive_play_pause)
     seekRow = root.findViewById(R.id.immersive_seek_row)
     seekBar = root.findViewById(R.id.immersive_seek_bar)
@@ -1378,6 +1396,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(stereoView) { cycleStereoLayout(1, fromPanel = true) }
     onPanelClick(coverageView) { toggleCoverage() }
     onPanelClick(turnButton) { if (request?.isSplat == true) turnSplatUpright() else rotateSphere(YAW_STEP_DEGREES) }
+    onPanelClick(stabilizationButton) { stabilization.toggle() }
     onPanelClick(seekBackButton) { seekBy(-1) }
     onPanelClick(seekForwardButton) { seekBy(1) }
     onPanelClick(resetButton) { resetScene() }
@@ -1397,6 +1416,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateTurnButton()
     updateSceneControls()
     updateScreenControls()
+    updateStabilizationButton()
   }
 
   /**
@@ -5419,7 +5439,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         if (plan.mode != RawMode.PLAIN) Log.i(TAG, "raw plan ${plan.mode} ${plan.streams}: ${plan.reason}")
         // Before the surface and before prepare, which sets up the effect pipeline
         if (plan.mode == RawMode.EFFECT_SIDE_BY_SIDE && projection != null) {
-          it.setVideoEffects(listOf(DualFisheyeEffect(projection, VIDEO_PANEL_WIDTH_PX, VIDEO_PANEL_HEIGHT_PX)))
+          it.setVideoEffects(
+            listOf(DualFisheyeEffect(projection, VIDEO_PANEL_WIDTH_PX, VIDEO_PANEL_HEIGHT_PX, stabilization.stitch)),
+          )
         }
         it.repeatMode = repeatModeFor(media)
         it.addListener(playerListener)
@@ -5455,7 +5477,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         builder,
         mediaSourceFactory,
         listener,
-      ).also { listener.playback = it }
+      ).also {
+        listener.playback = it
+        it.setStabilization(stabilization.stitch)
+      }
     } catch (e: RawStitchException) {
       Log.e(TAG, "the lens compositor cannot start, the raw video plays unstitched", e)
       null
@@ -6691,6 +6716,47 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       true
     }
 
+  // ---------------------------------------------------------------------------------------------
+  // Stabilisation with the camera's gyroscope (issue 14, lot d3), see ImmersiveStabilization
+
+  /**
+   * The player of the media starts at [startPositionMs]: the frames the stitch gets are on the timeline of the video,
+   * or [startPositionMs] early for the side by side effect, and the table turns only a stitched frame
+   */
+  private fun stabilizationOnPlay(startPositionMs: Long) {
+    val mode = playerPlan?.mode
+    stabilization.onPlay(
+      sideBySide = mode == RawMode.EFFECT_SIDE_BY_SIDE,
+      stitchedFrame = mode == RawMode.EFFECT_SIDE_BY_SIDE || (mode == RawMode.LENSES && twoLens != null),
+      startPositionMs = startPositionMs.coerceAtLeast(0L),
+    )
+  }
+
+  /** The button of the panel: shown for a raw video with a track, its state in its text, dimmed when off */
+  private fun updateStabilizationButton() {
+    val button = stabilizationButton ?: return
+    val visible = stabilization.buttonVisible && request?.isRawVideo == true
+    button.visibility = if (visible) View.VISIBLE else View.GONE
+    if (!visible) return
+    val enabled = stabilization.enabled
+    button.text = ImmersiveStabilization.buttonText(request?.stereoLabels.orEmpty(), enabled)
+    button.alpha = if (enabled) 1f else STABILIZATION_OFF_ALPHA
+  }
+
+  /** [notice] on the feedback line once the info panel hides, fading out like the other notices */
+  private fun showStabilizationNotice(notice: StabilizationSwitch.Notice) {
+    val text = ImmersiveStabilization.noticeText(request?.stereoLabels.orEmpty(), notice)
+    Log.i(TAG, "shown to the user: $text")
+    queueNotice(text)
+  }
+
+  /** The user pressed the button: the setting of the app follows, as the phone's player does */
+  private fun onStabilizationToggled(enabled: Boolean) {
+    Log.i(TAG, "stabilisation turned ${if (enabled) "on" else "off"} in the viewer")
+    val openingId = request?.openingId ?: return
+    ImmersiveApiImpl.notifyStabilizationChanged(openingId, enabled)
+  }
+
   /** Plays [url] from [startPositionMs] (0 from the beginning). */
   private fun playUrl(url: String, startPositionMs: Long) {
     val p = player ?: return
@@ -6727,6 +6793,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     } else {
       p.setMediaItem(MediaItem.fromUri(url), startPositionMs.coerceAtLeast(0L))
     }
+    stabilizationOnPlay(startPositionMs)
     p.prepare()
     // A video that arrives while the viewer is paused or behind the system menu (a previous or next media Flutter
     // answered meanwhile, a fallback url, a recreation) loads but waits, see [playOnReturn]
@@ -6806,6 +6873,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         // viewer only lost the focus (system menu, headset off) and played on since
         val position = p.currentPosition.coerceAtLeast(0L)
         Log.i(TAG, "preparing again after the decoders were reclaimed, at $position ms")
+        stabilizationOnPlay(position)
         p.prepare()
         p.seekTo(position)
       }
@@ -6897,6 +6965,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationTimeoutJob = null
     mainHandler.removeCallbacks(bufferingLine)
     if (liveViewer === this) liveViewer = null
+    stabilization.release()
     // A viewer that finished at its onPause or at its onStop had its onSpatialShutdown there (the SDK runs it from
     // either once the viewer is finishing): the objects of the scene read null, and these drops only let the jobs and
     // the bitmaps go. Any other viewer, destroyed without a finish or finished while already stopped, drops its scene
@@ -7043,6 +7112,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     private const val VIDEO_PANEL_WIDTH_PX = 3840
     private const val VIDEO_PANEL_HEIGHT_PX = 1920
+
+    /** Opacity of the stabilisation button when the switch is off, as the phone's player dims its own */
+    private const val STABILIZATION_OFF_ALPHA = 0.6f
 
     /** Swapchain of the flat video screen: a flat 3D frame is scaled to it, the quad gives it its shape back. */
     private const val FLAT_VIDEO_PANEL_WIDTH_PX = 3840

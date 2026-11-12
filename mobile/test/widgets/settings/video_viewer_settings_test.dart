@@ -127,7 +127,21 @@ void main() {
       expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, isTrue);
     });
 
-    testWidgets('left out where no player applies it yet (iOS, computers, Meta Quest)', (tester) async {
+    testWidgets('offered on a Meta Quest, whose immersive viewer applies it', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const SingleChildScrollView(child: VideoViewerSettings()),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => true),
+          videoStabilizationSupportedProvider.overrideWithValue(true),
+        ],
+      );
+
+      expect(stabilizationSwitch, findsOneWidget);
+      expect(tester.widget<SwitchListTile>(stabilizationSwitch).value, isTrue);
+    });
+
+    testWidgets('left out where no player applies it yet (iOS, computers)', (tester) async {
       await tester.pumpTestWidget(
         context,
         const SingleChildScrollView(child: VideoViewerSettings()),

@@ -4,7 +4,9 @@ name: Immuch360 iOS compile check
 # macOS minutes are paid: the same "flutter build ios --release --no-codesign" as the ios-testflight workflow of
 # codemagic.yaml, after the same code generation and Metal toolchain steps, so that a Swift, pod or Xcode error shows
 # here first and costs no second paid build. The repository is public, so the minutes of this runner cost nothing.
-# Runs on the push of a release branch (release-*) that changes the iOS side, and by hand. It builds code that may come
+# Runs on the push of a release branch (release-*) that changes the iOS side, and by hand. A second job, a few minutes
+# long, compiles the pure Swift of the 360° player's stabilisation with its tests and runs them (mobile/ios/SwiftTests,
+# swiftc, no simulator), beside the build. It builds code that may come
 # from branches, so it reads the repository only, keeps no token in the checkout and uses no secret, under the rules of
 # .github/desktop/check_workflow.py (check_workflow.py --workflow .github/workflows/immuch360-ios-check.yml).
 
@@ -32,6 +34,30 @@ env:
   MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
 
 jobs:
+  swift-tests:
+    name: Swift unit tests of the 360° player (stabilisation)
+    runs-on: macos-15
+    timeout-minutes: 20
+    env:
+      XCODE_VERSION: '26.3'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Xcode
+        run: |
+          xcode="/Applications/Xcode_$XCODE_VERSION.app"
+          if [ ! -d "$xcode" ]; then
+            echo "::error::No Xcode $XCODE_VERSION on this runner image: set XCODE_VERSION to one its readme lists"
+            exit 1
+          fi
+          sudo xcode-select -s "$xcode/Contents/Developer"
+          xcrun --sdk macosx swiftc --version
+
+      - name: StabilizationTable, PlayerStabilization and their tests
+        run: sh mobile/ios/SwiftTests/run.sh
+
   ios:
     name: iOS release build without signing
     runs-on: macos-15

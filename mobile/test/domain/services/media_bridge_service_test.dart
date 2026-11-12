@@ -789,6 +789,19 @@ void main() {
       expect((await _send(deeper)).status, HttpStatus.notFound);
     });
 
+    test('media fetched when asked: its file, 404 for none, 502 when the fetch fails', () async {
+      final fetched = _FetchedMedia({'film.m3u8': GeneratedFile(_playlistBytes, 'application/vnd.apple.mpegurl')});
+      bridge.registerGenerated('f0e1d2c3b4a5968778695a4b', fetched);
+      final playlist = await _send(bridge.urlFor('f0e1d2c3b4a5968778695a4b', 'film.m3u8'));
+      expect(playlist.status, HttpStatus.ok);
+      expect(playlist.body, _playlistBytes);
+      expect(playlist.header(HttpHeaders.contentTypeHeader), 'application/vnd.apple.mpegurl');
+      expect((await _send(bridge.urlFor('f0e1d2c3b4a5968778695a4b', '7.ts'))).status, HttpStatus.notFound);
+      fetched.fails = true;
+      expect((await _send(bridge.urlFor('f0e1d2c3b4a5968778695a4b', 'film.m3u8'))).status, HttpStatus.badGateway);
+      expect(fetched.asked, ['film.m3u8', '7.ts', 'film.m3u8']);
+    });
+
     test('nothing once unregistered; the shares are still served', () async {
       bridge.unregisterGenerated('a1b2c3d4e5f6a7b8c9d0e1f2');
       expect((await _send(bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'live.m3u8'))).status, HttpStatus.notFound);
@@ -1004,6 +1017,30 @@ void main() {
       expect((await _send(bridge.urlFor('nas1', '/photo.jpg'))).status, HttpStatus.internalServerError);
       share.statErrors['/sub/clip.mp4'] = const NetworkFileSystemException('Host unreachable');
       expect((await _send(bridge.urlFor('nas1', '/sub/clip.mp4'))).status, HttpStatus.internalServerError);
+    });
+
+    test('a file the share knows but cannot read now answers 503, and its page is told why', () async {
+      const unreadable = NetworkFileSystemException('Cannot read the file now', isFileUnreadable: true);
+      share.statErrors['/photo.jpg'] = unreadable;
+      final reply = await _send(bridge.urlFor('nas1', '/photo.jpg'));
+      expect(reply.status, HttpStatus.serviceUnavailable);
+      expect(bridge.recentFailure('nas1', '/photo.jpg'), same(unreadable));
+      expect(bridge.recentFailure('nas1', 'photo.jpg'), same(unreadable), reason: 'the path as the page holds it');
+      expect(bridge.recentFailure('nas1', '/sub/clip.mp4'), isNull);
+      expect(bridge.recentFailure('nas2', '/photo.jpg'), isNull);
+    });
+
+    test('the failure behind a 500 is kept for the page of the player, until the file reads or it is old', () async {
+      const stopped = NetworkFileSystemException('The server stopped answering');
+      share.statErrors['/sub/clip.mp4'] = stopped;
+      expect((await _send(bridge.urlFor('nas1', '/sub/clip.mp4'))).status, HttpStatus.internalServerError);
+      expect(bridge.recentFailure('nas1', '/sub/clip.mp4'), same(stopped));
+      now = now.add(LocalMediaBridge.failureMemory + const Duration(seconds: 1));
+      expect(bridge.recentFailure('nas1', '/sub/clip.mp4'), isNull, reason: 'too old to explain a failure now');
+      now = now.subtract(LocalMediaBridge.failureMemory);
+      share.statErrors.remove('/sub/clip.mp4');
+      expect((await _send(bridge.urlFor('nas1', '/sub/clip.mp4'))).status, HttpStatus.ok);
+      expect(bridge.recentFailure('nas1', '/sub/clip.mp4'), isNull, reason: 'the file read since');
     });
 
     test('only GET and HEAD are served', () async {
@@ -1484,4 +1521,26 @@ void main() {
       });
     },
   );
+}
+
+/// Generated media whose files come from an await, as a conversion of the Plex server fetches them
+class _FetchedMedia implements GeneratedMediaFetch {
+  _FetchedMedia(this.files);
+
+  final Map<String, GeneratedFile> files;
+  final asked = <String>[];
+  bool fails = false;
+
+  @override
+  Future<GeneratedFile?> fetch(String name) async {
+    asked.add(name);
+    await Future<void>.delayed(Duration.zero);
+    if (fails) {
+      throw const SocketException('the server is gone');
+    }
+    return files[name];
+  }
+
+  @override
+  GeneratedFile? file(String name) => throw StateError('a fetched media is never asked synchronously');
 }

@@ -157,6 +157,36 @@ class LocalMediaBridge implements MediaBridge {
   /// The port of the last server, tried first when the bridge starts again so that the URLs already given stay valid
   int? _lastPort;
 
+  /// The last failure of a share behind an error answered to a player, by source and path: a player only tells
+  /// "Response code: 500", its page asks here what it stood for (see [recentFailure])
+  final Map<(String, String), ({NetworkFileSystemException error, DateTime at})> _failures = {};
+
+  /// How long [recentFailure] remembers a failure
+  static const failureMemory = Duration(minutes: 2);
+
+  /// The failure of the share that made the bridge answer an error, or cut a body, for the file at [path] of
+  /// [sourceId] within [within]; null when there was none, or the file was read since
+  NetworkFileSystemException? recentFailure(String sourceId, String path, {Duration within = failureMemory}) {
+    final known = _failures[(sourceId, _failureKey(path))];
+    if (known == null || _clock().difference(known.at) > within) {
+      return null;
+    }
+    return known.error;
+  }
+
+  static String _failureKey(String path) => '/${path.split('/').where((segment) => segment.isNotEmpty).join('/')}';
+
+  void _recordFailure(String sourceId, String path, Object error) {
+    if (error is NetworkFileSystemException) {
+      _failures[(sourceId, _failureKey(path))] = (error: error, at: _clock());
+      if (_failures.length > 64) {
+        _failures.remove(_failures.keys.first);
+      }
+    }
+  }
+
+  void _forgetFailure(String sourceId, String path) => _failures.remove((sourceId, _failureKey(path)));
+
   /// The port the bridge listens on, null while it does not run
   int? get port => _server?.port;
 
@@ -364,6 +394,7 @@ class LocalMediaBridge implements MediaBridge {
         body.close();
         return _failForShare(response, fileSystem, path, error, stackTrace);
       }
+      _forgetFailure(fileSystem.source.id, path);
       if (first.isEmpty && end != null) {
         body.close();
         // Shorter than the stat said: the file changed on the share since, the next request asks again
@@ -477,7 +508,17 @@ class LocalMediaBridge implements MediaBridge {
   /// A file of generated media, from memory or from disk: never cached unless the file says otherwise, a range when
   /// one is asked
   Future<void> _answerGenerated(HttpRequest request, HttpResponse response, GeneratedMedia media, String name) async {
-    final file = media.file(name);
+    final GeneratedFile? file;
+    if (media is GeneratedMediaFetch) {
+      try {
+        file = await media.fetch(name);
+      } catch (error) {
+        _log.fine('A fetched file of generated media failed: ${error.runtimeType}');
+        return _fail(response, HttpStatus.badGateway, 'The server did not send it');
+      }
+    } else {
+      file = media.file(name);
+    }
     if (file == null) {
       return _fail(response, HttpStatus.notFound, 'Not found');
     }
@@ -673,9 +714,14 @@ class LocalMediaBridge implements MediaBridge {
   ) {
     // The file may have changed or gone: the next request asks again
     _stats.remove(fileSystem.source.id, path);
+    _recordFailure(fileSystem.source.id, path, error);
     if (error is NetworkFileSystemException) {
       if (error.isNotFound) {
         return _fail(response, HttpStatus.notFound, 'Not found');
+      }
+      if (error.isFileUnreadable) {
+        // Known to the share, not readable now (a Plex volume not mounted): a status that says to try later
+        return _fail(response, HttpStatus.serviceUnavailable, 'The share cannot read this file right now');
       }
       if (error.isAuthentication) {
         return _fail(response, HttpStatus.badGateway, 'The share refused the credentials');
@@ -980,6 +1026,7 @@ class _BodyReader {
         if (!_closed && generation == _generation) {
           _error = error;
           _errorStackTrace = stackTrace;
+          _bridge._recordFailure(sourceId, path, error);
         }
       } finally {
         if (failed) {

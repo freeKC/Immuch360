@@ -134,23 +134,30 @@ enum RawStitchItemBuilder {
     let asset: AVAsset
     let duration: CMTime
     let sourceTrackIDs: [CMPersistentTrackID]
+    // From the time of the composition to the time of the lead track from its first frame, the clock of the
+    // stabilisation table (issue 14); zero for the files of these cameras, whose tracks start at zero
+    let leadOffset: CMTime
     if direct {
       asset = mainAsset
       duration = try await mainAsset.load(.duration)
       sourceTrackIDs = sources.map { $0.track.trackID }
+      let leadStart = (try? await lead.load(.timeRange))?.start ?? .zero
+      leadOffset = leadStart.isNumeric ? CMTimeMultiply(leadStart, multiplier: -1) : .zero
     } else {
       let timeline = try await Self.composition(
         sources, layout: geometry.layout, mainAsset: mainAsset, secondAsset: secondAsset)
       asset = timeline.composition
       duration = timeline.duration
       sourceTrackIDs = timeline.trackIDs
+      leadOffset = timeline.leadOffset
     }
     guard duration.isNumeric, duration.seconds > 0 else {
       throw RawStitchError(reason: "the recording has no duration")
     }
 
     let instruction = RawStitchInstruction(
-      timeRange: CMTimeRange(start: .zero, duration: duration), sourceTrackIDs: sourceTrackIDs, geometry: geometry)
+      timeRange: CMTimeRange(start: .zero, duration: duration), sourceTrackIDs: sourceTrackIDs, geometry: geometry,
+      stabilizationTimeOffsetUs: RawStitchCompositor.microseconds(leadOffset))
     let tier = RawStitchOutput.current
     let renderSizes = RawStitchOutput.sizes(
       naturalWidth: Self.naturalWidth(geometry, sizes: sources.map { $0.size }), frameRate: frameRate, tier: tier)
@@ -221,10 +228,13 @@ enum RawStitchItemBuilder {
 
   /// One composition track per source from time zero, and one audio track. The tracks of one file keep the timeline
   /// they share: each gives the span where all of them have media. Each file of a pair starts at the start of its
-  /// track, for the length of the shorter one.
+  /// track, for the length of the shorter one. [leadOffset] is how far after the first frame of the lead source the
+  /// composition starts.
   private static func composition(
     _ sources: [Source], layout: RawStitchSpec.Layout, mainAsset: AVURLAsset, secondAsset: AVURLAsset?
-  ) async throws -> (composition: AVMutableComposition, duration: CMTime, trackIDs: [CMPersistentTrackID]) {
+  ) async throws -> (
+    composition: AVMutableComposition, duration: CMTime, trackIDs: [CMPersistentTrackID], leadOffset: CMTime
+  ) {
     let composition = AVMutableComposition()
     var ranges: [CMTimeRange] = []
     for source in sources {
@@ -282,7 +292,12 @@ enum RawStitchItemBuilder {
         print("RawStitch: the stitched video plays without sound: \(error)")
       }
     }
-    return (composition: composition, duration: duration, trackIDs: trackIDs)
+    // The composition's time zero shows the lead source at starts[0], which is that much after its first frame
+    let leadOffset = CMTimeSubtract(starts[0], ranges[0].start)
+    return (
+      composition: composition, duration: duration, trackIDs: trackIDs,
+      leadOffset: leadOffset.isNumeric ? leadOffset : .zero
+    )
   }
 
   /// The first audio track of [asset] with at most two channels, else its first one (a GoPro ambisonic track of four

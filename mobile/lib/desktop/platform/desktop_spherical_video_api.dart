@@ -7,15 +7,19 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:immich_mobile/desktop/video/desktop_stabilization.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/spherical_player_route.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 
 class DesktopSphericalVideoApi implements SphericalVideoApi {
-  /// [navigator] gives the root navigator of the app (the router's), null when there is none yet
-  DesktopSphericalVideoApi({this.navigator});
+  /// [navigator] gives the root navigator of the app (the router's), null when there is none yet; [stabilization]
+  /// keeps what Flutter says of the stabilisation of each video until its player reads it
+  DesktopSphericalVideoApi({this.navigator, DesktopStabilizationInbox? stabilization})
+    : stabilization = stabilization ?? DesktopStabilizationInbox.instance;
 
   final GlobalKey<NavigatorState>? Function()? navigator;
+  final DesktopStabilizationInbox stabilization;
 
   @override
   // ignore: non_constant_identifier_names
@@ -61,8 +65,9 @@ class DesktopSphericalVideoApi implements SphericalVideoApi {
     );
   }
 
-  /// The 360° player of the computers does not stabilise yet (lot d2 of issue 14): nothing to keep, and Flutter does
-  /// not send it a table there (videoStabilizationSupportedProvider)
+  /// The stabilisation of the video at [url] (issue 14, lot d2): kept in [stabilization] until the player of that URL
+  /// reads it, then given to it as it comes (desktop_stabilization.dart). Flutter sends it where the player stabilises
+  /// (videoStabilizationSupportedProvider: Windows with renderer C), before the open and once the table is built.
   @override
   Future<void> setStabilization(
     String url,
@@ -71,5 +76,15 @@ class DesktopSphericalVideoApi implements SphericalVideoApi {
     Int64List? presentationTimesUs,
     Float64List? corrections,
     String? summary,
-  ) async {}
+  ) async {
+    stabilization.post(
+      DesktopStabilizationMessage(
+        url: url,
+        enabled: enabled,
+        hasTrack: hasTrack,
+        table: hasTrack ? pluginStabilizationOf(presentationTimesUs, corrections) : null,
+        summary: summary,
+      ),
+    );
+  }
 }

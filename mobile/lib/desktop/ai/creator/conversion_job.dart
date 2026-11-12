@@ -23,6 +23,7 @@ import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:path/path.dart' as p;
 
 /// The two lanes of the queue (design-final 2026-10-27, section 4.5), one job at a time on each: the processor, and
@@ -459,6 +460,7 @@ class ConversionJob {
     this.parentId,
     this.inputPath,
     this.quarterTurns = 0,
+    this.reliefStrength = ReliefStrength.normal,
     this.existing = ExistingVersionChoice.skip,
     this.whenExists = AiWhenExists.keepBoth,
     this.state = ConversionState.waiting,
@@ -513,6 +515,10 @@ class ConversionJob {
   /// The destination planned; null for a photo skipped from the start
   final ConversionTarget? target;
   final int quarterTurns;
+
+  /// The relief strength of a 3D photo, its parallax in its file and in the key of its settings (versionSettingsKey);
+  /// Normal for the other kinds, which do not read it
+  final ReliefStrength reliefStrength;
   final ExistingVersionChoice existing;
 
   /// What the writer does when the name of the 3D photo is taken (desktop_ai.json, spec 6.4)
@@ -630,6 +636,7 @@ class ConversionJob {
     parentId: parentId,
     inputPath: inputPath == null ? this.inputPath : inputPath(),
     quarterTurns: quarterTurns,
+    reliefStrength: reliefStrength,
     existing: existing,
     whenExists: whenExists,
     state: state ?? this.state,
@@ -670,6 +677,7 @@ class ConversionJob {
     parentId: parentId,
     inputPath: parentId == null ? inputPath : null,
     quarterTurns: quarterTurns,
+    reliefStrength: reliefStrength,
     existing: existing,
     whenExists: whenExists,
     keepsWaiting: keepsWaiting,

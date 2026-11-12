@@ -154,6 +154,13 @@ abstract class DocumentTreeApi {
   /// reads no content:// URI (lot S5). Fails with the code "too_large" beyond [maxBytes], leaving no copy.
   @async
   PickedFile? pickFile(String folder, int maxBytes);
+
+  /// Opens the system save dialog (ACTION_CREATE_DOCUMENT) with [suggestedName] of type [mimeType], and copies the file
+  /// at [sourcePath] into the document the user chose: true once written, false when the user goes back. Fails with the
+  /// code "no_picker" on a device without that dialog (some TVs). For "Save to a file" of the settings file (issue 16),
+  /// on the phones, the tablets, the Quest and the TVs.
+  @async
+  bool saveFile(String sourcePath, String suggestedName, String mimeType);
 }
 
 @FlutterApi()

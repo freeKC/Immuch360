@@ -244,9 +244,9 @@ abstract class PlaybackEngine {
   /// Shows the subtitle track [id] of [subtitleTracks], or none for null
   Future<void> setSubtitleTrack(String? id);
 
-  /// Adds the side file of subtitles at [uri] (a media bridge URL, SubRip) to the open file, named [title] in
-  /// [language], and shows it: it is then one of [subtitleTracks], with [uri] as its [DesktopSubtitleTrack.external],
-  /// until the next open. mpv opens no such file by itself (sub-auto, see DesktopPlayerOptions.common).
+  /// Adds the side file of subtitles at [uri] (a media bridge URL, SubRip, WebVTT or ASS) to the open file, named
+  /// [title] in [language], and shows it: it is then one of [subtitleTracks], with [uri] as its
+  /// [DesktopSubtitleTrack.external], until the next open. mpv opens no such file by itself (sub-auto, see DesktopPlayerOptions.common).
   Future<void> addExternalSubtitle(String uri, {String? title, String? language});
 
   /// The frame on screen as a JPEG scaled into [box], null when no frame is there yet
@@ -469,8 +469,14 @@ void logPlayerLine(String level, String prefix, String text) {
 class DesktopPlayer implements PlaybackEngine {
   DesktopPlayer._(this.kind, this._player, this.videoController);
 
-  /// Makes a player of [kind]: the libmpv instance, and for [PlayerKind.playback] and [PlayerKind.live] its texture
-  static Future<DesktopPlayer> create(PlayerKind kind) async {
+  /// Makes a player of [kind]: the libmpv instance, and for [PlayerKind.playback] and [PlayerKind.live] its texture.
+  /// The Meta Quest build's players (android_mpv.dart) give their own [hwdec] and measure nothing ([measureDecoding]):
+  /// the computers keep the defaults.
+  static Future<DesktopPlayer> create(
+    PlayerKind kind, {
+    String hwdec = DesktopPlayerOptions.hwdec,
+    bool measureDecoding = true,
+  }) async {
     // Read by media_kit_video of media_kit_360 when it sizes each texture (its IMMUCH360-NOTE.md, patch 3)
     VideoController.maxOutputHeight ??= DesktopPlayerOptions.maxRenderHeight;
     final player = Player(
@@ -484,7 +490,7 @@ class DesktopPlayer implements PlaybackEngine {
       ),
     );
     final controller = kind != PlayerKind.thumbnail
-        ? VideoController(player, configuration: const VideoControllerConfiguration(hwdec: DesktopPlayerOptions.hwdec))
+        ? VideoController(player, configuration: VideoControllerConfiguration(hwdec: hwdec))
         : null;
     if (controller != null) {
       // The controller makes its texture after the next frame, and every call on the player waits for it: a page
@@ -493,7 +499,7 @@ class DesktopPlayer implements PlaybackEngine {
     }
     final desktopPlayer = DesktopPlayer._(kind, player, controller);
     await desktopPlayer._setUp();
-    if (kind == PlayerKind.playback) {
+    if (kind == PlayerKind.playback && measureDecoding) {
       // What this computer keeps up with, for the next questions about the same kind of video (decoder_measure.dart)
       desktopPlayer._removers.add(watchDecoding(desktopPlayer, desktopPlayer.mpvProperty));
     }
@@ -776,9 +782,12 @@ class DesktopPlayer implements PlaybackEngine {
     }
     // Those of the resource itself (the y4m of an AV2 companion), those of the previous one it does not set taken back
     final extra = desktopResourceOptions[resource] ?? const <String, String>{};
+    // A key every player sets at its creation goes back to that value (access-references, which the films a Plex
+    // server converts open with, android_mpv.dart), any other to mpv's default
+    final common = DesktopPlayerOptions.common(kind);
     for (final key in _resourceKeys) {
       if (!extra.containsKey(key) && !options.containsKey(key)) {
-        await _set(key, '');
+        await _set(key, common[key] ?? '');
       }
     }
     for (final MapEntry(:key, :value) in extra.entries) {

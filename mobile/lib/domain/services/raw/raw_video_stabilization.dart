@@ -35,12 +35,18 @@ class RawStabilizationRequest {
     this.downBody,
     this.frameDurationUs,
     this.goProFace,
+    this.options = const StabilizationOptions(),
   });
 
   /// The request for the raw video of [plan], whose file holding the motion track is [fileSize] bytes long: the
   /// gravity its stitch levels with (an Insta360 calibration), and the frame duration of its first track, so that frame
   /// i of the table is at the presentation time the player gives it (constant frame rate, as these cameras record)
-  factory RawStabilizationRequest.of(RawVideoPlan plan, {required String name, required int fileSize}) {
+  factory RawStabilizationRequest.of(
+    RawVideoPlan plan, {
+    required String name,
+    required int fileSize,
+    StabilizationOptions options = const StabilizationOptions(),
+  }) {
     final frameRate = plan.tracks.firstOrNull?.frameRate;
     return RawStabilizationRequest(
       kind: plan.kind,
@@ -49,6 +55,7 @@ class RawStabilizationRequest {
       downBody: plan.kind == RawMediaKind.insta360Video ? plan.calibration?.downBody : null,
       frameDurationUs: frameRate != null && frameRate.isFinite && frameRate > 0 ? 1e6 / frameRate : null,
       goProFace: plan.kind == RawMediaKind.goProVideo ? plan.eac?.face : null,
+      options: options,
     );
   }
 
@@ -69,10 +76,13 @@ class RawStabilizationRequest {
   /// Side of the EAC faces of a GoPro .360 (1344 on the MAX, 1920 on the MAX 2); null for the other cameras
   final int? goProFace;
 
+  /// The settings of the table: the phone's by default, [StabilizationOptions.headset] for the Meta Quest
+  final StabilizationOptions options;
+
   @override
   String toString() =>
       'RawStabilizationRequest(${kind.name}, $name, $fileSize bytes, downBody: $downBody, '
-      'frameDurationUs: $frameDurationUs${goProFace == null ? '' : ', goProFace: $goProFace'})';
+      'frameDurationUs: $frameDurationUs${goProFace == null ? '' : ', goProFace: $goProFace'}, $options)';
 }
 
 /// Builds the table of a request from the reads of its file
@@ -99,9 +109,20 @@ Future<StabilizationTable?> buildRawStabilization(RawStabilizationRequest reques
       request.fileSize,
       downBody: request.downBody,
       frameDurationUs: request.frameDurationUs,
+      options: request.options,
     ),
-    RawMediaKind.goProVideo => readGoProStabilization(read, request.fileSize, frameDurationUs: request.frameDurationUs),
-    RawMediaKind.djiVideo => readDjiStabilization(read, request.fileSize, frameDurationUs: request.frameDurationUs),
+    RawMediaKind.goProVideo => readGoProStabilization(
+      read,
+      request.fileSize,
+      frameDurationUs: request.frameDurationUs,
+      options: request.options,
+    ),
+    RawMediaKind.djiVideo => readDjiStabilization(
+      read,
+      request.fileSize,
+      frameDurationUs: request.frameDurationUs,
+      options: request.options,
+    ),
     RawMediaKind.insta360Photo => Future.value(),
   };
 }
@@ -182,11 +203,12 @@ bool rawVideoHasReadableTrack(RawVideoPlan plan) {
 /// the table built by [build] (in a background isolate by default), the file closed. Null when the camera of the plan
 /// writes no track the app reads, when that file cannot be opened, read at any position or its size is unknown, when it
 /// has no track, when the build fails (the log tells why), or once [cancelled] says so: each read after it fails, which
-/// ends the build.
+/// ends the build. [options] are the settings of the table (the phone's by default).
 Future<StabilizationTable?> stabilizationOfRawVideo(
   RawVideoPlan plan, {
   RawStabilizationBuilder build = buildRawStabilizationInIsolate,
   bool Function()? cancelled,
+  StabilizationOptions options = const StabilizationOptions(),
 }) async {
   final input = plan.motionTrackInput;
   if (input == null || !rawVideoHasReadableTrack(plan)) {
@@ -200,7 +222,7 @@ Future<StabilizationTable?> stabilizationOfRawVideo(
       _log.info('${input.name}: no file to read the motion track from');
       return null;
     }
-    final request = RawStabilizationRequest.of(plan, name: input.name, fileSize: size);
+    final request = RawStabilizationRequest.of(plan, name: input.name, fileSize: size, options: options);
     final started = DateTime.now();
     final read = file.read;
     final table = await build(
@@ -229,20 +251,40 @@ Future<StabilizationTable?> stabilizationOfRawVideo(
   }
 }
 
+/// How a player is told about the stabilisation of a video: SphericalVideoApi.setStabilization for the phone's 360°
+/// player, ImmersiveApi.setStabilization for the immersive viewer of the Meta Quest (same arguments)
+typedef StabilizationSender =
+    Future<void> Function(
+      String url,
+      bool enabled,
+      bool hasTrack,
+      Int64List? presentationTimesUs,
+      Float64List? corrections,
+      String? summary,
+    );
+
 /// Tells the native player at [url] about the stabilisation of the raw video of [plan] (see
 /// [SphericalVideoApi.setStabilization]), the setting [enabled]: [announce] right before the player opens (the switch
 /// shows while the track is read), then [deliver] the table once [build] made it, or that the file has none. A failure
-/// to tell the player never stops the playback: the log keeps it.
+/// to tell the player never stops the playback: the log keeps it. The phone's player through [api]; another player
+/// (the immersive viewer of the Meta Quest) through [send], with its own [options].
 class RawVideoStabilizer {
   RawVideoStabilizer({
-    required this.api,
+    SphericalVideoApi? api,
+    StabilizationSender? send,
     required this.url,
     required this.enabled,
     required this.plan,
     this.build = buildRawStabilizationInIsolate,
-  });
+    this.options = const StabilizationOptions(),
+  }) : assert(api != null || send != null, 'a player to tell'),
+       send = send ?? _senderOf(api!);
 
-  final SphericalVideoApi api;
+  /// Where the messages go
+  final StabilizationSender send;
+
+  /// The settings of the table
+  final StabilizationOptions options;
   final String url;
   final bool enabled;
   final RawVideoPlan plan;
@@ -271,7 +313,7 @@ class RawVideoStabilizer {
   /// Builds the table and hands it to the player, or tells it the file has none; completes once told. Null without
   /// telling once [cancel] was called.
   Future<StabilizationTable?> deliver() async {
-    final table = await stabilizationOfRawVideo(plan, build: build, cancelled: () => _cancelled);
+    final table = await stabilizationOfRawVideo(plan, build: build, cancelled: () => _cancelled, options: options);
     if (_cancelled) {
       return null;
     }
@@ -280,18 +322,28 @@ class RawVideoStabilizer {
   }
 
   Future<void> _send({required bool hasTrack, StabilizationTable? table}) =>
-      _tell(api, url, enabled: enabled, hasTrack: hasTrack, table: table);
+      _tell(send, url, enabled: enabled, hasTrack: hasTrack, table: table);
 }
+
+// The phone's player: the API looked up at each call, so that a test's mock answers as stubbed then
+StabilizationSender _senderOf(SphericalVideoApi api) =>
+    (url, enabled, hasTrack, presentationTimesUs, corrections, summary) =>
+        api.setStabilization(url, enabled, hasTrack, presentationTimesUs, corrections, summary);
 
 /// Tells the native player at [url] the stabilisation setting [enabled] for a video Flutter builds no table for, right
 /// before it opens: a plain 360° video, whose CAMM track (if any) Media3 applies itself, or a raw video without a
 /// track the app reads. The switch of the player starts at the setting, and off keeps a CAMM track off: off means the
 /// raw video for every file. A failure to tell the player never stops the playback: the log keeps it.
 Future<void> tellStabilizationSetting(SphericalVideoApi api, String url, {required bool enabled}) =>
-    _tell(api, url, enabled: enabled, hasTrack: false);
+    _tell(_senderOf(api), url, enabled: enabled, hasTrack: false);
+
+/// [tellStabilizationSetting] through [send]: the immersive viewer of the Meta Quest, for a video Flutter builds no
+/// table for (the switch hides, and a message of an earlier opening of the same URL is replaced)
+Future<void> tellStabilizationSettingWith(StabilizationSender send, String url, {required bool enabled}) =>
+    _tell(send, url, enabled: enabled, hasTrack: false);
 
 Future<void> _tell(
-  SphericalVideoApi api,
+  StabilizationSender send,
   String url, {
   required bool enabled,
   required bool hasTrack,
@@ -299,7 +351,7 @@ Future<void> _tell(
 }) async {
   try {
     final corrections = table == null ? null : Float64List.fromList(table.corrections);
-    await api.setStabilization(
+    await send(
       url,
       enabled,
       hasTrack,

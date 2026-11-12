@@ -391,6 +391,53 @@ abstract final class ReliefV1 {
   static const maxEyeWidth = 8192;
 }
 
+/// relief-v2, the right eye of a 3D photo on a computer (release 46, lot I3): relief-v1 with two changes, the left eye
+/// still the original. The depth of the model is brought to the size of the eye by a joint bilateral upsampling guided
+/// by the photo (each pixel takes the depths of the 4 x 4 samples around it, weighted by their distance and by how close
+/// the colour of each sample is to its own), so that a depth jump falls on the edge the photo shows instead of a ramp
+/// of several pixels; the dilation of relief-v1 is not needed then. The holes the parallax opens are filled by MI-GAN
+/// when the component is installed, from the background around them only, and by the fill of relief-v1 otherwise. The
+/// settings B and c, the link threshold and the percentiles are those of relief-v1. The Quest keeps relief-v1.
+abstract final class ReliefV2 {
+  /// Immuch360:Pipeline
+  static const pipeline = 'relief-v2';
+
+  /// The range of the colour weight: exp(-|colour difference|^2 / (2 * rangeSigma^2)), RGB out of 255
+  static const rangeSigma = 16.0;
+
+  /// The reach of the distance weight, in samples of the model's map
+  static const spatialSigma = 1.0;
+
+  /// The square cells the holes are filled by, each given to MI-GAN with [inpaintMargin] pixels of context around it,
+  /// so that a region never exceeds the 512 pixels MI-GAN works at
+  static const inpaintCell = 384;
+  static const inpaintMargin = 64;
+
+  /// A cell goes to MI-GAN only when one of its holes is at least this many pixels wide; thinner holes keep the fill
+  /// of relief-v1, which is as good there and costs nothing
+  static const inpaintMinRun = 4;
+
+  /// A cell whose context keeps less than this share of known background pixels keeps the fill of relief-v1
+  static const inpaintMinContext = 0.125;
+}
+
+/// The right eye a computer makes for a 3D photo: "Relief quality" in the settings of the AI features
+enum ReliefVersion {
+  /// relief-v1, the right eye of the first versions and of the Quest: fast
+  v1(ReliefV1.pipeline),
+
+  /// relief-v2: the depth guided by the edges of the photo, the holes filled by MI-GAN when it is installed
+  v2(ReliefV2.pipeline);
+
+  const ReliefVersion(this.pipeline);
+
+  /// Immuch360:Pipeline of its files
+  final String pipeline;
+
+  /// The version named [name] (desktop_ai.json), null for a name this build does not know
+  static ReliefVersion? byName(String? name) => values.where((version) => version.name == name).firstOrNull;
+}
+
 /// The constants of scene-v1, the 3D scene made from one photo: its geometry estimated by MoGe-2, two layers cut at the
 /// breaks of depth, the bands the near layer hides filled in by LaMa, meshes in metres (design-final 2026-10-27,
 /// sections 2.3, 2.4 and 3.4, with the decisions of the measure M2: the grid step of [gridStepFor], LaMa for every

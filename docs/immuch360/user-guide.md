@@ -28,6 +28,7 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"I want my 360° photos and my Immich library on my Windows PC, with the photos and videos of its folders, my NAS and my Plex server, and the PC shared with my headset."** See [On a Windows computer](#on-a-windows-computer-immuch360-desktop-preview) (a preview: photos and flat videos, and from desktop build 3 360°, 3D, VR180 and raw 360° videos and the Tapo live view).
 - **"Typing my server address and password with a TV remote, or in the headset, takes ages."** See [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **"I want my DJI drone's video in my Quest one day, and I can help test."** See [DJI link diagnostics](#dji-link-diagnostics-experimental).
+- **"I reinstalled the app, or moved from the Google Play build to the GitHub one, and lost my servers, shares and backup folders."** See [Keep your settings in a file](#keep-your-settings-in-a-file-from-build-46).
 - **"Do I keep what the Immich app does?"** Yes, with two small changes, see [Everything else is Immich](#everything-else-is-immich).
 
 When a feature is recent, the text says from which build it is there. The GitHub release always has the newest build, the stores follow later: see [Where to get it](release-status.md#where-to-get-it).
@@ -53,6 +54,7 @@ When a feature is recent, the text says from which build it is there. The GitHub
 - [Watch on your TV (Android TV and Google TV)](#watch-on-your-tv-android-tv-and-google-tv)
 - [Find your 360° shots: the 360° list](#find-your-360-shots-the-360-list)
 - [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters)
+- [Keep your settings in a file (from build 46)](#keep-your-settings-in-a-file-from-build-46)
 - [Everything else is Immich](#everything-else-is-immich)
 - [On a Windows computer: Immuch360 Desktop (preview)](#on-a-windows-computer-immuch360-desktop-preview)
 - [Install it on a computer: Windows, Linux and macOS](#install-it-on-a-computer-windows-linux-and-macos)
@@ -108,7 +110,7 @@ On LG TVs the webOS app has the same keys and the same rule, see [LG webOS TVs](
 4. A 360° video has the 360° button in the top bar, which opens the [360° player](#play-a-360-video); on a phone or a tablet the Spatial button follows it while that setting is on, see [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 5. Swipe up for the details of the video: the codec, the size, the frame rate, the bit rate, the picture, and whether this device decodes it, see [Video details, decoders and why a video stutters](#video-details-decoders-and-why-a-video-stutters).
 
-The player plays the file stored on the device when there is one, the file of a network share through the app's local bridge, and otherwise the server's original or its transcoded stream, as Settings, Asset Viewer, Videos, "Video source" says (see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)). The audio track and subtitle menus are in the flat player of Android phones, tablets, TVs and the Quest window (from build 29), for the tracks inside the file; the 360°, Spatial and computer players have the audio track choice. iPhones and iPads have no track menu yet.. From build 45 a film of a Plex server also offers the subtitle files Plex knows beside it, under the names Plex gives its tracks, see [Films of a Plex library](#films-of-a-plex-library-from-build-45).
+The player plays the file stored on the device when there is one, the file of a network share through the app's local bridge, and otherwise the server's original or its transcoded stream, as Settings, Asset Viewer, Videos, "Video source" says (see [Choose the original or the transcoded stream](#choose-the-original-or-the-transcoded-stream)). The audio track and subtitle menus are in the flat player of Android phones, tablets, TVs and the Quest window (from build 29), for the tracks inside the file; the 360°, Spatial and computer players have the audio track choice. iPhones and iPads have no track menu yet. From build 45 a film of a Plex server also offers the subtitle files Plex knows beside it, under the names Plex gives its tracks, see [Films of a Plex library](#films-of-a-plex-library-from-build-45).
 
 ### On a TV, in a headset and on a computer
 
@@ -298,6 +300,8 @@ From build 20 Immuch360 pairs with your Plex Media Server directly, without plex
 7. "Access from outside home" then shows what the server says: "The server says it is reachable at (address):(port).", or "The server did not tell its address outside home." To use the server away from home, type your public address or DynDNS name in "Address outside home (IP or name)", and the port forwarded in Plex (Settings, Remote Access) in "Port outside home". What you type always wins over what the server says.
 8. "Name" is the name of the server unless you change it, and "Start folder (optional)" can open one library directly. Tap Save. The server is listed with the shares, as `plex://` and its address.
 
+**Or sign in with Plex** (from build 46): instead of steps 3 to 6, tap "Sign in with Plex" on the same page. On a phone, a tablet or a computer the plex.tv page opens in the browser: sign in and allow Immuch360. On a TV or a Quest, the page shows a 4 character code and a QR code: open plex.tv/link on your phone or computer and enter the code. The page then lists the Plex servers of your account; tap yours, and the app tries its addresses, at home first, fills in the address and the server's token and tests them. Go on with steps 7 and 8. This step talks to plex.tv once to get your token; the app then talks to your server only. To sign out, remove the server in the app; you can also revoke the app's access on plex.tv (Settings, Authorized Devices).
+
 ### Browse your Plex libraries
 
 1. Tap the server in Network shares. The first level lists the libraries the app shows: photos, movies and other videos, TV shows. Music is left out.
@@ -381,7 +385,7 @@ The address the server tells is learned again at each connection at home. When i
 ### Compared with Plex and with the DLNA type
 
 - **The original files**: the app reads the files themselves, never a copy converted by Plex, so the 360°, 3D and VR180 metadata stay intact and the app's viewers use them, where the Plex apps show these files flat.
-- **No plex.tv**: the app talks to your server only, always over HTTPS. The server is checked through its own plex.direct certificate, tied to the id of the server, before the token is sent. The token stays on the device, in its secure storage, and goes only to your server, in a request header.
+- **No plex.tv**: the app talks to your server only, always over HTTPS, and to plex.tv only during "Sign in with Plex" if you choose it. The server is checked through its own plex.direct certificate, tied to the id of the server, before the token is sent. The token stays on the device, in its secure storage, and goes only to your server, in a request header.
 - **Compared with adding the same server as DLNA**: the folders as on the disk, the thumbnails of Plex, access from outside home and a secure connection.
 
 ### Play a film on your TV from your phone
@@ -397,6 +401,8 @@ From build 45 and desktop build 25, a Plex film chosen on the phone plays on the
 **A TV that does not have your Plex server yet** says so on its row, with "Add (server) to (screen)". Tap it: the phone and the TV show the same six digits, the TV asks "Add (server) from (phone)?", and the phone warns that the TV gets the same full access to your Plex server as the phone. Once you accepted on both, the TV checks the server (its certificate, its identity, its libraries) and keeps it, and the film starts. This also spares typing the token with the remote. Removing the server on the TV forgets it there; the token stays valid on the server.
 
 **Limits**: the phone and the screen on the same home network; Immuch360 open on the screen; phones and tablets send, a TV, the Quest window and a computer receive (on Windows not on a network marked as public); Plex films only in this build. Checked with both sides in tests on a computer; the device test with a phone and a TV is the one of build 45.
+
+**With a Chromecast or a Google TV (experimental, from build 46)**: the same sheet lists "Cast devices" under your screens: a Chromecast, a Google TV, a TV with Cast built in or a Nest Hub on the same Wi-Fi, without Immuch360 on it. Each row says what the film's format means there: "Should play this film", "May not play it" or "Cannot play it", with why (for example "DTS sound" or "AVI file"); a device that cannot play it asks before you try anyway. Tap a device: the phone sends it the film through a small relay of its own, with the title, the year and the poster, and the sheet shows the controls (play or pause, minus 10 s, plus 30 s, the position, the volume, Stop). Leave the page and the small bar at the bottom of every page keeps play or pause and Stop; tap it to open the controls again. Your Plex token never leaves the phone: the device reads the film from the phone, under an address made for this film and forgotten when you stop. **Keep Immuch360 open on the phone while the film plays**: the phone is the one sending it, and with its screen locked the system may pause the app and the TV stops after a while. Cast devices decode H.264, AAC, MP3 and a few more (HEVC on newer ones, Dolby Digital through some TVs); a film in another format plays better on a TV with Immuch360, from "Your screens". Not tested on a real Cast device yet.
 
 ### Limits
 
@@ -588,7 +594,7 @@ From build 16 Immuch360 stitches those files itself, on the phone, the tablet or
 2. Keep the two files of an X3 pair together: the app looks for the other file next to the first one, on the device, on the server or in the share folder. When the other one is missing, the app says "This recording is split in two files, one per lens, and (name) was not found next to it", and suggests keeping both files together or exporting the video from the camera app.
 3. Open the file and tap 360°. Raw files get the 360° button and raw photos the 360° badge. From build 18 the raw Insta360 files of the server are in the 360° list too, found by their name.
 4. A photo opens in the sphere viewer with a label at the bottom: "Raw 360° file, stitched by the app", and the source of the calibration: "lens calibration read from the file", "lens calibration of the same camera" (kept from another file of the same camera, by its serial number, or by its model for a file that only names its model), or "nominal lens values, seams possible" (the values of an X3, when nothing better is available).
-5. A video opens in the native 360° player and is stitched as it plays. Its 3D and 360°/180° buttons are hidden, since a raw video is one full sphere. The video players and the headset show no label. On Android phones, tablets and TVs, from build 42, an Insta360, GoPro MAX or DJI Osmo 360 video also plays stabilised with the motion its camera recorded (experimental), from the library, a share or a folder alike: see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental).
+5. A video opens in the native 360° player and is stitched as it plays. Its 3D and 360°/180° buttons are hidden, since a raw video is one full sphere. The video players and the headset show no label. On Android phones, tablets and TVs from build 42, and in a Meta Quest from build 46, an Insta360, GoPro MAX or DJI Osmo 360 video also plays stabilised with the motion its camera recorded (experimental), from the library, a share or a folder alike: see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental).
 6. In the headset, the immersive view gets a stitched temporary picture for a photo, and the same GPU effect as the phone for a video. There is no progress indicator yet while a raw photo is prepared.
 7. If the picture opens facing an odd direction (a photo taken with the camera lying flat, for example), drag it on a phone, or turn it in the headset with the right thumbstick or the Turn button.
 
@@ -622,9 +628,10 @@ Where the file is:
 
 - **The library, the shares and the folders** are read the same way, by small reads of the parts that hold the motion, never the whole file. Insta360 files reach the library; an Immich server refuses .360 and .osv files, so GoPro MAX and DJI Osmo 360 videos are stabilised from a share or a folder.
 - **A file that cannot be read at any position** plays as before, without the button, rather than being downloaded whole: a file of a DLNA or Plex server that does not tell its size, a server that answers a part of a file with all of it, a device that sends each file from its start.
-- **iPhone and iPad, the computers and the Meta Quest** do not stabilise yet: they level the video once, as below.
+- **In a Meta Quest**, from build 46, the immersive viewer stabilises the same videos, from the same places (experimental, on by default). It turns the picture inside its stitch, frame by frame, so the sphere around you stays put. The view follows the camera's heading more slowly than on a phone, over about 2 seconds and never faster than 30 degrees a second, since in a headset a sudden turn of the world is worse than the shake. The "Stabilize with the camera's gyroscope (experimental)" button of the viewer's panel turns it off and on, and the setting of the app follows it.
+- **iPhone and iPad and the computers** do not stabilise yet: they level the video once, as below.
 
-What was checked: the tests of the project's CI and build host, on the motion tracks of sample files of Insta360 X3, X4 and X5, GoPro MAX (one file) and DJI Osmo 360 cameras, and the angles of the table against the picture of those files. No run on a phone or a TV is recorded yet: feedback welcome.
+What was checked: the tests of the project's CI and build host, on the motion tracks of sample files of Insta360 X3, X4 and X5, GoPro MAX (one file) and DJI Osmo 360 cameras, and the angles of the table against the picture of those files. For the Meta Quest, the tests also check that the turn inside the stitch shows each point where the phone's player shows it. No run on a phone, a TV or a headset is recorded yet: feedback welcome.
 
 ### How the stitching works
 
@@ -636,7 +643,7 @@ What was checked: the tests of the project's CI and build host, on the motion tr
 ### Limits
 
 - **Seams**: the stitch uses the camera's calibration only, without seam optimisation, so objects close to the camera can show a seam, as in the camera's own preview.
-- **Horizon**: on Android phones, tablets and TVs, from build 42, an Insta360, GoPro MAX or DJI Osmo 360 video plays stabilised, the horizon level through the whole video (see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental)). Without the stabilisation (turned off, a file without a motion track, a GoPro MAX 2, a file of a share that cannot be read at any position, iPhone and iPad, the computers, the Quest), levelling uses the accelerometer the camera records in the file, averaged: an Insta360 video is levelled once, from the start of the recording, so a handheld video keeps its shakes and its horizon may lean a little, and GoPro and DJI files keep the camera's horizon.
+- **Horizon**: on Android phones, tablets and TVs from build 42, and in a Meta Quest from build 46, an Insta360, GoPro MAX or DJI Osmo 360 video plays stabilised, the horizon level through the whole video (see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental)). Without the stabilisation (turned off, a file without a motion track, a GoPro MAX 2, a file of a share that cannot be read at any position, iPhone and iPad, the computers), levelling uses the accelerometer the camera records in the file, averaged: an Insta360 video is levelled once, from the start of the recording, so a handheld video keeps its shakes and its horizon may lean a little, and GoPro and DJI files keep the camera's horizon.
 - **Files without calibration**: a file without its calibration block (the members `_008` and `_009` of an X3 HDR group) uses the calibration the app kept from another file of the same camera or the same camera model, or the nominal X3 values if it has seen none.
 - **What was checked**: photos against Insta360 Studio exports of X3 files (same framing, level horizon, a yaw offset under a degree); single track videos on an Android emulator with a low resolution X3 file. The two track and two file paths were checked on real X4, X3 pair, GoPro MAX and Osmo 360 files with the app's CPU reference stitcher (level, continuous seams) and by the Android unit tests. Playback on a phone, a Quest and an iPhone is still the device test of builds 18 and 19, and raw files have not run on an iPhone yet: feedback welcome.
 - **DJI Osmo 360 files** (October 2026): a real .osv file, two 3840x3840 HEVC tracks of 10 bit (Main 10) at 25 frames a second with the camera's calibration after them, was read by the app's parsers and stitched by the CPU reference with continuous seams. On an Android 15 emulator, from a WebDAV share, it is listed with the 360° badge, but the emulator has no 10 bit HEVC decoder, so the file gets no thumbnail there and its 360° player says "Unable to play video"; a synthetic clip laid out the same way in 8 bit was listed with a thumbnail and played stitched to the end, both lenses paired, with the emulator's software decoders. A phone or a Quest with a 10 bit HEVC decoder is expected to play it with its hardware decoders, which no device run has confirmed yet. On Windows, see [Raw 360° videos](#use-it-on-a-computer) in the computer section.
@@ -977,6 +984,28 @@ exiftool -ProjectionType VID_360_hevc.mp4        # must print: equirectangular
 
 When the server ignores HTTP Range requests on the original and the MP4 index (moov) is at the end of the file, the whole file would have to download before the first frame, so the app falls back to the server playback stream. A reverse proxy in front of Immich that buffers the responses or strips the Range headers can cause this.
 
+## Keep your settings in a file (from build 46)
+
+The Google Play build and the GitHub build are signed with different keys, so Android installs one over the other only after an uninstall, which deletes the app's data. A reinstall, the store's "Restore the app" on the Quest, or a new phone do the same. Before that, save the app's settings to a file; after it, restore them.
+
+### Save them
+
+Settings, Settings file, Export the settings. Pick what the file holds:
+
+- **Settings only**: the Immich server address, the shares, Plex servers and cameras without their passwords, the settings, the choices made in the viewers, and the albums chosen or excluded for backup. Anyone who has the file can read it.
+- **Settings, accounts and passwords**: also the session of your Immich account and the passwords of the shares, the Plex tokens and the camera passwords. The whole file is then encrypted with a passphrase you type twice (AES-256-GCM, key derived with Argon2id). Without the passphrase nobody can open it, and it cannot be recovered.
+
+Then Share (to your cloud drive, an email to yourself, Quick Share; on iPhone and iPad, "Save to Files") or Save to a file (Android, the Quest, the TVs and the computers). The file stays on the device until you do one of those.
+
+### Restore them
+
+On the welcome screen, "Restore settings from a file", or in Settings, Settings file. Choose the file (on iPhone and iPad: open it in the Files app, Share, Immuch360), type the passphrase if it has one, and read what it holds before anything is written. Merge adds the file's servers, sources and settings and keeps what the app has; Replace removes the app's sources, settings and backup album choices first. A report tells what was restored and what was not, and why.
+
+- The account is restored only when the app is signed in to no server. It comes back as the session of the app that made the file: if that app is still in use, signing out on one signs out the other. An expired session leads to the sign in form, with the server address filled in.
+- Backup albums are found again by their id, else by their name. On a new install they are chosen once the app has read the device's photos.
+- Never in the file: the Play on links between your phone and your TVs, the DJI relay codes, this install's identity for Plex and for the phone share, the locked folder PIN, downloaded films and what the app learned on its own (caches, the scan of the device). Link the TVs again with one scan.
+- On a TV without a file picker, restore the settings on your phone, then sign the TV in with the phone.
+
 ## Everything else is Immich
 
 Everything the official Immich mobile app does is here: backup, timeline, albums, search, sharing, partners, all synced with your server, with the same server and the same account as the web app. Immuch360 installs next to the official app (package `com.aprogsys.immuch360`). There are two differences, from build 15: the "Force original video" switch became the Video source choice described above, and photos and videos you upload by hand from a device album count as backed up. On a TV, from build 20, the app is a viewer, see [Watch on your TV](#watch-on-your-tv-android-tv-and-google-tv).
@@ -1204,7 +1233,7 @@ What it does on Linux, from desktop build 6: the welcome page; without a server,
 - **Nothing goes to the developer**: the app talks to the Immich server you choose (and, when you open the map, to the map tile service that server uses), has no advertising, no analytics and no crash reporting service run by the developer, and sends nothing to the developer of Immuch360.
 - **Without a server**, no server is contacted: the app uses the network only for the shares, Plex servers and cameras you open, for the phone share, if you turn it on, and, when you open the page of a Plex film, for Wikipedia.
 - **Network shares**: the share list is kept on the device and never sent to a server; passwords go to the device keychain or keystore.
-- **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app never contacts plex.tv. From build 45 the app writes one thing to your server: the audio track and subtitles you pick for a film. What the server holds of your films is shown on the device and never kept or sent anywhere else.
+- **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app contacts plex.tv only during "Sign in with Plex", from build 46, if you choose it on the page of a new server. From build 45 the app writes one thing to your server: the audio track and subtitles you pick for a film. What the server holds of your films is shown on the device and never kept or sent anywhere else.
 - **Film details from Wikipedia** (from build 45): when you open the page of a Plex film, the app asks Wikidata and Wikipedia, run by the Wikimedia Foundation, for the article about that film in your language. It sends the film's IMDb or TMDB number and the title of the article, never your Plex token, your server's address or anything else of your library. The articles found are kept on the device for 30 days. Wikimedia's privacy policy applies to these requests. Turn it off in Settings, Advanced, "Film details from Wikipedia", which also deletes the kept articles.
 - **Tapo cameras** (from build 20): the TP-Link account password and the camera account password stay in the secure storage of the device; the app talks to the camera on the local network only, never to the servers of TP-Link; fetched clips stay in the cache of the app and are deleted with the camera.
 - **TV**: whether the device is a TV is read on the device; nothing is sent.

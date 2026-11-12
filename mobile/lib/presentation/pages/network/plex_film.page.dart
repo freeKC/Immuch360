@@ -192,10 +192,13 @@ class _FilmView extends ConsumerWidget {
                 height: wide ? constraints.maxHeight : constraints.maxWidth * 9 / 16,
                 child: _Backdrop(sourceId: sourceId, path: film.art!, width: constraints.maxWidth),
               ),
-            ListView(
-              key: const Key('plex_film_page'),
-              padding: EdgeInsets.fromLTRB(16, wide ? 24 : constraints.maxWidth * 9 / 32, 16, 32),
-              children: [content],
+            // The end of the list above the navigation bar of the phone; the backdrop keeps the whole page
+            SafeArea(
+              child: ListView(
+                key: const Key('plex_film_page'),
+                padding: EdgeInsets.fromLTRB(16, wide ? 24 : constraints.maxWidth * 9 / 32, 16, 32),
+                children: [content],
+              ),
             ),
           ],
         );

@@ -22,6 +22,7 @@ import androidx.media3.common.util.GlUtil
 import androidx.media3.common.util.Size
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.video.VideoFrameMetadataListener
+import app.alextran.immich.spherical.StabilizedStitch
 import java.util.Locale
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -103,6 +104,12 @@ class TwoLensCompositor(
 
   @Volatile private var downstream: VideoFrameMetadataListener? = null
   @Volatile private var released = false
+
+  /**
+   * The stabilisation turned inside the stitch (the immersive viewer of the Meta Quest), looked up by the time of each
+   * pair on the timeline of the video; null for none, the stitch as before (the phone's player turns its sphere)
+   */
+  @Volatile var stabilization: StabilizedStitch? = null
 
   /** The largest output the GPU draws: the viewport and texture limits, read when the context starts. */
   @Volatile
@@ -400,6 +407,10 @@ class TwoLensCompositor(
       program.setFloatsUniformIfPresent("uTexTransform$index", texTransforms[stream])
     }
     program.setFloatsUniformIfPresent("uEnabled", RawStitchUniforms.enabled(streams))
+    program.setFloatsUniformIfPresent(
+      RawStitchShaders.STABILIZATION_UNIFORM,
+      StabilizedStitch.matrixOf(stabilization, draw.ptsUs),
+    )
     if (projection.kind == RawKind.DUAL_FISHEYE) {
       val sizes = (0..1).map { stream -> formats.get(stream)?.takeIf { it.width > 0 }?.let { it.width to it.height } }
       for ((name, value) in RawStitchUniforms.halfTexels(projection, sizes)) {
@@ -506,6 +517,8 @@ class TwoLensCompositor(
       if (projection.kind == RawKind.EAC_GOPRO) RawStitchUniforms.eac(projection)
       else RawStitchUniforms.fisheye(projection)
     for ((name, value) in values) program.setFloatsUniformIfPresent(name, value)
+    // GLSL starts a uniform at zero: the identity until a pair says otherwise
+    program.setFloatsUniformIfPresent(RawStitchShaders.STABILIZATION_UNIFORM, StabilizedStitch.identity())
     return program
   }
 

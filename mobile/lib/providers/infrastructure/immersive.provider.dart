@@ -5,6 +5,7 @@ import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/services/immersive_navigation.service.dart';
 import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/platform/immersive_api.g.dart';
 import 'package:logging/logging.dart';
 
@@ -116,10 +117,36 @@ abstract interface class ImmersiveNavigator {
 /// through the system, or a request of a viewer since opened on another media from the app) would otherwise move the
 /// asset viewer, or search the timeline, for a viewer that is gone.
 class ImmersiveSession implements ImmersiveEvents {
-  ImmersiveSession({this.searchDeadline = immersiveSearchDeadline});
+  ImmersiveSession({this.searchDeadline = immersiveSearchDeadline, this.onStabilizationChanged});
 
   /// Longest a request for another media is answered in, see [immersiveSearchDeadline]
   final Duration searchDeadline;
+
+  /// Stores the stabilisation the user chose in the viewer, the setting of the app (see [stabilizationChanged])
+  final Future<void> Function(bool enabled)? onStabilizationChanged;
+
+  // What to do once the media the viewer shows goes away: another media, the viewer closed or not opened
+  final _onMediaGone = <void Function()>[];
+
+  /// [action] runs once the media the viewer is about to show goes away: another one shown in its place
+  /// ([mediaReplaced]), another opening, the viewer closed, or not opened. The build of its stabilisation table stops,
+  /// for example
+  void whenMediaGone(void Function() action) => _onMediaGone.add(action);
+
+  /// The viewer is about to show another media in place of the one before: what that one left running stops
+  void mediaReplaced() => _runMediaGone();
+
+  void _runMediaGone() {
+    final actions = List.of(_onMediaGone);
+    _onMediaGone.clear();
+    for (final action in actions) {
+      try {
+        action();
+      } catch (error, stackTrace) {
+        _log.warning('An action after the media of the immersive viewer went away failed', error, stackTrace);
+      }
+    }
+  }
 
   // The id of the last opening started: the next one gets the following id, so that no two openings share one. Seeded
   // from the clock because the viewer activity can outlive the app engine that opened it (the engine is recreated
@@ -146,6 +173,7 @@ class ImmersiveSession implements ImmersiveEvents {
   /// for ImmersiveApi.open: the events of any opening before it are ignored from now on.
   int start(ImmersiveNavigator? navigator) {
     _cancelRequest();
+    _runMediaGone();
     final id = ++_lastOpeningId;
     _opening = (id: id, navigator: navigator);
     RateAppSignals.viewingOpened(RateAppViewing.immersive);
@@ -156,6 +184,7 @@ class ImmersiveSession implements ImmersiveEvents {
   void cancel(int openingId) {
     if (isCurrent(openingId)) {
       _cancelRequest();
+      _runMediaGone();
       _opening = null;
       RateAppSignals.viewingClosed(RateAppViewing.immersive, normal: false);
     }
@@ -165,6 +194,7 @@ class ImmersiveSession implements ImmersiveEvents {
   /// no longer reach it
   void dispose() {
     _cancelRequest();
+    _runMediaGone();
     _opening = null;
     ImmersiveEvents.setUp(null);
   }
@@ -239,6 +269,7 @@ class ImmersiveSession implements ImmersiveEvents {
     }
     final navigator = _opening?.navigator;
     _opening = null;
+    _runMediaGone();
     RateAppSignals.viewingClosed(RateAppViewing.immersive);
     // A search still running for this viewer stops, showing nothing
     _cancelRequest();
@@ -250,6 +281,20 @@ class ImmersiveSession implements ImmersiveEvents {
       navigator.onClosed(url, stereoLayout, coverage, positionMs);
     } catch (error, stackTrace) {
       _log.warning('Could not follow the closing of the immersive viewer', error, stackTrace);
+    }
+  }
+
+  @override
+  void stabilizationChanged(int openingId, bool enabled) {
+    // The press was the user's, whichever opening it came from
+    _log.info('The stabilisation was turned ${enabled ? 'on' : 'off'} in the immersive viewer of opening $openingId');
+    final store = onStabilizationChanged;
+    if (store != null) {
+      unawaited(
+        store(enabled).catchError((Object error, StackTrace stackTrace) {
+          _log.warning('Could not store the stabilisation setting', error, stackTrace);
+        }),
+      );
     }
   }
 
@@ -271,7 +316,10 @@ class ImmersiveSession implements ImmersiveEvents {
 /// The session of the immersive viewer. Reading it the first time registers it as the [ImmersiveEvents] handler on
 /// the engine of the app window, which the openers do before the viewer opens, like for the native 360° player.
 final immersiveSessionProvider = Provider<ImmersiveSession>((ref) {
-  final session = ImmersiveSession();
+  final session = ImmersiveSession(
+    // The switch of the viewer is the setting of the app (Settings, Asset Viewer, Videos), as the phone's player's
+    onStabilizationChanged: (enabled) => SettingsRepository.instance.write(.viewerStabilizeVideos, enabled),
+  );
   ImmersiveEvents.setUp(session);
   ref.onDispose(session.dispose);
   return session;

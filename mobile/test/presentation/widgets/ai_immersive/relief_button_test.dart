@@ -1,6 +1,7 @@
 // The "AI relief" button of the 2D panel of the Meta Quest: greyed with its reason where the gate refuses, the install
 // sheet first when the depth model is missing (a fake download, nothing before Download), then the depthRelief request
-// to the immersive viewer with the model installed on the headset, the identity of the photo and its quarter turns.
+// to the immersive viewer with the model installed on the headset, the identity of the photo, its quarter turns and
+// the relief strength of the settings.
 
 import 'dart:async';
 import 'dart:convert';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
@@ -28,6 +30,8 @@ void main() {
           as Map<String, dynamic>;
   final serverPhoto = ((contract['depthRelief'] as List)[0] as Map<String, dynamic>)['request'];
   final serverPhotoIn25d = ((contract['depthRelief'] as List)[2] as Map<String, dynamic>)['request'];
+  final serverPhotoStrong = ((contract['depthRelief'] as List)[3] as Map<String, dynamic>)['request'];
+  final serverPhotoSubtle = ((contract['depthRelief'] as List)[4] as Map<String, dynamic>)['request'];
 
   late InstalledModelService service;
   late List<StereoPhotoRequest> opened;
@@ -53,6 +57,7 @@ void main() {
     ReliefGate gate, {
     int quarterTurns = 0,
     ReliefViewMode mode = ReliefViewMode.stereo,
+    ReliefStrength strength = ReliefStrength.normal,
   }) => tester.pumpConsumerWidget(
     Scaffold(
       body: Center(
@@ -60,6 +65,7 @@ void main() {
           gate: gate,
           target: target(quarterTurns: quarterTurns),
           mode: mode,
+          strength: strength,
         ),
       ),
     ),
@@ -120,6 +126,23 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(jsonOf(opened.single), serverPhotoIn25d);
+  });
+
+  testWidgets('asks for the relief strength of the settings, each with its own cache key', (tester) async {
+    service.setStatus(model, const AiComponentStatus(AiComponentState.installed));
+    for (final (strength, expected) in [
+      (ReliefStrength.strong, serverPhotoStrong),
+      (ReliefStrength.subtle, serverPhotoSubtle),
+      (ReliefStrength.normal, serverPhoto),
+    ]) {
+      opened.clear();
+      await pumpButton(tester, ReliefGate.offered, strength: strength);
+
+      await tester.tap(find.byKey(aiReliefButtonKey));
+      await tester.pumpAndSettle();
+
+      expect(jsonOf(opened.single), expected, reason: strength.name);
+    }
   });
 
   testWidgets('keys the relief with the quarter turns the photo is seen with', (tester) async {

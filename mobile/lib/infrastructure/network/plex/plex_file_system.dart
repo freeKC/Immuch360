@@ -37,6 +37,8 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_server_breaker.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:logging/logging.dart';
@@ -62,6 +64,7 @@ class PlexFileSystem
     this._pageSize,
     this._publicDelay,
     this._learned,
+    this._breaker,
   );
 
   /// Picks the address that answers (see [_choose]), checks that the server there is the one of the source by its
@@ -83,6 +86,7 @@ class PlexFileSystem
     @visibleForTesting Duration publicDelay = publicStartDelay,
     String? clientIdentifier,
     PlexLearnedAddressStore? learned,
+    @visibleForTesting PlexServerBreaker? breaker,
   }) async {
     if (source.type != NetworkSourceType.plex) {
       throw ArgumentError.value(source.type, 'source.type', 'Not a Plex source');
@@ -137,6 +141,7 @@ class PlexFileSystem
       pageSize,
       publicDelay,
       store,
+      breaker ?? PlexServerBreakers.of(source.id),
     );
     final watch = Stopwatch()..start();
     try {
@@ -153,6 +158,8 @@ class PlexFileSystem
       rethrow;
     }
     _log.info('Opened ${fileSystem.isOutsideHome ? 'outside home' : 'at home'} in ${watch.elapsedMilliseconds} ms');
+    // The probes of the breaker go through the last connection opened to the server
+    fileSystem._breaker.onProbe = fileSystem._probe;
     if (!fileSystem.isOutsideHome) {
       unawaited(fileSystem._refreshLearnedAddress());
     }
@@ -170,6 +177,9 @@ class PlexFileSystem
   final int _pageSize;
   final Duration _publicDelay;
   final PlexLearnedAddressStore? _learned;
+
+  /// The breaker of the server, shared with every connection to it (see plex_server_breaker.dart)
+  final PlexServerBreaker _breaker;
   bool _closed = false;
 
   /// The address in use, from [open] on
@@ -226,6 +236,13 @@ class PlexFileSystem
 
   /// How long the address at home has alone before the one outside home is tried too
   static const publicStartDelay = Duration(milliseconds: 400);
+
+  /// Longest wait for the first bytes of a film ([waitForFirstBytes]): a server that just mounted its films again
+  /// sent the first MiB of one in 74 s on 11 November 2026, while it read the middle of the same file at 14 Mbit/s
+  static const filmStartTimeout = Duration(minutes: 3);
+
+  /// What [waitForFirstBytes] reads: what a player reads first of a film
+  static const filmStartBytes = 64 * 1024;
 
   /// Sizes of the pictures asked of the photo transcoder
   static const _minThumbnailSize = 16;
@@ -347,11 +364,100 @@ class PlexFileSystem
               length,
             );
           } on PlexHttpStatus catch (error) {
-            throw error.status == 404 || error.status == 410 ? const _Stale() : error;
+            throw error.status == 404 || error.status == 410 ? const _PartGone() : error;
           }
         }),
       ),
     );
+  }
+
+  /// Waits for the first [length] bytes of the file at [path], [timeout] at most for the answer and then between two
+  /// parts of it, before a player gets the film: a server that just mounted its films again takes over a minute to
+  /// send them, where a player gives up after seconds. Stops when [cancel] completes (a [PlexRequestCancelled] then).
+  /// Throws [plexFileUnreadable] when the server knows the film but cannot read its file, and what the user is told
+  /// of any other failure.
+  Future<void> waitForFirstBytes(
+    String path, {
+    int length = filmStartBytes,
+    Duration timeout = filmStartTimeout,
+    Future<void>? cancel,
+  }) {
+    final target = normalizePath(path);
+    return _guard(
+      () => _rewalkOnce((again) async {
+        final file = await _fileOf(target, again);
+        final response = await _plex.send(
+          'GET',
+          _endpoint.base.resolve(file.partKey),
+          accept: '*/*',
+          abort: cancel,
+          timeout: timeout,
+          headers: {'range': 'bytes=0-${length - 1}', 'accept-encoding': 'identity'},
+        );
+        final status = response.statusCode;
+        if (status == 404 || status == 410) {
+          await discardHttpBody(response);
+          throw const _PartGone();
+        }
+        if (status == 416) {
+          // An empty file: nothing to wait for
+          await discardHttpBody(response);
+          return;
+        }
+        if (status != 200 && status != 206) {
+          await discardHttpBody(response);
+          throw PlexHttpStatus(status);
+        }
+        await _readSome(response.stream, length, timeout, cancel);
+      }),
+    );
+  }
+
+  /// Reads [length] bytes of [body] at most, each part within [timeout], and stops the transfer; a
+  /// [PlexRequestCancelled] once [cancel] completes
+  static Future<void> _readSome(Stream<List<int>> body, int length, Duration timeout, Future<void>? cancel) async {
+    final done = Completer<void>();
+    var received = 0;
+    Timer? timer;
+    late final StreamSubscription<List<int>> subscription;
+    void finish([Object? error]) {
+      timer?.cancel();
+      if (done.isCompleted) {
+        return;
+      }
+      if (error == null) {
+        done.complete();
+      } else {
+        done.completeError(error);
+      }
+    }
+
+    void arm() {
+      timer?.cancel();
+      timer = Timer(timeout, () => finish(TimeoutException('No bytes in time', timeout)));
+    }
+
+    subscription = body.listen(
+      (chunk) {
+        received += chunk.length;
+        if (received >= length) {
+          finish();
+        } else {
+          arm();
+        }
+      },
+      onError: (Object error) => finish(error),
+      onDone: finish,
+      cancelOnError: true,
+    );
+    arm();
+    unawaited(cancel?.whenComplete(() => finish(const PlexRequestCancelled())));
+    try {
+      await done.future;
+    } finally {
+      // Stops the transfer: the player asks for the film itself
+      unawaited(subscription.cancel().catchError((Object _) {}));
+    }
   }
 
   /// The part of the file at [path] for a copy on this device: `GET {Part.key}?download=1` with the token in its header,
@@ -395,7 +501,7 @@ class PlexFileSystem
           }
           if (status == 404 || status == 410) {
             await discardHttpBody(response);
-            throw const _Stale();
+            throw const _PartGone();
           }
           if (status == 403) {
             await discardHttpBody(response);
@@ -575,6 +681,56 @@ class PlexFileSystem
   /// the streams of its files. Not found once the server no longer has it.
   Future<PlexFilmDetails> filmDetails(String ratingKey) => _guard(() => _onServer(() => _detailsOf(ratingKey)));
 
+  /// Largest segment of a conversion read (a few seconds of a 20 Mbit/s stream is under 20 MB)
+  static const maxConversionSegment = 64 * 1024 * 1024;
+
+  /// The server's conversion of the film at [path] (plex_transcode.dart): the decision is asked first, and null comes
+  /// back when the server says it cannot convert the film (its answer goes to the log). [mediaIndex] and [partIndex]
+  /// are the places of the file among the versions and files of the film (plexPartPlace).
+  Future<PlexConversion?> conversionOf(
+    String path, {
+    int mediaIndex = 0,
+    int partIndex = 0,
+    Duration offset = Duration.zero,
+    List<String> audioCodecs = const ['eac3', 'ac3'],
+  }) => _guard(
+    () => _onServer(() async {
+      final item = itemAt(path);
+      if (item == null) {
+        throw const _Stale();
+      }
+      final request = PlexTranscodeRequest(
+        ratingKey: item.ratingKey,
+        session: newPlexTranscodeSession(),
+        mediaIndex: mediaIndex,
+        partIndex: partIndex,
+        offset: offset,
+        audioCodecs: audioCodecs,
+      );
+      final base = _endpoint.base;
+      final decision = await _plex.getJson(
+        request.decisionUri(base),
+        parsePlexTranscodeDecision,
+        headers: request.headers,
+      );
+      _log.info(decision.logLine);
+      if (!decision.canConvert) {
+        return null;
+      }
+      return PlexConversion(
+        request: request,
+        base: base,
+        fetch: (uri, headers) async {
+          final bytes = await _plex.getBytes(uri, accept: '*/*', maxSize: maxConversionSegment, headers: headers);
+          if (bytes == null) {
+            throw const NetworkFileSystemException('The conversion is gone from the server');
+          }
+          return bytes;
+        },
+      );
+    }),
+  );
+
   Future<PlexFilmDetails> _detailsOf(String ratingKey) async {
     final uri = _endpoint.base
         .resolve('/library/metadata/${Uri.encodeComponent(ratingKey)}')
@@ -708,8 +864,13 @@ class PlexFileSystem
     );
   }
 
-  /// The subtitle file [stream] beside a film, converted to SubRip by the server (GET /library/streams/{id}.srt with
-  /// format=srt); null when the server has no such file. Small: [maxSubtitleSize] at most.
+  /// The subtitle file [stream] beside a film, as it is on the server's disk, in UTF-8 (GET /library/streams/{id}, its
+  /// key, with encoding=utf-8); null when the server has no such file. Small: [maxSubtitleSize] at most.
+  ///
+  /// Read on a Plex Media Server 1.42.1 (11 November 2026, 26 side files): format=srt converts nothing, a path with an
+  /// extension other than the stream's codec answers 404 (a .srt path for a file Plex calls WebVTT), and
+  /// encoding=utf-8 turns a Latin-1 file into UTF-8 and leaves a UTF-8 one as it is. The text's own format is read by
+  /// subtitleTextFormatOf: a file Plex calls WebVTT from its name may hold SubRip or ASS text.
   Future<Uint8List?> subtitleFile(PlexStream stream) {
     if (!stream.isSidecar || !stream.isTextSubtitle) {
       return Future.value(null);
@@ -717,8 +878,8 @@ class PlexFileSystem
     return _guard(
       () => _onServer(() {
         final uri = _endpoint.base
-            .resolve('/library/streams/${stream.id}.srt')
-            .replace(queryParameters: const {'format': 'srt'});
+            .resolve('/library/streams/${stream.id}')
+            .replace(queryParameters: const {'encoding': 'utf-8'});
         return _plex.getBytes(uri, accept: '*/*', maxSize: maxSubtitleSize);
       }),
     );
@@ -836,6 +997,9 @@ class PlexFileSystem
       return;
     }
     _closed = true;
+    if (_breaker.onProbe == _probe) {
+      _breaker.onProbe = null;
+    }
     await _ranges.close();
     if (_ownsClient) {
       _plex.close();
@@ -933,21 +1097,25 @@ class PlexFileSystem
     }
   }
 
-  /// What to tell when no address answered: another server first, then what the address outside home said (at home the
-  /// address at home would have answered), else what the one at home said
+  /// What to tell when no address answered: another server first; a server that answered in this run stopped
+  /// answering; else what the address outside home said (at home the address at home would have answered), else what
+  /// the one at home said
   NetworkFileSystemException _choiceError(List<(_Candidate, Object)> errors) {
     for (final (_, error) in errors) {
       if (error is PlexFileSystemException && error.failure == PlexFailure.otherServer) {
         return error;
       }
     }
+    // A server that answered in this run stopped, wherever the phone is: on 11 November 2026 one that stopped at home
+    // was told as one to reach from outside home
+    final reached = _breaker.everReached;
     final outside = errors.where((e) => e.$1.outsideHome).firstOrNull;
     if (outside != null) {
-      return plexErrorOf(outside.$2, outsideHome: true);
+      return plexErrorOf(outside.$2, outsideHome: true, reachedBefore: reached, sourceId: source.id);
     }
     return errors.isEmpty
         ? const PlexFileSystemException('The Plex server does not answer', PlexFailure.unreachable)
-        : plexErrorOf(errors.first.$2);
+        : plexErrorOf(errors.first.$2, reachedBefore: reached, sourceId: source.id);
   }
 
   /// Runs [action], and once more after a new choice of the address when the network failed under it (the phone left
@@ -1290,7 +1458,7 @@ class PlexFileSystem
       await discardHttpBody(response);
     }
     if (status == 404 || status == 410) {
-      throw const _Stale();
+      throw const _PartGone();
     }
     if (status != 200 && status != 206) {
       throw PlexHttpStatus(status);
@@ -1321,6 +1489,9 @@ class PlexFileSystem
       _walkingAgain++;
       try {
         return await action(true);
+      } on _PartGone {
+        // The film is still there (its item or its folder was found again), its file is not: a volume not mounted
+        throw plexFileUnreadable;
       } on _Stale {
         throw _notFound;
       } finally {
@@ -1360,14 +1531,71 @@ class PlexFileSystem
 
   /// Runs [action], with every failure turned into a [NetworkFileSystemException] without the token, an address, a
   /// path or a title
+  ///
+  /// Every call goes through the breaker of the server: refused at once while it is open (but for its probe), and
+  /// told whether the server answered.
   Future<T> _guard<T>(Future<T> Function() action) async {
+    final permit = _breaker.admit();
+    if (permit == null) {
+      _log.fine('Not asked: the server stopped answering (next probe in ${_breaker.retryIn.inSeconds} s)');
+      throw _breaker.everReached
+          ? plexStoppedAnswering(sourceId: source.id)
+          : (_lastFailure ?? const PlexFileSystemException('The Plex server does not answer', PlexFailure.unreachable));
+    }
     try {
-      return await action();
+      final result = await action();
+      _breaker.answered(permit);
+      return result;
+    } on PlexRequestCancelled {
+      _breaker.released(permit);
+      rethrow;
+    } on _PartGone {
+      _breaker.answered(permit);
+      throw plexFileUnreadable;
     } on _Stale {
+      _breaker.answered(permit);
       throw _notFound;
     } catch (error) {
-      throw plexErrorOf(error, outsideHome: _current?.outsideHome ?? false);
+      if (_closed) {
+        _breaker.released(permit);
+        throw plexErrorOf(error, outsideHome: _current?.outsideHome ?? false);
+      }
+      final network = isPlexNetworkFailure(error);
+      // Read before the failure is counted: the server answered in this run, so it stopped
+      final reached = _breaker.everReached;
+      final mapped = plexErrorOf(
+        error,
+        outsideHome: _current?.outsideHome ?? false,
+        reachedBefore: reached,
+        sourceId: source.id,
+      );
+      if (network) {
+        _breaker.failed(permit);
+        _lastFailure = mapped;
+      } else {
+        // An answer of the server, whatever it said
+        _breaker.answered(permit);
+      }
+      throw mapped;
     }
+  }
+
+  /// What the last failure of the network was told as, for the calls the breaker refuses before the server ever
+  /// answered (the address outside home to set up, for one)
+  NetworkFileSystemException? get _lastFailure => switch (_breaker.lastFailure) {
+    final NetworkFileSystemException failure => failure,
+    _ => null,
+  };
+  set _lastFailure(NetworkFileSystemException? value) => _breaker.lastFailure = value;
+
+  /// The probe of the breaker: /identity at the address in use, through [_guard] like any call
+  Future<void> _probe() async {
+    if (_closed) {
+      return;
+    }
+    await _guard(
+      () => _onServer(() => _plex.getJson(_endpoint.base.resolve('/identity'), parsePlexIdentity, withToken: false)),
+    );
   }
 
   static const _downloadForbidden = PlexFileSystemException(
@@ -1576,6 +1804,15 @@ class _Stale implements Exception {
 
   @override
   String toString() => 'Stale Plex key';
+}
+
+/// The server answers 404 for the part of a file it listed: looked for again once (a rescan gives new keys), then the
+/// file is one the server cannot read now ([plexFileUnreadable])
+class _PartGone extends _Stale {
+  const _PartGone();
+
+  @override
+  String toString() => 'Plex part not found';
 }
 
 /// The Plex item behind a path of a [PlexFileSystem] (see [PlexFileSystem.itemAt])

@@ -29,6 +29,7 @@ class PlexStream {
     this.index,
     this.key,
     this.codec,
+    this.profile,
     this.language,
     this.languageCode,
     this.languageTag,
@@ -53,6 +54,10 @@ class PlexStream {
   final String? key;
   final String? codec;
 
+  /// The profile of its codec as the server names it ("high 10", "main 10", "advanced simple", "ma" for DTS-HD
+  /// Master Audio), what the choice of the player reads (film_player_choice.dart)
+  final String? profile;
+
   /// The name of its language in the server's words ("Français"), its three letter code ("fra"), its BCP 47 tag ("fr")
   final String? language;
   final String? languageCode;
@@ -74,8 +79,8 @@ class PlexStream {
   /// A subtitle file of its own beside the film, which the players do not see in the file
   bool get isSidecar => type == PlexStreamType.subtitle && key != null;
 
-  /// A subtitle a player can draw from a text file: the side files Plex can convert to SubRip (image subtitles, PGS
-  /// and VobSub, need burning in by the transcoder, which the app does not ask for)
+  /// A subtitle a player can draw from a text file: the side files that are not pictures (image subtitles, PGS and
+  /// VobSub, need burning in by the transcoder, which the app does not ask for)
   bool get isTextSubtitle => type == PlexStreamType.subtitle && !_imageSubtitleCodecs.contains(codec?.toLowerCase());
 
   /// The line of its menu: the server's longer line, else its shorter one, else its language
@@ -424,6 +429,7 @@ PlexStream? _stream(Map<String, Object?> stream) {
     index: _int(stream['index']),
     key: _string(stream['key']),
     codec: _string(stream['codec']),
+    profile: _string(stream['profile']),
     language: _string(stream['language']),
     languageCode: _string(stream['languageCode']),
     languageTag: _string(stream['languageTag']),

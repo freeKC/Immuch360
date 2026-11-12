@@ -19,6 +19,7 @@ import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 
 import '../../../test_utils.dart';
+import '../../system_navigation_bar.dart';
 
 /// The scanner, answering [result]
 class _FakeScanner extends QrScanApi {
@@ -174,6 +175,33 @@ void main() {
       expect(find.text('Living room TV'), findsOneWidget);
       expect(find.text('Sign out'), findsOneWidget);
       expect(find.text('You can also sign them out in Immich: Account settings, Authorized devices.'), findsOneWidget);
+    });
+
+    testWidgets('ends its list above the navigation bar of the phone', (tester) async {
+      screenWithNavigationBar(tester);
+      await pump(
+        tester,
+        const ConnectScreenPage(),
+        overrides: [
+          pairedScreensProvider.overrideWith(
+            () => _Screens([
+              for (var i = 1; i <= 10; i++)
+                PairedScreen(
+                  sessionId: 'session-$i',
+                  label: 'TV $i',
+                  kind: PairingScreenKind.tv,
+                  os: 'Android',
+                  at: DateTime.utc(2026, 10, i),
+                ),
+            ]),
+          ),
+        ],
+      );
+      await scrollToEnd(tester, find.byType(Scrollable).first);
+      expectAboveNavigationBar(
+        tester,
+        find.text('You can also sign them out in Immich: Account settings, Authorized devices.'),
+      );
     });
 
     testWidgets('says when nothing is connected yet', (tester) async {
@@ -383,6 +411,26 @@ void main() {
       await tester.pumpAndSettle();
       expect(choice?.link, isFalse);
       expect(choice?.sendHeaders, isTrue);
+    });
+
+    testWidgets('keeps Cancel and Sign in above the navigation bar, and above the keyboard', (tester) async {
+      screenWithNavigationBar(tester);
+      await open(tester, (_) {});
+      final confirm = find.byKey(const Key('pairing_confirm_button'));
+      await tester.ensureVisible(confirm);
+      await tester.pumpAndSettle();
+      expectAboveNavigationBar(tester, confirm);
+      expectAboveNavigationBar(tester, find.text('Cancel'));
+
+      showKeyboard(tester, 300);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(confirm);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(confirm).bottom,
+        lessThanOrEqualTo(screenBottom(tester) - 300),
+        reason: 'under the keyboard',
+      );
     });
 
     testWidgets('warns of a screen off the phone network', (tester) async {

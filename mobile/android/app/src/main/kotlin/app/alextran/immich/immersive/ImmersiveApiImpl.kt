@@ -5,6 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import app.alextran.immich.immersive.splat.SplatBuild
+import app.alextran.immich.spherical.StabilizationInbox
+import app.alextran.immich.spherical.StabilizationTable
 import io.flutter.plugin.common.BinaryMessenger
 
 /**
@@ -87,6 +89,24 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         }
         current.progress(openingId, url, positionMs, durationMs) { result ->
           result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the progress event", it) }
+        }
+      }
+    }
+
+    /**
+     * Tells Flutter the user turned the stabilisation with the camera's gyroscope on or off ([enabled]) in the viewer
+     * of [openingId], so that the setting of the app follows, as with the phone's player. Without an engine for the
+     * app UI the event is dropped.
+     */
+    fun notifyStabilizationChanged(openingId: Long, enabled: Boolean) {
+      onMainThread {
+        val current = events
+        if (current == null) {
+          Log.i(TAG, "no Flutter engine to tell the stabilisation setting")
+          return@onMainThread
+        }
+        current.stabilizationChanged(openingId, enabled) { result ->
+          result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the stabilisation event", it) }
         }
       }
     }
@@ -261,5 +281,30 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
       startPositionMs,
       startNotice,
     )
+  }
+
+  /**
+   * The stabilisation of the raw video at [url] (issue 14, lot d3): kept for the viewer, which may not show it yet,
+   * see [ImmersiveStabilizationInbox]. A table the viewer cannot use (lengths that do not match, times that do not
+   * rise, values that are not unit quaternions) counts as no track, the log tells why. Pigeon calls this on the main
+   * thread.
+   */
+  override fun setStabilization(
+    url: String,
+    enabled: Boolean,
+    hasTrack: Boolean,
+    presentationTimesUs: LongArray?,
+    corrections: DoubleArray?,
+    summary: String?,
+  ) {
+    val sent = presentationTimesUs != null || corrections != null
+    val table =
+      if (!sent) null else StabilizationTable.of(presentationTimesUs, corrections) { reason ->
+        Log.w(TAG, "Stabilisation table refused: $reason")
+      }
+    // A table sent but refused: the viewer shows the video as it is, and no switch that would do nothing
+    val usable = hasTrack && (table != null || !sent)
+    Log.i(TAG, "stabilisation of a video: setting $enabled, track $usable, ${table?.size ?: 0} frames, $summary")
+    ImmersiveStabilizationInbox.post(StabilizationInbox.Message(url, enabled, usable, table, summary))
   }
 }

@@ -36,6 +36,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
+import 'package:immich_mobile/desktop/video/desktop_stabilization.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
@@ -124,6 +125,7 @@ class SphericalPlayerDependencies {
     this.readable,
     this.firstFrameTimeout,
     this.now,
+    this.stabilization,
   });
 
   final PlayerPool? pool;
@@ -155,6 +157,9 @@ class SphericalPlayerDependencies {
 
   /// The clock of the measure of two stacked streams
   final DateTime Function()? now;
+
+  /// Where the stabilisation of the video waits for the player (DesktopStabilizationInbox.instance otherwise)
+  final DesktopStabilizationInbox? stabilization;
 }
 
 class DesktopSphericalPlayerPage extends ConsumerStatefulWidget {
@@ -213,6 +218,17 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
 
   /// What tells the user why the view is flat, or that one lens shows: under the controls
   String? _notice;
+
+  /// The stabilisation of a raw video with its camera's motion (desktop_stabilization.dart): the switch, the messages
+  /// of Flutter about this video, and the notice that fades after a few seconds
+  final _stabilization = StabilizationSwitch();
+  StreamSubscription<DesktopStabilizationMessage>? _stabilizationMessages;
+  String? _stabilizationNotice;
+  bool _stabilizationNoticeShown = false;
+  Timer? _stabilizationNoticeTimer;
+
+  /// How long the notice of the stabilisation stays before it fades
+  static const stabilizationNoticeTime = Duration(seconds: 3);
 
   /// The players whose mpv options a raw file changed (vid, hwdec, lavfi-complex, external-files): given back to the
   /// pool as it gave them
@@ -273,6 +289,10 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   @visibleForTesting
   RawStep? get rawStep => _step;
 
+  /// The stabilisation switch, for the tests
+  @visibleForTesting
+  StabilizationSwitch get stabilization => _stabilization;
+
   SphericalPlayerDependencies get _deps => widget.dependencies;
 
   DateTime _now() => (_deps.now ?? DateTime.now)();
@@ -328,7 +348,84 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     _controller.buffering.addListener(_onBuffering);
     _controller.videoController.addListener(_onBuffering);
     _controller.onPlaybackEnded.addListener(_onStatus);
+    // What Flutter said of the stabilisation before the open, then what it says once the table is built
+    final inbox = _stabilizationInbox;
+    final url = widget.args.url;
+    final latest = inbox.latestFor(url);
+    if (latest != null) {
+      _onStabilizationMessage(latest);
+    }
+    _stabilizationMessages = inbox.messages.where((message) => message.url == url).listen(_onStabilizationMessage);
     unawaited(_start());
+  }
+
+  DesktopStabilizationInbox get _stabilizationInbox => _deps.stabilization ?? DesktopStabilizationInbox.instance;
+
+  /// What Flutter said of the stabilisation of this video: the setting, then whether the file has a track and its
+  /// table (the Android player's rules, StabilizationSwitch)
+  void _onStabilizationMessage(DesktopStabilizationMessage message) {
+    _stabilization.onSetting(message.enabled);
+    final notice = _stabilization.onTrack(hasTrack: message.hasTrack, table: message.table);
+    if (message.table != null) {
+      _log.info('Stabilisation table of ${message.table!.length} frames: ${message.summary}');
+    }
+    _showStabilizationNotice(notice);
+    unawaited(_applyStabilization());
+  }
+
+  /// The view is the stitched sphere of a raw video drawn by renderer C: the only one a table turns
+  bool get _stitchedByRenderer {
+    final rendering = _rendering;
+    return _params.isRaw && rendering != null && !rendering.isFlat && _step?.mode != RawMode.unstitched;
+  }
+
+  /// Gives renderer C the table and the switch: the table once, the switch when it flips. The first time frames are
+  /// corrected in this player, the notice says so.
+  Future<void> _applyStabilization() async {
+    _stabilization.stitched = _stitchedByRenderer;
+    if (mounted) {
+      setState(() {});
+    }
+    final renderer = _renderer;
+    final table = _stabilization.table;
+    if (renderer == null || !renderer.attached || (table == null && renderer.stabilization == null)) {
+      return;
+    }
+    final active = _stabilization.active;
+    final ok = await renderer.setStabilization(table, enabled: active);
+    if (ok && active && mounted && identical(renderer, _renderer)) {
+      _showStabilizationNotice(_stabilization.onStabilized());
+    }
+  }
+
+  /// The user pressed the button: the switch flips, the setting of the app follows (as on Android), a paused frame
+  /// is drawn again with or without its correction (the plugin does it)
+  void _toggleStabilization() {
+    final notice = _stabilization.toggle();
+    _log.info('Stabilisation turned ${_stabilization.enabled ? 'on' : 'off'} by the user');
+    PlayerEventsHub.spherical?.stabilizationChanged(_stabilization.enabled);
+    _showStabilizationNotice(notice);
+    unawaited(_applyStabilization());
+  }
+
+  void _showStabilizationNotice(StabilizationNotice? notice) {
+    if (notice == null || !mounted) {
+      return;
+    }
+    final t = context.t;
+    _stabilizationNoticeTimer?.cancel();
+    setState(() {
+      _stabilizationNotice = switch (notice) {
+        StabilizationNotice.stabilized => t.video_stabilization_on,
+        StabilizationNotice.noTrack => t.video_stabilization_no_track,
+      };
+      _stabilizationNoticeShown = true;
+    });
+    _stabilizationNoticeTimer = Timer(stabilizationNoticeTime, () {
+      if (mounted) {
+        setState(() => _stabilizationNoticeShown = false);
+      }
+    });
   }
 
   Future<void> _start() async {
@@ -483,6 +580,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       _startTier = attached.tier;
     }
     _setRendering(SphereRendering.plugin(attached.tier!));
+    // The table of the video, kept by the page, goes to this renderer (a new player of the chain has a new one)
+    unawaited(_applyStabilization());
     final rawStep = _step;
     if (rawStep != null && (rawStep.mode == RawMode.stacked || rawStep.mode == RawMode.paired)) {
       if (rawStep.mode == RawMode.paired) {
@@ -932,6 +1031,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   void _showFlat(FlatReason reason) {
     _probe.stop();
     _setRendering(SphereRendering.flat(reason));
+    // A flat view has no stitched sphere to turn: the button goes
+    unawaited(_applyStabilization());
     if (!mounted) {
       return;
     }
@@ -1485,6 +1586,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   @override
   void dispose() {
     _reportClosed();
+    _stabilizationNoticeTimer?.cancel();
+    unawaited(_stabilizationMessages?.cancel());
+    _stabilizationInbox.forget(widget.args.url);
     _probe.stop();
     _stopStackWatch();
     _inertia.dispose();
@@ -1511,6 +1615,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     final t = context.t;
     final duration = Duration(milliseconds: _controller.videoInfo?.duration ?? 0);
     final notice = _notice;
+    final stabilizationNotice = _stabilizationNotice;
     final error = _error;
     return PopScope(
       onPopInvokedWithResult: (didPop, _) {
@@ -1579,8 +1684,38 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
                       onMute: () => unawaited(_toggleMute()),
                       onLayout: _onLayout,
                       onCoverage: _onCoverage,
+                      stabilization: _stabilization.buttonVisible ? _stabilization.enabled : null,
+                      onStabilization: _toggleStabilization,
                     ),
                   ),
+                  if (stabilizationNotice != null)
+                    Positioned(
+                      left: 16,
+                      right: 16,
+                      top: 72,
+                      child: IgnorePointer(
+                        child: AnimatedOpacity(
+                          opacity: _stabilizationNoticeShown ? 1 : 0,
+                          duration: const Duration(milliseconds: 400),
+                          child: Semantics(
+                            liveRegion: true,
+                            child: Center(
+                              child: DecoratedBox(
+                                key: const Key('spherical_stabilization_notice'),
+                                decoration: BoxDecoration(
+                                  color: Colors.black87,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  child: Text(stabilizationNotice, style: const TextStyle(color: Colors.white)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   if (notice != null)
                     Positioned(
                       left: 16,

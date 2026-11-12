@@ -11,6 +11,7 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_server_breaker.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 
@@ -38,6 +39,8 @@ Future<int> _deadPort() async {
 void main() {
   late FakePlexServer server;
 
+  // Every test starts with a server this run never reached, as the app does
+  setUp(PlexServerBreakers.clear);
   setUp(() async => server = await FakePlexServer.start());
   tearDown(() => server.close());
 
@@ -264,10 +267,11 @@ void main() {
     expect(namesOf(await listing), hasLength(2));
   });
 
-  test('a part gone is looked for again once, then not found', () async {
+  test('a part gone is looked for again once, then not found once its file left the listing', () async {
     final plex = await open();
     await plex.list('/Movies');
     server.partSizes.remove(11);
+    server.listings['/library/sections/1/folder']!.removeWhere((element) => element['ratingKey'] == '11');
     await expectLater(
       plex.readRange('/Movies/a.mp4', 0, 10),
       throwsA(isA<NetworkFileSystemException>().having((e) => e.isNotFound, 'isNotFound', isTrue)),

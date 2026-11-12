@@ -13,7 +13,7 @@ Each line links to the section that explains it. The limits by design, such as t
 - **No swiping from one file of a share folder to the next** on a phone yet: [Network shares](user-guide.md#network-shares-a-nas-a-computer-or-a-media-server).
 - **The 3D or 180° choice made on a file of a network share is not remembered**: [3D and VR180](user-guide.md#3d-and-vr180-photos-and-videos).
 - **Dual fisheye .dng files show flat**: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
-- **Raw videos are not stabilised on iPhone and iPad, the computers and the Quest yet** (Android phones, tablets and TVs stabilise them from build 42, experimental): there an Insta360 video is levelled once, and GoPro and DJI files keep the camera's horizon: [Stabilisation](user-guide.md#stabilisation-with-the-cameras-gyroscope-experimental).
+- **Raw videos are not stabilised on iPhone and iPad and the computers yet** (Android phones, tablets and TVs stabilise them from build 42, the Meta Quest from build 46, experimental): there an Insta360 video is levelled once, and GoPro and DJI files keep the camera's horizon: [Stabilisation](user-guide.md#stabilisation-with-the-cameras-gyroscope-experimental).
 - **The stabilisation of a GoPro MAX video was checked on one file**, and its heading is not fully corrected where the camera points near the vertical; GoPro MAX 2 files are not stabilised yet: [Stabilisation](user-guide.md#stabilisation-with-the-cameras-gyroscope-experimental).
 - **A raw video of a share that cannot be read at any position is not stabilised** (a DLNA or Plex server that does not tell the size of the file, a server that sends whole files): [Stabilisation](user-guide.md#stabilisation-with-the-cameras-gyroscope-experimental).
 - **Objects close to a 360° camera can show a seam** in a raw file stitched by the app: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
@@ -95,7 +95,7 @@ Each line links to the section that explains it. The limits by design, such as t
 - **A partial panorama is spread over the full sphere** in the immersive view, unless its GPano crop covers about half the width and the whole height: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **The initial view the camera recorded (GPano) is not used** by the immersive view: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
 - **No audio track choice in the immersive view**: [Limits of the immersive view](user-guide.md#limits-of-the-immersive-view).
-- **The store version is build 25**, until Meta approves version 4, with build 28: [Release status](release-status.md).
+- **The store version can be a build behind the GitHub APK** while Meta reviews the next one: [Release status](release-status.md).
 - **Sign in with your phone and the DJI link page have not run in a headset yet** (from build 28). Whether a Quest offers the USB accessory mode a DJI remote controller needs is the first question the DJI link page answers: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone), [DJI link](user-guide.md#dji-link-diagnostics-experimental).
 
 ## Windows

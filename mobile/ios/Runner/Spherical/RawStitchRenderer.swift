@@ -43,6 +43,10 @@ struct RawStitchUniforms {
   var range1 = SIMD4<Float>(repeating: 0)
   var colorMatrix0 = SIMD4<Float>(repeating: 0)  // Cr to R, Cb to G, Cr to G, Cb to B
   var colorMatrix1 = SIMD4<Float>(repeating: 0)
+  // Rows of K^T, the stabilisation of the frame: the identity unless a table turns it (StabilizationTable.swift)
+  var stabilization0 = StabilizationRows.identity.row0
+  var stabilization1 = StabilizationRows.identity.row1
+  var stabilization2 = StabilizationRows.identity.row2
 }
 
 /// The Metal side of RawStitchCompositor: one device, one command queue and the two pipelines of
@@ -108,7 +112,7 @@ final class RawStitchRenderer: @unchecked Sendable {
     self.blackChroma = blackChroma
     assert(MemoryLayout<RawStitchLensUniforms>.stride == 128)
     assert(MemoryLayout<RawStitchFaceUniforms>.stride == 48)
-    assert(MemoryLayout<RawStitchUniforms>.stride == 736)
+    assert(MemoryLayout<RawStitchUniforms>.stride == 784)
   }
 
   private static func makePipeline(device: MTLDevice, vertex: MTLFunction, fragment: MTLFunction)
@@ -145,11 +149,13 @@ final class RawStitchRenderer: @unchecked Sendable {
   }
 
   /// Stitches [frames] (one per track of the instruction's geometry, nil where a track has no frame at this time)
-  /// into [output], a BGRA pixel buffer. [completion] runs once, on a Metal thread when the GPU is done, with the GPU
-  /// time in milliseconds, or at once with the error when the frame cannot be drawn.
+  /// into [output], a BGRA pixel buffer, the picture turned by [stabilization] (see StabilizationTable). [completion]
+  /// runs once, on a Metal thread when the GPU is done, with the GPU time in milliseconds, or at once with the error
+  /// when the frame cannot be drawn.
   func render(
     instruction: RawStitchInstruction,
     frames: [CVPixelBuffer?],
+    stabilization: StabilizationRows = .identity,
     output: CVPixelBuffer,
     cache: CVMetalTextureCache,
     completion: @escaping (Double?, Error?) -> Void
@@ -181,6 +187,9 @@ final class RawStitchRenderer: @unchecked Sendable {
     uniforms.settings = SIMD4<Float>(
       Float(geometry.projection.rawValue), Float(outputWidth), Float(outputHeight), 0)
     uniforms.angles = geometry.angles
+    uniforms.stabilization0 = stabilization.row0
+    uniforms.stabilization1 = stabilization.row1
+    uniforms.stabilization2 = stabilization.row2
     uniforms.presence = SIMD4<Float>(sources[0] == nil ? 0 : 1, sources[1] == nil ? 0 : 1, 0, 0)
     if let source = sources[0] {
       uniforms.range0 = source.range

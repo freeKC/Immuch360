@@ -37,6 +37,8 @@ class StereoPhotoXmp implements ImmersiveXmp {
     this.pipeline,
     this.parallax,
     this.convergence,
+    this.inpaintModel,
+    this.inpaintModelSha256,
     this.derivativeId,
     this.sourceName,
     this.sourceSize,
@@ -48,8 +50,9 @@ class StereoPhotoXmp implements ImmersiveXmp {
     this.description,
   });
 
-  /// The packet of a full side by side photo whose right eye relief-v1 made from the estimated depth of [sourceName],
-  /// the left eye being the original
+  /// The packet of a full side by side photo whose right eye relief-v1 (or [pipeline], relief-v2) made from the
+  /// estimated depth of [sourceName], the left eye being the original; [inpaintModel] and its [inpaintModelSha256] when
+  /// a model filled the holes of the right eye (MI-GAN in relief-v2)
   factory StereoPhotoXmp.estimated({
     required int eyeWidth,
     required int eyeHeight,
@@ -64,6 +67,9 @@ class StereoPhotoXmp implements ImmersiveXmp {
     double parallax = ReliefV1.parallax,
     double convergence = ReliefV1.convergence,
     List<ReliefQualityFlag> qualityFlags = const [],
+    String pipeline = ReliefV1.pipeline,
+    String? inpaintModel,
+    String? inpaintModelSha256,
   }) => StereoPhotoXmp(
     eyes: StereoEyes.full,
     eyeOrder: EyeOrder.leftRight,
@@ -73,9 +79,11 @@ class StereoPhotoXmp implements ImmersiveXmp {
     origin: ImmersiveOrigin.estimatedDepth,
     depthModel: depthModelName,
     depthModelSha256: depthModelSha256,
-    pipeline: ReliefV1.pipeline,
+    pipeline: pipeline,
     parallax: parallax,
     convergence: convergence,
+    inpaintModel: inpaintModel,
+    inpaintModelSha256: inpaintModelSha256,
     derivativeId: derivativeId ?? newDerivativeId(),
     sourceName: sourceName,
     sourceSize: sourceSize,
@@ -112,11 +120,16 @@ class StereoPhotoXmp implements ImmersiveXmp {
   final String? depthModel;
   final String? depthModelSha256;
 
-  /// The algorithm of the right eye, "relief-v1", and its settings
+  /// The algorithm of the right eye, "relief-v1" or "relief-v2", and its settings
   @override
   final String? pipeline;
   final double? parallax;
   final double? convergence;
+
+  /// The model that filled the holes of the right eye, and the SHA-256 of its file: MI-GAN in relief-v2 when it was
+  /// installed, null otherwise. Not in [settingsKey]: whether it was installed is not a setting of the user.
+  final String? inpaintModel;
+  final String? inpaintModelSha256;
 
   /// "urn:uuid:..." of this file, which Replace and Delete check before touching it
   @override
@@ -200,6 +213,8 @@ class StereoPhotoXmp implements ImmersiveXmp {
         if (pipeline case final value?) ('$immuch360XmpPrefix:Pipeline', value),
         if (parallax case final value?) ('$immuch360XmpPrefix:Parallax', xmpDecimal(value)),
         if (convergence case final value?) ('$immuch360XmpPrefix:Convergence', xmpDecimal(value)),
+        if (inpaintModel case final value?) ('$immuch360XmpPrefix:InpaintModel', value),
+        if (inpaintModelSha256 case final value?) ('$immuch360XmpPrefix:InpaintModelSha256', value),
         if (derivativeId case final value?) ('$immuch360XmpPrefix:DerivativeId', value),
         if (sourceName case final value?) ('$immuch360XmpPrefix:SourceName', value),
         if (sourceSize case final value?) ('$immuch360XmpPrefix:SourceSize', '$value'),
@@ -244,6 +259,8 @@ class StereoPhotoXmp implements ImmersiveXmp {
       pipeline: field('Pipeline'),
       parallax: decimal('Parallax'),
       convergence: decimal('Convergence'),
+      inpaintModel: field('InpaintModel'),
+      inpaintModelSha256: field('InpaintModelSha256'),
       derivativeId: field('DerivativeId'),
       sourceName: field('SourceName'),
       sourceSize: integer('SourceSize'),
@@ -290,6 +307,8 @@ class StereoPhotoXmp implements ImmersiveXmp {
       other.pipeline == pipeline &&
       other.parallax == parallax &&
       other.convergence == convergence &&
+      other.inpaintModel == inpaintModel &&
+      other.inpaintModelSha256 == inpaintModelSha256 &&
       other.derivativeId == derivativeId &&
       other.sourceName == sourceName &&
       other.sourceSize == sourceSize &&
@@ -315,6 +334,8 @@ class StereoPhotoXmp implements ImmersiveXmp {
     pipeline,
     parallax,
     convergence,
+    inpaintModel,
+    inpaintModelSha256,
     derivativeId,
     sourceName,
     sourceSize,

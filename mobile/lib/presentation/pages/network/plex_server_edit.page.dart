@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -16,10 +17,13 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_pairing.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_token.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_tv_auth.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/forms/discard_changes.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/found_servers.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/plex_tv_sign_in.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_text_entry.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_discovery.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
@@ -305,6 +309,33 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
       _focusInside(_tokenEntry);
     }
   }
+
+  /// Fills the page with the server picked after the sign in with plex.tv, reached at one of its addresses, and its
+  /// token, then tests them as if typed: saving goes the same way as for a token pasted
+  void _fillFromPlexTv(PlexTvConnected connected) {
+    final server = connected.server;
+    setState(() {
+      _address.text = connected.address.text;
+      _server = server;
+      _foundOutsideHome = false;
+      _lookedUp = _address.text;
+      _lookupError = null;
+      _lookingUp = false;
+      _lookups++;
+      _token.text = connected.token;
+      _forgetTest();
+      final name = server.name;
+      if (name != null && (_name.text.trim().isEmpty || _name.text == _filledName)) {
+        _name.text = name;
+        _filledName = name;
+      }
+    });
+    unawaited(_test());
+  }
+
+  /// A failure of a server reached after the sign in with plex.tv, in the words of the page
+  String _networkMessageOf(NetworkFileSystemException error) =>
+      error is PlexFileSystemException ? _messageOf(error) : context.t.network_share_failed(error: error.message);
 
   void _forgetTest() {
     _testMessage = null;
@@ -610,6 +641,8 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
     PlexFailure.notPlex => context.t.plex_server_not_plex,
     PlexFailure.tokenRefused => context.t.plex_token_refused,
     PlexFailure.tokenForbidden => context.t.plex_token_forbidden,
+    PlexFailure.stoppedAnswering => context.t.plex_server_stopped_answering,
+    PlexFailure.fileUnreadable => context.t.plex_film_file_unreadable,
     PlexFailure.failed => context.t.network_share_failed(error: error.message),
   };
 
@@ -787,7 +820,9 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
       context: context,
       builder: (context) => ConfirmDialog(
         title: context.t.network_share_remove,
-        content: '${context.t.plex_remove_confirm(name: source.name)}\n\n${context.t.plex_remove_note}',
+        content:
+            '${context.t.plex_remove_confirm(name: source.name)}\n\n${context.t.plex_remove_note}\n\n'
+            '${context.t.plex_remove_note_plex_tv}',
         ok: context.t.remove,
       ),
     );
@@ -887,6 +922,8 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
     final askedLearned = (_check != null && (server?.isLocal ?? false)) || (_check == null && _learned != null);
     final showsRemote = _testSucceeded || !_isNew;
     final sectionPaths = _sectionPaths;
+    // A TV or a headset types the short code at plex.tv/link on another device; elsewhere plex.tv opens in the browser
+    final shortCode = ref.watch(tvModeProvider) || (ref.watch(isHorizonOsProvider).valueOrNull ?? false);
 
     return DiscardChangesScope(
       listenable: _fieldChanges,
@@ -916,6 +953,14 @@ class _PlexServerEditPageState extends ConsumerState<PlexServerEditPage> {
                 ),
                 const SizedBox(height: 4),
               ],
+              // The second way, beside the address and the token typed below, which stay the default
+              if (_isNew)
+                PlexTvSignInPanel(
+                  key: const Key('plex_signin_panel'),
+                  shortCode: shortCode,
+                  onConnected: _fillFromPlexTv,
+                  messageOf: _networkMessageOf,
+                ),
               Focus(
                 focusNode: _addressEntry,
                 child: _field(

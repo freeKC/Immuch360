@@ -87,6 +87,9 @@ abstract class PlexFilmsList extends ChangeNotifier {
   /// Whether pages could not be read: the page offers to try them again
   bool get hasFailures => false;
 
+  /// What the last page that could not be read failed with, null when none did
+  Object? get lastFailure => null;
+
   /// Tries the pages that failed again, as the rows ask for them
   void retryFailures() {}
 
@@ -164,6 +167,11 @@ class PagedPlexFilms extends PlexFilmsList {
   @override
   bool get hasFailures => _failed.isNotEmpty;
 
+  Object? _lastFailure;
+
+  @override
+  Object? get lastFailure => _failed.isEmpty ? null : _lastFailure;
+
   @override
   PlexFilm? filmAt(int index) {
     if (index < 0 || index >= count) {
@@ -214,6 +222,7 @@ class PagedPlexFilms extends PlexFilmsList {
     } catch (error) {
       if (!_disposed) {
         _failed.add(page);
+        _lastFailure = error;
         _log.info('A page of the films could not be read: ${error.runtimeType}');
       }
     } finally {

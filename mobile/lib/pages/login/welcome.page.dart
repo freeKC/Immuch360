@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/settings_file/settings_file_import.page.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
@@ -142,6 +143,13 @@ class WelcomePage extends HookConsumerWidget {
                         label: Text(context.t.pairing_welcome_link),
                         onPressed: () => unawaited(_explainPairing(context)),
                       ),
+                    // A reinstall, or another device: the servers, sources and settings of a settings file (issue 16)
+                    TextButton.icon(
+                      key: const Key('welcome_restore_settings'),
+                      icon: const Icon(Icons.settings_backup_restore_rounded),
+                      label: Text(context.t.settings_file_import_title),
+                      onPressed: () => unawaited(openSettingsFileImport(context, fromWelcome: true)),
+                    ),
                   ],
                 ),
               );

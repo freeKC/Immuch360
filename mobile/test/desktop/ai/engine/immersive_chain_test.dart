@@ -12,11 +12,13 @@ import 'package:immich_mobile/desktop/ai/codec/engine_picture.dart';
 import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
+import 'package:immich_mobile/desktop/ai/scene/migan_inpaint.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
@@ -43,6 +45,7 @@ void main() {
     int? available = 8 * 1024 * 1024 * 1024,
     MemoryProbe? memory,
     PartWriter? writePart,
+    ReliefInpaintSpec? inpaint,
   }) {
     final fake = backend ?? FakeDepthBackend();
     final codec = RecordingCodec(const DartSbsCodec());
@@ -54,6 +57,7 @@ void main() {
         memory: memory ?? FixedMemoryProbe(available: available),
         priority: ComputePriority(priority),
         writePart: writePart ?? writePartFile,
+        inpaint: inpaint,
       ),
       backend: fake,
       codec: codec,
@@ -616,6 +620,108 @@ void main() {
     });
   });
 
+  group('relief-v2 (release 46)', () {
+    /// [job] made with relief-v2 at [parallax]
+    ImmersiveJob v2Of(
+      ImmersiveJob job, {
+      double parallax = ReliefV1.parallax,
+      ReliefVersion relief = ReliefVersion.v2,
+    }) => ImmersiveJob(
+      id: job.id,
+      source: job.source,
+      partPath: job.partPath,
+      derivativeId: job.derivativeId,
+      creatorTool: job.creatorTool,
+      created: job.created,
+      maxEyeWidth: job.maxEyeWidth,
+      parallax: parallax,
+      relief: relief,
+      exif: job.exif,
+    );
+
+    test('without MI-GAN: the left eye the original, Pipeline relief-v2, no inpaint model in the packet', () {
+      final path = stripesJpeg(folder, 'stripes.jpg');
+      final part = partIn(folder, 'stripes.jpg');
+      final tools = chainOn(backend: FakeDepthBackend(shape: FakeDepthShape.step));
+      final outcome = runOn(tools.chain, v2Of(jobFor(path, partPath: part), parallax: 0.1));
+      expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+      final xmp = StereoPhotoXmp.findIn(File(part).readAsBytesSync())!;
+      expect(xmp.pipeline, 'relief-v2');
+      expect((xmp.inpaintModel, xmp.inpaintModelSha256), (null, null));
+      expect(xmp.settingsKey, '$depthModelOnnxSha256|relief-v2|0.1|0.5|0');
+      final picture = tools.codec.pictures.single;
+      expect(leftEyeOf(picture), const DartSbsCodec().decodeJpeg(File(path).readAsBytesSync()).rgba);
+      expect(outcome.inpaint, isNull);
+    });
+
+    test('with MI-GAN: the wide holes filled by it, opened once and kept with the session, named in the packet', () {
+      final path = stripesJpeg(folder, 'stripes.jpg');
+      final spec = _FakeInpaintSpec();
+      final tools = chainOn(
+        backend: FakeDepthBackend(shape: FakeDepthShape.step),
+        inpaint: spec,
+      );
+      for (final name in ['first', 'second']) {
+        final part = partIn(folder, '$name.jpg');
+        final outcome = runOn(tools.chain, v2Of(jobFor(path, partPath: part), parallax: 0.1));
+        expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+        expect(outcome.inpaint!.cells, greaterThan(0));
+        expect(outcome.inpaint!.pixels, greaterThan(0));
+        expect(outcome.inpaintProblem, isNull);
+        final xmp = StereoPhotoXmp.findIn(File(part).readAsBytesSync())!;
+        expect((xmp.pipeline, xmp.inpaintModel, xmp.inpaintModelSha256), ('relief-v2', 'migan-test', 'cafe'));
+      }
+      expect(spec.opened, 1);
+      // The magenta of the fake in the right eye, never in the left one
+      final picture = tools.codec.pictures.last;
+      bool magenta(Uint8List rgba, int at) => rgba[at] == 255 && rgba[at + 1] == 0 && rgba[at + 2] == 255;
+      final right = rightEyeOf(picture);
+      final left = leftEyeOf(picture);
+      expect([for (var at = 0; at < right.length; at += 4) magenta(right, at)], contains(true));
+      expect([for (var at = 0; at < left.length; at += 4) magenta(left, at)], everyElement(isFalse));
+      tools.chain.closeSession();
+      expect(spec.closed, 1);
+    });
+
+    test('a job of relief-v1 never opens MI-GAN, and keeps Pipeline relief-v1', () {
+      final path = stripesJpeg(folder, 'stripes.jpg');
+      final part = partIn(folder, 'stripes.jpg');
+      final spec = _FakeInpaintSpec();
+      final tools = chainOn(
+        backend: FakeDepthBackend(shape: FakeDepthShape.step),
+        inpaint: spec,
+      );
+      final outcome = runOn(tools.chain, v2Of(jobFor(path, partPath: part), parallax: 0.1, relief: ReliefVersion.v1));
+      expect(outcome.result.isDone, isTrue);
+      expect(spec.opened, 0);
+      expect(StereoPhotoXmp.findIn(File(part).readAsBytesSync())!.pipeline, 'relief-v1');
+    });
+
+    test('MI-GAN that cannot open, or fails: the fill of relief-v1 stays, the job ends well and says why', () {
+      final path = stripesJpeg(folder, 'stripes.jpg');
+      for (final spec in [_FakeInpaintSpec(refuses: true), _FakeInpaintSpec(fails: true)]) {
+        final part = partIn(folder, 'stripes-${spec.refuses}.jpg');
+        final tools = chainOn(
+          backend: FakeDepthBackend(shape: FakeDepthShape.step),
+          inpaint: spec,
+        );
+        final outcome = runOn(tools.chain, v2Of(jobFor(path, partPath: part), parallax: 0.1));
+        expect(outcome.result.isDone, isTrue, reason: '${outcome.result.error}: ${outcome.result.message}');
+        expect(outcome.inpaintProblem, 'no MI-GAN here');
+        final xmp = StereoPhotoXmp.findIn(File(part).readAsBytesSync())!;
+        expect((xmp.pipeline, xmp.inpaintModel), ('relief-v2', null));
+      }
+    });
+
+    test('MI-GAN not open yet counts in the memory of a job of relief-v2', () {
+      final path = stripesJpeg(folder, 'stripes.jpg');
+      final job = v2Of(jobFor(path, partPath: partIn(folder, 'stripes.jpg')));
+      final without = runOn(chainOn(available: 1).chain, job).memoryNeed!;
+      final withMigan = runOn(chainOn(available: 1, inpaint: _FakeInpaintSpec()).chain, job).memoryNeed!;
+      expect(withMigan - without, reliefInpaintSessionMemory + 3 * 200 * 20);
+    });
+  });
+
   test("the EXIF of the job first, then the original's, the date with its offset and the place as a whole", () {
     const original = ImmersiveExif(
       dateTimeOriginal: '2025:05:03 09:20:00',
@@ -651,4 +757,58 @@ class SettableMemoryProbe implements MemoryProbe {
 
   @override
   MemoryFacts read() => MemoryFacts(physical: 16 * 1024 * 1024 * 1024, available: available);
+}
+
+/// MI-GAN as the chain sees it: paints the holes magenta; refuses to open, or fails at its first cell, when asked
+class _FakeInpaintSpec implements ReliefInpaintSpec {
+  _FakeInpaintSpec({this.refuses = false, this.fails = false});
+
+  final bool refuses;
+  final bool fails;
+  var opened = 0;
+  var closed = 0;
+
+  @override
+  String get modelName => 'migan-test';
+
+  @override
+  String get modelSha256 => 'cafe';
+
+  @override
+  InpaintBackend open() {
+    if (refuses) {
+      throw const BackendException(ImmersiveErrorCode.modelFailed, 'no MI-GAN here');
+    }
+    opened++;
+    return _MagentaInpaint(this);
+  }
+}
+
+class _MagentaInpaint implements InpaintBackend {
+  _MagentaInpaint(this.spec);
+
+  final _FakeInpaintSpec spec;
+
+  @override
+  int get regionMax => 512;
+
+  @override
+  String get modelSha256 => spec.modelSha256;
+
+  @override
+  Uint8List fill(InpaintRegion region) {
+    if (spec.fails) {
+      throw const BackendException(ImmersiveErrorCode.modelFailed, 'no MI-GAN here');
+    }
+    final out = Uint8List.fromList(region.rgb);
+    for (var i = 0; i < region.width * region.height; i++) {
+      if (region.mask[i] == 0) {
+        out.setRange(3 * i, 3 * i + 3, const [255, 0, 255]);
+      }
+    }
+    return out;
+  }
+
+  @override
+  void close() => spec.closed++;
 }

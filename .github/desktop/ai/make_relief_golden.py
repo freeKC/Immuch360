@@ -277,6 +277,10 @@ CASES = [
     ("flat", "a constant map: d = 0.5 everywhere, the whole eye moved left, a hole column at the right edge",
      pattern_image, constant_depth, 0.25, 0.4),
     ("dark", "a dark photo and a map with little relief", dark_image, shallow_depth, 0.02, 0.5),
+    ("subtle", "the Subtle relief strength of the app: 1.5 % of parallax, convergence in the middle", pattern_image,
+     scene_depth, 0.015, 0.5),
+    ("pronounced", "the Strong relief strength of the app: 3 % of parallax, convergence in the middle", pattern_image,
+     scene_depth, 0.03, 0.5),
 ]
 
 

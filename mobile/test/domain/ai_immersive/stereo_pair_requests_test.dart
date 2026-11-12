@@ -92,8 +92,26 @@ void main() {
       expect(relief.cacheKey, request('depthRelief', 0)['cacheKey']);
     });
 
+    test('a photo of the server at the Strong and the Subtle relief writes the JSON of the contract', () {
+      final modelId = depthModelId(depthModelTfliteSha256);
+      final identity = ReliefSourceIdentity.sha1('X8tYgvibyzHDDN2yXGU/ft1XxeM=');
+      for (final (index, parallax) in [(3, 0.03), (4, 0.015)]) {
+        final relief = DepthReliefRequest(
+          model: model,
+          modelSize: 99530468,
+          modelId: modelId,
+          cacheKey: reliefCacheKey(identity: identity, modelId: modelId, parallax: parallax),
+          parallax: parallax,
+        );
+
+        expect(jsonDecode(relief.toJsonString()), request('depthRelief', index), reason: '$parallax');
+        // Another strength, another map in the cache
+        expect(relief.cacheKey, isNot(request('depthRelief', 0)['cacheKey']));
+      }
+    });
+
     test('reads back what it writes', () {
-      for (var i = 0; i < 3; i++) {
+      for (var i = 0; i < 5; i++) {
         expect(DepthReliefRequest.fromJson(request('depthRelief', i))!.toJson(), request('depthRelief', i));
       }
       expect(DepthReliefRequest.fromJson(request('depthRelief', 2))!.mode, ReliefViewMode.mesh25d);
@@ -241,6 +259,7 @@ void main() {
           reliefCacheKey(
             identity: entry['identity'] as String,
             modelId: entry['modelId'] as String,
+            parallax: entry['parallax'] as double,
             quarterTurns: entry['quarterTurns'] as int,
           ),
           entry['key'],

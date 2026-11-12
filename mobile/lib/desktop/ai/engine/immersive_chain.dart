@@ -1,6 +1,7 @@
 // The chain of one 2D to 3D job on a computer, in order (design-final 2026-10-26, section 2.3): the sum of the bytes
 // read, the decoding, the photo turned upright and by the quarter turns the user sees it with, the eye capped, the
-// pair, the depth, the right eye of relief-v1, the JPEG with its EXIF, XMP and ICC profile, and the .part. The left
+// pair, the depth, the right eye of relief-v1 (or relief-v2, release 46: the depth guided by the photo, the holes
+// filled by MI-GAN when the chain was given it), the JPEG with its EXIF, XMP and ICC profile, and the .part. The left
 // eye is the original as decoded, never changed; only the right eye is computed.
 //
 // Synchronous from end to end: the worker isolate runs a whole job as one event (ai_worker.dart), so that its thread
@@ -27,6 +28,7 @@ import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
 import 'package:immich_mobile/desktop/ai/codec/native_sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_failure.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
@@ -35,8 +37,11 @@ import 'package:immich_mobile/desktop/ai/ort/ort_depth_backend.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/relief/relief_input.dart';
 import 'package:immich_mobile/desktop/ai/relief/relief_map.dart';
+import 'package:immich_mobile/desktop/ai/relief/relief_v2.dart';
 import 'package:immich_mobile/desktop/ai/relief/right_eye.dart';
+import 'package:immich_mobile/desktop/ai/scene/migan_inpaint.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
 
 /// Where each step starts, in thousandths of the whole job. The right eye takes the largest share, row by row.
@@ -85,7 +90,15 @@ class ChainOriginal {
 
 /// How a run ended, with what the logs and the tests want to know of it
 class ChainOutcome {
-  const ChainOutcome(this.result, {this.decoder, this.encoder, this.threadsLowered = 0, this.memoryNeed});
+  const ChainOutcome(
+    this.result, {
+    this.decoder,
+    this.encoder,
+    this.threadsLowered = 0,
+    this.memoryNeed,
+    this.inpaint,
+    this.inpaintProblem,
+  });
 
   final ImmersiveResult result;
 
@@ -100,6 +113,12 @@ class ChainOutcome {
 
   /// The memory the job was estimated to need, in bytes
   final int? memoryNeed;
+
+  /// What MI-GAN filled in a job of relief-v2, null when it did not run
+  final ReliefInpaintReport? inpaint;
+
+  /// Why MI-GAN did not fill the holes of a job of relief-v2 that asked for it (the fill of relief-v1 stayed there)
+  final String? inpaintProblem;
 }
 
 /// Writes [bytes] as the whole content of the file at [path]
@@ -117,6 +136,7 @@ class ImmersiveChain {
     ComputePriority? priority,
     this.writePart = writePartFile,
     Sha1Engine? sha1,
+    this.inpaint,
   }) : codecs = codecs ?? SbsCodecChoice.auto.codecs(),
        priority = priority ?? ComputePriority(ThreadPriorityPlatform.system()),
        sha1 = sha1 ?? Sha1Engine.system() {
@@ -134,6 +154,11 @@ class ImmersiveChain {
   final PartWriter writePart;
   final Sha1Engine sha1;
 
+  /// MI-GAN for the holes of relief-v2, null when it is not installed; opened by the first job that needs it and kept
+  /// with the session of the depth model
+  final ReliefInpaintSpec? inpaint;
+  InpaintBackend? _inpaintBackend;
+
   /// Whether the model's session is open, as far as this chain knows: from a run of the model to [closeSession]
   bool get sessionOpen => _sessionOpen;
   bool _sessionOpen = false;
@@ -142,7 +167,12 @@ class ImmersiveChain {
   void closeSession() {
     backend.close();
     _sessionOpen = false;
+    _inpaintBackend?.close();
+    _inpaintBackend = null;
   }
+
+  /// MI-GAN, opened now when it is not yet; throws BackendException
+  InpaintBackend _openInpaint(ReliefInpaintSpec spec) => _inpaintBackend ??= spec.open();
 
   /// Makes the 3D photo of [job] from [original] into [ImmersiveJob.partPath]. [isCancelled] is read between two
   /// steps and every 64 rows of the right eye; [onProgress] hears each step and the rows of the right eye.
@@ -184,6 +214,11 @@ class _Run {
   String? _encoder;
   var _lowered = 0;
   int? _need;
+  ReliefInpaintReport? _inpaint;
+  String? _inpaintProblem;
+
+  /// A job of relief-v2 on a chain that has MI-GAN
+  bool get _wantsInpaint => job.relief == ReliefVersion.v2 && chain.inpaint != null;
 
   ChainOutcome go() {
     _watch.start();
@@ -207,7 +242,15 @@ class _Run {
         _ => ImmersiveErrorCode.modelFailed,
       }, '$error');
     }
-    return ChainOutcome(result, decoder: _decoder, encoder: _encoder, threadsLowered: _lowered, memoryNeed: _need);
+    return ChainOutcome(
+      result,
+      decoder: _decoder,
+      encoder: _encoder,
+      threadsLowered: _lowered,
+      memoryNeed: _need,
+      inpaint: _inpaint,
+      inpaintProblem: _inpaintProblem,
+    );
   }
 
   void _enter(ImmersiveStage stage, int perMille) {
@@ -282,21 +325,64 @@ class _Run {
       throw _Stop(ImmersiveErrorCode.modelFailed, '${error.message}');
     }
     const share = ChainProgress.encoding - ChainProgress.rightEye;
-    final relief = reliefV1RightEye(
-      left: pair,
-      width: width,
-      height: height,
-      leftStride: stride,
-      depth: depth,
-      parallax: job.parallax,
-      convergence: job.convergence,
-      target: pair,
-      targetOffset: 4 * width,
-      targetStride: stride,
-      isCancelled: isCancelled,
-      onRows: (rows) =>
-          onProgress?.call(ImmersiveProgress(ImmersiveStage.rightEye, ChainProgress.rightEye + share * rows ~/ height)),
-    );
+    void progress(int perMille) =>
+        onProgress?.call(ImmersiveProgress(ImmersiveStage.rightEye, ChainProgress.rightEye + share * perMille ~/ 1000));
+    final ReliefEyeResult relief;
+    String? inpaintModel;
+    String? inpaintModelSha256;
+    if (job.relief == ReliefVersion.v2) {
+      final spec = chain.inpaint;
+      _SafeInpaint? fill;
+      if (spec != null) {
+        try {
+          fill = _SafeInpaint(chain._openInpaint(spec));
+        } on BackendException catch (error) {
+          _inpaintProblem = error.message;
+        }
+      }
+      // Without MI-GAN the rows are the whole step; with it they take 35 % of it and the cells the rest
+      final rowsShare = fill == null ? 1000 : 350;
+      final v2 = reliefV2RightEye(
+        left: pair,
+        width: width,
+        height: height,
+        leftStride: stride,
+        depth: depth,
+        parallax: job.parallax,
+        convergence: job.convergence,
+        target: pair,
+        targetOffset: 4 * width,
+        targetStride: stride,
+        inpaint: fill,
+        isCancelled: isCancelled,
+        onRows: (rows) => progress(rowsShare * rows ~/ height),
+        onCells: (done, total) => progress(rowsShare + (1000 - rowsShare) * done ~/ math.max(1, total)),
+      );
+      relief = v2;
+      if (fill != null) {
+        _inpaint = v2.inpaint;
+        _inpaintProblem = fill.problem;
+        if (fill.filled > 0 && spec != null) {
+          inpaintModel = spec.modelName;
+          inpaintModelSha256 = spec.modelSha256;
+        }
+      }
+    } else {
+      relief = reliefV1RightEye(
+        left: pair,
+        width: width,
+        height: height,
+        leftStride: stride,
+        depth: depth,
+        parallax: job.parallax,
+        convergence: job.convergence,
+        target: pair,
+        targetOffset: 4 * width,
+        targetStride: stride,
+        isCancelled: isCancelled,
+        onRows: (rows) => progress(1000 * rows ~/ height),
+      );
+    }
 
     _enter(ImmersiveStage.encoding, ChainProgress.encoding);
     final xmp = StereoPhotoXmp.estimated(
@@ -313,6 +399,9 @@ class _Run {
       parallax: job.parallax,
       convergence: job.convergence,
       qualityFlags: relief.flags,
+      pipeline: job.relief.pipeline,
+      inpaintModel: inpaintModel,
+      inpaintModelSha256: inpaintModelSha256,
     );
     final jpeg = _encode(
       SbsPicture(width: 2 * width, height: height, rgba: pair),
@@ -404,6 +493,8 @@ class _Run {
       eyeWidth: eyeWidth,
       eyeHeight: eyeHeight,
       sessionOpen: chain.sessionOpen,
+      inpaint: _wantsInpaint,
+      inpaintOpen: chain._inpaintBackend != null,
     );
     final available = chain.memory.read().available;
     if (available != null && need > available) {
@@ -478,6 +569,42 @@ class _Run {
       // The caller deletes the .part in any case
     }
   }
+}
+
+/// MI-GAN that never fails a job: after its first failure the cells keep the fill of relief-v1 (their pixels given back
+/// as they are), and the failure is told in the outcome
+class _SafeInpaint implements InpaintBackend {
+  _SafeInpaint(this.inner);
+
+  final InpaintBackend inner;
+
+  /// The cells it filled, and the first failure
+  var filled = 0;
+  String? problem;
+
+  @override
+  int get regionMax => inner.regionMax;
+
+  @override
+  String get modelSha256 => inner.modelSha256;
+
+  @override
+  Uint8List fill(InpaintRegion region) {
+    if (problem == null) {
+      try {
+        final out = inner.fill(region);
+        filled++;
+        return out;
+      } on BackendException catch (error) {
+        problem = error.message;
+      }
+    }
+    return region.rgb;
+  }
+
+  /// The session stays with the chain
+  @override
+  void close() {}
 }
 
 class _Upright {

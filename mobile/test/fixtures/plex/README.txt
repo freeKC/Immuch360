@@ -30,3 +30,11 @@ python-plexapi, no server being asked (lot A1 of the films study, 11 November 20
 - films_all_page.json: a page of /library/sections/1/all?type=1&sort=year:desc,titleSort, a film without a year last.
 - films_years_light.json: the same list trimmed by excludeElements and excludeFields (the light pass of the years).
 - hubs_search.json: /hubs/search?query=elan&sectionId=1, a film of another library in the movie hub, an actor hub.
+
+After the answer of a Plex Media Server 1.42.1 read on 11 November 2026 (/library/metadata/{id} of a film with
+subtitle files beside it; field names and value types kept, every title, id, path and hash made up):
+- metadata_film_sidecars.json: one file with three subtitle files beside it, as that server lists them: a SubRip file
+  with its language, one without ("Unknown"), and one Plex calls WebVTT from its name. On that server the side files
+  come as they are on the disk from /library/streams/{id}: the format parameter converts nothing, a path ending in
+  another extension than the stream's codec answers 404, encoding=utf-8 turns a Latin-1 file into UTF-8 and leaves a
+  UTF-8 one byte for byte, and a file named .vtt may hold SubRip or ASS text.
