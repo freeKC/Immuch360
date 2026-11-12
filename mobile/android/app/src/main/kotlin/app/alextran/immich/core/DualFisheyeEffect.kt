@@ -23,6 +23,7 @@ import app.alextran.immich.core.raw.RawLayout
 import app.alextran.immich.core.raw.RawProjection
 import app.alextran.immich.core.raw.RawStitchShaders
 import app.alextran.immich.core.raw.RawStitchUniforms
+import app.alextran.immich.spherical.StabilizedStitch
 import kotlin.math.roundToInt
 
 /**
@@ -47,6 +48,11 @@ class DualFisheyeEffect(
    */
   private val maxOutputWidth: Int = 0,
   private val maxOutputHeight: Int = 0,
+  /**
+   * The stabilisation turned inside the stitch, frame by frame (the immersive viewer of the Meta Quest); null for none,
+   * the stitch as before (the phone's player turns its sphere instead)
+   */
+  private val stabilization: StabilizedStitch? = null,
 ) : GlEffect {
   init {
     require(projection.kind == RawKind.DUAL_FISHEYE && projection.layout == RawLayout.SIDE_BY_SIDE) {
@@ -56,7 +62,7 @@ class DualFisheyeEffect(
 
   override fun toGlShaderProgram(context: Context, useHdr: Boolean): GlShaderProgram =
     try {
-      DualFisheyeShaderProgram(projection, useHdr, maxOutputWidth, maxOutputHeight)
+      DualFisheyeShaderProgram(projection, useHdr, maxOutputWidth, maxOutputHeight, stabilization)
     } catch (e: Exception) {
       // A GL error (GlUtil.GlException), or a uniform the driver optimized away (a null from GlProgram)
       Log.e(TAG, "cannot build the dual fisheye shader, the raw frame shows as it is", e)
@@ -128,6 +134,7 @@ private class DualFisheyeShaderProgram(
   useHdr: Boolean,
   private val maxOutputWidth: Int,
   private val maxOutputHeight: Int,
+  private val stabilization: StabilizedStitch?,
 ) : BaseGlShaderProgram(/* useHighPrecisionColorComponents= */ useHdr, /* texturePoolCapacity= */ 1) {
   private val glProgram = GlProgram(RawStitchShaders.vertexEs1(), RawStitchShaders.fragmentEs1SideBySide())
 
@@ -140,6 +147,8 @@ private class DualFisheyeShaderProgram(
     )
     // Uniforms a driver folds away (the texture index of each lens, both 0 here) are skipped
     for ((name, value) in RawStitchUniforms.fisheye(projection)) glProgram.setFloatsUniformIfPresent(name, value)
+    // GLSL starts a uniform at zero: the identity until a frame says otherwise
+    glProgram.setFloatsUniformIfPresent(RawStitchShaders.STABILIZATION_UNIFORM, StabilizedStitch.identity())
   }
 
   override fun configure(inputWidth: Int, inputHeight: Int): Size {
@@ -160,6 +169,11 @@ private class DualFisheyeShaderProgram(
     try {
       glProgram.use()
       glProgram.setSamplerTexIdUniform(RawStitchShaders.SIDE_BY_SIDE_SAMPLER, inputTexId, /* texUnitIndex= */ 0)
+      // The rotation of this frame, looked up by the time of the video graph (StabilizedStitch.timeBaseUs)
+      glProgram.setFloatsUniformIfPresent(
+        RawStitchShaders.STABILIZATION_UNIFORM,
+        StabilizedStitch.matrixOf(stabilization, presentationTimeUs),
+      )
       glProgram.bindAttributesAndUniforms()
       // The four vertex triangle strip forms the quad
       GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, /* first= */ 0, /* count= */ 4)

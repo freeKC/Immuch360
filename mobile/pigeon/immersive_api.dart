@@ -112,6 +112,28 @@ abstract class ImmersiveApi {
     int startPositionMs = 0,
     String? startNotice,
   });
+
+  /// The stabilisation with the motion track of the camera (issue 14, lot d3) of the raw 360° video at [url], for the
+  /// viewer that shows it or is about to (an opening, or a previous or next media): called right before [open] or
+  /// [showAdjacent] with [hasTrack] and no table while Flutter reads the track (the button shows, the video plays
+  /// meanwhile), then again with the table once built, or with [hasTrack] false when the file has none after all (the
+  /// button hides). [enabled] is the setting "Stabilise with the camera's gyroscope", on by default; the switch of the
+  /// viewer starts there, unless the user pressed its button in this viewer. A message about a media the viewer does
+  /// not show waits for it (the last few URLs are kept).
+  ///
+  /// [presentationTimesUs] are the presentation times of the frames on the timeline of the video, in microseconds,
+  /// rising; [corrections] four values a frame (w, x, y, z): the rotation of the sphere of the stitched frame, in its
+  /// view frame (x to the right, y down, z forward), that shows the world level and steady (see
+  /// lib/domain/models/raw/stabilization.dart). The viewer turns it inside its stitch, frame by frame. [summary] tells
+  /// what the table did, for the logs. Same arguments as SphericalVideoApi.setStabilization.
+  void setStabilization(
+    String url,
+    bool enabled,
+    bool hasTrack,
+    Int64List? presentationTimesUs,
+    Float64List? corrections,
+    String? summary,
+  );
 }
 
 /// Events from the immersive viewer towards Flutter, attached to the engine of the app UI (the viewer is its own
@@ -151,4 +173,9 @@ abstract class ImmersiveEvents {
   /// and as the viewer closes, for a film only (see open's watchMinDurationMs), never in the kiosk. The app keeps it as
   /// the in-app player does (see WatchProgressStore): the film resumes there next time, in the headset or in the app.
   void progress(int openingId, String url, int positionMs, int durationMs);
+
+  /// The user turned the stabilisation with the camera's gyroscope on or off ([enabled]) in the viewer of [openingId]:
+  /// the setting of the app follows, as with the phone's 360° player (an opening Flutter no longer follows still
+  /// counts, the press was the user's).
+  void stabilizationChanged(int openingId, bool enabled);
 }

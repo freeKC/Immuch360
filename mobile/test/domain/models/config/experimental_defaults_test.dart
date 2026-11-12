@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
+import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 
 // The settings the app labels experimental are on by default, and each can still be turned off; Large splats is an
 // exception, off by default (decision D7 of the splats: 300 000 gaussians by default since 8 November 2026, 1 000 000
@@ -156,6 +157,15 @@ void main() {
 
       expect(config.viewer.stabilizeVideos, isFalse);
       expect(config.write(SettingsKey.viewerStabilizeVideos, true).viewer.stabilizeVideos, isTrue);
+    });
+
+    test('is offered on the Android phones, tablets and TVs and on the Meta Quest, not on the computers', () {
+      // The Quest's immersive viewer stabilises since lot d3 (release 46), turned inside its stitch
+      expect(videoStabilizationSupportedOn(isIOS: false, isAndroid: true, isHorizonOs: false), isTrue);
+      expect(videoStabilizationSupportedOn(isIOS: false, isAndroid: true, isHorizonOs: true), isTrue);
+      // While the kind of device is asked, nothing says it stabilises
+      expect(videoStabilizationSupportedOn(isIOS: false, isAndroid: true, isHorizonOs: null), isFalse);
+      expect(videoStabilizationSupportedOn(isIOS: false, isAndroid: false, isHorizonOs: false), isFalse);
     });
   });
 

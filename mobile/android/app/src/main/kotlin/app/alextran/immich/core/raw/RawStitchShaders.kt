@@ -32,8 +32,17 @@ object RawStitchShaders {
     }
   }
 
-  /** Uniforms every ES 3.00 program has: the two stream textures, their transforms, which are decoded. */
-  val COMMON_UNIFORMS = listOf("uTex0", "uTex1", "uTexTransform0", "uTexTransform1", "uEnabled")
+  /**
+   * The rotation of the output view (issue 14, the stabilisation of the Meta Quest): a mat3 that turns the view
+   * direction of each output pixel into the direction of the stitched view it shows, before the lenses or the faces
+   * are looked up. Every program declares it; its owner sets the identity when it builds the program (GLSL starts a
+   * uniform at zero) and the matrix of each frame when it draws (StabilizedStitch), so a player without a table draws
+   * the stitch as before.
+   */
+  const val STABILIZATION_UNIFORM = "uStabilization"
+
+  /** Uniforms every ES 3.00 program has: the two stream textures, their transforms, which are decoded, the rotation. */
+  val COMMON_UNIFORMS = listOf("uTex0", "uTex1", "uTexTransform0", "uTexTransform1", "uEnabled", STABILIZATION_UNIFORM)
 
   /** The BT.2020 matrix and offset of the YUV variants. */
   val YUV_UNIFORMS = listOf("uYuvToRgb", "uYuvOffset")
@@ -122,11 +131,12 @@ object RawStitchShaders {
       void main() {
       #ifdef SUPERSAMPLE
         vec2 q = 0.25 / uOutputSize;
-        vec3 color = 0.25 * ($stitch(viewDirection(vOut + vec2(-q.x, -q.y))) +
-          $stitch(viewDirection(vOut + vec2(q.x, -q.y))) + $stitch(viewDirection(vOut + vec2(-q.x, q.y))) +
-          $stitch(viewDirection(vOut + vec2(q.x, q.y))));
+        vec3 color = 0.25 * ($stitch(uStabilization * viewDirection(vOut + vec2(-q.x, -q.y))) +
+          $stitch(uStabilization * viewDirection(vOut + vec2(q.x, -q.y))) +
+          $stitch(uStabilization * viewDirection(vOut + vec2(-q.x, q.y))) +
+          $stitch(uStabilization * viewDirection(vOut + vec2(q.x, q.y))));
       #else
-        vec3 color = $stitch(viewDirection(vOut));
+        vec3 color = $stitch(uStabilization * viewDirection(vOut));
       #endif
         outColor = vec4(toOutput(color), 1.0);
       }
@@ -175,13 +185,13 @@ object RawStitchShaders {
       .trimIndent() + "\n" + COMMON_FUNCTIONS + FISHEYE +
       """
       void main() {
-        gl_FragColor = vec4(stitchFisheye(viewDirection(vTexSamplingCoord)), 1.0);
+        gl_FragColor = vec4(stitchFisheye(uStabilization * viewDirection(vTexSamplingCoord)), 1.0);
       }
       """
         .trimIndent() + "\n"
 
   /** The uniforms of [fragmentEs1SideBySide]; uTexOf is folded away there (one texture). */
-  val SIDE_BY_SIDE_UNIFORMS: List<String> = listOf(SIDE_BY_SIDE_SAMPLER) + FISHEYE_UNIFORMS
+  val SIDE_BY_SIDE_UNIFORMS: List<String> = listOf(SIDE_BY_SIDE_SAMPLER) + FISHEYE_UNIFORMS + STABILIZATION_UNIFORM
 
   /** A GLSL float literal of [value]: always a decimal point, no exponent. */
   private fun literal(value: Double): String {
@@ -240,10 +250,17 @@ object RawStitchShaders {
     """
       .trimIndent() + "\n"
 
-  /** The view direction of an output position: longitude -180 to 180 across, latitude -90 to 90 up. */
+  /**
+   * The view direction of an output position: longitude -180 to 180 across, latitude -90 to 90 up; and the rotation
+   * of the output view, see [STABILIZATION_UNIFORM].
+   */
   private val COMMON_FUNCTIONS =
     """
     const float PI = 3.14159265358979;
+
+    // The view direction e of an output pixel shows the direction uStabilization * e of the stitched view: the
+    // transpose of the correction of the frame, the identity without one
+    uniform mat3 uStabilization;
 
     vec3 viewDirection(vec2 position) {
       float lon = (position.x * 2.0 - 1.0) * PI;

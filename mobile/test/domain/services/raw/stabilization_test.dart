@@ -456,6 +456,92 @@ void main() {
       expect(_angleBetween(_matrix(_at(table.corrections, table.length - 1)), Mat3.identity), lessThan(0.6));
     });
 
+    test('caps the speed of the heading in a headset: a fast turn never exceeds it, the view ends on the new road', () {
+      // Straight 4 s, a U-turn to the right in half a second (360 degrees a second), straight 6.5 s: smoothed over 2 s,
+      // a turn of 90 degrees peaks at about 22 degrees a second, a U-turn at about 45
+      const turnRate = 2 * math.pi;
+      double angle(double t) => t < 4 ? 0 : (t < 4.5 ? turnRate * (t - 4) : math.pi);
+      double rate(double t) => t < 4 || t >= 4.5 ? 0 : turnRate;
+      final track = _track(_samples(-0.2, 11.2, _aboutAxis((x: 1, y: 0, z: 0), angle, rate)), seconds: 11);
+      final details = StabilizationDetails();
+      final free = StabilizationDetails();
+
+      final table = stabilizationOfMotionTrack(
+        track,
+        downBody: _upright,
+        details: details,
+        options: StabilizationOptions.headset,
+      );
+      stabilizationOfMotionTrack(
+        track,
+        downBody: _upright,
+        details: free,
+        options: const StabilizationOptions(headingTimeConstant: 2),
+      );
+
+      expect(table, isNotNull);
+      expect(StabilizationOptions.headset.headingTimeConstant, 2);
+      expect(StabilizationOptions.headset.headingMaxDegreesPerSecond, 30);
+      final times = details.times;
+      var fastest = 0.0;
+      var freeFastest = 0.0;
+      for (var i = 1; i < table!.length; i++) {
+        final dt = times[i] - times[i - 1];
+        fastest = math.max(fastest, (details.smoothedHeading[i] - details.smoothedHeading[i - 1]).abs() / dt);
+        freeFastest = math.max(freeFastest, (free.smoothedHeading[i] - free.smoothedHeading[i - 1]).abs() / dt);
+      }
+      // Smoothed over 2 s alone, the view would still turn faster than the cap
+      expect(freeFastest / _degree, greaterThan(32));
+      expect(fastest / _degree, lessThanOrEqualTo(30 + 1e-6));
+      // The turn is centred on the camera's: halfway through it the view has turned about half of it
+      final middle = times.indexed.firstWhere((e) => e.$2 >= 4.25).$1;
+      expect(details.smoothedHeading[middle] / _degree, closeTo(90, 6));
+      // Away from the turn the cap changes nothing: the view looks down the old road, then the new one, as the smoothing
+      // alone makes it (whose two sided tails of 2 s still lean a few degrees towards the turn at the ends)
+      final last = table.length - 1;
+      for (final i in [0, last]) {
+        expect(details.smoothedHeading[i] / _degree, closeTo(free.smoothedHeading[i] / _degree, 0.5), reason: '$i');
+      }
+      expect(details.smoothedHeading[last] / _degree, closeTo(180, 8));
+    });
+
+    test('leaves a turn slower than the cap as the smoothing makes it', () {
+      // 90 degrees over 6 s (15 degrees a second): smoothed over 2 s it never reaches 30 degrees a second
+      const turnRate = math.pi / 12;
+      double angle(double t) => t < 3 ? 0 : (t < 9 ? turnRate * (t - 3) : math.pi / 2);
+      double rate(double t) => t < 3 || t >= 9 ? 0 : turnRate;
+      final track = _track(_samples(-0.2, 12.2, _aboutAxis((x: 1, y: 0, z: 0), angle, rate)), seconds: 12);
+      final capped = StabilizationDetails();
+      final free = StabilizationDetails();
+
+      stabilizationOfMotionTrack(track, downBody: _upright, details: capped, options: StabilizationOptions.headset);
+      stabilizationOfMotionTrack(
+        track,
+        downBody: _upright,
+        details: free,
+        options: const StabilizationOptions(headingTimeConstant: 2),
+      );
+
+      for (var i = 0; i < capped.smoothedHeading.length; i++) {
+        expect(capped.smoothedHeading[i], closeTo(free.smoothedHeading[i], 1e-12), reason: 'frame $i');
+      }
+    });
+
+    test('still cancels a shake on a straight path in a headset', () {
+      const axis = (x: 1.0, y: 2.0, z: 3.0);
+      double angle(double t) => 2 * _degree * math.sin(2 * math.pi * 5 * t) + _degree * math.sin(2 * math.pi * 8 * t);
+      double rate(double t) =>
+          2 * _degree * 2 * math.pi * 5 * math.cos(2 * math.pi * 5 * t) +
+          _degree * 2 * math.pi * 8 * math.cos(2 * math.pi * 8 * t);
+      final track = _track(_samples(-0.5, 20.5, _aboutAxis(axis, angle, rate)), seconds: 20);
+
+      final table = stabilizationOfMotionTrack(track, downBody: _upright, options: StabilizationOptions.headset);
+
+      expect(table!.summary.cameraShakeDegrees, greaterThan(1));
+      expect(table.summary.meanViewStepDegrees, lessThan(0.01));
+      expect(table.summary.largestCorrectionDegrees, lessThan(3.5));
+    });
+
     test('levels slowly towards the accelerometer: the drift of the gyroscope goes, the turns of a vehicle do not', () {
       // The gyroscope reads a bias of 0.2 degree a second about the view's forward (body -z), 12 degrees over a
       // minute, while the camera stays still: the accelerometer stays level

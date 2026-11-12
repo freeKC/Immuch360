@@ -26,7 +26,10 @@
 // 4. Heading. The azimuth of the camera's view forward C_i z about the up, from the world forward laid level (positive
 //    to the right), unwrapped; held where the view looks within 6 degrees of the vertical (no azimuth there). Smoothed
 //    with the two sided exponential of 1 s: the file is known whole, so the view follows the road without lag and
-//    without the shake.
+//    without the shake. A headset (the immersive viewer of the Meta Quest) smooths over 2 s and caps the speed of the
+//    heading (StabilizationOptions.headset): in a headset a sudden turn of the world is worse than the shake. The cap
+//    limits the change from frame to frame, once forward and once backward, and takes the mean of the two passes, so
+//    that the view starts a fast turn early and ends it late rather than only late.
 // 5. Target and correction. The target view T_i is level (down = -up) and looks at the smoothed heading. The player
 //    turns the sphere of the stitched frame by K_i = T_i^T C_i: the point at direction d of the camera's view goes to
 //    K_i d, where the viewer looking at K_i d sees the world direction C_i d, so the viewer at direction e sees T_i e,
@@ -84,7 +87,12 @@ class StabilizationOptions {
     this.levelMinNorm = 0.95,
     this.levelMaxNorm = 1.05,
     this.djiFadeInSeconds = 5.0,
+    this.headingMaxDegreesPerSecond,
   });
+
+  /// The settings of the immersive viewer of the Meta Quest (issue 14, lot d3): the heading smoothed over 2 s and
+  /// turning at most 30 degrees a second, since in a headset a sudden turn of the world is worse than the shake
+  static const headset = StabilizationOptions(headingTimeConstant: 2.0, headingMaxDegreesPerSecond: 30);
 
   /// Added to the time of a frame less half its exposure to take the gyroscope at that frame, in seconds
   final double gyroOffsetSeconds;
@@ -105,6 +113,14 @@ class StabilizationOptions {
   /// Time over which the correction of a DJI file fades in from its first frame, in seconds, while the fusion of the
   /// camera settles (head of this file, step 6); 0 applies it whole from the start
   final double djiFadeInSeconds;
+
+  /// Fastest the smoothed heading turns, in degrees a second (head of this file, step 4); null for no limit
+  final double? headingMaxDegreesPerSecond;
+
+  @override
+  String toString() =>
+      'StabilizationOptions(heading: $headingTimeConstant s'
+      '${headingMaxDegreesPerSecond == null ? '' : ', at most $headingMaxDegreesPerSecond degrees/s'})';
 }
 
 /// The steps of a table frame by frame, filled when given to a builder: for the tests and the measures
@@ -852,7 +868,10 @@ StabilizationTable _buildTable({
     );
     heading[i] = i == 0 ? angle : heading[i - 1] + _wrapped(angle - heading[i - 1]);
   }
-  final smoothedHeading = _twoSided(times, heading, 1, options.headingTimeConstant);
+  final maxSpeed = options.headingMaxDegreesPerSecond;
+  final smoothedHeading = maxSpeed == null
+      ? _twoSided(times, heading, 1, options.headingTimeConstant)
+      : _speedCapped(times, _twoSided(times, heading, 1, options.headingTimeConstant), maxSpeed / _degrees);
 
   // The target, the correction, the numbers of the summary
   final corrections = Float32List(4 * count);
@@ -1024,6 +1043,29 @@ Float64List _twoSided(Float64List times, Float64List values, int dims, double ta
     }
   }
   return result;
+}
+
+/// [values] (one a time) turning at most [maxPerSecond] a second: each step limited once forward, from the first
+/// value, and once backward, from the last, then the mean of the two passes, which keeps the limit (a mean of two
+/// limited steps is limited) and centres the lag of a fast turn on it. A step of a gap in [times] may be longer.
+Float64List _speedCapped(Float64List times, Float64List values, double maxPerSecond) {
+  final count = values.length;
+  final forward = Float64List(count);
+  final backward = Float64List(count);
+  if (count == 0) {
+    return forward;
+  }
+  forward[0] = values[0];
+  for (var i = 1; i < count; i++) {
+    final limit = maxPerSecond * (times[i] - times[i - 1]).abs();
+    forward[i] = forward[i - 1] + (values[i] - forward[i - 1]).clamp(-limit, limit);
+  }
+  backward[count - 1] = values[count - 1];
+  for (var i = count - 2; i >= 0; i--) {
+    final limit = maxPerSecond * (times[i + 1] - times[i]).abs();
+    backward[i] = backward[i + 1] + (values[i] - backward[i + 1]).clamp(-limit, limit);
+  }
+  return Float64List.fromList([for (var i = 0; i < count; i++) (forward[i] + backward[i]) / 2]);
 }
 
 // Frames a second from the median step of the frame times; 30 with fewer than two frames
