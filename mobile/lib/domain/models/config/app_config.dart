@@ -18,6 +18,7 @@ import 'package:immich_mobile/domain/models/config/slideshow_config.dart';
 import 'package:immich_mobile/domain/models/config/theme_config.dart';
 import 'package:immich_mobile/domain/models/config/timeline_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
+import 'package:immich_mobile/domain/models/film_player_preference.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
@@ -92,6 +93,8 @@ abstract class AppConfig with _$AppConfig {
             .viewerAv2Videos => viewer.av2Videos,
             .viewerVideoSource => viewer.videoSource,
             .viewerFilmWikipedia => viewer.filmWikipedia,
+            .viewerFilmPlayer => viewer.filmPlayer,
+            .viewerPlexConversion => viewer.plexConversion,
             .networkAutoEndpointSwitching => network.autoEndpointSwitching,
             .networkPreferredWifiName => network.preferredWifiName,
             .networkLocalEndpoint => network.localEndpoint,
@@ -174,6 +177,8 @@ abstract class AppConfig with _$AppConfig {
       .viewerAv2Videos => copyWith(viewer: viewer.copyWith(av2Videos: value as bool)),
       .viewerVideoSource => copyWith(viewer: viewer.copyWith(videoSource: value as VideoSourcePolicy?)),
       .viewerFilmWikipedia => copyWith(viewer: viewer.copyWith(filmWikipedia: value as bool)),
+      .viewerFilmPlayer => copyWith(viewer: viewer.copyWith(filmPlayer: value as FilmPlayerPreference)),
+      .viewerPlexConversion => copyWith(viewer: viewer.copyWith(plexConversion: value as bool)),
       .networkAutoEndpointSwitching => copyWith(network: network.copyWith(autoEndpointSwitching: value as bool)),
       .networkPreferredWifiName => copyWith(
         network: network.copyWith(preferredWifiName: .fromNullable(value as String?)),

@@ -29,6 +29,7 @@ class PlexStream {
     this.index,
     this.key,
     this.codec,
+    this.profile,
     this.language,
     this.languageCode,
     this.languageTag,
@@ -52,6 +53,10 @@ class PlexStream {
   /// The request path of a stream that is a file of its own ("/library/streams/123"), null for one inside the file
   final String? key;
   final String? codec;
+
+  /// The profile of its codec as the server names it ("high 10", "main 10", "advanced simple", "ma" for DTS-HD
+  /// Master Audio), what the choice of the player reads (film_player_choice.dart)
+  final String? profile;
 
   /// The name of its language in the server's words ("Français"), its three letter code ("fra"), its BCP 47 tag ("fr")
   final String? language;
@@ -424,6 +429,7 @@ PlexStream? _stream(Map<String, Object?> stream) {
     index: _int(stream['index']),
     key: _string(stream['key']),
     codec: _string(stream['codec']),
+    profile: _string(stream['profile']),
     language: _string(stream['language']),
     languageCode: _string(stream['languageCode']),
     languageTag: _string(stream['languageTag']),

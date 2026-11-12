@@ -238,6 +238,11 @@ flutter:
     - path: assets/licenses/zstd-jni/
       flavors:
         - quest
+    # libmpv, which plays the films the headset cannot decode, is in the APK of the quest flavour only, and so are its
+    # licence texts (lib/utils/mpv_android_licenses.dart)
+    - path: assets/licenses/libmpv-android/
+      flavors:
+        - quest
     # The licence of the Meta Spatial SDK, which every Android APK ships, and the notices of its native libraries
     # (lib/utils/meta_spatial_licenses.dart)
     - assets/licenses/meta-spatial-sdk/

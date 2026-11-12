@@ -125,6 +125,18 @@ ONE_TIME_KIND_THRESHOLDS = {
         'arm64-v8a': 3.1,
         'quest': 2.9,
     },
+    # 11 November 2026, for Android build 46 (Immuch360 3.4.1), compared with release 45. The Quest APK alone carries
+    # libmpv (lot feat-plex-mpv-46: the films the headset cannot decode, src/quest and app/build.gradle), the arm64
+    # libraries of media-kit's libmpv-android-video-build v1.1.7 read from default-arm64-v8a.jar (SHA-256 4363dfa5...,
+    # licenses/libmpv-android/README.md): libmpv.so 12,369,680 bytes and libmediakitandroidhelper.so 386,696, stored
+    # uncompressed (minSdk 26) and aligned on 16 KiB, so 12,756,376 bytes and at most 32 KiB of padding, with about
+    # 20 KB of classes and 60 KB of compressed licence texts: about +12.84 MB, +7.67 % on the 167,429,950 bytes of the
+    # Quest APK of release 45, estimated without a build (no Gradle on the PC that wrote it). Every package also gets
+    # Media3's HLS module (about 0.1 to 0.2 MB of classes, the films the server converts) and the Dart of the lot,
+    # well under 1 % for the phones. 8.5 % for the Quest leaves about 0.8 point for the other lots of 46 and the fixes
+    # of the headset tests; the integration recomputes it from the packages it builds. Build 47 compares with build
+    # 46 and the ordinary threshold again.
+    'v3.4.0-45': {'quest': 8.5},
 }
 
 

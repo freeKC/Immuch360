@@ -508,7 +508,17 @@ class LocalMediaBridge implements MediaBridge {
   /// A file of generated media, from memory or from disk: never cached unless the file says otherwise, a range when
   /// one is asked
   Future<void> _answerGenerated(HttpRequest request, HttpResponse response, GeneratedMedia media, String name) async {
-    final file = media.file(name);
+    final GeneratedFile? file;
+    if (media is GeneratedMediaFetch) {
+      try {
+        file = await media.fetch(name);
+      } catch (error) {
+        _log.fine('A fetched file of generated media failed: ${error.runtimeType}');
+        return _fail(response, HttpStatus.badGateway, 'The server did not send it');
+      }
+    } else {
+      file = media.file(name);
+    }
     if (file == null) {
       return _fail(response, HttpStatus.notFound, 'Not found');
     }

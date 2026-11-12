@@ -9,15 +9,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/video/android_mpv.dart';
 import 'package:immich_mobile/desktop/video/av2_gate.dart';
+import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
+import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
+import 'package:immich_mobile/desktop/video/mpv_video_view.dart';
+import 'package:immich_mobile/desktop/video/player_resource_options.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
+import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
@@ -31,7 +37,10 @@ import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_streams.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_tracks.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
 import 'package:immich_mobile/presentation/actions/watch_progress.action.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
@@ -41,6 +50,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_pa
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_player_menu.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_video_buffering.widget.dart';
@@ -60,6 +70,7 @@ import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dar
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
+import 'package:immich_mobile/providers/network/film_player.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
@@ -71,8 +82,9 @@ import 'package:native_video_player/native_video_player.dart';
 
 final _log = Logger('NetworkVideoPage');
 
-/// A video of a share and its media bridge URL
-typedef _Video = ({NetworkEntry entry, Uri url});
+/// A video of a share, the media bridge URL of its file, and what the player plays: the file itself, or the server's
+/// conversion of it (a Plex film, see film_player_choice.dart)
+typedef _Video = ({NetworkEntry entry, Uri url, Uri playUrl});
 
 /// Whether [error], a message of the native player, says that what it got is no video it knows: Media3's
 /// UnrecognizedInputFormatException, "None of the available extractors (...) could read the stream", whose list of
@@ -85,6 +97,27 @@ bool isUnrecognizedVideoError(String error) =>
 /// reads "Attempt to invoke virtual method 'java.lang.Class java.lang.Object.getClass()' on a null object reference"
 /// once minified. Seen on 11 November 2026 on a Dolby Vision profile 5 MKV film on the Quest (Media3 1.10.0).
 bool isPlayerReaderFault(String error) => RegExp(r'^\s*Unexpected [A-Za-z]+(Exception|Error)\b').hasMatch(error);
+
+// The errors of a player that say the link or the server failed, not the player: the next player would wait for
+// the same server (Media3's HttpDataSource, "Response code: 500", a refused or reset connection, a timeout)
+final _linkError = RegExp(
+  r'response code|httpdatasource|unable to connect|connection|timed? ?out|unknownhost|socket|network|eof',
+  caseSensitive: false,
+);
+
+/// Whether [error], what a player reported for a film, hands the film to the next player (nextFilmPlayer): a decoder
+/// that refused or gave no picture, a file the player did not recognize, or any failure before the film ever played,
+/// but never a failure of the link or of the server, nor a link that stalled
+bool filmErrorHandsOver(String error, {required bool played}) {
+  final native = NativePlaybackError.parse(error);
+  if (native != null) {
+    return native.kind == NativePlaybackErrorKind.decoder || native.kind == NativePlaybackErrorKind.noFrame;
+  }
+  if (isUnrecognizedVideoError(error)) {
+    return true;
+  }
+  return !played && !_linkError.hasMatch(error);
+}
 
 /// The line of the logs about a file of a share that the player did not recognize as a video: the kind of share, the
 /// type and the size the share gave, and the first bytes the media bridge sent ([head], null when they could not be
@@ -198,6 +231,40 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// Whether the tracks Plex has for the account were picked in the player, once per load
   bool _plexChoiceApplied = false;
 
+  /// The file of a Plex film, its place among the versions and files of the film, and what its streams are, for the
+  /// choice of its player; null for any other video and when Plex did not tell
+  PlexFilmPart? _plexPart;
+  ({int mediaIndex, int partIndex}) _plexPlace = (mediaIndex: 0, partIndex: 0);
+
+  /// Who plays the film (film_player_choice.dart): the device's player for every video but a Plex film that it cannot
+  /// decode, on Android
+  FilmPlayerKind _player = FilmPlayerKind.device;
+
+  /// The players that failed on this film, and the one the next load must use (a hand over or the menu), null to
+  /// choose again
+  final Set<FilmPlayerKind> _failedPlayers = {};
+  FilmPlayerKind? _nextPlayer;
+
+  /// The player asked in the menu of this page, over Settings, null for the setting
+  FilmPlayerPreference? _askedPlayer;
+
+  /// Bumped at each change of player: the view of the player is made again
+  int _playerGeneration = 0;
+
+  /// The player is chosen again (a hand over, a pick in the menu): no view of a player until it is known
+  bool _choosing = false;
+
+  /// The server's conversion of the film that plays, served by the media bridge under [_conversionId]
+  PlexConversion? _conversion;
+  String? _conversionId;
+  MediaBridge? _conversionBridge;
+
+  /// Whether this build plays with libmpv, once asked
+  bool _mpvAvailable = false;
+
+  /// Whether the failure listener of the player status is set (once per page)
+  bool _failureListened = false;
+
   /// The film resumed where it was left, said for a few seconds (see ResumeNotice)
   ResumeNoticeEvent? _resumeNotice;
 
@@ -268,6 +335,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (offlineId != null) {
       _offlineBridge?.unregisterGenerated(offlineId);
     }
+    _endConversion();
     _rootFocus.dispose();
     _appBarFocus.dispose();
     _actionsFocus.dispose();
@@ -511,6 +579,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // study): its watch progress is the one of the film on the share, by the same entry
     final offline = await _offlineVideo(service, client);
     if (offline != null) {
+      await _chooseOfflinePlayer();
       return offline;
     }
     final fileSystem = await connections.fileSystem(widget.sourceId);
@@ -533,6 +602,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
     _shareReader = networkFileReader(fileSystem, widget.path);
     _shareFileSystem = fileSystem;
+    final playUrl = await _choosePlayer(fileSystem, bridge, url);
     // What the file declares is read once the player has what it needs to play, not beside its first reads: on a slow
     // share the two read the index of the file at once (3.6 MB for a two hour film), and the film started later. A
     // page whose native player is not there a second later reads it at once
@@ -542,7 +612,140 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       _detectTimer = null;
       _detectWhenIdle(now: _controller == null);
     });
-    return (entry: entry, url: url);
+    return (entry: entry, url: url, playUrl: playUrl);
+  }
+
+  /// The player of the film (see film_player_choice.dart) and what it plays: the file at [url], or the server's
+  /// conversion. A Plex film on Android only; any other video, and the computers, keep the player they had.
+  Future<Uri> _choosePlayer(NetworkFileSystem fileSystem, MediaBridge bridge, Uri url) async {
+    // Read before the first await: the page may be gone by then
+    final players = ref.read(filmPlayersProvider);
+    final viewer = ref.read(appConfigProvider).viewer;
+    final preference = _askedPlayer ?? viewer.filmPlayer;
+    final isPlex = fileSystem is PlexFileSystem;
+    final conversion = isPlex && viewer.plexConversion;
+    _endConversion();
+    if (CurrentPlatform.isDesktop || !Platform.isAndroid) {
+      _setPlayer(FilmPlayerKind.device);
+      return url;
+    }
+    _mpvAvailable = await players.mpvAvailable();
+    final FilmPlayerKind kind;
+    final forced = _nextPlayer;
+    if (forced != null) {
+      kind = forced;
+    } else if (isPlex) {
+      final part = _plexPart;
+      final choice = await players.choose(
+        part == null ? null : filmStreamsOfPlexPart(part),
+        preference: preference,
+        conversion: conversion,
+      );
+      _log.info(choice.logLine);
+      kind = choice.kind;
+    } else {
+      kind = preference == FilmPlayerPreference.mpv && _mpvAvailable ? FilmPlayerKind.mpv : FilmPlayerKind.device;
+    }
+    if (kind == FilmPlayerKind.serverConversion && fileSystem is PlexFileSystem) {
+      final converted = await _startConversion(fileSystem, bridge, players);
+      if (converted != null) {
+        _setPlayer(FilmPlayerKind.serverConversion);
+        return converted;
+      }
+      // The server cannot convert it: the best of the others
+      _failedPlayers.add(FilmPlayerKind.serverConversion);
+      _setPlayer(
+        _mpvAvailable && !_failedPlayers.contains(FilmPlayerKind.mpv) ? FilmPlayerKind.mpv : FilmPlayerKind.device,
+      );
+      return url;
+    }
+    _setPlayer(kind == FilmPlayerKind.serverConversion ? FilmPlayerKind.device : kind);
+    return url;
+  }
+
+  /// The copy of a film on this device: the device's player, or libmpv when asked or after the device's player failed
+  /// on it; never the server's conversion
+  Future<void> _chooseOfflinePlayer() async {
+    final players = ref.read(filmPlayersProvider);
+    final preference = _askedPlayer ?? ref.read(appConfigProvider).viewer.filmPlayer;
+    _endConversion();
+    if (CurrentPlatform.isDesktop || !Platform.isAndroid) {
+      _setPlayer(FilmPlayerKind.device);
+      return;
+    }
+    _mpvAvailable = await players.mpvAvailable();
+    final forced = _nextPlayer;
+    final mpv = _mpvAvailable && (forced == FilmPlayerKind.mpv || preference == FilmPlayerPreference.mpv);
+    _setPlayer(mpv ? FilmPlayerKind.mpv : FilmPlayerKind.device);
+  }
+
+  /// The player of the load under way is [kind]: its view is made (again when it changed)
+  void _setPlayer(FilmPlayerKind kind) {
+    if (!mounted || (kind == _player && !_choosing)) {
+      return;
+    }
+    setState(() {
+      if (kind != _player) {
+        _player = kind;
+        _playerGeneration++;
+      }
+      _choosing = false;
+    });
+  }
+
+  /// Asks the Plex server to convert the film, and serves the conversion through the media bridge: its playlist's
+  /// URL there, null when the server cannot convert it or does not answer
+  Future<Uri?> _startConversion(PlexFileSystem fileSystem, MediaBridge bridge, FilmPlayers players) async {
+    try {
+      final audioCodecs = await players.conversionAudioCodecs();
+      // From the start of the film: the converted stream keeps the film's times, and the player seeks where the film
+      // resumes, as for the file
+      final conversion = await fileSystem.conversionOf(
+        widget.path,
+        mediaIndex: _plexPlace.mediaIndex,
+        partIndex: _plexPlace.partIndex,
+        audioCodecs: audioCodecs,
+      );
+      if (conversion == null || !mounted) {
+        unawaited(conversion?.stop());
+        return null;
+      }
+      await bridge.start();
+      final id = 'conversion-${Random.secure().nextInt(1 << 32).toRadixString(16)}';
+      bridge.registerGenerated(id, conversion);
+      _conversion = conversion;
+      _conversionId = id;
+      _conversionBridge = bridge;
+      final url = bridge.urlFor(id, '/${PlexConversion.playlistName}');
+      // libmpv opens the segments the playlist names only with access-references on, which every player has off
+      // (DesktopPlayerOptions.common): this playlist names the bridge's files only (renameHlsSegments)
+      desktopResourceOptions[url.toString()] = const {'access-references': 'yes'};
+      _conversionUrl = url.toString();
+      return url;
+    } catch (error) {
+      _log.warning('The Plex server did not convert the film: ${error.runtimeType}');
+      return null;
+    }
+  }
+
+  /// The playlist address of the conversion, for the options libmpv opens it with
+  String? _conversionUrl;
+
+  /// Stops the server's conversion and takes it off the bridge
+  void _endConversion() {
+    final url = _conversionUrl;
+    if (url != null) {
+      desktopResourceOptions.remove(url);
+      _conversionUrl = null;
+    }
+    final id = _conversionId;
+    if (id != null) {
+      _conversionBridge?.unregisterGenerated(id);
+    }
+    unawaited(_conversion?.stop());
+    _conversion = null;
+    _conversionId = null;
+    _conversionBridge = null;
   }
 
   /// The whole copy of the film on this device, served by the media bridge under a random id like the generated media,
@@ -586,7 +789,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       _detectTimer = null;
       _detectWhenIdle(now: _controller == null);
     });
-    return (entry: entry, url: url);
+    return (entry: entry, url: url, playUrl: url);
   }
 
   /// Reads what the file declares (see [_detect]), set by [_load] and run once by [_detectWhenIdle]
@@ -657,7 +860,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
   Future<VideoSource?> _sourceOf(Future<_Video> video) async {
     try {
-      final url = (await video).url;
+      final url = (await video).playUrl;
       return await VideoSource.init(
         path: url.toString(),
         type: VideoSourceType.network,
@@ -673,6 +876,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// The tracks of the Plex film at the page's path (see PlexFilmTracks); null for any other video, and when Plex
   /// does not tell them within [plexTracksWait]: the film then plays with the tracks of its file only
   Future<PlexFilmTracks?> _plexTracksOf(NetworkFileSystem fileSystem, MediaBridge bridge) async {
+    _plexPart = null;
+    _plexPlace = (mediaIndex: 0, partIndex: 0);
     if (fileSystem is! PlexFileSystem) {
       return null;
     }
@@ -683,6 +888,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     try {
       final details = await fileSystem.filmDetails(item.ratingKey).timeout(plexTracksWait);
       final part = details.partOf(item.partId);
+      _plexPart = part;
+      _plexPlace = plexPartPlace(details, item.partId);
       if (part == null || part.streams.isEmpty) {
         return null;
       }
@@ -752,6 +959,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (tracks == null || _plexChoiceApplied) {
       return;
     }
+    final controller = _controller;
+    if (controller is MediaKitVideoPlayerController) {
+      return _applyPlexChoiceToMpv(controller, tracks);
+    }
     final listed = await _notifier.tracks();
     if (!mounted || listed.isEmpty || _plexChoiceApplied || !identical(tracks, _plexTracks)) {
       return;
@@ -776,6 +987,45 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       if (index >= 0 && (subtitle.isSidecar || tracks.streamOf(textRefs[index]) != null)) {
         await _notifier.selectTrack(text[index]);
       }
+    }
+  }
+
+  /// The tracks Plex has for the account, picked in libmpv once it lists the tracks of the file: the audio track by its
+  /// place among the audio tracks of the file, the subtitles by the id of their side file or by their place among the
+  /// subtitles of the file, as the menus of the controls name them (DesktopAudioTrackButton,
+  /// DesktopSubtitleTrackButton)
+  Future<void> _applyPlexChoiceToMpv(MediaKitVideoPlayerController controller, PlexFilmTracks tracks) async {
+    final audio = controller.audioTracks.value;
+    if (audio.isEmpty || _plexChoiceApplied) {
+      return;
+    }
+    _plexChoiceApplied = true;
+    final selectedAudio = tracks.selectedAudio;
+    if (selectedAudio != null) {
+      for (final (index, track) in audio.indexed) {
+        if (tracks.streamOf(desktopAudioTrackRef(track, index))?.id == selectedAudio.id) {
+          if (track.id != controller.audioTrack.value) {
+            await controller.selectAudioTrack(track.id);
+          }
+          break;
+        }
+      }
+    }
+    final subtitle = tracks.selectedSubtitle;
+    if (subtitle == null || controller.subtitleTrack.value != null) {
+      return;
+    }
+    if (subtitle.isSidecar) {
+      final external = controller.externalSubtitles.value.where((file) => file.id == subtitle.sidecarId).firstOrNull;
+      if (external != null) {
+        await controller.selectExternalSubtitle(external);
+      }
+      return;
+    }
+    final embedded = controller.subtitleTracks.value.where((track) => !track.isExternal).toList();
+    final ordinal = subtitle.ordinal;
+    if (ordinal != null && ordinal >= 0 && ordinal < embedded.length) {
+      await controller.selectSubtitleTrack(embedded[ordinal].id);
     }
   }
 
@@ -840,8 +1090,16 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     controller.onError.addListener(_onPlayerError);
     controller.onTracksChanged.addListener(_onTracksChanged);
     controller.onLinkChanged.addListener(_onLinkChanged);
+    if (controller is MediaKitVideoPlayerController) {
+      // libmpv lists its tracks itself (the menus of the controls read them there)
+      controller.audioTracks.addListener(_onTracksChanged);
+      controller.subtitleTracks.addListener(_onTracksChanged);
+    }
     _controller = controller;
-    ref.listenManual(videoPlayerProvider(_playerKey).select((v) => v.status), _onFailure);
+    if (!_failureListened) {
+      _failureListened = true;
+      ref.listenManual(videoPlayerProvider(_playerKey).select((v) => v.status), _onFailure);
+    }
     unawaited(_loadVideo());
   }
 
@@ -862,6 +1120,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     controller?.onError.removeListener(_onPlayerError);
     controller?.onTracksChanged.removeListener(_onTracksChanged);
     controller?.onLinkChanged.removeListener(_onLinkChanged);
+    if (controller is MediaKitVideoPlayerController) {
+      controller.audioTracks.removeListener(_onTracksChanged);
+      controller.subtitleTracks.removeListener(_onTracksChanged);
+    }
   }
 
   Future<void> _loadVideo() async {
@@ -993,8 +1255,15 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (controller != null && error != null && mounted) {
       _log.warning('Could not play $_name: $error');
       // The media bridge answered the player an error for a failure of the share ("Response code: 500" is all the
-      // player tells): the page says what the share met, with Retry, rather than the player's words
+      // player tells): the page says what the share met, with Retry, rather than the player's words. Another player
+      // cannot fix the server, so such a failure never hands the film over
       final shareFailure = _bridgeFailure();
+      // A fault of this player (its reader, a decoder, no picture) hands the film to the next player when there is
+      // one; the reader fault text below stays for when no other player is there
+      if (shareFailure == null && _handOver(error)) {
+        scheduleMicrotask(() => controller.onError.value = null);
+        return;
+      }
       // The extractor list of Media3 tells the user nothing: a sentence, and what the player got in the logs. An error
       // the native player put in the words of the app (NativePlaybackError) is said in ours, never as its token
       final unrecognized = shareFailure == null && isUnrecognizedVideoError(error);
@@ -1017,6 +1286,64 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       _notifier.onNativeError(error);
       scheduleMicrotask(() => controller.onError.value = null);
     }
+  }
+
+  /// Hands the film to the next player when [error] says the player that failed cannot play it (filmErrorHandsOver):
+  /// the device's player to libmpv, libmpv to the server's conversion. Only for a film the app chooses the player of
+  /// (Automatic), on Android; false when the error stays
+  bool _handOver(String error) {
+    final preference = _askedPlayer ?? ref.read(appConfigProvider).viewer.filmPlayer;
+    if (preference != FilmPlayerPreference.automatic || CurrentPlatform.isDesktop || !Platform.isAndroid) {
+      return false;
+    }
+    final isPlex = _shareType == NetworkSourceType.plex && _offlineId == null;
+    final next = nextFilmPlayer(
+      _player,
+      tried: _failedPlayers,
+      mpvAvailable: _mpvAvailable,
+      conversion: isPlex && ref.read(appConfigProvider).viewer.plexConversion,
+    );
+    if (next == null || !filmErrorHandsOver(error, played: _isVideoReady)) {
+      return false;
+    }
+    _log.info('The ${_player.name} player failed on the film, ${next.name} takes over');
+    _failedPlayers.add(_player);
+    final t = context.t;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 4),
+        content: Text(next == FilmPlayerKind.mpv ? t.film_player_now_mpv : t.film_player_now_conversion),
+      ),
+    );
+    _changePlayer(next);
+    return true;
+  }
+
+  /// Plays the film again with [kind], or with the player chosen again when null (a pick in the menu)
+  void _changePlayer(FilmPlayerKind? kind) {
+    _nextPlayer = kind;
+    _removeListeners();
+    _controller = null;
+    _detectTimer?.cancel();
+    _detectTimer = null;
+    setState(() {
+      _isVideoReady = false;
+      _playerError = null;
+      _playerGeneration++;
+      _choosing = true;
+      _video = _load();
+      videoSource = _sourceOf(_video);
+    });
+  }
+
+  /// The player picked in the menu of the page, for this film
+  void _askPlayer(FilmPlayerPreference preference) {
+    if (preference == (_askedPlayer ?? ref.read(appConfigProvider).viewer.filmPlayer) && _askedPlayer != null) {
+      return;
+    }
+    _askedPlayer = preference;
+    _failedPlayers.clear();
+    _changePlayer(null);
   }
 
   /// An error of the native player in the words of the failure panel of the viewer: the cause, else its title
@@ -1120,7 +1447,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         return;
       }
       final player = _notifier;
-      final around = widget.folder?.around(video.entry, video.url) ?? (items: [video], index: 0);
+      final around =
+          widget.folder?.around(video.entry, video.url) ?? (items: [(entry: video.entry, url: video.url)], index: 0);
       // Given the request too: the video shows again as it opens now, whatever its file declares
       final navigator = FolderImmersiveNavigator.read(
         ref,
@@ -1350,6 +1678,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final flat3dByName = isHorizonOs == true && ref.watch(appConfigProvider.select((c) => c.viewer.flat3dByName));
     final canUpload = !tvMode && ref.watch(hasServerProvider);
     final canPlayOn = !tvMode && isHorizonOs == false && !CurrentPlatform.isDesktop;
+    // The player of a film, on a build with libmpv (the Meta Quest build of release 46): Automatic, Device or mpv
+    final canChoosePlayer = !CurrentPlatform.isDesktop && (ref.watch(androidMpvAvailableProvider).valueOrNull ?? false);
     // The film plays on a screen from this page: the mini controller in place of the controls
     final remote = ref.watch(
       remotePlaybackProvider.select(
@@ -1424,6 +1754,16 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                       tooltip: context.t.spatial_2_5d,
                       onPressed: () => unawaited(_openSpatial(video)),
                     ),
+                  // Converted by the Plex server (film_player_choice.dart)
+                  if (_conversionId != null && _player == FilmPlayerKind.serverConversion)
+                    Tooltip(
+                      key: const Key('network_video_converted'),
+                      message: context.t.film_player_converted,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Icon(Icons.dns_outlined),
+                      ),
+                    ),
                   // Played from the copy on this device
                   if (_offlineId != null)
                     Tooltip(
@@ -1448,6 +1788,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                           menuSpatial ||
                           canUpload ||
                           canDownload ||
+                          canChoosePlayer ||
                           watchActions.restart ||
                           watchActions.unwatch))
                     PopupMenuButton<void>(
@@ -1490,6 +1831,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                               title: Text(context.t.spatial_2_5d),
                               contentPadding: EdgeInsets.zero,
                             ),
+                          ),
+                        // The player of the film: Automatic, Device or mpv (film_player_menu.widget.dart)
+                        if (canChoosePlayer)
+                          filmPlayerMenuItem(
+                            this.context,
+                            asked: _askedPlayer ?? ref.read(appConfigProvider).viewer.filmPlayer,
+                            playing: _player,
+                            onPicked: _askPlayer,
                           ),
                         // The page's own context: the sheet and the dialog open once the menu is gone
                         if (canDownload) ...filmDownloadMenuItems(this.context, ref, video.entry),
@@ -1577,6 +1926,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     );
   }
 
+  /// Whether libmpv plays the film: it was chosen, or the server converts it on a build that has libmpv
+  bool get _playsWithMpv =>
+      _player == FilmPlayerKind.mpv || (_player == FilmPlayerKind.serverConversion && _mpvAvailable);
+
   /// [remote]: the film plays on a screen, whose mini controller replaces the controls
   Widget _buildPlayer({bool remote = false}) {
     // https://github.com/flutter/flutter/issues/97499: iOS platform views are only disposed in frames containing
@@ -1589,17 +1942,25 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       onTap: () => _setControls(!_showControls),
       child: Stack(
         children: [
-          if (isRouteActive)
+          if (isRouteActive && !_choosing)
             Positioned.fill(
               child: IgnorePointer(
                 child: Visibility.maintain(
                   visible: _isVideoReady,
                   // A platform view must never take the focus: the keys of a remote would go to the native view
                   child: ExcludeFocus(
-                    // The computers play through media_kit (lib/desktop/video), with a controller of the same type
-                    child: CurrentPlatform.isDesktop
-                        ? DesktopVideoView(onViewReady: _initController)
-                        : NativeVideoPlayerView(onViewReady: _initController),
+                    // A new view at each change of player (film_player_choice.dart)
+                    child: KeyedSubtree(
+                      key: ValueKey(('player', _playerGeneration)),
+                      // The computers play through media_kit (lib/desktop/video), with a controller of the same type;
+                      // libmpv plays the films the device cannot decode on the Meta Quest, and there the server's
+                      // conversion too (mpv reads HLS, Media3 of the app has no HLS module)
+                      child: CurrentPlatform.isDesktop
+                          ? DesktopVideoView(onViewReady: _initController)
+                          : _playsWithMpv
+                          ? MpvVideoView(onViewReady: _initController)
+                          : NativeVideoPlayerView(onViewReady: _initController),
+                    ),
                   ),
                 ),
               ),
@@ -1642,6 +2003,10 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                   playFocusNode: _playFocus,
                   // The names Plex gives the tracks of a film, and the pick written back to it
                   trackNaming: _plexTracks,
+                  // libmpv lists its tracks itself: the menus of the computers, on its controller
+                  mpvController: _controller is MediaKitVideoPlayerController && !CurrentPlatform.isDesktop
+                      ? _controller! as MediaKitVideoPlayerController
+                      : null,
                 ),
               ),
             ),

@@ -38,6 +38,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_server_breaker.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:logging/logging.dart';
@@ -679,6 +680,56 @@ class PlexFileSystem
   /// The full item of the film [ratingKey] (/library/metadata/{ratingKey}?includeGuids=1): its texts, people, ids and
   /// the streams of its files. Not found once the server no longer has it.
   Future<PlexFilmDetails> filmDetails(String ratingKey) => _guard(() => _onServer(() => _detailsOf(ratingKey)));
+
+  /// Largest segment of a conversion read (a few seconds of a 20 Mbit/s stream is under 20 MB)
+  static const maxConversionSegment = 64 * 1024 * 1024;
+
+  /// The server's conversion of the film at [path] (plex_transcode.dart): the decision is asked first, and null comes
+  /// back when the server says it cannot convert the film (its answer goes to the log). [mediaIndex] and [partIndex]
+  /// are the places of the file among the versions and files of the film (plexPartPlace).
+  Future<PlexConversion?> conversionOf(
+    String path, {
+    int mediaIndex = 0,
+    int partIndex = 0,
+    Duration offset = Duration.zero,
+    List<String> audioCodecs = const ['eac3', 'ac3'],
+  }) => _guard(
+    () => _onServer(() async {
+      final item = itemAt(path);
+      if (item == null) {
+        throw const _Stale();
+      }
+      final request = PlexTranscodeRequest(
+        ratingKey: item.ratingKey,
+        session: newPlexTranscodeSession(),
+        mediaIndex: mediaIndex,
+        partIndex: partIndex,
+        offset: offset,
+        audioCodecs: audioCodecs,
+      );
+      final base = _endpoint.base;
+      final decision = await _plex.getJson(
+        request.decisionUri(base),
+        parsePlexTranscodeDecision,
+        headers: request.headers,
+      );
+      _log.info(decision.logLine);
+      if (!decision.canConvert) {
+        return null;
+      }
+      return PlexConversion(
+        request: request,
+        base: base,
+        fetch: (uri, headers) async {
+          final bytes = await _plex.getBytes(uri, accept: '*/*', maxSize: maxConversionSegment, headers: headers);
+          if (bytes == null) {
+            throw const NetworkFileSystemException('The conversion is gone from the server');
+          }
+          return bytes;
+        },
+      );
+    }),
+  );
 
   Future<PlexFilmDetails> _detailsOf(String ratingKey) async {
     final uri = _endpoint.base

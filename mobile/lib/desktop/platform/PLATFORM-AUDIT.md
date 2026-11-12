@@ -72,6 +72,9 @@ the gate is per desktop and is noted.
 | `lib/presentation/actions/lock.action.dart:63` | Android dialog text, else iOS text | iOS text on the computers; harmless (local files are not deleted on the computers), UX may add a computer text |
 | `lib/presentation/actions/share.action.dart:32` | Android share icon, else the iOS one | cosmetic: the iOS share icon on the computers; UX |
 | `lib/presentation/pages/asset_troubleshoot.page.dart:134` | iOS cloud details | right |
+| `lib/presentation/pages/network/network_video.page.dart:605` | the player of a film is chosen on Android only (film_player_choice.dart, release 46), behind `CurrentPlatform.isDesktop` | right: the computers keep `DesktopVideoView` and the file, no choice, no conversion |
+| `lib/presentation/pages/network/network_video.page.dart:649` | idem, for the copy of a film on the device | right |
+| `lib/presentation/pages/network/network_video.page.dart:1213` | a failed player hands the film over on Android only, behind `CurrentPlatform.isDesktop` | right: the computers show the error as before |
 | `lib/presentation/pages/network/phone_share.page.dart:80` | iOS foreground notice | right |
 | `lib/presentation/pages/network/phone_share.page.dart:95` | phone share tile on phones only | wired (G1): shown on the computers once computerShareAvailable is true (LAN) |
 | `lib/presentation/pages/pairing/connect_screen.page.dart:32` | a code of the LG webOS app leaves the TV unnamed on iOS, App Store guideline 2.3.10 (5 November 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider); they would get the text that names LG |
@@ -147,6 +150,7 @@ the gate is per desktop and is noted.
 | `lib/widgets/common/remote_album_sliver_app_bar.dart:74` | iOS back icon | right |
 | `lib/widgets/forms/login/sign_in_completion.dart:49` | Android media management (moved from the login form, sign in with your phone) | right |
 | `lib/widgets/settings/advanced_settings.dart:49` | Android 12 check | right |
+| `lib/widgets/settings/film_player_settings.dart:29` | the film player and the server conversion settings on Android only, behind `CurrentPlatform.isDesktop` (release 46) | hidden: not shown on the computers |
 | `lib/widgets/settings/backup_settings/backup_settings.dart:29` | Android background options | right; the computers show desktop_backup_while_open instead of the cellular options (G1) |
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:184` | iOS cloud ids | right |
 | `lib/widgets/settings/beta_sync_settings/sync_status_and_actions.dart:363` | Android trash tools | right |

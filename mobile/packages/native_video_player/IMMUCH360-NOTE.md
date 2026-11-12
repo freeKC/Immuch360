@@ -61,3 +61,10 @@ What differs from upstream, to apply again when a newer commit is copied here (e
    - `VideoTracks.kt`: the map of a track has `id` (its Format.id) when it has one. Media3 prefixes the id of a
      merged track with its period ("1:immuch-sub-3"), which the app strips (`sidecarIdOfTrack`).
    - iOS: nothing; it ignores the key `subtitles`.
+
+4. HLS on Android (11 November 2026, release 46). A film of a Plex server that the device cannot decode may be
+   converted by the server (its transcoder, an HLS stream), which the app serves through its media bridge as
+   `film.m3u8` (`plex_transcode.dart`). `build.gradle`: `androidx.media3:media3-exoplayer-hls` 1.9.2, the version of
+   the other Media3 modules. `NativeVideoPlayerViewController.kt`: a network video whose path ends with `.m3u8` (the
+   query left out) goes through an `HlsMediaSource` over the same data source, with the load error policy of the
+   app; every other video loads as before. iOS: nothing, AVPlayer reads HLS by itself.

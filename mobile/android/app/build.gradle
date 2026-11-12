@@ -149,6 +149,53 @@ flutter {
   source '../..'
 }
 
+// libmpv in the quest flavour only (release 46: the films the headset cannot decode, MpvPlayers of src/quest): the
+// arm64 libraries of media-kit's libmpv-android-video-build v1.1.7 (libmpv.so, mpv and FFmpeg under the LGPL, built
+// with -Dgpl=false and --disable-gpl; libmediakitandroidhelper.so, MIT), the very archive media_kit_libs_android_video
+// 1.3.8 downloads, checked here by its SHA-256 and unpacked as native libraries of the quest flavour. The phone flavour
+// has none of it. Licences and sizes: licenses/libmpv-android/README.md.
+def questLibmpv = [
+  url   : 'https://github.com/media-kit/libmpv-android-video-build/releases/download/v1.1.7/default-arm64-v8a.jar',
+  sha256: '4363dfa5d3d415b91c1f16f6fb90c3fe59a77dfd3f9b824d2b24b492d6b09df9',
+]
+def questLibmpvDir = layout.buildDirectory.dir('libmpv-android')
+tasks.register('downloadQuestLibmpv') {
+  def jar = questLibmpvDir.map { it.file('default-arm64-v8a.jar') }
+  def jniLibs = questLibmpvDir.map { it.dir('jniLibs/arm64-v8a') }
+  inputs.property('sha256', questLibmpv.sha256)
+  outputs.dir(jniLibs)
+  doLast {
+    def archive = jar.get().asFile
+    def sha256Of = { File file -> java.security.MessageDigest.getInstance('SHA-256').digest(file.bytes).encodeHex().toString() }
+    if (!archive.exists() || sha256Of(archive) != questLibmpv.sha256) {
+      archive.parentFile.mkdirs()
+      def part = new File(archive.path + '.part')
+      new URL(questLibmpv.url).withInputStream { input -> part.withOutputStream { output -> output << input } }
+      def got = sha256Of(part)
+      if (got != questLibmpv.sha256) {
+        part.delete()
+        throw new GradleException("libmpv for the Quest: SHA-256 ${got} instead of ${questLibmpv.sha256}")
+      }
+      archive.delete()
+      part.renameTo(archive)
+    }
+    def target = jniLibs.get().asFile
+    project.delete(target)
+    project.copy {
+      from(zipTree(archive)) {
+        include 'lib/arm64-v8a/*.so'
+        eachFile { it.path = it.name }
+        includeEmptyDirs = false
+      }
+      into target
+    }
+  }
+}
+android.sourceSets.quest.jniLibs.srcDir(questLibmpvDir.map { it.dir('jniLibs') }.get().asFile)
+tasks.matching { it.name ==~ /merge\w*Quest\w*JniLibFolders/ || it.name ==~ /merge\w*Quest\w*NativeLibs/ }.configureEach {
+  dependsOn 'downloadQuestLibmpv'
+}
+
 dependencies {
   implementation libs.okhttp
   implementation libs.cronet.embedded
@@ -161,6 +208,9 @@ dependencies {
   implementation libs.media3.effect
   // RTSP live view of the Tapo cameras (CameraLiveView)
   implementation libs.media3.exoplayer.rtsp
+  // The films a Plex server converts, as HLS (native_video_player, its IMMUCH360-NOTE.md patch 4): at the version of
+  // the other Media3 modules
+  implementation libs.media3.exoplayer.hls
   implementation libs.kotlinx.coroutines.android
   implementation libs.work.runtime.ktx
   implementation libs.concurrent.futures

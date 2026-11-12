@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/film_player_preference.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/models/value_codec.dart';
@@ -56,6 +57,10 @@ enum SettingsKey<T> {
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
   // The Wikipedia block of the film page of a Plex film, see ViewerConfig.filmWikipedia
   viewerFilmWikipedia<bool>(),
+  // The player of a Plex film and the server's conversion of what the device cannot play, see ViewerConfig.filmPlayer
+  // and ViewerConfig.plexConversion
+  viewerFilmPlayer<FilmPlayerPreference>(codec: EnumCodec(FilmPlayerPreference.values)),
+  viewerPlexConversion<bool>(),
 
   // Network
   networkAutoEndpointSwitching<bool>(),
