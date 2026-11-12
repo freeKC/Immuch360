@@ -4,7 +4,8 @@ import CoreVideo
 import Foundation
 
 /// The one instruction of a stitched raw video: its time range, the tracks of its sources in the order of the
-/// geometry's tracks (one for a side by side frame), and the geometry
+/// geometry's tracks (one for a side by side frame), the geometry, and the stabilisation the player sets (issue 14):
+/// every video composition of the item shares this instruction, the smaller one of the GPU valve included
 final class RawStitchInstruction: NSObject, AVVideoCompositionInstructionProtocol, @unchecked Sendable {
   let timeRange: CMTimeRange
   let enablePostProcessing: Bool = false
@@ -14,11 +15,18 @@ final class RawStitchInstruction: NSObject, AVVideoCompositionInstructionProtoco
   let passthroughTrackID: CMPersistentTrackID = kCMPersistentTrackID_Invalid
   let sourceTrackIDs: [CMPersistentTrackID]
   let geometry: RawStitchGeometry
+  let stabilization: RawStitchStabilization
 
-  init(timeRange: CMTimeRange, sourceTrackIDs: [CMPersistentTrackID], geometry: RawStitchGeometry) {
+  /// [stabilizationTimeOffsetUs] goes from the time of the composition to the time of the stabilisation table, see
+  /// RawStitchStabilization
+  init(
+    timeRange: CMTimeRange, sourceTrackIDs: [CMPersistentTrackID], geometry: RawStitchGeometry,
+    stabilizationTimeOffsetUs: Int64 = 0
+  ) {
     self.timeRange = timeRange
     self.sourceTrackIDs = sourceTrackIDs
     self.geometry = geometry
+    stabilization = RawStitchStabilization(timeOffsetUs: stabilizationTimeOffsetUs)
     let unique = Array(Set(sourceTrackIDs)).sorted()
     requiredSourceTrackIDs = unique.map { NSNumber(value: $0) }
     super.init()
@@ -175,8 +183,12 @@ final class RawStitchCompositor: NSObject, AVVideoCompositing, @unchecked Sendab
     // Nil where a track has no frame at this time: the end of a shorter track, a lens track not decoded yet
     let frames = instruction.sourceTrackIDs.map { request.sourceFrame(byTrackID: $0) }
     let missingSource = frames.contains { $0 == nil }
+    // The frame turned at its own time: the composition follows the frame timing of the lead track
+    let rows = instruction.stabilization.rows(atCompositionTimeUs: Self.microseconds(request.compositionTime))
     let recorder = statistics
-    renderer.render(instruction: instruction, frames: frames, output: output, cache: cache) { gpuMs, error in
+    renderer.render(
+      instruction: instruction, frames: frames, stabilization: rows, output: output, cache: cache
+    ) { gpuMs, error in
       recorder.record(gpuMs: gpuMs, missingSource: missingSource)
       if let error {
         request.finish(with: error)
@@ -184,5 +196,11 @@ final class RawStitchCompositor: NSObject, AVVideoCompositing, @unchecked Sendab
         request.finish(withComposedVideoFrame: output)
       }
     }
+  }
+
+  /// [time] in microseconds, rounded; zero for a time that is not a number
+  static func microseconds(_ time: CMTime) -> Int64 {
+    guard time.isNumeric else { return 0 }
+    return CMTimeConvertScale(time, timescale: 1_000_000, method: .roundHalfAwayFromZero).value
   }
 }

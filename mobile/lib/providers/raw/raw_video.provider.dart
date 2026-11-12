@@ -54,14 +54,19 @@ final rawVideoPlaybackSupportProvider = Provider<RawVideoPlaybackSupport>((ref) 
   );
 });
 
-/// Whether the 360° player of this device stabilises the raw videos with the motion track of their camera (issue 14,
-/// see raw_video_stabilization.dart): the Android player of the phones, tablets and TVs (SphericalVideoActivity). The
-/// iOS player, the computers and the immersive viewer of the Meta Quest come in later lots; their setting and switch
-/// stay hidden until then, so that nothing says it stabilises where nothing does. It follows a scope that overrides the
-/// kind of device, as the settings pages of the tests do.
+/// Whether the 360° player of a device stabilises the raw videos with the motion track of their camera (issue 14, see
+/// raw_video_stabilization.dart): the Android player of the phones, tablets and TVs (SphericalVideoActivity), once the
+/// device is known not to be a Meta Quest ([isHorizonOs]), and the iOS player of the iPhones and iPads, which turns each
+/// frame in its Metal stitch (RawStitchCompositor). The computers and the immersive viewer of the Quest come in later
+/// lots; their setting and switch stay hidden until then, so that nothing says it stabilises where nothing does.
+bool videoStabilizationSupportedOn({required bool isIOS, required bool isAndroid, required bool? isHorizonOs}) =>
+    isIOS || (isAndroid && isHorizonOs == false);
+
+/// [videoStabilizationSupportedOn] for this device. It follows a scope that overrides the kind of device, as the
+/// settings pages of the tests do.
 final videoStabilizationSupportedProvider = Provider<bool>((ref) {
   final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
-  return Platform.isAndroid && isHorizonOs == false;
+  return videoStabilizationSupportedOn(isIOS: Platform.isIOS, isAndroid: Platform.isAndroid, isHorizonOs: isHorizonOs);
 }, dependencies: [isHorizonOsProvider]);
 
 /// Builds the stabilisation table of a raw video: in a background isolate, the reads served from here (see

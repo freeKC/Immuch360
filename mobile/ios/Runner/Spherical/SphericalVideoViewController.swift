@@ -13,6 +13,8 @@ private let maxPitch: Float = 85 * Float.pi / 180
 private let radiansPerPoint: Float = 0.12 * Float.pi / 180
 private let controlsHideDelay: TimeInterval = 4
 private let messageDuration: TimeInterval = 2
+// The notices of the stabilisation stay a little longer, as on Android
+private let stabilizationNoticeDuration: TimeInterval = 3
 private let xAxis = SIMD3<Float>(1, 0, 0)
 private let yAxis = SIMD3<Float>(0, 1, 0)
 private let zAxis = SIMD3<Float>(0, 0, 1)
@@ -50,8 +52,15 @@ private let zAxis = SIMD3<Float>(0, 0, 1)
 ///
 /// A raw recording covers the whole sphere and holds no stereo pair: the coverage and 3D buttons hide, and the coverage
 /// and the layout Flutter gave go back to it unchanged.
+///
+/// A stitched raw recording whose camera wrote a motion track plays stabilised (issue 14): Flutter builds the table of
+/// the track while the video plays and sends it through StabilizationInbox, and RawStitchCompositor turns each frame
+/// by the correction at its own time (StabilizationTable). A button of the top bar turns it off and on, the setting of
+/// the app follows, and a notice tells the user for a few seconds when the video plays stabilised.
 final class SphericalVideoViewController: UIViewController, UIGestureRecognizerDelegate {
   private let videoUrl: URL
+  // The URL as Flutter gave it, which its messages about the stabilisation name
+  private let stabilizationKey: String
   // The server's transcoded stream, nil when there is none
   private let fallbackUrl: URL?
   private let headers: [String: String]
@@ -84,6 +93,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let audioButton = UIButton(type: .system)
   private let stereoButton = UIButton(type: .system)
   private let motionButton = UIButton(type: .system)
+  private let stabilizationButton = UIButton(type: .system)
   private let playPauseButton = UIButton(type: .system)
   private let spinner = UIActivityIndicatorView(style: .large)
   private let errorLabel = UILabel()
@@ -154,6 +164,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private var tracksObservation: NSKeyValueObservation?
   // Links named .mp4 to local raw files, for iOS 16 and earlier: removed when the player closes
   private var temporaryLinks: [URL] = []
+  /// The stabilisation switch and the track of the file, see StabilizationSwitch: on until Flutter sends the setting
+  private let stabilization = StabilizationSwitch(enabled: true)
 
   /// The calibration of a raw frame of version 1, stitched by the shader modifier
   private var dualFisheye: DualFisheyeCalibration? {
@@ -176,11 +188,14 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   /// [errorMessage] and [stereoLabels] come translated from Flutter, English is the fallback; [stereoLabels] also
   /// holds the labels of the coverage button, of the audio track button, of the buffering label, of the message of a
   /// switch to the fallback stream ("sourceSwitched") and of the message of a raw video heavier than the decoder
-  /// ("rawHeavy"). [stereoLayout] is the layout Flutter guessed from the dimensions of the video, [coverage] how much
-  /// of the sphere it covers. [fallbackUrl] is the server's transcoded stream, played with the same headers. [raw] is
-  /// what the rawProjection asks for, nil for an equirectangular video. [events] is told once when the player closes.
+  /// ("rawHeavy"), and those of the stabilisation ("stabilization..."). [stabilizationKey] is the URL as Flutter gave
+  /// it, which names the video in its messages about the stabilisation. [stereoLayout] is the layout Flutter guessed
+  /// from the dimensions of the video, [coverage] how much of the sphere it covers. [fallbackUrl] is the server's
+  /// transcoded stream, played with the same headers. [raw] is what the rawProjection asks for, nil for an
+  /// equirectangular video. [events] is told once when the player closes.
   init(
     url: URL,
+    stabilizationKey: String,
     fallbackUrl: URL?,
     headers: [String: String],
     title: String,
@@ -193,6 +208,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     events: SphericalVideoEvents
   ) {
     videoUrl = url
+    self.stabilizationKey = stabilizationKey
     self.fallbackUrl = fallbackUrl
     self.headers = headers
     videoTitle = title
@@ -242,6 +258,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     updateCoverageButton()
     applyStereoLayout()
     updateCamera()
+    setUpStabilization()
 
     NotificationCenter.default.addObserver(
       self,
@@ -290,6 +307,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     timeControlObservation?.invalidate()
     presentationSizeObservation?.invalidate()
     tracksObservation?.invalidate()
+    StabilizationInbox.shared.stopListening(owner: self)
+    StabilizationInbox.shared.forget(stabilizationKey)
     // A stitched item still being built is dropped
     stitchGeneration += 1
     player.replaceCurrentItem(with: nil)
@@ -840,6 +859,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
           return
         }
         self.stitchItem = built
+        self.applyStabilizationTable()
         if built.mode == .composition && attempt == .original(composition: false) {
           // The builder fell back to the composition by itself (a disabled lens track, or lens tracks in one
           // alternate group): a failure of this item must not try the composition again
@@ -1064,6 +1084,115 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
       return false
     }
     return now - watch.since >= Self.stitchFrameTimeout
+  }
+
+  // MARK: - Stabilisation
+
+  /// The switch starts at what Flutter said before the player opened, and follows what it says next about this video
+  private func setUpStabilization() {
+    // Only the Metal stitch turns the frames: an equirectangular video or a frame of version 1 never shows the button
+    stabilization.stitched = stitched != nil
+    if let message = StabilizationInbox.shared.latest(for: stabilizationKey) {
+      applyStabilizationMessage(message)
+    }
+    StabilizationInbox.shared.listen(owner: self) { [weak self] message in
+      guard let self, message.url == self.stabilizationKey else { return }
+      self.applyStabilizationMessage(message)
+    }
+    updateStabilization()
+  }
+
+  /// What Flutter says about the stabilisation of this video: the setting, while the user has not pressed the switch
+  /// here, and the track of the file (read, being read, none). A table the player refused came as none.
+  private func applyStabilizationMessage(_ message: StabilizationInbox.Message) {
+    stabilization.onSetting(message.enabled)
+    if let table = message.table {
+      print("Stabilisation table of \(table.count) frames: \(message.summary ?? "")")
+    } else if message.hasTrack {
+      print("Stabilisation: Flutter reads the motion track")
+    } else {
+      print("Stabilisation: no motion track in this file")
+    }
+    let notice = stabilization.onTrack(hasTrack: message.hasTrack, table: message.table)
+    updateStabilization()
+    redrawPausedFrame()
+    if let notice {
+      showStabilizationNotice(notice)
+    }
+  }
+
+  /// Applies the switch: its button (shown for a file with a track, dimmed when off) and the table the stitch turns the
+  /// frames with
+  private func updateStabilization() {
+    stabilizationButton.tintColor = stabilization.enabled ? UIColor.white : UIColor(white: 1, alpha: 0.4)
+    stabilizationButton.accessibilityValue =
+      stabilization.enabled
+      ? stereoText("stabilizationEnabled", fallback: "Enabled")
+      : stereoText("stabilizationDisabled", fallback: "Disabled")
+    stabilizationButton.isHidden = !stabilization.buttonVisible
+    applyStabilizationTable()
+  }
+
+  /// Gives the stitch of the item in use the table of the switch, none when off; set again for each new item (another
+  /// source after a failure), whose instruction starts without one
+  private func applyStabilizationTable() {
+    guard let stitchItem else { return }
+    let table = stabilization.activeTable
+    if table != nil && stitchAttempt == .transcoded {
+      print("Stabilisation: the table of the original turns the frames of the transcoded stream")
+    }
+    stitchItem.instruction.stabilization.setTable(table) { [weak self] in
+      Task { @MainActor [weak self] in
+        self?.onFirstStabilizedFrame()
+      }
+    }
+  }
+
+  /// The first frame drawn with the table: the user reads that the video is stabilised, once
+  private func onFirstStabilizedFrame() {
+    guard !closing, let notice = stabilization.onStabilizedFrame() else { return }
+    showStabilizationNotice(notice)
+  }
+
+  /// The user pressed the switch: it flips, the setting of the app follows, a paused frame shows the change
+  @objc private func stabilizationTapped() {
+    let notice = stabilization.toggle()
+    print("Stabilisation turned \(stabilization.enabled ? "on" : "off") by the user")
+    updateStabilization()
+    events.stabilizationChanged(enabled: stabilization.enabled) { result in
+      if case .failure(let error) = result {
+        print("Flutter did not get the stabilisation switch: \(error.code)")
+      }
+    }
+    redrawPausedFrame()
+    if let notice {
+      showStabilizationNotice(notice)
+    }
+    scheduleControlsHiding()
+  }
+
+  /// [notice] under the top bar for a few seconds, then it fades
+  private func showStabilizationNotice(_ notice: StabilizationSwitch.Notice) {
+    let text: String
+    switch notice {
+    case .stabilized:
+      text = stereoText("stabilizationOn", fallback: "Stabilized with the camera's gyroscope")
+    case .noTrack:
+      text = stereoText("stabilizationNoTrack", fallback: "This video has no gyroscope track")
+    }
+    print("Shown to the user: \(text)")
+    showMessage(text, duration: stabilizationNoticeDuration)
+  }
+
+  /// A paused stitched video draws its frame again, so that a table that arrives or a switch that flips shows at once:
+  /// AVFoundation asks the compositor for a frame only while it plays or seeks
+  private func redrawPausedFrame() {
+    guard let stitchItem, let item = player.currentItem, item === stitchItem.item, item.status == .readyToPlay,
+      player.timeControlStatus == .paused, pendingResume == nil, !closing
+    else {
+      return
+    }
+    player.seek(to: player.currentTime(), toleranceBefore: .zero, toleranceAfter: .zero)
   }
 
   // MARK: - Raw dual fisheye
@@ -1507,6 +1636,13 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     configure(motionButton, symbol: "gyroscope", pointSize: 20, action: #selector(motionTapped))
     motionButton.accessibilityLabel = "Gyroscope"
 
+    // The stabilisation with the camera's motion track: hidden unless the video has one, see updateStabilization
+    let stabilizationSymbol = UIImage(systemName: "level") == nil ? "camera.metering.center.weighted" : "level"
+    configure(stabilizationButton, symbol: stabilizationSymbol, pointSize: 20, action: #selector(stabilizationTapped))
+    stabilizationButton.accessibilityLabel = stereoText(
+      "stabilization", fallback: "Stabilize with the camera's gyroscope (experimental)")
+    stabilizationButton.isHidden = true
+
     // A text button, 360° or 180°: see updateCoverageButton
     coverageButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
     coverageButton.tintColor = .white
@@ -1522,7 +1658,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     audioButton.isHidden = true
 
     // A hidden audio track or gyroscope button gives its room to the title
-    let trailingButtons = UIStackView(arrangedSubviews: [audioButton, coverageButton, stereoButton, motionButton])
+    let trailingButtons = UIStackView(arrangedSubviews: [
+      stabilizationButton, audioButton, coverageButton, stereoButton, motionButton,
+    ])
     trailingButtons.axis = .horizontal
     trailingButtons.translatesAutoresizingMaskIntoConstraints = false
     topBar.addSubview(trailingButtons)
@@ -1548,6 +1686,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     motionButtonWidth.priority = UILayoutPriority(999)
     let audioButtonWidth = audioButton.widthAnchor.constraint(equalToConstant: 44)
     audioButtonWidth.priority = UILayoutPriority(999)
+    let stabilizationButtonWidth = stabilizationButton.widthAnchor.constraint(equalToConstant: 44)
+    stabilizationButtonWidth.priority = UILayoutPriority(999)
     // These two hide for a raw dual fisheye frame
     let coverageButtonWidth = coverageButton.widthAnchor.constraint(equalToConstant: 52)
     coverageButtonWidth.priority = UILayoutPriority(999)
@@ -1597,6 +1737,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
       audioButtonWidth,
       audioButton.heightAnchor.constraint(equalToConstant: 44),
+
+      stabilizationButtonWidth,
+      stabilizationButton.heightAnchor.constraint(equalToConstant: 44),
 
       titleLabel.leadingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 8),
       titleLabel.trailingAnchor.constraint(equalTo: trailingButtons.leadingAnchor, constant: -8),
@@ -1656,14 +1799,14 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     setControlsVisible(false)
   }
 
-  /// Shows [text] under the top bar for a moment
-  private func showMessage(_ text: String) {
+  /// Shows [text] under the top bar for [duration] seconds, then it fades
+  private func showMessage(_ text: String, duration: TimeInterval = messageDuration) {
     NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMessage), object: nil)
     messageLabel.text = text
     UIView.animate(withDuration: 0.2) {
       self.messageView.alpha = 1
     }
-    perform(#selector(hideMessage), with: nil, afterDelay: messageDuration)
+    perform(#selector(hideMessage), with: nil, afterDelay: duration)
     UIAccessibility.post(notification: .announcement, argument: text)
   }
 
