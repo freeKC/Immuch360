@@ -38,8 +38,25 @@ class _FakeServer {
 
   static final uri = Uri.parse('http://192.168.1.10:8200/MediaItems/22.mp4');
 
-  Future<(http.StreamedResponse, Uri)> send(String method, Uri uri, {Map<String, String> headers = const {}}) async {
+  /// The wait of each chunk of a body, a slow link; and of the answer, held until it completes when set
+  Duration chunkDelay = Duration.zero;
+  Future<void>? answerHeld;
+
+  /// The aborts the requests came with, see HttpSend
+  final aborts = <Future<void>?>[];
+
+  Future<(http.StreamedResponse, Uri)> send(
+    String method,
+    Uri uri, {
+    Map<String, String> headers = const {},
+    Future<void>? abort,
+  }) async {
     requests.add((method: method, uri: uri, headers: headers));
+    aborts.add(abort);
+    final held = answerHeld;
+    if (held != null) {
+      await held;
+    }
     final forced = status;
     if (forced != null) {
       return (http.StreamedResponse(_body(Uint8List(0)), forced, contentLength: 0), uri);
@@ -72,6 +89,9 @@ class _FakeServer {
     var complete = false;
     try {
       for (var i = 0; i < data.length; i += chunkSize) {
+        if (chunkDelay > Duration.zero) {
+          await Future<void>.delayed(chunkDelay);
+        }
         final chunk = Uint8List.sublistView(data, i, min(i + chunkSize, data.length));
         sent += chunk.length;
         yield chunk;
@@ -268,6 +288,76 @@ void main() {
 
       expect(server.cancelled, 1);
       expect(server.sent, lessThan(HttpRangeReader.maxDiscardedBody + 3 * 8192));
+    });
+  });
+
+  group('a read stopped by its caller (the media bridge, for a player that went away)', () {
+    test('in the middle of its body: the transfer stops at once, the read throws NetworkReadAborted', () async {
+      final server = _FakeServer(1000000, chunkSize: 10000)..chunkDelay = const Duration(milliseconds: 5);
+      final reader = server.reader();
+      final abort = Completer<void>();
+
+      final read = reader.read(_FakeServer.uri, 'clip', 0, 1000000, abort: abort.future);
+      await Future<void>.delayed(const Duration(milliseconds: 60));
+      expect(server.sent, greaterThan(0));
+      abort.complete();
+
+      await expectLater(read, throwsA(isA<NetworkReadAborted>()));
+      final sentAtAbort = server.sent;
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(server.sent, lessThanOrEqualTo(sentAtAbort + 10000), reason: 'no more of the body is drained');
+      expect(server.sent, lessThan(500000));
+      expect(server.cancelled, 1);
+    });
+
+    test('while it waits for the answer: the abort reaches the request, a late answer has its body dropped', () async {
+      final answer = Completer<void>();
+      final server = _FakeServer(100000)..answerHeld = answer.future;
+      final reader = server.reader();
+      final abort = Completer<void>();
+
+      final read = reader.read(_FakeServer.uri, 'clip', 0, 100000, abort: abort.future);
+      await Future<void>.delayed(Duration.zero);
+      var abortSeen = false;
+      unawaited(server.aborts.single!.then((_) => abortSeen = true));
+      abort.complete();
+      await expectLater(read, throwsA(isA<NetworkReadAborted>()));
+      expect(abortSeen, isTrue, reason: 'the sender aborts its request');
+
+      answer.complete();
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      expect(server.sent, lessThan(100000), reason: 'the body of the late answer is not read');
+    });
+
+    test('an abort after the read ended changes nothing, and a read without one is as before', () async {
+      final server = _FakeServer(10000);
+      final reader = server.reader();
+      final abort = Completer<void>();
+
+      final bytes = await reader.read(_FakeServer.uri, 'clip', 100, 500, abort: abort.future);
+      abort.complete();
+      await Future<void>.delayed(Duration.zero);
+      expect(bytes, server.part(100, 500));
+      expect(await reader.read(_FakeServer.uri, 'clip', 600, 500), server.part(600, 500));
+      expect(server.aborts.last, isNull);
+    });
+
+    test('a server that ignores ranges: the transfer kept open is stopped with the read', () async {
+      final server = _FakeServer(1000000, honourRanges: false, chunkSize: 10000)
+        ..chunkDelay = const Duration(milliseconds: 5);
+      final reader = server.reader();
+      expect(await reader.read(_FakeServer.uri, 'clip', 0, 20000), server.part(0, 20000));
+      final abort = Completer<void>();
+
+      final read = reader.read(_FakeServer.uri, 'clip', 20000, 900000, abort: abort.future);
+      await Future<void>.delayed(const Duration(milliseconds: 60));
+      abort.complete();
+
+      await expectLater(read, throwsA(isA<NetworkReadAborted>()));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(server.requests, hasLength(1), reason: 'the second read went on with the transfer kept open');
+      expect(server.cancelled, 1);
+      expect(server.sent, lessThan(500000));
     });
   });
 }

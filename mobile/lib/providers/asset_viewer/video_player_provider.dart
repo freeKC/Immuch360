@@ -245,6 +245,12 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
   /// Runs from the landing of the last seek for [seekSettle]
   Timer? _seekSettleTimer;
+
+  /// Whether a drag of the time bar, or an arrow held on it, is under way: see [beginScrub]
+  bool _scrubbing = false;
+
+  /// Whether the scrub under way asked a seek that the native player did not get yet: it goes at [endScrub]
+  bool _scrubSeekPending = false;
   // Runs while the status is buffering on a player that tells nothing of its link, see [fallbackStallTimeout]
   Timer? _stallTimer;
 
@@ -726,7 +732,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   }
 
   /// Takes the video to [position]. The time shows it at once; the native player gets it [seekDelay] later, with the
-  /// moves of a slider drag made meanwhile.
+  /// presses made meanwhile, or at the end of the drag of the time bar under way (see [beginScrub]).
   ///
   /// A seek takes a while in the native player (half a second on a TV emulator, longer for a stream), which goes on
   /// reporting where the video was, the seeks before under way: the reports of a quick series of presses came back
@@ -741,11 +747,48 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
 
     _askSeek(position);
 
+    if (_scrubbing) {
+      // The finger is still on the bar: only the time moves, the last place goes when it lifts
+      _seekTimer?.cancel();
+      _scrubSeekPending = true;
+      return;
+    }
+
     if (_seekTimer?.isActive ?? false) {
       return;
     }
 
     _seekTimer = Timer(seekDelay, () => unawaited(_sendSeek()));
+  }
+
+  /// A drag of the time bar starts, or an arrow is held on it: the video waits ([hold]), and the seeks asked until
+  /// [endScrub] only move the time shown (the positions the native player reports meanwhile are held back, see
+  /// [seekTo]); [endScrub] sends the last one, then the video goes on as it was. One seek per gesture: the seek every
+  /// [seekDelay] of the drag sent the native player to each place the finger crossed, a new range request each to the
+  /// share or the server while the reads of the places before still came in (S24 and a Plex film, 13 November 2026:
+  /// 5 seeks in the 0.55 s of a drag, the picture back 5 s later, tens of seconds after a slower drag).
+  void beginScrub() {
+    _scrubbing = true;
+    hold();
+  }
+
+  /// The drag of the time bar, or the arrow held, ended: the native player gets the last place asked, then the video
+  /// goes on as it was before [beginScrub]
+  void endScrub() {
+    if (!_scrubbing) {
+      return;
+    }
+    _scrubbing = false;
+    unawaited(_endScrub());
+  }
+
+  Future<void> _endScrub() async {
+    if (_scrubSeekPending) {
+      await _sendSeek();
+    }
+    if (mounted) {
+      release();
+    }
   }
 
   /// [position] becomes the target of the seek under way, shown at once
@@ -761,6 +804,8 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   Future<void> _sendSeek() async {
     final controller = _controller;
     final target = _seekTarget;
+    // What is sent goes to the target: the seek a scrub asked is on its way too
+    _scrubSeekPending = false;
     if (controller == null || target == null) {
       return;
     }
@@ -773,7 +818,11 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
     }
 
     // Another seek was asked or sent meanwhile: its own landing counts
-    if (!mounted || generation != _seekGeneration || _seekTarget != target || (_seekTimer?.isActive ?? false)) {
+    if (!mounted ||
+        generation != _seekGeneration ||
+        _seekTarget != target ||
+        (_seekTimer?.isActive ?? false) ||
+        _scrubSeekPending) {
       return;
     }
 
@@ -818,6 +867,7 @@ class VideoPlayerNotifier extends StateNotifier<VideoPlayerState> {
   /// No seek under way any more: a new video, the player handed to another one, or the player got there
   void _forgetSeek() {
     _seekTimer?.cancel();
+    _scrubSeekPending = false;
     _seekSettleTimer?.cancel();
     _seekSettleTimer = null;
     _seekTarget = null;

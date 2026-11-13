@@ -327,6 +327,94 @@ class _PausedRequest {
   }
 }
 
+// A link of [bytesPerSecond] shared by every read of a share: each read takes its turn of it 32 KiB at a time, so that
+// the reads under way share it as on a real link, and a read stopped meanwhile gives it up at its next turn
+class _Link {
+  _Link(this.bytesPerSecond);
+
+  final int bytesPerSecond;
+  final _clock = Stopwatch()..start();
+  int _busyUntilUs = 0;
+
+  static const step = 32 * 1024;
+
+  Future<void> carry(int bytes, {Future<void>? abort, required void Function(int bytes) carried}) async {
+    var aborted = false;
+    unawaited(abort?.then((_) => aborted = true));
+    var left = bytes;
+    while (left > 0) {
+      if (aborted) {
+        throw const NetworkReadAborted();
+      }
+      final size = left < step ? left : step;
+      final now = _clock.elapsedMicroseconds;
+      final start = now > _busyUntilUs ? now : _busyUntilUs;
+      final end = start + size * Duration.microsecondsPerSecond ~/ bytesPerSecond;
+      _busyUntilUs = end;
+      await Future<void>.delayed(Duration(microseconds: end - now));
+      carried(size);
+      left -= size;
+    }
+  }
+}
+
+// A film of 1 GiB on a server behind a [_Link]: what the link carried, by the offset each read started at
+class _LinkShare extends _MemoryShare {
+  _LinkShare(super.id, this.link) {
+    virtualFiles['/film.mkv'] = 1024 * _mib;
+  }
+
+  final _Link link;
+  final carried = <({int offset, int bytes})>[];
+
+  /// Bytes the link carried for the reads that started before [offset] (the places left), since [since] reads
+  int carriedBelow(int offset, {int since = 0}) =>
+      carried.skip(since).where((read) => read.offset < offset).fold(0, (sum, read) => sum + read.bytes);
+
+  @override
+  Future<Uint8List> readRange(String path, int offset, int length, {Future<void>? abort}) async {
+    reads.add((path: path, offset: offset, length: length));
+    await link.carry(length, abort: abort, carried: (bytes) => carried.add((offset: offset, bytes: bytes)));
+    return _virtualBytes(offset, offset + length);
+  }
+}
+
+// The same server, read over HTTP: the bridge stops the reads nobody waits for (see NetworkAbortableReads)
+class _AbortableLinkShare extends _LinkShare implements NetworkAbortableReads {
+  _AbortableLinkShare(super.id, super.link);
+}
+
+// A player that reads what it asked for as it comes, as a playing video does, until [close]
+class _PlayingRequest {
+  late final Socket _socket;
+  final _firstBytes = Completer<void>();
+  final _watch = Stopwatch();
+  int received = 0;
+
+  /// From the request to its first bytes
+  Duration? firstBytesAfter;
+
+  static Future<_PlayingRequest> open(LocalMediaBridge bridge, Uri url, {required int from}) async {
+    final request = _PlayingRequest();
+    request._watch.start();
+    request._socket = await Socket.connect(InternetAddress.loopbackIPv4, bridge.port!);
+    request._socket.listen((data) {
+      request.received += data.length;
+      if (!request._firstBytes.isCompleted) {
+        request.firstBytesAfter = request._watch.elapsed;
+        request._firstBytes.complete();
+      }
+    }, onError: (Object _) {});
+    request._socket.write('GET ${url.path} HTTP/1.1\r\nHost: 127.0.0.1\r\nRange: bytes=$from-\r\n\r\n');
+    await request._socket.flush();
+    return request;
+  }
+
+  Future<void> get firstBytes => _firstBytes.future;
+
+  void close() => _socket.destroy();
+}
+
 // Waits until [condition] holds, 10 seconds at most
 Future<void> _until(bool Function() condition) async {
   for (var i = 0; i < 200 && !condition(); i++) {
@@ -1419,6 +1507,49 @@ void main() {
         max,
       );
     });
+
+    // A seek while the film plays (S24 and a Plex film, 13 November 2026: the picture back 5 s after a drag of 0.55 s,
+    // tens of seconds after a slower one). The player streams the film from 0, then seeks: its connection closes, and a
+    // drag opens a request at each place it crossed, each closed 150 ms later by the next, before the one at the place
+    // the finger stopped. The reads the bridge had under way for the places left took the link from the new one.
+    Future<({Duration firstBytes, int stale})> seekWhilePlaying(_LinkShare server) async {
+      bridge.register(server);
+      final url = bridge.urlFor(server.source.id, '/film.mkv');
+      final playing = await _PlayingRequest.open(bridge, url, from: 0);
+      await playing.firstBytes;
+      // It plays: the bridge reads ahead, its reads growing to about two seconds of the link
+      await Future<void>.delayed(const Duration(milliseconds: 1500));
+      playing.close();
+      for (var place = 1; place <= 5; place++) {
+        final crossed = await _PlayingRequest.open(bridge, url, from: place * 100 * _mib);
+        await Future<void>.delayed(const Duration(milliseconds: 150));
+        crossed.close();
+      }
+      const target = 600 * _mib;
+      final since = server.carried.length;
+      final landed = await _PlayingRequest.open(bridge, url, from: target);
+      await landed.firstBytes;
+      // What the link still carried for the places left, while the player waited for the new one and just after
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      final stale = server.carriedBelow(target, since: since);
+      landed.close();
+      return (firstBytes: landed.firstBytesAfter!, stale: stale);
+    }
+
+    test('a seek while the film plays: the reads of the places left stop at once, the new place comes first', () async {
+      // 2 MB/s, 16 Mbit/s
+      final result = await seekWhilePlaying(_AbortableLinkShare('plex', _Link(2000 * 1000)));
+
+      expect(result.stale, lessThan(256 * 1024), reason: 'nothing more of the places left is carried: $result');
+      expect(result.firstBytes, lessThan(const Duration(milliseconds: 800)), reason: '$result');
+    }, timeout: const Timeout(Duration(seconds: 30)));
+
+    test('a share that cannot stop its reads (SMB) still carries them to their end', () async {
+      final result = await seekWhilePlaying(_LinkShare('smb', _Link(2000 * 1000)));
+
+      // The cause of the slow seeks, measured: kept here so that a change of the bridge that makes it worse shows
+      expect(result.stale, greaterThan(256 * 1024), reason: '$result');
+    }, timeout: const Timeout(Duration(seconds: 30)));
 
     test('two readers are served at the same time', () async {
       // Each read waits until both files are being read: served one after the other, this would never end

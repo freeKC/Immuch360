@@ -1034,7 +1034,12 @@ class _ServerFileSystem implements NetworkFileSystem {
     return _base.resolve('api/assets/${id.replaceAll('/', '')}/${playback ? 'video/playback' : 'original'}');
   }
 
-  Future<(http.StreamedResponse, Uri)> _send(String method, Uri uri, {Map<String, String> headers = const {}}) async {
+  Future<(http.StreamedResponse, Uri)> _send(
+    String method,
+    Uri uri, {
+    Map<String, String> headers = const {},
+    Future<void>? abort,
+  }) async {
     final request = http.Request(method, uri)
       ..headers.addAll(headers)
       ..headers['x-api-key'] = _apiKey;

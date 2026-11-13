@@ -20,7 +20,7 @@ import 'package:immich_mobile/infrastructure/network/http_range_reader.dart';
 import 'package:immich_mobile/infrastructure/network/lite_xml.dart';
 
 /// A [NetworkFileSystem] over WebDAV, see [open]
-class WebDavFileSystem implements NetworkFileSystem, NetworkRangeReads {
+class WebDavFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkAbortableReads {
   WebDavFileSystem._(this.source, this._base, this._authorization, this._client, this._ownsClient);
 
   /// Connects to the WebDAV share of [source] and checks that its start folder (the root path of the source) answers
@@ -134,14 +134,14 @@ class WebDavFileSystem implements NetworkFileSystem, NetworkRangeReads {
   }
 
   @override
-  Future<Uint8List> readRange(String path, int offset, int length) {
+  Future<Uint8List> readRange(String path, int offset, int length, {Future<void>? abort}) {
     RangeError.checkNotNegative(offset, 'offset');
     RangeError.checkNotNegative(length, 'length');
     final target = normalizePath(path);
     if (length == 0) {
       return Future.value(Uint8List(0));
     }
-    return _guard(() => _ranges.read(_uriOf(target), target, offset, length));
+    return _guard(() => _ranges.read(_uriOf(target), target, offset, length, abort: abort));
   }
 
   @override
@@ -287,19 +287,24 @@ class WebDavFileSystem implements NetworkFileSystem, NetworkRangeReads {
     Uri uri, {
     Map<String, String> headers = const {},
     List<int>? body,
+    Future<void>? abort,
   }) async {
     var current = uri;
     for (var redirects = 0; ; redirects++) {
       if (_closed) {
         throw const NetworkFileSystemException('The share is closed');
       }
-      final abort = Completer<void>();
-      final timer = Timer(answerTimeout, () {
-        if (!abort.isCompleted) {
-          abort.complete();
+      final trigger = Completer<void>();
+      void fire() {
+        if (!trigger.isCompleted) {
+          trigger.complete();
         }
-      });
-      final request = http.AbortableRequest(method, current, abortTrigger: abort.future)
+      }
+
+      final timer = Timer(answerTimeout, fire);
+      // The caller's abort (a read the media bridge stopped) aborts the request too
+      unawaited(abort?.whenComplete(fire));
+      final request = http.AbortableRequest(method, current, abortTrigger: trigger.future)
         ..followRedirects = false
         ..headers.addAll(headers);
       final authorization = _authorization;

@@ -13,8 +13,15 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 
-/// Sends a request and gives its answer, with the URL that answered (after the redirects the sender follows)
-typedef HttpSend = Future<(http.StreamedResponse, Uri)> Function(String method, Uri uri, {Map<String, String> headers});
+/// Sends a request and gives its answer, with the URL that answered (after the redirects the sender follows); the
+/// request is aborted when [abort] completes before its answer (an http.RequestAbortedException then)
+typedef HttpSend =
+    Future<(http.StreamedResponse, Uri)> Function(
+      String method,
+      Uri uri, {
+      Map<String, String> headers,
+      Future<void>? abort,
+    });
 
 /// Throws the exception matching an unexpected answer about [key] (a path, an object id), after dropping its body
 typedef HttpFail = Future<Never> Function(http.StreamedResponse response, String key);
@@ -58,29 +65,72 @@ class HttpRangeReader {
   /// transfers kept open on a server that ignores ranges (the WebDAV path, the DLNA object id). [headers] go with the
   /// request, along with the range and "accept-encoding: identity" (offsets are those of the file, not of a
   /// compressed body).
-  Future<Uint8List> read(Uri uri, String key, int offset, int length, {Map<String, String> headers = const {}}) async {
+  ///
+  /// When [abort] completes first, the read stops at once, waiting for its answer or in the middle of its body: the
+  /// request is aborted (see [HttpSend]), the body's connection dropped, and a [NetworkReadAborted] thrown. The media
+  /// bridge stops so the read of a player that went away (a seek elsewhere in the film): left to end, it held the link
+  /// and one of the connections to the server while the player waited for the bytes of the new place.
+  Future<Uint8List> read(
+    Uri uri,
+    String key,
+    int offset,
+    int length, {
+    Map<String, String> headers = const {},
+    Future<void>? abort,
+  }) async {
     RangeError.checkNotNegative(offset, 'offset');
     RangeError.checkNotNegative(length, 'length');
     if (length == 0) {
       return Uint8List(0);
     }
+    if (abort == null) {
+      return _read(uri, key, offset, length, headers, null);
+    }
+    final stop = _ReadStop(abort);
+    try {
+      final bytes = await _read(uri, key, offset, length, headers, stop);
+      stop.check();
+      return bytes;
+    } catch (error) {
+      if (stop.stopped) {
+        throw const NetworkReadAborted();
+      }
+      rethrow;
+    } finally {
+      stop.end();
+    }
+  }
+
+  Future<Uint8List> _read(
+    Uri uri,
+    String key,
+    int offset,
+    int length,
+    Map<String, String> headers,
+    _ReadStop? stop,
+  ) async {
     final open = _takeOpenRead(key, offset);
     if (open != null) {
+      stop?.follow(open);
       try {
         final bytes = await open.read(offset, length);
+        stop?.check();
         _keepOpenRead(key, open);
         return bytes;
       } catch (_) {
-        // The server dropped the transfer while it waited: a new request below
+        // The server dropped the transfer while it waited: a new request below. Or the read was stopped.
         await open.cancel();
+        stop?.check();
       }
     }
 
-    final (response, _) = await _send(
+    final sent = _send(
       'GET',
       uri,
       headers: {...headers, 'range': 'bytes=$offset-${offset + length - 1}', 'accept-encoding': 'identity'},
+      abort: stop?.stopping,
     );
+    final (response, _) = stop == null ? await sent : await stop.race(sent);
     final SequentialHttpRead transfer;
     switch (response.statusCode) {
       case 206:
@@ -106,9 +156,11 @@ class HttpRangeReader {
         return _fail(response, key);
     }
 
+    stop?.follow(transfer);
     final Uint8List bytes;
     try {
       bytes = await transfer.read(offset, length);
+      stop?.check();
     } catch (_) {
       await transfer.cancel();
       rethrow;
@@ -179,6 +231,83 @@ class HttpRangeReader {
     final match = RegExp(r'bytes\s+(\d+)-\d+').firstMatch(header);
     return match == null ? null : int.parse(match.group(1)!);
   }
+}
+
+/// The stop of one read of [HttpRangeReader.read]: once its abort completed, the transfer it follows is cancelled, the
+/// answer it waits for is dropped when it comes, and [check] throws
+class _ReadStop {
+  _ReadStop(Future<void> abort) {
+    unawaited(abort.then<void>((_) => _stop(), onError: (Object _) => _stop()));
+  }
+
+  final _stopping = Completer<void>();
+  SequentialHttpRead? _transfer;
+  bool _ended = false;
+
+  /// Whether the read was stopped before it ended
+  bool get stopped => _stopping.isCompleted;
+
+  /// Completes when the read is stopped: the abort of its request
+  Future<void> get stopping => _stopping.future;
+
+  void _stop() {
+    if (_ended || stopped) {
+      return;
+    }
+    _stopping.complete();
+    final transfer = _transfer;
+    if (transfer != null) {
+      unawaited(transfer.cancel());
+    }
+  }
+
+  /// [transfer] is the body the read takes its bytes from now: cancelled at once if the read is stopped
+  void follow(SequentialHttpRead transfer) {
+    _transfer = transfer;
+    if (stopped) {
+      unawaited(transfer.cancel());
+    }
+  }
+
+  /// Throws [NetworkReadAborted] once the read was stopped
+  void check() {
+    if (stopped) {
+      throw const NetworkReadAborted();
+    }
+  }
+
+  /// The answer of [sent], or [NetworkReadAborted] as soon as the read is stopped; an answer that comes after the
+  /// stop has its body dropped with its connection
+  Future<(http.StreamedResponse, Uri)> race(Future<(http.StreamedResponse, Uri)> sent) {
+    final result = Completer<(http.StreamedResponse, Uri)>();
+    unawaited(
+      sent.then<void>(
+        (answer) {
+          if (result.isCompleted) {
+            unawaited(answer.$1.stream.listen(null).cancel());
+          } else {
+            result.complete(answer);
+          }
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          if (!result.isCompleted) {
+            result.completeError(error, stackTrace);
+          }
+        },
+      ),
+    );
+    unawaited(
+      _stopping.future.then<void>((_) {
+        if (!result.isCompleted) {
+          result.completeError(const NetworkReadAborted());
+        }
+      }),
+    );
+    return result.future;
+  }
+
+  /// The read ended (with its bytes or a failure): a later abort leaves alone what it kept open
+  void end() => _ended = true;
 }
 
 /// Reads and drops a small body so that its connection serves the next request; stops a large or slow one

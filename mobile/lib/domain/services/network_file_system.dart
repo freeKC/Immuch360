@@ -54,6 +54,23 @@ abstract class NetworkFileSystem {
   Future<void> close();
 }
 
+/// A share whose reads can be stopped while they wait or transfer (the shares read over HTTP: WebDAV, DLNA, Plex, the
+/// Immich server on the computers). The media bridge stops the read of a player that went away (a seek elsewhere in the
+/// film) at once: left to end, it took the link from the read the player waits for at the new place.
+abstract interface class NetworkAbortableReads {
+  /// [NetworkFileSystem.readRange], stopped as soon as [abort] completes: a [NetworkReadAborted] then, and no more bytes
+  /// asked of the server
+  Future<Uint8List> readRange(String path, int offset, int length, {Future<void>? abort});
+}
+
+/// A read stopped by its caller (see [NetworkAbortableReads]): no failure of the share
+class NetworkReadAborted implements Exception {
+  const NetworkReadAborted();
+
+  @override
+  String toString() => 'NetworkReadAborted: the read was stopped';
+}
+
 /// A share whose server makes small pictures of its media (a Plex server). The pictures are read in Dart with the
 /// credentials of the share, so that no URL holding a credential reaches an image widget, whose errors print URLs.
 abstract interface class NetworkThumbnailSource {

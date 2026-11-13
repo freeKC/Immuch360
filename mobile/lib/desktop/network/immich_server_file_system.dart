@@ -16,7 +16,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/http_range_reader.dart';
 
-class ImmichServerFileSystem implements NetworkFileSystem {
+class ImmichServerFileSystem implements NetworkFileSystem, NetworkAbortableReads {
   /// [endpoint] gives the server's API address ("https://host/api") at each request, null when no server is set:
   /// the user may sign in to another server while the app runs. [client] gives the client the requests go through.
   ImmichServerFileSystem({required this._endpoint, required this._client});
@@ -113,13 +113,13 @@ class ImmichServerFileSystem implements NetworkFileSystem {
   });
 
   @override
-  Future<Uint8List> readRange(String path, int offset, int length) {
+  Future<Uint8List> readRange(String path, int offset, int length, {Future<void>? abort}) {
     RangeError.checkNotNegative(offset, 'offset');
     RangeError.checkNotNegative(length, 'length');
     if (length == 0) {
       return Future.value(Uint8List(0));
     }
-    return _guard(() => _ranges.read(_uriOf(path), path, offset, length));
+    return _guard(() => _ranges.read(_uriOf(path), path, offset, length, abort: abort));
   }
 
   @override
@@ -128,18 +128,27 @@ class ImmichServerFileSystem implements NetworkFileSystem {
     await _ranges.close();
   }
 
-  Future<(http.StreamedResponse, Uri)> _send(String method, Uri uri, {Map<String, String> headers = const {}}) async {
+  Future<(http.StreamedResponse, Uri)> _send(
+    String method,
+    Uri uri, {
+    Map<String, String> headers = const {},
+    Future<void>? abort,
+  }) async {
     if (_closed) {
       throw const NetworkFileSystemException('The server source is closed');
     }
-    final abort = Completer<void>();
-    final timer = Timer(HttpRangeReader.answerTimeout, () {
-      if (!abort.isCompleted) {
-        abort.complete();
+    final trigger = Completer<void>();
+    void fire() {
+      if (!trigger.isCompleted) {
+        trigger.complete();
       }
-    });
+    }
+
+    final timer = Timer(HttpRangeReader.answerTimeout, fire);
+    // The caller's abort (a read the media bridge stopped) aborts the request too
+    unawaited(abort?.whenComplete(fire));
     // The redirects of a proxy in front of the server are followed by the client, with its cookies
-    final request = http.AbortableRequest(method, uri, abortTrigger: abort.future)..headers.addAll(headers);
+    final request = http.AbortableRequest(method, uri, abortTrigger: trigger.future)..headers.addAll(headers);
     try {
       return (await _client().send(request), uri);
     } finally {

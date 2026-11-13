@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -37,10 +38,12 @@ class VideoTimeBar extends StatefulWidget {
   /// Moves the video; null while it is not loaded, which leaves the bar still
   final ValueChanged<Duration>? onSeek;
 
-  /// A drag of the slider, or an arrow held on the bar, starts: the video waits for it
+  /// A drag of the slider, or an arrow held on the bar, starts: the video waits for it, and the seeks of the gesture
+  /// ([onSeek], once per move) only move the time until [onRelease] (VideoPlayerNotifier.beginScrub)
   final VoidCallback? onHold;
 
-  /// The drag or the arrow ended: the video goes on as it was
+  /// The drag or the arrow ended: the video goes to the last place asked, and on as it was. Called too when the bar
+  /// goes away in the middle of a drag (the controls hidden), so that a gesture always ends.
   final VoidCallback? onRelease;
 
   /// OK on the bar, with the remote control layout
@@ -57,6 +60,20 @@ class VideoTimeBar extends StatefulWidget {
 class _VideoTimeBarState extends State<VideoTimeBar> {
   /// The repeats of the arrow held, 0 while none is
   int _repeats = 0;
+
+  /// Whether the finger drags the slider: from its start to its end, see [VideoTimeBar.onHold]
+  bool _dragging = false;
+
+  @override
+  void dispose() {
+    // Gone in the middle of a gesture: it ends here, the video goes to the last place asked (once the tree is no longer
+    // being torn down, the player's state may change then)
+    final release = widget.onRelease;
+    if ((_dragging || _repeats > 0) && release != null) {
+      scheduleMicrotask(release);
+    }
+    super.dispose();
+  }
 
   /// Where the arrows took the video since the key went down: the position the player reports lags behind
   Duration? _target;
@@ -135,8 +152,14 @@ class _VideoTimeBarState extends State<VideoTimeBar> {
       activeColor: Colors.white,
       inactiveColor: whiteOpacity75,
       padding: EdgeInsets.zero,
-      onChangeStart: (_) => widget.onHold?.call(),
-      onChangeEnd: (_) => widget.onRelease?.call(),
+      onChangeStart: (_) {
+        _dragging = true;
+        widget.onHold?.call();
+      },
+      onChangeEnd: (_) {
+        _dragging = false;
+        widget.onRelease?.call();
+      },
       onChanged: onSeek == null ? null : (value) => onSeek(Duration(microseconds: value.toInt())),
     );
     if (!widget.tvMode) {

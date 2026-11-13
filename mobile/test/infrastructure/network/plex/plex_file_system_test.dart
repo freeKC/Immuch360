@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -266,6 +267,28 @@ void main() {
     expect(await read, whole.sublist(0, 4));
     expect(namesOf(await listing), hasLength(2));
   });
+
+  test(
+    'a read the media bridge stops (a player that seeks elsewhere) ends at once, and counts as no failure',
+    () async {
+      final plex = await open();
+      await plex.list('/Movies');
+      // The server takes 3 s to answer the part, as a NAS busy with another read
+      server.delays['/library/parts/11/1700000000/file.mp4'] = const Duration(seconds: 3);
+      final abort = Completer<void>();
+      final watch = Stopwatch()..start();
+
+      final read = plex.readRange('/Movies/a.mp4', 0, 10, abort: abort.future);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      abort.complete();
+
+      await expectLater(read, throwsA(isA<PlexRequestCancelled>()));
+      expect(watch.elapsed, lessThan(const Duration(seconds: 1)));
+      // The server is still believed: the next read goes, without the wait of a breaker
+      server.delays.clear();
+      expect(await plex.readRange('/Movies/a.mp4', 0, 4), plexPartBytes(11, 1000).sublist(0, 4));
+    },
+  );
 
   test('a part gone is looked for again once, then not found once its file left the listing', () async {
     final plex = await open();
