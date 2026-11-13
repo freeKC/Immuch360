@@ -77,6 +77,8 @@ interface ExifInfo {
 	model?: string | null;
 	projectionType?: string | null;
 	fileSizeInByte?: number | null;
+	// Immuch360: "1" to "8"; for a video the rotation flag of its file (src/immuch360/video/orientation.ts)
+	orientation?: string | null;
 }
 
 export interface ColumnarAssetResponse {

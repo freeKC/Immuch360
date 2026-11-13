@@ -34,6 +34,12 @@ export interface Features {
 	 * whose S90C gives black frames; webOS runs the test on the About page only, as before.
 	 */
 	probeVideoFramesAtStart: boolean;
+	/**
+	 * The viewer turns a video filmed upright whose frames the player shows as stored, on their side (issue 17,
+	 * src/immuch360/video/orientation.ts). Samsung, whose video element leaves the file's rotation flag out; webOS
+	 * leaves it to its player, as before.
+	 */
+	turnSidewaysVideo: boolean;
 }
 
 /**
@@ -53,6 +59,7 @@ export function features(on: Platform = platform()): Features {
 			pauseVideoWhenHidden: true,
 			fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS,
 			probeVideoFramesAtStart: true,
+			turnSidewaysVideo: true,
 		};
 	}
 	// webOS, and a browser in development, where service/dev.js stands in for the service
@@ -65,5 +72,6 @@ export function features(on: Platform = platform()): Features {
 		pauseVideoWhenHidden: false,
 		fullsizePixelCap: null,
 		probeVideoFramesAtStart: false,
+		turnSidewaysVideo: false,
 	};
 }
