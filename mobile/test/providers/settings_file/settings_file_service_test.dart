@@ -116,8 +116,17 @@ class _FakeServerLink implements SettingsFileServerLink {
   @override
   Future<SettingsFileSessionCheck> check() async => answers[_address] ?? SettingsFileSessionCheck.unreachable;
 
+  /// The server ends the session while the user is loaded (signed out on the web at that moment)
+  var endSessionAtLoadUser = false;
+
   @override
-  Future<({String name, String email})?> loadUser(String token) async => user;
+  Future<({String name, String email})?> loadUser(String token) async {
+    if (endSessionAtLoadUser && _address != null) {
+      answers[_address!] = SettingsFileSessionCheck.refused;
+      return null;
+    }
+    return user;
+  }
 
   @override
   Future<void> forget() async {
@@ -503,6 +512,19 @@ void main() {
 
     expect(report.signIn?.result, SettingsFileSignInResult.unreachable);
     expect(b.store.tryGet(StoreKey.accessToken), 'session-token-a');
+    await b.dispose();
+  });
+
+  test('session ended while the user loads: asked again, refused, the token forgotten', () async {
+    final content = await accountsContent();
+    final b = await _Install.create();
+    b.server.endSessionAtLoadUser = true;
+    final report = await b.service.restore(content, SettingsFileRestoreMode.merge);
+
+    expect(report.signIn?.result, SettingsFileSignInResult.refused);
+    expect(report.accountRestored, isFalse);
+    expect(b.server.forgotten, isTrue);
+    expect(b.store.tryGet(StoreKey.accessToken), isNull);
     await b.dispose();
   });
 

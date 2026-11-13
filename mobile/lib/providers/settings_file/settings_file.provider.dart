@@ -28,6 +28,7 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
+import 'package:immich_mobile/services/widget.service.dart';
 import 'package:immich_mobile/utils/provider_utils.dart';
 import 'package:logging/logging.dart';
 import 'package:openapi/api.dart';
@@ -173,6 +174,12 @@ class _AppServerLink implements SettingsFileServerLink {
     await store.delete(StoreKey.accessToken);
     await store.delete(StoreKey.currentUser);
     await networkApi.clearCookies();
+    // saveAuthInfo hands the token to the home screen widgets before it loads the user
+    try {
+      await _ref.read(widgetServiceProvider).clearCredentials();
+    } catch (error) {
+      _log.info('The widgets could not forget the session: ${error.runtimeType}');
+    }
   }
 }
 
@@ -508,6 +515,19 @@ class SettingsFileService {
       }
     }
 
+    if (check == SettingsFileSessionCheck.valid) {
+      final user = await link.loadUser(token);
+      if (user != null) {
+        return SettingsFileSignIn(SettingsFileSignInResult.signedIn, name: user.name, email: user.email);
+      }
+      // Valid a moment ago, then no user: asked again, so a session ended in between is not kept
+      check = await link.check();
+      if (check == SettingsFileSessionCheck.valid) {
+        // The start of the app loads the user again
+        check = SettingsFileSessionCheck.unreachable;
+      }
+    }
+
     switch (check) {
       case SettingsFileSessionCheck.refused:
         _log.info('The server refused the session of the settings file');
@@ -518,14 +538,8 @@ class SettingsFileService {
         }
         return const SettingsFileSignIn(SettingsFileSignInResult.refused);
       case SettingsFileSessionCheck.unreachable:
-        return const SettingsFileSignIn(SettingsFileSignInResult.unreachable);
       case SettingsFileSessionCheck.valid:
-        final user = await link.loadUser(token);
-        if (user == null) {
-          // Valid a moment ago, then no user: the start of the app loads it again
-          return const SettingsFileSignIn(SettingsFileSignInResult.unreachable);
-        }
-        return SettingsFileSignIn(SettingsFileSignInResult.signedIn, name: user.name, email: user.email);
+        return const SettingsFileSignIn(SettingsFileSignInResult.unreachable);
     }
   }
 
