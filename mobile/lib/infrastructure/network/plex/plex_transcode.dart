@@ -38,7 +38,7 @@ class PlexTranscodeRequest {
     this.partIndex = 0,
     this.offset = Duration.zero,
     this.audioCodecs = const ['eac3', 'ac3'],
-    this.maxVideoBitrateKbps = 20000,
+    this.maxVideoBitrateKbps = defaultMaxVideoBitrateKbps,
     this.videoResolution = '1920x1080',
   });
 
@@ -57,8 +57,12 @@ class PlexTranscodeRequest {
   /// the device decodes (E-AC-3 and AC-3 on the Quest)
   final List<String> audioCodecs;
 
+  /// The highest video bit rate of the conversion, in kbit/s: a film above it has its video converted down to it (a
+  /// link slower than the file, release 47)
   final int maxVideoBitrateKbps;
   final String videoResolution;
+
+  static const defaultMaxVideoBitrateKbps = 20000;
 
   /// The client profile extra: the device takes these audio codecs in 5.1
   String get profileExtra => [

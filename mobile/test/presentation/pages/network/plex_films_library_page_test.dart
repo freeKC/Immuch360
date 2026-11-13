@@ -109,6 +109,14 @@ class _PlexShare extends MemoryShare implements PlexFilmsSource {
   }
 
   @override
+  Future<List<PlexFilm>> filmsByFoldedTitle(
+    PlexFilmListQuery query,
+    String text, {
+    Set<String> except = const {},
+    int limit = plexFoldedSearchLimit,
+  }) async => const [];
+
+  @override
   Future<List<({PlexSection section, String folderPath})>> filmLibraries() async => [
     (section: movies, folderPath: '/Movies'),
   ];

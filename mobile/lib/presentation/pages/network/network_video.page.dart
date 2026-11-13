@@ -24,6 +24,7 @@ import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
+import 'package:immich_mobile/domain/services/film_player/film_slow_link.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
@@ -32,6 +33,7 @@ import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
+import 'package:immich_mobile/domain/services/video_details.dart';
 import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -49,6 +51,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.d
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_track_buttons.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_conversion_notice.dart';
 import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/film_player_menu.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
@@ -71,12 +74,14 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/providers/network/film_player.provider.dart';
+import 'package:immich_mobile/providers/network/film_version_offers.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
 import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
+import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
 
@@ -258,6 +263,17 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   PlexConversion? _conversion;
   String? _conversionId;
   MediaBridge? _conversionBridge;
+
+  /// What the device's player lacks for the film the server converts (FilmPlayerChoice.deviceMissing), for the notice
+  /// and the converted icon; empty for a conversion after a player failed or asked from the waiting state
+  List<String> _conversionMissing = const [];
+
+  /// The conversion was told for this film (once per page, not at each Retry)
+  bool _conversionTold = false;
+
+  /// The highest video bit rate asked of the conversion, in kbit/s: lower than the server's default when it was asked
+  /// for a link too slow for the file (see [_convertForLink])
+  int? _conversionMaxKbps;
 
   /// Whether this build plays with libmpv, once asked
   bool _mpvAvailable = false;
@@ -632,6 +648,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _mpvAvailable = await players.mpvAvailable();
     final FilmPlayerKind kind;
     final forced = _nextPlayer;
+    _conversionMissing = const [];
     if (forced != null) {
       kind = forced;
     } else if (isPlex) {
@@ -643,6 +660,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       );
       _log.info(choice.logLine);
       kind = choice.kind;
+      _conversionMissing = choice.deviceMissing;
     } else {
       kind = preference == FilmPlayerPreference.mpv && _mpvAvailable ? FilmPlayerKind.mpv : FilmPlayerKind.device;
     }
@@ -650,6 +668,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       final converted = await _startConversion(fileSystem, bridge, players);
       if (converted != null) {
         _setPlayer(FilmPlayerKind.serverConversion);
+        _tellConversion();
         return converted;
       }
       // The server cannot convert it: the best of the others
@@ -705,6 +724,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         mediaIndex: _plexPlace.mediaIndex,
         partIndex: _plexPlace.partIndex,
         audioCodecs: audioCodecs,
+        maxVideoBitrateKbps: _conversionMaxKbps ?? PlexTranscodeRequest.defaultMaxVideoBitrateKbps,
       );
       if (conversion == null || !mounted) {
         unawaited(conversion?.stop());
@@ -1319,6 +1339,90 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     return true;
   }
 
+  /// Says once per page that the Plex server converts the film, and why (what the device's player lacks), as the
+  /// conversion chosen before playback starts; a conversion after a failure says so in its own words (_handOver)
+  void _tellConversion() {
+    if (_conversionTold || _conversionMissing.isEmpty || !mounted) {
+      return;
+    }
+    _conversionTold = true;
+    showFilmConversionNotice(context, _conversionMissing);
+  }
+
+  /// What the waiting state offers while the link brings less than the film needs (the S24 test of 13 November 2026:
+  /// a 2160p file of 43 Mbit/s over 9 to 12 Mbit/s): a lighter version of the film when it has one, and the server's
+  /// conversion down to what the link brings
+  List<VideoSlowAction> _slowActions(VideoLinkView view) {
+    final got = view.bitsPerSecond;
+    final need = view.neededBitsPerSecond;
+    if (got == null || need == null || got >= need || !mounted) {
+      return const [];
+    }
+    final t = context.t;
+    final locale = context.locale.toLanguageTag();
+    final offers =
+        ref.read(filmVersionOffersProvider((sourceId: widget.sourceId, path: widget.path))).valueOrNull ?? const [];
+    final version = _offlineId == null
+        ? lighterFilmVersion(offers, currentPath: widget.path, linkBitsPerSecond: got, neededBitsPerSecond: need)
+        : null;
+    final kbps = filmConversionKbpsFor(got);
+    return [
+      if (version != null)
+        (
+          key: const Key('network_video_lighter_version'),
+          label: t.video_slow_lighter_version(version: version.label),
+          onPressed: () => _playVersion(version),
+        ),
+      if (_canConvertForLink(kbps))
+        (
+          key: const Key('network_video_convert_for_link'),
+          label: t.video_slow_server_convert(rate: formatBitRate(kbps * 1000, t, locale: locale)),
+          onPressed: () => _convertForLink(kbps),
+        ),
+    ];
+  }
+
+  /// Whether the Plex server may convert the film down to [kbps] for a slow link: a Plex film on Android, not the copy
+  /// on this device, the setting on, the conversion not failed on it, and not converted already at about that rate
+  bool _canConvertForLink(int kbps) =>
+      !CurrentPlatform.isDesktop &&
+      Platform.isAndroid &&
+      _shareType == NetworkSourceType.plex &&
+      _offlineId == null &&
+      ref.read(appConfigProvider).viewer.plexConversion &&
+      !_failedPlayers.contains(FilmPlayerKind.serverConversion) &&
+      (_player != FilmPlayerKind.serverConversion ||
+          (_conversionMaxKbps ?? PlexTranscodeRequest.defaultMaxVideoBitrateKbps) > kbps * 1.25);
+
+  /// The film plays again, converted by the Plex server with its video at [kbps] at most
+  void _convertForLink(int kbps) {
+    if (!mounted || !_canConvertForLink(kbps)) {
+      return;
+    }
+    _log.info('The Plex server converts the film to $kbps kbit/s for a slow link');
+    _conversionMaxKbps = kbps;
+    _changePlayer(FilmPlayerKind.serverConversion);
+  }
+
+  /// Opens the lighter version of the film in place of this one, where this one is
+  void _playVersion(FilmVersionOffer version) {
+    if (!mounted) {
+      return;
+    }
+    _log.info('A lighter version of the film plays, for a slow link');
+    version.onChosen?.call();
+    final position = ref.read(videoPlayerProvider(_playerKey)).position;
+    unawaited(
+      context.replaceRoute(
+        NetworkVideoRoute(
+          sourceId: widget.sourceId,
+          path: version.path,
+          startAt: position > Duration.zero ? position : null,
+        ),
+      ),
+    );
+  }
+
   /// Plays the film again with [kind], or with the player chosen again when null (a pick in the menu)
   void _changePlayer(FilmPlayerKind? kind) {
     _nextPlayer = kind;
@@ -1687,6 +1791,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       ),
     );
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
+    // The other versions of the film, for a link slower than the file (see _slowActions)
+    ref.watch(filmVersionOffersProvider((sourceId: widget.sourceId, path: widget.path)));
     // The page covers the screen, under the app bar too: from the menu, Left would land on it rather than on the Back
     // button. Out of the directional moves while the app bar has the focus (set here, not while the focus changes);
     // Down and Back leave the app bar.
@@ -1754,15 +1860,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                       tooltip: context.t.spatial_2_5d,
                       onPressed: () => unawaited(_openSpatial(video)),
                     ),
-                  // Converted by the Plex server (film_player_choice.dart)
+                  // Converted by the Plex server (film_player_choice.dart): a tap says why again
                   if (_conversionId != null && _player == FilmPlayerKind.serverConversion)
-                    Tooltip(
+                    IconButton(
                       key: const Key('network_video_converted'),
-                      message: context.t.film_player_converted,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Icon(Icons.dns_outlined),
-                      ),
+                      icon: const Icon(Icons.dns_outlined),
+                      tooltip: filmConversionText(context.t, _conversionMissing),
+                      onPressed: () => showFilmConversionNotice(context, _conversionMissing),
                     ),
                   // Played from the copy on this device
                   if (_offlineId != null)
@@ -1974,14 +2078,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
             )
           else
             // "Buffering…" while the video loads, and while it stalls (its position stands still as it plays), with
-            // what the link brings against what the video needs, and a share that stopped sending
+            // what the link brings against what the video needs, and a share that stopped sending; for a link slower
+            // than the film, a lighter version and the server's conversion (it takes no touch but their buttons)
             Positioned.fill(
-              child: IgnorePointer(
-                child: NetworkVideoBufferingIndicator(
-                  playerKey: _playerKey,
-                  loading: !_isVideoReady,
-                  link: _notifier.link,
-                ),
+              child: NetworkVideoBufferingIndicator(
+                playerKey: _playerKey,
+                loading: !_isVideoReady,
+                link: _notifier.link,
+                slowActions: _slowActions,
               ),
             ),
           // Where a film resumed, for a few seconds (see ResumeNotice): it takes no touch nor key

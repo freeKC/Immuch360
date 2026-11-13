@@ -283,10 +283,42 @@ Future<StaticPlexFilms> searchPlexFilms(PlexFilmsSource source, PlexFilmListQuer
       break;
     }
   }
-  final films = mergePlexSearch(contains, await hubs, query.sort);
-  _log.fine('Search: ${films.length} films in ${watch.elapsedMilliseconds} ms');
+  final tolerant = await hubs;
+  // Plex matches the start of a word, an elided one whole ("J'écris"): the titles of the list, folded, find the rest
+  final folded = await _foldedSearch(
+    source,
+    query,
+    text,
+    except: {
+      for (final film in [...contains, ...tolerant]) film.ratingKey,
+    },
+  );
+  final films = mergePlexSearch(contains, [...tolerant, ...folded], query.sort);
+  _log.fine('Search: ${films.length} films (${folded.length} by the folded titles) in ${watch.elapsedMilliseconds} ms');
   return StaticPlexFilms(films);
 }
+
+/// The films whose titles hold the text without its accents nor apostrophes (PlexFilmsSource.filmsByFoldedTitle),
+/// which never fails the search either; nothing for a text under [plexFoldedSearchMinLength] letters once folded
+Future<List<PlexFilm>> _foldedSearch(
+  PlexFilmsSource source,
+  PlexFilmListQuery query,
+  String text, {
+  required Set<String> except,
+}) async {
+  if (plexTitleFold(text).replaceAll(' ', '').length < plexFoldedSearchMinLength) {
+    return const [];
+  }
+  try {
+    return await source.filmsByFoldedTitle(query, text, except: except);
+  } catch (error) {
+    _log.info('The search of the folded titles failed: ${error.runtimeType}');
+    return const [];
+  }
+}
+
+/// The shortest folded text the search of the folded titles takes: one or two letters would list half the library
+const plexFoldedSearchMinLength = 3;
 
 /// The server's spelling tolerant search, which never fails the search: the films that hold the text come anyway
 Future<List<PlexFilm>> _tolerantSearch(PlexFilmsSource source, String sectionKey, String text) async {
