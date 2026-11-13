@@ -163,7 +163,7 @@
 
 **你需要：** 一部 Plex Media Server，或者一部 DLNA 伺服器，例如 Jellyfin、Emby 或者 minidlna，同埋喺每部螢幕裝 Immuch360：Android TV、Meta Quest、電話、平板、Windows。
 
-Plex 會提供你媒體庫嘅原始檔案，所以 360° 影片會保持 360°，喺頭戴裝置圍住你，喺屋企得，經你嘅連接埠轉送喺出面都得；DLNA 伺服器喺你屋企網絡上就搵到。登入咗你 Immich 伺服器嘅 LG 電視都可以播放。由 build 45 起，電話、平板、Android TV、Quest 同電腦會按年份打開 Plex 電影庫嘅所有電影，每套電影有自己一頁，喺電話揀嘅電影可以喺 Android TV、Quest 或者電腦播放，由遙控器話事（實驗性）。由 build 46 起，Quest 會用 libmpv 播佢自己播放器解碼唔到嘅電影，你嘅 Plex 伺服器會轉換 Android 裝置所有播放器都解碼唔到嘅電影，而電話可以將電影傳去 Chromecast 或者 Google TV（實驗性）。由 build 47 起，電影會播裝置解碼到嘅音軌並講明係邊條，會打開啱螢幕嘅版本，喺 Windows 同 macOS 上面播佢嘅 Dolby TrueHD 聲音，而 DLNA 伺服器嘅電視直播頻道資料夾會講明暫時仲播唔到。點樣用：[播放 NAS、電腦、媒體伺服器或者 Plex 嘅檔案](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)同[睇你嘅 Plex 電影](#watch-your-plex-films)。
+Plex 會提供你媒體庫嘅原始檔案，所以 360° 影片會保持 360°，喺頭戴裝置圍住你，喺屋企得，經你嘅連接埠轉送喺出面都得；DLNA 伺服器喺你屋企網絡上就搵到。登入咗你 Immich 伺服器嘅 LG 電視都可以播放。由 build 45 起，電話、平板、Android TV、Quest 同電腦會按年份打開 Plex 電影庫嘅所有電影，每套電影有自己一頁，喺電話揀嘅電影可以喺 Android TV、Quest 或者電腦播放，由遙控器話事（實驗性）。由 build 46 起，Quest 會用 libmpv 播佢自己播放器解碼唔到嘅電影，你嘅 Plex 伺服器會轉換 Android 裝置所有播放器都解碼唔到嘅電影，而電話可以將電影傳去 Chromecast 或者 Google TV（實驗性）。由 build 47 起，電影會播裝置解碼到嘅音軌並講明係邊條，會打開啱螢幕嘅版本，喺 Windows 同 macOS 上面播佢嘅 Dolby TrueHD 聲音（實驗性），而 DLNA 伺服器嘅電視直播頻道資料夾會講明暫時仲播唔到。點樣用：[播放 NAS、電腦、媒體伺服器或者 Plex 嘅檔案](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)同[睇你嘅 Plex 電影](#watch-your-plex-films)。
 
 #### 你部電話或者 Windows 電腦，喺頭戴裝置打開
 
@@ -839,7 +839,7 @@ iPhone 同 iPad 會保留佢哋嘅系統解碼器同自己嘅等待規則。喺 
 3. 如果想將一張 360° 相片展示畀冇裝呢個 app 嘅人睇，可以用 Immich 共享連結分享：Immich 嘅網頁版 app 會喺佢哋嘅瀏覽器入面以球體顯示。
 4. 如果你部伺服器行緊 Immich 3.4 或以上，佢嘅管理員可以喺「系統管理」、「設定」、「圖片設定」入面，將「縮圖設定」同「預覽設定」嘅「格式」揀做 JPEG XL：同一張圖檔案更細。由 build 45 同桌面版 build 25 起，Immuch360 會喺 Android 電話、平板同電視、Meta Quest（視窗同沉浸式畫面）、主畫面小工具、Windows、Linux 同 macOS 顯示呢啲相，喺 iPhone 同 iPad 就由 3.4.0 版本起，用 Immich 自己嘅解碼器。LG 同 Samsung 電視 app 顯示唔到 JPEG XL：佢哋嘅相片會寫住「預覽用唔到」，所以如果你喺嗰啲電視睇，就保留 WebP 或者 JPEG。已經由 CI 嘅實驗室喺 Android 14 模擬器上面，對住一部用 JPEG XL 回應嘅測試伺服器檢查過，亦用 Windows 同 Linux 上面嘅桌面版測試檢查過；暫時未對住設定咗 JPEG XL 嘅真 Immich 3.4 伺服器試過，亦未喺 Quest、電視盒或者電腦上面人手試過，亦未喺 iPhone 或者 iPad 上面試過。
 
-目前嘅 build，即係 build 47，3.4.2 版本，同 build 45 同 46 一樣跟上 Immich 3.4.0 app，再加 Immich 之後嘅 11 個修正，適用於 Immich 3.3 同 3.4 伺服器；CI 嘅實驗室會對住一部模擬嘅 Immich 3.3.5 伺服器運行佢，build 45 同 46 由 11 月 11 日同 12 日起喺作者部電話上面配合作者自己嘅 Immich 伺服器運行過，而一個有設定檔修正嘅 build 47 候選版本由 11 月 13 日起喺嗰度運行。Immich 3.4.0 嘅通行密鑰（passkey）登入喺 Immuch360 入面保持關閉。build 28 至 44 基於 2026 年 10 月 10 日嘅 Immich `main`（3.3.0-rc.0 版本）；build 28 已經對住一部由同一個 Immich `main` 建置嘅伺服器測試過，build 27 亦都對住一部 Immich 3.2.4 伺服器測試過。有問題請喺 [Issues](https://github.com/freeKC/Immuch360/issues) 報告，唔好報去 Immich 專案。
+目前嘅 build，即係 build 47，3.4.2 版本，同 build 45 同 46 一樣跟上 Immich 3.4.0 app，再加 Immich 之後嘅 11 個修正，適用於 Immich 3.3 同 3.4 伺服器；CI 嘅實驗室會對住一部模擬嘅 Immich 3.3.5 伺服器運行佢，build 45 同 46 由 11 月 11 日同 12 日起喺作者部電話上面配合作者自己嘅 Immich 伺服器運行過，而一個有設定檔修正嘅 build 46 候選版本由 11 月 13 日起喺嗰度運行。Immich 3.4.0 嘅通行密鑰（passkey）登入喺 Immuch360 入面保持關閉。build 28 至 44 基於 2026 年 10 月 10 日嘅 Immich `main`（3.3.0-rc.0 版本）；build 28 已經對住一部由同一個 Immich `main` 建置嘅伺服器測試過，build 27 亦都對住一部 Immich 3.2.4 伺服器測試過。有問題請喺 [Issues](https://github.com/freeKC/Immuch360/issues) 報告，唔好報去 Immich 專案。
 
 有乜一樣、Immuch360 加咗乜，可以睇[同 Immich 比較](#compared-with-immich)。
 

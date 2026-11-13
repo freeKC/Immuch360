@@ -68,7 +68,7 @@
 - **您有一台 Meta Quest**，想走进自己的照片和视频：[在头显中](#step-inside-your-photos-and-videos-with-a-meta-quest)。
 - **您的照片是扁平的**，而您想在没有 3D 相机的情况下以 3D 方式观看它们，作为可以在头显中凑近细看的场景，或置身于 360° 全景图之中：[把一张照片变成 3D、场景、全景图](#turn-one-photo-into-3d-a-scene-a-panorama)，新功能，由 AI 在您自己的电脑上生成。
 - **您在使用 Immich**，想要它的应用，外加沉浸式查看器以及可用手机登录的大屏幕：[您的 Immich 媒体库](#keep-your-immich-library-with-more)、[与 Immich 对比](#compared-with-immich)。
-- ***您用 Tapo 摄像头看家**，包括电池供电的摄像头（实验性），希望它们出现在照片旁边，也能在电视上查看（已用模拟摄像头验证）：[家用摄像头](#watch-your-home-cameras-on-the-big-screen)。
+- **您用 Tapo 摄像头看家**，包括电池供电的摄像头（实验性），希望它们出现在照片旁边，也能在电视上查看（已用模拟摄像头验证）：[家用摄像头](#watch-your-home-cameras-on-the-big-screen)。
 - **您飞 DJI 无人机**，希望不用 DJI Fly 就能在手机上看到实时画面，并让身边的人在 Meta Quest 或 Android TV 上观看（实验性）：[您的无人机](#see-what-your-drone-sees-on-your-phone)。
 - **您以高斯泼溅的形式用 3D 记录地点和物体，**或者想用自己的照片制作它们，并希望在手机、电脑或头显中穿行其间（实验性）：[在手机、平板或电脑上](#explore-gaussian-splats-on-your-phone-tablet-or-computer)、[用您的照片生成](#make-a-splat-scene-from-your-photos-or-a-video-ai)、[保存在 Immich 中](#keep-a-splat-scene-on-your-immich-server)。
 - **您有 AV2 视频**，即继 AV1 之后的格式，并想在电脑上观看它们（实验性）：[电脑上的 AV2](#play-av2-videos-on-your-computer)。
@@ -163,7 +163,7 @@
 
 **您需要：**一台 Plex Media Server 或 DLNA 服务器（如 Jellyfin、Emby 或 minidlna），以及每块屏幕上的 Immuch360：Android TV、Meta Quest、手机、平板、Windows。
 
-Plex 提供您媒体库的原始文件，因此 360° 视频依然是 360°，在头显中环绕着您，在家中如此，在外通过您的端口转发也是如此；DLNA 服务器会在您的家庭网络中被发现。登录到您 Immich 服务器的 LG 电视也能播放它们。从 build 45 起，手机、平板、Android TV、Quest 和电脑可以打开 Plex 电影资源库，按年份显示所有电影，每部电影都有自己的页面，在手机上选好的电影可在 Android TV、Quest 或电脑上播放，由遥控器掌控（实验性）。从 build 46 起，Quest 用 libmpv 播放其自带播放器无法解码的电影，您的 Plex 服务器会转码 Android 设备上任何播放器都无法解码的电影，手机还能把电影发送到 Chromecast 或 Google TV（实验性）。从 build 47 起，电影会播放设备能解码的音轨并说明是哪一条，打开适合屏幕的版本，并在 Windows 和 macOS 上播放其 Dolby TrueHD 音频，DLNA 服务器的电视直播频道文件夹会提示这些频道暂时还无法播放。操作指南：[播放 NAS、电脑、媒体服务器或 Plex 上的文件](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)和[观看您的 Plex 电影](#watch-your-plex-films)。
+Plex 提供您媒体库的原始文件，因此 360° 视频依然是 360°，在头显中环绕着您，在家中如此，在外通过您的端口转发也是如此；DLNA 服务器会在您的家庭网络中被发现。登录到您 Immich 服务器的 LG 电视也能播放它们。从 build 45 起，手机、平板、Android TV、Quest 和电脑可以打开 Plex 电影资源库，按年份显示所有电影，每部电影都有自己的页面，在手机上选好的电影可在 Android TV、Quest 或电脑上播放，由遥控器掌控（实验性）。从 build 46 起，Quest 用 libmpv 播放其自带播放器无法解码的电影，您的 Plex 服务器会转码 Android 设备上任何播放器都无法解码的电影，手机还能把电影发送到 Chromecast 或 Google TV（实验性）。从 build 47 起，电影会播放设备能解码的音轨并说明是哪一条，打开适合屏幕的版本，并在 Windows 和 macOS 上播放其 Dolby TrueHD 音频（实验性），DLNA 服务器的电视直播频道文件夹会提示这些频道暂时还无法播放。操作指南：[播放 NAS、电脑、媒体服务器或 Plex 上的文件](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)和[观看您的 Plex 电影](#watch-your-plex-films)。
 
 #### 您的手机或 Windows 电脑，在头显中打开
 
@@ -839,7 +839,7 @@ iPhone 和 iPad 保留其系统解码器和自己的等待规则。已在 Androi
 3. 要把一张 360° 照片展示给没有安装此应用的人，可以用 Immich 的共享链接分享：Immich 网页版会在对方的浏览器中以球体形式显示它。
 4. 如果您的服务器运行 Immich 3.4 或更高版本，其管理员可以在“系统管理”、“设置”、“图像设置”中，把“缩略图设置”和“预览图设置”的“格式”选为 JPEG XL：同样的图片，文件更小。从 build 45 和桌面版 build 25 起，Immuch360 可在 Android 手机、平板和电视上，在 Meta Quest 中（窗口和沉浸式视图），在主屏幕小组件中，在 Windows、Linux 和 macOS 上，以及从版本 3.4.0 起在 iPhone 和 iPad 上显示它们，使用 Immich 自己的解码器。LG 和 Samsung 电视应用无法显示 JPEG XL：它们的照片会显示“无法预览”，因此如果您在这些电视上观看，请保留 WebP 或 JPEG。已由 CI 的实验环境在 Android 14 模拟器上针对以 JPEG XL 响应的测试服务器检查过，也由桌面版测试在 Windows 和 Linux 上检查过；尚未针对设为 JPEG XL 的真实 Immich 3.4 服务器测试，也未在 Quest、电视盒或电脑上手动测试过，也未在 iPhone 或 iPad 上测试过。
 
-目前的 build，即 build 47，版本 3.4.2，与 build 45 和 46 一样跟进 Immich 3.4.0 应用以及 Immich 之后的 11 项修复，适用于 Immich 3.3 和 3.4 服务器；CI 的实验环境会针对模拟的 Immich 3.3.5 服务器运行它，build 45 和 46 分别从 11 月 11 日和 12 日起在作者的手机上搭配作者自己的 Immich 服务器运行，带有设置文件修复的 build 47 候选版本自 11 月 13 日起在那里运行。Immich 3.4.0 的通行密钥登录在 Immuch360 中保持关闭。build 28 至 44 基于 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0）；build 28 已针对基于同一 Immich `main` 构建的服务器进行了测试，build 27 还针对 Immich 3.2.4 服务器进行了测试。如有问题，请在[议题](https://github.com/freeKC/Immuch360/issues)中反馈，而不要反馈给 Immich 项目。
+目前的 build，即 build 47，版本 3.4.2，与 build 45 和 46 一样跟进 Immich 3.4.0 应用以及 Immich 之后的 11 项修复，适用于 Immich 3.3 和 3.4 服务器；CI 的实验环境会针对模拟的 Immich 3.3.5 服务器运行它，build 45 和 46 分别从 11 月 11 日和 12 日起在作者的手机上搭配作者自己的 Immich 服务器运行，带有设置文件修复的 build 46 候选版本自 11 月 13 日起在那里运行。Immich 3.4.0 的通行密钥登录在 Immuch360 中保持关闭。build 28 至 44 基于 2026 年 10 月 10 日的 Immich `main`（版本 3.3.0-rc.0）；build 28 已针对基于同一 Immich `main` 构建的服务器进行了测试，build 27 还针对 Immich 3.2.4 服务器进行了测试。如有问题，请在[议题](https://github.com/freeKC/Immuch360/issues)中反馈，而不要反馈给 Immich 项目。
 
 哪些保持不变、Immuch360 增加了什么，见[与 Immich 对比](#compared-with-immich)。
 
