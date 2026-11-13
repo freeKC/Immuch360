@@ -8,6 +8,13 @@
 // same states; where libmpv is missing (Linux and macOS until their video libraries come) the live view is announced
 // for later.
 //
+// A camera without RTSP (the battery and solar ones) streams through its media port instead, with the password of the
+// TP-Link account: Dart makes the same live HLS playlist of it on every phone (TapoPreviewLiveHls), which the platform
+// view plays (Media3 HLS on Android and the Quest, AVPlayer on iPhone and iPad). A camera whose RTSP does not even
+// start on a visit is tried through its media port too, when the TP-Link password is there. When the live view fails,
+// the tile shows the reason in words and a diagnostics line (model, firmware, power, route, the step that failed and
+// the camera's code) that the user can read back.
+//
 // A platform view never takes the focus (a remote would get stuck in it): it sits in an ExcludeFocus, and its buttons
 // are Flutter buttons above it.
 
@@ -20,11 +27,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/camera_live_view.dart';
+import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/tapo/rtsp_probe.dart';
 import 'package:immich_mobile/platform/camera_live_api.g.dart';
+import 'package:immich_mobile/presentation/widgets/camera/camera_live_diagnostics.dart';
 import 'package:immich_mobile/presentation/widgets/camera/camera_live_hls.dart';
 import 'package:immich_mobile/providers/tapo/tapo_camera.provider.dart';
 import 'package:logging/logging.dart';
@@ -48,7 +57,9 @@ class CameraLiveView extends ConsumerStatefulWidget {
     required this.password,
     required this.hd,
     required this.muted,
+    this.mediaPort = false,
     this.onEvent,
+    this.onFailure,
   });
 
   final String host;
@@ -57,7 +68,13 @@ class CameraLiveView extends ConsumerStatefulWidget {
   final String password;
   final bool hd;
   final bool muted;
+
+  /// The stream of the media port: [port] is the media port and [password] the TP-Link one; [user] is not used
+  final bool mediaPort;
   final ValueChanged<CameraLiveEvent>? onEvent;
+
+  /// What made an open of the live playlist fail, for the diagnostics line
+  final ValueChanged<Object>? onFailure;
 
   @override
   ConsumerState<CameraLiveView> createState() => _CameraLiveViewState();
@@ -85,12 +102,13 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
       return;
     }
     _viewId = viewId;
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS || widget.mediaPort) {
       final hls = _hls = CameraLiveHlsController(
         viewId: viewId,
         api: _api,
-        startStream: ref.read(cameraLiveHlsProvider),
+        startStream: widget.mediaPort ? ref.read(cameraPreviewHlsProvider) : ref.read(cameraLiveHlsProvider),
         onEvent: (event) => widget.onEvent?.call(event),
+        onFailure: (error) => widget.onFailure?.call(error),
       );
       _events = _hub.of(viewId).listen(hls.onPlayerEvent);
     } else {
@@ -249,7 +267,8 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
 }
 
 /// The live tile of the camera page: the live view with its state line, a "Live" badge while it plays, and its
-/// buttons (sound, HD or SD, full screen); the reason when there is no live view
+/// buttons (sound, HD or SD, full screen); the reason when there is no live view, and when it failed, the reason in
+/// words, a Retry button and the diagnostics line
 class CameraLiveTile extends StatefulWidget {
   const CameraLiveTile({
     super.key,
@@ -260,15 +279,34 @@ class CameraLiveTile extends StatefulWidget {
     required this.fullScreen,
     required this.preferHd,
     required this.onFullScreen,
+    this.cloudPassword,
+    this.mediaPort = 8800,
+    this.model,
+    this.firmware,
+    this.power,
+    this.deviceType,
     this.autofocus = false,
   });
 
   final String host;
+
+  /// The RTSP port
   final int port;
 
   /// The camera account; null or empty: the hint to add one
   final String user;
   final String? password;
+
+  /// The password of the TP-Link account: the live view through the media port, for a camera without RTSP
+  final String? cloudPassword;
+  final int mediaPort;
+
+  /// What the camera told of itself (stored with the source, or fresh from the camera), for the route and the
+  /// diagnostics line
+  final String? model;
+  final String? firmware;
+  final String? power;
+  final String? deviceType;
   final bool fullScreen;
 
   /// The HD stream when not in full screen (the Quest)
@@ -287,26 +325,128 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
   bool? _hd;
   CameraLiveEvent _event = (state: CameraLiveState.idle, error: null, hasAudio: true);
 
+  /// RTSP failed on this visit before its first frame: the media port is tried in its place, when it can be
+  bool _rtspFailed = false;
+  String? _rtspError;
+
+  /// A frame of the current route was shown
+  bool _played = false;
+
+  /// What made the last open of a live playlist fail
+  Object? _failure;
+
+  /// Bumped by Retry: a new live view
+  int _attempt = 0;
+
   bool get _isHd => widget.fullScreen || (_hd ?? widget.preferHd);
+
+  bool get _hasAccount => widget.user.isNotEmpty && (widget.password?.isNotEmpty ?? false);
+
+  bool get _hasCloudPassword => widget.cloudPassword?.isNotEmpty ?? false;
+
+  TapoLiveRoute get _route => tapoLiveRoute(
+    model: widget.model,
+    power: widget.power,
+    deviceType: widget.deviceType,
+    hasCameraAccount: _hasAccount,
+    hasCloudPassword: _hasCloudPassword,
+    rtspFailed: _rtspFailed,
+  );
+
+  void _onEvent(TapoLiveRoute route, CameraLiveEvent event) {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      if (event.state == CameraLiveState.playing) {
+        _played = true;
+        _failure = null;
+      }
+      if (event.state == CameraLiveState.failed &&
+          route == TapoLiveRoute.rtsp &&
+          !_played &&
+          _hasCloudPassword &&
+          !CurrentPlatform.isDesktop) {
+        // A camera without RTSP that this build does not know as one (or RTSP off with Tapo Care and a card): the
+        // media port, with the TP-Link password (not on a computer yet, where the RTSP reason stays)
+        _log.info('RTSP did not start (${event.error}); trying the media port');
+        _rtspFailed = true;
+        _rtspError = event.error;
+        _event = (state: CameraLiveState.connecting, error: null, hasAudio: true);
+        return;
+      }
+      _event = event;
+    });
+  }
+
+  void _retry() => setState(() {
+    _attempt++;
+    _played = false;
+    _failure = null;
+    _event = (state: CameraLiveState.idle, error: null, hasAudio: true);
+  });
+
+  String _failureText(BuildContext context) {
+    final error = _event.error;
+    final failure = _failure;
+    final notAnswering =
+        (failure is TapoLiveException && failure.step == TapoLiveStep.connect) || error == cameraLiveUnreachable;
+    return switch (error) {
+      // An H.265 camera on iPhone and iPad: its own message, the SD stream may still be H.264
+      cameraLiveH265 => context.t.camera_live_h265_later_on_ios,
+      cameraLiveMediaLocked => context.t.camera_error_media_locked,
+      cameraLiveBusy => context.t.camera_error_busy,
+      _ when notAnswering && _route == TapoLiveRoute.mediaPort => context.t.camera_live_asleep,
+      _ => context.t.camera_live_failed(error: error ?? ''),
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
     if (CurrentPlatform.isDesktop && !DesktopCameraLiveView.available) {
       return _Message(key: const Key('camera_live_later'), text: context.t.desktop_tapo_live_later);
     }
-    final password = widget.password;
-    if (widget.user.isEmpty || password == null || password.isEmpty) {
-      return _Message(key: const Key('camera_live_needs_account'), text: context.t.camera_live_needs_account);
+    final route = _route;
+    switch (route) {
+      case TapoLiveRoute.hub:
+        return _Message(key: const Key('camera_live_hub'), text: context.t.camera_live_hub);
+      case TapoLiveRoute.needsCloudPassword:
+        return _Message(
+          key: const Key('camera_live_needs_cloud_password'),
+          text: context.t.camera_live_needs_cloud_password,
+        );
+      case TapoLiveRoute.needsAccount:
+        return _Message(key: const Key('camera_live_needs_account'), text: context.t.camera_live_needs_account);
+      case TapoLiveRoute.mediaPort when CurrentPlatform.isDesktop:
+        return _Message(
+          key: const Key('camera_live_media_port_later'),
+          text: context.t.camera_live_media_port_later_desktop,
+        );
+      case TapoLiveRoute.rtsp || TapoLiveRoute.mediaPort:
+        break;
     }
+    final mediaPort = route == TapoLiveRoute.mediaPort;
     final playing = _event.state == CameraLiveState.playing;
     final failed = _event.state == CameraLiveState.failed;
     final line = switch (_event.state) {
       CameraLiveState.connecting || CameraLiveState.buffering => context.t.camera_live_connecting,
-      // An H.265 camera on iPhone and iPad: its own message, the SD stream may still be H.264
-      CameraLiveState.failed when _event.error == cameraLiveH265 => context.t.camera_live_h265_later_on_ios,
-      CameraLiveState.failed => context.t.camera_live_failed(error: _event.error ?? ''),
+      CameraLiveState.failed => _failureText(context),
       CameraLiveState.idle || CameraLiveState.playing => null,
     };
+    final diagnostics = failed
+        ? cameraLiveDiagnostics(
+            model: widget.model,
+            firmware: widget.firmware,
+            power: widget.power,
+            route: route,
+            hd: _isHd,
+            rtspPort: widget.port,
+            mediaPort: widget.mediaPort,
+            rtspError: _rtspError,
+            failure: _failure,
+            error: _event.error,
+          )
+        : null;
     final buttonStyle = IconButton.styleFrom(
       backgroundColor: Colors.black45,
       foregroundColor: Colors.white,
@@ -319,27 +459,28 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
         children: [
           if (CurrentPlatform.isDesktop)
             DesktopCameraLiveView(
+              key: ValueKey(_attempt),
               url: cameraRtspUrl(widget.host, widget.port, hd: _isHd),
               user: widget.user,
-              password: password,
+              password: widget.password ?? '',
               muted: _muted,
-              onEvent: (event) {
-                if (mounted) {
-                  setState(() => _event = event);
-                }
-              },
+              onEvent: (event) => _onEvent(route, event),
             )
           else
             CameraLiveView(
+              // A new view for another route or a retry: the controller of a view keeps its route
+              key: ValueKey((route, _attempt)),
               host: widget.host,
-              port: widget.port,
-              user: widget.user,
-              password: password,
+              port: mediaPort ? widget.mediaPort : widget.port,
+              user: mediaPort ? '' : widget.user,
+              password: (mediaPort ? widget.cloudPassword : widget.password) ?? '',
               hd: _isHd,
               muted: _muted,
-              onEvent: (event) {
+              mediaPort: mediaPort,
+              onEvent: (event) => _onEvent(route, event),
+              onFailure: (error) {
                 if (mounted) {
-                  setState(() => _event = event);
+                  setState(() => _failure = error);
                 }
               },
             ),
@@ -347,11 +488,33 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(
-                  line,
-                  key: const Key('camera_live_state'),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: failed ? Colors.red.shade200 : Colors.white),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      line,
+                      key: const Key('camera_live_state'),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: failed ? Colors.red.shade200 : Colors.white),
+                    ),
+                    if (diagnostics != null) ...[
+                      const SizedBox(height: 8),
+                      SelectableText(
+                        context.t.camera_live_diagnostics(details: diagnostics),
+                        key: const Key('camera_live_diagnostics'),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        key: const Key('camera_live_retry'),
+                        style: TextButton.styleFrom(backgroundColor: Colors.black45, foregroundColor: Colors.white),
+                        onPressed: _retry,
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: Text(context.t.retry),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),

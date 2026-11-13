@@ -412,7 +412,9 @@ void main() {
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pump();
       expect(engine().calls.where((call) => call.startsWith('open')), hasLength(1));
-      expect(find.textContaining('401'), findsOneWidget);
+      expect(tester.widget<Text>(find.byKey(const Key('camera_live_state'))).data, contains('401'));
+      // The diagnostics line tells it too
+      expect(find.byKey(const Key('camera_live_diagnostics')), findsOneWidget);
     });
 
     desktopTest('without libmpv, the live view is announced for later', (tester) async {

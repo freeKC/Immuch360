@@ -198,17 +198,33 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     final tvMode = ref.watch(tvModeProvider);
     final isQuest = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     final accountPassword = ref.watch(tapoCameraAccountPasswordProvider(_id)).valueOrNull;
+    final cloudPassword = ref.watch(tapoCameraCloudPasswordProvider(_id)).valueOrNull;
+    // What the camera says of itself now, else what was stored: the route of the live view depends on its power
+    final details = ref.watch(tapoCameraStatusProvider(_id)).valueOrNull?.details;
+    final camera = source.camera;
+    final route = tapoLiveRoute(
+      model: _nonEmpty(details?.model) ?? camera?.model,
+      power: details?.power ?? camera?.power,
+      deviceType: details?.deviceType ?? camera?.deviceType,
+      hasCameraAccount: source.username.isNotEmpty && (accountPassword?.isNotEmpty ?? false),
+      hasCloudPassword: cloudPassword?.isNotEmpty ?? false,
+    );
     final hasLive =
         defaultTargetPlatform == TargetPlatform.android &&
-        source.username.isNotEmpty &&
-        (accountPassword?.isNotEmpty ?? false);
+        (route == TapoLiveRoute.rtsp || route == TapoLiveRoute.mediaPort);
 
     final live = CameraLiveTile(
       key: const Key('camera_live_tile'),
       host: source.host,
-      port: source.camera?.rtspPort ?? TapoCameraInfo.defaultRtspPort,
+      port: camera?.rtspPort ?? TapoCameraInfo.defaultRtspPort,
       user: source.username,
       password: accountPassword,
+      cloudPassword: cloudPassword,
+      mediaPort: camera?.mediaPort ?? TapoCameraInfo.defaultMediaPort,
+      model: _nonEmpty(details?.model) ?? camera?.model,
+      firmware: _nonEmpty(details?.firmware) ?? camera?.firmware,
+      power: details?.power ?? camera?.power,
+      deviceType: details?.deviceType ?? camera?.deviceType,
       fullScreen: _fullScreen,
       preferHd: isQuest,
       autofocus: tvMode && hasLive,
@@ -272,6 +288,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     );
   }
 }
+
+String? _nonEmpty(String? text) => text == null || text.isEmpty ? null : text;
 
 /// Model and firmware, and the memory card
 class _Status extends ConsumerWidget {

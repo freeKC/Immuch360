@@ -102,4 +102,16 @@ void main() {
       [0x65, 4],
     ]);
   });
+
+  test('reads every PMT of the PAT: the sound in a program of its own keeps its codec', () {
+    final frames = fixtureAccessUnits();
+    demuxer
+      ..feed(twoProgramTables(audioType: 0x91))
+      ..feed(packetsOf(videoPid, pes(0xe0, 90000, frames.first)))
+      ..feed(packetsOf(audioPid, pes(0xc0, 90000, List.filled(160, 0xff))))
+      ..feed(packetsOf(videoPid, pes(0xe0, 96000, frames[1])))
+      ..flush();
+    expect(video, hasLength(2));
+    expect(audio.single.codec, TsAudioCodec.ulaw, reason: 'A-law if the second PMT were not read');
+  });
 }

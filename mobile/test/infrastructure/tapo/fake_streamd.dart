@@ -1,8 +1,10 @@
 // A fake media port of a camera (Streamd, port 8800) on 127.0.0.1, after tapo-v4-protocol/tests/test_tapo_media.py:
 // the 401 with the Digest challenge on a first connection, the check of the Digest response and the Key-Exchange on a
 // second one, then the answers to the download requests: the parts of a clip (encrypted video/mp2t with their
-// sequence and wall clock, an acknowledgement awaited every 25 parts) or the picture of a recording, then finished.
-// Busy answers and a refused password on demand. Synthetic values only.
+// sequence and wall clock, an acknowledgement awaited every 25 parts) or the picture of a recording, then finished;
+// and the live request (preview) of a camera without RTSP: the parts of [preview], then nothing until the client stops.
+// Busy answers and a refused password on demand, and the C410 on firmware 1.3.5 that announces encrypt_type 3 but
+// takes only the MD5 of the password (HomeAssistant-Tapo-Control#1472). Synthetic values only.
 
 import 'dart:async';
 import 'dart:convert';
@@ -28,7 +30,13 @@ class FakeStreamd {
 
   static const _boundary = '--device-stream-boundary--';
   final _nonce = '0123456789abcdef0123456789abcdef';
-  String get _hashed => sha256HexUpper(password);
+  String get _hashed => md5Only ? md5HexUpper(password) : sha256HexUpper(password);
+
+  /// Announces encrypt_type 3 (SHA-256 of the password) but takes only its MD5, as a C410 on 1.3.5
+  bool md5Only = false;
+
+  /// The parts sent for a live request (preview); null answers it as a clip
+  List<StreamPart>? preview;
 
   /// The parts of the clip sent for a video download
   List<StreamPart> clip = clipParts(fixtureAccessUnits());
@@ -138,6 +146,32 @@ class FakeStreamd {
         'application/json',
         utf8.encode('{"type":"response", "seq":${message['seq']}, "params":{"error_code":0, "session_id":"$session"}}'),
       );
+      final previewParts = preview;
+      if (params['preview'] != null && previewParts != null) {
+        for (final part in previewParts) {
+          _send(
+            socket,
+            'video/mp2t',
+            part.ts,
+            encrypt: true,
+            extra: {'X-Session-Id': session, 'X-Data-Sequence': '$seq', 'X-Data-PTS': '${part.wallMs}'},
+          );
+          seq++;
+        }
+        // A live stream goes on: nothing more until the client says "do stop" or goes
+        while (true) {
+          final next = await reader.part(timeout: const Duration(seconds: 30));
+          if (next == null) {
+            break;
+          }
+          if (_isStop(next.$2)) {
+            stops.add(next.$1);
+            break;
+          }
+          acks.add(next.$1);
+        }
+        break;
+      }
       final download = (params['download']! as Map).cast<String, Object?>();
       if (download['media_type'] == 2) {
         if (silentSnapshots) {
@@ -247,12 +281,14 @@ class _Reader {
     waiting?.complete();
   }
 
+  Duration _timeout = const Duration(seconds: 10);
+
   Future<void> _more() async {
     if (_done) {
       throw const SocketException('closed');
     }
     final waiting = _waiting = Completer<void>();
-    await waiting.future.timeout(const Duration(seconds: 10));
+    await waiting.future.timeout(_timeout);
   }
 
   Future<Uint8List> until(String marker) async {
@@ -282,7 +318,8 @@ class _Reader {
   }
 
   /// The next part of the client, null once it closed the connection
-  Future<(Map<String, String>, Uint8List)?> part() async {
+  Future<(Map<String, String>, Uint8List)?> part({Duration timeout = const Duration(seconds: 10)}) async {
+    _timeout = timeout;
     try {
       await until('----client-stream-boundary--\r\n');
       final headers = {

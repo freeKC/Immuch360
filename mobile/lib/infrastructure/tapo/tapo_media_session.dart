@@ -15,6 +15,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_crypto.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_login.dart';
@@ -63,6 +64,11 @@ class TapoMediaSession {
   /// The session the camera gave, from its first answer
   String? sessionId;
 
+  TapoPasscodeHash _passwordHash = TapoPasscodeHash.md5;
+
+  /// The form of the password the media port took (for the diagnostics line of the live view)
+  TapoPasscodeHash get passwordHash => _passwordHash;
+
   /// How often a data part is acknowledged: half of the window announced, as the official app does
   static const window = 50;
   static const _ackEvery = window ~/ 2;
@@ -95,69 +101,91 @@ class TapoMediaSession {
     }
 
     // The challenge: the camera answers 401 and closes the connection
-    final (first, firstReader) = await connectOnce();
-    final Map<String, String> challenge;
-    try {
-      first.add(_head(null));
-      final (status, headers, body) = await _readHead(firstReader);
-      final authenticate = headers['www-authenticate'];
-      if (status != 401 || authenticate == null || !authenticate.toLowerCase().startsWith('digest')) {
-        throw _refusal(status, body);
+    Future<Map<String, String>> challengeOnce() async {
+      final (first, firstReader) = await connectOnce();
+      try {
+        first.add(_head(null));
+        final (status, headers, body) = await _readHead(firstReader);
+        final authenticate = headers['www-authenticate'];
+        if (status != 401 || authenticate == null || !authenticate.toLowerCase().startsWith('digest')) {
+          throw _refusal(status, body);
+        }
+        return _parsePairs(authenticate.substring(6), ',');
+      } finally {
+        firstReader.cancel();
+        first.destroy();
       }
-      challenge = _parsePairs(authenticate.substring(6), ',');
-    } finally {
-      firstReader.cancel();
-      first.destroy();
     }
-    final realm = challenge['realm'] ?? '';
-    final nonce = challenge['nonce'] ?? '';
-    final hashed = challenge['encrypt_type'] == '3' ? sha256HexUpper(password) : md5HexUpper(password);
-    final cnonce = hexOf(randomBytes(12));
-    const nc = '00000001';
-    final ha1 = md5Hex('$tapoAdminUser:$realm:$hashed');
-    final ha2 = md5Hex('POST:/stream');
-    final response = md5Hex('$ha1:$nonce:$nc:$cnonce:auth:$ha2');
-    final authorization =
-        'Digest username="$tapoAdminUser",realm="$realm",uri="/stream",algorithm=MD5,nonce="$nonce",nc=$nc,'
-        'cnonce="$cnonce",qop=auth,response="$response",opaque="${challenge['opaque'] ?? ''}"';
 
-    final (socket, reader) = await connectOnce();
+    Future<TapoMediaSession> loginWith(Map<String, String> challenge, TapoPasscodeHash hash) async {
+      final realm = challenge['realm'] ?? '';
+      final nonce = challenge['nonce'] ?? '';
+      final hashed = hash == TapoPasscodeHash.sha256 ? sha256HexUpper(password) : md5HexUpper(password);
+      final cnonce = hexOf(randomBytes(12));
+      const nc = '00000001';
+      final ha1 = md5Hex('$tapoAdminUser:$realm:$hashed');
+      final ha2 = md5Hex('POST:/stream');
+      final response = md5Hex('$ha1:$nonce:$nc:$cnonce:auth:$ha2');
+      final authorization =
+          'Digest username="$tapoAdminUser",realm="$realm",uri="/stream",algorithm=MD5,nonce="$nonce",nc=$nc,'
+          'cnonce="$cnonce",qop=auth,response="$response",opaque="${challenge['opaque'] ?? ''}"';
+
+      final (socket, reader) = await connectOnce();
+      try {
+        socket.add(_head(authorization));
+        final (status, headers, body) = await _readHead(reader);
+        if (status == 401) {
+          throw const _Unauthorized();
+        }
+        if (status != 200) {
+          throw _refusal(status, body);
+        }
+        final keyExchange = headers['key-exchange'];
+        if (keyExchange == null) {
+          throw const TapoCameraException(TapoErrorKind.unsupported, detail: 'Key-Exchange');
+        }
+        final exchange = _parsePairs(keyExchange, ' ');
+        final exchangeNonce = exchange['nonce'] ?? '';
+        final exchangeUser = exchange['username'] ?? tapoAdminUser;
+        var boundary = '--device-stream-boundary--';
+        for (final piece in (headers['content-type'] ?? '').split(';')) {
+          final trimmed = piece.trim();
+          if (trimmed.startsWith('boundary=')) {
+            boundary = trimmed.substring(9);
+          }
+        }
+        return TapoMediaSession._(
+          socket,
+          reader,
+          AesCbcDecryptor(
+            md5Bytes(utf8.encode('$exchangeNonce:$hashed')),
+            md5Bytes(utf8.encode('$exchangeUser:$exchangeNonce')),
+          ),
+          Uint8List.fromList(latin1.encode(boundary)),
+        ).._passwordHash = hash;
+      } catch (_) {
+        reader.cancel();
+        socket.destroy();
+        rethrow;
+      }
+    }
+
+    // encrypt_type "3" asks for SHA-256 of the password, but some firmware announces it and only takes MD5 (a C410
+    // on 1.3.5, pytapo 3.4.28 after HomeAssistant-Tapo-Control#1472): a refused SHA-256 gets one MD5 try, on a fresh
+    // challenge since the camera closed the refused connection
+    final challenge = await challengeOnce();
+    final first = challenge['encrypt_type'] == '3' ? TapoPasscodeHash.sha256 : TapoPasscodeHash.md5;
     try {
-      socket.add(_head(authorization));
-      final (status, headers, body) = await _readHead(reader);
-      if (status == 401) {
+      return await loginWith(challenge, first);
+    } on _Unauthorized {
+      if (first == TapoPasscodeHash.md5) {
         throw const TapoCameraException(TapoErrorKind.mediaLocked, code: 401);
       }
-      if (status != 200) {
-        throw _refusal(status, body);
-      }
-      final keyExchange = headers['key-exchange'];
-      if (keyExchange == null) {
-        throw const TapoCameraException(TapoErrorKind.unsupported, detail: 'Key-Exchange');
-      }
-      final exchange = _parsePairs(keyExchange, ' ');
-      final exchangeNonce = exchange['nonce'] ?? '';
-      final exchangeUser = exchange['username'] ?? tapoAdminUser;
-      var boundary = '--device-stream-boundary--';
-      for (final piece in (headers['content-type'] ?? '').split(';')) {
-        final trimmed = piece.trim();
-        if (trimmed.startsWith('boundary=')) {
-          boundary = trimmed.substring(9);
-        }
-      }
-      return TapoMediaSession._(
-        socket,
-        reader,
-        AesCbcDecryptor(
-          md5Bytes(utf8.encode('$exchangeNonce:$hashed')),
-          md5Bytes(utf8.encode('$exchangeUser:$exchangeNonce')),
-        ),
-        Uint8List.fromList(latin1.encode(boundary)),
-      );
-    } catch (_) {
-      reader.cancel();
-      socket.destroy();
-      rethrow;
+    }
+    try {
+      return await loginWith(await challengeOnce(), TapoPasscodeHash.md5);
+    } on _Unauthorized {
+      throw const TapoCameraException(TapoErrorKind.mediaLocked, code: 401);
     }
   }
 
@@ -451,6 +479,11 @@ int? _errorCodeOf(Uint8List body) {
   } on FormatException {
     return null;
   }
+}
+
+/// The media port refused the Digest response with a 401
+class _Unauthorized implements Exception {
+  const _Unauthorized();
 }
 
 class _ConnectionEnded implements Exception {

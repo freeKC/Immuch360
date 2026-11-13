@@ -150,3 +150,40 @@ List<StreamPart> clipParts(
 Uint8List toneAlaw(int count, {int startSample = 0}) => Uint8List.fromList([
   for (var i = 0; i < count; i++) pcm16ToAlaw((sin(2 * pi * 440 * (startSample + i) / 8000) * 8000).round()),
 ]);
+
+/// PAT and two PMT, the sound in a program of its own (pytapo b713ace): H.264 on 0x44 in program 1 (PMT on 0x12),
+/// [audioType] on 0x45 in program 2 (PMT on 0x13)
+Uint8List twoProgramTables({int audioType = 0x91}) {
+  const audioPmtPid = 0x13;
+  final pat = _section(0x00, [
+    0x00, 0x01, 0xe0 | (pmtPid >> 8), pmtPid & 0xff, // program 1
+    0x00, 0x02, 0xe0 | (audioPmtPid >> 8), audioPmtPid & 0xff, // program 2
+  ]);
+  final videoPmt = _section(0x02, [
+    0xe0 | (videoPid >> 8),
+    videoPid & 0xff,
+    0xf0,
+    0x00,
+    0x1b,
+    0xe0 | (videoPid >> 8),
+    videoPid & 0xff,
+    0xf0,
+    0x00,
+  ]);
+  final audioPmt = _section(0x02, [
+    0xe0 | (audioPid >> 8),
+    audioPid & 0xff,
+    0xf0,
+    0x00,
+    audioType,
+    0xe0 | (audioPid >> 8),
+    audioPid & 0xff,
+    0xf0,
+    0x00,
+  ]);
+  return Uint8List.fromList([
+    ...tsPacket(0, pat, unitStart: true),
+    ...tsPacket(pmtPid, videoPmt, unitStart: true),
+    ...tsPacket(audioPmtPid, audioPmt, unitStart: true),
+  ]);
+}
