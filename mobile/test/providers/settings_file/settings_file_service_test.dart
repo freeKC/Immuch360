@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:drift/native.dart';
@@ -76,9 +77,59 @@ const _tapo = NetworkSource(
   camera: TapoCameraInfo(model: 'C200'),
 );
 
+/// The server of a restored account, in memory: what each address answers, and what the app did with it
+class _FakeServerLink implements SettingsFileServerLink {
+  _FakeServerLink(this.store, this.settings);
+
+  final StoreService store;
+  final SettingsRepository settings;
+
+  /// What the server answers at each address; an address missing does not answer
+  Map<String, SettingsFileSessionCheck> answers = {
+    'https://photos.example.org/api': SettingsFileSessionCheck.valid,
+    'https://photos.example.org': SettingsFileSessionCheck.valid,
+  };
+
+  ({String name, String email})? user = (name: 'Alice', email: 'alice@example.org');
+
+  /// The addresses connected to, with whether resolved, and the token given to the HTTP clients
+  final connects = <(String, bool, String)>[];
+
+  /// The proxy headers and the Store's token at the first connect: what the first request goes out with
+  Map<String, String>? headersAtConnect;
+  String? storedTokenAtConnect;
+  String? _address;
+  var forgotten = false;
+
+  @override
+  Future<void> connect(String address, {required bool resolve, required String token}) async {
+    headersAtConnect ??= settings.appConfig.network.customHeaders;
+    storedTokenAtConnect ??= store.tryGet(StoreKey.accessToken);
+    connects.add((address, resolve, token));
+    if (!answers.containsKey(address)) {
+      _address = null;
+      throw const SocketException('no answer');
+    }
+    _address = address;
+  }
+
+  @override
+  Future<SettingsFileSessionCheck> check() async => answers[_address] ?? SettingsFileSessionCheck.unreachable;
+
+  @override
+  Future<({String name, String email})?> loadUser(String token) async => user;
+
+  @override
+  Future<void> forget() async {
+    forgotten = true;
+    await store.delete(StoreKey.accessToken);
+    await store.delete(StoreKey.currentUser);
+  }
+}
+
 /// One install of the app: its database, Store, settings, secure storage and albums
 class _Install {
-  _Install._(this.db, this.store, this.settings, this.secrets, this.albums, this.container);
+  _Install._(this.db, this.store, this.settings, this.secrets, this.albums, this.container, this.server);
 
   final Drift db;
   final StoreService store;
@@ -86,6 +137,7 @@ class _Install {
   final FakeSecureStorage secrets;
   final _FakeAlbums albums;
   final ProviderContainer container;
+  final _FakeServerLink server;
 
   static Future<_Install> create({List<LocalAlbum> albums = const []}) async {
     final db = Drift(DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true));
@@ -94,15 +146,17 @@ class _Install {
     final settings = await SettingsRepository.ensureInitialized(db);
     final secrets = FakeSecureStorage();
     final fakeAlbums = _FakeAlbums(albums);
+    final server = _FakeServerLink(store, settings);
     final container = ProviderContainer(
       overrides: [
         storeServiceProvider.overrideWithValue(store),
         secureStorageServiceProvider.overrideWithValue(secrets),
         settingsProvider.overrideWithValue(settings),
         settingsFileAlbumsProvider.overrideWithValue(fakeAlbums),
+        settingsFileServerLinkProvider.overrideWithValue(server),
       ],
     );
-    return _Install._(db, store, settings, secrets, fakeAlbums, container);
+    return _Install._(db, store, settings, secrets, fakeAlbums, container, server);
   }
 
   SettingsFileService get service => container.read(settingsFileServiceProvider);
@@ -336,5 +390,144 @@ void main() {
       throwsArgumentError,
     );
     await a.dispose();
+  });
+
+  /// An accounts file of FreeKC's case, opened on a new install: the content to restore
+  Future<SettingsFileContent> accountsContent() async {
+    final a = await _fullInstall();
+    final content = await a.service.collect();
+    await a.dispose();
+    return content;
+  }
+
+  // Issue of 13 Nov 2026: the import wrote the token into the Store only. The session travels as a cookie of the
+  // native HTTP clients, which only a sign in sets, and the API client of an install started without a server has no
+  // address: the app came back signed out while the sources and settings were there.
+  for (final mode in SettingsFileRestoreMode.values) {
+    test(
+      'accounts level on an empty install, ${mode.name}: the session goes to the server and the user is signed in',
+      () async {
+        final content = await accountsContent();
+        final b = await _Install.create();
+        final report = await b.service.restore(content, mode);
+
+        expect(b.server.connects, [('https://photos.example.org/api', false, 'session-token-a')]);
+        // The proxy headers of the file were in place for the first request, and the token stored
+        expect(b.server.headersAtConnect, {'X-Proxy-Token': 'proxy-secret'});
+        expect(b.server.storedTokenAtConnect, 'session-token-a');
+        expect(report.accountRestored, isTrue);
+        expect(report.signIn?.result, SettingsFileSignInResult.signedIn);
+        expect(report.signIn?.name, 'Alice');
+        expect(report.signIn?.email, 'alice@example.org');
+        expect(report.items.first.toString(), 'account https://photos.example.org restored');
+        expect(b.store.tryGet(StoreKey.accessToken), 'session-token-a');
+        expect(b.server.forgotten, isFalse);
+        await b.dispose();
+      },
+    );
+  }
+
+  test('a session the server refused: the token is forgotten, the address kept for the sign in form', () async {
+    final content = await accountsContent();
+    final b = await _Install.create();
+    b.server.answers = {'https://photos.example.org/api': SettingsFileSessionCheck.refused};
+    final report = await b.service.restore(content, SettingsFileRestoreMode.merge);
+
+    expect(report.signIn?.result, SettingsFileSignInResult.refused);
+    expect(report.accountRestored, isFalse);
+    expect(b.server.forgotten, isTrue);
+    expect(b.store.tryGet(StoreKey.accessToken), isNull);
+    expect(b.store.tryGet(StoreKey.serverUrl), 'https://photos.example.org');
+    expect(b.store.tryGet(StoreKey.serverEndpoint), 'https://photos.example.org/api');
+    expect(report.items.take(2).map((i) => i.toString()), [
+      'server https://photos.example.org restored',
+      'account https://photos.example.org skipped sessionRefused',
+    ]);
+    // The rest of the file is restored all the same
+    expect(b.sourceList, hasLength(3));
+    expect(b.settings.appConfig.read(SettingsKey.themeMode), ThemeMode.dark);
+    await b.dispose();
+  });
+
+  test('no answer at any address: the account is kept for the next start, nothing forgotten', () async {
+    final content = await accountsContent();
+    final b = await _Install.create();
+    b.server.answers = {};
+    final report = await b.service.restore(content, SettingsFileRestoreMode.merge);
+
+    expect(report.signIn?.result, SettingsFileSignInResult.unreachable);
+    expect(report.accountRestored, isTrue);
+    expect(b.server.forgotten, isFalse);
+    expect(b.store.tryGet(StoreKey.accessToken), 'session-token-a');
+    await b.dispose();
+  });
+
+  test('the old address does not answer: the address the user typed is resolved again', () async {
+    const content = SettingsFileContent(
+      server: SettingsFileServer(
+        url: 'https://photos.example.org',
+        endpoint: 'http://192.168.1.5:2283/api',
+        accessToken: 'session-token-a',
+      ),
+    );
+    final b = await _Install.create();
+    final report = await b.service.restore(content, SettingsFileRestoreMode.merge);
+
+    expect(b.server.connects, [
+      ('http://192.168.1.5:2283/api', false, 'session-token-a'),
+      ('https://photos.example.org', true, 'session-token-a'),
+    ]);
+    expect(report.signIn?.result, SettingsFileSignInResult.signedIn);
+    await b.dispose();
+  });
+
+  test('a file without the API address: the address typed is resolved, the sign in form filled when refused', () async {
+    const content = SettingsFileContent(
+      server: SettingsFileServer(url: 'https://photos.example.org', accessToken: 'session-token-a'),
+    );
+    final b = await _Install.create();
+    b.server.answers = {'https://photos.example.org': SettingsFileSessionCheck.refused};
+    final report = await b.service.restore(content, SettingsFileRestoreMode.replace);
+
+    expect(b.server.connects, [('https://photos.example.org', true, 'session-token-a')]);
+    expect(report.signIn?.result, SettingsFileSignInResult.refused);
+    expect(b.store.tryGet(StoreKey.serverEndpoint), 'https://photos.example.org');
+    await b.dispose();
+  });
+
+  test('valid session but no user from the server: told as not answering, the account kept', () async {
+    final content = await accountsContent();
+    final b = await _Install.create();
+    b.server.user = null;
+    final report = await b.service.restore(content, SettingsFileRestoreMode.merge);
+
+    expect(report.signIn?.result, SettingsFileSignInResult.unreachable);
+    expect(b.store.tryGet(StoreKey.accessToken), 'session-token-a');
+    await b.dispose();
+  });
+
+  test('no account restored, no request to the server: settings level, and an install signed in already', () async {
+    final a = await _fullInstall();
+    final settingsText = await a.service.buildFile(level: SettingsFileLevel.settings, origin: _origin);
+    final content = await a.service.collect();
+    await a.dispose();
+
+    final b = await _Install.create();
+    final fromSettings = await b.service.restore(
+      await openSettingsFile(SettingsFile.parse(settingsText)),
+      SettingsFileRestoreMode.merge,
+    );
+    expect(fromSettings.signIn, isNull);
+    expect(b.server.connects, isEmpty);
+    await b.dispose();
+
+    final c = await _Install.create();
+    await c.store.put(StoreKey.serverUrl, 'https://other.example.net');
+    await c.store.put(StoreKey.accessToken, 'session-token-c');
+    final signedIn = await c.service.restore(content, SettingsFileRestoreMode.merge);
+    expect(signedIn.signIn, isNull);
+    expect(c.server.connects, isEmpty);
+    expect(c.store.tryGet(StoreKey.accessToken), 'session-token-c');
+    await c.dispose();
   });
 }

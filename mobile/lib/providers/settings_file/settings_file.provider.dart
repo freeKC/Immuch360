@@ -5,6 +5,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
@@ -16,13 +17,20 @@ import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/local_album.service.dart';
 import 'package:immich_mobile/domain/services/settings_file/settings_file_crypto.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/providers/api.provider.dart';
+import 'package:immich_mobile/providers/auth.provider.dart';
 import 'package:immich_mobile/providers/backup/backup_album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/db.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
+import 'package:immich_mobile/services/api.service.dart';
+import 'package:immich_mobile/utils/provider_utils.dart';
 import 'package:logging/logging.dart';
+import 'package:openapi/api.dart';
 
 final _log = Logger('SettingsFile');
 
@@ -57,7 +65,118 @@ enum SettingsFileSkipReason {
 
   /// A backup album not found on this device
   notOnThisDevice,
+
+  /// The account: the server no longer accepts the session of the file (signed out there, or expired)
+  sessionRefused,
 }
+
+/// How the session of a restored account went when the app put it to the server, as at a start with a saved token
+enum SettingsFileSignInResult {
+  /// The server accepted the session and named its user
+  signedIn,
+
+  /// The server answered that the session is no longer valid: the address is kept, the token is not
+  refused,
+
+  /// No answer from the server (offline, another network): the account is kept and the app signs in when it answers
+  unreachable,
+}
+
+class SettingsFileSignIn {
+  const SettingsFileSignIn(this.result, {this.name, this.email});
+
+  final SettingsFileSignInResult result;
+
+  /// The user the server named, when signed in
+  final String? name;
+  final String? email;
+}
+
+/// What a check of the session against the server gave
+enum SettingsFileSessionCheck { valid, refused, unreachable }
+
+/// The server side of a restored account, behind an interface for the tests: what the start of the app does with a
+/// saved token (splash screen, auth guard), and what a sign in sets that a token written in the Store alone does not
+abstract interface class SettingsFileServerLink {
+  /// Points the API client at [address] (resolved first from what the user typed when [resolve]) and gives [token]
+  /// to the HTTP clients of the app, which carry the session as a cookie that only a sign in or this sets
+  Future<void> connect(String address, {required bool resolve, required String token});
+
+  /// Asks the server whether the session is valid
+  Future<SettingsFileSessionCheck> check();
+
+  /// Loads the user of the session into the app (current user, device id, the auth state); null when the server did
+  /// not give it
+  Future<({String name, String email})?> loadUser(String token);
+
+  /// Forgets a session the server refused: the token, the user and the session cookies; the addresses stay
+  Future<void> forget();
+}
+
+class _AppServerLink implements SettingsFileServerLink {
+  const _AppServerLink(this._ref);
+
+  final Ref _ref;
+
+  static const _timeout = Duration(seconds: 12);
+
+  ApiService get _api => _ref.read(apiServiceProvider);
+
+  Future<void> _giveToken(String token) async {
+    await NetworkRepository.setHeaders(ApiService.getNativeHeaders(), ApiService.getServerUrls(), token: token);
+    _api.apiClient.client = NetworkRepository.client;
+  }
+
+  @override
+  Future<void> connect(String address, {required bool resolve, required String token}) async {
+    // The custom headers (a proxy in front of the server) before the first request
+    await _giveToken(token);
+    if (resolve) {
+      await _api.resolveAndSetEndpoint(address).timeout(_timeout);
+    } else {
+      _api.setEndpoint(address);
+    }
+    await _api.setDeviceInfoHeader();
+    // Again with the address in use, which may be another host than the one stored
+    await _giveToken(token);
+    invalidateApiRepositoryProviders(_ref.invalidate);
+  }
+
+  @override
+  Future<SettingsFileSessionCheck> check() async {
+    try {
+      final response = await _api.authenticationApi.validateAccessToken().timeout(_timeout);
+      return response?.authStatus == true ? SettingsFileSessionCheck.valid : SettingsFileSessionCheck.refused;
+    } on ApiException catch (error) {
+      return error.code == HttpStatus.unauthorized
+          ? SettingsFileSessionCheck.refused
+          : SettingsFileSessionCheck.unreachable;
+    } catch (error) {
+      _log.info('The server of the settings file did not answer: ${error.runtimeType}');
+      return SettingsFileSessionCheck.unreachable;
+    }
+  }
+
+  @override
+  Future<({String name, String email})?> loadUser(String token) async {
+    final auth = _ref.read(authProvider.notifier);
+    if (!await auth.saveAuthInfo(accessToken: token)) {
+      return null;
+    }
+    final state = _ref.read(authProvider);
+    return (name: state.name, email: state.userEmail);
+  }
+
+  @override
+  Future<void> forget() async {
+    final store = _ref.read(storeServiceProvider);
+    await store.delete(StoreKey.accessToken);
+    await store.delete(StoreKey.currentUser);
+    await networkApi.clearCookies();
+  }
+}
+
+final settingsFileServerLinkProvider = Provider<SettingsFileServerLink>(_AppServerLink.new);
 
 class SettingsFileReportItem {
   const SettingsFileReportItem(this.section, this.label, this.outcome, [this.reason]);
@@ -74,12 +193,15 @@ class SettingsFileReportItem {
 }
 
 class SettingsFileReport {
-  const SettingsFileReport(this.items, {this.accountRestored = false});
+  const SettingsFileReport(this.items, {this.accountRestored = false, this.signIn});
 
   final List<SettingsFileReportItem> items;
 
   /// The session of the file's server was put in place: the app starts again from its start screen to resume it
   final bool accountRestored;
+
+  /// What the server said of the file's session, when the file put one in place
+  final SettingsFileSignIn? signIn;
 
   Iterable<SettingsFileReportItem> where(SettingsFileOutcome outcome) => items.where((i) => i.outcome == outcome);
 }
@@ -309,7 +431,7 @@ class SettingsFileService {
           await _store.put(StoreKey.accessToken, server.accessToken!);
           accountRestored = true;
           sameServer = true;
-          items.add(SettingsFileReportItem(SettingsFileSection.account, server.url, SettingsFileOutcome.restored));
+          // Its line comes once the server said what it thinks of the session, below
         }
       } else if (!signedIn) {
         // No account in the file: the addresses fill in the sign in form (getServerUrl reads the endpoint), as after a
@@ -334,13 +456,77 @@ class SettingsFileService {
 
     items.addAll(await _restoreSettings(content, replace: replace, serverSettingsApply: sameServer));
     items.addAll(await _restoreStore(content, replace: replace));
+    SettingsFileSignIn? signIn;
     if (accountRestored) {
       items.addAll(await _restorePairing(content));
+      // The settings first: the proxy headers, the local address and this screen's name go with the first request
+      signIn = await _signIn(server!);
+      if (signIn.result == SettingsFileSignInResult.refused) {
+        accountRestored = false;
+        items.insert(
+          0,
+          SettingsFileReportItem(
+            SettingsFileSection.account,
+            server.url,
+            SettingsFileOutcome.skipped,
+            SettingsFileSkipReason.sessionRefused,
+          ),
+        );
+        items.insert(0, SettingsFileReportItem(SettingsFileSection.server, server.url, SettingsFileOutcome.restored));
+      } else {
+        items.insert(0, SettingsFileReportItem(SettingsFileSection.account, server.url, SettingsFileOutcome.restored));
+      }
     }
     items.addAll(await _restoreSources(content, replace: replace));
     items.addAll(await _restoreAlbums(content.backupAlbums, replace: replace));
 
-    return SettingsFileReport(List.unmodifiable(items), accountRestored: accountRestored);
+    return SettingsFileReport(List.unmodifiable(items), accountRestored: accountRestored, signIn: signIn);
+  }
+
+  /// Puts the session of the file to its server, as the start of the app does with a saved token: the API client
+  /// pointed at the server, the token given to the HTTP clients (a token in the Store alone is not sent: the session
+  /// travels as a cookie that a sign in sets), the session checked, the user loaded. The address the old install
+  /// used first, then the one the user typed, resolved again (the old one may be a local address of another network).
+  Future<SettingsFileSignIn> _signIn(SettingsFileServer server) async {
+    final link = _ref.read(settingsFileServerLinkProvider);
+    final token = server.accessToken!;
+    final candidates = <(String, bool)>[
+      if (server.endpoint != null) (server.endpoint!, false),
+      if (server.endpoint == null || !_sameAddress(server.endpoint!, server.url)) (server.url, true),
+    ];
+    var check = SettingsFileSessionCheck.unreachable;
+    for (final (address, resolve) in candidates) {
+      try {
+        await link.connect(address, resolve: resolve, token: token);
+      } catch (error) {
+        _log.info('The server of the settings file is not reachable at one of its addresses: ${error.runtimeType}');
+        continue;
+      }
+      check = await link.check();
+      if (check != SettingsFileSessionCheck.unreachable) {
+        break;
+      }
+    }
+
+    switch (check) {
+      case SettingsFileSessionCheck.refused:
+        _log.info('The server refused the session of the settings file');
+        await link.forget();
+        // The sign in form fills its address from the endpoint
+        if ((_store.tryGet(StoreKey.serverEndpoint) ?? '').isEmpty) {
+          await _store.put(StoreKey.serverEndpoint, server.url);
+        }
+        return const SettingsFileSignIn(SettingsFileSignInResult.refused);
+      case SettingsFileSessionCheck.unreachable:
+        return const SettingsFileSignIn(SettingsFileSignInResult.unreachable);
+      case SettingsFileSessionCheck.valid:
+        final user = await link.loadUser(token);
+        if (user == null) {
+          // Valid a moment ago, then no user: the start of the app loads it again
+          return const SettingsFileSignIn(SettingsFileSignInResult.unreachable);
+        }
+        return SettingsFileSignIn(SettingsFileSignInResult.signedIn, name: user.name, email: user.email);
+    }
   }
 
   Future<List<SettingsFileReportItem>> _restoreSettings(
