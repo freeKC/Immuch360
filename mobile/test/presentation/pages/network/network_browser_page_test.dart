@@ -480,6 +480,24 @@ void main() {
     expect(find.byType(NetworkMediaTile), findsNothing);
   });
 
+  testWidgets('tells a folder of live TV channels it does not play, instead of calling it empty', (tester) async {
+    share = _LiveShare(source, live: {'/': 3})..folders['/'] = [];
+    await pumpBrowser(tester);
+
+    expect(find.text('Live TV channels are not playable here yet'), findsOneWidget);
+    expect(find.text('This folder is empty'), findsNothing);
+  });
+
+  testWidgets('puts the line of the live TV channels above the other contents of the folder', (tester) async {
+    final live = _LiveShare(source, live: {'/': 2});
+    live.folders['/'] = [share.folder('/Holidays')];
+    share = live;
+    await pumpBrowser(tester);
+
+    expect(find.text('Live TV channels are not playable here yet'), findsOneWidget);
+    expect(find.text('Holidays'), findsOneWidget);
+  });
+
   testWidgets('tells while the folder is read', (tester) async {
     share.listGate = Completer<void>();
     await pumpBrowser(tester, settle: false);
@@ -1234,4 +1252,14 @@ class _Viewings implements SplatViewerService {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A share whose folders hold live streams it does not list, as a DLNA media server's TV folder
+class _LiveShare extends MemoryShare implements NetworkLiveStreams {
+  _LiveShare(super.source, {required this.live});
+
+  final Map<String, int> live;
+
+  @override
+  int liveStreamsIn(String path) => live[path] ?? 0;
 }

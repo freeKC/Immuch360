@@ -25,7 +25,10 @@
 // - the companion of a resource (the AV2 decoder serving its y4m) is let go once the controller loads another video
 //   or is disposed: [release];
 // - audio tracks, which the phones' flat players do not offer: listed here for the audio track button of the
-//   controls (desktop_audio_track_button.dart).
+//   controls (desktop_audio_track_button.dart);
+// - an audio track this libmpv does not decode (TrueHD in the app's builds, release 47): another track of the file
+//   plays, in the same language first, when the tracks are listed and again when mpv says a decoder failed to open or
+//   no track plays a while after the first frame; [audioSwitch] tells the page, which says so (film_audio_choice.dart).
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -33,6 +36,8 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
+import 'package:immich_mobile/domain/services/film_player/film_audio_choice.dart';
+import 'package:immich_mobile/domain/services/film_player/film_decoders.dart';
 import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:logging/logging.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -62,6 +67,25 @@ typedef DesktopVideoRelease = Future<void> Function(String resource);
 /// enough, mpv's own wait, where a link's rule would wait 2 to 4 s (1.6 to 3.3 s at 1.2x; plan of the AV2 videos,
 /// AD2's m2); one that does not keep up waits by the rule of a link, fewer and longer pauses
 int decoderResumeWaitMs(double? ratio) => ratio == null || ratio >= 1 ? 1000 : linkTargetMs(ratio, rebuffering: true);
+
+/// What a player did about an audio track it does not decode (MediaKitVideoPlayerController.audioSwitch)
+@immutable
+class FilmAudioSwitch {
+  const FilmAudioSwitch({required this.fromCodec, this.to, this.toIndex, this.atRunTime = false});
+
+  /// The codec of the track it would have played ("truehd")
+  final String fromCodec;
+
+  /// The track that plays instead, and its place among the audio tracks of the file; null when it decodes none
+  final DesktopAudioTrack? to;
+  final int? toIndex;
+
+  /// Found when mpv failed to open the decoder, not from the list of what it decodes
+  final bool atRunTime;
+
+  @override
+  String toString() => 'FilmAudioSwitch($fromCodec to ${to?.id ?? 'none'}${atRunTime ? ', at run time' : ''})';
+}
 
 /// The player that played or loaded last: the audio track button of the controls follows it. One video plays at a
 /// time on the computers, the viewer loading only the page on screen.
@@ -156,6 +180,30 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   final _subtitleTrack = ValueNotifier<String?>(null);
   final _externalSubtitles = ValueNotifier<List<VideoSubtitle>>(const []);
   final _decoding = ValueNotifier<({String? hwdec, VideoFrameSize? size})>((hwdec: null, size: null));
+  final _audioSwitch = ValueNotifier<FilmAudioSwitch?>(null);
+
+  /// The audio codecs this player does not decode (film_decoders.dart): TrueHD and MLP in the Quest's libmpv, nothing
+  /// on the computers. The tests set their own.
+  static Set<String> missingAudioCodecs = libmpvMissingAudioOn(
+    android: defaultTargetPlatform == TargetPlatform.android,
+  );
+
+  /// How long after the first frame a video whose audio track mpv dropped (a decoder that did not open) is taken for
+  /// one without sound
+  static const silentAudioAfter = Duration(seconds: 8);
+
+  /// The codecs whose decoder mpv failed to open during this video
+  final _failedAudioCodecs = <String>{};
+
+  /// The audio track asked last (mpv's own choice at the open, a menu, a pick of this controller): mpv plays none once
+  /// its decoder failed to open, and this tells which one it was
+  String? _wantedAudioId;
+
+  /// The tracks whose failure was handled since the last pick in the menu: a switch is made once per failure
+  final _handledAudioFailures = <String>{};
+  bool _audioChecked = false;
+  Timer? _silenceTimer;
+  StreamSubscription<String>? _audioFailures;
 
   /// The texture the view draws, null while the controller holds no player
   ValueListenable<VideoController?> get videoController => _videoController;
@@ -182,6 +230,17 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   /// How mpv decodes the video of the player held now (PlaybackEngine.hwdec) and the size of its frames, for the Video
   /// decoding line of the details (desktop_video_decoding_tile.dart); nothing while no player is held
   ValueListenable<({String? hwdec, VideoFrameSize? size})> get decoding => _decoding;
+
+  /// The last time this player played another audio track than the one it would have played, because it does not
+  /// decode that one, or found it decodes none of the file's tracks; null for none since the load
+  ValueListenable<FilmAudioSwitch?> get audioSwitch => _audioSwitch;
+
+  /// Whether this player decodes the audio codec [codec] (FFmpeg's name, as mpv lists the track): not one of
+  /// [missingAudioCodecs], nor one whose decoder failed to open during this video
+  bool decodesAudio(String codec) {
+    final canonical = canonicalAudioCodec(codec.trim().toLowerCase());
+    return !missingAudioCodecs.contains(canonical) && !_failedAudioCodecs.contains(canonical);
+  }
 
   /// The player held now, for the measurement harness and the tests
   @visibleForTesting
@@ -282,6 +341,12 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _resource = null;
     _resumeAt = null;
     _audioChosen = false;
+    _audioChecked = false;
+    _failedAudioCodecs.clear();
+    _handledAudioFailures.clear();
+    _wantedAudioId = null;
+    _audioSwitch.value = null;
+    _silenceTimer?.cancel();
     _subtitleChoice = null;
     _externalSubtitles.value = const [];
     _pausedWhenReady = start > Duration.zero;
@@ -343,6 +408,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _generation++;
     _ready = false;
     _restarted = false;
+    _silenceTimer?.cancel();
     _linkTimer?.cancel();
     _linkTimer = null;
     _readyTimer?.cancel();
@@ -424,14 +490,103 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   @override
   Future<void> disableTracks(NativeVideoTrackType type) async {}
 
-  /// Plays the audio track [id] of [audioTracks], and prefers its language for the next videos
+  /// Plays the audio track [id] of [audioTracks], and prefers its language for the next videos. A track this player
+  /// does not decode gives its place to another one, which [audioSwitch] tells.
   Future<void> selectAudioTrack(String id) async {
     final track = _audioTracks.value.where((track) => track.id == id).firstOrNull;
     if (track == null) {
       return;
     }
     preferredAudioLanguage = track.language ?? preferredAudioLanguage;
+    // A new pick: a failure of its decoder is handled again, and told again
+    _handledAudioFailures.clear();
+    final codec = track.codec;
+    if (codec != null && !decodesAudio(codec)) {
+      _audioSwitch.value = null;
+      _checkAudio(id, atRunTime: false);
+      return;
+    }
+    _wantedAudioId = id;
     await _engine?.setAudioTrack(id);
+  }
+
+  /// Plays another audio track when this player does not decode [wantedId] (null for the one mpv plays, else the
+  /// file's default), in the same language first (pickFilmAudio), and tells it in [audioSwitch], once per pick
+  void _checkAudio(String? wantedId, {required bool atRunTime}) {
+    final engine = _engine;
+    final tracks = _audioTracks.value;
+    if (engine == null || tracks.isEmpty) {
+      return;
+    }
+    final wanted = wantedId == null ? -1 : tracks.indexWhere((track) => track.id == wantedId);
+    final pick = pickFilmAudio(
+      [
+        for (final track in tracks)
+          FilmAudioTrack(codec: track.codec, language: track.language, isDefault: track.isDefault ?? false),
+      ],
+      wanted: wanted >= 0 ? wanted : null,
+      decodes: decodesAudio,
+    );
+    final from = pick.from;
+    if (pick.outcome == FilmAudioOutcome.kept || from == null) {
+      return;
+    }
+    final fromCodec = tracks[from].codec ?? '';
+    final index = pick.index;
+    final to = index == null ? null : tracks[index];
+    final told = _audioSwitch.value;
+    if (to != null) {
+      _wantedAudioId = to.id;
+      if (engine.audioTrack.value != to.id) {
+        unawaited(engine.setAudioTrack(to.id));
+      }
+    }
+    if (told != null && told.to?.id == to?.id && told.fromCodec == fromCodec) {
+      return;
+    }
+    _log.info(
+      to == null
+          ? 'No audio track of the video is decoded here ($fromCodec first)'
+          : 'Audio track ${to.id} (${to.codec}) plays: $fromCodec is not decoded here'
+                '${atRunTime ? ' (its decoder did not open)' : ''}',
+    );
+    _audioSwitch.value = FilmAudioSwitch(fromCodec: fromCodec, to: to, toIndex: index, atRunTime: atRunTime);
+  }
+
+  /// mpv could not open the decoder of [codec]: noted for this video, and when it was the track asked, another one
+  /// plays (once per pick)
+  void _onAudioDecoderFailure(String codec) {
+    final canonical = canonicalAudioCodec(codec.trim().toLowerCase());
+    _failedAudioCodecs.add(canonical);
+    final wanted = _wantedAudioId ?? _engine?.audioTrack.value;
+    final track = _audioTracks.value.where((track) => track.id == wanted).firstOrNull;
+    final trackCodec = track?.codec;
+    if (trackCodec != null && canonicalAudioCodec(trackCodec.trim().toLowerCase()) != canonical) {
+      // Another track than the one asked
+      return;
+    }
+    if (!_handledAudioFailures.add(wanted ?? '')) {
+      return;
+    }
+    _log.info('mpv could not open the decoder of the audio ($canonical)');
+    _checkAudio(wanted, atRunTime: true);
+  }
+
+  /// [silentAudioAfter] after the first frame: a file with audio tracks of which mpv plays none, the one asked having
+  /// been dropped (its decoder failed without a line of the log reaching here), is handled as that failure
+  void _checkSilence(int generation) {
+    final engine = _engine;
+    if (_disposed || _unloaded || generation != _generation || engine == null) {
+      return;
+    }
+    if (_audioTracks.value.isEmpty || engine.audioTrack.value != null) {
+      return;
+    }
+    final wanted = _audioTracks.value.where((track) => track.id == _wantedAudioId).firstOrNull;
+    final codec = wanted?.codec;
+    if (codec != null) {
+      _onAudioDecoderFailure(codec);
+    }
   }
 
   /// Shows the subtitle track [id] of [subtitleTracks], none for null
@@ -498,6 +653,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _disposed = true;
     _generation++;
     _readyTimer?.cancel();
+    _silenceTimer?.cancel();
     _positionTimer?.cancel();
     _linkTimer?.cancel();
     final engine = _engine;
@@ -690,6 +846,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.hwdec.addListener(_onDecoding);
     engine.videoSize.addListener(_onDecoding);
     _events = engine.events.listen(_onEvent);
+    _audioFailures = engine.audioDecoderFailures.listen(_onAudioDecoderFailure);
     _videoController.value = engine.videoController;
     _onDecoding();
     // Lost while another page held it, or before: no change comes to tell it
@@ -718,6 +875,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     engine.videoSize.removeListener(_onDecoding);
     unawaited(_events?.cancel());
     _events = null;
+    unawaited(_audioFailures?.cancel());
+    _audioFailures = null;
     _engine = null;
     _videoController.value = null;
     _buffering.value = false;
@@ -732,6 +891,8 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
         if (engine != null && !_unloaded) {
           _restoreSubtitle(engine);
         }
+        // Opened again (the pool took the player, a replay): mpv chose its own track again, which is checked again
+        _audioChecked = false;
       case PlayerEventKind.restarted:
         final seek = _seekWatch;
         if (seek != null && _restarted && !_unloaded) {
@@ -743,6 +904,9 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
           _restarted = true;
           _readyTimer?.cancel();
           _readyTimer = Timer(readyWithoutSize, () => _announceReady(force: true));
+          final generation = _generation;
+          _silenceTimer?.cancel();
+          _silenceTimer = Timer(silentAudioAfter, () => _checkSilence(generation));
           _checkReady();
         }
       case PlayerEventKind.failed:
@@ -899,17 +1063,38 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _audioTracks.value = tracks;
     // The language picked last, once per video, when the file has it and does not play it already
     final language = preferredAudioLanguage;
-    if (_audioChosen || tracks.length < 2 || language == null) {
-      return;
+    if (!_audioChosen && tracks.length >= 2 && language != null) {
+      _audioChosen = true;
+      final track = tracks.where((track) => track.language == language).firstOrNull;
+      if (track != null && track.id != _engine?.audioTrack.value) {
+        _wantedAudioId = track.id;
+        unawaited(_engine?.setAudioTrack(track.id));
+      }
     }
-    _audioChosen = true;
-    final track = tracks.where((track) => track.language == language).firstOrNull;
-    if (track != null && track.id != _engine?.audioTrack.value) {
-      unawaited(_engine?.setAudioTrack(track.id));
+    // Once per video, when the tracks are known: a track this player does not decode gives its place
+    if (!_audioChecked && tracks.isNotEmpty) {
+      _audioChecked = true;
+      _checkAudio(_wantedAudioId ?? _engine?.audioTrack.value, atRunTime: false);
     }
   }
 
-  void _onAudioTrack() => _audioTrack.value = _engine?.audioTrack.value;
+  void _onAudioTrack() {
+    final engine = _engine;
+    final id = engine?.audioTrack.value;
+    _audioTrack.value = id;
+    // None once mpv dropped a track whose decoder failed: the one asked stays known
+    if (id == null || engine == null) {
+      return;
+    }
+    // mpv's own choice told after the switch (its choice at the open, a file opened again): the track that replaced it
+    final codec = _audioTracks.value.where((track) => track.id == id).firstOrNull?.codec;
+    final replacement = _audioSwitch.value?.to;
+    if (_audioChecked && codec != null && !decodesAudio(codec) && replacement != null && replacement.id != id) {
+      unawaited(engine.setAudioTrack(replacement.id));
+      return;
+    }
+    _wantedAudioId = id;
+  }
 
   void _onSubtitleTracks() => _subtitleTracks.value = _engine?.subtitleTracks.value ?? const [];
 

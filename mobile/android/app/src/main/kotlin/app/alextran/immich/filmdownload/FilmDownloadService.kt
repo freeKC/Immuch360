@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.IBinder
@@ -16,13 +17,16 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
+import app.alextran.immich.MainActivity
 import app.alextran.immich.R
 
 /**
  * Keeps "Download" of a Plex film running while the screen is off or another app is in front: a foreground service of
- * type dataSync with an ongoing notification that tells the film, its progress and the time left, and offers Pause and
- * Cancel. It holds a Wi-Fi lock, so that the Wi-Fi does not doze under a long copy, and a partial wake lock, so that
- * the Dart copy keeps running.
+ * type dataSync with an ongoing notification that tells the film, its progress in percent and bytes, the speed and the
+ * time left, and offers Pause and Cancel; a tap opens Downloaded films in the app. It holds a Wi-Fi lock, so that the
+ * Wi-Fi does not doze under a long copy, and a partial wake lock, so that the Dart copy keeps running. While the copy
+ * waits for the Wi-Fi ("Download only on Wi-Fi" on mobile data) the service stays, with its notification, and lets
+ * both go: the change of network wakes the app, and the copy goes on by itself.
  *
  * The copy itself runs in the Flutter engine of the app, through the pinned client of the server with the token in its
  * header: the service never sees an address or the token. It never starts by itself ([START_NOT_STICKY]); it stops
@@ -61,7 +65,7 @@ class FilmDownloadService : Service() {
       stopSelf()
       return START_NOT_STICKY
     }
-    acquireLocks()
+    if (notice.waiting) releaseLocks() else acquireLocks()
     if (running !== this) {
       // The lab test of the downloads waits for this line (integration_test/lab_plex_download_test.dart)
       Log.i(TAG, "Foreground service started")
@@ -94,6 +98,7 @@ class FilmDownloadService : Service() {
 
   internal fun show(next: Notice) {
     notice = next
+    if (next.waiting) releaseLocks() else acquireLocks()
     try {
       NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, buildNotification())
     } catch (e: SecurityException) {
@@ -102,19 +107,10 @@ class FilmDownloadService : Service() {
     }
   }
 
-  private fun createChannel() {
-    val channel =
-      NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
-        .setName(notice.channelName)
-        .setShowBadge(false)
-        .build()
-    NotificationManagerCompat.from(this).createNotificationChannel(channel)
-  }
+  private fun createChannel() = createChannel(this, notice.channelName)
 
   private fun buildNotification(): Notification {
-    val open = packageManager.getLaunchIntentForPackage(packageName)?.let {
-      PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-    }
+    val open = openIntent(this, notice.openLink, 0)
     val pause =
       PendingIntent.getService(
         this,
@@ -134,6 +130,7 @@ class FilmDownloadService : Service() {
       .setSmallIcon(R.drawable.notification_icon)
       .setContentTitle(notice.title)
       .setContentText(notice.text)
+      .setSubText(notice.subText)
       .setProgress(PROGRESS_MAX, if (indeterminate) 0 else notice.progress.coerceIn(0, PROGRESS_MAX), indeterminate)
       .setOngoing(true)
       .setOnlyAlertOnce(true)
@@ -185,30 +182,25 @@ class FilmDownloadService : Service() {
     val progress: Int,
     val pauseLabel: String,
     val cancelLabel: String,
+    val subText: String? = null,
+    val waiting: Boolean = false,
+    val openLink: String? = FilmDownloadNoticeRules.LINK,
   ) {
     companion object {
-      private const val MAX_LENGTH = 200
-      private val CONTROL = Regex("[\\u0000-\\u001f\\u007f]+")
-
       val DEFAULT = Notice("Film downloads", "Downloading a film", "Immuch360", -1, "Pause", "Cancel")
 
       fun of(notice: FilmDownloadNotice): Notice =
         Notice(
-          channelName = clean(notice.channelName, DEFAULT.channelName),
-          title = clean(notice.title, DEFAULT.title),
-          text = clean(notice.text, DEFAULT.text),
+          channelName = FilmDownloadNoticeRules.clean(notice.channelName, DEFAULT.channelName),
+          title = FilmDownloadNoticeRules.clean(notice.title, DEFAULT.title),
+          text = FilmDownloadNoticeRules.clean(notice.text, DEFAULT.text),
           progress = notice.progress.toInt(),
-          pauseLabel = clean(notice.pauseLabel, DEFAULT.pauseLabel),
-          cancelLabel = clean(notice.cancelLabel, DEFAULT.cancelLabel),
+          pauseLabel = FilmDownloadNoticeRules.clean(notice.pauseLabel, DEFAULT.pauseLabel),
+          cancelLabel = FilmDownloadNoticeRules.clean(notice.cancelLabel, DEFAULT.cancelLabel),
+          subText = FilmDownloadNoticeRules.cleanOrNull(notice.subText),
+          waiting = notice.waiting,
+          openLink = FilmDownloadNoticeRules.safeLink(notice.openLink),
         )
-
-      private fun clean(value: String?, fallback: String): String {
-        val trimmed = value?.replace(CONTROL, " ")?.trim()
-        if (trimmed.isNullOrEmpty()) {
-          return fallback
-        }
-        return if (trimmed.length > MAX_LENGTH) trimmed.take(MAX_LENGTH - 1).trimEnd() + "…" else trimmed
-      }
     }
   }
 
@@ -216,6 +208,9 @@ class FilmDownloadService : Service() {
     private const val TAG = "FilmDownloadService"
     private const val CHANNEL_ID = "film_download"
     private const val NOTIFICATION_ID = 3602
+
+    /** The notifications of the end of the copies, one per film by its tag */
+    private const val END_NOTIFICATION_ID = 3603
     private const val PROGRESS_MAX = 1000
     private const val LOCK_TAG = "immuch360:filmdownload"
     private const val WAKE_LOCK_LIMIT_MS = 12L * 60 * 60 * 1000
@@ -250,6 +245,71 @@ class FilmDownloadService : Service() {
 
     fun update(notice: Notice) {
       running?.show(notice)
+    }
+
+    /** The channel of the film downloads, quiet: the progress and the end of the copies, never a sound */
+    internal fun createChannel(context: Context, name: String) {
+      val channel =
+        NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
+          .setName(name)
+          .setShowBadge(false)
+          .build()
+      NotificationManagerCompat.from(context).createNotificationChannel(channel)
+    }
+
+    /**
+     * Opens the app on [link] (Downloaded films, see [FilmDownloadNoticeRules.safeLink]) through the deep links of
+     * Flutter, or simply the app for a link it does not accept
+     */
+    internal fun openIntent(context: Context, link: String?, requestCode: Int): PendingIntent? {
+      val safe = FilmDownloadNoticeRules.safeLink(link)
+      val intent =
+        if (safe != null) {
+          Intent(Intent.ACTION_VIEW, Uri.parse(safe))
+            .setClass(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        } else {
+          context.packageManager.getLaunchIntentForPackage(context.packageName) ?: return null
+        }
+      return PendingIntent.getActivity(
+        context,
+        requestCode,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+      )
+    }
+
+    /** The notification of the end of a copy: Downloaded, or why it stopped, with Retry or Resume when given */
+    fun showEnd(context: Context, notice: FilmDownloadEndNotice) {
+      val tag = FilmDownloadNoticeRules.endTag(notice.filmId) ?: return
+      try {
+        createChannel(context, FilmDownloadNoticeRules.clean(notice.channelName, Notice.DEFAULT.channelName))
+        val code = tag.hashCode()
+        val builder =
+          NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.notification_icon)
+            .setContentTitle(FilmDownloadNoticeRules.clean(notice.title, "Immuch360"))
+            .setContentText(FilmDownloadNoticeRules.clean(notice.text, ""))
+            .setAutoCancel(true)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .setContentIntent(openIntent(context, notice.openLink, code))
+        val label = FilmDownloadNoticeRules.cleanOrNull(notice.actionLabel)
+        val action = FilmDownloadNoticeRules.safeLink(notice.actionLink)?.let { openIntent(context, it, code + 1) }
+        if (label != null && action != null) {
+          builder.addAction(0, label, action)
+        }
+        NotificationManagerCompat.from(context).notify(tag, END_NOTIFICATION_ID, builder.build())
+      } catch (e: SecurityException) {
+        // Notifications refused (Android 13 and later): Downloaded films tells the same
+        Log.i(TAG, "The end of a film download is not shown: ${e.message}")
+      }
+    }
+
+    fun cancelEnd(context: Context, filmId: String) {
+      val tag = FilmDownloadNoticeRules.endTag(filmId) ?: return
+      NotificationManagerCompat.from(context).cancel(tag, END_NOTIFICATION_ID)
     }
 
     fun stop(context: Context) {

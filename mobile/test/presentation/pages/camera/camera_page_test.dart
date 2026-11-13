@@ -124,10 +124,29 @@ void main() {
     expect(live.sources.last.$2.url, 'rtsp://$cameraHost:554/stream2');
   });
 
-  testWidgets('asks for the camera account when there is none', (tester) async {
-    await pump(tester, source: cameraSource(username: ''), accountPassword: null);
+  testWidgets('asks for the camera account when there is neither it nor the TP-Link password', (tester) async {
+    await pump(tester, source: cameraSource(username: ''), accountPassword: null, cloudPassword: null);
     expect(find.text('Add the camera account to see the live view.'), findsOneWidget);
     expect(live.sources, isEmpty);
+  });
+
+  testWidgets('without a camera account, plays the media port with the TP-Link password', (tester) async {
+    await pump(tester, source: cameraSource(username: ''), accountPassword: null);
+    await tester.pumpAndSettle();
+    final source = live.sources.single.$2;
+    expect((source.isHls, source.username, source.password), (true, null, null));
+  });
+
+  testWidgets('a battery camera plays its media port even with a camera account', (tester) async {
+    await pump(
+      tester,
+      source: cameraSource(
+        camera: const TapoCameraInfo(model: 'C410', power: 'BATTERY', zoneId: 'Europe/Brussels'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(live.sources.single.$2.isHls, isTrue);
+    expect(live.sources.single.$2.url, isNot(startsWith('rtsp:')));
   });
 
   testWidgets('plays the live playlist on iPhone and iPad, the recordings below', (tester) async {

@@ -2,7 +2,7 @@ name: immich_mobile
 description: Immich - selfhosted backup media file on mobile phone
 
 publish_to: 'none'
-version: 3.4.1+3030044
+version: 3.4.2+3030045
 
 environment:
   sdk: '>=3.12.0 <4.0.0'
@@ -187,22 +187,22 @@ dependency_overrides:
   media_kit:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.1.0
+      ref: v1.1.1
       path: packages/media_kit
   media_kit_libs_linux:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.1.0
+      ref: v1.1.1
       path: packages/media_kit_libs_linux
   media_kit_libs_windows_video:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.1.0
+      ref: v1.1.1
       path: packages/media_kit_libs_windows_video
   media_kit_video:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.1.0
+      ref: v1.1.1
       path: packages/media_kit_video
   # Copy of immich-app/native_video_player at cdf621bdb7edaf996e118a58a48f6441187d79c6, the git ref of the dependency
   # (MIT), with an audio and subtitle track API and the subtitles drawn on Android (see its IMMUCH360-NOTE.md)

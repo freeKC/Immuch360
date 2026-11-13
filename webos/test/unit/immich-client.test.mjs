@@ -8,6 +8,7 @@ import {APIClient} from '../../src/api/client.ts';
 import {ImmichRepository} from '../../src/api/ImmichRepository.ts';
 import {AuthMethod} from '../../src/api/types.ts';
 import {isShownAs360, resolveSphereView} from '../../src/immuch360/sphere/rules.ts';
+import {videoTurn, videoTurnTransform} from '../../src/immuch360/video/orientation.ts';
 
 const fixture = (name) => readFileSync(new URL(`../fixtures/immich/${name}`, import.meta.url), 'utf8');
 
@@ -16,6 +17,7 @@ const ROUTES = {
 	'/api/timeline/bucket?timeBucket=2024-06-01&visibility=timeline&withPartners=true&withStacked=true': 'timeline-bucket-2024-06-01.json',
 	'/api/assets/7f1c2b8e-0d4f-4d1e-9a51-2a5b7c3e9f10': 'asset-360.json',
 	'/api/assets/9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d': 'asset-vr180.json',
+	'/api/assets/3c2d1e0f-6a5b-4c7d-8e9f-0a1b2c3d4e5f': 'asset-video-upright.json',
 	'/api/server/about': 'server-about.json',
 };
 
@@ -89,6 +91,7 @@ describe('ImmichRepository with recorded responses', () => {
 			model: 'Insta360 X4',
 			projectionType: 'EQUIRECTANGULAR',
 			fileSize: 18734512,
+			orientation: null,
 			ownerId: '0b6a4e1c-3f2d-4c8b-9e7a-5d1f2a3b4c5d',
 			livePhotoVideoId: null,
 			isTrashed: false,
@@ -99,6 +102,17 @@ describe('ImmichRepository with recorded responses', () => {
 			coverage: 'full',
 			coverageGuess: 'full',
 		});
+	});
+
+	test('a phone video filmed upright: its rotation flag and stored size, and the turn a Samsung TV gives it', async () => {
+		// Immich v3: the asset's size is the turned one, the EXIF size the stored frames, the flag in orientation (issue 17)
+		const details = await repository().getAssetDetails('3c2d1e0f-6a5b-4c7d-8e9f-0a1b2c3d4e5f');
+		assert.equal(details.type, 'VIDEO');
+		assert.equal(details.orientation, '6');
+		assert.deepEqual([details.width, details.height], [1920, 1080]);
+		const shown = {orientation: details.orientation, width: details.width, height: details.height, boxWidth: 1920, boxHeight: 1080};
+		assert.equal(videoTurnTransform(videoTurn({...shown, frameWidth: 1920, frameHeight: 1080})), 'rotate(90deg) scale(0.5625)');
+		assert.equal(videoTurn({...shown, frameWidth: 1080, frameHeight: 1920}), null, 'a player that honours the flag');
 	});
 
 	test('a VR180 photo the server does not flag: shown as 360° once chosen, as a half sphere', async () => {

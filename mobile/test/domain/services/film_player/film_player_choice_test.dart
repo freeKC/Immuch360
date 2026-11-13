@@ -102,6 +102,19 @@ void main() {
       expect(choice.mpvMissing, ['audio truehd']);
     });
 
+    test('TrueHD with an AC3 or E-AC-3 track beside it (release 47): the device plays that track, no conversion', () {
+      final choice = choose(
+        const FilmStreams(container: 'mkv', videoCodec: 'hevc', audioCodec: 'truehd', otherAudioCodecs: ['ac3', 'dca']),
+      );
+      expect(choice.kind, FilmPlayerKind.device);
+      expect(choice.reason, FilmPlayerReason.deviceDecodesAll);
+      final dtsOnly = choose(
+        const FilmStreams(container: 'mkv', videoCodec: 'hevc', audioCodec: 'truehd', otherAudioCodecs: ['dca']),
+      );
+      expect(dtsOnly.kind, FilmPlayerKind.mpv, reason: 'the DTS track is decoded by mpv only');
+      expect(dtsOnly.deviceMissing, ['audio truehd']);
+    });
+
     test('TrueHD without the conversion: mpv anyway, the best of what is left', () {
       final choice = choose(
         const FilmStreams(container: 'mkv', videoCodec: 'hevc', audioCodec: 'truehd'),

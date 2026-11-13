@@ -22,6 +22,8 @@ class TapoCameraInfo {
     this.rtspPort = defaultRtspPort,
     this.mediaPort = defaultMediaPort,
     this.certificateSha256,
+    this.power,
+    this.deviceType,
     this.extraJson = const {},
   });
 
@@ -46,6 +48,12 @@ class TapoCameraInfo {
   /// Lower case hex SHA-256 of the camera's DER certificate, seen at the first login (trust on first use)
   final String? certificateSha256;
 
+  /// basic_info power of the camera (BATTERY, SOLAR, ...), which tells a camera without RTSP; null when unknown
+  final String? power;
+
+  /// The device type the camera told (SMART.IPCAMERA, SMART.TAPOHUB, ...), null when unknown
+  final String? deviceType;
+
   /// What a later build stored and this one does not know: the keys it does not know, and the values of its own keys
   /// that it cannot read (an enum value added later). Written back as they were, so that the later build finds them
   /// again; a value this build learns replaces them. Not part of the equality.
@@ -61,6 +69,8 @@ class TapoCameraInfo {
     'rtspPort',
     'mediaPort',
     'certificateSha256',
+    'power',
+    'deviceType',
   };
 
   Map<String, Object?> toJson() => {
@@ -74,6 +84,8 @@ class TapoCameraInfo {
     'rtspPort': rtspPort,
     'mediaPort': mediaPort,
     if (certificateSha256 != null) 'certificateSha256': certificateSha256,
+    if (power != null) 'power': power,
+    if (deviceType != null) 'deviceType': deviceType,
   };
 
   /// Enum values stored by a later build and unknown here read as null (and are kept in [extraJson]); anything that is
@@ -124,6 +136,8 @@ class TapoCameraInfo {
       // Kept as stored even when it does not read as a digest: such a pin matches no certificate, so the user is asked
       // rather than the first certificate seen being trusted again
       certificateSha256: text('certificateSha256'),
+      power: text('power'),
+      deviceType: text('deviceType'),
       extraJson: Map.unmodifiable(extra),
     );
   }
@@ -138,6 +152,8 @@ class TapoCameraInfo {
     int? rtspPort,
     int? mediaPort,
     String? certificateSha256,
+    String? power,
+    String? deviceType,
   }) => TapoCameraInfo(
     model: model ?? this.model,
     firmware: firmware ?? this.firmware,
@@ -148,6 +164,8 @@ class TapoCameraInfo {
     rtspPort: rtspPort ?? this.rtspPort,
     mediaPort: mediaPort ?? this.mediaPort,
     certificateSha256: certificateSha256 ?? this.certificateSha256,
+    power: power ?? this.power,
+    deviceType: deviceType ?? this.deviceType,
     extraJson: extraJson,
   );
 
@@ -162,11 +180,24 @@ class TapoCameraInfo {
       other.zoneId == zoneId &&
       other.rtspPort == rtspPort &&
       other.mediaPort == mediaPort &&
-      other.certificateSha256 == certificateSha256;
+      other.certificateSha256 == certificateSha256 &&
+      other.power == power &&
+      other.deviceType == deviceType;
 
   @override
-  int get hashCode =>
-      Object.hash(model, firmware, protocol, passcode, userName, zoneId, rtspPort, mediaPort, certificateSha256);
+  int get hashCode => Object.hash(
+    model,
+    firmware,
+    protocol,
+    passcode,
+    userName,
+    zoneId,
+    rtspPort,
+    mediaPort,
+    certificateSha256,
+    power,
+    deviceType,
+  );
 
   @override
   String toString() =>

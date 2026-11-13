@@ -136,6 +136,7 @@ describe('on a Samsung TV', () => {
 		const text = diagnosticsText(await collectDiagnostics(null));
 		expect(text).toContain('webOS: ?');
 		expect(text).toContain('Last errors: none');
+		expect(text).toContain('Video turn: none');
 		expect(text).not.toContain('on Samsung TVs');
 		expect(text).not.toContain('Tizen:');
 	});

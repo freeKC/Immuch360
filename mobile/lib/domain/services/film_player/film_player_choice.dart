@@ -60,6 +60,7 @@ class FilmStreams {
     this.videoProfile,
     this.audioCodec,
     this.audioProfile,
+    this.otherAudioCodecs = const [],
     this.subtitleCodec,
   });
 
@@ -72,6 +73,10 @@ class FilmStreams {
 
   /// Plex's profile of the audio ("ma" for DTS-HD Master Audio, "lc" for AAC), lower case
   final String? audioProfile;
+
+  /// The codecs of the file's other audio tracks: a player that decodes one of them plays the film with that track
+  /// (film_audio_choice.dart)
+  final List<String> otherAudioCodecs;
   final String? subtitleCodec;
 
   @override
@@ -82,15 +87,37 @@ class FilmStreams {
       other.videoProfile == videoProfile &&
       other.audioCodec == audioCodec &&
       other.audioProfile == audioProfile &&
+      _sameList(other.otherAudioCodecs, otherAudioCodecs) &&
       other.subtitleCodec == subtitleCodec;
 
   @override
-  int get hashCode => Object.hash(container, videoCodec, videoProfile, audioCodec, audioProfile, subtitleCodec);
+  int get hashCode => Object.hash(
+    container,
+    videoCodec,
+    videoProfile,
+    audioCodec,
+    audioProfile,
+    Object.hashAll(otherAudioCodecs),
+    subtitleCodec,
+  );
 
   @override
   String toString() =>
       'container $container, video $videoCodec${videoProfile == null ? '' : ' ($videoProfile)'}, audio $audioCodec'
-      '${audioProfile == null ? '' : ' ($audioProfile)'}, subtitles $subtitleCodec';
+      '${audioProfile == null ? '' : ' ($audioProfile)'}'
+      '${otherAudioCodecs.isEmpty ? '' : ' (others ${otherAudioCodecs.join(', ')})'}, subtitles $subtitleCodec';
+
+  static bool _sameList(List<String> a, List<String> b) {
+    if (a.length != b.length) {
+      return false;
+    }
+    for (var index = 0; index < a.length; index++) {
+      if (a[index] != b[index]) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 /// What a player decodes, in Plex's names. A codec that is not listed is not decoded; a null set means any.
@@ -105,7 +132,9 @@ class FilmDecoders {
   final Map<String, Set<String>> refusedVideoProfiles;
 
   /// What of [streams] this player does not decode, as "video msmpeg4v3", "audio dca", "container asf"; empty when it
-  /// decodes everything. The subtitles never count: a player that cannot draw them still plays the film.
+  /// decodes everything. The subtitles never count: a player that cannot draw them still plays the film. An audio
+  /// track it does not decode counts only when it decodes none of the other tracks either (it then plays one of those,
+  /// see film_audio_choice.dart).
   List<String> missing(FilmStreams streams) {
     final container = streams.container;
     final video = streams.videoCodec;
@@ -117,7 +146,8 @@ class FilmDecoders {
       if (video != null && !this.video.contains(video)) 'video $video',
       if (video != null && this.video.contains(video) && profile != null && (refused?.contains(profile) ?? false))
         'video $video ($profile)',
-      if (audio != null && !this.audio.contains(audio)) 'audio $audio',
+      if (audio != null && !this.audio.contains(audio) && !streams.otherAudioCodecs.any(this.audio.contains))
+        'audio $audio',
     ];
   }
 }

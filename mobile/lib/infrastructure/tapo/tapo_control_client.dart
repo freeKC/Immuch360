@@ -271,6 +271,8 @@ class TapoControlClient {
       model: learned.model,
       firmware: learned.firmware,
       zoneId: learned.zoneId,
+      power: learned.power,
+      deviceType: learned.deviceType,
     );
   }
 
@@ -426,12 +428,16 @@ class TapoControlClient {
       firmware: _text(basic['sw_version']) ?? '',
       mac: (_text(basic['mac']) ?? '').replaceAll(':', '-').toLowerCase(),
       zoneId: zoneId,
+      power: _text(basic['power']) ?? _text(basic['power_mode']),
+      deviceType: _text(basic['dev_type']) ?? _text(basic['device_type']),
     );
     _offsetText = offsetText;
     _info = _info.copyWith(
       model: details.model.isEmpty ? null : details.model,
       firmware: details.firmware.isEmpty ? null : details.firmware,
       zoneId: zoneId,
+      power: details.power,
+      deviceType: details.deviceType,
     );
     return details;
   }

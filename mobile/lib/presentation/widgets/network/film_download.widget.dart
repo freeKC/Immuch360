@@ -1,6 +1,7 @@
 // The pieces of "Download" of a Plex film on the screens (request 5 of the Plex films study): the sheet that starts a
-// copy (the size, the free room, Wi-Fi only, iPhone kept open), the entries of a menu, a button with its progress for
-// the film page of lot A2, the mark of a tile, and the tile of the Network shares page that opens the list.
+// copy (the size, the free room, Wi-Fi only, iPhone kept open), the question of the notifications at the first copy on
+// Android, the entries of a menu, a button with its progress for the film page of lot A2 (a plain button on a TV), the
+// mark of a tile, and the tile of the Network shares page that opens the list.
 
 import 'dart:async';
 
@@ -14,6 +15,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/network_capability_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/film_download/film_download_notification_permission.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
@@ -21,17 +23,11 @@ import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 
-/// Whether this screen copies films: never on a TV (see filmDownloadOffered). Its dependency is declared so that a
-/// scope that sets the TV mode (a test of a page holding the button) gets its own.
+/// Whether this screen copies films (see filmDownloadOffered): Android TV too since release 47
 final filmDownloadOfferedProvider = Provider.autoDispose<bool>((ref) {
   final platform = filmDownloadPlatform();
-  return filmDownloadOffered(
-    tvMode: ref.watch(tvModeProvider),
-    isAndroid: platform.isAndroid,
-    isIOS: platform.isIOS,
-    isDesktop: platform.isDesktop,
-  );
-}, dependencies: [tvModeProvider]);
+  return filmDownloadOffered(isAndroid: platform.isAndroid, isIOS: platform.isIOS, isDesktop: platform.isDesktop);
+});
 
 /// Whether [entry] of the share [sourceId] can be downloaded here: a video of a Plex server, on a screen that copies
 /// films. [watch] in a build method, read elsewhere (a menu being opened).
@@ -47,8 +43,14 @@ bool canDownloadFilm(WidgetRef ref, String sourceId, NetworkEntry entry, {bool w
   return filmDownloadSourceType(source?.type);
 }
 
-/// The line of a copy under way or stopped: its progress, why it waits or why it stopped
-String filmDownloadStatusText(BuildContext context, FilmDownload film, {double? bytesPerSecond}) {
+/// The line of a copy under way or stopped: its progress, why it waits (the Wi-Fi, the server between two tries:
+/// [waitingForServer]) or why it stopped
+String filmDownloadStatusText(
+  BuildContext context,
+  FilmDownload film, {
+  double? bytesPerSecond,
+  bool waitingForServer = false,
+}) {
   final t = context.t;
   final size = film.size;
   final progress = size == null
@@ -56,9 +58,12 @@ String filmDownloadStatusText(BuildContext context, FilmDownload film, {double? 
       : t.film_download_progress(done: formatBytes(film.received), whole: formatBytes(size));
   return switch (film.state) {
     FilmDownloadState.done => size == null ? t.film_downloaded : '${t.film_downloaded} · ${formatBytes(size)}',
+    FilmDownloadState.running when waitingForServer => '${t.film_download_waiting_server} · $progress',
     FilmDownloadState.running => [
       if (size != null && size > 0) '${(film.received * 100 / size).floor()} %',
       progress,
+      if (bytesPerSecond != null && bytesPerSecond > 0)
+        t.film_download_speed(bytes: formatBytes(bytesPerSecond.round())),
       if (size != null && bytesPerSecond != null && bytesPerSecond > 0)
         t.film_download_time_left(minutes: '${((size - film.received) / bytesPerSecond / 60).ceil().clamp(1, 99999)}'),
     ].join(' · '),
@@ -70,14 +75,24 @@ String filmDownloadStatusText(BuildContext context, FilmDownload film, {double? 
 }
 
 /// Why a copy stopped, in one sentence
-String filmDownloadFailureText(BuildContext context, FilmDownloadFailure? failure) => switch (failure) {
-  FilmDownloadFailure.forbidden => context.t.film_download_forbidden,
-  FilmDownloadFailure.noSpace => context.t.film_download_disk_full,
-  FilmDownloadFailure.unreachable => context.t.film_download_unreachable,
-  FilmDownloadFailure.gone => context.t.film_download_gone,
-  FilmDownloadFailure.unreadable => context.t.film_download_unreadable,
-  FilmDownloadFailure.failed || null => context.t.download_failed,
-};
+String filmDownloadFailureText(BuildContext context, FilmDownloadFailure? failure) =>
+    filmDownloadFailureMessage(context.t, failure);
+
+/// Whether the notification of a copy will show: granted, or granted at the question of the first copy on Android
+/// (filmDownloadAsksNotifications). Always true off Android (see filmDownloadNotificationPermissionProvider): iPhone
+/// and iPad ask at the start of the app, a computer shows none.
+Future<bool> filmDownloadNotificationsOn(WidgetRef ref) async {
+  final permission = ref.read(filmDownloadNotificationPermissionProvider);
+  if (await permission.granted()) {
+    return true;
+  }
+  final asks = filmDownloadAsksNotifications(
+    isAndroid: true,
+    denied: await permission.askable(),
+    askedBefore: permission.asked,
+  );
+  return asks && await permission.request();
+}
 
 /// What the sheet chose: start, and whether over mobile data this time
 typedef FilmDownloadChoice = ({bool mobileDataThisTime});
@@ -121,10 +136,25 @@ Future<void> startFilmDownload(BuildContext context, WidgetRef ref, NetworkEntry
   if (choice == null) {
     return;
   }
+  // The question of the notifications comes here, once the user chose to download: the copy then starts either way
+  final notificationsOn = await filmDownloadNotificationsOn(ref);
   await notifier.download(entry, title: title, mobileDataThisTime: choice.mobileDataThisTime);
-  if (context.mounted) {
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.t.film_download_started)));
+  if (!context.mounted) {
+    return;
   }
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  if (notificationsOn) {
+    messenger?.showSnackBar(SnackBar(content: Text(context.t.film_download_started)));
+    return;
+  }
+  final permission = ref.read(filmDownloadNotificationPermissionProvider);
+  messenger?.showSnackBar(
+    SnackBar(
+      key: const Key('film_download_notifications_off'),
+      content: Text(context.t.film_download_notifications_off),
+      action: SnackBarAction(label: context.t.settings, onPressed: () => unawaited(permission.openSettings())),
+    ),
+  );
 }
 
 /// The sheet before a copy: the size of the original file, the free room (a copy that does not fit cannot start), where
@@ -216,10 +246,17 @@ class _FilmDownloadSheetState extends State<FilmDownloadSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(t.cancel)),
+                // The remote of a TV and a keyboard start on Download, or on Cancel when the film does not fit
+                TextButton(
+                  key: const Key('film_download_sheet_cancel'),
+                  autofocus: !mayStart,
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(t.cancel),
+                ),
                 const SizedBox(width: 8),
                 FilledButton.icon(
                   key: const Key('film_download_start'),
+                  autofocus: mayStart,
                   onPressed: mayStart ? () => Navigator.of(context).pop((mobileDataThisTime: _mobileData)) : null,
                   icon: const Icon(Icons.download_rounded),
                   label: Text(t.download),
@@ -314,7 +351,8 @@ Future<void> confirmFilmCopyDeletion(BuildContext context, WidgetRef ref, FilmDo
 
 /// The Download button of the film page (lot A2 puts it in its row of actions): Download, then a ring with the
 /// percentage while the film is copied (a tap offers Pause or Resume and Cancel), then Downloaded with a check (a tap
-/// offers Delete the copy). Nothing where films are not copied (a TV, a share that is not Plex).
+/// offers Delete the copy). On a TV, whose remote does not hold the focus of a menu, the tap on a film already asked
+/// opens Downloaded films instead, where each copy has its buttons. Nothing for a share that is not Plex.
 class FilmDownloadButton extends ConsumerWidget {
   const FilmDownloadButton({super.key, required this.entry, this.title});
 
@@ -349,6 +387,14 @@ class FilmDownloadButton extends ConsumerWidget {
         : fraction == null
         ? t.downloading
         : '${(fraction * 100).floor()} %';
+    if (ref.watch(tvModeProvider)) {
+      return TextButton.icon(
+        key: const Key('film_download_button'),
+        onPressed: () => unawaited(context.pushRoute(const DownloadedFilmsRoute())),
+        icon: icon,
+        label: Text(label),
+      );
+    }
     return PopupMenuButton<void>(
       key: const Key('film_download_button'),
       tooltip: film.isDone ? t.film_downloaded : filmDownloadStatusText(context, film),
@@ -363,7 +409,7 @@ class FilmDownloadButton extends ConsumerWidget {
 }
 
 /// The Download action of a film page, for the row after Play of lot A2 (its filmPageActions): the button for the file
-/// [entry] of the film, null where films are not copied (a TV), for a share that is not Plex, and while the file is not
+/// [entry] of the film, null where films are not copied, for a share that is not Plex, and while the file is not
 /// known yet, so that the row keeps no empty place. [title] is the Plex title of the film. Called in a build method.
 Widget? filmDownloadPageAction(WidgetRef ref, NetworkEntry? entry, {String? title}) {
   if (entry == null || !canDownloadFilm(ref, entry.sourceId, entry)) {

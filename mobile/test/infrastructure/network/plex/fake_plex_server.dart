@@ -238,9 +238,10 @@ class FakePlexServer {
         response.write('<html><body>$status</body></html>');
         return await response.close();
       }
-      final item = RegExp(r'^/library/metadata/(\d+)$').firstMatch(uri.path);
+      final item = RegExp(r'^/library/metadata/(\d+(?:,\d+)*)$').firstMatch(uri.path);
       if (item != null && !listings.containsKey(full)) {
-        final body = metadata[item.group(1)] ?? items[item.group(1)] ?? _filmMetadata(item.group(1)!);
+        final keys = item.group(1)!;
+        final body = keys.contains(',') ? _filmMetadata(keys) : metadata[keys] ?? items[keys] ?? _filmMetadata(keys);
         if (body == null) {
           response.statusCode = 404;
           return await response.close();
@@ -326,12 +327,16 @@ class FakePlexServer {
     }
   }
 
-  /// What /library/metadata/{ratingKey} gives for a film of [films], null when none has [ratingKey]
-  Object? _filmMetadata(String ratingKey) {
+  /// What /library/metadata/{ratingKey} gives for a film of [films] (for several, their keys between commas), null when
+  /// none has [ratingKeys]
+  Object? _filmMetadata(String ratingKeys) {
+    // Several films at once: /library/metadata/1,3
+    final keys = ratingKeys.split(',');
     final found = [
-      for (final list in films.values)
-        for (final film in list)
-          if (film['ratingKey'] == ratingKey) film,
+      for (final key in keys)
+        for (final list in films.values)
+          for (final film in list)
+            if (film['ratingKey'] == key) film,
     ];
     return found.isEmpty
         ? null

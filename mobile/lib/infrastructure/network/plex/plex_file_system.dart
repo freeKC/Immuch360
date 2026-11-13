@@ -686,13 +686,15 @@ class PlexFileSystem
 
   /// The server's conversion of the film at [path] (plex_transcode.dart): the decision is asked first, and null comes
   /// back when the server says it cannot convert the film (its answer goes to the log). [mediaIndex] and [partIndex]
-  /// are the places of the file among the versions and files of the film (plexPartPlace).
+  /// are the places of the file among the versions and files of the film (plexPartPlace); [maxVideoBitrateKbps] caps the
+  /// video, lower than the default for a link slower than the file.
   Future<PlexConversion?> conversionOf(
     String path, {
     int mediaIndex = 0,
     int partIndex = 0,
     Duration offset = Duration.zero,
     List<String> audioCodecs = const ['eac3', 'ac3'],
+    int maxVideoBitrateKbps = PlexTranscodeRequest.defaultMaxVideoBitrateKbps,
   }) => _guard(
     () => _onServer(() async {
       final item = itemAt(path);
@@ -706,6 +708,7 @@ class PlexFileSystem
         partIndex: partIndex,
         offset: offset,
         audioCodecs: audioCodecs,
+        maxVideoBitrateKbps: maxVideoBitrateKbps,
       );
       final base = _endpoint.base;
       final decision = await _plex.getJson(
@@ -1638,9 +1641,15 @@ class PlexFileSystem
   }
 
   @override
-  Future<List<int?>> filmYears(PlexFilmListQuery query) => _guard(
+  Future<List<int?>> filmYears(PlexFilmListQuery query) async => [
+    for (final film in await _lightPass(query)) film.year,
+  ];
+
+  /// The light pass of [query]: the year and the titles of each of its films, in its order. The titles of the last
+  /// passes stay for the search without accents (filmsByFoldedTitle), by query without its title.
+  Future<List<({int? year, PlexFilmTitles titles})>> _lightPass(PlexFilmListQuery query) => _guard(
     () => _onServer(() async {
-      final years = <int?>[];
+      final films = <({int? year, PlexFilmTitles titles})>[];
       var start = 0;
       while (start < PlexFilmListQuery.maxFilms) {
         final page = await _plex.getJson(
@@ -1648,7 +1657,9 @@ class PlexFileSystem
           parsePlexYearsPage,
           headers: {'x-plex-container-start': '$start', 'x-plex-container-size': '${PlexFilmListQuery.yearsPageSize}'},
         );
-        years.addAll(page.years);
+        for (final (index, year) in page.years.indexed) {
+          films.add((year: year, titles: page.titles[index]));
+        }
         if (page.count <= 0) {
           break;
         }
@@ -1658,9 +1669,62 @@ class PlexFileSystem
           break;
         }
       }
-      return years;
+      if (query.searchedTitle == null) {
+        _lightTitles.remove(query);
+        _lightTitles[query] = [for (final film in films) film.titles];
+        while (_lightTitles.length > _lightTitlesKept) {
+          _lightTitles.remove(_lightTitles.keys.first);
+        }
+      }
+      return films;
     }),
   );
+
+  /// The titles of the films of the last light passes, by query (no title searched), the last one at the end
+  final Map<PlexFilmListQuery, List<PlexFilmTitles>> _lightTitles = {};
+
+  /// How many lists of titles stay (a filter or a sort is another list)
+  static const _lightTitlesKept = 4;
+
+  /// How many films one request of their items asks (/library/metadata/{key,key,...})
+  static const _itemsPerRequest = 50;
+
+  @override
+  Future<List<PlexFilm>> filmsByFoldedTitle(
+    PlexFilmListQuery query,
+    String text, {
+    Set<String> except = const {},
+    int limit = plexFoldedSearchLimit,
+  }) async {
+    final list = query.copyWith(clearTitle: true);
+    final titles = _lightTitles[list] ?? [for (final film in await _lightPass(list)) film.titles];
+    final keys = <String>[];
+    final seen = <String>{...except};
+    for (final film in titles) {
+      if (keys.length >= limit) {
+        break;
+      }
+      if (!seen.contains(film.ratingKey) && plexTitleMatches(film, text)) {
+        seen.add(film.ratingKey);
+        keys.add(film.ratingKey);
+      }
+    }
+    if (keys.isEmpty) {
+      return const [];
+    }
+    return _guard(
+      () => _onServer(() async {
+        final films = <PlexFilm>[];
+        for (var start = 0; start < keys.length; start += _itemsPerRequest) {
+          final batch = keys.skip(start).take(_itemsPerRequest).map(Uri.encodeComponent).join(',');
+          final page = await _plex.getJson(_endpoint.base.resolve('/library/metadata/$batch'), parsePlexFilmListPage);
+          films.addAll(page.films);
+        }
+        _recordFilms(query.sectionKey, films);
+        return films;
+      }),
+    );
+  }
 
   @override
   Future<PlexFilmListPage> filmsPage(PlexFilmListQuery query, {required int start, required int size}) => _guard(

@@ -11,8 +11,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
+import 'package:immich_mobile/infrastructure/tapo/rtsp_probe.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_control_client.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_live_hls.dart';
+import 'package:immich_mobile/infrastructure/tapo/tapo_preview_live.dart';
 import 'package:immich_mobile/platform/camera_live_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -30,6 +32,13 @@ DateTime cameraLocalTime(TapoCameraInfo? camera, DateTime instant) => TapoZone.o
 final tapoCameraHasCloudPasswordProvider = FutureProvider.autoDispose.family<bool, String>((ref, sourceId) async {
   ref.watch(networkSourceProvider(sourceId));
   return await ref.read(networkSourcesProvider.notifier).readPassword(sourceId) != null;
+});
+
+/// The password of the TP-Link account of a source id (the recordings, and the live view through the media port), null
+/// when none was given
+final tapoCameraCloudPasswordProvider = FutureProvider.autoDispose.family<String?, String>((ref, sourceId) async {
+  ref.watch(networkSourceProvider(sourceId));
+  return ref.read(networkSourcesProvider.notifier).readPassword(sourceId);
 });
 
 /// The password of the camera account of a source id (the live view), null when none was given
@@ -68,6 +77,8 @@ Future<void> saveLearnedTapoInfo(Ref ref, String sourceId, TapoCameraInfo learne
     userName: learned.userName,
     zoneId: learned.zoneId,
     certificateSha256: learned.certificateSha256,
+    power: learned.power,
+    deviceType: learned.deviceType,
   );
   if (camera == source.camera) {
     return;
@@ -199,6 +210,27 @@ final cameraLiveHlsProvider = Provider<LiveHlsStarter>((ref) {
     path: path,
     user: user,
     password: password,
+    withAudio: withAudio,
+  );
+});
+
+/// Makes the live playlist of a camera from its media port (the password of the TP-Link account), for the cameras
+/// without RTSP; the same starter as [cameraLiveHlsProvider], the path telling the main or the sub stream
+final cameraPreviewHlsProvider = Provider<LiveHlsStarter>((ref) {
+  final bridge = ref.watch(mediaBridgeProvider);
+  return ({
+    required String host,
+    required int port,
+    required String path,
+    required String user,
+    required String password,
+    required bool withAudio,
+  }) => TapoPreviewLiveHls(
+    bridge: bridge,
+    host: host,
+    port: port,
+    password: password,
+    hd: path == tapoRtspHdPath,
     withAudio: withAudio,
   );
 });

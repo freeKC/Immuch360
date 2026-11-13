@@ -22,6 +22,7 @@ void main() {
         videoCodec: 'hevc',
         videoProfile: 'main 10',
         audioCodec: 'ac3',
+        otherAudioCodecs: ['truehd'],
         subtitleCodec: 'srt',
       ),
     );

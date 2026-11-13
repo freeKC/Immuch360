@@ -109,6 +109,14 @@ class _PlexShare extends MemoryShare implements PlexFilmsSource {
   }
 
   @override
+  Future<List<PlexFilm>> filmsByFoldedTitle(
+    PlexFilmListQuery query,
+    String text, {
+    Set<String> except = const {},
+    int limit = plexFoldedSearchLimit,
+  }) async => const [];
+
+  @override
   Future<List<({PlexSection section, String folderPath})>> filmLibraries() async => [
     (section: movies, folderPath: '/Movies'),
   ];
@@ -304,7 +312,7 @@ void main() {
     expect(find.byIcon(Icons.filter_alt_rounded), findsOneWidget);
   });
 
-  testWidgets('the menu of a film offers Download and Play on on a phone, neither on a TV', (tester) async {
+  testWidgets('the menu of a film offers Download and Play on on a phone', (tester) async {
     final root = Directory.systemTemp.createTempSync('films_menu_');
     addTearDown(() => root.deleteSync(recursive: true));
     final films = FakeFilmEnvironment(root, FakeDownloadShare({}));
@@ -331,12 +339,12 @@ void main() {
     expect(find.text('Download to this device'), findsOneWidget);
   });
 
-  testWidgets('the menu of a film on a TV has Play and no Download nor Play on', (tester) async {
+  testWidgets('the menu of a film on a TV has Play and Download (release 47), no Play on', (tester) async {
     await pumpFilms(tester, tvMode: true);
     await tester.longPress(tileOf('Ten Rooms'));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('plex_film_menu_play')), findsOneWidget);
-    expect(find.byKey(ValueKey('plex_film_menu_${Icons.download_rounded.codePoint}')), findsNothing);
+    expect(find.byKey(ValueKey('plex_film_menu_${Icons.download_rounded.codePoint}')), findsOneWidget);
     expect(find.byKey(ValueKey('plex_film_menu_${Icons.cast_rounded.codePoint}')), findsNothing);
   });
 

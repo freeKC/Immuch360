@@ -301,6 +301,7 @@ export class ImmichRepository implements PhotoRepository {
 			model: a.exifInfo?.model ?? null,
 			projectionType: a.exifInfo?.projectionType ?? null,
 			fileSize: a.exifInfo?.fileSizeInByte ?? null,
+			orientation: a.exifInfo?.orientation ?? null,
 			ownerId: a.ownerId ?? null,
 			livePhotoVideoId: a.livePhotoVideoId ?? null,
 			isTrashed: a.isTrashed ?? false,

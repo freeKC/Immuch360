@@ -29,6 +29,7 @@ const cameraLiveH265 = 'H.265';
 const cameraLiveRefused = 'the camera refused the account';
 const cameraLiveUnreachable = 'the camera does not answer';
 const cameraLiveBusy = 'the camera serves enough viewers already';
+const cameraLiveMediaLocked = 'the media port refused the TP-Link password';
 
 class CameraLiveHlsController {
   CameraLiveHlsController({
@@ -36,6 +37,7 @@ class CameraLiveHlsController {
     required this.api,
     required this.startStream,
     required this.onEvent,
+    this.onFailure,
     this.retryDelays = defaultRetryDelays,
     this.firstFrameTimeout = const Duration(seconds: 25),
   });
@@ -57,6 +59,9 @@ class CameraLiveHlsController {
 
   /// Called at each change of the state the camera page shows
   final void Function(CameraLiveEvent event) onEvent;
+
+  /// Called with what made an open fail (a TapoLiveException tells the step), for the diagnostics line
+  final void Function(Object error)? onFailure;
   final List<Duration> retryDelays;
 
   /// Longest wait for the first frame once the player has the playlist
@@ -185,6 +190,7 @@ class CameraLiveHlsController {
         return;
       }
       _stream = null;
+      onFailure?.call(error);
       final (reason, retry) = _reasonOf(error);
       _log.warning('The live stream did not start: $reason');
       await _failed(reason, retry: retry);
@@ -258,6 +264,8 @@ class CameraLiveHlsController {
     }
     return switch (error.kind) {
       TapoErrorKind.wrongPassword => (cameraLiveRefused, false),
+      // Each refused try counts towards the lockout of the camera
+      TapoErrorKind.mediaLocked => (cameraLiveMediaLocked, false),
       TapoErrorKind.h265 => (cameraLiveH265, false),
       TapoErrorKind.busy => (cameraLiveBusy, true),
       TapoErrorKind.unreachable => (

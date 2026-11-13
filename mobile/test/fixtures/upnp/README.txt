@@ -12,3 +12,8 @@ browse_sample.xml: the Browse answer of the design document (minidlna style, han
 
 Hand-written after the layout of real descriptions, to be replaced by captures: plex_DeviceDescription.xml,
 jellyfin_description.xml (media server as an embedded device), urlbase_description.xml, no_content_directory.xml.
+
+freebox_browse_tv.xml: the Browse answer of the TV folder of a Freebox Server (live TV channels), hand-written after
+the layout publicly described for it, to be replaced by a capture: a sub-folder, three channels of class
+videoBroadcast and one of class videoItem whose only resources are RTSP addresses (rtsp-rtp-udp, MPEG-TS), and a radio
+(audioBroadcast). Channel names and logo paths are made up.

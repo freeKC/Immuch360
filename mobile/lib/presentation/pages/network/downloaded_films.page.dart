@@ -8,6 +8,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
@@ -15,7 +16,9 @@ import 'package:immich_mobile/utils/bytes_units.dart';
 /// "Downloaded films": the films copied to this device from a Plex server, and the copies under way, with the room
 /// they take (request 5 of the Plex films study). A whole copy plays from this device in the usual player, without
 /// the server; each one can be deleted, or all of them. The copies under way pause, resume and cancel here, and
-/// "Download only on Wi-Fi" (on by default) sits on top, but on the computers, which tell no mobile network.
+/// "Download only on Wi-Fi" (on by default) sits on top, but on the computers, which tell no mobile network. On a TV
+/// (release 47) the remote starts on the switch and moves through the buttons of each copy; the notifications open this
+/// page.
 @RoutePage()
 class DownloadedFilmsPage extends ConsumerWidget {
   const DownloadedFilmsPage({super.key});
@@ -26,6 +29,7 @@ class DownloadedFilmsPage extends ConsumerWidget {
     final notifier = ref.read(filmDownloadsProvider.notifier);
     final t = context.t;
     final films = downloads.films.reversed.toList();
+    final tvMode = ref.watch(tvModeProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(t.films_downloaded),
@@ -48,6 +52,8 @@ class DownloadedFilmsPage extends ConsumerWidget {
             if (!CurrentPlatform.isDesktop)
               SwitchListTile(
                 key: const Key('downloaded_films_wifi_only'),
+                // The first stop of the remote on a TV
+                autofocus: tvMode,
                 value: downloads.wifiOnly,
                 onChanged: (value) => unawaited(notifier.setWifiOnly(value)),
                 title: Text(t.film_download_wifi_only),
@@ -77,7 +83,12 @@ class DownloadedFilmsPage extends ConsumerWidget {
                 ),
               )
             else
-              for (final film in films) _FilmTile(film: film, bytesPerSecond: downloads.bytesPerSecond),
+              for (final film in films)
+                _FilmTile(
+                  film: film,
+                  bytesPerSecond: downloads.bytesPerSecond,
+                  waitingForServer: downloads.waitingForServer,
+                ),
           ],
         ),
       ),
@@ -106,10 +117,11 @@ class DownloadedFilmsPage extends ConsumerWidget {
 }
 
 class _FilmTile extends ConsumerWidget {
-  const _FilmTile({required this.film, required this.bytesPerSecond});
+  const _FilmTile({required this.film, required this.bytesPerSecond, required this.waitingForServer});
 
   final FilmDownload film;
   final double? bytesPerSecond;
+  final bool waitingForServer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -158,7 +170,12 @@ class _FilmTile extends ConsumerWidget {
       leading: leading,
       title: Text(film.shownTitle, maxLines: 2, overflow: TextOverflow.ellipsis),
       subtitle: Text(
-        filmDownloadStatusText(context, film, bytesPerSecond: running ? bytesPerSecond : null),
+        filmDownloadStatusText(
+          context,
+          film,
+          bytesPerSecond: running ? bytesPerSecond : null,
+          waitingForServer: running && waitingForServer,
+        ),
         style: film.state == FilmDownloadState.failed ? TextStyle(color: context.colorScheme.error) : null,
       ),
       trailing: Row(mainAxisSize: MainAxisSize.min, children: actions),

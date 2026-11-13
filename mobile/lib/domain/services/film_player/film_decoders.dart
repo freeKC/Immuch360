@@ -8,6 +8,11 @@
 // v1.1.7 (default-arm64-v8a.jar, read from its configure line on 11 November 2026: --disable-decoders, then the list
 // below). It has DTS (dca), DivX 3 (msmpeg4v3), WMA and WMV, AC-3 and E-AC-3, but neither TrueHD (mlp, truehd) nor
 // VC-1, nor the PGS subtitles of Blu-ray discs.
+//
+// The libmpv of the computers (immuch360/libmpv-builds libmpv-windows-20261113-2 and libmpv-macos-20261113-2, through
+// media_kit_360 v1.1.1 and the macOS Package.swift) decodes Dolby TrueHD and MLP, and PGS subtitles; the 20261110-1
+// builds had neither TrueHD nor MLP (and Windows no PGS). Linux takes the system's libmpv, whose FFmpeg has every
+// decoder. iOS plays with AVFoundation.
 
 import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
 
@@ -168,3 +173,28 @@ const mpvFilmDecoders = FilmDecoders(
     'ra_288',
   },
 );
+
+/// The audio codecs the libmpv of the Quest build (media-kit v1.1.7, re-hosted) does not decode. A track in one of them
+/// is not played by mpv; any other codec is left to mpv, which says at run time when it cannot. The computers' builds
+/// decode them since the 20261113-2 releases.
+const libmpvMissingAudioCodecs = {'truehd', 'mlp'};
+
+/// What libmpv does not decode of the audio on this system: TrueHD and MLP on the Quest, nothing on the computers
+Set<String> libmpvMissingAudioOn({required bool android}) => android ? libmpvMissingAudioCodecs : const {};
+
+/// The audio AVFoundation plays on iPhone and iPad (no DTS, no TrueHD)
+const iosAudioCodecs = {
+  'aac',
+  'ac3',
+  'eac3',
+  'mp3',
+  'alac',
+  'flac',
+  'opus',
+  'pcm',
+  'pcm_s16le',
+  'pcm_s24le',
+  'pcm_s16be',
+  'pcm_s24be',
+  'lpcm',
+};

@@ -15,9 +15,16 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 /// pauses or ends. [loading] shows it too, before the native player is ready. With the [link] of the player (see
 /// VideoLinkView): what the share brings against what the video needs, that it will pause now and then when the share
 /// is too slow for it, and that the share stopped sending, the video playing on by itself once it answers. Where the
-/// player tells nothing of its link (iOS), that nothing played for a minute.
+/// player tells nothing of its link (iOS), that nothing played for a minute. A link too slow for the video gets the
+/// buttons of [slowActions] under its words (a lighter version, the server's conversion); the rest takes no touch.
 class NetworkVideoBufferingIndicator extends ConsumerStatefulWidget {
-  const NetworkVideoBufferingIndicator({super.key, required this.playerKey, this.loading = false, this.link});
+  const NetworkVideoBufferingIndicator({
+    super.key,
+    required this.playerKey,
+    this.loading = false,
+    this.link,
+    this.slowActions,
+  });
 
   /// How long the position may stay still while the video plays before the indicator shows
   static const stallDelay = Duration(milliseconds: 700);
@@ -28,6 +35,9 @@ class NetworkVideoBufferingIndicator extends ConsumerStatefulWidget {
   final String playerKey;
   final bool loading;
   final ValueListenable<VideoLinkView?>? link;
+
+  /// What the page offers while the link is slower than the video, from what it measured
+  final List<VideoSlowAction> Function(VideoLinkView view)? slowActions;
 
   @override
   ConsumerState<NetworkVideoBufferingIndicator> createState() => _NetworkVideoBufferingIndicatorState();
@@ -139,6 +149,14 @@ class _NetworkVideoBufferingIndicatorState extends ConsumerState<NetworkVideoBuf
     }
     final t = context.t;
     final locale = context.locale.toLanguageTag();
+    final slow =
+        !dead &&
+        !stalled &&
+        view != null &&
+        view.slow &&
+        view.bitsPerSecond != null &&
+        view.neededBitsPerSecond != null;
+    final actions = slow ? widget.slowActions?.call(view) ?? const <VideoSlowAction>[] : const <VideoSlowAction>[];
     final lines = <String>[
       if (dead) ...[
         t.video_link_stopped_share,
@@ -149,25 +167,28 @@ class _NetworkVideoBufferingIndicatorState extends ConsumerState<NetworkVideoBuf
       ] else
         '${t.video_buffering_simple}…',
       if (!dead && !stalled) ?videoLoadingText(view, t, locale: locale),
-      if (!dead &&
-          !stalled &&
-          view != null &&
-          view.slow &&
-          view.bitsPerSecond != null &&
-          view.neededBitsPerSecond != null)
+      if (slow)
         t.video_slow_share(
           got: formatBitRate(view.bitsPerSecond!, t, locale: locale),
           need: formatBitRate(view.neededBitsPerSecond!, t, locale: locale),
         ),
     ];
-    return Center(
-      child: DecoratedBox(
-        key: const Key('network_video_buffering'),
-        decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(12))),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
+    return IgnorePointer(
+      ignoring: actions.isEmpty,
+      child: Center(child: _decorated(lines, actions)),
+    );
+  }
+
+  Widget _decorated(List<String> lines, List<VideoSlowAction> actions) {
+    return DecoratedBox(
+      key: const Key('network_video_buffering'),
+      decoration: const BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.all(Radius.circular(12))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          // A phone held sideways leaves little height for the words and the buttons
+          child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -182,6 +203,22 @@ class _NetworkVideoBufferingIndicatorState extends ConsumerState<NetworkVideoBuf
                         : const TextStyle(color: Colors.white70),
                   ),
                 ],
+                if (actions.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      for (final action in actions)
+                        TextButton(
+                          key: action.key,
+                          style: TextButton.styleFrom(foregroundColor: Colors.white),
+                          onPressed: action.onPressed,
+                          child: Text(action.label, textAlign: TextAlign.center),
+                        ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -190,3 +227,6 @@ class _NetworkVideoBufferingIndicatorState extends ConsumerState<NetworkVideoBuf
     );
   }
 }
+
+/// A button the waiting state offers while the link is slower than the video
+typedef VideoSlowAction = ({Key key, String label, VoidCallback onPressed});

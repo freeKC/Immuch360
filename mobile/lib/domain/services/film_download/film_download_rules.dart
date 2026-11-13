@@ -7,13 +7,18 @@ import 'dart:io';
 import 'package:immich_mobile/platform/connectivity_api.g.dart';
 
 /// The screens that copy films to the device: phones, tablets, the Meta Quest window (a film for the plane), computers,
-/// and iPhone and iPad while the app stays open. Never a TV: it is a viewer of the shares.
-bool filmDownloadOffered({
-  required bool tvMode,
-  required bool isAndroid,
-  required bool isIOS,
-  required bool isDesktop,
-}) => !tvMode && (isAndroid || isIOS || isDesktop);
+/// iPhone and iPad while the app stays open, and Android TV since release 47 (FreeKC's request of 12 November 2026):
+/// a TV often has little room, so the sheet tells the size of the film and the free room first and refuses a film that
+/// does not fit (filmDownloadRoom).
+bool filmDownloadOffered({required bool isAndroid, required bool isIOS, required bool isDesktop}) =>
+    isAndroid || isIOS || isDesktop;
+
+/// Whether the first copy asks the permission of the notifications (Android 13 and later grant it only when asked):
+/// on Android, while it was neither given nor refused for good, once in a run of the app. Refused, the copy runs all
+/// the same, its progress in Downloaded films. iPhone and iPad ask at the start of the app
+/// (flutter_local_notifications); a computer shows none.
+bool filmDownloadAsksNotifications({required bool isAndroid, required bool denied, required bool askedBefore}) =>
+    isAndroid && denied && !askedBefore;
 
 /// iPhone and iPad suspend the app once it leaves the screen, and with it the copy, which goes on when the app comes
 /// back: the sheet says to keep the app open. Decision 4 a: no background session of iOS, which would carry the token

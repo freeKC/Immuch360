@@ -18,6 +18,7 @@ import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/desktop/platform/desktop_overrides.dart';
 import 'package:immich_mobile/domain/services/background_worker.service.dart';
+import 'package:immich_mobile/domain/services/film_download/film_download_link.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -36,6 +37,7 @@ import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
+import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_player.provider.dart';
@@ -246,7 +248,19 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         android: AndroidInitializationSettings('@drawable/notification_icon'),
         iOS: DarwinInitializationSettings(),
       ),
+      onDidReceiveNotificationResponse: _onNotificationTapped,
     );
+  }
+
+  /// A tap on the notification of the end of a film download on iPhone and iPad (its payload, film_download_link.dart)
+  /// opens Downloaded films; the other notifications of the plugin carry no such payload and keep doing nothing
+  void _onNotificationTapped(NotificationResponse response) {
+    final payload = response.payload;
+    final link = payload == null ? null : parseFilmDownloadLink(Uri.tryParse(payload) ?? Uri());
+    if (link == null || !mounted) {
+      return;
+    }
+    unawaited(ref.read(appRouterProvider).push(const DownloadedFilmsRoute()));
   }
 
   Future<void> _setNavigationBarColor() async {
@@ -281,6 +295,13 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
         return DeepLink.none;
       }
       route = address == null ? null : ConnectScreenRoute(linkedAddress: address);
+    } else if (parseFilmDownloadLink(deepLink.uri) case final link?) {
+      // The notification of a film download: Downloaded films, and Retry or Resume set the film going again
+      final filmId = link.filmId;
+      if (filmId != null) {
+        unawaited(ref.read(filmDownloadsProvider.notifier).resumeFromNotification(filmId));
+      }
+      route = const DownloadedFilmsRoute();
     } else if (deepLink.uri.scheme == "immich") {
       route = await deepLinkHandler.handleScheme(deepLink, ref);
     } else if (deepLink.uri.host == "my.immich.app") {

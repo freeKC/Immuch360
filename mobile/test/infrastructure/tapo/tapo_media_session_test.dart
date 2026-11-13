@@ -1,10 +1,12 @@
 // The media port client against the fake Streamd on 127.0.0.1: the Digest login on a second connection, the parts
 // decrypted with the key exchange, the acknowledgements at 25 and 50, finished, do stop; the picture of a recording on
-// a connection of its own; the busy answers; a refused password told as the videos being locked.
+// a connection of its own; the busy answers; a refused password told as the videos being locked; the C410 that
+// announces SHA-256 and takes MD5 (one MD5 try after a refused SHA-256, on a fresh challenge).
 
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_media_session.dart';
 
@@ -79,12 +81,44 @@ void main() {
     await session.close();
   });
 
-  test('tells a refused password as videos locked to this password', () async {
+  test('tells a refused password as videos locked to this password, after one MD5 try', () async {
     streamd.refusePassword = true;
     await expectLater(
       TapoMediaSession.open('127.0.0.1', _password, port: streamd.port),
-      throwsA(isA<TapoCameraException>().having((e) => e.kind, 'kind', TapoErrorKind.mediaLocked)),
+      throwsA(
+        isA<TapoCameraException>()
+            .having((e) => e.kind, 'kind', TapoErrorKind.mediaLocked)
+            .having((e) => e.code, 'code', 401),
+      ),
     );
+    // Challenge and SHA-256, then a fresh challenge and MD5: never more
+    expect(streamd.connections, 4);
+  });
+
+  test('takes the SHA-256 of the password first when the camera announces encrypt_type 3', () async {
+    final session = await TapoMediaSession.open('127.0.0.1', _password, port: streamd.port);
+    expect(session.passwordHash, TapoPasscodeHash.sha256);
+    expect(streamd.connections, 2);
+    await session.close();
+  });
+
+  test('logs in with MD5 on a camera that announces SHA-256 but refuses it (C410 1.3.5)', () async {
+    streamd.md5Only = true;
+    final session = await TapoMediaSession.open('127.0.0.1', _password, port: streamd.port);
+    expect(session.passwordHash, TapoPasscodeHash.md5);
+    expect(streamd.connections, 4);
+    // The parts decrypt with the MD5 form too
+    final received = BytesBuilder();
+    final finished = await tapoDownloadClip(
+      session,
+      start: 1000,
+      end: 1002,
+      playerId: _player,
+      onData: (part) => received.add(part.body),
+    );
+    expect(finished, isTrue);
+    expect(received.length, greaterThan(0));
+    await session.close();
   });
 
   test('tells parts that do not decrypt as videos locked to another password', () async {

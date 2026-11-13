@@ -82,6 +82,13 @@ abstract interface class NetworkRangeReads {
   bool? get supportsRanges;
 }
 
+/// A share whose folders may hold live streams it does not list (the TV channels of a DLNA media server), so that the
+/// browser tells why such a folder shows nothing instead of calling it empty
+abstract interface class NetworkLiveStreams {
+  /// The live streams of the folder at [path] in its last listing, 0 for a folder not listed yet
+  int liveStreamsIn(String path);
+}
+
 /// A share whose server gives a whole file for a copy on this device (a Plex server, request 5 of the Plex films study:
 /// "Download"), as a stream from an offset so that a copy cut short goes on where it stopped
 abstract interface class NetworkFileDownloads {

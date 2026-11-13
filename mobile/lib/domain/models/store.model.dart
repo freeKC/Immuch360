@@ -164,6 +164,11 @@ enum StoreKey<T> {
   /// numbers of the settings file lot of release 46
   pendingBackupAlbums<String>._(5480),
 
+  /// The version picked on the page of a Plex film that has several (release 47): a JSON map from
+  /// `<source id>:<ratingKey>` to the id of the Plex Media picked, the latest last. Kept on this device only (the
+  /// default depends on the screen). 5470 and on are the numbers of the Plex audio and versions lot of release 47
+  plexFilmVersions<String>._(5470),
+
   /// The invitation to rate the app: its opens, viewings, crashes and asks, one JSON object (RateAppState of
   /// lib/domain/models/rate_app.dart). Sign out keeps it, an uninstall removes it
   rateAppState<String>._(5052),

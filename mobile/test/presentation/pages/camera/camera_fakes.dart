@@ -195,9 +195,12 @@ class FakeCameraLiveApi extends Mock implements CameraLiveApi {
 /// The live playlist of the iPhone and iPad live view, held by the test: [ready] gives its address, [refuse] fails
 /// its start, [lose] ends it
 class FakeLiveHls implements LiveHlsStream {
-  FakeLiveHls(this.path, this.user, this.password, {required this.withAudio, this.hasAudio = true});
+  FakeLiveHls(this.path, this.user, this.password, {required this.withAudio, this.hasAudio = true, this.port = 0});
 
   final String path;
+
+  /// The port asked for: RTSP, or the media port
+  final int port;
   final String user;
   final String password;
   final bool withAudio;
@@ -246,7 +249,7 @@ class FakeLiveHlsStarter {
     required String password,
     required bool withAudio,
   }) {
-    final stream = FakeLiveHls(path, user, password, withAudio: withAudio, hasAudio: withAudio);
+    final stream = FakeLiveHls(path, user, password, withAudio: withAudio, hasAudio: withAudio, port: port);
     streams.add(stream);
     if (autoReady) {
       stream.ready();
@@ -333,6 +336,7 @@ List<Override> cameraOverrides({
   FakeTapoRecordings? recordings,
   FakeCameraLiveApi? live,
   FakeLiveHlsStarter? liveHls,
+  FakeLiveHlsStarter? previewHls,
   bool realPlatformView = false,
   TapoCameraTester? tester,
   TapoCertificateReader? certificateReader,
@@ -346,6 +350,7 @@ List<Override> cameraOverrides({
     ),
   cameraLiveApiProvider.overrideWithValue(live ?? FakeCameraLiveApi()),
   cameraLiveHlsProvider.overrideWithValue((liveHls ?? FakeLiveHlsStarter()).call),
+  cameraPreviewHlsProvider.overrideWithValue((previewHls ?? FakeLiveHlsStarter()).call),
   if (!realPlatformView) cameraLivePlatformViewProvider.overrideWithValue(fakeCameraPlatformView),
   tapoCameraTesterProvider.overrideWithValue(tester ?? (request) async => const TapoTestResult()),
   tapoCertificateReaderProvider.overrideWithValue(certificateReader ?? (host) async => null),

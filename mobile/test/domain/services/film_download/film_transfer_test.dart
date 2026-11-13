@@ -84,14 +84,16 @@ void main() {
   });
   tearDown(() => folder.delete(recursive: true));
 
-  FilmTransfer transfer(_Server server, {String? identity, List<int>? progress}) => FilmTransfer(
-    target: target,
-    open: server.open,
-    identity: identity,
-    retryDelays: const [Duration.zero, Duration.zero, Duration.zero],
-    writeChunk: 256,
-    onProgress: progress == null ? null : (received, total) => progress.add(received),
-  );
+  FilmTransfer transfer(_Server server, {String? identity, List<int>? progress, List<Duration>? retries}) =>
+      FilmTransfer(
+        target: target,
+        open: server.open,
+        identity: identity,
+        retryDelays: const [Duration.zero, Duration.zero, Duration.zero],
+        writeChunk: 256,
+        onProgress: progress == null ? null : (received, total) => progress.add(received),
+        onRetry: retries?.add,
+      );
 
   test('copies the whole file into its place, through a partial file', () async {
     final server = _Server(_bytes(1000));
@@ -172,6 +174,20 @@ void main() {
       throwsA(isA<FilmTransferException>().having((e) => e.failure, 'failure', FilmDownloadFailure.unreachable)),
     );
     expect(server.asked, hasLength(4));
+  });
+
+  test('tells each wait for the server before it tries again, none once it answers', () async {
+    final retries = <Duration>[];
+    final server = _Server(_bytes(100))..failures.addAll([const SocketException('No route to host')]);
+    final result = await transfer(server, retries: retries).run();
+    expect(result.end, FilmTransferEnd.completed);
+    expect(retries, [Duration.zero]);
+
+    retries.clear();
+    File(target).deleteSync();
+    final failing = _Server(_bytes(100))..failures.addAll(List.filled(4, const SocketException('No route to host')));
+    await expectLater(transfer(failing, retries: retries).run(), throwsA(isA<FilmTransferException>()));
+    expect(retries, hasLength(3), reason: 'three waits, then unreachable');
   });
 
   test('a download the server owner forbids stops at once', () async {

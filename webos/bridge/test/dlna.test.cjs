@@ -103,6 +103,76 @@ test('DIDL-Lite gives containers, items, the original and the thumbnail', () => 
 	assert.strictEqual(dlna.parseDuration('1:00:00'), 3600);
 });
 
+// The TV folder of a Freebox Server, after the layout publicly described for it (mobile/test/fixtures/upnp/
+// freebox_browse_tv.xml has the same): a bouquet, channels whose only resources are RTSP addresses, a radio
+function freeboxTv() {
+	const channel = (n, upnpClass, flavours) =>
+		`<item id="fbxtv/${n}" parentID="fbxtv" restricted="1"><dc:title>${n - 200} - Chaîne ${n}</dc:title><upnp:class>${upnpClass}</upnp:class>` +
+		`<upnp:channelNr>${n - 200}</upnp:channelNr><upnp:albumArtURI>http://mafreebox.freebox.fr/fbxtv_pub/logos/${n}.png</upnp:albumArtURI>` +
+		flavours.map((f) => `<res protocolInfo="rtsp-rtp-udp:*:video/mp2t:*">rtsp://mafreebox.freebox.fr/fbxtv_pub/stream?namespace=1&amp;service=${n}&amp;flavour=${f}</res>`).join('') +
+		'</item>';
+	return (
+		'<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">' +
+		'<container id="fbxtv/hd" parentID="fbxtv" restricted="1" childCount="2"><dc:title>Chaînes HD</dc:title><upnp:class>object.container</upnp:class></container>' +
+		channel(201, 'object.item.videoItem.videoBroadcast', ['sd', 'hd']) +
+		channel(202, 'object.item.videoItem.videoBroadcast', ['sd']) +
+		channel(203, 'object.item.videoItem', ['sd', 'hd']) +
+		'<item id="fbxtv/radio/1" parentID="fbxtv" restricted="1"><dc:title>100 - Radio</dc:title><upnp:class>object.item.audioItem.audioBroadcast</upnp:class>' +
+		'<res protocolInfo="rtsp-rtp-udp:*:audio/mpeg:*">rtsp://mafreebox.freebox.fr/fbxtv_pub/stream?namespace=1&amp;service=1001</res></item>' +
+		'</DIDL-Lite>'
+	);
+}
+
+test('the live TV channels of a Freebox-shaped server are counted, not listed', () => {
+	const parsed = dlna.parseDidl(freeboxTv());
+	assert.deepStrictEqual(parsed.folders, [{ref: 'fbxtv/hd', name: 'Chaînes HD'}]);
+	assert.deepStrictEqual(parsed.files, [], 'an RTSP channel has no file the TV reads, and the radio is audio');
+	assert.strictEqual(parsed.live, 3);
+	assert.strictEqual(dlna.parseDidl(didl('http://h', 0, 1)).live, 0);
+});
+
+test('an item with an HTTP copy is a file, a bare broadcast item and an rtsp:// video are live', () => {
+	const rtsp = {url: 'rtsp://box/stream?id=1', protocol: 'rtsp-rtp-udp', mime: 'video/mp2t'};
+	const http = {url: 'http://h/rec.ts', protocol: 'http-get', mime: 'video/mp2t'};
+	assert.strictEqual(dlna.isLiveItem('object.item.videoItem.videoBroadcast', [rtsp, http]), false);
+	assert.strictEqual(dlna.isLiveItem('object.item.videoItem.videoBroadcast', []), true);
+	assert.strictEqual(dlna.isLiveItem('object.item', [{url: 'rtsp://cam/live', protocol: 'http-get', mime: 'video/h264'}]), true);
+	assert.strictEqual(dlna.isLiveItem('object.item.audioItem.audioBroadcast', [{url: 'rtsp://box/r', protocol: 'rtsp-rtp-udp', mime: 'audio/mpeg'}]), false);
+	assert.strictEqual(dlna.isLiveItem('object.item.videoItem', [http]), false);
+	const recorded = dlna.parseDidl(
+		'<DIDL-Lite><item id="r"><dc:title>Recorded</dc:title><upnp:class>object.item.videoItem.videoBroadcast</upnp:class>' +
+			'<res protocolInfo="rtsp-rtp-udp:*:video/mp2t:*">rtsp://box/stream?id=1</res><res size="1000" protocolInfo="http-get:*:video/mp2t:*">http://h/rec.ts</res></item></DIDL-Lite>'
+	);
+	assert.strictEqual(recorded.live, 0);
+	assert.strictEqual(recorded.files.length, 1);
+	assert.strictEqual(recorded.files[0].ref, 'http://h/rec.ts', 'the file over HTTP, never the RTSP address');
+});
+
+test('the bridge listing of a folder of channels carries their count', async (t) => {
+	const server = await startServer((req, res) => {
+		if (req.url === '/desc.xml') {
+			res.writeHead(200, {'Content-Type': 'text/xml'});
+			res.end(description(''));
+			return;
+		}
+		res.writeHead(200, {'Content-Type': 'text/xml'});
+		res.end(
+			'<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:BrowseResponse xmlns:u="urn:schemas-upnp-org:service:ContentDirectory:1">' +
+				`<Result>${xml.escapeXml(freeboxTv())}</Result><NumberReturned>5</NumberReturned><TotalMatches>5</TotalMatches><UpdateID>1</UpdateID></u:BrowseResponse></s:Body></s:Envelope>`
+		);
+	});
+	const b = await startBridge([{id: 'fbx', kind: 'dlna', location: server.url + '/desc.xml'}]);
+	t.after(() => {
+		b.stop();
+		return server.close();
+	});
+	const listing = await fetchJson(`${b.base}/list?s=fbx&r=fbxtv`);
+	assert.strictEqual(listing.status, 200);
+	assert.strictEqual(listing.json.folders.length, 1);
+	assert.strictEqual(listing.json.files.length, 0);
+	assert.strictEqual(listing.json.live, 3);
+});
+
 test('the bridge browses every page of a container and only reads media of that server', async (t) => {
 	const server = await dlnaServer();
 	const b = await startBridge([{id: 'tv', kind: 'dlna', location: server.url + '/desc.xml'}]);

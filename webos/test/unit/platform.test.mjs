@@ -94,6 +94,7 @@ describe('the platform', () => {
 			pauseVideoWhenHidden: true,
 			fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS,
 			probeVideoFramesAtStart: true,
+			turnSidewaysVideo: true,
 		});
 		// webOS keeps its behaviour: every Samsung only answer is off there, and LG's Back to Photos on
 		for (const on of ['webos', 'browser']) {
@@ -108,6 +109,7 @@ describe('the platform', () => {
 					pauseVideoWhenHidden: false,
 					fullsizePixelCap: null,
 					probeVideoFramesAtStart: false,
+					turnSidewaysVideo: false,
 				},
 				on
 			);

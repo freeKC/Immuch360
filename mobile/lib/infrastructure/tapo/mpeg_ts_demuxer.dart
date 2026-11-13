@@ -45,7 +45,8 @@ class MpegTsDemuxer {
   /// The bytes of a packet cut between two calls of [feed]
   Uint8List _rest = Uint8List(0);
 
-  int? _pmtPid;
+  /// The PMT of each program of the PAT: some cameras put the sound in a program of its own (pytapo b713ace)
+  final Set<int> _pmtPids = {};
   final Map<int, int> _streamTypes = {};
 
   /// The PES being gathered, by PID
@@ -135,7 +136,7 @@ class MpegTsDemuxer {
       _pat(payload, unitStart);
       return;
     }
-    if (pid == _pmtPid) {
+    if (_pmtPids.contains(pid)) {
       _pmt(payload, unitStart);
       return;
     }
@@ -172,8 +173,7 @@ class MpegTsDemuxer {
     for (var at = start + 8; at + 4 <= end && at + 4 <= payload.length; at += 4) {
       final program = (payload[at] << 8) | payload[at + 1];
       if (program != 0) {
-        _pmtPid = ((payload[at + 2] & 0x1f) << 8) | payload[at + 3];
-        return;
+        _pmtPids.add(((payload[at + 2] & 0x1f) << 8) | payload[at + 3]);
       }
     }
   }
