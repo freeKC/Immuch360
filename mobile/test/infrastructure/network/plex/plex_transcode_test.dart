@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
@@ -178,14 +179,16 @@ void main() {
 
   group('PlexConversion', () {
     late List<Uri> asked;
+    late List<Future<void>?> aborts;
     late Map<String, String> sentHeaders;
     late Map<String, String> answers;
 
     PlexConversion conversion() => PlexConversion(
       request: const PlexTranscodeRequest(ratingKey: '6017', session: 'abc'),
       base: _base,
-      fetch: (uri, headers) async {
+      fetch: (uri, headers, {abort}) async {
         asked.add(uri);
+        aborts.add(abort);
         sentHeaders = headers;
         final body = answers[uri.path];
         if (body == null) {
@@ -197,6 +200,7 @@ void main() {
 
     setUp(() {
       asked = [];
+      aborts = [];
       sentHeaders = {};
       answers = {
         '/video/:/transcode/universal/start.m3u8':
@@ -221,6 +225,14 @@ void main() {
       // start.m3u8 once: the next reads of the playlist go to the stream's own
       await media.fetch(PlexConversion.playlistName);
       expect(asked.where((uri) => uri.path.endsWith('start.m3u8')), hasLength(1));
+    });
+
+    test('a segment whose player went away (a seek elsewhere) gets the abort of its fetch', () async {
+      final media = conversion();
+      await media.fetch(PlexConversion.playlistName);
+      final left = Completer<void>();
+      await media.fetch('0.ts', abort: left.future);
+      expect(aborts.last, same(left.future));
     });
 
     test('a server whose start.m3u8 is the media playlist itself', () async {

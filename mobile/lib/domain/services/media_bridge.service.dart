@@ -535,8 +535,12 @@ class LocalMediaBridge implements MediaBridge {
   Future<void> _answerGenerated(HttpRequest request, HttpResponse response, GeneratedMedia media, String name) async {
     final GeneratedFile? file;
     if (media is GeneratedMediaFetch) {
+      // The player leaves the segment of the place it seeked from: its fetch from the server stops (the Plex
+      // conversion), rather than holding the link and the server while the segment of the new place waits
+      final remotePort = request.connectionInfo?.remotePort;
+      final left = remotePort == null ? null : _socket?.closedFrom(remotePort);
       try {
-        file = await media.fetch(name);
+        file = await media.fetch(name, abort: left);
       } catch (error) {
         _log.fine('A fetched file of generated media failed: ${error.runtimeType}');
         return _fail(response, HttpStatus.badGateway, 'The server did not send it');

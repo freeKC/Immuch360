@@ -337,8 +337,9 @@ class PlexClient {
     String accept = 'image/jpeg',
     int maxSize = maxPictureSize,
     Map<String, String> headers = const {},
+    Future<void>? abort,
   }) async {
-    final response = await send('GET', uri, accept: accept, headers: headers);
+    final response = await send('GET', uri, accept: accept, headers: headers, abort: abort);
     if (response.statusCode == 404) {
       await discardHttpBody(response);
       return null;
