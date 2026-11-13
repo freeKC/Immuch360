@@ -258,3 +258,47 @@ class NetworkEmptyFolderView extends StatelessWidget {
     );
   }
 }
+
+/// The live TV channels of a folder, which the app does not play yet (a DLNA media server's TV folder, see
+/// NetworkLiveStreams): the whole view of a folder that holds nothing else, else a line above its contents
+class NetworkLiveStreamsNotice extends StatelessWidget {
+  const NetworkLiveStreamsNotice({super.key, this.inline = false});
+
+  /// A line above the folders and files, rather than the view of a folder that holds only channels
+  final bool inline;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = context.colorScheme.onSurface.withAlpha(inline ? 179 : 128);
+    final text = Text(
+      context.t.network_share_live_streams,
+      textAlign: inline ? TextAlign.start : TextAlign.center,
+      style: context.textTheme.bodyMedium,
+    );
+    if (inline) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+        child: Row(
+          children: [
+            Icon(Icons.live_tv_outlined, size: 20, color: color),
+            const SizedBox(width: 12),
+            Expanded(child: text),
+          ],
+        ),
+      );
+    }
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.live_tv_outlined, size: 64, color: color),
+            const SizedBox(height: 16),
+            text,
+          ],
+        ),
+      ),
+    );
+  }
+}

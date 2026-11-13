@@ -2933,6 +2933,7 @@
   "network_share_empty_folder": "This folder is empty",
   "network_share_failed": "Connection failed: {error}",
   "network_share_host": "Server name or address",
+  "network_share_live_streams": "Live TV channels are not playable here yet",
   "network_share_loading": "Reading the folder",
   "network_share_name": "Name",
   "network_share_no_shares": "No share yet. Add a NAS or a computer of your network to play its photos and videos from here.",

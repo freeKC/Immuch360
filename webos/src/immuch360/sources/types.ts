@@ -57,6 +57,8 @@ export interface ListedFile {
 export interface Listing {
 	folders: ListedFolder[];
 	files: ListedFile[];
+	/** DLNA: the live TV channels of the folder (a Freebox Server's TV folder), counted but not listed: not playable */
+	live?: number;
 }
 
 /** What bridgeStart answers */

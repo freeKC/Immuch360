@@ -271,6 +271,60 @@ void main() {
     });
   });
 
+  group('live streams', () {
+    test('tell the live TV channels of a Freebox-shaped server, whose only resources are RTSP addresses', () {
+      final answer = parseBrowseResponse(_fixture('freebox_browse_tv.xml'), Uri.parse('http://192.168.0.254:52424/cd'));
+      final objects = answer.objects!;
+
+      expect(
+        [for (final object in objects) object.id],
+        ['fbxtv/hd', 'fbxtv/201', 'fbxtv/202', 'fbxtv/203', 'fbxtv/204', 'fbxtv/radio/1'],
+      );
+      expect([for (final object in objects) object.isLiveStream], [false, true, true, true, true, false]);
+      final channel = objects[1];
+      expect(channel.resources.first.protocol, 'rtsp-rtp-udp');
+      expect(channel.resources.first.url.scheme, 'rtsp');
+      expect(channel.resources.first.isLiveStream, isTrue);
+      expect(channel.original, isNull, reason: 'an RTSP stream is no file the app reads');
+      expect(
+        [for (final (:object, :name) in dlnaEntryNames(objects.where((o) => o.isMedia))) '${object.id} $name'],
+        ['fbxtv/hd Chaînes HD'],
+        reason: 'the channels have no file to read: they are counted, not listed',
+      );
+      expect(dlnaLiveStreamCount(objects), 4, reason: 'the radio is audio, left out like the other audio');
+    });
+
+    test('an item with an HTTP copy of the stream is a video, and a broadcast item without a resource is live', () {
+      final both = _one(
+        _item(
+          'Recorded',
+          _res('rtsp://box/stream?id=1', 'video/mp2t', protocol: 'rtsp-rtp-udp') +
+              _res('http://h/rec.ts', 'video/mp2t', attributes: ' size="1000"'),
+          upnpClass: 'object.item.videoItem.videoBroadcast',
+        ),
+      );
+      expect(both.isLiveStream, isFalse);
+      expect(dlnaEntryName(both), 'Recorded.mts', reason: 'the HTTP file, named after its MIME type');
+
+      final bare = _one(_item('Channel', '', upnpClass: 'object.item.videoItem.videoBroadcast'));
+      expect(bare.isLiveStream, isTrue);
+
+      final rtspScheme = _one(
+        _item('Cam', _res('rtsp://cam/live', 'video/h264', protocol: 'http-get'), upnpClass: 'object.item'),
+      );
+      expect(
+        rtspScheme.resources.single.isLiveStream,
+        isTrue,
+        reason: 'an rtsp:// address is a stream whatever it says',
+      );
+      expect(rtspScheme.original, isNull, reason: 'a stream is never read as a file');
+      expect(rtspScheme.isLiveStream, isTrue, reason: 'a video MIME type over RTSP');
+
+      const folder = '<container id="c"><dc:title>TV</dc:title><upnp:class>object.container</upnp:class></container>';
+      expect(_one(folder).isLiveStream, isFalse);
+    });
+  });
+
   group('dlnaEntryName and dlnaEntryNames', () {
     test('make a path segment of the title', () {
       String? nameOf(String title) => dlnaEntryName(_one('<container id="1"><dc:title>$title</dc:title></container>'));

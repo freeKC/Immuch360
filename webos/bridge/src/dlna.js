@@ -2,6 +2,10 @@
 // DLNA media servers (minidlna, Jellyfin, Plex's DLNA, NAS and TV boxes): SSDP finds them, the device description
 // names them and gives the control URL of their ContentDirectory, SOAP Browse lists a container, and DIDL-Lite
 // describes its children. Their media are plain HTTP without a password. As mobile/lib/infrastructure/network/upnp/.
+//
+// Live streams are no files: the TV channels of a media server (a Freebox Server lists them as items of class
+// videoBroadcast whose only resources are rtsp://mafreebox.freebox.fr/fbxtv_pub/... addresses, protocol rtsp-rtp-udp,
+// MPEG-TS) are not listed but counted (listing.live), so that the TV says why a folder of channels shows nothing.
 
 const urlLib = require('url');
 const httpx = require('./httpx');
@@ -101,6 +105,7 @@ function resInfo(res) {
 	const resolution = /^(\d+)x(\d+)$/.exec(xml.attribute(res.attrs, 'resolution') || '');
 	return {
 		url: xml.decodeEntities(res.body.trim()),
+		protocol: (parts[0] || '').toLowerCase(),
 		mime: (parts[2] || '').toLowerCase() || null,
 		profile: (/DLNA\.ORG_PN=([^;]+)/.exec(parts[3] || '') || [])[1] || null,
 		size: Number(xml.attribute(res.attrs, 'size')) || null,
@@ -110,17 +115,42 @@ function resInfo(res) {
 	};
 }
 
-/** The children of a DIDL-Lite document: {folders: [{ref, name}], files: [{ref, name, kind, mime, size, thumb, ...}]} */
+/** A live stream rather than a file: an RTSP, RTP or UDP protocol (rtsp-rtp-udp...), or such an address */
+function isLiveResource(r) {
+	return /^(rtsp|rtp|udp)/.test(r.protocol || '') || /^(rtsps?|rtp|udp):\/\//i.test(r.url);
+}
+
+/**
+ * A live video stream with no file over HTTP, a TV channel: a broadcast item (object.item.videoItem.videoBroadcast),
+ * or a video item or video MIME type whose resources are live streams. Radios are left out, as the rest of the audio.
+ */
+function isLiveItem(upnpClass, resources) {
+	if (resources.some((r) => /^https?:\/\//i.test(r.url) && !isLiveResource(r))) return false;
+	if (/^object\.item\.videoItem\.videoBroadcast/.test(upnpClass)) return true;
+	const videoItem = /^object\.item\.videoItem/.test(upnpClass);
+	return resources.some((r) => isLiveResource(r) && (videoItem || /^video\//.test(r.mime || '')));
+}
+
+/**
+ * The children of a DIDL-Lite document: {folders: [{ref, name}], files: [{ref, name, kind, mime, size, thumb, ...}],
+ * live: the count of live TV channels, which are not listed}
+ */
 function parseDidl(didl) {
 	const folders = xml.elements(didl, 'container').map((c) => ({
 		ref: xml.attribute(c.attrs, 'id'),
 		name: xml.childText(c.body, 'title') || xml.attribute(c.attrs, 'id')
 	}));
 	const files = [];
+	let live = 0;
 	xml.elements(didl, 'item').forEach((item) => {
 		const title = xml.childText(item.body, 'title') || '';
 		const upnpClass = xml.childText(item.body, 'class') || '';
-		const resources = xml.elements(item.body, 'res').map(resInfo).filter((r) => /^https?:\/\//i.test(r.url));
+		const all = xml.elements(item.body, 'res').map(resInfo);
+		if (isLiveItem(upnpClass, all)) {
+			live++;
+			return;
+		}
+		const resources = all.filter((r) => /^https?:\/\//i.test(r.url) && !isLiveResource(r));
 		const thumbnails = resources.filter((r) => r.profile === 'JPEG_TN' || r.profile === 'PNG_TN');
 		const originals = resources.filter((r) => thumbnails.indexOf(r) < 0 && !/^(JPEG_SM|JPEG_MED)$/.test(r.profile || ''));
 		const main = originals[0] || resources[0];
@@ -144,7 +174,7 @@ function parseDidl(didl) {
 			modified: Date.parse(xml.childText(item.body, 'date') || '') || null
 		});
 	});
-	return {folders: folders, files: files};
+	return {folders: folders, files: files, live: live};
 }
 
 function controlOf(source) {
@@ -174,16 +204,18 @@ function list(source, objectId) {
 	return controlOf(source).then((control) => {
 		const folders = [];
 		const files = [];
+		let live = 0;
 		const page = (start) =>
 			browsePage(control, objectId || '0', start).then((answer) => {
 				const parsed = parseDidl(answer.didl);
 				Array.prototype.push.apply(folders, parsed.folders);
 				Array.prototype.push.apply(files, parsed.files);
-				const next = start + (answer.returned || parsed.folders.length + parsed.files.length);
+				live += parsed.live;
+				const next = start + (answer.returned || parsed.folders.length + parsed.files.length + parsed.live);
 				if (answer.returned > 0 && next < answer.total && next < MAX_CHILDREN) return page(next);
 				return null;
 			});
-		return page(0).then(() => ({folders: folders, files: files.filter((f) => f.kind)}));
+		return page(0).then(() => ({folders: folders, files: files.filter((f) => f.kind), live: live}));
 	});
 }
 
@@ -199,4 +231,4 @@ function pipeMedia(source, url, req, res) {
 	return httpx.request(url, {headers: httpx.rangeHeaders(req)}).then((upstream) => httpx.pipeResponse(upstream, res));
 }
 
-module.exports = {discover, describe, parseDescription, parseDidl, parseDuration, list, ownsUrl, pipeMedia, browseEnvelope};
+module.exports = {discover, describe, parseDescription, parseDidl, isLiveItem, parseDuration, list, ownsUrl, pipeMedia, browseEnvelope};

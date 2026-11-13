@@ -79,7 +79,7 @@ BrowseAnswer parseBrowseResponse(String xml, Uri base) {
 }
 
 /// A [NetworkFileSystem] over a DLNA media server, see [open]
-class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads {
+class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkLiveStreams {
   DlnaFileSystem._(this.source, this._description, this._client, this._ownsClient, this._pageSize, this._browseTimeout);
 
   /// Reads the device description of [source], then lists its start folder (the root path of the source). Throws a
@@ -143,6 +143,9 @@ class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads {
 
   /// The listings of the folders, for looking a name up without asking the server again within [listingLifetime]
   final Map<String, ({List<NetworkEntry> entries, Duration at})> _listings = {};
+
+  /// The live streams (TV channels) of the folders listed so far, by path, the folders without any left out
+  final Map<String, int> _liveStreams = {};
 
   /// The listings under way, so that two callers wait for one Browse
   final Map<String, Future<List<NetworkEntry>>> _browsing = {};
@@ -253,6 +256,9 @@ class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads {
     }
     return _guard(() => _rewalkOnce(() => _browseFolder(folder)));
   }
+
+  @override
+  int liveStreamsIn(String path) => _liveStreams[normalizePath(path)] ?? 0;
 
   @override
   Future<NetworkEntry> stat(String path) {
@@ -401,6 +407,12 @@ class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads {
           throw NetworkFileSystemException('$folder is not a folder');
         }
         final objects = await _browseAll(container.id, folder);
+        final live = dlnaLiveStreamCount(objects);
+        if (live > 0) {
+          _liveStreams[folder] = live;
+        } else {
+          _liveStreams.remove(folder);
+        }
         final entries = <NetworkEntry>[];
         for (final (:object, :name) in dlnaEntryNames(objects.where((o) => o.isMedia))) {
           final path = folder == '/' ? '/$name' : '$folder/$name';
