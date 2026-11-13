@@ -140,6 +140,12 @@ class SettingsFileImportPage extends HookConsumerWidget {
 
     void finish() {
       final done = report.value;
+      if (done?.signIn?.result == SettingsFileSignInResult.refused) {
+        // The session of the file ended on the server: its sign in form, the address filled in, above the welcome page
+        // that its Back leads to, as the start of the app does for a refused token
+        unawaited(context.router.replaceAll([const WelcomeRoute(), const LoginRoute()]));
+        return;
+      }
       if (done?.accountRestored ?? false) {
         // The start screen resumes the session restored, as at any start of the app; an expired one leads to the sign
         // in form, the server filled in
@@ -164,7 +170,12 @@ class SettingsFileImportPage extends HookConsumerWidget {
       action = FilledButton(
         key: const Key('settings_file_finish'),
         onPressed: finish,
-        child: Text(report.value!.accountRestored ? context.t.settings_file_continue : context.t.settings_file_done),
+        child: Text(switch (report.value!) {
+          SettingsFileReport(signIn: SettingsFileSignIn(result: SettingsFileSignInResult.refused)) =>
+            context.t.settings_file_sign_in_again,
+          SettingsFileReport(accountRestored: true) => context.t.settings_file_continue,
+          _ => context.t.settings_file_done,
+        }),
       );
     } else if (content.value != null) {
       children = [
@@ -436,14 +447,18 @@ class SettingsFileReportView extends StatelessWidget {
       SettingsFileSkipReason.unknownToThisBuild => t.settings_file_reason_unknown,
       SettingsFileSkipReason.unreadable => t.settings_file_reason_unreadable,
       SettingsFileSkipReason.notOnThisDevice => t.settings_file_reason_not_on_device,
+      SettingsFileSkipReason.sessionRefused => t.settings_file_reason_session_refused,
       null => '',
     };
+
+    final signIn = report.signIn;
 
     final restored = [...report.where(SettingsFileOutcome.restored), ...report.where(SettingsFileOutcome.waiting)];
     final skipped = report.where(SettingsFileOutcome.skipped).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (signIn != null) ...[SettingsFileSignInView(signIn: signIn), const SizedBox(height: 12)],
         Text(t.settings_file_restored_title, style: context.textTheme.titleMedium),
         for (final item in restored)
           ListTile(
@@ -468,6 +483,48 @@ class SettingsFileReportView extends StatelessWidget {
             ),
         ],
       ],
+    );
+  }
+}
+
+/// What the server said of the session the file put in place: signed in as its user, or why not
+class SettingsFileSignInView extends StatelessWidget {
+  const SettingsFileSignInView({super.key, required this.signIn});
+
+  final SettingsFileSignIn signIn;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final scheme = context.colorScheme;
+    final (icon, color, title, subtitle) = switch (signIn.result) {
+      SettingsFileSignInResult.signedIn => (
+        Icons.verified_user_outlined,
+        scheme.primary,
+        t.settings_file_signed_in_as(name: signIn.name ?? '', email: signIn.email ?? ''),
+        null,
+      ),
+      SettingsFileSignInResult.unreachable => (
+        Icons.cloud_off_outlined,
+        scheme.onSurfaceVariant,
+        t.settings_file_server_unreachable,
+        t.settings_file_server_unreachable_description,
+      ),
+      SettingsFileSignInResult.refused => (
+        Icons.lock_reset_rounded,
+        scheme.error,
+        t.settings_file_session_refused,
+        t.settings_file_session_refused_description,
+      ),
+    };
+    return Card(
+      key: const Key('settings_file_sign_in'),
+      margin: EdgeInsets.zero,
+      child: ListTile(
+        leading: Icon(icon, color: color),
+        title: Text(title),
+        subtitle: subtitle == null ? null : Text(subtitle),
+      ),
     );
   }
 }

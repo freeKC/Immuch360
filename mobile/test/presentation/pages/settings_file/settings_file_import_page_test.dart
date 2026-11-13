@@ -58,9 +58,10 @@ class _FakeIo implements SettingsFileIo {
 }
 
 class _FakeService extends Fake implements SettingsFileService {
-  _FakeService({this.signedIn = false});
+  _FakeService({this.signedIn = false, this.report});
 
   final bool signedIn;
+  final SettingsFileReport? report;
   final restored = <(SettingsFileContent, SettingsFileRestoreMode)>[];
 
   @override
@@ -69,17 +70,18 @@ class _FakeService extends Fake implements SettingsFileService {
   @override
   Future<SettingsFileReport> restore(SettingsFileContent content, SettingsFileRestoreMode mode) async {
     restored.add((content, mode));
-    return const SettingsFileReport([
-      SettingsFileReportItem(SettingsFileSection.settings, '3', SettingsFileOutcome.restored),
-      SettingsFileReportItem(SettingsFileSection.sources, 'Plex at home', SettingsFileOutcome.restored),
-      SettingsFileReportItem(
-        SettingsFileSection.sources,
-        'NAS photos',
-        SettingsFileOutcome.skipped,
-        SettingsFileSkipReason.alreadyHere,
-      ),
-      SettingsFileReportItem(SettingsFileSection.backupAlbums, '2', SettingsFileOutcome.waiting),
-    ]);
+    return report ??
+        const SettingsFileReport([
+          SettingsFileReportItem(SettingsFileSection.settings, '3', SettingsFileOutcome.restored),
+          SettingsFileReportItem(SettingsFileSection.sources, 'Plex at home', SettingsFileOutcome.restored),
+          SettingsFileReportItem(
+            SettingsFileSection.sources,
+            'NAS photos',
+            SettingsFileOutcome.skipped,
+            SettingsFileSkipReason.alreadyHere,
+          ),
+          SettingsFileReportItem(SettingsFileSection.backupAlbums, '2', SettingsFileOutcome.waiting),
+        ]);
   }
 }
 
@@ -108,12 +110,13 @@ void main() {
     String? initialText,
     String? picked,
     bool signedIn = false,
+    SettingsFileReport? report,
   }) async {
     tester.view
       ..physicalSize = const Size(1200, 4000)
       ..devicePixelRatio = 2;
     addTearDown(tester.view.reset);
-    final service = _FakeService(signedIn: signedIn);
+    final service = _FakeService(signedIn: signedIn, report: report);
     await tester.pumpConsumerWidget(
       SettingsFileImportPage(initialText: initialText),
       overrides: [
@@ -229,5 +232,70 @@ void main() {
       find.text('This file was made by a newer version of Immuch360. Update the app, then try again.'),
       findsOneWidget,
     );
+  });
+
+  Future<void> restoreWith(WidgetTester tester, SettingsFileReport report) async {
+    await pumpPage(tester, initialText: clearFile, report: report);
+    await tester.tap(find.byKey(const Key('settings_file_restore')));
+    await tester.pumpAndSettle();
+  }
+
+  const accountLine = SettingsFileReportItem(
+    SettingsFileSection.account,
+    'https://photos.example.org',
+    SettingsFileOutcome.restored,
+  );
+
+  testWidgets('the report says who the app is signed in as, and Continue opens the app', (tester) async {
+    await restoreWith(
+      tester,
+      const SettingsFileReport(
+        [accountLine],
+        accountRestored: true,
+        signIn: SettingsFileSignIn(SettingsFileSignInResult.signedIn, name: 'Alice', email: 'alice@example.org'),
+      ),
+    );
+    expect(find.text('Signed in as Alice (alice@example.org)'), findsOneWidget);
+    expect(find.text('Signed in to https://photos.example.org'), findsOneWidget);
+    expect(find.text('Continue'), findsOneWidget);
+  });
+
+  testWidgets('a refused session: the report says to sign in again, the button opens the sign in form', (tester) async {
+    await restoreWith(
+      tester,
+      const SettingsFileReport([
+        SettingsFileReportItem(SettingsFileSection.server, 'https://photos.example.org', SettingsFileOutcome.restored),
+        SettingsFileReportItem(
+          SettingsFileSection.account,
+          'https://photos.example.org',
+          SettingsFileOutcome.skipped,
+          SettingsFileSkipReason.sessionRefused,
+        ),
+      ], signIn: SettingsFileSignIn(SettingsFileSignInResult.refused)),
+    );
+    expect(find.text('Sign in again'), findsOneWidget);
+    expect(find.textContaining('no longer accepts the session of this file'), findsOneWidget);
+    expect(find.text('the server ended this session'), findsOneWidget);
+    expect(find.text('Sign in'), findsOneWidget);
+    expect(find.text('Continue'), findsNothing);
+  });
+
+  testWidgets('a server that did not answer: the account is kept, said so', (tester) async {
+    await restoreWith(
+      tester,
+      const SettingsFileReport(
+        [accountLine],
+        accountRestored: true,
+        signIn: SettingsFileSignIn(SettingsFileSignInResult.unreachable),
+      ),
+    );
+    expect(find.text('The server did not answer'), findsOneWidget);
+    expect(find.textContaining('signs in as soon as the server answers'), findsOneWidget);
+    expect(find.text('Continue'), findsOneWidget);
+  });
+
+  testWidgets('no account in the file: no sign in line', (tester) async {
+    await restoreWith(tester, const SettingsFileReport([accountLine]));
+    expect(find.byKey(const Key('settings_file_sign_in')), findsNothing);
   });
 }
