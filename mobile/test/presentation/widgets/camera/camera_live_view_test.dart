@@ -2,7 +2,9 @@
 // SD or HD stream, the sound, the states the view reports, the player stopped when the view goes and while the app is
 // away, and the tile without a live view (no camera account). On iPhone and iPad: the live playlist made in Dart with
 // the account, the player given its address alone, the video alone after a refusal of the player, the H.265 cameras,
-// a lost stream opened again, and the UiKitView of the live view.
+// a lost stream opened again, and the UiKitView of the live view. A camera without RTSP (a battery C410): the playlist
+// of its media port with the TP-Link password on Android too, the hint when that password is missing, the hub, RTSP
+// that does not start tried through the media port, and the reason in words with the diagnostics line and Retry.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +23,12 @@ import '../../pages/camera/camera_fakes.dart';
 void main() {
   late FakeCameraLiveApi live;
   late FakeLiveHlsStarter hls;
+  late FakeLiveHlsStarter preview;
 
   setUp(() {
     live = FakeCameraLiveApi();
     hls = FakeLiveHlsStarter();
+    preview = FakeLiveHlsStarter();
   });
 
   Future<void> pump(
@@ -34,6 +38,10 @@ void main() {
     bool preferHd = false,
     ValueNotifier<bool>? shown,
     bool realPlatformView = false,
+    String? cloudPassword,
+    String? model,
+    String? power,
+    String? deviceType,
   }) async {
     final visible = shown ?? ValueNotifier(true);
     await pumpCameraApp(
@@ -53,12 +61,17 @@ void main() {
                     fullScreen: false,
                     preferHd: preferHd,
                     onFullScreen: (_) {},
+                    cloudPassword: cloudPassword,
+                    model: model,
+                    firmware: model == null ? null : '1.3.5 Build 260430 Rel.80669n',
+                    power: power,
+                    deviceType: deviceType,
                   ),
                 )
               : const SizedBox.shrink(),
         ),
       ),
-      overrides: cameraOverrides(live: live, liveHls: hls, realPlatformView: realPlatformView),
+      overrides: cameraOverrides(live: live, liveHls: hls, previewHls: preview, realPlatformView: realPlatformView),
     );
   }
 
@@ -119,6 +132,80 @@ void main() {
     await pump(tester, user: '', password: null);
     expect(find.text('Add the camera account to see the live view.'), findsOneWidget);
     expect(live.sources, isEmpty);
+  });
+
+  group('a camera without RTSP', () {
+    testWidgets('plays the media port with the TP-Link password, the player getting the playlist alone', (
+      tester,
+    ) async {
+      preview.autoReady = true;
+      await pump(tester, model: 'C410', power: 'BATTERY', cloudPassword: cameraCloudPassword);
+      await tester.pumpAndSettle();
+      final stream = preview.streams.single;
+      expect((stream.port, stream.password, stream.path), (8800, cameraCloudPassword, '/stream2'));
+      expect(hls.streams, isEmpty);
+      final source = live.sources.single.$2;
+      expect(
+        (source.url, source.isHls, source.username, source.password),
+        (FakeLiveHls.address.toString(), true, null, null),
+      );
+      hub(tester).stateChanged(cameraViewId, CameraLiveState.playing, null, false);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('camera_live_badge')), findsOneWidget);
+    });
+
+    testWidgets('without the TP-Link password, says it is needed, whatever the camera account', (tester) async {
+      await pump(tester, model: 'C410');
+      expect(find.byKey(const Key('camera_live_needs_cloud_password')), findsOneWidget);
+      expect(live.sources, isEmpty);
+      expect(preview.streams, isEmpty);
+    });
+
+    testWidgets('a hub is said so', (tester) async {
+      await pump(tester, model: 'H200', deviceType: 'SMART.TAPOHUB', cloudPassword: cameraCloudPassword);
+      expect(find.byKey(const Key('camera_live_hub')), findsOneWidget);
+      expect(live.sources, isEmpty);
+    });
+
+    testWidgets('RTSP that does not start is tried through the media port; a sleeping camera is said so', (
+      tester,
+    ) async {
+      preview.autoReady = false;
+      await pump(tester, cloudPassword: cameraCloudPassword);
+      expect(live.sources.single.$2.isHls, isFalse);
+      hub(tester).stateChanged(cameraViewId, CameraLiveState.failed, 'ERROR_CODE_IO_NETWORK_CONNECTION_FAILED', true);
+      await tester.pumpAndSettle();
+      final stream = preview.streams.single;
+      expect(stream.password, cameraCloudPassword);
+      expect(find.text('Connecting to the camera'), findsOneWidget);
+      stream.refuse(const TapoLiveException(TapoLiveStep.connect, TapoErrorKind.unreachable, detail: cameraHost));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('A battery camera sleeps'), findsOneWidget);
+      final diagnostics = tester.widget<SelectableText>(find.byKey(const Key('camera_live_diagnostics'))).data!;
+      expect(diagnostics, contains('RTSP 554: ERROR_CODE_IO_NETWORK_CONNECTION_FAILED'));
+      expect(diagnostics, contains('media port 8800 SD'));
+      expect(diagnostics, contains('failed at connect: unreachable'));
+      expect(diagnostics, isNot(contains(cameraCloudPassword)));
+      expect(diagnostics, isNot(contains(cameraAccountPassword)));
+      await tester.tap(find.byKey(const Key('camera_live_retry')));
+      await tester.pumpAndSettle();
+      expect(preview.streams, hasLength(2), reason: 'Retry opens the media port again');
+      expect(find.byKey(const Key('camera_live_diagnostics')), findsNothing);
+    });
+
+    testWidgets('a refused TP-Link password is told as such, with the step and the code', (tester) async {
+      preview.autoReady = false;
+      await pump(tester, model: 'C410', power: 'BATTERY', cloudPassword: cameraCloudPassword);
+      await tester.pumpAndSettle();
+      preview.streams.single.refuse(const TapoLiveException(TapoLiveStep.login, TapoErrorKind.mediaLocked, code: 401));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('accepts the password for its settings'), findsOneWidget);
+      expect(
+        tester.widget<SelectableText>(find.byKey(const Key('camera_live_diagnostics'))).data,
+        'Diagnostics: C410 | 1.3.5 Build 260430 Rel.80669n | power BATTERY | media port 8800 SD | '
+        'failed at login: mediaLocked code 401',
+      );
+    });
   });
 
   group('on iPhone and iPad', () {

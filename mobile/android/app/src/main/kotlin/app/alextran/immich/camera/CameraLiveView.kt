@@ -19,7 +19,9 @@ import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.rtsp.RtspMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import io.flutter.plugin.platform.PlatformView
@@ -63,11 +65,26 @@ private fun encodeUserInfo(text: String): String {
 }
 
 /**
+ * Whether [url] is a live playlist of the local media bridge (`http://127.0.0.1:port/...`): what Dart makes of the
+ * media port of a camera without RTSP. Nothing else is played as HLS.
+ */
+fun isLocalLivePlaylist(url: String): Boolean {
+  val prefix = "http://127.0.0.1:"
+  if (!url.startsWith(prefix)) {
+    return false
+  }
+  val rest = url.substring(prefix.length)
+  val port = rest.substringBefore('/')
+  return port.isNotEmpty() && port.all { it in '0'..'9' } && rest.length > port.length + 1
+}
+
+/**
  * One live view of a Tapo camera (Tapo design 3.8): an ExoPlayer on the RTSP stream of the camera, RTP over TCP, a short
  * buffer for a small delay, muted at first, drawn on a SurfaceView kept at the aspect ratio of the video. The address
  * with the camera account stays in memory: never logged, Media3 debug logging off, and the errors sent to Flutter carry
  * the name of the Media3 error code only. The player is released when Flutter stops the view, disposes of it, and when
- * the activity stops (the camera serves two viewers at most).
+ * the activity stops (the camera serves two viewers at most). A camera without RTSP (a battery one) comes as the live
+ * HLS playlist Dart makes of its media port on the local media bridge, which holds no secret.
  */
 @OptIn(UnstableApi::class)
 class CameraLiveView(
@@ -141,22 +158,33 @@ class CameraLiveView(
       return
     }
     releasePlayer()
-    val address = if (source.isHls) null else cameraRtspUri(source.url, source.username, source.password)
+    val address =
+      if (source.isHls) source.url.takeIf { isLocalLivePlaylist(it) } else cameraRtspUri(source.url, source.username, source.password)
     if (address == null) {
       send(CameraLiveState.FAILED, "unsupported address")
       return
     }
-    val loadControl = DefaultLoadControl.Builder().setBufferDurationsMs(500, 2_000, 250, 500).build()
+    // HLS: whole segments of about 2 s, so a buffer of a few seconds
+    val loadControl =
+      if (source.isHls) {
+        DefaultLoadControl.Builder().setBufferDurationsMs(2_000, 8_000, 500, 1_000).build()
+      } else {
+        DefaultLoadControl.Builder().setBufferDurationsMs(500, 2_000, 250, 500).build()
+      }
     val exoPlayer = ExoPlayer.Builder(context).setLoadControl(loadControl).build()
     exoPlayer.setVideoSurfaceView(surface)
     exoPlayer.addListener(listener)
     exoPlayer.volume = if (muted) 0f else 1f
     val mediaSource =
-      RtspMediaSource.Factory()
-        .setForceUseRtpTcp(true)
-        .setTimeoutMs(8_000)
-        .setDebugLoggingEnabled(false)
-        .createMediaSource(MediaItem.fromUri(Uri.parse(address)))
+      if (source.isHls) {
+        HlsMediaSource.Factory(DefaultDataSource.Factory(context)).createMediaSource(MediaItem.fromUri(Uri.parse(address)))
+      } else {
+        RtspMediaSource.Factory()
+          .setForceUseRtpTcp(true)
+          .setTimeoutMs(8_000)
+          .setDebugLoggingEnabled(false)
+          .createMediaSource(MediaItem.fromUri(Uri.parse(address)))
+      }
     exoPlayer.setMediaSource(mediaSource)
     exoPlayer.playWhenReady = true
     exoPlayer.prepare()

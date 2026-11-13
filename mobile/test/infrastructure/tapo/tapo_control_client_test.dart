@@ -68,6 +68,32 @@ void main() {
     expect(camera.calls.take(2), ['getDeviceInfo', 'getTimezone']);
   });
 
+  test('learns the power of a battery camera, which has no RTSP', () async {
+    final methods = defaultFakeMethods();
+    methods['getDeviceInfo'] = (_) => {
+      'device_info': {
+        'basic_info': {
+          'device_type': 'SMART.IPCAMERA',
+          'device_model': 'C410',
+          'sw_version': '1.3.5 Build 260430 Rel.80669n',
+          'device_alias': 'Gate',
+          'power': 'BATTERY',
+          'mac': fakeCameraMac.toUpperCase(),
+        },
+      },
+    };
+    final control = client(FakeTapoCamera(methods: methods));
+    final details = await control.details();
+    expect((details.model, details.power, details.deviceType), ('C410', 'BATTERY', 'SMART.IPCAMERA'));
+    expect((control.info.power, control.info.deviceType), ('BATTERY', 'SMART.IPCAMERA'));
+  });
+
+  test('a mains camera tells no power', () async {
+    final control = client(FakeTapoCamera());
+    expect((await control.details()).power, isNull);
+    expect(control.info.power, isNull);
+  });
+
   test('refuses a method that is not a read method before anything is sent', () async {
     final camera = FakeTapoCamera();
     final control = client(camera);
