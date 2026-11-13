@@ -26,6 +26,10 @@ FilmStreams filmStreamsOfPlexPart(PlexFilmPart part, {String? container}) {
     videoProfile: lower(video?.profile),
     audioCodec: lower(audio?.codec),
     audioProfile: lower(audio?.profile),
+    otherAudioCodecs: [
+      for (final other in audios)
+        if (lower(other.codec) case final String codec when !identical(other, audio)) codec,
+    ],
     subtitleCodec: lower(subtitle?.codec),
   );
 }

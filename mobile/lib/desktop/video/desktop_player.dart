@@ -221,6 +221,10 @@ abstract class PlaybackEngine {
 
   Stream<PlayerEvent> get events;
 
+  /// The codec of an audio track whose decoder mpv could not open ("truehd" in the libmpv of the computers, which has
+  /// none), each time mpv says it (see audioDecoderFailureOf): the track then plays silent
+  Stream<String> get audioDecoderFailures;
+
   /// Opens [resource], a path of this computer or a media bridge URL (for [PlayerKind.live], the RTSP address of a
   /// camera), paused at [start]. [streamed]: read over the network, with the larger cache.
   Future<void> open(String resource, {Duration start = Duration.zero, bool streamed = false});
@@ -465,6 +469,20 @@ void logPlayerLine(String level, String prefix, String text) {
   }
 }
 
+/// The codec of the line of mpv's log ([prefix], [text]) that says a decoder of audio could not be opened ("ad: Failed
+/// to initialize a decoder for codec 'truehd'."), lower case; null for any other line
+@visibleForTesting
+String? audioDecoderFailureOf(String prefix, String text) {
+  if (prefix != 'ad') {
+    return null;
+  }
+  final match = _audioDecoderFailure.firstMatch(text);
+  final codec = match?.group(1)?.trim().toLowerCase();
+  return codec == null || codec.isEmpty ? null : codec;
+}
+
+final _audioDecoderFailure = RegExp(r"Failed to initialize a decoder for codec '([^']+)'");
+
 /// A media_kit player with the options of the app, see [PlaybackEngine]
 class DesktopPlayer implements PlaybackEngine {
   DesktopPlayer._(this.kind, this._player, this.videoController);
@@ -551,6 +569,7 @@ class DesktopPlayer implements PlaybackEngine {
   /// Bumped by each listing of the tracks and each open, so that a read of mpv's track-list that ends late is dropped
   int _subtitleListing = 0;
   final _events = StreamController<PlayerEvent>.broadcast();
+  final _audioDecoderFailures = StreamController<String>.broadcast();
   final _subscriptions = <StreamSubscription<Object?>>[];
   final _removers = <void Function()>[];
   bool _disposed = false;
@@ -596,6 +615,8 @@ class DesktopPlayer implements PlaybackEngine {
   ValueListenable<String?> get subtitleTrack => _subtitleTrack;
   @override
   Stream<PlayerEvent> get events => _events.stream;
+  @override
+  Stream<String> get audioDecoderFailures => _audioDecoderFailures.stream;
 
   Future<void> _setUp() async {
     final stream = _player.stream;
@@ -640,6 +661,10 @@ class DesktopPlayer implements PlaybackEngine {
       stream.track.listen((track) => _audioTrack.value = _isPseudoTrack(track.audio.id) ? null : track.audio.id),
       stream.log.listen((log) {
         logPlayerLine(log.level, log.prefix, log.text);
+        final failedCodec = audioDecoderFailureOf(log.prefix, log.text);
+        if (failedCodec != null && !_disposed && !_audioDecoderFailures.isClosed) {
+          _audioDecoderFailures.add(failedCodec);
+        }
         // Why a camera's stream did not open, which a decoder this computer lacks never is
         if (kind == PlayerKind.live &&
             (log.level == 'error' || log.level == 'fatal') &&
@@ -936,6 +961,7 @@ class DesktopPlayer implements PlaybackEngine {
       await subscription.cancel();
     }
     await _events.close();
+    await _audioDecoderFailures.close();
     await _player.dispose();
   }
 

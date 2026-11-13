@@ -54,6 +54,14 @@ class FakePlaybackEngine implements PlaybackEngine {
   @override
   Stream<PlayerEvent> get events => _events.stream;
 
+  final _audioDecoderFailures = StreamController<String>.broadcast(sync: true);
+
+  @override
+  Stream<String> get audioDecoderFailures => _audioDecoderFailures.stream;
+
+  /// mpv says the decoder of [codec] could not be opened
+  void failAudioDecoder(String codec) => _audioDecoderFailures.add(codec);
+
   /// Every call, in order: `open /videos/a.mp4 at 0 streamed`, `play`, `seek 1500`, ...
   final calls = <String>[];
 

@@ -143,4 +143,11 @@ void main() {
     expect(text, isNot(contains(bridgeToken)));
     expectNoSecret();
   });
+
+  test('the line of mpv that says an audio decoder did not open gives its codec (release 47)', () {
+    expect(audioDecoderFailureOf('ad', "Failed to initialize a decoder for codec 'truehd'."), 'truehd');
+    expect(audioDecoderFailureOf('ad', "Failed to initialize a decoder for codec 'MLP'."), 'mlp');
+    expect(audioDecoderFailureOf('vd', "Failed to initialize a decoder for codec 'vc1'."), isNull);
+    expect(audioDecoderFailureOf('ad', 'Could not open codec.'), isNull);
+  });
 }

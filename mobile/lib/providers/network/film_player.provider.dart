@@ -39,6 +39,10 @@ class FilmPlayers {
     return chooseFilmPlayer(streams: streams, device: device, mpv: mpv, preference: preference, conversion: conversion);
   }
 
+  /// Whether the device has a Dolby Vision decoder, which shows profile 5 in its right colours; false where the
+  /// device does not tell (not Android)
+  Future<bool> decodesDolbyVision() async => (await _decoderTypes.types())?.contains('video/dolby-vision') ?? false;
+
   /// The audio codecs a conversion may send this device besides AAC: E-AC-3 and AC-3 where it decodes them
   Future<List<String>> conversionAudioCodecs() async {
     final device = await deviceDecoders();
