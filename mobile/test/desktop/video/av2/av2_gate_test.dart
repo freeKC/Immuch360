@@ -370,7 +370,7 @@ void main() {
   });
 
   test('the libmpv of macOS the app pins reads the pictures of the decoder (lot AD4)', () {
-    expect(macosLibmpvRelease, 'libmpv-macos-20261110-1');
+    expect(macosLibmpvRelease, 'libmpv-macos-20261113-2');
     expect(macosLibmpvWithoutY4m, isNot(contains(macosLibmpvRelease)));
     expect(av2PlaysWithMacLibmpv(macosLibmpvRelease), isTrue);
   });
@@ -398,6 +398,7 @@ void main() {
       expect(av2PlaysWithMacLibmpv('libmpv-macos-20261020-9'), isFalse);
       expect(av2PlaysWithMacLibmpv('libmpv-macos-20261102-12'), isTrue);
       expect(av2PlaysWithMacLibmpv('libmpv-macos-20261110-1'), isTrue);
+      expect(av2PlaysWithMacLibmpv('libmpv-macos-20261113-2'), isTrue);
     });
 
     test('the reason of an error: its words, without its type nor a path of the computer', () {

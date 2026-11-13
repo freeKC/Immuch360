@@ -22,8 +22,8 @@ import 'package:path/path.dart' as p;
 /// (github.com/immuch360/media_kit_360, IMMUCH360_LIBMPV_TAG) and by
 /// mobile/packages/media_kit_libs_macos_video/macos/media_kit_libs_macos_video/Package.swift (libmpvTag); a test keeps
 /// them equal
-const windowsLibmpvRelease = 'libmpv-windows-20261110-1';
-const macosLibmpvRelease = 'libmpv-macos-20261110-1';
+const windowsLibmpvRelease = 'libmpv-windows-20261113-2';
+const macosLibmpvRelease = 'libmpv-macos-20261113-2';
 
 const _releases = 'https://github.com/immuch360/libmpv-builds/releases/tag';
 

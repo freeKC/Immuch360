@@ -1,7 +1,7 @@
 libmpv for macOS (arm64 and x86_64, macOS 12 and later), built by immuch360/libmpv-builds
-release: libmpv-macos-20261110-1
-run: https://github.com/immuch360/libmpv-builds/actions/runs/42837177719
-repository commit: c8812d7a8d8732f5d1f77ee3cad5877e308476fd
+release: libmpv-macos-20261113-2
+run: https://github.com/immuch360/libmpv-builds/actions/runs/43429967862
+repository commit: d395829394c546115c54996c84ac183f68fcdd77
 recipe: https://github.com/media-kit/libmpv-darwin-build at aadae8ce295dd15a222839c361c4c984ce9befb2, with macos/
 package: mk-out-archive-xcframeworks-macos-universal-video-default
 Xcode: Xcode 16.4 Build version 16F6 
