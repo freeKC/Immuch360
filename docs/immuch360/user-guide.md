@@ -14,8 +14,10 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"Plex plays my 360° videos flat, and I want my Plex library in the headset, on the TV and away from home."** See [Plex Media Server, without plex.tv](#plex-media-server-without-plextv).
 - **"I want a film of my Plex server on the phone or in the headset for the plane."** See [Download a film to this device](#download-a-film-to-this-device).
 - **"My Quest will not play some films of my Plex server (DTS sound, an old AVI), or the server stops answering."** See [A film this device cannot decode](#a-film-this-device-cannot-decode-from-build-46) and [When the Plex server stops answering](#when-the-plex-server-stops-answering-from-build-46).
+- **"A film of my Plex server plays without sound, opens its 4K version on my phone, or waits for ages away from home."** See [Films of a Plex library](#films-of-a-plex-library-from-build-45) and [A film this device cannot decode](#a-film-this-device-cannot-decode-from-build-46).
 - **"My photos are on my phone, and I have no computer or NAS to put them on for the headset."** See [Share this phone on the network](#share-this-phone-on-the-network).
 - **"I want to see my Tapo camera and last night's clips without the Tapo app, and keep a clip in Immich."** See [Tapo cameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
+- **"My battery Tapo camera, a C410 for example, shows no live view."** See [Battery cameras](#battery-cameras-from-build-47).
 - **"My drone videos are not on the Immich map, and I want the files of my DJI drone on my server without a computer."** See [DJI drones](#dji-drones-photos-and-videos-over-usb-experimental).
 - **"My photo is sideways, and I want to turn it with one key, on the phone, the TV or the computer."** See [Turn a photo with one key](#turn-a-photo-with-one-key).
 - **"My Insta360 files need the Insta360 app before I can watch them"** (and the GoPro .360 and DJI .osv files too). See [Raw 360° camera files](#raw-360-camera-files-without-the-cameras-app).
@@ -267,6 +269,8 @@ Folders and files are listed with the server's Browse action, page by page, and 
 
 A media server lists only the files it indexed, and media servers usually pick them by their extension: the raw files of 360° cameras (.insv, .insp, .360, .osv) and the splat files (.ply, .spz) usually do not show in a DLNA share, even when they sit in its folders. Put them on an SMB or WebDAV share, or in a folder of the device ("Browse a folder" on an Android phone, a tablet or a Meta Quest, the folders of a computer), where the app lists them itself.
 
+From build 47 and desktop build 27, and in the LG TV app from version 1.0.3, a folder of live TV channels (the TV channels of a Freebox, for example, which a DLNA server offers as RTSP or RTP streams) says "Live TV channels are not playable here yet" instead of opening empty. Playing them is on the roadmap.
+
 Checked against minidlna and Gerbera; discovery on a real network, Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest are the device test of build 19.
 
 ### A share that moved
@@ -319,7 +323,7 @@ You want every film of your library in one place, newest first, with its title u
 1. Open your Plex server in Network shares, then its film library, or tap **Films** in the Library tab (it shows once the app has a Plex server, and asks which library when there are several).
 2. Every film is in one list, under a header per year with its number of films, newest year first; the films without a year come last, under "Year unknown". The posters load as you scroll, 100 films at a time, with the title and the year under each.
 3. Drag the scrubber on the right edge, which shows once the list moves, to jump to a year.
-4. Type in "Search a title": the films whose title holds the text show 300 ms after you stop typing, with what the server's own search adds for a misspelt title. The × button or Back clears the search.
+4. Type in "Search a title": the films whose title holds the text show 300 ms after you stop typing, with what the server's own search adds for a misspelt title. From build 47 the search also ignores accents and apostrophes and finds a word anywhere in the title, the original title or the sort title, from three letters: "ecris" finds "J'écris ton nom". The × button or Back clears the search.
 5. The filter button of the bar opens the filters of the library (Year, Audience, Not watched, see [Films of a Plex library](#films-of-a-plex-library-from-build-45)): the list keeps the films that match, still newest year first, and the button shows that filters are on.
 6. Tap a poster to open the film's page (see [Films of a Plex library](#films-of-a-plex-library-from-build-45)), where Play starts it. A long press opens its menu: Play, which starts the film at once, "Download to this device" (on Android TV too from build 47), "Play on…" (phones and tablets) and Upload to Immich.
 7. The menu of the page has "Show the folders", the folder view as before, where the title of each film now shows under its picture. Libraries of other videos, where 360° clips usually are, keep the folder view.
@@ -330,7 +334,7 @@ On each screen:
 - **Meta Quest window**: the tablet layout, with the system keyboard.
 - **Computers**: Ctrl (Command on a Mac) and the mouse wheel change the number of posters a row; Ctrl F, Command F or / go to the search field, Escape clears it; the whole title shows when the pointer rests on it.
 
-Limits of build 45: the page was checked against a simulated server built from Plex's documentation, then in a Quest 3 with build 45 against a real Plex Media Server (the year headers, a search, a year filter), and whether the server's search ignores accents depends on the server.
+Limits of build 45: the page was checked against a simulated server built from Plex's documentation, then in a Quest 3 with build 45 against a real Plex Media Server (the year headers, a search, a year filter), and, before build 47, whether the search ignored accents depended on the server.
 
 ### Films of a Plex library (from build 45)
 
@@ -343,6 +347,8 @@ You want to know what a film is before it starts, to pick its language and its s
 5. **Filters**: the filter button of the films page opens Year (each decade, ticked whole or opened onto its years), Audience and Not watched; within one kind the choices add up, between kinds they narrow the list, and the films page keeps the films that match. In the folder view of a film library ("Show the folders"), the same button also offers Order (year, newest or oldest first, title, recently added); "Show the films" lists the films that match, with their count and Clear above them; Back or Clear brings the folders back.
 6. **Download and Play on**: the row after Play has "Download to this device" (see [Download a film to this device](#download-a-film-to-this-device)) and, on a phone or a tablet, "Play on…" (see [Play a film on your TV from your phone](#play-a-film-on-your-tv-from-your-phone)).
 7. **Audience**: the ages come from the ratings Plex stores, in the rating system of the library's country: "All audiences", "10 and over", "12 and over", "16 and over", "18 and over" and "Not rated", several at a time. A rating the app does not know is offered as Plex writes it. It is a filter, not a parental lock.
+8. **Versions** (from build 47): a film your library holds in several files, 1080p and 4K for example, shows them under "Versions", each with its resolution, its codec and its size ("2160p HEVC HDR, 52 GiB", "1080p HEVC, 3.0 GiB"). Play opens the one you picked last on this device; otherwise the largest one whose height fits the screen among those this device decodes, leaving out on a phone a file of 20 GB or more when a smaller one exists. The pick stays on the device, not in the settings file, since it depends on the screen. "Download to this device" then asks "Which version to download?".
+9. **A sound track this device cannot decode** (from build 47): when the track Plex picked is one the player of this device does not decode, Dolby TrueHD in a Meta Quest for example, the app plays another track of the film, in the same language when there is one, and says so for a few seconds: "Audio: French AC3 5.1 (TrueHD is not playable on this device)". With mpv, the same switch happens when mpv reports that a decoder failed, or when no sound comes 8 s after the first picture; picking the TrueHD track again in the menu brings the other one back, with the notice. When no track can play, the app says "This film has no sound this device can play", and on Android, for a film read from the server with the conversion setting on, offers "Let the server convert it".
 
 On each screen:
 - **Phones and tablets**: the page in one column on a phone, two columns on a tablet in landscape; the filters in a sheet.
@@ -351,7 +357,8 @@ On each screen:
 - **Computers**: the page in two columns, Enter or Space on Play; the Subtitles menu sits next to Audio in the player.
 - **iPhone and iPad**: the page and the filters, but no track menu yet, and MKV films do not play there.
 
-Limits of builds 45 and 46:
+Limits of builds 45 to 47:
+- The versions and the sound track choice of build 47 were checked by the project's tests, not on a device yet, and the version chips not with a TV remote yet.
 - The film page, the filters and the subtitle files were checked against a simulated server built from Plex's documentation, then the film page in a Quest 3 with build 45 against a real Plex Media Server. From build 46 the subtitle files beside a film were checked against a real server with 26 such files: a file Plex names `.vtt` that holds ASS or SubRip text, and a SubRip file written in Latin-1, whose accents showed wrong, now play as they are.
 - The pictures of the cast are on Plex's own servers, which the app never contacts: the page shows their initials.
 - Subtitles drawn as pictures (PGS, VobSub) beside a film are not offered: only Plex's transcoder can burn them in, which the app does not use.
@@ -365,9 +372,12 @@ You pick a film and the player stops: a DTS sound track, a DivX 3 AVI of the 200
 - **mpv, in a Meta Quest**: the Quest build carries libmpv, which keeps the hardware video decoding of the headset (mediacodec-copy) and decodes in software what the hardware lacks: DTS, DivX 3, WMA and WMV, MPEG-4 part 2 beyond its simple profile, 10 bit H.264. The phone, tablet and TV builds do not carry it.
 - **The Plex server's conversion**, on every Android device: a film that neither the device nor mpv decodes (TrueHD sound, VC-1 video) is converted by your Plex server, with its processor or graphics card, and played as a stream. "Let the Plex server convert what this device cannot play (experimental)", in Settings, Advanced, is on by default; the player then shows "Converted by the Plex server".
 - **When a player fails anyway**, before or during the film, the app hands the film to the next one and says so for a few seconds: "This device could not play the film: mpv takes over", or "This device could not play the film: the Plex server converts it". A failure of the link or of the server never hands the film over, since another player could not fix it (see [When the Plex server stops answering](#when-the-plex-server-stops-answering-from-build-46)).
+- **Why it is converted** (from build 47): when the server converts a film, the player says why for a few seconds, "Converted by the Plex server: this device cannot play DTS", naming what this device lacks (DTS, DivX 3, Dolby TrueHD, WMA, VC-1, or a profile such as "H.264 High 10"); a tap on the converted icon of the player says it again, and the film page tells it before Play: "On this device: converted by the Plex server (this device cannot play DTS)".
+- **A link slower than the film** (from build 47): when the waiting box says that the network is slower than the film, it offers "Play the (version) version" when the film has a lighter version (the richest one the link carries), which plays from the same moment and becomes your pick, and on Android "Let the server convert it to (rate)", about 70 % of the rate measured, between 1.5 and 20 Mbit/s.
+- **Dolby Vision profile 5** (from build 47): libmpv draws such a film without its Dolby Vision colours, and so does an Android device without a Dolby Vision decoder. The page then says "Dolby Vision profile 5: colours may be wrong on this device" for a few seconds, on computers, in mpv on the Quest and on those Android devices, and on Android adds "Let the server convert it". The Quest 3's own player has a Dolby Vision decoder and gets no notice.
 - **Choose the player yourself**, on the Quest: "Player: Automatic" in the menu of the video page, for that film, or "Film player" in Settings, Advanced, for every film: Automatic, Device (the decoders of this device only) or mpv.
 
-Limits: the conversion turns HEVC into H.264 1080p, starts at 0 and seeks to where you stopped, and seeking far ahead in it relies on the server starting its conversion again, not tried yet. TrueHD, VC-1 and the PGS subtitles of Blu-ray discs are not in the libmpv of the Quest. iPhone, iPad and the computers keep their own player (the computers play with libmpv already). The colours of a Dolby Vision profile 5 film played by mpv are still to be checked in a headset. Checked by the project's tests, and the conversion decision asked of a real Plex server, read only; no conversion was played end to end, and nothing was tried on a device yet.
+Limits: the conversion turns HEVC into H.264 1080p, starts at 0 and seeks to where you stopped, and seeking far ahead in it relies on the server starting its conversion again, not tried yet. TrueHD, VC-1 and the PGS subtitles of Blu-ray discs are not in the libmpv of the Quest. iPhone, iPad and the computers keep their own player (the computers play with libmpv already); from desktop build 27 the libmpv of Windows and macOS decodes Dolby TrueHD and MLP, and on Windows the PGS subtitles too (the macOS one had them), and the computers have no server conversion yet. The colours of a Dolby Vision profile 5 film stay wrong in libmpv, whose drawing path in the app has no Dolby Vision step, and whether the conversion of the server gives them right was not tried. Checked by the project's tests, and the conversion decision asked of a real Plex server, read only. On 13 November a Galaxy S24 with the player of build 46 played a DTS film and a DivX 3 AVI of a real Plex server through the server's conversion, with their sound; mpv in a Quest, and the notices and the offers of build 47, were not tried on a device yet.
 
 ### When the Plex server stops answering (from build 46)
 
@@ -385,7 +395,7 @@ Limits: a server that is already down when the app starts still gets the advice 
 
 You want a film of your Plex server on the phone, the tablet or the headset for a trip, without a connection. From build 45 a video of a Plex server can be copied to the device, whole and as it is on the server.
 
-1. Tap "Download to this device" on the page of the film, or long press its poster on the films page, or open the video, then its menu (⋮): "Download to this device". In the folder view, select one or more videos and tap the download button next to "Upload to Immich".
+1. Tap "Download to this device" on the page of the film, or long press its poster on the films page, or open the video, then its menu (⋮): "Download to this device". In the folder view, select one or more videos and tap the download button next to "Upload to Immich". From build 47, for a film in several versions, Download first asks "Which version to download?".
 2. A sheet tells the size of the original file, the free room on the device and where the copy goes. A film that does not fit, with 512 MB kept free, cannot start. On mobile data, with "Download only on Wi-Fi" on, "Download over mobile data this time" lets it start at once; otherwise it waits for the Wi-Fi. Tap Download.
 3. The copy runs in the background, one film at a time. On Android a notification shows the film, a progress bar with the percentage, the sizes, the speed and the time left, with Pause and Cancel, and the copy goes on with the screen off; it also says when the copy waits for the Wi-Fi or for the server. A tap opens "Downloaded films". At the end a notification says "Downloaded", or why the copy stopped, with Retry (or Resume after a pause). From build 47, on Android 13 and later the first download asks for the permission of the notifications; refused, the copy runs all the same and "Downloaded films" shows its progress. On iPhone and iPad a notification tells the end of the copy only. A lost link does not lose it: the copy goes on where it stopped, with the rest of the file only.
 4. The tile of the film shows a ring while it is copied and a check once it is on the device. The menu of its page then offers "Delete the copy on this device".
@@ -480,7 +490,7 @@ From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows 
 
 ### Add a camera
 
-1. In the Tapo app first: create the camera account, in the settings of the camera, Advanced Settings, Camera Account (a user name and password for this camera, used for the live view), and turn on Third-Party Compatibility, under Me, then Tapo Lab.
+1. In the Tapo app first: create the camera account, in the settings of the camera, Advanced Settings, Camera Account (a user name and password for this camera, used for the live view; a battery camera has none, see [Battery cameras](#battery-cameras-from-build-47)), and turn on Third-Party Compatibility, under Me, then Tapo Lab.
 2. In Immuch360, open the Library tab, then Network shares, then + and "A Tapo camera".
 3. The "Add a camera" page looks for cameras ("Looking for Tapo cameras on your network") and lists them under "Found on the network" with the Tapo tag. Tap yours to fill in "Camera address", or type its address. A camera with the Tapo tag in the share form opens the same page.
 4. "Name": how the camera is listed.
@@ -498,6 +508,19 @@ From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows 
 4. Below the picture come the model and firmware and the memory card, such as "Memory card: (used) used of (total)" or "No memory card".
 
 On iPhone and iPad, the live view comes with version 3.3.2, published on 6 November 2026 and not tried on an iPhone yet: the app turns the stream of the camera into a live HLS playlist on the device, played by the system player a few seconds behind the camera, with its sound, and an H.265 camera says so in its tile ("SD" may still play). Before that version, the live view said "The live view comes to iPhone and iPad in a later version. The recordings play here already." On LG TVs, from webOS 0.2.0, the live view is video only, see [LG webOS TVs](platform-support.md#lg-webos-tvs). Without the camera account the page says "Add the camera account to see the live view."
+
+### Battery cameras (from build 47)
+
+A battery or solar camera (C400 to C460, the C410 for example) has no camera account, no RTSP stream and no ONVIF: the Tapo app shows it through the camera's media port, with the password of your TP-Link account. From build 47 Immuch360 does the same on Android phones and tablets, Android TV, iPhone and iPad and the Meta Quest (experimental).
+
+1. Add the camera as above with the TP-Link account password (step 5), and leave the camera account empty. Without that password the page says "This camera has no RTSP stream (battery and solar cameras have none). Add the password of the TP-Link account: the live view then comes through the camera's media port, as in the Tapo app."
+2. Tap the camera: the live view comes from its media port, SD on the page of a phone and HD in full screen and in the Quest. On iPhone and iPad it has its sound; on Android and the Quest it is video only for now.
+3. A battery camera sleeps to save its battery: the app tries the connection three times, with a longer wait. If it still does not answer, the page says "The camera did not answer. A battery camera sleeps to save its battery: open its live view in the Tapo app to wake it up, then tap Retry here."
+4. A live view that fails says why, with Retry and a "Diagnostics:" line you can select and post in an issue: the model, the firmware, the power, the route, the step and a code, never a password.
+
+The media port also serves a camera on mains power that has no camera account, when the TP-Link password is there, and a camera whose RTSP stream does not start. A C410 on firmware 1.3.5 takes the older MD5 form of the password on its media port: the app tries it once after the newer form is refused, for the live view and the recordings, so a wrong password costs two tries at most.
+
+Limits: not tried with a real camera yet; written from what pytapo and Home Assistant Tapo Control document, and checked against a simulated media port. A camera paired with a Tapo hub (H200 and others) cannot stream through it yet, and the address of a hub says so. On computers the page says "This camera has no RTSP stream. Its live view through the media port comes to Immuch360 Desktop in a later version." "Test the camera" still checks RTSP only, and an H.265 camera is refused.
 
 ### Play and keep the recordings
 
@@ -521,7 +544,7 @@ When the camera no longer answers at its address, its page looks for it on the n
 
 - **Not yet checked on a device**: build 20 has not run with a real camera yet. The protocol was written from captures of a C510W with firmware 1.3.4 (the V4 login of mid 2026), and the app was checked against a simulated camera in its tests. Reports are welcome, with the model and firmware that "Test the camera" shows and the lines of [Logs](troubleshooting.md#logs).
 - **Live view**: on Android phones and tablets, Android TV, the Quest, from desktop build 3 Windows, and from webOS 0.2.0 LG TVs, video only; on iPhone and iPad from the next iOS release, a few seconds behind the camera. The limits of TP-Link apply: two HD and two SD streams at most at once per camera, the Tapo app included, and Tapo Care, the memory card and a recorder that uses RTSP or ONVIF cannot all run at once.
-- **Cameras**: battery cameras and cameras behind a Tapo hub are not supported.
+- **Cameras**: from build 47, battery cameras show live through their media port (see [Battery cameras](#battery-cameras-from-build-47)); cameras behind a Tapo hub are not supported yet.
 - **Recordings**: one download at a time per camera. While the Tapo app browses the memory card, the app tries again after 4, 8 and 12 seconds, then says "The camera is busy with another viewer, such as the Tapo app. Try again in a minute." Recordings in H.265 are not converted yet ("This recording is in H.265, which this version cannot convert yet."), continuous recordings have no thumbnail, and a clip plays once it is fully fetched.
 - **Passwords**: each wrong password counts, and after a few the camera locks for a while ("The camera is locked after too many wrong passwords. Try again in N minutes."). The app never tries a refused password again by itself: only "Test the camera" or Retry ask the camera again. When the camera takes the password for its settings but not for its videos, turn Third-Party Compatibility off and on again in the Tapo app, then restart the camera.
 - **Space**: fetched clips stay in the cache of the app, 1 GB at most for all the cameras together (the ones played least recently go first); the system may clear that cache, and removing a camera deletes its clips.
@@ -1040,10 +1063,12 @@ Then Share (to your cloud drive, an email to yourself, Quick Share; on iPhone an
 
 On the welcome screen, "Restore settings from a file", or in Settings, Settings file. Choose the file (on iPhone and iPad: open it in the Files app, Share, Immuch360), type the passphrase if it has one, and read what it holds before anything is written. Merge adds the file's servers, sources and settings and keeps what the app has; Replace removes the app's sources, settings and backup album choices first. A report tells what was restored and what was not, and why.
 
-- The account is restored only when the app is signed in to no server. It comes back as the session of the app that made the file: if that app is still in use, signing out on one signs out the other. An expired session leads to the sign in form, with the server address filled in.
+- The account is restored only when the app is signed in to no server. It comes back as the session of the app that made the file: if that app is still in use, signing out on one signs out the other. From build 47 the restore signs you in to your Immich server and the report says "Signed in as" with your name and email; build 46 wrote the session without signing in, so the app stayed signed out. When the server no longer accepts the session (signed out or expired), the report says "Sign in again", and its Sign in button opens the sign in form with the server address filled in. When the server does not answer, the report says "The server did not answer" and keeps the account: the app signs in at a later start, once the server answers.
 - Backup albums are found again by their id, else by their name. On a new install they are chosen once the app has read the device's photos.
 - Never in the file: the Play on links between your phone and your TVs, the DJI relay codes, this install's identity for Plex and for the phone share, the locked folder PIN, downloaded films and what the app learned on its own (caches, the scan of the device). Link the TVs again with one scan.
 - On a TV without a file picker, restore the settings on your phone, then sign the TV in with the phone.
+
+Checked by the project's tests; no restore was run on a device yet, and the restore on an iPhone through the Files app is not checked.
 
 ## Everything else is Immich
 
@@ -1051,7 +1076,7 @@ Everything the official Immich mobile app does is here: backup, timeline, albums
 
 To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows a 360° photo as a sphere in their browser.
 
-The current build, build 28 (version 3.3.0-rc.0, build number 3030026), is based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0, not a stable release yet). Build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
+The current build, build 47 (version 3.4.2, build number 3030045), follows the Immich 3.4.0 app with 11 later fixes of Immich, as builds 45 and 46 did, for Immich 3.3 and 3.4 servers; the CI's lab runs it against a simulated Immich 3.3.5 server, and builds 45 and 46 ran on the author's phone with the author's own Immich server. Builds 28 to 44 were based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), and build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
 
 ## On a Windows computer: Immuch360 Desktop (preview)
 
@@ -1061,7 +1086,7 @@ On a computer, Immich offers its web app in a browser. **What Immuch360 Desktop 
 
 This is a preview: photos and flat videos work from desktop build 2, and from desktop build 3 the 360° video player (360°, 3D, VR180 and raw 360° videos) and the live view of Tapo cameras; the steps below that need build 3 say so. Since 9 October 2026 the desktop sources are in the main branch of the fork, `immuch360`, so phones, headsets, TVs and computers ship from the same sources. The phone, tablet, Quest and TV apps do not change with it and keep the name Immuch360.
 
-To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the installer or the ZIP of desktop build 8, signed, with packages for Linux and macOS, early previews.
+To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the installer or the ZIP of desktop build 27, signed, with packages for Linux and macOS, early previews.
 
 ### What the preview does
 
@@ -1071,7 +1096,7 @@ To download and install the preview, see [Install it on a computer](#install-it-
 - **Select as in a file manager** (from desktop build 24): Ctrl+click, Shift+click, Ctrl+A and Esc in the timeline, the albums, the folders and the folders of a share, and a right click whose menu starts with Upload to Immich, see step 15 of [Use it on a computer](#use-it-on-a-computer).
 - **360° photos as a sphere**, with the mouse and the keyboard; the raw .insp photos of Insta360 cameras open as on phones.
 - **Turn a photo** (from desktop build 7): R, Shift+R, or the rotate button of the top bar, see [Turn a photo with one key](#turn-a-photo-with-one-key).
-- **Flat videos** (from desktop build 2): the videos of your folders, of your Immich server (the original or the transcoded stream, see [Video details and decoders](#video-details-decoders-and-why-a-video-stutters)), of SMB, WebDAV and DLNA shares, of Plex servers and the Tapo recordings play in the window, with the controls of the phones (play, pause, the time bar), a buffering indicator, and a menu of the audio tracks for a video that has several. The videos of your folders and of the shares show a frame of the video as their thumbnail, instead of a film icon.
+- **Flat videos** (from desktop build 2): the videos of your folders, of your Immich server (the original or the transcoded stream, see [Video details and decoders](#video-details-decoders-and-why-a-video-stutters)), of SMB, WebDAV and DLNA shares, of Plex servers and the Tapo recordings play in the window, with the controls of the phones (play, pause, the time bar), a buffering indicator, and a menu of the audio tracks for a video that has several. The videos of your folders and of the shares show a frame of the video as their thumbnail, instead of a film icon. From desktop build 27, the libmpv of Windows and macOS decodes the Dolby TrueHD and MLP sound of films, the default audio of most UHD Blu-ray copies, and on Windows their Blu-ray (PGS) subtitles too.
 - **360°, 3D and VR180 videos** (from desktop build 3): the 360° button opens them in the app's 360° player, in the window or in full screen, from every source of flat videos, turned with the mouse and the keyboard, with the 3D and 360°/180° buttons of the phones (a 3D video shows its left eye, as on phones), seeking, the audio track menu and a buffering indicator.
 - **Raw 360° videos** (from desktop build 3): Insta360 .insv files, with both lenses in one track, in two tracks (X4 and later) or in two files (X3 pairs), GoPro .360 and DJI .osv files, stitched by the app on the graphics chip as they play, with the calibration of the file, as on phones. From desktop build 5 the files with one lens per track or per file play in two players, one per lens, as phones run two decoders. From desktop build 26, Windows plays them stabilised with the camera's gyroscope (experimental), see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental).
 - **Network shares**: Samba (SMB), WebDAV and DLNA media servers, and Plex servers without plex.tv, browsed as on phones: their photos open and their videos play. For Tapo cameras, the recordings of the memory card: the list, fetching a clip and playing it; and from desktop build 3 the live view.
@@ -1210,7 +1235,7 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 
 ## Install it on a computer: Windows, Linux and macOS
 
-Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 8](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-8). From desktop build 7, each desktop pre-release has seven files (six in desktop builds 5 and 6), with `SHA256SUMS.txt` to check them:
+Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 27](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.2-27). From desktop build 7, each desktop pre-release has seven files (six in desktop builds 5 and 6), with `SHA256SUMS.txt` to check them:
 
 | Computer | File | What it is |
 |---|---|---|
