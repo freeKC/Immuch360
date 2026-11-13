@@ -81,12 +81,39 @@ class _FakeFilms implements PlexFilmsSource {
     return hubFilms;
   }
 
+  /// What the search of the folded titles was asked
+  final List<String> folded = [];
+  Exception? foldedError;
+
+  @override
+  Future<List<PlexFilm>> filmsByFoldedTitle(
+    PlexFilmListQuery query,
+    String text, {
+    Set<String> except = const {},
+    int limit = plexFoldedSearchLimit,
+  }) async {
+    folded.add(text);
+    final error = foldedError;
+    if (error != null) {
+      throw error;
+    }
+    return [
+      for (final f in films)
+        if (!except.contains(f.ratingKey) &&
+            plexTitleMatches((ratingKey: f.ratingKey, title: f.title, titleSort: null, originalTitle: null), text))
+          f,
+    ].take(limit).toList();
+  }
+
   @override
   Future<List<({PlexSection section, String folderPath})>> filmLibraries() async => const [];
 
   @override
   PlexSection? filmLibraryAt(String path) => null;
 }
+
+PlexFilmTitles _titles(String title, {String? sort, String? original}) =>
+    (ratingKey: '1', title: title, titleSort: sort, originalTitle: original);
 
 void main() {
   group('parsers', () {
@@ -115,6 +142,7 @@ void main() {
     test('the light pass gives the year of each film in the order of the list', () {
       final page = parsePlexYearsPage(_fixture('films_years_light.json'));
       expect(page.years, [2021, 2021, 2019, null]);
+      expect(page.titles, hasLength(4));
       expect(page.count, 4);
       expect(page.totalSize, 4);
     });
@@ -131,6 +159,7 @@ void main() {
         },
       };
       expect(parsePlexYearsPage(json).years, [2000]);
+      expect(parsePlexYearsPage(json).titles, [(ratingKey: '1', title: 'A', titleSort: null, originalTitle: null)]);
       expect([for (final f in parsePlexFilmListPage(json).films) f.ratingKey], ['1']);
       expect(parsePlexFilmListPage(json).count, 3, reason: 'the next page starts after every element');
     });
@@ -279,6 +308,53 @@ void main() {
       expect(around.index, 3);
     });
 
+    // The S24 run of 13 Nov 2026: "ecris" listed "Smile, c'était écrit" but not "La Bataille de Gaulle : J'écris ton
+    // nom"; Plex's title filter matches the start of a word and keeps "j'écris" whole
+    test('a title folds its case, its accents and its apostrophes', () {
+      expect(plexTitleFold("La Bataille de Gaulle : J'écris ton nom"), 'la bataille de gaulle jecris ton nom');
+      expect(plexTitleFold('L’Œuvre  de  Dieu'), 'loeuvre de dieu');
+      expect(plexTitleFold('Ça, ÉTÉ — 1985!'), 'ca ete 1985');
+      expect(plexTitleFold("  ' "), '');
+    });
+
+    test('a search without accents nor apostrophes finds the titles that have them, and the other way round', () {
+      final bataille = _titles("La Bataille de Gaulle : J'écris ton nom", sort: "Bataille de Gaulle : J'ecris ton nom");
+      for (final text in ['ecris', 'écris', 'ÉCRIS', "j'ecris", 'jecris', 'j ecris', 'gaulle ecris', 'ecris ton nom']) {
+        expect(plexTitleMatches(bataille, text), isTrue, reason: text);
+      }
+      expect(plexTitleMatches(bataille, 'ecrit'), isFalse);
+      expect(plexTitleMatches(bataille, 'ecris lune'), isFalse, reason: 'every word must be there');
+      expect(plexTitleMatches(bataille, ' '), isFalse);
+      expect(plexTitleMatches(_titles('Ecris-moi'), 'écris'), isTrue);
+      expect(plexTitleMatches(_titles('Smile', original: "C'était écrit"), 'cetait'), isTrue);
+    });
+
+    test('a search adds the films the folded titles find, each once, and never fails for them', () async {
+      final source = _FakeFilms([
+        _film('1', "La Bataille de Gaulle : J'écris ton nom", 2024),
+        _film('2', "Smile, c'était écrit", 2024),
+        _film('3', 'Ecrits', 2020),
+      ])..hubFilms = [_film('2', "Smile, c'était écrit", 2024)];
+      final found = await searchPlexFilms(source, const PlexFilmListQuery(sectionKey: '1', title: 'ecri'));
+      expect([for (final f in found.films) f.ratingKey], unorderedEquals(['1', '2', '3']));
+      expect(source.folded, ['ecri']);
+
+      source.hubFilms = const [];
+      final ecris = await searchPlexFilms(source, const PlexFilmListQuery(sectionKey: '1', title: 'ecris'));
+      expect([for (final f in ecris.films) f.ratingKey], ['1']);
+
+      source.foldedError = const PlexHttpStatus(500);
+      final failed = await searchPlexFilms(source, const PlexFilmListQuery(sectionKey: '1', title: 'ecrits'));
+      expect([for (final f in failed.films) f.ratingKey], ['3']);
+    });
+
+    test('one or two letters are left to the server: the folded titles would list half the library', () async {
+      final source = _FakeFilms([_film('1', "J'ai", 2024)]);
+      await searchPlexFilms(source, const PlexFilmListQuery(sectionKey: '1', title: "é'"));
+      await searchPlexFilms(source, const PlexFilmListQuery(sectionKey: '1', title: 'ja'));
+      expect(source.folded, isEmpty);
+    });
+
     test('a search asks both, and the tolerant one failing or off with filters loses nothing', () async {
       final source = _FakeFilms([_film('1', 'Elan', 2001), _film('2', 'Other', 2002)])
         ..hubFilms = [_film('9', 'Élan', 1999)];
@@ -409,6 +485,30 @@ void main() {
       final plex = await open();
       final found = await searchPlexFilms(plex, const PlexFilmListQuery(sectionKey: '1', title: 'LPH'));
       expect([for (final f in found.films) f.title], ['Alpha']);
+    });
+
+    test('the folded titles of the light pass find a film the title filter of the server misses', () async {
+      server.films['1'] = [
+        plexFilmElement(1, "La Bataille de Gaulle : J'écris ton nom", 2024),
+        plexFilmElement(2, 'Beta', 2002),
+        plexFilmElement(3, 'Écrits', 2020),
+      ];
+      final plex = await open();
+      const list = PlexFilmListQuery(sectionKey: '1');
+      expect(await plex.filmYears(list), [2024, 2002, 2020]);
+      final asked = server.requests.length;
+
+      final found = await searchPlexFilms(plex, list.copyWith(title: 'ecri'));
+      expect([
+        for (final f in found.films) f.title,
+      ], unorderedEquals(["La Bataille de Gaulle : J'écris ton nom", 'Écrits']));
+      // The items of the two films in one request, the titles from the light pass already read
+      final paths = [for (final request in server.requests.skip(asked)) request.path];
+      expect(paths.where((path) => path.startsWith('/library/metadata/')), ['/library/metadata/1,3']);
+      expect(paths.where((path) => path.endsWith('/all')), hasLength(1), reason: 'the title= of the server only');
+      // Their files have their paths, for the player
+      final film = found.films.firstWhere((f) => f.ratingKey == '1');
+      expect(await plex.stat(plexFilmEntry(plex.source.id, '1', film)!.path), isNotNull);
     });
 
     test('the folder view of a film library shows the titles, "Other videos" keep the file names', () async {

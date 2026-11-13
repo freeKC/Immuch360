@@ -83,6 +83,7 @@ the gate is per desktop and is noted.
 | `lib/presentation/pages/network/network_video.page.dart:1289` | the audio Media3 decodes on Android, behind `CurrentPlatform.isDesktop` | right |
 | `lib/providers/network/plex_film_version.provider.dart:77` | the default version of a film avoids a very large file on a phone (Android, iOS), behind `CurrentPlatform.isDesktop` and the TV mode | right: a computer is no phone |
 | `lib/providers/network/plex_film_version.provider.dart:83` | the decoders of Android for the default version, after the computers' own branch | right |
+| `lib/presentation/pages/network/network_video.page.dart:1389` | the server's conversion offered for a link slower than the film (release 47) on Android only, behind `CurrentPlatform.isDesktop` | right: the computers play the file with libmpv, no conversion; the lighter version stays offered there |
 | `lib/presentation/pages/network/phone_share.page.dart:80` | iOS foreground notice | right |
 | `lib/presentation/pages/network/phone_share.page.dart:95` | phone share tile on phones only | wired (G1): shown on the computers once computerShareAvailable is true (LAN) |
 | `lib/presentation/pages/pairing/connect_screen.page.dart:32` | a code of the LG webOS app leaves the TV unnamed on iOS, App Store guideline 2.3.10 (5 November 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider); they would get the text that names LG |

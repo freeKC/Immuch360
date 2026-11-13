@@ -87,6 +87,14 @@ class _Films implements PlexFilmsSource {
 
   @override
   Future<List<PlexFilm>> searchFilms(String sectionKey, String text) async => const [];
+
+  @override
+  Future<List<PlexFilm>> filmsByFoldedTitle(
+    PlexFilmListQuery query,
+    String text, {
+    Set<String> except = const {},
+    int limit = plexFoldedSearchLimit,
+  }) async => const [];
 }
 
 void main() {

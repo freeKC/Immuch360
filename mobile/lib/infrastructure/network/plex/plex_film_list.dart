@@ -12,6 +12,7 @@
 // but to the server they came from (Plex's terms call its metadata Content).
 
 import 'package:collection/collection.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/infrastructure/network/entry_names.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
@@ -212,16 +213,27 @@ PlexFilmListPage parsePlexFilmListPage(Object? json) {
   );
 }
 
-/// One page of the light pass: the year of each element in the order of the list (null for a film without one)
-typedef PlexYearsPage = ({List<int?> years, int count, int offset, int? totalSize});
+/// One page of the light pass: the year of each element in the order of the list (null for a film without one), and
+/// its titles, for the search of a title without its accents or apostrophes (see plexTitleMatches)
+typedef PlexYearsPage = ({List<int?> years, List<PlexFilmTitles> titles, int count, int offset, int? totalSize});
+
+/// The titles of a film, from the light pass: the one shown, the one it sorts by, the original one
+typedef PlexFilmTitles = ({String ratingKey, String title, String? titleSort, String? originalTitle});
 
 PlexYearsPage parsePlexYearsPage(Object? json) {
   final elements = _metadata(json);
   final container = _container(json);
+  final films = elements.where(_isFilm).toList();
   return (
-    years: [
-      for (final element in elements)
-        if (_isFilm(element)) _positiveYear(element['year']),
+    years: [for (final element in films) _positiveYear(element['year'])],
+    titles: [
+      for (final element in films)
+        (
+          ratingKey: _string(element['ratingKey'])!,
+          title: _string(element['title'])!.trim(),
+          titleSort: _string(element['titleSort']),
+          originalTitle: _string(element['originalTitle']),
+        ),
     ],
     count: elements.length,
     offset: _int(container?['offset']) ?? 0,
@@ -333,6 +345,33 @@ List<PlexFilm> mergePlexSearch(List<PlexFilm> contains, List<PlexFilm> hubs, Ple
   return films;
 }
 
+/// [text] for a search that ignores case, accents and apostrophes: lower case, without diacritics ("é" is "e", "œ" is
+/// "oe"), the apostrophes taken out ("J'écris" is "jecris"), any other sign a space, the spaces single.
+///
+/// Plex's own title filter (/all?title=) folds the accents but matches the start of a word, and keeps an elided word
+/// whole: "ecris" does not find "J'écris ton nom" (the test server, Plex Media Server 1.42, 13 November 2026), nor does
+/// its spelling tolerant search. The app matches the folded words anywhere in the folded titles instead.
+String plexTitleFold(String text) => removeDiacritics(text.toLowerCase())
+    .replaceAll(RegExp("['\u2019\u2018\u02bc`\u00b4]"), '')
+    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+    .trim();
+
+/// Whether [titles] answer the search [text]: each of its folded words (plexTitleFold) is somewhere in one of the
+/// folded titles ("ecris", "j ecris" and "jecris" all find "J'écris ton nom"). An empty search matches nothing.
+bool plexTitleMatches(PlexFilmTitles titles, String text) {
+  final words = plexTitleFold(text).split(' ').where((word) => word.isNotEmpty).toList();
+  if (words.isEmpty) {
+    return false;
+  }
+  return [titles.title, titles.titleSort, titles.originalTitle].any((title) {
+    if (title == null) {
+      return false;
+    }
+    final folded = plexTitleFold(title);
+    return words.every(folded.contains);
+  });
+}
+
 /// The first folder of the paths of the films, hidden from every listing (a dot name); the same paths as the film page
 /// of lot A2 builds (its plexFilmsFolder)
 const plexFilmsRoot = '/.films';
@@ -384,6 +423,9 @@ NetworkEntry plexFilmPartEntry(String sourceId, String path, PlexFileItem part, 
 /// A film library of a Plex server, for the Films button of the Library tab
 typedef PlexFilmLibrary = ({String sourceId, String serverName, PlexSection section, String folderPath});
 
+/// The films a search without accents nor apostrophes adds at most (see PlexFilmsSource.filmsByFoldedTitle)
+const plexFoldedSearchLimit = 200;
+
 /// What the films page reads of a Plex server: PlexFileSystem, a fake in the tests
 abstract interface class PlexFilmsSource {
   /// The id of the source of the server, for the entries of its films
@@ -401,6 +443,15 @@ abstract interface class PlexFilmsSource {
   /// The films of the section that the server's spelling tolerant search finds for [text]; empty when the server has
   /// no such search
   Future<List<PlexFilm>> searchFilms(String sectionKey, String text);
+
+  /// The films of [query] (its title left out) whose titles answer [text] without its accents nor apostrophes
+  /// (plexTitleMatches), read from the titles of its light pass; none of [except] (rating keys), [limit] at most
+  Future<List<PlexFilm>> filmsByFoldedTitle(
+    PlexFilmListQuery query,
+    String text, {
+    Set<String> except = const {},
+    int limit = plexFoldedSearchLimit,
+  });
 
   /// The film libraries of the server, with the path of the folder of each at the root of the share
   Future<List<({PlexSection section, String folderPath})>> filmLibraries();

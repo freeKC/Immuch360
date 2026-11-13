@@ -171,4 +171,57 @@ void main() {
 
     await pauseAtEnd(tester);
   });
+
+  // The S24 run of 13 Nov 2026: a 2160p file of 43 Mbit/s over a link of 9 Mbit/s, 30 s before its first frame
+  testWidgets('a link slower than the video offers what the page gives, under its words, and the buttons take taps', (
+    tester,
+  ) async {
+    final link = ValueNotifier<VideoLinkView?>(
+      const VideoLinkView(waiting: true, loading: true, bitsPerSecond: 9100000, neededBitsPerSecond: 43000000),
+    );
+    addTearDown(link.dispose);
+    final pressed = <String>[];
+    // Not loading while the app settles (its spinner turns for ever)
+    await pumpNetworkTestApp(
+      tester,
+      home: ValueListenableBuilder<bool>(
+        valueListenable: loading,
+        builder: (context, isLoading, _) => NetworkVideoBufferingIndicator(
+          playerKey: _playerKey,
+          loading: isLoading,
+          link: link,
+          slowActions: (view) => [
+            (
+              key: const Key('convert'),
+              label: 'Convert at ${view.bitsPerSecond! ~/ 1000000}',
+              onPressed: () => pressed.add('convert'),
+            ),
+          ],
+        ),
+      ),
+      overrides: [videoPlayerProvider(_playerKey).overrideWith((ref) => player)],
+    );
+    loading.value = true;
+    await tester.pump();
+    expect(find.byKey(const Key('convert')), findsNothing, reason: 'not slow yet: nothing to offer');
+
+    link.value = const VideoLinkView(
+      waiting: true,
+      loading: true,
+      slow: true,
+      bitsPerSecond: 9100000,
+      neededBitsPerSecond: 43000000,
+    );
+    await tester.pump();
+    expect(find.textContaining('it will pause now and then'), findsOneWidget);
+    expect(find.text('Convert at 9'), findsOneWidget);
+    // The box scrolls when the screen is short (the test font is large)
+    await tester.ensureVisible(find.byKey(const Key('convert')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('convert')));
+    expect(pressed, ['convert']);
+
+    loading.value = false;
+    await tester.pump();
+  });
 }

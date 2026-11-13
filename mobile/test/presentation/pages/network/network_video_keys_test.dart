@@ -23,6 +23,7 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
@@ -91,6 +92,9 @@ class _FakePlayer extends VideoPlayerNotifier {
     calls.add('seek ${position.inSeconds}');
     state = state.copyWith(position: position);
   }
+
+  /// The video moves on by [step], as the native player reports it while it plays
+  void tick(Duration step) => state = state.copyWith(position: state.position + step);
 }
 
 /// What the page asked of the player's loop
@@ -106,6 +110,8 @@ void main() {
   // What the page asks of the player of the next video, /b.mp4
   late List<String> nextCalls;
   late int systemPops;
+  // The player of the video of the page, /clip.mp4
+  late _FakePlayer player;
 
   setUp(() async {
     db = Drift(DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true));
@@ -184,7 +190,7 @@ void main() {
         panorama360VideoSupportedProvider.overrideWithValue(false),
         networkMediaServiceProvider.overrideWith((ref) => _NoDetection()),
         videoPlayerProvider('network:nas:/clip.mp4').overrideWith(
-          (ref) => _FakePlayer(
+          (ref) => player = _FakePlayer(
             calls,
             VideoPlayerState(
               position: const Duration(seconds: 30),
@@ -375,6 +381,67 @@ void main() {
     await tester.pump();
     expect(controlsShown(), isTrue);
     expect(appBarShown(tester), isTrue);
+  });
+
+  // The S24 run of 13 Nov 2026: the menu "did not open" and a tap on the bar "did not seek" while a film played. The
+  // taps came 6 to 20 s after the bars showed, or 0.5 s after a tap on the picture that hid them: on bars that were
+  // gone, where a tap brings the bars back and nothing else
+  testWidgets('on a phone the menu opens while the video plays, and stays open as it plays on', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing, tvMode: false);
+
+    await tester.tap(find.byTooltip(StaticTranslations.instance.more));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(PopupMenuItem<void>), findsWidgets);
+
+    // 12 s of playback, a position every 250 ms, past the 5 s of the bars
+    for (var i = 0; i < 48; i++) {
+      player.tick(const Duration(milliseconds: 250));
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    expect(find.byType(PopupMenuItem<void>), findsWidgets);
+    expect(appBarShown(tester), isTrue);
+
+    // Closed, the bars hide 5 s later
+    await tester.tapAt(const Offset(10, 300));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(PopupMenuItem<void>), findsNothing);
+    await tester.pump(const Duration(seconds: 5));
+    expect(appBarShown(tester), isFalse);
+  });
+
+  testWidgets('on a phone, once the bars hid, a tap where the menu was brings them back, and the next one opens it', (
+    tester,
+  ) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing, tvMode: false);
+    final more = tester.getCenter(find.byTooltip(StaticTranslations.instance.more));
+
+    await tester.pump(const Duration(seconds: 6));
+    expect(appBarShown(tester), isFalse);
+    await tester.tapAt(more);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(PopupMenuItem<void>), findsNothing);
+    expect(appBarShown(tester), isTrue);
+
+    await tester.tapAt(more);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(PopupMenuItem<void>), findsWidgets);
+  });
+
+  testWidgets('on a phone a tap on the time bar takes the video there while it plays, and it plays on', (tester) async {
+    await pumpVideo(tester, status: VideoPlaybackStatus.playing, tvMode: false);
+
+    final bar = tester.getRect(find.byType(Slider));
+    await tester.tapAt(Offset(bar.left + bar.width * 0.75, bar.center.dy));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final seeks = calls.where((call) => call.startsWith('seek ')).toList();
+    expect(seeks, hasLength(1));
+    expect(int.parse(seeks.single.substring(5)), inInclusiveRange(85, 95));
+    expect(player.state.status, VideoPlaybackStatus.playing);
   });
 
   testWidgets('a TV plays a video once by default, a phone loops it', (tester) async {

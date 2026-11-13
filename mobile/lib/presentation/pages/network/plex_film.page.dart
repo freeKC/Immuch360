@@ -13,6 +13,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_client.dart';
 import 'package:immich_mobile/presentation/pages/network/film_page_actions.dart';
 import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
+import 'package:immich_mobile/presentation/widgets/network/film_conversion_notice.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
@@ -552,6 +553,12 @@ class _Texts extends ConsumerWidget {
           const SizedBox(height: 16),
           for (final line in technical) Text(line, style: secondary),
         ],
+        // The file Play opens, converted by the server on this device: why
+        FilmConversionLine(
+          part: film.parts.firstOrNull,
+          container: film.parts.firstOrNull == null ? null : film.mediaOf(film.parts.first)?.container,
+          style: secondary,
+        ),
         _WikipediaBlock(film: film, libraryLanguage: library, tvMode: tvMode),
       ],
     );
