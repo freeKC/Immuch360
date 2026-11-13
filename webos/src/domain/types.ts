@@ -28,6 +28,8 @@ export interface AssetDetails {
 	model: string | null;
 	projectionType: string | null;
 	fileSize: number | null;
+	// Immuch360: the EXIF orientation ("6", "8"...), which for a video is its rotation flag (src/immuch360/video/orientation.ts)
+	orientation?: string | null;
 	// Immuch360: what the one-key rotation reads (src/immuch360/rotation/mode.ts), and the thumbhash that changes once the
 	// server made a turned picture
 	ownerId: string | null;

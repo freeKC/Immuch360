@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {VideoPlayer as SandstoneVideoPlayer} from '@enact/sandstone/VideoPlayer';
 import {features} from '../../platform/features';
+import {videoTurn, videoTurnTransform, type VideoOrientationInfo} from '../../immuch360/video/orientation';
 import {holdScreenSaver} from '../../utils/screenSaver';
 import css from './MediaViewer.module.less';
 
@@ -26,6 +27,9 @@ interface VideoPlayerProps {
 	onControlsAvailable?: (ev: {available?: boolean}) => void;
 	// Not Sandstone's `playerRef` prop (that one exposes the DOM node, not the API).
 	apiRef?: React.Ref<VideoPlayerApi>;
+	// Immuch360: the orientation and stored size of the video (asset details), null while unknown: a video filmed upright
+	// whose frames the player shows on their side is turned (src/immuch360/video/orientation.ts, issue 17)
+	orientation?: VideoOrientationInfo | null;
 }
 
 // Sandstone exposes VideoPlayer with a Slottable-only typing — `autoCloseTimeout`,
@@ -65,7 +69,7 @@ function passApi(ref: React.Ref<VideoPlayerApi> | undefined, api: VideoPlayerApi
 	else if (ref) (ref as React.MutableRefObject<VideoPlayerApi | null>).current = api;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailable, apiRef}) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailable, apiRef, orientation}) => {
 	// Immuch360: the player's API for this component too (the pause below), and for the viewer through apiRef
 	const ownApi = useRef<VideoPlayerApi | null>(null);
 	const setApi = useCallback(
@@ -108,6 +112,43 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 			if (release) release();
 		};
 	}, []);
+
+	// Immuch360: on a Samsung TV the video element is turned once the player knows the size of the frames (loadedmetadata),
+	// and again when the asset's details come; the player's controls are outside the element and stay as they are
+	const turnOrientation = orientation?.orientation ?? null;
+	const turnWidth = orientation?.width ?? null;
+	const turnHeight = orientation?.height ?? null;
+	useEffect(() => {
+		if (!features().turnSidewaysVideo) return undefined;
+		// The element turned last: on closing it is already out of the page
+		let turned: HTMLVideoElement | null = null;
+		const apply = () => {
+			const node = viewerVideoElement();
+			if (!node) return;
+			turned = node;
+			const turn = videoTurn({
+				orientation: turnOrientation,
+				width: turnWidth,
+				height: turnHeight,
+				frameWidth: node.videoWidth,
+				frameHeight: node.videoHeight,
+				boxWidth: node.clientWidth,
+				boxHeight: node.clientHeight,
+			});
+			node.style.transform = videoTurnTransform(turn);
+		};
+		const onMetadata = (event: Event) => {
+			if (fromThisPlayer(event.target)) apply();
+		};
+		apply();
+		document.addEventListener('loadedmetadata', onMetadata, true);
+		window.addEventListener('resize', apply);
+		return () => {
+			document.removeEventListener('loadedmetadata', onMetadata, true);
+			window.removeEventListener('resize', apply);
+			if (turned) turned.style.transform = '';
+		};
+	}, [src, turnOrientation, turnWidth, turnHeight]);
 
 	const playerProps = {...PLAYER_PROPS, onControlsAvailable, ref: setApi, [VIDEO_MARK]: ''};
 	return (

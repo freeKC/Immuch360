@@ -108,3 +108,53 @@ test('an LG TV: hiding the app leaves the video to webOS, and the viewer gets th
 	hide(false);
 	expect(pause).not.toHaveBeenCalled();
 });
+
+// Immuch360: a phone video filmed upright, stored as 1920 x 1080 frames with a rotation flag (Immich orientation "6"),
+// whose frames the player shows as stored, in a 1920 x 1080 screen (issue 17)
+const UPRIGHT = {orientation: '6', width: 1920, height: 1080};
+
+function reportSizes(video: HTMLVideoElement, frame: [number, number], box: [number, number] = [1920, 1080]) {
+	Object.defineProperty(video, 'videoWidth', {configurable: true, value: frame[0]});
+	Object.defineProperty(video, 'videoHeight', {configurable: true, value: frame[1]});
+	Object.defineProperty(video, 'clientWidth', {configurable: true, value: box[0]});
+	Object.defineProperty(video, 'clientHeight', {configurable: true, value: box[1]});
+}
+
+test('a Samsung TV turns a video filmed upright once the player knows its frames, and stops when it closes', () => {
+	samsung();
+	const {container, unmount} = render(<VideoPlayer src="clip.mp4" orientation={UPRIGHT} />);
+	const video = playerVideo(container);
+	expect(video.style.transform).toBe('');
+	reportSizes(video, [1920, 1080]);
+	act(() => {
+		video.dispatchEvent(new Event('loadedmetadata'));
+	});
+	expect(video.style.transform).toBe('rotate(90deg) scale(0.5625)');
+	unmount();
+	expect(video.style.transform).toBe('');
+});
+
+test('a Samsung TV leaves a video whose frames come already turned, and turns once the details come', () => {
+	samsung();
+	const {container, rerender} = render(<VideoPlayer src="clip.mp4" orientation={null} />);
+	const video = playerVideo(container);
+	reportSizes(video, [1080, 1920]);
+	act(() => {
+		video.dispatchEvent(new Event('loadedmetadata'));
+	});
+	rerender(<VideoPlayer src="clip.mp4" orientation={UPRIGHT} />);
+	expect(video.style.transform).toBe('');
+	reportSizes(video, [1920, 1080]);
+	rerender(<VideoPlayer src="clip.mp4" orientation={{...UPRIGHT, orientation: '8'}} />);
+	expect(video.style.transform).toBe('rotate(270deg) scale(0.5625)');
+});
+
+test('an LG TV leaves the turn to its player', () => {
+	const {container} = render(<VideoPlayer src="clip.mp4" orientation={UPRIGHT} />);
+	const video = playerVideo(container);
+	reportSizes(video, [1920, 1080]);
+	act(() => {
+		video.dispatchEvent(new Event('loadedmetadata'));
+	});
+	expect(video.style.transform).toBe('');
+});

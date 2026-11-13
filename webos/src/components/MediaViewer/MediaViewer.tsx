@@ -3,6 +3,7 @@ import Button from '@enact/sandstone/Button';
 import Spotlight from '@enact/spotlight';
 import {useWebOSKeys, type ArrowHandler} from '../../hooks/useWebOSKeys';
 import {useOnline} from '../../hooks/useOnline';
+import {features} from '../../platform/features';
 import {useAutoHideControls} from '../../hooks/useAutoHideControls';
 import {useAssetRotation} from '../../hooks/useAssetRotation';
 import {useAssetDetailsQuery} from '../../hooks/useAssetDetails';
@@ -137,7 +138,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const {details, settled: detailsSettled} = useAssetDetailsQuery(
 		asset?.id,
 		!!asset &&
-			(detailsOpen || zoomedPast2x || videoFailed || stallSeen || sizeBeforePlay || (!isVideo && (flagged || forced || looksEquirect(asset.ratio) || repository.detailsForEveryPhoto === true)))
+			(detailsOpen || zoomedPast2x || videoFailed || stallSeen || sizeBeforePlay || (isVideo && features().turnSidewaysVideo) || (!isVideo && (flagged || forced || looksEquirect(asset.ratio) || repository.detailsForEveryPhoto === true)))
 	);
 	let videoSize: VideoGateInput['size'] = null;
 	if (sizeBeforePlay) videoSize = details ? {width: details.width, height: details.height} : detailsSettled ? null : undefined;
@@ -147,6 +148,12 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const playsOriginal = usePlaysOriginal(repository, isVideo ? asset?.id : undefined, details?.fileSize ?? null, pastCeiling || videoFailed || stallSeen);
 	const gate = useVideoGate(isVideo ? asset?.id : undefined, ceiling, videoSize, playsOriginal);
 	const playerShown = isVideo && gate.kind === 'play' && !videoFailed;
+	// Immuch360: what the player turns a video filmed upright by, on a Samsung TV (src/immuch360/video/orientation.ts)
+	const detailsOfVideo = isVideo && !!details && details.id === asset?.id ? details : null;
+	const videoOrientation = useMemo(
+		() => (detailsOfVideo ? {orientation: detailsOfVideo.orientation, width: detailsOfVideo.width, height: detailsOfVideo.height} : null),
+		[detailsOfVideo]
+	);
 	// Immuch360: the bitrate of the file, from its size and the asset's duration (else the one the player found)
 	const mediaDuration = (videoFailed ? videoFailure?.mediaDuration : null) ?? (stallSeen ? videoStall?.mediaDuration : null) ?? null;
 	const heavy = {
@@ -631,7 +638,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 							</Button>
 						</div>
 					) : playerShown ? (
-						<VideoPlayer src={mediaUrl} onControlsAvailable={handleVideoControlsAvailable} apiRef={playerApiRef} />
+						<VideoPlayer src={mediaUrl} onControlsAvailable={handleVideoControlsAvailable} apiRef={playerApiRef} orientation={videoOrientation} />
 					) : null
 				) : show360 ? (
 					<SphereView
