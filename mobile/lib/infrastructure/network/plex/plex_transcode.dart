@@ -235,8 +235,8 @@ String _extensionOf(String path) {
 }
 
 /// GETs [uri] on the server with the app's headers and [headers], and gives its body; throws when the server does not
-/// answer 200
-typedef PlexConversionFetch = Future<Uint8List> Function(Uri uri, Map<String, String> headers);
+/// answer 200, and when [abort] completes first (the request and its body stopped)
+typedef PlexConversionFetch = Future<Uint8List> Function(Uri uri, Map<String, String> headers, {Future<void>? abort});
 
 /// The conversion of one film, served by the media bridge under a random id: [playlistName] is the playlist of its
 /// stream (the variant of start.m3u8, its segments renamed), each segment "N.ts" fetched from the server when a player
@@ -255,9 +255,11 @@ class PlexConversion implements GeneratedMediaFetch {
   List<Uri> _segments = const [];
   bool _stopped = false;
 
-  /// What the server converts last: the segments a player asks for twice (a seek back) are fetched again
+  /// What the server converts last: the segments a player asks for twice (a seek back) are fetched again. A segment
+  /// whose player went away ([abort]: a seek elsewhere) stops at once, so that the server's connection and the link go
+  /// to the segment of the new place.
   @override
-  Future<GeneratedFile?> fetch(String name) async {
+  Future<GeneratedFile?> fetch(String name, {Future<void>? abort}) async {
     if (_stopped) {
       return null;
     }
@@ -274,7 +276,7 @@ class PlexConversion implements GeneratedMediaFetch {
       // The token goes to the Plex server only
       return null;
     }
-    final bytes = await _fetch(segment, request.headers);
+    final bytes = await _fetch(segment, request.headers, abort: abort);
     return GeneratedFile(bytes, name.endsWith('.ts') ? 'video/mp2t' : 'application/octet-stream');
   }
 

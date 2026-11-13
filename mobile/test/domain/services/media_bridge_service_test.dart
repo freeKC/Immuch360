@@ -890,6 +890,29 @@ void main() {
       expect(fetched.asked, ['film.m3u8', '7.ts', 'film.m3u8']);
     });
 
+    test('a segment fetch is told at once when its player leaves (a seek elsewhere in a converted film)', () async {
+      final hold = Completer<void>();
+      final fetched = _FetchedMedia({'0.ts': GeneratedFile(_playlistBytes, 'video/mp2t')})..held = hold.future;
+      bridge.registerGenerated('f0e1d2c3b4a5968778695a4b', fetched);
+      final url = bridge.urlFor('f0e1d2c3b4a5968778695a4b', '0.ts');
+      final socket = await Socket.connect(InternetAddress.loopbackIPv4, bridge.port!);
+      socket.listen((_) {}, onError: (Object _) {});
+      socket.write('GET ${url.path} HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n');
+      await socket.flush();
+      await _until(() => fetched.aborts.isNotEmpty);
+      final left = fetched.aborts.single;
+      expect(left, isNotNull);
+      var told = false;
+      unawaited(left!.then((_) => told = true));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(told, isFalse);
+
+      socket.destroy();
+      await left.timeout(const Duration(seconds: 2));
+      expect(told, isTrue);
+      hold.complete();
+    });
+
     test('nothing once unregistered; the shares are still served', () async {
       bridge.unregisterGenerated('a1b2c3d4e5f6a7b8c9d0e1f2');
       expect((await _send(bridge.urlFor('a1b2c3d4e5f6a7b8c9d0e1f2', 'live.m3u8'))).status, HttpStatus.notFound);
@@ -1662,10 +1685,17 @@ class _FetchedMedia implements GeneratedMediaFetch {
   final asked = <String>[];
   bool fails = false;
 
+  /// Holds the fetches until it completes, when set
+  Future<void>? held;
+
+  /// The aborts the fetches came with
+  final aborts = <Future<void>?>[];
+
   @override
-  Future<GeneratedFile?> fetch(String name) async {
+  Future<GeneratedFile?> fetch(String name, {Future<void>? abort}) async {
     asked.add(name);
-    await Future<void>.delayed(Duration.zero);
+    aborts.add(abort);
+    await (held ?? Future<void>.delayed(Duration.zero));
     if (fails) {
       throw const SocketException('the server is gone');
     }

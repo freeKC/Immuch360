@@ -729,8 +729,14 @@ class PlexFileSystem
       return PlexConversion(
         request: request,
         base: base,
-        fetch: (uri, headers) async {
-          final bytes = await _plex.getBytes(uri, accept: '*/*', maxSize: maxConversionSegment, headers: headers);
+        fetch: (uri, headers, {abort}) async {
+          final bytes = await _plex.getBytes(
+            uri,
+            accept: '*/*',
+            maxSize: maxConversionSegment,
+            headers: headers,
+            abort: abort,
+          );
           if (bytes == null) {
             throw const NetworkFileSystemException('The conversion is gone from the server');
           }
