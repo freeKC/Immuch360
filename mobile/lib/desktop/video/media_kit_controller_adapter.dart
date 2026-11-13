@@ -182,9 +182,11 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
   final _decoding = ValueNotifier<({String? hwdec, VideoFrameSize? size})>((hwdec: null, size: null));
   final _audioSwitch = ValueNotifier<FilmAudioSwitch?>(null);
 
-  /// The audio codecs this player does not decode (film_decoders.dart): TrueHD in the app's libmpv builds, nothing in
-  /// the system's libmpv of Linux. The tests set their own.
-  static Set<String> missingAudioCodecs = libmpvMissingAudioOn(linux: defaultTargetPlatform == TargetPlatform.linux);
+  /// The audio codecs this player does not decode (film_decoders.dart): TrueHD and MLP in the Quest's libmpv, nothing
+  /// on the computers. The tests set their own.
+  static Set<String> missingAudioCodecs = libmpvMissingAudioOn(
+    android: defaultTargetPlatform == TargetPlatform.android,
+  );
 
   /// How long after the first frame a video whose audio track mpv dropped (a decoder that did not open) is taken for
   /// one without sound

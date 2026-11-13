@@ -77,7 +77,7 @@ final filmVersionDeviceProvider = FutureProvider.autoDispose<FilmVersionDevice>(
   final phone = !tv && !CurrentPlatform.isDesktop && (Platform.isAndroid || Platform.isIOS);
   bool Function(FilmStreams streams)? decodes;
   if (CurrentPlatform.isDesktop) {
-    final missing = libmpvMissingAudioOn(linux: CurrentPlatform.isLinux);
+    final missing = libmpvMissingAudioOn(android: false);
     decodes = (streams) =>
         [streams.audioCodec, ...streams.otherAudioCodecs].any((codec) => codec == null || !missing.contains(codec));
   } else if (Platform.isAndroid) {

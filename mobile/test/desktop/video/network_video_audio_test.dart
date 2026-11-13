@@ -1,6 +1,7 @@
 // The notice of the network video page when libmpv plays another audio track than the film's default one, or none
 // (release 47, the desktop Plex validation of 13 November 2026: La Bataille de Gaulle played silent on its TrueHD
-// track, with no word).
+// track, with no word). The computers' libmpv decodes TrueHD since the 20261113-2 releases: the tests give the player
+// the missing codecs of the Quest's libmpv, the one that still lacks TrueHD.
 
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
@@ -86,6 +87,7 @@ void main() {
       },
     );
     calls = [];
+    // A libmpv without TrueHD (the Quest's)
     MediaKitVideoPlayerController.missingAudioCodecs = const {'truehd', 'mlp'};
     MediaKitVideoPlayerController.preferredAudioLanguage = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
