@@ -39,6 +39,9 @@ class FakeDownloadShare implements NetworkFileSystem, NetworkFileDownloads {
   Completer<void>? hold;
   final List<int> asked = [];
 
+  /// Thrown by the next opens of a download, one each, before the file is given (a server that does not answer)
+  final List<Exception> failures = [];
+
   @override
   NetworkSource get source => filmTestSource;
 
@@ -58,6 +61,9 @@ class FakeDownloadShare implements NetworkFileSystem, NetworkFileDownloads {
   @override
   Future<NetworkDownloadStream> openDownload(String path, {int from = 0, Future<void>? abort}) async {
     asked.add(from);
+    if (failures.isNotEmpty) {
+      throw failures.removeAt(0);
+    }
     final data = files[path];
     if (data == null) {
       throw const NetworkFileSystemException('gone', isNotFound: true);
@@ -79,16 +85,32 @@ class FakeDownloadShare implements NetworkFileSystem, NetworkFileDownloads {
 
 class FakeKeepAlive implements FilmDownloadKeepAlive {
   final List<int> shown = [];
+
+  /// Every notice shown, with its text and whether the service was told it waits
+  final List<({String text, String? subText, int progress, bool waiting})> notices = [];
+
+  /// The end notifications left, by film
+  final List<({String filmId, FilmDownloadEndTexts texts})> ends = [];
+  final List<String> cancelledEnds = [];
   int stops = 0;
   int? free;
   void Function()? onPause;
   void Function()? onCancel;
 
   @override
-  Future<void> show(FilmDownloadNoticeTexts texts, int progress) async => shown.add(progress);
+  Future<void> show(FilmDownloadNoticeTexts texts, int progress, {bool waiting = false}) async {
+    shown.add(progress);
+    notices.add((text: texts.text, subText: texts.subText, progress: progress, waiting: waiting));
+  }
 
   @override
   Future<void> stop() async => stops++;
+
+  @override
+  Future<void> showEnd(String filmId, FilmDownloadEndTexts texts) async => ends.add((filmId: filmId, texts: texts));
+
+  @override
+  Future<void> cancelEnd(String filmId) async => cancelledEnds.add(filmId);
 
   @override
   Future<int?> freeBytes(Directory folder) async => free;
@@ -109,6 +131,7 @@ class FakeFilmEnvironment {
   final keepAlive = FakeKeepAlive();
   final network = StreamController<void>.broadcast();
   List<NetworkCapability> capabilities = const [NetworkCapability.wifi, NetworkCapability.unmetered];
+  List<Duration> retryDelays = const [Duration.zero];
 
   Directory get films => Directory('${root.path}${Platform.pathSeparator}films');
 
@@ -122,9 +145,15 @@ class FakeFilmEnvironment {
     networkChanges: () => network.stream,
     keepAlive: keepAlive,
     isDesktop: false,
-    texts: (film, received, speed) =>
-        (channelName: 'Films', title: film.shownTitle, text: '$received', pause: 'Pause', cancel: 'Cancel'),
-    retryDelays: const [Duration.zero],
+    texts: (film, received, speed, wait) => (
+      channelName: 'Films',
+      title: film.shownTitle,
+      text: wait == FilmDownloadWait.none ? '$received' : '${wait.name} $received',
+      subText: speed == null ? null : 'speed',
+      pause: 'Pause',
+      cancel: 'Cancel',
+    ),
+    retryDelays: retryDelays,
   );
 }
 

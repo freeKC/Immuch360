@@ -27,7 +27,8 @@ class FilmPageContext {
   final NetworkEntry? entry;
 }
 
-/// Builds one button of the row after Play for [film], null to show none (a TV has no Download, for instance)
+/// Builds one button of the row after Play for [film], null to show none (no Download for a share that is not Plex,
+/// for instance)
 typedef FilmPageActionBuilder = Widget? Function(BuildContext context, WidgetRef ref, FilmPageContext film);
 
 /// The actions of the row after Play, in order: Download (lot B), then "Play on..." (lot C)

@@ -111,7 +111,8 @@ const filmTransferRetryDelays = [
 
 /// One copy into [target], through [open]. [identity] is the one the bytes of the partial file came under, null when
 /// there are none yet. [onProgress] gets the bytes on the disk and the total as they grow, [onIdentity] the identity
-/// once the server told it (kept with the copy, for its next start).
+/// once the server told it (kept with the copy, for its next start), [onRetry] the wait before the next try after a
+/// cut link or a server that does not answer ("Waiting for the server").
 class FilmTransfer {
   FilmTransfer({
     required this.target,
@@ -119,6 +120,7 @@ class FilmTransfer {
     this.identity,
     this.onProgress,
     this.onIdentity,
+    this.onRetry,
     this.idleTimeout = const Duration(seconds: 60),
     this.retryDelays = filmTransferRetryDelays,
     this.writeChunk = 1024 * 1024,
@@ -130,6 +132,7 @@ class FilmTransfer {
   String? identity;
   final void Function(int received, int? total)? onProgress;
   final void Function(String identity)? onIdentity;
+  final void Function(Duration delay)? onRetry;
 
   /// Longest wait for the next bytes before the request is dropped and tried again
   final Duration idleTimeout;
@@ -204,6 +207,7 @@ class FilmTransfer {
         }
         final delay = retryDelays[tries++];
         _log.fine('The copy is cut (${error.runtimeType}): trying again in ${delay.inSeconds} s');
+        onRetry?.call(delay);
         await _sleep(delay);
       }
     }

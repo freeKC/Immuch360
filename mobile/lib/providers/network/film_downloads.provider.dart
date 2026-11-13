@@ -4,7 +4,9 @@
 // app's own storage (never the gallery) or the download folder of a computer; on Android a foreground service keeps it
 // running while the screen is off. With "Download only on Wi-Fi" on (the default), a copy waits on mobile data unless
 // it was asked "over mobile data this time", and goes on by itself on Wi-Fi. A copy cut by a lost link goes on where it
-// stopped; one cut by the end of the app goes on once the app reads this list again.
+// stopped; one cut by the end of the app goes on once the app reads this list again. The notification of Android tells
+// the film, its progress, the speed and the time left, why it waits (the Wi-Fi, the server), and stays at the end of a
+// copy (Downloaded, or why it stopped with Retry, or Paused with Resume); a tap opens Downloaded films (release 47).
 
 import 'dart:async';
 import 'dart:io';
@@ -15,6 +17,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/files/download_folder.dart';
 import 'package:immich_mobile/domain/models/film_download.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/film_download/film_download_link.dart';
 import 'package:immich_mobile/domain/services/film_download/film_download_rules.dart';
 import 'package:immich_mobile/domain/services/film_download/film_download_store.dart';
 import 'package:immich_mobile/domain/services/film_download/film_transfer.dart';
@@ -25,6 +28,7 @@ import 'package:immich_mobile/infrastructure/film_download/film_download_keep_al
 import 'package:immich_mobile/platform/connectivity_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/platform.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -41,6 +45,7 @@ class FilmDownloadEnvironment {
     required this.keepAlive,
     required this.isDesktop,
     this.texts = defaultFilmDownloadTexts,
+    this.endTexts = defaultFilmDownloadEndTexts,
     this.retryDelays = filmTransferRetryDelays,
   });
 
@@ -57,40 +62,116 @@ class FilmDownloadEnvironment {
   final FilmDownloadKeepAlive keepAlive;
   final bool isDesktop;
 
-  /// The notification of [film], [received] of its bytes copied at [bytesPerSecond]
-  final FilmDownloadNoticeTexts Function(FilmDownload film, int received, double? bytesPerSecond) texts;
+  /// The notification of [film], [received] of its bytes copied at [bytesPerSecond], or why it waits
+  final FilmDownloadNoticeTexts Function(FilmDownload film, int received, double? bytesPerSecond, FilmDownloadWait wait)
+  texts;
+
+  /// The notification left at the end of the copy of [film], null for none
+  final FilmDownloadEndTexts? Function(FilmDownload film) endTexts;
   final List<Duration> retryDelays;
 }
 
-/// The notification in the language of the app: the film, the percentage and the time left
-FilmDownloadNoticeTexts defaultFilmDownloadTexts(FilmDownload film, int received, double? bytesPerSecond) {
+/// What a copy under way waits for, if anything: the Wi-Fi ("Download only on Wi-Fi" on mobile data), or the server
+/// between two tries after a cut link
+enum FilmDownloadWait { none, wifi, server }
+
+/// "27 % · 1.2 GiB of 4.5 GiB", the bytes alone while the size is not known
+String filmDownloadProgressLine(Translations t, int received, int? size) => size == null || size <= 0
+    ? formatBytes(received)
+    : '${(received * 100 / size).floor().clamp(0, 100)} % · '
+          '${t.film_download_progress(done: formatBytes(received), whole: formatBytes(size))}';
+
+/// The notification in the language of the app: the film; the percentage, the bytes and the time left, the speed beside
+/// the name of the app; or what the copy waits for
+FilmDownloadNoticeTexts defaultFilmDownloadTexts(
+  FilmDownload film,
+  int received,
+  double? bytesPerSecond,
+  FilmDownloadWait wait,
+) {
   final t = StaticTranslations.instance;
   final size = film.size;
+  final moving = wait == FilmDownloadWait.none && bytesPerSecond != null && bytesPerSecond > 0;
   final parts = <String>[
-    if (size != null && size > 0) '${(received * 100 / size).floor()} %',
-    if (size != null && bytesPerSecond != null && bytesPerSecond > 0)
+    if (wait == FilmDownloadWait.wifi) t.film_download_waiting_wifi,
+    if (wait == FilmDownloadWait.server) t.film_download_waiting_server,
+    filmDownloadProgressLine(t, received, size),
+    if (moving && size != null && size > received)
       t.film_download_time_left(minutes: '${max(1, ((size - received) / bytesPerSecond / 60).ceil())}'),
   ];
   return (
     channelName: t.film_download_notification_channel,
     title: t.film_download_notification_title(name: film.shownTitle),
-    text: parts.isEmpty ? t.downloading : parts.join(' · '),
+    text: parts.join(' · '),
+    subText: moving ? t.film_download_speed(bytes: formatBytes(bytesPerSecond.round())) : null,
     pause: t.pause,
     cancel: t.cancel,
   );
 }
 
+/// Why a copy stopped, in one sentence
+String filmDownloadFailureMessage(Translations t, FilmDownloadFailure? failure) => switch (failure) {
+  FilmDownloadFailure.forbidden => t.film_download_forbidden,
+  FilmDownloadFailure.noSpace => t.film_download_disk_full,
+  FilmDownloadFailure.unreachable => t.film_download_unreachable,
+  FilmDownloadFailure.gone => t.film_download_gone,
+  FilmDownloadFailure.unreadable => t.film_download_unreadable,
+  FilmDownloadFailure.failed || null => t.download_failed,
+};
+
+/// The notification left at the end of a copy: Downloaded with its size; why it stopped, with Retry when trying again
+/// may help (not for a film gone from the server or an account that may not download); Paused, with Resume. None for a
+/// copy that runs, waits or was cancelled.
+FilmDownloadEndTexts? defaultFilmDownloadEndTexts(FilmDownload film) {
+  final t = StaticTranslations.instance;
+  final size = film.size;
+  final channelName = t.film_download_notification_channel;
+  switch (film.state) {
+    case FilmDownloadState.done:
+      return (
+        channelName: channelName,
+        title: film.shownTitle,
+        text: size == null ? t.film_downloaded : '${t.film_downloaded} · ${formatBytes(size)}',
+        actionLabel: null,
+        actionLink: null,
+      );
+    case FilmDownloadState.failed:
+      final retry = film.failure != FilmDownloadFailure.gone && film.failure != FilmDownloadFailure.forbidden;
+      return (
+        channelName: channelName,
+        title: film.shownTitle,
+        text: filmDownloadFailureMessage(t, film.failure),
+        actionLabel: retry ? t.retry : null,
+        actionLink: retry ? filmDownloadActionLink(film.id, FilmDownloadLinkAction.retry) : null,
+      );
+    case FilmDownloadState.paused:
+      return (
+        channelName: channelName,
+        title: film.shownTitle,
+        text: '${t.film_download_paused} · ${filmDownloadProgressLine(t, film.received, size)}',
+        actionLabel: t.resume,
+        actionLink: filmDownloadActionLink(film.id, FilmDownloadLinkAction.resume),
+      );
+    case FilmDownloadState.queued || FilmDownloadState.running || FilmDownloadState.waitingForWifi:
+      return null;
+  }
+}
+
 /// The platform as Download sees it, read in this one place (PLATFORM-AUDIT.md): an Android service, an iPhone kept
-/// open, the download folder of a computer
+/// open with a notification at the end, the download folder of a computer
 typedef FilmDownloadPlatform = ({bool isAndroid, bool isIOS, bool isDesktop});
 
 FilmDownloadPlatform filmDownloadPlatform() =>
     (isAndroid: CurrentPlatform.isAndroid, isIOS: CurrentPlatform.isIOS, isDesktop: CurrentPlatform.isDesktop);
 
-/// What keeps a copy running: the foreground service on Android, nothing elsewhere
+/// What keeps a copy running and tells it: the foreground service on Android, the notification of the end on iPhone
+/// and iPad, nothing on a computer
 FilmDownloadKeepAlive filmDownloadKeepAliveOf(FilmDownloadPlatform platform) {
   if (platform.isAndroid) {
     return AndroidFilmDownloadKeepAlive();
+  }
+  if (platform.isIOS) {
+    return IosFilmDownloadKeepAlive();
   }
   return PlainFilmDownloadKeepAlive(isDesktop: platform.isDesktop);
 }
@@ -120,7 +201,13 @@ final filmDownloadEnvironmentProvider = Provider<FilmDownloadEnvironment>((ref) 
 
 /// The copies on this device and the setting
 class FilmDownloadsState {
-  const FilmDownloadsState({this.loaded = false, this.wifiOnly = true, this.films = const [], this.bytesPerSecond});
+  const FilmDownloadsState({
+    this.loaded = false,
+    this.wifiOnly = true,
+    this.films = const [],
+    this.bytesPerSecond,
+    this.waitingForServer = false,
+  });
 
   final bool loaded;
 
@@ -132,6 +219,9 @@ class FilmDownloadsState {
 
   /// The speed of the copy under way, null when none runs or it is not measured yet
   final double? bytesPerSecond;
+
+  /// The copy under way waits before it tries the server again (a cut link, a server that does not answer)
+  final bool waitingForServer;
 
   FilmDownload? of(String sourceId, String path) =>
       films.where((film) => film.sourceId == sourceId && film.path == path).firstOrNull;
@@ -147,13 +237,19 @@ class FilmDownloadsState {
   int get bytesOnDevice =>
       films.fold(0, (sum, film) => sum + (film.isDone ? (film.size ?? film.received) : film.received));
 
-  FilmDownloadsState copyWith({bool? loaded, bool? wifiOnly, List<FilmDownload>? films, double? bytesPerSecond}) =>
-      FilmDownloadsState(
-        loaded: loaded ?? this.loaded,
-        wifiOnly: wifiOnly ?? this.wifiOnly,
-        films: films ?? this.films,
-        bytesPerSecond: bytesPerSecond,
-      );
+  FilmDownloadsState copyWith({
+    bool? loaded,
+    bool? wifiOnly,
+    List<FilmDownload>? films,
+    double? bytesPerSecond,
+    bool? waitingForServer,
+  }) => FilmDownloadsState(
+    loaded: loaded ?? this.loaded,
+    wifiOnly: wifiOnly ?? this.wifiOnly,
+    films: films ?? this.films,
+    bytesPerSecond: bytesPerSecond,
+    waitingForServer: waitingForServer ?? this.waitingForServer,
+  );
 }
 
 /// Whether a share of [type] gives films to download: Plex, the request of the study (the other shares may follow)
@@ -348,6 +444,13 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     unawaited(_pump());
   }
 
+  /// Retry or Resume of a notification (a link of film_download_link.dart): once the list is read, the film goes on
+  /// when it is still stopped; a film gone from the list meanwhile is left
+  Future<void> resumeFromNotification(String id) async {
+    await ready;
+    resume(id);
+  }
+
   /// Stops a copy and deletes what it copied; the film leaves the list
   Future<void> cancel(String id) => delete(id);
 
@@ -362,6 +465,7 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     }
     _remove(id);
     _saveSoon(now: true);
+    unawaited(_env.keepAlive.cancelEnd(id));
     await _deleteFiles(film);
   }
 
@@ -374,6 +478,7 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     state = state.copyWith(films: const []);
     _saveSoon(now: true);
     for (final film in films) {
+      unawaited(_env.keepAlive.cancelEnd(film.id));
       await _deleteFiles(film);
     }
   }
@@ -389,17 +494,31 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     await _onNetworkChanged();
   }
 
+  /// The film the notification of the service shows: the copy under way, or the one that waits for the Wi-Fi
+  String? _noticeFilmId;
+
   void _pauseRunning() {
-    final id = _runningId;
-    if (id != null) {
-      pause(id);
+    final running = _runningId;
+    final id = running ?? _noticeFilmId;
+    if (id == null) {
+      return;
     }
+    pause(id);
+    if (running == null) {
+      // A film that waited for the Wi-Fi: no transfer ends, so its Paused notification is left here
+      final paused = state.byId(id);
+      final texts = paused == null ? null : _env.endTexts(paused);
+      if (texts != null) {
+        unawaited(_env.keepAlive.showEnd(id, texts));
+      }
+    }
+    unawaited(_pump());
   }
 
   void _cancelRunning() {
-    final id = _runningId;
+    final id = _runningId ?? _noticeFilmId;
     if (id != null) {
-      unawaited(cancel(id));
+      unawaited(cancel(id).then((_) => _pump()));
     }
   }
 
@@ -462,7 +581,15 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
           }
         }
         if (next == null) {
-          await _env.keepAlive.stop();
+          // A copy that waits for the Wi-Fi keeps the service and says so, without its locks: the change of network
+          // reaches the app, which goes on by itself
+          final waiting = state.films.where((film) => film.state == FilmDownloadState.waitingForWifi).firstOrNull;
+          if (waiting == null) {
+            _noticeFilmId = null;
+            await _env.keepAlive.stop();
+          } else {
+            await _notify(waiting, waiting.received, force: true, wait: FilmDownloadWait.wifi);
+          }
           continue;
         }
         _run(next);
@@ -479,7 +606,9 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     _speedBytes = film.received;
     _speedSince = DateTime.now();
     _update(id, (film) => film.copyWith(state: FilmDownloadState.running, clearFailure: true));
+    state = state.copyWith(waitingForServer: false, bytesPerSecond: _speed);
     _saveSoon(now: true);
+    unawaited(_env.keepAlive.cancelEnd(id));
     final transfer = FilmTransfer(
       target: film.localPath,
       identity: film.identity,
@@ -496,6 +625,7 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
         _saveSoon(now: true);
       },
       onProgress: (received, total) => _progress(id, received, total),
+      onRetry: (_) => _waitForServer(id),
     );
     _transfer = transfer;
     _runningId = id;
@@ -526,7 +656,8 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
             ),
           );
         }
-        // Cancelled: the film left the list with its bytes
+        // Cancelled: the film left the list with its bytes; waiting for the Wi-Fi: the notification of the service
+        // says it
       } on FilmTransferException catch (error) {
         _update(
           id,
@@ -541,15 +672,36 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
           _runningId = null;
         }
         _speed = null;
-        state = state.copyWith(bytesPerSecond: null);
+        state = state.copyWith(bytesPerSecond: null, waitingForServer: false);
         _saveSoon(now: true);
+        final ended = state.byId(id);
+        final endTexts = ended == null ? null : _env.endTexts(ended);
+        if (endTexts != null) {
+          unawaited(_env.keepAlive.showEnd(id, endTexts));
+        }
         unawaited(_pump());
       }
     }());
   }
 
+  /// The copy waits before it tries the server again: the page and the notification say so until bytes come
+  void _waitForServer(String id) {
+    if (_runningId != id) {
+      return;
+    }
+    state = state.copyWith(waitingForServer: true, bytesPerSecond: null);
+    final film = state.byId(id);
+    if (film != null) {
+      unawaited(_notify(film, film.received, force: true, wait: FilmDownloadWait.server));
+    }
+  }
+
   void _progress(String id, int received, int? total) {
     final now = DateTime.now();
+    final before = state.byId(id)?.received ?? 0;
+    if (state.waitingForServer && received > before) {
+      state = state.copyWith(waitingForServer: false, bytesPerSecond: _speed);
+    }
     final since = _speedSince;
     if (since != null && now.difference(since) >= const Duration(seconds: 2)) {
       final measured = (received - _speedBytes) * 1000 / now.difference(since).inMilliseconds;
@@ -572,7 +724,7 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     }
   }
 
-  Future<void> _notify(FilmDownload film, int received, {bool force = false}) async {
+  Future<void> _notify(FilmDownload film, int received, {bool force = false, FilmDownloadWait? wait}) async {
     final now = DateTime.now();
     if (!force && now.difference(_lastNotice) < _noticeEvery) {
       return;
@@ -580,8 +732,14 @@ class FilmDownloadsNotifier extends Notifier<FilmDownloadsState> {
     _lastNotice = now;
     final size = film.size;
     final progress = size == null || size <= 0 ? -1 : (received * 1000 / size).floor().clamp(0, 1000);
+    final waitingFor = wait ?? (state.waitingForServer ? FilmDownloadWait.server : FilmDownloadWait.none);
+    _noticeFilmId = film.id;
     try {
-      await _env.keepAlive.show(_env.texts(film, received, _speed), progress);
+      await _env.keepAlive.show(
+        _env.texts(film, received, waitingFor == FilmDownloadWait.none ? _speed : null, waitingFor),
+        progress,
+        waiting: waitingFor == FilmDownloadWait.wifi,
+      );
     } catch (error) {
       _log.info('The notification of the film download was not shown: ${error.runtimeType}');
     }

@@ -484,6 +484,8 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       return;
     }
     final downloads = ref.read(filmDownloadsProvider.notifier);
+    // The question of the notifications of Android 13 and later, as for one film: the copies start either way
+    await filmDownloadNotificationsOn(ref);
     for (final entry in videos) {
       await downloads.download(entry);
     }
