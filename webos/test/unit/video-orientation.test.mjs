@@ -4,7 +4,7 @@
 import {describe, test} from 'node:test';
 import assert from 'node:assert/strict';
 import {features} from '../../src/platform/features.ts';
-import {quarterTurnOf, videoTurn, videoTurnTransform} from '../../src/immuch360/video/orientation.ts';
+import {lastVideoTurnLine, noteVideoTurn, quarterTurnOf, videoTurn, videoTurnTransform} from '../../src/immuch360/video/orientation.ts';
 
 const TV = {boxWidth: 1920, boxHeight: 1080};
 // A phone's upright 1080p video: stored 1920 x 1080, flag -90 (Immich orientation "6")
@@ -62,6 +62,24 @@ describe('videoTurn', () => {
 
 	test('no transform without a turn', () => {
 		assert.equal(videoTurnTransform(null), '');
+	});
+});
+
+describe('the diagnostics line of the last video with a quarter turn flag', () => {
+	test('none before one played; a video without the flag or before the player knows its frames changes nothing', () => {
+		assert.equal(lastVideoTurnLine(), 'none');
+		noteVideoTurn({orientation: '1', width: 1920, height: 1080, frameWidth: 1920, frameHeight: 1080, ...TV}, null, true);
+		noteVideoTurn({...upright, frameWidth: 0, frameHeight: 0, ...TV}, null, true);
+		assert.equal(lastVideoTurnLine(), 'none');
+	});
+
+	test('the sizes the player reported and what was done', () => {
+		const shown = {...upright, frameWidth: 1920, frameHeight: 1080, ...TV};
+		noteVideoTurn(shown, videoTurn(shown), true);
+		assert.equal(lastVideoTurnLine(), 'orientation 6, stored 1920 x 1080, player 1920 x 1080, box 1920 x 1080, rotate(90deg) scale(0.5625)');
+		const honoured = {...upright, frameWidth: 1080, frameHeight: 1920, ...TV};
+		noteVideoTurn(honoured, videoTurn(honoured), true);
+		assert.equal(lastVideoTurnLine(), 'orientation 6, stored 1920 x 1080, player 1080 x 1920, box 1920 x 1080, not turned');
 	});
 });
 

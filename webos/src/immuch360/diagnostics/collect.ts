@@ -14,6 +14,7 @@ import {features} from '../../platform/features';
 import {probeSmartView, tizenAppInfo, tizenInfo, type TizenInfo} from '../../platform/tizen';
 import {decoderCeiling, decoderVerdict, largestDecoded, type DecoderRecord} from '../video/decoders';
 import {knownVideoFrames, recordVideoFrames, sessionDecoders, type VideoFramesVerdict} from '../video/session';
+import {lastVideoTurnLine} from '../video/orientation';
 import {lastErrors} from './errorLog';
 // The clip of the video test goes through the bundler, which copies it into the package: enact pack copies from
 // webos-meta/ only the files appinfo.json names (the icons, the splash), so the clip that sat there never reached the
@@ -164,6 +165,8 @@ export async function collectDiagnostics(repository: PhotoRepository | null): Pr
 		{label: 'WebAssembly', value: typeof WebAssembly === 'object' ? 'yes' : 'no'},
 		{label: t('webos_diagnostics_heap'), value: heapLine((performance as {memory?: {usedJSHeapSize?: number; jsHeapSizeLimit?: number}}).memory)},
 		{label: 'Server', value: repository ? `${repository.serverUrl()}, ${serverVersion ?? '?'}` : '?'},
+		// The last video filmed upright: the size its player reported and the turn the viewer gave it (issue 17)
+		{label: 'Video turn', value: lastVideoTurnLine()},
 	];
 	const errors = lastErrors();
 	const closing: DiagnosticsLine[] = [{label: t('webos_diagnostics_last_errors'), value: errors.length > 0 ? errors.join(' | ') : 'none'}];

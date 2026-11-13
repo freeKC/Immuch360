@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {VideoPlayer as SandstoneVideoPlayer} from '@enact/sandstone/VideoPlayer';
 import {features} from '../../platform/features';
-import {videoTurn, videoTurnTransform, type VideoOrientationInfo} from '../../immuch360/video/orientation';
+import {noteVideoTurn, videoTurn, videoTurnTransform, type VideoOrientationInfo} from '../../immuch360/video/orientation';
 import {holdScreenSaver} from '../../utils/screenSaver';
 import css from './MediaViewer.module.less';
 
@@ -119,14 +119,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 	const turnWidth = orientation?.width ?? null;
 	const turnHeight = orientation?.height ?? null;
 	useEffect(() => {
-		if (!features().turnSidewaysVideo) return undefined;
+		// webOS only notes what its player reported, for the diagnostics page; the element is turned on Samsung only
+		const turns = features().turnSidewaysVideo;
 		// The element turned last: on closing it is already out of the page
 		let turned: HTMLVideoElement | null = null;
 		const apply = () => {
 			const node = viewerVideoElement();
 			if (!node) return;
-			turned = node;
-			const turn = videoTurn({
+			const input = {
 				orientation: turnOrientation,
 				width: turnWidth,
 				height: turnHeight,
@@ -134,7 +134,11 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 				frameHeight: node.videoHeight,
 				boxWidth: node.clientWidth,
 				boxHeight: node.clientHeight,
-			});
+			};
+			const turn = videoTurn(input);
+			noteVideoTurn(input, turn, turns);
+			if (!turns) return;
+			turned = node;
 			node.style.transform = videoTurnTransform(turn);
 		};
 		const onMetadata = (event: Event) => {

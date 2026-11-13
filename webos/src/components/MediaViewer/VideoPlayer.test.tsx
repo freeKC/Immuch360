@@ -3,6 +3,7 @@
 import React from 'react';
 import {act, render} from '@testing-library/react';
 import {VIDEO_MARK, VideoPlayer} from './VideoPlayer';
+import {lastVideoTurnLine} from '../../immuch360/video/orientation';
 
 let screenSaver: number[];
 
@@ -130,6 +131,7 @@ test('a Samsung TV turns a video filmed upright once the player knows its frames
 		video.dispatchEvent(new Event('loadedmetadata'));
 	});
 	expect(video.style.transform).toBe('rotate(90deg) scale(0.5625)');
+	expect(lastVideoTurnLine()).toBe('orientation 6, stored 1920 x 1080, player 1920 x 1080, box 1920 x 1080, rotate(90deg) scale(0.5625)');
 	unmount();
 	expect(video.style.transform).toBe('');
 });
@@ -149,12 +151,19 @@ test('a Samsung TV leaves a video whose frames come already turned, and turns on
 	expect(video.style.transform).toBe('rotate(270deg) scale(0.5625)');
 });
 
-test('an LG TV leaves the turn to its player', () => {
+test('an LG TV leaves the turn to its player, and notes the size it reported for the diagnostics page', () => {
 	const {container} = render(<VideoPlayer src="clip.mp4" orientation={UPRIGHT} />);
 	const video = playerVideo(container);
+	reportSizes(video, [1080, 1920]);
+	act(() => {
+		video.dispatchEvent(new Event('loadedmetadata'));
+	});
+	expect(video.style.transform).toBe('');
+	expect(lastVideoTurnLine()).toBe('orientation 6, stored 1920 x 1080, player 1080 x 1920, box 1920 x 1080, not turned');
 	reportSizes(video, [1920, 1080]);
 	act(() => {
 		video.dispatchEvent(new Event('loadedmetadata'));
 	});
 	expect(video.style.transform).toBe('');
+	expect(lastVideoTurnLine()).toBe('orientation 6, stored 1920 x 1080, player 1920 x 1080, box 1920 x 1080, rotate(90deg) scale(0.5625) left to the player');
 });

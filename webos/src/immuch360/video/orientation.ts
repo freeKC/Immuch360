@@ -64,3 +64,19 @@ export function videoTurn(input: VideoTurnInput): VideoTurn | null {
 
 /** The CSS transform of a turn, '' for none */
 export const videoTurnTransform = (turn: VideoTurn | null): string => (turn ? `rotate(${turn.degrees}deg) scale(${turn.scale})` : '');
+
+// What the viewer saw of the last video with a quarter turn flag, for the diagnostics page: on a TV nobody here can
+// test, it tells which size the player reported and what was done (a CSS turn may not reach a TV's video plane)
+let lastSeen: string | null = null;
+
+/** Notes a video with a quarter turn flag once the player reported its frames; applied tells whether the TV turns it */
+export function noteVideoTurn(input: VideoTurnInput, turn: VideoTurn | null, applied: boolean): void {
+	if (quarterTurnOf(input.orientation) === null || !positive(input.frameWidth) || !positive(input.frameHeight)) return;
+	const done = !turn ? 'not turned' : applied ? videoTurnTransform(turn) : `${videoTurnTransform(turn)} left to the player`;
+	lastSeen =
+		`orientation ${String(input.orientation)}, stored ${input.width ?? '?'} x ${input.height ?? '?'}, ` +
+		`player ${input.frameWidth} x ${input.frameHeight}, box ${input.boxWidth} x ${input.boxHeight}, ${done}`;
+}
+
+/** The diagnostics line of the last video with a quarter turn flag, 'none' before one played */
+export const lastVideoTurnLine = (): string => lastSeen ?? 'none';
