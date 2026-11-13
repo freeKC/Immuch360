@@ -527,6 +527,7 @@ class _Texts extends ConsumerWidget {
     final directors = film.directors.map((person) => person.name).join(', ');
     final writers = film.writers.map((person) => person.name).join(', ');
     final technical = plexFilmTechnicalLine(t, film, version: version);
+    final played = plexFilmVersionPart(film, version: version);
     final section = film.sectionKey;
     final library = section == null ? null : _sectionLanguage(ref, section);
     return Column(
@@ -555,8 +556,8 @@ class _Texts extends ConsumerWidget {
         ],
         // The file Play opens, converted by the server on this device: why
         FilmConversionLine(
-          part: film.parts.firstOrNull,
-          container: film.parts.firstOrNull == null ? null : film.mediaOf(film.parts.first)?.container,
+          part: played,
+          container: played == null ? null : film.mediaOf(played)?.container,
           style: secondary,
         ),
         _WikipediaBlock(film: film, libraryLanguage: library, tvMode: tvMode),
@@ -799,13 +800,17 @@ String audienceBandLabel(Translations t, AudienceBand band) => switch (band) {
   AudienceBand.unrated => t.plex_films_audience_unrated,
 };
 
+/// The file Play opens: the first part of the version at [version] (plexFilmVersions), else the film's first part
+PlexFilmPart? plexFilmVersionPart(PlexFilmDetails film, {int version = 0}) {
+  final versions = plexFilmVersions(film);
+  return (version >= 0 && version < versions.length ? versions[version].parts.firstOrNull : null) ??
+      film.parts.firstOrNull;
+}
+
 /// The lines about the file Play opens, the first of the version at [version] (plexFilmVersions): "1080p, H264 · MKV,
 /// 8.2 GB", then its audio and subtitle languages as Plex names them
 List<String> plexFilmTechnicalLine(Translations t, PlexFilmDetails film, {int version = 0}) {
-  final versions = plexFilmVersions(film);
-  final part =
-      (version >= 0 && version < versions.length ? versions[version].parts.firstOrNull : null) ??
-      film.parts.firstOrNull;
+  final part = plexFilmVersionPart(film, version: version);
   if (part == null) {
     return const [];
   }
