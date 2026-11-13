@@ -417,6 +417,11 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
         );
       case TapoLiveRoute.needsAccount:
         return _Message(key: const Key('camera_live_needs_account'), text: context.t.camera_live_needs_account);
+      // The computers have no media port live view yet: a camera with RTSP (a mains one without a camera account)
+      // still asks for the camera account there, only a battery or solar one is told that it has no RTSP
+      case TapoLiveRoute.mediaPort
+          when CurrentPlatform.isDesktop && !tapoIsBatteryCamera(model: widget.model, power: widget.power):
+        return _Message(key: const Key('camera_live_needs_account'), text: context.t.camera_live_needs_account);
       case TapoLiveRoute.mediaPort when CurrentPlatform.isDesktop:
         return _Message(
           key: const Key('camera_live_media_port_later'),

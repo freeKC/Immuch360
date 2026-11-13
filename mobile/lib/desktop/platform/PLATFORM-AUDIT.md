@@ -198,7 +198,7 @@ or `deviceFeaturesProvider` so that the phones run exactly as before:
 | `lib/presentation/pages/library.page.dart`, `lib/widgets/asset_viewer/detail_panel/exif_map.dart` | maps through `deviceFeaturesProvider.maps`; "On this computer" on the card of the device albums |
 | `lib/presentation/pages/local_album.page.dart`, `lib/pages/backup/backup_album_selection.page.dart` | `FoldersEntry`: the way to the folders page, the banner while no folder is chosen |
 | `lib/widgets/common/local_album_sliver_app_bar.dart`, `lib/presentation/widgets/panorama_360/panorama_360_filter_bar.widget.dart` | "On this computer" instead of "On this device" |
-| `lib/presentation/widgets/camera/camera_live_view.widget.dart` | `DesktopCameraLiveView` (media_kit, `lib/desktop/video/camera_live_view.dart`) instead of the Android view, with the same states; the live view announced for later where libmpv is missing |
+| `lib/presentation/widgets/camera/camera_live_view.widget.dart` | `DesktopCameraLiveView` (media_kit, `lib/desktop/video/camera_live_view.dart`) instead of the Android view, with the same states; the live view announced for later where libmpv is missing; a battery or solar camera (no RTSP) is told that its media port live view comes later, a mains camera without a camera account still asks for one |
 | `lib/presentation/widgets/asset_viewer/spatial_viewer.dart` | Spatial 2.5D announced for later instead of "not available on this device" |
 | `lib/widgets/forms/login/login_form.dart` | OAuth through `deviceFeaturesProvider.oauth`, with a line saying so |
 | `lib/presentation/widgets/local_session/local_session_permission_banner.dart` | `FoldersBanner` instead of the gallery permission |

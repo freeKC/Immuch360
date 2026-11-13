@@ -322,7 +322,14 @@ void main() {
       });
     }
 
-    Future<void> pump(WidgetTester tester, {ValueNotifier<bool>? shown, bool fullScreen = false}) async {
+    Future<void> pump(
+      WidgetTester tester, {
+      ValueNotifier<bool>? shown,
+      bool fullScreen = false,
+      String user = _user,
+      String? cloudPassword,
+      String? model,
+    }) async {
       final visible = shown ?? ValueNotifier(true);
       await pumpCameraApp(
         tester,
@@ -336,8 +343,10 @@ void main() {
                     child: CameraLiveTile(
                       host: cameraHost,
                       port: 554,
-                      user: _user,
+                      user: user,
                       password: _password,
+                      cloudPassword: cloudPassword,
+                      model: model,
                       fullScreen: fullScreen,
                       preferHd: false,
                       onFullScreen: (_) {},
@@ -421,6 +430,19 @@ void main() {
       desktopVideoAvailable = false;
       await pump(tester);
       expect(find.byKey(const Key('camera_live_later')), findsOneWidget);
+      expect(players.made, isEmpty);
+    });
+
+    desktopTest('a battery camera says its media port live view comes later', (tester) async {
+      await pump(tester, user: '', cloudPassword: 'cloud-secret', model: 'C410');
+      expect(find.byKey(const Key('camera_live_media_port_later')), findsOneWidget);
+      expect(players.made, isEmpty);
+    });
+
+    desktopTest('a mains camera without a camera account still asks for one, its RTSP being there', (tester) async {
+      await pump(tester, user: '', cloudPassword: 'cloud-secret', model: 'C510W');
+      expect(find.byKey(const Key('camera_live_needs_account')), findsOneWidget);
+      expect(find.byKey(const Key('camera_live_media_port_later')), findsNothing);
       expect(players.made, isEmpty);
     });
   });
