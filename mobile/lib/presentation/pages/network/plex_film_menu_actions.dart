@@ -1,6 +1,6 @@
 // What the long press menu of a poster of the films page (lot A1) offers after Play, from the lots that came after it:
-// Download to this device (lot B, not on a TV) and "Play on..." (lot C, phones and tablets), the same actions as the
-// row after Play of the film page (film_page_actions.dart). Read by plexFilmMenuActionsProvider.
+// Download to this device (lot B, Android TV too since release 47) and "Play on..." (lot C, phones and tablets), the
+// same actions as the row after Play of the film page (film_page_actions.dart). Read by plexFilmMenuActionsProvider.
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

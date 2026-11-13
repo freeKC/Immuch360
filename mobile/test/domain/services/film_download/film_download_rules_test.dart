@@ -9,13 +9,22 @@ import 'package:immich_mobile/platform/connectivity_api.g.dart';
 
 void main() {
   group('screens', () {
-    test('phones, tablets, the Quest window, iPhone and computers download; a TV never does', () {
-      expect(filmDownloadOffered(tvMode: false, isAndroid: true, isIOS: false, isDesktop: false), isTrue);
-      expect(filmDownloadOffered(tvMode: true, isAndroid: true, isIOS: false, isDesktop: false), isFalse);
-      expect(filmDownloadOffered(tvMode: false, isAndroid: false, isIOS: true, isDesktop: false), isTrue);
-      expect(filmDownloadOffered(tvMode: false, isAndroid: false, isIOS: false, isDesktop: true), isTrue);
-      expect(filmDownloadOffered(tvMode: false, isAndroid: false, isIOS: false, isDesktop: false), isFalse);
+    test('phones, tablets, the Quest window, Android TV, iPhone and computers download', () {
+      expect(filmDownloadOffered(isAndroid: true, isIOS: false, isDesktop: false), isTrue);
+      expect(filmDownloadOffered(isAndroid: false, isIOS: true, isDesktop: false), isTrue);
+      expect(filmDownloadOffered(isAndroid: false, isIOS: false, isDesktop: true), isTrue);
+      expect(filmDownloadOffered(isAndroid: false, isIOS: false, isDesktop: false), isFalse);
     });
+
+    test(
+      'the first copy on Android asks the notifications once, while they were neither given nor refused for good',
+      () {
+        expect(filmDownloadAsksNotifications(isAndroid: true, denied: true, askedBefore: false), isTrue);
+        expect(filmDownloadAsksNotifications(isAndroid: true, denied: true, askedBefore: true), isFalse);
+        expect(filmDownloadAsksNotifications(isAndroid: true, denied: false, askedBefore: false), isFalse);
+        expect(filmDownloadAsksNotifications(isAndroid: false, denied: true, askedBefore: false), isFalse);
+      },
+    );
 
     test('only iPhone and iPad need the app open', () {
       expect(filmDownloadNeedsAppOpen(isIOS: true), isTrue);

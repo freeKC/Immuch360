@@ -196,6 +196,96 @@ void main() {
     expect(container.read(filmDownloadsProvider).byId(film.id)?.failure, FilmDownloadFailure.gone);
   });
 
+  group('the notifications (release 47)', () {
+    test('a whole copy leaves Downloaded with its size and no button; its start took an earlier one away', () async {
+      final (container, notifier) = await start();
+      final film = await notifier.download(filmTestEntry('/Movies/Heat.mkv', 3000), title: 'Heat');
+      await waitUntil(() => fake.keepAlive.ends.isNotEmpty);
+      expect(container.read(filmDownloadsProvider).byId(film.id)?.isDone, isTrue);
+      expect(fake.keepAlive.cancelledEnds, contains(film.id));
+      final end = fake.keepAlive.ends.single;
+      expect(end.filmId, film.id);
+      expect(end.texts.title, 'Heat');
+      expect(end.texts.actionLabel, isNull);
+      expect(end.texts.actionLink, isNull);
+    });
+
+    test('the copy under way shows its progress, then why it waits for the server between two tries', () async {
+      fake.share.failures.add(const SocketException('No route to host'));
+      final (container, notifier) = await start();
+      final film = await notifier.download(filmTestEntry('/Movies/Heat.mkv', 3000));
+      await waitUntil(() => container.read(filmDownloadsProvider).byId(film.id)?.isDone ?? false);
+      expect(fake.keepAlive.notices.map((notice) => notice.text), contains('server 0'));
+      expect(fake.keepAlive.notices.every((notice) => !notice.waiting), isTrue, reason: 'the locks stay held');
+      expect(container.read(filmDownloadsProvider).waitingForServer, isFalse);
+    });
+
+    test('a server that stays away leaves why the copy stopped, with Retry that sets it going again', () async {
+      fake.share.failures.addAll(const [SocketException('No route to host'), SocketException('No route to host')]);
+      final (container, notifier) = await start();
+      final film = await notifier.download(filmTestEntry('/Movies/Heat.mkv', 3000));
+      await waitUntil(() => container.read(filmDownloadsProvider).byId(film.id)?.state == FilmDownloadState.failed);
+      await waitUntil(() => fake.keepAlive.ends.isNotEmpty);
+      final end = fake.keepAlive.ends.single.texts;
+      expect(end.actionLabel, isNotNull);
+      expect(end.actionLink, 'immuch360://downloads?film=${film.id}&do=retry');
+
+      await notifier.resumeFromNotification(film.id);
+      await waitUntil(() => container.read(filmDownloadsProvider).byId(film.id)?.isDone ?? false);
+      expect(await File(film.localPath).readAsBytes(), filmTestBytes(3000));
+    });
+
+    test('a film gone from the server leaves why, without Retry', () async {
+      final (container, notifier) = await start();
+      final film = await notifier.download(filmTestEntry('/Movies/Gone.mkv', 10));
+      await waitUntil(() => fake.keepAlive.ends.isNotEmpty);
+      expect(container.read(filmDownloadsProvider).byId(film.id)?.failure, FilmDownloadFailure.gone);
+      expect(fake.keepAlive.ends.single.texts.actionLink, isNull);
+    });
+
+    test(
+      'a copy waiting for the Wi-Fi keeps the notification without the locks, and its Pause leaves Resume',
+      () async {
+        fake.capabilities = const [NetworkCapability.cellular];
+        final (container, notifier) = await start();
+        final film = await notifier.download(filmTestEntry('/Movies/Heat.mkv', 3000));
+        await waitUntil(() => fake.keepAlive.notices.any((notice) => notice.waiting));
+        expect(fake.keepAlive.notices.lastWhere((notice) => notice.waiting).text, 'wifi 0');
+        final stopsBefore = fake.keepAlive.stops;
+
+        fake.keepAlive.onPause!();
+        await waitUntil(() => fake.keepAlive.ends.isNotEmpty);
+        expect(container.read(filmDownloadsProvider).byId(film.id)?.state, FilmDownloadState.paused);
+        expect(fake.keepAlive.ends.single.texts.actionLink, 'immuch360://downloads?film=${film.id}&do=resume');
+        await waitUntil(() => fake.keepAlive.stops > stopsBefore);
+      },
+    );
+
+    test('Cancel of the notification of a copy waiting for the Wi-Fi takes it off the list', () async {
+      fake.capabilities = const [NetworkCapability.cellular];
+      final (container, _) = await start();
+      await container.read(filmDownloadsProvider.notifier).download(filmTestEntry('/Movies/Heat.mkv', 3000));
+      await waitUntil(() => fake.keepAlive.notices.any((notice) => notice.waiting));
+      fake.keepAlive.onCancel!();
+      await waitUntil(() => container.read(filmDownloadsProvider).films.isEmpty);
+    });
+
+    test('deleting a copy takes its notification away', () async {
+      final (container, notifier) = await start();
+      final film = await notifier.download(filmTestEntry('/Movies/Heat.mkv', 3000));
+      await waitUntil(() => container.read(filmDownloadsProvider).byId(film.id)?.isDone ?? false);
+      fake.keepAlive.cancelledEnds.clear();
+      await notifier.delete(film.id);
+      expect(fake.keepAlive.cancelledEnds, [film.id]);
+    });
+
+    test('Resume of a notification for a film no longer in the list does nothing', () async {
+      final (container, notifier) = await start();
+      await notifier.resumeFromNotification('00aa');
+      expect(container.read(filmDownloadsProvider).films, isEmpty);
+    });
+  });
+
   test('a copy that ran when the app ended goes on at the next start, from its bytes', () async {
     final index = Directory('${root.path}${Platform.pathSeparator}index');
     await index.create(recursive: true);

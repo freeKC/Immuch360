@@ -26,6 +26,14 @@ class FilmDownloadApiImpl(context: Context) : FilmDownloadApi {
     FilmDownloadService.stop(appContext)
   }
 
+  override fun showEnd(notice: FilmDownloadEndNotice) {
+    FilmDownloadService.showEnd(appContext, notice)
+  }
+
+  override fun cancelEnd(filmId: String) {
+    FilmDownloadService.cancelEnd(appContext, filmId)
+  }
+
   override fun freeBytes(path: String): Long? =
     try {
       StatFs(path).availableBytes

@@ -192,7 +192,7 @@ class NetworkSharesPage extends ConsumerWidget {
                       ),
                     ),
                     for (final source in shares) _NetworkShareTile(source: source, tvMode: tvMode),
-                    // The films copied from a Plex server, where films are copied (not on a TV)
+                    // The films copied from a Plex server, where films are copied (Android TV too since release 47)
                     const DownloadedFilmsTile(),
                     if (cameras.isNotEmpty) ...[
                       Padding(

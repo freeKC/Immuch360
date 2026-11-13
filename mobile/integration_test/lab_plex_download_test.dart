@@ -72,10 +72,11 @@ void main() {
       networkChanges: () => const Stream.empty(),
       keepAlive: AndroidFilmDownloadKeepAlive(),
       isDesktop: false,
-      texts: (film, received, speed) => (
+      texts: (film, received, speed, wait) => (
         channelName: 'Film downloads',
         title: 'Downloading ${film.shownTitle}',
         text: '${received ~/ (1024 * 1024)} MiB',
+        subText: null,
         pause: 'Pause',
         cancel: 'Cancel',
       ),
