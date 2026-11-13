@@ -516,7 +516,13 @@ class SettingsFileService {
     }
 
     if (check == SettingsFileSessionCheck.valid) {
-      final user = await link.loadUser(token);
+      ({String name, String email})? user;
+      try {
+        user = await link.loadUser(token);
+      } catch (error) {
+        // A failure here must not stop the import: the sources and the albums come after it
+        _log.info('The user of the settings file could not be loaded: ${error.runtimeType}');
+      }
       if (user != null) {
         return SettingsFileSignIn(SettingsFileSignInResult.signedIn, name: user.name, email: user.email);
       }
@@ -531,7 +537,14 @@ class SettingsFileService {
     switch (check) {
       case SettingsFileSessionCheck.refused:
         _log.info('The server refused the session of the settings file');
-        await link.forget();
+        try {
+          await link.forget();
+        } catch (error) {
+          _log.info('The session of the settings file could not be forgotten everywhere: ${error.runtimeType}');
+        } finally {
+          // A refused token never stays, whatever failed above
+          await _store.delete(StoreKey.accessToken);
+        }
         // The sign in form fills its address from the endpoint
         if ((_store.tryGet(StoreKey.serverEndpoint) ?? '').isEmpty) {
           await _store.put(StoreKey.serverEndpoint, server.url);

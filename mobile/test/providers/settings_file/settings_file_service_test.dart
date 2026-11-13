@@ -119,8 +119,17 @@ class _FakeServerLink implements SettingsFileServerLink {
   /// The server ends the session while the user is loaded (signed out on the web at that moment)
   var endSessionAtLoadUser = false;
 
+  /// The user load fails outside the server's answer (a platform call of the app)
+  var failAtLoadUser = false;
+
+  /// Forgetting the session fails part way (a platform call of the app)
+  var failAtForget = false;
+
   @override
   Future<({String name, String email})?> loadUser(String token) async {
+    if (failAtLoadUser) {
+      throw StateError('platform call failed');
+    }
     if (endSessionAtLoadUser && _address != null) {
       answers[_address!] = SettingsFileSessionCheck.refused;
       return null;
@@ -131,6 +140,9 @@ class _FakeServerLink implements SettingsFileServerLink {
   @override
   Future<void> forget() async {
     forgotten = true;
+    if (failAtForget) {
+      throw StateError('platform call failed');
+    }
     await store.delete(StoreKey.accessToken);
     await store.delete(StoreKey.currentUser);
   }
@@ -525,6 +537,33 @@ void main() {
     expect(report.accountRestored, isFalse);
     expect(b.server.forgotten, isTrue);
     expect(b.store.tryGet(StoreKey.accessToken), isNull);
+    await b.dispose();
+  });
+
+  test('a user load that fails: the rest of the file restored, told as not answering, the account kept', () async {
+    final content = await accountsContent();
+    final b = await _Install.create();
+    b.server.failAtLoadUser = true;
+    final report = await b.service.restore(content, SettingsFileRestoreMode.merge);
+
+    expect(report.signIn?.result, SettingsFileSignInResult.unreachable);
+    expect(report.accountRestored, isTrue);
+    expect(b.store.tryGet(StoreKey.accessToken), 'session-token-a');
+    expect(b.sourceList, hasLength(3));
+    await b.dispose();
+  });
+
+  test('a refused session whose forgetting fails: the token leaves the Store all the same', () async {
+    final content = await accountsContent();
+    final b = await _Install.create();
+    b.server.answers = {'https://photos.example.org/api': SettingsFileSessionCheck.refused};
+    b.server.failAtForget = true;
+    final report = await b.service.restore(content, SettingsFileRestoreMode.merge);
+
+    expect(report.signIn?.result, SettingsFileSignInResult.refused);
+    expect(report.accountRestored, isFalse);
+    expect(b.store.tryGet(StoreKey.accessToken), isNull);
+    expect(b.sourceList, hasLength(3));
     await b.dispose();
   });
 
