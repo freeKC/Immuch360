@@ -115,13 +115,15 @@ describe('the client of the bridge', () => {
 		const store = createSourceStore(memoryStorage());
 		const answers = [
 			{ok: true, status: 200, json: async () => ({folders: [{ref: 'a', name: 'a'}], files: []})},
+			{ok: true, status: 200, json: async () => ({folders: [], files: [], live: 3})},
 			{ok: false, status: 401, json: async () => ({error: 'The server refused the user name or the password', code: 'auth'})},
 		];
 		const urls = [];
 		const client = new BridgeClient(fakeTransport(), store, {pollMs: 1000000, fetch: async (url) => (urls.push(url), answers.shift())});
 		const listing = await client.list('x', '');
-		assert.deepEqual(listing, {folders: [{ref: 'a', name: 'a'}], files: []});
+		assert.deepEqual(listing, {folders: [{ref: 'a', name: 'a'}], files: [], live: 0});
 		assert.match(urls[0], /\/list\?s=x&r=$/);
+		assert.deepEqual(await client.list('x', 'fbxtv'), {folders: [], files: [], live: 3}, 'the live TV channels of a DLNA folder');
 		await assert.rejects(client.list('x', 'b'), (e) => e instanceof BridgeError && e.code === 'auth' && e.status === 401);
 		await assert.rejects(client.control('fail', {}), (e) => e.code === 'auth');
 	});

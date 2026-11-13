@@ -14,10 +14,19 @@ class _Object {
     : file = null,
       mime = '',
       bytes = null,
-      upnpClass = 'object.container';
+      upnpClass = 'object.container',
+      live = null;
 
   _Object.file(this.id, this.parent, this.title, this.file, this.mime, this.bytes, {String? upnpClass})
-    : upnpClass = upnpClass ?? (mime.startsWith('video/') ? 'object.item.videoItem' : 'object.item.imageItem.photo');
+    : upnpClass = upnpClass ?? (mime.startsWith('video/') ? 'object.item.videoItem' : 'object.item.imageItem.photo'),
+      live = null;
+
+  /// A live TV channel served at the RTSP address [live], as a Freebox Server lists them
+  _Object.live(this.id, this.parent, this.title, String this.live)
+    : file = null,
+      mime = 'video/mp2t',
+      bytes = null,
+      upnpClass = 'object.item.videoItem.videoBroadcast';
 
   final String id;
   final String parent;
@@ -26,6 +35,7 @@ class _Object {
   final String mime;
   final Uint8List? bytes;
   final String upnpClass;
+  final String? live;
 }
 
 typedef _Request = ({String method, String path, Map<String, String> headers, String body});
@@ -208,6 +218,15 @@ class _FakeDlnaServer {
       'xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dlna="urn:schemas-dlna-org:metadata-1-0/">',
     );
     for (final object in page) {
+      final live = object.live;
+      if (live != null) {
+        didl.write(
+          '<item id="${object.id}" parentID="$id" restricted="1"><dc:title>${escapeXmlText(object.title)}</dc:title>'
+          '<upnp:class>${object.upnpClass}</upnp:class>'
+          '<res protocolInfo="rtsp-rtp-udp:*:${object.mime}:*">${escapeXmlText(live)}</res></item>',
+        );
+        continue;
+      }
       if (object.file == null) {
         didl.write(
           '<container id="${object.id}" parentID="$id" restricted="1"><dc:title>${escapeXmlText(object.title)}'
@@ -437,6 +456,38 @@ void main() {
 
       await fileSystem.list('/');
       expect(server.browses.length, greaterThan(browses), reason: 'a list asks the server again');
+    });
+
+    test('counts the live TV channels of a folder, which it does not list', () async {
+      server.objects.addAll([
+        _Object.folder('tv', '0', 'Freebox TV'),
+        _Object.live(
+          'tv/201',
+          'tv',
+          '1 - Channel One',
+          'rtsp://mafreebox.freebox.fr/fbxtv_pub/stream?namespace=1&service=201',
+        ),
+        _Object.live(
+          'tv/202',
+          'tv',
+          '2 - Channel Two',
+          'rtsp://mafreebox.freebox.fr/fbxtv_pub/stream?namespace=1&service=202',
+        ),
+        _Object.file('tv/9', 'tv', 'guide', '/media/9.jpg', 'image/jpeg', photo),
+      ]);
+      final fileSystem = await open();
+
+      final entries = await fileSystem.list('/Freebox TV');
+
+      expect([for (final entry in entries) entry.path], ['/Freebox TV/guide.jpg']);
+      expect(fileSystem.liveStreamsIn('/Freebox TV'), 2);
+      expect(fileSystem.liveStreamsIn('/Freebox TV/'), 2, reason: 'the path is normalised');
+      expect(fileSystem.liveStreamsIn('/'), 0);
+      expect(fileSystem.liveStreamsIn('/Trips'), 0, reason: 'a folder not listed yet has none known');
+
+      server.objects.removeWhere((o) => o.live != null);
+      await fileSystem.list('/Freebox TV');
+      expect(fileSystem.liveStreamsIn('/Freebox TV'), 0, reason: 'each listing counts again');
     });
 
     test('goes down into folders by name, titles with a slash included', () async {

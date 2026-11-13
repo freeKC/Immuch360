@@ -2,6 +2,11 @@
 // folder (container) or media file (item), each item with one or more resources (the original file, copies converted
 // by the server, thumbnails). The app keeps the folders, the photos and the videos, reads the original resource of
 // each, and names them after their titles with an extension, which the browser needs to tell photos from videos.
+//
+// Live streams are no files: the TV channels of a media server (a Freebox Server lists its TV channels as items of
+// class videoBroadcast whose only resources are rtsp://mafreebox.freebox.fr/fbxtv_pub/... addresses, protocol
+// rtsp-rtp-udp, MPEG-TS) are not listed but counted (DidlObject.isLiveStream), so that the browser says why a folder
+// of channels shows nothing.
 
 import 'dart:math';
 
@@ -67,8 +72,15 @@ class DidlResource {
     return operations[1] == '1';
   }
 
+  /// A live stream rather than a file: an RTSP, RTP or UDP protocol (rtsp-rtp-udp, rtsp-rtp-tcp...), or such an
+  /// address whatever the protocolInfo says
+  bool get isLiveStream => _liveProtocols.any(protocol.startsWith) || _liveSchemes.contains(url.scheme.toLowerCase());
+
+  static const _liveProtocols = ['rtsp', 'rtp', 'udp'];
+  static const _liveSchemes = {'rtsp', 'rtsps', 'rtp', 'udp'};
+
   bool get _isReadableMedia =>
-      protocol == 'http-get' && (mimeType.startsWith('image/') || mimeType.startsWith('video/'));
+      protocol == 'http-get' && !isLiveStream && (mimeType.startsWith('image/') || mimeType.startsWith('video/'));
 
   @override
   String toString() => 'DidlResource($url $mimeType${size == null ? '' : ' $size'})';
@@ -182,6 +194,23 @@ class DidlObject {
       return true;
     }
     return upnpClass.startsWith('object.item') && original != null;
+  }
+
+  /// A live video stream with no file to read, a TV channel: a broadcast item (object.item.videoItem.videoBroadcast),
+  /// or a video item or video MIME type whose resources are live streams (see [DidlResource.isLiveStream]). An item
+  /// that also has a file over HTTP (a recording) is that file instead. Radios and other audio are left out, as the
+  /// rest of the audio.
+  bool get isLiveStream {
+    if (isContainer || original != null) {
+      return false;
+    }
+    if (upnpClass.startsWith('object.item.videoItem.videoBroadcast')) {
+      return true;
+    }
+    final isVideoItem = upnpClass.startsWith('object.item.videoItem');
+    return resources.any(
+      (resource) => resource.isLiveStream && (isVideoItem || resource.mimeType.startsWith('video/')),
+    );
   }
 
   @override
@@ -407,3 +436,6 @@ List<({DidlObject object, String name})> dlnaEntryNames(Iterable<DidlObject> obj
   for (final (:item, :name) in uniqueEntryNames(objects, dlnaEntryName, (object) => object.isContainer))
     (object: item, name: name),
 ];
+
+/// The live streams among [objects] (see [DidlObject.isLiveStream]): the TV channels a folder holds but cannot show
+int dlnaLiveStreamCount(Iterable<DidlObject> objects) => objects.where((object) => object.isLiveStream).length;

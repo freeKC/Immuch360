@@ -51,6 +51,9 @@ typedef _Folder = ({
   List<NetworkEntry> media,
   Map<String, Uri> urls,
   List<NetworkEntry> splats,
+
+  /// The live TV channels of the folder, which it does not list (see NetworkLiveStreams)
+  int liveStreams,
 });
 
 /// The photos and videos of a share folder in the order the browser shows them ([entries]), with their media bridge
@@ -280,6 +283,11 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     // Hidden entries (".DS_Store", "._IMG.JPG" resource forks, ".thumbnails") and files of other kinds are left out, the
     // same for every folder source (see FolderContents)
     final contents = FolderContents.of(await fileSystem.list(widget.path));
+    // The TV channels of a DLNA media server are counted, not listed: a folder of them says so instead of "empty"
+    final liveStreams = switch (fileSystem) {
+      final NetworkLiveStreams live => live.liveStreamsIn(widget.path),
+      _ => 0,
+    };
     final media = contents.media;
     final urls = <String, Uri>{};
     for (final entry in media) {
@@ -294,7 +302,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
     if (mounted) {
       setState(() => _splats = splats);
     }
-    return (folders: contents.folders, media: media, urls: urls, splats: splats);
+    return (folders: contents.folders, media: media, urls: urls, splats: splats, liveStreams: liveStreams);
   }
 
   /// The films of [section] that [query] keeps, in the server's order, in place of the folders: each under its own path
@@ -313,7 +321,7 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
         _splats = const [];
       });
     }
-    return (folders: const <NetworkEntry>[], media: media, urls: urls, splats: const <NetworkEntry>[]);
+    return (folders: const <NetworkEntry>[], media: media, urls: urls, splats: const <NetworkEntry>[], liveStreams: 0);
   }
 
   /// Opens the filters of the library of films of this folder; the films they keep show in place of the folders, the
@@ -846,9 +854,10 @@ class _FolderView extends StatelessWidget {
     final filtered = filmsFiltered
         ? _FilmsFilteredBar(count: media.length, onClear: onClearFilms, autofocus: focusFirst && media.isEmpty)
         : null;
+    final hasLiveStreams = folder.liveStreams > 0;
     if (folders.isEmpty && media.isEmpty && folder.splats.isEmpty) {
       return filtered == null
-          ? const _Filled(child: NetworkEmptyFolderView())
+          ? _Filled(child: hasLiveStreams ? const NetworkLiveStreamsNotice() : const NetworkEmptyFolderView())
           : _Filled(
               child: Column(
                 children: [
@@ -869,6 +878,7 @@ class _FolderView extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         if (filtered != null) SliverToBoxAdapter(child: filtered),
+        if (hasLiveStreams) const SliverToBoxAdapter(child: NetworkLiveStreamsNotice(inline: true)),
         SliverList.builder(
           itemCount: folders.length,
           itemBuilder: (context, index) {

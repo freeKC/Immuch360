@@ -180,7 +180,7 @@ export class BridgeClient {
 			const response = await this.fetchImpl(bridgeUrl(info, 'list', {s: sourceId, r: ref}));
 			const body = (await response.json()) as Listing & {error?: string; code?: string};
 			if (!response.ok) throw new BridgeError(body.error || `HTTP ${response.status}`, body.code || null, response.status);
-			return {folders: body.folders || [], files: body.files || []};
+			return {folders: body.folders || [], files: body.files || [], live: Number(body.live) || 0};
 		};
 		const info = await this.ensure();
 		try {

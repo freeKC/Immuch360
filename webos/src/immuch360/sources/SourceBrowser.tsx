@@ -93,7 +93,10 @@ export const SourceBrowser: React.FC<SourceBrowserProps> = ({client, info, versi
 		staleTime: 60000,
 	});
 	const listing = query.data;
-	const mediaOnly = !!listing && listing.folders.length === 0 && listing.files.length > 0;
+	// The live TV channels of a DLNA server are counted, not listed: a folder of them says so instead of "empty", and a
+	// folder with channels and media keeps its page so that the line shows above the media tile
+	const live = listing?.live || 0;
+	const mediaOnly = !!listing && listing.folders.length === 0 && listing.files.length > 0 && live === 0;
 
 	const up = useCallback(() => {
 		setMediaOpen(false);
@@ -173,8 +176,9 @@ export const SourceBrowser: React.FC<SourceBrowserProps> = ({client, info, versi
 						<Button onClick={retry}>{t('retry')}</Button>
 					</div>
 				)}
-				{listing && listing.folders.length === 0 && listing.files.length === 0 && <div className={css.notice}>{t('network_share_empty_folder')}</div>}
-				{listing && listing.folders.length > 0 && (
+				{live > 0 && <div className={css.notice}>{t('network_share_live_streams')}</div>}
+				{listing && live === 0 && listing.folders.length === 0 && listing.files.length === 0 && <div className={css.notice}>{t('network_share_empty_folder')}</div>}
+				{listing && (listing.folders.length > 0 || listing.files.length > 0) && (
 					<div className={css.grid}>
 						{listing.files.length > 0 && <SourceTile icon="picture" title={t('webos_folder_media', {count: listing.files.length})} value="" onSelect={openMedia} spotlightId={FIRST_TILE_ID} />}
 						{listing.folders.map((f, index) => (
