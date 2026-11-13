@@ -41,6 +41,8 @@ class PlexStream {
     this.selected = false,
     this.forced = false,
     this.hearingImpaired = false,
+    this.colorTrc,
+    this.doviProfile,
   });
 
   /// The id of the stream, what PUT /library/parts/{id} takes
@@ -75,6 +77,16 @@ class PlexStream {
   final bool selected;
   final bool forced;
   final bool hearingImpaired;
+
+  /// The transfer of a video stream as the server reads it ("smpte2084" for HDR10 and Dolby Vision, "arib-std-b67" for
+  /// HLG, "bt709"), lower case; null when it does not tell
+  final String? colorTrc;
+
+  /// The Dolby Vision profile of a video stream (5, 7, 8), null when it has none
+  final int? doviProfile;
+
+  /// A video stream in high dynamic range: PQ or HLG, or Dolby Vision
+  bool get isHdr => doviProfile != null || colorTrc == 'smpte2084' || colorTrc == 'arib-std-b67';
 
   /// A subtitle file of its own beside the film, which the players do not see in the file
   bool get isSidecar => type == PlexStreamType.subtitle && key != null;
@@ -441,6 +453,8 @@ PlexStream? _stream(Map<String, Object?> stream) {
     selected: _bool(stream['selected']),
     forced: _bool(stream['forced']),
     hearingImpaired: _bool(stream['hearingImpaired']),
+    colorTrc: _string(stream['colorTrc'])?.toLowerCase(),
+    doviProfile: _int(stream['DOVIProfile']),
   );
 }
 

@@ -77,6 +77,12 @@ the gate is per desktop and is noted.
 | `lib/presentation/pages/network/network_video.page.dart:605` | the player of a film is chosen on Android only (film_player_choice.dart, release 46), behind `CurrentPlatform.isDesktop` | right: the computers keep `DesktopVideoView` and the file, no choice, no conversion |
 | `lib/presentation/pages/network/network_video.page.dart:649` | idem, for the copy of a film on the device | right |
 | `lib/presentation/pages/network/network_video.page.dart:1213` | a failed player hands the film over on Android only, behind `CurrentPlatform.isDesktop` | right: the computers show the error as before |
+| `lib/presentation/pages/network/network_video.page.dart:1230` | the server's conversion offered by the audio and Dolby Vision notices (release 47) on Android only, behind `CurrentPlatform.isDesktop` | right: the computers have no conversion, the notice says what it can |
+| `lib/presentation/pages/network/network_video.page.dart:1261` | the Dolby Vision profile 5 notice: a device player of Android without a Dolby Vision decoder; libmpv is checked first, so the computers get it | right: the computers' libmpv draws DV 5 in wrong colours, they are told |
+| `lib/presentation/pages/network/network_video.page.dart:1286` | the audio AVFoundation decodes, on iOS, behind `CurrentPlatform.isDesktop` | right: the computers return before it (libmpv picks its own track) |
+| `lib/presentation/pages/network/network_video.page.dart:1289` | the audio Media3 decodes on Android, behind `CurrentPlatform.isDesktop` | right |
+| `lib/providers/network/plex_film_version.provider.dart:77` | the default version of a film avoids a very large file on a phone (Android, iOS), behind `CurrentPlatform.isDesktop` and the TV mode | right: a computer is no phone |
+| `lib/providers/network/plex_film_version.provider.dart:83` | the decoders of Android for the default version, after the computers' own branch | right |
 | `lib/presentation/pages/network/phone_share.page.dart:80` | iOS foreground notice | right |
 | `lib/presentation/pages/network/phone_share.page.dart:95` | phone share tile on phones only | wired (G1): shown on the computers once computerShareAvailable is true (LAN) |
 | `lib/presentation/pages/pairing/connect_screen.page.dart:32` | a code of the LG webOS app leaves the TV unnamed on iOS, App Store guideline 2.3.10 (5 November 2026) | hidden: the computers are big screens, which never show Connect a TV or computer (isBigScreenProvider); they would get the text that names LG |

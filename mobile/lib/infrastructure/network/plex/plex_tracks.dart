@@ -14,6 +14,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/video_track_naming.dart';
+import 'package:immich_mobile/domain/services/film_player/film_audio_choice.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
@@ -278,70 +279,9 @@ bool plexLanguagesAgree(String? language, PlexStream stream) {
   if (tag == null && three == null) {
     return true;
   }
-  final asTwo = code.length == 3 ? (_twoLetterOf[code] ?? (code == three ? tag : null)) : code;
+  final asTwo = code.length == 3 ? (twoLetterLanguageOf[code] ?? (code == three ? tag : null)) : code;
   if (asTwo != null && tag != null) {
     return asTwo == tag;
   }
-  return code == three || _twoLetterOf[code] == _twoLetterOf[three];
+  return code == three || twoLetterLanguageOf[code] == twoLetterLanguageOf[three];
 }
-
-/// The two letter codes of the three letter ones whose two forms (bibliographic and terminology) differ, and of the
-/// common ones a player may report as such
-const _twoLetterOf = {
-  'eng': 'en',
-  'fre': 'fr',
-  'fra': 'fr',
-  'ger': 'de',
-  'deu': 'de',
-  'spa': 'es',
-  'ita': 'it',
-  'por': 'pt',
-  'jpn': 'ja',
-  'kor': 'ko',
-  'chi': 'zh',
-  'zho': 'zh',
-  'dut': 'nl',
-  'nld': 'nl',
-  'rus': 'ru',
-  'pol': 'pl',
-  'swe': 'sv',
-  'nor': 'no',
-  'nob': 'nb',
-  'dan': 'da',
-  'fin': 'fi',
-  'cze': 'cs',
-  'ces': 'cs',
-  'gre': 'el',
-  'ell': 'el',
-  'per': 'fa',
-  'fas': 'fa',
-  'rum': 'ro',
-  'ron': 'ro',
-  'slo': 'sk',
-  'slk': 'sk',
-  'alb': 'sq',
-  'sqi': 'sq',
-  'arm': 'hy',
-  'hye': 'hy',
-  'baq': 'eu',
-  'eus': 'eu',
-  'geo': 'ka',
-  'kat': 'ka',
-  'ice': 'is',
-  'isl': 'is',
-  'mac': 'mk',
-  'mkd': 'mk',
-  'may': 'ms',
-  'msa': 'ms',
-  'wel': 'cy',
-  'cym': 'cy',
-  'tur': 'tr',
-  'ara': 'ar',
-  'heb': 'he',
-  'hin': 'hi',
-  'hun': 'hu',
-  'ukr': 'uk',
-  'tha': 'th',
-  'vie': 'vi',
-  'cat': 'ca',
-};

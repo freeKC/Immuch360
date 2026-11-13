@@ -12,7 +12,7 @@ import 'package:immich_mobile/presentation/pages/network/film_page_play_on.dart'
 
 /// What an action of the film page knows of the film
 class FilmPageContext {
-  const FilmPageContext({required this.sourceId, required this.film, this.path, this.entry});
+  const FilmPageContext({required this.sourceId, required this.film, this.path, this.entry, this.version = 0});
 
   /// The Plex source the film is on
   final String sourceId;
@@ -25,6 +25,9 @@ class FilmPageContext {
 
   /// That file as the share lists it (its size and date), null until known
   final NetworkEntry? entry;
+
+  /// The place of the version of [path] among the versions of the film (plexFilmVersions), 0 for a film with one
+  final int version;
 }
 
 /// Builds one button of the row after Play for [film], null to show none (a TV has no Download, for instance)

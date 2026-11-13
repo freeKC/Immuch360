@@ -8,6 +8,7 @@ import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_versions.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_client.dart';
 import 'package:immich_mobile/presentation/pages/network/film_page_actions.dart';
@@ -20,6 +21,7 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
+import 'package:immich_mobile/providers/network/plex_film_version.provider.dart';
 import 'package:immich_mobile/providers/network/plex_films.provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -32,7 +34,9 @@ import 'package:immich_mobile/utils/bytes_units.dart';
 ///
 /// Opened by [ratingKey] from a tile of the folder view of a library of films, from a filtered list, and later from
 /// the films page of lot A1. [path] is the file the tile showed, which Play opens so that its watch progress and its
-/// upload mark stay those of the tile; without one, the film's own path (plexFilmPath) of its first file.
+/// upload mark stay those of the tile; without one, the film's own path (plexFilmPath) of its first file. A film with
+/// several versions (release 47) shows them under the buttons: Play opens the one picked, remembered per film, else
+/// the one this device plays best (plexFilmVersionIndex), by its own path when it is not the tile's file.
 ///
 /// On a TV the focus starts on Play, the texts scroll with the remote (RemoteScrollArea), an address opens in a dialog
 /// rather than a browser (openUrl), and Back returns to the poster the page was opened from. Wide screens (tablets,
@@ -58,42 +62,59 @@ class _PlexFilmPageState extends ConsumerState<PlexFilmPage> {
   Widget build(BuildContext context) {
     final details = ref.watch(plexFilmDetailsProvider(_key));
     final film = details.valueOrNull;
+    final picks = ref.watch(plexFilmVersionPicksProvider);
+    final device = ref.watch(filmVersionDeviceProvider).valueOrNull;
+    final fileSystem = ref.watch(plexFilmFileSystemProvider(widget.sourceId)).valueOrNull;
+    final given = widget.path;
+    final givenPartId = given == null ? null : fileSystem?.itemAt(given)?.partId;
+    // A file opened in the folder view is a version the user chose; the films page opens a film by its first file
+    final tapped = given != null && parsePlexFilmPath(given) == null ? givenPartId : null;
+    int versionOf(PlexFilmDetails film) =>
+        plexFilmVersionIndex(film, widget.sourceId, picks, device, tappedPartId: tapped);
+    String? pathOf(PlexFilmDetails film) =>
+        plexFilmPlayPath(film, given: given, givenPartId: givenPartId, version: versionOf(film));
     return Scaffold(
       appBar: AppBar(
         title: Text(film?.title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis),
         elevation: 0,
         centerTitle: false,
-        actions: [if (film != null) _FilmMenu(sourceId: widget.sourceId, film: film, path: _playPath(film))],
+        actions: [if (film != null) _FilmMenu(sourceId: widget.sourceId, film: film, path: pathOf(film))],
       ),
       body: details.when(
         skipLoadingOnReload: true,
-        data: (film) => _FilmView(sourceId: widget.sourceId, film: film, path: _playPath(film)),
+        data: (film) => _FilmView(sourceId: widget.sourceId, film: film, path: pathOf(film), version: versionOf(film)),
         loading: () => const NetworkLoadingView(),
         error: (error, _) =>
             NetworkErrorView(error: error, onRetry: () => ref.invalidate(plexFilmDetailsProvider(_key))),
       ),
     );
   }
+}
 
-  /// The file Play opens: the one of the tile, else the first file of the film by its own path; null for an item
-  /// without a file
-  String? _playPath(PlexFilmDetails film) {
-    final given = widget.path;
-    if (given != null) {
+/// The file Play opens for the version at [version] of [film] (plexFilmVersions): [given], the file of the tile, when
+/// it is that version's file ([givenPartId], its part, null when not known counts as the first version's), else that
+/// version's first file by its own path (plexFilmPath); null for an item without a file
+String? plexFilmPlayPath(PlexFilmDetails film, {String? given, int? givenPartId, int version = 0}) {
+  final versions = plexFilmVersions(film);
+  final media = version >= 0 && version < versions.length ? versions[version] : versions.firstOrNull;
+  final part = media?.parts.firstOrNull ?? film.parts.firstOrNull;
+  if (given != null) {
+    final givenPart = givenPartId ?? parsePlexFilmPath(given)?.partId;
+    final same = givenPart == null ? version == 0 || versions.length < 2 : givenPart == part?.id;
+    if (same || versions.length < 2) {
       return given;
     }
-    final part = film.parts.firstOrNull;
-    final section = film.sectionKey;
-    if (part == null || section == null) {
-      return null;
-    }
-    return plexFilmPath(
-      sectionKey: section,
-      ratingKey: film.ratingKey,
-      partId: part.id,
-      name: part.fileName ?? '${film.title}.${part.container ?? 'mkv'}',
-    );
   }
+  final section = film.sectionKey;
+  if (part == null || section == null) {
+    return given;
+  }
+  return plexFilmPath(
+    sectionKey: section,
+    ratingKey: film.ratingKey,
+    partId: part.id,
+    name: part.fileName ?? '${film.title}.${part.container ?? 'mkv'}',
+  );
 }
 
 /// The ⋮ of the app bar: the Wikipedia switch, and Upload to Immich where the app sends files
@@ -154,11 +175,14 @@ class _FilmMenu extends ConsumerWidget {
 }
 
 class _FilmView extends ConsumerWidget {
-  const _FilmView({required this.sourceId, required this.film, required this.path});
+  const _FilmView({required this.sourceId, required this.film, required this.path, required this.version});
 
   final String sourceId;
   final PlexFilmDetails film;
   final String? path;
+
+  /// The place of the version Play opens among plexFilmVersions
+  final int version;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -167,8 +191,15 @@ class _FilmView extends ConsumerWidget {
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 720;
         final posterWidth = wide ? 220.0 : 120.0;
-        final header = _Header(sourceId: sourceId, film: film, path: path, posterWidth: posterWidth, wide: wide);
-        final texts = _Texts(sourceId: sourceId, film: film, tvMode: tvMode);
+        final header = _Header(
+          sourceId: sourceId,
+          film: film,
+          path: path,
+          version: version,
+          posterWidth: posterWidth,
+          wide: wide,
+        );
+        final texts = _Texts(sourceId: sourceId, film: film, version: version, tvMode: tvMode);
         final content = wide
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,6 +287,7 @@ class _Header extends ConsumerWidget {
     required this.sourceId,
     required this.film,
     required this.path,
+    required this.version,
     required this.posterWidth,
     required this.wide,
   });
@@ -263,6 +295,7 @@ class _Header extends ConsumerWidget {
   final String sourceId;
   final PlexFilmDetails film;
   final String? path;
+  final int version;
   final double posterWidth;
   final bool wide;
 
@@ -287,7 +320,17 @@ class _Header extends ConsumerWidget {
         ],
       ],
     );
-    final buttons = _Buttons(sourceId: sourceId, film: film, path: path);
+    final buttons = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _Buttons(sourceId: sourceId, film: film, path: path, version: version),
+        if (plexFilmVersions(film).length > 1) ...[
+          const SizedBox(height: 12),
+          PlexFilmVersions(sourceId: sourceId, film: film, selected: version),
+        ],
+      ],
+    );
     if (wide) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,11 +404,12 @@ class _PosterPlaceholder extends StatelessWidget {
 /// Play, or Resume at the place where the film was left (on this device, else in a Plex app) with Play from the
 /// start, then the actions of the other lots
 class _Buttons extends ConsumerWidget {
-  const _Buttons({required this.sourceId, required this.film, required this.path});
+  const _Buttons({required this.sourceId, required this.film, required this.path, required this.version});
 
   final String sourceId;
   final PlexFilmDetails film;
   final String? path;
+  final int version;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -383,7 +427,7 @@ class _Buttons extends ConsumerWidget {
         ? Duration(milliseconds: offset)
         : null;
     final resumeAt = rule.enabled ? here ?? (row == null ? there : null) : null;
-    final context_ = FilmPageContext(sourceId: sourceId, film: film, path: path, entry: entry);
+    final context_ = FilmPageContext(sourceId: sourceId, film: film, path: path, entry: entry, version: version);
     final extra = [
       for (final action in filmPageActions)
         if (action(context, ref, context_) case final Widget widget) widget,
@@ -468,10 +512,11 @@ Future<void> showPlexFilmFolders(
 
 /// The tagline, the synopsis, the people, the file and the Wikipedia block
 class _Texts extends ConsumerWidget {
-  const _Texts({required this.sourceId, required this.film, required this.tvMode});
+  const _Texts({required this.sourceId, required this.film, required this.version, required this.tvMode});
 
   final String sourceId;
   final PlexFilmDetails film;
+  final int version;
   final bool tvMode;
 
   @override
@@ -480,7 +525,7 @@ class _Texts extends ConsumerWidget {
     final secondary = context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant);
     final directors = film.directors.map((person) => person.name).join(', ');
     final writers = film.writers.map((person) => person.name).join(', ');
-    final technical = plexFilmTechnicalLine(t, film);
+    final technical = plexFilmTechnicalLine(t, film, version: version);
     final section = film.sectionKey;
     final library = section == null ? null : _sectionLanguage(ref, section);
     return Column(
@@ -747,10 +792,13 @@ String audienceBandLabel(Translations t, AudienceBand band) => switch (band) {
   AudienceBand.unrated => t.plex_films_audience_unrated,
 };
 
-/// The lines about the file Play opens: "1080p, H264 · MKV, 8.2 GB", then its audio and subtitle languages as Plex
-/// names them
-List<String> plexFilmTechnicalLine(Translations t, PlexFilmDetails film) {
-  final part = film.parts.firstOrNull;
+/// The lines about the file Play opens, the first of the version at [version] (plexFilmVersions): "1080p, H264 · MKV,
+/// 8.2 GB", then its audio and subtitle languages as Plex names them
+List<String> plexFilmTechnicalLine(Translations t, PlexFilmDetails film, {int version = 0}) {
+  final versions = plexFilmVersions(film);
+  final part =
+      (version >= 0 && version < versions.length ? versions[version].parts.firstOrNull : null) ??
+      film.parts.firstOrNull;
   if (part == null) {
     return const [];
   }
@@ -775,6 +823,46 @@ List<String> plexFilmTechnicalLine(Translations t, PlexFilmDetails film) {
     if (audio.isNotEmpty) t.plex_film_audio(languages: audio),
     if (subtitles.isNotEmpty) t.plex_film_subtitles(languages: subtitles),
   ].where((line) => line.isNotEmpty).toList();
+}
+
+/// The versions of a film that has several, under its buttons: one chip each ("1080p HEVC, 3.0 GiB", "2160p HEVC HDR,
+/// 52 GiB"), the one Play opens selected; a pick is remembered for the film on this device
+class PlexFilmVersions extends ConsumerWidget {
+  const PlexFilmVersions({super.key, required this.sourceId, required this.film, required this.selected});
+
+  final String sourceId;
+  final PlexFilmDetails film;
+  final int selected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final versions = plexFilmVersions(film);
+    return Column(
+      key: const Key('plex_film_versions'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(context.t.plex_film_versions, style: context.textTheme.titleSmall),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: [
+            for (final (index, media) in versions.indexed)
+              ChoiceChip(
+                key: Key('plex_film_version_$index'),
+                label: Text(plexFilmVersionLabel(media)),
+                selected: index == selected,
+                onSelected: media.id == null
+                    ? null
+                    : (_) => unawaited(
+                        ref.read(plexFilmVersionPicksProvider.notifier).pick(sourceId, film.ratingKey, media.id!),
+                      ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 /// The initials of a name, two at most: "Keanu Reeves" gives "KR"

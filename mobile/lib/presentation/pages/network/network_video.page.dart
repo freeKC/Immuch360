@@ -23,6 +23,8 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
+import 'package:immich_mobile/domain/services/film_player/film_audio_choice.dart';
+import 'package:immich_mobile/domain/services/film_player/film_decoders.dart';
 import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
@@ -38,6 +40,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_streams.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_versions.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_tracks.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
@@ -264,6 +267,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
   /// Whether the failure listener of the player status is set (once per page)
   bool _failureListened = false;
+
+  /// Whether the page said that the colours of this Dolby Vision profile 5 film may be wrong (once per page)
+  bool _dolbyVisionTold = false;
 
   /// The film resumed where it was left, said for a few seconds (see ResumeNotice)
   ResumeNoticeEvent? _resumeNotice;
@@ -603,6 +609,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _shareReader = networkFileReader(fileSystem, widget.path);
     _shareFileSystem = fileSystem;
     final playUrl = await _choosePlayer(fileSystem, bridge, url);
+    unawaited(_tellDolbyVision5());
     // What the file declares is read once the player has what it needs to play, not beside its first reads: on a slow
     // share the two read the index of the file at once (3.6 MB for a two hour film), and the film started later. A
     // page whose native player is not there a second later reads it at once
@@ -971,9 +978,46 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final audio = listed.where((track) => track.type == NativeVideoTrackType.audio).toList();
     final text = listed.where((track) => track.type == NativeVideoTrackType.text).toList();
     final audioRefs = videoTrackRefs(audio);
-    final selectedAudio = tracks.selectedAudio;
-    if (selectedAudio != null) {
-      final index = audioRefs.indexWhere((ref) => tracks.streamOf(ref)?.id == selectedAudio.id);
+    final embedded = plexEmbeddedAudio(tracks.part);
+    var selectedAudio = tracks.selectedAudio;
+    // A track the device's player does not decode (release 47): the first one it decodes, in the same language first
+    final decodes = await _deviceAudioDecodes();
+    if (!mounted || !identical(tracks, _plexTracks)) {
+      return;
+    }
+    if (decodes != null && embedded.isNotEmpty) {
+      final wanted = selectedAudio == null ? -1 : embedded.indexOf(selectedAudio);
+      final pick = pickFilmAudio(
+        plexFilmAudioTracks(tracks.part),
+        wanted: wanted >= 0 ? wanted : null,
+        decodes: decodes,
+      );
+      final from = pick.from;
+      final index = pick.index;
+      if (pick.outcome != FilmAudioOutcome.kept && from != null) {
+        final fromCodec = embedded[from].codec ?? '';
+        _log.info(
+          index == null
+              ? 'No audio track of the film is decoded by the device ($fromCodec first)'
+              : 'The device does not decode $fromCodec: audio track ${index + 1} plays',
+        );
+        if (index == null) {
+          _tellAudio(fromCodec: fromCodec);
+        } else {
+          selectedAudio = embedded[index];
+          final label = selectedAudio.label;
+          _tellAudio(
+            fromCodec: fromCodec,
+            label: label != null
+                ? plexTrackLabelInSentence(label)
+                : context.t.video_audio_track_number(track: index + 1),
+          );
+        }
+      }
+    }
+    final playAudio = selectedAudio;
+    if (playAudio != null) {
+      final index = audioRefs.indexWhere((ref) => tracks.streamOf(ref)?.id == playAudio.id);
       if (index >= 0 && !audio[index].selected) {
         await _notifier.selectTrack(audio[index]);
       }
@@ -1004,7 +1048,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (selectedAudio != null) {
       for (final (index, track) in audio.indexed) {
         if (tracks.streamOf(desktopAudioTrackRef(track, index))?.id == selectedAudio.id) {
-          if (track.id != controller.audioTrack.value) {
+          // A track libmpv does not decode is left to the controller, which plays another one and says so
+          final codec = track.codec;
+          if (track.id != controller.audioTrack.value && (codec == null || controller.decodesAudio(codec))) {
             await controller.selectAudioTrack(track.id);
           }
           break;
@@ -1094,6 +1140,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       // libmpv lists its tracks itself (the menus of the controls read them there)
       controller.audioTracks.addListener(_onTracksChanged);
       controller.subtitleTracks.addListener(_onTracksChanged);
+      controller.audioSwitch.addListener(_onAudioSwitch);
     }
     _controller = controller;
     if (!_failureListened) {
@@ -1123,7 +1170,127 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (controller is MediaKitVideoPlayerController) {
       controller.audioTracks.removeListener(_onTracksChanged);
       controller.subtitleTracks.removeListener(_onTracksChanged);
+      controller.audioSwitch.removeListener(_onAudioSwitch);
     }
+  }
+
+  /// libmpv plays another audio track than the one it would have played, or none: the page says which and why
+  void _onAudioSwitch() {
+    final controller = _controller;
+    final change = controller is MediaKitVideoPlayerController ? controller.audioSwitch.value : null;
+    if (change == null || !mounted) {
+      return;
+    }
+    final to = change.to;
+    final index = change.toIndex;
+    if (to == null || index == null) {
+      _tellAudio(fromCodec: change.fromCodec);
+      return;
+    }
+    final named = _plexTracks?.labelOf(desktopAudioTrackRef(to, index));
+    _tellAudio(
+      fromCodec: change.fromCodec,
+      label: named != null ? plexTrackLabelInSentence(named) : audioTrackLabel(context.t, to, index),
+    );
+  }
+
+  /// Says that the track [label] plays because this device does not decode [fromCodec], or, without [label], that no
+  /// track of the film is decoded here (with the server's conversion, where the build has it)
+  void _tellAudio({required String fromCodec, String? label}) {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (messenger == null) {
+      return;
+    }
+    final t = context.t;
+    final codec = audioCodecDisplayName(fromCodec.isEmpty ? '?' : fromCodec);
+    if (label != null) {
+      messenger.showSnackBar(
+        SnackBar(
+          key: const Key('film_audio_switched'),
+          duration: const Duration(seconds: 5),
+          content: Text(t.film_audio_switched(track: label, codec: codec)),
+        ),
+      );
+      return;
+    }
+    messenger.showSnackBar(
+      SnackBar(
+        key: const Key('film_audio_none'),
+        duration: const Duration(seconds: 8),
+        content: Text(t.film_audio_none),
+        action: _canConvert ? SnackBarAction(label: t.film_server_convert, onPressed: _convertOnServer) : null,
+      ),
+    );
+  }
+
+  /// Whether the Plex server may convert this film for this device: a Plex film on Android, not a copy on the
+  /// device, the setting on, and not converted already
+  bool get _canConvert =>
+      !CurrentPlatform.isDesktop &&
+      Platform.isAndroid &&
+      _shareType == NetworkSourceType.plex &&
+      _offlineId == null &&
+      ref.read(appConfigProvider).viewer.plexConversion &&
+      _player != FilmPlayerKind.serverConversion &&
+      !_failedPlayers.contains(FilmPlayerKind.serverConversion);
+
+  /// The film plays again, converted by the Plex server
+  void _convertOnServer() {
+    if (!mounted || !_canConvert) {
+      return;
+    }
+    _log.info('The Plex server converts the film, asked from a notice');
+    _failedPlayers.add(_player);
+    _changePlayer(FilmPlayerKind.serverConversion);
+  }
+
+  /// A Dolby Vision profile 5 film, whose picture has no HDR10 or SDR layer under it, on a player that does not apply
+  /// its reshaping: libmpv (its render API draws with mpv's gpu renderer, which leaves Dolby Vision out; mpv's
+  /// gpu-next would apply it, release 47 reading of mpv's sources) and a device without a Dolby Vision decoder. The
+  /// colours come out magenta and green: the page says so once, with the server's conversion where the build has it.
+  Future<void> _tellDolbyVision5() async {
+    final part = _plexPart;
+    if (_dolbyVisionTold || part == null || !plexPartIsDolbyVision5(part)) {
+      return;
+    }
+    if (_player == FilmPlayerKind.serverConversion) {
+      return;
+    }
+    final players = ref.read(filmPlayersProvider);
+    final mpv = CurrentPlatform.isDesktop || _player == FilmPlayerKind.mpv;
+    if (!mpv && (!Platform.isAndroid || await players.decodesDolbyVision())) {
+      return;
+    }
+    if (!mounted || _dolbyVisionTold) {
+      return;
+    }
+    _dolbyVisionTold = true;
+    _log.info('Dolby Vision profile 5 on a player without its reshaping (${_player.name})');
+    final t = context.t;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(
+        key: const Key('film_dolby_vision_5'),
+        duration: const Duration(seconds: 8),
+        content: Text(t.film_dolby_vision_5),
+        action: _canConvert ? SnackBarAction(label: t.film_server_convert, onPressed: _convertOnServer) : null,
+      ),
+    );
+  }
+
+  /// What the device's own player decodes of the audio, null where the app cannot tell (it then picks nothing):
+  /// Media3 with the device's decoders on Android, AVFoundation on iPhone and iPad
+  Future<bool Function(String codec)?> _deviceAudioDecodes() async {
+    if (CurrentPlatform.isDesktop) {
+      return null;
+    }
+    if (Platform.isIOS) {
+      return iosAudioCodecs.contains;
+    }
+    if (!Platform.isAndroid) {
+      return null;
+    }
+    final decoders = await ref.read(filmPlayersProvider).deviceDecoders();
+    return decoders?.audio.contains;
   }
 
   Future<void> _loadVideo() async {

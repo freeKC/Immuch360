@@ -819,4 +819,117 @@ void main() {
     engine.buffering.value = false;
     expect(video.buffering.value, isFalse);
   });
+
+  group('an audio track this libmpv does not decode (release 47)', () {
+    // La Bataille de Gaulle 2160p as mpv lists it: TrueHD 7.1 by default, then AC3 5.1 and DTS 2.0, all French
+    const bataille = [
+      DesktopAudioTrack(id: '1', language: 'fre', channels: 8, codec: 'truehd', isDefault: true),
+      DesktopAudioTrack(id: '2', language: 'fre', channels: 6, codec: 'ac3'),
+      DesktopAudioTrack(id: '3', language: 'fre', channels: 2, codec: 'dts'),
+    ];
+    final missing = MediaKitVideoPlayerController.missingAudioCodecs;
+    tearDown(() => MediaKitVideoPlayerController.missingAudioCodecs = missing);
+
+    Future<(MediaKitVideoPlayerController, FakePlaybackEngine)> opened() async {
+      final video = controller();
+      await video.loadVideoSource(await _network(_bridgeUrl));
+      await pumpEventQueue();
+      return (video, players.made.single);
+    }
+
+    test(
+      'the default TrueHD track gives its place to AC3 as soon as the tracks are listed, and the page hears it',
+      () async {
+        MediaKitVideoPlayerController.missingAudioCodecs = const {'truehd', 'mlp'};
+        final (video, engine) = await opened();
+        final told = <FilmAudioSwitch?>[];
+        video.audioSwitch.addListener(() => told.add(video.audioSwitch.value));
+        engine.audioTracks.value = bataille;
+        engine.audioTrack.value = '1';
+        expect(engine.calls.last, 'audio 2');
+        expect(video.audioTrack.value, '2');
+        expect(told, hasLength(1));
+        expect(told.single!.fromCodec, 'truehd');
+        expect(told.single!.to?.id, '2');
+        expect(told.single!.toIndex, 1);
+        expect(told.single!.atRunTime, isFalse);
+        expect(video.decodesAudio('truehd'), isFalse);
+        expect(video.decodesAudio('dts'), isTrue);
+      },
+    );
+
+    test('mpv says a decoder failed (a libmpv of Linux without it): AC3 plays, once, whatever mpv repeats', () async {
+      MediaKitVideoPlayerController.missingAudioCodecs = const {};
+      final (video, engine) = await opened();
+      engine.audioTracks.value = bataille;
+      engine.audioTrack.value = '1';
+      expect(engine.calls.where((call) => call.startsWith('audio')), isEmpty, reason: 'TrueHD looks decodable');
+      // mpv drops the track whose decoder did not open, and says so three times
+      engine.audioTrack.value = null;
+      engine.failAudioDecoder('truehd');
+      engine.failAudioDecoder('truehd');
+      engine.failAudioDecoder('truehd');
+      expect(engine.calls.where((call) => call.startsWith('audio')), ['audio 2']);
+      expect(video.audioSwitch.value?.atRunTime, isTrue);
+      expect(video.audioSwitch.value?.to?.id, '2');
+    });
+
+    test('no track decoded: nothing to switch to, the page is told that the film has no sound here', () async {
+      MediaKitVideoPlayerController.missingAudioCodecs = const {'truehd', 'mlp'};
+      final (video, engine) = await opened();
+      engine.audioTracks.value = const [
+        DesktopAudioTrack(id: '1', language: 'fre', channels: 8, codec: 'truehd', isDefault: true),
+      ];
+      expect(engine.calls.where((call) => call.startsWith('audio')), isEmpty);
+      expect(video.audioSwitch.value?.fromCodec, 'truehd');
+      expect(video.audioSwitch.value?.to, isNull);
+    });
+
+    test('a pick of the TrueHD track in the menu plays AC3 again and says it again', () async {
+      MediaKitVideoPlayerController.missingAudioCodecs = const {'truehd', 'mlp'};
+      final (video, engine) = await opened();
+      engine.audioTracks.value = bataille;
+      var told = 0;
+      video.audioSwitch.addListener(() => told += video.audioSwitch.value == null ? 0 : 1);
+      await video.selectAudioTrack('3');
+      expect(engine.calls.last, 'audio 3');
+      await video.selectAudioTrack('1');
+      expect(engine.calls.last, 'audio 2', reason: 'the first French track decoded');
+      expect(told, 1);
+    });
+
+    test('no audio played a while after the first frame: taken for a decoder that failed', () {
+      fakeAsync((async) {
+        MediaKitVideoPlayerController.missingAudioCodecs = const {};
+        players = FakePlayers(onCreate: (engine) => engine.autoLoad = const Duration(seconds: 10));
+        final video = controller();
+        unawaited(_network(_bridgeUrl).then(video.loadVideoSource));
+        async.flushMicrotasks();
+        final engine = players.made.single;
+        engine.audioTracks.value = bataille;
+        engine.audioTrack.value = '1';
+        // mpv drops the track without a line of its log reaching the app
+        engine.audioTrack.value = null;
+        async.elapse(MediaKitVideoPlayerController.silentAudioAfter - const Duration(seconds: 1));
+        expect(engine.calls.where((call) => call.startsWith('audio')), isEmpty);
+        async.elapse(const Duration(seconds: 2));
+        expect(engine.calls.where((call) => call.startsWith('audio')), ['audio 2']);
+        expect(video.audioSwitch.value?.atRunTime, isTrue);
+        video.dispose();
+        async.flushMicrotasks();
+      });
+    });
+
+    test('a new video starts with nothing failed and nothing told', () async {
+      MediaKitVideoPlayerController.missingAudioCodecs = const {};
+      final (video, engine) = await opened();
+      engine.audioTracks.value = bataille;
+      engine.audioTrack.value = '1';
+      engine.failAudioDecoder('truehd');
+      expect(video.audioSwitch.value, isNotNull);
+      await video.loadVideoSource(await _network(_bridgeUrl));
+      expect(video.audioSwitch.value, isNull);
+      expect(video.decodesAudio('truehd'), isTrue);
+    });
+  });
 }
