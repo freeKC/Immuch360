@@ -1021,6 +1021,118 @@ void main() {
     });
   });
 
+  // The time bar of the controls calls beginScrub as a drag starts (or an arrow is held on it on a TV) and endScrub as
+  // it ends. Until 13 November 2026 a drag sent a seek to the native player every 150 ms: on the S24 a 0.55 s drag of a
+  // Plex film that played sent 5 (5 flushes of the decoders), each a new range request through the media bridge while
+  // the reads of the places before still came in, and the picture came back 5 s later; a slower drag took tens of
+  // seconds. A drag of 3 s sent 18.
+  group('a drag of the time bar (one seek per gesture)', () {
+    /// A 2 h film at 2:20 on the native player
+    _SlowNativePlayer filmPlayer({PlaybackStatus status = PlaybackStatus.playing}) {
+      final native = _SlowNativePlayer(controller, player, positionMs: 140000, endMs: 7200000, seekTime: Duration.zero)
+        ..status = status;
+      native.report(ready: true);
+      return native;
+    }
+
+    /// A drag of [frames] moves, one per frame of 16 ms, from 2:20 on by 20 s per move; the player's position loop
+    /// reports where the video is every 250 ms meanwhile
+    Duration drag(FakeAsync async, _SlowNativePlayer native, {int frames = 180}) {
+      var target = const Duration(seconds: 140);
+      player.beginScrub();
+      for (var frame = 1; frame <= frames; frame++) {
+        target = Duration(seconds: 140 + frame * 20);
+        player.seekTo(target);
+        if (frame % 16 == 0) {
+          native.report();
+          expect(player.state.position, target, reason: 'the time follows the finger, never the player');
+        }
+        async.elapse(const Duration(milliseconds: 16));
+      }
+      return target;
+    }
+
+    test('while the video plays: the native player gets one seek, at the release, then plays on', () {
+      fakeAsync((async) {
+        final native = filmPlayer();
+        expect(player.state.status, VideoPlaybackStatus.playing);
+
+        final target = drag(async, native);
+        expect(native.seeks, isEmpty, reason: 'nothing reaches the player while the finger is on the bar');
+        verify(controller.pause).called(1);
+        verifyNever(controller.play);
+
+        player.endScrub();
+        async.elapse(const Duration(seconds: 1));
+
+        expect(native.seeks, [target.inMilliseconds]);
+        verifyInOrder([() => controller.seekTo(target.inMilliseconds), controller.play]);
+        expect(player.state.position, target);
+        player.dispose();
+      });
+    });
+
+    test('a paused video gets its one seek and stays paused', () {
+      fakeAsync((async) {
+        final native = filmPlayer(status: PlaybackStatus.paused);
+
+        final target = drag(async, native, frames: 40);
+        player.endScrub();
+        async.elapse(const Duration(seconds: 1));
+
+        expect(native.seeks, [target.inMilliseconds]);
+        verifyNever(controller.play);
+        player.dispose();
+      });
+    });
+
+    test('a tap on the bar (a start, one move and an end at once) seeks there', () {
+      fakeAsync((async) {
+        final native = filmPlayer();
+
+        player.beginScrub();
+        player.seekTo(const Duration(hours: 1));
+        player.endScrub();
+        async.elapse(const Duration(seconds: 1));
+
+        expect(native.seeks, [3600000]);
+        verifyInOrder([() => controller.seekTo(3600000), controller.play]);
+        player.dispose();
+      });
+    });
+
+    test('a touch that does not move sends no seek, and the video plays on', () {
+      fakeAsync((async) {
+        final native = filmPlayer();
+
+        player.beginScrub();
+        async.elapse(const Duration(milliseconds: 300));
+        player.endScrub();
+        async.elapse(const Duration(seconds: 1));
+
+        expect(native.seeks, isEmpty);
+        verify(controller.play).called(1);
+        player.dispose();
+      });
+    });
+
+    test('the presses of the keys outside a drag still go after their 150 ms', () {
+      fakeAsync((async) {
+        final native = filmPlayer();
+        player.beginScrub();
+        player.seekTo(const Duration(minutes: 10));
+        player.endScrub();
+        async.elapse(const Duration(seconds: 1));
+
+        player.seekBy(const Duration(seconds: 10));
+        async.elapse(VideoPlayerNotifier.seekDelay * 2);
+
+        expect(native.seeks, [600000, 610000]);
+        player.dispose();
+      });
+    });
+  });
+
   // A Linux session without the screen saver service that wakelock_plus asks (org.freedesktop.ScreenSaver: a bare
   // window manager, WSLg, a CI virtual screen) refuses to keep the screen on
   group('keeping the screen on', () {

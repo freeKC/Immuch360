@@ -52,6 +52,7 @@ class PlexFileSystem
         NetworkThumbnailSource,
         NetworkRemoteEndpoint,
         NetworkRangeReads,
+        NetworkAbortableReads,
         NetworkFileDownloads,
         PlexFilmsSource {
   PlexFileSystem._(
@@ -338,8 +339,10 @@ class PlexFileSystem
     );
   }
 
+  /// A read stopped by [abort] ends in [PlexRequestCancelled], which counts as no failure of the server (see
+  /// NetworkAbortableReads)
   @override
-  Future<Uint8List> readRange(String path, int offset, int asked) {
+  Future<Uint8List> readRange(String path, int offset, int asked, {Future<void>? abort}) {
     RangeError.checkNotNegative(offset, 'offset');
     RangeError.checkNotNegative(asked, 'length');
     final target = normalizePath(path);
@@ -362,7 +365,10 @@ class PlexFileSystem
               'part:${file.partId ?? file.partKey}',
               offset,
               length,
+              abort: abort,
             );
+          } on NetworkReadAborted {
+            throw const PlexRequestCancelled();
           } on PlexHttpStatus catch (error) {
             throw error.status == 404 || error.status == 410 ? const _PartGone() : error;
           }
@@ -1473,7 +1479,8 @@ class PlexFileSystem
     String method,
     Uri uri, {
     Map<String, String> headers = const {},
-  }) async => (await _plex.send(method, uri, headers: headers, accept: '*/*'), uri);
+    Future<void>? abort,
+  }) async => (await _plex.send(method, uri, headers: headers, accept: '*/*', abort: abort), uri);
 
   Future<Never> _failRead(http.StreamedResponse response, String key) async {
     await discardHttpBody(response);

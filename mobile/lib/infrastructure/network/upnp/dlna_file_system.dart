@@ -79,7 +79,7 @@ BrowseAnswer parseBrowseResponse(String xml, Uri base) {
 }
 
 /// A [NetworkFileSystem] over a DLNA media server, see [open]
-class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkLiveStreams {
+class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkAbortableReads, NetworkLiveStreams {
   DlnaFileSystem._(this.source, this._description, this._client, this._ownsClient, this._pageSize, this._browseTimeout);
 
   /// Reads the device description of [source], then lists its start folder (the root path of the source). Throws a
@@ -291,7 +291,7 @@ class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkLiv
   }
 
   @override
-  Future<Uint8List> readRange(String path, int offset, int asked) {
+  Future<Uint8List> readRange(String path, int offset, int asked, {Future<void>? abort}) {
     RangeError.checkNotNegative(offset, 'offset');
     RangeError.checkNotNegative(asked, 'length');
     final target = normalizePath(path);
@@ -313,13 +313,20 @@ class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkLiv
         }
         final length = size == null ? asked : min(asked, size - offset);
         try {
-          return await _ranges.read(url, object.id, offset, length, headers: _transferHeaders(original));
+          return await _ranges.read(url, object.id, offset, length, headers: _transferHeaders(original), abort: abort);
         } on _HttpStatus catch (error) {
           if ((error.status == 400 || error.status == 406) && !_sendsTransferMode) {
             _sendsTransferMode = true;
             _log.info('${_description.host} wants the DLNA transfer mode header');
             try {
-              return await _ranges.read(url, object.id, offset, length, headers: _transferHeaders(original));
+              return await _ranges.read(
+                url,
+                object.id,
+                offset,
+                length,
+                headers: _transferHeaders(original),
+                abort: abort,
+              );
             } on _HttpStatus catch (again) {
               throw _readError(again.status, target);
             }
@@ -670,13 +677,14 @@ class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkLiv
     Uri uri, {
     Map<String, String> headers = const {},
     List<int>? body,
+    Future<void>? abort,
   }) async {
     var current = uri;
     for (var redirects = 0; ; redirects++) {
       if (_closed) {
         throw const NetworkFileSystemException('The share is closed');
       }
-      final response = await _sendOnce(method, current, headers, body);
+      final response = await _sendOnce(method, current, headers, body, abort);
       final location = response.headers['location'];
       if (!const {301, 302, 303, 307, 308}.contains(response.statusCode) || location == null) {
         return (response, current);
@@ -696,16 +704,28 @@ class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkLiv
   }
 
   /// Sends one request, once more on a new connection when the one it went on had been closed by the server
-  Future<http.StreamedResponse> _sendOnce(String method, Uri uri, Map<String, String> headers, List<int>? body) async {
+  Future<http.StreamedResponse> _sendOnce(
+    String method,
+    Uri uri,
+    Map<String, String> headers,
+    List<int>? body, [
+    Future<void>? abort,
+  ]) async {
+    var aborted = false;
+    unawaited(abort?.whenComplete(() => aborted = true));
     while (true) {
       final keepAlive = _keepsConnections;
-      final abort = Completer<void>();
-      final timer = Timer(answerTimeout, () {
-        if (!abort.isCompleted) {
-          abort.complete();
+      final trigger = Completer<void>();
+      void fire() {
+        if (!trigger.isCompleted) {
+          trigger.complete();
         }
-      });
-      final request = http.AbortableRequest(method, uri, abortTrigger: abort.future)
+      }
+
+      final timer = Timer(answerTimeout, fire);
+      // The caller's abort (a read the media bridge stopped) aborts the request too
+      unawaited(abort?.whenComplete(fire));
+      final request = http.AbortableRequest(method, uri, abortTrigger: trigger.future)
         ..followRedirects = false
         ..persistentConnection = keepAlive
         ..headers['user-agent'] = userAgent
@@ -717,7 +737,7 @@ class DlnaFileSystem implements NetworkFileSystem, NetworkRangeReads, NetworkLiv
         return await _client.send(request);
       } on Exception catch (error) {
         // Every request asks for the same thing again: a Browse changes nothing on the server
-        if (!keepAlive || _closed || !_isLostConnection(error)) {
+        if (!keepAlive || _closed || aborted || !_isLostConnection(error)) {
           rethrow;
         }
         _keepsConnections = false;

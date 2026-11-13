@@ -31,6 +31,7 @@ import 'package:immich_mobile/domain/services/http_byte_range.dart';
 import 'package:immich_mobile/domain/services/m2ts.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/video_link_rule.dart';
+import 'package:immich_mobile/domain/services/watched_server_socket.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('MediaBridge');
@@ -152,6 +153,9 @@ class LocalMediaBridge implements MediaBridge {
   final Map<String, NetworkFileSystem> _fileSystems = {};
   final Map<String, GeneratedMedia> _generated = {};
   HttpServer? _server;
+
+  /// The socket [_server] listens on, which tells when a client closed its connection (see WatchedServerSocket)
+  WatchedServerSocket? _socket;
   Future<void>? _starting;
 
   /// The port of the last server, tried first when the bridge starts again so that the URLs already given stay valid
@@ -202,18 +206,20 @@ class LocalMediaBridge implements MediaBridge {
   }
 
   Future<void> _bind() async {
-    HttpServer? bound;
+    WatchedServerSocket? bound;
     final lastPort = _lastPort;
     if (lastPort != null) {
       try {
-        bound = await HttpServer.bind(InternetAddress.loopbackIPv4, lastPort);
+        bound = await WatchedServerSocket.bind(InternetAddress.loopbackIPv4, lastPort);
       } on SocketException catch (error) {
         _log.fine('Port $lastPort is taken, the media bridge moves to another one: $error');
       }
     }
-    final server = bound ?? await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    final socket = bound ?? await WatchedServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+    final server = HttpServer.listenOn(socket);
     server.autoCompress = false;
     _server = server;
+    _socket = socket;
     _lastPort = server.port;
     server.listen(
       (request) => unawaited(_serve(request)),
@@ -223,6 +229,8 @@ class LocalMediaBridge implements MediaBridge {
         // Closed by stop, or by the system (a suspended iOS app may lose its sockets): the next start binds again
         if (identical(_server, server)) {
           _server = null;
+          _socket = null;
+          unawaited(socket.close().then<void>((_) {}, onError: (Object _) {}));
         }
       },
     );
@@ -280,13 +288,21 @@ class LocalMediaBridge implements MediaBridge {
       }
     }
     final server = _server;
+    final socket = _socket;
     _server = null;
+    _socket = null;
     _stats.clear();
     _m2tsChecks.clear();
     for (final reader in _bodies.toList()) {
       reader.stopReadingAhead();
     }
     await server?.close(force: true);
+    // A server listening on a socket it was given leaves the socket open
+    try {
+      await socket?.close();
+    } on SocketException catch (error) {
+      _log.fine('The media bridge socket did not close: $error');
+    }
   }
 
   Future<void> _serve(HttpRequest request) async {
@@ -386,13 +402,22 @@ class LocalMediaBridge implements MediaBridge {
         read.end,
         _meterOf(fileSystem.source.id, path, size),
       );
-      // A client that goes away stops the reading at once, rather than at the next chunk sent
+      // A client that goes away stops the reading at once, rather than at the next chunk sent: a player that seeks
+      // closes the connection of the place it leaves, and the read under way for it stops (see _BodyReader.close).
+      // The server itself sees a client leave only when a write fails, which a read of a slow share delays.
       unawaited(response.done.then<void>((_) => body.close(), onError: (Object _) => body.close()));
+      final remotePort = request.connectionInfo?.remotePort;
+      final closedByClient = remotePort == null ? null : _socket?.closedFrom(remotePort);
+      unawaited(closedByClient?.then<void>((_) => body.close()));
       try {
         first = await body.next();
       } catch (error, stackTrace) {
         body.close();
         return _failForShare(response, fileSystem, path, error, stackTrace);
+      }
+      if (body.isClosed) {
+        // The client went away while the first bytes came (a player that seeked elsewhere): nobody to answer
+        return _fail(response, HttpStatus.serviceUnavailable, 'The client went away');
       }
       _forgetFailure(fileSystem.source.id, path);
       if (first.isEmpty && end != null) {
@@ -898,6 +923,13 @@ class _BodyReader {
   /// The read under way, and the bytes it holds of the budget
   Future<void>? _reading;
 
+  /// Stops the read under way of a share that can stop its reads (see NetworkAbortableReads), once nobody waits for its
+  /// bytes: the client went away, or what it read ahead was dropped. A player that seeks while the video plays leaves a
+  /// read in flight at the old place (up to 4 MiB, about two seconds of the link), and one more for each place a drag
+  /// crossed: left to end, they held the link and the connections to the server while the player waited for the new
+  /// place (S24 and Plex, 13 November 2026: a seek while playing took 5 s, tens of seconds for a long drag).
+  Completer<void>? _abortReading;
+
   /// Changed when what was read ahead is dropped: a read under way then is forgotten
   int _generation = 0;
   Object? _error;
@@ -913,6 +945,9 @@ class _BodyReader {
   /// The source left, or the bridge stopped: no reading ahead any more
   bool _stopped = false;
   bool _closed = false;
+
+  /// Whether the client is done or gone, see [close]
+  bool get isClosed => _closed;
 
   /// Whether the client had all the bytes of the body
   bool get isComplete {
@@ -989,9 +1024,10 @@ class _BodyReader {
     _meter.start();
     var failed = true;
     final watch = Stopwatch()..start();
+    final abort = _abortReading = Completer<void>();
     _reading = () async {
       try {
-        var bytes = await _fileSystem.readRange(path, offset, size);
+        var bytes = await _readShare(offset, size, abort.future);
         if (bytes.length > size) {
           bytes = Uint8List.sublistView(bytes, 0, size);
         }
@@ -1030,14 +1066,33 @@ class _BodyReader {
         }
       } finally {
         if (failed) {
-          _meter.end(failed: true);
+          // A read stopped by the bridge is no failure of the link
+          _meter.end(failed: !abort.isCompleted);
         }
         if (generation == _generation) {
           _reading = null;
         }
+        if (identical(_abortReading, abort)) {
+          _abortReading = null;
+        }
       }
       _fill();
     }();
+  }
+
+  /// [size] bytes of the file at [offset], stopped when [abort] completes where the share can stop a read
+  Future<Uint8List> _readShare(int offset, int size, Future<void> abort) => switch (_fileSystem) {
+    final NetworkAbortableReads reads => reads.readRange(path, offset, size, abort: abort),
+    final fileSystem => fileSystem.readRange(path, offset, size),
+  };
+
+  /// Stops the read under way: nobody waits for its bytes any more
+  void _stopReading() {
+    final abort = _abortReading;
+    _abortReading = null;
+    if (abort != null && !abort.isCompleted) {
+      abort.complete();
+    }
   }
 
   /// Drops what was read ahead and reads on demand from now on: the source left, or the bridge stopped
@@ -1070,6 +1125,7 @@ class _BodyReader {
     _closed = true;
     _readsAhead = false;
     _drop();
+    _stopReading();
     _bridge._closed(this);
   }
 
@@ -1082,9 +1138,10 @@ class _BodyReader {
     _ring.clear();
     _bridge._budget.giveBack(_buffered);
     _buffered = 0;
-    // A read under way is past what was dropped: forgotten, the next one starts where the client is
+    // A read under way is past what was dropped: forgotten and stopped, the next one starts where the client is
     _generation++;
     _reading = null;
+    _stopReading();
     _next = _position;
     _ended = false;
   }
