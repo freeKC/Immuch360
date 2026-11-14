@@ -573,12 +573,14 @@ void main() {
       expect(reply.header(HttpHeaders.acceptRangesHeader), 'bytes');
       expect(reply.header(HttpHeaders.lastModifiedHeader), HttpDate.format(_modified));
       expect(reply.header(HttpHeaders.contentRangeHeader), isNull);
+      expect(reply.header(HttpHeaders.cacheControlHeader), isNull, reason: 'a picture may be kept by the client');
     });
 
-    test('GET of a video in a folder', () async {
+    test('GET of a video in a folder, not for the disk cache of the client', () async {
       final reply = await _send(bridge.urlFor('nas1', '/sub/clip.mp4'));
       expect(reply.status, HttpStatus.ok);
       expect(reply.header(HttpHeaders.contentTypeHeader), 'video/mp4');
+      expect(reply.header(HttpHeaders.cacheControlHeader), 'no-store');
       expect(reply.body, clip);
     });
 

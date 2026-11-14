@@ -36,7 +36,9 @@ class NativeVideoPlayerApi {
     _channel.setMethodCallHandler(null);
   }
 
-  Future<dynamic> _handleMethodCall(MethodCall call) {
+  // Immuch360: async, with the throw in a default case; upstream threw after every case, so each position of a playing
+  // video (125 a second on Android) ended in an UnsupportedError and its error reply
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'onPlaybackReady':
         onPlaybackReady();
@@ -57,8 +59,9 @@ class NativeVideoPlayerApi {
         if (arguments is Map<Object?, Object?>) {
           onLinkChanged?.call(NativeVideoLink.fromMap(arguments));
         }
+      default:
+        throw UnsupportedError('Unrecognized method ${call.method}');
     }
-    throw UnsupportedError('Unrecognized method ${call.method}');
   }
 
   /// Loads [videoSource], at [startPositionMs] when given (Immuch360: Android starts there; iOS at its start), with

@@ -68,3 +68,14 @@ What differs from upstream, to apply again when a newer commit is copied here (e
    the other Media3 modules. `NativeVideoPlayerViewController.kt`: a network video whose path ends with `.m3u8` (the
    query left out) goes through an `HlsMediaSource` over the same data source, with the load error policy of the
    app; every other video loads as before. iOS: nothing, AVPlayer reads HLS by itself.
+
+5. The position at 10 Hz on Android, and no error per call (14 November 2026, release 48). On a Samsung S24 a Plex
+   film through the media bridge played at a fifth of the link: the main thread, where Flutter runs the Dart UI isolate
+   (and the bridge) and draws the frames, was busy at 60 % while the video played. Upstream sends the position every
+   8 ms, and its Dart handler threw `UnsupportedError` after every call.
+   - `NativeVideoPlayerViewController.kt`: while the video plays, the position goes to Flutter at most every 100 ms
+     (`POSITION_INTERVAL_MS`); a jump back or of more than a second (a seek), and any change while it does not play,
+     still go at once. The 8 ms tick that reads it is unchanged.
+   - `platform_interface/native_video_player_api.dart`: `_handleMethodCall` is async and throws only for a method it
+     does not know.
+   - iOS: nothing.

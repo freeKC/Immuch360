@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.SurfaceView
 import android.view.Gravity
 import android.view.View
@@ -29,6 +30,13 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.platform.PlatformView
 import me.albemala.native_video_player.platform_interface.*
 
+// Immuch360: the position goes to Flutter at most this often while the video plays (each one rebuilds the controls,
+// and on a phone the frames, the Dart isolate and the media bridge share the main thread)
+private const val POSITION_INTERVAL_MS = 100L
+
+// Immuch360: a move of the position by more than this while the video plays is a seek, sent at once
+private const val POSITION_JUMP_MS = 1000L
+
 @OptIn(UnstableApi::class)
 class NativeVideoPlayerViewController(
     messenger: BinaryMessenger,
@@ -51,6 +59,7 @@ class NativeVideoPlayerViewController(
     private val positionUpdateHandler = Handler(Looper.getMainLooper())
     private var positionUpdateRunnable: Runnable? = null
     private var lastPosition = -1L
+    private var lastPositionSentAt = 0L
 
     // Immuch360: the player as the app makes it, and what Flutter is told of its link twice a second while it loads
     private val setup: PlayerSetup? = NativeVideoPlayerPlugin.playerSetup?.invoke(context)
@@ -285,8 +294,16 @@ class NativeVideoPlayerViewController(
             override fun run() {
                 val position = player.currentPosition
                 if (lastPosition != position) {
-                    lastPosition = position
-                    api.onPlaybackPositionChanged(position)
+                    // Immuch360: while the video plays, the position goes to Flutter every 100 ms rather than at each
+                    // 8 ms tick; a seek, a pause or a stop still goes at once
+                    val now = SystemClock.uptimeMillis()
+                    val jumped = lastPosition < 0 || position < lastPosition ||
+                        position - lastPosition > POSITION_JUMP_MS
+                    if (!player.isPlaying || jumped || now - lastPositionSentAt >= POSITION_INTERVAL_MS) {
+                        lastPosition = position
+                        lastPositionSentAt = now
+                        api.onPlaybackPositionChanged(position)
+                    }
                 }
                 positionUpdateHandler.postDelayed(this, 8L)
             }
