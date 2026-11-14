@@ -49,6 +49,7 @@ import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/desktop/video/spherical_controls.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_probe.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -61,6 +62,7 @@ import 'package:logging/logging.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/sphere.dart';
+import 'package:media_kit_video/xr.dart';
 import 'package:native_video_player/native_video_player.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -195,6 +197,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   late final RendererProbe _probe;
 
   late ProjectionParams _params;
+
+  /// The video's frame rate for the headset probe, read once the first frame came
+  double? _headsetFps;
   ViewAngles _view = const ViewAngles();
 
   /// What draws now, null until the first open decided it
@@ -979,6 +984,23 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     }
   }
 
+  /// What the headset probe shows of this page: the player drawn through renderer C, each eye's part of a 3D frame,
+  /// the window's yaw ahead
+  HeadsetProbeTarget _headsetTarget() => HeadsetProbeTarget(
+    handle: () async => _rendererEngine?.videoController?.player.handle,
+    modes: const [XrProbeMode.sphere, XrProbeMode.screen],
+    stereo: switch (_params.layout) {
+      StereoLayout.mono => XrProbeStereo.mono,
+      StereoLayout.leftRight => XrProbeStereo.leftRight,
+      StereoLayout.topBottom => XrProbeStereo.topBottom,
+    },
+    fps: _headsetFps ?? 0,
+    yaw: _view.yaw,
+    label: _params.isRaw
+        ? 'raw 360 video'
+        : '${_params.coverage == SphereCoverage.half ? '180' : '360'} video, ${_params.layout.name}',
+  );
+
   static PluginRenderer? _pluginForEngine(PlaybackEngine engine) {
     final videoController = engine.videoController;
     return videoController == null
@@ -1203,6 +1225,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     try {
       codec = await _readMpv(engine, 'current-tracks/video/codec');
       rate = await (_deps.framesPerSecond ?? _mpvFramesPerSecond)(engine);
+      _headsetFps = rate;
       hwdec = await (_deps.hwdecCurrent ?? _mpvHwdec)(engine);
     } catch (error) {
       _log.fine('The kind of video was not read whole: $error');
@@ -1688,6 +1711,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
                       onStabilization: _toggleStabilization,
                     ),
                   ),
+                  // The headset probe (xr/headset_probe.dart), behind its switch of the video settings
+                  Positioned(top: 72, right: 12, child: HeadsetProbeButton(target: _headsetTarget)),
                   if (stabilizationNotice != null)
                     Positioned(
                       left: 16,

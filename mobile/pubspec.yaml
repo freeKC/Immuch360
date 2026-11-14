@@ -183,26 +183,27 @@ dependency_overrides:
   # media_kit_video with the computers as its only plugin platforms, its patches and the 360 renderer
   # (package:media_kit_video/sphere.dart); the Windows libs package with the libmpv of
   # github.com/immuch360/libmpv-builds pinned by SHA-256; the Linux libs package without its mimalloc download (see
-  # their IMMUCH360-NOTE.md). Overrides, as the dependencies above name the hosted versions
+  # their IMMUCH360-NOTE.md). Overrides, as the dependencies above name the hosted versions. Branch feat-xr-probe-48:
+  # the commit of branch xr-probe of media_kit_360 (the headset probe, its patch 15), until it has a tag
   media_kit:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.1.1
+      ref: 1ad1430cb856b1e8a1219b983bd7f3ed9e2ee07b
       path: packages/media_kit
   media_kit_libs_linux:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.1.1
+      ref: 1ad1430cb856b1e8a1219b983bd7f3ed9e2ee07b
       path: packages/media_kit_libs_linux
   media_kit_libs_windows_video:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.1.1
+      ref: 1ad1430cb856b1e8a1219b983bd7f3ed9e2ee07b
       path: packages/media_kit_libs_windows_video
   media_kit_video:
     git:
       url: https://github.com/immuch360/media_kit_360
-      ref: v1.1.1
+      ref: 1ad1430cb856b1e8a1219b983bd7f3ed9e2ee07b
       path: packages/media_kit_video
   # Copy of immich-app/native_video_player at cdf621bdb7edaf996e118a58a48f6441187d79c6, the git ref of the dependency
   # (MIT), with an audio and subtitle track API and the subtitles drawn on Android (see its IMMUCH360-NOTE.md)

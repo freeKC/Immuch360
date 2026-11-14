@@ -11,6 +11,7 @@
 import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -26,6 +27,7 @@ import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_sources.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
@@ -35,6 +37,8 @@ import 'package:immich_mobile/infrastructure/repositories/settings.repository.da
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:media_kit_video/sphere.dart';
+import 'package:media_kit_video/xr.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 class DesktopVideoView extends ConsumerStatefulWidget {
@@ -99,22 +103,60 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
         valueListenable: _controller.videoController,
         builder: (context, videoController, _) => videoController == null
             ? const SizedBox.expand()
-            : Video(
-                // A new player (the pool gave another one) is a new texture, and a new state of the widget
-                key: ObjectKey(videoController),
-                controller: videoController,
-                controls: NoVideoControls,
-                // What is around the video shows the page behind it, as the native view on the phones
-                fill: Colors.transparent,
-                filterQuality: FilterQuality.medium,
-                // The pages hold the wake lock and pause in the background themselves (VideoPlayerNotifier)
-                wakelock: false,
-                pauseUponEnteringBackgroundMode: false,
-                resumeUponEnteringForegroundMode: false,
+            : Stack(
+                fit: StackFit.expand,
+                children: [
+                  Video(
+                    // A new player (the pool gave another one) is a new texture, and a new state of the widget
+                    key: ObjectKey(videoController),
+                    controller: videoController,
+                    controls: NoVideoControls,
+                    // What is around the video shows the page behind it, as the native view on the phones
+                    fill: Colors.transparent,
+                    filterQuality: FilterQuality.medium,
+                    // The pages hold the wake lock and pause in the background themselves (VideoPlayerNotifier)
+                    wakelock: false,
+                    pauseUponEnteringBackgroundMode: false,
+                    resumeUponEnteringForegroundMode: false,
+                  ),
+                  // The headset probe (xr/headset_probe.dart), behind its switch of the video settings
+                  Positioned(
+                    top: 72,
+                    left: 12,
+                    child: HeadsetProbeButton(target: () => _headsetTarget(videoController)),
+                  ),
+                ],
               ),
       ),
     );
   }
+
+  PluginRenderer? _headsetRenderer;
+
+  /// What the headset probe shows of a flat video: its frame on a screen. The flat player does not draw through
+  /// renderer C, so the probe turns it on for the time of the headset view (the window then shows the middle of the
+  /// frame as a 360 view would), and off again after
+  HeadsetProbeTarget _headsetTarget(VideoController videoController) => HeadsetProbeTarget(
+    handle: () async => videoController.player.handle,
+    modes: const [XrProbeMode.screen],
+    fps: 0,
+    label: 'flat video',
+    prepare: () async {
+      final renderer = _headsetRenderer ??= PluginRenderer.forController(videoController);
+      final attached = await renderer.attach(
+        projection: PluginProjection.equirect(),
+        outputSize: const ui.Size(1280, 720),
+        view: const PluginView(fov: 60),
+      );
+      return attached.ok;
+    },
+    release: () async {
+      final renderer = _headsetRenderer;
+      _headsetRenderer = null;
+      await renderer?.detach();
+      await renderer?.dispose();
+    },
+  );
 }
 
 /// What the app's media bridge measures of the reads of a video it serves (see LocalMediaBridge.trafficOf)
