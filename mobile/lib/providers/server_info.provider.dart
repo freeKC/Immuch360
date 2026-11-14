@@ -64,7 +64,18 @@ class ServerInfoNotifier extends StateNotifier<ServerInfo> {
     final packageInfo = await PackageInfo.fromPlatform();
     final SemVer clientVersion = SemVer.fromString(packageInfo.version);
 
-    if (serverVersion < clientVersion || (latestVersion != null && serverVersion < latestVersion)) {
+    // "Server update available" when the server itself reports a newer release, or when it is a major or minor release
+    // behind the app. Never for a patch: Immuch360's version is the fork's own number and may be a patch ahead of the
+    // newest Immich server (app 3.4.2 on a 3.4.1 server whose latest release is 3.4.1), so a patch gap between the app
+    // and the server says nothing about the server. The latest release is the one of this call or of an earlier one
+    final latest = latestVersion ?? state.latestVersion;
+    final serverBehindApp =
+        serverVersion < clientVersion &&
+        switch (serverVersion.differenceType(clientVersion)) {
+          SemVerType.major || SemVerType.minor => true,
+          _ => false,
+        };
+    if ((latest != null && serverVersion < latest) || serverBehindApp) {
       state = state.copyWith(versionStatus: VersionStatus.serverOutOfDate);
       return;
     }

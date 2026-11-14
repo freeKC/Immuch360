@@ -1,7 +1,9 @@
 // The version check against the server: "App update available" only when the server is a major release ahead of the
 // app. A newer minor or a prerelease of the same release asks for nothing, so that the notice does not come back for
 // every user between two upstream syncs; an older server stays "server out of date" for an admin who knows the latest
-// release, as upstream has it.
+// release, as upstream has it. "Server update available" never comes from a patch gap between the app and the server:
+// Immuch360's version is the fork's own number and can be a patch ahead of the newest Immich server (issue 16, app
+// 3.4.2 on a 3.4.1 server whose latest release is 3.4.1).
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -113,6 +115,48 @@ void main() {
     test('app 3.3.0-rc.0 on a 3.4.0 server: up to date, no notice', () async {
       appVersion('3.3.0-rc.0');
       expect(await statusOn(server(3, 4, 0)), VersionStatus.upToDate);
+      expect(warningFor(user), isFalse);
+    });
+  });
+
+  group('the server against the app (issue 16)', () {
+    test('app 3.4.2 on a 3.4.1 server whose latest release is 3.4.1: up to date, no notice', () async {
+      appVersion('3.4.2');
+      expect(await statusOn(server(3, 4, 1), latest: server(3, 4, 1)), VersionStatus.upToDate);
+      expect(warningFor(user), isFalse);
+      expect(warningFor(admin), isFalse);
+    });
+
+    test('app 3.4.2 on a 3.4.1 server, latest release unknown: up to date', () async {
+      appVersion('3.4.2');
+      expect(await statusOn(server(3, 4, 1)), VersionStatus.upToDate);
+      expect(warningFor(admin), isFalse);
+    });
+
+    test('app 3.4.2 on a 3.4.1 server that reports 3.4.2 as the latest release: server out of date', () async {
+      appVersion('3.4.2');
+      expect(await statusOn(server(3, 4, 1), latest: server(3, 4, 2)), VersionStatus.serverOutOfDate);
+      expect(warningFor(user), isFalse);
+      expect(warningFor(admin), isTrue);
+    });
+
+    test('the latest release reported earlier still counts when the server version is read again', () async {
+      appVersion('3.4.2');
+      expect(await statusOn(server(3, 4, 1), latest: server(3, 4, 2)), VersionStatus.serverOutOfDate);
+      expect(await statusOn(server(3, 4, 1)), VersionStatus.serverOutOfDate);
+      expect(await statusOn(server(3, 4, 2)), VersionStatus.upToDate);
+    });
+
+    test('app 3.5.0 on a 3.4.1 server, a minor behind: server out of date', () async {
+      appVersion('3.5.0');
+      expect(await statusOn(server(3, 4, 1)), VersionStatus.serverOutOfDate);
+      expect(await statusOn(server(3, 4, 1), latest: server(3, 4, 1)), VersionStatus.serverOutOfDate);
+      expect(warningFor(admin), isTrue);
+    });
+
+    test('app 3.4.1 on a 3.4.2 server, a patch ahead of the app: up to date', () async {
+      appVersion('3.4.1');
+      expect(await statusOn(server(3, 4, 2), latest: server(3, 4, 2)), VersionStatus.upToDate);
       expect(warningFor(user), isFalse);
     });
   });

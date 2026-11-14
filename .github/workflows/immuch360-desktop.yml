@@ -603,14 +603,18 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+      # The label reaches the app as IMMUCH360_DESKTOP_LABEL, for the version line of its About box (the three systems,
+      # mobile/lib/utils/app_version_label.dart), the same text as `immuch360 --version`
       - name: Build
         working-directory: mobile
         env:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
+          LABEL: ${{ needs.codegen.outputs.label }}
           IMMUCH360_LIBSMB2: ${{ runner.temp }}/libsmb2/libsmb2.so
         run: |
           mise exec -- flutter pub get --enforce-lockfile
-          mise exec -- flutter build linux --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+          mise exec -- flutter build linux --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER" \
+            --dart-define=IMMUCH360_DESKTOP_LABEL="$LABEL"
 
       # nFPM, one static program pinned by its version and its SHA-256, makes both packages from one description; the
       # libraries the ELF files of the bundle link are listed first, for the dependencies the packages declare
@@ -1024,7 +1028,10 @@ jobs:
         working-directory: mobile
         env:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
-        run: flutter build windows --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+          LABEL: ${{ needs.codegen.outputs.label }}
+        run: >-
+          flutter build windows --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+          --dart-define=IMMUCH360_DESKTOP_LABEL="$LABEL"
 
       # The Release folder plus the Visual C++ runtime, without dartjni.dll, each DLL import checked against what a
       # clean Windows has, and the file version of the executable checked; the debug symbols, if the build made any,
@@ -1255,10 +1262,12 @@ jobs:
         working-directory: mobile
         env:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
+          LABEL: ${{ needs.codegen.outputs.label }}
         run: |
           tar -xf generated-dart.tar && rm generated-dart.tar
           mise exec -- flutter pub get --enforce-lockfile
-          mise exec -- flutter build macos --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+          mise exec -- flutter build macos --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER" \
+            --dart-define=IMMUCH360_DESKTOP_LABEL="$LABEL"
 
       # The app as Flutter builds it: universal, signed for the computer that runs it only ("Sign to Run Locally", no
       # Apple certificate) and not notarized, so macOS asks for a confirmation at the first start. Zipped with ditto,
