@@ -76,6 +76,9 @@ What differs from upstream, to apply again when a newer commit is copied here (e
    - `NativeVideoPlayerViewController.kt`: while the video plays, the position goes to Flutter at most every 100 ms
      (`POSITION_INTERVAL_MS`); a jump back or of more than a second (a seek), and any change while it does not play,
      still go at once. The 8 ms tick that reads it is unchanged.
+   - Temporary, for the measure on the S24: `adb shell setprop debug.immuch.position_ms 8` (read by reflection of
+     `android.os.SystemProperties` when a player is made) gives the upstream rate back; unset, 100 ms. To remove with
+     the app's `lib/infrastructure/network/rate_switches.dart`.
    - `platform_interface/native_video_player_api.dart`: `_handleMethodCall` is async and throws only for a method it
      does not know.
    - iOS: nothing.

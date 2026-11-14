@@ -73,7 +73,7 @@ class _Server {
 /// A server on a raw socket that answers each request with [total] bytes, in pieces of [piece] each written once the
 /// socket took the one before, and tells when its client went away (an HttpServer blocked in a flush does not)
 class _Streamer {
-  _Streamer._(this._server, this.total, this.piece) {
+  _Streamer._(this._server, this.total, this.piece, this.gap) {
     _server.listen((socket) {
       var answered = false;
       void left(Object? _) {
@@ -95,6 +95,9 @@ class _Streamer {
               socket.add(piece <= total - sent ? block : Uint8List.sublistView(block, 0, total - sent));
               await socket.flush();
               flushed += piece;
+              if (gap != null) {
+                await Future<void>.delayed(gap!);
+              }
             }
           } catch (error) {
             left(error);
@@ -106,12 +109,15 @@ class _Streamer {
     });
   }
 
-  static Future<_Streamer> start(int total, {int piece = _mib}) async =>
-      _Streamer._(await ServerSocket.bind(InternetAddress.loopbackIPv4, 0), total, piece);
+  static Future<_Streamer> start(int total, {int piece = _mib, Duration? gap}) async =>
+      _Streamer._(await ServerSocket.bind(InternetAddress.loopbackIPv4, 0), total, piece, gap);
 
   final ServerSocket _server;
   final int total;
   final int piece;
+
+  /// The wait after each piece: a link slower than the socket
+  final Duration? gap;
 
   /// Bytes the socket took
   int flushed = 0;
@@ -221,6 +227,31 @@ void main() {
     // The window of the worker and the buffers of the sockets, not the 256 MiB
     expect(held, lessThan(48 * _mib), reason: '${held ~/ _mib} MiB sent to a reader that read one batch');
     expect(streamer.flushed - held, lessThanOrEqualTo(2 * _mib), reason: 'the transfer stopped');
+
+    await reader.cancel();
+    await streamer.clientLeft.future.timeout(const Duration(seconds: 5));
+  });
+
+  test('the window counts bytes: small batches of a slower link keep coming to a late reader, up to 4 MiB', () async {
+    // 64 KiB every 30 ms, about 17 Mbit/s: each piece goes as its own batch once the 20 ms of a batch are over
+    final streamer = await _Streamer.start(16 * _mib, piece: 64 * _kib, gap: const Duration(milliseconds: 30));
+    addTearDown(streamer.close);
+
+    final response = await client.send(http.Request('GET', streamer.url));
+    final reader = StreamIterator(response.stream);
+    expect(await reader.moveNext(), isTrue);
+    final before = IsolateHttpClient.bytesReceived - reader.current.length;
+    // A reader late by 4 s, a frame of the app that took long
+    await Future<void>.delayed(const Duration(seconds: 4));
+    final received = IsolateHttpClient.bytesReceived - before;
+
+    // Counted in batches (4 of 64 KiB) the worker stopped at about 256 KiB; in bytes it reads on to the window
+    expect(received, greaterThan(_mib), reason: '${received ~/ _kib} KiB handed to a late reader');
+    expect(
+      received,
+      lessThanOrEqualTo(IsolateHttpClient.windowBytes + IsolateHttpClient.batchSize + 64 * _kib),
+      reason: '${received ~/ _kib} KiB, past the window',
+    );
 
     await reader.cancel();
     await streamer.clientLeft.future.timeout(const Duration(seconds: 5));

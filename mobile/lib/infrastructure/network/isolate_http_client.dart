@@ -4,15 +4,20 @@
 // On Android the UI isolate runs on the main thread of the app, which also draws the frames while a video plays. On a
 // Samsung S24 (14 November 2026) a Plex film read through the media bridge came at 4 to 8 Mbit/s while the phone read
 // the same file at 41 Mbit/s outside the app: dart:io decrypts a TLS body 8 KiB at a time, each pass a few turns of
-// the event loop of the isolate that reads it, and with that loop busy at 60 % the turns came late. Here the worker
-// takes those turns; the isolate of the app sees each answer's head, then its body in batches of up to [batchSize]
-// bytes handed over without a copy (TransferableTypedData), a few dozen messages a second instead of over a thousand.
+// the event loop of the isolate that reads it, and with that loop busy at 60 % the turns may come late (a likely cause,
+// not yet measured on the phone: the PC bench does not reproduce the 4 to 8 Mbit/s). Here the worker takes those
+// turns; the isolate of the app sees each answer's head, then its body in batches of up to [batchSize]
+// bytes, a few dozen messages a second instead of over a thousand. The worker joins the pieces of a batch into one
+// buffer (one copy there), which crosses to the app without a copy (TransferableTypedData). Each batch still costs the
+// app's isolate one turn (the message, the add to the body, its acknowledgement), and a reader that joins batches
+// (HttpRangeReader joins those of one range) copies them once more there.
 //
 // The client behaves as IOClient does: an http.Abortable request stops at once when its trigger completes (before its
 // answer, or in the middle of its body, with an http.RequestAbortedException), the errors are those of IOClient, and a
-// body is read only as fast as it is taken (at most [window] batches wait for their reader).
+// body is read only as fast as it is taken (at most [windowBytes] wait for their reader).
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
@@ -34,14 +39,20 @@ class IsolateHttpClient extends http.BaseClient {
   /// Longest wait of the bytes of a body that trickles before they are handed over
   static const batchDelay = Duration(milliseconds: 20);
 
-  /// Batches of a body handed over and not yet taken by its reader, past which the worker stops reading it
-  static const window = 4;
+  /// Bytes of a body handed over and not yet taken by its reader, past which the worker stops reading it: the largest
+  /// read of the media bridge (4 MiB), so that the worker keeps reading through a late turn of the app's isolate of
+  /// about a second at 40 Mbit/s. Counted in batches (4) it was about 80 ms there, the batches of a link of that rate
+  /// being about 100 KB (those of [batchDelay]), and the socket paused at each late frame (review of 14 November 2026)
+  static const windowBytes = 4 * 1024 * 1024;
 
   final int _id;
   bool _closed = false;
 
   /// The batches of body handed over by the worker since the start, all clients together (for the tests and benches)
   static int get batchesReceived => _Hub.instance.batches;
+
+  /// The bytes of body handed over by the worker since the start, all clients together (for the tests and benches)
+  static int get bytesReceived => _Hub.instance.bytes;
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
@@ -92,6 +103,7 @@ class _Hub {
   int _nextClient = 0;
   int _nextRequest = 0;
   int batches = 0;
+  int bytes = 0;
   final _requests = <int, _Request>{};
 
   /// The makers of the open clients, opened again in a new worker when one failed to start
@@ -262,7 +274,9 @@ class _Request {
     if (body == null || _ended) {
       return;
     }
-    body.add(data.materialize().asUint8List());
+    final bytes = data.materialize().asUint8List();
+    _hub.bytes += bytes.length;
+    body.add(bytes);
     if (body.hasListener && !body.isPaused) {
       _hub._post([_ack, id]);
     } else {
@@ -385,10 +399,11 @@ class _WorkerRequest {
   int _pendingBytes = 0;
   Timer? _flushTimer;
 
-  /// Batches handed over and not yet taken
-  int _unacked = 0;
+  /// The sizes of the batches handed over and not yet taken, oldest first, and their sum
+  final _unacked = Queue<int>();
+  int _unackedBytes = 0;
 
-  /// A batch was due while [IsolateHttpClient.window] batches waited: it goes at the next acknowledgement
+  /// A batch was due while [IsolateHttpClient.windowBytes] waited: it goes at the next acknowledgement
   bool _flushDue = false;
   bool _paused = false;
   bool _ended = false;
@@ -470,13 +485,13 @@ class _WorkerRequest {
     if (_ended || _pendingBytes == 0) {
       return;
     }
-    if (_unacked >= IsolateHttpClient.window) {
+    if (_unackedBytes >= IsolateHttpClient.windowBytes) {
       _flushDue = true;
       _pause();
       return;
     }
     _sendPending();
-    if (_unacked >= IsolateHttpClient.window) {
+    if (_unackedBytes >= IsolateHttpClient.windowBytes) {
       _pause();
     }
   }
@@ -489,20 +504,21 @@ class _WorkerRequest {
     }
     _toApp.send([_data, id, TransferableTypedData.fromList(_pending)]);
     _flushDue = false;
+    _unacked.add(_pendingBytes);
+    _unackedBytes += _pendingBytes;
     _pending.clear();
     _pendingBytes = 0;
-    _unacked++;
   }
 
   void ack() {
-    if (_unacked > 0) {
-      _unacked--;
+    if (_unacked.isNotEmpty) {
+      _unackedBytes -= _unacked.removeFirst();
     }
     // A batch held back goes now; one still filling waits for its size or its delay
     if (_flushDue) {
       _flush();
     }
-    if (_unacked < IsolateHttpClient.window && _paused) {
+    if (_unackedBytes < IsolateHttpClient.windowBytes && _paused) {
       _paused = false;
       _subscription?.resume();
     }

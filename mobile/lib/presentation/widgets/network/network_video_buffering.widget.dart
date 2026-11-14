@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -192,7 +193,7 @@ class _NetworkVideoBufferingIndicatorState extends ConsumerState<NetworkVideoBuf
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(color: Colors.white70),
+                const VideoWaitingSpinner(),
                 for (final (index, line) in lines.indexed) ...[
                   SizedBox(height: index == 0 ? 12 : 8),
                   Text(
@@ -230,3 +231,45 @@ class _NetworkVideoBufferingIndicatorState extends ConsumerState<NetworkVideoBuf
 
 /// A button the waiting state offers while the link is slower than the video
 typedef VideoSlowAction = ({Key key, String label, VoidCallback onPressed});
+
+/// The spinner of the waiting box: an arc that turns by an eighth [stepInterval] (4 frames a second) rather than an
+/// indeterminate CircularProgressIndicator, which asks for a frame at every vsync (120 a second on a Samsung S24). On
+/// Android the frames over the native player are composed on the main thread (a SurfaceView, so Hybrid Composition),
+/// the thread that also runs the Dart isolate of the media bridge, and the box shows exactly when the bridge has to
+/// fill the player again (review of 14 November 2026)
+class VideoWaitingSpinner extends StatefulWidget {
+  const VideoWaitingSpinner({super.key});
+
+  /// How often the arc turns
+  static const stepInterval = Duration(milliseconds: 250);
+
+  @override
+  State<VideoWaitingSpinner> createState() => _VideoWaitingSpinnerState();
+}
+
+class _VideoWaitingSpinnerState extends State<VideoWaitingSpinner> {
+  late final Timer _timer;
+  int _step = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(VideoWaitingSpinner.stepInterval, (_) => setState(() => _step = (_step + 1) % 8));
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: Transform.rotate(
+        angle: _step * pi / 4,
+        child: const CircularProgressIndicator(value: 0.3, color: Colors.white70),
+      ),
+    );
+  }
+}

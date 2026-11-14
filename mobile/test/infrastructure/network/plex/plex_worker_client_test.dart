@@ -15,6 +15,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_server_breaker.dart';
+import 'package:immich_mobile/infrastructure/network/rate_switches.dart';
 
 import 'fake_plex_server.dart';
 
@@ -74,6 +75,11 @@ void main() {
     });
     return fileSystem;
   }
+
+  test('the worker is the Plex client of every build but one made for the measure of the S24', () async {
+    expect(rateSwitchesBuilt, isFalse);
+    expect(await plexClientOffMainIsolate(), isTrue);
+  });
 
   test('the client of the app for a hash refuses what is not one', () {
     expect(() => pinnedPlexClientOffMainIsolate('not-a-hash'), throwsArgumentError);

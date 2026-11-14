@@ -172,6 +172,35 @@ void main() {
     await pauseAtEnd(tester);
   });
 
+  // Review of 14 November 2026: an indeterminate spinner asked for a frame at every vsync, on the S24 on the main
+  // thread that also runs the media bridge, while the bridge has to fill the player again
+  testWidgets('while it waits, the spinner turns 4 times a second and asks for no frame in between', (tester) async {
+    await pumpIndicator(tester);
+    player.set(status: VideoPlaybackStatus.buffering);
+    await tester.pump();
+    expect(indicator, findsOneWidget);
+    expect(find.byType(VideoWaitingSpinner), findsOneWidget);
+
+    double angle() => tester
+        .widget<Transform>(find.descendant(of: find.byType(VideoWaitingSpinner), matching: find.byType(Transform)))
+        .transform
+        .getRotation()
+        .entry(1, 0);
+    final first = angle();
+    // A second at 60 frames a second: a frame left asked for after one means a widget that animates at every vsync
+    var asked = 0;
+    for (var i = 0; i < 60; i++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      if (tester.binding.hasScheduledFrame) {
+        asked++;
+      }
+    }
+    expect(asked, 0, reason: 'frames asked for between two steps of the spinner');
+    expect(angle(), isNot(closeTo(first, 1e-6)), reason: 'the arc turned');
+
+    await pauseAtEnd(tester);
+  });
+
   // The S24 run of 13 Nov 2026: a 2160p file of 43 Mbit/s over a link of 9 Mbit/s, 30 s before its first frame
   testWidgets('a link slower than the video offers what the page gives, under its words, and the buttons take taps', (
     tester,
