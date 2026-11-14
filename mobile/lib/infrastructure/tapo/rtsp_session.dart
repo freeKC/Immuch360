@@ -61,6 +61,10 @@ class RtspSession {
     try {
       await connection.request('OPTIONS', uri);
       var answer = await connection.request('DESCRIBE', uri, {'Accept': 'application/sdp'});
+      if (answer.status == 401 && user.isEmpty) {
+        // A camera of another brand added without an account: nothing is sent in its name
+        throw const TapoCameraException(TapoErrorKind.wrongPassword, code: 401, detail: rtspNeedsAccount);
+      }
       if (answer.status == 401) {
         final digest = RtspDigest.of(answer.headers['www-authenticate'] ?? const []);
         if (digest == null) {

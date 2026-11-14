@@ -77,6 +77,9 @@ class _SimulatedCamera {
 
   /// Each request: its method, and how it was authorised ("none", "digest ok", "digest refused", "basic")
   final requests = <(String, String)>[];
+
+  /// The address of each request, as FFmpeg wrote it
+  final uris = <String>[];
   final _described = Completer<bool>();
 
   /// Completes with whether the account was accepted, at the first authorised DESCRIBE
@@ -88,6 +91,9 @@ class _SimulatedCamera {
     final lines = request.split('\r\n');
     final parts = lines.first.split(' ');
     final method = parts.first;
+    if (parts.length > 1) {
+      uris.add(parts[1]);
+    }
     final cseq = lines.where((line) => line.startsWith('CSeq:')).firstOrNull?.substring(5).trim() ?? '0';
     final authorization = lines.where((line) => line.toLowerCase().startsWith('authorization:')).firstOrNull;
     if (method == 'OPTIONS') {
@@ -199,6 +205,8 @@ void main() {
     String password, {
     String? cameraPassword,
     bool basicOnly = false,
+    String path = '/stream1',
+    List<String>? uris,
   }) async {
     const user = 'cam.viewer';
     final camera = await _SimulatedCamera.start(user, cameraPassword ?? password, basicOnly: basicOnly);
@@ -208,11 +216,12 @@ void main() {
       for (final secret in {user, password}) {
         hidePlayerSecret(secret);
       }
-      final address = cameraRtspUrlWithAccount('rtsp://127.0.0.1:${camera.port}/stream1', user, password)!;
+      final address = cameraRtspUrlWithAccount('rtsp://127.0.0.1:${camera.port}$path', user, password)!;
       player = await _openLive(address, lines);
       final accepted = await camera.described.timeout(const Duration(seconds: 20), onTimeout: () => false);
       // FFmpeg's answer to the last refusal, and mpv's lines about it
       await Future<void>.delayed(const Duration(seconds: 2));
+      uris?.addAll(camera.uris);
       return (accepted, List.of(camera.requests), lines);
     } finally {
       await player?.dispose();
@@ -245,6 +254,23 @@ void main() {
       timeout: const Timeout(Duration(seconds: 60)),
     );
   }
+
+  test(
+    'a camera of another brand: a stream path with a query and a token reaches the camera whole, never a log',
+    () async {
+      const password = 'onvif-pw';
+      const path = '/cam/realmonitor?channel=1&subtype=0&token=SyntheticTok3n';
+      final uris = <String>[];
+      final (accepted, requests, lines) = await attempt(password, path: path, uris: uris);
+      expect(accepted, isTrue, reason: 'requests: $requests');
+      expect(uris.where((uri) => uri.contains('?')).first, endsWith(path));
+      final text = [...lines, for (final record in records) record.message].join('\n');
+      expect(text, isNot(contains('SyntheticTok3n')));
+      expectNoSecret(lines, password);
+    },
+    skip: skip,
+    timeout: const Timeout(Duration(seconds: 60)),
+  );
 
   test(
     'a refused account is asked once, and mpv says why without the account',

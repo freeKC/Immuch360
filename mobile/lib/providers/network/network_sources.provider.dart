@@ -62,14 +62,16 @@ class NetworkSourcesNotifier extends Notifier<List<NetworkSource>> {
   NetworkSource? byId(String id) => state.where((source) => source.id == id).firstOrNull;
 
   /// Adds [source] after the others of its kind, with its secrets when there are some: [password] is the password
-  /// of an SMB or WebDAV share, the token of a Plex server or the password of the TP-Link account of a Tapo camera;
-  /// [cameraPassword] the password of the camera account of a Tapo camera, ignored for the other types
+  /// of an SMB or WebDAV share, the token of a Plex server, the password of the TP-Link account of a Tapo camera or
+  /// the password of the account of a camera of another brand; [cameraPassword] the password of the camera account
+  /// of a Tapo camera or the stream addresses of a camera of another brand (IpCameraStreams), ignored for the other
+  /// types
   Future<void> add(NetworkSource source, {String? password, String? cameraPassword}) async {
     if (byId(source.id) != null) {
       throw ArgumentError.value(source.id, 'source.id', 'A share with this id already exists');
     }
     await _writeSecret(source, source.secretKey, password);
-    if (source.type == NetworkSourceType.tapo) {
+    if (source.type.isCamera) {
       await _writeSecret(source, source.cameraSecretKey, cameraPassword);
     }
     await _save([...state, source]);
@@ -85,7 +87,7 @@ class NetworkSourcesNotifier extends Notifier<List<NetworkSource>> {
     if (password != null) {
       await _writeSecret(source, source.secretKey, password);
     }
-    if (cameraPassword != null && source.type == NetworkSourceType.tapo) {
+    if (cameraPassword != null && source.type.isCamera) {
       await _writeSecret(source, source.cameraSecretKey, cameraPassword);
     }
     // Always a new object, even for a new password only: the open connection of the share is closed when its source
@@ -108,12 +110,14 @@ class NetworkSourcesNotifier extends Notifier<List<NetworkSource>> {
     } catch (error, stackTrace) {
       _log.warning('Could not forget the password of a removed share', error, stackTrace);
     }
-    if (source.type == NetworkSourceType.tapo) {
+    if (source.type.isCamera) {
       try {
         await storage.delete(source.cameraSecretKey, deviceOnly: deviceOnly);
       } catch (error, stackTrace) {
         _log.warning('Could not forget the camera account password of a removed camera', error, stackTrace);
       }
+    }
+    if (source.type == NetworkSourceType.tapo) {
       try {
         await ref.read(tapoCameraCacheDeleterProvider)(id);
       } catch (error, stackTrace) {
@@ -133,7 +137,8 @@ class NetworkSourcesNotifier extends Notifier<List<NetworkSource>> {
   /// when it has none or is unknown
   Future<String?> readPassword(String id) => _readSecret(id, (source) => source.secretKey);
 
-  /// The stored camera account password of the Tapo camera with [id], null when it has none or is unknown
+  /// The stored camera account password of the Tapo camera with [id] (the stream addresses of a camera of another
+  /// brand), null when it has none or is unknown
   Future<String?> readCameraPassword(String id) => _readSecret(id, (source) => source.cameraSecretKey);
 
   Future<String?> _readSecret(String id, String Function(NetworkSource source) keyOf) async {
@@ -146,9 +151,9 @@ class NetworkSourcesNotifier extends Notifier<List<NetworkSource>> {
   }
 
   /// The secrets of a Plex server (a token with full access to the server) and of a camera (the password of the
-  /// TP-Link account) stay on this device: out of the cloud and device to device backups
-  static bool _isDeviceOnly(NetworkSource source) =>
-      source.type == NetworkSourceType.plex || source.type == NetworkSourceType.tapo;
+  /// TP-Link account, the account and stream addresses of a camera of another brand) stay on this device: out of the
+  /// cloud and device to device backups
+  static bool _isDeviceOnly(NetworkSource source) => source.type == NetworkSourceType.plex || source.type.isCamera;
 
   Future<void> _writeSecret(NetworkSource source, String key, String? secret) async {
     final storage = ref.read(secureStorageServiceProvider);

@@ -94,8 +94,9 @@ class SettingsFileServer {
       SettingsFileServer(url: stripUserInfo(url), endpoint: endpoint == null ? null : stripUserInfo(endpoint!));
 }
 
-/// The passwords of one source: SMB and WebDAV password, Plex token, TP-Link password; the camera account password of
-/// a Tapo camera
+/// The passwords of one source: SMB and WebDAV password, Plex token, TP-Link password, the account password of a
+/// camera of another brand; the camera account password of a Tapo camera, the stream addresses of a camera of another
+/// brand (their path may hold a token)
 class SettingsFileSourceSecrets {
   const SettingsFileSourceSecrets({this.password, this.cameraPassword});
 

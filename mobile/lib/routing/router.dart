@@ -51,6 +51,8 @@ import 'package:immich_mobile/presentation/pages/asset_troubleshoot.page.dart';
 import 'package:immich_mobile/presentation/pages/camera/camera.page.dart';
 import 'package:immich_mobile/presentation/pages/camera/camera_day.page.dart';
 import 'package:immich_mobile/presentation/pages/camera/camera_edit.page.dart';
+import 'package:immich_mobile/presentation/pages/camera/ip_camera.page.dart';
+import 'package:immich_mobile/presentation/pages/camera/ip_camera_edit.page.dart';
 import 'package:immich_mobile/presentation/pages/cleanup_preview.page.dart';
 import 'package:immich_mobile/presentation/pages/create_album.page.dart';
 import 'package:immich_mobile/presentation/pages/dev/main_timeline.page.dart';
@@ -260,6 +262,9 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CameraRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: CameraEditRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: CameraDayRoute.page, guards: [_authGuard, _duplicateGuard]),
+    // A camera of another brand (ONVIF or a typed RTSP address, release 48): its own two pages
+    AutoRoute(page: IpCameraRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: IpCameraEditRoute.page, guards: [_authGuard, _duplicateGuard]),
     // Share this phone on the network (phones only)
     AutoRoute(page: PhoneShareRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: DroneImportRoute.page, guards: [_authGuard, _duplicateGuard]),

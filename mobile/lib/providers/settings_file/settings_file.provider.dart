@@ -345,7 +345,7 @@ class SettingsFileService {
     for (final source in sources) {
       final secret = SettingsFileSourceSecrets(
         password: await _sources.readPassword(source.id),
-        cameraPassword: source.type == NetworkSourceType.tapo ? await _sources.readCameraPassword(source.id) : null,
+        cameraPassword: source.type.isCamera ? await _sources.readCameraPassword(source.id) : null,
       );
       if (!secret.isEmpty) {
         secrets[source.id] = secret;

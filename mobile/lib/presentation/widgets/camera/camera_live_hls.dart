@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
+import 'package:immich_mobile/infrastructure/ipcam/camera_address.dart';
 import 'package:immich_mobile/infrastructure/tapo/rtsp_probe.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_live_hls.dart';
 import 'package:immich_mobile/platform/camera_live_api.g.dart';
@@ -67,7 +68,7 @@ class CameraLiveHlsController {
   /// Longest wait for the first frame once the player has the playlist
   final Duration firstFrameTimeout;
 
-  ({String host, int port, String user, String password, bool hd})? _source;
+  ({String host, int port, String user, String password, bool hd, String? path})? _source;
   bool _muted = true;
 
   /// AVPlayer refused the playlist with its sound: the video alone from now on
@@ -95,18 +96,20 @@ class CameraLiveHlsController {
   CameraLiveEvent? _last;
   bool _disposed = false;
 
-  /// Plays the stream of the camera at [host] (HD or SD) with the camera account, in place of what played before
+  /// Plays the stream of the camera at [host] (HD or SD) with the camera account, in place of what played before;
+  /// [path] is the stream of a camera of another brand (and its query), in place of the Tapo paths
   void play({
     required String host,
     required int port,
     required String user,
     required String password,
     required bool hd,
+    String? path,
   }) {
     if (_disposed) {
       return;
     }
-    _source = (host: host, port: port, user: user, password: password, hd: hd);
+    _source = (host: host, port: port, user: user, password: password, hd: hd, path: path);
     _shown = false;
     _attempts = 0;
     unawaited(_open(lost: false));
@@ -177,7 +180,7 @@ class CameraLiveHlsController {
     final stream = _stream = startStream(
       host: source.host,
       port: source.port,
-      path: source.hd ? tapoRtspHdPath : tapoRtspSdPath,
+      path: source.path ?? (source.hd ? tapoRtspHdPath : tapoRtspSdPath),
       user: source.user,
       password: source.password,
       withAudio: !_videoOnly,
@@ -192,7 +195,7 @@ class CameraLiveHlsController {
       _stream = null;
       onFailure?.call(error);
       final (reason, retry) = _reasonOf(error);
-      _log.warning('The live stream did not start: $reason');
+      _log.warning('The live stream did not start: ${maskCameraUrlsIn(reason)}');
       await _failed(reason, retry: retry);
       return;
     }
@@ -225,7 +228,8 @@ class CameraLiveHlsController {
 
   /// The player gave up: before its first frame with the sound, once more without it
   void _playerFailed(String reason) {
-    _log.warning('The live player failed: $reason');
+    // AVPlayer's reason may quote an address: masked, as a stream of another brand may carry a token in its path
+    _log.warning('The live player failed: ${maskCameraUrlsIn(reason)}');
     if (!_shownThisOpen && _streamAudio && !_videoOnly) {
       _videoOnly = true;
       unawaited(_open(lost: _shown));
@@ -245,7 +249,9 @@ class CameraLiveHlsController {
     }
     if (retry && _shown && _attempts < retryDelays.length) {
       final delay = retryDelays[_attempts++];
-      _log.info('The live view lost its stream ($reason); opening it again in ${delay.inSeconds} s');
+      _log.info(
+        'The live view lost its stream (${maskCameraUrlsIn(reason)}); opening it again in ${delay.inSeconds} s',
+      );
       _report(CameraLiveState.buffering);
       _retry = Timer(delay, () {
         if (generation == _generation && !_disposed) {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/domain/models/device_folder.dart';
+import 'package:immich_mobile/domain/models/ip_camera_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -44,12 +45,21 @@ String networkSourceAddress(NetworkSource source) {
           ? 'plex://${source.plex!.publicHost}:${source.plex!.publicPort ?? _plexDefaultPort}'
           : 'plex://${source.host}:${source.port ?? _plexDefaultPort}',
     NetworkSourceType.tapo => 'tapo://${source.host}',
+    // A camera of another brand: its host and the port of what reads it; never the path of a stream (a token)
+    NetworkSourceType.ipCamera => switch (source.ipCamera) {
+      final info? when info.kind == IpCameraKind.onvif =>
+        'onvif://${_hostOf(source.host)}${info.onvifPort == null || info.onvifPort == 80 ? '' : ':${info.onvifPort}'}',
+      final info? => '${info.secure ? 'rtsps' : 'rtsp'}://${_hostOf(source.host)}:${info.rtspPort}',
+      null => 'rtsp://${_hostOf(source.host)}',
+    },
     // A folder picked on the DJI drone page: the volume or the device it is on
     NetworkSourceType.documentTree => 'usb://${source.name}',
     // A folder of the device: where it is on its volume
     NetworkSourceType.deviceFolder => deviceFolderPath(source.share) ?? source.name,
   };
 }
+
+String _hostOf(String host) => host.contains(':') ? '[$host]' : host;
 
 /// No Plex logo: it is a trade mark
 IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
@@ -58,6 +68,7 @@ IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
   NetworkSourceType.dlna => Icons.perm_media_outlined,
   NetworkSourceType.plex => Icons.video_library_outlined,
   NetworkSourceType.tapo => Icons.videocam_outlined,
+  NetworkSourceType.ipCamera => Icons.videocam_outlined,
   NetworkSourceType.documentTree => Icons.usb_rounded,
   NetworkSourceType.deviceFolder => Icons.folder_outlined,
 };
@@ -66,6 +77,7 @@ IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
 /// folder for a share
 PageRouteInfo networkSourceOpenRoute(NetworkSource source) => switch (source.type) {
   NetworkSourceType.tapo => CameraRoute(sourceId: source.id),
+  NetworkSourceType.ipCamera => IpCameraRoute(sourceId: source.id),
   NetworkSourceType.documentTree => const DroneImportRoute(),
   NetworkSourceType.smb ||
   NetworkSourceType.webdav ||
@@ -79,6 +91,7 @@ PageRouteInfo networkSourceEditRoute(NetworkSource source, {bool focusCredential
   NetworkSourceType.smb || NetworkSourceType.webdav || NetworkSourceType.dlna => NetworkShareEditRoute(source: source),
   NetworkSourceType.plex => PlexServerEditRoute(source: source, focusToken: focusCredentials),
   NetworkSourceType.tapo => CameraEditRoute(source: source),
+  NetworkSourceType.ipCamera => IpCameraEditRoute(source: source),
   // Nothing to edit: the page picks another folder
   NetworkSourceType.documentTree => const DroneImportRoute(),
   // Nothing to edit: On this device lists it, and removes it
@@ -97,7 +110,12 @@ const splatPickMaxBytes = 1 << 30;
 /// Asks what to add (a network share, a Plex Media Server, a Tapo camera, on Android a folder of the device, a splat
 /// file where splats are offered) and opens its page
 Future<void> _add(BuildContext context, WidgetRef ref) async {
-  final choice = await showModalBottomSheet<Object>(context: context, builder: (context) => const _AddChoices());
+  // Grows with its choices (six with the cameras of other brands, release 48), and scrolls on a small screen
+  final choice = await showModalBottomSheet<Object>(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => const _AddChoices(),
+  );
   if (!context.mounted) {
     return;
   }
@@ -149,8 +167,8 @@ class NetworkSharesPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sources = ref.watch(networkSourcesProvider);
-    final shares = sources.where((source) => source.type != NetworkSourceType.tapo).toList();
-    final cameras = sources.where((source) => source.type == NetworkSourceType.tapo).toList();
+    final shares = sources.where((source) => !source.type.isCamera).toList();
+    final cameras = sources.where((source) => source.type.isCamera).toList();
 
     void add() => unawaited(_add(context, ref));
     // A remote control starts on the first share, or on the add button when there is none
@@ -281,7 +299,7 @@ class _SourceRow extends StatelessWidget {
   }
 }
 
-/// A Tapo camera in the list: its name, its model when known and its address. Nothing read from the camera here:
+/// A camera in the list (Tapo or another brand): its name, its model when known and its address. Nothing read from the camera here:
 /// the list would call each camera every time it shows.
 class _CameraTile extends StatelessWidget {
   const _CameraTile({required this.source, required this.tvMode});
@@ -291,7 +309,7 @@ class _CameraTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = source.camera?.model;
+    final model = source.camera?.model ?? source.ipCamera?.label;
     final address = networkSourceAddress(source);
     return _SourceRow(
       tvMode: tvMode,
@@ -320,7 +338,7 @@ class _AddChoices extends ConsumerWidget {
     // On Android phones, tablets and the Meta Quest, not on a TV: a folder of the device, browsed as a share
     final folders = ref.watch(deviceFoldersSupportedProvider);
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -342,6 +360,12 @@ class _AddChoices extends ConsumerWidget {
               leading: const Icon(Icons.videocam_outlined),
               title: Text(context.t.network_add_choose_camera),
               onTap: () => Navigator.of(context).pop(CameraEditRoute()),
+            ),
+            ListTile(
+              key: const Key('network_add_choose_ip_camera'),
+              leading: const Icon(Icons.linked_camera_outlined),
+              title: Text(context.t.network_add_choose_ip_camera),
+              onTap: () => Navigator.of(context).pop(IpCameraEditRoute()),
             ),
             if (folders)
               ListTile(

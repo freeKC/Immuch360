@@ -9,6 +9,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
+import 'package:immich_mobile/infrastructure/tapo/rtsp_probe.dart';
 import 'package:immich_mobile/infrastructure/tapo/rtsp_session.dart';
 
 import 'fake_rtsp_camera.dart';
@@ -165,6 +166,28 @@ void main() {
       throwsA(isA<TapoCameraException>().having((e) => e.kind, 'kind', TapoErrorKind.wrongPassword)),
     );
     expect(camera.methods, ['OPTIONS', 'DESCRIBE', 'DESCRIBE']);
+  });
+
+  test('a camera added without an account that asks for one gets nothing in its name (release 48)', () async {
+    final camera = await FakeRtspCamera.start();
+    addTearDown(camera.close);
+    await expectLater(
+      RtspSession.open(
+        '127.0.0.1',
+        port: camera.port,
+        path: '/stream2',
+        user: '',
+        password: '',
+        timeout: const Duration(seconds: 3),
+      ),
+      throwsA(
+        isA<TapoCameraException>()
+            .having((e) => e.kind, 'kind', TapoErrorKind.wrongPassword)
+            .having((e) => e.detail, 'detail', rtspNeedsAccount),
+      ),
+    );
+    expect(camera.methods, ['OPTIONS', 'DESCRIBE']);
+    expect(camera.requests.where((request) => FakeRtspCamera.header(request, 'Authorization') != null), isEmpty);
   });
 
   test('never answers a Basic challenge', () async {

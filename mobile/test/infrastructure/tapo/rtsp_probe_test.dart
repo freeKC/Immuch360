@@ -142,6 +142,34 @@ void main() {
     expect(server.methods, ['OPTIONS', 'DESCRIBE']);
   });
 
+  test('a camera that asks for an account when none was given gets no Authorization at all (release 48)', () async {
+    final server = await _FakeRtsp.start();
+    addTearDown(server.close);
+    await expectLater(
+      probeTapoRtsp('127.0.0.1', port: server.port, user: '', password: ''),
+      throwsA(
+        isA<TapoCameraException>()
+            .having((e) => e.kind, 'kind', TapoErrorKind.wrongPassword)
+            .having((e) => e.detail, 'detail', rtspNeedsAccount),
+      ),
+    );
+    expect(server.authorizations, isEmpty);
+    expect(server.methods, ['OPTIONS', 'DESCRIBE']);
+  });
+
+  test('a path with a query goes in the request line as it is (Dahua realmonitor)', () async {
+    final server = await _FakeRtsp.start();
+    addTearDown(server.close);
+    await probeTapoRtsp(
+      '127.0.0.1',
+      port: server.port,
+      path: '/cam/realmonitor?channel=1&subtype=0',
+      user: 'viewer',
+      password: 'camera-account-pw',
+    );
+    expect(server.methods, ['OPTIONS', 'DESCRIBE', 'DESCRIBE']);
+  });
+
   test('tells a camera that does not answer', () async {
     final server = await _FakeRtsp.start();
     final port = server.port;
