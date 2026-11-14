@@ -26,17 +26,25 @@ final _log = Logger('TapoLogin');
 const tapoAdminUser = 'admin';
 
 /// The camera refused a request of a session in plain JSON, or its answer could not be read: the session is dead on
-/// the camera's side. [isSessionLost] tells the refusals that one new login may cure (-40401 a wrong sequence or an
-/// expired session, -40421 a stok refused).
+/// the camera's side. [isSessionLost] tells the refusals that one new login may cure: -40401 a wrong sequence or an
+/// expired session, -40421 a stok refused, -40420 a refused tag and -2402 an invalid TPAP session (python-kasa PR
+/// 1592), -2101 and -2203 which a TPAP device answers on its channel once it forgot the session (python-kasa PR 1592,
+/// mihai-dinculescu/tapo), and an HTTP 401 with or without a body (C220 and C100 on the 1.4.4 line drop their session
+/// about every ten minutes that way, python-kasa #1771).
 class TapoSessionRefused implements Exception {
-  const TapoSessionRefused(this.code);
+  const TapoSessionRefused(this.code, {this.httpStatus});
 
   final int? code;
 
-  bool get isSessionLost => code == -40401 || code == -40421;
+  /// The HTTP status of the answer, when it was not 200
+  final int? httpStatus;
+
+  static const sessionLostCodes = {-40401, -40421, -40420, -2402, -2101, -2203};
+
+  bool get isSessionLost => httpStatus == 401 || sessionLostCodes.contains(code);
 
   @override
-  String toString() => 'TapoSessionRefused($code)';
+  String toString() => 'TapoSessionRefused($code${httpStatus == null ? '' : ', HTTP $httpStatus'})';
 }
 
 /// Runs one request after the other: the V4 and V3 channels number their requests, which must reach the camera in
@@ -268,8 +276,13 @@ class TapoLogin {
     final result = _map(reply['result']);
     final code = _int(reply['error_code']);
     if (result == null || (code != null && code != 0)) {
-      if (code == -40401) {
+      // -40401 on the cameras, -2203 the TPAP code of a wrong credential: the next passcode form may be the one. -2101,
+      // too many attempts, ends the login (python-kasa PR 1592, mihai-dinculescu/tapo).
+      if (code == -40401 || code == -2203) {
         throw TapoCameraException(TapoErrorKind.wrongPassword, code: code, attemptsLeft: _attemptsLeft(reply));
+      }
+      if (code == -2101) {
+        throw TapoCameraException(TapoErrorKind.locked, code: code);
       }
       throw TapoCameraException(TapoErrorKind.unsupported, code: code, detail: 'pake_share');
     }
@@ -465,10 +478,10 @@ class TapoV4Session extends TapoSession {
     // start an encrypted answer with "{"
     final refusal = _jsonObject(reply.body);
     if (refusal != null && refusal.containsKey('error_code')) {
-      throw TapoSessionRefused(_int(refusal['error_code']));
+      throw TapoSessionRefused(_int(refusal['error_code']), httpStatus: _statusOf(reply));
     }
     if (reply.body.length < 20) {
-      throw const TapoSessionRefused(null);
+      throw TapoSessionRefused(null, httpStatus: _statusOf(reply));
     }
     final replySeq = ByteData.sublistView(reply.body, 0, 4).getUint32(0);
     final Uint8List plain;
@@ -534,12 +547,12 @@ class TapoV3Session extends TapoSession {
     );
     final answer = _jsonObject(reply.body);
     if (answer == null) {
-      throw const TapoSessionRefused(null);
+      throw TapoSessionRefused(null, httpStatus: _statusOf(reply));
     }
     final encrypted = _map(answer['result'])?['response'];
     if (encrypted is! String) {
       final code = _int(answer['error_code']);
-      throw TapoSessionRefused(code ?? -40401);
+      throw TapoSessionRefused(code ?? -40401, httpStatus: _statusOf(reply));
     }
     try {
       final plain = _jsonObject(aesCbcDecrypt(_lsk, _ivb, base64.decode(encrypted)));
@@ -582,11 +595,11 @@ class TapoV2Session extends TapoSession {
     );
     final answer = _jsonObject(reply.body);
     if (answer == null) {
-      throw const TapoSessionRefused(null);
+      throw TapoSessionRefused(null, httpStatus: _statusOf(reply));
     }
     final code = _int(answer['error_code']);
-    if (code == -40401) {
-      throw TapoSessionRefused(code);
+    if (code == -40401 || reply.status == 401) {
+      throw TapoSessionRefused(code, httpStatus: _statusOf(reply));
     }
     return answer;
   });
@@ -646,6 +659,9 @@ int? _attemptsLeft(Map<String, Object?> reply) {
   }
   return null;
 }
+
+/// The status of [reply] when it is not 200, for [TapoSessionRefused.httpStatus]
+int? _statusOf(TapoHttpReply reply) => reply.status == 200 ? null : reply.status;
 
 Map<String, Object?>? _map(Object? value) =>
     value is Map ? value.map((key, entry) => MapEntry('$key', entry as Object?)) : null;

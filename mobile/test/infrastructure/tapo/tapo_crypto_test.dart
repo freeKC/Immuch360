@@ -167,6 +167,113 @@ void main() {
     });
   });
 
+  // Resync of release 48: the extra_crypt forms of later firmware (python-kasa PR 1592, mihai-dinculescu/tapo), the
+  // expected values computed by another tool (openssl passwd -1 and -5) or by hand from the rule
+  group('extra_crypt forms of later firmware', () {
+    test('MD5 crypt matches openssl passwd -1, the salt cut to 8 characters', () {
+      expect(md5Crypt('Hello world!', r'$1$saltsalt$'), r'$1$saltsalt$le8lFSqqnPaRFOlmAZpvH1');
+      expect(md5Crypt('password', r'$1$toolongsaltstring'), r'$1$toolongs$nbxWng79pwW9eFqyOCHnw1');
+    });
+
+    test('password_shadow 1 is the MD5 crypt of the passcode, and needs its prefix', () {
+      expect(
+        applyExtraCrypt('21232f297a57a5a743894a0e4a801fc3', {
+          'type': 'password_shadow',
+          'params': {'passwd_id': 1, 'passwd_prefix': r'$1$x1hYMevs$'},
+        }),
+        r'$1$x1hYMevs$4LHbRLGkB4puHVlPdrwvF1',
+      );
+      expect(
+        () => applyExtraCrypt('abc', {
+          'type': 'password_shadow',
+          'params': {'passwd_id': 1, 'passwd_prefix': ''},
+        }),
+        throwsA(isA<TapoCredentialFormException>()),
+      );
+    });
+
+    test('password_shadow 3 leaves the passcode of a camera as it is (its user name is not part of it)', () {
+      expect(
+        applyExtraCrypt('abc', {
+          'type': 'password_shadow',
+          'params': {'passwd_id': 3},
+        }),
+        'abc',
+      );
+    });
+
+    test('password_shadow 5 without a prefix takes passwd_salt and passwd_rounds, and needs one of them', () {
+      expect(
+        applyExtraCrypt('abc', {
+          'type': 'password_shadow',
+          'params': {'passwd_id': 5, 'passwd_salt': 'x1hYMevsEYq2APg+', 'passwd_rounds': 5000},
+        }),
+        r'$5$x1hYMevsEYq2APg+$sR4DSDPxqVHtblkC8A422teb5p5cFYbcX.vXcS.jDZ1',
+      );
+      expect(
+        applyExtraCrypt('Hello world!', {
+          'type': 'password_shadow',
+          'params': {'passwd_id': '5', 'passwd_salt': 'saltstringsaltstring', 'passwd_rounds': '10000'},
+        }),
+        r'$5$rounds=10000$saltstringsaltst$3xv.VbSHBb41AL9AvLeujZkZRBAwqFMz2.opqey6IcA',
+      );
+      expect(
+        () => applyExtraCrypt('abc', {
+          'type': 'password_shadow',
+          'params': {'passwd_id': 5},
+        }),
+        throwsA(isA<TapoCredentialFormException>()),
+      );
+    });
+
+    test('a SHA-256 crypt asking for more than 100000 rounds is refused, fewer than 1000 count as 1000', () {
+      expect(() => sha256Crypt('abc', r'$5$rounds=100001$salt$'), throwsA(isA<TapoCredentialFormException>()));
+      expect(sha256Crypt('abc', r'$5$rounds=10$salt$'), sha256Crypt('abc', r'$5$rounds=1000$salt$'));
+    });
+
+    test('password_authkey masks the passcode with the key and the dictionary, 0xBB past either end', () {
+      expect(
+        applyExtraCrypt('21232f297a57a5a743894a0e4a801fc3', {
+          'type': 'password_authkey',
+          'params': {'authkey_tmpkey': 'Kx7Qp', 'authkey_dictionary': 'RzBd4mHkT1aYwXq9'},
+        }),
+        '11mBBX1Bwaqwaqaw9TdB9aYq9adYaXTT',
+      );
+      expect(
+        applyExtraCrypt('ab', {
+          'type': 'password_authkey',
+          'params': {'authkey_tmpkey': 'Kx7Qp1', 'authkey_dictionary': 'RzBd4mHkT1aYwXq9'},
+        }),
+        'aawaYa',
+      );
+    });
+
+    test('password_sha_with_salt is the SHA-256 of the role, the salt and the passcode', () {
+      final salt = base64.encode(utf8.encode('synthetic-salt'));
+      expect(
+        applyExtraCrypt('pw', {
+          'type': 'password_sha_with_salt',
+          'params': {'sha_name': 0, 'sha_salt': salt},
+        }),
+        '4efdb9ba1fdb6700e86abc2bb8b2cd10893bfb4f5f5e46076f69e207d8e03140',
+      );
+      expect(
+        applyExtraCrypt('pw', {
+          'type': 'password_sha_with_salt',
+          'params': {'sha_name': 1, 'sha_salt': salt},
+        }),
+        '1ed2e244c67ad302dfe0f3021911255f2b086db831a065cd2dca590e837fb869',
+      );
+      expect(
+        () => applyExtraCrypt('pw', {
+          'type': 'password_sha_with_salt',
+          'params': {'sha_name': 0, 'sha_salt': '%%%'},
+        }),
+        throwsA(isA<TapoCredentialFormException>()),
+      );
+    });
+  });
+
   group('hashes and KDFs', () {
     test('hashes as the camera logins do', () {
       expect(md5Hex('admin'), '21232f297a57a5a743894a0e4a801fc3');

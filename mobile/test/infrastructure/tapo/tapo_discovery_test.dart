@@ -75,6 +75,22 @@ void main() {
 
   setUpAll(() => key = generateTdpKeyPair(bits: 1024));
 
+  test('reads the numbers of the tpap object given as text, as the official app does (python-kasa PR 1592)', () {
+    final result = _cameraResult()
+      ..['encrypt_type'] = ['3']
+      ..['tpap'] = {
+        'pake': ['2'],
+        'user_hash_type': '1',
+        'tls': '1',
+        'port': '443',
+      };
+    final reply = parseTdpReply(_reply(result))!;
+    expect(reply.pake, [2]);
+    expect(reply.userHashType, 1);
+    expect(reply.offersV4, isTrue);
+    expect(tdpServerOf(reply).camera?.userName, TapoUserNameForm.sha256);
+  });
+
   test('builds the probe: header, length, flags, serial and the CRC32 of the whole datagram', () {
     final probe = tdpProbe(key, serial: 0x01020304);
     final data = ByteData.sublistView(probe);

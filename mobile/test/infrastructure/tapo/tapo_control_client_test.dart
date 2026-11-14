@@ -116,6 +116,28 @@ void main() {
     expect(stubborn.logins, 2);
   });
 
+  // Resync of release 48: a 401 without a body (python-kasa #1771, the V3 cameras of the 1.4.4 line) and the plain JSON
+  // codes of a dropped TPAP session (-40420, -2402, python-kasa PR 1592; any plain code in mihai-dinculescu/tapo)
+  for (final (protocol, drop) in [
+    (TapoLoginProtocol.v3, (status: 401, json: null)),
+    (TapoLoginProtocol.v4, (status: 401, json: null)),
+    (TapoLoginProtocol.v4, (status: 200, json: {'error_code': -40420})),
+    (TapoLoginProtocol.v4, (status: 200, json: {'error_code': -2402})),
+  ]) {
+    test(
+      'logs in once more when a ${protocol.name} camera drops the session with ${drop.status} ${drop.json}',
+      () async {
+        final camera = FakeTapoCamera(protocol: protocol);
+        final control = client(camera);
+        await control.cardStatus();
+        camera.dropNextRequest = drop;
+        final card = await control.cardStatus(refresh: true);
+        expect(card.state, TapoCardState.normal);
+        expect(camera.logins, 2);
+      },
+    );
+  }
+
   test('tries once more after a network failure, then tells the camera unreachable', () async {
     final camera = FakeTapoCamera()..failNextPosts = 1;
     await client(camera).details();
