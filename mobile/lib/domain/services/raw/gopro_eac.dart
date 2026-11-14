@@ -6,7 +6,8 @@
 //
 // Checked on a real GoPro MAX file (4096 x 1344 tracks, docs/18-design-projections-and-parsers.md, section 10.1): every
 // face joins its neighbours, and the MAX needs a quarter turn about the front axis that the table of the MAX 2 does not
-// have. No MAX 2 file was at hand.
+// have. Checked on three real MAX 2 files too (5952 x 1920 tracks, firmware H24.02.01.09.71, 14 November 2026,
+// lots/feat-raw-2026-48.md): the faces join and the picture stands upright with the table as it is.
 //
 // Pure Dart: the resolver of raw videos and the CPU reference stitcher use it, and the shaders of the native players
 // follow the same steps (section 4.2 of that document).
@@ -119,7 +120,7 @@ String goProCameraName(GoProEacGeometry geometry) => switch (geometry.face) {
 /// The rotation from the view frame (x right, y down, z forward) to the camera frame of the face table, row major:
 /// [0,1,0, 1,0,0, 0,0,1] for faces of 1344 (the MAX, whose faces put the camera's up along the table's -x: Rz(90) times
 /// diag(1, -1, 1), checked on a real file), diag(1, -1, 1) otherwise (the MAX 2, as max2-reframe-resolve fits it to
-/// GoPro Player exports). No leveling.
+/// GoPro Player exports, checked on real files). No leveling.
 List<double> goProViewToCamera(GoProEacGeometry geometry) => geometry.face == 1344
     ? const [0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
     : const [1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0];

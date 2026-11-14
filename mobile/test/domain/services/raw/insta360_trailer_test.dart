@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 
@@ -355,6 +356,19 @@ void main() {
   });
 
   group('calibrationOf', () {
+    test('levels a ONE RS with a 360 module by the axes of its IMU, those of the X series otherwise', () async {
+      final x3 = (await _trailer(_x3Photo()))!;
+      final rs = (await _trailer(_x3Photo(metadata: x3Metadata(model: 'Insta360 OneRS'))))!;
+
+      expect(rs.meanAccelerometer, x3.meanAccelerometer);
+      expect(
+        calibrationOf(rs)!.downBody,
+        downBodyFromAccelerometer(rs.meanAccelerometer, axes: Insta360ImuAxes.oneRs360),
+      );
+      expect(calibrationOf(x3)!.downBody, downBodyFromAccelerometer(x3.meanAccelerometer));
+      expect(calibrationOf(rs)!.downBody, isNot(calibrationOf(x3)!.downBody));
+    });
+
     test('builds the Mei model of the V3 string of an X3, levelled by the accelerometer of the trailer', () async {
       final calibration = calibrationOf((await _trailer(_x3Photo()))!);
 

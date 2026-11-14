@@ -8,6 +8,10 @@
 // Kannala-Brandt fisheye model with five radial terms, the pose of the lens in yaw, pitch and roll, and its rotation as
 // a quaternion.
 //
+// The Osmo 360 II (schema dvtm_OQ102.proto, firmware 01.01.02.10) writes the same content as the one sample of a camd
+// track rather than as a box after moov, its calibration slots in field 5 of the config (2-5-n: the rear lens, then
+// the front one, whose quaternion is the identity, written as w = 1 alone): read on a real file, 14 November 2026.
+//
 // Verified on a real Osmo 360 file (firmware 10.00.05.06) and documented by OSVplat
 // (docs/osmo360-telemetry.md, scripts/osv_meta.py, MIT) on another unit and firmware; the field names come from
 // telemetry-parser's dvtm_library.proto as osv_meta.py quotes it. See docs/18-design-projections-and-parsers.md,
@@ -21,6 +25,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
+import 'package:immich_mobile/domain/services/raw/gopro_motion.dart' show readFirstTrackSample;
 import 'package:immich_mobile/domain/services/raw/protobuf_reader.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:logging/logging.dart';
@@ -111,14 +116,23 @@ class DjiCamdMdat {
 }
 
 /// Finds the mdat box of the camd box of the Osmo 360 file that [read] reads: the top level boxes, then the child
-/// boxes of camd from a first read of 4 KiB. [fileSize] bounds a camd box, or an mdat box, that runs to the end of the
-/// file. Null without a camd box or without an mdat in it, or when the boxes are damaged. Errors of [read] are not
-/// caught.
+/// boxes of camd from a first read of 4 KiB. The Osmo 360 II writes no camd box: the same content (ftyp, free, mdat,
+/// moov) is the one sample of a timed metadata track whose sample entry is camd, found through the moov box.
+/// [fileSize] bounds a camd box, or an mdat box, that runs to the end of the file. Null without a camd box or track or
+/// without an mdat in it, or when the boxes are damaged. Errors of [read] are not caught.
 Future<DjiCamdMdat?> findDjiCamdMdat(ByteRangeReader read, {int? fileSize}) async {
   final boxes = await listTopLevelBoxes(read);
   final camd = boxes.lastWhereOrNull((box) => box.type == 'camd');
   if (camd == null) {
-    return null;
+    final sample = await readFirstTrackSample(read, 'camd', fileSize: fileSize);
+    if (sample == null) {
+      return null;
+    }
+    final mdat = await _mdatPlace(read, sample.offset, sample.offset + sample.size);
+    if (mdat == null) {
+      _log.info('Osmo 360 file: its camd track has no media data');
+    }
+    return mdat;
   }
   final contentStart = camd.offset + camd.headerLength;
   final size = camd.size;
@@ -360,7 +374,8 @@ _DjiLens? _slot(Uint8List bytes) {
   return _DjiLens(values, quaternion);
 }
 
-// cam_extri_q: w (1), x (2), y (3), z (4), floats; null unless all four are there
+// cam_extri_q: w (1), x (2), y (3), z (4), floats, a missing one 0 as protobuf 3 leaves zeros out (the identity of the
+// front lens of the Osmo 360 II is w = 1 alone); null when none is there
 List<double>? _quaternion(Uint8List bytes) {
   final values = <int, double>{};
   for (final field in protoFieldsLenient(bytes)) {
@@ -369,7 +384,7 @@ List<double>? _quaternion(Uint8List bytes) {
       values.putIfAbsent(field.number, () => value);
     }
   }
-  return values.length == 4 ? [values[1]!, values[2]!, values[3]!, values[4]!] : null;
+  return values.isEmpty ? null : [for (var number = 1; number <= 4; number++) values[number] ?? 0];
 }
 
 // The rotation of a quaternion [q] (w, x, y, z) when its norm is within the tolerance of 1

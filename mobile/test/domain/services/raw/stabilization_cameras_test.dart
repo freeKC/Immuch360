@@ -301,24 +301,69 @@ void main() {
       }
     });
 
-    test('gives no table for a GoPro whose axes were not measured, the MAX 2', () async {
+    test('gives no table for a GoPro whose axes were not measured', () async {
       expect(goProAxesMeasured(goProMaxName), isTrue);
       expect(goProAxesMeasured('GoPro MAX'), isTrue);
       expect(goProAxesMeasured(null), isTrue, reason: 'the caller checks the faces');
-      expect(goProAxesMeasured('GoPro Max2'), isFalse);
-      expect(goProAxesMeasured('GoPro MAX 2'), isFalse);
+      expect(goProAxesMeasured('MAX2'), isTrue, reason: 'the DVNM of the MAX 2 files');
+      expect(goProAxesMeasured('GoPro MAX 2'), isTrue);
       expect(goProAxesMeasured('HERO13 Black'), isFalse);
 
-      final max2 = goProMotionFile(
+      final hero = goProMotionFile(
         [
           for (var i = 0; i < 3; i++)
-            goProPayload(cori: [goProSpreadCori[i]], grav: [goProSpreadGrav[i]], shut: [0.0003], name: 'GoPro Max2'),
+            goProPayload(cori: [goProSpreadCori[i]], grav: [goProSpreadGrav[i]], shut: [0.0003], name: 'HERO13 Black'),
         ],
         withVideo: false,
         payloadTicks: List.filled(3, 834),
       );
-      expect(await readGoProMotion(_reader(max2), max2.length), isNotNull, reason: 'the track itself reads');
-      expect(await readGoProStabilization(_reader(max2), max2.length), isNull);
+      expect(await readGoProMotion(_reader(hero), hero.length), isNotNull, reason: 'the track itself reads');
+      expect(await readGoProStabilization(_reader(hero), hero.length), isNull);
+    });
+
+    test('takes the GPMF axes of the MAX 2 as the axes of its view, the MAX ones for the MAX', () {
+      // Measured on three MAX 2 files of firmware H24.02.01.09.71 (14 November 2026): GRAV of an upright camera along
+      // GPMF +y, the down of the stitch; CORI turns a car mounted clip back best with these axes (lots/feat-raw-2026-48)
+      expect(goProViewToGpmfOf('MAX2')!.values, Mat3.identity.values);
+      expect(goProViewToGpmfOf('GoPro MAX 2')!.values, Mat3.identity.values);
+      expect(goProViewToGpmfOf(goProMaxName)!.values, goProViewToGpmf.values);
+      expect(goProViewToGpmfOf(null, face: 1920)!.values, Mat3.identity.values, reason: 'no name: by the faces');
+      expect(goProViewToGpmfOf(null, face: 1344)!.values, goProViewToGpmf.values);
+      expect(goProViewToGpmfOf(null)!.values, goProViewToGpmf.values);
+      expect(goProViewToGpmfOf('HERO13 Black'), isNull);
+    });
+
+    test('levels a MAX 2 that stands upright without rolling its picture', () async {
+      // GRAV of the MAX 2 sample GS010007.360 on its tripod, and no turn of the camera
+      const grav = [145, 32765, -363];
+      final max2 = goProMotionFile(
+        [
+          for (var i = 0; i < 3; i++)
+            goProPayload(
+              cori: [
+                const [32767, 0, 0, 0],
+              ],
+              grav: [grav],
+              shut: [0.0003],
+              name: 'MAX2',
+            ),
+        ],
+        withVideo: false,
+        payloadTicks: List.filled(3, 834),
+      );
+
+      final table = (await readGoProStabilization(_reader(max2), max2.length))!;
+
+      // The down of the camera, nearly the down of its view, is shown down: no roll, under a degree of tilt
+      final cameraDown = (x: grav[0] / 32767, y: grav[1] / 32767, z: grav[2] / 32767);
+      for (var i = 0; i < table.length; i++) {
+        expect(_angle(_shownDown(table, i, cameraDown), _displayDown), lessThan(1), reason: 'frame $i');
+        expect(_angle(_shownDown(table, i, (x: 0, y: 1, z: 0)), _displayDown), lessThan(1.5), reason: 'frame $i');
+      }
+      // With the axes of the MAX, the same camera would be shown on its side
+      final track = (await readGoProMotion(_reader(max2), max2.length))!;
+      final rolled = stabilizationOfCameraMotion(track, viewToBody: goProViewToGpmf)!;
+      expect(_angle(_shownDown(rolled, 0, (x: 0, y: 1, z: 0)), _displayDown), greaterThan(80));
     });
 
     test('would put the sky at the bottom with GRAV taken the other way', () async {

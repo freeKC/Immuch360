@@ -8,7 +8,8 @@
 // telemetry-parser reads them in; no such file was at hand). The samples are already corrected by the camera: the
 // offsets of field 31 must not be taken off again.
 //
-// Record 4 has one entry per frame, 16 bytes: a u64 LE timestamp in microseconds on the clock of the samples, then the
+// Record 4 has one entry per frame, 16 bytes: a u64 LE timestamp in microseconds on the clock of the samples (in
+// milliseconds on the cameras of 56 byte samples, as field 24: the ONE X2 of lots/feat-raw-2026-48.md), then the
 // exposure time of the frame in seconds as an f64 LE. It starts a few entries before the first frame of the video (4
 // to 8 on the files measured: frames the camera did not keep); field 24 is the timestamp of the first frame, equal to
 // one of the entries within 15 microseconds. Time 0 of the track is that frame; frame i of the video is the i-th entry
@@ -17,7 +18,9 @@
 // The IMU axes map to the body frame of dual_fisheye_math.dart as body x = IMU x, body y = IMU z, body z = -IMU y,
 // the mapping the leveling already uses for the accelerometer (downBodyFromAccelerometer). Measured on real X3, X4 and
 // X5 videos against the rotation of the picture itself: the integrated gyroscope matches it within 0.1 to 0.3 degree a
-// frame, the mapping within 1 to 4 degrees, at a time offset of -8 to +4 ms from the frame entries.
+// frame, the mapping within 1 to 4 degrees, at a time offset of -8 to +4 ms from the frame entries. The ONE X2 follows
+// it (0.25 degree a frame, -18 ms); a ONE RS with a 360 module does not: body x = IMU z, body y = IMU x, body z =
+// IMU y (Insta360ImuAxes.oneRs360, 0.03 degree a frame on a ONE RS 1-Inch 360 Edition video, +7 ms).
 //
 // Pure Dart: the caller reads the bytes, from a file on the device or with HTTP range requests.
 
@@ -25,6 +28,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/raw/camera_motion.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart' show Insta360ImuAxes, insta360ImuAxesOf;
 import 'package:immich_mobile/domain/services/raw/insta360_trailer.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart' show ByteRangeReader;
 import 'package:logging/logging.dart';
@@ -104,11 +108,22 @@ Future<CameraMotionTrack?> readInsta360Motion(
     return null;
   }
 
-  final entries = await _frameEntries(read, records.frames, indexed: trailer.indexed);
-  final firstFrame = trailer.firstFrameTimestamp;
+  // The cameras of raw samples write the frame record and field 24 in microseconds, the older ones in milliseconds, as
+  // their samples
+  final unitUs = trailer.isRawGyro ? 1 : 1000;
+  final entries = [
+    for (final entry in await _frameEntries(read, records.frames, indexed: trailer.indexed))
+      (timeUs: entry.timeUs * unitUs, exposure: entry.exposure),
+  ];
+  final firstFrame = trailer.firstFrameTimestamp == null ? null : trailer.firstFrameTimestamp! * unitUs;
   final step = math.max(1, math.max(1, chunkLength) ~/ sampleLength) * sampleLength;
+  final axes = insta360ImuAxesOf(
+    trailer.cameraModel,
+    twoLenses: trailer.offsetV3 != null || trailer.offsetV6 != null || trailer.offsetV1 != null,
+  );
   final decoder = _SampleDecoder(
     raw: trailer.isRawGyro,
+    oneRs360: axes == Insta360ImuAxes.oneRs360,
     accelerometerRange: trailer.accelerometerRange ?? _defaultAccelerometerRange,
     gyroscopeRange: trailer.gyroscopeRange ?? _defaultGyroscopeRange,
     capacity: sink == null ? count : math.min(count, step ~/ sampleLength),
@@ -241,6 +256,7 @@ bool _isFooter(Uint8List bytes, int offset, Insta360RecordPlace place, int id) {
 class _SampleDecoder {
   _SampleDecoder({
     required this.raw,
+    required this.oneRs360,
     required double accelerometerRange,
     required double gyroscopeRange,
     required int capacity,
@@ -251,6 +267,9 @@ class _SampleDecoder {
        _accelerations = Float32List(3 * capacity);
 
   final bool raw;
+
+  /// Whether the IMU lies as on a ONE RS with a 360 module ([Insta360ImuAxes.oneRs360]), else as on the X series
+  final bool oneRs360;
   final double _accelerometerScale;
   final double _gyroscopeScale;
 
@@ -327,14 +346,24 @@ class _SampleDecoder {
       }
       _lastTimeUs = timeUs;
       _timesUs[kept] = timeUs;
-      // Body x = IMU x, body y = IMU z, body z = -IMU y
       final i = 3 * kept;
-      _rates[i] = gx;
-      _rates[i + 1] = gz;
-      _rates[i + 2] = -gy;
-      _accelerations[i] = ax;
-      _accelerations[i + 1] = az;
-      _accelerations[i + 2] = -ay;
+      if (oneRs360) {
+        // Body x = IMU z, body y = IMU x, body z = IMU y
+        _rates[i] = gz;
+        _rates[i + 1] = gx;
+        _rates[i + 2] = gy;
+        _accelerations[i] = az;
+        _accelerations[i + 1] = ax;
+        _accelerations[i + 2] = ay;
+      } else {
+        // Body x = IMU x, body y = IMU z, body z = -IMU y
+        _rates[i] = gx;
+        _rates[i + 1] = gz;
+        _rates[i + 2] = -gy;
+        _accelerations[i] = ax;
+        _accelerations[i + 1] = az;
+        _accelerations[i + 2] = -ay;
+      }
       kept++;
       total++;
     }

@@ -125,19 +125,48 @@ Mat3 lensPose(DualFisheyeLens lens, int index) =>
     rotationX(lens.pitch * _degree) *
     rotationY(lens.yaw * _degree);
 
+/// How the IMU of an Insta360 camera lies in the body frame
+enum Insta360ImuAxes {
+  /// Body x = IMU x, body y = IMU z, body z = -IMU y: the X3, X4 and X5 measured against their pictures, the ONE X2
+  /// too (14 November 2026, lots/feat-raw-2026-48.md: 0.25 degree a frame on a real video), the X4 Air and the X6 as
+  /// GyroView measured them
+  xSeries,
+
+  /// Body x = IMU z, body y = IMU x, body z = IMU y: a ONE RS with a 360 module, measured on a ONE RS 1-Inch 360
+  /// Edition video against the rotation of its picture (0.03 degree a frame, 14 November 2026); with the axes of the X
+  /// series its pictures lay on their side. The 360 lens module is taken the same: telemetry-parser gives both 360
+  /// modules of the ONE RS one orientation, another than the one lens modules'.
+  oneRs360;
+
+  /// The vector ([x], [y], [z]) of the IMU axes in the body frame
+  Vec3 toBody(double x, double y, double z) => switch (this) {
+    Insta360ImuAxes.xSeries => (x: x, y: z, z: -y),
+    Insta360ImuAxes.oneRs360 => (x: z, y: x, z: y),
+  };
+}
+
+/// The axes of the IMU of the Insta360 camera named [cameraModel] (field 2 of its trailer, or the Model of its EXIF):
+/// those of a ONE RS with a 360 module for a ONE RS file with [twoLenses] (a two lens calibration string), those of the
+/// X series otherwise
+Insta360ImuAxes insta360ImuAxesOf(String? cameraModel, {bool twoLenses = true}) =>
+    twoLenses && cameraModel?.trim().toLowerCase().replaceAll(' ', '') == 'insta360oners'
+    ? Insta360ImuAxes.oneRs360
+    : Insta360ImuAxes.xSeries;
+
 /// The direction of gravity in the body frame from the mean of the accelerometer of an Insta360 camera, in any unit (at
-/// rest it measures the reaction to gravity, which points up). The IMU of the X3, and of the X4 Air, X5 and X6 as
-/// GyroView measured them, has body x = IMU x, body y = IMU z and body z = -IMU y. Without a usable [accelerometer]
-/// the camera is taken as upright, gravity along body +x: the lenses face the horizon, sideways.
-List<double> downBodyFromAccelerometer(List<double>? accelerometer) {
+/// rest it measures the reaction to gravity, which points up), its IMU lying as [axes] say. Without a usable
+/// [accelerometer] the camera is taken as upright: gravity along body +x on the X series (the lenses face the horizon,
+/// sideways), along body +y on a ONE RS with a 360 module.
+List<double> downBodyFromAccelerometer(List<double>? accelerometer, {Insta360ImuAxes axes = Insta360ImuAxes.xSeries}) {
   final a = accelerometer != null && accelerometer.length >= 3
       ? _normalized((x: accelerometer[0], y: accelerometer[1], z: accelerometer[2]))
       : null;
   if (a == null) {
-    return const [1.0, 0.0, 0.0];
+    return axes == Insta360ImuAxes.oneRs360 ? const [0.0, 1.0, 0.0] : const [1.0, 0.0, 0.0];
   }
   // Gravity is opposite to what the accelerometer measures
-  return [-a.x, -a.z, a.y];
+  final up = axes.toBody(a.x, a.y, a.z);
+  return [-up.x, -up.y, -up.z];
 }
 
 /// The rotation from the view to the body frame, levelled by [downBody] (the direction of gravity in the body frame):

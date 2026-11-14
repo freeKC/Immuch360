@@ -10,6 +10,7 @@ import 'package:immich_mobile/domain/services/raw/raw_video_stabilization.dart';
 import 'package:immich_mobile/domain/services/raw/stabilization.dart';
 import 'package:immich_mobile/platform/spherical_video_api.g.dart';
 
+import '../../../fixtures/raw/gopro_gpmf.stub.dart';
 import '../../../fixtures/raw/insta360_motion_slices.dart';
 import '../../../fixtures/raw/stabilization_slices.dart';
 import '../../../fixtures/raw/stabilization_videos.dart';
@@ -147,30 +148,63 @@ void main() {
       expect(table.presentationTimesUs, [for (var i = 0; i < table.length; i++) (i * 1e6 / 29.97).round()]);
     });
 
-    test('of a GoPro whose faces are not those of the MAX is none: its axes were not measured', () async {
+    test('of a GoPro whose faces are neither the MAX nor the MAX 2 ones is none: its axes were not measured', () async {
       final request = RawStabilizationRequest.of(
         const RawVideoPlan(
           kind: RawMediaKind.goProVideo,
           layout: RawVideoLayout.twoTracks,
           tracks: [
-            RawVideoTrack(file: 0, videoTrack: 0, width: 5952, height: 1920, frameRate: 29.97),
-            RawVideoTrack(file: 0, videoTrack: 1, width: 5952, height: 1920, frameRate: 29.97),
+            RawVideoTrack(file: 0, videoTrack: 0, width: 4384, height: 1440, frameRate: 29.97),
+            RawVideoTrack(file: 0, videoTrack: 1, width: 4384, height: 1440, frameRate: 29.97),
           ],
-          eac: GoProEacGeometry(trackWidth: 5952, trackHeight: 1920),
-          url: 'file:///max2.360',
+          eac: GoProEacGeometry(trackWidth: 4384, trackHeight: 1440),
+          url: 'file:///other.360',
           trackOrderSource: 'single',
         ),
-        name: 'max2.360',
+        name: 'other.360',
         fileSize: 10,
       );
-      expect(request.goProFace, 1920);
+      expect(request.goProFace, 1440);
       var reads = 0;
       final table = await buildRawStabilization(request, (offset, length) async {
         reads++;
         return Uint8List(0);
       });
       expect((table, reads), (null, 0));
-      expect(request.toString(), contains('goProFace: 1920'));
+      expect(request.toString(), contains('goProFace: 1440'));
+    });
+
+    test('of a GoPro MAX 2 comes from its orientations, through the axes of the MAX 2', () async {
+      final max2 = goProMotionFile(
+        [
+          for (var i = 0; i < 3; i++)
+            goProPayload(
+              cori: [
+                const [32767, 0, 0, 0],
+              ],
+              grav: [
+                const [145, 32765, -363],
+              ],
+              shut: [0.0003],
+              name: 'MAX2',
+            ),
+        ],
+        withVideo: false,
+        payloadTicks: List.filled(3, 834),
+      );
+      final table = await buildRawStabilization(
+        RawStabilizationRequest(
+          kind: RawMediaKind.goProVideo,
+          name: 'max2.360',
+          fileSize: max2.length,
+          goProFace: 1920,
+        ),
+        bytesReader(max2),
+      );
+      expect(table!.summary.source, 'GoPro CORI');
+      expect(table.length, 3);
+      // Upright, still: nothing to correct but the 0.7 degree tilt of GRAV
+      expect(table.summary.largestCorrectionDegrees, lessThan(1));
     });
 
     test('of a GoPro and of a DJI come from their orientations', () async {
@@ -422,7 +456,7 @@ void main() {
       await tellStabilizationSetting(_Player(fails: true), 'u', enabled: true);
     });
 
-    test('does not apply to a GoPro whose faces are not those of the MAX: its switch never shows', () {
+    test('does not apply to a GoPro whose faces are neither the MAX nor the MAX 2 ones: its switch never shows', () {
       final file = _File(goProSpreadVideo());
       RawVideoPlan goPro(int face) => RawVideoPlan(
         kind: RawMediaKind.goProVideo,
@@ -433,8 +467,9 @@ void main() {
         trackOrderSource: 'single',
         motionTrackInput: file.input('g.360'),
       );
-      expect(RawVideoStabilizer(api: _Player(), url: 'u', enabled: true, plan: goPro(1920)).applies, isFalse);
+      expect(RawVideoStabilizer(api: _Player(), url: 'u', enabled: true, plan: goPro(1920)).applies, isTrue);
       expect(RawVideoStabilizer(api: _Player(), url: 'u', enabled: true, plan: goPro(1344)).applies, isTrue);
+      expect(RawVideoStabilizer(api: _Player(), url: 'u', enabled: true, plan: goPro(1440)).applies, isFalse);
     });
 
     test('applies only to a camera with a track and a file to read, and a failing player stops nothing', () async {

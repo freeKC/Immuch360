@@ -30,7 +30,7 @@ Future<CameraMotionTrack?> _motion(
 final _mp4 = [0, 0, 0, 8, ...'free'.codeUnits];
 
 /// The metadata of a video: model, firmware, first frame time (field 24), rolling shutter time (25), raw samples (62),
-/// IMU ranges (65)
+/// IMU ranges (65), a V3 calibration string (54)
 List<int> _videoMetadata({
   String model = x3Model,
   String firmware = x3Firmware,
@@ -38,10 +38,12 @@ List<int> _videoMetadata({
   double rollingShutterMs = 15.727346420288086,
   bool rawGyro = true,
   bool withRanges = true,
+  String? offsetV3,
 }) => [
   ...pbStringField(1, x3Serial),
   ...pbStringField(2, model),
   ...pbStringField(3, firmware),
+  if (offsetV3 != null) ...pbStringField(54, offsetV3),
   if (firstFrame != null) ...pbVarintField(24, firstFrame),
   ...pbDoubleField(25, rollingShutterMs),
   ...pbVarintField(62, rawGyro ? 1 : 0),
@@ -236,6 +238,54 @@ void main() {
       expect(track.samples.times, _closeToList([0, 0.002, 0.004, 0.006], 1e-12));
       expect(track.samples.rotationRates.sublist(0, 3), _closeToList([0.5, 0.125, 0.25], 1e-7));
       expect(track.samples.accelerations.sublist(0, 3), _closeToList([0.1, 0.2, 0.9], 1e-7));
+    });
+
+    test('reads the frames of the older cameras in milliseconds, as their samples, field 24 too', () async {
+      // As the ONE X2 of the lot writes them: samples of doubles 2 ms apart, the frame record and field 24 in
+      // milliseconds, entries before the first frame (6983, 7016, 8085) the video does not keep
+      List<int> sample(int ms) => [
+        ...u64le(ms),
+        ...f64le(0.1),
+        ...f64le(-0.9),
+        ...f64le(0.2),
+        for (var i = 0; i < 3; i++) ...f64le(0),
+      ];
+      final samples = [for (var ms = 8300; ms < 8420; ms += 2) ...sample(ms)];
+      final frames = insta360FrameEntries([6983, 7016, 8085, 8308, 8341, 8375, 8408], exposure: 0.0005);
+
+      final track = (await _motion(
+        _x3Video(
+          metadata: _videoMetadata(firstFrame: 8308, rawGyro: false, withRanges: false),
+          imu: samples,
+          frames: frames,
+        ),
+      ))!;
+
+      expect(track.timeOrigin, CameraMotionTimeOrigin.firstFrame);
+      expect(track.frameTimes, _closeToList([0, 0.033, 0.067, 0.1], 1e-9));
+      expect(track.samples.times.first, closeTo(-0.008, 1e-9));
+      expect(track.samples.times.last, closeTo(0.110, 1e-9));
+    });
+
+    test('turns the IMU of a ONE RS with a 360 module by its own axes: body x = IMU z, y = IMU x, z = IMU y', () async {
+      Future<CameraMotionTrack> read(String model, {String? offsetV3 = x3OffsetV3}) async => (await _motion(
+        _x3Video(
+          metadata: _videoMetadata(model: model, offsetV3: offsetV3),
+          imu: _stillSamples(gyro: (100, 0, 0)),
+          frames: _frames(),
+        ),
+      ))!;
+
+      final rs = await read('Insta360 OneRS');
+      final x3 = await read(x3Model);
+      final flat = await read('Insta360 OneRS', offsetV3: null);
+
+      // A turn about IMU x, the accelerometer 1 g along IMU -y
+      expect(rs.samples.rotationRates.sublist(0, 3), _closeToList([0, 100 * _gyroStep, 0], 1e-6));
+      expect(rs.samples.accelerations.sublist(0, 3), _closeToList([0, 0, -1], 1e-9));
+      expect(x3.samples.rotationRates.sublist(0, 3), _closeToList([100 * _gyroStep, 0, 0], 1e-6));
+      expect(x3.samples.accelerations.sublist(0, 3), _closeToList([0, 0, 1], 1e-9));
+      expect(flat.samples.rotationRates.sublist(0, 3), x3.samples.rotationRates.sublist(0, 3), reason: 'one lens');
     });
 
     test('leaves out the samples whose time does not rise, and those that are not finite numbers', () async {

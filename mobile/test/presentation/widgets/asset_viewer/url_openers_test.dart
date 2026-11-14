@@ -629,10 +629,25 @@ void main() {
       );
     });
 
-    testWidgets('a GoPro MAX 2 file gets no table, its switch never shows', (tester) async {
+    testWidgets('a GoPro MAX 2 file gets its table too', (tester) async {
       await pump(tester, stabilization: true);
       final share = _Share({'/GS010014.360': goPro});
       final plan = _sharePlan(RawMediaKind.goProVideo, _shareInput(share, '/GS010014.360'), goProFace: 1920);
+
+      await openPlan(tester, plan);
+
+      expect(sphericalApi.calls, [
+        'stabilization ${plan.url} true true true',
+        'open ${plan.url}',
+        'stabilization ${plan.url} true true false',
+      ]);
+      expect(sphericalApi.summaries.single, contains('GoPro CORI'));
+    });
+
+    testWidgets('a GoPro whose faces are neither the MAX nor the MAX 2 ones gets no table', (tester) async {
+      await pump(tester, stabilization: true);
+      final share = _Share({'/GS010015.360': goPro});
+      final plan = _sharePlan(RawMediaKind.goProVideo, _shareInput(share, '/GS010015.360'), goProFace: 1440);
 
       await openPlan(tester, plan);
 

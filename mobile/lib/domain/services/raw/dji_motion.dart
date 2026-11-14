@@ -9,7 +9,12 @@
 //   first sample, the low 32 bits of the same clock (it wraps every 71.6 minutes); 2 a counter; 3 repeated, one
 //   quaternion a sample, w, x, y and z as fixed32 floats; samples 1004 microseconds apart on the sample file;
 // - 2-9: one quaternion for the frame, the middle sample of the run (sample 20 of 40);
-// - 4-1-5: the frame rate, a float.
+// - 4-1-5: the frame rate, a float; 2-1-5 too, after the name of the camera in 2-1-4.
+//
+// The Osmo 360 II (firmware 01.01.02.10, read on a real file on 14 November 2026) keeps its camd content in a track
+// (dji_osv.dart) and the same records, but for: the quaternion of the frame in 2-22 (2-9 holds a varint), its position
+// in 4-1 (no frame rate in 4-1-5: 2-1-5 gives it), zero components of the quaternions left out (protobuf 3), and the
+// axes of its attitude, half a turn about the vertical from those of the Osmo 360 (_bodyToCamera2).
 //
 // The header record of the first track (field 1 of the mdat) holds the time stamp of the first frame of the video in
 // 1-9. Frame n of the video is the record whose stamp is n frame durations after it: a frame is counted from the first
@@ -81,6 +86,15 @@ const _twoTo32 = 0x100000000;
 
 // The rotation from the body frame of the app to the axes of the camera (x forward, y right, z down), w x y z
 const _bodyToCamera = [0.5, 0.5, -0.5, -0.5];
+
+// The same for the Osmo 360 II: the turn of the Osmo 360 then half a turn about body y, the vertical of the camera
+// upright (q_c times the conjugate of (0, 0, 1, 0)). Measured on the sample against the rotation of its picture, frame
+// pair after frame pair, in both lenses: the axes of the Osmo 360 leave 1.23 degrees a frame (the picture turns 0.55),
+// these 0.18 to 0.20 degree, at the same delay of 8.5 ms (lots/feat-raw-2026-48.md, raw-2026/dji_vision48.py)
+const _bodyToCamera2 = [0.5, 0.5, 0.5, 0.5];
+
+// Whether the camera named [model] (1-10 of the header) is an Osmo 360 II
+bool _isOsmo360II(String? model) => model?.trim().toLowerCase().replaceAll(' ', '') == 'osmo360ii';
 
 /// Reads the attitude of the DJI Osmo 360 video of [fileSize] bytes that [read] reads: an orientation for each frame of
 /// the video, from the world to the body frame ([CameraMotionTrack.frameOrientations]), and the time of each frame on
@@ -223,7 +237,12 @@ class _AttitudeRecord {
   int? runStampUs;
   final List<double> run = [];
   List<double>? frameQuaternion;
+
+  /// The frame rate of 4-1-5 (the Osmo 360; the Osmo 360 II keeps its position in 4-1)
   double? frameRate;
+
+  /// The frame rate of 2-1-5, next to the name of the camera (the Osmo 360 and the Osmo 360 II)
+  double? streamFrameRate;
 
   int get runLength => run.length ~/ 4;
 }
@@ -242,29 +261,38 @@ _AttitudeRecord? _parseRecord(Uint8List bytes) {
         record.recordIndex ??= _firstVarint(payload, 1) ?? 0;
       case 2:
         if (record.frameQuaternion == null) {
-          final message = protoPath(payload, [9]);
-          record.frameQuaternion = message == null ? null : _quaternion(message);
+          // 2-9 on the Osmo 360, 2-22 on the Osmo 360 II (whose 2-9 holds a varint)
+          for (final number in const [9, 22]) {
+            final message = protoPath(payload, [number]);
+            record.frameQuaternion ??= message == null ? null : _quaternion(message);
+          }
         }
+        record.streamFrameRate ??= _frameRateOf(payload);
       case 3:
         if (record.run.isEmpty) {
           _readRun(payload, record);
         }
       case 4:
-        if (record.frameRate == null) {
-          final message = protoPath(payload, [1]);
-          if (message != null) {
-            for (final sub in protoFieldsLenient(message)) {
-              final value = sub.float32;
-              if (sub.number == 5 && value != null && value.isFinite && value > 0) {
-                record.frameRate = value;
-                break;
-              }
-            }
-          }
-        }
+        record.frameRate ??= _frameRateOf(payload);
     }
   }
   return record.run.isEmpty && record.frameQuaternion == null ? null : record;
+}
+
+// Float 5 of the first message 1 of [payload], when it is a rate: the frame rate in 4-1-5 on the Osmo 360, in 2-1-5
+// (after the name of the camera in 2-1-4) on both
+double? _frameRateOf(Uint8List payload) {
+  final message = protoPath(payload, [1]);
+  if (message == null) {
+    return null;
+  }
+  for (final sub in protoFieldsLenient(message)) {
+    final value = sub.float32;
+    if (sub.number == 5 && value != null && value.isFinite && value > 0) {
+      return value;
+    }
+  }
+  return null;
 }
 
 // The first run of attitude samples of field 3 of a record (3-2-1), with its time stamp
@@ -308,8 +336,8 @@ int? _firstVarint(Uint8List message, int number) {
   return null;
 }
 
-// A quaternion message: w (1), x (2), y (3), z (4) as floats, normalised; null unless all four are there and make a
-// rotation
+// A quaternion message: w (1), x (2), y (3), z (4) as floats, a missing one 0 as protobuf 3 leaves zeros out,
+// normalised; null unless they make a rotation (an empty message does not)
 List<double>? _quaternion(Uint8List message) {
   double? w;
   double? x;
@@ -331,14 +359,12 @@ List<double>? _quaternion(Uint8List message) {
         z ??= value;
     }
   }
-  if (w == null || x == null || y == null || z == null) {
-    return null;
-  }
-  final norm = math.sqrt(w * w + x * x + y * y + z * z);
+  final q = [w ?? 0.0, x ?? 0.0, y ?? 0.0, z ?? 0.0];
+  final norm = math.sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
   if (!(norm > 0.5 && norm < 1.5)) {
     return null;
   }
-  return [w / norm, x / norm, y / norm, z / norm];
+  return [for (final v in q) v / norm];
 }
 
 /// Turns the attitude records, in their order, into a frame time and an orientation each
@@ -398,7 +424,7 @@ class _AttitudeCollector {
     if (record == null) {
       return;
     }
-    _frameRate ??= record.frameRate;
+    _frameRate ??= record.frameRate ?? record.streamFrameRate;
     final previous = _previous;
 
     // The frame of the video: as many frame durations after the first frame of the file as its stamp says, else after
@@ -445,7 +471,7 @@ class _AttitudeCollector {
     _previous = record;
     _frameIndices.add(index);
     // From the world to the body: the inverse of q times the turn from the body to the axes of the camera
-    final bodyToWorld = _multiply(q, _bodyToCamera);
+    final bodyToWorld = _multiply(q, _isOsmo360II(_model) ? _bodyToCamera2 : _bodyToCamera);
     var body = [bodyToWorld[0], -bodyToWorld[1], -bodyToWorld[2], -bodyToWorld[3]];
     final count = _orientations.length;
     if (count >= 4) {
