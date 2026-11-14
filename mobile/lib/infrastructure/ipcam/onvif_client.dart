@@ -88,6 +88,9 @@ OnvifPost onvifHttpPost({Duration timeout = const Duration(seconds: 4)}) => (url
     throw const IpCameraException(IpCameraErrorKind.unreachable, detail: 'timeout');
   } on HttpException {
     throw const IpCameraException(IpCameraErrorKind.notOnvif, detail: 'HTTP');
+  } on TlsException {
+    // An https service (an XAddr the camera announced) whose certificate this device refuses: nothing was sent
+    throw const IpCameraException(IpCameraErrorKind.other, detail: 'TLS');
   } finally {
     client.close(force: true);
   }

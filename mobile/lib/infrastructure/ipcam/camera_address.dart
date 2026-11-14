@@ -144,19 +144,23 @@ String _decode(String text) {
 
 /// [url] for a log or the screen: the scheme, the host and the port, the user info and the path and query replaced
 /// by "…" (they may hold an account or a token, see the top of this file). Anything that is not an address with a
-/// scheme is masked whole.
+/// scheme is masked whole. An @ after the authority may end a password holding a raw "/", "?" or "#": the address is
+/// then masked after its scheme, host included, rather than show a part of the account as its host.
 String maskCameraUrl(String url) {
   final match = RegExp(r'^([a-zA-Z][a-zA-Z0-9+.-]*)://([^/?#]*)(.*)$').firstMatch(url.trim());
   if (match == null) {
     return '…';
   }
+  final scheme = match.group(1)!.toLowerCase();
   var authority = match.group(2)!;
+  final rest = match.group(3)!;
   final at = authority.lastIndexOf('@');
   if (at >= 0) {
     authority = '…@${authority.substring(at + 1)}';
+  } else if (rest.contains('@')) {
+    return '$scheme://…';
   }
-  final rest = match.group(3)!;
-  return '${match.group(1)!.toLowerCase()}://$authority${rest.isEmpty || rest == '/' ? rest : '/…'}';
+  return '$scheme://$authority${rest.isEmpty || rest == '/' ? rest : '/…'}';
 }
 
 /// Every address inside [text] masked as [maskCameraUrl] does: for a message of a player or a library that quotes

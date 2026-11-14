@@ -74,6 +74,19 @@ void main() {
       expect(maskCameraUrl('not an address'), '…');
     });
 
+    test('a password with a raw slash, question mark or hash leaks no part of it', () {
+      for (final url in [
+        'rtsp://admin:pa/ss1@192.0.2.10:554/stream1',
+        'rtsp://admin:pa?ss1@192.0.2.10/stream1',
+        'rtsp://admin:pa#ss1@192.0.2.10/stream1',
+      ]) {
+        final masked = maskCameraUrl(url);
+        expect(masked, isNot(contains('admin')), reason: url);
+        expect(masked, isNot(contains('pa')), reason: url);
+        expect(masked, isNot(contains('ss1')), reason: url);
+      }
+    });
+
     test('masks every address of a message', () {
       final text = maskCameraUrlsIn(
         'Failed to open rtsp://u:pw@192.0.2.10/token123 and "http://192.0.2.10/snap?pwd=x"',

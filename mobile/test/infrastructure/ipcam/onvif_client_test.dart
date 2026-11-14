@@ -3,6 +3,7 @@
 // secret in a log, and the brand presets of fake_onvif_camera.dart. Vectors computed by a script of ours (Python
 // hashlib) from the rules of the specifications.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -305,6 +306,24 @@ void main() {
       await expectLater(
         onvifHttpPost()(Uri.parse('http://127.0.0.1:$port/onvif/device_service'), const {}, const []),
         throwsA(isA<IpCameraException>().having((e) => e.kind, 'kind', IpCameraErrorKind.unreachable)),
+      );
+    });
+
+    test('an https service whose TLS fails is told, not thrown raw', () async {
+      // A camera that announces an https XAddr with a certificate this device refuses: here a plain answer to TLS
+      final server = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+      server.listen((socket) {
+        socket.write('HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n');
+        unawaited(socket.flush().then((_) => socket.close()));
+      });
+      addTearDown(server.close);
+      await expectLater(
+        onvifHttpPost()(Uri.parse('https://127.0.0.1:${server.port}/onvif/media_service'), const {}, const []),
+        throwsA(
+          isA<IpCameraException>()
+              .having((e) => e.kind, 'kind', IpCameraErrorKind.other)
+              .having((e) => e.detail, 'detail', 'TLS'),
+        ),
       );
     });
   });
