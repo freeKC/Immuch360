@@ -37,9 +37,15 @@ export interface Features {
 	/**
 	 * The viewer turns a video filmed upright whose frames the player shows as stored, on their side (issue 17,
 	 * src/immuch360/video/orientation.ts). Samsung, whose video element leaves the file's rotation flag out; webOS
-	 * leaves it to its player, as before.
+	 * leaves it to its player, as before. A turn chosen with the viewer's "Turn the picture" button applies everywhere.
 	 */
 	turnSidewaysVideo: boolean;
+	/**
+	 * Whether the size the player reports (videoWidth, videoHeight) tells that it turned the frames itself. webOS and
+	 * browsers; a Samsung TV reports the turned size while it draws the frames on their side (issue 17, "player
+	 * 2160 x 3840" for a 3840 x 2160 file), so there the reported size is not trusted (src/immuch360/video/orientation.ts).
+	 */
+	reportedVideoSizeTellsTurn: boolean;
 }
 
 /**
@@ -60,6 +66,7 @@ export function features(on: Platform = platform()): Features {
 			fullsizePixelCap: TIZEN_FULLSIZE_MAX_PIXELS,
 			probeVideoFramesAtStart: true,
 			turnSidewaysVideo: true,
+			reportedVideoSizeTellsTurn: false,
 		};
 	}
 	// webOS, and a browser in development, where service/dev.js stands in for the service
@@ -73,5 +80,6 @@ export function features(on: Platform = platform()): Features {
 		fullsizePixelCap: null,
 		probeVideoFramesAtStart: false,
 		turnSidewaysVideo: false,
+		reportedVideoSizeTellsTurn: true,
 	};
 }

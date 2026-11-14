@@ -12,7 +12,8 @@ export const ACTION_BAR_SPOTLIGHT_ID = 'media-viewer-actions';
 
 const ActionBar = createSpotlightContainer({enterTo: 'last-focused'});
 
-// Immuch360: the buttons of the action bar of a photo are given by the viewer (zoom, 360°, 3D...), in their order
+// Immuch360: the buttons of the action bar of a photo are given by the viewer (zoom, 360°, 3D...), in their order; those
+// of a video go in its top bar, after the close button
 export interface ViewerAction {
 	key: string;
 	icon?: string;
@@ -52,9 +53,18 @@ export const MediaControls: React.FC<MediaControlsProps> = React.memo(
 		return (
 			<div ref={rootRef} className={controlsVisible ? chrome.chrome : `${chrome.chrome} ${chrome.hidden}`}>
 				<div className={chrome.topBar}>
-					{/* Video has no action bar (Down opens the transport bar), so it keeps a close button here. */}
+					{/* Video has no action bar (Down opens the transport bar), so it keeps a close button here. Immuch360: and the
+					    buttons the viewer gives a video ("Turn the picture"), which Up reaches; the focus among them keeps the
+					    bar on screen */}
 					{isVideo && (
-						<Button icon="closex" size="small" backgroundOpacity="transparent" onClick={onClose} spotlightId={CLOSE_BUTTON_SPOTLIGHT_ID} />
+						<div className={css.videoBar} onFocus={handleBarFocus} onBlur={handleBarBlur}>
+							<Button icon="closex" size="small" backgroundOpacity="transparent" onClick={onClose} spotlightId={CLOSE_BUTTON_SPOTLIGHT_ID} />
+							{actions.map((action) => (
+								<RoundButton key={action.key} icon={action.icon} tooltipText={action.label} onClick={action.onClick} spotlightId={action.spotlightId}>
+									{action.text}
+								</RoundButton>
+							))}
+						</div>
 					)}
 					<div className={css.infoColumn}>
 						<MediaInfo asset={asset} />

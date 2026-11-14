@@ -43,9 +43,11 @@ import {
 	type VideoGateInput,
 } from '../../immuch360/video/limits';
 import {holdsFlatVideoNotice} from '../../immuch360/video/session';
+import {nextTurn} from '../../immuch360/video/orientation';
+import {setVideoTurnChoice, videoTurnChoice} from '../../immuch360/video/turnChoice';
 import {usePlaysOriginal, useVideoGate, useVideoSession} from '../../immuch360/video/useVideoGate';
 import {MediaControls, type ViewerAction} from './MediaControls';
-import {VideoPlayer, VideoPlayerApi, viewerVideoElement} from './VideoPlayer';
+import {PLAYER_SPOTLIGHT_ID, VideoPlayer, VideoPlayerApi, viewerVideoElement, type VideoTurnShown} from './VideoPlayer';
 import {PhotoLoading, ZoomLevel} from './PhotoStatus';
 import css from './MediaViewer.module.less';
 
@@ -65,6 +67,8 @@ const STAGE_SPOTLIGHT_ID = 'media-viewer-stage';
 const ZOOM_IN_SPOTLIGHT_ID = 'media-viewer-zoom-in';
 // Immuch360: the Back button under the message of a video that does not play
 const VIDEO_BACK_SPOTLIGHT_ID = 'media-viewer-video-back';
+// Immuch360: the "Turn the picture" button of a video's top bar, where Up takes the focus (issue 17)
+const VIDEO_TURN_SPOTLIGHT_ID = 'media-viewer-video-turn';
 // readyState from which a video can play (HTMLMediaElement.HAVE_FUTURE_DATA, the canplay event)
 const HAVE_FUTURE_DATA = 3;
 // Immuch360: the duration the player found, once its metadata is in
@@ -154,6 +158,41 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		() => (detailsOfVideo ? {orientation: detailsOfVideo.orientation, width: detailsOfVideo.width, height: detailsOfVideo.height} : null),
 		[detailsOfVideo]
 	);
+	// Immuch360: the turn of a video chosen by hand ("Turn the picture", "Fit the picture", the yellow and blue keys),
+	// kept for the video (turnChoice.ts), and what the player turns it by now (its own turn until one is chosen)
+	const [turnVersion, setTurnVersion] = useState(0);
+	const manualTurn = useMemo(() => (isVideo && asset ? videoTurnChoice(asset.id) : null), [asset, isVideo, turnVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+	const [turnShown, setTurnShown] = useState<(VideoTurnShown & {assetId: string}) | null>(null);
+	const shownTurn = isVideo && asset && turnShown?.assetId === asset.id ? turnShown : null;
+	const turnAssetId = isVideo ? asset?.id : undefined;
+	const handleTurnShown = useCallback(
+		(shown: VideoTurnShown) => {
+			if (!turnAssetId) return;
+			setTurnShown((was) =>
+				was && was.assetId === turnAssetId && was.degrees === shown.degrees && was.fit === shown.fit && was.fitMatters === shown.fitMatters ? was : {...shown, assetId: turnAssetId}
+			);
+		},
+		[turnAssetId]
+	);
+	// Each press turns the picture as it shows a quarter turn further (clockwise, or back with the blue key); the choice
+	// replaces the player's own turn from then on
+	const turnVideo = useCallback(
+		(step: 1 | -1) => {
+			if (!turnAssetId) return;
+			const current = shownTurn?.degrees ?? manualTurn?.degrees ?? 0;
+			setVideoTurnChoice(turnAssetId, {degrees: nextTurn(current, step), fit: manualTurn?.fit});
+			setTurnVersion((n) => n + 1);
+		},
+		[turnAssetId, shownTurn, manualTurn]
+	);
+	// The proportions of the file or those the player reports, where they differ (a Samsung TV stretches the frames)
+	const fitVideo = useCallback(() => {
+		if (!turnAssetId) return;
+		const degrees = shownTurn?.degrees ?? manualTurn?.degrees ?? 0;
+		const fit = (shownTurn?.fit ?? manualTurn?.fit) === 'file' ? 'player' : 'file';
+		setVideoTurnChoice(turnAssetId, {degrees, fit});
+		setTurnVersion((n) => n + 1);
+	}, [turnAssetId, shownTurn, manualTurn]);
 	// Immuch360: the bitrate of the file, from its size and the asset's duration (else the one the player found)
 	const mediaDuration = (videoFailed ? videoFailure?.mediaDuration : null) ?? (stallSeen ? videoStall?.mediaDuration : null) ?? null;
 	const heavy = {
@@ -208,6 +247,9 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const sphereRef = useRef<SphereViewHandle>(null);
 
 	const [actionBarFocused, setActionBarFocused] = useState(false);
+	// Immuch360: Up on a video shows its top bar with "Turn the picture" focused; the focus among its buttons keeps it
+	// on screen, Down or Back hands the focus back to the player
+	const [videoBarAsked, setVideoBarAsked] = useState<{assetId: string; press: number} | null>(null);
 	const {rotation, rotate, notice: rotationNotice, phase: rotationPhase} = useAssetRotation(isVideo || show360 ? undefined : asset?.id);
 	const {zoom, zoomed, pulse: zoomPulse, zoomIn: photoZoomIn, zoomOut: photoZoomOut, reset: resetZoom, pan, style: zoomStyle} = usePhotoZoom(isVideo || show360 ? undefined : asset?.id);
 	if (zoomedPast2x !== zoom.scale > FULLSIZE_FROM_SCALE) setZoomedPast2x(zoom.scale > FULLSIZE_FROM_SCALE);
@@ -236,8 +278,8 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	// The bar faded out under an idle focus: hand it back to the stage rather than leave it on
 	// a hidden button.
 	useEffect(() => {
-		if (!controlsVisible && actionBarFocused) focusStage();
-	}, [controlsVisible, actionBarFocused]);
+		if (!isVideo && !controlsVisible && actionBarFocused) focusStage();
+	}, [isVideo, controlsVisible, actionBarFocused]);
 
 	// Sandstone transport-bar visibility (video) drives arrow-key semantics: hidden →
 	// left/right page between media; visible → Sandstone seeks.
@@ -269,6 +311,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		setVideoStall(null);
 		// And the full-size picture of a photo
 		setFullsizeFailed(null);
+		setVideoBarAsked(null);
 	}
 	const videoControlsOpen = isVideo && videoControlsVisible;
 
@@ -336,10 +379,31 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		else if (hadVideoMessage.current && isVideo) forceFocus(VIEWER_SPOTLIGHT_ID);
 		hadVideoMessage.current = hasVideoMessage;
 	}, [hasVideoMessage, assetId, isVideo]);
-	// Immuch360: a photo whose turn stays on the TV, or could not be saved, shows the controls with a message about it
+	// Immuch360: the focus in a video's top bar (its buttons), or Up that asked for it
+	const inVideoBar = isVideo && actionBarFocused;
+	const videoBarShown = inVideoBar || (isVideo && !!asset && videoBarAsked?.assetId === asset.id);
+	// Immuch360: a photo whose turn stays on the TV, or could not be saved, shows the controls with a message about it;
+	// a video's top bar shows while the focus is in it
 	const chromeVisible = isVideo
-		? videoControlsOpen || videoIntro === asset?.id || hasVideoMessage || (stallSeen && !!videoStall?.active)
+		? videoControlsOpen || videoIntro === asset?.id || hasVideoMessage || (stallSeen && !!videoStall?.active) || videoBarShown
 		: controlsVisible || !!rotationNotice;
+
+	// Immuch360: once the bar Up asked for shows, the focus goes to "Turn the picture"; the bar stays while the focus is in
+	// it, and the request lapses after the time the controls show
+	const askedPress = videoBarAsked?.press;
+	useEffect(() => {
+		if (askedPress === undefined) return undefined;
+		forceFocus(VIDEO_TURN_SPOTLIGHT_ID);
+		const timer = window.setTimeout(() => setVideoBarAsked(null), CONTROLS_HIDE_AFTER_MS);
+		return () => window.clearTimeout(timer);
+	}, [askedPress]);
+	const openVideoBar = useCallback(() => {
+		if (assetId) setVideoBarAsked((was) => ({assetId, press: (was?.press ?? 0) + 1}));
+	}, [assetId]);
+	const leaveVideoBar = useCallback(() => {
+		setVideoBarAsked(null);
+		forceFocus(PLAYER_SPOTLIGHT_ID);
+	}, []);
 
 	// Immuch360: Left and Right go to the neighbours whatever the video does; a video alone in the viewer seeks 10 s
 	const hasNeighbours = totalCount > 1;
@@ -360,12 +424,17 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 			playerApiRef.current.hideControls();
 			return;
 		}
+		// Immuch360: the focus in a video's top bar goes back to the player before Back closes it
+		if (inVideoBar) {
+			leaveVideoBar();
+			return;
+		}
 		if (zoomed) {
 			resetZoom();
 			return;
 		}
 		onClose();
-	}, [detailsOpen, videoControlsOpen, onClose, zoomed, resetZoom]);
+	}, [detailsOpen, videoControlsOpen, inVideoBar, leaveVideoBar, onClose, zoomed, resetZoom]);
 
 	// Immuch360: Up or Down held down zooms once. The repeats of the press that zoomed are swallowed: zoomed in, the
 	// arrows move the photo, and they would slide it to its edge. A new press of the key acts again.
@@ -411,12 +480,14 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	let arrowUp: ArrowHandler | undefined;
 	let arrowDown: ArrowHandler | undefined;
 	if (isVideo) {
-		// Left/right page between media, except while the video transport bar is open (Sandstone seeks there)
-		arrowLeft = videoControlsOpen ? undefined : videoLeft;
-		arrowRight = videoControlsOpen ? undefined : videoRight;
-		// Up/down must never reach Spotlight unhandled, or it leaks focus to the grid behind the overlay
-		arrowUp = videoControlsOpen ? undefined : swallowKey;
-		arrowDown = undefined;
+		// Left/right page between media, except while the video transport bar is open (Sandstone seeks there) or the focus
+		// is in the top bar (Spotlight moves between its buttons)
+		arrowLeft = videoControlsOpen || inVideoBar ? undefined : videoLeft;
+		arrowRight = videoControlsOpen || inVideoBar ? undefined : videoRight;
+		// Up/down must never reach Spotlight unhandled, or it leaks focus to the grid behind the overlay. Immuch360: Up
+		// takes the focus to the top bar's "Turn the picture" while the video plays, Down from there back to the player
+		arrowUp = videoControlsOpen ? undefined : inVideoBar || !playerShown ? swallowKey : openVideoBar;
+		arrowDown = inVideoBar && !videoControlsOpen ? leaveVideoBar : undefined;
 	} else if (show360) {
 		// The sphere turns with the arrows (SphereView) unless the focus is in the action bar
 		arrowUp = inActionBar ? focusStage : undefined;
@@ -452,8 +523,12 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		const onKeyDown = (event: KeyboardEvent) => {
 			const action = remoteAction(event);
 			const turn = !isVideo && !show360 ? photoRotationStep(action) : null;
+			// Immuch360: on a video that plays, the same keys turn its picture (issue 17)
+			const videoTurnStep = isVideo && playerShown ? photoRotationStep(action) : null;
 			let handled = true;
-			if (turn !== null) {
+			if (videoTurnStep !== null) {
+				if (!event.repeat) turnVideo(videoTurnStep);
+			} else if (turn !== null) {
 				// A key held down repeats: one press is one turn
 				if (!event.repeat) {
 					// The zoom and its position were for the photo as it stood
@@ -480,7 +555,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		};
 		window.addEventListener('keydown', onKeyDown, {capture: true});
 		return () => window.removeEventListener('keydown', onKeyDown, {capture: true});
-	}, [handlePrev, handleNext, isVideo, show360, inActionBar, zoomed, onClose, seekVideo, zoomIn, zoomOut, resetZoom, rotate, toggleDetails]);
+	}, [handlePrev, handleNext, isVideo, show360, inActionBar, zoomed, onClose, seekVideo, zoomIn, zoomOut, resetZoom, rotate, toggleDetails, playerShown, turnVideo]);
 
 	// Photos rest focus on the stage; forcing it also pulls focus off the grid card behind the
 	// overlay when the viewer was opened with the pointer.
@@ -549,10 +624,17 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const sphereZoomIn = useCallback(() => sphereRef.current?.zoomIn(), []);
 	const sphereZoomOut = useCallback(() => sphereRef.current?.zoomOut(), []);
 
+	const shownTurnFit = !!shownTurn?.fitMatters;
 	// The buttons of the action bar, in their order. Built from literals only: the zoom buttons of the sphere read a
 	// ref when pressed, and the React lint rules forbid handing such a function to a call during render.
 	const actions: ViewerAction[] = useMemo(() => {
-		if (!asset || isVideo) return [];
+		if (!asset) return [];
+		// Immuch360: a video that plays gets "Turn the picture", and "Fit the picture" where the proportions differ
+		if (isVideo) {
+			if (!playerShown) return [];
+			const turnAction: ViewerAction = {key: 'turn', icon: 'rotate', label: t('webos_video_turn'), onClick: () => turnVideo(1), spotlightId: VIDEO_TURN_SPOTLIGHT_ID};
+			return shownTurnFit ? [turnAction, {key: 'fit', icon: 'aspectratio', label: t('webos_video_fit'), onClick: fitVideo}] : [turnAction];
+		}
 		const sphereChoices: ViewerAction[] =
 			show360 && resolved
 				? [
@@ -592,7 +674,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 			{key: 'close', icon: 'closex', label: t('close'), onClick: onClose},
 			...last,
 		];
-	}, [asset, isVideo, show360, resolved, flagged, forced, choice, currentIndex, totalCount, zoomIn, zoomOut, sphereZoomIn, sphereZoomOut, rotate, toggleDetails, handlePrev, handleNext, onStartSlideshow, onClose, saveChoice, toggleForced]);
+	}, [asset, isVideo, playerShown, shownTurnFit, turnVideo, fitVideo, show360, resolved, flagged, forced, choice, currentIndex, totalCount, zoomIn, zoomOut, sphereZoomIn, sphereZoomOut, rotate, toggleDetails, handlePrev, handleNext, onStartSlideshow, onClose, saveChoice, toggleForced]);
 
 	// The Magic Remote drags the sphere through the stage, which lies over it
 	const stageMouse = useMemo(
@@ -618,6 +700,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	else if (rotationNotice === 'keptOnDevice') notice = t('rotate_kept_on_device');
 	else if (wants360 && sphereFailure) notice = sphereFailure.reason;
 	else if (stallText) notice = stallText;
+	else if (isVideo && playerShown && manualTurn) notice = t('webos_video_turned_by_hand', {degrees: manualTurn.degrees});
 	else if (video360 && playerShown) {
 		// Immuch360: a 360° video plays flat; where the TV keeps video frames out of WebGL, the first one of the session
 		// says why and the next ones say nothing (limits.ts, flatVideoNotice)
@@ -638,7 +721,14 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 							</Button>
 						</div>
 					) : playerShown ? (
-						<VideoPlayer src={mediaUrl} onControlsAvailable={handleVideoControlsAvailable} apiRef={playerApiRef} orientation={videoOrientation} />
+						<VideoPlayer
+							src={mediaUrl}
+							onControlsAvailable={handleVideoControlsAvailable}
+							apiRef={playerApiRef}
+							orientation={videoOrientation}
+							manualTurn={manualTurn}
+							onTurnShown={handleTurnShown}
+						/>
 					) : null
 				) : show360 ? (
 					<SphereView
