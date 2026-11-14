@@ -80,9 +80,9 @@ class DjiOsvCalibration {
   String toString() => 'DjiOsvCalibration(model: $model, serial: $serial, firmware: $firmware, schema: $schema)';
 }
 
-/// Reads the calibration of the DJI .osv file that [read] reads: a few header reads to reach the camd box after moov,
-/// then at most 256 KiB of its mdat; null when the file has no camd box or no usable calibration in it. Errors of
-/// [read] are not caught.
+/// Reads the calibration of the DJI .osv file that [read] reads: a few header reads to reach the camd box after moov
+/// (or the camd track of an Osmo 360 II through the moov box, [findDjiCamdMdat]), then at most 256 KiB of its mdat;
+/// null when the file has neither or no usable calibration in it. Errors of [read] are not caught.
 Future<DjiOsvCalibration?> readDjiOsvCalibration(ByteRangeReader read) async {
   final mdat = await findDjiCamdMdat(read);
   if (mdat == null) {

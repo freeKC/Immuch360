@@ -103,6 +103,7 @@ Future<ResolvedDualFisheyeCalibration> resolveDualFisheyeCalibration({
       : calibrationOf(
           trailer,
           accelerometer: accelerometer,
+          cameraModel: cameraModel,
         )?.copyWith(serial: serial, cameraModel: cameraModel, gravity: gravity, layoutHints: hints);
   if (fromFile != null) {
     if (serial != null) {

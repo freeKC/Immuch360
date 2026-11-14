@@ -7,10 +7,13 @@
 //   onex2/VID_20201031_094049_00_188.insv, _10_188.insv, IMG_20201026_154628_00_069.insp  Insta360 ONE X2, 360rumors
 //   oners1inch/VID_20220625_140410_00_008.insv, _10_008.insv, LRV_..._11_008.insv, IMG_20220701_170732_00_018.insp
 //                                              Insta360 ONE RS 1-inch 360, 360rumors
-// The values checked are those read on these files on 14 November 2026 (lots/feat-raw-2026-48.md).
+// The values checked are those read on these files on 14 November 2026 (lots/feat-raw-2026-48.md): what the readers
+// must give for the fixes of the lot to hold on real files (the axes themselves were measured against the pictures by
+// the lot's scripts, the stitches looked at with raw_2026_stitch_sample_test.dart).
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -18,6 +21,7 @@ import 'package:immich_mobile/domain/models/raw/camera_motion.dart';
 import 'package:immich_mobile/domain/models/raw/dual_fisheye_calibration.dart';
 import 'package:immich_mobile/domain/services/raw/dji_motion.dart';
 import 'package:immich_mobile/domain/services/raw/dji_osv.dart';
+import 'package:immich_mobile/domain/services/raw/dual_fisheye_math.dart';
 import 'package:immich_mobile/domain/services/raw/gopro_eac.dart';
 import 'package:immich_mobile/domain/services/raw/gopro_motion.dart';
 import 'package:immich_mobile/domain/services/raw/insta360_motion.dart';
@@ -80,7 +84,14 @@ String _lenses(DualFisheyeCalibration calibration) => [
         .trim(),
 ].join('\n  ');
 
-Future<void> _insta360(String path) async {
+typedef _Insta360Read = ({
+  String name,
+  Insta360Trailer? trailer,
+  DualFisheyeCalibration? calibration,
+  CameraMotionTrack? motion,
+});
+
+Future<_Insta360Read> _insta360(String path) async {
   final file = await _open(path);
   final name = path.split('/').last;
   _print(
@@ -89,8 +100,10 @@ Future<void> _insta360(String path) async {
   );
   final trailer = await readInsta360Trailer(file.read, file.size);
   _print('trailer: $trailer');
+  DualFisheyeCalibration? calibration;
+  CameraMotionTrack? motion;
   if (trailer != null) {
-    final calibration = calibrationOf(trailer);
+    calibration = calibrationOf(trailer);
     _print(
       'calibration ${calibration?.model.name}, canvas ${calibration?.canvasSquare}, down ${calibration?.downBody}'
       '\n  ${calibration == null ? '' : _lenses(calibration)}',
@@ -105,7 +118,7 @@ Future<void> _insta360(String path) async {
   if (!name.endsWith('.insp')) {
     final probe = await probeSphericalMetadata(file.read);
     _print('tracks:\n  ${_tracks(probe)}');
-    final motion = await readInsta360Motion(file.read, file.size);
+    motion = await readInsta360Motion(file.read, file.size);
     _print('motion: ${_motion(motion)}');
     if (motion != null && motion.samples.times.isNotEmpty) {
       final times = motion.samples.times;
@@ -117,7 +130,14 @@ Future<void> _insta360(String path) async {
       );
     }
   }
+  return (name: name, trailer: trailer, calibration: calibration, motion: motion);
 }
+
+// Upright: gravity along body +y within [degrees], the down of the view of dual_fisheye_math.dart
+Matcher _alongPlusY(double degrees) => predicate<List<double>>(
+  (down) => down[1] >= math.cos(degrees * math.pi / 180),
+  'gravity along body +y within $degrees degrees',
+);
 
 void main() {
   test('DJI Osmo 360 II', () async {
@@ -134,10 +154,21 @@ void main() {
     }
     final motion = await readDjiMotion(file.read, file.size);
     _print('motion: ${_motion(motion)}');
-    if (motion != null) {
-      final table = stabilizationOfCameraMotion(motion);
-      _print('stabilisation: $table');
-    }
+    final table = motion == null ? null : stabilizationOfCameraMotion(motion);
+    _print('stabilisation: $table');
+
+    // The camd track found, the calibration of the file with both lenses placed by their quaternions
+    expect(dji, isNotNull, reason: 'the camd content, a track sample on the Osmo 360 II');
+    expect((dji!.model, dji.firmware, dji.schema), ('Osmo 360 II', '01.01.02.10', 'dvtm_OQ102.proto'));
+    expect(dji.calibration.source, DualFisheyeSource.file);
+    expect(dji.calibration.lenses, hasLength(2));
+    expect(dji.calibration.lenses[0].fx, closeTo(1053.16, 0.01));
+    expect(dji.calibration.lenses.every((lens) => lens.viewToLens != null), isTrue, reason: 'both quaternions read');
+    // The attitude, 25 fps from 2-1-5, a frame quaternion and a table for each of the 258 frames
+    expect((motion!.cameraModel, motion.frameTimes.length), ('Osmo 360 II', 258));
+    expect(motion.frameTimes.last, closeTo(10.28, 1e-6));
+    expect(motion.frameOrientations, hasLength(4 * 258));
+    expect(table!.length, 258);
     // The orientations at a few delays, for the check against the picture (raw-2026/dji_vision48.py)
     final dump = Platform.environment['IMMUCH_RAW48_DUMP'];
     if (dump != null) {
@@ -160,20 +191,28 @@ void main() {
     final motion = await readGoProMotion(file.read, file.size);
     _print('motion: ${_motion(motion)}');
     _print('axes measured: ${goProAxesMeasured(motion?.cameraModel)}');
-    if (motion != null) {
-      final orientations = motion.frameOrientations!;
-      final gravity = motion.frameGravity!;
-      for (final frame in [0, 1, motion.frameTimes.length ~/ 2, motion.frameTimes.length - 1]) {
-        _print(
-          'frame $frame at ${motion.frameTimes[frame].toStringAsFixed(4)} s: CORI '
-          '${orientations.sublist(4 * frame, 4 * frame + 4)}, GRAV ${gravity.sublist(3 * frame, 3 * frame + 3)}, '
-          'SHUT ${motion.frameExposures.length > frame ? motion.frameExposures[frame] : null}',
-        );
-      }
+    final table = await readGoProStabilization(file.read, file.size, face: geometry?.face);
+    _print('stabilisation: $table');
+
+    expect(geometry?.face, goProMax2Face);
+    expect((motion!.cameraModel, motion.firmware, motion.frameTimes.length), ('MAX2', 'H24.02.01.09.71', 2749));
+    expect(goProViewToGpmfOf(motion.cameraModel, face: geometry!.face)!.values, Mat3.identity.values);
+    // On its tripod, GRAV along GPMF +y, the down of the view, which these axes take as the same
+    final gravities = motion.frameGravity!;
+    expect(gravities[1], greaterThan(0.999));
+    expect(table, isNotNull, reason: 'the MAX 2 gets its table');
+    expect(table!.length, 2749);
+    final orientations = motion.frameOrientations!;
+    for (final frame in [0, 1, motion.frameTimes.length ~/ 2, motion.frameTimes.length - 1]) {
+      _print(
+        'frame $frame at ${motion.frameTimes[frame].toStringAsFixed(4)} s: CORI '
+        '${orientations.sublist(4 * frame, 4 * frame + 4)}, GRAV ${gravities.sublist(3 * frame, 3 * frame + 3)}, '
+        'SHUT ${motion.frameExposures.length > frame ? motion.frameExposures[frame] : null}',
+      );
     }
   }, skip: _path('max2/GS010007.360') == null ? 'no GoPro MAX 2 sample' : false);
 
-  for (final (camera, files) in [
+  for (final (camera, files, check) in <(String, List<String>, void Function(List<_Insta360Read>))>[
     (
       'Insta360 ONE X2',
       [
@@ -181,6 +220,20 @@ void main() {
         'onex2/VID_20201031_094049_10_188.insv',
         'onex2/IMG_20201026_154628_00_069.insp',
       ],
+      (reads) {
+        final [video, second, photo] = reads;
+        expect(video.trailer!.cameraModel, 'Insta360 ONE X2');
+        expect(video.trailer!.isRawGyro, isFalse);
+        expect(insta360ImuAxesOf(video.trailer!.cameraModel), Insta360ImuAxes.xSeries);
+        // The frame record and field 24 in milliseconds: 139 frames over 4.6 s, not squeezed into 5 ms
+        final motion = video.motion!;
+        expect(motion.frameTimes.length, 139);
+        expect(motion.frameTimes.first, closeTo(0.011, 1e-9));
+        expect(motion.frameTimes.last, closeTo(4.615, 1e-9));
+        expect(motion.sampleRate, closeTo(500, 1));
+        expect(second.trailer, isNull, reason: 'lens 1 of the pair carries no trailer');
+        expect(photo.calibration?.model, DualFisheyeModel.mei);
+      },
     ),
     (
       'Insta360 ONE RS 1-inch 360',
@@ -190,15 +243,32 @@ void main() {
         'oners1inch/LRV_20220625_140410_11_008.insv',
         'oners1inch/IMG_20220701_170732_00_018.insp',
       ],
+      (reads) {
+        final [video, second, lrv, photo] = reads;
+        expect(video.trailer!.cameraModel, 'Insta360 OneRS');
+        expect(insta360ImuAxesOf(video.trailer!.cameraModel), Insta360ImuAxes.oneRs360);
+        // Upright and level with the axes of the ONE RS 360 (on their side with those of the X series)
+        expect(video.calibration!.downBody, _alongPlusY(3));
+        expect(lrv.calibration!.downBody, _alongPlusY(3));
+        expect(photo.calibration!.downBody, _alongPlusY(2));
+        final motion = video.motion!;
+        expect(motion.frameTimes.length, 1141);
+        expect(motion.frameTimes.last, closeTo(47.5, 1e-6));
+        expect(motion.sampleRate, closeTo(986, 1));
+        // At rest the accelerometer, in the body frame, points up: along body -y
+        expect(motion.samples.accelerations[1], lessThan(-0.9));
+        expect(second.trailer, isNull, reason: 'lens 1 of the pair carries no trailer');
+      },
     ),
   ]) {
     test(camera, () async {
+      final reads = <_Insta360Read>[];
       for (final relative in files) {
         final path = _path(relative);
-        if (path != null) {
-          await _insta360(path);
-        }
+        expect(path, isNotNull, reason: '$relative, next to ${files.first}');
+        reads.add(await _insta360(path!));
       }
+      check(reads);
     }, skip: _path(files.first) == null ? 'no $camera sample' : false);
   }
 }

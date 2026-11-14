@@ -369,6 +369,17 @@ void main() {
       expect(calibrationOf(rs)!.downBody, isNot(calibrationOf(x3)!.downBody));
     });
 
+    test('levels by the axes of the camera the EXIF names when the trailer does not name it', () async {
+      final unnamed = (await _trailer(_x3Photo(metadata: x3Metadata(model: ''))))!;
+      final rs = (await _trailer(_x3Photo(metadata: x3Metadata(model: 'Insta360 OneRS'))))!;
+
+      final calibration = calibrationOf(unnamed, cameraModel: 'Insta360 OneRS')!;
+      expect(calibration.downBody, calibrationOf(rs)!.downBody);
+      expect(calibration.cameraModel, 'Insta360 OneRS');
+      // The trailer's own name comes first
+      expect(calibrationOf(rs, cameraModel: 'Insta360 X3')!.downBody, calibrationOf(rs)!.downBody);
+    });
+
     test('builds the Mei model of the V3 string of an X3, levelled by the accelerometer of the trailer', () async {
       final calibration = calibrationOf((await _trailer(_x3Photo()))!);
 

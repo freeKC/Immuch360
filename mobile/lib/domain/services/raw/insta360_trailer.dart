@@ -486,8 +486,9 @@ Uint8List? _checkedPayload(Uint8List? bytes, _Record record, int id) {
 /// The calibration of the file whose trailer is [trailer]: the Mei model of its V3 string, else of its V6 string, else
 /// the equidistant model of its V1 string; null when it has none of them. Gravity comes from the mean accelerometer of
 /// the trailer, else from [accelerometer] (the sample of the MakerNote of a photo, see [readInsta360PhotoHead]), else
-/// the camera is taken as upright; through the axes of the IMU of its camera ([insta360ImuAxesOf]).
-DualFisheyeCalibration? calibrationOf(Insta360Trailer trailer, {List<double>? accelerometer}) {
+/// the camera is taken as upright; through the axes of the IMU of its camera ([insta360ImuAxesOf]), the one the trailer
+/// names, else [cameraModel] (the Model of the EXIF of a photo).
+DualFisheyeCalibration? calibrationOf(Insta360Trailer trailer, {List<double>? accelerometer, String? cameraModel}) {
   final v3 = trailer.offsetV3;
   final v6 = trailer.offsetV6;
   final v1 = trailer.offsetV1;
@@ -500,13 +501,12 @@ DualFisheyeCalibration? calibrationOf(Insta360Trailer trailer, {List<double>? ac
   if (lenses == null) {
     return null;
   }
+  final named = trailer.cameraModel?.trim();
+  final model = named == null || named.isEmpty ? cameraModel : trailer.cameraModel;
   return lenses.copyWith(
-    downBody: downBodyFromAccelerometer(
-      trailer.meanAccelerometer ?? accelerometer,
-      axes: insta360ImuAxesOf(trailer.cameraModel),
-    ),
+    downBody: downBodyFromAccelerometer(trailer.meanAccelerometer ?? accelerometer, axes: insta360ImuAxesOf(model)),
     serial: trailer.serial,
-    cameraModel: trailer.cameraModel,
+    cameraModel: model,
     source: DualFisheyeSource.file,
   );
 }

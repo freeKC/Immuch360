@@ -99,10 +99,11 @@ bool _isOsmo360II(String? model) => model?.trim().toLowerCase().replaceAll(' ', 
 /// Reads the attitude of the DJI Osmo 360 video of [fileSize] bytes that [read] reads: an orientation for each frame of
 /// the video, from the world to the body frame ([CameraMotionTrack.frameOrientations]), and the time of each frame on
 /// the timeline of the video (time 0 at the first frame of the file, whether or not its record was kept: a frame n
-/// frame durations after it is at n / frame rate), from the per frame records of the camd box, [chunkLength] bytes at a time, at most [maxLength] bytes of them ([CameraMotionTrack.truncated] tells when
-/// there are more). The orientation of a frame is the attitude [attitudeDelayUs] microseconds after its time stamp.
-/// Null for a file without a camd box or without attitude in it. A record whose frame does not come after the one
-/// before is left out and counted in [CameraMotionTrack.droppedSamples]. Errors of [read] are not caught.
+/// frame durations after it is at n / frame rate), from the per frame records of the camd box, [chunkLength] bytes at
+/// a time, at most [maxLength] bytes of them ([CameraMotionTrack.truncated] tells when there are more). The orientation
+/// of a frame is the attitude [attitudeDelayUs] microseconds after its time stamp. Null for a file without a camd box
+/// or track ([findDjiCamdMdat]) or without attitude in it. A record whose frame does not come after the one before is
+/// left out and counted in [CameraMotionTrack.droppedSamples]. Errors of [read] are not caught.
 Future<CameraMotionTrack?> readDjiMotion(
   ByteRangeReader read,
   int fileSize, {
