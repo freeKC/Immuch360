@@ -114,6 +114,87 @@ void main() {
       expect(refusing.registeredUserNames, everyElement(md5Hex('admin')));
     });
 
+    // Resync of release 48 (store/m2/release-48/tapo-resync.md): -2203 is the TPAP code of a wrong credential and
+    // -2101 the one of too many attempts (python-kasa PR 1592, mihai-dinculescu/tapo tapo_response.rs)
+    test('a pake_share refused with -2203 is a wrong passcode form: the other form is tried', () async {
+      final camera = FakeTapoCamera(passcode: TapoPasscodeHash.sha256)..shareRefusalCode = -2203;
+      final result = await _login(camera).login(_password);
+      expect(result.passcode, TapoPasscodeHash.sha256);
+      expect(camera.shares, 2);
+
+      final wrong = FakeTapoCamera(cloudPassword: 'another-password')..shareRefusalCode = -2203;
+      final error = _refusal(
+        await _login(wrong).login(_password).then<Object>((_) => 'logged in', onError: (Object e) => e),
+      );
+      expect(error.kind, TapoErrorKind.wrongPassword);
+      expect(error.code, -2203);
+      expect(wrong.shares, 2);
+    });
+
+    test('a pake_share refused with -2101 is a lockout: nothing more is tried', () async {
+      final camera = FakeTapoCamera(passcode: TapoPasscodeHash.sha256)..shareRefusalCode = -2101;
+      final error = _refusal(
+        await _login(camera).login(_password).then<Object>((_) => 'logged in', onError: (Object e) => e),
+      );
+      expect(error.kind, TapoErrorKind.locked);
+      expect(error.code, -2101);
+      expect(camera.shares, 1);
+    });
+
+    test('logs in to a camera asking for the MD5 crypt of the passcode (password_shadow 1)', () async {
+      // The credential the device holds: openssl passwd -1 -salt Qm4tZp8w <md5 hex of the password>
+      final camera = FakeTapoCamera()
+        ..extraCrypt = {
+          'type': 'password_shadow',
+          'params': {'passwd_id': 1, 'passwd_prefix': r'$1$Qm4tZp8w$'},
+        }
+        ..extraCryptCredential = r'$1$Qm4tZp8w$yMWNFPefNT0XoTN2kBv3O1';
+      final result = await _login(camera).login(_password);
+      expect(result.passcode, TapoPasscodeHash.md5);
+      expect(camera.refusedShares, 0);
+      await _deviceInfo(result.session);
+    });
+
+    test('refuses a SHA-256 crypt with more rounds than any camera asks, before any share is sent', () async {
+      final camera = FakeTapoCamera()
+        ..extraCrypt = {
+          'type': 'password_shadow',
+          'params': {'passwd_id': 5, 'passwd_prefix': r'$5$rounds=900000000$x1hYMevsEYq2APg+$'},
+        }
+        ..extraCryptCredential = 'never used';
+      final started = DateTime.now();
+      final error = _refusal(
+        await _login(camera).login(_password).then<Object>((_) => 'logged in', onError: (Object e) => e),
+      );
+      expect(error.kind, TapoErrorKind.unsupported);
+      expect(camera.shares, 0);
+      expect(DateTime.now().difference(started), lessThan(const Duration(seconds: 5)));
+    });
+
+    test('tells the refusals of a request that one new login may cure', () {
+      for (final code in [-40401, -40421, -40420, -2402, -2101, -2203]) {
+        expect(TapoSessionRefused(code).isSessionLost, isTrue, reason: '$code');
+      }
+      expect(const TapoSessionRefused(null, httpStatus: 401).isSessionLost, isTrue);
+      expect(const TapoSessionRefused(null).isSessionLost, isFalse);
+      expect(const TapoSessionRefused(-40106).isSessionLost, isFalse);
+    });
+
+    for (final drop in [
+      (status: 401, json: null),
+      (status: 200, json: {'error_code': -40420}),
+    ]) {
+      test('a request answered ${drop.status} ${drop.json ?? 'without a body'} is a lost session', () async {
+        final camera = FakeTapoCamera();
+        final result = await _login(camera).login(_password);
+        camera.dropNextRequest = drop;
+        await expectLater(
+          _deviceInfo(result.session),
+          throwsA(isA<TapoSessionRefused>().having((e) => e.isSessionLost, 'lost', isTrue)),
+        );
+      });
+    }
+
     test('stops at a lockout, with its minutes', () async {
       final camera = FakeTapoCamera()
         ..lockout = {
@@ -280,6 +361,19 @@ void main() {
         expect(camera.calls, hasLength(2));
       });
     }
+
+    test(
+      'a request answered 401 without a body is a lost session (C220 and C100 on 1.4.4, python-kasa #1771)',
+      () async {
+        final camera = FakeTapoCamera(protocol: TapoLoginProtocol.v3);
+        final result = await _login(camera).login(_password);
+        camera.dropNextRequest = (status: 401, json: null);
+        await expectLater(
+          _deviceInfo(result.session),
+          throwsA(isA<TapoSessionRefused>().having((e) => e.isSessionLost, 'lost', isTrue)),
+        );
+      },
+    );
 
     test('refuses a wrong password from the device confirmation, without a login attempt', () async {
       final camera = FakeTapoCamera(protocol: TapoLoginProtocol.v3, cloudPassword: 'another');

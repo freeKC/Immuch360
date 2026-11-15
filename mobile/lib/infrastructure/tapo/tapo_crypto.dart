@@ -226,9 +226,14 @@ int pcm16ToAlaw(int sample) {
   return code ^ mask;
 }
 
+/// The most rounds a SHA-256 crypt may ask for: the count comes from whoever answers pake_register, before anything
+/// proved it is the camera, and crypt(3) itself allows 999999999 (python-kasa PR 1592 caps it the same)
+const tapoMaxCryptRounds = 100000;
+
 /// The SHA-256 crypt of Unix ("$5$", Drepper 2007) of [key] with the salt and the rounds of [prefix], what a camera
-/// asks for with extra_crypt password_shadow 5 (`$5$<salt>$`, the salt cut to 16 characters, "rounds=N$" honoured).
-/// Returns the whole `$5$[rounds=N$]salt$hash`.
+/// asks for with extra_crypt password_shadow 5 (`$5$<salt>$`, the salt cut to 16 characters, "rounds=N$" honoured,
+/// fewer than 1000 counted as 1000). Returns the whole `$5$[rounds=N$]salt$hash`. Throws a
+/// [TapoCredentialFormException] for more than [tapoMaxCryptRounds] rounds.
 String sha256Crypt(String key, String prefix) {
   var rest = prefix.startsWith(r'$5$') ? prefix.substring(3) : prefix;
   var rounds = 5000;
@@ -236,7 +241,11 @@ String sha256Crypt(String key, String prefix) {
   if (rest.startsWith('rounds=')) {
     final end = rest.indexOf(r'$');
     if (end > 0 && end < rest.length - 1) {
-      rounds = (int.tryParse(rest.substring(7, end)) ?? 5000).clamp(1000, 999999999);
+      rounds = int.tryParse(rest.substring(7, end)) ?? 5000;
+      if (rounds > tapoMaxCryptRounds) {
+        throw const TapoCredentialFormException('password_shadow 5 rounds');
+      }
+      rounds = max(rounds, 1000);
       explicitRounds = true;
       rest = rest.substring(end + 1);
     }
@@ -297,6 +306,57 @@ String sha256Crypt(String key, String prefix) {
   return '\$5\$${explicitRounds ? 'rounds=$rounds\$' : ''}$salt\$$encoded';
 }
 
+/// The MD5 crypt of Unix ("$1$", Poul-Henning Kamp 1994, what openssl passwd -1 gives) of [key] with the salt of
+/// [prefix] (`$1$<salt>$`, cut to 8 characters): what a camera asks for with extra_crypt password_shadow 1
+String md5Crypt(String key, String prefix) {
+  final rest = prefix.startsWith(r'$1$') ? prefix.substring(3) : prefix;
+  final saltEnd = rest.indexOf(r'$');
+  final salt = rest.substring(0, min(saltEnd >= 0 ? saltEnd : rest.length, 8));
+  final k = utf8.encode(key);
+  final s = utf8.encode(salt);
+  final alternate = md5Bytes([...k, ...s, ...k]);
+  final first = <int>[...k, ...utf8.encode(r'$1$'), ...s];
+  for (var i = 0; i < k.length; i++) {
+    first.add(alternate[i % 16]);
+  }
+  for (var n = k.length; n > 0; n >>= 1) {
+    first.add((n & 1) != 0 ? 0 : k.first);
+  }
+  var c = md5Bytes(first);
+  for (var i = 0; i < 1000; i++) {
+    final input = <int>[...(i & 1) != 0 ? k : c];
+    if (i % 3 != 0) {
+      input.addAll(s);
+    }
+    if (i % 7 != 0) {
+      input.addAll(k);
+    }
+    input.addAll((i & 1) != 0 ? c : k);
+    c = md5Bytes(input);
+  }
+  const alphabet = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  final encoded = StringBuffer();
+  void to64(int value, int count) {
+    var rest = value;
+    for (var i = 0; i < count; i++) {
+      encoded.write(alphabet[rest & 0x3f]);
+      rest >>= 6;
+    }
+  }
+
+  for (final [x, y, z] in const [
+    [0, 6, 12],
+    [1, 7, 13],
+    [2, 8, 14],
+    [3, 9, 15],
+    [4, 10, 5],
+  ]) {
+    to64((c[x] << 16) | (c[y] << 8) | c[z], 4);
+  }
+  to64(c[11], 2);
+  return '\$1\$$salt\$$encoded';
+}
+
 /// Thrown when the camera asks for a credential form this app does not know (an extra_crypt of a later firmware)
 class TapoCredentialFormException implements Exception {
   const TapoCredentialFormException(this.detail);
@@ -309,7 +369,14 @@ class TapoCredentialFormException implements Exception {
 }
 
 /// The SPAKE2+ credential of [passcode] after the extra_crypt of the pake_register answer, when the camera sends one
-/// (a C200 on firmware 1.4.6 asks for the SHA-256 crypt of the passcode, password_shadow 5)
+/// (a C200 on firmware 1.4.6 asks for the SHA-256 crypt of the passcode, password_shadow 5). The forms of later
+/// firmware as python-kasa PR 1592 and mihai-dinculescu/tapo read them (release 48 resync): password_shadow 1 the MD5
+/// crypt, 2 the SHA-1, 3 the SHA-1 of the user name and the MAC, which a camera's login leaves out (its passcode stays
+/// as it is), 5 the SHA-256 crypt from passwd_prefix, else from passwd_salt and passwd_rounds; password_authkey the
+/// passcode masked with authkey_tmpkey through authkey_dictionary; password_sha_with_salt the SHA-256 of the role
+/// ("admin" for sha_name 0, else "user"), the decoded sha_salt and the passcode. A form this app does not know, or one
+/// without what it needs, throws a [TapoCredentialFormException] rather than spend one of the camera's attempts on a
+/// credential that cannot be the right one.
 String applyExtraCrypt(String passcode, Object? extraCrypt) {
   if (extraCrypt is! Map) {
     return passcode;
@@ -319,15 +386,59 @@ String applyExtraCrypt(String passcode, Object? extraCrypt) {
     return passcode;
   }
   final params = extraCrypt['params'] is Map ? extraCrypt['params'] as Map : const {};
-  if (type == 'password_shadow') {
-    final id = int.tryParse('${params['passwd_id'] ?? ''}');
-    if (id == 5) {
-      return sha256Crypt(passcode, '${params['passwd_prefix'] ?? ''}');
-    }
-    if (id == 2) {
-      return crypto.sha1.convert(utf8.encode(passcode)).toString();
-    }
-    throw TapoCredentialFormException('password_shadow $id');
+  String text(String key) => '${params[key] ?? ''}'.trim();
+  switch (type) {
+    case 'password_shadow':
+      final id = int.tryParse(text('passwd_id'));
+      final prefix = text('passwd_prefix');
+      switch (id) {
+        case 1:
+          if (!prefix.startsWith(r'$1$')) {
+            throw const TapoCredentialFormException('password_shadow 1 prefix');
+          }
+          return md5Crypt(passcode, prefix);
+        case 2:
+          return crypto.sha1.convert(utf8.encode(passcode)).toString();
+        case 3:
+          return passcode;
+        case 5:
+          if (prefix.isNotEmpty) {
+            return sha256Crypt(passcode, prefix);
+          }
+          final salt = text('passwd_salt');
+          if (salt.isEmpty) {
+            throw const TapoCredentialFormException('password_shadow 5 salt');
+          }
+          final rounds = int.tryParse(text('passwd_rounds'));
+          return sha256Crypt(
+            passcode,
+            rounds == null || rounds == 5000 ? '\$5\$$salt\$' : '\$5\$rounds=$rounds\$$salt\$',
+          );
+      }
+      throw TapoCredentialFormException('password_shadow $id');
+    case 'password_authkey':
+      final key = text('authkey_tmpkey').runes.toList();
+      final dictionary = text('authkey_dictionary').runes.toList();
+      if (key.isEmpty || dictionary.isEmpty) {
+        throw const TapoCredentialFormException('password_authkey');
+      }
+      final code = passcode.runes.toList();
+      return String.fromCharCodes([
+        for (var i = 0; i < max(key.length, code.length); i++)
+          dictionary[((i < code.length ? code[i] : 0xbb) ^ (i < key.length ? key[i] : 0xbb)) % dictionary.length],
+      ]);
+    case 'password_sha_with_salt':
+      final shaName = int.tryParse(text('sha_name'));
+      final String salt;
+      try {
+        salt = utf8.decode(base64.decode(text('sha_salt')));
+      } on FormatException {
+        throw const TapoCredentialFormException('password_sha_with_salt salt');
+      }
+      if (shaName == null || salt.isEmpty) {
+        throw const TapoCredentialFormException('password_sha_with_salt');
+      }
+      return sha256Hex('${shaName == 0 ? 'admin' : 'user'}$salt$passcode');
   }
   throw TapoCredentialFormException(type);
 }
