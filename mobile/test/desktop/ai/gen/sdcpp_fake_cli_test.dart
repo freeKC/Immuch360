@@ -305,6 +305,16 @@ void main() {
     });
 
     test('given a device beyond its list, the fake ends as the pinned build does; the list puts it right', () async {
+      // The fake alone, run to its end: exit 1 and the line of the pinned build on its error output
+      final alone = await Process.run(
+        _fakeSdCli!,
+        ['--backend', 'diffusion=Vulkan2,vae=Vulkan2,te=CPU'],
+        environment: {'IMMUCH360_FAKE_SD_CLI_DEVICES': _laptop},
+      );
+      expect(alone.exitCode, 1);
+      expect('${alone.stdout}', contains('ggml_vulkan: Found 2 Vulkan devices:'));
+      expect('${alone.stderr}', contains("[E] backend 'Vulkan2' was not found"));
+
       final generator = SdCppGenerator(
         runner: runner(),
         settings: settings(device: 'Vulkan2', devices: _laptop, card: _rtx),
@@ -317,8 +327,19 @@ void main() {
 
       expect(failure, isNull);
       expect(generator.device.name, 'Vulkan1');
-      final log = File(p.join(folder.path, 'logs', 'sd-cli.log')).readAsStringSync();
-      expect(log, contains("[E] backend 'Vulkan2' was not found"));
+      // Both runs in the log of the job, the first on Vulkan2. The runner stops that first run as soon as its list is
+      // read (the list goes to the output, the [E] line to the error output), so whether the [E] line reached the log
+      // before the stop is a race of the two outputs: when it did, it is in the first run's part
+      final log = File(p.join(folder.path, 'logs', 'sd-cli.log')).readAsLinesSync();
+      final heads = [
+        for (final (index, line) in log.indexed)
+          if (line.startsWith('===== ')) index,
+      ];
+      expect(heads, hasLength(2));
+      expect(log[heads[0]], contains('sd-cli on Vulkan2, attempt 1'));
+      expect(log[heads[1]], contains('sd-cli on Vulkan1, attempt 2'));
+      expect(log.sublist(heads[0], heads[1]), contains('ggml_vulkan: Found 2 Vulkan devices:'));
+      expect(log.sublist(heads[1]).where((line) => line.contains("backend 'Vulkan2' was not found")), isEmpty);
     });
 
     test('an upscale: four times its input, its tiles reported', () async {
