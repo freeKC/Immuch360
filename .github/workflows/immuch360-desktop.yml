@@ -825,9 +825,20 @@ jobs:
           - image: debian:12
             package: deb
             slug: debian-12
+          # Mesa 24.1 of Fedora 40 draws the virtual screen with llvmpipe, which compiles its shaders with LLVM 18 for
+          # the runner's processor: on the Intel Xeon 6975P-C and Platinum 8573C runners, its AVX-512 code crashes
+          # libLLVM.so.18.1 (llvm::X86InstrInfo::unfoldMemoryOperand) at the first frame of Flutter's Impeller, before
+          # any video (desktop run 43749726425, 15 November 2026, every attempt on those processors). Not a fault of the
+          # package: Fedora 44's Mesa and LLVM draw on the same runners. GALLIUM_OVERRIDE_CPU_CAPS=avx makes Mesa see
+          # the processor as an AVX one (no AVX2, no AVX-512), so llvmpipe stays Fedora 40's own software renderer, on
+          # LLVM still, and the video and the splat checks run as before (probe run 43753896359 of the branch
+          # ci-fedora40-48-probe: avx passed on the 6975P-C where the default, 128 and 256 bit vectors crashed;
+          # softpipe plays the video but has no WebGL2 for the splat). Only this container, only the CI's virtual
+          # screen: the package and what it installs are unchanged
           - image: fedora:40
             package: rpm
             slug: fedora-40
+            mesa_cpu_caps: avx
           - image: fedora:44
             package: rpm
             slug: fedora-44
@@ -848,16 +859,26 @@ jobs:
         env:
           IMAGE: ${{ matrix.image }}
           PACKAGE: ${{ matrix.package }}
+          # The processor Mesa's llvmpipe compiles for, capped in the container where the matrix says so (fedora:40,
+          # see its entry above); empty elsewhere
+          MESA_CPU_CAPS: ${{ matrix.mesa_cpu_caps || '' }}
         run: |
           # The status of check_package.sh through the pipe to tee, not tee's: the step runs under bash -e only
           set -o pipefail
           file=$(cd dist && ls ./*."$PACKAGE")
           mkdir -p video-smoke
+          mesa=()
+          if [ -n "$MESA_CPU_CAPS" ]; then
+            mesa=(-e "GALLIUM_OVERRIDE_CPU_CAPS=$MESA_CPU_CAPS")
+            cpu=$(sed -n 's/^model name\s*:\s*//p' /proc/cpuinfo | head -n 1)
+            echo "::notice title=$IMAGE::GALLIUM_OVERRIDE_CPU_CAPS=$MESA_CPU_CAPS in the container: Mesa's llvmpipe" \
+              "compiles for an $MESA_CPU_CAPS processor on the CI's virtual screen (runner $cpu)"
+          fi
           # The core of a crash of the app is written in the container (/tmp/core.<pid>), where video_smoke.sh prints
           # its stack; the runner's own handler (apport) keeps nothing of a process in a container
           echo '/tmp/core.%p' | sudo tee /proc/sys/kernel/core_pattern
           status=0
-          docker run --rm --ulimit core=-1 -v "$PWD/dist:/pkgs:ro" \
+          docker run --rm --ulimit core=-1 "${mesa[@]}" -v "$PWD/dist:/pkgs:ro" \
             -v "$PWD/.github/desktop/packaging/linux:/check:ro" -v "$PWD/mobile/test/fixtures/video:/clips:ro" \
             -v "$PWD/mobile/test/fixtures/splat_viewer:/splats:ro" -e SPLAT=/splats/room_floor.spz \
             -v "$PWD/video-smoke:/out" "$IMAGE" \
