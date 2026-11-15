@@ -49,6 +49,8 @@ import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/desktop/video/spherical_controls.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_service.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
@@ -61,6 +63,7 @@ import 'package:logging/logging.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/sphere.dart';
+import 'package:media_kit_video/xr.dart';
 import 'package:native_video_player/native_video_player.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -195,6 +198,14 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
   late final RendererProbe _probe;
 
   late ProjectionParams _params;
+
+  /// What the headset view shows of this page (xr/headset_view.dart): its playback and subtitle line, and a signal
+  /// when the player or the 3D layout changes
+  late final HeadsetControllerPlayback _headsetPlayback;
+  late final HeadsetTarget _headsetTarget;
+  late final HeadsetViewService _headsetService;
+  final _headsetChanged = HeadsetSignal();
+  bool _headsetRegistered = false;
   ViewAngles _view = const ViewAngles();
 
   /// What draws now, null until the first open decided it
@@ -348,6 +359,11 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     _controller.buffering.addListener(_onBuffering);
     _controller.videoController.addListener(_onBuffering);
     _controller.onPlaybackEnded.addListener(_onStatus);
+    _headsetPlayback = HeadsetControllerPlayback(_controller);
+    _headsetTarget = _makeHeadsetTarget();
+    _headsetService = ref.read(headsetViewServiceProvider);
+    _headsetService.register(_headsetTarget);
+    _headsetRegistered = true;
     // What Flutter said of the stabilisation before the open, then what it says once the table is built
     final inbox = _stabilizationInbox;
     final url = widget.args.url;
@@ -543,6 +559,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     if (!identical(engine, _rendererEngine)) {
       _renderer = (_deps.pluginFor ?? _pluginForEngine)(engine);
       _rendererEngine = engine;
+      // The headset view takes the new player
+      _headsetChanged.fire();
     }
     final renderer = _renderer;
     if (renderer == null) {
@@ -615,6 +633,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       onScreen: _onScreen,
     );
     partner.failure.addListener(_onPartnerFailure);
+    // The headset would get this player's lens only: not offered while a second player draws the other one
+    _headsetChanged.fire();
     String? reason;
     try {
       // The other stream's file goes through the same resolver as the file: a server URL becomes the bridge's
@@ -690,6 +710,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     }
     _partner = null;
     partner.failure.removeListener(_onPartnerFailure);
+    // One player draws the whole frame again (a stack, one lens or another file): the headset view may take it
+    _headsetChanged.fire();
     final renderer = _renderer;
     if (renderer != null && renderer.attached) {
       await renderer.setPartner(null);
@@ -979,6 +1001,52 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     }
   }
 
+  /// What the headset view shows of this page: the player drawn through renderer C, around the head with each eye's
+  /// part of a 3D frame, or its frame on a flat screen; the window's yaw ahead. Play or pause and seek go through
+  /// this page's own controls. A raw file drawn by two players is not offered (plan 7): the headset would get the
+  /// first player's lens only.
+  HeadsetTarget _makeHeadsetTarget() => HeadsetTarget(
+    source: () => HeadsetSourceKind.player360,
+    video: () => _params.isRaw
+        ? HeadsetVideoKind.raw360
+        : _params.coverage == SphereCoverage.half
+        ? HeadsetVideoKind.video180
+        : HeadsetVideoKind.video360,
+    title: () => widget.args.title,
+    choices: const [HeadsetChoice.around, HeadsetChoice.screen2d],
+    preselected: () => HeadsetChoice.around,
+    layoutOf: (choice) => (
+      mode: choice == HeadsetChoice.around ? XrHeadsetMode.sphere : XrHeadsetMode.screen,
+      stereo: switch (_params.layout) {
+        StereoLayout.mono => XrStereo.mono,
+        StereoLayout.leftRight => XrStereo.leftRight,
+        StereoLayout.topBottom => XrStereo.topBottom,
+      },
+      squeeze: XrEyeSqueeze.full,
+    ),
+    handle: () async => _rendererEngine?.videoController?.player.handle,
+    playPause: () => unawaited(_playPause()),
+    seekBy: (delta) => unawaited(_skip(delta)),
+    pause: () => unawaited(_controller.pause()),
+    playback: _headsetPlayback.playback,
+    frameRate: _headsetPlayback.frameRate,
+    subtitle: _headsetPlayback.subtitle,
+    yaw: () => _view.yaw,
+    hideSubtitles: (hidden) {
+      final native = _rendererEngine?.videoController?.player.platform;
+      return headsetHideSubtitles(hidden, native: native is NativePlayer ? native : null, state: _headsetChanged);
+    },
+    videoChanged: _headsetChanged,
+    notAvailable: () => _partner != null ? 'a raw file drawn by two players' : null,
+  );
+
+  void _unregisterHeadset() {
+    if (_headsetRegistered) {
+      _headsetRegistered = false;
+      _headsetService.unregister(_headsetTarget);
+    }
+  }
+
   static PluginRenderer? _pluginForEngine(PlaybackEngine engine) {
     final videoController = engine.videoController;
     return videoController == null
@@ -1203,6 +1271,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     try {
       codec = await _readMpv(engine, 'current-tracks/video/codec');
       rate = await (_deps.framesPerSecond ?? _mpvFramesPerSecond)(engine);
+      _headsetPlayback.frameRate.value = rate ?? 0;
       hwdec = await (_deps.hwdecCurrent ?? _mpvHwdec)(engine);
     } catch (error) {
       _log.fine('The kind of video was not read whole: $error');
@@ -1345,6 +1414,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       return;
     }
     setState(() => _params = params);
+    // The headset view takes the new layout
+    _headsetChanged.fire();
     final renderer = _renderer;
     if (renderer != null && renderer.attached) {
       // Uniforms of the pass only: the 3D layout and the coverage change nothing of mpv
@@ -1391,6 +1462,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       return;
     }
     _closed = true;
+    // The headset view goes to the page behind, or waits for a video
+    _unregisterHeadset();
     // The second player of two back to the pool now: the page that opened this one takes a player back as soon as it
     // hears of the close, and would otherwise take this one's partner, a failure this page no longer answers
     unawaited(_releasePartner());
@@ -1603,6 +1676,9 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     _controller.onPlaybackEnded.removeListener(_onStatus);
     // The second player of two back to the pool, also when the page never got a player of its own
     unawaited(_releasePartner());
+    _unregisterHeadset();
+    _headsetPlayback.dispose();
+    _headsetChanged.dispose();
     // Renderer C off and the player back to the pool, in this order (the adapter's unprepare)
     _controller.dispose();
     _visibility.dispose();

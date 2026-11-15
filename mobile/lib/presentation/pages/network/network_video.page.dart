@@ -17,6 +17,7 @@ import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/mpv_video_view.dart';
 import 'package:immich_mobile/desktop/video/player_resource_options.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -2247,7 +2248,21 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                       // libmpv plays the films the device cannot decode on the Meta Quest, and there the server's
                       // conversion too (mpv reads HLS, Media3 of the app has no HLS module)
                       child: CurrentPlatform.isDesktop
-                          ? DesktopVideoView(onViewReady: _initController)
+                          ? DesktopVideoView(
+                              onViewReady: _initController,
+                              // The headset view (lib/desktop/video/xr)
+                              headset: HeadsetFlatPage(
+                                playerKey: _playerKey,
+                                source: () => switch (_shareType) {
+                                  NetworkSourceType.plex => HeadsetSourceKind.plex,
+                                  NetworkSourceType.tapo => HeadsetSourceKind.camera,
+                                  NetworkSourceType.documentTree ||
+                                  NetworkSourceType.deviceFolder => HeadsetSourceKind.local,
+                                  _ => HeadsetSourceKind.nas,
+                                },
+                                title: () => _name,
+                              ),
+                            )
                           : _playsWithMpv
                           ? MpvVideoView(onViewReady: _initController)
                           : NativeVideoPlayerView(onViewReady: _initController),

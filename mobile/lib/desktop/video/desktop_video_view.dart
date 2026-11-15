@@ -26,6 +26,8 @@ import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_sources.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_service.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
@@ -33,12 +35,13 @@ import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 class DesktopVideoView extends ConsumerStatefulWidget {
-  const DesktopVideoView({super.key, required this.onViewReady, this.pool, this.resolve});
+  const DesktopVideoView({super.key, required this.onViewReady, this.pool, this.resolve, this.headset});
 
   /// Called once with the controller of the view, as NativeVideoPlayerView.onViewReady
   final void Function(NativeVideoPlayerController)? onViewReady;
@@ -47,6 +50,10 @@ class DesktopVideoView extends ConsumerStatefulWidget {
   /// server for the sources
   final PlayerPool? pool;
   final DesktopVideoSourceResolver? resolve;
+
+  /// What the page tells the headset view of its video, null while the page's video is not the one on screen (a
+  /// neighbour of the viewer's pages)
+  final HeadsetFlatPage? headset;
 
   /// Whether this computer plays videos: libmpv was loaded at start (desktop_video_setup.dart)
   static bool get available => desktopVideoAvailable;
@@ -76,8 +83,18 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         widget.onViewReady?.call(_controller);
+        _syncHeadset();
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant DesktopVideoView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((oldWidget.headset == null) != (widget.headset == null) ||
+        oldWidget.headset?.playerKey != widget.headset?.playerKey) {
+      _syncHeadset();
+    }
   }
 
   static Future<String> _unavailable(VideoSource source) async =>
@@ -85,6 +102,13 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
 
   @override
   void dispose() {
+    // Out of the headset first: renderer C's flat pass off before the player goes back to the pool
+    final bound = _headset;
+    _headset = null;
+    if (bound != null) {
+      _headsetService.unregister(bound.target);
+      bound.dispose();
+    }
     _controller.dispose();
     super.dispose();
   }
@@ -115,6 +139,36 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
       ),
     );
   }
+
+  HeadsetFlatBinding? _headset;
+
+  /// The page's video goes to the headset view while the page shows it (headset_view.dart): registered while
+  /// [DesktopVideoView.headset] is given, unregistered when it no longer is or the view goes
+  void _syncHeadset() {
+    final page = widget.headset;
+    final bound = _headset;
+    if (page != null && bound != null && bound.page.playerKey == page.playerKey) {
+      return;
+    }
+    if (bound != null) {
+      _headset = null;
+      _headsetService.unregister(bound.target);
+      bound.dispose();
+    }
+    if (page == null || !_playable) {
+      return;
+    }
+    final service = _headsetService;
+    final binding = _headset = HeadsetFlatBinding(
+      controller: _controller,
+      page: page,
+      notifier: () => ref.read(videoPlayerProvider(page.playerKey).notifier),
+    );
+    service.register(binding.target);
+  }
+
+  /// Read once, when the page first gives its video: the service lives with the app
+  late final HeadsetViewService _headsetService = ref.read(headsetViewServiceProvider);
 }
 
 /// What the app's media bridge measures of the reads of a video it serves (see LocalMediaBridge.trafficOf)

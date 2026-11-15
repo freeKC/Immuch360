@@ -99,6 +99,13 @@ enum DesktopWindowKey {
 
   /// Control A, Command A on macOS, never while typing: selects the whole grid shown (lib/desktop/selection)
   selectAll,
+
+  /// H alone, never while typing: View in headset with the layout the player marks, or its end
+  /// (lib/desktop/video/xr); no viewer or player of the app uses H
+  toggleHeadsetView,
+
+  /// Shift H, never while typing: recenters the headset view
+  recenterHeadsetView,
 }
 
 /// The window key [event] stands for, if any. Presses only: a held key does not toggle full screen again and again.
@@ -135,6 +142,9 @@ DesktopWindowKey? desktopWindowKeyOf(KeyEvent event, {bool? typing}) {
   }
   if (key == LogicalKeyboardKey.keyF && !control && !meta && !alt && !(typing ?? isTypingText())) {
     return DesktopWindowKey.toggleFullScreenInViewer;
+  }
+  if (key == LogicalKeyboardKey.keyH && !control && !meta && !alt && !(typing ?? isTypingText())) {
+    return keyboard.isShiftPressed ? DesktopWindowKey.recenterHeadsetView : DesktopWindowKey.toggleHeadsetView;
   }
   return null;
 }

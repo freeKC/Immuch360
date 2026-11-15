@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/desktop/video/desktop_subtitle_track_button.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_button.dart';
 import 'package:immich_mobile/domain/models/video_track_naming.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -23,7 +24,8 @@ const _shadows = [Shadow(color: Colors.black87, blurRadius: 6, offset: Offset(0,
 /// the remote: left and right on it seek, further at each press of a quick series and faster while held (see
 /// VideoTimeBar, RemoteSeekSeries), the step of the last press beside the time (VideoSeekHint). The audio track and
 /// subtitle menus follow, for a video that has several audio tracks or subtitles (VideoTrackButtons,
-/// DesktopAudioTrackButton, DesktopSubtitleTrackButton), with the names a media server gives them ([trackNaming]).
+/// DesktopAudioTrackButton, DesktopSubtitleTrackButton), with the names a media server gives them ([trackNaming]), and
+/// on a computer View in headset (HeadsetViewButton).
 class NetworkVideoControls extends ConsumerWidget {
   const NetworkVideoControls({
     super.key,
@@ -82,6 +84,8 @@ class NetworkVideoControls extends ConsumerWidget {
               if (CurrentPlatform.isDesktop) ...[
                 DesktopAudioTrackButton(shadows: _shadows, naming: trackNaming),
                 DesktopSubtitleTrackButton(shadows: _shadows, naming: trackNaming),
+                // View in headset, where a PC VR runtime is registered (lib/desktop/video/xr)
+                const HeadsetViewButton(shadows: _shadows),
               ] else if (mpvController != null) ...[
                 DesktopAudioTrackButton(shadows: _shadows, naming: trackNaming, controller: mpvController),
                 DesktopSubtitleTrackButton(shadows: _shadows, naming: trackNaming, controller: mpvController),

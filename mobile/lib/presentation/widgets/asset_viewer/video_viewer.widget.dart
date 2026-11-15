@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_placeholder.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
@@ -953,7 +954,18 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
               child: ExcludeFocus(
                 // The computers play through media_kit (lib/desktop/video), with a controller of the same type
                 child: CurrentPlatform.isDesktop
-                    ? DesktopVideoView(onViewReady: _initController)
+                    ? DesktopVideoView(
+                        onViewReady: _initController,
+                        // The headset view (lib/desktop/video/xr) shows the video on screen only
+                        headset: widget.isCurrent && !widget.asset.isMotionPhoto
+                            ? HeadsetFlatPage(
+                                playerKey: widget.asset.id,
+                                source: () =>
+                                    widget.asset.hasRemote ? HeadsetSourceKind.immich : HeadsetSourceKind.local,
+                                title: () => widget.asset.name,
+                              )
+                            : null,
+                      )
                     : NativeVideoPlayerView(onViewReady: _initController),
               ),
             ),
