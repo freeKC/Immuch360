@@ -197,7 +197,7 @@ HeadsetViewService testService(
 }) => HeadsetViewService(
   api: api,
   settings: settings ?? HeadsetViewSettings(folder: () async => folder),
-  renderStrip: (content, font) async => Uint8List(headsetStripWidth * headsetStripHeight * 4),
+  renderStrip: (content, font, direction) async => Uint8List(headsetStripWidth * headsetStripHeight * 4),
   onNotice: (notice) => notices?.add(notice),
   appVersion: () async => '3.4.2+3030046',
   now: now,

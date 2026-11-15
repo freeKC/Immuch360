@@ -1,8 +1,8 @@
-// "PC VR headset (experimental)" in Settings, Videos of Immuch360 Desktop, under the AV2 row (headset_view.dart): the
-// switch, on by default; the state line (Windows only for now, with the switch disabled, on Linux and macOS; no PC VR
-// runtime found; or the runtime registered); then, while on, matching the refresh rate, pausing when the headset is
-// taken off and the test pattern at 24 or 30 frames per second; and, on or off, the folder of the headset logs to
-// send back (the crash guard turns the switch off exactly when the logs matter most).
+// "PC VR headset (experimental)" in Settings, Asset Viewer, Videos of Immuch360 Desktop, under the AV2 row
+// (headset_view.dart): the switch, on by default; the state line (Windows only for now, with the switch disabled, on
+// Linux and macOS; no PC VR runtime found; or the runtime registered); then, while on, matching the refresh rate,
+// pausing when the headset is taken off and the test pattern at 24 or 30 frames per second; and, on or off, the folder
+// of the headset logs to send back (the crash guard turns the switch off exactly when the logs matter most).
 // A Windows build without the plugin's option shows no row: nothing in it could work.
 
 import 'dart:async';
