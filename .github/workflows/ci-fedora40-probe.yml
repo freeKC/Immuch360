@@ -1,0 +1,73 @@
+name: Fedora 40 software renderer probe (helper branch, never merged)
+
+# The fedora:40 package check of the desktop workflow crashes in libLLVM 18 (X86InstrInfo::unfoldMemoryOperand) when
+# Mesa's llvmpipe compiles its first shaders on an Intel Xeon 6975P-C runner. This probe installs the .rpm of desktop
+# run 43749726425 (at H of release 48) in fedora:40 and runs the same check_package.sh --video with SPLAT, once per
+# Mesa setting, so that the setting that passes on that processor is known before the desktop workflow is changed.
+
+on:
+  push:
+    branches: [ci-fedora40-48-probe]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  probe:
+    name: fedora:40 ${{ matrix.variant }} ${{ matrix.n }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [baseline, vw256, vw128, caps-avx, caps-sse41, softpipe]
+        n: [1, 2]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: Immuch360-Desktop-*-linux-*
+          merge-multiple: true
+          skip-decompress: true
+          path: dist
+          run-id: 43749726425
+          github-token: ${{ github.token }}
+
+      - name: Install and check
+        env:
+          VARIANT: ${{ matrix.variant }}
+        run: |
+          set -o pipefail
+          echo "runner: $(sed -n 's/^model name\s*:\s*//p' /proc/cpuinfo | head -n 1)"
+          case "$VARIANT" in
+            baseline) extra= ;;
+            vw256) extra="-e LP_NATIVE_VECTOR_WIDTH=256" ;;
+            vw128) extra="-e LP_NATIVE_VECTOR_WIDTH=128" ;;
+            caps-avx) extra="-e GALLIUM_OVERRIDE_CPU_CAPS=avx" ;;
+            caps-sse41) extra="-e GALLIUM_OVERRIDE_CPU_CAPS=sse4.1" ;;
+            softpipe) extra="-e GALLIUM_DRIVER=softpipe -e DRAW_USE_LLVM=0" ;;
+          esac
+          echo "variant $VARIANT: $extra"
+          file=$(cd dist && ls ./*.rpm)
+          mkdir -p video-smoke
+          echo '/tmp/core.%p' | sudo tee /proc/sys/kernel/core_pattern
+          # shellcheck disable=SC2086
+          docker run --rm --ulimit core=-1 $extra -v "$PWD/dist:/pkgs:ro" \
+            -v "$PWD/.github/desktop/packaging/linux:/check:ro" -v "$PWD/mobile/test/fixtures/video:/clips:ro" \
+            -v "$PWD/mobile/test/fixtures/splat_viewer:/splats:ro" -e SPLAT=/splats/room_floor.spz \
+            -v "$PWD/video-smoke:/out" fedora:40 \
+            sh /check/check_package.sh "/pkgs/${file#./}" --video /clips/flat-6s.mp4 /out /clips/flat-6s-theora.mkv
+
+      - name: Upload the output
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: probe-${{ matrix.variant }}-${{ matrix.n }}
+          path: video-smoke/
+          retention-days: 5
+          if-no-files-found: ignore
