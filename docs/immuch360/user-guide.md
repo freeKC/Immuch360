@@ -4,7 +4,7 @@ Every function of Immuch360, step by step, with its options, its messages and it
 
 Back to the [README](../../README.md)
 
-This guide covers every function of Immuch360, for your ordinary photos and videos as for those of a 360° camera (Insta360, GoPro MAX and MAX 2, DJI Osmo 360 and Osmo 360 II, Ricoh Theta, Samsung Gear 360), of the photo sphere mode of a phone or of a 3D camera, from an Immich server, the device itself, a NAS, a media server, a Plex server, a Tapo camera, a camera of another brand or a DJI drone, on phones, tablets, TVs (Android TV and Google TV, and a first test build for LG webOS TVs), Meta Quest headsets and computers (Windows, and early previews for Linux and macOS).
+This guide covers every function of Immuch360, for your ordinary photos and videos as for those of a 360° camera (Insta360, GoPro MAX and MAX 2, DJI Osmo 360 and Osmo 360 II, Ricoh Theta, Samsung Gear 360), of the photo sphere mode of a phone or of a 3D camera, from an Immich server, the device itself, a NAS, a media server, a Plex server, a Tapo camera, a camera of another brand or a DJI drone, on phones, tablets, TVs (Android TV and Google TV, LG webOS TVs, whose app is in LG's review, and a test build for Samsung Tizen TVs), Meta Quest headsets and computers (Windows, and early previews for Linux and macOS).
 
 **Which problem do you have?**
 
