@@ -28,15 +28,17 @@ jest.mock('./MediaControls', () => ({
 	MediaControls: ({
 		controlsVisible,
 		actions,
+		notice,
 		onActionBarFocusChange,
 	}: {
 		controlsVisible: boolean;
 		actions: {key: string; label: string; onClick: () => void}[];
+		notice?: string;
 		onActionBarFocusChange: (focused: boolean) => void;
 	}) => {
 		mockBar.focusChange = onActionBarFocusChange;
 		return (
-			<div data-testid="controls" data-visible={String(controlsVisible)}>
+			<div data-testid="controls" data-visible={String(controlsVisible)} data-notice={notice ?? ''}>
 				{actions.map((action) => (
 					<button key={action.key} type="button" onClick={action.onClick}>
 						{action.label}
@@ -46,7 +48,17 @@ jest.mock('./MediaControls', () => ({
 		);
 	},
 }));
-jest.mock('./VideoPlayer', () => ({viewerVideoElement: () => null, VideoPlayer: () => <div data-testid="player" />}));
+// The player: the turn chosen by hand it is given, and its report of the turn it shows
+const mockPlayer: {manualTurn: unknown; onTurnShown: ((shown: {degrees: number; fit: string; fitMatters: boolean}) => void) | null} = {manualTurn: null, onTurnShown: null};
+jest.mock('./VideoPlayer', () => ({
+	PLAYER_SPOTLIGHT_ID: 'videoPlayer',
+	viewerVideoElement: () => null,
+	VideoPlayer: ({manualTurn, onTurnShown}: {manualTurn: unknown; onTurnShown: (shown: {degrees: number; fit: string; fitMatters: boolean}) => void}) => {
+		mockPlayer.manualTurn = manualTurn;
+		mockPlayer.onTurnShown = onTurnShown;
+		return <div data-testid="player" />;
+	},
+}));
 // The sphere takes the arrows itself (its own listener): here it draws nothing and listens to nothing
 jest.mock('../../immuch360/sphere/SphereView', () => ({SphereView: jest.requireActual('react').forwardRef(() => null)}));
 jest.mock('../../immuch360/details/AssetDetailsPanel', () => ({AssetDetailsPanel: () => null}));
@@ -71,6 +83,8 @@ const KEYS = {
 	ArrowDown: 40,
 	Enter: 13,
 	GoBack: 461,
+	Yellow: 405,
+	Blue: 406,
 	PageUp: 33,
 	PageDown: 34,
 };
@@ -127,6 +141,10 @@ beforeEach(() => {
 	onClose = jest.fn();
 	onNavigate = jest.fn();
 	mockBar.focusChange = null;
+	mockPlayer.manualTurn = null;
+	mockPlayer.onTurnShown = null;
+	mockForceFocus.mockClear();
+	window.localStorage.clear();
 	resetVideoSession();
 	pointerMode = jest.spyOn(Spotlight, 'getPointerMode').mockReturnValue(false);
 });
@@ -413,5 +431,109 @@ describe('other items keep their keys', () => {
 		expect(press('PageUp')).toBe(false);
 		expect(screen.queryByText('125%')).toBeNull();
 		expect(screen.queryByRole('presentation')).toBeNull();
+	});
+});
+
+// Issue 17: a Samsung TV may draw an upright video on its side whatever the viewer guesses; its top bar has "Turn the
+// picture", which Up reaches, and the choice is kept for the video
+describe('a video turned by hand', () => {
+	const focusBar = (focused: boolean) =>
+		act(() => {
+			mockBar.focusChange?.(focused);
+		});
+	const reportShown = (degrees: number, fit = 'file', fitMatters = true) =>
+		act(() => {
+			mockPlayer.onTurnShown?.({degrees, fit, fitMatters});
+		});
+	const stored = () => JSON.parse(window.localStorage.getItem('immuch360_video_turns') ?? '{}');
+
+	test('Up shows the top bar with "Turn the picture" focused; Left and Right stay in it; Down hands the focus back', () => {
+		mount(video);
+		wait(5000);
+		expect(controlsShown()).toBe(false);
+		expect(press('ArrowUp')).toBe(true);
+		expect(mockForceFocus).toHaveBeenLastCalledWith('media-viewer-video-turn');
+		expect(controlsShown()).toBe(true);
+		focusBar(true);
+		// The bar stays while the focus is in it
+		wait(10000);
+		expect(controlsShown()).toBe(true);
+		expect(press('ArrowLeft')).toBe(false);
+		expect(press('ArrowRight')).toBe(false);
+		expect(onNavigate).not.toHaveBeenCalled();
+		expect(press('ArrowUp')).toBe(true);
+		expect(press('ArrowDown')).toBe(true);
+		expect(mockForceFocus).toHaveBeenLastCalledWith('videoPlayer');
+		focusBar(false);
+		expect(controlsShown()).toBe(false);
+		// Out of the bar, Left and Right go to the neighbours again
+		expect(press('ArrowLeft')).toBe(true);
+		expect(onNavigate).toHaveBeenCalledWith('prev');
+	});
+
+	test('Back in the top bar hands the focus back to the player, the next Back closes the video', () => {
+		mount(video);
+		press('ArrowUp');
+		focusBar(true);
+		expect(press('GoBack')).toBe(true);
+		expect(onClose).not.toHaveBeenCalled();
+		expect(mockForceFocus).toHaveBeenLastCalledWith('videoPlayer');
+		focusBar(false);
+		press('GoBack');
+		expect(onClose).toHaveBeenCalledTimes(1);
+	});
+
+	test('each press turns the picture as it shows a quarter further, kept for the video; the yellow and blue keys too', () => {
+		mount(video);
+		expect(screen.queryByText('Fit the picture')).toBeNull();
+		// The player turned it by itself (a Samsung TV): the first press goes on from there
+		reportShown(90);
+		fireEvent.click(screen.getByText('Turn the picture'));
+		expect(stored()).toEqual({v: {degrees: 180}});
+		expect(mockPlayer.manualTurn).toEqual({degrees: 180});
+		expect(screen.getByTestId('controls').dataset.notice).toBe('Turned by hand: 180°, kept for this video');
+		reportShown(180, 'player');
+		fireEvent.click(screen.getByText('Turn the picture'));
+		reportShown(270);
+		expect(mockPlayer.manualTurn).toEqual({degrees: 270});
+		fireEvent.keyDown(window, {keyCode: KEYS.Yellow});
+		reportShown(0, 'player');
+		expect(mockPlayer.manualTurn).toEqual({degrees: 0});
+		fireEvent.keyDown(window, {keyCode: KEYS.Blue});
+		expect(mockPlayer.manualTurn).toEqual({degrees: 270});
+		// A key held down turns once
+		reportShown(270);
+		fireEvent.keyDown(window, {keyCode: KEYS.Yellow, repeat: true});
+		expect(mockPlayer.manualTurn).toEqual({degrees: 270});
+		expect(stored()).toEqual({v: {degrees: 270}});
+	});
+
+	test('"Fit the picture" shows where the proportions differ and switches them, the turn kept', () => {
+		mount(video);
+		reportShown(90, 'file', true);
+		fireEvent.click(screen.getByText('Fit the picture'));
+		expect(stored()).toEqual({v: {degrees: 90, fit: 'player'}});
+		reportShown(90, 'player', true);
+		fireEvent.click(screen.getByText('Fit the picture'));
+		expect(mockPlayer.manualTurn).toEqual({degrees: 90, fit: 'file'});
+		// The next turn keeps the fit chosen
+		fireEvent.click(screen.getByText('Turn the picture'));
+		expect(mockPlayer.manualTurn).toEqual({degrees: 180, fit: 'file'});
+		reportShown(180, 'file', false);
+		expect(screen.queryByText('Fit the picture')).toBeNull();
+	});
+
+	test('the choice made before is given to the player when the video opens again', () => {
+		window.localStorage.setItem('immuch360_video_turns', JSON.stringify({v: {degrees: 270, fit: 'player'}}));
+		mount(video);
+		expect(mockPlayer.manualTurn).toEqual({degrees: 270, fit: 'player'});
+		expect(screen.getByTestId('controls').dataset.notice).toBe('Turned by hand: 270°, kept for this video');
+	});
+
+	test('a photo keeps its own yellow and blue turn, and no video button', () => {
+		mount();
+		expect(screen.queryByText('Turn the picture')).toBeNull();
+		fireEvent.keyDown(window, {keyCode: KEYS.Yellow});
+		expect(stored()).toEqual({});
 	});
 });

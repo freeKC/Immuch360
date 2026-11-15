@@ -1,7 +1,17 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {VideoPlayer as SandstoneVideoPlayer} from '@enact/sandstone/VideoPlayer';
 import {features} from '../../platform/features';
-import {noteVideoTurn, videoTurn, videoTurnTransform, type VideoOrientationInfo} from '../../immuch360/video/orientation';
+import {platform} from '../../platform/detect';
+import {
+	fitMatters,
+	noteVideoTurn,
+	resolveVideoTurn,
+	videoTurnTransform,
+	type TurnDegrees,
+	type VideoFit,
+	type VideoOrientationInfo,
+	type VideoTurnChoice,
+} from '../../immuch360/video/orientation';
 import {holdScreenSaver} from '../../utils/screenSaver';
 import css from './MediaViewer.module.less';
 
@@ -30,6 +40,18 @@ interface VideoPlayerProps {
 	// Immuch360: the orientation and stored size of the video (asset details), null while unknown: a video filmed upright
 	// whose frames the player shows on their side is turned (src/immuch360/video/orientation.ts, issue 17)
 	orientation?: VideoOrientationInfo | null;
+	// Immuch360: the turn chosen with the viewer's "Turn the picture" and "Fit the picture" buttons, which replaces the
+	// player's own; null for none
+	manualTurn?: VideoTurnChoice | null;
+	// Immuch360: what the picture is turned by now, and whether the fit changes anything, for the viewer's buttons
+	onTurnShown?: (shown: VideoTurnShown) => void;
+}
+
+/** What the player turns the picture by, once it knows the frames (VideoPlayer's onTurnShown) */
+export interface VideoTurnShown {
+	degrees: TurnDegrees;
+	fit: VideoFit;
+	fitMatters: boolean;
 }
 
 // Sandstone exposes VideoPlayer with a Slottable-only typing — `autoCloseTimeout`,
@@ -42,6 +64,10 @@ interface VideoPlayerProps {
 // We set a sentinel aria-label and hide via [aria-label="..."] in the LESS module —
 // targeting the CSS-Modules hash directly would break on every Sandstone rebuild.
 const HIDDEN_BACK_LABEL = 'immich-tv-internal-back-hidden';
+
+// Immuch360: the player's Spotlight container (Sandstone's default id, kept), where the focus goes back from the buttons
+// of the video's top bar; it enters at the handle that takes the keys while the transport bar is closed
+export const PLAYER_SPOTLIGHT_ID = 'videoPlayer';
 
 const PLAYER_PROPS = {
 	autoCloseTimeout: 5000,
@@ -69,7 +95,7 @@ function passApi(ref: React.Ref<VideoPlayerApi> | undefined, api: VideoPlayerApi
 	else if (ref) (ref as React.MutableRefObject<VideoPlayerApi | null>).current = api;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailable, apiRef, orientation}) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailable, apiRef, orientation, manualTurn, onTurnShown}) => {
 	// Immuch360: the player's API for this component too (the pause below), and for the viewer through apiRef
 	const ownApi = useRef<VideoPlayerApi | null>(null);
 	const setApi = useCallback(
@@ -113,14 +139,23 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 		};
 	}, []);
 
-	// Immuch360: on a Samsung TV the video element is turned once the player knows the size of the frames (loadedmetadata),
-	// and again when the asset's details come; the player's controls are outside the element and stay as they are
+	// Immuch360: the video element is turned once the player knows the size of the frames (loadedmetadata), and again
+	// when the asset's details come or a turn is chosen by hand; the player's controls are outside the element and stay
+	// as they are. By itself on a Samsung TV only; a turn chosen by hand on every TV.
 	const turnOrientation = orientation?.orientation ?? null;
 	const turnWidth = orientation?.width ?? null;
 	const turnHeight = orientation?.height ?? null;
+	const manualDegrees = manualTurn?.degrees ?? null;
+	const manualFit = manualTurn?.fit ?? null;
+	const shownRef = useRef(onTurnShown);
 	useEffect(() => {
-		// webOS only notes what its player reported, for the diagnostics page; the element is turned on Samsung only
-		const turns = features().turnSidewaysVideo;
+		shownRef.current = onTurnShown;
+	});
+	useEffect(() => {
+		// webOS only notes its own turn, for the diagnostics page, and leaves it to its player
+		const {turnSidewaysVideo, reportedVideoSizeTellsTurn} = features();
+		const rule = {reportedSizeTellsTurn: reportedVideoSizeTellsTurn};
+		const manual: VideoTurnChoice | null = manualDegrees === null ? null : manualFit ? {degrees: manualDegrees, fit: manualFit} : {degrees: manualDegrees};
 		// The element turned last: on closing it is already out of the page
 		let turned: HTMLVideoElement | null = null;
 		const apply = () => {
@@ -135,11 +170,17 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 				boxWidth: node.clientWidth,
 				boxHeight: node.clientHeight,
 			};
-			const turn = videoTurn(input);
-			noteVideoTurn(input, turn, turns);
-			if (!turns) return;
-			turned = node;
-			node.style.transform = videoTurnTransform(turn);
+			const resolved = resolveVideoTurn(input, manual, rule);
+			const applies = resolved.source === 'manual' || turnSidewaysVideo;
+			if (applies) {
+				turned = node;
+				node.style.transform = videoTurnTransform(resolved.turn);
+			}
+			const rect = typeof node.getBoundingClientRect === 'function' ? node.getBoundingClientRect() : null;
+			noteVideoTurn(input, {platform: platform(), resolved, applied: applies, onScreen: rect ? {width: rect.width, height: rect.height} : null});
+			// A turn by hand stands before the player knows its frames; its own turn only once it is set
+			const degrees = resolved.source === 'manual' || (applies && resolved.turn) ? resolved.degrees : 0;
+			shownRef.current?.({degrees, fit: resolved.fit, fitMatters: fitMatters(input)});
 		};
 		const onMetadata = (event: Event) => {
 			if (fromThisPlayer(event.target)) apply();
@@ -152,7 +193,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 			window.removeEventListener('resize', apply);
 			if (turned) turned.style.transform = '';
 		};
-	}, [src, turnOrientation, turnWidth, turnHeight]);
+	}, [src, turnOrientation, turnWidth, turnHeight, manualDegrees, manualFit]);
 
 	const playerProps = {...PLAYER_PROPS, onControlsAvailable, ref: setApi, [VIDEO_MARK]: ''};
 	return (

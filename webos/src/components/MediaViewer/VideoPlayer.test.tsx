@@ -131,39 +131,89 @@ test('a Samsung TV turns a video filmed upright once the player knows its frames
 		video.dispatchEvent(new Event('loadedmetadata'));
 	});
 	expect(video.style.transform).toBe('rotate(90deg) scale(0.5625)');
-	expect(lastVideoTurnLine()).toBe('orientation 6, stored 1920 x 1080, player 1920 x 1080, box 1920 x 1080, rotate(90deg) scale(0.5625)');
+	expect(lastVideoTurnLine()).toBe('tizen, orientation 6, stored 1920 x 1080, player 1920 x 1080, element 1920 x 1080, auto rotate(90deg) scale(0.5625)');
 	unmount();
 	expect(video.style.transform).toBe('');
 });
 
-test('a Samsung TV leaves a video whose frames come already turned, and turns once the details come', () => {
+// Issue 17, the line of the reporter's Samsung TV with 0.3.2: "orientation 6, stored 3840 x 2160, player 2160 x 3840,
+// box 1920 x 1080, not turned", the picture on its side
+const UPRIGHT_4K = {orientation: '6', width: 3840, height: 2160};
+
+test('issue 17: a Samsung TV that reports the turned size of the original still gets the turn, unstretched', () => {
+	samsung();
+	const shown = jest.fn();
+	const {container} = render(<VideoPlayer src="clip.mp4" orientation={UPRIGHT_4K} onTurnShown={shown} />);
+	const video = playerVideo(container);
+	reportSizes(video, [2160, 3840]);
+	jest.spyOn(video, 'getBoundingClientRect').mockReturnValue({width: 607.5, height: 1080} as DOMRect);
+	act(() => {
+		video.dispatchEvent(new Event('loadedmetadata'));
+	});
+	expect(video.style.transform).toBe('rotate(90deg) scale(1.7778, 0.5625)');
+	expect(lastVideoTurnLine()).toBe(
+		'tizen, orientation 6, stored 3840 x 2160, player 2160 x 3840, element 1920 x 1080, auto rotate(90deg) scale(1.7778, 0.5625), on screen 608 x 1080'
+	);
+	expect(shown).toHaveBeenLastCalledWith({degrees: 90, fit: 'file', fitMatters: true});
+});
+
+test('a Samsung TV leaves a smaller stream of the other shape (a transcode that turned the frames), and turns once the details come', () => {
 	samsung();
 	const {container, rerender} = render(<VideoPlayer src="clip.mp4" orientation={null} />);
 	const video = playerVideo(container);
-	reportSizes(video, [1080, 1920]);
+	reportSizes(video, [720, 1280]);
 	act(() => {
 		video.dispatchEvent(new Event('loadedmetadata'));
 	});
 	rerender(<VideoPlayer src="clip.mp4" orientation={UPRIGHT} />);
 	expect(video.style.transform).toBe('');
+	expect(lastVideoTurnLine()).toBe('tizen, orientation 6, stored 1920 x 1080, player 720 x 1280, element 1920 x 1080, not turned');
 	reportSizes(video, [1920, 1080]);
 	rerender(<VideoPlayer src="clip.mp4" orientation={{...UPRIGHT, orientation: '8'}} />);
 	expect(video.style.transform).toBe('rotate(270deg) scale(0.5625)');
 });
 
-test('an LG TV leaves the turn to its player, and notes the size it reported for the diagnostics page', () => {
-	const {container} = render(<VideoPlayer src="clip.mp4" orientation={UPRIGHT} />);
+test('an LG TV or a browser leaves the turn to its player, and notes the size it reported for the diagnostics page', () => {
+	const {container} = render(<VideoPlayer src="clip.mp4" orientation={UPRIGHT_4K} />);
 	const video = playerVideo(container);
-	reportSizes(video, [1080, 1920]);
+	reportSizes(video, [2160, 3840]);
 	act(() => {
 		video.dispatchEvent(new Event('loadedmetadata'));
 	});
 	expect(video.style.transform).toBe('');
-	expect(lastVideoTurnLine()).toBe('orientation 6, stored 1920 x 1080, player 1080 x 1920, box 1920 x 1080, not turned');
-	reportSizes(video, [1920, 1080]);
+	expect(lastVideoTurnLine()).toBe('browser, orientation 6, stored 3840 x 2160, player 2160 x 3840, element 1920 x 1080, not turned');
+	reportSizes(video, [3840, 2160]);
 	act(() => {
 		video.dispatchEvent(new Event('loadedmetadata'));
 	});
 	expect(video.style.transform).toBe('');
-	expect(lastVideoTurnLine()).toBe('orientation 6, stored 1920 x 1080, player 1920 x 1080, box 1920 x 1080, rotate(90deg) scale(0.5625) left to the player');
+	expect(lastVideoTurnLine()).toBe('browser, orientation 6, stored 3840 x 2160, player 3840 x 2160, element 1920 x 1080, auto rotate(90deg) scale(0.5625) left to the player');
+});
+
+test('a turn chosen by hand replaces the turn of the player, on a Samsung TV as on an LG TV, and goes when it closes', () => {
+	samsung();
+	const shown = jest.fn();
+	const {container, rerender, unmount} = render(<VideoPlayer src="clip.mp4" orientation={UPRIGHT_4K} manualTurn={{degrees: 0}} onTurnShown={shown} />);
+	const video = playerVideo(container);
+	reportSizes(video, [2160, 3840]);
+	act(() => {
+		video.dispatchEvent(new Event('loadedmetadata'));
+	});
+	expect(video.style.transform).toBe('');
+	expect(shown).toHaveBeenLastCalledWith({degrees: 0, fit: 'player', fitMatters: true});
+	rerender(<VideoPlayer src="clip.mp4" orientation={UPRIGHT_4K} manualTurn={{degrees: 270, fit: 'player'}} onTurnShown={shown} />);
+	expect(video.style.transform).toBe('rotate(270deg) scale(1.7778)');
+	expect(lastVideoTurnLine()).toBe('tizen, orientation 6, stored 3840 x 2160, player 2160 x 3840, element 1920 x 1080, by hand 270, fit player, rotate(270deg) scale(1.7778)');
+	unmount();
+	expect(video.style.transform).toBe('');
+	delete (window as {tizen?: unknown}).tizen;
+	// An LG TV: no turn by itself, the one chosen by hand, for a video without the flag too
+	const {container: lgContainer} = render(<VideoPlayer src="clip.mp4" orientation={{orientation: '1', width: 1920, height: 1080}} manualTurn={{degrees: 90}} />);
+	const lgVideo = playerVideo(lgContainer);
+	reportSizes(lgVideo, [1920, 1080]);
+	act(() => {
+		lgVideo.dispatchEvent(new Event('loadedmetadata'));
+	});
+	expect(lgVideo.style.transform).toBe('rotate(90deg) scale(0.5625)');
+	expect(lastVideoTurnLine()).toBe('browser, orientation 1, stored 1920 x 1080, player 1920 x 1080, element 1920 x 1080, by hand 90, fit player, rotate(90deg) scale(0.5625)');
 });
