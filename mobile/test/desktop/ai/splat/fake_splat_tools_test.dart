@@ -697,6 +697,10 @@ bool _alive(int id) {
     final list = Process.runSync('tasklist', ['/FI', 'PID eq $id', '/NH']);
     return '${list.stdout}'.contains(' $id ');
   }
-  final status = File('/proc/$id/status');
-  return status.existsSync() && !status.readAsStringSync().contains(RegExp(r'State:\s+Z'));
+  // Read with no look before: the process can end and be reaped between a look and the read (No such process)
+  try {
+    return !File('/proc/$id/status').readAsStringSync().contains(RegExp(r'State:\s+Z'));
+  } on FileSystemException {
+    return false;
+  }
 }
