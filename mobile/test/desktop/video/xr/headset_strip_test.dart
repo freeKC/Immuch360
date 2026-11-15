@@ -3,9 +3,11 @@
 // most 4 a second.
 
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:fake_async/fake_async.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/video/xr/headset_strip.dart';
@@ -31,6 +33,120 @@ void main() {
     expect(bytes.sublist(0, 4), [0x15, 0x17, 0x1C, 255], reason: 'the background at the top left corner');
     final lighter = [for (var i = 0; i < bytes.length; i += 4) bytes[i]].where((red) => red > 0x80).length;
     expect(lighter, greaterThan(100), reason: 'some text drawn');
+  });
+
+  group('the hint fits its place, whole, in every language', () {
+    // The app's font, as the strip draws it on a computer
+    setUpAll(() async {
+      final font = FontLoader('GoogleSans');
+      for (final face in ['Regular', 'SemiBold']) {
+        final bytes = File('fonts/GoogleSans/GoogleSans-$face.ttf').readAsBytesSync();
+        font.addFont(Future.value(ByteData.sublistView(bytes)));
+      }
+      await font.load();
+    });
+
+    // A film of nearly two hours, the widest time of most videos
+    const time = '1:02:15 / 1:58:00';
+    const hints = ['headset_strip_hint_stick', 'headset_strip_hint_trackpad', 'headset_strip_hint_simple'];
+
+    void expectWhole(HeadsetStripLayout layout, String reason) {
+      final hint = layout.hint!;
+      expect(hint.whole, isTrue, reason: '$reason: no line cut');
+      expect(hint.width, lessThanOrEqualTo(layout.hintRoom + 0.5), reason: '$reason: within its width');
+      expect(hint.rect.top, greaterThanOrEqualTo(layout.title.rect.bottom - 0.5), reason: '$reason: under line 1');
+      expect(hint.rect.bottom, lessThanOrEqualTo(106), reason: '$reason: above line 3');
+      final time = layout.time.rect;
+      expect(hint.rect.left >= time.right || hint.rect.right <= time.left, isTrue, reason: '$reason: beside the time');
+      expect(hint.rect.left, greaterThanOrEqualTo(24 - 0.5), reason: '$reason: within the strip');
+      expect(hint.rect.right, lessThanOrEqualTo(headsetStripWidth - 24 + 0.5), reason: '$reason: within the strip');
+    }
+
+    test('the English hints on one line at full size, with room to spare', () {
+      for (final key in hints) {
+        final text = english[key]! as String;
+        final layout = layoutHeadsetStrip(
+          HeadsetStripContent(title: 'Lisbon', state: 'Paused', time: time, hint: text),
+          fontFamily: 'GoogleSans',
+        );
+        expectWhole(layout, key);
+        final hint = layout.hint!;
+        expect(hint.scale, 1, reason: key);
+        expect(hint.painter.text!.style!.fontSize, headsetHintSize, reason: '$key at full size');
+        expect(hint.painter.computeLineMetrics(), hasLength(1), reason: '$key on one line');
+        expect(hint.width, lessThan(layout.hintRoom * 0.93), reason: '$key: ${hint.width} of ${layout.hintRoom} px');
+      }
+    });
+
+    test('a hint far too long shrinks, wraps and scales down, its last words kept', () {
+      final long = List.filled(4, english['headset_strip_hint_stick']! as String).join(' ');
+      for (final direction in TextDirection.values) {
+        final layout = layoutHeadsetStrip(
+          HeadsetStripContent(title: 'Lisbon', state: 'Paused', time: time, hint: long),
+          fontFamily: 'GoogleSans',
+          direction: direction,
+        );
+        expectWhole(layout, direction.name);
+        expect(layout.hint!.painter.plainText, long);
+      }
+    });
+
+    test('the hints of the 88 translations are drawn whole', () {
+      final files = Directory('../i18n').listSync().whereType<File>().where((file) => file.path.endsWith('.json'));
+      expect(files.length, greaterThan(80));
+      for (final file in files) {
+        final texts = jsonDecode(file.readAsStringSync()) as Map<String, Object?>;
+        final language = file.uri.pathSegments.last.replaceAll('.json', '');
+        for (final key in hints) {
+          final text = texts[key];
+          if (text is! String || text.isEmpty) {
+            continue;
+          }
+          final layout = layoutHeadsetStrip(
+            HeadsetStripContent(title: 'Lisbon', state: 'Paused', time: time, hint: text),
+            fontFamily: 'GoogleSans',
+            direction: headsetStripDirectionOf(Locale(language.split('_').first)),
+          );
+          expectWhole(layout, '$language $key');
+        }
+      }
+    });
+  });
+
+  group('the reading direction', () {
+    test('right to left for Arabic, Persian, Hebrew and Urdu', () {
+      for (final language in ['ar', 'fa', 'he', 'ur']) {
+        expect(headsetStripDirectionOf(Locale(language)), TextDirection.rtl, reason: language);
+      }
+      for (final language in ['en', 'fr', 'de', 'ja', 'zh']) {
+        expect(headsetStripDirectionOf(Locale(language)), TextDirection.ltr, reason: language);
+      }
+      expect(headsetStripDirectionOf(null), TextDirection.ltr);
+    });
+
+    test('mirrored right to left: the title and the time at the right, the state at the left', () {
+      const content = HeadsetStripContent(
+        title: 'لشبونة',
+        state: 'متوقف',
+        time: '1:02:15 / 1:58:00',
+        hint: 'الزناد: تشغيل',
+        line3: 'نص',
+      );
+      final ltr = layoutHeadsetStrip(content);
+      final rtl = layoutHeadsetStrip(content, direction: TextDirection.rtl);
+      const width = headsetStripWidth * 1.0;
+      expect(ltr.title.rect.left, 24);
+      expect(rtl.title.rect.right, closeTo(width - 24, 0.01));
+      expect(ltr.state.rect.right, closeTo(width - 24, 0.01));
+      expect(rtl.state.rect.left, closeTo(24, 0.01));
+      expect(rtl.time.rect.right, closeTo(width - 24, 0.01));
+      expect(rtl.hint!.rect.right, closeTo(width - 48 - rtl.time.width, 0.01));
+      expect(rtl.line3!.rect.right, closeTo(width - 24, 0.01));
+      for (final text in [rtl.title, rtl.state, rtl.hint!, rtl.line3!]) {
+        expect(text.painter.textDirection, TextDirection.rtl);
+      }
+      expect(rtl.time.painter.textDirection, TextDirection.ltr, reason: 'the figures of the time read left to right');
+    });
   });
 
   group('the texts', () {
@@ -190,6 +306,31 @@ void main() {
     });
   });
 
+  test('the service draws the strip in the direction of the app language', () {
+    fakeAsync((async) {
+      final directions = <TextDirection>[];
+      final service = HeadsetViewService(
+        api: FakeHeadsetApi(),
+        settings: _MemorySettings(),
+        renderStrip: (content, font, direction) async {
+          directions.add(direction);
+          return Uint8List(headsetStripWidth * headsetStripHeight * 4);
+        },
+        onNotice: (_) {},
+        appVersion: () async => '3.4.2',
+        pollInterval: const Duration(hours: 1),
+      );
+      final page = FakePage();
+      service.register(page.target);
+      async.flushMicrotasks();
+      unawaited(service.start(HeadsetChoice.around, locale: const Locale('ar')));
+      async.elapse(const Duration(milliseconds: 300));
+      expect(directions, isNotEmpty);
+      expect(directions.toSet(), {TextDirection.rtl});
+      service.dispose();
+    });
+  });
+
   test('the service: the strip follows the page and hides 4 s after a change while playing', () {
     fakeAsync((async) {
       final start = DateTime(2026, 11, 15);
@@ -198,7 +339,7 @@ void main() {
       final service = HeadsetViewService(
         api: api,
         settings: _MemorySettings(),
-        renderStrip: (content, font) async => Uint8List(headsetStripWidth * headsetStripHeight * 4),
+        renderStrip: (content, font, direction) async => Uint8List(headsetStripWidth * headsetStripHeight * 4),
         onNotice: (_) {},
         appVersion: () async => '3.4.2',
         now: () => start.add(async.elapsed),

@@ -60,7 +60,7 @@ class HeadsetViewSettings {
 
   final Future<Directory> Function() _folder;
 
-  /// The switch of Settings, Videos: on by default
+  /// The switch of Settings, Asset Viewer, Videos: on by default
   final enabled = ValueNotifier<bool>(true);
 
   /// Ask the runtime for a refresh rate that is a multiple of the video's frame rate

@@ -1,10 +1,10 @@
 // "View in headset" in the controls of the players (headset_view.dart), next to the audio and subtitle track buttons:
 // the Immich viewer (VideoControls), the network page (NetworkVideoControls) and the 360 player (SphericalControls).
-// It shows only where it can be of use: the switch of Settings, Videos on, Windows, a build with the plugin's option,
-// an OpenXR runtime registered on this computer, and a page whose video can go to the headset. The menu: the layouts
-// the page offers (around you for a 360 video; on a flat screen in 2D, 3D side by side or 3D over under for a film,
-// the one its file name tells marked), or "Not available for this file yet" in their place (a raw 360 file drawn by two
-// players), then while a view runs its state, Recenter, Lying down and Stop.
+// It shows only where it can be of use: the switch of Settings, Asset Viewer, Videos on, Windows, a build with the
+// plugin's option, an OpenXR runtime registered on this computer, and a page whose video can go to the headset. The
+// menu: the layouts the page offers (around you for a 360 video; on a flat screen in 2D, 3D side by side or 3D over
+// under for a film, the one its file name tells marked), or "Not available for this file yet" in their place (a raw 360
+// file drawn by two players), then while a view runs its state, Recenter, Lying down and Stop.
 //
 // Keyboard, in every player: H starts the marked layout or stops the view, Shift+H recenters (DesktopShell, through
 // desktopWindowKeyOf; no viewer or player of the app uses H).

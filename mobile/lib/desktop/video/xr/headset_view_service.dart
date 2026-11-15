@@ -58,7 +58,7 @@ class HeadsetViewService extends ChangeNotifier {
   HeadsetViewService({
     HeadsetApi? api,
     HeadsetViewSettings? settings,
-    Future<Uint8List> Function(HeadsetStripContent content, String? fontFamily)? renderStrip,
+    Future<Uint8List> Function(HeadsetStripContent content, String? fontFamily, TextDirection direction)? renderStrip,
     void Function(HeadsetNotice notice)? onNotice,
     Translations? translations,
     Future<String> Function()? appVersion,
@@ -66,13 +66,15 @@ class HeadsetViewService extends ChangeNotifier {
     this.pollInterval = const Duration(milliseconds: 100),
   }) : api = api ?? const PluginHeadsetApi(),
        settings = settings ?? HeadsetViewSettings(),
-       _renderStrip = renderStrip ?? ((content, font) => renderHeadsetStrip(content, fontFamily: font)),
+       _renderStrip =
+           renderStrip ??
+           ((content, font, direction) => renderHeadsetStrip(content, fontFamily: font, direction: direction)),
        _onNotice = onNotice ?? showHeadsetNotice,
        _t = translations,
        _appVersion = appVersion ?? _packageVersion,
        _now = now ?? DateTime.now {
     _strip = HeadsetStripSender(
-      render: (content) => _renderStrip(content, _fontFamily),
+      render: (content) => _renderStrip(content, _fontFamily, _direction),
       send: (rgba, width, height, {required visible}) => this.api.setStrip(rgba, width, height, visible: visible),
       now: _now,
     );
@@ -82,7 +84,8 @@ class HeadsetViewService extends ChangeNotifier {
   final HeadsetApi api;
   final HeadsetViewSettings settings;
   final Duration pollInterval;
-  final Future<Uint8List> Function(HeadsetStripContent content, String? fontFamily) _renderStrip;
+  final Future<Uint8List> Function(HeadsetStripContent content, String? fontFamily, TextDirection direction)
+  _renderStrip;
   final void Function(HeadsetNotice notice) _onNotice;
   final Translations? _t;
   final Future<String> Function() _appVersion;
@@ -113,6 +116,7 @@ class HeadsetViewService extends ChangeNotifier {
   Timer? _flashEnd;
   bool _subtitlesHidden = false;
   String? _fontFamily;
+  TextDirection _direction = TextDirection.ltr;
   Future<void> _queue = Future.value();
 
   /// The runtime registered, as read at the last page opened (null before)
@@ -285,6 +289,7 @@ class HeadsetViewService extends ChangeNotifier {
     }
     // As the app's theme chooses it (theme_data.dart)
     _fontFamily = localesNotSupportedByAppFont.contains(locale) ? null : 'GoogleSans';
+    _direction = headsetStripDirectionOf(locale);
   }
 
   Future<void> _start(HeadsetTarget? page, {HeadsetChoice? choice, double? patternFps}) async {
