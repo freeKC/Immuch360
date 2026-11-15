@@ -195,6 +195,30 @@ void main() {
     });
   });
 
+  testWidgets('a raw file drawn by two players: the menu says not available and offers no layout', (tester) async {
+    final page = FakePage()..notAvailable = 'a raw file drawn by two players';
+    service.register(page.target);
+    await tester.runAsync(service.refreshRuntime);
+    await tester.pumpWidget(localized(bar(), service: service));
+    await settle(tester);
+    await tester.tap(find.byKey(const Key('headset_view_button')));
+    await tester.pumpAndSettle();
+    expect(find.text(english['headset_view_not_available']! as String), findsOneWidget);
+    expect(find.byKey(const Key('headset_view_around')), findsNothing);
+    expect(find.byKey(const Key('headset_view_screen2d')), findsNothing);
+    await tester.tap(find.byKey(const Key('headset_view_not_available')), warnIfMissed: false);
+    await settle(tester);
+    expect(api.starts, isEmpty);
+    // Once one player draws the whole frame, the layouts are back at the next opening of the menu
+    await tester.tapAt(const Offset(5, 5));
+    await tester.pumpAndSettle();
+    page.notAvailable = null;
+    await tester.tap(find.byKey(const Key('headset_view_button')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('headset_view_around')), findsOneWidget);
+    expect(find.byKey(const Key('headset_view_not_available')), findsNothing);
+  });
+
   group('the setting row', () {
     String text(String key) => english[key]! as String;
 
@@ -260,6 +284,45 @@ void main() {
       await settle(tester);
       expect(service.settings.enabled.value, isFalse);
       expect(find.byKey(const Key('headset_view_setting_refresh')), findsNothing);
+      expect(find.byKey(const Key('headset_view_pattern_24')), findsNothing);
+      // The logs stay reachable with the switch off
+      await tester.tap(find.byKey(const Key('headset_view_open_logs')));
+      await settle(tester);
+      expect(opened, [p.join(folder.path, 'headset'), p.join(folder.path, 'headset')]);
+    });
+
+    testWidgets('the crash guard turned the switch off: the folder of the logs is still there', (tester) async {
+      // Two views in a row that were running when the app ended. Made in the real zone, as the service of setUp:
+      // the settings' chain of writes would otherwise wait for the fake time
+      final next = (await tester.runAsync(() async {
+        final guarded = HeadsetViewSettings(folder: () async => folder);
+        await guarded.markRunning();
+        await guarded.checkCrashMarker();
+        await guarded.markRunning();
+        final next = testService(api, folder);
+        expect(await next.settings.checkCrashMarker(), HeadsetCrashCheck.turnedOff);
+        return next;
+      }))!;
+      addTearDown(next.dispose);
+      final opened = <String>[];
+      await tester.pumpWidget(
+        localized(
+          HeadsetViewSetting(
+            openFolder: (folder) async {
+              opened.add(folder);
+              return true;
+            },
+          ),
+          service: next,
+        ),
+      );
+      await settle(tester);
+      expect(tester.widget<SwitchListTile>(find.byKey(const Key('headset_view_setting_switch'))).value, isFalse);
+      expect(find.byKey(const Key('headset_view_setting_refresh')), findsNothing);
+      expect(find.byKey(const Key('headset_view_pattern_24')), findsNothing);
+      await tester.tap(find.byKey(const Key('headset_view_open_logs')));
+      await settle(tester);
+      expect(opened, [p.join(folder.path, 'headset')]);
     });
   });
 

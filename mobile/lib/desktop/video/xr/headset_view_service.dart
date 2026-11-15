@@ -246,6 +246,11 @@ class HeadsetViewService extends ChangeNotifier {
       _pattern = false;
       return _show(page, choice);
     }
+    final reason = page.notAvailable?.call();
+    if (reason != null) {
+      headsetViewLog.info('Not shown in the headset yet ($reason): no view started');
+      return;
+    }
     await _start(page, choice: choice);
   });
 
@@ -268,7 +273,7 @@ class HeadsetViewService extends ChangeNotifier {
       return stop();
     }
     final page = target;
-    if (page == null || !available) {
+    if (page == null || !available || page.notAvailable?.call() != null) {
       return Future.value();
     }
     return start(page.preselected(), locale: locale);
@@ -375,6 +380,11 @@ class HeadsetViewService extends ChangeNotifier {
   Future<void> _show(HeadsetTarget page, HeadsetChoice choice) async {
     if (!running) {
       return;
+    }
+    final reason = page.notAvailable?.call();
+    if (reason != null) {
+      headsetViewLog.info('Not shown in the headset yet ($reason): the dark room');
+      return _showIdle();
     }
     if (!identical(_shown, page)) {
       await _release();

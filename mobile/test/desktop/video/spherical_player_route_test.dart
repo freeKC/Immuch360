@@ -34,6 +34,7 @@ import 'package:immich_mobile/desktop/video/raw_two_stream_switch.dart';
 import 'package:immich_mobile/desktop/video/raw_two_streams.dart';
 import 'package:immich_mobile/desktop/video/render/sphere_renderer.dart';
 import 'package:immich_mobile/desktop/video/spherical_player_route.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_service.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/player_events_hub.dart';
@@ -691,6 +692,9 @@ void main() {
       expect(channel.setups.where((setup) => setup.secondary), isNotEmpty);
       expect(channel.partners, hasLength(1));
       expect(find.byKey(const Key('spherical_notice')), findsNothing);
+      // The headset would get this player's lens only: the page is not offered to it while the pair draws
+      final headset = container.read(headsetViewServiceProvider).target!;
+      expect(headset.notAvailable?.call(), 'a raw file drawn by two players');
 
       // The second player plays with this one and goes where it goes
       expect(second.calls, contains('play'));
@@ -728,10 +732,13 @@ void main() {
       await pumpLauncher(tester, SphericalPlayerArgs(url: file, title: args.title, rawProjection: osmo), pairing: true);
       await settle(tester);
       expect(page(tester).rawStep?.mode, RawMode.paired);
+      final headset = container.read(headsetViewServiceProvider).target!;
+      expect(headset.notAvailable?.call(), isNotNull);
       players.made[1].emit(PlayerEventKind.failed, 'libmpv: decoding failed');
       await settle(tester);
       expect(page(tester).rawStep?.mode, RawMode.oneLens);
       expect(players.made[1].calls, contains('stop'));
+      expect(headset.notAvailable?.call(), isNull, reason: 'one player draws what the window shows');
       await close(tester);
     });
 

@@ -3,7 +3,8 @@
 // It shows only where it can be of use: the switch of Settings, Videos on, Windows, a build with the plugin's option,
 // an OpenXR runtime registered on this computer, and a page whose video can go to the headset. The menu: the layouts
 // the page offers (around you for a 360 video; on a flat screen in 2D, 3D side by side or 3D over under for a film,
-// the one its file name tells marked), then while a view runs its state, Recenter, Lying down and Stop.
+// the one its file name tells marked), or "Not available for this file yet" in their place (a raw 360 file drawn by two
+// players), then while a view runs its state, Recenter, Lying down and Stop.
 //
 // Keyboard, in every player: H starts the marked layout or stops the view, Shift+H recenters (DesktopShell, through
 // desktopWindowKeyOf; no viewer or player of the app uses H).
@@ -67,6 +68,8 @@ class HeadsetViewButton extends ConsumerWidget {
         final t = context.t;
         final running = service.running;
         final marked = running && identical(service.shown, target) ? service.choice : target.preselected();
+        // Read when the menu opens: the page's video may have changed since this build
+        bool notAvailable() => target.notAvailable?.call() != null;
         return PopupMenuButton<_Item>(
           key: const Key('headset_view_button'),
           tooltip: running && service.statusText.isNotEmpty ? service.statusText : t.headset_view_button,
@@ -79,13 +82,20 @@ class HeadsetViewButton extends ConsumerWidget {
                 enabled: false,
                 child: Text(service.statusText),
               ),
-            for (final choice in target.choices)
-              CheckedPopupMenuItem<_Item>(
-                key: Key('headset_view_${choice.name}'),
-                value: _Choice(choice),
-                checked: choice == marked,
-                child: Text(headsetChoiceLabel(t, choice)),
-              ),
+            if (notAvailable())
+              PopupMenuItem<_Item>(
+                key: const Key('headset_view_not_available'),
+                enabled: false,
+                child: Text(t.headset_view_not_available),
+              )
+            else
+              for (final choice in target.choices)
+                CheckedPopupMenuItem<_Item>(
+                  key: Key('headset_view_${choice.name}'),
+                  value: _Choice(choice),
+                  checked: choice == marked,
+                  child: Text(headsetChoiceLabel(t, choice)),
+                ),
             if (running) ...[
               const PopupMenuDivider(),
               PopupMenuItem<_Item>(

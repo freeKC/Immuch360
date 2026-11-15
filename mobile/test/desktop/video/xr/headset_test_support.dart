@@ -145,6 +145,9 @@ class FakePage {
   final subtitle = ValueNotifier('');
   final changed = HeadsetSignal();
 
+  /// Why the page cannot go to the headset yet (a raw file drawn by two players), null when it can
+  String? notAvailable;
+
   late final target = HeadsetTarget(
     source: () => source,
     video: () => video,
@@ -180,6 +183,7 @@ class FakePage {
     release: () async => calls.add('release'),
     hideSubtitles: (hidden) async => calls.add('subtitles ${hidden ? 'hidden' : 'shown'}'),
     videoChanged: changed,
+    notAvailable: () => notAvailable,
   );
 }
 

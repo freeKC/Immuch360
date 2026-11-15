@@ -95,6 +95,41 @@ void main() {
   });
 
   group('one session', () {
+    test('a page that cannot go to the headset yet: no start, and the dark room while a view runs', () async {
+      final page = FakePage()..notAvailable = 'a raw file drawn by two players';
+      service.register(page.target);
+      await settle();
+      await service.toggle();
+      await service.start(HeadsetChoice.around);
+      expect(api.starts, isEmpty, reason: 'neither H nor the menu starts it');
+      expect(service.running, isFalse);
+
+      // A view runs on another page; this one comes on screen
+      final other = FakePage(handle: 9);
+      service.register(other.target);
+      await service.start(HeadsetChoice.around);
+      expect(api.starts.single.content.handle, 9);
+      service.unregister(other.target);
+      service.unregister(page.target);
+      service.register(page.target);
+      await settle();
+      expect(api.contents.last.mode, XrHeadsetMode.idle, reason: 'one lens is never shown');
+      expect(service.shown, isNull);
+
+      // Its second player went (one player draws the whole frame): shown on the next change
+      page.notAvailable = null;
+      await service.start(HeadsetChoice.around);
+      await settle();
+      expect(api.contents.last.handle, 7);
+      expect(service.shown, same(page.target));
+      // And the other way round, while it is shown
+      page.notAvailable = 'a raw file drawn by two players';
+      page.changed.fire();
+      await settle();
+      expect(api.contents.last.mode, XrHeadsetMode.idle);
+      expect(service.running, isTrue, reason: 'the view stays, in its dark room');
+    });
+
     test('start: the page, its layout, yaw and rate, a log file, the names of the actions', () async {
       final page = FakePage(stereo: XrStereo.leftRight)..frameRate.value = 29.97;
       service.register(page.target);
@@ -316,6 +351,8 @@ void main() {
       expect(service.running, isFalse);
       expect(page.calls, containsAllInOrder(['release', 'pause']));
       expect(notices.last, const HeadsetNotice(HeadsetNoticeKind.stopped, reason: XrStopReason.runtimeLost));
+      // The text the user reads says what happened to the video
+      expect(english['headset_view_error_runtime_lost'], contains('paused'));
     });
 
     test('a stop the runtime does not answer says so', () async {

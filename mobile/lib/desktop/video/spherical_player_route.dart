@@ -633,6 +633,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       onScreen: _onScreen,
     );
     partner.failure.addListener(_onPartnerFailure);
+    // The headset would get this player's lens only: not offered while a second player draws the other one
+    _headsetChanged.fire();
     String? reason;
     try {
       // The other stream's file goes through the same resolver as the file: a server URL becomes the bridge's
@@ -708,6 +710,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     }
     _partner = null;
     partner.failure.removeListener(_onPartnerFailure);
+    // One player draws the whole frame again (a stack, one lens or another file): the headset view may take it
+    _headsetChanged.fire();
     final renderer = _renderer;
     if (renderer != null && renderer.attached) {
       await renderer.setPartner(null);
@@ -999,7 +1003,8 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
 
   /// What the headset view shows of this page: the player drawn through renderer C, around the head with each eye's
   /// part of a 3D frame, or its frame on a flat screen; the window's yaw ahead. Play or pause and seek go through
-  /// this page's own controls.
+  /// this page's own controls. A raw file drawn by two players is not offered (plan 7): the headset would get the
+  /// first player's lens only.
   HeadsetTarget _makeHeadsetTarget() => HeadsetTarget(
     source: () => HeadsetSourceKind.player360,
     video: () => _params.isRaw
@@ -1032,6 +1037,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       return headsetHideSubtitles(hidden, native: native is NativePlayer ? native : null, state: _headsetChanged);
     },
     videoChanged: _headsetChanged,
+    notAvailable: () => _partner != null ? 'a raw file drawn by two players' : null,
   );
 
   void _unregisterHeadset() {

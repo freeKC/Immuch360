@@ -39,7 +39,7 @@ final headsetViewLog = Logger('HeadsetView');
 
 /// The commit of media_kit_360 that mobile/pubspec.yaml pins, for the first lines of the headset log: the plugin
 /// knows its own only when it was built from a git checkout (a test checks both stay the same)
-const headsetPluginCommit = 'ecb0350a6b9a6ba184749f19d0ac5b0c24ec695a';
+const headsetPluginCommit = '4ce1ebad9e56a814b5f46920957fef624e4d529f';
 
 /// What the crash guard found at the app's start
 enum HeadsetCrashCheck {
@@ -356,6 +356,7 @@ class HeadsetTarget {
     this.release,
     this.hideSubtitles,
     this.videoChanged,
+    this.notAvailable,
   }) : frameRate = frameRate ?? ValueNotifier(0),
        subtitle = subtitle ?? ValueNotifier('');
 
@@ -403,6 +404,12 @@ class HeadsetTarget {
 
   /// Fires when the page shows another video in the same player
   final Listenable? videoChanged;
+
+  /// Why this page's video cannot go to the headset yet, for the log (never a title or a path), null when it can: a
+  /// raw 360 file drawn by two players, whose second lens the headset would not get. The menu then says so and
+  /// offers no layout, H starts nothing, and a view running shows the dark room. The page fires [videoChanged] when
+  /// it changes.
+  final String? Function()? notAvailable;
 
   /// The label of the log for [choice]: the kind of video only
   String labelOf(HeadsetChoice choice) {
