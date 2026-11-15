@@ -22,8 +22,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [baseline, vw256, vw128, caps-avx, caps-sse41, softpipe]
-        n: [1, 2]
+        variant: [caps-avx]
+        n: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        include:
+          - variant: baseline
+            n: 1
+          - variant: baseline
+            n: 2
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
