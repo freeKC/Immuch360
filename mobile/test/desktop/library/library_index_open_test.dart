@@ -54,6 +54,9 @@ final class _WatchedFileSystem extends BaseVirtualFileSystem {
   /// How many shared locks are still refused
   var locksToRefuse = 0;
 
+  /// How many write (reserved) locks are still refused, as another connection's write would
+  var writeLocksToRefuse = 0;
+
   /// The waits of SQLite's busy handler, in the order it asked for them
   final waits = <Duration>[];
 
@@ -100,6 +103,10 @@ final class _WatchedFile implements VirtualFileSystemFileV1 {
   void xLock(int mode) {
     if (mode == SqlFileLockingLevels.SQLITE_LOCK_SHARED && _files.locksToRefuse > 0) {
       _files.locksToRefuse--;
+      throw const VfsException(SqlError.SQLITE_BUSY);
+    }
+    if (mode == SqlFileLockingLevels.SQLITE_LOCK_RESERVED && _files.writeLocksToRefuse > 0) {
+      _files.writeLocksToRefuse--;
       throw const VfsException(SqlError.SQLITE_BUSY);
     }
     _file.xLock(mode);
@@ -202,6 +209,19 @@ void main() {
       // SQLite's busy handler waited between the tries, inside the switch to WAL, the first statement that reads the
       // file: the time out was set before it. Set after it, the switch fails at once and only its own retry waits
       expect(files.waits, hasLength(3));
+      expect(files.open, isEmpty);
+    });
+
+    test('the migration waits for another write longer than SQLite counts its own waits', () {
+      // SQLite's busy handler gives up once the sleeps it asked for add up to the time out, whether they lasted or
+      // not; a signal that cuts them short (the profiler of flutter test, of a debug or profile build) ends the 10 s
+      // early, as in the desktop CI. Here no sleep lasts at all: three times what its count lets it try
+      files.writeLocksToRefuse = 300;
+
+      LibraryIndex.open(path).close();
+
+      expect(files.writeLocksToRefuse, 0, reason: 'it kept trying until the other write ended');
+      expect(files.waits.length, greaterThan(100), reason: 'SQLite gave up at least once and was asked again');
       expect(files.open, isEmpty);
     });
 
