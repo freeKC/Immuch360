@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
+import 'package:immich_mobile/domain/models/ip_camera_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/settings_file/settings_file.dart';
@@ -76,6 +77,18 @@ const _tapo = NetworkSource(
   useTls: true,
   camera: TapoCameraInfo(model: 'C200'),
 );
+
+/// A camera of another brand (release 48): its password and its stream addresses (a token in the path) as secrets
+const _ipCamera = NetworkSource(
+  id: '8765432187654321',
+  type: NetworkSourceType.ipCamera,
+  name: 'Porch',
+  host: '192.168.1.40',
+  username: 'onvif',
+  ipCamera: IpCameraInfo(kind: IpCameraKind.onvif, onvifPort: 8000, model: 'Cam-1'),
+);
+
+const _ipCameraStreams = '{"v":1,"main":"/SyntheticTok3nMain"}';
 
 /// The server of a restored account, in memory: what each address answers, and what the app did with it
 class _FakeServerLink implements SettingsFileServerLink {
@@ -220,6 +233,7 @@ Future<_Install> _fullInstall() async {
   await a.sources.add(_smb, password: 'smb-pass');
   await a.sources.add(_plex, password: 'plex-token');
   await a.sources.add(_tapo, password: 'tplink-pass', cameraPassword: 'camera-pass');
+  await a.sources.add(_ipCamera, password: 'onvif-pass', cameraPassword: _ipCameraStreams);
   return a;
 }
 
@@ -260,12 +274,17 @@ void main() {
     expect(b.store.tryGet(StoreKey.playFromPhoneAsk), isTrue);
     expect(b.store.tryGet(StoreKey.pairedScreens), contains('Living room TV'));
     // Sources and their secrets, the Plex token and the camera passwords on this device only
-    expect(b.sourceList.map((s) => s.name), ['NAS photos', 'Plex at home', 'Garden']);
+    expect(b.sourceList.map((s) => s.name), ['NAS photos', 'Plex at home', 'Garden', 'Porch']);
     expect(await b.sources.readPassword(_smb.id), 'smb-pass');
     expect(await b.sources.readPassword(_plex.id), 'plex-token');
     expect(await b.sources.readPassword(_tapo.id), 'tplink-pass');
     expect(await b.sources.readCameraPassword(_tapo.id), 'camera-pass');
     expect(b.secrets.writtenDeviceOnly, containsAll([_plex.secretKey, _tapo.secretKey, _tapo.cameraSecretKey]));
+    // A camera of another brand: its password and its stream addresses, on this device only
+    expect(b.sourceList.last.ipCamera?.onvifPort, 8000);
+    expect(await b.sources.readPassword(_ipCamera.id), 'onvif-pass');
+    expect(await b.sources.readCameraPassword(_ipCamera.id), _ipCameraStreams);
+    expect(b.secrets.writtenDeviceOnly, containsAll([_ipCamera.secretKey, _ipCamera.cameraSecretKey]));
     // The albums are not listed yet on the new install: they wait for its first scan
     expect(report.where(SettingsFileOutcome.waiting).single.section, SettingsFileSection.backupAlbums);
     b.albums.albums = [_album('-1739773001', 'Camera'), _album('540528482', 'Screenshots'), _album('7', 'Other')];
@@ -287,6 +306,8 @@ void main() {
       'plex-token',
       'tplink-pass',
       'camera-pass',
+      'onvif-pass',
+      'SyntheticTok3nMain',
       'proxy-secret',
       'device-of-a',
       'plex-client-of-a',
@@ -303,7 +324,7 @@ void main() {
     expect(b.store.tryGet(StoreKey.serverUrl), 'https://photos.example.org');
     expect(b.store.tryGet(StoreKey.serverEndpoint), 'https://photos.example.org/api');
     expect(b.store.tryGet(StoreKey.accessToken), isNull);
-    expect(b.sourceList, hasLength(3));
+    expect(b.sourceList, hasLength(4));
     expect(await b.sources.readPassword(_smb.id), isNull);
     expect(b.settings.appConfig.read(SettingsKey.themeMode), ThemeMode.dark);
     // Matched by name on another device (another id); Screenshots is not on it
@@ -340,7 +361,7 @@ void main() {
     expect(b.settings.appConfig.read(SettingsKey.networkCustomHeaders), isEmpty);
     expect(report.items.any((i) => i.reason == SettingsFileSkipReason.otherServer), isTrue);
     // Its share kept with its password, the two others added, its own DLNA kept
-    expect(b.sourceList.map((s) => s.name), ['NAS photos', 'TV', 'Plex at home', 'Garden']);
+    expect(b.sourceList.map((s) => s.name), ['NAS photos', 'TV', 'Plex at home', 'Garden', 'Porch']);
     expect(await b.sources.readPassword(_smb.id), 'b-pass');
     expect(report.items.where((i) => i.reason == SettingsFileSkipReason.alreadyHere).map((i) => i.label), [
       'NAS photos',
@@ -465,7 +486,7 @@ void main() {
       'account https://photos.example.org skipped sessionRefused',
     ]);
     // The rest of the file is restored all the same
-    expect(b.sourceList, hasLength(3));
+    expect(b.sourceList, hasLength(4));
     expect(b.settings.appConfig.read(SettingsKey.themeMode), ThemeMode.dark);
     await b.dispose();
   });
@@ -549,7 +570,7 @@ void main() {
     expect(report.signIn?.result, SettingsFileSignInResult.unreachable);
     expect(report.accountRestored, isTrue);
     expect(b.store.tryGet(StoreKey.accessToken), 'session-token-a');
-    expect(b.sourceList, hasLength(3));
+    expect(b.sourceList, hasLength(4));
     await b.dispose();
   });
 
@@ -563,7 +584,7 @@ void main() {
     expect(report.signIn?.result, SettingsFileSignInResult.refused);
     expect(report.accountRestored, isFalse);
     expect(b.store.tryGet(StoreKey.accessToken), isNull);
-    expect(b.sourceList, hasLength(3));
+    expect(b.sourceList, hasLength(4));
     await b.dispose();
   });
 

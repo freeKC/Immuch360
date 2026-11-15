@@ -33,11 +33,13 @@ final _log = Logger('DesktopCameraLive');
 /// The address libmpv plays: [url] (`rtsp://host:port/path`, without the account, as cameraRtspUrl builds it) with the
 /// camera account in its user info. Each byte of the account outside the unreserved characters of RFC 3986 is
 /// percent-encoded, as the phones do (cameraRtspUri in CameraLiveView.kt): FFmpeg decodes the user info before it
-/// answers the Digest challenge, so any character of a password survives (a space as %20, a plus as %2B). Null for an
-/// address that is not a plain rtsp:// one, or that already holds a user info.
+/// answers the Digest challenge, so any character of a password survives (a space as %20, a plus as %2B). An rtsps://
+/// address (a UniFi Protect link, release 48) keeps its scheme: FFmpeg opens it over TLS. Null for an address that is
+/// neither, or that already holds a user info.
 String? cameraRtspUrlWithAccount(String url, String user, String password) {
-  const prefix = 'rtsp://';
-  if (!url.toLowerCase().startsWith(prefix)) {
+  final lower = url.toLowerCase();
+  final prefix = lower.startsWith('rtsps://') ? url.substring(0, 8) : 'rtsp://';
+  if (!lower.startsWith(prefix.toLowerCase())) {
     return null;
   }
   final rest = url.substring(prefix.length);

@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_crypto.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_media_session.dart';
@@ -16,6 +17,9 @@ import 'package:immich_mobile/infrastructure/tapo/tapo_media_session.dart';
 /// The RTSP paths of the cameras: the main stream (HD) and the sub stream (SD)
 const tapoRtspHdPath = '/stream1';
 const tapoRtspSdPath = '/stream2';
+
+/// The detail of the refusal of a camera that asks for an account when none was given
+const rtspNeedsAccount = 'needs an account';
 
 /// What an RTSP answer is made of
 class _RtspAnswer {
@@ -44,6 +48,10 @@ Future<TapoLiveProbe> probeTapoRtsp(
   try {
     await connection.send('OPTIONS', uri, const {});
     var answer = await connection.send('DESCRIBE', uri, const {'Accept': 'application/sdp'});
+    if (answer.status == 401 && user.isEmpty) {
+      // Asked for an account and none given: nothing is sent (an answer with an empty name counts as a refusal)
+      throw const TapoCameraException(TapoErrorKind.wrongPassword, code: 401, detail: rtspNeedsAccount);
+    }
     if (answer.status == 401) {
       final authorization = RtspDigest.of(
         answer.headers['www-authenticate'] ?? const [],
@@ -196,13 +204,16 @@ RtspSdp parseSdp(String sdp) {
   return RtspSdp(control: sessionControl, tracks: tracks);
 }
 
-/// The first Digest challenge of an answer (MD5, with or without qop auth), which answers each next request of the
-/// connection with the next nonce count. Never Basic: see the top of this file.
+/// The first Digest challenge of an answer that this client can answer (RFC 7616: MD5 when the challenge names no
+/// algorithm, MD5, MD5-sess, SHA-256, SHA-256-sess; with or without qop auth), which answers each next request of the
+/// connection with the next nonce count. A challenge with another algorithm is skipped before anything is sent, as is
+/// Basic: see the top of this file.
 class RtspDigest {
-  RtspDigest._(this._realm, this._nonce, this._opaque, this._qop);
+  RtspDigest._(this._realm, this._nonce, this._opaque, this._qop, this._algorithm, {this.cnonce});
 
-  /// The Digest challenge among [challenges] (the WWW-Authenticate values), null without one
-  static RtspDigest? of(List<String> challenges) {
+  /// The Digest challenge among [challenges] (the WWW-Authenticate values), null without one this client answers.
+  /// [cnonce] fixes the client nonce (tests).
+  static RtspDigest? of(List<String> challenges, {@visibleForTesting String? cnonce}) {
     for (final challenge in challenges) {
       if (!challenge.toLowerCase().startsWith('digest')) {
         continue;
@@ -216,29 +227,49 @@ class RtspDigest {
       if (realm == null || nonce == null) {
         continue;
       }
+      final algorithm = params['algorithm'];
+      if (algorithm != null && !_algorithms.contains(algorithm.toUpperCase())) {
+        continue;
+      }
       final qop = params['qop']?.split(',').map((value) => value.trim()).contains('auth') ?? false;
-      return RtspDigest._(realm, nonce, params['opaque'], qop);
+      return RtspDigest._(realm, nonce, params['opaque'], qop, algorithm, cnonce: cnonce);
     }
     return null;
   }
+
+  static const _algorithms = {'MD5', 'MD5-SESS', 'SHA-256', 'SHA-256-SESS'};
 
   final String _realm;
   final String _nonce;
   final String? _opaque;
   final bool _qop;
+
+  /// As the challenge wrote it (echoed in the answer), null when it named none
+  final String? _algorithm;
+  final String? cnonce;
   int _count = 0;
 
   /// The Authorization header of [method] on [uri] with the account [user] and [password]
   String authorization(String method, String uri, String user, String password) {
-    final ha1 = md5Hex('$user:$_realm:$password');
-    final ha2 = md5Hex('$method:$uri');
+    final name = _algorithm?.toUpperCase() ?? 'MD5';
+    final String Function(String) hash = name.startsWith('SHA-256') ? sha256Hex : md5Hex;
     final count = (++_count).toRadixString(16).padLeft(8, '0');
-    final cnonce = hexOf(randomBytes(8));
-    final response = _qop ? md5Hex('$ha1:$_nonce:$count:$cnonce:auth:$ha2') : md5Hex('$ha1:$_nonce:$ha2');
+    final cnonce = this.cnonce ?? hexOf(randomBytes(8));
+    var ha1 = hash('$user:$_realm:$password');
+    if (name.endsWith('-SESS')) {
+      ha1 = hash('$ha1:$_nonce:$cnonce');
+    }
+    final ha2 = hash('$method:$uri');
+    final response = _qop ? hash('$ha1:$_nonce:$count:$cnonce:auth:$ha2') : hash('$ha1:$_nonce:$ha2');
     final opaque = _opaque;
+    final algorithm = _algorithm;
+    // A -sess algorithm needs the client nonce even without qop
+    final sendCnonce = _qop || name.endsWith('-SESS');
     return 'Digest username="$user", realm="$_realm", nonce="$_nonce", uri="$uri", response="$response"'
+        '${algorithm == null ? '' : ', algorithm=$algorithm'}'
         '${opaque == null ? '' : ', opaque="$opaque"'}'
-        '${_qop ? ', qop=auth, nc=$count, cnonce="$cnonce"' : ''}';
+        '${_qop ? ', qop=auth, nc=$count' : ''}'
+        '${sendCnonce ? ', cnonce="$cnonce"' : ''}';
   }
 }
 

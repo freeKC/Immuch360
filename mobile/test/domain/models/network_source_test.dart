@@ -7,6 +7,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/ip_camera_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
@@ -190,6 +191,7 @@ void main() {
         'tapo',
         'documentTree',
         'deviceFolder',
+        'ipCamera',
       ]);
       expect(NetworkSourceType.values.where((type) => type.inLegacyList), [
         NetworkSourceType.smb,
@@ -283,6 +285,43 @@ void main() {
       expect(read.secretKey, 'network_source_password_1123456789abcdef');
       expect(read.cameraSecretKey, 'network_source_camera_password_1123456789abcdef');
       expect(jsonEncode(camera.toJson()), isNot(contains('password')));
+    });
+
+    test('stores a camera of another brand without any secret, and reads it back (release 48)', () {
+      const ipCamera = NetworkSource(
+        id: '2123456789abcdef',
+        type: NetworkSourceType.ipCamera,
+        name: 'Porch',
+        host: '192.0.2.40',
+        username: 'onvif',
+        discoveryId: 'urn:uuid:00000000-0000-4000-8000-000000000001',
+        ipCamera: IpCameraInfo(
+          kind: IpCameraKind.onvif,
+          onvifPort: 8000,
+          onvifPath: '/onvif/device_service',
+          manufacturer: 'Example',
+          model: 'Cam-1',
+          main: IpCameraStreamInfo(profileToken: 'main', codec: 'H265', width: 2560, height: 1440, audio: 'AAC'),
+          sub: IpCameraStreamInfo(profileToken: 'sub', codec: 'H264', width: 640, height: 360),
+        ),
+      );
+      final text = jsonEncode(ipCamera.toJson());
+      final read = NetworkSource.fromJson(jsonDecode(text))!;
+      expect(read.type, NetworkSourceType.ipCamera);
+      expect(read.type.isCamera, isTrue);
+      expect(read.type.isStored, isTrue);
+      expect(read.ipCamera, ipCamera.ipCamera);
+      expect(read.ipCamera!.label, 'Example Cam-1');
+      expect(read.camera, isNull);
+      expect(text, isNot(contains('rtsp://')));
+      // Without what its type needs, dropped; and a Tapo never carries the part of another brand
+      expect(NetworkSource.fromJson(ipCamera.toJson()..remove('ipCamera')), isNull);
+      final tapo = NetworkSource.fromJson({...camera.toJson(), 'ipCamera': ipCamera.ipCamera!.toJson()})!;
+      expect(tapo.ipCamera, isNull);
+      // A pasted RTSPS link keeps its port and the flag
+      const link = IpCameraInfo(kind: IpCameraKind.rtsp, rtspPort: 7441, secure: true);
+      expect(IpCameraInfo.fromJson(link.toJson()), link);
+      expect(IpCameraInfo.fromJson({'kind': 'later'}), isNull);
     });
 
     test('a camera saved with its camera account only has no learned details', () {
