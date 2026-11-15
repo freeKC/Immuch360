@@ -20,6 +20,7 @@ import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/providers/websocket.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/utils/app_version_label.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:immich_mobile/widgets/common/app_bar_dialog/app_bar_local_session_info.dart';
 import 'package:immich_mobile/widgets/common/app_bar_dialog/app_bar_profile_info.dart';
@@ -250,7 +251,7 @@ class ImmichAppBarDialog extends HookConsumerWidget {
                     padding: EdgeInsetsGeometry.symmetric(vertical: 10),
                     child: ImmichLogo(size: 40),
                   ),
-                  applicationVersion: packageInfo.version,
+                  applicationVersion: appVersionNameOf(packageInfo),
                 );
               },
               child: Text(context.t.licenses, style: context.textTheme.bodySmall),
