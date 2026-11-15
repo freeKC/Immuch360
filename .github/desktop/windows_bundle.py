@@ -17,7 +17,8 @@ AmdPowerXpressRequestHighPerformance at 1 (mobile/windows/runner/main.cpp): on a
 drivers then run the app on the high performance one, which an 8K video needs.
 
 The video player's files (libmpv-2.dll, under the LGPL; ANGLE, BSD-3-Clause; SwiftShader and the Vulkan loader,
-Apache-2.0) must travel with their licences, and the README is not in the ZIP: when the folder holds them, NOTICES.md
+Apache-2.0; openxr_loader.dll of the headset view, Apache-2.0 OR MIT, listed by NOTICES.md) must travel with their
+licences, and the README is not in the ZIP: when the folder holds them, NOTICES.md
 and the licence texts next to it (--notices, by default the windows folder of media_kit_video, where pub put it:
 github.com/immuch360/media_kit_360 by git tag, read from mobile/.dart_tool/package_config.json) go into licenses/.
 When libmpv-2.dll is a build of the project's workflow (a release of immuch360/libmpv-builds: its archive, extracted by
@@ -77,6 +78,9 @@ API_SET = re.compile(r'(?i)^(api|ext)-ms-')
 FIXED_FILE_INFO = struct.pack('<II', 0xFEEF04BD, 0x00010000)
 # The files media_kit_libs_windows_video bundles for the video player, which its notices cover
 VIDEO_FILES = ('libmpv-2.dll', 'libegl.dll', 'libglesv2.dll', 'vk_swiftshader.dll', 'vulkan-1.dll')
+# The Khronos OpenXR loader of the headset view (media_kit_video built with MEDIA_KIT_360_XR), Apache-2.0 OR MIT: its
+# row in NOTICES.md and the Apache-2.0 text must travel with it
+XR_LOADER = 'openxr_loader.dll'
 # The package whose windows folder holds the notices of the video player (NOTICES.md and licenses/)
 NOTICES_PACKAGE = 'media_kit_video'
 PACKAGE_CONFIG = ROOT / 'mobile' / '.dart_tool' / 'package_config.json'
@@ -327,6 +331,17 @@ def copy_notices(folder: pathlib.Path, notices: pathlib.Path, fork: pathlib.Path
     return missing
 
 
+def xr_loader_problems(folder: pathlib.Path) -> list:
+    """What is missing for the OpenXR loader's notice in the folder: its row in licenses/NOTICES.md, the Apache text."""
+    problems = []
+    notices = folder / 'licenses' / 'NOTICES.md'
+    if not notices.is_file() or XR_LOADER not in notices.read_text(encoding='utf-8', errors='replace'):
+        problems.append(f'licenses/NOTICES.md does not list {XR_LOADER}')
+    if not (folder / 'licenses' / 'Apache-2.0.txt').is_file():
+        problems.append('licenses/Apache-2.0.txt is missing')
+    return problems
+
+
 def copy_libsmb2_notices(folder: pathlib.Path, notices: pathlib.Path) -> list:
     """Copies the notice and the licence texts of libsmb2 into licenses/libsmb2/; the names it could not find."""
     missing = [str(notices / name) for name in LIBSMB2_TEXTS if not (notices / name).is_file()]
@@ -405,7 +420,7 @@ def bundle(args) -> int:
     names = {p.name.lower() for p in folder.iterdir() if p.is_file()}
     fork = None
     notes = []
-    if names & set(VIDEO_FILES):
+    if names & set(VIDEO_FILES) or XR_LOADER in names:
         libmpv_dir = args.libmpv
         if libmpv_dir is None and len(args.release.resolve().parents) > 1:
             libmpv_dir = args.release.resolve().parents[1] / 'libmpv'
@@ -426,6 +441,14 @@ def bundle(args) -> int:
             notes.append("libmpv-2.dll: not a build of the fork's workflow (media-kit's archive of 2024-10-21 unless")
             notes.append('replaced); licenses/NOTICES.md says where its sources are.')
         print('licences of the video player copied to licenses/' + (" with those of the fork's libmpv" if fork else ''))
+    if XR_LOADER in names:
+        missing = xr_loader_problems(folder)
+        if missing:
+            print(f'the notice of {XR_LOADER} must travel with it: ' + '; '.join(missing))
+            return 2
+        notes.append(f'{XR_LOADER} (View in headset, the Khronos OpenXR loader): Apache-2.0 OR MIT, see')
+        notes.append('licenses/NOTICES.md and licenses/Apache-2.0.txt.')
+        print(f'{XR_LOADER}: listed in licenses/NOTICES.md, licenses/Apache-2.0.txt present')
     if 'libsmb2.dll' in names:
         missing = copy_libsmb2_notices(folder, args.libsmb2_notices)
         if missing:

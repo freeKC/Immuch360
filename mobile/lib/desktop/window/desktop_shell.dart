@@ -6,12 +6,14 @@
 
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/video_frame_timings.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_service.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/desktop/window/close_sequence.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
@@ -51,6 +53,8 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
     // Every view of an AV2 video asks its thumbnail again once the AV2 decoder is installed, not its tiles alone
     ref.read(av2ThumbnailVariantsProvider);
     _stopFrameTimings = watchVideoFrameTimings();
+    // The headset view's crash guard reads its marker at the start (Windows only)
+    unawaited(ref.read(headsetViewServiceProvider).startUp());
     _window.addListener(this);
     unawaited(
       _window.setPreventClose(true).catchError((Object error, StackTrace stack) {
@@ -147,6 +151,22 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
           return KeyEventResult.ignored;
         }
         unawaited(grid.selectAll());
+        return KeyEventResult.handled;
+      case DesktopWindowKey.toggleHeadsetView:
+      case DesktopWindowKey.recenterHeadsetView:
+        // A player on screen, or a headset view running (xr/headset_view_service.dart); a dialog or a menu keeps H
+        if (route is PopupRoute || !ref.exists(headsetViewServiceProvider)) {
+          return KeyEventResult.ignored;
+        }
+        final headset = ref.read(headsetViewServiceProvider);
+        if (!headset.handlesKeys) {
+          return KeyEventResult.ignored;
+        }
+        if (key == DesktopWindowKey.recenterHeadsetView) {
+          unawaited(headset.recenter());
+        } else {
+          unawaited(headset.toggle(locale: context.locale));
+        }
         return KeyEventResult.handled;
     }
   }

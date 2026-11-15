@@ -1,6 +1,6 @@
 // The controls of the 360° player of the computers (design 2.6 and 4.3): close, title, 360 or 180 degrees, the 3D
-// layout, the audio track, full screen at the top; the buffering with its percentage in the middle; play, 10 s back and
-// forward, the time bar and mute at the bottom.
+// layout, the audio track, View in headset, full screen at the top; the buffering with its percentage in the middle;
+// play, 10 s back and forward, the time bar and mute at the bottom.
 //
 // When they show (SphericalControlsVisibility): on a mouse move or a key, for 3 s, and the cursor hides with them; all
 // the time while the video does not play (paused, loading, ended), while the pointer is over them and while one of them
@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_button.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
@@ -328,6 +329,8 @@ class SphericalControls extends StatelessWidget {
             icon: Icon(Icons.video_stable, color: on ? Colors.white : Colors.white54, shadows: _shadows),
           ),
         DesktopAudioTrackButton(controller: model.controller, shadows: _shadows),
+        // View in headset, where a PC VR runtime is registered (xr/headset_view_button.dart)
+        const HeadsetViewButton(shadows: _shadows),
         const DesktopFullScreenButton(),
       ],
     );

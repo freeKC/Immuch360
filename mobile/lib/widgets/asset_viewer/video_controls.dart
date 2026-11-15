@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_button.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -26,7 +27,7 @@ import 'package:immich_mobile/widgets/asset_viewer/animated_play_pause.dart';
 /// remoteVideoArrows); the time bar under them takes the remote: left and right on it seek, further at each press of a
 /// quick series and faster while held (see VideoTimeBar, RemoteSeekSeries), the step of the last press beside the time
 /// (VideoSeekHint). The audio track and subtitle menus follow, for a video that has several audio tracks or subtitles
-/// (VideoTrackButtons, DesktopAudioTrackButton).
+/// (VideoTrackButtons, DesktopAudioTrackButton), and on a computer View in headset (HeadsetViewButton).
 class VideoControls extends ConsumerStatefulWidget {
   final String videoPlayerName;
 
@@ -198,8 +199,11 @@ class _VideoControlsState extends ConsumerState<VideoControls> {
                   onPressed: () => _toggle(isCasting),
                 ),
                 // The computers' player lists the audio tracks of a video that has several
-                if (CurrentPlatform.isDesktop && !isCasting)
+                if (CurrentPlatform.isDesktop && !isCasting) ...[
                   const DesktopAudioTrackButton(shadows: VideoControls._controlShadows),
+                  // View in headset, where a PC VR runtime is registered (lib/desktop/video/xr)
+                  const HeadsetViewButton(shadows: VideoControls._controlShadows),
+                ],
                 // A remote without fast forward and rewind keys seeks with these: on a TV left and right go to the
                 // previous or next asset. After play and pause, which OK focuses first.
                 if (tvMode) ...[

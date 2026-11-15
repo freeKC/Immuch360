@@ -1069,6 +1069,26 @@ jobs:
           print(hashlib.sha256(packed).hexdigest())
           PY
 
+      # View in headset (media_kit_360 built with MEDIA_KIT_360_XR, mobile/windows/CMakeLists.txt): the Khronos OpenXR
+      # loader next to the executable, with its row in NOTICES.md and the Apache-2.0 text (Apache-2.0 OR MIT)
+      - name: The OpenXR loader and its notice in the ZIP
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+        run: |
+          python - "$ZIP" <<'PY'
+          import sys, zipfile
+          top = 'Immuch360 Desktop/'
+          with zipfile.ZipFile(sys.argv[1]) as bundle:
+              names = set(bundle.namelist())
+              missing = [name for name in (top + 'openxr_loader.dll', top + 'licenses/NOTICES.md',
+                                           top + 'licenses/Apache-2.0.txt') if name not in names]
+              if missing:
+                  sys.exit('::error::not in the ZIP: ' + ', '.join(missing))
+              if b'openxr_loader.dll' not in bundle.read(top + 'licenses/NOTICES.md'):
+                  sys.exit('::error::licenses/NOTICES.md of the ZIP does not list openxr_loader.dll')
+          print('the ZIP holds openxr_loader.dll, its row in NOTICES.md and licenses/Apache-2.0.txt')
+          PY
+
       # The Rust JPEG codec of the AI features next to the executable, whose imports windows_bundle.py has checked
       - name: The JPEG codec of the AI features in the ZIP
         env:

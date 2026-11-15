@@ -11,7 +11,6 @@
 import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -27,7 +26,8 @@ import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_sources.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
-import 'package:immich_mobile/desktop/video/xr/headset_probe.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_service.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/media_bridge.service.dart';
@@ -35,14 +35,13 @@ import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:media_kit_video/sphere.dart';
-import 'package:media_kit_video/xr.dart';
 import 'package:native_video_player/native_video_player.dart';
 
 class DesktopVideoView extends ConsumerStatefulWidget {
-  const DesktopVideoView({super.key, required this.onViewReady, this.pool, this.resolve});
+  const DesktopVideoView({super.key, required this.onViewReady, this.pool, this.resolve, this.headset});
 
   /// Called once with the controller of the view, as NativeVideoPlayerView.onViewReady
   final void Function(NativeVideoPlayerController)? onViewReady;
@@ -51,6 +50,10 @@ class DesktopVideoView extends ConsumerStatefulWidget {
   /// server for the sources
   final PlayerPool? pool;
   final DesktopVideoSourceResolver? resolve;
+
+  /// What the page tells the headset view of its video, null while the page's video is not the one on screen (a
+  /// neighbour of the viewer's pages)
+  final HeadsetFlatPage? headset;
 
   /// Whether this computer plays videos: libmpv was loaded at start (desktop_video_setup.dart)
   static bool get available => desktopVideoAvailable;
@@ -80,8 +83,18 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         widget.onViewReady?.call(_controller);
+        _syncHeadset();
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant DesktopVideoView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((oldWidget.headset == null) != (widget.headset == null) ||
+        oldWidget.headset?.playerKey != widget.headset?.playerKey) {
+      _syncHeadset();
+    }
   }
 
   static Future<String> _unavailable(VideoSource source) async =>
@@ -89,6 +102,13 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
 
   @override
   void dispose() {
+    // Out of the headset first: renderer C's flat pass off before the player goes back to the pool
+    final bound = _headset;
+    _headset = null;
+    if (bound != null) {
+      _headsetService.unregister(bound.target);
+      bound.dispose();
+    }
     _controller.dispose();
     super.dispose();
   }
@@ -103,60 +123,52 @@ class _DesktopVideoViewState extends ConsumerState<DesktopVideoView> {
         valueListenable: _controller.videoController,
         builder: (context, videoController, _) => videoController == null
             ? const SizedBox.expand()
-            : Stack(
-                fit: StackFit.expand,
-                children: [
-                  Video(
-                    // A new player (the pool gave another one) is a new texture, and a new state of the widget
-                    key: ObjectKey(videoController),
-                    controller: videoController,
-                    controls: NoVideoControls,
-                    // What is around the video shows the page behind it, as the native view on the phones
-                    fill: Colors.transparent,
-                    filterQuality: FilterQuality.medium,
-                    // The pages hold the wake lock and pause in the background themselves (VideoPlayerNotifier)
-                    wakelock: false,
-                    pauseUponEnteringBackgroundMode: false,
-                    resumeUponEnteringForegroundMode: false,
-                  ),
-                  // The headset probe (xr/headset_probe.dart), behind its switch of the video settings
-                  Positioned(
-                    top: 72,
-                    left: 12,
-                    child: HeadsetProbeButton(target: () => _headsetTarget(videoController)),
-                  ),
-                ],
+            : Video(
+                // A new player (the pool gave another one) is a new texture, and a new state of the widget
+                key: ObjectKey(videoController),
+                controller: videoController,
+                controls: NoVideoControls,
+                // What is around the video shows the page behind it, as the native view on the phones
+                fill: Colors.transparent,
+                filterQuality: FilterQuality.medium,
+                // The pages hold the wake lock and pause in the background themselves (VideoPlayerNotifier)
+                wakelock: false,
+                pauseUponEnteringBackgroundMode: false,
+                resumeUponEnteringForegroundMode: false,
               ),
       ),
     );
   }
 
-  PluginRenderer? _headsetRenderer;
+  HeadsetFlatBinding? _headset;
 
-  /// What the headset probe shows of a flat video: its frame on a screen. The flat player does not draw through
-  /// renderer C, so the probe turns it on for the time of the headset view (the window then shows the middle of the
-  /// frame as a 360 view would), and off again after
-  HeadsetProbeTarget _headsetTarget(VideoController videoController) => HeadsetProbeTarget(
-    handle: () async => videoController.player.handle,
-    modes: const [XrProbeMode.screen],
-    fps: 0,
-    label: 'flat video',
-    prepare: () async {
-      final renderer = _headsetRenderer ??= PluginRenderer.forController(videoController);
-      final attached = await renderer.attach(
-        projection: PluginProjection.equirect(),
-        outputSize: const ui.Size(1280, 720),
-        view: const PluginView(fov: 60),
-      );
-      return attached.ok;
-    },
-    release: () async {
-      final renderer = _headsetRenderer;
-      _headsetRenderer = null;
-      await renderer?.detach();
-      await renderer?.dispose();
-    },
-  );
+  /// The page's video goes to the headset view while the page shows it (headset_view.dart): registered while
+  /// [DesktopVideoView.headset] is given, unregistered when it no longer is or the view goes
+  void _syncHeadset() {
+    final page = widget.headset;
+    final bound = _headset;
+    if (page != null && bound != null && bound.page.playerKey == page.playerKey) {
+      return;
+    }
+    if (bound != null) {
+      _headset = null;
+      _headsetService.unregister(bound.target);
+      bound.dispose();
+    }
+    if (page == null || !_playable) {
+      return;
+    }
+    final service = _headsetService;
+    final binding = _headset = HeadsetFlatBinding(
+      controller: _controller,
+      page: page,
+      notifier: () => ref.read(videoPlayerProvider(page.playerKey).notifier),
+    );
+    service.register(binding.target);
+  }
+
+  /// Read once, when the page first gives its video: the service lives with the app
+  late final HeadsetViewService _headsetService = ref.read(headsetViewServiceProvider);
 }
 
 /// What the app's media bridge measures of the reads of a video it serves (see LocalMediaBridge.trafficOf)

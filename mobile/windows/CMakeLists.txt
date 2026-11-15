@@ -53,10 +53,10 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 add_subdirectory("runner")
 
 
-# Immuch360 Desktop: the headset probe of media_kit_360 (OpenXR in its video
+# Immuch360 Desktop: the headset view of media_kit_360 (OpenXR in its video
 # plugin, IMMUCH360-NOTE.md patch 15): compiled in and the OpenXR loader
-# bundled; nothing of it runs until "View in headset (probe)" starts it
-# (lib/desktop/video/xr/headset_probe.dart)
+# bundled; nothing of it is loaded until "View in headset" starts it
+# (lib/desktop/video/xr/headset_view.dart)
 set(MEDIA_KIT_360_XR ON)
 
 # Generated plugin build rules, which manage building the plugins and adding
