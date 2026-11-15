@@ -91,6 +91,29 @@ void main() {
       expect(reads.where((read) => read.$2 > 16), hasLength(2), reason: '$reads');
     });
 
+    test('reads the camd track of an Osmo 360 II, which writes no camd box after its moov box', () async {
+      final dji = await _read(djiOsv2File(djiOsv2Records()));
+
+      expect(dji, isNotNull);
+      expect((dji!.model, dji.serial, dji.firmware, dji.schema), (djiModel2, djiSerial2, djiFirmware2, djiSchema2));
+      final calibration = dji.calibration;
+      expect(calibration.cameraModel, djiModel2);
+      expect(calibration.source, DualFisheyeSource.file);
+      expect(calibration.canvasSquare, 3840);
+      final [rear, front] = calibration.lenses;
+      expect([rear.cx, rear.cy, rear.fx!], _closeToList([1917.94, 1915.26, 1053.16], 1e-3));
+      expect([front.cx, front.cy, front.k5], _closeToList([1922.37 + 3840, 1919.53, 0.000793635], 1e-3));
+      expect(rear.yaw, closeTo(-179.895, 1e-3));
+      // Lens 1 placed by the two quaternions, that of the front lens being the identity, written as w = 1 alone
+      final q = djiLens2Rear.quaternion;
+      final rearTurn = quaternionMatrix(q[0], q[1], q[2], q[3])!;
+      final expected = rearTurn.transposed * Mat3(rear.viewToLens!);
+      expect(front.viewToLens, _closeToList(expected.values, 1e-6));
+      // and its yaw, pitch and roll agree with them within 2 degrees (1.8 on the sample)
+      final byAngles = djiLensRotation(front.yaw, front.pitch, front.roll) * djiViewToWorld;
+      expect(_angleBetween(front.viewToLens!, byAngles.values), lessThan(2));
+    });
+
     test('places lens 1 by its yaw, pitch and roll without the quaternions, within 1.5 degrees of them', () async {
       final file = djiOsvFile(
         camd: djiCamdBox(djiCamdRecords(config: djiConfig(calibration: djiSampleCalibration(withQuaternion: false)))),

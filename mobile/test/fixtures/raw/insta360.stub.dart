@@ -97,6 +97,7 @@ List<int> pbDoubleField(int field, double value) => [...pbKey(field, 1), ...f64l
 /// The metadata record of an X3 photo, with fields the reader skips around the ones it reads. [floatRanges] writes the
 /// ranges of the IMU as floats, as the schema has them, rather than as the varints of the X3.
 List<int> x3Metadata({
+  String model = x3Model,
   String? offsetV1 = x3OffsetV1,
   String? offsetV3 = x3OffsetV3,
   bool? rawGyro = true,
@@ -104,7 +105,7 @@ List<int> x3Metadata({
   bool floatRanges = false,
 }) => [
   ...pbStringField(1, x3Serial),
-  ...pbStringField(2, x3Model),
+  ...pbStringField(2, model),
   ...pbStringField(3, x3Firmware),
   if (offsetV1 != null) ...pbStringField(5, offsetV1),
   // Skipped: the offset of the trailer, a negative varint, a double

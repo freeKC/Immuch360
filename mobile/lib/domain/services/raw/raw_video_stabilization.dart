@@ -89,17 +89,20 @@ class RawStabilizationRequest {
 typedef RawStabilizationBuilder =
     Future<StabilizationTable?> Function(RawStabilizationRequest request, ByteRangeReader read);
 
-/// Side of the EAC faces of the one GoPro whose GPMF axes were measured against its picture, the MAX
+/// Side of the EAC faces of the GoPro MAX, the first GoPro whose GPMF axes were measured against its picture
 /// ([goProViewToGpmf])
 const goProMeasuredFace = 1344;
 
+/// Sides of the EAC faces of the GoPros whose GPMF axes were measured: the MAX and the MAX 2 ([goProViewToGpmfOf])
+const goProMeasuredFaces = {goProMeasuredFace, goProMax2Face};
+
 /// Reads the motion track of [request] with [read] and builds its table, in this isolate: the gyroscope of an
 /// Insta360 integrated (readInsta360Stabilization), the orientations of a GoPro (readGoProStabilization) or of a DJI
-/// (readDjiStabilization). Null when the file has no track, and for a GoPro whose faces are not those of the MAX: the
-/// axes of the MAX 2 were not measured, its video could play rolled by 90 degrees (the switch hides).
+/// (readDjiStabilization). Null when the file has no track, and for a GoPro whose faces are neither those of the MAX
+/// nor those of the MAX 2: its axes were not measured, its video could play rolled by 90 degrees (the switch hides).
 Future<StabilizationTable?> buildRawStabilization(RawStabilizationRequest request, ByteRangeReader read) {
   final face = request.goProFace;
-  if (request.kind == RawMediaKind.goProVideo && face != null && face != goProMeasuredFace) {
+  if (request.kind == RawMediaKind.goProVideo && face != null && !goProMeasuredFaces.contains(face)) {
     _log.info('${request.name}: GoPro faces of $face pixels, axes not measured, no stabilisation table');
     return Future.value();
   }
@@ -114,6 +117,7 @@ Future<StabilizationTable?> buildRawStabilization(RawStabilizationRequest reques
     RawMediaKind.goProVideo => readGoProStabilization(
       read,
       request.fileSize,
+      face: face,
       frameDurationUs: request.frameDurationUs,
       options: request.options,
     ),
@@ -188,14 +192,14 @@ Future<StabilizationTable?> _buildWithRemoteReads(RawStabilizationRequest reques
 
 /// Whether the table of the raw video of [plan] can be built: its camera writes a track the app reads, in a file the
 /// plan can open ([RawVideoPlan.motionTrackInput]) at any position (see [RawVideoInput.readsAnywhere]: not the stream
-/// of a share without ranges, which would be read whole). Not for a GoPro whose EAC faces are not those of the MAX
-/// ([goProMeasuredFace]): no table would come, so its switch never shows.
+/// of a share without ranges, which would be read whole). Not for a GoPro whose EAC faces are neither the MAX nor the
+/// MAX 2 ones ([goProMeasuredFaces]): no table would come, so its switch never shows.
 bool rawVideoHasReadableTrack(RawVideoPlan plan) {
   final input = plan.motionTrackInput;
   final face = plan.kind == RawMediaKind.goProVideo ? plan.eac?.face : null;
   return rawKindHasMotionTrack(plan.kind) &&
       input != null &&
-      (face == null || face == goProMeasuredFace) &&
+      (face == null || goProMeasuredFaces.contains(face)) &&
       (input.readsAnywhere?.call() ?? true);
 }
 

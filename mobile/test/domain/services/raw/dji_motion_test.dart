@@ -95,6 +95,9 @@ List<(List<int>, List<int>)> _withSecondTrack(List<List<int>> attitude) => [
 // the turn from the body to the camera axes, (0.5, 0.5, -0.5, -0.5)
 List<double> _body(List<double> q) => _conjugate(_multiply(q, const [0.5, 0.5, -0.5, -0.5]));
 
+// The same for an Osmo 360 II, whose camera axes are half a turn about the vertical from those of the Osmo 360
+List<double> _body2(List<double> q) => _conjugate(_multiply(q, const [0.5, 0.5, 0.5, 0.5]));
+
 Matcher _sameOrientation(List<double> expected, [double degrees = 1e-4]) => predicate<List<double>>(
   (q) => _angle(q, expected) <= degrees,
   'an orientation within $degrees degree of $expected',
@@ -199,6 +202,33 @@ void main() {
         final turn = _relative(track, 0, 1);
         // 4 degrees from run to run, less the 158 us the run starts later than the frame (40160 against 40002)
         expect(turn.degrees, closeTo(4.0 - 0.1 * 158 / 1004, 1e-4), reason: 'camera axis $axis');
+        expect(turn.axis, [for (final v in bodyAxis) closeTo(v, 1e-6)], reason: 'camera axis $axis');
+      }
+    });
+
+    test('turns the camera axes of an Osmo 360 II half a turn about the vertical from those of the Osmo 360', () async {
+      // Measured against the picture of the sample, in both lenses (lots/feat-raw-2026-48.md): forward is +z, the
+      // right of the camera +x, down +y
+      const bodyAxes = [
+        ([1.0, 0.0, 0.0], [0.0, 0.0, 1.0]),
+        ([0.0, 1.0, 0.0], [1.0, 0.0, 0.0]),
+        ([0.0, 0.0, 1.0], [0.0, 1.0, 0.0]),
+      ];
+      for (final (axis, bodyAxis) in bodyAxes) {
+        final records = [
+          for (var k = 0; k < 2; k++)
+            djiAttitudeRecord2(
+              frameStampUs: 2465177400 + 40000 * k,
+              index: 2 * k,
+              runStampUs: (2465177400 - 777 + 40000 * k) % _twoTo32,
+              run: _run(axis, startDegrees: 4.0 * k),
+            ),
+        ];
+
+        final track = (await _read(djiOsv2File(djiOsv2Records(frames: _withSecondTrack(records)))))!;
+
+        final turn = _relative(track, 0, 1);
+        expect(turn.degrees, closeTo(4.0, 0.05), reason: 'camera axis $axis');
         expect(turn.axis, [for (final v in bodyAxis) closeTo(v, 1e-6)], reason: 'camera axis $axis');
       }
     });
@@ -348,6 +378,46 @@ void main() {
       final a = _orientation(track, 0);
       final b = _orientation(track, 1);
       expect(a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3], greaterThan(0.99));
+    });
+
+    test('reads an Osmo 360 II from its camd track, its frame rate from 2-1-5', () async {
+      const stamp0 = 2465177400;
+      List<int> record(int k) {
+        final stamp = stamp0 + (k * 1e6 / 50).round();
+        return djiAttitudeRecord2(
+          frameStampUs: stamp,
+          index: 2 * k,
+          runStampUs: (stamp - 777) % _twoTo32,
+          run: _run(const [1, 0, 0], startDegrees: 2.0 * k, count: 20),
+          frameRate: 50,
+        );
+      }
+
+      final track = (await _read(
+        djiOsv2File(djiOsv2Records(frames: _withSecondTrack([for (var k = 0; k < 4; k++) record(k)]))),
+      ))!;
+
+      expect((track.cameraModel, track.firmware), (djiModel2, djiFirmware2));
+      expect(track.frameTimes, [for (var k = 0; k < 4; k++) closeTo(k / 50, 1e-12)]);
+      // The attitude at the frame stamp plus the delay: (777 + 8500) / 1004 samples into the run
+      const position = (777 + djiAttitudeDelayUs) / djiAttitudeSampleStepUs;
+      expect(_orientation(track, 0), _sameOrientation(_body2(_turn(const [1, 0, 0], 0.1 * position)), 1e-3));
+    });
+
+    test('takes the quaternion of the frame of an Osmo 360 II from 2-22, its zeros left out', () async {
+      final turned = _turn(const [0, 0, 1], 30);
+      final identity = djiAttitudeRecord2(frameStampUs: 2465177400, frameQuaternion: const [1, 0, 0, 0]);
+      final turn = djiAttitudeRecord2(frameStampUs: 2465177400, frameQuaternion: turned);
+
+      for (final (record, expected) in [
+        (identity, const [1.0, 0.0, 0.0, 0.0]),
+        (turn, turned),
+      ]) {
+        final track = (await _read(djiOsv2File(djiOsv2Records(frames: _withSecondTrack([record])))))!;
+
+        expect(track.frameTimes, [0]);
+        expect(_orientation(track, 0), _sameOrientation(_body2(expected), 1e-5));
+      }
     });
 
     test('gives nothing without a camd box or without attitude in it', () async {
