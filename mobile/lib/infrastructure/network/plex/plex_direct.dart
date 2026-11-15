@@ -9,6 +9,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
+import 'package:immich_mobile/infrastructure/network/isolate_http_client.dart';
 import 'package:immich_mobile/infrastructure/network/upnp/ssdp.dart' show isLocalNetworkAddress;
 
 /// The port of a Plex Media Server that does not say another one
@@ -94,6 +96,19 @@ HttpClient pinnedPlexHttpClient(String hash, {SecurityContext? context}) {
       return ConnectionTask.fromSocket(socket, () => socket.then((s) => s.destroy(), onError: (_) {}));
     };
 }
+
+/// [pinnedPlexHttpClient] for [hash], run in a worker isolate (see IsolateHttpClient): the client of a Plex server
+/// whose films stream through the media bridge, so that the TLS of their bytes never waits for the UI of the app
+http.Client pinnedPlexClientOffMainIsolate(String hash) {
+  if (!isPlexHash(hash)) {
+    throw ArgumentError.value(hash, 'hash', 'Not the hash of a plex.direct certificate');
+  }
+  return IsolateHttpClient(_pinnedMaker(hash));
+}
+
+/// A maker that holds the hash only, so that the worker isolate can be sent it
+HttpClientMaker _pinnedMaker(String hash) =>
+    () => pinnedPlexHttpClient(hash);
 
 /// A plain client for the fake servers of the tests, on loopback over http (PlexFileSystem.open with its address
 /// overrides): the only Plex client that is not [pinnedPlexHttpClient], kept here so that every client the Plex code

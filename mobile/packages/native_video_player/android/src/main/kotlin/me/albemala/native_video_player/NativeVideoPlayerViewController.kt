@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
+import android.util.Log
 import android.view.SurfaceView
 import android.view.Gravity
 import android.view.View
@@ -29,6 +31,32 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.platform.PlatformView
 import me.albemala.native_video_player.platform_interface.*
 
+// Immuch360: the position goes to Flutter at most this often while the video plays (each one rebuilds the controls,
+// and on a phone the frames, the Dart isolate and the media bridge share the main thread)
+private const val POSITION_INTERVAL_MS = 100L
+
+// Immuch360: a move of the position by more than this while the video plays is a seek, sent at once
+private const val POSITION_JUMP_MS = 1000L
+
+// Immuch360, temporary (the measure of release 48 on a Samsung S24, see lib/infrastructure/network/rate_switches.dart
+// of the app): `adb shell setprop debug.immuch.position_ms 8` sends the position at every 8 ms tick again, as upstream
+// did, to a player opened after it; unset, or out of 1 to 1000, keeps POSITION_INTERVAL_MS
+private fun positionIntervalMs(): Long {
+    val value = try {
+        Class.forName("android.os.SystemProperties")
+            .getMethod("get", String::class.java)
+            .invoke(null, "debug.immuch.position_ms") as? String
+    } catch (e: Throwable) {
+        null
+    }
+    val ms = value?.trim()?.toLongOrNull() ?: return POSITION_INTERVAL_MS
+    if (ms !in 1L..1000L) {
+        return POSITION_INTERVAL_MS
+    }
+    Log.i("NativeVideoPlayer", "Immuch360 rate switch: the position goes every $ms ms")
+    return ms
+}
+
 @OptIn(UnstableApi::class)
 class NativeVideoPlayerViewController(
     messenger: BinaryMessenger,
@@ -51,6 +79,8 @@ class NativeVideoPlayerViewController(
     private val positionUpdateHandler = Handler(Looper.getMainLooper())
     private var positionUpdateRunnable: Runnable? = null
     private var lastPosition = -1L
+    private var lastPositionSentAt = 0L
+    private val positionInterval = positionIntervalMs()
 
     // Immuch360: the player as the app makes it, and what Flutter is told of its link twice a second while it loads
     private val setup: PlayerSetup? = NativeVideoPlayerPlugin.playerSetup?.invoke(context)
@@ -285,8 +315,16 @@ class NativeVideoPlayerViewController(
             override fun run() {
                 val position = player.currentPosition
                 if (lastPosition != position) {
-                    lastPosition = position
-                    api.onPlaybackPositionChanged(position)
+                    // Immuch360: while the video plays, the position goes to Flutter every 100 ms rather than at each
+                    // 8 ms tick; a seek, a pause or a stop still goes at once
+                    val now = SystemClock.uptimeMillis()
+                    val jumped = lastPosition < 0 || position < lastPosition ||
+                        position - lastPosition > POSITION_JUMP_MS
+                    if (!player.isPlaying || jumped || now - lastPositionSentAt >= positionInterval) {
+                        lastPosition = position
+                        lastPositionSentAt = now
+                        api.onPlaybackPositionChanged(position)
+                    }
                 }
                 positionUpdateHandler.postDelayed(this, 8L)
             }
