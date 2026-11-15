@@ -39,7 +39,6 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_server_breaker.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
-import 'package:immich_mobile/infrastructure/network/rate_switches.dart';
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:logging/logging.dart';
@@ -127,11 +126,8 @@ class PlexFileSystem
       httpClient = IOClient(unpinnedPlexHttpClientForTests());
     } else {
       // Off the UI isolate: on a phone the UI isolate also runs the frames, and a film read on it came at a fifth of
-      // the link (S24, 14 November 2026, see IsolateHttpClient). On the UI isolate again only for the measure of
-      // rate_switches.dart
-      httpClient = await plexClientOffMainIsolate()
-          ? pinnedPlexClientOffMainIsolate(hash)
-          : IOClient(pinnedPlexHttpClient(hash));
+      // the link (S24, 14 November 2026, see IsolateHttpClient)
+      httpClient = pinnedPlexClientOffMainIsolate(hash);
     }
     final fileSystem = PlexFileSystem._(
       source,

@@ -54,7 +54,6 @@ the gate is per desktop and is noted.
 | `lib/infrastructure/network/plex/plex_client.dart:186` | idem | right |
 | `lib/infrastructure/network/plex/plex_tv_auth.dart:306` | plex.tv platform header of "Sign in with Plex", else Platform.operatingSystem | right: "windows", "linux", "macos", as the Plex client |
 | `lib/infrastructure/network/plex/plex_tv_auth.dart:308` | idem | right |
-| `lib/infrastructure/network/rate_switches.dart:21` | the measuring switch `debug.immuch.plex_worker` (getprop) read on Android only, in a build with `IMMUCH_RATE_SWITCHES` (release 48) | right: the computers keep the Plex client in the worker isolate, as every release build |
 | `lib/infrastructure/network/upnp/ssdp.dart:60` | Android multicast socket option | right; LAN checks multicast on Windows |
 | `lib/infrastructure/network/upnp/ssdp.dart:69` | SSDP user agent, else Platform.operatingSystem | right |
 | `lib/infrastructure/repositories/local_album.repository.dart:70` | iOS assets unique to the album, else every asset of it | right: a file is in one folder |
