@@ -483,6 +483,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       // Never held by this form: they have pages of their own
       NetworkSourceType.plex ||
       NetworkSourceType.tapo ||
+      NetworkSourceType.ipCamera ||
       NetworkSourceType.documentTree ||
       NetworkSourceType.deviceFolder => null,
     };

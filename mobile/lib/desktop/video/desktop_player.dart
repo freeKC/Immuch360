@@ -298,8 +298,9 @@ abstract final class DesktopPlayerOptions {
   static const protocols = ['file', 'http', 'tcp'];
 
   /// The live view's: the RTSP connection to the camera and nothing else. FFmpeg's RTSP client opens its connection
-  /// through tcp; with the RTP packets inside it (rtsp-transport) it opens no rtp or udp socket, so neither is listed.
-  static const liveProtocols = ['rtsp', 'tcp'];
+  /// through tcp, or tls for an rtsps:// address (a UniFi Protect link of a camera of another brand, release 48);
+  /// with the RTP packets inside it (rtsp-transport) it opens no rtp or udp socket, so neither is listed.
+  static const liveProtocols = ['rtsp', 'rtsps', 'tcp', 'tls'];
 
   static List<String> protocolsFor(PlayerKind kind) => kind == PlayerKind.live ? liveProtocols : protocols;
 

@@ -111,8 +111,11 @@ describe('ImmichRepository with recorded responses', () => {
 		assert.equal(details.orientation, '6');
 		assert.deepEqual([details.width, details.height], [1920, 1080]);
 		const shown = {orientation: details.orientation, width: details.width, height: details.height, boxWidth: 1920, boxHeight: 1080};
-		assert.equal(videoTurnTransform(videoTurn({...shown, frameWidth: 1920, frameHeight: 1080})), 'rotate(90deg) scale(0.5625)');
-		assert.equal(videoTurn({...shown, frameWidth: 1080, frameHeight: 1920}), null, 'a player that honours the flag');
+		const samsung = {reportedSizeTellsTurn: false};
+		assert.equal(videoTurnTransform(videoTurn({...shown, frameWidth: 1920, frameHeight: 1080}, samsung)), 'rotate(90deg) scale(0.5625)');
+		assert.equal(videoTurn({...shown, frameWidth: 1080, frameHeight: 1920}, {reportedSizeTellsTurn: true}), null, 'a player that honours the flag');
+		// A Samsung TV reports the turned size of the original while it draws it on its side (issue 17): turned there too
+		assert.equal(videoTurnTransform(videoTurn({...shown, frameWidth: 1080, frameHeight: 1920}, samsung)), 'rotate(90deg) scale(1.7778, 0.5625)');
 	});
 
 	test('a VR180 photo the server does not flag: shown as 360° once chosen, as a half sphere', async () => {

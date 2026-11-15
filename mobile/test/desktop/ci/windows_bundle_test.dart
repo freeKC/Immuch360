@@ -379,6 +379,38 @@ void main() {
         expect(bundled(), contains('licenses/libmpv/BUILDINFO.txt'));
       });
 
+      test('the OpenXR loader of View in headset: listed by NOTICES.md, with the Apache-2.0 text', () {
+        writeBuild();
+        writeVideo();
+        writePe('Release/openxr_loader.dll', fakePe(imports: _kernel));
+        final run = bundle(version: internal);
+        expect(run.exitCode, 0, reason: '$run');
+        expect(run.output, contains('openxr_loader.dll: listed in licenses/NOTICES.md'));
+        expect(bundled(), containsAll(['openxr_loader.dll', 'licenses/NOTICES.md', 'licenses/Apache-2.0.txt']));
+        expect(
+          File(path('dist/Immuch360 Desktop/licenses/NOTICES.md')).readAsStringSync(),
+          contains('openxr_loader.dll'),
+        );
+        expect(buildInfo(), contains('openxr_loader.dll (View in headset'));
+      });
+
+      test('stops when NOTICES.md does not list the OpenXR loader', () {
+        writeBuild();
+        writeVideo();
+        writePe('Release/openxr_loader.dll', fakePe(imports: _kernel));
+        writeFiles(root, {
+          'notices/NOTICES.md': '# Notices of libmpv and ANGLE',
+          'notices/licenses/LGPL-3.0.txt': 'GNU LESSER GENERAL PUBLIC LICENSE',
+          'notices/licenses/GPL-3.0.txt': 'GNU GENERAL PUBLIC LICENSE',
+          'notices/licenses/Apache-2.0.txt': 'Apache License',
+          'notices/licenses/ANGLE-BSD-3-Clause.txt': 'BSD',
+        });
+        final run = bundle(version: internal, extra: ['--notices', path('notices')]);
+        expect(run.exitCode, 2, reason: '$run');
+        expect(run.output, contains('licenses/NOTICES.md does not list openxr_loader.dll'));
+        expect(File(path(zipFile)).existsSync(), isFalse);
+      });
+
       test('stops when a licence text is missing', () {
         writeBuild();
         writeVideo();

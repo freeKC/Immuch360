@@ -429,7 +429,13 @@ class LocalMediaBridge implements MediaBridge {
     }
 
     final headers = response.headers;
-    headers.set(HttpHeaders.contentTypeHeader, m2ts ? 'video/mp2t' : _contentType(entry));
+    final contentType = m2ts ? 'video/mp2t' : _contentType(entry);
+    headers.set(HttpHeaders.contentTypeHeader, contentType);
+    if (contentType.startsWith('video/') || contentType.startsWith('audio/')) {
+      // A film or a song is read once, in ranges: not for the disk cache of the client (on Android, Media3 reads the
+      // bridge through Cronet, whose disk cache is the one of the app's pictures)
+      headers.set(HttpHeaders.cacheControlHeader, 'no-store');
+    }
     if (lastModified != null) {
       headers.set(HttpHeaders.lastModifiedHeader, lastModified);
     }
@@ -946,6 +952,17 @@ class _BodyReader {
   /// Whether the body streams its file, see the class
   final bool streams;
 
+  /// How often a body that streams tells its rate in the log, at the fine level (not printed by a release build)
+  static const rateLogPeriod = Duration(seconds: 10);
+
+  /// What the body brought since its last line of rate, see [_logRate]
+  final _rateWatch = Stopwatch()..start();
+  int _rateSent = 0;
+  int _rateReads = 0;
+  int _rateRead = 0;
+  Duration _rateReadTime = Duration.zero;
+  Duration _rateWaited = Duration.zero;
+
   /// The source left, or the bridge stopped: no reading ahead any more
   bool _stopped = false;
   bool _closed = false;
@@ -973,6 +990,10 @@ class _BodyReader {
         _position += chunk.length;
         _bridge._budget.giveBack(chunk.length);
         _fill();
+        _rateSent += chunk.length;
+        if (_rateWatch.elapsed >= rateLogPeriod) {
+          _logRate();
+        }
         return chunk;
       }
       final error = _error;
@@ -982,7 +1003,10 @@ class _BodyReader {
       }
       final reading = _reading;
       if (reading != null) {
+        // The client waits for the share
+        final waited = Stopwatch()..start();
         await reading;
+        _rateWaited += waited.elapsed;
         continue;
       }
       if (_closed || _readAll) {
@@ -1039,6 +1063,9 @@ class _BodyReader {
         _meter
           ..add(bytes.length)
           ..end();
+        _rateReads++;
+        _rateRead += bytes.length;
+        _rateReadTime += watch.elapsed;
         if (generation == _generation) {
           _chunkSize = LocalMediaBridge.nextChunkSize(
             previous: size,
@@ -1121,10 +1148,36 @@ class _BodyReader {
     _fill();
   }
 
+  /// One line at the fine level on what the body brought lately: what went to the client, what the share brought while
+  /// it was read, and how long the client waited for it. A client that waits while the share reads fast is held up by
+  /// the bridge; one that waits for a slow share, by the link. No path, no URL.
+  void _logRate() {
+    final elapsed = _rateWatch.elapsed;
+    if (_rateSent > 0 && _log.isLoggable(Level.FINE)) {
+      String mbps(int bytes, Duration time) =>
+          time.inMicroseconds <= 0 ? '-' : (bytes * 8 / time.inMicroseconds).toStringAsFixed(1);
+      _log.fine(
+        'Body of a ${_fileSystem.source.type.name} share: ${mbps(_rateSent, elapsed)} Mbit/s out over '
+        '${elapsed.inMilliseconds} ms, $_rateReads reads of ${_rateReads == 0 ? 0 : _rateRead ~/ _rateReads ~/ 1024} '
+        'KiB at ${mbps(_rateRead, _rateReadTime)} Mbit/s, the client waited ${_rateWaited.inMilliseconds} ms, '
+        '${_buffered ~/ 1024} KiB ahead',
+      );
+    }
+    _rateWatch.reset();
+    _rateSent = 0;
+    _rateReads = 0;
+    _rateRead = 0;
+    _rateReadTime = Duration.zero;
+    _rateWaited = Duration.zero;
+  }
+
   /// The client is done or gone: nothing more is read
   void close() {
     if (_closed) {
       return;
+    }
+    if (streams) {
+      _logRate();
     }
     _closed = true;
     _readsAhead = false;

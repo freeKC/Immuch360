@@ -99,6 +99,27 @@ void main() {
       expect(down[2], closeTo(-0.12220717, 1e-8));
     });
 
+    test('maps the accelerometer of a ONE RS with a 360 module by its own axes', () {
+      expect(insta360ImuAxesOf('Insta360 OneRS'), Insta360ImuAxes.oneRs360);
+      expect(insta360ImuAxesOf(' Insta360 ONE RS '), Insta360ImuAxes.oneRs360);
+      expect(insta360ImuAxesOf('Insta360 OneRS', twoLenses: false), Insta360ImuAxes.xSeries);
+      for (final model in ['Insta360 X3', 'Insta360 ONE X2', 'Insta360 X5', 'Insta360 X6', 'Insta360 OneR', null]) {
+        expect(insta360ImuAxesOf(model), Insta360ImuAxes.xSeries, reason: '$model');
+      }
+      // The mean accelerometer of the ONE RS 1-Inch 360 video of the lot, the camera upright: gravity along body +y,
+      // where the axes of the X series would put it along +x, the picture on its side
+      const accelerometer = [-0.9976058975083623, 0.013906639560362984, 0.04524925088268087];
+      final down = downBodyFromAccelerometer(accelerometer, axes: Insta360ImuAxes.oneRs360);
+      expect(down[0], closeTo(-0.0452, 1e-3));
+      expect(down[1], closeTo(0.9989, 1e-3));
+      expect(down[2], closeTo(-0.0139, 1e-3));
+      expect(downBodyFromAccelerometer(accelerometer)[0], closeTo(0.9989, 1e-3));
+      expect(downBodyFromAccelerometer(null, axes: Insta360ImuAxes.oneRs360), [0.0, 1.0, 0.0]);
+      // The same turn for the gyroscope: body x = IMU z, body y = IMU x, body z = IMU y
+      expect(Insta360ImuAxes.oneRs360.toBody(1, 2, 3), (x: 3.0, y: 1.0, z: 2.0));
+      expect(Insta360ImuAxes.xSeries.toBody(1, 2, 3), (x: 1.0, y: 3.0, z: -2.0));
+    });
+
     test('looks along lens 1 laid level, with gravity down in the view', () {
       final upright = bodyFrame(const [1, 0, 0]);
 

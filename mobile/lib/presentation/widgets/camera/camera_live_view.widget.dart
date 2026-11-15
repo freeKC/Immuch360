@@ -31,10 +31,12 @@ import 'package:immich_mobile/domain/services/tapo_camera.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/ipcam/camera_address.dart';
 import 'package:immich_mobile/infrastructure/tapo/rtsp_probe.dart';
 import 'package:immich_mobile/platform/camera_live_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/camera/camera_live_diagnostics.dart';
 import 'package:immich_mobile/presentation/widgets/camera/camera_live_hls.dart';
+import 'package:immich_mobile/presentation/widgets/camera/ip_camera_text.dart';
 import 'package:immich_mobile/providers/tapo/tapo_camera.provider.dart';
 import 'package:logging/logging.dart';
 
@@ -43,9 +45,10 @@ final _log = Logger('CameraLiveView');
 /// The type of the platform view, CameraLiveViewFactory.VIEW_TYPE in Kotlin and viewType in Swift
 const cameraLiveViewType = 'immuch/camera_live';
 
-/// The RTSP address of a stream of the camera at [host], without the account: Kotlin puts it in
-String cameraRtspUrl(String host, int port, {required bool hd}) =>
-    'rtsp://${host.contains(':') ? '[$host]' : host}:$port${hd ? tapoRtspHdPath : tapoRtspSdPath}';
+/// The RTSP address of a stream of the camera at [host], without the account: Kotlin puts it in. [path] is the
+/// stream of a camera of another brand with its query, in place of the Tapo paths.
+String cameraRtspUrl(String host, int port, {required bool hd, String? path}) =>
+    'rtsp://${host.contains(':') ? '[$host]' : host}:$port${path ?? (hd ? tapoRtspHdPath : tapoRtspSdPath)}';
 
 /// The platform view playing a camera, see the header
 class CameraLiveView extends ConsumerStatefulWidget {
@@ -58,6 +61,7 @@ class CameraLiveView extends ConsumerStatefulWidget {
     required this.hd,
     required this.muted,
     this.mediaPort = false,
+    this.path,
     this.onEvent,
     this.onFailure,
   });
@@ -71,6 +75,9 @@ class CameraLiveView extends ConsumerStatefulWidget {
 
   /// The stream of the media port: [port] is the media port and [password] the TP-Link one; [user] is not used
   final bool mediaPort;
+
+  /// A camera of another brand: the path and query of the stream to play, in place of the Tapo paths
+  final String? path;
   final ValueChanged<CameraLiveEvent>? onEvent;
 
   /// What made an open of the live playlist fail, for the diagnostics line
@@ -128,7 +135,14 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
       // The playlist comes with the muting of the view
       hls
         ..setMuted(widget.muted)
-        ..play(host: widget.host, port: widget.port, user: widget.user, password: widget.password, hd: widget.hd);
+        ..play(
+          host: widget.host,
+          port: widget.port,
+          user: widget.user,
+          password: widget.password,
+          hd: widget.hd,
+          path: widget.path,
+        );
       return;
     }
     // Called from didUpdateWidget too, while the tile builds: it hears of the new state once that is over
@@ -142,7 +156,7 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
         await _api.setSource(
           viewId,
           CameraLiveSource(
-            url: cameraRtspUrl(widget.host, widget.port, hd: widget.hd),
+            url: cameraRtspUrl(widget.host, widget.port, hd: widget.hd, path: widget.path),
             username: widget.user,
             password: widget.password,
             isHls: false,
@@ -184,6 +198,7 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
     if (oldWidget.host != widget.host ||
         oldWidget.port != widget.port ||
         oldWidget.hd != widget.hd ||
+        oldWidget.path != widget.path ||
         oldWidget.user != widget.user ||
         oldWidget.password != widget.password) {
       _play();
@@ -266,6 +281,23 @@ class _CameraLiveViewState extends ConsumerState<CameraLiveView> with WidgetsBin
   );
 }
 
+/// The streams of a camera of another brand than Tapo (ONVIF or a typed RTSP address), for the live tile: the path
+/// and query of its main (HD) and sub (SD) streams, and whether it is RTSPS
+class IpCameraLiveStreams {
+  const IpCameraLiveStreams({required this.hdPath, required this.sdPath, this.secure = false});
+
+  final String hdPath;
+  final String sdPath;
+  final bool secure;
+
+  @override
+  bool operator ==(Object other) =>
+      other is IpCameraLiveStreams && other.hdPath == hdPath && other.sdPath == sdPath && other.secure == secure;
+
+  @override
+  int get hashCode => Object.hash(hdPath, sdPath, secure);
+}
+
 /// The live tile of the camera page: the live view with its state line, a "Live" badge while it plays, and its
 /// buttons (sound, HD or SD, full screen); the reason when there is no live view, and when it failed, the reason in
 /// words, a Retry button and the diagnostics line
@@ -286,6 +318,7 @@ class CameraLiveTile extends StatefulWidget {
     this.power,
     this.deviceType,
     this.autofocus = false,
+    this.ipStreams,
   });
 
   final String host;
@@ -316,6 +349,10 @@ class CameraLiveTile extends StatefulWidget {
   /// TV mode: the first button takes the focus
   final bool autofocus;
 
+  /// A camera of another brand: its streams. The Tapo routes (media port, hub) do not apply, the account is
+  /// optional (many cameras and restreamers have none), and the failures are told in its own words.
+  final IpCameraLiveStreams? ipStreams;
+
   @override
   State<CameraLiveTile> createState() => _CameraLiveTileState();
 }
@@ -344,14 +381,16 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
 
   bool get _hasCloudPassword => widget.cloudPassword?.isNotEmpty ?? false;
 
-  TapoLiveRoute get _route => tapoLiveRoute(
-    model: widget.model,
-    power: widget.power,
-    deviceType: widget.deviceType,
-    hasCameraAccount: _hasAccount,
-    hasCloudPassword: _hasCloudPassword,
-    rtspFailed: _rtspFailed,
-  );
+  TapoLiveRoute get _route => widget.ipStreams != null
+      ? TapoLiveRoute.rtsp
+      : tapoLiveRoute(
+          model: widget.model,
+          power: widget.power,
+          deviceType: widget.deviceType,
+          hasCameraAccount: _hasAccount,
+          hasCloudPassword: _hasCloudPassword,
+          rtspFailed: _rtspFailed,
+        );
 
   void _onEvent(TapoLiveRoute route, CameraLiveEvent event) {
     if (!mounted) {
@@ -388,6 +427,9 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
 
   String _failureText(BuildContext context) {
     final error = _event.error;
+    if (widget.ipStreams != null) {
+      return ipCameraLiveFailureText(context, error, hasAccount: widget.user.isNotEmpty, host: widget.host);
+    }
     final failure = _failure;
     final notAnswering =
         (failure is TapoLiveException && failure.step == TapoLiveStep.connect) || error == cameraLiveUnreachable;
@@ -405,6 +447,27 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
   Widget build(BuildContext context) {
     if (CurrentPlatform.isDesktop && !DesktopCameraLiveView.available) {
       return _Message(key: const Key('camera_live_later'), text: context.t.desktop_tapo_live_later);
+    }
+    final ipStreams = widget.ipStreams;
+    // A camera of another brand: the address each player gets. Media3 and the Dart playlist have no RTSPS: a UniFi
+    // Protect link plays through the console's plain port, any other RTSPS address on a computer only.
+    var host = widget.host;
+    var port = widget.port;
+    String? path;
+    if (ipStreams != null) {
+      final address = CameraStreamAddress(
+        secure: ipStreams.secure,
+        host: widget.host,
+        port: widget.port,
+        pathAndQuery: _isHd ? ipStreams.hdPath : ipStreams.sdPath,
+      );
+      final playable = CurrentPlatform.isDesktop ? address : phonePlayableAddress(address);
+      if (playable == null) {
+        return _Message(key: const Key('camera_live_secure_not_here'), text: context.t.ip_camera_error_secure_not_here);
+      }
+      host = playable.host;
+      port = playable.port;
+      path = playable.pathAndQuery;
     }
     final route = _route;
     switch (route) {
@@ -465,7 +528,9 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
           if (CurrentPlatform.isDesktop)
             DesktopCameraLiveView(
               key: ValueKey(_attempt),
-              url: cameraRtspUrl(widget.host, widget.port, hd: _isHd),
+              url: ipStreams == null
+                  ? cameraRtspUrl(widget.host, widget.port, hd: _isHd)
+                  : cameraStreamUrl(secure: ipStreams.secure, host: host, port: port, pathAndQuery: path!),
               user: widget.user,
               password: widget.password ?? '',
               muted: _muted,
@@ -475,8 +540,9 @@ class _CameraLiveTileState extends State<CameraLiveTile> {
             CameraLiveView(
               // A new view for another route or a retry: the controller of a view keeps its route
               key: ValueKey((route, _attempt)),
-              host: widget.host,
-              port: mediaPort ? widget.mediaPort : widget.port,
+              host: host,
+              port: mediaPort ? widget.mediaPort : port,
+              path: path,
               user: mediaPort ? '' : widget.user,
               password: (mediaPort ? widget.cloudPassword : widget.password) ?? '',
               hd: _isHd,

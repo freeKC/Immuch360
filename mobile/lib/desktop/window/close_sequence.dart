@@ -10,6 +10,8 @@
 // code cannot be cut by any bound, and the logs written last would then be lost with the session's last lines.
 // - The films open in a page save where they are (VideoWatchRecorder.closeAll), and stop following their players,
 //   whose teardown says nothing of where the film was.
+// - The headset view ends, when one runs (xr/headset_view_service.dart): its runtime lets go of the players' frames
+//   before they go. Its bound (2 s) counts only when a view runs; the runner's watchdog gives the close 6 s.
 // - The players are disposed, all at once: libmpv stops reading and calling Dart. One that does not answer is told to
 //   stop calling Dart and left as it is (PlayerPool.close).
 // - The window of the splat viewer closes, when one is open: its page stops reading the scene from the media bridge.
@@ -28,6 +30,7 @@ import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view_service.dart';
 import 'package:immich_mobile/domain/services/log.service.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
@@ -53,6 +56,9 @@ enum DesktopCloseStepEnd { done, failed, timedOut }
 abstract final class DesktopCloseBounds {
   static const watchProgress = Duration(milliseconds: 400);
 
+  /// Only when a headset view runs: the plugin's stop itself waits longer for a runtime that hangs, on its own thread
+  static const headsetView = HeadsetViewService.closeBound;
+
   /// Each player, all at once
   static const player = Duration(milliseconds: 400);
   static const players = Duration(milliseconds: 500);
@@ -60,8 +66,11 @@ abstract final class DesktopCloseBounds {
   static const mediaBridge = Duration(milliseconds: 200);
   static const logs = Duration(milliseconds: 400);
 
-  /// The longest a close waits for the app, all steps together
+  /// The longest a close waits for the app, all steps together, without a headset view
   static const total = Duration(milliseconds: 1800);
+
+  /// With a headset view running, under the 6 s the runner gives a close (windows/runner/flutter_window.cpp)
+  static const totalWithHeadsetView = Duration(milliseconds: 3800);
 }
 
 /// Runs [steps] one after the other, each within its timeout, and tells how each ended. A step that throws or does
@@ -136,6 +145,12 @@ final desktopCloseLogWritesProvider = Provider<Future<void> Function()>(
 final desktopCloseStepsProvider = Provider<List<DesktopCloseStep> Function()>((ref) {
   return () => [
     const DesktopCloseStep('the watch progress', DesktopCloseBounds.watchProgress, VideoWatchRecorder.closeAll),
+    if (ref.exists(headsetViewServiceProvider) && ref.read(headsetViewServiceProvider).running)
+      DesktopCloseStep(
+        'the headset view ends',
+        DesktopCloseBounds.headsetView,
+        () => ref.read(headsetViewServiceProvider).closeForExit(),
+      ),
     DesktopCloseStep(
       'the players',
       DesktopCloseBounds.players,

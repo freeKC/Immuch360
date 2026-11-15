@@ -17,6 +17,7 @@ import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/mpv_video_view.dart';
 import 'package:immich_mobile/desktop/video/player_resource_options.dart';
+import 'package:immich_mobile/desktop/video/xr/headset_view.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_viewer_labels.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -311,6 +312,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// video plays
   late final RestartableTimer _hideTimer;
 
+  /// The video played on this page: from then on a phone hides the controls while it waits too
+  bool _playedHere = false;
+
+  static bool _playsOrWaits(VideoPlaybackStatus? status) =>
+      status == VideoPlaybackStatus.playing || status == VideoPlaybackStatus.buffering;
+
   /// The key of the player of this page in [videoPlayerProvider]
   String get _playerKey => 'network:${widget.sourceId}:${widget.path}';
 
@@ -391,10 +398,13 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       return;
     }
     // Paused or ended they stay, until it plays again (a change of status starts the 5 s again). A TV also hides them
-    // while the video loads: a slow network would keep them there for ever.
+    // while the video loads: a slow network would keep them there for ever. A phone hides them while it waits once the
+    // video played: a link that stalls every few seconds kept them, their time bar and their frames for ever, on the
+    // main thread that also runs the media bridge (review of 14 November 2026)
     final status = ref.read(videoPlayerProvider(_playerKey)).status;
     final plays =
-        status == VideoPlaybackStatus.playing || (status == VideoPlaybackStatus.buffering && ref.read(tvModeProvider));
+        status == VideoPlaybackStatus.playing ||
+        (status == VideoPlaybackStatus.buffering && (_playedHere || ref.read(tvModeProvider)));
     if (!plays || _playerError != null) {
       return;
     }
@@ -416,10 +426,18 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
-  /// A change of the video's status starts the 5 s again; on a TV the controls show when it reaches its end, with the
-  /// replay button (a video just loaded is reported ended too, at its start, which does not count)
+  /// A change of the video's status starts the 5 s again, but for a stall and its end (playing and buffering in turn,
+  /// which a slow link does every few seconds and would keep the controls for ever) while the 5 s run; on a TV the
+  /// controls show when it reaches its end, with the replay button (a video just loaded is reported ended too, at its
+  /// start, which does not count)
   void _onStatus(VideoPlaybackStatus? previous, VideoPlaybackStatus status) {
-    _hideTimer.reset();
+    if (status == VideoPlaybackStatus.playing) {
+      _playedHere = true;
+    }
+    final stallOrItsEnd = _playsOrWaits(previous) && _playsOrWaits(status);
+    if (!stallOrItsEnd || !_hideTimer.isActive) {
+      _hideTimer.reset();
+    }
     if (status == VideoPlaybackStatus.completed &&
         previous != VideoPlaybackStatus.completed &&
         ref.read(tvModeProvider) &&
@@ -584,6 +602,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
           : _playFocus;
       target?.requestFocus();
     });
+    // Controls already shown ask for no frame: without one the focus waited for the next frame something else asked
+    // for (the waiting spinner asked for one at every vsync until 14 November 2026)
+    WidgetsBinding.instance.scheduleFrame();
   }
 
   /// Back on a TV, while the controls show or the app bar has the focus: they hide, and the page takes the keys again
@@ -2227,7 +2248,21 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                       // libmpv plays the films the device cannot decode on the Meta Quest, and there the server's
                       // conversion too (mpv reads HLS, Media3 of the app has no HLS module)
                       child: CurrentPlatform.isDesktop
-                          ? DesktopVideoView(onViewReady: _initController)
+                          ? DesktopVideoView(
+                              onViewReady: _initController,
+                              // The headset view (lib/desktop/video/xr)
+                              headset: HeadsetFlatPage(
+                                playerKey: _playerKey,
+                                source: () => switch (_shareType) {
+                                  NetworkSourceType.plex => HeadsetSourceKind.plex,
+                                  NetworkSourceType.tapo => HeadsetSourceKind.camera,
+                                  NetworkSourceType.documentTree ||
+                                  NetworkSourceType.deviceFolder => HeadsetSourceKind.local,
+                                  _ => HeadsetSourceKind.nas,
+                                },
+                                title: () => _name,
+                              ),
+                            )
                           : _playsWithMpv
                           ? MpvVideoView(onViewReady: _initController)
                           : NativeVideoPlayerView(onViewReady: _initController),

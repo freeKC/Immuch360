@@ -11,6 +11,7 @@ import 'package:immich_mobile/presentation/widgets/pairing/pairing_panel.widget.
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
+import 'package:immich_mobile/utils/app_version_label.dart';
 import 'package:immich_mobile/widgets/forms/login/login_form.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -27,7 +28,7 @@ class LoginPage extends HookConsumerWidget {
 
     Future<void> getAppInfo() async {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      appVersion.value = packageInfo.version;
+      appVersion.value = appVersionNameOf(packageInfo);
     }
 
     useEffect(() {

@@ -150,16 +150,38 @@ Future<CameraMotionTrack?> readGoProMotion(
   return track;
 }
 
+/// Where the first sample of the first track whose sample entry is [entryType] lies in the file that [read] reads, from
+/// the sample tables of its moov box (at most [maxMoovLength] bytes of it; [fileSize] bounds a moov box that runs to the
+/// end of the file): the walk of this reader, shared with the camd track of the DJI Osmo 360 II (dji_osv.dart). Null
+/// without a moov box, such a track or a sample in it. Errors of [read] are not caught.
+Future<({int offset, int size})?> readFirstTrackSample(
+  ByteRangeReader read,
+  String entryType, {
+  int? fileSize,
+  int maxMoovLength = goProMaxMoovLength,
+}) async {
+  final moov = await _readMoov(read, fileSize, maxMoovLength);
+  if (moov == null) {
+    return null;
+  }
+  final track = _tracks(moov.bytes).where((track) => track.entryType == entryType).firstOrNull;
+  final sample = track?.samples().firstOrNull;
+  return sample == null || sample.size <= 0 ? null : (offset: sample.offset, size: sample.size);
+}
+
 typedef _Moov = ({Uint8List bytes, String? firmware});
 
 // The content of the moov box, and the firmware its udta box names (FIRM, as a GoPro writes it)
-Future<_Moov?> _readMoov(ByteRangeReader read, int fileSize, int maxMoovLength) async {
+Future<_Moov?> _readMoov(ByteRangeReader read, int? fileSize, int maxMoovLength) async {
   final boxes = await listTopLevelBoxes(read);
   final moov = boxes.where((box) => box.type == 'moov').firstOrNull;
   if (moov == null) {
     return null;
   }
-  final size = moov.size ?? fileSize - moov.offset;
+  final size = moov.size ?? (fileSize == null ? null : fileSize - moov.offset);
+  if (size == null) {
+    return null;
+  }
   final length = size - moov.headerLength;
   if (length <= 0) {
     return null;

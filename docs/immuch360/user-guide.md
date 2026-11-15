@@ -4,7 +4,7 @@ Every function of Immuch360, step by step, with its options, its messages and it
 
 Back to the [README](../../README.md)
 
-This guide covers every function of Immuch360, for your ordinary photos and videos as for those of a 360° camera (Insta360, GoPro MAX, DJI Osmo 360, Ricoh Theta, Samsung Gear 360), of the photo sphere mode of a phone or of a 3D camera, from an Immich server, the device itself, a NAS, a media server, a Plex server, a Tapo camera or a DJI drone, on phones, tablets, TVs (Android TV and Google TV, and a first test build for LG webOS TVs), Meta Quest headsets and computers (Windows, and early previews for Linux and macOS).
+This guide covers every function of Immuch360, for your ordinary photos and videos as for those of a 360° camera (Insta360, GoPro MAX and MAX 2, DJI Osmo 360 and Osmo 360 II, Ricoh Theta, Samsung Gear 360), of the photo sphere mode of a phone or of a 3D camera, from an Immich server, the device itself, a NAS, a media server, a Plex server, a Tapo camera, a camera of another brand or a DJI drone, on phones, tablets, TVs (Android TV and Google TV, LG webOS TVs, whose app is in LG's review, and a test build for Samsung Tizen TVs), Meta Quest headsets and computers (Windows, and early previews for Linux and macOS).
 
 **Which problem do you have?**
 
@@ -15,21 +15,26 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 - **"I want a film of my Plex server on the phone or in the headset for the plane."** See [Download a film to this device](#download-a-film-to-this-device).
 - **"My Quest will not play some films of my Plex server (DTS sound, an old AVI), or the server stops answering."** See [A film this device cannot decode](#a-film-this-device-cannot-decode-from-build-46) and [When the Plex server stops answering](#when-the-plex-server-stops-answering-from-build-46).
 - **"A film of my Plex server plays without sound, opens its 4K version on my phone, or waits for ages away from home."** See [Films of a Plex library](#films-of-a-plex-library-from-build-45) and [A film this device cannot decode](#a-film-this-device-cannot-decode-from-build-46).
+- **"A Plex film pauses every few seconds on my phone, though the Wi-Fi is fast."** See [Films of a Plex library](#films-of-a-plex-library-from-build-45), "On a phone, from build 48".
 - **"My photos are on my phone, and I have no computer or NAS to put them on for the headset."** See [Share this phone on the network](#share-this-phone-on-the-network).
 - **"I want to see my Tapo camera and last night's clips without the Tapo app, and keep a clip in Immich."** See [Tapo cameras](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card).
 - **"My battery Tapo camera, a C410 for example, shows no live view."** See [Battery cameras](#battery-cameras-from-build-47).
+- **"My Reolink, Hikvision, Dahua or UniFi camera has its own app, and I want it next to my photos and on the TV."** See [Cameras of other brands](#cameras-of-other-brands-onvif-or-rtsp-from-build-48).
 - **"My drone videos are not on the Immich map, and I want the files of my DJI drone on my server without a computer."** See [DJI drones](#dji-drones-photos-and-videos-over-usb-experimental).
 - **"My photo is sideways, and I want to turn it with one key, on the phone, the TV or the computer."** See [Turn a photo with one key](#turn-a-photo-with-one-key).
 - **"My Insta360 files need the Insta360 app before I can watch them"** (and the GoPro .360 and DJI .osv files too). See [Raw 360° camera files](#raw-360-camera-files-without-the-cameras-app).
+- **"My DJI Osmo 360 II or GoPro MAX 2 videos shake, or my Insta360 ONE RS 1-Inch files show on their side."** See [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental) and [Raw 360° camera files](#raw-360-camera-files-without-the-cameras-app).
 - **"My 360° videos filmed on a bike or a helmet shake, and their horizon leans."** See [Stabilisation with the camera's gyroscope](#stabilisation-with-the-cameras-gyroscope-experimental).
 - **"My 3D videos look doubled, and my VR180 videos are stretched all around."** See [3D and VR180](#3d-and-vr180-photos-and-videos) and [Spatial 2.5D](#depth-on-a-flat-screen-spatial-25d-experimental).
 - **"I have spatial photos from my iPhone."** See [Apple spatial photos and videos](#apple-spatial-photos-and-videos).
 - **"It works on the phone, but I want it in the Quest."** See [In the Meta Quest 3 headset](#in-the-meta-quest-3-headset).
 - **"I want to watch my 360° photos and videos, and the videos of my NAS or my Plex server, on the TV, with the remote."** See [Watch on your TV](#watch-on-your-tv-android-tv-and-google-tv), and for an LG TV, [LG webOS TVs](platform-support.md#lg-webos-tvs).
+- **"A video filmed upright lies on its side on my Samsung or LG TV."** See [A video on its side](#a-video-on-its-side-on-an-lg-or-samsung-tv).
 - **"I cannot find my 360° shots among all the others."** See [The 360° list](#find-your-360-shots-the-360-list).
 - **"My 360° video stutters, or plays a blurry copy."** See [Video details and decoders](#video-details-decoders-and-why-a-video-stutters).
 - **"A video loads forever, or does not play on my TV."** See [When a video does not play](#when-a-video-does-not-play).
 - **"I want my 360° photos and my Immich library on my Windows PC, with the photos and videos of its folders, my NAS and my Plex server, and the PC shared with my headset."** See [On a Windows computer](#on-a-windows-computer-immuch360-desktop-preview) (a preview: photos and flat videos, and from desktop build 3 360°, 3D, VR180 and raw 360° videos and the Tapo live view).
+- **"I have a PC VR headset, and I want my 360° videos and my films in it from my Windows PC."** See [A PC VR headset](#a-pc-vr-headset-from-desktop-build-28-experimental) (experimental, not yet tried in a headset by the project).
 - **"Typing my server address and password with a TV remote, or in the headset, takes ages."** See [Sign in a TV, a headset or a computer with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **"I want my DJI drone's video in my Quest one day, and I can help test."** See [DJI link diagnostics](#dji-link-diagnostics-experimental).
 - **"I reinstalled the app, or moved from the Google Play build to the GitHub one, and lost my servers, shares and backup folders."** See [Keep your settings in a file](#keep-your-settings-in-a-file-from-build-46).
@@ -47,6 +52,7 @@ When a feature is recent, the text says from which build it is there. The GitHub
 - [Plex Media Server, without plex.tv](#plex-media-server-without-plextv)
 - [Share this phone on the network](#share-this-phone-on-the-network)
 - [Tapo cameras: live view and the recordings of the memory card](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
+- [Cameras of other brands: ONVIF or RTSP (from build 48)](#cameras-of-other-brands-onvif-or-rtsp-from-build-48)
 - [DJI drones: photos and videos over USB (experimental)](#dji-drones-photos-and-videos-over-usb-experimental)
 - [DJI link diagnostics (experimental)](#dji-link-diagnostics-experimental)
 - [Raw 360° camera files, without the camera's app](#raw-360-camera-files-without-the-cameras-app)
@@ -357,6 +363,8 @@ On each screen:
 - **Computers**: the page in two columns, Enter or Space on Play; the Subtitles menu sits next to Audio in the player.
 - **iPhone and iPad**: the page and the filters, but no track menu yet, and MKV films do not play there.
 
+**On a phone, from build 48**: a film that a phone received at a few Mbit/s, pausing every few seconds while the Wi-Fi was fast, plays on. The app now reads Plex away from the part of the app that draws the screen, in its own worker, and hands the player its data in large batches; the player of Android tells its position ten times a second instead of 125, and the waiting circle turns four times a second instead of at every frame. On 14 November, on a Galaxy S24, a candidate of build 48 received a film of 21 Mbit/s at 32 to 40 Mbit/s, where build 47 received it at 4 to 8. Nothing to set; the TVs, the Quest and the computers read Plex the same way, not measured there yet. If a film still pauses, the waiting box tells what the link carries against what the film needs.
+
 Limits of builds 45 to 47:
 - The versions and the sound track choice of build 47 were checked by the project's tests, not on a device yet, and the version chips not with a TV remote yet.
 - The film page, the filters and the subtitle files were checked against a simulated server built from Plex's documentation, then the film page in a Quest 3 with build 45 against a real Plex Media Server. From build 46 the subtitle files beside a film were checked against a real server with 26 such files: a file Plex names `.vtt` that holds ASS or SubRip text, and a SubRip file written in Latin-1, whose accents showed wrong, now play as they are.
@@ -486,7 +494,7 @@ From there it is a WebDAV share like any other: 360° detection, raw files, the 
 
 You have Tapo cameras at home, and you want to see the garden camera and last night's clips next to your photos without opening the Tapo app, and keep a clip in Immich. The Immich app has nothing for cameras, and the Tapo app is a separate app, signed in to your TP-Link account, with the clips apart from your photos.
 
-From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows the camera live on Android phones and tablets, Android TV and the Meta Quest (and on Windows, iPhone and iPad and LG TVs, see below), and on every platform the recordings of its memory card, day by day: a clip is fetched from the camera, then plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera.
+From build 20 Immuch360 adds a Tapo camera next to the network shares. It shows the camera live on Android phones and tablets, Android TV and the Meta Quest (and on Windows, iPhone and iPad and LG TVs, see below), and on every platform the recordings of its memory card, day by day: a clip is fetched from the camera, then plays like any video and can be sent to Immich. The app talks to the camera on your network only, never to the servers of TP-Link, and never changes anything on the camera. From build 48 a Tapo on mains power can also be added as an ONVIF camera, live view alone, see [Cameras of other brands](#cameras-of-other-brands-onvif-or-rtsp-from-build-48); added here, it keeps its recordings.
 
 ### Add a camera
 
@@ -544,12 +552,77 @@ When the camera no longer answers at its address, its page looks for it on the n
 
 - **Not yet checked on a device**: build 20 has not run with a real camera yet. The protocol was written from captures of a C510W with firmware 1.3.4 (the V4 login of mid 2026), and the app was checked against a simulated camera in its tests. Reports are welcome, with the model and firmware that "Test the camera" shows and the lines of [Logs](troubleshooting.md#logs).
 - **Live view**: on Android phones and tablets, Android TV, the Quest, from desktop build 3 Windows, and from webOS 0.2.0 LG TVs, video only; on iPhone and iPad from the next iOS release, a few seconds behind the camera. The limits of TP-Link apply: two HD and two SD streams at most at once per camera, the Tapo app included, and Tapo Care, the memory card and a recorder that uses RTSP or ONVIF cannot all run at once.
+- **Sign in, from build 48**: the logins follow pytapo, Home Assistant Tapo Control and python-kasa (its open pull request for the newer TPAP firmware included) as of 13 November 2026. A camera that drops its session, a C100, C200 or C220 on firmware 1.4 does it about every ten minutes, is signed in again once and the request sent again; the newer forms of the password that some firmware asks for are computed (MD5 crypt, SHA-256 crypt with its salt and rounds, and a few others), a refused password tries the next form before it stops, a camera that says it is locked gets no more tries, and a camera asking for more than 100,000 rounds is refused before anything is sent. Checked against a simulated camera, not with a real one yet.
 - **Cameras**: from build 47, battery cameras show live through their media port (see [Battery cameras](#battery-cameras-from-build-47)); cameras behind a Tapo hub are not supported yet.
 - **Recordings**: one download at a time per camera. While the Tapo app browses the memory card, the app tries again after 4, 8 and 12 seconds, then says "The camera is busy with another viewer, such as the Tapo app. Try again in a minute." Recordings in H.265 are not converted yet ("This recording is in H.265, which this version cannot convert yet."), continuous recordings have no thumbnail, and a clip plays once it is fully fetched.
 - **Passwords**: each wrong password counts, and after a few the camera locks for a while ("The camera is locked after too many wrong passwords. Try again in N minutes."). The app never tries a refused password again by itself: only "Test the camera" or Retry ask the camera again. When the camera takes the password for its settings but not for its videos, turn Third-Party Compatibility off and on again in the Tapo app, then restart the camera.
 - **Space**: fetched clips stay in the cache of the app, 1 GB at most for all the cameras together (the ones played least recently go first); the system may clear that cache, and removing a camera deletes its clips.
 - **Away from home**: the app reaches the camera at its address on your network, so not from outside it.
 - Immuch360 is not affiliated with TP-Link.
+
+## Cameras of other brands: ONVIF or RTSP (from build 48)
+
+You have cameras of another brand than Tapo, Reolink, Hikvision, Dahua, Axis or others, or a recorder such as UniFi Protect or Frigate, and you want their picture next to your photos, on the TV or in the headset, without their apps. The Immich app has nothing for cameras. From build 48 and desktop build 28, Immuch360 adds them next to the network shares: it finds the cameras that speak ONVIF on your network, reads them, and plays their RTSP stream live. The live view, without the recordings for now; the app reads the camera and never writes to it.
+
+None of these brands was seen on a real device by the project yet. The app was checked against a simulated ONVIF camera written from the ONVIF specifications and the documentation of the brands, and its streams against a local RTSP server (MediaMTX, with synthetic pictures and sound), on the project's computer.
+
+### Add a camera
+
+1. **On the camera**, or in its app, turn ONVIF or RTSP on, and create its account when it has none: often a separate ONVIF or RTSP user, not the account of its cloud app. The page of Immuch360 says where for each brand: "Reolink, Server Settings (ONVIF port 8000); Hikvision, Integration Protocol, with an ONVIF user; Dahua and Amcrest, the ONVIF page of Network; Imou, its safety code is the password of admin; Ezviz, its verification code; Tapo, Camera Account (ONVIF port 2020); Aqara G5 Pro, RTSP in the Aqara app (port 8554); UniFi Protect, the RTSP switch of each camera, then paste its link; Frigate and go2rtc, rtsp://host:8554/name; Eufy, RTSP in the HomeBase settings."
+2. **In Immuch360**, open the Library tab, then Network shares, then + and "A camera of another brand (ONVIF or RTSP)".
+3. **Pick it, type it or paste it.** For about 3 seconds the page asks the network, and the cameras that answer show under "Cameras found on the network (ONVIF)", with their name and model; tap yours, or "Search again". When none answers, the page says "No ONVIF camera answered. Type its address below: ONVIF is often off until you turn it on, and some networks block the search." In "Address or RTSP link", type its address (192.168.1.40, or 192.168.1.40:8000 for another ONVIF port: without a port the app tries 80, 8000, 2020, 8080 and 8899 in turn), or paste a whole rtsp:// or rtsps:// link from UniFi Protect, go2rtc, Frigate or the manual of the camera. An account written inside a pasted link is taken out of it and kept as the account.
+4. **The account**: "Camera account", the user and the password of the camera itself. Leave it empty when the camera has none.
+5. **"Read the camera"**: for an ONVIF camera, the page shows "(device), firmware (firmware)", then "Main stream (main), sub stream (sub)", such as "Main stream H.264 2304 x 1296, sub stream H.264 640 x 360", and whether this screen plays them; for a link, what the stream holds. Or the reason it could not, in red (below). Save: the camera is listed under "Cameras", after the shares.
+
+On iPhone and iPad, from version 3.4.3, the list stays empty: the search needs the multicast entitlement of Apple, which the app does not have. Type the address or paste the link.
+
+### Watch it live
+
+1. Tap the camera. Its live view starts on the sub stream on a phone, a tablet and a TV, with HD for the main stream, and on the main stream in the Quest, at the shape of the picture. Below it come the model and the streams, and "Live view only: the recordings of this camera are not read in this version, and nothing is written to the camera."
+2. A live view that fails says why, read from the player: a refused account, a codec, a network that does not answer.
+
+| Screen | Player | Video | Sound | Links |
+|---|---|---|---|---|
+| Android phones and tablets, Android TV, Meta Quest | Media3, RTSP over TCP | H.264, H.265 when the device decodes it, MPEG-4 | AAC, G.711 A-law and mu-law | rtsp://; a UniFi rtsps:// link plays through the plain port 7447 of the console, with the same token |
+| iPhone and iPad (from version 3.4.3) | the stream turned into an HLS playlist on the device, played by the system player | H.264 | G.711; an AAC stream plays without sound | as on Android |
+| Windows, Linux and macOS | libmpv (FFmpeg), RTSP over TCP | what FFmpeg decodes: H.264, H.265, MJPEG, MPEG-4 | AAC, G.711, G.726 | rtsp:// and rtsps:// over TLS |
+| LG and Samsung TVs | not in build 48 | | | |
+
+A stream this screen cannot play says so before it starts: "This device does not play (codec) from a camera. Switch the camera to H.264, or watch it in the computer app." (MJPEG on phones and TVs, H.265 on iPhone and iPad), and "This RTSPS link plays in the computer app only. Use the camera's plain rtsp:// link here." for an RTSPS link other than UniFi's.
+
+### The brands
+
+| Brand | Expected | How |
+|---|---|---|
+| Tapo on mains power (C200, C2xx, C510W, C5xx) | yes | ONVIF on port 2020 with the camera account; added here it is live view alone, added as "A Tapo camera" it keeps its recordings |
+| Reolink wired and PoE cameras, NVRs, Home Hub | yes | ONVIF on port 8000, ONVIF and RTSP turned on in Server Settings; a 4K H.265 model plays on Android and computers, not on iPhone |
+| Hikvision, Ezviz | yes, with the ONVIF user | Integration Protocol: ONVIF turned on and an ONVIF user; Ezviz, the verification code as the password, ONVIF often off; a clock of the camera minutes off is taken into account |
+| Dahua, Amcrest, Imou, Lorex | yes | HTTP Digest, the stream path with its query; Imou, the safety code is the password of admin |
+| Axis | yes | ONVIF users apart from the VAPIX users; MJPEG profiles kept second |
+| Vivotek, D-Link | yes, from a device that reaches them | ONVIF and RTSP |
+| Aqara G5 Pro, G100, G350 | by a pasted link | RTSP on port 8554, turned on in the Aqara app |
+| UniFi Protect | by a pasted link | the RTSP switch of each camera; rtsps:// on 7441 on computers, the plain 7447 elsewhere |
+| Frigate, go2rtc, MediaMTX restreams | by a pasted link | rtsp://host:8554/name |
+| Eufy with a HomeBase | by a pasted link | when RTSP is on in the HomeBase settings |
+| Ring, Nest, Blink, Arlo, Wyze, battery Reolink cameras without a hub | no | "Ring, Nest, Blink, Arlo, Wyze and battery Reolink cameras without a hub stream through their cloud only: they cannot be added. If Home Assistant or Frigate already shows them, paste the RTSP link they give." |
+
+### The account and what stays on the device
+
+- **No account before the camera asks**: the app sends no account to a camera that does not ask for one, and tries a typed account once: a refused account stops there, since some cameras lock it after a few tries ("The camera refused the user or the password. Some cameras lock the account after a few tries.").
+- **Digest, never Basic, when it reads the camera**: ONVIF calls carry the digest of the password the standard asks for, and HTTP and RTSP answers use Digest (MD5, MD5-sess, SHA-256, SHA-256-sess). A camera that takes Basic authentication alone, which sends the password in clear, is refused: "The camera only takes Basic authentication, which sends the password in clear: Immuch360 does not. Turn on Digest authentication in the camera's settings." The players of the live view, Media3 and libmpv, would still answer a Basic request that came later from that address.
+- **Read calls only**: the date and time of the camera, its information, its capabilities and services, its profiles, its stream and snapshot addresses. Nothing that writes, no PTZ, no events.
+- **The address the camera gives** is put back on the address you chose: the account never goes anywhere else, and no redirection is followed.
+- **The secure storage**: the password and the stream addresses, which can hold a token (UniFi) or an account (some cameras), stay in the secure storage of the device; the list of sources keeps the address, the ports, the model and the stream sizes. The logs mask the addresses. A settings file with its accounts carries them, one without does not: the camera then says "The stream address of this camera is missing (a settings file restored without its accounts). Use the pencil at the top (Edit the camera), then Read the camera again; for a camera added by its link, paste the link again."
+
+### Limits
+
+- **Not on a real device yet**: no phone, TV, Quest, iPhone, computer or real camera ran this yet, and each brand above is expected from its documentation and the local bench. Real ONVIF cameras will tell whether a camera that ties its Digest nonce to a connection is told "wrong password" on its second call. Reports are welcome in [Issues](https://github.com/freeKC/Immuch360/issues), with the red line the page shows and, on a computer, the log of the app (the addresses are masked).
+- **The live view alone**: the recordings of these cameras (ONVIF Profile G, the memory card of a Reolink), the snapshot on the tile, PTZ and the events are not in build 48; several cameras with one password cannot be added at once yet.
+- **Transport**: RTSP over TCP, never UDP; a camera that answers 461 to TCP says so. A sub stream on another RTSP port than the main one is left out. ONVIF Media 1: a camera that offers H.265 through Media 2 alone is read through Media 1 or added by its link.
+- **The network**: the camera must be reachable from the screen; a camera on another network gets "Nothing answers at (host). Check the address, and that this device is on the camera's network." The app never changes a network setting. A web server on port 80 that asks for an account on every path can stop the search before the ONVIF port: type address:port.
+- **Codecs**: MJPEG plays on computers alone; on iPhone and iPad, H.264 alone, and an AAC stream without its sound.
+- **TVs**: the LG and Samsung TV apps have no cameras of other brands yet; Android TV has them all.
+- Immuch360 is not affiliated with any of these brands.
 
 ## DJI drones: photos and videos over USB (experimental)
 
@@ -634,7 +707,8 @@ From build 16 Immuch360 stitches those files itself, on the phone, the tablet or
 - **Insta360 X4, X4 Air, X5 and X6 .insv videos, one square track per lens** (build 18): two decoders at once, one per lens, and a GPU compositor that stitches them into the sphere.
 - **Insta360 X3 and older at 5.7K and above: two files, `_00_` and `_10_`** (build 18): the same, the other file being found next to the first one.
 - **GoPro MAX and MAX 2 .360: two tracks of three cube faces each** (build 18): the same, with the overlap columns blended.
-- **DJI Osmo 360 .osv: two square 10 bit tracks** (build 18): the same, with the Kannala-Brandt calibration of the file.
+- **DJI Osmo 360 .osv: two square 10 bit tracks** (build 18): the same, with the Kannala-Brandt calibration of the file. From build 48, the DJI Osmo 360 II too: its calibration is in a track of its own (camd) rather than in a box after the file, and the camera leaves out the parts of its lens turns that are zero, which the app reads as zero; before, it was stitched with the nominal values of the Osmo 360.
+- **Insta360 ONE X2 and ONE RS 1-Inch 360 .insv in two files** (build 18, fixed in build 48): as the X3 pair. From build 48 the ONE RS 1-Inch 360 photos and videos are upright: its sensor sits at other axes than those of the X series, which laid its pictures on their side.
 - **Dual fisheye .dng** (not yet): shows flat.
 
 ### Watch a raw file
@@ -669,9 +743,10 @@ A 360° video filmed in the hand, on a bike or on a helmet shakes, and its horiz
 
 What the app reads, camera by camera:
 
-- **Insta360** (.insv): the gyroscope and the frame times of the trailer at the end of the file. A split X3 pair takes them from its `_00_` file, whichever file you open. Checked on sample files of X3, X4 and X5 cameras.
-- **GoPro MAX** (.360): the orientation (CORI) and gravity (GRAV) tracks of the file. Checked on one GoPro MAX file: the horizon and the shake are corrected, but where the camera points near the vertical part of the turn is not, so the view can drift there. A GoPro MAX 2 file plays as before, without the button: the axes of its tracks were not measured yet.
+- **Insta360** (.insv): the gyroscope and the frame times of the trailer at the end of the file. A split X3 pair takes them from its `_00_` file, whichever file you open. Checked on sample files of X3, X4 and X5 cameras. From build 48, the frame times of the ONE X2 (and of every camera that records 56 byte samples) are read in milliseconds, where they were read in microseconds, which squeezed 146 frames into 5 ms; the ONE RS 1-Inch 360 gets its own axes, the ONE RS 360 lens module the same ones (not checked). Checked from build 48 on a public pair of ONE X2 files (139 frames, within 0.25 degree per frame of the motion in the picture) and on public files of a ONE RS 1-Inch 360 (within 0.03 degree, on a small motion). The X6, its V6 calibration read as GyroView documents it, and the X4 Air are read with the axes of the X series, with no real file found to check them.
+- **GoPro MAX** (.360): the orientation (CORI) and gravity (GRAV) tracks of the file. Checked on one GoPro MAX file: the horizon and the shake are corrected, but where the camera points near the vertical part of the turn is not, so the view can drift there. From build 48, a GoPro MAX 2 file is stabilised too: its tracks follow the axes of the view, measured on three public files of firmware H24.02.01.09.71 (one of them on a tripod); the app knows it by its name in the file ("MAX2") or by its faces of 1920. Its 8 bit mode (5888 x 1920) was not seen.
 - **DJI Osmo 360** (.osv): the attitude of each frame. The correction fades in over the first 5 seconds, because the attitude of the first seconds can lean by up to 20 degrees: part of the shake of those seconds stays.
+- **DJI Osmo 360 II** (.osv, from build 48): the attitude of each frame from its own track, with its frame rate and its own axes, other than those of the Osmo 360. Checked on one public file (a motorbike ride, 25 frames a second, firmware 01.01.02.10): 258 frames over 10.28 s, within 0.18 to 0.20 degree per frame of the motion in the picture, against 0.55 degree of motion. Its 50 and 60 frame modes and other firmware were not seen, and how its first seconds lean was not measured.
 
 Where the file is:
 
@@ -682,7 +757,7 @@ Where the file is:
 - **On Windows**, from desktop build 26, the 360° player stabilises them too (experimental, on by default), from your folders, your library and your shares: its drawing pass turns each frame at the time of that frame, which mpv gives within one frame (measured on 18,052 draws of test clips on Windows and 14,336 on Linux); the first frame of a video and the first frame after a seek can be one frame off. The button is at the top of the player, and the setting in the settings of the app. It comes with media_kit_360 v1.1.0. Not watched on a real camera file on a computer yet.
 - **Linux and macOS** do not stabilise yet: their 360° player plays these videos flat.
 
-What was checked: the tests of the project's CI and build host, on the motion tracks of sample files of Insta360 X3, X4 and X5, GoPro MAX (one file) and DJI Osmo 360 cameras, and the angles of the table against the picture of those files. For the Meta Quest, the tests also check that the turn inside the stitch shows each point where the phone's player shows it. No run on a phone, a TV, an iPhone, a headset or a computer is recorded yet: feedback welcome.
+What was checked: the tests of the project's CI and build host, on the motion tracks of sample files of Insta360 X3, X4 and X5, GoPro MAX (one file) and DJI Osmo 360 cameras, and from build 48 of public files of the Insta360 ONE X2 and ONE RS 1-Inch 360, the GoPro MAX 2 and the DJI Osmo 360 II, the samples kept off the repository and read by a probe of the tests that checks each fact above, and the angles of the table against the picture of those files. For the Meta Quest, the tests also check that the turn inside the stitch shows each point where the phone's player shows it. No run on a phone, a TV, an iPhone, a headset or a computer is recorded yet: feedback welcome.
 
 ### How the stitching works
 
@@ -694,7 +769,7 @@ What was checked: the tests of the project's CI and build host, on the motion tr
 ### Limits
 
 - **Seams**: the stitch uses the camera's calibration only, without seam optimisation, so objects close to the camera can show a seam, as in the camera's own preview.
-- **Horizon**: on Android phones, tablets and TVs from build 42, and on iPhone and iPad, in a Meta Quest and on Windows from build 46 and desktop build 26, an Insta360, GoPro MAX or DJI Osmo 360 video plays stabilised, the horizon level through the whole video (see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental)). Without the stabilisation (turned off, a file without a motion track, a GoPro MAX 2, a file of a share that cannot be read at any position, Linux and macOS), levelling uses the accelerometer the camera records in the file, averaged: an Insta360 video is levelled once, from the start of the recording, so a handheld video keeps its shakes and its horizon may lean a little, and GoPro and DJI files keep the camera's horizon.
+- **Horizon**: on Android phones, tablets and TVs from build 42, and on iPhone and iPad, in a Meta Quest and on Windows from build 46 and desktop build 26, an Insta360, GoPro MAX or DJI Osmo 360 video plays stabilised, the horizon level through the whole video (see [Stabilisation](#stabilisation-with-the-cameras-gyroscope-experimental)). Without the stabilisation (turned off, a file without a motion track, a file of a share that cannot be read at any position, Linux and macOS), levelling uses the accelerometer the camera records in the file, averaged: an Insta360 video is levelled once, from the start of the recording, so a handheld video keeps its shakes and its horizon may lean a little, and GoPro and DJI files keep the camera's horizon.
 - **Files without calibration**: a file without its calibration block (the members `_008` and `_009` of an X3 HDR group) uses the calibration the app kept from another file of the same camera or the same camera model, or the nominal X3 values if it has seen none.
 - **What was checked**: photos against Insta360 Studio exports of X3 files (same framing, level horizon, a yaw offset under a degree); single track videos on an Android emulator with a low resolution X3 file. The two track and two file paths were checked on real X4, X3 pair, GoPro MAX and Osmo 360 files with the app's CPU reference stitcher (level, continuous seams) and by the Android unit tests. Playback on a phone, a Quest and an iPhone is still the device test of builds 18 and 19, and raw files have not run on an iPhone yet: feedback welcome.
 - **DJI Osmo 360 files** (October 2026): a real .osv file, two 3840x3840 HEVC tracks of 10 bit (Main 10) at 25 frames a second with the camera's calibration after them, was read by the app's parsers and stitched by the CPU reference with continuous seams. On an Android 15 emulator, from a WebDAV share, it is listed with the 360° badge, but the emulator has no 10 bit HEVC decoder, so the file gets no thumbnail there and its 360° player says "Unable to play video"; a synthetic clip laid out the same way in 8 bit was listed with a thumbnail and played stitched to the end, both lenses paired, with the emulator's software decoders. A phone or a Quest with a 10 bit HEVC decoder is expected to play it with its hardware decoders, which no device run has confirmed yet. On Windows, see [Raw 360° videos](#use-it-on-a-computer) in the computer section.
@@ -940,6 +1015,18 @@ To install the app on a TV, see [Install it on the TV](platform-support.md#insta
 5. **Memories**: left and right go through the photos and on to the next memory, Up goes to the close button and Down to "View in timeline".
 6. **Shares and Plex**: the same keys in the photo and video pages of a share, where left and right open the previous or next file of the folder; from build 27 the name and the controls of a video hide 5 seconds after the last key there too.
 
+### A video on its side, on an LG or Samsung TV
+
+A video filmed upright on a phone is stored lying down, with a turn written in the file for the player. The TV apps of LG and Samsung are a separate app (see [LG webOS TVs](platform-support.md#lg-webos-tvs)), and on Samsung TVs the player may ignore that turn ([issue 17](https://github.com/freeKC/Immuch360/issues/17)).
+
+1. **By itself, on a Samsung TV**: from test build 0.3.2, a video the TV draws on its side is turned; from 0.3.3 also when the TV reports the turned size while it still draws the stored picture on its side, the case of the issue, the stretch undone. A smaller stream is a copy the Immich server converted, already turned, and is left alone. On an LG TV the app leaves the turn to the player of the TV.
+2. **By hand, on both** (Samsung from test build 0.3.3, LG from version 1.0.4): in a video, Up shows its top bar with "Turn the picture" selected, after the close button; each OK turns the picture a quarter clockwise. Left and Right move between the buttons of the bar, and Down or Back hand the focus back to the video; the next Back closes it. While the video plays, the yellow key turns it a quarter clockwise and the blue key back.
+3. **"Fit the picture"** shows next to it when the size the TV reports and the size of the file differ in shape: it switches between the two ways the turned picture can fill the screen.
+4. The choice is kept for that video on the TV (the newest 1000 videos), and the top bar says "Turned by hand: 90°, kept for this video".
+5. If it is still wrong, About this TV shows a "Video turn" line: the platform, the turn of the file, the sizes, whether the turn was automatic or by hand, and what was applied. Please post it in the issue.
+
+Limits: not tried on a Samsung or LG TV yet. A TV may ignore a turn asked by the page; the "on screen" size of the line then looks right while the picture does not. A copy the server converted at the size of the original cannot be told from the original, so the button is there for it. From test build 0.3.4 and version 1.0.4 the three texts of the buttons are in the 89 languages.
+
 ### The Remote control layout setting
 
 Settings, Preferences, "Remote control layout": "Large focus frames and remote control keys, without the controls that need a touch screen. Automatic turns it on on Android TV and Google TV." Automatic is the default; On suits a tablet driven by a keyboard or a game pad; Off turns it off on a TV. The setting exists on Android only. From build 22 a change applies at once to the open page, which stays where it was (before, Settings opened again on Advanced, over a start screen that Back had to go through). The arrows and OK work in the viewers with a keyboard or a game pad whatever the setting.
@@ -1076,7 +1163,7 @@ Everything the official Immich mobile app does is here: backup, timeline, albums
 
 To show a 360° photo to someone who does not have the app, share it with an Immich shared link: the Immich web app shows a 360° photo as a sphere in their browser.
 
-The current build, build 47 (version 3.4.2, build number 3030045), follows the Immich 3.4.0 app with 11 later fixes of Immich, as builds 45 and 46 did, for Immich 3.3 and 3.4 servers; the CI's lab runs it against a simulated Immich 3.3.5 server, and builds 45 and 46 ran on the author's phone with the author's own Immich server. Builds 28 to 44 were based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), and build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
+The current build, build 48 (version 3.4.3, build number 3030046), follows the Immich 3.4.0 app with 11 later fixes of Immich, as builds 45 to 47 did, for Immich 3.3 and 3.4 servers; the CI's lab runs it against a simulated Immich 3.3.5 server, and builds 45 and 46 ran on the author's phone with the author's own Immich server. Builds 28 to 44 were based on Immich `main` of 10 October 2026 (version 3.3.0-rc.0), and build 22, on the same Immich base, was tested against an Immich 3.2.4 server and against a server built from that same Immich `main`: login, timeline, albums, 360° photos and videos, video playback and uploads, with no API error. From build 48 and desktop build 28, "Server update is available" no longer shows for a patch gap between the app and the server, either way: the app 3.4.2 on an Immich 3.4.1 server, the latest release, showed it ([issue 16](https://github.com/freeKC/Immuch360/issues/16)). It shows when the server reports a newer Immich release, or is a minor or major release behind the app; "App update is available" still shows when the server is a whole major release ahead. Please report problems in [Issues](https://github.com/freeKC/Immuch360/issues), not to the Immich project. For the full documentation of Immich itself, see [immich.app](https://immich.app).
 
 ## On a Windows computer: Immuch360 Desktop (preview)
 
@@ -1086,7 +1173,7 @@ On a computer, Immich offers its web app in a browser. **What Immuch360 Desktop 
 
 This is a preview: photos and flat videos work from desktop build 2, and from desktop build 3 the 360° video player (360°, 3D, VR180 and raw 360° videos) and the live view of Tapo cameras; the steps below that need build 3 say so. Since 9 October 2026 the desktop sources are in the main branch of the fork, `immuch360`, so phones, headsets, TVs and computers ship from the same sources. The phone, tablet, Quest and TV apps do not change with it and keep the name Immuch360.
 
-To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the installer or the ZIP of desktop build 27, signed, with packages for Linux and macOS, early previews.
+To download and install the preview, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos): the installer or the ZIP of desktop build 28, signed, with packages for Linux and macOS, early previews.
 
 ### What the preview does
 
@@ -1106,6 +1193,8 @@ To download and install the preview, see [Install it on a computer](#install-it-
 - **Open with and drag and drop** (from desktop build 5): a photo or a video opened with the program ("Open with", a file dropped on `immuch360.exe`, a path given on its command line) or dropped on its window opens in the viewer, a 360° one in its 360° view at once; several files, or a folder, open on a page of their own; a second start hands its files to the window already open. See step 3 of [Use it on a computer](#use-it-on-a-computer).
 - **Sign in with your phone** (from desktop build 8): the sign-in page shows a QR code for Immuch360 on your phone, see [Sign in with your phone](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
 - **Spatial 2.5D**: its button shows on Windows, and says that Spatial 2.5D comes to Immuch360 Desktop in a later version.
+- **A PC VR headset** (from desktop build 28, on Windows, experimental): "View in headset" shows the video playing in a headset of SteamVR, Meta Horizon Link, Virtual Desktop or another OpenXR runtime, see [A PC VR headset](#a-pc-vr-headset-from-desktop-build-28-experimental).
+- **Cameras of other brands** (from desktop build 28): their live view, over ONVIF or RTSP, through libmpv, see [Cameras of other brands](#cameras-of-other-brands-onvif-or-rtsp-from-build-48).
 
 ### Use it on a computer
 
@@ -1203,6 +1292,26 @@ In Settings, "AI and 3D", "Relief quality of 3D photos" offers "v2, better edges
 - **Why Maximum is sometimes greyed.** The training program decodes every image whole before it starts: the frames of an 8K video at their own size took 11.4 GB in 26 seconds on a computer of 16 GB, and emptied its memory. So the app counts what the images would take (some 1.3 GB, plus 5 bytes a pixel, plus 2.2 KB a gaussian for a million of them) and prepares them at the largest size that fits in half the computer's memory and in the memory free when the box opens. When that comes back to 1,920 pixels, the line says "Same as Detailed on this computer". Closing other programs, or a computer with more memory, can raise it.
 - **The time.** The box starts from the times of the measure and, once this computer made a scene, from its own: placing the photos takes the same at every quality, the training of Detailed about five times that of Headset, Maximum more again by its pixels. A Maximum scene leaves the training time the box starts from as it was: how that time grows with the pixels is not measured yet. Each is an estimate: "about".
 
+### A PC VR headset (from desktop build 28, experimental)
+
+You have a PC VR headset, or a Meta Quest you plug into the PC, and you want your 360° videos all around you and your films on a big screen in it, from the library, the folders, the NAS or the Plex server that Immuch360 Desktop already plays. From desktop build 28, on Windows, "View in headset" hands the video playing to the headset through OpenXR, the standard of SteamVR, Meta Horizon Link, Virtual Desktop and the other PC VR runtimes. Experimental and on by default. **Not yet tried in a headset by the project**: the code was checked by the project's tests and its CI on Windows, without a headset and without a runtime; tell us how it goes on yours.
+
+**You need**: Windows 10 or 11; a graphics card able to drive a PC VR headset; a PC VR runtime set as the OpenXR runtime of the computer; the headset connected to it (a cable, Air Link, Steam Link or Virtual Desktop).
+
+1. **The runtime**: in Meta Horizon Link, Settings, General, "OpenXR Runtime", "Set Meta Horizon Link as active"; in SteamVR, Settings, OpenXR, "Set SteamVR as OpenXR runtime"; Virtual Desktop and the other runtimes have their own switch. The app reads the active runtime each time the setting shows, so a switch needs no restart of the app.
+2. **The setting**: Settings, Asset Viewer, Videos, under AV2: "PC VR headset (experimental)", "Adds View in headset to the video players, for a headset on SteamVR, Meta Horizon Link, Virtual Desktop or another OpenXR runtime. Not yet tried in a headset by the project." The line under it says "Runtime: (runtime)", or "No PC VR runtime found on this computer.", in which case no button shows anywhere. On Linux and macOS the switch is greyed: "Windows only for now."
+3. **Its switches**: "Match the headset to the video", "Asks for a refresh rate that is a multiple of the video's frame rate, for example 72 or 120 Hz for a 24 fps film, when the headset allows it."; "Pause when the headset is taken off". "Test pattern at 24 frames per second" and the one at 30, shown when a runtime is set, put a pattern in the headset: a red patch for the left eye, a blue one for the right, a grey ramp of even steps and a bar that moves, to see each eye, the steps of the picture and whether the motion is regular; "Stop the headset view" ends it. "Open the folder of the headset logs" opens the logs, the switch on or off.
+4. **Start**: open a video in the Immich viewer, a folder, a network share, Plex or the 360° player, then "View in headset", next to the audio and subtitle buttons, or H on the keyboard (never while typing). A 360° video offers "Around you" or "On a flat screen"; a flat film "On a flat screen", "On a flat screen, 3D side by side" or "On a flat screen, 3D over under", the one its file name says already marked ("SBS", "HSBS", "OU", "HOU"), full or half width from the name, else from the shape of the picture. The window says "Waiting for the headset", "Starting the headset view", then "In the headset: (headset)". The window keeps its own picture and every control.
+5. **In the headset**: a stick controller plays and pauses with the trigger, seeks 10 s with the stick, then 30 s at a time when held 2 s, recenters with a press of the stick and lays the picture before your gaze with a press held 1 s ("Lying down", to watch on a sofa or in bed, held again to come back upright); a controller with a trackpad seeks with the pad and recenters with the grip; a simple controller plays with Select and recenters with Select held. Menu held 1 s leaves. A strip under the video gives the title, the state and the time, the hint of your controller while paused ("Trigger: play. Stick: seek, press: recenter, hold: lie down. Hold Menu: exit."), and the subtitles of the film, which leave the picture for it; it hides 4 s after a change while the video plays.
+6. **From the window**: the menu of the button, while a view runs, has its state, Recenter, Lying down and "Stop the headset view"; Shift+H recenters, and H stops. The next video opened in the window goes to the headset without a new start; with no video on screen, the headset shows a dark room and "Pick a video in the window".
+7. **Ends**: taking the headset off pauses the video ("Headset taken off: paused"), and nothing plays on until the trigger or the window; leaving from the menu of the headset says "The headset view was closed from the headset."; a runtime that stops says "The VR runtime stopped. The video is paused in the window." and the app stays open. Closing the app ends the view first.
+
+**When it cannot start**, the window says why: "No PC VR runtime is active. Start SteamVR, Meta Horizon Link or Virtual Desktop, set it as the OpenXR runtime, then try again."; "No headset found within a minute. Connect it (cable, Air Link, Steam Link or Virtual Desktop) and try again."; "The headset is on another graphics card than the one Immuch360 uses. In Windows Settings, System, Display, Graphics, set Immuch360 to High performance, then restart the app."; "This graphics card cannot drive a headset."; "A file for headsets is missing from this copy of the app (openxr_loader.dll). Install the app again."; "The VR runtime stopped answering. Restart it, or the app, before trying again." If a headset view closes the app, the next start says so, and after a second time in a row View in headset turns itself off: "The last headset view closed the app, so View in headset is turned off. You can turn it on again in Settings, Asset Viewer, Videos."
+
+**The logs**: each view writes `headset-(date)-(time).log` in the `headset` folder of the app's support folder, the 20 newest kept: the app version and the commit of media_kit_360, the runtime and its API layers, the headset, the graphics cards, the formats, the refresh rates asked and obtained, the controllers, figures every 5 s, the states and the code it stopped with. They hold no address, path, token or title. A log and a few lines on what you saw, in [Issues](https://github.com/freeKC/Immuch360/issues), help the most.
+
+**Not in desktop build 28**: photos, AV2 videos, the stabilisation of raw videos and the raw 360° files the app draws with two players, one per lens ("Not available for this file yet" in the menu, the dark room if a view runs); Linux and macOS; Steam. The subtitles on the strip come from what mpv's manual says of its subtitle text, not from a run. The app comes with the OpenXR loader of the Khronos Group (`openxr_loader.dll`, Apache 2.0 or MIT) and its notice, and the headset code is in [media_kit_360](https://github.com/immuch360/media_kit_360).
+
 ### Compared with the phone apps
 
 - **Backup runs while the app is open** (or minimised), not in the background with the window closed. Closing the window while uploads run, or while the computer is shared, asks first.
@@ -1217,7 +1326,7 @@ In Settings, "AI and 3D", "Relief quality of 3D photos" offers "v2, better edges
 ### Not there yet
 
 - **Two lens raw videos on a laptop**: in desktop builds 3 and 4 the test laptop stacked an X3 pair (two 2880x2880 H.264 files) at 30 frames a second on its NVIDIA chip only, and an X4 file (two 3840x3840 HEVC tracks) played one lens on both chips. From desktop build 5 they play in two players: on the NVIDIA chip, a DJI Osmo 360 file (two 3840x3840 HEVC 10 bit tracks at 25 frames a second), an X4 file (two 3840x3840 HEVC tracks at 30) and an X3 pair played with no frame dropped. The first time a file at 30 frames a second opens, the player may still say "it may not play smoothly on this device", until the computer has measured it. Not checked yet in the app: the Intel chip, where the flat viewer alone took 2.5 GB of shared GPU memory for the Osmo 360 file and the test stopped for lack of memory on the PC (two players outside the app dropped 2 to 3 frames of 300 there).
-- **3D on the screen only**: a 3D video shows its left eye, as on phones; there is no gyroscope and no headset view on the computer. To watch in true 3D, share the computer with a Meta Quest.
+- **3D on the screen only**: a 3D video shows its left eye, as on phones, and there is no gyroscope. To watch in true 3D, share the computer with a Meta Quest, or from desktop build 28 on Windows use [a PC VR headset](#a-pc-vr-headset-from-desktop-build-28-experimental) (experimental).
 - **Spatial 2.5D**, with the webcam, in development for November 2026; the **map** and the Places view; **signing in with OAuth** (sign in with an email and a password instead); **Google Cast**; **notifications**.
 - **Automatic updates**: the next build is installed by hand. The installer and the ZIP are signed from desktop build 7, see [Windows](#windows).
 - **Linux and macOS**: from desktop build 5 they have packages, early previews: the photos of your folders and 360° photos, and from desktop build 6 flat videos; 360°, 3D, VR180 and raw videos play flat, and the macOS app has only run on the project's CI, see [Install it on a computer](#install-it-on-a-computer-windows-linux-and-macos).
@@ -1235,7 +1344,7 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 
 ## Install it on a computer: Windows, Linux and macOS
 
-Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 27](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.2-27). From desktop build 7, each desktop pre-release has seven files (six in desktop builds 5 and 6), with `SHA256SUMS.txt` to check them:
+Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 28](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.3-28). From desktop build 28, the App Version line of the profile menu names the desktop build, as `immuch360 --version` does on Linux, rather than the build of the phones. From desktop build 7, each desktop pre-release has seven files (six in desktop builds 5 and 6), with `SHA256SUMS.txt` to check them:
 
 | Computer | File | What it is |
 |---|---|---|
@@ -1306,6 +1415,8 @@ What it does on Linux, from desktop build 6: the welcome page; without a server,
 - **Plex** (from build 20): the token stays in the secure storage of the device and is sent only to your own server, in a request header over HTTPS; the app contacts plex.tv only during "Sign in with Plex", from build 46, if you choose it on the page of a new server. From build 45 the app writes one thing to your server: the audio track and subtitles you pick for a film. What the server holds of your films is shown on the device and never kept or sent anywhere else.
 - **Film details from Wikipedia** (from build 45): when you open the page of a Plex film, the app asks Wikidata and Wikipedia, run by the Wikimedia Foundation, for the article about that film in your language. It sends the film's IMDb or TMDB number and the title of the article, never your Plex token, your server's address or anything else of your library. The articles found are kept on the device for 30 days. Wikimedia's privacy policy applies to these requests. Turn it off in Settings, Advanced, "Film details from Wikipedia", which also deletes the kept articles.
 - **Tapo cameras** (from build 20): the TP-Link account password and the camera account password stay in the secure storage of the device; the app talks to the camera on the local network only, never to the servers of TP-Link; fetched clips stay in the cache of the app and are deleted with the camera.
+- **Cameras of other brands** (from build 48): the password of the camera and its stream addresses stay in the secure storage of the device; the app talks to the camera on the local network only, sends no account before the camera asks for one, refuses a camera that takes Basic authentication alone, writes nothing to the camera, and masks the addresses in its logs.
+- **The PC VR headset** (from desktop build 28): the video goes from the app to the runtime and the headset of the computer, and the headset logs stay in the app's folder, with no address, path, token or title.
 - **TV**: whether the device is a TV is read on the device; nothing is sent.
 - **Sign in with your phone** (from build 28): the big screen listens on your home network only while its sign-in page shows a code; the phone asks your server for a session of its own for that screen and sends it encrypted, never your password; the camera of the phone reads the code on the device, and its images are never stored or sent. The list "Connected by this phone" stays on the phone.
 - **DJI link** (from build 28): the page reads the remote plugged into the device and keeps its capture on the device until you export it; nothing is sent anywhere, and nothing is sent to the remote but the one byte check described in [DJI link diagnostics](#dji-link-diagnostics-experimental).

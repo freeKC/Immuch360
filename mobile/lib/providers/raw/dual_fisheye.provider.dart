@@ -103,6 +103,7 @@ Future<ResolvedDualFisheyeCalibration> resolveDualFisheyeCalibration({
       : calibrationOf(
           trailer,
           accelerometer: accelerometer,
+          cameraModel: cameraModel,
         )?.copyWith(serial: serial, cameraModel: cameraModel, gravity: gravity, layoutHints: hints);
   if (fromFile != null) {
     if (serial != null) {
@@ -112,7 +113,10 @@ Future<ResolvedDualFisheyeCalibration> resolveDualFisheyeCalibration({
     return (calibration: fromFile, readFailed: false);
   }
 
-  final downBody = downBodyFromAccelerometer(trailer?.meanAccelerometer ?? accelerometer);
+  final downBody = downBodyFromAccelerometer(
+    trailer?.meanAccelerometer ?? accelerometer,
+    axes: insta360ImuAxesOf(cameraModel),
+  );
   // The camera's own calibration first; another camera of the same model is still closer than the nominal values
   final cached =
       (serial == null ? null : await store.forSerial(serial, downBody: downBody)) ??

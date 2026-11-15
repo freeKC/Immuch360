@@ -1054,6 +1054,46 @@ void main() {
         await endRealIo(tester);
       });
 
+      // Review of 14 November 2026: on a phone the controls stayed for ever over a film that stalls every few
+      // seconds (each change of status started the 5 s again, and a phone kept them while it waits), their time bar
+      // rebuilt on the main thread that also runs the media bridge
+      testWidgets('on a phone the controls hide over a film that plays 3 s and waits 3 s in turn', (tester) async {
+        await pumpFilm(tester, []);
+        native.ready();
+        await tester.pump();
+        await tester.pump();
+        expect(find.byType(NetworkVideoControls), findsOneWidget);
+
+        var at = 0;
+        final statuses = <VideoPlaybackStatus>{};
+        for (var cycle = 0; cycle < 4; cycle++) {
+          for (var i = 0; i < 30; i++) {
+            at += 100;
+            native.moveTo(at);
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          statuses.add(
+            ProviderScope.containerOf(
+              tester.element(find.byType(NetworkVideoPage)),
+            ).read(videoPlayerProvider('network:nas:/holiday.mp4')).status,
+          );
+          // The share stalls: the position stands still for 3 s
+          for (var i = 0; i < 30; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          statuses.add(
+            ProviderScope.containerOf(
+              tester.element(find.byType(NetworkVideoPage)),
+            ).read(videoPlayerProvider('network:nas:/holiday.mp4')).status,
+          );
+        }
+
+        expect(statuses, {VideoPlaybackStatus.playing, VideoPlaybackStatus.buffering}, reason: 'it played and waited');
+        expect(find.byType(NetworkVideoControls), findsNothing, reason: 'the controls hid');
+
+        await endRealIo(tester);
+      });
+
       testWidgets('a slow share is never an error, and the buffering says what it brings', (tester) async {
         var now = DateTime(2026, 10, 31, 18);
         final clock = VideoPlayerNotifier.clock;

@@ -145,6 +145,19 @@ class FakeTapoCamera implements TapoTransport {
 
   /// Refuses every request of a session in plain text, as a camera that keeps ending its sessions
   bool refuseRequests = false;
+
+  /// The code of a refused pake_share: -40401 on most cameras (C220 in mihai-dinculescu/tapo), -2203 the TPAP code of
+  /// a wrong credential, -2101 its code of too many attempts (python-kasa PR 1592)
+  int shareRefusalCode = -40401;
+
+  /// The extra_crypt pake_register sends instead of the shadow of a C200, with the credential the device holds for it
+  /// (computed by another tool: openssl passwd), for the forms of later firmware
+  Map<String, Object?>? extraCrypt;
+  String? extraCryptCredential;
+
+  /// The answer to the next request of the session instead of its answer, the session then ended: a camera that drops
+  /// its session with an HTTP 401 and no body, or with a plain JSON code (-40420, -2402...)
+  ({int status, Object? json})? dropNextRequest;
   bool closed = false;
 
   // The live session
@@ -173,7 +186,12 @@ class FakeTapoCamera implements TapoTransport {
 
   String get _shadowPrefix => r'$5$x1hYMevsEYq2APg+$';
 
-  String _credential() => shadow ? sha256Crypt(_passcodeText, _shadowPrefix) : _passcodeText;
+  String _credential() {
+    if (extraCrypt != null) {
+      return extraCryptCredential!;
+    }
+    return shadow ? sha256Crypt(_passcodeText, _shadowPrefix) : _passcodeText;
+  }
 
   String get _expectedUserName => switch (userName) {
     TapoUserNameForm.md5 => md5Hex('admin'),
@@ -202,6 +220,13 @@ class FakeTapoCamera implements TapoTransport {
       return _json(_login(jsonDecode(utf8.decode(bytes)) as Map<String, Object?>));
     }
     final stok = _stok;
+    final drop = dropNextRequest;
+    if (drop != null && stok != null && path == tapoStokPath(stok)) {
+      dropNextRequest = null;
+      _stok = null;
+      final json = drop.json;
+      return (status: drop.status, body: Uint8List.fromList(json == null ? const [] : utf8.encode(jsonEncode(json))));
+    }
     if (refuseRequests || stok == null || path != tapoStokPath(stok)) {
       return _json({'error_code': -40401});
     }
@@ -242,7 +267,9 @@ class FakeTapoCamera implements TapoTransport {
           'iterations': reportedIterations ?? iterations,
           'cipher_suites': 1,
           'encryption': 'aes_128_ccm',
-          if (shadow)
+          if (extraCrypt != null)
+            'extra_crypt': extraCrypt
+          else if (shadow)
             'extra_crypt': {
               'type': 'password_shadow',
               'params': {'passwd_id': 5, 'passwd_prefix': _shadowPrefix},
@@ -264,7 +291,7 @@ class FakeTapoCamera implements TapoTransport {
         }
         refusedShares++;
         return {
-          'error_code': -40401,
+          'error_code': shareRefusalCode,
           'error_info': {
             'failedAttempts': refusedShares,
             'remainAttempts': 5 - refusedShares,

@@ -183,6 +183,23 @@ void main() {
       expect(desktopWindowKeyOf(up), isNull);
     });
 
+    testWidgets('H starts or stops the headset view, Shift H recenters it, never while typing nor with Control', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final h = _down(LogicalKeyboardKey.keyH, character: 'h', physical: PhysicalKeyboardKey.keyH);
+      expect(desktopWindowKeyOf(h, typing: false), DesktopWindowKey.toggleHeadsetView);
+      expect(desktopWindowKeyOf(h, typing: true), isNull);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      expect(desktopWindowKeyOf(h, typing: false), DesktopWindowKey.recenterHeadsetView);
+      expect(desktopWindowKeyOf(h, typing: true), isNull);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      expect(desktopWindowKeyOf(h, typing: false), isNull, reason: 'Control H is left to the pages');
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets('Control F is left to the pages, Command W and Control Command F serve macOS', (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);

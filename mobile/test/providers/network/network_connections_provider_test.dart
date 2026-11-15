@@ -102,7 +102,11 @@ void main() {
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
-    expect(container.read(networkFileSystemOpenersProvider).keys.toSet(), NetworkSourceType.values.toSet());
+    // But the cameras of other brands (release 48): live view only, no files
+    expect(
+      container.read(networkFileSystemOpenersProvider).keys.toSet(),
+      NetworkSourceType.values.toSet()..remove(NetworkSourceType.ipCamera),
+    );
   });
 
   group('NetworkConnections', () {

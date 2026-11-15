@@ -125,7 +125,9 @@ class PlexFileSystem
     } else if (testing) {
       httpClient = IOClient(unpinnedPlexHttpClientForTests());
     } else {
-      httpClient = IOClient(pinnedPlexHttpClient(hash));
+      // Off the UI isolate: on a phone the UI isolate also runs the frames, and a film read on it came at a fifth of
+      // the link (S24, 14 November 2026, see IsolateHttpClient)
+      httpClient = pinnedPlexClientOffMainIsolate(hash);
     }
     final fileSystem = PlexFileSystem._(
       source,

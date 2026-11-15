@@ -1,9 +1,11 @@
-// Network shares (SMB, WebDAV, DLNA media servers, Plex Media Servers) and Tapo cameras: a source is a share or a
+// Network shares (SMB, WebDAV, DLNA media servers, Plex Media Servers), Tapo cameras and the cameras of other brands
+// (ONVIF or a typed RTSP address): a source is a share or a
 // camera the user added, an entry is a file or a folder on it. Media of a share play straight from it through the
 // local media bridge; nothing is copied to the device.
 
 import 'dart:convert';
 
+import 'package:immich_mobile/domain/models/ip_camera_info.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -26,7 +28,11 @@ enum NetworkSourceType {
   /// a share: every subfolder, the photos and videos, the splats on a Meta Quest (see DeviceFoldersNotifier). Read as
   /// [documentTree] is, under an id of its own that starts with NetworkEntry.importSourcePrefix; its source lives in
   /// memory only, the folders chosen being kept in a list of their own.
-  deviceFolder;
+  deviceFolder,
+
+  /// A camera of another brand than Tapo (release 48): found by ONVIF, or a pasted RTSP or RTSPS address. Live view
+  /// only. Last of the list: the builds before 48 keep a source of this type whole, as one of a type they do not know.
+  ipCamera;
 
   /// Stored in StoreKey.networkSources, the list that builds 19 and older read and write back
   bool get inLegacyList => this == smb || this == webdav || this == dlna;
@@ -37,6 +43,9 @@ enum NetworkSourceType {
   /// Whether its folders hold the files as a camera or a drone wrote them, side files included (the .SRT of a video):
   /// a file share or a picked folder, not a media server, which lists media only
   bool get keepsSideFiles => this == smb || this == webdav || this == documentTree || this == deviceFolder;
+
+  /// A camera, with its own pages rather than a browser of folders
+  bool get isCamera => this == tapo || this == ipCamera;
 }
 
 /// A stored list: the sources this build reads, and the entries of a type it does not know, kept as they are so that
@@ -59,6 +68,7 @@ class NetworkSource {
     this.discoveryId,
     this.plex,
     this.camera,
+    this.ipCamera,
     this.extraJson = const {},
   });
 
@@ -70,12 +80,12 @@ class NetworkSource {
   final String name;
 
   /// SMB: the server name or address. WebDAV: the server name or address of the base URL. DLNA: the one of the device
-  /// description URL. Plex: the local IPv4 address of the server, empty when it was paired from outside home. Tapo:
-  /// the address of the camera.
+  /// description URL. Plex: the local IPv4 address of the server, empty when it was paired from outside home. Tapo and
+  /// the cameras of other brands: the address of the camera (or of the console or restreamer of a pasted address).
   final String host;
 
   /// Null for the default port of the type (445 for SMB, 80 or 443 for WebDAV and DLNA, 32400 for Plex, 443 for
-  /// Tapo)
+  /// Tapo); null for a camera of another brand, whose ports are in [ipCamera]
   final int? port;
 
   /// SMB share name. WebDAV: the path of the base URL (for example "/remote.php/dav/files/alice"). DLNA: the path of
@@ -86,8 +96,8 @@ class NetworkSource {
   /// Folder inside the share the browser starts from, "/" for its root. Plex: "/" or "/<Section>". Tapo: "/".
   final String rootPath;
 
-  /// Empty for DLNA, which has no authentication, and for Plex. Tapo: the user of the camera account (live view), ""
-  /// when none.
+  /// Empty for DLNA, which has no authentication, and for Plex. Tapo and the cameras of other brands: the user of
+  /// the camera account (live view), "" when none.
   final String username;
 
   /// WebDAV over HTTPS, DLNA with an https description URL; always true for Plex and Tapo
@@ -106,6 +116,10 @@ class NetworkSource {
   /// with its camera account only until a login on its TP-Link account
   final TapoCameraInfo? camera;
 
+  /// What the app keeps of a camera of another brand (JSON key "ipCamera"); required for that type, null for the
+  /// others
+  final IpCameraInfo? ipCamera;
+
   /// The keys of the stored object this build does not know, written back first by [toJson] (the known keys
   /// overwrite them) so that the later build that wrote them finds them again
   final Map<String, Object?> extraJson;
@@ -123,12 +137,15 @@ class NetworkSource {
     'discoveryId',
     'plex',
     'camera',
+    'ipCamera',
   };
 
-  /// SMB and WebDAV: the password. Plex: the token. Tapo: the password of the TP-Link account (recordings).
+  /// SMB and WebDAV: the password. Plex: the token. Tapo: the password of the TP-Link account (recordings). A camera
+  /// of another brand: the password of its account.
   String get secretKey => 'network_source_password_$id';
 
-  /// Tapo: the password of the camera account (live view); unused by the other types
+  /// Tapo: the password of the camera account (live view). A camera of another brand: its stream addresses
+  /// (IpCameraStreams), whose path or query may hold a token. Unused by the other types.
   String get cameraSecretKey => 'network_source_camera_password_$id';
 
   Map<String, Object?> toJson() => {
@@ -145,6 +162,7 @@ class NetworkSource {
     if (discoveryId != null) 'discoveryId': discoveryId,
     if (plex != null) 'plex': plex!.toJson(),
     if (camera != null) 'camera': camera!.toJson(),
+    if (ipCamera != null) 'ipCamera': ipCamera!.toJson(),
   };
 
   /// Null when [json] is not a source of a type this build knows, or misses what its type needs (the hash of a Plex
@@ -166,6 +184,10 @@ class NetworkSource {
       // Without the hash of its certificate the token could go to any server
       return null;
     }
+    final ipCamera = IpCameraInfo.fromJson(json['ipCamera']);
+    if (type == NetworkSourceType.ipCamera && ipCamera == null) {
+      return null;
+    }
     final camera = json['camera'];
     final discoveryId = json['discoveryId'];
     return NetworkSource(
@@ -181,6 +203,7 @@ class NetworkSource {
       discoveryId: discoveryId is String && discoveryId.isNotEmpty ? discoveryId : null,
       plex: plex,
       camera: camera is Map ? TapoCameraInfo.fromJson(camera) : null,
+      ipCamera: type == NetworkSourceType.ipCamera ? ipCamera : null,
       extraJson: Map.unmodifiable({
         for (final entry in json.entries)
           if (entry.key is String && !_knownKeys.contains(entry.key)) entry.key as String: entry.value,
@@ -249,6 +272,7 @@ class NetworkSource {
     bool clearDiscoveryId = false,
     PlexServerInfo? plex,
     TapoCameraInfo? camera,
+    IpCameraInfo? ipCamera,
   }) => NetworkSource(
     id: id,
     type: type,
@@ -262,6 +286,7 @@ class NetworkSource {
     discoveryId: clearDiscoveryId ? null : (discoveryId ?? this.discoveryId),
     plex: plex ?? this.plex,
     camera: camera ?? this.camera,
+    ipCamera: ipCamera ?? this.ipCamera,
     extraJson: extraJson,
   );
 }

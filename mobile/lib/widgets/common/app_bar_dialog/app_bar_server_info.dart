@@ -10,6 +10,7 @@ import 'package:immich_mobile/models/server_info/server_info.model.dart';
 import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
+import 'package:immich_mobile/utils/app_version_label.dart';
 import 'package:immich_mobile/utils/url_helper.dart';
 import 'package:immich_mobile/widgets/common/app_bar_dialog/server_update_notification.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -24,12 +25,13 @@ class AppBarServerInfo extends HookConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final bool showVersionWarning = ref.watch(versionWarningPresentProvider(user));
 
-    final appInfo = useState({});
+    final appVersion = useState('');
 
     Future<void> getPackageInfo() async {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-      appInfo.value = {"version": packageInfo.version, "buildNumber": packageInfo.buildNumber};
+      // On a computer the desktop label, as `immuch360 --version` prints it (app_version_label.dart)
+      appVersion.value = appVersionLineOf(packageInfo);
     }
 
     useEffect(() {
@@ -45,10 +47,7 @@ class AppBarServerInfo extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (showVersionWarning) ...[const ServerUpdateNotification(), divider],
-          _ServerInfoItem(
-            label: context.t.server_info_box_app_version,
-            text: "${appInfo.value["version"]} build.${appInfo.value["buildNumber"]}",
-          ),
+          _ServerInfoItem(label: context.t.server_info_box_app_version, text: appVersion.value),
           divider,
           _ServerInfoItem(
             label: context.t.server_version,

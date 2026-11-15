@@ -301,9 +301,18 @@ StabilizationTable? stabilizationOfOrientations(
 /// 2026, lots/gopro_vision.py and gopro_sky.py): the camera turns about GPMF y and the picture about the view's x axis,
 /// and GRAV follows the down of the sky in the picture within 3 degrees over a turn of 150 degrees once taken as
 /// pointing down. The angle about GPMF y cannot be told from that one turn (the fits give 15 to 22 degrees, the bias of
-/// the sky and the parallax of the ground nearby): the axes of the camera are taken square. The MAX 2 is assumed the
-/// same, no file was at hand.
+/// the sky and the parallax of the ground nearby): the axes of the camera are taken square. The MAX 2 has its own,
+/// [goProMax2ViewToGpmf].
 const goProViewToGpmf = Mat3([0, 1, 0, -1, 0, 0, 0, 0, 1]);
+
+/// The rotation from the view frame of the stitch of a GoPro MAX 2 .360 to the axes of its GPMF camera frame: the same
+/// axes, GPMF x the view's right, y its down, z its forward. The MAX's matrix with the quarter turn of its faces
+/// ([goProViewToCamera]) taken off. Measured on three MAX 2 files of firmware H24.02.01.09.71 (14 November 2026,
+/// lots/feat-raw-2026-48.md): GRAV of a camera standing upright lies along +y within 3 degrees; on a clip from a car
+/// that turns by 90 degrees, CORI turns frame j back onto frame i best with these axes (sum of the grey differences
+/// above the horizon over 8 pairs 100.3, against 107.4 to 119.3 for the three other turns about the vertical, 110.8
+/// unturned and 161.8 with the MAX's matrix).
+const goProMax2ViewToGpmf = Mat3.identity;
 
 /// The rotation from the view frame of the stitch of a DJI Osmo 360 .osv to the body frame of its attitude, row major:
 /// bodyFrame([0, 1, 0]), the view of an upright Insta360 (lot a3, the attitude checked against the picture)
@@ -434,23 +443,38 @@ StabilizationTable? stabilizationOfCameraMotion(
   );
 }
 
-/// Whether the axes of the GPMF of the GoPro named [cameraModel] (DVNM) were measured against its picture
-/// ([goProViewToGpmf]): the MAX only. The MAX 2 may follow another rule (its EAC faces are upright, the MAX's are a
-/// quarter turn off): taken with the MAX's matrix, its stabilised video could play rolled by 90 degrees. A file that
-/// does not name its camera counts as measured; the caller checks its faces (1344 pixels on the MAX).
-bool goProAxesMeasured(String? cameraModel) {
+/// The rotation from the view of the stitch to the GPMF axes of the GoPro named [cameraModel] (DVNM), measured
+/// against its picture: [goProViewToGpmf] for the MAX ("GoPro Max"), [goProMax2ViewToGpmf] for the MAX 2 ("MAX2");
+/// for a file that does not name its camera, by the side of its EAC faces ([face]: 1920 on the MAX 2, the MAX
+/// otherwise). Null for any other camera, whose axes were not measured: taken with another camera's matrix, its
+/// stabilised video could play rolled by 90 degrees.
+Mat3? goProViewToGpmfOf(String? cameraModel, {int? face}) {
   if (cameraModel == null) {
-    return true;
+    return face == goProMax2Face ? goProMax2ViewToGpmf : goProViewToGpmf;
   }
-  return cameraModel.trim().toLowerCase().replaceAll(' ', '') == 'gopromax';
+  return switch (cameraModel.trim().toLowerCase().replaceAll(' ', '')) {
+    'gopromax' => goProViewToGpmf,
+    'max2' || 'gopromax2' => goProMax2ViewToGpmf,
+    _ => null,
+  };
 }
 
+/// Side of the EAC faces of the GoPro MAX 2
+const goProMax2Face = 1920;
+
+/// Whether the axes of the GPMF of the GoPro named [cameraModel] (DVNM) were measured against its picture
+/// ([goProViewToGpmfOf]): the MAX and the MAX 2. A file that does not name its camera counts as measured; the caller
+/// checks its faces.
+bool goProAxesMeasured(String? cameraModel) => goProViewToGpmfOf(cameraModel) != null;
+
 /// Reads the GPMF track of the GoPro .360 of [fileSize] bytes that [read] reads ([readGoProMotion]) and builds its
-/// stabilisation table from CORI and GRAV, the frames on the clock of the video track. Null when the file has no CORI,
-/// or when it comes from a GoPro whose axes were not measured ([goProAxesMeasured]).
+/// stabilisation table from CORI and GRAV, the frames on the clock of the video track, seen through the axes of its
+/// camera ([goProViewToGpmfOf], [face] the side of its EAC faces when known). Null when the file has no CORI, or when it
+/// comes from a GoPro whose axes were not measured.
 Future<StabilizationTable?> readGoProStabilization(
   ByteRangeReader read,
   int fileSize, {
+  int? face,
   double? frameDurationUs,
   StabilizationOptions options = const StabilizationOptions(),
   StabilizationDetails? details,
@@ -459,14 +483,21 @@ Future<StabilizationTable?> readGoProStabilization(
   if (track == null) {
     return null;
   }
-  if (!goProAxesMeasured(track.cameraModel)) {
+  final viewToGpmf = goProViewToGpmfOf(track.cameraModel, face: face);
+  if (viewToGpmf == null) {
     _log.info('Stabilization: the axes of the ${track.cameraModel} were not measured against its picture, no table');
     return null;
   }
   if (track.truncated) {
     _log.warning('Stabilization: the GPMF track was read in part, the last frames hold the last orientation');
   }
-  return stabilizationOfCameraMotion(track, frameDurationUs: frameDurationUs, options: options, details: details);
+  return stabilizationOfCameraMotion(
+    track,
+    viewToBody: viewToGpmf,
+    frameDurationUs: frameDurationUs,
+    options: options,
+    details: details,
+  );
 }
 
 /// Reads the attitude of the DJI Osmo 360 .osv of [fileSize] bytes that [read] reads ([readDjiMotion]) and builds its

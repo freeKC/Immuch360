@@ -44,6 +44,16 @@ void main() {
       expect(cameraRtspUrlWithAccount('rtsp://other@192.0.2.30:554/stream2', _user, _password), isNull);
       expect(cameraRtspUrlWithAccount('rtsp:///stream2', _user, _password), isNull);
     });
+
+    test('an RTSPS link keeps its scheme, for FFmpeg over TLS (release 48)', () {
+      expect(
+        cameraRtspUrlWithAccount('rtsps://192.0.2.1:7441/Tok3n?enableSrtp', '', ''),
+        'rtsps://192.0.2.1:7441/Tok3n?enableSrtp',
+      );
+      expect(cameraRtspUrlWithAccount('RTSPS://192.0.2.1:7441/x', 'u', 'p'), 'RTSPS://u:p@192.0.2.1:7441/x');
+      expect(cameraRtspUrlWithAccount('rtspx://192.0.2.1/x', 'u', 'p'), isNull);
+      expect(DesktopPlayerOptions.liveProtocols, ['rtsp', 'rtsps', 'tcp', 'tls']);
+    });
   });
 
   test('the states of the camera page', () {

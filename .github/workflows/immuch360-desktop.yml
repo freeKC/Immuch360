@@ -603,14 +603,18 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+      # The label reaches the app as IMMUCH360_DESKTOP_LABEL, for the version line of its About box (the three systems,
+      # mobile/lib/utils/app_version_label.dart), the same text as `immuch360 --version`
       - name: Build
         working-directory: mobile
         env:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
+          LABEL: ${{ needs.codegen.outputs.label }}
           IMMUCH360_LIBSMB2: ${{ runner.temp }}/libsmb2/libsmb2.so
         run: |
           mise exec -- flutter pub get --enforce-lockfile
-          mise exec -- flutter build linux --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+          mise exec -- flutter build linux --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER" \
+            --dart-define=IMMUCH360_DESKTOP_LABEL="$LABEL"
 
       # nFPM, one static program pinned by its version and its SHA-256, makes both packages from one description; the
       # libraries the ELF files of the bundle link are listed first, for the dependencies the packages declare
@@ -1024,7 +1028,10 @@ jobs:
         working-directory: mobile
         env:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
-        run: flutter build windows --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+          LABEL: ${{ needs.codegen.outputs.label }}
+        run: >-
+          flutter build windows --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+          --dart-define=IMMUCH360_DESKTOP_LABEL="$LABEL"
 
       # The Release folder plus the Visual C++ runtime, without dartjni.dll, each DLL import checked against what a
       # clean Windows has, and the file version of the executable checked; the debug symbols, if the build made any,
@@ -1067,6 +1074,26 @@ jobs:
               sys.exit('::error::the libsmb2 sources in the ZIP are not the archive packed')
           print('the ZIP holds libsmb2.dll, its notice and licence texts, and the sources')
           print(hashlib.sha256(packed).hexdigest())
+          PY
+
+      # View in headset (media_kit_360 built with MEDIA_KIT_360_XR, mobile/windows/CMakeLists.txt): the Khronos OpenXR
+      # loader next to the executable, with its row in NOTICES.md and the Apache-2.0 text (Apache-2.0 OR MIT)
+      - name: The OpenXR loader and its notice in the ZIP
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+        run: |
+          python - "$ZIP" <<'PY'
+          import sys, zipfile
+          top = 'Immuch360 Desktop/'
+          with zipfile.ZipFile(sys.argv[1]) as bundle:
+              names = set(bundle.namelist())
+              missing = [name for name in (top + 'openxr_loader.dll', top + 'licenses/NOTICES.md',
+                                           top + 'licenses/Apache-2.0.txt') if name not in names]
+              if missing:
+                  sys.exit('::error::not in the ZIP: ' + ', '.join(missing))
+              if b'openxr_loader.dll' not in bundle.read(top + 'licenses/NOTICES.md'):
+                  sys.exit('::error::licenses/NOTICES.md of the ZIP does not list openxr_loader.dll')
+          print('the ZIP holds openxr_loader.dll, its row in NOTICES.md and licenses/Apache-2.0.txt')
           PY
 
       # The Rust JPEG codec of the AI features next to the executable, whose imports windows_bundle.py has checked
@@ -1255,10 +1282,12 @@ jobs:
         working-directory: mobile
         env:
           BUILD_NUMBER: ${{ needs.codegen.outputs.build_number }}
+          LABEL: ${{ needs.codegen.outputs.label }}
         run: |
           tar -xf generated-dart.tar && rm generated-dart.tar
           mise exec -- flutter pub get --enforce-lockfile
-          mise exec -- flutter build macos --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER"
+          mise exec -- flutter build macos --release -t lib/main_desktop.dart --build-number "$BUILD_NUMBER" \
+            --dart-define=IMMUCH360_DESKTOP_LABEL="$LABEL"
 
       # The app as Flutter builds it: universal, signed for the computer that runs it only ("Sign to Run Locally", no
       # Apple certificate) and not notarized, so macOS asks for a confirmation at the first start. Zipped with ditto,

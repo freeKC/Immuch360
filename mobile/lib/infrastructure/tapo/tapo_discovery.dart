@@ -215,12 +215,13 @@ TdpReply? parseTdpReply(Uint8List data, {TdpKeyPair? key, String? sender}) {
     encryptTypes.add('${scheme['encrypt_type']}');
   }
   final tpap = result['tpap'];
+  // Numbers as JSON numbers or as numeric text, as the official app reads them (python-kasa PR 1592)
+  int? number(Object? value) => value is int ? value : (value is String ? int.tryParse(value.trim()) : null);
   final pake = <int>[
     if (tpap is Map && tpap['pake'] is List)
-      for (final value in tpap['pake'] as List)
-        if (value is int) value,
+      for (final value in tpap['pake'] as List) ?number(value),
   ];
-  final userHashType = tpap is Map && tpap['user_hash_type'] is int ? tpap['user_hash_type'] as int : null;
+  final userHashType = tpap is Map ? number(tpap['user_hash_type']) : null;
 
   String? sdStatus;
   final encryptInfo = result['encrypt_info'];
