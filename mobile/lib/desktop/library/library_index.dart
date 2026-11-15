@@ -274,11 +274,18 @@ class LibraryIndex {
   // the first one holds, which SQLite does not wait for even with a time out (they could wait for each other), so it
   // gets "database is locked" at once. It tries again, within the time out: its next read waits for the first one's
   // switch, after which the file is in WAL and the pragma has nothing left to do
-  static void _switchToWal(Database db) {
+  static void _switchToWal(Database db) => _untilFree(db, 'PRAGMA journal_mode = WAL');
+
+  // Runs [sql] again while it meets another connection's lock, until [_busyTimeout] has passed on the clock. SQLite's
+  // own busy handler counts the time it asked to sleep, not the time that passed: a sleep that a signal cuts short
+  // (the sampling profiler of the Dart VM, on in flutter test and in the debug and profile builds) still counts in
+  // full, so its 10 s could end within a few hundred milliseconds while another isolate migrates the new file
+  // (library_index_open_test, "database is locked" on BEGIN IMMEDIATE in the desktop CI)
+  static void _untilFree(Database db, String sql) {
     final clock = Stopwatch()..start();
     while (true) {
       try {
-        db.execute('PRAGMA journal_mode = WAL');
+        db.execute(sql);
         return;
       } on SqliteException catch (error) {
         if (error.resultCode != SqlError.SQLITE_BUSY || clock.elapsed >= _busyTimeout) {
@@ -409,7 +416,7 @@ class LibraryIndex {
 
   /// Runs [action] in a write transaction, taken at once so that two writers queue instead of failing on upgrade
   T _write<T>(T Function() action) {
-    _db.execute('BEGIN IMMEDIATE');
+    _untilFree(_db, 'BEGIN IMMEDIATE');
     try {
       final result = action();
       _db.execute('COMMIT');
