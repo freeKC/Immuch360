@@ -147,6 +147,20 @@ ONE_TIME_KIND_THRESHOLDS = {
         'x86_64': 2.6,
         'arm64-v8a': 1.9,
     },
+    # 15 November 2026, for Android build 48 (Immuch360 3.4.3), compared with release 47. No native library added:
+    # the Dart of the seven lots (the cameras of other brands over ONVIF and RTSP, the raw files of the 2026 cameras,
+    # the Tapo resync, the Plex bridge rate, the TV turn, the server notice, the PC VR headset view, whose Dart is in
+    # every build though it runs on Windows only) and their 82 new texts in 89 languages, compiled into libapp.so by
+    # CodegenLoader. Measured on the packages of release-48-int at 646cc5043f, the translations in (CI run 43693393664,
+    # artifact apks), with this gate: arm64-v8a 159,650,859 bytes (+0.620 %), armeabi-v7a 100,871,223 (+1.084 %), the
+    # Quest 183,771,586 (+0.538 %), universal 330,736,682 (+0.930 %), x86_64 106,552,164 (+0.931 %), the AAB 272,329,769
+    # (+1.364 %). The commits after it change the README, the user guide and the desktop pin of media_kit_360 only,
+    # none of which the phones ship. The two kinds above 1 % get the measure plus half a point, rounded up to a tenth;
+    # every other kind keeps 1 %. Build 49 compares with build 48 and the ordinary threshold again.
+    'v3.4.2-47': {
+        'aab': 1.9,
+        'armeabi-v7a': 1.6,
+    },
 }
 
 

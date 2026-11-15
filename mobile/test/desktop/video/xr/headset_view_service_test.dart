@@ -485,12 +485,19 @@ void main() {
       }
     });
 
-    test('the commit of the headset log is the one mobile/pubspec.yaml pins', () {
+    test('the commit of the headset log is the one mobile/pubspec.lock resolves the pin of mobile/pubspec.yaml to', () {
       final pubspec = File('pubspec.yaml').readAsStringSync();
-      final refs = RegExp(
-        r'url: https://github.com/immuch360/media_kit_360\s+ref: (\w+)',
+      final pins = RegExp(
+        r'url: https://github.com/immuch360/media_kit_360\s+ref: ([\w.]+)',
       ).allMatches(pubspec).map((match) => match.group(1)).toSet();
-      expect(refs, {headsetPluginCommit});
+      expect(pins, hasLength(1), reason: 'the four packages of media_kit_360 come from one tag or commit');
+      final lock = File('pubspec.lock').readAsStringSync();
+      final resolved = RegExp(
+        r'ref: "([\w.]+)"\s+resolved-ref: "([0-9a-f]{40})"\s+url: "https://github.com/immuch360/media_kit_360"',
+      ).allMatches(lock).toList();
+      expect(resolved, hasLength(4));
+      expect(resolved.map((match) => match.group(1)).toSet(), pins);
+      expect(resolved.map((match) => match.group(2)).toSet(), {headsetPluginCommit});
     });
   });
 }

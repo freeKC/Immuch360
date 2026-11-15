@@ -1130,7 +1130,7 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/media_kit"
-      ref: "4ce1ebad9e56a814b5f46920957fef624e4d529f"
+      ref: "v1.2.0"
       resolved-ref: "4ce1ebad9e56a814b5f46920957fef624e4d529f"
       url: "https://github.com/immuch360/media_kit_360"
     source: git
@@ -1139,7 +1139,7 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/media_kit_libs_linux"
-      ref: "4ce1ebad9e56a814b5f46920957fef624e4d529f"
+      ref: "v1.2.0"
       resolved-ref: "4ce1ebad9e56a814b5f46920957fef624e4d529f"
       url: "https://github.com/immuch360/media_kit_360"
     source: git
@@ -1155,7 +1155,7 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/media_kit_libs_windows_video"
-      ref: "4ce1ebad9e56a814b5f46920957fef624e4d529f"
+      ref: "v1.2.0"
       resolved-ref: "4ce1ebad9e56a814b5f46920957fef624e4d529f"
       url: "https://github.com/immuch360/media_kit_360"
     source: git
@@ -1164,7 +1164,7 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/media_kit_video"
-      ref: "4ce1ebad9e56a814b5f46920957fef624e4d529f"
+      ref: "v1.2.0"
       resolved-ref: "4ce1ebad9e56a814b5f46920957fef624e4d529f"
       url: "https://github.com/immuch360/media_kit_360"
     source: git
