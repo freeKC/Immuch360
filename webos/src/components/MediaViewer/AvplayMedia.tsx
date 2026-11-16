@@ -4,8 +4,11 @@
 // proportionPlayed, onLoadStart and onUpdate), backed by Samsung's AVPlay player through AvplaySession, so the
 // transport bar, the time slider, the jumps and the viewer's buttons work as with the HTML element.
 //
-// Its element is an empty, transparent div with the viewer's video mark: AVPlay draws under the page, which is
-// cleared over the video plane while it plays (avplayPage.ts). The media events the screen saver and the viewer
+// Its element is a transparent div with the viewer's video mark: AVPlay draws under the page, which is cleared over
+// the video plane while it plays (avplayPage.ts). Inside it, while the player is open, the <object
+// type="application/avplayer"> of step 1 of Samsung's "Using AVPlay" guide, filling the player's area as the rect given
+// to setDisplayRect does: on some TVs the picture stays black without it (the sound plays). It needs object-src 'self'
+// in the policy of tizen/config.xml. The media events the screen saver and the viewer
 // listen to (playing, pause, ended, loadedmetadata) are raised on it with their HTML names.
 //
 // Dropped while AVPlay plays: the playback speed (rewind and fast forward are 10 s jumps in the viewer anyway), the
@@ -38,6 +41,19 @@ export interface AvplayMediaProps {
 
 const NO_TURN: AvplayTurnRequest = {info: null, manual: null};
 
+/** The type of the element Samsung's guide puts on the page for AVPlay */
+export const AVPLAYER_OBJECT_TYPE = 'application/avplayer';
+
+// The element of Samsung's guide, over the player's whole area, never in the way of the remote's keys
+function playerObject(): HTMLObjectElement {
+	const object = document.createElement('object');
+	object.setAttribute('type', AVPLAYER_OBJECT_TYPE);
+	object.setAttribute('aria-hidden', 'true');
+	object.tabIndex = -1;
+	object.style.cssText = 'display: block; width: 100%; height: 100%; border: 0; pointer-events: none;';
+	return object;
+}
+
 /** The URL of the first <source> of the media's source (as @enact/ui Media reads it), or the string given */
 export function sourceUrl(source: React.ReactNode): string | null {
 	if (typeof source === 'string') return source || null;
@@ -67,6 +83,7 @@ export class AvplayMedia extends React.Component<AvplayMediaProps> {
 	private node: HTMLDivElement | null = null;
 	private session: AvplaySession | null = null;
 	private restorePage: (() => void) | null = null;
+	private object: HTMLObjectElement | null = null;
 	private openTimer: ReturnType<typeof setTimeout> | null = null;
 
 	componentDidMount(): void {
@@ -184,8 +201,13 @@ export class AvplayMedia extends React.Component<AvplayMediaProps> {
 			onEvent: this.raise,
 			onFailed: this.failed,
 			onTurnShown: (shown) => this.props.onAvplayTurnShown?.(shown),
+			hasPlayerObject: () => this.object !== null && this.object.isConnected,
 		});
 		this.restorePage = clearPageForVideoPlane(node);
+		// Samsung's guide: the object first, then open
+		this.removeObject();
+		this.object = playerObject();
+		node.appendChild(this.object);
 		this.props.onLoadStart?.({type: 'loadstart'});
 		this.session.start();
 		this.update();
@@ -199,6 +221,12 @@ export class AvplayMedia extends React.Component<AvplayMediaProps> {
 		this.session = null;
 		this.restorePage?.();
 		this.restorePage = null;
+		this.removeObject();
+	}
+
+	private removeObject(): void {
+		this.object?.remove();
+		this.object = null;
 	}
 
 	private readonly update = (): void => {
@@ -213,6 +241,7 @@ export class AvplayMedia extends React.Component<AvplayMediaProps> {
 	private readonly failed = (failure: AvplayFailure): void => {
 		this.restorePage?.();
 		this.restorePage = null;
+		this.removeObject();
 		this.node?.setAttribute('data-immuch360-avplay', 'failed');
 		this.props.onAvplayFailed?.(failure);
 	};

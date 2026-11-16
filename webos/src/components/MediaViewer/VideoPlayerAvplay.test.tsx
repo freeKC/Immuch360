@@ -7,6 +7,7 @@ import {VIDEO_MARK, VideoPlayer, type VideoPlayerApi} from './VideoPlayer';
 import {fakeAvplay, type FakeAvplay, type FakeAvplayOptions} from '../../immuch360/video/fakeAvplay';
 import {lastVideoTurnLine, resetVideoTurnNotes} from '../../immuch360/video/orientation';
 import {AVPLAY_PAGE_CLASS, VIEWER_MARK} from '../../immuch360/video/avplayPage';
+import {AVPLAYER_OBJECT_TYPE} from './AvplayMedia';
 
 const SRC = 'http://nas:2283/api/assets/v1/video/playback?apiKey=SECRET-KEY';
 const UPRIGHT_4K = {orientation: '6', width: 3840, height: 2160};
@@ -63,6 +64,9 @@ function mountPage(props: Partial<React.ComponentProps<typeof VideoPlayer>> = {}
 	return {...view, grid, viewer, apiRef, shown, failed, node};
 }
 
+// The <object type="application/avplayer"> of Samsung's guide, where the page has it
+const playerObjects = () => Array.from(document.querySelectorAll(`object[type="${AVPLAYER_OBJECT_TYPE}"]`)) as HTMLObjectElement[];
+
 const run = (step: () => void) =>
 	act(() => {
 		step();
@@ -81,6 +85,29 @@ test('a Samsung TV plays a turned video through AVPlay: no video element, the UR
 	expect(node.getAttribute('data-immuch360-avplay')).toBe('playing');
 	expect(lastVideoTurnLine()).toContain('tizen AVPlay');
 	expect(lastVideoTurnLine()).not.toContain('SECRET');
+});
+
+test("Samsung's guide: the player's object is on the page before AVPlay opens, fills the player, and goes when it closes", () => {
+	samsung();
+	let objectAtOpen: HTMLObjectElement[] = [];
+	const open = tv.api.open;
+	tv.api.open = (url) => {
+		objectAtOpen = playerObjects();
+		open.call(tv.api, url);
+	};
+	const {node, unmount} = mountPage();
+	expect(objectAtOpen).toHaveLength(1);
+	const object = playerObjects()[0]!;
+	expect(object).toBe(objectAtOpen[0]);
+	expect(object.parentElement).toBe(node);
+	expect(object.style.width).toBe('100%');
+	expect(object.style.height).toBe('100%');
+	expect(object.style.pointerEvents).toBe('none');
+	expect(object.tabIndex).toBe(-1);
+	run(() => tv.prepareOk());
+	expect(lastVideoTurnLine()).toContain('stream 3840 x 2160 HEVC, object yes, auto 90');
+	unmount();
+	expect(playerObjects()).toEqual([]);
 });
 
 test('the page is cleared over the video plane while AVPlay plays, and put back as it was when it closes', () => {
@@ -119,7 +146,15 @@ test("Sandstone's controls drive AVPlay: pause, play, a 10 s jump, the time it r
 	run(() => api.jump(10));
 	expect(tv.calls[tv.calls.length - 1]).toEqual(['seekTo', 14000]);
 	expect(api.getMediaState().currentTime).toBe(14);
+	// Pause while the jump is on its way: sent once it lands (Samsung refuses it meanwhile)
+	run(() => api.pause());
+	expect(api.getMediaState().paused).toBe(true);
+	expect(tv.state).toBe('PLAYING');
 	run(() => tv.seekOk());
+	expect(tv.state).toBe('PAUSED');
+	expect(api.getMediaState().paused).toBe(true);
+	run(() => api.play());
+	expect(tv.state).toBe('PLAYING');
 	run(() => tv.complete());
 	expect(tv.names().slice(-1)).toEqual(['stop']);
 	expect(api.getMediaState().paused).toBe(true);
@@ -174,6 +209,7 @@ test('a failure closes AVPlay, puts the page back and tells the viewer where it 
 	expect(tv.state).toBe('NONE');
 	expect(grid.style.visibility).toBe('');
 	expect(document.documentElement.classList.contains(AVPLAY_PAGE_CLASS)).toBe(false);
+	expect(playerObjects()).toEqual([]);
 });
 
 test('a turn chosen by hand reaches AVPlay while it plays, no reopening', () => {
@@ -203,6 +239,7 @@ test('AVPlay opens after the delay given, so that a video element closed just be
 	second.unmount();
 	run(() => jest.advanceTimersByTime(1000));
 	expect(tv.names().indexOf('open')).toBe(-1);
+	expect(playerObjects()).toEqual([]);
 });
 
 // The viewer's video element in a rendered player

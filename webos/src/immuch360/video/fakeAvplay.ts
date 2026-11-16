@@ -1,7 +1,7 @@
 // Immuch360: a stand in for Samsung's webapis.avplay, for the tests only (nothing of the app imports it). It keeps
 // AVPlay's states as Samsung's reference gives them (NONE, IDLE, READY, PLAYING, PAUSED), throws InvalidStateError
-// where a call is not allowed, records every call, and lets a test drive what the TV would do: prepare, time going on,
-// the end, a seek landing, an error.
+// where a call is not allowed and InvalidAccessError for a call made while a seek is on its way, records every call,
+// and lets a test drive what the TV would do: prepare, time going on, the end, a seek landing, an error.
 
 import type {AvplayApi} from '../../platform/avplay';
 import type {WebapisAvplayListener} from '../../platform/tizen-api';
@@ -36,6 +36,9 @@ export interface FakeAvplay {
 	names: () => string[];
 }
 
+// What a call may do while a seek is on its way (getState, getCurrentTime and getDuration are never refused)
+const WHILE_SEEKING = ['stop', 'close'];
+
 const exception = (name: string) => Object.assign(new Error(`${name} (the URL and its key could be in here)`), {name});
 
 export function fakeAvplay(options: FakeAvplayOptions = {}): FakeAvplay {
@@ -51,6 +54,8 @@ export function fakeAvplay(options: FakeAvplayOptions = {}): FakeAvplay {
 		calls.push([name, ...args]);
 		const thrown = options.throws?.[name];
 		if (thrown) throw exception(thrown);
+		// Samsung: after seekTo, wait for one of its callbacks before any other call
+		if (seek && WHILE_SEEKING.indexOf(name) < 0) throw exception('InvalidAccessError');
 		if (allowed && allowed.indexOf(state) < 0) throw exception('InvalidStateError');
 		return run();
 	};
@@ -91,6 +96,7 @@ export function fakeAvplay(options: FakeAvplayOptions = {}): FakeAvplay {
 		stop: () =>
 			call('stop', [], ['READY', 'PLAYING', 'PAUSED'], () => {
 				state = 'IDLE';
+				seek = null;
 			}),
 		seekTo: (ms: number, ok?: () => void, fail?: (error: unknown) => void) =>
 			call('seekTo', [ms], ['IDLE', 'READY', 'PLAYING', 'PAUSED'], () => {

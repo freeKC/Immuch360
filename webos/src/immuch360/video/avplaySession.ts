@@ -6,7 +6,9 @@
 //   open(url), setListener, setTimeoutForBuffering, setDisplayMethod and setDisplayRect (a display must be set, or the
 //   sound plays with no picture), prepareAsync; once prepared: setDisplayRotation, setDisplayMethod and setDisplayRect
 //   again ("this API call will change the origin of coordinates"), seekTo the start when there is one, play.
-//   Leaving: stop, then close. At the end: stop, or the last frame stays on screen.
+//   Leaving: stop, then close. At the end: stop, or the last frame stays on screen. After seekTo, no other call until
+//   one of its callbacks (pause throws InvalidAccessError meanwhile): a pause or a turn asked for during a seek is sent
+//   once it lands.
 //
 // Every callback carries the generation of the open it belongs to: a Back or the next video during prepareAsync, or a
 // seek, finds its callbacks ignored. Anything that fails before or during playback (open, prepare or play throwing, an
@@ -73,6 +75,8 @@ export interface AvplaySessionOptions {
 	onEvent: (type: AvplayMediaEvent) => void;
 	onFailed: (failure: AvplayFailure) => void;
 	onTurnShown: (shown: AvplayTurnShown) => void;
+	/** Whether the page has the <object type="application/avplayer"> of Samsung's guide, for the diagnostics line */
+	hasPlayerObject?: () => boolean;
 	startTimeoutMs?: number;
 }
 
@@ -108,6 +112,8 @@ export class AvplaySession {
 	private advanced = false;
 	private seekTarget: number | null = null;
 	private queuedSeek: number | null = null;
+	/** A turn asked for while a seek was on its way: sent once it lands */
+	private pendingTurn = false;
 	private startTimer: ReturnType<typeof setTimeout> | null = null;
 	private stream: AvplayStream | null = null;
 	private request: AvplayTurnRequest;
@@ -195,8 +201,9 @@ export class AvplaySession {
 		}
 		if (this.phase !== 'playing') return;
 		this.wantPlay = false;
-		// Samsung: pause() throws InvalidAccessError while a seek is on its way; the seek's end leaves it paused
-		attempt(() => this.options.api.pause());
+		// Samsung: no other call until a seek's callback (pause() throws InvalidAccessError meanwhile): the seek's end
+		// pauses it (runSeek)
+		if (this.seekTarget === null) attempt(() => this.options.api.pause());
 		this.phase = 'paused';
 		this.options.onEvent('pause');
 		this.options.onChange();
@@ -228,10 +235,12 @@ export class AvplaySession {
 		}
 	}
 
-	/** A new turn asked for (the viewer's buttons): applied at once when the player is prepared */
+	/** A new turn asked for (the viewer's buttons): applied at once when the player is prepared, after a seek on its way */
 	setTurn(request: AvplayTurnRequest): void {
 		this.request = request;
-		if (this.phase === 'ready' || this.phase === 'playing' || this.phase === 'paused') this.applyTurn();
+		if (this.phase !== 'ready' && this.phase !== 'playing' && this.phase !== 'paused') return;
+		if (this.seekTarget === null) this.applyTurn();
+		else this.pendingTurn = true;
 	}
 
 	/** The app is hidden: the player closes, the time is kept */
@@ -266,6 +275,7 @@ export class AvplaySession {
 		this.advanced = false;
 		this.seekTarget = null;
 		this.queuedSeek = null;
+		this.pendingTurn = false;
 		this.phase = 'preparing';
 		this.buffering = true;
 		this.failure = null;
@@ -421,9 +431,16 @@ export class AvplaySession {
 				return;
 			}
 			this.playFrom = this.time;
+			// What waited for the seek's end (Samsung: no other call until its callback)
+			if (this.pendingTurn) {
+				this.pendingTurn = false;
+				this.applyTurn();
+			}
 			if (starting) this.afterReady();
 			// Play pressed while the seek was on its way
 			else if (this.wantPlay && this.phase === 'paused') this.startPlaying();
+			// Pause pressed while it was on its way: AVPlay went on playing
+			else if (!this.wantPlay && this.phase === 'paused' && this.avplayState() === 'PLAYING') attempt(() => api.pause());
 			this.options.onChange();
 		};
 		try {
@@ -436,6 +453,14 @@ export class AvplaySession {
 			done(false);
 		}
 		this.options.onChange();
+	}
+
+	private avplayState(): string | null {
+		try {
+			return this.options.api.getState();
+		} catch {
+			return null;
+		}
 	}
 
 	private completed(): void {
@@ -519,19 +544,23 @@ export class AvplaySession {
 		this.clearStartTimer();
 		this.seekTarget = null;
 		this.queuedSeek = null;
+		this.pendingTurn = false;
 		const {api} = this.options;
-		let state: string | null = null;
-		try {
-			state = api.getState();
-		} catch {
-			state = null;
-		}
+		const state = this.avplayState();
 		if (state === null || state === 'READY' || state === 'PLAYING' || state === 'PAUSED') attempt(() => api.stop());
 		if (state !== 'NONE') attempt(() => api.close());
 	}
 
 	private reach(milestone: Milestone): void {
 		if (MILESTONES.indexOf(milestone) > MILESTONES.indexOf(this.reached)) this.reached = milestone;
+	}
+
+	private hasPlayerObject(): boolean {
+		try {
+			return this.options.hasPlayerObject?.() === true;
+		} catch {
+			return false;
+		}
 	}
 
 	private note(): void {
@@ -542,6 +571,7 @@ export class AvplaySession {
 			`orientation ${String(info?.orientation ?? '?')}`,
 			`stored ${info?.width ?? '?'} x ${info?.height ?? '?'}`,
 			`stream ${this.stream ? `${this.stream.width} x ${this.stream.height}${this.stream.codec ? ` ${this.stream.codec}` : ''}` : '?'}`,
+			`object ${this.hasPlayerObject() ? 'yes' : 'no'}`,
 		];
 		if (this.shown && this.display) {
 			const {source, degrees, fit} = this.shown;

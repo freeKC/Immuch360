@@ -47,7 +47,7 @@ afterEach(() => {
 });
 
 test("Samsung's order: open, listener, a display, prepare; once prepared the rotation, the method and the rect again, then play", () => {
-	const player = session();
+	const player = session({hasPlayerObject: () => true});
 	player.start();
 	expect(tv.names()).toEqual(['open', 'setListener', 'setTimeoutForBuffering', 'setDisplayMethod', 'setDisplayRect', 'prepareAsync']);
 	expect(tv.calls[0]).toEqual(['open', URL]);
@@ -70,7 +70,7 @@ test("Samsung's order: open, listener, a display, prepare; once prepared the rot
 	expect(player.loading).toBe(false);
 	// The line of the About page: what was asked, what each call did, how far it went; never the URL nor its key
 	expect(lastVideoTurnLine()).toBe(
-		'tizen AVPlay, TV ?, Tizen ?, firmware ?, orientation 6, stored 3840 x 2160, stream 3840 x 2160 HEVC, auto 90, fit player, ' +
+		'tizen AVPlay, TV ?, Tizen ?, firmware ?, orientation 6, stored 3840 x 2160, stream 3840 x 2160 HEVC, object yes, auto 90, fit player, ' +
 			'PLAYER_DISPLAY_ROTATION_90 ok, letterbox ok, rect 0,0,1920,1080 ok, reached frames at 1.5 s'
 	);
 	expect(lastVideoTurnLine()).not.toContain('SECRET');
@@ -90,7 +90,7 @@ test('the rotation value of each turn: 6 is 90, 8 is 270, a turn by hand stands,
 	expect(rotationSent({info: UPRIGHT_4K, manual: {degrees: 0}})).toEqual(['PLAYER_DISPLAY_ROTATION_NONE']);
 	// A 1080 x 1920 stream of a 3840 x 2160 file: Immich's software transcode turned it already
 	expect(rotationSent({info: UPRIGHT_4K, manual: null}, {stream: {Width: 1080, Height: 1920, fourCC: 'H264'}})).toEqual(['PLAYER_DISPLAY_ROTATION_NONE']);
-	expect(lastVideoTurnLine()).toContain('stream 1080 x 1920 H264, not turned, fit player, PLAYER_DISPLAY_ROTATION_NONE ok');
+	expect(lastVideoTurnLine()).toContain('stream 1080 x 1920 H264, object no, not turned, fit player, PLAYER_DISPLAY_ROTATION_NONE ok');
 	// A video with no flag, turned by hand from the start of the session
 	expect(rotationSent({info: {orientation: '1', width: 1920, height: 1080}, manual: {degrees: 90}})).toEqual(['PLAYER_DISPLAY_ROTATION_90']);
 });
@@ -197,6 +197,78 @@ test('seeks: the time asked for shows at once, one seek at a time, the latest as
 	expect(tv.state).toBe('PLAYING');
 });
 
+test('Pause during a 10 s jump: no call until the seek lands, then AVPlay is paused (Samsung: pause throws meanwhile)', () => {
+	const player = session();
+	player.start();
+	tv.prepareOk();
+	tv.tick(4000);
+	player.seek(14);
+	const before = tv.calls.length;
+	player.pause();
+	// Nothing sent while the seek is on its way (the stand in would throw InvalidAccessError), the viewer shows paused
+	expect(tv.calls.slice(before)).toEqual([]);
+	expect(player.paused).toBe(true);
+	expect(events[events.length - 1]).toBe('pause');
+	expect(tv.state).toBe('PLAYING');
+	tv.seekOk();
+	expect(tv.names().slice(-1)).toEqual(['pause']);
+	expect(tv.state).toBe('PAUSED');
+	expect(player.paused).toBe(true);
+	expect(player.currentTime).toBe(14);
+	// A failed seek too: paused where the player is
+	player.play();
+	expect(tv.state).toBe('PLAYING');
+	player.seek(30);
+	player.pause();
+	tv.seekFail();
+	expect(tv.state).toBe('PAUSED');
+	// Pause then Play during a seek: it plays on, no pause sent
+	player.play();
+	player.seek(40);
+	player.pause();
+	player.play();
+	const during = tv.calls.length;
+	tv.seekOk();
+	expect(tv.names().slice(during)).not.toContain('pause');
+	expect(tv.state).toBe('PLAYING');
+	expect(player.paused).toBe(false);
+	expect(failures).toEqual([]);
+});
+
+test('"Turn the picture" during a seek: sent once it lands, after the last seek queued', () => {
+	const player = session();
+	player.start();
+	tv.prepareOk();
+	tv.tick(4000);
+	player.seek(14);
+	player.seek(24);
+	const before = tv.calls.length;
+	player.setTurn({info: UPRIGHT_4K, manual: {degrees: 180}});
+	expect(tv.calls.slice(before)).toEqual([]);
+	tv.seekOk();
+	// The queued seek goes first, the turn waits for it too
+	expect(tv.calls.slice(before)).toEqual([['seekTo', 24000]]);
+	tv.seekOk();
+	expect(tv.calls.slice(before + 1)).toEqual([
+		['setDisplayRotation', 'PLAYER_DISPLAY_ROTATION_180'],
+		['setDisplayMethod', 'PLAYER_DISPLAY_MODE_LETTER_BOX'],
+		['setDisplayRect', 0, 0, 1920, 1080],
+	]);
+	expect(shown[shown.length - 1]).toEqual({degrees: 180, fit: 'player', fitMatters: false});
+	expect(lastVideoTurnLine()).toContain('by hand 180, fit player, PLAYER_DISPLAY_ROTATION_180 ok, letterbox ok, rect 0,0,1920,1080 ok');
+	// During the seek to the start time of a switch from the HTML element: the turn comes before play
+	const switched = session({startAt: 12.5});
+	switched.start();
+	tv.prepareOk();
+	const start = tv.calls.length;
+	switched.setTurn({info: UPRIGHT_4K, manual: {degrees: 270}});
+	expect(tv.calls.slice(start)).toEqual([]);
+	tv.seekOk();
+	expect(tv.names().slice(start)).toEqual(['setDisplayRotation', 'setDisplayMethod', 'setDisplayRect', 'play']);
+	expect(tv.calls[start]).toEqual(['setDisplayRotation', 'PLAYER_DISPLAY_ROTATION_270']);
+	expect(failures).toEqual([]);
+});
+
 test('the end: stop (else the last frame stays), paused at the end; play again starts it over', () => {
 	const player = session();
 	player.start();
@@ -225,7 +297,7 @@ test('an error before the first frame: the player is stopped and closed, the vie
 	expect(tv.state).toBe('NONE');
 	expect(tv.names().slice(-1)).toEqual(['close']);
 	expect(lastVideoTurnLine()).toBe(
-		'tizen AVPlay, TV ?, Tizen ?, firmware ?, orientation 6, stored 3840 x 2160, stream ?, reached opened, failed at prepare: PLAYER_ERROR_CONNECTION_FAILED, HTML player instead'
+		'tizen AVPlay, TV ?, Tizen ?, firmware ?, orientation 6, stored 3840 x 2160, stream ?, object no, reached opened, failed at prepare: PLAYER_ERROR_CONNECTION_FAILED, HTML player instead'
 	);
 	expect(lastVideoTurnLine()).not.toContain('SECRET');
 	// Nothing more once failed
