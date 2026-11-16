@@ -46,6 +46,12 @@ export interface Features {
 	 * 2160 x 3840" for a 3840 x 2160 file), so there the reported size is not trusted (src/immuch360/video/orientation.ts).
 	 */
 	reportedVideoSizeTellsTurn: boolean;
+	/**
+	 * A video that needs a turn plays through Samsung's AVPlay player, which turns it with its own rotation setting: the
+	 * video element of a Samsung TV ignores the turn the page gives it (issue 17, src/immuch360/video/avplayEngine.ts).
+	 * Samsung, when the TV has AVPlay; webOS and browsers keep the video element for every video.
+	 */
+	avplayForTurn: boolean;
 }
 
 /**
@@ -67,6 +73,7 @@ export function features(on: Platform = platform()): Features {
 			probeVideoFramesAtStart: true,
 			turnSidewaysVideo: true,
 			reportedVideoSizeTellsTurn: false,
+			avplayForTurn: true,
 		};
 	}
 	// webOS, and a browser in development, where service/dev.js stands in for the service
@@ -81,5 +88,6 @@ export function features(on: Platform = platform()): Features {
 		probeVideoFramesAtStart: false,
 		turnSidewaysVideo: false,
 		reportedVideoSizeTellsTurn: true,
+		avplayForTurn: false,
 	};
 }

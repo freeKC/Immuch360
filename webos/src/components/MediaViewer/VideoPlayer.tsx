@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef} from 'react';
 import {VideoPlayer as SandstoneVideoPlayer} from '@enact/sandstone/VideoPlayer';
 import {features} from '../../platform/features';
 import {platform} from '../../platform/detect';
@@ -12,7 +12,10 @@ import {
 	type VideoOrientationInfo,
 	type VideoTurnChoice,
 } from '../../immuch360/video/orientation';
+import type {VideoEngine} from '../../immuch360/video/avplayEngine';
+import type {AvplayFailure, AvplayTurnShown} from '../../immuch360/video/avplaySession';
 import {holdScreenSaver} from '../../utils/screenSaver';
+import {AvplayMedia} from './AvplayMedia';
 import css from './MediaViewer.module.less';
 
 // Subset of the imperative API exposed by Sandstone's ApiDecorator (available on a ref
@@ -26,8 +29,9 @@ export interface VideoPlayerApi {
 	play: () => void;
 	pause: () => void;
 	getMediaState: () => {paused?: boolean; currentTime?: number; duration?: number};
-	// Immuch360: the media node, whose error tells a video the TV cannot play
-	getVideoNode: () => {error?: unknown} | null;
+	// Immuch360: the media node, whose error tells a video the TV cannot play; readyState from Samsung's AVPlay player,
+	// whose node is no video element (AvplayMedia.tsx)
+	getVideoNode: () => {error?: unknown; readyState?: number} | null;
 }
 
 interface VideoPlayerProps {
@@ -45,6 +49,15 @@ interface VideoPlayerProps {
 	manualTurn?: VideoTurnChoice | null;
 	// Immuch360: what the picture is turned by now, and whether the fit changes anything, for the viewer's buttons
 	onTurnShown?: (shown: VideoTurnShown) => void;
+	// Immuch360: the player of the video: the HTML element, or Samsung's AVPlay player for a video that needs a turn on a
+	// Samsung TV (src/immuch360/video/avplayEngine.ts). The viewer gives each engine and video a player of its own.
+	engine?: VideoEngine;
+	// Immuch360: where the video starts, in seconds: the time it had reached in the other player when it was switched
+	startAt?: number;
+	// Immuch360: AVPlay failed: the viewer plays the video in the HTML element instead
+	onAvplayFailed?: (failure: AvplayFailure) => void;
+	// Immuch360: how long AVPlay waits before it opens, so that the video element closed before frees the decoder
+	avplayOpenDelayMs?: number;
 }
 
 /** What the player turns the picture by, once it knows the frames (VideoPlayer's onTurnShown) */
@@ -83,11 +96,30 @@ const PLAYER_PROPS = {
 // Immuch360: marks the video element of the viewer (Sandstone hands the props it does not use to the <video>), so that
 // the media events of this player are told from those of other videos (the test clip of the About page)
 export const VIDEO_MARK = 'data-immuch360-video';
-const fromThisPlayer = (target: EventTarget | null): boolean => target instanceof HTMLVideoElement && target.hasAttribute(VIDEO_MARK);
+// (the HTML element, or the element of Samsung's AVPlay player, AvplayMedia.tsx)
+const fromThisPlayer = (target: EventTarget | null): boolean => target instanceof HTMLElement && target.hasAttribute(VIDEO_MARK);
 /** The video element of the viewer's player, null when none is open: its readyState tells whether it reached canplay */
 export const viewerVideoElement = (): HTMLVideoElement | null => document.querySelector<HTMLVideoElement>(`video[${VIDEO_MARK}]`);
 // The events after which a video no longer plays; 'waiting' (buffering) keeps the screen saver off
 const STOPPED_EVENTS = ['pause', 'ended', 'emptied', 'error'];
+// Immuch360: AVPlay opens this long after the player mounts (the video element of a switched video frees the decoder)
+export const AVPLAY_OPEN_DELAY_MS = 300;
+
+/**
+ * Immuch360: frees the decoder of a video element that goes (a Samsung TV, where AVPlay may open next): Samsung's
+ * multimedia FAQ says a <video> and AVPlay must not play at the same time, the source is emptied and load() called
+ */
+function releaseVideoElement(node: HTMLVideoElement | null): void {
+	if (!node) return;
+	try {
+		node.pause();
+		Array.from(node.querySelectorAll('source')).forEach((source) => source.removeAttribute('src'));
+		node.removeAttribute('src');
+		node.load();
+	} catch {
+		// the element goes anyway
+	}
+}
 
 // Hands the player's API to the ref of the viewer, a function or an object
 function passApi(ref: React.Ref<VideoPlayerApi> | undefined, api: VideoPlayerApi | null): void {
@@ -95,7 +127,19 @@ function passApi(ref: React.Ref<VideoPlayerApi> | undefined, api: VideoPlayerApi
 	else if (ref) (ref as React.MutableRefObject<VideoPlayerApi | null>).current = api;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailable, apiRef, orientation, manualTurn, onTurnShown}) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({
+	src,
+	onControlsAvailable,
+	apiRef,
+	orientation,
+	manualTurn,
+	onTurnShown,
+	engine = 'html',
+	startAt = 0,
+	onAvplayFailed,
+	avplayOpenDelayMs = AVPLAY_OPEN_DELAY_MS,
+}) => {
+	const avplay = engine === 'avplay';
 	// Immuch360: the player's API for this component too (the pause below), and for the viewer through apiRef
 	const ownApi = useRef<VideoPlayerApi | null>(null);
 	const setApi = useCallback(
@@ -152,6 +196,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 		shownRef.current = onTurnShown;
 	});
 	useEffect(() => {
+		// Samsung's AVPlay player turns the picture itself (AvplayMedia.tsx)
+		if (avplay) return undefined;
 		// webOS only notes its own turn, for the diagnostics page, and leaves it to its player
 		const {turnSidewaysVideo, reportedVideoSizeTellsTurn} = features();
 		const rule = {reportedSizeTellsTurn: reportedVideoSizeTellsTurn};
@@ -193,9 +239,62 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({src, onControlsAvailabl
 			window.removeEventListener('resize', apply);
 			if (turned) turned.style.transform = '';
 		};
-	}, [src, turnOrientation, turnWidth, turnHeight, manualDegrees, manualFit]);
+	}, [avplay, src, turnOrientation, turnWidth, turnHeight, manualDegrees, manualFit]);
 
-	const playerProps = {...PLAYER_PROPS, onControlsAvailable, ref: setApi, [VIDEO_MARK]: ''};
+	// Immuch360: a video switched from AVPlay to the HTML element goes on from where AVPlay was, once the element knows
+	// the video
+	useEffect(() => {
+		if (avplay || !(startAt > 0)) return undefined;
+		let done = false;
+		const seek = (node: HTMLVideoElement | null) => {
+			if (done || !node || node.readyState < 1) return;
+			done = true;
+			try {
+				node.currentTime = startAt;
+			} catch {
+				// it starts from the beginning
+			}
+		};
+		const onMetadata = (event: Event) => {
+			if (fromThisPlayer(event.target)) seek(event.target as HTMLVideoElement);
+		};
+		seek(viewerVideoElement());
+		document.addEventListener('loadedmetadata', onMetadata, true);
+		return () => document.removeEventListener('loadedmetadata', onMetadata, true);
+	}, [avplay, src, startAt]);
+
+	// Immuch360: on a Samsung TV the video element frees its decoder when it goes, before AVPlay opens
+	useLayoutEffect(() => {
+		if (avplay || !features().avplayForTurn) return undefined;
+		return () => releaseVideoElement(viewerVideoElement());
+	}, [avplay]);
+
+	// Immuch360: what Sandstone hands Samsung's AVPlay player besides its own props (AvplayMedia.tsx)
+	const failedRef = useRef(onAvplayFailed);
+	useEffect(() => {
+		failedRef.current = onAvplayFailed;
+	});
+	const avplayTurn = useMemo(
+		() => ({
+			info: turnOrientation === null && turnWidth === null && turnHeight === null ? null : {orientation: turnOrientation, width: turnWidth, height: turnHeight},
+			manual: manualDegrees === null ? null : manualFit ? {degrees: manualDegrees, fit: manualFit} : {degrees: manualDegrees},
+		}),
+		[turnOrientation, turnWidth, turnHeight, manualDegrees, manualFit]
+	);
+	const onAvplayTurnShown = useCallback((shown: AvplayTurnShown) => shownRef.current?.(shown), []);
+	const handleAvplayFailed = useCallback((failure: AvplayFailure) => failedRef.current?.(failure), []);
+	const avplayProps = avplay
+		? {
+				videoComponent: AvplayMedia,
+				avplayTurn,
+				avplayStartAt: startAt,
+				avplayOpenDelayMs,
+				onAvplayFailed: handleAvplayFailed,
+				onAvplayTurnShown,
+			}
+		: null;
+
+	const playerProps = {...PLAYER_PROPS, ...avplayProps, onControlsAvailable, ref: setApi, [VIDEO_MARK]: ''};
 	return (
 		<SandstoneVideoPlayer {...(playerProps as any)} className={css.viewerMedia}>
 			<source src={src} type="video/mp4" />

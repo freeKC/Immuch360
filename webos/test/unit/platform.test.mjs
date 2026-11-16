@@ -96,6 +96,7 @@ describe('the platform', () => {
 			probeVideoFramesAtStart: true,
 			turnSidewaysVideo: true,
 			reportedVideoSizeTellsTurn: false,
+			avplayForTurn: true,
 		});
 		// webOS keeps its behaviour: every Samsung only answer is off there, and LG's Back to Photos on
 		for (const on of ['webos', 'browser']) {
@@ -112,6 +113,7 @@ describe('the platform', () => {
 					probeVideoFramesAtStart: false,
 					turnSidewaysVideo: false,
 					reportedVideoSizeTellsTurn: true,
+					avplayForTurn: false,
 				},
 				on
 			);
