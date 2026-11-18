@@ -96,6 +96,10 @@ class FakeJellyfinServer {
 
   Map<String, Object?>? _playbackInfo;
 
+  /// The bodies of the PlaybackInfo requests, and the encodings stopped ("deviceId playSessionId")
+  final List<Map<String, Object?>> playbackInfoBodies = [];
+  final List<String> encodingsStopped = [];
+
   void _load() {
     publicInfo = _map(jellyfinFixture(folder, 'system_info_public'));
     serverId = publicInfo['Id']! as String;
@@ -318,7 +322,12 @@ class FakeJellyfinServer {
       return _json(request, _page(next.toList(), query));
     }
     if (segments.length == 3 && segments[0] == 'Items' && segments[2] == 'PlaybackInfo') {
+      playbackInfoBodies.add(_map(jsonDecode(body)));
       return _json(request, _playbackInfo);
+    }
+    if (path == '/Videos/ActiveEncodings' && request.method == 'DELETE') {
+      encodingsStopped.add('${query['deviceId']} ${query['playSessionId']}');
+      return _send(request, 204, '');
     }
     if (segments.length == 3 && segments[0] == 'Videos' && segments[2] == 'stream') {
       return _file(request, segments[1]);

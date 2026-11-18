@@ -144,6 +144,11 @@ class JellyfinRoutes {
     'tag': tag,
   });
 
+  /// The encodings of [playSessionId] from the device [deviceId], whose DELETE ends a conversion without telling a
+  /// place (Sessions/Playing/Stopped would write one)
+  Uri activeEncodings(String deviceId, String playSessionId) =>
+      _at('/Videos/ActiveEncodings', {'deviceId': deviceId, 'playSessionId': playSessionId});
+
   Uri playing() => _at('/Sessions/Playing');
   Uri playingProgress() => _at('/Sessions/Playing/Progress');
   Uri playingStopped() => _at('/Sessions/Playing/Stopped');

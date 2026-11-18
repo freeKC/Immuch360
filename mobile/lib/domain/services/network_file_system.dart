@@ -232,11 +232,33 @@ abstract class GeneratedMedia {
 }
 
 /// Generated media whose files are fetched when a player asks for them, from a server the app reads in Dart: the
-/// playlist and the segments of a film the Plex server converts (PlexConversion). [GeneratedMedia.file] is not asked.
+/// playlist and the segments of a film the server converts (HlsConversion). [GeneratedMedia.file] is not asked.
 abstract class GeneratedMediaFetch implements GeneratedMedia {
   /// The file [name] (one path segment), null when there is none; throws when it could not be fetched. [abort]
   /// completes when the player that asked went away (a seek elsewhere in a converted film): the fetch may stop then.
   Future<GeneratedFile?> fetch(String name, {Future<void>? abort});
+}
+
+/// A conversion of a film by its server (see NetworkServerConversion), served by the bridge as generated media: its
+/// playlist [playlist] and its segments, fetched from the server as a player asks for them
+abstract interface class NetworkConversion implements GeneratedMediaFetch {
+  /// The name of the playlist the player opens
+  String get playlist;
+
+  /// Ends the conversion on the server; nothing more is served
+  Future<void> stop();
+}
+
+/// A share whose server converts a film this device cannot play (a Plex, Jellyfin or Emby server): the labelled
+/// fallback after the device's player and libmpv, experimental (the setting viewer.plexConversion, product neutral)
+abstract interface class NetworkServerConversion {
+  /// The conversion of the film at [path] to H.264 with one of [audioCodecs] or AAC, [maxVideoBitrateKbps] at most;
+  /// null when the server will not convert it
+  Future<NetworkConversion?> conversionOfFilm(
+    String path, {
+    required List<String> audioCodecs,
+    required int maxVideoBitrateKbps,
+  });
 }
 
 /// Generated media that also takes small posts: the events the page of the splat viewer sends to the app

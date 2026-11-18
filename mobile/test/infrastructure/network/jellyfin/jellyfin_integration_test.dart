@@ -9,6 +9,7 @@
 // What it prints is counts, statuses, booleans and kinds: never the token, the password, an address or a title.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
@@ -258,6 +259,41 @@ void main() {
         await fileSystem.playbackStarted(film.path, Duration.zero);
         await fileSystem.playbackStopped(film.path, Duration.zero);
         _report('$label: a place of 90 s written and read back by two sessions');
+      }, skip: skip);
+
+      test('the DTS film converted by the server: the playlist and two segments through the media bridge', () async {
+        final fileSystem = await open();
+        addTearDown(fileSystem.close);
+        final films = await fileSystem.list((await fileSystem.list('/')).firstWhere((e) => e.name == 'Films').path);
+        final tone = films.firstWhere((e) => e.name.startsWith('Tone'));
+        final conversion = await fileSystem.conversionOfFilm(
+          tone.path,
+          audioCodecs: const ['eac3', 'ac3'],
+          maxVideoBitrateKbps: 8000,
+        );
+        expect(conversion, isNotNull);
+        final bridge = LocalMediaBridge();
+        addTearDown(bridge.stop);
+        await bridge.start();
+        bridge.registerGenerated('conversion-test', conversion!);
+        final http = HttpClient();
+        addTearDown(http.close);
+        Future<List<int>> get(String name) async {
+          final response = await (await http.getUrl(bridge.urlFor('conversion-test', '/$name'))).close();
+          expect(response.statusCode, 200, reason: name);
+          return response.fold<List<int>>([], (all, part) => all..addAll(part));
+        }
+
+        final playlist = utf8.decode(await get(conversion.playlist));
+        final names = playlist.split('\n').where((l) => l.isNotEmpty && !l.startsWith('#')).toList();
+        expect(names.take(2), ['0.ts', '1.ts']);
+        for (final name in names.take(2)) {
+          final bytes = await get(name);
+          expect(bytes.length, greaterThan(1000));
+          expect(bytes.first, 0x47, reason: 'MPEG-TS');
+        }
+        await conversion.stop();
+        _report('$label: conversion playlist of ${names.length} segments, two read through the bridge, stopped');
       }, skip: skip);
 
       test('a token sent with another DeviceId still works', () async {

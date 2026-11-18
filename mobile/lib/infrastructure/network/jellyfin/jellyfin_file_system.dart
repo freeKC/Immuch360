@@ -31,6 +31,7 @@ import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/entry_names.dart';
+import 'package:immich_mobile/infrastructure/network/hls_conversion.dart';
 import 'package:immich_mobile/infrastructure/network/http_range_reader.dart';
 import 'package:immich_mobile/infrastructure/network/isolate_http_client.dart';
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_api.dart';
@@ -133,6 +134,7 @@ class JellyfinFileSystem
         NetworkAbortableReads,
         NetworkPlaybackReports,
         NetworkFilmStreams,
+        NetworkServerConversion,
         MediaServerItemSource {
   JellyfinFileSystem._(this.source, this.client, this.userId, this.info, this._pageSize);
 
@@ -409,6 +411,59 @@ class JellyfinFileSystem
     }
     final source = item.mediaSources.where((s) => s.id == node.mediaSourceId).firstOrNull ?? item.firstSource;
     return source == null ? null : filmStreamsOfJellyfinSource(source, fileName: target.split('/').last);
+  });
+
+  /// Largest file of a conversion fetched (a playlist, a segment of a few seconds)
+  static const maxConversionFile = 64 * 1024 * 1024;
+
+  /// The conversion of the film at [path] by the server: PlaybackInfo with a device profile that plays nothing as it
+  /// is and converts to HLS (H.264, one of [audioCodecs] or AAC, [maxVideoBitrateKbps] at most), then the server's own
+  /// TranscodingUrl, its key removed (the token goes in the header, bench of release 49, fact 6). Its play session
+  /// becomes the one of the reports of [path]; stopped with a DELETE of its encodings, which writes no place.
+  @override
+  Future<NetworkConversion?> conversionOfFilm(
+    String path, {
+    required List<String> audioCodecs,
+    required int maxVideoBitrateKbps,
+  }) => _guard('conversion', () async {
+    final target = normalizePath(path);
+    final node = await _resolve(target);
+    final item = node.item;
+    final mediaSource = node.mediaSourceId ?? item?.firstSource?.id;
+    if (item == null || !item.isVideo || mediaSource == null) {
+      return null;
+    }
+    final info = await client.playbackInfo(
+      userId,
+      item.id,
+      mediaSourceId: mediaSource,
+      deviceProfile: jellyfinConversionProfile(audioCodecs: audioCodecs, maxVideoBitrateKbps: maxVideoBitrateKbps),
+      maxStreamingBitrate: maxVideoBitrateKbps * 1000,
+    );
+    final source = info.mediaSources.where((s) => s.id == mediaSource).firstOrNull ?? info.mediaSources.firstOrNull;
+    final url = source?.transcodingUrl;
+    final session = info.playSessionId;
+    if (url == null || source?.transcodingSubProtocol != 'hls' || session == null) {
+      _log.info('The server offers no HLS conversion of the film');
+      return null;
+    }
+    usePlaySession(target, session);
+    final stopUri = routes.activeEncodings(client.deviceId, session);
+    return HlsConversion(
+      start: routes.conversion(url),
+      base: routes.base,
+      fetch: (uri, headers, {abort}) async {
+        final bytes = await client.bytes(uri, accept: '*/*', maxSize: maxConversionFile, abort: abort);
+        if (bytes == null) {
+          throw const JellyfinHttpStatus(404);
+        }
+        return bytes;
+      },
+      stopOnServer: () async {
+        final response = await client.send('DELETE', stopUri);
+        await discardHttpBody(response);
+      },
+    );
   });
 
   /// The items met so far, by id, for their pictures
@@ -821,6 +876,35 @@ MediaServerItem jellyfinMediaServerItem(JellyfinItem item) {
     versions: max(1, item.mediaSources.length),
   );
 }
+
+/// The device profile of a conversion: nothing plays as it is, one HLS transcoding profile in MPEG-TS with H.264 and
+/// [audioCodecs] (those this device decodes, E-AC-3 and AC-3 on the Quest) before AAC, at [maxVideoBitrateKbps] at
+/// most. The server copies a stream the profile takes as it is, and converts the others.
+Map<String, Object?> jellyfinConversionProfile({required List<String> audioCodecs, required int maxVideoBitrateKbps}) =>
+    {
+      'Name': jellyfinClientName,
+      'MaxStreamingBitrate': maxVideoBitrateKbps * 1000,
+      'MaxStaticBitrate': maxVideoBitrateKbps * 1000,
+      'DirectPlayProfiles': const <Object>[],
+      'CodecProfiles': const <Object>[],
+      'SubtitleProfiles': const <Object>[],
+      'TranscodingProfiles': [
+        {
+          'Container': 'ts',
+          'Type': 'Video',
+          'VideoCodec': 'h264',
+          'AudioCodec': {...audioCodecs.map(jellyfinCodecFromPlex), 'aac'}.join(','),
+          'Protocol': 'hls',
+          'Context': 'Streaming',
+          'BreakOnNonKeyFrames': true,
+          'MinSegments': 1,
+          'MaxAudioChannels': '6',
+        },
+      ],
+    };
+
+/// A codec of the player choice in the names of Jellyfin ("dca" is "dts")
+String jellyfinCodecFromPlex(String codec) => codec == 'dca' ? 'dts' : codec;
 
 /// The HTTP client of a Jellyfin or Emby server in the app: off the UI isolate, as Plex since release 47, so that a
 /// film read through the bridge does not wait for the frames
