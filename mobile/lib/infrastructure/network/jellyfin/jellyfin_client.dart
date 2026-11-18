@@ -178,17 +178,14 @@ String jellyfinAuthorization({
 
 /// "Immuch360 Android", "Immuch360 iOS", "Immuch360 Windows": the platform only, never the user's device name
 String jellyfinDeviceName() {
-  final platform = Platform.isIOS
-      ? 'iOS'
-      : Platform.isAndroid
-      ? 'Android'
-      : Platform.isMacOS
-      ? 'macOS'
-      : Platform.isWindows
-      ? 'Windows'
-      : Platform.isLinux
-      ? 'Linux'
-      : Platform.operatingSystem;
+  final platform = switch (Platform.operatingSystem) {
+    'ios' => 'iOS',
+    'android' => 'Android',
+    'macos' => 'macOS',
+    'windows' => 'Windows',
+    'linux' => 'Linux',
+    final other => other,
+  };
   return '$jellyfinClientName $platform';
 }
 
