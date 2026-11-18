@@ -76,7 +76,8 @@ Map<String, String> flat3dViewerLabels(Translations t) => {
 /// screen), under the keys StereoComposer reads: what passes once when the first one the compositor filters shows
 /// (Sharper flat screens, experimental), what previous and next say on a video opened with View on a big screen, and
 /// what a 3D photo says when it is not brought nearer past its comfort bound, the controller mapping of the photos of
-/// a flat screen, which browse, and the button that keeps their size and place for the next ones (issue 19)
+/// a flat screen, which browse, the button that keeps their size and place for the next ones, and what their
+/// slideshow says (issue 19)
 Map<String, String> flatScreenViewerLabels(Translations t) => {
   'sharpScreensNotice': t.immersive_sharp_screens_notice,
   'bigScreenNoNavigation': t.immersive_big_screen_no_navigation,
@@ -85,6 +86,10 @@ Map<String, String> flatScreenViewerLabels(Translations t) => {
   'keepFrame': t.immersive_keep_frame,
   'keepFrameOn': t.immersive_keep_frame_on,
   'keepFrameOff': t.immersive_keep_frame_off,
+  'slideshow': t.slideshow,
+  'slideshowPaused': t.immersive_slideshow_paused,
+  'slideshowEnd': t.immersive_slideshow_end,
+  'slideshowTooWarm': t.immersive_slideshow_too_warm,
 };
 
 /// Translated labels of a Gaussian splat file of another tool in the immersive viewer (lot S5), under the keys

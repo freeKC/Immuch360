@@ -67,7 +67,9 @@ abstract class ImmersiveApi {
   /// with it off (FreeKC's rule of 31 October 2026, see WatchReport): a video longer than that is a film, which
   /// plays once, and whose position the viewer reports with [ImmersiveEvents.progress]; previous and next keep the value
   /// of the opening, the kiosk ignores it. [startNotice] is what to say once the video plays, in the language of the app
-  /// ("Resumed at 42:10" for a film that starts where it was left), null for nothing.
+  /// ("Resumed at 42:10" for a film that starts where it was left), null for nothing. [slideshowSeconds] is how long
+  /// each photo of the slideshow of a flat screen stays (the slideshow duration of the app, issue 19), 0 for the 5 s
+  /// of the viewer; previous and next keep the value of the opening.
   void open(
     String url,
     Map<String, String> headers,
@@ -89,6 +91,7 @@ abstract class ImmersiveApi {
     bool gaussianSplats = true,
     int watchMinDurationMs = -1,
     String? startNotice,
+    int slideshowSeconds = 0,
   });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified

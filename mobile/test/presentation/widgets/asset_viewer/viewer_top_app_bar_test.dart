@@ -457,6 +457,7 @@ void main() {
         gaussianSplats: any(named: 'gaussianSplats'),
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
+        slideshowSeconds: any(named: 'slideshowSeconds'),
       ),
     ).thenAnswer(openImmersive);
     previewRequests = [];
@@ -737,6 +738,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       );
     });
@@ -1126,6 +1128,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured;
       expect(captured[0], ImmersiveStereoLayout.mono);
@@ -1162,6 +1165,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       );
     });
@@ -1214,6 +1218,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name), reason: 'the 2D panorama viewer is not used');
@@ -1256,6 +1261,7 @@ void main() {
             gaussianSplats: any(named: 'gaussianSplats'),
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
+            slideshowSeconds: any(named: 'slideshowSeconds'),
           ),
         ).captured;
         expect(captured, [
@@ -1308,6 +1314,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.mono);
@@ -1346,6 +1353,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured.single;
       expect(layout, ImmersiveStereoLayout.topBottom);
@@ -1411,6 +1419,7 @@ void main() {
             gaussianSplats: any(named: 'gaussianSplats'),
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
+            slideshowSeconds: any(named: 'slideshowSeconds'),
           ),
         ).captured;
         expect(captured, [layout, coverage], reason: asset.name);
@@ -1447,6 +1456,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.mono, ImmersiveSphereCoverage.full]);
@@ -1491,6 +1501,7 @@ void main() {
             gaussianSplats: any(named: 'gaussianSplats'),
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
+            slideshowSeconds: any(named: 'slideshowSeconds'),
           ),
         ).called(1);
         verifyNever(() => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()));
@@ -1528,6 +1539,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).called(1);
     });
@@ -1562,6 +1574,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).called(1);
     });
@@ -1616,6 +1629,7 @@ void main() {
             gaussianSplats: any(named: 'gaussianSplats'),
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
+            slideshowSeconds: any(named: 'slideshowSeconds'),
           ),
         ).captured.single;
         expect(startPosition, expected, reason: '$status');
@@ -1697,6 +1711,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(
@@ -1771,6 +1786,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).called(1);
       expect(file.uri.toString(), startsWith('file:///'));
@@ -1813,6 +1829,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured;
       expect(captured, [ImmersiveStereoLayout.leftRight, ImmersiveSphereCoverage.half]);
@@ -1879,6 +1896,7 @@ void main() {
             gaussianSplats: any(named: 'gaussianSplats'),
             watchMinDurationMs: any(named: 'watchMinDurationMs'),
             startNotice: any(named: 'startNotice'),
+            slideshowSeconds: any(named: 'slideshowSeconds'),
           ),
         ).captured;
         expect(captured, [ImmersiveStereoLayout.mono, coverage], reason: '$width x $height');
@@ -1929,6 +1947,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).called(1);
       verifyNever(() => storage.getFileForAsset(any()));
@@ -1982,6 +2001,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured.single;
       expect(startPosition, 12000);
@@ -2019,6 +2039,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       );
       expect(find.text('Could not open the immersive viewer'), findsOneWidget);
@@ -2080,6 +2101,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).called(1);
     });
@@ -2120,6 +2142,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).called(1);
     });
@@ -2274,6 +2297,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).called(1);
       expect(router.current.name, isNot(PanoramaViewerRoute.name));
@@ -2863,6 +2887,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured;
       return (captured[0] as String, captured[1] as String?);
@@ -2925,6 +2950,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured;
       expect(captured, ['$server/assets/${asset.id}/video/playback', null, switchedMessage]);
@@ -3213,6 +3239,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured;
       // The original the pair was read from, not an edit of it
@@ -3273,6 +3300,7 @@ void main() {
         gaussianSplats: any(named: 'gaussianSplats'),
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
+        slideshowSeconds: any(named: 'slideshowSeconds'),
       ),
     ).captured;
 
@@ -3457,6 +3485,7 @@ void main() {
         gaussianSplats: any(named: 'gaussianSplats'),
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
+        slideshowSeconds: any(named: 'slideshowSeconds'),
       ),
     ).captured;
 
@@ -3787,6 +3816,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).captured;
       expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
@@ -3848,6 +3878,7 @@ void main() {
         gaussianSplats: any(named: 'gaussianSplats'),
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
+        slideshowSeconds: any(named: 'slideshowSeconds'),
       ),
     ).captured;
 
@@ -4003,6 +4034,7 @@ void main() {
           gaussianSplats: any(named: 'gaussianSplats'),
           watchMinDurationMs: any(named: 'watchMinDurationMs'),
           startNotice: any(named: 'startNotice'),
+          slideshowSeconds: any(named: 'slideshowSeconds'),
         ),
       ).thenThrow(PlatformException(code: 'no-activity'));
       final asset = owned(type: .video, name: 'Movie_SBS.mp4', width: 3840, height: 1080);
@@ -4056,6 +4088,7 @@ void main() {
         gaussianSplats: any(named: 'gaussianSplats'),
         watchMinDurationMs: any(named: 'watchMinDurationMs'),
         startNotice: any(named: 'startNotice'),
+        slideshowSeconds: any(named: 'slideshowSeconds'),
       ),
     ).captured;
 

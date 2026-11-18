@@ -206,6 +206,9 @@ class ImmersiveRequest {
 ///
 /// [stabilization] tells the viewer about the stabilisation of a raw video first (see ImmersiveStabilization); null
 /// for none.
+///
+/// [slideshowSeconds] is how long each photo of the slideshow of a flat screen stays (SlideshowConfig.duration), 0 for
+/// the viewer's 5 s.
 Future<void> openImmersiveRequest(
   ImmersiveApi api,
   ImmersiveRequest request, {
@@ -219,6 +222,7 @@ Future<void> openImmersiveRequest(
   int watchMinDurationMs = -1,
   String? startNotice,
   ImmersiveStabilization? stabilization,
+  int slideshowSeconds = 0,
 }) {
   Future<void> open() => _openImmersiveRequest(
     api,
@@ -232,6 +236,7 @@ Future<void> openImmersiveRequest(
     kiosk: kiosk,
     watchMinDurationMs: watchMinDurationMs,
     startNotice: startNotice,
+    slideshowSeconds: slideshowSeconds,
   );
   return stabilization == null ? open() : stabilization.around(request, open);
 }
@@ -248,6 +253,7 @@ Future<void> _openImmersiveRequest(
   required String? kiosk,
   required int watchMinDurationMs,
   required String? startNotice,
+  required int slideshowSeconds,
 }) => api.open(
   request.url,
   request.headers,
@@ -269,6 +275,7 @@ Future<void> _openImmersiveRequest(
   gaussianSplats: gaussianSplats,
   watchMinDurationMs: watchMinDurationMs,
   startNotice: startNotice,
+  slideshowSeconds: slideshowSeconds,
 );
 
 /// The watch progress of the films of the immersive viewer, read from the providers (see ImmersiveWatch): before the
@@ -544,6 +551,7 @@ class ImmersiveAssetResolver {
     this.reverseThumbstickTurn = false,
     this.sharpFlatScreens = true,
     this.gaussianSplats = true,
+    this.slideshowSeconds = 0,
     this.raw,
     this.exifOf,
     this.forcedSource,
@@ -571,6 +579,7 @@ class ImmersiveAssetResolver {
       reverseThumbstickTurn: ref.read(appConfigProvider).viewer.reverseThumbstickTurn,
       sharpFlatScreens: ref.read(appConfigProvider).viewer.sharpFlatScreens,
       gaussianSplats: ref.read(appConfigProvider).viewer.gaussianSplats,
+      slideshowSeconds: ref.read(appConfigProvider).slideshow.duration,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
       forcedSource: ref.read(videoSourceOverridesProvider.notifier).of,
@@ -653,6 +662,10 @@ class ImmersiveAssetResolver {
   /// Whether the viewer starts the splat module of the headset (Gaussian splats, on by default), as the settings said
   /// when the viewer opened
   final bool gaussianSplats;
+
+  /// How long each photo of the slideshow of a flat screen stays, in seconds, as the settings said when the viewer
+  /// opened (Settings, Slideshow); 0 for the viewer's 5 s
+  final int slideshowSeconds;
 
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
@@ -915,6 +928,7 @@ class ImmersiveAssetResolver {
     watchMinDurationMs: watch?.minDurationMs ?? -1,
     startNotice: startNotice,
     stabilization: raw?.stabilization,
+    slideshowSeconds: slideshowSeconds,
   );
 }
 

@@ -44,6 +44,34 @@ typedef _Shown = ({String url, String? stereoPair});
 class _RecordingImmersiveApi extends ImmersiveApi {
   final shown = <_Shown>[];
 
+  /// The slideshow duration each opening was given
+  final slideshowSeconds = <int>[];
+
+  @override
+  Future<void> open(
+    String url,
+    Map<String, String> headers,
+    bool isVideo,
+    String title,
+    ImmersiveStereoLayout stereoLayout,
+    Map<String, String> stereoLabels,
+    ImmersiveSphereCoverage coverage,
+    int startPositionMs,
+    int openingId,
+    String? fallbackUrl,
+    String? rawProjection,
+    String? stereoPair,
+    bool reverseThumbstickTurn,
+    bool sharpFlatScreens, {
+    String? kiosk,
+    String? sourceNotice,
+    String? sourceRefusal,
+    bool gaussianSplats = true,
+    int watchMinDurationMs = -1,
+    String? startNotice,
+    int slideshowSeconds = 0,
+  }) async => this.slideshowSeconds.add(slideshowSeconds);
+
   @override
   Future<bool> showAdjacent(
     int requestId,
@@ -414,6 +442,20 @@ void main() {
       expect(await request(1), isFalse);
       expect(api.shown, isEmpty);
     });
+  });
+
+  test('the opening tells the viewer the slideshow duration of the app, 0 for its 5 s', () async {
+    final api = _RecordingImmersiveApi();
+    final request = ImmersiveRequest(
+      url: 'photo',
+      isVideo: false,
+      title: 'photo.jpg',
+      view: (layout: StereoLayout.mono, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full),
+      stereoPair: const StereoPhotoRequest.bigScreen().toImmersiveJson(),
+    );
+    await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 1, slideshowSeconds: 8);
+    await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 2);
+    expect(api.slideshowSeconds, [8, 0]);
   });
 
   test('every choice but a skip has its request of the stereo quad', () {

@@ -64,3 +64,89 @@ internal enum class ReliefStrengthChoice(val wire: String, val parallax: Double)
       entries.firstOrNull { kotlin.math.abs(it.parallax - parallax) < 1e-9 }
   }
 }
+
+/**
+ * The slideshow of the photos of a flat screen (issue 19, point 2): each photo stays [photoMs] (the slideshow duration
+ * of the app, 5 s by default) from the moment its final view is there (the original, its 3D relief, or the photo flat
+ * after a refusal or "too warm"), never from the request, so that a slow photo or a relief being made is not cut
+ * short. Its time stops while a hold is on (a grip held on the screen, the viewer behind the system or not focused) and
+ * starts again from nothing when the user presses a button of the panel. The viewer asks for the next photo once
+ * [isDue]; at "no next" the slideshow ends. A headset too warm for a relief turns the rest of the slideshow to 2D, said
+ * once. Pure: the viewer gives the time. Unit tested.
+ */
+internal class SlideshowClock(val photoMs: Long = DEFAULT_PHOTO_MS) {
+  /** Why the time of a photo stops for a while. */
+  enum class Hold {
+    GRIP,
+    BACKGROUND,
+  }
+
+  /** The user started the slideshow and it did not end. */
+  var playing = false
+    private set
+
+  /** The rest of the slideshow shows the photos in 2D: the headset was too warm for a relief. */
+  var twoD = false
+    private set
+
+  private var finalView = false
+  private val holds = mutableSetOf<Hold>()
+  private var countedMs = 0L
+  private var countingSince: Long? = null
+
+  private val counting: Boolean
+    get() = playing && finalView && holds.isEmpty()
+
+  /** Runs [change] and moves the count to the state it leaves, at [nowMs]. */
+  private inline fun update(nowMs: Long, change: () -> Unit) {
+    countingSince?.let { countedMs += nowMs - it }
+    countingSince = null
+    change()
+    if (counting) countingSince = nowMs
+  }
+
+  /** Play: the photo shown counts from now, from nothing. */
+  fun play(nowMs: Long) = update(nowMs) {
+    playing = true
+    countedMs = 0L
+  }
+
+  /** Pause, or the end of the slideshow. */
+  fun pause(nowMs: Long) = update(nowMs) { playing = false }
+
+  /** Another photo was asked for: its time waits for its final view. */
+  fun photoChanged(nowMs: Long) = update(nowMs) {
+    finalView = false
+    countedMs = 0L
+  }
+
+  /** The photo shown reached its final view: its time starts. */
+  fun finalViewShown(nowMs: Long) = update(nowMs) { finalView = true }
+
+  /** [hold] starts ([on]) or ends. */
+  fun hold(hold: Hold, on: Boolean, nowMs: Long) = update(nowMs) { if (on) holds += hold else holds -= hold }
+
+  /** A button of the panel was pressed: the photo shown counts again from nothing. */
+  fun restartPhoto(nowMs: Long) = update(nowMs) { countedMs = 0L }
+
+  /** Whether the next photo is due at [nowMs]. */
+  fun isDue(nowMs: Long): Boolean = counting && countedMs + (nowMs - (countingSince ?: nowMs)) >= photoMs
+
+  /** No photo after the last one: the slideshow ends (the viewer says "End of the slideshow"). */
+  fun noNext(nowMs: Long) = pause(nowMs)
+
+  /** The headset was too warm for a relief: true the first time (the viewer says so once), the rest goes on in 2D. */
+  fun tooWarm(): Boolean {
+    if (twoD) return false
+    twoD = true
+    return true
+  }
+
+  companion object {
+    /** The slideshow duration of the app by default (SlideshowConfig.duration). */
+    const val DEFAULT_PHOTO_MS = 5_000L
+
+    /** The time of a photo for the [seconds] the app sent, 0 or less for the default. */
+    fun photoMsOf(seconds: Long): Long = if (seconds > 0) seconds * 1000L else DEFAULT_PHOTO_MS
+  }
+}

@@ -412,6 +412,10 @@ internal object StereoComposer {
         ReliefStrengthChoice.SUBTLE.labelKey to "Subtle",
         ReliefStrengthChoice.NORMAL.labelKey to "Normal",
         ReliefStrengthChoice.STRONG.labelKey to "Strong",
+        LABEL_SLIDESHOW to "Slideshow",
+        LABEL_SLIDESHOW_PAUSED to "Slideshow paused",
+        LABEL_SLIDESHOW_END to "End of the slideshow",
+        LABEL_SLIDESHOW_TOO_WARM to "Headset too warm: the slideshow goes on in 2D",
         LABEL_KEEP_FRAME to "Keep size and place",
         LABEL_KEEP_FRAME_ON to "The next photos open at this size and place",
         LABEL_KEEP_FRAME_OFF to "Each photo opens in front of you",
@@ -440,6 +444,12 @@ internal object StereoComposer {
    * FlatScreenGeometry.nearerAllowed).
    */
   const val LABEL_NEAR_LIMIT_3D = "screenNearLimit3d"
+
+  /** What the slideshow of a flat screen says as it plays, pauses, ends, and goes on in 2D when too warm. */
+  const val LABEL_SLIDESHOW = "slideshow"
+  const val LABEL_SLIDESHOW_PAUSED = "slideshowPaused"
+  const val LABEL_SLIDESHOW_END = "slideshowEnd"
+  const val LABEL_SLIDESHOW_TOO_WARM = "slideshowTooWarm"
 
   /** The button "Keep size and place" of a flat screen photo, and what it says when it is turned on or off. */
   const val LABEL_KEEP_FRAME = "keepFrame"

@@ -373,6 +373,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     val reachedByBrowsing: Boolean = false,
     val browseView: StereoView? = null,
+    /**
+     * How long each photo of the slideshow of a flat screen stays, in seconds (the slideshow duration of the app), 0
+     * for the viewer's 5 s (see SlideshowClock). A previous or next media keeps the value of its opening.
+     */
+    val slideshowSeconds: Long = 0L,
   ) {
     /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
     private val screenMedia: FlatScreenMedia by lazy {
@@ -670,6 +675,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var reliefRun: ReliefRun? = null
   /** Puts both eyes of a finished relief on the quad. */
   private var reliefApplyJob: Job? = null
+  /**
+   * The slideshow of the photos of a flat screen (issue 19, point 2), for the opening [slideshowOpening]: the time of
+   * each photo (see SlideshowClock), its ticker, the request it made for the next photo, and whether a grip held it.
+   */
+  private var slideshow: SlideshowClock? = null
+  private var slideshowOpening: Long? = null
+  private var slideshowJob: Job? = null
+  private var slideshowRequestId: Long? = null
+  private var slideshowGripHeld = false
+
   /** A relief reached in 2D while browsing, made only if the user presses 3D (see BrowseView). */
   private var deferredRelief: DeferredRelief? = null
   /** The file of the relief photo shown, for a new right eye at another strength (see cycleReliefStrength). */
@@ -1534,6 +1549,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     view?.setOnClickListener {
       action()
       restartPendingHide()
+      // A slideshow waits for the user: the photo shown counts again from nothing after a press (Play aside)
+      if (view !== playPauseButton) slideshow?.restartPhoto(SystemClock.uptimeMillis())
     }
   }
 
@@ -1543,9 +1560,107 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun updateVideoControls() {
     val visibility = if (request?.isVideo == true) View.VISIBLE else View.GONE
-    playPauseButton?.visibility = visibility
+    // A photo of a flat screen plays its slideshow with the same button
+    val slideshowPhoto = request?.let(::isSlideshowPhoto) == true
+    playPauseButton?.visibility = if (slideshowPhoto) View.VISIBLE else visibility
+    if (slideshowPhoto) {
+      playPauseButton?.setText(if (slideshow?.playing == true) R.string.immersive_pause else R.string.immersive_play)
+    }
     seekRow?.visibility = visibility
     updateProgress()
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // Slideshow of the photos of a flat screen (issue 19, point 2)
+
+  /** A photo of a flat screen, which browses: a slideshow goes through those. */
+  private fun isSlideshowPhoto(media: MediaRequest): Boolean =
+    !media.isVideo && media.isStereoPhoto && media.isMovableScreen && !media.isExplorable
+
+  /** The slideshow of the opening of [media], made at its first flat screen photo. */
+  private fun slideshowFor(media: MediaRequest): SlideshowClock {
+    val clock = slideshow
+    if (clock != null && slideshowOpening == media.openingId) return clock
+    stopSlideshowTicker()
+    return SlideshowClock(SlideshowClock.photoMsOf(media.slideshowSeconds)).also {
+      slideshow = it
+      slideshowOpening = media.openingId
+      Log.i(TAG, "slideshow of opening ${media.openingId}: ${it.photoMs} ms a photo")
+    }
+  }
+
+  /** Play or pause on a photo of a flat screen: the panel button, or the trigger with the panel hidden. */
+  private fun toggleSlideshow(media: MediaRequest) {
+    val clock = slideshowFor(media)
+    val now = SystemClock.uptimeMillis()
+    val labels = media.stereoLabels
+    if (clock.playing) {
+      clock.pause(now)
+      stopSlideshowTicker()
+      Log.i(TAG, "slideshow paused")
+      reportScreenChange(StereoComposer.label(labels, StereoComposer.LABEL_SLIDESHOW_PAUSED))
+    } else {
+      clock.play(now)
+      clock.hold(SlideshowClock.Hold.BACKGROUND, !playbackAllowed(), now)
+      startSlideshowTicker()
+      Log.i(TAG, "slideshow playing, ${clock.photoMs} ms a photo")
+      reportScreenChange(StereoComposer.label(labels, StereoComposer.LABEL_SLIDESHOW))
+    }
+    updateVideoControls()
+  }
+
+  /** Every SLIDESHOW_TICK_MS while the slideshow plays: the next photo once the one shown had its time. */
+  private fun startSlideshowTicker() {
+    slideshowJob?.cancel()
+    slideshowJob =
+      scope.launch {
+        while (true) {
+          delay(SLIDESHOW_TICK_MS)
+          val clock = slideshow ?: break
+          if (!clock.playing || closing) break
+          if (pendingRequestId != null || !clock.isDue(SystemClock.uptimeMillis())) continue
+          clock.photoChanged(SystemClock.uptimeMillis())
+          Log.i(TAG, "slideshow: next photo")
+          // As the thumbstick does: the panel stays as it is, the feedback line says what comes
+          navigate(1, fromThumbstick = true)
+          slideshowRequestId = pendingRequestId
+          if (slideshowRequestId == null) endSlideshow()
+        }
+      }
+  }
+
+  private fun stopSlideshowTicker() {
+    slideshowJob?.cancel()
+    slideshowJob = null
+    slideshowRequestId = null
+  }
+
+  /** No photo after the last one, or none could be asked for: "End of the slideshow". */
+  private fun endSlideshow() {
+    val clock = slideshow ?: return
+    if (!clock.playing) return
+    clock.noNext(SystemClock.uptimeMillis())
+    stopSlideshowTicker()
+    Log.i(TAG, "slideshow ended")
+    reportScreenChange(StereoComposer.label(request?.stereoLabels.orEmpty(), StereoComposer.LABEL_SLIDESHOW_END))
+    updateVideoControls()
+  }
+
+  /** The photo shown reached its final view: its time in the slideshow starts (see SlideshowClock). */
+  private fun slideshowFinalView() {
+    slideshow?.finalViewShown(SystemClock.uptimeMillis())
+  }
+
+  /** A grip held on the screen, or the viewer behind the system, stops the time of the photo shown. */
+  private fun updateSlideshowHolds() {
+    val clock = slideshow ?: return
+    val now = SystemClock.uptimeMillis()
+    val grip = screenGrip.grabbing != null || screenGrip.stretching
+    if (grip != slideshowGripHeld) {
+      slideshowGripHeld = grip
+      clock.hold(SlideshowClock.Hold.GRIP, grip, now)
+    }
+    clock.hold(SlideshowClock.Hold.BACKGROUND, !playbackAllowed(), now)
   }
 
   /** Previous and next are disabled while a request waits for its answer. */
@@ -2520,6 +2635,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val now = SystemClock.uptimeMillis()
     val events = screenGrip.update(now, heldButtons) { side -> pointsAtScreen(side, place, size) }
     handleGripEvents(events)
+    if (slideshow?.playing == true) updateSlideshowHolds()
     moveWithGrip()
     stretchWithGrips()
   }
@@ -2953,7 +3069,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         watchMinDurationMs = current.watchMinDurationMs,
         startNotice = startNotice,
         reachedByBrowsing = true,
-        browseView = keptBrowseView(current),
+        // A slideshow the headset was too warm for goes on in 2D (said once)
+        browseView = if (slideshow?.let { it.playing && it.twoD } == true) StereoView.TWO_D
+        else keptBrowseView(current),
+        slideshowSeconds = current.slideshowSeconds,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -2987,11 +3106,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun finishNavigation(id: Long, status: String) {
     if (closing || isDestroyed || pendingRequestId != id) return
+    // The slideshow asked and there is no next photo: it ends there
+    val slideshowEnds = id == slideshowRequestId
     val quiet = navigationQuiet && !infoVisible
     endNavigation()
     replaceNavigationStatus(status)
     runDeferredHide()
     if (quiet) showFeedback(status)
+    if (slideshowEnds) endSlideshow()
   }
 
   /**
@@ -3002,9 +3124,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun timeoutNavigation(id: Long, step: Int) {
     if (closing || isDestroyed || pendingRequestId != id) return
     Log.w(TAG, "no answer from the app $ADJACENT_TIMEOUT_MS ms after request $id for step $step")
+    val slideshowEnds = id == slideshowRequestId
     endNavigation()
     replaceNavigationStatus(statusBeforeNavigation)
     runDeferredHide()
+    if (slideshowEnds) endSlideshow()
   }
 
   /** Shows [text] in place of "Looking for the next media", unless an error or a warning replaced it meanwhile. */
@@ -3620,6 +3744,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     // Issue 19: the next photos take the size and place set; the photo of a recreation stays as the user left it
     fitToFrame = restored == null && keepFrame && media.isMovableScreen && !media.isFlatVideo
+    // The slideshow goes on through the photos reached by browsing; a photo opened from the app stops it
+    if (!media.reachedByBrowsing && slideshow?.playing == true) slideshow?.pause(SystemClock.uptimeMillis())
+    if (isSlideshowPhoto(media)) slideshowFor(media).photoChanged(SystemClock.uptimeMillis())
+    slideshowRequestId = null
     if (kind is StereoPhotoKind.VolumetricScene) {
       showScene(media, kind.spec)
       return
@@ -3659,6 +3787,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           throw e
         } catch (e: Throwable) {
           Log.e(TAG, "stereo photo failed", e)
+          // A slideshow does not wait for a photo that fails
+          slideshowFinalView()
           val reason = e.message ?: e.javaClass.simpleName
           if (previewShown) {
             // The preview stays, said to be one, as on the sphere
@@ -3761,6 +3891,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         // Browsed in 2D: the original shows, and the 3D button makes the relief (no heat for a relief nobody sees)
         Log.i(TAG, "relief photo reached in 2D: the relief waits for the 3D button")
         deferredRelief = DeferredRelief(media, spec, bytes)
+        slideshowFinalView()
         updateStereoView()
         return
       }
@@ -3857,6 +3988,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       if (!shown) return
       setReliefProgress(false)
       updateStereoView()
+      // The photo stays flat: that is its final view in a slideshow, which goes on in 2D once the headset is too warm
+      slideshowFinalView()
+      val clock = slideshow
+      if (reason == ReliefStop.TOO_WARM && clock != null && clock.playing && clock.tooWarm()) {
+        Log.i(TAG, "slideshow: too warm for a relief, goes on in 2D")
+        queueNotice(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SLIDESHOW_TOO_WARM))
+      }
       val text = StereoComposer.reliefStopText(media.stereoLabels, reason, detail)
       Log.i(TAG, "relief: the photo stays flat ($reason)")
       if (text == null) {
@@ -3914,6 +4052,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         } catch (e: Throwable) {
           Log.e(TAG, "relief: the eyes could not be put on the quad", e)
           setReliefProgress(false)
+          slideshowFinalView()
           updateStereoView()
           val reason = if (e is OutOfMemoryError) ReliefStop.NOT_ENOUGH_MEMORY else ReliefStop.FAILED
           StereoComposer.reliefStopText(media.stereoLabels, reason, e.message ?: e.javaClass.simpleName)?.let {
@@ -4656,6 +4795,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     stereoStatus = getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight)
+    // The time of the photo in a slideshow starts at its final view: the original, or the 3D of a relief
+    if (media?.stereoKind !is StereoPhotoKind.DepthRelief || stereo.hasSecondEye) slideshowFinalView()
     if (media?.stereoPair != null && !stereo.hasSecondEye) {
       // Shown at once and longer, as the decoder warning: the user expected 3D
       showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
@@ -7183,6 +7324,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   private fun togglePlayPause() {
+    val media = request
+    if (media != null && isSlideshowPhoto(media)) {
+      toggleSlideshow(media)
+      return
+    }
     val p = player ?: return
     if (currentVideoUrl == null) return
     when {
@@ -7267,6 +7413,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       SessionState.FOCUSED -> {
         focused = true
         resumeHeldPlayback()
+        updateSlideshowHolds()
       }
       // A state this SDK does not know says nothing about the focus
       SessionState.UNKNOWN -> Unit
@@ -7274,6 +7421,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       else -> {
         focused = false
         holdPlayback()
+        updateSlideshowHolds()
       }
     }
   }
@@ -7282,6 +7430,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     super.onResume()
     resumed = true
     resumeHeldPlayback()
+    updateSlideshowHolds()
   }
 
   override fun onPause() {
@@ -7292,6 +7441,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // The headset off, the system menu: the app keeps where the film is
     reportProgress()
     holdPlayback()
+    updateSlideshowHolds()
   }
 
   override fun onStop() {
@@ -7397,6 +7547,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The threshold of the films and the start notice of a media, see [MediaRequest] */
     private const val EXTRA_WATCH_MIN_DURATION_MS = "app.alextran.immich.immersive.WATCH_MIN_DURATION_MS"
     private const val EXTRA_START_NOTICE = "app.alextran.immich.immersive.START_NOTICE"
+    /** The slideshow duration of the opening, see [MediaRequest] */
+    private const val EXTRA_SLIDESHOW_SECONDS = "app.alextran.immich.immersive.SLIDESHOW_SECONDS"
+    /** How often the slideshow looks whether the next photo is due */
+    private const val SLIDESHOW_TICK_MS = 250L
     /** The folder of the cache the original of a video that cannot stream is downloaded to, see downloadOriginal */
     private const val DOWNLOAD_DIR = "immersive_video"
     private const val DOWNLOAD_BUFFER_BYTES = 256 * 1024
@@ -7648,6 +7802,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       gaussianSplats: Boolean = true,
       watchMinDurationMs: Long = WatchReport.OFF,
       startNotice: String? = null,
+      slideshowSeconds: Long = 0L,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -7671,6 +7826,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           gaussianSplats = gaussianSplats,
           watchMinDurationMs = watchMinDurationMs,
           startNotice = startNotice,
+          slideshowSeconds = slideshowSeconds,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -7703,6 +7859,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putBoolean(EXTRA_GAUSSIAN_SPLATS, media.gaussianSplats)
         putLong(EXTRA_WATCH_MIN_DURATION_MS, media.watchMinDurationMs)
         putString(EXTRA_START_NOTICE, media.startNotice)
+        putLong(EXTRA_SLIDESHOW_SECONDS, media.slideshowSeconds)
       }
     }
 
@@ -7744,6 +7901,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         gaussianSplats = gaussianSplatsOf(extras),
         watchMinDurationMs = extras.getLong(EXTRA_WATCH_MIN_DURATION_MS, WatchReport.OFF),
         startNotice = extras.getString(EXTRA_START_NOTICE)?.takeIf { it.isNotBlank() },
+        slideshowSeconds = extras.getLong(EXTRA_SLIDESHOW_SECONDS, 0L),
       )
     }
 

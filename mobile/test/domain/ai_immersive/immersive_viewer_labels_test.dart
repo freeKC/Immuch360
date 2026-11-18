@@ -167,6 +167,10 @@ void main() {
       'keepFrame': 'Keep size and place',
       'keepFrameOn': 'The next photos open at this size and place',
       'keepFrameOff': 'Each photo opens in front of you',
+      'slideshow': 'Slideshow',
+      'slideshowPaused': 'Slideshow paused',
+      'slideshowEnd': 'End of the slideshow',
+      'slideshowTooWarm': 'Headset too warm: the slideshow goes on in 2D',
     });
   });
 

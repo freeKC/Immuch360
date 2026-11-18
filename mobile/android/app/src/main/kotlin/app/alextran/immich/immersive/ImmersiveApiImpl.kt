@@ -212,6 +212,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     gaussianSplats: Boolean,
     watchMinDurationMs: Long,
     startNotice: String?,
+    slideshowSeconds: Long,
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
@@ -223,7 +224,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         "stereo pair=${stereoPair != null}, reverse thumbstick turn=$reverseThumbstickTurn, " +
         "sharp flat screens=$sharpFlatScreens, kiosk=${kiosk != null}, notice=${sourceNotice != null}, " +
         "refused=${sourceRefusal != null}, gaussian splats=$gaussianSplats, films from $watchMinDurationMs ms, " +
-        "start notice=${startNotice != null}",
+        "start notice=${startNotice != null}, slideshow $slideshowSeconds s",
     )
     val intent =
       ImmersiveViewerActivity.intent(
@@ -246,6 +247,7 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
         gaussianSplats,
         watchMinDurationMs,
         startNotice,
+        slideshowSeconds,
       )
     appContext.startActivity(intent.putExtra(ImmersiveViewerActivity.EXTRA_STEREO_PAIR, stereoPair))
   }
