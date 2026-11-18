@@ -1157,6 +1157,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
     _detectTimer?.cancel();
     _detectTimer = null;
+    _stopReporter();
     setState(() {
       _video = _load();
       videoSource = _sourceOf(_video);
@@ -1432,11 +1433,17 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     )..start();
   }
 
+  /// The viewing reported so far stops, before the next load asks anything of the server: a conversion that takes over
+  /// names its own play session as it loads (NetworkServerConversion), and the stop must go out under the viewing's
+  void _stopReporter() {
+    _reporter?.dispose();
+    _reporter = null;
+  }
+
   /// The reports of a media server that keeps where its user stopped (a Jellyfin or Emby server), for the file about
   /// to load in [notifier], in place of the ones of a load before
   void _startReporter(VideoPlayerNotifier notifier, NetworkEntry entry) {
-    _reporter?.dispose();
-    _reporter = null;
+    _stopReporter();
     if (_shareFileSystem case final NetworkPlaybackReports reports) {
       _reporter = NetworkPlaybackReporter(
         reports: reports,
@@ -1671,6 +1678,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _controller = null;
     _detectTimer?.cancel();
     _detectTimer = null;
+    _stopReporter();
     setState(() {
       _isVideoReady = false;
       _playerError = null;

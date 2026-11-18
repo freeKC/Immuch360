@@ -303,6 +303,44 @@ void main() {
       expect(server.reports.last.body['PlaySessionId'], isNot(server.reports.first.body['PlaySessionId']));
     });
 
+    test('a conversion that names its play session before the stop of the viewing it takes over keeps it', () async {
+      final fileSystem = await openJellyfin(server);
+      addTearDown(fileSystem.close);
+      const path = '/Films/Tone (2021).mkv';
+      await fileSystem.playbackStarted(path, const Duration(seconds: 30));
+      final viewing = server.reports.single.body['PlaySessionId'];
+      // The order of a hand over: the conversion is asked for (PlaybackInfo names its session), then the stop of the
+      // viewing before is sent. A Stopped under the conversion's session would end the encoding just started.
+      fileSystem.usePlaySession(path, 'conversion-session');
+      await fileSystem.playbackStopped(path, const Duration(seconds: 40));
+      expect(server.reports.last.kind, 'stopped');
+      expect(server.reports.last.body['PlaySessionId'], viewing);
+      expect(server.reports.last.body['PlayMethod'], 'DirectPlay');
+      await fileSystem.playbackStarted(path, const Duration(seconds: 40), converted: true);
+      await fileSystem.playbackProgress(path, const Duration(seconds: 50));
+      expect(server.reports.skip(2).map((r) => (r.kind, r.body['PlaySessionId'], r.body['PlayMethod'])), [
+        ('start', 'conversion-session', 'Transcode'),
+        ('progress', 'conversion-session', 'Transcode'),
+      ]);
+      await fileSystem.playbackStopped(path, const Duration(seconds: 55));
+      expect(server.reports.last.body['PlaySessionId'], 'conversion-session', reason: 'its own stop ends it');
+    });
+
+    test('the stop of a viewing goes out with its session even when a conversion names one while it waits', () async {
+      final fileSystem = await openJellyfin(server);
+      addTearDown(fileSystem.close);
+      const path = '/Films/Tone (2021).mkv';
+      await fileSystem.playbackStarted(path, const Duration(seconds: 30));
+      final viewing = server.reports.single.body['PlaySessionId'];
+      // The order of the page since the review: the stop leaves first, the conversion names its session meanwhile
+      final stop = fileSystem.playbackStopped(path, const Duration(seconds: 40));
+      fileSystem.usePlaySession(path, 'conversion-session');
+      await stop;
+      expect(server.reports.last.body['PlaySessionId'], viewing);
+      await fileSystem.playbackStarted(path, const Duration(seconds: 40), converted: true);
+      expect(server.reports.last.body['PlaySessionId'], 'conversion-session');
+    });
+
     test('the streams of a film for the player choice, none for a photo', () async {
       final fileSystem = await openJellyfin(server);
       addTearDown(fileSystem.close);

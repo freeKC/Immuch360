@@ -347,11 +347,28 @@ class JellyfinFileSystem
   }
 
   /// The play session of each file playing, by path: one per viewing, as the server's own apps do; a conversion
-  /// gives its own (see the PlaySessionId of PlaybackInfo)
-  final Map<String, ({String id, bool converted})> _playSessions = {};
+  /// gives its own (see the PlaySessionId of PlaybackInfo). [_PlaySession.started] once its start was reported.
+  final Map<String, _PlaySession> _playSessions = {};
+
+  /// The session of a viewing that another took over before its stop was sent (a conversion that takes over a film
+  /// playing): that stop goes out with it, and the viewing that took over keeps its own. A Stopped report under the
+  /// conversion's session would end the encoding that just started (fact 6 of the release 49 bench).
+  final Map<String, _PlaySession> _replacedSessions = {};
 
   /// The play session [id] of a conversion of the file at [path], for its reports
-  void usePlaySession(String path, String id) => _playSessions[normalizePath(path)] = (id: id, converted: true);
+  void usePlaySession(String path, String id) {
+    final target = normalizePath(path);
+    _keepForItsStop(target);
+    _playSessions[target] = (id: id, converted: true, started: false);
+  }
+
+  /// A viewing of [target] that started and is being replaced keeps its session for its stop
+  void _keepForItsStop(String target) {
+    final known = _playSessions[target];
+    if (known != null && known.started) {
+      _replacedSessions[target] = known;
+    }
+  }
 
   static String _newPlaySession() {
     final random = Random.secure();
@@ -362,10 +379,12 @@ class JellyfinFileSystem
   Future<void> playbackStarted(String path, Duration position, {bool converted = false}) {
     final target = normalizePath(path);
     final known = _playSessions[target];
-    _playSessions[target] = known != null && known.converted == converted
-        ? known
-        : (id: _newPlaySession(), converted: converted);
-    return _report(JellyfinReport.start, target, position);
+    // A conversion's session named before its start is kept; a viewing still playing is another one
+    final reuse = known != null && !known.started && known.converted == converted;
+    _keepForItsStop(target);
+    final session = (id: reuse ? known.id : _newPlaySession(), converted: converted, started: true);
+    _playSessions[target] = session;
+    return _report(JellyfinReport.start, target, position, session: session);
   }
 
   @override
@@ -373,38 +392,41 @@ class JellyfinFileSystem
       _report(JellyfinReport.progress, normalizePath(path), position, paused: paused);
 
   @override
-  Future<void> playbackStopped(String path, Duration position) async {
+  Future<void> playbackStopped(String path, Duration position) {
     final target = normalizePath(path);
-    final session = _playSessions[target];
-    try {
-      await _report(JellyfinReport.stopped, target, position);
-    } finally {
-      // A conversion that took over meanwhile keeps its own session
-      if (identical(_playSessions[target], session)) {
-        _playSessions.remove(target);
-      }
-    }
+    // The session is taken at once, before any wait: a conversion that names its own meanwhile keeps it
+    final session =
+        _replacedSessions.remove(target) ??
+        _playSessions.remove(target) ??
+        (id: _newPlaySession(), converted: false, started: false);
+    return _report(JellyfinReport.stopped, target, position, session: session);
   }
 
-  Future<void> _report(JellyfinReport kind, String path, Duration position, {bool paused = false}) =>
-      _guard('report', () async {
-        final node = await _resolve(path);
-        final item = node.item;
-        final mediaSource = node.mediaSourceId ?? item?.firstSource?.id;
-        if (item == null || mediaSource == null || _closed) {
-          return;
-        }
-        final session = _playSessions[path] ??= (id: _newPlaySession(), converted: false);
-        await client.report(
-          kind,
-          itemId: item.id,
-          mediaSourceId: mediaSource,
-          positionMs: position.inMilliseconds,
-          playSessionId: session.id,
-          paused: paused,
-          converted: session.converted,
-        );
-      });
+  /// Sends [kind] for the file at [path] with [session], else the session of the file now (made when there is none)
+  Future<void> _report(
+    JellyfinReport kind,
+    String path,
+    Duration position, {
+    bool paused = false,
+    _PlaySession? session,
+  }) => _guard('report', () async {
+    final node = await _resolve(path);
+    final item = node.item;
+    final mediaSource = node.mediaSourceId ?? item?.firstSource?.id;
+    if (item == null || mediaSource == null || _closed) {
+      return;
+    }
+    final sent = session ?? (_playSessions[path] ??= (id: _newPlaySession(), converted: false, started: false));
+    await client.report(
+      kind,
+      itemId: item.id,
+      mediaSourceId: mediaSource,
+      positionMs: position.inMilliseconds,
+      playSessionId: sent.id,
+      paused: paused,
+      converted: sent.converted,
+    );
+  });
 
   @override
   Future<FilmStreams?> filmStreamsAt(String path) => _guard('streams', () async {
@@ -953,3 +975,6 @@ class _Node {
       kind == _Kind.season ||
       (kind == _Kind.library && (item?.collectionType == 'movies' || item?.collectionType == 'tvshows'));
 }
+
+/// A play session of the reports: its id, whether the server converts the file, whether its start was sent
+typedef _PlaySession = ({String id, bool converted, bool started});
