@@ -20,6 +20,10 @@ import UIKit
 class SphericalVideoApiImpl: SphericalVideoApi {
   private let events: SphericalVideoEvents
 
+  /// The gyroscope choice the next player opens with (issue 20): what Flutter told last (see [setMotion]), or what the
+  /// user chose in the last player; off until then, the photo viewer's default. Main thread.
+  static var nextMotion = false
+
   init(events: SphericalVideoEvents) {
     self.events = events
   }
@@ -83,6 +87,7 @@ class SphericalVideoApiImpl: SphericalVideoApi {
       stereoLabels: stereoLabels,
       coverage: coverage,
       raw: raw,
+      motionEnabled: Self.nextMotion,
       events: events
     )
     player.modalPresentationStyle = .fullScreen
@@ -100,6 +105,12 @@ class SphericalVideoApiImpl: SphericalVideoApi {
       top = presented
     }
     return top
+  }
+
+  /// The gyroscope choice of the 360° viewers (one setting with the photo viewer), told right before [open]: the next
+  /// player opens with the turns of the phone moving the view, or with touch alone
+  func setMotion(enabled: Bool) throws {
+    Self.nextMotion = enabled
   }
 
   /// The stabilisation of a raw 360° video with the motion track of its camera (issue 14), for the player of [url]

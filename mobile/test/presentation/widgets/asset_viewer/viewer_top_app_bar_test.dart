@@ -234,6 +234,8 @@ void main() {
   late MockRemoteAssetRepository noSiblingsOnServer;
   late _MockVideoDecoderApi decoderApi;
   late List<String> calls;
+  // The gyroscope choices told to the 360° player, and whether it had opened already
+  late List<String> motions;
   // Preview requests of the immersive viewer, and the XMP the preview carries: none by default
   late List<Uri> previewRequests;
   String? previewXmp;
@@ -389,6 +391,8 @@ void main() {
     ...englishSourceLabels,
     ...englishRawLabels,
     ...englishStabilizationLabels,
+    // The gyroscope button, named as the photo viewer's (issue 20)
+    'motion': 'Gyroscope',
   };
 
   setUp(() async {
@@ -396,7 +400,12 @@ void main() {
     timeline = _MockTimelineService();
     when(() => timeline.origin).thenReturn(TimelineOrigin.main);
     calls = [];
+    motions = [];
     sphericalVideoApi = _MockSphericalVideoApi();
+    when(() => sphericalVideoApi.setMotion(any())).thenAnswer(
+      (invocation) async =>
+          motions.add('${invocation.positionalArguments[0]} ${calls.contains('open') ? 'after' : 'before'} open'),
+    );
     when(
       () => sphericalVideoApi.open(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()),
     ).thenAnswer((_) async => calls.add('open'));
@@ -1055,6 +1064,33 @@ void main() {
 
       // No file to read the track from (the fake opens none): the switch hides again
       expect(calls, ['suspend', 'stabilization off pending', 'open', 'stabilization off none']);
+    });
+
+    testWidgets('tells the player the gyroscope choice of the 360° viewers before it opens (issue 20)', (tester) async {
+      final asset = owned(type: .video, name: 'VID_20240908_133036_00_002.insv', width: 5760, height: 2880);
+      await pumpTopBar(
+        tester,
+        asset,
+        projectionType: .none,
+        panoramaVideoSupported: true,
+        appConfig: const AppConfig(viewer: ViewerConfig(panoramaGyroscope: true)),
+      );
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(motions, ['true before open']);
+      expect(calls, ['suspend', 'open']);
+    });
+
+    testWidgets('opens the player with the gyroscope off by default, as the photo viewer', (tester) async {
+      final asset = owned(type: .video, name: 'VID_20240908_133036_00_002.insv', width: 5760, height: 2880);
+      await pumpTopBar(tester, asset, projectionType: .none, panoramaVideoSupported: true);
+
+      await tester.tap(panoramaButton);
+      await tester.pumpAndSettle();
+
+      expect(motions, ['false before open']);
     });
 
     testWidgets('sends nothing about the stabilisation where the player does not apply it', (tester) async {

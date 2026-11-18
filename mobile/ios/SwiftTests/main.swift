@@ -41,6 +41,7 @@ func test(_ name: String, _ body: @escaping () -> Void) { tests.append((name, bo
 // MARK: - Math of the tests, apart from the code under test
 
 let degree = Double.pi / 180
+let degreeF = Float.pi / 180
 
 typealias Matrix = [[Double]]
 
@@ -501,6 +502,168 @@ test("the stabilisation rows close the uniforms of the shader and of Swift alike
   // Both fragment shaders turn their view direction
   let turned = metal.components(separatedBy: "rawStitchStabilized(rawStitchViewDirection(").count - 1
   check(turned == 2, "fragments turning the view direction: \(turned)")
+}
+
+// MARK: - The view of the player (issue 20): SphereLook.swift
+
+// The cases of the Dart tests of the photo viewer's applyGyroRotation (panorama_gyro_test.dart) and of the Android
+// SphereLookMathTest, in the yaw and pitch of the player: the yaw is the opposite of the photo viewer's longitude.
+
+func nearF(_ a: Float, _ b: Float, _ tolerance: Float) -> Bool { abs(a - b) <= tolerance }
+
+func gyro(
+  yaw: Float = 0, pitch: Float = 0, x: Float = 0, y: Float = 0, z: Float = 0, dt: Float = 1,
+  screen: LookScreen = .portrait, maxPitch: Float = Float.pi / 2
+) -> (yaw: Float, pitch: Float) {
+  SphereLookMath.gyro(yaw: yaw, pitch: pitch, rateX: x, rateY: y, rateZ: z, dt: dt, screen: screen, maxPitch: maxPitch)
+}
+
+test("the gyroscope turns the view in portrait as in the photo viewer") {
+  // Positive y is counterclockwise seen from above: the phone turns left, the yaw grows (looks left)
+  let left = gyro(y: 0.1)
+  check(nearF(left.yaw, 0.1, 1e-6) && left.pitch == 0, "\(left)")
+  // Top of the phone towards the user: its back points higher
+  let up = gyro(x: 0.1)
+  check(nearF(up.pitch, 0.1, 1e-6) && up.yaw == 0, "\(up)")
+  check(nearF(gyro(x: -0.1).pitch, -0.1, 1e-6))
+  // Over dt
+  check(nearF(gyro(y: -0.1, dt: 1 / 50).yaw, -0.002, 1e-7))
+  // The roll is ignored
+  let roll = gyro(z: 1)
+  check(roll.yaw == 0 && roll.pitch == 0, "\(roll)")
+}
+
+test("the gyroscope stops at the poles") {
+  let maxPitch = Float.pi / 2
+  check(gyro(pitch: 89 * degreeF, x: 1).pitch == maxPitch)
+  check(gyro(pitch: -89 * degreeF, x: -1).pitch == -maxPitch)
+}
+
+test("in landscape the axes swap with the side of the top of the phone") {
+  // The top on the left (interface landscapeRight): device x points up, device y points left
+  var view = gyro(x: 0.1, screen: .topOnLeft)
+  check(nearF(view.yaw, 0.1, 1e-6) && nearF(view.pitch, 0, 1e-7), "\(view)")
+  view = gyro(y: 0.1, screen: .topOnLeft)
+  check(nearF(view.yaw, 0, 1e-7) && nearF(view.pitch, -0.1, 1e-6), "\(view)")
+  // The top on the right: device x points down, device y points right
+  view = gyro(x: 0.1, screen: .topOnRight)
+  check(nearF(view.yaw, -0.1, 1e-6), "\(view)")
+  view = gyro(y: 0.1, screen: .topOnRight)
+  check(nearF(view.pitch, 0.1, 1e-6), "\(view)")
+  // Upside down, both reversed
+  view = gyro(x: 0.1, y: 0.1, screen: .portraitUpsideDown)
+  check(nearF(view.yaw, -0.1, 1e-6) && nearF(view.pitch, -0.1, 1e-6), "\(view)")
+}
+
+test("the same movement of the phone moves the view the same way on every side") {
+  // The up and right axes of the screen, in device coordinates
+  let axes: [(LookScreen, (Float, Float), (Float, Float))] = [
+    (.portrait, (0, 1), (1, 0)),
+    (.topOnLeft, (1, 0), (0, -1)),
+    (.portraitUpsideDown, (0, -1), (-1, 0)),
+    (.topOnRight, (-1, 0), (0, 1)),
+  ]
+  for (screen, up, right) in axes {
+    let turn = gyro(x: 0.1 * up.0, y: 0.1 * up.1, screen: screen)
+    check(nearF(turn.yaw, 0.1, 1e-6) && nearF(turn.pitch, 0, 1e-6), "turn \(screen): \(turn)")
+    let tilt = gyro(x: 0.1 * right.0, y: 0.1 * right.1, screen: screen)
+    check(nearF(tilt.pitch, 0.1, 1e-6) && nearF(tilt.yaw, 0, 1e-6), "tilt \(screen): \(tilt)")
+  }
+}
+
+test("noise does not move the view: a phone at rest does not drift") {
+  var view = (yaw: Float(0.2), pitch: Float(-0.1))
+  for _ in 0..<(50 * 60) {
+    view = gyro(yaw: view.yaw, pitch: view.pitch, x: 0.004, y: -0.0049, z: 0.003, dt: 1 / 50)
+  }
+  check(view.yaw == 0.2 && view.pitch == -0.1, "\(view)")
+}
+
+test("the step between two samples of the gyroscope") {
+  check(SphereLookMath.gyroStep(previous: nil, current: 5) == 1 / 50)
+  check(nearF(SphereLookMath.gyroStep(previous: 1, current: 1.01), 0.01, 1e-6))
+  check(SphereLookMath.gyroStep(previous: 1, current: 2) == 1 / 50)
+  check(SphereLookMath.gyroStep(previous: 2, current: 1) == 1 / 50)
+}
+
+test("a drag reaches straight up and straight down, and never flips the view over") {
+  let full = SphereLookMath.maxPitch(halfSphere: false, verticalFieldOfView: 90)
+  check(nearF(full, Float.pi / 2, 1e-6))
+  var view = (yaw: Float(0), pitch: Float(0))
+  for _ in 0..<40 {
+    view = SphereLookMath.drag(yaw: view.yaw, pitch: view.pitch, dx: 0, dy: 300, fieldOfView: 90, maxPitch: full)
+  }
+  check(view.pitch == full, "a drag down looks up to the zenith: \(view)")
+  var forward = SphereLookMath.orientation(yaw: view.yaw, pitch: view.pitch).act(SIMD3<Float>(0, 0, -1))
+  check(nearF(forward.y, 1, 1e-5), "\(forward)")
+  for _ in 0..<80 {
+    view = SphereLookMath.drag(yaw: view.yaw, pitch: view.pitch, dx: 0, dy: -300, fieldOfView: 90, maxPitch: full)
+  }
+  check(view.pitch == -full, "and up to the nadir: \(view)")
+  forward = SphereLookMath.orientation(yaw: view.yaw, pitch: view.pitch).act(SIMD3<Float>(0, 0, -1))
+  check(nearF(forward.y, -1, 1e-5), "\(forward)")
+  // Random drags: the camera stays upright, its height the sine of the pitch
+  var generator = SystemRandomNumberGenerator()
+  for _ in 0..<2000 {
+    view = SphereLookMath.drag(
+      yaw: view.yaw, pitch: view.pitch, dx: Float.random(in: -400...400, using: &generator),
+      dy: Float.random(in: -400...400, using: &generator), fieldOfView: 90, maxPitch: full)
+    let orientation = SphereLookMath.orientation(yaw: view.yaw, pitch: view.pitch)
+    check(orientation.act(SIMD3<Float>(0, 1, 0)).y >= -1e-6, "upright at \(view)")
+    check(nearF(orientation.act(SIMD3<Float>(0, 0, -1)).y, sin(view.pitch), 1e-5))
+  }
+}
+
+test("a drag keeps the speed the player had, the picture following the finger") {
+  // 0.12 degree per point at the default field of view: a drag to the left turns the view to the right
+  let view = SphereLookMath.drag(yaw: 0, pitch: 0, dx: -100, dy: 0, fieldOfView: 90, maxPitch: Float.pi / 2)
+  check(nearF(view.yaw, -12 * degreeF, 1e-5), "\(view)")
+  let forward = SphereLookMath.orientation(yaw: view.yaw, pitch: 0).act(SIMD3<Float>(0, 0, -1))
+  check(forward.x > 0, "looks right: \(forward)")
+  // A drag down looks up; zoomed in to 45 degrees, half as fast
+  check(nearF(SphereLookMath.drag(yaw: 0, pitch: 0, dx: 0, dy: 100, fieldOfView: 90, maxPitch: 1).pitch, 12 * degreeF, 1e-5))
+  check(nearF(SphereLookMath.drag(yaw: 0, pitch: 0, dx: -100, dy: 0, fieldOfView: 45, maxPitch: 1).yaw, -6 * degreeF, 1e-5))
+}
+
+test("a half sphere stops where the edge of the screen reaches the pole") {
+  // Portrait at the default field of view: 45 degrees
+  check(nearF(SphereLookMath.maxPitch(halfSphere: true, verticalFieldOfView: 90), 45 * degreeF, 1e-6))
+  check(nearF(SphereLookMath.maxPitch(halfSphere: true, verticalFieldOfView: 30), 75 * degreeF, 1e-6))
+  check(nearF(SphereLookMath.maxPitch(halfSphere: true, verticalFieldOfView: 115), 32.5 * degreeF, 1e-6))
+  // The vertical field of view in landscape, the camera's 90 degrees across the longer side
+  let landscape = SphereLookMath.verticalFieldOfView(90, width: 2340, height: 1080)
+  check(nearF(landscape, 2 * atan(Float(1080) / 2340) * 180 / Float.pi, 1e-3), "\(landscape)")
+  check(SphereLookMath.verticalFieldOfView(90, width: 1080, height: 2340) == 90)
+}
+
+test("the pinch and the double tap keep the photo viewer's limits") {
+  check(nearF(SphereLookMath.pinch(start: 90, scale: 2), 45, 1e-5))
+  check(SphereLookMath.pinch(start: 90, scale: 10) == 15)
+  check(SphereLookMath.pinch(start: 90, scale: 0.5) == 115)
+  check(SphereLookMath.pinch(start: 90, scale: 0) == 90)
+  check(SphereLookMath.pinch(start: 90, scale: .nan) == 90)
+  check(SphereLookMath.defaultFieldOfView == 90)
+  check(SphereLookMath.doubleTap(90) == 45)
+  check(SphereLookMath.doubleTap(45) == 90)
+  check(SphereLookMath.doubleTap(46) == 90)
+  check(SphereLookMath.doubleTap(47) == 45)
+  check(SphereLookMath.doubleTap(15) == 90)
+}
+
+test("the player reads no attitude: off, the motion of the phone never reaches the view") {
+  let arguments = CommandLine.arguments
+  guard arguments.count >= 4, let player = try? String(contentsOfFile: arguments[3], encoding: .utf8) else {
+    check(false, "run.sh passes the path of SphericalVideoViewController.swift")
+    return
+  }
+  // The view is the yaw and the pitch, never the attitude of the phone (which drags could not leave)
+  check(!player.contains(".attitude"), "the attitude is not read")
+  // The samples of the gyroscope are used only while the button is on, and the updates stop when it goes off
+  check(player.contains("guard motionEnabled, !closing, let motion = motionManager.deviceMotion"))
+  check(player.contains("motionManager.stopDeviceMotionUpdates()"))
+  check(player.contains("SphereLookMath.gyro("))
+  // The motion starts only where the choice says so
+  check(player.contains("motionEnabled = motionEnabled && motionManager.isDeviceMotionAvailable"))
 }
 
 // MARK: - Run

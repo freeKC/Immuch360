@@ -43,6 +43,9 @@ class _Session implements SphericalVideoEvents {
 
   @override
   void stabilizationChanged(bool enabled) {}
+
+  @override
+  void motionChanged(bool enabled) {}
 }
 
 String _hex(int pixel) => '0x${pixel.toRadixString(16).padLeft(8, '0')}';

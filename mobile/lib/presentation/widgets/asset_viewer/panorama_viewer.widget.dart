@@ -130,6 +130,7 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
   final stabilizationSupported = ref.read(videoStabilizationSupportedProvider);
   final stabilizationEnabled = ref.read(appConfigProvider).viewer.stabilizeVideos;
   final stabilizationBuilder = ref.read(rawStabilizationBuilderProvider);
+  final motion = ref.read(appConfigProvider).viewer.panoramaGyroscope;
   final messenger = ScaffoldMessenger.maybeOf(context);
   final t = context.t;
   final closeLabel = context.t.close;
@@ -141,6 +142,7 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
     ...videoSourceLabels(context.t),
     ...rawVideoLabels(context.t),
     ...videoStabilizationLabels(context.t),
+    ...sphereMotionLabels(context.t),
   };
 
   try {
@@ -210,6 +212,7 @@ Future<void> openPanoramaVideo(BuildContext context, WidgetRef ref, BaseAsset as
       supported: stabilizationSupported,
       enabled: stabilizationEnabled,
       build: stabilizationBuilder,
+      motion: motion,
       open: () => api.open(
         url,
         ApiService.getRequestHeaders(),
@@ -271,6 +274,9 @@ Future<bool> confirmUndecodableVideo(
 /// [tellStabilizationSetting]): the switch of a CAMM track starts there. The one way both the library
 /// ([openPanoramaVideo]) and the shares and folders ([openSphericalVideoUrl]) open the player.
 ///
+/// The player is told first the gyroscope choice [motion] it opens with, the setting the 360° photo viewer shares (see
+/// [tellMotionSetting]).
+///
 /// Returns the delivery of the table, not to be awaited before the video plays; null when no table is built.
 Future<Future<StabilizationTable?>?> openStabilizedSphericalVideo({
   required SphericalVideoApi api,
@@ -280,8 +286,10 @@ Future<Future<StabilizationTable?>?> openStabilizedSphericalVideo({
   required bool supported,
   required bool enabled,
   required RawStabilizationBuilder build,
+  required bool motion,
   required Future<void> Function() open,
 }) async {
+  await tellMotionSetting(api, enabled: motion);
   final candidate = plan != null && supported
       ? RawVideoStabilizer(api: api, url: url, enabled: enabled, plan: plan, build: build)
       : null;
@@ -331,6 +339,7 @@ Future<bool> openSphericalVideoUrl(
   final stabilizationSupported = ref.read(videoStabilizationSupportedProvider);
   final stabilizationEnabled = ref.read(appConfigProvider).viewer.stabilizeVideos;
   final stabilizationBuilder = ref.read(rawStabilizationBuilderProvider);
+  final motion = ref.read(appConfigProvider).viewer.panoramaGyroscope;
   // The session takes the events of the player; without an asset, it has nothing to remember when it closes, but
   // stops the build of a stabilisation table then
   final session = ref.read(sphericalVideoSessionProvider)..cancel();
@@ -343,6 +352,7 @@ Future<bool> openSphericalVideoUrl(
     ...videoSourceLabels(context.t),
     ...rawVideoLabels(context.t),
     ...videoStabilizationLabels(context.t),
+    ...sphereMotionLabels(context.t),
   };
 
   try {
@@ -355,6 +365,7 @@ Future<bool> openSphericalVideoUrl(
       supported: stabilizationSupported,
       enabled: stabilizationEnabled,
       build: stabilizationBuilder,
+      motion: motion,
       open: () => api.open(
         url,
         headers,
@@ -374,6 +385,19 @@ Future<bool> openSphericalVideoUrl(
     session.cancel();
     await player?.resumeAfterExternalPlayer();
     return false;
+  }
+}
+
+/// Tells the native 360° player the gyroscope choice it opens with, right before it opens: [enabled] true, the motion
+/// of the phone turns the view and drags add to it; false, touch alone turns it, the motion ignored. The setting the
+/// 360° photo viewer shares (ViewerConfig.panoramaGyroscope), which the button of the player changes in turn (see
+/// [SphericalVideoSession.motionChanged]). A failure to tell the player never stops the playback: it opens with the
+/// motion off, and the log keeps why.
+Future<void> tellMotionSetting(SphericalVideoApi api, {required bool enabled}) async {
+  try {
+    await api.setMotion(enabled);
+  } catch (error) {
+    _log.warning('Could not tell the 360° player the gyroscope setting: $error');
   }
 }
 
@@ -851,8 +875,10 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
   @override
   ({double longitude, double latitude, double fov}) get view => (longitude: _longitude, latitude: _latitude, fov: _fov);
 
-  // Gyroscope mode: the view follows the phone, drags still add on top
+  // Gyroscope mode: the view follows the phone, drags still add on top. It opens as the user left it in a 360° viewer
+  // of the phone, photo or video (see panoramaGyroscopeChoiceProvider), once the button is offered
   bool _gyroEnabled = false;
+  bool _storedGyroApplied = false;
   StreamSubscription<GyroscopeEvent>? _gyroSubscription;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
   DateTime? _lastGyroTimestamp;
@@ -1315,7 +1341,19 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     }
   }
 
-  void _setGyroEnabled(bool enabled) {
+  /// Turns the gyroscope mode on or off; [remember] stores it as the choice of the 360° viewers (the button), which the
+  /// 360° video player opens with too
+  void _setGyroEnabled(bool enabled, {bool remember = false}) {
+    if (remember) {
+      unawaited(
+        ref.read(panoramaGyroscopeChoiceProvider).remember(enabled).catchError((Object error) {
+          _log.warning('Could not store the gyroscope choice: $error');
+        }),
+      );
+    }
+    if (enabled == _gyroEnabled) {
+      return;
+    }
     setState(() => _gyroEnabled = enabled);
     if (enabled) {
       _inertia.stop();
@@ -1616,6 +1654,19 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
     if (tvMode && showsSphere) {
       _startLookHint();
     }
+    final gyroscopeOffered = showsSphere && !isHorizonOs && !tvMode && hasGyroscope;
+    // Once the kind of device is known: a Meta Quest never turns the view with the headset here
+    if (gyroscopeOffered && !_storedGyroApplied && ref.read(isHorizonOsProvider).hasValue) {
+      // Once: the choice the user made last in a 360° viewer, photo or video
+      _storedGyroApplied = true;
+      if (ref.read(panoramaGyroscopeChoiceProvider).enabled) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _setGyroEnabled(true);
+          }
+        });
+      }
+    }
     // A panorama of ours: its badge stays, its sentence and the outline of its photo come and go once the sphere shows
     final generated = isRaw ? null : _generated;
     final generatedNotice = generated == null
@@ -1679,13 +1730,13 @@ class _PanoramaViewerPageState extends ConsumerState<PanoramaViewerPage>
                   tooltip: stereoLayout.label(context.t),
                   onPressed: () => _showNextStereoLayout(stereoLayout),
                 ),
-              if (showsSphere && !isHorizonOs && !tvMode && hasGyroscope)
+              if (gyroscopeOffered)
                 IconButton(
                   isSelected: _gyroEnabled,
                   icon: const Icon(Icons.explore_outlined),
                   selectedIcon: const Icon(Icons.explore),
                   tooltip: context.t.panorama_gyroscope,
-                  onPressed: () => _setGyroEnabled(!_gyroEnabled),
+                  onPressed: () => _setGyroEnabled(!_gyroEnabled, remember: true),
                 ),
               // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
               if (CurrentPlatform.isDesktop) const DesktopFullScreenButton(),

@@ -7,7 +7,8 @@
   android:layout_height="match_parent"
   android:background="@android:color/black">
 
-  <!-- The spherical surface turns the view with touch drags and with the orientation sensors -->
+  <!-- The spherical surface: on phones and tablets the activity turns its view (drags, pinch, double tap, the gyroscope
+       when its button is on, see SphereLookController), on a TV Media3 does -->
   <androidx.media3.ui.PlayerView
     android:id="@+id/spherical_video_player"
     android:layout_width="match_parent"
@@ -177,5 +178,19 @@
       android:textSize="16sp"
       android:textStyle="bold"
       tools:ignore="HardcodedText" />
+
+    <!-- Gyroscope control (issue 20), the compass of the 360° photo viewer and in the same place, last: on, the motion of
+         the device turns the view; off (dimmed), touch alone does. Shown by the activity where the device has a
+         gyroscope, never on a TV; its description, tooltip and state come from the activity. -->
+    <ImageButton
+      android:id="@+id/spherical_video_motion"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_marginStart="8dp"
+      android:background="?android:attr/selectableItemBackgroundBorderless"
+      android:foreground="@drawable/remote_focus_ring"
+      android:src="@drawable/ic_spherical_video_motion"
+      android:visibility="gone"
+      tools:ignore="ContentDescription" />
   </LinearLayout>
 </FrameLayout>

@@ -58,6 +58,12 @@ class _RecordingSphericalVideoApi extends SphericalVideoApi {
   /// table when one came ("track", "no track", "table of N frames")
   final List<String> stabilization = [];
 
+  /// The gyroscope choices the player was told before opening (issue 20)
+  final List<bool> motions = [];
+
+  @override
+  Future<void> setMotion(bool enabled) async => motions.add(enabled);
+
   @override
   Future<void> setStabilization(
     String url,
@@ -504,6 +510,8 @@ void main() {
         'coverage': SphereCoverage.full,
       },
     ]);
+    // The gyroscope off, the default of the 360° viewers, told before the player opened (issue 20)
+    expect(sphericalApi.motions, [false]);
     expect(playerCalls, ['suspend'], reason: 'the page player stops meanwhile');
 
     await endRealIo(tester);

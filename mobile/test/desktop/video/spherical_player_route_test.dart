@@ -176,6 +176,10 @@ class _Session implements SphericalVideoEvents {
 
   @override
   void stabilizationChanged(bool enabled) => stabilizations.add(enabled);
+
+  // A computer has no gyroscope: its player never sends this
+  @override
+  void motionChanged(bool enabled) => fail('the 360° player of a computer has no gyroscope button');
 }
 
 void main() {

@@ -122,14 +122,18 @@ typedef _SphericalPlayback = ({BaseAsset asset, SphereCoverage coverage, SphereC
 /// layout it reports is not remembered: the player prefers the layout the file declares, and the guess comes again.
 ///
 /// The player also says when the user turns the stabilisation with the camera's gyroscope on or off there
-/// ([stabilizationChanged]): [onStabilizationChanged] makes the setting follow.
+/// ([stabilizationChanged]): [onStabilizationChanged] makes the setting follow. Likewise for its gyroscope button
+/// ([motionChanged]): [onMotionChanged] stores the choice the 360° photo viewer shares.
 class SphericalVideoSession implements SphericalVideoEvents {
-  SphericalVideoSession(this._overrides, {this.onStabilizationChanged});
+  SphericalVideoSession(this._overrides, {this.onStabilizationChanged, this.onMotionChanged});
 
   final SphereCoverageOverrides _overrides;
 
   /// Stores the stabilisation the user chose in the player, the setting of the app
   final Future<void> Function(bool enabled)? onStabilizationChanged;
+
+  /// Stores the gyroscope choice the user made in the player, one setting with the 360° photo viewer
+  final Future<void> Function(bool enabled)? onMotionChanged;
 
   _SphericalPlayback? _playback;
 
@@ -196,6 +200,19 @@ class SphericalVideoSession implements SphericalVideoEvents {
     }
   }
 
+  @override
+  void motionChanged(bool enabled) {
+    _log.info('The gyroscope was turned ${enabled ? 'on' : 'off'} in the 360° player');
+    final store = onMotionChanged;
+    if (store != null) {
+      unawaited(
+        store(enabled).catchError((Object error, StackTrace stackTrace) {
+          _log.warning('Could not store the gyroscope setting', error, stackTrace);
+        }),
+      );
+    }
+  }
+
   Future<void> _remember(_SphericalPlayback playback, SphereCoverage coverage) async {
     try {
       await _overrides.remember(playback.asset, coverage, opened: playback.coverage, guess: playback.coverageGuess);
@@ -212,6 +229,8 @@ final sphericalVideoSessionProvider = Provider<SphericalVideoSession>((ref) {
     ref.read(sphereCoverageOverridesProvider.notifier),
     // The switch of the player is the setting of the app (Settings, Asset Viewer, Videos)
     onStabilizationChanged: (enabled) => SettingsRepository.instance.write(.viewerStabilizeVideos, enabled),
+    // The gyroscope button of the player is the one of the 360° photo viewer: one choice for both (issue 20)
+    onMotionChanged: (enabled) => SettingsRepository.instance.write(.viewerPanoramaGyroscope, enabled),
   );
   // Through the hub, which the 360° player of the computers calls when it closes
   PlayerEventsHub.setUpSpherical(session);

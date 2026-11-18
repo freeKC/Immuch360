@@ -257,6 +257,10 @@ void main() {
     });
   });
 
+  test('the gyroscope button of the 360° video player has the name of the one of the photo viewer (issue 20)', () {
+    expect(sphereMotionLabels(StaticTranslations.instance), {'motion': StaticTranslations.instance.panorama_gyroscope});
+  });
+
   group('remembered coverages', () {
     test('survive their JSON form, with the coverage names', () {
       final coverages = {'asset-1': SphereCoverage.half, 'asset-2': SphereCoverage.full};
