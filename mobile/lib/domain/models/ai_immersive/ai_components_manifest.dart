@@ -85,8 +85,9 @@ enum AiFeature {
   av2Video(_computers),
 
   /// A flat video made 3D side by side on the computers (experimental, video3d-plan.md): Video Depth Anything Small on
-  /// the processor and the FFmpeg program of immuch360/libmpv-builds
-  stereoVideo(_computers);
+  /// the processor and the FFmpeg program of immuch360/libmpv-builds. Not on Intel Macs: whether ONNX Runtime 1.23.2
+  /// runs the model there was not checked, as the plan asks before that platform is offered
+  stereoVideo([AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64]);
 
   const AiFeature(this.platforms);
 

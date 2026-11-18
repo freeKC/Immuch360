@@ -327,6 +327,10 @@ jobs:
       - name: The golden fixture of relief-v1 is what its script writes
         run: python3 .github/desktop/ai/make_relief_golden.py --check
 
+      # The frame work of the 3D videos (release 49): its Python reference and fixture, which the Rust and the Dart meet
+      - name: The golden fixture of the 3D videos is what its script writes
+        run: python3 .github/desktop/ai/make_relief_video_golden.py --check
+
       # relief-v2 (release 46) without MI-GAN, on the computers only: its Python reference and fixture
       - name: The golden fixture of relief-v2 is what its script writes
         run: python3 .github/desktop/ai/make_relief_v2_golden.py --check
@@ -508,8 +512,26 @@ jobs:
             IMMUCH360_ORT_LIB="$ort/onnxruntime-linux-x64-$version/lib/libonnxruntime.so.$version" \
               IMMUCH360_SCENE_OUT="$RUNNER_TEMP/scenes-$version" \
               mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene \
-                test/desktop/ai/panorama/panorama_engine_ort_test.dart
+                test/desktop/ai/panorama/panorama_engine_ort_test.dart test/desktop/ai/video3d
           done
+
+      # A whole 3D video (release 49) with the real FFmpeg program of immuch360/libmpv-builds, checked by its SHA-256,
+      # and tiny_vda.onnx: a 4 s clip with a cut and a tone made by the program itself, the encoder test (no VA-API on
+      # the runner: SVT-AV1), the segments, the mux, st3d read back by the app's own probe
+      - name: A 3D video through the real FFmpeg program and the tiny model
+        working-directory: mobile
+        run: |
+          work="$RUNNER_TEMP/video3d"
+          mkdir -p "$work/ffmpeg"
+          curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/Immuch360-ffmpeg-9.0.2-1-linux-x64.zip
+          echo "b343bdc434f24cef963a8d08768b54208135dd1664f3ba7ea2d443d278023ddd  $work/ffmpeg.zip" | sha256sum -c -
+          (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
+          python3 ../.github/desktop/ai/video3d_ci_clip.py make "$work/ffmpeg/bin/ffmpeg" "$work/clip.mkv"
+          export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$RUNNER_TEMP/onnxruntime/onnxruntime-linux-x64-1.31.0/lib/libonnxruntime.so.1.31.0\",\"--model\",\"$PWD/test/fixtures/ai_immersive/tiny_vda.onnx\",\"--out\",\"$work/out\",\"--quality\",\"fast\",\"--segment\",\"1\",\"$work/clip.mkv\"]"
+          mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
+            | tee "$work/run.log"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py check "$work/run.log"
 
       # The glTF-Validator of Khronos on the 3D scenes of phase 2 (lot S1; design-final 2026-10-27, section 8.2): the
       # fixture of make_scene_fixture.py, the one the engine wrote with the fakes (tiny_scene3D_dart.jpg, which the
@@ -1030,6 +1052,31 @@ jobs:
           path: ${{ steps.fake_sd_cli.outputs.tools }}
           retention-days: 14
           if-no-files-found: error
+
+      # A whole 3D video (release 49) with the signed FFmpeg program of immuch360/libmpv-builds, checked by its SHA-256,
+      # and tiny_vda.onnx: h264_mf of Media Foundation when its one second test passes on the runner, else SVT-AV1
+      - name: A 3D video through the real FFmpeg program and the tiny model
+        working-directory: mobile
+        env:
+          ORT_LIB: ${{ steps.ort.outputs.lib }}
+        run: |
+          work="$(cygpath -u "$RUNNER_TEMP")/video3d"
+          mkdir -p "$work/ffmpeg"
+          curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/Immuch360-ffmpeg-9.0.2-1-windows-x64.zip
+          echo "246eac7a5cc2ce488ec4d9e5d17008908906ab96ac2481dee265680904c864f8  $work/ffmpeg.zip" | sha256sum -c -
+          (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
+          python ../.github/desktop/ai/video3d_ci_clip.py make "$(cygpath -w "$work/ffmpeg/bin/ffmpeg.exe")" "$(cygpath -w "$work/clip.mkv")"
+          IMMUCH360_VIDEO3D_ARGS="$(python - "$(cygpath -w "$work")" "$ORT_LIB" "$(cygpath -w "$PWD/test/fixtures/ai_immersive/tiny_vda.onnx")" <<'PY'
+          import json, sys
+          work, ort, model = sys.argv[1:4]
+          print(json.dumps(['--ffmpeg', work + '\\ffmpeg', '--ort', ort, '--model', model, '--out', work + '\\out',
+                            '--quality', 'fast', '--segment', '1', work + '\\clip.mkv']))
+          PY
+          )"
+          export IMMUCH360_VIDEO3D_ARGS
+          flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded | tee "$work/run.log"
+          python ../.github/desktop/ai/video3d_ci_clip.py check "$(cygpath -w "$work/run.log")"
 
       # IMMUCH360_REQUIRE_SBS_CODEC: the dart:ffi tests of the JPEG codec fail rather than skip without the library
       - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts, ONNX Runtime, the job object)
