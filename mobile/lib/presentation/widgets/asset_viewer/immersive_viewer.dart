@@ -854,7 +854,7 @@ class ImmersiveAssetResolver {
   /// stream the settings chose), with the flat3d JSON, which puts it on the flat video screen of the viewer instead.
   /// [localPath] is the file of a media opened with "Open with". Throws when there is no file to open.
   Future<ImmersiveRequest> resolveFlatVideo(BaseAsset asset, FlatStereoFormat format, {String? localPath}) =>
-      resolveFlatScreenVideo(asset, Flat3dRequest(format).toJsonString(), localPath: localPath);
+      resolveFlatScreenVideo(asset, Flat3dRequest.ofName(format, asset.name).toJsonString(), localPath: localPath);
 
   /// What the viewer opens for [asset], a video of its flat video screen that [stereoPair] describes (the flat3d JSON
   /// of a flat 3D video, the bigScreen JSON of an ordinary one on the big screen): the file [resolve] picks for the
@@ -1147,7 +1147,7 @@ Future<void> openFlatVideoViewer(
 }) => _openFlatScreenVideo(
   ref,
   asset,
-  Flat3dRequest(format).toJsonString(),
+  Flat3dRequest.ofName(format, asset.name).toJsonString(),
   stereoLabels: stereoLabels,
   onSourceNotice: onSourceNotice,
 );

@@ -109,6 +109,24 @@ void main() {
       expect(guessSpatialLayout(width: 1920, height: 2160, fileName: 'clip.sbs.mp4'), SpatialStereoLayout.topBottom);
     });
 
+    test('reads the portrait 3D video of a computer (2160 x 1920) side by side by its words or its st3d box', () {
+      // Its frame shape (1.125) is neither of the flat shapes: the name words tell, Full or Half
+      expect(
+        guessSpatialLayout(width: 2160, height: 1920, fileName: 'IMG_1234_3D_LRF_Full_SBS.mp4'),
+        SpatialStereoLayout.sideBySide,
+      );
+      expect(
+        guessSpatialLayout(width: 1080, height: 960, fileName: 'IMG_1234_3D_LRF_Half_SBS.mp4'),
+        SpatialStereoLayout.sideBySide,
+      );
+      // Renamed, only its st3d box says it: the player reads it
+      expect(guessSpatialLayout(width: 2160, height: 1920, fileName: 'holiday.mp4'), SpatialStereoLayout.auto);
+      expect(
+        guessSpatialLayout(width: 2160, height: 1920, fileName: 'holiday.mp4', declaredStereo: true),
+        SpatialStereoLayout.auto,
+      );
+    });
+
     test('leaves a file that declares its layout to the player', () {
       expect(
         guessSpatialLayout(width: 3840, height: 1080, fileName: 'clip.sbs.mp4', declaredStereo: true),

@@ -1,5 +1,5 @@
 {
-  "about": "The stereoPair JSON of ImmersiveApi.open for a flat 3D photo or video told by its file name (_SBS, _HSBS, _LR, _TB, _OU, _HTB, Half-SBS and the others, see guessFlatStereoFormat), version 1: a photo on the stereo quad, a video on the flat video screen. format says how the frame packs the eyes: sbs side by side and halfSbs squeezed to half their width, tb one above the other (left eye on top) and halfTb squeezed to half their height. The Dart tests write each request and compare it with this file; the Kotlin tests read it. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat, and the video on the sphere as before.",
+  "about": "The stereoPair JSON of ImmersiveApi.open for a flat 3D photo or video told by its file name (_SBS, _HSBS, _LR, _TB, _OU, _HTB, Half-SBS and the others, see guessFlatStereoFormat), version 1: a photo on the stereo quad, a video on the flat video screen. format says how the frame packs the eyes: sbs side by side and halfSbs squeezed to half their width, tb one above the other (left eye on top) and halfTb squeezed to half their height; full true (side by side only) says the name or the st3d box told two full eyes, which the viewer then keeps whatever the shape of the frame (a portrait 3D video of 2160 x 1920). The Dart tests write each request and compare it with this file; the Kotlin tests read it. unknown holds requests a reader of version 1 refuses: the viewer then shows the photo flat, and the video on the sphere as before.",
   "flat3d": [
     {
       "name": "side by side",
@@ -8,6 +8,16 @@
         "kind": "flat3d",
         "version": 1,
         "format": "sbs"
+      }
+    },
+    {
+      "name": "side by side, full said by the name or the st3d box: never squeezed, whatever the frame",
+      "format": "sbs",
+      "request": {
+        "kind": "flat3d",
+        "version": 1,
+        "format": "sbs",
+        "full": true
       }
     },
     {

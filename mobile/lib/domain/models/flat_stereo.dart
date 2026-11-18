@@ -74,16 +74,26 @@ final _wordSeparators = RegExp(r'[._\- ]+');
 ///   (1920x1080) or wider than 2.5:1 stacked (1920x1080) are taken as squeezed. Photos keep their eyes as they are:
 ///   a converter writes the squeezed ones with a word of their own, and two portrait photos side by side are common.
 ///
+/// An explicit full word (fsbs, fullsbs, or full next to a side by side word: _3D_LRF_Full_SBS) keeps two full eyes
+/// side by side whatever the frame: the 3D video a computer makes of a portrait phone clip is 2160 x 1920, eyes
+/// narrower than square that the squeeze rule would stretch to twice their width. [declaredSideBySide] is for a caller
+/// that read the file's st3d box saying left and right: a name that says nothing of 3D then gets two full eyes side by
+/// side too (the words win over the box when there are some).
+///
 /// The short words ou, tab, tb and lr count at the end of a name of several words or next to 3d, half, full or h, and
 /// fou only next to one of those: "Paris ou Lyon.jpg" and "Le fou.jpg" are regular photos. The words of 360° and VR180
 /// media (360, 180, vr, vr180, ...) make it no flat media at all.
-FlatStereoFormat? guessFlatStereoFormat({required String? fileName, int? width, int? height, bool isVideo = false}) {
+FlatStereoFormat? guessFlatStereoFormat({
+  required String? fileName,
+  int? width,
+  int? height,
+  bool isVideo = false,
+  bool declaredSideBySide = false,
+}) {
   if (fileName == null || fileName.isEmpty) {
     return null;
   }
-  final dot = fileName.lastIndexOf('.');
-  final stem = dot > 0 ? fileName.substring(0, dot) : fileName;
-  final parts = stem.toLowerCase().split(_wordSeparators).where((word) => word.isNotEmpty).toList();
+  final parts = _nameParts(fileName);
   final words = {
     for (final (index, word) in parts.indexed)
       if (_countsAsStereoWord(parts, index)) word,
@@ -104,14 +114,47 @@ FlatStereoFormat? guessFlatStereoFormat({required String? fileName, int? width, 
   }
   final known = width != null && height != null && width > 0 && height > 0;
   if (words.any(_sideBySideWords.contains)) {
-    final squeezed = half || (isVideo && known && width / 2 / height < 1.0);
+    final squeezed = half || (isVideo && known && !_saysFull(parts) && width / 2 / height < 1.0);
     return squeezed ? FlatStereoFormat.halfSbs : FlatStereoFormat.sbs;
   }
   if (words.any(_topBottomWords.contains)) {
     final squeezed = half || (isVideo && known && width / (height / 2) > 2.5);
     return squeezed ? FlatStereoFormat.halfTb : FlatStereoFormat.tb;
   }
-  return null;
+  return declaredSideBySide ? FlatStereoFormat.sbs : null;
+}
+
+/// Whether the name [fileName] says two full eyes side by side in so many words: fsbs, fullsbs, or full right before
+/// or after a side by side word (_3D_LRF_Full_SBS, SBS.Full); never with half or for stacked eyes
+bool flatStereoFullSaid(String? fileName) {
+  if (fileName == null || fileName.isEmpty) {
+    return false;
+  }
+  final parts = _nameParts(fileName);
+  return !parts.contains('half') && _saysFull(parts);
+}
+
+bool _saysFull(List<String> parts) {
+  for (final (index, word) in parts.indexed) {
+    if (word == 'fsbs' || word == 'fullsbs') {
+      return true;
+    }
+    if (word == 'full') {
+      final before = index > 0 && _sideBySideWords.contains(parts[index - 1]);
+      final after = index + 1 < parts.length && _sideBySideWords.contains(parts[index + 1]);
+      if (before || after) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/// The words of [fileName] without its extension, in lower case
+List<String> _nameParts(String fileName) {
+  final dot = fileName.lastIndexOf('.');
+  final stem = dot > 0 ? fileName.substring(0, dot) : fileName;
+  return stem.toLowerCase().split(_wordSeparators).where((word) => word.isNotEmpty).toList();
 }
 
 /// Whether the word at [index] of the words of a name, [parts], counts: any word but the short ones, which count at
@@ -156,13 +199,32 @@ const flat3dVersion = 1;
 /// test/fixtures/ai_immersive/flat3d_contract_v1.json. A photo goes on the stereo quad, a video on the flat video
 /// screen in front of the user. A viewer that does not know the request shows the photo flat, and the video on the
 /// sphere.
+///
+/// [fullSaid] (written as "full": true, side by side only) tells the viewer that the name or the st3d box said two full
+/// eyes, which it then keeps whatever the frame: without it, the viewer squeezes eyes narrower than square as
+/// guessFlatStereoFormat does once the frame size is known. A viewer that does not know the key squeezes them as before.
 class Flat3dRequest {
-  const Flat3dRequest(this.format);
+  const Flat3dRequest(this.format, {bool fullSaid = false}) : fullSaid = fullSaid && format == FlatStereoFormat.sbs;
+
+  /// The request for a video named [fileName] packed as [format]: full said by its words (see [flatStereoFullSaid]),
+  /// or by its st3d box ([declaredSideBySide]) when the name says nothing of 3D
+  factory Flat3dRequest.ofName(FlatStereoFormat format, String? fileName, {bool declaredSideBySide = false}) {
+    final silent = guessFlatStereoFormat(fileName: fileName) == null;
+    return Flat3dRequest(format, fullSaid: flatStereoFullSaid(fileName) || (declaredSideBySide && silent));
+  }
 
   /// How the frame packs the eyes
   final FlatStereoFormat format;
 
-  Map<String, Object> toJson() => {'kind': flat3dKind, 'version': flat3dVersion, 'format': format.wire};
+  /// Whether the eyes are full by the name or the file's box, see the class
+  final bool fullSaid;
+
+  Map<String, Object> toJson() => {
+    'kind': flat3dKind,
+    'version': flat3dVersion,
+    'format': format.wire,
+    if (fullSaid) 'full': true,
+  };
 
   /// The stereoPair JSON of ImmersiveApi.open
   String toJsonString() => jsonEncode(toJson());
@@ -173,15 +235,15 @@ class Flat3dRequest {
       return null;
     }
     final format = FlatStereoFormat.fromWire(json['format']);
-    return format == null ? null : Flat3dRequest(format);
+    return format == null ? null : Flat3dRequest(format, fullSaid: json['full'] == true);
   }
 
   @override
-  bool operator ==(Object other) => other is Flat3dRequest && other.format == format;
+  bool operator ==(Object other) => other is Flat3dRequest && other.format == format && other.fullSaid == fullSaid;
 
   @override
-  int get hashCode => format.hashCode;
+  int get hashCode => Object.hash(format, fullSaid);
 
   @override
-  String toString() => 'Flat3dRequest(${format.wire})';
+  String toString() => 'Flat3dRequest(${format.wire}${fullSaid ? ', full' : ''})';
 }

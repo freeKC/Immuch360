@@ -65,6 +65,19 @@ class FlatStereoTest {
   }
 
   @Test
+  fun `a video whose name or st3d box said full keeps two full eyes whatever its frame`() {
+    // The portrait 3D video of a computer: two eyes of 1080 x 1920 side by side, named _3D_LRF_Full_SBS
+    assertEquals(FlatFormat.SBS, FlatStereo.videoFormat(FlatFormat.SBS, 2160, 1920, fullSaid = true))
+    assertEquals(FlatFormat.HALF_SBS, FlatStereo.videoFormat(FlatFormat.SBS, 2160, 1920))
+    assertEquals(FlatFormat.SBS, FlatStereo.videoFormat(FlatFormat.SBS, 1920, 1080, fullSaid = true))
+    // Each eye then shows at its own portrait shape
+    assertEquals(1080f / 1920f, FlatStereo.eyeAspect(FlatFormat.SBS, 2160, 1920), 1e-6f)
+    // A squeezed request stays squeezed, and full never touches stacked eyes
+    assertEquals(FlatFormat.HALF_SBS, FlatStereo.videoFormat(FlatFormat.HALF_SBS, 2160, 1920, fullSaid = true))
+    assertEquals(FlatFormat.HALF_TB, FlatStereo.videoFormat(FlatFormat.TB, 1920, 1080, fullSaid = true))
+  }
+
+  @Test
   fun `the video layer shows each eye its half in 3D, the first eye in 2D`() {
     assertEquals(StereoMode.LeftRight, FlatStereo.stereoModeFor(FlatFormat.HALF_SBS, threeD = true))
     assertEquals(StereoMode.MonoLeft, FlatStereo.stereoModeFor(FlatFormat.SBS, threeD = false))
