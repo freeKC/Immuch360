@@ -417,6 +417,7 @@ internal object StereoComposer {
         LABEL_BIG_SCREEN_NO_NAVIGATION to
           "On the big screen, a photo or video shows on its own: B or Y goes back to the app",
         LABEL_SHARP_NOTICE to "Sharper flat screen (experimental)",
+        LABEL_NEAR_LIMIT_3D to "Make it smaller first: a 3D photo this close tires the eyes",
       )
 
   /**
@@ -431,6 +432,12 @@ internal object StereoComposer {
 
   /** What passes once when a flat screen first shows with Sharper flat screens on (see FlatScreenLayer). */
   const val LABEL_SHARP_NOTICE = "sharpScreensNotice"
+
+  /**
+   * What a photo of two eyes says when it is not brought nearer past its comfort bound (see
+   * FlatScreenGeometry.nearerAllowed).
+   */
+  const val LABEL_NEAR_LIMIT_3D = "screenNearLimit3d"
 
   const val LABEL_3D = "spatial3d"
   const val LABEL_2D = "spatial2d"

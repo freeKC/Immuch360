@@ -396,6 +396,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val screenAngleBounds: ClosedFloatingPointRange<Float>
       get() = screenMedia.angleBounds
 
+    /** A photo whose kind holds two eyes, see [FlatScreenMedia.holdsTwoEyes]: its comfort bounds apply. */
+    val holdsTwoEyes: Boolean
+      get() = screenMedia.holdsTwoEyes
+
+    /** A relief estimated by AI: 60 degrees wide at most. */
+    val isEstimatedRelief: Boolean
+      get() = stereoKind?.isEstimatedRelief == true
+
     /** A photo that carries a 3D scene, shown by [SceneView] once read, its preview flat on the quad meanwhile. */
     val isScene: Boolean
       get() = stereoKind is StereoPhotoKind.VolumetricScene
@@ -628,6 +636,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** When the stretch last resized the screen (uptime ms), and the size it still has to take. */
   private var stretchAppliedAt = 0L
   private var stretchPendingAngle: Float? = null
+  /** The angles the stretch in progress keeps to: those of the screen, widened to its angle at the start. */
+  private var stretchBounds: ClosedFloatingPointRange<Float>? = null
   /** The pose of each controller on this frame, see ImmersiveInputSystem.Listener.onControllerRays. */
   private var controllerRays: Map<GripSide, Pose> = emptyMap()
   /** The hint of the grips, and the word on Sharper flat screens, passed once in this viewer. */
@@ -2478,13 +2488,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (!stretchStarted) {
       screenStretch.start(spread, FlatScreenGeometry.width(angle, place.distance))
       stretchStarted = true
-      Log.i(TAG, "flat screen stretched, hands $spread m apart")
+      // A screen brought nearer past its widest Size keeps it: the stretch goes on from there, never back to the bound
+      stretchBounds = FlatScreenGeometry.boundsHolding(screenAngleBounds(), angle)
+      Log.i(TAG, "flat screen stretched, hands $spread m apart, within $stretchBounds degrees")
       return
     }
     val width = screenStretch.width(spread) ?: return
     val wanted =
       FlatScreenGeometry.angleForWidth(width, place.distance)
-        .coerceIn(screenAngleBounds())
+        .coerceIn(stretchBounds ?: screenAngleBounds())
         .roundToInt()
         .toFloat()
     if (abs(wanted - angle) < 1f) {
@@ -2504,6 +2516,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun endStretch() {
     screenStretch.end()
     stretchStarted = false
+    stretchBounds = null
     stretchPendingAngle?.let { setScreenAngle(it) }
     stretchPendingAngle = null
   }
@@ -2566,23 +2579,43 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The Size buttons and the thumbstick up or down on a photo: a larger ([step] 1) or smaller (-1) screen. */
   private fun changeScreenSize(step: Int) {
     val angle = currentScreenAngle() ?: return
-    setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, screenAngleBounds()))
+    // A screen brought nearer past its widest Size goes smaller from there, never back to the bound at once
+    val bounds = FlatScreenGeometry.boundsHolding(screenAngleBounds(), angle)
+    setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, bounds))
+  }
+
+  /** Whether the screen shown may come from [from] to [to] meters, see FlatScreenGeometry.nearerAllowed. */
+  private fun screenNearerAllowed(angle: Float, from: Float, to: Float): Boolean {
+    val media = request ?: return true
+    val twoEyes = media.holdsTwoEyes && !media.isFlatVideo
+    return FlatScreenGeometry.nearerAllowed(angle, from, to, twoEyes, media.isEstimatedRelief)
   }
 
   /**
    * The Distance buttons and the thumbstick up or down while a grip holds the screen: the screen farther ([step] 1) or
-   * nearer (-1) on the line it stands on, the same width in meters, so that it looks larger nearer. The distance is
-   * kept for the next flat screens, and a grab in progress goes on from there.
+   * nearer (-1) on the line it stands on, the same width in meters, so that it looks larger nearer (see
+   * FlatScreenGeometry.keptAngle; issue 19, point 3). A photo of two eyes that would pass its comfort bound nearer
+   * stays where it is, and the panel or the feedback line says to make it smaller first. The distance is kept for the
+   * next flat screens, and a grab in progress goes on from there.
    */
   private fun changeScreenDistance(step: Int) {
     val place = screenPlace ?: return
     val angle = currentScreenAngle() ?: return
     val distance = FlatScreenGeometry.nextDistance(place.distance, step)
+    if (distance < place.distance && !screenNearerAllowed(angle, place.distance, distance)) {
+      Log.i(TAG, "flat screen of $angle degrees not brought to $distance m: past the comfort bound of its two eyes")
+      updateScreenControls()
+      reportScreenChange(StereoComposer.label(request?.stereoLabels.orEmpty(), StereoComposer.LABEL_NEAR_LIMIT_3D))
+      return
+    }
     if (distance != place.distance) {
       val moved = place.at(distance)
       screenPlace = moved
       screenDistanceM = distance
-      val kept = FlatScreenGeometry.angleAtDistance(angle, place.distance, distance, screenAngleBounds())
+      val media = request
+      val twoEyes = media?.holdsTwoEyes == true && media.isFlatVideo != true
+      val estimated = media?.isEstimatedRelief == true
+      val kept = FlatScreenGeometry.keptAngle(angle, place.distance, distance, twoEyes, estimated)
       setScreenAngle(kept, report = false)
       applyScreenPlace()
       screenDragSide?.let { side ->
@@ -2632,7 +2665,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val bounds = screenAngleBounds()
     sizeLessButton?.isEnabled = angle > bounds.start + 1e-3f
     sizeMoreButton?.isEnabled = angle < bounds.endInclusive - 1e-3f
-    distanceLessButton?.isEnabled = place.distance > FlatScreenGeometry.DISTANCES_M.first() + 1e-3f
+    // At the comfort bound of a photo of two eyes, nearer is refused: the button says so by being off
+    distanceLessButton?.isEnabled =
+      place.distance > FlatScreenGeometry.DISTANCES_M.first() + 1e-3f &&
+        screenNearerAllowed(angle, place.distance, FlatScreenGeometry.nextDistance(place.distance, -1))
     distanceMoreButton?.isEnabled = place.distance < FlatScreenGeometry.DISTANCES_M.last() - 1e-3f
     sizeRow?.visibility = View.VISIBLE
     distanceRow?.visibility = View.VISIBLE

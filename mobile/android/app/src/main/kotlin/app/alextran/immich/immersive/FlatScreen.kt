@@ -452,6 +452,47 @@ internal object FlatScreenGeometry {
   ): Float = angleForWidth(width(angleDeg, from), to).coerceIn(bounds)
 
   /**
+   * The widest a screen brought nearer gets, whatever its Size bounds: the width in meters is kept, so a screen of one
+   * picture 110 degrees wide brought to the nearest of [DISTANCES_M] covers 151.6 degrees, under this guard.
+   */
+  const val NEAR_MAX_DEG = 160f
+
+  /**
+   * The angular width at [to] meters of a screen [angleDeg] wide at [from], for a change of distance: the width in
+   * meters is kept (issue 19, point 3: a photo brought nearer shrank once its angle reached the Size bound, which
+   * [angleAtDistance] clamps to). Never made smaller nearer: [NEAR_MAX_DEG] at most, and a photo of two eyes is not
+   * brought nearer past its comfort bound at all (see [nearerAllowed]). Farther, it keeps its meters too, but never
+   * goes under the smallest Size of its bounds (see [angleBounds]).
+   */
+  fun keptAngle(angleDeg: Float, from: Float, to: Float, twoEyes: Boolean, estimatedRelief: Boolean): Float {
+    val kept = angleForWidth(width(angleDeg, from), to)
+    return if (to > from) max(kept, angleBounds(twoEyes, estimatedRelief).start) else min(kept, NEAR_MAX_DEG)
+  }
+
+  /**
+   * Whether a screen [angleDeg] wide at [from] may come to [to] meters with its width in meters kept: always farther;
+   * nearer, a photo of two eyes up to the widest angle of its bounds only (90 degrees, 60 for an estimated relief:
+   * the disparity grows with the angle, design-final 2026-10-26 section 3.3), and one picture up to [NEAR_MAX_DEG].
+   * Refused, the screen stays where it is and the viewer says why.
+   */
+  fun nearerAllowed(angleDeg: Float, from: Float, to: Float, twoEyes: Boolean, estimatedRelief: Boolean): Boolean {
+    if (to >= from) return true
+    val kept = angleForWidth(width(angleDeg, from), to)
+    val widest = if (twoEyes) angleBounds(true, estimatedRelief).endInclusive else NEAR_MAX_DEG
+    return kept <= widest + ANGLE_EPSILON_DEG
+  }
+
+  /**
+   * [bounds] widened to hold [angleDeg]: a screen of one picture brought nearer past its widest Size is never pulled
+   * back to it by a stretch or the Size buttons, which go on from where it is.
+   */
+  fun boundsHolding(bounds: ClosedFloatingPointRange<Float>, angleDeg: Float): ClosedFloatingPointRange<Float> =
+    min(bounds.start, angleDeg)..max(bounds.endInclusive, angleDeg)
+
+  /** Angles closer than this are the same: the rounding of a width in meters and back. */
+  private const val ANGLE_EPSILON_DEG = 1e-3f
+
+  /**
    * The angular width a new screen of [aspect] (width over height; 16:9 when unknown) opens at: as wide as fits in
    * [FIT_WIDTH_DEG] x [FIT_HEIGHT_DEG], so that a portrait photo or video is not taller than the view.
    */

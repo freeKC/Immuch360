@@ -144,6 +144,7 @@ void main() {
     expect(labels, {
       'sharpScreensNotice': 'Sharper flat screen (experimental)',
       'bigScreenNoNavigation': 'On the big screen, a photo or video shows on its own: B or Y goes back to the app',
+      'screenNearLimit3d': 'Make it smaller first: a 3D photo this close tires the eyes',
     });
   });
 

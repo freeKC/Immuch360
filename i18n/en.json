@@ -2655,6 +2655,7 @@
   "immersive_downloading_original": "Downloading the original to play it: {percent} %",
   "immersive_flat_3d_no_navigation": "A 3D video plays on its own: B or Y goes back to the app",
   "immersive_flat_3d_notice": "3D told by the file name (experimental)",
+  "immersive_near_limit_3d": "Make it smaller first: a 3D photo this close tires the eyes",
   "immersive_playback_no_picture": "No picture for 3 seconds while the sound plays ({video}). What the headset saw is in the Logs of the app",
   "immersive_playback_no_picture_switch": "No picture for 3 seconds from {video}, trying the server playback stream",
   "immersive_playback_restarted": "The video stopped at {position}, it plays again from there",
