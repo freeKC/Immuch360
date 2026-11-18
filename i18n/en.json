@@ -914,6 +914,7 @@
   "ai_immersive_video_experimental": "Experimental. Not checked yet on a 3D screen or in a headset: tell us how it looks.",
   "ai_immersive_video_line": "Relief estimated by AI from a single camera, 32 frames at a time",
   "ai_immersive_video_note_audio": "All audio tracks are kept",
+  "ai_immersive_video_note_audio_not_kept": "Audio tracks the program cannot read (WMA, AMR, ADPCM) are left out; without any other, the 3D video is silent",
   "ai_immersive_video_note_data": "Data tracks and cover pictures are not kept",
   "ai_immersive_video_note_deep_colour": "10 or 12 bit colour is made 8 bit",
   "ai_immersive_video_note_dolby_vision": "Dolby Vision is read through its standard picture",

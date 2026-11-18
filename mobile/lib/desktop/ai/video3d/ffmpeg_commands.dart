@@ -253,9 +253,17 @@ List<String> videoSegmentArguments({
   ];
 }
 
-/// The list of segments of the concat demuxer, each path quoted
-String videoConcatList(List<String> segmentNames) =>
-    ['ffconcat version 1.0', for (final name in segmentNames) "file '${name.replaceAll("'", r"'\''")}'"].join('\n');
+/// The list of segments of the concat demuxer, each path quoted and followed by its exact length: its [slots] at
+/// [rate]. Without it the demuxer places each segment after the duration of the one before as Matroska keeps it, in
+/// whole milliseconds, and the picture drifts from the source's sound by about 0.6 ms a segment (150 ms over a two
+/// hour film at 29.97 fps, measured with the program on ai1)
+String videoConcatList(List<({String name, int slots})> segments, VideoRate rate) => [
+  'ffconcat version 1.0',
+  for (final segment in segments) ...[
+    "file '${segment.name.replaceAll("'", r"'\''")}'",
+    'duration ${(segment.slots * rate.denominator / rate.numerator).toStringAsFixed(9)}',
+  ],
+].join('\n');
 
 /// The final mux: the segments of [concatPath] joined, the audio tracks of the source [sourcePath] each copied or made
 /// AAC, the source's tags (date, place, make, model) and chapters, our [keys], [videoOffset] seconds of the video's

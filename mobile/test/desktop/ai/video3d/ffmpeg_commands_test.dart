@@ -141,11 +141,20 @@ void main() {
     );
   });
 
-  test('the concat list quotes each name', () {
+  test('the concat list quotes each name and gives each segment its exact length', () {
     expect(
-      videoConcatList(['seg-0001.seg', "it's.seg"]),
-      "ffconcat version 1.0\nfile 'seg-0001.seg'\nfile 'it'\\''s.seg'",
+      videoConcatList([
+        (name: 'seg-0001.seg', slots: 899),
+        (name: "it's.seg", slots: 25),
+      ], const VideoRate(30000, 1001)),
+      "ffconcat version 1.0\nfile 'seg-0001.seg'\nduration 29.996633333\nfile 'it'\\''s.seg'\nduration 0.834166667",
     );
+    // 240 segments of 30 s at 23.976 fps: the lengths add up to the grid, not to whole milliseconds
+    final list = videoConcatList([
+      for (var i = 0; i < 240; i++) (name: 'seg-$i.seg', slots: 719),
+    ], const VideoRate(24000, 1001));
+    final total = RegExp(r'duration (\S+)').allMatches(list).fold<double>(0, (sum, m) => sum + double.parse(m[1]!));
+    expect(total, closeTo(240 * 719 * 1001 / 24000, 1e-6));
   });
 
   test('the lines of -stats_enc_pre', () {

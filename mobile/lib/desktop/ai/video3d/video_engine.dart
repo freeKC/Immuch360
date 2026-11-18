@@ -11,7 +11,10 @@
 //
 // Each segment ends right after a window of the loop, so that its state (state-NNNN.bin) and job.json are enough to
 // go on from there: Pause, a crash, a restart of the computer lose at most one segment. A resumed job seeks the
-// decoder to the first frame the state holds back and checks its time against pts.txt.
+// decoder to the first frame the state holds back (relative to the file's start time, as -ss counts) and checks its
+// time against pts.txt; when they differ, the job starts again rather than failing on every Resume. Once every frame is
+// in a segment, job.json says so: a stop or a failure during the final mux goes back to the mux only. One state file
+// is kept at a time, and the work folder goes once the MP4 is in place.
 
 import 'dart:async';
 import 'dart:convert';
@@ -554,6 +557,17 @@ class VideoConversion {
   void _log(String line) => onLog?.call(line);
 
   Future<VideoJobResult> run() async {
+    try {
+      return await _run(resume: true);
+    } on _ResumeRefused catch (refused) {
+      // The work folder does not match the source as the decoder reads it now: every later Resume would fail the
+      // same way, so the job starts again rather than throwing
+      _log('${refused.reason}: started again');
+      return _run(resume: false);
+    }
+  }
+
+  Future<VideoJobResult> _run({required bool resume}) async {
     final folder = request.workFolder;
     await folder.create(recursive: true);
     final source = File(request.sourcePath);
@@ -569,6 +583,11 @@ class VideoConversion {
     final model = videoModelSize(eye.width, eye.height, request.quality);
     final outWidth = request.relief.packing == VideoSbsPacking.full ? eye.width * 2 : eye.width;
     final identity = await VideoSourceIdentity.of(source);
+    for (final track in info.audio) {
+      if (!track.isKept) {
+        _log('audio track ${track.index} (${track.codec}): the program cannot read it, not kept');
+      }
+    }
 
     // A job already in the folder for this source and these settings goes on; anything else starts again
     final settings = <String, Object?>{
@@ -583,7 +602,7 @@ class VideoConversion {
       'grid': grid.rate.ffmpeg,
       'slowMotion': grid.slowMotion,
     };
-    var job = await VideoJobFile.read(folder);
+    var job = resume ? await VideoJobFile.read(folder) : null;
     VdaLoopState? state;
     if (job != null &&
         (job.identity != identity ||
@@ -593,21 +612,32 @@ class VideoConversion {
       job = null;
     }
     if (job != null && job.segments.isNotEmpty) {
-      final last = job.segments.last;
-      final stateFile = File(p.join(folder.path, VideoSegment.stateNameOf(last.index)));
-      state = stateFile.existsSync() ? decodeVdaLoopState(await stateFile.readAsBytes()) : null;
       // Every segment as it was written
+      var intact = true;
       for (final segment in job.segments) {
         final file = File(p.join(folder.path, segment.name));
         if (!file.existsSync() || await sha256OfFile(file) != segment.sha256) {
+          intact = false;
+        }
+      }
+      if (job.encoded != null) {
+        if (!intact) {
+          _log('a segment of the work folder changed: started again');
+          job = null;
+        }
+      } else {
+        final last = job.segments.last;
+        final stateFile = File(p.join(folder.path, VideoSegment.stateNameOf(last.index)));
+        state = intact && stateFile.existsSync() ? decodeVdaLoopState(await stateFile.readAsBytes()) : null;
+        if (state == null || state.firstHeld != last.endFrame) {
+          _log('the state of the work folder cannot be read: started again');
+          job = null;
           state = null;
         }
       }
-      if (state == null || state.firstHeld != last.endFrame) {
-        _log('the state of the work folder cannot be read: started again');
-        job = null;
-        state = null;
-      }
+    } else if (job != null && job.encoded != null) {
+      _log('the work folder holds no segment: started again');
+      job = null;
     }
 
     final encoder = job != null && job.settings['encoder'] is String
@@ -640,6 +670,13 @@ class VideoConversion {
     }
     final jobFile = job;
     _log('eye ${eye.width}x${eye.height}, model ${model.width}x${model.height}, grid ${grid.rate}, ${encoder.name}');
+    final started = _now();
+
+    // Stopped during the final mux: every frame is in a segment already
+    if (jobFile.encoded case final encoded?) {
+      _log('every frame is in a segment already: the final mux');
+      return _mux(jobFile, encoded, json, info, check.audio, grid, encoder, started);
+    }
 
     final worker = await workerFactory(
       eyeWidth: eye.width,
@@ -657,7 +694,8 @@ class VideoConversion {
         }
       }
       if (times.length < state.nextIndex) {
-        throw const VideoJobException('pts.txt holds fewer frames than the state');
+        await worker.close();
+        throw const _ResumeRefused('pts.txt holds fewer frames than the state');
       }
       times.removeRange(state.nextIndex, times.length);
     } else if (ptsFile.existsSync()) {
@@ -674,7 +712,6 @@ class VideoConversion {
     var holesSum = 0.0;
     var holesCount = 0;
     final segmentFrames = math.max(vdaStep, (request.segmentSeconds * grid.rate.value).round());
-    final started = _now();
     final windowTimes = <DateTime>[];
     _SegmentWriter? writer;
     final pendingFrames = <VideoSbsFrame>[];
@@ -706,7 +743,9 @@ class VideoConversion {
     final firstDecoded = state?.firstHeld ?? 0;
     double? seek;
     if (state != null) {
-      seek = times[firstDecoded] - 0.5 / grid.rate.value;
+      // -ss counts from the start time of the file (its format start_time: 1.4 s in most MPEG-TS), while -copyts
+      // keeps the times of pts.txt absolute: without it, a TS or M2TS source would resume 1.4 s too late
+      seek = math.max(0.0, times[firstDecoded] - _formatStart(json, info) - 0.5 / grid.rate.value);
     }
     final decoder = await runner.start(
       request.ffmpeg,
@@ -773,31 +812,42 @@ class VideoConversion {
       }
     }
 
-    Future<void> closeSegment(VdaLoopState loopState) async {
-      final current = writer!;
-      writer = null;
+    Future<VideoSegment> addSegment(_SegmentWriter current) async {
       await current.close();
       _running.remove(current.program);
       final file = File(current.path);
-      jobFile.segments.add(
-        VideoSegment(
-          index: current.index,
-          name: p.basename(current.path),
-          firstFrame: current.firstFrame,
-          endFrame: done,
-          slots: current.slots,
-          bytes: file.lengthSync(),
-          sha256: await sha256OfFile(file),
-        ),
+      final segment = VideoSegment(
+        index: current.index,
+        name: p.basename(current.path),
+        firstFrame: current.firstFrame,
+        endFrame: done,
+        slots: current.slots,
+        bytes: file.lengthSync(),
+        sha256: await sha256OfFile(file),
       );
+      jobFile.segments.add(segment);
+      return segment;
+    }
+
+    Future<void> closeSegment(VdaLoopState loopState) async {
+      final current = writer!;
+      writer = null;
+      final previous = jobFile.segments.isEmpty ? null : jobFile.segments.last;
+      await addSegment(current);
       await File(
         p.join(folder.path, VideoSegment.stateNameOf(current.index)),
       ).writeAsBytes(encodeVdaLoopState(loopState), flush: true);
       await ptsSink.flush();
       await jobFile.write(folder);
+      // Only the state of the last segment is read again (55 MB at 392): the one before goes once job.json names
+      // the new one
+      if (previous != null) {
+        await _deleteQuietly(File(p.join(folder.path, VideoSegment.stateNameOf(previous.index))));
+      }
       _log('segment ${current.index}: frames ${current.firstFrame} to ${done - 1}, ${current.slots} slots');
     }
 
+    final VideoJobEncoded encoded;
     try {
       if (state != null) {
         // The 8 held frames again, checked against the times written before
@@ -805,11 +855,11 @@ class VideoConversion {
         for (var i = 0; i < vdaBlended; i++) {
           final frame = await reader.next();
           if (frame == null) {
-            throw const VideoJobException('The source ended before the held frames of the state');
+            throw const _ResumeRefused('the source ended before the held frames of the state');
           }
           final time = await timeOfDecoded(decodedHere++);
           if ((time - times[firstDecoded + i]).abs() > 1e-6) {
-            throw VideoJobException('Frame ${firstDecoded + i} is at $time s, it was at ${times[firstDecoded + i]} s');
+            throw _ResumeRefused('frame ${firstDecoded + i} is at $time s, it was at ${times[firstDecoded + i]} s');
           }
           held.add(frame);
         }
@@ -855,70 +905,22 @@ class VideoConversion {
       if (writer != null) {
         final current = writer!;
         writer = null;
-        await current.close();
-        _running.remove(current.program);
-        final file = File(current.path);
-        jobFile.segments.add(
-          VideoSegment(
-            index: current.index,
-            name: p.basename(current.path),
-            firstFrame: current.firstFrame,
-            endFrame: done,
-            slots: current.slots,
-            bytes: file.lengthSync(),
-            sha256: await sha256OfFile(file),
-          ),
-        );
+        await addSegment(current);
       }
       await ptsSink.flush();
       await ptsSink.close();
-      await jobFile.write(folder);
-      report();
-
-      // The disk: the output takes about what the segments take, checked again before the mux
-      final segmentBytes = jobFile.segments.fold<int>(0, (sum, segment) => sum + segment.bytes);
-      final concat = File(p.join(folder.path, 'segments.txt'));
-      await concat.writeAsString(videoConcatList([for (final segment in jobFile.segments) segment.name]));
-      final part = '${request.outputPath}.part';
-      final offset = math.max(0.0, times.isEmpty ? 0.0 : times.first - _formatStart(json, info));
-      final mux = await runner.start(
-        request.ffmpeg,
-        videoMuxArguments(
-          concatPath: concat.path,
-          sourcePath: request.sourcePath,
-          audio: info.audio,
-          keys: {...request.keys, 'com.immuch360.encoder': encoder.codec},
-          outputPath: part,
-          videoOffset: offset,
-        ),
-      );
-      _running.add(mux);
-      unawaited(mux.stdin.close());
-      unawaited(mux.stdout.drain<void>());
-      final muxCode = await mux.exitCode;
-      _running.remove(mux);
-      if (muxCode != 0) {
-        throw VideoJobException('The mux stopped with $muxCode: ${await mux.errors}');
-      }
-      await File(part).rename(request.outputPath);
-      jobFile.finished = true;
-      await jobFile.write(folder);
       final counts = await worker.counts();
-      final slots = jobFile.segments.fold<int>(0, (sum, segment) => sum + segment.slots);
-      _log(
-        'done: $done frames, $slots slots, ${jobFile.segments.length} segments ($segmentBytes bytes), '
-        '${_now().difference(started).inSeconds} s',
-      );
-      return VideoJobResult(
-        outputPath: request.outputPath,
+      encoded = VideoJobEncoded(
         frames: done,
-        slots: slots,
-        encoder: encoder,
+        firstTime: times.isEmpty ? _formatStart(json, info) : times.first,
         windows: counts.windows,
         cuts: counts.cuts,
         holesMean: holesCount == 0 ? 0 : holesSum / holesCount,
-        segments: jobFile.segments.length,
       );
+      // From here a stop or a failure of the mux goes back to the mux, not to the frames
+      jobFile.encoded = encoded;
+      await jobFile.write(folder);
+      report();
     } finally {
       for (final program in _running) {
         program.kill();
@@ -934,13 +936,103 @@ class VideoConversion {
       // A segment begun and not closed is not part of the job: a resume writes it again
       final current = writer;
       if (current != null) {
-        try {
-          await File(current.path).delete();
-        } on FileSystemException {
-          // Gone already
-        }
+        await _deleteQuietly(File(current.path));
       }
     }
+    // The states, the times and the stats of the decoder are not needed any more
+    for (final entity in folder.listSync()) {
+      final name = p.basename(entity.path);
+      if (entity is File && (name.startsWith('state-') || name.startsWith('stats-') || name == 'pts.txt')) {
+        await _deleteQuietly(entity);
+      }
+    }
+    return _mux(jobFile, encoded, json, info, check.audio, grid, encoder, started);
+  }
+
+  /// The final mux of a job whose frames are all in segments, then the work folder removed
+  Future<VideoJobResult> _mux(
+    VideoJobFile jobFile,
+    VideoJobEncoded encoded,
+    Map<String, Object?> json,
+    VideoSource info,
+    List<VideoAudioTrack> audio,
+    VideoGrid grid,
+    VideoEncoder encoder,
+    DateTime started,
+  ) async {
+    _checkStop();
+    final folder = request.workFolder;
+    final segmentBytes = jobFile.segments.fold<int>(0, (sum, segment) => sum + segment.bytes);
+    final concat = File(p.join(folder.path, 'segments.txt'));
+    await concat.writeAsString(
+      videoConcatList([for (final segment in jobFile.segments) (name: segment.name, slots: segment.slots)], grid.rate),
+    );
+    final part = '${request.outputPath}.part';
+    final offset = math.max(0.0, encoded.firstTime - _formatStart(json, info));
+    final mux = await runner.start(
+      request.ffmpeg,
+      videoMuxArguments(
+        concatPath: concat.path,
+        sourcePath: request.sourcePath,
+        audio: audio,
+        keys: {...request.keys, 'com.immuch360.encoder': encoder.codec},
+        outputPath: part,
+        videoOffset: offset,
+      ),
+    );
+    _running.add(mux);
+    try {
+      unawaited(mux.stdin.close());
+      unawaited(mux.stdout.drain<void>());
+      final muxCode = await mux.exitCode;
+      if (muxCode != 0) {
+        throw VideoJobException('The mux stopped with $muxCode: ${await mux.errors}');
+      }
+    } finally {
+      _running.remove(mux);
+      mux.kill();
+    }
+    await File(part).rename(request.outputPath);
+    jobFile.finished = true;
+    await jobFile.write(folder);
+    final slots = jobFile.segments.fold<int>(0, (sum, segment) => sum + segment.slots);
+    _log(
+      'done: ${encoded.frames} frames, $slots slots, ${jobFile.segments.length} segments ($segmentBytes bytes), '
+      '${_now().difference(started).inSeconds} s',
+    );
+    // The segments take about what the output takes: they go with the folder
+    if (p.basename(folder.path).startsWith(videoWorkPrefix)) {
+      try {
+        await folder.delete(recursive: true);
+      } on FileSystemException catch (error) {
+        _log('the work folder stays: ${error.message}');
+      }
+    }
+    return VideoJobResult(
+      outputPath: request.outputPath,
+      frames: encoded.frames,
+      slots: slots,
+      encoder: encoder,
+      windows: encoded.windows,
+      cuts: encoded.cuts,
+      holesMean: encoded.holesMean,
+      segments: jobFile.segments.length,
+    );
+  }
+}
+
+/// The work folder does not match the source as the decoder reads it now: the job starts again
+class _ResumeRefused implements Exception {
+  const _ResumeRefused(this.reason);
+
+  final String reason;
+}
+
+Future<void> _deleteQuietly(File file) async {
+  try {
+    await file.delete();
+  } on FileSystemException {
+    // Gone already
   }
 }
 

@@ -99,12 +99,19 @@ class _FakeProgram implements VideoProgram {
 /// The FFmpeg program played in Dart: ffprobe answers [probe], the decoder serves [frames] frames at [times], the
 /// encoders keep a digest of what they were given, the mux joins the segments
 class _FakeRunner implements VideoProgramRunner {
-  _FakeRunner({required this.probe, required this.times});
+  _FakeRunner({required this.probe, required this.times, this.failMux = false});
 
   final Map<String, Object?> probe;
   final List<double> times;
+
+  /// The mux fails, as a full disk or a killed app would make it
+  final bool failMux;
   final passing = const {'libsvtav1'};
   final calls = <List<String>>[];
+  String? concatList;
+
+  /// -ss counts from the start time of the file, as FFmpeg adds it to an input seek and to its accurate trim
+  double get _formatStart => double.parse('${(probe['format']! as Map)['start_time']}');
 
   @override
   Future<VideoProgram> start(String executable, List<String> arguments) async {
@@ -118,9 +125,14 @@ class _FakeRunner implements VideoProgramRunner {
     } else if (arguments.contains('-stats_enc_pre')) {
       unawaited(_decode(program, arguments));
     } else if (arguments.contains('concat')) {
+      if (failMux) {
+        program.end(1);
+        return program;
+      }
+      concatList = File(arguments[arguments.indexOf('concat') + 4]).readAsStringSync();
       final list = File(arguments[arguments.indexOf('concat') + 4]).readAsLinesSync();
       final out = BytesBuilder();
-      for (final line in list.skip(1)) {
+      for (final line in list.where((line) => line.startsWith('file '))) {
         out.add(
           File(p.join(p.dirname(arguments[arguments.indexOf('concat') + 4]), line.split("'")[1])).readAsBytesSync(),
         );
@@ -146,7 +158,7 @@ class _FakeRunner implements VideoProgramRunner {
     final seek = seekAt < 0 ? null : double.parse(arguments[seekAt + 1]);
     var n = 0;
     for (var i = 0; i < times.length; i++) {
-      if (seek != null && times[i] < seek) {
+      if (seek != null && times[i] < seek + _formatStart) {
         continue;
       }
       // Killed by a pause: a real decoder ends there too
@@ -168,7 +180,13 @@ class _FakeRunner implements VideoProgramRunner {
   }
 }
 
-Map<String, Object?> _probe(int frames, double duration, {String rate = '25/1'}) => {
+Map<String, Object?> _probe(
+  int frames,
+  double duration, {
+  String rate = '25/1',
+  double start = 0,
+  String audio = 'vorbis',
+}) => {
   'streams': [
     {
       'index': 0,
@@ -181,12 +199,12 @@ Map<String, Object?> _probe(int frames, double duration, {String rate = '25/1'})
       'avg_frame_rate': rate,
       'nb_frames': '$frames',
       'duration': '$duration',
-      'start_time': '0.000000',
+      'start_time': start.toStringAsFixed(6),
       'disposition': {'attached_pic': 0},
     },
-    {'index': 1, 'codec_type': 'audio', 'codec_name': 'vorbis', 'channels': 2},
+    {'index': 1, 'codec_type': 'audio', 'codec_name': audio, 'channels': 2},
   ],
-  'format': {'duration': '$duration', 'start_time': '0.000000'},
+  'format': {'duration': '$duration', 'start_time': start.toStringAsFixed(6)},
 };
 
 void main() {
@@ -242,9 +260,15 @@ void main() {
     final mux = runner.calls.firstWhere((call) => call.contains('concat'));
     expect(mux, containsAllInOrder(['-map', '1:1', '-map_metadata', '1', '-c:a:0', 'aac']));
     expect(mux, containsAllInOrder(['-strict', 'unofficial', '-movflags', '+faststart+use_metadata_tags']));
-    final job = (await VideoJobFile.read(Directory(p.join(temp.path, '${videoWorkPrefix}clip_3D_LRF_Full_SBS.mp4'))))!;
-    expect(job.finished, isTrue);
-    expect(job.segments.map((s) => (s.firstFrame, s.endFrame)), [(0, 46), (46, 60)]);
+    expect(logs.where((line) => line.startsWith('segment ')), [startsWith('segment 1: frames 0 to 45')]);
+    // Each segment with its exact length in the concat list: 46 and 14 slots at 25 fps
+    expect(
+      runner.concatList,
+      "ffconcat version 1.0\nfile 'seg-0001.seg'\nduration 1.840000000\nfile 'seg-0002.seg'\n"
+      'duration 0.560000000',
+    );
+    // The work folder goes once the MP4 is in place: segments, states, times
+    expect(Directory(p.join(temp.path, '${videoWorkPrefix}clip_3D_LRF_Full_SBS.mp4')).existsSync(), isFalse);
     expect(File(p.join(temp.path, 'clip_3D_LRF_Full_SBS.mp4')).existsSync(), isTrue);
     expect(File(p.join(temp.path, 'clip_3D_LRF_Full_SBS.mp4.part')).existsSync(), isFalse);
   });
@@ -322,6 +346,120 @@ void main() {
       onLog: logs.add,
     ).run();
     expect(logs, contains('the work folder holds another job: started again'));
+  });
+
+  /// Runs a job to the log line [line], pauses it there, and gives its work folder
+  Future<Directory> pausedAt(String name, String line, _FakeRunner runner) async {
+    late VideoConversion first;
+    first = conversion(
+      runner,
+      name,
+      onLog: (logged) {
+        if (logged.startsWith(line)) {
+          first.pause();
+        }
+      },
+    );
+    await expectLater(first.run(), throwsA(isA<VideoJobStopped>()));
+    return Directory(p.join(temp.path, '$videoWorkPrefix$name'));
+  }
+
+  List<String> statesIn(Directory folder) => [
+    for (final entity in folder.listSync())
+      if (p.basename(entity.path).startsWith('state-')) p.basename(entity.path),
+  ];
+
+  test('a source whose times start at 1.44 s (MPEG-TS) resumes at the right frame', () async {
+    // -copyts keeps the times absolute, -ss counts from the file's start time: the seek takes it off
+    final times = [for (var i = 0; i < 100; i++) 1.44 + i / 25];
+    final whole = await conversion(_FakeRunner(probe: _probe(100, 4, start: 1.44), times: times), 'ts-whole.mp4').run();
+    expect(whole.frames, 100);
+
+    final folder = await pausedAt('ts.mp4', 'segment 1', _FakeRunner(probe: _probe(100, 4, start: 1.44), times: times));
+    expect((await VideoJobFile.read(folder))!.segments.length, 1);
+    final runner = _FakeRunner(probe: _probe(100, 4, start: 1.44), times: times);
+    final logs = <String>[];
+    final resumed = await conversion(runner, 'ts.mp4', onLog: logs.add).run();
+    expect(logs.where((line) => line.contains('started again')), isEmpty);
+    final decoder = runner.calls.firstWhere((call) => call.contains('-stats_enc_pre'));
+    expect(double.parse(decoder[decoder.indexOf('-ss') + 1]), closeTo(times[46] - 1.44 - 0.5 / 25, 1e-6));
+    expect(resumed.frames, 100);
+    expect(
+      File(p.join(temp.path, 'ts.mp4')).readAsStringSync(),
+      File(p.join(temp.path, 'ts-whole.mp4')).readAsStringSync(),
+    );
+  });
+
+  test('frames that are not where the work folder says start the job again instead of failing each Resume', () async {
+    final times = [for (var i = 0; i < 100; i++) i / 25];
+    final whole = await conversion(_FakeRunner(probe: _probe(100, 4), times: times), 'drift-whole.mp4').run();
+    final folder = await pausedAt('drift.mp4', 'segment 1', _FakeRunner(probe: _probe(100, 4), times: times));
+    // The times written then are not those the decoder gives now
+    final pts = File(p.join(folder.path, 'pts.txt'));
+    pts.writeAsStringSync([for (final line in pts.readAsLinesSync()) '${double.parse(line) + 0.01}'].join('\n'));
+    final logs = <String>[];
+    final again = await conversion(
+      _FakeRunner(probe: _probe(100, 4), times: times),
+      'drift.mp4',
+      onLog: logs.add,
+    ).run();
+    expect(logs, contains(allOf(startsWith('frame 46 is at 1.84'), endsWith(': started again'))));
+    expect(again.frames, whole.frames);
+    expect(
+      File(p.join(temp.path, 'drift.mp4')).readAsStringSync(),
+      File(p.join(temp.path, 'drift-whole.mp4')).readAsStringSync(),
+    );
+  });
+
+  test('only the state of the last segment stays in the work folder', () async {
+    final times = [for (var i = 0; i < 100; i++) i / 25];
+    final folder = await pausedAt('states.mp4', 'segment 2', _FakeRunner(probe: _probe(100, 4), times: times));
+    expect((await VideoJobFile.read(folder))!.segments.length, 2);
+    expect(statesIn(folder), [VideoSegment.stateNameOf(2)]);
+  });
+
+  test('a mux that fails goes back to the mux, not to the frames', () async {
+    final times = [for (var i = 0; i < 100; i++) i / 25];
+    final whole = await conversion(_FakeRunner(probe: _probe(100, 4), times: times), 'mux-whole.mp4').run();
+    await expectLater(
+      conversion(_FakeRunner(probe: _probe(100, 4), times: times, failMux: true), 'mux.mp4').run(),
+      throwsA(isA<VideoJobException>().having((e) => e.message, 'message', startsWith('The mux stopped with 1'))),
+    );
+    final folder = Directory(p.join(temp.path, '${videoWorkPrefix}mux.mp4'));
+    final job = (await VideoJobFile.read(folder))!;
+    expect((job.encoded!.frames, job.encoded!.windows, job.finished), (100, whole.windows, false));
+    expect(job.segments.length, whole.segments);
+    // The states, the times and the stats went with the last segment
+    expect(statesIn(folder), isEmpty);
+    expect(File(p.join(folder.path, 'pts.txt')).existsSync(), isFalse);
+
+    final runner = _FakeRunner(probe: _probe(100, 4), times: times);
+    final logs = <String>[];
+    final result = await conversion(runner, 'mux.mp4', onLog: logs.add).run();
+    expect(logs, contains('every frame is in a segment already: the final mux'));
+    expect(runner.calls.where((call) => call.contains('-stats_enc_pre')), isEmpty);
+    expect(
+      (result.frames, result.windows, result.segments, result.holesMean),
+      (100, whole.windows, 3, whole.holesMean),
+    );
+    expect(
+      File(p.join(temp.path, 'mux.mp4')).readAsStringSync(),
+      File(p.join(temp.path, 'mux-whole.mp4')).readAsStringSync(),
+    );
+    expect(folder.existsSync(), isFalse);
+  });
+
+  test('a WMA track the program cannot decode is not mapped into the mux', () async {
+    final runner = _FakeRunner(
+      probe: _probe(60, 2.4, audio: 'wmav2'),
+      times: [for (var i = 0; i < 60; i++) i / 25],
+    );
+    final logs = <String>[];
+    await conversion(runner, 'wma.mp4', onLog: logs.add).run();
+    final mux = runner.calls.firstWhere((call) => call.contains('concat'));
+    expect(mux, isNot(contains('1:1')));
+    expect(mux, isNot(contains('-c:a:0')));
+    expect(logs, contains('audio track 1 (wmav2): the program cannot read it, not kept'));
   });
 
   test('the state of the loop survives its bytes', () {

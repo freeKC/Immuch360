@@ -107,7 +107,65 @@ class VideoAudioTrack {
   /// The codecs an MP4 takes as they are (plan 2.5)
   static const copied = {'aac', 'mp3', 'opus', 'alac', 'ac3', 'eac3', 'flac'};
 
+  /// The audio codecs the FFmpeg program can decode, so make AAC: the audio decoders of its sources.lock
+  /// (immuch360/libmpv-builds, ffmpeg-lgpl-*), by the codec names ffprobe gives (its dca decoder reads "dts"). No WMA,
+  /// AMR or ADPCM decoder is built in
+  static const decodable = {
+    'aac',
+    'aac_latm',
+    'ac3',
+    'eac3',
+    'mp2',
+    'mp3',
+    'opus',
+    'vorbis',
+    'flac',
+    'alac',
+    'truehd',
+    'mlp',
+    'dts',
+    'pcm_alaw',
+    'pcm_bluray',
+    'pcm_dvd',
+    'pcm_f16le',
+    'pcm_f24le',
+    'pcm_f32be',
+    'pcm_f32le',
+    'pcm_f64be',
+    'pcm_f64le',
+    'pcm_lxf',
+    'pcm_mulaw',
+    'pcm_s8',
+    'pcm_s8_planar',
+    'pcm_s16be',
+    'pcm_s16be_planar',
+    'pcm_s16le',
+    'pcm_s16le_planar',
+    'pcm_s24be',
+    'pcm_s24daud',
+    'pcm_s24le',
+    'pcm_s24le_planar',
+    'pcm_s32be',
+    'pcm_s32le',
+    'pcm_s32le_planar',
+    'pcm_s64be',
+    'pcm_s64le',
+    'pcm_sga',
+    'pcm_u8',
+    'pcm_u16be',
+    'pcm_u16le',
+    'pcm_u24be',
+    'pcm_u24le',
+    'pcm_u32be',
+    'pcm_u32le',
+    'pcm_vidc',
+  };
+
   bool get isCopied => copied.contains(codec);
+
+  /// Whether the final mux can keep it: copied as it is, or decoded and made AAC. Any other track would only fail at
+  /// the very end of the job ("decoder not found"), so it is left out from the start
+  bool get isKept => isCopied || decodable.contains(codec);
 
   /// The bit rate of the AAC it becomes when it cannot be copied: 192 kbit/s for stereo, 384 for 5.1 and more
   int get aacBitRate => (channels ?? 2) > 2 ? 384000 : 192000;
@@ -414,6 +472,9 @@ enum VideoPlanNote {
   /// Several audio tracks: all kept
   allAudioKept,
 
+  /// Audio tracks the FFmpeg program cannot read (WMA, AMR, ADPCM...): left out, the video silent when none is left
+  audioNotKept,
+
   /// Subtitles not kept
   subtitlesNotKept,
 
@@ -539,9 +600,12 @@ bool isStereoFrameShape(int width, int height) {
 
 /// The verdict on a video before its job
 class VideoSourceCheck {
-  const VideoSourceCheck._({this.source, this.skip, this.notes = const {}, this.grid});
+  const VideoSourceCheck._({this.source, this.skip, this.notes = const {}, this.grid, this.audio = const []});
 
   final VideoSource? source;
+
+  /// The audio tracks the output keeps (VideoAudioTrack.isKept), in the order of the source
+  final List<VideoAudioTrack> audio;
 
   /// Why it is refused, null when it can be made 3D
   final VideoRefusal? skip;
@@ -593,16 +657,21 @@ VideoSourceCheck checkVideoSource(VideoSource? source, {required String fileName
     return VideoSourceCheck._(source: source, skip: VideoRefusal.unreadable);
   }
   final duration = source.duration;
+  final audio = [
+    for (final track in source.audio)
+      if (track.isKept) track,
+  ];
   final notes = {
     if (source.isHdr) VideoPlanNote.hdrToneMapped,
     if (dolby != null) VideoPlanNote.dolbyVisionBaseLayer,
     if (source.bitDepth > 8) VideoPlanNote.deepColour,
     if (isVariableRate(source) && !grid.slowMotion) VideoPlanNote.variableRate,
     if (grid.slowMotion) VideoPlanNote.slowMotion,
-    if (source.audio.length > 1) VideoPlanNote.allAudioKept,
+    if (audio.length > 1 && audio.length == source.audio.length) VideoPlanNote.allAudioKept,
+    if (audio.length < source.audio.length) VideoPlanNote.audioNotKept,
     if (source.subtitleCount > 0) VideoPlanNote.subtitlesNotKept,
     if (source.dataCount > 0 || source.attachedPictureCount > 0) VideoPlanNote.dataNotKept,
     if (duration != null && duration * 1000 > videoLongJob.inMilliseconds) VideoPlanNote.long,
   };
-  return VideoSourceCheck._(source: source, notes: notes, grid: grid);
+  return VideoSourceCheck._(source: source, notes: notes, grid: grid, audio: audio);
 }

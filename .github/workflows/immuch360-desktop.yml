@@ -532,6 +532,12 @@ jobs:
           mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
             | tee "$work/run.log"
           python3 ../.github/desktop/ai/video3d_ci_clip.py check "$work/run.log"
+          # Sound and picture over a long film: 12 segments joined by the concat list of the engine, each with its
+          # exact length, end on the grid (the Matroska durations alone lose about 0.6 ms a segment)
+          python3 ../.github/desktop/ai/video3d_ci_clip.py drift "$work/ffmpeg/bin/ffmpeg" "$work/drift"
+          # Every audio decoder the app counts on is in the program, and no other
+          python3 ../.github/desktop/ai/video3d_ci_clip.py decoders "$work/ffmpeg/bin/ffmpeg" \
+            lib/desktop/ai/video3d/video_source.dart
 
       # The glTF-Validator of Khronos on the 3D scenes of phase 2 (lot S1; design-final 2026-10-27, section 8.2): the
       # fixture of make_scene_fixture.py, the one the engine wrote with the fakes (tiny_scene3D_dart.jpg, which the

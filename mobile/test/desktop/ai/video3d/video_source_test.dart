@@ -239,6 +239,71 @@ void main() {
       expect(check.source!.attachedPictureCount, 1);
     });
 
+    test('audio the program cannot read is left out from the start, not at the final mux', () {
+      // A WMV with WMA, a 3GP phone clip with AMR, a camera AVI with ADPCM: the program reads the files, but has no
+      // decoder for these tracks
+      final odd = _phone(
+        (video) {},
+        more: [
+          {'index': 1, 'codec_type': 'audio', 'codec_name': 'wmav2', 'channels': 2},
+          {'index': 2, 'codec_type': 'audio', 'codec_name': 'amr_nb', 'channels': 1},
+          {'index': 3, 'codec_type': 'audio', 'codec_name': 'adpcm_ima_wav', 'channels': 1},
+          {'index': 4, 'codec_type': 'audio', 'codec_name': 'dts', 'channels': 6},
+          {'index': 5, 'codec_type': 'audio', 'codec_name': 'pcm_s24le', 'channels': 2},
+        ],
+      );
+      final check = _check(odd);
+      expect(check.accepted, isTrue);
+      expect(check.source!.audio, hasLength(5));
+      expect(check.audio.map((track) => (track.index, track.codec, track.isCopied)), [
+        (4, 'dts', false),
+        (5, 'pcm_s24le', false),
+      ]);
+      expect(check.notes, contains(VideoPlanNote.audioNotKept));
+      expect(check.notes, isNot(contains(VideoPlanNote.allAudioKept)));
+
+      // Only a WMA track: the 3D video is silent, and says so
+      final wma = _check(
+        _phone(
+          (video) {},
+          more: [
+            {'index': 1, 'codec_type': 'audio', 'codec_name': 'wmav2', 'channels': 2},
+          ],
+        ),
+      );
+      expect((wma.accepted, wma.audio.length, wma.notes.contains(VideoPlanNote.audioNotKept)), (true, 0, true));
+      // Every track kept: no line about it
+      final plain = _check(
+        _phone(
+          (video) {},
+          more: [
+            {'index': 1, 'codec_type': 'audio', 'codec_name': 'aac', 'channels': 2},
+          ],
+        ),
+      );
+      expect(plain.audio.single.codec, 'aac');
+      expect(plain.notes, isNot(contains(VideoPlanNote.audioNotKept)));
+    });
+
+    test('the audio decoders the app counts on are those of the program\'s lock', () {
+      // ffmpeg/sources.lock of immuch360/libmpv-builds (ffmpeg-lgpl-*): the audio decoders, by ffprobe's codec
+      // names (dca reads "dts")
+      expect(VideoAudioTrack.copied.difference(VideoAudioTrack.decodable), isEmpty);
+      for (final missing in [
+        'wmav1',
+        'wmav2',
+        'wmapro',
+        'amr_nb',
+        'amr_wb',
+        'adpcm_ms',
+        'adpcm_ima_wav',
+        'pcm_s16le_x',
+      ]) {
+        expect(VideoAudioTrack.decodable, isNot(contains(missing)), reason: missing);
+      }
+      expect(VideoAudioTrack.decodable, containsAll(['dts', 'truehd', 'mp2', 'vorbis', 'pcm_s16le', 'pcm_bluray']));
+    });
+
     test('a video over 20 minutes gets the line of a night or more', () {
       final long = _phone((video) {
         video['duration'] = '1500.0';

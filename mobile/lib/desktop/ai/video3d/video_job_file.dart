@@ -3,7 +3,10 @@
 // their sums), pts.txt (the time of each decoded frame, one line each, appended), seg-NNNN.seg (the Matroska segments)
 // and state-NNNN.bin (what the window loop holds at the end of segment NNNN: the 8 held maps, ref, the key inputs, the
 // smoothed percentiles, the scene's start and the cut detector). A paused, crashed or closed job resumes from its last
-// segment; a source changed since (size, time, the sums of its first and last 4 MiB) cannot.
+// segment; a source changed since (size, time, the sums of its first and last 4 MiB) cannot. Once every frame is in a
+// segment, job.json says so ([VideoJobEncoded]) and the states go: a job stopped during the final mux goes straight
+// back to the mux. Only the state of the last segment is kept while the job runs, and the folder goes once the MP4 is
+// in place.
 //
 // Pure Dart and dart:io, no Flutter.
 
@@ -130,7 +133,44 @@ class VideoSegment {
   static String stateNameOf(int index) => 'state-${index.toString().padLeft(4, '0')}.bin';
 }
 
-/// job.json: the source, the settings (free JSON values the engine writes and reads back), the segments done
+/// Every frame of the job is in a segment: what the final mux and the result need, written before the mux starts
+class VideoJobEncoded {
+  const VideoJobEncoded({
+    required this.frames,
+    required this.firstTime,
+    required this.windows,
+    required this.cuts,
+    required this.holesMean,
+  });
+
+  /// Frames decoded and given a depth
+  final int frames;
+
+  /// The time of the first frame in the source, seconds (the offset of the video at the mux)
+  final double firstTime;
+  final int windows;
+  final List<int> cuts;
+  final double holesMean;
+
+  Map<String, Object> toJson() => {
+    'frames': frames,
+    'firstTime': firstTime,
+    'windows': windows,
+    'cuts': cuts,
+    'holesMean': holesMean,
+  };
+
+  static VideoJobEncoded fromJson(Map<String, Object?> json) => VideoJobEncoded(
+    frames: json['frames']! as int,
+    firstTime: (json['firstTime']! as num).toDouble(),
+    windows: json['windows']! as int,
+    cuts: (json['cuts']! as List).cast<int>(),
+    holesMean: (json['holesMean']! as num).toDouble(),
+  );
+}
+
+/// job.json: the source, the settings (free JSON values the engine writes and reads back), the segments done, and once
+/// every frame is encoded, [encoded]
 class VideoJobFile {
   VideoJobFile({
     required this.id,
@@ -139,6 +179,7 @@ class VideoJobFile {
     required this.outputPath,
     required this.settings,
     List<VideoSegment>? segments,
+    this.encoded,
     this.finished = false,
   }) : segments = segments ?? [];
 
@@ -148,6 +189,9 @@ class VideoJobFile {
   final String outputPath;
   final Map<String, Object?> settings;
   final List<VideoSegment> segments;
+
+  /// Set when the last segment is written: the job only needs its final mux
+  VideoJobEncoded? encoded;
   bool finished;
 
   Map<String, Object?> toJson() => {
@@ -158,6 +202,7 @@ class VideoJobFile {
     'output': outputPath,
     'settings': settings,
     'segments': [for (final segment in segments) segment.toJson()],
+    if (encoded != null) 'encoded': encoded!.toJson(),
     'finished': finished,
   };
 
@@ -177,6 +222,9 @@ class VideoJobFile {
           for (final segment in json['segments']! as List)
             VideoSegment.fromJson((segment as Map).cast<String, Object?>()),
         ],
+        encoded: json['encoded'] is Map
+            ? VideoJobEncoded.fromJson((json['encoded']! as Map).cast<String, Object?>())
+            : null,
         finished: json['finished'] == true,
       );
     } on Object {
@@ -306,3 +354,8 @@ VdaLoopState? decodeVdaLoopState(Uint8List bytes) {
 
 /// The SHA-256 of [file], read in pieces
 Future<String> sha256OfFile(File file) async => (await crypto.sha256.bind(file.openRead()).first).toString();
+
+/// About the bytes of one state file for a model input of [modelWidth] x [modelHeight]: the 8 held maps and the 2 of
+/// ref in float64, the 10 key inputs of 3 planes in float32 (55 MB at 700 x 392); the header and the histogram aside
+int videoStateBytes(int modelWidth, int modelHeight) =>
+    (vdaBlended + 2) * 8 * modelWidth * modelHeight + vdaKeyFrames.length * 3 * 4 * modelWidth * modelHeight;
