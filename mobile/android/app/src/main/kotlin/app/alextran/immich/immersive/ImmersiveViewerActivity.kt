@@ -685,6 +685,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var slideshowRequestId: Long? = null
   private var slideshowGripHeld = false
 
+  /** The next photo reached by browsing replaces the one shown without hiding it first (see PhotoSwap). */
+  private var swapInPlace = false
+
   /** A relief reached in 2D while browsing, made only if the user presses 3D (see BrowseView). */
   private var deferredRelief: DeferredRelief? = null
   /** The file of the relief photo shown, for a new right eye at another strength (see cycleReliefStrength). */
@@ -3044,6 +3047,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     // navigate only asks with a media on screen, which a pending request keeps
     val current = request ?: return false
+    // Whether the photo shown has its picture on screen, for a swap without a black gap (see PhotoSwap)
+    val shownIsScreenPhoto = isSlideshowPhoto(current) && stereoEyeSize != null
     Log.i(TAG, "show adjacent ${if (isVideo) "video" else "photo"} for request $requestId")
     appliedRequestId = requestId
     // Still the same opening: Flutter follows it, and the events of the new media keep its id
@@ -3073,6 +3078,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         browseView = if (slideshow?.let { it.playing && it.twoD } == true) StereoView.TWO_D
         else keptBrowseView(current),
         slideshowSeconds = current.slideshowSeconds,
+      )
+    swapInPlace =
+      PhotoSwap.keepsShown(
+        reachedByBrowsing = true,
+        shownIsScreenPhoto = shownIsScreenPhoto,
+        nextIsScreenPhoto = request?.let(::isSlideshowPhoto) == true,
+        shownIn25d = reliefMeshShown,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -3715,7 +3727,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     resetSkyboxToIdle()
     skyboxEntity?.setComponent(Visible(false))
     halfSphereEntity?.setComponent(Visible(false))
-    hideStereoQuad()
+    // The next photo of a flat screen replaces the one shown once its first picture is ready: no black gap (issue 19)
+    val swap = swapInPlace
+    swapInPlace = false
+    if (swap) {
+      Log.i(TAG, "stereo photo: the one shown stays until the first picture of the next one")
+      dropForSwap()
+    } else {
+      hideStereoQuad()
+    }
     val kind = media.stereoKind
     val spec = media.stereoPair
     // A new photo starts in 3D at the width its field of view gives; the photo of a recreation as the user left it
@@ -3795,6 +3815,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             showStatus(getString(R.string.immersive_preview_only, reason))
             scheduleInfoHide()
           } else {
+            // The photo before must not stay up as if it were this one
+            if (swap && stereoEyeSize == null) hideStereoQuad()
             showError(getString(R.string.immersive_error_photo, reason))
           }
         }
@@ -5445,6 +5467,22 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * Any other media: the quad goes away (its texture stays until the next spatial photo replaces it), and the mesh of
    * a relief and the photo layer with it.
    */
+  /**
+   * The next photo of a flat screen is on its way: the photo shown stays on the layer or the mesh until its texture is
+   * replaced (see [applyStereoTexture]), but the 2.5D mesh, a picture waiting for the quad and the eyes go at once,
+   * so that nothing places, sizes or grabs the photo shown as if it were the next one.
+   */
+  private fun dropForSwap() {
+    reliefMeshEntity?.setComponent(Visible(false))
+    reliefMesh = null
+    reliefMeshWritten = false
+    stereo25d = false
+    pendingStereo?.bitmap?.recycle()
+    pendingStereo = null
+    stereoPlacedWithHead = false
+    stereoEyeSize = null
+  }
+
   private fun hideStereoQuad() {
     stereoQuadEntity?.setComponent(Visible(false))
     dropPhotoLayer()

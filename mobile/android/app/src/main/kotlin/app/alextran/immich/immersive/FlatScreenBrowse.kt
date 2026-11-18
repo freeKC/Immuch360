@@ -150,3 +150,19 @@ internal class SlideshowClock(val photoMs: Long = DEFAULT_PHOTO_MS) {
     fun photoMsOf(seconds: Long): Long = if (seconds > 0) seconds * 1000L else DEFAULT_PHOTO_MS
   }
 }
+
+/**
+ * Whether the photo shown stays until the first picture of the next one is ready (issue 19, point 2: no black gap
+ * between two photos of a flat screen): only for a photo of a flat screen reached by previous, next or the slideshow
+ * from another one shown ([shownIsScreenPhoto], its picture there), never from a relief in 2.5D, whose mesh goes at
+ * once; any other media hides the photo first, as before. The texture of the photo shown is replaced in one go, so at
+ * most two photos are in memory during the swap. Pure, unit tested.
+ */
+internal object PhotoSwap {
+  fun keepsShown(
+    reachedByBrowsing: Boolean,
+    shownIsScreenPhoto: Boolean,
+    nextIsScreenPhoto: Boolean,
+    shownIn25d: Boolean,
+  ): Boolean = reachedByBrowsing && shownIsScreenPhoto && nextIsScreenPhoto && !shownIn25d
+}
