@@ -155,6 +155,9 @@ class _FakeRunner implements VideoProgramRunner {
       }
       stats.write('$n ${(times[i] * 1000).round()} 1/1000\n');
       await stats.flush();
+      if (program._out.isClosed) {
+        break;
+      }
       program._out.add(_frame(i));
       n++;
       // The pace of a pipe
