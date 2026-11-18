@@ -26,6 +26,7 @@ import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_discovery
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_routes.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
+import 'package:immich_mobile/providers/network/jellyfin_connector.provider.dart';
 
 void _report(String line) => stdout.writeln('jellyfin: $line');
 
@@ -206,6 +207,39 @@ void main() {
           FlatStereoFormat.halfSbs,
         );
         _report('$label: 360 found from the bytes, half side by side from the name');
+      }, skip: skip);
+
+      test('the page signs in both ways: the password, and Quick Connect approved by a signed in user', () async {
+        const connector = JellyfinConnector();
+        final target = (base: base, info: await connector.publicInfo(base, 'integration-page'));
+        final byPassword = await connector.signIn(target, 'integration-page', user, password);
+        expect(byPassword.userId, signedIn.userId);
+        if (info.product == JellyfinProduct.emby) {
+          expect(await connector.quickConnectEnabled(target, 'integration-page'), isFalse);
+          _report('$label: password sign in, no Quick Connect on Emby');
+          return;
+        }
+        expect(await connector.quickConnectEnabled(target, 'integration-page'), isTrue);
+        final request = await connector.quickConnectStart(target, 'integration-page');
+        expect(request.code, matches(RegExp(r'^\d{6}$')));
+        expect(await connector.quickConnectApproved(target, 'integration-page', request.secret), isFalse);
+        // What the Quick Connect page of the web client does for the signed in user
+        final approving = clientOf(info.product, info.version, token: byPassword.accessToken, suffix: 'phone');
+        await approving.post(
+          base.replace(
+            path: '${base.path}/QuickConnect/Authorize',
+            queryParameters: {'code': request.code, 'userId': byPassword.userId},
+          ),
+        );
+        expect(await connector.quickConnectApproved(target, 'integration-page', request.secret), isTrue);
+        final byCode = await connector.quickConnectSignIn(target, 'integration-page', request.secret);
+        expect(byCode.userId, signedIn.userId);
+        await connector.signOut(target, 'integration-page', byCode.accessToken);
+        await expectLater(
+          clientOf(info.product, info.version, token: byCode.accessToken, suffix: 'x').me(signedIn.userId),
+          throwsA(isA<JellyfinException>().having((e) => e.failure, 'failure', JellyfinFailure.tokenRefused)),
+        );
+        _report('$label: password and Quick Connect sign in, sign out ends the session');
       }, skip: skip);
 
       test('a token sent with another DeviceId still works', () async {

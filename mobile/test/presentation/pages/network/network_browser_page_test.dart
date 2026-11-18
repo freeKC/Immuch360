@@ -12,6 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
+import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
@@ -27,6 +28,7 @@ import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_client.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
@@ -843,6 +845,32 @@ void main() {
       await tester.tap(find.byKey(const Key('network_error_edit_source')));
       await tester.pumpAndSettle();
       expect(find.text('plex edit Test Plex token'), findsOneWidget);
+    });
+
+    testWidgets('a Jellyfin server that ended the session: its words, Sign in again, the diagnostics line', (
+      tester,
+    ) async {
+      const jellyfin = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.jellyfin,
+        name: 'Home media',
+        host: '192.0.2.20',
+        jellyfin: JellyfinServerInfo(serverId: '0d6eac044f7a4e448bba5921022e44a7', userId: 'u1', version: '12.4.0'),
+      );
+      await store.delete(StoreKey.networkSources);
+      await store.put(StoreKey.networkSourcesExtra, NetworkSource.encodeList(const [jellyfin]));
+      share.error = JellyfinException.of(JellyfinFailure.tokenRefused, status: 401);
+      await pumpBrowser(tester);
+
+      expect(find.text('The server ended this session. Sign in again.'), findsOneWidget);
+      expect(find.text('Sign in again'), findsOneWidget);
+      final line = tester.widget<SelectableText>(find.byKey(const Key('jellyfin_diagnostics'))).data!;
+      expect(line, startsWith('Diagnostics: jellyfin 12.4.0, step '));
+      expect(line, contains('status 401, route items-v2'));
+      expect(line, isNot(contains('192.0.2.20')));
+      await tester.tap(find.byKey(const Key('network_error_edit_source')));
+      await tester.pumpAndSettle();
+      expect(find.text('jellyfin edit Home media sign in'), findsOneWidget);
     });
 
     testWidgets('no edit button when the share could not be reached', (tester) async {

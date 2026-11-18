@@ -260,6 +260,16 @@ Future<RootStackRouter> pumpNetworkRouter(
           },
         ),
       ),
+      AutoRoute(
+        path: '/jellyfin-server-edit',
+        page: PageInfo(
+          JellyfinServerEditRoute.name,
+          builder: (data) {
+            final args = data.argsAs<JellyfinServerEditRouteArgs>();
+            return Text('jellyfin edit ${args.source?.name}${args.focusCredentials ? ' sign in' : ''}');
+          },
+        ),
+      ),
     ],
   );
 

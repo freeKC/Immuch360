@@ -96,8 +96,7 @@ PageRouteInfo networkSourceOpenRoute(NetworkSource source) => switch (source.typ
 PageRouteInfo networkSourceEditRoute(NetworkSource source, {bool focusCredentials = false}) => switch (source.type) {
   NetworkSourceType.smb || NetworkSourceType.webdav || NetworkSourceType.dlna => NetworkShareEditRoute(source: source),
   NetworkSourceType.plex => PlexServerEditRoute(source: source, focusToken: focusCredentials),
-  // Until its own page: the browser, which tells why it does not open
-  NetworkSourceType.jellyfin => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
+  NetworkSourceType.jellyfin => JellyfinServerEditRoute(source: source, focusCredentials: focusCredentials),
   NetworkSourceType.tapo => CameraEditRoute(source: source),
   NetworkSourceType.ipCamera => IpCameraEditRoute(source: source),
   // Nothing to edit: the page picks another folder
@@ -362,6 +361,12 @@ class _AddChoices extends ConsumerWidget {
               leading: const Icon(Icons.video_library_outlined),
               title: Text(context.t.network_add_choose_plex),
               onTap: () => Navigator.of(context).pop(PlexServerEditRoute()),
+            ),
+            ListTile(
+              key: const Key('network_add_choose_jellyfin'),
+              leading: const Icon(Icons.live_tv_outlined),
+              title: Text(context.t.network_add_choose_jellyfin),
+              onTap: () => Navigator.of(context).pop(JellyfinServerEditRoute()),
             ),
             ListTile(
               key: const Key('network_add_choose_camera'),

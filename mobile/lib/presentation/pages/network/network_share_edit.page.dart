@@ -302,6 +302,10 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       unawaited(_replaceWith(PlexServerEditRoute(server: server)));
       return;
     }
+    if (server.type == NetworkSourceType.jellyfin) {
+      unawaited(_replaceWith(JellyfinServerEditRoute(server: server)));
+      return;
+    }
     if (server.type == NetworkSourceType.tapo) {
       unawaited(_replaceWith(CameraEditRoute(server: server)));
       return;
@@ -752,6 +756,11 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                       unawaited(_replaceWith(PlexServerEditRoute()));
                       return;
                     }
+                    if (type == NetworkSourceType.jellyfin) {
+                      // As Plex: a page of its own, with its sign in
+                      unawaited(_replaceWith(JellyfinServerEditRoute()));
+                      return;
+                    }
                     if (type != null && type != _type) {
                       setState(() {
                         _type = type;
@@ -794,6 +803,14 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                           contentPadding: EdgeInsets.zero,
                           dense: true,
                           title: Text(context.t.network_share_type_plex),
+                        ),
+                      if (_isNew)
+                        RadioListTile<NetworkSourceType>(
+                          key: const Key('network_share_type_jellyfin'),
+                          value: NetworkSourceType.jellyfin,
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          title: Text(context.t.network_share_type_jellyfin),
                         ),
                     ],
                   ),
