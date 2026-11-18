@@ -123,8 +123,10 @@ void main() {
       final asset = tester.widget<ThumbnailTile>(labTile(_jpegName).first).asset!;
       await tester.tap(labTile(_jpegName).first);
       await pumpUntil(tester, () => find.byType(AssetViewerPage).evaluate().isNotEmpty, reason: 'the asset viewer');
-      // The providers of the asset viewer page, as the top bar reads them for "View on a big screen"
-      container = ProviderScope.containerOf(tester.element(find.byType(AssetViewerPage).first), listen: false);
+      // The providers inside the asset viewer page (its own scope: its timeline and its AssetViewerJump), as the top
+      // bar reads them for "View on a big screen"; the page itself stands above that scope
+      await pumpUntil(tester, () => find.byType(AssetViewer).evaluate().isNotEmpty, reason: 'the pages of the viewer');
+      container = ProviderScope.containerOf(tester.element(find.byType(AssetViewer).first), listen: false);
       final builder = flatScreenNavigatorFor(container.read, asset, const StereoPhotoRequest.bigScreen());
       expect(builder, isNotNull, reason: 'a navigator from the providers of the asset viewer');
       final resolver = ImmersiveAssetResolver(
