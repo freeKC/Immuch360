@@ -8,13 +8,12 @@
 // (a short side of 280, 392 or 518, both sides multiples of 14), and the grid of the output (r_frame_rate, checked
 // against the frame count and the duration: the WebM of Wikimedia Commons say avg_frame_rate=1000/1).
 //
-// Pure Dart, no I/O: the tests feed it the JSON of real files (test/fixtures/video3d) and of made up ones.
+// Pure Dart, no I/O and no Flutter (the command line tool of the lot runs it too): the tests feed it the JSON of real
+// files (test/fixtures/video3d) and of made up ones.
 
 import 'dart:math' as math;
 
-import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
-import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:path/path.dart' as p;
@@ -524,6 +523,20 @@ String videoOutputName(String sourceName, VideoSbsPacking packing) {
   return '${stem}_3D_LRF_${packing == VideoSbsPacking.full ? 'Full' : 'Half'}_SBS.mp4';
 }
 
+/// Why a video is not made 3D (each a ConversionSkipReason of the queue, see videoSkipReason)
+enum VideoRefusal { sphere360, vr180, alreadyStereo, interlaced, dolbyVisionProfile5, oddRotation, unreadable }
+
+/// Whether a flat frame of [width] x [height] holds two eyes by its shape alone, as the players read it
+/// (guessSpatialLayout of spatial_media.dart): about twice as wide as a regular one (3.2 to 3.9) side by side, a little
+/// taller than wide (above 0.8, up to 0.95) stacked
+bool isStereoFrameShape(int width, int height) {
+  if (width <= 0 || height <= 0) {
+    return false;
+  }
+  final ratio = width / height;
+  return (ratio >= 3.2 && ratio <= 3.9) || (ratio > 0.8 && ratio <= 0.95);
+}
+
 /// The verdict on a video before its job
 class VideoSourceCheck {
   const VideoSourceCheck._({this.source, this.skip, this.notes = const {}, this.grid});
@@ -531,7 +544,7 @@ class VideoSourceCheck {
   final VideoSource? source;
 
   /// Why it is refused, null when it can be made 3D
-  final ConversionSkipReason? skip;
+  final VideoRefusal? skip;
   final Set<VideoPlanNote> notes;
   final VideoGrid? grid;
 
@@ -546,7 +559,7 @@ const videoLongJob = Duration(minutes: 20);
 /// boxes found (sv3d, st3d), when it ran.
 VideoSourceCheck checkVideoSource(VideoSource? source, {required String fileName, SphericalProbe? spherical}) {
   if (source == null) {
-    return const VideoSourceCheck._(skip: ConversionSkipReason.unreadableVideo);
+    return const VideoSourceCheck._(skip: VideoRefusal.unreadable);
   }
   final nameStem = p.basenameWithoutExtension(fileName).toLowerCase();
   final words = nameStem.split(RegExp(r'[._\- ]+')).toSet();
@@ -557,31 +570,27 @@ VideoSourceCheck checkVideoSource(VideoSource? source, {required String fileName
       words.any(const {'360', '180', 'vr', 'vr180', 'vr360', 'equirect', 'equirectangular', '360x180'}.contains);
   if (sphere) {
     final vr180 = halfSphere || words.contains('180');
-    return VideoSourceCheck._(
-      source: source,
-      skip: vr180 ? ConversionSkipReason.vr180 : ConversionSkipReason.sphere360,
-    );
+    return VideoSourceCheck._(source: source, skip: vr180 ? VideoRefusal.vr180 : VideoRefusal.sphere360);
   }
   final declaredStereo = source.declaredStereo || (spherical?.stereo != null && spherical!.stereo != StereoLayout.mono);
   final byName = guessFlatStereoFormat(fileName: fileName, isVideo: true) != null;
-  final byShape =
-      guessSpatialLayout(width: source.displayWidth, height: source.displayHeight) != SpatialStereoLayout.auto;
+  final byShape = isStereoFrameShape(source.displayWidth, source.displayHeight);
   if (declaredStereo || byName || byShape) {
-    return VideoSourceCheck._(source: source, skip: ConversionSkipReason.alreadyStereo);
+    return VideoSourceCheck._(source: source, skip: VideoRefusal.alreadyStereo);
   }
   if (source.interlaced) {
-    return VideoSourceCheck._(source: source, skip: ConversionSkipReason.interlaced);
+    return VideoSourceCheck._(source: source, skip: VideoRefusal.interlaced);
   }
   final dolby = source.dolbyVision;
   if (dolby != null && !dolby.hasBaseLayer) {
-    return VideoSourceCheck._(source: source, skip: ConversionSkipReason.dolbyVisionProfile5);
+    return VideoSourceCheck._(source: source, skip: VideoRefusal.dolbyVisionProfile5);
   }
   if (source.quarterTurn == null) {
-    return VideoSourceCheck._(source: source, skip: ConversionSkipReason.oddRotation);
+    return VideoSourceCheck._(source: source, skip: VideoRefusal.oddRotation);
   }
   final grid = videoGridOf(source);
   if (grid == null) {
-    return VideoSourceCheck._(source: source, skip: ConversionSkipReason.unreadableVideo);
+    return VideoSourceCheck._(source: source, skip: VideoRefusal.unreadable);
   }
   final duration = source.duration;
   final notes = {

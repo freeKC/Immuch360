@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -86,21 +85,21 @@ void main() {
     });
 
     test('a 3D video the probe made is refused as already 3D, by its st3d side data and by its name', () {
-      expect(_check(_fixture('phone_3D_LRF_Full_SBS'), name: 'phone.mp4').skip, ConversionSkipReason.alreadyStereo);
-      expect(_check(_fixture('phone_src'), name: 'phone_3D_LRF_Full_SBS.mp4').skip, ConversionSkipReason.alreadyStereo);
+      expect(_check(_fixture('phone_3D_LRF_Full_SBS'), name: 'phone.mp4').skip, VideoRefusal.alreadyStereo);
+      expect(_check(_fixture('phone_src'), name: 'phone_3D_LRF_Full_SBS.mp4').skip, VideoRefusal.alreadyStereo);
     });
   });
 
   group('refusals', () {
     test('no video stream, or only an attached picture, is unreadable', () {
-      expect(checkVideoSource(null, fileName: 'x.mp4').skip, ConversionSkipReason.unreadableVideo);
+      expect(checkVideoSource(null, fileName: 'x.mp4').skip, VideoRefusal.unreadable);
       final cover = _phone((video) => video['disposition'] = {'attached_pic': 1});
-      expect(_check(cover).skip, ConversionSkipReason.unreadableVideo);
+      expect(_check(cover).skip, VideoRefusal.unreadable);
     });
 
     test('interlaced fields', () {
       for (final order in ['tt', 'bb', 'tb', 'bt']) {
-        expect(_check(_phone((video) => video['field_order'] = order)).skip, ConversionSkipReason.interlaced);
+        expect(_check(_phone((video) => video['field_order'] = order)).skip, VideoRefusal.interlaced);
       }
       expect(_check(_phone((video) => video['field_order'] = 'progressive')).skip, isNull);
       expect(_check(_phone((video) => video.remove('field_order'))).skip, isNull);
@@ -120,7 +119,7 @@ void main() {
           'dv_bl_signal_compatibility_id': compatibility,
         });
       });
-      expect(_check(dolby(5, 0, 'unknown')).skip, ConversionSkipReason.dolbyVisionProfile5);
+      expect(_check(dolby(5, 0, 'unknown')).skip, VideoRefusal.dolbyVisionProfile5);
       final hdr10 = _check(dolby(8, 1, 'smpte2084'));
       expect(hdr10.skip, isNull);
       expect(hdr10.notes, containsAll([VideoPlanNote.hdrToneMapped, VideoPlanNote.dolbyVisionBaseLayer]));
@@ -133,7 +132,7 @@ void main() {
     test('a rotation that is not a quarter turn', () {
       Map<String, Object?> turned(num degrees) =>
           _phone((video) => (video['side_data_list']! as List).first['rotation'] = degrees);
-      expect(_check(turned(45)).skip, ConversionSkipReason.oddRotation);
+      expect(_check(turned(45)).skip, VideoRefusal.oddRotation);
       for (final degrees in [0, 90, -90, 180, -180, 270]) {
         expect(_check(turned(degrees)).skip, isNull, reason: '$degrees');
       }
@@ -148,7 +147,7 @@ void main() {
           'projection': 'equirectangular',
         }),
       );
-      expect(_check(sphere).skip, ConversionSkipReason.sphere360);
+      expect(_check(sphere).skip, VideoRefusal.sphere360);
       final half = _phone(
         (video) => (video['side_data_list']! as List).add({
           'side_data_type': 'Spherical Mapping',
@@ -157,26 +156,26 @@ void main() {
           'bound_right': 1073741823,
         }),
       );
-      expect(_check(half).skip, ConversionSkipReason.vr180);
+      expect(_check(half).skip, VideoRefusal.vr180);
       expect(
         _check(_fixture('phone_src'), spherical: const SphericalProbe(hasSphericalMetadata: true)).skip,
-        ConversionSkipReason.sphere360,
+        VideoRefusal.sphere360,
       );
       expect(
         _check(
           _fixture('phone_src'),
           spherical: const SphericalProbe(hasSphericalMetadata: true, halfSphere: true),
         ).skip,
-        ConversionSkipReason.vr180,
+        VideoRefusal.vr180,
       );
-      expect(_check(_fixture('phone_src'), name: 'GS010012_360.mp4').skip, ConversionSkipReason.sphere360);
-      expect(_check(_fixture('phone_src'), name: 'trip_VR180.mp4').skip, ConversionSkipReason.vr180);
+      expect(_check(_fixture('phone_src'), name: 'GS010012_360.mp4').skip, VideoRefusal.sphere360);
+      expect(_check(_fixture('phone_src'), name: 'trip_VR180.mp4').skip, VideoRefusal.vr180);
     });
 
     test('already 3D by the app\'s st3d probe or by the frame of two eyes', () {
       expect(
         _check(_fixture('phone_src'), spherical: const SphericalProbe(stereo: StereoLayout.leftRight)).skip,
-        ConversionSkipReason.alreadyStereo,
+        VideoRefusal.alreadyStereo,
       );
       final wide = _phone((video) {
         video['width'] = 3840;
@@ -184,7 +183,7 @@ void main() {
         video['side_data_list'] = <Object?>[];
         video['sample_aspect_ratio'] = '1:1';
       });
-      expect(_check(wide).skip, ConversionSkipReason.alreadyStereo);
+      expect(_check(wide).skip, VideoRefusal.alreadyStereo);
     });
   });
 
