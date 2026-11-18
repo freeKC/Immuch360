@@ -230,9 +230,13 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
         return false;
       }
       // DLNA has no authentication. A Plex server only gets its token over the connection pinned to the certificate of
-      // the stored hash, and the relocator kept only a server announcing that hash: nothing goes to another one. Any
-      // other share would send its user name and password to the new address.
-      final asks = relocated.type != NetworkSourceType.dlna && relocated.type != NetworkSourceType.plex;
+      // the stored hash, and the relocator kept only a server announcing that hash: nothing goes to another one. A
+      // Jellyfin or Emby server gets its token only after it told the stored server id (JellyfinFileSystem.open), and
+      // no password is ever sent. Any other share would send its user name and password to the new address.
+      final asks =
+          relocated.type != NetworkSourceType.dlna &&
+          relocated.type != NetworkSourceType.plex &&
+          relocated.type != NetworkSourceType.jellyfin;
       if (asks && !await _acceptsAddress(source, relocated)) {
         _log.info('${source.name} was not moved to ${relocated.host}:${relocated.port ?? ''}: the user declined');
         return false;

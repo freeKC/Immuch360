@@ -93,6 +93,10 @@ class FoundServersList extends StatelessWidget {
                         NetworkSourceType.webdav => context.t.network_share_scan_type_webdav,
                         NetworkSourceType.dlna => context.t.network_share_scan_type_dlna,
                         NetworkSourceType.plex => context.t.network_share_scan_type_plex,
+                        NetworkSourceType.jellyfin =>
+                          server.isEmby
+                              ? context.t.network_share_scan_type_emby
+                              : context.t.network_share_scan_type_jellyfin,
                         NetworkSourceType.tapo => context.t.network_share_scan_type_tapo,
                         NetworkSourceType.ipCamera => context.t.network_add_choose_ip_camera,
                         // Never found on the network

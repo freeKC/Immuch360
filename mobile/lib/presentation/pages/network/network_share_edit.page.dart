@@ -482,6 +482,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       NetworkSourceType.dlna => normalizeDescriptionPath(shareText),
       // Never held by this form: they have pages of their own
       NetworkSourceType.plex ||
+      NetworkSourceType.jellyfin ||
       NetworkSourceType.tapo ||
       NetworkSourceType.ipCamera ||
       NetworkSourceType.documentTree ||

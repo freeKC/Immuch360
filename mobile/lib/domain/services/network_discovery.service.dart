@@ -46,6 +46,7 @@ class DiscoveredServer {
     this.plexHash,
     this.version,
     this.camera,
+    this.product,
   });
 
   /// The IP address or the host name to put in the server field
@@ -89,25 +90,35 @@ class DiscoveredServer {
   /// part of the equality.
   final TapoCameraInfo? camera;
 
+  /// "jellyfin" or "emby" for a server of type jellyfin, as its answer told; null for the other types. Not part of
+  /// the equality.
+  final String? product;
+
+  /// Whether a server of type jellyfin is an Emby server
+  bool get isEmby => product == 'emby';
+
   /// What tells two finds of the same server apart from two servers: [address] when known, else [host]. One address
   /// and port may serve several DLNA media servers (a NAS, a server with embedded devices): each is told apart by its
   /// UDN, else by its description path; several Plex servers by their machine id. A camera found by TDP and by the
   /// scan has the same address, type and port (443), so it shows once.
-  (String, NetworkSourceType, int, String) get mergeKey => (
-    (address ?? host).toLowerCase(),
-    type,
-    port,
-    switch (type) {
-      NetworkSourceType.dlna => (discoveryId ?? path).toLowerCase(),
-      NetworkSourceType.plex => (discoveryId ?? '').toLowerCase(),
-      NetworkSourceType.smb ||
-      NetworkSourceType.webdav ||
-      NetworkSourceType.tapo ||
-      NetworkSourceType.ipCamera ||
-      NetworkSourceType.documentTree ||
-      NetworkSourceType.deviceFolder => '',
-    },
-  );
+  /// A Jellyfin or Emby server is told by its id alone: its UDP answer and the scan of its port are one server.
+  (String, NetworkSourceType, int, String) get mergeKey => type == NetworkSourceType.jellyfin && discoveryId != null
+      ? ('', type, 0, discoveryId!.toLowerCase())
+      : (
+          (address ?? host).toLowerCase(),
+          type,
+          port,
+          switch (type) {
+            NetworkSourceType.dlna => (discoveryId ?? path).toLowerCase(),
+            NetworkSourceType.plex || NetworkSourceType.jellyfin => (discoveryId ?? '').toLowerCase(),
+            NetworkSourceType.smb ||
+            NetworkSourceType.webdav ||
+            NetworkSourceType.tapo ||
+            NetworkSourceType.ipCamera ||
+            NetworkSourceType.documentTree ||
+            NetworkSourceType.deviceFolder => '',
+          },
+        );
 
   /// The same server as found by two probes: the find of the better origin wins (see [DiscoveryOrigin.rank]; the
   /// first find on a tie), a known WebDAV path, discovery id, user name, Plex hash, version and camera login are kept
@@ -129,6 +140,7 @@ class DiscoveredServer {
       plexHash: preferred.plexHash ?? second.plexHash,
       version: preferred.version ?? second.version,
       camera: preferred.camera ?? second.camera,
+      product: preferred.product ?? second.product,
     );
   }
 

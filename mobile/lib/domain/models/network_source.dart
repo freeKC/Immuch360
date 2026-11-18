@@ -1,4 +1,4 @@
-// Network shares (SMB, WebDAV, DLNA media servers, Plex Media Servers), Tapo cameras and the cameras of other brands
+// Network shares (SMB, WebDAV, DLNA media servers, Plex Media Servers, Jellyfin and Emby servers), Tapo cameras and the cameras of other brands
 // (ONVIF or a typed RTSP address): a source is a share or a
 // camera the user added, an entry is a file or a folder on it. Media of a share play straight from it through the
 // local media bridge; nothing is copied to the device.
@@ -6,6 +6,7 @@
 import 'dart:convert';
 
 import 'package:immich_mobile/domain/models/ip_camera_info.dart';
+import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -31,8 +32,12 @@ enum NetworkSourceType {
   deviceFolder,
 
   /// A camera of another brand than Tapo (release 48): found by ONVIF, or a pasted RTSP or RTSPS address. Live view
-  /// only. Last of the list: the builds before 48 keep a source of this type whole, as one of a type they do not know.
-  ipCamera;
+  /// only. The builds before 48 keep a source of this type whole, as one of a type they do not know.
+  ipCamera,
+
+  /// A Jellyfin or Emby server (release 49), signed in with a token. Last of the list: the builds before 49 keep a
+  /// source of this type whole, as one of a type they do not know.
+  jellyfin;
 
   /// Stored in StoreKey.networkSources, the list that builds 19 and older read and write back
   bool get inLegacyList => this == smb || this == webdav || this == dlna;
@@ -69,6 +74,7 @@ class NetworkSource {
     this.plex,
     this.camera,
     this.ipCamera,
+    this.jellyfin,
     this.extraJson = const {},
   });
 
@@ -85,19 +91,19 @@ class NetworkSource {
   final String host;
 
   /// Null for the default port of the type (445 for SMB, 80 or 443 for WebDAV and DLNA, 32400 for Plex, 443 for
-  /// Tapo); null for a camera of another brand, whose ports are in [ipCamera]
+  /// Tapo, 8096 or 8920 with TLS for Jellyfin); null for a camera of another brand, whose ports are in [ipCamera]
   final int? port;
 
   /// SMB share name. WebDAV: the path of the base URL (for example "/remote.php/dav/files/alice"). DLNA: the path of
-  /// the device description URL with its query ("/rootDesc.xml", "/dlna/7d2c.../description.xml"). "" for Plex and
-  /// Tapo.
+  /// the device description URL with its query ("/rootDesc.xml", "/dlna/7d2c.../description.xml"). Jellyfin: the base
+  /// path of the server, "" or "/jellyfin" behind a reverse proxy. "" for Plex and Tapo.
   final String share;
 
   /// Folder inside the share the browser starts from, "/" for its root. Plex: "/" or "/<Section>". Tapo: "/".
   final String rootPath;
 
   /// Empty for DLNA, which has no authentication, and for Plex. Tapo and the cameras of other brands: the user of
-  /// the camera account (live view), "" when none.
+  /// the camera account (live view), "" when none. Jellyfin: the name of the signed in user, shown only.
   final String username;
 
   /// WebDAV over HTTPS, DLNA with an https description URL; always true for Plex and Tapo
@@ -106,7 +112,8 @@ class NetworkSource {
   /// What the server tells about itself on the network, to find it again when its address changes (see
   /// NetworkSourceRelocator): the UPnP UDN ("uuid:...") of a DLNA media server, the TXT id of a phone share, the
   /// machineIdentifier (40 hex digits) of a Plex server, the MAC address of a Tapo camera in lower case
-  /// ("aa-bb-cc-dd-ee-ff"). Null for a share typed in by hand.
+  /// ("aa-bb-cc-dd-ee-ff"), the server id (32 hex digits) of a Jellyfin or Emby server. Null for a share typed in by
+  /// hand.
   final String? discoveryId;
 
   /// Required for a Plex server (JSON key "plex"), null for the other types
@@ -119,6 +126,9 @@ class NetworkSource {
   /// What the app keeps of a camera of another brand (JSON key "ipCamera"); required for that type, null for the
   /// others
   final IpCameraInfo? ipCamera;
+
+  /// Required for a Jellyfin or Emby server (JSON key "jellyfin"), null for the other types
+  final JellyfinServerInfo? jellyfin;
 
   /// The keys of the stored object this build does not know, written back first by [toJson] (the known keys
   /// overwrite them) so that the later build that wrote them finds them again
@@ -138,9 +148,10 @@ class NetworkSource {
     'plex',
     'camera',
     'ipCamera',
+    'jellyfin',
   };
 
-  /// SMB and WebDAV: the password. Plex: the token. Tapo: the password of the TP-Link account (recordings). A camera
+  /// SMB and WebDAV: the password. Plex, Jellyfin and Emby: the token. Tapo: the password of the TP-Link account (recordings). A camera
   /// of another brand: the password of its account.
   String get secretKey => 'network_source_password_$id';
 
@@ -163,6 +174,7 @@ class NetworkSource {
     if (plex != null) 'plex': plex!.toJson(),
     if (camera != null) 'camera': camera!.toJson(),
     if (ipCamera != null) 'ipCamera': ipCamera!.toJson(),
+    if (jellyfin != null) 'jellyfin': jellyfin!.toJson(),
   };
 
   /// Null when [json] is not a source of a type this build knows, or misses what its type needs (the hash of a Plex
@@ -188,6 +200,11 @@ class NetworkSource {
     if (type == NetworkSourceType.ipCamera && ipCamera == null) {
       return null;
     }
+    final jellyfin = JellyfinServerInfo.fromJson(json['jellyfin']);
+    if (type == NetworkSourceType.jellyfin && jellyfin == null) {
+      // Without the server id the token could go to any server, without the user id nothing can be listed
+      return null;
+    }
     final camera = json['camera'];
     final discoveryId = json['discoveryId'];
     return NetworkSource(
@@ -204,6 +221,7 @@ class NetworkSource {
       plex: plex,
       camera: camera is Map ? TapoCameraInfo.fromJson(camera) : null,
       ipCamera: type == NetworkSourceType.ipCamera ? ipCamera : null,
+      jellyfin: type == NetworkSourceType.jellyfin ? jellyfin : null,
       extraJson: Map.unmodifiable({
         for (final entry in json.entries)
           if (entry.key is String && !_knownKeys.contains(entry.key)) entry.key as String: entry.value,
@@ -273,6 +291,7 @@ class NetworkSource {
     PlexServerInfo? plex,
     TapoCameraInfo? camera,
     IpCameraInfo? ipCamera,
+    JellyfinServerInfo? jellyfin,
   }) => NetworkSource(
     id: id,
     type: type,
@@ -287,6 +306,7 @@ class NetworkSource {
     plex: plex ?? this.plex,
     camera: camera ?? this.camera,
     ipCamera: ipCamera ?? this.ipCamera,
+    jellyfin: jellyfin ?? this.jellyfin,
     extraJson: extraJson,
   );
 }

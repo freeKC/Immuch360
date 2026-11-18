@@ -150,10 +150,11 @@ class NetworkSourcesNotifier extends Notifier<List<NetworkSource>> {
     return secret == null || secret.isEmpty ? null : secret;
   }
 
-  /// The secrets of a Plex server (a token with full access to the server) and of a camera (the password of the
-  /// TP-Link account, the account and stream addresses of a camera of another brand) stay on this device: out of the
-  /// cloud and device to device backups
-  static bool _isDeviceOnly(NetworkSource source) => source.type == NetworkSourceType.plex || source.type.isCamera;
+  /// The secrets of a Plex, Jellyfin or Emby server (a token with the access of its user) and of a camera (the
+  /// password of the TP-Link account, the account and stream addresses of a camera of another brand) stay on this
+  /// device: out of the cloud and device to device backups
+  static bool _isDeviceOnly(NetworkSource source) =>
+      source.type == NetworkSourceType.plex || source.type == NetworkSourceType.jellyfin || source.type.isCamera;
 
   Future<void> _writeSecret(NetworkSource source, String key, String? secret) async {
     final storage = ref.read(secureStorageServiceProvider);

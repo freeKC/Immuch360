@@ -3051,6 +3051,8 @@
   "network_share_scan_tap_to_fill": "Tap a server to fill in the form",
   "network_share_scan_title": "Found on the network",
   "network_share_scan_type_dlna": "DLNA",
+  "network_share_scan_type_emby": "Emby",
+  "network_share_scan_type_jellyfin": "Jellyfin",
   "network_share_scan_type_phone": "Phone",
   "network_share_scan_type_plex": "Plex",
   "network_share_scan_type_smb": "SMB",

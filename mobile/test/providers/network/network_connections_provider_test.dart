@@ -102,10 +102,13 @@ void main() {
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
-    // But the cameras of other brands (release 48): live view only, no files
+    // But the cameras of other brands (release 48): live view only, no files. And the Jellyfin servers until their
+    // file system
     expect(
       container.read(networkFileSystemOpenersProvider).keys.toSet(),
-      NetworkSourceType.values.toSet()..remove(NetworkSourceType.ipCamera),
+      NetworkSourceType.values.toSet()
+        ..remove(NetworkSourceType.ipCamera)
+        ..remove(NetworkSourceType.jellyfin),
     );
   });
 

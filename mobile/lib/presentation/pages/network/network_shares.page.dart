@@ -45,6 +45,10 @@ String networkSourceAddress(NetworkSource source) {
           ? 'plex://${source.plex!.publicHost}:${source.plex!.publicPort ?? _plexDefaultPort}'
           : 'plex://${source.host}:${source.port ?? _plexDefaultPort}',
     NetworkSourceType.tapo => 'tapo://${source.host}',
+    // The address the user types in a browser to reach the server, its base path included
+    NetworkSourceType.jellyfin =>
+      '${source.useTls ? 'https' : 'http'}://${_hostOf(source.host)}:${source.port ?? (source.useTls ? 8920 : 8096)}'
+          '${source.share}',
     // A camera of another brand: its host and the port of what reads it; never the path of a stream (a token)
     NetworkSourceType.ipCamera => switch (source.ipCamera) {
       final info? when info.kind == IpCameraKind.onvif =>
@@ -67,6 +71,7 @@ IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
   NetworkSourceType.webdav => Icons.cloud_outlined,
   NetworkSourceType.dlna => Icons.perm_media_outlined,
   NetworkSourceType.plex => Icons.video_library_outlined,
+  NetworkSourceType.jellyfin => Icons.live_tv_outlined,
   NetworkSourceType.tapo => Icons.videocam_outlined,
   NetworkSourceType.ipCamera => Icons.videocam_outlined,
   NetworkSourceType.documentTree => Icons.usb_rounded,
@@ -83,6 +88,7 @@ PageRouteInfo networkSourceOpenRoute(NetworkSource source) => switch (source.typ
   NetworkSourceType.webdav ||
   NetworkSourceType.dlna ||
   NetworkSourceType.plex ||
+  NetworkSourceType.jellyfin ||
   NetworkSourceType.deviceFolder => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
 };
 
@@ -90,6 +96,8 @@ PageRouteInfo networkSourceOpenRoute(NetworkSource source) => switch (source.typ
 PageRouteInfo networkSourceEditRoute(NetworkSource source, {bool focusCredentials = false}) => switch (source.type) {
   NetworkSourceType.smb || NetworkSourceType.webdav || NetworkSourceType.dlna => NetworkShareEditRoute(source: source),
   NetworkSourceType.plex => PlexServerEditRoute(source: source, focusToken: focusCredentials),
+  // Until its own page: the browser, which tells why it does not open
+  NetworkSourceType.jellyfin => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
   NetworkSourceType.tapo => CameraEditRoute(source: source),
   NetworkSourceType.ipCamera => IpCameraEditRoute(source: source),
   // Nothing to edit: the page picks another folder
