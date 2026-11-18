@@ -39,6 +39,8 @@ const _onnxRuntimeRepository = 'https://github.com/microsoft/onnxruntime/blob';
 String aiLicenceText(AiComponent component) => switch (component.licence) {
   // The AV2 decoder of the computers: dav2d, x86inc.asm and the patent licence (av2_decoder_licences.dart)
   'BSD-2-Clause' when component.features.contains(AiFeature.av2Video) => av2DecoderLicenceText(component),
+  // Video Depth Anything Small: the NOTICE of the export goes with the file (section 4 (d) of the licence)
+  'Apache-2.0' when component.id == videoDepthModelComponent.id => videoDepthModelLicence,
   'Apache-2.0' => apacheLicence2,
   'MIT' when component.kind == AiComponentKind.runtime => onnxRuntimeLicence,
   'MIT' when component.id == mogeGeometryComponent.id => mogeLicence,
@@ -175,6 +177,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ''';
+
+/// The NOTICE of looplj/video-depth-anything-small-onnx at ff810849 (SHA-256 f7429610cbd3e3726dae44b32ffce8adb71d...,
+/// the text MODEL-LICENSES.md of ai-components-5 quotes too), which section 4 (d) of the Apache License asks to keep
+/// with the file
+const videoDepthModelNotice = '''Video Depth Anything Small
+Copyright (2025) Bytedance Ltd. and/or its affiliates
+Original project: https://github.com/DepthAnything/Video-Depth-Anything
+Reveric conversion: dynamic spatial ONNX export; unchanged FP32 checkpoint weights.
+Export-only adaptations preserve positional interpolation, replace specialized video
+reshapes, and express temporal attention with standard MatMul/Softmax operators.
+''';
+
+/// The licence of Video Depth Anything Small: the Apache License 2.0, then the NOTICE of the export
+const videoDepthModelLicence =
+    '$apacheLicence2\nNOTICE (looplj/video-depth-anything-small-onnx at ff810849333df46d37ea18a885fc11689661fe96):\n\n'
+    '$videoDepthModelNotice';
 
 /// The Apache License, Version 2.0, https://www.apache.org/licenses/LICENSE-2.0.txt
 const apacheLicence2 = r'''
