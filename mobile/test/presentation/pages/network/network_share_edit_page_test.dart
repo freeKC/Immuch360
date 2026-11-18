@@ -771,8 +771,15 @@ void main() {
       await tapButton(tester, dlnaRadio);
 
       expect(find.text('DLNA media server (NAS, TV box, minidlna)'), findsOneWidget);
+      expect(
+        find.textContaining('Jellyfin with its DLNA plugin'),
+        findsNothing,
+        reason: 'the label of the TV apps, which have no Jellyfin type',
+      );
       expect(find.text('Description path'), findsOneWidget);
       expect(find.byKey(const Key('network_share_dlna_hint')), findsOneWidget);
+      expect(find.text('A Jellyfin or Emby server has a type of its own.'), findsOneWidget);
+      expect(find.textContaining('Media servers ask for no password.'), findsOneWidget);
       expect(find.textContaining('minidlna on Linux are not found'), findsOneWidget);
       expect(
         find.descendant(of: field('host'), matching: find.text('http://192.168.1.10:8200/rootDesc.xml')),
@@ -945,6 +952,11 @@ void main() {
       await pumpEditPage(tester, source: source);
 
       expect(find.text('Description path'), findsOneWidget);
+      expect(
+        find.byKey(const Key('network_share_dlna_hint_jellyfin')),
+        findsNothing,
+        reason: 'an existing share is offered no Jellyfin type',
+      );
       await enter(tester, 'name', 'Living room box');
       await tapButton(tester, saveButton);
 

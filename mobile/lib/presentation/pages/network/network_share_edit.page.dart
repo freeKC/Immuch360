@@ -793,7 +793,8 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                         value: NetworkSourceType.dlna,
                         contentPadding: EdgeInsets.zero,
                         dense: true,
-                        title: Text(context.t.network_share_type_dlna),
+                        // Not network_share_type_dlna, which the TV apps show: they have no Jellyfin type
+                        title: Text(context.t.network_share_type_dlna_server),
                       ),
                       // A share saved as another type stays one of those: a Plex server is added, not converted
                       if (_isNew)
@@ -817,6 +818,13 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                 ),
                 if (isDlna) ...[
                   const SizedBox(height: 4),
+                  // A stock Jellyfin has had no DLNA since 10.9: its own type is in the list above, for a new source
+                  if (_isNew)
+                    Text(
+                      context.t.network_share_dlna_hint_jellyfin,
+                      key: const Key('network_share_dlna_hint_jellyfin'),
+                      style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),
+                    ),
                   Text(
                     context.t.network_share_dlna_hint,
                     key: const Key('network_share_dlna_hint'),
