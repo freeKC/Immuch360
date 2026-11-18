@@ -10,6 +10,7 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/watch_progress.provider.dart';
@@ -246,7 +247,16 @@ class _Poster extends ConsumerWidget {
                   final bytes = snapshot.data;
                   return bytes == null
                       ? placeholder
-                      : Image.memory(bytes, fit: BoxFit.cover, errorBuilder: (_, _, _) => placeholder);
+                      : Image(
+                          image: GuardedMemoryImage(
+                            bytes,
+                            source: 'mediaServerPoster',
+                            maxWidth: (width * MediaQuery.devicePixelRatioOf(context)).round(),
+                            maxHeight: (width * 3 / 2 * MediaQuery.devicePixelRatioOf(context)).round(),
+                          ),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => placeholder,
+                        );
                 },
               ),
       ),
