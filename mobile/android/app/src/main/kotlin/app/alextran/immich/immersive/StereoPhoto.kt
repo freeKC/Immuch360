@@ -252,16 +252,6 @@ internal data class StereoPhotoChoices(
 }
 
 /**
- * What the quad shows of a photo with two eyes: both eyes (3D), the relief of the headset on its 2.5D mesh (see
- * [ReliefMesh], experimental), or the left eye for both (2D)
- */
-internal enum class StereoView {
-  THREE_D,
-  MESH_25D,
-  TWO_D,
-}
-
-/**
  * How the two eyes of a spatial photo go on the stereo quad of the viewer (section 5.8 of the design): the columns
  * each eye keeps for the disparity adjustment, the texture that holds both side by side, and the size of the quad.
  * Pure functions, but [compose].

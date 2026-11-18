@@ -366,6 +366,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val watchMinDurationMs: Long = WatchReport.OFF,
     /** What to say once the video plays, in the language of the app ("Resumed at 42:10"); null for nothing. */
     val startNotice: String? = null,
+    /**
+     * Reached by previous, next or the slideshow rather than opened from the app: the view of the photo before goes
+     * on ([browseView], see BrowseView), and the stages of a relief go to the feedback line rather than holding the
+     * panel up. Not kept over a recreation, which comes back as the user left the photo anyway.
+     */
+    val reachedByBrowsing: Boolean = false,
+    val browseView: StereoView? = null,
   ) {
     /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
     private val screenMedia: FlatScreenMedia by lazy {
@@ -663,6 +670,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var reliefRun: ReliefRun? = null
   /** Puts both eyes of a finished relief on the quad. */
   private var reliefApplyJob: Job? = null
+  /** A relief reached in 2D while browsing, made only if the user presses 3D (see BrowseView). */
+  private var deferredRelief: DeferredRelief? = null
   /** The heat of the headset, watched while the viewer has a relief job. */
   private var thermalWatch: ThermalWatch? = null
 
@@ -2868,6 +2877,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         gaussianSplats = current.gaussianSplats,
         watchMinDurationMs = current.watchMinDurationMs,
         startNotice = startNotice,
+        reachedByBrowsing = true,
+        browseView = keptBrowseView(current),
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -2879,6 +2890,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (quiet && !infoVisible) showFeedback(title.ifBlank { label })
     return true
   }
+
+  /**
+   * The view the photo [current] leaves to the next one (see BrowseView): what the user chose on a photo of two eyes
+   * (2.5D chosen counts while its mesh is made, 3D while its relief runs), the view kept before for one picture,
+   * which has no view of its own; none from a sphere or a video.
+   */
+  private fun keptBrowseView(current: MediaRequest): StereoView? =
+    when {
+      !current.isStereoPhoto || current.isExplorable -> null
+      !current.holdsTwoEyes -> current.browseView
+      stereo25d && current.stereoKind is StereoPhotoKind.DepthRelief -> StereoView.MESH_25D
+      stereo3d -> StereoView.THREE_D
+      else -> StereoView.TWO_D
+    }
 
   /**
    * Ends request [id] without a new media: previous and next work again, [status] replaces "Looking for the next
@@ -3497,10 +3522,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // A new photo starts in 3D at the width its field of view gives; the photo of a recreation as the user left it
     val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.screenAngleBounds)
     restoredStereoChoices = null
-    stereo3d = restored?.threeD ?: true
-    // A relief first shows as its request says, 3D or 2.5D; the photo of a recreation as the user left it
-    stereo25d =
-      restored?.mesh25d ?: ((kind as? StereoPhotoKind.DepthRelief)?.spec?.mode == ReliefViewMode.MESH_25D)
+    // A relief first shows as its request says, 3D or 2.5D; a photo reached by browsing in the view of the photo
+    // before, where it offers it (issue 19, point 5, see BrowseView); the photo of a recreation as the user left it
+    val relief = kind is StereoPhotoKind.DepthRelief
+    val requested =
+      if (relief && (kind as StereoPhotoKind.DepthRelief).spec.mode == ReliefViewMode.MESH_25D) StereoView.MESH_25D
+      else StereoView.THREE_D
+    val start = BrowseView.startView(media.browseView, requested, media.holdsTwoEyes, relief)
+    if (media.browseView != null) Log.i(TAG, "stereo photo reached by browsing, starts in $start")
+    stereo3d = restored?.threeD ?: (start != StereoView.TWO_D)
+    stereo25d = restored?.mesh25d ?: (start == StereoView.MESH_25D)
     stereoHasSecondEye = false
     stereoAngleDeg =
       restored?.angleDeg
@@ -3650,6 +3681,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       val texture = flat.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
       Log.i(TAG, "relief photo: ${texture.eyeWidth}x${texture.eyeHeight}, shown flat, ${spec.quarterTurns} turns")
       applyStereoTexture(texture)
+      if (!BrowseView.computesRelief(if (stereo3d) StereoView.THREE_D else StereoView.TWO_D)) {
+        // Browsed in 2D: the original shows, and the 3D button makes the relief (no heat for a relief nobody sees)
+        Log.i(TAG, "relief photo reached in 2D: the relief waits for the 3D button")
+        deferredRelief = DeferredRelief(media, spec, bytes)
+        updateStereoView()
+        return
+      }
       startRelief(media, spec, photo.getAndSet(null) ?: return)
     } finally {
       photo.getAndSet(null)?.recycle()
@@ -3662,6 +3700,40 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * the stages go to the status line under the indeterminate bar, the panel stays on screen, the 3D button reads
    * "Stop relief". The job owns [photo] from now on.
    */
+  /** The photo of a relief reached in 2D while browsing, whose relief the 3D button makes (see BrowseView). */
+  private class DeferredRelief(val media: MediaRequest, val spec: DepthReliefSpec, val bytes: ByteArray)
+
+  /**
+   * The 3D button on a relief reached in 2D: the photo decoded again from its file, then its relief made as at any
+   * opening (see [startRelief]).
+   */
+  private fun startDeferredRelief(deferred: DeferredRelief) {
+    reliefApplyJob?.cancel()
+    reliefApplyJob =
+      scope.launch {
+        val photo = AtomicReference<Bitmap?>()
+        try {
+          decodeMutex.withLock {
+            withContext(Dispatchers.Default) {
+              photo.set(ImmersiveMedia.decodeForRelief(deferred.bytes, deferred.spec.quarterTurns))
+            }
+          }
+          ensureActive()
+          if (request !== deferred.media) return@launch
+          Log.i(TAG, "relief of the photo reached in 2D, asked with the 3D button")
+          startRelief(deferred.media, deferred.spec, photo.getAndSet(null) ?: return@launch)
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Throwable) {
+          Log.e(TAG, "relief: the photo could not be decoded again", e)
+          stereo3d = false
+          updateStereoView()
+        } finally {
+          photo.getAndSet(null)?.recycle()
+        }
+      }
+  }
+
   private fun startRelief(media: MediaRequest, spec: DepthReliefSpec, photo: Bitmap) {
     val job =
       reliefJob
@@ -3673,7 +3745,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
     val request =
       ReliefRequest(File(spec.model), spec.modelSize, spec.modelId, spec.cacheKey, spec.parallax, spec.convergence)
-    cancelInfoHide()
+    // Opened from the app the panel stays for the stages; reached by browsing it goes as it would, the stages passing
+    // on the feedback line (issue 19)
+    if (!media.reachedByBrowsing) cancelInfoHide()
     reliefRun = job.start(request, BitmapReliefPhoto(photo), ::BitmapReliefEye, ReliefViewListener(media))
     setReliefProgress(true)
     updateStereoView()
@@ -3688,7 +3762,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     override fun onStage(stage: ReliefStage) {
       if (!shown) return
       setReliefProgress(true)
-      setStatus(StereoComposer.label(media.stereoLabels, StereoComposer.reliefStageLabelKey(stage)))
+      val text = StereoComposer.label(media.stereoLabels, StereoComposer.reliefStageLabelKey(stage))
+      if (media.reachedByBrowsing && !infoVisible) showFeedback(text) else setStatus(text)
     }
 
     override fun onDone(result: ReliefResult<BitmapReliefPhoto, BitmapReliefEye>) {
@@ -3711,6 +3786,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       if (text == null) {
         setStatus(stereoStatus)
         scheduleInfoHide()
+      } else if (media.reachedByBrowsing && !infoVisible) {
+        showFeedback(text, TransientText.HOLD_MS)
       } else {
         // The reason comes and goes, as the honesty label does
         showPassing(text)
@@ -3782,6 +3859,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** Another media, or the end of the viewer: the relief of the photo shown is dropped without a word. */
   private fun dropRelief() {
+    deferredRelief = null
     reliefApplyJob?.cancel()
     reliefApplyJob = null
     reliefRun = null
@@ -4506,8 +4584,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
       scheduleInfoHide(DECODER_WARNING_HIDE_MS)
     } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
-      // The flat photo while its relief is made: the panel stays for the stages, see startRelief
+      // The flat photo while its relief is made: the panel stays for the stages, see startRelief; reached by browsing
+      // it goes as for any photo
       setStatus(stereoStatus)
+      if (media.reachedByBrowsing) scheduleInfoHide()
     } else if (media?.isScene == true && scenePreparing) {
       // The preview of a scene while the scene is made: the panel stays for the bar, see showScene
       setStatus(SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_PREPARING))
@@ -4799,6 +4879,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (run != null && run.running) {
       Log.i(TAG, "relief: Stop relief")
       reliefJob?.stop(run)
+      return
+    }
+    val deferred = deferredRelief
+    if (deferred != null && deferred.media === request) {
+      // A relief reached in 2D while browsing: 3D now makes it
+      deferredRelief = null
+      stereo3d = true
+      stereo25d = false
+      startDeferredRelief(deferred)
+      updateStereoView()
+      showControlChange(fromPanel)
       return
     }
     if (!stereoHasSecondEye) {
