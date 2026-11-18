@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
 
 /// Thrown by the file systems for anything the user may act on: wrong credentials, host unreachable, missing file.
 class NetworkFileSystemException implements Exception {
@@ -140,6 +141,13 @@ class NetworkDownloadStream {
   final String? fileName;
 
   final Stream<List<int>> bytes;
+}
+
+/// A share whose server tells the streams of its films (a Plex, Jellyfin or Emby server), so that the video page
+/// chooses the player of a film before it plays (film_player_choice.dart)
+abstract interface class NetworkFilmStreams {
+  /// The streams of the film at [path], null when the server tells none (not a film, not listed)
+  Future<FilmStreams?> filmStreamsAt(String path);
 }
 
 /// A share whose server keeps where its user stopped in a film and shows it in its own apps (a Jellyfin or Emby

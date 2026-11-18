@@ -296,6 +296,14 @@ void main() {
       expect(server.reports.last.body['PlaySessionId'], isNot(server.reports.first.body['PlaySessionId']));
     });
 
+    test('the streams of a film for the player choice, none for a photo', () async {
+      final fileSystem = await openJellyfin(server);
+      addTearDown(fileSystem.close);
+      final streams = await fileSystem.filmStreamsAt('/Films/Tone (2021).mkv');
+      expect((streams?.container, streams?.audioCodec), ('mkv', 'dca'));
+      expect(await fileSystem.filmStreamsAt('/Photos/2024/pano-001.jpg'), isNull);
+    });
+
     test('the token, the address, titles and paths stay out of the logs and the errors', () async {
       final records = <LogRecord>[];
       final previous = Logger.root.level;

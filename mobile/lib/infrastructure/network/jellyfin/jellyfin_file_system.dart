@@ -28,12 +28,14 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/models/media_server_item.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/entry_names.dart';
 import 'package:immich_mobile/infrastructure/network/http_range_reader.dart';
 import 'package:immich_mobile/infrastructure/network/isolate_http_client.dart';
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_api.dart';
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_client.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_film_streams.dart';
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_routes.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart' show plexAppVersion;
 import 'package:immich_mobile/infrastructure/network/webdav_file_system.dart';
@@ -130,6 +132,7 @@ class JellyfinFileSystem
         NetworkRangeReads,
         NetworkAbortableReads,
         NetworkPlaybackReports,
+        NetworkFilmStreams,
         MediaServerItemSource {
   JellyfinFileSystem._(this.source, this.client, this.userId, this.info, this._pageSize);
 
@@ -395,6 +398,18 @@ class JellyfinFileSystem
           converted: session.converted,
         );
       });
+
+  @override
+  Future<FilmStreams?> filmStreamsAt(String path) => _guard('streams', () async {
+    final target = normalizePath(path);
+    final node = await _resolve(target);
+    final item = node.item;
+    if (item == null || !item.isVideo) {
+      return null;
+    }
+    final source = item.mediaSources.where((s) => s.id == node.mediaSourceId).firstOrNull ?? item.firstSource;
+    return source == null ? null : filmStreamsOfJellyfinSource(source, fileName: target.split('/').last);
+  });
 
   /// The items met so far, by id, for their pictures
   final Map<String, JellyfinItem> _items = {};

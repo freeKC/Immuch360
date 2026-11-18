@@ -672,8 +672,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final players = ref.read(filmPlayersProvider);
     final viewer = ref.read(appConfigProvider).viewer;
     final preference = _askedPlayer ?? viewer.filmPlayer;
-    final isPlex = fileSystem is PlexFileSystem;
-    final conversion = isPlex && viewer.plexConversion;
+    // A server that tells the streams of its films (Plex, Jellyfin, Emby) has its player chosen from them
+    final streamsSource = fileSystem is NetworkFilmStreams ? fileSystem as NetworkFilmStreams : null;
+    final conversion = fileSystem is PlexFileSystem && viewer.plexConversion;
     _endConversion();
     if (CurrentPlatform.isDesktop || !Platform.isAndroid) {
       _setPlayer(FilmPlayerKind.device);
@@ -685,10 +686,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _conversionMissing = const [];
     if (forced != null) {
       kind = forced;
-    } else if (isPlex) {
-      final part = _plexPart;
+    } else if (streamsSource != null) {
       final choice = await players.choose(
-        part == null ? null : filmStreamsOfPlexPart(part),
+        await _filmStreams(streamsSource),
         preference: preference,
         conversion: conversion,
       );
@@ -714,6 +714,21 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
     _setPlayer(kind == FilmPlayerKind.serverConversion ? FilmPlayerKind.device : kind);
     return url;
+  }
+
+  /// The streams of the film of the page: those of the Plex part the tracks read already, else what its server tells
+  /// (nothing within [plexTracksWait] counts as nothing told: the choice then goes by the preference)
+  Future<FilmStreams?> _filmStreams(NetworkFilmStreams source) async {
+    final part = _plexPart;
+    if (part != null) {
+      return filmStreamsOfPlexPart(part);
+    }
+    try {
+      return await source.filmStreamsAt(widget.path).timeout(plexTracksWait);
+    } catch (error) {
+      _log.info('The streams of the film are not known: ${error.runtimeType}');
+      return null;
+    }
   }
 
   /// The copy of a film on this device: the device's player, or libmpv when asked or after the device's player failed

@@ -28,6 +28,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
+import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/infrastructure/network/entry_names.dart';
@@ -36,6 +37,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_api.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_list.dart';
+import 'package:immich_mobile/infrastructure/network/plex/plex_film_streams.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_server_breaker.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
@@ -54,6 +56,7 @@ class PlexFileSystem
         NetworkRangeReads,
         NetworkAbortableReads,
         NetworkFileDownloads,
+        NetworkFilmStreams,
         PlexFilmsSource {
   PlexFileSystem._(
     this.source,
@@ -683,6 +686,18 @@ class PlexFileSystem
       return _parentOf(normalizePath(path));
     }
     return sectionKey == null ? null : sectionFolder(sectionKey);
+  }
+
+  /// The streams of the film at [path] (its part of the full item), for the player choice; null for a file that is
+  /// no film of a library
+  @override
+  Future<FilmStreams?> filmStreamsAt(String path) async {
+    final item = itemAt(path);
+    if (item == null) {
+      return null;
+    }
+    final part = (await filmDetails(item.ratingKey)).partOf(item.partId);
+    return part == null ? null : filmStreamsOfPlexPart(part);
   }
 
   /// The full item of the film [ratingKey] (/library/metadata/{ratingKey}?includeGuids=1): its texts, people, ids and
