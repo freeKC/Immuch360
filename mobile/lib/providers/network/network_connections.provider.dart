@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/document_tree_file_system.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/smb_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/upnp/dlna_file_system.dart';
@@ -25,6 +26,7 @@ final networkFileSystemOpenersProvider = Provider<Map<NetworkSourceType, Network
     NetworkSourceType.webdav: WebDavFileSystem.open,
     NetworkSourceType.dlna: DlnaFileSystem.open,
     NetworkSourceType.plex: PlexFileSystem.open,
+    NetworkSourceType.jellyfin: JellyfinFileSystem.open,
     NetworkSourceType.tapo: TapoFileSystem.open,
     NetworkSourceType.documentTree: DocumentTreeFileSystem.open,
     NetworkSourceType.deviceFolder: DocumentTreeFileSystem.openDeviceFolder,

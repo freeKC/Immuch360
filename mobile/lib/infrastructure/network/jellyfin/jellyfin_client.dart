@@ -206,6 +206,10 @@ class JellyfinClient {
   }) : deviceName = deviceName ?? jellyfinDeviceName();
 
   final http.Client _http;
+
+  /// The HTTP client the requests go through, for another client of the same server
+  http.Client get httpClient => _http;
+
   final JellyfinRoutes routes;
   final String deviceId;
   final String deviceName;
