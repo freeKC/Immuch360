@@ -50,6 +50,7 @@ When a feature is recent, the text says from which build it is there. The GitHub
 - [Without a server or an account](#without-a-server-or-an-account)
 - [Network shares: a NAS, a computer or a media server](#network-shares-a-nas-a-computer-or-a-media-server)
 - [Plex Media Server, without plex.tv](#plex-media-server-without-plextv)
+- [Jellyfin and Emby servers (from build 49)](#jellyfin-and-emby-servers-from-build-49)
 - [Share this phone on the network](#share-this-phone-on-the-network)
 - [Tapo cameras: live view and the recordings of the memory card](#tapo-cameras-live-view-and-the-recordings-of-the-memory-card)
 - [Cameras of other brands: ONVIF or RTSP (from build 48)](#cameras-of-other-brands-onvif-or-rtsp-from-build-48)
@@ -212,9 +213,9 @@ From build 24 the app starts on a welcome page, where "Use without a server" is 
 
 ## Network shares: a NAS, a computer or a media server
 
-Your 360° videos sit on a NAS or a computer, and you want to watch them on the phone or in the headset without copying them first. In the headset, people end up copying each file over a cable; media servers such as Plex and Jellyfin play 360° videos flat, as requests on their forums describe; the Immich app reads only your Immich server.
+Your 360° videos sit on a NAS or a computer, and you want to watch them on the phone or in the headset without copying them first. In the headset, people end up copying each file over a cable; the apps of media servers such as Plex and Jellyfin play 360° videos flat, as requests on their forums describe; the Immich app reads only your Immich server.
 
-Immuch360 browses and plays the photos and videos of any server that speaks SMB (Samba, Windows), WebDAV or, from build 19, DLNA/UPnP (a media server: Jellyfin, minidlna, Gerbera, Emby, a NAS or a TV box), straight from the share. From build 20 a Plex Media Server has a type of its own, see [Plex Media Server, without plex.tv](#plex-media-server-without-plextv).
+Immuch360 browses and plays the photos and videos of any server that speaks SMB (Samba, Windows), WebDAV or, from build 19, DLNA/UPnP (a media server: minidlna, Gerbera, a NAS or a TV box, or Jellyfin and Emby with their DLNA plugin), straight from the share. From build 20 a Plex Media Server has a type of its own, see [Plex Media Server, without plex.tv](#plex-media-server-without-plextv), and from build 49 a Jellyfin or Emby server too, see [Jellyfin and Emby servers](#jellyfin-and-emby-servers-from-build-49).
 
 It finds the servers of your network by itself, and plays the files live in the same viewers as the rest of the app (360°, 3D, VR180, Spatial 2.5D, Quest immersive view), with or without an Immich server, on phones and on the Meta Quest 3. Nothing is downloaded. When a server is connected, the files you pick can be sent to your Immich account (from build 15).
 
@@ -231,7 +232,7 @@ It finds the servers of your network by itself, and plays the files live in the 
 1. Open the Library tab, then Network shares; from build 24, on the welcome page of the first start, "Add a network share or a media server" opens this page directly, without a server. The first time, the page says "No share yet" with an "Add a share" button; + at the top right does the same at any time. From build 20 both ask what to add: "A network share (NAS, computer, media server)", "A Plex Media Server" or "A Tapo camera". Pick the first one.
 2. The "Add a share" page first looks for the servers of your network and lists them under "Found on the network", with their type (SMB, WebDAV, DLNA, Phone, and from build 20 Plex and Tapo). The search takes up to about six seconds; "Scan again" starts it over. It uses Bonjour/mDNS and a scan of the local network confirmed by a real SMB or WebDAV exchange, from build 19 an SSDP search for DLNA media servers, and from build 20 GDM, the discovery of Plex, and the discovery protocol of TP-Link for the Tapo cameras.
 3. Tap a server: the type, server, port and path are filled in. A Plex server or a Tapo camera opens its own page instead, filled in.
-4. Not in the list? Fill the form by hand. Type: "SMB (Samba, Windows share)", "WebDAV (Nextcloud, Synology and others)", "DLNA media server (Jellyfin, NAS, TV box)" or, from build 20, "Plex Media Server", which opens the page of [Plex Media Server, without plex.tv](#plex-media-server-without-plextv). Then Name, "Server name or address" (a name or an address; a full address such as `smb://nas/photos`, `\\nas\photos` or `https://nas:5006/photos` fills the other fields), "Port (optional)" when it is not the usual one, "Share" for SMB or "Path of the WebDAV address" for WebDAV, "Start folder (optional)", "User name" and "Password", and "Secure connection (HTTPS)" for WebDAV.
+4. Not in the list? Fill the form by hand. Type: "SMB (Samba, Windows share)", "WebDAV (Nextcloud, Synology and others)", "DLNA media server (NAS, TV box, minidlna)" or, from build 20, "Plex Media Server", which opens the page of [Plex Media Server, without plex.tv](#plex-media-server-without-plextv), or from build 49 "Jellyfin or Emby server", which opens the page of [Jellyfin and Emby servers](#jellyfin-and-emby-servers-from-build-49). Then Name, "Server name or address" (a name or an address; a full address such as `smb://nas/photos`, `\\nas\photos` or `https://nas:5006/photos` fills the other fields), "Port (optional)" when it is not the usual one, "Share" for SMB or "Path of the WebDAV address" for WebDAV, "Start folder (optional)", "User name" and "Password", and "Secure connection (HTTPS)" for WebDAV.
 5. SMB: once the server and the user name are typed, "Choose a share" lists the shares of the server.
 6. DLNA: a media server has no user name or password. Give the server, the port and the "Description path" of its device description (`/rootDesc.xml` for minidlna), or paste the whole address, such as `http://192.168.1.10:8200/rootDesc.xml`, in the server field.
 7. Tap "Test the connection". It answers "Connected, N entries in the start folder", or says why it failed. Then tap Save, at the bottom of the form. From build 22, closing a form you typed in (X, Back) asks "Discard the changes?" first, on the Plex and camera pages too, and so does choosing Plex or a camera found once something is typed.
@@ -277,7 +278,7 @@ A media server lists only the files it indexed, and media servers usually pick t
 
 From build 47 and desktop build 27, and in the LG TV app from version 1.0.3, a folder of live TV channels (the TV channels of a Freebox, for example, which a DLNA server offers as RTSP or RTP streams) says "Live TV channels are not playable here yet" instead of opening empty. Playing them is on the roadmap.
 
-Checked against minidlna and Gerbera; discovery on a real network, Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest are the device test of build 19.
+Checked against minidlna and Gerbera; discovery on a real network, Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest are the device test of build 19. Since Jellyfin 10.9 (May 2024) a stock Jellyfin server has no DLNA, which became a plugin: add it as a [Jellyfin or Emby server](#jellyfin-and-emby-servers-from-build-49) instead.
 
 ### A share that moved
 
@@ -459,6 +460,45 @@ From build 45 and desktop build 25, a Plex film chosen on the phone plays on the
 - **Finding the server**: a server whose "Enable local network discovery (GDM)" setting is off is not found, so type its address. On iPhone and iPad the search sends unicast requests only. The DLNA side of the same server can show in the list too, with the DLNA tag: pick the line with the Plex tag.
 - **Not yet checked on a device**: the pairing, the folders, the byte ranges of a video, the thumbnails, a wrong token and the address outside home were checked from a computer against a real Plex Media Server 1.42.1, and photo and TV show libraries against a simulated server only. Playback on a phone, in the Quest, on an iPhone and on a TV, and the switch to the address outside home, are the device test of build 20.
 - Immuch360 is not affiliated with Plex.
+
+## Jellyfin and Emby servers (from build 49)
+
+Your films and videos are on a Jellyfin or an Emby server, and you want them in the headset or on the phone, 360° and 3D kept as they are. Since Jellyfin 10.9, a stock server has no DLNA (it became a plugin), so the DLNA type does not find it. From build 49 a Jellyfin or Emby server has a type of its own, experimental: found by itself, signed in with Quick Connect or a password, its libraries browsed, the original files played with the app's own viewers, and your place kept on the server.
+
+### Add a Jellyfin or Emby server
+
+1. Sources, the + button, **"A Jellyfin or Emby server (experimental)"**. The share form's "Jellyfin or Emby server" type opens the same page.
+2. **The servers of your network show by themselves**, tagged Jellyfin or Emby: the app asks the question both products answer on UDP 7359, broadcast and to every address of your network (the way that works on iPhone and iPad), and tries port 8096 (8920 for https), which also finds a server in Docker bridge mode. Tap yours. Not in the list (another network, Wi-Fi that isolates its clients)? Type its address in **Server address**, for example `http://192.168.1.20:8096`, or `https://media.example.org/jellyfin` behind a reverse proxy, then **Connect**. The page shows "Jellyfin 12.4.0, named Home" before anything is sent.
+3. **Sign in**, one of two ways:
+   - **Quick Connect** (Jellyfin, on by default in 10.10 and 12.4): the page shows a six digit code and a QR code. On a phone or a computer already signed in to the server, open your profile, then Quick Connect, and enter the code, or scan the QR code, which opens that page. The app checks every 5 seconds; a code that expired offers "New code". A TV and the Meta Quest show Quick Connect first, since typing a password with a remote or in a headset is slow. "Quick Connect is turned off on this server" when an administrator turned it off: they turn it on in the dashboard, or you sign in with the password.
+   - **User and password**: tap your name when the server shows its users (Emby does, Jellyfin hides them by default), or type it. Emby has no Quick Connect, so the page says "Emby has no Quick Connect: sign in with the user and password."
+4. **Save**. Only the session token is kept, in the secure storage of the device, never in cloud backups; the password is sent once to the server and kept nowhere.
+
+An http address outside your home network shows "This address is not on your home network and uses http: the session can be read on the way. Use https." A self signed https certificate is refused in this build: use the http address at home, or a certificate the device trusts.
+
+### Browse and play
+
+- **Films**: the films of a film library, by their sort name, with their title and year under the poster. A tap opens the film's page: poster, title, year, length, overview, the streams of the file in one line ("HEVC 1080p, DTS 5.1, 2 audio tracks, half side by side 3D"), **Resume at** the place where it was left (here, else in Jellyfin's or Emby's own apps) and **Play from start**.
+- **Series**: a tap on a series opens its page: the seasons as chips, the episodes with their progress and a tick once played, and **Next episode** as the server tells it. Episodes play at once from the season folders too.
+- **Home videos, photos, folders**: as the server lists them, with its pictures.
+- **The original files**: the app reads each file as it is on the disk, with byte ranges, never a copy converted by the server, so 360° videos open as a sphere, 3D stays 3D and the Quest's immersive view, the PC VR view and the TV play them as they play the files of a NAS. The 360° projection is read from the file itself; side by side and top and bottom 3D are read from the file name, or from the 3D layout Jellyfin read when the server hides the file's path.
+- **The player**: as for Plex, the app picks the device's player, libmpv when the device cannot decode the film (DTS on a Quest, for example), and, when you allow it, **the server's conversion** (Settings, Advanced, "Let the media server convert what this device cannot play (experimental)"): the server converts to H.264 with sound the device decodes, the app reads its stream with your session in a header only, and stops the conversion when you leave.
+- **Your place, on the server**: while a film plays the app tells the server where it is, every minute and at each pause, and where it stopped, so a film stopped on the Quest resumes on the phone and in the server's own apps. The server keeps no place in a very short video (Jellyfin and Emby skip those under 5 minutes by default).
+
+### Two accounts, a settings file, a server that moved
+
+- Two users of one server on one device are two sources, each with its own session: the app names itself to the server per source ("Immuch360 Android" and a device id of its own), so that signing in one account never signs the other out.
+- A [settings file](#keep-your-settings-in-a-file-from-build-46) at the accounts level carries the sessions; at the settings level it carries the servers only, which ask you to sign in again. An imported session that the server refuses shows **Sign in again**.
+- A server found at a new address is moved without a question: the app sends the session only after the server told the id of the one it was added with.
+- When the server ends the session (signed out, user removed), the folder page says "The server ended this session. Sign in again." with **Sign in again** and a selectable **Diagnostics** line (product, version, step, status, route table, ranges and TLS, nothing of yours) to paste in a report.
+
+### Limits
+
+- **Experimental**: checked against Jellyfin 12.4, Jellyfin 10.10 and Emby 4.10 in Docker (discovery, both sign ins, every library, every byte of every file read through the app, 360° and 3D, the place written back, the conversion), not yet on a TV, a Quest, an iPhone or a computer with a real server at home: that is the device test of build 49.
+- **Not in this build**: the films page by year with its filters and search, downloads, Play on the TV from a phone, a choice between several versions of a film (the first plays), audio and subtitle choices written back, music, live TV, collections, playlists and books, a self signed https certificate, and the LG and Samsung TV apps (they keep the DLNA type: Jellyfin with its DLNA plugin).
+- **Emby**: the same client where Emby's API matches (sign in, libraries, files, place, conversion); no Quick Connect. Emby's own users list shows as tiles.
+- **Raw 360° camera files** (.insv, .insp, .360, .osv) are not indexed by Jellyfin or Emby: add the same NAS folder as an SMB or WebDAV share to see them, see [Raw 360° camera files](#raw-360-camera-files-without-the-cameras-app).
+- Immuch360 is not affiliated with or endorsed by the Jellyfin project or Emby LLC; Emby is a trademark of Emby LLC.
 
 ## Share this phone on the network
 

@@ -1,4 +1,5 @@
-// A DLNA/UPnP media server (minidlna, Gerbera, Plex, Jellyfin, Emby, a NAS, a TV box) as a share: the folders are its
+// A DLNA/UPnP media server (minidlna, Gerbera, Plex, a NAS, a TV box; Jellyfin and Emby with their DLNA plugin,
+// which have a type of their own since release 49, see jellyfin_file_system.dart) as a share: the folders are its
 // ContentDirectory containers, listed with the SOAP Browse action, and the files the original resources of its photo
 // and video items, read with Range requests (see http_range_reader.dart, shared with WebDAV). Paths are made of entry
 // names built from the titles (see dlnaEntryName); the server only knows object ids, which this file system maps paths

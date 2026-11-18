@@ -1,7 +1,8 @@
 // Writing new files on a share opened in the app, on a computer: the versions the AI makes next to their originals on
 // an SMB or WebDAV share (FreeKC, 30 October 2026, "Make 3D (AI)" on a photo of a share). The file systems of the
 // shares read only (domain/services/network_file_system.dart), and the phones never write on a share: the writer is
-// desktop code, with a connection of its own that it closes once its files are written. DLNA and Plex take no file.
+// desktop code, with a connection of its own that it closes once its files are written. DLNA, Plex, Jellyfin and
+// Emby take no file.
 //
 // It never writes over a file and never touches an original: a version goes first into a hidden partial file of its
 // folder (".salon_3D.jpg.<id>.partial", a name the browser of the shares does not show), then is renamed onto its
@@ -86,7 +87,8 @@ abstract interface class ShareWriter {
 /// The types of share the app writes versions into: those of the files of a NAS or a computer, not a media server
 bool isWritableShareType(NetworkSourceType type) => type == NetworkSourceType.smb || type == NetworkSourceType.webdav;
 
-/// Opens a writer on the share with this id, null for a share the app never writes into (DLNA, Plex, a camera)
+/// Opens a writer on the share with this id, null for a share the app never writes into (DLNA, Plex, Jellyfin, a
+/// camera)
 typedef ShareWriterOpener = Future<ShareWriter?> Function(String sourceId);
 
 /// Opens a writer with the address and the credentials of the share, as its file system connects; replaced in tests

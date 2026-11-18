@@ -770,7 +770,7 @@ void main() {
 
       await tapButton(tester, dlnaRadio);
 
-      expect(find.text('DLNA media server (Jellyfin, NAS, TV box)'), findsOneWidget);
+      expect(find.text('DLNA media server (NAS, TV box, minidlna)'), findsOneWidget);
       expect(find.text('Description path'), findsOneWidget);
       expect(find.byKey(const Key('network_share_dlna_hint')), findsOneWidget);
       expect(find.textContaining('minidlna on Linux are not found'), findsOneWidget);
