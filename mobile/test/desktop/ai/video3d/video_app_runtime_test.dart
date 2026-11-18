@@ -81,7 +81,8 @@ void main() {
     for (var i = 0; i < 60; i++) {
       there.addAll(await worker.add(_frame(i)));
       here.addAll(await local.add(_frame(i)));
-      if (i == 53) {
+      if (i == 31) {
+        // Right after the first window (the cut at 37 restarts the windows after it)
         expect(await worker.stateAfterWindow(), isNotNull);
       }
     }

@@ -149,6 +149,10 @@ class _FakeRunner implements VideoProgramRunner {
       if (seek != null && times[i] < seek) {
         continue;
       }
+      // Killed by a pause: a real decoder ends there too
+      if (program._out.isClosed) {
+        break;
+      }
       stats.write('$n ${(times[i] * 1000).round()} 1/1000\n');
       await stats.flush();
       program._out.add(_frame(i));
