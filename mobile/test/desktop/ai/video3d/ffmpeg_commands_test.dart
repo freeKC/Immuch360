@@ -36,7 +36,7 @@ void main() {
     expect(arguments, containsAllInOrder(['-stats_enc_pre', '/w/stats-1.txt', '-stats_enc_pre_fmt', '{n} {pts} {tb}']));
     expect(arguments.sublist(arguments.length - 5), ['-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:1']);
     expect(arguments, isNot(contains('-ss')));
-    expect(arguments[arguments.indexOf('-vf') + 1], '$videoToneMap,scale=1080:1920:flags=area,setsar=1,format=rgb24');
+    expect(arguments[arguments.indexOf('-vf') + 1], '$videoToneMap,scale=1080:1920:flags=area,format=rgb24');
   });
 
   test('a resumed decoder seeks accurately; slow motion and untagged HD get their filters', () {
@@ -53,7 +53,7 @@ void main() {
     expect(arguments, containsAllInOrder(['-copyts', '-ss', '1.820000', '-i', 'ped.webm']));
     expect(
       arguments[arguments.indexOf('-vf') + 1],
-      'fps=30,scale=1920:1080:flags=area:in_color_matrix=bt709,setsar=1,format=rgb24',
+      'fps=30,scale=1920:1080:flags=area:in_color_matrix=bt709,format=rgb24',
     );
   });
 

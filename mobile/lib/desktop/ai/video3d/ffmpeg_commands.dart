@@ -131,7 +131,7 @@ List<String> videoProbeArguments(String path) => [
 ];
 
 /// The filter of the decoder for [source] at an eye of [eyeWidth] x [eyeHeight]: 30 fps for slow motion, the tone map
-/// of HDR, the eye size by area, square pixels, RGB
+/// of HDR, the eye size by area (its sample aspect already counted in it; the program has no setsar), RGB
 String videoDecoderFilter(VideoSource source, int eyeWidth, int eyeHeight, {required bool slowMotion}) {
   // An untagged HD stream is BT.709 (swscale would take it for BT.601 and shift its colours)
   final matrix = !source.colourTagged && math.max(source.codedWidth, source.codedHeight) >= 1280
@@ -141,7 +141,6 @@ String videoDecoderFilter(VideoSource source, int eyeWidth, int eyeHeight, {requ
     if (slowMotion) 'fps=30',
     if (source.isHdr && source.colourTagged) videoToneMap,
     'scale=$eyeWidth:$eyeHeight:flags=area$matrix',
-    'setsar=1',
     'format=rgb24',
   ].join(',');
 }

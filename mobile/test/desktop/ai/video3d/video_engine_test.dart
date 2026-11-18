@@ -231,7 +231,7 @@ void main() {
     ]);
     final decoder = runner.calls.firstWhere((call) => call.contains('-stats_enc_pre'));
     expect(decoder, containsAllInOrder(['-fps_mode', 'passthrough', '-vf']));
-    expect(decoder[decoder.indexOf('-vf') + 1], 'scale=28:28:flags=area,setsar=1,format=rgb24');
+    expect(decoder[decoder.indexOf('-vf') + 1], 'scale=28:28:flags=area,format=rgb24');
     final mux = runner.calls.firstWhere((call) => call.contains('concat'));
     expect(mux, containsAllInOrder(['-map', '1:1', '-map_metadata', '1', '-c:a:0', 'aac']));
     expect(mux, containsAllInOrder(['-strict', 'unofficial', '-movflags', '+faststart+use_metadata_tags']));
