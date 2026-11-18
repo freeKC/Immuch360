@@ -8,6 +8,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -171,6 +172,43 @@ class SphereLookMathTest {
     assertEquals(45f, SphereLookMath.doubleTapFov(47f), 0f)
     assertEquals(45f, SphereLookMath.doubleTapFov(115f), 0f)
     assertEquals(90f, SphereLookMath.doubleTapFov(15f), 0f)
+  }
+
+  @Test
+  fun aDoubleTapZoomsOnTheReleaseOfASecondTapThatStayedATap() {
+    val doubleTap = DoubleTapRelease()
+    // GestureDetector says double tap on the second down: nothing zooms yet
+    doubleTap.secondDown()
+    assertTrue(doubleTap.pending)
+    assertTrue(doubleTap.release(dragging = false, scaling = false))
+    assertFalse(doubleTap.pending)
+    // A plain up afterwards, with no second down, does not zoom again
+    assertFalse(doubleTap.release(dragging = false, scaling = false))
+  }
+
+  @Test
+  fun aTapThenADragAtOnceDoesNotZoom() {
+    val doubleTap = DoubleTapRelease()
+    doubleTap.secondDown()
+    // The second touch moved beyond the slop: a drag, released without a zoom
+    assertFalse(doubleTap.release(dragging = true, scaling = false))
+    // Nor does the up of the next gesture
+    assertFalse(doubleTap.release(dragging = false, scaling = false))
+  }
+
+  @Test
+  fun aTapThenAPinchOrACancelDoesNotZoom() {
+    val doubleTap = DoubleTapRelease()
+    doubleTap.secondDown()
+    assertFalse(doubleTap.release(dragging = false, scaling = true))
+    // A second finger (the controller resets on its down) then a release in place
+    doubleTap.secondDown()
+    doubleTap.reset()
+    assertFalse(doubleTap.release(dragging = false, scaling = false))
+    // A cancel
+    doubleTap.secondDown()
+    doubleTap.reset()
+    assertFalse(doubleTap.pending)
   }
 
   @Test

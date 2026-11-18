@@ -203,3 +203,32 @@ internal object SphereLookMath {
     return wrapped
   }
 }
+
+/**
+ * When a double tap zooms: on the release of its second tap, as in the photo viewer (Flutter's onDoubleTap) and the
+ * iOS player (a tap recognizer fails once the touch moves), and only if that second touch stayed a tap.
+ * GestureDetector calls onDoubleTap on the second down: a tap to show the controls followed at once by a drag or a
+ * pinch from the same spot would otherwise zoom while the fingers turn the view.
+ */
+internal class DoubleTapRelease {
+  /** The second tap of a double tap is down and still a tap */
+  var pending = false
+    private set
+
+  /** GestureDetector saw the second down of a double tap */
+  fun secondDown() {
+    pending = true
+  }
+
+  /** A new touch, a second finger or a cancel: the touch going on is no longer the second tap */
+  fun reset() {
+    pending = false
+  }
+
+  /** The last finger went up: true when the double tap zooms now, the second touch having neither dragged nor scaled */
+  fun release(dragging: Boolean, scaling: Boolean): Boolean {
+    val zoom = pending && !dragging && !scaling
+    pending = false
+    return zoom
+  }
+}

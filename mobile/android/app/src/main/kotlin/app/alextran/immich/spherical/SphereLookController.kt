@@ -27,7 +27,8 @@ import kotlin.math.hypot
  * - a drag turns the view, the picture following the finger as before, now up to straight up and straight down (see
  *   [SphereLookMath.maxLatitude]); two fingers turn it too, from their middle;
  * - a pinch zooms between [SphereLookMath.MIN_FOV] and [SphereLookMath.MAX_FOV], a double tap zooms in to 45 degrees
- *   or back to 90, while the video plays or is paused; the player opens at 90;
+ *   or back to 90 when its second tap goes up without having moved ([DoubleTapRelease]), while the video plays or is
+ *   paused; the player opens at 90;
  * - a tap shows or hides the controls, as before (PlayerView listens to the clicks of the view), once it cannot be a
  *   double tap;
  * - with the gyroscope on ([motionEnabled]), the turns of the phone add to the view as in the photo viewer; off, the
@@ -120,12 +121,15 @@ internal class SphereLookController(
         // The controls toggle once the tap cannot be the first of a double tap
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean = view.performClick()
 
+        // Called on the second down: the zoom waits for its release, see [DoubleTapRelease]
         override fun onDoubleTap(e: MotionEvent): Boolean {
-          zoomTo(SphereLookMath.doubleTapFov(zoomAnimator?.takeIf { it.isRunning }?.let { targetFov } ?: look.fov))
+          doubleTap.secondDown()
           return true
         }
       },
     )
+
+  private val doubleTap = DoubleTapRelease()
 
   private var targetFov = SphereLookMath.DEFAULT_FOV
 
@@ -174,9 +178,12 @@ internal class SphereLookController(
 
   @SuppressLint("ClickableViewAccessibility") // performClick on a confirmed tap, as Media3's touch did on a tap
   override fun onTouch(v: View, event: MotionEvent): Boolean {
-    // Any touch stops a zoom going on, as in the photo viewer; before the detectors, so that the second tap of a double
-    // tap starts its own zoom
-    if (event.actionMasked == MotionEvent.ACTION_DOWN) zoomAnimator?.cancel()
+    // Any touch stops a zoom going on, as in the photo viewer, and starts as no second tap; before the detectors, which
+    // say on this down whether it is the second tap of a double tap
+    if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+      zoomAnimator?.cancel()
+      doubleTap.reset()
+    }
     tapDetector.onTouchEvent(event)
     scaleDetector.onTouchEvent(event)
     val (x, y) = focalPoint(event)
@@ -194,6 +201,7 @@ internal class SphereLookController(
         lastX = x
         lastY = y
         dragging = true
+        doubleTap.reset()
       }
       MotionEvent.ACTION_MOVE -> {
         if (!dragging && hypot(x - downX, y - downY) > touchSlop) {
@@ -206,8 +214,16 @@ internal class SphereLookController(
           lastY = y
         }
       }
-      MotionEvent.ACTION_UP,
-      MotionEvent.ACTION_CANCEL -> dragging = false
+      MotionEvent.ACTION_UP -> {
+        if (doubleTap.release(dragging, scaleDetector.isInProgress)) {
+          zoomTo(SphereLookMath.doubleTapFov(zoomAnimator?.takeIf { it.isRunning }?.let { targetFov } ?: look.fov))
+        }
+        dragging = false
+      }
+      MotionEvent.ACTION_CANCEL -> {
+        doubleTap.reset()
+        dragging = false
+      }
     }
     return true
   }
