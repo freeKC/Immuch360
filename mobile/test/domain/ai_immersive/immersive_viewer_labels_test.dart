@@ -150,6 +150,9 @@ void main() {
           'or a short grip press: show or hide this panel. Hold a grip on the screen to move it, the thumbstick then '
           'brings it nearer or farther; hold both grips to resize it. Right thumbstick left or right: the screen in '
           'front again.',
+      'keepFrame': 'Keep size and place',
+      'keepFrameOn': 'The next photos open at this size and place',
+      'keepFrameOff': 'Each photo opens in front of you',
     });
   });
 

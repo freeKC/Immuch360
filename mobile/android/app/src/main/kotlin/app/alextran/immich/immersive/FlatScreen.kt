@@ -224,6 +224,72 @@ internal data class ScreenPlace(val eyes: Vector3, val yawDeg: Float, val height
 }
 
 /**
+ * The box of the flat screen the user set (issue 19, points 1 and 2): where it stands and its width and height in
+ * meters, updated at each change the user makes (the end of a grab or a stretch, Size, Distance, the right thumbstick
+ * that brings the screen in front). With "Keep size and place" on, each next photo goes at [place], as large as fits
+ * in the box (contain, see [angleFor]), so that a portrait photo in a landscape box is narrower and the box itself
+ * never moves. Pure, unit tested.
+ */
+internal data class ScreenFrame(val place: ScreenPlace, val widthM: Float, val heightM: Float) {
+  /** The width in meters of a picture of [aspect] (width over height) as large as fits in the box. */
+  fun containedWidth(aspect: Float): Float {
+    val shape = if (aspect > 0f) aspect else 16f / 9f
+    return min(widthM, heightM * shape)
+  }
+
+  /**
+   * The angular width at the distance of the box of a picture of [aspect] contained in it, within [bounds]: those of
+   * its photo (a photo of two eyes may come out smaller than the box, see [FlatScreenGeometry.frameBounds]).
+   */
+  fun angleFor(aspect: Float, bounds: ClosedFloatingPointRange<Float>): Float =
+    FlatScreenGeometry.angleForWidth(containedWidth(aspect), place.distance).coerceIn(bounds)
+
+  /** How far above (positive) or below the eyes the box stands, in part of its distance. */
+  val elevation: Float
+    get() = (place.height - place.eyes.y) / place.distance
+
+  /** What the viewer keeps of the box for its next openings: the yaw is the gaze of the opening. */
+  fun saved(): SavedScreenFrame = SavedScreenFrame(widthM, heightM, place.distance, elevation)
+
+  companion object {
+    /** The box of a picture of [aspect] [angleDeg] wide at [place]. */
+    fun of(place: ScreenPlace, angleDeg: Float, aspect: Float): ScreenFrame {
+      val width = FlatScreenGeometry.width(angleDeg, place.distance)
+      val shape = if (aspect > 0f) aspect else 16f / 9f
+      return ScreenFrame(place, width, width / shape)
+    }
+  }
+}
+
+/**
+ * The box of the flat screen as the viewer keeps it in its preferences between openings: its width, height and
+ * distance in meters, and its [elevation] above or below the eyes in part of the distance. Pure, unit tested.
+ */
+internal data class SavedScreenFrame(
+  val widthM: Float,
+  val heightM: Float,
+  val distance: Float,
+  val elevation: Float,
+) {
+  /** Whether these values can be a box: a stale or damaged entry is forgotten. */
+  val isValid: Boolean
+    get() =
+      widthM.isFinite() &&
+        heightM.isFinite() &&
+        widthM > 0f &&
+        heightM > 0f &&
+        distance in FlatScreenGeometry.DISTANCES_M.first()..FlatScreenGeometry.DISTANCES_M.last() &&
+        elevation.isFinite()
+
+  /** The box in front of [eyes] looking along [forward], at its distance and elevation. */
+  fun placedInFront(eyes: Vector3, forward: Vector3): ScreenFrame {
+    val front = ScreenPlace.inFront(eyes, forward, distance)
+    val rise = elevation.coerceIn(-FlatScreenGeometry.MAX_ELEVATION, FlatScreenGeometry.MAX_ELEVATION) * distance
+    return ScreenFrame(front.copy(height = eyes.y + rise), widthM, heightM)
+  }
+}
+
+/**
  * An upright rectangle [width] x [height] meters at [place], facing the eyes it was placed from: a flat screen, or a
  * panel of the viewer (its Transform at the center of [place], turned by Quaternion.lookRotation of its direction).
  */
@@ -488,6 +554,13 @@ internal object FlatScreenGeometry {
    */
   fun boundsHolding(bounds: ClosedFloatingPointRange<Float>, angleDeg: Float): ClosedFloatingPointRange<Float> =
     min(bounds.start, angleDeg)..max(bounds.endInclusive, angleDeg)
+
+  /**
+   * The angles a photo takes in the kept box (see [ScreenFrame.angleFor]): its Size bounds for two eyes, and for one
+   * picture from the smallest Size up to [NEAR_MAX_DEG], since the box may hold a screen brought nearer past them.
+   */
+  fun frameBounds(twoEyes: Boolean, estimatedRelief: Boolean): ClosedFloatingPointRange<Float> =
+    if (twoEyes) angleBounds(true, estimatedRelief) else MIN_ANGLE_DEG..NEAR_MAX_DEG
 
   /** Angles closer than this are the same: the rounding of a width in meters and back. */
   private const val ANGLE_EPSILON_DEG = 1e-3f

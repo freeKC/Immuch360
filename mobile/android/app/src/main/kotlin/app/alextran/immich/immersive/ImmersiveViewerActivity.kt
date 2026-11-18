@@ -636,6 +636,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** When the stretch last resized the screen (uptime ms), and the size it still has to take. */
   private var stretchAppliedAt = 0L
   private var stretchPendingAngle: Float? = null
+  /**
+   * The box of the flat screen the user set (see ScreenFrame), for the opening [frameOpeningId]: with "Keep size and
+   * place" on ([keepFrame], in the preferences of the viewer, on by default) each next photo goes there, as large as
+   * fits in it. A new opening starts from the box kept in the preferences, in front of the gaze.
+   */
+  private var screenFrame: ScreenFrame? = null
+  private var frameOpeningId: Long? = null
+  private var keepFrame = true
+
+  /** The photo being shown goes into the kept box once its picture is known (see screenPlaceFor). */
+  private var fitToFrame = false
+
   /** The angles the stretch in progress keeps to: those of the screen, widened to its angle at the start. */
   private var stretchBounds: ClosedFloatingPointRange<Float>? = null
   /** The pose of each controller on this frame, see ImmersiveInputSystem.Listener.onControllerRays. */
@@ -1032,6 +1044,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         )
     }
     liveViewer = this
+    keepFrame = screenPreferences().getBoolean(PREF_KEEP_FRAME, true)
     stabilization.listen()
   }
 
@@ -1418,6 +1431,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(sizeMoreButton) { changeScreenSize(1) }
     onPanelClick(distanceLessButton) { changeScreenDistance(-1) }
     onPanelClick(distanceMoreButton) { changeScreenDistance(1) }
+    onPanelClick(keepFrameButton) { toggleKeepFrame() }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
     previousButton?.setOnClickListener { navigate(-1) }
     nextButton?.setOnClickListener { navigate(1) }
@@ -1742,7 +1756,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /** The distance of the movable flat screen of the media shown, null for any other media. */
-  private fun nearScreenDistance(): Float? = screenPlace?.distance?.takeIf { request?.isMovableScreen == true }
+  private fun nearScreenDistance(): Float? = screenPlace?.distance?.takeIf { movableNow }
 
   /**
    * Every frame: the info panel and the feedback line shown come nearer than a flat screen brought nearer than them
@@ -2356,7 +2370,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             // A splat turns about the user by the step of the spheres, the place the glide reached kept
             splatStage?.turn(degrees)
           } else if (isStereoPhoto) {
-            placeStereoQuad()
+            placeStereoQuad(recenter = true)
           } else if (isFlatVideo) {
             placeFlatVideo()
           } else {
@@ -2366,13 +2380,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         ImmersiveControls.Action.STICK_UP ->
           when {
             isVideo -> seekFromThumbstick(1)
-            isStereoPhoto -> if (request?.isMovableScreen == true) changeScreenSize(1) else resizeStereoQuad(1)
+            isStereoPhoto -> if (movableNow) changeScreenSize(1) else resizeStereoQuad(1)
             else -> turnFromThumbstick(YAW_STEP_DEGREES)
           }
         ImmersiveControls.Action.STICK_DOWN ->
           when {
             isVideo -> seekFromThumbstick(-1)
-            isStereoPhoto -> if (request?.isMovableScreen == true) changeScreenSize(-1) else resizeStereoQuad(-1)
+            isStereoPhoto -> if (movableNow) changeScreenSize(-1) else resizeStereoQuad(-1)
             else -> turnFromThumbstick(-YAW_STEP_DEGREES)
           }
         ImmersiveControls.Action.SCREEN_FARTHER -> changeScreenDistance(1)
@@ -2470,6 +2484,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     screenDrag = null
     screenDragSide = null
     Log.i(TAG, "flat screen let go at $screenPlace")
+    rememberFrame("moved")
   }
 
   /** While a grip holds the screen, the screen where its ray points now. */
@@ -2526,6 +2541,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stretchBounds = null
     stretchPendingAngle?.let { setScreenAngle(it) }
     stretchPendingAngle = null
+    rememberFrame("stretched")
   }
 
   /**
@@ -2535,7 +2551,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun screenSize(): Pair<Float, Float>? {
     val media = request ?: return null
     val place = screenPlace ?: return null
-    if (!media.isMovableScreen) return null
+    if (!movableNow) return null
     if (media.isFlatVideo) {
       if (!videoRevealed) return null
       val aspect = flatVideoLook()?.second ?: return null
@@ -2548,7 +2564,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The angular width of the movable flat screen shown ("Size 48°"), null when none shows. */
   private fun currentScreenAngle(): Float? {
     val media = request ?: return null
-    if (!media.isMovableScreen || screenPlace == null) return null
+    if (!movableNow || screenPlace == null) return null
     return when {
       media.isFlatVideo -> flatVideoLook()?.let { flatVideoAngle(it.second) }
       stereoEyeSize != null -> stereoAngleDeg
@@ -2589,6 +2605,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // A screen brought nearer past its widest Size goes smaller from there, never back to the bound at once
     val bounds = FlatScreenGeometry.boundsHolding(screenAngleBounds(), angle)
     setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, bounds))
+    rememberFrame("sized")
   }
 
   /** Whether the screen shown may come from [from] to [to] meters, see FlatScreenGeometry.nearerAllowed. */
@@ -2629,6 +2646,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         controllerRays[side]?.let { ray -> screenDrag = ScreenDrag(moved, ray.t, ray.forward()) }
       }
       Log.i(TAG, "flat screen is now $distance m away")
+      rememberFrame("brought to $distance m")
     }
     updateScreenControls()
     reportScreenChange(distanceText(distance))
@@ -2665,6 +2683,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val place = screenPlace
     if (angle == null || place == null) {
       screenRow?.visibility = View.GONE
+      keepFrameButton?.visibility = View.GONE
       sizeRow?.visibility = View.GONE
       distanceRow?.visibility = View.GONE
       return
@@ -2682,6 +2701,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     screenRow?.visibility = View.VISIBLE
     sizeRow?.visibility = View.VISIBLE
     distanceRow?.visibility = View.VISIBLE
+    updateKeepFrameButton()
   }
 
   /**
@@ -3487,6 +3507,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceIn(media.screenAngleBounds)
     stereoSizeFromPicture = kind == StereoPhotoKind.BigScreen && restored == null
     stereoChoicesFor = media.url to media.openingId
+    // The box the user set goes with the opening: a new opening places the box of the preferences in front of the gaze
+    if (media.openingId != frameOpeningId) {
+      screenFrame = null
+      frameOpeningId = media.openingId
+    }
+    // Issue 19: the next photos take the size and place set; the photo of a recreation stays as the user left it
+    fitToFrame = restored == null && keepFrame && media.isMovableScreen && !media.isFlatVideo
     if (kind is StereoPhotoKind.VolumetricScene) {
       showScene(media, kind.spec)
       return
@@ -4786,6 +4813,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     applyStereoMode()
     applyStereoPlacement()
     updateStereoView()
+    // A relief in 2.5D stands where it was computed from: no Size, Distance or grips until it leaves 2.5D
+    updateScreenControls()
     if (next != StereoView.TWO_D) showReliefEstimated() else hideReliefEstimated()
     showControlChange(fromPanel)
   }
@@ -4793,9 +4822,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /**
    * Puts the quad 2 m in front of where the user looks, at the height of the eyes, facing them the way the info panel
    * does (see StereoComposer.quadRotation): the horizontal gaze. Before the first head pose, in front of the default
-   * eye position; [onFrame] places it again once the pose is known.
+   * eye position; [onFrame] places it again once the pose is known. A flat screen the user may move goes where
+   * [screenPlaceFor] says: the kept box for a new photo with "Keep size and place" on, and in front of the gaze at its
+   * distance for the right thumbstick ([recenter]), which then becomes the box.
    */
-  private fun placeStereoQuad() {
+  private fun placeStereoQuad(recenter: Boolean = false) {
     if (stereoQuadEntity == null) return
     val head = lastHeadPosition
     val eyes = head ?: Vector3(0f, DEFAULT_EYE_HEIGHT, 0f)
@@ -4805,8 +4836,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoEyes = Vector3(eyes.x, eyes.y, eyes.z)
     stereoGaze = direction
     stereoPlacedWithHead = head != null
-    // A flat screen the user may move goes at the distance the user chose last (see ScreenPlace)
-    screenPlace = if (request?.isMovableScreen == true) ScreenPlace.inFront(eyes, forward, screenDistanceM) else null
+    val movable = movableNow
+    screenPlace = if (movable) screenPlaceFor(eyes, forward, head != null, recenter) else null
     // A 2.5D view starts again from here: the whole relief
     if (reliefMeshShown) {
       reliefAttenuation = 1.0
@@ -4816,9 +4847,120 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateScreenControls()
     Log.i(
       TAG,
-      "stereo quad placed in front of $eyes, gaze $direction, head ${if (head != null) "known" else "unknown"}",
+      "stereo quad placed in front of $eyes, gaze $direction, head ${if (head != null) "known" else "unknown"}" +
+        if (movable) ", screen at $screenPlace, $stereoAngleDeg degrees" else "",
     )
+    // The screen brought in front is the box from now on; so is the first one of a viewer that keeps it
+    if (movable && head != null && (recenter || (keepFrame && screenFrame == null))) {
+      rememberFrame(if (recenter) "in front again" else "first screen")
+    }
   }
+
+  /**
+   * Where a movable flat screen goes: in front of the gaze at its distance for the right thumbstick ([recenter]); the
+   * kept box for a new photo with "Keep size and place" on ([fitToFrame]), the photo then as large as fits in it (its
+   * angle set here, within its own bounds), the box of the preferences placed in front of the gaze at the first photo
+   * of an opening; else in front of the gaze at the distance chosen last, as before issue 19.
+   */
+  private fun screenPlaceFor(eyes: Vector3, forward: Vector3, headKnown: Boolean, recenter: Boolean): ScreenPlace {
+    if (recenter) return ScreenPlace.inFront(eyes, forward, screenPlace?.distance ?: screenDistanceM)
+    if (fitToFrame) {
+      val frame =
+        screenFrame
+          ?: savedScreenFrame()?.placedInFront(eyes, forward)?.also {
+            // Kept once the head is known: before, the box stands in front of a default pose
+            if (headKnown) {
+              screenFrame = it
+              frameOpeningId = request?.openingId
+            }
+          }
+      val eyeSize = stereoEyeSize
+      val media = request
+      if (frame != null && eyeSize != null && media != null) {
+        val aspect = eyeSize.first.toFloat() / eyeSize.second.coerceAtLeast(1)
+        val bounds = FlatScreenGeometry.frameBounds(media.holdsTwoEyes, media.isEstimatedRelief)
+        stereoAngleDeg = frame.angleFor(aspect, bounds)
+        val fills = abs(FlatScreenGeometry.width(stereoAngleDeg, frame.place.distance) - frame.containedWidth(aspect))
+        Log.i(
+          TAG,
+          "photo in the kept box ${frame.widthM} x ${frame.heightM} m: $stereoAngleDeg degrees" +
+            if (fills > 0.01f) ", smaller than the box (its bounds $bounds)" else "",
+        )
+        return frame.place
+      }
+    }
+    return ScreenPlace.inFront(eyes, forward, screenDistanceM)
+  }
+
+  /**
+   * The flat screen shown, where it is and as large as it is, becomes the box the next photos take (see
+   * ScreenFrame), here and in the preferences for the next openings; [why] goes to the log. A photo only: a flat
+   * video keeps its own screen.
+   */
+  private fun rememberFrame(why: String) {
+    val media = request ?: return
+    if (!movableNow || media.isFlatVideo) return
+    val place = screenPlace ?: return
+    val angle = currentScreenAngle() ?: return
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
+    val frame = ScreenFrame.of(place, angle, eyeWidth.toFloat() / eyeHeight.coerceAtLeast(1))
+    screenFrame = frame
+    frameOpeningId = media.openingId
+    val saved = frame.saved()
+    screenPreferences()
+      .edit()
+      .putFloat(PREF_FRAME_WIDTH, saved.widthM)
+      .putFloat(PREF_FRAME_HEIGHT, saved.heightM)
+      .putFloat(PREF_FRAME_DISTANCE, saved.distance)
+      .putFloat(PREF_FRAME_ELEVATION, saved.elevation)
+      .apply()
+    Log.i(TAG, "kept box ($why): ${frame.widthM} x ${frame.heightM} m, ${saved.distance} m, rise ${saved.elevation}")
+  }
+
+  /** The box of the preferences, null before the first one or when the entry does not read. */
+  private fun savedScreenFrame(): SavedScreenFrame? {
+    val preferences = screenPreferences()
+    if (!preferences.contains(PREF_FRAME_WIDTH)) return null
+    return SavedScreenFrame(
+        preferences.getFloat(PREF_FRAME_WIDTH, 0f),
+        preferences.getFloat(PREF_FRAME_HEIGHT, 0f),
+        preferences.getFloat(PREF_FRAME_DISTANCE, 0f),
+        preferences.getFloat(PREF_FRAME_ELEVATION, 0f),
+      )
+      .takeIf { it.isValid }
+  }
+
+  private fun screenPreferences() = getSharedPreferences(SCREEN_PREFERENCES, MODE_PRIVATE)
+
+  /**
+   * "Keep size and place": on, the next photos open in the box the user set; off, each one in front of the gaze at
+   * its own size, as before issue 19. Kept in the preferences of the viewer.
+   */
+  private fun toggleKeepFrame() {
+    keepFrame = !keepFrame
+    screenPreferences().edit().putBoolean(PREF_KEEP_FRAME, keepFrame).apply()
+    if (keepFrame) rememberFrame("Keep size and place on")
+    Log.i(TAG, "Keep size and place ${if (keepFrame) "on" else "off"}")
+    updateKeepFrameButton()
+    val labels = request?.stereoLabels.orEmpty()
+    val key = if (keepFrame) StereoComposer.LABEL_KEEP_FRAME_ON else StereoComposer.LABEL_KEEP_FRAME_OFF
+    reportScreenChange(StereoComposer.label(labels, key))
+  }
+
+  /** The Keep size and place button, for the photos of a flat screen once one shows, dimmed while off. */
+  private fun updateKeepFrameButton() {
+    val button = keepFrameButton ?: return
+    val media = request
+    val shown = media != null && media.isStereoPhoto && movableNow && screenPlace != null
+    button.text = StereoComposer.label(media?.stereoLabels.orEmpty(), StereoComposer.LABEL_KEEP_FRAME)
+    button.alpha = if (keepFrame) 1f else STABILIZATION_OFF_ALPHA
+    button.isActivated = keepFrame
+    button.visibility = if (shown) View.VISIBLE else View.GONE
+  }
+
+  /** The flat screen shown moves and resizes now: a movable screen, but a relief while its 2.5D mesh shows. */
+  private val movableNow: Boolean
+    get() = request?.isMovableScreen == true && !reliefMeshShown
 
   /**
    * The quad at the start pose [placeStereoQuad] took last: 2 m along the gaze, at the height of the eyes, as wide as
@@ -4829,7 +4971,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun applyStereoPlacement() {
     val entity = stereoQuadEntity ?: return
     val place = screenPlace
-    if (place != null && request?.isMovableScreen == true) {
+    if (place != null && movableNow) {
       placeScreenPhoto(place)
       return
     }
@@ -4877,7 +5019,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     screenPlace?.let { place ->
-      if (request?.isMovableScreen == true) {
+      if (movableNow) {
         placeScreenPhoto(place)
         return
       }
@@ -7097,6 +7239,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val SPLAT_PREFIX = "immersive_splat_"
     /** The orientation chosen for each splat file, see SplatUprightMemory */
     private const val SPLAT_PREFERENCES = "immersive_splat"
+    /** "Keep size and place" and the box of the flat screen kept between openings, see ScreenFrame */
+    private const val SCREEN_PREFERENCES = "immersive_screen"
+    private const val PREF_KEEP_FRAME = "keep_frame"
+    private const val PREF_FRAME_WIDTH = "frame_width_m"
+    private const val PREF_FRAME_HEIGHT = "frame_height_m"
+    private const val PREF_FRAME_DISTANCE = "frame_distance_m"
+    private const val PREF_FRAME_ELEVATION = "frame_elevation"
     private const val INFO_DISTANCE = 1.3f
     /** The info panel stands this much below the eyes, at INFO_DISTANCE. */
     private const val INFO_DROP = 0.3f
