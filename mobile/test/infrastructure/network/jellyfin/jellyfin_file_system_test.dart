@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/io_client.dart';
 import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
+import 'package:immich_mobile/domain/models/media_server_item.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_api.dart';
@@ -247,6 +248,30 @@ void main() {
       expect(poster, isNull, reason: 'unknown to the server: 404');
       expect(server.requests.last.query, containsPair('fillHeight', '360'));
       expect(server.requests.last.query, containsPair('fillWidth', '240'));
+    });
+
+    test('the pages of films and series: which entries open one, and what they show', () async {
+      final fileSystem = await openJellyfin(server);
+      addTearDown(fileSystem.close);
+      final films = await fileSystem.list('/Films');
+      final tone = films.firstWhere((e) => e.name == 'Tone (2021).mkv');
+      final toneId = server.itemId('Tone (2021)');
+      expect(fileSystem.itemPageAt(tone.path), toneId);
+      await fileSystem.list('/Shows');
+      expect(fileSystem.itemPageAt('/Shows/Pattern Show'), server.itemId('Pattern Show'));
+      final episodes = await fileSystem.list('/Shows/Pattern Show/Season 1');
+      expect(fileSystem.itemPageAt(episodes.first.path), isNull, reason: 'an episode plays at once');
+      final details = await fileSystem.itemDetails(toneId);
+      expect(details.kind, MediaServerItemKind.film);
+      expect((details.videoCodec, details.videoHeight), ('h264', 720));
+      expect(details.audio.single.codec, 'dts');
+      final seriesId = server.itemId('Pattern Show');
+      final seasons = await fileSystem.seasonsOf(seriesId);
+      expect(seasons.single.seasonNumber, 1);
+      final listed = await fileSystem.episodesOf(seriesId, seasons.single.id);
+      expect(listed.map((e) => (e.seasonNumber, e.episodeNumber)), [(1, 1), (1, 2)]);
+      expect((await fileSystem.nextEpisodeOf(seriesId))?.episodeNumber, 1);
+      expect(await fileSystem.pathOfItem(listed.last.id), endsWith('/Pattern Show S01E02.mp4'));
     });
 
     test('the token, the address, titles and paths stay out of the logs and the errors', () async {

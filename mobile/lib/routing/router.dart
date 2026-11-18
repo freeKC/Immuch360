@@ -76,6 +76,7 @@ import 'package:immich_mobile/presentation/pages/memory.page.dart';
 import 'package:immich_mobile/presentation/pages/memory_list.page.dart';
 import 'package:immich_mobile/presentation/pages/network/downloaded_films.page.dart';
 import 'package:immich_mobile/presentation/pages/network/jellyfin_server_edit.page.dart';
+import 'package:immich_mobile/presentation/pages/network/media_server_item.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_share_edit.page.dart';
@@ -261,6 +262,7 @@ class AppRouter extends RootStackRouter {
     // not browsed as folders
     AutoRoute(page: PlexServerEditRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: JellyfinServerEditRoute.page, guards: [_authGuard, _duplicateGuard]),
+    AutoRoute(page: MediaServerItemRoute.page, guards: [_authGuard]),
     AutoRoute(page: CameraRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: CameraEditRoute.page, guards: [_authGuard, _duplicateGuard]),
     AutoRoute(page: CameraDayRoute.page, guards: [_authGuard, _duplicateGuard]),

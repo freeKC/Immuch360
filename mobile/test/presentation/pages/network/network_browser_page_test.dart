@@ -13,6 +13,7 @@ import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
+import 'package:immich_mobile/domain/models/media_server_item.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
@@ -148,6 +149,34 @@ class _Toasts extends ToastService {
   FutureOr<void> error(String message, {ToastOption? toast}) {
     errors.add(message);
   }
+}
+
+/// A share whose films and series have pages (a Jellyfin server), by path
+class _ItemsShare extends MemoryShare implements MediaServerItemSource {
+  _ItemsShare(super.source, {super.folders, super.files});
+
+  final Map<String, String> pages = {};
+
+  @override
+  String? itemPageAt(String path) => pages[path];
+
+  @override
+  Future<MediaServerItem> itemDetails(String itemId) => throw UnimplementedError();
+
+  @override
+  Future<List<MediaServerItem>> seasonsOf(String seriesId) async => const [];
+
+  @override
+  Future<List<MediaServerItem>> episodesOf(String seriesId, String seasonId) async => const [];
+
+  @override
+  Future<MediaServerItem?> nextEpisodeOf(String seriesId) async => null;
+
+  @override
+  Future<String> pathOfItem(String itemId) async => '/';
+
+  @override
+  Future<Uint8List?> itemPicture(String itemId, int size) async => null;
 }
 
 void main() {
@@ -799,6 +828,23 @@ void main() {
       Uri.parse('http://127.0.0.1:1234/token/nas/pano.jpg'),
     ], reason: 'no bridge read for the others');
     expect(videoHost.urls, isEmpty, reason: 'no frame taken while the server picture comes');
+  });
+
+  testWidgets('a film or a series of a Jellyfin server opens its page on a tap, the film with its tile file', (
+    tester,
+  ) async {
+    share = _ItemsShare(source, folders: share.folders, files: share.files)
+      ..pages['/trip.mp4'] = 'film-1'
+      ..pages['/Holidays'] = 'series-1';
+    final router = await pumpBrowser(tester);
+    await tester.tap(tileOf('trip.mp4'));
+    await tester.pumpAndSettle();
+    expect(find.text('item nas film-1 /trip.mp4'), findsOneWidget);
+    await router.maybePop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Holidays'));
+    await tester.pumpAndSettle();
+    expect(find.text('item nas series-1 null'), findsOneWidget);
   });
 
   group('the address outside home and refused credentials', () {

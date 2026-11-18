@@ -2255,6 +2255,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                                 playerKey: _playerKey,
                                 source: () => switch (_shareType) {
                                   NetworkSourceType.plex => HeadsetSourceKind.plex,
+                                  NetworkSourceType.jellyfin => HeadsetSourceKind.jellyfin,
                                   NetworkSourceType.tapo => HeadsetSourceKind.camera,
                                   NetworkSourceType.documentTree ||
                                   NetworkSourceType.deviceFolder => HeadsetSourceKind.local,

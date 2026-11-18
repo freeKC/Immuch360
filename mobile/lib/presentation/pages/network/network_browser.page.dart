@@ -7,6 +7,7 @@ import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/desktop/selection/network_selection.dart';
+import 'package:immich_mobile/domain/models/media_server_item.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/services/folder_contents.dart';
@@ -402,6 +403,23 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       return;
     }
     final connection = ref.read(networkConnectionsProvider).opened(widget.sourceId);
+    // A film or a series of a Jellyfin or Emby server opens its page (release 49); its episodes and other files play
+    if (connection case final MediaServerItemSource items) {
+      final itemId = items.itemPageAt(entry.path);
+      if (itemId != null) {
+        unawaited(
+          context.pushRoute(
+            MediaServerItemRoute(
+              sourceId: widget.sourceId,
+              itemId: itemId,
+              path: entry.isDirectory ? null : entry.path,
+              title: entry.shownName,
+            ),
+          ),
+        );
+        return;
+      }
+    }
     // A film library of a Plex server opens on its films page (lot A1), whose menu shows its folders
     if (entry.isDirectory) {
       final folderPath = _withoutTrailingSlash(entry.path);

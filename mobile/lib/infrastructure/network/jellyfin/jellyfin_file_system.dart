@@ -26,6 +26,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/domain/models/media_server_item.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/entry_names.dart';
@@ -123,7 +124,12 @@ String? jellyfinTitleOf(JellyfinItem item) {
 
 /// A [NetworkFileSystem] over a Jellyfin or Emby server, see [open]
 class JellyfinFileSystem
-    implements NetworkFileSystem, NetworkThumbnailSource, NetworkRangeReads, NetworkAbortableReads {
+    implements
+        NetworkFileSystem,
+        NetworkThumbnailSource,
+        NetworkRangeReads,
+        NetworkAbortableReads,
+        MediaServerItemSource {
   JellyfinFileSystem._(this.source, this.client, this.userId, this.info, this._pageSize);
 
   /// Checks that the server at the address of [source] is the one of its server id, without the token, then the
@@ -333,9 +339,52 @@ class JellyfinFileSystem
     });
   }
 
+  /// The items met so far, by id, for their pictures
+  final Map<String, JellyfinItem> _items = {};
+
+  JellyfinItem _keep(JellyfinItem item) => _items[item.id] = item;
+
+  @override
+  String? itemPageAt(String path) {
+    final item = _nodes[normalizePath(path)]?.item;
+    return item != null && (item.isMovie || item.isSeries) ? item.id : null;
+  }
+
+  @override
+  Future<MediaServerItem> itemDetails(String itemId) =>
+      _guard('item', () async => jellyfinMediaServerItem(_keep(await client.item(userId, itemId))));
+
+  @override
+  Future<List<MediaServerItem>> seasonsOf(String seriesId) => _guard(
+    'seasons',
+    () async => [for (final season in await client.seasons(userId, seriesId)) jellyfinMediaServerItem(_keep(season))],
+  );
+
+  @override
+  Future<List<MediaServerItem>> episodesOf(String seriesId, String seasonId) => _guard(
+    'episodes',
+    () async => [
+      for (final episode in await client.episodes(userId, seriesId, seasonId: seasonId))
+        if (episode.isVideo) jellyfinMediaServerItem(_keep(episode)),
+    ],
+  );
+
+  @override
+  Future<MediaServerItem?> nextEpisodeOf(String seriesId) => _guard('next up', () async {
+    final next = await client.nextUp(userId, seriesId);
+    return next == null ? null : jellyfinMediaServerItem(_keep(next));
+  });
+
+  @override
+  Future<Uint8List?> itemPicture(String itemId, int size) async {
+    final item = _items[itemId];
+    return item == null || _closed ? null : pictureOf(item, size);
+  }
+
   /// The path of its own of the item [itemId] (see [jellyfinItemPath]), its node and entry known
+  @override
   Future<String> pathOfItem(String itemId) => _guard('item', () async {
-    final item = await client.item(userId, itemId);
+    final item = _keep(await client.item(userId, itemId));
     final name = jellyfinEntryName(item);
     final path = jellyfinItemPath(item.id, item.firstSource?.id, name);
     final node = _Node.of(item);
@@ -444,6 +493,9 @@ class JellyfinFileSystem
         for (final (:item, :name) in named) {
           final path = folder == '/' ? '/$name' : '$folder/$name';
           _nodes[path] = item;
+          if (item.item case final met?) {
+            _keep(met);
+          }
           final entry = _entryOf(path, item);
           final known = _entries[path];
           _entries[path] = known != null && entry.size == null && known.size != null
@@ -658,6 +710,44 @@ class JellyfinFileSystem
     final slash = path.lastIndexOf('/');
     return slash <= 0 ? '/' : path.substring(0, slash);
   }
+}
+
+/// What the film and series page shows of [item]
+MediaServerItem jellyfinMediaServerItem(JellyfinItem item) {
+  final source = item.firstSource;
+  final audio = [...?source?.streams.where((s) => s.isAudio)];
+  // The default track first, then the others in their order
+  final ordered = [...audio.where((s) => s.isDefault), ...audio.where((s) => !s.isDefault)];
+  final userData = item.userData;
+  return MediaServerItem(
+    id: item.id,
+    kind: item.isMovie
+        ? MediaServerItemKind.film
+        : item.isSeries
+        ? MediaServerItemKind.series
+        : item.isSeason
+        ? MediaServerItemKind.season
+        : item.isEpisode
+        ? MediaServerItemKind.episode
+        : MediaServerItemKind.other,
+    title: item.name,
+    year: item.productionYear,
+    durationMs: source?.runTimeMs ?? item.runTimeMs,
+    overview: item.overview,
+    positionMs: userData?.positionMs,
+    played: userData?.played ?? false,
+    seasonNumber: item.isSeason ? item.indexNumber : item.parentIndexNumber,
+    episodeNumber: item.isEpisode ? item.indexNumber : null,
+    seriesId: item.seriesId,
+    videoCodec: source?.video?.codec,
+    videoHeight: source?.video?.height,
+    audio: [
+      for (final stream in ordered)
+        if (stream.codec case final codec?) (codec: codec, channels: stream.channels),
+    ],
+    stereo: source?.video3DFormat ?? item.video3DFormat,
+    versions: max(1, item.mediaSources.length),
+  );
 }
 
 /// The HTTP client of a Jellyfin or Emby server in the app: off the UI isolate, as Plex since release 47, so that a
