@@ -521,8 +521,13 @@ def vda_expected() -> dict:
         frame = vda_video_frame(index)
         inputs.append(golden.vda_input(frame, VDA_MODEL, VDA_MODEL))
         histograms.append(golden.luma_hist(frame))
-    distances = [0.5 * sum(abs(a - b) for a, b in zip(histograms[i], histograms[i - 1]))
-                 for i in range(1, VDA_FRAMES)]
+    # Added one after the other, never with sum(): from Python 3.12 it compensates the rounding of floats
+    distances = []
+    for i in range(1, VDA_FRAMES):
+        l1 = 0.0
+        for a, b in zip(histograms[i], histograms[i - 1]):
+            l1 += abs(a - b)
+        distances.append(0.5 * l1)
     flagged = [i + 1 for i in golden.cuts(distances)]
     # A cut less than 22 frames after the scene's start only resets the normalisation
     starts = [0]
