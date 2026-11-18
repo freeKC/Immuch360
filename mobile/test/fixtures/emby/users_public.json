@@ -1,0 +1,22 @@
+[
+ {
+  "HasConfiguredPassword": true,
+  "HasPassword": true,
+  "Id": "f000000000000000000000000000002c",
+  "LastActivityDate": "2026-11-18T14:03:54.5699455Z",
+  "LastLoginDate": "2026-11-18T14:03:54.5699455Z",
+  "Name": "admin",
+  "Prefix": "A",
+  "ServerId": "f000000000000000000000000000002b"
+ },
+ {
+  "HasConfiguredPassword": true,
+  "HasPassword": true,
+  "Id": "f000000000000000000000000000002d",
+  "LastActivityDate": "2026-11-18T14:09:13.1543257Z",
+  "LastLoginDate": "2026-11-18T14:09:12.3989659Z",
+  "Name": "viewer",
+  "Prefix": "V",
+  "ServerId": "f000000000000000000000000000002b"
+ }
+]

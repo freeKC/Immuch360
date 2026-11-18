@@ -1,0 +1,68 @@
+{
+ "Items": [
+  {
+   "Album": "2024",
+   "AlbumId": "f000000000000000000000000000001d",
+   "BackdropImageTags": [],
+   "ChannelId": null,
+   "Id": "f000000000000000000000000000001f",
+   "ImageBlurHashes": {
+    "Primary": {
+     "4c8b1b3b102c4028297eeea183fe1543": "N~LEZw[%osz6mt^I%3n|j=nUafs,jua{fQjua{ju"
+    }
+   },
+   "ImageTags": {
+    "Primary": "f0000000000000000000000000000020"
+   },
+   "LocationType": "FileSystem",
+   "MediaType": "Photo",
+   "Name": "pano-001",
+   "Overview": "Lavc61.19.101",
+   "Path": "/media/photos/2024/pano-001.jpg",
+   "ServerId": "f0000000000000000000000000000024",
+   "SortName": "pano0000000001",
+   "Type": "Photo",
+   "UserData": {
+    "IsFavorite": false,
+    "ItemId": "f0000000000000000000000000000027",
+    "Key": "f0000000-0000-0000-0000-00000000001f",
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false
+   }
+  },
+  {
+   "Album": "2024",
+   "AlbumId": "f000000000000000000000000000001d",
+   "BackdropImageTags": [],
+   "ChannelId": null,
+   "Id": "f0000000000000000000000000000021",
+   "ImageBlurHashes": {
+    "Primary": {
+     "9c55dccbb50ff18c89b7aa4ac7a6bbed": "V~LXY,;st0z6iPtRoHj?nTe:bHjZbHjaa{tRn#bFnSe="
+    }
+   },
+   "ImageTags": {
+    "Primary": "f0000000000000000000000000000022"
+   },
+   "LocationType": "FileSystem",
+   "MediaType": "Photo",
+   "Name": "pattern-001",
+   "Overview": "Lavc61.19.101",
+   "Path": "/media/photos/2024/pattern-001.jpg",
+   "ServerId": "f0000000000000000000000000000024",
+   "SortName": "pattern0000000001",
+   "Type": "Photo",
+   "UserData": {
+    "IsFavorite": false,
+    "ItemId": "f0000000000000000000000000000027",
+    "Key": "f0000000-0000-0000-0000-000000000021",
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false
+   }
+  }
+ ],
+ "StartIndex": 0,
+ "TotalRecordCount": 2
+}

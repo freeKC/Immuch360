@@ -169,6 +169,12 @@ enum StoreKey<T> {
   /// default depends on the screen). 5470 and on are the numbers of the Plex audio and versions lot of release 47
   plexFilmVersions<String>._(5470),
 
+  /// The id of this install in the DeviceId of the requests to Jellyfin and Emby servers (release 49): 32 hex digits
+  /// made on first use, followed by the start of the source id in each request (see jellyfinDeviceIdOf). Never
+  /// exported: another device that took it would end this one's sessions. 5490 and on are the numbers of the
+  /// Jellyfin lot of release 49
+  jellyfinDeviceId<String>._(5490),
+
   /// The invitation to rate the app: its opens, viewings, crashes and asks, one JSON object (RateAppState of
   /// lib/domain/models/rate_app.dart). Sign out keeps it, an uninstall removes it
   rateAppState<String>._(5052),

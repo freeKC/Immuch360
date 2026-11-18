@@ -1,0 +1,24 @@
+{
+ "Items": [
+  {
+   "BackdropImageTags": [],
+   "Id": "25",
+   "ImageTags": {},
+   "IndexNumber": 1,
+   "IsFolder": true,
+   "Name": "Season 1",
+   "SeriesId": "24",
+   "SeriesName": "Pattern Show",
+   "ServerId": "f000000000000000000000000000002b",
+   "Type": "Season",
+   "UserData": {
+    "IsFavorite": false,
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false,
+    "UnplayedItemCount": 2
+   }
+  }
+ ],
+ "TotalRecordCount": 1
+}

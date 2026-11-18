@@ -1,0 +1,30 @@
+{
+ "Items": [
+  {
+   "BackdropImageTags": [],
+   "ChannelId": null,
+   "Id": "f000000000000000000000000000001a",
+   "ImageBlurHashes": {},
+   "ImageTags": {},
+   "IsFolder": true,
+   "LocationType": "FileSystem",
+   "MediaType": "Unknown",
+   "Name": "Trip",
+   "Path": "/media/home/Trip",
+   "ServerId": "f0000000000000000000000000000024",
+   "SortName": "trip",
+   "Type": "Folder",
+   "UserData": {
+    "IsFavorite": false,
+    "ItemId": "f0000000000000000000000000000027",
+    "Key": "f0000000-0000-0000-0000-00000000001a",
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false,
+    "UnplayedItemCount": 1
+   }
+  }
+ ],
+ "StartIndex": 0,
+ "TotalRecordCount": 1
+}

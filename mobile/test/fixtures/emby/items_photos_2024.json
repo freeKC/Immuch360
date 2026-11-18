@@ -1,0 +1,51 @@
+{
+ "Items": [
+  {
+   "Album": "2024",
+   "AlbumId": "21",
+   "BackdropImageTags": [],
+   "Container": "jpg",
+   "Id": "23",
+   "ImageTags": {
+    "Primary": "7d6ac3ebd41542dee438935071165cac_639306070421061820"
+   },
+   "IsFolder": false,
+   "MediaType": "Photo",
+   "Name": "pano-001",
+   "Path": "/media/photos/2024/pano-001.jpg",
+   "ServerId": "f000000000000000000000000000002b",
+   "SortName": "pano-001",
+   "Type": "Photo",
+   "UserData": {
+    "IsFavorite": false,
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false
+   }
+  },
+  {
+   "Album": "2024",
+   "AlbumId": "21",
+   "BackdropImageTags": [],
+   "Container": "jpg",
+   "Id": "22",
+   "ImageTags": {
+    "Primary": "3538979c361ce714a4e8e573823f4094_639306070416661828"
+   },
+   "IsFolder": false,
+   "MediaType": "Photo",
+   "Name": "pattern-001",
+   "Path": "/media/photos/2024/pattern-001.jpg",
+   "ServerId": "f000000000000000000000000000002b",
+   "SortName": "pattern-001",
+   "Type": "Photo",
+   "UserData": {
+    "IsFavorite": false,
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false
+   }
+  }
+ ],
+ "TotalRecordCount": 2
+}
