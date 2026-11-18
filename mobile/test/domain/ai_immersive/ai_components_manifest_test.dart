@@ -524,7 +524,7 @@ void main() {
         );
         expect(
           program.urls().single,
-          'https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/${program.assetName}',
+          'https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/${program.assetName}',
         );
       }
       for (final platform in AiPlatform.values) {

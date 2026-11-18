@@ -2660,17 +2660,17 @@ const videoDepthModelComponent = AiComponent(
 
 // The FFmpeg program of the 3D videos (video3d-plan.md, section 3): ffmpeg and ffprobe 9.0.2 with their shared
 // libraries, LGPL 2.1 or later (no GPL or non free part), built from pinned sources, checked, signed for Windows and
-// released by github.com/immuch360/libmpv-builds (.github/workflows/ffmpeg.yml at v1.3.0). Each archive holds bin/ (and
+// released by github.com/immuch360/libmpv-builds (.github/workflows/ffmpeg.yml at v1.3.1). Each archive holds bin/ (and
 // lib/ but on Windows; immuch360-run on Linux), its licence texts, PATENTS-NOTE.md and FFmpeg-SOURCE.txt (the
 // corresponding source of the release) in licenses/, BUILD-INFO.txt with the configure lines, and SHA256SUMS.txt. The
-// entries carry the archives of the run 44377424022 at a452ac2f2, as the manifest of the release gives them
-// (.github/desktop/ai/ffmpeg-lgpl-ffmpeg-lgpl-20261118-7.json); publish_ai_components.py --check holds them to it.
+// entries carry the archives of the run 44422001622 at b9e49ddba, as the manifest of the release gives them
+// (.github/desktop/ai/ffmpeg-lgpl-ffmpeg-lgpl-20261118-9.json); publish_ai_components.py --check holds them to it.
 
 /// The repository of the FFmpeg program, whose releases host its archives
 const ffmpegProgramRepository = 'immuch360/libmpv-builds';
 
 /// The release of [ffmpegProgramRepository] the app takes the FFmpeg program from, a prerelease never marked latest
-const ffmpegProgramReleaseTag = 'ffmpeg-lgpl-20261118-7';
+const ffmpegProgramReleaseTag = 'ffmpeg-lgpl-20261118-9';
 
 /// The LGPL 2.1 of FFmpeg at the commit of n9.0.2 (its COPYING.LGPLv2.1; LICENSE.md says which parts are under other
 /// permissive licences, all in the licenses/ folder of each archive)
@@ -2681,13 +2681,13 @@ const _ffmpegLicenceUrl =
 const ffmpegWindowsComponent = AiComponent(
   id: 'ffmpeg-lgpl-windows-x64',
   name: 'FFmpeg program',
-  version: '9.0.2-1',
+  version: '9.0.2-2',
   kind: AiComponentKind.archive,
   platforms: {AiPlatform.windowsX64},
-  assetName: 'Immuch360-ffmpeg-9.0.2-1-windows-x64.zip',
+  assetName: 'Immuch360-ffmpeg-9.0.2-2-windows-x64.zip',
   installPath: 'engines/ffmpeg-lgpl-windows-x64',
-  size: 8423208,
-  sha256: '246eac7a5cc2ce488ec4d9e5d17008908906ab96ac2481dee265680904c864f8',
+  size: 8424233,
+  sha256: '7b76b85a6dde6e2e9d7ad84ec695c033e9151578297167b21482591770d14a5e',
   compression: AiCompression.none,
   licence: 'LGPL-2.1-or-later',
   licenceUrl: _ffmpegLicenceUrl,
@@ -2698,59 +2698,59 @@ const ffmpegWindowsComponent = AiComponent(
     AiArchiveFile(
       path: 'BUILD-INFO.txt',
       size: 4172,
-      sha256: 'b64b149c4af3814bb501b3c8ab0d6393b12fc815e24a923f6d7e4da6ffa8f6ae',
+      sha256: '86a2a5a6f8960cd3d1126c9bcd2d01862b6beaea49905c01275844faba7dacf4',
     ),
     AiArchiveFile(
       path: 'SHA256SUMS.txt',
-      size: 2485,
-      sha256: 'd53e8e122e0815d43f2f3bb99d629b799b1fff9b88e9089b52bf7db7123cf7cf',
+      size: 2583,
+      sha256: '4a3efaf8c57333f4d064fa7cf04212de98b289673241fb4590d292e1fc54e74f',
     ),
     AiArchiveFile(
       path: 'bin/avcodec-63.dll',
       size: 15607128,
-      sha256: 'e8996abbba52725b9bf1b7306e7ea2aa45e7997c3ec8670ea2756a5b83d9431c',
+      sha256: '2540b47eb31ae5c07774a5dfed8df91f4dc11162e20e6b9ac90ef6df416690f1',
     ),
     AiArchiveFile(
       path: 'bin/avdevice-63.dll',
       size: 81240,
-      sha256: 'abc5bd7a707066b90af44ca38a162cdae5e04289bdac45d1accb882419f5b622',
+      sha256: 'dfae378a9a35c63dd5c628133dee0dd7cfc0679503e1bfb76e489f703bc8ffe2',
     ),
     AiArchiveFile(
       path: 'bin/avfilter-12.dll',
       size: 1285976,
-      sha256: '80d95b4cf9f630531bfa7bd774983f0efcd5194e70a8f5e5a7839f772962b577',
+      sha256: '491d3bbf642ccd6359b497c57b68c99a2781ba1b276c24397af4dd2e6f6e9cd2',
     ),
     AiArchiveFile(
       path: 'bin/avformat-63.dll',
       size: 1102680,
-      sha256: '38fdb057f235181e9dbdff5e61872ad9ad6d7f8a83a4f07b1e4d43a715494ee5',
+      sha256: 'd3b1457546356e9dc52dc348e4753446aadc225d29b10f943107f80a9a08c601',
     ),
     AiArchiveFile(
       path: 'bin/avutil-61.dll',
       size: 1076056,
-      sha256: 'dedf419292f53185cb6e61e605994dbc4c81301d482ccab91871ddbd3687234d',
+      sha256: '4982261173745e69a2ac6817d9c72d1ea82c0941dfeb96d309ca7d228fee904a',
     ),
     AiArchiveFile(
       path: 'bin/ffmpeg.exe',
       size: 503128,
-      sha256: '8576710bcf04433d3f7f514384ec6ea53bf48b0686e7d3ecc548cdcf8b0796d7',
+      sha256: '6335c3d05a688bba0d08a37892dcbb4bbe02edf5b45b6129a30b399f030513a3',
       executable: true,
     ),
     AiArchiveFile(
       path: 'bin/ffprobe.exe',
       size: 233304,
-      sha256: '455909b1b566671b8cb00040a1d180814a19f5d66073d9ffcd46d54e631c8e83',
+      sha256: '6b05d30cd16bcda55e79b7aaf2eb26f0cf7318ccfe0a418a0eed22ea50b58a4e',
       executable: true,
     ),
     AiArchiveFile(
       path: 'bin/swresample-7.dll',
       size: 139096,
-      sha256: '6ca45f719e9b964778dffc9ed8e80dd00496bb79044e21373c035976891d89ee',
+      sha256: 'eb5b2ec8c1369158c03aaf45fd3a4fad44cb67f2edcaeadd65b6cb17a91d8969',
     ),
     AiArchiveFile(
       path: 'bin/swscale-10.dll',
       size: 1120600,
-      sha256: 'aa9fb7aa6ecde12e84061dc91975ca9e4c0bd8416199ce3c08891e909290320c',
+      sha256: 'c16d4d2eb4830bed5a3b597e140b44e124c34391bcb85b9eebe586d7f84c855b',
     ),
     AiArchiveFile(
       path: 'licenses/FFmpeg-COPYING.LGPLv2.1.txt',
@@ -2770,7 +2770,7 @@ const ffmpegWindowsComponent = AiComponent(
     AiArchiveFile(
       path: 'licenses/FFmpeg-SOURCE.txt',
       size: 675,
-      sha256: '38321a7459e179ef74dacfc432ba08f2413ed058f83642de45d0ccb02795a841',
+      sha256: 'fc8c8971342fe3386551f6b6817a99df429e31a93bf1a2a8b931c8d00a03dd5d',
     ),
     AiArchiveFile(
       path: 'licenses/PATENTS-NOTE.md',
@@ -2779,8 +2779,8 @@ const ffmpegWindowsComponent = AiComponent(
     ),
     AiArchiveFile(
       path: 'licenses/README.md',
-      size: 4334,
-      sha256: '440cfe2775331b7f175c44275e8bb295e795788203348e3354d8ee1fa56f21f2',
+      size: 4804,
+      sha256: '1524f0da7d2c4106a2a8ac92e6eff9325ee04c913b96cd3a2dd18c89489b40dd',
     ),
     AiArchiveFile(
       path: 'licenses/SVT-AV1-LICENSE-BSD2.md',
@@ -2806,6 +2806,11 @@ const ffmpegWindowsComponent = AiComponent(
       path: 'licenses/SVT-AV1-safestringlib-LICENSE.txt',
       size: 2247,
       sha256: 'c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-vector-MIT.txt',
+      size: 1084,
+      sha256: '0baa179c776937c84107ce35bb0bb3d036ed6e5289215241e72701bfc48126d9',
     ),
     AiArchiveFile(
       path: 'licenses/dav1d-COPYING.txt',
@@ -2844,13 +2849,13 @@ const ffmpegWindowsComponent = AiComponent(
 const ffmpegLinuxComponent = AiComponent(
   id: 'ffmpeg-lgpl-linux-x64',
   name: 'FFmpeg program',
-  version: '9.0.2-1',
+  version: '9.0.2-2',
   kind: AiComponentKind.archive,
   platforms: {AiPlatform.linuxX64},
-  assetName: 'Immuch360-ffmpeg-9.0.2-1-linux-x64.zip',
+  assetName: 'Immuch360-ffmpeg-9.0.2-2-linux-x64.zip',
   installPath: 'engines/ffmpeg-lgpl-linux-x64',
-  size: 8201929,
-  sha256: 'b343bdc434f24cef963a8d08768b54208135dd1664f3ba7ea2d443d278023ddd',
+  size: 8202937,
+  sha256: '6a3102ce743507395370c1d4aacb67ea153d065cb05636806af436ca6d2e13f4',
   compression: AiCompression.none,
   licence: 'LGPL-2.1-or-later',
   licenceUrl: _ffmpegLicenceUrl,
@@ -2861,12 +2866,12 @@ const ffmpegLinuxComponent = AiComponent(
     AiArchiveFile(
       path: 'BUILD-INFO.txt',
       size: 4328,
-      sha256: '8bf0f293da0a349e1f396cc35ef20fafbe603bc2bdcdc1db1bfb9c1a0c921ad4',
+      sha256: '05b738615cf6d71e52241c6da0290e09efc99c82074fa1ba533af8cb960f36ee',
     ),
     AiArchiveFile(
       path: 'SHA256SUMS.txt',
-      size: 2717,
-      sha256: '78413bde8a107e4550c36979e9d868c1f9d73ec7bd1c7c16b2da279837bfac25',
+      size: 2815,
+      sha256: 'ff99d6e629864301fbef01d6786b966fce993e202fe45a45cdb8fa96d75544c0',
     ),
     AiArchiveFile(
       path: 'bin/ffmpeg',
@@ -2949,7 +2954,7 @@ const ffmpegLinuxComponent = AiComponent(
     AiArchiveFile(
       path: 'licenses/FFmpeg-SOURCE.txt',
       size: 675,
-      sha256: '38321a7459e179ef74dacfc432ba08f2413ed058f83642de45d0ccb02795a841',
+      sha256: 'fc8c8971342fe3386551f6b6817a99df429e31a93bf1a2a8b931c8d00a03dd5d',
     ),
     AiArchiveFile(
       path: 'licenses/PATENTS-NOTE.md',
@@ -2958,8 +2963,8 @@ const ffmpegLinuxComponent = AiComponent(
     ),
     AiArchiveFile(
       path: 'licenses/README.md',
-      size: 4334,
-      sha256: '440cfe2775331b7f175c44275e8bb295e795788203348e3354d8ee1fa56f21f2',
+      size: 4804,
+      sha256: '1524f0da7d2c4106a2a8ac92e6eff9325ee04c913b96cd3a2dd18c89489b40dd',
     ),
     AiArchiveFile(
       path: 'licenses/SVT-AV1-LICENSE-BSD2.md',
@@ -2985,6 +2990,11 @@ const ffmpegLinuxComponent = AiComponent(
       path: 'licenses/SVT-AV1-safestringlib-LICENSE.txt',
       size: 2247,
       sha256: 'c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-vector-MIT.txt',
+      size: 1084,
+      sha256: '0baa179c776937c84107ce35bb0bb3d036ed6e5289215241e72701bfc48126d9',
     ),
     AiArchiveFile(
       path: 'licenses/dav1d-COPYING.txt',
@@ -3023,13 +3033,13 @@ const ffmpegLinuxComponent = AiComponent(
 const ffmpegMacComponent = AiComponent(
   id: 'ffmpeg-lgpl-macos-universal',
   name: 'FFmpeg program',
-  version: '9.0.2-1',
+  version: '9.0.2-2',
   kind: AiComponentKind.archive,
   platforms: {AiPlatform.macosArm64, AiPlatform.macosX64},
-  assetName: 'Immuch360-ffmpeg-9.0.2-1-macos-universal.zip',
+  assetName: 'Immuch360-ffmpeg-9.0.2-2-macos-universal.zip',
   installPath: 'engines/ffmpeg-lgpl-macos-universal',
-  size: 14607554,
-  sha256: '6bc7855c1e9289a26995aae1cfbf3791f3684f9573c441ee35232d19c73bb1cd',
+  size: 14608564,
+  sha256: 'b0d76f497d989283dd5d77c1076792e02371a7df092899f2a8d12857c65cf6b7',
   compression: AiCompression.none,
   licence: 'LGPL-2.1-or-later',
   licenceUrl: _ffmpegLicenceUrl,
@@ -3040,12 +3050,12 @@ const ffmpegMacComponent = AiComponent(
     AiArchiveFile(
       path: 'BUILD-INFO.txt',
       size: 5923,
-      sha256: '77140a0343acec469ba139e13926dfdee9275908506235b45fa8292587485404',
+      sha256: '3931c61b6143d164d633ab6e9cb73b52182adf1750d6e1b38c371f193632bdc5',
     ),
     AiArchiveFile(
       path: 'SHA256SUMS.txt',
-      size: 2298,
-      sha256: '5f5664c37ea1c41721b588b21ae22aad0d9c48b5f23aacd88d1ec3ac5ab07066',
+      size: 2396,
+      sha256: '6b903bc2ece030a410490d4fe7988df8ad95275aa5a759ed150842648909af72',
     ),
     AiArchiveFile(
       path: 'bin/ffmpeg',
@@ -3112,7 +3122,7 @@ const ffmpegMacComponent = AiComponent(
     AiArchiveFile(
       path: 'licenses/FFmpeg-SOURCE.txt',
       size: 675,
-      sha256: '38321a7459e179ef74dacfc432ba08f2413ed058f83642de45d0ccb02795a841',
+      sha256: 'fc8c8971342fe3386551f6b6817a99df429e31a93bf1a2a8b931c8d00a03dd5d',
     ),
     AiArchiveFile(
       path: 'licenses/PATENTS-NOTE.md',
@@ -3121,8 +3131,8 @@ const ffmpegMacComponent = AiComponent(
     ),
     AiArchiveFile(
       path: 'licenses/README.md',
-      size: 4334,
-      sha256: '440cfe2775331b7f175c44275e8bb295e795788203348e3354d8ee1fa56f21f2',
+      size: 4804,
+      sha256: '1524f0da7d2c4106a2a8ac92e6eff9325ee04c913b96cd3a2dd18c89489b40dd',
     ),
     AiArchiveFile(
       path: 'licenses/SVT-AV1-LICENSE-BSD2.md',
@@ -3148,6 +3158,11 @@ const ffmpegMacComponent = AiComponent(
       path: 'licenses/SVT-AV1-safestringlib-LICENSE.txt',
       size: 2247,
       sha256: 'c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-vector-MIT.txt',
+      size: 1084,
+      sha256: '0baa179c776937c84107ce35bb0bb3d036ed6e5289215241e72701bfc48126d9',
     ),
     AiArchiveFile(
       path: 'licenses/dav1d-COPYING.txt',

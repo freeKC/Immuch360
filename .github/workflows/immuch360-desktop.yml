@@ -524,8 +524,8 @@ jobs:
           work="$RUNNER_TEMP/video3d"
           mkdir -p "$work/ffmpeg"
           curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
-            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/Immuch360-ffmpeg-9.0.2-1-linux-x64.zip
-          echo "b343bdc434f24cef963a8d08768b54208135dd1664f3ba7ea2d443d278023ddd  $work/ffmpeg.zip" | sha256sum -c -
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/Immuch360-ffmpeg-9.0.2-2-linux-x64.zip
+          echo "6a3102ce743507395370c1d4aacb67ea153d065cb05636806af436ca6d2e13f4  $work/ffmpeg.zip" | sha256sum -c -
           (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
           python3 ../.github/desktop/ai/video3d_ci_clip.py make "$work/ffmpeg/bin/ffmpeg" "$work/clip.mkv"
           export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$RUNNER_TEMP/onnxruntime/onnxruntime-linux-x64-1.31.0/lib/libonnxruntime.so.1.31.0\",\"--model\",\"$PWD/test/fixtures/ai_immersive/tiny_vda.onnx\",\"--out\",\"$work/out\",\"--quality\",\"fast\",\"--segment\",\"1\",\"$work/clip.mkv\"]"
@@ -1069,8 +1069,8 @@ jobs:
           work="$(cygpath -u "$RUNNER_TEMP")/video3d"
           mkdir -p "$work/ffmpeg"
           curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
-            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/Immuch360-ffmpeg-9.0.2-1-windows-x64.zip
-          echo "246eac7a5cc2ce488ec4d9e5d17008908906ab96ac2481dee265680904c864f8  $work/ffmpeg.zip" | sha256sum -c -
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/Immuch360-ffmpeg-9.0.2-2-windows-x64.zip
+          echo "7b76b85a6dde6e2e9d7ad84ec695c033e9151578297167b21482591770d14a5e  $work/ffmpeg.zip" | sha256sum -c -
           (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
           python ../.github/desktop/ai/video3d_ci_clip.py make "$(cygpath -w "$work/ffmpeg/bin/ffmpeg.exe")" "$(cygpath -w "$work/clip.mkv")"
           IMMUCH360_VIDEO3D_ARGS="$(python - "$(cygpath -w "$work")" "$ORT_LIB" "$(cygpath -w "$PWD/test/fixtures/ai_immersive/tiny_vda.onnx")" <<'PY'

@@ -682,8 +682,8 @@ void main() {
       expect(
         run.output,
         contains(
-          'the FFmpeg program carries the archives of immuch360/libmpv-builds ffmpeg-lgpl-20261118-7 as its manifest '
-          'gives them (run 44377424022, commit a452ac2f2b11b0f642d48fd64a1496ccc455a7fc)',
+          'the FFmpeg program carries the archives of immuch360/libmpv-builds ffmpeg-lgpl-20261118-9 as its manifest '
+          'gives them (run 44422001622, commit b9e49ddba1f4f755b2e106386749a1a9bd1de14a)',
         ),
       );
       final licencesText = File(_licences).readAsStringSync().replaceAll('\r\n', '\n');
@@ -714,7 +714,7 @@ void main() {
         contains('ffmpeg-lgpl-linux-x64: licence GPL-2.0-or-later, the FFmpeg program is under LGPL-2.1-or-later'),
       );
       expect(refused.output, contains('ffmpeg-lgpl-windows-x64: the catalogue has'));
-      expect(refused.output, contains('the manifest of ffmpeg-lgpl-20261118-7'));
+      expect(refused.output, contains('the manifest of ffmpeg-lgpl-20261118-9'));
 
       // Sums without the manifest they come from
       catalogue.writeAsStringSync(text);
@@ -728,8 +728,8 @@ void main() {
       expect(
         unrecorded.output,
         contains(
-          'the FFmpeg program carries sums but ffmpeg-lgpl-ffmpeg-lgpl-20261118-7.json is not the manifest of '
-          'immuch360/libmpv-builds ffmpeg-lgpl-20261118-7',
+          'the FFmpeg program carries sums but ffmpeg-lgpl-ffmpeg-lgpl-20261118-9.json is not the manifest of '
+          'immuch360/libmpv-builds ffmpeg-lgpl-20261118-9',
         ),
       );
     }, skip: skipCiScripts);
