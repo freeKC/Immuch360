@@ -4,6 +4,7 @@
 // certificate.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
@@ -227,6 +228,27 @@ void main() {
 
       expect(await discovery.relocator().relocate(_plexServer), isNull, reason: 'hash $hash');
     }
+  });
+
+  test('a Jellyfin server without a port is at 8096, and follows its server id, its base path kept', () async {
+    const jellyfin = NetworkSource(
+      id: 'jf00112233445566',
+      type: NetworkSourceType.jellyfin,
+      name: 'Media',
+      host: '192.0.2.30',
+      share: '/jellyfin',
+      discoveryId: '0d6eac044f7a4e448bba5921022e44a7',
+      jellyfin: JellyfinServerInfo(serverId: '0d6eac044f7a4e448bba5921022e44a7', userId: 'u1'),
+    );
+    final same = _Discovery([
+      _server('192.0.2.30', 8096, type: NetworkSourceType.jellyfin, discoveryId: jellyfin.discoveryId),
+    ]);
+    expect(await same.relocator().relocate(jellyfin), isNull, reason: 'the same address, at the default port');
+    final moved = _Discovery([
+      _server('192.0.2.31', 8096, type: NetworkSourceType.jellyfin, discoveryId: jellyfin.discoveryId!.toUpperCase()),
+    ]);
+    final relocated = await moved.relocator().relocate(jellyfin);
+    expect((relocated?.host, relocated?.share, relocated?.jellyfin?.userId), ('192.0.2.31', '/jellyfin', 'u1'));
   });
 
   test('a camera without a port is at 443, and follows its MAC address', () async {
