@@ -216,7 +216,8 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
   /// Looks for the share on the network when it was found there (it has a discovery id) and its first reading failed
   /// for another reason than the credentials or a missing folder: a phone or a box given another address by the
   /// router, a media server restarted on another port. True once it answered elsewhere and was saved with its new
-  /// address; a share with credentials only once the user accepted the new address (see [_acceptsAddress]).
+  /// address; a share with credentials (a Jellyfin or Emby token too) only once the user accepted the new address (see
+  /// [_acceptsAddress]).
   Future<bool> _relocate(NetworkFileSystemException error) async {
     final source = ref.read(networkSourceProvider(widget.sourceId));
     if (source == null || source.discoveryId == null || error.isAuthentication || error.isNotFound) {
@@ -231,13 +232,11 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
         return false;
       }
       // DLNA has no authentication. A Plex server only gets its token over the connection pinned to the certificate of
-      // the stored hash, and the relocator kept only a server announcing that hash: nothing goes to another one. A
-      // Jellyfin or Emby server gets its token only after it told the stored server id (JellyfinFileSystem.open), and
-      // no password is ever sent. Any other share would send its user name and password to the new address.
-      final asks =
-          relocated.type != NetworkSourceType.dlna &&
-          relocated.type != NetworkSourceType.plex &&
-          relocated.type != NetworkSourceType.jellyfin;
+      // the stored hash, and the relocator kept only a server announcing that hash: nothing goes to another one. Any
+      // other share would send its credentials to the new address: its user name and password, or the token of a
+      // Jellyfin or Emby server. The server id a Jellyfin server tells before its token (JellyfinFileSystem.open) is
+      // no proof: any device can repeat it, it is in the discovery answer and in /System/Info/Public.
+      final asks = relocated.type != NetworkSourceType.dlna && relocated.type != NetworkSourceType.plex;
       if (asks && !await _acceptsAddress(source, relocated)) {
         _log.info('${source.name} was not moved to ${relocated.host}:${relocated.port ?? ''}: the user declined');
         return false;
@@ -263,11 +262,18 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
       context: context,
       builder: (context) => ConfirmDialog(
         title: context.t.network_share_relocate_title,
-        content: context.t.network_share_relocate_confirm(
-          name: source.name,
-          previous: networkSourceAddress(source),
-          address: networkSourceAddress(relocated),
-        ),
+        // A Jellyfin or Emby source keeps no password: it would send its sign in, a token
+        content: source.type == NetworkSourceType.jellyfin
+            ? context.t.network_share_relocate_confirm_token(
+                name: source.name,
+                previous: networkSourceAddress(source),
+                address: networkSourceAddress(relocated),
+              )
+            : context.t.network_share_relocate_confirm(
+                name: source.name,
+                previous: networkSourceAddress(source),
+                address: networkSourceAddress(relocated),
+              ),
         ok: context.t.network_share_save,
       ),
     );

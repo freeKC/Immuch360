@@ -489,7 +489,7 @@ An http address outside your home network shows "This address is not on your hom
 
 - Two users of one server on one device are two sources, each with its own session: the app names itself to the server per source ("Immuch360 Android" and a device id of its own), so that signing in one account never signs the other out.
 - A [settings file](#keep-your-settings-in-a-file-from-build-46) at the accounts level carries the sessions; at the settings level it carries the servers only, which ask you to sign in again. An imported session that the server refuses shows **Sign in again**.
-- A server found at a new address is moved without a question: the app sends the session only after the server told the id of the one it was added with.
+- A server found at a new address is moved only once you accept: "Use the new address?" names the old and the new address. The id a server announces can be repeated by any device of the network, so the session goes to the new address only with your yes (see [A share that moved](#a-share-that-moved)).
 - When the server ends the session (signed out, user removed), the folder page says "The server ended this session. Sign in again." with **Sign in again** and a selectable **Diagnostics** line (product, version, step, status, route table, ranges and TLS, nothing of yours) to paste in a report.
 
 ### Limits

@@ -1028,6 +1028,38 @@ void main() {
       expect(saved.plex?.hash, '0123456789abcdef0123456789abcdef');
     });
 
+    testWidgets('a Jellyfin server is moved only once the user accepts: any device may repeat its server id', (
+      tester,
+    ) async {
+      const jellyfin = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.jellyfin,
+        name: 'Home media',
+        host: '192.168.1.20',
+        discoveryId: '0d6eac044f7a4e448bba5921022e44a7',
+        jellyfin: JellyfinServerInfo(serverId: '0d6eac044f7a4e448bba5921022e44a7', userId: 'u1', version: '12.4.0'),
+      );
+      await store.delete(StoreKey.networkSources);
+      await store.put(StoreKey.networkSourcesExtra, NetworkSource.encodeList(const [jellyfin]));
+      share.error = const NetworkFileSystemException('Cannot reach 192.168.1.20: No route to host');
+      relocator.result = jellyfin.copyWith(host: '192.168.1.66');
+      List<NetworkSource> storedExtra() => NetworkSource.decodeList(store.tryGet(StoreKey.networkSourcesExtra));
+      await pump(tester, settle: false);
+      for (var i = 0; i < 4; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      expect(find.text('Use the new address?'), findsOneWidget);
+      expect(find.textContaining('sends the sign in of this server to that device'), findsOneWidget);
+      expect(find.textContaining('user name and password'), findsNothing, reason: 'a Jellyfin source keeps none');
+      expect(storedExtra().single.host, '192.168.1.20', reason: 'nothing saved before the answer');
+
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+      await tester.pumpAndSettle();
+      expect(storedExtra().single.host, '192.168.1.20');
+      expect(share.listed, ['/'], reason: 'not read at the new address');
+    });
+
     testWidgets('a share typed by hand is not looked for', (tester) async {
       await store.put(StoreKey.networkSources, NetworkSource.encodeList([found.copyWith(clearDiscoveryId: true)]));
       share.error = const NetworkFileSystemException('Cannot reach 192.168.1.10: No route to host');

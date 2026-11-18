@@ -3085,6 +3085,7 @@
   "network_share_password": "Password",
   "network_share_port": "Port (optional)",
   "network_share_relocate_confirm": "{name} no longer answers at {previous}, and a device of the network that announces it answers at {address}. Saving this address sends the user name and password of the share to that device: only do it if you trust it.",
+  "network_share_relocate_confirm_token": "{name} no longer answers at {previous}, and a device of the network that announces it answers at {address}. Saving this address sends the sign in of this server to that device: only do it if you trust it.",
   "network_share_relocate_title": "Use the new address?",
   "network_share_relocating": "Looking for {name} on the network",
   "network_share_remote_endpoint": "Connected through the address outside home",
