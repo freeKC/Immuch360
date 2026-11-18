@@ -281,6 +281,19 @@ enum ConversionSkipReason {
 
   /// A 360° 3D panorama chained after a panorama that was not made: failed, cancelled, or skipped without a file
   parentNotMade,
+
+  /// A 3D video: an interlaced video (its fields would tear once a depth is estimated on each frame)
+  interlaced,
+
+  /// A 3D video: Dolby Vision without a standard picture beside it (profile 5), whose colours only a Dolby Vision
+  /// decoder turns right; profiles 8.1 and 8.4 go through their base layer
+  dolbyVisionProfile5,
+
+  /// A 3D video: a rotation that is not a quarter turn
+  oddRotation,
+
+  /// A 3D video: no video stream, or a file the FFmpeg program cannot open
+  unreadableVideo,
 }
 
 /// What a batch does with a photo that already has a version with the same settings. A name taken by another file is
