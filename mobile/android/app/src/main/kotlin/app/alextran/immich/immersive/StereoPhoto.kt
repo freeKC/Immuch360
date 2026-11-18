@@ -418,6 +418,11 @@ internal object StereoComposer {
           "On the big screen, a photo or video shows on its own: B or Y goes back to the app",
         LABEL_SHARP_NOTICE to "Sharper flat screen (experimental)",
         LABEL_NEAR_LIMIT_3D to "Make it smaller first: a 3D photo this close tires the eyes",
+        LABEL_FLAT_SCREEN_BROWSE_HINT to
+          "B or Y: back to the app. Left thumbstick left or right: previous or next photo. Trigger: slideshow. " +
+            "A, X or a short grip press: show or hide this panel. Hold a grip on the screen to move it, the " +
+            "thumbstick then brings it nearer or farther; hold both grips to resize it. Right thumbstick left or " +
+            "right: the screen in front again.",
       )
 
   /**
@@ -438,6 +443,9 @@ internal object StereoComposer {
    * FlatScreenGeometry.nearerAllowed).
    */
   const val LABEL_NEAR_LIMIT_3D = "screenNearLimit3d"
+
+  /** The controller mapping of the photos of a flat screen, which browse and play a slideshow (issue 19). */
+  const val LABEL_FLAT_SCREEN_BROWSE_HINT = "flatScreenBrowseHint"
 
   const val LABEL_3D = "spatial3d"
   const val LABEL_2D = "spatial2d"

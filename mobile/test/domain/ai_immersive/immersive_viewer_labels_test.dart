@@ -145,6 +145,11 @@ void main() {
       'sharpScreensNotice': 'Sharper flat screen (experimental)',
       'bigScreenNoNavigation': 'On the big screen, a photo or video shows on its own: B or Y goes back to the app',
       'screenNearLimit3d': 'Make it smaller first: a 3D photo this close tires the eyes',
+      'flatScreenBrowseHint':
+          'B or Y: back to the app. Left thumbstick left or right: previous or next photo. Trigger: slideshow. A, X '
+          'or a short grip press: show or hide this panel. Hold a grip on the screen to move it, the thumbstick then '
+          'brings it nearer or farther; hold both grips to resize it. Right thumbstick left or right: the screen in '
+          'front again.',
     });
   });
 

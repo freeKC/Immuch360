@@ -774,6 +774,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var previousButton: Button? = null
   private var nextButton: Button? = null
   /** The Size and the Distance of a movable flat screen, in place of previous and next, see [updateScreenControls]. */
+  private var screenRow: View? = null
+  private var keepFrameButton: Button? = null
   private var sizeRow: View? = null
   private var sizeView: TextView? = null
   private var sizeLessButton: Button? = null
@@ -1391,6 +1393,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     seekForwardButton = root.findViewById(R.id.immersive_seek_forward)
     previousButton = root.findViewById(R.id.immersive_previous)
     nextButton = root.findViewById(R.id.immersive_next)
+    screenRow = root.findViewById(R.id.immersive_screen_row)
+    keepFrameButton = root.findViewById(R.id.immersive_keep_frame)
     sizeRow = root.findViewById(R.id.immersive_size_row)
     sizeView = root.findViewById(R.id.immersive_size)
     sizeLessButton = root.findViewById(R.id.immersive_size_less)
@@ -1446,7 +1450,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       when {
         splat -> SplatTexts.label(media?.stereoLabels.orEmpty(), SplatTexts.LABEL_HINT)
         scene -> SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
-        // A flat screen the grips move and resize has its own mapping
+        // A flat screen the grips move and resize has its own mapping: its photos browse and play a slideshow too,
+        // which a label of the app says (the Android strings stay as they are); a flat video keeps the one of before
+        media?.isMovableScreen == true && !media.isFlatVideo ->
+          StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_FLAT_SCREEN_BROWSE_HINT)
         media?.isMovableScreen == true -> getString(R.string.immersive_screen_hint)
         else -> getString(R.string.immersive_hint)
       }
@@ -2646,16 +2653,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     getString(R.string.immersive_distance, FlatScreenGeometry.meters(distance, Locale.getDefault()))
 
   /**
-   * The Size and Distance rows take the place of previous and next for a movable flat screen (which plays on its own,
-   * the thumbstick still saying so), once it shows; a minus or plus button at its bound is disabled.
+   * The row of the flat screens under previous and next, once a movable flat screen shows: Size and Distance, a minus
+   * or plus button at its bound disabled. Previous and next stay for its photos (issue 19, point 1), not for a flat
+   * video, which plays on its own.
    */
   private fun updateScreenControls() {
-    val movable = request?.isMovableScreen == true
-    previousButton?.visibility = if (movable) View.GONE else View.VISIBLE
-    nextButton?.visibility = if (movable) View.GONE else View.VISIBLE
+    val flatVideo = request?.isFlatVideo == true
+    previousButton?.visibility = if (flatVideo) View.GONE else View.VISIBLE
+    nextButton?.visibility = if (flatVideo) View.GONE else View.VISIBLE
     val angle = currentScreenAngle()
     val place = screenPlace
     if (angle == null || place == null) {
+      screenRow?.visibility = View.GONE
       sizeRow?.visibility = View.GONE
       distanceRow?.visibility = View.GONE
       return
@@ -2670,6 +2679,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       place.distance > FlatScreenGeometry.DISTANCES_M.first() + 1e-3f &&
         screenNearerAllowed(angle, place.distance, FlatScreenGeometry.nextDistance(place.distance, -1))
     distanceMoreButton?.isEnabled = place.distance < FlatScreenGeometry.DISTANCES_M.last() - 1e-3f
+    screenRow?.visibility = View.VISIBLE
     sizeRow?.visibility = View.VISIBLE
     distanceRow?.visibility = View.VISIBLE
   }
@@ -2701,31 +2711,26 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun navigate(step: Int, fromThumbstick: Boolean = false) {
     if (closing || isFinishing) return
     val shown = request
-    if (shown != null && (shown.isFlatVideo || shown.isBigScreen)) {
-      // Opened alone from the app: said rather than asked
+    if (shown != null && shown.isFlatVideo) {
+      // A flat video plays on its own, its player and its progress apart: said rather than asked
       val key =
-        if (shown.isBigScreen) StereoComposer.LABEL_BIG_SCREEN_NO_NAVIGATION
+        if (shown.isBigScreenVideo) StereoComposer.LABEL_BIG_SCREEN_NO_NAVIGATION
         else StereoComposer.LABEL_FLAT3D_NO_NAVIGATION
       val text = StereoComposer.label(shown.stereoLabels, key)
-      Log.i(TAG, "no previous or next from a flat video or the big screen (step $step)")
+      Log.i(TAG, "no previous or next from a flat video (step $step)")
       if (fromThumbstick && !infoVisible) showFeedback(text) else setStatus(text)
       return
     }
-    if (shown != null && shown.isStereoPhoto) {
-      // Flutter finds no spatial or 3D photo before or after this one yet: said rather than asked
-      val key =
-        when (shown.stereoKind) {
-          is StereoPhotoKind.Sbs,
-          is StereoPhotoKind.Flat,
-          is StereoPhotoKind.DepthRelief,
-          is StereoPhotoKind.VolumetricScene -> StereoComposer.LABEL_NO_NAVIGATION_3D
-          else -> StereoComposer.LABEL_NO_NAVIGATION
-        }
+    if (shown != null && shown.isExplorable) {
+      // A 3D scene or a splat has no list around it (and its left thumbstick glides): said rather than asked
+      val key = if (shown.isScene) StereoComposer.LABEL_NO_NAVIGATION_3D else StereoComposer.LABEL_NO_NAVIGATION
       val text = StereoComposer.label(shown.stereoLabels, key)
-      Log.i(TAG, "no previous or next from a spatial photo (step $step)")
+      Log.i(TAG, "no previous or next from a 3D scene or a splat (step $step)")
       if (fromThumbstick && !infoVisible) showFeedback(text) else setStatus(text)
       return
     }
+    // Every other photo of a flat screen asks Flutter like a 360 media (issue 19, point 1): a viewer opened with a list
+    // around it gets the previous or next photo, one opened alone the answer that there is none
     if (pendingRequestId != null) {
       // Still looking: the feedback says so again rather than nothing happening
       if (fromThumbstick && !infoVisible) showFeedback(navigationStatus)
@@ -7109,10 +7114,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /**
      * Size of the info panel: its layout in dp, and its quad in meters. Both keep the 1 m for 720 dp of the first
      * panel (720 x 260 dp on 1.0 x 0.36 m) so that the text keeps its size in the headset; the height grew for the
-     * time bar and the previous and next buttons (see immersive_info_panel.xml).
+     * time bar and the previous and next buttons, then for the row of the flat screens under them, which a video on
+     * the big screen shows with its time bar (see immersive_info_panel.xml).
      */
     private const val INFO_PANEL_WIDTH_DP = 720f
-    private const val INFO_PANEL_HEIGHT_DP = 400f
+    private const val INFO_PANEL_HEIGHT_DP = 456f
     private const val INFO_PANEL_WIDTH_M = 1.0f
     private const val INFO_PANEL_HEIGHT_M = INFO_PANEL_WIDTH_M * INFO_PANEL_HEIGHT_DP / INFO_PANEL_WIDTH_DP
 
