@@ -6,6 +6,7 @@ import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_discovery.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
 import 'package:immich_mobile/infrastructure/network/plex/gdm.dart';
 import 'package:immich_mobile/infrastructure/network/upnp/ssdp.dart';
@@ -451,7 +452,7 @@ void main() {
       }
       final others = tried.where((t) => !t.endsWith(':445') && !t.endsWith(':80')).toList();
       expect(others.map((t) => t.split(':').first).toSet(), {'192.168.1.7'});
-      expect(others, hasLength(6), reason: 'the five WebDAV ports and RTSP');
+      expect(others, hasLength(8), reason: 'the five WebDAV ports, the two of Jellyfin and RTSP');
     });
 
     test('stops once the discovery ended', () async {
@@ -547,11 +548,11 @@ void main() {
             }
           }
           for (final host in alive) {
-            for (final port in [5005, 5006, 443, 8080, 8443, 554]) {
+            for (final port in [5005, 5006, 443, 8080, 8443, 8096, 8920, 554]) {
               expect(tried, contains('$host:$port'));
             }
           }
-          expect(tried.length, 506 * firstPorts.length + alive.length * 6, reason: 'nothing else, nothing twice');
+          expect(tried.length, 506 * firstPorts.length + alive.length * 8, reason: 'nothing else, nothing twice');
           expect(timeouts.every((timeout) => timeout >= const Duration(milliseconds: 250)), isTrue);
         });
       }
@@ -787,12 +788,13 @@ void main() {
     });
   });
 
-  test('the discovery of the app runs mDNS, the scan, SSDP, GDM and TDP', () {
+  test('the discovery of the app runs mDNS, the scan, SSDP, GDM, the Jellyfin question and TDP', () {
     final probes = networkDiscoveryProbes(extraPorts: const []);
 
-    expect(probes, hasLength(5));
+    expect(probes, hasLength(6));
     expect(probes[2], const SsdpProbe().call);
     expect(probes[3], const GdmProbe().call);
-    expect(probes[4], const TapoDiscoveryProbe().call);
+    expect(probes[4], const JellyfinDiscoveryProbe().call);
+    expect(probes[5], const TapoDiscoveryProbe().call);
   });
 }

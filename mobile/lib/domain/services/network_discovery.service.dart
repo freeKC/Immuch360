@@ -1,6 +1,7 @@
-// Finds the SMB, WebDAV and DLNA servers, the Plex Media Servers and the Tapo cameras of the local network for the
-// forms that add a share or a camera. Several probes run side by side (mDNS / DNS-SD, a scan of the subnet, SSDP, GDM
-// for Plex, the TP-Link discovery for Tapo, see network_discovery_probes.dart); what they find is merged into one list
+// Finds the SMB, WebDAV and DLNA servers, the Plex Media Servers, the Jellyfin and Emby servers and the Tapo cameras
+// of the local network for the forms that add a share or a camera. Several probes run side by side (mDNS / DNS-SD, a
+// scan of the subnet, SSDP, GDM for Plex, UDP 7359 for Jellyfin and Emby, the TP-Link discovery for Tapo, see
+// network_discovery_probes.dart); what they find is merged into one list
 // that grows while they run. A probe that fails, or a platform without what it needs, only means fewer servers.
 
 import 'dart:async';
@@ -12,20 +13,21 @@ import 'package:logging/logging.dart';
 final _log = Logger('NetworkDiscovery');
 
 /// How a server was found: mDNS / DNS-SD, the scan of the subnet, SSDP (DLNA), GDM (Plex), the TP-Link discovery
-/// protocol (Tapo)
+/// protocol (Tapo), the UDP 7359 question of Jellyfin and Emby
 enum DiscoveryOrigin {
   mdns,
   scan,
   ssdp,
   gdm,
-  tdp;
+  tdp,
+  jellyfin;
 
   /// Which find of a server is kept when two probes find it (see [DiscoveredServer.mergedWith]), the lowest first:
   /// mDNS has the name the server gives itself, TDP the model and the MAC address of a camera
   int get rank => switch (this) {
     mdns => 0,
     tdp => 1,
-    scan || ssdp || gdm => 2,
+    scan || ssdp || gdm || jellyfin => 2,
   };
 }
 
