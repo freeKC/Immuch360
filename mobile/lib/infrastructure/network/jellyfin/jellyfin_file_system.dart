@@ -221,6 +221,7 @@ class JellyfinFileSystem
       _log.info('Open failed at $step: ${jellyfinErrorKind(failure)}');
       throw failure;
     }
+    lastOpenFailure = null;
     _log.info(
       'Opened ${fileSystem.info.product.name} ${fileSystem.info.version ?? ''} in ${watch.elapsedMilliseconds} ms',
     );
@@ -374,10 +375,14 @@ class JellyfinFileSystem
   @override
   Future<void> playbackStopped(String path, Duration position) async {
     final target = normalizePath(path);
+    final session = _playSessions[target];
     try {
       await _report(JellyfinReport.stopped, target, position);
     } finally {
-      _playSessions.remove(target);
+      // A conversion that took over meanwhile keeps its own session
+      if (identical(_playSessions[target], session)) {
+        _playSessions.remove(target);
+      }
     }
   }
 

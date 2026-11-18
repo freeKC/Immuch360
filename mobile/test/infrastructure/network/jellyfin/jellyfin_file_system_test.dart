@@ -293,6 +293,13 @@ void main() {
       expect((await fileSystem.itemDetails(id)).positionMs, 120000);
       await fileSystem.playbackStarted(path, Duration.zero, converted: true);
       expect(server.reports.last.body['PlayMethod'], 'Transcode');
+      // The stop of the viewing before, heard after a conversion took over, leaves the conversion's session
+      fileSystem.usePlaySession(path, 'conversion-session');
+      final late = fileSystem.playbackStopped(path, const Duration(seconds: 5));
+      fileSystem.usePlaySession(path, 'conversion-session-2');
+      await late;
+      await fileSystem.playbackProgress(path, const Duration(seconds: 6));
+      expect(server.reports.last.body['PlaySessionId'], 'conversion-session-2');
       expect(server.reports.last.body['PlaySessionId'], isNot(server.reports.first.body['PlaySessionId']));
     });
 
