@@ -672,6 +672,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var reliefApplyJob: Job? = null
   /** A relief reached in 2D while browsing, made only if the user presses 3D (see BrowseView). */
   private var deferredRelief: DeferredRelief? = null
+  /** The file of the relief photo shown, for a new right eye at another strength (see cycleReliefStrength). */
+  private var reliefSource: DeferredRelief? = null
+  /**
+   * The relief strength chosen in this viewer for the opening [reliefStrengthOpening]: every relief request of that
+   * opening takes its parallax (the cache key kept, the depth map not depending on it), so that a photo reached
+   * before the app stored the setting cannot show the strength of before.
+   */
+  private var reliefStrength: ReliefStrengthChoice? = null
+  private var reliefStrengthOpening: Long? = null
   /** The heat of the headset, watched while the viewer has a relief job. */
   private var thermalWatch: ThermalWatch? = null
 
@@ -780,6 +789,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var navigationRow: View? = null
   private var resetButton: Button? = null
   private var stereoView: Button? = null
+  private var reliefStrengthButton: Button? = null
   private var coverageView: Button? = null
   /** Turns the sphere by 90 degrees; hidden for a spatial photo, which has no sphere. */
   private var turnButton: View? = null
@@ -1404,6 +1414,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationRow = root.findViewById(R.id.immersive_navigation_row)
     resetButton = root.findViewById(R.id.immersive_reset)
     stereoView = root.findViewById(R.id.immersive_stereo)
+    reliefStrengthButton = root.findViewById(R.id.immersive_relief_strength)
     coverageView = root.findViewById(R.id.immersive_coverage)
     turnButton = root.findViewById(R.id.immersive_turn)
     stabilizationButton = root.findViewById(R.id.immersive_stabilization)
@@ -1441,6 +1452,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(distanceLessButton) { changeScreenDistance(-1) }
     onPanelClick(distanceMoreButton) { changeScreenDistance(1) }
     onPanelClick(keepFrameButton) { toggleKeepFrame() }
+    onPanelClick(reliefStrengthButton) { cycleReliefStrength() }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
     previousButton?.setOnClickListener { navigate(-1) }
     nextButton?.setOnClickListener { navigate(1) }
@@ -1592,6 +1604,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** The 3D layout button, "3D layout: 3D, top and bottom": shown whenever a media is loaded, mono ones included. */
   private fun updateStereoView() {
+    updateReliefStrengthButton()
     val view = stereoView ?: return
     val media = request
     // A stitched frame is mono, and so is an ordinary photo or video on the big screen: the layout would change nothing
@@ -1627,6 +1640,68 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     view.text = ImmersiveMedia.stereoLayoutText(stereoLayout, media.stereoLabels)
     view.visibility = View.VISIBLE
+  }
+
+  /** "Relief: Normal" on a relief made in the headset, the strength its right eye is made with; hidden otherwise. */
+  private fun updateReliefStrengthButton() {
+    val button = reliefStrengthButton ?: return
+    val media = request
+    val spec = media?.let(::reliefSpecOf)
+    if (media == null || spec == null) {
+      button.visibility = View.GONE
+      return
+    }
+    val strength = ReliefStrengthChoice.ofParallax(spec.parallax)
+    val name = strength?.let { StereoComposer.label(media.stereoLabels, it.labelKey) } ?: "${spec.parallax}"
+    val info = StereoComposer.label(media.stereoLabels, ReliefStrengthChoice.LABEL_INFO)
+    button.text = info.replace(ReliefStrengthChoice.STRENGTH, name)
+    button.visibility = View.VISIBLE
+  }
+
+  /**
+   * The relief request of [media] with the strength chosen in this viewer for its opening (see [reliefStrength]);
+   * null for any other photo.
+   */
+  private fun reliefSpecOf(media: MediaRequest): DepthReliefSpec? {
+    val spec = (media.stereoKind as? StereoPhotoKind.DepthRelief)?.spec ?: return null
+    val chosen = reliefStrength?.takeIf { reliefStrengthOpening == media.openingId } ?: return spec
+    return spec.copy(parallax = chosen.parallax)
+  }
+
+  /**
+   * "Relief: Normal" pressed: the next strength (Subtle, Normal, Strong), for the photo shown at once (a new right eye
+   * from the cached depth map, about 0.3 s; a photo whose map is not cached yet runs its pass) and for every relief of
+   * this opening; the app keeps it as its setting. A relief reached in 2D waits for the 3D button, at that strength.
+   */
+  private fun cycleReliefStrength() {
+    val media = request ?: return
+    val spec = reliefSpecOf(media) ?: return
+    val next = (ReliefStrengthChoice.ofParallax(spec.parallax) ?: ReliefStrengthChoice.NORMAL).next
+    reliefStrength = next
+    reliefStrengthOpening = media.openingId
+    Log.i(TAG, "relief strength ${next.wire} (parallax ${next.parallax}) for opening ${media.openingId}")
+    notifyReliefSettings(null)
+    updateReliefStrengthButton()
+    val chosen = reliefSpecOf(media) ?: return
+    deferredRelief?.let { deferredRelief = DeferredRelief(it.media, chosen, it.bytes) }
+    val source = reliefSource
+    if (source != null && source.media === media && stereo3d && deferredRelief == null) {
+      // The relief of before goes, the new one replaces it once made; the photo stays meanwhile
+      reliefApplyJob?.cancel()
+      reliefRun = null
+      reliefJob?.cancel()
+      reliefSource = DeferredRelief(media, chosen, source.bytes)
+      startDeferredRelief(DeferredRelief(media, chosen, source.bytes))
+    }
+    updateStereoView()
+  }
+
+  /** The relief strength shown and, when 3D or 2.5D was chosen ([mode]), the first view, to the app's settings. */
+  private fun notifyReliefSettings(mode: ReliefViewMode?) {
+    val media = request ?: return
+    val spec = reliefSpecOf(media) ?: return
+    val strength = ReliefStrengthChoice.ofParallax(spec.parallax) ?: return
+    ImmersiveApiImpl.notifyReliefSettingsChanged(media.openingId, strength.wire, mode?.json)
   }
 
   /**
@@ -3572,7 +3647,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           val read = SystemClock.elapsedRealtime()
           Log.i(TAG, "stereo photo: ${bytes.size} bytes in ${read - started} ms")
           if (kind is StereoPhotoKind.DepthRelief) {
-            showReliefPhoto(media, kind.spec, bytes)
+            showReliefPhoto(media, reliefSpecOf(media) ?: kind.spec, bytes)
             return@launch
           }
           val texture =
@@ -3681,6 +3756,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       val texture = flat.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
       Log.i(TAG, "relief photo: ${texture.eyeWidth}x${texture.eyeHeight}, shown flat, ${spec.quarterTurns} turns")
       applyStereoTexture(texture)
+      reliefSource = DeferredRelief(media, spec, bytes)
       if (!BrowseView.computesRelief(if (stereo3d) StereoView.THREE_D else StereoView.TWO_D)) {
         // Browsed in 2D: the original shows, and the 3D button makes the relief (no heat for a relief nobody sees)
         Log.i(TAG, "relief photo reached in 2D: the relief waits for the 3D button")
@@ -3860,6 +3936,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** Another media, or the end of the viewer: the relief of the photo shown is dropped without a word. */
   private fun dropRelief() {
     deferredRelief = null
+    reliefSource = null
     reliefApplyJob?.cancel()
     reliefApplyJob = null
     reliefRun = null
@@ -4906,6 +4983,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateStereoView()
     // A relief in 2.5D stands where it was computed from: no Size, Distance or grips until it leaves 2.5D
     updateScreenControls()
+    // 3D or 2.5D chosen on a relief is the first view of the next ones, in the app's settings too (2D is a view only)
+    if (request?.stereoKind is StereoPhotoKind.DepthRelief && next != StereoView.TWO_D) {
+      notifyReliefSettings(if (next == StereoView.MESH_25D) ReliefViewMode.MESH_25D else ReliefViewMode.STEREO)
+    }
     if (next != StereoView.TWO_D) showReliefEstimated() else hideReliefEstimated()
     showControlChange(fromPanel)
   }
@@ -5141,7 +5222,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The photo of the quad as the mesh sees it, with the settings of relief-v1 of its request. */
   private fun reliefView(): ReliefView? {
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return null
-    val spec = (request?.stereoKind as? StereoPhotoKind.DepthRelief)?.spec ?: return null
+    val spec = reliefSpecOf(request ?: return null) ?: return null
     return ReliefView.forQuad(stereoAngleDeg, eyeWidth, eyeHeight, spec.parallax, spec.convergence)
   }
 

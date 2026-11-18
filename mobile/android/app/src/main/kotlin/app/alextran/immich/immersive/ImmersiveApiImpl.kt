@@ -112,6 +112,24 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
     }
 
     /**
+     * Tells Flutter the user chose the relief strength [strength] (subtle, normal or strong) or the first view [mode]
+     * of the reliefs (stereo or mesh25d, null when only the strength changed) in the viewer of [openingId], so that
+     * the AI settings of the app follow (issue 19, point 4). Without an engine for the app UI the event is dropped.
+     */
+    fun notifyReliefSettingsChanged(openingId: Long, strength: String, mode: String?) {
+      onMainThread {
+        val current = events
+        if (current == null) {
+          Log.i(TAG, "no Flutter engine to tell the relief settings")
+          return@onMainThread
+        }
+        current.reliefSettingsChanged(openingId, strength, mode) { result ->
+          result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the relief settings event", it) }
+        }
+      }
+    }
+
+    /**
      * Asks Flutter, under [requestId], for the media [step] places away from the one shown (+1 next, -1 previous) in
      * the viewer of [openingId]. [stereoLayout] and [coverage] are what the viewer shows now, which the app keeps for
      * that media before moving on. [callback] runs on the main thread with true once Flutter found one and showed it

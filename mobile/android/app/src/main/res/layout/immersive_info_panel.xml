@@ -300,6 +300,19 @@
       android:textSize="17sp"
       android:visibility="gone" />
 
+    <!-- The relief strength of a relief made in the headset, "Relief: Normal": a click goes to the next strength,
+         Subtle, Normal or Strong, which the photo shown takes at once and the app keeps as its setting (issue 19) -->
+    <Button
+      android:id="@+id/immersive_relief_strength"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginEnd="12dp"
+      android:maxLines="1"
+      android:textAllCaps="false"
+      android:textSize="17sp"
+      android:visibility="gone" />
+
     <!-- Field of view of the media on screen, "360°" (full sphere) or "180°" (VR180, front half), shown while a
          media is loaded. A click switches to the other one -->
     <Button

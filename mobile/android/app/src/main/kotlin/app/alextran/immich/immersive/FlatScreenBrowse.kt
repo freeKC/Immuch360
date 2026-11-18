@@ -34,3 +34,33 @@ internal object BrowseView {
    */
   fun computesRelief(view: StereoView): Boolean = view != StereoView.TWO_D
 }
+
+/**
+ * The relief strengths of the AI relief made in the headset (release 46, lot feat-relief-strength-46): the whole
+ * parallax of relief-v1, under the names the app keeps in its settings (ReliefStrength in Dart), checked against the
+ * contract fixture stereo_pair_contract_v1.json so that the two sides cannot drift. The button "Relief: Normal" of the
+ * viewer goes through them in this order (issue 19, point 4). Pure, unit tested.
+ */
+internal enum class ReliefStrengthChoice(val wire: String, val parallax: Double) {
+  SUBTLE("subtle", 0.015),
+  NORMAL("normal", 0.02),
+  STRONG("strong", 0.03);
+
+  /** The strength the button goes to next: Subtle, Normal, Strong, then Subtle again. */
+  val next: ReliefStrengthChoice
+    get() = entries[(ordinal + 1) % entries.size]
+
+  /** The key of its name among the labels of the viewer. */
+  val labelKey: String
+    get() = "aiReliefStrength_$wire"
+
+  companion object {
+    /** The label of the button, "Relief: {strength}", and where its name goes. */
+    const val LABEL_INFO = "aiReliefStrengthInfo"
+    const val STRENGTH = "{strength}"
+
+    /** The strength of [parallax], null for a parallax of none of them (a later version of the app). */
+    fun ofParallax(parallax: Double): ReliefStrengthChoice? =
+      entries.firstOrNull { kotlin.math.abs(it.parallax - parallax) < 1e-9 }
+  }
+}

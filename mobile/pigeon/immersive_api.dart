@@ -178,4 +178,11 @@ abstract class ImmersiveEvents {
   /// the setting of the app follows, as with the phone's 360° player (an opening Flutter no longer follows still
   /// counts, the press was the user's).
   void stabilizationChanged(int openingId, bool enabled);
+
+  /// The user chose the relief strength ([strength], the name of a ReliefStrength: subtle, normal or strong) or the
+  /// first view of the reliefs ([mode], the json of a ReliefViewMode: stereo or mesh25d; null when only the strength
+  /// changed, and for 2D, which is a view, not a mode) on a relief made in the viewer of [openingId] (issue 19, point
+  /// 4): the settings of the app follow, as for [stabilizationChanged], so that the next reliefs, in the headset and
+  /// in the app, start from them (an opening Flutter no longer follows still counts, the press was the user's).
+  void reliefSettingsChanged(int openingId, String strength, String? mode);
 }

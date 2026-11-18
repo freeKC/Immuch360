@@ -26,6 +26,11 @@ Map<String, String> aiImmersiveViewerLabels(Translations t) => {
   'aiReliefNoMemory': t.ai_immersive_unavailable_memory,
   'aiReliefMissing': t.ai_immersive_unavailable_missing,
   'aiReliefDamaged': t.ai_immersive_unavailable_damaged,
+  // The button "Relief: Normal" of a relief (issue 19), its name where {strength} is
+  'aiReliefStrengthInfo': t.ai_immersive_relief_strength_info(strength: '{strength}'),
+  'aiReliefStrength_subtle': t.ai_immersive_relief_strength_subtle,
+  'aiReliefStrength_normal': t.ai_immersive_relief_strength_normal,
+  'aiReliefStrength_strong': t.ai_immersive_relief_strength_strong,
 };
 
 /// Translated labels of a 3D scene in the headset (design-final 2026-10-27, sections 3.3, 3.5 and 3.7), under the keys

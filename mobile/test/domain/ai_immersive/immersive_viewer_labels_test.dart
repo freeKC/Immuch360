@@ -53,8 +53,22 @@ void main() {
       'aiReliefNoMemory',
       'aiReliefMissing',
       'aiReliefDamaged',
+      'aiReliefStrengthInfo',
+      'aiReliefStrength_subtle',
+      'aiReliefStrength_normal',
+      'aiReliefStrength_strong',
     });
     expect(labels.values, everyElement(isNotEmpty));
+  });
+
+  testWidgets('the relief strength button of the headset reads the names of the settings', (tester) async {
+    final labels = aiImmersiveViewerLabels(await english(tester));
+    // The English texts of StereoComposer.defaultLabels in StereoPhoto.kt
+    expect(labels['aiReliefStrengthInfo'], 'Relief: {strength}');
+    expect(
+      [labels['aiReliefStrength_subtle'], labels['aiReliefStrength_normal'], labels['aiReliefStrength_strong']],
+      ['Subtle', 'Normal', 'Strong'],
+    );
   });
 
   testWidgets('the relief the headset makes says its stages and why it left a photo flat', (tester) async {
