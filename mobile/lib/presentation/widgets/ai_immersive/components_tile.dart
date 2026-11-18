@@ -258,6 +258,7 @@ String aiFeatureGroupName(Translations t, AiFeatureGroup group) => switch (group
   AiFeatureGroup.panoramas => t.ai_immersive_feature_panoramas,
   AiFeatureGroup.splats => t.ai_immersive_feature_splats,
   AiFeatureGroup.av2 => t.av2_decoder_name,
+  AiFeatureGroup.videos => t.ai_immersive_feature_videos,
 };
 
 /// "3D scenes: 378 MB", the size of all the components a group needs, from the catalogue: those it shares with another
@@ -271,6 +272,7 @@ String aiFeatureGroupTitle(Translations t, AiGroupComponents group) {
     AiFeatureGroup.splats => t.ai_immersive_components_splats(size: size),
     // Never in this tile (aiComponentGroupsFor gives the groups of the AI): the video settings show the AV2 decoder
     AiFeatureGroup.av2 => t.av2_settings_not_installed(size: size),
+    AiFeatureGroup.videos => t.ai_immersive_components_videos(size: size),
   };
 }
 

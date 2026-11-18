@@ -1356,7 +1356,8 @@ void main() {
     testWidgets('held back by a version, it is not listed, whatever the engine; this version holds nothing back', (
       tester,
     ) async {
-      expect(aiHeldFeatureGroups, isEmpty);
+      // Only the 3D videos are held, until their own lot offers them
+      expect(aiHeldFeatureGroups, {AiFeatureGroup.videos});
       panoramas();
       held = const {AiFeatureGroup.panoramas};
       original('salon.jpg');

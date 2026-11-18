@@ -1,0 +1,650 @@
+{
+  "name": "ffmpeg-lgpl",
+  "tag": "ffmpeg-lgpl-20261118-7",
+  "repository": "https://github.com/immuch360/libmpv-builds",
+  "commit": "a452ac2f2b11b0f642d48fd64a1496ccc455a7fc",
+  "run": "44377424022",
+  "date": "2026-11-18",
+  "lock": "9.0.2-1",
+  "licence": "LGPL-2.1-or-later",
+  "ffmpeg": {
+    "version": "9.0.2",
+    "tag": "n9.0.2",
+    "commit": "946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+    "url": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+    "sha256": "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e"
+  },
+  "sources": {
+    "assetName": "ffmpeg-lgpl-20261118-7-sources.tar.xz",
+    "url": "https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/ffmpeg-lgpl-20261118-7-sources.tar.xz",
+    "size": 27301208,
+    "sha256": "dbf6138fba884bca109a756f6b5b134f604015511fc028521ccadf46fc5f10b7"
+  },
+  "archives": {
+    "ffmpeg-lgpl-windows-x64": {
+      "system": "windows-x64",
+      "assetName": "Immuch360-ffmpeg-9.0.2-1-windows-x64.zip",
+      "url": "https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/Immuch360-ffmpeg-9.0.2-1-windows-x64.zip",
+      "size": 8423208,
+      "sha256": "246eac7a5cc2ce488ec4d9e5d17008908906ab96ac2481dee265680904c864f8",
+      "signature": "Authenticode, APROGSYS (Azure Artifact Signing)",
+      "archiveFiles": [
+        {
+          "path": "BUILD-INFO.txt",
+          "size": 4172,
+          "sha256": "b64b149c4af3814bb501b3c8ab0d6393b12fc815e24a923f6d7e4da6ffa8f6ae",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "SHA256SUMS.txt",
+          "size": 2485,
+          "sha256": "d53e8e122e0815d43f2f3bb99d629b799b1fff9b88e9089b52bf7db7123cf7cf",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/avcodec-63.dll",
+          "size": 15607128,
+          "sha256": "e8996abbba52725b9bf1b7306e7ea2aa45e7997c3ec8670ea2756a5b83d9431c",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/avdevice-63.dll",
+          "size": 81240,
+          "sha256": "abc5bd7a707066b90af44ca38a162cdae5e04289bdac45d1accb882419f5b622",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/avfilter-12.dll",
+          "size": 1285976,
+          "sha256": "80d95b4cf9f630531bfa7bd774983f0efcd5194e70a8f5e5a7839f772962b577",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/avformat-63.dll",
+          "size": 1102680,
+          "sha256": "38fdb057f235181e9dbdff5e61872ad9ad6d7f8a83a4f07b1e4d43a715494ee5",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/avutil-61.dll",
+          "size": 1076056,
+          "sha256": "dedf419292f53185cb6e61e605994dbc4c81301d482ccab91871ddbd3687234d",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/ffmpeg.exe",
+          "size": 503128,
+          "sha256": "8576710bcf04433d3f7f514384ec6ea53bf48b0686e7d3ecc548cdcf8b0796d7",
+          "mode": "0755",
+          "executable": true
+        },
+        {
+          "path": "bin/ffprobe.exe",
+          "size": 233304,
+          "sha256": "455909b1b566671b8cb00040a1d180814a19f5d66073d9ffcd46d54e631c8e83",
+          "mode": "0755",
+          "executable": true
+        },
+        {
+          "path": "bin/swresample-7.dll",
+          "size": 139096,
+          "sha256": "6ca45f719e9b964778dffc9ed8e80dd00496bb79044e21373c035976891d89ee",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/swscale-10.dll",
+          "size": 1120600,
+          "sha256": "aa9fb7aa6ecde12e84061dc91975ca9e4c0bd8416199ce3c08891e909290320c",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-COPYING.LGPLv2.1.txt",
+          "size": 26517,
+          "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-IJG.txt",
+          "size": 1961,
+          "sha256": "9fd403421481cb9f88141c852b259da5a0f65fc15017405862b6370e2df1347c",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-LICENSE.md",
+          "size": 4346,
+          "sha256": "2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-SOURCE.txt",
+          "size": 675,
+          "sha256": "38321a7459e179ef74dacfc432ba08f2413ed058f83642de45d0ccb02795a841",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/PATENTS-NOTE.md",
+          "size": 992,
+          "sha256": "2524b8924ad94c944c966f33567ade71302c3d04306dc561f96a0dc92232f35a",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/README.md",
+          "size": 4334,
+          "sha256": "440cfe2775331b7f175c44275e8bb295e795788203348e3354d8ee1fa56f21f2",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-LICENSE-BSD2.md",
+          "size": 1316,
+          "sha256": "c582fcbeb9cf972a60d298bfaf41dc5adff2dd14208946edcb9bb56a281e8438",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-LICENSE.md",
+          "size": 1709,
+          "sha256": "0acc2fcb27472bdc9aaf8b71f37055bbdac4f54671b7d922f241bd7fcd0dd3e6",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-PATENTS.md",
+          "size": 5767,
+          "sha256": "20678ab10402659106dc4c147c97b2a6e94b5c0695415e15a8f195ebc3547922",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-fastfeat-LICENSE.txt",
+          "size": 1506,
+          "sha256": "043dcfd059386f9facd376351b2bd79325778744aa442177390cdfcca54babed",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-safestringlib-LICENSE.txt",
+          "size": 2247,
+          "sha256": "c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav1d-COPYING.txt",
+          "size": 1317,
+          "sha256": "dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav1d-x86inc-ISC.txt",
+          "size": 1162,
+          "sha256": "1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/mingw-gcc-runtime-copyright.txt",
+          "size": 75729,
+          "sha256": "a481f772f7a53335f13b32c6c54eb1c8577ce97704edd3757ab7ed4287a8e96a",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/mingw-w64-runtime-copyright.txt",
+          "size": 35571,
+          "sha256": "f27a58667538b6913ea23cb9e07e270922761ebf7c22d94bda7f819aaf08ea08",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/zimg-COPYING.txt",
+          "size": 484,
+          "sha256": "7637386b5f81e8a719ca336233149005e5fa28b5e6054ea7b67de49355b0ad40",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/zlib-LICENSE.txt",
+          "size": 1002,
+          "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+          "mode": "0644",
+          "executable": false
+        }
+      ]
+    },
+    "ffmpeg-lgpl-linux-x64": {
+      "system": "linux-x64",
+      "assetName": "Immuch360-ffmpeg-9.0.2-1-linux-x64.zip",
+      "url": "https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/Immuch360-ffmpeg-9.0.2-1-linux-x64.zip",
+      "size": 8201929,
+      "sha256": "b343bdc434f24cef963a8d08768b54208135dd1664f3ba7ea2d443d278023ddd",
+      "signature": "none",
+      "archiveFiles": [
+        {
+          "path": "BUILD-INFO.txt",
+          "size": 4328,
+          "sha256": "8bf0f293da0a349e1f396cc35ef20fafbe603bc2bdcdc1db1bfb9c1a0c921ad4",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "SHA256SUMS.txt",
+          "size": 2717,
+          "sha256": "78413bde8a107e4550c36979e9d868c1f9d73ec7bd1c7c16b2da279837bfac25",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/ffmpeg",
+          "size": 504128,
+          "sha256": "66bb34aa82c122eb5519b2c87144a100819281af61afbba94644dc7676eac0a4",
+          "mode": "0755",
+          "executable": true
+        },
+        {
+          "path": "bin/ffprobe",
+          "size": 228424,
+          "sha256": "3531c352a3f000ad1441b71f94ef7cba484118590dacbf54c857d40b149fec99",
+          "mode": "0755",
+          "executable": true
+        },
+        {
+          "path": "bin/immuch360-run",
+          "size": 14472,
+          "sha256": "8ab42102ac355c952b2fe3565f06089b499f262bf004d41353fd7e696018e1ed",
+          "mode": "0755",
+          "executable": true
+        },
+        {
+          "path": "lib/libavcodec.so.63",
+          "size": 15425120,
+          "sha256": "169251597214d9720718f2f1659558d019dbfa03bb13e96a70d224b51d840891",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libavdevice.so.63",
+          "size": 31432,
+          "sha256": "ac1337eda836a862b0f1d0b27f12ee88d5a5df3234f4ddfe11fa8f84ee34e584",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libavfilter.so.12",
+          "size": 1192240,
+          "sha256": "d9bbf7c323758326d619f5d96b7cd78ab11c5612ede4e53279415480ded1dfe1",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libavformat.so.63",
+          "size": 1096944,
+          "sha256": "28d791b58cb4b9c5f5c5c18943f9404ab258d498f56dd5f5e42d817410b58521",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libavutil.so.61",
+          "size": 1031656,
+          "sha256": "afdb751cf36b5a8a71fc3033ea675bfe541ddfa8c2fe8db809791c4cc9ce0095",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libswresample.so.7",
+          "size": 129104,
+          "sha256": "f163e14407da0f5a6490abc0cbacc24f50e5b04af7b1853ace1378d4a4a85756",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libswscale.so.10",
+          "size": 1195496,
+          "sha256": "fe6a95ca8a01351aa22c5a4e606fcb0c5908c6a5564708e94adf6ed584a9faa8",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libva-drm.so.2",
+          "size": 17896,
+          "sha256": "3c74dba832a29d23fa63211d0f1dc56d800773e6796fe0238f28318c2dbe96ba",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libva.so.2",
+          "size": 237416,
+          "sha256": "f671881265952b8cf8665558f6f99796d8ec29d4f7c407901a867a55ba1c2cb1",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-COPYING.LGPLv2.1.txt",
+          "size": 26517,
+          "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-IJG.txt",
+          "size": 1961,
+          "sha256": "9fd403421481cb9f88141c852b259da5a0f65fc15017405862b6370e2df1347c",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-LICENSE.md",
+          "size": 4346,
+          "sha256": "2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-SOURCE.txt",
+          "size": 675,
+          "sha256": "38321a7459e179ef74dacfc432ba08f2413ed058f83642de45d0ccb02795a841",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/PATENTS-NOTE.md",
+          "size": 992,
+          "sha256": "2524b8924ad94c944c966f33567ade71302c3d04306dc561f96a0dc92232f35a",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/README.md",
+          "size": 4334,
+          "sha256": "440cfe2775331b7f175c44275e8bb295e795788203348e3354d8ee1fa56f21f2",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-LICENSE-BSD2.md",
+          "size": 1316,
+          "sha256": "c582fcbeb9cf972a60d298bfaf41dc5adff2dd14208946edcb9bb56a281e8438",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-LICENSE.md",
+          "size": 1709,
+          "sha256": "0acc2fcb27472bdc9aaf8b71f37055bbdac4f54671b7d922f241bd7fcd0dd3e6",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-PATENTS.md",
+          "size": 5767,
+          "sha256": "20678ab10402659106dc4c147c97b2a6e94b5c0695415e15a8f195ebc3547922",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-fastfeat-LICENSE.txt",
+          "size": 1506,
+          "sha256": "043dcfd059386f9facd376351b2bd79325778744aa442177390cdfcca54babed",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-safestringlib-LICENSE.txt",
+          "size": 2247,
+          "sha256": "c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav1d-COPYING.txt",
+          "size": 1317,
+          "sha256": "dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav1d-x86inc-ISC.txt",
+          "size": 1162,
+          "sha256": "1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/immuch360-run-MIT.txt",
+          "size": 1156,
+          "sha256": "e1ca99633c8cb8df3e8189b0c4b804e91b6dca413ae4022ea3d905e0f94ef191",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/libva-COPYING.txt",
+          "size": 1130,
+          "sha256": "c86a782ee845b52472dae9b9d79fb915d333628ac0efe49cdce63644814931de",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/zimg-COPYING.txt",
+          "size": 484,
+          "sha256": "7637386b5f81e8a719ca336233149005e5fa28b5e6054ea7b67de49355b0ad40",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/zlib-LICENSE.txt",
+          "size": 1002,
+          "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+          "mode": "0644",
+          "executable": false
+        }
+      ]
+    },
+    "ffmpeg-lgpl-macos-universal": {
+      "system": "macos-universal",
+      "assetName": "Immuch360-ffmpeg-9.0.2-1-macos-universal.zip",
+      "url": "https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/Immuch360-ffmpeg-9.0.2-1-macos-universal.zip",
+      "size": 14607554,
+      "sha256": "6bc7855c1e9289a26995aae1cfbf3791f3684f9573c441ee35232d19c73bb1cd",
+      "signature": "ad hoc",
+      "archiveFiles": [
+        {
+          "path": "BUILD-INFO.txt",
+          "size": 5923,
+          "sha256": "77140a0343acec469ba139e13926dfdee9275908506235b45fa8292587485404",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "SHA256SUMS.txt",
+          "size": 2298,
+          "sha256": "5f5664c37ea1c41721b588b21ae22aad0d9c48b5f23aacd88d1ec3ac5ab07066",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "bin/ffmpeg",
+          "size": 937728,
+          "sha256": "2c695271cf34b303f9d240c03476f32a8d6eb2b2502ef0adad37dbbb49da943d",
+          "mode": "0755",
+          "executable": true
+        },
+        {
+          "path": "bin/ffprobe",
+          "size": 467824,
+          "sha256": "b75ecf315b3551975c5f64429fc93a70617141b1f249fe77b0b37df002cb1c91",
+          "mode": "0755",
+          "executable": true
+        },
+        {
+          "path": "lib/libavcodec.63.dylib",
+          "size": 26382784,
+          "sha256": "b8ecf37e774754da870edc7ea62a4bf620288f2350e7ad4bcd9272b472db4316",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libavdevice.63.dylib",
+          "size": 124944,
+          "sha256": "a9ff5552be34044575adeab2473cb6cff3c8ad910f622774eb623f4b026e64c9",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libavfilter.12.dylib",
+          "size": 1546368,
+          "sha256": "29b056c513426a06e57627c498c7e80267991c70025f4dde21a725034230ff6b",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libavformat.63.dylib",
+          "size": 2059056,
+          "sha256": "71dbc12d6b96f2c9b89fad880df06228097cb4eab6d4a128037d5367ea9dd143",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libavutil.61.dylib",
+          "size": 1645472,
+          "sha256": "081ec2e1ab165784c38a2584e5926e813dcb6ec75bc3d8b9496db79cf602d7f0",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libswresample.7.dylib",
+          "size": 318352,
+          "sha256": "edf8cc1afe2d7bc2ea3833e3cf682ddc843e8ce36e801dd0e83ad9d7250cf7e3",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "lib/libswscale.10.dylib",
+          "size": 2890720,
+          "sha256": "c2f14cb3257a650ad26047f224d13e400e801c7406d6ba4f3e58861044508158",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-COPYING.LGPLv2.1.txt",
+          "size": 26517,
+          "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-IJG.txt",
+          "size": 1961,
+          "sha256": "9fd403421481cb9f88141c852b259da5a0f65fc15017405862b6370e2df1347c",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-LICENSE.md",
+          "size": 4346,
+          "sha256": "2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/FFmpeg-SOURCE.txt",
+          "size": 675,
+          "sha256": "38321a7459e179ef74dacfc432ba08f2413ed058f83642de45d0ccb02795a841",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/PATENTS-NOTE.md",
+          "size": 992,
+          "sha256": "2524b8924ad94c944c966f33567ade71302c3d04306dc561f96a0dc92232f35a",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/README.md",
+          "size": 4334,
+          "sha256": "440cfe2775331b7f175c44275e8bb295e795788203348e3354d8ee1fa56f21f2",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-LICENSE-BSD2.md",
+          "size": 1316,
+          "sha256": "c582fcbeb9cf972a60d298bfaf41dc5adff2dd14208946edcb9bb56a281e8438",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-LICENSE.md",
+          "size": 1709,
+          "sha256": "0acc2fcb27472bdc9aaf8b71f37055bbdac4f54671b7d922f241bd7fcd0dd3e6",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-PATENTS.md",
+          "size": 5767,
+          "sha256": "20678ab10402659106dc4c147c97b2a6e94b5c0695415e15a8f195ebc3547922",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-fastfeat-LICENSE.txt",
+          "size": 1506,
+          "sha256": "043dcfd059386f9facd376351b2bd79325778744aa442177390cdfcca54babed",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/SVT-AV1-safestringlib-LICENSE.txt",
+          "size": 2247,
+          "sha256": "c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav1d-COPYING.txt",
+          "size": 1317,
+          "sha256": "dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/dav1d-x86inc-ISC.txt",
+          "size": 1162,
+          "sha256": "1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/zimg-COPYING.txt",
+          "size": 484,
+          "sha256": "7637386b5f81e8a719ca336233149005e5fa28b5e6054ea7b67de49355b0ad40",
+          "mode": "0644",
+          "executable": false
+        },
+        {
+          "path": "licenses/zlib-LICENSE.txt",
+          "size": 1002,
+          "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+          "mode": "0644",
+          "executable": false
+        }
+      ]
+    }
+  }
+}

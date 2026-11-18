@@ -105,6 +105,7 @@ const _kParamTypeOverrides = <String, String>{
   'ai_immersive_components_photos.size': 'String',
   'ai_immersive_components_scenes.size': 'String',
   'ai_immersive_components_splats.size': 'String',
+  'ai_immersive_components_videos.size': 'String',
   'ai_immersive_components_total.size': 'String',
   'ai_immersive_install_prompt.size': 'String',
   'ai_immersive_relief_cache_size.size': 'String',

@@ -538,7 +538,10 @@ void main() {
       expect(run.exitCode, 0, reason: '$run');
       expect(
         run.output,
-        contains('20 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, each complete'),
+        contains(
+          '21 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, ai-components-5, '
+          'each complete',
+        ),
       );
       // The archives of av2-companion v1.0.1, as the manifest of the release gives them
       expect(
@@ -671,6 +674,66 @@ void main() {
       skip: skipCiScripts,
     );
 
+    test('the 3D videos: the model of ai-components-5 named with its NOTICE, the FFmpeg program held to the manifest '
+        'of its release in libmpv-builds, under the LGPL 2.1 or later', () {
+      final run = _check(['--release', 'ai-components-5']);
+      expect(run.exitCode, 0, reason: '$run');
+      expect(run.output, contains('1 components in ai-components-5, each complete'));
+      expect(
+        run.output,
+        contains(
+          'the FFmpeg program carries the archives of immuch360/libmpv-builds ffmpeg-lgpl-20261118-7 as its manifest '
+          'gives them (run 44377424022, commit a452ac2f2b11b0f642d48fd64a1496ccc455a7fc)',
+        ),
+      );
+      final licencesText = File(_licences).readAsStringSync().replaceAll('\r\n', '\n');
+      expect(licencesText, contains('<!-- ai-components-5 -->\n## ai-components-5: 3D videos'));
+      expect(
+        licencesText,
+        contains(
+          '| `video-depth-anything-small-dynamic-fp32.onnx` | `video-depth-anything-small-onnx` | 116528885 | '
+          '`eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99` | Apache-2.0 |',
+        ),
+      );
+      expect(licencesText, contains('Copyright (2025) Bytedance Ltd. and/or its affiliates'));
+      expect(licencesText, contains('13379300b739e659f076a59d52e9801bd8d38c541a7e71f73bbca4dcfb013609'));
+
+      // Another licence, another sum, another repository: each refused
+      final text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
+      final linux = text.indexOf("  id: 'ffmpeg-lgpl-linux-x64',");
+      final licence = text.indexOf("  licence: 'LGPL-2.1-or-later',", linux);
+      var changed = text.replaceRange(licence, licence + 31, "  licence: 'GPL-2.0-or-later',");
+      final windows = changed.indexOf("  id: 'ffmpeg-lgpl-windows-x64',");
+      final sum = RegExp(r"  sha256: '([0-9a-f]{64})',").firstMatch(changed.substring(windows))!;
+      changed = changed.replaceRange(windows + sum.start, windows + sum.end, "  sha256: '${'0' * 64}',");
+      catalogue.writeAsStringSync(changed);
+      final refused = _check(['--catalogue', catalogue.path]);
+      expect(refused.exitCode, 1, reason: '$refused');
+      expect(
+        refused.output,
+        contains('ffmpeg-lgpl-linux-x64: licence GPL-2.0-or-later, the FFmpeg program is under LGPL-2.1-or-later'),
+      );
+      expect(refused.output, contains('ffmpeg-lgpl-windows-x64: the catalogue has'));
+      expect(refused.output, contains('the manifest of ffmpeg-lgpl-20261118-7'));
+
+      // Sums without the manifest they come from
+      catalogue.writeAsStringSync(text);
+      final unrecorded = _check([
+        '--catalogue',
+        catalogue.path,
+        '--ffmpeg-record',
+        p.join(catalogue.parent.path, 'no-ffmpeg-lgpl.json'),
+      ]);
+      expect(unrecorded.exitCode, 1, reason: '$unrecorded');
+      expect(
+        unrecorded.output,
+        contains(
+          'the FFmpeg program carries sums but ffmpeg-lgpl-ffmpeg-lgpl-20261118-7.json is not the manifest of '
+          'immuch360/libmpv-builds ffmpeg-lgpl-20261118-7',
+        ),
+      );
+    }, skip: skipCiScripts);
+
     test('says what is missing: an incomplete component, a row of MODEL-LICENSES.md', () {
       final text = File(_catalogue).readAsStringSync();
       final start = text.indexOf("  id: 'onnxruntime-1.31.0-linux-x64',");
@@ -693,7 +756,9 @@ void main() {
         expect(run.exitCode, 0, reason: '$branch: $run');
         expect(
           run.output,
-          contains('20 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4'),
+          contains(
+            '21 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, ai-components-5',
+          ),
         );
       }
     }, skip: skipCiScripts);
@@ -718,12 +783,16 @@ void main() {
 
       // A checkout on Windows may hold CRLF line ends; the script reads either
       final text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
-      const lifted = 'const aiHeldFeatureGroups = <AiFeatureGroup>{};';
+      // Nothing held but the 3D videos, which their own lot offers
+      const lifted = 'const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.videos};';
       expect(text, contains(lifted));
 
       // The hold put back by the app: the components stay those of the release, complete
       catalogue.writeAsStringSync(
-        text.replaceFirst(lifted, 'const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.splats};'),
+        text.replaceFirst(
+          lifted,
+          'const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.splats, AiFeatureGroup.videos};',
+        ),
       );
       final held = _check(['--catalogue', catalogue.path]);
       expect(held.exitCode, 0, reason: '$held');
