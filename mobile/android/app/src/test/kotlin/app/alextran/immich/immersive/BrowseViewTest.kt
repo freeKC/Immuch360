@@ -2,6 +2,7 @@ package app.alextran.immich.immersive
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -57,5 +58,32 @@ class BrowseViewTest {
     assertFalse(BrowseView.computesRelief(StereoView.TWO_D))
     assertTrue(BrowseView.computesRelief(StereoView.THREE_D))
     assertTrue(BrowseView.computesRelief(StereoView.MESH_25D))
+  }
+
+  @Test
+  fun `a relief left without a press keeps the setting`() {
+    assertNull(ReliefFirstView().take())
+  }
+
+  @Test
+  fun `2_5D passed through on the way to 2D is never kept`() {
+    val first = ReliefFirstView()
+    // 3D at the opening, then the button: 2.5D, then 2D
+    first.pressed(StereoView.MESH_25D)
+    first.pressed(StereoView.TWO_D)
+    assertNull(first.take())
+  }
+
+  @Test
+  fun `the view a relief is left in after a press is kept, once`() {
+    val first = ReliefFirstView()
+    first.pressed(StereoView.MESH_25D)
+    assertEquals(StereoView.MESH_25D, first.take())
+    assertNull(first.take())
+    // 2.5D, 2D, then 3D again: 3D is the choice
+    first.pressed(StereoView.MESH_25D)
+    first.pressed(StereoView.TWO_D)
+    first.pressed(StereoView.THREE_D)
+    assertEquals(StereoView.THREE_D, first.take())
   }
 }

@@ -717,6 +717,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private var reliefStrength: ReliefStrengthChoice? = null
   private var reliefStrengthOpening: Long? = null
+  /** The view the 3D button left the relief shown in, kept as the app's first view once the photo is left. */
+  private val reliefFirstView = ReliefFirstView()
   /** The heat of the headset, watched while the viewer has a relief job. */
   private var thermalWatch: ThermalWatch? = null
 
@@ -1146,6 +1148,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // singleTask: other apps can reach this method too, an intent without the launch token changes nothing
     val parsed = parse(intent) ?: return
     setIntent(intent)
+    sendReliefFirstView()
     request = parsed
     Log.i(TAG, "immersive viewer onNewIntent, opening ${parsed.openingId}")
     if (sceneReady) showRequest()
@@ -1866,6 +1869,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val spec = reliefSpecOf(media) ?: return
     val strength = ReliefStrengthChoice.ofParallax(spec.parallax) ?: return
     ImmersiveApiImpl.notifyReliefSettingsChanged(media.openingId, strength.wire, mode?.json)
+  }
+
+  /**
+   * The relief shown is left (previous or next, another opening, the viewer closed): the view its 3D button left it in
+   * goes to the app's settings as the first view, once (see [ReliefFirstView]). Called while [request] is still that
+   * relief.
+   */
+  private fun sendReliefFirstView() {
+    val view = reliefFirstView.take() ?: return
+    Log.i(TAG, "relief left in $view: kept as the first view of the reliefs")
+    notifyReliefSettings(if (view == StereoView.MESH_25D) ReliefViewMode.MESH_25D else ReliefViewMode.STEREO)
   }
 
   /**
@@ -3093,6 +3107,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     // navigate only asks with a media on screen, which a pending request keeps
     val current = request ?: return false
+    sendReliefFirstView()
     // Whether the photo shown has its picture on screen, for a swap without a black gap (see PhotoSwap)
     val shownIsScreenPhoto = isSlideshowPhoto(current) && stereoEyeSize != null
     Log.i(TAG, "show adjacent ${if (isVideo) "video" else "photo"} for request $requestId")
@@ -3410,6 +3425,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * to report for an intent that showed nothing.
    */
   private fun reportClosed() {
+    // The relief closed on keeps the view it was left in, before the closed event
+    sendReliefFirstView()
     if (closedSent) return
     val media = request ?: return
     // The film the viewer closes on, a previous or next one too, is kept before the app follows the closing: the last
@@ -5278,6 +5295,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       deferredRelief = null
       stereo3d = true
       stereo25d = false
+      reliefFirstView.pressed(StereoView.THREE_D)
       startDeferredRelief(deferred)
       updateStereoView()
       showControlChange(fromPanel)
@@ -5297,10 +5315,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateStereoView()
     // A relief in 2.5D stands where it was computed from: no Size, Distance or grips until it leaves 2.5D
     updateScreenControls()
-    // 3D or 2.5D chosen on a relief is the first view of the next ones, in the app's settings too (2D is a view only)
-    if (request?.stereoKind is StereoPhotoKind.DepthRelief && next != StereoView.TWO_D) {
-      notifyReliefSettings(if (next == StereoView.MESH_25D) ReliefViewMode.MESH_25D else ReliefViewMode.STEREO)
-    }
+    // The view a relief is left in, 3D or 2.5D, becomes the first view in the app's settings once the photo is left:
+    // a 2.5D only passed through on the way to 2D is not kept (see sendReliefFirstView)
+    if (request?.stereoKind is StereoPhotoKind.DepthRelief) reliefFirstView.pressed(next)
     if (next != StereoView.TWO_D) showReliefEstimated() else hideReliefEstimated()
     showControlChange(fromPanel)
   }

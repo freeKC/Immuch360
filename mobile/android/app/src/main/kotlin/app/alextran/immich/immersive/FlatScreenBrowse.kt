@@ -36,6 +36,25 @@ internal object BrowseView {
 }
 
 /**
+ * The first view of the reliefs the app keeps as its setting ("Open AI reliefs in 2.5D", issue 19, point 4): the view
+ * the user leaves a relief in after pressing its 3D button, sent once when the photo is left (previous, next or the
+ * slideshow, another opening, the viewer closed). The button goes 3D, 2.5D, 2D on a relief with its mesh, so a view
+ * only passed through on the way to 2D is never kept, and a relief left in 2D keeps the setting as it was: 2D is a
+ * view only. Pure, unit tested.
+ */
+internal class ReliefFirstView {
+  private var pending: StereoView? = null
+
+  /** The 3D button of a relief went to [view]. */
+  fun pressed(view: StereoView) {
+    pending = view.takeIf { it != StereoView.TWO_D }
+  }
+
+  /** The relief is left: the view to keep as the setting, once; null keeps the setting as it is. */
+  fun take(): StereoView? = pending.also { pending = null }
+}
+
+/**
  * The relief strengths of the AI relief made in the headset (release 46, lot feat-relief-strength-46): the whole
  * parallax of relief-v1, under the names the app keeps in its settings (ReliefStrength in Dart), checked against the
  * contract fixture stereo_pair_contract_v1.json so that the two sides cannot drift. The button "Relief: Normal" of the
