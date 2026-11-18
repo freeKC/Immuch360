@@ -142,6 +142,21 @@ class NetworkDownloadStream {
   final Stream<List<int>> bytes;
 }
 
+/// A share whose server keeps where its user stopped in a film and shows it in its own apps (a Jellyfin or Emby
+/// server): the video page tells it when a film starts, as it plays (every minute and at each pause) and when it
+/// stops, so that a film stopped on the Quest resumes on the phone and in the server's apps. A report that fails is
+/// logged once and dropped: playback never waits for it.
+abstract interface class NetworkPlaybackReports {
+  /// The file at [path] starts playing at [position]; [converted] when the server's conversion plays it
+  Future<void> playbackStarted(String path, Duration position, {bool converted = false});
+
+  /// The file at [path] is at [position], [paused] or playing
+  Future<void> playbackProgress(String path, Duration position, {bool paused = false});
+
+  /// The file at [path] stopped at [position]: the page went, or the next file took its place
+  Future<void> playbackStopped(String path, Duration position);
+}
+
 /// Whether [error] says that the server owner forbids downloads to this account
 bool isDownloadForbidden(Object error) => error is NetworkFileSystemException && error.isDownloadForbidden;
 

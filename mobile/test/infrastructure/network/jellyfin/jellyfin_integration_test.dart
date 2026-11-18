@@ -242,6 +242,24 @@ void main() {
         _report('$label: password and Quick Connect sign in, sign out ends the session');
       }, skip: skip);
 
+      test('a place written by the reports is read back, by this session and by another', () async {
+        final fileSystem = await open();
+        addTearDown(fileSystem.close);
+        final films = await fileSystem.list((await fileSystem.list('/')).firstWhere((e) => e.name == 'Films').path);
+        // The ten minute film: Emby keeps no place in a film of 30 s whatever its settings (its own threshold)
+        final film = films.firstWhere((e) => e.name.startsWith('Long'));
+        await fileSystem.playbackStarted(film.path, Duration.zero);
+        await fileSystem.playbackProgress(film.path, const Duration(seconds: 80), paused: true);
+        await fileSystem.playbackStopped(film.path, const Duration(seconds: 90));
+        final id = fileSystem.itemPageAt(film.path)!;
+        expect((await fileSystem.itemDetails(id)).positionMs, closeTo(90000, 1));
+        final other = clientOf(info.product, info.version, token: signedIn.accessToken, suffix: 'reader');
+        expect((await other.item(signedIn.userId, id)).userData?.positionMs, closeTo(90000, 1));
+        await fileSystem.playbackStarted(film.path, Duration.zero);
+        await fileSystem.playbackStopped(film.path, Duration.zero);
+        _report('$label: a place of 90 s written and read back by two sessions');
+      }, skip: skip);
+
       test('a token sent with another DeviceId still works', () async {
         final other = clientOf(info.product, info.version, token: signedIn.accessToken, suffix: 'other-device');
         expect((await other.me(signedIn.userId)).name, user);

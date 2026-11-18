@@ -203,6 +203,24 @@ class _WholeFileMemoryShare extends MemoryShare implements NetworkRangeReads {
   bool? get supportsRanges => false;
 }
 
+/// A share whose server keeps where its user stopped (a Jellyfin server): the reports it got
+class _ReportingShare extends MemoryShare implements NetworkPlaybackReports {
+  _ReportingShare(super.source, {super.files});
+
+  final reports = <String>[];
+
+  @override
+  Future<void> playbackStarted(String path, Duration position, {bool converted = false}) async =>
+      reports.add('start $path');
+
+  @override
+  Future<void> playbackProgress(String path, Duration position, {bool paused = false}) async =>
+      reports.add('progress${paused ? ' paused' : ''}');
+
+  @override
+  Future<void> playbackStopped(String path, Duration position) async => reports.add('stopped ${position.inMinutes}');
+}
+
 void main() {
   late Drift db;
   late StoreService store;
@@ -991,6 +1009,26 @@ void main() {
       page.attachController(native);
       await pumpRealIo(tester, () => native.calls.contains('load'));
     }
+
+    testWidgets('a media server that keeps the place hears the start, a pause and the stop; a share does not', (
+      tester,
+    ) async {
+      final reporting = _ReportingShare(_source, files: share.files);
+      share = reporting;
+      await pumpFilm(tester, [row(42)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      native.moveTo(43 * minute);
+      await tester.pump();
+      expect(reporting.reports, ['start /holiday.mp4']);
+      await native.pause();
+      await tester.pump();
+      await tester.pump();
+      expect(reporting.reports.last, 'progress paused');
+      await endRealIo(tester);
+      expect(reporting.reports.last, 'stopped 43');
+    });
 
     testWidgets('resumes where it was left once ready, plays on, and says so for a few seconds', (tester) async {
       await pumpFilm(tester, [row(42)]);

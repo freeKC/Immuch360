@@ -32,6 +32,7 @@ import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/network_playback_reporter.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
@@ -233,6 +234,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// Resumes a film and saves where it is, for the video loaded (see VideoWatchRecorder)
   VideoWatchRecorder? _recorder;
 
+  /// What tells the media server where the film is (a Jellyfin or Emby server), null for the other shares
+  NetworkPlaybackReporter? _reporter;
+
   /// The tracks of a film of a Plex server: its subtitle files, the names Plex gives its tracks, and the pick written
   /// back (see PlexFilmTracks); null for any other video
   PlexFilmTracks? _plexTracks;
@@ -355,6 +359,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // Where the film is, as the page goes: Back, or the previous or next file in its place
     _recorder?.dispose();
     _recorder = null;
+    _reporter?.dispose();
+    _reporter = null;
     _plexTracks?.dispose();
     _plexTracks = null;
     _cancelStartWait();
@@ -1364,6 +1370,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (recorder == null) {
       return;
     }
+    _startReporter(notifier, entry);
     await notifier.load(source);
     await notifier.setLoop(recorder.loopsWith(loop));
     await notifier.setVolume(1);
@@ -1392,6 +1399,21 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       duration: durationMs == null ? null : Duration(milliseconds: durationMs),
       onResumed: _onResumed,
     )..start();
+  }
+
+  /// The reports of a media server that keeps where its user stopped (a Jellyfin or Emby server), for the file about
+  /// to load in [notifier], in place of the ones of a load before
+  void _startReporter(VideoPlayerNotifier notifier, NetworkEntry entry) {
+    _reporter?.dispose();
+    _reporter = null;
+    if (_shareFileSystem case final NetworkPlaybackReports reports) {
+      _reporter = NetworkPlaybackReporter(
+        reports: reports,
+        player: notifier,
+        path: entry.path,
+        converted: _player == FilmPlayerKind.serverConversion,
+      )..start();
+    }
   }
 
   /// The film plays from where it was left: the page says so for a few seconds

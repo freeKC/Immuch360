@@ -274,6 +274,28 @@ void main() {
       expect(await fileSystem.pathOfItem(listed.last.id), endsWith('/Pattern Show S01E02.mp4'));
     });
 
+    test('the playback reports: the item, its media source, the ticks and one play session per viewing', () async {
+      final fileSystem = await openJellyfin(server);
+      addTearDown(fileSystem.close);
+      const path = '/Films/Pattern (2024).mp4';
+      final id = server.itemId('Pattern (2024)');
+      await fileSystem.playbackStarted(path, const Duration(seconds: 62));
+      await fileSystem.playbackProgress(path, const Duration(seconds: 90), paused: true);
+      await fileSystem.playbackStopped(path, const Duration(minutes: 2));
+      expect(server.reports.map((r) => r.kind), ['start', 'progress', 'stopped']);
+      expect(server.reports.map((r) => r.body['ItemId']).toSet(), {id});
+      expect(server.reports.map((r) => r.body['MediaSourceId']).toSet().single, isNotEmpty);
+      expect(server.reports.map((r) => r.body['PositionTicks']), [620000000, 900000000, 1200000000]);
+      expect(server.reports.map((r) => r.body['PlaySessionId']).toSet(), hasLength(1));
+      expect(server.reports[1].body['IsPaused'], isTrue);
+      expect(server.reports.first.body['PlayMethod'], 'DirectPlay');
+      // The server keeps the place: the page shows it next time
+      expect((await fileSystem.itemDetails(id)).positionMs, 120000);
+      await fileSystem.playbackStarted(path, Duration.zero, converted: true);
+      expect(server.reports.last.body['PlayMethod'], 'Transcode');
+      expect(server.reports.last.body['PlaySessionId'], isNot(server.reports.first.body['PlaySessionId']));
+    });
+
     test('the token, the address, titles and paths stay out of the logs and the errors', () async {
       final records = <LogRecord>[];
       final previous = Logger.root.level;
