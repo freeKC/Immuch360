@@ -412,6 +412,7 @@ internal object StereoComposer {
         ReliefStrengthChoice.SUBTLE.labelKey to "Subtle",
         ReliefStrengthChoice.NORMAL.labelKey to "Normal",
         ReliefStrengthChoice.STRONG.labelKey to "Strong",
+        LABEL_FROSTED_NOTICE to "Frosted background (experimental)",
         LABEL_SLIDESHOW to "Slideshow",
         LABEL_SLIDESHOW_PAUSED to "Slideshow paused",
         LABEL_SLIDESHOW_END to "End of the slideshow",
@@ -444,6 +445,9 @@ internal object StereoComposer {
    * FlatScreenGeometry.nearerAllowed).
    */
   const val LABEL_NEAR_LIMIT_3D = "screenNearLimit3d"
+
+  /** What passes once when the frosted background behind a flat screen photo first shows (FrostedBackdrop). */
+  const val LABEL_FROSTED_NOTICE = "frostedNotice"
 
   /** What the slideshow of a flat screen says as it plays, pauses, ends, and goes on in 2D when too warm. */
   const val LABEL_SLIDESHOW = "slideshow"

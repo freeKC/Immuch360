@@ -166,3 +166,76 @@ internal object PhotoSwap {
     shownIn25d: Boolean,
   ): Boolean = reachedByBrowsing && shownIsScreenPhoto && nextIsScreenPhoto && !shownIn25d
 }
+
+/**
+ * The frosted background behind the photo of a flat screen (issue 19, point 2, experimental): a blurred, darker copy
+ * of the photo on a small compositor layer behind it, which fills the box the user set (a portrait photo in a
+ * landscape box has the blur on its sides) and goes a little past it. The passthrough of the headset cannot be blurred
+ * by an app, so the picture is: the photo scaled to [SMALL_WIDTH] pixels, [PASSES] box blurs, its saturation brought
+ * to [SATURATION] and a dark veil of [VEIL], drawn once per photo on a Surface of [SURFACE_WIDTH] x [SURFACE_HEIGHT]
+ * that the compositor magnifies with its bilinear filter: nothing per frame. Pure, unit tested.
+ */
+internal object FrostedBackdrop {
+  const val SMALL_WIDTH = 64
+  const val SURFACE_WIDTH = 256
+  const val SURFACE_HEIGHT = 144
+  const val PASSES = 3
+  const val RADIUS = 2
+  const val SATURATION = 0.8f
+  const val VEIL = 0.5f
+
+  /** The backdrop goes this part of the box past each of its sides, and this far behind the photo, in meters. */
+  const val MARGIN = 0.06f
+  const val BEHIND_M = 0.02f
+
+  /** The size of the small copy of a photo of [width] x [height]: [SMALL_WIDTH] wide, its aspect kept. */
+  fun smallSize(width: Int, height: Int): Pair<Int, Int> {
+    val h = (SMALL_WIDTH.toFloat() * height / width.coerceAtLeast(1)).let { kotlin.math.round(it).toInt() }
+    return SMALL_WIDTH to h.coerceIn(1, 4 * SMALL_WIDTH)
+  }
+
+  /** The width and height in meters of the backdrop of a box [widthM] x [heightM]: [MARGIN] past each side. */
+  fun size(widthM: Float, heightM: Float): Pair<Float, Float> = widthM * (1 + 2 * MARGIN) to heightM * (1 + 2 * MARGIN)
+
+  /** [pixels] (ARGB, [width] x [height], row after row) frosted: blurred, desaturated and veiled, opaque. */
+  fun frost(pixels: IntArray, width: Int, height: Int): IntArray {
+    require(pixels.size == width * height && width > 0 && height > 0) { "${pixels.size} pixels for $width x $height" }
+    val channels =
+      Array(3) { channel -> FloatArray(pixels.size) { i -> ((pixels[i] shr (16 - 8 * channel)) and 0xFF).toFloat() } }
+    for (channel in channels) blur(channel, width, height)
+    return IntArray(pixels.size) { i ->
+      val (r, g, b) = saturate(channels[0][i], channels[1][i], channels[2][i])
+      opaque(r * (1 - VEIL), g * (1 - VEIL), b * (1 - VEIL))
+    }
+  }
+
+  /** [PASSES] box blurs of [RADIUS] across and down [values], the edges repeated: what goes in comes out. */
+  fun blur(values: FloatArray, width: Int, height: Int, passes: Int = PASSES, radius: Int = RADIUS) {
+    val line = FloatArray(maxOf(width, height))
+    repeat(passes) {
+      for (y in 0 until height) boxLine(values, y * width, 1, width, radius, line)
+      for (x in 0 until width) boxLine(values, x, width, height, radius, line)
+    }
+  }
+
+  private fun boxLine(values: FloatArray, start: Int, step: Int, count: Int, radius: Int, line: FloatArray) {
+    for (i in 0 until count) line[i] = values[start + i * step]
+    val span = 2 * radius + 1
+    for (i in 0 until count) {
+      var sum = 0f
+      for (k in -radius..radius) sum += line[(i + k).coerceIn(0, count - 1)]
+      values[start + i * step] = sum / span
+    }
+  }
+
+  /** [r], [g], [b] with their saturation brought to [SATURATION] around their grey. */
+  fun saturate(r: Float, g: Float, b: Float): Triple<Float, Float, Float> {
+    val grey = 0.299f * r + 0.587f * g + 0.114f * b
+    return Triple(grey + (r - grey) * SATURATION, grey + (g - grey) * SATURATION, grey + (b - grey) * SATURATION)
+  }
+
+  private fun opaque(r: Float, g: Float, b: Float): Int {
+    fun level(value: Float) = kotlin.math.round(value).toInt().coerceIn(0, 255)
+    return (0xFF shl 24) or (level(r) shl 16) or (level(g) shl 8) or level(b)
+  }
+}

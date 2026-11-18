@@ -43,6 +43,9 @@ enum SettingsKey<T> {
   // The compositor layer and its filters on the flat screens of the Meta Quest immersive viewer, see
   // ViewerConfig.sharpFlatScreens
   viewerSharpFlatScreens<bool>(),
+  // A blurred, darker copy of the photo around it on the flat screens of the Meta Quest immersive viewer, see
+  // ViewerConfig.frostedFlatScreens
+  viewerFrostedFlatScreens<bool>(),
   // The Gaussian splat files of other tools on a Meta Quest 3 or 3S, see ViewerConfig.gaussianSplats and largeSplats
   viewerGaussianSplats<bool>(),
   viewerLargeSplats<bool>(),

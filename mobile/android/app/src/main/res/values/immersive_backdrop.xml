@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The compositor layer of the frosted background behind the photos of a flat screen of the immersive viewer (issue
+     19, experimental), see FrostedBackdrop. Apart from immersive.xml, whose strings the 88 languages translate -->
+<resources>
+  <item type="id" name="immersive_backdrop_panel" />
+</resources>

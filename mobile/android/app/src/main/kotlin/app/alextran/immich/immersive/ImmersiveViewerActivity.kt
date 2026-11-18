@@ -378,6 +378,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * for the viewer's 5 s (see SlideshowClock). A previous or next media keeps the value of its opening.
      */
     val slideshowSeconds: Long = 0L,
+    /**
+     * The "Frosted background behind photos" setting when the app opened the viewer (experimental, on by default,
+     * issue 19): a blurred copy of the photo of a flat screen fills the box around it (see FrostedBackdrop). A
+     * previous or next media keeps the value of its opening.
+     */
+    val frostedBackground: Boolean = true,
   ) {
     /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
     private val screenMedia: FlatScreenMedia by lazy {
@@ -629,6 +635,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var photoLayerTexture: StereoTexture? = null
   /** [photoLayerTexture] is on the Surface. */
   private var photoLayerDrawn = false
+
+  /**
+   * The frosted background behind the photo of a flat screen (see FrostedBackdrop, experimental): its layer under the
+   * photo layer, its Surface, the small frosted copy of the photo shown drawn on it, and whether it said once that it
+   * is experimental.
+   */
+  private var backdropEntity: Entity? by sceneHold.ref()
+  private var backdropPanel: PanelSceneObject? by sceneHold.ref()
+  private var backdropSurface: Surface? by sceneHold.ref()
+  private var backdropBitmap: Bitmap? = null
+  private var backdropDrawn = false
+  private var frostedNoticeShown = false
 
   /** Where the flat screen shown stands (a movable photo of the stereo quad, the flat video screen), null before. */
   private var screenPlace: ScreenPlace? = null
@@ -1321,6 +1339,34 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             applyLayerFilters(panel)
             drawPhotoLayer()
           }
+        },
+      ),
+      // Frosted background (issue 19, experimental): a small Surface under the photo layer (zIndex -2, the photo layer
+      // and the flat video screen being -1), on which the blurred copy of each photo is drawn once; the compositor
+      // magnifies it to the box around the photo with its bilinear filter (see FrostedBackdrop)
+      VideoSurfacePanelRegistration(
+        R.id.immersive_backdrop_panel,
+        surfaceConsumer = { _, surface ->
+          Log.i(TAG, "backdrop surface ready")
+          runOnUiThread {
+            if (sceneHold.isDown) return@runOnUiThread
+            backdropSurface = surface
+            backdropDrawn = false
+            drawBackdrop()
+          }
+        },
+        settingsCreator = {
+          MediaPanelSettings(
+            shape = QuadShapeOptions(width = 1f, height = 0.5625f),
+            display =
+              PixelDisplayOptions(width = FrostedBackdrop.SURFACE_WIDTH, height = FrostedBackdrop.SURFACE_HEIGHT),
+            rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = -2),
+          )
+        },
+        panelSetup = { panel, _ ->
+          Log.i(TAG, "backdrop layer ready")
+          backdropPanel = panel
+          scope.launch(Dispatchers.Main) { drawBackdrop() }
         },
       ),
     )
@@ -3078,6 +3124,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         browseView = if (slideshow?.let { it.playing && it.twoD } == true) StereoView.TWO_D
         else keptBrowseView(current),
         slideshowSeconds = current.slideshowSeconds,
+        frostedBackground = current.frostedBackground,
       )
     swapInPlace =
       PhotoSwap.keepsShown(
@@ -4793,6 +4840,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     val media = request
     val onLayer = media?.photoOnLayer == true
+    // Made before the photo goes on the mesh, which recycles its bitmap
+    if (media != null) makeBackdrop(media, stereo)
     if (onLayer) {
       showOnLayer(stereo)
     } else if (!showOnMesh(stereo)) {
@@ -4990,6 +5039,108 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.i(TAG, "photo layer is now $mode, ${width}x$height m")
     } catch (e: Exception) {
       Log.e(TAG, "could not set the photo layer to $mode, ${width}x$height m", e)
+    }
+  }
+
+  /**
+   * The frosted copy of the photo of [stereo] for the backdrop of a flat screen (see FrostedBackdrop): its left eye
+   * scaled to a few pixels, blurred, desaturated and veiled, then drawn on the backdrop layer. Nothing with the setting
+   * off or for any other media.
+   */
+  private fun makeBackdrop(media: MediaRequest, stereo: StereoTexture) {
+    if (!media.frostedBackground || !isSlideshowPhoto(media) || sceneHold.isDown) return
+    val small =
+      try {
+        val (width, height) = FrostedBackdrop.smallSize(stereo.eyeWidth, stereo.eyeHeight)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val source = FlatScreenLayer.sourceRegion(0, stereo.cellWidth, stereo.cellHeight)
+        val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+        Canvas(bitmap).drawBitmap(stereo.bitmap, rectOf(source), Rect(0, 0, width, height), paint)
+        val pixels = IntArray(width * height)
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+        bitmap.setPixels(FrostedBackdrop.frost(pixels, width, height), 0, width, 0, 0, width, height)
+        bitmap
+      } catch (e: Throwable) {
+        Log.e(TAG, "frosted background: the copy of the photo could not be made", e)
+        null
+      } ?: return
+    backdropBitmap?.recycle()
+    backdropBitmap = small
+    backdropDrawn = false
+    if (backdropEntity == null) {
+      backdropEntity =
+        Entity.create(
+          Panel(R.id.immersive_backdrop_panel, MeshCollision.NoCollision),
+          Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
+          Visible(false),
+        )
+      Log.i(TAG, "backdrop layer created")
+    }
+    drawBackdrop()
+  }
+
+  /** Draws the frosted copy on the Surface of the backdrop once both are there, then places it. */
+  private fun drawBackdrop() {
+    val bitmap = backdropBitmap ?: return
+    val surface = backdropSurface ?: return
+    if (backdropDrawn || backdropPanel == null || !surface.isValid || bitmap.isRecycled) return
+    backdropDrawn =
+      try {
+        val canvas = surface.lockHardwareCanvas()
+        try {
+          val target = Rect(0, 0, FrostedBackdrop.SURFACE_WIDTH, FrostedBackdrop.SURFACE_HEIGHT)
+          canvas.drawBitmap(bitmap, null, target, Paint(Paint.FILTER_BITMAP_FLAG))
+        } finally {
+          surface.unlockCanvasAndPost(canvas)
+        }
+        true
+      } catch (e: Exception) {
+        Log.e(TAG, "frosted background could not be drawn", e)
+        false
+      }
+    placeBackdrop()
+  }
+
+  /**
+   * The backdrop around the flat screen shown: the box the user set when the photo stands in it, else the photo
+   * itself, [FrostedBackdrop.MARGIN] past each side and [FrostedBackdrop.BEHIND_M] behind it; hidden without a
+   * movable photo, in 2.5D, with the setting off, or before its copy is drawn. Said once to be experimental.
+   */
+  private fun placeBackdrop() {
+    val entity = backdropEntity ?: return
+    val media = request
+    val place = screenPlace
+    val screen = screenSize()
+    if (media == null || !media.frostedBackground || !isSlideshowPhoto(media) || place == null || screen == null ||
+      !backdropDrawn
+    ) {
+      entity.setComponent(Visible(false))
+      return
+    }
+    val box = screenFrame?.takeIf { it.place == place }?.let { it.widthM to it.heightM } ?: screen
+    val behind = place.distance + FrostedBackdrop.BEHIND_M
+    val scale = behind / place.distance
+    val (width, height) = FrostedBackdrop.size(box.first * scale, box.second * scale)
+    val center = place.eyes + place.direction * behind
+    entity.setComponent(
+      Transform(Pose(Vector3(center.x, place.height, center.z), StereoComposer.quadRotation(place.direction)))
+    )
+    val panel = backdropPanel
+    val config = panel?.panelShapeConfig
+    if (panel != null && config != null && (abs(config.width - width) > 1e-3f || abs(config.height - height) > 1e-3f)) {
+      try {
+        config.width = width
+        config.height = height
+        panel.reshape(config)
+      } catch (e: Exception) {
+        Log.e(TAG, "could not size the backdrop to ${width}x$height m", e)
+      }
+    }
+    entity.setComponent(Visible(true))
+    if (!frostedNoticeShown) {
+      frostedNoticeShown = true
+      Log.i(TAG, "frosted background shown, ${width}x$height m")
+      queueNotice(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_FROSTED_NOTICE))
     }
   }
 
@@ -5310,6 +5461,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       placeScreenPhoto(place)
       return
     }
+    // No frosted background in 2.5D: the mesh stands where it was computed from, its quad behind it
+    backdropEntity?.setComponent(Visible(false))
     val eyes = stereoEyes ?: return
     val gaze = stereoGaze ?: return
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
@@ -5333,6 +5486,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * [ScreenPlace]), both upright and facing the eyes it was placed from.
    */
   private fun placeScreenPhoto(place: ScreenPlace) {
+    placeBackdrop()
     val pose = Pose(place.center, StereoComposer.quadRotation(place.direction))
     if (photoOnLayer) {
       photoLayerEntity?.setComponent(Transform(pose))
@@ -5485,6 +5639,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   private fun hideStereoQuad() {
     stereoQuadEntity?.setComponent(Visible(false))
+    backdropEntity?.setComponent(Visible(false))
     dropPhotoLayer()
     reliefMeshEntity?.setComponent(Visible(false))
     reliefMesh = null
@@ -7587,6 +7742,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_START_NOTICE = "app.alextran.immich.immersive.START_NOTICE"
     /** The slideshow duration of the opening, see [MediaRequest] */
     private const val EXTRA_SLIDESHOW_SECONDS = "app.alextran.immich.immersive.SLIDESHOW_SECONDS"
+    /** The frosted background setting of the opening, see [MediaRequest] */
+    private const val EXTRA_FROSTED_BACKGROUND = "app.alextran.immich.immersive.FROSTED_BACKGROUND"
     /** How often the slideshow looks whether the next photo is due */
     private const val SLIDESHOW_TICK_MS = 250L
     /** The folder of the cache the original of a video that cannot stream is downloaded to, see downloadOriginal */
@@ -7841,6 +7998,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       watchMinDurationMs: Long = WatchReport.OFF,
       startNotice: String? = null,
       slideshowSeconds: Long = 0L,
+      frostedBackground: Boolean = true,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -7865,6 +8023,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           watchMinDurationMs = watchMinDurationMs,
           startNotice = startNotice,
           slideshowSeconds = slideshowSeconds,
+          frostedBackground = frostedBackground,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -7898,6 +8057,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putLong(EXTRA_WATCH_MIN_DURATION_MS, media.watchMinDurationMs)
         putString(EXTRA_START_NOTICE, media.startNotice)
         putLong(EXTRA_SLIDESHOW_SECONDS, media.slideshowSeconds)
+        putBoolean(EXTRA_FROSTED_BACKGROUND, media.frostedBackground)
       }
     }
 
@@ -7940,6 +8100,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         watchMinDurationMs = extras.getLong(EXTRA_WATCH_MIN_DURATION_MS, WatchReport.OFF),
         startNotice = extras.getString(EXTRA_START_NOTICE)?.takeIf { it.isNotBlank() },
         slideshowSeconds = extras.getLong(EXTRA_SLIDESHOW_SECONDS, 0L),
+        frostedBackground = extras.getBoolean(EXTRA_FROSTED_BACKGROUND, true),
       )
     }
 

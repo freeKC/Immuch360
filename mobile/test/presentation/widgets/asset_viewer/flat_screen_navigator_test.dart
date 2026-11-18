@@ -44,8 +44,9 @@ typedef _Shown = ({String url, String? stereoPair});
 class _RecordingImmersiveApi extends ImmersiveApi {
   final shown = <_Shown>[];
 
-  /// The slideshow duration each opening was given
+  /// The slideshow duration and the frosted background each opening was given
   final slideshowSeconds = <int>[];
+  final frosted = <bool>[];
 
   @override
   Future<void> open(
@@ -70,7 +71,11 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     int watchMinDurationMs = -1,
     String? startNotice,
     int slideshowSeconds = 0,
-  }) async => this.slideshowSeconds.add(slideshowSeconds);
+    bool frostedBackground = true,
+  }) async {
+    this.slideshowSeconds.add(slideshowSeconds);
+    frosted.add(frostedBackground);
+  }
 
   @override
   Future<bool> showAdjacent(
@@ -444,7 +449,7 @@ void main() {
     });
   });
 
-  test('the opening tells the viewer the slideshow duration of the app, 0 for its 5 s', () async {
+  test('the opening tells the viewer the slideshow duration of the app and the frosted background setting', () async {
     final api = _RecordingImmersiveApi();
     final request = ImmersiveRequest(
       url: 'photo',
@@ -453,9 +458,17 @@ void main() {
       view: (layout: StereoLayout.mono, coverage: SphereCoverage.full, coverageGuess: SphereCoverage.full),
       stereoPair: const StereoPhotoRequest.bigScreen().toImmersiveJson(),
     );
-    await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 1, slideshowSeconds: 8);
+    await openImmersiveRequest(
+      api,
+      request,
+      stereoLabels: const {},
+      openingId: 1,
+      slideshowSeconds: 8,
+      frostedBackground: false,
+    );
     await openImmersiveRequest(api, request, stereoLabels: const {}, openingId: 2);
-    expect(api.slideshowSeconds, [8, 0]);
+    expect(api.slideshowSeconds, [8, 0], reason: '0 for the 5 s of the viewer');
+    expect(api.frosted, [false, true], reason: 'on by default');
   });
 
   test('every choice but a skip has its request of the stereo quad', () {

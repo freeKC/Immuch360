@@ -69,7 +69,9 @@ abstract class ImmersiveApi {
   /// of the opening, the kiosk ignores it. [startNotice] is what to say once the video plays, in the language of the app
   /// ("Resumed at 42:10" for a film that starts where it was left), null for nothing. [slideshowSeconds] is how long
   /// each photo of the slideshow of a flat screen stays (the slideshow duration of the app, issue 19), 0 for the 5 s
-  /// of the viewer; previous and next keep the value of the opening.
+  /// of the viewer; previous and next keep the value of the opening. [frostedBackground] is the "Frosted background
+  /// behind photos" setting (experimental, on by default, issue 19): a blurred, darker copy of the photo of a flat
+  /// screen fills the box around it; previous and next keep the value of the opening.
   void open(
     String url,
     Map<String, String> headers,
@@ -92,6 +94,7 @@ abstract class ImmersiveApi {
     int watchMinDurationMs = -1,
     String? startNotice,
     int slideshowSeconds = 0,
+    bool frostedBackground = true,
   });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified

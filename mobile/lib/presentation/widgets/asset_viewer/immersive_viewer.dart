@@ -208,7 +208,7 @@ class ImmersiveRequest {
 /// for none.
 ///
 /// [slideshowSeconds] is how long each photo of the slideshow of a flat screen stays (SlideshowConfig.duration), 0 for
-/// the viewer's 5 s.
+/// the viewer's 5 s, and [frostedBackground] the "Frosted background behind photos" setting.
 Future<void> openImmersiveRequest(
   ImmersiveApi api,
   ImmersiveRequest request, {
@@ -223,6 +223,7 @@ Future<void> openImmersiveRequest(
   String? startNotice,
   ImmersiveStabilization? stabilization,
   int slideshowSeconds = 0,
+  bool frostedBackground = true,
 }) {
   Future<void> open() => _openImmersiveRequest(
     api,
@@ -237,6 +238,7 @@ Future<void> openImmersiveRequest(
     watchMinDurationMs: watchMinDurationMs,
     startNotice: startNotice,
     slideshowSeconds: slideshowSeconds,
+    frostedBackground: frostedBackground,
   );
   return stabilization == null ? open() : stabilization.around(request, open);
 }
@@ -254,6 +256,7 @@ Future<void> _openImmersiveRequest(
   required int watchMinDurationMs,
   required String? startNotice,
   required int slideshowSeconds,
+  required bool frostedBackground,
 }) => api.open(
   request.url,
   request.headers,
@@ -276,6 +279,7 @@ Future<void> _openImmersiveRequest(
   watchMinDurationMs: watchMinDurationMs,
   startNotice: startNotice,
   slideshowSeconds: slideshowSeconds,
+  frostedBackground: frostedBackground,
 );
 
 /// The watch progress of the films of the immersive viewer, read from the providers (see ImmersiveWatch): before the
@@ -552,6 +556,7 @@ class ImmersiveAssetResolver {
     this.sharpFlatScreens = true,
     this.gaussianSplats = true,
     this.slideshowSeconds = 0,
+    this.frostedBackground = true,
     this.raw,
     this.exifOf,
     this.forcedSource,
@@ -580,6 +585,7 @@ class ImmersiveAssetResolver {
       sharpFlatScreens: ref.read(appConfigProvider).viewer.sharpFlatScreens,
       gaussianSplats: ref.read(appConfigProvider).viewer.gaussianSplats,
       slideshowSeconds: ref.read(appConfigProvider).slideshow.duration,
+      frostedBackground: ref.read(appConfigProvider).viewer.frostedFlatScreens,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
       forcedSource: ref.read(videoSourceOverridesProvider.notifier).of,
@@ -666,6 +672,10 @@ class ImmersiveAssetResolver {
   /// How long each photo of the slideshow of a flat screen stays, in seconds, as the settings said when the viewer
   /// opened (Settings, Slideshow); 0 for the viewer's 5 s
   final int slideshowSeconds;
+
+  /// Whether a blurred copy of the photo of a flat screen fills the box around it (Frosted background behind photos,
+  /// experimental, on by default), as the settings said when the viewer opened
+  final bool frostedBackground;
 
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
@@ -929,6 +939,7 @@ class ImmersiveAssetResolver {
     startNotice: startNotice,
     stabilization: raw?.stabilization,
     slideshowSeconds: slideshowSeconds,
+    frostedBackground: frostedBackground,
   );
 }
 
@@ -1328,6 +1339,7 @@ Future<void> openImmersiveUrl(
   final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
   final sharpFlatScreens = ref.read(appConfigProvider).viewer.sharpFlatScreens;
   final gaussianSplats = ref.read(appConfigProvider).viewer.gaussianSplats;
+  final frostedBackground = ref.read(appConfigProvider).viewer.frostedFlatScreens;
   final stabilization = ImmersiveStabilization.read(ref);
   await player?.suspendForExternalPlayer();
   final openingId = session.start(navigator);
@@ -1344,6 +1356,7 @@ Future<void> openImmersiveUrl(
       watchMinDurationMs: watchMinDurationMs,
       startNotice: startNotice,
       stabilization: stabilization,
+      frostedBackground: frostedBackground,
     );
   } catch (_) {
     session.cancel(openingId);

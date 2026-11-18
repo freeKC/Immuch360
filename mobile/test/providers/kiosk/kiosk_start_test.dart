@@ -83,6 +83,7 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     int watchMinDurationMs = -1,
     String? startNotice,
     int slideshowSeconds = 0,
+    bool frostedBackground = true,
   }) async {
     final failure = this.failure;
     if (failure != null) {
