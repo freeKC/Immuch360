@@ -516,7 +516,7 @@ jobs:
           done
 
       # A whole 3D video (release 49) with the real FFmpeg program of immuch360/libmpv-builds, checked by its SHA-256,
-      # and tiny_vda.onnx: a 4 s clip with a cut and a tone made by the program itself, the encoder test (no VA-API on
+      # and tiny_vda.onnx: a 4 s clip with a cut made by the program itself, the encoder test (no VA-API on
       # the runner: SVT-AV1), the segments, the mux, st3d read back by the app's own probe
       - name: A 3D video through the real FFmpeg program and the tiny model
         working-directory: mobile

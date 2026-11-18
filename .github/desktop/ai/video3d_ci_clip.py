@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """The CI check of the 3D videos with the real FFmpeg program and tiny_vda.onnx (video3d-plan.md, section 5).
 
-  video3d_ci_clip.py make FFMPEG OUT.mkv   writes a 4 s clip, 160 x 90 at 25 fps, a moving pattern with a cut at 2 s
-                                           and a stereo tone, encoded by the program itself (SVT-AV1 and AAC)
+  video3d_ci_clip.py make FFMPEG OUT.mkv   writes a 4 s clip, 160 x 90 at 25 fps, a moving pattern with a cut at 2 s,
+                                           encoded by the program itself (SVT-AV1). No sound: the program has no raw
+                                           audio or WAV demuxer to take one from (the mux of the sound is checked by the
+                                           integration on ai1 and by the CI of the program)
   video3d_ci_clip.py check LOG             reads the events of video3d_probe in the log of the test: one done event,
                                            100 frames, st3d left right, one cut; prints the encoder chosen
 
 Pure Python 3, no package.
 """
 import json
-import math
 import os
 import pathlib
-import struct
 import subprocess
 import sys
 import tempfile
@@ -34,16 +34,11 @@ def frame(index: int) -> bytes:
 def make(ffmpeg: str, target: str) -> None:
     with tempfile.TemporaryDirectory() as work:
         video = pathlib.Path(work, 'video.rgb')
-        audio = pathlib.Path(work, 'audio.raw')
         video.write_bytes(b''.join(frame(i) for i in range(FRAMES)))
-        samples = 48000 * FRAMES // RATE
-        audio.write_bytes(b''.join(struct.pack('<hh', int(8000 * math.sin(i / 20)), int(8000 * math.sin(i / 31)))
-                                   for i in range(samples)))
         subprocess.run([ffmpeg, '-nostdin', '-hide_banner', '-v', 'error', '-y',
                         '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{WIDTH}x{HEIGHT}', '-framerate', str(RATE),
-                        '-i', str(video), '-f', 's16le', '-ar', '48000', '-ac', '2', '-i', str(audio),
-                        '-vf', 'scale=out_color_matrix=bt709:out_range=tv,format=yuv420p',
-                        '-c:v', 'libsvtav1', '-preset', '12', '-crf', '20', '-c:a', 'aac', target], check=True)
+                        '-i', str(video), '-vf', 'scale=out_color_matrix=bt709:out_range=tv,format=yuv420p',
+                        '-c:v', 'libsvtav1', '-preset', '12', '-crf', '20', target], check=True)
     print(f'{target}: {os.path.getsize(target)} bytes')
 
 
