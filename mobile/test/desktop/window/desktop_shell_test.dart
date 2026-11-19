@@ -3,9 +3,11 @@
 // typed in a text field stays there, leaving the viewer that went full screen leaves it, and the close button asks
 // first while uploads, the share of the computer or 3D conversions run, a 360° panorama being generated with its step,
 // then the window hides, the line of the close is written, and the app ends its own work, each step bounded, before the
-// window goes.
+// window goes. The offer to resume the 3D videos a quit stopped waits for the main page: the splash that replaces
+// itself does not take it away, and it stays until answered.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -17,6 +19,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
+import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/desktop/window/close_sequence.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
@@ -24,7 +29,12 @@ import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 import 'package:window_manager/window_manager.dart';
+
+import '../ai/fakes/fake_conversion_output.dart';
+import '../ai/fakes/fake_immersive_engine.dart';
+import '../ai/fakes/fake_video_job_engine.dart';
 
 /// window_manager needs the runner: this one records what the app asks of the window
 class FakeDesktopWindow extends DesktopWindow {
@@ -98,8 +108,10 @@ void main() {
   late GlobalKey<NavigatorState> navigatorKey;
   late Set<DesktopCloseReason> reasons;
   late int backs;
+  late ValueNotifier<bool> mainPage;
 
   setUp(() {
+    mainPage = ValueNotifier(false);
     window = FakeDesktopWindow();
     navigatorKey = GlobalKey<NavigatorState>();
     reasons = {};
@@ -108,7 +120,7 @@ void main() {
 
   tearDown(() => debugDefaultTargetPlatformOverride = null);
 
-  Future<void> pumpShell(WidgetTester tester, {List<Override> overrides = const []}) async {
+  Future<void> pumpShell(WidgetTester tester, {List<Override> overrides = const [], Widget? home}) async {
     await tester.pumpWidget(
       EasyLocalization(
         supportedLocales: locales.values.toList(),
@@ -123,6 +135,7 @@ void main() {
             desktopWindowProvider.overrideWithValue(window),
             desktopNavigatorKeyProvider.overrideWithValue(navigatorKey),
             desktopCloseReasonsProvider.overrideWithValue(() => reasons),
+            desktopMainPageShownProvider.overrideWithValue(mainPage),
             desktopBackProvider.overrideWithValue(() async {
               backs++;
               return navigatorKey.currentState!.maybePop();
@@ -136,17 +149,19 @@ void main() {
               supportedLocales: context.supportedLocales,
               locale: context.locale,
               builder: (context, child) => DesktopShell(child: child!),
-              home: const Scaffold(
-                body: Focus(
-                  autofocus: true,
-                  child: Column(
-                    children: [
-                      Text('grid'),
-                      TextField(key: Key('search')),
-                    ],
+              home:
+                  home ??
+                  const Scaffold(
+                    body: Focus(
+                      autofocus: true,
+                      child: Column(
+                        children: [
+                          Text('grid'),
+                          TextField(key: Key('search')),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
             ),
           ),
         ),
@@ -408,6 +423,87 @@ void main() {
     expect(find.byIcon(Icons.fullscreen_exit_rounded), findsOneWidget);
     semantics.dispose();
     debugDefaultTargetPlatformOverride = null;
+  });
+
+  group('the offer to resume the 3D videos a quit stopped', () {
+    late Directory root;
+
+    setUp(() => root = Directory.systemTemp.createTempSync('desktop_shell_offer_'));
+    tearDown(() => root.deleteSync(recursive: true));
+
+    List<Override> offerOverrides() {
+      final work = videoWorkFolderIn(root.path, 'trip');
+      Directory(work).createSync();
+      File(p.join(root.path, 'trip.mp4')).writeAsBytesSync([1, 2, 3]);
+      return [
+        aiFeaturesEnabledProvider.overrideWith((ref) => true),
+        conversionToolsProvider.overrideWithValue(
+          ConversionTools(
+            engine: FakeImmersiveEngine(),
+            output: FakeConversionOutput(),
+            finder: ExistingVersionFinder(),
+            creatorTool: 'Immuch360 Desktop 3.4.4 (linux)',
+            video: FakeVideoJobEngine(),
+            videoJobs: _MemoryVideoJobs([
+              VideoJobRecord(
+                sourcePath: p.join(root.path, 'trip.mp4'),
+                folder: root.path,
+                fileName: 'trip_3D_LRF_Full_SBS.mp4',
+                settings: VideoJobSettings(recordId: 'trip', workFolder: work),
+                perMille: 420,
+              ),
+            ]),
+          ),
+        ),
+      ];
+    }
+
+    testWidgets('waits for the main page: the splash replaced by it does not take the offer away', (tester) async {
+      await pumpShell(
+        tester,
+        overrides: offerOverrides(),
+        home: const Scaffold(body: Text('splash')),
+      );
+      expect(find.text('splash'), findsOneWidget);
+      expect(find.byKey(const Key('ai_video_resume_offer')), findsNothing, reason: 'not over the splash page');
+
+      // The splash replaces itself with the main page, as replaceAll([TabShellRoute()]) does
+      unawaited(
+        navigator().pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('library'))),
+          (_) => false,
+        ),
+      );
+      mainPage.value = true;
+      await tester.pumpAndSettle();
+      expect(find.text('library'), findsOneWidget);
+      expect(find.byKey(const Key('ai_video_resume_offer')), findsOneWidget);
+      expect(find.text('A 3D video stopped at 42 %'), findsOneWidget);
+
+      // It stays until answered
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('ai_video_resume_offer')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('ai_video_offer_later')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('ai_video_resume_offer')), findsNothing);
+      final queue = ProviderScope.containerOf(tester.element(find.byType(DesktopShell))).read(conversionQueueProvider);
+      expect(queue.jobs.single.state, ConversionState.paused);
+
+      // Once in the life of the window: the main page shown again asks nothing more
+      mainPage.value = false;
+      mainPage.value = true;
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('ai_video_resume_offer')), findsNothing);
+    });
+
+    test('the main page is the tabs on top of the root router, never the splash, the welcome or the login', () {
+      expect(desktopMainPageShown([]), isFalse);
+      expect(desktopMainPageShown([SplashScreenRoute.name]), isFalse);
+      expect(desktopMainPageShown([WelcomeRoute.name, LoginRoute.name]), isFalse);
+      expect(desktopMainPageShown([TabShellRoute.name]), isTrue);
+      expect(desktopMainPageShown([TabShellRoute.name, AssetViewerRoute.name]), isFalse);
+    });
   });
 
   group('the close button of the window', () {
@@ -821,4 +917,24 @@ class _Splatting extends ConversionQueueNotifier {
       ),
     ],
   );
+}
+
+/// video_jobs.json in memory: the widget tests run in a fake clock, where a file read never ends
+class _MemoryVideoJobs extends VideoJobsStore {
+  _MemoryVideoJobs(List<VideoJobRecord> records) : _records = [...records];
+
+  final List<VideoJobRecord> _records;
+
+  @override
+  Future<List<VideoJobRecord>> read() async => [..._records];
+
+  @override
+  Future<void> put(VideoJobRecord record) async {
+    _records
+      ..removeWhere((other) => other.id == record.id)
+      ..add(record);
+  }
+
+  @override
+  Future<void> remove(String id) async => _records.removeWhere((record) => record.id == id);
 }

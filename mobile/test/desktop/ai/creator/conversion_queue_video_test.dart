@@ -2,9 +2,11 @@
 // its MP4 with its frames, pace and segments, kept in video_jobs.json while it is not finished; Pause with its work
 // kept and Resume going on from it; Stop and Discard deleting it; the refusals of the engine as reasons to skip; a
 // failure with its words and its log, a full disk pausing the queue; the videos stopped put back at the next start;
-// the 3D photos asked meanwhile let go first between two windows. Then the real engine (VideoConversion, the window
-// loop, relief-v1 in Dart) on a synthetic clip played by an FFmpeg in Dart, paused after its first segment and resumed
-// through the queue: the bytes of an uninterrupted job.
+// the 3D photos asked meanwhile let go first between two windows; a record whose folder is not reachable or whose
+// original moved kept paused; Cancel all pausing the videos with work done. Then the real engine (VideoConversion, the
+// window loop, relief-v1 in Dart) on a synthetic clip played by an FFmpeg in Dart, paused after its first segment and
+// resumed through the queue: the bytes of an uninterrupted job; a Resume while the original is moved keeping the work
+// and the record, a destination not reachable making no folder, Cancel all keeping the work folder.
 
 import 'dart:async';
 import 'dart:io';
@@ -388,6 +390,79 @@ void main() {
     },
   );
 
+  test('a record whose folder is not reachable at the start comes back paused and kept; Resume once it is', () async {
+    // A USB disk or a share of the NAS not connected yet: neither the folder nor its work can be seen
+    final unplugged = p.join(root.path, 'Unplugged', 'Films');
+    final source = p.join(videos, 'trip.mp4');
+    File(source).writeAsBytesSync([1, 2, 3]);
+    await store.put(
+      VideoJobRecord(
+        sourcePath: source,
+        folder: unplugged,
+        fileName: 'trip_3D_LRF_Full_SBS.mp4',
+        settings: VideoJobSettings(recordId: 'far', workFolder: videoWorkFolderIn(unplugged, 'far')),
+        perMille: 600,
+      ),
+    );
+    // Its original moved, its work there
+    final work = videoWorkFolderIn(videos, 'moved');
+    Directory(work).createSync();
+    await store.put(
+      VideoJobRecord(
+        sourcePath: p.join(videos, 'moved.mp4'),
+        folder: videos,
+        fileName: 'moved_3D_LRF_Full_SBS.mp4',
+        settings: VideoJobSettings(recordId: 'moved', workFolder: work),
+        perMille: 300,
+      ),
+    );
+    final notifier = queue();
+    final restored = await notifier.restoreVideoJobs();
+
+    expect(restored.map((job) => job.video?.recordId), ['far', 'moved']);
+    expect(restored.map((job) => job.state), everyElement(ConversionState.paused));
+    expect(restored.map((job) => job.videoMissing), [VideoMissing.folder, VideoMissing.original]);
+    expect(restored.first.perMille, 600);
+    expect((await store.read()).map((record) => record.id), ['far', 'moved'], reason: 'nothing forgotten');
+    expect(Directory(unplugged).existsSync(), isFalse, reason: 'never made on the local disk');
+
+    // The drive is connected: Resume goes on
+    Directory(videoWorkFolderIn(unplugged, 'far')).createSync(recursive: true);
+    notifier.retry(restored.first.id);
+    await until((state) => state.byId(restored.first.id)!.state == ConversionState.done);
+    expect(job(restored.first.id).videoMissing, isNull);
+    expect(job(restored.first.id).writtenPath, p.join(unplugged, 'trip_3D_LRF_Full_SBS.mp4'));
+  });
+
+  test(
+    'Cancel all pauses the videos with work done, under way or waiting; one with nothing done is cancelled',
+    () async {
+      final fake = engine as FakeVideoJobEngine..holdAfter = 1;
+      final notifier = queue();
+      final first = addVideos(notifier, [video('a.mp4')]).single;
+      await until((state) => state.byId(first)?.videoProgress?.windows == 1);
+      notifier.pause(first);
+      await until((state) => state.byId(first)!.state == ConversionState.paused);
+
+      final second = addVideos(notifier, [video('b.mp4')]).single;
+      await until((state) => state.byId(second)?.videoProgress?.windows == 1);
+      // a.mp4 resumed behind b.mp4: waiting with its work; c.mp4 waiting with none
+      notifier.retry(first);
+      final third = addVideos(notifier, [video('c.mp4')]).single;
+      expect(job(first).state, ConversionState.waiting);
+      expect(job(first).perMille, greaterThan(0));
+
+      notifier.cancelAll();
+      await until((state) => state.byId(second)!.state.isEnded);
+      expect(job(second).state, ConversionState.paused);
+      expect(job(first).state, ConversionState.paused);
+      expect(job(third).state, ConversionState.cancelled);
+      expect(fake.stops, ['pause', 'pause']);
+      expect(fake.discarded, isEmpty, reason: 'Discard alone deletes the work of a video');
+      expect((await store.read()).map((record) => record.id), unorderedEquals(['job0', 'job1']));
+    },
+  );
+
   test('a 3D photo asked while a video runs goes first, between two of its windows', () async {
     final fake = engine as FakeVideoJobEngine..holdAfter = 1;
     final photoEngine = _Photos();
@@ -479,6 +554,95 @@ void main() {
       expect(File(videoMadePathOf(work.path)).existsSync(), isFalse);
       expect(File(p.join(root.path, 'logs', 'video3d-job1.log')).existsSync(), isFalse);
       expect(await store.read(), isEmpty);
+    });
+
+    /// Pauses the video [id] once its first segment is closed, through [stop], and waits until it ended
+    Future<void> stopAfterFirstSegment(String id, void Function() stop) async {
+      final stopped = Completer<void>();
+      final subscription = container.listen(conversionQueueProvider, (_, next) {
+        final progress = next.byId(id)?.videoProgress;
+        if (!stopped.isCompleted && progress != null && progress.segmentsDone >= 1) {
+          stopped.complete();
+          stop();
+        }
+      });
+      await until((state) => state.byId(id)!.state.isEnded, within: const Duration(seconds: 60));
+      subscription.close();
+    }
+
+    test('Resume while its original is moved keeps the work and the record; put back, it finishes', () async {
+      engine = real();
+      final notifier = queue();
+      final request = video('clip.mp4');
+      final source = (request.source as LocalFileSource).path;
+      final id = addVideos(notifier, [request]).single;
+      await stopAfterFirstSegment(id, () => notifier.pause(id));
+      expect(job(id).state, ConversionState.paused, reason: '${job(id).message}');
+      final work = Directory(videoWorkFolderIn(videos, 'job0'));
+      final segments = (await VideoJobFile.read(work))!.segments;
+      expect(segments, isNotEmpty);
+
+      // Moved away (or its share not connected): Resume waits for it, nothing deleted
+      final moved = File(source).renameSync('$source.away');
+      notifier.retry(id);
+      await until((state) => state.byId(id)!.state.isEnded, within: const Duration(seconds: 60));
+      expect(job(id).state, ConversionState.paused);
+      expect(job(id).skipReason, isNull, reason: 'never "A video the FFmpeg program cannot read"');
+      expect(job(id).videoMissing, VideoMissing.original);
+      expect((await VideoJobFile.read(work))!.segments, hasLength(segments.length));
+      expect((await store.read()).single.id, 'job0');
+      expect(File(p.join(root.path, 'logs', 'video3d-job0.log')).readAsStringSync(), contains('the original is not'));
+
+      // Put back: Resume goes on from its segments and finishes
+      moved.renameSync(source);
+      notifier.retry(id);
+      expect(job(id).videoMissing, isNull);
+      await until((state) => state.byId(id)!.state.isEnded, within: const Duration(seconds: 60));
+      expect(job(id).state, ConversionState.done, reason: '${job(id).message}');
+      final decoder = runner.calls.firstWhere((call) => call.contains('-stats_enc_pre'));
+      expect(decoder, contains('-ss'), reason: 'resumed, not started again');
+      expect(work.existsSync(), isFalse);
+      expect(await store.read(), isEmpty);
+    });
+
+    test('a destination folder not reachable: the job waits for it and makes no folder', () async {
+      container = ProviderContainer();
+      final unplugged = p.join(root.path, 'Unplugged', 'Films');
+      final request = video('clip.mp4');
+      final control = VideoJobControl();
+      await expectLater(
+        real().run(
+          VideoJobSpec(
+            sourcePath: (request.source as LocalFileSource).path,
+            folder: unplugged,
+            fileName: 'clip_3D_LRF_Full_SBS.mp4',
+            settings: VideoJobSettings(recordId: 'far', workFolder: videoWorkFolderIn(unplugged, 'far')),
+          ),
+          control,
+        ),
+        throwsA(
+          isA<VideoJobUnreachable>()
+              .having((error) => error.missing, 'missing', VideoMissing.folder)
+              .having((error) => error.path, 'path', unplugged),
+        ),
+      );
+      expect(Directory(p.join(root.path, 'Unplugged')).existsSync(), isFalse);
+    });
+
+    test('Cancel all pauses a video under way: its work folder and its record stay, Resume finishes it', () async {
+      engine = real();
+      final notifier = queue();
+      final id = addVideos(notifier, [video('clip.mp4')]).single;
+      await stopAfterFirstSegment(id, notifier.cancelAll);
+      expect(job(id).state, ConversionState.paused, reason: '${job(id).message}');
+      expect(job(id).perMille, greaterThan(0));
+      final work = Directory(videoWorkFolderIn(videos, 'job0'));
+      expect((await VideoJobFile.read(work))!.segments, isNotEmpty);
+      expect((await store.read()).single.id, 'job0');
+
+      notifier.retry(id);
+      await until((state) => state.byId(id)!.state.isEnded, within: const Duration(seconds: 60));
+      expect(job(id).state, ConversionState.done, reason: '${job(id).message}');
     });
 
     test('a name taken meanwhile is never replaced: the MP4 takes "name (1)"', () async {

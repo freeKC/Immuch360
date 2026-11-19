@@ -1232,6 +1232,10 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   var _videoProbeStarted = false;
   var _videoReading = false;
   var _videoProbed = false;
+
+  /// The FFmpeg program did not start although its components are there (a component damaged, a runner that fails):
+  /// said in red with Retry, never a Convert off with no word
+  var _videoProbeFailed = false;
   VideoEncoder? _videoEncoder;
   var _videoEncoderTested = false;
 
@@ -1528,20 +1532,53 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   };
 
   /// Reads each video that runs with the FFmpeg program, once it is there, then plans the selection again without the
-  /// videos it refuses, and tests the encoder at the size of the first one
+  /// videos it refuses, and tests the encoder at the size of the first one. A program that does not start, or any
+  /// failure before the videos are read, is said in red with Retry rather than leaving "Reading the videos" or a Convert
+  /// off with no word.
   Future<void> _probeVideos() async {
     if (_videoProbeStarted || _photos == null) {
       return;
     }
     _videoProbeStarted = true;
-    setState(() => _videoReading = true);
+    setState(() {
+      _videoReading = true;
+      _videoProbeFailed = false;
+    });
+    try {
+      await _readVideos();
+    } catch (error, stack) {
+      _log.warning('The videos could not be read for a 3D video', error, stack);
+      if (mounted && !_closed) {
+        setState(() {
+          _videoReading = false;
+          if (_videoProbed) {
+            // Read, but the plan or the encoder test failed: no encoder, said in red with Convert off
+            _videoEncoderTested = true;
+          } else {
+            _videoProbeFailed = true;
+          }
+        });
+      }
+    }
+  }
+
+  /// Reads the videos again: the probe starts over at the next frame
+  void _retryVideoProbe() => setState(() {
+    _videoProbeStarted = false;
+    _videoProbeFailed = false;
+  });
+
+  Future<void> _readVideos() async {
     final probe = await ref.read(videoDialogProbeProvider)();
     if (!mounted || _closed) {
       return;
     }
     if (probe == null) {
-      // Not ready after all (a component damaged): asked again once components are installed
-      setState(() => _videoReading = false);
+      // The gate finds the components, yet the FFmpeg program does not start: a component damaged
+      setState(() {
+        _videoReading = false;
+        _videoProbeFailed = true;
+      });
       return;
     }
     for (final candidate in _runs.toList()) {
@@ -2237,6 +2274,22 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       ready = false;
       if (_videoReading) {
         facts.add(ConversionNote(key: const Key('ai_conversion_video_reading'), text: t.ai_immersive_video_checking));
+      } else if (_videoProbeFailed) {
+        facts.addAll([
+          ConversionNote(
+            key: const Key('ai_conversion_video_probe_failed'),
+            text: t.ai_immersive_video_probe_failed,
+            error: true,
+          ),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton(
+              key: const Key('ai_conversion_video_probe_retry'),
+              onPressed: busy ? null : _retryVideoProbe,
+              child: Text(t.ai_immersive_retry),
+            ),
+          ),
+        ]);
       } else if (gate != null && !gate.isAvailable && !aiGateRefuses(gate)) {
         facts.add(
           ConversionNote(

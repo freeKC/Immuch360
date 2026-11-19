@@ -6,7 +6,9 @@
 // the free space needed (Convert waits for room), the name of the MP4, and Convert handing the job to the queue with
 // those settings, kept for the next dialog. The panel: frames, pace, segment and time left while it runs, the photos let
 // go first, Pause, Stop (asked first), Resume and Discard once paused, the error and its log, the MP4 made with Open and
-// Show in folder. The close guard of a video being made, and the offer at the start to resume a video a quit stopped.
+// Show in folder, what a paused video waits for (its original or its folder), Cancel all pausing it. A FFmpeg program
+// that does not start said in red with Retry. The close guard of a video being made, and the offer at the start to
+// resume a video a quit stopped, with the original not found said.
 
 import 'dart:async';
 import 'dart:convert';
@@ -183,6 +185,9 @@ void main() {
   late bool flatVideo;
   late FakeImmersiveEngine photos;
 
+  /// The FFmpeg program does not start although its components are there: 'null' for no probe, 'throw' for a failure
+  late String? probeBroken;
+
   final videoComponents = aiComponentsFor(AiPlatform.linuxX64, feature: AiFeature.stereoVideo);
   // The 3D photos and the 3D videos
   final linux = {...aiComponentsFor(AiPlatform.linuxX64), ...videoComponents};
@@ -211,6 +216,7 @@ void main() {
     viewed = [];
     flatVideo = true;
     photos = FakeImmersiveEngine();
+    probeBroken = null;
   });
 
   tearDown(() {
@@ -252,6 +258,12 @@ void main() {
       conversionEnginesProvider.overrideWithValue(const {}),
       videoJobEngineProvider.overrideWithValue(engine),
       videoDialogProbeProvider.overrideWithValue(() async {
+        if (probeBroken == 'throw') {
+          throw StateError('The runner of the programs did not start');
+        }
+        if (probeBroken == 'null') {
+          return null;
+        }
         final found = videoComponents.every(
           (component) => service.statusOf(component).state == AiComponentState.installed,
         );
@@ -624,6 +636,34 @@ void main() {
       expect(convertEnabled(tester), isTrue);
     });
 
+    testWidgets('a FFmpeg program that does not start with its components there: said in red, Retry reads the videos', (
+      tester,
+    ) async {
+      for (final broken in ['null', 'throw']) {
+        probeBroken = broken;
+        original('clip.mp4');
+        await openDialog(tester, [_asset('clip.mp4')]);
+
+        expect(find.byKey(const Key('ai_conversion_install')), findsNothing, reason: 'the components are there');
+        expect(find.byKey(const Key('ai_conversion_video_reading')), findsNothing, reason: broken);
+        expect(
+          note(tester, 'ai_conversion_video_probe_failed'),
+          'The FFmpeg program could not be started: remove it and download it again in Settings, AI components',
+        );
+        expect(convertEnabled(tester), isFalse);
+
+        probeBroken = null;
+        await tapIn(tester, find.byKey(const Key('ai_conversion_video_probe_retry')));
+        await settle(tester, until: () => probe.read_.contains('clip.mp4'));
+        expect(find.byKey(const Key('ai_conversion_video_probe_failed')), findsNothing);
+        expect(find.text('H.264, by the encoder of this computer'), findsOneWidget);
+        expect(convertEnabled(tester), isTrue, reason: broken);
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        probe.read_.clear();
+      }
+    });
+
     testWidgets('AV1 says what plays it; no encoder, or a drive too full, keeps Convert off', (tester) async {
       original('clip.mp4');
       probe.encoderFound = VideoEncoder.svtAv1;
@@ -841,6 +881,47 @@ void main() {
       expect(inRow(id, find.text('Interlaced video')), findsOneWidget);
     });
 
+    testWidgets('paused for its original or its folder: what it waits for, in red, with Resume and Discard', (
+      tester,
+    ) async {
+      final container = await pumpPanel(tester);
+      final unplugged = p.join(root.path, 'Unplugged');
+      await tester.runAsync(() async {
+        await jobs.put(
+          VideoJobRecord(
+            sourcePath: p.join(videos, 'trip.mp4'),
+            folder: unplugged,
+            fileName: 'trip_3D_LRF_Full_SBS.mp4',
+            settings: VideoJobSettings(recordId: 'far', workFolder: videoWorkFolderIn(unplugged, 'far')),
+            perMille: 500,
+          ),
+        );
+        await container.read(conversionQueueProvider.notifier).restoreVideoJobs();
+      });
+      await settle(tester);
+      final id = container.read(conversionQueueProvider).jobs.single.id;
+      expect(
+        inRow(id, find.text('The folder $unplugged is not reachable: connect its drive, then Resume')),
+        findsOneWidget,
+      );
+      expect(inRow(id, find.byKey(const Key('ai_job_video_resume'))), findsOneWidget);
+      expect(inRow(id, find.byKey(const Key('ai_job_video_discard'))), findsOneWidget);
+    });
+
+    testWidgets('Cancel all pauses a video with work done: no question, its work kept', (tester) async {
+      engine.holdAfter = 1;
+      final container = await pumpPanel(tester);
+      final id = add(container, 'clip.mp4');
+      await settle(tester);
+      await tester.tap(find.byKey(const Key('ai_conversions_cancel_all')));
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.single.state.isEnded);
+      expect(find.byKey(const Key('ai_video_stop_confirm')), findsNothing);
+      expect(inRow(id, find.text('Paused')), findsOneWidget);
+      expect(inRow(id, find.byKey(const Key('ai_job_video_resume'))), findsOneWidget);
+      expect(engine.stops, ['pause']);
+      expect(engine.discarded, isEmpty);
+    });
+
     testWidgets('the 3D photos asked meanwhile go first, said on the row of the video', (tester) async {
       engine.holdAfter = 1;
       final photo = photos = FakeImmersiveEngine(holdStage: .depth);
@@ -905,10 +986,12 @@ void main() {
   });
 
   group('the offer at the start', () {
-    Future<ProviderContainer> start(WidgetTester tester, {required String record}) async {
+    Future<ProviderContainer> start(WidgetTester tester, {required String record, bool withOriginal = true}) async {
       final work = videoWorkFolderIn(videos, record);
       Directory(work).createSync();
-      File(p.join(videos, '$record.mp4')).writeAsBytesSync([1, 2, 3]);
+      if (withOriginal) {
+        File(p.join(videos, '$record.mp4')).writeAsBytesSync([1, 2, 3]);
+      }
       await tester.runAsync(
         () => jobs.put(
           VideoJobRecord(
@@ -959,6 +1042,21 @@ void main() {
       expect(container.read(conversionQueueProvider).jobs.single.state, ConversionState.cancelled);
       expect(engine.discarded.single.recordId, 'trip');
       expect(await tester.runAsync(jobs.read), isEmpty);
+    });
+
+    testWidgets('an original not found is said, its work kept: put it back, then Resume', (tester) async {
+      final container = await start(tester, record: 'lost', withOriginal: false);
+      final path = p.join(videos, 'lost.mp4');
+      expect(
+        tester.widget<Text>(find.byKey(const Key('ai_video_offer_missing'))).data,
+        'The original video is not found at $path: put it back, then Resume',
+      );
+      await tester.tap(find.byKey(const Key('ai_video_offer_later')));
+      await settle(tester);
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.state, ConversionState.paused);
+      expect(job.videoMissing, VideoMissing.original);
+      expect((await tester.runAsync(jobs.read))!.single.id, 'lost', reason: 'its record stays');
     });
 
     testWidgets('Later leaves it paused in the panel', (tester) async {

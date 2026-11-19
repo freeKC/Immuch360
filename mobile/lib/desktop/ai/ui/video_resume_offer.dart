@@ -2,7 +2,9 @@
 // 49, store/m2/release-49/lots/video3d-plan.md section 4.5): each one put back in the queue of the conversions as
 // paused, then a dialog per video, "A 3D video stopped at 42 %" with its name, Resume, Discard or Later. Resume goes on
 // from its work folder; Discard deletes that folder; Later leaves it paused in the panel of the conversions, where
-// Resume and Discard stay. Nothing is asked while the AI features are off.
+// Resume and Discard stay. A video whose original or folder is not there says so ("put it back, then Resume"). Nothing
+// is asked while the AI features are off. The shell asks once the main page of the library shows (desktop_shell.dart),
+// never over the splash, the welcome or the login pages.
 
 import 'dart:async';
 
@@ -13,6 +15,9 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('VideoResumeOffer');
 
 /// What the user answered for a 3D video stopped
 enum VideoResumeAnswer { resume, discard, later }
@@ -26,8 +31,9 @@ Future<List<VideoResumeAnswer>> offerStoppedVideoJobs(BuildContext context, Widg
       return const [];
     }
     stopped = await ref.read(conversionQueueProvider.notifier).restoreVideoJobs();
-  } catch (_) {
+  } catch (error) {
     // A build or a test without the AI features set up: nothing to offer
+    _log.info('No 3D video to offer to resume: $error');
     return const [];
   }
   final answers = <VideoResumeAnswer>[];
@@ -77,6 +83,12 @@ class VideoResumeDialog extends StatelessWidget {
         children: [
           Text(t.ai_immersive_video_stopped(percent: (job.progress * 100).floor()), key: const Key('ai_video_stopped')),
           Text(job.source.name, style: Theme.of(context).textTheme.titleSmall),
+          if (videoMissingText(t, job) case final missing?)
+            Text(
+              missing,
+              key: const Key('ai_video_offer_missing'),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           Text(t.ai_immersive_video_paused_kept),
         ],
       ),

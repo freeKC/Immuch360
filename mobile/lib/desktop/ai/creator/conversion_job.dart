@@ -531,6 +531,7 @@ class ConversionJob {
     this.videoProgress,
     this.videoDone,
     this.yielding = false,
+    this.videoMissing,
   });
 
   final String id;
@@ -546,6 +547,10 @@ class ConversionJob {
 
   /// A 3D video that lets the 3D photos asked meanwhile run between two of its windows
   final bool yielding;
+
+  /// A 3D video paused because its original or its destination folder is not there now, its work kept: "put it back,
+  /// then Resume"; null once it runs again
+  final VideoMissing? videoMissing;
 
   /// A splat scene: its photos or its video, and its settings; null for the other kinds
   final SplatSelection? splat;
@@ -655,9 +660,9 @@ class ConversionJob {
   /// From 0 to 1
   double get progress => perMille / 1000;
 
-  /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor], [gpuShortfall] and
-  /// [segments] are given as functions, so that they may go back to null; [placed] and [keptFolder] go back to null with
-  /// [restarted] only
+  /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor], [gpuShortfall],
+  /// [segments], [videoProgress] and [videoMissing] are given as functions, so that they may go back to null; [placed]
+  /// and [keptFolder] go back to null with [restarted] only
   ConversionJob copyWith({
     ConversionState? state,
     int? perMille,
@@ -685,6 +690,7 @@ class ConversionJob {
     VideoJobProgress? Function()? videoProgress,
     VideoJobResult? videoDone,
     bool? yielding,
+    VideoMissing? Function()? videoMissing,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -726,6 +732,7 @@ class ConversionJob {
     videoProgress: videoProgress == null ? this.videoProgress : videoProgress(),
     videoDone: videoDone ?? this.videoDone,
     yielding: yielding ?? this.yielding,
+    videoMissing: videoMissing == null ? this.videoMissing : videoMissing(),
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then. [keepsWaiting]: it

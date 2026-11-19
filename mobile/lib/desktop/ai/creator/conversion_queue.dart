@@ -62,7 +62,9 @@
 // the processor lane go first, its session kept, when the memory free holds them beside it. Each video not finished is
 // kept in video_jobs.json of the support folder, so that the next start offers to resume it (restoreVideoJobs); a quit
 // loses at most the segment under way. A video that cannot be made 3D (a 360° video, interlaced...) is skipped with its
-// reason, its work deleted.
+// reason, its work deleted. Cancel all pauses a video with work done rather than deleting it. A video whose original or
+// destination folder is not there (moved, renamed, a drive or a share of the NAS not connected) is paused with its work
+// and its record kept, and says what it waits for.
 
 import 'dart:async';
 import 'dart:io';
@@ -582,8 +584,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   }
 
   /// The 3D videos a quit or a crash stopped, from video_jobs.json: each put in the queue paused, where it was, unless
-  /// the queue has it already; a record whose work folder and MP4 are both gone is forgotten. Gives the jobs added, for
-  /// the offer to resume them.
+  /// the queue has it already. A record is forgotten only when its destination folder is there with neither its work
+  /// folder nor its MP4 in it; one whose folder is not reachable (a drive or a share not connected yet) or whose
+  /// original is not found comes back paused with what it lacks, its record kept. Gives the jobs added, for the offer
+  /// to resume them.
   Future<List<ConversionJob>> restoreVideoJobs() async {
     final ConversionTools tools;
     try {
@@ -611,7 +615,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         continue;
       }
       final work = record.settings.workFolder;
-      if (!Directory(work).existsSync() && !File(videoMadePathOf(work)).existsSync()) {
+      final missing = videoMissingOf(record.sourcePath, record.folder);
+      if (missing?.missing != VideoMissing.folder &&
+          !Directory(work).existsSync() &&
+          !File(videoMadePathOf(work)).existsSync()) {
         await store.remove(record.id);
         continue;
       }
@@ -626,6 +633,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         state: ConversionState.paused,
         perMille: record.perMille,
         video: record.settings,
+        videoMissing: missing?.missing,
       );
       added.add(job);
       state = state.copyWith(jobs: [...state.jobs, job]);
@@ -696,7 +704,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// Cancels every job waiting and those under way; a pause has nothing left to hold. A 3D version waiting for its
   /// panorama is skipped with its reason once the panorama ends cancelled (at once for one that waited), as after
   /// Cancel of the panorama: Retry of the panorama runs it again. Nothing starts after it: one whose panorama was
-  /// written all the same is cancelled.
+  /// written all the same is cancelled. A 3D video with work done is paused, under way or waiting (a Resume waiting for
+  /// its turn): its work stays, Discard alone deletes it. Removing the components in Settings stops the queue this way
+  /// too.
   void cancelAll() {
     _diskFull.clear();
     bool waitsForParent(ConversionJob job) =>
@@ -708,16 +718,24 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     state = ConversionQueueState(
       jobs: [
         for (final job in state.jobs)
-          job.state == ConversionState.waiting && !waitsForParent(job)
-              ? job.copyWith(state: ConversionState.cancelled, waitingFor: () => null)
-              : job,
+          if (job.state == ConversionState.waiting && job.kind.isVideo && job.perMille > 0)
+            job.copyWith(state: ConversionState.paused, waitingFor: () => null)
+          else if (job.state == ConversionState.waiting && !waitsForParent(job))
+            job.copyWith(state: ConversionState.cancelled, waitingFor: () => null)
+          else
+            job,
       ],
     );
     for (final flag in _flags.values) {
       flag.cancel();
     }
-    for (final control in _videoControls.values) {
-      control.cancel();
+    for (final MapEntry(key: id, value: control) in _videoControls.entries) {
+      // Nothing done yet, nothing to keep: cancelled as the other jobs are
+      if ((state.byId(id)?.perMille ?? 0) > 0) {
+        control.pause();
+      } else {
+        control.cancel();
+      }
     }
     // Nothing waits for the graphics card any more: the next job of it asks the card at once
     _gpuRecheck?.cancel();
@@ -1343,6 +1361,18 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       } else {
         _set(id, (job) => job.copyWith(state: ConversionState.paused, remaining: () => null, yielding: false));
       }
+    } on VideoJobUnreachable catch (error) {
+      // Its original or its folder is not there now: paused with its work and its record, Resume once it is back
+      _log.warning('The 3D video $id waits for its ${error.missing.name}: ${error.path}');
+      _set(
+        id,
+        (job) => job.copyWith(
+          state: ConversionState.paused,
+          remaining: () => null,
+          yielding: false,
+          videoMissing: () => error.missing,
+        ),
+      );
     } on VideoJobException catch (error) {
       if (error.refusal case final refusal?) {
         await forget();

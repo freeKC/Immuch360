@@ -290,11 +290,39 @@ class VideoJobDone {
   final int? millisPerFrame;
 }
 
+/// What a 3D video lacks to go on: its original, or the destination folder its work and its MP4 are in (a drive or a
+/// share of the NAS not connected, a file moved or renamed). Its work stays for a Resume once it is back.
+enum VideoMissing { original, folder }
+
+/// A 3D video that cannot go on now, its work kept: [path] is what is not there
+class VideoJobUnreachable implements Exception {
+  const VideoJobUnreachable(this.missing, this.path);
+
+  final VideoMissing missing;
+  final String path;
+
+  @override
+  String toString() => 'VideoJobUnreachable: ${missing.name} $path';
+}
+
+/// What a 3D video of [sourcePath] made in [folder] lacks now, null when both are there: the folder first, then the
+/// original
+({VideoMissing missing, String path})? videoMissingOf(String sourcePath, String folder) {
+  if (!Directory(folder).existsSync()) {
+    return (missing: VideoMissing.folder, path: folder);
+  }
+  if (!File(sourcePath).existsSync()) {
+    return (missing: VideoMissing.original, path: sourcePath);
+  }
+  return null;
+}
+
 /// The engine of the 3D videos as the queue sees it; the tests give fakes
 abstract interface class VideoJobEngine {
   /// Makes [spec], or goes on from its work folder. Throws [VideoJobStopped] after a pause or a cancel of [control]
-  /// (the work folder deleted for a cancel), [VideoJobException] with its refusal for a video that cannot be made 3D,
-  /// and the errors of the programs and the files otherwise.
+  /// (the work folder deleted for a cancel), [VideoJobUnreachable] with its work kept when its original or its folder is
+  /// not there, [VideoJobException] with its refusal for a video that cannot be made 3D, and the errors of the programs
+  /// and the files otherwise.
   Future<VideoJobDone> run(
     VideoJobSpec spec,
     VideoJobControl control, {
@@ -420,6 +448,10 @@ class DesktopVideoJobEngine implements VideoJobEngine {
         ended = true;
         return VideoJobDone(path: path);
       }
+      // A file moved or a drive not connected is no reason to delete hours of segments: the job waits for it
+      if (videoMissingOf(spec.sourcePath, spec.folder) case final lack?) {
+        throw VideoJobUnreachable(lack.missing, lack.path);
+      }
       final found = await setup();
       if (control.isStopping) {
         throw VideoJobStopped(control.isCancelled);
@@ -497,7 +529,17 @@ class DesktopVideoJobEngine implements VideoJobEngine {
         throw const VideoJobStopped(true);
       }
       throw const VideoJobStopped(false);
+    } on VideoJobUnreachable catch (error) {
+      log('paused: the ${error.missing.name} is not found at ${error.path}, the work folder is kept');
+      rethrow;
     } on VideoJobException catch (error) {
+      // ffprobe could not read the original because it went meanwhile (a share that dropped): its work is kept
+      if (error.refusal == VideoRefusal.unreadable) {
+        if (videoMissingOf(spec.sourcePath, spec.folder) case final lack?) {
+          log('paused: the ${lack.missing.name} is not found at ${lack.path}, the work folder is kept');
+          throw VideoJobUnreachable(lack.missing, lack.path);
+        }
+      }
       log('failed: ${error.message}');
       if (error.refusal != null) {
         // Nothing of a refused video is worth keeping

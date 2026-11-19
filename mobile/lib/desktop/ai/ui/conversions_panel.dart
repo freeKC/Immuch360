@@ -44,9 +44,11 @@
 // A 3D video (release 49, store/m2/release-49/lots/video3d-plan.md, section 4.5): "2D video to 3D side by side
 // (experimental)", its frames done of all with its pace and its segment ("1,200 of 5,400 frames, 0.85 a second  •
 // segment 3"), the time left once two windows of the model ran (said until then), the line of the 3D photos it lets go
-// first; Pause and Stop while it runs (Stop asks first: it deletes the work done), Resume and Discard once paused, the
-// error with its log to send once it failed (Retry goes on from its work folder), and once made what the engine tells
-// of it, Open the 3D video and Show in folder. No Delete: an MP4 carries no XMP to tell it is ours.
+// first; Pause and Stop while it runs (Stop asks first: it deletes the work done), Resume and Discard once paused, with
+// what it waits for when its original or its folder is not there ("put it back, then Resume"), the error with its log
+// to send once it failed (Retry goes on from its work folder), and once made what the engine tells of it, Open the 3D
+// video and Show in folder. No Delete: an MP4 carries no XMP to tell it is ours. Cancel all pauses a video with work
+// done: Discard alone deletes it.
 
 import 'dart:async';
 import 'dart:io';
@@ -68,6 +70,7 @@ import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -489,6 +492,19 @@ String? videoProgressText(Translations t, ConversionJob job) {
 /// "H.264" or "AV1": how a 3D video was encoded
 String videoEncoderText(VideoEncoder encoder) => encoder.codec.contains('av1') ? 'AV1' : 'H.264';
 
+/// What a 3D video paused waits for, with its path: its original, or its destination folder; null when it lacks
+/// nothing
+String? videoMissingText(Translations t, ConversionJob job) => switch (job.videoMissing) {
+  VideoMissing.original => t.ai_immersive_video_original_missing(
+    path: switch (job.source) {
+      LocalFileSource(:final path) => path,
+      final source => source.name,
+    },
+  ),
+  VideoMissing.folder => t.ai_immersive_video_folder_missing(path: job.target?.folder ?? ''),
+  null => null,
+};
+
 /// Stop of a 3D video asks first once work was done: it deletes it, Pause keeps it
 Future<bool> confirmVideoStop(BuildContext context) async =>
     await showDialog<bool>(
@@ -778,6 +794,12 @@ class _JobRowState extends ConsumerState<_JobRow> {
       ],
       if (job.state == ConversionState.paused) ...[
         if (videoLine != null) Text(videoLine, key: const Key('ai_job_video_frames'), style: secondary),
+        if (videoMissingText(t, job) case final missing?)
+          Text(
+            missing,
+            key: const Key('ai_job_video_missing'),
+            style: TextStyle(color: colors.error),
+          ),
         Text(t.ai_immersive_video_paused_kept, key: const Key('ai_job_video_paused'), style: secondary),
       ],
       if (job.skipReason case final reason?)
