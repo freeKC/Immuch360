@@ -144,7 +144,7 @@ AV2_RECORD = ROOT / '.github' / 'desktop' / 'ai' / 'av2-companion-1.0.1.json'
 # The FFmpeg program of the 3D videos (video3d-plan.md, section 3): archives built, checked, signed and released by
 # github.com/immuch360/libmpv-builds (.github/workflows/ffmpeg.yml), LGPL 2.1 or later, which this script does not make;
 # held like the AV2 decoder to the manifest of their release, whose copy is FFMPEG_RECORD
-TAG_FFMPEG = 'ffmpeg-lgpl-20261118-7'
+TAG_FFMPEG = 'ffmpeg-lgpl-20261118-9'
 FFMPEG_REPOSITORY = 'immuch360/libmpv-builds'
 FFMPEG_ARCHIVES = ('ffmpeg-lgpl-windows-x64', 'ffmpeg-lgpl-linux-x64', 'ffmpeg-lgpl-macos-universal')
 FFMPEG_LICENCES = ('LGPL-2.1-or-later',)

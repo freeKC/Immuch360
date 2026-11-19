@@ -333,6 +333,18 @@ class ManagedProcessRunner implements ProcessRunner {
 
   @override
   Future<RunningProcess> start(ProcessLaunch launch) async {
+    final (process, job) = await _launch(launch);
+    return ManagedRunningProcess(process, job: job, onExit: () => journal?.remove(process.pid));
+  }
+
+  /// [launch] started as [start] does, its output left as bytes (the frames the FFmpeg program of the 3D videos writes
+  /// on its standard output) and its error output kept as text
+  Future<ManagedBinaryProcess> startBinary(ProcessLaunch launch) async {
+    final (process, job) = await _launch(launch);
+    return ManagedBinaryProcess(process, job: job, onExit: () => journal?.remove(process.pid));
+  }
+
+  Future<(io.Process, ProcessJobObject?)> _launch(ProcessLaunch launch) async {
     final (executable, arguments) = commandOf(launch);
     final process = await _start(
       executable,
@@ -360,7 +372,51 @@ class ManagedProcessRunner implements ProcessRunner {
       _log.info('The priority of ${p.basename(launch.executable)} (process ${process.pid}) could not be lowered');
     }
     journal?.add(process.pid, launch.executable);
-    return ManagedRunningProcess(process, job: job, onExit: () => journal?.remove(process.pid));
+    return (process, job);
+  }
+}
+
+/// A program started by [ManagedProcessRunner.startBinary]: its output as bytes, the end of its error output as text
+class ManagedBinaryProcess {
+  ManagedBinaryProcess(this._process, {ProcessJobObject? job, void Function()? onExit}) {
+    _job = job;
+    final tail = StringBuffer();
+    errors = _process.stderr
+        .transform(const Utf8Decoder(allowMalformed: true))
+        .forEach((text) {
+          tail.write(text);
+          if (tail.length > 8192) {
+            final kept = tail.toString().substring(tail.length - 4096);
+            tail
+              ..clear()
+              ..write(kept);
+          }
+        })
+        .then((_) => tail.toString(), onError: (Object _) => tail.toString());
+    unawaited(_process.stdin.done.then<void>((_) {}, onError: (Object _) {}));
+    exitCode = _process.exitCode.then((code) {
+      _job?.close();
+      _job = null;
+      onExit?.call();
+      return code;
+    });
+  }
+
+  final io.Process _process;
+  ProcessJobObject? _job;
+
+  /// The end of the error output, once the program ended
+  late final Future<String> errors;
+  late final Future<int> exitCode;
+
+  int get pid => _process.pid;
+  Stream<List<int>> get stdout => _process.stdout;
+  io.IOSink get stdin => _process.stdin;
+
+  void kill() {
+    _process.kill(io.ProcessSignal.sigkill);
+    _job?.close();
+    _job = null;
   }
 }
 

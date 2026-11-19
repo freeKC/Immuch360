@@ -21,6 +21,15 @@ names and shapes from the model as it does with the real one:
   tiny_migan.onnx   MI-GAN (migan_pipeline_v2.onnx): image uint8 [batch, 3, height, width] and mask uint8
                     [batch, 1, height, width] in, 255 where the pixel is known, result uint8 [batch, 3, height, width]
                     out (IR 8, opset 17). Inside: the known pixels kept, the holes painted 128.
+  tiny_vda.onnx     Video Depth Anything Small (video-depth-anything-small-dynamic-fp32.onnx of looplj): frames float32
+                    [1, 32, 3, height, width] in, depth float32 [1, 32, height, width] out (IR 8, opset 17). Inside:
+                    depth = (m 0.5 + 2) (1 + g / 8) + g / 4, where m is the mean of the three channels of each frame
+                    and g the mean of the whole window, so that each window gets a scale and a shift of its own and
+                    the alignment of the 3D videos has something to fit. tiny_vda_expected.json holds what the job
+                    gives with it on a 60 frame synthetic video with a cut (the window loop of video_depth.py of
+                    Video-Depth-Anything at 4f5ae23172 as the probe's depth.py runs it, scene by scene, the luma
+                    histogram detector, the percentiles smoothed and reset at the cut), computed here in double
+                    precision, and the frames each window takes for clips of several lengths.
   tiny_slow.onnx    A model made slow on purpose, for the stop of a run from another isolate (RunOptionsSetTerminate):
                     state float32 [384, 384] and iterations int64 [] in; a Loop of `iterations` matrix products by a
                     permutation that turns the columns by one; rotated float32 [384, 384] and count int64 [] out
@@ -38,7 +47,7 @@ so the bytes are the same on every machine and the CI checks them without any pa
 by onnx.checker (onnx 1.20.1) and run by ONNX Runtime 1.18.1, 1.23.2 and 1.31.0 in Python (tools only, never in the
 repository); the Dart tests run them on 1.31.0 and 1.23.2 in every run of the CI.
 
-  make_tiny_models.py           writes the five files into mobile/test/fixtures/ai_immersive
+  make_tiny_models.py           writes the seven files into mobile/test/fixtures/ai_immersive
   make_tiny_models.py --check   exit 1 when one of them differs from what this script writes (a CI step)
 
 Pure Python 3, no package.
@@ -50,6 +59,8 @@ import json
 import pathlib
 import struct
 import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 FIXTURES = pathlib.Path(__file__).resolve().parents[3] / "mobile/test/fixtures/ai_immersive"
 
@@ -298,6 +309,35 @@ def tiny_slow() -> bytes:
     return model(graph("tiny_slow", nodes, inputs, outputs, initializers), 8, 17, doc)
 
 
+def tiny_vda() -> bytes:
+    nodes = [
+        node("ReduceMean", ["frames"], ["channels"], "channels", [attribute_ints("axes", [2]), attribute_int("keepdims",
+                                                                                                             1)]),
+        node("ReduceMean", ["frames"], ["window"], "window", [attribute_ints("axes", [1, 2, 3, 4]), attribute_int(
+            "keepdims", 1)]),
+        node("Mul", ["channels", "half"], ["halved"], "halved"),
+        node("Add", ["halved", "two"], ["raised"], "raised"),
+        node("Mul", ["window", "eighth"], ["window_eighth"], "window_eighth"),
+        node("Add", ["window_eighth", "one"], ["scale"], "scale"),
+        node("Mul", ["raised", "scale"], ["scaled"], "scaled"),
+        node("Mul", ["window", "quarter"], ["shift"], "shift"),
+        node("Add", ["scaled", "shift"], ["shifted"], "shifted"),
+        node("Squeeze", ["shifted", "channel_axis"], ["depth"], "depth"),
+    ]
+    initializers = (
+        tensor("half", FLOAT, [], [0.5]),
+        tensor("two", FLOAT, [], [2.0]),
+        tensor("one", FLOAT, [], [1.0]),
+        tensor("eighth", FLOAT, [], [0.125]),
+        tensor("quarter", FLOAT, [], [0.25]),
+        tensor("channel_axis", INT64, [1], [2]),
+    )
+    inputs = [value_info("frames", FLOAT, [1, 32, 3, "height", "width"])]
+    outputs = [value_info("depth", FLOAT, [1, 32, "height", "width"])]
+    doc = "A stand in for Video Depth Anything Small in the tests of Immuch360: (m / 2 + 2) (1 + g / 8) + g / 4."
+    return model(graph("tiny_vda", nodes, inputs, outputs, initializers), 8, 17, doc)
+
+
 # --- what the tests compare with ------------------------------------------------------------------------------------
 
 MOGE_SAMPLE_SHAPE = [1, 3, 2, 3]
@@ -373,13 +413,170 @@ def expected_json() -> str:
     return json.dumps(document, indent=1) + "\n"
 
 
+# --- the 3D videos: the window loop of depth.py, scene by scene, with tiny_vda ---------------------------------------
+
+VDA_LENGTH, VDA_OVERLAP, VDA_BLENDED = 32, 10, 8
+VDA_STEP = VDA_LENGTH - VDA_OVERLAP
+VDA_KEYFRAMES = [0, 12, 24, 25, 26, 27, 28, 29, 30, 31]
+VDA_DECAY = 0.9
+VDA_EYE = 28
+VDA_MODEL = 14
+VDA_FRAMES = 60
+VDA_CUT = 37
+
+
+def vda_windows(n: int) -> list:
+    """The frames of each slot of each window of a scene of n frames, as depth.py takes them: the first 10 slots of
+    a window are the previous window's key frames, the tail padded with the last frame"""
+    windows = []
+    previous = None
+    for fid in range(0, n, VDA_STEP):
+        slots = [min(fid + slot, n - 1) for slot in range(VDA_LENGTH)]
+        if previous is not None:
+            slots[:VDA_OVERLAP] = [previous[k] for k in VDA_KEYFRAMES]
+        windows.append(slots)
+        previous = slots
+    return windows
+
+
+def vda_model(window: list, plane: int) -> list:
+    """tiny_vda in double precision: window is 32 inputs of 3 x plane values"""
+    total = 0.0
+    for frame in window:
+        for value in frame:
+            total += value
+    g = total / (len(window) * 3 * plane)
+    maps = []
+    for frame in window:
+        maps.append([((frame[i] + frame[plane + i] + frame[2 * plane + i]) / 3 * 0.5 + 2) * (1 + g / 8) + g / 4
+                     for i in range(plane)])
+    return maps
+
+
+def vda_scale_shift(predicted: list, target: list) -> tuple:
+    a00 = a01 = a11 = b0 = b1 = 0.0
+    for p, t in zip(predicted, target):
+        for x, y in zip(p, t):
+            a00 += x * x
+            a01 += x
+            b0 += x * y
+            b1 += y
+        a11 += len(p)
+    det = a00 * a11 - a01 * a01
+    if det == 0:
+        return 1.0, 0.0
+    return (a11 * b0 - a01 * b1) / det, (-a01 * b0 + a00 * b1) / det
+
+
+def vda_scene(inputs: list, plane: int) -> list:
+    """depth.py's vda on the inputs of one scene: the aligned maps, one per frame"""
+    n = len(inputs)
+    aligned = []
+    ref = []
+    for slots in vda_windows(n):
+        maps = vda_model([inputs[i] for i in slots], plane)
+        if not aligned:
+            aligned = maps
+            ref = [maps[0], maps[12]]
+            continue
+        sc, sh = vda_scale_shift(maps[:VDA_OVERLAP - VDA_BLENDED], ref)
+        fit = [[max(v * sc + sh, 0.0) for v in m] for m in maps]
+        for i in range(VDA_BLENDED):
+            w = i / (VDA_BLENDED - 1)
+            pre = aligned[-VDA_BLENDED + i]
+            post = fit[VDA_OVERLAP - VDA_BLENDED + i]
+            aligned[-VDA_BLENDED + i] = [a * (1 - w) + b * w for a, b in zip(pre, post)]
+        aligned += fit[VDA_OVERLAP:]
+        ref = [ref[0], fit[12]]
+    return aligned[:n]
+
+
+def vda_percentiles(m: list) -> tuple:
+    ordered = sorted(m)
+    rank = lambda p: max(1, (p * len(ordered) + 99) // 100) - 1  # noqa: E731
+    return ordered[rank(2)], ordered[rank(98)]
+
+
+def vda_video_frame(index: int) -> list:
+    """Frame index of the synthetic video, RGB rows: a dark scene moving to the right, then a bright one going down"""
+    frame = []
+    for y in range(VDA_EYE):
+        row = []
+        for x in range(VDA_EYE):
+            if index < VDA_CUT:
+                row.append([(8 * x + 3 * index) % 90, (5 * y + index) % 70 + 10, (x * y + 2 * index) % 60])
+            else:
+                row.append([150 + (7 * y + 2 * index) % 100, 120 + (3 * x + y + index) % 120, 200 + (x + index) % 50])
+        frame.append(row)
+    return frame
+
+
+def vda_expected() -> dict:
+    import make_relief_video_golden as golden  # noqa: E402 (same folder)
+
+    plane = VDA_MODEL * VDA_MODEL
+    inputs = []
+    histograms = []
+    for index in range(VDA_FRAMES):
+        frame = vda_video_frame(index)
+        inputs.append(golden.vda_input(frame, VDA_MODEL, VDA_MODEL))
+        histograms.append(golden.luma_hist(frame))
+    # Added one after the other, never with sum(): from Python 3.12 it compensates the rounding of floats
+    distances = []
+    for i in range(1, VDA_FRAMES):
+        l1 = 0.0
+        for a, b in zip(histograms[i], histograms[i - 1]):
+            l1 += abs(a - b)
+        distances.append(0.5 * l1)
+    flagged = [i + 1 for i in golden.cuts(distances)]
+    # A cut less than 22 frames after the scene's start only resets the normalisation
+    starts = [0]
+    resets = {0}
+    for index in flagged:
+        resets.add(index)
+        if index - starts[-1] >= VDA_STEP:
+            starts.append(index)
+    maps = []
+    for i, start in enumerate(starts):
+        end = starts[i + 1] if i + 1 < len(starts) else VDA_FRAMES
+        maps += vda_scene(inputs[start:end], plane)
+    lo = hi = None
+    percentiles = []
+    for index, m in enumerate(maps):
+        a, b = vda_percentiles(m)
+        if lo is None or index in resets:
+            lo, hi = a, b
+        else:
+            lo, hi = VDA_DECAY * lo + (1 - VDA_DECAY) * a, VDA_DECAY * hi + (1 - VDA_DECAY) * b
+        percentiles.append([lo, hi])
+    windows = {str(n): vda_windows(n) for n in (1, 10, 22, 31, 32, 33, 53, 54, 60, 100)}
+    return {
+        "about": "Made by .github/desktop/ai/make_tiny_models.py: tiny_vda.onnx on the synthetic video of "
+        "vda_video_frame (28 x 28 eyes, model input 14 x 14, a cut at frame 37), the window loop of depth.py scene by "
+        "scene in double precision. maps are the aligned maps of the frames, percentiles the smoothed p2 and p98 they "
+        "are normalised with; windows gives the frame of each slot of each window of a scene of n frames.",
+        "eye": VDA_EYE,
+        "model": VDA_MODEL,
+        "frames": VDA_FRAMES,
+        "cutAt": VDA_CUT,
+        "distances": distances,
+        "cuts": flagged,
+        "sceneStarts": starts,
+        "maps": maps,
+        "percentiles": percentiles,
+        "windows": windows,
+    }
+
+
 def outputs() -> dict:
     return {
         "tiny_moge.onnx": tiny_moge(),
         "tiny_lama.onnx": tiny_lama(),
         "tiny_migan.onnx": tiny_migan(),
         "tiny_slow.onnx": tiny_slow(),
+        "tiny_vda.onnx": tiny_vda(),
         "tiny_models_expected.json": expected_json().encode("utf-8"),
+        "tiny_vda_expected.json": (json.dumps(vda_expected()) + "\n").encode("utf-8"),
     }
 
 

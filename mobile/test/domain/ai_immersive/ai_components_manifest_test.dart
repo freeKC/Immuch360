@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -325,6 +328,26 @@ void main() {
       expect(aiLicenceText(lamaInpaintComponent), apacheLicence2);
     });
 
+    test('Video Depth Anything Small keeps the NOTICE of its export beside the Apache License 2.0', () {
+      final text = aiLicenceText(videoDepthModelComponent);
+      expect(text, startsWith(apacheLicence2));
+      expect(text, contains('Copyright (2025) Bytedance Ltd. and/or its affiliates'));
+      expect(text, contains('Original project: https://github.com/DepthAnything/Video-Depth-Anything'));
+      expect(text, contains('Reveric conversion: dynamic spatial ONNX export; unchanged FP32 checkpoint weights.'));
+      // The NOTICE file of looplj/video-depth-anything-small-onnx at ff810849, byte for byte
+      expect(
+        crypto.sha256.convert(utf8.encode(videoDepthModelNotice)).toString(),
+        'f7429610cbd3e3726dae44b32ffce8adb71da0a6c2ae3eb31884395fe1abaa9b',
+      );
+      // The file written next to the model when it is installed carries it too
+      final installed = aiComponentLicenceNotice(
+        videoDepthModelComponent,
+        source: 'https://example.invalid/model.onnx',
+        installedAt: DateTime.utc(2026, 11, 19),
+      );
+      expect(installed, contains('Copyright (2025) Bytedance Ltd. and/or its affiliates'));
+    });
+
     test('of a component and its variant, the one the card takes with the most memory', () {
       const q8 = AiComponent(
         id: 'transformer-q8',
@@ -501,14 +524,15 @@ void main() {
         );
         expect(
           program.urls().single,
-          'https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/${program.assetName}',
+          'https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/${program.assetName}',
         );
       }
       for (final platform in AiPlatform.values) {
         final components = aiComponentsFor(platform, feature: AiFeature.stereoVideo);
         expect(
           components.map((component) => component.kind),
-          platform == AiPlatform.questArm64
+          // Not on Intel Macs: ONNX Runtime 1.23.2 was not checked with the model there
+          platform == AiPlatform.questArm64 || platform == AiPlatform.macosX64
               ? isEmpty
               : [AiComponentKind.runtime, AiComponentKind.archive, AiComponentKind.model],
           reason: platform.name,

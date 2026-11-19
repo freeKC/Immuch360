@@ -419,23 +419,28 @@ String aiGateReasonText(Translations t, AiGateResult gate) => switch (gate.reaso
   ),
 };
 
-/// The words of a reason to skip a photo
-String conversionSkipText(Translations t, ConversionSkipReason reason, {String? name}) => switch (reason) {
-  ConversionSkipReason.video => t.ai_immersive_skipped_video,
-  ConversionSkipReason.sphere360 => t.ai_immersive_skipped_360,
-  ConversionSkipReason.vr180 => t.ai_immersive_skipped_vr180,
-  ConversionSkipReason.spatial => t.ai_immersive_skipped_spatial,
-  ConversionSkipReason.alreadyStereo => t.ai_immersive_skipped_3d,
-  ConversionSkipReason.alreadyVersion => t.ai_immersive_skipped_ai_version,
-  ConversionSkipReason.notSphere => t.ai_immersive_skipped_not_360,
-  ConversionSkipReason.raw360 => t.ai_immersive_skipped_raw_360,
-  ConversionSkipReason.unreadableFormat => t.ai_immersive_unavailable_format,
-  ConversionSkipReason.sameSettingsExists => t.ai_immersive_skipped_same_settings,
-  ConversionSkipReason.nameTaken => t.ai_immersive_exists(name: name ?? ''),
-  ConversionSkipReason.unreachable => t.ai_immersive_failed_source,
-  ConversionSkipReason.diskFull => t.ai_immersive_failed_disk_full,
-  ConversionSkipReason.parentNotMade => t.ai_immersive_skipped_parent,
-};
+/// The words of a reason to skip a photo, or a video when [video] (a 3D video)
+String conversionSkipText(Translations t, ConversionSkipReason reason, {String? name, bool video = false}) =>
+    switch (reason) {
+      ConversionSkipReason.video => t.ai_immersive_skipped_video,
+      ConversionSkipReason.sphere360 => video ? t.ai_immersive_skipped_360_video : t.ai_immersive_skipped_360,
+      ConversionSkipReason.vr180 => video ? t.ai_immersive_skipped_vr180_video : t.ai_immersive_skipped_vr180,
+      ConversionSkipReason.spatial => t.ai_immersive_skipped_spatial,
+      ConversionSkipReason.alreadyStereo => video ? t.ai_immersive_skipped_3d_video : t.ai_immersive_skipped_3d,
+      ConversionSkipReason.alreadyVersion => t.ai_immersive_skipped_ai_version,
+      ConversionSkipReason.notSphere => t.ai_immersive_skipped_not_360,
+      ConversionSkipReason.raw360 => t.ai_immersive_skipped_raw_360,
+      ConversionSkipReason.unreadableFormat => t.ai_immersive_unavailable_format,
+      ConversionSkipReason.sameSettingsExists => t.ai_immersive_skipped_same_settings,
+      ConversionSkipReason.nameTaken => t.ai_immersive_exists(name: name ?? ''),
+      ConversionSkipReason.unreachable => t.ai_immersive_failed_source,
+      ConversionSkipReason.diskFull => t.ai_immersive_failed_disk_full,
+      ConversionSkipReason.parentNotMade => t.ai_immersive_skipped_parent,
+      ConversionSkipReason.interlaced => t.ai_immersive_skipped_interlaced,
+      ConversionSkipReason.dolbyVisionProfile5 => t.ai_immersive_skipped_dolby_vision,
+      ConversionSkipReason.oddRotation => t.ai_immersive_skipped_rotation,
+      ConversionSkipReason.unreadableVideo => t.ai_immersive_skipped_unreadable_video,
+    };
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere (a raw one of a 360°
 /// camera, its lenses not stitched, among them), holds two eyes already, is one of the versions the app made and of

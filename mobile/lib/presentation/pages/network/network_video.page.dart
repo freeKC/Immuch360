@@ -23,6 +23,7 @@ import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/models/watch_key.dart';
 import 'package:immich_mobile/domain/services/film_player/film_audio_choice.dart';
 import 'package:immich_mobile/domain/services/film_player/film_decoders.dart';
@@ -1914,7 +1915,11 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     width: _videoSize?.width,
     height: _videoSize?.height,
     isVideo: true,
+    declaredSideBySide: _declaresSideBySide,
   );
+
+  /// Whether the file's st3d box says left and right (a renamed 3D video of a computer keeps only that)
+  bool get _declaresSideBySide => _info?.probe?.stereo == StereoLayout.leftRight;
 
   /// Opens [video], a flat 3D video packed as [format], on the flat video screen of the immersive viewer of a Meta
   /// Quest, from where the page's player is unless it reached the end. It plays on its own there; once the viewer
@@ -1928,7 +1933,11 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       isVideo: true,
       title: video.entry.name,
       view: stereoPhotoSphereView,
-      stereoPair: Flat3dRequest(format).toJsonString(),
+      stereoPair: Flat3dRequest.ofName(
+        format,
+        video.entry.name,
+        declaredSideBySide: _declaresSideBySide,
+      ).toJsonString(),
     );
     final player = _notifier;
     // Read right before openImmersiveUrl stops the player, nothing awaited in between

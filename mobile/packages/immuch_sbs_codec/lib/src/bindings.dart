@@ -1,4 +1,4 @@
-// The C functions of rust/src/lib.rs, written by hand: five functions do not need ffigen. The asset is the library
+// The C functions of rust/src/lib.rs, written by hand: a few functions do not need ffigen. The asset is the library
 // hook/build.dart builds under the name src/bindings.dart; on a target it does not build for (the phones, the Quest,
 // iOS, another processor) the first call throws an ArgumentError, which immuch_sbs_codec.dart turns into "not
 // available".
@@ -81,3 +81,105 @@ external int iscEncode(
 
 @Native<Void Function(Pointer<Uint8>, Size)>(symbol: 'isc_free')
 external void iscFree(Pointer<Uint8> data, int length);
+
+// The frame work of the 3D videos (rust/src/video.rs): each reads and writes the caller's memory only
+
+@Native<
+  Int32 Function(Pointer<Uint8>, Size, Uint32, Uint32, Pointer<Float>, Size, Uint32, Uint32, Pointer<Uint8>, Size)
+>(symbol: 'isc_vda_input')
+external int iscVdaInput(
+  Pointer<Uint8> rgb,
+  int rgbLength,
+  int width,
+  int height,
+  Pointer<Float> out,
+  int outLength,
+  int outWidth,
+  int outHeight,
+  Pointer<Uint8> error,
+  int errorCapacity,
+);
+
+@Native<Int32 Function(Pointer<Uint8>, Size, Uint32, Uint32, Pointer<Double>, Pointer<Uint8>, Size)>(
+  symbol: 'isc_luma_hist64',
+)
+external int iscLumaHist64(
+  Pointer<Uint8> rgb,
+  int rgbLength,
+  int width,
+  int height,
+  Pointer<Double> out,
+  Pointer<Uint8> error,
+  int errorCapacity,
+);
+
+@Native<
+  Int32 Function(
+    Pointer<Uint8>,
+    Size,
+    Uint32,
+    Uint32,
+    Pointer<Double>,
+    Size,
+    Uint32,
+    Uint32,
+    Double,
+    Double,
+    Double,
+    Double,
+    Uint32,
+    Pointer<Uint8>,
+    Size,
+    Pointer<Uint64>,
+    Pointer<Uint8>,
+    Size,
+  )
+>(symbol: 'isc_relief_v1_eye')
+external int iscReliefV1Eye(
+  Pointer<Uint8> sbs,
+  int sbsLength,
+  int width,
+  int height,
+  Pointer<Double> depth,
+  int depthLength,
+  int depthWidth,
+  int depthHeight,
+  double p2,
+  double p98,
+  double parallax,
+  double convergence,
+  int threads,
+  Pointer<Uint8> holes,
+  int holesLength,
+  Pointer<Uint64> outFilled,
+  Pointer<Uint8> error,
+  int errorCapacity,
+);
+
+@Native<Uint32 Function(Double, Uint32, Double)>(symbol: 'isc_edge_band')
+external int iscEdgeBand(double parallax, int width, double convergence);
+
+@Native<Int32 Function(Pointer<Uint8>, Size, Uint32, Uint32, Uint32, Pointer<Uint8>, Size)>(symbol: 'isc_edge_fade')
+external int iscEdgeFade(
+  Pointer<Uint8> sbs,
+  int sbsLength,
+  int width,
+  int height,
+  int band,
+  Pointer<Uint8> error,
+  int errorCapacity,
+);
+
+@Native<Int32 Function(Pointer<Uint8>, Size, Uint32, Uint32, Pointer<Uint8>, Size, Pointer<Uint8>, Size)>(
+  symbol: 'isc_half_sbs',
+)
+external int iscHalfSbs(
+  Pointer<Uint8> sbs,
+  int sbsLength,
+  int width,
+  int height,
+  Pointer<Uint8> out,
+  int outLength,
+  Pointer<Uint8> error,
+  int errorCapacity,
+);

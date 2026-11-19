@@ -48,6 +48,76 @@ void main() {
       );
     });
 
+    test('keeps full eyes whatever the frame when the name says full: a portrait 3D video of a computer', () {
+      // The 3D videos a computer makes from a portrait phone clip: two eyes of 1080 x 1920 side by side
+      for (final name in ['IMG_1234_3D_LRF_Full_SBS.mp4', 'clip.FSBS.mp4', 'clip-fullsbs.mkv', 'clip SBS Full.mp4']) {
+        expect(
+          guessFlatStereoFormat(fileName: name, width: 2160, height: 1920, isVideo: true),
+          FlatStereoFormat.sbs,
+          reason: name,
+        );
+        expect(flatStereoFullSaid(name), isTrue, reason: name);
+      }
+      // A plain sbs keeps the squeeze rule, and half wins over everything
+      expect(
+        guessFlatStereoFormat(fileName: 'clip_SBS.mp4', width: 2160, height: 1920, isVideo: true),
+        FlatStereoFormat.halfSbs,
+      );
+      expect(
+        guessFlatStereoFormat(fileName: 'IMG_1234_3D_LRF_Half_SBS.mp4', width: 2160, height: 1920, isVideo: true),
+        FlatStereoFormat.halfSbs,
+      );
+      expect(
+        guessFlatStereoFormat(fileName: 'IMG_1234_3D_LRF_Half_SBS.mp4', width: 1920, height: 1080, isVideo: true),
+        FlatStereoFormat.halfSbs,
+      );
+      for (final name in ['clip_SBS.mp4', 'IMG_1234_3D_LRF_Half_SBS.mp4', 'Full moon.mp4', 'full_OU.mp4', null]) {
+        expect(flatStereoFullSaid(name), isFalse, reason: name);
+      }
+      // The landscape 3D videos stay as they were
+      expect(
+        guessFlatStereoFormat(fileName: 'ped_3D_LRF_Full_SBS.mp4', width: 3840, height: 1080, isVideo: true),
+        FlatStereoFormat.sbs,
+      );
+    });
+
+    test('reads a renamed video that declares its eyes side by side (st3d) as two full eyes, its name saying none', () {
+      expect(
+        guessFlatStereoFormat(
+          fileName: 'holiday.mp4',
+          width: 2160,
+          height: 1920,
+          isVideo: true,
+          declaredSideBySide: true,
+        ),
+        FlatStereoFormat.sbs,
+      );
+      expect(guessFlatStereoFormat(fileName: 'holiday.mp4', width: 2160, height: 1920, isVideo: true), isNull);
+      // The words still win over the box
+      expect(
+        guessFlatStereoFormat(
+          fileName: 'holiday_HSBS.mp4',
+          width: 2160,
+          height: 1920,
+          isVideo: true,
+          declaredSideBySide: true,
+        ),
+        FlatStereoFormat.halfSbs,
+      );
+      expect(
+        guessFlatStereoFormat(
+          fileName: 'holiday_OU.mp4',
+          width: 1920,
+          height: 2160,
+          isVideo: true,
+          declaredSideBySide: true,
+        ),
+        FlatStereoFormat.tb,
+      );
+      // A 360° name is no flat media
+      expect(guessFlatStereoFormat(fileName: 'holiday_360.mp4', isVideo: true, declaredSideBySide: true), isNull);
+    });
+
     test('keeps the eyes of a photo as they are: two portrait photos side by side are common', () {
       expect(guessFlatStereoFormat(fileName: 'portrait-SBS.png', width: 2160, height: 1920), FlatStereoFormat.sbs);
     });
@@ -181,14 +251,35 @@ void main() {
       for (final c in cases) {
         final format = FlatStereoFormat.fromWire(c['format'])!;
 
-        expect(jsonDecode(Flat3dRequest(format).toJsonString()), c['request'], reason: c['name'] as String);
+        final fullSaid = c['request']['full'] == true;
+
+        expect(
+          jsonDecode(Flat3dRequest(format, fullSaid: fullSaid).toJsonString()),
+          c['request'],
+          reason: c['name'] as String,
+        );
       }
     });
 
     test('reads back what it writes', () {
       for (final c in cases) {
-        expect(Flat3dRequest.fromJson(c['request']), Flat3dRequest(FlatStereoFormat.fromWire(c['format'])!));
+        expect(
+          Flat3dRequest.fromJson(c['request']),
+          Flat3dRequest(FlatStereoFormat.fromWire(c['format'])!, fullSaid: c['request']['full'] == true),
+        );
       }
+    });
+
+    test('says full eyes for a side by side video whose name says full, which the viewer then never squeezes', () {
+      final full = Flat3dRequest.ofName(FlatStereoFormat.sbs, 'IMG_1234_3D_LRF_Full_SBS.mp4');
+      expect(full.fullSaid, isTrue);
+      final written = cases.firstWhere((c) => c['request']['full'] == true);
+      expect(jsonDecode(full.toJsonString()), written['request']);
+      expect(Flat3dRequest.ofName(FlatStereoFormat.sbs, 'clip_SBS.mp4').toJson().containsKey('full'), isFalse);
+      // Squeezed or stacked eyes never say full
+      expect(Flat3dRequest.ofName(FlatStereoFormat.halfSbs, 'IMG_1234_3D_LRF_Full_SBS.mp4').fullSaid, isFalse);
+      expect(Flat3dRequest.ofName(FlatStereoFormat.tb, 'clip_Full_OU.mp4').fullSaid, isFalse);
+      expect(Flat3dRequest.ofName(FlatStereoFormat.sbs, 'holiday.mp4', declaredSideBySide: true).fullSaid, isTrue);
     });
 
     test('reads nothing of what a reader of version 1 refuses', () {

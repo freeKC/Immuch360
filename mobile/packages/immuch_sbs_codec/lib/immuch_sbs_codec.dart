@@ -1,7 +1,8 @@
 // The Dart side of the Rust JPEG codec of Immuch360 Desktop (rust/src/lib.rs): decode an original, encode a side by
 // side pair, read the licence texts. Each call copies its input into native memory, and copies what Rust returns into
 // Dart lists before freeing it, so that nothing native outlives a call and the memory of a job never waits for the
-// garbage collector. Synchronous: the AI job calls it from its own isolate, as the rest of its body.
+// garbage collector. Synchronous: the AI job calls it from its own isolate, as the rest of its body. The frame work of
+// the 3D videos (NativeVideoFrames) keeps its native buffers for a whole job instead, given back by dispose.
 
 import 'dart:convert';
 import 'dart:ffi';
@@ -10,8 +11,10 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'package:immuch_sbs_codec/src/bindings.dart';
 
+part 'src/video.dart';
+
 /// The version of the C interface this file was written for, ABI_VERSION of rust/src/lib.rs
-const nativeCodecAbiVersion = 1;
+const nativeCodecAbiVersion = 2;
 
 /// The chroma subsampling written, in the order of the C interface
 enum NativeSubsampling { s444, s422, s420, s440, s411 }

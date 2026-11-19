@@ -7168,7 +7168,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       val aspect = if (frame == null) 0f else frame.first.toFloat() / frame.second
       return StereoMode.None to aspect
     }
-    val format = if (frame == null) spec.format else FlatStereo.videoFormat(spec.format, frame.first, frame.second)
+    val format =
+      if (frame == null) spec.format else FlatStereo.videoFormat(spec.format, frame.first, frame.second, spec.fullSaid)
     val aspect = if (frame == null) 0f else FlatStereo.eyeAspect(format, frame.first, frame.second)
     return FlatStereo.stereoModeFor(format, stereo3d) to aspect
   }
