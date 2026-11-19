@@ -88,8 +88,17 @@ final class _WatchedFileSystem extends BaseVirtualFileSystem {
   @override
   String xFullPathName(String path) => _memory.xFullPathName(path);
 
+  /// The part of each wait that is really slept: none by default, so that nothing sleeps; below one, a signal that cuts
+  /// every sleep a little short
+  var sleptPart = 0.0;
+
   @override
-  void xSleep(Duration duration) => waits.add(duration);
+  void xSleep(Duration duration) {
+    waits.add(duration);
+    if (sleptPart > 0) {
+      sleep(duration * sleptPart);
+    }
+  }
 }
 
 final class _WatchedFile implements VirtualFileSystemFileV1 {
@@ -223,6 +232,46 @@ void main() {
       expect(files.writeLocksToRefuse, 0, reason: 'it kept trying until the other write ended');
       expect(files.waits.length, greaterThan(100), reason: 'SQLite gave up at least once and was asked again');
       expect(files.open, isEmpty);
+    });
+
+    test('the tries of a write meet another write for one time out in all, not one time out each', () {
+      // Another write that never ends. Each sleep of SQLite's busy handler lasts nine tenths of what it asked for: its
+      // first try gives up just before the time out has passed on the clock, so a second try is made. Given the whole
+      // time out again, that try would wait it out as well, about twice the time out in all
+      files
+        ..writeLocksToRefuse = 1 << 30
+        ..sleptPart = 0.9;
+      final db = sqlite3.open(path)..execute('PRAGMA busy_timeout = 7000');
+      addTearDown(db.close);
+      const timeout = Duration(seconds: 1);
+
+      final clock = Stopwatch()..start();
+      expect(
+        () => LibraryIndex.untilFree(db, 'BEGIN IMMEDIATE', timeout: timeout),
+        throwsA(isA<SqliteException>().having((error) => error.resultCode, 'resultCode', SqlError.SQLITE_BUSY)),
+      );
+      clock.stop();
+
+      expect(clock.elapsed, greaterThanOrEqualTo(timeout));
+      expect(clock.elapsed, lessThan(timeout * 1.5), reason: 'the second try waited only for what was left');
+      final asked = files.waits.fold(Duration.zero, (sum, wait) => sum + wait);
+      expect(asked, lessThan(timeout * 1.25), reason: 'SQLite was asked to wait one time out in all');
+      // The connection keeps the time out it had
+      expect(db.select('PRAGMA busy_timeout').single.values.single, 7000);
+    });
+
+    test('a write that meets another write for a moment goes on once it is free', () {
+      files.writeLocksToRefuse = 5;
+      final db = sqlite3.open(path)..execute('PRAGMA busy_timeout = 7000');
+      addTearDown(db.close);
+
+      LibraryIndex.untilFree(db, 'BEGIN IMMEDIATE', timeout: const Duration(seconds: 1));
+      db
+        ..execute('CREATE TABLE t (x)')
+        ..execute('COMMIT');
+
+      expect(files.writeLocksToRefuse, 0);
+      expect(db.select('PRAGMA busy_timeout').single.values.single, 7000);
     });
 
     test('a file that is not an index fails to open and leaves no connection open', () {
