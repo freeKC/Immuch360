@@ -1540,11 +1540,8 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       return;
     }
     if (probe == null) {
-      // Not ready after all (a component damaged): asked again once the gate changes
-      setState(() {
-        _videoReading = false;
-        _videoProbeStarted = false;
-      });
+      // Not ready after all (a component damaged): asked again once components are installed
+      setState(() => _videoReading = false);
       return;
     }
     for (final candidate in _runs.toList()) {
@@ -2110,6 +2107,8 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                             for (final each in features) {
                               ref.invalidate(aiGateResultForProvider(each));
                             }
+                            // The videos are read once the FFmpeg program is there
+                            _videoProbeStarted = false;
                           },
                         ),
                         ConversionInstallSpace(choice: choice),
