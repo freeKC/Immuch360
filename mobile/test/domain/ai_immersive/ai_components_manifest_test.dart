@@ -71,8 +71,11 @@ void main() {
       expect(aiComponents.map((component) => component.id).toSet(), hasLength(aiComponents.length));
       expect(aiComponents.map((component) => component.assetName).toSet(), hasLength(aiComponents.length));
       for (final component in aiComponents) {
+        // The FFmpeg program of the 3D videos alone is under the LGPL 2.1 or later, a separate program it runs
         expect(
-          ['Apache-2.0', 'MIT', 'BSD-3-Clause', 'BSD-2-Clause'],
+          component.id.startsWith('ffmpeg-lgpl-')
+              ? ['LGPL-2.1-or-later']
+              : ['Apache-2.0', 'MIT', 'BSD-3-Clause', 'BSD-2-Clause'],
           contains(component.licence),
           reason: component.id,
         );
@@ -146,10 +149,15 @@ void main() {
       const scenes = {'moge-2-vits-normal-onnx-immuch360', 'lama-onnx'};
       for (final component in aiComponents) {
         final av2 = component.features.contains(AiFeature.av2Video);
+        final ffmpeg = component.id.startsWith('ffmpeg-lgpl-');
         final family = av2
             ? av2DecoderReleaseTag
+            : ffmpeg
+            ? ffmpegProgramReleaseTag
             : component.features.contains(AiFeature.stereoPhoto)
             ? aiComponentsReleaseTag
+            : component.features.contains(AiFeature.stereoVideo)
+            ? aiComponentsVideosReleaseTag
             : scenes.contains(component.id)
             ? aiComponentsScenesReleaseTag
             : component.features.contains(AiFeature.splatScene)
@@ -166,7 +174,7 @@ void main() {
         );
         expect(
           component.isArchive,
-          ['sd-cpp-', 'colmap-', 'brush-'].any(component.id.startsWith) || av2,
+          ['sd-cpp-', 'colmap-', 'brush-', 'ffmpeg-lgpl-'].any(component.id.startsWith) || av2,
           reason: component.id,
         );
         // Only a file of 2 GiB or more comes in parts
@@ -174,12 +182,17 @@ void main() {
       }
       expect(aiComponentsScenesReleaseTag, 'ai-components-2');
       expect(aiComponentsPanoramasReleaseTag, 'ai-components-3');
+      expect(aiComponentsVideosReleaseTag, 'ai-components-5');
       expect(aiComponentsReleaseBaseOf(aiComponentsReleaseTag), aiComponentsReleaseBase);
-      // Every component but the AV2 decoder is in a release of the app's repository
+      // Every component but the AV2 decoder and the FFmpeg program is in a release of the app's repository
       for (final component in aiComponents) {
         expect(
           component.releaseRepository,
-          component.features.contains(AiFeature.av2Video) ? 'immuch360/av2-companion' : 'freeKC/Immuch360',
+          component.features.contains(AiFeature.av2Video)
+              ? 'immuch360/av2-companion'
+              : component.id.startsWith('ffmpeg-lgpl-')
+              ? 'immuch360/libmpv-builds'
+              : 'freeKC/Immuch360',
           reason: component.id,
         );
       }
@@ -251,8 +264,9 @@ void main() {
         expect(component.isComplete, isTrue, reason: component.id);
         expect(component.officialUrls.single, startsWith('https://'), reason: component.id);
       }
-      // Nothing held back since ai-components-4 is made (lot SP14): the panoramas are offered where their engine runs
-      expect(aiHeldFeatureGroups, isEmpty);
+      // Nothing held back since ai-components-4 is made (lot SP14) but the 3D videos, which their own lot offers: the
+      // panoramas are offered where their engine runs
+      expect(aiHeldFeatureGroups, {AiFeatureGroup.videos});
       for (final platform in AiPlatform.values) {
         expect(
           aiComponentGroupsFor(platform).map((group) => group.group),
@@ -294,7 +308,10 @@ void main() {
         // stable-diffusion.cpp brings its texts in its archive; the app keeps those of COLMAP and Brush, and those of
         // dav2d with the patent licence of AV2 for the card shown before the AV2 decoder is downloaded
         // (av2_decoder_licences.dart)
-        if (component == sdCppWindowsComponent || component == sdCppLinuxComponent) {
+        // The FFmpeg program too, with its corresponding source named in licenses/FFmpeg-SOURCE.txt
+        if (component == sdCppWindowsComponent ||
+            component == sdCppLinuxComponent ||
+            component.id.startsWith('ffmpeg-lgpl-')) {
           expect(text, 'See ${component.licenceUrl}\n', reason: component.id);
           continue;
         }
@@ -366,9 +383,17 @@ void main() {
       // The groups of the AI, the AV2 decoder apart (the video settings show it); the splat scenes, offered since
       // ai-components-4 is made (lot SP14), come last with their own two programs, which no other group needs
       final aiGroups = AiFeatureGroup.values.where((group) => group.isAi);
-      expect(aiGroups, [AiFeatureGroup.photos, AiFeatureGroup.scenes, AiFeatureGroup.panoramas, AiFeatureGroup.splats]);
+      expect(aiGroups, [
+        AiFeatureGroup.photos,
+        AiFeatureGroup.scenes,
+        AiFeatureGroup.panoramas,
+        AiFeatureGroup.splats,
+        AiFeatureGroup.videos,
+      ]);
+      // The 3D videos are held until their lot offers them (aiHeldFeatureGroups)
+      final offered = aiGroups.where((group) => group != AiFeatureGroup.videos);
       final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
-      expect(windows.map((group) => group.group), aiGroups);
+      expect(windows.map((group) => group.group), offered);
       expect(windows.last.all, [colmapWindowsComponent, brushWindowsComponent]);
       expect(windows.last.own, [colmapWindowsComponent, brushWindowsComponent]);
       expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
@@ -403,17 +428,18 @@ void main() {
         aiComponentGroupsFor(
           AiPlatform.windowsX64,
           catalogue: complete,
-          held: const {AiFeatureGroup.panoramas},
+          held: const {AiFeatureGroup.panoramas, AiFeatureGroup.videos},
         ).map((group) => group.group),
         [AiFeatureGroup.photos, AiFeatureGroup.scenes, AiFeatureGroup.splats],
       );
-      // Nothing held back since ai-components-4 is made (lot SP14); the splat scenes held, the panoramas come last
-      expect(aiHeldFeatureGroups, isEmpty);
-      expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), aiGroups);
+      // Nothing held back since ai-components-4 is made (lot SP14) but the 3D videos; the splat scenes held, the
+      // panoramas come last
+      expect(aiHeldFeatureGroups, {AiFeatureGroup.videos});
+      expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), offered);
       final groups = aiComponentGroupsFor(
         AiPlatform.windowsX64,
         catalogue: complete,
-        held: const {AiFeatureGroup.splats},
+        held: const {AiFeatureGroup.splats, AiFeatureGroup.videos},
       );
       expect(groups.map((group) => group.group), [
         AiFeatureGroup.photos,
@@ -436,6 +462,67 @@ void main() {
       expect(engine.isComplete, isTrue);
       expect(depthModelOnnxComponent.mainPath, depthModelOnnxComponent.installPath);
       expect(depthModelOnnxComponent.installedSize, depthModelOnnxComponent.size);
+    });
+
+    test('the 3D videos: Video Depth Anything Small in ai-components-5, the FFmpeg program of libmpv-builds, held', () {
+      expect(AiFeatureGroup.videos.features, {AiFeature.stereoVideo});
+      expect(AiFeature.stereoVideo.isAi, isTrue);
+      expect(aiHeldFeatureGroups, contains(AiFeatureGroup.videos));
+      expect(videoDepthModelComponent.releaseTag, 'ai-components-5');
+      expect(
+        (videoDepthModelComponent.size, videoDepthModelComponent.sha256),
+        (116528885, 'eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99'),
+      );
+      expect(videoDepthModelComponent.officialUrls.single, contains('/ff810849333df46d37ea18a885fc11689661fe96/'));
+      final programs = {
+        ffmpegWindowsComponent: ['bin/ffmpeg.exe', 'bin/ffprobe.exe'],
+        ffmpegLinuxComponent: ['bin/ffmpeg', 'bin/ffprobe', 'bin/immuch360-run'],
+        ffmpegMacComponent: ['bin/ffmpeg', 'bin/ffprobe'],
+      };
+      for (final MapEntry(key: program, value: executables) in programs.entries) {
+        expect(program.releaseRepository, ffmpegProgramRepository, reason: program.id);
+        expect(program.releaseTag, ffmpegProgramReleaseTag, reason: program.id);
+        expect(program.isComplete, isTrue, reason: program.id);
+        expect(program.features, {AiFeature.stereoVideo}, reason: program.id);
+        expect(
+          [for (final file in program.archiveFiles.where((file) => file.executable)) file.path],
+          executables,
+          reason: program.id,
+        );
+        expect(
+          [for (final file in program.archiveFiles) file.path],
+          containsAll([
+            'BUILD-INFO.txt',
+            'licenses/FFmpeg-COPYING.LGPLv2.1.txt',
+            'licenses/FFmpeg-SOURCE.txt',
+            'licenses/PATENTS-NOTE.md',
+          ]),
+          reason: program.id,
+        );
+        expect(
+          program.urls().single,
+          'https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-7/${program.assetName}',
+        );
+      }
+      for (final platform in AiPlatform.values) {
+        final components = aiComponentsFor(platform, feature: AiFeature.stereoVideo);
+        expect(
+          components.map((component) => component.kind),
+          platform == AiPlatform.questArm64
+              ? isEmpty
+              : [AiComponentKind.runtime, AiComponentKind.archive, AiComponentKind.model],
+          reason: platform.name,
+        );
+        // Held: never in the tile, whatever its components
+        expect(aiComponentGroupsFor(platform).map((group) => group.group), isNot(contains(AiFeatureGroup.videos)));
+      }
+      // Offered once released from the hold: the runtime of the photos, the program and the model
+      final videos = aiComponentGroupsFor(
+        AiPlatform.linuxX64,
+        held: const {},
+      ).firstWhere((group) => group.group == AiFeatureGroup.videos);
+      expect(videos.all, [onnxRuntimeLinuxComponent, ffmpegLinuxComponent, videoDepthModelComponent]);
+      expect(videos.own, [ffmpegLinuxComponent, videoDepthModelComponent]);
     });
 
     test('the AV2 decoder: three archives of av2-companion v1.0.1, those of its manifest (the Windows program signed), '

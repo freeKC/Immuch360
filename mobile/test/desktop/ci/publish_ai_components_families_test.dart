@@ -709,7 +709,10 @@ void main() {
       expect(run.exitCode, 0, reason: '$run');
       expect(
         run.output,
-        contains('20 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, each complete'),
+        contains(
+          '21 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, ai-components-5, '
+          'each complete',
+        ),
       );
       // Pending before lot P2 wrote them: the run of the panoramas above starts from such a catalogue
       expect(run.output, isNot(contains('pending')));
