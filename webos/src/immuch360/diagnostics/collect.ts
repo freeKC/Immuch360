@@ -165,7 +165,8 @@ export async function collectDiagnostics(repository: PhotoRepository | null): Pr
 		{label: 'WebAssembly', value: typeof WebAssembly === 'object' ? 'yes' : 'no'},
 		{label: t('webos_diagnostics_heap'), value: heapLine((performance as {memory?: {usedJSHeapSize?: number; jsHeapSizeLimit?: number}}).memory)},
 		{label: 'Server', value: repository ? `${repository.serverUrl()}, ${serverVersion ?? '?'}` : '?'},
-		// The last video filmed upright: the size its player reported and the turn the viewer gave it (issue 17)
+		// The last video filmed upright: the size its player reported and the turn the viewer gave it, or what Samsung's
+		// AVPlay player was asked and did with it (issue 17)
 		{label: 'Video turn', value: lastVideoTurnLine()},
 	];
 	const errors = lastErrors();

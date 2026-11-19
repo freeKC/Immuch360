@@ -4699,6 +4699,7 @@
   "webos_url_shortcuts": "URL shortcuts",
   "webos_video_advice_transcode": "Let Immich transcode it (Administration, Settings, Video transcoding, policy Bitrate), or use a faster wired link.",
   "webos_video_advice_wired": "Use a faster wired link.",
+  "webos_video_avplay_fallback": "Samsung's video player could not play this video: the standard player plays it.",
   "webos_video_cannot_play": "This TV could not play this video ({format}).",
   "webos_video_file_bitrate": "This file is {bitrate} Mb/s.",
   "webos_video_fit": "Fit the picture",
