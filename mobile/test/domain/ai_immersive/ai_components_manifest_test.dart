@@ -267,9 +267,9 @@ void main() {
         expect(component.isComplete, isTrue, reason: component.id);
         expect(component.officialUrls.single, startsWith('https://'), reason: component.id);
       }
-      // Nothing held back since ai-components-4 is made (lot SP14) but the 3D videos, which their own lot offers: the
-      // panoramas are offered where their engine runs
-      expect(aiHeldFeatureGroups, {AiFeatureGroup.videos});
+      // Nothing held back since the screens of the 3D videos offered them (release 49): the panoramas are offered where
+      // their engine runs
+      expect(aiHeldFeatureGroups, isEmpty);
       for (final platform in AiPlatform.values) {
         expect(
           aiComponentGroupsFor(platform).map((group) => group.group),
@@ -413,12 +413,14 @@ void main() {
         AiFeatureGroup.splats,
         AiFeatureGroup.videos,
       ]);
-      // The 3D videos are held until their lot offers them (aiHeldFeatureGroups)
-      final offered = aiGroups.where((group) => group != AiFeatureGroup.videos);
+      // The 3D videos come last since their screens offer them (release 49), the splat scenes before them
+      final offered = aiGroups;
       final windows = aiComponentGroupsFor(AiPlatform.windowsX64);
       expect(windows.map((group) => group.group), offered);
-      expect(windows.last.all, [colmapWindowsComponent, brushWindowsComponent]);
-      expect(windows.last.own, [colmapWindowsComponent, brushWindowsComponent]);
+      final splats = windows.firstWhere((group) => group.group == AiFeatureGroup.splats);
+      expect(splats.all, [colmapWindowsComponent, brushWindowsComponent]);
+      expect(splats.own, [colmapWindowsComponent, brushWindowsComponent]);
+      expect(windows.last.own, [ffmpegWindowsComponent, videoDepthModelComponent]);
       expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
       expect(windows[1].all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
       expect(windows[1].own, [mogeGeometryComponent, lamaInpaintComponent]);
@@ -455,9 +457,9 @@ void main() {
         ).map((group) => group.group),
         [AiFeatureGroup.photos, AiFeatureGroup.scenes, AiFeatureGroup.splats],
       );
-      // Nothing held back since ai-components-4 is made (lot SP14) but the 3D videos; the splat scenes held, the
+      // Nothing held back since the screens of the 3D videos (release 49); the splat scenes and the videos held, the
       // panoramas come last
-      expect(aiHeldFeatureGroups, {AiFeatureGroup.videos});
+      expect(aiHeldFeatureGroups, isEmpty);
       expect(aiComponentGroupsFor(AiPlatform.windowsX64, catalogue: complete).map((group) => group.group), offered);
       final groups = aiComponentGroupsFor(
         AiPlatform.windowsX64,
@@ -487,67 +489,77 @@ void main() {
       expect(depthModelOnnxComponent.installedSize, depthModelOnnxComponent.size);
     });
 
-    test('the 3D videos: Video Depth Anything Small in ai-components-5, the FFmpeg program of libmpv-builds, held', () {
-      expect(AiFeatureGroup.videos.features, {AiFeature.stereoVideo});
-      expect(AiFeature.stereoVideo.isAi, isTrue);
-      expect(aiHeldFeatureGroups, contains(AiFeatureGroup.videos));
-      expect(videoDepthModelComponent.releaseTag, 'ai-components-5');
-      expect(
-        (videoDepthModelComponent.size, videoDepthModelComponent.sha256),
-        (116528885, 'eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99'),
-      );
-      expect(videoDepthModelComponent.officialUrls.single, contains('/ff810849333df46d37ea18a885fc11689661fe96/'));
-      final programs = {
-        ffmpegWindowsComponent: ['bin/ffmpeg.exe', 'bin/ffprobe.exe'],
-        ffmpegLinuxComponent: ['bin/ffmpeg', 'bin/ffprobe', 'bin/immuch360-run'],
-        ffmpegMacComponent: ['bin/ffmpeg', 'bin/ffprobe'],
-      };
-      for (final MapEntry(key: program, value: executables) in programs.entries) {
-        expect(program.releaseRepository, ffmpegProgramRepository, reason: program.id);
-        expect(program.releaseTag, ffmpegProgramReleaseTag, reason: program.id);
-        expect(program.isComplete, isTrue, reason: program.id);
-        expect(program.features, {AiFeature.stereoVideo}, reason: program.id);
+    test(
+      'the 3D videos: Video Depth Anything Small in ai-components-5, the FFmpeg program of libmpv-builds, offered',
+      () {
+        expect(AiFeatureGroup.videos.features, {AiFeature.stereoVideo});
+        expect(AiFeature.stereoVideo.isAi, isTrue);
+        expect(aiHeldFeatureGroups, isNot(contains(AiFeatureGroup.videos)));
+        expect(videoDepthModelComponent.releaseTag, 'ai-components-5');
         expect(
-          [for (final file in program.archiveFiles.where((file) => file.executable)) file.path],
-          executables,
-          reason: program.id,
+          (videoDepthModelComponent.size, videoDepthModelComponent.sha256),
+          (116528885, 'eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99'),
         );
-        expect(
-          [for (final file in program.archiveFiles) file.path],
-          containsAll([
-            'BUILD-INFO.txt',
-            'licenses/FFmpeg-COPYING.LGPLv2.1.txt',
-            'licenses/FFmpeg-SOURCE.txt',
-            'licenses/PATENTS-NOTE.md',
-          ]),
-          reason: program.id,
-        );
-        expect(
-          program.urls().single,
-          'https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/${program.assetName}',
-        );
-      }
-      for (final platform in AiPlatform.values) {
-        final components = aiComponentsFor(platform, feature: AiFeature.stereoVideo);
-        expect(
-          components.map((component) => component.kind),
-          // Not on Intel Macs: ONNX Runtime 1.23.2 was not checked with the model there
-          platform == AiPlatform.questArm64 || platform == AiPlatform.macosX64
-              ? isEmpty
-              : [AiComponentKind.runtime, AiComponentKind.archive, AiComponentKind.model],
-          reason: platform.name,
-        );
-        // Held: never in the tile, whatever its components
-        expect(aiComponentGroupsFor(platform).map((group) => group.group), isNot(contains(AiFeatureGroup.videos)));
-      }
-      // Offered once released from the hold: the runtime of the photos, the program and the model
-      final videos = aiComponentGroupsFor(
-        AiPlatform.linuxX64,
-        held: const {},
-      ).firstWhere((group) => group.group == AiFeatureGroup.videos);
-      expect(videos.all, [onnxRuntimeLinuxComponent, ffmpegLinuxComponent, videoDepthModelComponent]);
-      expect(videos.own, [ffmpegLinuxComponent, videoDepthModelComponent]);
-    });
+        expect(videoDepthModelComponent.officialUrls.single, contains('/ff810849333df46d37ea18a885fc11689661fe96/'));
+        final programs = {
+          ffmpegWindowsComponent: ['bin/ffmpeg.exe', 'bin/ffprobe.exe'],
+          ffmpegLinuxComponent: ['bin/ffmpeg', 'bin/ffprobe', 'bin/immuch360-run'],
+          ffmpegMacComponent: ['bin/ffmpeg', 'bin/ffprobe'],
+        };
+        for (final MapEntry(key: program, value: executables) in programs.entries) {
+          expect(program.releaseRepository, ffmpegProgramRepository, reason: program.id);
+          expect(program.releaseTag, ffmpegProgramReleaseTag, reason: program.id);
+          expect(program.isComplete, isTrue, reason: program.id);
+          expect(program.features, {AiFeature.stereoVideo}, reason: program.id);
+          expect(
+            [for (final file in program.archiveFiles.where((file) => file.executable)) file.path],
+            executables,
+            reason: program.id,
+          );
+          expect(
+            [for (final file in program.archiveFiles) file.path],
+            containsAll([
+              'BUILD-INFO.txt',
+              'licenses/FFmpeg-COPYING.LGPLv2.1.txt',
+              'licenses/FFmpeg-SOURCE.txt',
+              'licenses/PATENTS-NOTE.md',
+            ]),
+            reason: program.id,
+          );
+          expect(
+            program.urls().single,
+            'https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/${program.assetName}',
+          );
+        }
+        for (final platform in AiPlatform.values) {
+          final components = aiComponentsFor(platform, feature: AiFeature.stereoVideo);
+          expect(
+            components.map((component) => component.kind),
+            // Not on Intel Macs: ONNX Runtime 1.23.2 was not checked with the model there
+            platform == AiPlatform.questArm64 || platform == AiPlatform.macosX64
+                ? isEmpty
+                : [AiComponentKind.runtime, AiComponentKind.archive, AiComponentKind.model],
+            reason: platform.name,
+          );
+          // In the tile where the feature runs, out of it elsewhere; never when held again
+          expect(
+            aiComponentGroupsFor(platform).map((group) => group.group),
+            components.isEmpty ? isNot(contains(AiFeatureGroup.videos)) : contains(AiFeatureGroup.videos),
+            reason: platform.name,
+          );
+          expect(
+            aiComponentGroupsFor(platform, held: const {AiFeatureGroup.videos}).map((group) => group.group),
+            isNot(contains(AiFeatureGroup.videos)),
+          );
+        }
+        // The runtime of the photos, the program and the model
+        final videos = aiComponentGroupsFor(
+          AiPlatform.linuxX64,
+        ).firstWhere((group) => group.group == AiFeatureGroup.videos);
+        expect(videos.all, [onnxRuntimeLinuxComponent, ffmpegLinuxComponent, videoDepthModelComponent]);
+        expect(videos.own, [ffmpegLinuxComponent, videoDepthModelComponent]);
+      },
+    );
 
     test('the AV2 decoder: three archives of av2-companion v1.0.1, those of its manifest (the Windows program signed), '
         'never in the tile of the AI', () {

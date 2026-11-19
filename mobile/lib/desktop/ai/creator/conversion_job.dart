@@ -8,6 +8,11 @@
 // waits when the other lane runs. The splat scene (plan 2026-11-01, lot SP0) adds a kind of the graphics card whose
 // engine tells the time left of the whole job, its steps between COLMAP and Brush being counted in images and steps.
 //
+// The 3D video (release 49, store/m2/release-49/lots/video3d-plan.md) is a kind of the processor lane run by an engine
+// of its own (VideoJobEngine of video3d/video_jobs.dart) rather than ImmersiveEngine: hours of work in segments, a
+// work folder beside its MP4, Pause that keeps it (the state paused, Resume going on from it), its frames, segment and
+// pace while it runs (ConversionJob.videoProgress).
+//
 // A source says how to get the bytes the engine reads: a file of this computer is read in place, a server original or
 // a file of a share is copied to a temporary folder first (by the screens, lot A5c). Either way the original is never
 // opened for writing.
@@ -19,6 +24,8 @@ import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/desktop/library/native_sha1.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
@@ -32,13 +39,15 @@ enum ConversionLane { cpu, gpu }
 
 /// What a job makes: "2D to 3D SBS" (phase 1), "2D to 3D scene", "2D to 360° panorama", "360° to 3D 360°", and
 /// "Photos to splat scene" from a whole selection of photos or one video, on the lane of the graphics card (its poses
-/// run on the processor, but the training holds the card)
+/// run on the processor, but the training holds the card); and "2D video to 3D" (release 49), on the processor, whose
+/// MP4 holds two eyes side by side as a 3D photo does (its [output]), but carries no XMP and is made by its own engine
 enum ConversionKind {
   sbsFromPhoto(ImmersiveKind.stereoPhoto, ConversionLane.cpu),
   sceneFromPhoto(ImmersiveKind.volumetricScene, ConversionLane.cpu),
   panoramaFromPhoto(ImmersiveKind.panorama360, ConversionLane.gpu),
   stereoPanoramaFromPanorama(ImmersiveKind.stereoPanorama360, ConversionLane.cpu),
-  splatScene(ImmersiveKind.gaussianSplat, ConversionLane.gpu);
+  splatScene(ImmersiveKind.gaussianSplat, ConversionLane.gpu),
+  stereoVideo(ImmersiveKind.stereoPhoto, ConversionLane.cpu);
 
   const ConversionKind(this.output, this.lane);
 
@@ -48,8 +57,15 @@ enum ConversionKind {
   /// The lane it runs on
   final ConversionLane lane;
 
+  /// A 3D video: its own engine, its own panel line, Pause and Resume
+  bool get isVideo => this == stereoVideo;
+
+  /// The steps of a 3D video as the queue shows them: the video read and its encoder tested, the frames (depth, right
+  /// eye, encoding, segment after segment), the final mux
+  static const videoStages = [ImmersiveStage.reading, ImmersiveStage.depth, ImmersiveStage.writing];
+
   /// The steps of its engine, in their order
-  List<ImmersiveStage> get stages => ImmersiveStage.of(output);
+  List<ImmersiveStage> get stages => isVideo ? videoStages : ImmersiveStage.of(output);
 
   /// Whether its engine tells the time left of the whole job (ImmersiveProgress.remaining), which the time left then
   /// is, rather than what the timings of the steps leave: the time of a splat scene follows its images, its pairs and
@@ -185,7 +201,10 @@ enum ConversionState {
   done,
   skipped,
   cancelled,
-  failed;
+  failed,
+
+  /// A 3D video stopped with its work kept: Resume goes on where it stopped, at once or at a later start
+  paused;
 
   /// The step of the engine it stands for, null for waiting and the ends
   ImmersiveStage? get stage => isActive ? ImmersiveStage.values.byName(name) : null;
@@ -197,6 +216,7 @@ enum ConversionState {
     skipped => ConversionPhase.skipped,
     cancelled => ConversionPhase.cancelled,
     failed => ConversionPhase.failed,
+    paused => ConversionPhase.paused,
     _ => switch (stage!.phase) {
       ImmersivePhase.preparing => ConversionPhase.preparing,
       ImmersivePhase.computing => ConversionPhase.computing,
@@ -204,7 +224,7 @@ enum ConversionState {
     },
   };
 
-  /// Done, skipped, cancelled or failed: nothing more happens to the job unless it is retried
+  /// Done, skipped, cancelled, failed or paused: nothing more happens to the job unless it is retried or resumed
   bool get isEnded => index >= done.index;
 
   /// Between waiting and its end
@@ -241,7 +261,7 @@ enum ConversionState {
 }
 
 /// The states as the spec words them (5.3 and 5.4): the texts are the ai_immersive_state_ keys
-enum ConversionPhase { waiting, preparing, computing, finishing, done, skipped, cancelled, failed }
+enum ConversionPhase { waiting, preparing, computing, finishing, done, skipped, cancelled, failed, paused }
 
 /// Why a job was skipped
 enum ConversionSkipReason {
@@ -294,6 +314,13 @@ enum ConversionSkipReason {
 
   /// A 3D video: no video stream, or a file the FFmpeg program cannot open
   unreadableVideo,
+
+  /// A photo, for the 3D video type, which takes videos only
+  photo,
+
+  /// A 3D video: a video this computer has no file of (one of the server, of a share); version 1 reads the files of
+  /// the folders of this computer and those opened with the program
+  videoNotLocal,
 }
 
 /// What a batch does with a photo that already has a version with the same settings. A name taken by another file is
@@ -500,9 +527,25 @@ class ConversionJob {
     this.placed,
     this.keptFolder,
     this.segments,
+    this.video,
+    this.videoProgress,
+    this.videoDone,
+    this.yielding = false,
   });
 
   final String id;
+
+  /// A 3D video: what the dialog chose, its work folder and its record; null for the other kinds
+  final VideoJobSettings? video;
+
+  /// A 3D video under way, or stopped: its frames, its segments and its pace as the engine last told them
+  final VideoJobProgress? videoProgress;
+
+  /// A 3D video made: what its engine tells of it
+  final VideoJobResult? videoDone;
+
+  /// A 3D video that lets the 3D photos asked meanwhile run between two of its windows
+  final bool yielding;
 
   /// A splat scene: its photos or its video, and its settings; null for the other kinds
   final SplatSelection? splat;
@@ -639,6 +682,9 @@ class ConversionJob {
     SplatPlaced? placed,
     String? keptFolder,
     int? Function()? segments,
+    VideoJobProgress? Function()? videoProgress,
+    VideoJobResult? videoDone,
+    bool? yielding,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -676,10 +722,15 @@ class ConversionJob {
     placed: placed ?? this.placed,
     keptFolder: keptFolder ?? this.keptFolder,
     segments: segments == null ? this.segments : segments(),
+    video: video,
+    videoProgress: videoProgress == null ? this.videoProgress : videoProgress(),
+    videoDone: videoDone ?? this.videoDone,
+    yielding: yielding ?? this.yielding,
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then. [keepsWaiting]: it
-  /// waits for the memory of the graphics card as long as it takes
+  /// waits for the memory of the graphics card as long as it takes. A 3D video keeps where it stopped: Resume goes on
+  /// from its work folder
   ConversionJob restarted({bool keepsWaiting = false}) => ConversionJob(
     id: id,
     source: source,
@@ -696,6 +747,10 @@ class ConversionJob {
     keepsWaiting: keepsWaiting,
     fromVideo: fromVideo,
     splat: splat,
+    video: video,
+    // A 3D video goes on from its work folder: where it stopped stays shown until its engine tells more
+    perMille: video == null ? 0 : perMille,
+    videoProgress: videoProgress,
   );
 
   @override

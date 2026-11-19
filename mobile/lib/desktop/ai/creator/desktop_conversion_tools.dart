@@ -31,6 +31,11 @@
 // from one job to the next in the support folder of the app, one folder per card and driver. The writer puts the .ply
 // of a scene beside its .spz, under the same name (ConversionCompanionOutput).
 //
+// The 3D videos (release 49, store/m2/release-49/lots/video3d-plan.md) have an engine of their own
+// (videoJobEngineProvider): when a job starts, the gate of the feature stereoVideo gives the FFmpeg program of its
+// archive (ffmpeg and ffprobe, through immuch360-run on Linux, by a runner of the same session), ONNX Runtime and Video
+// Depth Anything Small, which a worker isolate opens for the job. The videos not finished are kept in video_jobs.json.
+//
 // The writer adapts SafeWriter to the queue. The partial file the dialog made to check a folder is handed over to the
 // job of that photo, which writes into it; one no job took (a photo skipped, cancelled while waiting) is deleted at
 // once. Its refusals become the codes of the queue: a disk full at the rename still pauses it. Before the final rename
@@ -67,6 +72,10 @@ import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/colmap_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_engine.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_images.dart';
+import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_app_runtime.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/files/save_to_folder.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -1028,6 +1037,69 @@ final conversionEnginesProvider = Provider<Map<ConversionKind, ConversionEngine>
   },
 );
 
+/// The engine of the 3D videos (release 49): none by default (the tests, a build that makes none), the one of the
+/// computers given by desktopOverrides() ([desktopVideoJobEngine])
+final videoJobEngineProvider = Provider<VideoJobEngine?>((ref) => null);
+
+/// The engine of the 3D videos of the app: the setup of each job from what the gate finds when it starts, its log in
+/// the logs folder of the app
+VideoJobEngine desktopVideoJobEngine(Ref ref) {
+  final gate = ref.watch(desktopAiGateProvider);
+  return DesktopVideoJobEngine(
+    setup: () => desktopVideoJobSetup(gate, ref.read(aiProcessSessionProvider)),
+    logs: appLogsDirectory,
+  );
+}
+
+/// video_jobs.json of the support folder: the 3D videos not finished
+final videoJobsStoreProvider = Provider<VideoJobsStore>((ref) => VideoJobsStore.instance);
+
+/// What a 3D video runs with, as the gate of the feature stereoVideo finds it now: ffmpeg and ffprobe of the archive of
+/// this system (bin/ of its folder; through immuch360-run beside them on Linux), ONNX Runtime and Video Depth Anything
+/// Small for the worker isolate of the job. Throws a [ConversionException] when the gate refuses or a component is
+/// missing: a job never downloads anything.
+Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession session) async {
+  final found = await gate.evaluate(feature: AiFeature.stereoVideo);
+  final platform = found.platform;
+  if (!found.isAvailable || platform == null) {
+    throw ConversionException(panoramaRefusalCode(found.reason), found.message ?? found.reason?.name);
+  }
+  final archive = aiComponentsFor(
+    platform,
+    feature: AiFeature.stereoVideo,
+  ).where((component) => component.kind == AiComponentKind.archive).firstOrNull;
+  final ffmpeg = archive == null ? null : found.fileOf(archive.id)?.path;
+  final runtime = found.runtimeFile?.path;
+  final model = found.modelFile?.path;
+  if (ffmpeg == null || runtime == null || model == null) {
+    throw const ConversionException(ImmersiveErrorCode.componentsMissing, 'A component of the 3D videos is missing');
+  }
+  final bin = p.dirname(ffmpeg);
+  final windows = platform == AiPlatform.windowsX64;
+  final launcher = platform == AiPlatform.linuxX64 ? p.join(bin, linuxLauncherName) : null;
+  return VideoJobSetup(
+    ffmpeg: ffmpeg,
+    ffprobe: p.join(bin, windows ? 'ffprobe.exe' : 'ffprobe'),
+    runner: ManagedVideoProgramRunner(session.runner(linuxLauncher: launcher)),
+    modelSha256: videoDepthModelComponent.sha256,
+    worker: (sizes, relief) => IsolateVideoFrameWorker.spawn(
+      VideoWorkerSetup(
+        ortLibrary: runtime,
+        modelPath: model,
+        eyeWidth: sizes.eyeWidth,
+        eyeHeight: sizes.eyeHeight,
+        modelWidth: sizes.modelWidth,
+        modelHeight: sizes.modelHeight,
+        parallax: relief.parallax,
+        convergence: relief.convergence,
+        half: relief.packing == VideoSbsPacking.half,
+        edgeFade: relief.edgeFade,
+        alignment: VideoDepthAlignment.upstream,
+      ),
+    ),
+  );
+}
+
 /// desktop_ai.json, where the screens read and keep the settings of the conversions
 final desktopAiSettingsStoreProvider = Provider<DesktopAiSettingsStore>((ref) => DesktopAiSettingsStore.instance);
 
@@ -1066,6 +1138,9 @@ ConversionTools desktopConversionTools(Ref ref) {
     software: aiSoftware(version),
     settings: ref.watch(desktopAiSettingsStoreProvider),
     processors: Platform.numberOfProcessors,
+    video: ref.watch(videoJobEngineProvider),
+    videoJobs: ref.watch(videoJobsStoreProvider),
+    appVersion: version,
     // The answer of the probe the gate keeps is asked again, so that the dialog and the settings see it too
     gpuBudget: GpuBudget(
       probe: () => gate.gpuReport(fresh: true),

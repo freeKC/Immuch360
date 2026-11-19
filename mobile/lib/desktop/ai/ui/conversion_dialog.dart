@@ -57,6 +57,23 @@
 // 360° photo of a whole sphere that holds one eye for its 3D version, by the rule of the plan (conversionSkipOf), a
 // photo of 2:1 nothing flags 360° among them. With "Also save a .glb copy", each scene made gets its .glb next to it
 // (scene_glb_export.dart).
+//
+// The 3D video (release 49, store/m2/release-49/lots/video3d-plan.md, sections 4.2 and 4.3) is a type of this dialog
+// too, "3D video (experimental)", for the flat videos of the selection, the entry offered in the viewer of a flat video
+// (aiFlatVideoProvider): what it does in plain words ("Relief estimated by AI from a single camera, 32 frames at a
+// time") and that it is experimental and was not checked on a 3D screen or in a headset; Quality (Fast, Standard by
+// default, Fine with 16 GB of memory or more), the relief strength of the videos (Subtle by default) and Full or Half
+// side by side, each kept for the next dialog; the components of the feature with their sizes and licences, downloaded
+// on Download only. Once the FFmpeg program is there, each video is read (its ffprobe and the app's probe of its st3d
+// and sv3d boxes): a 360° or VR180 video, one already 3D, interlaced, Dolby Vision without a standard picture (profile
+// 5), turned by an angle that is not a quarter turn, or unreadable, is skipped with its reason; what the job does to the
+// others is said (HDR tone mapped, 10 bit made 8 bit, a variable rate kept, slow motion made 30 fps, the sound kept or
+// what of it cannot be, subtitles and data not kept, a night or more for a long one). Then the encoder this computer
+// passes its one second test with (H.264, or AV1 that a Quest 2 cannot play), the time of the work as a range marked a
+// first guess (this computer's last 3D video at that quality, else an estimate from the measures of the study), the
+// memory it takes, the free space it needs on the drive of its destination (Convert waits for room), and where the MP4
+// goes, `<name>_3D_LRF_Full_SBS.mp4` by the rules of the photos (next to the original or a folder of my choice). A video
+// with no file on this computer (on the server or a share) is skipped with that reason in this version.
 
 import 'dart:async';
 import 'dart:io';
@@ -88,6 +105,11 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_parts.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_estimates.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/files/opened_files.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
@@ -98,6 +120,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
@@ -178,6 +201,7 @@ const conversionDialogKinds = [
   ConversionKind.sceneFromPhoto,
   ConversionKind.panoramaFromPhoto,
   ConversionKind.stereoPanoramaFromPanorama,
+  ConversionKind.stereoVideo,
 ];
 
 /// The types of [conversionDialogKinds] this build makes: the 3D photo always, another one once its lot registered its
@@ -185,11 +209,13 @@ const conversionDialogKinds = [
 /// its group is not held back by this version (HardwareGate.heldGroups)
 final offeredConversionKindsProvider = Provider.autoDispose<List<ConversionKind>>((ref) {
   final engines = ref.watch(conversionEnginesProvider);
+  final video = ref.watch(videoJobEngineProvider) != null;
   final held = ref.watch(desktopAiGateProvider).heldGroups;
   bool isHeld(ConversionKind kind) => held.any((group) => group.features.contains(aiFeatureOf(kind)));
+  bool made(ConversionKind kind) => kind.isVideo ? video : engines.containsKey(kind);
   return [
     for (final kind in conversionDialogKinds)
-      if (kind == ConversionKind.sbsFromPhoto || (engines.containsKey(kind) && !isHeld(kind))) kind,
+      if (kind == ConversionKind.sbsFromPhoto || (made(kind) && !isHeld(kind))) kind,
   ];
 });
 
@@ -200,6 +226,7 @@ AiFeature aiFeatureOf(ConversionKind kind) => switch (kind) {
   ConversionKind.panoramaFromPhoto => AiFeature.panorama,
   ConversionKind.stereoPanoramaFromPanorama => AiFeature.stereoPanorama,
   ConversionKind.splatScene => AiFeature.splatScene,
+  ConversionKind.stereoVideo => AiFeature.stereoVideo,
 };
 
 /// The name of a type of version in the dialog: "3D photo", "3D scene"
@@ -209,6 +236,7 @@ String conversionKindName(Translations t, ConversionKind kind) => switch (kind) 
   ConversionKind.panoramaFromPhoto => t.ai_immersive_type_panorama,
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_type_stereo_360,
   ConversionKind.splatScene => t.ai_immersive_type_splat,
+  ConversionKind.stereoVideo => t.ai_immersive_type_video,
 };
 
 /// What a type of version is, in the words of its honesty label; the 3D version of a panorama the app [generated] is
@@ -220,6 +248,7 @@ String conversionKindHonesty(Translations t, ConversionKind kind, {bool generate
   ConversionKind.stereoPanoramaFromPanorama when generated => t.ai_immersive_panorama_honesty,
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
   ConversionKind.splatScene => t.ai_immersive_splat_honesty,
+  ConversionKind.stereoVideo => t.ai_immersive_video_line,
 };
 
 /// "6 s", "4 min": a time of the conversions, the seconds rounded up under a minute, the minutes rounded above
@@ -440,6 +469,8 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
       ConversionSkipReason.dolbyVisionProfile5 => t.ai_immersive_skipped_dolby_vision,
       ConversionSkipReason.oddRotation => t.ai_immersive_skipped_rotation,
       ConversionSkipReason.unreadableVideo => t.ai_immersive_skipped_unreadable_video,
+      ConversionSkipReason.photo => t.ai_immersive_skipped_photo,
+      ConversionSkipReason.videoNotLocal => t.ai_immersive_skipped_video_not_local,
     };
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere (a raw one of a 360°
@@ -759,6 +790,9 @@ ConversionSkipReason? conversionSkipOf(
   ConversionKind kind = ConversionKind.sbsFromPhoto,
   bool? linux,
 }) {
+  if (kind.isVideo) {
+    return videoSkipOf(asset, facts);
+  }
   if (asset.isVideo || !asset.isImage) {
     return ConversionSkipReason.video;
   }
@@ -805,6 +839,31 @@ ConversionSkipReason? conversionSkipOf(
   }
   return null;
 }
+
+/// The reason to skip [asset] for a 3D video known before its file is read, from its [facts]: a photo; a video the
+/// 360° rules take (its coverage telling a VR180 one); one already 3D, by the index of the versions, its name words
+/// (SBS, OU...) or its frame (two eyes side by side or stacked). The ffprobe of the file tells the rest
+/// (checkVideoSource).
+ConversionSkipReason? videoSkipOf(BaseAsset asset, ConversionPhotoFacts facts) {
+  if (!asset.isVideo) {
+    return ConversionSkipReason.photo;
+  }
+  if (facts.isPanorama) {
+    final half =
+        (facts.coverage ?? guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height)) ==
+        SphereCoverage.half;
+    return half ? ConversionSkipReason.vr180 : ConversionSkipReason.sphere360;
+  }
+  if (facts.isStereo || isStereoVideoByLook(asset)) {
+    return ConversionSkipReason.alreadyStereo;
+  }
+  return null;
+}
+
+/// Whether [asset] shows two eyes by its name words or its frame alone, as the players read a video
+bool isStereoVideoByLook(BaseAsset asset) =>
+    guessFlatStereoFormat(fileName: asset.name, isVideo: true) != null ||
+    isStereoFrameShape(asset.width ?? 0, asset.height ?? 0);
 
 /// Whether a photo the 360° rules leave flat, of the camera [make] its exif names, may be the raw photo of an Insta360
 /// camera renamed .jpg: its stitched photos have the same make and the same 2:1 frame, and only the trailer of the
@@ -885,8 +944,18 @@ final aiSourceProvider = Provider.autoDispose.family<bool, ({BaseAsset asset, Co
           ConversionKind.panoramaFromPhoto => ref.watch(aiFlatPhotoProvider(source.asset)),
           ConversionKind.stereoPanoramaFromPanorama => ref.watch(aiMonoPanoramaProvider(source.asset)),
           ConversionKind.splatScene => false,
+          ConversionKind.stereoVideo => ref.watch(aiFlatVideoProvider(source.asset)),
         },
 );
+
+/// Whether the viewer offers "Make 3D (AI)" for [asset] as a 3D video: a video the 360° rules leave flat, neither two
+/// eyes by its name or its frame, nor a version the app made. Its file tells the rest in the dialog.
+final aiFlatVideoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
+  if (!asset.isVideo || ref.watch(isPanoramaProvider(asset)) || _versionOf(ref, asset) != null) {
+    return false;
+  }
+  return !isStereoVideoByLook(asset);
+});
 
 /// Whether the viewer offers "Make 3D (AI)" for [asset]: a flat photo this system can read, neither 360°, nor two eyes
 /// side by side, nor a version the app made, nor an Apple spatial photo (hidden until the check of a HEIF photo
@@ -946,6 +1015,70 @@ final aiMonoPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>((ref
   return conversionSkipOf(asset, facts, kind: ConversionKind.stereoPanoramaFromPanorama) == null;
 });
 
+/// What the dialog reads of the videos of a 3D video job with the FFmpeg program: each video, and the encoder that
+/// passes its one second test at a size
+abstract interface class VideoDialogProbe {
+  Future<VideoDialogFacts> read(String path);
+
+  Future<VideoEncoder?> encoder(int width, int height, VideoRate rate);
+}
+
+/// The probe of the programs of [setup]
+class SetupVideoDialogProbe implements VideoDialogProbe {
+  const SetupVideoDialogProbe(this.setup);
+
+  final VideoJobSetup setup;
+
+  @override
+  Future<VideoDialogFacts> read(String path) => readVideoDialogFacts(setup, path);
+
+  @override
+  Future<VideoEncoder?> encoder(int width, int height, VideoRate rate) =>
+      chooseVideoEncoder(setup.runner, setup.ffmpeg, VideoEncoder.forThisComputer, width, height, rate);
+}
+
+/// The probe of the dialog once the components of the 3D videos are there, null before; the tests give theirs
+final videoDialogProbeProvider = Provider<Future<VideoDialogProbe?> Function()>((ref) {
+  final gate = ref.watch(desktopAiGateProvider);
+  return () async {
+    try {
+      return SetupVideoDialogProbe(await desktopVideoJobSetup(gate, ref.read(aiProcessSessionProvider)));
+    } on ConversionException catch (error) {
+      _log.fine('The FFmpeg program of the 3D videos is not ready: $error');
+      return null;
+    }
+  };
+});
+
+/// "40 min", "3 h 20 min": a time of the work of a 3D video
+String videoDurationText(Translations t, Duration duration) {
+  if (duration.inMinutes < 60) {
+    return aiDurationText(t, duration);
+  }
+  return t.ai_immersive_duration_hours(hours: duration.inHours, minutes: duration.inMinutes % 60);
+}
+
+/// The words of a note of the plan of a 3D video
+String videoPlanNoteText(Translations t, VideoPlanNote note) => switch (note) {
+  VideoPlanNote.hdrToneMapped => t.ai_immersive_video_note_hdr,
+  VideoPlanNote.dolbyVisionBaseLayer => t.ai_immersive_video_note_dolby_vision,
+  VideoPlanNote.deepColour => t.ai_immersive_video_note_deep_colour,
+  VideoPlanNote.variableRate => t.ai_immersive_video_note_variable_rate,
+  VideoPlanNote.slowMotion => t.ai_immersive_video_note_slow_motion,
+  VideoPlanNote.allAudioKept => t.ai_immersive_video_note_audio,
+  VideoPlanNote.audioNotKept => t.ai_immersive_video_note_audio_not_kept,
+  VideoPlanNote.subtitlesNotKept => t.ai_immersive_video_note_subtitles,
+  VideoPlanNote.dataNotKept => t.ai_immersive_video_note_data,
+  VideoPlanNote.long => t.ai_immersive_video_note_long,
+};
+
+/// The name of a quality of the depth of a 3D video
+String videoQualityText(Translations t, VideoDepthQuality quality) => switch (quality) {
+  VideoDepthQuality.fast => t.ai_immersive_video_quality_fast,
+  VideoDepthQuality.standard => t.ai_immersive_video_quality_standard,
+  VideoDepthQuality.fine => t.ai_immersive_video_quality_fine,
+};
+
 /// "Make 3D (AI)" for the photos of [source]: a menu item of the viewer, or a button of the bottom sheet of a
 /// selection
 class DesktopMakeImmersiveButton extends ConsumerWidget {
@@ -960,12 +1093,14 @@ class DesktopMakeImmersiveButton extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     final assets = ref.watch(assetsActionProvider(source)).toList();
-    if (!assets.any((asset) => asset.isImage)) {
+    final offered = ref.watch(offeredConversionKindsProvider);
+    final videos = offered.contains(ConversionKind.stereoVideo);
+    if (!assets.any((asset) => asset.isImage || (videos && asset.isVideo))) {
       return const SizedBox.shrink();
     }
     // In the viewer, the types that take the photo shown; in a selection, every type, the dialog plans each photo
     final kinds = [
-      for (final kind in ref.watch(offeredConversionKindsProvider))
+      for (final kind in offered)
         if (source != ActionSource.viewer || ref.watch(aiSourceProvider((asset: assets.first, kind: kind)))) kind,
     ];
     if (kinds.isEmpty) {
@@ -1085,6 +1220,25 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   /// The relief strength of the 3D photos, the one chosen last as kept in desktop_ai.json
   var _strength = ReliefStrength.normal;
 
+  /// A 3D video: its relief strength (Subtle by default), its quality chosen here (the one kept, else Standard, when
+  /// none), Half side by side, as kept in desktop_ai.json
+  var _videoStrength = ReliefStrength.subtle;
+  VideoDepthQuality? _videoQuality;
+  var _videoHalf = false;
+
+  /// What the FFmpeg program read of each video, by the path of its file; the probe once started, its reading under
+  /// way, and the encoder its one second test found (tested once)
+  final _videoFacts = <String, VideoDialogFacts>{};
+  var _videoProbeStarted = false;
+  var _videoReading = false;
+  var _videoProbed = false;
+  VideoEncoder? _videoEncoder;
+  var _videoEncoderTested = false;
+
+  /// The free space of the drive of the destination of the 3D videos, read for the folder [_videoFreeFolder]
+  AiFreeSpace? _videoFree;
+  String? _videoFreeFolder;
+
   /// The part of the panoramas of the selection the AI invents, in percent, the smallest of them; null until read
   int? _invented;
 
@@ -1159,6 +1313,8 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     _existing = _settings.skipExisting ? ExistingVersionChoice.skip : ExistingVersionChoice.newVersion;
     _alsoStereo = _settings.alsoStereoPanorama;
     _strength = _settings.reliefStrength;
+    _videoStrength = _settings.videoReliefStrength;
+    _videoHalf = _settings.videoHalfSbs;
     _offered = ref.read(offeredConversionKindsProvider);
     _reading = true;
     List<_Photo>? photos;
@@ -1339,9 +1495,127 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     }
   }
 
-  /// Why [photo] is skipped for a version of [kind], null when it runs
-  ConversionSkipReason? _skipOf(_Photo photo, ConversionKind kind) =>
-      conversionSkipOf(photo.asset, photo.facts, kind: kind) ?? (photo.found == null ? photo.missing : null);
+  /// Why [photo] is skipped for a version of [kind], null when it runs. A 3D video reads a file of this computer, and
+  /// once the FFmpeg program read it, its verdict.
+  ConversionSkipReason? _skipOf(_Photo photo, ConversionKind kind) {
+    final known =
+        conversionSkipOf(photo.asset, photo.facts, kind: kind) ?? (photo.found == null ? photo.missing : null);
+    if (known != null || !kind.isVideo) {
+      return known;
+    }
+    final source = photo.found!.source;
+    if (source is! LocalFileSource) {
+      return ConversionSkipReason.videoNotLocal;
+    }
+    return switch (_videoFacts[source.path]?.check.skip) {
+      final refusal? => videoSkipReason(refusal),
+      null => null,
+    };
+  }
+
+  VideoSbsPacking get _videoPacking => _videoHalf ? VideoSbsPacking.half : VideoSbsPacking.full;
+
+  /// The qualities this computer is offered, by its memory as the gate read it (all of them when it is not known)
+  List<VideoDepthQuality> _videoQualities(AiGateResult? gate) => switch (gate?.physicalMemory) {
+    final memory? => videoQualitiesFor(memory),
+    null => VideoDepthQuality.values,
+  };
+
+  /// The quality chosen here when this computer is offered it, else the one kept, else Standard
+  VideoDepthQuality _videoQualityOf(List<VideoDepthQuality> offered) => switch (_videoQuality) {
+    final chosen? when offered.contains(chosen) => chosen,
+    _ => videoDefaultQuality(offered, _settings.videoQuality),
+  };
+
+  /// Reads each video that runs with the FFmpeg program, once it is there, then plans the selection again without the
+  /// videos it refuses, and tests the encoder at the size of the first one
+  Future<void> _probeVideos() async {
+    if (_videoProbeStarted || _photos == null) {
+      return;
+    }
+    _videoProbeStarted = true;
+    setState(() => _videoReading = true);
+    final probe = await ref.read(videoDialogProbeProvider)();
+    if (!mounted || _closed) {
+      return;
+    }
+    if (probe == null) {
+      // Not ready after all (a component damaged): asked again once the gate changes
+      setState(() {
+        _videoReading = false;
+        _videoProbeStarted = false;
+      });
+      return;
+    }
+    for (final candidate in _runs.toList()) {
+      final source = candidate.source;
+      if (source is! LocalFileSource || _videoFacts.containsKey(source.path)) {
+        continue;
+      }
+      try {
+        _videoFacts[source.path] = await probe.read(source.path);
+      } catch (error) {
+        _log.warning('${candidate.asset.name} could not be read for a 3D video: $error');
+        _videoFacts[source.path] = VideoDialogFacts(check: checkVideoSource(null, fileName: candidate.asset.name));
+      }
+      if (!mounted || _closed) {
+        return;
+      }
+    }
+    setState(() {
+      _videoReading = false;
+      _videoProbed = true;
+    });
+    if (_kind.isVideo) {
+      await _plan();
+    }
+    final first = _videoAccepted.firstOrNull?.check;
+    final video = first?.source;
+    final grid = first?.grid;
+    if (video != null && grid != null && mounted && !_closed) {
+      final eye = videoEyeSize(video);
+      VideoEncoder? encoder;
+      try {
+        // At the size of Full side by side, the larger one
+        encoder = await probe.encoder(eye.width * 2, eye.height, grid.rate);
+      } catch (error) {
+        _log.warning('The encoders of this computer could not be tested: $error');
+      }
+      if (mounted && !_closed) {
+        setState(() {
+          _videoEncoder = encoder;
+          _videoEncoderTested = true;
+        });
+      }
+    }
+  }
+
+  /// What the FFmpeg program read of the videos that run
+  List<VideoDialogFacts> get _videoAccepted => [
+    for (final candidate in _runs)
+      if (candidate.source case LocalFileSource(:final path))
+        if (_videoFacts[path] case final facts? when facts.check.accepted) facts,
+  ];
+
+  /// Reads the free space of the drive of [folder], once per folder
+  Future<void> _readVideoFree(String folder) async {
+    if (_videoFreeFolder == folder) {
+      return;
+    }
+    _videoFreeFolder = folder;
+    final reader = ref.read(aiFreeSpaceProvider);
+    if (reader == null) {
+      return;
+    }
+    try {
+      final free = await reader(Directory(folder));
+      if (mounted && !_closed && _videoFreeFolder == folder) {
+        setState(() => _videoFree = free);
+      }
+    } catch (error) {
+      _log.fine('The free space of $folder is not known: $error');
+    }
+  }
 
   List<ConversionCandidate> _candidatesFor(ConversionKind kind) => [
     for (final (index, photo) in _photos!.indexed)
@@ -1396,7 +1670,13 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
 
     final jobs = [
       for (final candidate in candidates)
-        if (candidate.runs) DestinationJob(id: candidate.id!, original: candidate.location!, kind: kind.output),
+        if (candidate.runs)
+          DestinationJob(
+            id: candidate.id!,
+            original: candidate.location!,
+            kind: kind.output,
+            fileName: kind.isVideo ? videoOutputName(candidate.location!.name, _videoPacking) : null,
+          ),
     ];
     final session = jobs.isEmpty
         ? null
@@ -1534,6 +1814,10 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       }
     }
     _launched = true;
+    if (kind.isVideo) {
+      await _convertVideos(session);
+      return;
+    }
     final alsoStereo = kind == ConversionKind.panoramaFromPhoto && _alsoStereo;
     final candidates = _candidates!;
     final settings = await _store.read();
@@ -1642,6 +1926,68 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     }
   }
 
+  /// Convert of 3D videos: each video that runs to the queue, in the folder its plan says, its own work folder beside
+  /// its MP4; the settings of the videos kept for the next dialog
+  Future<void> _convertVideos(DestinationSession session) async {
+    final candidates = _candidates!;
+    final quality = _videoQualityOf(
+      _videoQualities(ref.read(aiGateResultForProvider(AiFeature.stereoVideo)).valueOrNull),
+    );
+    final packing = _videoPacking;
+    final requests = <ConversionRequest>[];
+    for (final candidate in candidates) {
+      final plan = candidate.runs ? session.destinations[candidate.id] : null;
+      // A folder of a share is not written into by a 3D video in this version
+      final folder = plan == null || plan.share != null ? null : plan.folder;
+      requests.add(
+        folder == null
+            ? ConversionRequest(source: candidate.source, skip: candidate.skip ?? ConversionSkipReason.unreachable)
+            : ConversionRequest(
+                source: candidate.source,
+                target: ConversionTarget(folder: folder, fileName: videoOutputName(candidate.location!.name, packing)),
+              ),
+      );
+    }
+    await ref.read(aiAppVersionProvider.future);
+    final now = DateTime.now();
+    final ids = ref
+        .read(conversionQueueProvider.notifier)
+        .addVideos(
+          requests,
+          settingsOf: (index) {
+            final id = newVideoRecordId(now, index);
+            return VideoJobSettings(
+              recordId: id,
+              workFolder: videoWorkFolderIn(requests[index].target!.folder, id),
+              quality: quality,
+              strength: _videoStrength,
+              packing: packing,
+            );
+          },
+        );
+    ref.read(conversionJobInfoProvider.notifier).addAll({
+      for (final (index, id) in ids.indexed)
+        id: ConversionJobInfo(
+          asset: candidates[index].asset,
+          isNetwork: session.destinations[candidates[index].id]?.isNetwork ?? false,
+        ),
+    });
+    _close();
+    unawaited(
+      _store.update(
+        (kept) => kept.copyWith(
+          lastType: () => ConversionKind.stereoVideo.name,
+          videoQuality: quality.name,
+          videoReliefStrength: _videoStrength,
+          videoHalfSbs: _videoHalf,
+        ),
+      ),
+    );
+    if (mounted) {
+      Navigator.of(context).pop(true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.t;
@@ -1664,7 +2010,17 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     // The components being moved read as missing until the copy ends: nothing to download, Convert waits
     final moving = ref.read(aiComponentsServiceProvider).isMoving;
     final busy = _gestures > 0 || candidates == null || _asking;
-    final canConvert = !busy && !moving && available && session != null && _ready(session);
+    final video = kind.isVideo ? _videoPlan(t, found, session) : null;
+    if (kind.isVideo && available && !_videoProbeStarted && candidates != null) {
+      // The FFmpeg program is there (installed with Download, or before): each video is read once
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_closed) {
+          unawaited(_probeVideos());
+        }
+      });
+    }
+    final canConvert =
+        !busy && !moving && available && session != null && _ready(session) && (video == null || video.ready);
     final count = _count;
     // Each type with the refusal of its gate, when it refuses
     final refusals = {
@@ -1674,7 +2030,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           _ => null,
         },
     };
-    final time = _runs.isEmpty ? null : conversionTimeText(t, kind, AiTimings(_settings.timings));
+    final time = _runs.isEmpty || kind.isVideo ? null : conversionTimeText(t, kind, AiTimings(_settings.timings));
 
     return AlertDialog(
       key: const Key('ai_conversion_dialog'),
@@ -1699,6 +2055,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 ),
               const SizedBox(height: 4),
               Text(t.ai_immersive_no_guarantee, style: Theme.of(context).textTheme.bodySmall),
+              if (video != null) ...video.choices,
               if (kind == ConversionKind.sbsFromPhoto) ...[
                 const SizedBox(height: 12),
                 ReliefStrengthChoice(
@@ -1761,8 +2118,14 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                   ),
                 ),
               if (candidates != null && !refused) ...[
+                if (video != null) ...video.facts,
                 if (session != null) ..._destination(t, session),
-                if (session != null) ..._existingChoice(t, kind),
+                if (video?.fileName case final name?)
+                  ConversionNote(
+                    key: const Key('ai_conversion_video_file'),
+                    text: t.ai_immersive_video_file_name(name: name),
+                  ),
+                if (session != null && !kind.isVideo) ..._existingChoice(t, kind),
                 if (_runs.any((candidate) => candidate.quarterTurns != 0))
                   ConversionNote(key: const Key('ai_conversion_rotation'), text: t.ai_immersive_rotation_applied),
                 if (_runs.any((candidate) => candidate.serverEdits))
@@ -1770,7 +2133,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                     key: const Key('ai_conversion_server_edits'),
                     text: t.ai_immersive_server_edits_ignored,
                   ),
-                _PlanList(candidates: candidates, kindName: conversionKindName(t, kind)),
+                _PlanList(candidates: candidates, kindName: conversionKindName(t, kind), video: kind.isVideo),
               ],
             ],
           ),
@@ -1788,6 +2151,218 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           child: Text(t.ai_immersive_convert),
         ),
       ],
+    );
+  }
+
+  /// What the dialog shows of a 3D video: its choices (the experimental line, Quality, Strength, Full or Half), what the
+  /// FFmpeg program read of the videos (the notes of their plan, the encoder, the time, the memory, the free space),
+  /// the name of the MP4 of a single video, and whether Convert may run (each video read, an encoder found, room on
+  /// the drive)
+  ({List<Widget> choices, List<Widget> facts, String? fileName, bool ready}) _videoPlan(
+    Translations t,
+    AiGateResult? gate,
+    DestinationSession? session,
+  ) {
+    final busy = _gestures > 0 || _launched || _photos == null;
+    final offered = _videoQualities(gate);
+    final quality = _videoQualityOf(offered);
+    final title = Theme.of(context).textTheme.titleSmall;
+    final choices = <Widget>[
+      ConversionNote(key: const Key('ai_conversion_video_experimental'), text: t.ai_immersive_video_experimental),
+      const SizedBox(height: 8),
+      Text(t.ai_immersive_video_quality, style: title),
+      Text(t.ai_immersive_video_quality_subtitle, style: Theme.of(context).textTheme.bodySmall),
+      RadioGroup<VideoDepthQuality>(
+        groupValue: quality,
+        onChanged: (value) {
+          if (value != null && !busy) {
+            setState(() => _videoQuality = value);
+          }
+        },
+        child: Column(
+          children: [
+            for (final each in VideoDepthQuality.values)
+              RadioListTile<VideoDepthQuality>(
+                key: Key('ai_conversion_video_quality_${each.name}'),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                value: each,
+                enabled: offered.contains(each) && !busy,
+                title: Text('${videoQualityText(t, each)} (${each.shortSide})'),
+                subtitle: each == VideoDepthQuality.fine && !offered.contains(each)
+                    ? Text(t.ai_immersive_video_quality_needs_memory)
+                    : null,
+              ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 4),
+      ReliefStrengthChoice(
+        key: const Key('ai_conversion_video_strength'),
+        value: _videoStrength,
+        onChanged: busy ? null : (strength) => setState(() => _videoStrength = strength),
+      ),
+      const SizedBox(height: 8),
+      Text(t.ai_immersive_video_output, style: title),
+      RadioGroup<bool>(
+        groupValue: _videoHalf,
+        onChanged: (half) {
+          if (half != null && half != _videoHalf && !busy) {
+            setState(() => _videoHalf = half);
+            // The name of each MP4 changes with it
+            unawaited(_plan());
+          }
+        },
+        child: Column(
+          children: [
+            for (final (half, label) in [
+              (false, t.ai_immersive_video_packing_full),
+              (true, t.ai_immersive_video_packing_half),
+            ])
+              RadioListTile<bool>(
+                key: Key('ai_conversion_video_packing_${half ? 'half' : 'full'}'),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                value: half,
+                enabled: !busy,
+                title: Text(label),
+              ),
+          ],
+        ),
+      ),
+    ];
+    final runs = _runs.toList();
+    final facts = <Widget>[];
+    var ready = runs.isNotEmpty;
+    if (!_videoProbed) {
+      ready = false;
+      if (_videoReading) {
+        facts.add(ConversionNote(key: const Key('ai_conversion_video_reading'), text: t.ai_immersive_video_checking));
+      } else if (gate != null && !gate.isAvailable && !aiGateRefuses(gate)) {
+        facts.add(
+          ConversionNote(
+            key: const Key('ai_conversion_video_after_install'),
+            text: t.ai_immersive_video_checked_after_install,
+          ),
+        );
+      }
+    } else if (runs.isNotEmpty) {
+      final accepted = _videoAccepted;
+      // What the jobs do to the videos, each line once
+      final notes = {for (final each in accepted) ...each.check.notes};
+      final oneSound = accepted.any((each) => each.check.audio.length == 1);
+      for (final note in VideoPlanNote.values) {
+        if (notes.contains(note)) {
+          facts.add(
+            ConversionNote(key: Key('ai_conversion_video_note_${note.name}'), text: videoPlanNoteText(t, note)),
+          );
+        }
+      }
+      if (oneSound && !notes.contains(VideoPlanNote.allAudioKept)) {
+        facts.add(
+          ConversionNote(key: const Key('ai_conversion_video_note_sound'), text: t.ai_immersive_video_note_audio_one),
+        );
+      }
+      if (!_videoEncoderTested) {
+        ready = false;
+        facts.add(
+          ConversionNote(key: const Key('ai_conversion_video_encoder'), text: t.ai_immersive_video_encoder_testing),
+        );
+      } else {
+        final encoder = _videoEncoder;
+        if (encoder == null) {
+          ready = false;
+        }
+        facts.add(
+          ConversionNote(
+            key: const Key('ai_conversion_video_encoder'),
+            text: switch (encoder) {
+              null => t.ai_immersive_video_encoder_none,
+              VideoEncoder.svtAv1 => t.ai_immersive_video_encoder_av1,
+              _ => t.ai_immersive_video_encoder_h264,
+            },
+            error: encoder == null,
+          ),
+        );
+      }
+      // The time of the work, the memory and the disk, over every video
+      var low = Duration.zero;
+      var high = Duration.zero;
+      var disk = 0;
+      final av1 = _videoEncoder == VideoEncoder.svtAv1;
+      for (final each in accepted) {
+        final source = each.check.source;
+        if (source == null) {
+          continue;
+        }
+        final eye = videoEyeSize(source);
+        final model = videoModelSize(eye.width, eye.height, quality);
+        final range = videoTimeRange(
+          frames: each.frames ?? 0,
+          quality: quality,
+          logicalProcessors: gate?.processors ?? Platform.numberOfProcessors,
+          keptMillisPerFrame: _settings.videoFrameMillis[quality.name],
+        );
+        low += range.low;
+        high += range.high;
+        disk += videoDiskNeed(
+          durationSeconds: each.durationSeconds ?? 0,
+          av1: av1,
+          half: _videoHalf,
+          modelWidth: model.width,
+          modelHeight: model.height,
+          outWidth: _videoHalf ? eye.width : eye.width * 2,
+          outHeight: eye.height,
+        );
+      }
+      if (high > Duration.zero) {
+        facts.add(
+          ConversionNote(
+            key: const Key('ai_conversion_video_time'),
+            text: t.ai_immersive_video_time_guess(low: videoDurationText(t, low), high: videoDurationText(t, high)),
+          ),
+        );
+      }
+      facts.add(
+        ConversionNote(
+          key: const Key('ai_conversion_video_memory'),
+          text: t.ai_immersive_video_memory(space: formatBytes(quality.jobMemoryBytes)),
+        ),
+      );
+      if (disk > 0) {
+        facts.add(
+          ConversionNote(
+            key: const Key('ai_conversion_video_disk'),
+            text: t.ai_immersive_video_disk(space: formatBytes(disk)),
+          ),
+        );
+      }
+      final folder = session == null || runs.isEmpty ? null : session.destinations[runs.first.id]?.folder;
+      if (folder != null && _videoFreeFolder != folder) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && !_closed) {
+            unawaited(_readVideoFree(folder));
+          }
+        });
+      }
+      final free = _videoFree?.free;
+      if (free != null && folder == _videoFreeFolder && free < disk) {
+        ready = false;
+        facts.add(
+          ConversionNote(
+            key: const Key('ai_conversion_video_disk_short'),
+            text: t.ai_immersive_video_disk_short(free: formatBytes(free), space: formatBytes(disk)),
+            error: true,
+          ),
+        );
+      }
+    }
+    final single = runs.length == 1 ? runs.first.location : null;
+    return (
+      choices: choices,
+      facts: facts,
+      fileName: single == null ? null : videoOutputName(single.name, _videoPacking),
+      ready: ready,
     );
   }
 
@@ -2020,10 +2595,13 @@ class _ShareCopyLine extends StatelessWidget {
 /// the photos taken for the 3D version of a 360° photo by their 2:1 frame alone, to be checked; then the photos
 /// skipped, each with why
 class _PlanList extends StatelessWidget {
-  const _PlanList({required this.candidates, required this.kindName});
+  const _PlanList({required this.candidates, required this.kindName, this.video = false});
 
   final List<ConversionCandidate> candidates;
   final String kindName;
+
+  /// The plan of 3D videos: the reasons in the words of a video
+  final bool video;
 
   /// More than this many are counted, not listed
   static const _listed = 20;
@@ -2069,7 +2647,10 @@ class _PlanList extends StatelessWidget {
               const SizedBox(height: 8),
               Text('${t.ai_immersive_state_skipped} (${skipped.length})', style: title),
               for (final candidate in skipped.take(_listed))
-                Text('${candidate.asset.name}: ${conversionSkipText(t, candidate.skip!)}', style: secondary),
+                Text(
+                  '${candidate.asset.name}: ${conversionSkipText(t, candidate.skip!, video: video)}',
+                  style: secondary,
+                ),
               if (skipped.length > _listed) Text('…', style: secondary),
             ],
           ),

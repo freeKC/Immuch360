@@ -181,14 +181,14 @@ enum ActionButtonType {
       ActionButtonType.watchProgress => context.asset.isVideo,
       // Immuch360 Desktop: "Make 3D (AI)" of a photo one of the types of the dialog takes (lib/desktop/ai/ui), which the
       // button asks for each type: a flat photo, and a 360° photo of a whole sphere that holds one eye for its 3D
-      // version (lot P1). Absent while the AI features are off. Never in the locked folder, where nothing takes a photo
-      // out, nor in the trash.
+      // version (lot P1); a flat video for a 3D video (release 49). Absent while the AI features are off. Never in the
+      // locked folder, where nothing takes a photo out, nor in the trash.
       ActionButtonType.makeImmersive =>
         CurrentPlatform.isDesktop &&
             !context.isInLockedView &&
             context.timelineOrigin != TimelineOrigin.lockedFolder &&
             context.timelineOrigin != TimelineOrigin.trash &&
-            context.asset.isImage,
+            (context.asset.isImage || context.asset.isVideo),
       // Immuch360 Desktop: "Make a splat scene (AI)" of a video (lib/desktop/ai/ui/splat_dialog.dart); photos make a
       // scene from a selection. The button hides itself while the AI features or the splat scenes are off. Never in the
       // locked folder nor in the trash.

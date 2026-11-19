@@ -396,8 +396,8 @@ void main() {
         gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
       ),
     );
-    // Only the 3D videos are held, until their own lot offers them
-    expect(aiHeldFeatureGroups, {AiFeatureGroup.videos});
+    // Nothing held since the screens of the 3D videos (release 49)
+    expect(aiHeldFeatureGroups, isEmpty);
     expect(find.text('22 logical processors, 32.0 GiB of memory'), findsOneWidget);
     expect(
       find.text('NVIDIA GeForce RTX 4060 Laptop GPU, 8.0 GiB, Vulkan 1.4: 360° panoramas available'),

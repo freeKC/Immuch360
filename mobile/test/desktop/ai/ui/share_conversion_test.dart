@@ -436,7 +436,8 @@ void main() {
 
     expect(bridge.asked, ['/token/nas/2024/salon.jpg', '/token/nas/2024/beach.jpg'], reason: 'a video is not copied');
     expect(copies(), hasLength(2));
-    for (final kind in conversionDialogKinds) {
+    // The 3D video is not made by this build of the test
+    for (final kind in conversionDialogKinds.where((kind) => !kind.isVideo)) {
       expect(find.byKey(Key('ai_conversion_type_${kind.name}')), findsOneWidget, reason: kind.name);
     }
     expect(chosenType(tester), ConversionKind.sbsFromPhoto);

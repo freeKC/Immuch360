@@ -1,7 +1,7 @@
 // What concerns the whole window of Immuch360 Desktop, wrapped around the navigator inside MaterialApp (main.dart, through
 // desktopAppShell): the keys that work on every page (Control A and Escape for the selection of the grid shown among
 // them, lib/desktop/selection), the back button of the mouse, full screen and the close guard, then the close itself
-// (close_sequence.dart). The viewers read their own keys first (remote_keys.dart): what reaches the shell is what no
+// (close_sequence.dart), and at the start the offer to resume the 3D videos a quit stopped. The viewers read their own keys first (remote_keys.dart): what reaches the shell is what no
 // page handled.
 
 import 'dart:async';
@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/ui/video_resume_offer.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
@@ -56,12 +57,28 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
     // The headset view's crash guard reads its marker at the start (Windows only)
     unawaited(ref.read(headsetViewServiceProvider).startUp());
     _window.addListener(this);
+    // The 3D videos a quit or a crash stopped are offered to resume once the window shows (video_resume_offer.dart)
+    WidgetsBinding.instance.addPostFrameCallback((_) => _offerStoppedVideos());
     unawaited(
       _window.setPreventClose(true).catchError((Object error, StackTrace stack) {
         // The window then closes without asking, as any window does
         _log.warning('The close guard could not be set', error, stack);
       }),
     );
+  }
+
+  void _offerStoppedVideos() {
+    if (!mounted) {
+      return;
+    }
+    try {
+      final navigator = ref.read(desktopNavigatorKeyProvider).currentContext;
+      if (navigator != null) {
+        unawaited(offerStoppedVideoJobs(navigator, ref));
+      }
+    } catch (_) {
+      // No navigator nor router yet in a test of the shell: nothing to offer
+    }
   }
 
   @override

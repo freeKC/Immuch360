@@ -53,6 +53,16 @@
 // (ConversionCompanionOutput), and dropped with it. Its engine
 // keeps its work folder until the file is saved (ImmersiveResult.afterSaved): a destination that refuses the file
 // leaves the poses and the training for Retry.
+//
+// A 3D video (release 49, store/m2/release-49/lots/video3d-plan.md, sections 2 and 4.5) is a job of the processor lane
+// run by its own engine (ConversionTools.video): hours of work in segments of about 30 s, its work folder beside its
+// MP4. Its progress is its frames, its segments and its pace; Pause stops it with its work kept (the state paused) and
+// Resume goes on from there, as Retry of one that failed does; Cancel, or Discard of one paused, deletes its work. While
+// it runs, a 3D photo asked meanwhile does not wait hours: between two windows of the model the video lets the photos of
+// the processor lane go first, its session kept, when the memory free holds them beside it. Each video not finished is
+// kept in video_jobs.json of the support folder, so that the next start offers to resume it (restoreVideoJobs); a quit
+// loses at most the segment under way. A video that cannot be made 3D (a 360° video, interlaced...) is skipped with its
+// reason, its work deleted.
 
 import 'dart:async';
 import 'dart:io';
@@ -69,6 +79,9 @@ import 'package:immich_mobile/desktop/ai/gpu/graphics_release.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -220,6 +233,9 @@ class ConversionTools {
     this.gpuGiveUp = const Duration(seconds: 30),
     this.settings,
     this.processors,
+    this.video,
+    this.videoJobs,
+    this.appVersion = '',
     DateTime Function()? now,
     String Function()? newDerivativeId,
     int Function()? newSeed,
@@ -276,6 +292,15 @@ class ConversionTools {
   /// The seed of a panorama, drawn for each job: "Make a new version" gives another panorama
   final int Function() newSeed;
 
+  /// The engine of the 3D videos; null in the builds and tests that make none
+  final VideoJobEngine? video;
+
+  /// video_jobs.json, the 3D videos not finished; null: nothing kept for the next start
+  final VideoJobsStore? videoJobs;
+
+  /// The version of the app, written into each 3D video
+  final String appVersion;
+
   late final _sbs = ConversionEngine(
     engine: engine,
     settingsKey: (source, quarterTurns) async => versionSettingsKey(
@@ -313,7 +338,7 @@ class ConversionTools {
       engines[kind] ?? (kind == ConversionKind.sbsFromPhoto ? _sbs : null);
 
   /// Whether this build makes the files of [kind]
-  bool supports(ConversionKind kind) => engineFor(kind) != null;
+  bool supports(ConversionKind kind) => kind.isVideo ? video != null : engineFor(kind) != null;
 }
 
 final _seeds = math.Random.secure();
@@ -366,10 +391,14 @@ class ConversionQueueState {
   ConversionJob? get splatting =>
       jobs.where((job) => job.kind == ConversionKind.splatScene && job.state.isActive).firstOrNull;
 
+  /// The 3D video under way, if any: what closing the window would stop (it resumes at the next start)
+  ConversionJob? get videoMaking => jobs.where((job) => job.kind.isVideo && job.state.isActive).firstOrNull;
+
   /// A job failed that a Retry may mend: not a splat scene of too few images placed, which would place the same ones
   bool get hasFailed => jobs.any((job) => job.state == ConversionState.failed && !job.retryGivesTheSame);
 
-  bool get hasEnded => jobs.any((job) => job.state.isEnded);
+  /// A job Clear finished would forget: a 3D video paused stays, its work kept for Resume
+  bool get hasEnded => jobs.any((job) => job.state.isEnded && job.state != ConversionState.paused);
 
   ConversionJob? byId(String id) => jobs.where((job) => job.id == id).firstOrNull;
 
@@ -386,6 +415,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
   /// The jobs a disk full failed since the queue paused: Resume runs them again
   final _diskFull = <String>{};
+
+  /// The control of each 3D video under way: Pause and Cancel
+  final _videoControls = <String, VideoJobControl>{};
 
   /// When the step shown of each job under way started, for its time left
   final _stepStarted = <String, DateTime>{};
@@ -425,6 +457,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       // The jobs under way stop at their next check; their own end frees the flag, which the engine may still read
       for (final flag in _flags.values) {
         flag.cancel();
+      }
+      // A 3D video keeps its work: the next start offers to resume it
+      for (final control in _videoControls.values) {
+        control.pause();
       }
     });
     return const ConversionQueueState();
@@ -520,11 +556,110 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     return job.id;
   }
 
+  /// Adds the 3D videos of [requests], "1 of n" to "n of n", each with its settings and its own work folder
+  /// ([settingsOf] of its index); a request with a reason to skip is added skipped. Gives the ids of the jobs.
+  List<String> addVideos(List<ConversionRequest> requests, {required VideoJobSettings Function(int index) settingsOf}) {
+    final jobs = <ConversionJob>[];
+    for (final (index, request) in requests.indexed) {
+      jobs.add(
+        ConversionJob(
+          id: 'conversion-${++_lastId}',
+          source: request.source,
+          kind: ConversionKind.stereoVideo,
+          batchIndex: index + 1,
+          batchSize: requests.length,
+          target: request.target,
+          existing: ExistingVersionChoice.newVersion,
+          state: request.skip == null ? ConversionState.waiting : ConversionState.skipped,
+          skipReason: request.skip,
+          video: request.skip == null ? settingsOf(index) : null,
+        ),
+      );
+    }
+    state = state.copyWith(jobs: [...state.jobs, ...jobs]);
+    _pump();
+    return [for (final job in jobs) job.id];
+  }
+
+  /// The 3D videos a quit or a crash stopped, from video_jobs.json: each put in the queue paused, where it was, unless
+  /// the queue has it already; a record whose work folder and MP4 are both gone is forgotten. Gives the jobs added, for
+  /// the offer to resume them.
+  Future<List<ConversionJob>> restoreVideoJobs() async {
+    final ConversionTools tools;
+    try {
+      tools = ref.read(conversionToolsProvider);
+    } catch (_) {
+      return const [];
+    }
+    final store = tools.videoJobs;
+    if (store == null || tools.video == null) {
+      return const [];
+    }
+    final List<VideoJobRecord> records;
+    try {
+      records = await store.read();
+    } catch (error) {
+      _log.warning('The 3D videos not finished could not be read: $error');
+      return const [];
+    }
+    final added = <ConversionJob>[];
+    for (final record in records) {
+      if (_disposed) {
+        break;
+      }
+      if (state.jobs.any((job) => job.video?.recordId == record.id)) {
+        continue;
+      }
+      final work = record.settings.workFolder;
+      if (!Directory(work).existsSync() && !File(videoMadePathOf(work)).existsSync()) {
+        await store.remove(record.id);
+        continue;
+      }
+      final job = ConversionJob(
+        id: 'conversion-${++_lastId}',
+        source: LocalFileSource(record.sourcePath),
+        kind: ConversionKind.stereoVideo,
+        batchIndex: 1,
+        batchSize: 1,
+        target: ConversionTarget(folder: record.folder, fileName: record.fileName),
+        existing: ExistingVersionChoice.newVersion,
+        state: ConversionState.paused,
+        perMille: record.perMille,
+        video: record.settings,
+      );
+      added.add(job);
+      state = state.copyWith(jobs: [...state.jobs, job]);
+    }
+    return added;
+  }
+
+  /// Pauses a 3D video: the one under way stops at its next frame (the model's run in progress within a second) with
+  /// its work kept, one waiting stays out of the queue until Resume. Nothing for the other kinds.
+  void pause(String id) {
+    final job = state.byId(id);
+    if (job == null || !job.kind.isVideo) {
+      return;
+    }
+    if (job.state == ConversionState.waiting) {
+      _set(id, (job) => job.copyWith(state: ConversionState.paused, waitingFor: () => null));
+      _pump();
+    } else if (job.state.isActive) {
+      _videoControls[id]?.pause();
+    }
+  }
+
   /// Cancels a job: one waiting never runs (nor the 3D version chained after it), the one under way stops at its next
   /// check and leaves no file
   void cancel(String id) {
     final job = state.byId(id);
     if (job == null) {
+      return;
+    }
+    if (job.state == ConversionState.paused || (job.kind.isVideo && job.state == ConversionState.failed)) {
+      // Discard: the work of a 3D video goes
+      unawaited(_discardVideo(job));
+      // Its work gone: a Retry starts from the first frame
+      _set(id, (job) => job.copyWith(state: ConversionState.cancelled, perMille: 0, videoProgress: () => null));
       return;
     }
     if (job.state == ConversionState.waiting) {
@@ -539,6 +674,22 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       }
     } else if (job.state.isActive) {
       _flags[id]?.cancel();
+      _videoControls[id]?.cancel();
+    }
+  }
+
+  /// Deletes the work of the 3D video [job] and forgets its record
+  Future<void> _discardVideo(ConversionJob job) async {
+    final settings = job.video;
+    if (settings == null) {
+      return;
+    }
+    try {
+      final tools = ref.read(conversionToolsProvider);
+      await tools.video?.discard(settings);
+      await tools.videoJobs?.remove(settings.recordId);
+    } catch (error) {
+      _log.warning('The work of the 3D video ${job.source.name} could not be deleted: $error');
     }
   }
 
@@ -564,6 +715,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     );
     for (final flag in _flags.values) {
       flag.cancel();
+    }
+    for (final control in _videoControls.values) {
+      control.cancel();
     }
     // Nothing waits for the graphics card any more: the next job of it asks the card at once
     _gpuRecheck?.cancel();
@@ -624,12 +778,13 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     _pump();
   }
 
-  /// Forgets the jobs that ended: done, skipped, cancelled and failed. A pause with nothing left waiting ends.
+  /// Forgets the jobs that ended: done, skipped, cancelled and failed. A pause with nothing left waiting ends. A 3D
+  /// video paused stays, its work kept for Resume.
   void clearFinished() {
     _settleChained();
     final jobs = [
       for (final job in state.jobs)
-        if (!job.state.isEnded) job,
+        if (!job.state.isEnded || job.state == ConversionState.paused) job,
     ];
     _diskFull.removeWhere((id) => !jobs.any((job) => job.id == id));
     state = ConversionQueueState(jobs: jobs, isPaused: state.isPaused && jobs.isNotEmpty);
@@ -677,8 +832,12 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     _pump();
   }
 
+  /// A job failed or cancelled; a 3D video paused too, Resume being its Retry
   bool _retriable(ConversionJob job) =>
-      job.target != null && (job.state == ConversionState.failed || job.state == ConversionState.cancelled);
+      job.target != null &&
+      (job.state == ConversionState.failed ||
+          job.state == ConversionState.cancelled ||
+          (job.kind.isVideo && job.state == ConversionState.paused));
 
   /// The jobs with [ids] as they were added, and the jobs chained after them that were skipped for them; those of the
   /// graphics card let go of the app's share again when they are asked
@@ -775,11 +934,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       if (tools != null &&
           _lanes.isNotEmpty &&
           !fitsBeside(
-            jobMemoryNeedOf(next.kind.output),
+            _memoryNeedOf(next),
             tools.memory.read(),
-            besideNeeds: beside == null || beside.state.isEnded
-                ? 0
-                : jobMemoryStillNeeded(beside.kind.output, beside.state.stage),
+            besideNeeds: beside == null || beside.state.isEnded ? 0 : _memoryStillNeeded(beside),
           )) {
         if (next.waitingFor != ConversionWait.memory) {
           _set(next.id, (job) => job.copyWith(waitingFor: () => ConversionWait.memory));
@@ -801,6 +958,15 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
+  /// What a job may take of the memory: that of its kind, that of its quality for a 3D video (one pass of the model
+  /// and the frames it holds, VideoDepthQuality.jobMemoryBytes)
+  static int _memoryNeedOf(ConversionJob job) => job.video?.quality.jobMemoryBytes ?? jobMemoryNeedOf(job.kind.output);
+
+  /// What a job under way may still take: a 3D video holds its need once its frames run
+  static int _memoryStillNeeded(ConversionJob job) => job.kind.isVideo
+      ? (job.state.index >= ConversionState.depth.index ? 0 : _memoryNeedOf(job))
+      : jobMemoryStillNeeded(job.kind.output, job.state.stage);
+
   Future<void> _run(ConversionJob job) async {
     final id = job.id;
     final ConversionTools tools;
@@ -810,6 +976,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _log.severe('The tools of the conversions are missing', error, stack);
       _end(id, ImmersiveErrorCode.modelFailed, '$error', null, true);
       return;
+    }
+    if (job.kind.isVideo) {
+      return _runVideo(job, tools);
     }
     final kindEngine = tools.engineFor(job.kind);
     if (kindEngine == null) {
@@ -1082,6 +1251,205 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
+  /// Runs the 3D video [job], or goes on from its work folder (see the top of this file)
+  Future<void> _runVideo(ConversionJob job, ConversionTools tools) async {
+    final id = job.id;
+    final engine = tools.video;
+    final settings = job.video;
+    final target = job.target;
+    final source = job.source;
+    if (engine == null || settings == null || target == null) {
+      _end(id, ImmersiveErrorCode.componentsMissing, 'This build makes no 3D video');
+      return;
+    }
+    if (source is! LocalFileSource) {
+      _set(id, (job) => job.copyWith(state: ConversionState.skipped, skipReason: ConversionSkipReason.videoNotLocal));
+      return;
+    }
+    final control = VideoJobControl()..betweenWindows = () => _videoYield(id, tools);
+    _videoControls[id] = control;
+    _set(id, (job) => job.copyWith(state: ConversionState.reading, waitingFor: () => null, remaining: () => null));
+    final record = VideoJobRecord(
+      sourcePath: source.path,
+      folder: target.folder,
+      fileName: target.fileName,
+      settings: settings,
+      perMille: job.perMille,
+    );
+    var keptSegments = -1;
+    Future<void> keep(int perMille) async {
+      try {
+        await tools.videoJobs?.put(record.withPerMille(perMille));
+      } catch (error) {
+        _log.warning('video_jobs.json could not be written: $error');
+      }
+    }
+
+    Future<void> forget() async {
+      try {
+        await tools.videoJobs?.remove(settings.recordId);
+      } catch (error) {
+        _log.warning('video_jobs.json could not be written: $error');
+      }
+    }
+
+    await keep(job.perMille);
+    try {
+      final done = await engine.run(
+        VideoJobSpec(
+          sourcePath: source.path,
+          folder: target.folder,
+          fileName: target.fileName,
+          settings: settings,
+          appVersion: tools.appVersion,
+        ),
+        control,
+        onProgress: (progress) {
+          final perMille = _videoProgress(id, progress);
+          if (progress.segmentsDone != keptSegments && perMille != null) {
+            keptSegments = progress.segmentsDone;
+            unawaited(keep(perMille));
+          }
+        },
+      );
+      await forget();
+      if (done.millisPerFrame case final millis?) {
+        await _keepVideoPace(tools, settings.quality, millis);
+      }
+      _set(
+        id,
+        (job) => job.copyWith(
+          state: ConversionState.done,
+          perMille: 1000,
+          writtenPath: done.path,
+          videoDone: done.result,
+          remaining: () => null,
+          yielding: false,
+        ),
+      );
+    } on VideoJobStopped catch (stopped) {
+      if (stopped.cancelled || control.isCancelled) {
+        await forget();
+        _set(
+          id,
+          (job) => job.copyWith(
+            state: ConversionState.cancelled,
+            perMille: 0,
+            videoProgress: () => null,
+            remaining: () => null,
+            yielding: false,
+          ),
+        );
+      } else {
+        _set(id, (job) => job.copyWith(state: ConversionState.paused, remaining: () => null, yielding: false));
+      }
+    } on VideoJobException catch (error) {
+      if (error.refusal case final refusal?) {
+        await forget();
+        _set(
+          id,
+          (job) => job.copyWith(state: ConversionState.skipped, skipReason: videoSkipReason(refusal), yielding: false),
+        );
+      } else {
+        _end(id, videoFailureCode(error.message), error.message, await _videoLogOf(engine, settings));
+      }
+    } on ConversionException catch (error) {
+      _end(id, error.code, error.message, await _videoLogOf(engine, settings));
+    } on FileSystemException catch (error) {
+      final message = error.osError?.message ?? error.message;
+      _end(
+        id,
+        isDiskFullError(error) ? ImmersiveErrorCode.diskFull : ImmersiveErrorCode.writeFailed,
+        '${error.path ?? ''}: $message',
+        await _videoLogOf(engine, settings),
+      );
+    } catch (error, stack) {
+      _log.warning('The 3D video $id failed', error, stack);
+      _end(id, ImmersiveErrorCode.modelFailed, '$error', await _videoLogOf(engine, settings), true);
+    } finally {
+      _videoControls.remove(id);
+      _set(id, (job) => job.copyWith(yielding: false));
+    }
+  }
+
+  /// The log of the 3D video of [settings], named in the panel once it failed; null when there is none
+  Future<String?> _videoLogOf(VideoJobEngine engine, VideoJobSettings settings) async {
+    try {
+      return await engine.logPathOf(settings);
+    } catch (error) {
+      _log.fine('The log of the 3D video is not known: $error');
+      return null;
+    }
+  }
+
+  /// What the engine of 3D video [id] tells, never going back: its frames, its pace, its time left; the final mux
+  /// once every frame is in a segment. The thousandths shown, null when the job no longer runs.
+  int? _videoProgress(String id, VideoJobProgress progress) {
+    int? shown;
+    _set(id, (job) {
+      if (!job.state.isActive) {
+        return job;
+      }
+      final reported = progress.muxing ? ConversionState.writing : ConversionState.depth;
+      final perMille = math.max(job.perMille, progress.muxing ? 990 : (progress.fraction * 990).round());
+      shown = perMille;
+      return job.copyWith(
+        state: reported.index > job.state.index ? reported : job.state,
+        perMille: perMille,
+        videoProgress: () => progress,
+        remaining: () => progress.timeLeft,
+      );
+    });
+    return shown;
+  }
+
+  /// Between two windows of the 3D video [videoId]: the 3D photos of the processor lane that came meanwhile run, one
+  /// after the other, when the memory free holds each one beside the video (whose memory is in what is free); then the
+  /// video goes on
+  Future<void> _videoYield(String videoId, ConversionTools tools) async {
+    while (!_disposed && !state.isPaused) {
+      final guest = state.jobs
+          .where(
+            (job) =>
+                job.state == ConversionState.waiting &&
+                job.kind.lane == ConversionLane.cpu &&
+                !job.kind.isVideo &&
+                (job.parentId == null || job.inputPath != null),
+          )
+          .firstOrNull;
+      if (guest == null || (_videoControls[videoId]?.isStopping ?? true)) {
+        return;
+      }
+      if (!fitsBeside(_memoryNeedOf(guest), tools.memory.read())) {
+        if (guest.waitingFor != ConversionWait.memory) {
+          _set(guest.id, (job) => job.copyWith(waitingFor: () => ConversionWait.memory));
+        }
+        return;
+      }
+      _set(videoId, (job) => job.copyWith(yielding: true));
+      try {
+        await _run(guest);
+      } finally {
+        _set(videoId, (job) => job.copyWith(yielding: false));
+      }
+    }
+  }
+
+  /// Keeps the pace of a 3D video of [quality] on this computer, the first guess of the next one (videoFrameMillis)
+  Future<void> _keepVideoPace(ConversionTools tools, VideoDepthQuality quality, int millis) async {
+    final store = tools.settings;
+    if (store == null) {
+      return;
+    }
+    try {
+      await store.update(
+        (settings) => settings.copyWith(videoFrameMillis: {...settings.videoFrameMillis, quality.name: millis}),
+      );
+    } catch (error) {
+      _log.warning('The pace of the 3D video could not be kept: $error');
+    }
+  }
+
   /// Whether the job [id] of the graphics card may start now: the card has the memory free that a job of [kind] needs
   /// (gpuNeedOf: 3.5 GiB for a panorama; 2.5 GiB on a dedicated card for a splat scene), or nothing is asked of it
   /// (tools without a budget). First, once per job, the app lets go of its share of the card and the card is asked
@@ -1289,6 +1657,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           },
           plannedImages: splat.images,
         );
+      case ConversionKind.stereoVideo:
+        // Run by its own engine (_runVideo)
+        return null;
       case ConversionKind.stereoPanoramaFromPanorama:
         return StereoPanoramaJob(
           id: job.id,
@@ -1533,6 +1904,23 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
     state = state.copyWith(jobs: [for (final job in state.jobs) job.id == id ? change(job) : job]);
   }
+}
+
+/// The code a failure of the engine of the 3D videos ends with: a disk full where the words of FFmpeg or of the system
+/// say so (the queue pauses then, and Resume goes on from the work folder), else the failure of the engine
+ImmersiveErrorCode videoFailureCode(String message) {
+  final lower = message.toLowerCase();
+  return lower.contains('no space left') || lower.contains('not enough space') || lower.contains('disk full')
+      ? ImmersiveErrorCode.diskFull
+      : ImmersiveErrorCode.modelFailed;
+}
+
+/// Whether [error] says the drive is full: ENOSPC (28) elsewhere, ERROR_DISK_FULL (112) or ERROR_HANDLE_DISK_FULL (39)
+/// on Windows
+bool isDiskFullError(FileSystemException error) {
+  final code = error.osError?.errorCode;
+  return (Platform.isWindows ? code == 112 || code == 39 : code == 28) ||
+      videoFailureCode(error.osError?.message ?? error.message) == ImmersiveErrorCode.diskFull;
 }
 
 /// The first line of [message], at most 300 characters: the rest of a failure of sd-cli is the end of its output, which

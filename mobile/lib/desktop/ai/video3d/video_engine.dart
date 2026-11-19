@@ -257,6 +257,8 @@ class VideoJobProgress {
     this.framesPerSecond,
     this.timeLeft,
     this.windows = 0,
+    this.segmentsDone = 0,
+    this.muxing = false,
   });
 
   /// Frames final and encoded, of about [framesTotal]
@@ -267,6 +269,12 @@ class VideoJobProgress {
   final double? framesPerSecond;
   final Duration? timeLeft;
   final int windows;
+
+  /// The segments closed in the work folder: what a stop keeps
+  final int segmentsDone;
+
+  /// Every frame is in a segment: the final mux runs
+  final bool muxing;
 
   double get fraction => framesTotal <= 0 ? 0 : math.min(1, framesDone / framesTotal);
 }
@@ -529,6 +537,7 @@ class VideoConversion {
     required this.workerFactory,
     this.onProgress,
     this.onLog,
+    this.betweenWindows,
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now;
 
@@ -537,6 +546,11 @@ class VideoConversion {
   final VideoWorkerFactory workerFactory;
   final void Function(VideoJobProgress progress)? onProgress;
   final void Function(String line)? onLog;
+
+  /// Awaited after each window of the loop, its segment closed when one ended there: the queue lets the 3D photos
+  /// asked meanwhile run then, the session of the model kept (video3d-plan.md, section 2). The time it takes is left
+  /// out of the pace of the job.
+  final Future<void> Function()? betweenWindows;
   final DateTime Function() _now;
 
   var _stop = 0; // 0 run, 1 pause, 2 cancel
@@ -675,6 +689,15 @@ class VideoConversion {
     // Stopped during the final mux: every frame is in a segment already
     if (jobFile.encoded case final encoded?) {
       _log('every frame is in a segment already: the final mux');
+      onProgress?.call(
+        VideoJobProgress(
+          framesDone: encoded.frames,
+          framesTotal: encoded.frames,
+          timeLeft: Duration.zero,
+          segmentsDone: jobFile.segments.length,
+          muxing: true,
+        ),
+      );
       return _mux(jobFile, encoded, json, info, check.audio, grid, encoder, started);
     }
 
@@ -767,7 +790,7 @@ class VideoConversion {
 
     Future<double> timeOfDecoded(int n) => stats.timeOf(n);
 
-    void report() {
+    void report({bool muxing = false}) {
       double? fps;
       Duration? left;
       if (windowTimes.length >= 3) {
@@ -782,8 +805,10 @@ class VideoConversion {
           framesDone: done,
           framesTotal: math.max(total, done),
           framesPerSecond: fps,
-          timeLeft: left,
+          timeLeft: muxing ? Duration.zero : left,
           windows: windowTimes.length,
+          segmentsDone: jobFile.segments.length,
+          muxing: muxing,
         ),
       );
     }
@@ -893,6 +918,18 @@ class VideoConversion {
             }
           }
           report();
+          if (betweenWindows case final wait?) {
+            final before = _now();
+            await wait();
+            _checkStop();
+            // The time the photos took is not the pace of this job
+            final yielded = _now().difference(before);
+            if (yielded > Duration.zero) {
+              for (var i = 0; i < windowTimes.length; i++) {
+                windowTimes[i] = windowTimes[i].add(yielded);
+              }
+            }
+          }
         }
       }
       final code = await decoder.exitCode;
@@ -920,7 +957,7 @@ class VideoConversion {
       // From here a stop or a failure of the mux goes back to the mux, not to the frames
       jobFile.encoded = encoded;
       await jobFile.write(folder);
-      report();
+      report(muxing: true);
     } finally {
       for (final program in _running) {
         program.kill();

@@ -293,7 +293,16 @@ void main() {
 
     expect(shareConversionKinds(entry, null, all, width: 4000, height: 3000), flat, reason: 'not read yet: flat');
     expect(shareConversionKinds(entry, const NetworkMediaInfo(), all, width: 4000, height: 3000), flat);
-    expect(shareConversionKinds(entry, const NetworkMediaInfo(), all, width: 8192, height: 4096), all, reason: '2:1');
+    // The 3D video takes no photo
+    final photoKinds = [
+      for (final kind in all)
+        if (!kind.isVideo) kind,
+    ];
+    expect(
+      shareConversionKinds(entry, const NetworkMediaInfo(), all, width: 8192, height: 4096),
+      photoKinds,
+      reason: '2:1',
+    );
     expect(shareConversionKinds(sphere, const NetworkMediaInfo(cameraEquirect: true), all, width: 6000, height: 3000), [
       ConversionKind.stereoPanoramaFromPanorama,
     ]);
