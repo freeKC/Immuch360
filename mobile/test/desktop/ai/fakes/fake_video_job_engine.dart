@@ -10,6 +10,7 @@ import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
+import 'package:path/path.dart' as p;
 
 class FakeVideoJobEngine implements VideoJobEngine {
   FakeVideoJobEngine({this.frames = 110, this.holdAfter, this.refusal, this.failure, this.logFolder});
@@ -153,5 +154,5 @@ class FakeVideoJobEngine implements VideoJobEngine {
 
   @override
   Future<String?> logPathOf(VideoJobSettings settings) async =>
-      logFolder == null ? null : '$logFolder/video3d-${settings.recordId}.log';
+      logFolder == null ? null : p.join(logFolder!, 'video3d-${settings.recordId}.log');
 }

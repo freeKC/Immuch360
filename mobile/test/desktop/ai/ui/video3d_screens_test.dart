@@ -822,7 +822,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        inRow(id, find.text('Its log, to send with a report: ${p.join(root.path, 'logs')}/video3d-clip.log')),
+        inRow(id, find.text('Its log, to send with a report: ${p.join(root.path, 'logs', 'video3d-clip.log')}')),
         findsOneWidget,
       );
       expect(inRow(id, find.byKey(const Key('ai_job_retry'))), findsOneWidget);
