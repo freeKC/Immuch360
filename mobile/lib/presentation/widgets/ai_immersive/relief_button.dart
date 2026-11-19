@@ -68,10 +68,17 @@ class ReliefTarget {
 /// The quarter turns clockwise [asset] is seen with in the viewer, from its unedited file, which the immersive viewer
 /// reads: the rotation of its edits on the server, then the turns the viewer draws on top of the picture (kept on this
 /// device, or those of a rotation being saved). A crop or a mirror made in Immich is not applied.
-Future<int> reliefQuarterTurnsOfAsset(WidgetRef ref, BaseAsset asset) async {
+Future<int> reliefQuarterTurnsOfAsset(WidgetRef ref, BaseAsset asset) => reliefQuarterTurnsWith(ref.read, asset);
+
+/// Reads the providers, as [ProviderContainer.read] or [WidgetRef.read] do
+typedef ProviderReader = T Function<T>(ProviderListenable<T> provider);
+
+/// [reliefQuarterTurnsOfAsset] with the providers [read] gives: those of the asset viewer the immersive viewer was
+/// opened from, for a photo reached there by previous or next (see FlatScreenImmersiveNavigator)
+Future<int> reliefQuarterTurnsWith(ProviderReader read, BaseAsset asset) async {
   // Read before the first await: the viewer may be gone by then
-  final drawn = ref.read(displayQuarterTurnsProvider(asset));
-  final server = ref.read(viewRotationServerProvider);
+  final drawn = read(displayQuarterTurnsProvider(asset));
+  final server = read(viewRotationServerProvider);
   var edits = const <AssetEdit>[];
   if (asset is RemoteAsset && asset.isEdited) {
     try {

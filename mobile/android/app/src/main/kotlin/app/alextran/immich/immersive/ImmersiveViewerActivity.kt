@@ -366,6 +366,24 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val watchMinDurationMs: Long = WatchReport.OFF,
     /** What to say once the video plays, in the language of the app ("Resumed at 42:10"); null for nothing. */
     val startNotice: String? = null,
+    /**
+     * Reached by previous, next or the slideshow rather than opened from the app: the view of the photo before goes
+     * on ([browseView], see BrowseView), and the stages of a relief go to the feedback line rather than holding the
+     * panel up. Not kept over a recreation, which comes back as the user left the photo anyway.
+     */
+    val reachedByBrowsing: Boolean = false,
+    val browseView: StereoView? = null,
+    /**
+     * How long each photo of the slideshow of a flat screen stays, in seconds (the slideshow duration of the app), 0
+     * for the viewer's 5 s (see SlideshowClock). A previous or next media keeps the value of its opening.
+     */
+    val slideshowSeconds: Long = 0L,
+    /**
+     * The "Frosted background behind photos" setting when the app opened the viewer (experimental, on by default,
+     * issue 19): a blurred copy of the photo of a flat screen fills the box around it (see FrostedBackdrop). A
+     * previous or next media keeps the value of its opening.
+     */
+    val frostedBackground: Boolean = true,
   ) {
     /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
     private val screenMedia: FlatScreenMedia by lazy {
@@ -395,6 +413,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     val screenAngleBounds: ClosedFloatingPointRange<Float>
       get() = screenMedia.angleBounds
+
+    /** A photo whose kind holds two eyes, see [FlatScreenMedia.holdsTwoEyes]: its comfort bounds apply. */
+    val holdsTwoEyes: Boolean
+      get() = screenMedia.holdsTwoEyes
+
+    /** A relief estimated by AI: 60 degrees wide at most. */
+    val isEstimatedRelief: Boolean
+      get() = stereoKind?.isEstimatedRelief == true
 
     /** A photo that carries a 3D scene, shown by [SceneView] once read, its preview flat on the quad meanwhile. */
     val isScene: Boolean
@@ -610,6 +636,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** [photoLayerTexture] is on the Surface. */
   private var photoLayerDrawn = false
 
+  /**
+   * The frosted background behind the photo of a flat screen (see FrostedBackdrop, experimental): its layer under the
+   * photo layer, its Surface, the small frosted copy of the photo shown drawn on it, and whether it said once that it
+   * is experimental.
+   */
+  private var backdropEntity: Entity? by sceneHold.ref()
+  private var backdropPanel: PanelSceneObject? by sceneHold.ref()
+  private var backdropSurface: Surface? by sceneHold.ref()
+  private var backdropBitmap: Bitmap? = null
+  private var backdropDrawn = false
+  private var frostedNoticeShown = false
+
   /** Where the flat screen shown stands (a movable photo of the stereo quad, the flat video screen), null before. */
   private var screenPlace: ScreenPlace? = null
 
@@ -628,6 +666,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** When the stretch last resized the screen (uptime ms), and the size it still has to take. */
   private var stretchAppliedAt = 0L
   private var stretchPendingAngle: Float? = null
+  /**
+   * The box of the flat screen the user set (see ScreenFrame), for the opening [frameOpeningId]: with "Keep size and
+   * place" on ([keepFrame], in the preferences of the viewer, on by default) each next photo goes there, as large as
+   * fits in it. A new opening starts from the box kept in the preferences, in front of the gaze.
+   */
+  private var screenFrame: ScreenFrame? = null
+  private var frameOpeningId: Long? = null
+  private var keepFrame = true
+
+  /** The photo being shown goes into the kept box once its picture is known (see screenPlaceFor). */
+  private var fitToFrame = false
+
+  /** The angles the stretch in progress keeps to: those of the screen, widened to its angle at the start. */
+  private var stretchBounds: ClosedFloatingPointRange<Float>? = null
   /** The pose of each controller on this frame, see ImmersiveInputSystem.Listener.onControllerRays. */
   private var controllerRays: Map<GripSide, Pose> = emptyMap()
   /** The hint of the grips, and the word on Sharper flat screens, passed once in this viewer. */
@@ -641,6 +693,32 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var reliefRun: ReliefRun? = null
   /** Puts both eyes of a finished relief on the quad. */
   private var reliefApplyJob: Job? = null
+  /**
+   * The slideshow of the photos of a flat screen (issue 19, point 2), for the opening [slideshowOpening]: the time of
+   * each photo (see SlideshowClock), its ticker, the request it made for the next photo, and whether a grip held it.
+   */
+  private var slideshow: SlideshowClock? = null
+  private var slideshowOpening: Long? = null
+  private var slideshowJob: Job? = null
+  private var slideshowRequestId: Long? = null
+  private var slideshowGripHeld = false
+
+  /** The next photo reached by browsing replaces the one shown without hiding it first (see PhotoSwap). */
+  private var swapInPlace = false
+
+  /** A relief reached in 2D while browsing, made only if the user presses 3D (see BrowseView). */
+  private var deferredRelief: DeferredRelief? = null
+  /** The file of the relief photo shown, for a new right eye at another strength (see cycleReliefStrength). */
+  private var reliefSource: DeferredRelief? = null
+  /**
+   * The relief strength chosen in this viewer for the opening [reliefStrengthOpening]: every relief request of that
+   * opening takes its parallax (the cache key kept, the depth map not depending on it), so that a photo reached
+   * before the app stored the setting cannot show the strength of before.
+   */
+  private var reliefStrength: ReliefStrengthChoice? = null
+  private var reliefStrengthOpening: Long? = null
+  /** The view the 3D button left the relief shown in, kept as the app's first view once the photo is left. */
+  private val reliefFirstView = ReliefFirstView()
   /** The heat of the headset, watched while the viewer has a relief job. */
   private var thermalWatch: ThermalWatch? = null
 
@@ -749,6 +827,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var navigationRow: View? = null
   private var resetButton: Button? = null
   private var stereoView: Button? = null
+  private var reliefStrengthButton: Button? = null
   private var coverageView: Button? = null
   /** Turns the sphere by 90 degrees; hidden for a spatial photo, which has no sphere. */
   private var turnButton: View? = null
@@ -764,6 +843,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var previousButton: Button? = null
   private var nextButton: Button? = null
   /** The Size and the Distance of a movable flat screen, in place of previous and next, see [updateScreenControls]. */
+  private var screenRow: View? = null
+  private var keepFrameButton: Button? = null
   private var sizeRow: View? = null
   private var sizeView: TextView? = null
   private var sizeLessButton: Button? = null
@@ -1020,6 +1101,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         )
     }
     liveViewer = this
+    keepFrame = screenPreferences().getBoolean(PREF_KEEP_FRAME, true)
     stabilization.listen()
   }
 
@@ -1066,6 +1148,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // singleTask: other apps can reach this method too, an intent without the launch token changes nothing
     val parsed = parse(intent) ?: return
     setIntent(intent)
+    sendReliefFirstView()
     request = parsed
     Log.i(TAG, "immersive viewer onNewIntent, opening ${parsed.openingId}")
     if (sceneReady) showRequest()
@@ -1261,6 +1344,34 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           }
         },
       ),
+      // Frosted background (issue 19, experimental): a small Surface under the photo layer (zIndex -2, the photo layer
+      // and the flat video screen being -1), on which the blurred copy of each photo is drawn once; the compositor
+      // magnifies it to the box around the photo with its bilinear filter (see FrostedBackdrop)
+      VideoSurfacePanelRegistration(
+        R.id.immersive_backdrop_panel,
+        surfaceConsumer = { _, surface ->
+          Log.i(TAG, "backdrop surface ready")
+          runOnUiThread {
+            if (sceneHold.isDown) return@runOnUiThread
+            backdropSurface = surface
+            backdropDrawn = false
+            drawBackdrop()
+          }
+        },
+        settingsCreator = {
+          MediaPanelSettings(
+            shape = QuadShapeOptions(width = 1f, height = 0.5625f),
+            display =
+              PixelDisplayOptions(width = FrostedBackdrop.SURFACE_WIDTH, height = FrostedBackdrop.SURFACE_HEIGHT),
+            rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = -2),
+          )
+        },
+        panelSetup = { panel, _ ->
+          Log.i(TAG, "backdrop layer ready")
+          backdropPanel = panel
+          scope.launch(Dispatchers.Main) { drawBackdrop() }
+        },
+      ),
     )
 
   /** The media to show, or null for an intent without the launch token (not started by this app) or without url. */
@@ -1370,6 +1481,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     navigationRow = root.findViewById(R.id.immersive_navigation_row)
     resetButton = root.findViewById(R.id.immersive_reset)
     stereoView = root.findViewById(R.id.immersive_stereo)
+    reliefStrengthButton = root.findViewById(R.id.immersive_relief_strength)
     coverageView = root.findViewById(R.id.immersive_coverage)
     turnButton = root.findViewById(R.id.immersive_turn)
     stabilizationButton = root.findViewById(R.id.immersive_stabilization)
@@ -1381,6 +1493,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     seekForwardButton = root.findViewById(R.id.immersive_seek_forward)
     previousButton = root.findViewById(R.id.immersive_previous)
     nextButton = root.findViewById(R.id.immersive_next)
+    screenRow = root.findViewById(R.id.immersive_screen_row)
+    keepFrameButton = root.findViewById(R.id.immersive_keep_frame)
     sizeRow = root.findViewById(R.id.immersive_size_row)
     sizeView = root.findViewById(R.id.immersive_size)
     sizeLessButton = root.findViewById(R.id.immersive_size_less)
@@ -1404,6 +1518,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(sizeMoreButton) { changeScreenSize(1) }
     onPanelClick(distanceLessButton) { changeScreenDistance(-1) }
     onPanelClick(distanceMoreButton) { changeScreenDistance(1) }
+    onPanelClick(keepFrameButton) { toggleKeepFrame() }
+    onPanelClick(reliefStrengthButton) { cycleReliefStrength() }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
     previousButton?.setOnClickListener { navigate(-1) }
     nextButton?.setOnClickListener { navigate(1) }
@@ -1436,7 +1552,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       when {
         splat -> SplatTexts.label(media?.stereoLabels.orEmpty(), SplatTexts.LABEL_HINT)
         scene -> SceneTexts.label(media?.stereoLabels.orEmpty(), SceneTexts.LABEL_HINT)
-        // A flat screen the grips move and resize has its own mapping
+        // A flat screen the grips move and resize has its own mapping: its photos browse and play a slideshow too,
+        // which a label of the app says (the Android strings stay as they are); a flat video keeps the one of before
+        media?.isMovableScreen == true && !media.isFlatVideo ->
+          StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_FLAT_SCREEN_BROWSE_HINT)
         media?.isMovableScreen == true -> getString(R.string.immersive_screen_hint)
         else -> getString(R.string.immersive_hint)
       }
@@ -1482,6 +1601,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     view?.setOnClickListener {
       action()
       restartPendingHide()
+      // A slideshow waits for the user: the photo shown counts again from nothing after a press (Play aside)
+      if (view !== playPauseButton) slideshow?.restartPhoto(SystemClock.uptimeMillis())
     }
   }
 
@@ -1491,9 +1612,107 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun updateVideoControls() {
     val visibility = if (request?.isVideo == true) View.VISIBLE else View.GONE
-    playPauseButton?.visibility = visibility
+    // A photo of a flat screen plays its slideshow with the same button
+    val slideshowPhoto = request?.let(::isSlideshowPhoto) == true
+    playPauseButton?.visibility = if (slideshowPhoto) View.VISIBLE else visibility
+    if (slideshowPhoto) {
+      playPauseButton?.setText(if (slideshow?.playing == true) R.string.immersive_pause else R.string.immersive_play)
+    }
     seekRow?.visibility = visibility
     updateProgress()
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // Slideshow of the photos of a flat screen (issue 19, point 2)
+
+  /** A photo of a flat screen, which browses: a slideshow goes through those. */
+  private fun isSlideshowPhoto(media: MediaRequest): Boolean =
+    !media.isVideo && media.isStereoPhoto && media.isMovableScreen && !media.isExplorable
+
+  /** The slideshow of the opening of [media], made at its first flat screen photo. */
+  private fun slideshowFor(media: MediaRequest): SlideshowClock {
+    val clock = slideshow
+    if (clock != null && slideshowOpening == media.openingId) return clock
+    stopSlideshowTicker()
+    return SlideshowClock(SlideshowClock.photoMsOf(media.slideshowSeconds)).also {
+      slideshow = it
+      slideshowOpening = media.openingId
+      Log.i(TAG, "slideshow of opening ${media.openingId}: ${it.photoMs} ms a photo")
+    }
+  }
+
+  /** Play or pause on a photo of a flat screen: the panel button, or the trigger with the panel hidden. */
+  private fun toggleSlideshow(media: MediaRequest) {
+    val clock = slideshowFor(media)
+    val now = SystemClock.uptimeMillis()
+    val labels = media.stereoLabels
+    if (clock.playing) {
+      clock.pause(now)
+      stopSlideshowTicker()
+      Log.i(TAG, "slideshow paused")
+      reportScreenChange(StereoComposer.label(labels, StereoComposer.LABEL_SLIDESHOW_PAUSED))
+    } else {
+      clock.play(now)
+      clock.hold(SlideshowClock.Hold.BACKGROUND, !playbackAllowed(), now)
+      startSlideshowTicker()
+      Log.i(TAG, "slideshow playing, ${clock.photoMs} ms a photo")
+      reportScreenChange(StereoComposer.label(labels, StereoComposer.LABEL_SLIDESHOW))
+    }
+    updateVideoControls()
+  }
+
+  /** Every SLIDESHOW_TICK_MS while the slideshow plays: the next photo once the one shown had its time. */
+  private fun startSlideshowTicker() {
+    slideshowJob?.cancel()
+    slideshowJob =
+      scope.launch {
+        while (true) {
+          delay(SLIDESHOW_TICK_MS)
+          val clock = slideshow ?: break
+          if (!clock.playing || closing) break
+          if (pendingRequestId != null || !clock.isDue(SystemClock.uptimeMillis())) continue
+          clock.photoChanged(SystemClock.uptimeMillis())
+          Log.i(TAG, "slideshow: next photo")
+          // As the thumbstick does: the panel stays as it is, the feedback line says what comes
+          navigate(1, fromThumbstick = true)
+          slideshowRequestId = pendingRequestId
+          if (slideshowRequestId == null) endSlideshow()
+        }
+      }
+  }
+
+  private fun stopSlideshowTicker() {
+    slideshowJob?.cancel()
+    slideshowJob = null
+    slideshowRequestId = null
+  }
+
+  /** No photo after the last one, or none could be asked for: "End of the slideshow". */
+  private fun endSlideshow() {
+    val clock = slideshow ?: return
+    if (!clock.playing) return
+    clock.noNext(SystemClock.uptimeMillis())
+    stopSlideshowTicker()
+    Log.i(TAG, "slideshow ended")
+    reportScreenChange(StereoComposer.label(request?.stereoLabels.orEmpty(), StereoComposer.LABEL_SLIDESHOW_END))
+    updateVideoControls()
+  }
+
+  /** The photo shown reached its final view: its time in the slideshow starts (see SlideshowClock). */
+  private fun slideshowFinalView() {
+    slideshow?.finalViewShown(SystemClock.uptimeMillis())
+  }
+
+  /** A grip held on the screen, or the viewer behind the system, stops the time of the photo shown. */
+  private fun updateSlideshowHolds() {
+    val clock = slideshow ?: return
+    val now = SystemClock.uptimeMillis()
+    val grip = screenGrip.grabbing != null || screenGrip.stretching
+    if (grip != slideshowGripHeld) {
+      slideshowGripHeld = grip
+      clock.hold(SlideshowClock.Hold.GRIP, grip, now)
+    }
+    clock.hold(SlideshowClock.Hold.BACKGROUND, !playbackAllowed(), now)
   }
 
   /** Previous and next are disabled while a request waits for its answer. */
@@ -1552,6 +1771,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** The 3D layout button, "3D layout: 3D, top and bottom": shown whenever a media is loaded, mono ones included. */
   private fun updateStereoView() {
+    updateReliefStrengthButton()
     val view = stereoView ?: return
     val media = request
     // A stitched frame is mono, and so is an ordinary photo or video on the big screen: the layout would change nothing
@@ -1587,6 +1807,79 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     view.text = ImmersiveMedia.stereoLayoutText(stereoLayout, media.stereoLabels)
     view.visibility = View.VISIBLE
+  }
+
+  /** "Relief: Normal" on a relief made in the headset, the strength its right eye is made with; hidden otherwise. */
+  private fun updateReliefStrengthButton() {
+    val button = reliefStrengthButton ?: return
+    val media = request
+    val spec = media?.let(::reliefSpecOf)
+    if (media == null || spec == null) {
+      button.visibility = View.GONE
+      return
+    }
+    val strength = ReliefStrengthChoice.ofParallax(spec.parallax)
+    val name = strength?.let { StereoComposer.label(media.stereoLabels, it.labelKey) } ?: "${spec.parallax}"
+    val info = StereoComposer.label(media.stereoLabels, ReliefStrengthChoice.LABEL_INFO)
+    button.text = info.replace(ReliefStrengthChoice.STRENGTH, name)
+    button.visibility = View.VISIBLE
+  }
+
+  /**
+   * The relief request of [media] with the strength chosen in this viewer for its opening (see [reliefStrength]);
+   * null for any other photo.
+   */
+  private fun reliefSpecOf(media: MediaRequest): DepthReliefSpec? {
+    val spec = (media.stereoKind as? StereoPhotoKind.DepthRelief)?.spec ?: return null
+    val chosen = reliefStrength?.takeIf { reliefStrengthOpening == media.openingId } ?: return spec
+    return spec.copy(parallax = chosen.parallax)
+  }
+
+  /**
+   * "Relief: Normal" pressed: the next strength (Subtle, Normal, Strong), for the photo shown at once (a new right eye
+   * from the cached depth map, about 0.3 s; a photo whose map is not cached yet runs its pass) and for every relief of
+   * this opening; the app keeps it as its setting. A relief reached in 2D waits for the 3D button, at that strength.
+   */
+  private fun cycleReliefStrength() {
+    val media = request ?: return
+    val spec = reliefSpecOf(media) ?: return
+    val next = (ReliefStrengthChoice.ofParallax(spec.parallax) ?: ReliefStrengthChoice.NORMAL).next
+    reliefStrength = next
+    reliefStrengthOpening = media.openingId
+    Log.i(TAG, "relief strength ${next.wire} (parallax ${next.parallax}) for opening ${media.openingId}")
+    notifyReliefSettings(null)
+    updateReliefStrengthButton()
+    val chosen = reliefSpecOf(media) ?: return
+    deferredRelief?.let { deferredRelief = DeferredRelief(it.media, chosen, it.bytes) }
+    val source = reliefSource
+    if (source != null && source.media === media && stereo3d && deferredRelief == null) {
+      // The relief of before goes, the new one replaces it once made; the photo stays meanwhile
+      reliefApplyJob?.cancel()
+      reliefRun = null
+      reliefJob?.cancel()
+      reliefSource = DeferredRelief(media, chosen, source.bytes)
+      startDeferredRelief(DeferredRelief(media, chosen, source.bytes))
+    }
+    updateStereoView()
+  }
+
+  /** The relief strength shown and, when 3D or 2.5D was chosen ([mode]), the first view, to the app's settings. */
+  private fun notifyReliefSettings(mode: ReliefViewMode?) {
+    val media = request ?: return
+    val spec = reliefSpecOf(media) ?: return
+    val strength = ReliefStrengthChoice.ofParallax(spec.parallax) ?: return
+    ImmersiveApiImpl.notifyReliefSettingsChanged(media.openingId, strength.wire, mode?.json)
+  }
+
+  /**
+   * The relief shown is left (previous or next, another opening, the viewer closed): the view its 3D button left it in
+   * goes to the app's settings as the first view, once (see [ReliefFirstView]). Called while [request] is still that
+   * relief.
+   */
+  private fun sendReliefFirstView() {
+    val view = reliefFirstView.take() ?: return
+    Log.i(TAG, "relief left in $view: kept as the first view of the reliefs")
+    notifyReliefSettings(if (view == StereoView.MESH_25D) ReliefViewMode.MESH_25D else ReliefViewMode.STEREO)
   }
 
   /**
@@ -1725,7 +2018,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /** The distance of the movable flat screen of the media shown, null for any other media. */
-  private fun nearScreenDistance(): Float? = screenPlace?.distance?.takeIf { request?.isMovableScreen == true }
+  private fun nearScreenDistance(): Float? = screenPlace?.distance?.takeIf { movableNow }
 
   /**
    * Every frame: the info panel and the feedback line shown come nearer than a flat screen brought nearer than them
@@ -2339,7 +2632,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             // A splat turns about the user by the step of the spheres, the place the glide reached kept
             splatStage?.turn(degrees)
           } else if (isStereoPhoto) {
-            placeStereoQuad()
+            placeStereoQuad(recenter = true)
           } else if (isFlatVideo) {
             placeFlatVideo()
           } else {
@@ -2349,13 +2642,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         ImmersiveControls.Action.STICK_UP ->
           when {
             isVideo -> seekFromThumbstick(1)
-            isStereoPhoto -> if (request?.isMovableScreen == true) changeScreenSize(1) else resizeStereoQuad(1)
+            isStereoPhoto -> if (movableNow) changeScreenSize(1) else resizeStereoQuad(1)
             else -> turnFromThumbstick(YAW_STEP_DEGREES)
           }
         ImmersiveControls.Action.STICK_DOWN ->
           when {
             isVideo -> seekFromThumbstick(-1)
-            isStereoPhoto -> if (request?.isMovableScreen == true) changeScreenSize(-1) else resizeStereoQuad(-1)
+            isStereoPhoto -> if (movableNow) changeScreenSize(-1) else resizeStereoQuad(-1)
             else -> turnFromThumbstick(-YAW_STEP_DEGREES)
           }
         ImmersiveControls.Action.SCREEN_FARTHER -> changeScreenDistance(1)
@@ -2405,6 +2698,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val now = SystemClock.uptimeMillis()
     val events = screenGrip.update(now, heldButtons) { side -> pointsAtScreen(side, place, size) }
     handleGripEvents(events)
+    if (slideshow?.playing == true) updateSlideshowHolds()
     moveWithGrip()
     stretchWithGrips()
   }
@@ -2453,6 +2747,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     screenDrag = null
     screenDragSide = null
     Log.i(TAG, "flat screen let go at $screenPlace")
+    rememberFrame("moved")
   }
 
   /** While a grip holds the screen, the screen where its ray points now. */
@@ -2478,13 +2773,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     if (!stretchStarted) {
       screenStretch.start(spread, FlatScreenGeometry.width(angle, place.distance))
       stretchStarted = true
-      Log.i(TAG, "flat screen stretched, hands $spread m apart")
+      // A screen brought nearer past its widest Size keeps it: the stretch goes on from there, never back to the bound
+      stretchBounds = FlatScreenGeometry.boundsHolding(screenAngleBounds(), angle)
+      Log.i(TAG, "flat screen stretched, hands $spread m apart, within $stretchBounds degrees")
       return
     }
     val width = screenStretch.width(spread) ?: return
     val wanted =
       FlatScreenGeometry.angleForWidth(width, place.distance)
-        .coerceIn(screenAngleBounds())
+        .coerceIn(stretchBounds ?: screenAngleBounds())
         .roundToInt()
         .toFloat()
     if (abs(wanted - angle) < 1f) {
@@ -2504,8 +2801,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun endStretch() {
     screenStretch.end()
     stretchStarted = false
+    stretchBounds = null
     stretchPendingAngle?.let { setScreenAngle(it) }
     stretchPendingAngle = null
+    rememberFrame("stretched")
   }
 
   /**
@@ -2515,7 +2814,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun screenSize(): Pair<Float, Float>? {
     val media = request ?: return null
     val place = screenPlace ?: return null
-    if (!media.isMovableScreen) return null
+    if (!movableNow) return null
     if (media.isFlatVideo) {
       if (!videoRevealed) return null
       val aspect = flatVideoLook()?.second ?: return null
@@ -2528,7 +2827,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The angular width of the movable flat screen shown ("Size 48°"), null when none shows. */
   private fun currentScreenAngle(): Float? {
     val media = request ?: return null
-    if (!media.isMovableScreen || screenPlace == null) return null
+    if (!movableNow || screenPlace == null) return null
     return when {
       media.isFlatVideo -> flatVideoLook()?.let { flatVideoAngle(it.second) }
       stereoEyeSize != null -> stereoAngleDeg
@@ -2566,29 +2865,51 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The Size buttons and the thumbstick up or down on a photo: a larger ([step] 1) or smaller (-1) screen. */
   private fun changeScreenSize(step: Int) {
     val angle = currentScreenAngle() ?: return
-    setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, screenAngleBounds()))
+    // A screen brought nearer past its widest Size goes smaller from there, never back to the bound at once
+    val bounds = FlatScreenGeometry.boundsHolding(screenAngleBounds(), angle)
+    setScreenAngle(FlatScreenGeometry.nextAngle(angle, step, bounds))
+    rememberFrame("sized")
+  }
+
+  /** Whether the screen shown may come from [from] to [to] meters, see FlatScreenGeometry.nearerAllowed. */
+  private fun screenNearerAllowed(angle: Float, from: Float, to: Float): Boolean {
+    val media = request ?: return true
+    val twoEyes = media.holdsTwoEyes && !media.isFlatVideo
+    return FlatScreenGeometry.nearerAllowed(angle, from, to, twoEyes, media.isEstimatedRelief)
   }
 
   /**
    * The Distance buttons and the thumbstick up or down while a grip holds the screen: the screen farther ([step] 1) or
-   * nearer (-1) on the line it stands on, the same width in meters, so that it looks larger nearer. The distance is
-   * kept for the next flat screens, and a grab in progress goes on from there.
+   * nearer (-1) on the line it stands on, the same width in meters, so that it looks larger nearer (see
+   * FlatScreenGeometry.keptAngle; issue 19, point 3). A photo of two eyes that would pass its comfort bound nearer
+   * stays where it is, and the panel or the feedback line says to make it smaller first. The distance is kept for the
+   * next flat screens, and a grab in progress goes on from there.
    */
   private fun changeScreenDistance(step: Int) {
     val place = screenPlace ?: return
     val angle = currentScreenAngle() ?: return
     val distance = FlatScreenGeometry.nextDistance(place.distance, step)
+    if (distance < place.distance && !screenNearerAllowed(angle, place.distance, distance)) {
+      Log.i(TAG, "flat screen of $angle degrees not brought to $distance m: past the comfort bound of its two eyes")
+      updateScreenControls()
+      reportScreenChange(StereoComposer.label(request?.stereoLabels.orEmpty(), StereoComposer.LABEL_NEAR_LIMIT_3D))
+      return
+    }
     if (distance != place.distance) {
       val moved = place.at(distance)
       screenPlace = moved
       screenDistanceM = distance
-      val kept = FlatScreenGeometry.angleAtDistance(angle, place.distance, distance, screenAngleBounds())
+      val media = request
+      val twoEyes = media?.holdsTwoEyes == true && media.isFlatVideo != true
+      val estimated = media?.isEstimatedRelief == true
+      val kept = FlatScreenGeometry.keptAngle(angle, place.distance, distance, twoEyes, estimated)
       setScreenAngle(kept, report = false)
       applyScreenPlace()
       screenDragSide?.let { side ->
         controllerRays[side]?.let { ray -> screenDrag = ScreenDrag(moved, ray.t, ray.forward()) }
       }
       Log.i(TAG, "flat screen is now $distance m away")
+      rememberFrame("brought to $distance m")
     }
     updateScreenControls()
     reportScreenChange(distanceText(distance))
@@ -2613,16 +2934,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     getString(R.string.immersive_distance, FlatScreenGeometry.meters(distance, Locale.getDefault()))
 
   /**
-   * The Size and Distance rows take the place of previous and next for a movable flat screen (which plays on its own,
-   * the thumbstick still saying so), once it shows; a minus or plus button at its bound is disabled.
+   * The row of the flat screens under previous and next, once a movable flat screen shows: Size and Distance, a minus
+   * or plus button at its bound disabled. Previous and next stay for its photos (issue 19, point 1), not for a flat
+   * video, which plays on its own.
    */
   private fun updateScreenControls() {
-    val movable = request?.isMovableScreen == true
-    previousButton?.visibility = if (movable) View.GONE else View.VISIBLE
-    nextButton?.visibility = if (movable) View.GONE else View.VISIBLE
+    val flatVideo = request?.isFlatVideo == true
+    previousButton?.visibility = if (flatVideo) View.GONE else View.VISIBLE
+    nextButton?.visibility = if (flatVideo) View.GONE else View.VISIBLE
     val angle = currentScreenAngle()
     val place = screenPlace
     if (angle == null || place == null) {
+      screenRow?.visibility = View.GONE
+      keepFrameButton?.visibility = View.GONE
       sizeRow?.visibility = View.GONE
       distanceRow?.visibility = View.GONE
       return
@@ -2632,10 +2956,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     val bounds = screenAngleBounds()
     sizeLessButton?.isEnabled = angle > bounds.start + 1e-3f
     sizeMoreButton?.isEnabled = angle < bounds.endInclusive - 1e-3f
-    distanceLessButton?.isEnabled = place.distance > FlatScreenGeometry.DISTANCES_M.first() + 1e-3f
+    // At the comfort bound of a photo of two eyes, nearer is refused: the button says so by being off
+    distanceLessButton?.isEnabled =
+      place.distance > FlatScreenGeometry.DISTANCES_M.first() + 1e-3f &&
+        screenNearerAllowed(angle, place.distance, FlatScreenGeometry.nextDistance(place.distance, -1))
     distanceMoreButton?.isEnabled = place.distance < FlatScreenGeometry.DISTANCES_M.last() - 1e-3f
+    screenRow?.visibility = View.VISIBLE
     sizeRow?.visibility = View.VISIBLE
     distanceRow?.visibility = View.VISIBLE
+    updateKeepFrameButton()
   }
 
   /**
@@ -2665,31 +2994,26 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun navigate(step: Int, fromThumbstick: Boolean = false) {
     if (closing || isFinishing) return
     val shown = request
-    if (shown != null && (shown.isFlatVideo || shown.isBigScreen)) {
-      // Opened alone from the app: said rather than asked
+    if (shown != null && shown.isFlatVideo) {
+      // A flat video plays on its own, its player and its progress apart: said rather than asked
       val key =
-        if (shown.isBigScreen) StereoComposer.LABEL_BIG_SCREEN_NO_NAVIGATION
+        if (shown.isBigScreenVideo) StereoComposer.LABEL_BIG_SCREEN_NO_NAVIGATION
         else StereoComposer.LABEL_FLAT3D_NO_NAVIGATION
       val text = StereoComposer.label(shown.stereoLabels, key)
-      Log.i(TAG, "no previous or next from a flat video or the big screen (step $step)")
+      Log.i(TAG, "no previous or next from a flat video (step $step)")
       if (fromThumbstick && !infoVisible) showFeedback(text) else setStatus(text)
       return
     }
-    if (shown != null && shown.isStereoPhoto) {
-      // Flutter finds no spatial or 3D photo before or after this one yet: said rather than asked
-      val key =
-        when (shown.stereoKind) {
-          is StereoPhotoKind.Sbs,
-          is StereoPhotoKind.Flat,
-          is StereoPhotoKind.DepthRelief,
-          is StereoPhotoKind.VolumetricScene -> StereoComposer.LABEL_NO_NAVIGATION_3D
-          else -> StereoComposer.LABEL_NO_NAVIGATION
-        }
+    if (shown != null && shown.isExplorable) {
+      // A 3D scene or a splat has no list around it (and its left thumbstick glides): said rather than asked
+      val key = if (shown.isScene) StereoComposer.LABEL_NO_NAVIGATION_3D else StereoComposer.LABEL_NO_NAVIGATION
       val text = StereoComposer.label(shown.stereoLabels, key)
-      Log.i(TAG, "no previous or next from a spatial photo (step $step)")
+      Log.i(TAG, "no previous or next from a 3D scene or a splat (step $step)")
       if (fromThumbstick && !infoVisible) showFeedback(text) else setStatus(text)
       return
     }
+    // Every other photo of a flat screen asks Flutter like a 360 media (issue 19, point 1): a viewer opened with a list
+    // around it gets the previous or next photo, one opened alone the answer that there is none
     if (pendingRequestId != null) {
       // Still looking: the feedback says so again rather than nothing happening
       if (fromThumbstick && !infoVisible) showFeedback(navigationStatus)
@@ -2783,6 +3107,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     // navigate only asks with a media on screen, which a pending request keeps
     val current = request ?: return false
+    sendReliefFirstView()
+    // Whether the photo shown has its picture on screen, for a swap without a black gap (see PhotoSwap)
+    val shownIsScreenPhoto = isSlideshowPhoto(current) && stereoEyeSize != null
     Log.i(TAG, "show adjacent ${if (isVideo) "video" else "photo"} for request $requestId")
     appliedRequestId = requestId
     // Still the same opening: Flutter follows it, and the events of the new media keep its id
@@ -2807,6 +3134,19 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         gaussianSplats = current.gaussianSplats,
         watchMinDurationMs = current.watchMinDurationMs,
         startNotice = startNotice,
+        reachedByBrowsing = true,
+        // A slideshow the headset was too warm for goes on in 2D (said once)
+        browseView = if (slideshow?.let { it.playing && it.twoD } == true) StereoView.TWO_D
+        else keptBrowseView(current),
+        slideshowSeconds = current.slideshowSeconds,
+        frostedBackground = current.frostedBackground,
+      )
+    swapInPlace =
+      PhotoSwap.keepsShown(
+        reachedByBrowsing = true,
+        shownIsScreenPhoto = shownIsScreenPhoto,
+        nextIsScreenPhoto = request?.let(::isSlideshowPhoto) == true,
+        shownIn25d = reliefMeshShown,
       )
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
@@ -2820,17 +3160,34 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   /**
+   * The view the photo [current] leaves to the next one (see BrowseView): what the user chose on a photo of two eyes
+   * (2.5D chosen counts while its mesh is made, 3D while its relief runs), the view kept before for one picture,
+   * which has no view of its own; none from a sphere or a video.
+   */
+  private fun keptBrowseView(current: MediaRequest): StereoView? =
+    when {
+      !current.isStereoPhoto || current.isExplorable -> null
+      !current.holdsTwoEyes -> current.browseView
+      stereo25d && current.stereoKind is StereoPhotoKind.DepthRelief -> StereoView.MESH_25D
+      stereo3d -> StereoView.THREE_D
+      else -> StereoView.TWO_D
+    }
+
+  /**
    * Ends request [id] without a new media: previous and next work again, [status] replaces "Looking for the next
    * media" (an error or the decoder warning shown meanwhile stays), and an auto hide held back for the request starts.
    * A late answer to an older request, or one that arrives after the new media, changes nothing.
    */
   private fun finishNavigation(id: Long, status: String) {
     if (closing || isDestroyed || pendingRequestId != id) return
+    // The slideshow asked and there is no next photo: it ends there
+    val slideshowEnds = id == slideshowRequestId
     val quiet = navigationQuiet && !infoVisible
     endNavigation()
     replaceNavigationStatus(status)
     runDeferredHide()
     if (quiet) showFeedback(status)
+    if (slideshowEnds) endSlideshow()
   }
 
   /**
@@ -2841,9 +3198,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun timeoutNavigation(id: Long, step: Int) {
     if (closing || isDestroyed || pendingRequestId != id) return
     Log.w(TAG, "no answer from the app $ADJACENT_TIMEOUT_MS ms after request $id for step $step")
+    val slideshowEnds = id == slideshowRequestId
     endNavigation()
     replaceNavigationStatus(statusBeforeNavigation)
     runDeferredHide()
+    if (slideshowEnds) endSlideshow()
   }
 
   /** Shows [text] in place of "Looking for the next media", unless an error or a warning replaced it meanwhile. */
@@ -3066,6 +3425,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * to report for an intent that showed nothing.
    */
   private fun reportClosed() {
+    // The relief closed on keeps the view it was left in, before the closed event
+    sendReliefFirstView()
     if (closedSent) return
     val media = request ?: return
     // The film the viewer closes on, a previous or next one too, is kept before the app follows the closing: the last
@@ -3430,22 +3791,47 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     resetSkyboxToIdle()
     skyboxEntity?.setComponent(Visible(false))
     halfSphereEntity?.setComponent(Visible(false))
-    hideStereoQuad()
+    // The next photo of a flat screen replaces the one shown once its first picture is ready: no black gap (issue 19)
+    val swap = swapInPlace
+    swapInPlace = false
+    if (swap) {
+      Log.i(TAG, "stereo photo: the one shown stays until the first picture of the next one")
+      dropForSwap()
+    } else {
+      hideStereoQuad()
+    }
     val kind = media.stereoKind
     val spec = media.stereoPair
     // A new photo starts in 3D at the width its field of view gives; the photo of a recreation as the user left it
     val restored = restoredStereoChoices?.forPhoto(media.url, media.openingId, media.screenAngleBounds)
     restoredStereoChoices = null
-    stereo3d = restored?.threeD ?: true
-    // A relief first shows as its request says, 3D or 2.5D; the photo of a recreation as the user left it
-    stereo25d =
-      restored?.mesh25d ?: ((kind as? StereoPhotoKind.DepthRelief)?.spec?.mode == ReliefViewMode.MESH_25D)
+    // A relief first shows as its request says, 3D or 2.5D; a photo reached by browsing in the view of the photo
+    // before, where it offers it (issue 19, point 5, see BrowseView); the photo of a recreation as the user left it
+    val relief = kind is StereoPhotoKind.DepthRelief
+    val requested =
+      if (relief && (kind as StereoPhotoKind.DepthRelief).spec.mode == ReliefViewMode.MESH_25D) StereoView.MESH_25D
+      else StereoView.THREE_D
+    val start = BrowseView.startView(media.browseView, requested, media.holdsTwoEyes, relief)
+    if (media.browseView != null) Log.i(TAG, "stereo photo reached by browsing, starts in $start")
+    stereo3d = restored?.threeD ?: (start != StereoView.TWO_D)
+    stereo25d = restored?.mesh25d ?: (start == StereoView.MESH_25D)
     stereoHasSecondEye = false
     stereoAngleDeg =
       restored?.angleDeg
         ?: StereoComposer.initialAngle(spec?.horizontalFovDeg).coerceIn(media.screenAngleBounds)
     stereoSizeFromPicture = kind == StereoPhotoKind.BigScreen && restored == null
     stereoChoicesFor = media.url to media.openingId
+    // The box the user set goes with the opening: a new opening places the box of the preferences in front of the gaze
+    if (media.openingId != frameOpeningId) {
+      screenFrame = null
+      frameOpeningId = media.openingId
+    }
+    // Issue 19: the next photos take the size and place set; the photo of a recreation stays as the user left it
+    fitToFrame = restored == null && keepFrame && media.isMovableScreen && !media.isFlatVideo
+    // The slideshow goes on through the photos reached by browsing; a photo opened from the app stops it
+    if (!media.reachedByBrowsing && slideshow?.playing == true) slideshow?.pause(SystemClock.uptimeMillis())
+    if (isSlideshowPhoto(media)) slideshowFor(media).photoChanged(SystemClock.uptimeMillis())
+    slideshowRequestId = null
     if (kind is StereoPhotoKind.VolumetricScene) {
       showScene(media, kind.spec)
       return
@@ -3473,7 +3859,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           val read = SystemClock.elapsedRealtime()
           Log.i(TAG, "stereo photo: ${bytes.size} bytes in ${read - started} ms")
           if (kind is StereoPhotoKind.DepthRelief) {
-            showReliefPhoto(media, kind.spec, bytes)
+            showReliefPhoto(media, reliefSpecOf(media) ?: kind.spec, bytes)
             return@launch
           }
           val texture =
@@ -3485,12 +3871,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           throw e
         } catch (e: Throwable) {
           Log.e(TAG, "stereo photo failed", e)
+          // A slideshow does not wait for a photo that fails
+          slideshowFinalView()
           val reason = e.message ?: e.javaClass.simpleName
           if (previewShown) {
             // The preview stays, said to be one, as on the sphere
             showStatus(getString(R.string.immersive_preview_only, reason))
             scheduleInfoHide()
           } else {
+            // The photo before must not stay up as if it were this one
+            if (swap && stereoEyeSize == null) hideStereoQuad()
             showError(getString(R.string.immersive_error_photo, reason))
           }
         }
@@ -3582,6 +3972,15 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       val texture = flat.getAndSet(null) ?: throw IOException("this image cannot be read or decoded")
       Log.i(TAG, "relief photo: ${texture.eyeWidth}x${texture.eyeHeight}, shown flat, ${spec.quarterTurns} turns")
       applyStereoTexture(texture)
+      reliefSource = DeferredRelief(media, spec, bytes)
+      if (!BrowseView.computesRelief(if (stereo3d) StereoView.THREE_D else StereoView.TWO_D)) {
+        // Browsed in 2D: the original shows, and the 3D button makes the relief (no heat for a relief nobody sees)
+        Log.i(TAG, "relief photo reached in 2D: the relief waits for the 3D button")
+        deferredRelief = DeferredRelief(media, spec, bytes)
+        slideshowFinalView()
+        updateStereoView()
+        return
+      }
       startRelief(media, spec, photo.getAndSet(null) ?: return)
     } finally {
       photo.getAndSet(null)?.recycle()
@@ -3594,6 +3993,40 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * the stages go to the status line under the indeterminate bar, the panel stays on screen, the 3D button reads
    * "Stop relief". The job owns [photo] from now on.
    */
+  /** The photo of a relief reached in 2D while browsing, whose relief the 3D button makes (see BrowseView). */
+  private class DeferredRelief(val media: MediaRequest, val spec: DepthReliefSpec, val bytes: ByteArray)
+
+  /**
+   * The 3D button on a relief reached in 2D: the photo decoded again from its file, then its relief made as at any
+   * opening (see [startRelief]).
+   */
+  private fun startDeferredRelief(deferred: DeferredRelief) {
+    reliefApplyJob?.cancel()
+    reliefApplyJob =
+      scope.launch {
+        val photo = AtomicReference<Bitmap?>()
+        try {
+          decodeMutex.withLock {
+            withContext(Dispatchers.Default) {
+              photo.set(ImmersiveMedia.decodeForRelief(deferred.bytes, deferred.spec.quarterTurns))
+            }
+          }
+          ensureActive()
+          if (request !== deferred.media) return@launch
+          Log.i(TAG, "relief of the photo reached in 2D, asked with the 3D button")
+          startRelief(deferred.media, deferred.spec, photo.getAndSet(null) ?: return@launch)
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Throwable) {
+          Log.e(TAG, "relief: the photo could not be decoded again", e)
+          stereo3d = false
+          updateStereoView()
+        } finally {
+          photo.getAndSet(null)?.recycle()
+        }
+      }
+  }
+
   private fun startRelief(media: MediaRequest, spec: DepthReliefSpec, photo: Bitmap) {
     val job =
       reliefJob
@@ -3605,7 +4038,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         }
     val request =
       ReliefRequest(File(spec.model), spec.modelSize, spec.modelId, spec.cacheKey, spec.parallax, spec.convergence)
-    cancelInfoHide()
+    // Opened from the app the panel stays for the stages; reached by browsing it goes as it would, the stages passing
+    // on the feedback line (issue 19)
+    if (!media.reachedByBrowsing) cancelInfoHide()
     reliefRun = job.start(request, BitmapReliefPhoto(photo), ::BitmapReliefEye, ReliefViewListener(media))
     setReliefProgress(true)
     updateStereoView()
@@ -3620,7 +4055,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     override fun onStage(stage: ReliefStage) {
       if (!shown) return
       setReliefProgress(true)
-      setStatus(StereoComposer.label(media.stereoLabels, StereoComposer.reliefStageLabelKey(stage)))
+      val text = StereoComposer.label(media.stereoLabels, StereoComposer.reliefStageLabelKey(stage))
+      if (media.reachedByBrowsing && !infoVisible) showFeedback(text) else setStatus(text)
     }
 
     override fun onDone(result: ReliefResult<BitmapReliefPhoto, BitmapReliefEye>) {
@@ -3638,11 +4074,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       if (!shown) return
       setReliefProgress(false)
       updateStereoView()
+      // The photo stays flat: that is its final view in a slideshow, which goes on in 2D once the headset is too warm
+      slideshowFinalView()
+      val clock = slideshow
+      if (reason == ReliefStop.TOO_WARM && clock != null && clock.playing && clock.tooWarm()) {
+        Log.i(TAG, "slideshow: too warm for a relief, goes on in 2D")
+        queueNotice(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SLIDESHOW_TOO_WARM))
+      }
       val text = StereoComposer.reliefStopText(media.stereoLabels, reason, detail)
       Log.i(TAG, "relief: the photo stays flat ($reason)")
       if (text == null) {
         setStatus(stereoStatus)
         scheduleInfoHide()
+      } else if (media.reachedByBrowsing && !infoVisible) {
+        showFeedback(text, TransientText.HOLD_MS)
       } else {
         // The reason comes and goes, as the honesty label does
         showPassing(text)
@@ -3693,6 +4138,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         } catch (e: Throwable) {
           Log.e(TAG, "relief: the eyes could not be put on the quad", e)
           setReliefProgress(false)
+          slideshowFinalView()
           updateStereoView()
           val reason = if (e is OutOfMemoryError) ReliefStop.NOT_ENOUGH_MEMORY else ReliefStop.FAILED
           StereoComposer.reliefStopText(media.stereoLabels, reason, e.message ?: e.javaClass.simpleName)?.let {
@@ -3714,6 +4160,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /** Another media, or the end of the viewer: the relief of the photo shown is dropped without a word. */
   private fun dropRelief() {
+    deferredRelief = null
+    reliefSource = null
     reliefApplyJob?.cancel()
     reliefApplyJob = null
     reliefRun = null
@@ -4409,6 +4857,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     val media = request
     val onLayer = media?.photoOnLayer == true
+    // Made before the photo goes on the mesh, which recycles its bitmap
+    if (media != null) makeBackdrop(media, stereo)
     if (onLayer) {
       showOnLayer(stereo)
     } else if (!showOnMesh(stereo)) {
@@ -4433,13 +4883,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     stereoStatus = getString(R.string.immersive_full_resolution, stereo.eyeWidth, stereo.eyeHeight)
+    // The time of the photo in a slideshow starts at its final view: the original, or the 3D of a relief
+    if (media?.stereoKind !is StereoPhotoKind.DepthRelief || stereo.hasSecondEye) slideshowFinalView()
     if (media?.stereoPair != null && !stereo.hasSecondEye) {
       // Shown at once and longer, as the decoder warning: the user expected 3D
       showStatus(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_SECOND_EYE_FAILED))
       scheduleInfoHide(DECODER_WARNING_HIDE_MS)
     } else if (media?.stereoKind is StereoPhotoKind.DepthRelief && !stereo.hasSecondEye) {
-      // The flat photo while its relief is made: the panel stays for the stages, see startRelief
+      // The flat photo while its relief is made: the panel stays for the stages, see startRelief; reached by browsing
+      // it goes as for any photo
       setStatus(stereoStatus)
+      if (media.reachedByBrowsing) scheduleInfoHide()
     } else if (media?.isScene == true && scenePreparing) {
       // The preview of a scene while the scene is made: the panel stays for the bar, see showScene
       setStatus(SceneTexts.label(media.stereoLabels, SceneTexts.LABEL_PREPARING))
@@ -4605,6 +5059,108 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
   }
 
+  /**
+   * The frosted copy of the photo of [stereo] for the backdrop of a flat screen (see FrostedBackdrop): its left eye
+   * scaled to a few pixels, blurred, desaturated and veiled, then drawn on the backdrop layer. Nothing with the setting
+   * off or for any other media.
+   */
+  private fun makeBackdrop(media: MediaRequest, stereo: StereoTexture) {
+    if (!media.frostedBackground || !isSlideshowPhoto(media) || sceneHold.isDown) return
+    val small =
+      try {
+        val (width, height) = FrostedBackdrop.smallSize(stereo.eyeWidth, stereo.eyeHeight)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val source = FlatScreenLayer.sourceRegion(0, stereo.cellWidth, stereo.cellHeight)
+        val paint = Paint(Paint.FILTER_BITMAP_FLAG)
+        Canvas(bitmap).drawBitmap(stereo.bitmap, rectOf(source), Rect(0, 0, width, height), paint)
+        val pixels = IntArray(width * height)
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+        bitmap.setPixels(FrostedBackdrop.frost(pixels, width, height), 0, width, 0, 0, width, height)
+        bitmap
+      } catch (e: Throwable) {
+        Log.e(TAG, "frosted background: the copy of the photo could not be made", e)
+        null
+      } ?: return
+    backdropBitmap?.recycle()
+    backdropBitmap = small
+    backdropDrawn = false
+    if (backdropEntity == null) {
+      backdropEntity =
+        Entity.create(
+          Panel(R.id.immersive_backdrop_panel, MeshCollision.NoCollision),
+          Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
+          Visible(false),
+        )
+      Log.i(TAG, "backdrop layer created")
+    }
+    drawBackdrop()
+  }
+
+  /** Draws the frosted copy on the Surface of the backdrop once both are there, then places it. */
+  private fun drawBackdrop() {
+    val bitmap = backdropBitmap ?: return
+    val surface = backdropSurface ?: return
+    if (backdropDrawn || backdropPanel == null || !surface.isValid || bitmap.isRecycled) return
+    backdropDrawn =
+      try {
+        val canvas = surface.lockHardwareCanvas()
+        try {
+          val target = Rect(0, 0, FrostedBackdrop.SURFACE_WIDTH, FrostedBackdrop.SURFACE_HEIGHT)
+          canvas.drawBitmap(bitmap, null, target, Paint(Paint.FILTER_BITMAP_FLAG))
+        } finally {
+          surface.unlockCanvasAndPost(canvas)
+        }
+        true
+      } catch (e: Exception) {
+        Log.e(TAG, "frosted background could not be drawn", e)
+        false
+      }
+    placeBackdrop()
+  }
+
+  /**
+   * The backdrop around the flat screen shown: the box the user set when the photo stands in it, else the photo
+   * itself, [FrostedBackdrop.MARGIN] past each side and [FrostedBackdrop.BEHIND_M] behind it; hidden without a
+   * movable photo, in 2.5D, with the setting off, or before its copy is drawn. Said once to be experimental.
+   */
+  private fun placeBackdrop() {
+    val entity = backdropEntity ?: return
+    val media = request
+    val place = screenPlace
+    val screen = screenSize()
+    if (media == null || !media.frostedBackground || !isSlideshowPhoto(media) || place == null || screen == null ||
+      !backdropDrawn
+    ) {
+      entity.setComponent(Visible(false))
+      return
+    }
+    val box = screenFrame?.takeIf { it.place == place }?.let { it.widthM to it.heightM } ?: screen
+    val behind = place.distance + FrostedBackdrop.BEHIND_M
+    val scale = behind / place.distance
+    val (width, height) = FrostedBackdrop.size(box.first * scale, box.second * scale)
+    val center = place.eyes + place.direction * behind
+    entity.setComponent(
+      Transform(Pose(Vector3(center.x, place.height, center.z), StereoComposer.quadRotation(place.direction)))
+    )
+    val panel = backdropPanel
+    val config = panel?.panelShapeConfig
+    if (panel != null && config != null && (abs(config.width - width) > 1e-3f || abs(config.height - height) > 1e-3f)) {
+      try {
+        config.width = width
+        config.height = height
+        panel.reshape(config)
+      } catch (e: Exception) {
+        Log.e(TAG, "could not size the backdrop to ${width}x$height m", e)
+      }
+    }
+    entity.setComponent(Visible(true))
+    if (!frostedNoticeShown) {
+      frostedNoticeShown = true
+      Log.i(TAG, "frosted background shown, ${width}x$height m")
+      queueNotice(StereoComposer.label(media.stereoLabels, StereoComposer.LABEL_FROSTED_NOTICE))
+    }
+  }
+
   /** The photo layer shows nothing any more: hidden, its bitmap recycled. */
   private fun dropPhotoLayer() {
     photoLayerEntity?.setComponent(Visible(false))
@@ -4733,6 +5289,18 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       reliefJob?.stop(run)
       return
     }
+    val deferred = deferredRelief
+    if (deferred != null && deferred.media === request) {
+      // A relief reached in 2D while browsing: 3D now makes it
+      deferredRelief = null
+      stereo3d = true
+      stereo25d = false
+      reliefFirstView.pressed(StereoView.THREE_D)
+      startDeferredRelief(deferred)
+      updateStereoView()
+      showControlChange(fromPanel)
+      return
+    }
     if (!stereoHasSecondEye) {
       Log.i(TAG, "spatial photo without a second eye: stays in 2D")
       return
@@ -4745,6 +5313,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     applyStereoMode()
     applyStereoPlacement()
     updateStereoView()
+    // A relief in 2.5D stands where it was computed from: no Size, Distance or grips until it leaves 2.5D
+    updateScreenControls()
+    // The view a relief is left in, 3D or 2.5D, becomes the first view in the app's settings once the photo is left:
+    // a 2.5D only passed through on the way to 2D is not kept (see sendReliefFirstView)
+    if (request?.stereoKind is StereoPhotoKind.DepthRelief) reliefFirstView.pressed(next)
     if (next != StereoView.TWO_D) showReliefEstimated() else hideReliefEstimated()
     showControlChange(fromPanel)
   }
@@ -4752,9 +5325,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /**
    * Puts the quad 2 m in front of where the user looks, at the height of the eyes, facing them the way the info panel
    * does (see StereoComposer.quadRotation): the horizontal gaze. Before the first head pose, in front of the default
-   * eye position; [onFrame] places it again once the pose is known.
+   * eye position; [onFrame] places it again once the pose is known. A flat screen the user may move goes where
+   * [screenPlaceFor] says: the kept box for a new photo with "Keep size and place" on, and in front of the gaze at its
+   * distance for the right thumbstick ([recenter]), which then becomes the box.
    */
-  private fun placeStereoQuad() {
+  private fun placeStereoQuad(recenter: Boolean = false) {
     if (stereoQuadEntity == null) return
     val head = lastHeadPosition
     val eyes = head ?: Vector3(0f, DEFAULT_EYE_HEIGHT, 0f)
@@ -4764,8 +5339,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     stereoEyes = Vector3(eyes.x, eyes.y, eyes.z)
     stereoGaze = direction
     stereoPlacedWithHead = head != null
-    // A flat screen the user may move goes at the distance the user chose last (see ScreenPlace)
-    screenPlace = if (request?.isMovableScreen == true) ScreenPlace.inFront(eyes, forward, screenDistanceM) else null
+    val movable = movableNow
+    screenPlace = if (movable) screenPlaceFor(eyes, forward, head != null, recenter) else null
     // A 2.5D view starts again from here: the whole relief
     if (reliefMeshShown) {
       reliefAttenuation = 1.0
@@ -4775,9 +5350,120 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     updateScreenControls()
     Log.i(
       TAG,
-      "stereo quad placed in front of $eyes, gaze $direction, head ${if (head != null) "known" else "unknown"}",
+      "stereo quad placed in front of $eyes, gaze $direction, head ${if (head != null) "known" else "unknown"}" +
+        if (movable) ", screen at $screenPlace, $stereoAngleDeg degrees" else "",
     )
+    // The screen brought in front is the box from now on; so is the first one of a viewer that keeps it
+    if (movable && head != null && (recenter || (keepFrame && screenFrame == null))) {
+      rememberFrame(if (recenter) "in front again" else "first screen")
+    }
   }
+
+  /**
+   * Where a movable flat screen goes: in front of the gaze at its distance for the right thumbstick ([recenter]); the
+   * kept box for a new photo with "Keep size and place" on ([fitToFrame]), the photo then as large as fits in it (its
+   * angle set here, within its own bounds), the box of the preferences placed in front of the gaze at the first photo
+   * of an opening; else in front of the gaze at the distance chosen last, as before issue 19.
+   */
+  private fun screenPlaceFor(eyes: Vector3, forward: Vector3, headKnown: Boolean, recenter: Boolean): ScreenPlace {
+    if (recenter) return ScreenPlace.inFront(eyes, forward, screenPlace?.distance ?: screenDistanceM)
+    if (fitToFrame) {
+      val frame =
+        screenFrame
+          ?: savedScreenFrame()?.placedInFront(eyes, forward)?.also {
+            // Kept once the head is known: before, the box stands in front of a default pose
+            if (headKnown) {
+              screenFrame = it
+              frameOpeningId = request?.openingId
+            }
+          }
+      val eyeSize = stereoEyeSize
+      val media = request
+      if (frame != null && eyeSize != null && media != null) {
+        val aspect = eyeSize.first.toFloat() / eyeSize.second.coerceAtLeast(1)
+        val bounds = FlatScreenGeometry.frameBounds(media.holdsTwoEyes, media.isEstimatedRelief)
+        stereoAngleDeg = frame.angleFor(aspect, bounds)
+        val fills = abs(FlatScreenGeometry.width(stereoAngleDeg, frame.place.distance) - frame.containedWidth(aspect))
+        Log.i(
+          TAG,
+          "photo in the kept box ${frame.widthM} x ${frame.heightM} m: $stereoAngleDeg degrees" +
+            if (fills > 0.01f) ", smaller than the box (its bounds $bounds)" else "",
+        )
+        return frame.place
+      }
+    }
+    return ScreenPlace.inFront(eyes, forward, screenDistanceM)
+  }
+
+  /**
+   * The flat screen shown, where it is and as large as it is, becomes the box the next photos take (see
+   * ScreenFrame), here and in the preferences for the next openings; [why] goes to the log. A photo only: a flat
+   * video keeps its own screen.
+   */
+  private fun rememberFrame(why: String) {
+    val media = request ?: return
+    if (!movableNow || media.isFlatVideo) return
+    val place = screenPlace ?: return
+    val angle = currentScreenAngle() ?: return
+    val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
+    val frame = ScreenFrame.of(place, angle, eyeWidth.toFloat() / eyeHeight.coerceAtLeast(1))
+    screenFrame = frame
+    frameOpeningId = media.openingId
+    val saved = frame.saved()
+    screenPreferences()
+      .edit()
+      .putFloat(PREF_FRAME_WIDTH, saved.widthM)
+      .putFloat(PREF_FRAME_HEIGHT, saved.heightM)
+      .putFloat(PREF_FRAME_DISTANCE, saved.distance)
+      .putFloat(PREF_FRAME_ELEVATION, saved.elevation)
+      .apply()
+    Log.i(TAG, "kept box ($why): ${frame.widthM} x ${frame.heightM} m, ${saved.distance} m, rise ${saved.elevation}")
+  }
+
+  /** The box of the preferences, null before the first one or when the entry does not read. */
+  private fun savedScreenFrame(): SavedScreenFrame? {
+    val preferences = screenPreferences()
+    if (!preferences.contains(PREF_FRAME_WIDTH)) return null
+    return SavedScreenFrame(
+        preferences.getFloat(PREF_FRAME_WIDTH, 0f),
+        preferences.getFloat(PREF_FRAME_HEIGHT, 0f),
+        preferences.getFloat(PREF_FRAME_DISTANCE, 0f),
+        preferences.getFloat(PREF_FRAME_ELEVATION, 0f),
+      )
+      .takeIf { it.isValid }
+  }
+
+  private fun screenPreferences() = getSharedPreferences(SCREEN_PREFERENCES, MODE_PRIVATE)
+
+  /**
+   * "Keep size and place": on, the next photos open in the box the user set; off, each one in front of the gaze at
+   * its own size, as before issue 19. Kept in the preferences of the viewer.
+   */
+  private fun toggleKeepFrame() {
+    keepFrame = !keepFrame
+    screenPreferences().edit().putBoolean(PREF_KEEP_FRAME, keepFrame).apply()
+    if (keepFrame) rememberFrame("Keep size and place on")
+    Log.i(TAG, "Keep size and place ${if (keepFrame) "on" else "off"}")
+    updateKeepFrameButton()
+    val labels = request?.stereoLabels.orEmpty()
+    val key = if (keepFrame) StereoComposer.LABEL_KEEP_FRAME_ON else StereoComposer.LABEL_KEEP_FRAME_OFF
+    reportScreenChange(StereoComposer.label(labels, key))
+  }
+
+  /** The Keep size and place button, for the photos of a flat screen once one shows, dimmed while off. */
+  private fun updateKeepFrameButton() {
+    val button = keepFrameButton ?: return
+    val media = request
+    val shown = media != null && media.isStereoPhoto && movableNow && screenPlace != null
+    button.text = StereoComposer.label(media?.stereoLabels.orEmpty(), StereoComposer.LABEL_KEEP_FRAME)
+    button.alpha = if (keepFrame) 1f else STABILIZATION_OFF_ALPHA
+    button.isActivated = keepFrame
+    button.visibility = if (shown) View.VISIBLE else View.GONE
+  }
+
+  /** The flat screen shown moves and resizes now: a movable screen, but a relief while its 2.5D mesh shows. */
+  private val movableNow: Boolean
+    get() = request?.isMovableScreen == true && !reliefMeshShown
 
   /**
    * The quad at the start pose [placeStereoQuad] took last: 2 m along the gaze, at the height of the eyes, as wide as
@@ -4788,10 +5474,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun applyStereoPlacement() {
     val entity = stereoQuadEntity ?: return
     val place = screenPlace
-    if (place != null && request?.isMovableScreen == true) {
+    if (place != null && movableNow) {
       placeScreenPhoto(place)
       return
     }
+    // No frosted background in 2.5D: the mesh stands where it was computed from, its quad behind it
+    backdropEntity?.setComponent(Visible(false))
     val eyes = stereoEyes ?: return
     val gaze = stereoGaze ?: return
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return
@@ -4815,6 +5503,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * [ScreenPlace]), both upright and facing the eyes it was placed from.
    */
   private fun placeScreenPhoto(place: ScreenPlace) {
+    placeBackdrop()
     val pose = Pose(place.center, StereoComposer.quadRotation(place.direction))
     if (photoOnLayer) {
       photoLayerEntity?.setComponent(Transform(pose))
@@ -4836,7 +5525,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       return
     }
     screenPlace?.let { place ->
-      if (request?.isMovableScreen == true) {
+      if (movableNow) {
         placeScreenPhoto(place)
         return
       }
@@ -4867,7 +5556,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The photo of the quad as the mesh sees it, with the settings of relief-v1 of its request. */
   private fun reliefView(): ReliefView? {
     val (eyeWidth, eyeHeight) = stereoEyeSize ?: return null
-    val spec = (request?.stereoKind as? StereoPhotoKind.DepthRelief)?.spec ?: return null
+    val spec = reliefSpecOf(request ?: return null) ?: return null
     return ReliefView.forQuad(stereoAngleDeg, eyeWidth, eyeHeight, spec.parallax, spec.convergence)
   }
 
@@ -4949,8 +5638,25 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    * Any other media: the quad goes away (its texture stays until the next spatial photo replaces it), and the mesh of
    * a relief and the photo layer with it.
    */
+  /**
+   * The next photo of a flat screen is on its way: the photo shown stays on the layer or the mesh until its texture is
+   * replaced (see [applyStereoTexture]), but the 2.5D mesh, a picture waiting for the quad and the eyes go at once,
+   * so that nothing places, sizes or grabs the photo shown as if it were the next one.
+   */
+  private fun dropForSwap() {
+    reliefMeshEntity?.setComponent(Visible(false))
+    reliefMesh = null
+    reliefMeshWritten = false
+    stereo25d = false
+    pendingStereo?.bitmap?.recycle()
+    pendingStereo = null
+    stereoPlacedWithHead = false
+    stereoEyeSize = null
+  }
+
   private fun hideStereoQuad() {
     stereoQuadEntity?.setComponent(Visible(false))
+    backdropEntity?.setComponent(Visible(false))
     dropPhotoLayer()
     reliefMeshEntity?.setComponent(Visible(false))
     reliefMesh = null
@@ -6828,6 +7534,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   private fun togglePlayPause() {
+    val media = request
+    if (media != null && isSlideshowPhoto(media)) {
+      toggleSlideshow(media)
+      return
+    }
     val p = player ?: return
     if (currentVideoUrl == null) return
     when {
@@ -6912,6 +7623,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       SessionState.FOCUSED -> {
         focused = true
         resumeHeldPlayback()
+        updateSlideshowHolds()
       }
       // A state this SDK does not know says nothing about the focus
       SessionState.UNKNOWN -> Unit
@@ -6919,6 +7631,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       else -> {
         focused = false
         holdPlayback()
+        updateSlideshowHolds()
       }
     }
   }
@@ -6927,6 +7640,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     super.onResume()
     resumed = true
     resumeHeldPlayback()
+    updateSlideshowHolds()
   }
 
   override fun onPause() {
@@ -6937,6 +7651,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // The headset off, the system menu: the app keeps where the film is
     reportProgress()
     holdPlayback()
+    updateSlideshowHolds()
   }
 
   override fun onStop() {
@@ -7042,6 +7757,12 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /** The threshold of the films and the start notice of a media, see [MediaRequest] */
     private const val EXTRA_WATCH_MIN_DURATION_MS = "app.alextran.immich.immersive.WATCH_MIN_DURATION_MS"
     private const val EXTRA_START_NOTICE = "app.alextran.immich.immersive.START_NOTICE"
+    /** The slideshow duration of the opening, see [MediaRequest] */
+    private const val EXTRA_SLIDESHOW_SECONDS = "app.alextran.immich.immersive.SLIDESHOW_SECONDS"
+    /** The frosted background setting of the opening, see [MediaRequest] */
+    private const val EXTRA_FROSTED_BACKGROUND = "app.alextran.immich.immersive.FROSTED_BACKGROUND"
+    /** How often the slideshow looks whether the next photo is due */
+    private const val SLIDESHOW_TICK_MS = 250L
     /** The folder of the cache the original of a video that cannot stream is downloaded to, see downloadOriginal */
     private const val DOWNLOAD_DIR = "immersive_video"
     private const val DOWNLOAD_BUFFER_BYTES = 256 * 1024
@@ -7056,6 +7777,13 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val SPLAT_PREFIX = "immersive_splat_"
     /** The orientation chosen for each splat file, see SplatUprightMemory */
     private const val SPLAT_PREFERENCES = "immersive_splat"
+    /** "Keep size and place" and the box of the flat screen kept between openings, see ScreenFrame */
+    private const val SCREEN_PREFERENCES = "immersive_screen"
+    private const val PREF_KEEP_FRAME = "keep_frame"
+    private const val PREF_FRAME_WIDTH = "frame_width_m"
+    private const val PREF_FRAME_HEIGHT = "frame_height_m"
+    private const val PREF_FRAME_DISTANCE = "frame_distance_m"
+    private const val PREF_FRAME_ELEVATION = "frame_elevation"
     private const val INFO_DISTANCE = 1.3f
     /** The info panel stands this much below the eyes, at INFO_DISTANCE. */
     private const val INFO_DROP = 0.3f
@@ -7073,10 +7801,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     /**
      * Size of the info panel: its layout in dp, and its quad in meters. Both keep the 1 m for 720 dp of the first
      * panel (720 x 260 dp on 1.0 x 0.36 m) so that the text keeps its size in the headset; the height grew for the
-     * time bar and the previous and next buttons (see immersive_info_panel.xml).
+     * time bar and the previous and next buttons, then for the row of the flat screens under them, which a video on
+     * the big screen shows with its time bar (see immersive_info_panel.xml).
      */
     private const val INFO_PANEL_WIDTH_DP = 720f
-    private const val INFO_PANEL_HEIGHT_DP = 400f
+    private const val INFO_PANEL_HEIGHT_DP = 456f
     private const val INFO_PANEL_WIDTH_M = 1.0f
     private const val INFO_PANEL_HEIGHT_M = INFO_PANEL_WIDTH_M * INFO_PANEL_HEIGHT_DP / INFO_PANEL_WIDTH_DP
 
@@ -7285,6 +8014,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       gaussianSplats: Boolean = true,
       watchMinDurationMs: Long = WatchReport.OFF,
       startNotice: String? = null,
+      slideshowSeconds: Long = 0L,
+      frostedBackground: Boolean = true,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -7308,6 +8039,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           gaussianSplats = gaussianSplats,
           watchMinDurationMs = watchMinDurationMs,
           startNotice = startNotice,
+          slideshowSeconds = slideshowSeconds,
+          frostedBackground = frostedBackground,
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -7340,6 +8073,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putBoolean(EXTRA_GAUSSIAN_SPLATS, media.gaussianSplats)
         putLong(EXTRA_WATCH_MIN_DURATION_MS, media.watchMinDurationMs)
         putString(EXTRA_START_NOTICE, media.startNotice)
+        putLong(EXTRA_SLIDESHOW_SECONDS, media.slideshowSeconds)
+        putBoolean(EXTRA_FROSTED_BACKGROUND, media.frostedBackground)
       }
     }
 
@@ -7381,6 +8116,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         gaussianSplats = gaussianSplatsOf(extras),
         watchMinDurationMs = extras.getLong(EXTRA_WATCH_MIN_DURATION_MS, WatchReport.OFF),
         startNotice = extras.getString(EXTRA_START_NOTICE)?.takeIf { it.isNotBlank() },
+        slideshowSeconds = extras.getLong(EXTRA_SLIDESHOW_SECONDS, 0L),
+        frostedBackground = extras.getBoolean(EXTRA_FROSTED_BACKGROUND, true),
       )
     }
 

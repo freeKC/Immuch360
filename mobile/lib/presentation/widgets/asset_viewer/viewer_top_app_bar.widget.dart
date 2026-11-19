@@ -21,6 +21,7 @@ import 'package:immich_mobile/presentation/actions/favorite.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/flat_screen_navigator.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
@@ -348,16 +349,20 @@ class ViewerTopAppBar extends ConsumerWidget implements PreferredSizeWidget {
 }
 
 /// Opens [asset], an Apple spatial photo, a side by side photo, a photo for an AI relief or a photo that carries a 3D
-/// scene as [stereo] describes it, in 3D in the immersive viewer (see [openStereoPhotoViewer]); a message says when it
-/// could not open
+/// scene as [stereo] describes it, in 3D in the immersive viewer (see [openStereoPhotoViewer]), with previous and next
+/// among the photos of the timeline but for a scene (see [flatScreenNavigatorFor]); a message says when it could not
+/// open
 Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset asset, StereoPhotoRequest stereo) async {
-  // Read before the first await: the viewer may be gone by then
+  // Read before the first await: the viewer may be gone by then. The navigator reads the providers of this asset
+  // viewer through its container, never through this WidgetRef, which goes with the widget
   final messenger = ScaffoldMessenger.maybeOf(context);
   final errorMessage = context.t.immersive_viewer_open_failed;
   final tiffMessage = context.t.tiff_cannot_decode;
   final stereoLabels = stereoPhotoViewerLabels(context.t);
+  final container = ProviderScope.containerOf(context, listen: false);
   try {
-    await openStereoPhotoViewer(ref, asset, stereo, stereoLabels: stereoLabels);
+    final navigator = flatScreenNavigatorFor(container.read, asset, stereo);
+    await openStereoPhotoViewer(ref, asset, stereo, stereoLabels: stereoLabels, navigator: navigator);
   } catch (error) {
     _log.warning('Could not open ${asset.name} in 3D: $error');
     // A TIFF of the headset that does not decode says so (see ImmersiveAssetResolver.resolveStereoPhoto)
@@ -397,6 +402,7 @@ Future<void> _openBigScreen(BuildContext context, WidgetRef ref, BaseAsset asset
   final errorMessage = context.t.immersive_viewer_open_failed;
   final tiffMessage = context.t.tiff_cannot_decode;
   final stereoLabels = stereoPhotoViewerLabels(context.t);
+  final container = ProviderScope.containerOf(context, listen: false);
   try {
     if (asset.isVideo) {
       await openBigScreenVideo(
@@ -408,7 +414,9 @@ Future<void> _openBigScreen(BuildContext context, WidgetRef ref, BaseAsset asset
             messenger?.showSnackBar(SnackBar(content: Text(notice.message(StaticTranslations.instance)))),
       );
     } else {
-      await openBigScreenPhoto(ref, asset, stereoLabels: stereoLabels);
+      // Previous and next among the photos of the timeline, which come at the size and place set (issue 19)
+      final navigator = flatScreenNavigatorFor(container.read, asset, const StereoPhotoRequest.bigScreen());
+      await openBigScreenPhoto(ref, asset, stereoLabels: stereoLabels, navigator: navigator);
     }
   } catch (error) {
     _log.warning('Could not open ${asset.name} on the big screen: $error');

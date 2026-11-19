@@ -92,10 +92,13 @@ class FlatScreenMediaTest {
   }
 
   @Test
-  fun `a relief made in the headset and a scene stay where they were placed, on the mesh`() {
+  fun `a relief made in the headset moves as a screen on the mesh, a scene stays where it was placed`() {
+    // Issue 19: the relief keeps the size and place set like any flat screen photo; its 2.5D view still stands where
+    // it was computed from (the viewer stops moving it while the mesh shows), and it never goes on the photo layer
     val made = photo(relief)
-    assertFalse(made.isMovableScreen)
+    assertTrue(made.isMovableScreen)
     assertFalse(made.photoOnLayer)
+    assertFalse(photo(relief, sharp = false).photoOnLayer)
     assertTrue(made.holdsTwoEyes)
     assertEquals(30f..60f, made.angleBounds)
     val shown = photo(scene)

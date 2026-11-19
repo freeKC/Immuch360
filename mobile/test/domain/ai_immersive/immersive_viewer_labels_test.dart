@@ -53,8 +53,22 @@ void main() {
       'aiReliefNoMemory',
       'aiReliefMissing',
       'aiReliefDamaged',
+      'aiReliefStrengthInfo',
+      'aiReliefStrength_subtle',
+      'aiReliefStrength_normal',
+      'aiReliefStrength_strong',
     });
     expect(labels.values, everyElement(isNotEmpty));
+  });
+
+  testWidgets('the relief strength button of the headset reads the names of the settings', (tester) async {
+    final labels = aiImmersiveViewerLabels(await english(tester));
+    // The English texts of StereoComposer.defaultLabels in StereoPhoto.kt
+    expect(labels['aiReliefStrengthInfo'], 'Relief: {strength}');
+    expect(
+      [labels['aiReliefStrength_subtle'], labels['aiReliefStrength_normal'], labels['aiReliefStrength_strong']],
+      ['Subtle', 'Normal', 'Strong'],
+    );
   });
 
   testWidgets('the relief the headset makes says its stages and why it left a photo flat', (tester) async {
@@ -144,6 +158,20 @@ void main() {
     expect(labels, {
       'sharpScreensNotice': 'Sharper flat screen (experimental)',
       'bigScreenNoNavigation': 'On the big screen, a photo or video shows on its own: B or Y goes back to the app',
+      'screenNearLimit3d': 'Make it smaller first: a 3D photo this close tires the eyes',
+      'flatScreenBrowseHint':
+          'B or Y: back to the app. Left thumbstick left or right: previous or next photo. Trigger: slideshow. A, X '
+          'or a short grip press: show or hide this panel. Hold a grip on the screen to move it, the thumbstick then '
+          'brings it nearer or farther; hold both grips to resize it. Right thumbstick left or right: the screen in '
+          'front again.',
+      'keepFrame': 'Keep size and place',
+      'keepFrameOn': 'The next photos open at this size and place',
+      'keepFrameOff': 'Each photo opens in front of you',
+      'slideshow': 'Slideshow',
+      'slideshowPaused': 'Slideshow paused',
+      'slideshowEnd': 'End of the slideshow',
+      'slideshowTooWarm': 'Headset too warm: the slideshow goes on in 2D',
+      'frostedNotice': 'Frosted background (experimental)',
     });
   });
 

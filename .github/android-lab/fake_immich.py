@@ -23,10 +23,10 @@ socket open, as Immich 3.3.5 (the version of media.freekc.fr):
 - With --image-format jxl, the server answers as one whose admin picked JPEG XL for the thumbnails and previews (a
   choice of Immich 3.4.0): the thumbnail, preview and fullsize sizes of /thumbnail are JPEG XL files with the type
   image/jxl, the originals are unchanged. The timeline is another one then: the three photos under other ids and names
-  (so that nothing the app kept from the first run answers for them) and a 360 photo, flagged EQUIRECTANGULAR in its
-  exif as the server flags a photo with GPano tags. The version stays 3.3.5: the app decodes what the thumbnails are,
-  whatever the version says, and a newer version would bring the notice of a newer server into the screens the tests
-  read.
+  (so that nothing the app kept from the first run answers for them), a 360 photo, flagged EQUIRECTANGULAR in its
+  exif as the server flags a photo with GPano tags, and a video that is never played. The version stays 3.3.5: the
+  app decodes what the thumbnails are, whatever the version says, and a newer version would bring the notice of a
+  newer server into the screens the tests read.
 
 Every JSON answer and every sync event is checked against the schemas of open-api/immich-openapi-specs.json when the
 server starts (--check runs that check alone and exits), so a change of the API that the fake answers no longer follow
@@ -97,6 +97,12 @@ JXL_ASSETS = [
      "mime": "image/heic", "width": 1200, "height": 800, "date": "2026-11-02T10:00:00.000Z"},
     {"id": "4b1c7d0e-1f2a-4c3b-8d4e-5f6a7b8c9d13", "file": "lab_photo.avif", "name": "lab_jxl_avif.avif",
      "mime": "image/avif", "width": 1200, "height": 800, "date": "2026-11-01T10:00:00.000Z"},
+    # A video between the photos, which previous and next on the flat screen of the headset pass over
+    # (lab_flat_screen_browse_test.dart): never played, so its "original" is a fixture of its own (its checksum is
+    # its own), and its thumbnails are those of the photos
+    {"id": "4b1c7d0e-1f2a-4c3b-8d4e-5f6a7b8c9d15", "file": "lab_preview.jpg", "name": "lab_jxl_clip.mp4",
+     "mime": "video/mp4", "width": 1280, "height": 720, "date": "2026-11-02T22:00:00.000Z", "type": "VIDEO",
+     "duration": 5000},
 ]
 JXL_THUMBNAILS = {"thumbnail": "lab_thumbnail.jxl", "preview": "lab_preview.jxl", "fullsize": "lab_preview.jxl"}
 
@@ -200,11 +206,12 @@ def sync_events(files, assets=ASSETS):
     for asset in assets:
         checksum = base64.b64encode(hashlib.sha1(files[asset["file"]]).digest()).decode()
         events.append(("AssetV2", "SyncAssetV2", {
-            "checksum": checksum, "createdAt": asset["date"], "deletedAt": None, "duration": None,
+            "checksum": checksum, "createdAt": asset["date"], "deletedAt": None, "duration": asset.get("duration"),
             "fileCreatedAt": asset["date"], "fileModifiedAt": asset["date"], "height": asset["height"],
             "id": asset["id"], "isEdited": False, "isFavorite": False, "libraryId": None, "livePhotoVideoId": None,
             "localDateTime": asset["date"], "originalFileName": asset["name"], "ownerId": USER_ID, "stackId": None,
-            "thumbhash": None, "type": "IMAGE", "visibility": "timeline", "width": asset["width"]}))
+            "thumbhash": None, "type": asset.get("type", "IMAGE"), "visibility": "timeline",
+            "width": asset["width"]}))
     for asset in assets:
         exif = {key: None for key in (
             "city", "country", "description", "exposureTime", "fNumber", "focalLength", "fps", "iso", "latitude",

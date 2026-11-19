@@ -5,7 +5,8 @@
 # LAB_HOST commands of the tests), then the stress test of the vendored ok_http (required), upstream's background sync
 # teardown test (reported only), the lab smoke test, the background run test, the Plex film download test and the
 # invitation to rate the app (required); then the fake server again, answering as a server set to JPEG XL thumbnails
-# and previews (--image-format jxl, its records in the jxl folder), for the JPEG XL test (required); and at the end
+# and previews (--image-format jxl, its records in the jxl folder), for the JPEG XL test and the test of previous and
+# next on the flat screen of the headset (both required); and at the end
 # logcat read by check_logcat.py, whose verdict is the result of the step: a crash, an ANR or a death of the app in any
 # scenario fails it, and so does a "Not decoded" line of the app in a jxl scenario. Never on a device of the owner,
 # never on a real Plex server.
@@ -75,6 +76,7 @@ stop_server "$out/server-state.json"
 
 start_server jxl "$out/jxl" "$out/server-jxl.txt"
 run jxl integration_test/lab_jxl_server_test.dart
+run flatbrowse integration_test/lab_flat_screen_browse_test.dart
 stop_server "$out/server-jxl-state.json"
 
 sleep 3
@@ -82,7 +84,8 @@ kill "$logcat" 2>/dev/null || true
 wait "$logcat" 2>/dev/null || true
 
 python3 .github/android-lab/check_logcat.py --app "$app" --results "$out/results.txt" \
-  --required stress --required smoke --required background --required plexdownload --required rate --required jxl \
+  --required stress --required smoke --required background --required plexdownload --required rate --required jxl --required flatbrowse \
   --scenarios redirect,timeline,originals,native-decode,upload,background-end,background-cancel,plex-download-pause,plex-download-background,rate-early,rate-due,rate-crash \
   --scenarios jxl-grid,jxl-viewer,jxl-360,jxl-native-decode --not-decoded jxl- \
+  --scenarios flat-browse-open,flat-browse-next,flat-browse-previous,flat-browse-close \
   --out "$out" "$out/logcat.txt"

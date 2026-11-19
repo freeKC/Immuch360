@@ -351,6 +351,21 @@ class ReliefJobTest {
   }
 
   @Test
+  fun `another strength for the photo shown keeps its cache key and takes the map from the cache`() {
+    // Issue 19, point 4: "Relief: Strong" in the viewer runs the photo again with the same key and the new parallax
+    val job = job()
+    val first = Recorder()
+    start(job, FakePhoto(64, 48), first)
+    worker.runDue()
+    val strong = Recorder()
+    start(job, FakePhoto(64, 48), strong, ReliefRequest(model, MODEL_SIZE, MODEL_ID, KEY, 0.03, ReliefV1.CONVERGENCE))
+    worker.runDue()
+
+    assertEquals(1, engine.passes)
+    assertTrue(strong.done.single().fromCache)
+  }
+
+  @Test
   fun `a failure of the engine leaves the photo flat with its reason`() {
     val job = job()
     engine.openFailure = DepthFailure.OPEN_FAILED

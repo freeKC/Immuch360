@@ -181,6 +181,8 @@ class _ImmersiveApi extends ImmersiveApi {
     bool gaussianSplats = true,
     int watchMinDurationMs = -1,
     String? startNotice,
+    int slideshowSeconds = 0,
+    bool frostedBackground = true,
   }) async {
     openingIds.add(openingId);
     final failure = this.failure;

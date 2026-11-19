@@ -280,6 +280,63 @@ void main() {
     });
   });
 
+  group('Frosted background behind photos (experimental, issue 19)', () {
+    final frostedSwitch = find.descendant(
+      of: find.byKey(const Key('advanced_settings_frosted_screens')),
+      matching: find.byType(SwitchListTile),
+    );
+
+    Future<void> pumpOnQuest(WidgetTester tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [
+          isHorizonOsProvider.overrideWith((ref) => true),
+          appFlavorProvider.overrideWithValue(null),
+          aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
+        ],
+      );
+      await tester.scrollUntilVisible(frostedSwitch, 100, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(frostedSwitch);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('reads on by default, next to Sharper flat screens, and says what it does', (tester) async {
+      await pumpOnQuest(tester);
+
+      expect(find.text('Frosted background behind photos (experimental)'), findsOneWidget);
+      expect(
+        find.text('A blurred copy of the photo fills the frame around it on the big screen of the headset'),
+        findsOneWidget,
+      );
+      expect(tester.widget<SwitchListTile>(frostedSwitch).value, isTrue);
+      expect(SettingsRepository.instance.appConfig.viewer.frostedFlatScreens, isTrue);
+    });
+
+    testWidgets('turns off and on again', (tester) async {
+      await pumpOnQuest(tester);
+
+      await tester.tap(frostedSwitch);
+      await tester.pumpAndSettle();
+      expect(tester.widget<SwitchListTile>(frostedSwitch).value, isFalse);
+      expect(SettingsRepository.instance.appConfig.viewer.frostedFlatScreens, isFalse);
+
+      await tester.tap(frostedSwitch);
+      await tester.pumpAndSettle();
+      expect(SettingsRepository.instance.appConfig.viewer.frostedFlatScreens, isTrue);
+    });
+
+    testWidgets('is not offered on a phone, which has no immersive viewer', (tester) async {
+      await tester.pumpTestWidget(
+        context,
+        const AdvancedSettings(),
+        overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
+      );
+
+      expect(find.byKey(const Key('advanced_settings_frosted_screens')), findsNothing);
+    });
+  });
+
   group('Gaussian splats (experimental)', () {
     final splatSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_gaussian_splats')),

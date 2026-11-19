@@ -118,10 +118,8 @@
       android:tooltipText="@string/immersive_seek_forward" />
   </LinearLayout>
 
-  <!-- Previous and next media of the app (photos and videos), and play or pause for a video. Not offered in a 3D
-       scene, where the left thumbstick glides. A flat screen the grips move and resize (a photo of the stereo quad, a
-       video of the flat video screen) has its Size and its Distance here instead of previous and next, each with its
-       minus and plus buttons -->
+  <!-- Previous and next media of the app (photos and videos), and play or pause: a video, or the slideshow of the
+       photos of a flat screen. Not offered in a 3D scene, where the left thumbstick glides -->
   <LinearLayout
     android:id="@+id/immersive_navigation_row"
     android:layout_width="match_parent"
@@ -138,6 +136,37 @@
       android:maxLines="1"
       android:text="@string/immersive_previous"
       android:textSize="18sp" />
+
+    <Button
+      android:id="@+id/immersive_play_pause"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="12dp"
+      android:maxLines="1"
+      android:text="@string/immersive_pause"
+      android:textSize="18sp"
+      android:visibility="gone" />
+
+    <Button
+      android:id="@+id/immersive_next"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:maxLines="1"
+      android:text="@string/immersive_next"
+      android:textSize="18sp" />
+  </LinearLayout>
+
+  <!-- A flat screen the grips move and resize (a photo of the stereo quad, a video of the flat video screen): its
+       Size and its Distance, each with its minus and plus buttons, and "Keep size and place" for the photos that
+       follow. Shown once such a screen shows -->
+  <LinearLayout
+    android:id="@+id/immersive_screen_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:visibility="gone">
 
     <LinearLayout
       android:id="@+id/immersive_size_row"
@@ -176,16 +205,6 @@
         android:textSize="20sp" />
     </LinearLayout>
 
-    <Button
-      android:id="@+id/immersive_play_pause"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginEnd="12dp"
-      android:maxLines="1"
-      android:text="@string/immersive_pause"
-      android:textSize="18sp"
-      android:visibility="gone" />
-
     <LinearLayout
       android:id="@+id/immersive_distance_row"
       android:layout_width="0dp"
@@ -223,12 +242,16 @@
     </LinearLayout>
 
     <Button
-      android:id="@+id/immersive_next"
+      android:id="@+id/immersive_keep_frame"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:maxLines="1"
-      android:text="@string/immersive_next"
-      android:textSize="18sp" />
+      android:layout_marginStart="8dp"
+      android:ellipsize="end"
+      android:maxLines="2"
+      android:maxWidth="200dp"
+      android:textAllCaps="false"
+      android:textSize="15sp"
+      android:visibility="gone" />
   </LinearLayout>
 
   <LinearLayout
@@ -273,6 +296,19 @@
       android:layout_weight="1"
       android:ellipsize="end"
       android:maxLines="2"
+      android:textAllCaps="false"
+      android:textSize="17sp"
+      android:visibility="gone" />
+
+    <!-- The relief strength of a relief made in the headset, "Relief: Normal": a click goes to the next strength,
+         Subtle, Normal or Strong, which the photo shown takes at once and the app keeps as its setting (issue 19) -->
+    <Button
+      android:id="@+id/immersive_relief_strength"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginEnd="12dp"
+      android:maxLines="1"
       android:textAllCaps="false"
       android:textSize="17sp"
       android:visibility="gone" />

@@ -67,7 +67,11 @@ abstract class ImmersiveApi {
   /// with it off (FreeKC's rule of 31 October 2026, see WatchReport): a video longer than that is a film, which
   /// plays once, and whose position the viewer reports with [ImmersiveEvents.progress]; previous and next keep the value
   /// of the opening, the kiosk ignores it. [startNotice] is what to say once the video plays, in the language of the app
-  /// ("Resumed at 42:10" for a film that starts where it was left), null for nothing.
+  /// ("Resumed at 42:10" for a film that starts where it was left), null for nothing. [slideshowSeconds] is how long
+  /// each photo of the slideshow of a flat screen stays (the slideshow duration of the app, issue 19), 0 for the 5 s
+  /// of the viewer; previous and next keep the value of the opening. [frostedBackground] is the "Frosted background
+  /// behind photos" setting (experimental, on by default, issue 19): a blurred, darker copy of the photo of a flat
+  /// screen fills the box around it; previous and next keep the value of the opening.
   void open(
     String url,
     Map<String, String> headers,
@@ -89,6 +93,8 @@ abstract class ImmersiveApi {
     bool gaussianSplats = true,
     int watchMinDurationMs = -1,
     String? startNotice,
+    int slideshowSeconds = 0,
+    bool frostedBackground = true,
   });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
@@ -178,4 +184,11 @@ abstract class ImmersiveEvents {
   /// the setting of the app follows, as with the phone's 360° player (an opening Flutter no longer follows still
   /// counts, the press was the user's).
   void stabilizationChanged(int openingId, bool enabled);
+
+  /// The user chose the relief strength ([strength], the name of a ReliefStrength: subtle, normal or strong) or the
+  /// first view of the reliefs ([mode], the json of a ReliefViewMode: stereo or mesh25d; null when only the strength
+  /// changed, and for 2D, which is a view, not a mode) on a relief made in the viewer of [openingId] (issue 19, point
+  /// 4): the settings of the app follow, as for [stabilizationChanged], so that the next reliefs, in the headset and
+  /// in the app, start from them (an opening Flutter no longer follows still counts, the press was the user's).
+  void reliefSettingsChanged(int openingId, String strength, String? mode);
 }

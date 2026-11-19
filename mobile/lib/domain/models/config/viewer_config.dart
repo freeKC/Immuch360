@@ -59,6 +59,11 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// On by default (Settings, Advanced turns it off: the photos then go on the quad mesh, without filters)
     @Default(true) bool sharpFlatScreens,
 
+    /// Meta Quest immersive viewer, experimental (issue 19): a blurred, darker copy of the photo of a flat screen fills
+    /// the box the user set around it, on a compositor layer behind it. On by default (Settings, Advanced, "Frosted
+    /// background behind photos")
+    @Default(true) bool frostedFlatScreens,
+
     /// Experimental: the Gaussian splat files of other tools (.spz, .ply) of the shares are listed and open in the
     /// immersive viewer of a Quest 3 or 3S (lot S5), and in the splat viewer of the computers, phones and tablets. On
     /// by default (Settings, Advanced turns it off)
