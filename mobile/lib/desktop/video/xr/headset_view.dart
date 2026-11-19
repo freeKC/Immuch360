@@ -299,7 +299,7 @@ enum HeadsetChoice {
 }
 
 /// Where a page's video comes from, for the label of the log only
-enum HeadsetSourceKind { immich, nas, plex, camera, local, player360 }
+enum HeadsetSourceKind { immich, nas, plex, camera, local, player360, jellyfin }
 
 /// What a 360 page plays, for the label of the log only
 enum HeadsetVideoKind { flat, video360, video180, raw360 }
@@ -440,6 +440,7 @@ String headsetLabel({
     HeadsetSourceKind.camera => 'camera',
     HeadsetSourceKind.local => 'local file',
     HeadsetSourceKind.player360 => '360 player',
+    HeadsetSourceKind.jellyfin => 'Jellyfin or Emby',
   };
   final kind = switch (video) {
     HeadsetVideoKind.flat => 'flat film',

@@ -7,9 +7,11 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_server_breaker.dart';
 import 'package:immich_mobile/presentation/pages/network/network_shares.page.dart';
+import 'package:immich_mobile/presentation/widgets/network/jellyfin_failure.widget.dart';
 
 /// What to tell the user of a failure to reach or read a share: the message of the file system when it gave one, the
 /// status of the media bridge for an image it could not serve (rather than its URL)
@@ -193,6 +195,7 @@ class NetworkErrorView extends StatelessWidget {
                 error is TiffDecodeException
                     ? context.t.tiff_cannot_decode
                     : plexFailureText(context, error) ??
+                          jellyfinFailureText(context, error) ??
                           context.t.network_share_open_error(error: networkErrorMessage(error)),
                 key: const Key('network_error_text'),
                 textAlign: TextAlign.center,
@@ -218,12 +221,16 @@ class NetworkErrorView extends StatelessWidget {
                   key: const Key('network_error_edit_source'),
                   onPressed: () => context.pushRoute(networkSourceEditRoute(source, focusCredentials: true)),
                   icon: const Icon(Icons.edit_outlined),
-                  label: Text(
-                    source.type == NetworkSourceType.plex
-                        ? context.t.plex_token_paste_new
-                        : context.t.network_share_edit,
-                  ),
+                  label: Text(switch (source.type) {
+                    NetworkSourceType.plex => context.t.plex_token_paste_new,
+                    NetworkSourceType.jellyfin => context.t.jellyfin_sign_in_again,
+                    _ => context.t.network_share_edit,
+                  }),
                 ),
+              ],
+              if (source != null && source.type == NetworkSourceType.jellyfin && error is JellyfinException) ...[
+                const SizedBox(height: 12),
+                JellyfinDiagnostics(line: jellyfinDiagnosticsOf(source, error), color: color),
               ],
             ],
           ),

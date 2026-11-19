@@ -43,6 +43,11 @@ Future<RootStackRouter> pumpNetworkTestApp(
         final name = args.source?.name ?? args.server?.displayName ?? 'new';
         return Text('plex edit $name${args.focusToken ? ' token' : ''}');
       }),
+      route('/jellyfin-server-edit', JellyfinServerEditRoute.name, (data) {
+        final args = data.argsAs<JellyfinServerEditRouteArgs>(orElse: () => const JellyfinServerEditRouteArgs());
+        final name = args.source?.name ?? args.server?.displayName ?? 'new';
+        return Text('jellyfin edit $name${args.focusCredentials ? ' sign in' : ''}');
+      }),
       route('/camera', CameraRoute.name, (data) => Text('camera ${data.argsAs<CameraRouteArgs>().sourceId}')),
       route('/splat', SplatRoute.name, (data) {
         final args = data.argsAs<SplatRouteArgs>();

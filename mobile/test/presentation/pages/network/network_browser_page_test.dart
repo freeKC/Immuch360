@@ -12,6 +12,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
+import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
+import 'package:immich_mobile/domain/models/media_server_item.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/splat/splat_computer.dart';
@@ -27,6 +29,7 @@ import 'package:immich_mobile/domain/services/splat_viewer_session.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_client.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
@@ -146,6 +149,34 @@ class _Toasts extends ToastService {
   FutureOr<void> error(String message, {ToastOption? toast}) {
     errors.add(message);
   }
+}
+
+/// A share whose films and series have pages (a Jellyfin server), by path
+class _ItemsShare extends MemoryShare implements MediaServerItemSource {
+  _ItemsShare(super.source, {super.folders, super.files});
+
+  final Map<String, String> pages = {};
+
+  @override
+  String? itemPageAt(String path) => pages[path];
+
+  @override
+  Future<MediaServerItem> itemDetails(String itemId) => throw UnimplementedError();
+
+  @override
+  Future<List<MediaServerItem>> seasonsOf(String seriesId) async => const [];
+
+  @override
+  Future<List<MediaServerItem>> episodesOf(String seriesId, String seasonId) async => const [];
+
+  @override
+  Future<MediaServerItem?> nextEpisodeOf(String seriesId) async => null;
+
+  @override
+  Future<String> pathOfItem(String itemId) async => '/';
+
+  @override
+  Future<Uint8List?> itemPicture(String itemId, int size) async => null;
 }
 
 void main() {
@@ -799,6 +830,23 @@ void main() {
     expect(videoHost.urls, isEmpty, reason: 'no frame taken while the server picture comes');
   });
 
+  testWidgets('a film or a series of a Jellyfin server opens its page on a tap, the film with its tile file', (
+    tester,
+  ) async {
+    share = _ItemsShare(source, folders: share.folders, files: share.files)
+      ..pages['/trip.mp4'] = 'film-1'
+      ..pages['/Holidays'] = 'series-1';
+    final router = await pumpBrowser(tester);
+    await tester.tap(tileOf('trip.mp4'));
+    await tester.pumpAndSettle();
+    expect(find.text('item nas film-1 /trip.mp4'), findsOneWidget);
+    await router.maybePop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Holidays'));
+    await tester.pumpAndSettle();
+    expect(find.text('item nas series-1 null'), findsOneWidget);
+  });
+
   group('the address outside home and refused credentials', () {
     testWidgets('marks a share read through its address outside home', (tester) async {
       share = _RemoteShare(source, folders: share.folders, files: share.files, isOutsideHome: true);
@@ -843,6 +891,32 @@ void main() {
       await tester.tap(find.byKey(const Key('network_error_edit_source')));
       await tester.pumpAndSettle();
       expect(find.text('plex edit Test Plex token'), findsOneWidget);
+    });
+
+    testWidgets('a Jellyfin server that ended the session: its words, Sign in again, the diagnostics line', (
+      tester,
+    ) async {
+      const jellyfin = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.jellyfin,
+        name: 'Home media',
+        host: '192.0.2.20',
+        jellyfin: JellyfinServerInfo(serverId: '0d6eac044f7a4e448bba5921022e44a7', userId: 'u1', version: '12.4.0'),
+      );
+      await store.delete(StoreKey.networkSources);
+      await store.put(StoreKey.networkSourcesExtra, NetworkSource.encodeList(const [jellyfin]));
+      share.error = JellyfinException.of(JellyfinFailure.tokenRefused, status: 401);
+      await pumpBrowser(tester);
+
+      expect(find.text('The server ended this session. Sign in again.'), findsOneWidget);
+      expect(find.text('Sign in again'), findsOneWidget);
+      final line = tester.widget<SelectableText>(find.byKey(const Key('jellyfin_diagnostics'))).data!;
+      expect(line, startsWith('Diagnostics: jellyfin 12.4.0, step '));
+      expect(line, contains('status 401, route items-v2'));
+      expect(line, isNot(contains('192.0.2.20')));
+      await tester.tap(find.byKey(const Key('network_error_edit_source')));
+      await tester.pumpAndSettle();
+      expect(find.text('jellyfin edit Home media sign in'), findsOneWidget);
     });
 
     testWidgets('no edit button when the share could not be reached', (tester) async {
@@ -952,6 +1026,38 @@ void main() {
       final saved = NetworkSource.decodeList(store.tryGet(StoreKey.networkSourcesExtra)).single;
       expect(saved.host, '192.0.2.21');
       expect(saved.plex?.hash, '0123456789abcdef0123456789abcdef');
+    });
+
+    testWidgets('a Jellyfin server is moved only once the user accepts: any device may repeat its server id', (
+      tester,
+    ) async {
+      const jellyfin = NetworkSource(
+        id: 'nas',
+        type: NetworkSourceType.jellyfin,
+        name: 'Home media',
+        host: '192.168.1.20',
+        discoveryId: '0d6eac044f7a4e448bba5921022e44a7',
+        jellyfin: JellyfinServerInfo(serverId: '0d6eac044f7a4e448bba5921022e44a7', userId: 'u1', version: '12.4.0'),
+      );
+      await store.delete(StoreKey.networkSources);
+      await store.put(StoreKey.networkSourcesExtra, NetworkSource.encodeList(const [jellyfin]));
+      share.error = const NetworkFileSystemException('Cannot reach 192.168.1.20: No route to host');
+      relocator.result = jellyfin.copyWith(host: '192.168.1.66');
+      List<NetworkSource> storedExtra() => NetworkSource.decodeList(store.tryGet(StoreKey.networkSourcesExtra));
+      await pump(tester, settle: false);
+      for (var i = 0; i < 4; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      expect(find.text('Use the new address?'), findsOneWidget);
+      expect(find.textContaining('sends the sign in of this server to that device'), findsOneWidget);
+      expect(find.textContaining('user name and password'), findsNothing, reason: 'a Jellyfin source keeps none');
+      expect(storedExtra().single.host, '192.168.1.20', reason: 'nothing saved before the answer');
+
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+      await tester.pumpAndSettle();
+      expect(storedExtra().single.host, '192.168.1.20');
+      expect(share.listed, ['/'], reason: 'not read at the new address');
     });
 
     testWidgets('a share typed by hand is not looked for', (tester) async {

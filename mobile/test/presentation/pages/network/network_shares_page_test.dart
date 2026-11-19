@@ -295,6 +295,7 @@ void main() {
       final pages = {
         'network_add_choose_share': 'edit new',
         'network_add_choose_plex': 'plex edit new',
+        'network_add_choose_jellyfin': 'jellyfin edit new',
         'network_add_choose_camera': 'camera edit new',
       };
 
@@ -303,6 +304,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('A network share (NAS, computer, media server)'), findsOneWidget);
         expect(find.text('A Plex Media Server'), findsOneWidget);
+        expect(find.text('A Jellyfin or Emby server (experimental)'), findsOneWidget);
         expect(find.text('A Tapo camera'), findsOneWidget);
 
         await tester.tap(find.byKey(Key(choice)));

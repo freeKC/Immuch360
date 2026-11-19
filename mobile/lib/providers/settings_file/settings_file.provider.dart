@@ -882,10 +882,16 @@ class SettingsFileService {
     await _store.delete(StoreKey.pendingBackupAlbums);
   }
 
-  /// The same share or server reached the same way: the type, the address, the port and the share
+  /// The same share or server reached the same way: the type, the address, the port and the share. A Jellyfin or
+  /// Emby server is the same source when both the server and the user are: two accounts of one server are two sources
   static bool _sameSource(NetworkSource a, NetworkSource b) {
     if (a.type != b.type) {
       return false;
+    }
+    if (a.type == NetworkSourceType.jellyfin) {
+      final first = a.jellyfin;
+      final second = b.jellyfin;
+      return first != null && second != null && first.serverId == second.serverId && first.userId == second.userId;
     }
     if (a.discoveryId != null && a.discoveryId == b.discoveryId) {
       return true;

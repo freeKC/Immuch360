@@ -1,0 +1,32 @@
+{
+ "Items": [
+  {
+   "AirDays": [],
+   "BackdropImageTags": [],
+   "ChannelId": null,
+   "Id": "f0000000000000000000000000000014",
+   "ImageBlurHashes": {},
+   "ImageTags": {},
+   "IsFolder": true,
+   "LocationType": "FileSystem",
+   "MediaType": "Unknown",
+   "Name": "Pattern Show",
+   "Path": "/media/shows/Pattern Show",
+   "ServerId": "f0000000000000000000000000000001",
+   "SortName": "pattern show",
+   "Type": "Series",
+   "UserData": {
+    "IsFavorite": false,
+    "ItemId": "f0000000000000000000000000000014",
+    "Key": "f0000000-0000-0000-0000-000000000014",
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false,
+    "PlayedPercentage": 0,
+    "UnplayedItemCount": 2
+   }
+  }
+ ],
+ "StartIndex": 0,
+ "TotalRecordCount": 1
+}

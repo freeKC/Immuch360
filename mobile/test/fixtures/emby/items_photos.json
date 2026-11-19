@@ -1,0 +1,25 @@
+{
+ "Items": [
+  {
+   "BackdropImageTags": [],
+   "Id": "21",
+   "ImageTags": {},
+   "IsFolder": true,
+   "Name": "2024",
+   "Path": "/media/photos/2024",
+   "PrimaryImageAspectRatio": 2,
+   "PrimaryImageItemId": "23",
+   "PrimaryImageTag": "7d6ac3ebd41542dee438935071165cac_639306070421061820",
+   "ServerId": "f000000000000000000000000000002b",
+   "SortName": "2024",
+   "Type": "PhotoAlbum",
+   "UserData": {
+    "IsFavorite": false,
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false
+   }
+  }
+ ],
+ "TotalRecordCount": 1
+}

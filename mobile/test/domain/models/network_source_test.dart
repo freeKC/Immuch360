@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ip_camera_info.dart';
+import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/tapo_camera_info.dart';
@@ -192,6 +193,7 @@ void main() {
         'documentTree',
         'deviceFolder',
         'ipCamera',
+        'jellyfin',
       ]);
       expect(NetworkSourceType.values.where((type) => type.inLegacyList), [
         NetworkSourceType.smb,
@@ -393,9 +395,10 @@ void main() {
     });
 
     test('a stored list keeps the entries of a type it does not know, unchanged', () {
+      // What build 48 did with a jellyfin source of build 49, and what this build does with a type of a later one
       final jellyfin = {
         'id': 'aaaaaaaaaaaaaaaa',
-        'type': 'jellyfin',
+        'type': 'laterType',
         'name': 'Media',
         'host': '192.0.2.40',
         'whatever': [1, 2, 3],
@@ -421,6 +424,64 @@ void main() {
       expect(again.sources.map((source) => source.id), [plexServer.id, camera.id]);
       expect(again.unknown, [jellyfin]);
       expect((jsonDecode(encoded) as List).last, jellyfin);
+    });
+
+    test('a Jellyfin or Emby server: its server id, user and product, kept whole by a build that does not know it', () {
+      const source = NetworkSource(
+        id: 'jf00112233445566',
+        type: NetworkSourceType.jellyfin,
+        name: 'Home media',
+        host: '192.0.2.10',
+        port: 8096,
+        share: '/jellyfin',
+        username: 'viewer',
+        discoveryId: '0d6eac044f7a4e448bba5921022e44a7',
+        jellyfin: JellyfinServerInfo(
+          serverId: '0d6eac044f7a4e448bba5921022e44a7',
+          userId: 'f0000000000000000000000000000002',
+          product: 'emby',
+          version: '4.10.2.0',
+        ),
+      );
+      final json = source.toJson();
+      expect(json['jellyfin'], {
+        'serverId': '0d6eac044f7a4e448bba5921022e44a7',
+        'userId': 'f0000000000000000000000000000002',
+        'product': 'emby',
+        'version': '4.10.2.0',
+      });
+      final read = NetworkSource.fromJson(jsonDecode(jsonEncode(json)))!;
+      expect(read.type, NetworkSourceType.jellyfin);
+      expect(read.jellyfin, source.jellyfin);
+      expect(read.jellyfin!.productName, 'Emby');
+      expect(read.share, '/jellyfin');
+      expect(read.secretKey, 'network_source_password_jf00112233445566');
+      // The keys of a later build are kept, at both levels
+      final later = NetworkSource.fromJson({
+        ...json,
+        'jellyfin': {...json['jellyfin']! as Map, 'pinned': 'x'},
+        'next': 1,
+      })!;
+      expect(later.toJson()['next'], 1);
+      expect((later.toJson()['jellyfin']! as Map)['pinned'], 'x');
+      // Without a server id of 32 hex digits or a user id, the token could go anywhere: the source is dropped
+      expect(NetworkSource.fromJson(json..remove('jellyfin')), isNull);
+      expect(
+        NetworkSource.fromJson({
+          ...source.toJson(),
+          'jellyfin': {'serverId': 'nope', 'userId': 'u'},
+        }),
+        isNull,
+      );
+      expect(
+        NetworkSource.fromJson({
+          ...source.toJson(),
+          'jellyfin': {'serverId': '0d6eac044f7a4e448bba5921022e44a7'},
+        }),
+        isNull,
+      );
+      // Another type never keeps a jellyfin part
+      expect(NetworkSource.fromJson({...plexServer.toJson(), 'jellyfin': source.jellyfin!.toJson()})!.jellyfin, isNull);
     });
 
     test('an empty stored list is no value, and a broken one reads as empty', () {

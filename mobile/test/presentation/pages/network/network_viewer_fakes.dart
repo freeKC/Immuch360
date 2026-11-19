@@ -229,6 +229,19 @@ Future<RootStackRouter> pumpNetworkRouter(
               },
         ),
       ),
+      // The page of a film or a series of a Jellyfin or Emby server (release 49)
+      AutoRoute(
+        path: '/media-server-item',
+        page: PageInfo(
+          MediaServerItemRoute.name,
+          builder:
+              pages[MediaServerItemRoute.name] ??
+              (data) {
+                final args = data.argsAs<MediaServerItemRouteArgs>();
+                return Text('item ${args.sourceId} ${args.itemId} ${args.path}');
+              },
+        ),
+      ),
       // The page of a Gaussian splat file (lot S5)
       AutoRoute(
         path: '/splat',
@@ -257,6 +270,16 @@ Future<RootStackRouter> pumpNetworkRouter(
           builder: (data) {
             final args = data.argsAs<PlexServerEditRouteArgs>();
             return Text('plex edit ${args.source?.name}${args.focusToken ? ' token' : ''}');
+          },
+        ),
+      ),
+      AutoRoute(
+        path: '/jellyfin-server-edit',
+        page: PageInfo(
+          JellyfinServerEditRoute.name,
+          builder: (data) {
+            final args = data.argsAs<JellyfinServerEditRouteArgs>();
+            return Text('jellyfin edit ${args.source?.name}${args.focusCredentials ? ' sign in' : ''}');
           },
         ),
       ),

@@ -265,7 +265,8 @@ class SettingsFileImportPage extends HookConsumerWidget {
   }
 }
 
-String _typeName(Object? type) => switch (type) {
+String _typeName(Object? type, [Object? jellyfin]) => switch (type) {
+  'jellyfin' => jellyfin is Map && jellyfin['product'] == 'emby' ? 'Emby' : 'Jellyfin',
   'smb' => 'SMB',
   'webdav' => 'WebDAV',
   'dlna' => 'DLNA',
@@ -357,7 +358,7 @@ class SettingsFilePreview extends StatelessWidget {
               }),
               subtitle: Text(
                 [
-                  _typeName(source['type']),
+                  _typeName(source['type'], source['jellyfin']),
                   if (source['host'] case final String host when host.isNotEmpty) host,
                   if (!(content.sourceSecrets[source['id']]?.isEmpty ?? true)) t.settings_file_password_included,
                 ].join(' · '),

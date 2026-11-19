@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/domain/models/album/local_album.model.dart';
 import 'package:immich_mobile/domain/models/ip_camera_info.dart';
+import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/settings_file/settings_file.dart';
@@ -294,6 +295,58 @@ void main() {
     expect(b.albums.choiceOf('7'), BackupSelection.none);
     expect(b.store.tryGet(StoreKey.pendingBackupAlbums), isNull);
     await b.dispose();
+  });
+
+  test('two Jellyfin accounts of one server: both come back, the tokens at the accounts level only', () async {
+    const serverId = '0d6eac044f7a4e448bba5921022e44a7';
+    NetworkSource account(String id, String user, String userId) => NetworkSource(
+      id: id,
+      type: NetworkSourceType.jellyfin,
+      name: 'Jellyfin $user',
+      host: '192.168.1.50',
+      port: 8096,
+      username: user,
+      discoveryId: serverId,
+      jellyfin: JellyfinServerInfo(serverId: serverId, userId: userId, version: '12.4.0'),
+    );
+    final alice = account('a1b2c3d4e5f60718', 'alice', 'f0000000000000000000000000000002');
+    final bob = account('0f1e2d3c4b5a6978', 'bob', 'f0000000000000000000000000000003');
+    final a = await _Install.create();
+    await a.store.put(StoreKey.jellyfinDeviceId, 'jellyfin-install-of-a');
+    await a.sources.add(alice, password: 'jf-token-alice');
+    await a.sources.add(bob, password: 'jf-token-bob');
+    expect(a.secrets.writtenDeviceOnly, containsAll([alice.secretKey, bob.secretKey]));
+    final settingsText = await a.service.buildFile(level: SettingsFileLevel.settings, origin: _origin);
+    final accountsText = await a.service.buildFile(
+      level: SettingsFileLevel.accounts,
+      origin: _origin,
+      passphrase: 'correct horse battery',
+    );
+    await a.dispose();
+    for (final secret in ['jf-token-alice', 'jf-token-bob', 'jellyfin-install-of-a']) {
+      expect(settingsText.contains(secret), isFalse, reason: secret);
+    }
+
+    final b = await _Install.create();
+    await b.service.restore(await openSettingsFile(SettingsFile.parse(settingsText)), SettingsFileRestoreMode.merge);
+    expect(b.sourceList.map((s) => s.username), ['alice', 'bob'], reason: 'one server, two users: two sources');
+    expect(await b.sources.readPassword(alice.id), isNull);
+    await b.dispose();
+
+    final c = await _Install.create();
+    final content = await openSettingsFile(SettingsFile.parse(accountsText), passphrase: 'correct horse battery');
+    final plain = jsonEncode(content.toJson());
+    expect(plain.contains('jellyfin-install-of-a'), isFalse, reason: 'the install id is never exported');
+    await c.service.restore(content, SettingsFileRestoreMode.merge);
+    expect(c.sourceList.map((s) => s.jellyfin?.userId), [alice.jellyfin!.userId, bob.jellyfin!.userId]);
+    expect(await c.sources.readPassword(alice.id), 'jf-token-alice');
+    expect(await c.sources.readPassword(bob.id), 'jf-token-bob');
+    expect(c.secrets.writtenDeviceOnly, containsAll([alice.secretKey, bob.secretKey]));
+    expect(c.store.tryGet(StoreKey.jellyfinDeviceId), isNull);
+    // The same file again adds nothing: the same server and the same users
+    await c.service.restore(content, SettingsFileRestoreMode.merge);
+    expect(c.sourceList, hasLength(2));
+    await c.dispose();
   });
 
   test('settings level: no secret leaves, the account is not restored, the address fills the sign in form', () async {

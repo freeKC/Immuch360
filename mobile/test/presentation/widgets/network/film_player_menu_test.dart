@@ -67,7 +67,7 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('menu')));
     await tester.pumpAndSettle();
-    expect(find.text('Player: Automatic (Converted by the Plex server)'), findsOneWidget);
+    expect(find.text('Player: Automatic (Converted by the media server)'), findsOneWidget);
     await tester.tapAt(Offset.zero);
     await tester.pumpAndSettle();
 

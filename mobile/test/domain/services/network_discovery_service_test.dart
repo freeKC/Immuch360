@@ -381,7 +381,7 @@ void main() {
     });
 
     test('the mDNS find still wins over every other origin, TDP over the rest, the first find on a tie', () {
-      expect(DiscoveryOrigin.values.map((origin) => origin.rank), [0, 2, 2, 2, 1]);
+      expect(DiscoveryOrigin.values.map((origin) => origin.rank), [0, 2, 2, 2, 1, 2]);
       final mdns = _server('NAS', '192.168.1.20', origin: DiscoveryOrigin.mdns);
       final scan = _server('192.168.1.20', '192.168.1.20');
       final ssdp = _server('Other', '192.168.1.20', origin: DiscoveryOrigin.ssdp);

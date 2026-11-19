@@ -63,7 +63,7 @@ void main() {
     await tester.tap(find.text('play'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('Converted by the Plex server: this device cannot play DTS'), findsOneWidget);
+    expect(find.text('Converted by the media server: this device cannot play DTS'), findsOneWidget);
 
     await tester.pump(filmConversionNoticeDuration);
     await tester.pumpAndSettle();
@@ -76,7 +76,7 @@ void main() {
       home: Scaffold(body: Builder(builder: (context) => Text(filmConversionText(context.t, const [])))),
       overrides: const [],
     );
-    expect(find.text('Converted by the Plex server'), findsOneWidget);
+    expect(find.text('Converted by the media server'), findsOneWidget);
   });
 
   Future<void> pumpLine(WidgetTester tester, String audio, {bool conversion = true}) => pumpNetworkTestApp(

@@ -249,7 +249,7 @@ void main() {
 
     test('writes back, each in its key, the entries of a type this build does not know', () async {
       final legacyUnknown = {'id': 'a', 'type': 'nfs', 'name': 'NFS', 'host': '192.0.2.60'};
-      final extraUnknown = {'id': 'b', 'type': 'jellyfin', 'name': 'Media', 'host': '192.0.2.61', 'more': true};
+      final extraUnknown = {'id': 'b', 'type': 'laterType', 'name': 'Media', 'host': '192.0.2.61', 'more': true};
       await store.put(StoreKey.networkSources, jsonEncode([smbSource.toJson(), legacyUnknown]));
       await store.put(StoreKey.networkSourcesExtra, jsonEncode([extraUnknown, plexServer.toJson()]));
       final container = createContainer();

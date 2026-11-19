@@ -32,6 +32,7 @@ import 'package:immich_mobile/domain/services/media_bridge.service.dart';
 import 'package:immich_mobile/domain/services/native_playback_error.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/network_playback_reporter.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/raw/raw_video_plan.dart';
@@ -233,6 +234,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// Resumes a film and saves where it is, for the video loaded (see VideoWatchRecorder)
   VideoWatchRecorder? _recorder;
 
+  /// What tells the media server where the film is (a Jellyfin or Emby server), null for the other shares
+  NetworkPlaybackReporter? _reporter;
+
   /// The tracks of a film of a Plex server: its subtitle files, the names Plex gives its tracks, and the pick written
   /// back (see PlexFilmTracks); null for any other video
   PlexFilmTracks? _plexTracks;
@@ -264,7 +268,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   bool _choosing = false;
 
   /// The server's conversion of the film that plays, served by the media bridge under [_conversionId]
-  PlexConversion? _conversion;
+  NetworkConversion? _conversion;
   String? _conversionId;
   MediaBridge? _conversionBridge;
 
@@ -355,6 +359,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // Where the film is, as the page goes: Back, or the previous or next file in its place
     _recorder?.dispose();
     _recorder = null;
+    _reporter?.dispose();
+    _reporter = null;
     _plexTracks?.dispose();
     _plexTracks = null;
     _cancelStartWait();
@@ -666,8 +672,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     final players = ref.read(filmPlayersProvider);
     final viewer = ref.read(appConfigProvider).viewer;
     final preference = _askedPlayer ?? viewer.filmPlayer;
-    final isPlex = fileSystem is PlexFileSystem;
-    final conversion = isPlex && viewer.plexConversion;
+    // A server that tells the streams of its films (Plex, Jellyfin, Emby) has its player chosen from them
+    final streamsSource = fileSystem is NetworkFilmStreams ? fileSystem as NetworkFilmStreams : null;
+    final conversion = _convertsFilms(fileSystem) && viewer.plexConversion;
     _endConversion();
     if (CurrentPlatform.isDesktop || !Platform.isAndroid) {
       _setPlayer(FilmPlayerKind.device);
@@ -679,10 +686,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _conversionMissing = const [];
     if (forced != null) {
       kind = forced;
-    } else if (isPlex) {
-      final part = _plexPart;
+    } else if (streamsSource != null) {
       final choice = await players.choose(
-        part == null ? null : filmStreamsOfPlexPart(part),
+        await _filmStreams(streamsSource),
         preference: preference,
         conversion: conversion,
       );
@@ -692,7 +698,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     } else {
       kind = preference == FilmPlayerPreference.mpv && _mpvAvailable ? FilmPlayerKind.mpv : FilmPlayerKind.device;
     }
-    if (kind == FilmPlayerKind.serverConversion && fileSystem is PlexFileSystem) {
+    if (kind == FilmPlayerKind.serverConversion && _convertsFilms(fileSystem)) {
       final converted = await _startConversion(fileSystem, bridge, players);
       if (converted != null) {
         _setPlayer(FilmPlayerKind.serverConversion);
@@ -708,6 +714,21 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
     _setPlayer(kind == FilmPlayerKind.serverConversion ? FilmPlayerKind.device : kind);
     return url;
+  }
+
+  /// The streams of the film of the page: those of the Plex part the tracks read already, else what its server tells
+  /// (nothing within [plexTracksWait] counts as nothing told: the choice then goes by the preference)
+  Future<FilmStreams?> _filmStreams(NetworkFilmStreams source) async {
+    final part = _plexPart;
+    if (part != null) {
+      return filmStreamsOfPlexPart(part);
+    }
+    try {
+      return await source.filmStreamsAt(widget.path).timeout(plexTracksWait);
+    } catch (error) {
+      _log.info('The streams of the film are not known: ${error.runtimeType}');
+      return null;
+    }
   }
 
   /// The copy of a film on this device: the device's player, or libmpv when asked or after the device's player failed
@@ -742,18 +763,31 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
 
   /// Asks the Plex server to convert the film, and serves the conversion through the media bridge: its playlist's
   /// URL there, null when the server cannot convert it or does not answer
-  Future<Uri?> _startConversion(PlexFileSystem fileSystem, MediaBridge bridge, FilmPlayers players) async {
+  /// Whether the server of [fileSystem] converts films: Plex (its version and file picked), Jellyfin and Emby
+  static bool _convertsFilms(NetworkFileSystem? fileSystem) =>
+      fileSystem is PlexFileSystem || fileSystem is NetworkServerConversion;
+
+  Future<Uri?> _startConversion(NetworkFileSystem fileSystem, MediaBridge bridge, FilmPlayers players) async {
     try {
       final audioCodecs = await players.conversionAudioCodecs();
+      final maxKbps = _conversionMaxKbps ?? PlexTranscodeRequest.defaultMaxVideoBitrateKbps;
       // From the start of the film: the converted stream keeps the film's times, and the player seeks where the film
-      // resumes, as for the file
-      final conversion = await fileSystem.conversionOf(
-        widget.path,
-        mediaIndex: _plexPlace.mediaIndex,
-        partIndex: _plexPlace.partIndex,
-        audioCodecs: audioCodecs,
-        maxVideoBitrateKbps: _conversionMaxKbps ?? PlexTranscodeRequest.defaultMaxVideoBitrateKbps,
-      );
+      // resumes, as for the file. A Plex film converts the version and the file the page picked.
+      final NetworkConversion? conversion = switch (fileSystem) {
+        final PlexFileSystem plex => await plex.conversionOf(
+          widget.path,
+          mediaIndex: _plexPlace.mediaIndex,
+          partIndex: _plexPlace.partIndex,
+          audioCodecs: audioCodecs,
+          maxVideoBitrateKbps: maxKbps,
+        ),
+        final NetworkServerConversion server => await server.conversionOfFilm(
+          widget.path,
+          audioCodecs: audioCodecs,
+          maxVideoBitrateKbps: maxKbps,
+        ),
+        _ => null,
+      };
       if (conversion == null || !mounted) {
         unawaited(conversion?.stop());
         return null;
@@ -764,14 +798,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       _conversion = conversion;
       _conversionId = id;
       _conversionBridge = bridge;
-      final url = bridge.urlFor(id, '/${PlexConversion.playlistName}');
+      final url = bridge.urlFor(id, '/${conversion.playlist}');
       // libmpv opens the segments the playlist names only with access-references on, which every player has off
       // (DesktopPlayerOptions.common): this playlist names the bridge's files only (renameHlsSegments)
       desktopResourceOptions[url.toString()] = const {'access-references': 'yes'};
       _conversionUrl = url.toString();
       return url;
     } catch (error) {
-      _log.warning('The Plex server did not convert the film: ${error.runtimeType}');
+      _log.warning('The server did not convert the film: ${error.runtimeType}');
       return null;
     }
   }
@@ -1123,6 +1157,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
     _detectTimer?.cancel();
     _detectTimer = null;
+    _stopReporter();
     setState(() {
       _video = _load();
       videoSource = _sourceOf(_video);
@@ -1269,11 +1304,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   bool get _canConvert =>
       !CurrentPlatform.isDesktop &&
       Platform.isAndroid &&
-      _shareType == NetworkSourceType.plex &&
+      _shareConverts &&
       _offlineId == null &&
       ref.read(appConfigProvider).viewer.plexConversion &&
       _player != FilmPlayerKind.serverConversion &&
       !_failedPlayers.contains(FilmPlayerKind.serverConversion);
+
+  /// Whether the server of the page's share converts films (a Plex, Jellyfin or Emby server)
+  bool get _shareConverts => _shareType == NetworkSourceType.plex || _convertsFilms(_shareFileSystem);
 
   /// The film plays again, converted by the Plex server
   void _convertOnServer() {
@@ -1364,6 +1402,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (recorder == null) {
       return;
     }
+    _startReporter(notifier, entry);
     await notifier.load(source);
     await notifier.setLoop(recorder.loopsWith(loop));
     await notifier.setVolume(1);
@@ -1392,6 +1431,27 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       duration: durationMs == null ? null : Duration(milliseconds: durationMs),
       onResumed: _onResumed,
     )..start();
+  }
+
+  /// The viewing reported so far stops, before the next load asks anything of the server: a conversion that takes over
+  /// names its own play session as it loads (NetworkServerConversion), and the stop must go out under the viewing's
+  void _stopReporter() {
+    _reporter?.dispose();
+    _reporter = null;
+  }
+
+  /// The reports of a media server that keeps where its user stopped (a Jellyfin or Emby server), for the file about
+  /// to load in [notifier], in place of the ones of a load before
+  void _startReporter(VideoPlayerNotifier notifier, NetworkEntry entry) {
+    _stopReporter();
+    if (_shareFileSystem case final NetworkPlaybackReports reports) {
+      _reporter = NetworkPlaybackReporter(
+        reports: reports,
+        player: notifier,
+        path: entry.path,
+        converted: _player == FilmPlayerKind.serverConversion,
+      )..start();
+    }
   }
 
   /// The film plays from where it was left: the page says so for a few seconds
@@ -1504,12 +1564,12 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     if (preference != FilmPlayerPreference.automatic || CurrentPlatform.isDesktop || !Platform.isAndroid) {
       return false;
     }
-    final isPlex = _shareType == NetworkSourceType.plex && _offlineId == null;
+    final converts = _shareConverts && _offlineId == null;
     final next = nextFilmPlayer(
       _player,
       tried: _failedPlayers,
       mpvAvailable: _mpvAvailable,
-      conversion: isPlex && ref.read(appConfigProvider).viewer.plexConversion,
+      conversion: converts && ref.read(appConfigProvider).viewer.plexConversion,
     );
     if (next == null || !filmErrorHandsOver(error, played: _isVideoReady)) {
       return false;
@@ -1575,7 +1635,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   bool _canConvertForLink(int kbps) =>
       !CurrentPlatform.isDesktop &&
       Platform.isAndroid &&
-      _shareType == NetworkSourceType.plex &&
+      _shareConverts &&
       _offlineId == null &&
       ref.read(appConfigProvider).viewer.plexConversion &&
       !_failedPlayers.contains(FilmPlayerKind.serverConversion) &&
@@ -1618,6 +1678,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     _controller = null;
     _detectTimer?.cancel();
     _detectTimer = null;
+    _stopReporter();
     setState(() {
       _isVideoReady = false;
       _playerError = null;
@@ -2255,6 +2316,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                                 playerKey: _playerKey,
                                 source: () => switch (_shareType) {
                                   NetworkSourceType.plex => HeadsetSourceKind.plex,
+                                  NetworkSourceType.jellyfin => HeadsetSourceKind.jellyfin,
                                   NetworkSourceType.tapo => HeadsetSourceKind.camera,
                                   NetworkSourceType.documentTree ||
                                   NetworkSourceType.deviceFolder => HeadsetSourceKind.local,

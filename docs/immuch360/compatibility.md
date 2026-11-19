@@ -163,7 +163,8 @@ On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw 
 - **Spatial 2.5D**: tested on a Galaxy S24+; iPhone feedback welcome.
 - **Without any server**: tested on a Galaxy S24+, a Quest 3 and an Android emulator.
 - **SMB and WebDAV shares**: tested with a Freebox Server (SMB) on a Galaxy S24+ and a Quest 3, and against Samba and WebDAV test servers on an Android emulator; other NAS and WebDAV feedback welcome.
-- **DLNA media servers**: checked against minidlna and Gerbera in Docker; Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest are the device test of build 19.
+- **DLNA media servers**: checked against minidlna and Gerbera in Docker; Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest are the device test of build 19. A stock Jellyfin server since 10.9 has no DLNA without its plugin.
+- **Jellyfin and Emby servers (from build 49, experimental)**: checked against Jellyfin 12.4, Jellyfin 10.10 and Emby 4.10 in Docker (discovery by UDP 7359 and by the 8096 scan, Quick Connect and password, every library, the bytes of every file, 360° and 3D, the place written back, the conversion); the device test is the one of build 49.
 - **Send the files of a share to Immich**: tested on an Android emulator against a Samba test server and an Immich 3.2 server.
 - **DJI drone import**: run on an Android phone emulator with synthetic CC0 files against an Immich 3.3.0-rc.0 server (the listing, the upload with the 360° sidecar of a sphere and the place of a video from its .SRT, Keep on the device, the Immich trash); not with a real drone, a USB drive or a device in File transfer mode yet.
 - **Share this phone on the network**: unit tests and end to end tests with the headset's WebDAV client, on a computer; a phone serving a Quest, and the iPhone side, are the device test of build 19.
@@ -188,9 +189,9 @@ On Windows, the Immuch360 Desktop preview shows the photos, flat and 360°, raw 
 - **The Insta360 app or Studio**
   - What they run into: needed to turn the raw files of the card into a 360° picture before watching.
   - What Immuch360 does: opens the raw .insp and .insv files directly, and the GoPro .360 and DJI .osv files.
-- **Plex, Jellyfin, Synology Photos**
+- **Plex, Jellyfin, Emby, Synology Photos**
   - What they run into: 360° photos and videos shown flat or not recognised, as threads on their forums describe (a Plex request has been open since 2017).
-  - What Immuch360 does: reads the Plex library itself from build 20, or the same folders over SMB, WebDAV or DLNA, and plays them as a sphere, without changing anything on the server.
+  - What Immuch360 does: reads the Plex library itself from build 20 and the Jellyfin or Emby library from build 49, or the same folders over SMB, WebDAV or DLNA, and plays them as a sphere, without changing anything on the server.
 - **The Tapo app**
   - What they run into: a separate app, signed in to your TP-Link account, with the clips apart from your photos.
   - What Immuch360 does: shows the camera next to your photos, talks to it on your network only, and keeps a clip as a video you can send to Immich (from build 20).
@@ -254,6 +255,7 @@ What each function was checked on, gathered in one place from the sections of th
 - **Raw videos with one lens per track or per file**: playback on a phone, a Quest and an iPhone; raw files have not run on an iPhone at all, see [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - **Share this phone on the network**: a phone serving a Quest 3, and the iPhone side, see [Share this phone on the network](user-guide.md#share-this-phone-on-the-network).
 - **DLNA**: discovery on a real network, and Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest, see [DLNA media servers](user-guide.md#dlna-media-servers).
+- **Jellyfin and Emby**: a real server at home on the Quest (Quick Connect, a 360° video), a phone, Android TV, an iPhone and a computer, see [Jellyfin and Emby servers](user-guide.md#jellyfin-and-emby-servers-from-build-49).
 - **Apple spatial photos and videos**: the headset view and real iPhone files, see [Apple spatial photos and videos](user-guide.md#apple-spatial-photos-and-videos).
 - **Meta Quest 2, Quest Pro and Quest 3S**: not tested, see [Meta Quest](platform-support.md#meta-quest).
 - **Sign in with your phone**: a real camera scan, a headset, a computer signed in that way, and an iPhone, see [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).
