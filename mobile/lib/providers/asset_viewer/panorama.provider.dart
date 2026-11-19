@@ -6,12 +6,42 @@ import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
+import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/providers/asset_viewer/local_panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('Panorama');
+
+/// The gyroscope choice of the 360° viewers of the phones and tablets (issue 20): one setting for the 360° photo viewer
+/// and the 360° video player, the last choice made in either (ViewerConfig.panoramaGyroscope, off by default).
+abstract interface class PanoramaGyroscopeChoice {
+  /// Whether the viewers open with the gyroscope on; off while the settings are not loaded
+  bool get enabled;
+
+  /// Stores the choice the user made with a gyroscope button
+  Future<void> remember(bool enabled);
+}
+
+class _SettingsGyroscopeChoice implements PanoramaGyroscopeChoice {
+  const _SettingsGyroscopeChoice();
+
+  @override
+  bool get enabled {
+    try {
+      return SettingsRepository.instance.appConfig.viewer.panoramaGyroscope;
+    } on StateError {
+      return false;
+    }
+  }
+
+  @override
+  Future<void> remember(bool enabled) => SettingsRepository.instance.write(.viewerPanoramaGyroscope, enabled);
+}
+
+/// The gyroscope choice the 360° photo viewer opens with and stores, see [PanoramaGyroscopeChoice]. Tests replace it.
+final panoramaGyroscopeChoiceProvider = Provider<PanoramaGyroscopeChoice>((_) => const _SettingsGyroscopeChoice());
 
 /// Whether the asset is a 360° photo: an image viewed as 360° (see [isEquirectangularProvider]), or a raw dual fisheye
 /// photo of an Insta360 camera (.insp), which the panorama viewer stitches itself (see [rawMediaKindProvider]).

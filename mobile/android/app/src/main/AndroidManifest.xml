@@ -201,13 +201,14 @@
     </activity>
 
 
-    <!-- 360° video player, started from Flutter through SphericalVideoApi -->
+    <!-- 360° video player, started from Flutter through SphericalVideoApi. It follows the rotation of the device like the
+         360° photo viewer and the rest of the app (issue 20: a 360° video has no frame to fit, landscape was forced for
+         nothing); a rotation or a resize keeps the activity, so the video plays on -->
     <activity
       android:name=".spherical.SphericalVideoActivity"
-      android:configChanges="orientation|screenSize|keyboardHidden"
+      android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
       android:exported="false"
       android:launchMode="singleTop"
-      android:screenOrientation="sensorLandscape"
       android:theme="@style/SphericalVideoTheme" />
 
     <!-- The splat viewer of the phones and tablets, started from Flutter through SplatViewerApi: a WebView that shows

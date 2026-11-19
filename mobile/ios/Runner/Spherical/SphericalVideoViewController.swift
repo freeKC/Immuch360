@@ -5,25 +5,23 @@ import UIKit
 import native_video_player
 import simd
 
-private let defaultFieldOfView: CGFloat = 80
-private let minFieldOfView: CGFloat = 30
-private let maxFieldOfView: CGFloat = 100
-private let maxPitch: Float = 85 * Float.pi / 180
-// Drag speed at the default field of view, slower when zoomed in
-private let radiansPerPoint: Float = 0.12 * Float.pi / 180
+// The field of view across the longer side of the screen, its limits and the drags: the 360° photo viewer's, see
+// SphereLookMath (issue 20)
+private let defaultFieldOfView = CGFloat(SphereLookMath.defaultFieldOfView)
 private let controlsHideDelay: TimeInterval = 4
 private let messageDuration: TimeInterval = 2
 // The notices of the stabilisation stay a little longer, as on Android
 private let stabilizationNoticeDuration: TimeInterval = 3
-private let xAxis = SIMD3<Float>(1, 0, 0)
-private let yAxis = SIMD3<Float>(0, 1, 0)
-private let zAxis = SIMD3<Float>(0, 0, 1)
 
 /// Plays an equirectangular video full screen, from the centre of a sphere textured with the video.
 ///
-/// Drags turn the view (the picture follows the finger, so a drag to the left turns the view to the right), a pinch
-/// zooms. While the gyroscope button is on, the motion of the phone turns the view and drags only turn it around the
-/// vertical axis. A tap on the video shows or hides the controls, which also hide on their own while the video plays.
+/// The controls of the 360° photo viewer (issue 20, see [SphereLookMath]): drags turn the view (the picture follows the
+/// finger, so a drag to the left turns the view to the right) up to straight up and straight down, a pinch or a double
+/// tap zooms. While the gyroscope button is on, the turns of the phone add to the view and drags still turn it; off,
+/// the motion of the phone is not even read. The button starts as the user left it in a 360° viewer of the app, photo
+/// or video (one setting, told by Flutter through SphericalVideoApi.setMotion), and changing it here changes that
+/// setting. The player follows the rotation of the phone. A tap on the video shows or hides the controls, which also
+/// hide on their own while the video plays.
 /// The 3D button tells how a stereoscopic video lays out its two eyes: the phone shows the left eye only. The coverage
 /// button (360° or 180°) tells whether the video covers the whole sphere or only its front half, as VR180 videos do;
 /// the back half is then black. A video with several audio tracks (languages, commentary) shows an audio track button,
@@ -101,16 +99,25 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   private let messageLabel = UILabel()
   private let bufferingIndicator: BufferingIndicator
 
-  // Where the view looks, in radians: yaw around the vertical axis, growing to the left, and pitch, growing upwards,
-  // which only drags set (the phone's attitude replaces it while the motion drives the view)
+  // Where the view looks, in radians: yaw around the vertical axis, growing to the left, and pitch, growing upwards.
+  // Drags, and the gyroscope when its button is on, add to them (see SphereLookMath)
   private var yaw: Float = 0
   private var pitch: Float = 0
   private var fieldOfView = defaultFieldOfView
   private var pinchStartFieldOfView = defaultFieldOfView
+  // Where a double tap zoom goes, and when it ends
+  private var zoom: (target: CGFloat, ends: CFTimeInterval)?
+
+  /// Where the double tap zoom going on goes, nil when none runs
+  private var zoomTarget: CGFloat? {
+    guard let zoom, CACurrentMediaTime() < zoom.ends else { return nil }
+    return zoom.target
+  }
   private var motionEnabled = false
-  // Last sample of a previous run, measured in another reference frame
+  // The time of the last gyroscope sample used, nil before the first one of a run, and the last sample of a previous
+  // run, never used
+  private var lastMotionTimestamp: TimeInterval?
   private var staleMotionTimestamp: TimeInterval?
-  private var alignHeadingOnNextMotion = false
   private var screenOrientation = UIInterfaceOrientation.portrait
   // The guess of Flutter from the dimensions of the video at first, what the 3D button picks once the user taps it
   private var stereoLayout: StereoLayout
@@ -205,8 +212,10 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     stereoLabels: [String: String],
     coverage: SphereCoverage,
     raw: RawProjection?,
+    motionEnabled: Bool = false,
     events: SphericalVideoEvents
   ) {
+    self.motionEnabled = motionEnabled
     videoUrl = url
     self.stabilizationKey = stabilizationKey
     self.fallbackUrl = fallbackUrl
@@ -248,8 +257,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     setUpControls()
     setUpGestures()
 
-    // The motion drives the view from the start where the phone has the sensors for it
-    motionEnabled = motionManager.isDeviceMotionAvailable
+    // The gyroscope as the user left it in a 360° viewer, where the phone has one
+    motionEnabled = motionEnabled && motionManager.isDeviceMotionAvailable
     motionButton.isHidden = !motionManager.isDeviceMotionAvailable
     // A raw recording always covers the whole sphere and is never a stereo pair
     coverageButton.isHidden = isRaw
@@ -331,6 +340,8 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     let size = view.bounds.size
     let direction: SCNCameraProjectionDirection = size.width > size.height ? .horizontal : .vertical
     cameraNode.camera?.projectionDirection = direction
+    // A rotation changes the vertical field of view, and so how far a half sphere lets the view go
+    updateCamera()
   }
 
   // MARK: - Player
@@ -666,15 +677,14 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
   @objc private func appDidEnterBackground() {
     player.pause()
+    // No sensor in the background
+    motionManager.stopDeviceMotionUpdates()
   }
 
-  // The motion reference frame may have moved while the app was in the background: the view keeps its heading, and
-  // the first sample after the return realigns the phone on it
+  // The view stays where it was: the gyroscope only adds the turns made from now on
   @objc private func appWillEnterForeground() {
     guard started, motionEnabled, !closing else { return }
-    yaw = Self.heading(of: cameraNode.simdOrientation)
-    staleMotionTimestamp = motionManager.deviceMotion?.timestamp
-    alignHeadingOnNextMotion = true
+    startMotion()
   }
 
   /// Stops the playback, the motion and the refresh when the player closes, idempotent
@@ -1344,71 +1354,63 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
 
   // MARK: - View direction
 
+  /// The camera looks at [yaw] and [pitch], kept within the poles, or within what a half sphere shows (see
+  /// SphereLookMath.maxPitch)
   private func updateCamera() {
-    guard !motionEnabled else { return }
-    cameraNode.simdOrientation = simd_quatf(angle: yaw, axis: yAxis) * simd_quatf(angle: pitch, axis: xAxis)
+    pitch = min(max(pitch, -currentMaxPitch), currentMaxPitch)
+    cameraNode.simdOrientation = SphereLookMath.orientation(yaw: yaw, pitch: pitch)
   }
 
+  private var currentMaxPitch: Float {
+    let size = view.bounds.size
+    let vertical = SphereLookMath.verticalFieldOfView(
+      Float(fieldOfView), width: Float(size.width), height: Float(size.height))
+    return SphereLookMath.maxPitch(halfSphere: !isRaw && coverage == .half, verticalFieldOfView: vertical)
+  }
+
+  /// The gyroscope adds the turns of the phone to the view, as the photo viewer does (see [step])
   private func startMotion() {
     guard motionManager.isDeviceMotionAvailable else { return }
-    alignHeadingOnNextMotion = true
+    // The first sample of a run only starts the clock: one of an earlier run was measured before a pause
+    lastMotionTimestamp = nil
     staleMotionTimestamp = motionManager.deviceMotion?.timestamp
     motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
-    // The magnetometer corrects the drift of the heading, where there is one
-    let corrected = CMMotionManager.availableAttitudeReferenceFrames().contains(.xArbitraryCorrectedZVertical)
-    motionManager.startDeviceMotionUpdates(using: corrected ? .xArbitraryCorrectedZVertical : .xArbitraryZVertical)
+    motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical)
   }
 
-  /// Called on every screen refresh: turns the camera with the latest attitude of the phone
+  /// Called on every screen refresh: while the gyroscope button is on, each new sample of the phone's rotation rate
+  /// turns the view by what it measured since the previous one; off, the motion is not even read
   @objc private func step(_ link: CADisplayLink) {
     pollStitchStatistics(link.timestamp)
-    guard motionEnabled, let motion = motionManager.deviceMotion, motion.timestamp != staleMotionTimestamp else {
+    guard motionEnabled, !closing, let motion = motionManager.deviceMotion, motion.timestamp != staleMotionTimestamp,
+      motion.timestamp != lastMotionTimestamp
+    else {
       return
     }
-    let sensor = sensorOrientation(motion.attitude.quaternion)
-    if alignHeadingOnNextMotion {
-      // Keeps the heading of the view: the middle of the video at first, where the drags left it later
-      alignHeadingOnNextMotion = false
-      yaw -= Self.heading(of: sensor)
-    }
-    cameraNode.simdOrientation = simd_quatf(angle: yaw, axis: yAxis) * sensor
+    let dt = SphereLookMath.gyroStep(previous: lastMotionTimestamp, current: motion.timestamp)
+    lastMotionTimestamp = motion.timestamp
+    let rate = motion.rotationRate
+    let turned = SphereLookMath.gyro(
+      yaw: yaw, pitch: pitch, rateX: Float(rate.x), rateY: Float(rate.y), rateZ: Float(rate.z), dt: dt,
+      screen: Self.lookScreen(screenOrientation), maxPitch: currentMaxPitch)
+    yaw = turned.yaw
+    pitch = turned.pitch
+    updateCamera()
   }
 
-  /// Camera orientation for an attitude of the phone. CoreMotion's reference frame has z up where SceneKit has y up,
-  /// hence the quarter turn around x: the phone held upright looks at the horizon, flat on its back it looks at the
-  /// floor. The camera then rolls with the interface so that the top of the screen stays the top of the view.
-  private func sensorOrientation(_ attitude: CMQuaternion) -> simd_quatf {
-    let device = simd_quatf(ix: Float(attitude.x), iy: Float(attitude.y), iz: Float(attitude.z), r: Float(attitude.w))
-    let screen = simd_quatf(angle: Self.screenAngle(screenOrientation), axis: zAxis)
-    return Self.zUpToYUp * device * screen
-  }
-
-  private static let zUpToYUp = simd_quatf(angle: -Float.pi / 2, axis: xAxis)
-
-  /// Rotation of the interface around the screen normal, from the phone's portrait axes
-  private static func screenAngle(_ orientation: UIInterfaceOrientation) -> Float {
+  /// How the interface is turned against the portrait of the phone, for the axes of the gyroscope
+  private static func lookScreen(_ orientation: UIInterfaceOrientation) -> LookScreen {
     switch orientation {
-    case .landscapeLeft:
-      return Float.pi / 2
-    case .landscapeRight:
-      return -Float.pi / 2
     case .portraitUpsideDown:
-      return Float.pi
+      return .portraitUpsideDown
+    // The home button on the right: the top of the phone on the left
+    case .landscapeRight:
+      return .topOnLeft
+    case .landscapeLeft:
+      return .topOnRight
     default:
-      return 0
+      return .portrait
     }
-  }
-
-  /// Angle around the vertical axis of where [orientation] looks: 0 towards -z, growing to the left
-  private static func heading(of orientation: simd_quatf) -> Float {
-    let forward = orientation.act(SIMD3<Float>(0, 0, -1))
-    var direction = forward
-    if forward.x * forward.x + forward.z * forward.z < 0.01 {
-      // Looking straight down, the top of the screen points where the view heads; straight up, away from it
-      let up: Float = forward.y < 0 ? 1 : -1
-      direction = orientation.act(SIMD3<Float>(0, up, 0))
-    }
-    return atan2(-direction.x, -direction.z)
   }
 
   // MARK: - Stereo layout
@@ -1539,7 +1541,11 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
     let pinch = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
     let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-    let recognizers: [UIGestureRecognizer] = [pan, pinch, tap]
+    // A double tap zooms in or back, as in the photo viewer; a single tap waits until it cannot be one
+    let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+    doubleTap.numberOfTapsRequired = 2
+    tap.require(toFail: doubleTap)
+    let recognizers: [UIGestureRecognizer] = [pan, pinch, tap, doubleTap]
     for recognizer in recognizers {
       recognizer.delegate = self
       sceneView.addGestureRecognizer(recognizer)
@@ -1557,26 +1563,58 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
     let translation = gesture.translation(in: sceneView)
     gesture.setTranslation(.zero, in: sceneView)
-    // The picture follows the finger: a drag to the left turns the view to the right, a drag up turns it down
-    let scale = radiansPerPoint * Float(fieldOfView / defaultFieldOfView)
-    yaw += Float(translation.x) * scale
-    if !motionEnabled {
-      pitch = min(max(pitch + Float(translation.y) * scale, -maxPitch), maxPitch)
-      updateCamera()
-    }
+    // The picture follows the finger: a drag to the left turns the view to the right, a drag up turns it down; with the
+    // gyroscope on too, as in the photo viewer
+    let turned = SphereLookMath.drag(
+      yaw: yaw, pitch: pitch, dx: Float(translation.x), dy: Float(translation.y), fieldOfView: Float(fieldOfView),
+      maxPitch: currentMaxPitch)
+    yaw = turned.yaw
+    pitch = turned.pitch
+    updateCamera()
   }
 
   @objc private func handlePinch(_ gesture: UIPinchGestureRecognizer) {
     switch gesture.state {
     case .began:
+      stopZoomAnimation()
       pinchStartFieldOfView = fieldOfView
     case .changed:
       guard gesture.scale > 0 else { return }
-      fieldOfView = min(max(pinchStartFieldOfView / gesture.scale, minFieldOfView), maxFieldOfView)
-      cameraNode.camera?.fieldOfView = fieldOfView
+      setFieldOfView(CGFloat(SphereLookMath.pinch(start: Float(pinchStartFieldOfView), scale: Float(gesture.scale))))
     default:
       break
     }
+  }
+
+  @objc private func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
+    let from = zoomTarget ?? fieldOfView
+    let target = CGFloat(SphereLookMath.doubleTap(Float(from)))
+    zoom = (target: target, ends: CACurrentMediaTime() + SphereLookMath.zoomAnimationDuration)
+    SCNTransaction.begin()
+    SCNTransaction.animationDuration = SphereLookMath.zoomAnimationDuration
+    // The ease out of the photo viewer (Curves.easeOutCubic)
+    SCNTransaction.animationTimingFunction = CAMediaTimingFunction(controlPoints: 0.33, 1, 0.68, 1)
+    fieldOfView = target
+    cameraNode.camera?.fieldOfView = target
+    SCNTransaction.commit()
+    // Zoomed in, a half sphere lets the view go further up and down
+    updateCamera()
+  }
+
+  private func stopZoomAnimation() {
+    guard zoomTarget != nil else { return }
+    zoom = nil
+    // The camera jumps to where the animation was going: a pinch then starts from there
+    SCNTransaction.begin()
+    SCNTransaction.animationDuration = 0
+    cameraNode.camera?.fieldOfView = fieldOfView
+    SCNTransaction.commit()
+  }
+
+  private func setFieldOfView(_ value: CGFloat) {
+    fieldOfView = value
+    cameraNode.camera?.fieldOfView = value
+    updateCamera()
   }
 
   @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
@@ -1633,8 +1671,9 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     configure(stereoButton, symbol: stereoSymbol, pointSize: 20, action: #selector(stereoTapped))
     stereoButton.accessibilityLabel = stereoText("stereo", fallback: "3D layout")
 
-    configure(motionButton, symbol: "gyroscope", pointSize: 20, action: #selector(motionTapped))
-    motionButton.accessibilityLabel = "Gyroscope"
+    // The compass of the photo viewer's gyroscope button (Material "explore"): filled when on, see updateMotionButton
+    configure(motionButton, symbol: Self.motionSymbol(on: false), pointSize: 20, action: #selector(motionTapped))
+    motionButton.accessibilityLabel = stereoText("motion", fallback: "Gyroscope")
 
     // The stabilisation with the camera's motion track: hidden unless the video has one, see updateStabilization
     let stabilizationSymbol = UIImage(systemName: "level") == nil ? "camera.metering.center.weighted" : "level"
@@ -1770,8 +1809,16 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
   }
 
   private func updateMotionButton() {
-    motionButton.tintColor = motionEnabled ? UIColor.white : UIColor(white: 1, alpha: 0.4)
-    motionButton.accessibilityValue = motionEnabled ? "On" : "Off"
+    setSymbol(of: motionButton, to: Self.motionSymbol(on: motionEnabled), pointSize: 20)
+    motionButton.tintColor = .white
+    motionButton.accessibilityValue = motionEnabled
+      ? stereoText("stabilizationEnabled", fallback: "Enabled") : stereoText("stabilizationDisabled", fallback: "Disabled")
+  }
+
+  /// The SF Symbol closest to the photo viewer's compass, filled when the gyroscope is on
+  private static func motionSymbol(on: Bool) -> String {
+    let symbol = on ? "safari.fill" : "safari"
+    return UIImage(systemName: symbol) == nil ? "gyroscope" : symbol
   }
 
   private func setControlsVisible(_ visible: Bool) {
@@ -1835,21 +1882,21 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     }
   }
 
+  /// The gyroscope button: the view stays where it is either way, the setting of the 360° viewers follows
   @objc private func motionTapped() {
+    motionEnabled.toggle()
     if motionEnabled {
-      // The drags carry on from where the motion left the view
-      let orientation = cameraNode.simdOrientation
-      let forward = orientation.act(SIMD3<Float>(0, 0, -1))
-      yaw = Self.heading(of: orientation)
-      pitch = min(max(asin(min(max(forward.y, -1), 1)), -maxPitch), maxPitch)
-      motionEnabled = false
-      motionManager.stopDeviceMotionUpdates()
-      updateCamera()
-    } else {
-      motionEnabled = true
       startMotion()
+    } else {
+      motionManager.stopDeviceMotionUpdates()
     }
     updateMotionButton()
+    SphericalVideoApiImpl.nextMotion = motionEnabled
+    events.motionChanged(enabled: motionEnabled) { result in
+      if case .failure(let error) = result {
+        print("Cannot tell Flutter that the gyroscope was turned on or off: \(error.code)")
+      }
+    }
     scheduleControlsHiding()
   }
 
@@ -1866,6 +1913,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     coverage = coverage == .full ? .half : .full
     rebuildSphere()
     updateCoverageButton()
+    updateCamera()
     // The shape of the frame may tell another stereo layout for the new coverage
     guessStereoLayoutFromFrame()
     showMessage(coverageName(coverage))

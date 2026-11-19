@@ -146,6 +146,10 @@ Map<String, String> sphereViewerLabels(Translations t) => {
   'remoteLookHint': t.tv_video_360_hint,
 };
 
+/// Translated label of the gyroscope button of the 360° video player of the phones (issue 20), named as the one of the
+/// 360° photo viewer; its states are those of the stabilisation switch ("Enabled", "Disabled")
+Map<String, String> sphereMotionLabels(Translations t) => {'motion': t.panorama_gyroscope};
+
 extension SphereCoverageExtension on SphereCoverage {
   /// The coverage the coverage control switches to: the full sphere and the front half, in turn
   SphereCoverage get next => switch (this) {

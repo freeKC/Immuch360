@@ -26,6 +26,13 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
+    /**
+     * The gyroscope choice of the next player, as Flutter told it right before opening it (see [setMotion]); off until
+     * Flutter says, the photo viewer's default
+     */
+    @Volatile
+    private var nextMotion = false
+
     fun attachEvents(messenger: BinaryMessenger) {
       eventsMessenger = messenger
       events = SphericalVideoEvents(messenger)
@@ -65,6 +72,22 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
      * Tells Flutter the user turned the stabilisation on or off in the player, so that the setting follows. The result
      * is ignored; without an engine for the app UI the event is dropped. Main thread.
      */
+    /**
+     * Tells Flutter the user turned the gyroscope on or off in the player, so that the setting of the 360° viewers
+     * follows; the next player opens so even without an engine to tell. Main thread.
+     */
+    fun notifyMotionChanged(enabled: Boolean) {
+      nextMotion = enabled
+      val current = events
+      if (current == null) {
+        Log.i(TAG, "No Flutter engine to tell that the gyroscope was turned ${if (enabled) "on" else "off"}")
+        return
+      }
+      current.motionChanged(enabled) { result ->
+        result.exceptionOrNull()?.let { Log.w(TAG, "Flutter did not get the gyroscope switch", it) }
+      }
+    }
+
     fun notifyStabilizationChanged(enabled: Boolean) {
       val current = events
       if (current == null) {
@@ -78,7 +101,7 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
   }
 
   /**
-   * Starts the 360° player on [url]. [fallbackUrl] is the server's transcoded stream, played once instead of [url]
+   * Starts the 360° player on [url], with the gyroscope choice Flutter told last (see [setMotion]). [fallbackUrl] is the server's transcoded stream, played once instead of [url]
    * when the device cannot decode the original or when it fails; null when there is none. [rawProjection] is null for
    * an equirectangular video, or the JSON calibration of a raw dual fisheye video, which the player stitches itself.
    */
@@ -106,11 +129,20 @@ class SphericalVideoApiImpl(private val context: Context) : SphericalVideoApi {
       coverage,
       fallbackUrl,
       rawProjection,
+      nextMotion,
     )
     if (context !is Activity) {
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
     context.startActivity(intent)
+  }
+
+  /**
+   * The gyroscope choice of the 360° viewers (issue 20, one setting with the photo viewer), told right before [open]:
+   * the next player opens with the motion of the device turning the view, or with touch alone
+   */
+  override fun setMotion(enabled: Boolean) {
+    nextMotion = enabled
   }
 
   /**

@@ -39,6 +39,11 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// player, turn it off); the Android phones, tablets and TVs apply it
     @Default(true) bool stabilizeVideos,
 
+    /// The gyroscope of the 360° viewers of the phones and tablets: on, turning the device turns the view and drags add
+    /// to it; off, touch alone turns it. One choice for the 360° photo viewer and the 360° video player (issue 20), the
+    /// last one made in either; off by default, as the photo viewer always opened
+    @Default(false) bool panoramaGyroscope,
+
     /// Meta Quest immersive viewer: the right thumbstick turns 360° photos and videos the other way. Off by default,
     /// the view then turns the way the stick is pushed, as in most headset apps (Settings, Asset Viewer, Videos)
     @Default(false) bool reverseThumbstickTurn,

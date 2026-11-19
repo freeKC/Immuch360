@@ -1,6 +1,7 @@
 #!/bin/sh
 # Compiles the pure Swift of the 360° player's stabilisation (Runner/Spherical/StabilizationTable.swift and
-# PlayerStabilization.swift) with the tests of main.swift, and runs them: no simulator, no target in the Xcode project.
+# PlayerStabilization.swift) and of its view (SphereLook.swift, issue 20) with the tests of main.swift, and runs them: no
+# simulator, no target in the Xcode project.
 # On macOS with Xcode (the CI's macOS job), or anywhere a Swift toolchain with Foundation is installed.
 set -eu
 here=$(cd "$(dirname "$0")" && pwd)
@@ -13,5 +14,7 @@ else
   compiler="swiftc"
 fi
 $compiler -swift-version 5 -O -o "$out/stabilization-tests" \
-  "$spherical/StabilizationTable.swift" "$spherical/PlayerStabilization.swift" "$here/main.swift"
-"$out/stabilization-tests" "$spherical/RawStitchShaders.metal" "$spherical/RawStitchRenderer.swift"
+  "$spherical/StabilizationTable.swift" "$spherical/PlayerStabilization.swift" "$spherical/SphereLook.swift" \
+  "$here/main.swift"
+"$out/stabilization-tests" "$spherical/RawStitchShaders.metal" "$spherical/RawStitchRenderer.swift" \
+  "$spherical/SphericalVideoViewController.swift"

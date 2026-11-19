@@ -65,6 +65,10 @@ class DesktopSphericalVideoApi implements SphericalVideoApi {
     );
   }
 
+  /// The gyroscope choice of the phones: a computer has no gyroscope, its player turns with the mouse and the keys
+  @override
+  Future<void> setMotion(bool enabled) async {}
+
   /// The stabilisation of the video at [url] (issue 14, lot d2): kept in [stabilization] until the player of that URL
   /// reads it, then given to it as it comes (desktop_stabilization.dart). Flutter sends it where the player stabilises
   /// (videoStabilizationSupportedProvider: Windows with renderer C), before the open and once the table is built.

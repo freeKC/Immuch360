@@ -53,6 +53,12 @@ import '../../../widget_tester_extensions.dart';
 class _SphericalVideoApi extends SphericalVideoApi {
   final List<Map<String, Object?>> opened = [];
 
+  /// The gyroscope choices the player was told, with how many videos it had opened by then
+  final List<(bool, int)> motions = [];
+
+  @override
+  Future<void> setMotion(bool enabled) async => motions.add((enabled, opened.length));
+
   /// What the player was told, in order with the openings: "stabilization", the URL, the setting, whether a track
   /// comes and whether no table came; or "open" and the URL
   final List<String> calls = [];
@@ -394,6 +400,30 @@ void main() {
       expect(sphericalApi.calls, ['stabilization $_url false false true', 'open $_url']);
     });
 
+    for (final gyroscope in [true, false]) {
+      testWidgets('tells the player the gyroscope choice $gyroscope of the 360° viewers before it opens (issue 20)', (
+        tester,
+      ) async {
+        await pump(
+          tester,
+          config: AppConfig(viewer: ViewerConfig(panoramaGyroscope: gyroscope)),
+        );
+
+        await openSphericalVideoUrl(
+          context,
+          ref,
+          url: _url,
+          title: 'trip.mp4',
+          layout: StereoLayout.mono,
+          coverage: SphereCoverage.full,
+        );
+
+        // Told once, before the player opened
+        expect(sphericalApi.motions, [(gyroscope, 0)]);
+        expect(sphericalApi.opened, hasLength(1));
+      });
+    }
+
     testWidgets('tells the player nothing of the stabilisation where it does not stabilise', (tester) async {
       await pump(tester);
 
@@ -431,8 +461,8 @@ void main() {
         'close': 'Close',
         'layout': StereoLayout.leftRight,
         // The labels of the audio track control, of the buffering indicator, of a switch to the stream to fall back
-        // to, of a raw video too heavy for the decoders and of the stabilisation switch too, with the language of
-        // the app to name the track languages in
+        // to, of a raw video too heavy for the decoders, of the stabilisation switch and of the gyroscope button too,
+        // with the language of the app to name the track languages in
         'labels': {
           ...sphereViewerLabels(context.t),
           ...audioTrackLabels(context.t, const Locale('en')),
@@ -440,6 +470,7 @@ void main() {
           ...videoSourceLabels(context.t),
           ...rawVideoLabels(context.t),
           ...videoStabilizationLabels(context.t),
+          ...sphereMotionLabels(context.t),
         },
         'coverage': SphereCoverage.half,
       });
@@ -521,6 +552,7 @@ void main() {
         supported: true,
         enabled: enabled,
         build: buildRawStabilization,
+        motion: false,
         open: () async => sphericalApi.calls.add('open ${plan.url}'),
       );
       await delivery;

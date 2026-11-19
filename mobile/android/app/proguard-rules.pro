@@ -52,3 +52,18 @@
 -keep class com.meta.spatial.** { *; }
 -dontwarn com.meta.spatial.**
 ##---------------End: Meta Spatial SDK ----------
+
+##---------------Begin: the view of the 360° video player (issue 20) ----------
+# SphereViewDriver (src/main/kotlin/androidx/media3/exoplayer/video/spherical) reaches the renderer of Media3's
+# SphericalGLSurfaceView through the touch tracker it keeps, found by the types of the fields: the field holding the
+# tracker is only read in the constructor, and R8 would drop it; the two interfaces the renderer takes the view through
+# must stay interfaces of their own. Names may still be obfuscated.
+-keepclassmembers,allowobfuscation class androidx.media3.exoplayer.video.spherical.SphericalGLSurfaceView {
+  androidx.media3.exoplayer.video.spherical.TouchTracker *;
+}
+-keepclassmembers,allowobfuscation class androidx.media3.exoplayer.video.spherical.TouchTracker {
+  androidx.media3.exoplayer.video.spherical.TouchTracker$Listener *;
+}
+-keep,allowobfuscation interface androidx.media3.exoplayer.video.spherical.TouchTracker$Listener { *; }
+-keep,allowobfuscation interface androidx.media3.exoplayer.video.spherical.OrientationListener$Listener { *; }
+##---------------End: the view of the 360° video player ----------
