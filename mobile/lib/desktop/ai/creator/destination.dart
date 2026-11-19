@@ -550,7 +550,12 @@ class DestinationPlanner {
 
 /// A photo of the selection of the conversion dialog
 class DestinationJob {
-  const DestinationJob({required this.id, required this.original, this.kind = ImmersiveKind.stereoPhoto});
+  const DestinationJob({
+    required this.id,
+    required this.original,
+    this.kind = ImmersiveKind.stereoPhoto,
+    this.fileName,
+  });
 
   /// The id its job takes in the queue
   final String id;
@@ -560,8 +565,11 @@ class DestinationJob {
   /// version, which the job then takes over
   final ImmersiveKind kind;
 
+  /// The name of a file of its own, a 3D video ("clip_3D_LRF_Full_SBS.mp4"); null for a version named by its kind
+  final String? fileName;
+
   /// The name its version takes: "salon_3D_LRF_Full_SBS.jpg", "salon_scene3D.jpg"
-  String get finalName => versionTargetName(kind, original.name);
+  String get finalName => fileName ?? versionTargetName(kind, original.name);
 }
 
 /// The destinations of a selection, from the opening of the conversion dialog to its launch or its closing. Its

@@ -538,13 +538,14 @@ void main() {
       depth = model('depth', {AiFeature.stereoPhoto, AiFeature.stereoPanorama});
       geometry = model('geometry', {AiFeature.scene, AiFeature.panorama});
       filling = model('filling', {AiFeature.scene});
-      // The panoramas need a generator too, never installed here
+      // The panoramas need a generator too, and the 3D videos their model, never installed here
       catalogue = [
         runtime,
         depth,
         geometry,
         filling,
         model('generator', {AiFeature.panorama}),
+        model('video-depth', {AiFeature.stereoVideo}),
       ];
     });
 

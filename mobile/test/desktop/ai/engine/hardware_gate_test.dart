@@ -118,8 +118,8 @@ void main() {
       expect(mac.reason!.textKey, 'ai_immersive_gpu_not_on_mac');
       // Nothing held back on the branch of the test build, which lifts the splat scenes (lot SP8): every component
       // installed, a card it takes
-      // Only the 3D videos are held, until their own lot offers them
-      expect(gate().heldGroups, {AiFeatureGroup.videos});
+      // Nothing held since the screens of the 3D videos (release 49)
+      expect(gate().heldGroups, isEmpty);
       expect(sdCppWindowsComponent.isComplete, isTrue);
       expect(windows.isAvailable, isTrue, reason: '$windows');
       expect(windows.fileOf(sdCppWindowsComponent.id), isNotNull);

@@ -783,8 +783,8 @@ void main() {
 
       // A checkout on Windows may hold CRLF line ends; the script reads either
       final text = File(_catalogue).readAsStringSync().replaceAll('\r\n', '\n');
-      // Nothing held but the 3D videos, which their own lot offers
-      const lifted = 'const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.videos};';
+      // Nothing held since the screens of the 3D videos offered them (release 49)
+      const lifted = 'const aiHeldFeatureGroups = <AiFeatureGroup>{};';
       expect(text, contains(lifted));
 
       // The hold put back by the app: the components stay those of the release, complete

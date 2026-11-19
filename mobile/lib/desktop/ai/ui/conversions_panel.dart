@@ -40,6 +40,15 @@
 // "Done: 150,000 gaussians, 3.4 MiB, from 150 of 150 photos", the photos COLMAP could not place, the blurred frames of a
 // video, the .ply kept for other 3D apps, Open folder and "How to open it in the headset". No View and no Delete: the
 // computer shows no splat scene, and a .spz carries no XMP to tell it is ours.
+//
+// A 3D video (release 49, store/m2/release-49/lots/video3d-plan.md, section 4.5): "2D video to 3D side by side
+// (experimental)", its frames done of all with its pace and its segment ("1,200 of 5,400 frames, 0.85 a second  •
+// segment 3"), the time left once two windows of the model ran (said until then), the line of the 3D photos it lets go
+// first; Pause and Stop while it runs (Stop asks first: it deletes the work done), Resume and Discard once paused, with
+// what it waits for when its original or its folder is not there ("put it back, then Resume"), the error with its log
+// to send once it failed (Retry goes on from its work folder), and once made what the engine tells of it, Open the 3D
+// video and Show in folder. No Delete: an MP4 carries no XMP to tell it is ours. Cancel all pauses a video with work
+// done: Discard alone deletes it.
 
 import 'dart:async';
 import 'dart:io';
@@ -60,6 +69,8 @@ import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/desktop/ai/scene_preview/scene_preview.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
+import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -207,6 +218,7 @@ String conversionStateText(Translations t, ConversionJob job) => switch (job.pha
   ConversionPhase.skipped => t.ai_immersive_state_skipped,
   ConversionPhase.cancelled => t.ai_immersive_state_cancelled,
   ConversionPhase.failed => t.ai_immersive_state_failed,
+  ConversionPhase.paused => t.ai_immersive_state_paused,
 };
 
 /// Why a job failed, in words; the message of the system or of the model where the text has room for it. A job of the
@@ -222,6 +234,10 @@ String conversionFailureText(
 }) => switch (code) {
   ImmersiveErrorCode.cancelled => t.ai_immersive_state_cancelled,
   ImmersiveErrorCode.decodeFailed => t.ai_immersive_failed_decode,
+  // The words of FFmpeg or of the engine, which the log of the job tells in full
+  ImmersiveErrorCode.modelFailed when kind == ConversionKind.stereoVideo => t.ai_immersive_video_failed(
+    message: message ?? '',
+  ),
   ImmersiveErrorCode.unsupportedFormat => t.ai_immersive_unavailable_format,
   ImmersiveErrorCode.outOfMemory when kind == ConversionKind.splatScene => t.ai_immersive_failed_splat_memory,
   ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
@@ -294,6 +310,7 @@ String conversionKindText(Translations t, ConversionKind kind, {bool fromVideo =
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_job_type_stereo_panorama,
   ConversionKind.splatScene when fromVideo => t.ai_immersive_job_type_splat_video,
   ConversionKind.splatScene => t.ai_immersive_job_type_splat_photos,
+  ConversionKind.stereoVideo => t.ai_immersive_job_type_video,
 };
 
 /// The honesty label of the files of a kind, as the head of the panel says it
@@ -302,6 +319,7 @@ String conversionKindLabel(Translations t, ConversionKind kind) => switch (kind)
   ConversionKind.sceneFromPhoto => t.ai_immersive_scene_honesty,
   ConversionKind.panoramaFromPhoto => t.ai_immersive_panorama_honesty,
   ConversionKind.splatScene => t.ai_immersive_splat_honesty,
+  ConversionKind.stereoVideo => t.ai_immersive_video_line,
 };
 
 /// The honesty label of the file of [job]: that of its kind, but the 3D version of a panorama the app generated (chained
@@ -451,6 +469,65 @@ String qualityFlagText(Translations t, ReliefQualityFlag flag) => switch (flag) 
   ReliefQualityFlag.seam => t.ai_immersive_quality_seam,
   ReliefQualityFlag.mostlyInvented => t.ai_immersive_quality_mostly_invented,
 };
+
+/// "0.85", "12.4": frames a second of a 3D video, two digits under one
+String videoPaceText(double framesPerSecond) => framesPerSecond.toStringAsFixed(framesPerSecond < 1 ? 2 : 1);
+
+/// "1,200 of 5,400 frames, 0.85 a second  •  segment 3" for a 3D video under way or paused, from what its engine told
+/// last; its frames alone until its pace is known
+String? videoProgressText(Translations t, ConversionJob job) {
+  final progress = job.videoProgress;
+  if (progress == null) {
+    return null;
+  }
+  final fps = progress.framesPerSecond;
+  final frames = fps == null
+      ? t.ai_immersive_video_frames(done: progress.framesDone, total: progress.framesTotal)
+      : t.ai_immersive_video_progress(done: progress.framesDone, total: progress.framesTotal, fps: videoPaceText(fps));
+  return job.state.isActive && !progress.muxing
+      ? '$frames  •  ${t.ai_immersive_video_segment(index: progress.segmentsDone + 1)}'
+      : frames;
+}
+
+/// "H.264" or "AV1": how a 3D video was encoded
+String videoEncoderText(VideoEncoder encoder) => encoder.codec.contains('av1') ? 'AV1' : 'H.264';
+
+/// What a 3D video paused waits for, with its path: its original, or its destination folder; null when it lacks
+/// nothing
+String? videoMissingText(Translations t, ConversionJob job) => switch (job.videoMissing) {
+  VideoMissing.original => t.ai_immersive_video_original_missing(
+    path: switch (job.source) {
+      LocalFileSource(:final path) => path,
+      final source => source.name,
+    },
+  ),
+  VideoMissing.folder => t.ai_immersive_video_folder_missing(path: job.target?.folder ?? ''),
+  null => null,
+};
+
+/// Stop of a 3D video asks first once work was done: it deletes it, Pause keeps it
+Future<bool> confirmVideoStop(BuildContext context) async =>
+    await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        key: const Key('ai_video_stop_confirm'),
+        content: Text(context.t.ai_immersive_video_stop_confirm),
+        actions: [
+          TextButton(
+            key: const Key('ai_video_stop_keep'),
+            autofocus: true,
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.t.cancel),
+          ),
+          FilledButton(
+            key: const Key('ai_video_stop_yes'),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(context.t.ai_immersive_video_stop),
+          ),
+        ],
+      ),
+    ) ??
+    false;
 
 /// See the top of this file
 class ConversionsPanel extends ConsumerWidget {
@@ -675,8 +752,10 @@ class _JobRowState extends ConsumerState<_JobRow> {
       SceneResultDetails(:final hiddenFraction) when hiddenFraction > 0 => hiddenFraction,
       _ => null,
     };
-    final photo = job.kind.output == ImmersiveKind.stereoPhoto;
+    final video = job.kind.isVideo;
+    final photo = job.kind.output == ImmersiveKind.stereoPhoto && !video;
     final splat = job.kind == ConversionKind.splatScene;
+    final videoLine = video ? videoProgressText(t, job) : null;
     final lines = <Widget>[
       Text(
         [
@@ -695,7 +774,13 @@ class _JobRowState extends ConsumerState<_JobRow> {
       if (job.state.isActive) ...[
         const SizedBox(height: 4),
         LinearProgressIndicator(value: job.phase == ConversionPhase.preparing ? null : job.progress),
-        if (progress != null) Text(progress, key: const Key('ai_job_time_left'), style: secondary),
+        if (videoLine != null) Text(videoLine, key: const Key('ai_job_video_frames'), style: secondary),
+        if (progress != null)
+          Text(progress, key: const Key('ai_job_time_left'), style: secondary)
+        else if (video && job.state == ConversionState.depth)
+          Text(t.ai_immersive_video_measuring, key: const Key('ai_job_video_measuring'), style: secondary),
+        if (video && job.yielding)
+          Text(t.ai_immersive_video_yielding, key: const Key('ai_job_video_yielding'), style: secondary),
         // The generator cut its work into segments, the card being short of memory: why it runs slower
         if (job.state == ConversionState.generating && (job.segments ?? 1) > 1)
           Text(
@@ -707,8 +792,21 @@ class _JobRowState extends ConsumerState<_JobRow> {
         if (job.placed case final placed? when placed.isIncomplete)
           _splatIncomplete(t, placed.placed, placed.images, colors),
       ],
+      if (job.state == ConversionState.paused) ...[
+        if (videoLine != null) Text(videoLine, key: const Key('ai_job_video_frames'), style: secondary),
+        if (videoMissingText(t, job) case final missing?)
+          Text(
+            missing,
+            key: const Key('ai_job_video_missing'),
+            style: TextStyle(color: colors.error),
+          ),
+        Text(t.ai_immersive_video_paused_kept, key: const Key('ai_job_video_paused'), style: secondary),
+      ],
       if (job.skipReason case final reason?)
-        Text(conversionSkipText(t, reason, name: job.target?.fileName), style: secondary),
+        Text(
+          conversionSkipText(t, reason, name: job.target?.fileName, video: video),
+          style: secondary,
+        ),
       if (job.state == ConversionState.failed && job.error != null)
         Text(
           conversionFailureText(
@@ -731,7 +829,14 @@ class _JobRowState extends ConsumerState<_JobRow> {
           ),
       // What a failure of a splat scene left for Retry and for a diagnosis, where "Save logs to a file" names it too,
       // until the next scene or a day; for a diagnosis only when a Retry would place the same images again
-      if (job.state == ConversionState.failed && job.keptFolder != null)
+      // The log of a 3D video that failed, which "Save logs to a file" gathers too
+      if (video && job.state == ConversionState.failed && job.keptFolder != null)
+        SelectableText(
+          t.ai_immersive_video_failed_log(path: job.keptFolder!),
+          key: const Key('ai_job_video_log'),
+          style: secondary,
+        ),
+      if (!video && job.state == ConversionState.failed && job.keptFolder != null)
         SelectableText(
           job.error == ImmersiveErrorCode.notEnoughOverlap
               ? t.ai_immersive_splat_work_kept_diagnosis(folder: job.keptFolder!)
@@ -786,6 +891,16 @@ class _JobRowState extends ConsumerState<_JobRow> {
             style: TextStyle(color: colors.error),
           ),
         if (job.details case final SplatResultDetails splat) ..._splatDone(t, splat, written, secondary),
+        if (job.videoDone case final made?)
+          Text(
+            t.ai_immersive_video_done(
+              frames: made.frames,
+              cuts: made.cuts.length,
+              encoder: videoEncoderText(made.encoder),
+            ),
+            key: const Key('ai_job_video_done'),
+            style: secondary,
+          ),
         if (localOnly case final message?) Text(message, key: const Key('ai_job_local_only'), style: secondary),
       ],
     ];
@@ -808,8 +923,36 @@ class _JobRowState extends ConsumerState<_JobRow> {
           onPressed: () => notifier.keepWaiting(job.id),
           child: Text(t.ai_immersive_keep_waiting),
         ),
-      if (!job.state.isEnded)
+      // A 3D video under way: Pause keeps its work, Stop deletes it (asked first once frames were made)
+      if (video && job.state.isActive) ...[
+        TextButton(
+          key: const Key('ai_job_video_pause'),
+          onPressed: () => notifier.pause(job.id),
+          child: Text(t.ai_immersive_video_pause),
+        ),
+        TextButton(
+          key: const Key('ai_job_video_stop'),
+          onPressed: () async {
+            if (job.perMille == 0 || await confirmVideoStop(context)) {
+              notifier.cancel(job.id);
+            }
+          },
+          child: Text(t.ai_immersive_video_stop),
+        ),
+      ] else if (!job.state.isEnded)
         TextButton(key: const Key('ai_job_cancel'), onPressed: () => notifier.cancel(job.id), child: Text(t.cancel)),
+      if (video && job.state == ConversionState.paused)
+        FilledButton.tonal(
+          key: const Key('ai_job_video_resume'),
+          onPressed: () => notifier.retry(job.id),
+          child: Text(t.ai_immersive_video_resume),
+        ),
+      if (video && (job.state == ConversionState.paused || job.state == ConversionState.failed))
+        TextButton(
+          key: const Key('ai_job_video_discard'),
+          onPressed: () => notifier.cancel(job.id),
+          child: Text(t.ai_immersive_video_discard),
+        ),
       // Not for a job that ended for the memory of the graphics card (Keep waiting puts it back), nor for a splat
       // scene of too few images placed: the same images would be placed the same way
       if (job.target != null &&
@@ -839,7 +982,23 @@ class _JobRowState extends ConsumerState<_JobRow> {
           },
           child: Text(t.view),
         ),
-      if (job.state == ConversionState.done && written != null) ...[
+      if (video && job.state == ConversionState.done && written != null) ...[
+        TextButton(
+          key: const Key('ai_job_video_open'),
+          onPressed: () {
+            final open = ref.read(versionOpenerProvider);
+            unawaited(Navigator.of(context).maybePop());
+            open(written);
+          },
+          child: Text(t.ai_immersive_video_open),
+        ),
+        TextButton(
+          key: const Key('ai_job_video_folder'),
+          onPressed: () => unawaited(ref.read(conversionFolderOpenerProvider)(p.dirname(written))),
+          child: Text(t.ai_immersive_video_show_in_folder),
+        ),
+      ],
+      if (!video && job.state == ConversionState.done && written != null) ...[
         // A scene is judged here before it goes to the NAS; the panel stays under the preview for the next one
         if (job.kind == ConversionKind.sceneFromPhoto)
           TextButton(
@@ -894,7 +1053,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
               child: asset == null
                   ? ColoredBox(
                       color: colors.surfaceContainerHighest,
-                      child: Icon(Icons.photo_outlined, color: colors.onSurfaceVariant),
+                      child: Icon(video ? Icons.movie_outlined : Icons.photo_outlined, color: colors.onSurfaceVariant),
                     )
                   : ref.watch(conversionThumbnailProvider)(asset),
             ),

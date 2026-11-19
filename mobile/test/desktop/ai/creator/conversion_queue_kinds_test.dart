@@ -1210,9 +1210,11 @@ void main() {
     });
 
     test('the time a job of each kind takes, before any measure', () {
-      for (final kind in ConversionKind.values) {
+      // A 3D video tells its own time, from its frames (video_estimates.dart), never from the timings of the steps
+      for (final kind in ConversionKind.values.where((kind) => !kind.isVideo)) {
         expect(kind.expectedDuration(const AiTimings()), greaterThan(Duration.zero), reason: '$kind');
       }
+      expect(ConversionKind.stereoVideo.expectedDuration(const AiTimings()), Duration.zero);
       expect(ConversionKind.sceneFromPhoto.expectedDuration(const AiTimings()), lessThan(const Duration(seconds: 30)));
       expect(
         ConversionKind.panoramaFromPhoto.expectedDuration(const AiTimings()),

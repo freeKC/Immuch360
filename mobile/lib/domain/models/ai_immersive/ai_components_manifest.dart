@@ -32,8 +32,8 @@
 // Video Depth Anything Small (Apache-2.0, the ONNX export of looplj at a pinned revision) from ai-components-5, ONNX
 // Runtime shared with the photos, and an FFmpeg program under the LGPL 2.1 or later: three archives of a release of
 // github.com/immuch360/libmpv-builds (.github/workflows/ffmpeg.yml), as its manifest gives them (a copy in
-// .github/desktop/ai/ffmpeg-lgpl-<tag>.json). Their group stays in aiHeldFeatureGroups until the app's lot of the 3D
-// videos offers them.
+// .github/desktop/ai/ffmpeg-lgpl-<tag>.json). Their group, held in aiHeldFeatureGroups until the screens of the 3D
+// videos offered it, is offered since release 49, labelled experimental.
 //
 // Shared with the Meta Quest, which reads the LiteRT model from it.
 
@@ -3276,9 +3276,9 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
 /// feature behind the gate of the graphics card (a dedicated card, Windows only). Their components come from
 /// ai-components-4 like the others from theirs; put the group back here if that release is not published.
 ///
-/// The 3D videos are held here until the app's lot of the 3D videos (feat-video3d-49) offers them, once
-/// ai-components-5 and the release of the FFmpeg program exist (video3d-plan.md, section 4.1).
-const aiHeldFeatureGroups = <AiFeatureGroup>{AiFeatureGroup.videos};
+/// The 3D videos were held here until the screens of their lot (feat-video3d-49) offered them, ai-components-5 and the
+/// release ffmpeg-lgpl-20261118-9 of the FFmpeg program published (video3d-plan.md, section 4.1): nothing is held now.
+const aiHeldFeatureGroups = <AiFeatureGroup>{};
 
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when
 /// none of its features is offered here, one of its components is incomplete, or it is [held] (never offered). The

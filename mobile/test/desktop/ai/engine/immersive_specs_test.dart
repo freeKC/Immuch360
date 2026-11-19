@@ -101,9 +101,12 @@ void main() {
           ConversionKind.panoramaFromPhoto: (ImmersiveKind.panorama360, ConversionLane.gpu),
           ConversionKind.stereoPanoramaFromPanorama: (ImmersiveKind.stereoPanorama360, ConversionLane.cpu),
           ConversionKind.splatScene: (ImmersiveKind.gaussianSplat, ConversionLane.gpu),
+          // Two eyes side by side, an MP4 made by its own engine
+          ConversionKind.stereoVideo: (ImmersiveKind.stereoPhoto, ConversionLane.cpu),
         },
       );
       expect(ConversionKind.sceneFromPhoto.stages, ImmersiveStage.scene);
+      expect(ConversionKind.stereoVideo.stages, [ImmersiveStage.reading, ImmersiveStage.depth, ImmersiveStage.writing]);
     });
   });
 
