@@ -7,9 +7,17 @@
     "blob": "55dea3b569e13b90e4aeb591b00f6b62acfb3288",
     "reason": "AI immersive LiteRT engine (feat-ai-immersive-a8a-litert): the R8 rules of the quest flavour only, which keep the classes of the LiteRT API that its JNI library builds by name; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the R8 rule that keeps the classes of zstd-jni"
   },
+  "mobile/android/app/proguard-rules.pro": {
+    "blob": "aaf1b3d26ac1c5a149a3e4ca4b67b2793edb6f83",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the R8 rules that keep the fields of the spherical view SphereViewDriver reaches"
+  },
   "mobile/android/app/src/main/AndroidManifest.xml": {
-    "blob": "7ac7bc0aa7ed0478e68734d7ffdcab726baf6b6a",
-    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone; Play deep links (fix-play-deep-links): no https links of my.immich.app, Immich's domain, and BROWSABLE on the two content:// viewer filters; Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules"
+    "blob": "5ab80b8ada473ba3a2ae79a9fbaec554cc00ee00",
+    "reason": "Sign in with your phone (feat-qr-pairing): the immuch360://pair deep link and the orientation of the ZXing scanner activity; DJI link (feat-dji-link, 12ccff821): the two USB features, neither of them required, the accessory attached entry shipped disabled and the one query that says whether the DJI application is installed; DJI link stage 2b (feat-dji-link-3): the relay service of Send to a headset and the flight view activity of the Quest; DJI live video (feat-dji-ux): the comment of the accessory attached entry, now kept by the open on plug choice; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone; Play deep links (fix-play-deep-links): no https links of my.immich.app, Immich's domain, and BROWSABLE on the two content:// viewer filters; Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules; 360 video controls (feat-360-video-controls-49, issue 20): the 360 video player follows the rotation of the device (no forced landscape) and keeps its activity across a change of screen size"
+  },
+  "mobile/android/app/src/main/kotlin/androidx/media3/exoplayer/video/spherical/SphereViewDriver.kt": {
+    "blob": "25270e024f7ef80f35b87cf5358bd55a8cfeff4b",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): hands the view of the app to the package private listeners of Media3's spherical view"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
     "blob": "58db6ab83b79bc44722c1b071998bfb3b34182f7",
@@ -368,16 +376,20 @@
     "reason": "Image decode guard (fix-crash-image-decode, crash M1 of the Meta Quest store, 8 November 2026): the native decode keeps and logs its failure, retries once at half the size after an OutOfMemoryError, and hands Flutter the encoded bytes only in a format of the engine's own codecs; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreen.kt": {
-    "blob": "fcb4df1db6d9f18806a5d11a133c6733cb4f807a",
-    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the grips of a flat screen (a short press, a hold on it, both grips), where it stands, the grab around the eyes and the stretch"
+    "blob": "c310cb6dc6791b39b4d8d2a05542872a90ccc005",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the grips of a flat screen (a short press, a hold on it, both grips), where it stands, the grab around the eyes and the stretch; Quest gallery (feat-quest-gallery-49, issue 19): the flat screen keeps its size and place while browsing and in the slideshow, the frosted background, 2D and 3D while browsing"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreenBrowse.kt": {
+    "blob": "7a06637433e47535f082f1d81b5fa440d86f13de",
+    "reason": "Quest gallery (feat-quest-gallery-49, issue 19): previous and next from the headset over the photos of the album or the timeline"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreenLayer.kt": {
     "blob": "0b9a413d1f7be26ce1ae2b4ae08a5e7294afda72",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the compositor quad layer of the flat photos, its filters and its shape; Gaussian splats (feat-quest-splats, lot S5): a splat never goes on the photo layer"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatScreenMedia.kt": {
-    "blob": "89fd8136ada0ea4fa1030f38b5b41ad28ac8a73f",
-    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): what the viewer makes of a request (the stereo quad, the flat video screen, the big screen, a movable screen, the photo layer, the widths of its screen), read by the MediaRequest of the viewer; Gaussian splats (feat-quest-splats, lot S5): a splat is no flat screen media: not movable, no two eyes"
+    "blob": "a484d733dc5360339a88cc46144a35ddc742399f",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): what the viewer makes of a request (the stereo quad, the flat video screen, the big screen, a movable screen, the photo layer, the widths of its screen), read by the MediaRequest of the viewer; Gaussian splats (feat-quest-splats, lot S5): a splat is no flat screen media: not movable, no two eyes; Quest gallery (feat-quest-gallery-49, issue 19): the relief made in the headset is a movable screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/FlatStereo.kt": {
     "blob": "4d29bedad4e64bb304dbe85141bb9f98332b7fb6",
@@ -388,8 +400,8 @@
     "reason": "AI immersive phases 2 and 3, lot P4: our packet at the head of a panorama generated beyond the edges of a photo, the yaw that opens it on its photo, its passing text and panel lines; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): no outline on the 3D version of a generated panorama, the flags on one line of the panel"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveApiImpl.kt": {
-    "blob": "ba17b4ea880bf0bc26e6251274fbcc042c891fa6",
-    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Sharper flat screens setting handed to the viewer; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the opening carries the kiosk JSON to the immersive viewer; not yet on the phone branch; decoder limit (fix-decoder-limit): open and showAdjacent carry the notice of the file chosen and the refusal of a video nothing decodes; fix round of the splats: the Gaussian splats setting handed to the viewer; the decision of 30 October on the splats: splatsInThisBuild, false in the Meta Horizon Store build; integration of 31 October: one opening carries the notice, the refusal and the Gaussian splats setting; watch progress (feat-watch-progress): the threshold of the films and the start notice handed to the viewer, the start of a film shown next, and the progress event towards Flutter"
+    "blob": "47c9867da837b0394464edcae2423df8cd7c8509",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Sharper flat screens setting handed to the viewer; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the opening carries the kiosk JSON to the immersive viewer; not yet on the phone branch; decoder limit (fix-decoder-limit): open and showAdjacent carry the notice of the file chosen and the refusal of a video nothing decodes; fix round of the splats: the Gaussian splats setting handed to the viewer; the decision of 30 October on the splats: splatsInThisBuild, false in the Meta Horizon Store build; integration of 31 October: one opening carries the notice, the refusal and the Gaussian splats setting; watch progress (feat-watch-progress): the threshold of the films and the start notice handed to the viewer, the start of a film shown next, and the progress event towards Flutter; Quest gallery (feat-quest-gallery-49, issue 19): the slideshow time and the frosted background of the Pigeon open"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveCacheCleaning.kt": {
     "blob": "65200849240f4826132ce88be3f19d1f62a0a91e",
@@ -404,8 +416,8 @@
     "reason": "AI immersive lot A9a: the photo of a relief decoded upright by ImageDecoder (EXIF orientation, quarter turns, transparency on black); feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the upright decode of an ordinary photo for the big screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveViewerActivity.kt": {
-    "blob": "466b25f2b410ccd7dca272edcf4e7aff95fc406c",
-    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): a kiosk opening plays for visitors, restart on headset on, player released on headset off, one play and an end card in the gaze over a dark sphere, the last 15 s rule, no panel, hands, controllers or pointer, B or Y held one second; quest kiosk fix round: a recreated kiosk starts from 0:00, its panel made at the first kiosk opening only; quest playback resilience: a video whose decoder or media server fails after its first frame plays again from where it stopped on a new player, once, the last frame kept; no picture for 3 s while the sound plays switches to the transcoded stream or says so with the details of the video; reports to the Logs page; the details line in the info panel; fix round: the restart waits for the media service and starts past a decoder failure, notices that go when the picture comes back; integration of 30 October: the kiosk and the flat screens in one opening, the watch and the report of the playback lot on the surface the video plays on (activeVideoSurface); quest shutdown fix (fix-quest-shutdown): every object of the scene held through SpatialHold, let go at the start of onSpatialShutdown, so that onDestroy and the late posts touch no entity once the SDK cleared EntityContext; hardening of the quest shutdown (hardening-quest-shutdown): the kiosk panel, the photo layer and the flat video screen never made once the scene is down, the comments of the shutdown for every order of the SDK; decoder limit (fix-decoder-limit): the start rule of a video (a refusal at once, an original that cannot stream downloaded to the cache with a progress line when its copy is no fallback), a video beyond the decoder at its first tracks switched once, stopped at once for a server video or warned for a file, the 3 s rule before any restart, the errors of the player in our words; fix round: a wait for the network on the share bridge no longer counts for the 3 s rule, and a copy beyond the decoder played because the original could not stream gives way to the original, downloaded, once; Gaussian splats (feat-quest-splats, lot S5): the splat module registered beside VRFeature, a gaussianSplat request prepared, shown fixed in the world with the glide, Reset and Turn upright, its passing texts, and nothing done once the scene is down; fix round of the splats: the splat module registered only with Gaussian splats on, a splat refused at once without it, the room of the cache, nothing left in the cache; rebase of the splats on the shutdown hardening; the decision of 30 October: the splat module never registered in the Meta Horizon Store build, and the notice of the first splat with the words that Meta neither supports nor warrants its API; integration of 31 October: the notice and the refusal of a video and the Gaussian splats setting in one request, for the opening and for previous and next; watch progress (feat-watch-progress): a film plays once and its position goes to Flutter every 5 s while it plays, at onPause, before a request for another media, at its end and as the viewer closes, with the start notice of a film resumed where it was left; the kiosk neither reports nor resumes; fix round of the watch progress: Play at the end of a film starts it again from its beginning; the decision of 31 October on the watch progress: the threshold of the films said as the setting says it, a film is longer than it; the splats on the Quest 3 (fix-quest-splats-device): Loading the splat while the module loads, a splat that cannot show says why and keeps the panel and its Back in sight; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the Quest viewer starts a streamed video from its link, says what it brings while it waits, and counts what the link waits for as the network's in the 3 s rule; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the right thumbstick of a splat given to its stage, Reset in the panel only, the hint of a splat; Splat photos (feat-splat-photo, lot L4): the start up cleaning of its cache through ImmersiveCacheCleaning.leftovers"
+    "blob": "b8a95bffa770f2d0410a1fae99ca2a17cb55371e",
+    "reason": "AI immersive lots A7, A9a and A11, and their review minors: the stereo quad shows side by side 3D photos (sbsPhoto), makes the relief of a depthRelief photo with its stages, Stop relief and its reasons, and shows it in 2.5D on its mesh (experimental); phases 2 and 3, lot S3: a photo that carries a 3D scene shows its preview flat, then the scene with Reset, Photo (2D), its lines and passing texts; lot P4: the sphere reads the head of each photo, opens a generated panorama on its photo, says so, outlines the photo and keeps the sentence in the panel; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): the head of a 360° photo read beside its preview, no outline on the 3D version of a generated panorama; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): a flat 3D video on a flat quad video layer in true 3D, a flat 3D photo on the stereo quad, the words said once; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): flat photos on a compositor quad layer, the server preview first, the big screen, flat screens moved and resized with the grips, Size and Distance in the panel; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): a kiosk opening plays for visitors, restart on headset on, player released on headset off, one play and an end card in the gaze over a dark sphere, the last 15 s rule, no panel, hands, controllers or pointer, B or Y held one second; quest kiosk fix round: a recreated kiosk starts from 0:00, its panel made at the first kiosk opening only; quest playback resilience: a video whose decoder or media server fails after its first frame plays again from where it stopped on a new player, once, the last frame kept; no picture for 3 s while the sound plays switches to the transcoded stream or says so with the details of the video; reports to the Logs page; the details line in the info panel; fix round: the restart waits for the media service and starts past a decoder failure, notices that go when the picture comes back; integration of 30 October: the kiosk and the flat screens in one opening, the watch and the report of the playback lot on the surface the video plays on (activeVideoSurface); quest shutdown fix (fix-quest-shutdown): every object of the scene held through SpatialHold, let go at the start of onSpatialShutdown, so that onDestroy and the late posts touch no entity once the SDK cleared EntityContext; hardening of the quest shutdown (hardening-quest-shutdown): the kiosk panel, the photo layer and the flat video screen never made once the scene is down, the comments of the shutdown for every order of the SDK; decoder limit (fix-decoder-limit): the start rule of a video (a refusal at once, an original that cannot stream downloaded to the cache with a progress line when its copy is no fallback), a video beyond the decoder at its first tracks switched once, stopped at once for a server video or warned for a file, the 3 s rule before any restart, the errors of the player in our words; fix round: a wait for the network on the share bridge no longer counts for the 3 s rule, and a copy beyond the decoder played because the original could not stream gives way to the original, downloaded, once; Gaussian splats (feat-quest-splats, lot S5): the splat module registered beside VRFeature, a gaussianSplat request prepared, shown fixed in the world with the glide, Reset and Turn upright, its passing texts, and nothing done once the scene is down; fix round of the splats: the splat module registered only with Gaussian splats on, a splat refused at once without it, the room of the cache, nothing left in the cache; rebase of the splats on the shutdown hardening; the decision of 30 October: the splat module never registered in the Meta Horizon Store build, and the notice of the first splat with the words that Meta neither supports nor warrants its API; integration of 31 October: the notice and the refusal of a video and the Gaussian splats setting in one request, for the opening and for previous and next; watch progress (feat-watch-progress): a film plays once and its position goes to Flutter every 5 s while it plays, at onPause, before a request for another media, at its end and as the viewer closes, with the start notice of a film resumed where it was left; the kiosk neither reports nor resumes; fix round of the watch progress: Play at the end of a film starts it again from its beginning; the decision of 31 October on the watch progress: the threshold of the films said as the setting says it, a film is longer than it; the splats on the Quest 3 (fix-quest-splats-device): Loading the splat while the module loads, a splat that cannot show says why and keeps the panel and its Back in sight; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the Quest viewer starts a streamed video from its link, says what it brings while it waits, and counts what the link waits for as the network's in the 3 s rule; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the right thumbstick of a splat given to its stage, Reset in the panel only, the hint of a splat; Splat photos (feat-splat-photo, lot L4): the start up cleaning of its cache through ImmersiveCacheCleaning.leftovers; Quest gallery (feat-quest-gallery-49, issue 19): the slideshow in the headset and the photo swap without a black gap"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/KioskSession.kt": {
     "blob": "689e79df7f4731d5f1c9ca181a3a2a061d1f014c",
@@ -440,8 +452,8 @@
     "reason": "quest shutdown fix (fix-quest-shutdown): the objects of the scene of the immersive viewer, null once onSpatialShutdown ran, so that no entity is touched after the SDK cleared EntityContext; hardening of the quest shutdown (hardening-quest-shutdown): the name of the hold in its KDoc; not yet on the phone branch"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
-    "blob": "2bcd04b9d2849334eb04b0ac5250e36b98968a2a",
-    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the stereo quad cuts the eyes of a flat 3D photo as its frame packs them, the English texts of the flat 3D media; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens"
+    "blob": "54e4c7e563f7f5be104debc0c2c915160b53c35f",
+    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the stereo quad cuts the eyes of a flat 3D photo as its frame packs them, the English texts of the flat 3D media; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens; Quest gallery (feat-quest-gallery-49, issue 19): a 3D photo brought near keeps its size"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
     "blob": "18f069534b5c55b70c7139396c9b5ecb8a2b71b5",
@@ -575,13 +587,21 @@
     "blob": "2aca75d13b8c9b535a0ccd4d7e7ff819499479f3",
     "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the inbox of the last tables, the rules of the player switch and of the CAMM track"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphereLookController.kt": {
+    "blob": "96dba061abc4c6415b38036befbf46af721b0293",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the drags, the pinch and the double tap zoom and the gyroscope of the 360 video player"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphereLookMath.kt": {
+    "blob": "2ca639c1bede3672710bf9d4ac4835af6a694776",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the view maths of the 360 video player, as the photo viewer: latitude to the poles, zoom, gyroscope"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideoActivity.kt": {
-    "blob": "9aa45fc1a8c6c118e9212bd14272a9c3b2fb6022",
-    "reason": "TV lot (5e7bf8e27, e66574872, cced20e83): the 360 video player of the phone app and its error view; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the 360 player starts a streamed video from its link, with the retries and the buffering line of the link; Video stabilization (feat-video-stabilization, issue 14, lot c): the table of the camera turns each stitched frame through the camera motion listener, the switch in the top bar and the fading notice"
+    "blob": "a77db91520068ef057adea1fd7b8b8341b6760ec",
+    "reason": "TV lot (5e7bf8e27, e66574872, cced20e83): the 360 video player of the phone app and its error view; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the 360 player starts a streamed video from its link, with the retries and the buffering line of the link; Video stabilization (feat-video-stabilization, issue 14, lot c): the table of the camera turns each stitched frame through the camera motion listener, the switch in the top bar and the fading notice; 360 video controls (feat-360-video-controls-49, issue 20): the gyroscope button, the view controller, the top bar fitted in portrait"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideoApiImpl.kt": {
-    "blob": "9b771c61fc7a801f1198fe98878c3fcfa2744f28",
-    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): setStabilization of the Pigeon API, the table and the setting handed to the player"
+    "blob": "b489bba882727b13f63eafc00e830883e6421d2f",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): setStabilization of the Pigeon API, the table and the setting handed to the player; 360 video controls (feat-360-video-controls-49, issue 20): setMotion of the Pigeon API and motionChanged back to the app"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/StabilizationTable.kt": {
     "blob": "141c4b82f4a12449fe5d6e4ec3b9983e58f5bc1b",
@@ -590,6 +610,10 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/StabilizedFrames.kt": {
     "blob": "236590f8007b36f51e551de3a1a45016855285ea",
     "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the rotation of each frame handed to the camera motion listener before the frame, one reset when the table goes"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/TopBarFit.kt": {
+    "blob": "c55587bd5f60906d0d7fb2027fd9d4caaa4474bf",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the margins of the top bar buttons on a narrow screen"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/splatviewer/SplatViewerActivity.kt": {
     "blob": "af4ce35b868f9275ec8766985585c4dea623f7e7",
@@ -611,13 +635,25 @@
     "blob": "e815fd621f1968ac104bc8b687d1d19a818d00a8",
     "reason": "TV lot (651962690): dark launch background of the app on a TV"
   },
+  "mobile/android/app/src/main/res/drawable/ic_spherical_video_motion.xml": {
+    "blob": "c5639e8cbb8ecf4123ca0f942f466637dd766272",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the gyroscope button icon"
+  },
+  "mobile/android/app/src/main/res/drawable/ic_spherical_video_motion_off.xml": {
+    "blob": "ea154a553a254758301d9b09a599a8b6cb4d1d7d",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the gyroscope button icon, off"
+  },
+  "mobile/android/app/src/main/res/drawable/ic_spherical_video_motion_on.xml": {
+    "blob": "3993fa29d00f5c7ce499c3126d08225f1cfb82ba",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the gyroscope button icon, on"
+  },
   "mobile/android/app/src/main/res/drawable/ic_video_stabilization.xml": {
     "blob": "5d53d332f51bdd2f3e4a705a5fc98ddba50dc834",
     "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the icon of the switch in the top bar of the player"
   },
   "mobile/android/app/src/main/res/layout/activity_spherical_video.xml": {
-    "blob": "01866bf0415e18e0212ff6251b0d60bb59426c6a",
-    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the switch in the top bar of the player and its notice"
+    "blob": "c70bb962a0bfcdfa15712168150cbae02f81de43",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the switch in the top bar of the player and its notice; 360 video controls (feat-360-video-controls-49, issue 20): the gyroscope button at the right end of the top bar"
   },
   "mobile/android/app/src/main/res/layout/dji_flight_circle.xml": {
     "blob": "fe93f9bac633f8086bed25a0a5307dd82cb2794b",
@@ -644,8 +680,8 @@
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): notices on two lines"
   },
   "mobile/android/app/src/main/res/layout/immersive_info_panel.xml": {
-    "blob": "282e81d3775f328c163f0ee904bf416f4de10adc",
-    "reason": "AI immersive lot A9a: the indeterminate bar under the status line while a relief is made in the headset; phases 2 and 3, lot S3: the lines and the Reset button of a 3D scene, ids to hide the mapping and previous and next in a scene; feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size and Distance rows of a flat screen in place of previous and next"
+    "blob": "a9852b337c608a3f85508e6a342a9172027255cd",
+    "reason": "AI immersive lot A9a: the indeterminate bar under the status line while a relief is made in the headset; phases 2 and 3, lot S3: the lines and the Reset button of a 3D scene, ids to hide the mapping and previous and next in a scene; feat-ai-immersive, not yet on the phone branch; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Size and Distance rows of a flat screen in place of previous and next; Quest gallery (feat-quest-gallery-49, issue 19): the buttons of the panel: slideshow, keep the frame, 2D and 3D"
   },
   "mobile/android/app/src/main/res/layout/immersive_kiosk_panel.xml": {
     "blob": "215a58c94fe5b2fb92c55b50c1894a44122d958a",
@@ -1019,6 +1055,10 @@
     "blob": "12178e069fde3ec58310a4a65533cbe45800e921",
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the id of the flat video panel; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the id of the photo layer panel, the Size, the Distance and the grip hints of a flat screen; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the id of the kiosk panel; not yet on the phone branch"
   },
+  "mobile/android/app/src/main/res/values/immersive_backdrop.xml": {
+    "blob": "9e22c42f56e7e41978da26670f761d2dc1b9b7e2",
+    "reason": "Quest gallery (feat-quest-gallery-49, issue 19): the values of the frosted background"
+  },
   "mobile/android/app/src/main/res/xml/dji_accessory_filter.xml": {
     "blob": "46cc9494b2c2d01fcdb02c6dffd4e967dcf35e57",
     "reason": "DJI link (feat-dji-link, 12ccff821): which USB accessories bring up the link entry: any DJI accessory, plus the three identity strings of the format notes; DJI accessory filter (fix-accessory-filter): any DJI accessory plus the identity string of our own capture of 23 October 2026, the two unseen model strings dropped"
@@ -1379,9 +1419,13 @@
     "blob": "5c20d462e79128259bf0e34baaa50012d49109c4",
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the bigScreen request against big_screen_contract_v1.json"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/BrowseViewTest.kt": {
+    "blob": "cf59b62406b106a26a56c89bf17ee278225d5b6b",
+    "reason": "Quest gallery (feat-quest-gallery-49, issue 19): unit tests of the view kept while browsing, run by the Kotlin unit tests job"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenGeometryTest.kt": {
-    "blob": "c060b3365aba351b04a7194f3308b13ab56ad1c2",
-    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of where a flat screen stands, the ray, the grab, the distance, the size and the stretch"
+    "blob": "ffadd5ca9294850fa7d5e57693719f2bfcf5ff51",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of where a flat screen stands, the ray, the grab, the distance, the size and the stretch; Quest gallery (feat-quest-gallery-49, issue 19): unit tests of a screen brought near that keeps its size"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenGripTest.kt": {
     "blob": "4ae6425a6d05a58db32ccf6f079b24a93e5beb6c",
@@ -1392,8 +1436,8 @@
     "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of the parameters of the compositor layer and its filters"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatScreenMediaTest.kt": {
-    "blob": "0881b03794ccc7cca8913cf116663afbf8d478b1",
-    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of what the viewer makes of each request of the contracts"
+    "blob": "dca83d8f49dfcda1cbfac83850619fa86c92b6d6",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): unit tests of what the viewer makes of each request of the contracts; Quest gallery (feat-quest-gallery-49, issue 19): unit tests of the relief as a movable screen"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatStereoSpecTest.kt": {
     "blob": "c12470ebb72a39906cac0abf3baf073920082b2e",
@@ -1402,6 +1446,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FlatStereoTest.kt": {
     "blob": "bcbc38869ea4c346a9b1f7497eff15a74d59f55f",
     "reason": "Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): unit tests of the eyes of a flat 3D frame and of the stereo mode of its video layer"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/FrostedBackdropTest.kt": {
+    "blob": "5011405d47c5f39697b193e195ca1764fdeecd32",
+    "reason": "Quest gallery (feat-quest-gallery-49, issue 19): unit tests of the frosted background"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/GeneratedPanoramaTest.kt": {
     "blob": "dd41cafe9ab601c0012ef69de03890a9779935db",
@@ -1427,6 +1475,10 @@
     "blob": "6a74cc55c58598bd0698bdd0a419b6e9c3a688f9",
     "reason": "AI immersive phases 2 and 3, lot P4: the arcs of the outline against the golden projection of pano-v1, and the ribbons of the mesh; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): tests of the triangles of the ribbon and of its opaque colours"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/PhotoSwapTest.kt": {
+    "blob": "db2be3f929f149a000f71d4e1355dc2ddc0e5322",
+    "reason": "Quest gallery (feat-quest-gallery-49, issue 19): unit tests of the photo swap"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/PlaybackDetailsTest.kt": {
     "blob": "45725886d4fa50d7f2180791164576904152c6d2",
     "reason": "quest playback resilience (feat-quest-playback-resilience, from the Quest Pro signal of the exhibition builds of ppawelstachh-sys/Immuch360): unit tests of the details line, the notices and the report, run by the Kotlin unit tests job; not yet on the phone branch; decoder limit (fix-decoder-limit): tests of the texts of the refusal, of the download and of the errors"
@@ -1439,9 +1491,21 @@
     "blob": "f054903d2e647621f29134d01b02ad15f1f76b36",
     "reason": "AI immersive lot A11: tests of the mesh of the 2.5D view, run by the Kotlin unit tests job; feat-ai-immersive, not yet on the phone branch"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ReliefStrengthsTest.kt": {
+    "blob": "99ea9579ab4dd67cb48b0fecf8504ebfa0d32c76",
+    "reason": "Quest gallery (feat-quest-gallery-49, issue 19): unit tests of the relief strengths of the headset"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SbsPhotoTest.kt": {
     "blob": "09fca7bff919e58554d854fa7b2a863673fee150",
     "reason": "AI immersive lot A7: tests of the side by side split; feat-ai-immersive, not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/ScreenFrameTest.kt": {
+    "blob": "1a1584c0cb793c639218c3302015b8aa269287fb",
+    "reason": "Quest gallery (feat-quest-gallery-49, issue 19): unit tests of the kept frame"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SlideshowClockTest.kt": {
+    "blob": "d2eb32c22b2adb794cb47b60f363df35aa606120",
+    "reason": "Quest gallery (feat-quest-gallery-49, issue 19): unit tests of the slideshow clock"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SpatialHoldTest.kt": {
     "blob": "5e0c34a4b5792e9310cc4de0facd3357c5367af8",
@@ -1596,8 +1660,8 @@
     "reason": "AI immersive relief-v1 in Kotlin and the relief cache (feat-ai-immersive-a8b-relief-kotlin): the reader of the shared fixtures of mobile/test/fixtures/ai_immersive for the Kotlin unit tests"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefJobTest.kt": {
-    "blob": "e6b6111e38d40b73ecdd26bed3f5199b5b21e212",
-    "reason": "AI immersive lots A9a and A11, and their review minors: unit tests of the relief job with a fake engine and a fake thread, the map handed with the eyes included, run by the Kotlin unit tests job"
+    "blob": "69004ff464f34961356bc7dfd60622f8f367cbae",
+    "reason": "AI immersive lots A9a and A11, and their review minors: unit tests of the relief job with a fake engine and a fake thread, the map handed with the eyes included, run by the Kotlin unit tests job; Quest gallery (feat-quest-gallery-49, issue 19): unit tests of the relief job of the headset"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/relief/ReliefPreprocessTest.kt": {
     "blob": "1e09a27f3ae0e38a9a60642d70aba2889b96c2c2",
@@ -1610,6 +1674,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/PlaybackReportTest.kt": {
     "blob": "29ccb659b150adfc6305a4fc930eda5e266bec43",
     "reason": "TV lot (e66574872): unit tests of PlaybackReport, run by the Kotlin unit tests job"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/SphereLookMathTest.kt": {
+    "blob": "6067f552a79920f8d5fb1092d8b4010e6e54b315",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): unit tests of the view maths against Media3's own, run by the Kotlin unit tests job"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/spherical/StabilizationSwitchTest.kt": {
     "blob": "78494c58e464ac2c666484200dc343ffba175625",
@@ -1715,9 +1783,25 @@
     "blob": "b7930d562b69585edbfa24e02c2cf0fc5ff312ff",
     "reason": "Release 43 (alignment, 7 November 2026): the associated domains entry applinks:my.immich.app removed, inert since the apple-app-site-association file of that domain names Immich's team only; not yet on the phone branch"
   },
+  "mobile/ios/Runner/Spherical/SphereLook.swift": {
+    "blob": "48e3aea64142123a7f30726d0400f31e4e6ef884",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the view maths of the iOS 360 video player, as the photo viewer"
+  },
   "mobile/ios/Runner/Spherical/SphericalVideoApiImpl.swift": {
-    "blob": "cc13e7afce92b5a6733f1c4961295dc5e9ad8afb",
-    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the iOS stub of setStabilization of the Pigeon API (the iOS player applies no table yet)"
+    "blob": "caa1c834438dae4e866a05159d3e39cbeead4ad9",
+    "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the iOS stub of setStabilization of the Pigeon API (the iOS player applies no table yet); 360 video controls (feat-360-video-controls-49, issue 20): setMotion of the Pigeon API"
+  },
+  "mobile/ios/Runner/Spherical/SphericalVideoViewController.swift": {
+    "blob": "0b680eb985d1d9463732a38a2bad49b13238816d",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the gyroscope from the setting, pinch limits and double tap, a drag to the poles"
+  },
+  "mobile/ios/SwiftTests/main.swift": {
+    "blob": "ad5bf4f9b362d95402519c1637dd1ff022cb3e25",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the Swift tests of the view maths"
+  },
+  "mobile/ios/SwiftTests/run.sh": {
+    "blob": "391d6c7f84668254945be693fc0fb269ef6188fb",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): SphereLook.swift compiled into the Swift tests"
   },
   "mobile/packages/native_video_player/android/src/main/kotlin/me/albemala/native_video_player/NativeVideoPlayerPlugin.kt": {
     "blob": "0c6e468a8a2ffbe6700f9683ee09f92136e68c5c",
