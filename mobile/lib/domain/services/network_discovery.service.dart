@@ -1,6 +1,7 @@
-// Finds the SMB, WebDAV and DLNA servers, the Plex Media Servers and the Tapo cameras of the local network for the
-// forms that add a share or a camera. Several probes run side by side (mDNS / DNS-SD, a scan of the subnet, SSDP, GDM
-// for Plex, the TP-Link discovery for Tapo, see network_discovery_probes.dart); what they find is merged into one list
+// Finds the SMB, WebDAV and DLNA servers, the Plex Media Servers, the Jellyfin and Emby servers and the Tapo cameras
+// of the local network for the forms that add a share or a camera. Several probes run side by side (mDNS / DNS-SD, a
+// scan of the subnet, SSDP, GDM for Plex, UDP 7359 for Jellyfin and Emby, the TP-Link discovery for Tapo, see
+// network_discovery_probes.dart); what they find is merged into one list
 // that grows while they run. A probe that fails, or a platform without what it needs, only means fewer servers.
 
 import 'dart:async';
@@ -12,20 +13,21 @@ import 'package:logging/logging.dart';
 final _log = Logger('NetworkDiscovery');
 
 /// How a server was found: mDNS / DNS-SD, the scan of the subnet, SSDP (DLNA), GDM (Plex), the TP-Link discovery
-/// protocol (Tapo)
+/// protocol (Tapo), the UDP 7359 question of Jellyfin and Emby
 enum DiscoveryOrigin {
   mdns,
   scan,
   ssdp,
   gdm,
-  tdp;
+  tdp,
+  jellyfin;
 
   /// Which find of a server is kept when two probes find it (see [DiscoveredServer.mergedWith]), the lowest first:
   /// mDNS has the name the server gives itself, TDP the model and the MAC address of a camera
   int get rank => switch (this) {
     mdns => 0,
     tdp => 1,
-    scan || ssdp || gdm => 2,
+    scan || ssdp || gdm || jellyfin => 2,
   };
 }
 
@@ -46,6 +48,7 @@ class DiscoveredServer {
     this.plexHash,
     this.version,
     this.camera,
+    this.product,
   });
 
   /// The IP address or the host name to put in the server field
@@ -89,25 +92,35 @@ class DiscoveredServer {
   /// part of the equality.
   final TapoCameraInfo? camera;
 
+  /// "jellyfin" or "emby" for a server of type jellyfin, as its answer told; null for the other types. Not part of
+  /// the equality.
+  final String? product;
+
+  /// Whether a server of type jellyfin is an Emby server
+  bool get isEmby => product == 'emby';
+
   /// What tells two finds of the same server apart from two servers: [address] when known, else [host]. One address
   /// and port may serve several DLNA media servers (a NAS, a server with embedded devices): each is told apart by its
   /// UDN, else by its description path; several Plex servers by their machine id. A camera found by TDP and by the
   /// scan has the same address, type and port (443), so it shows once.
-  (String, NetworkSourceType, int, String) get mergeKey => (
-    (address ?? host).toLowerCase(),
-    type,
-    port,
-    switch (type) {
-      NetworkSourceType.dlna => (discoveryId ?? path).toLowerCase(),
-      NetworkSourceType.plex => (discoveryId ?? '').toLowerCase(),
-      NetworkSourceType.smb ||
-      NetworkSourceType.webdav ||
-      NetworkSourceType.tapo ||
-      NetworkSourceType.ipCamera ||
-      NetworkSourceType.documentTree ||
-      NetworkSourceType.deviceFolder => '',
-    },
-  );
+  /// A Jellyfin or Emby server is told by its id alone: its UDP answer and the scan of its port are one server.
+  (String, NetworkSourceType, int, String) get mergeKey => type == NetworkSourceType.jellyfin && discoveryId != null
+      ? ('', type, 0, discoveryId!.toLowerCase())
+      : (
+          (address ?? host).toLowerCase(),
+          type,
+          port,
+          switch (type) {
+            NetworkSourceType.dlna => (discoveryId ?? path).toLowerCase(),
+            NetworkSourceType.plex || NetworkSourceType.jellyfin => (discoveryId ?? '').toLowerCase(),
+            NetworkSourceType.smb ||
+            NetworkSourceType.webdav ||
+            NetworkSourceType.tapo ||
+            NetworkSourceType.ipCamera ||
+            NetworkSourceType.documentTree ||
+            NetworkSourceType.deviceFolder => '',
+          },
+        );
 
   /// The same server as found by two probes: the find of the better origin wins (see [DiscoveryOrigin.rank]; the
   /// first find on a tie), a known WebDAV path, discovery id, user name, Plex hash, version and camera login are kept
@@ -129,6 +142,7 @@ class DiscoveredServer {
       plexHash: preferred.plexHash ?? second.plexHash,
       version: preferred.version ?? second.version,
       camera: preferred.camera ?? second.camera,
+      product: preferred.product ?? second.product,
     );
   }
 

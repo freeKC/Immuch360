@@ -1,0 +1,22 @@
+{
+ "Items": [
+  {
+   "BackdropImageTags": [],
+   "Id": "19",
+   "ImageTags": {},
+   "IsFolder": true,
+   "Name": "Trip",
+   "Path": "/media/home/Trip",
+   "ServerId": "f000000000000000000000000000002b",
+   "SortName": "Trip",
+   "Type": "Folder",
+   "UserData": {
+    "IsFavorite": false,
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false
+   }
+  }
+ ],
+ "TotalRecordCount": 1
+}

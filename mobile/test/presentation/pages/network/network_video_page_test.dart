@@ -58,6 +58,12 @@ class _RecordingSphericalVideoApi extends SphericalVideoApi {
   /// table when one came ("track", "no track", "table of N frames")
   final List<String> stabilization = [];
 
+  /// The gyroscope choices the player was told before opening (issue 20)
+  final List<bool> motions = [];
+
+  @override
+  Future<void> setMotion(bool enabled) async => motions.add(enabled);
+
   @override
   Future<void> setStabilization(
     String url,
@@ -141,6 +147,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     bool gaussianSplats = true,
     int watchMinDurationMs = -1,
     String? startNotice,
+    int slideshowSeconds = 0,
+    bool frostedBackground = true,
   }) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);
@@ -201,6 +209,24 @@ class _WholeFileMemoryShare extends MemoryShare implements NetworkRangeReads {
 
   @override
   bool? get supportsRanges => false;
+}
+
+/// A share whose server keeps where its user stopped (a Jellyfin server): the reports it got
+class _ReportingShare extends MemoryShare implements NetworkPlaybackReports {
+  _ReportingShare(super.source, {super.files});
+
+  final reports = <String>[];
+
+  @override
+  Future<void> playbackStarted(String path, Duration position, {bool converted = false}) async =>
+      reports.add('start $path');
+
+  @override
+  Future<void> playbackProgress(String path, Duration position, {bool paused = false}) async =>
+      reports.add('progress${paused ? ' paused' : ''}');
+
+  @override
+  Future<void> playbackStopped(String path, Duration position) async => reports.add('stopped ${position.inMinutes}');
 }
 
 void main() {
@@ -504,6 +530,8 @@ void main() {
         'coverage': SphereCoverage.full,
       },
     ]);
+    // The gyroscope off, the default of the 360° viewers, told before the player opened (issue 20)
+    expect(sphericalApi.motions, [false]);
     expect(playerCalls, ['suspend'], reason: 'the page player stops meanwhile');
 
     await endRealIo(tester);
@@ -991,6 +1019,26 @@ void main() {
       page.attachController(native);
       await pumpRealIo(tester, () => native.calls.contains('load'));
     }
+
+    testWidgets('a media server that keeps the place hears the start, a pause and the stop; a share does not', (
+      tester,
+    ) async {
+      final reporting = _ReportingShare(_source, files: share.files);
+      share = reporting;
+      await pumpFilm(tester, [row(42)]);
+      native.ready();
+      await tester.pump();
+      await tester.pump();
+      native.moveTo(43 * minute);
+      await tester.pump();
+      expect(reporting.reports, ['start /holiday.mp4']);
+      await native.pause();
+      await tester.pump();
+      await tester.pump();
+      expect(reporting.reports.last, 'progress paused');
+      await endRealIo(tester);
+      expect(reporting.reports.last, 'stopped 43');
+    });
 
     testWidgets('resumes where it was left once ready, plays on, and says so for a few seconds', (tester) async {
       await pumpFilm(tester, [row(42)]);

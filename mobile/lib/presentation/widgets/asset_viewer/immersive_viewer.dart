@@ -206,6 +206,9 @@ class ImmersiveRequest {
 ///
 /// [stabilization] tells the viewer about the stabilisation of a raw video first (see ImmersiveStabilization); null
 /// for none.
+///
+/// [slideshowSeconds] is how long each photo of the slideshow of a flat screen stays (SlideshowConfig.duration), 0 for
+/// the viewer's 5 s, and [frostedBackground] the "Frosted background behind photos" setting.
 Future<void> openImmersiveRequest(
   ImmersiveApi api,
   ImmersiveRequest request, {
@@ -219,6 +222,8 @@ Future<void> openImmersiveRequest(
   int watchMinDurationMs = -1,
   String? startNotice,
   ImmersiveStabilization? stabilization,
+  int slideshowSeconds = 0,
+  bool frostedBackground = true,
 }) {
   Future<void> open() => _openImmersiveRequest(
     api,
@@ -232,6 +237,8 @@ Future<void> openImmersiveRequest(
     kiosk: kiosk,
     watchMinDurationMs: watchMinDurationMs,
     startNotice: startNotice,
+    slideshowSeconds: slideshowSeconds,
+    frostedBackground: frostedBackground,
   );
   return stabilization == null ? open() : stabilization.around(request, open);
 }
@@ -248,6 +255,8 @@ Future<void> _openImmersiveRequest(
   required String? kiosk,
   required int watchMinDurationMs,
   required String? startNotice,
+  required int slideshowSeconds,
+  required bool frostedBackground,
 }) => api.open(
   request.url,
   request.headers,
@@ -269,6 +278,8 @@ Future<void> _openImmersiveRequest(
   gaussianSplats: gaussianSplats,
   watchMinDurationMs: watchMinDurationMs,
   startNotice: startNotice,
+  slideshowSeconds: slideshowSeconds,
+  frostedBackground: frostedBackground,
 );
 
 /// The watch progress of the films of the immersive viewer, read from the providers (see ImmersiveWatch): before the
@@ -544,6 +555,8 @@ class ImmersiveAssetResolver {
     this.reverseThumbstickTurn = false,
     this.sharpFlatScreens = true,
     this.gaussianSplats = true,
+    this.slideshowSeconds = 0,
+    this.frostedBackground = true,
     this.raw,
     this.exifOf,
     this.forcedSource,
@@ -571,6 +584,8 @@ class ImmersiveAssetResolver {
       reverseThumbstickTurn: ref.read(appConfigProvider).viewer.reverseThumbstickTurn,
       sharpFlatScreens: ref.read(appConfigProvider).viewer.sharpFlatScreens,
       gaussianSplats: ref.read(appConfigProvider).viewer.gaussianSplats,
+      slideshowSeconds: ref.read(appConfigProvider).slideshow.duration,
+      frostedBackground: ref.read(appConfigProvider).viewer.frostedFlatScreens,
       raw: RawImmersiveMedia.read(ref),
       exifOf: (asset) => assets.watchExif(asset).first,
       forcedSource: ref.read(videoSourceOverridesProvider.notifier).of,
@@ -653,6 +668,14 @@ class ImmersiveAssetResolver {
   /// Whether the viewer starts the splat module of the headset (Gaussian splats, on by default), as the settings said
   /// when the viewer opened
   final bool gaussianSplats;
+
+  /// How long each photo of the slideshow of a flat screen stays, in seconds, as the settings said when the viewer
+  /// opened (Settings, Slideshow); 0 for the viewer's 5 s
+  final int slideshowSeconds;
+
+  /// Whether a blurred copy of the photo of a flat screen fills the box around it (Frosted background behind photos,
+  /// experimental, on by default), as the settings said when the viewer opened
+  final bool frostedBackground;
 
   final StorageRepository _storage;
   final SphericalProbeService _probeService;
@@ -854,7 +877,7 @@ class ImmersiveAssetResolver {
   /// stream the settings chose), with the flat3d JSON, which puts it on the flat video screen of the viewer instead.
   /// [localPath] is the file of a media opened with "Open with". Throws when there is no file to open.
   Future<ImmersiveRequest> resolveFlatVideo(BaseAsset asset, FlatStereoFormat format, {String? localPath}) =>
-      resolveFlatScreenVideo(asset, Flat3dRequest(format).toJsonString(), localPath: localPath);
+      resolveFlatScreenVideo(asset, Flat3dRequest.ofName(format, asset.name).toJsonString(), localPath: localPath);
 
   /// What the viewer opens for [asset], a video of its flat video screen that [stereoPair] describes (the flat3d JSON
   /// of a flat 3D video, the bigScreen JSON of an ordinary one on the big screen): the file [resolve] picks for the
@@ -915,6 +938,8 @@ class ImmersiveAssetResolver {
     watchMinDurationMs: watch?.minDurationMs ?? -1,
     startNotice: startNotice,
     stabilization: raw?.stabilization,
+    slideshowSeconds: slideshowSeconds,
+    frostedBackground: frostedBackground,
   );
 }
 
@@ -1108,21 +1133,28 @@ const SphereView stereoPhotoSphereView = (
   coverageGuess: SphereCoverage.full,
 );
 
+/// Makes the navigator of a photo of the stereo quad once the viewer is about to open it with [request] (see
+/// [openStereoPhotoViewer]), reading nothing more from the providers: what it needs was read before the first await
+typedef StereoPhotoNavigatorBuilder =
+    ImmersiveNavigator Function(ImmersiveAssetResolver resolver, ImmersiveRequest request);
+
 /// Opens [asset] in the immersive viewer in stereo photo mode, as [stereo] describes it (an Apple spatial photo, a
-/// side by side photo, a photo for an AI relief, see [ImmersiveAssetResolver.resolveStereoPhoto]), the controls
-/// labelled with [stereoLabels]. Previous and next do not lead from there to other photos yet: the viewer says so
-/// itself. Throws when there is no file to open or the viewer does not open.
+/// side by side photo, a photo for an AI relief, an ordinary photo on the big screen, see
+/// [ImmersiveAssetResolver.resolveStereoPhoto]), the controls labelled with [stereoLabels]. With [navigator], previous
+/// and next lead from there to the other photos of the timeline (FlatScreenImmersiveNavigator, issue 19); without
+/// one, the viewer answers that there is none. Throws when there is no file to open or the viewer does not open.
 Future<void> openStereoPhotoViewer(
   WidgetRef ref,
   BaseAsset asset,
   StereoPhotoRequest stereo, {
   required Map<String, String> stereoLabels,
+  StereoPhotoNavigatorBuilder? navigator,
 }) async {
   // Read before the first await: the viewer may be gone by then
   final resolver = ImmersiveAssetResolver.read(ref, stereoLabels: stereoLabels);
   final session = ref.read(immersiveSessionProvider);
   final request = await resolver.resolveStereoPhoto(asset, stereo);
-  final openingId = session.start(null);
+  final openingId = session.start(navigator?.call(resolver, request));
   try {
     await resolver.open(request, openingId: openingId);
   } catch (_) {
@@ -1147,18 +1179,28 @@ Future<void> openFlatVideoViewer(
 }) => _openFlatScreenVideo(
   ref,
   asset,
-  Flat3dRequest(format).toJsonString(),
+  Flat3dRequest.ofName(format, asset.name).toJsonString(),
   stereoLabels: stereoLabels,
   onSourceNotice: onSourceNotice,
 );
 
 /// Opens [asset], an ordinary photo, whole on the big screen of the immersive viewer of a Meta Quest (see
 /// BigScreenRequest), as the asset viewer shows it: its copy on the device, else its original on the server, edited
-/// (see [ImmersiveAssetResolver.resolveStereoPhoto]). It shows on its own, without previous or next, the controls
-/// labelled with [stereoLabels] (see stereoPhotoViewerLabels). Throws when there is no file to open or the viewer does
-/// not open.
-Future<void> openBigScreenPhoto(WidgetRef ref, BaseAsset asset, {required Map<String, String> stereoLabels}) =>
-    openStereoPhotoViewer(ref, asset, const StereoPhotoRequest.bigScreen(), stereoLabels: stereoLabels);
+/// (see [ImmersiveAssetResolver.resolveStereoPhoto]), the controls labelled with [stereoLabels] (see
+/// stereoPhotoViewerLabels); previous and next with [navigator], as for [openStereoPhotoViewer]. Throws when there is
+/// no file to open or the viewer does not open.
+Future<void> openBigScreenPhoto(
+  WidgetRef ref,
+  BaseAsset asset, {
+  required Map<String, String> stereoLabels,
+  StereoPhotoNavigatorBuilder? navigator,
+}) => openStereoPhotoViewer(
+  ref,
+  asset,
+  const StereoPhotoRequest.bigScreen(),
+  stereoLabels: stereoLabels,
+  navigator: navigator,
+);
 
 /// Stops the in-app video player, then opens [asset], an ordinary video, whole on the big screen of the immersive
 /// viewer of a Meta Quest (see BigScreenRequest), from where the in-app player was when it stopped, as for
@@ -1297,6 +1339,7 @@ Future<void> openImmersiveUrl(
   final reverseThumbstickTurn = ref.read(appConfigProvider).viewer.reverseThumbstickTurn;
   final sharpFlatScreens = ref.read(appConfigProvider).viewer.sharpFlatScreens;
   final gaussianSplats = ref.read(appConfigProvider).viewer.gaussianSplats;
+  final frostedBackground = ref.read(appConfigProvider).viewer.frostedFlatScreens;
   final stabilization = ImmersiveStabilization.read(ref);
   await player?.suspendForExternalPlayer();
   final openingId = session.start(navigator);
@@ -1313,11 +1356,106 @@ Future<void> openImmersiveUrl(
       watchMinDurationMs: watchMinDurationMs,
       startNotice: startNotice,
       stabilization: stabilization,
+      frostedBackground: frostedBackground,
     );
   } catch (_) {
     session.cancel(openingId);
     await player?.resumeAfterExternalPlayer();
     rethrow;
+  }
+}
+
+/// Where a navigator of the immersive viewer stands in the timeline of the asset viewer it was opened from (see
+/// [TimelineImmersiveNavigator] and FlatScreenImmersiveNavigator): it finds an asset again, loads the assets a search
+/// goes through, and brings the asset viewer ([jump]) to the asset the viewer showed last once it closes.
+///
+/// The search reads the very timeline of the asset viewer, whose buffer the pages of the asset viewer are built from:
+/// that buffer is loaded around the page on screen again after each search, and once the viewer closes (see
+/// [AssetViewerJump]).
+class TimelineCursor {
+  TimelineCursor(this.timeline, {this.jump});
+
+  // Assets on each side of its last known index loaded to find an asset again, which a sync may have moved by a few
+  static const _locateMargin = 16;
+
+  final TimelineService timeline;
+  final AssetViewerJump? jump;
+
+  /// The index of [asset] in the timeline now, last found at [known]: the timeline may have moved since, after a
+  /// sync. Found by what it is, around its last known index; that index when it is no longer found there, null when
+  /// it never was.
+  Future<int?> locate(BaseAsset asset, int? known) async {
+    final total = timeline.totalAssets;
+    var start = 0;
+    var count = 0;
+    if (known != null && total > 0) {
+      // The timeline holds a part of its assets at a time, which getIndex looks in: that part goes around the index
+      start = math.max(0, math.min(known, total - 1) - _locateMargin);
+      count = math.min(2 * _locateMargin + 1, total - start);
+      try {
+        await timeline.loadAssets(start, count);
+      } catch (error) {
+        _log.fine('Could not load the timeline around $known: $error');
+        count = 0;
+      }
+    }
+    final tagged = timeline.getIndex(asset.heroTag);
+    if (tagged != null) {
+      return tagged;
+    }
+    // The hero tag changes once the copy on the device of an asset is known, or once it is uploaded
+    for (var index = start; index < start + count; index++) {
+      if (timeline.getAssetSafe(index)?.refersToSameAsset(asset) ?? false) {
+        return index;
+      }
+    }
+    return known;
+  }
+
+  /// The assets from [start] on, [count] of them at most, for [findAdjacentImmersive]
+  Future<List<BaseAsset?>> lookup(int start, int count) async {
+    try {
+      return await timeline.loadAssets(start, count);
+    } catch (error) {
+      // The timeline changed under the search, after a sync or a deletion: what is left of the range, one by one
+      _log.fine('Could not load the assets $start to ${start + count - 1} at once: $error');
+      return [for (var index = start; index < start + count; index++) await timeline.getAssetAsync(index)];
+    }
+  }
+
+  /// The asset viewer shows [asset], last found at [known], where it is in the timeline now. It stays where it is when
+  /// [asset] is not found there or cannot be shown, with the timeline loaded around its page again all the same (see
+  /// [AssetViewerJump.jumpTo]): the searches and [locate] left the buffer of the timeline elsewhere, where the page
+  /// on screen would find no asset to show.
+  Future<void> follow(BaseAsset asset, int? known) async {
+    final jump = this.jump;
+    if (jump == null) {
+      return;
+    }
+    int? index;
+    try {
+      index = await locate(asset, known);
+    } catch (error, stackTrace) {
+      _log.warning('Could not find ${asset.name} in its timeline again', error, stackTrace);
+    }
+    if (index == null) {
+      return recenter();
+    }
+    try {
+      await jump.jumpTo(index);
+    } catch (error, stackTrace) {
+      _log.warning('Could not show ${asset.name} in the asset viewer', error, stackTrace);
+      await recenter();
+    }
+  }
+
+  /// The buffer of the timeline around the page of the asset viewer again
+  Future<void> recenter() async {
+    try {
+      await jump?.recenter();
+    } catch (error, stackTrace) {
+      _log.warning('Could not load the timeline around the asset viewer again', error, stackTrace);
+    }
   }
 }
 
@@ -1346,28 +1484,27 @@ typedef _ShownAsset = ({BaseAsset asset, ImmersiveRequest request, int? index, S
 class TimelineImmersiveNavigator implements ImmersiveNavigator {
   TimelineImmersiveNavigator({
     required this._resolver,
-    required this._timeline,
+    required TimelineService timeline,
     required BaseAsset asset,
     required ImmersiveRequest request,
     required int? index,
     required this._forced,
     required this._localIds,
     required this._equirectangularRemoteIds,
-    this._jump,
+    AssetViewerJump? jump,
     this._player,
-  }) : _start = (asset: asset, request: request, index: index, coverage: request.view.coverage),
+  }) : _cursor = TimelineCursor(timeline, jump: jump),
+       _start = (asset: asset, request: request, index: index, coverage: request.view.coverage),
        _current = (asset: asset, request: request, index: index, coverage: request.view.coverage);
 
-  // Assets on each side of its last known index loaded to find an asset again, which a sync may have moved by a few
-  static const _locateMargin = 16;
-
   final ImmersiveAssetResolver _resolver;
-  final TimelineService _timeline;
+  final TimelineCursor _cursor;
   final Set<String> _forced;
   final Set<String> _localIds;
   final Future<Set<String>> Function(Iterable<String> remoteIds) _equirectangularRemoteIds;
-  final AssetViewerJump? _jump;
   final VideoPlayerNotifier? _player;
+
+  TimelineService get _timeline => _cursor.timeline;
   final _ShownAsset _start;
   _ShownAsset _current;
   // The asset shown before the current one, see [_shownAt]
@@ -1394,12 +1531,12 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
       return await _showAdjacent(request);
     } finally {
       // Found or not, the search left the buffer of the timeline where it looked
-      unawaited(_recenter());
+      unawaited(_cursor.recenter());
     }
   }
 
   Future<bool> _showAdjacent(ImmersiveAdjacentRequest request) async {
-    final shownIndex = await _locate(_current);
+    final shownIndex = await _cursor.locate(_current.asset, _current.index);
     if (shownIndex == null) {
       _log.info('${_current.asset.name} is not found in its timeline: no previous or next');
       return false;
@@ -1411,7 +1548,7 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
         index: from,
         step: request.step,
         length: _timeline.totalAssets,
-        lookup: _lookup,
+        lookup: _cursor.lookup,
         isCapable: _areCapable,
         limit: budget,
         isCancelled: () => request.isCancelled,
@@ -1460,49 +1597,6 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
     return false;
   }
 
-  /// The index of [shown] in the timeline now: the timeline may have moved since it was found there, after a sync.
-  /// Found by what it is, around its last known index; that index when it is no longer found there, null when it
-  /// never was.
-  Future<int?> _locate(_ShownAsset shown) async {
-    final known = shown.index;
-    final total = _timeline.totalAssets;
-    var start = 0;
-    var count = 0;
-    if (known != null && total > 0) {
-      // The timeline holds a part of its assets at a time, which getIndex looks in: that part goes around the index
-      start = math.max(0, math.min(known, total - 1) - _locateMargin);
-      count = math.min(2 * _locateMargin + 1, total - start);
-      try {
-        await _timeline.loadAssets(start, count);
-      } catch (error) {
-        _log.fine('Could not load the timeline around $known: $error');
-        count = 0;
-      }
-    }
-    final asset = shown.asset;
-    final tagged = _timeline.getIndex(asset.heroTag);
-    if (tagged != null) {
-      return tagged;
-    }
-    // The hero tag changes once the copy on the device of an asset is known, or once it is uploaded
-    for (var index = start; index < start + count; index++) {
-      if (_timeline.getAssetSafe(index)?.refersToSameAsset(asset) ?? false) {
-        return index;
-      }
-    }
-    return known;
-  }
-
-  Future<List<BaseAsset?>> _lookup(int start, int count) async {
-    try {
-      return await _timeline.loadAssets(start, count);
-    } catch (error) {
-      // The timeline changed under the search, after a sync or a deletion: what is left of the range, one by one
-      _log.fine('Could not load the assets $start to ${start + count - 1} at once: $error');
-      return [for (var index = start; index < start + count; index++) await _timeline.getAssetAsync(index)];
-    }
-  }
-
   Future<List<bool>> _areCapable(List<BaseAsset> assets) async {
     // A raw file is shown stitched, unless it was found not to open
     bool isCapable(BaseAsset asset, [Set<String> equirectangularIds = const {}]) =>
@@ -1546,7 +1640,7 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
     if (shown == null) {
       // Nothing is attributed to an asset the viewer may not have shown
       _log.info('The immersive viewer closed on a media this navigator did not show');
-      unawaited(_recenter());
+      unawaited(_cursor.recenter());
       return;
     }
     // Like the native 360° player, the layout is not remembered: the guess comes again, or what the file declares
@@ -1556,7 +1650,7 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
       // Paused: the user is back in the app, and the video waits for them where they left it
       unawaited(player.resumeAfterExternalPlayerAt(Duration(milliseconds: math.max(0, positionMs)), play: false));
     }
-    unawaited(_follow(shown));
+    unawaited(_cursor.follow(shown.asset, shown.index));
   }
 
   /// The asset shown at [url]: the current one, else the one before it or the one the viewer opened on, which it may
@@ -1569,40 +1663,6 @@ class TimelineImmersiveNavigator implements ImmersiveNavigator {
       }
     }
     return null;
-  }
-
-  /// The asset viewer shows [shown], where it is in the timeline now. It stays where it is when [shown] is not found
-  /// there or cannot be shown, with the timeline loaded around its page again all the same (see
-  /// [AssetViewerJump.jumpTo]): the searches and [_locate] left the buffer of the timeline elsewhere, where the page
-  /// on screen would find no asset to show.
-  Future<void> _follow(_ShownAsset shown) async {
-    final jump = _jump;
-    if (jump == null) {
-      return;
-    }
-    int? index;
-    try {
-      index = await _locate(shown);
-    } catch (error, stackTrace) {
-      _log.warning('Could not find ${shown.asset.name} in its timeline again', error, stackTrace);
-    }
-    if (index == null) {
-      return _recenter();
-    }
-    try {
-      await jump.jumpTo(index);
-    } catch (error, stackTrace) {
-      _log.warning('Could not show ${shown.asset.name} in the asset viewer', error, stackTrace);
-      await _recenter();
-    }
-  }
-
-  Future<void> _recenter() async {
-    try {
-      await _jump?.recenter();
-    } catch (error, stackTrace) {
-      _log.warning('Could not load the timeline around the asset viewer again', error, stackTrace);
-    }
   }
 
   Future<void> _remember(_ShownAsset shown, SphereCoverage coverage) async {

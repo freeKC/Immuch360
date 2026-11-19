@@ -1,5 +1,6 @@
-// The C interface of immuch_sbs_codec, called by lib/src/bindings.dart through dart:ffi: decode, encode, free, and
-// two small calls for the version and the licence texts. Every call that can fail returns a Status (codec.rs) and
+// The C interface of immuch_sbs_codec, called by lib/src/bindings.dart through dart:ffi: decode, encode, free, two
+// small calls for the version and the licence texts, and the frame work of the 3D videos (video.rs), which reads and
+// writes the caller's memory only. Every call that can fail returns a Status (codec.rs) and
 // writes its reason, NUL terminated, into the caller's buffer; a panic is caught here and never crosses into Dart.
 // What Rust allocates for Dart is a boxed slice, freed by isc_free with its length.
 
@@ -7,6 +8,9 @@ mod codec;
 mod licenses;
 #[cfg(test)]
 mod tests;
+mod video;
+#[cfg(test)]
+mod video_tests;
 
 use std::panic::{self, AssertUnwindSafe};
 use std::ptr;
@@ -14,7 +18,7 @@ use std::ptr;
 use codec::{CodecError, EncodeRequest, Status, Subsampling};
 
 /// Changes with any change of the functions below; the Dart side refuses another one
-pub const ABI_VERSION: u32 = 1;
+pub const ABI_VERSION: u32 = 2;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn isc_abi_version() -> u32 {
@@ -148,6 +152,200 @@ pub unsafe extern "C" fn isc_encode(
             *out_jpeg_length = length;
         }
         Ok(())
+    })
+}
+
+/// The input of Video Depth Anything for the frame `rgb` (`width` x `height` RGB bytes): `out_width` x `out_height`
+/// float32 values per channel, channels first, into `out` (video.rs, vda_input).
+///
+/// # Safety
+/// `rgb` points to `rgb_length` readable bytes, `out` to `out_length` writable floats; `error` is null or points to
+/// `error_capacity` writable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn isc_vda_input(
+    rgb: *const u8,
+    rgb_length: usize,
+    width: u32,
+    height: u32,
+    out: *mut f32,
+    out_length: usize,
+    out_width: u32,
+    out_height: u32,
+    error: *mut u8,
+    error_capacity: usize,
+) -> i32 {
+    guard(error, error_capacity, || {
+        if rgb.is_null() || out.is_null() {
+            return Err(CodecError::new(Status::InvalidArgument, "a null pointer"));
+        }
+        // SAFETY: checked non null; the caller keeps both buffers alive and apart for the call
+        let (frame, input) = unsafe {
+            (
+                std::slice::from_raw_parts(rgb, rgb_length),
+                std::slice::from_raw_parts_mut(out, out_length),
+            )
+        };
+        video::vda_input(
+            frame,
+            width as usize,
+            height as usize,
+            input,
+            out_width as usize,
+            out_height as usize,
+        )
+    })
+}
+
+/// The 64 bins of the luma histogram of the frame `rgb` at 320 x 180, into `out` (64 doubles; video.rs, luma_hist64).
+///
+/// # Safety
+/// `rgb` points to `rgb_length` readable bytes, `out` to 64 writable doubles; `error` is null or points to
+/// `error_capacity` writable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn isc_luma_hist64(
+    rgb: *const u8,
+    rgb_length: usize,
+    width: u32,
+    height: u32,
+    out: *mut f64,
+    error: *mut u8,
+    error_capacity: usize,
+) -> i32 {
+    guard(error, error_capacity, || {
+        if rgb.is_null() || out.is_null() {
+            return Err(CodecError::new(Status::InvalidArgument, "a null pointer"));
+        }
+        // SAFETY: checked non null; the caller hands rgb_length readable bytes and 64 writable doubles
+        let (frame, bins) = unsafe {
+            (
+                std::slice::from_raw_parts(rgb, rgb_length),
+                std::slice::from_raw_parts_mut(out, video::HIST_BINS),
+            )
+        };
+        video::luma_hist64(frame, width as usize, height as usize, bins)
+    })
+}
+
+/// The right eye of relief-v1 written into the right half of `sbs` (2 `width` x `height` RGB bytes, the frame in its
+/// left half) from the depth map `depth` (`depth_width` x `depth_height` doubles) normalised between `p2` and `p98`;
+/// `holes` (null, or `width` x `height` bytes) gets 1 for each filled pixel, `*out_filled` how many there were. The
+/// rows are shared among `threads` threads (1 to 16).
+///
+/// # Safety
+/// Each pointer points to its length of memory (`holes` may be null), `sbs` and `holes` writable, all apart;
+/// `out_filled` points to a writable u64; `error` is null or points to `error_capacity` writable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn isc_relief_v1_eye(
+    sbs: *mut u8,
+    sbs_length: usize,
+    width: u32,
+    height: u32,
+    depth: *const f64,
+    depth_length: usize,
+    depth_width: u32,
+    depth_height: u32,
+    p2: f64,
+    p98: f64,
+    parallax: f64,
+    convergence: f64,
+    threads: u32,
+    holes: *mut u8,
+    holes_length: usize,
+    out_filled: *mut u64,
+    error: *mut u8,
+    error_capacity: usize,
+) -> i32 {
+    guard(error, error_capacity, || {
+        if sbs.is_null() || depth.is_null() || out_filled.is_null() {
+            return Err(CodecError::new(Status::InvalidArgument, "a null pointer"));
+        }
+        // SAFETY: checked non null (holes may be null: no mask then); the caller keeps the buffers alive and apart
+        let (frame, map, mask) = unsafe {
+            (
+                std::slice::from_raw_parts_mut(sbs, sbs_length),
+                std::slice::from_raw_parts(depth, depth_length),
+                if holes.is_null() || holes_length == 0 {
+                    &mut [][..]
+                } else {
+                    std::slice::from_raw_parts_mut(holes, holes_length)
+                },
+            )
+        };
+        let request = video::ReliefRequest {
+            depth: map,
+            depth_width: depth_width as usize,
+            depth_height: depth_height as usize,
+            p2,
+            p98,
+            parallax,
+            convergence,
+            threads: threads as usize,
+        };
+        let filled = video::relief_v1_eye(frame, width as usize, height as usize, &request, mask)?;
+        // SAFETY: checked non null; the caller hands a writable u64
+        unsafe { *out_filled = filled };
+        Ok(())
+    })
+}
+
+/// The band of the soft floating window of an eye `width` wide (video.rs, edge_band)
+#[unsafe(no_mangle)]
+pub extern "C" fn isc_edge_band(parallax: f64, width: u32, convergence: f64) -> u32 {
+    video::edge_band(parallax, width as usize, convergence) as u32
+}
+
+/// Fades `band` columns at both edges of each eye of `sbs` (2 `width` x `height` RGB bytes) to black.
+///
+/// # Safety
+/// `sbs` points to `sbs_length` writable bytes; `error` is null or points to `error_capacity` writable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn isc_edge_fade(
+    sbs: *mut u8,
+    sbs_length: usize,
+    width: u32,
+    height: u32,
+    band: u32,
+    error: *mut u8,
+    error_capacity: usize,
+) -> i32 {
+    guard(error, error_capacity, || {
+        if sbs.is_null() {
+            return Err(CodecError::new(Status::InvalidArgument, "a null pointer"));
+        }
+        // SAFETY: checked non null; the caller hands sbs_length writable bytes
+        let frame = unsafe { std::slice::from_raw_parts_mut(sbs, sbs_length) };
+        video::edge_fade(frame, width as usize, height as usize, band as usize)
+    })
+}
+
+/// Both eyes of `sbs` (2 `width` x `height` RGB bytes) squeezed to half their width into `out` (`width` x `height`).
+///
+/// # Safety
+/// `sbs` points to `sbs_length` readable bytes and `out` to `out_length` writable ones, apart; `error` is null or
+/// points to `error_capacity` writable bytes.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn isc_half_sbs(
+    sbs: *const u8,
+    sbs_length: usize,
+    width: u32,
+    height: u32,
+    out: *mut u8,
+    out_length: usize,
+    error: *mut u8,
+    error_capacity: usize,
+) -> i32 {
+    guard(error, error_capacity, || {
+        if sbs.is_null() || out.is_null() {
+            return Err(CodecError::new(Status::InvalidArgument, "a null pointer"));
+        }
+        // SAFETY: checked non null; the caller keeps both buffers alive and apart for the call
+        let (frame, half) = unsafe {
+            (
+                std::slice::from_raw_parts(sbs, sbs_length),
+                std::slice::from_raw_parts_mut(out, out_length),
+            )
+        };
+        video::half_sbs(frame, width as usize, height as usize, half)
     })
 }
 

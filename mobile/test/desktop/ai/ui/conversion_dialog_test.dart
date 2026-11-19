@@ -1356,6 +1356,7 @@ void main() {
     testWidgets('held back by a version, it is not listed, whatever the engine; this version holds nothing back', (
       tester,
     ) async {
+      // Nothing held since the screens of the 3D videos (release 49)
       expect(aiHeldFeatureGroups, isEmpty);
       panoramas();
       held = const {AiFeatureGroup.panoramas};

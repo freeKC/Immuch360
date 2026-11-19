@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/film_player/film_player_choice.dart';
 
 /// Thrown by the file systems for anything the user may act on: wrong credentials, host unreachable, missing file.
 class NetworkFileSystemException implements Exception {
@@ -142,6 +143,28 @@ class NetworkDownloadStream {
   final Stream<List<int>> bytes;
 }
 
+/// A share whose server tells the streams of its films (a Plex, Jellyfin or Emby server), so that the video page
+/// chooses the player of a film before it plays (film_player_choice.dart)
+abstract interface class NetworkFilmStreams {
+  /// The streams of the film at [path], null when the server tells none (not a film, not listed)
+  Future<FilmStreams?> filmStreamsAt(String path);
+}
+
+/// A share whose server keeps where its user stopped in a film and shows it in its own apps (a Jellyfin or Emby
+/// server): the video page tells it when a film starts, as it plays (every minute and at each pause) and when it
+/// stops, so that a film stopped on the Quest resumes on the phone and in the server's apps. A report that fails is
+/// logged once and dropped: playback never waits for it.
+abstract interface class NetworkPlaybackReports {
+  /// The file at [path] starts playing at [position]; [converted] when the server's conversion plays it
+  Future<void> playbackStarted(String path, Duration position, {bool converted = false});
+
+  /// The file at [path] is at [position], [paused] or playing
+  Future<void> playbackProgress(String path, Duration position, {bool paused = false});
+
+  /// The file at [path] stopped at [position]: the page went, or the next file took its place
+  Future<void> playbackStopped(String path, Duration position);
+}
+
 /// Whether [error] says that the server owner forbids downloads to this account
 bool isDownloadForbidden(Object error) => error is NetworkFileSystemException && error.isDownloadForbidden;
 
@@ -209,11 +232,33 @@ abstract class GeneratedMedia {
 }
 
 /// Generated media whose files are fetched when a player asks for them, from a server the app reads in Dart: the
-/// playlist and the segments of a film the Plex server converts (PlexConversion). [GeneratedMedia.file] is not asked.
+/// playlist and the segments of a film the server converts (HlsConversion). [GeneratedMedia.file] is not asked.
 abstract class GeneratedMediaFetch implements GeneratedMedia {
   /// The file [name] (one path segment), null when there is none; throws when it could not be fetched. [abort]
   /// completes when the player that asked went away (a seek elsewhere in a converted film): the fetch may stop then.
   Future<GeneratedFile?> fetch(String name, {Future<void>? abort});
+}
+
+/// A conversion of a film by its server (see NetworkServerConversion), served by the bridge as generated media: its
+/// playlist [playlist] and its segments, fetched from the server as a player asks for them
+abstract interface class NetworkConversion implements GeneratedMediaFetch {
+  /// The name of the playlist the player opens
+  String get playlist;
+
+  /// Ends the conversion on the server; nothing more is served
+  Future<void> stop();
+}
+
+/// A share whose server converts a film this device cannot play (a Plex, Jellyfin or Emby server): the labelled
+/// fallback after the device's player and libmpv, experimental (the setting viewer.plexConversion, product neutral)
+abstract interface class NetworkServerConversion {
+  /// The conversion of the film at [path] to H.264 with one of [audioCodecs] or AAC, [maxVideoBitrateKbps] at most;
+  /// null when the server will not convert it
+  Future<NetworkConversion?> conversionOfFilm(
+    String path, {
+    required List<String> audioCodecs,
+    required int maxVideoBitrateKbps,
+  });
 }
 
 /// Generated media that also takes small posts: the events the page of the splat viewer sends to the app

@@ -3,7 +3,9 @@
   Immuch360 for Samsung TVs (Tizen 5.5 and later). tizen/tools/build-wgt.mjs puts this file next to the webOS bundle
   (webos/dist) with the version of the build: a tizen-v<x.y.z> tag, else the one given, else the one written here. The
   Tizen command line tools then sign the folder into a .wgt. The privileges are the least the app uses: the network,
-  the remote keys, the TV model for the About page.
+  the remote keys, the TV model for the About page. The policy lets in objects of the app's own origin for the
+  <object type="application/avplayer"> of Samsung's AVPlay guide (webos/src/components/MediaViewer/AvplayMedia.tsx);
+  nothing else on the page is an object.
 -->
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
         id="https://github.com/freeKC/Immuch360/tizen" version="0.1.0" viewmodes="maximized">
@@ -21,5 +23,5 @@
   <tizen:profile name="tv-samsung"/>
   <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable"
                  encryption="disable" install-location="auto" hwkey-event="enable"/>
-  <tizen:content-security-policy>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' * data: blob:; media-src 'self' * data: blob:; connect-src 'self' *; font-src 'self' data:; object-src 'none'</tizen:content-security-policy>
+  <tizen:content-security-policy>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' * data: blob:; media-src 'self' * data: blob:; connect-src 'self' *; font-src 'self' data:; object-src 'self'</tizen:content-security-policy>
 </widget>

@@ -36,6 +36,9 @@ enum SettingsKey<T> {
   viewerSpatial25d<bool>(),
   // The stabilisation of the raw 360° videos with the motion track of their camera, see ViewerConfig.stabilizeVideos
   viewerStabilizeVideos<bool>(),
+  // The gyroscope of the 360° photo viewer and of the 360° video player of the phones, one choice for both, see
+  // ViewerConfig.panoramaGyroscope
+  viewerPanoramaGyroscope<bool>(),
   // The right thumbstick of the Meta Quest immersive viewer turns the other way, see ViewerConfig.reverseThumbstickTurn
   viewerReverseThumbstickTurn<bool>(),
   // The flat 3D media told by their file name in the Meta Quest immersive viewer, see ViewerConfig.flat3dByName
@@ -43,6 +46,9 @@ enum SettingsKey<T> {
   // The compositor layer and its filters on the flat screens of the Meta Quest immersive viewer, see
   // ViewerConfig.sharpFlatScreens
   viewerSharpFlatScreens<bool>(),
+  // A blurred, darker copy of the photo around it on the flat screens of the Meta Quest immersive viewer, see
+  // ViewerConfig.frostedFlatScreens
+  viewerFrostedFlatScreens<bool>(),
   // The Gaussian splat files of other tools on a Meta Quest 3 or 3S, see ViewerConfig.gaussianSplats and largeSplats
   viewerGaussianSplats<bool>(),
   viewerLargeSplats<bool>(),

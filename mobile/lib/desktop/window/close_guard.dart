@@ -11,7 +11,9 @@
 // of the conversions stays beside it when other jobs run or wait on the queue, since quitting stops them too. A splat
 // scene being made (plan 2026-11-01, lot SP6) is told the same way at any of its steps, in the words of the panel: "A
 // splat scene is being made (Training the splat, step 12,400 of 20,000, about 3 min left). Closing stops it." Quitting
-// kills COLMAP or Brush with the app (their job object); the poses already found are kept a day for Retry.
+// kills COLMAP or Brush with the app (their job object); the poses already found are kept a day for Retry. A 3D video
+// being made (release 49) is told with how far it is, "A 3D video is being made (42 %). Closing stops it.", and that it
+// resumes where it stopped next time: its segments stay in its work folder, and the next start offers to resume it.
 
 import 'dart:async';
 
@@ -46,6 +48,9 @@ enum DesktopCloseReason {
 
   /// A splat scene being made, at any of its steps
   splat,
+
+  /// A 3D video being made, at any of its steps
+  video,
 }
 
 /// Whether the backup is sending a file: a failed one stays in the list until the next run, and stops nothing
@@ -70,6 +75,8 @@ final desktopCloseReasonsProvider = Provider<Set<DesktopCloseReason> Function()>
       DesktopCloseReason.generation,
     if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.splatting != null))
       DesktopCloseReason.splat,
+    if (ref.exists(conversionQueueProvider) && runs(conversionQueueProvider, (state) => state.videoMaking != null))
+      DesktopCloseReason.video,
   };
 });
 
@@ -110,7 +117,10 @@ class DesktopCloseDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
     // The reason comes from the queue, which exists then
-    final watchesQueue = reasons.contains(DesktopCloseReason.generation) || reasons.contains(DesktopCloseReason.splat);
+    final watchesQueue =
+        reasons.contains(DesktopCloseReason.generation) ||
+        reasons.contains(DesktopCloseReason.splat) ||
+        reasons.contains(DesktopCloseReason.video);
     final (generating, pending) = watchesQueue
         ? ref.watch(conversionQueueProvider.select((state) => (state.generating, state.pending)))
         : (null, 0);
@@ -121,7 +131,10 @@ class DesktopCloseDialog extends ConsumerWidget {
     final splatting = reasons.contains(DesktopCloseReason.splat)
         ? ref.watch(conversionQueueProvider.select((state) => state.splatting))
         : null;
-    final told = (generation == null ? 0 : 1) + (splatting == null ? 0 : 1);
+    final video = reasons.contains(DesktopCloseReason.video)
+        ? ref.watch(conversionQueueProvider.select((state) => state.videoMaking))
+        : null;
+    final told = (generation == null ? 0 : 1) + (splatting == null ? 0 : 1) + (video == null ? 0 : 1);
     return TvFocusRing(
       child: AlertDialog(
         title: Text(t.desktop_close_title),
@@ -141,6 +154,12 @@ class DesktopCloseDialog extends ConsumerWidget {
               Text(
                 t.ai_immersive_close_splat(stage: splatCloseStage(t, splatting)),
                 key: const Key('desktop_close_splat'),
+              ),
+            if (video != null)
+              Text(
+                '${t.ai_immersive_close_video(percent: (video.progress * 100).floor())} '
+                '${t.ai_immersive_video_close_resumes}.',
+                key: const Key('desktop_close_video'),
               ),
             // The 3D photos, scenes and versions beside the generation or the splat scene, or waiting after them, stop
             // too

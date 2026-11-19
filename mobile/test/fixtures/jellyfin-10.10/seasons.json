@@ -1,0 +1,31 @@
+{
+ "Items": [
+  {
+   "BackdropImageTags": [],
+   "ChannelId": null,
+   "Id": "f0000000000000000000000000000015",
+   "ImageBlurHashes": {},
+   "ImageTags": {},
+   "IndexNumber": 1,
+   "IsFolder": true,
+   "LocationType": "FileSystem",
+   "MediaType": "Unknown",
+   "Name": "Season 1",
+   "SeriesId": "f0000000000000000000000000000014",
+   "SeriesName": "Pattern Show",
+   "ServerId": "f0000000000000000000000000000024",
+   "Type": "Season",
+   "UserData": {
+    "IsFavorite": false,
+    "ItemId": "f0000000000000000000000000000027",
+    "Key": "df80cfd9-20cf-9dbe-be21-f62c5918c2d5001",
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false,
+    "UnplayedItemCount": 2
+   }
+  }
+ ],
+ "StartIndex": 0,
+ "TotalRecordCount": 1
+}

@@ -1,8 +1,8 @@
 # Licences of the AI components of Immuch360
 
-Date: 2026-11-04. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases
-`ai-components-1` (3D photos), `ai-components-2` (3D scenes), `ai-components-3` (360° panoramas) and `ai-components-4`
-(splat scenes):
+Date: 2026-11-18. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases
+`ai-components-1` (3D photos), `ai-components-2` (3D scenes), `ai-components-3` (360° panoramas), `ai-components-4`
+(splat scenes) and `ai-components-5` (3D videos):
 https://github.com/freeKC/Immuch360/releases
 
 The app downloads a component only when the user asks for it, checks its SHA-256 against the catalogue built
@@ -531,6 +531,50 @@ needs one.
 The programs and libraries of `colmap-cpu-win-x64` and `brush-vulkan-win-x64` are signed by APROGSYS (Azure
 Artifact Signing), those of Microsoft keeping their own signature. Linux programs carry no signature. The app
 checks each archive and each of its files by its SHA-256 when it installs them.
+
+<!-- ai-components-5 -->
+## ai-components-5: 3D videos
+
+https://github.com/freeKC/Immuch360/releases/tag/ai-components-5
+
+| File | Component | Size (bytes) | SHA-256 | Licence | Source, pinned revision |
+| --- | --- | --- | --- | --- | --- |
+| `video-depth-anything-small-dynamic-fp32.onnx` | `video-depth-anything-small-onnx` | 116528885 | `eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99` | Apache-2.0 | https://huggingface.co/looplj/video-depth-anything-small-onnx, revision `ff810849`, `video-depth-anything-small-dynamic-fp32.onnx` |
+
+Video Depth Anything Small: Apache-2.0 (https://huggingface.co/depth-anything/Video-Depth-Anything-Small,
+the README of https://github.com/DepthAnything/Video-Depth-Anything: "Video-Depth-Anything-Small model is
+under the Apache-2.0 license"), Copyright (2025) Bytedance Ltd. The Base and Large models are CC BY-NC 4.0 and
+are not used. The file is the ONNX export of looplj (Reveric), a community export, not one of the authors:
+https://huggingface.co/looplj/video-depth-anything-small-onnx at revision
+`ff810849333df46d37ea18a885fc11689661fe96`, Apache-2.0 on its card, its `LICENSE` the Apache License 2.0
+(SHA-256 `43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1`). Its author validated it against
+the unmodified PyTorch model (normalised RMSE 4.8e-7 to 1.4e-6 at six sizes, its `validation.json`), made from
+the official weights `video_depth_anything_vits.pth` of
+https://huggingface.co/depth-anything/Video-Depth-Anything-Small (116440756 bytes, SHA-256
+`13379300b739e659f076a59d52e9801bd8d38c541a7e71f73bbca4dcfb013609`, downloaded and checked by this project)
+and the code of https://github.com/DepthAnything/Video-Depth-Anything at `4f5ae23172`. Its `NOTICE`
+(SHA-256 `f7429610cbd3e3726dae44b32ffce8adb71da0a6c2ae3eb31884395fe1abaa9b`), which section 4 (d) of the
+licence asks to keep with the file:
+
+```
+Video Depth Anything Small
+Copyright (2025) Bytedance Ltd. and/or its affiliates
+Original project: https://github.com/DepthAnything/Video-Depth-Anything
+Reveric conversion: dynamic spatial ONNX export; unchanged FP32 checkpoint weights.
+Export-only adaptations preserve positional interpolation, replace specialized video
+reshapes, and express temporal attention with standard MatMul/Softmax operators.
+```
+
+Training data (paper arXiv 2501.12375 v4, supplementary): video frames of TartanAir (CC BY 4.0), Virtual
+KITTI (CC BY-NC-SA 3.0), PointOdyssey (CC BY-NC-SA 4.0) and IRS, wild binocular videos pseudo-labelled, and
+images of the set of Depth Anything V2, from which the weights start. Two of these datasets are non
+commercial; the authors license the Small weights under Apache-2.0 all the same, as for Depth Anything V2
+Small, which the 3D photos use: the licence of the weights is the one this project reads.
+
+The FFmpeg program the 3D videos also download (ffmpeg and ffprobe, LGPL-2.1-or-later, no GPL or non free
+part) is not in this release: its archives are those of a release `ffmpeg-lgpl-*` of
+https://github.com/immuch360/libmpv-builds, with their licence texts, `PATENTS-NOTE.md` and corresponding
+source, checked by their SHA-256 like these files.
 
 <!-- end of the releases -->
 ## The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)

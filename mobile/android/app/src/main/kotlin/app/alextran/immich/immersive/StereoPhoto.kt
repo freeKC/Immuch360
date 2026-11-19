@@ -252,16 +252,6 @@ internal data class StereoPhotoChoices(
 }
 
 /**
- * What the quad shows of a photo with two eyes: both eyes (3D), the relief of the headset on its 2.5D mesh (see
- * [ReliefMesh], experimental), or the left eye for both (2D)
- */
-internal enum class StereoView {
-  THREE_D,
-  MESH_25D,
-  TWO_D,
-}
-
-/**
  * How the two eyes of a spatial photo go on the stereo quad of the viewer (section 5.8 of the design): the columns
  * each eye keeps for the disparity adjustment, the texture that holds both side by side, and the size of the quad.
  * Pure functions, but [compose].
@@ -417,6 +407,24 @@ internal object StereoComposer {
         LABEL_BIG_SCREEN_NO_NAVIGATION to
           "On the big screen, a photo or video shows on its own: B or Y goes back to the app",
         LABEL_SHARP_NOTICE to "Sharper flat screen (experimental)",
+        LABEL_NEAR_LIMIT_3D to "Make it smaller first: a 3D photo this close tires the eyes",
+        ReliefStrengthChoice.LABEL_INFO to "Relief: ${ReliefStrengthChoice.STRENGTH}",
+        ReliefStrengthChoice.SUBTLE.labelKey to "Subtle",
+        ReliefStrengthChoice.NORMAL.labelKey to "Normal",
+        ReliefStrengthChoice.STRONG.labelKey to "Strong",
+        LABEL_FROSTED_NOTICE to "Frosted background (experimental)",
+        LABEL_SLIDESHOW to "Slideshow",
+        LABEL_SLIDESHOW_PAUSED to "Slideshow paused",
+        LABEL_SLIDESHOW_END to "End of the slideshow",
+        LABEL_SLIDESHOW_TOO_WARM to "Headset too warm: the slideshow goes on in 2D",
+        LABEL_KEEP_FRAME to "Keep size and place",
+        LABEL_KEEP_FRAME_ON to "The next photos open at this size and place",
+        LABEL_KEEP_FRAME_OFF to "Each photo opens in front of you",
+        LABEL_FLAT_SCREEN_BROWSE_HINT to
+          "B or Y: back to the app. Left thumbstick left or right: previous or next photo. Trigger: slideshow. " +
+            "A, X or a short grip press: show or hide this panel. Hold a grip on the screen to move it, the " +
+            "thumbstick then brings it nearer or farther; hold both grips to resize it. Right thumbstick left or " +
+            "right: the screen in front again.",
       )
 
   /**
@@ -431,6 +439,29 @@ internal object StereoComposer {
 
   /** What passes once when a flat screen first shows with Sharper flat screens on (see FlatScreenLayer). */
   const val LABEL_SHARP_NOTICE = "sharpScreensNotice"
+
+  /**
+   * What a photo of two eyes says when it is not brought nearer past its comfort bound (see
+   * FlatScreenGeometry.nearerAllowed).
+   */
+  const val LABEL_NEAR_LIMIT_3D = "screenNearLimit3d"
+
+  /** What passes once when the frosted background behind a flat screen photo first shows (FrostedBackdrop). */
+  const val LABEL_FROSTED_NOTICE = "frostedNotice"
+
+  /** What the slideshow of a flat screen says as it plays, pauses, ends, and goes on in 2D when too warm. */
+  const val LABEL_SLIDESHOW = "slideshow"
+  const val LABEL_SLIDESHOW_PAUSED = "slideshowPaused"
+  const val LABEL_SLIDESHOW_END = "slideshowEnd"
+  const val LABEL_SLIDESHOW_TOO_WARM = "slideshowTooWarm"
+
+  /** The button "Keep size and place" of a flat screen photo, and what it says when it is turned on or off. */
+  const val LABEL_KEEP_FRAME = "keepFrame"
+  const val LABEL_KEEP_FRAME_ON = "keepFrameOn"
+  const val LABEL_KEEP_FRAME_OFF = "keepFrameOff"
+
+  /** The controller mapping of the photos of a flat screen, which browse and play a slideshow (issue 19). */
+  const val LABEL_FLAT_SCREEN_BROWSE_HINT = "flatScreenBrowseHint"
 
   const val LABEL_3D = "spatial3d"
   const val LABEL_2D = "spatial2d"

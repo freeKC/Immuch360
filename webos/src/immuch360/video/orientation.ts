@@ -15,6 +15,11 @@
 //   turned (portrait frames, no flag), and is left alone.
 // Neither can be checked on a real TV here: the viewer's "Turn the picture" and "Fit the picture" buttons choose by hand,
 // and their choice is kept for the video (turnChoice.ts).
+//
+// The reporter's TV then showed that its video plane takes the element's size but ignores any CSS rotation (issue 17,
+// 16 November 2026). On a Samsung TV with AVPlay a video that needs a turn now plays through Samsung's AVPlay player,
+// which has a rotation setting of its own (avplayEngine.ts, avplaySession.ts); the CSS turn here stays for webOS and
+// browsers (a turn by hand), for a Samsung TV without AVPlay, and for a video AVPlay failed.
 
 /** What the viewer knows of a video before it plays: its EXIF orientation and its stored size (asset details) */
 export interface VideoOrientationInfo {
@@ -176,6 +181,11 @@ export function videoTurnTransform(turn: VideoTurn | null): string {
 // What the viewer saw of the last video with a quarter turn flag or a turn chosen by hand, for the diagnostics page: on
 // a TV nobody here can test, it tells which size the player reported, what was done and where the element ended up
 let lastSeen: string | null = null;
+// Immuch360: what Samsung's AVPlay player did with the last video it was given (avplaySession.ts), and whether the
+// video element noted a video after it (the fallback when AVPlay failed)
+let lastAvplay: string | null = null;
+let htmlAfterAvplay = false;
+
 
 /** What the viewer did, for the diagnostics line */
 export interface VideoTurnNote {
@@ -200,7 +210,27 @@ export function noteVideoTurn(input: VideoTurnInput, note: VideoTurnNote): void 
 	lastSeen =
 		`${note.platform}, orientation ${String(input.orientation ?? '?')}, stored ${input.width ?? '?'} x ${input.height ?? '?'}, ` +
 		`player ${input.frameWidth} x ${input.frameHeight}, element ${input.boxWidth} x ${input.boxHeight}, ${done}${screen}`;
+	if (lastAvplay !== null) htmlAfterAvplay = true;
 }
 
-/** The diagnostics line of the last video with a quarter turn flag or a turn by hand, 'none' before one played */
-export const lastVideoTurnLine = (): string => lastSeen ?? 'none';
+/** Notes what AVPlay did with a video, for the diagnostics line; the text holds no URL nor key */
+export function noteAvplayTurn(line: string): void {
+	lastAvplay = line;
+	htmlAfterAvplay = false;
+}
+
+/**
+ * The diagnostics line of the last video with a quarter turn flag or a turn by hand, 'none' before one played. After
+ * AVPlay, its line, followed by the video element's when the element played a video after it.
+ */
+export function lastVideoTurnLine(): string {
+	if (lastAvplay !== null) return htmlAfterAvplay && lastSeen !== null ? `${lastAvplay}; then HTML player: ${lastSeen}` : lastAvplay;
+	return lastSeen ?? 'none';
+}
+
+/** Forgets the notes (tests) */
+export function resetVideoTurnNotes(): void {
+	lastSeen = null;
+	lastAvplay = null;
+	htmlAfterAvplay = false;
+}

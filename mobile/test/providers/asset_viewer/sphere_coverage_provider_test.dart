@@ -282,6 +282,47 @@ void main() {
       await pumpEventQueue();
     });
 
+    test(
+      'the session provider stores the gyroscope button of the native player, the photo viewer\'s setting',
+      () async {
+        await SettingsRepository.ensureInitialized(db);
+        addTearDown(SettingsRepository.reset);
+        final container = createContainer();
+        container.read(sphericalVideoSessionProvider);
+        expect(SettingsRepository.instance.appConfig.viewer.panoramaGyroscope, isFalse, reason: 'off by default');
+
+        for (final enabled in [true, false]) {
+          await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+            'dev.flutter.pigeon.immich_mobile.SphericalVideoEvents.motionChanged',
+            SphericalVideoEvents.pigeonChannelCodec.encodeMessage(<Object?>[enabled]),
+            (_) {},
+          );
+          await pumpEventQueue();
+          expect(SettingsRepository.instance.appConfig.viewer.panoramaGyroscope, enabled);
+          // The stabilisation is another setting
+          expect(SettingsRepository.instance.appConfig.viewer.stabilizeVideos, isTrue);
+        }
+      },
+    );
+
+    test('a gyroscope choice the session cannot store only logs', () async {
+      final stored = <bool>[];
+      final session = SphericalVideoSession(
+        createContainer().read(sphereCoverageOverridesProvider.notifier),
+        onMotionChanged: (enabled) async => stored.add(enabled),
+      );
+      session.motionChanged(true);
+      await pumpEventQueue();
+      expect(stored, [true]);
+
+      final failing = SphericalVideoSession(
+        createContainer().read(sphereCoverageOverridesProvider.notifier),
+        onMotionChanged: (_) async => throw StateError('no database'),
+      );
+      failing.motionChanged(false);
+      await pumpEventQueue();
+    });
+
     test('the session provider stores the switch of the native player in the settings, off then on', () async {
       await SettingsRepository.ensureInitialized(db);
       addTearDown(SettingsRepository.reset);

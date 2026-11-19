@@ -65,6 +65,8 @@ List<Override> desktopOverrides() => [
   aiFreeSpaceProvider.overrideWithValue(systemFreeSpace),
   // The 3D conversions run with the engine on ONNX Runtime, the safe writer and the index of the folder library
   conversionToolsProvider.overrideWith(desktopConversionTools),
+  // The 3D videos (release 49)
+  videoJobEngineProvider.overrideWith(desktopVideoJobEngine),
   // The splat viewer in a window of its own over the app's, on the dedicated graphics chip of a Windows computer with
   // two unless the setting says otherwise
   splatViewerHostProvider.overrideWith(

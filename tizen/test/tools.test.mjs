@@ -240,7 +240,13 @@ describe('check-wgt', () => {
 			[TEMPLATE.replace('<access origin="*" subdomains="true"/>', ''), /access policy/],
 			[TEMPLATE.replace("script-src 'self'", "script-src 'self' 'unsafe-eval'"), /unsafe-eval or unsafe-inline/],
 			[TEMPLATE.replace(/<tizen:content-security-policy>.*<\/tizen:content-security-policy>/, ''), /no content security policy/],
+			[TEMPLATE.replace("; object-src 'self'", ''), /no object-src 'self' or 'none'/],
+			[TEMPLATE.replace("object-src 'self'", 'object-src *'), /no object-src 'self' or 'none'/],
+			[TEMPLATE.replace("object-src 'self'", "object-src 'self' https://example.com"), /no object-src 'self' or 'none'/],
 		];
+		// AVPlay's object (AvplayMedia.tsx) needs 'self'; 'none' stays accepted
+		assert.match(TEMPLATE, /object-src 'self'</);
+		assert.deepEqual(configProblems(TEMPLATE.replace("object-src 'self'", "object-src 'none'"), null), []);
 		for (const [xml, expected] of broken) assert.match(configProblems(xml, null).join('; '), expected);
 		assert.equal(PRIVILEGES.length, 3);
 	});

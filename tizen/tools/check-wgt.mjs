@@ -108,7 +108,9 @@ export function configProblems(xml, version) {
 		const script = /(?:^|;)\s*script-src([^;]*)/.exec(policy)?.[1] ?? '';
 		if (!/'self'/.test(script)) problems.push("the policy has no script-src 'self'");
 		if (/unsafe-(eval|inline)/.test(script)) problems.push('the policy lets scripts run from text (unsafe-eval or unsafe-inline)');
-		if (!/object-src\s+'none'/.test(policy)) problems.push("the policy has no object-src 'none'");
+		// 'self' for the <object type="application/avplayer"> of Samsung's AVPlay guide, never another server
+		const object = /(?:^|;)\s*object-src([^;]*)/.exec(policy)?.[1]?.trim();
+		if (object !== "'none'" && object !== "'self'") problems.push("the policy has no object-src 'self' or 'none'");
 	}
 	return problems;
 }

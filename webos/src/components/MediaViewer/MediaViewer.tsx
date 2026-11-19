@@ -44,6 +44,9 @@ import {
 } from '../../immuch360/video/limits';
 import {holdsFlatVideoNotice} from '../../immuch360/video/session';
 import {nextTurn} from '../../immuch360/video/orientation';
+import {avplayFailedFor, avplayUsable, chooseVideoEngine, noteAvplayFailure} from '../../immuch360/video/avplayEngine';
+import type {AvplayFailure} from '../../immuch360/video/avplaySession';
+import {VIEWER_MARK} from '../../immuch360/video/avplayPage';
 import {setVideoTurnChoice, videoTurnChoice} from '../../immuch360/video/turnChoice';
 import {usePlaysOriginal, useVideoGate, useVideoSession} from '../../immuch360/video/useVideoGate';
 import {MediaControls, type ViewerAction} from './MediaControls';
@@ -151,7 +154,6 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const pastCeiling = sizeBeforePlay && !!ceiling && !!details?.width && !!details.height && exceedsCeiling(details.width, details.height, ceiling);
 	const playsOriginal = usePlaysOriginal(repository, isVideo ? asset?.id : undefined, details?.fileSize ?? null, pastCeiling || videoFailed || stallSeen);
 	const gate = useVideoGate(isVideo ? asset?.id : undefined, ceiling, videoSize, playsOriginal);
-	const playerShown = isVideo && gate.kind === 'play' && !videoFailed;
 	// Immuch360: what the player turns a video filmed upright by, on a Samsung TV (src/immuch360/video/orientation.ts)
 	const detailsOfVideo = isVideo && !!details && details.id === asset?.id ? details : null;
 	const videoOrientation = useMemo(
@@ -162,6 +164,23 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	// kept for the video (turnChoice.ts), and what the player turns it by now (its own turn until one is chosen)
 	const [turnVersion, setTurnVersion] = useState(0);
 	const manualTurn = useMemo(() => (isVideo && asset ? videoTurnChoice(asset.id) : null), [asset, isVideo, turnVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+	// Immuch360: on a Samsung TV a video that needs a turn plays through Samsung's AVPlay player, which turns it; every
+	// other one, and one AVPlay failed, keeps the HTML element (src/immuch360/video/avplayEngine.ts). Where AVPlay may
+	// play, the player waits for the details (the orientation) so that a video does not start in one player and go on
+	// in the other. avplayFallback: the video AVPlay failed, and where the HTML element takes over.
+	const [avplayFallback, setAvplayFallback] = useState<{assetId: string; at: number} | null>(null);
+	// The video switched from the HTML element to AVPlay by "Turn the picture", and the time it had reached
+	const [avplaySwitch, setAvplaySwitch] = useState<{assetId: string; at: number} | null>(null);
+	const video360Flag = isVideo && flagged;
+	// The player's API (Sandstone's), for the keys, the start check and the time of a switch
+	const playerApiRef = useRef<VideoPlayerApi | null>(null);
+	const mayUseAvplay = isVideo && !!asset && !video360Flag && avplayUsable() && !avplayFailedFor(asset.id);
+	const engine = mayUseAvplay ? chooseVideoEngine({usable: true, video360: false, failed: false, orientation: videoOrientation, manual: manualTurn}) : 'html';
+	const engineKnown = !mayUseAvplay || manualTurn !== null || detailsSettled || !!detailsOfVideo;
+	let playerStartAt = 0;
+	if (engine === 'avplay' && avplaySwitch?.assetId === asset?.id) playerStartAt = avplaySwitch?.at ?? 0;
+	else if (engine === 'html' && avplayFallback?.assetId === asset?.id) playerStartAt = avplayFallback?.at ?? 0;
+	const playerShown = isVideo && gate.kind === 'play' && !videoFailed && engineKnown;
 	const [turnShown, setTurnShown] = useState<(VideoTurnShown & {assetId: string}) | null>(null);
 	const shownTurn = isVideo && asset && turnShown?.assetId === asset.id ? turnShown : null;
 	const turnAssetId = isVideo ? asset?.id : undefined;
@@ -179,11 +198,13 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	const turnVideo = useCallback(
 		(step: 1 | -1) => {
 			if (!turnAssetId) return;
+			// The first turn by hand of a video in the HTML element moves it to AVPlay, at the time it had reached
+			if (engine === 'html' && mayUseAvplay) setAvplaySwitch({assetId: turnAssetId, at: playerApiRef.current?.getMediaState().currentTime ?? 0});
 			const current = shownTurn?.degrees ?? manualTurn?.degrees ?? 0;
 			setVideoTurnChoice(turnAssetId, {degrees: nextTurn(current, step), fit: manualTurn?.fit});
 			setTurnVersion((n) => n + 1);
 		},
-		[turnAssetId, shownTurn, manualTurn]
+		[turnAssetId, shownTurn, manualTurn, engine, mayUseAvplay]
 	);
 	// The proportions of the file or those the player reports, where they differ (a Samsung TV stretches the frames)
 	const fitVideo = useCallback(() => {
@@ -283,7 +304,6 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 
 	// Sandstone transport-bar visibility (video) drives arrow-key semantics: hidden →
 	// left/right page between media; visible → Sandstone seeks.
-	const playerApiRef = useRef<VideoPlayerApi | null>(null);
 	const [videoControlsVisible, setVideoControlsVisible] = useState(false);
 	// Sandstone bug: forwardCustom drops the documented {available} payload, so read the
 	// current state through the imperative API instead (fires post-update, value is fresh).
@@ -312,6 +332,9 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 		// And the full-size picture of a photo
 		setFullsizeFailed(null);
 		setVideoBarAsked(null);
+		// A video opened again starts from its beginning
+		setAvplayFallback(null);
+		setAvplaySwitch(null);
 	}
 	const videoControlsOpen = isVideo && videoControlsVisible;
 
@@ -343,11 +366,13 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 				return;
 			}
 			const node = viewerVideoElement();
+			// The HTML element's readyState, or the one Samsung's AVPlay player gives through Sandstone's node
+			const readyState = node ? node.readyState : (api.getVideoNode()?.readyState ?? 0);
 			const verdict = videoStart(
 				{
 					elapsedMs: Date.now() - opened,
 					currentTime: state.currentTime ?? 0,
-					canPlay: !!node && node.readyState >= HAVE_FUTURE_DATA,
+					canPlay: readyState >= HAVE_FUTURE_DATA,
 					paused: state.paused,
 					error: !!api.getVideoNode()?.error,
 				},
@@ -368,7 +393,26 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 			setVideoFailure({assetId, kind: verdict, mediaDuration: knownDuration(state.duration)});
 		}, 1000);
 		return () => window.clearInterval(timer);
-	}, [playerShown, assetId]);
+	}, [playerShown, assetId, engine]);
+
+	// Immuch360: AVPlay failed this video (avplaySession.ts): it goes on in the HTML element from where AVPlay was, with
+	// the turn of 0.3.4, and a notice says so for a few seconds; the diagnostics line tells why
+	const [avplayNotice, setAvplayNotice] = useState<string | null>(null);
+	const handleAvplayFailed = useCallback(
+		(failure: AvplayFailure) => {
+			if (!assetId) return;
+			noteAvplayFailure(assetId, failure);
+			setAvplayFallback({assetId, at: failure.at});
+			setAvplayNotice(assetId);
+		},
+		[assetId]
+	);
+	useEffect(() => {
+		if (avplayNotice === null) return undefined;
+		const timer = window.setTimeout(() => setAvplayNotice(null), CONTROLS_HIDE_AFTER_MS);
+		return () => window.clearTimeout(timer);
+	}, [avplayNotice]);
+	const avplayNoticeShown = isVideo && !!asset && avplayNotice === asset.id;
 
 	// Immuch360: the message of a video that does not play takes the focus, on its Back button; the next video that
 	// plays gives it back to the viewer, as when a video opens
@@ -385,7 +429,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	// Immuch360: a photo whose turn stays on the TV, or could not be saved, shows the controls with a message about it;
 	// a video's top bar shows while the focus is in it
 	const chromeVisible = isVideo
-		? videoControlsOpen || videoIntro === asset?.id || hasVideoMessage || (stallSeen && !!videoStall?.active) || videoBarShown
+		? videoControlsOpen || videoIntro === asset?.id || hasVideoMessage || (stallSeen && !!videoStall?.active) || videoBarShown || avplayNoticeShown
 		: controlsVisible || !!rotationNotice;
 
 	// Immuch360: once the bar Up asked for shows, the focus goes to "Turn the picture"; the bar stays while the focus is in
@@ -700,6 +744,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	else if (rotationNotice === 'keptOnDevice') notice = t('rotate_kept_on_device');
 	else if (wants360 && sphereFailure) notice = sphereFailure.reason;
 	else if (stallText) notice = stallText;
+	else if (avplayNoticeShown && playerShown) notice = t('webos_video_avplay_fallback');
 	else if (isVideo && playerShown && manualTurn) notice = t('webos_video_turned_by_hand', {degrees: manualTurn.degrees});
 	else if (video360 && playerShown) {
 		// Immuch360: a 360° video plays flat; where the TV keeps video frames out of WebGL, the first one of the session
@@ -710,7 +755,7 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 	}
 
 	return (
-		<ViewerContainer spotlightId={VIEWER_SPOTLIGHT_ID} spotlightRestrict="self-only" className={css.viewerOverlay}>
+		<ViewerContainer spotlightId={VIEWER_SPOTLIGHT_ID} spotlightRestrict="self-only" className={css.viewerOverlay} {...{[VIEWER_MARK]: ''}}>
 			<div className={css.viewerContent}>
 				{isVideo ? (
 					videoMessage ? (
@@ -722,6 +767,10 @@ export const MediaViewer: React.FC<MediaViewerProps> = React.memo(({getAssetAt, 
 						</div>
 					) : playerShown ? (
 						<VideoPlayer
+							key={engine === 'avplay' ? `avplay-${asset.id}` : 'html'}
+							engine={engine}
+							startAt={playerStartAt}
+							onAvplayFailed={handleAvplayFailed}
 							src={mediaUrl}
 							onControlsAvailable={handleVideoControlsAvailable}
 							apiRef={playerApiRef}

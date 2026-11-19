@@ -147,7 +147,8 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 - **Plex** on a phone, in the Quest, on an iPhone and on a TV, and the switch to the address outside home: [Plex Media Server](user-guide.md#plex-media-server-without-plextv).
 - **Raw two lens playback** on a phone, a Quest and an iPhone: [Raw 360° camera files](user-guide.md#raw-360-camera-files-without-the-cameras-app).
 - **The iPhone side of the phone share**, and a phone serving a Quest 3: [Share this phone](user-guide.md#share-this-phone-on-the-network).
-- **DLNA** on a real network, with Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest: [DLNA media servers](user-guide.md#dlna-media-servers).
+- **DLNA** on a real network, with Plex, Jellyfin, a NAS, the Freebox Server, an iPhone and the Quest: [DLNA media servers](user-guide.md#dlna-media-servers). A stock Jellyfin server since 10.9 has no DLNA without its plugin: add it as a Jellyfin or Emby server instead.
+- **Jellyfin and Emby servers (build 49, experimental)**: checked against servers in Docker only; a real server on the Quest, a phone, a TV, an iPhone and a computer is still to do: [Jellyfin and Emby servers](user-guide.md#jellyfin-and-emby-servers-from-build-49).
 - **Apple spatial photos in the headset**, and real iPhone photos and videos: [Apple spatial photos and videos](user-guide.md#not-checked-on-a-device-yet).
 - **The Quest 2, Quest Pro and Quest 3S**: [Meta Quest](platform-support.md#meta-quest).
 - **Sign in with your phone** with a real camera, in a headset, on a computer and from an iPhone: [Sign in with your phone](user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone).

@@ -1,14 +1,17 @@
 // What concerns the whole window of Immuch360 Desktop, wrapped around the navigator inside MaterialApp (main.dart, through
 // desktopAppShell): the keys that work on every page (Control A and Escape for the selection of the grid shown among
 // them, lib/desktop/selection), the back button of the mouse, full screen and the close guard, then the close itself
-// (close_sequence.dart). The viewers read their own keys first (remote_keys.dart): what reaches the shell is what no
-// page handled.
+// (close_sequence.dart), and the offer to resume the 3D videos a quit stopped, once the main page of the library shows
+// (never over the splash page, whose replacement would close it, nor over the welcome or the login pages). The viewers
+// read their own keys first (remote_keys.dart): what reaches the shell is what no page handled.
 
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/ui/video_resume_offer.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
@@ -28,6 +31,25 @@ final _log = Logger('DesktopShell');
 /// router (the top route of the top router, a dialog first)
 final desktopBackProvider = Provider<Future<bool> Function()>((ref) => ref.watch(appRouterProvider).maybePopTop);
 
+/// Whether the root router showing the routes named [stack] (bottom first) shows the main page of the library on top:
+/// the tabs, nothing pushed over them (the splash, the welcome and the login pages are never it)
+bool desktopMainPageShown(List<String> stack) => stack.isNotEmpty && stack.last == TabShellRoute.name;
+
+/// Whether the main page of the library shows now, told again at each change of the root router; the tests give
+/// theirs
+final desktopMainPageShownProvider = Provider<ValueListenable<bool>>((ref) {
+  final router = ref.watch(appRouterProvider);
+  final shown = ValueNotifier(false);
+  void read() => shown.value = desktopMainPageShown([for (final page in router.stack) page.routeData.name]);
+  router.addListener(read);
+  read();
+  ref.onDispose(() {
+    router.removeListener(read);
+    shown.dispose();
+  });
+  return shown;
+});
+
 class DesktopShell extends ConsumerStatefulWidget {
   const DesktopShell({super.key, required this.child});
 
@@ -41,6 +63,10 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
   late final _window = ref.read(desktopWindowProvider);
   late final _fullScreen = ref.read(desktopFullScreenProvider.notifier);
   bool _closing = false;
+
+  /// Whether the main page shows, for the offer to resume the 3D videos; null when the router is not there (a test)
+  ValueListenable<bool>? _mainPage;
+  var _offered = false;
 
   /// Stops the frame times of a playing video in the log (video_frame_timings.dart)
   late final void Function() _stopFrameTimings;
@@ -56,6 +82,14 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
     // The headset view's crash guard reads its marker at the start (Windows only)
     unawaited(ref.read(headsetViewServiceProvider).startUp());
     _window.addListener(this);
+    // The 3D videos a quit or a crash stopped are offered to resume once the main page shows (video_resume_offer.dart)
+    try {
+      final mainPage = ref.read(desktopMainPageShownProvider)..addListener(_onMainPage);
+      _mainPage = mainPage;
+      _onMainPage();
+    } catch (error) {
+      _log.info('No router to wait for the main page: the 3D videos stopped are not offered: $error');
+    }
     unawaited(
       _window.setPreventClose(true).catchError((Object error, StackTrace stack) {
         // The window then closes without asking, as any window does
@@ -64,8 +98,40 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
     );
   }
 
+  /// Once the main page shows, the offer comes after the frame that draws it, once in the life of the window
+  void _onMainPage() {
+    if (_offered || !mounted || !(_mainPage?.value ?? false)) {
+      return;
+    }
+    _offered = true;
+    _mainPage?.removeListener(_onMainPage);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _offerStoppedVideos());
+  }
+
+  void _offerStoppedVideos() {
+    if (!mounted) {
+      return;
+    }
+    try {
+      final navigator = ref.read(desktopNavigatorKeyProvider).currentContext;
+      if (navigator == null) {
+        _log.warning('No navigator: the 3D videos stopped are not offered');
+        return;
+      }
+      unawaited(
+        offerStoppedVideoJobs(navigator, ref).catchError((Object error, StackTrace stack) {
+          _log.warning('The offer to resume the 3D videos failed', error, stack);
+          return const <VideoResumeAnswer>[];
+        }),
+      );
+    } catch (error, stack) {
+      _log.warning('The offer to resume the 3D videos could not start', error, stack);
+    }
+  }
+
   @override
   void dispose() {
+    _mainPage?.removeListener(_onMainPage);
     _stopFrameTimings();
     _window.removeListener(this);
     super.dispose();

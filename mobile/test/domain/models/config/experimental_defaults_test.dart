@@ -63,6 +63,20 @@ void main() {
     });
   });
 
+  group('Frosted background behind photos on the Meta Quest (experimental)', () {
+    test('is on by default', () {
+      expect(const AppConfig().viewer.frostedFlatScreens, isTrue);
+      expect(defaultConfig.read(SettingsKey.viewerFrostedFlatScreens), isTrue);
+    });
+
+    test('a stored off wins over the default', () {
+      final config = AppConfig.fromEntries({SettingsKey.viewerFrostedFlatScreens: false});
+
+      expect(config.viewer.frostedFlatScreens, isFalse);
+      expect(config.write(SettingsKey.viewerFrostedFlatScreens, true).viewer.frostedFlatScreens, isTrue);
+    });
+  });
+
   group('AV2 videos on the computers (experimental)', () {
     test('are on by default', () {
       expect(const AppConfig().viewer.av2Videos, isTrue);

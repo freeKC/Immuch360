@@ -8,6 +8,8 @@
 //   WebDAV, so that a router or a printer is not offered as a share.
 // - SSDP for the DLNA media servers, see upnp/ssdp.dart. They are not scanned for by port: the path of their device
 //   description cannot be guessed (Jellyfin, Windows and Synology put an id in it).
+// - The UDP 7359 question of the Jellyfin and Emby servers (see jellyfin/jellyfin_discovery.dart), and the scan of
+//   their ports 8096 and 8920 confirmed by /System/Info/Public, which finds a server in Docker bridge mode too.
 // - GDM for the Plex Media Servers (UDP 32414, see plex/gdm.dart), and the TP-Link discovery protocol for the Tapo
 //   cameras (TDP, UDP 20002, see ../tapo/tapo_discovery.dart). The scan also finds a camera by its RTSP port (554),
 //   confirmed by the certificate it shows on 443.
@@ -31,6 +33,8 @@ import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/network_discovery.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_api.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_discovery.dart';
 import 'package:immich_mobile/infrastructure/network/plex/gdm.dart';
 import 'package:immich_mobile/infrastructure/network/upnp/ssdp.dart';
 import 'package:immich_mobile/infrastructure/tapo/tapo_discovery.dart';
@@ -52,6 +56,7 @@ List<DiscoveryProbe> networkDiscoveryProbes({List<ScanPort>? extraPorts}) {
     SubnetScanProbe(confirmer: confirmer, extraPorts: extraPorts ?? ScanPort.fromEnvironment()).call,
     const SsdpProbe().call,
     const GdmProbe().call,
+    const JellyfinDiscoveryProbe().call,
     const TapoDiscoveryProbe().call,
   ];
 }
@@ -73,10 +78,11 @@ class ScanPort {
   final int port;
   final NetworkSourceType type;
 
-  /// WebDAV over HTTPS
+  /// WebDAV or Jellyfin over HTTPS
   final bool useTls;
 
-  /// SMB, the WebDAV server of Synology (5006 over TLS), the web servers that may serve WebDAV, then RTSP for the
+  /// SMB, the WebDAV server of Synology (5006 over TLS), the web servers that may serve WebDAV, Jellyfin and Emby
+  /// (8096, 8920 over TLS), then RTSP for the
   /// Tapo cameras, which TDP finds better (with their model and MAC address): the scan only tries it on the hosts that
   /// answered on another port, and confirms it on 443 (see [ServerConfirmer.isTapoCamera])
   static const defaults = [
@@ -87,6 +93,10 @@ class ScanPort {
     ScanPort(443, NetworkSourceType.webdav, useTls: true),
     ScanPort(8080, NetworkSourceType.webdav),
     ScanPort(8443, NetworkSourceType.webdav, useTls: true),
+    // Jellyfin and Emby, confirmed by /System/Info/Public: what finds a server in Docker bridge mode, which the UDP
+    // question does not reach
+    ScanPort(8096, NetworkSourceType.jellyfin),
+    ScanPort(8920, NetworkSourceType.jellyfin, useTls: true),
     ScanPort(554, NetworkSourceType.tapo),
   ];
 
@@ -298,6 +308,15 @@ class ServerConfirmer {
       return false;
     }
     return certificate.subject.contains('TPRI') || certificate.issuer.contains('TPRI');
+  }
+
+  /// What a Jellyfin or Emby server at [base] says of itself, null when none answers there (see
+  /// jellyfinPublicInfoAt). Null once [request] ended.
+  Future<JellyfinPublicInfo?> jellyfinAt(Uri base, {DiscoveryRequest? request}) async {
+    if (request?.isCancelled ?? false) {
+      return null;
+    }
+    return jellyfinPublicInfoAt(base, timeout: httpTimeout, until: request?.done);
   }
 
   /// Whether [bytes] start with a NetBIOS session message holding an SMB2 message
@@ -938,6 +957,14 @@ class SubnetScanProbe {
       if (!isSmb) {
         return null;
       }
+    } else if (port.type == NetworkSourceType.jellyfin) {
+      socket?.destroy();
+      final base = Uri(scheme: port.useTls ? 'https' : 'http', host: host, port: port.port);
+      final info = await confirmer.jellyfinAt(base, request: request);
+      if (info == null || request.isCancelled) {
+        return null;
+      }
+      return jellyfinDiscovered(info, host: host, port: port.port, useTls: port.useTls, origin: DiscoveryOrigin.scan);
     } else if (port.type == NetworkSourceType.tapo) {
       socket?.destroy();
       // Many devices answer on the RTSP port; a Tapo camera shows its own certificate on 443, where it is reached

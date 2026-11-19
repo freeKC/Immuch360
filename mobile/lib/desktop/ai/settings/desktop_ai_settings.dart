@@ -65,6 +65,10 @@ class DesktopAiSettings {
     this.splatSubject = SplatSubject.place,
     this.splatKeepPly = false,
     this.reliefStrength = ReliefStrength.normal,
+    this.videoReliefStrength = ReliefStrength.subtle,
+    this.videoQuality = 'standard',
+    this.videoHalfSbs = false,
+    this.videoFrameMillis = const {},
     this.reliefVersion = defaultReliefVersion,
   });
 
@@ -123,6 +127,21 @@ class DesktopAiSettings {
   /// "Relief quality" of the 3D photos: relief-v1 (fast) or relief-v2 (better edges)
   final ReliefVersion reliefVersion;
 
+  /// The relief strength of the 3D videos, a setting of its own: Subtle by default (nothing was looked at in a headset
+  /// yet, video3d-plan.md section 0)
+  final ReliefStrength videoReliefStrength;
+
+  /// The quality of the depth of the 3D videos the dialog chose last, by the name of VideoDepthQuality (fast,
+  /// standard, fine)
+  final String videoQuality;
+
+  /// Whether the 3D videos are written Half SBS rather than Full SBS
+  final bool videoHalfSbs;
+
+  /// The milliseconds a new frame of a 3D video took on this computer in its last job, by quality: the first guess of
+  /// the next one
+  final Map<String, int> videoFrameMillis;
+
   DesktopAiSettings copyWith({
     AiDestination? destination,
     String? Function()? folder,
@@ -143,6 +162,10 @@ class DesktopAiSettings {
     bool? splatKeepPly,
     ReliefStrength? reliefStrength,
     ReliefVersion? reliefVersion,
+    ReliefStrength? videoReliefStrength,
+    String? videoQuality,
+    bool? videoHalfSbs,
+    Map<String, int>? videoFrameMillis,
   }) => DesktopAiSettings(
     destination: destination ?? this.destination,
     folder: folder == null ? this.folder : folder(),
@@ -163,6 +186,10 @@ class DesktopAiSettings {
     splatKeepPly: splatKeepPly ?? this.splatKeepPly,
     reliefStrength: reliefStrength ?? this.reliefStrength,
     reliefVersion: reliefVersion ?? this.reliefVersion,
+    videoReliefStrength: videoReliefStrength ?? this.videoReliefStrength,
+    videoQuality: videoQuality ?? this.videoQuality,
+    videoHalfSbs: videoHalfSbs ?? this.videoHalfSbs,
+    videoFrameMillis: videoFrameMillis ?? this.videoFrameMillis,
   );
 
   Map<String, Object?> toJson() => {
@@ -185,6 +212,10 @@ class DesktopAiSettings {
     'splatKeepPly': splatKeepPly,
     'reliefStrength': reliefStrength.name,
     'reliefVersion': reliefVersion.name,
+    'videoReliefStrength': videoReliefStrength.name,
+    'videoQuality': videoQuality,
+    'videoHalfSbs': videoHalfSbs,
+    'videoFrameMillis': videoFrameMillis,
   };
 
   /// The settings of [json], a default for each value that is missing or not understood
@@ -243,6 +274,20 @@ class DesktopAiSettings {
       splatKeepPly: flag('splatKeepPly', defaults.splatKeepPly),
       reliefStrength: ReliefStrength.named(json['reliefStrength']),
       reliefVersion: named(ReliefVersion.values, json['reliefVersion'], defaults.reliefVersion),
+      videoReliefStrength: json['videoReliefStrength'] is String
+          ? ReliefStrength.named(json['videoReliefStrength'])
+          : defaults.videoReliefStrength,
+      videoQuality: const {'fast', 'standard', 'fine'}.contains(json['videoQuality'])
+          ? json['videoQuality']! as String
+          : defaults.videoQuality,
+      videoHalfSbs: flag('videoHalfSbs', defaults.videoHalfSbs),
+      videoFrameMillis: switch (json['videoFrameMillis']) {
+        final Map<Object?, Object?> kept => Map.unmodifiable({
+          for (final MapEntry(:key, :value) in kept.entries)
+            if (key is String && value is int && value > 0) key: value,
+        }),
+        _ => const {},
+      },
     );
   }
 
@@ -267,10 +312,17 @@ class DesktopAiSettings {
       other.splatSubject == splatSubject &&
       other.splatKeepPly == splatKeepPly &&
       other.reliefStrength == reliefStrength &&
-      other.reliefVersion == reliefVersion;
+      other.reliefVersion == reliefVersion &&
+      other.videoReliefStrength == videoReliefStrength &&
+      other.videoQuality == videoQuality &&
+      other.videoHalfSbs == videoHalfSbs &&
+      _sameMap(
+        other.videoFrameMillis.map((k, v) => MapEntry(k, '$v')),
+        videoFrameMillis.map((k, v) => MapEntry(k, '$v')),
+      );
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     destination,
     folder,
     whenExists,
@@ -290,7 +342,11 @@ class DesktopAiSettings {
     splatKeepPly,
     reliefStrength,
     reliefVersion,
-  );
+    videoReliefStrength,
+    videoQuality,
+    videoHalfSbs,
+    Object.hashAllUnordered(videoFrameMillis.keys),
+  ]);
 }
 
 /// The milliseconds each step of each kind of job takes before this computer finished one, by the names of

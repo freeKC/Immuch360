@@ -57,14 +57,14 @@ internal class FlatScreenMedia(
 
   /**
    * A media on a flat screen the user may move and resize (see [ScreenPlace]): a video of the flat video screen, or a
-   * photo of the stereo quad but a relief made in the headset, whose 2.5D mesh stands on the quad where it was placed,
-   * a 3D scene, and a Gaussian splat, which has no screen.
+   * photo of the stereo quad but a 3D scene and a Gaussian splat, which has no screen. A relief made in the headset is
+   * one too since issue 19 (it keeps the size and place set as the user browses), except while its 2.5D mesh shows,
+   * which stands where it was computed from: the viewer then stops moving it (movableNow in the activity).
    */
   val isMovableScreen: Boolean
     get() =
       isFlatVideo ||
         (isStereoPhoto &&
-          stereoKind !is StereoPhotoKind.DepthRelief &&
           stereoKind !is StereoPhotoKind.VolumetricScene &&
           stereoKind !is StereoPhotoKind.GaussianSplat)
 

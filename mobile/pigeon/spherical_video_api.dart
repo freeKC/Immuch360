@@ -63,6 +63,12 @@ abstract class SphericalVideoApi {
     Float64List? corrections,
     String? summary,
   );
+
+  /// The gyroscope choice the player opens with, called right before [open]: [enabled] true, the motion of the device
+  /// turns the view and drags add to it; false, the motion is ignored and touch alone turns it. One setting with the
+  /// 360° photo viewer ("Gyroscope", off by default); the button of the player changes it, see
+  /// [SphericalVideoEvents.motionChanged]. A device without a gyroscope, and a TV, show no button and ignore it.
+  void setMotion(bool enabled);
 }
 
 @FlutterApi()
@@ -72,4 +78,7 @@ abstract class SphericalVideoEvents {
 
   /// The user turned the stabilisation with the camera's gyroscope on or off in the player: the setting follows
   void stabilizationChanged(bool enabled);
+
+  /// The user turned the gyroscope on or off in the player: the setting the photo viewer shares follows
+  void motionChanged(bool enabled);
 }

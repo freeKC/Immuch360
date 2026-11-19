@@ -12,6 +12,8 @@ import com.meta.spatial.runtime.StereoMode
 import kotlin.math.roundToInt
 import kotlin.math.tan
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 
 /**
  * How a flat 3D media packs its eyes, as Flutter names it in the format of the flat3d JSON (see guessFlatStereoFormat
@@ -76,12 +78,14 @@ internal object FlatStereo {
    * The packing of a flat 3D video of [width] x [height] (its display size) that Flutter named [format]: eyes said full
    * but narrower than square side by side, or wider than 2.5:1 stacked, are squeezed ones, as guessFlatStereoFormat
    * reads a video on the Flutter side, which a share page can only do once its player told the frame size. [format]
-   * itself for squeezed eyes and for a size not known yet.
+   * itself for squeezed eyes and for a size not known yet. [fullSaid] (the "full" of the request: the name said
+   * _Full_SBS, or the st3d box said left and right) keeps two full eyes side by side whatever the frame, as the portrait
+   * 3D video of a computer (2160 x 1920) needs.
    */
-  fun videoFormat(format: FlatFormat, width: Int, height: Int): FlatFormat {
+  fun videoFormat(format: FlatFormat, width: Int, height: Int, fullSaid: Boolean = false): FlatFormat {
     if (width <= 0 || height <= 0) return format
     return when (format) {
-      FlatFormat.SBS -> if (width / 2f / height < 1f) FlatFormat.HALF_SBS else format
+      FlatFormat.SBS -> if (!fullSaid && width / 2f / height < 1f) FlatFormat.HALF_SBS else format
       FlatFormat.TB -> if (width / (height / 2f) > 2.5f) FlatFormat.HALF_TB else format
       FlatFormat.HALF_SBS,
       FlatFormat.HALF_TB -> format
@@ -131,15 +135,20 @@ internal object FlatStereo {
  * Flat3dRequest on the Dart side and mobile/test/fixtures/ai_immersive/flat3d_contract_v1.json): how the frame packs
  * the eyes. A photo goes on the stereo quad ([StereoPhotoKind.Flat]), a video on the flat video screen.
  */
-internal data class FlatStereoSpec(val format: FlatFormat) {
+internal data class FlatStereoSpec(val format: FlatFormat, val fullSaid: Boolean = false) {
   companion object {
     const val KIND = "flat3d"
     const val VERSION = 1
 
-    /** The request of [root], null for another kind or version, or a format this build does not know. */
+    /**
+     * The request of [root], null for another kind or version, or a format this build does not know. "full": true
+     * counts for side by side eyes only (see [FlatStereo.videoFormat]).
+     */
     fun fromJson(root: JsonObject): FlatStereoSpec? {
       if (root.string("kind") != KIND || root.integer("version") != VERSION) return null
-      return FlatFormat.parse(root.string("format"))?.let(::FlatStereoSpec)
+      val format = FlatFormat.parse(root.string("format")) ?: return null
+      val full = (root["full"] as? JsonPrimitive)?.takeIf { !it.isString }?.booleanOrNull == true
+      return FlatStereoSpec(format, full && format == FlatFormat.SBS)
     }
 
     /** The request [text] holds, null for none, for another kind and for what [fromJson] refuses. */

@@ -39,6 +39,11 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// player, turn it off); the Android phones, tablets and TVs apply it
     @Default(true) bool stabilizeVideos,
 
+    /// The gyroscope of the 360° viewers of the phones and tablets: on, turning the device turns the view and drags add
+    /// to it; off, touch alone turns it. One choice for the 360° photo viewer and the 360° video player (issue 20), the
+    /// last one made in either; off by default, as the photo viewer always opened
+    @Default(false) bool panoramaGyroscope,
+
     /// Meta Quest immersive viewer: the right thumbstick turns 360° photos and videos the other way. Off by default,
     /// the view then turns the way the stick is pushed, as in most headset apps (Settings, Asset Viewer, Videos)
     @Default(false) bool reverseThumbstickTurn,
@@ -53,6 +58,11 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// a quad layer, and that layer and the flat video screen sampled with its quality super sampling and sharpening.
     /// On by default (Settings, Advanced turns it off: the photos then go on the quad mesh, without filters)
     @Default(true) bool sharpFlatScreens,
+
+    /// Meta Quest immersive viewer, experimental (issue 19): a blurred, darker copy of the photo of a flat screen fills
+    /// the box the user set around it, on a compositor layer behind it. On by default (Settings, Advanced, "Frosted
+    /// background behind photos")
+    @Default(true) bool frostedFlatScreens,
 
     /// Experimental: the Gaussian splat files of other tools (.spz, .ply) of the shares are listed and open in the
     /// immersive viewer of a Quest 3 or 3S (lot S5), and in the splat viewer of the computers, phones and tablets. On

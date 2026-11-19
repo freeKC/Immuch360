@@ -25,6 +25,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_metadata.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -280,19 +281,34 @@ class LibraryIndex {
   // own busy handler counts the time it asked to sleep, not the time that passed: a sleep that a signal cuts short
   // (the sampling profiler of the Dart VM, on in flutter test and in the debug and profile builds) still counts in
   // full, so its 10 s could end within a few hundred milliseconds while another isolate migrates the new file
-  // (library_index_open_test, "database is locked" on BEGIN IMMEDIATE in the desktop CI)
-  static void _untilFree(Database db, String sql) {
+  // (library_index_open_test, "database is locked" on BEGIN IMMEDIATE in the desktop CI).
+  // Each try waits only for what is left of the time out: SQLite's handler is given that much and no more, then the
+  // connection's own time out is put back. Without it, a first try cut short just before the end and a second one that
+  // SQLite really waits out would hold the isolate about twice the time out
+  static void _untilFree(Database db, String sql) => untilFree(db, sql, timeout: _busyTimeout);
+
+  /// Runs [sql] on [db] again while it meets another connection's lock, until [timeout] has passed on the clock, each
+  /// try given only what is left of it; the connection's busy time out is the one it had before, whatever the outcome
+  @visibleForTesting
+  static void untilFree(Database db, String sql, {required Duration timeout}) {
+    final before = db.select('PRAGMA busy_timeout').single.values.single! as int;
     final clock = Stopwatch()..start();
-    while (true) {
-      try {
-        db.execute(sql);
-        return;
-      } on SqliteException catch (error) {
-        if (error.resultCode != SqlError.SQLITE_BUSY || clock.elapsed >= _busyTimeout) {
-          rethrow;
+    try {
+      while (true) {
+        final left = timeout - clock.elapsed;
+        db.execute('PRAGMA busy_timeout = ${max(left.inMilliseconds, 0)}');
+        try {
+          db.execute(sql);
+          return;
+        } on SqliteException catch (error) {
+          if (error.resultCode != SqlError.SQLITE_BUSY || clock.elapsed >= timeout) {
+            rethrow;
+          }
+          sleep(const Duration(milliseconds: 10));
         }
-        sleep(const Duration(milliseconds: 10));
       }
+    } finally {
+      db.execute('PRAGMA busy_timeout = $before');
     }
   }
 

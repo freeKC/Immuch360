@@ -161,6 +161,24 @@ ONE_TIME_KIND_THRESHOLDS = {
         'aab': 1.9,
         'armeabi-v7a': 1.6,
     },
+    # 19 November 2026, for Android build 49 (Immuch360 3.4.4), compared with release 48. No native library, asset or
+    # desktop package added to a phone build: the Dart of the six lots (Jellyfin and Emby, the Quest gallery, the 360
+    # video controls, the Samsung player notice, the engine and the screens of the 3D videos, whose Dart is in every
+    # build though they run on computers only) and their 150 new or changed texts in 89 languages (115 of the first
+    # translation pass, 35 of the screens), compiled into libapp.so by CodegenLoader. Measured on the packages of
+    # release-49-int at 30ddc16547, both translation passes in (CI run 44474693853, artifact apks 14508450526), with
+    # this gate: arm64-v8a 160,783,692 bytes (+0.710 %), armeabi-v7a 102,233,432 (+1.350 %), the Quest 184,904,415
+    # (+0.616 %), universal 334,392,651 (+1.105 %), x86_64 107,750,533 (+1.125 %), the AAB 276,353,441 (+1.477 %). At
+    # 0e4686f770, before the texts, every kind was +0.15 to +0.33 %. The commits after 30ddc16547 change the README, its
+    # translations, the user guide and this file only, none of which the phones ship. The four kinds above 1 % get the
+    # measure plus half a point, rounded up to a tenth; arm64-v8a and the Quest keep 1 %. Build 50 compares with build
+    # 49 and the ordinary threshold again.
+    'v3.4.3-48': {
+        'aab': 2.0,
+        'armeabi-v7a': 1.9,
+        'universal': 1.7,
+        'x86_64': 1.7,
+    },
 }
 
 

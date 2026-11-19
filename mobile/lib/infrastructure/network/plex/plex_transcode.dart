@@ -16,15 +16,11 @@
 // as it reads the films. The playlist of the server names its segments by paths under its session; the bridge's
 // playlist names them by number, and the app keeps their paths.
 
-import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
-import 'package:immich_mobile/domain/services/network_file_system.dart';
-import 'package:logging/logging.dart';
+import 'package:immich_mobile/infrastructure/network/hls_conversion.dart';
 
-final _log = Logger('PlexConversion');
+export 'package:immich_mobile/infrastructure/network/hls_conversion.dart' show firstHlsEntry, renameHlsSegments;
 
 /// Where the transcoder answers on the server
 const plexTranscodePath = '/video/:/transcode/universal';
@@ -189,137 +185,25 @@ PlexTranscodeDecision parsePlexTranscodeDecision(Object? json) {
   );
 }
 
-/// The first playlist [playlist] names (a line that is no tag), resolved against [at]: the variant of start.m3u8
-Uri? firstHlsEntry(String playlist, Uri at) {
-  for (final line in const LineSplitter().convert(playlist)) {
-    final entry = line.trim();
-    if (entry.isNotEmpty && !entry.startsWith('#')) {
-      return at.resolve(entry);
-    }
-  }
-  return null;
-}
-
-/// [playlist], a media playlist read at [at], with each segment renamed to its number ("0.ts", "1.ts"...) for the
-/// bridge, and the server addresses of those numbers, which [known] keeps from the reads before (a playlist read again
-/// keeps its numbers). A tag that names another address (#EXT-X-KEY, #EXT-X-MAP, #EXT-X-MEDIA with a URI) is left
-/// out, Plex sends none: the playlist the player gets names the bridge's files only, which lets libmpv open it with
-/// access-references on (android_mpv.dart).
-({String playlist, List<Uri> segments}) renameHlsSegments(String playlist, Uri at, {List<Uri> known = const []}) {
-  final segments = [...known];
-  final lines = <String>[];
-  for (final line in const LineSplitter().convert(playlist)) {
-    final entry = line.trim();
-    if (entry.startsWith('#') && entry.toUpperCase().contains('URI=')) {
-      continue;
-    }
-    if (entry.isEmpty || entry.startsWith('#')) {
-      lines.add(line);
-      continue;
-    }
-    final uri = at.resolve(entry);
-    var index = segments.indexOf(uri);
-    if (index < 0) {
-      index = segments.length;
-      segments.add(uri);
-    }
-    lines.add('$index${_extensionOf(uri.path)}');
-  }
-  return (playlist: '${lines.join('\n')}\n', segments: segments);
-}
-
-String _extensionOf(String path) {
-  final name = path.split('/').last;
-  final dot = name.lastIndexOf('.');
-  return dot > 0 ? name.substring(dot).toLowerCase() : '.ts';
-}
-
 /// GETs [uri] on the server with the app's headers and [headers], and gives its body; throws when the server does not
 /// answer 200, and when [abort] completes first (the request and its body stopped)
-typedef PlexConversionFetch = Future<Uint8List> Function(Uri uri, Map<String, String> headers, {Future<void>? abort});
+typedef PlexConversionFetch = HlsFetch;
 
-/// The conversion of one film, served by the media bridge under a random id: [playlistName] is the playlist of its
-/// stream (the variant of start.m3u8, its segments renamed), each segment "N.ts" fetched from the server when a player
-/// asks for it. [stop] ends the conversion on the server.
-class PlexConversion implements GeneratedMediaFetch {
-  PlexConversion({required this.request, required this._base, required this._fetch});
+/// The conversion of one Plex film (see HlsConversion): start.m3u8 of [request] with its headers, stopped through the
+/// transcoder's stop with its session
+class PlexConversion extends HlsConversion {
+  // The start and the stop are made of the base and the fetch: no super parameters
+  // ignore: use_super_parameters
+  PlexConversion({required this.request, required Uri base, required PlexConversionFetch fetch})
+    : super(
+        start: request.startUri(base),
+        base: base,
+        headers: request.headers,
+        fetch: fetch,
+        stopOnServer: () => fetch(request.stopUri(base), const {}),
+      );
 
-  static const playlistName = 'film.m3u8';
+  static const playlistName = HlsConversion.playlistName;
 
   final PlexTranscodeRequest request;
-  final Uri _base;
-  final PlexConversionFetch _fetch;
-
-  /// The media playlist on the server, once start.m3u8 named it
-  Uri? _variant;
-  List<Uri> _segments = const [];
-  bool _stopped = false;
-
-  /// What the server converts last: the segments a player asks for twice (a seek back) are fetched again. A segment
-  /// whose player went away ([abort]: a seek elsewhere) stops at once, so that the server's connection and the link go
-  /// to the segment of the new place.
-  @override
-  Future<GeneratedFile?> fetch(String name, {Future<void>? abort}) async {
-    if (_stopped) {
-      return null;
-    }
-    if (name == playlistName) {
-      return GeneratedFile(utf8.encode(await _playlist()), 'application/vnd.apple.mpegurl');
-    }
-    final dot = name.indexOf('.');
-    final index = int.tryParse(dot < 0 ? name : name.substring(0, dot));
-    if (index == null || index < 0 || index >= _segments.length) {
-      return null;
-    }
-    final segment = _segments[index];
-    if (!_onServer(segment)) {
-      // The token goes to the Plex server only
-      return null;
-    }
-    final bytes = await _fetch(segment, request.headers, abort: abort);
-    return GeneratedFile(bytes, name.endsWith('.ts') ? 'video/mp2t' : 'application/octet-stream');
-  }
-
-  /// The media playlist with its segments renamed, read again at each request: a player reads it again while the
-  /// conversion runs
-  Future<String> _playlist() async {
-    var variant = _variant;
-    if (variant == null) {
-      final start = request.startUri(_base);
-      final master = utf8.decode(await _fetch(start, request.headers), allowMalformed: true);
-      if (!master.contains('#EXT-X-STREAM-INF')) {
-        // Already the media playlist
-        final renamed = renameHlsSegments(master, start, known: _segments);
-        _segments = renamed.segments;
-        return renamed.playlist;
-      }
-      variant = _variant = firstHlsEntry(master, start);
-      if (variant == null || !_onServer(variant)) {
-        throw const NetworkFileSystemException('The server sent no playlist of its own');
-      }
-    }
-    final text = utf8.decode(await _fetch(variant, request.headers), allowMalformed: true);
-    final renamed = renameHlsSegments(text, variant, known: _segments);
-    _segments = renamed.segments;
-    return renamed.playlist;
-  }
-
-  /// Whether [uri] is on the server of the conversion: nothing else is asked with its token
-  bool _onServer(Uri uri) => uri.scheme == _base.scheme && uri.host == _base.host && uri.port == _base.port;
-
-  /// Ends the conversion on the server; the bridge serves nothing more of it
-  Future<void> stop() async {
-    if (_stopped) {
-      return;
-    }
-    _stopped = true;
-    try {
-      await _fetch(request.stopUri(_base), const {});
-    } catch (error) {
-      _log.fine('The conversion did not stop on the server: ${error.runtimeType}');
-    }
-  }
-
-  @override
-  GeneratedFile? file(String name) => null;
 }

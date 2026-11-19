@@ -389,9 +389,10 @@ void main() {
         ]) {
           expect(await says(container, aiMonoPanoramaProvider(asset)), isSphere, reason: asset.name);
           for (final kind in ConversionKind.values) {
-            // A splat scene is made from a whole selection by its own button, never offered for one photo
+            // A splat scene is made from a whole selection by its own button, never offered for one photo; the 3D
+            // video takes videos
             final offered = switch (kind) {
-              ConversionKind.splatScene => false,
+              ConversionKind.splatScene || ConversionKind.stereoVideo => false,
               ConversionKind.stereoPanoramaFromPanorama => isSphere,
               _ => isFlat,
             };
@@ -429,7 +430,8 @@ void main() {
         for (final kind in ConversionKind.values) {
           expect(
             await says(container, aiSourceProvider((asset: asset, kind: kind))),
-            kind != ConversionKind.splatScene,
+            // The splat scene has its own button, the 3D video takes videos
+            kind != ConversionKind.splatScene && !kind.isVideo,
             reason: '${asset.name} ${kind.name}',
           );
         }
@@ -523,7 +525,8 @@ void main() {
           );
           final facts = await read(asset);
           expect((facts.isPanorama, facts.isStereo), (false, true), reason: asset.name);
-          for (final kind in ConversionKind.values) {
+          // A photo for the 3D video, which takes videos
+          for (final kind in ConversionKind.values.where((kind) => !kind.isVideo)) {
             expect(
               conversionSkipOf(asset, facts, kind: kind),
               ConversionSkipReason.alreadyStereo,

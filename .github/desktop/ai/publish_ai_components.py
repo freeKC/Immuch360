@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The files of the prereleases ai-components-1 to 4: the AI components Immuch360 downloads when the user asks.
+"""The files of the prereleases ai-components-1 to 5: the AI components Immuch360 downloads when the user asks.
 
 Design: store/m2/ai-immersive-2026-10-26/design-final-2026-10-26.md, sections 2.2 and 4.6 (lot A3b), and
 phase23/design-final-2026-10-27.md, sections 7.1 to 7.4 (lot C2). The app carries a catalogue of these files with the
@@ -39,6 +39,11 @@ ai-components-4, the splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-
      .dll must carry an Authenticode signature; not signed, the script names those without one. A SHA256SUMS.txt in
      an artifact must agree with its files, a signed program apart, and is written again with the sums of the files as
      they are published.
+ai-components-5, the 3D videos (store/m2/release-49/lots/video3d-plan.md, section 3):
+  9. Video Depth Anything Small, the ONNX export of looplj (Apache-2.0, a community export of the official weights,
+     validated against them), from its source pinned to a revision, its card read again as for 5. The FFmpeg program
+     the 3D videos also need is not in this release: its archives are those of a release of immuch360/libmpv-builds,
+     held to its manifest by --check (below), as the AV2 decoder.
 Every release also holds MODEL-LICENSES.md (the copy of licenses/ai-components/MODEL-LICENSES.md, dated, one section
 per release, the other sections kept as they are) and SHA256SUMS.
 
@@ -60,14 +65,16 @@ per release, the other sections kept as they are) and SHA256SUMS.
       no release workflow runs on it (the upstream workflows that run on a published release are disabled in the
       fork). A release that exists already is never touched.
   publish_ai_components.py --check [--release TAG]
-      offline, for the four releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
+      offline, for the five releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
       be pending, said), in the release of its family, its file, parts and sums are those of the tables below, and
       MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart);
       and, whatever TAG, the three archives of the AV2 decoder (a release of immuch360/av2-companion, not made by this
       script): in that release (TAG_AV2 of AV2_REPOSITORY), under BSD-2-Clause, with no size, no sum and no file (a
       version that does not offer the decoder), or all of them, equal to the manifest of that release, whose copy is
       .github/desktop/ai/av2-companion-<version>.json (AV2_RECORD): the asset, its size and SHA-256, and every file
-      of the archive with its size, SHA-256 and mode; any other sums fail. The engines of ai-components-4, COLMAP
+      of the archive with its size, SHA-256 and mode; any other sums fail. The same for the three archives of the FFmpeg
+      program of the 3D videos, a release of immuch360/libmpv-builds (TAG_FFMPEG of FFMPEG_REPOSITORY) under
+      LGPL-2.1-or-later, held to FFMPEG_RECORD, the copy of its ffmpeg-lgpl-<tag>.json. The engines of ai-components-4, COLMAP
       and Brush, are checked as those of ai-components-3 (lot SP14; before it, lot SP8 held them back, lifted on the
       branch of their test build only, which nothing needs any more).
 
@@ -113,8 +120,11 @@ TAG_PANORAMAS = 'ai-components-3'
 # The splat scenes (store/m2/splat-maker-2026-11-01/plan-2026-11-01.md, section 2.3): COLMAP and Brush built by our CI
 # (lots SP1 and SP2), made into this release by this script since lot SP14 (ENGINES below)
 TAG_SPLATS = 'ai-components-4'
-RELEASES = (TAG, TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS)
-FAMILIES = {TAG: '3D photos', TAG_SCENES: '3D scenes', TAG_PANORAMAS: '360° panoramas', TAG_SPLATS: 'splat scenes'}
+# The 3D videos of the computers (store/m2/release-49/lots/video3d-plan.md, section 3): Video Depth Anything Small
+TAG_VIDEOS = 'ai-components-5'
+RELEASES = (TAG, TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS)
+FAMILIES = {TAG: '3D photos', TAG_SCENES: '3D scenes', TAG_PANORAMAS: '360° panoramas', TAG_SPLATS: 'splat scenes',
+            TAG_VIDEOS: '3D videos'}
 SUMS = 'SHA256SUMS'
 # GitHub refuses an asset of 2 GiB or more; a larger file goes in parts of the largest whole number of MiB under 1.9 GiB
 ASSET_LIMIT = 2 * 1024 ** 3
@@ -131,6 +141,14 @@ AV2_LICENCES = ('BSD-2-Clause',)
 # The copy of av2-companion-<version>.json, an asset of that release: the archive of each entry with its URL, size,
 # sum and files
 AV2_RECORD = ROOT / '.github' / 'desktop' / 'ai' / 'av2-companion-1.0.1.json'
+# The FFmpeg program of the 3D videos (video3d-plan.md, section 3): archives built, checked, signed and released by
+# github.com/immuch360/libmpv-builds (.github/workflows/ffmpeg.yml), LGPL 2.1 or later, which this script does not make;
+# held like the AV2 decoder to the manifest of their release, whose copy is FFMPEG_RECORD
+TAG_FFMPEG = 'ffmpeg-lgpl-20261118-9'
+FFMPEG_REPOSITORY = 'immuch360/libmpv-builds'
+FFMPEG_ARCHIVES = ('ffmpeg-lgpl-windows-x64', 'ffmpeg-lgpl-linux-x64', 'ffmpeg-lgpl-macos-universal')
+FFMPEG_LICENCES = ('LGPL-2.1-or-later',)
+FFMPEG_RECORD = ROOT / '.github' / 'desktop' / 'ai' / f'ffmpeg-lgpl-{TAG_FFMPEG}.json'
 LICENCES_NAME = 'MODEL-LICENSES.md'
 ORT_RELEASES = 'https://github.com/microsoft/onnxruntime/releases/download'
 USER_AGENT = 'immuch360-ai-components'
@@ -295,6 +313,16 @@ UPSTREAM = (
              'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth', 67040989,
              '4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1', 'github:xinntao/Real-ESRGAN', 'v0.1.0',
              'RealESRGAN_x4plus.pth', 'BSD-3-Clause', 'the upscaler of a panorama (x4)'),
+    # The 3D videos: the export of looplj, validated by its author against the official weights (its validation.json),
+    # which this project downloaded and checked too (store/m2/release-49/video3d-study.md, section 1)
+    Upstream('video-depth-anything-small-onnx', TAG_VIDEOS,
+             f'{HF}/looplj/video-depth-anything-small-onnx/resolve/ff810849333df46d37ea18a885fc11689661fe96/'
+             'video-depth-anything-small-dynamic-fp32.onnx', 116528885,
+             'eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99',
+             'looplj/video-depth-anything-small-onnx', 'ff810849333df46d37ea18a885fc11689661fe96',
+             'video-depth-anything-small-dynamic-fp32.onnx', 'apache-2.0',
+             'the depth of a video, 32 frames at a time: Video Depth Anything Small, ONNX export of looplj (fp32, '
+             'opset 17)'),
 )
 
 ENGINES = (
@@ -644,8 +672,8 @@ def licences_header(date: str) -> list:
         '# Licences of the AI components of Immuch360',
         '',
         f'Date: {date}. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases',
-        f'`{TAG}` (3D photos), `{TAG_SCENES}` (3D scenes), `{TAG_PANORAMAS}` (360° panoramas) and `{TAG_SPLATS}`',
-        '(splat scenes):',
+        f'`{TAG}` (3D photos), `{TAG_SCENES}` (3D scenes), `{TAG_PANORAMAS}` (360° panoramas), `{TAG_SPLATS}`',
+        f'(splat scenes) and `{TAG_VIDEOS}` (3D videos):',
         f'https://github.com/{REPO}/releases',
         '',
         'The app downloads a component only when the user asks for it, checks its SHA-256 against the catalogue built',
@@ -815,6 +843,42 @@ FAMILY_NOTES = {
         'Microsoft; on Linux, `immuch360-run`, the launcher of the app (MIT). No model of any kind: neither program',
         'needs one.',
     ],
+    TAG_VIDEOS: [
+        'Video Depth Anything Small: Apache-2.0 (https://huggingface.co/depth-anything/Video-Depth-Anything-Small,',
+        'the README of https://github.com/DepthAnything/Video-Depth-Anything: "Video-Depth-Anything-Small model is',
+        'under the Apache-2.0 license"), Copyright (2025) Bytedance Ltd. The Base and Large models are CC BY-NC 4.0 and',
+        'are not used. The file is the ONNX export of looplj (Reveric), a community export, not one of the authors:',
+        'https://huggingface.co/looplj/video-depth-anything-small-onnx at revision',
+        '`ff810849333df46d37ea18a885fc11689661fe96`, Apache-2.0 on its card, its `LICENSE` the Apache License 2.0',
+        '(SHA-256 `43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1`). Its author validated it against',
+        'the unmodified PyTorch model (normalised RMSE 4.8e-7 to 1.4e-6 at six sizes, its `validation.json`), made from',
+        'the official weights `video_depth_anything_vits.pth` of',
+        'https://huggingface.co/depth-anything/Video-Depth-Anything-Small (116440756 bytes, SHA-256',
+        '`13379300b739e659f076a59d52e9801bd8d38c541a7e71f73bbca4dcfb013609`, downloaded and checked by this project)',
+        'and the code of https://github.com/DepthAnything/Video-Depth-Anything at `4f5ae23172`. Its `NOTICE`',
+        '(SHA-256 `f7429610cbd3e3726dae44b32ffce8adb71da0a6c2ae3eb31884395fe1abaa9b`), which section 4 (d) of the',
+        'licence asks to keep with the file:',
+        '',
+        '```',
+        'Video Depth Anything Small',
+        'Copyright (2025) Bytedance Ltd. and/or its affiliates',
+        'Original project: https://github.com/DepthAnything/Video-Depth-Anything',
+        'Reveric conversion: dynamic spatial ONNX export; unchanged FP32 checkpoint weights.',
+        'Export-only adaptations preserve positional interpolation, replace specialized video',
+        'reshapes, and express temporal attention with standard MatMul/Softmax operators.',
+        '```',
+        '',
+        'Training data (paper arXiv 2501.12375 v4, supplementary): video frames of TartanAir (CC BY 4.0), Virtual',
+        'KITTI (CC BY-NC-SA 3.0), PointOdyssey (CC BY-NC-SA 4.0) and IRS, wild binocular videos pseudo-labelled, and',
+        'images of the set of Depth Anything V2, from which the weights start. Two of these datasets are non',
+        'commercial; the authors license the Small weights under Apache-2.0 all the same, as for Depth Anything V2',
+        'Small, which the 3D photos use: the licence of the weights is the one this project reads.',
+        '',
+        'The FFmpeg program the 3D videos also download (ffmpeg and ffprobe, LGPL-2.1-or-later, no GPL or non free',
+        'part) is not in this release: its archives are those of a release `ffmpeg-lgpl-*` of',
+        'https://github.com/immuch360/libmpv-builds, with their licence texts, `PATENTS-NOTE.md` and corresponding',
+        'source, checked by their SHA-256 like these files.',
+    ],
 }
 
 
@@ -967,7 +1031,8 @@ def licences_for(date: str, catalogue: dict, kept: str, made: dict | None = None
                  upstream: tuple = UPSTREAM) -> str:
     """MODEL-LICENSES.md: the section of [release] from [made] (the photos) or from the catalogue (a family), the
     other families from the catalogue, the photos kept from [kept] when [release] is another one"""
-    sections = {tag: family_section(tag, catalogue, upstream) for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS)}
+    sections = {tag: family_section(tag, catalogue, upstream)
+                for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS)}
     if release == TAG and made is not None:
         sections[TAG] = made['photos']
     else:
@@ -1487,34 +1552,84 @@ def hexadecimal(digest) -> bool:
     return isinstance(digest, str) and re.fullmatch(r'[0-9a-f]{64}', digest) is not None
 
 
-def av2_with_sums(catalogue: dict) -> list:
-    """The entries of the AV2 decoder that carry a size, a sum or files"""
-    return sorted(component_id for component_id in AV2_DECODERS if component_id in catalogue and (
+@dataclasses.dataclass(frozen=True)
+class Outside:
+    """Archives of the catalogue released by another repository, which this script does not make: the AV2 decoder
+    (immuch360/av2-companion) and the FFmpeg program of the 3D videos (immuch360/libmpv-builds)"""
+    name: str
+    ids: tuple
+    tag: str
+    repository: str
+    licences: tuple
+    record: pathlib.Path
+
+
+OUTSIDE = (
+    Outside('the AV2 decoder', AV2_DECODERS, TAG_AV2, AV2_REPOSITORY, AV2_LICENCES, AV2_RECORD),
+    Outside('the FFmpeg program', FFMPEG_ARCHIVES, TAG_FFMPEG, FFMPEG_REPOSITORY, FFMPEG_LICENCES, FFMPEG_RECORD),
+)
+
+
+def av2_with_sums(catalogue: dict, outside: Outside = OUTSIDE[0]) -> list:
+    """The entries of the AV2 decoder (or of [outside]) that carry a size, a sum or files"""
+    return sorted(component_id for component_id in outside.ids if component_id in catalogue and (
         catalogue[component_id].get('size') is not None or catalogue[component_id].get('sha256') is not None
         or bool(catalogue[component_id]['archiveFiles'])))
 
 
-def av2_record_findings(catalogue: dict, record: dict | None) -> list:
-    """How the AV2 decoder of the catalogue differs from the manifest of its release ([record], AV2_RECORD)"""
-    if not record or record.get('tag') != TAG_AV2 or record.get('repository') != f'https://github.com/{AV2_REPOSITORY}':
-        return [f'the AV2 decoder carries sums but {AV2_RECORD.name} is not the manifest of {AV2_REPOSITORY} {TAG_AV2}']
+def av2_record_findings(catalogue: dict, record: dict | None, outside: Outside = OUTSIDE[0]) -> list:
+    """How the AV2 decoder (or [outside]) of the catalogue differs from the manifest of its release ([record])"""
+    tag, repository = outside.tag, outside.repository
+    if not record or record.get('tag') != tag or record.get('repository') != f'https://github.com/{repository}':
+        return [f'{outside.name} carries sums but {outside.record.name} is not the manifest of {repository} {tag}']
     found = []
     archives = record.get('archives', {})
-    for component_id in AV2_DECODERS:
+    for component_id in outside.ids:
         entry, recorded = catalogue.get(component_id, {}), archives.get(component_id) or {}
         held = {'assetName': entry.get('assetName'), 'size': entry.get('size'), 'sha256': entry.get('sha256')}
         expected = {key: recorded.get(key) for key in held}
         if held != expected:
-            found.append(f'{component_id}: the catalogue has {held}, the manifest of {TAG_AV2} {expected}')
+            found.append(f'{component_id}: the catalogue has {held}, the manifest of {tag} {expected}')
             continue
-        url = f'https://github.com/{AV2_REPOSITORY}/releases/download/{TAG_AV2}/{entry.get("assetName")}'
+        url = f'https://github.com/{repository}/releases/download/{tag}/{entry.get("assetName")}'
         if recorded.get('url') != url:
-            found.append(f'{component_id}: the manifest of {TAG_AV2} serves it from {recorded.get("url")}, not {url}')
+            found.append(f'{component_id}: the manifest of {tag} serves it from {recorded.get("url")}, not {url}')
         files = sorted((file['path'], file['size'], file['sha256'], file['executable'])
                        for file in recorded.get('archiveFiles', []))
         if sorted(entry.get('archiveFiles', [])) != files:
-            found.append(f'{component_id}: the files of its archive are not those of the manifest of {TAG_AV2}')
+            found.append(f'{component_id}: the files of its archive are not those of the manifest of {tag}')
     return found
+
+
+def outside_findings(catalogue: dict, outside: Outside) -> tuple:
+    """The rules of an archive of another repository ([outside]): its release, its licence, all its sums or none"""
+    found, pending = [], []
+    for component_id in outside.ids:
+        component = catalogue.get(component_id)
+        if component is None:
+            continue
+        if component.get('releaseTag') != outside.tag:
+            found.append(f'{component_id}: in {component.get("releaseTag")}, {outside.name} is in {outside.tag}')
+        if component.get('releaseRepository') != outside.repository:
+            found.append(f'{component_id}: in a release of {component.get("releaseRepository")}, {outside.name} is in '
+                         f'those of {outside.repository}')
+        if component.get('licence') not in outside.licences:
+            found.append(f'{component_id}: licence {component.get("licence")}, {outside.name} is under '
+                         f'{", ".join(outside.licences)}')
+        if component.get('kind') != 'AiComponentKind.archive':
+            found.append(f'{component_id}: {outside.name} is an archive')
+        size, digest, files = component.get('size'), component.get('sha256'), component['archiveFiles']
+        if size is None and digest is None and not files:
+            pending.append(component_id)
+        elif not isinstance(size, int) or not hexadecimal(digest) or not files:
+            found.append(f'{component_id}: incomplete in the catalogue (size {size}, sha256 {digest}, {len(files)} files)')
+        else:
+            for path, _, file_digest, _ in files:
+                if not safe_path(path) or not hexadecimal(file_digest):
+                    found.append(f'{component_id}: the file {path!r} of its archive is not a safe path with a sum')
+            if not any(executable for *_, executable in files):
+                found.append(f'{component_id}: its archive holds no program')
+    return found, pending
 
 
 def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, releases: tuple = RELEASES) -> tuple:
@@ -1529,34 +1644,13 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
     family = {**{component: TAG for component in [*archives, *models]},
               **{component: model.release for component, model in upstream.items()},
               **{component: engine.release for component, engine in engines.items()},
-              **{component: TAG_AV2 for component in AV2_DECODERS}}
+              **{component: outside.tag for outside in OUTSIDE for component in outside.ids}}
     if set(catalogue) != set(family):
         found.append(f'the catalogue has {sorted(catalogue)}; this script knows {sorted(family)}')
-    for component_id in AV2_DECODERS:
-        component = catalogue.get(component_id)
-        if component is None:
-            continue
-        if component.get('releaseTag') != TAG_AV2:
-            found.append(f'{component_id}: in {component.get("releaseTag")}, the AV2 decoder is in {TAG_AV2}')
-        if component.get('releaseRepository') != AV2_REPOSITORY:
-            found.append(f'{component_id}: in a release of {component.get("releaseRepository")}, the AV2 decoder is in '
-                         f'those of {AV2_REPOSITORY}')
-        if component.get('licence') not in AV2_LICENCES:
-            found.append(f'{component_id}: licence {component.get("licence")}, the AV2 decoder is under '
-                         f'{", ".join(AV2_LICENCES)}')
-        if component.get('kind') != 'AiComponentKind.archive':
-            found.append(f'{component_id}: the AV2 decoder is an archive')
-        size, digest, files = component.get('size'), component.get('sha256'), component['archiveFiles']
-        if size is None and digest is None and not files:
-            pending.append(component_id)
-        elif not isinstance(size, int) or not hexadecimal(digest) or not files:
-            found.append(f'{component_id}: incomplete in the catalogue (size {size}, sha256 {digest}, {len(files)} files)')
-        else:
-            for path, _, file_digest, _ in files:
-                if not safe_path(path) or not hexadecimal(file_digest):
-                    found.append(f'{component_id}: the file {path!r} of its archive is not a safe path with a sum')
-            if not any(executable for *_, executable in files):
-                found.append(f'{component_id}: its archive holds no program')
+    for outside in OUTSIDE:
+        found_here, pending_here = outside_findings(catalogue, outside)
+        found += found_here
+        pending += pending_here
     for component_id, component in sorted(catalogue.items()):
         release = family.get(component_id, component.get('releaseTag'))
         if release not in releases:
@@ -1639,7 +1733,7 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
         if row not in licences:
             found.append(f'{LICENCES_NAME} lacks the row {row}')
     sections = sections_of(licences)
-    for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS):
+    for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS):
         if tag in releases and sections.get(tag) != family_section(tag, catalogue, tuple(upstream_table)):
             found.append(f'the section of {tag} in {LICENCES_NAME} is not what the catalogue gives: run with '
                          f'--write-licences')
@@ -1664,6 +1758,10 @@ NOTES = {
                 'Brush 0.3.0 (Apache-2.0), which trains the splat on the graphics card through Vulkan, built by our CI '
                 'without its LPIPS weights. For Windows x64 and Linux x64; this version of the app offers the splat '
                 'scenes on Windows only.',
+    TAG_VIDEOS: 'The AI component of the 3D videos of Immuch360 Desktop (experimental): Video Depth Anything Small '
+                '(Apache-2.0, Copyright (2025) Bytedance Ltd.), the ONNX export of looplj at a pinned revision, '
+                'which gives the depth of a video 32 frames at a time on the processor. The FFmpeg program the '
+                'feature also needs comes from a release of immuch360/libmpv-builds.',
 }
 
 
@@ -1818,7 +1916,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--out', type=pathlib.Path, help='the folder of the files of the release')
     parser.add_argument('--release', choices=RELEASES, help=f'the release to make or check ({TAG} by default when '
-                        'making, all four when checking)')
+                        'making, all five when checking)')
     parser.add_argument('--cache', type=pathlib.Path, action='append', default=[],
                         help='a folder of files already downloaded or made; downloads go to the first one')
     parser.add_argument('--from-run', help='the run of our CI whose artifacts give the engines of '
@@ -1834,6 +1932,7 @@ def main(argv=None) -> int:
     parser.add_argument('--sources', type=pathlib.Path, help=argparse.SUPPRESS)
     parser.add_argument('--catalogue', type=pathlib.Path, default=CATALOGUE, help=argparse.SUPPRESS)
     parser.add_argument('--av2-record', type=pathlib.Path, default=AV2_RECORD, help=argparse.SUPPRESS)
+    parser.add_argument('--ffmpeg-record', type=pathlib.Path, default=FFMPEG_RECORD, help=argparse.SUPPRESS)
     parser.add_argument('--licences', type=pathlib.Path, default=LICENCES, help=argparse.SUPPRESS)
     parser.add_argument('--date', default=datetime.date.today().isoformat(), help=argparse.SUPPRESS)
     parser.add_argument('--repo', default=REPO, help=argparse.SUPPRESS)
@@ -1868,22 +1967,30 @@ def main(argv=None) -> int:
         licences = args.licences.read_text(encoding='utf-8') if args.licences.is_file() else ''
         releases = (args.release,) if args.release else RELEASES
         found, pending = check(catalogue, licences, args.sources, releases)
-        with_sums = av2_with_sums(catalogue)
-        record = json.loads(args.av2_record.read_text(encoding='utf-8')) if args.av2_record.is_file() else None
-        if with_sums:
-            found[0:0] = av2_record_findings(catalogue, record)
+        records = {OUTSIDE[0].name: args.av2_record, OUTSIDE[1].name: args.ffmpeg_record}
+        said = []
+        for outside in OUTSIDE:
+            path = records[outside.name]
+            record = json.loads(path.read_text(encoding='utf-8')) if path.is_file() else None
+            if av2_with_sums(catalogue, outside):
+                found[0:0] = av2_record_findings(catalogue, record, outside)
+                said.append(f'{outside.name} carries the archives of {outside.repository} {outside.tag} as its '
+                            f'manifest gives them (run {(record or {}).get("run")}, commit '
+                            f'{(record or {}).get("commit")})')
+            else:
+                waiting = sorted(component for component in pending if component in outside.ids)
+                if waiting:
+                    said.append(f'{outside.name} is not offered (no sums): {", ".join(waiting)}')
         for line in found:
             print(f'publish_ai_components: {line}')
         if found:
             return 1
         counted = [component for component in catalogue.values() if component.get('releaseTag') in releases]
-        engines = sorted(component for component in pending if component not in AV2_DECODERS)
-        decoders = sorted(component for component in pending if component in AV2_DECODERS)
+        outside_ids = {component for outside in OUTSIDE for component in outside.ids}
+        engines = sorted(component for component in pending if component not in outside_ids)
         print(f'{len(counted)} components in {", ".join(releases)}, each complete and named with its size and SHA-256 '
               f'in {LICENCES_NAME}' + (f'; pending for lot P2: {", ".join(engines)}' if engines else '')
-              + (f'; the AV2 decoder is not offered (no sums): {", ".join(decoders)}' if decoders else '')
-              + (f'; the AV2 decoder carries the archives of {AV2_REPOSITORY} {TAG_AV2} as its manifest gives them '
-                 f'(run {record.get("run")}, commit {record.get("commit")})' if with_sums else ''))
+              + ''.join(f'; {line}' for line in said))
         return 0
     if args.out is None:
         print('--out DIR is needed (or --check)')

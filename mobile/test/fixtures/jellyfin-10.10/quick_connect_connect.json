@@ -1,0 +1,10 @@
+{
+ "AppName": "Bench",
+ "AppVersion": "1",
+ "Authenticated": false,
+ "Code": "411222",
+ "DateAdded": "2026-11-18T14:09:45.7577708Z",
+ "DeviceId": "redacted",
+ "DeviceName": "Bench",
+ "Secret": "redacted"
+}

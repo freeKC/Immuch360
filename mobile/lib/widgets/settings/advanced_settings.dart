@@ -91,6 +91,12 @@ class AdvancedSettings extends HookConsumerWidget {
     useValueChanged<bool, void>(sharpFlatScreens.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerSharpFlatScreens, sharpFlatScreens.value));
     });
+    // The blurred copy of a photo around it on the flat screens of the immersive viewer of a Meta Quest (issue 19),
+    // experimental and on by default
+    final frostedFlatScreens = useState(ref.watch(appConfigProvider).viewer.frostedFlatScreens);
+    useValueChanged<bool, void>(frostedFlatScreens.value, (_, _) {
+      unawaited(ref.read(settingsProvider).write(.viewerFrostedFlatScreens, frostedFlatScreens.value));
+    });
     // The Gaussian splat files of other tools in the immersive viewer of a Meta Quest 3 or 3S, experimental and on by
     // default, and the larger count of Large splats (1 000 000 instead of 300 000), off by default (decision D7)
     final gaussianSplats = useState(ref.watch(appConfigProvider).viewer.gaussianSplats);
@@ -241,6 +247,13 @@ class AdvancedSettings extends HookConsumerWidget {
           valueNotifier: sharpFlatScreens,
           title: context.t.setting_immersive_sharp_screens_title,
           subtitle: context.t.setting_immersive_sharp_screens_subtitle,
+        ),
+      if (isHorizonOs)
+        SettingsSwitchListTile(
+          key: const Key('advanced_settings_frosted_screens'),
+          valueNotifier: frostedFlatScreens,
+          title: context.t.advanced_settings_frosted_flat_screens_title,
+          subtitle: context.t.advanced_settings_frosted_flat_screens_subtitle,
         ),
       if (splatsInThisBuild)
         SettingsSwitchListTile(

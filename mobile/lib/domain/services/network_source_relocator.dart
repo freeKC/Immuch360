@@ -52,6 +52,7 @@ class NetworkSourceRelocator {
     NetworkSourceType.webdav || NetworkSourceType.dlna => source.useTls ? 443 : 80,
     NetworkSourceType.plex => 32400,
     NetworkSourceType.tapo => 443,
+    NetworkSourceType.jellyfin => source.useTls ? 8920 : 8096,
     // Found again by its WS-Discovery endpoint, at the port of its device service
     NetworkSourceType.ipCamera => source.ipCamera?.onvifPort ?? 80,
     // Never found on the network: a folder picked on the device

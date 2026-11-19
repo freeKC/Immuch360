@@ -1,4 +1,4 @@
-// Settings, Advanced: the player of the films of a Plex server and the server's conversion (release 46,
+// Settings, Advanced: the player of the films of a Plex, Jellyfin or Emby server and the server's conversion (release 46,
 // film_player_choice.dart). The player (Automatic, Device, mpv) on a build with libmpv only (the Meta Quest build of
 // 46); the conversion, experimental and on by default, on Android, where the app chooses the player.
 

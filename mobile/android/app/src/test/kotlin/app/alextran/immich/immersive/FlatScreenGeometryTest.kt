@@ -214,18 +214,73 @@ class FlatScreenGeometryTest {
   }
 
   @Test
-  fun `a screen brought nearer keeps its width in meters, so it looks larger, within the size bounds`() {
+  fun `a screen brought nearer keeps its width in meters, so it looks larger, and never shrinks`() {
     val width = FlatScreenGeometry.width(48f, 2f)
-    val nearer = FlatScreenGeometry.angleAtDistance(48f, 2f, 1.5f)
+    val nearer = FlatScreenGeometry.keptAngle(48f, 2f, 1.5f, twoEyes = false, estimatedRelief = false)
     assertEquals(width, FlatScreenGeometry.width(nearer, 1.5f), 1e-4f)
     assertTrue(nearer > 48f)
-    assertEquals(FlatScreenGeometry.MAX_ANGLE_DEG, FlatScreenGeometry.angleAtDistance(100f, 2f, 0.75f), 0f)
-    assertEquals(FlatScreenGeometry.MIN_ANGLE_DEG, FlatScreenGeometry.angleAtDistance(20f, 1f, 8f), 0f)
+    // Issue 19, point 3: the Size bound no longer cuts a screen brought nearer, which made it smaller in meters
+    val past = FlatScreenGeometry.keptAngle(100f, 2f, 0.75f, twoEyes = false, estimatedRelief = false)
+    assertTrue(past > FlatScreenGeometry.MAX_ANGLE_DEG)
+    assertEquals(FlatScreenGeometry.width(100f, 2f), FlatScreenGeometry.width(past, 0.75f), 1e-3f)
+    // Farther, the smallest Size still holds
+    assertEquals(
+      FlatScreenGeometry.MIN_ANGLE_DEG,
+      FlatScreenGeometry.keptAngle(20f, 1f, 8f, twoEyes = false, estimatedRelief = false),
+      0f,
+    )
+    // A photo of two eyes taken to 8 m stops at 30 degrees
+    assertEquals(30f, FlatScreenGeometry.keptAngle(60f, 2f, 8f, twoEyes = true, estimatedRelief = false), 0f)
+    // The clamp of angleAtDistance is still there for the callers that want it
     assertEquals(40f, FlatScreenGeometry.angleAtDistance(48f, 2f, 1.5f, 15f..40f), 0f)
-    // A photo of two eyes brought from 2 m to 0.75 m stops at 90 degrees, and taken to 8 m at 30
-    val twoEyes = FlatScreenGeometry.angleBounds(twoEyes = true, estimatedRelief = false)
-    assertEquals(90f, FlatScreenGeometry.angleAtDistance(60f, 2f, 0.75f, twoEyes), 0f)
-    assertEquals(30f, FlatScreenGeometry.angleAtDistance(60f, 2f, 8f, twoEyes), 0f)
+  }
+
+  @Test
+  fun `one picture 110 degrees wide at 2 m keeps its 5_71 m down to 0_75 m, under the near guard`() {
+    val meters = FlatScreenGeometry.width(110f, 2f)
+    assertEquals(5.71f, meters, 0.01f)
+    var angle = 110f
+    var distance = 2f
+    while (distance > FlatScreenGeometry.DISTANCES_M.first()) {
+      val next = FlatScreenGeometry.nextDistance(distance, -1)
+      assertTrue(FlatScreenGeometry.nearerAllowed(angle, distance, next, twoEyes = false, estimatedRelief = false))
+      val nextAngle = FlatScreenGeometry.keptAngle(angle, distance, next, twoEyes = false, estimatedRelief = false)
+      assertTrue("grows at $next m", nextAngle > angle)
+      assertEquals(meters, FlatScreenGeometry.width(nextAngle, next), 1e-3f)
+      angle = nextAngle
+      distance = next
+    }
+    assertEquals(150.6f, angle, 0.1f)
+    assertTrue(angle < FlatScreenGeometry.NEAR_MAX_DEG)
+  }
+
+  @Test
+  fun `a photo of two eyes is not brought nearer past 90 degrees, an estimated relief past 60`() {
+    // 60 degrees at 2 m: 75 at 1.5 m, 85 at 1.25 m, then 98 at 1 m would pass 90
+    assertTrue(FlatScreenGeometry.nearerAllowed(60f, 2f, 1.5f, twoEyes = true, estimatedRelief = false))
+    val at125 = FlatScreenGeometry.keptAngle(60f, 2f, 1.25f, twoEyes = true, estimatedRelief = false)
+    assertEquals(85.45f, at125, 0.1f)
+    assertTrue(FlatScreenGeometry.nearerAllowed(60f, 2f, 1.25f, twoEyes = true, estimatedRelief = false))
+    assertFalse(FlatScreenGeometry.nearerAllowed(at125, 1.25f, 1f, twoEyes = true, estimatedRelief = false))
+    // Exactly at the bound is allowed
+    val distanceAt90 = FlatScreenGeometry.width(60f, 2f) / 2f
+    assertTrue(FlatScreenGeometry.nearerAllowed(60f, 2f, distanceAt90, twoEyes = true, estimatedRelief = false))
+    // An estimated relief stops at 60: 48 degrees at 2 m to 1.5 m is 61
+    assertFalse(FlatScreenGeometry.nearerAllowed(48f, 2f, 1.5f, twoEyes = true, estimatedRelief = true))
+    assertTrue(FlatScreenGeometry.nearerAllowed(40f, 2f, 1.75f, twoEyes = true, estimatedRelief = true))
+    // Farther is always allowed, and one picture nearer up to the guard
+    assertTrue(FlatScreenGeometry.nearerAllowed(90f, 1f, 2f, twoEyes = true, estimatedRelief = false))
+    assertTrue(FlatScreenGeometry.nearerAllowed(110f, 2f, 0.75f, twoEyes = false, estimatedRelief = false))
+    assertFalse(FlatScreenGeometry.nearerAllowed(155f, 1f, 0.75f, twoEyes = false, estimatedRelief = false))
+  }
+
+  @Test
+  fun `a screen wider than its bounds keeps its angle in the bounds of a stretch or a Size press`() {
+    assertEquals(15f..151f, FlatScreenGeometry.boundsHolding(15f..110f, 151f))
+    assertEquals(15f..110f, FlatScreenGeometry.boundsHolding(15f..110f, 60f))
+    val bounds = FlatScreenGeometry.boundsHolding(15f..110f, 151f)
+    assertEquals(145f, FlatScreenGeometry.nextAngle(151f, -1, bounds), 0f)
+    assertEquals(151f, FlatScreenGeometry.nextAngle(151f, 1, bounds), 0f)
   }
 
   @Test

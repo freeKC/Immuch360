@@ -57,7 +57,7 @@ webOS 5 (2020 TVs) or later; SMB needs webOS 22 (2022 TVs) or later. A webOS 4 T
 |---|---|---|
 | SMB share (Windows, Samba on a NAS) | Add a share, SMB: the server's address, "Choose a share" lists its shares, a user and a password | the folders, photos (with the small picture the camera wrote in each JPEG) and videos |
 | WebDAV (Nextcloud, Synology and others) | Add a share, WebDAV: the server, the path of its WebDAV address, HTTPS or not, a user and a password | the same |
-| DLNA media server (Jellyfin, minidlna, a NAS, a TV box) | Pick it under "Found on the network", or type its description address | the server's folders and pictures; its videos go straight to the TV's player |
+| DLNA media server (Jellyfin with its DLNA plugin, minidlna, a NAS, a TV box) | Pick it under "Found on the network", or type its description address | the server's folders and pictures; its videos go straight to the TV's player |
 | Plex Media Server | Add a Plex server: one found on the network without a Plex account is added as it is; for the others, "Sign in with Plex" shows a code to type on plex.tv/link with a phone (or scan the QR code), then the servers of the account | the libraries and folders; photos made at the TV's size by Plex; a video the TV cannot play is converted by Plex (HLS) |
 | Tapo camera | Add a camera: its address and the camera account (Tapo app, camera settings, Advanced Settings, Camera Account) | the live view, HD or SD, video only |
 

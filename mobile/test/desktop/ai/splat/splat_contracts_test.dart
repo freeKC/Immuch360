@@ -379,6 +379,7 @@ void main() {
       expect(AiFeature.splatScene.platforms, [AiPlatform.windowsX64]);
       expect(AiFeatureGroup.splats.features, {AiFeature.splatScene});
       // Held from lot SP8 to lot SP14, until ai-components-4 was made
+      // Nothing held since the screens of the 3D videos (release 49)
       expect(aiHeldFeatureGroups, isEmpty);
       expect(aiComponentsSplatsReleaseTag, 'ai-components-4');
       expect(aiComponentGroupsFor(AiPlatform.windowsX64).map((group) => group.group), contains(AiFeatureGroup.splats));

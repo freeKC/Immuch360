@@ -169,7 +169,14 @@ void main() {
       updatedAt: DateTime(2025),
       isEdited: false,
     );
-    expect(ActionButtonType.makeImmersive.shouldShow(_viewerContext(video)), isFalse);
+    // A video for its 3D video (release 49): the button itself hides when no type takes it
+    expect(ActionButtonType.makeImmersive.shouldShow(_viewerContext(video)), isTrue);
+    expect(
+      ActionButtonType.makeImmersive.shouldShow(
+        _viewerContext(video, locked: true, origin: TimelineOrigin.lockedFolder),
+      ),
+      isFalse,
+    );
   });
 
   test('"Make a splat scene (AI)" is in the menu of the viewer of a video, on the computers only', () {

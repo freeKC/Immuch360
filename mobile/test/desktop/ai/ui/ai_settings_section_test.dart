@@ -396,6 +396,7 @@ void main() {
         gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
       ),
     );
+    // Nothing held since the screens of the 3D videos (release 49)
     expect(aiHeldFeatureGroups, isEmpty);
     expect(find.text('22 logical processors, 32.0 GiB of memory'), findsOneWidget);
     expect(

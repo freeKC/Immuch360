@@ -302,6 +302,10 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       unawaited(_replaceWith(PlexServerEditRoute(server: server)));
       return;
     }
+    if (server.type == NetworkSourceType.jellyfin) {
+      unawaited(_replaceWith(JellyfinServerEditRoute(server: server)));
+      return;
+    }
     if (server.type == NetworkSourceType.tapo) {
       unawaited(_replaceWith(CameraEditRoute(server: server)));
       return;
@@ -482,6 +486,7 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       NetworkSourceType.dlna => normalizeDescriptionPath(shareText),
       // Never held by this form: they have pages of their own
       NetworkSourceType.plex ||
+      NetworkSourceType.jellyfin ||
       NetworkSourceType.tapo ||
       NetworkSourceType.ipCamera ||
       NetworkSourceType.documentTree ||
@@ -751,6 +756,11 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                       unawaited(_replaceWith(PlexServerEditRoute()));
                       return;
                     }
+                    if (type == NetworkSourceType.jellyfin) {
+                      // As Plex: a page of its own, with its sign in
+                      unawaited(_replaceWith(JellyfinServerEditRoute()));
+                      return;
+                    }
                     if (type != null && type != _type) {
                       setState(() {
                         _type = type;
@@ -783,7 +793,8 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                         value: NetworkSourceType.dlna,
                         contentPadding: EdgeInsets.zero,
                         dense: true,
-                        title: Text(context.t.network_share_type_dlna),
+                        // Not network_share_type_dlna, which the TV apps show: they have no Jellyfin type
+                        title: Text(context.t.network_share_type_dlna_server),
                       ),
                       // A share saved as another type stays one of those: a Plex server is added, not converted
                       if (_isNew)
@@ -794,11 +805,26 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
                           dense: true,
                           title: Text(context.t.network_share_type_plex),
                         ),
+                      if (_isNew)
+                        RadioListTile<NetworkSourceType>(
+                          key: const Key('network_share_type_jellyfin'),
+                          value: NetworkSourceType.jellyfin,
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          title: Text(context.t.network_share_type_jellyfin),
+                        ),
                     ],
                   ),
                 ),
                 if (isDlna) ...[
                   const SizedBox(height: 4),
+                  // A stock Jellyfin has had no DLNA since 10.9: its own type is in the list above, for a new source
+                  if (_isNew)
+                    Text(
+                      context.t.network_share_dlna_hint_jellyfin,
+                      key: const Key('network_share_dlna_hint_jellyfin'),
+                      style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurfaceVariant),
+                    ),
                   Text(
                     context.t.network_share_dlna_hint,
                     key: const Key('network_share_dlna_hint'),

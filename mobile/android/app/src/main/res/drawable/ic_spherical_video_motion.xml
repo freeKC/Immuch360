@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The gyroscope button of the 360° video player: filled when on, outlined when off, as in the 360° photo viewer -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:drawable="@drawable/ic_spherical_video_motion_on" android:state_selected="true" />
+  <item android:drawable="@drawable/ic_spherical_video_motion_off" />
+</selector>

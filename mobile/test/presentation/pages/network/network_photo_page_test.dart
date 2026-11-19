@@ -82,6 +82,8 @@ class _RecordingImmersiveApi extends ImmersiveApi {
     bool gaussianSplats = true,
     int watchMinDurationMs = -1,
     String? startNotice,
+    int slideshowSeconds = 0,
+    bool frostedBackground = true,
   }) async {
     opened.add({'url': url, 'isVideo': isVideo, 'title': title, 'layout': stereoLayout, 'coverage': coverage});
     startPositions.add(startPositionMs);

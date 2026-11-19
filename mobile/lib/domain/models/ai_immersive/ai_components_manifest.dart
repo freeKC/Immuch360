@@ -28,6 +28,13 @@
 // run 41884480484 of the release workflow (with_splat and sign_test: colmap.exe and brush_app.exe signed by APROGSYS)
 // for its publication (lot SP14).
 //
+// The 3D videos of the computers (store/m2/release-49/lots/video3d-plan.md, sections 3 and 4.1, experimental) take
+// Video Depth Anything Small (Apache-2.0, the ONNX export of looplj at a pinned revision) from ai-components-5, ONNX
+// Runtime shared with the photos, and an FFmpeg program under the LGPL 2.1 or later: three archives of a release of
+// github.com/immuch360/libmpv-builds (.github/workflows/ffmpeg.yml), as its manifest gives them (a copy in
+// .github/desktop/ai/ffmpeg-lgpl-<tag>.json). Their group, held in aiHeldFeatureGroups until the screens of the 3D
+// videos offered it, is offered since release 49, labelled experimental.
+//
 // Shared with the Meta Quest, which reads the LiteRT model from it.
 
 /// The tag of the prerelease that hosts the files of phase 1 (never "Latest": the app reads releases/latest)
@@ -37,6 +44,7 @@ const aiComponentsReleaseTag = 'ai-components-1';
 const aiComponentsScenesReleaseTag = 'ai-components-2';
 const aiComponentsPanoramasReleaseTag = 'ai-components-3';
 const aiComponentsSplatsReleaseTag = 'ai-components-4';
+const aiComponentsVideosReleaseTag = 'ai-components-5';
 
 /// The repository whose releases host the components, but the AV2 decoder ([av2DecoderRepository])
 const aiComponentsRepository = 'freeKC/Immuch360';
@@ -74,7 +82,12 @@ enum AiFeature {
   splatScene([AiPlatform.windowsX64]),
 
   /// The AV2 videos of the computers, decoded by the processor with the AV2 decoder: no AI, see [isAi]
-  av2Video(_computers);
+  av2Video(_computers),
+
+  /// A flat video made 3D side by side on the computers (experimental, video3d-plan.md): Video Depth Anything Small on
+  /// the processor and the FFmpeg program of immuch360/libmpv-builds. Not on Intel Macs: whether ONNX Runtime 1.23.2
+  /// runs the model there was not checked, as the plan asks before that platform is offered
+  stereoVideo([AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64]);
 
   const AiFeature(this.platforms);
 
@@ -89,14 +102,15 @@ enum AiFeature {
 const _computers = [AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64, AiPlatform.macosX64];
 
 /// The groups the screens show the components in (design 7.1, point 7): the 3D photos, with the 3D version of a 360°
-/// photo, which needs nothing more; the 3D scenes; the 360° panoramas; the splat scenes; and the AV2 decoder, which the
-/// video settings show. Each is installed, sized and removed as a whole.
+/// photo, which needs nothing more; the 3D scenes; the 360° panoramas; the splat scenes; the AV2 decoder, which the
+/// video settings show; and the 3D videos. Each is installed, sized and removed as a whole.
 enum AiFeatureGroup {
   photos({AiFeature.stereoPhoto, AiFeature.stereoPanorama}),
   scenes({AiFeature.scene}),
   panoramas({AiFeature.panorama}),
   splats({AiFeature.splatScene}),
-  av2({AiFeature.av2Video});
+  av2({AiFeature.av2Video}),
+  videos({AiFeature.stereoVideo});
 
   const AiFeatureGroup(this.features);
 
@@ -355,7 +369,13 @@ const depthModelTfliteComponent = AiComponent(
 const _ortLicence = 'MIT';
 
 /// ONNX Runtime runs the models of every feature of the computers: depth, geometry, filling
-const _onnxRuntimeFeatures = {AiFeature.stereoPhoto, AiFeature.scene, AiFeature.panorama, AiFeature.stereoPanorama};
+const _onnxRuntimeFeatures = {
+  AiFeature.stereoPhoto,
+  AiFeature.scene,
+  AiFeature.panorama,
+  AiFeature.stereoPanorama,
+  AiFeature.stereoVideo,
+};
 
 /// ThirdPartyNotices.txt of ONNX Runtime 1.31.0, the same in its three archives (CRLF line ends in the Windows one)
 const _onnxRuntimeNotices1310 = AiNoticesFile(
@@ -2611,6 +2631,562 @@ const brushLinuxComponent = AiComponent(
 /// with 4 GB, as its memory is read
 const _splatGraphicsMemory = 3584 * 1024 * 1024;
 
+// The 3D videos, in ai-components-5 (video3d-plan.md, section 3): the sum checked against the Hugging Face API at the
+// pinned revision by .github/desktop/ai/publish_ai_components.py --release ai-components-5.
+
+/// Video Depth Anything Small, the depth of a video 32 frames at a time (input [1, 32, 3, H, W], H and W multiples of
+/// 14): the ONNX export (fp32, opset 17) of looplj at ff810849 of the Apache-2.0 weights of ByteDance, a community
+/// export validated against them (its validation.json)
+const videoDepthModelComponent = AiComponent(
+  id: 'video-depth-anything-small-onnx',
+  name: 'Video Depth Anything Small',
+  version: 'ff810849',
+  kind: AiComponentKind.model,
+  platforms: {AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64, AiPlatform.macosX64},
+  assetName: 'video-depth-anything-small-dynamic-fp32.onnx',
+  installPath: 'models/video-depth-anything-small/video-depth-anything-small-dynamic-fp32.onnx',
+  size: 116528885,
+  sha256: 'eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl:
+      'https://huggingface.co/looplj/video-depth-anything-small-onnx/blob/ff810849333df46d37ea18a885fc11689661fe96/LICENSE',
+  features: {AiFeature.stereoVideo},
+  releaseTag: aiComponentsVideosReleaseTag,
+  officialUrls: [
+    'https://huggingface.co/looplj/video-depth-anything-small-onnx/resolve/ff810849333df46d37ea18a885fc11689661fe96/video-depth-anything-small-dynamic-fp32.onnx',
+  ],
+);
+
+// The FFmpeg program of the 3D videos (video3d-plan.md, section 3): ffmpeg and ffprobe 9.0.2 with their shared
+// libraries, LGPL 2.1 or later (no GPL or non free part), built from pinned sources, checked, signed for Windows and
+// released by github.com/immuch360/libmpv-builds (.github/workflows/ffmpeg.yml at v1.3.1). Each archive holds bin/ (and
+// lib/ but on Windows; immuch360-run on Linux), its licence texts, PATENTS-NOTE.md and FFmpeg-SOURCE.txt (the
+// corresponding source of the release) in licenses/, BUILD-INFO.txt with the configure lines, and SHA256SUMS.txt. The
+// entries carry the archives of the run 44422001622 at b9e49ddba, as the manifest of the release gives them
+// (.github/desktop/ai/ffmpeg-lgpl-ffmpeg-lgpl-20261118-9.json); publish_ai_components.py --check holds them to it.
+
+/// The repository of the FFmpeg program, whose releases host its archives
+const ffmpegProgramRepository = 'immuch360/libmpv-builds';
+
+/// The release of [ffmpegProgramRepository] the app takes the FFmpeg program from, a prerelease never marked latest
+const ffmpegProgramReleaseTag = 'ffmpeg-lgpl-20261118-9';
+
+/// The LGPL 2.1 of FFmpeg at the commit of n9.0.2 (its COPYING.LGPLv2.1; LICENSE.md says which parts are under other
+/// permissive licences, all in the licenses/ folder of each archive)
+const _ffmpegLicenceUrl =
+    'https://github.com/FFmpeg/FFmpeg/blob/946fcce07b6dcd0331c8cc609192aeff5e1924f8/COPYING.LGPLv2.1';
+
+/// The FFmpeg program for Windows x64: ffmpeg.exe, ffprobe.exe and the FFmpeg DLLs beside them, signed by APROGSYS
+const ffmpegWindowsComponent = AiComponent(
+  id: 'ffmpeg-lgpl-windows-x64',
+  name: 'FFmpeg program',
+  version: '9.0.2-2',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'Immuch360-ffmpeg-9.0.2-2-windows-x64.zip',
+  installPath: 'engines/ffmpeg-lgpl-windows-x64',
+  size: 8424233,
+  sha256: '7b76b85a6dde6e2e9d7ad84ec695c033e9151578297167b21482591770d14a5e',
+  compression: AiCompression.none,
+  licence: 'LGPL-2.1-or-later',
+  licenceUrl: _ffmpegLicenceUrl,
+  features: {AiFeature.stereoVideo},
+  releaseTag: ffmpegProgramReleaseTag,
+  releaseRepository: ffmpegProgramRepository,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 4172,
+      sha256: '86a2a5a6f8960cd3d1126c9bcd2d01862b6beaea49905c01275844faba7dacf4',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 2583,
+      sha256: '4a3efaf8c57333f4d064fa7cf04212de98b289673241fb4590d292e1fc54e74f',
+    ),
+    AiArchiveFile(
+      path: 'bin/avcodec-63.dll',
+      size: 15607128,
+      sha256: '2540b47eb31ae5c07774a5dfed8df91f4dc11162e20e6b9ac90ef6df416690f1',
+    ),
+    AiArchiveFile(
+      path: 'bin/avdevice-63.dll',
+      size: 81240,
+      sha256: 'dfae378a9a35c63dd5c628133dee0dd7cfc0679503e1bfb76e489f703bc8ffe2',
+    ),
+    AiArchiveFile(
+      path: 'bin/avfilter-12.dll',
+      size: 1285976,
+      sha256: '491d3bbf642ccd6359b497c57b68c99a2781ba1b276c24397af4dd2e6f6e9cd2',
+    ),
+    AiArchiveFile(
+      path: 'bin/avformat-63.dll',
+      size: 1102680,
+      sha256: 'd3b1457546356e9dc52dc348e4753446aadc225d29b10f943107f80a9a08c601',
+    ),
+    AiArchiveFile(
+      path: 'bin/avutil-61.dll',
+      size: 1076056,
+      sha256: '4982261173745e69a2ac6817d9c72d1ea82c0941dfeb96d309ca7d228fee904a',
+    ),
+    AiArchiveFile(
+      path: 'bin/ffmpeg.exe',
+      size: 503128,
+      sha256: '6335c3d05a688bba0d08a37892dcbb4bbe02edf5b45b6129a30b399f030513a3',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'bin/ffprobe.exe',
+      size: 233304,
+      sha256: '6b05d30cd16bcda55e79b7aaf2eb26f0cf7318ccfe0a418a0eed22ea50b58a4e',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'bin/swresample-7.dll',
+      size: 139096,
+      sha256: 'eb5b2ec8c1369158c03aaf45fd3a4fad44cb67f2edcaeadd65b6cb17a91d8969',
+    ),
+    AiArchiveFile(
+      path: 'bin/swscale-10.dll',
+      size: 1120600,
+      sha256: 'c16d4d2eb4830bed5a3b597e140b44e124c34391bcb85b9eebe586d7f84c855b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-COPYING.LGPLv2.1.txt',
+      size: 26517,
+      sha256: '246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-IJG.txt',
+      size: 1961,
+      sha256: '9fd403421481cb9f88141c852b259da5a0f65fc15017405862b6370e2df1347c',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-LICENSE.md',
+      size: 4346,
+      sha256: '2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-SOURCE.txt',
+      size: 675,
+      sha256: 'fc8c8971342fe3386551f6b6817a99df429e31a93bf1a2a8b931c8d00a03dd5d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/PATENTS-NOTE.md',
+      size: 992,
+      sha256: '2524b8924ad94c944c966f33567ade71302c3d04306dc561f96a0dc92232f35a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 4804,
+      sha256: '1524f0da7d2c4106a2a8ac92e6eff9325ee04c913b96cd3a2dd18c89489b40dd',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-LICENSE-BSD2.md',
+      size: 1316,
+      sha256: 'c582fcbeb9cf972a60d298bfaf41dc5adff2dd14208946edcb9bb56a281e8438',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-LICENSE.md',
+      size: 1709,
+      sha256: '0acc2fcb27472bdc9aaf8b71f37055bbdac4f54671b7d922f241bd7fcd0dd3e6',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-PATENTS.md',
+      size: 5767,
+      sha256: '20678ab10402659106dc4c147c97b2a6e94b5c0695415e15a8f195ebc3547922',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-fastfeat-LICENSE.txt',
+      size: 1506,
+      sha256: '043dcfd059386f9facd376351b2bd79325778744aa442177390cdfcca54babed',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-safestringlib-LICENSE.txt',
+      size: 2247,
+      sha256: 'c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-vector-MIT.txt',
+      size: 1084,
+      sha256: '0baa179c776937c84107ce35bb0bb3d036ed6e5289215241e72701bfc48126d9',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav1d-COPYING.txt',
+      size: 1317,
+      sha256: 'dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav1d-x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+    AiArchiveFile(
+      path: 'licenses/mingw-gcc-runtime-copyright.txt',
+      size: 75729,
+      sha256: 'a481f772f7a53335f13b32c6c54eb1c8577ce97704edd3757ab7ed4287a8e96a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/mingw-w64-runtime-copyright.txt',
+      size: 35571,
+      sha256: 'f27a58667538b6913ea23cb9e07e270922761ebf7c22d94bda7f819aaf08ea08',
+    ),
+    AiArchiveFile(
+      path: 'licenses/zimg-COPYING.txt',
+      size: 484,
+      sha256: '7637386b5f81e8a719ca336233149005e5fa28b5e6054ea7b67de49355b0ad40',
+    ),
+    AiArchiveFile(
+      path: 'licenses/zlib-LICENSE.txt',
+      size: 1002,
+      sha256: 'e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2',
+    ),
+  ],
+);
+
+/// The FFmpeg program for Linux x64 (glibc of Ubuntu 22.04 and later): the programs in bin/ with immuch360-run, the FFmpeg libraries and libva in lib/
+const ffmpegLinuxComponent = AiComponent(
+  id: 'ffmpeg-lgpl-linux-x64',
+  name: 'FFmpeg program',
+  version: '9.0.2-2',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.linuxX64},
+  assetName: 'Immuch360-ffmpeg-9.0.2-2-linux-x64.zip',
+  installPath: 'engines/ffmpeg-lgpl-linux-x64',
+  size: 8202937,
+  sha256: '6a3102ce743507395370c1d4aacb67ea153d065cb05636806af436ca6d2e13f4',
+  compression: AiCompression.none,
+  licence: 'LGPL-2.1-or-later',
+  licenceUrl: _ffmpegLicenceUrl,
+  features: {AiFeature.stereoVideo},
+  releaseTag: ffmpegProgramReleaseTag,
+  releaseRepository: ffmpegProgramRepository,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 4328,
+      sha256: '05b738615cf6d71e52241c6da0290e09efc99c82074fa1ba533af8cb960f36ee',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 2815,
+      sha256: 'ff99d6e629864301fbef01d6786b966fce993e202fe45a45cdb8fa96d75544c0',
+    ),
+    AiArchiveFile(
+      path: 'bin/ffmpeg',
+      size: 504128,
+      sha256: '66bb34aa82c122eb5519b2c87144a100819281af61afbba94644dc7676eac0a4',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'bin/ffprobe',
+      size: 228424,
+      sha256: '3531c352a3f000ad1441b71f94ef7cba484118590dacbf54c857d40b149fec99',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'bin/immuch360-run',
+      size: 14472,
+      sha256: '8ab42102ac355c952b2fe3565f06089b499f262bf004d41353fd7e696018e1ed',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'lib/libavcodec.so.63',
+      size: 15425120,
+      sha256: '169251597214d9720718f2f1659558d019dbfa03bb13e96a70d224b51d840891',
+    ),
+    AiArchiveFile(
+      path: 'lib/libavdevice.so.63',
+      size: 31432,
+      sha256: 'ac1337eda836a862b0f1d0b27f12ee88d5a5df3234f4ddfe11fa8f84ee34e584',
+    ),
+    AiArchiveFile(
+      path: 'lib/libavfilter.so.12',
+      size: 1192240,
+      sha256: 'd9bbf7c323758326d619f5d96b7cd78ab11c5612ede4e53279415480ded1dfe1',
+    ),
+    AiArchiveFile(
+      path: 'lib/libavformat.so.63',
+      size: 1096944,
+      sha256: '28d791b58cb4b9c5f5c5c18943f9404ab258d498f56dd5f5e42d817410b58521',
+    ),
+    AiArchiveFile(
+      path: 'lib/libavutil.so.61',
+      size: 1031656,
+      sha256: 'afdb751cf36b5a8a71fc3033ea675bfe541ddfa8c2fe8db809791c4cc9ce0095',
+    ),
+    AiArchiveFile(
+      path: 'lib/libswresample.so.7',
+      size: 129104,
+      sha256: 'f163e14407da0f5a6490abc0cbacc24f50e5b04af7b1853ace1378d4a4a85756',
+    ),
+    AiArchiveFile(
+      path: 'lib/libswscale.so.10',
+      size: 1195496,
+      sha256: 'fe6a95ca8a01351aa22c5a4e606fcb0c5908c6a5564708e94adf6ed584a9faa8',
+    ),
+    AiArchiveFile(
+      path: 'lib/libva-drm.so.2',
+      size: 17896,
+      sha256: '3c74dba832a29d23fa63211d0f1dc56d800773e6796fe0238f28318c2dbe96ba',
+    ),
+    AiArchiveFile(
+      path: 'lib/libva.so.2',
+      size: 237416,
+      sha256: 'f671881265952b8cf8665558f6f99796d8ec29d4f7c407901a867a55ba1c2cb1',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-COPYING.LGPLv2.1.txt',
+      size: 26517,
+      sha256: '246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-IJG.txt',
+      size: 1961,
+      sha256: '9fd403421481cb9f88141c852b259da5a0f65fc15017405862b6370e2df1347c',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-LICENSE.md',
+      size: 4346,
+      sha256: '2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-SOURCE.txt',
+      size: 675,
+      sha256: 'fc8c8971342fe3386551f6b6817a99df429e31a93bf1a2a8b931c8d00a03dd5d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/PATENTS-NOTE.md',
+      size: 992,
+      sha256: '2524b8924ad94c944c966f33567ade71302c3d04306dc561f96a0dc92232f35a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 4804,
+      sha256: '1524f0da7d2c4106a2a8ac92e6eff9325ee04c913b96cd3a2dd18c89489b40dd',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-LICENSE-BSD2.md',
+      size: 1316,
+      sha256: 'c582fcbeb9cf972a60d298bfaf41dc5adff2dd14208946edcb9bb56a281e8438',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-LICENSE.md',
+      size: 1709,
+      sha256: '0acc2fcb27472bdc9aaf8b71f37055bbdac4f54671b7d922f241bd7fcd0dd3e6',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-PATENTS.md',
+      size: 5767,
+      sha256: '20678ab10402659106dc4c147c97b2a6e94b5c0695415e15a8f195ebc3547922',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-fastfeat-LICENSE.txt',
+      size: 1506,
+      sha256: '043dcfd059386f9facd376351b2bd79325778744aa442177390cdfcca54babed',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-safestringlib-LICENSE.txt',
+      size: 2247,
+      sha256: 'c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-vector-MIT.txt',
+      size: 1084,
+      sha256: '0baa179c776937c84107ce35bb0bb3d036ed6e5289215241e72701bfc48126d9',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav1d-COPYING.txt',
+      size: 1317,
+      sha256: 'dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav1d-x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+    AiArchiveFile(
+      path: 'licenses/immuch360-run-MIT.txt',
+      size: 1156,
+      sha256: 'e1ca99633c8cb8df3e8189b0c4b804e91b6dca413ae4022ea3d905e0f94ef191',
+    ),
+    AiArchiveFile(
+      path: 'licenses/libva-COPYING.txt',
+      size: 1130,
+      sha256: 'c86a782ee845b52472dae9b9d79fb915d333628ac0efe49cdce63644814931de',
+    ),
+    AiArchiveFile(
+      path: 'licenses/zimg-COPYING.txt',
+      size: 484,
+      sha256: '7637386b5f81e8a719ca336233149005e5fa28b5e6054ea7b67de49355b0ad40',
+    ),
+    AiArchiveFile(
+      path: 'licenses/zlib-LICENSE.txt',
+      size: 1002,
+      sha256: 'e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2',
+    ),
+  ],
+);
+
+/// The FFmpeg program for macOS 12 and later, arm64 and x86_64 in one, signed ad hoc
+const ffmpegMacComponent = AiComponent(
+  id: 'ffmpeg-lgpl-macos-universal',
+  name: 'FFmpeg program',
+  version: '9.0.2-2',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.macosArm64, AiPlatform.macosX64},
+  assetName: 'Immuch360-ffmpeg-9.0.2-2-macos-universal.zip',
+  installPath: 'engines/ffmpeg-lgpl-macos-universal',
+  size: 14608564,
+  sha256: 'b0d76f497d989283dd5d77c1076792e02371a7df092899f2a8d12857c65cf6b7',
+  compression: AiCompression.none,
+  licence: 'LGPL-2.1-or-later',
+  licenceUrl: _ffmpegLicenceUrl,
+  features: {AiFeature.stereoVideo},
+  releaseTag: ffmpegProgramReleaseTag,
+  releaseRepository: ffmpegProgramRepository,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 5923,
+      sha256: '3931c61b6143d164d633ab6e9cb73b52182adf1750d6e1b38c371f193632bdc5',
+    ),
+    AiArchiveFile(
+      path: 'SHA256SUMS.txt',
+      size: 2396,
+      sha256: '6b903bc2ece030a410490d4fe7988df8ad95275aa5a759ed150842648909af72',
+    ),
+    AiArchiveFile(
+      path: 'bin/ffmpeg',
+      size: 937728,
+      sha256: '2c695271cf34b303f9d240c03476f32a8d6eb2b2502ef0adad37dbbb49da943d',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'bin/ffprobe',
+      size: 467824,
+      sha256: 'b75ecf315b3551975c5f64429fc93a70617141b1f249fe77b0b37df002cb1c91',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'lib/libavcodec.63.dylib',
+      size: 26382784,
+      sha256: 'b8ecf37e774754da870edc7ea62a4bf620288f2350e7ad4bcd9272b472db4316',
+    ),
+    AiArchiveFile(
+      path: 'lib/libavdevice.63.dylib',
+      size: 124944,
+      sha256: 'a9ff5552be34044575adeab2473cb6cff3c8ad910f622774eb623f4b026e64c9',
+    ),
+    AiArchiveFile(
+      path: 'lib/libavfilter.12.dylib',
+      size: 1546368,
+      sha256: '29b056c513426a06e57627c498c7e80267991c70025f4dde21a725034230ff6b',
+    ),
+    AiArchiveFile(
+      path: 'lib/libavformat.63.dylib',
+      size: 2059056,
+      sha256: '71dbc12d6b96f2c9b89fad880df06228097cb4eab6d4a128037d5367ea9dd143',
+    ),
+    AiArchiveFile(
+      path: 'lib/libavutil.61.dylib',
+      size: 1645472,
+      sha256: '081ec2e1ab165784c38a2584e5926e813dcb6ec75bc3d8b9496db79cf602d7f0',
+    ),
+    AiArchiveFile(
+      path: 'lib/libswresample.7.dylib',
+      size: 318352,
+      sha256: 'edf8cc1afe2d7bc2ea3833e3cf682ddc843e8ce36e801dd0e83ad9d7250cf7e3',
+    ),
+    AiArchiveFile(
+      path: 'lib/libswscale.10.dylib',
+      size: 2890720,
+      sha256: 'c2f14cb3257a650ad26047f224d13e400e801c7406d6ba4f3e58861044508158',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-COPYING.LGPLv2.1.txt',
+      size: 26517,
+      sha256: '246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-IJG.txt',
+      size: 1961,
+      sha256: '9fd403421481cb9f88141c852b259da5a0f65fc15017405862b6370e2df1347c',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-LICENSE.md',
+      size: 4346,
+      sha256: '2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af',
+    ),
+    AiArchiveFile(
+      path: 'licenses/FFmpeg-SOURCE.txt',
+      size: 675,
+      sha256: 'fc8c8971342fe3386551f6b6817a99df429e31a93bf1a2a8b931c8d00a03dd5d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/PATENTS-NOTE.md',
+      size: 992,
+      sha256: '2524b8924ad94c944c966f33567ade71302c3d04306dc561f96a0dc92232f35a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 4804,
+      sha256: '1524f0da7d2c4106a2a8ac92e6eff9325ee04c913b96cd3a2dd18c89489b40dd',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-LICENSE-BSD2.md',
+      size: 1316,
+      sha256: 'c582fcbeb9cf972a60d298bfaf41dc5adff2dd14208946edcb9bb56a281e8438',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-LICENSE.md',
+      size: 1709,
+      sha256: '0acc2fcb27472bdc9aaf8b71f37055bbdac4f54671b7d922f241bd7fcd0dd3e6',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-PATENTS.md',
+      size: 5767,
+      sha256: '20678ab10402659106dc4c147c97b2a6e94b5c0695415e15a8f195ebc3547922',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-fastfeat-LICENSE.txt',
+      size: 1506,
+      sha256: '043dcfd059386f9facd376351b2bd79325778744aa442177390cdfcca54babed',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-safestringlib-LICENSE.txt',
+      size: 2247,
+      sha256: 'c0f99a208799ca20c9ccf31a30533d49334eb458dca5a3d14f9afe3e884e5d7d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/SVT-AV1-vector-MIT.txt',
+      size: 1084,
+      sha256: '0baa179c776937c84107ce35bb0bb3d036ed6e5289215241e72701bfc48126d9',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav1d-COPYING.txt',
+      size: 1317,
+      sha256: 'dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5',
+    ),
+    AiArchiveFile(
+      path: 'licenses/dav1d-x86inc-ISC.txt',
+      size: 1162,
+      sha256: '1c20545ce9b2407beccfcf88f33fd0588e8988afaeef31bed7acc30803d2204c',
+    ),
+    AiArchiveFile(
+      path: 'licenses/zimg-COPYING.txt',
+      size: 484,
+      sha256: '7637386b5f81e8a719ca336233149005e5fa28b5e6054ea7b67de49355b0ad40',
+    ),
+    AiArchiveFile(
+      path: 'licenses/zlib-LICENSE.txt',
+      size: 1002,
+      sha256: 'e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2',
+    ),
+  ],
+);
+
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)
 /// ask for it.
 const aiComponents = <AiComponent>[
@@ -2637,6 +3213,10 @@ const aiComponents = <AiComponent>[
   colmapLinuxComponent,
   brushWindowsComponent,
   brushLinuxComponent,
+  videoDepthModelComponent,
+  ffmpegWindowsComponent,
+  ffmpegLinuxComponent,
+  ffmpegMacComponent,
 ];
 
 /// The components [platform] needs for [feature] (the 3D photo when not given), the runtimes first, then the
@@ -2695,6 +3275,9 @@ AiComponent _betterVariant(AiComponent a, AiComponent b, int? memory) {
 /// FreeKC asked on 4 November 2026 for the release of everything done, the splat scenes with it, as an experimental
 /// feature behind the gate of the graphics card (a dedicated card, Windows only). Their components come from
 /// ai-components-4 like the others from theirs; put the group back here if that release is not published.
+///
+/// The 3D videos were held here until the screens of their lot (feat-video3d-49) offered them, ai-components-5 and the
+/// release ffmpeg-lgpl-20261118-9 of the FFmpeg program published (video3d-plan.md, section 4.1): nothing is held now.
 const aiHeldFeatureGroups = <AiFeatureGroup>{};
 
 /// The components of each group of features on [platform], in the order of [AiFeatureGroup]; a group left out when

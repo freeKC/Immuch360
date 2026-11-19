@@ -1,0 +1,35 @@
+{
+ "Items": [
+  {
+   "BackdropImageTags": [],
+   "ChannelId": null,
+   "Id": "f000000000000000000000000000001d",
+   "ImageBlurHashes": {
+    "Primary": {
+     "f6bd9d7e81f6fb71ca54582bfdc8d236": "N~L4{E[josz6r1^I%3oGfhrxWBs.n,bFa|jbbFjb"
+    }
+   },
+   "ImageTags": {
+    "Primary": "f000000000000000000000000000001e"
+   },
+   "IsFolder": true,
+   "LocationType": "FileSystem",
+   "MediaType": "Unknown",
+   "Name": "2024",
+   "Path": "/media/photos/2024",
+   "ServerId": "f0000000000000000000000000000001",
+   "SortName": "0000002024",
+   "Type": "PhotoAlbum",
+   "UserData": {
+    "IsFavorite": false,
+    "ItemId": "f000000000000000000000000000001d",
+    "Key": "f0000000-0000-0000-0000-00000000001d",
+    "PlayCount": 0,
+    "PlaybackPositionTicks": 0,
+    "Played": false
+   }
+  }
+ ],
+ "StartIndex": 0,
+ "TotalRecordCount": 1
+}

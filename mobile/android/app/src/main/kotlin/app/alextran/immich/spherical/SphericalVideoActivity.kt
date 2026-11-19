@@ -2,7 +2,10 @@ package app.alextran.immich.spherical
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.SurfaceTexture
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.media.MediaFormat
 import android.opengl.GLES20
 import android.os.Build
@@ -92,9 +95,13 @@ private const val STABILIZATION_NOTICE_MS = 3000L
 private const val STABILIZATION_FADE_MS = 500L
 
 /**
- * Plays an equirectangular video full screen. The spherical surface of [PlayerView] turns the view with touch
- * drags and with the orientation sensors; a tap shows the playback controls, the close button and the 3D control.
- * System back closes the player too.
+ * Plays an equirectangular video full screen, in the orientation of the device, which it follows like the rest of the
+ * app (issue 20: no forced landscape; the top bar fits a portrait screen, see [fitTopBar]). On phones and tablets the
+ * view turns with the controls of the 360° photo viewer (see [SphereLookController]): drags up to straight up and
+ * straight down, a pinch or a double tap to zoom, and a gyroscope button, on or off as the user left it in a 360°
+ * viewer (one setting with the photo viewer, sent by Flutter through [SphericalVideoApiImpl.setMotion]); off, the
+ * motion of the device is ignored. On a TV, Media3's spherical surface turns the view as before (see [RemoteLook]). A
+ * tap shows the playback controls, the close button and the 3D control. System back closes the player too.
  *
  * A stereoscopic (3D) video holds one equirectangular image per eye, either stacked (left eye on top) or side by
  * side (left eye on the left). The phone screen shows the left eye only. The 3D control cycles the layout used for
@@ -147,6 +154,7 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val EXTRA_COVERAGE = "coverage"
     private const val EXTRA_FALLBACK_URL = "fallback_url"
     private const val EXTRA_RAW_PROJECTION = "raw_projection"
+    private const val EXTRA_MOTION = "motion"
     private const val STATE_POSITION = "position"
     private const val STATE_PLAY_WHEN_READY = "play_when_ready"
     private const val STATE_STEREO_LAYOUT = "stereo_layout"
@@ -165,6 +173,13 @@ class SphericalVideoActivity : ComponentActivity() {
     private const val STATE_STABILIZATION_TURNED_ON = "stabilization_turned_on"
     private const val STATE_STABILIZATION_NOTICE_SHOWN = "stabilization_notice_shown"
     private const val STATE_STABILIZATION_SAVED = "stabilization_saved"
+    private const val STATE_MOTION_ENABLED = "motion_enabled"
+
+    /** Key of the label of the gyroscope button, in the labels from Flutter: the name of the photo viewer's button */
+    const val LABEL_MOTION = "motion"
+
+    /** Below this width, in dp, the buttons of the top bar sit closer, so that they all fit a phone in portrait */
+    private const val COMPACT_TOP_BAR_DP = 400
 
     /**
      * Keys of the labels of the stabilisation, in the labels from Flutter: the switch ("Stabilise with the camera's
@@ -239,6 +254,7 @@ class SphericalVideoActivity : ComponentActivity() {
       LABEL_STABILIZATION_DISABLED to "Disabled",
       LABEL_STABILIZATION_ON to "Stabilised with the camera's gyroscope",
       LABEL_STABILIZATION_NO_TRACK to "This video has no gyroscope track",
+      LABEL_MOTION to "Gyroscope",
     )
 
     /** Key of the name of the layout, in the labels from Flutter */
@@ -266,7 +282,7 @@ class SphericalVideoActivity : ComponentActivity() {
      * stream (see [VideoDecoders.LABEL_SWITCHED]). [coverage] is the part of the sphere Flutter expects the video to
      * cover. [fallbackUrl] is the server's transcoded stream, null when there is none. [rawProjection] is the JSON
      * calibration of a raw dual fisheye video (docs 16-dual-fisheye-spec.md section 5), null for an equirectangular
-     * one.
+     * one. [motionEnabled] is the gyroscope choice the player opens with (see [SphericalVideoApiImpl.setMotion]).
      */
     fun intent(
       context: Context,
@@ -280,6 +296,7 @@ class SphericalVideoActivity : ComponentActivity() {
       coverage: SphereCoverage,
       fallbackUrl: String?,
       rawProjection: String?,
+      motionEnabled: Boolean = false,
     ): Intent {
       return Intent(context, SphericalVideoActivity::class.java)
         .putExtra(EXTRA_URL, url)
@@ -292,6 +309,7 @@ class SphericalVideoActivity : ComponentActivity() {
         .putExtra(EXTRA_COVERAGE, coverage.name)
         .putExtra(EXTRA_FALLBACK_URL, fallbackUrl)
         .putExtra(EXTRA_RAW_PROJECTION, rawProjection)
+        .putExtra(EXTRA_MOTION, motionEnabled)
     }
 
     private fun stereoLayoutNamed(name: String?): StereoLayout? = StereoLayout.entries.firstOrNull { it.name == name }
@@ -359,6 +377,17 @@ class SphericalVideoActivity : ComponentActivity() {
   private lateinit var remoteHint: TextView
   private lateinit var stabilizationButton: View
   private lateinit var stabilizationNotice: TextView
+  private lateinit var motionButton: View
+  private lateinit var topBarButtons: List<View>
+
+  /**
+   * The controls of the photo viewer on the spherical view (issue 20), null on a TV and when this Media3 cannot be
+   * driven: Media3's own touch and sensor then turn the view, as before
+   */
+  private var look: SphereLookController? = null
+
+  /** The gyroscope button is on: the motion of the device turns the view */
+  private var motionEnabled = false
 
   /** The stabilisation switch and the track of the file, see [StabilizationSwitch] */
   private val stabilization = StabilizationSwitch(enabled = true)
@@ -618,6 +647,9 @@ class SphericalVideoActivity : ComponentActivity() {
     }
     remoteLook = sphericalView?.let(::RemoteLook)
     television = isTelevision(this)
+    // A TV keeps Media3's own view, turned by the arrows of its remote (RemoteLook)
+    look = if (television) null else sphericalView?.let { SphereLookController.attach(it) }
+    look?.restore(savedInstanceState)
     remoteHint = findViewById<TextView>(R.id.spherical_video_remote_hint).apply {
       text = label(LABEL_REMOTE_LOOK_HINT)
     }
@@ -685,6 +717,20 @@ class SphericalVideoActivity : ComponentActivity() {
     updateStabilization()
     if (savedInstanceState != null) restoreStabilizationTable()
 
+    // The gyroscope: as the user left it in this player, else as the setting of the 360° viewers says
+    motionEnabled =
+      if (savedInstanceState != null && savedInstanceState.containsKey(STATE_MOTION_ENABLED)) {
+        savedInstanceState.getBoolean(STATE_MOTION_ENABLED)
+      } else {
+        intent.getBooleanExtra(EXTRA_MOTION, false)
+      }
+    motionButton = findViewById<View>(R.id.spherical_video_motion).apply {
+      contentDescription = label(LABEL_MOTION)
+      tooltipText = label(LABEL_MOTION)
+      setOnClickListener { toggleMotion() }
+    }
+    updateMotion()
+
     audioTracks = AudioTrackChooser(this, labels)
     audioTracks.chosenIndex = savedInstanceState?.getInt(STATE_AUDIO_TRACK, -1) ?: -1
     audioButton = findViewById<View>(R.id.spherical_video_audio).apply {
@@ -697,6 +743,15 @@ class SphericalVideoActivity : ComponentActivity() {
     val streamed = StreamingLoadControl.isStreamed(playbackUrl().orEmpty())
     bufferingIndicator = BufferingIndicator(bufferingLabel, labels, streamed, BufferingIndicator.isShare(playbackUrl()))
 
+    topBarButtons =
+      listOf(
+        R.id.spherical_video_audio,
+        R.id.spherical_video_stabilization,
+        R.id.spherical_video_coverage,
+        R.id.spherical_video_stereo,
+        R.id.spherical_video_motion,
+      ).map { findViewById<View>(it) }
+    fitTopBar()
     enterFullScreen(topBar)
     // The first plan of this opening may already be a fallback: the user reads why (a recreation said it already)
     if (restored == null) showRawMessage(plan)
@@ -709,8 +764,9 @@ class SphericalVideoActivity : ComponentActivity() {
       rawMessageOnStart = false
       showRawMessage(plan)
     }
-    // Starts the rendering thread and the orientation sensors of the spherical surface
+    // Starts the rendering thread of the spherical surface, and Media3's orientation sensor where it turns the view
     playerView.onResume()
+    look?.start()
   }
 
   override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -726,6 +782,7 @@ class SphericalVideoActivity : ComponentActivity() {
 
   override fun onStop() {
     super.onStop()
+    look?.stop()
     remoteLook?.cancel()
     playerView.onPause()
     releasePlayer()
@@ -825,7 +882,62 @@ class SphericalVideoActivity : ComponentActivity() {
     outState.putBoolean(STATE_STABILIZATION_NOTICE_SHOWN, stabilization.stabilizedNoticeWasShown)
     saveStabilizationTable()
     outState.putBoolean(STATE_STABILIZATION_SAVED, stabilizationSaved)
+    outState.putBoolean(STATE_MOTION_ENABLED, motionEnabled)
+    look?.save(outState)
   }
+
+  override fun onConfigurationChanged(newConfig: Configuration) {
+    super.onConfigurationChanged(newConfig)
+    // A rotation, the window resized: the top bar fits the new width
+    fitTopBar()
+  }
+
+  /**
+   * The buttons of the top bar sit closer on a narrow window (a phone in portrait), so that the close button and the
+   * five others fit 360 dp and the title keeps what is left, see [TopBarFit]
+   */
+  private fun fitTopBar() {
+    val margin = TopBarFit.buttonMarginDp(resources.configuration.screenWidthDp, COMPACT_TOP_BAR_DP)
+    val pixels = (margin * resources.displayMetrics.density).roundToInt()
+    for (button in topBarButtons) {
+      button.updateLayoutParams<android.widget.LinearLayout.LayoutParams> { marginStart = pixels }
+    }
+  }
+
+  /**
+   * The gyroscope button: shown where the device has a gyroscope, never on a TV; the compass filled when on and
+   * outlined when off, as in the photo viewer. The motion turns the view through [look], or through Media3's own sensor
+   * when the view cannot be driven.
+   */
+  private fun updateMotion() {
+    val controller = look
+    val available = !television && (controller?.hasGyroscope ?: hasGyroscope())
+    if (!available) motionEnabled = false
+    motionButton.visibility = if (available) View.VISIBLE else View.GONE
+    motionButton.isSelected = motionEnabled
+    ViewCompat.setStateDescription(
+      motionButton,
+      label(if (motionEnabled) LABEL_STABILIZATION_ENABLED else LABEL_STABILIZATION_DISABLED),
+    )
+    if (controller != null) {
+      controller.motionEnabled = motionEnabled
+    } else if (!television) {
+      sphericalView?.setUseSensorRotation(motionEnabled)
+    }
+  }
+
+  /** The user pressed the gyroscope button: it flips, the setting of the 360° viewers follows */
+  private fun toggleMotion() {
+    // Keeps the controls, and so this button, on screen
+    playerView.showController()
+    motionEnabled = !motionEnabled
+    Log.i(TAG, "Gyroscope turned ${if (motionEnabled) "on" else "off"} by the user")
+    updateMotion()
+    SphericalVideoApiImpl.notifyMotionChanged(motionEnabled)
+  }
+
+  private fun hasGyroscope(): Boolean =
+    (getSystemService(Context.SENSOR_SERVICE) as? SensorManager)?.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null
 
   override fun onDestroy() {
     // Closed by the user or destroyed by the system rather than recreated: Flutter hears what the player showed last
@@ -1622,6 +1734,8 @@ class SphericalVideoActivity : ComponentActivity() {
   /** "360°" or "180°", which read the same in every language, with the name of the coverage as state */
   private fun updateCoverageButton() {
     coverageButton.text = if (coverage == SphereCoverage.HALF) "180°" else "360°"
+    // A raw frame always covers the full sphere, whatever the coverage says
+    look?.halfSphere = coverage == SphereCoverage.HALF && !rawJsonPresent
     ViewCompat.setStateDescription(coverageButton, coverageLabel())
   }
 

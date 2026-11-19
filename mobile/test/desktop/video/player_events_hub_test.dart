@@ -15,6 +15,9 @@ class _Spherical implements SphericalVideoEvents {
 
   @override
   void stabilizationChanged(bool enabled) {}
+
+  @override
+  void motionChanged(bool enabled) {}
 }
 
 class _Spatial extends Fake implements SpatialVideoEvents {}

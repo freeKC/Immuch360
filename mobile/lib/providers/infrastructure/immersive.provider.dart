@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/services/immersive_navigation.service.dart';
 import 'package:immich_mobile/domain/services/rate_app.service.dart';
@@ -117,13 +119,21 @@ abstract interface class ImmersiveNavigator {
 /// through the system, or a request of a viewer since opened on another media from the app) would otherwise move the
 /// asset viewer, or search the timeline, for a viewer that is gone.
 class ImmersiveSession implements ImmersiveEvents {
-  ImmersiveSession({this.searchDeadline = immersiveSearchDeadline, this.onStabilizationChanged});
+  ImmersiveSession({
+    this.searchDeadline = immersiveSearchDeadline,
+    this.onStabilizationChanged,
+    this.onReliefSettingsChanged,
+  });
 
   /// Longest a request for another media is answered in, see [immersiveSearchDeadline]
   final Duration searchDeadline;
 
   /// Stores the stabilisation the user chose in the viewer, the setting of the app (see [stabilizationChanged])
   final Future<void> Function(bool enabled)? onStabilizationChanged;
+
+  /// Stores the relief strength and the first view the user chose on a relief in the viewer, the settings of the app
+  /// (see [reliefSettingsChanged]); [mode] null leaves the first view as it is
+  final Future<void> Function(ReliefStrength strength, ReliefViewMode? mode)? onReliefSettingsChanged;
 
   // What to do once the media the viewer shows goes away: another media, the viewer closed or not opened
   final _onMediaGone = <void Function()>[];
@@ -299,6 +309,23 @@ class ImmersiveSession implements ImmersiveEvents {
   }
 
   @override
+  void reliefSettingsChanged(int openingId, String strength, String? mode) {
+    // The press was the user's, whichever opening it came from. A name this build does not know changes nothing
+    final chosen = ReliefStrength.values.where((value) => value.name == strength).firstOrNull;
+    final view = mode == null ? null : ReliefViewMode.values.where((value) => value.json == mode).firstOrNull;
+    _log.info('Relief settings chosen in the immersive viewer of opening $openingId: $strength, first view $mode');
+    final store = onReliefSettingsChanged;
+    if (store == null || chosen == null) {
+      return;
+    }
+    unawaited(
+      store(chosen, view).catchError((Object error, StackTrace stackTrace) {
+        _log.warning('Could not store the relief settings', error, stackTrace);
+      }),
+    );
+  }
+
+  @override
   void progress(int openingId, String url, int positionMs, int durationMs) {
     if (!isCurrent(openingId)) {
       // A viewer gone already: what it played was told before its closing
@@ -319,6 +346,14 @@ final immersiveSessionProvider = Provider<ImmersiveSession>((ref) {
   final session = ImmersiveSession(
     // The switch of the viewer is the setting of the app (Settings, Asset Viewer, Videos), as the phone's player's
     onStabilizationChanged: (enabled) => SettingsRepository.instance.write(.viewerStabilizeVideos, enabled),
+    // The strength and the first view chosen on a relief of the viewer are those of the AI settings of the Quest (2D is
+    // a view, never written): the next photos of the flat screen read them (flatScreenRequestOf)
+    onReliefSettingsChanged: (strength, mode) async {
+      await SettingsRepository.instance.write(.aiReliefStrength, strength);
+      if (mode != null) {
+        await SettingsRepository.instance.write(.aiReliefQuestMode, mode);
+      }
+    },
   );
   ImmersiveEvents.setUp(session);
   ref.onDispose(session.dispose);

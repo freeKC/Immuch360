@@ -770,9 +770,16 @@ void main() {
 
       await tapButton(tester, dlnaRadio);
 
-      expect(find.text('DLNA media server (Jellyfin, NAS, TV box)'), findsOneWidget);
+      expect(find.text('DLNA media server (NAS, TV box, minidlna)'), findsOneWidget);
+      expect(
+        find.textContaining('Jellyfin with its DLNA plugin'),
+        findsNothing,
+        reason: 'the label of the TV apps, which have no Jellyfin type',
+      );
       expect(find.text('Description path'), findsOneWidget);
       expect(find.byKey(const Key('network_share_dlna_hint')), findsOneWidget);
+      expect(find.text('A Jellyfin or Emby server has a type of its own.'), findsOneWidget);
+      expect(find.textContaining('Media servers ask for no password.'), findsOneWidget);
       expect(find.textContaining('minidlna on Linux are not found'), findsOneWidget);
       expect(
         find.descendant(of: field('host'), matching: find.text('http://192.168.1.10:8200/rootDesc.xml')),
@@ -945,6 +952,11 @@ void main() {
       await pumpEditPage(tester, source: source);
 
       expect(find.text('Description path'), findsOneWidget);
+      expect(
+        find.byKey(const Key('network_share_dlna_hint_jellyfin')),
+        findsNothing,
+        reason: 'an existing share is offered no Jellyfin type',
+      );
       await enter(tester, 'name', 'Living room box');
       await tapButton(tester, saveButton);
 
@@ -998,6 +1010,32 @@ void main() {
 
       expect(find.text('camera edit 192.0.2.30'), findsOneWidget);
       expect(find.text('Add a share'), findsNothing);
+    });
+
+    testWidgets('the Jellyfin radio, and a Jellyfin server found, open the Jellyfin page in place of the form', (
+      tester,
+    ) async {
+      await pumpEditPage(tester);
+      expect(find.text('Jellyfin or Emby server'), findsOneWidget);
+      await tapButton(tester, find.byKey(const Key('network_share_type_jellyfin')));
+      expect(find.text('jellyfin edit new'), findsOneWidget);
+      expect(find.text('Add a share'), findsNothing);
+    });
+
+    testWidgets('a Jellyfin server found on the network opens its page, filled in', (tester) async {
+      const jellyfin = DiscoveredServer(
+        host: '192.0.2.50',
+        displayName: 'Home media',
+        type: NetworkSourceType.jellyfin,
+        port: 8096,
+        origin: DiscoveryOrigin.jellyfin,
+        discoveryId: '0d6eac044f7a4e448bba5921022e44a7',
+        product: 'emby',
+      );
+      await pumpWithServers(tester, const [jellyfin]);
+      expect(find.descendant(of: found(jellyfin), matching: find.text('Emby')), findsOneWidget);
+      await tapButton(tester, found(jellyfin));
+      expect(find.text('jellyfin edit Home media'), findsOneWidget);
     });
 
     testWidgets('the Plex radio of a new share opens the Plex page in place of the form', (tester) async {
@@ -1178,6 +1216,10 @@ void main() {
       expect(find.text('plex edit new'), findsNothing);
 
       await press(tester, LogicalKeyboardKey.arrowDown);
+      expect(focusedIn(type('jellyfin')), isTrue);
+      expect(find.text('jellyfin edit new'), findsNothing, reason: 'passing over Jellyfin does not open its page');
+
+      await press(tester, LogicalKeyboardKey.arrowDown);
       expect(
         focusedIn(find.ancestor(of: field('name'), matching: find.byType(TvTextEntry))),
         isTrue,
@@ -1186,7 +1228,9 @@ void main() {
       expect(chosenType(tester), NetworkSourceType.smb);
 
       await press(tester, LogicalKeyboardKey.arrowUp);
-      expect(focusedIn(type('plex')), isTrue, reason: 'Up goes back into the group');
+      expect(focusedIn(type('jellyfin')), isTrue, reason: 'Up goes back into the group');
+      await press(tester, LogicalKeyboardKey.arrowUp);
+      expect(focusedIn(type('plex')), isTrue);
       await press(tester, LogicalKeyboardKey.arrowUp);
       expect(focusedIn(type('dlna')), isTrue, reason: 'and through it');
       await press(tester, LogicalKeyboardKey.select);
