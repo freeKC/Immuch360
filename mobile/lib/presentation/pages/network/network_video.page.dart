@@ -51,6 +51,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_tracks.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
 import 'package:immich_mobile/presentation/actions/watch_progress.action.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/display_rate_pacer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
@@ -2284,7 +2285,11 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
           _hideControls();
         }
       },
-      child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: page),
+      // On a Meta Quest the window follows the display while the film plays (see VideoDisplayRatePacer)
+      child: VideoDisplayRatePacer(
+        playerKey: _playerKey,
+        child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: page),
+      ),
     );
   }
 

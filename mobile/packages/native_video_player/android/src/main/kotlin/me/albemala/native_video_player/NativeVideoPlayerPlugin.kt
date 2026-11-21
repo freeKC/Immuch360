@@ -55,6 +55,13 @@ interface PlayerSetup {
     /** The token of the error to send Flutter when the player waits with a decoder that gives no picture, else null */
     fun stuckError(): String?
 
+    /**
+     * How often the position goes to Flutter while the video plays, in ms (see PositionPacer): each one is a redraw of
+     * the window, so this is its frame rate during playback. 100 ms unless the app says otherwise
+     */
+    val positionIntervalMs: Long
+        get() = PositionPacer.DEFAULT_INTERVAL_MS
+
     /** The view goes */
     fun release()
 }

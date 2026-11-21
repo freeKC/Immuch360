@@ -13,10 +13,11 @@ import me.albemala.native_video_player.PlayerSetup
  * The player of the flat player of the app (native_video_player: the asset viewer and the share page on phones, TVs
  * and the Meta Quest window), with its link (see [PlayerLink]): Media3's buffers as before, started from the measured
  * link, a link that sends nothing tried again until it answers, and what Flutter is told of it while the video loads.
- * Set as NativeVideoPlayerPlugin.playerSetup by MainActivity.
+ * Set as NativeVideoPlayerPlugin.playerSetup by MainActivity, with the interval of the position while a video plays
+ * ([positionIntervalMs], see FlatPlayerPosition).
  */
 @OptIn(UnstableApi::class)
-class FlatPlayerSetup(context: Context) : PlayerSetup {
+class FlatPlayerSetup(context: Context, override val positionIntervalMs: Long) : PlayerSetup {
   private val link = PlayerLink(context)
 
   override val player: ExoPlayer = link.applyTo(ExoPlayer.Builder(context), DefaultLoadControl()).build()

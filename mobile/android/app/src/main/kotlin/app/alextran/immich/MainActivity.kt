@@ -18,6 +18,7 @@ import app.alextran.immich.connectivity.ConnectivityApiImpl
 import app.alextran.immich.core.AppHealth
 import app.alextran.immich.core.AudioTrackChooser
 import app.alextran.immich.core.FlatPlayerErrors
+import app.alextran.immich.core.FlatPlayerPosition
 import app.alextran.immich.core.FlatPlayerSetup
 import app.alextran.immich.core.HttpClientManager
 import app.alextran.immich.core.ImmichPlugin
@@ -199,8 +200,11 @@ class MainActivity : FlutterFragmentActivity() {
       NativeVideoPlayerPlugin.onAudioLanguageChosen = { language -> AudioTrackChooser.rememberLanguage(app, language) }
       // Its errors in the words of the app: Flutter gets the kind, the codec and the size, never the text of Media3
       NativeVideoPlayerPlugin.errorToken = FlatPlayerErrors::token
-      // Its player starts a streamed video from the measured link, and tells Flutter what that link brings
-      NativeVideoPlayerPlugin.playerSetup = { context -> FlatPlayerSetup(context) }
+      // Its player starts a streamed video from the measured link, and tells Flutter what that link brings. Its
+      // position comes 10 times a second on every device (FlatPlayerPosition); the window of a Meta Quest keeps the
+      // display's rate while a video plays through DisplayRatePacer
+      val positionIntervalMs = FlatPlayerPosition.intervalFor(isHorizonOsDevice())
+      NativeVideoPlayerPlugin.playerSetup = { context -> FlatPlayerSetup(context, positionIntervalMs) }
       // The redirects the HTTP client of Dart (package:ok_http) did not expect, on the Logs page: a relative Location
       // it resolved, one it could not follow, an upload a redirect stopped. Static too, and holds nothing
       RedirectInterceptor.onUnusualRedirect = { text -> AppHealth.report("network", text) }
