@@ -22,14 +22,16 @@ import 'package:openapi/api.dart';
 void main() {
   late List<Map<String, String?>> picked;
   late List<String> countries;
+  late List<SearchSuggestionArgs> asked;
 
   setUp(() {
     picked = [];
     countries = ['France', 'Japan'];
+    asked = [];
   });
 
   /// The suggestions of the server: the places and cameras of a small library
-  List<String> suggestions(SearchSuggestionArgs args) => switch (args.type) {
+  List<String> suggestions(SearchSuggestionArgs args) => switch ((asked..add(args)).last.type) {
     SearchSuggestionType.country => countries,
     SearchSuggestionType.state => switch (args.locationCountry) {
       'France' => ['Bretagne', 'Provence'],
@@ -222,6 +224,34 @@ void main() {
       await press(tester, LogicalKeyboardKey.select);
       expect(fieldText(tester, 'State'), 'Provence');
       expect(picked.last, {'country': 'France', 'state': 'Provence', 'city': null});
+    });
+
+    testWidgets('a new country drops the state of the old one: the cities offered are those of the new country', (
+      tester,
+    ) async {
+      await open(
+        tester,
+        locationSheet(
+          filter: const SearchLocationFilter(country: 'France', state: 'Bretagne', city: 'Brest'),
+        ),
+      );
+      await focusField(tester, 'Country');
+      await press(tester, LogicalKeyboardKey.select);
+      await press(tester, LogicalKeyboardKey.arrowDown);
+      await press(tester, LogicalKeyboardKey.select);
+      expect(fieldText(tester, 'Country'), 'Japan');
+
+      await focusField(tester, 'City');
+      await press(tester, LogicalKeyboardKey.select);
+      expect(find.widgetWithText(ListTile, 'Shibuya'), findsOneWidget, reason: 'not the cities of Bretagne');
+      expect(
+        asked.where((args) => args.type == SearchSuggestionType.city).last.locationState,
+        isNull,
+        reason: 'the cities of the new country, whatever its state',
+      );
+      // The countries are those of the whole library, asked once rather than again at each choice
+      final countryRequests = asked.where((args) => args.type == SearchSuggestionType.country);
+      expect(countryRequests.every((args) => args.locationCountry == null && args.locationState == null), isTrue);
     });
 
     testWidgets('Back closes the dialog only and changes nothing', (tester) async {

@@ -31,7 +31,7 @@ class RemoteImageRequest extends ImageRequest {
 
     final info = await _request(preferEncoded: true);
     final result = await _codecFromResponse(info);
-    return result?.$1;
+    return result == null ? null : _holdingDescriptor(result.$1, result.$2);
   }
 
   // The photo from the platform; one its native decoder did not decode (an OutOfMemoryError included) came, and is an

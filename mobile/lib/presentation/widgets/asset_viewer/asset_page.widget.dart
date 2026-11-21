@@ -48,7 +48,17 @@ class AssetPage extends ConsumerStatefulWidget {
   final int heroOffset;
   final void Function(int direction)? onTapNavigate;
 
-  const AssetPage({super.key, required this.index, required this.heroOffset, this.onTapNavigate});
+  /// The controller of the photo of this page once built ([attached]), and again once the page goes: the viewer zooms
+  /// and moves the photo on screen with the keys of a TV remote (see tv_photo_zoom.dart)
+  final void Function(PhotoViewControllerBase controller, {required bool attached})? onPhotoController;
+
+  const AssetPage({
+    super.key,
+    required this.index,
+    required this.heroOffset,
+    this.onTapNavigate,
+    this.onPhotoController,
+  });
 
   @override
   ConsumerState createState() => _AssetPageState();
@@ -106,6 +116,10 @@ class _AssetPageState extends ConsumerState<AssetPage> {
 
   @override
   void dispose() {
+    final controller = _viewController;
+    if (controller != null) {
+      widget.onPhotoController?.call(controller, attached: false);
+    }
     _scrollController.dispose();
     unawaited(_scaleBoundarySub?.cancel());
     unawaited(_eventSubscription?.cancel());
@@ -393,6 +407,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
 
   void _onPageBuild(PhotoViewControllerBase controller) {
     _viewController = controller;
+    widget.onPhotoController?.call(controller, attached: true);
     _listenForScaleBoundaries(controller);
   }
 
