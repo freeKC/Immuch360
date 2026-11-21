@@ -382,7 +382,9 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
     // The viewer is closing; don't flip the current asset now. Flipping it swaps
     // the grid tile hero keys mid pop and animates the close on two tiles (#23779).
-    if (!mounted || !(ModalRoute.of(context)?.isActive ?? true)) {
+    // Nor when the viewer moved on while this asset was read: fast presses of a remote, or quick swipes, had the reply
+    // for a page left behind arrive after the one for the page on screen, which then showed the bars of the other.
+    if (!mounted || index != _currentPage || !(ModalRoute.of(context)?.isActive ?? true)) {
       return;
     }
 
