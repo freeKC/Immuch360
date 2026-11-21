@@ -19,11 +19,13 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_page.widge
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_preloader.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_stack.provider.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/tv_zoom_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_photo_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
+import 'package:immich_mobile/presentation/widgets/tv/tv_photo_zoom.dart';
 import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart';
@@ -167,6 +169,13 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// The details opened under a held OK: the rest of that press, its repeats and its release, goes nowhere rather than
   /// to the row of the details that has the focus now
   bool _dropHeldOk = false;
+
+  /// The controllers of the photos of the pages built, by page: a TV zooms and moves the photo on screen with the keys
+  /// of its remote, which has no pinch (see tv_photo_zoom.dart)
+  final _photoControllers = <int, PhotoViewControllerBase>{};
+
+  /// "Zoomed in: the arrows move the photo" shows once per opening of the viewer
+  bool _zoomHintShown = false;
 
   /// The sideways thumbstick pushes of a Meta Quest controller, one "page" call per push (see QuestStickPaging.kt):
   /// taken natively, the scrollables of the page would compete for them as pointer scrolls
@@ -373,6 +382,13 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   }
 
   Future<void> _onAssetChanged(int index) async {
+    // A TV: the photo zoomed by the remote on the page left is whole again when the viewer comes back to it
+    if (index != _currentPage && ref.read(tvModeProvider)) {
+      final left = _photoControllers[_currentPage];
+      if (left != null && tvPhotoZoomed(left)) {
+        tvPhotoZoomReset(left);
+      }
+    }
     _currentPage = index;
 
     final asset = await ref.read(timelineServiceProvider).getAssetAsync(index);
@@ -382,7 +398,9 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
     // The viewer is closing; don't flip the current asset now. Flipping it swaps
     // the grid tile hero keys mid pop and animates the close on two tiles (#23779).
-    if (!mounted || !(ModalRoute.of(context)?.isActive ?? true)) {
+    // Nor when the viewer moved on while this asset was read: fast presses of a remote, or quick swipes, had the reply
+    // for a page left behind arrive after the one for the page on screen, which then showed the bars of the other.
+    if (!mounted || index != _currentPage || !(ModalRoute.of(context)?.isActive ?? true)) {
       return;
     }
 
@@ -521,6 +539,18 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     if (rotation != 0 && video == null) {
       return _rotate(rotation, press: press);
     }
+    // The zoom keys of a remote (channel up and down on most): the photo on screen zooms in or out, held as pressed
+    final zoomIn = isRemoteZoomIn(event)
+        ? true
+        : isRemoteZoomOut(event)
+        ? false
+        : null;
+    if (tvMode && zoomIn != null && video == null && _zoomablePhoto != null) {
+      if (event is! KeyUpEvent) {
+        _zoomPhoto(zoomIn: zoomIn);
+      }
+      return KeyEventResult.handled;
+    }
     if (remoteNextItemKeys.contains(key) || remotePreviousItemKeys.contains(key)) {
       if (press) {
         _onTapNavigate(remoteNextItemKeys.contains(key) ? 1 : -1);
@@ -560,6 +590,15 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     }
     if (!node.hasPrimaryFocus) {
       return KeyEventResult.ignored;
+    }
+    // A TV, a photo zoomed in: the arrows move it, held as pressed, rather than go to another asset or show the bars
+    final pan = _panDirections[key];
+    final zoomed = tvMode && video == null ? _zoomedPhoto : null;
+    if (pan != null && zoomed != null) {
+      if (event is! KeyUpEvent) {
+        tvPhotoPan(zoomed, pan);
+      }
+      return KeyEventResult.handled;
     }
     // Home and End of a computer: the first and the last asset of the timeline; a video keeps them for its start and
     // end. The phones have no such keys (remote_keys.dart).
@@ -604,6 +643,53 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
+  }
+
+  /// What comes into view at each press of an arrow on a photo zoomed in (see tv_photo_zoom.dart)
+  static final _panDirections = {
+    LogicalKeyboardKey.arrowLeft: const Offset(-1, 0),
+    LogicalKeyboardKey.arrowRight: const Offset(1, 0),
+    LogicalKeyboardKey.arrowUp: const Offset(0, -1),
+    LogicalKeyboardKey.arrowDown: const Offset(0, 1),
+  };
+
+  /// The controller of the photo on screen, which the remote of a TV zooms: none for a video, nor over the details
+  PhotoViewControllerBase? get _zoomablePhoto {
+    if (_videoPlayer != null || ref.read(assetViewerProvider).showingDetails) {
+      return null;
+    }
+    return _photoControllers[_currentPage];
+  }
+
+  /// [_zoomablePhoto] when zoomed in
+  PhotoViewControllerBase? get _zoomedPhoto {
+    final photo = _zoomablePhoto;
+    return photo != null && tvPhotoZoomed(photo) ? photo : null;
+  }
+
+  void _onPhotoController(int index, PhotoViewControllerBase controller, {required bool attached}) {
+    if (attached) {
+      _photoControllers[index] = controller;
+    } else if (identical(_photoControllers[index], controller)) {
+      _photoControllers.remove(index);
+    }
+  }
+
+  /// A zoom key of a remote, or the Zoom in button of a TV (see TvPhotoZoomIntent): the photo on screen zooms in or out
+  /// by one step. The first zoom in of the viewer says how to move the photo and how to see it whole again.
+  void _zoomPhoto({required bool zoomIn}) {
+    final photo = _zoomablePhoto;
+    if (photo == null || !tvPhotoZoomBy(photo, zoomIn: zoomIn)) {
+      return;
+    }
+    // Back and its PopScope depend on the zoom
+    setState(() {});
+    if (zoomIn && !_zoomHintShown) {
+      _zoomHintShown = true;
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(SnackBar(content: Text(context.t.tv_photo_zoom_hint), duration: const Duration(seconds: 4)));
+    }
   }
 
   /// The one-key rotation of the photo on screen (the yellow and blue keys of a remote, R and Shift R): nothing for a
@@ -734,11 +820,12 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     return !_topBarFocus.traversalDescendants.any((node) => node != focused && node.rect.top >= bottom);
   }
 
-  /// Where the focus goes in the bottom bar: its top button (play for a video), the Rotate button of a TV after any
-  /// other and only [withRotate]
+  /// Where the focus goes in the bottom bar: its top button (play for a video), the Rotate button of a TV (or Zoom in on
+  /// its right) after any other and only [withRotate]
   FocusNode? _bottomBarTarget({required bool withRotate}) {
     final items = _bottomBarFocus.traversalDescendants;
-    return items.where((node) => !isTvRotateFocus(node)).firstOrNull ?? (withRotate ? items.firstOrNull : null);
+    return items.where((node) => !isTvRotateFocus(node) && !isTvZoomFocus(node)).firstOrNull ??
+        (withRotate ? items.firstOrNull : null);
   }
 
   /// Where Up takes the focus in the top bar: its buttons on the right (360° first), else its Back button only
@@ -806,10 +893,17 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     WidgetsBinding.instance.ensureVisualUpdate();
   }
 
-  /// Back on a TV: the details close first, then the controls that have the focus hide, then the viewer closes
+  /// Back on a TV: the details close first, then the controls that have the focus hide, then a photo zoomed in by the
+  /// remote shows whole again, then the viewer closes
   void _onTvBack() {
     if (ref.read(assetViewerProvider).showingDetails) {
       EventStream.shared.emit(const ViewerHideDetailsEvent());
+      return;
+    }
+    final zoomed = _zoomedPhoto;
+    if (!_barsHaveFocus && zoomed != null) {
+      tvPhotoZoomReset(zoomed);
+      setState(() {});
       return;
     }
     ref.read(assetViewerProvider.notifier).setControls(false);
@@ -897,8 +991,13 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
                       ? const FastScrollPhysics()
                       : const FastClampingScrollPhysics(),
                   itemCount: _totalAssets,
-                  itemBuilder: (context, index) =>
-                      AssetPage(index: index, heroOffset: _heroOffset, onTapNavigate: _onTapNavigate),
+                  itemBuilder: (context, index) => AssetPage(
+                    index: index,
+                    heroOffset: _heroOffset,
+                    onTapNavigate: _onTapNavigate,
+                    onPhotoController: (controller, {required attached}) =>
+                        _onPhotoController(index, controller, attached: attached),
+                  ),
                 ),
               ),
             ),
@@ -939,14 +1038,21 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     );
 
     return PopScope(
-      // On a TV, Back closes the details, then leaves the bars, before it closes the viewer
-      canPop: !tvMode || (!showingDetails && !_barsHaveFocus),
+      // On a TV, Back closes the details, then leaves the bars, then shows a zoomed photo whole, before it closes the
+      // viewer
+      canPop: !tvMode || (!showingDetails && !_barsHaveFocus && _zoomedPhoto == null),
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
           _onTvBack();
         }
       },
-      child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: viewer),
+      child: Actions(
+        // The Zoom in button of the bottom bar of a TV
+        actions: {
+          TvPhotoZoomIntent: CallbackAction<TvPhotoZoomIntent>(onInvoke: (intent) => _zoomPhoto(zoomIn: intent.zoomIn)),
+        },
+        child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: viewer),
+      ),
     );
   }
 }

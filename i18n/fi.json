@@ -4303,6 +4303,7 @@
   "tv_oauth_use_phone": "{provider} tarvitsee selaimen: kirjaudu sen sijaan puhelimellasi.",
   "tv_open_elsewhere_body": "Tämä televisio ei voi avata verkkosivuja. Avaa tämä osoite puhelimella tai tietokoneella:",
   "tv_open_elsewhere_title": "Avaa toisella laitteella",
+  "tv_photo_zoom_hint": "Lähennetty: nuolet siirtävät kuvaa, Takaisin näyttää sen kokonaan",
   "tv_text_entry_hint": "Paina OK kirjoittaaksesi",
   "tv_video_360_hint": "Nuolet katseluun, OK keskeyttää ja näyttää säätimet, Takaisin sulkee",
   "tv_video_seek_step": "{seconds} s",

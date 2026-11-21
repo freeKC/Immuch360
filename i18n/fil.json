@@ -2370,6 +2370,7 @@
   "tv_oauth_use_phone": "Kailangan ng {provider} ng browser: mag-sign in na lang gamit ang iyong telepono.",
   "tv_open_elsewhere_body": "Hindi makapagbukas ng mga web page ang TV na ito. Buksan ang address na ito sa isang phone o computer:",
   "tv_open_elsewhere_title": "Buksan sa ibang device",
+  "tv_photo_zoom_hint": "Naka-zoom in: inililipat ng mga arrow ang larawan, ipinapakita ito nang buo ng Back",
   "tv_text_entry_hint": "Pindutin ang OK para mag-type",
   "tv_video_360_hint": "Mga arrow para tumingin sa paligid, OK para i-pause at ipakita ang mga control, Back para isara",
   "tv_video_seek_step": "{seconds} s",

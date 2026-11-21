@@ -43,7 +43,52 @@ Future<ui.Codec> codecOfTiffPixels(TiffPixels pixels) async {
   );
   buffer.dispose();
   // The codec reads the pixels of the descriptor when its frame is asked for, later: the descriptor goes with it
-  return descriptor.instantiateCodec();
+  return _holdingDescriptor(await _instantiate(descriptor), descriptor);
+}
+
+/// [descriptor].instantiateCodec, the descriptor disposed when that fails: nothing holds it then
+Future<ui.Codec> _instantiate(ui.ImageDescriptor descriptor, {int? targetWidth, int? targetHeight}) async {
+  try {
+    return await descriptor.instantiateCodec(targetWidth: targetWidth, targetHeight: targetHeight);
+  } catch (_) {
+    descriptor.dispose();
+    rethrow;
+  }
+}
+
+/// [codec], which disposes [descriptor] with itself: the codec of an animation reads its frames from the descriptor as
+/// they are asked for, all along, so the descriptor must outlive it and go with it. The animations of the viewer kept
+/// the descriptor of each until the garbage collector came by.
+ui.Codec _holdingDescriptor(ui.Codec codec, ui.ImageDescriptor descriptor) => _DescriptorCodec(codec, descriptor);
+
+class _DescriptorCodec implements ui.Codec {
+  _DescriptorCodec(this._codec, this._descriptor);
+
+  final ui.Codec _codec;
+  final ui.ImageDescriptor _descriptor;
+  bool _disposed = false;
+
+  @override
+  int get frameCount => _codec.frameCount;
+
+  @override
+  int get repetitionCount => _codec.repetitionCount;
+
+  @override
+  Future<ui.FrameInfo> getNextFrame() => _codec.getNextFrame();
+
+  @override
+  void dispose() {
+    if (_disposed) {
+      return;
+    }
+    _disposed = true;
+    try {
+      _codec.dispose();
+    } finally {
+      _descriptor.dispose();
+    }
+  }
 }
 
 abstract class ImageRequest {
@@ -141,7 +186,7 @@ abstract class ImageRequest {
       _targetSize(descriptor.width, descriptor.height, decodeSize),
       maxLongSide,
     );
-    final codec = await descriptor.instantiateCodec(targetWidth: target?.$1, targetHeight: target?.$2);
+    final codec = await _instantiate(descriptor, targetWidth: target?.$1, targetHeight: target?.$2);
     if (_isCancelled) {
       descriptor.dispose();
       codec.dispose();
@@ -182,7 +227,7 @@ abstract class ImageRequest {
       descriptor?.dispose();
       return null;
     }
-    final codec = await descriptor.instantiateCodec();
+    final codec = await _instantiate(descriptor);
     if (_isCancelled) {
       descriptor.dispose();
       codec.dispose();
@@ -271,16 +316,20 @@ abstract class ImageRequest {
       return null;
     }
 
-    final descriptor = ui.ImageDescriptor.raw(
-      buffer,
-      width: width,
-      height: height,
-      rowBytes: rowBytes,
-      pixelFormat: ui.PixelFormat.rgba8888,
-    );
-    buffer.dispose();
+    final ui.ImageDescriptor descriptor;
+    try {
+      descriptor = ui.ImageDescriptor.raw(
+        buffer,
+        width: width,
+        height: height,
+        rowBytes: rowBytes,
+        pixelFormat: ui.PixelFormat.rgba8888,
+      );
+    } finally {
+      buffer.dispose();
+    }
 
-    final codec = await descriptor.instantiateCodec();
+    final codec = await _instantiate(descriptor);
     if (_isCancelled) {
       descriptor.dispose();
       codec.dispose();

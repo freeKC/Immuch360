@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "{provider} 需要浏览器：请改用手机登录。",
   "tv_open_elsewhere_body": "这台电视无法打开网页。请在手机或电脑上打开此地址：",
   "tv_open_elsewhere_title": "在其他设备上打开",
+  "tv_photo_zoom_hint": "已放大：方向键移动照片，返回键显示完整照片",
   "tv_text_entry_hint": "按 OK 输入",
   "tv_video_360_hint": "方向键环顾四周，OK 暂停并显示控件，返回键关闭",
   "tv_video_seek_step": "{seconds} 秒",

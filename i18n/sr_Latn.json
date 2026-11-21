@@ -4164,6 +4164,7 @@
   "tv_oauth_use_phone": "{provider} zahteva pregledač: umesto toga se prijavite telefonom.",
   "tv_open_elsewhere_body": "Ovaj televizor ne može da otvara veb stranice. Otvorite ovu adresu na telefonu ili računaru:",
   "tv_open_elsewhere_title": "Otvori na drugom uređaju",
+  "tv_photo_zoom_hint": "Uvećano: strelice pomeraju fotografiju, Nazad je prikazuje celu",
   "tv_text_entry_hint": "Pritisnite OK za kucanje",
   "tv_video_360_hint": "Strelice za razgledanje, OK za pauzu i prikaz kontrola, Nazad za zatvaranje",
   "tv_video_seek_step": "{seconds} s",

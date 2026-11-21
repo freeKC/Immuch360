@@ -4514,6 +4514,7 @@
   "tv_oauth_use_phone": "{provider} necessita un navegador: inicia la sessió amb el telèfon.",
   "tv_open_elsewhere_body": "Aquest televisor no pot obrir pàgines web. Obre aquesta adreça en un telèfon o un ordinador:",
   "tv_open_elsewhere_title": "Obre en un altre dispositiu",
+  "tv_photo_zoom_hint": "Ampliada: les fletxes mouen la foto, Enrere la mostra sencera",
   "tv_text_entry_hint": "Prem OK per escriure",
   "tv_video_360_hint": "Fletxes per mirar al voltant, OK per posar en pausa i mostrar els controls, Enrere per tancar",
   "tv_video_seek_step": "{seconds} s",

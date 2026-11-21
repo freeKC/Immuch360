@@ -4514,6 +4514,7 @@
   "tv_oauth_use_phone": "{provider} wymaga przeglądarki: zaloguj się zamiast tego telefonem.",
   "tv_open_elsewhere_body": "Ten telewizor nie może otwierać stron internetowych. Otwórz ten adres na telefonie lub komputerze:",
   "tv_open_elsewhere_title": "Otwórz na innym urządzeniu",
+  "tv_photo_zoom_hint": "Powiększono: strzałki przesuwają zdjęcie, Wstecz pokazuje je w całości",
   "tv_text_entry_hint": "Naciśnij OK, aby pisać",
   "tv_video_360_hint": "Strzałki, aby się rozejrzeć, OK, aby wstrzymać i pokazać sterowanie, Wstecz, aby zamknąć",
   "tv_video_seek_step": "{seconds} s",

@@ -3099,6 +3099,7 @@
   "tv_oauth_use_phone": "{provider} memerlukan pelayar: log masuk dengan telefon anda sebagai gantinya.",
   "tv_open_elsewhere_body": "TV ini tidak dapat membuka halaman web. Buka alamat ini pada telefon atau komputer:",
   "tv_open_elsewhere_title": "Buka pada peranti lain",
+  "tv_photo_zoom_hint": "Dizum masuk: anak panah menggerakkan foto, Kembali menunjukkannya sepenuhnya",
   "tv_text_entry_hint": "Tekan OK untuk menaip",
   "tv_video_360_hint": "Anak panah untuk melihat sekeliling, OK untuk menjeda dan menunjukkan kawalan, Kembali untuk menutup",
   "tv_video_seek_step": "{seconds} saat",

@@ -20,8 +20,8 @@
     "reason": "360 video controls (feat-360-video-controls-49, issue 20): hands the view of the app to the package private listeners of Media3's spherical view"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/MainActivity.kt": {
-    "blob": "58db6ab83b79bc44722c1b071998bfb3b34182f7",
-    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity; DJI link stage 2 (feat-dji-link-2): the video view of the DJI link page registered with the app engine; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the sideways thumbstick scrolls of the flat app window handed to QuestStickPaging, one page call per push to the asset viewer; integration of 30 October: the channel and its hook on a Meta Quest only (QuestStickPaging.attach); decoder limit (fix-decoder-limit): the errors of the flat player in the words of the app, the hook of native_video_player set to FlatPlayerErrors.token; fix round: its CRLF line endings back, as upstream; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the flat player made by the app with its link (FlatPlayerSetup); Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules; Image decode guard (fix-crash-image-decode, crash M1 of the Meta Quest store, 8 November 2026): NativeImageDecodeApi registered in the app engine next to RemoteImageApi; OkHttp relative redirect (fix-crash-redirect, crash M3 of the Meta Quest store, 8 November 2026): the redirects package:ok_http did not expect written to the Logs page (RedirectInterceptor.onUnusualRedirect); background lifecycle (fix-crash-background, Play cluster b91d14, 8 November 2026): FlutterInjectorPin.checkBeforeActivity before super.onCreate; release 44 integration (release-44-int, 9 November 2026): the blob of the three crash families together; upstream v3.4.0 merge (release 45): the PasskeyPlugin of upstream registered, off by BuildConfig.PASSKEYS"
+    "blob": "4069521086d9c812899dc290c5aad53df5e1b124",
+    "reason": "TV lot (lot-tv-2026-10-21, c05b57812): the phone app starts the main thread stall watch and the exit reasons; DJI import (feat-dji-import, 30e76a894, fc3c742e5): the folder bridge of the DJI drone page registered in the app engine only; DJI link (feat-dji-link, 12ccff821): the link page of the headset and of the phone is registered in the app engine only, and a gamepad event is handed to the page that draws the sticks; fix round of 22 October: a gamepad event reaches only a link page that is open and never creates its owner; sign in with your phone (feat-qr-pairing): the QR code scanner registered with this activity; DJI link stage 2 (feat-dji-link-2): the video view of the DJI link page registered with the app engine; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the sideways thumbstick scrolls of the flat app window handed to QuestStickPaging, one page call per push to the asset viewer; integration of 30 October: the channel and its hook on a Meta Quest only (QuestStickPaging.attach); decoder limit (fix-decoder-limit): the errors of the flat player in the words of the app, the hook of native_video_player set to FlatPlayerErrors.token; fix round: its CRLF line endings back, as upstream; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the flat player made by the app with its link (FlatPlayerSetup); Splat viewer of the computers, phones and tablets (feat-splat-viewer, lot SV6): SplatViewerActivity, the WebView of the Android phones and tablets, its activity entry and SplatViewerApi registered in the app engine, and the tests of its rules; Image decode guard (fix-crash-image-decode, crash M1 of the Meta Quest store, 8 November 2026): NativeImageDecodeApi registered in the app engine next to RemoteImageApi; OkHttp relative redirect (fix-crash-redirect, crash M3 of the Meta Quest store, 8 November 2026): the redirects package:ok_http did not expect written to the Logs page (RedirectInterceptor.onUnusualRedirect); background lifecycle (fix-crash-background, Play cluster b91d14, 8 November 2026): FlutterInjectorPin.checkBeforeActivity before super.onCreate; release 44 integration (release-44-int, 9 November 2026): the blob of the three crash families together; upstream v3.4.0 merge (release 45): the PasskeyPlugin of upstream registered, off by BuildConfig.PASSKEYS; Quest frame rate (fix-quest-fps-50, release 50): the Quest asks the player for its position at the Quest interval of FlatPlayerPosition"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/QuestStickPaging.kt": {
     "blob": "cf19ba404cda83630d3bab46c3d993f236e44f13",
@@ -39,9 +39,13 @@
     "blob": "0b6081f25fe0c5e0e02ea6d838852babea3ee169",
     "reason": "decoder limit (fix-decoder-limit): the token the flat player sends Flutter for a Media3 error the app knows (the stuck playing check), with the codec and the frame of the video; not yet on the phone branch; Video adaptive start (feat-video-adaptive-start, 31 October 2026): a decoder fed past what the link waits for (DECODER_FED_MS)"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/core/FlatPlayerPosition.kt": {
+    "blob": "9aa9986293a6690e4eacb38e68bf01b7db58b4af",
+    "reason": "Quest frame rate (fix-quest-fps-50, release 50): the interval of the position reports of the flat player, the Quest apart from the phones"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/FlatPlayerSetup.kt": {
-    "blob": "82038cedca0a602e33f76f67833ca64c5800c3e2",
-    "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the flat player with its link: the start from the measured link, the retries, what Flutter is told of the link, no picture with a fed decoder; not yet on the phone branch"
+    "blob": "085341fa54cc58d81fe47943dc35e1ca64fda0f2",
+    "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the flat player with its link: the start from the measured link, the retries, what Flutter is told of the link, no picture with a fed decoder; not yet on the phone branch; Quest frame rate (fix-quest-fps-50, release 50): the flat player set up with the interval of FlatPlayerPosition"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/core/LinkMeter.kt": {
     "blob": "cd406ccc98eb57a908aad5be9c6e468556d5ade7",
@@ -1127,6 +1131,10 @@
     "blob": "8777f1bda2efb165d20e55ceacb5c56c27ba4485",
     "reason": "decoder limit (fix-decoder-limit): unit tests of PlaybackErrors, run by the Kotlin unit tests job; not yet on the phone branch"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/core/PositionPacerTest.kt": {
+    "blob": "2bba333b98c1a51b81b4caa7f9db872a01fd66ac",
+    "reason": "Quest frame rate (fix-quest-fps-50, release 50): unit tests of the position pacer on both kinds of device"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/core/StreamRetryTest.kt": {
     "blob": "2496323450e41b35fbf6775003449d94c753d40a",
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): unit tests of the retries of a streamed load; not yet on the phone branch"
@@ -1804,12 +1812,16 @@
     "reason": "360 video controls (feat-360-video-controls-49, issue 20): SphereLook.swift compiled into the Swift tests"
   },
   "mobile/packages/native_video_player/android/src/main/kotlin/me/albemala/native_video_player/NativeVideoPlayerPlugin.kt": {
-    "blob": "0c6e468a8a2ffbe6700f9683ee09f92136e68c5c",
-    "reason": "decoder limit (fix-decoder-limit): the errorToken hook, what the app sends Flutter for an error instead of the text of Media3 (see IMMUCH360-NOTE.md); Video adaptive start (feat-video-adaptive-start, 31 October 2026): the playerSetup hook, the player made by the app with its link"
+    "blob": "b490ccfd2fa1e3757c0cd72560d2797f97a138c5",
+    "reason": "decoder limit (fix-decoder-limit): the errorToken hook, what the app sends Flutter for an error instead of the text of Media3 (see IMMUCH360-NOTE.md); Video adaptive start (feat-video-adaptive-start, 31 October 2026): the playerSetup hook, the player made by the app with its link; Quest frame rate (fix-quest-fps-50, release 50): the interval of the position reports handed to each view"
   },
   "mobile/packages/native_video_player/android/src/main/kotlin/me/albemala/native_video_player/NativeVideoPlayerViewController.kt": {
-    "blob": "7823dee1d602797d38c2527bf8abf759e46b6b83",
-    "reason": "decoder limit (fix-decoder-limit): onPlayerError sends the token of the app when there is one (see IMMUCH360-NOTE.md); Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the app, its link sent to Flutter twice a second while it loads, a film loaded at its place, the error of a decoder fed without picture"
+    "blob": "62aad9114af1f03b2c6d3c163ecc5851b3a38cb0",
+    "reason": "decoder limit (fix-decoder-limit): onPlayerError sends the token of the app when there is one (see IMMUCH360-NOTE.md); Video adaptive start (feat-video-adaptive-start, 31 October 2026): the player of the app, its link sent to Flutter twice a second while it loads, a film loaded at its place, the error of a decoder fed without picture; Quest frame rate (fix-quest-fps-50, release 50): the position reports of a playing video through PositionPacer"
+  },
+  "mobile/packages/native_video_player/android/src/main/kotlin/me/albemala/native_video_player/PositionPacer.kt": {
+    "blob": "0948c748a76afeaf3251abbf9ac97f32d1f5340f",
+    "reason": "Quest frame rate (fix-quest-fps-50, release 50): the pacer of the position reports of a playing video"
   },
   "mobile/packages/native_video_player/android/src/main/kotlin/me/albemala/native_video_player/platform_interface/NativeVideoPlayerApi.kt": {
     "blob": "aab2e762ffc63ab0bde0b5040590c46bb4969218",

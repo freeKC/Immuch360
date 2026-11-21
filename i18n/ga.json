@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "Teastaíonn brabhsálaí ó {provider}: sínigh isteach le d'fhón ina ionad.",
   "tv_open_elsewhere_body": "Ní féidir leis an teilifís seo leathanaigh ghréasáin a oscailt. Oscail an seoladh seo ar fhón nó ar ríomhaire:",
   "tv_open_elsewhere_title": "Oscail ar ghléas eile",
+  "tv_photo_zoom_hint": "Zúmáilte isteach: bogann na saigheada an grianghraf, taispeánann Siar go hiomlán é",
   "tv_text_entry_hint": "Brúigh OK chun clóscríobh",
   "tv_video_360_hint": "Saigheada chun féachaint thart, OK chun sos a chur agus na rialuithe a thaispeáint, Siar chun dúnadh",
   "tv_video_seek_step": "{seconds} s",

@@ -4392,6 +4392,7 @@
   "tv_oauth_use_phone": "{provider} zerbitzuak nabigatzaile bat behar du: hasi saioa zure telefonoarekin horren ordez.",
   "tv_open_elsewhere_body": "Telebista honek ezin ditu web-orriak ireki. Ireki helbide hau telefono edo ordenagailu batean:",
   "tv_open_elsewhere_title": "Ireki beste gailu batean",
+  "tv_photo_zoom_hint": "Handituta: geziek argazkia mugitzen dute, Atzerak osorik erakusten du",
   "tv_text_entry_hint": "Sakatu OK idazteko",
   "tv_video_360_hint": "Geziak inguruan begiratzeko, OK pausatzeko eta kontrolak erakusteko, Atzera ixteko",
   "tv_video_seek_step": "{seconds} s",

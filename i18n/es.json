@@ -4511,6 +4511,7 @@
   "tv_oauth_use_phone": "{provider} necesita un navegador: inicia sesión con tu teléfono.",
   "tv_open_elsewhere_body": "Este televisor no puede abrir páginas web. Abre esta dirección en un teléfono o un ordenador:",
   "tv_open_elsewhere_title": "Abrir en otro dispositivo",
+  "tv_photo_zoom_hint": "Ampliada: las flechas mueven la foto, Atrás la muestra entera",
   "tv_text_entry_hint": "Pulsa OK para escribir",
   "tv_video_360_hint": "Flechas para mirar alrededor, OK para pausar y mostrar los controles, Atrás para cerrar",
   "tv_video_seek_step": "{seconds} s",

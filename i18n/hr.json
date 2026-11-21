@@ -4405,6 +4405,7 @@
   "tv_oauth_use_phone": "{provider} treba preglednik: umjesto toga prijavite se telefonom.",
   "tv_open_elsewhere_body": "Ovaj televizor ne može otvarati web-stranice. Otvorite ovu adresu na telefonu ili računalu:",
   "tv_open_elsewhere_title": "Otvori na drugom uređaju",
+  "tv_photo_zoom_hint": "Uvećano: strelice pomiču fotografiju, Natrag je prikazuje cijelu",
   "tv_text_entry_hint": "Pritisnite OK za tipkanje",
   "tv_video_360_hint": "Strelice za razgledavanje, OK za pauzu i prikaz kontrola, Natrag za zatvaranje",
   "tv_video_seek_step": "{seconds} s",

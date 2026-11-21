@@ -3597,6 +3597,7 @@
   "tv_oauth_use_phone": "{provider} bruucht en Browser: mäld di lieber mit dim Telefon aa.",
   "tv_open_elsewhere_body": "De Fernseh cha kei Websiite ufmache. Mach die Adrässe uf emene Handy oder Computer uf:",
   "tv_open_elsewhere_title": "Uf emene andere Gerät ufmache",
+  "tv_photo_zoom_hint": "Vergrösseret: D Pfiil verschiebed s Foto, Zrugg zeigt s ganz",
   "tv_text_entry_hint": "OK drücke zum Tippe",
   "tv_video_360_hint": "Pfiil zum Umeluege, OK zum Pausiere und d Bedienelement aazeige, Zrugg zum Schliesse",
   "tv_video_seek_step": "{seconds} s",

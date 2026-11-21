@@ -23,23 +23,15 @@ class LocationPicker extends HookConsumerWidget {
     final selectedState = useState<String?>(filter?.state);
     final selectedCity = useState<String?>(filter?.city);
 
+    // The countries of the whole library, asked once: keyed on the choices, each choice asked for them again, and the
+    // list was empty while they came back. The states depend on the country only.
     final countries = ref.watch(
-      getSearchSuggestionsProvider(
-        SearchSuggestionArgs(
-          type: SearchSuggestionType.country,
-          locationCountry: selectedCountry.value,
-          locationState: selectedState.value,
-        ),
-      ),
+      getSearchSuggestionsProvider(const SearchSuggestionArgs(type: SearchSuggestionType.country)),
     );
 
     final states = ref.watch(
       getSearchSuggestionsProvider(
-        SearchSuggestionArgs(
-          type: SearchSuggestionType.state,
-          locationCountry: selectedCountry.value,
-          locationState: selectedState.value,
-        ),
+        SearchSuggestionArgs(type: SearchSuggestionType.state, locationCountry: selectedCountry.value),
       ),
     );
 
@@ -68,6 +60,10 @@ class LocationPicker extends HookConsumerWidget {
               return;
             }
             selectedCountry.value = value.toString();
+            // The state and the city of the old country go with their fields: the cities offered next were those of
+            // the old state
+            selectedState.value = null;
+            selectedCity.value = null;
             stateTextController.value = TextEditingValue.empty;
             cityTextController.value = TextEditingValue.empty;
             onSelected({'country': selectedCountry.value, 'state': null, 'city': null});
@@ -87,6 +83,7 @@ class LocationPicker extends HookConsumerWidget {
               return;
             }
             selectedState.value = value.toString();
+            selectedCity.value = null;
             cityTextController.value = TextEditingValue.empty;
             onSelected({'country': selectedCountry.value, 'state': selectedState.value, 'city': null});
           },

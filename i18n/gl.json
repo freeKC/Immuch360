@@ -4514,6 +4514,7 @@
   "tv_oauth_use_phone": "{provider} necesita un navegador: inicia sesión co teu teléfono.",
   "tv_open_elsewhere_body": "Esta televisión non pode abrir páxinas web. Abre este enderezo nun teléfono ou nun ordenador:",
   "tv_open_elsewhere_title": "Abrir noutro dispositivo",
+  "tv_photo_zoom_hint": "Ampliada: as frechas moven a foto, Atrás móstraa enteira",
   "tv_text_entry_hint": "Preme OK para escribir",
   "tv_video_360_hint": "Frechas para mirar arredor, OK para pausar e mostrar os controis, Atrás para pechar",
   "tv_video_seek_step": "{seconds} s",

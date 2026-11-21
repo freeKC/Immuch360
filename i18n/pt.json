@@ -4511,6 +4511,7 @@
   "tv_oauth_use_phone": "{provider} precisa de um navegador: inicie antes sessão com o seu telefone.",
   "tv_open_elsewhere_body": "Esta TV não consegue abrir páginas web. Abra este endereço num telemóvel ou computador:",
   "tv_open_elsewhere_title": "Abrir noutro dispositivo",
+  "tv_photo_zoom_hint": "Ampliada: as setas movem a fotografia, Voltar mostra-a por inteiro",
   "tv_text_entry_hint": "Prima OK para escrever",
   "tv_video_360_hint": "Setas para olhar em redor, OK para pausar e mostrar os controlos, Voltar para fechar",
   "tv_video_seek_step": "{seconds} s",

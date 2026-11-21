@@ -13,6 +13,7 @@ import 'package:immich_mobile/presentation/actions/upload.action.dart';
 import 'package:immich_mobile/presentation/widgets/action_buttons/add_action_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/ocr_toggle_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/tv_zoom_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_date_time.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
@@ -61,6 +62,9 @@ class ViewerBottomBar extends ConsumerWidget {
     // (see ViewerTopAppBar), with "Show photo date and time" on
     final tvDateTime =
         tvMode && asset.isImage && ref.watch(appConfigProvider.select((config) => config.viewer.tvShowDateTime));
+    // A TV zooms a photo with Zoom in on the right of Rotate, or the zoom keys of its remote (see AssetViewer); OK from
+    // the photo never lands on either
+    final tvZoom = tvMode && asset.isImage;
     // The text boxes are not drawn over a photo turned on screen (see AssetPage)
     final showOcr = asset.isImage && ref.watch(displayQuarterTurnsProvider(asset)) == 0;
 
@@ -116,10 +120,10 @@ class ViewerBottomBar extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           // A TV: the date and time of a photo on the left, the OCR toggle on the right, then
-                          // Rotate on its right, one Right away. The row spans the bar, so that the bar and its shade
+                          // Rotate on its right, one Right away, then Zoom in. The row spans the bar, so that the bar and its shade
                           // span the screen as with the row of a phone. The date takes no focus, and TalkBack reads it
                           // on its own, not as a part of the label of Rotate.
-                          if (tvRotate || tvDateTime)
+                          if (tvRotate || tvDateTime || tvZoom)
                             Row(
                               children: [
                                 if (tvDateTime)
@@ -144,6 +148,7 @@ class ViewerBottomBar extends ConsumerWidget {
                                   const Spacer(),
                                 if (showOcr) OcrToggleButton(asset: asset),
                                 if (tvRotate) TvRotateButton(asset: asset),
+                                if (tvZoom) const TvZoomInButton(),
                               ],
                             )
                           else if (showOcr)

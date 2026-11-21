@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "{provider} krever en nettleser: logg inn med telefonen din i stedet.",
   "tv_open_elsewhere_body": "Denne TV-en kan ikke åpne nettsider. Åpne denne adressen på en telefon eller en datamaskin:",
   "tv_open_elsewhere_title": "Åpne på en annen enhet",
+  "tv_photo_zoom_hint": "Zoomet inn: pilene flytter bildet, Tilbake viser det helt",
   "tv_text_entry_hint": "Trykk på OK for å skrive",
   "tv_video_360_hint": "Piler for å se deg rundt, OK for å sette på pause og vise kontrollene, Tilbake for å lukke",
   "tv_video_seek_step": "{seconds} s",
