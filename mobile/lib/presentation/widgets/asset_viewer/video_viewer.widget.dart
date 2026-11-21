@@ -21,6 +21,7 @@ import 'package:immich_mobile/domain/services/video_source_policy.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/display_rate_pacer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_failure_panel.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_loading_line.widget.dart';
 import 'package:immich_mobile/presentation/widgets/watch_progress/resume_notice.widget.dart';
@@ -33,6 +34,7 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -935,87 +937,92 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     // the view from the tree when we start a route transition, which has the side effect of properly ordering the `dispose`
     final isRouteActive = ModalRoute.of(context)?.isActive ?? true;
     final showPlayer = !isCasting && isRouteActive;
+    // On a Meta Quest the window follows the display while the video plays (see DisplayRatePacer)
+    final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
 
-    return IgnorePointer(
-      child: Stack(
-        children: [
-          if (!_isVideoReady || widget.asset.isMotionPhoto || !showPlayer) Positioned.fill(child: widget.image),
-          if (showPlayer && CurrentPlatform.isDesktop && !DesktopVideoView.available)
-            // A computer without the video library (Linux and macOS until their packages come): the poster stays,
-            // with the line saying so, rather than a player that never gets ready
-            const Positioned.fill(child: DesktopVideoPlaceholder())
-          else if (showPlayer) ...[
-            Visibility.maintain(
-              // Kept when the poster and the failure panel leave the stack in the same frame: without a key, Flutter
-              // made the platform view again then, and the new native player never got the video (31 October 2026)
-              key: const ValueKey('video_player_view'),
-              visible: _isVideoReady,
-              // A platform view must never take the focus: the keys of a remote would go to the native view
-              child: ExcludeFocus(
-                // The computers play through media_kit (lib/desktop/video), with a controller of the same type
-                child: CurrentPlatform.isDesktop
-                    ? DesktopVideoView(
-                        onViewReady: _initController,
-                        // The headset view (lib/desktop/video/xr) shows the video on screen only
-                        headset: widget.isCurrent && !widget.asset.isMotionPhoto
-                            ? HeadsetFlatPage(
-                                playerKey: widget.asset.id,
-                                source: () =>
-                                    widget.asset.hasRemote ? HeadsetSourceKind.immich : HeadsetSourceKind.local,
-                                title: () => widget.asset.name,
-                              )
-                            : null,
-                      )
-                    : NativeVideoPlayerView(onViewReady: _initController),
+    return DisplayRatePacer(
+      active: horizonOs && showPlayer && status == VideoPlaybackStatus.playing,
+      child: IgnorePointer(
+        child: Stack(
+          children: [
+            if (!_isVideoReady || widget.asset.isMotionPhoto || !showPlayer) Positioned.fill(child: widget.image),
+            if (showPlayer && CurrentPlatform.isDesktop && !DesktopVideoView.available)
+              // A computer without the video library (Linux and macOS until their packages come): the poster stays,
+              // with the line saying so, rather than a player that never gets ready
+              const Positioned.fill(child: DesktopVideoPlaceholder())
+            else if (showPlayer) ...[
+              Visibility.maintain(
+                // Kept when the poster and the failure panel leave the stack in the same frame: without a key, Flutter
+                // made the platform view again then, and the new native player never got the video (31 October 2026)
+                key: const ValueKey('video_player_view'),
+                visible: _isVideoReady,
+                // A platform view must never take the focus: the keys of a remote would go to the native view
+                child: ExcludeFocus(
+                  // The computers play through media_kit (lib/desktop/video), with a controller of the same type
+                  child: CurrentPlatform.isDesktop
+                      ? DesktopVideoView(
+                          onViewReady: _initController,
+                          // The headset view (lib/desktop/video/xr) shows the video on screen only
+                          headset: widget.isCurrent && !widget.asset.isMotionPhoto
+                              ? HeadsetFlatPage(
+                                  playerKey: widget.asset.id,
+                                  source: () =>
+                                      widget.asset.hasRemote ? HeadsetSourceKind.immich : HeadsetSourceKind.local,
+                                  title: () => widget.asset.name,
+                                )
+                              : null,
+                        )
+                      : NativeVideoPlayerView(onViewReady: _initController),
+                ),
               ),
-            ),
-            Center(
-              child: AnimatedOpacity(
-                opacity: status == VideoPlaybackStatus.buffering ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 400),
-                // The spinner turns only while the video waits: hidden, its animation still asked for a frame at every
-                // refresh of the display, and on the computers each of those frames drew the video's texture again
-                // (60 to 113 frames a second for a 30 fps video, 2 November 2026)
-                child: TickerMode(
-                  enabled: status == VideoPlaybackStatus.buffering,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(),
-                      // What the link brings against what the video needs, while it waits (see VideoLoadingLine)
-                      VideoLoadingLine(link: _notifier.link),
-                    ],
+              Center(
+                child: AnimatedOpacity(
+                  opacity: status == VideoPlaybackStatus.buffering ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 400),
+                  // The spinner turns only while the video waits: hidden, its animation still asked for a frame at every
+                  // refresh of the display, and on the computers each of those frames drew the video's texture again
+                  // (60 to 113 frames a second for a 30 fps video, 2 November 2026)
+                  child: TickerMode(
+                    enabled: status == VideoPlaybackStatus.buffering,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(),
+                        // What the link brings against what the video needs, while it waits (see VideoLoadingLine)
+                        VideoLoadingLine(link: _notifier.link),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            // The original downloaded before it plays, see _download
-            ValueListenableBuilder<int?>(
-              valueListenable: _downloadPercent,
-              builder: (context, percent, _) => percent == null
-                  ? const SizedBox.shrink()
-                  : Center(
-                      child: Column(
-                        key: const Key('video_original_download'),
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CircularProgressIndicator(value: percent / 100),
-                          const SizedBox(height: 12),
-                          Text(
-                            context.t.immersive_downloading_original(percent: percent),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ],
+              // The original downloaded before it plays, see _download
+              ValueListenableBuilder<int?>(
+                valueListenable: _downloadPercent,
+                builder: (context, percent, _) => percent == null
+                    ? const SizedBox.shrink()
+                    : Center(
+                        child: Column(
+                          key: const Key('video_original_download'),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircularProgressIndicator(value: percent / 100),
+                            const SizedBox(height: 12),
+                            Text(
+                              context.t.immersive_downloading_original(percent: percent),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-            ),
-            if (status == VideoPlaybackStatus.failed && failure != null)
-              Positioned.fill(
-                child: VideoFailurePanel(asset: widget.asset, failure: failure, fromServer: _fromServer),
               ),
+              if (status == VideoPlaybackStatus.failed && failure != null)
+                Positioned.fill(
+                  child: VideoFailurePanel(asset: widget.asset, failure: failure, fromServer: _fromServer),
+                ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

@@ -51,6 +51,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_tracks.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
 import 'package:immich_mobile/presentation/actions/watch_progress.action.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/display_rate_pacer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
@@ -2027,7 +2028,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   @override
   Widget build(BuildContext context) {
     // Watched so that the player lives as long as the page
-    ref.watch(videoPlayerProvider(_playerKey).select((v) => v.status));
+    final status = ref.watch(videoPlayerProvider(_playerKey).select((v) => v.status));
     ref.listen(videoPlayerProvider(_playerKey).select((v) => v.status), _onStatus);
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
     final can360 = (isHorizonOs ?? false) || ref.watch(panorama360VideoSupportedProvider);
@@ -2284,7 +2285,11 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
           _hideControls();
         }
       },
-      child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: page),
+      // On a Meta Quest the window follows the display while the film plays (see DisplayRatePacer)
+      child: DisplayRatePacer(
+        active: (isHorizonOs ?? false) && status == VideoPlaybackStatus.playing,
+        child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: page),
+      ),
     );
   }
 
