@@ -73,9 +73,17 @@ What differs from upstream, to apply again when a newer commit is copied here (e
    film through the media bridge played at a fifth of the link: the main thread, where Flutter runs the Dart UI isolate
    (and the bridge) and draws the frames, was busy at 60 % while the video played. Upstream sends the position every
    8 ms, and its Dart handler threw `UnsupportedError` after every call.
-   - `NativeVideoPlayerViewController.kt`: while the video plays, the position goes to Flutter at most every 100 ms
-     (`POSITION_INTERVAL_MS`); a jump back or of more than a second (a seek), and any change while it does not play,
-     still go at once. The 8 ms tick that reads it is unchanged.
+   - `NativeVideoPlayerViewController.kt`: while the video plays, the position goes to Flutter at most every
+     `positionIntervalMs` (below); a jump back or of more than a second (a seek), and any change while it does not
+     play, still go at once. The 8 ms tick that reads it is unchanged.
+   - Changed on 21 November 2026 (build 50): the interval is a setting of the player, no longer a constant. Meta's
+     review of build 48 failed VRC.Quest.Performance.1 (the app under 60 frames a second): the window of a Meta Quest
+     redraws once per position, and at 10 a second it presented 10 frames a second while a video played in the 2D
+     viewer, against 62 to 66 on build 47 (`store/m2/meta/v15/frame-rate-2026-11-21.md` of the research notes).
+     `PositionPacer.kt` (new) holds the rule (the tick, the jumps, the pause, the interval); `PlayerSetup` gets
+     `positionIntervalMs` (100 ms when the app gives none, as release 48), which the app sets
+     (`FlatPlayerSetup`, `FlatPlayerPosition` in `MainActivity.registerPlugins`): 8 ms, each tick as upstream, on a
+     Meta Quest (`isHorizonOsDevice()`), 100 ms on phones and TVs.
    - `platform_interface/native_video_player_api.dart`: `_handleMethodCall` is async and throws only for a method it
      does not know.
    - iOS: nothing.
