@@ -4430,6 +4430,7 @@
   "tv_oauth_use_phone": "{provider} reikia naršyklės: vietoj to prisijunkite telefonu.",
   "tv_open_elsewhere_body": "Šis televizorius negali atidaryti tinklalapių. Atidarykite šį adresą telefone arba kompiuteryje:",
   "tv_open_elsewhere_title": "Atidaryti kitame įrenginyje",
+  "tv_photo_zoom_hint": "Priartinta: rodyklės stumdo nuotrauką, Atgal parodo ją visą",
   "tv_text_entry_hint": "Paspauskite OK, kad rašytumėte",
   "tv_video_360_hint": "Rodyklės apsidairyti, OK pristabdyti ir rodyti valdiklius, Atgal uždaryti",
   "tv_video_seek_step": "{seconds} s",

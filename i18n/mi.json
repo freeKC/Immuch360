@@ -2260,6 +2260,7 @@
   "tv_oauth_use_phone": "Me whai pūtirotiro a {provider}: takiuru kē mā tō waea.",
   "tv_open_elsewhere_body": "Kāore e taea e tēnei pouaka whakaata te whakatuwhera whārangi tukutuku. Whakatuwherahia tēnei wāhitau ki tētahi waea, rorohiko rānei:",
   "tv_open_elsewhere_title": "Whakatuwhera ki tētahi atu pūrere",
+  "tv_photo_zoom_hint": "Kua topa atu: ka nekehia te whakaahua e ngā pere, ka whakaatu a Hoki i te katoa",
   "tv_text_entry_hint": "Pēhia te OK hei patopato",
   "tv_video_360_hint": "Ngā pere hei titiro huri noa, OK hei tatari me te whakaatu i ngā mana, Hoki hei kati",
   "tv_video_seek_step": "{seconds} s",

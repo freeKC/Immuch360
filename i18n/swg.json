@@ -2260,6 +2260,7 @@
   "tv_oauth_use_phone": "{provider} braucht an Browser: meld di liabr mit deim Telefon a.",
   "tv_open_elsewhere_body": "Dr Fernseher ka koine Webseita aufmacha. Mach die Adress auf ma Handy oder Computer auf:",
   "tv_open_elsewhere_title": "Auf ma andra Gerät aufmacha",
+  "tv_photo_zoom_hint": "Vergrößrt: d Pfeil verschiebat s Foto, Zrück zoigt s ganz",
   "tv_text_entry_hint": "OK drücka zom Tippa",
   "tv_video_360_hint": "Pfeil zom Romgucka, OK zom Pausiera ond Bedienelement azoiga, Zrück zom Zuamacha",
   "tv_video_seek_step": "{seconds} s",

@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "{provider} a besoin d'un navigateur : connectez-vous plutôt avec votre téléphone.",
   "tv_open_elsewhere_body": "Ce téléviseur ne peut pas ouvrir de pages web. Ouvrez cette adresse sur un téléphone ou un ordinateur :",
   "tv_open_elsewhere_title": "Ouvrir sur un autre appareil",
+  "tv_photo_zoom_hint": "Zoom avant : les flèches déplacent la photo, Retour l'affiche en entier",
   "tv_text_entry_hint": "Appuyez sur OK pour saisir",
   "tv_video_360_hint": "Flèches pour regarder autour, OK pour mettre en pause et afficher les commandes, Retour pour fermer",
   "tv_video_seek_step": "{seconds} s",

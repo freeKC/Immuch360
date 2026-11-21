@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "{provider} vajab brauserit: logi selle asemel sisse telefoniga.",
   "tv_open_elsewhere_body": "See teler ei saa veebilehti avada. Ava see aadress telefonis või arvutis:",
   "tv_open_elsewhere_title": "Ava teises seadmes",
+  "tv_photo_zoom_hint": "Suurendatud: nooled liigutavad fotot, Tagasi näitab seda tervikuna",
   "tv_text_entry_hint": "Kirjutamiseks vajuta OK",
   "tv_video_360_hint": "Nooled ringi vaatamiseks, OK peatamiseks ja juhtnuppude näitamiseks, Tagasi sulgemiseks",
   "tv_video_seek_step": "{seconds} s",

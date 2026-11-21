@@ -3842,6 +3842,7 @@
   "tv_oauth_use_phone": "{provider} kërkon një shfletues: identifikohuni më mirë me telefonin tuaj.",
   "tv_open_elsewhere_body": "Ky televizor nuk hap dot faqe uebi. Hapeni këtë adresë në një telefon ose kompjuter:",
   "tv_open_elsewhere_title": "Hape në një pajisje tjetër",
+  "tv_photo_zoom_hint": "E zmadhuar: shigjetat lëvizin foton, Prapa e shfaq të plotë",
   "tv_text_entry_hint": "Shtypni OK për të shkruar",
   "tv_video_360_hint": "Shigjetat për të parë përreth, OK për pauzë dhe për të shfaqur kontrollet, Prapa për ta mbyllur",
   "tv_video_seek_step": "{seconds} s",

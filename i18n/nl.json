@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "{provider} heeft een browser nodig: log in plaats daarvan in met je telefoon.",
   "tv_open_elsewhere_body": "Deze tv kan geen webpagina's openen. Open dit adres op een telefoon of een computer:",
   "tv_open_elsewhere_title": "Openen op een ander apparaat",
+  "tv_photo_zoom_hint": "Ingezoomd: de pijlen verschuiven de foto, Terug toont hem helemaal",
   "tv_text_entry_hint": "Druk op OK om te typen",
   "tv_video_360_hint": "Pijlen om rond te kijken, OK om te pauzeren en de bediening te tonen, Terug om te sluiten",
   "tv_video_seek_step": "{seconds} s",

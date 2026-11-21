@@ -2431,6 +2431,7 @@
   "tv_oauth_use_phone": "{provider} brauzer tələb edir: bunun əvəzinə telefonunuzla daxil olun.",
   "tv_open_elsewhere_body": "Bu televizor veb səhifələri aça bilmir. Bu ünvanı telefonda və ya kompüterdə açın:",
   "tv_open_elsewhere_title": "Başqa cihazda aç",
+  "tv_photo_zoom_hint": "Yaxınlaşdırılıb: oxlar fotonu sürüşdürür, Geri onu tam göstərir",
   "tv_text_entry_hint": "Yazmaq üçün OK basın",
   "tv_video_360_hint": "Ətrafa baxmaq üçün oxlar, fasilə və idarəetməni göstərmək üçün OK, bağlamaq üçün Geri",
   "tv_video_seek_step": "{seconds} san",

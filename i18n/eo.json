@@ -4360,6 +4360,7 @@
   "tv_oauth_use_phone": "{provider} bezonas retumilon: anstataŭe ensalutu per via telefono.",
   "tv_open_elsewhere_body": "Ĉi tiu televidilo ne povas malfermi retpaĝojn. Malfermu ĉi tiun adreson en telefono aŭ komputilo:",
   "tv_open_elsewhere_title": "Malfermi en alia aparato",
+  "tv_photo_zoom_hint": "Zomita: la sagoj movas la foton, Reen montras ĝin tutan",
   "tv_text_entry_hint": "Premu OK por tajpi",
   "tv_video_360_hint": "Sagoj por ĉirkaŭrigardi, OK por paŭzi kaj montri la regilojn, Reen por fermi",
   "tv_video_seek_step": "{seconds} s",

@@ -4514,6 +4514,7 @@
   "tv_oauth_use_phone": "{provider}에는 브라우저가 필요합니다: 대신 휴대폰으로 로그인하세요.",
   "tv_open_elsewhere_body": "이 TV에서는 웹 페이지를 열 수 없습니다. 이 주소를 휴대폰이나 컴퓨터에서 여세요:",
   "tv_open_elsewhere_title": "다른 기기에서 열기",
+  "tv_photo_zoom_hint": "확대됨: 화살표로 사진을 옮기고, 뒤로로 전체를 표시",
   "tv_text_entry_hint": "OK를 눌러 입력",
   "tv_video_360_hint": "화살표로 둘러보기, OK로 일시 정지 및 컨트롤 표시, 뒤로로 닫기",
   "tv_video_seek_step": "{seconds}초",

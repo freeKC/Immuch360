@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "{provider} richiede un browser: accedi invece con il telefono.",
   "tv_open_elsewhere_body": "Questa TV non può aprire pagine web. Apri questo indirizzo su un telefono o un computer:",
   "tv_open_elsewhere_title": "Apri su un altro dispositivo",
+  "tv_photo_zoom_hint": "Ingrandita: le frecce spostano la foto, Indietro la mostra intera",
   "tv_text_entry_hint": "Premi OK per scrivere",
   "tv_video_360_hint": "Frecce per guardarti intorno, OK per mettere in pausa e mostrare i controlli, Indietro per chiudere",
   "tv_video_seek_step": "{seconds} s",

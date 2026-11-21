@@ -2875,6 +2875,7 @@
   "tv_oauth_use_phone": "{provider} treng ein nettlesar: logg inn med telefonen din i staden.",
   "tv_open_elsewhere_body": "Denne TV-en kan ikkje opne nettsider. Opne denne adressa på ein telefon eller ei datamaskin:",
   "tv_open_elsewhere_title": "Opne på ei anna eining",
+  "tv_photo_zoom_hint": "Zooma inn: pilene flyttar biletet, Tilbake viser det heilt",
   "tv_text_entry_hint": "Trykk på OK for å skrive",
   "tv_video_360_hint": "Piler for å sjå deg rundt, OK for å setje på pause og vise kontrollane, Tilbake for å lukke",
   "tv_video_seek_step": "{seconds} s",

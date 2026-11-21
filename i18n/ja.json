@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "{provider} にはブラウザーが必要です: 代わりに電話でログインしてください。",
   "tv_open_elsewhere_body": "このテレビではウェブページを開けません。このアドレスをスマートフォンかコンピューターで開いてください:",
   "tv_open_elsewhere_title": "別のデバイスで開く",
+  "tv_photo_zoom_hint": "拡大中: 矢印で写真を動かし、戻るで全体を表示",
   "tv_text_entry_hint": "OK を押して入力",
   "tv_video_360_hint": "矢印で見回す、OK で一時停止してコントロールを表示、戻るで閉じる",
   "tv_video_seek_step": "{seconds} 秒",

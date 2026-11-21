@@ -4490,6 +4490,7 @@
   "tv_oauth_use_phone": "{provider} memerlukan peramban: masuklah dengan ponsel Anda.",
   "tv_open_elsewhere_body": "TV ini tidak dapat membuka halaman web. Buka alamat ini di ponsel atau komputer:",
   "tv_open_elsewhere_title": "Buka di perangkat lain",
+  "tv_photo_zoom_hint": "Diperbesar: panah menggeser foto, Kembali menampilkannya utuh",
   "tv_text_entry_hint": "Tekan OK untuk mengetik",
   "tv_video_360_hint": "Panah untuk melihat sekeliling, OK untuk menjeda dan menampilkan kontrol, Kembali untuk menutup",
   "tv_video_seek_step": "{seconds} dtk",

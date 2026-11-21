@@ -4277,6 +4277,7 @@
   "tv_oauth_use_phone": "{provider} vajag pārlūku: tā vietā pierakstieties ar tālruni.",
   "tv_open_elsewhere_body": "Šis televizors nevar atvērt tīmekļa lapas. Atveriet šo adresi tālrunī vai datorā:",
   "tv_open_elsewhere_title": "Atvērt citā ierīcē",
+  "tv_photo_zoom_hint": "Tuvināts: bultiņas pārvieto fotoattēlu, Atpakaļ parāda to visu",
   "tv_text_entry_hint": "Nospiediet OK, lai rakstītu",
   "tv_video_360_hint": "Bultiņas, lai paskatītos apkārt, OK pauzei un vadīklu rādīšanai, Atpakaļ, lai aizvērtu",
   "tv_video_seek_step": "{seconds} s",

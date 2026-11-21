@@ -4458,6 +4458,7 @@
   "tv_oauth_use_phone": "{provider} needs a browser: sign in with your phone instead.",
   "tv_open_elsewhere_body": "This TV cannot open web pages. Open this address on a phone or a computer:",
   "tv_open_elsewhere_title": "Open on another device",
+  "tv_photo_zoom_hint": "Zoomed in: the arrows move the photo, Back shows it whole",
   "tv_text_entry_hint": "Press OK to type",
   "tv_video_360_hint": "Arrows to look around, OK to pause and show the controls, Back to close",
   "tv_video_seek_step": "{seconds} s",

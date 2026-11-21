@@ -4514,6 +4514,7 @@
   "tv_oauth_use_phone": "{provider} braucht einen Browser: Melde dich stattdessen mit deinem Telefon an.",
   "tv_open_elsewhere_body": "Dieser Fernseher kann keine Webseiten öffnen. Öffne diese Adresse auf einem Handy oder Computer:",
   "tv_open_elsewhere_title": "Auf einem anderen Gerät öffnen",
+  "tv_photo_zoom_hint": "Vergrößert: Die Pfeile verschieben das Foto, Zurück zeigt es ganz",
   "tv_text_entry_hint": "OK drücken, um zu tippen",
   "tv_video_360_hint": "Pfeile zum Umsehen, OK zum Pausieren und Anzeigen der Bedienelemente, Zurück zum Schließen",
   "tv_video_seek_step": "{seconds} s",

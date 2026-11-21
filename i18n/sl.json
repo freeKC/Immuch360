@@ -4512,6 +4512,7 @@
   "tv_oauth_use_phone": "{provider} potrebuje brskalnik: raje se prijavite s telefonom.",
   "tv_open_elsewhere_body": "Ta televizor ne more odpirati spletnih strani. Odprite ta naslov na telefonu ali računalniku:",
   "tv_open_elsewhere_title": "Odpri v drugi napravi",
+  "tv_photo_zoom_hint": "Povečano: puščice premikajo fotografijo, Nazaj jo prikaže celo",
   "tv_text_entry_hint": "Pritisnite OK za tipkanje",
   "tv_video_360_hint": "Puščice za razgledovanje, OK za premor in prikaz kontrolnikov, Nazaj za zapiranje",
   "tv_video_seek_step": "{seconds} s",

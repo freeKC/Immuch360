@@ -4495,6 +4495,7 @@
   "tv_oauth_use_phone": "{provider} bir tarayıcı gerektiriyor: bunun yerine telefonunuzla oturum açın.",
   "tv_open_elsewhere_body": "Bu televizyon web sayfalarını açamaz. Bu adresi bir telefonda veya bilgisayarda açın:",
   "tv_open_elsewhere_title": "Başka bir cihazda aç",
+  "tv_photo_zoom_hint": "Yakınlaştırıldı: oklar fotoğrafı kaydırır, Geri tamamını gösterir",
   "tv_text_entry_hint": "Yazmak için OK'e basın",
   "tv_video_360_hint": "Etrafa bakmak için oklar, duraklatmak ve kontrolleri göstermek için OK, kapatmak için Geri",
   "tv_video_seek_step": "{seconds} sn",

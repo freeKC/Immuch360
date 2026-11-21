@@ -4514,6 +4514,7 @@
   "tv_oauth_use_phone": "{provider} potrebuje prehliadač: prihláste sa radšej telefónom.",
   "tv_open_elsewhere_body": "Tento televízor nedokáže otvárať webové stránky. Otvorte túto adresu v telefóne alebo počítači:",
   "tv_open_elsewhere_title": "Otvoriť v inom zariadení",
+  "tv_photo_zoom_hint": "Priblížené: šípky posúvajú fotku, Späť ju ukáže celú",
   "tv_text_entry_hint": "Stlačte OK na písanie",
   "tv_video_360_hint": "Šípkami sa rozhliadate, OK pozastaví a zobrazí ovládanie, Späť zatvorí",
   "tv_video_seek_step": "{seconds} s",
