@@ -289,7 +289,7 @@ class NativeVideoPlayerViewController(
             override fun run() {
                 val position = player.currentPosition
                 // Immuch360: while the video plays, the position goes to Flutter at the interval of the app (100 ms on
-                // a phone, each 8 ms tick on a Meta Quest); a seek, a pause or a stop still goes at once
+                // every device of Immuch360); a seek, a pause or a stop still goes at once
                 if (positionPacer.shouldSend(position, player.isPlaying, SystemClock.uptimeMillis())) {
                     api.onPlaybackPositionChanged(position)
                 }

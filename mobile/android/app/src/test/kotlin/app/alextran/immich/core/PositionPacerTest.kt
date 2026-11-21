@@ -23,23 +23,25 @@ class PositionPacerTest {
   }
 
   @Test
-  fun aQuestGetsTheIntervalOfEachTickAndAPhoneTenASecond() {
-    assertEquals(PositionPacer.TICK_MS, FlatPlayerPosition.intervalFor(horizonOs = true))
-    assertEquals(8L, FlatPlayerPosition.intervalFor(horizonOs = true))
+  fun aQuestAndAPhoneGetTenPositionsASecond() {
+    // The Quest's window keeps the display's rate through DisplayRatePacer (Dart), not through the position
+    assertEquals(100L, FlatPlayerPosition.intervalFor(horizonOs = true))
     assertEquals(100L, FlatPlayerPosition.intervalFor(horizonOs = false))
     assertEquals(PositionPacer.DEFAULT_INTERVAL_MS, FlatPlayerPosition.intervalFor(horizonOs = false))
   }
 
   @Test
-  fun onAQuestEveryTickOfSteadyPlaybackGoesToFlutter() {
-    // 125 ticks a second, each one sent: more than the 72 or 90 Hz of the display, so a frame at every refresh
-    assertEquals(125 * 2, sentOverSteadyPlayback(PositionPacer(FlatPlayerPosition.intervalFor(true)), 2))
+  fun anIntervalOfOneTickSendsEveryTickOfSteadyPlayback() {
+    // 125 ticks a second, each one sent: what upstream did, and the Quest up to release 47
+    assertEquals(125 * 2, sentOverSteadyPlayback(PositionPacer(PositionPacer.TICK_MS), 2))
   }
 
   @Test
-  fun onAPhoneSteadyPlaybackSendsTenPositionsASecond() {
-    val sent = sentOverSteadyPlayback(PositionPacer(FlatPlayerPosition.intervalFor(false)), 4)
-    assertTrue("sent $sent", sent in 39..41)
+  fun steadyPlaybackSendsTenPositionsASecondOnAQuestAndOnAPhone() {
+    for (horizonOs in listOf(true, false)) {
+      val sent = sentOverSteadyPlayback(PositionPacer(FlatPlayerPosition.intervalFor(horizonOs)), 4)
+      assertTrue("horizonOs $horizonOs, sent $sent", sent in 39..41)
+    }
   }
 
   @Test

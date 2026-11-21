@@ -201,8 +201,8 @@ class MainActivity : FlutterFragmentActivity() {
       // Its errors in the words of the app: Flutter gets the kind, the codec and the size, never the text of Media3
       NativeVideoPlayerPlugin.errorToken = FlatPlayerErrors::token
       // Its player starts a streamed video from the measured link, and tells Flutter what that link brings. Its
-      // position comes 10 times a second on a phone or a TV, at each tick of the player on a Meta Quest, whose window
-      // redraws once per position and must keep 60 frames a second while a video plays
+      // position comes 10 times a second on every device (FlatPlayerPosition); the window of a Meta Quest keeps the
+      // display's rate while a video plays through DisplayRatePacer
       val positionIntervalMs = FlatPlayerPosition.intervalFor(isHorizonOsDevice())
       NativeVideoPlayerPlugin.playerSetup = { context -> FlatPlayerSetup(context, positionIntervalMs) }
       // The redirects the HTTP client of Dart (package:ok_http) did not expect, on the Logs page: a relative Location

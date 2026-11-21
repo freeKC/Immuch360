@@ -2,10 +2,9 @@ package me.albemala.native_video_player
 
 /**
  * Immuch360 (patch 5): when the position the player reads at each tick goes to Flutter. Each one rebuilds the
- * controls and asks for a frame, so the interval while the video plays is the redraw rate of the window: 100 ms on a
- * phone, where the frames, the Dart isolate and the media bridge share the main thread, and the 8 ms tick on a Meta
- * Quest, whose window must present at least 60 frames a second while a video plays (VRC.Quest.Performance.1). The app
- * gives the interval (PlayerSetup.positionIntervalMs). A position that did not change is never sent; a jump back or
+ * controls and asks for a frame on the main thread, which the frames, the Dart isolate and the media bridge share. The
+ * app gives the interval (PlayerSetup.positionIntervalMs): 100 ms on its phones, TVs and Meta Quest (whose window
+ * keeps the display's rate through a ticker of its own, not through the position). A position that did not change is never sent; a jump back or
  * of more than [JUMP_MS] (a seek), and any change while the video does not play, go at once.
  */
 class PositionPacer(intervalMs: Long) {

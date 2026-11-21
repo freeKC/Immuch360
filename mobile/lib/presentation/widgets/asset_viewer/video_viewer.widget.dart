@@ -34,7 +34,6 @@ import 'package:immich_mobile/providers/asset_viewer/video_player_provider.dart'
 import 'package:immich_mobile/providers/asset_viewer/video_source.provider.dart';
 import 'package:immich_mobile/providers/cast.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
-import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
@@ -937,11 +936,10 @@ class NativeVideoViewerState extends ConsumerState<NativeVideoViewer> with Widge
     // the view from the tree when we start a route transition, which has the side effect of properly ordering the `dispose`
     final isRouteActive = ModalRoute.of(context)?.isActive ?? true;
     final showPlayer = !isCasting && isRouteActive;
-    // On a Meta Quest the window follows the display while the video plays (see DisplayRatePacer)
-    final horizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
-
-    return DisplayRatePacer(
-      active: horizonOs && showPlayer && status == VideoPlaybackStatus.playing,
+    // On a Meta Quest the window follows the display while the video plays (see VideoDisplayRatePacer)
+    return VideoDisplayRatePacer(
+      playerKey: widget.asset.id,
+      enabled: showPlayer,
       child: IgnorePointer(
         child: Stack(
           children: [

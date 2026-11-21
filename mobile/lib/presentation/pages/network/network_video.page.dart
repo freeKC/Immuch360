@@ -2028,7 +2028,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   @override
   Widget build(BuildContext context) {
     // Watched so that the player lives as long as the page
-    final status = ref.watch(videoPlayerProvider(_playerKey).select((v) => v.status));
+    ref.watch(videoPlayerProvider(_playerKey).select((v) => v.status));
     ref.listen(videoPlayerProvider(_playerKey).select((v) => v.status), _onStatus);
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull;
     final can360 = (isHorizonOs ?? false) || ref.watch(panorama360VideoSupportedProvider);
@@ -2285,9 +2285,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
           _hideControls();
         }
       },
-      // On a Meta Quest the window follows the display while the film plays (see DisplayRatePacer)
-      child: DisplayRatePacer(
-        active: (isHorizonOs ?? false) && status == VideoPlaybackStatus.playing,
+      // On a Meta Quest the window follows the display while the film plays (see VideoDisplayRatePacer)
+      child: VideoDisplayRatePacer(
+        playerKey: _playerKey,
         child: Focus(focusNode: _rootFocus, autofocus: true, onKeyEvent: _onKey, child: page),
       ),
     );

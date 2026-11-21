@@ -82,8 +82,11 @@ What differs from upstream, to apply again when a newer commit is copied here (e
      viewer, against 62 to 66 on build 47 (`store/m2/meta/v15/frame-rate-2026-11-21.md` of the research notes).
      `PositionPacer.kt` (new) holds the rule (the tick, the jumps, the pause, the interval); `PlayerSetup` gets
      `positionIntervalMs` (100 ms when the app gives none, as release 48), which the app sets
-     (`FlatPlayerSetup`, `FlatPlayerPosition` in `MainActivity.registerPlugins`): 8 ms, each tick as upstream, on a
-     Meta Quest (`isHorizonOsDevice()`), 100 ms on phones and TVs.
+     (`FlatPlayerSetup`, `FlatPlayerPosition` in `MainActivity.registerPlugins`). The Quest first got 8 ms, each tick
+     as upstream; measured on the headset, that alone gave 41 frames a second (the positions landed just after a
+     refresh) and took the main thread from 4 % to 23 % during a video. The window of the Quest keeps the display's
+     rate through `DisplayRatePacer` (Dart) instead, so every device gets 100 ms; the setting stays for the Quest to
+     change on its own.
    - `platform_interface/native_video_player_api.dart`: `_handleMethodCall` is async and throws only for a method it
      does not know.
    - iOS: nothing.
