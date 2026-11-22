@@ -269,7 +269,7 @@ final removableRootProvider = Provider<bool Function(LibraryRoot root)>((ref) {
   return (root) => known.putIfAbsent('${root.volumeKey}|${root.path}', () => volumes.isRemovable(root.path));
 });
 
-/// The watcher of the roots on a computer that can watch folders (Windows, macOS); null elsewhere. Kept alive by
+/// The watcher of the roots on a computer that can watch folders (Windows, macOS, Linux); null elsewhere. Kept alive by
 /// [FolderLibraryHost].
 final folderLibraryWatcherProvider = Provider<LibraryWatcher?>((ref) {
   if (!LibraryWatcher.supported) {
