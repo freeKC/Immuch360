@@ -1540,6 +1540,7 @@
   "desktop_video_360_needs_gpu": "The graphics card cannot keep up with the 360° view of this video, so it plays flat. A dedicated graphics card helps: Windows chooses the card for each app in Settings, System, Display, Graphics.",
   "desktop_video_360_slow_gpu": "This graphics card cannot show the 360° view of this video smoothly. A dedicated graphics card helps: Windows chooses the card for each app in Settings, System, Display, Graphics.",
   "desktop_video_360_transcoded": "The original could not be played: playing the server's transcoded stream.",
+  "desktop_video_3d_flat_one_eye": "This computer cannot show the 360° view of this 3D video: it plays flat, one eye only.",
   "desktop_video_later": "Video playback comes to Immuch360 Desktop in a later version",
   "desktop_video_mute": "Mute",
   "desktop_video_needs_libmpv": "Videos need the libmpv library, which this computer does not have: install the libmpv2 package (libmpv1 on Ubuntu 22.04, mpv-libs on Fedora), then start Immuch360 again.",

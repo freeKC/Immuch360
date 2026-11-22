@@ -451,6 +451,8 @@ void main() {
   // plays flat in the same player, with the message, and the plugin is never asked for a projection
   group('without renderer C (Linux)', () {
     const flatMessage = 'This computer cannot show the 360° view of this video: it plays flat.';
+    // A 3D video shown flat shows one eye (flat_eye_view.dart, parity lot L02), and says so
+    const oneEyeMessage = 'This computer cannot show the 360° view of this 3D video: it plays flat, one eye only.';
 
     testWidgets('a 360° video plays flat at once, with the message', (tester) async {
       await pumpLauncher(
@@ -469,7 +471,7 @@ void main() {
       expect(session.closings, [(StereoLayout.mono, SphereCoverage.full)]);
     });
 
-    testWidgets('a VR180 3D video plays flat, with the message', (tester) async {
+    testWidgets('a VR180 3D video plays flat, one eye, with the message', (tester) async {
       await pumpLauncher(
         tester,
         const SphericalPlayerArgs(
@@ -481,7 +483,8 @@ void main() {
         pluginSupported: false,
       );
       expect(page(tester).rendering, const SphereRendering.flat(FlatReason.unsupported));
-      expect(find.text(flatMessage), findsOneWidget);
+      expect(find.text(oneEyeMessage), findsOneWidget);
+      expect(find.text(flatMessage), findsNothing);
       expect(players.made.single.calls, contains('open /videos/vr180.mp4 at 0'));
       expect(channel.setups, isEmpty);
       await close(tester);
