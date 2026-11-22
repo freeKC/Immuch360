@@ -1882,6 +1882,33 @@ jobs:
           IMMUCH360_RUN_LAUNCHER: ${{ steps.fakes.outputs.dir }}/immuch360-run
         run: mise exec -- flutter test test/desktop
 
+      # For the record, not a check: macOS refused the test authority of tls_contract_test.dart and of the downloader
+      # tests on the first run of the suite on a Mac (22 November 2026), so those tests are skipped there. The same
+      # authority and server certificate made by the openssl of this runner, its version, the extensions it wrote, and
+      # what the trust evaluation of macOS (security verify-cert, policy ssl, 127.0.0.1) says of them
+      - name: TLS diagnostics (information only)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: |
+          tls="$RUNNER_TEMP/tls-diagnostics"
+          mkdir -p "$tls"
+          cd "$tls"
+          printf '[req]\ndistinguished_name = dn\n[dn]\n' > openssl.cnf
+          export OPENSSL_CONF="$tls/openssl.cnf"
+          command -v openssl
+          openssl version
+          openssl req -x509 -newkey rsa:2048 -nodes -keyout ca.key -out ca.pem -days 2 \
+            -subj '/CN=Immuch360 Test Authority' -addext 'basicConstraints=critical,CA:TRUE' \
+            -addext 'keyUsage=critical,keyCertSign,cRLSign'
+          printf 'subjectAltName=IP:127.0.0.1,DNS:localhost\nbasicConstraints=CA:FALSE\nextendedKeyUsage=serverAuth\n' \
+            > server.ext
+          openssl req -newkey rsa:2048 -nodes -keyout server.key -out server.csr -subj '/CN=127.0.0.1'
+          openssl x509 -req -in server.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out server.pem -days 2 \
+            -extfile server.ext
+          openssl x509 -in server.pem -noout -text | sed -n '/X509v3 extensions/,$p' | head -20
+          security verify-cert -c server.pem -r ca.pem -p ssl -s 127.0.0.1 -L -v || true
+          security verify-cert -c ca.pem -r ca.pem -L -v || true
+
       - name: ONNX Runtime archive cache
         if: ${{ !cancelled() }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
