@@ -12,7 +12,6 @@ import 'package:immich_mobile/domain/models/apple_spatial.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/scene_photo_probe.dart';
-import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -22,6 +21,7 @@ import 'package:immich_mobile/presentation/widgets/action_buttons/motion_photo_a
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/flat_screen_navigator.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_open_error.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
@@ -356,8 +356,7 @@ Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset ass
   // Read before the first await: the viewer may be gone by then. The navigator reads the providers of this asset
   // viewer through its container, never through this WidgetRef, which goes with the widget
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final errorMessage = context.t.immersive_viewer_open_failed;
-  final tiffMessage = context.t.tiff_cannot_decode;
+  final t = context.t;
   final stereoLabels = stereoPhotoViewerLabels(context.t);
   final container = ProviderScope.containerOf(context, listen: false);
   try {
@@ -366,7 +365,7 @@ Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset ass
   } catch (error) {
     _log.warning('Could not open ${asset.name} in 3D: $error');
     // A TIFF of the headset that does not decode says so (see ImmersiveAssetResolver.resolveStereoPhoto)
-    messenger?.showSnackBar(SnackBar(content: Text(error is TiffDecodeException ? tiffMessage : errorMessage)));
+    messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
   }
 }
 
@@ -375,7 +374,7 @@ Future<void> _openStereoPhoto(BuildContext context, WidgetRef ref, BaseAsset ass
 Future<void> _openFlatVideo(BuildContext context, WidgetRef ref, BaseAsset asset, FlatStereoFormat format) async {
   // Read before the first await: the viewer may be gone by then
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final errorMessage = context.t.immersive_viewer_open_failed;
+  final t = context.t;
   final stereoLabels = stereoPhotoViewerLabels(context.t);
   try {
     await openFlatVideoViewer(
@@ -389,7 +388,7 @@ Future<void> _openFlatVideo(BuildContext context, WidgetRef ref, BaseAsset asset
     );
   } catch (error) {
     _log.warning('Could not open ${asset.name} in 3D: $error');
-    messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
   }
 }
 
@@ -399,8 +398,7 @@ Future<void> _openFlatVideo(BuildContext context, WidgetRef ref, BaseAsset asset
 Future<void> _openBigScreen(BuildContext context, WidgetRef ref, BaseAsset asset) async {
   // Read before the first await: the viewer may be gone by then
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final errorMessage = context.t.immersive_viewer_open_failed;
-  final tiffMessage = context.t.tiff_cannot_decode;
+  final t = context.t;
   final stereoLabels = stereoPhotoViewerLabels(context.t);
   final container = ProviderScope.containerOf(context, listen: false);
   try {
@@ -420,7 +418,7 @@ Future<void> _openBigScreen(BuildContext context, WidgetRef ref, BaseAsset asset
     }
   } catch (error) {
     _log.warning('Could not open ${asset.name} on the big screen: $error');
-    messenger?.showSnackBar(SnackBar(content: Text(error is TiffDecodeException ? tiffMessage : errorMessage)));
+    messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
   }
 }
 
