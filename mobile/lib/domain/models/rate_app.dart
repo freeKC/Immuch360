@@ -1,12 +1,16 @@
-// The invitation to rate the app (release 45, study of 10 November 2026 in the research notes, "Rating invitation"):
-// what the app keeps of its use on this install, and the rule that says when the store of the build may be asked for
-// a rating. Pure: no clock, no store, no platform, so that every condition is tested alone.
+// The invitation to rate the app (release 45, study of 10 November 2026 in the research notes, "Rating invitation";
+// gentler rule of release 51, store/m2/release-51/ratings-2026-11-22.md): what the app keeps of its use on this
+// install, and the rule that says when the store of the build may be asked for a rating. Pure: no clock, no store, no
+// platform, so that every condition is tested alone.
 //
-// The rule asks once a few viewings ended well over several days, never right after an update, the What's new notice
-// or a crash of this build, never twice in a build, twice at most ever, 90 days apart, and never again once the user
-// chose Rate or dismissed the invitation twice. Google Play and the App Store show their own card or prompt and never
-// say whether it showed or what the user did: an ask there counts as asked, without an answer. On the Quest store
-// build, where Meta offers no review API, the app shows a sentence of its own with Not now and Rate.
+// The rule asks only a user who looks happy: a few opens over several days, viewings that ended well, the last of
+// them a 360°, 3D or immersive one, no crash in the last days and no error in this session, never within a day of an
+// update or of the What's new notice, never with the remote control layout (nothing takes the focus of a remote).
+// At most once in a build, three times ever, 60 days apart, and never again once the user chose Rate (in the
+// invitation or in Settings) or No thanks. Google Play and the App Store show their own card or prompt and never say
+// whether it showed or what the user did: an ask there counts as asked, without an answer. On the Quest store build,
+// where Meta offers no review API, the app shows a quiet line of its own that fades by itself, then stays in Settings
+// for the rest of the build until the user answers it; no dialog anywhere.
 
 import 'dart:convert';
 
@@ -32,17 +36,36 @@ enum RateAppChannel {
 }
 
 /// What the user did with an invitation of the app's own (the Quest store build). Play and StoreKit never tell, so
-/// their asks keep [none].
-enum RateAppAnswer { none, notNow, rate }
+/// their asks keep [none], as a line of the Quest that faded unanswered does. [noThanks] ends the invitation for good
+/// (kept as "notNow" by the builds 45 to 50, read the same)
+enum RateAppAnswer {
+  none,
+  noThanks,
+  rate;
+
+  /// The answer kept under [name], "notNow" being the [noThanks] of the builds 45 to 50
+  static RateAppAnswer fromName(String name) => name == 'notNow' ? noThanks : RateAppAnswer.values.byName(name);
+}
 
 /// A viewing that may end well, one of the success signals of the rule
-enum RateAppViewing { immersive, sphericalVideo, spatialVideo, splat, panorama, film }
+enum RateAppViewing {
+  immersive,
+  sphericalVideo,
+  spatialVideo,
+  splat,
+  panorama,
+  film;
+
+  /// Whether a viewing of this kind may be the moment of the ask: the 360°, 3D and immersive viewings. A film counts
+  /// among the viewings that ended well, but is not the moment
+  bool get isMoment => this != film;
+}
 
 /// The fork's switch of the whole invitation: false and no build asks anything
 const bool kRateAppInvite = true;
 
 /// Opens of the app before the first ask, on at least [kRateAppMinDays] different local days
-const int kRateAppMinOpens = 5;
+const int kRateAppMinOpens = 4;
 const int kRateAppMinDays = 3;
 
 /// Viewings that ended well before the first ask, the last of them being the moment
@@ -58,12 +81,15 @@ const Duration kRateAppReopenAfter = Duration(minutes: 30);
 const Duration kRateAppQuietAfterUpdate = Duration(hours: 24);
 const Duration kRateAppQuietAfterNotice = Duration(hours: 24);
 
-/// Asks at most, ever, the second one at least [kRateAppSecondAskAfter] after the first
-const int kRateAppMaxAsks = 2;
-const Duration kRateAppSecondAskAfter = Duration(days: 90);
+/// No ask within so long of a crash, of any build
+const Duration kRateAppQuietAfterCrash = Duration(days: 3);
 
-/// Dismissals of the app's own invitation after which it is never shown again
-const int kRateAppMaxDismissals = 2;
+/// Asks at most, ever, each one at least [kRateAppAskInterval] after the one before
+const int kRateAppMaxAsks = 3;
+const Duration kRateAppAskInterval = Duration(days: 60);
+
+/// How long the quiet line of the Quest store build shows before it fades by itself
+const Duration kRateAppLineShows = Duration(seconds: 8);
 
 /// The pause on a browse page, after the viewing that ended well, before the ask
 const Duration kRateAppSettle = Duration(seconds: 2);
@@ -88,7 +114,7 @@ class RateAppAsk {
     build: json['build']! as int,
     at: DateTime.fromMillisecondsSinceEpoch(json['at']! as int),
     channel: RateAppChannel.values.byName(json['channel']! as String),
-    answer: RateAppAnswer.values.byName(json['answer']! as String),
+    answer: RateAppAnswer.fromName(json['answer']! as String),
   );
 
   @override
@@ -118,6 +144,7 @@ class RateAppState {
     this.problemAt,
     this.foreground = false,
     this.asks = const [],
+    this.rateOpenedAt,
   });
 
   /// The version of the JSON object
@@ -140,7 +167,8 @@ class RateAppState {
   /// When the What's new notice last showed
   final DateTime? noticeAt;
 
-  /// The build that last crashed (a crash, a native crash or an ANR, never a kill for low memory), and when it was told
+  /// The build that last crashed (a crash, a native crash or an ANR, never a kill for low memory), and when it crashed
+  /// (the time of the report, or when it was told when the report has none)
   final int? problemBuild;
   final DateTime? problemAt;
 
@@ -151,11 +179,14 @@ class RateAppState {
   /// Every ask made, oldest first
   final List<RateAppAsk> asks;
 
-  /// The dismissals of the app's own invitation
-  int get dismissals => asks.where((ask) => ask.answer == RateAppAnswer.notNow).length;
+  /// When the user last opened the store page from Settings (Rate Immuch360)
+  final DateTime? rateOpenedAt;
 
-  /// Whether the user chose Rate once
-  bool get rated => asks.any((ask) => ask.answer == RateAppAnswer.rate);
+  /// Whether the user chose Rate once, in an invitation or in Settings
+  bool get rated => rateOpenedAt != null || asks.any((ask) => ask.answer == RateAppAnswer.rate);
+
+  /// Whether the user chose No thanks once
+  bool get declined => asks.any((ask) => ask.answer == RateAppAnswer.noThanks);
 
   RateAppState copyWith({
     int? opens,
@@ -169,6 +200,7 @@ class RateAppState {
     DateTime? problemAt,
     bool? foreground,
     List<RateAppAsk>? asks,
+    DateTime? rateOpenedAt,
   }) => RateAppState(
     opens: opens ?? this.opens,
     days: days ?? this.days,
@@ -181,6 +213,7 @@ class RateAppState {
     problemAt: problemAt ?? this.problemAt,
     foreground: foreground ?? this.foreground,
     asks: asks ?? this.asks,
+    rateOpenedAt: rateOpenedAt ?? this.rateOpenedAt,
   );
 
   Map<String, Object?> toJson() => {
@@ -196,6 +229,7 @@ class RateAppState {
     if (problemAt != null) 'problemAt': problemAt!.millisecondsSinceEpoch,
     'foreground': foreground,
     'asks': [for (final ask in asks) ask.toJson()],
+    if (rateOpenedAt != null) 'rateOpenedAt': rateOpenedAt!.millisecondsSinceEpoch,
   };
 
   String encode() => jsonEncode(toJson());
@@ -227,6 +261,7 @@ class RateAppState {
           for (final ask in (json['asks'] as List? ?? const []))
             RateAppAsk.fromJson((ask as Map).cast<String, Object?>()),
         ],
+        rateOpenedAt: time('rateOpenedAt'),
       );
     } catch (error) {
       onError?.call(error);
@@ -267,6 +302,32 @@ RateAppState rateAppOpened(RateAppState state, {required DateTime now, required 
 /// [state] once [ask] was made
 RateAppState rateAppAsked(RateAppState state, RateAppAsk ask) => state.copyWith(asks: [...state.asks, ask]);
 
+/// [state] once the user gave [answer] to the ask of [build] (the line of the Quest store build, shown then kept in
+/// Settings); unchanged when no ask of that build waits for an answer
+RateAppState rateAppAnswered(RateAppState state, {required int build, required RateAppAnswer answer}) {
+  final asks = state.asks;
+  if (asks.isEmpty || asks.last.build != build || asks.last.answer != RateAppAnswer.none) {
+    return state;
+  }
+  final last = asks.last;
+  return state.copyWith(
+    asks: [
+      ...asks.take(asks.length - 1),
+      RateAppAsk(build: last.build, at: last.at, channel: last.channel, answer: answer),
+    ],
+  );
+}
+
+/// Whether the quiet line of the Quest store build stays in Settings: the line showed in this [build] and the user
+/// has not answered it yet
+bool rateAppLineWaits(RateAppState state, {required RateAppChannel channel, required int build}) {
+  if (channel != RateAppChannel.horizonStore || state.rated || state.declined || state.asks.isEmpty) {
+    return false;
+  }
+  final last = state.asks.last;
+  return last.build == build && last.answer == RateAppAnswer.none;
+}
+
 /// What the rule reads besides the state, at the moment of a possible ask
 class RateAppContext {
   const RateAppContext({
@@ -276,7 +337,9 @@ class RateAppContext {
     this.enabled = kRateAppInvite,
     this.screenshotMode = false,
     this.kioskActive = false,
-    this.versionWarning = false,
+    this.remoteControl = false,
+    this.appOutOfDate = false,
+    this.sessionTrouble = false,
   });
 
   final RateAppChannel channel;
@@ -292,11 +355,19 @@ class RateAppContext {
   /// The kiosk mode of the Quest is on (KioskConfig.isActive)
   final bool kioskActive;
 
-  /// The version warning of the profile menu is present (versionWarningPresentProvider)
-  final bool versionWarning;
+  /// The remote control layout is on (tvModeProvider): nothing may take the focus of a remote
+  final bool remoteControl;
+
+  /// The server says this app is too old for it (VersionStatus.clientOutOfDate). Not the other warnings of the profile
+  /// menu: a server behind its latest release (shown to the admins, who are most users of a self hosted server) or a
+  /// server version that did not read say nothing about this app
+  final bool appOutOfDate;
+
+  /// Something went wrong in this session: a video that could not play, a viewer that ended on an error
+  final bool sessionTrouble;
 }
 
-/// Why the app does not ask now, the words of its log line ("not yet, opens 4 of 5, days 2 of 3"), or null when it
+/// Why the app does not ask now, the words of its log line ("not yet, opens 3 of 4, days 2 of 3"), or null when it
 /// may ask
 String? rateAppBlocker(RateAppState state, RateAppContext context) {
   if (!context.enabled) {
@@ -311,11 +382,14 @@ String? rateAppBlocker(RateAppState state, RateAppContext context) {
   if (context.kioskActive) {
     return 'kiosk mode';
   }
+  if (context.remoteControl) {
+    return 'remote control layout';
+  }
   if (state.rated) {
     return 'rated already';
   }
-  if (state.dismissals >= kRateAppMaxDismissals) {
-    return 'dismissed ${state.dismissals} times';
+  if (state.declined) {
+    return 'no thanks';
   }
   if (state.asks.length >= kRateAppMaxAsks) {
     return 'asked ${state.asks.length} times';
@@ -324,11 +398,15 @@ String? rateAppBlocker(RateAppState state, RateAppContext context) {
     return 'asked in this build';
   }
   final lastAsk = state.asks.isEmpty ? null : state.asks.last;
-  if (lastAsk != null && context.now.difference(lastAsk.at) < kRateAppSecondAskAfter) {
+  if (lastAsk != null && context.now.difference(lastAsk.at) < kRateAppAskInterval) {
     return 'asked ${context.now.difference(lastAsk.at).inDays} days ago';
   }
-  if (state.problemBuild == context.build) {
-    return 'a crash in this build';
+  final problemAt = state.problemAt;
+  if (problemAt != null && context.now.difference(problemAt) < kRateAppQuietAfterCrash) {
+    return 'a crash ${context.now.difference(problemAt).inHours} h ago';
+  }
+  if (context.sessionTrouble) {
+    return 'an error in this session';
   }
   if (state.opens < kRateAppMinOpens || state.days < kRateAppMinDays) {
     return 'not yet, opens ${state.opens} of $kRateAppMinOpens, days ${state.days} of $kRateAppMinDays';
@@ -344,8 +422,8 @@ String? rateAppBlocker(RateAppState state, RateAppContext context) {
   if (noticeAt != null && context.now.difference(noticeAt) < kRateAppQuietAfterNotice) {
     return 'the What\'s new notice showed';
   }
-  if (context.versionWarning) {
-    return 'the version warning shows';
+  if (context.appOutOfDate) {
+    return 'the app is out of date for the server';
   }
   return null;
 }
@@ -370,6 +448,7 @@ final _whereSaid = RegExp(
   r', (in the foreground|visible|in the background|running a foreground service|gone|importance -?[0-9]+)',
 );
 final _buildOfExit = RegExp(r'\[Immuch360 ([0-9]+) ');
+final _timeOfExit = RegExp(r'^The app ended on ([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})');
 
 /// Whether the exit report [text] of AppHealth.kt tells of a crash the rule counts: a crash, a native crash or an ANR
 /// in the foreground or visible (or where Android did not say where the app stood)
@@ -390,4 +469,14 @@ bool rateAppExitIsCrash(String text) {
 int? rateAppExitBuild(String text) {
   final match = _buildOfExit.firstMatch(text.split('\n').first);
   return match == null ? null : int.tryParse(match.group(1)!);
+}
+
+/// The local time the process of the exit report [text] ended, null when the first line does not say
+DateTime? rateAppExitTime(String text) {
+  final match = _timeOfExit.firstMatch(text.split('\n').first);
+  if (match == null) {
+    return null;
+  }
+  final parts = [for (var i = 1; i <= 6; i++) int.parse(match.group(i)!)];
+  return DateTime(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]);
 }

@@ -24,6 +24,12 @@ const kHorizonStoreCertificateSha256 = 'ecc6b085c727f003cd71ae45927be08800a7fd84
 /// The id of the app on the Meta Horizon Store, the end of [kHorizonStoreLink]
 const kHorizonStoreAppId = '1384208401440714';
 
+/// The id of the app on the App Store, the end of kImmichAppStoreLink
+const kAppStoreAppId = '6817655965';
+
+/// The GitHub issues of Immuch360, where a problem goes rather than into a store review
+const kImmuch360IssuesLink = 'https://github.com/freeKC/Immuch360/issues';
+
 /// The installer of the apps of Google Play (InstallSourceInfo.initiatingPackageName)
 const kGooglePlayInstaller = 'com.android.vending';
 
@@ -62,3 +68,25 @@ RateAppChannel storeChannelOf({
       return RateAppChannel.none;
   }
 }
+
+/// The addresses that open the page of the app on the store of [channel], best first; none for a build with no store.
+/// Google Play: its app, then its web page. The App Store: the page with its review sheet open (action=write-review,
+/// the link Apple gives for a review the user asks for). The Meta Horizon Store: its web page, after the system deep
+/// link the Kotlin side tries first (HorizonStoreLink)
+List<Uri> rateAppStorePages(RateAppChannel channel) => switch (channel) {
+  RateAppChannel.googlePlay => [
+    Uri.parse('market://details?id=$kImmuch360PackageName'),
+    Uri.parse(kImmichPlayStoreLink),
+  ],
+  RateAppChannel.appStore => [Uri.parse('https://apps.apple.com/app/id$kAppStoreAppId?action=write-review')],
+  RateAppChannel.horizonStore => [Uri.parse(kHorizonStoreLink)],
+  RateAppChannel.github || RateAppChannel.none => const [],
+};
+
+/// The name of the store of [channel] as the app writes it, null for a build with no store
+String? rateAppStoreName(RateAppChannel channel) => switch (channel) {
+  RateAppChannel.googlePlay => 'Google Play',
+  RateAppChannel.appStore => 'App Store',
+  RateAppChannel.horizonStore => 'Meta Horizon Store',
+  RateAppChannel.github || RateAppChannel.none => null,
+};

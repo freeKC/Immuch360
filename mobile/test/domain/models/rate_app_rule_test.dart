@@ -22,7 +22,9 @@ RateAppContext _context({
   bool enabled = true,
   bool screenshotMode = false,
   bool kioskActive = false,
-  bool versionWarning = false,
+  bool remoteControl = false,
+  bool appOutOfDate = false,
+  bool sessionTrouble = false,
 }) => RateAppContext(
   channel: channel,
   build: build,
@@ -30,7 +32,9 @@ RateAppContext _context({
   enabled: enabled,
   screenshotMode: screenshotMode,
   kioskActive: kioskActive,
-  versionWarning: versionWarning,
+  remoteControl: remoteControl,
+  appOutOfDate: appOutOfDate,
+  sessionTrouble: sessionTrouble,
 );
 
 RateAppAsk _ask({int build = 3030040, DateTime? at, RateAppAnswer answer = RateAppAnswer.none}) => RateAppAsk(
@@ -47,36 +51,46 @@ String _exit(String reason, {String where = ', in the foreground', String build 
 
 void main() {
   group('the rule', () {
-    test('asks on the happy path: 5 opens on 3 days, 2 viewings, 24 hours after the first open of the build', () {
+    test('asks on the happy path: 4 opens on 3 days, 2 viewings, 24 hours after the first open of the build', () {
       expect(rateAppBlocker(_due(), _context()), isNull);
     });
 
     test('each condition blocks alone', () {
       final cases = <String, (RateAppState, RateAppContext)>{
-        '4 opens': (_due().copyWith(opens: 4), _context()),
+        '3 opens': (_due().copyWith(opens: 3), _context()),
         '2 days': (_due().copyWith(days: 2), _context()),
         '1 viewing': (_due().copyWith(successes: 1), _context()),
-        'a crash in this build': (_due().copyWith(problemBuild: _build, problemAt: _now), _context()),
+        'a crash 2 days ago': (
+          _due().copyWith(problemBuild: _build - 1, problemAt: _now.subtract(const Duration(days: 2))),
+          _context(),
+        ),
+        'an error in this session': (_due(), _context(sessionTrouble: true)),
         'an update 23 hours ago': (_due().copyWith(buildSince: _now.subtract(const Duration(hours: 23))), _context()),
         'What\'s new 23 hours ago': (_due().copyWith(noticeAt: _now.subtract(const Duration(hours: 23))), _context()),
-        'the version warning': (_due(), _context(versionWarning: true)),
+        'the app out of date for the server': (_due(), _context(appOutOfDate: true)),
         'asked in this build': (_due().copyWith(asks: [_ask(build: _build)]), _context()),
-        'dismissed twice': (
+        'no thanks once': (_due().copyWith(asks: [_ask(answer: RateAppAnswer.noThanks)]), _context()),
+        'rated': (_due().copyWith(asks: [_ask(answer: RateAppAnswer.rate)]), _context()),
+        'the store page opened from Settings': (
+          _due().copyWith(rateOpenedAt: _now.subtract(const Duration(days: 300))),
+          _context(),
+        ),
+        'asked three times already': (
           _due().copyWith(
             asks: [
-              _ask(build: 1, answer: RateAppAnswer.notNow),
-              _ask(build: 2, answer: RateAppAnswer.notNow),
+              _ask(build: 1, at: _now.subtract(const Duration(days: 400))),
+              _ask(build: 2, at: _now.subtract(const Duration(days: 300))),
+              _ask(build: 3),
             ],
           ),
           _context(),
         ),
-        'rated': (_due().copyWith(asks: [_ask(answer: RateAppAnswer.rate)]), _context()),
-        'asked twice already': (_due().copyWith(asks: [_ask(build: 1), _ask(build: 2)]), _context()),
-        'second ask at 89 days': (
-          _due().copyWith(asks: [_ask(at: _now.subtract(const Duration(days: 89)))]),
+        'the last ask 59 days ago': (
+          _due().copyWith(asks: [_ask(at: _now.subtract(const Duration(days: 59)))]),
           _context(),
         ),
         'kiosk mode': (_due(), _context(kioskActive: true)),
+        'the remote control layout': (_due(), _context(remoteControl: true)),
         'store captures': (_due(), _context(screenshotMode: true)),
         'the switch off': (_due(), _context(enabled: false)),
         'the GitHub builds': (_due(), _context(channel: RateAppChannel.github)),
@@ -88,18 +102,16 @@ void main() {
       }
     });
 
-    test('a crash of an earlier build does not block the build that fixes it', () {
-      expect(rateAppBlocker(_due().copyWith(problemBuild: _build - 1, problemAt: _now), _context()), isNull);
-    });
-
-    test('a second ask 90 days after a first one left unanswered', () {
-      final state = _due().copyWith(asks: [_ask(at: _now.subtract(kRateAppSecondAskAfter))]);
+    test('a crash of this build three days ago no longer holds it: the heavy users meet a crash now and then', () {
+      final state = _due().copyWith(problemBuild: _build, problemAt: _now.subtract(kRateAppQuietAfterCrash));
       expect(rateAppBlocker(state, _context()), isNull);
     });
 
-    test('one dismissal leaves one more ask, later', () {
-      final state = _due().copyWith(asks: [_ask(answer: RateAppAnswer.notNow)]);
-      expect(rateAppBlocker(state, _context()), isNull);
+    test('another ask 60 days after one left unanswered, and a third one 60 days after that', () {
+      final first = _ask(build: 1, at: _now.subtract(const Duration(days: 120)));
+      final second = _ask(build: 2, at: _now.subtract(kRateAppAskInterval));
+      expect(rateAppBlocker(_due().copyWith(asks: [first]), _context()), isNull);
+      expect(rateAppBlocker(_due().copyWith(asks: [first, second]), _context()), isNull);
     });
 
     test('the store prompts of Play and the App Store follow the same rule', () {
@@ -108,9 +120,15 @@ void main() {
     });
 
     test('the log line says what is missing', () {
-      expect(rateAppBlocker(_due().copyWith(opens: 4, days: 2), _context()), 'not yet, opens 4 of 5, days 2 of 3');
+      expect(rateAppBlocker(_due().copyWith(opens: 3, days: 2), _context()), 'not yet, opens 3 of 4, days 2 of 3');
       expect(rateAppBlocker(_due().copyWith(successes: 1), _context()), 'not yet, viewings 1 of 2');
-      expect(rateAppBlocker(_due().copyWith(problemBuild: _build), _context()), 'a crash in this build');
+      expect(
+        rateAppBlocker(_due().copyWith(problemAt: _now.subtract(const Duration(hours: 47))), _context()),
+        'a crash 47 h ago',
+      );
+      expect(rateAppBlocker(_due(), _context(sessionTrouble: true)), 'an error in this session');
+      expect(rateAppBlocker(_due().copyWith(asks: [_ask(answer: RateAppAnswer.noThanks)]), _context()), 'no thanks');
+      expect(rateAppBlocker(_due(), _context(remoteControl: true)), 'remote control layout');
     });
 
     test('the channels that can ask', () {
@@ -119,6 +137,44 @@ void main() {
         RateAppChannel.appStore,
         RateAppChannel.horizonStore,
       ]);
+    });
+
+    test('every viewing but a film may be the moment', () {
+      expect(RateAppViewing.values.where((kind) => !kind.isMoment), [RateAppViewing.film]);
+    });
+  });
+
+  group('the answers', () {
+    test('an answer goes to the unanswered ask of this build, and only to it', () {
+      final waiting = _due().copyWith(
+        asks: [
+          _ask(build: 1),
+          _ask(build: _build, at: _now),
+        ],
+      );
+      final rated = rateAppAnswered(waiting, build: _build, answer: RateAppAnswer.rate);
+      expect(rated.asks.map((ask) => ask.answer), [RateAppAnswer.none, RateAppAnswer.rate]);
+      expect(rated.asks.last.at, _now);
+      expect(rated.rated, isTrue);
+      // Already answered, or an ask of another build: nothing changes
+      expect(rateAppAnswered(rated, build: _build, answer: RateAppAnswer.noThanks), rated);
+      expect(rateAppAnswered(waiting, build: _build + 1, answer: RateAppAnswer.rate), waiting);
+      expect(rateAppAnswered(_due(), build: _build, answer: RateAppAnswer.rate), _due());
+    });
+
+    test('the line of the Quest store build waits in Settings while the ask of this build has no answer', () {
+      final waiting = _due().copyWith(
+        asks: [_ask(build: _build, at: _now)],
+      );
+      bool waits(RateAppState state, {RateAppChannel channel = RateAppChannel.horizonStore, int build = _build}) =>
+          rateAppLineWaits(state, channel: channel, build: build);
+      expect(waits(waiting), isTrue);
+      expect(waits(_due()), isFalse);
+      expect(waits(waiting, build: _build + 1), isFalse, reason: 'gone with the update');
+      expect(waits(waiting, channel: RateAppChannel.googlePlay), isFalse, reason: 'Play shows its own card');
+      expect(waits(rateAppAnswered(waiting, build: _build, answer: RateAppAnswer.noThanks)), isFalse);
+      expect(waits(rateAppAnswered(waiting, build: _build, answer: RateAppAnswer.rate)), isFalse);
+      expect(waits(waiting.copyWith(rateOpenedAt: _now)), isFalse, reason: 'rated from Settings');
     });
   });
 
@@ -161,14 +217,24 @@ void main() {
         problemAt: DateTime(2026, 11, 2, 8),
         foreground: true,
         asks: [
-          _ask(answer: RateAppAnswer.notNow),
+          _ask(answer: RateAppAnswer.noThanks),
           _ask(build: _build, at: _now),
         ],
+        rateOpenedAt: DateTime(2026, 11, 3, 9),
       );
       final back = RateAppState.decode(state.encode());
       expect(back, state);
       expect(back.asks, state.asks);
-      expect(back.dismissals, 1);
+      expect(back.rateOpenedAt, DateTime(2026, 11, 3, 9));
+      expect((back.declined, back.rated), (true, true));
+    });
+
+    test('the Not now kept by the builds 45 to 50 reads as No thanks', () {
+      final state = RateAppState.decode(
+        '{"v": 1, "opens": 9, "asks": [{"build": 3030045, "at": 0, "channel": "horizonStore", "answer": "notNow"}]}',
+      );
+      expect(state.asks.single.answer, RateAppAnswer.noThanks);
+      expect(state.declined, isTrue);
     });
 
     test('an unreadable text is a fresh state, told', () {
@@ -232,6 +298,11 @@ void main() {
     test('another text is no crash', () {
       expect(rateAppExitIsCrash('The main thread did not answer for 5.0 s, in Java code.'), isFalse);
       expect(rateAppExitIsCrash(''), isFalse);
+    });
+
+    test('the time the process ended, in local time', () {
+      expect(rateAppExitTime(_exit('crash')), DateTime(2026, 11, 10, 22, 40, 1));
+      expect(rateAppExitTime('The main thread did not answer for 5.0 s, in Java code.'), isNull);
     });
 
     test('the build that ran', () {

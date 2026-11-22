@@ -3,13 +3,15 @@
 // emulator of the CI, never on a device of the owner. The debug build is not from a store and the google_apis image
 // has no Google Play: the store is forced to the Meta Horizon Store with a fake review API, the clock is the test's,
 // and the viewings that end well are told through RateAppSignals as the viewers tell them. The rest is the app's own:
-// its start, the state in the app's store, the lifecycle of the binding, the router under the timeline and the dialog.
+// its start, the state in the app's store, the lifecycle of the binding, the router under the timeline and the quiet
+// line (a snack bar that fades by itself).
 //
-//   rate-early  4 opens on 2 days and 2 viewings: no dialog, the store asked nothing, the decision says why
-//   rate-due    the fifth open on the third day, more than 24 hours after the first open of the build, one more
-//               viewing: the dialog shows once over the timeline; Not now; another viewing in the build: nothing
-//   rate-crash  a new build that meets every other condition, and a crash of it reported by AppHealth: no dialog
-//               after any number of viewings
+//   rate-early  4 opens on 2 days and 2 viewings: no line, the store asked nothing, the decision says why
+//   rate-due    an open on the third day, more than 24 hours after the first open of the build, one more viewing:
+//               the line shows once over the timeline and fades by itself, and waits for an answer; another viewing
+//               in the build: nothing; No thanks is kept
+//   rate-crash  a new build that meets every other condition, and a crash of an hour ago reported by AppHealth: no
+//               line after any number of viewings
 //
 // By hand, with the fake server on the computer that runs the emulator (port 2283):
 //   python3 .github/android-lab/fake_immich.py --fixtures mobile/test/fixtures/android_lab \
@@ -20,7 +22,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/services/rate_app.service.dart';
-import 'package:immich_mobile/presentation/widgets/rate_app/rate_app_dialog.dart';
 import 'package:immich_mobile/providers/feature_message.provider.dart';
 import 'package:immich_mobile/providers/rate_app.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -56,7 +57,7 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
 
-  testWidgets('the invitation to rate: too early, due once, and held by a crash of the build', (tester) async {
+  testWidgets('the invitation to rate: too early, due once, and held by a recent crash', (tester) async {
     final server = LabServer.fromEnvironment();
     final store = _LabStore();
     // The sign in asks the photo and notification permissions in a system dialog, which a test cannot answer
@@ -75,7 +76,7 @@ void main() {
     await waitForLabTimeline(tester, server);
     final container = labContainer(tester);
     final router = container.read(appRouterProvider);
-    final dialog = find.byKey(RateAppDialog.dialogKey);
+    final line = find.byKey(rateAppSnackBarKey);
 
     RateAppService service() => RateAppSignals.service ?? fail('no invitation service registered');
 
@@ -155,7 +156,7 @@ void main() {
       // A fresh state: this start is the first open
       await restart(const RateAppState());
       expect((service().state.opens, service().state.days), (1, 1));
-      expect(await viewing(), 'not yet, opens 1 of 5, days 1 of 3');
+      expect(await viewing(), 'not yet, opens 1 of 4, days 1 of 3');
       await backgroundFor(const Duration(minutes: 29));
       expect(service().state.opens, 1, reason: 'a return after 29 minutes is no open');
       await backgroundFor(const Duration(minutes: 31));
@@ -164,8 +165,8 @@ void main() {
       await backgroundFor(const Duration(days: 1));
       await backgroundFor(const Duration(hours: 1));
       expect((service().state.opens, service().state.days), (4, 2));
-      expect(await viewing(), 'not yet, opens 4 of 5, days 2 of 3');
-      expect(dialog, findsNothing);
+      expect(await viewing(), 'not yet, opens 4 of 4, days 2 of 3');
+      expect(line, findsNothing);
       expect((store.reviews, store.pages), (0, 0));
     });
 
@@ -178,30 +179,45 @@ void main() {
       RateAppSignals.viewingClosed(RateAppViewing.immersive);
       await pumpUntil(
         tester,
-        () => dialog.evaluate().isNotEmpty,
-        reason: 'the invitation over the timeline',
+        () => line.evaluate().isNotEmpty,
+        reason: 'the quiet line over the timeline',
         describe: screenNow,
       );
-      expect(dialog, findsOneWidget);
+      expect(line, findsOneWidget);
       expect(service().lastDecision, 'due');
-      await tester.tap(find.byKey(RateAppDialog.notNowKey));
-      await pumpUntil(tester, () => dialog.evaluate().isEmpty, reason: 'the invitation closed by Not now');
       // Kept in the app's store, as the next start reads it: the store keeps a value once it is written
       RateAppState kept() => RateAppState.decode(container.read(rateAppMemoryProvider).read());
       await pumpUntil(
         tester,
         () => kept().asks.isNotEmpty,
-        reason: 'the answer kept in the app\'s store',
+        reason: 'the ask kept in the app\'s store',
         timeout: const Duration(seconds: 10),
         describe: screenNow,
       );
-      expect(service().state.asks.single.answer, RateAppAnswer.notNow);
-      expect(kept().asks.single.answer, RateAppAnswer.notNow);
+      expect(kept().asks.single.answer, RateAppAnswer.none);
+      expect(service().line.value, isTrue, reason: 'the line waits in Settings');
+      // Gone by itself, with nothing tapped
+      await pumpUntil(
+        tester,
+        () => line.evaluate().isEmpty,
+        reason: 'the line faded by itself',
+        timeout: kRateAppLineShows + const Duration(seconds: 10),
+        describe: screenNow,
+      );
       expect((store.reviews, store.pages), (0, 0));
-      // The ask ends once its answer is kept; the next viewing comes after
-      await tester.pump(const Duration(milliseconds: 500));
       expect(await viewing(), 'asked in this build');
-      expect(dialog, findsNothing);
+      expect(line, findsNothing);
+      // No thanks, as the line in Settings answers it
+      await service().answer(RateAppAnswer.noThanks);
+      await pumpUntil(
+        tester,
+        () => kept().declined,
+        reason: 'No thanks kept in the app\'s store',
+        timeout: const Duration(seconds: 10),
+        describe: screenNow,
+      );
+      expect(service().line.value, isFalse);
+      expect(store.pages, 0);
     });
 
     await labScenario('rate-crash', () async {
@@ -218,19 +234,21 @@ void main() {
         ),
       );
       expect(service().build, 1001);
-      // A crash of this build, told as AppHealth.kt reports it at the start after it
+      // A crash of this build an hour ago, told as AppHealth.kt reports it at the start after it
+      final crashAt = _now.subtract(const Duration(hours: 1));
+      String two(int n) => n.toString().padLeft(2, '0');
       final written = AppHealthReports.write({
         'kind': 'exit',
         'text':
-            'The app ended on 2026-11-13 09:12:00: crash, in the foreground, memory PSS 312 MB, RSS 401 MB '
-            '[Immuch360 $_build phone]\nLast known state: page=TabShellRoute fg',
+            'The app ended on ${rateAppDayOf(crashAt)} ${two(crashAt.hour)}:${two(crashAt.minute)}:00: crash, in the '
+            'foreground, memory PSS 312 MB, RSS 401 MB [Immuch360 $_build phone]\nLast known state: page=TabShellRoute fg',
       });
       expect(written, isTrue);
       expect(service().state.problemBuild, _build);
       for (var i = 0; i < 3; i++) {
         _now = _now.add(const Duration(minutes: 1));
-        expect(await viewing(), 'a crash in this build');
-        expect(dialog, findsNothing);
+        expect(await viewing(), 'a crash 1 h ago');
+        expect(line, findsNothing);
       }
       expect((store.reviews, store.pages), (0, 0));
     });
