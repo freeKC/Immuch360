@@ -4,10 +4,13 @@
 // started here:
 //  - never outlives the app: on Windows it goes into a job object that kills it when its handle closes, the exit or the
 //    crash of the app included (process_job_object.dart); on Linux it is started through immuch360-run, the launcher
-//    of its archive, which sets PR_SET_PDEATHSIG before it becomes the program; and in every case its id and path go to
-//    a journal, so that a program still alive at that id and path when the next runner opens is stopped;
+//    of its archive, which sets PR_SET_PDEATHSIG before it becomes the program; on macOS through the immuch360-run
+//    of the app, beside its executable in Contents/MacOS (lot L10 of the desktop parity plan), whose watcher kills
+//    the program when the app ends; and in every case its id and path go to a journal, so that a program still alive
+//    at that id and path when the next runner opens is stopped;
 //  - runs at a lower priority when asked: "below normal" on Windows (the priority class of its job), nice 10 elsewhere
-//    (set by the launcher on Linux before the program starts its threads, process_priority.dart otherwise);
+//    (set by the launcher on Linux and macOS before the program starts its threads, process_priority.dart
+//    otherwise);
 //  - takes what the app writes on its standard input (the AV2 companion), a pipe whose breaking is never an error of
 //    the app;
 //  - gives its output and its error output line by line, a line ending at \n, \r\n or \r (sd-cli redraws its progress
@@ -38,8 +41,20 @@ final _log = Logger('ManagedProcess');
 /// The name of the folder of the work folders and of the journal, under the temporary folder of the system
 const aiWorkFolderName = 'immuch360-ai';
 
-/// The name of the Linux launcher in the archive of an engine
+/// The name of the Linux launcher in the archive of an engine, and of the macOS launcher beside the executable of the
+/// app
 const linuxLauncherName = 'immuch360-run';
+
+/// immuch360-run beside [executable] (the executable of the app by default: Contents/MacOS of the app, where a build
+/// phase of mobile/macos/Runner.xcodeproj puts it) on macOS; null on another system or where it is not there (the
+/// tests under flutter_tester, a build made without it)
+String? bundledMacLauncher({String? executable, bool? isMacOS}) {
+  if (!(isMacOS ?? io.Platform.isMacOS)) {
+    return null;
+  }
+  final path = p.join(p.dirname(executable ?? io.Platform.resolvedExecutable), linuxLauncherName);
+  return io.File(path).existsSync() ? path : null;
+}
 
 /// The name the work folder of a splat scene starts with: it is kept SplatV1.workKept after its last use, for Retry
 const splatWorkFolderPrefix = 'splat-';
@@ -282,12 +297,16 @@ class ManagedProcessRunner implements ProcessRunner {
     ProcessPriority? priority,
     bool? isWindows,
     bool? isLinux,
+    bool? isMacOS,
+    String? macLauncher,
     int? appPid,
   }) : _start = start ?? _startProcess,
        _jobObjects = jobObjects ?? windowsJobObject,
        _priority = priority ?? const SystemProcessPriority(),
        _isWindows = isWindows ?? io.Platform.isWindows,
        _isLinux = isLinux ?? io.Platform.isLinux,
+       _isMacOS = isMacOS ?? io.Platform.isMacOS,
+       macLauncher = macLauncher ?? bundledMacLauncher(isMacOS: isMacOS),
        _appPid = appPid ?? io.pid;
 
   /// A runner that first stops the programs an earlier session left running and deletes the work folders it left: for
@@ -303,19 +322,27 @@ class ManagedProcessRunner implements ProcessRunner {
   /// immuch360-run of the archive of the engine, for the programs started on Linux; without it a program is started
   /// directly, and only the journal stops it if the app dies first
   final String? linuxLauncher;
+
+  /// immuch360-run of the app, for the programs started on macOS ([bundledMacLauncher] when not given); without it a
+  /// program is started directly, and only the journal stops it if the app dies first
+  final String? macLauncher;
   final ProcessJournal? journal;
   final ProcessStarter _start;
   final ProcessJobObjects _jobObjects;
   final ProcessPriority _priority;
   final bool _isWindows;
   final bool _isLinux;
+  final bool _isMacOS;
   final int _appPid;
 
-  /// What is started for [launch]: the program itself, or on Linux the launcher with the id of the app, the nice value
-  /// when the program runs low, and the program with its arguments
+  /// The launcher of this system: that of the archive on Linux, that of the app on macOS, none on Windows
+  String? get _launcher => _isLinux ? linuxLauncher : (_isMacOS ? macLauncher : null);
+
+  /// What is started for [launch]: the program itself, or on Linux and macOS the launcher with the id of the app, the
+  /// nice value when the program runs low, and the program with its arguments
   (String, List<String>) commandOf(ProcessLaunch launch) {
-    final launcher = linuxLauncher;
-    if (!_isLinux || launcher == null) {
+    final launcher = _launcher;
+    if (launcher == null) {
       return (launch.executable, launch.arguments);
     }
     return (
@@ -353,7 +380,7 @@ class ManagedProcessRunner implements ProcessRunner {
       environment: launch.environment,
     );
     ProcessJobObject? job;
-    var lowered = _isLinux && linuxLauncher != null;
+    var lowered = _launcher != null;
     if (_isWindows) {
       job = _jobObjects(lowPriority: launch.lowPriority);
       if (job != null && !job.assign(process.pid)) {

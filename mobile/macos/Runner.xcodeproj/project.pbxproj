@@ -213,6 +213,7 @@
 				33CC10EB2044A3C60003C045 /* Resources */,
 				33CC110E2044A8840003C045 /* Bundle Framework */,
 				3399D490228B24CF009A79C7 /* ShellScript */,
+				7A3E5D2B2F10C0DE00A1B2C3 /* immuch360-run */,
 			);
 			buildRules = (
 			);
@@ -338,6 +339,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh && touch Flutter/ephemeral/tripwire";
+		};
+		7A3E5D2B2F10C0DE00A1B2C3 /* immuch360-run */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/../../.github/desktop/ai/immuch360_run.c",
+			);
+			name = "immuch360-run";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_FOLDER_PATH)/immuch360-run",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n# immuch360-run, the launcher that makes the programs of the app die with it (lot L10 of the desktop parity plan):\n# built for the architectures of the app from the source the Linux archives use, beside the executable, signed ad hoc\nsrc=\"$PROJECT_DIR/../../.github/desktop/ai/immuch360_run.c\"\nout=\"$TARGET_BUILD_DIR/$EXECUTABLE_FOLDER_PATH/immuch360-run\"\narchs=\"\"\nfor arch in $ARCHS; do archs=\"$archs -arch $arch\"; done\nxcrun clang -O2 -Wall -Wextra -Werror $archs -mmacosx-version-min=\"$MACOSX_DEPLOYMENT_TARGET\" -o \"$out\" \"$src\"\ncodesign --force --sign - --timestamp=none \"$out\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

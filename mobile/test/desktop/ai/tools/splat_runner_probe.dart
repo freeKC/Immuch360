@@ -65,7 +65,8 @@ Map<String, String> _options(List<String> arguments, {Set<String> flags = const 
   return options;
 }
 
-ManagedProcessRunner _runner(Map<String, String> options) => ManagedProcessRunner(linuxLauncher: options['launcher']);
+ManagedProcessRunner _runner(Map<String, String> options) =>
+    ManagedProcessRunner(linuxLauncher: options['launcher'], macLauncher: options['launcher']);
 
 int _countImages(Directory folder) => folder
     .listSync(recursive: true)

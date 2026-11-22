@@ -537,7 +537,7 @@ Future<int> _analyze(Map<String, String> options) async {
 /// The host of the test of a program that never outlives the app
 Future<void> _host(String pidFile) async {
   final launcher = Platform.environment['IMMUCH360_RUN_LAUNCHER'];
-  final runner = ManagedProcessRunner(linuxLauncher: launcher);
+  final runner = ManagedProcessRunner(linuxLauncher: launcher, macLauncher: launcher);
   final folder = Directory.systemTemp.createTempSync('fake-colmap-host-');
   final child = await runner.start(
     ProcessLaunch(

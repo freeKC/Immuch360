@@ -310,7 +310,8 @@ Future<int> _run(Map<String, String> options, Map<String, String> environment) a
   }
 
   final launcher = options['launcher'];
-  final runner = ManagedProcessRunner(linuxLauncher: launcher == null ? null : p.absolute(launcher));
+  final absolute = launcher == null ? null : p.absolute(launcher);
+  final runner = ManagedProcessRunner(linuxLauncher: absolute, macLauncher: absolute);
   final need = (int.tryParse(options['need-mib'] ?? '') ?? SplatV1.freeGraphicsMemory ~/ (1 << 20)) << 20;
   final card = options['card'] ?? 'nvidia-smi';
   final roots = [if (options['work-root'] case final root?) SplatWorkRoot(Directory(root)) else ...splatWorkRoots()];

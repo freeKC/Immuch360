@@ -1430,6 +1430,27 @@ jobs:
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
 
+      # immuch360-run in Contents/MacOS, beside the executable (lot L10, the build phase of mobile/macos/Runner.xcodeproj):
+      # both slices, its ad hoc signature valid, and the checks of check_launcher.sh on it, the stand-in for the app
+      # killed with SIGKILL included
+      - name: immuch360-run in the app
+        run: |
+          launcher="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app/Contents/MacOS/immuch360-run"
+          [ -x "$launcher" ] || { echo "::error::no immuch360-run in Contents/MacOS of the app"; exit 1; }
+          archs=$(lipo -archs "$launcher")
+          echo "immuch360-run: $archs, minimum macOS $(vtool -show-build "$launcher" | awk '/minos/ {print $2; exit}')"
+          for arch in arm64 x86_64; do
+            case " $archs " in
+              *" $arch "*) ;;
+              *) echo "::error::immuch360-run has no $arch slice: $archs"; exit 1 ;;
+            esac
+          done
+          codesign --verify --strict --verbose=2 "$launcher"
+          # The seal of the whole app with the launcher inside: said, not asked (the app is signed to run locally only)
+          codesign --verify --deep --strict "mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app" \
+            || echo "::warning::codesign --verify --deep --strict refuses the app"
+          bash .github/desktop/packaging/macos/check_launcher.sh "$PWD/$launcher"
+
       # The y4m that the AV2 decoder of the app serves libmpv over HTTP on 127.0.0.1: the frameworks of the app read it,
       # 8 and 10 bit, from a file and over HTTP with exact seeks, on each architecture this runner runs
       # (.github/desktop/libmpv-macos/check_y4m.py, as immuch360/libmpv-builds checks a release before it is
@@ -1751,6 +1772,16 @@ jobs:
           mise exec -- dart compile exe test/desktop/video/fakes/fake_av2.dart -o "$fakes/fake-av2"
           echo "dir=$fakes" >> "$GITHUB_OUTPUT"
 
+      # immuch360-run, the launcher that makes the programs of the app die with it (lot L10), built here as the build
+      # phase of the app builds it: its exit codes, and a stand-in for the app killed with SIGKILL while a program runs
+      # under it (check_launcher.sh). The suite below then kills the hosts of the fakes started through it
+      - name: immuch360-run, the launcher of the programs, on macOS
+        working-directory: mobile
+        run: |
+          xcrun clang -O2 -Wall -Wextra -Werror -o "${{ steps.fakes.outputs.dir }}/immuch360-run" \
+            ../.github/desktop/ai/immuch360_run.c
+          bash ../.github/desktop/packaging/macos/check_launcher.sh "${{ steps.fakes.outputs.dir }}/immuch360-run"
+
       # test/desktop as the windows job runs it. IMMUCH360_REQUIRE_SBS_CODEC: the build hook must have built the JPEG
       # codec for this Mac
       - name: Desktop tests on macOS
@@ -1763,6 +1794,7 @@ jobs:
           IMMUCH360_SPLAT_PROBE: ${{ steps.fakes.outputs.dir }}/splat-runner-probe
           IMMUCH360_SPLAT_SCENE_PROBE: ${{ steps.fakes.outputs.dir }}/splat-probe
           IMMUCH360_FAKE_AV2: ${{ steps.fakes.outputs.dir }}/fake-av2
+          IMMUCH360_RUN_LAUNCHER: ${{ steps.fakes.outputs.dir }}/immuch360-run
         run: mise exec -- flutter test test/desktop
 
       - name: ONNX Runtime archive cache
