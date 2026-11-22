@@ -451,14 +451,15 @@ void main() {
         tile.dispose();
       }
       await images.idle();
-    });
+    }, skip: Platform.isLinux ? false : 'the engine of this system reads a TIFF under a raw name itself');
 
     test('a TIFF elsewhere goes to the engine, as before: a tile where the engine reads no TIFF', () async {
       put('t3', 'scan.tif', File('test/fixtures/tiff/rgb8_lzw_pred.tif').readAsBytesSync());
       final images = api();
       final original = takeEncoded(await request(images, 't3', width: 0, height: 0, preferEncoded: true));
-      // The engine of the tests reads no TIFF: the tile of the largest bucket
-      expect(sniffImageFormat(original), SniffedFormat.png);
+      // The engine of Windows (WIC) and macOS (Core Graphics) reads it: the file itself; Linux's reads no TIFF: the
+      // tile of the largest bucket
+      expect(sniffImageFormat(original), Platform.isLinux ? SniffedFormat.png : SniffedFormat.tiff);
       await images.idle();
     });
 
