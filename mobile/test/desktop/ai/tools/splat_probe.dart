@@ -28,10 +28,11 @@
 //       app. The photos are copied as they are into one camera, or into one camera per folder when DIR holds folders
 //       (images/cam0 and cam1 of make_splat_dataset.py): the preparation of lot SP5 needs Flutter, so the photos of an
 //       essay are given prepared already (1 600 pixels at most). The card is read from nvidia-smi on the PC, is the
-//       RTX the fake Brush knows, or is the one the gate of the app (splatCardOf) takes among those of FILE, the JSON
-//       of the probe of the graphics cards of the app (immuch360 --immuch360-gpu-probe=FILE). --software-card, for the
-//       end to end check of the CI only (lot L03 of the desktop parity plan), takes Mesa's software device of Vulkan
-//       (lavapipe) when the gate refuses every card, and says so. A second run of the same photos and settings in the
+//       RTX the fake Brush knows, or is the dedicated card of Vulkan with the most memory among those of FILE, the JSON
+//       of the probe of the graphics cards of the app (immuch360 --immuch360-gpu-probe=FILE): the rule of the gate
+//       (splatCardOf of hardware_gate.dart, which needs Flutter, so not imported here). --software-card, for the end
+//       to end check of the CI only (lot L03 of the desktop parity plan), takes Mesa's software device of Vulkan
+//       (lavapipe) when there is no dedicated card, and says so. A second run of the same photos and settings in the
 //       same work root starts again from the poses the first one kept (Retry). --env goes to COLMAP and Brush (the
 //       fakes take their modes so). --stall-seconds replaces the silence after which Brush is stopped (300 s), for
 //       the processor of the CI, which compiles its kernels slowly.
@@ -48,7 +49,6 @@ import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
-import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/colmap_runner.dart';
@@ -284,24 +284,31 @@ Future<GpuReport> _nvidiaSmi() async {
   );
 }
 
-/// The card the gate of the app takes among those of the report of its probe at [path]; with [software], Mesa's
-/// software device of Vulkan (lavapipe) when the gate refuses every card: the end to end check of the CI only
+/// The dedicated card of Vulkan with the most memory among those of the report of the probe of the app at [path], as
+/// the gate chooses it; with [software], Mesa's software device of Vulkan (lavapipe) when there is none: the end to
+/// end check of the CI only
 Future<BrushCard> _reportCard(String path, {required bool software, required int need}) async {
   final report = GpuReport.fromJson(jsonDecode(await File(path).readAsString()));
-  final choice = splatCardOf(report);
-  var found = choice.refusal == null ? choice.card : null;
+  GpuAdapter? found;
+  for (final adapter in report.adapters) {
+    if (adapter.source == 'vulkan' &&
+        adapter.kind == GpuKind.discrete &&
+        (found == null || adapter.localMemory > found.localMemory)) {
+      found = adapter;
+    }
+  }
   if (found == null) {
     final lavapipe = software
         ? report.adapters.where((adapter) => adapter.source == 'vulkan' && adapter.kind == GpuKind.cpu).firstOrNull
         : null;
     _event('gate', {
-      'refusal': choice.refusal?.name,
-      'card': choice.card?.name,
+      'refusal': 'no dedicated card of Vulkan',
+      'card': null,
       'cards': [for (final adapter in report.adapters) '${adapter.name} (${adapter.kind.json}, ${adapter.source})'],
       'softwareCard': lavapipe?.name,
     });
     if (lavapipe == null) {
-      return BrushCardRefused(choice.refusal?.name ?? 'gpuNone');
+      return const BrushCardRefused('gpuNone');
     }
     found = lavapipe;
   }
