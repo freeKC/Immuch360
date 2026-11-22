@@ -8,7 +8,9 @@
 // go first, Pause, Stop (asked first), Resume and Discard once paused, the error and its log, the MP4 made with Open and
 // Show in folder, what a paused video waits for (its original or its folder), Cancel all pausing it. A FFmpeg program
 // that does not start said in red with Retry. The close guard of a video being made, and the offer at the start to
-// resume a video a quit stopped, with the original not found said.
+// resume a video a quit stopped, with the original not found said. A video of the server (lot ai3d-remote-51): the
+// dialog says it is downloaded first and Convert runs it, the panel tells its download, a Pause there keeps its bytes,
+// too little room is said with both figures; a 360° video by the rules of its players is not offered as a flat one.
 
 import 'dart:async';
 import 'dart:convert';
@@ -25,6 +27,7 @@ import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
@@ -34,6 +37,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/ai/ui/video_resume_offer.dart';
 import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
@@ -41,6 +45,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_strength_choice.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -50,6 +55,7 @@ import 'package:path/path.dart' as p;
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
 import '../fakes/fake_conversion_output.dart';
+import '../fakes/fake_downloadable_original.dart';
 import '../fakes/fake_gpu_probe.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_video_job_engine.dart';
@@ -143,8 +149,14 @@ class _GateFiles implements AiComponentFiles {
 class _Originals implements ConversionAssetFiles {
   final byName = <String, LibraryOriginal>{};
 
+  /// The videos of the server, downloaded by their job
+  final remote = <String, FakeDownloadableOriginal>{};
+
   @override
   Future<({OriginalLocation location, ConversionSource source})?> locate(BaseAsset asset) async {
+    if (remote[asset.name] case final source?) {
+      return (location: ServerOriginal(name: asset.name), source: source);
+    }
     final original = byName[asset.name];
     return original == null ? null : (location: original, source: LocalFileSource(original.path));
   }
@@ -512,6 +524,42 @@ void main() {
       expect(Directory(videos).listSync().where((entity) => isPartFileName(p.basename(entity.path))), isEmpty);
     });
 
+    testWidgets('a video of the server: no longer skipped, said to be downloaded first; Convert queues it at once and '
+        'its job reads the copy', (tester) async {
+      final bytes = List.generate(4000, (i) => i % 256);
+      originals.remote['VID_server.mp4'] = FakeDownloadableOriginal('VID_server.mp4', bytes);
+      final container = await openDialog(tester, [_asset('VID_server.mp4')]);
+
+      expect(
+        find.text(
+          'No file of this video on this computer (it is on the server or a share): save it to a folder '
+          'of this computer first',
+        ),
+        findsNothing,
+      );
+      expect(
+        note(tester, 'ai_conversion_video_download'),
+        'This video is not on this computer: it is downloaded first to the drive of its 3D video, and the copy is '
+        'deleted once the 3D video is made',
+      );
+      expect(probe.read_, isEmpty, reason: 'nothing of it to read before it is downloaded');
+      expect(probe.tested, isEmpty);
+      expect(find.byKey(const Key('ai_conversion_video_encoder')), findsNothing);
+      expect(find.text('Saved as VID_server_3D_LRF_Full_SBS.mp4'), findsOneWidget);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(
+        tester,
+        until: () => container.read(conversionQueueProvider).jobs.singleOrNull?.state == ConversionState.done,
+      );
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect((job.state, job.error, job.message, job.skipReason), (ConversionState.done, null, null, null));
+      expect(job.source, same(originals.remote['VID_server.mp4']));
+      expect(engine.sourceLengths, [4000]);
+      expect(Directory('${job.video!.workFolder}-original').existsSync(), isFalse);
+    });
+
     testWidgets('each refusal of a video has its words, and nothing runs', (tester) async {
       final refused = {
         'sphere.mp4': (
@@ -870,6 +918,59 @@ void main() {
       await settle(tester);
       expect(inRow(id, find.text('Cancelled')), findsOneWidget);
       expect(engine.discarded.single.recordId, 'clip');
+    });
+
+    testWidgets('a video of the server: its download told, a Pause there keeping its bytes; too little room said with '
+        'both figures', (tester) async {
+      final container = await pumpPanel(tester);
+      final source = FakeDownloadableOriginal('VID_server.mp4', List.filled(3 << 20, 7), chunk: 1 << 20);
+      var chunks = 0;
+      final hold = Completer<void>();
+      source.beforeChunk = () async {
+        if (++chunks == 3) {
+          await hold.future;
+        }
+      };
+      final id = container.read(conversionQueueProvider.notifier).addVideos(
+        [
+          ConversionRequest(
+            source: source,
+            target: ConversionTarget(folder: videos, fileName: 'VID_server_3D_LRF_Full_SBS.mp4'),
+          ),
+        ],
+        settingsOf: (_) => VideoJobSettings(recordId: 'server', workFolder: videoWorkFolderIn(videos, 'server')),
+      ).single;
+      await settle(tester, until: () => chunks >= 3);
+      final running = container.read(conversionQueueProvider).jobs.single;
+      expect(
+        (running.state, running.videoDownload, running.message),
+        (ConversionState.reading, (copied: 2 << 20, total: 3 << 20), null),
+      );
+      expect(inRow(id, find.text('Downloading the video: 2.0 MiB of 3.0 MiB')), findsOneWidget);
+      final bar = tester.widget<LinearProgressIndicator>(inRow(id, find.byType(LinearProgressIndicator)));
+      expect(bar.value, closeTo(2 / 3, 0.001));
+
+      await tester.tap(inRow(id, find.byKey(const Key('ai_job_video_pause'))));
+      // The download looks for a stop every tenth of a second, on the clock of the test
+      await tester.pump(const Duration(milliseconds: 250));
+      await settle(
+        tester,
+        until: () => container.read(conversionQueueProvider).jobs.single.state == ConversionState.paused,
+      );
+      expect(inRow(id, find.text('2.0 MiB of the video downloaded: Resume goes on from there')), findsOneWidget);
+      expect(inRow(id, find.byKey(const Key('ai_job_video_resume'))), findsOneWidget);
+      hold.complete();
+
+      expect(
+        conversionFailureText(
+          tester.element(find.byType(ConversionsPanel)).t,
+          ImmersiveErrorCode.diskFull,
+          videoDownloadRoomMessage(1 << 30, 3 << 30),
+          kind: ConversionKind.stereoVideo,
+        ),
+        'Not enough room to download the video: 1.0 GiB free on the drive of the destination, 3.0 GiB needed. Free '
+        'some space, then Resume',
+      );
     });
 
     testWidgets('skipped by the engine, in the words of a video', (tester) async {

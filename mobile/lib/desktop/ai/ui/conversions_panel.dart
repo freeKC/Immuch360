@@ -71,6 +71,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -243,6 +244,11 @@ String conversionFailureText(
   ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
   ImmersiveErrorCode.writeFailed when message == libraryNotReadyMessage => t.ai_immersive_library_not_ready,
   ImmersiveErrorCode.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),
+  // The download of the original of a 3D video found too little room before it wrote a byte: both figures
+  ImmersiveErrorCode.diskFull when videoDownloadRoomOf(message) != null => t.ai_immersive_video_download_disk_short(
+    free: formatBytes(videoDownloadRoomOf(message)!.free),
+    space: formatBytes(videoDownloadRoomOf(message)!.need),
+  ),
   ImmersiveErrorCode.diskFull => t.ai_immersive_failed_disk_full,
   ImmersiveErrorCode.readOnly => t.ai_immersive_failed_read_only,
   ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
@@ -487,6 +493,35 @@ String? videoProgressText(Translations t, ConversionJob job) {
   return job.state.isActive && !progress.muxing
       ? '$frames  •  ${t.ai_immersive_video_segment(index: progress.segmentsDone + 1)}'
       : frames;
+}
+
+/// "Downloading the video: 1.2 GB of 4.0 GB" while the first step of a 3D video of the server or of a share runs, "1.2
+/// GB of the video downloaded: Resume goes on from there" once paused there; null otherwise
+String? videoDownloadText(Translations t, ConversionJob job) {
+  final download = job.videoDownload;
+  if (download == null) {
+    return null;
+  }
+  final copied = formatBytes(download.copied);
+  if (job.state == ConversionState.paused) {
+    return download.copied > 0 ? t.ai_immersive_video_download_kept(copied: copied) : null;
+  }
+  if (!job.state.isActive) {
+    return null;
+  }
+  final whole = download.total;
+  return whole == null
+      ? t.ai_immersive_video_downloading_size_unknown(copied: copied)
+      : t.ai_immersive_video_downloading(copied: copied, whole: formatBytes(whole));
+}
+
+/// How far the bar of [job] is, from 0 to 1; null for a bar that only moves: its download while the total is told, else
+/// its progress once it computes
+double? conversionBarValue(ConversionJob job) {
+  if (job.videoDownload case (:final copied, total: final whole?) when whole > 0) {
+    return (copied / whole).clamp(0.0, 1.0);
+  }
+  return job.phase == ConversionPhase.preparing ? null : job.progress;
 }
 
 /// "H.264" or "AV1": how a 3D video was encoded
@@ -756,6 +791,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
     final photo = job.kind.output == ImmersiveKind.stereoPhoto && !video;
     final splat = job.kind == ConversionKind.splatScene;
     final videoLine = video ? videoProgressText(t, job) : null;
+    final downloadLine = video ? videoDownloadText(t, job) : null;
     final lines = <Widget>[
       Text(
         [
@@ -773,7 +809,8 @@ class _JobRowState extends ConsumerState<_JobRow> {
         ),
       if (job.state.isActive) ...[
         const SizedBox(height: 4),
-        LinearProgressIndicator(value: job.phase == ConversionPhase.preparing ? null : job.progress),
+        LinearProgressIndicator(value: conversionBarValue(job)),
+        if (downloadLine != null) Text(downloadLine, key: const Key('ai_job_video_download'), style: secondary),
         if (videoLine != null) Text(videoLine, key: const Key('ai_job_video_frames'), style: secondary),
         if (progress != null)
           Text(progress, key: const Key('ai_job_time_left'), style: secondary)
@@ -793,6 +830,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
           _splatIncomplete(t, placed.placed, placed.images, colors),
       ],
       if (job.state == ConversionState.paused) ...[
+        if (downloadLine != null) Text(downloadLine, key: const Key('ai_job_video_download'), style: secondary),
         if (videoLine != null) Text(videoLine, key: const Key('ai_job_video_frames'), style: secondary),
         if (videoMissingText(t, job) case final missing?)
           Text(

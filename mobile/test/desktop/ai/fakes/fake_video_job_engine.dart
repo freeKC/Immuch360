@@ -31,6 +31,9 @@ class FakeVideoJobEngine implements VideoJobEngine {
   final String? logFolder;
 
   final runs = <VideoJobSpec>[];
+
+  /// The size of the file each run read, null when it was not there
+  final sourceLengths = <int?>[];
   final discarded = <VideoJobSettings>[];
   final stops = <String>[];
   var _release = Completer<void>();
@@ -52,6 +55,8 @@ class FakeVideoJobEngine implements VideoJobEngine {
     void Function(VideoJobProgress progress)? onProgress,
   }) async {
     runs.add(spec);
+    final source = File(spec.sourcePath);
+    sourceLengths.add(source.existsSync() ? source.lengthSync() : null);
     _release = Completer<void>();
     final stopped = Completer<void>();
     control.onStop = () {

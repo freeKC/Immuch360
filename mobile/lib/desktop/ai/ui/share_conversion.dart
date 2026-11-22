@@ -21,6 +21,7 @@ import 'package:immich_mobile/desktop/ai/creator/collisions.dart' show versionHe
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/creator/original_bytes.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart' show aiCopiesFolder;
 import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
@@ -61,6 +62,9 @@ final shareConversionSourceProvider = Provider<ShareFileSource Function(NetworkE
     url: () => connections.mediaUrl(entry.sourceId, entry.path),
     // Aborted by a cancel, even while the share sends nothing
     fetch: (url, {abort}) => client.send(http.AbortableRequest('GET', url, abortTrigger: abort)),
+    // From an offset for the download of a 3D video, which goes on where it stopped
+    fetchRange: (url, {offset = 0, abort}) =>
+        client.send(http.AbortableRequest('GET', url, abortTrigger: abort)..headers.addAll(rangeHeadersFrom(offset))),
     versions: shareVersionLookup(() => connections.fileSystem(entry.sourceId), entry),
   );
 });
@@ -372,7 +376,10 @@ class DesktopShareMakeImmersiveButton extends ConsumerWidget {
     final kinds = ref.watch(offeredConversionKindsProvider);
     final gates = [for (final kind in kinds) ref.watch(aiGateResultForProvider(aiFeatureOf(kind))).valueOrNull];
     final refusal = gates.isNotEmpty && gates.every(aiGateRefuses) ? aiGateReasonText(context.t, gates.first!) : null;
-    final photos = entries.any((entry) => entry.isImage);
+    // A video of the share too once this build makes 3D videos: its job downloads it first
+    final photos = entries.any(
+      (entry) => entry.isImage || (entry.isVideo && kinds.contains(ConversionKind.stereoVideo)),
+    );
     Future<void> open() async {
       if (await ref.read(shareConversionOpenerProvider)(context, entries)) {
         onLaunched();

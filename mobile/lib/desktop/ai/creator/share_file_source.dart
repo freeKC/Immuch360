@@ -9,6 +9,9 @@
 // A copy that finds no room fails as a disk full, which pauses the queue as for the version itself. A cancel stops the
 // copy within a tenth of a second even when the share sends nothing more (a NAS that stopped answering): the request
 // to the bridge is aborted and its partial copy deleted, without waiting for the share to time out.
+//
+// A video of a share is not copied by the dialog: its 3D video downloads it whole as the first step of its job
+// (video_original_copy.dart), from an offset when the bridge takes a Range request ([ShareFileSource.openBytes]).
 
 import 'dart:async';
 import 'dart:io';
@@ -16,6 +19,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/creator/original_bytes.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
@@ -50,14 +54,46 @@ typedef ShareVersionLookup =
 
 var _copies = 0;
 
+/// The kind of a [ShareFileSource] in its descriptor
+const shareOriginalKind = 'share';
+
+/// The descriptor of the file of a share at [entry] (see DownloadableOriginal.descriptor)
+Map<String, Object?> shareDescriptorOf(NetworkEntry entry) => {
+  'kind': shareOriginalKind,
+  'name': entry.name,
+  'sourceId': entry.sourceId,
+  'path': entry.path,
+  'size': ?entry.size,
+  'modified': ?entry.modified?.toUtc().toIso8601String(),
+};
+
+/// The file of a share a descriptor names, null when it is not one of a share
+NetworkEntry? shareEntryOfDescriptor(Map<String, Object?> descriptor) {
+  final sourceId = descriptor['sourceId'];
+  final path = descriptor['path'];
+  if (descriptor['kind'] != shareOriginalKind || sourceId is! String || path is! String) {
+    return null;
+  }
+  final size = descriptor['size'];
+  final modified = descriptor['modified'];
+  return NetworkEntry(
+    sourceId: sourceId,
+    path: path,
+    isDirectory: false,
+    size: size is int ? size : null,
+    modified: modified is String ? DateTime.tryParse(modified) : null,
+  );
+}
+
 /// A file of a share, copied once into the cache of this computer before its conversion. Its versions are looked for
 /// in the folder of the original on the share too ([versions]), where a batch that skips a photo with a version made
 /// with the same settings finds the one a computer put there.
-class ShareFileSource implements ConversionSource, RemoteVersionLookup {
+class ShareFileSource implements DownloadableOriginal, RemoteVersionLookup {
   ShareFileSource({
     required this.entry,
     required this._url,
     required this._fetch,
+    this._fetchRange,
     this.exif = const ImmersiveExif(),
     this._versions,
     Future<Directory> Function()? copiesFolder,
@@ -75,6 +111,9 @@ class ShareFileSource implements ConversionSource, RemoteVersionLookup {
 
   final Future<Uri> Function() _url;
   final ShareFileFetcher _fetch;
+
+  /// The request of the file from an offset, for the download of a 3D video; null: from the first byte, by [_fetch]
+  final OriginalRangeFetcher? _fetchRange;
   final Future<Directory> Function() _copiesFolder;
   final Future<String> Function(String path, NativeCancelFlag cancel) _hash;
   final ShareVersionLookup? _versions;
@@ -255,6 +294,37 @@ class ShareFileSource implements ConversionSource, RemoteVersionLookup {
       throw const ConversionException(ImmersiveErrorCode.cancelled);
     } on FileSystemException catch (error) {
       throw ConversionException(ImmersiveErrorCode.sourceLost, error.osError?.message ?? error.message);
+    }
+  }
+
+  /// What video_jobs.json keeps of a 3D video of a share: the share and the path, the connection gives the rest at the
+  /// next start
+  @override
+  Map<String, Object?> get descriptor => shareDescriptorOf(entry);
+
+  @override
+  Future<OriginalBytes> openBytes({int offset = 0, Future<void>? abort}) async {
+    const cancelled = ConversionException(ImmersiveErrorCode.cancelled);
+    final ranged = _fetchRange;
+    try {
+      final url = abort == null ? await _url() : await Future.any([_url(), abort.then<Uri>((_) => throw cancelled)]);
+      final response = ranged == null
+          ? await _fetch(url, abort: abort)
+          : await ranged(url, offset: offset, abort: abort);
+      final bytes = originalBytesOf(response, ranged == null ? 0 : offset, 'share');
+      // The size the share listed, when the bridge tells none
+      if (bytes.total == null && bytes.offset == 0 && entry.size != null) {
+        return OriginalBytes(stream: bytes.stream, offset: 0, total: entry.size);
+      }
+      return bytes;
+    } on ConversionException {
+      rethrow;
+    } on OriginalRangeRefused {
+      rethrow;
+    } on http.RequestAbortedException {
+      throw cancelled;
+    } on Exception catch (error) {
+      throw ConversionException(ImmersiveErrorCode.sourceLost, '$error');
     }
   }
 

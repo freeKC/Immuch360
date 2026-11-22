@@ -51,6 +51,7 @@ import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/creator/remote_video_sources.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/dart_immersive_engine.dart';
@@ -1141,6 +1142,10 @@ ConversionTools desktopConversionTools(Ref ref) {
     video: ref.watch(videoJobEngineProvider),
     videoJobs: ref.watch(videoJobsStoreProvider),
     appVersion: version,
+    // A 3D video of the server or of a share: the room of its drive read before its download, its source made again
+    // at the next start
+    freeSpace: ref.watch(aiFreeSpaceProvider),
+    remoteVideoSource: (descriptor) => desktopRemoteVideoSource(ref, descriptor),
     // The answer of the probe the gate keeps is asked again, so that the dialog and the settings see it too
     gpuBudget: GpuBudget(
       probe: () => gate.gpuReport(fresh: true),

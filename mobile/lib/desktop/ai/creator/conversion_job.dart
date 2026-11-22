@@ -318,8 +318,8 @@ enum ConversionSkipReason {
   /// A photo, for the 3D video type, which takes videos only
   photo,
 
-  /// A 3D video: a video this computer has no file of (one of the server, of a share); version 1 reads the files of
-  /// the folders of this computer and those opened with the program
+  /// A 3D video: a video this computer has no file of and cannot download either (a source that gives no bytes); the
+  /// videos of the server and of a share are downloaded by their job first (video_original_copy.dart)
   videoNotLocal,
 }
 
@@ -532,6 +532,7 @@ class ConversionJob {
     this.videoDone,
     this.yielding = false,
     this.videoMissing,
+    this.videoDownload,
   });
 
   final String id;
@@ -551,6 +552,10 @@ class ConversionJob {
   /// A 3D video paused because its original or its destination folder is not there now, its work kept: "put it back,
   /// then Resume"; null once it runs again
   final VideoMissing? videoMissing;
+
+  /// A 3D video of an original that is not on this computer: the bytes of its copy downloaded so far and their total
+  /// when told, while its first step downloads it and once paused there; null before, and once it is whole
+  final ({int copied, int? total})? videoDownload;
 
   /// A splat scene: its photos or its video, and its settings; null for the other kinds
   final SplatSelection? splat;
@@ -661,7 +666,7 @@ class ConversionJob {
   double get progress => perMille / 1000;
 
   /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor], [gpuShortfall],
-  /// [segments], [videoProgress] and [videoMissing] are given as functions, so that they may go back to null; [placed]
+  /// [segments], [videoProgress], [videoMissing] and [videoDownload] are given as functions, so that they may go back to null; [placed]
   /// and [keptFolder] go back to null with [restarted] only
   ConversionJob copyWith({
     ConversionState? state,
@@ -691,6 +696,7 @@ class ConversionJob {
     VideoJobResult? videoDone,
     bool? yielding,
     VideoMissing? Function()? videoMissing,
+    ({int copied, int? total})? Function()? videoDownload,
   }) => ConversionJob(
     id: id,
     source: source,
@@ -733,6 +739,7 @@ class ConversionJob {
     videoDone: videoDone ?? this.videoDone,
     yielding: yielding ?? this.yielding,
     videoMissing: videoMissing == null ? this.videoMissing : videoMissing(),
+    videoDownload: videoDownload == null ? this.videoDownload : videoDownload(),
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then. [keepsWaiting]: it
@@ -758,6 +765,7 @@ class ConversionJob {
     // A 3D video goes on from its work folder: where it stopped stays shown until its engine tells more
     perMille: video == null ? 0 : perMille,
     videoProgress: videoProgress,
+    videoDownload: videoDownload,
   );
 
   @override

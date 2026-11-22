@@ -22,6 +22,7 @@ import 'package:immich_mobile/desktop/ai/video3d/video_app_runtime.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_estimates.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_job_file.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
@@ -97,9 +98,15 @@ class VideoJobRecord {
     required this.fileName,
     required this.settings,
     this.perMille = 0,
+    this.original,
   });
 
+  /// The file the engine reads: the original on this computer, or the copy of one downloaded first ([original])
   final String sourcePath;
+
+  /// The original that is not on this computer, as its source describes it (DownloadableOriginal.descriptor): the
+  /// next start makes the source again to go on with its download; null for a file of this computer
+  final Map<String, Object?>? original;
 
   /// The destination folder and the name the MP4 is to take there
   final String folder;
@@ -111,8 +118,14 @@ class VideoJobRecord {
 
   String get id => settings.recordId;
 
-  VideoJobRecord withPerMille(int value) =>
-      VideoJobRecord(sourcePath: sourcePath, folder: folder, fileName: fileName, settings: settings, perMille: value);
+  VideoJobRecord withPerMille(int value) => VideoJobRecord(
+    sourcePath: sourcePath,
+    folder: folder,
+    fileName: fileName,
+    settings: settings,
+    perMille: value,
+    original: original,
+  );
 
   Map<String, Object?> toJson() => {
     'sourcePath': sourcePath,
@@ -120,6 +133,7 @@ class VideoJobRecord {
     'fileName': fileName,
     'perMille': perMille,
     'settings': settings.toJson(),
+    'original': ?original,
   };
 
   static VideoJobRecord? fromJson(Object? json) {
@@ -134,12 +148,14 @@ class VideoJobRecord {
       return null;
     }
     final perMille = json['perMille'];
+    final original = json['original'];
     return VideoJobRecord(
       sourcePath: source,
       folder: folder,
       fileName: name,
       settings: settings,
       perMille: perMille is int ? perMille.clamp(0, 1000) : 0,
+      original: original is Map ? original.cast<String, Object?>() : null,
     );
   }
 }
@@ -597,6 +613,8 @@ class DesktopVideoJobEngine implements VideoJobEngine {
       }
       await _deleteQuietly(File(videoMadePathOf(work.path)));
       await _deleteQuietly(File('${videoMadePathOf(work.path)}.part'));
+      // The copy of an original of the server or of a share, downloaded for this job
+      await deleteVideoOriginalCopy(work.path);
     }
   }
 }

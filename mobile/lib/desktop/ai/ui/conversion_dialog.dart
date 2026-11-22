@@ -81,7 +81,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
@@ -91,7 +90,8 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
-import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/original_bytes.dart';
+import 'package:immich_mobile/desktop/ai/creator/remote_video_sources.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
@@ -133,7 +133,6 @@ import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart' show isSideBySideFrame;
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
-import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_strength_choice.dart';
@@ -148,7 +147,6 @@ import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
-import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:immich_mobile/utils/editor.utils.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -566,6 +564,7 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
   return (asset) async {
     final turns = ref.listen(displayQuarterTurnsProvider(asset), (_, _) {});
     final panorama = ref.listen(isPanoramaProvider(asset), (_, _) {});
+    final video360 = ref.listen(aiVideo360Provider(asset), (_, _) {});
     final raw = ref.listen(rawMediaKindProvider(asset), (_, _) {});
     try {
       final localId = asset.localId;
@@ -595,7 +594,8 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
           _log.fine('${asset.name} could not be read for a spatial photo: $error');
         }
       }
-      final isPanorama = panorama.read();
+      // A video by the rules of its players (isPanoramaProvider takes photos only), read once its exif answered
+      final isPanorama = asset.isVideo ? video360.read() : panorama.read();
       // One of our 3D photos renamed, which only our XMP tells: its head is read as the viewer reads it
       if (!isStereo && !isPanorama && FlatStereoService.isCandidate(asset)) {
         try {
@@ -632,6 +632,7 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
     } finally {
       turns.close();
       panorama.close();
+      video360.close();
       raw.close();
     }
   };
@@ -687,17 +688,14 @@ class DesktopConversionAssetFiles implements ConversionAssetFiles {
     }
     return (
       location: ServerOriginal(name: asset.name),
-      source: ServerOriginalSource(
+      source: desktopServerOriginalSource(
         name: asset.name,
         remoteId: remoteId,
         endpoint: endpoint,
         exif: _exifOf(asset),
-        fetch: (url) => NetworkRepository.client.send(http.Request('GET', url)..headers.addAll(_headers())),
       ),
     );
   }
-
-  static Map<String, String> _headers() => ApiService.getRequestHeaders();
 }
 
 /// The date of a photo that is not a JPEG for its 3D photo: the engine reads the EXIF of a JPEG itself, nothing reads
@@ -951,11 +949,20 @@ final aiSourceProvider = Provider.autoDispose.family<bool, ({BaseAsset asset, Co
 /// Whether the viewer offers "Make 3D (AI)" for [asset] as a 3D video: a video the 360° rules leave flat, neither two
 /// eyes by its name or its frame, nor a version the app made. Its file tells the rest in the dialog.
 final aiFlatVideoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
-  if (!asset.isVideo || ref.watch(isPanoramaProvider(asset)) || _versionOf(ref, asset) != null) {
+  if (!asset.isVideo || ref.watch(aiVideo360Provider(asset)) || _versionOf(ref, asset) != null) {
     return false;
   }
   return !isStereoVideoByLook(asset);
 });
+
+/// Whether [asset] is a 360° video by the rules of its players, as the splat scenes read it (splatVideo360Reader): the
+/// raw file of a 360° camera (.insv, .360, .osv), flagged equirectangular by the server, found so on this computer, or
+/// viewed as 360° by the user. isPanoramaProvider takes photos only, so a 360° video was offered "Make 3D (AI)" as a flat
+/// one before (lot ai3d-remote-51); a 3D video of a 360° one is not made in this version (its engine refuses it too).
+final aiVideo360Provider = Provider.autoDispose.family<bool, BaseAsset>(
+  (ref, asset) =>
+      asset.isVideo && (ref.watch(isEquirectangularProvider(asset)) || ref.watch(rawMediaKindProvider(asset)) != null),
+);
 
 /// Whether the viewer offers "Make 3D (AI)" for [asset]: a flat photo this system can read, neither 360°, nor two eyes
 /// side by side, nor a version the app made, nor an Apple spatial photo (hidden until the check of a HEIF photo
@@ -1367,10 +1374,10 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   }
 
   /// The files of a share the dialog was opened on: each photo copied once through the media bridge, its name and its
-  /// bytes shown meanwhile, then its facts read from that copy; a video is not copied, the plan skips it. A photo whose
-  /// copy fails cannot be reached; once a copy finds no room on this computer, that photo and the ones after it are
-  /// skipped with "Disk full", without trying their copies. Null once the dialog closed meanwhile (Cancel): the copy
-  /// under way stops.
+  /// bytes shown meanwhile, then its facts read from that copy; a video is not copied, the job of its 3D video
+  /// downloads it. A photo whose copy fails cannot be reached; once a copy finds no room on this computer, that photo
+  /// and the ones after it are skipped with "Disk full", without trying their copies. Null once the dialog closed
+  /// meanwhile (Cancel): the copy under way stops.
   Future<List<_Photo>?> _readShareFiles() async {
     final make = ref.read(shareConversionSourceProvider);
     final read = ref.read(shareCopyFactsReaderProvider);
@@ -1389,6 +1396,19 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     for (final (index, entry) in files.indexed) {
       if (_closed) {
         return null;
+      }
+      if (entry.isVideo) {
+        // Not copied here: the job of its 3D video downloads it first, and its 3D video goes to a folder of this
+        // computer (a 3D video is not written into a share in this version)
+        final source = make(entry);
+        _shareSources.add(source);
+        photos.add(
+          _Photo(shareConversionAsset(entry), const ConversionPhotoFacts(), (
+            location: ShareOriginal(name: entry.name),
+            source: source,
+          )),
+        );
+        continue;
       }
       if (!entry.isImage) {
         photos.add(_Photo(shareConversionAsset(entry), const ConversionPhotoFacts(), null));
@@ -1499,8 +1519,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     }
   }
 
-  /// Why [photo] is skipped for a version of [kind], null when it runs. A 3D video reads a file of this computer, and
-  /// once the FFmpeg program read it, its verdict.
+  /// Why [photo] is skipped for a version of [kind], null when it runs. A 3D video of a file of this computer, once the
+  /// FFmpeg program read it, its verdict; one of the server or of a share runs, its job downloading it first, and the
+  /// engine reads its verdict then.
   ConversionSkipReason? _skipOf(_Photo photo, ConversionKind kind) {
     final known =
         conversionSkipOf(photo.asset, photo.facts, kind: kind) ?? (photo.found == null ? photo.missing : null);
@@ -1508,6 +1529,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       return known;
     }
     final source = photo.found!.source;
+    if (source is DownloadableOriginal) {
+      return null;
+    }
     if (source is! LocalFileSource) {
       return ConversionSkipReason.videoNotLocal;
     }
@@ -2300,6 +2324,12 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       }
     } else if (runs.isNotEmpty) {
       final accepted = _videoAccepted;
+      // Downloaded by their job first: read by the FFmpeg program then, their encoder tested by the engine
+      if (runs.any((candidate) => candidate.source is DownloadableOriginal)) {
+        facts.add(
+          ConversionNote(key: const Key('ai_conversion_video_download'), text: t.ai_immersive_video_download_first),
+        );
+      }
       // What the jobs do to the videos, each line once
       final notes = {for (final each in accepted) ...each.check.notes};
       final oneSound = accepted.any((each) => each.check.audio.length == 1);
@@ -2315,12 +2345,13 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           ConversionNote(key: const Key('ai_conversion_video_note_sound'), text: t.ai_immersive_video_note_audio_one),
         );
       }
-      if (!_videoEncoderTested) {
+      // Only videos to download: nothing read here yet, nothing to test before their job
+      if (accepted.isNotEmpty && !_videoEncoderTested) {
         ready = false;
         facts.add(
           ConversionNote(key: const Key('ai_conversion_video_encoder'), text: t.ai_immersive_video_encoder_testing),
         );
-      } else {
+      } else if (accepted.isNotEmpty) {
         final encoder = _videoEncoder;
         if (encoder == null) {
           ready = false;
