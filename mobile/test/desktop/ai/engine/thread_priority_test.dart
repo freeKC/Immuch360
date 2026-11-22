@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -160,11 +161,19 @@ void main() {
     test('macOS puts the calling thread in the utility class for the body, then gives its class back', () {
       final id = system.currentThreadId()!;
       expect(id, greaterThan(0));
-      final before = system.priorityOf(id);
-      expect(isMacComputeQos(before), isFalse, reason: 'the thread of a test runs above the utility class: $before');
+      // The thread of flutter_tester already runs in the utility class (measured on the runner, 22 November 2026): it
+      // is left as it is, then raised to "user initiated" here, as the worker of the app may be, and lowered from there
+      final original = system.priorityOf(id)!;
+      expect(ComputePriority(system).whileLowered(() => system.priorityOf(id)), original);
+      final setQos = DynamicLibrary.process().lookupFunction<Int32 Function(Uint32, Int32), int Function(int, int)>(
+        'pthread_set_qos_class_self_np',
+      );
+      const userInitiated = 0x19;
+      expect(setQos(userInitiated, 0), 0);
+      addTearDown(() => setQos(original == 0 ? 0x15 : original, 0));
       final during = ComputePriority(system).whileLowered(() => system.priorityOf(id));
       expect(during, macUtilityQos);
-      expect(isMacComputeQos(system.priorityOf(id)), isFalse);
+      expect(system.priorityOf(id), userInitiated);
       // Another thread is not read
       expect(system.priorityOf(id + 1), isNull);
     }, skip: Platform.isMacOS ? null : 'macOS only');

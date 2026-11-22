@@ -155,9 +155,8 @@ class UnchangedThreadPriority implements ThreadPriorityPlatform {
 /// and in favour of the battery
 const macUtilityQos = 0x11;
 
-/// QOS_CLASS_DEFAULT, QOS_CLASS_BACKGROUND and QOS_CLASS_UNSPECIFIED of `<sys/qos.h>`
+/// QOS_CLASS_DEFAULT and QOS_CLASS_UNSPECIFIED of `<sys/qos.h>`
 const _macDefaultQos = 0x15;
-const _macBackgroundQos = 0x09;
 const _macUnspecifiedQos = 0x00;
 
 typedef _QosSelfNative = Uint32 Function();
@@ -224,9 +223,6 @@ class MacThreadPriority implements ThreadPriorityPlatform {
     return _libSystem.threadId(nullptr, id) == 0 ? id.value : null;
   });
 }
-
-/// Whether [qos], a class of quality of service of macOS, is that of a background computation (utility or background)
-bool isMacComputeQos(int? qos) => qos == macUtilityQos || qos == _macBackgroundQos;
 
 // --- Linux ------------------------------------------------------------------------------------------------------------
 

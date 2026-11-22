@@ -533,7 +533,9 @@ void main() {
         licence: 'MIT',
         licenceUrl: _runtimeComponent.licenceUrl,
         notices: _runtimeComponent.notices,
-        features: AiFeature.values.where((feature) => feature.isAi).toSet(),
+        // As ONNX Runtime of the catalogue: every feature of the AI but the splat scenes, which COLMAP and Brush make
+        // (offered on Linux since release 51, lot L03)
+        features: AiFeature.values.where((feature) => feature.isAi && feature != AiFeature.splatScene).toSet(),
       );
       depth = model('depth', {AiFeature.stereoPhoto, AiFeature.stereoPanorama});
       geometry = model('geometry', {AiFeature.scene, AiFeature.panorama});

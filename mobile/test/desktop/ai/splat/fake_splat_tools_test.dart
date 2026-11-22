@@ -697,6 +697,12 @@ bool _alive(int id) {
     final list = Process.runSync('tasklist', ['/FI', 'PID eq $id', '/NH']);
     return '${list.stdout}'.contains(' $id ');
   }
+  // macOS has no /proc: ps says the state, Z for a zombie, nothing for a process gone
+  if (Platform.isMacOS) {
+    final state = Process.runSync('ps', ['-p', '$id', '-o', 'stat=']);
+    final text = '${state.stdout}'.trim();
+    return state.exitCode == 0 && text.isNotEmpty && !text.startsWith('Z');
+  }
   // Read with no look before: the process can end and be reaped between a look and the read (No such process)
   try {
     return !File('/proc/$id/status').readAsStringSync().contains(RegExp(r'State:\s+Z'));
