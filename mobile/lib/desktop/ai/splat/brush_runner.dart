@@ -119,8 +119,18 @@ typedef BrushCardCheck = Future<BrushCard> Function();
 
 /// The device of cubecl for [card] among the cards of [report]: "DiscreteGpu(n)", n its rank among the dedicated cards
 /// Vulkan lists, in the order of the loader (that of wgpu); "IntegratedGpu(n)" for an integrated one; null when it is
-/// not one Vulkan lists
+/// not one Vulkan lists. A software device of Vulkan (lavapipe), which the gate never gives (splatCardOf) and only the
+/// end to end check of the CI hands over (lot L03 of the desktop parity plan, splat_probe --software-card), is the
+/// empty text: no variable, the default device of wgpu, the only one such a computer has
 String? cubeclDeviceOf(GpuReport report, GpuAdapter card) {
+  if (card.kind == GpuKind.cpu) {
+    final listed = report.adapters.any(
+      (adapter) =>
+          adapter.source == 'vulkan' &&
+          (identical(adapter, card) || (adapter.vulkanIndex != null && adapter.vulkanIndex == card.vulkanIndex)),
+    );
+    return listed ? '' : null;
+  }
   final kind = switch (card.kind) {
     GpuKind.discrete => 'DiscreteGpu',
     GpuKind.integrated => 'IntegratedGpu',
@@ -380,7 +390,7 @@ class BrushRunner {
         environment: {
           'RUST_LOG': brushRustLog,
           'RUST_BACKTRACE': '0',
-          'CUBECL_WGPU_DEFAULT_DEVICE': device,
+          if (device.isNotEmpty) 'CUBECL_WGPU_DEFAULT_DEVICE': device,
           ...environment,
         },
       ),

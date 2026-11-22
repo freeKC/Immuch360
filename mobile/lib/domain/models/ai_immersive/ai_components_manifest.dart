@@ -77,9 +77,10 @@ enum AiFeature {
   panorama([AiPlatform.windowsX64, AiPlatform.linuxX64]),
   stereoPanorama(_computers),
 
-  /// Windows only in the first test build (plan 2026-11-01, section 4.1): Linux once a Linux computer with a dedicated
-  /// card has run it (its archives are built from the start), macOS later
-  splatScene([AiPlatform.windowsX64]),
+  /// Windows since the first test build (plan 2026-11-01, section 4.1), Linux since release 51 (lot L03 of the desktop
+  /// parity plan: the same rule of the dedicated card, the chain run end to end on the CI on lavapipe; no Linux PC
+  /// with a dedicated card has run it yet), macOS later
+  splatScene([AiPlatform.windowsX64, AiPlatform.linuxX64]),
 
   /// The AV2 videos of the computers, decoded by the processor with the AV2 decoder: no AI, see [isAi]
   av2Video(_computers),
@@ -1237,8 +1238,8 @@ const av2DecoderMacComponent = AiComponent(
 // builds T1 to T3, colmap.exe and brush_app.exe of the Windows archives signed by APROGSYS), each file with its size
 // and SHA-256, colmap.exe and brush_app.exe the programs the engines run. Neither has an official
 // source: the official binaries of COLMAP carry SiftGPU (non commercial), LSD (AGPL 3) and the GPL parts of CHOLMOD,
-// and those of Brush the LPIPS weights, whose origin is not written. The Linux entries are complete too, but the
-// splat scenes are offered on Windows only in this version (AiFeature.splatScene).
+// and those of Brush the LPIPS weights, whose origin is not written. The Linux entries, complete from the start, are
+// offered since release 51 (AiFeature.splatScene).
 
 /// The licence of COLMAP at the tag 4.2.1 (its COPYING.txt: the new BSD licence of ETH Zurich and UNC Chapel Hill)
 const _colmapLicenceUrl = 'https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt';

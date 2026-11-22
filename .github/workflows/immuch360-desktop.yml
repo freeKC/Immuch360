@@ -566,7 +566,7 @@ jobs:
     name: Linux build
     runs-on: ubuntu-22.04
     needs: codegen
-    timeout-minutes: 45
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -825,6 +825,55 @@ jobs:
         with:
           name: linux-splat-smoke
           path: splat-smoke/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      # The splat scenes on Linux end to end (lot L03 of the desktop parity plan, 21 November 2026; offered on Linux
+      # since release 51): COLMAP and Brush of ai-components-4 as the app downloads them, checked by the sums of the
+      # catalogue and installed with their licences, then the 24 views of make_splat_dataset.py (two cameras) made
+      # into a scene by the engine of the app (splat_probe, the engine of lot SP6, COLMAP and Brush started through
+      # the immuch360-run of the archive). The card is what the probe of the graphics cards of this build reports,
+      # chosen by the rule of the gate (splatCardOf): the runner has no graphics card, so Mesa's software Vulkan
+      # (lavapipe) is installed here and taken by --software-card, the override of the gate's refusal that only this
+      # check uses; 30 steps at 128 pixels. The .spz must be written from every view placed, and read by the probe of
+      # the app. A real dedicated card (NVIDIA proprietary Vulkan, RADV) stays unproven on Linux
+      - name: A splat scene made by the engine of the app with COLMAP and Brush of ai-components-4 (lavapipe)
+        if: ${{ !cancelled() && steps.packages.outcome == 'success' }}
+        timeout-minutes: 30
+        working-directory: mobile
+        run: |
+          set -o pipefail
+          sudo sh ../.github/desktop/packaging/linux/apt_install.sh mesa-vulkan-drivers
+          work="$RUNNER_TEMP/splat-e2e"
+          mkdir -p "$work/mirror" "$work/out"
+          for asset in colmap-cpu-linux-x64.zip brush-vulkan-linux-x64.zip; do
+            curl -sSfL --retry 3 -o "$work/mirror/$asset" \
+              "https://github.com/freeKC/Immuch360/releases/download/ai-components-4/$asset"
+          done
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$work/splat-probe"
+          "$work/splat-probe" install --mirror "$work/mirror" --components "$work/components" --platform linux \
+            | tee "$work/install.log"
+          python3 ../.github/desktop/ai/make_splat_dataset.py --out "$work/dataset"
+          export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json
+          timeout 60 build/linux/x64/release/bundle/immuch360 --immuch360-gpu-probe="$work/gpu.json"
+          cat "$work/gpu.json"
+          echo
+          "$work/splat-probe" run --components "$work/components" --photos "$work/dataset/images" --out "$work/out" \
+            --name room --work-root "$work/work" --steps 30 --resolution 128 --card "report:$work/gpu.json" \
+            --software-card --need-mib 0 --stall-seconds 900 \
+            --launcher "$work/components/engines/colmap-cpu-linux-x64/immuch360-run" \
+            --env "VK_ICD_FILENAMES=$VK_ICD_FILENAMES" | tee "$work/run.log"
+          python3 ../.github/desktop/ai/splat_e2e_check.py "$work/run.log" --views 24
+
+      - name: Upload the splat scene made on Linux
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: linux-splat-e2e
+          path: |
+            ${{ runner.temp }}/splat-e2e/out/
+            ${{ runner.temp }}/splat-e2e/*.log
+            ${{ runner.temp }}/splat-e2e/gpu.json
           retention-days: 14
           if-no-files-found: ignore
 

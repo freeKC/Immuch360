@@ -16,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/splat/brush_runner.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -176,11 +177,15 @@ void main() {
       const desktop = GpuReport(adapters: [second, _intel, _rtx]);
       expect(cubeclDeviceOf(desktop, second), 'DiscreteGpu(1)');
       expect(cubeclDeviceOf(desktop, _rtx), 'DiscreteGpu(0)');
-      // An adapter of DXGI only, and lavapipe, are no card of cubecl
+      // An adapter of DXGI only is no card of cubecl; lavapipe, which only the end to end check of the CI hands over,
+      // is the default device of wgpu: no variable
       const dxgi = GpuAdapter(name: 'Basic Render', kind: GpuKind.discrete, localMemory: 0, source: 'dxgi');
       const lavapipe = GpuAdapter(name: 'llvmpipe', kind: GpuKind.cpu, localMemory: _gib, vulkanIndex: 2);
       expect(cubeclDeviceOf(const GpuReport(adapters: [dxgi, _rtx]), dxgi), isNull);
-      expect(cubeclDeviceOf(const GpuReport(adapters: [lavapipe]), lavapipe), isNull);
+      expect(cubeclDeviceOf(const GpuReport(adapters: [lavapipe]), lavapipe), '');
+      expect(cubeclDeviceOf(const GpuReport(adapters: [_rtx]), lavapipe), isNull);
+      // And never a card of the gate
+      expect(splatCardOf(const GpuReport(adapters: [lavapipe])).refusal, AiGateReason.gpuNone);
     });
 
     test('each card, and each driver, has its own working folder for the autotune cache of cubecl', () {
