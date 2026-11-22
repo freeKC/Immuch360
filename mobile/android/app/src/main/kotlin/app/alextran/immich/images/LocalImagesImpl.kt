@@ -305,7 +305,8 @@ class LocalImagesImpl(context: Context) : LocalImageApi {
       // orphan it. Deliver it; Dart frees the buffer itself if the request was cancelled meanwhile.
       callback(Result.success(res))
     } catch (e: Exception) {
-      callback(if (e is OperationCanceledException) CANCELLED else Result.failure(e))
+      // A CancellationException is the cancel of Glide's request before Android 10 (see GlideHandOver)
+      callback(if (e is OperationCanceledException || e is CancellationException) CANCELLED else Result.failure(e))
     }
   }
 
@@ -368,10 +369,9 @@ class LocalImagesImpl(context: Context) : LocalImageApi {
             if (target.width > 0) target.width else SIZE_ORIGINAL,
             if (target.height > 0) target.height else SIZE_ORIGINAL,
           )
-      // A cancel clears the request while Glide decodes only: once Glide answered, a clear would free the pixels the
-      // caller copies (see GlideHandOver)
-      GlideHandOver.take(signal.handOver(), clear = { Glide.with(ctx).clear(ref) }) { ref.get() }
-        ?: throw OperationCanceledException()
+      // A cancel cancels the future, which wakes ref.get() and clears the request while Glide decodes only: once Glide
+      // answered, a clear would free the pixels the caller copies (see GlideHandOver)
+      GlideHandOver.take(signal.handOver(), ref) { it.recycle() } ?: throw OperationCanceledException()
     }
   }
 
