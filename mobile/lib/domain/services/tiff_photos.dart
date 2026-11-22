@@ -14,13 +14,16 @@
 //   photo again (a new density, the page shown again, the tiles of a folder opened again) reads and decodes it again.
 //
 // iOS, macOS and Windows keep their decoders, which read TIFF: Core Graphics (ImageIO) and WIC, through the engine and
-// the native image pipelines alike. Linux has no TIFF decoder in its engine and keeps the path of its desktop library
-// (a tile for the formats it does not read).
+// the native image pipelines alike. Linux has no TIFF decoder in its engine either and takes the path of Android: the
+// server's JPEG of a TIFF of the server, the Dart decoder for the TIFFs of its folders and of the shares. Its folder
+// library makes the thumbnails of those TIFFs with the same decoder and keeps them in its thumbnail cache
+// (desktop/platform/desktop_local_image_api.dart), and the AI features decode them so too (engine_picture.dart).
 
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
@@ -30,7 +33,8 @@ import 'package:image/image.dart' as img;
 import 'package:immich_mobile/domain/services/tiff_decoder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 
-export 'package:immich_mobile/domain/services/tiff_decoder.dart' show TiffDecodeException, TiffPixels;
+export 'package:immich_mobile/domain/services/tiff_decoder.dart'
+    show TiffDecodeException, TiffHead, TiffPixels, readTiffHead;
 
 final _tiffName = RegExp(r'\.tiff?$', caseSensitive: false);
 
@@ -62,9 +66,28 @@ bool isTiffPhoto(String name, {String? mimeType}) =>
     !_rawName.hasMatch(name) && (isTiffName(name) || isTiffMimeType(mimeType));
 
 /// Whether this platform keeps its own path for TIFF: iOS and macOS decode it through Core Graphics, Windows through
-/// WIC; Linux, whose engine has no TIFF decoder, keeps the tile of its desktop library. False on Android, which has
-/// no TIFF decoder.
-bool get thisPlatformKeepsItsTiffPath => !CurrentPlatform.isAndroid;
+/// WIC. False on Android and Linux, which have no TIFF decoder (Linux's engine has none either).
+bool get thisPlatformKeepsItsTiffPath => !(CurrentPlatform.isAndroid || CurrentPlatform.isLinux);
+
+/// Whether the tiles of the TIFFs of the device are decoded in Dart by the image providers, as their photos are: on
+/// Android. Linux's folder library makes them itself, with the same decoder, and keeps them in its thumbnail cache, so
+/// that a TIFF is decoded once for its tile rather than at each session (desktop_local_image_api.dart).
+bool get tiffTilesDecodedByProviders => !CurrentPlatform.isLinux;
+
+/// The long side to decode a TIFF of [head] to: at most [maxWidth] wide once upright, or just enough to cover a
+/// [cover] by [cover] square (the size of a thumbnail), never more than its own size
+int tiffDecodeSide(TiffHead head, {int? maxWidth, int? cover}) {
+  final long = math.max(head.width, head.height);
+  final short = math.min(head.width, head.height);
+  var scale = 1.0;
+  if (maxWidth != null && head.width > maxWidth) {
+    scale = maxWidth / head.width;
+  }
+  if (cover != null && short > cover) {
+    scale = math.min(scale, cover / short);
+  }
+  return math.max(1, math.min(long, (long * scale).ceil()));
+}
 
 /// How a photo is decoded for the viewers
 enum PhotoDecodePath {
@@ -306,6 +329,39 @@ Future<TiffPixels> decodeTiff(
       throw const TiffDecodeCancelled();
     }
     return decodeTiffNow(bytes, maxSide: maxSide);
+  },
+  work: work,
+  cancel: cancel,
+);
+
+/// The TIFF [read] gives, read when the turn of the decoder comes (see [inTiffTurn], [work], [cancel]), decoded as
+/// [decodeTiffNow] does to the side [tiffDecodeSide] gives for [maxWidth] and [cover], with its head. A camera raw file
+/// built on TIFF is refused, whatever its name ([TiffHead.cameraRaw]): what Linux's folder library and AI features
+/// decode of a file of the computer.
+Future<(TiffPixels, TiffHead)> decodeTiffFitting(
+  Future<Uint8List> Function() read, {
+  int? maxWidth,
+  int? cover,
+  TiffWork work = TiffWork.viewer,
+  TiffCancel? cancel,
+}) => inTiffTurn(
+  () async {
+    final bytes = await read();
+    if (cancel?.isCancelled ?? false) {
+      throw const TiffDecodeCancelled();
+    }
+    final head = readTiffHead(bytes);
+    if (head == null) {
+      throw const TiffDecodeException('unreadable header');
+    }
+    if (head.cameraRaw) {
+      throw const TiffDecodeException('a camera raw file');
+    }
+    final pixels = await decodeTiffNow(
+      bytes,
+      maxSide: tiffDecodeSide(head, maxWidth: maxWidth, cover: cover),
+    );
+    return (pixels, head);
   },
   work: work,
   cancel: cancel,

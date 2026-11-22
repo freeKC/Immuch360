@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -10,6 +11,7 @@ import 'package:immich_mobile/desktop/library/thumbnail_cache.dart';
 import 'package:immich_mobile/desktop/platform/desktop_local_image_api.dart';
 import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:path/path.dart' as p;
 
 import '../video/fake_playback_engine.dart';
@@ -48,7 +50,7 @@ void main() {
   late List<DesktopLocalImageApi> made;
   var nextRequest = 1000;
 
-  DesktopLocalImageApi api({int concurrentDecodes = 3}) {
+  DesktopLocalImageApi api({int concurrentDecodes = 3, bool tiffInDart = false}) {
     final images = DesktopLocalImageApi(
       fileForAsset: (id) async {
         asked.add(id);
@@ -56,6 +58,7 @@ void main() {
       },
       thumbnails: cache,
       concurrentDecodes: concurrentDecodes,
+      tiffInDart: tiffInDart,
     );
     made.add(images);
     return images;
@@ -408,6 +411,57 @@ void main() {
       expect(Directory(p.join(root.path, 'thumbs')).existsSync(), isFalse, reason: 'tiles are not cached on disk');
     });
 
+    test('a TIFF on Linux: its thumbnail by the Dart decoder, kept in the cache; its file for the viewers', () async {
+      final tiff = File('test/fixtures/tiff/rgb8_lzw_pred.tif').readAsBytesSync();
+      final head = readTiffHead(tiff)!;
+      put('t1', 'scan.tif', tiff);
+      final images = api(tiffInDart: true);
+
+      final encoded = takeEncoded(await request(images, 't1', width: 64, height: 64));
+      expect(sniffImageFormat(encoded), SniffedFormat.jpeg, reason: 'an opaque TIFF is kept as a JPEG');
+      final thumbnail = await decode(encoded);
+      final short = math.min(head.width, head.height);
+      // The bucket of a 64 pixel box is 320: the thumbnail covers it, never enlarged
+      expect(math.min(thumbnail.width, thumbnail.height), math.min(short, 320));
+      thumbnail.dispose();
+      await images.idle();
+      final cached = Directory(
+        p.join(root.path, 'thumbs'),
+      ).listSync(recursive: true).whereType<File>().where((file) => file.path.endsWith(ThumbnailCache.extension));
+      expect(cached, hasLength(1));
+
+      // An unsized request (the viewers, LocalTiffImageRequest): the file as it is
+      expect(takeEncoded(await request(images, 't1', width: 0, height: 0, preferEncoded: true)), tiff);
+    });
+
+    test('a TIFF with transparency on Linux keeps it: a PNG', () async {
+      put('t2', 'alpha.tif', File('test/fixtures/tiff/rgba8_deflate_pred.tif').readAsBytesSync());
+      final encoded = takeEncoded(await request(api(tiffInDart: true), 't2', width: 64, height: 64));
+      expect(sniffImageFormat(encoded), SniffedFormat.png);
+    });
+
+    test('a camera raw file built on TIFF keeps its tile on Linux, by its name or by its tags', () async {
+      final tiff = File('test/fixtures/tiff/rgb8_lzw_pred.tif').readAsBytesSync();
+      put('r1', 'DSC_0001.NEF', tiff);
+      put('r2', 'renamed.tif', _dngStructure());
+      final images = api(tiffInDart: true);
+      for (final id in ['r1', 'r2']) {
+        final tile = await decode(takeEncoded(await request(images, id, width: 64, height: 64)));
+        expect((tile.width, tile.height), (320, 320), reason: '$id: the tile of its bucket');
+        tile.dispose();
+      }
+      await images.idle();
+    });
+
+    test('a TIFF elsewhere goes to the engine, as before: a tile where the engine reads no TIFF', () async {
+      put('t3', 'scan.tif', File('test/fixtures/tiff/rgb8_lzw_pred.tif').readAsBytesSync());
+      final images = api();
+      final original = takeEncoded(await request(images, 't3', width: 0, height: 0, preferEncoded: true));
+      // The engine of the tests reads no TIFF: the tile of the largest bucket
+      expect(sniffImageFormat(original), SniffedFormat.png);
+      await images.idle();
+    });
+
     test('an empty file gets a tile too', () async {
       put('e1', 'empty.jpg', const []);
       expect(sniffImageFormat(takeEncoded(await request(api(), 'e1'))), SniffedFormat.png);
@@ -509,4 +563,42 @@ void main() {
     expect(answer['rowBytes'], answer['width']! * 4);
     malloc.free(Pointer<Uint8>.fromAddress(answer['pointer']!));
   });
+}
+
+/// A TIFF whose tags say DNG (DNGVersion), with a tiny RGB image, under any name
+Uint8List _dngStructure() {
+  const fields = <(int, int, int)>[
+    (256, 3, 4),
+    (257, 3, 2),
+    (258, 3, 8),
+    (259, 3, 1),
+    (262, 3, 2),
+    (273, 4, 0),
+    (277, 3, 3),
+    (278, 3, 2),
+    (279, 4, 24),
+    (50706, 4, 0x01040000),
+  ];
+  final dataAt = 8 + 2 + fields.length * 12 + 4;
+  final out = ByteData(dataAt + 24)
+    ..setUint8(0, 0x49)
+    ..setUint8(1, 0x49)
+    ..setUint16(2, 42, Endian.little)
+    ..setUint32(4, 8, Endian.little)
+    ..setUint16(8, fields.length, Endian.little);
+  for (var index = 0; index < fields.length; index++) {
+    final (tag, type, value) = fields[index];
+    final at = 10 + index * 12;
+    out
+      ..setUint16(at, tag, Endian.little)
+      ..setUint16(at + 2, type, Endian.little)
+      ..setUint32(at + 4, 1, Endian.little);
+    final written = tag == 273 ? dataAt : value;
+    if (type == 3) {
+      out.setUint16(at + 8, written, Endian.little);
+    } else {
+      out.setUint32(at + 8, written, Endian.little);
+    }
+  }
+  return out.buffer.asUint8List();
 }

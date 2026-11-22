@@ -176,6 +176,22 @@ Future<Uint8List?> _jpegOf(ui.Image image) async {
 Future<Uint8List?> _opaqueJpegInBackground(Uint8List rgba, int width, int height) =>
     Isolate.run(() => opaqueJpeg(rgba, width, height));
 
+/// The thumbnail of [rgba], [width] by [height] pixels of four bytes decoded outside the engine (a TIFF on Linux, see
+/// desktop_local_image_api.dart), encoded in a background isolate: a JPEG when it is opaque, else a PNG, as
+/// [renderThumbnail] keeps the pictures the engine decodes
+Future<Uint8List> thumbnailOfPixels(Uint8List rgba, int width, int height) =>
+    Isolate.run(() => opaqueJpeg(rgba, width, height) ?? _png(rgba, width, height), debugName: 'Thumbnail');
+
+Uint8List _png(Uint8List rgba, int width, int height) => img.encodePng(
+  img.Image.fromBytes(
+    width: width,
+    height: height,
+    bytes: rgba.buffer,
+    bytesOffset: rgba.offsetInBytes,
+    numChannels: 4,
+  ),
+);
+
 /// [rgba], [width] by [height] pixels of four bytes, as a JPEG; null when a pixel is not fully opaque, since JPEG
 /// would turn its transparency black
 @visibleForTesting
