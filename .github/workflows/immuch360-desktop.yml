@@ -22,7 +22,9 @@ name: Immuch360 Desktop
 #                  downloads (immuch360/av2-companion) on fixtures and a 1080p clip, with the options of the app
 #                  (check_y4m.py companion), and a self check of the app on the runner (a folder and a video on the
 #                  command line, the keychain, five seconds of libmpv, the y4m over HTTP), a failed check failing the job
-#   macos-tests    test/desktop on an arm64 Mac
+#   macos-tests    test/desktop on an arm64 Mac, then ONNX Runtime by FFI on the library the app installs there (the
+#                  tiny models, the engines of the scenes, the panoramas and the 3D videos), and a whole 3D video through
+#                  the macOS FFmpeg program the app downloads
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
 #                  fake sd-cli and the probes of a generation, of a panorama and of the splat scenes as the artifact
 #                  Immuch360-AI-tools-windows-x64, the release build, the ZIP and the installer (Inno Setup) for the
@@ -1694,12 +1696,15 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
-  # The desktop tests on macOS (lot L04 of the desktop parity plan, 21 November 2026), beside the build: until
+  # The desktop tests on macOS (lots L04 and L05 of the desktop parity plan, 21 November 2026), beside the build: until
   # release 51 they never ran on a Mac, the build job only compiled the app and started it. test/desktop on this arm64
-  # runner with the fakes of the AI features compiled here. A runner is no Mac on a desk: no graphics card the AI uses,
-  # no Retina screen, no keychain prompt
+  # runner with the fakes of the AI features compiled here, then ONNX Runtime by FFI on the library the app installs on
+  # Apple silicon (onnxruntime-1.31.0-osx-arm64.dylib.gz of the release ai-components-1, checked by the SHA-256 of the
+  # download and by that of the catalogue once unpacked): the tiny models, the engines of the 3D scenes and of the 360°
+  # panoramas, the 3D videos, and a whole 3D video through the macOS FFmpeg program of immuch360/libmpv-builds that the
+  # app downloads. A runner is no Mac on a desk: no graphics card the AI uses, no Retina screen, no keychain prompt
   macos-tests:
-    name: macOS desktop tests
+    name: macOS desktop tests and ONNX Runtime
     runs-on: macos-15
     needs: codegen
     if: >-
@@ -1759,6 +1764,60 @@ jobs:
           IMMUCH360_SPLAT_SCENE_PROBE: ${{ steps.fakes.outputs.dir }}/splat-probe
           IMMUCH360_FAKE_AV2: ${{ steps.fakes.outputs.dir }}/fake-av2
         run: mise exec -- flutter test test/desktop
+
+      - name: ONNX Runtime archive cache
+        if: ${{ !cancelled() }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/onnxruntime-macos
+          key: onnxruntime-osx-arm64-1.31.0-fa5c0ea9-2a50a63e
+
+      # The library the app installs on Apple silicon, the gzip of the release checked by its SHA-256, the library by
+      # that of the catalogue (onnxRuntimeMacArmComponent of ai_components_manifest.dart)
+      - name: ONNX Runtime by FFI on 1.31.0 (osx-arm64)
+        id: ort
+        if: ${{ !cancelled() }}
+        working-directory: mobile
+        run: |
+          ort="$RUNNER_TEMP/onnxruntime-macos"
+          mkdir -p "$ort"
+          archive="$ort/onnxruntime-1.31.0-osx-arm64.dylib.gz"
+          [ -f "$archive" ] || curl -sSfL --retry 3 -o "$archive" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-1/onnxruntime-1.31.0-osx-arm64.dylib.gz
+          echo "fa5c0ea9c33f3ea1eb86e3aa989d92c1d78b8f4dbef50c77ea9c6c54919f33b8  $archive" | shasum -a 256 -c -
+          lib="$ort/libonnxruntime.1.31.0.dylib"
+          gzip -dc "$archive" > "$lib"
+          echo "2a50a63e7f41f8d4d551d3ee47248df3864f6540109fce8ad520ca3b51af4b70  $lib" | shasum -a 256 -c -
+          echo "lib=$lib" >> "$GITHUB_OUTPUT"
+          IMMUCH360_ORT_LIB="$lib" IMMUCH360_SCENE_OUT="$RUNNER_TEMP/scenes-1.31.0" \
+            mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene \
+              test/desktop/ai/panorama/panorama_engine_ort_test.dart test/desktop/ai/video3d
+          ls -l "$RUNNER_TEMP/scenes-1.31.0" || true
+
+      # A whole 3D video as the test job makes it, with the macOS FFmpeg program the app downloads
+      # (ffmpegMacComponent: one universal archive, signed ad hoc) and this ONNX Runtime
+      - name: A 3D video through the real FFmpeg program and the tiny model (macOS)
+        if: ${{ !cancelled() && steps.ort.outcome == 'success' }}
+        working-directory: mobile
+        env:
+          ORT_LIB: ${{ steps.ort.outputs.lib }}
+        run: |
+          set -o pipefail
+          work="$RUNNER_TEMP/video3d"
+          mkdir -p "$work/ffmpeg"
+          curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/Immuch360-ffmpeg-9.0.2-2-macos-universal.zip
+          echo "b0d76f497d989283dd5d77c1076792e02371a7df092899f2a8d12857c65cf6b7  $work/ffmpeg.zip" | shasum -a 256 -c -
+          (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
+          lipo -archs "$work/ffmpeg/bin/ffmpeg"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py make "$work/ffmpeg/bin/ffmpeg" "$work/clip.mkv"
+          export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$ORT_LIB\",\"--model\",\"$PWD/test/fixtures/ai_immersive/tiny_vda.onnx\",\"--out\",\"$work/out\",\"--quality\",\"fast\",\"--segment\",\"1\",\"$work/clip.mkv\"]"
+          mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
+            | tee "$work/run.log"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py check "$work/run.log"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py drift "$work/ffmpeg/bin/ffmpeg" "$work/drift"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py decoders "$work/ffmpeg/bin/ffmpeg" \
+            lib/desktop/ai/video3d/video_source.dart
 
   # The seven files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
   # release: a file missing or added shows on every run, not on the day of a release
