@@ -9,6 +9,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/network/linux_network_bus.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
@@ -58,13 +59,15 @@ class _PlayFromPhonePageState extends ConsumerState<PlayFromPhonePage> {
     final headset = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     final phones = ref.watch(linkedPhonesProvider).valueOrNull ?? const <LinkedPeer>[];
     final view = ref.watch(screenPlayerProvider);
+    // Linux without Avahi: the screen listens, but no phone finds it (linux_network_bus.dart)
+    final avahiUnanswered = ref.watch(avahiUnansweredProvider);
     final dates = DateFormat.yMMMd(context.locale.toLanguageTag());
     final status = !enabled
         ? null
         : phones.isEmpty
         ? t.play_from_phone_no_phone
         : view.listening
-        ? t.play_from_phone_listening
+        ? (avahiUnanswered ? t.play_from_phone_no_avahi : t.play_from_phone_listening)
         : switch (view.problem) {
             ScreenPlayerProblem.publicNetwork => t.pairing_screen_public_network,
             ScreenPlayerProblem.noNetwork || ScreenPlayerProblem.failed => t.play_from_phone_no_network,

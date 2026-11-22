@@ -13,9 +13,9 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/network/linux_network_bus.dart';
 import 'package:immich_mobile/desktop/network/windows_dns_sd.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
@@ -88,8 +88,11 @@ final screenPlayerEnvironmentProvider = Provider<ScreenPlayerEnvironment>((ref) 
     publicNetworkOnly: pairing.publicNetworkOnly,
     advertise: CurrentPlatform.isWindows
         ? (name, port, attributes) => windowsShareAdvertise(name, port, attributes, type: pairingServiceType)
-        : (name, port, attributes) => bonsoirAdvertise(name, port, attributes, type: pairingServiceType),
-    networkChanges: () => Connectivity().onConnectivityChanged.map<void>((_) {}),
+        : (name, port, attributes) => advertiseNotingAvahi(
+            () => bonsoirAdvertise(name, port, attributes, type: pairingServiceType),
+            (unanswered) => ref.read(avahiUnansweredProvider.notifier).set(unanswered),
+          ),
+    networkChanges: deviceNetworkChanges,
     lifecycle: appLifecycleStates,
     kind: pairing.kind,
     isBigScreen: () async {

@@ -18,11 +18,11 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:bonsoir/bonsoir.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/network/interface_rank.dart';
+import 'package:immich_mobile/desktop/network/linux_network_bus.dart';
 import 'package:immich_mobile/desktop/network/windows_dns_sd.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -394,7 +394,7 @@ final phoneShareEnvironmentProvider = Provider<PhoneShareEnvironment>((ref) {
     advertise: CurrentPlatform.isWindows ? windowsShareAdvertise : bonsoirAdvertise,
     // The computers rank their own network interfaces (lib/desktop/network/interface_rank.dart)
     localAddresses: CurrentPlatform.isDesktop ? desktopShareLocalAddresses : phoneShareLocalAddresses,
-    networkChanges: () => Connectivity().onConnectivityChanged.map<void>((_) {}),
+    networkChanges: deviceNetworkChanges,
     lifecycle: appLifecycleStates,
     deviceName: CurrentPlatform.isDesktop ? desktopShareDeviceName : phoneShareDeviceName,
     installId: () => phoneShareInstallId(ref.read(storeServiceProvider)),

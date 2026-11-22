@@ -7,12 +7,12 @@
 import 'dart:async';
 import 'dart:isolate';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/network/interface_rank.dart';
+import 'package:immich_mobile/desktop/network/linux_network_bus.dart';
 import 'package:immich_mobile/desktop/network/windows_dns_sd.dart';
 import 'package:immich_mobile/desktop/platform/desktop_device.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -235,8 +235,11 @@ final screenPairingEnvironmentProvider = Provider<ScreenPairingEnvironment>((ref
     // bonsoir_windows crashes the app; Windows announces through dnsapi (lib/desktop/network/windows_dns_sd.dart)
     advertise: CurrentPlatform.isWindows
         ? (name, port, attributes) => windowsShareAdvertise(name, port, attributes, type: pairingServiceType)
-        : (name, port, attributes) => bonsoirAdvertise(name, port, attributes, type: pairingServiceType),
-    networkChanges: () => Connectivity().onConnectivityChanged.map<void>((_) {}),
+        : (name, port, attributes) => advertiseNotingAvahi(
+            () => bonsoirAdvertise(name, port, attributes, type: pairingServiceType),
+            (unanswered) => ref.read(avahiUnansweredProvider.notifier).set(unanswered),
+          ),
+    networkChanges: deviceNetworkChanges,
     lifecycle: appLifecycleStates,
     deviceName: CurrentPlatform.isDesktop ? desktopShareDeviceName : phoneShareDeviceName,
     kind: () async {
