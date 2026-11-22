@@ -321,6 +321,15 @@ List<ViewAlignment> _align(List<_ViewMap> maps, double cosLimit, int width, int 
     }
   }
 
+  return alignmentsFromPairs(pairs, n, share);
+}
+
+/// The scale and the shift of each of [n] views from the normal equations of each pair of them ([pairs], the 4 x 4
+/// block of (a_k, b_k, a_l, b_l) at k * n + l, k < l, null for a pair that sees nothing in common): least squares,
+/// the scales averaging 1, with the pull [share] (rule 4); a view whose scale comes out not above zero is left out,
+/// the one with the lowest scale first, and the others are solved again without it. [ViewAlignment.unused] for a view
+/// left out. The 3D videos of a 360° video share it (sphere_depth.dart).
+List<ViewAlignment> alignmentsFromPairs(List<Float64List?> pairs, int n, double share) {
   final used = List<bool>.filled(n, true);
   while (true) {
     final active = [

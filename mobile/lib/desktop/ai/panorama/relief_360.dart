@@ -100,7 +100,8 @@ class SphereDepthSampler {
 /// (far) and 1 (near) as normaliseDepth gives it, whose [lowRelief] goes into the result. [maxShiftDegrees] is the
 /// shift of the nearest at the equator. [holes], when given, receives 1 for each filled pixel and 0 for the others,
 /// row after row. [isCancelled] is read before every 64th row and throws [ReliefCancelledException] when true;
-/// [onRows] hears the rows done every 64 rows and at the end. [left] is only read.
+/// [onRows] hears the rows done every 64 rows and at the end. [left] is only read. With [channels] 3 both frames are
+/// RGB (the frames of a 360° video, sphere_video_worker.dart) and no alpha is written.
 Relief360Eye writeRelief360RightEye({
   required Uint8List left,
   required int width,
@@ -116,11 +117,15 @@ Relief360Eye writeRelief360RightEye({
   Uint8List? holes,
   bool Function()? isCancelled,
   void Function(int rows)? onRows,
+  int channels = 4,
 }) {
-  final leftRow = leftStride ?? width * 4;
-  final targetRow = targetStride ?? width * 4;
-  _checkPixels('left', left, width, height, leftOffset, leftRow);
-  _checkPixels('target', target, width, height, targetOffset, targetRow);
+  if (channels != 3 && channels != 4) {
+    throw ArgumentError.value(channels, 'channels', 'RGB (3) or RGBA (4)');
+  }
+  final leftRow = leftStride ?? width * channels;
+  final targetRow = targetStride ?? width * channels;
+  _checkPixels('left', left, width, height, leftOffset, leftRow, channels);
+  _checkPixels('target', target, width, height, targetOffset, targetRow, channels);
   if (holes != null && holes.length != width * height) {
     throw ArgumentError('The mask of an eye of $width x $height has ${width * height} cells, not ${holes.length}');
   }
@@ -165,7 +170,7 @@ Relief360Eye writeRelief360RightEye({
       final next = x + 1 < width ? x + 1 : 0;
       final d0 = d[x];
       final t0 = t[x];
-      final at = source + x * 4;
+      final at = source + x * channels;
       final r0 = left[at];
       final g0 = left[at + 1];
       final b0 = left[at + 2];
@@ -175,7 +180,7 @@ Relief360Eye writeRelief360RightEye({
         continue;
       }
       final t1 = t[next] + (next == 0 ? width : 0);
-      final to = source + next * 4;
+      final to = source + next * channels;
       final r1 = left[to];
       final g1 = left[to + 1];
       final b1 = left[to + 2];
@@ -224,7 +229,7 @@ Relief360Eye writeRelief360RightEye({
     // The bytes: each filled pixel blurred over 3 on the filled row, around it, every channel rounded half up
     final out = targetOffset + y * targetRow;
     for (var x = 0; x < width; x++) {
-      final at = out + x * 4;
+      final at = out + x * channels;
       if (depth[x] != unwritten) {
         target[at] = _toByte(filledRow[x * 3]);
         target[at + 1] = _toByte(filledRow[x * 3 + 1]);
@@ -245,7 +250,9 @@ Relief360Eye writeRelief360RightEye({
           holes[y * width + x] = 1;
         }
       }
-      target[at + 3] = 255;
+      if (channels == 4) {
+        target[at + 3] = 255;
+      }
     }
     if (onRows != null && ((y + 1) % 64 == 0 || y + 1 == height)) {
       onRows(y + 1);
@@ -256,11 +263,11 @@ Relief360Eye writeRelief360RightEye({
 
 int _toByte(double value) => math.min(255, math.max(0, (value + 0.5).floor()));
 
-void _checkPixels(String name, Uint8List bytes, int width, int height, int offset, int stride) {
-  if (width < 1 || height < 1 || offset < 0 || stride < width * 4) {
+void _checkPixels(String name, Uint8List bytes, int width, int height, int offset, int stride, int channels) {
+  if (width < 1 || height < 1 || offset < 0 || stride < width * channels) {
     throw ArgumentError('The $name eye of $width x $height with rows of $stride bytes from $offset');
   }
-  if (bytes.length < offset + (height - 1) * stride + width * 4) {
+  if (bytes.length < offset + (height - 1) * stride + width * channels) {
     throw ArgumentError('${bytes.length} bytes do not hold the $name eye of $width x $height from $offset');
   }
 }

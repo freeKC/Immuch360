@@ -15,6 +15,10 @@
 // time against pts.txt; when they differ, the job starts again rather than failing on every Resume. Once every frame is
 // in a segment, job.json says so: a stop or a failure during the final mux goes back to the mux only. One state file
 // is kept at a time, and the work folder goes once the MP4 is in place.
+//
+// A 360° video (lot ai-360-3d-51, VideoJobRequest.sphereEyeWidth) runs the same way with its own worker
+// (sphere_video_worker.dart): eyes of 2:1, the frame top and bottom (the left eye on top), segments not marked, and the
+// MP4 of the mux written once more with the marks of a 360° 3D video (spherical_mp4_writer.dart) before its rename.
 
 import 'dart:async';
 import 'dart:convert';
@@ -23,6 +27,8 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
+import 'package:immich_mobile/desktop/ai/video3d/sphere_depth.dart' show sphereShiftDegreesOf;
+import 'package:immich_mobile/desktop/ai/video3d/spherical_mp4_writer.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_frame_ops.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_job_file.dart';
@@ -152,6 +158,7 @@ class VideoReliefSettings {
     this.convergence = 0.5,
     this.packing = VideoSbsPacking.full,
     this.edgeFade = true,
+    this.sphere = false,
   });
 
   final double parallax;
@@ -160,6 +167,13 @@ class VideoReliefSettings {
 
   /// The soft floating window (plan 4.6), on by default
   final bool edgeFade;
+
+  /// A 360° video: the right eye drawn around the sphere (relief-360), the frame top and bottom; packing, convergence
+  /// and the floating window do not apply
+  final bool sphere;
+
+  /// The shift of the nearest point at the equator of a 360° video, from the strength (sphereShiftDegreesOf)
+  double get sphereShiftDegrees => sphereShiftDegreesOf(parallax);
 }
 
 /// The worker in the caller's isolate: [VdaWindowLoop] and [VideoFrameOps] called in place
@@ -293,6 +307,7 @@ class VideoJobRequest {
     this.encoders,
     this.segmentSeconds = 30,
     this.keys = const {},
+    this.sphereEyeWidth,
   });
 
   final String sourcePath;
@@ -316,6 +331,12 @@ class VideoJobRequest {
 
   /// Our keys in the MP4 (com.immuch360.*)
   final Map<String, String> keys;
+
+  /// A 360° video made 360° 3D: the width of each eye (its height half of it), the frame top and bottom; null for a
+  /// flat video
+  final int? sphereEyeWidth;
+
+  bool get sphere => sphereEyeWidth != null;
 }
 
 /// What a finished job made
@@ -587,15 +608,24 @@ class VideoConversion {
     final source = File(request.sourcePath);
     final json = await probeVideo(runner, request.ffprobe, request.sourcePath);
     final video = VideoSource.fromFfprobe(json);
-    final check = checkVideoSource(video, fileName: p.basename(request.sourcePath));
+    final sphereEye = request.sphereEyeWidth;
+    final check = checkVideoSource(
+      video,
+      fileName: p.basename(request.sourcePath),
+      ask: sphereEye != null ? VideoProjectionAsk.sphere : VideoProjectionAsk.flat,
+    );
     if (!check.accepted) {
       throw VideoJobException('Refused: ${check.skip!.name}', refusal: check.skip);
     }
     final info = check.source!;
     final grid = check.grid!;
-    final eye = videoEyeSize(info);
-    final model = videoModelSize(eye.width, eye.height, request.quality);
-    final outWidth = request.relief.packing == VideoSbsPacking.full ? eye.width * 2 : eye.width;
+    final side = request.quality.shortSide;
+    final eye = sphereEye != null ? (width: sphereEye, height: sphereEye ~/ 2) : videoEyeSize(info);
+    final model = sphereEye != null
+        ? (width: side, height: side)
+        : videoModelSize(eye.width, eye.height, request.quality);
+    final outWidth = sphereEye != null || request.relief.packing == VideoSbsPacking.half ? eye.width : eye.width * 2;
+    final outHeight = sphereEye != null ? 2 * eye.height : eye.height;
     final identity = await VideoSourceIdentity.of(source);
     for (final track in info.audio) {
       if (!track.isKept) {
@@ -615,6 +645,8 @@ class VideoConversion {
       'model': [model.width, model.height],
       'grid': grid.rate.ffmpeg,
       'slowMotion': grid.slowMotion,
+      // Only for a 360° video: the work folders of the flat ones keep the settings they had
+      'sphere': ?sphereEye,
     };
     var job = resume ? await VideoJobFile.read(folder) : null;
     VdaLoopState? state;
@@ -661,7 +693,7 @@ class VideoConversion {
             request.ffmpeg,
             request.encoders ?? VideoEncoder.forThisComputer,
             outWidth,
-            eye.height,
+            outHeight,
             grid.rate,
             onTest: (encoder, passed, errors) =>
                 _log('encoder test ${encoder.name}: ${passed ? 'passed' : 'failed ${errors.trim()}'}'),
@@ -748,9 +780,10 @@ class VideoConversion {
         videoSegmentArguments(
           encoder: encoder,
           width: outWidth,
-          height: eye.height,
+          height: outHeight,
           rate: grid.rate,
           segmentPath: path,
+          markLeftRight: sphereEye == null,
         ),
       );
       _running.add(program);
@@ -1029,6 +1062,9 @@ class VideoConversion {
       _running.remove(mux);
       mux.kill();
     }
+    if (request.sphere) {
+      await _markSphere(part, info, audio);
+    }
     await File(part).rename(request.outputPath);
     jobFile.finished = true;
     await jobFile.write(folder);
@@ -1055,6 +1091,32 @@ class VideoConversion {
       holesMean: encoded.holesMean,
       segments: jobFile.segments.length,
     );
+  }
+}
+
+extension on VideoConversion {
+  /// The MP4 of the mux [part] written again with the marks of a 360° 3D video, top and bottom: st3d and sv3d, the XML
+  /// of Spherical Video V1, and the SA3D box of each spatial sound track the mux copied as it is
+  Future<void> _markSphere(String part, VideoSource info, List<VideoAudioTrack> audio) async {
+    final source = await readAudioSa3d(request.sourcePath);
+    final sa3d = <Uint8List?>[];
+    for (final track in audio) {
+      final rank = info.audio.indexWhere((candidate) => candidate.index == track.index);
+      sa3d.add(track.isCopied && rank >= 0 && rank < source.length ? source[rank] : null);
+    }
+    final marked = '$part.sphere';
+    try {
+      final result = await writeSphericalMp4(part, marked, audioSa3d: sa3d);
+      await File(part).delete();
+      await File(marked).rename(part);
+      _log(
+        'marked as a 360° video top and bottom: ${result.videoTracks} video track, '
+        '${result.sa3dAdded} spatial sound box put back',
+      );
+    } on FormatException catch (error) {
+      await _deleteQuietly(File(marked));
+      throw VideoJobException('The marks of a 360° video could not be written: ${error.message}');
+    }
   }
 }
 

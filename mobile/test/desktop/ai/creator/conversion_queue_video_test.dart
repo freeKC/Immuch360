@@ -290,6 +290,8 @@ void main() {
       VideoRefusal.dolbyVisionProfile5: ConversionSkipReason.dolbyVisionProfile5,
       VideoRefusal.oddRotation: ConversionSkipReason.oddRotation,
       VideoRefusal.unreadable: ConversionSkipReason.unreadableVideo,
+      VideoRefusal.raw360: ConversionSkipReason.raw360Video,
+      VideoRefusal.sphereLayout: ConversionSkipReason.sphereLayout,
     };
     expect(reasons.keys, VideoRefusal.values);
     final notifier = queue();

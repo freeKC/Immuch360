@@ -41,6 +41,7 @@ class VideoJobSettings {
     this.quality = VideoDepthQuality.standard,
     this.strength = ReliefStrength.subtle,
     this.packing = VideoSbsPacking.full,
+    this.sphereEyeWidth,
   });
 
   /// Its id in video_jobs.json, also the end of the name of its work folder and of its log
@@ -52,7 +53,12 @@ class VideoJobSettings {
   final ReliefStrength strength;
   final VideoSbsPacking packing;
 
+  /// A 360° video made 360° 3D, top and bottom: the width of each eye (sphereEyeWidths); null for a flat video
+  final int? sphereEyeWidth;
+
   bool get half => packing == VideoSbsPacking.half;
+
+  bool get sphere => sphereEyeWidth != null;
 
   Map<String, Object?> toJson() => {
     'recordId': recordId,
@@ -60,6 +66,7 @@ class VideoJobSettings {
     'quality': quality.name,
     'strength': strength.name,
     'packing': packing.name,
+    'sphereEyeWidth': ?sphereEyeWidth,
   };
 
   static VideoJobSettings? fromJson(Object? json) {
@@ -77,6 +84,10 @@ class VideoJobSettings {
       quality: VideoDepthQuality.values.asNameMap()[json['quality']] ?? VideoDepthQuality.standard,
       strength: ReliefStrength.named(json['strength']),
       packing: VideoSbsPacking.values.asNameMap()[json['packing']] ?? VideoSbsPacking.full,
+      sphereEyeWidth: switch (json['sphereEyeWidth']) {
+        final int width when width >= 4 && width % 4 == 0 => width,
+        _ => null,
+      },
     );
   }
 }
@@ -361,6 +372,8 @@ ConversionSkipReason videoSkipReason(VideoRefusal refusal) => switch (refusal) {
   VideoRefusal.dolbyVisionProfile5 => ConversionSkipReason.dolbyVisionProfile5,
   VideoRefusal.oddRotation => ConversionSkipReason.oddRotation,
   VideoRefusal.unreadable => ConversionSkipReason.unreadableVideo,
+  VideoRefusal.raw360 => ConversionSkipReason.raw360Video,
+  VideoRefusal.sphereLayout => ConversionSkipReason.sphereLayout,
 };
 
 /// What a job runs with on this computer, found when it starts: the programs of the FFmpeg archive and their runner,
@@ -456,7 +469,10 @@ class DesktopVideoJobEngine implements VideoJobEngine {
 
     var ended = false;
     try {
-      log('source ${spec.sourcePath}, ${settings.quality.name}, ${settings.strength.name}, ${settings.packing.name}');
+      log(
+        'source ${spec.sourcePath}, ${settings.quality.name}, ${settings.strength.name}, '
+        '${settings.sphere ? '360° top and bottom, eyes of ${settings.sphereEyeWidth}' : settings.packing.name}',
+      );
       // The app quit between the end of the mux and the final name
       if (!work.existsSync() && made.existsSync()) {
         log('the MP4 was made: it only takes its name');
@@ -474,7 +490,11 @@ class DesktopVideoJobEngine implements VideoJobEngine {
       }
       await _sleep.hold();
       VideoFrameWorker? worker;
-      final relief = VideoReliefSettings(parallax: settings.strength.parallax, packing: settings.packing);
+      final relief = VideoReliefSettings(
+        parallax: settings.strength.parallax,
+        packing: settings.packing,
+        sphere: settings.sphere,
+      );
       VideoJobProgress? last;
       final conversion = VideoConversion(
         request: VideoJobRequest(
@@ -486,11 +506,20 @@ class DesktopVideoJobEngine implements VideoJobEngine {
           quality: settings.quality,
           relief: relief,
           segmentSeconds: segmentSeconds,
+          sphereEyeWidth: settings.sphereEyeWidth,
           keys: {
-            'com.immuch360.kind': 'StereoVideo',
-            'com.immuch360.pipeline': 'relief-v1-video',
+            if (settings.sphere) ...{
+              'com.immuch360.kind': 'StereoVideo360',
+              'com.immuch360.pipeline': 'relief-360-video',
+              'com.immuch360.projection': 'equirectangular',
+              'com.immuch360.stereo': 'top-bottom',
+              'com.immuch360.max_shift_degrees': '${relief.sphereShiftDegrees}',
+            } else ...{
+              'com.immuch360.kind': 'StereoVideo',
+              'com.immuch360.pipeline': 'relief-v1-video',
+              'com.immuch360.convergence': '${relief.convergence}',
+            },
             'com.immuch360.parallax': '${relief.parallax}',
-            'com.immuch360.convergence': '${relief.convergence}',
             'com.immuch360.model': 'video-depth-anything-small-onnx',
             'com.immuch360.model.sha256': ?found.modelSha256,
             'com.immuch360.depth.short_side': '${settings.quality.shortSide}',
@@ -632,15 +661,48 @@ Future<void> _deleteQuietly(File file) async {
 /// What the dialog reads of a video before Convert: the verdict of its ffprobe and of the app's own probe of its MP4
 /// boxes, and the figures of its job
 class VideoDialogFacts {
-  const VideoDialogFacts({required this.check, this.durationSeconds, this.frames});
+  const VideoDialogFacts({
+    required this.check,
+    this.durationSeconds,
+    this.frames,
+    this.source,
+    this.spherical,
+    this.fileName,
+    this.marked360 = false,
+  });
 
+  /// The verdict read as the video says (VideoProjectionAsk.auto)
   final VideoSourceCheck check;
   final double? durationSeconds;
   final int? frames;
+
+  /// What ffprobe and the app's probe read, and the name, so that the verdict can be read again for a 2:1 video the
+  /// user says is a 360° one
+  final VideoSource? source;
+  final SphericalProbe? spherical;
+  final String? fileName;
+  final bool marked360;
+
+  /// The verdict for a video the user says is 360° ([as360] true) or flat (false); [check] when [as360] is null or
+  /// the video was not read
+  VideoSourceCheck checkAs(bool? as360) {
+    final name = fileName;
+    if (as360 == null || name == null || !check.looksLike360) {
+      return check;
+    }
+    return checkVideoSource(
+      source,
+      fileName: name,
+      spherical: spherical,
+      marked360: marked360,
+      ask: as360 ? VideoProjectionAsk.sphere : VideoProjectionAsk.flat,
+    );
+  }
 }
 
-/// Reads [path] with ffprobe of [setup] and the app's probe of the st3d and sv3d boxes
-Future<VideoDialogFacts> readVideoDialogFacts(VideoJobSetup setup, String path) async {
+/// Reads [path] with ffprobe of [setup] and the app's probe of the st3d and sv3d boxes; [marked360] when the app takes
+/// it for a 360° video already (aiVideo360Provider)
+Future<VideoDialogFacts> readVideoDialogFacts(VideoJobSetup setup, String path, {bool marked360 = false}) async {
   SphericalProbe? spherical;
   try {
     spherical = await probeSphericalMetadata(_fileRangeReader(path));
@@ -654,12 +716,23 @@ Future<VideoDialogFacts> readVideoDialogFacts(VideoJobSetup setup, String path) 
     return VideoDialogFacts(check: checkVideoSource(null, fileName: p.basename(path)));
   }
   final source = VideoSource.fromFfprobe(json);
-  final check = checkVideoSource(source, fileName: p.basename(path), spherical: spherical);
+  final name = p.basename(path);
+  final check = checkVideoSource(
+    source,
+    fileName: name,
+    spherical: spherical,
+    marked360: marked360,
+    ask: VideoProjectionAsk.auto,
+  );
   final grid = check.grid;
   return VideoDialogFacts(
     check: check,
     durationSeconds: source?.duration,
     frames: source == null || grid == null ? null : videoFramesOf(source, grid),
+    source: source,
+    spherical: spherical,
+    fileName: name,
+    marked360: marked360,
   );
 }
 

@@ -12,6 +12,8 @@ import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:path/path.dart' as p;
 
+import 'tiny_mp4.dart';
+
 /// tiny_vda.onnx in double precision
 Float32List tinyVdaInDart(Float32List input, int width, int height) {
   final plane = width * height;
@@ -33,11 +35,12 @@ Float32List tinyVdaInDart(Float32List input, int width, int height) {
 
 const fakeVideoSide = 28;
 
-Uint8List fakeVideoFrame(int index) {
-  final rgb = Uint8List(fakeVideoSide * fakeVideoSide * 3);
+/// The synthetic frame [index], [width] x [height] (the decoder's scale; fakeVideoSide square by default)
+Uint8List fakeVideoFrame(int index, {int width = fakeVideoSide, int height = fakeVideoSide}) {
+  final rgb = Uint8List(width * height * 3);
   var at = 0;
-  for (var y = 0; y < fakeVideoSide; y++) {
-    for (var x = 0; x < fakeVideoSide; x++) {
+  for (var y = 0; y < height; y++) {
+    for (var x = 0; x < width; x++) {
       rgb[at++] = (8 * x + 3 * index) % 200;
       rgb[at++] = (5 * y + index) % 90 + 20;
       rgb[at++] = (x * y + 2 * index) % 120;
@@ -98,10 +101,14 @@ class FakeVideoProgram implements VideoProgram {
 /// The FFmpeg program played in Dart: ffprobe answers [probe], the decoder serves [frames] frames at [times], the
 /// encoders keep a digest of what they were given, the mux joins the segments
 class FakeFfmpegRunner implements VideoProgramRunner {
-  FakeFfmpegRunner({required this.probe, required this.times, this.failMux = false});
+  FakeFfmpegRunner({required this.probe, required this.times, this.failMux = false, this.mp4Mux = false});
 
   final Map<String, Object?> probe;
   final List<double> times;
+
+  /// The mux writes a small real MP4 holding the joined segments as its media data (tiny_mp4.dart), so that the marks
+  /// of a 360° video can be written into it and read back
+  final bool mp4Mux;
 
   /// The mux fails, as a full disk or a killed app would make it
   final bool failMux;
@@ -136,7 +143,8 @@ class FakeFfmpegRunner implements VideoProgramRunner {
           File(p.join(p.dirname(arguments[arguments.indexOf('concat') + 4]), line.split("'")[1])).readAsBytesSync(),
         );
       }
-      File(arguments.last).writeAsBytesSync(out.takeBytes());
+      final joined = out.takeBytes();
+      File(arguments.last).writeAsBytesSync(mp4Mux ? tinyMp4(mediaData: joined) : joined);
       program.end(0);
     } else {
       final path = arguments.last;
@@ -153,6 +161,11 @@ class FakeFfmpegRunner implements VideoProgramRunner {
 
   Future<void> _decode(FakeVideoProgram program, List<String> arguments) async {
     final stats = File(arguments[arguments.indexOf('-stats_enc_pre') + 1]).openWrite();
+    // The size the decoder scales to: scale=W:H of its filter
+    final scale = RegExp(r'scale=(\d+):(\d+)').firstMatch(arguments[arguments.indexOf('-vf') + 1]);
+    final width = scale == null ? fakeVideoSide : int.parse(scale.group(1)!);
+    final height = scale == null ? fakeVideoSide : int.parse(scale.group(2)!);
+    final size = (width, height);
     final seekAt = arguments.indexOf('-ss');
     final seek = seekAt < 0 ? null : double.parse(arguments[seekAt + 1]);
     var n = 0;
@@ -169,7 +182,7 @@ class FakeFfmpegRunner implements VideoProgramRunner {
       if (program._out.isClosed) {
         break;
       }
-      program._out.add(fakeVideoFrame(i));
+      program._out.add(fakeVideoFrame(i, width: size.$1, height: size.$2));
       n++;
       // The pace of a pipe
       await Future<void>.delayed(Duration.zero);
@@ -185,14 +198,16 @@ Map<String, Object?> fakeVideoProbe(
   String rate = '25/1',
   double start = 0,
   String audio = 'vorbis',
+  int width = fakeVideoSide,
+  int height = fakeVideoSide,
 }) => {
   'streams': [
     {
       'index': 0,
       'codec_type': 'video',
       'codec_name': 'h264',
-      'width': fakeVideoSide,
-      'height': fakeVideoSide,
+      'width': width,
+      'height': height,
       'pix_fmt': 'yuv420p',
       'r_frame_rate': rate,
       'avg_frame_rate': rate,

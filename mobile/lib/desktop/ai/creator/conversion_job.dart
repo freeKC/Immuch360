@@ -321,6 +321,12 @@ enum ConversionSkipReason {
   /// A 3D video: a video this computer has no file of and cannot download either (a source that gives no bytes); the
   /// videos of the server and of a share are downloaded by their job first (video_original_copy.dart)
   videoNotLocal,
+
+  /// A 3D video: the raw file of a 360° camera (its two fisheye lenses not stitched yet: .insv, .360, .osv)
+  raw360Video,
+
+  /// A 3D video: a 360° video that is not one 2:1 equirectangular frame (a cube map, a cropped sphere)
+  sphereLayout,
 }
 
 /// What a batch does with a photo that already has a version with the same settings. A name taken by another file is

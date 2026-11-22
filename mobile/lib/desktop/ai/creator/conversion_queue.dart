@@ -87,9 +87,9 @@ import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_estimates.dart' show sphereJobMemoryBytes, videoPaceKey;
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
-import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -1024,7 +1024,11 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
   /// What a job may take of the memory: that of its kind, that of its quality for a 3D video (one pass of the model
   /// and the frames it holds, VideoDepthQuality.jobMemoryBytes)
-  static int _memoryNeedOf(ConversionJob job) => job.video?.quality.jobMemoryBytes ?? jobMemoryNeedOf(job.kind.output);
+  static int _memoryNeedOf(ConversionJob job) => switch (job.video) {
+    final video? when video.sphereEyeWidth != null => sphereJobMemoryBytes(video.quality, video.sphereEyeWidth!),
+    final video? => video.quality.jobMemoryBytes,
+    null => jobMemoryNeedOf(job.kind.output),
+  };
 
   /// What a job under way may still take: a 3D video holds its need once its frames run
   static int _memoryStillNeeded(ConversionJob job) => job.kind.isVideo
@@ -1429,7 +1433,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       // The copy of an original of the server or of a share is no longer needed
       await deleteVideoOriginalCopy(settings.workFolder);
       if (done.millisPerFrame case final millis?) {
-        await _keepVideoPace(tools, settings.quality, millis);
+        await _keepVideoPace(tools, videoPaceKey(settings.quality, sphereEyeWidth: settings.sphereEyeWidth), millis);
       }
       _set(
         id,
@@ -1562,15 +1566,16 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// Keeps the pace of a 3D video of [quality] on this computer, the first guess of the next one (videoFrameMillis)
-  Future<void> _keepVideoPace(ConversionTools tools, VideoDepthQuality quality, int millis) async {
+  /// Keeps the pace of a 3D video under [key] (videoPaceKey: its quality, and the eye of a 360° one) on this computer,
+  /// the first guess of the next one (videoFrameMillis)
+  Future<void> _keepVideoPace(ConversionTools tools, String key, int millis) async {
     final store = tools.settings;
     if (store == null) {
       return;
     }
     try {
       await store.update(
-        (settings) => settings.copyWith(videoFrameMillis: {...settings.videoFrameMillis, quality.name: millis}),
+        (settings) => settings.copyWith(videoFrameMillis: {...settings.videoFrameMillis, key: millis}),
       );
     } catch (error) {
       _log.warning('The pace of the 3D video could not be kept: $error');

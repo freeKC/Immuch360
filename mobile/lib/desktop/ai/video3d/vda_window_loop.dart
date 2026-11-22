@@ -192,6 +192,8 @@ class VdaLoopState {
     required this.distances,
     required this.firstHeld,
     this.resets = const {},
+    this.views = const [],
+    this.alignment,
   });
 
   /// The index of the next frame the loop takes
@@ -222,6 +224,15 @@ class VdaLoopState {
 
   /// Frames not given out yet whose normalisation starts again (a cut too close to the scene's start)
   final Set<int> resets;
+
+  /// For a 360° video (sphere_video_worker.dart): the state of the loop of each face of the cube, this state holding
+  /// the cut detector of the whole frame, the smoothed percentiles of the map of the sphere ([lo], [hi]) and the
+  /// frames whose smoothing starts again ([resets]); empty for a flat video
+  final List<VdaLoopState> views;
+
+  /// For a 360° video: the smoothed scale and shift of each face, two values a face (NaN for a face left out); null
+  /// before the first frame or for a flat video
+  final Float64List? alignment;
 }
 
 /// The window loop over a whole video, scene after scene
@@ -279,11 +290,14 @@ class VdaWindowLoop {
   /// The frames given out so far
   int get given => _given;
 
-  /// Takes the eye frame [rgb] of the next index; gives the frames that became final, in order
-  List<VdaFinalFrame> add(Uint8List rgb) {
+  /// Takes the eye frame [rgb] of the next index; gives the frames that became final, in order. [cut], when given,
+  /// says whether a cut comes right before this frame instead of the loop's own detector: the faces of a 360° video
+  /// each run a loop, and the cuts are found once on the whole frame (sphere_video_worker.dart)
+  List<VdaFinalFrame> add(Uint8List rgb, {bool? cut}) {
     final out = <VdaFinalFrame>[];
     final index = _next++;
-    if (detectCuts && _detector.add(ops.lumaHistogram(rgb, eyeWidth, eyeHeight)) && index > 0) {
+    final isCut = cut ?? (detectCuts && _detector.add(ops.lumaHistogram(rgb, eyeWidth, eyeHeight)));
+    if (isCut && index > 0) {
       if (index - _sceneStart < vdaStep) {
         normalisationResets.add(index);
         _resets.add(index);

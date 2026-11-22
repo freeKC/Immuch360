@@ -1096,6 +1096,7 @@ Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession s
         half: relief.packing == VideoSbsPacking.half,
         edgeFade: relief.edgeFade,
         alignment: VideoDepthAlignment.upstream,
+        sphereShiftDegrees: relief.sphere ? relief.sphereShiftDegrees : null,
       ),
     ),
   );

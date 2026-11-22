@@ -112,6 +112,43 @@ VideoDialogFacts _facts(Map<String, Object?> json, String name) {
   );
 }
 
+/// The ffprobe of a stitched 360° video of [width] x [height] at 30 fps, its Spherical Mapping side data when [tagged]
+Map<String, Object?> _sphereJson({int width = 5760, int height = 2880, bool tagged = true}) => {
+  'streams': [
+    {
+      'index': 0,
+      'codec_type': 'video',
+      'codec_name': 'h264',
+      'width': width,
+      'height': height,
+      'pix_fmt': 'yuv420p',
+      'r_frame_rate': '30/1',
+      'avg_frame_rate': '30/1',
+      'nb_frames': '300',
+      'duration': '10.0',
+      'side_data_list': [
+        if (tagged) {'side_data_type': 'Spherical Mapping', 'projection': 'equirectangular'},
+      ],
+      'disposition': {'attached_pic': 0},
+    },
+    {'index': 1, 'codec_type': 'audio', 'codec_name': 'aac', 'channels': 2},
+  ],
+  'format': {'duration': '10.0', 'start_time': '0.000000'},
+};
+
+/// The facts the dialog reads of a video as it says (VideoProjectionAsk.auto), kept so that a 2:1 one can be read again
+VideoDialogFacts _autoFacts(Map<String, Object?> json, String name) {
+  final source = VideoSource.fromFfprobe(json);
+  final check = checkVideoSource(source, fileName: name, ask: VideoProjectionAsk.auto);
+  return VideoDialogFacts(
+    check: check,
+    durationSeconds: source?.duration,
+    frames: source?.frameCount,
+    source: source,
+    fileName: name,
+  );
+}
+
 /// The FFmpeg program as the dialog reads it: the facts of each video by its name, the encoder of the test
 class _Probe implements VideoDialogProbe {
   final byName = <String, VideoDialogFacts>{};
@@ -120,7 +157,7 @@ class _Probe implements VideoDialogProbe {
   final tested = <(int, int)>[];
 
   @override
-  Future<VideoDialogFacts> read(String path) async {
+  Future<VideoDialogFacts> read(String path, {bool marked360 = false}) async {
     read_.add(p.basename(path));
     return byName[p.basename(path)] ?? _facts(_phone(), p.basename(path));
   }
@@ -197,6 +234,9 @@ void main() {
   late bool flatVideo;
   late FakeImmersiveEngine photos;
 
+  /// The videos the app takes for 360° ones (aiVideo360Provider), by name
+  late Set<String> marked360;
+
   /// The FFmpeg program does not start although its components are there: 'null' for no probe, 'throw' for a failure
   late String? probeBroken;
 
@@ -229,6 +269,7 @@ void main() {
     flatVideo = true;
     photos = FakeImmersiveEngine();
     probeBroken = null;
+    marked360 = {};
   });
 
   tearDown(() {
@@ -286,7 +327,7 @@ void main() {
       ),
       conversionFactsReaderProvider.overrideWith(
         (ref) =>
-            (asset) async => const ConversionPhotoFacts(),
+            (asset) async => ConversionPhotoFacts(isPanorama: marked360.contains(asset.name)),
       ),
       conversionAssetFilesProvider.overrideWithValue(originals),
       destinationSessionFactoryProvider.overrideWithValue(
@@ -417,8 +458,24 @@ void main() {
         ConversionSkipReason.alreadyStereo,
       );
       expect(
-        videoSkipOf(_asset('trip.mp4'), const ConversionPhotoFacts(isPanorama: true)),
-        ConversionSkipReason.sphere360,
+        videoSkipOf(_asset('trip.mp4', width: 5760, height: 2880), const ConversionPhotoFacts(isPanorama: true)),
+        isNull,
+      );
+      // A 360° video that is not made 360° 3D in this version: two eyes already, VR180, the raw file of a camera
+      expect(
+        videoSkipOf(_asset('trip.mp4', width: 5760, height: 5760), const ConversionPhotoFacts(isPanorama: true)),
+        ConversionSkipReason.alreadyStereo,
+      );
+      expect(
+        videoSkipOf(_asset('trip_VR180.mp4', width: 5760, height: 2880), const ConversionPhotoFacts(isPanorama: true)),
+        ConversionSkipReason.vr180,
+      );
+      expect(
+        videoSkipOf(
+          _asset('VID_00_001.insv', width: 5760, height: 2880),
+          const ConversionPhotoFacts(isPanorama: true, isRaw360: true),
+        ),
+        ConversionSkipReason.raw360Video,
       );
       expect(
         videoSkipOf(_asset('photo.jpg', type: AssetType.image), const ConversionPhotoFacts()),
@@ -522,6 +579,121 @@ void main() {
       // The partial file of the check of the folder is not left behind
       await settle(tester);
       expect(Directory(videos).listSync().where((entity) => isPartFileName(p.basename(entity.path))), isEmpty);
+    });
+
+    testWidgets('a 360° video (lot ai-360-3d-51): made 360° 3D, top and bottom; the sizes of its frame offered, 3072 '
+        'chosen, the encoder tested at that frame; its name; Convert hands a 360° job to the queue', (tester) async {
+      original('VID_20261122_101500.mp4');
+      probe.byName['VID_20261122_101500.mp4'] = _autoFacts(_sphereJson(), 'VID_20261122_101500.mp4');
+      final container = await openDialog(tester, [_asset('VID_20261122_101500.mp4', width: 5760, height: 2880)]);
+
+      expect(find.text('360° 3D video'), findsOneWidget);
+      for (final width in sphereEyeWidths) {
+        expect(find.byKey(Key('ai_conversion_video_sphere_$width')), findsOneWidget);
+      }
+      expect(tester.widget<RadioGroup<int>>(find.byType(RadioGroup<int>)).groupValue, 3072);
+      expect(find.text('3072 x 3072 (3072 x 1536 for each eye)'), findsOneWidget);
+      // Full or Half is a choice of flat videos only
+      expect(find.byKey(const Key('ai_conversion_video_packing_half')), findsNothing);
+      expect(probe.tested, [(3072, 3072)], reason: 'the encoder tested at the frame of the 360° 3D video');
+      expect(find.text('H.264 at 3072 x 3072, by the encoder of this computer'), findsOneWidget);
+      expect(
+        find.text('This 360° video is 5760 pixels wide: each eye is made 3072 pixels wide, the size chosen above'),
+        findsOneWidget,
+      );
+      expect(find.text('Saved as VID_20261122_101500_360_3D.mp4'), findsOneWidget);
+      expect(note(tester, 'ai_conversion_video_time'), matches(RegExp(r'^About .+ to .+ of work, a first guess$')));
+      expect(convertEnabled(tester), isTrue);
+
+      // A larger frame: the encoder tested again at that size, Convert waits for it
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_sphere_4096')));
+      await settle(tester, until: () => probe.tested.length == 2);
+      expect(probe.tested.last, (4096, 4096));
+      // An encoder of this computer that cannot write it: said, Convert off until a smaller size
+      probe.encoderFound = null;
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_sphere_2048')));
+      await settle(tester, until: () => probe.tested.length == 3);
+      expect(
+        find.text('No video encoder of this computer passed its test at 2048 x 2048: choose a smaller size'),
+        findsOneWidget,
+      );
+      expect(convertEnabled(tester), isFalse);
+      probe.encoderFound = VideoEncoder.h264VaapiFull;
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_sphere_3072')));
+      await settle(tester);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.isNotEmpty);
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.kind, ConversionKind.stereoVideo);
+      expect(job.target?.fileName, 'VID_20261122_101500_360_3D.mp4');
+      expect(job.video?.sphereEyeWidth, 3072);
+      expect(job.video?.strength, ReliefStrength.subtle);
+    });
+
+    testWidgets('a 2:1 video with no 360° mark: asked, never guessed; Convert waits for the answer, 360° gives a 360° '
+        'job, flat a side by side one', (tester) async {
+      original('ride.mp4');
+      probe.byName['ride.mp4'] = _autoFacts(_sphereJson(width: 3840, height: 1920, tagged: false), 'ride.mp4');
+      final container = await openDialog(tester, [_asset('ride.mp4', width: 3840, height: 1920)]);
+
+      expect(
+        note(tester, 'ai_conversion_video_looks_360'),
+        'ride.mp4 has a 2:1 frame with no 360° mark: is it a 360° video?',
+      );
+      expect(
+        tester
+            .widget<RadioGroup<bool>>(
+              find
+                  .ancestor(
+                    of: find.byKey(const Key('ai_conversion_video_as_360')),
+                    matching: find.byType(RadioGroup<bool>),
+                  )
+                  .first,
+            )
+            .groupValue,
+        isNull,
+      );
+      expect(convertEnabled(tester), isFalse);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_as_360')));
+      await settle(tester, until: () => probe.tested.contains((3072, 3072)));
+      expect(find.text('360° 3D video'), findsOneWidget);
+      expect(find.text('Saved as ride_360_3D.mp4'), findsOneWidget);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_as_flat')));
+      await settle(tester);
+      expect(find.text('360° 3D video'), findsNothing);
+      expect(find.text('Saved as ride_3D_LRF_Full_SBS.mp4'), findsOneWidget);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_as_360')));
+      await settle(tester);
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.isNotEmpty);
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.target?.fileName, 'ride_360_3D.mp4');
+      expect(job.video?.sphereEyeWidth, 3072);
+    });
+
+    testWidgets('a 360° video of the server: made 360° 3D after its download, its sizes and encoder tested here', (
+      tester,
+    ) async {
+      marked360.add('trip.mp4');
+      originals.remote['trip.mp4'] = FakeDownloadableOriginal('trip.mp4', List.filled(400, 7));
+      final container = await openDialog(tester, [_asset('trip.mp4', width: 5760, height: 2880)]);
+      expect(probe.read_, isEmpty);
+      expect(find.text('360° 3D video'), findsOneWidget);
+      await settle(tester, until: () => probe.tested.isNotEmpty);
+      expect(probe.tested, [(3072, 3072)]);
+      expect(convertEnabled(tester), isTrue);
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.isNotEmpty);
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.target?.fileName, 'trip_360_3D.mp4');
+      expect(job.video?.sphereEyeWidth, 3072);
     });
 
     testWidgets('a video of the server: no longer skipped, said to be downloaded first; Convert queues it at once and '

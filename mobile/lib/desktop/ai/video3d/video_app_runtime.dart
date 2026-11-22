@@ -17,6 +17,7 @@ import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
+import 'package:immich_mobile/desktop/ai/video3d/sphere_video_worker.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_frame_ops.dart';
@@ -74,6 +75,7 @@ class VideoWorkerSetup {
     this.intraOpThreads,
     this.cpuMemArena = true,
     this.lowPriority = true,
+    this.sphereShiftDegrees,
   });
 
   final String ortLibrary;
@@ -94,6 +96,10 @@ class VideoWorkerSetup {
 
   /// The threads of the session lowered as those of the photos (thread_priority.dart)
   final bool lowPriority;
+
+  /// A 360° video: the shift of the nearest point at the equator (the worker of the sphere, sphere_video_worker.dart,
+  /// its faces of modelWidth x modelWidth); null for a flat video
+  final double? sphereShiftDegrees;
 }
 
 /// The worker of a job in an isolate of its own: the frames go there as TransferableTypedData, the side by side frames
@@ -228,7 +234,7 @@ void _workerMain((SendPort, VideoWorkerSetup) start) {
   OrtSession? session;
   OrtRunOptions? options;
   VideoFrameOps? ops;
-  LocalVideoFrameWorker? worker;
+  VideoFrameWorker? worker;
   try {
     final runtime = OrtRuntime.load(setup.ortLibrary);
     final settings = OrtSessionSettings(
@@ -243,31 +249,43 @@ void _workerMain((SendPort, VideoWorkerSetup) start) {
     final runOptions = options = runtime.createRunOptions();
     final model = session;
     ops = nativeVideoFrameOps(threads: 2) ?? const DartVideoFrameOps();
-    worker = LocalVideoFrameWorker(
-      ops: ops,
-      model: (input, width, height) => model
-          .runNamed(
-            {
-              model.inputs.first.name: OrtTensor([1, vdaWindowLength, 3, height, width], input),
-            },
-            outputs: [model.outputs.first.name],
-            options: runOptions,
+    Float32List run(Float32List input, int width, int height) => model
+        .runNamed(
+          {
+            model.inputs.first.name: OrtTensor([1, vdaWindowLength, 3, height, width], input),
+          },
+          outputs: [model.outputs.first.name],
+          options: runOptions,
+        )
+        .values
+        .single
+        .values;
+    final shift = setup.sphereShiftDegrees;
+    worker = shift != null
+        ? LocalSphereVideoFrameWorker(
+            ops: ops,
+            model: run,
+            eyeWidth: setup.eyeWidth,
+            eyeHeight: setup.eyeHeight,
+            side: setup.modelWidth,
+            shiftDegrees: shift,
+            alignment: setup.alignment,
           )
-          .values
-          .single
-          .values,
-      eyeWidth: setup.eyeWidth,
-      eyeHeight: setup.eyeHeight,
-      modelWidth: setup.modelWidth,
-      modelHeight: setup.modelHeight,
-      relief: VideoReliefSettings(
-        parallax: setup.parallax,
-        convergence: setup.convergence,
-        packing: setup.half ? VideoSbsPacking.half : VideoSbsPacking.full,
-        edgeFade: setup.edgeFade,
-      ),
-      alignment: setup.alignment,
-    );
+        : LocalVideoFrameWorker(
+            ops: ops,
+            model: run,
+            eyeWidth: setup.eyeWidth,
+            eyeHeight: setup.eyeHeight,
+            modelWidth: setup.modelWidth,
+            modelHeight: setup.modelHeight,
+            relief: VideoReliefSettings(
+              parallax: setup.parallax,
+              convergence: setup.convergence,
+              packing: setup.half ? VideoSbsPacking.half : VideoSbsPacking.full,
+              edgeFade: setup.edgeFade,
+            ),
+            alignment: setup.alignment,
+          );
     replies.send((commands.sendPort, runOptions.handle));
   } on Object catch (error) {
     session?.close();

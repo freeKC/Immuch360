@@ -8,13 +8,22 @@
 // (a short side of 280, 392 or 518, both sides multiples of 14), and the grid of the output (r_frame_rate, checked
 // against the frame count and the duration: the WebM of Wikimedia Commons say avg_frame_rate=1000/1).
 //
+// A 360° video (lot ai-360-3d-51) is one whose spherical side data, sv3d or Spherical Video V1 box, name words, or the
+// mark of the app (the server's projection, a 360° file found on this computer, "view as 360°") say so: a whole
+// equirectangular sphere in one 2:1 eye is made a 360° 3D video (VideoSourceCheck.sphere); two eyes already (st3d, a
+// square or 4:1 frame, the words of a stereo name) are refused as already 3D, a half sphere (VR180) and the raw files
+// of the 360° cameras (two fisheye lenses, not stitched yet) are refused with their own words. A 2:1 frame with no mark
+// at all may be a 360° video or a 2.00:1 film: the dialog asks (VideoSourceCheck.looksLike360), never guesses.
+//
 // Pure Dart, no I/O and no Flutter (the command line tool of the lot runs it too): the tests feed it the JSON of real
 // files (test/fixtures/video3d) and of made up ones.
 
 import 'dart:math' as math;
 
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart' show nameSays360;
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart' show isRawVideoName;
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:path/path.dart' as p;
 
@@ -96,13 +105,22 @@ class VideoRate {
 
 /// An audio track of the source: copied into the MP4 when it takes it as it is, else made AAC by FFmpeg's own encoder
 class VideoAudioTrack {
-  const VideoAudioTrack({required this.index, required this.codec, this.channels, this.language});
+  const VideoAudioTrack({
+    required this.index,
+    required this.codec,
+    this.channels,
+    this.language,
+    this.ambisonic = false,
+  });
 
   /// The index of the stream in the file
   final int index;
   final String codec;
   final int? channels;
   final String? language;
+
+  /// Spatial sound of a 360° video: first order (or higher) ambisonics, as ffprobe reads the SA3D box ("ambisonic 1")
+  final bool ambisonic;
 
   /// The codecs an MP4 takes as they are (plan 2.5)
   static const copied = {'aac', 'mp3', 'opus', 'alac', 'ac3', 'eac3', 'flac'};
@@ -315,6 +333,7 @@ class VideoSource {
               codec: '${stream['codec_name'] ?? 'unknown'}',
               channels: _int(stream['channels']),
               language: (stream['tags'] as Map?)?['language'] as String?,
+              ambisonic: '${stream['channel_layout'] ?? ''}'.contains('ambisonic'),
             ),
           );
         case 'subtitle':
@@ -483,6 +502,12 @@ enum VideoPlanNote {
 
   /// Over 20 minutes: a night or more, the computer kept awake, the job resumes where it stopped
   long,
+
+  /// A 360° video: spatial sound (ambisonics) kept as it is, the head turning in the sound as in the picture
+  spatialAudioKept,
+
+  /// A 360° video: spatial sound the MP4 cannot take as it is, made plain AAC (the sound no longer turns with the head)
+  spatialAudioPlain,
 }
 
 /// The output's frame grid and whether frames above 60 fps were made 30 fps
@@ -585,7 +610,80 @@ String videoOutputName(String sourceName, VideoSbsPacking packing) {
 }
 
 /// Why a video is not made 3D (each a ConversionSkipReason of the queue, see videoSkipReason)
-enum VideoRefusal { sphere360, vr180, alreadyStereo, interlaced, dolbyVisionProfile5, oddRotation, unreadable }
+enum VideoRefusal {
+  sphere360,
+  vr180,
+  alreadyStereo,
+  interlaced,
+  dolbyVisionProfile5,
+  oddRotation,
+  unreadable,
+
+  /// The raw file of a 360° camera (two fisheye lenses, .insv, .360, .osv): to be stitched by the camera's app first
+  raw360,
+
+  /// A 360° video that is not one 2:1 equirectangular frame (a cube map, a cropped sphere)
+  sphereLayout,
+}
+
+/// How a video is to be made 3D, as the caller asks it
+enum VideoProjectionAsk {
+  /// A flat video only: a 360° video is refused (the jobs of flat 3D videos)
+  flat,
+
+  /// As the video says: a marked 360° video is made 360° 3D, a 2:1 one with no mark is flat and looksLike360 (the
+  /// dialog, which then asks)
+  auto,
+
+  /// A 360° video, marked or not (the jobs of 360° 3D videos, a 2:1 video the user said is 360°)
+  sphere,
+}
+
+/// The sizes of the eyes of a 360° 3D video, by their width (each eye 2:1, the frame top and bottom, so square)
+const sphereEyeWidths = [2048, 3072, 4096];
+
+/// The eye of the 360° 3D videos by default: 3072 x 1536, a frame of 3072 x 3072, within the 36 864 macroblocks of
+/// H.264 level 5.1 that most hardware decoders take, phones and headsets included
+const sphereDefaultEyeWidth = 3072;
+
+/// The eye widths a 360° video of [source] is offered: those of [sphereEyeWidths] not wider than its frame, else its
+/// own width (a multiple of 4, so that both sides of each eye are even)
+List<int> sphereEyeWidthsFor(VideoSource source) {
+  final width = source.displayWidth;
+  final offered = [
+    for (final eye in sphereEyeWidths)
+      if (eye <= width) eye,
+  ];
+  return offered.isNotEmpty ? offered : [math.max(4, width ~/ 4 * 4)];
+}
+
+/// The eye width a dialog starts with among [offered]: [kept] (the last chosen) when offered, else the default, else
+/// the largest
+int sphereDefaultEyeWidthOf(List<int> offered, int? kept) {
+  if (kept != null && offered.contains(kept)) {
+    return kept;
+  }
+  return offered.contains(sphereDefaultEyeWidth) ? sphereDefaultEyeWidth : offered.last;
+}
+
+/// The name of the 360° 3D video of [sourceName]: `<name>_360_3D.mp4`, or `<name>_3D.mp4` when the name already says
+/// 360 or pano, the rule of the 3D versions of the 360° photos (derivedNameEnd)
+String sphereOutputName(String sourceName) {
+  final stem = p.basenameWithoutExtension(sourceName);
+  return nameSays360(sourceName) ? '${stem}_3D.mp4' : '${stem}_360_3D.mp4';
+}
+
+/// Whether a frame of [width] x [height] is 2:1 within [tolerance]
+bool isTwoToOne(int width, int height, {double tolerance = 0.01}) =>
+    width > 0 && height > 0 && (width / height - 2).abs() <= 2 * tolerance;
+
+/// The words of the name of a 360° video in two eyes, as cameras, players and the app write them (our own
+/// `<name>_360_3D.mp4` among them)
+const _stereoSphereWords = {'tb', 'ou', 'tab', 'overunder', 'topbottom', 'sbs', 'lr', '3d', 'stereo'};
+
+/// Whether a 360° frame of [width] x [height] holds two eyes by its shape: about square (top and bottom) or 4:1 (side
+/// by side), as the 360° viewers read it (guessStereoLayout)
+bool isStereoSphereShape(int width, int height) => guessStereoLayout(width: width, height: height) != StereoLayout.mono;
 
 /// Whether a flat frame of [width] x [height] holds two eyes by its shape alone, as the players read it
 /// (guessSpatialLayout of spatial_media.dart): about twice as wide as a regular one (3.2 to 3.9) side by side, a little
@@ -600,7 +698,15 @@ bool isStereoFrameShape(int width, int height) {
 
 /// The verdict on a video before its job
 class VideoSourceCheck {
-  const VideoSourceCheck._({this.source, this.skip, this.notes = const {}, this.grid, this.audio = const []});
+  const VideoSourceCheck._({
+    this.source,
+    this.skip,
+    this.notes = const {},
+    this.grid,
+    this.audio = const [],
+    this.sphere = false,
+    this.looksLike360 = false,
+  });
 
   final VideoSource? source;
 
@@ -612,6 +718,12 @@ class VideoSourceCheck {
   final Set<VideoPlanNote> notes;
   final VideoGrid? grid;
 
+  /// Made a 360° 3D video: a whole sphere, one 2:1 equirectangular eye
+  final bool sphere;
+
+  /// A flat video whose 2:1 frame with no mark may be a 360° one: the dialog asks before Convert
+  final bool looksLike360;
+
   bool get accepted => skip == null;
 }
 
@@ -620,28 +732,63 @@ const videoLongJob = Duration(minutes: 20);
 
 /// Whether the video named [fileName], that ffprobe described as [source] (null when it found no video stream or could
 /// not open the file), can be made 3D, and what the job changes. [spherical] is what the app's own probe of the MP4
-/// boxes found (sv3d, st3d), when it ran.
-VideoSourceCheck checkVideoSource(VideoSource? source, {required String fileName, SphericalProbe? spherical}) {
+/// boxes found (sv3d, st3d), when it ran; [marked360] says that the app takes it for a 360° video (the server's
+/// projection, a 360° file found on this computer, the user's "view as 360°"). [ask] says what the caller makes of a
+/// 360° video (VideoProjectionAsk).
+VideoSourceCheck checkVideoSource(
+  VideoSource? source, {
+  required String fileName,
+  SphericalProbe? spherical,
+  bool marked360 = false,
+  VideoProjectionAsk ask = VideoProjectionAsk.flat,
+}) {
   if (source == null) {
     return const VideoSourceCheck._(skip: VideoRefusal.unreadable);
   }
   final nameStem = p.basenameWithoutExtension(fileName).toLowerCase();
   final words = nameStem.split(RegExp(r'[._\- ]+')).toSet();
+  if (isRawVideoName(fileName)) {
+    return VideoSourceCheck._(source: source, skip: VideoRefusal.raw360);
+  }
   final halfSphere = source.declaredHalfSphere || (spherical?.halfSphere ?? false) || words.contains('vr180');
   final sphere =
       source.declaredSpherical ||
       (spherical?.hasSphericalMetadata ?? false) ||
+      marked360 ||
+      ask == VideoProjectionAsk.sphere ||
       words.any(const {'360', '180', 'vr', 'vr180', 'vr360', 'equirect', 'equirectangular', '360x180'}.contains);
-  if (sphere) {
-    final vr180 = halfSphere || words.contains('180');
-    return VideoSourceCheck._(source: source, skip: vr180 ? VideoRefusal.vr180 : VideoRefusal.sphere360);
-  }
   final declaredStereo = source.declaredStereo || (spherical?.stereo != null && spherical!.stereo != StereoLayout.mono);
   final byName = guessFlatStereoFormat(fileName: fileName, isVideo: true) != null;
+  if (sphere) {
+    if (halfSphere || words.contains('180')) {
+      return VideoSourceCheck._(source: source, skip: VideoRefusal.vr180);
+    }
+    if (ask == VideoProjectionAsk.flat) {
+      return VideoSourceCheck._(source: source, skip: VideoRefusal.sphere360);
+    }
+    if (declaredStereo ||
+        byName ||
+        words.any(_stereoSphereWords.contains) ||
+        isStereoSphereShape(source.displayWidth, source.displayHeight)) {
+      return VideoSourceCheck._(source: source, skip: VideoRefusal.alreadyStereo);
+    }
+    if (!isTwoToOne(source.displayWidth, source.displayHeight, tolerance: 0.02)) {
+      return VideoSourceCheck._(source: source, skip: VideoRefusal.sphereLayout);
+    }
+    return _checkStream(source, sphere: true);
+  }
   final byShape = isStereoFrameShape(source.displayWidth, source.displayHeight);
   if (declaredStereo || byName || byShape) {
     return VideoSourceCheck._(source: source, skip: VideoRefusal.alreadyStereo);
   }
+  return _checkStream(
+    source,
+    looksLike360: ask == VideoProjectionAsk.auto && isTwoToOne(source.displayWidth, source.displayHeight),
+  );
+}
+
+/// The checks of a video's stream once its shape is known
+VideoSourceCheck _checkStream(VideoSource source, {bool sphere = false, bool looksLike360 = false}) {
   if (source.interlaced) {
     return VideoSourceCheck._(source: source, skip: VideoRefusal.interlaced);
   }
@@ -649,7 +796,8 @@ VideoSourceCheck checkVideoSource(VideoSource? source, {required String fileName
   if (dolby != null && !dolby.hasBaseLayer) {
     return VideoSourceCheck._(source: source, skip: VideoRefusal.dolbyVisionProfile5);
   }
-  if (source.quarterTurn == null) {
+  // A sphere turns in the headset, never in its frame
+  if (source.quarterTurn == null || (sphere && source.quarterTurn != 0)) {
     return VideoSourceCheck._(source: source, skip: VideoRefusal.oddRotation);
   }
   final grid = videoGridOf(source);
@@ -672,6 +820,15 @@ VideoSourceCheck checkVideoSource(VideoSource? source, {required String fileName
     if (source.subtitleCount > 0) VideoPlanNote.subtitlesNotKept,
     if (source.dataCount > 0 || source.attachedPictureCount > 0) VideoPlanNote.dataNotKept,
     if (duration != null && duration * 1000 > videoLongJob.inMilliseconds) VideoPlanNote.long,
+    if (sphere && audio.any((track) => track.ambisonic && track.isCopied)) VideoPlanNote.spatialAudioKept,
+    if (sphere && audio.any((track) => track.ambisonic && !track.isCopied)) VideoPlanNote.spatialAudioPlain,
   };
-  return VideoSourceCheck._(source: source, notes: notes, grid: grid, audio: audio);
+  return VideoSourceCheck._(
+    source: source,
+    notes: notes,
+    grid: grid,
+    audio: audio,
+    sphere: sphere,
+    looksLike360: looksLike360,
+  );
 }

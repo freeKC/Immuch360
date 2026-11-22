@@ -213,13 +213,15 @@ List<String> videoEncoderTestArguments(VideoEncoder encoder, int width, int heig
 }
 
 /// The encoder of one segment: RGB frames of [width] x [height] on its standard input at [rate], written by [encoder]
-/// into the Matroska file [segmentPath] marked left right
+/// into the Matroska file [segmentPath] marked left right; with [markLeftRight] false (a 360° video, top and bottom)
+/// not marked at all: the marks of a sphere go into the MP4 after the mux (spherical_mp4_writer.dart)
 List<String> videoSegmentArguments({
   required VideoEncoder encoder,
   required int width,
   required int height,
   required VideoRate rate,
   required String segmentPath,
+  bool markLeftRight = true,
 }) {
   final options = videoEncoderOptions(encoder, width, height, rate);
   return [
@@ -245,8 +247,7 @@ List<String> videoSegmentArguments({
     '-g',
     '${math.max(1, (2 * rate.value).round())}',
     ..._colourTags,
-    '-metadata:s:v:0',
-    'stereo_mode=left_right',
+    if (markLeftRight) ...['-metadata:s:v:0', 'stereo_mode=left_right'],
     '-f',
     'matroska',
     segmentPath,

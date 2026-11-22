@@ -308,16 +308,18 @@ String conversionFailureText(
 
 /// What a job makes, in the words of the panel: "2D to 3D SBS", "2D to 3D scene", "2D to 360° panorama", "360° to 3D
 /// 360°", "Photos to splat scene", or "Video to splat scene" for a splat scene of a video ([fromVideo],
-/// ConversionJob.fromVideo)
-String conversionKindText(Translations t, ConversionKind kind, {bool fromVideo = false}) => switch (kind) {
-  ConversionKind.sbsFromPhoto => t.ai_immersive_job_type,
-  ConversionKind.sceneFromPhoto => t.ai_immersive_job_type_scene,
-  ConversionKind.panoramaFromPhoto => t.ai_immersive_job_type_panorama,
-  ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_job_type_stereo_panorama,
-  ConversionKind.splatScene when fromVideo => t.ai_immersive_job_type_splat_video,
-  ConversionKind.splatScene => t.ai_immersive_job_type_splat_photos,
-  ConversionKind.stereoVideo => t.ai_immersive_job_type_video,
-};
+/// ConversionJob.fromVideo); "360° video to 360° 3D" for a 3D video of a 360° one ([sphere])
+String conversionKindText(Translations t, ConversionKind kind, {bool fromVideo = false, bool sphere = false}) =>
+    switch (kind) {
+      ConversionKind.sbsFromPhoto => t.ai_immersive_job_type,
+      ConversionKind.sceneFromPhoto => t.ai_immersive_job_type_scene,
+      ConversionKind.panoramaFromPhoto => t.ai_immersive_job_type_panorama,
+      ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_job_type_stereo_panorama,
+      ConversionKind.splatScene when fromVideo => t.ai_immersive_job_type_splat_video,
+      ConversionKind.splatScene => t.ai_immersive_job_type_splat_photos,
+      ConversionKind.stereoVideo when sphere => t.ai_immersive_job_type_video_360,
+      ConversionKind.stereoVideo => t.ai_immersive_job_type_video,
+    };
 
 /// The honesty label of the files of a kind, as the head of the panel says it
 String conversionKindLabel(Translations t, ConversionKind kind) => switch (kind) {
@@ -795,7 +797,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
     final lines = <Widget>[
       Text(
         [
-          conversionKindText(t, job.kind, fromVideo: job.fromVideo),
+          conversionKindText(t, job.kind, fromVideo: job.fromVideo, sphere: job.video?.sphere ?? false),
           if (job.batchSize > 1) t.ai_immersive_progress_count(index: job.batchIndex, total: job.batchSize),
         ].join('  •  '),
         style: secondary,
