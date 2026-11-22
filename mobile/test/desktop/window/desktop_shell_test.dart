@@ -25,6 +25,7 @@ import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
 import 'package:immich_mobile/desktop/window/close_sequence.dart';
 import 'package:immich_mobile/desktop/window/desktop_shell.dart';
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -229,7 +230,9 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
-  testWidgets('the Videos and 360° grids are no viewers: F and Escape do nothing there', (tester) async {
+  testWidgets('the Videos and 360° grids are no viewers: F does nothing there, Escape goes back as on any page', (
+    tester,
+  ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;
     await pumpShell(tester);
 
@@ -247,12 +250,11 @@ void main() {
 
       expect(await tester.sendKeyEvent(LogicalKeyboardKey.keyF), isFalse, reason: name);
       expect(isFullScreen(tester), isFalse, reason: name);
-      expect(await tester.sendKeyEvent(LogicalKeyboardKey.escape), isFalse, reason: name);
+      expect(await tester.sendKeyEvent(LogicalKeyboardKey.escape), isTrue, reason: name);
       await tester.pumpAndSettle();
-      expect(find.text('$name grid'), findsOneWidget, reason: 'Escape does not close a grid');
-
-      navigator().pop();
-      await tester.pumpAndSettle();
+      expect(find.text('$name grid'), findsNothing, reason: 'Escape goes back from a page');
+      expect(find.text('grid'), findsOneWidget);
+      expect(isFullScreen(tester), isFalse, reason: name);
     }
     expect(window.calls, ['preventClose true']);
     debugDefaultTargetPlatformOverride = null;
@@ -423,6 +425,313 @@ void main() {
     expect(find.byIcon(Icons.fullscreen_exit_rounded), findsOneWidget);
     semantics.dispose();
     debugDefaultTargetPlatformOverride = null;
+  });
+
+  group('Escape, the one step back', () {
+    /// A page over the grid, with the focus in it as a page of the router has it
+    Future<void> pushPage(WidgetTester tester, String label, {Widget? body, String? name}) async {
+      unawaited(
+        navigator().push(
+          MaterialPageRoute<void>(
+            settings: RouteSettings(name: name ?? label),
+            builder: (_) => Scaffold(
+              appBar: AppBar(title: Text(label)),
+              body: Focus(autofocus: true, child: body ?? Text('$label body')),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    Future<bool> escape(WidgetTester tester) async {
+      final handled = await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      return handled;
+    }
+
+    testWidgets('goes back one page at a time, as the back arrow, and does nothing on the first page', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await pumpShell(tester);
+      await pushPage(tester, 'albums');
+      await pushPage(tester, 'album');
+
+      expect(await escape(tester), isTrue);
+      expect(find.text('album body'), findsNothing);
+      expect(find.text('albums body'), findsOneWidget);
+      expect(await escape(tester), isTrue);
+      expect(find.text('albums body'), findsNothing);
+      expect(find.text('grid'), findsOneWidget);
+
+      expect(await escape(tester), isFalse, reason: 'the first page of the window stays: Escape never quits');
+      expect(find.text('grid'), findsOneWidget);
+      expect(window.calls, ['preventClose true']);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('never leaves the main page of the library, even over another page', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      await pumpShell(tester);
+      await pushPage(tester, 'library', name: TabShellRoute.name);
+
+      expect(await escape(tester), isFalse);
+      expect(find.text('library body'), findsOneWidget);
+      expect(canEscapePage(null), isFalse);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('closes a dialog, a menu of a route or a menu anchored on the page, and nothing else', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final controller = MenuController();
+      await pumpShell(tester);
+      await pushPage(
+        tester,
+        'settings',
+        body: Column(
+          children: [
+            const Text('settings body'),
+            MenuAnchor(
+              controller: controller,
+              menuChildren: [MenuItemButton(onPressed: () {}, child: const Text('anchored item'))],
+              child: const Text('anchor'),
+            ),
+          ],
+        ),
+      );
+
+      unawaited(
+        showDialog<void>(
+          context: navigatorKey.currentContext!,
+          builder: (context) => const AlertDialog(content: Text('a dialog')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(await escape(tester), isTrue);
+      expect(find.text('a dialog'), findsNothing);
+      expect(find.text('settings body'), findsOneWidget);
+
+      unawaited(
+        showMenu<void>(
+          context: navigatorKey.currentContext!,
+          position: const RelativeRect.fromLTRB(10, 10, 10, 10),
+          items: const [PopupMenuItem(child: Text('route item'))],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(await escape(tester), isTrue);
+      expect(find.text('route item'), findsNothing);
+      expect(find.text('settings body'), findsOneWidget);
+
+      // Opened by a click: the focus stays on the page
+      controller.open();
+      await tester.pumpAndSettle();
+      expect(find.text('anchored item'), findsOneWidget);
+      expect(await escape(tester), isTrue);
+      expect(find.text('anchored item'), findsNothing);
+      expect(find.text('settings body'), findsOneWidget, reason: 'the menu closes, the page stays');
+
+      // Gone into with the arrows: Flutter's own Escape of the menu
+      controller.open();
+      await tester.pumpAndSettle();
+      FocusManager.instance.primaryFocus?.focusInDirection(TraversalDirection.down);
+      await tester.pumpAndSettle();
+      await escape(tester);
+      expect(find.text('anchored item'), findsNothing);
+      expect(find.text('settings body'), findsOneWidget);
+
+      expect(await escape(tester), isTrue);
+      expect(find.text('settings body'), findsNothing);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('while typing, lets go of the field and leaves the page alone; the next Escape goes back', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      await pumpShell(tester);
+      await pushPage(
+        tester,
+        'search',
+        body: const Column(
+          children: [
+            Text('search body'),
+            TextField(key: Key('field')),
+          ],
+        ),
+      );
+      await tester.tap(find.byKey(const Key('field')));
+      await tester.pump();
+      await tester.enterText(find.byKey(const Key('field')), 'beach');
+      expect(isTypingText(), isTrue);
+
+      expect(await escape(tester), isTrue);
+      expect(isTypingText(), isFalse);
+      expect(find.text('search body'), findsOneWidget);
+      expect(find.text('beach'), findsOneWidget, reason: 'the text stays');
+
+      expect(await escape(tester), isTrue);
+      expect(find.text('search body'), findsNothing);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a field of a dialog: Escape closes the dialog, as before', (tester) async {
+      // On macOS the text input closes it, through cancelOperation: (the shell lets the key go there too)
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await pumpShell(tester);
+      await pushPage(tester, 'album');
+      unawaited(
+        showDialog<void>(
+          context: navigatorKey.currentContext!,
+          builder: (context) => const AlertDialog(content: TextField(key: Key('name'), autofocus: true)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(isTypingText(), isTrue);
+
+      expect(await escape(tester), isTrue);
+      expect(find.byKey(const Key('name')), findsNothing);
+      expect(find.text('album body'), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a dialog whose Back is its Cancel gets Escape; a progress stays', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await pumpShell(tester);
+      await pushPage(tester, 'splat');
+      var cancels = 0;
+      unawaited(
+        showDialog<void>(
+          context: navigatorKey.currentContext!,
+          barrierDismissible: false,
+          builder: (context) => PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, _) {
+              if (!didPop) {
+                cancels++;
+              }
+            },
+            child: const AlertDialog(content: Text('preparing')),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(await escape(tester), isTrue);
+      expect(cancels, 1, reason: 'as its Cancel button');
+      expect(find.text('preparing'), findsOneWidget, reason: 'the dialog closes itself once cancelled');
+
+      navigator().pop();
+      await tester.pumpAndSettle();
+      unawaited(
+        showDialog<void>(
+          context: navigatorKey.currentContext!,
+          barrierDismissible: false,
+          builder: (context) => const AlertDialog(content: Text('uploading')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(await escape(tester), isFalse);
+      expect(find.text('uploading'), findsOneWidget);
+      expect(find.text('splat body'), findsOneWidget);
+      navigator().pop();
+      await tester.pumpAndSettle();
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a page with unsaved changes keeps its say: Escape asks as its back arrow does', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await pumpShell(tester);
+      var asked = 0;
+      await pushPage(
+        tester,
+        'edit',
+        body: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) => didPop ? null : asked++,
+          child: const Text('edit body'),
+        ),
+      );
+
+      expect(await escape(tester), isTrue);
+      expect(asked, 1);
+      expect(find.text('edit body'), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('a running 3D conversion goes on when Escape leaves its page and its dialog', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await pumpShell(tester, overrides: [conversionQueueProvider.overrideWith(_Generating.new)]);
+      await pushPage(
+        tester,
+        'conversions',
+        body: Consumer(
+          builder: (context, ref, _) => Text('job ${ref.watch(conversionQueueProvider).jobs.single.state.name}'),
+        ),
+      );
+      expect(find.text('job generating'), findsOneWidget);
+      unawaited(
+        showDialog<void>(
+          context: navigatorKey.currentContext!,
+          builder: (context) => const AlertDialog(content: Text('Make 3D (AI)')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(await escape(tester), isTrue);
+      expect(await escape(tester), isTrue);
+      expect(find.text('job generating'), findsNothing);
+      final queue = ProviderScope.containerOf(tester.element(find.byType(DesktopShell))).read(conversionQueueProvider);
+      expect(queue.jobs.single.state, ConversionState.generating);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Alt Left and Command [ go back as the back button of a mouse, in a viewer too, never while typing', (
+      tester,
+    ) async {
+      Future<void> altLeft() async {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+        await tester.pumpAndSettle();
+      }
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await pumpShell(tester);
+      await pushPage(tester, 'folders');
+      await altLeft();
+      expect(backs, 1);
+      expect(find.text('folders body'), findsNothing);
+
+      await openViewer(tester);
+      await altLeft();
+      expect(backs, 2);
+      expect(find.text('viewer body'), findsNothing, reason: 'read before the arrows of the viewer');
+
+      await pushPage(
+        tester,
+        'search',
+        body: const Column(
+          children: [
+            Text('search body'),
+            TextField(key: Key('field')),
+          ],
+        ),
+      );
+      await tester.tap(find.byKey(const Key('field')));
+      await tester.pump();
+      await altLeft();
+      expect(backs, 2, reason: 'the field keeps Alt Left');
+      expect(find.text('search body'), findsOneWidget);
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      await escape(tester);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.bracketLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+      await tester.pumpAndSettle();
+      expect(backs, 3);
+      expect(find.text('search body'), findsNothing);
+      debugDefaultTargetPlatformOverride = null;
+    });
   });
 
   group('the offer to resume the 3D videos a quit stopped', () {

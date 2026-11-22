@@ -90,9 +90,13 @@ enum DesktopWindowKey {
   /// F alone, in a viewer only, and never while typing
   toggleFullScreenInViewer,
 
-  /// Escape: closes the menu of a selection, else clears the selection, else leaves full screen, else closes the
-  /// viewer
-  leaveFullScreenOrViewer,
+  /// Escape, the one step back (DesktopShell): a field typed in lets go of the keyboard (unless it answers Escape
+  /// itself), a dialog, a sheet or a menu closes, the selection of the grid clears, full screen is left, the viewer
+  /// closes, else the page shown goes back as its back arrow would; nothing on the main page
+  escape,
+
+  /// Alt Left on Windows and Linux, Command [ on macOS, never while typing: what the back button of a mouse does
+  back,
 
   /// Command W on macOS: closes the viewer
   closeViewer,
@@ -122,7 +126,7 @@ DesktopWindowKey? desktopWindowKeyOf(KeyEvent event, {bool? typing}) {
     return DesktopWindowKey.toggleFullScreen;
   }
   if (key == LogicalKeyboardKey.escape) {
-    return DesktopWindowKey.leaveFullScreenOrViewer;
+    return DesktopWindowKey.escape;
   }
   if (key == LogicalKeyboardKey.keyA && !alt && !keyboard.isShiftPressed && !(typing ?? isTypingText())) {
     // A text field keeps its own select all
@@ -138,7 +142,19 @@ DesktopWindowKey? desktopWindowKeyOf(KeyEvent event, {bool? typing}) {
     if (key == LogicalKeyboardKey.keyW && !control && !alt) {
       return DesktopWindowKey.closeViewer;
     }
+    if (key == LogicalKeyboardKey.bracketLeft && !control && !alt && !(typing ?? isTypingText())) {
+      return DesktopWindowKey.back;
+    }
     return null;
+  }
+  if (key == LogicalKeyboardKey.arrowLeft &&
+      alt &&
+      !control &&
+      !meta &&
+      !keyboard.isShiftPressed &&
+      !CurrentPlatform.isMacOS &&
+      !(typing ?? isTypingText())) {
+    return DesktopWindowKey.back;
   }
   if (key == LogicalKeyboardKey.keyF && !control && !meta && !alt && !(typing ?? isTypingText())) {
     return DesktopWindowKey.toggleFullScreenInViewer;
@@ -149,8 +165,8 @@ DesktopWindowKey? desktopWindowKeyOf(KeyEvent event, {bool? typing}) {
   return null;
 }
 
-/// Whether [event] presses the back button of a mouse (the thumb button), which leaves full screen or goes back like
-/// the Back button of a phone
+/// Whether [event] presses the back button of a mouse (the thumb button), which closes a dialog, else leaves full
+/// screen, else goes back like the Back button of a phone
 bool isMouseBackButton(PointerDownEvent event) =>
     event.kind == PointerDeviceKind.mouse && event.buttons & kBackMouseButton != 0;
 
