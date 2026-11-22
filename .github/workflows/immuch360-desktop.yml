@@ -1661,14 +1661,17 @@ jobs:
           cat "$out/finder.state"
           tail -n 40 "$out/finder.log" 2>/dev/null || true
 
-          # The y4m over HTTP, ten seconds of it, from a server on 127.0.0.1 that answers ranges as the AV2 decoder does
+          # The y4m over HTTP, ten seconds of it, from a server on 127.0.0.1 that answers ranges as the AV2 decoder does.
+          # It once took more than 10 s to start on a busy runner (22 November 2026): up to 60 s, the time it took said
           python3 .github/desktop/libmpv-macos/check_y4m.py serve --seconds 10 --port-file "$RUNNER_TEMP/y4m.port" \
             > "$out/y4m-server.log" 2>&1 &
           y4m_server=$!
-          for _ in $(seq 1 20); do
-            [ -s "$RUNNER_TEMP/y4m.port" ] && break
+          waited=0
+          while [ ! -s "$RUNNER_TEMP/y4m.port" ] && [ "$waited" -lt 120 ] && kill -0 "$y4m_server" 2>/dev/null; do
             sleep 0.5
+            waited=$((waited + 1))
           done
+          echo "y4m server: $((waited / 2)) s to give its port"
           if [ -s "$RUNNER_TEMP/y4m.port" ]; then
             IMMUCH360_SELF_CHECK_VIDEO="http://127.0.0.1:$(cat "$RUNNER_TEMP/y4m.port")/fixture-10bit.y4m" run_app y4m
           else
