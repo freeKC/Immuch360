@@ -34,6 +34,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
+import 'package:immich_mobile/desktop/platform/linux_launch_hints.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
 import 'package:immich_mobile/domain/services/film_player/film_audio_choice.dart';
@@ -1219,5 +1220,7 @@ class MediaKitVideoPlayerController with ChangeNotifier implements NativeVideoPl
     _unloaded = true;
     onPlaybackStatusChanged.value = PlaybackStatus.stopped;
     onError.value = message;
+    // On Fedora with its own FFmpeg: the FFmpeg of RPM Fusion, said once a session
+    unawaited(FedoraFfmpegHint.instance.playbackFailed());
   }
 }

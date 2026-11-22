@@ -136,6 +136,10 @@ fi
 echo "-- the desktop entry and the MIME types"
 desktop-file-validate /usr/share/applications/com.aprogsys.immuch360.desktop
 echo "  desktop-file-validate: no error"
+# The dedicated graphics card of a laptop with two (parity lot L11): GNOME and KDE start the app on it
+grep -qx 'PrefersNonDefaultGPU=true' /usr/share/applications/com.aprogsys.immuch360.desktop \
+  || { echo "  the desktop entry does not ask for the dedicated graphics card"; exit 1; }
+echo "  PrefersNonDefaultGPU=true"
 grep -o '^MimeType=.*' /usr/share/applications/com.aprogsys.immuch360.desktop | cut -c1-120 | sed 's/^/  /'
 if command -v update-mime-database >/dev/null 2>&1; then
   update-mime-database /usr/share/mime

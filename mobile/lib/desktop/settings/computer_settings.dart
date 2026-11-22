@@ -2,7 +2,8 @@
 // phone has from its system. Each group comes from the part of the app it sets: the folders of the library (the
 // folders page), the download folder (files), the network adapter for discovery and sharing, the trusted certificates
 // (network), the AI and 3D features (ai/ui/ai_settings_section.dart), and on Linux the notice of secrets kept for the
-// session only (platform/linux_secret_storage.dart).
+// session only (platform/linux_secret_storage.dart) and, with an NVIDIA card, the splat viewer's renderer
+// (platform/linux_launch_hints.dart).
 //
 // The section is drawn under one focus ring (design 4.7): Material only tints a focused tile, which is hard to follow
 // on a computer screen, so the control that has the keyboard focus gets the ring of the remote control layout, the
@@ -15,6 +16,7 @@ import 'package:immich_mobile/desktop/ai/ui/ai_settings_section.dart';
 import 'package:immich_mobile/desktop/files/download_folder_tile.dart';
 import 'package:immich_mobile/desktop/network/network_choice.dart';
 import 'package:immich_mobile/desktop/network/trusted_certificates_settings.dart';
+import 'package:immich_mobile/desktop/platform/linux_launch_hints.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
 import 'package:immich_mobile/desktop/settings/session_secrets_notice.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -66,6 +68,7 @@ class ComputerSettings extends StatelessWidget {
             ],
           ),
           const TrustedCertificatesSettings(),
+          const LinuxNvidiaSplatTile(),
           const DesktopAiSettingsSection(),
         ],
       ),
