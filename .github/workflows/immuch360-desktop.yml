@@ -524,6 +524,7 @@ jobs:
       # and tiny_vda.onnx: a 4 s clip with a cut made by the program itself, the encoder test (no VA-API on
       # the runner: SVT-AV1), the segments, the mux, st3d read back by the app's own probe
       - name: A 3D video through the real FFmpeg program and the tiny model
+        id: video3d_tiny
         working-directory: mobile
         run: |
           work="$RUNNER_TEMP/video3d"
@@ -555,8 +556,9 @@ jobs:
           path: ${{ runner.temp }}/vda
           key: video-depth-anything-small-ff810849-eb5926ad
 
+      # The FFmpeg program and the clip of the step above
       - name: A 3D video with the real model on ONNX Runtime 1.23.2
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.video3d_tiny.outcome == 'success' }}
         working-directory: mobile
         run: |
           set -o pipefail
