@@ -17,7 +17,7 @@ class FakeThreadPriority implements ThreadPriorityPlatform {
   /// macOS does not list them
   final bool listsThreads;
 
-  /// Windows lowers the calling thread, Linux and macOS leave it
+  /// Windows and macOS lower the calling thread, Linux leaves it
   final bool lowersCurrentThread;
 
   /// Linux: a thread takes the name of its creator, and the calling thread can be named

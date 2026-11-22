@@ -60,5 +60,5 @@ void main() {
     backend.close();
     final again = openWithLowThreads(backend, priority);
     expect(again, Platform.isLinux ? intraOp - 1 : greaterThanOrEqualTo(intraOp - 1));
-  }, skip: ort.skip ?? (Platform.isMacOS ? 'macOS leaves the threads as they are in phase 1' : null));
+  }, skip: ort.skip ?? (Platform.isMacOS ? 'macOS does not list the threads of a process (MacThreadPriority)' : null));
 }
