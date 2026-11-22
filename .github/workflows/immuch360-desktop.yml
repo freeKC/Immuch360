@@ -21,7 +21,8 @@ name: Immuch360 Desktop
 #                  the AV2 decoder serves it (check_y4m.py), the serve of the macOS archive of the AV2 decoder the app
 #                  downloads (immuch360/av2-companion) on fixtures and a 1080p clip, with the options of the app
 #                  (check_y4m.py companion), and a self check of the app on the runner (a folder and a video on the
-#                  command line, the keychain, five seconds of libmpv, the y4m over HTTP)
+#                  command line, the keychain, five seconds of libmpv, the y4m over HTTP), a failed check failing the job
+#   macos-tests    test/desktop on an arm64 Mac
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
 #                  fake sd-cli and the probes of a generation, of a panorama and of the splat scenes as the artifact
 #                  Immuch360-AI-tools-windows-x64, the release build, the ZIP and the installer (Inno Setup) for the
@@ -1547,10 +1548,10 @@ jobs:
       # (AppDelegate.application(_:open:)), after which the video is handed to the copy that runs. Last, a start
       # without arguments that plays the 10 bit y4m of check_y4m.py over HTTP from 127.0.0.1, the stream the AV2 decoder
       # serves, in the app's own player. A capture of the screen each time. The window server of a runner is not a Mac
-      # on a desk: the next step says what passed
+      # on a desk: the next step says what passed. It passed every check on the five runs of 19 to 21 November 2026
+      # (184 rows, none failed), so since release 51 a failed check fails the job (lot L04 of the desktop parity plan)
       - name: Self check on the runner
         id: self_check
-        continue-on-error: true
         run: |
           app="$PWD/mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
           exe="$app/Contents/MacOS/Immuch360 Desktop"
@@ -1661,13 +1662,13 @@ jobs:
 
       - name: What the self check found
         if: always()
-        continue-on-error: true
-        # pipefail: a failed check marks this step, the job stays green (continue-on-error)
+        # pipefail: a failed check fails this step and the job
         run: |
           set -o pipefail
           python3 .github/desktop/packaging/macos/self_check_summary.py first-start --strict | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the macOS ZIP
+        if: ${{ !cancelled() && steps.app.outcome == 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           path: ${{ steps.app.outputs.zip }}
@@ -1676,6 +1677,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload the DMG
+        if: ${{ !cancelled() && steps.app.outcome == 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           path: ${{ steps.app.outputs.dmg }}
@@ -1691,6 +1693,72 @@ jobs:
           path: first-start/
           retention-days: 14
           if-no-files-found: ignore
+
+  # The desktop tests on macOS (lot L04 of the desktop parity plan, 21 November 2026), beside the build: until
+  # release 51 they never ran on a Mac, the build job only compiled the app and started it. test/desktop on this arm64
+  # runner with the fakes of the AI features compiled here. A runner is no Mac on a desk: no graphics card the AI uses,
+  # no Retina screen, no keychain prompt
+  macos-tests:
+    name: macOS desktop tests
+    runs-on: macos-15
+    needs: codegen
+    if: >-
+      ${{ !cancelled() && needs.codegen.result == 'success'
+      && (github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')) }}
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install Flutter
+        run: cd mobile && mise install
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Flutter dependencies
+        working-directory: mobile
+        run: |
+          tar -xf generated-dart.tar && rm generated-dart.tar
+          mise exec -- flutter pub get --enforce-lockfile
+
+      # The fakes of the AI features and the probes of the splat scenes, compiled as the test job compiles them
+      - name: The fake sd-cli, the fake COLMAP, the fake Brush, the probes of the splat scenes and the fake AV2 companion
+        id: fakes
+        working-directory: mobile
+        run: |
+          fakes="$RUNNER_TEMP/ai-fakes"
+          mkdir -p "$fakes"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$fakes/fake-sd-cli"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_colmap.dart -o "$fakes/fake-colmap"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_brush.dart -o "$fakes/fake-brush"
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_runner_probe.dart -o "$fakes/splat-runner-probe"
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$fakes/splat-probe"
+          mise exec -- dart compile exe test/desktop/video/fakes/fake_av2.dart -o "$fakes/fake-av2"
+          echo "dir=$fakes" >> "$GITHUB_OUTPUT"
+
+      # test/desktop as the windows job runs it. IMMUCH360_REQUIRE_SBS_CODEC: the build hook must have built the JPEG
+      # codec for this Mac
+      - name: Desktop tests on macOS
+        working-directory: mobile
+        env:
+          IMMUCH360_REQUIRE_SBS_CODEC: '1'
+          IMMUCH360_FAKE_SD_CLI: ${{ steps.fakes.outputs.dir }}/fake-sd-cli
+          IMMUCH360_FAKE_COLMAP: ${{ steps.fakes.outputs.dir }}/fake-colmap
+          IMMUCH360_FAKE_BRUSH: ${{ steps.fakes.outputs.dir }}/fake-brush
+          IMMUCH360_SPLAT_PROBE: ${{ steps.fakes.outputs.dir }}/splat-runner-probe
+          IMMUCH360_SPLAT_SCENE_PROBE: ${{ steps.fakes.outputs.dir }}/splat-probe
+          IMMUCH360_FAKE_AV2: ${{ steps.fakes.outputs.dir }}/fake-av2
+        run: mise exec -- flutter test test/desktop
 
   # The seven files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
   # release: a file missing or added shows on every run, not on the day of a release
