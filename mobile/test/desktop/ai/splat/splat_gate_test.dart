@@ -312,6 +312,28 @@ void main() {
       expect(choice.refusal, AiGateReason.splatGpuIntegrated);
       expect(splatCardOf(FakeGpuReports.twoCards, integratedAllowed: false).refusal, isNull);
     });
+
+    test('the end to end check of the CI takes the card of the gate: splatCardIn is the choice of splatCardOf', () {
+      final reports = [
+        FakeGpuReports.integratedOnly,
+        FakeGpuReports.twoCards,
+        FakeGpuReports.rtx4060,
+        GpuReport(adapters: [_card(api: '1.1.130')]),
+        GpuReport(adapters: [_card()], instanceVersion: '1.1.121'),
+        GpuReport(adapters: [_card(source: 'dxgi')]),
+        GpuReport(
+          adapters: [
+            _card(name: 'Small', memory: 4 * _gib),
+            _card(name: 'Large', memory: 12 * _gib),
+          ],
+        ),
+      ];
+      for (final report in reports) {
+        expect(splatCardIn(report)?.name, splatCardOf(report).card?.name);
+      }
+      // Vulkan 1.1 only: no card for the check either, as for the gate
+      expect(splatCardIn(GpuReport(adapters: [_card(api: '1.1.130')])), isNull);
+    });
   });
 
   group('the budget of the queue, by kind', () {

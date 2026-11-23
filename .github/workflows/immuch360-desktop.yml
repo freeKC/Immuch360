@@ -875,10 +875,11 @@ jobs:
       # catalogue and installed with their licences, then the 24 views of make_splat_dataset.py (two cameras) made
       # into a scene by the engine of the app (splat_probe, the engine of lot SP6, COLMAP and Brush started through
       # the immuch360-run of the archive). The card is what the probe of the graphics cards of this build reports,
-      # chosen by the rule of the gate (splatCardOf): the runner has no graphics card, so Mesa's software Vulkan
-      # (lavapipe) is installed here and taken by --software-card, the override of the gate's refusal that only this
-      # check uses; 30 steps at 128 pixels. The .spz must be written from every view placed, and read by the probe of
-      # the app. A real dedicated card (NVIDIA proprietary Vulkan, RADV) stays unproven on Linux
+      # chosen by the rule of the gate (splatCardIn, which splatCardOf takes): the runner has no graphics card, so
+      # Mesa's software Vulkan (lavapipe) is installed here and taken by --software-card, the override of the gate's
+      # refusal that only this check uses; 30 steps at 128 pixels. The .spz must be written from every view placed,
+      # and read by the probe of the app. A real dedicated card (NVIDIA proprietary Vulkan, RADV) stays unproven on
+      # Linux
       - name: A splat scene made by the engine of the app with COLMAP and Brush of ai-components-4 (lavapipe)
         if: ${{ !cancelled() && steps.packages.outcome == 'success' }}
         timeout-minutes: 30
@@ -1744,8 +1745,8 @@ jobs:
       # (AppDelegate.application(_:open:)), after which the video is handed to the copy that runs. Last, a start
       # without arguments that plays the 10 bit y4m of check_y4m.py over HTTP from 127.0.0.1, the stream the AV2 decoder
       # serves, in the app's own player. A capture of the screen each time. The window server of a runner is not a Mac
-      # on a desk: the next step says what passed. It passed every check on the five runs of 19 to 21 November 2026
-      # (184 rows, none failed), so since release 51 a failed check fails the job (lot L04 of the desktop parity plan)
+      # on a desk: the next step says what passed. It passed its 14 checks on the five runs of 19 to 21 November 2026,
+      # none failed, so since release 51 a failed check fails the job (lot L04 of the desktop parity plan)
       - name: Self check on the runner
         id: self_check
         run: |

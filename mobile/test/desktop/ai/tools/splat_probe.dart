@@ -30,7 +30,7 @@
 //       essay are given prepared already (1 600 pixels at most). The card is read from nvidia-smi on the PC, is the
 //       RTX the fake Brush knows, or is the dedicated card of Vulkan with the most memory among those of FILE, the JSON
 //       of the probe of the graphics cards of the app (immuch360 --immuch360-gpu-probe=FILE): the rule of the gate
-//       (splatCardOf of hardware_gate.dart, which needs Flutter, so not imported here). --software-card, for the end
+//       (splatCardIn of backends.dart, the choice splatCardOf of hardware_gate.dart takes). --software-card, for the end
 //       to end check of the CI only (lot L03 of the desktop parity plan), takes Mesa's software device of Vulkan
 //       (lavapipe) when there is no dedicated card, and says so. A second run of the same photos and settings in the
 //       same work root starts again from the poses the first one kept (Retry). --env goes to COLMAP and Brush (the
@@ -284,19 +284,13 @@ Future<GpuReport> _nvidiaSmi() async {
   );
 }
 
-/// The dedicated card of Vulkan with the most memory among those of the report of the probe of the app at [path], as
-/// the gate chooses it; with [software], Mesa's software device of Vulkan (lavapipe) when there is none: the end to
-/// end check of the CI only
+/// The card of the report of the probe of the app at [path] by the rule of the gate (splatCardIn of backends.dart,
+/// which splatCardOf takes: a dedicated card of Vulkan 1.2, an integrated one refused); with [software], Mesa's
+/// software device of Vulkan (lavapipe) when there is none: the end to end check of the CI only
 Future<BrushCard> _reportCard(String path, {required bool software, required int need}) async {
   final report = GpuReport.fromJson(jsonDecode(await File(path).readAsString()));
-  GpuAdapter? found;
-  for (final adapter in report.adapters) {
-    if (adapter.source == 'vulkan' &&
-        adapter.kind == GpuKind.discrete &&
-        (found == null || adapter.localMemory > found.localMemory)) {
-      found = adapter;
-    }
-  }
+  final chosen = splatCardIn(report);
+  var found = chosen?.kind == GpuKind.discrete ? chosen : null;
   if (found == null) {
     final lavapipe = software
         ? report.adapters.where((adapter) => adapter.source == 'vulkan' && adapter.kind == GpuKind.cpu).firstOrNull
