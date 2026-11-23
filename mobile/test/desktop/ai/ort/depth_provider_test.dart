@@ -161,6 +161,42 @@ void main() {
     });
   });
 
+  group('the versions and the cards remembered', () {
+    test('the file version of a Windows library, from its version resource', () {
+      final bytes = Uint8List(64);
+      final data = ByteData.sublistView(bytes)
+        ..setUint32(24, 0xFEEF04BD, Endian.little)
+        ..setUint32(28, 0x00010000, Endian.little)
+        ..setUint32(32, 0x0001000F, Endian.little)
+        ..setUint32(36, 0x00050000, Endian.little);
+      expect(data.lengthInBytes, 64);
+      expect(windowsFileVersion(bytes), '1.15.5.0');
+      expect(windowsFileVersion(Uint8List(64)), isNull);
+    });
+
+    test('a card that gave another depth is remembered 30 days, by its versions; one that passes is forgotten', () {
+      var now = DateTime.utc(2026, 11, 23, 12);
+      final folder = Directory.systemTemp.createTempSync('depth_cards_test_');
+      addTearDown(() => folder.deleteSync(recursive: true));
+      final memory = DepthCardMemory('${folder.path}/${DepthCardMemory.fileName}', now: () => now);
+      final intel = DepthCardMemory.keyOf(_laptop[2], runtime: '1.24.4', directMl: '1.15.5.0');
+      expect(intel, 'Intel(R) UHD Graphics (32902:42888), ONNX Runtime 1.24.4, DirectML.dll 1.15.5.0');
+      expect(memory.failedAt(intel), isNull);
+      memory.keep(intel, 'check of DirectML on Intel(R) UHD Graphics: failed, the card gives another depth');
+      expect(memory.failedAt(intel), now);
+      expect(
+        memory.failedAt(DepthCardMemory.keyOf(_laptop[2], runtime: '1.24.4', directMl: '1.16.0.0')),
+        isNull,
+        reason: 'another DirectML.dll is checked again',
+      );
+      now = now.add(const Duration(days: depthCardMemoryDays + 1));
+      expect(memory.failedAt(intel), isNull, reason: 'a new driver may mend it');
+      memory.keep(intel, 'failed again');
+      memory.keep(intel, null);
+      expect(memory.failedAt(intel), isNull);
+    });
+  });
+
   group('the check', () {
     test('the same depth passes, the depth of the Intel chip under DirectML fails, values not numbers fail', () {
       final processor = Float32List.fromList([6.5, 7.0, 9.0, 11.5]);
@@ -326,7 +362,11 @@ void main() {
       );
       // ignore: avoid_print
       print(depth.lines.join('\n'));
-      expect(depth.lines.first, startsWith('graphics cards of DirectML (ONNX Runtime 1.24.4): '));
+      // The DirectML.dll of the runner's Windows (1.4.0 on Server 2022) told beside the runtime
+      expect(
+        depth.lines.first,
+        matches(RegExp(r'^graphics cards of DirectML \(ONNX Runtime 1\.24\.4, DirectML\.dll \d+\.\d+\.\d+\.\d+\): ')),
+      );
       final input = Float32List(32 * 3 * 28 * 56);
       for (var i = 0; i < input.length; i++) {
         input[i] = (i % 97) / 50 - 1;
@@ -344,6 +384,32 @@ void main() {
         expect(depth.lines.last, startsWith('depth model on the processor: '));
       }
       depth.session.close();
+
+      // A card whose check gave another depth before: not checked again, the processor, said
+      final warp = depthCards(devices).isNotEmpty
+          ? depthCards(devices).first
+          : devices.firstWhere((device) => device.epName == directMlEpName && device.isGraphicsCard);
+      final memory = DepthCardMemory(
+        '${Directory.systemTemp.createTempSync('depth_cards_').path}${Platform.pathSeparator}${DepthCardMemory.fileName}',
+      )..keep(DepthCardMemory.keyOf(warp, runtime: card.version, directMl: systemDirectMlVersion()), 'check failed');
+      final remembered = openDepthSession(
+        processorLibrary: processorLibrary,
+        cardLibrary: cardLibrary,
+        modelPath: _tinyVda,
+        width: 56,
+        height: 28,
+        settings: const OrtSessionSettings(intraOpThreads: 2),
+        allowSoftware: true,
+        windows: true,
+        appleSilicon: false,
+        cardMemory: memory,
+      );
+      // ignore: avoid_print
+      print(remembered.lines.join('\n'));
+      expect(remembered.lines, contains(contains('not checked again before 30 days')));
+      expect(remembered.lines, isNot(contains(startsWith('check of DirectML on '))));
+      expect(remembered.lines.last, startsWith('depth model on the processor: '));
+      remembered.session.close();
 
       // A card that cannot be used (an adapter that is not there) leaves the processor, said
       final missing = card.openSession;

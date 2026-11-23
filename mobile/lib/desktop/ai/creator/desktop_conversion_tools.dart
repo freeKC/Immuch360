@@ -1095,6 +1095,12 @@ Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession s
   } on Object catch (error) {
     _log.warning('The setting of the depth device was not read: $error');
   }
+  String? depthCardMemory;
+  try {
+    depthCardMemory = p.join((await getApplicationSupportDirectory()).path, DepthCardMemory.fileName);
+  } on Object catch (error) {
+    _log.warning('The cards that failed their check are not kept: $error');
+  }
   return VideoJobSetup(
     ffmpeg: ffmpeg,
     ffprobe: p.join(bin, windows ? 'ffprobe.exe' : 'ffprobe'),
@@ -1117,6 +1123,7 @@ Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession s
         sphereShiftDegrees: relief.sphere ? relief.sphereShiftDegrees : null,
         cardLibrary: cardLibrary,
         depthDevice: depthDevice,
+        depthCardMemory: depthCardMemory,
       ),
     ),
   );

@@ -10,7 +10,8 @@
 // range, at 112 x 112 as at 392 x 392). So a card is used only after a check against the processor.
 //
 // The choices:
-// * Windows: DirectML, the provider of ONNX Runtime that runs on every DirectX 12 card (NVIDIA, AMD, Intel). The
+// * Windows: DirectML, the provider of ONNX Runtime for DirectX 12 cards (NVIDIA, AMD, Intel); proven on Windows 11
+//   with DirectML 1.15.5 on an RTX 4060 only (the version of DirectML.dll goes in the job log). The
 //   library is onnxruntime.dll of the official package Microsoft.ML.OnnxRuntime.DirectML 1.24.4 (MIT, March 2026, the
 //   last of that package: DirectML is in sustained engineering), which calls the DirectML.dll of Windows itself
 //   (System32, 1.15.5 on Windows 11 24H2): the redistributable DirectML.dll is under a Microsoft licence the project
@@ -23,10 +24,13 @@
 //   card of a Linux computer tried and ends the process when its shaders cannot be made.
 //
 // The session of a card is opened only after a check: the model run at 112 x 112 on a fixed picture by the card and
-// by the processor of the same library, compared ([depthCheckTolerance]). Any failure (the library, the provider, the
+// by the processor of the same library, compared ([depthCheckTolerance]). A card that gives another depth is kept in
+// video_depth_cards.json ([DepthCardMemory]) with the versions it was checked with, and not checked again for
+// [depthCardMemoryDays] days (the Intel chip cost 28 s at each job start and each Resume). Any failure (the library, the provider, the
 // adapter, the check) leaves the processor with a line in the job log, and so does a card that fails during the job
 // (video_app_runtime.dart): the window is run again on the processor and the job goes on there.
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -159,6 +163,94 @@ List<OrtEpDeviceInfo> depthCards(List<OrtEpDeviceInfo> devices) {
   ];
 }
 
+/// The file version of a Windows program or library from its bytes (the VS_FIXEDFILEINFO of its version resource):
+/// "1.15.5.0", null when it has none
+String? windowsFileVersion(Uint8List bytes) {
+  final data = ByteData.sublistView(bytes);
+  // The signature 0xFEEF04BD, then the structure version, then the file version, most significant part first
+  for (var at = 0; at + 16 <= bytes.length; at += 4) {
+    if (data.getUint32(at, Endian.little) == 0xFEEF04BD) {
+      final high = data.getUint32(at + 8, Endian.little);
+      final low = data.getUint32(at + 12, Endian.little);
+      return '${high >> 16}.${high & 0xFFFF}.${low >> 16}.${low & 0xFFFF}';
+    }
+  }
+  return null;
+}
+
+/// The version of the DirectML.dll of Windows the DirectML build of ONNX Runtime calls (System32), null when it is not
+/// read
+String? systemDirectMlVersion() {
+  try {
+    final root = Platform.environment['SystemRoot'] ?? r'C:\Windows';
+    return windowsFileVersion(File('$root\\System32\\DirectML.dll').readAsBytesSync());
+  } on FileSystemException {
+    return null;
+  }
+}
+
+/// How long a card that gave another depth is not checked again
+const depthCardMemoryDays = 30;
+
+/// video_depth_cards.json of the support folder: the cards whose check gave another depth, by their name, their ids
+/// and the versions of the libraries they were checked with (a new ONNX Runtime or a new DirectML.dll checks again)
+class DepthCardMemory {
+  DepthCardMemory(this.path, {DateTime Function()? now}) : _now = now ?? DateTime.now;
+
+  static const fileName = 'video_depth_cards.json';
+
+  final String path;
+  final DateTime Function() _now;
+
+  /// The key of [card] checked with ONNX Runtime [runtime] and DirectML.dll [directMl]
+  static String keyOf(OrtEpDeviceInfo card, {required String runtime, String? directMl}) =>
+      '${card.description} (${card.vendorId}:${card.deviceId}), ONNX Runtime $runtime, '
+      'DirectML.dll ${directMl ?? 'not read'}';
+
+  Map<String, Object?> _read() {
+    try {
+      final file = File(path);
+      if (!file.existsSync()) {
+        return {};
+      }
+      final content = jsonDecode(file.readAsStringSync());
+      return content is Map<String, Object?> ? content : {};
+    } on Object {
+      return {};
+    }
+  }
+
+  /// When the check of [key] gave another depth, within [depthCardMemoryDays] days; null otherwise
+  DateTime? failedAt(String key) {
+    final at = DateTime.tryParse('${(_read()[key] as Map?)?['at'] ?? ''}');
+    if (at == null || _now().difference(at) > const Duration(days: depthCardMemoryDays)) {
+      return null;
+    }
+    return at;
+  }
+
+  /// Keeps that the check of [key] gave another depth ([said]: its line), or forgets it ([said] null: it passed)
+  void keep(String key, String? said) {
+    final entries = _read();
+    if (said == null && !entries.containsKey(key)) {
+      return;
+    }
+    if (said == null) {
+      entries.remove(key);
+    } else {
+      entries[key] = {'at': _now().toUtc().toIso8601String(), 'said': said};
+    }
+    try {
+      final file = File(path);
+      file.parent.createSync(recursive: true);
+      final temporary = File('$path.tmp')..writeAsStringSync(const JsonEncoder.withIndent(' ').convert(entries));
+      temporary.renameSync(path);
+    } on FileSystemException {
+      // Not kept: the check runs again at the next job
+    }
+  }
+}
+
 /// The input of the check: 32 frames of [side] x [side], a pattern that moves, normalised as the model takes them
 Float32List depthCheckInput({int side = depthCheckSide, int frames = 32}) {
   final plane = side * side;
@@ -280,6 +372,8 @@ DepthSession openDepthSession({
   OrtSession Function(OrtSession Function() open)? wrap,
   bool? windows,
   bool? appleSilicon,
+  DepthCardMemory? cardMemory,
+  String? Function()? directMlVersion,
 }) {
   final lines = <String>[];
   final onWindows = windows ?? Platform.isWindows;
@@ -293,6 +387,7 @@ DepthSession openDepthSession({
   OrtRuntime? cardRuntime;
   var devices = const <OrtEpDeviceInfo>[];
   var cardLoaded = false;
+  String? directMl;
   if (choice != depthDeviceProcessor) {
     final library = onWindows ? cardLibrary : (onAppleSilicon ? processorLibrary : null);
     if (onWindows && library == null) {
@@ -307,8 +402,10 @@ DepthSession openDepthSession({
             for (final device in devices)
               if (device.epName == directMlEpName) device,
           ];
+          directMl = (directMlVersion ?? systemDirectMlVersion)();
           lines.add(
-            'graphics cards of DirectML (ONNX Runtime ${cardRuntime.version}): '
+            'graphics cards of DirectML (ONNX Runtime ${cardRuntime.version}, DirectML.dll '
+            '${directMl ?? 'of Windows not read'}): '
             '${cards.isEmpty ? 'none' : cards.map((card) => '${card.description} (adapter ${card.dxgiAdapter}, high performance order ${card.highPerformanceIndex}, ${card.videoMemory ?? 'memory not given'})').join('; ')}',
           );
         }
@@ -325,7 +422,18 @@ DepthSession openDepthSession({
     cardLibrary: cardLoaded,
     allowSoftware: allowSoftware,
   );
-  if (plan.isGraphicsCard && cardRuntime != null) {
+  final device = plan.device;
+  final memoryKey = device == null || cardRuntime == null
+      ? null
+      : DepthCardMemory.keyOf(device, runtime: cardRuntime.version, directMl: directMl);
+  final failedBefore = memoryKey == null ? null : cardMemory?.failedAt(memoryKey);
+  if (failedBefore != null) {
+    lines.add(
+      'depth model: ${plan.title} gave another depth at its check of ${failedBefore.toIso8601String()}, not checked '
+      'again before $depthCardMemoryDays days or another ONNX Runtime or DirectML.dll',
+    );
+  }
+  if (plan.isGraphicsCard && cardRuntime != null && failedBefore == null) {
     final card = cardRuntime;
     OrtSession? checkCard;
     OrtSession? checkProcessor;
@@ -343,11 +451,14 @@ DepthSession openDepthSession({
       checkProcessor.close();
       checkCard = checkProcessor = null;
       final passed = difference.largest <= depthCheckTolerance;
-      lines.add(
-        'check of ${plan.title} against the processor at $depthCheckSide x $depthCheckSide: largest difference '
-        '${depthShare(difference.largest)}, mean ${depthShare(difference.mean)} of the depth range '
-        '(${watch.elapsedMilliseconds} ms): ${passed ? 'passed' : 'failed, the card gives another depth'}',
-      );
+      final line =
+          'check of ${plan.title} against the processor at $depthCheckSide x $depthCheckSide: largest difference '
+          '${depthShare(difference.largest)}, mean ${depthShare(difference.mean)} of the depth range '
+          '(${watch.elapsedMilliseconds} ms): ${passed ? 'passed' : 'failed, the card gives another depth'}';
+      lines.add(line);
+      if (memoryKey != null) {
+        cardMemory?.keep(memoryKey, passed ? null : line);
+      }
       if (passed) {
         final session = opened(card, settings.copyWith(provider: plan.provider, fixedDimensions: dimensions));
         lines.add('depth model on the graphics card: ${plan.title}, ONNX Runtime ${card.version}, ${plan.why}');
@@ -363,7 +474,9 @@ DepthSession openDepthSession({
   final runtime = OrtRuntime.load(processorLibrary);
   // As before this lot: the free dimensions left free on the processor
   final session = opened(runtime, settings.copyWith(provider: OrtProvider.cpu));
-  final why = plan.isGraphicsCard ? 'the graphics card did not pass' : plan.why;
+  final why = plan.isGraphicsCard
+      ? (failedBefore != null ? 'the graphics card gave another depth before' : 'the graphics card did not pass')
+      : plan.why;
   lines.add('depth model on the processor: ONNX Runtime ${runtime.version}, ${settings.intraOpThreads} threads ($why)');
   return DepthSession(
     runtime: runtime,

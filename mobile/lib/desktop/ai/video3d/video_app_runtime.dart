@@ -80,6 +80,7 @@ class VideoWorkerSetup {
     this.cardLibrary,
     this.depthDevice = depthDeviceAuto,
     this.allowSoftwareCard = false,
+    this.depthCardMemory,
   });
 
   final String ortLibrary;
@@ -113,6 +114,9 @@ class VideoWorkerSetup {
 
   /// The renderer of Windows on the processor (WARP) counted as a card: the CI only
   final bool allowSoftwareCard;
+
+  /// video_depth_cards.json, the cards whose check gave another depth (DepthCardMemory); null: none kept
+  final String? depthCardMemory;
 }
 
 /// The worker of a job in an isolate of its own: the frames go there as TransferableTypedData, the side by side frames
@@ -273,6 +277,10 @@ void _workerMain((SendPort, VideoWorkerSetup) start) {
       choice: setup.depthDevice,
       allowSoftware: setup.allowSoftwareCard,
       wrap: wrap,
+      cardMemory: switch (setup.depthCardMemory) {
+        final String path => DepthCardMemory(path),
+        null => null,
+      },
     );
     lines.addAll(opened.lines);
     final runOptions = options = opened.runtime.createRunOptions();
