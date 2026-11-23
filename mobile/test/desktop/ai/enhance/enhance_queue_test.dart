@@ -213,6 +213,21 @@ void main() {
     expect(engine.specs.map((spec) => spec.source.name), ['a.jpg', 'c.jpg', 'a.jpg', 'b.jpg']);
   });
 
+  test('Pause all stops the whole batch, Resume all runs it again in its order', () async {
+    final engine = levels[EnhanceLevel.rebuild]!..hold = Completer<void>();
+    final ids = queue().add([photo('a.jpg'), photo('b.jpg'), photo('c.jpg')], kind: ConversionKind.enhanceRebuild);
+    await running([engine], 1);
+    expect(current().hasEnhanceToPause, isTrue);
+    queue().pauseEnhance();
+    await until((state) => ids.every((id) => state.byId(id)!.state == ConversionState.paused));
+    expect(current().hasEnhanceToPause, isFalse);
+    expect(current().hasEnhancePaused, isTrue);
+    engine.hold!.complete();
+    queue().resumeEnhance();
+    await until((state) => ids.every((id) => state.byId(id)!.state == ConversionState.done));
+    expect(engine.specs.map((spec) => spec.source.name), ['a.jpg', 'a.jpg', 'b.jpg', 'c.jpg']);
+  });
+
   test('Cancel of a paused photo forgets it; Cancel all stops the batch, a paused photo stays paused', () async {
     final engine = levels[EnhanceLevel.natural]!..hold = Completer<void>();
     final ids = queue().add([photo('a.jpg'), photo('b.jpg'), photo('c.jpg')], kind: ConversionKind.enhanceNatural);

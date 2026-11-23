@@ -424,6 +424,13 @@ class ConversionQueueState {
   /// A job failed that a Retry may mend: not a splat scene of too few images placed, which would place the same ones
   bool get hasFailed => jobs.any((job) => job.state == ConversionState.failed && !job.retryGivesTheSame);
 
+  /// Enhanced photos waiting or under way, which Pause all stops
+  bool get hasEnhanceToPause =>
+      jobs.any((job) => job.kind.isEnhance && (job.state == ConversionState.waiting || job.state.isActive));
+
+  /// Enhanced photos paused, which Resume all runs again
+  bool get hasEnhancePaused => jobs.any((job) => job.kind.isEnhance && job.state == ConversionState.paused);
+
   /// A job Clear finished would forget: a 3D video paused stays, its work kept for Resume
   bool get hasEnded => jobs.any((job) => job.state.isEnded && job.state != ConversionState.paused);
 
@@ -718,6 +725,30 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     } else if (job.state.isActive) {
       _videoControls[id]?.pause();
     }
+  }
+
+  /// Pauses every enhanced photo waiting or under way (a batch of "Enhance (AI)"): see [pause]
+  void pauseEnhance() {
+    for (final job in state.jobs) {
+      if (job.kind.isEnhance && (job.state == ConversionState.waiting || job.state.isActive)) {
+        pause(job.id);
+      }
+    }
+  }
+
+  /// Runs every enhanced photo paused again, from its start, in the order they came; ends a pause of the queue as
+  /// Retry does
+  void resumeEnhance() {
+    final ids = {
+      for (final job in state.jobs)
+        if (job.kind.isEnhance && job.state == ConversionState.paused) job.id,
+    };
+    if (ids.isEmpty) {
+      return;
+    }
+    _gpuShort = null;
+    state = ConversionQueueState(jobs: _restarted(ids), isPaused: state.isPaused);
+    _pump();
   }
 
   /// Cancels a job: one waiting never runs (nor the 3D version chained after it), the one under way stops at its next
@@ -1573,6 +1604,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
                 job.state == ConversionState.waiting &&
                 job.kind.lane == ConversionLane.cpu &&
                 !job.kind.isVideo &&
+                // Natural of "Enhance (AI)" takes minutes a photo, a batch hours: it waits for the end of the video
+                !job.kind.isEnhance &&
                 (job.parentId == null || job.inputPath != null),
           )
           .firstOrNull;

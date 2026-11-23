@@ -690,6 +690,19 @@ class ConversionsPanel extends ConsumerWidget {
                   onPressed: notifier.cancelAll,
                   child: Text(t.ai_immersive_cancel_all),
                 ),
+              // A batch of "Enhance (AI)": its photos paused and resumed together
+              if (queue.hasEnhanceToPause)
+                TextButton(
+                  key: const Key('ai_conversions_enhance_pause'),
+                  onPressed: notifier.pauseEnhance,
+                  child: Text(t.ai_enhance_pause_all),
+                ),
+              if (queue.hasEnhancePaused)
+                TextButton(
+                  key: const Key('ai_conversions_enhance_resume'),
+                  onPressed: notifier.resumeEnhance,
+                  child: Text(t.ai_enhance_resume_all),
+                ),
               if (queue.hasFailed)
                 TextButton(
                   key: const Key('ai_conversions_retry_failed'),
