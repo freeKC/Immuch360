@@ -983,3 +983,35 @@ class SdCppUpscaler implements UpscaleBackend {
     }
   }
 }
+
+/// A run of a program of the script mode of a newer sd-cli (`-M dgl --script`, "Enhance (AI)" of release 51,
+/// enhance/rebuild_backend.dart), on the card of its job with the same check of sd-cli's own list as the generator and
+/// the upscaler (a card at another index started again there once, one not listed refused). [onLine] reads each line
+/// with the device of the run ("Vulkan1") and may stop it with a failure.
+class SdCppScriptRun {
+  SdCppScriptRun({required this.runner, required this.device, Duration Function()? elapsed})
+    : _elapsed = elapsed ?? sidecarStopwatch();
+
+  final ProcessRunner runner;
+  final SdCppDevice device;
+  final Duration Function() _elapsed;
+
+  Future<void> run({
+    required List<String> Function(String vulkan) arguments,
+    required String workFolder,
+    required String what,
+    required NativeCancelFlag cancel,
+    required BackendException? Function(String line, String vulkan) onLine,
+    void Function()? onStart,
+  }) => _sdCppRunOn(
+    device,
+    runner: runner,
+    arguments: arguments,
+    workFolder: workFolder,
+    what: what,
+    cancel: cancel,
+    elapsed: _elapsed,
+    onStart: onStart,
+    onLine: (line, vulkan, check) => onLine(line, vulkan),
+  );
+}

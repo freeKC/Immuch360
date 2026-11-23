@@ -225,6 +225,10 @@ AiFeature aiFeatureOf(ConversionKind kind) => switch (kind) {
   ConversionKind.stereoPanoramaFromPanorama => AiFeature.stereoPanorama,
   ConversionKind.splatScene => AiFeature.splatScene,
   ConversionKind.stereoVideo => AiFeature.stereoVideo,
+  // Never asked here: "Enhance (AI)" has a dialog and gates of its own (enhance_dialog.dart, enhance_plan.dart). Its
+  // levels of the card take the sd-cli of the panoramas, Natural the ONNX Runtime of the 3D photos.
+  ConversionKind.enhanceSharpen || ConversionKind.enhanceRebuild => AiFeature.panorama,
+  ConversionKind.enhanceNatural => AiFeature.stereoPhoto,
 };
 
 /// The name of a type of version in the dialog: "3D photo", "3D scene"
@@ -235,6 +239,9 @@ String conversionKindName(Translations t, ConversionKind kind) => switch (kind) 
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_type_stereo_360,
   ConversionKind.splatScene => t.ai_immersive_type_splat,
   ConversionKind.stereoVideo => t.ai_immersive_type_video,
+  ConversionKind.enhanceSharpen => t.ai_enhance_level_sharpen,
+  ConversionKind.enhanceRebuild => t.ai_enhance_level_rebuild,
+  ConversionKind.enhanceNatural => t.ai_enhance_level_natural,
 };
 
 /// What a type of version is, in the words of its honesty label; the 3D version of a panorama the app [generated] is
@@ -247,6 +254,9 @@ String conversionKindHonesty(Translations t, ConversionKind kind, {bool generate
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
   ConversionKind.splatScene => t.ai_immersive_splat_honesty,
   ConversionKind.stereoVideo => t.ai_immersive_video_line,
+  ConversionKind.enhanceSharpen ||
+  ConversionKind.enhanceRebuild ||
+  ConversionKind.enhanceNatural => t.ai_enhance_invented,
 };
 
 /// "6 s", "4 min": a time of the conversions, the seconds rounded up under a minute, the minutes rounded above
@@ -770,7 +780,10 @@ class ConversionCandidate {
 /// not know (or not read again since the index learnt the kinds), which is never made into another version either. The
 /// picture that will carry a splat scene is one flat image, as that of a 3D scene.
 bool versionHoldsTwoEyes(IndexedVersion version) => switch (version.kind) {
-  ImmersiveKind.volumetricScene || ImmersiveKind.panorama360 || ImmersiveKind.gaussianSplat => false,
+  ImmersiveKind.volumetricScene ||
+  ImmersiveKind.panorama360 ||
+  ImmersiveKind.gaussianSplat ||
+  ImmersiveKind.enhancedPhoto => false,
   ImmersiveKind.stereoPhoto || ImmersiveKind.stereoPanorama360 || null => true,
 };
 
@@ -943,6 +956,8 @@ final aiSourceProvider = Provider.autoDispose.family<bool, ({BaseAsset asset, Co
           ConversionKind.stereoPanoramaFromPanorama => ref.watch(aiMonoPanoramaProvider(source.asset)),
           ConversionKind.splatScene => false,
           ConversionKind.stereoVideo => ref.watch(aiFlatVideoProvider(source.asset)),
+          // Offered by its own button (enhance_dialog.dart)
+          ConversionKind.enhanceSharpen || ConversionKind.enhanceRebuild || ConversionKind.enhanceNatural => false,
         },
 );
 

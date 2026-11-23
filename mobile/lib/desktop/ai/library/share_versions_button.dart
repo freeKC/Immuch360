@@ -39,6 +39,7 @@ String shareVersionKindText(Translations t, ShareVersion version) => switch (ver
         : t.ai_immersive_version_stereo_360,
   // No picture carries a splat scene in this version (plan 2026-11-01, decision D2): one is from a newer version
   ImmersiveKind.gaussianSplat || null => t.ai_immersive_newer_version,
+  ImmersiveKind.enhancedPhoto => t.ai_enhance_version,
 };
 
 /// The photo of its folder [head] (the head of the file at [entry]) says it was made from, when our XMP in it names a

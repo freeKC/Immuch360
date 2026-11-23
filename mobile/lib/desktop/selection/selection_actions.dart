@@ -6,6 +6,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -13,7 +14,7 @@ import 'package:immich_mobile/presentation/actions/action.widget.dart';
 import 'package:immich_mobile/presentation/actions/upload.action.dart';
 
 /// The [actions] of the bottom sheet of a selection, in their order on a phone; on a computer, "Upload to Immich" first
-/// and "Make 3D (AI)" then "Make a splat scene (AI)" added last
+/// and "Make 3D (AI)", "Enhance (AI)" then "Make a splat scene (AI)" added last
 List<Widget> withDesktopSelectionActions(List<Widget> actions) {
   if (!CurrentPlatform.isDesktop) {
     return [...actions];
@@ -23,6 +24,7 @@ List<Widget> withDesktopSelectionActions(List<Widget> actions) {
     ...actions.where(isUpload),
     ...actions.whereNot(isUpload),
     const DesktopMakeImmersiveButton(source: ActionSource.timeline),
+    const DesktopEnhanceButton(source: ActionSource.timeline),
     const DesktopMakeSplatButton(source: ActionSource.timeline),
   ];
 }

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 
@@ -103,6 +104,10 @@ void main() {
           ConversionKind.splatScene: (ImmersiveKind.gaussianSplat, ConversionLane.gpu),
           // Two eyes side by side, an MP4 made by its own engine
           ConversionKind.stereoVideo: (ImmersiveKind.stereoPhoto, ConversionLane.cpu),
+          // "Enhance (AI)": the levels of the graphics card, and Natural on the processor
+          ConversionKind.enhanceSharpen: (ImmersiveKind.enhancedPhoto, ConversionLane.gpu),
+          ConversionKind.enhanceRebuild: (ImmersiveKind.enhancedPhoto, ConversionLane.gpu),
+          ConversionKind.enhanceNatural: (ImmersiveKind.enhancedPhoto, ConversionLane.cpu),
         },
       );
       expect(ConversionKind.sceneFromPhoto.stages, ImmersiveStage.scene);
@@ -117,6 +122,7 @@ void main() {
       PanoramaJob() => 'panorama ${job.steps} steps',
       StereoPanoramaJob() => 'stereo of ${job.original.name}',
       SplatJob() => 'splat of ${job.members.length}${job.isVideo ? ' video' : ''}',
+      EnhanceJob() => 'enhance ${job.level.name} ${job.strength}',
     };
 
     test('each names its kind, its sources, the original it is a version of and its steps', () {
@@ -174,18 +180,33 @@ void main() {
         created: 'now',
       );
 
+      const enhanced = EnhanceJob(
+        id: '7',
+        source: source,
+        partPath: '/out/.g.part',
+        derivativeId: 'urn:uuid:7',
+        creatorTool: 'tool',
+        created: 'now',
+        level: EnhanceLevel.rebuild,
+        strength: 70,
+      );
+
       expect(
-        [sbs, scene, generated, stereoOfGenerated, splat].map((job) => job.kind).toSet(),
+        [sbs, scene, generated, stereoOfGenerated, splat, enhanced].map((job) => job.kind).toSet(),
         ImmersiveKind.values.toSet(),
       );
-      expect([sbs, scene, generated, stereoOfGenerated, stereoOf360, splat].map(describe), [
+      expect([sbs, scene, generated, stereoOfGenerated, stereoOf360, splat, enhanced].map(describe), [
         'photo ${ReliefV1.parallax}',
         'scene of 1',
         'panorama 28 steps',
         'stereo of salon.jpg',
         'stereo of salon_360.jpg',
         'splat of 2',
+        'enhance rebuild 70',
       ]);
+      // An enhanced photo reads its photo and is a version of it
+      expect(enhanced.original, source);
+      expect(enhanced.stages, ImmersiveStage.enhance);
       // A splat scene names its lead as its original, and reads the others as its members
       expect(splat.sources, [source]);
       expect(splat.original, source);

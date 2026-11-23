@@ -73,6 +73,10 @@ on:
         description: Also build stable-diffusion.cpp (the sdcpp jobs), as when sd_cpp.lock.json changes
         type: boolean
         default: false
+      sdcpp_seedvr2:
+        description: Also build the stable-diffusion.cpp of Enhance (AI), as when sd_cpp_seedvr2.lock.json changes
+        type: boolean
+        default: false
       spark:
         description: Also build Spark for the splat viewer (the spark job), as when its lock changes
         type: boolean
@@ -126,6 +130,7 @@ jobs:
       file_version: ${{ steps.version.outputs.file_version }}
       label: ${{ steps.version.outputs.label }}
       sdcpp_lock_changed: ${{ steps.sdcpp.outputs.changed }}
+      sdcpp_seedvr2_lock_changed: ${{ steps.sdcpp.outputs.seedvr2_changed }}
       spark_lock_changed: ${{ steps.sdcpp.outputs.spark_changed }}
       colmap_lock_changed: ${{ steps.colmap.outputs.changed }}
       brush_lock_changed: ${{ steps.brush.outputs.changed }}
@@ -164,6 +169,14 @@ jobs:
           fi
           echo "sd_cpp.lock.json changed since ${base:-no base}: $changed"
           echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          # The same for the second archive, that of Enhance (AI): its lock and the help its runner is frozen by
+          seedvr2_changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/ai/sd_cpp_seedvr2.lock.json \
+            mobile/test/fixtures/ai_immersive/sd_cli_seedvr2_help.txt; then
+            seedvr2_changed=true
+          fi
+          echo "sd_cpp_seedvr2.lock.json changed since ${base:-no base}: $seedvr2_changed"
+          echo "seedvr2_changed=$seedvr2_changed" >> "$GITHUB_OUTPUT"
           # The same for Spark, the renderer of the splat viewer: its lock, its patches and its build script
           spark_changed=false
           if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/splat_viewer/spark.lock.json \
@@ -1857,6 +1870,145 @@ jobs:
         run: |
           python3 .github/desktop/ai/sdcpp_build.py pack --system linux-x64 --source "$RUNNER_TEMP/sdcpp" \
             --bin "$RUNNER_TEMP/sdcpp-build/bin" --launcher "$RUNNER_TEMP/immuch360-run" --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
+          chmod +x "$RUNNER_TEMP/unpacked/sd-cli"
+          LD_LIBRARY_PATH= "$RUNNER_TEMP/unpacked/sd-cli" --list-devices || echo "no device listed (no GPU on the runner)"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  # The second archive of stable-diffusion.cpp, the engine of "Rebuild details" of Enhance (AI) (release 51,
+  # store/m2/ai-enhance-2026-11-22): SeedVR2 3B runs only through the script mode (DGL) of a newer commit, 0d71f963
+  # (tag master-1117-0d71f96, the build the probe of 23 November 2026 measured), so it is built apart from the archive
+  # of the 360° panoramas, whose commit and measures stay as they are. The same script and options as the sdcpp jobs
+  # above, with sd_cpp_seedvr2.lock.json and the help of that commit (sd_cli_seedvr2_help.txt); only when asked (the
+  # sdcpp_seedvr2 input) or when that lock or that help changed. Its artifact Immuch360-AI-sdcpp-0d71f96-1-<system>.zip
+  # is for ai-components-7; nothing here publishes it.
+  sdcpp-seedvr2-windows:
+    name: stable-diffusion.cpp of Enhance (AI) for Windows
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.sdcpp_seedvr2 || needs.codegen.outputs.sdcpp_seedvr2_lock_changed == 'true' }}
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+    env:
+      LOCK: .github/desktop/ai/sd_cpp_seedvr2.lock.json
+      HELP: mobile/test/fixtures/ai_immersive/sd_cli_seedvr2_help.txt
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" lock --system windows-x64 --github-output
+
+      - name: Sources of stable-diffusion.cpp and ggml at the commits of the lock
+        run: python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" sources --dir "$RUNNER_TEMP/sdcpp"
+
+      - name: Vulkan SDK of LunarG
+        env:
+          SDK_URL: ${{ steps.lock.outputs.sdk_url }}
+          SDK_SHA256: ${{ steps.lock.outputs.sdk_sha256 }}
+          SDK_VERSION: ${{ steps.lock.outputs.sdk_version }}
+        run: |
+          installer="$RUNNER_TEMP/vulkansdk.exe"
+          curl -sSfL --retry 3 -o "$installer" "$SDK_URL"
+          echo "$SDK_SHA256  $installer" | sha256sum -c -
+          "$installer" --accept-licenses --default-answer --confirm-command install
+          echo "VULKAN_SDK=C:\\VulkanSDK\\$SDK_VERSION" >> "$GITHUB_ENV"
+          echo "C:\\VulkanSDK\\$SDK_VERSION\\Bin" >> "$GITHUB_PATH"
+
+      - name: Build
+        run: |
+          glslc --version
+          python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" build --system windows-x64 \
+            --source "$RUNNER_TEMP/sdcpp" --build "$RUNNER_TEMP/sdcpp-build"
+
+      - name: sd-cli --help as the fixture says
+        run: |
+          "$RUNNER_TEMP/sdcpp-build/bin/sd-cli.exe" --help > "$RUNNER_TEMP/sd-cli-help.txt"
+          python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" help --output "$RUNNER_TEMP/sd-cli-help.txt" \
+            --fixture "$HELP"
+
+      - name: The archive
+        run: |
+          python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" pack --system windows-x64 \
+            --source "$RUNNER_TEMP/sdcpp" --bin "$RUNNER_TEMP/sdcpp-build/bin" --out dist
+          "$RUNNER_TEMP/sdcpp-build/bin/sd-cli.exe" --list-devices || echo "no device listed (no GPU on the runner)"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  sdcpp-seedvr2-linux:
+    name: stable-diffusion.cpp of Enhance (AI) for Linux
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.sdcpp_seedvr2 || needs.codegen.outputs.sdcpp_seedvr2_lock_changed == 'true' }}
+    timeout-minutes: 120
+    env:
+      LOCK: .github/desktop/ai/sd_cpp_seedvr2.lock.json
+      HELP: mobile/test/fixtures/ai_immersive/sd_cli_seedvr2_help.txt
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" lock --system linux-x64 --github-output
+
+      - name: Sources of stable-diffusion.cpp and ggml at the commits of the lock
+        run: python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" sources --dir "$RUNNER_TEMP/sdcpp"
+
+      - name: Vulkan SDK of LunarG
+        env:
+          SDK_URL: ${{ steps.lock.outputs.sdk_url }}
+          SDK_SHA256: ${{ steps.lock.outputs.sdk_sha256 }}
+          SDK_VERSION: ${{ steps.lock.outputs.sdk_version }}
+        run: |
+          tarball="$RUNNER_TEMP/vulkansdk.tar.xz"
+          curl -sSfL --retry 3 -o "$tarball" "$SDK_URL"
+          echo "$SDK_SHA256  $tarball" | sha256sum -c -
+          tar -xJf "$tarball" -C "$RUNNER_TEMP"
+          sdk="$RUNNER_TEMP/$SDK_VERSION/x86_64"
+          echo "VULKAN_SDK=$sdk" >> "$GITHUB_ENV"
+          echo "$sdk/bin" >> "$GITHUB_PATH"
+          echo "LD_LIBRARY_PATH=$sdk/lib" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: |
+          glslc --version
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" build --system linux-x64 \
+            --source "$RUNNER_TEMP/sdcpp" --build "$RUNNER_TEMP/sdcpp-build"
+
+      - name: immuch360-run
+        run: gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/immuch360-run" .github/desktop/ai/immuch360_run.c
+
+      - name: sd-cli --help as the fixture says
+        run: |
+          LD_LIBRARY_PATH= "$RUNNER_TEMP/sdcpp-build/bin/sd-cli" --help > "$RUNNER_TEMP/sd-cli-help.txt"
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" help --output "$RUNNER_TEMP/sd-cli-help.txt" \
+            --fixture "$HELP"
+
+      - name: The archive
+        run: |
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" pack --system linux-x64 \
+            --source "$RUNNER_TEMP/sdcpp" --bin "$RUNNER_TEMP/sdcpp-build/bin" --launcher "$RUNNER_TEMP/immuch360-run" \
+            --out dist
           mkdir -p "$RUNNER_TEMP/unpacked"
           python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
           chmod +x "$RUNNER_TEMP/unpacked/sd-cli"

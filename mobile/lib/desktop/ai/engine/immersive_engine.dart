@@ -16,10 +16,15 @@
 // sources: SplatJob names the photos, or the video, as members the engine reads one after the other, never all copied
 // at once; its steps are those of the photos (or of the frames of the video), of COLMAP, of Brush and of the copy for
 // the headset, its failures those of placing the photos and of the training, and its result the counts the panel tells.
+//
+// The enhanced photo of release 51 (EnhanceJob, enhance/enhance_engine.dart) reads one photo and writes the same
+// picture sharper: its steps are the reading and the decoding, the loading of its models, the tiles of its model
+// ("step 12 of 63"), the colour fix and the strength (pasteBack), the encoding and the writing.
 
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
@@ -104,6 +109,10 @@ enum ImmersiveStage {
   /// The steps of a 360° 3D panorama
   static const stereoPanorama = [reading, decoding, panoramaDepth, rightEye, encoding, writing];
 
+  /// The steps of an enhanced photo: its model runs in [generating], tile after tile; the colour fix and the strength
+  /// are [pasteBack]
+  static const enhance = [reading, decoding, loadingModels, generating, pasteBack, encoding, writing];
+
   /// The steps of a splat scene: the sources read (a photo of the server copied, the sums of the photos), then the
   /// photos, or the frames of a video (SplatJob.stages keeps the one of its job, [splatOf]), COLMAP, Brush, the copy
   /// for the headset and the file written
@@ -123,6 +132,7 @@ enum ImmersiveStage {
     ImmersiveKind.panorama360 => panorama,
     ImmersiveKind.stereoPanorama360 => stereoPanorama,
     ImmersiveKind.gaussianSplat => splat,
+    ImmersiveKind.enhancedPhoto => enhance,
   };
 }
 
@@ -692,6 +702,35 @@ final class StereoPanoramaJob extends ImmersiveJobSpec {
   ImmersiveSource get original => photo ?? source;
 }
 
+/// One photo to make sharper by "Enhance (AI)" (release 51): [source] read, the same picture written at [level] with
+/// [strength] percent of the model's result (0 to 100), the tiles of SeedVR2 and VOSR drawn with [seed]
+final class EnhanceJob extends ImmersiveJobSpec {
+  const EnhanceJob({
+    required super.id,
+    required this.source,
+    required super.partPath,
+    required super.derivativeId,
+    required super.creatorTool,
+    required super.created,
+    required this.level,
+    required this.strength,
+    this.seed = 42,
+    super.quarterTurns = 0,
+    super.exif = const ImmersiveExif(),
+  });
+
+  final ImmersiveSource source;
+  final EnhanceLevel level;
+  final int strength;
+  final int seed;
+
+  @override
+  ImmersiveKind get kind => ImmersiveKind.enhancedPhoto;
+
+  @override
+  List<ImmersiveSource> get sources => [source];
+}
+
 /// How a splat scene was set upright (lot SPF2): an object on the plane it stands on, found under its cameras
 /// (splat_scale.dart), or as COLMAP turned it (model_orientation_aligner by IMAGE-ORIENTATION, the median "down" of the
 /// images: FreeKC's repeater of 3 November, filmed from above and with the phone turned, lay on its side)
@@ -830,6 +869,26 @@ final class StereoPanoramaResultDetails extends ImmersiveResultDetails {
   final int width;
   final int height;
   final double filledFraction;
+}
+
+/// An enhanced photo: its size (that of its original), its level and strength, the model, and what the run noticed
+/// that the panel says: [fellBack] when the engine said part of its work fell back to the processor
+final class EnhanceResultDetails extends ImmersiveResultDetails {
+  const EnhanceResultDetails({
+    required this.width,
+    required this.height,
+    required this.level,
+    required this.strength,
+    required this.model,
+    this.fellBack = false,
+  });
+
+  final int width;
+  final int height;
+  final EnhanceLevel level;
+  final int strength;
+  final String model;
+  final bool fellBack;
 }
 
 /// A splat scene: its [gaussians] in the .spz (whose bytes are those of ImmersiveResult.bytesWritten), the [images] it

@@ -63,6 +63,9 @@ import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/local_only_message.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/desktop_enhance.dart' show enhanceNotInThisVersion;
+import 'package:immich_mobile/desktop/ai/enhance/enhance_compare.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart' show enhanceNoIntDotMessage;
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
@@ -241,6 +244,12 @@ String conversionFailureText(
   ),
   ImmersiveErrorCode.unsupportedFormat => t.ai_immersive_unavailable_format,
   ImmersiveErrorCode.outOfMemory when kind == ConversionKind.splatScene => t.ai_immersive_failed_splat_memory,
+  // "Enhance (AI)": the engine, or its own check before it, found the memory free short (enhance_engine.dart)
+  ImmersiveErrorCode.outOfMemory when kind?.isEnhance ?? false => t.ai_enhance_failed_memory,
+  ImmersiveErrorCode.tooLarge when kind?.isEnhance ?? false => t.ai_enhance_refused_too_large,
+  ImmersiveErrorCode.componentsMissing when message == enhanceNotInThisVersion => t.ai_enhance_refused_not_yet,
+  ImmersiveErrorCode.gpuUnavailable when message?.startsWith(enhanceNoIntDotMessage) ?? false =>
+    t.ai_enhance_failed_no_int_dot,
   ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
   ImmersiveErrorCode.writeFailed when message == libraryNotReadyMessage => t.ai_immersive_library_not_ready,
   ImmersiveErrorCode.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),
@@ -317,6 +326,9 @@ String conversionKindText(Translations t, ConversionKind kind, {bool fromVideo =
   ConversionKind.splatScene when fromVideo => t.ai_immersive_job_type_splat_video,
   ConversionKind.splatScene => t.ai_immersive_job_type_splat_photos,
   ConversionKind.stereoVideo => t.ai_immersive_job_type_video,
+  ConversionKind.enhanceSharpen => t.ai_enhance_job_type(level: t.ai_enhance_level_sharpen),
+  ConversionKind.enhanceRebuild => t.ai_enhance_job_type(level: t.ai_enhance_level_rebuild),
+  ConversionKind.enhanceNatural => t.ai_enhance_job_type(level: t.ai_enhance_level_natural),
 };
 
 /// The honesty label of the files of a kind, as the head of the panel says it
@@ -326,6 +338,9 @@ String conversionKindLabel(Translations t, ConversionKind kind) => switch (kind)
   ConversionKind.panoramaFromPhoto => t.ai_immersive_panorama_honesty,
   ConversionKind.splatScene => t.ai_immersive_splat_honesty,
   ConversionKind.stereoVideo => t.ai_immersive_video_line,
+  ConversionKind.enhanceSharpen ||
+  ConversionKind.enhanceRebuild ||
+  ConversionKind.enhanceNatural => t.ai_enhance_invented,
 };
 
 /// The honesty label of the file of [job]: that of its kind, but the 3D version of a panorama the app generated (chained
@@ -838,7 +853,10 @@ class _JobRowState extends ConsumerState<_JobRow> {
             key: const Key('ai_job_video_missing'),
             style: TextStyle(color: colors.error),
           ),
-        Text(t.ai_immersive_video_paused_kept, key: const Key('ai_job_video_paused'), style: secondary),
+        if (job.kind.isEnhance)
+          Text(t.ai_enhance_paused, key: const Key('ai_job_enhance_paused'), style: secondary)
+        else
+          Text(t.ai_immersive_video_paused_kept, key: const Key('ai_job_video_paused'), style: secondary),
       ],
       if (job.skipReason case final reason?)
         Text(
@@ -929,6 +947,12 @@ class _JobRowState extends ConsumerState<_JobRow> {
             style: TextStyle(color: colors.error),
           ),
         if (job.details case final SplatResultDetails splat) ..._splatDone(t, splat, written, secondary),
+        if (job.details case EnhanceResultDetails(fellBack: true))
+          Text(
+            t.ai_enhance_fell_back,
+            key: const Key('ai_job_enhance_fell_back'),
+            style: TextStyle(color: colors.error),
+          ),
         if (job.videoDone case final made?)
           Text(
             t.ai_immersive_video_done(
@@ -979,6 +1003,25 @@ class _JobRowState extends ConsumerState<_JobRow> {
         ),
       ] else if (!job.state.isEnded)
         TextButton(key: const Key('ai_job_cancel'), onPressed: () => notifier.cancel(job.id), child: Text(t.cancel)),
+      // An enhanced photo: Pause while it waits or runs, then Resume (the photo again from its start) or Cancel
+      if (job.kind.isEnhance && (job.state.isActive || job.state == ConversionState.waiting))
+        TextButton(
+          key: const Key('ai_job_enhance_pause'),
+          onPressed: () => notifier.pause(job.id),
+          child: Text(t.ai_enhance_pause),
+        ),
+      if (job.kind.isEnhance && job.state == ConversionState.paused) ...[
+        FilledButton.tonal(
+          key: const Key('ai_job_enhance_resume'),
+          onPressed: () => notifier.retry(job.id),
+          child: Text(t.ai_enhance_resume),
+        ),
+        TextButton(
+          key: const Key('ai_job_enhance_cancel'),
+          onPressed: () => notifier.cancel(job.id),
+          child: Text(t.cancel),
+        ),
+      ],
       if (video && job.state == ConversionState.paused)
         FilledButton.tonal(
           key: const Key('ai_job_video_resume'),
@@ -1036,6 +1079,14 @@ class _JobRowState extends ConsumerState<_JobRow> {
           child: Text(t.ai_immersive_video_show_in_folder),
         ),
       ],
+      // An enhanced photo of a file of this computer, beside its original: the two compared
+      if (job.kind.isEnhance && job.state == ConversionState.done && written != null)
+        if (job.source case LocalFileSource(:final path))
+          TextButton(
+            key: const Key('ai_job_enhance_compare'),
+            onPressed: () => unawaited(showEnhanceCompare(context, originalPath: path, enhancedPath: written)),
+            child: Text(t.ai_enhance_compare),
+          ),
       if (!video && job.state == ConversionState.done && written != null) ...[
         // A scene is judged here before it goes to the NAS; the panel stays under the preview for the next one
         if (job.kind == ConversionKind.sceneFromPhoto)

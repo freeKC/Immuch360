@@ -74,7 +74,13 @@ SIGNING_SECRETS = ('AZURE_TENANT_ID', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET')
 SIGNING_LINE = re.compile(r'^(\s+)(' + '|'.join(SIGNING_SECRETS) + r'):\s*\$\{\{\s*secrets\.(\w+)\s*\}\}\s*$')
 # The jobs that build stable-diffusion.cpp, by the start of their names, and the image each system builds on
 SDCPP_JOB = 'sdcpp'
-SDCPP_RUNNERS = {'sdcpp-windows': 'windows-2022', 'sdcpp-linux': 'ubuntu-22.04'}
+SDCPP_RUNNERS = {
+    'sdcpp-windows': 'windows-2022',
+    'sdcpp-linux': 'ubuntu-22.04',
+    # The second archive, that of Enhance (AI): asked by inputs.sdcpp_seedvr2, which the check finds as inputs.sdcpp
+    'sdcpp-seedvr2-windows': 'windows-2022',
+    'sdcpp-seedvr2-linux': 'ubuntu-22.04',
+}
 # The jobs that build a program the AI features run beside the app, by the start of their names: what they build, the
 # image of each job and the input that asks for them
 SIDECAR_JOBS = {
