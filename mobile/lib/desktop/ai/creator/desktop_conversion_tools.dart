@@ -63,6 +63,7 @@ import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
 import 'package:immich_mobile/desktop/ai/gpu/graphics_release.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
+import 'package:immich_mobile/desktop/ai/ort/depth_provider.dart';
 import 'package:immich_mobile/desktop/ai/panorama/panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/panorama/stereo_panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
@@ -82,6 +83,7 @@ import 'package:immich_mobile/desktop/files/save_to_folder.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_gpu_runtime_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -1079,6 +1081,20 @@ Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession s
   final bin = p.dirname(ffmpeg);
   final windows = platform == AiPlatform.windowsX64;
   final launcher = platform == AiPlatform.linuxX64 ? p.join(bin, linuxLauncherName) : null;
+  // The graphics card of the depth model (lot ai-360-3d-51): the DirectML runtime installed beside the others
+  // (runtime/onnxruntime-1.31.0/ of the components folder), or carried by a test build beside its executable
+  final cardLibrary = windows
+      ? await findDirectMlRuntime(
+          componentsFolder: p.normalize(p.join(p.dirname(runtime), '..', '..')),
+          executableFolder: p.dirname(Platform.resolvedExecutable),
+        )
+      : null;
+  var depthDevice = depthDeviceAuto;
+  try {
+    depthDevice = (await DesktopAiSettingsStore.instance.read()).videoDepthDevice;
+  } on Object catch (error) {
+    _log.warning('The setting of the depth device was not read: $error');
+  }
   return VideoJobSetup(
     ffmpeg: ffmpeg,
     ffprobe: p.join(bin, windows ? 'ffprobe.exe' : 'ffprobe'),
@@ -1099,6 +1115,8 @@ Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession s
         edgeFade: relief.edgeFade,
         alignment: VideoDepthAlignment.upstream,
         sphereShiftDegrees: relief.sphere ? relief.sphereShiftDegrees : null,
+        cardLibrary: cardLibrary,
+        depthDevice: depthDevice,
       ),
     ),
   );

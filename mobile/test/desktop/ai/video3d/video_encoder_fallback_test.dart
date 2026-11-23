@@ -382,6 +382,25 @@ void main() {
     expect(Directory(p.join(temp.path, '${videoWorkPrefix}clip_3D_LRF_Full_SBS.mp4')).existsSync(), isTrue);
   });
 
+  test('the job log times each stage of a frame, per segment and for the run (lot ai-360-3d-51)', () async {
+    final logs = <String>[];
+    await conversion(runner(), logs: logs).run();
+    final segment = logs.firstWhere((line) => line.startsWith('timings of segment 1, '));
+    expect(
+      segment,
+      allOf(
+        matches(
+          RegExp(
+            r'^timings of segment 1, \d+ frames: decode \d+, window \d+, model \d+, relief \d+, encode \d+ ms a frame \(sum \d+\)$',
+          ),
+        ),
+      ),
+    );
+    expect(logs, contains(startsWith('timings of this run, 60 frames: decode ')));
+    // The order of the log: the timings of a segment follow its line
+    expect(logs.indexOf(segment), greaterThan(logs.indexWhere((line) => line.startsWith('segment 1: frames'))));
+  });
+
   test('the smaller 360° size proposed by a dead end', () {
     expect(videoSmallerSphereEye(4096), 3072);
     expect(videoSmallerSphereEye(3072), 2048);

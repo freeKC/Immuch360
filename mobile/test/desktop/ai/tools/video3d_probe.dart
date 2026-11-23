@@ -16,20 +16,24 @@
 //
 //   --ffmpeg DIR --ort LIBRARY --model FILE --out DIR [--quality standard] [--strength normal]
 //   [--alignment upstream|tenFrame] [--packing full|half] [--segment 30] [--no-fade]
-//   [--frames-npy] [--maps-npy] [--pause-after N] [--sphere EYE_WIDTH] VIDEO...
+//   [--frames-npy] [--maps-npy] [--pause-after N] [--sphere EYE_WIDTH] [--card LIBRARY [--device auto|card:NAME]
+//   [--allow-software]] VIDEO...
 // DIR holds bin/ffmpeg and bin/ffprobe (an archive of the FFmpeg program unpacked). Each video gives
 // <out>/<name>_3D_LRF_Full_SBS.mp4 (or Half), its work folder beside it. --maps-npy writes the aligned maps of the
 // model (float32 [frames, height, width]) and --frames-npy the eye frames (uint8 [frames, height, width, 3]) next to
 // it, for depth.py and analyse.py of the probe. --pause-after N pauses the job after its segment N and resumes it at
 // once: the resume check (not with the .npy files, whose held frames would come twice). --sphere EYE_WIDTH makes a
 // 360° video a 360° 3D video of eyes EYE_WIDTH wide (lot ai-360-3d-51), <name>_360_3D.mp4, with the worker of the
-// sphere.
+// sphere. --card gives the DirectML build of ONNX Runtime (lot ai-360-3d-51): the depth model runs on the card its
+// check passes, as in the app (ort/depth_provider.dart), the processor otherwise, said in the log; --allow-software
+// counts the renderer of Windows on the processor (WARP) as a card, for the runners of the CI that have no other.
 
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:immich_mobile/desktop/ai/ort/depth_provider.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/video3d/sphere_video_worker.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
@@ -191,7 +195,7 @@ Future<int> runVideo3dProbe(List<String> args) async {
   final videos = <String>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
-    if (const {'--frames-npy', '--maps-npy', '--no-fade'}.contains(arg)) {
+    if (const {'--frames-npy', '--maps-npy', '--no-fade', '--allow-software'}.contains(arg)) {
       flags.add(arg);
     } else if (arg.startsWith('--')) {
       options[arg] = args[++i];
@@ -219,7 +223,7 @@ Future<int> runVideo3dProbe(List<String> args) async {
     edgeFade: !flags.contains('--no-fade'),
     sphere: sphere != null,
   );
-  final runtime = OrtRuntime.load(ortLibrary);
+  final cardLibrary = options['--card'];
   final ffmpeg = p.join(ffmpegDir, 'bin', Platform.isWindows ? 'ffmpeg.exe' : 'ffmpeg');
   final ffprobe = p.join(ffmpegDir, 'bin', Platform.isWindows ? 'ffprobe.exe' : 'ffprobe');
   Directory(outDir).createSync(recursive: true);
@@ -232,7 +236,25 @@ Future<int> runVideo3dProbe(List<String> args) async {
     final windowMs = <int>[];
     _NpyWriter? frames;
     _NpyWriter? maps;
-    final session = runtime.openSession(modelPath, settings: OrtSessionSettings.forThisComputer());
+    final settings = OrtSessionSettings.forThisComputer();
+    DepthSession? depth;
+    DepthSession openFor(int width, int height) {
+      final opened = depth = openDepthSession(
+        processorLibrary: ortLibrary,
+        cardLibrary: cardLibrary,
+        modelPath: modelPath,
+        width: width,
+        height: height,
+        settings: settings,
+        choice: cardLibrary == null ? depthDeviceProcessor : options['--device'] ?? depthDeviceAuto,
+        allowSoftware: flags.contains('--allow-software'),
+      );
+      for (final line in opened.lines) {
+        _emit('log', {'line': line});
+      }
+      return opened;
+    }
+
     var paused = false;
     VideoConversion make() {
       late VideoConversion conversion;
@@ -276,17 +298,27 @@ Future<int> runVideo3dProbe(List<String> args) async {
           }
           final ops = nativeVideoFrameOps(threads: 2) ?? const DartVideoFrameOps();
           _emit('log', {'line': 'frame work: ${ops.name}'});
+          final opened = depth ?? openFor(modelWidth, modelHeight);
           Float32List run(Float32List input, int width, int height) {
             final watch = Stopwatch()..start();
-            final output = session
-                .runNamed({
-                  'frames': OrtTensor([1, vdaWindowLength, 3, height, width], input),
-                })
-                .values
-                .single;
+            final output = runDepthWindow(
+              onCard: opened.session.provider.isGraphicsCard,
+              run: () => opened.session
+                  .runNamed({
+                    'frames': OrtTensor([1, vdaWindowLength, 3, height, width], input),
+                  })
+                  .values
+                  .single
+                  .values,
+              toProcessor: (reason) {
+                opened.session.close();
+                opened.session = opened.runtime.openSession(modelPath, settings: settings);
+                _emit('log', {'line': 'the graphics card failed during the job ($reason): on the processor now'});
+              },
+            );
             windowMs.add(watch.elapsedMilliseconds);
-            _emit('window', {'ms_run': watch.elapsedMilliseconds});
-            return output.values;
+            _emit('window', {'ms_run': watch.elapsedMilliseconds, 'on': opened.session.provider.toString()});
+            return output;
           }
 
           if (sphere != null) {
@@ -384,7 +416,7 @@ Future<int> runVideo3dProbe(List<String> args) async {
       failures++;
       _emit('failed', {'video': video, 'error': '$error', 'stack': '$stack'.split('\n').take(6).join(' | ')});
     } finally {
-      session.close();
+      depth?.session.close();
     }
   }
   return failures;

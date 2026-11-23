@@ -1019,6 +1019,33 @@ jobs:
           PY
           echo "lib=$(cygpath -w "$ort/onnxruntime.dll")" >> "$GITHUB_OUTPUT"
 
+      # The runtime of the graphics card of the 3D videos (lot ai-360-3d-51): onnxruntime.dll of the official NuGet
+      # package Microsoft.ML.OnnxRuntime.DirectML 1.24.4 (MIT), checked by its SHA-256, made into the files of the
+      # prerelease ai-components-6 (not published by this workflow: the artifact ai-components-6-candidate holds them),
+      # its sizes and sums held to mobile/lib/domain/models/ai_immersive/ai_gpu_runtime_manifest.dart. No DirectML.dll:
+      # the library calls the one of Windows. The runner has no graphics card; DirectML runs on WARP there, which the
+      # app never takes as a card, the tests and probes below do (--allow-software)
+      - name: The DirectML runtime of the graphics card
+        id: ort_card
+        run: |
+          out="$(cygpath -u "$RUNNER_TEMP")/ai-components-6"
+          plain="$(cygpath -u "$RUNNER_TEMP")/ort-directml"
+          python .github/desktop/ai/gpu_runtime.py --out "$(cygpath -w "$out")" --plain "$(cygpath -w "$plain")"
+          echo "lib=$(cygpath -w "$plain/onnxruntime.dll")" >> "$GITHUB_OUTPUT"
+          echo "plain=$(cygpath -w "$plain")" >> "$GITHUB_OUTPUT"
+          echo "out=$(cygpath -w "$out")" >> "$GITHUB_OUTPUT"
+          ls -l "$out" "$plain"
+          powershell -NoProfile -Command '(Get-Item C:\Windows\System32\DirectML.dll).VersionInfo.FileVersion' \
+            || echo "no DirectML.dll in System32"
+
+      - name: Upload the files of ai-components-6 (not published)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ai-components-6-candidate
+          path: ${{ steps.ort_card.outputs.out }}
+          retention-days: 14
+          if-no-files-found: error
+
       # The fake sd-cli of the 360° panoramas, for the tests of the runner and of the job object below (lot P2),
       # sdcpp_probe, the program that runs a real generation through the same runner and launcher on a PC with a
       # graphics card (the essay of lot P2), and panorama_probe, the engine of the panoramas on the same PC (the essay
@@ -1041,6 +1068,7 @@ jobs:
           dart compile exe test/desktop/ai/tools/panorama_probe.dart -o "$tools/panorama-probe.exe"
           dart compile exe test/desktop/ai/tools/splat_runner_probe.dart -o "$tools/splat-runner-probe.exe"
           dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$tools/splat_probe.exe"
+          dart compile exe test/desktop/ai/tools/depth_provider_probe.dart -o "$tools/depth-provider-probe.exe"
           echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
           echo "colmap=$(cygpath -w "$tools/fake-colmap.exe")" >> "$GITHUB_OUTPUT"
           echo "brush=$(cygpath -w "$tools/fake-brush.exe")" >> "$GITHUB_OUTPUT"
@@ -1072,6 +1100,7 @@ jobs:
         working-directory: mobile
         env:
           ORT_LIB: ${{ steps.ort.outputs.lib }}
+          ORT_CARD_LIB: ${{ steps.ort_card.outputs.lib }}
         run: |
           work="$(cygpath -u "$RUNNER_TEMP")/video3d"
           mkdir -p "$work/ffmpeg"
@@ -1081,10 +1110,11 @@ jobs:
           (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
           python ../.github/desktop/ai/video3d_ci_clip.py make "$(cygpath -w "$work/ffmpeg/bin/ffmpeg.exe")" "$(cygpath -w "$work/clip.mkv")"
           IMMUCH360_VIDEO3D_ARGS="$(python - "$(cygpath -w "$work")" "$ORT_LIB" "$(cygpath -w "$PWD/test/fixtures/ai_immersive/tiny_vda.onnx")" <<'PY'
-          import json, sys
+          import json, os, sys
           work, ort, model = sys.argv[1:4]
           print(json.dumps(['--ffmpeg', work + '\\ffmpeg', '--ort', ort, '--model', model, '--out', work + '\\out',
-                            '--quality', 'fast', '--segment', '1', work + '\\clip.mkv']))
+                            '--quality', 'fast', '--segment', '1', '--card', os.environ['ORT_CARD_LIB'],
+                            '--allow-software', work + '\\clip.mkv']))
           PY
           )"
           export IMMUCH360_VIDEO3D_ARGS
@@ -1093,22 +1123,25 @@ jobs:
           # A 360° video made 360° 3D (lot ai-360-3d-51), with the encoder of the runner
           python ../.github/desktop/ai/video3d_ci_clip.py make360 "$(cygpath -w "$work/ffmpeg/bin/ffmpeg.exe")" "$(cygpath -w "$work/sphere_360.mkv")"
           IMMUCH360_VIDEO3D_ARGS="$(python - "$(cygpath -w "$work")" "$ORT_LIB" "$(cygpath -w "$PWD/test/fixtures/ai_immersive/tiny_vda.onnx")" <<'PY'
-          import json, sys
+          import json, os, sys
           work, ort, model = sys.argv[1:4]
           print(json.dumps(['--ffmpeg', work + '\\ffmpeg', '--ort', ort, '--model', model, '--out', work + '\\out360',
                             '--quality', 'fast', '--strength', 'strong', '--segment', '1', '--sphere', '512',
-                            work + '\\sphere_360.mkv']))
+                            '--card', os.environ['ORT_CARD_LIB'], '--allow-software', work + '\\sphere_360.mkv']))
           PY
           )"
           export IMMUCH360_VIDEO3D_ARGS
           flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded | tee "$work/run360.log"
           python ../.github/desktop/ai/video3d_ci_clip.py check360 "$(cygpath -w "$work/run360.log")"
+          # Where the depth model ran, as the job logs say it (the card of the runner is WARP, counted here only)
+          grep -h -o '"line":"[^"]*\(graphics card\|depth model\|check of\|timings of\)[^"]*"' "$work/run.log" "$work/run360.log" || true
 
       # IMMUCH360_REQUIRE_SBS_CODEC: the dart:ffi tests of the JPEG codec fail rather than skip without the library
       - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts, ONNX Runtime, the job object)
         working-directory: mobile
         env:
           IMMUCH360_ORT_LIB: ${{ steps.ort.outputs.lib }}
+          IMMUCH360_ORT_CARD_LIB: ${{ steps.ort_card.outputs.lib }}
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
           IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
           IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
@@ -1202,6 +1235,27 @@ jobs:
           if info is None:
               sys.exit('::error::no immuch_sbs_codec.dll next to immuch360.exe in the ZIP')
           print(f'immuch_sbs_codec.dll: {info.file_size} bytes in the ZIP')
+          PY
+
+      # The runtime of the graphics card in the test ZIP only (lot ai-360-3d-51), while ai-components-6 is not
+      # published: ai-gpu/onnxruntime-directml-1.24.4/ beside the executable, the DLL with its MIT licence and notices,
+      # which the app takes when its size and SHA-256 are those of its catalogue. Not in the installer, not in a
+      # release build (tags)
+      - name: The DirectML runtime in the test ZIP
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+          PLAIN: ${{ steps.ort_card.outputs.plain }}
+        run: |
+          python - "$ZIP" "$PLAIN" <<'PY'
+          import hashlib, pathlib, sys, zipfile
+          archive, plain = sys.argv[1], pathlib.Path(sys.argv[2])
+          top = 'Immuch360 Desktop/ai-gpu/onnxruntime-directml-1.24.4/'
+          with zipfile.ZipFile(archive, 'a', compression=zipfile.ZIP_DEFLATED) as bundle:
+              for name in ('onnxruntime.dll', 'LICENSE.txt', 'ThirdPartyNotices.txt'):
+                  data = (plain / name).read_bytes()
+                  bundle.writestr(top + name, data)
+                  print(f'{top}{name}: {len(data)} bytes, SHA-256 {hashlib.sha256(data).hexdigest()}')
           PY
 
       # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
@@ -1386,6 +1440,21 @@ jobs:
       # The app as Flutter builds it: universal, signed for the computer that runs it only ("Sign to Run Locally", no
       # Apple certificate) and not notarized, so macOS asks for a confirmation at the first start. Zipped with ditto,
       # which keeps the attributes of the bundle, and in a DMG with a link to the Applications folder
+      # Core ML of ONNX Runtime 1.31.0 for Apple silicon (lot ai-360-3d-51): the library the app installs (the asset of
+      # ai-components-1, checked by the SHA-256 of the catalogue), the depth model's check against the processor and
+      # one window on Core ML; the runner proves it loads and runs, not the speed of a Mac
+      - name: Core ML of ONNX Runtime for the depth model
+        working-directory: mobile
+        run: |
+          ort="$RUNNER_TEMP/ort-macos"
+          mkdir -p "$ort"
+          curl -sSfL --retry 3 -o "$ort/ort.dylib.gz" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-1/onnxruntime-1.31.0-osx-arm64.dylib.gz
+          gunzip -c "$ort/ort.dylib.gz" > "$ort/libonnxruntime.1.31.0.dylib"
+          echo "2a50a63e7f41f8d4d551d3ee47248df3864f6540109fce8ad520ca3b51af4b70  $ort/libonnxruntime.1.31.0.dylib" | shasum -a 256 -c -
+          IMMUCH360_ORT_LIB="$ort/libonnxruntime.1.31.0.dylib" IMMUCH360_ORT_COREML=1 \
+            mise exec -- flutter test test/desktop/ai/ort/depth_provider_test.dart --reporter expanded
+
       - name: ZIP and DMG
         id: app
         env:

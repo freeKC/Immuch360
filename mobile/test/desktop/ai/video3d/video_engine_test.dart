@@ -103,7 +103,10 @@ void main() {
     final runner = FakeFfmpegRunner(probe: fakeVideoProbe(100, 4), times: times);
     final logs = <String>[];
     final resumed = await conversion(runner, 'resumed.mp4', onLog: logs.add).run();
-    expect(logs.where((line) => line.startsWith('encoder test')), isEmpty);
+    // Only the encoder of the job file, tested again before the first frame (lot ai-360-3d-51)
+    expect(logs.where((line) => line.startsWith('encoder test')), [
+      'encoder test svtAv1 (the encoder of the job, on resume): passed',
+    ]);
     final decoder = runner.calls.firstWhere((call) => call.contains('-stats_enc_pre'));
     expect(decoder, contains('-ss'));
     expect(double.parse(decoder[decoder.indexOf('-ss') + 1]), closeTo(46 / 25 - 0.5 / 25, 1e-6));

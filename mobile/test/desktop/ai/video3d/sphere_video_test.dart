@@ -194,6 +194,17 @@ void main() {
         expect(segment, isNot(contains('stereo_mode=left_right')));
       }
       expect(logs, contains(startsWith('marked as a 360° video top and bottom: 1 video track')));
+      // The stages of the sphere timed in the job log (lot ai-360-3d-51)
+      expect(
+        logs,
+        contains(
+          matches(
+            RegExp(
+              r'^timings of this run, \d+ frames: decode \d+, faces \d+, window \d+, model \d+, merge \d+, right eye \d+, encode \d+ ms a frame',
+            ),
+          ),
+        ),
+      );
       final output = File(p.join(temp.path, 'trip_360_3D.mp4'));
       final bytes = output.readAsBytesSync();
       final probe = await probeSphericalMetadata(

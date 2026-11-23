@@ -111,6 +111,7 @@ class LocalSphereVideoFrameWorker implements VideoFrameWorker {
       throw StateError('No frame $index of the sphere');
     }
     final reset = _resets.remove(index) || _alignment == null;
+    final watch = Stopwatch()..start();
     final x = [for (final face in faces) sphereFaceNormalised(face.map, face.p2, face.p98)];
     final solved = _merger.align(x);
     final alignment = _alignment = smoothAlignments(reset ? null : _alignment, solved);
@@ -125,20 +126,39 @@ class LocalSphereVideoFrameWorker implements VideoFrameWorker {
     }
     final map = sphereRelief(values, _merger.mapWidth, _merger.mapHeight, _lo!, _hi!);
     onSphere?.call(index, map, alignment);
-    final eyeBytes = eyeWidth * eyeHeight * 3;
-    final frame = Uint8List(2 * eyeBytes)..setRange(0, eyeBytes, left);
-    final eye = writeRelief360RightEye(
-      left: left,
-      width: eyeWidth,
-      height: eyeHeight,
-      map: map,
-      lowRelief: false,
-      maxShiftDegrees: shiftDegrees,
-      target: frame,
-      targetOffset: eyeBytes,
-      channels: 3,
-    );
-    return VideoSbsFrame(index: index, bytes: frame, holes: eye.filledPixels);
+    _clock.add(VideoStage.merge, watch.elapsedMicroseconds);
+    return _clock.time(VideoStage.rightEye, () {
+      final eyeBytes = eyeWidth * eyeHeight * 3;
+      final frame = Uint8List(2 * eyeBytes)..setRange(0, eyeBytes, left);
+      final eye = writeRelief360RightEye(
+        left: left,
+        width: eyeWidth,
+        height: eyeHeight,
+        map: map,
+        lowRelief: false,
+        maxShiftDegrees: shiftDegrees,
+        target: frame,
+        targetOffset: eyeBytes,
+        channels: 3,
+      );
+      return VideoSbsFrame(index: index, bytes: frame, holes: eye.filledPixels);
+    });
+  }
+
+  final _clock = VideoStageClock();
+
+  int get _modelMicros => _loops.fold(0, (sum, loop) => sum + loop.modelMicros);
+
+  /// The six loops, the model's time apart
+  List<List<VdaFinalFrame>> _timedLoops(List<VdaFinalFrame> Function(VdaWindowLoop loop, int face) step) {
+    final model = _modelMicros;
+    final watch = Stopwatch()..start();
+    final perView = [for (var k = 0; k < _loops.length; k++) step(_loops[k], k)];
+    final spent = _modelMicros - model;
+    _clock
+      ..add(VideoStage.window, watch.elapsedMicroseconds - spent)
+      ..add(VideoStage.model, spent);
+    return perView;
   }
 
   @override
@@ -150,12 +170,15 @@ class LocalSphereVideoFrameWorker implements VideoFrameWorker {
       _resets.add(index);
     }
     _frames[index] = rgb;
-    final faces = _sampler.sample(rgb);
-    return _gather([for (var k = 0; k < _loops.length; k++) _loops[k].add(faces[k], cut: cut)]);
+    final faces = _clock.time(VideoStage.faces, () => _sampler.sample(rgb));
+    return _gather(_timedLoops((loop, k) => loop.add(faces[k], cut: cut)));
   }
 
   @override
-  Future<List<VideoSbsFrame>> finish() async => _gather([for (final loop in _loops) loop.finish()]);
+  Future<List<VideoSbsFrame>> finish() async => _gather(_timedLoops((loop, _) => loop.finish()));
+
+  @override
+  Future<VideoWorkerReport> report() async => VideoWorkerReport(stages: Map.of(_clock.micros));
 
   @override
   Future<VdaLoopState?> stateAfterWindow() async {

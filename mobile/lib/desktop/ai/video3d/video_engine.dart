@@ -159,7 +159,69 @@ abstract interface class VideoFrameWorker {
   /// Windows run and cuts found so far
   Future<({int windows, List<int> cuts})> counts();
 
+  /// The lines for the job log since the last call, and the time of each stage so far
+  Future<VideoWorkerReport> report();
+
   Future<void> close();
+}
+
+/// What a worker tells the job: the lines for its log written since the last call (where the depth model runs, a
+/// graphics card that failed), and the time each stage of its frames took so far, in microseconds, by stage:
+/// [VideoStage] names
+class VideoWorkerReport {
+  const VideoWorkerReport({this.lines = const [], this.stages = const {}});
+
+  final List<String> lines;
+  final Map<String, int> stages;
+}
+
+/// The stages of a frame the job log times (lot ai-360-3d-51): decode and encode by the engine, the others by the
+/// worker. [window] is the work of the window loop around the model (the frames brought to the model's size and
+/// normalised, the blend of the windows, the cut detector); [relief] the right eye of a flat video.
+abstract final class VideoStage {
+  static const decode = 'decode';
+  static const faces = 'faces';
+  static const window = 'window';
+  static const model = 'model';
+  static const merge = 'merge';
+  static const rightEye = 'right eye';
+  static const relief = 'relief';
+  static const encode = 'encode';
+
+  /// The order of the log
+  static const order = [decode, faces, window, model, merge, rightEye, relief, encode];
+}
+
+/// Time per stage, in microseconds
+class VideoStageClock {
+  final micros = <String, int>{};
+
+  /// [run], its time added to [stage]
+  T time<T>(String stage, T Function() run) {
+    final watch = Stopwatch()..start();
+    try {
+      return run();
+    } finally {
+      add(stage, watch.elapsedMicroseconds);
+    }
+  }
+
+  void add(String stage, int elapsed) => micros[stage] = (micros[stage] ?? 0) + elapsed;
+}
+
+/// "decode 12, faces 40, model 1900, ... ms a frame" over [frames] frames, from the times [now] minus [before]
+String videoStageLine(Map<String, int> now, Map<String, int> before, int frames) {
+  final parts = <String>[];
+  var total = 0;
+  for (final stage in [...VideoStage.order, ...now.keys.where((key) => !VideoStage.order.contains(key))]) {
+    final spent = (now[stage] ?? 0) - (before[stage] ?? 0);
+    if (spent <= 0 && !now.containsKey(stage)) {
+      continue;
+    }
+    total += spent;
+    parts.add('$stage ${(spent / 1000 / math.max(1, frames)).round()}');
+  }
+  return '${parts.join(', ')} ms a frame (sum ${(total / 1000 / math.max(1, frames)).round()})';
 }
 
 /// How a frame is drawn
@@ -255,11 +317,27 @@ class LocalVideoFrameWorker implements VideoFrameWorker {
     return VideoSbsFrame(index: frame.index, bytes: sbs, holes: holes);
   }
 
-  @override
-  Future<List<VideoSbsFrame>> add(Uint8List rgb) async => _draw(_loop.add(rgb));
+  final _clock = VideoStageClock();
+
+  /// The window loop, the model's time apart, then the right eyes
+  List<VideoSbsFrame> _timed(List<VdaFinalFrame> Function() loop) {
+    final model = _loop.modelMicros;
+    final watch = Stopwatch()..start();
+    final finals = loop();
+    _clock
+      ..add(VideoStage.window, watch.elapsedMicroseconds - (_loop.modelMicros - model))
+      ..add(VideoStage.model, _loop.modelMicros - model);
+    return _clock.time(VideoStage.relief, () => _draw(finals));
+  }
 
   @override
-  Future<List<VideoSbsFrame>> finish() async => _draw(_loop.finish());
+  Future<List<VideoSbsFrame>> add(Uint8List rgb) async => _timed(() => _loop.add(rgb));
+
+  @override
+  Future<List<VideoSbsFrame>> finish() async => _timed(_loop.finish);
+
+  @override
+  Future<VideoWorkerReport> report() async => VideoWorkerReport(stages: Map.of(_clock.micros));
 
   @override
   Future<VdaLoopState?> stateAfterWindow() async => _loop.stateAfterWindow();
@@ -1122,6 +1200,13 @@ class VideoConversion {
       modelWidth: model.width,
       modelHeight: model.height,
     );
+    // Where the depth model runs, said by the worker before the first frame
+    for (final line in (await worker.report()).lines) {
+      _log(line);
+    }
+    final clock = VideoStageClock();
+    var stagesBefore = <String, int>{};
+    final jobStages = <String, int>{};
     final ptsFile = File(p.join(folder.path, 'pts.txt'));
     final times = <double>[];
     if (state != null && ptsFile.existsSync()) {
@@ -1147,6 +1232,31 @@ class VideoConversion {
         : ((info.duration ?? 0) * (grid.slowMotion ? 30 : grid.rate.value)).round();
     var segmentIndex = jobFile.segments.isEmpty ? 0 : jobFile.segments.last.index;
     var done = state?.firstHeld ?? 0;
+    var framesBefore = done;
+    final framesAtStart = done;
+
+    // The lines of the worker, and with [what] the time of each stage per frame since the last timings
+    Future<void> logReport([String? what]) async {
+      final told = await worker.report();
+      for (final line in told.lines) {
+        _log(line);
+      }
+      if (what == null) {
+        return;
+      }
+      final now = {...told.stages, ...clock.micros};
+      if (done > framesBefore) {
+        _log(
+          'timings of $what, ${done - framesBefore} frames: ${videoStageLine(now, stagesBefore, done - framesBefore)}',
+        );
+      }
+      stagesBefore = now;
+      jobStages
+        ..clear()
+        ..addAll(now);
+      framesBefore = done;
+    }
+
     var holesSum = 0.0;
     var holesCount = 0;
     final segmentFrames = math.max(vdaStep, (request.segmentSeconds * grid.rate.value).round());
@@ -1286,6 +1396,7 @@ class VideoConversion {
         await _deleteQuietly(File(p.join(folder.path, VideoSegment.stateNameOf(previous.index))));
       }
       _log('segment ${current.index}: frames ${current.firstFrame} to ${done - 1}, ${current.slots} slots');
+      await logReport('segment ${current.index}');
     }
 
     final VideoJobEncoded encoded;
@@ -1309,7 +1420,9 @@ class VideoConversion {
       }
       while (true) {
         _checkStop();
+        final reading = Stopwatch()..start();
         final frame = await reader.next();
+        clock.add(VideoStage.decode, reading.elapsedMicroseconds);
         if (frame == null) {
           break;
         }
@@ -1324,9 +1437,12 @@ class VideoConversion {
         final finals = await worker.add(frame);
         _checkStop();
         pendingFrames.addAll(finals);
+        final writing = Stopwatch()..start();
         await writeFrames(atEnd: false);
+        clock.add(VideoStage.encode, writing.elapsedMicroseconds);
         if ((await worker.counts()).windows > windowsBefore) {
           windowTimes.add(_now());
+          await logReport();
           if (writer != null && done - writer!.firstFrame >= segmentFrames && pendingFrames.isEmpty) {
             final loopState = await worker.stateAfterWindow();
             if (loopState != null && loopState.firstHeld == done) {
@@ -1354,7 +1470,9 @@ class VideoConversion {
       }
       _running.remove(decoder);
       pendingFrames.addAll(await worker.finish());
+      final writing = Stopwatch()..start();
       await writeFrames(atEnd: true);
+      clock.add(VideoStage.encode, writing.elapsedMicroseconds);
       if (writer != null) {
         final current = writer!;
         writer = null;
@@ -1362,6 +1480,12 @@ class VideoConversion {
       }
       await ptsSink.flush();
       await ptsSink.close();
+      await logReport('the last segment');
+      if (done > framesAtStart) {
+        _log(
+          'timings of this run, ${done - framesAtStart} frames: ${videoStageLine(jobStages, const {}, done - framesAtStart)}',
+        );
+      }
       final counts = await worker.counts();
       encoded = VideoJobEncoded(
         frames: done,
