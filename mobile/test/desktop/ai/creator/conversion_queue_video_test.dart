@@ -466,7 +466,7 @@ void main() {
   });
 
   test('a download a quit stopped comes back paused with its part and goes on from it; one whose source cannot be '
-      'made again waits for its original', () async {
+      'made again waits for its server or share, made again at Resume', () async {
     final source = FakeDownloadableOriginal('VID_quit.mp4', serverBytes);
     final work = videoWorkFolderIn(videos, 'quit');
     final copy = videoOriginalCopyPathOf(work, 'VID_quit.mp4');
@@ -494,7 +494,15 @@ void main() {
         original: const {'kind': 'fake', 'name': 'VID_lost.mp4'},
       ),
     );
-    final notifier = queue(remote: (descriptor) => descriptor['name'] == 'VID_quit.mp4' ? source : null);
+    final lostSource = FakeDownloadableOriginal('VID_lost.mp4', serverBytes);
+    var signedIn = false;
+    final notifier = queue(
+      remote: (descriptor) => switch (descriptor['name']) {
+        'VID_quit.mp4' => source,
+        'VID_lost.mp4' when signedIn => lostSource,
+        _ => null,
+      },
+    );
     final restored = await notifier.restoreVideoJobs();
 
     expect(restored, hasLength(2));
@@ -504,13 +512,24 @@ void main() {
     expect(back.videoDownload, (copied: 3000, total: null));
     expect(back.videoMissing, isNull);
     final lost = restored.firstWhere((job) => job.video!.recordId == 'lost');
-    expect(lost.videoMissing, VideoMissing.original);
+    expect(lost.videoMissing, VideoMissing.source, reason: 'never "put back" a hidden copy the user never had');
 
     notifier.retry(back.id);
     await until((state) => state.byId(back.id)!.state == ConversionState.done);
     expect(source.offsets, [3000]);
     expect((engine as FakeVideoJobEngine).sourceLengths, [5000]);
     expect(Directory(p.dirname(copy)).existsSync(), isFalse);
+
+    // Still signed out: Resume leaves it paused with its reason
+    notifier.retry(lost.id);
+    expect(job(lost.id).state, ConversionState.paused);
+    expect(job(lost.id).videoMissing, VideoMissing.source);
+    // Signed in again: Resume makes its source again and it goes on
+    signedIn = true;
+    notifier.retry(lost.id);
+    expect(job(lost.id).source, same(lostSource));
+    expect(job(lost.id).videoMissing, isNull);
+    await until((state) => state.byId(lost.id)!.state == ConversionState.done);
   });
 
   test('a video with no file on this computer and no bytes to download is skipped with that reason', () async {

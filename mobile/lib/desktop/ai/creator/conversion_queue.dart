@@ -434,6 +434,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// The jobs a disk full failed since the queue paused: Resume runs them again
   final _diskFull = <String>{};
 
+  // The 3D videos of the server or of a share restored without their source (VideoMissing.source): what describes
+  // their original, to make the source again at Resume (the user signed in or reconnected the share since)
+  final _unbuiltSources = <String, Map<String, Object?>>{};
+
   /// The control of each 3D video under way: Pause and Cancel
   final _videoControls = <String, VideoJobControl>{};
 
@@ -650,8 +654,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       } else if (!Directory(record.folder).existsSync()) {
         missing = (missing: VideoMissing.folder, path: record.folder);
       } else if (remote == null && !copied) {
-        // Neither its copy whole nor a way to download the rest (signed out of the server, the share gone)
-        missing = (missing: VideoMissing.original, path: record.sourcePath);
+        // Neither its copy whole nor a way to download the rest (signed out of the server, the share gone): Resume
+        // makes the source again
+        missing = (missing: VideoMissing.source, path: record.sourcePath);
       } else {
         missing = null;
       }
@@ -676,10 +681,35 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         videoMissing: missing?.missing,
         videoDownload: !copied && part.existsSync() ? (copied: part.lengthSync(), total: null) : null,
       );
+      if (missing?.missing == VideoMissing.source) {
+        _unbuiltSources[job.id] = original!;
+      }
       added.add(job);
       state = state.copyWith(jobs: [...state.jobs, job]);
     }
     return added;
+  }
+
+  /// Makes again the source of a 3D video restored without it (VideoMissing.source), true when it is made; false
+  /// leaves the job paused with that reason
+  bool _rebuildSource(String id) {
+    final descriptor = _unbuiltSources[id];
+    if (descriptor == null) {
+      return true;
+    }
+    DownloadableOriginal? remote;
+    try {
+      remote = ref.read(conversionToolsProvider).remoteVideoSource?.call(descriptor);
+    } catch (error) {
+      _log.warning('The source of the 3D video $id cannot be made again: $error');
+    }
+    if (remote == null) {
+      _log.info('The server or the share of the 3D video $id is still out of reach: it stays paused');
+      return false;
+    }
+    _unbuiltSources.remove(id);
+    _set(id, (job) => job.copyWith(source: remote, videoMissing: () => null));
+    return true;
   }
 
   /// Pauses a 3D video: the one under way stops at its next frame (the model's run in progress within a second) with
@@ -794,6 +824,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   void retry(String id) {
     final job = state.byId(id);
     if (job == null || !_retriable(job)) {
+      return;
+    }
+    if (!_rebuildSource(id)) {
       return;
     }
     _diskFull.remove(id);

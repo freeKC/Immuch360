@@ -673,8 +673,10 @@ class ConversionJob {
 
   /// A copy with the values given; [inputPath], [step], [steps], [remaining], [waitingFor], [gpuShortfall],
   /// [segments], [videoProgress], [videoMissing] and [videoDownload] are given as functions, so that they may go back to null; [placed]
-  /// and [keptFolder] go back to null with [restarted] only
+  /// and [keptFolder] go back to null with [restarted] only. [source]: a 3D video of the server or of a share whose
+  /// source was made again at Resume
   ConversionJob copyWith({
+    ConversionSource? source,
     ConversionState? state,
     int? perMille,
     String? writtenPath,
@@ -705,7 +707,7 @@ class ConversionJob {
     ({int copied, int? total})? Function()? videoDownload,
   }) => ConversionJob(
     id: id,
-    source: source,
+    source: source ?? this.source,
     batchIndex: batchIndex,
     batchSize: batchSize,
     target: target,

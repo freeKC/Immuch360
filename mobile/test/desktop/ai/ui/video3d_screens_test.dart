@@ -831,16 +831,11 @@ void main() {
       originals.remote['VID_server.mp4'] = FakeDownloadableOriginal('VID_server.mp4', bytes);
       final container = await openDialog(tester, [_asset('VID_server.mp4')]);
 
-      expect(
-        find.text(
-          'No file of this video on this computer (it is on the server or a share): save it to a folder '
-          'of this computer first',
-        ),
-        findsNothing,
-      );
+      // The plan line reads "<name>: <reason>": a part of it, so that the old refusal is caught
+      expect(find.textContaining('No file of this video on this computer'), findsNothing);
       expect(
         note(tester, 'ai_conversion_video_download'),
-        'This video is not on this computer: it is downloaded first to the drive of its 3D video, and the copy is '
+        'This video is not on this computer: it is downloaded first to the destination drive, and the copy is '
         'deleted once the 3D video is made',
       );
       expect(probe.read_, isEmpty, reason: 'nothing of it to read before it is downloaded');
@@ -1517,6 +1512,36 @@ void main() {
       expect(job.state, ConversionState.paused);
       expect(job.videoMissing, VideoMissing.original);
       expect((await tester.runAsync(jobs.read))!.single.id, 'lost', reason: 'its record stays');
+    });
+
+    testWidgets('a download a quit stopped: the bytes kept, and a server out of reach says to sign in, then Resume', (
+      tester,
+    ) async {
+      await tester.pumpConsumerWidget(
+        VideoResumeDialog(
+          job: ConversionJob(
+            id: 'conversion-1',
+            source: LocalFileSource(p.join(videos, '.immuch360-work-x-original', 'VID_server.mp4')),
+            kind: ConversionKind.stereoVideo,
+            batchIndex: 1,
+            batchSize: 1,
+            target: ConversionTarget(folder: videos, fileName: 'VID_server_3D_LRF_Full_SBS.mp4'),
+            existing: ExistingVersionChoice.newVersion,
+            state: ConversionState.paused,
+            videoMissing: VideoMissing.source,
+            videoDownload: (copied: 2 << 20, total: null),
+          ),
+        ),
+      );
+      expect(
+        tester.widget<Text>(find.byKey(const Key('ai_video_offer_download'))).data,
+        '2.0 MiB of the video downloaded: Resume goes on from there',
+      );
+      expect(
+        tester.widget<Text>(find.byKey(const Key('ai_video_offer_missing'))).data,
+        'The server or the share of this video cannot be reached: sign in to it or reconnect it, then Resume',
+      );
+      expect(find.textContaining('.immuch360-work'), findsNothing, reason: 'never the path of the hidden copy');
     });
 
     testWidgets('Later leaves it paused in the panel', (tester) async {

@@ -83,6 +83,8 @@ class VideoResumeDialog extends StatelessWidget {
         children: [
           Text(t.ai_immersive_video_stopped(percent: (job.progress * 100).floor()), key: const Key('ai_video_stopped')),
           Text(job.source.name, style: Theme.of(context).textTheme.titleSmall),
+          // A download a quit stopped: the bytes kept, which "stopped at 0 %" does not say
+          if (videoDownloadText(t, job) case final download?) Text(download, key: const Key('ai_video_offer_download')),
           if (videoMissingText(t, job) case final missing?)
             Text(
               missing,

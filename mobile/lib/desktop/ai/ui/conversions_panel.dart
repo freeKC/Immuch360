@@ -570,6 +570,7 @@ String? videoMissingText(Translations t, ConversionJob job) => switch (job.video
     },
   ),
   VideoMissing.folder => t.ai_immersive_video_folder_missing(path: job.target?.folder ?? ''),
+  VideoMissing.source => t.ai_immersive_video_source_unreachable,
   null => null,
 };
 

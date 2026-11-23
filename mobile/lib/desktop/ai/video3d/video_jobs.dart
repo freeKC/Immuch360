@@ -317,8 +317,10 @@ class VideoJobDone {
 }
 
 /// What a 3D video lacks to go on: its original, or the destination folder its work and its MP4 are in (a drive or a
-/// share of the NAS not connected, a file moved or renamed). Its work stays for a Resume once it is back.
-enum VideoMissing { original, folder }
+/// share of the NAS not connected, a file moved or renamed), or, for a video of the server or of a share whose download
+/// a quit stopped, the server or the share to download the rest from (signed out, the share gone): [source]. Its work
+/// stays for a Resume once it is back.
+enum VideoMissing { original, folder, source }
 
 /// A 3D video that cannot go on now, its work kept: [path] is what is not there
 class VideoJobUnreachable implements Exception {
