@@ -300,11 +300,86 @@ void main() {
     final resumed = await conversion(fake, logs: logs).run();
     expect(resumed.encoder, VideoEncoder.h264Mf);
     expect(resumed.frames, 60);
-    expect(logs.where((line) => line.startsWith('encoder test')), isEmpty, reason: 'the job file names its encoder');
+    // The encoder of the job file is tested again before the first frame, and only that one
+    expect(logs.where((line) => line.startsWith('encoder test')), [
+      'encoder test h264Mf (the encoder of the job, on resume): passed',
+    ]);
     expect(
       fake.calls.skip(calls).where((call) => call.contains('pipe:0')),
       everyElement(isNot(contains('-hw_encoding'))),
     );
+  });
+
+  test(
+    'on resume the encoder of the job fails its test: the next one passes, makes the kept segments again, goes on',
+    () async {
+      // A first run on the hardware encoder, paused after a segment was kept
+      final fake = runner();
+      late VideoConversion first;
+      first = conversion(
+        fake,
+        betweenWindows: () async {
+          final job = await VideoJobFile.read(
+            Directory(p.join(temp.path, '${videoWorkPrefix}clip_3D_LRF_Full_SBS.mp4')),
+          );
+          if (job != null && job.segments.isNotEmpty) {
+            first.pause();
+          }
+        },
+      );
+      await expectLater(first.run(), throwsA(isA<VideoJobStopped>()));
+      final work = Directory(p.join(temp.path, '${videoWorkPrefix}clip_3D_LRF_Full_SBS.mp4'));
+      final before = await VideoJobFile.read(work);
+      expect(before!.settings['encoder'], 'h264MfHardware');
+      expect(before.segments, isNotEmpty);
+
+      // The driver changed meanwhile: the hardware encoder no longer passes its test
+      final later = runner(passing: const {VideoEncoder.h264Mf, VideoEncoder.svtAv1});
+      final logs = <String>[];
+      final progress = <VideoJobProgress>[];
+      final memory = _Memory();
+      final resumed = await conversion(later, logs: logs, progress: progress, memory: memory).run();
+      expect(resumed.encoder, VideoEncoder.h264Mf);
+      expect(resumed.frames, 60);
+      expect(logs.where((line) => line.startsWith('encoder test')).toList(), [
+        allOf(
+          startsWith('encoder test h264MfHardware (the encoder of the job, on resume): failed '),
+          contains('Could not write header'),
+        ),
+        'encoder test h264Mf: passed',
+      ]);
+      expect(logs, contains('the encoder h264MfHardware of the job failed its test on resume: continuing with h264Mf'));
+      expect(logs, contains('segment 1 made again by h264Mf'));
+      expect(progress.last.encoderSwitch, (from: VideoEncoder.h264MfHardware, to: VideoEncoder.h264Mf));
+      expect(memory.stopped, isEmpty, reason: 'a failed test is not a stop during a job');
+      expect((await VideoJobFile.read(work))?.settings['encoder'], anyOf(isNull, 'h264Mf'));
+      // No frame went to the hardware encoder after the resume: the test came before the first frame
+      expect(segmentCalls(later), everyElement(isNot(contains('-hw_encoding'))));
+      final out = File(p.join(temp.path, 'clip_3D_LRF_Full_SBS.mp4')).readAsStringSync();
+      expect(out, startsWith('remade by h264Mf: '));
+    },
+  );
+
+  test('on resume no encoder passes its test: the job fails with the reason, the work folder kept', () async {
+    final fake = runner();
+    late VideoConversion first;
+    first = conversion(
+      fake,
+      betweenWindows: () async {
+        final job = await VideoJobFile.read(Directory(p.join(temp.path, '${videoWorkPrefix}clip_3D_LRF_Full_SBS.mp4')));
+        if (job != null && job.segments.isNotEmpty) {
+          first.pause();
+        }
+      },
+    );
+    await expectLater(first.run(), throwsA(isA<VideoJobStopped>()));
+    final logs = <String>[];
+    await expectLater(
+      conversion(runner(passing: const {}), logs: logs).run(),
+      throwsA(isA<VideoJobException>().having((error) => error.message, 'message', contains('passed its test'))),
+    );
+    expect(logs.where((line) => line.startsWith('encoder test')), hasLength(3));
+    expect(Directory(p.join(temp.path, '${videoWorkPrefix}clip_3D_LRF_Full_SBS.mp4')).existsSync(), isTrue);
   });
 
   test('the smaller 360° size proposed by a dead end', () {

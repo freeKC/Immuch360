@@ -1058,16 +1058,32 @@ class VideoConversion {
     }
 
     _frame = (width: outWidth, height: outHeight, rate: grid.rate, markLeftRight: sphereEye == null);
-    final encoder =
-        _switchedTo ??
-        (job != null && job.settings['encoder'] is String
-            ? VideoEncoder.values.byName(job.settings['encoder']! as String)
-            : await _chooseEncoder(outWidth, outHeight, grid.rate, markLeftRight: sphereEye == null));
-    if (encoder == null) {
+    final remembered = job != null && job.settings['encoder'] is String
+        ? VideoEncoder.values.asNameMap()[job.settings['encoder']! as String]
+        : null;
+    if (job != null && remembered == null) {
+      _log('the work folder names an encoder this version does not know: started again');
+      job = null;
+      state = null;
+    }
+    final VideoEncoder? chosen;
+    if (_switchedTo case final switched?) {
+      chosen = switched;
+    } else if (job != null && remembered != null) {
+      // A resumed job tests the encoder its file names before the first frame, as a new job tests its own: a driver
+      // updated or a card changed since the pause would otherwise stop at the first segment (only the mux needs none)
+      chosen = job.encoded != null
+          ? remembered
+          : await _retestOnResume(job, remembered, outWidth, outHeight, grid.rate, markLeftRight: sphereEye == null);
+    } else {
+      chosen = await _chooseEncoder(outWidth, outHeight, grid.rate, markLeftRight: sphereEye == null);
+    }
+    if (chosen == null) {
       throw VideoJobException(
         'No encoder of the FFmpeg program passed its test at ${outWidth}x$outHeight (the log of the job says why)',
       );
     }
+    final encoder = chosen;
     if (job == null) {
       for (final entity in folder.listSync()) {
         entity.deleteSync(recursive: true);
@@ -1384,6 +1400,65 @@ class VideoConversion {
       }
     }
     return _mux(jobFile, encoded, json, info, check.audio, grid, encoder, started);
+  }
+
+  /// The encoder of a resumed job: [remembered], the one its file names, when it passes its test again at this frame;
+  /// else the first other encoder of the list that passes, the segments kept made again by it (so that the mux joins
+  /// one codec), the job file and the row told of the switch. Null when none passes. A failed test is not a stop during
+  /// a job: this computer does not remember it.
+  Future<VideoEncoder?> _retestOnResume(
+    VideoJobFile job,
+    VideoEncoder remembered,
+    int width,
+    int height,
+    VideoRate rate, {
+    required bool markLeftRight,
+  }) async {
+    final failure = await testVideoEncoder(
+      runner,
+      request.ffmpeg,
+      request.ffprobe,
+      remembered,
+      width,
+      height,
+      rate,
+      folder: request.workFolder,
+      markLeftRight: markLeftRight,
+    );
+    _log(
+      'encoder test ${remembered.name} (the encoder of the job, on resume): ${failure == null ? 'passed' : 'failed $failure'}',
+    );
+    if (failure == null) {
+      return remembered;
+    }
+    final order = request.encoders ?? VideoEncoder.forThisComputer;
+    final next = await chooseVideoEncoder(
+      runner,
+      request.ffmpeg,
+      request.ffprobe,
+      [
+        for (final other in order)
+          if (other != remembered) other,
+      ],
+      width,
+      height,
+      rate,
+      folder: request.workFolder,
+      markLeftRight: markLeftRight,
+      onTest: _logTest,
+    );
+    if (next == null) {
+      return null;
+    }
+    if (job.segments.isNotEmpty) {
+      await _remakeSegments(job, next, _frame!);
+    }
+    job.settings['encoder'] = next.name;
+    await job.write(request.workFolder);
+    _switchedTo = next;
+    _switch = (from: remembered, to: next);
+    _log('the encoder ${remembered.name} of the job failed its test on resume: continuing with ${next.name}');
+    return next;
   }
 
   /// The encoder of a new job: the first of the list that passes its test at this frame, those that stopped during a
