@@ -213,7 +213,15 @@ class SettingsFileExportPage extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 8,
                 children: [
-                  Text(context.t.settings_file_stays_here, style: context.textTheme.bodyMedium),
+                  // "share or save" only where a Share button is offered: a TV with a share has Save to a network
+                  // share alone
+                  Text(
+                    io.canShare && !sharesOnly
+                        ? context.t.settings_file_stays_here
+                        : context.t.settings_file_stays_here_save,
+                    key: const Key('settings_file_stays_here'),
+                    style: context.textTheme.bodyMedium,
+                  ),
                   Text(
                     context.t.settings_file_device_only_note,
                     style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.onSurfaceVariant),

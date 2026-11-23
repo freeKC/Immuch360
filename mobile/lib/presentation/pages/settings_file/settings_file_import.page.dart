@@ -17,6 +17,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/settings_file/settings_file_share.page.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/settings_file/settings_file.provider.dart';
 import 'package:immich_mobile/providers/settings_file/settings_file_io.dart';
 import 'package:immich_mobile/providers/settings_file/settings_file_share_io.dart';
@@ -56,6 +57,24 @@ class SettingsFileImportPage extends HookConsumerWidget {
     final error = useState<Object?>(null);
     final working = useState(false);
     final passphrase = useTextEditingController();
+    final remote = ref.watch(tvModeProvider);
+    // With a remote the report starts on its Done (or Continue) button, not on the Back arrow of the bar: the Restore
+    // button that had the focus is gone, and the report ends on that button
+    final finishFocus = useFocusNode(debugLabel: 'settings_file_finish');
+    final reportShown = report.value != null;
+    useEffect(() {
+      if (reportShown && remote) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final finishContext = finishFocus.context;
+          if (!context.mounted || finishContext == null) {
+            return;
+          }
+          finishFocus.requestFocus();
+          unawaited(Scrollable.ensureVisible(finishContext, alignment: 1));
+        });
+      }
+      return null;
+    }, [reportShown, remote]);
 
     String messageOf(Object e) {
       final t = context.t;
@@ -205,6 +224,7 @@ class SettingsFileImportPage extends HookConsumerWidget {
       children = [SettingsFileReportView(report: report.value!)];
       action = FilledButton(
         key: const Key('settings_file_finish'),
+        focusNode: finishFocus,
         onPressed: finish,
         child: Text(switch (report.value!) {
           SettingsFileReport(signIn: SettingsFileSignIn(result: SettingsFileSignInResult.refused)) =>

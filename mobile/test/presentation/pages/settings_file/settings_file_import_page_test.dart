@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/settings_file/settings_file.dart';
 import 'package:immich_mobile/domain/services/settings_file/settings_file_crypto.dart';
 import 'package:immich_mobile/presentation/pages/settings_file/settings_file_import.page.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/settings_file/settings_file.provider.dart';
 import 'package:immich_mobile/providers/settings_file/settings_file_io.dart';
 
@@ -111,6 +113,7 @@ void main() {
     String? picked,
     bool signedIn = false,
     SettingsFileReport? report,
+    bool remote = false,
   }) async {
     tester.view
       ..physicalSize = const Size(1200, 4000)
@@ -122,6 +125,7 @@ void main() {
       overrides: [
         settingsFileServiceProvider.overrideWithValue(service),
         settingsFileIoProvider.overrideWithValue(_FakeIo(picked)),
+        tvModeProvider.overrideWithValue(remote),
       ],
     );
     return service;
@@ -297,5 +301,24 @@ void main() {
   testWidgets('no account in the file: no sign in line', (tester) async {
     await restoreWith(tester, const SettingsFileReport([accountLine]));
     expect(find.byKey(const Key('settings_file_sign_in')), findsNothing);
+  });
+
+  testWidgets('with a remote the report starts on Done, not on the Back arrow of the bar', (tester) async {
+    await pumpPage(tester, initialText: clearFile, remote: true);
+    final restore = find.byKey(const Key('settings_file_restore'));
+    Focus.of(tester.element(find.descendant(of: restore, matching: find.byType(Text)))).requestFocus();
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+
+    final finish = find.byKey(const Key('settings_file_finish'));
+    expect(find.descendant(of: finish, matching: find.text('Done')), findsOneWidget);
+    expect(Focus.of(tester.element(find.descendant(of: finish, matching: find.byType(Text)))).hasPrimaryFocus, isTrue);
+  });
+
+  testWidgets('without a remote the report gives no focus of its own', (tester) async {
+    await restoreWith(tester, const SettingsFileReport([accountLine]));
+    final finish = find.byKey(const Key('settings_file_finish'));
+    expect(Focus.of(tester.element(find.descendant(of: finish, matching: find.byType(Text)))).hasPrimaryFocus, isFalse);
   });
 }

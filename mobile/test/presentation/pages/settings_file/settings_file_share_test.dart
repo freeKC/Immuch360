@@ -367,12 +367,16 @@ void main() {
       expect(find.byKey(const Key('settings_file_save_share')), findsOneWidget);
       expect(find.byKey(const Key('settings_file_save')), findsNothing);
       expect(find.widgetWithText(FilledButton, 'Share'), findsNothing);
+      // No Share button, so no "share" in the line above the buttons
+      expect(find.text('The file stays on this device unless you save it.'), findsOneWidget);
+      expect(find.textContaining('share or save'), findsNothing);
     });
 
     testWidgets('a TV without a share keeps Save and Share', (tester) async {
       await pump(tester, const SettingsFileExportPage(), shares: const [], television: true);
       expect(find.byKey(const Key('settings_file_save')), findsOneWidget);
       expect(find.widgetWithText(FilledButton, 'Share'), findsOneWidget);
+      expect(find.text('The file stays on this device unless you share or save it.'), findsOneWidget);
     });
 
     testWidgets('Back in the folder browser leaves the export as it was', (tester) async {

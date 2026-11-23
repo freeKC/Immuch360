@@ -1846,5 +1846,9 @@
   "mobile/packages/native_video_player/android/src/main/kotlin/me/albemala/native_video_player/platform_interface/VideoSource.kt": {
     "blob": "337ed584c109049320cd72798d2beaff12aa0404",
     "reason": "Video adaptive start (feat-video-adaptive-start, 31 October 2026): the place a video starts at (startPositionMs); not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/tv/TvApiImpl.kt": {
+    "blob": "1ec23ca4914fcf2fe5671918fe80203e5167e9b1",
+    "reason": "release 51 integration (device checks of 23 November 2026): Down from the field of the TV text dialog goes to OK, not to Cancel, so that Back, Down and OK keep the text typed"
   }
 }

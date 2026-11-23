@@ -4249,6 +4249,7 @@
   "settings_file_signed_in_as": "Signed in as {name} ({email})",
   "settings_file_sources": "Sources",
   "settings_file_stays_here": "The file stays on this device unless you share or save it.",
+  "settings_file_stays_here_save": "The file stays on this device unless you save it.",
   "settings_file_subtitle": "Save your servers, sources and settings to a file, or restore them from one",
   "settings_file_title": "Settings file",
   "settings_file_too_large": "This file is too large to be a settings file.",
