@@ -316,6 +316,61 @@ List<Uint8List?> audioSa3dOf(Mp4Box moov) => [
     sampleEntriesOf(trak).map((entry) => entry.child('SA3D')?.payload).nonNulls.firstOrNull,
 ];
 
+/// Each stco table of [moov] that an offset moved by [delta] would take past 32 bits rewritten as co64 (8 byte
+/// offsets, unmoved); whether one was. FFmpeg writes co64 only for its own offsets, so a faststart MP4 whose media data
+/// ends just under 4 GiB passes that line once the moov grows with the marks.
+bool widenChunkOffsets(Mp4Box moov, int delta) {
+  var widened = false;
+  for (final trak in moov.children!.where((box) => box.type == 'trak')) {
+    final stbl = trak.child('mdia')?.child('minf')?.child('stbl');
+    final tables = stbl?.children;
+    if (tables == null) {
+      continue;
+    }
+    for (var t = 0; t < tables.length; t++) {
+      final payload = tables[t].payload;
+      if (tables[t].type != 'stco' || payload == null || payload.length < 8) {
+        continue;
+      }
+      final view = ByteData.sublistView(payload);
+      final count = view.getUint32(4);
+      if (8 + count * 4 > payload.length) {
+        throw FormatException('stco of $count entries in ${payload.length} bytes');
+      }
+      var passes = false;
+      for (var i = 0; i < count && !passes; i++) {
+        passes = view.getUint32(8 + i * 4) + delta > 0xffffffff;
+      }
+      if (!passes) {
+        continue;
+      }
+      final wide = Uint8List(8 + count * 8);
+      final wideView = ByteData.sublistView(wide)
+        ..setUint32(0, view.getUint32(0))
+        ..setUint32(4, count);
+      for (var i = 0; i < count; i++) {
+        wideView.setUint64(8 + i * 8, view.getUint32(8 + i * 4));
+      }
+      tables[t] = Mp4Box('co64', payload: wide);
+      widened = true;
+    }
+  }
+  return widened;
+}
+
+/// The chunk offsets of [moov], read from a file where it took [oldSize] bytes before its media data, moved by its
+/// growth: the stco tables that would pass 32 bits made co64 first (their own growth counted in), then every offset
+/// moved. Returns the growth.
+int relocateChunkOffsets(Mp4Box moov, int oldSize) {
+  var delta = moov.size - oldSize;
+  // Each table widened grows the moov, which may take another one past the line: at most one round per table
+  while (widenChunkOffsets(moov, delta)) {
+    delta = moov.size - oldSize;
+  }
+  shiftChunkOffsets(moov, delta);
+  return delta;
+}
+
 /// Every chunk offset of [moov] (stco, co64) moved by [delta] bytes; throws when an offset of stco would leave 32 bits
 void shiftChunkOffsets(Mp4Box moov, int delta) {
   if (delta == 0) {
@@ -429,7 +484,6 @@ Future<SphericalMoov> writeSphericalMp4(
     if (marked.videoTracks == 0) {
       throw const FormatException('No video track to mark');
     }
-    final delta = moov.size - old.size;
     // The media data after the moov moves by its growth; before it, it stays where it is
     final dataAfter = boxes.skip(at + 1).any((box) => box.type == 'mdat');
     final dataBefore = boxes.take(at).any((box) => box.type == 'mdat');
@@ -437,7 +491,7 @@ Future<SphericalMoov> writeSphericalMp4(
       throw const FormatException('Media data on both sides of the moov');
     }
     if (dataAfter) {
-      shiftChunkOffsets(moov, delta);
+      relocateChunkOffsets(moov, old.size);
     }
     Future<void> copy(int from, int length) async {
       await source.setPosition(from);

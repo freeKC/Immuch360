@@ -11,7 +11,8 @@
 //             own probe reads back, and the median milliseconds of a window and of a new frame
 //   failed    the message
 //   sphere    for --sphere: the frame of the MP4 (square, top and bottom), what the app's probe reads (st3d, sv3d,
-//             half sphere) and how the two eyes of frame 50 differ at the poles, at the equator and across the seam
+//             half sphere) and how the two eyes of frame 50 differ, from each other and from the source's frame 50, near
+//             the poles, at the equator and across the seam
 //
 //   --ffmpeg DIR --ort LIBRARY --model FILE --out DIR [--quality standard] [--strength normal]
 //   [--alignment upstream|tenFrame] [--packing full|half] [--segment 30] [--no-fade]
@@ -26,6 +27,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
@@ -77,10 +79,8 @@ class _NpyWriter {
   }
 }
 
-/// The frame [index] of the top and bottom MP4 [path], decoded by [ffmpeg]: its size, and the mean difference of its two
-/// eyes over the three rows at each pole, over the three rows of the equator, and across the seam of each eye (the
-/// last column against the first, along the equator band)
-Future<Map<String, Object?>> _sphereFrame(String ffmpeg, String path, int index) async {
+/// The frame [index] of the video [path] decoded by [ffmpeg] as RGB, and its size; null when it was not read
+Future<({int width, int height, List<int> pixels})?> _decodedFrame(String ffmpeg, String path, int index) async {
   final ffprobe = p.join(p.dirname(ffmpeg), Platform.isWindows ? 'ffprobe.exe' : 'ffprobe');
   final size = await Process.run(ffprobe, [
     '-v',
@@ -94,8 +94,11 @@ Future<Map<String, Object?>> _sphereFrame(String ffmpeg, String path, int index)
     path,
   ]);
   final parts = '${size.stdout}'.trim().split(',');
-  final width = int.parse(parts[0]);
-  final height = int.parse(parts[1]);
+  final width = parts.length >= 2 ? int.tryParse(parts[0]) : null;
+  final height = parts.length >= 2 ? int.tryParse(parts[1]) : null;
+  if (width == null || height == null) {
+    return null;
+  }
   final decoded = await Process.run(ffmpeg, [
     '-v',
     'error',
@@ -112,17 +115,48 @@ Future<Map<String, Object?>> _sphereFrame(String ffmpeg, String path, int index)
   final bytes = decoded.stdout as List<int>;
   final frame = width * height * 3;
   final last = bytes.length ~/ frame - 1;
-  final pixels = bytes.sublist(last * frame, (last + 1) * frame);
-  final eye = height ~/ 2;
-  double rows(List<int> ys) {
+  if (last < 0) {
+    return null;
+  }
+  return (width: width, height: height, pixels: bytes.sublist(last * frame, (last + 1) * frame));
+}
+
+/// The frame [index] of the top and bottom MP4 [path] and of its [source], decoded by [ffmpeg]: the size of the MP4,
+/// the mean difference of its two eyes over three rows near each pole (rows 3 to 5 of each eye from its top and its
+/// bottom: away from the edges of the frame and from the line between the eyes, where the chroma and the deblocking of
+/// the codec mix the two eyes) and over the three rows of the equator, the same rows measured against the source
+/// (how much further the right eye is from it than the left one: each eye's own codec noise cancels out, what stays is
+/// the shift of the right eye), and the jump across the seam of each eye (the last column against the first, along
+/// the equator band)
+Future<Map<String, Object?>> _sphereFrame(String ffmpeg, String path, String source, int index) async {
+  final out = await _decodedFrame(ffmpeg, path, index);
+  if (out == null) {
+    throw StateError('Frame $index of $path not read');
+  }
+  final width = out.width;
+  final pixels = out.pixels;
+  final eye = out.height ~/ 2;
+  final original = await _decodedFrame(ffmpeg, source, index);
+  final same = original != null && original.width == width && original.height == eye;
+  final north = [3, 4, 5];
+  final south = [eye - 6, eye - 5, eye - 4];
+  final equator = [eye ~/ 2 - 1, eye ~/ 2, eye ~/ 2 + 1];
+
+  // The mean difference over [ys] of rows of [a] from [aTop] and rows of [b] from [bTop]
+  double rows(List<int> a, int aTop, List<int> b, int bTop, List<int> ys) {
     var sum = 0;
     for (final y in ys) {
       for (var i = 0; i < width * 3; i++) {
-        sum += (pixels[(eye + y) * width * 3 + i] - pixels[y * width * 3 + i]).abs();
+        sum += (a[(aTop + y) * width * 3 + i] - b[(bTop + y) * width * 3 + i]).abs();
       }
     }
     return sum / (ys.length * width * 3);
   }
+
+  double eyes(List<int> ys) => rows(pixels, eye, pixels, 0, ys);
+  // How much further the right eye is from the source than the left one
+  double? excess(List<int> ys) =>
+      same ? rows(pixels, eye, original.pixels, 0, ys) - rows(pixels, 0, original.pixels, 0, ys) : null;
 
   double seam(int top) {
     var sum = 0;
@@ -134,12 +168,17 @@ Future<Map<String, Object?>> _sphereFrame(String ffmpeg, String path, int index)
     return sum / 48;
   }
 
+  final northExcess = excess(north);
+  final southExcess = excess(south);
   return {
     'width': width,
-    'height': height,
-    'frame': last,
-    'pole_diff': (rows([0, 1, 2]) + rows([eye - 3, eye - 2, eye - 1])) / 2,
-    'equator_diff': rows([eye ~/ 2 - 1, eye ~/ 2, eye ~/ 2 + 1]),
+    'height': out.height,
+    'frame': index,
+    'source_read': same,
+    'pole_diff': (eyes(north) + eyes(south)) / 2,
+    'equator_diff': eyes(equator),
+    'pole_excess': northExcess == null || southExcess == null ? null : math.max(northExcess.abs(), southExcess.abs()),
+    'equator_excess': excess(equator),
     'seam_left': seam(0),
     'seam_right': seam(eye),
   };
@@ -338,7 +377,7 @@ Future<int> runVideo3dProbe(List<String> args) async {
           'st3d_top_bottom': probe.stereo == StereoLayout.topBottom,
           'sv3d': probe.hasSphericalMetadata,
           'half_sphere': probe.halfSphere,
-          ...await _sphereFrame(ffmpeg, output, 50),
+          ...await _sphereFrame(ffmpeg, output, video, 50),
         });
       }
     } on Object catch (error, stack) {

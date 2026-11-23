@@ -12,6 +12,7 @@ import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
 import 'package:immich_mobile/desktop/ai/video3d/sphere_video_worker.dart';
+import 'package:immich_mobile/desktop/ai/video3d/spherical_mp4_writer.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_frame_ops.dart';
@@ -22,6 +23,7 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:path/path.dart' as p;
 
 import 'fake_ffmpeg.dart';
+import 'tiny_mp4.dart';
 
 const _eyeWidth = 56;
 const _eyeHeight = 28;
@@ -256,6 +258,29 @@ void main() {
             times: times,
           ),
         ).run(),
+        throwsA(isA<VideoJobException>().having((e) => e.refusal, 'refusal', VideoRefusal.alreadyStereo)),
+      );
+    });
+
+    test('the engine reads the boxes of the source with the app\'s own probe, as the dialog does for a file of this '
+        'computer: a downloaded file whose marks ffprobe does not give is still seen as 360° or as two eyes', () async {
+      final times = [for (var i = 0; i < 40; i++) i / 25];
+      // ffprobe sees a plain 2:1 video, no side data; the file itself says 360°
+      Map<String, Object?> plain() => fakeVideoProbe(40, 1.6, width: 112, height: 56, audio: 'aac');
+      Future<void> source(StereoLayout stereo) async {
+        final unmarked = p.join(temp.path, 'unmarked.mp4');
+        File(unmarked).writeAsBytesSync(tinyMp4(width: 112, height: 56));
+        await writeSphericalMp4(unmarked, p.join(temp.path, 'trip.mp4'), stereo: stereo);
+      }
+
+      await source(StereoLayout.mono);
+      await expectLater(
+        conversion(FakeFfmpegRunner(probe: plain(), times: times), sphere: null).run(),
+        throwsA(isA<VideoJobException>().having((e) => e.refusal, 'refusal', VideoRefusal.sphere360)),
+      );
+      await source(StereoLayout.topBottom);
+      await expectLater(
+        conversion(FakeFfmpegRunner(probe: plain(), times: times)).run(),
         throwsA(isA<VideoJobException>().having((e) => e.refusal, 'refusal', VideoRefusal.alreadyStereo)),
       );
     });

@@ -233,6 +233,7 @@ class VideoSource {
     this.declaredSpherical = false,
     this.declaredHalfSphere = false,
     this.formatTags = const {},
+    this.quickTime = false,
   });
 
   /// The index of the video stream in the file, and its rank among the video streams (-map 0:v:N)
@@ -279,6 +280,10 @@ class VideoSource {
   final bool declaredSpherical;
   final bool declaredHalfSphere;
   final Map<String, String> formatTags;
+
+  /// The file is an MP4 or a MOV (ffprobe's format "mov,mp4,..."): it has a moov, where a 360° video's SA3D boxes of
+  /// spatial sound are, which the marks written after the mux copy back (a Matroska or WebM file has none)
+  final bool quickTime;
 
   /// The rotation as a quarter turn (0, 90, 180, 270), null when it is not one
   int? get quarterTurn {
@@ -418,6 +423,7 @@ class VideoSource {
       duration: _double(video['duration']) ?? _double(format['duration']),
       startTime: _double(video['start_time']) ?? 0,
       timeBase: VideoRate.parse(video['time_base']),
+      quickTime: '${format['format_name'] ?? ''}'.split(',').any(const {'mov', 'mp4'}.contains),
       audio: audio,
       subtitleCount: subtitles,
       dataCount: data,
@@ -508,6 +514,10 @@ enum VideoPlanNote {
 
   /// A 360° video: spatial sound the MP4 cannot take as it is, made plain AAC (the sound no longer turns with the head)
   spatialAudioPlain,
+
+  /// A 360° video in a Matroska or WebM file: its spatial sound is copied, but there is no SA3D box to copy back with
+  /// it (the source has no moov), so players may take it as plain sound
+  spatialAudioUnmarked,
 }
 
 /// The output's frame grid and whether frames above 60 fps were made 30 fps
@@ -642,9 +652,18 @@ enum VideoProjectionAsk {
 /// The sizes of the eyes of a 360° 3D video, by their width (each eye 2:1, the frame top and bottom, so square)
 const sphereEyeWidths = [2048, 3072, 4096];
 
-/// The eye of the 360° 3D videos by default: 3072 x 1536, a frame of 3072 x 3072, within the 36 864 macroblocks of
-/// H.264 level 5.1 that most hardware decoders take, phones and headsets included
+/// The eye of the 360° 3D videos by default: 3072 x 1536, a frame of 3072 x 3072. That frame is exactly the 36 864
+/// macroblocks of H.264 level 5.1, but level 5.1 decodes 983 040 macroblocks a second, 26.7 frames of it: at 30 frames
+/// a second it needs level 5.2 (2 073 600 a second), which most hardware decoders of phones and headsets take; at 50 or
+/// 60 it needs level 6 (sphereFastRateEyeWidth then)
 const sphereDefaultEyeWidth = 3072;
+
+/// The eye by default of a 360° video above 30 frames a second: a frame of 2048 x 2048 (16 384 macroblocks) stays
+/// within H.264 level 5.1 up to 60 frames a second, where 3072 x 3072 would need level 6
+const sphereFastRateEyeWidth = 2048;
+
+/// The frame rate above which the 360° 3D videos start at [sphereFastRateEyeWidth] (30000/1001 and 30 stay at 3072)
+const sphereFastRate = 30.5;
 
 /// The eye widths a 360° video of [source] is offered: those of [sphereEyeWidths] not wider than its frame, else its
 /// own width (a multiple of 4, so that both sides of each eye are even)
@@ -657,11 +676,16 @@ List<int> sphereEyeWidthsFor(VideoSource source) {
   return offered.isNotEmpty ? offered : [math.max(4, width ~/ 4 * 4)];
 }
 
-/// The eye width a dialog starts with among [offered]: [kept] (the last chosen) when offered, else the default, else
-/// the largest
-int sphereDefaultEyeWidthOf(List<int> offered, int? kept) {
+/// The eye width a dialog starts with among [offered]: [kept] (the last chosen) when offered, else the default
+/// ([sphereFastRateEyeWidth] when the videos run at more than [sphereFastRate] frames a second, [rate]), else the
+/// largest
+int sphereDefaultEyeWidthOf(List<int> offered, int? kept, {double? rate}) {
   if (kept != null && offered.contains(kept)) {
     return kept;
+  }
+  final preferred = rate != null && rate > sphereFastRate ? sphereFastRateEyeWidth : sphereDefaultEyeWidth;
+  if (offered.contains(preferred)) {
+    return preferred;
   }
   return offered.contains(sphereDefaultEyeWidth) ? sphereDefaultEyeWidth : offered.last;
 }
@@ -820,7 +844,11 @@ VideoSourceCheck _checkStream(VideoSource source, {bool sphere = false, bool loo
     if (source.subtitleCount > 0) VideoPlanNote.subtitlesNotKept,
     if (source.dataCount > 0 || source.attachedPictureCount > 0) VideoPlanNote.dataNotKept,
     if (duration != null && duration * 1000 > videoLongJob.inMilliseconds) VideoPlanNote.long,
-    if (sphere && audio.any((track) => track.ambisonic && track.isCopied)) VideoPlanNote.spatialAudioKept,
+    // The SA3D box is copied back from the moov of the source: a Matroska or WebM file has none to copy
+    if (sphere && source.quickTime && audio.any((track) => track.ambisonic && track.isCopied))
+      VideoPlanNote.spatialAudioKept,
+    if (sphere && !source.quickTime && audio.any((track) => track.ambisonic && track.isCopied))
+      VideoPlanNote.spatialAudioUnmarked,
     if (sphere && audio.any((track) => track.ambisonic && !track.isCopied)) VideoPlanNote.spatialAudioPlain,
   };
   return VideoSourceCheck._(

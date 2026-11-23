@@ -33,6 +33,7 @@ import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_frame_ops.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_job_file.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
+import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:path/path.dart' as p;
 
 /// A program of the FFmpeg archive, running: its standard output as bytes
@@ -609,9 +610,19 @@ class VideoConversion {
     final json = await probeVideo(runner, request.ffprobe, request.sourcePath);
     final video = VideoSource.fromFfprobe(json);
     final sphereEye = request.sphereEyeWidth;
+    // The app's own probe of the boxes as well as ffprobe's, as the dialog reads a file of this computer: a video of
+    // the server or of a share is read for the first time here, after its download, and its Spherical Video V1 XML
+    // (two eyes, a half sphere) is seen by this probe only
+    SphericalProbe? spherical;
+    try {
+      spherical = await probeSphericalMetadata(videoFileRangeReader(request.sourcePath));
+    } on Object catch (error) {
+      _log('the boxes of the source were not read: $error');
+    }
     final check = checkVideoSource(
       video,
       fileName: p.basename(request.sourcePath),
+      spherical: spherical,
       ask: sphereEye != null ? VideoProjectionAsk.sphere : VideoProjectionAsk.flat,
     );
     if (!check.accepted) {
@@ -1109,9 +1120,13 @@ extension on VideoConversion {
       final result = await writeSphericalMp4(part, marked, audioSa3d: sa3d);
       await File(part).delete();
       await File(marked).rename(part);
+      // How many audio tracks end with an SA3D box, the mux's own (FFmpeg may write one from an ambisonic layout) and
+      // ours: a Matroska source has none to copy back, this line says whether the player will be told
+      final spatial = audioSa3dOf(result.moov).nonNulls.length;
       _log(
         'marked as a 360° video top and bottom: ${result.videoTracks} video track, '
-        '${result.sa3dAdded} spatial sound box put back',
+        '${result.sa3dAdded} spatial sound box put back, $spatial audio track(s) with an SA3D box of '
+        '${audio.where((track) => track.ambisonic).length} ambisonic',
       );
     } on FormatException catch (error) {
       await _deleteQuietly(File(marked));
@@ -1140,3 +1155,14 @@ double _formatStart(Map<String, Object?> json, VideoSource info) {
   final start = double.tryParse('${format?['start_time']}');
   return start ?? info.startTime;
 }
+
+/// The bytes of [path] from [offset], for the app's probe of its boxes (probeSphericalMetadata)
+ByteRangeReader videoFileRangeReader(String path) => (offset, length) async {
+  final file = await File(path).open();
+  try {
+    await file.setPosition(offset);
+    return Uint8List.fromList(await file.read(length));
+  } finally {
+    await file.close();
+  }
+};

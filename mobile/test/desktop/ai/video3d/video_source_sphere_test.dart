@@ -21,6 +21,7 @@ Map<String, Object?> _sphere({
     {'codec_name': 'aac', 'channels': 2},
   ],
   double rotation = 0,
+  String format = 'mov,mp4,m4a,3gp,3g2,mj2',
 }) =>
     jsonDecode(
           jsonEncode({
@@ -44,7 +45,7 @@ Map<String, Object?> _sphere({
               },
               for (final (i, track) in audio.indexed) {'index': i + 1, 'codec_type': 'audio', ...track},
             ],
-            'format': {'duration': '10.0', 'start_time': '0.000000'},
+            'format': {'duration': '10.0', 'start_time': '0.000000', 'format_name': format},
           }),
         )
         as Map<String, Object?>;
@@ -175,6 +176,22 @@ void main() {
       ),
     );
     expect(plain.notes, contains(VideoPlanNote.spatialAudioPlain));
+    expect(plain.notes, isNot(contains(VideoPlanNote.spatialAudioKept)));
+    // A Matroska or WebM file has no moov, so no SA3D box to copy back: copied, but said unmarked
+    final matroska = _check(
+      _sphere(
+        side: [_spherical],
+        format: 'matroska,webm',
+        audio: [
+          {'codec_name': 'opus', 'channels': 4, 'channel_layout': 'ambisonic 1'},
+        ],
+      ),
+      name: 'ride.mkv',
+    );
+    expect(matroska.source!.quickTime, isFalse);
+    expect(matroska.notes, contains(VideoPlanNote.spatialAudioUnmarked));
+    expect(matroska.notes, isNot(contains(VideoPlanNote.spatialAudioKept)));
+    expect(kept.source!.quickTime, isTrue);
     // A flat video never says it
     expect(
       _check(
@@ -190,7 +207,19 @@ void main() {
     );
   });
 
-  test('the sizes offered, never wider than the video; the default 3072; the name of the MP4', () {
+  test('the sizes offered, never wider than the video; the default 3072 (H.264 level 5.2 at 30 fps), 2048 above 30 '
+      'fps (level 5.1 up to 60, where 3072 would need level 6); the name of the MP4', () {
+    // 3072 x 3072: exactly the 36 864 macroblocks of level 5.1, 26.7 frames a second within its 983 040 a second
+    expect(3072 * 3072 ~/ 256, 36864);
+    expect(983040 / 36864, closeTo(26.7, 0.05));
+    expect(2073600 / 36864, greaterThan(30)); // level 5.2
+    expect(2048 * 2048 ~/ 256 * 60, lessThanOrEqualTo(983040)); // level 5.1 at 60
+    expect(sphereDefaultEyeWidthOf([2048, 3072, 4096], null, rate: 30000 / 1001), 3072);
+    expect(sphereDefaultEyeWidthOf([2048, 3072, 4096], null, rate: 30), 3072);
+    expect(sphereDefaultEyeWidthOf([2048, 3072, 4096], null, rate: 50), 2048);
+    expect(sphereDefaultEyeWidthOf([2048, 3072, 4096], null, rate: 60000 / 1001), 2048);
+    expect(sphereDefaultEyeWidthOf([2048, 3072, 4096], 3072, rate: 60), 3072);
+    expect(sphereDefaultEyeWidthOf([1920], null, rate: 60), 1920);
     expect(sphereEyeWidthsFor(VideoSource.fromFfprobe(_sphere())!), [2048, 3072, 4096]);
     expect(sphereEyeWidthsFor(VideoSource.fromFfprobe(_sphere(width: 3840, height: 1920))!), [2048, 3072]);
     expect(sphereEyeWidthsFor(VideoSource.fromFfprobe(_sphere(width: 1922, height: 961))!), [1920]);

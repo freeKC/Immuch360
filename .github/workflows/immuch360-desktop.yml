@@ -535,7 +535,7 @@ jobs:
           # A 360° video made 360° 3D (lot ai-360-3d-51): the six faces through tiny_vda.onnx, the frame top and
           # bottom, st3d and sv3d written into the MP4 and read back by the app, the eyes of a frame compared
           python3 ../.github/desktop/ai/video3d_ci_clip.py make360 "$work/ffmpeg/bin/ffmpeg" "$work/sphere_360.mkv"
-          export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$RUNNER_TEMP/onnxruntime/onnxruntime-linux-x64-1.31.0/lib/libonnxruntime.so.1.31.0\",\"--model\",\"$PWD/test/fixtures/ai_immersive/tiny_vda.onnx\",\"--out\",\"$work/out360\",\"--quality\",\"fast\",\"--strength\",\"strong\",\"--segment\",\"1\",\"--sphere\",\"256\",\"$work/sphere_360.mkv\"]"
+          export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$RUNNER_TEMP/onnxruntime/onnxruntime-linux-x64-1.31.0/lib/libonnxruntime.so.1.31.0\",\"--model\",\"$PWD/test/fixtures/ai_immersive/tiny_vda.onnx\",\"--out\",\"$work/out360\",\"--quality\",\"fast\",\"--strength\",\"strong\",\"--segment\",\"1\",\"--sphere\",\"512\",\"$work/sphere_360.mkv\"]"
           mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
             | tee "$work/run360.log"
           python3 ../.github/desktop/ai/video3d_ci_clip.py check360 "$work/run360.log"
@@ -1096,7 +1096,7 @@ jobs:
           import json, sys
           work, ort, model = sys.argv[1:4]
           print(json.dumps(['--ffmpeg', work + '\\ffmpeg', '--ort', ort, '--model', model, '--out', work + '\\out360',
-                            '--quality', 'fast', '--strength', 'strong', '--segment', '1', '--sphere', '256',
+                            '--quality', 'fast', '--strength', 'strong', '--segment', '1', '--sphere', '512',
                             work + '\\sphere_360.mkv']))
           PY
           )"

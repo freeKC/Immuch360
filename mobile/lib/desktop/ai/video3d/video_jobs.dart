@@ -15,7 +15,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_app_runtime.dart';
@@ -705,7 +704,7 @@ class VideoDialogFacts {
 Future<VideoDialogFacts> readVideoDialogFacts(VideoJobSetup setup, String path, {bool marked360 = false}) async {
   SphericalProbe? spherical;
   try {
-    spherical = await probeSphericalMetadata(_fileRangeReader(path));
+    spherical = await probeSphericalMetadata(videoFileRangeReader(path));
   } on Object catch (error) {
     _log.fine('The boxes of $path were not read: $error');
   }
@@ -735,14 +734,3 @@ Future<VideoDialogFacts> readVideoDialogFacts(VideoJobSetup setup, String path, 
     marked360: marked360,
   );
 }
-
-/// The bytes of [path] from [offset], for the probe of its boxes
-ByteRangeReader _fileRangeReader(String path) => (offset, length) async {
-  final file = await File(path).open();
-  try {
-    await file.setPosition(offset);
-    return Uint8List.fromList(await file.read(length));
-  } finally {
-    await file.close();
-  }
-};

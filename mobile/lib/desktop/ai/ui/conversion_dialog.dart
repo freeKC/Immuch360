@@ -456,8 +456,9 @@ String aiGateReasonText(Translations t, AiGateResult gate) => switch (gate.reaso
 String conversionSkipText(Translations t, ConversionSkipReason reason, {String? name, bool video = false}) =>
     switch (reason) {
       ConversionSkipReason.video => t.ai_immersive_skipped_video,
-      ConversionSkipReason.sphere360 => video ? t.ai_immersive_skipped_360_video : t.ai_immersive_skipped_360,
-      ConversionSkipReason.vr180 => video ? t.ai_immersive_skipped_vr180_video : t.ai_immersive_skipped_vr180,
+      // A 3D video: a 360° one is refused only when it was said flat, VR180 is a later lot
+      ConversionSkipReason.sphere360 => video ? t.ai_immersive_skipped_360_video_as_flat : t.ai_immersive_skipped_360,
+      ConversionSkipReason.vr180 => video ? t.ai_immersive_skipped_vr180_video_later : t.ai_immersive_skipped_vr180,
       ConversionSkipReason.spatial => t.ai_immersive_skipped_spatial,
       ConversionSkipReason.alreadyStereo => video ? t.ai_immersive_skipped_3d_video : t.ai_immersive_skipped_3d,
       ConversionSkipReason.alreadyVersion => t.ai_immersive_skipped_ai_version,
@@ -1120,6 +1121,7 @@ String videoPlanNoteText(Translations t, VideoPlanNote note) => switch (note) {
   VideoPlanNote.long => t.ai_immersive_video_note_long,
   VideoPlanNote.spatialAudioKept => t.ai_immersive_video_note_spatial_audio_kept,
   VideoPlanNote.spatialAudioPlain => t.ai_immersive_video_note_spatial_audio_plain,
+  VideoPlanNote.spatialAudioUnmarked => t.ai_immersive_video_note_spatial_audio_unmarked,
 };
 
 /// The name of a quality of the depth of a 3D video
@@ -1301,6 +1303,12 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   VideoEncoder? _sphereEncoder;
   int? _sphereEncoderWidth;
   int? _sphereEncoderTesting;
+
+  /// When the encoder at the size chosen is AV1 (which a Quest 2 and many phones cannot play), the one tested at
+  /// [sphereFastRateEyeWidth] (2048 x 2048): H.264 there is said as the way to keep H.264
+  VideoEncoder? _sphereSmallEncoder;
+  var _sphereSmallTested = false;
+  var _sphereSmallTesting = false;
   var _flatEncoderTesting = false;
   VideoDialogProbe? _probe;
 
@@ -1617,10 +1625,18 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     if (candidate.marked360) {
       return true;
     }
-    if (isTwoToOne(candidate.asset.width ?? 0, candidate.asset.height ?? 0)) {
+    if (_remoteMayBe360(candidate)) {
       return _as360;
     }
     return false;
+  }
+
+  /// A video of the server or of a share with no 360° mark of the app whose frame is 2:1, or not known: it may be a
+  /// 360° one, its file read only after its download, so the user is asked (never a silent guess)
+  bool _remoteMayBe360(ConversionCandidate candidate) {
+    final width = candidate.asset.width ?? 0;
+    final height = candidate.asset.height ?? 0;
+    return !candidate.marked360 && (width <= 0 || height <= 0 || isTwoToOne(width, height));
   }
 
   /// The videos whose answer, 360° or flat, the user has to give
@@ -1629,7 +1645,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     if (source is LocalFileSource) {
       return _videoFacts[source.path]?.check.looksLike360 ?? false;
     }
-    return !candidate.marked360 && isTwoToOne(candidate.asset.width ?? 0, candidate.asset.height ?? 0);
+    return _remoteMayBe360(candidate);
   }
 
   /// The eye widths the 360° videos of the selection are offered: those of the smallest one read, all of them when
@@ -1657,7 +1673,60 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     return offered ?? sphereEyeWidths;
   }
 
-  int get _sphereEyeWidthChosen => sphereDefaultEyeWidthOf(_sphereEyeWidths, _sphereEyeWidth);
+  int get _sphereEyeWidthChosen => sphereDefaultEyeWidthOf(_sphereEyeWidths, _sphereEyeWidth, rate: _sphereRate);
+
+  /// The highest frame rate of the 360° videos read (the grid of their output), null when none was read (videos of
+  /// the server, taken as 30 until their download)
+  double? get _sphereRate => _videoAccepted
+      .where((each) => each.check.sphere)
+      .map((each) => each.check.grid?.rate.value)
+      .nonNulls
+      .fold<double?>(null, (highest, rate) => highest == null || rate > highest ? rate : highest);
+
+  /// What a size of 360° 3D video means for the players, at the frame rate [rate] of the videos
+  String _sphereSizeLine(Translations t, int width, double? rate) {
+    final fast = rate != null && rate > sphereFastRate;
+    if (width > sphereDefaultEyeWidth) {
+      return t.ai_immersive_video_sphere_size_large;
+    }
+    if (width == sphereDefaultEyeWidth) {
+      return fast
+          ? t.ai_immersive_video_sphere_size_fast_rate(rate: _rateText(rate))
+          : t.ai_immersive_video_sphere_size_default;
+    }
+    return fast && width == sphereFastRateEyeWidth
+        ? t.ai_immersive_video_sphere_size_small_fast
+        : t.ai_immersive_video_sphere_size_small;
+  }
+
+  /// 50, 59.94, 29.97: a frame rate as people read it
+  static String _rateText(double rate) {
+    final text = rate.toStringAsFixed(2);
+    return text.endsWith('.00') ? text.substring(0, text.length - 3) : text.replaceFirst(RegExp(r'0$'), '');
+  }
+
+  /// Tests the encoder of this computer at the frame of 2048 x 2048, once, when the size chosen gave AV1
+  Future<void> _testSphereSmallEncoder() async {
+    final probe = _probe;
+    if (probe == null || _sphereSmallTesting || _sphereSmallTested) {
+      return;
+    }
+    _sphereSmallTesting = true;
+    VideoEncoder? encoder;
+    try {
+      final rate = _videoAccepted.map((each) => each.check.grid?.rate).nonNulls.firstOrNull ?? const VideoRate(30, 1);
+      encoder = await probe.encoder(sphereFastRateEyeWidth, sphereFastRateEyeWidth, rate);
+    } catch (error) {
+      _log.warning('The encoders of this computer could not be tested at $sphereFastRateEyeWidth: $error');
+    }
+    if (mounted && !_closed) {
+      setState(() {
+        _sphereSmallEncoder = encoder;
+        _sphereSmallTested = true;
+        _sphereSmallTesting = false;
+      });
+    }
+  }
 
   /// The name of the MP4 of [candidate]: `<name>_360_3D.mp4` for a 360° one, `<name>_3D_LRF_Full_SBS.mp4` (or Half)
   String _videoNameOf(ConversionCandidate candidate) => _sphereOf(candidate) == true
@@ -2408,9 +2477,13 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       if (asking.isNotEmpty) ...[
         ConversionNote(
           key: const Key('ai_conversion_video_looks_360'),
-          text: asking.length == 1
-              ? t.ai_immersive_video_looks_360(name: asking.single.asset.name)
-              : t.ai_immersive_video_looks_360_many(count: asking.length),
+          // A video of the server or of a share is asked before its file is read: only its frame, if that
+          text: switch ((asking.length, asking.any((candidate) => candidate.source is! LocalFileSource))) {
+            (1, false) => t.ai_immersive_video_looks_360(name: asking.single.asset.name),
+            (1, true) => t.ai_immersive_video_may_be_360(name: asking.single.asset.name),
+            (_, false) => t.ai_immersive_video_looks_360_many(count: asking.length),
+            (_, true) => t.ai_immersive_video_may_be_360_many(count: asking.length),
+          },
           error: _as360 == null,
         ),
         RadioGroup<bool>(
@@ -2496,11 +2569,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                   title: Text(
                     t.ai_immersive_video_sphere_size(frame: '$width x $width', eye: '$width x ${width ~/ 2}'),
                   ),
-                  subtitle: Text(switch (width) {
-                    > sphereDefaultEyeWidth => t.ai_immersive_video_sphere_size_large,
-                    sphereDefaultEyeWidth => t.ai_immersive_video_sphere_size_default,
-                    _ => t.ai_immersive_video_sphere_size_small,
-                  }),
+                  subtitle: Text(_sphereSizeLine(t, width, _sphereRate)),
                 ),
             ],
           ),
@@ -2591,10 +2660,12 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         );
       }
       // The 360° ones: each eye made at most at the size chosen, the encoder tested at that frame
-      final largest = accepted
-          .where((each) => each.check.sphere)
-          .map((each) => each.check.source?.displayWidth ?? 0)
-          .fold(0, math.max);
+      // A video of the server or of a share by the width the server gives, its file read after its download
+      final largest = [
+        ...accepted.where((each) => each.check.sphere).map((each) => each.check.source?.displayWidth ?? 0),
+        for (final candidate in spheres)
+          if (candidate.source is! LocalFileSource) candidate.asset.width ?? 0,
+      ].fold(0, math.max);
       if (largest > sphereWidth) {
         facts.add(
           ConversionNote(
@@ -2636,6 +2707,30 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
               error: encoder == null,
             ),
           );
+          // AV1 at a large frame (an H.264 encoder that stops at 4096 x 2304 or 4096 x 2160): 2048 x 2048 may keep
+          // H.264, which the Quest 2 and phones play; tested once and said when it does
+          if (encoder == VideoEncoder.svtAv1 &&
+              sphereWidth > sphereFastRateEyeWidth &&
+              sphereWidths.contains(sphereFastRateEyeWidth)) {
+            if (!_sphereSmallTested) {
+              if (!_sphereSmallTesting) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && !_closed) {
+                    unawaited(_testSphereSmallEncoder());
+                  }
+                });
+              }
+            } else if (_sphereSmallEncoder case final small? when small != VideoEncoder.svtAv1) {
+              facts.add(
+                ConversionNote(
+                  key: const Key('ai_conversion_video_sphere_smaller_h264'),
+                  text: t.ai_immersive_video_sphere_av1_smaller(
+                    frame: '$sphereFastRateEyeWidth x $sphereFastRateEyeWidth',
+                  ),
+                ),
+              );
+            }
+          }
         }
       }
       final flatAccepted = accepted.where((each) => !each.check.sphere).toList();

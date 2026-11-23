@@ -107,8 +107,13 @@ void main() {
   });
 
   test('the SA3D box of a spatial sound track of the source is put back in the track the mux copied', () async {
-    // version 0, ambisonic type 0, order 1, ACN, SN3D, 4 channels 0 to 3
-    final sa3d = Uint8List.fromList([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3]);
+    // version 0, ambisonic type 0, order 1 (4 bytes), ACN 0, SN3D 0, 4 channels (4 bytes), channels 0 to 3: 28 bytes
+    final sa3d = Uint8List.fromList([
+      0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, //
+      0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3,
+    ]);
+    expect(sa3d.length, 28);
+    expect(ByteData.sublistView(sa3d).getUint32(8), 4);
     final source = tinyMp4(audioExtra: [tinyBox('SA3D', sa3d)]);
     final sourcePath = p.join(folder.path, 'source.mp4');
     File(sourcePath).writeAsBytesSync(source);
@@ -128,6 +133,45 @@ void main() {
     final plainPath = p.join(folder.path, 'plain.mp4');
     File(plainPath).writeAsBytesSync(tinyMp4());
     expect(await readAudioSa3d(plainPath), [null]);
+  });
+
+  test('an offset just under 4 GiB that the growth of the moov would take past 32 bits: its table is made co64 (its '
+      'own growth counted in), the others stay stco, every offset moved by the whole growth', () {
+    final moov = parseMp4Boxes(tinyMp4()).firstWhere((box) => box.type == 'moov');
+    final oldSize = moov.size;
+    Mp4Box table(String handler) {
+      final trak = moov.children!.firstWhere((box) => box.type == 'trak' && trackHandler(box) == handler);
+      final stbl = trak.child('mdia')!.child('minf')!.child('stbl')!;
+      return stbl.children!.firstWhere((box) => box.type == 'stco' || box.type == 'co64');
+    }
+
+    ByteData.sublistView(table('vide').payload!).setUint32(8, 0xFFFFFF00);
+    ByteData.sublistView(table('soun').payload!).setUint32(8, 0x1000);
+    markMoovSpherical(moov);
+    final growthOfMarks = moov.size - oldSize;
+    expect(0xFFFFFF00 + growthOfMarks, greaterThan(0xFFFFFFFF));
+
+    final delta = relocateChunkOffsets(moov, oldSize);
+    expect(delta, moov.size - oldSize);
+    expect(delta, growthOfMarks + 4); // one entry of 4 bytes made 8
+    final video = table('vide');
+    expect(video.type, 'co64');
+    expect(ByteData.sublistView(video.payload!).getUint32(4), 1);
+    expect(ByteData.sublistView(video.payload!).getUint64(8), 0xFFFFFF00 + delta);
+    final audio = table('soun');
+    expect(audio.type, 'stco');
+    expect(ByteData.sublistView(audio.payload!).getUint32(8), 0x1000 + delta);
+    // Read back as boxes: the co64 table is where the stco was
+    final again = parseMp4Boxes(moov.toBytes()).single;
+    expect(again.size, moov.size);
+  });
+
+  test('a moov that stays under the line keeps its stco tables', () {
+    final moov = parseMp4Boxes(tinyMp4()).firstWhere((box) => box.type == 'moov');
+    final oldSize = moov.size;
+    markMoovSpherical(moov);
+    expect(widenChunkOffsets(moov, moov.size - oldSize), isFalse);
+    expect(relocateChunkOffsets(moov, oldSize), moov.size - oldSize);
   });
 
   test('a file with no moov or no video track is refused, nothing written over the input', () async {
