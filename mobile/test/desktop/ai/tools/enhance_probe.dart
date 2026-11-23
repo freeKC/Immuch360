@@ -14,7 +14,9 @@
 //                 sharpen: --sd-cli EXE --upscaler RealESRGAN_x4plus.pth
 //                 rebuild: --sd-cli EXE --dit seedvr2_3b_int8_convrot.safetensors --vae seedvr2_ema_vae_fp16.safetensors
 //                 natural: --ort onnxruntime.dll --vosr DIR (the four graphs under their asset names)
-//                 [--device Vulkan1] [--card NAME] [--graphics-free BYTES] [--threads N]
+//                 [--device Vulkan1] [--card NAME] [--graphics-free BYTES] [--threads N] [--assume-free-mib N]
+// --assume-free-mib replaces the free memory the engine reads before it starts (its gate "close other programs"): for
+// a run on a PC whose other programs hold more than the gate leaves, said in the "memory" line it prints.
 // The photo must be a JPEG (the engine of Flutter decodes the other formats in the app, not here).
 
 import 'dart:convert';
@@ -28,6 +30,7 @@ import 'package:immich_mobile/desktop/ai/enhance/natural_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/sharpen_backend.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
+import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
@@ -37,6 +40,16 @@ final _clock = Stopwatch()..start();
 
 void _event(String name, [Map<String, Object?> values = const {}]) =>
     stdout.writeln(jsonEncode({'event': name, 'ms': _clock.elapsedMilliseconds, ...values}));
+
+/// The memory of the system, its free part replaced by --assume-free-mib
+class _AssumedMemory implements MemoryProbe {
+  const _AssumedMemory(this.free);
+
+  final int free;
+
+  @override
+  MemoryFacts read() => MemoryFacts(physical: const SystemMemoryProbe().read().physical, available: free);
+}
 
 /// Announces the programs it starts
 class _Announcing implements ProcessRunner {
@@ -104,8 +117,16 @@ Future<void> main(List<String> arguments) async {
       threads: options['threads'] == null ? null : int.parse(options['threads']!),
     ),
   };
+  final system = const SystemMemoryProbe().read();
+  final assumed = options['assume-free-mib'] == null ? null : int.parse(options['assume-free-mib']!) << 20;
+  _event('memory', {
+    'physicalMiB': (system.physical ?? 0) >> 20,
+    'availableMiB': (system.available ?? 0) >> 20,
+    if (assumed != null) 'assumedFreeMiB': assumed >> 20,
+  });
   final engine = EnhanceEngine(
     backend: backend,
+    memory: assumed == null ? const SystemMemoryProbe() : _AssumedMemory(assumed),
     workFolder: (id) => Directory(p.join(work.path, 'enhance-$id'))..createSync(recursive: true),
   );
   final bytes = input.readAsBytesSync();
