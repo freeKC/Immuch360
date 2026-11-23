@@ -96,6 +96,10 @@ on:
         description: Also build stable-diffusion.cpp, for the release workflow to sign it (never for a release)
         type: boolean
         default: false
+      sdcpp_seedvr2:
+        description: Also build the stable-diffusion.cpp of Enhance (AI), for the release workflow to sign it (never for a release)
+        type: boolean
+        default: false
       colmap:
         description: Also build COLMAP (never for a release)
         type: boolean

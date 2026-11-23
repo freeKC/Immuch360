@@ -16,7 +16,16 @@ publish_ai_components.py, as the DirectML runtime of ai-components-6 will.
       (the probe kept them in downloads/seedvr2 and downloads/vosr2-int8/<part>/model.onnx), copied under its asset
       name, or cut into its parts; each archive of stable-diffusion.cpp made from the artifact
       Immuch360-AI-sdcpp-0d71f96-1-<system>.zip of the jobs sdcpp-seedvr2-* (as publish_ai_components.py makes those of
-      ai-components-3), with the Dart lines of its entry printed; SHA256SUMS. Nothing is downloaded.
+      ai-components-3), with the Dart lines of its entry printed; SHA256SUMS; and LICENCE_SECTION, the section of
+      ai-components-7 for MODEL-LICENSES.md (below). Nothing is downloaded.
+  enhance_components.py licences --out FILE
+      that section alone, with the sizes and sums of the archives as "pending" until their artifacts are given to make.
+
+The section is a separate file on purpose: licenses/ai-components/MODEL-LICENSES.md is written by
+publish_ai_components.py from its catalogue (--write), and --publish of any release refuses while the file of the
+repository differs from what it writes, so a section of a release it does not know yet would block the publication of
+ai-components-6. Once the entries of ai-components-7 move into the catalogue and the tables of publish_ai_components.py,
+its --write writes the section of ai-components-7 into MODEL-LICENSES.md; this file is the text to check it against.
 
 Only the Python standard library and publish_ai_components.py beside it. Exit codes: 0 good, 1 a check failed, 2 bad
 arguments or missing inputs.
@@ -67,8 +76,89 @@ ENGINES = (
 ARTIFACT = re.compile(r'^Immuch360-AI-sdcpp-0d71f96-\d+-(windows-x64|linux-x64)\.zip$')
 
 
+LICENCE_SECTION = 'MODEL-LICENSES-ai-components-7.md'
+
+# The licence texts the probe of 23 November 2026 read again before each download (its folder licences/), by SHA-256
+LICENCE_TEXTS = (
+    ('ByteDance-Seed/SeedVR LICENSE (sha 9b0726ca on GitHub)', 'Apache License, Version 2.0, January 2004',
+     '5967a0c153e731109b76c5d83b5e0fae2382b6aaf7b898d08ff03702eea59430'),
+    ('cswry/VOSR LICENSE, the same text in moonbox-dev/VOSR-ONNX at 46811283',
+     'Apache License, Version 2.0, January 2004', '6cf63d87586c7c25c3ab8e62eef5c75bbaa982b0a6f9c00c59e2720255aac9ec'),
+    ('leejet/stable-diffusion.cpp LICENSE', 'MIT License, Copyright (c) 2023 leejet',
+     'b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee'),
+)
+
+
 class Failure(Exception):
     pass
+
+
+def licence_section(archives: dict | None = None) -> str:
+    """The section of ai-components-7 for MODEL-LICENSES.md. [archives]: asset name -> (size, sha256) of the archives
+    of stable-diffusion.cpp that make built, the others pending"""
+    archives = archives or {}
+    lines = [
+        f'<!-- {TAG} -->',
+        f'## {TAG}: Enhance (AI)',
+        '',
+        f'https://github.com/{pub.REPO}/releases/tag/{TAG}',
+        '',
+        '| File | Component | Size (bytes) | SHA-256 | Licence | Source, pinned revision |',
+        '| --- | --- | --- | --- | --- | --- |',
+    ]
+    for component, asset, _, size, digest, licence, source in MODELS:
+        repository, revision, path = source.split(' ', 2)
+        lines.append(f'| `{asset}` | `{component}` | {size} | `{digest}` | {licence} | '
+                     f'https://huggingface.co/{repository}, revision `{revision}`, `{path}` |')
+    for component, _, asset in ENGINES:
+        size, digest = archives.get(asset, ('pending', 'pending'))
+        shown = digest if digest == 'pending' else f'`{digest}`'
+        lines.append(f'| `{asset}` | `{component}` | {size} | {shown} | MIT | built and signed by our CI |')
+    lines += [
+        '',
+        'The files of 2 GiB or more are in parts (GitHub refuses a larger asset), put end to end by the app, which',
+        'checks the sum of each part and of the whole:',
+        '',
+        '| Part | Of | Size (bytes) | SHA-256 |',
+        '| --- | --- | --- | --- |',
+    ]
+    for component, entry in sorted(entries().items()):
+        parts = entry['parts']
+        for index, (name, size, digest) in enumerate(parts, 1):
+            lines.append(f'| `{name}` | {index} of {len(parts)} of `{entry["asset"]}` | {size} | `{digest}` |')
+    lines += [
+        '',
+        'SeedVR2 3B: Apache-2.0. The card of ByteDance-Seed/SeedVR2-3B (revision `37255ff8`) says `license:',
+        'apache-2.0` and "SeedVR and SeedVR2 are licensed under the Apache 2.0."; the files are the repack of',
+        'Comfy-Org/SeedVR2 at `df48879708206a403d2a61acd55578c2e80fd233` (card `license: apache-2.0`, "Repackaged',
+        'model files for ComfyUI"). SeedVR2 was trained from scratch (arXiv 2506.05301, section 4: a 7B model "from',
+        'scratch", the 3B one "distilled from the original 7B one"), so it inherits no base model; the weights of',
+        'SeedVR v1, initialised from SD3-Medium, are not used. Its VAE was trained from scratch too.',
+        '',
+        'VOSR 2.0 1.4B int8: the ONNX export of moonbox-dev/VOSR-ONNX at `46811283f2b767d9d634cdd3d8e465594712df61`,',
+        'whose card says "Apache-2.0. These files are a derivative of the original model and carry its license", of',
+        'the checkpoints of CSWRY/VOSR (card `license: apache-2.0`), whose table gives "VOSR checkpoints (`VOSR2/`,',
+        '`VOSR_*/`) and project-authored decoder files" the terms "Apache-2.0 under the project license", and its',
+        '`Qwen-Image-vae-2d/` VAE "the applicable upstream terms" of Wan2.1 (GitHub',
+        '`Apache License 2.0`) and Qwen-Image (card `apache-2.0`), and DINOv2 (facebookresearch/dinov2, `Apache',
+        'License 2.0`). Only the 1.4B models are used: the 0.5B ones take the VAE of Stable Diffusion 2.1, under',
+        'OpenRAIL++, which this project does not ship.',
+        '',
+        'stable-diffusion.cpp and ggml: MIT',
+        '(https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE,',
+        'https://github.com/leejet/ggml/blob/eeda9ec48fc84a3df0bb9dcc19ae9053075a2539/LICENSE), built by our CI at the',
+        'commits of `.github/desktop/ai/sd_cpp_seedvr2.lock.json` and signed for Windows, run by the app as a child',
+        'process; the licences of the code built into them are in the `licenses/` folder of each archive. No CUDA.',
+        '',
+        'The licence texts, as read again on 23 November 2026:',
+        '',
+        '| Text | First line | SHA-256 |',
+        '| --- | --- | --- |',
+    ]
+    for name, first, digest in LICENCE_TEXTS:
+        lines.append(f'| {name} | {first} | `{digest}` |')
+    lines.append('')
+    return '\n'.join(lines)
 
 
 def entries() -> dict:
@@ -149,6 +239,7 @@ def make(caches: list, artifacts: list, out: pathlib.Path) -> int:
             shutil.copyfile(source, out / asset)
             sums[asset] = digest
             print(f'{asset}: {size} bytes, SHA-256 {digest}')
+    built = {}
     for artifact in artifacts:
         match = ARTIFACT.match(artifact.name)
         if not match:
@@ -159,11 +250,13 @@ def make(caches: list, artifacts: list, out: pathlib.Path) -> int:
         (out / asset).write_bytes(data)
         digest = hashlib.sha256(data).hexdigest()
         sums[asset] = digest
+        built[asset] = (len(data), digest)
         print(f'{asset}: {len(data)} bytes, SHA-256 {digest}; the entry {component} of ai_enhance_manifest.dart:')
         print(f'  size: {len(data)},\n  sha256: \'{digest}\',')
         print(pub.dart_archive_files(listed), end='')
     (out / 'SHA256SUMS').write_text(''.join(f'{digest}  {name}\n' for name, digest in sorted(sums.items())))
-    print(f'{len(sums)} files and SHA256SUMS in {out}; nothing published')
+    (out / LICENCE_SECTION).write_text(licence_section(built), encoding='utf-8')
+    print(f'{len(sums)} files, SHA256SUMS and {LICENCE_SECTION} in {out}; nothing published')
     return 0
 
 
@@ -175,6 +268,8 @@ def main(argv=None) -> int:
     maker.add_argument('--cache', type=pathlib.Path, action='append', default=[])
     maker.add_argument('--artifact', type=pathlib.Path, action='append', default=[])
     maker.add_argument('--out', type=pathlib.Path, required=True)
+    licences = commands.add_parser('licences')
+    licences.add_argument('--out', type=pathlib.Path, required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == 'check':
@@ -184,6 +279,10 @@ def main(argv=None) -> int:
             if not found:
                 print(f'{len(MODELS)} models and {len(ENGINES)} archives of {TAG}, as ai_enhance_manifest.dart says')
             return 1 if found else 0
+        if args.command == 'licences':
+            args.out.write_text(licence_section(), encoding='utf-8')
+            print(f'the section of {TAG} in {args.out}, its archives pending')
+            return 0
         return make(args.cache, args.artifact, args.out)
     except (Failure, pub.Failure) as error:
         print(f'::error::{error}')
