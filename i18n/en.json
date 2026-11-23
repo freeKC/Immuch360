@@ -2745,6 +2745,7 @@
   "immersive_slideshow_too_warm": "Headset too warm: the slideshow goes on in 2D",
   "immersive_view_big_screen": "View on a big screen",
   "immersive_viewer_open_failed": "Could not open the immersive viewer",
+  "immersive_viewer_update_headset": "Update Horizon OS on your headset to open the immersive viewer",
   "immich_logo": "Immich Logo",
   "import_from_json": "Import from JSON",
   "import_path": "Import path",

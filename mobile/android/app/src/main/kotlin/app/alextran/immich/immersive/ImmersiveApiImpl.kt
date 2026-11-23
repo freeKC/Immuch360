@@ -1,6 +1,7 @@
 package app.alextran.immich.immersive
 
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -217,6 +218,15 @@ class ImmersiveApiImpl(context: Context) : ImmersiveApi {
   ) {
     if (!isHorizonOsDevice()) {
       throw FlutterError("unsupported", "The immersive viewer needs a Meta Quest headset", null)
+    }
+    if (!SpatialSdkSupport.here) {
+      // The SDK would end the app in the viewer's onCreate (see SpatialSdkSupport): Flutter asks to update the headset
+      Log.w(TAG, "immersive viewer refused: Android API ${Build.VERSION.SDK_INT}, the Spatial SDK needs API 33")
+      throw FlutterError(
+        SpatialSdkSupport.TOO_OLD_ERROR,
+        "The immersive viewer needs Horizon OS on Android 13 or later; this headset runs API ${Build.VERSION.SDK_INT}",
+        null,
+      )
     }
     Log.i(
       TAG,

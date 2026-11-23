@@ -32,6 +32,7 @@ import 'package:immich_mobile/extensions/network_capability_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_open_error.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_viewer_launch.dart';
@@ -303,7 +304,7 @@ Future<void> openSplatPhotoOnHeadset(
   GaussianSplatRequest request,
 ) async {
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final errorMessage = context.t.immersive_viewer_open_failed;
+  final t = context.t;
   final stereoLabels = stereoPhotoViewerLabels(context.t);
   final head = scene.head;
   final splat = GaussianSplatRequest(
@@ -331,7 +332,7 @@ Future<void> openSplatPhotoOnHeadset(
     );
   } catch (error) {
     _log.warning('Could not open the scene ${xmp.splatName} on the headset: $error');
-    messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+    messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
   }
 }
 

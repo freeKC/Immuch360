@@ -11,6 +11,7 @@ import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_service.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_open_error.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_save_launch.dart';
@@ -71,7 +72,7 @@ class SplatPage extends ConsumerWidget {
     }
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final errorMessage = context.t.immersive_viewer_open_failed;
+    final t = context.t;
     final stereoLabels = stereoPhotoViewerLabels(context.t);
     final connections = ref.read(networkConnectionsProvider);
     try {
@@ -90,7 +91,7 @@ class SplatPage extends ConsumerWidget {
       await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels);
     } catch (error) {
       _log.warning('Could not open the splat $_name: $error');
-      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+      messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
     }
   }
 

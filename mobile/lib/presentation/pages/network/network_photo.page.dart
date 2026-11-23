@@ -32,6 +32,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_open_error.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_tiff.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
@@ -471,8 +472,8 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   Future<void> _openStereo(String path, StereoPhotoRequest stereo, {Uri? url}) async {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final errorMessage = context.t.immersive_viewer_open_failed;
-    final tiffMessage = context.t.tiff_cannot_decode;
+    final t = context.t;
+    final tiffMessage = t.tiff_cannot_decode;
     final stereoLabels = stereoPhotoViewerLabels(context.t);
     final connections = ref.read(networkConnectionsProvider);
     final tiffJpeg = _tiffJpegReader(messenger);
@@ -492,7 +493,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       messenger?.showSnackBar(SnackBar(content: Text(tiffMessage)));
     } catch (error) {
       _log.warning('Could not open $name in 3D: $error');
-      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+      messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
     }
   }
 
@@ -520,7 +521,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   Future<void> _openPanoramaVersion(ShareVersion version) async {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final errorMessage = context.t.immersive_viewer_open_failed;
+    final t = context.t;
     final stereoLabels = sphereViewerLabels(context.t);
     final connections = ref.read(networkConnectionsProvider);
     final entry = version.entry;
@@ -540,15 +541,15 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       await openImmersiveUrl(ref, request: request, stereoLabels: stereoLabels, navigator: navigator);
     } catch (error) {
       _log.warning('Could not open the 360° version ${entry.name}: $error');
-      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+      messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
     }
   }
 
   Future<void> _openImmersive(_Photo photo, SphereView view) async {
     // Read before the first await: the page may be gone by then
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final errorMessage = context.t.immersive_viewer_open_failed;
-    final tiffMessage = context.t.tiff_cannot_decode;
+    final t = context.t;
+    final tiffMessage = t.tiff_cannot_decode;
     final stereoLabels = sphereViewerLabels(context.t);
     final isRaw = _info?.rawKind == RawMediaKind.insta360Photo || isRawPhotoName(photo.entry.name);
     final raw = isRaw ? RawImmersiveMedia.read(ref, forAssets: false) : null;
@@ -576,7 +577,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
       messenger?.showSnackBar(SnackBar(content: Text(tiffMessage)));
     } catch (error) {
       _log.warning('Could not open the immersive viewer: $error');
-      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+      messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
     }
   }
 

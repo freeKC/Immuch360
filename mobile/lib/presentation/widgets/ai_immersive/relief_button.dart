@@ -23,6 +23,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service
 import 'package:immich_mobile/domain/services/ai_immersive/quest_relief.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_open_error.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
@@ -192,7 +193,7 @@ class _AiReliefButtonState extends ConsumerState<AiReliefButton> {
       await widget.target.open(StereoPhotoRequest.relief(request));
     } catch (error, stack) {
       _log.warning('Could not ask for the AI relief', error, stack);
-      messenger?.showSnackBar(SnackBar(content: Text(t.immersive_viewer_open_failed)));
+      messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
     } finally {
       if (mounted) {
         setState(() => _busy = false);

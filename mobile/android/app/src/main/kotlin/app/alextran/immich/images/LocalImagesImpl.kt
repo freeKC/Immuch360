@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
+import com.bumptech.glide.signature.ObjectKey
 import java.util.Base64
 import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
@@ -304,7 +305,8 @@ class LocalImagesImpl(context: Context) : LocalImageApi {
       // orphan it. Deliver it; Dart frees the buffer itself if the request was cancelled meanwhile.
       callback(Result.success(res))
     } catch (e: Exception) {
-      callback(if (e is OperationCanceledException) CANCELLED else Result.failure(e))
+      // A CancellationException is the cancel of Glide's request before Android 10 (see GlideHandOver)
+      callback(if (e is OperationCanceledException || e is CancellationException) CANCELLED else Result.failure(e))
     }
   }
 
@@ -358,14 +360,26 @@ class LocalImagesImpl(context: Context) : LocalImageApi {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
       ImageDecoder.createSource(resolver, uri).decodeBitmap(target)
     } else {
+      // A signature of its own and no memory cache: each request decodes its own bitmap, which the caller recycles
+      // once copied, never one Glide shares with another request of the same image and size
       val ref =
-        Glide.with(ctx).asBitmap().priority(Priority.IMMEDIATE).load(uri).disallowHardwareConfig()
+        Glide.with(ctx).asBitmap().priority(Priority.IMMEDIATE).load(uri).signature(ObjectKey(Any()))
+          .skipMemoryCache(true).disallowHardwareConfig()
           .format(DecodeFormat.PREFER_ARGB_8888).submit(
             if (target.width > 0) target.width else SIZE_ORIGINAL,
             if (target.height > 0) target.height else SIZE_ORIGINAL,
           )
-      signal.setOnCancelListener { Glide.with(ctx).clear(ref) }
-      ref.get()
+      // A cancel cancels the future, which wakes ref.get() and clears the request while Glide decodes only: once Glide
+      // answered, a clear would free the pixels the caller copies (see GlideHandOver)
+      GlideHandOver.take(signal.handOver(), ref) { it.recycle() } ?: throw OperationCanceledException()
     }
+  }
+
+  private fun CancellationSignal.handOver() = object : GlideHandOver.Cancel {
+    override val isCanceled: Boolean
+      get() = this@handOver.isCanceled
+
+    override fun onCancel(action: (() -> Unit)?) =
+      this@handOver.setOnCancelListener(action?.let { fire -> CancellationSignal.OnCancelListener { fire() } })
   }
 }
