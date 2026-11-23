@@ -109,23 +109,16 @@ DepthProviderPlan planDepthProvider({
   if (cards.isEmpty) {
     return const DepthProviderPlan(OrtProvider.cpu, why: 'no graphics card DirectML can use');
   }
+  final ordered = _highPerformanceFirst(cards);
   if (choice.startsWith(depthDeviceCardPrefix)) {
     final name = choice.substring(depthDeviceCardPrefix.length);
-    for (final card in cards) {
+    // Two adapters of one name (the Intel chip DirectML lists twice): the first of the system's order
+    for (final card in ordered) {
       if (card.description == name) {
         return DepthProviderPlan(OrtProvider.directMl(card.dxgiAdapter!), device: card, why: 'chosen in This computer');
       }
     }
   }
-  // The order of the system for high performance, a dedicated card before an integrated one when it says nothing
-  final ordered = [...cards]
-    ..sort((a, b) {
-      final byIndex = (a.highPerformanceIndex ?? 1 << 20).compareTo(b.highPerformanceIndex ?? 1 << 20);
-      if (byIndex != 0) {
-        return byIndex;
-      }
-      return (b.discrete ? 1 : 0).compareTo(a.discrete ? 1 : 0);
-    });
   final card = ordered.first;
   final missing = choice.startsWith(depthDeviceCardPrefix)
       ? ' (${choice.substring(depthDeviceCardPrefix.length)} chosen in This computer is not there)'
@@ -137,12 +130,34 @@ DepthProviderPlan planDepthProvider({
   );
 }
 
-/// The cards "This computer" offers: those DirectML sees, the software renderer left out, in the order of the system
-List<OrtEpDeviceInfo> depthCards(List<OrtEpDeviceInfo> devices) => [
-  for (final device in devices)
-    if (device.epName == directMlEpName && device.isGraphicsCard && device.dxgiAdapter != null && !device.isSoftware)
-      device,
-]..sort((a, b) => (a.highPerformanceIndex ?? 1 << 20).compareTo(b.highPerformanceIndex ?? 1 << 20));
+/// [cards] in the order of the system for high performance, a dedicated card before an integrated one when it says
+/// nothing (EnumAdapters lists the Intel chip of a hybrid laptop first)
+List<OrtEpDeviceInfo> _highPerformanceFirst(List<OrtEpDeviceInfo> cards) => [...cards]
+  ..sort((a, b) {
+    final byIndex = (a.highPerformanceIndex ?? 1 << 20).compareTo(b.highPerformanceIndex ?? 1 << 20);
+    if (byIndex != 0) {
+      return byIndex;
+    }
+    return (b.discrete ? 1 : 0).compareTo(a.discrete ? 1 : 0);
+  });
+
+/// The cards "This computer" offers: those DirectML sees, the software renderer left out, in the order of the system,
+/// one per name (a choice is kept by its name; DirectML lists the Intel chip of FreeKC's laptop twice, adapters 0
+/// and 2)
+List<OrtEpDeviceInfo> depthCards(List<OrtEpDeviceInfo> devices) {
+  final seen = <String>{};
+  return [
+    for (final device in _highPerformanceFirst([
+      for (final device in devices)
+        if (device.epName == directMlEpName &&
+            device.isGraphicsCard &&
+            device.dxgiAdapter != null &&
+            !device.isSoftware)
+          device,
+    ]))
+      if (seen.add(device.description)) device,
+  ];
+}
 
 /// The input of the check: 32 frames of [side] x [side], a pattern that moves, normalised as the model takes them
 Float32List depthCheckInput({int side = depthCheckSide, int frames = 32}) {

@@ -56,6 +56,36 @@ const _laptop = [
   ),
 ];
 
+/// The second Intel adapter of the same laptop (adapter 2, high performance order 3), as the job log listed it
+const _intelAgain = OrtEpDeviceInfo(
+  epName: directMlEpName,
+  type: 1,
+  vendor: 'Intel Corporation',
+  vendorId: 32902,
+  deviceId: 42888,
+  metadata: {
+    'Description': 'Intel(R) UHD Graphics',
+    'Discrete': '0',
+    'DxgiAdapterNumber': '2',
+    'DxgiHighPerformanceIndex': '3',
+    'DxgiVideoMemory': '128 MB',
+    'LUID': '98371',
+  },
+);
+
+/// [device] with [metadata] changed
+OrtEpDeviceInfo _with(OrtEpDeviceInfo device, Map<String, String?> metadata) => OrtEpDeviceInfo(
+  epName: device.epName,
+  type: device.type,
+  vendor: device.vendor,
+  vendorId: device.vendorId,
+  deviceId: device.deviceId,
+  metadata: {
+    for (final entry in {...device.metadata, ...metadata}.entries)
+      if (entry.value != null) entry.key: entry.value!,
+  },
+);
+
 const _warp = OrtEpDeviceInfo(
   epName: directMlEpName,
   type: 1,
@@ -76,6 +106,24 @@ void main() {
       expect(plan.provider.options, {'device_id': '1'});
       expect(plan.title, 'DirectML on NVIDIA GeForce RTX 4060 Laptop GPU (adapter 1, 7956 MB)');
       expect(plan.why, 'the high performance card of Windows');
+    });
+
+    test('the order of EnumAdapters, the Intel chip first: still the RTX, by the high performance order', () {
+      final enumOrder = [_laptop[2], _intelAgain, _laptop[1]];
+      expect(_plan(depthDeviceAuto, devices: enumOrder).provider, const OrtProvider.directMl(1));
+      // A system that gives no high performance order: the dedicated card wins
+      final unordered = [
+        for (final device in enumOrder) _with(device, {'DxgiHighPerformanceIndex': null}),
+      ];
+      expect(_plan(depthDeviceAuto, devices: unordered).provider, const OrtProvider.directMl(1));
+    });
+
+    test('This computer lists the Intel chip once, though DirectML gives it twice; its choice takes adapter 0', () {
+      final cards = depthCards([..._laptop, _intelAgain]);
+      expect(cards.map((card) => card.description), ['NVIDIA GeForce RTX 4060 Laptop GPU', 'Intel(R) UHD Graphics']);
+      expect(cards.last.dxgiAdapter, 0, reason: 'the first of the high performance order');
+      final chosen = _plan('${depthDeviceCardPrefix}Intel(R) UHD Graphics', devices: [_intelAgain, ..._laptop]);
+      expect(chosen.provider, const OrtProvider.directMl(0));
     });
 
     test('a card chosen by its name, a card no longer there, the processor', () {

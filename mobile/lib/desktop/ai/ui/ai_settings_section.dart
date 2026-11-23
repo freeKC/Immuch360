@@ -429,13 +429,13 @@ class _VideoDepthDevice extends ConsumerWidget {
     }
     final cards = Platform.isWindows ? ref.watch(videoDepthCardsProvider).valueOrNull : const <String>[];
     final chosen = settings.videoDepthDevice;
-    final names = [
+    final names = {
       ...?cards,
       // A card chosen before and not seen now stays listed, so that the choice shows
       if (chosen.startsWith(depthDeviceCardPrefix) &&
           !(cards ?? const []).contains(chosen.substring(depthDeviceCardPrefix.length)))
         chosen.substring(depthDeviceCardPrefix.length),
-    ];
+    };
     return Column(
       key: const Key('ai_settings_depth_device'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
