@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/ort/depth_provider.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
@@ -55,6 +56,9 @@ void main() {
         alignment: VideoDepthAlignment.upstream,
         intraOpThreads: 1,
         lowPriority: false,
+        // Compared byte for byte with the processor below: on Apple silicon "automatic" takes Core ML, whose depth
+        // agrees within the check's 2 %, not to the bit
+        depthDevice: depthDeviceProcessor,
       ),
     );
     final session = OrtRuntime.load(
