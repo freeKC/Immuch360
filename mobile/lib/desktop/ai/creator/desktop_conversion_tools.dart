@@ -56,6 +56,7 @@ import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/dart_immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/desktop_enhance.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/gpu/app_graphics_memory.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
@@ -1024,6 +1025,7 @@ final keptAiEnginesProvider = Provider<List<KeptAiEngine>>(
     ref.watch(desktopStereoPanoramaEngineProvider),
     ref.watch(desktopPanoramaEngineProvider),
     ref.watch(desktopSplatEngineProvider),
+    ...ref.watch(desktopEnhanceEnginesProvider).values,
   ],
 );
 
@@ -1038,6 +1040,9 @@ final conversionEnginesProvider = Provider<Map<ConversionKind, ConversionEngine>
       ref.watch(desktopStereoPanoramaEngineProvider),
     ),
     ConversionKind.splatScene: splatConversionEngine(ref.watch(desktopSplatEngineProvider)),
+    // "Enhance (AI)" of release 51, one engine per level (enhance/desktop_enhance.dart)
+    for (final MapEntry(key: level, value: engine) in ref.watch(desktopEnhanceEnginesProvider).entries)
+      ConversionKind.enhanceAt(level): enhanceConversionEngine(engine),
   },
 );
 

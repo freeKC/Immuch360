@@ -69,6 +69,12 @@
 // and Resume going on with the download, the free space read first; the copy is deleted with its work once the 3D
 // video is made, stopped, refused or discarded, and the next start makes its source again (ConversionTools
 // .remoteVideoSource) to go on with a download a quit stopped.
+//
+// An enhanced photo of "Enhance (AI)" (release 51) is a job of one of three kinds, by its level: Sharpen and Rebuild
+// details on the lane of the graphics card (each asking the card with its own need, enhance_gpu.dart), Natural on the
+// processor (its memory told by its level, enhance_plan.dart). Its settings (level and strength) go with the job. It
+// always makes a new version beside the others. Pause stops one under way at its next check (a tile of its model) or
+// keeps one waiting out of the queue: the state paused, Resume running the photo again from its start, as Retry does.
 
 import 'dart:async';
 import 'dart:io';
@@ -81,6 +87,9 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/original_bytes.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_gpu.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/ai/gpu/graphics_release.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -415,6 +424,13 @@ class ConversionQueueState {
   /// A job failed that a Retry may mend: not a splat scene of too few images placed, which would place the same ones
   bool get hasFailed => jobs.any((job) => job.state == ConversionState.failed && !job.retryGivesTheSame);
 
+  /// Enhanced photos waiting or under way, which Pause all stops
+  bool get hasEnhanceToPause =>
+      jobs.any((job) => job.kind.isEnhance && (job.state == ConversionState.waiting || job.state.isActive));
+
+  /// Enhanced photos paused, which Resume all runs again
+  bool get hasEnhancePaused => jobs.any((job) => job.kind.isEnhance && job.state == ConversionState.paused);
+
   /// A job Clear finished would forget: a 3D video paused stays, its work kept for Resume
   bool get hasEnded => jobs.any((job) => job.state.isEnded && job.state != ConversionState.paused);
 
@@ -440,6 +456,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
   /// The control of each 3D video under way: Pause and Cancel
   final _videoControls = <String, VideoJobControl>{};
+
+  /// The enhanced photos under way asked to pause: their stop ends them paused, not cancelled
+  final _pausing = <String>{};
 
   /// When the step shown of each job under way started, for its time left
   final _stepStarted = <String, DateTime>{};
@@ -502,6 +521,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     bool alsoStereo = false,
     bool fromVideo = false,
     ReliefStrength reliefStrength = ReliefStrength.normal,
+    EnhanceSettings? enhance,
   }) {
     if (requests.isEmpty) {
       return const [];
@@ -523,6 +543,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         state: request.skip == null ? ConversionState.waiting : ConversionState.skipped,
         skipReason: request.skip,
         fromVideo: fromVideo && kind == ConversionKind.splatScene,
+        enhance: switch (kind.enhanceLevel) {
+          final level? => (enhance?.level == level ? enhance! : EnhanceSettings.of(level)).forPixels(request.pixels),
+          null => null,
+        },
       );
       jobs.add(job);
       final target = request.target;
@@ -713,10 +737,16 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   }
 
   /// Pauses a 3D video: the one under way stops at its next frame (the model's run in progress within a second) with
-  /// its work kept, one waiting stays out of the queue until Resume. Nothing for the other kinds.
+  /// its work kept, one waiting stays out of the queue until Resume. An enhanced photo under way stops at its next
+  /// check and runs again from its start at Resume. Nothing for the other kinds.
   void pause(String id) {
     final job = state.byId(id);
-    if (job == null || !job.kind.isVideo) {
+    if (job == null || !(job.kind.isVideo || job.kind.isEnhance)) {
+      return;
+    }
+    if (job.kind.isEnhance && job.state.isActive) {
+      _pausing.add(id);
+      _flags[id]?.cancel();
       return;
     }
     if (job.state == ConversionState.waiting) {
@@ -725,6 +755,30 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     } else if (job.state.isActive) {
       _videoControls[id]?.pause();
     }
+  }
+
+  /// Pauses every enhanced photo waiting or under way (a batch of "Enhance (AI)"): see [pause]
+  void pauseEnhance() {
+    for (final job in state.jobs) {
+      if (job.kind.isEnhance && (job.state == ConversionState.waiting || job.state.isActive)) {
+        pause(job.id);
+      }
+    }
+  }
+
+  /// Runs every enhanced photo paused again, from its start, in the order they came; ends a pause of the queue as
+  /// Retry does
+  void resumeEnhance() {
+    final ids = {
+      for (final job in state.jobs)
+        if (job.kind.isEnhance && job.state == ConversionState.paused) job.id,
+    };
+    if (ids.isEmpty) {
+      return;
+    }
+    _gpuShort = null;
+    state = ConversionQueueState(jobs: _restarted(ids), isPaused: state.isPaused);
+    _pump();
   }
 
   /// Cancels a job: one waiting never runs (nor the 3D version chained after it), the one under way stops at its next
@@ -934,7 +988,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       job.target != null &&
       (job.state == ConversionState.failed ||
           job.state == ConversionState.cancelled ||
-          (job.kind.isVideo && job.state == ConversionState.paused));
+          ((job.kind.isVideo || job.kind.isEnhance) && job.state == ConversionState.paused));
 
   /// The jobs with [ids] as they were added, and the jobs chained after them that were skipped for them; those of the
   /// graphics card let go of the app's share again when they are asked
@@ -1060,12 +1114,18 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   static int _memoryNeedOf(ConversionJob job) => switch (job.video) {
     final video? when video.sphereEyeWidth != null => sphereJobMemoryBytes(video.quality, video.sphereEyeWidth!),
     final video? => video.quality.jobMemoryBytes,
-    null => jobMemoryNeedOf(job.kind.output),
+    null => switch (job.kind.enhanceLevel) {
+      final level? => enhanceJobMemoryOf(level, pixels: job.enhance?.pixels),
+      null => jobMemoryNeedOf(job.kind.output),
+    },
   };
 
   /// What a job under way may still take: a 3D video holds its need once its frames run
   static int _memoryStillNeeded(ConversionJob job) => job.kind.isVideo
       ? (job.state.index >= ConversionState.depth.index ? 0 : _memoryNeedOf(job))
+      // An enhanced photo holds the need of its level once its model runs
+      : job.kind.isEnhance
+      ? (job.state.index >= ConversionState.generating.index ? 0 : _memoryNeedOf(job))
       : jobMemoryStillNeeded(job.kind.output, job.state.stage);
 
   Future<void> _run(ConversionJob job) async {
@@ -1348,6 +1408,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _flags.remove(id);
       _stepStarted.remove(id);
       _graphicsFree.remove(id);
+      _pausing.remove(id);
       cancel.free();
     }
   }
@@ -1578,6 +1639,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
                 job.state == ConversionState.waiting &&
                 job.kind.lane == ConversionLane.cpu &&
                 !job.kind.isVideo &&
+                // Natural of "Enhance (AI)" takes minutes a photo, a batch hours: it waits for the end of the video
+                !job.kind.isEnhance &&
                 (job.parentId == null || job.inputPath != null),
           )
           .firstOrNull;
@@ -1722,7 +1785,12 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// a card that did not answer
   Future<GpuBudgetCheck> _askCard(String id, GpuBudget budget, ConversionKind kind) async {
     try {
-      return await budget.check(need: gpuNeedOf(kind.output));
+      return await budget.check(
+        need: switch (kind.enhanceLevel) {
+          final level? => enhanceGpuNeedOf(level),
+          null => gpuNeedOf(kind.output),
+        },
+      );
     } catch (error, stack) {
       _log.warning('The graphics card could not be asked for $id', error, stack);
       return const GpuBudgetUnavailable(AiGateReason.gpuNoAnswer);
@@ -1825,6 +1893,19 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       case ConversionKind.stereoVideo:
         // Run by its own engine (_runVideo)
         return null;
+      case ConversionKind.enhanceSharpen || ConversionKind.enhanceRebuild || ConversionKind.enhanceNatural:
+        final settings = job.enhance ?? EnhanceSettings.of(job.kind.enhanceLevel!);
+        return EnhanceJob(
+          id: job.id,
+          source: source,
+          partPath: part,
+          derivativeId: derivativeId,
+          creatorTool: tools.creatorTool,
+          created: created,
+          level: settings.level,
+          strength: settings.strength,
+          exif: exif,
+        );
       case ConversionKind.stereoPanoramaFromPanorama:
         return StereoPanoramaJob(
           id: job.id,
@@ -2002,6 +2083,11 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// kind, its code and the first line of [message], the engine of a panorama writing the whole message with the end of
   /// sd-cli's output; none when the caller [logged] it already, with its stack
   void _end(String id, ImmersiveErrorCode code, [String? message, String? keptFolder, bool logged = false]) {
+    // An enhanced photo asked to pause ends paused whatever stopped it, and runs again from its start at Resume
+    if (_pausing.remove(id) && (code == ImmersiveErrorCode.cancelled || code == ImmersiveErrorCode.modelFailed)) {
+      _set(id, (job) => job.copyWith(state: ConversionState.paused, remaining: () => null));
+      return;
+    }
     if (code == ImmersiveErrorCode.cancelled) {
       _set(id, (job) => job.copyWith(state: ConversionState.cancelled, remaining: () => null));
       return;

@@ -17,6 +17,8 @@ import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/desktop_enhance.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/panorama/panorama_engine.dart';
@@ -135,7 +137,16 @@ void main() {
       ConversionKind.panoramaFromPhoto,
       ConversionKind.stereoPanoramaFromPanorama,
       ConversionKind.splatScene,
+      ConversionKind.enhanceSharpen,
+      ConversionKind.enhanceRebuild,
+      ConversionKind.enhanceNatural,
     ], reason: 'S1 registers the 3D scene, P3 the 360° panorama, P1 the 3D version of a 360° panorama, SP6 the splat');
+    // "Enhance (AI)" of release 51, one engine per level, kept while it runs
+    for (final level in EnhanceLevel.values) {
+      final engine = bare.read(conversionEnginesProvider)[ConversionKind.enhanceAt(level)]!.engine;
+      expect(engine, isA<DesktopEnhanceEngine>().having((engine) => engine.level, 'level', level));
+      expect(bare.read(keptAiEnginesProvider), contains(engine));
+    }
     expect(bare.read(conversionEnginesProvider)[ConversionKind.splatScene]!.engine, isA<DesktopSplatEngine>());
     expect(
       bare.read(keptAiEnginesProvider),

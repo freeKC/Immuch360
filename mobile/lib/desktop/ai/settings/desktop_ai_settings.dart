@@ -412,6 +412,36 @@ const aiDefaultTimings = <String, Map<String, int>>{
   },
   'splatScene': splatSceneDefaultTimings,
   'splatSceneVideo': splatSceneVideoDefaultTimings,
+  // "Enhance (AI)" of release 51, a photo of 3 MP as the probe of 23 November 2026 measured it on the RTX 4060 Laptop
+  // and the i9 of 24 threads (probe-e0.md, section 4): Sharpen 28 s, Rebuild details 35 s, Natural 340 s (9 s of
+  // loading, 16 s a tile)
+  'enhanceSharpen': {
+    'reading': 100,
+    'decoding': 400,
+    'loadingModels': 1000,
+    'generating': 25000,
+    'pasteBack': 500,
+    'encoding': 600,
+    'writing': 100,
+  },
+  'enhanceRebuild': {
+    'reading': 100,
+    'decoding': 400,
+    'loadingModels': 2000,
+    'generating': 30000,
+    'pasteBack': 1500,
+    'encoding': 600,
+    'writing': 100,
+  },
+  'enhanceNatural': {
+    'reading': 100,
+    'decoding': 400,
+    'loadingModels': 9000,
+    'generating': 330000,
+    'pasteBack': 1500,
+    'encoding': 600,
+    'writing': 100,
+  },
 };
 
 /// The time the steps of the jobs take on this computer: those it measured (DesktopAiSettings.timings), else

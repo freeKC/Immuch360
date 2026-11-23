@@ -23,6 +23,7 @@ import 'dart:isolate';
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
@@ -47,9 +48,33 @@ enum ConversionKind {
   panoramaFromPhoto(ImmersiveKind.panorama360, ConversionLane.gpu),
   stereoPanoramaFromPanorama(ImmersiveKind.stereoPanorama360, ConversionLane.cpu),
   splatScene(ImmersiveKind.gaussianSplat, ConversionLane.gpu),
-  stereoVideo(ImmersiveKind.stereoPhoto, ConversionLane.cpu);
+  stereoVideo(ImmersiveKind.stereoPhoto, ConversionLane.cpu),
+
+  /// "Enhance (AI)" (release 51), one kind per level: Sharpen and Rebuild details on the lane of the graphics card,
+  /// Natural on the processor; each writes `<name>_enhanced.jpg`
+  enhanceSharpen(ImmersiveKind.enhancedPhoto, ConversionLane.gpu),
+  enhanceRebuild(ImmersiveKind.enhancedPhoto, ConversionLane.gpu),
+  enhanceNatural(ImmersiveKind.enhancedPhoto, ConversionLane.cpu);
 
   const ConversionKind(this.output, this.lane);
+
+  /// The kind of the jobs of "Enhance (AI)" at [level]
+  static ConversionKind enhanceAt(EnhanceLevel level) => switch (level) {
+    EnhanceLevel.sharpen => enhanceSharpen,
+    EnhanceLevel.rebuild => enhanceRebuild,
+    EnhanceLevel.natural => enhanceNatural,
+  };
+
+  /// The level of an enhanced photo, null for the other kinds
+  EnhanceLevel? get enhanceLevel => switch (this) {
+    enhanceSharpen => EnhanceLevel.sharpen,
+    enhanceRebuild => EnhanceLevel.rebuild,
+    enhanceNatural => EnhanceLevel.natural,
+    _ => null,
+  };
+
+  /// An enhanced photo: Pause and Resume, a new version each time, Compare once done
+  bool get isEnhance => enhanceLevel != null;
 
   /// The kind of file it writes
   final ImmersiveKind output;
@@ -327,6 +352,9 @@ enum ConversionSkipReason {
 
   /// A 3D video: a 360° video that is not one 2:1 equirectangular frame (a cube map, a cropped sphere)
   sphereLayout,
+
+  /// An enhanced photo: a photo above 50 megapixels (enhance_plan.dart, enhanceMaxPixels)
+  tooLarge,
 }
 
 /// What a batch does with a photo that already has a version with the same settings. A name taken by another file is
@@ -479,7 +507,7 @@ class SplatSelection {
 
 /// One photo to convert, as the dialog hands it to the queue
 class ConversionRequest {
-  const ConversionRequest({required this.source, this.target, this.quarterTurns = 0, this.skip})
+  const ConversionRequest({required this.source, this.target, this.quarterTurns = 0, this.skip, this.pixels})
     : assert(target != null || skip != null, 'A job that runs has a destination');
 
   final ConversionSource source;
@@ -492,6 +520,10 @@ class ConversionRequest {
 
   /// Known before anything runs: a video, a 360° photo, a 3D photo already, a format this system cannot read
   final ConversionSkipReason? skip;
+
+  /// The pixels of the photo as the library knows them, for the memory an enhanced photo holds (EnhanceSettings.pixels);
+  /// null when not known, and for the other kinds
+  final int? pixels;
 }
 
 /// A job of the queue, unchanged once made: the queue replaces it with a copy at each change
@@ -539,9 +571,13 @@ class ConversionJob {
     this.yielding = false,
     this.videoMissing,
     this.videoDownload,
+    this.enhance,
   });
 
   final String id;
+
+  /// An enhanced photo: the level and the strength the dialog chose; null for the other kinds
+  final EnhanceSettings? enhance;
 
   /// A 3D video: what the dialog chose, its work folder and its record; null for the other kinds
   final VideoJobSettings? video;
@@ -748,6 +784,7 @@ class ConversionJob {
     yielding: yielding ?? this.yielding,
     videoMissing: videoMissing == null ? this.videoMissing : videoMissing(),
     videoDownload: videoDownload == null ? this.videoDownload : videoDownload(),
+    enhance: enhance,
   );
 
   /// The job as it was added, to run again; a chained job reads again what its parent makes then. [keepsWaiting]: it
@@ -774,6 +811,7 @@ class ConversionJob {
     perMille: video == null ? 0 : perMille,
     videoProgress: videoProgress,
     videoDownload: videoDownload,
+    enhance: enhance,
   );
 
   @override

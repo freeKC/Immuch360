@@ -216,6 +216,10 @@ const stereoPanoramaJobMemory = 2 * 4 * 8192 * 4096 + 2 * 4 * 4096 * 4096 + 64 *
 /// plus what the poses gave back
 const splatJobMemory = SplatV1.jobMemory;
 
+/// What an enhanced photo takes, told by its level when the queue knows it (enhance_plan.dart, enhanceJobMemoryOf); the
+/// most of them otherwise, Natural on the processor: 8.5 to 9.7 GB of commit in the probe of 23 November 2026
+const enhanceJobMemory = 10 * _gib;
+
 /// What a job that makes a file of [kind] needs at its peak, told before it runs, to decide whether it may run beside
 /// a job of the other lane: a 3D photo of 24 Mpx with its session to open for the 3D photo, whose own job then checks
 /// the size of its photo (jobMemoryNeed)
@@ -231,6 +235,7 @@ int jobMemoryNeedOf(ImmersiveKind kind) => switch (kind) {
   ImmersiveKind.panorama360 => panoramaJobMemory,
   ImmersiveKind.stereoPanorama360 => stereoPanoramaJobMemory,
   ImmersiveKind.gaussianSplat => splatJobMemory,
+  ImmersiveKind.enhancedPhoto => enhanceJobMemory,
 };
 
 /// What is kept free for the job under way on the other lane when a second one starts: M3 saw the free memory of
@@ -248,6 +253,7 @@ ImmersiveStage memoryPeakOf(ImmersiveKind kind) => switch (kind) {
   ImmersiveKind.panorama360 => ImmersiveStage.generating,
   ImmersiveKind.stereoPanorama360 => ImmersiveStage.panoramaDepth,
   ImmersiveKind.gaussianSplat => ImmersiveStage.features,
+  ImmersiveKind.enhancedPhoto => ImmersiveStage.generating,
 };
 
 /// What a job of [kind] at [stage] (null: not started yet) may still take beyond the memory free read now: its whole

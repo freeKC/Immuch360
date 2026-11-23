@@ -30,6 +30,13 @@ name: Immuch360 Desktop release
 # --from-run <run> takes them from there, with the Linux archives of the same run. A release of the app never builds
 # them, and a run with with_splat never reaches the release job.
 #
+# With with_sdcpp_seedvr2 (by hand, with sign_test), the build also makes the second archive of stable-diffusion.cpp,
+# the engine of "Rebuild details" of Enhance (AI) at 0d71f963 (the sdcpp-seedvr2 jobs of immuch360-desktop.yml), and
+# sign-windows signs and checks every .exe and .dll of its Windows archive as for with_sdcpp, in place of the artifact
+# under the same name: enhance_components.py make --artifact takes it from there for ai-components-7. Never with
+# with_sdcpp in the same run (both archives are Immuch360-AI-sdcpp-*: the step of with_sdcpp then finds two and stops).
+# A release of the app never builds it, and a run with with_sdcpp_seedvr2 never reaches the release job.
+#
 # This is the one desktop workflow that writes to the repository, its release job only, with "contents: write", and
 # the one that holds secrets, its sign-windows job only, which reads the repository and gets the three credentials of
 # the signing account in the steps that sign; it runs on desktop-v* tags and by hand, never on a pull request.
@@ -52,6 +59,10 @@ on:
         description: Also build and sign COLMAP and Brush for ai-components-4 (with sign_test); no release is touched
         type: boolean
         default: false
+      with_sdcpp_seedvr2:
+        description: Also build and sign the stable-diffusion.cpp of Enhance (AI) for ai-components-7 (with sign_test); no release is touched
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -65,6 +76,7 @@ jobs:
       sdcpp: ${{ inputs.with_sdcpp == true }}
       colmap: ${{ inputs.with_splat == true }}
       brush: ${{ inputs.with_splat == true }}
+      sdcpp_seedvr2: ${{ inputs.with_sdcpp_seedvr2 == true }}
 
   sign-windows:
     name: Sign the Windows files
@@ -203,6 +215,42 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+      # The stable-diffusion.cpp of Enhance (AI), when the build made it (with_sdcpp_seedvr2): the same, for its archive
+      # of the commit 0d71f96 of sd_cpp_seedvr2.lock.json
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: ${{ inputs.with_sdcpp_seedvr2 }}
+        with:
+          pattern: Immuch360-AI-sdcpp-0d71f96-*-windows-x64.zip
+          merge-multiple: true
+          skip-decompress: true
+          path: unsigned-sdcpp-seedvr2
+
+      - name: Sign the stable-diffusion.cpp of Enhance (AI)
+        id: sdcpp_seedvr2
+        if: ${{ inputs.with_sdcpp_seedvr2 }}
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: |
+          ls -l unsigned-sdcpp-seedvr2
+          archives=(unsigned-sdcpp-seedvr2/Immuch360-AI-sdcpp-0d71f96-*-windows-x64.zip)
+          [ ${#archives[@]} = 1 ] && [ -f "${archives[0]}" ] || { echo "::error::not one sdcpp-seedvr2 archive"; exit 1; }
+          python .github/desktop/windows_sign.py files --tools "$RUNNER_TEMP/signing" --zip "${archives[0]}" \
+            --work "$RUNNER_TEMP/sdcpp-seedvr2" --out signed-sdcpp-seedvr2 --github-output
+          echo "name=$(basename "${archives[0]}")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the signed stable-diffusion.cpp of Enhance (AI)
+        if: ${{ inputs.with_sdcpp_seedvr2 }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ steps.sdcpp_seedvr2.outputs.name }}
+          path: ${{ steps.sdcpp_seedvr2.outputs.archive }}
+          archive: false
+          overwrite: true
+          retention-days: 14
+          if-no-files-found: error
+
       # COLMAP and Brush, when the build made them (with_splat): every .exe and .dll of their Windows archives signed
       # and checked (the runtime DLLs of Microsoft keep their signature), each archive written again with the same
       # entries, in place of its artifact under the same name
@@ -264,9 +312,9 @@ jobs:
   release:
     name: Attach the packages to the release
     needs: [build, sign-windows]
-    # A sign test never reaches a release, nor a build of stable-diffusion.cpp for ai-components-3 or of COLMAP and
-    # Brush for ai-components-4 (the AV2 decoder is built and signed by immuch360/av2-companion)
-    if: ${{ !inputs.sign_test && !inputs.with_sdcpp && !inputs.with_splat }}
+    # A sign test never reaches a release, nor a build of stable-diffusion.cpp for ai-components-3 or 7 or of COLMAP
+    # and Brush for ai-components-4 (the AV2 decoder is built and signed by immuch360/av2-companion)
+    if: ${{ !inputs.sign_test && !inputs.with_sdcpp && !inputs.with_splat && !inputs.with_sdcpp_seedvr2 }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:

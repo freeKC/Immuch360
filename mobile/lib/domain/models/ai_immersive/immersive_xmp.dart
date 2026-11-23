@@ -1,6 +1,7 @@
 // The XMP packets of every file Immuch360 makes from a photo (design-final 2026-10-27, section 8.1): what they share,
 // and the packets of the kinds of phases 2 and 3, the 3D scene (SceneXmp), the 360° panorama generated beyond the
-// edges of a photo (PanoramaXmp) and the 360° 3D panorama, also the 3D version of a 360° photo (StereoPanoramaXmp).
+// edges of a photo (PanoramaXmp) and the 360° 3D panorama, also the 3D version of a 360° photo (StereoPanoramaXmp);
+// and since release 51 the photo made sharper by "Enhance (AI)" (EnhancedPhotoXmp).
 // The 3D photo of phase 1 keeps its own class, StereoPhotoXmp, which writes its packet with the same writer.
 //
 // Always one rdf:Description, our namespace under the prefix Immuch360 and FormatVersion 1: a build of phase 1 reads
@@ -87,6 +88,7 @@ abstract interface class ImmersiveXmp {
       ImmersiveKind.volumetricScene => SceneXmp.parse(xmp),
       ImmersiveKind.panorama360 => PanoramaXmp.parse(xmp),
       ImmersiveKind.stereoPanorama360 => StereoPanoramaXmp.parse(xmp),
+      ImmersiveKind.enhancedPhoto => EnhancedPhotoXmp.parse(xmp),
       ImmersiveKind.stereoPhoto || ImmersiveKind.gaussianSplat || null => StereoPhotoXmp.parse(xmp),
     };
   }
@@ -1178,6 +1180,142 @@ final class StereoPanoramaXmp extends ImmersiveVersionXmp {
       region: _regionOf(read),
       sourceCoverage: read.decimal('SourceCoverage'),
       parentDerivativeId: read.field('ParentDerivativeId'),
+      derivativeId: read.field('DerivativeId'),
+      sourceName: read.field('SourceName'),
+      sourceSize: read.integer('SourceSize'),
+      sourceSha1: read.field('SourceSha1'),
+      sourceQuarterTurns: read.turns,
+      qualityFlags: read.flags,
+      created: read.field('Created'),
+      creatorTool: read.creatorTool,
+      description: read.description,
+      digitalSourceType: read.digitalSourceType,
+      sources: read.sources,
+    );
+  }
+}
+
+/// The packet of a photo made sharper by "Enhance (AI)" (lots E1 to E3 of release 51), `<name>_enhanced.jpg`: the
+/// level (Immuch360:EnhanceLevel), the strength in percent (EnhanceStrength), the model and the SHA-256 of its file
+/// (EnhanceModel, EnhanceModelSha256), with the fields every kind shares: Origin GeneratedContent (details are
+/// invented), the IPTC digital source type compositeWithTrainedAlgorithmicMedia, the software in xmp:CreatorTool and a
+/// description that starts with "AI enhanced".
+final class EnhancedPhotoXmp extends ImmersiveVersionXmp {
+  const EnhancedPhotoXmp({
+    super.formatVersion = immersiveFormatVersion,
+    super.origin,
+    super.pipeline,
+    this.level,
+    this.strength,
+    this.model,
+    this.modelSha256,
+    this.width,
+    this.height,
+    super.derivativeId,
+    super.sourceName,
+    super.sourceSize,
+    super.sourceSha1,
+    super.sourceQuarterTurns,
+    super.qualityFlags = const [],
+    super.created,
+    super.creatorTool,
+    super.description,
+    super.digitalSourceType,
+    super.sources = const [],
+  });
+
+  /// The packet of a photo enhanced at [level] (its Immuch360:EnhanceLevel value, "Sharpen", "RebuildDetails" or
+  /// "Natural", said [levelName] in the description) with [strength] percent of the result
+  factory EnhancedPhotoXmp.enhanced({
+    required String level,
+    required String levelName,
+    required int strength,
+    required String model,
+    required String modelSha256,
+    required int width,
+    required int height,
+    required String sourceName,
+    required int sourceSize,
+    required String sourceSha1,
+    required String created,
+    required String creatorTool,
+    String? derivativeId,
+  }) => EnhancedPhotoXmp(
+    origin: ImmersiveOrigin.generatedContent,
+    pipeline: enhancePipeline,
+    level: level,
+    strength: strength,
+    model: model,
+    modelSha256: modelSha256,
+    width: width,
+    height: height,
+    derivativeId: derivativeId ?? newImmersiveDerivativeId(),
+    sourceName: sourceName,
+    sourceSize: sourceSize,
+    sourceSha1: sourceSha1,
+    sourceQuarterTurns: 0,
+    created: created,
+    creatorTool: creatorTool,
+    description: enhancedDescription(levelName, strength),
+    digitalSourceType: iptcCompositeWithTrainedAlgorithmicMedia,
+  );
+
+  /// The pipeline of the enhanced photos of release 51
+  static const enhancePipeline = 'enhance-v1';
+
+  @override
+  ImmersiveKind get kind => ImmersiveKind.enhancedPhoto;
+
+  final String? level;
+  final int? strength;
+  final String? model;
+  final String? modelSha256;
+
+  /// The size of the picture, the size of its original
+  final int? width;
+  final int? height;
+
+  @override
+  String? get settingsKey {
+    final chosen = level;
+    final share = strength;
+    final sum = modelSha256;
+    final steps = pipeline;
+    if (chosen == null || share == null || sum == null || steps == null) {
+      return null;
+    }
+    return '$sum|$steps|$chosen|$share';
+  }
+
+  @override
+  List<(String, String)> get kindFields => [
+    if (level case final value?) ('EnhanceLevel', value),
+    if (strength case final value?) ('EnhanceStrength', '$value'),
+    if (model case final value?) ('EnhanceModel', value),
+    if (modelSha256 case final value?) ('EnhanceModelSha256', value),
+    if (width case final value?) ('Width', '$value'),
+    if (height case final value?) ('Height', '$value'),
+  ];
+
+  @override
+  List<Object?> get kindValues => [level, strength, model, modelSha256, width, height];
+
+  /// The fields of the packet [xmp], null when it is not ours or not of an enhanced photo
+  static EnhancedPhotoXmp? parse(String xmp) {
+    final read = _sharedOf(xmp, ImmersiveKind.enhancedPhoto);
+    if (read == null) {
+      return null;
+    }
+    return EnhancedPhotoXmp(
+      formatVersion: read.formatVersion,
+      origin: read.origin,
+      pipeline: read.field('Pipeline'),
+      level: read.field('EnhanceLevel'),
+      strength: read.integer('EnhanceStrength'),
+      model: read.field('EnhanceModel'),
+      modelSha256: read.field('EnhanceModelSha256'),
+      width: read.integer('Width'),
+      height: read.integer('Height'),
       derivativeId: read.field('DerivativeId'),
       sourceName: read.field('SourceName'),
       sourceSize: read.integer('SourceSize'),

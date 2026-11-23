@@ -103,7 +103,9 @@ void main() {
         jobMemoryNeedOf(ImmersiveKind.stereoPhoto),
         jobMemoryNeed(sourceWidth: 6000, sourceHeight: 4000, eyeWidth: 6000, eyeHeight: 4000, sessionOpen: false),
       );
-      for (final kind in ImmersiveKind.values) {
+      // An enhanced photo is told by its level (enhance_plan.dart), Natural on the processor the most: 10 GiB
+      expect(jobMemoryNeedOf(ImmersiveKind.enhancedPhoto), 10 * gib);
+      for (final kind in ImmersiveKind.values.where((kind) => kind != ImmersiveKind.enhancedPhoto)) {
         expect(jobMemoryNeedOf(kind), lessThanOrEqualTo(jobMemoryNeedOf(ImmersiveKind.panorama360)), reason: '$kind');
       }
     });

@@ -16,6 +16,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
@@ -236,9 +237,10 @@ class _TimelineSelectionState extends ConsumerState<_TimelineSelection> {
 
     return [
       ?entry(const UploadAction(source: ActionSource.timeline), 'desktop_selection_upload'),
-      // The AI entries, "Make 3D (AI)" then "Make a splat scene (AI)" as in the sheet of the selection
+      // The AI entries, "Make 3D (AI)", "Enhance (AI)" then "Make a splat scene (AI)" as in the sheet of the selection
       if (ai) ...[
         const DesktopMakeImmersiveButton(source: ActionSource.timeline, menuItem: true),
+        const DesktopEnhanceButton(source: ActionSource.timeline, menuItem: true),
         const DesktopMakeSplatButton(source: ActionSource.timeline, menuItem: true),
       ],
       ?entry(const DownloadAction(source: ActionSource.timeline), 'desktop_selection_download'),
