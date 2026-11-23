@@ -535,8 +535,8 @@ void main() {
           final components = aiComponentsFor(platform, feature: AiFeature.stereoVideo);
           expect(
             components.map((component) => component.kind),
-            // Not on Intel Macs: ONNX Runtime 1.23.2 was not checked with the model there
-            platform == AiPlatform.questArm64 || platform == AiPlatform.macosX64
+            // On every computer, Intel Macs included since release 51 (ONNX Runtime 1.23.2 runs the model, lot L06)
+            platform == AiPlatform.questArm64
                 ? isEmpty
                 : [AiComponentKind.runtime, AiComponentKind.archive, AiComponentKind.model],
             reason: platform.name,

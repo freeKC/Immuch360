@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -47,11 +48,26 @@ void main() {
       expect(system.calls, ['threads', 'threads', 'lower 30', 'lower 31']);
     });
 
-    test('a system that does not list its threads (macOS): the session opens, nothing is lowered', () {
-      final system = FakeThreadPriority(threads: {1: 'a'}, listsThreads: false);
-      final opened = ComputePriority(system).lowerThreadsBornDuring(() => system.current[40] = 'b');
-      expect(opened.lowered, 0);
-      expect(system.calls, ['threads']);
+    test(
+      'a system that does not list its threads (macOS): the session opens from the thread lowered, none counted',
+      () {
+        final system = FakeThreadPriority(threads: {1: 'a'}, listsThreads: false);
+        final opened = ComputePriority(system).lowerThreadsBornDuring(() {
+          system.calls.add('open');
+          system.current[40] = 'b';
+        });
+        expect(opened.lowered, 0);
+        expect(system.calls, ['threads', 'lowerCurrent', 'open', 'restore']);
+      },
+    );
+
+    test('macOS: the thread put back when the opening fails', () {
+      final system = FakeThreadPriority(listsThreads: false);
+      expect(
+        () => ComputePriority(system).lowerThreadsBornDuring<void>(() => throw StateError('no model')),
+        throwsStateError,
+      );
+      expect(system.calls, ['threads', 'lowerCurrent', 'restore']);
     });
 
     test('an opening that fails lowers nothing and says why', () {
@@ -87,7 +103,7 @@ void main() {
       expect(system.calls, ['lowerCurrent', 'restore']);
     });
 
-    test('left as it is where the system would not give it back (Linux, macOS)', () {
+    test('left as it is where the system would not give it back (Linux)', () {
       final system = FakeThreadPriority(lowersCurrentThread: false);
       ComputePriority(system).whileLowered(() => system.calls.add('body'));
       expect(system.calls, ['lowerCurrent', 'body']);
@@ -113,6 +129,8 @@ void main() {
             ? isA<WindowsThreadPriority>()
             : Platform.isLinux
             ? isA<LinuxThreadPriority>()
+            : Platform.isMacOS
+            ? isA<MacThreadPriority>()
             : isA<UnchangedThreadPriority>(),
       );
     });
@@ -139,6 +157,26 @@ void main() {
       restore();
       expect(comm.readAsStringSync().trim(), before);
     }, skip: Platform.isLinux ? null : 'Linux only');
+
+    test('macOS puts the calling thread in the utility class for the body, then gives its class back', () {
+      final id = system.currentThreadId()!;
+      expect(id, greaterThan(0));
+      // The thread of flutter_tester already runs in the utility class (measured on the runner, 22 November 2026): it
+      // is left as it is, then raised to "user initiated" here, as the worker of the app may be, and lowered from there
+      final original = system.priorityOf(id)!;
+      expect(ComputePriority(system).whileLowered(() => system.priorityOf(id)), original);
+      final setQos = DynamicLibrary.process().lookupFunction<Int32 Function(Uint32, Int32), int Function(int, int)>(
+        'pthread_set_qos_class_self_np',
+      );
+      const userInitiated = 0x19;
+      expect(setQos(userInitiated, 0), 0);
+      addTearDown(() => setQos(original == 0 ? 0x15 : original, 0));
+      final during = ComputePriority(system).whileLowered(() => system.priorityOf(id));
+      expect(during, macUtilityQos);
+      expect(system.priorityOf(id), userInitiated);
+      // Another thread is not read
+      expect(system.priorityOf(id + 1), isNull);
+    }, skip: Platform.isMacOS ? null : 'macOS only');
 
     test('Linux leaves the calling thread as it is', () {
       final id = system.currentThreadId()!;

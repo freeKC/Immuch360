@@ -2,7 +2,8 @@
 // app and the nice value), the job object on Windows, the priority, the journal and its reaping, the work folders, and
 // the lines it reads (a progress bar redrawn with \r, the escapes). With real processes: a program killed within a
 // second, and the compiled fake sd-cli (IMMUCH360_FAKE_SD_CLI) started by a host that is killed: its child must die
-// with it, by the job object on Windows and by immuch360-run (IMMUCH360_RUN_LAUNCHER) on Linux.
+// with it, by the job object on Windows and by immuch360-run (IMMUCH360_RUN_LAUNCHER) on Linux and macOS (lot L10 of
+// the desktop parity plan: its watcher on macOS).
 
 import 'dart:async';
 import 'dart:convert';
@@ -111,10 +112,21 @@ void main() {
       ]);
     });
 
+    test('on macOS with the launcher of the app: the same command', () {
+      const launcher = '/Applications/Immuch360 Desktop.app/Contents/MacOS/immuch360-run';
+      final runner = ManagedProcessRunner(isLinux: false, isMacOS: true, macLauncher: launcher, appPid: 4242);
+      final (executable, arguments) = runner.commandOf(launch);
+      expect(executable, launcher);
+      expect(arguments, ['--parent', '4242', '--nice', '10', '--', '/engines/sd/sd-cli', '-o', 'out.png']);
+    });
+
     test('elsewhere, or without a launcher: the program itself', () {
       for (final runner in [
-        ManagedProcessRunner(isLinux: true),
-        ManagedProcessRunner(linuxLauncher: '/engines/sd/immuch360-run', isLinux: false),
+        ManagedProcessRunner(isLinux: true, isMacOS: false),
+        ManagedProcessRunner(linuxLauncher: '/engines/sd/immuch360-run', isLinux: false, isMacOS: false),
+        // No immuch360-run beside flutter_tester; and the launcher of the app is no Linux program
+        ManagedProcessRunner(isLinux: false, isMacOS: true),
+        ManagedProcessRunner(isLinux: true, macLauncher: '/a/immuch360-run'),
       ]) {
         final (executable, arguments) = runner.commandOf(launch);
         expect(executable, '/engines/sd/sd-cli');
@@ -123,13 +135,28 @@ void main() {
     });
   });
 
+  test('the launcher of the app on macOS: immuch360-run beside its executable, when it is there', () {
+    final executable = p.join(folder.path, 'Immuch360 Desktop');
+    File(executable).writeAsStringSync('');
+    expect(bundledMacLauncher(executable: executable, isMacOS: true), isNull);
+    File(p.join(folder.path, 'immuch360-run')).writeAsStringSync('');
+    expect(bundledMacLauncher(executable: executable, isMacOS: true), p.join(folder.path, 'immuch360-run'));
+    expect(bundledMacLauncher(executable: executable, isMacOS: false), isNull);
+  });
+
   group('a start', () {
     late List<_FakeProcess> started;
     late List<_FakeJob> jobs;
     late _FakePriority priority;
     late ProcessJournal journal;
 
-    ManagedProcessRunner runner({required bool windows, bool linux = false, String? launcher, bool accepts = true}) {
+    ManagedProcessRunner runner({
+      required bool windows,
+      bool linux = false,
+      bool mac = false,
+      String? launcher,
+      bool accepts = true,
+    }) {
       started = [];
       jobs = [];
       priority = _FakePriority();
@@ -139,6 +166,8 @@ void main() {
         journal: journal,
         isWindows: windows,
         isLinux: linux,
+        isMacOS: mac,
+        macLauncher: mac ? launcher : null,
         appPid: 1,
         priority: priority,
         jobObjects: ({required bool lowPriority}) {
@@ -194,6 +223,13 @@ void main() {
       expect(priority.lowered, isEmpty);
       await runner(windows: false, linux: true).start(const ProcessLaunch(executable: 'x'));
       expect(priority.lowered, [5000]);
+    });
+
+    test('on macOS through the launcher of the app, which lowers it', () async {
+      await runner(windows: false, mac: true, launcher: '/a/immuch360-run').start(const ProcessLaunch(executable: 'x'));
+      expect(started, hasLength(1));
+      expect(priority.lowered, isEmpty);
+      expect(journal.read(), [(pid: 5000, path: 'x')]);
     });
 
     test(
@@ -352,7 +388,7 @@ void main() {
       await process.exitCode.timeout(const Duration(seconds: 1));
       expect(watch.elapsed, lessThan(const Duration(seconds: 1)));
       expect(processImageOf(process.pid), isNull);
-    }, skip: Platform.isMacOS ? 'the programs of the AI features run on Windows and Linux' : false);
+    });
 
     test('what the app writes on the standard input reaches the program, and closing it ends its input', () async {
       final runner = ManagedProcessRunner(journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))));
@@ -372,7 +408,7 @@ void main() {
       expect(await process.exitCode.timeout(const Duration(seconds: 10)), 0);
       await read.timeout(const Duration(seconds: 5));
       expect(lines, ['temporal unit 0']);
-    }, skip: Platform.isMacOS ? 'the programs of the AI features run on Windows and Linux' : false);
+    });
 
     test('a program that ends without reading its input does not fail the writes of the app', () async {
       final runner = ManagedProcessRunner(journal: ProcessJournal(File(p.join(folder.path, 'processes.json'))));
@@ -387,7 +423,7 @@ void main() {
       process.stdin.add(List.filled(1 << 20, 65));
       await process.stdin.flush().then<void>((_) {}, onError: (Object _) {});
       await process.stdin.close().then<void>((_) {}, onError: (Object _) {});
-    }, skip: Platform.isMacOS ? 'the programs of the AI features run on Windows and Linux' : false);
+    });
 
     test(
       'the fake sd-cli started by a host that is killed dies with it',
@@ -422,10 +458,8 @@ void main() {
       },
       skip: _fakeSdCli == null
           ? 'no compiled fake sd-cli (IMMUCH360_FAKE_SD_CLI)'
-          : Platform.isLinux && _launcher == null
+          : !Platform.isWindows && _launcher == null
           ? 'no immuch360-run (IMMUCH360_RUN_LAUNCHER)'
-          : Platform.isMacOS
-          ? 'the programs of the AI features run on Windows and Linux'
           : false,
     );
   });

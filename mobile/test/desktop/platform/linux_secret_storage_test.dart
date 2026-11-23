@@ -67,8 +67,11 @@ Future<void> _silentService((String, SendPort) message) async {
   await client.close();
 }
 
-/// The D-Bus servers of these tests listen on Unix sockets, which the Windows job of the CI does not have
-final _unixSockets = Platform.isWindows ? 'D-Bus on a Unix socket' : null;
+/// The D-Bus servers of these tests listen on Unix sockets, which the Windows job of the CI does not have; the dbus
+/// package does not authenticate on macOS ("Authentication not supported on macos"), which has no secret service
+final _unixSockets = Platform.isWindows
+    ? 'D-Bus on a Unix socket'
+    : (Platform.isMacOS ? 'the dbus package does not authenticate on macOS' : null);
 
 void main() {
   late Directory folder;

@@ -110,6 +110,10 @@ void main() {
 
   /// A test against the HTTPS server, skipped with its reason when openssl could not make the certificates
   void httpsTest(String description, Future<void> Function() body) => test(description, () async {
+    if (Platform.isMacOS) {
+      markTestSkipped(macOsTestAuthorityRefused);
+      return;
+    }
     if (certificates == null) {
       markTestSkipped('openssl is needed to make the certificates of the test server');
       return;
