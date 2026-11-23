@@ -1,4 +1,5 @@
 #include "gpu_probe.h"
+#include "launch_hints.h"
 #include "my_application.h"
 
 int main(int argc, char** argv) {
@@ -9,6 +10,9 @@ int main(int argc, char** argv) {
   if (gpu_probe_output != nullptr) {
     return RunGpuProbe(gpu_probe_output, GpuProbePid(argc, argv));
   }
+  // Before GTK and any thread: the environment the libraries read later
+  // (launch_hints.h)
+  ApplyLaunchHints();
   g_autoptr(MyApplication) app = my_application_new();
   return g_application_run(G_APPLICATION(app), argc, argv);
 }

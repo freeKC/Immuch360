@@ -2,10 +2,10 @@
 // a laptop with two is asked for by the desktop entry (PrefersNonDefaultGPU, .github/desktop/packaging/linux):
 //
 // - the splat viewer on an NVIDIA card: WebKitGTK's DMABUF renderer leaves the window blank with some NVIDIA drivers
-//   (plan section 2.5 of the splat viewer). Where the NVIDIA driver runs (/proc/driver/nvidia/version), the app sets
-//   WEBKIT_DISABLE_DMABUF_RENDERER=1 before its first web view, unless the user set the variable already, behind a
-//   setting of "This computer", on by default. WebKitGTK reads the variable once, at its first web view: a change of
-//   the setting counts from the next start;
+//   (plan section 2.5 of the splat viewer). Where the NVIDIA driver runs (/proc/driver/nvidia/version), the launcher
+//   of the app (linux/runner/launch_hints.cc) sets WEBKIT_DISABLE_DMABUF_RENDERER=1 first thing in main, before any
+//   thread starts, unless the user set the variable already, behind a setting of "This computer", on by default. A
+//   change of the setting counts from the next start;
 // - Fedora's FFmpeg: ffmpeg-free, which Fedora's libmpv takes, has no decoder for most camera videos (H.264 Main and
 //   High through OpenH264 only, which refuses them, no HEVC). When a film or a camera does not play on Fedora with
 //   that FFmpeg, the app says, once a session, to install the FFmpeg of RPM Fusion. The packages are asked of rpm
@@ -15,10 +15,8 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
-import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_ui/immich_ui.dart' show scaffoldMessengerKey;
@@ -34,7 +32,8 @@ const webkitDmabufVariable = 'WEBKIT_DISABLE_DMABUF_RENDERER';
 /// Whether the NVIDIA driver runs on this computer: its /proc entry is there
 bool nvidiaDriverLoaded({String path = '/proc/driver/nvidia/version'}) => File(path).existsSync();
 
-/// The setting "Splats on an NVIDIA card" and its file
+/// The setting "Splats on an NVIDIA card" and its file, read by the launcher at the start too (DmabufOffInSettings of
+/// linux/runner/launch_hints.cc: the text {"webkitDmabufOff":false} keeps the renderer on)
 abstract final class LinuxWebkitDmabuf {
   static const fileName = 'desktop_linux.json';
   static const _key = 'webkitDmabufOff';
@@ -81,58 +80,33 @@ abstract final class LinuxWebkitDmabuf {
   }
 }
 
-/// Sets [name] to [value] in the environment of this process (libc setenv), for the libraries it loads later
-typedef SetEnvironment = void Function(String name, String value);
-
-void _setenv(String name, String value) {
-  final setenv = DynamicLibrary.process()
-      .lookupFunction<
-        Int32 Function(Pointer<Utf8>, Pointer<Utf8>, Int32),
-        int Function(Pointer<Utf8>, Pointer<Utf8>, int)
-      >('setenv');
-  final nativeName = name.toNativeUtf8();
-  final nativeValue = value.toNativeUtf8();
-  try {
-    setenv(nativeName, nativeValue, 0);
-  } finally {
-    malloc
-      ..free(nativeName)
-      ..free(nativeValue);
-  }
-}
-
 var _dmabufDecided = false;
 
-/// Before the first web view of the app (the splat viewer): on Linux with the NVIDIA driver and the setting on,
-/// WEBKIT_DISABLE_DMABUF_RENDERER=1, unless the variable is set already (the user's own choice); decided once a
-/// session, as WebKitGTK reads it once. Returns whether the variable was set. The arguments stand for this computer
-/// in the tests.
+/// Before the first web view of the app (the splat viewer): tells the log, once a session, what the launcher decided.
+/// The launcher (linux/runner/launch_hints.cc) sets WEBKIT_DISABLE_DMABUF_RENDERER=1 first thing in main, before GTK
+/// and any thread, on a computer with the NVIDIA driver, the setting on and no value of the user's: setenv is not safe
+/// once other threads may read the environment, which they do here (the engine, GTK, mpv, Mesa). Returns whether the
+/// variable is set. The arguments stand for this computer in the tests.
 Future<bool> applyWebkitDmabufHint({
   bool? linux,
   bool Function()? nvidia,
   Map<String, String>? environment,
   Future<bool> Function()? settingOn,
-  SetEnvironment? setEnvironment,
 }) async {
   if (_dmabufDecided || !(linux ?? Platform.isLinux)) {
     return false;
   }
   _dmabufDecided = true;
-  if ((environment ?? Platform.environment).containsKey(webkitDmabufVariable) || !(nvidia ?? nvidiaDriverLoaded)()) {
-    return false;
-  }
-  if (!await (settingOn ?? LinuxWebkitDmabuf.load)()) {
-    _log.info('NVIDIA driver: the DMABUF renderer of WebKitGTK stays on, as the setting says');
-    return false;
-  }
-  try {
-    (setEnvironment ?? _setenv)(webkitDmabufVariable, '1');
-    _log.info('NVIDIA driver: $webkitDmabufVariable=1 for the splat viewer');
+  final value = (environment ?? Platform.environment)[webkitDmabufVariable];
+  if (value != null) {
+    _log.info('$webkitDmabufVariable=$value for the splat viewer');
     return true;
-  } catch (error) {
-    _log.warning('$webkitDmabufVariable could not be set: $error');
-    return false;
   }
+  if ((nvidia ?? nvidiaDriverLoaded)() && await (settingOn ?? LinuxWebkitDmabuf.load)()) {
+    // Turned on in this session: the launcher sets it at the next start
+    _log.info('NVIDIA driver: $webkitDmabufVariable=1 from the next start of the app');
+  }
+  return false;
 }
 
 @visibleForTesting

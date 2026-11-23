@@ -1,6 +1,6 @@
 // What a Linux computer is told or set at launch (linux_launch_hints.dart, parity lot L11): the variable of WebKitGTK's
-// DMABUF renderer on an NVIDIA card (set once, never over the user's own value, never with the setting off, never
-// elsewhere), the setting's file, Fedora told apart from the others by /etc/os-release, its ffmpeg-free told apart
+// DMABUF renderer on an NVIDIA card (set by the launcher before any thread, told once a session), the setting's file
+// in the form the launcher reads, Fedora told apart from the others by /etc/os-release, its ffmpeg-free told apart
 // from the FFmpeg of RPM Fusion by the packages rpm lists, and the hint said once a session where it applies only.
 
 import 'dart:io';
@@ -25,39 +25,22 @@ void main() {
   tearDown(() => folder.deleteSync(recursive: true));
 
   group('the DMABUF renderer of the splat viewer', () {
-    test('set to 1 on Linux with the NVIDIA driver, once a session', () async {
-      final set = <String, String>{};
-      Future<bool> apply() => applyWebkitDmabufHint(
-        linux: true,
-        nvidia: () => true,
-        environment: const {},
-        setEnvironment: (name, value) => set[name] = value,
-      );
+    test('the variable the launcher set is told once a session, on Linux only', () async {
+      Future<bool> apply({bool linux = true, Map<String, String> environment = const {webkitDmabufVariable: '1'}}) =>
+          applyWebkitDmabufHint(linux: linux, nvidia: () => true, environment: environment);
       expect(await apply(), isTrue);
-      expect(set, {webkitDmabufVariable: '1'});
-      set.clear();
-      expect(await apply(), isFalse, reason: 'WebKitGTK reads it once');
-      expect(set, isEmpty);
+      expect(await apply(), isFalse, reason: 'once a session');
+      forgetWebkitDmabufDecision();
+      expect(await apply(linux: false), isFalse);
+      forgetWebkitDmabufDecision();
+      expect(await apply(environment: const {}), isFalse, reason: 'nothing set: nothing set now either');
     });
 
-    test('never over the user own value, never without NVIDIA, never off Linux, never with the setting off', () async {
-      final set = <String>[];
-      Future<bool> apply({bool linux = true, bool nvidia = true, Map<String, String> environment = const {}}) {
-        forgetWebkitDmabufDecision();
-        return applyWebkitDmabufHint(
-          linux: linux,
-          nvidia: () => nvidia,
-          environment: environment,
-          setEnvironment: (name, _) => set.add(name),
-        );
-      }
-
-      expect(await apply(environment: const {webkitDmabufVariable: '0'}), isFalse);
-      expect(await apply(nvidia: false), isFalse);
-      expect(await apply(linux: false), isFalse);
+    test('the file the launcher reads: {"webkitDmabufOff":false} once the setting is off', () async {
       await LinuxWebkitDmabuf.save(false);
-      expect(await apply(), isFalse);
-      expect(set, isEmpty);
+      expect(File(p.join(folder.path, LinuxWebkitDmabuf.fileName)).readAsStringSync(), '{"webkitDmabufOff":false}');
+      await LinuxWebkitDmabuf.save(true);
+      expect(File(p.join(folder.path, LinuxWebkitDmabuf.fileName)).readAsStringSync(), '{"webkitDmabufOff":true}');
     });
 
     test('the setting: on by default, kept in its file, on again when the file is damaged', () async {
