@@ -17,7 +17,8 @@
 //   immuch360-run --parent PID [--nice N] [--] PROGRAM [ARGUMENT]...
 //
 // PID is the process id of the app: if the app is already gone when the launcher starts watching it, the launcher
-// stops there (Linux), or the watcher kills the program at once (macOS).
+// stops there (Linux), or the watcher kills the program at once (macOS); a watch of the app the system refuses for
+// another reason leaves the program running, unwatched (macOS).
 // Exit codes of its own: 2 bad arguments, 125 the app is gone, 126 the watch could not be set, 127 no such program.
 #define _GNU_SOURCE
 #include <errno.h>
@@ -77,7 +78,11 @@ static void watch(pid_t app, pid_t program) {
   }
   EV_SET(&change, app, EVFILT_PROC, EV_ADD | EV_ONESHOT, NOTE_EXIT, 0, NULL);
   if (kevent(queue, &change, 1, NULL, 0, NULL) < 0) {
-    kill(program, SIGKILL);
+    // Only "no such process" says the app is gone. Any other refusal (a sandbox, a limit) leaves the program alone:
+    // the journal of the app's programs then applies, as without the launcher
+    if (errno == ESRCH) {
+      kill(program, SIGKILL);
+    }
     _exit(0);
   }
   for (;;) {
