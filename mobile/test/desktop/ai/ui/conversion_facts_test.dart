@@ -302,6 +302,41 @@ void main() {
     });
   });
 
+  test('a 360° video of the server is one by the rules of its players: the dialog makes it a 360° 3D video (lot '
+      'ai-360-3d-51) and the viewer offers it; the raw file of a 360° camera is said, not offered', () async {
+    final sphere = RemoteAssetFactory.create(
+      ownerId: _userId,
+      name: 'VID_20261120.mp4',
+      type: AssetType.video,
+      width: 5760,
+      height: 2880,
+    );
+    final insv = RemoteAssetFactory.create(ownerId: _userId, name: 'VID_20261121_00_001.insv', type: AssetType.video);
+    final flat = RemoteAssetFactory.create(ownerId: _userId, name: 'clip.mp4', type: AssetType.video);
+    final container = createContainer(exif: {sphere: _sphereExif, insv: _flatExif, flat: _flatExif});
+    final read = container.read(conversionFactsReaderProvider);
+
+    final ofSphere = await read(sphere);
+    expect(ofSphere.isPanorama, isTrue);
+    expect(conversionSkipOf(sphere, ofSphere, kind: ConversionKind.stereoVideo), isNull);
+    expect(
+      conversionSkipOf(insv, await read(insv), kind: ConversionKind.stereoVideo),
+      ConversionSkipReason.raw360Video,
+    );
+    expect(conversionSkipOf(flat, await read(flat), kind: ConversionKind.stereoVideo), isNull);
+
+    Future<bool> offered(BaseAsset asset) async {
+      final subscription = container.listen(aiFlatVideoProvider(asset), (_, _) {});
+      addTearDown(subscription.close);
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+      return container.read(aiFlatVideoProvider(asset));
+    }
+
+    expect(await offered(sphere), isTrue);
+    expect(await offered(insv), isFalse);
+    expect(await offered(flat), isTrue);
+  });
+
   group('the entry of the viewer', () {
     /// What the entry says of [asset] once what it reads had the time to answer
     Future<bool> offered(ProviderContainer container, BaseAsset asset) async {

@@ -70,6 +70,7 @@ class DesktopAiSettings {
     this.videoHalfSbs = false,
     this.videoFrameMillis = const {},
     this.reliefVersion = defaultReliefVersion,
+    this.videoDepthDevice = 'auto',
   });
 
   final AiDestination destination;
@@ -142,6 +143,10 @@ class DesktopAiSettings {
   /// the next one
   final Map<String, int> videoFrameMillis;
 
+  /// Where the depth model of the 3D videos runs (lot ai-360-3d-51, ort/depth_provider.dart): "auto" (the high
+  /// performance card of the system, checked against the processor), "processor", or "card:" and the name of a card
+  final String videoDepthDevice;
+
   DesktopAiSettings copyWith({
     AiDestination? destination,
     String? Function()? folder,
@@ -166,6 +171,7 @@ class DesktopAiSettings {
     String? videoQuality,
     bool? videoHalfSbs,
     Map<String, int>? videoFrameMillis,
+    String? videoDepthDevice,
   }) => DesktopAiSettings(
     destination: destination ?? this.destination,
     folder: folder == null ? this.folder : folder(),
@@ -190,6 +196,7 @@ class DesktopAiSettings {
     videoQuality: videoQuality ?? this.videoQuality,
     videoHalfSbs: videoHalfSbs ?? this.videoHalfSbs,
     videoFrameMillis: videoFrameMillis ?? this.videoFrameMillis,
+    videoDepthDevice: videoDepthDevice ?? this.videoDepthDevice,
   );
 
   Map<String, Object?> toJson() => {
@@ -216,6 +223,7 @@ class DesktopAiSettings {
     'videoQuality': videoQuality,
     'videoHalfSbs': videoHalfSbs,
     'videoFrameMillis': videoFrameMillis,
+    'videoDepthDevice': videoDepthDevice,
   };
 
   /// The settings of [json], a default for each value that is missing or not understood
@@ -281,6 +289,11 @@ class DesktopAiSettings {
           ? json['videoQuality']! as String
           : defaults.videoQuality,
       videoHalfSbs: flag('videoHalfSbs', defaults.videoHalfSbs),
+      videoDepthDevice: switch (json['videoDepthDevice']) {
+        final String kept when kept == 'auto' || kept == 'processor' || (kept.startsWith('card:') && kept.length > 5) =>
+          kept,
+        _ => defaults.videoDepthDevice,
+      },
       videoFrameMillis: switch (json['videoFrameMillis']) {
         final Map<Object?, Object?> kept => Map.unmodifiable({
           for (final MapEntry(:key, :value) in kept.entries)
@@ -316,6 +329,7 @@ class DesktopAiSettings {
       other.videoReliefStrength == videoReliefStrength &&
       other.videoQuality == videoQuality &&
       other.videoHalfSbs == videoHalfSbs &&
+      other.videoDepthDevice == videoDepthDevice &&
       _sameMap(
         other.videoFrameMillis.map((k, v) => MapEntry(k, '$v')),
         videoFrameMillis.map((k, v) => MapEntry(k, '$v')),
@@ -346,6 +360,7 @@ class DesktopAiSettings {
     videoQuality,
     videoHalfSbs,
     Object.hashAllUnordered(videoFrameMillis.keys),
+    videoDepthDevice,
   ]);
 }
 

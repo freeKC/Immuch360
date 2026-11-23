@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -297,6 +298,18 @@ void main() {
     final map = Float64List.fromList(List.generate(100, (i) => (99 - i).toDouble()));
     expect(vdaPercentiles(map), (1.0, 97.0));
     expect(vdaPercentiles(Float64List.fromList([5])), (5.0, 5.0));
+    // Selected rather than sorted (lot ai-360-3d-51): the ranks of a sort, on maps of every kind
+    final random = math.Random(7);
+    for (final (length, levels) in [(2, 3), (17, 2), (1000, 5), (153664, 1 << 30), (274400, 40)]) {
+      final values = Float64List.fromList([for (var i = 0; i < length; i++) random.nextInt(levels) / 7]);
+      final sorted = Float64List.fromList(values)..sort();
+      int rank(int percent) => math.max(1, (percent * length + 99) ~/ 100) - 1;
+      expect(vdaPercentiles(values), (sorted[rank(2)], sorted[rank(98)]), reason: '$length values of $levels levels');
+    }
+    final ascending = Float64List.fromList([for (var i = 0; i < 5000; i++) i.toDouble()]);
+    expect(vdaPercentiles(ascending), (99.0, 4899.0));
+    expect(vdaPercentiles(Float64List.fromList(ascending.reversed.toList())), (99.0, 4899.0));
+    expect(vdaPercentiles(Float64List.fromList([3, double.nan, 1, 2])).$1, 1.0);
   });
 }
 

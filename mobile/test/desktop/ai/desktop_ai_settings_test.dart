@@ -278,4 +278,16 @@ void main() {
       expect(AiTimings((await store.read()).timings).of('sceneFromPhoto', 'geometry'), 2500);
     });
   });
+
+  test('the depth device of the 3D videos: automatic by default, kept, an unknown value reads automatic', () {
+    expect(const DesktopAiSettings().videoDepthDevice, 'auto');
+    for (final value in ['processor', 'card:NVIDIA GeForce RTX 4060 Laptop GPU']) {
+      final kept = const DesktopAiSettings().copyWith(videoDepthDevice: value);
+      expect(DesktopAiSettings.fromJson(kept.toJson()).videoDepthDevice, value);
+      expect(DesktopAiSettings.fromJson(kept.toJson()), kept);
+    }
+    for (final value in [null, 'gpu', 'card:', 7]) {
+      expect(DesktopAiSettings.fromJson({'videoDepthDevice': value}).videoDepthDevice, 'auto');
+    }
+  });
 }

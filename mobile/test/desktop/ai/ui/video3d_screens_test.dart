@@ -8,7 +8,9 @@
 // go first, Pause, Stop (asked first), Resume and Discard once paused, the error and its log, the MP4 made with Open and
 // Show in folder, what a paused video waits for (its original or its folder), Cancel all pausing it. A FFmpeg program
 // that does not start said in red with Retry. The close guard of a video being made, and the offer at the start to
-// resume a video a quit stopped, with the original not found said.
+// resume a video a quit stopped, with the original not found said. A video of the server (lot ai3d-remote-51): the
+// dialog says it is downloaded first and Convert runs it, the panel tells its download, a Pause there keeps its bytes,
+// too little room is said with both figures; a 360° video by the rules of its players is not offered as a flat one.
 
 import 'dart:async';
 import 'dart:convert';
@@ -25,6 +27,7 @@ import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
+import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
@@ -34,6 +37,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
 import 'package:immich_mobile/desktop/ai/ui/video_resume_offer.dart';
 import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/window/close_guard.dart';
@@ -41,6 +45,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_strength_choice.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -50,6 +55,7 @@ import 'package:path/path.dart' as p;
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
 import '../fakes/fake_conversion_output.dart';
+import '../fakes/fake_downloadable_original.dart';
 import '../fakes/fake_gpu_probe.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_video_job_engine.dart';
@@ -106,15 +112,55 @@ VideoDialogFacts _facts(Map<String, Object?> json, String name) {
   );
 }
 
+/// The ffprobe of a stitched 360° video of [width] x [height] at 30 fps, its Spherical Mapping side data when [tagged]
+Map<String, Object?> _sphereJson({int width = 5760, int height = 2880, bool tagged = true, String rate = '30/1'}) => {
+  'streams': [
+    {
+      'index': 0,
+      'codec_type': 'video',
+      'codec_name': 'h264',
+      'width': width,
+      'height': height,
+      'pix_fmt': 'yuv420p',
+      'r_frame_rate': rate,
+      'avg_frame_rate': rate,
+      'nb_frames': '${(10 * double.parse(rate.split('/')[0]) / double.parse(rate.split('/')[1])).round()}',
+      'duration': '10.0',
+      'side_data_list': [
+        if (tagged) {'side_data_type': 'Spherical Mapping', 'projection': 'equirectangular'},
+      ],
+      'disposition': {'attached_pic': 0},
+    },
+    {'index': 1, 'codec_type': 'audio', 'codec_name': 'aac', 'channels': 2},
+  ],
+  'format': {'duration': '10.0', 'start_time': '0.000000'},
+};
+
+/// The facts the dialog reads of a video as it says (VideoProjectionAsk.auto), kept so that a 2:1 one can be read again
+VideoDialogFacts _autoFacts(Map<String, Object?> json, String name) {
+  final source = VideoSource.fromFfprobe(json);
+  final check = checkVideoSource(source, fileName: name, ask: VideoProjectionAsk.auto);
+  return VideoDialogFacts(
+    check: check,
+    durationSeconds: source?.duration,
+    frames: source?.frameCount,
+    source: source,
+    fileName: name,
+  );
+}
+
 /// The FFmpeg program as the dialog reads it: the facts of each video by its name, the encoder of the test
 class _Probe implements VideoDialogProbe {
   final byName = <String, VideoDialogFacts>{};
   VideoEncoder? encoderFound = VideoEncoder.h264VaapiFull;
+
+  /// The encoder found by the width of the frame tested, when set (else [encoderFound])
+  VideoEncoder? Function(int width)? encoderAt;
   final read_ = <String>[];
   final tested = <(int, int)>[];
 
   @override
-  Future<VideoDialogFacts> read(String path) async {
+  Future<VideoDialogFacts> read(String path, {bool marked360 = false}) async {
     read_.add(p.basename(path));
     return byName[p.basename(path)] ?? _facts(_phone(), p.basename(path));
   }
@@ -122,8 +168,14 @@ class _Probe implements VideoDialogProbe {
   @override
   Future<VideoEncoder?> encoder(int width, int height, VideoRate rate) async {
     tested.add((width, height));
-    return encoderFound;
+    return encoderAt != null ? encoderAt!(width) : encoderFound;
   }
+
+  /// The encoder this computer remembers as stopped during a 3D video, by the frame ("3072x3072")
+  final stopped = <String, VideoEncoder>{};
+
+  @override
+  Future<VideoEncoder?> stoppedBefore(int width, int height) async => stopped['${width}x$height'];
 }
 
 class _GateFiles implements AiComponentFiles {
@@ -143,8 +195,14 @@ class _GateFiles implements AiComponentFiles {
 class _Originals implements ConversionAssetFiles {
   final byName = <String, LibraryOriginal>{};
 
+  /// The videos of the server, downloaded by their job
+  final remote = <String, FakeDownloadableOriginal>{};
+
   @override
   Future<({OriginalLocation location, ConversionSource source})?> locate(BaseAsset asset) async {
+    if (remote[asset.name] case final source?) {
+      return (location: ServerOriginal(name: asset.name), source: source);
+    }
     final original = byName[asset.name];
     return original == null ? null : (location: original, source: LocalFileSource(original.path));
   }
@@ -185,6 +243,9 @@ void main() {
   late bool flatVideo;
   late FakeImmersiveEngine photos;
 
+  /// The videos the app takes for 360° ones (aiVideo360Provider), by name
+  late Set<String> marked360;
+
   /// The FFmpeg program does not start although its components are there: 'null' for no probe, 'throw' for a failure
   late String? probeBroken;
 
@@ -217,6 +278,7 @@ void main() {
     flatVideo = true;
     photos = FakeImmersiveEngine();
     probeBroken = null;
+    marked360 = {};
   });
 
   tearDown(() {
@@ -274,7 +336,7 @@ void main() {
       ),
       conversionFactsReaderProvider.overrideWith(
         (ref) =>
-            (asset) async => const ConversionPhotoFacts(),
+            (asset) async => ConversionPhotoFacts(isPanorama: marked360.contains(asset.name)),
       ),
       conversionAssetFilesProvider.overrideWithValue(originals),
       destinationSessionFactoryProvider.overrideWithValue(
@@ -405,8 +467,24 @@ void main() {
         ConversionSkipReason.alreadyStereo,
       );
       expect(
-        videoSkipOf(_asset('trip.mp4'), const ConversionPhotoFacts(isPanorama: true)),
-        ConversionSkipReason.sphere360,
+        videoSkipOf(_asset('trip.mp4', width: 5760, height: 2880), const ConversionPhotoFacts(isPanorama: true)),
+        isNull,
+      );
+      // A 360° video that is not made 360° 3D in this version: two eyes already, VR180, the raw file of a camera
+      expect(
+        videoSkipOf(_asset('trip.mp4', width: 5760, height: 5760), const ConversionPhotoFacts(isPanorama: true)),
+        ConversionSkipReason.alreadyStereo,
+      );
+      expect(
+        videoSkipOf(_asset('trip_VR180.mp4', width: 5760, height: 2880), const ConversionPhotoFacts(isPanorama: true)),
+        ConversionSkipReason.vr180,
+      );
+      expect(
+        videoSkipOf(
+          _asset('VID_00_001.insv', width: 5760, height: 2880),
+          const ConversionPhotoFacts(isPanorama: true, isRaw360: true),
+        ),
+        ConversionSkipReason.raw360Video,
       );
       expect(
         videoSkipOf(_asset('photo.jpg', type: AssetType.image), const ConversionPhotoFacts()),
@@ -512,6 +590,277 @@ void main() {
       expect(Directory(videos).listSync().where((entity) => isPartFileName(p.basename(entity.path))), isEmpty);
     });
 
+    testWidgets('an encoder that stopped during a 3D video at this frame on this computer is said, the next one used '
+        '(FreeKC\'s PC, 23 Nov 2026)', (tester) async {
+      original('VID_20250710_134925_00_082.mp4');
+      probe
+        ..byName['VID_20250710_134925_00_082.mp4'] = _autoFacts(_sphereJson(), 'VID_20250710_134925_00_082.mp4')
+        ..encoderFound = VideoEncoder.h264Mf
+        ..stopped['3072x3072'] = VideoEncoder.h264MfHardware;
+      await openDialog(tester, [_asset('VID_20250710_134925_00_082.mp4', width: 5760, height: 2880)]);
+      expect(find.text('H.264 at 3072 x 3072, by the encoder of this computer'), findsOneWidget);
+      expect(
+        find.text(
+          'The H.264 hardware (Media Foundation) encoder stopped during a 3D video at 3072 x 3072 on this computer: it '
+          'is skipped at this size',
+        ),
+        findsOneWidget,
+      );
+      expect(convertEnabled(tester), isTrue);
+
+      // At 2048 nothing stopped
+      await tester.tap(find.byKey(const Key('ai_conversion_video_sphere_2048')));
+      await settle(tester);
+      expect(find.text('H.264 at 2048 x 2048, by the encoder of this computer'), findsOneWidget);
+      expect(find.byKey(const Key('ai_conversion_video_sphere_encoder_stopped')), findsNothing);
+    });
+
+    testWidgets('a flat video: the encoder that stopped at its Full side by side frame is said too', (tester) async {
+      original('IMG_1234.MOV');
+      probe
+        ..byName['IMG_1234.MOV'] = _facts(_phone(audio: ['aac']), 'IMG_1234.MOV')
+        ..encoderFound = VideoEncoder.h264Mf
+        ..stopped['2160x1920'] = VideoEncoder.h264MfHardware;
+      await openDialog(tester, [_asset('IMG_1234.MOV', width: 1080, height: 1920)]);
+      expect(
+        find.text(
+          'The H.264 hardware (Media Foundation) encoder stopped during a 3D video at 2160 x 1920 on this computer: it '
+          'is skipped at this size',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('a 360° video (lot ai-360-3d-51): made 360° 3D, top and bottom; the sizes of its frame offered, 3072 '
+        'chosen, the encoder tested at that frame; its name; Convert hands a 360° job to the queue', (tester) async {
+      original('VID_20261122_101500.mp4');
+      probe.byName['VID_20261122_101500.mp4'] = _autoFacts(_sphereJson(), 'VID_20261122_101500.mp4');
+      final container = await openDialog(tester, [_asset('VID_20261122_101500.mp4', width: 5760, height: 2880)]);
+
+      expect(find.text('360° 3D video'), findsOneWidget);
+      for (final width in sphereEyeWidths) {
+        expect(find.byKey(Key('ai_conversion_video_sphere_$width')), findsOneWidget);
+      }
+      expect(tester.widget<RadioGroup<int>>(find.byType(RadioGroup<int>)).groupValue, 3072);
+      expect(find.text('3072 x 3072 (3072 x 1536 for each eye)'), findsOneWidget);
+      // Full or Half is a choice of flat videos only
+      expect(find.byKey(const Key('ai_conversion_video_packing_half')), findsNothing);
+      expect(probe.tested, [(3072, 3072)], reason: 'the encoder tested at the frame of the 360° 3D video');
+      expect(find.text('H.264 at 3072 x 3072, by the encoder of this computer'), findsOneWidget);
+      expect(
+        find.text('This 360° video is 5760 pixels wide: each eye is made 3072 pixels wide, the size chosen above'),
+        findsOneWidget,
+      );
+      expect(find.text('Saved as VID_20261122_101500_360_3D.mp4'), findsOneWidget);
+      expect(note(tester, 'ai_conversion_video_time'), matches(RegExp(r'^About .+ to .+ of work, a first guess$')));
+      expect(convertEnabled(tester), isTrue);
+
+      // A larger frame: the encoder tested again at that size, Convert waits for it
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_sphere_4096')));
+      await settle(tester, until: () => probe.tested.length == 2);
+      expect(probe.tested.last, (4096, 4096));
+      // An encoder of this computer that cannot write it: said, Convert off until a smaller size
+      probe.encoderFound = null;
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_sphere_2048')));
+      await settle(tester, until: () => probe.tested.length == 3);
+      expect(
+        find.text('No video encoder of this computer passed its test at 2048 x 2048: choose a smaller size'),
+        findsOneWidget,
+      );
+      expect(convertEnabled(tester), isFalse);
+      probe.encoderFound = VideoEncoder.h264VaapiFull;
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_sphere_3072')));
+      await settle(tester);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.isNotEmpty);
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.kind, ConversionKind.stereoVideo);
+      expect(job.target?.fileName, 'VID_20261122_101500_360_3D.mp4');
+      expect(job.video?.sphereEyeWidth, 3072);
+      expect(job.video?.strength, ReliefStrength.subtle);
+    });
+
+    testWidgets('a 2:1 video with no 360° mark: asked, never guessed; Convert waits for the answer, 360° gives a 360° '
+        'job, flat a side by side one', (tester) async {
+      original('ride.mp4');
+      probe.byName['ride.mp4'] = _autoFacts(_sphereJson(width: 3840, height: 1920, tagged: false), 'ride.mp4');
+      final container = await openDialog(tester, [_asset('ride.mp4', width: 3840, height: 1920)]);
+
+      expect(
+        note(tester, 'ai_conversion_video_looks_360'),
+        'ride.mp4 has a 2:1 frame with no 360° mark: is it a 360° video?',
+      );
+      expect(
+        tester
+            .widget<RadioGroup<bool>>(
+              find
+                  .ancestor(
+                    of: find.byKey(const Key('ai_conversion_video_as_360')),
+                    matching: find.byType(RadioGroup<bool>),
+                  )
+                  .first,
+            )
+            .groupValue,
+        isNull,
+      );
+      expect(convertEnabled(tester), isFalse);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_as_360')));
+      await settle(tester, until: () => probe.tested.contains((3072, 3072)));
+      expect(find.text('360° 3D video'), findsOneWidget);
+      expect(find.text('Saved as ride_360_3D.mp4'), findsOneWidget);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_as_flat')));
+      await settle(tester);
+      expect(find.text('360° 3D video'), findsNothing);
+      expect(find.text('Saved as ride_3D_LRF_Full_SBS.mp4'), findsOneWidget);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_as_360')));
+      await settle(tester);
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.isNotEmpty);
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.target?.fileName, 'ride_360_3D.mp4');
+      expect(job.video?.sphereEyeWidth, 3072);
+    });
+
+    testWidgets('a 360° video of the server: made 360° 3D after its download, its sizes and encoder tested here', (
+      tester,
+    ) async {
+      marked360.add('trip.mp4');
+      originals.remote['trip.mp4'] = FakeDownloadableOriginal('trip.mp4', List.filled(400, 7));
+      final container = await openDialog(tester, [_asset('trip.mp4', width: 5760, height: 2880)]);
+      expect(probe.read_, isEmpty);
+      expect(find.text('360° 3D video'), findsOneWidget);
+      await settle(tester, until: () => probe.tested.isNotEmpty);
+      expect(probe.tested, [(3072, 3072)]);
+      expect(convertEnabled(tester), isTrue);
+      await tapIn(tester, convert());
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.isNotEmpty);
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect(job.target?.fileName, 'trip_360_3D.mp4');
+      expect(job.video?.sphereEyeWidth, 3072);
+    });
+
+    testWidgets('a 360° video of the server is 5760 pixels wide by its asset: the dialog says each eye is made 3072 '
+        'wide', (tester) async {
+      marked360.add('trip.mp4');
+      originals.remote['trip.mp4'] = FakeDownloadableOriginal('trip.mp4', List.filled(400, 7));
+      await openDialog(tester, [_asset('trip.mp4', width: 5760, height: 2880)]);
+      await settle(tester, until: () => probe.tested.isNotEmpty);
+      expect(
+        note(tester, 'ai_conversion_video_sphere_downscaled'),
+        'This 360° video is 5760 pixels wide: each eye is made 3072 pixels wide, the size chosen above',
+      );
+    });
+
+    testWidgets('a video of the server with no 360° mark, 2:1 or of a size not known: asked before its download in '
+        'words that do not claim its file was read; Convert waits for the answer', (tester) async {
+      originals.remote['ride.mp4'] = FakeDownloadableOriginal('ride.mp4', List.filled(400, 7));
+      await openDialog(tester, [_asset('ride.mp4', width: 3840, height: 1920)]);
+      expect(
+        note(tester, 'ai_conversion_video_looks_360'),
+        'ride.mp4 may be a 360° video (its file is read after the download): is it one?',
+      );
+      expect(convertEnabled(tester), isFalse);
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_as_360')));
+      await settle(tester, until: () => probe.tested.isNotEmpty);
+      expect(find.text('Saved as ride_360_3D.mp4'), findsOneWidget);
+      expect(convertEnabled(tester), isTrue);
+    });
+
+    testWidgets('a video of the server whose size the server does not give is asked too, never taken as flat', (
+      tester,
+    ) async {
+      originals.remote['clip.mp4'] = FakeDownloadableOriginal('clip.mp4', List.filled(400, 7));
+      await openDialog(tester, [_asset('clip.mp4', width: 0, height: 0)]);
+      expect(find.byKey(const Key('ai_conversion_video_looks_360')), findsOneWidget);
+      expect(convertEnabled(tester), isFalse);
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_as_flat')));
+      await settle(tester);
+      expect(find.text('360° 3D video'), findsNothing);
+      expect(convertEnabled(tester), isTrue);
+    });
+
+    testWidgets('a 360° video at 60 fps starts at 2048 (H.264 level 5.1), 3072 said to need level 6 at that rate', (
+      tester,
+    ) async {
+      original('VID_60.mp4');
+      probe.byName['VID_60.mp4'] = _autoFacts(_sphereJson(rate: '60/1'), 'VID_60.mp4');
+      await openDialog(tester, [_asset('VID_60.mp4', width: 5760, height: 2880)]);
+      await settle(tester, until: () => probe.tested.isNotEmpty);
+      expect(tester.widget<RadioGroup<int>>(find.byType(RadioGroup<int>)).groupValue, 2048);
+      expect(probe.tested, [(2048, 2048)]);
+      expect(
+        find.text('Plays on most headsets, phones and computers up to 60 frames a second (H.264 level 5.1)'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('At 60 frames a second this size needs H.264 level 6, which many headsets and phones do not play'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('AV1 at 3072 x 3072 (an H.264 encoder that stops at 4096 x 2304): 2048 x 2048 tested as well and said '
+        'to keep H.264', (tester) async {
+      original('VID_20261122_101500.mp4');
+      probe.byName['VID_20261122_101500.mp4'] = _autoFacts(_sphereJson(), 'VID_20261122_101500.mp4');
+      probe.encoderAt = (width) => width > 2048 ? VideoEncoder.svtAv1 : VideoEncoder.h264Mf;
+      await openDialog(tester, [_asset('VID_20261122_101500.mp4', width: 5760, height: 2880)]);
+      await settle(tester, until: () => probe.tested.length == 2);
+      expect(probe.tested, [(3072, 3072), (2048, 2048)]);
+      expect(find.text('AV1 at 3072 x 3072: plays on computers and on the Quest 3, not on a Quest 2'), findsOneWidget);
+      expect(
+        note(tester, 'ai_conversion_video_sphere_smaller_h264'),
+        '2048 x 2048 keeps H.264 on this computer, which the Quest 2 and phones play',
+      );
+      // AV1 at 2048 too: nothing to suggest
+      probe.encoderAt = (width) => VideoEncoder.svtAv1;
+      await tapIn(tester, find.byKey(const Key('ai_conversion_video_sphere_2048')));
+      await settle(tester, until: () => probe.tested.length == 3);
+      expect(find.byKey(const Key('ai_conversion_video_sphere_smaller_h264')), findsNothing);
+    });
+
+    testWidgets('a video of the server: no longer skipped, said to be downloaded first; Convert queues it at once and '
+        'its job reads the copy', (tester) async {
+      final bytes = List.generate(4000, (i) => i % 256);
+      originals.remote['VID_server.mp4'] = FakeDownloadableOriginal('VID_server.mp4', bytes);
+      final container = await openDialog(tester, [_asset('VID_server.mp4')]);
+
+      expect(
+        find.text(
+          'No file of this video on this computer (it is on the server or a share): save it to a folder '
+          'of this computer first',
+        ),
+        findsNothing,
+      );
+      expect(
+        note(tester, 'ai_conversion_video_download'),
+        'This video is not on this computer: it is downloaded first to the drive of its 3D video, and the copy is '
+        'deleted once the 3D video is made',
+      );
+      expect(probe.read_, isEmpty, reason: 'nothing of it to read before it is downloaded');
+      expect(probe.tested, isEmpty);
+      expect(find.byKey(const Key('ai_conversion_video_encoder')), findsNothing);
+      expect(find.text('Saved as VID_server_3D_LRF_Full_SBS.mp4'), findsOneWidget);
+      expect(convertEnabled(tester), isTrue);
+
+      await tapIn(tester, convert());
+      await settle(
+        tester,
+        until: () => container.read(conversionQueueProvider).jobs.singleOrNull?.state == ConversionState.done,
+      );
+      final job = container.read(conversionQueueProvider).jobs.single;
+      expect((job.state, job.error, job.message, job.skipReason), (ConversionState.done, null, null, null));
+      expect(job.source, same(originals.remote['VID_server.mp4']));
+      expect(engine.sourceLengths, [4000]);
+      expect(Directory('${job.video!.workFolder}-original').existsSync(), isFalse);
+    });
+
     testWidgets('each refusal of a video has its words, and nothing runs', (tester) async {
       final refused = {
         'sphere.mp4': (
@@ -521,7 +870,7 @@ void main() {
               'projection': 'equirectangular',
             }),
           ),
-          '360° video',
+          '360° video: choose 360° in the dialog to make it a 360° 3D video',
         ),
         'half.mp4': (
           _phone(
@@ -532,7 +881,7 @@ void main() {
               'bound_right': 1073741823,
             }),
           ),
-          'VR180 video',
+          'VR180 video: not made 3D in this version yet',
         ),
         'stereo.mp4': (
           _phone(
@@ -870,6 +1219,117 @@ void main() {
       await settle(tester);
       expect(inRow(id, find.text('Cancelled')), findsOneWidget);
       expect(engine.discarded.single.recordId, 'clip');
+    });
+
+    testWidgets('a video of the server: its download told, a Pause there keeping its bytes; too little room said with '
+        'both figures', (tester) async {
+      final container = await pumpPanel(tester);
+      final source = FakeDownloadableOriginal('VID_server.mp4', List.filled(3 << 20, 7), chunk: 1 << 20);
+      var chunks = 0;
+      final hold = Completer<void>();
+      source.beforeChunk = () async {
+        if (++chunks == 3) {
+          await hold.future;
+        }
+      };
+      final id = container.read(conversionQueueProvider.notifier).addVideos(
+        [
+          ConversionRequest(
+            source: source,
+            target: ConversionTarget(folder: videos, fileName: 'VID_server_3D_LRF_Full_SBS.mp4'),
+          ),
+        ],
+        settingsOf: (_) => VideoJobSettings(recordId: 'server', workFolder: videoWorkFolderIn(videos, 'server')),
+      ).single;
+      await settle(tester, until: () => chunks >= 3);
+      final running = container.read(conversionQueueProvider).jobs.single;
+      expect(
+        (running.state, running.videoDownload, running.message),
+        (ConversionState.reading, (copied: 2 << 20, total: 3 << 20), null),
+      );
+      expect(inRow(id, find.text('Downloading the video: 2.0 MiB of 3.0 MiB')), findsOneWidget);
+      final bar = tester.widget<LinearProgressIndicator>(inRow(id, find.byType(LinearProgressIndicator)));
+      expect(bar.value, closeTo(2 / 3, 0.001));
+
+      await tester.tap(inRow(id, find.byKey(const Key('ai_job_video_pause'))));
+      // The download looks for a stop every tenth of a second, on the clock of the test
+      await tester.pump(const Duration(milliseconds: 250));
+      await settle(
+        tester,
+        until: () => container.read(conversionQueueProvider).jobs.single.state == ConversionState.paused,
+      );
+      expect(inRow(id, find.text('2.0 MiB of the video downloaded: Resume goes on from there')), findsOneWidget);
+      expect(inRow(id, find.byKey(const Key('ai_job_video_resume'))), findsOneWidget);
+      hold.complete();
+
+      expect(
+        conversionFailureText(
+          tester.element(find.byType(ConversionsPanel)).t,
+          ImmersiveErrorCode.diskFull,
+          videoDownloadRoomMessage(1 << 30, 3 << 30),
+          kind: ConversionKind.stereoVideo,
+        ),
+        'Not enough room to download the video: 1.0 GiB free on the drive of the destination, 3.0 GiB needed. Free '
+        'some space, then Resume',
+      );
+    });
+
+    testWidgets('its encoder stopped and it went on with the next one: said in its row', (tester) async {
+      engine
+        ..holdAfter = 1
+        ..encoderSwitch = (from: VideoEncoder.h264MfHardware, to: VideoEncoder.h264Mf);
+      final container = await pumpPanel(tester);
+      final id = add(container, 'clip.mp4');
+      await settle(tester);
+      expect(
+        inRow(
+          id,
+          find.text(
+            'The H.264 hardware (Media Foundation) encoder stopped: continuing with H.264 software (Media Foundation)',
+          ),
+        ),
+        findsOneWidget,
+      );
+      engine
+        ..encoderSwitch = null
+        ..release();
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.single.state.isEnded);
+    });
+
+    testWidgets('no encoder of this computer finished it: the encoder, the frame, the smaller size, FFmpeg\'s words', (
+      tester,
+    ) async {
+      engine.failure = videoEncoderDeadEndMessage(
+        encoder: VideoEncoder.h264Mf,
+        width: 3072,
+        height: 3072,
+        smaller: 2048,
+        said: '[out#0/matroska] Could not write header',
+      );
+      final container = await pumpPanel(tester);
+      final id = add(container, 'clip.mp4');
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.single.state.isEnded);
+      expect(
+        inRow(
+          id,
+          find.text(
+            'The H.264 software (Media Foundation) encoder stopped at 3072 x 3072 and no other encoder of this computer '
+            'could go on: choose 2048 x 2048 in the dialog and convert again. FFmpeg said: [out#0/matroska] Could not '
+            'write header',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        conversionFailureText(
+          tester.element(find.byType(ConversionsPanel)).t,
+          ImmersiveErrorCode.modelFailed,
+          videoEncoderDeadEndMessage(encoder: VideoEncoder.svtAv1, width: 3840, height: 1080, said: 'x'),
+          kind: ConversionKind.stereoVideo,
+        ),
+        'The AV1 (SVT-AV1) encoder stopped at 3840 x 1080 and no other encoder of this computer could go on. FFmpeg '
+        'said: x',
+      );
     });
 
     testWidgets('skipped by the engine, in the words of a video', (tester) async {

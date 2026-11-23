@@ -30,7 +30,13 @@ class FakeVideoJobEngine implements VideoJobEngine {
   /// Where its log would be; null for none
   final String? logFolder;
 
+  /// Its encoder stopped and it went on with the next one: told with each progress
+  ({VideoEncoder from, VideoEncoder to})? encoderSwitch;
+
   final runs = <VideoJobSpec>[];
+
+  /// The size of the file each run read, null when it was not there
+  final sourceLengths = <int?>[];
   final discarded = <VideoJobSettings>[];
   final stops = <String>[];
   var _release = Completer<void>();
@@ -52,6 +58,8 @@ class FakeVideoJobEngine implements VideoJobEngine {
     void Function(VideoJobProgress progress)? onProgress,
   }) async {
     runs.add(spec);
+    final source = File(spec.sourcePath);
+    sourceLengths.add(source.existsSync() ? source.lengthSync() : null);
     _release = Completer<void>();
     final stopped = Completer<void>();
     control.onStop = () {
@@ -98,6 +106,7 @@ class FakeVideoJobEngine implements VideoJobEngine {
           timeLeft: fps == null ? null : Duration(seconds: ((frames - done) / fps).round()),
           windows: windows,
           segmentsDone: segments,
+          encoderSwitch: encoderSwitch,
         ),
       );
       await control.betweenWindows?.call();

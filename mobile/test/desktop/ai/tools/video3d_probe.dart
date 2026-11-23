@@ -10,21 +10,32 @@
 //   done      the 3D video: its file, frames, slots, encoder, windows, cuts, holes, segments, the st3d mode the app's
 //             own probe reads back, and the median milliseconds of a window and of a new frame
 //   failed    the message
+//   sphere    for --sphere: the frame of the MP4 (square, top and bottom), what the app's probe reads (st3d, sv3d,
+//             half sphere) and how the two eyes of frame 50 differ, from each other and from the source's frame 50, near
+//             the poles, at the equator and across the seam
 //
 //   --ffmpeg DIR --ort LIBRARY --model FILE --out DIR [--quality standard] [--strength normal]
 //   [--alignment upstream|tenFrame] [--packing full|half] [--segment 30] [--no-fade]
-//   [--frames-npy] [--maps-npy] [--pause-after N] VIDEO...
+//   [--frames-npy] [--maps-npy] [--pause-after N] [--sphere EYE_WIDTH] [--card LIBRARY [--device auto|card:NAME]
+//   [--allow-software]] VIDEO...
 // DIR holds bin/ffmpeg and bin/ffprobe (an archive of the FFmpeg program unpacked). Each video gives
 // <out>/<name>_3D_LRF_Full_SBS.mp4 (or Half), its work folder beside it. --maps-npy writes the aligned maps of the
 // model (float32 [frames, height, width]) and --frames-npy the eye frames (uint8 [frames, height, width, 3]) next to
 // it, for depth.py and analyse.py of the probe. --pause-after N pauses the job after its segment N and resumes it at
-// once: the resume check (not with the .npy files, whose held frames would come twice).
+// once: the resume check (not with the .npy files, whose held frames would come twice). --sphere EYE_WIDTH makes a
+// 360° video a 360° 3D video of eyes EYE_WIDTH wide (lot ai-360-3d-51), <name>_360_3D.mp4, with the worker of the
+// sphere. --card gives the DirectML build of ONNX Runtime (lot ai-360-3d-51): the depth model runs on the card its
+// check passes, as in the app (ort/depth_provider.dart), the processor otherwise, said in the log; --allow-software
+// counts the renderer of Windows on the processor (WARP) as a card, for the runners of the CI that have no other.
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:immich_mobile/desktop/ai/ort/depth_provider.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
+import 'package:immich_mobile/desktop/ai/video3d/sphere_video_worker.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_frame_ops.dart';
@@ -72,6 +83,111 @@ class _NpyWriter {
   }
 }
 
+/// The frame [index] of the video [path] decoded by [ffmpeg] as RGB, and its size; null when it was not read
+Future<({int width, int height, List<int> pixels})?> _decodedFrame(String ffmpeg, String path, int index) async {
+  final ffprobe = p.join(p.dirname(ffmpeg), Platform.isWindows ? 'ffprobe.exe' : 'ffprobe');
+  final size = await Process.run(ffprobe, [
+    '-v',
+    'error',
+    '-select_streams',
+    'v:0',
+    '-show_entries',
+    'stream=width,height',
+    '-of',
+    'csv=p=0',
+    path,
+  ]);
+  final parts = '${size.stdout}'.trim().split(',');
+  final width = parts.length >= 2 ? int.tryParse(parts[0]) : null;
+  final height = parts.length >= 2 ? int.tryParse(parts[1]) : null;
+  if (width == null || height == null) {
+    return null;
+  }
+  final decoded = await Process.run(ffmpeg, [
+    '-v',
+    'error',
+    '-i',
+    path,
+    '-frames:v',
+    '${index + 1}',
+    '-f',
+    'rawvideo',
+    '-pix_fmt',
+    'rgb24',
+    'pipe:1',
+  ], stdoutEncoding: null);
+  final bytes = decoded.stdout as List<int>;
+  final frame = width * height * 3;
+  final last = bytes.length ~/ frame - 1;
+  if (last < 0) {
+    return null;
+  }
+  return (width: width, height: height, pixels: bytes.sublist(last * frame, (last + 1) * frame));
+}
+
+/// The frame [index] of the top and bottom MP4 [path] and of its [source], decoded by [ffmpeg]: the size of the MP4,
+/// the mean difference of its two eyes over three rows near each pole (rows 3 to 5 of each eye from its top and its
+/// bottom: away from the edges of the frame and from the line between the eyes, where the chroma and the deblocking of
+/// the codec mix the two eyes) and over the three rows of the equator, the same rows measured against the source
+/// (how much further the right eye is from it than the left one: each eye's own codec noise cancels out, what stays is
+/// the shift of the right eye), and the jump across the seam of each eye (the last column against the first, along
+/// the equator band)
+Future<Map<String, Object?>> _sphereFrame(String ffmpeg, String path, String source, int index) async {
+  final out = await _decodedFrame(ffmpeg, path, index);
+  if (out == null) {
+    throw StateError('Frame $index of $path not read');
+  }
+  final width = out.width;
+  final pixels = out.pixels;
+  final eye = out.height ~/ 2;
+  final original = await _decodedFrame(ffmpeg, source, index);
+  final same = original != null && original.width == width && original.height == eye;
+  final north = [3, 4, 5];
+  final south = [eye - 6, eye - 5, eye - 4];
+  final equator = [eye ~/ 2 - 1, eye ~/ 2, eye ~/ 2 + 1];
+
+  // The mean difference over [ys] of rows of [a] from [aTop] and rows of [b] from [bTop]
+  double rows(List<int> a, int aTop, List<int> b, int bTop, List<int> ys) {
+    var sum = 0;
+    for (final y in ys) {
+      for (var i = 0; i < width * 3; i++) {
+        sum += (a[(aTop + y) * width * 3 + i] - b[(bTop + y) * width * 3 + i]).abs();
+      }
+    }
+    return sum / (ys.length * width * 3);
+  }
+
+  double eyes(List<int> ys) => rows(pixels, eye, pixels, 0, ys);
+  // How much further the right eye is from the source than the left one
+  double? excess(List<int> ys) =>
+      same ? rows(pixels, eye, original.pixels, 0, ys) - rows(pixels, 0, original.pixels, 0, ys) : null;
+
+  double seam(int top) {
+    var sum = 0;
+    for (var y = eye ~/ 2 - 8; y < eye ~/ 2 + 8; y++) {
+      for (var c = 0; c < 3; c++) {
+        sum += (pixels[((top + y) * width) * 3 + c] - pixels[((top + y) * width + width - 1) * 3 + c]).abs();
+      }
+    }
+    return sum / 48;
+  }
+
+  final northExcess = excess(north);
+  final southExcess = excess(south);
+  return {
+    'width': width,
+    'height': out.height,
+    'frame': index,
+    'source_read': same,
+    'pole_diff': (eyes(north) + eyes(south)) / 2,
+    'equator_diff': eyes(equator),
+    'pole_excess': northExcess == null || southExcess == null ? null : math.max(northExcess.abs(), southExcess.abs()),
+    'equator_excess': excess(equator),
+    'seam_left': seam(0),
+    'seam_right': seam(eye),
+  };
+}
+
 /// Runs the probe on [args]; the number of videos that failed
 Future<int> runVideo3dProbe(List<String> args) async {
   final options = <String, String>{};
@@ -79,7 +195,7 @@ Future<int> runVideo3dProbe(List<String> args) async {
   final videos = <String>[];
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
-    if (const {'--frames-npy', '--maps-npy', '--no-fade'}.contains(arg)) {
+    if (const {'--frames-npy', '--maps-npy', '--no-fade', '--allow-software'}.contains(arg)) {
       flags.add(arg);
     } else if (arg.startsWith('--')) {
       options[arg] = args[++i];
@@ -100,21 +216,45 @@ Future<int> runVideo3dProbe(List<String> args) async {
   final alignment = VideoDepthAlignment.values.byName(options['--alignment'] ?? 'upstream');
   final packing = VideoSbsPacking.values.byName(options['--packing'] ?? 'full');
   final pauseAfter = int.tryParse(options['--pause-after'] ?? '');
-  final relief = VideoReliefSettings(parallax: parallax, packing: packing, edgeFade: !flags.contains('--no-fade'));
-  final runtime = OrtRuntime.load(ortLibrary);
+  final sphere = int.tryParse(options['--sphere'] ?? '');
+  final relief = VideoReliefSettings(
+    parallax: parallax,
+    packing: packing,
+    edgeFade: !flags.contains('--no-fade'),
+    sphere: sphere != null,
+  );
+  final cardLibrary = options['--card'];
   final ffmpeg = p.join(ffmpegDir, 'bin', Platform.isWindows ? 'ffmpeg.exe' : 'ffmpeg');
   final ffprobe = p.join(ffmpegDir, 'bin', Platform.isWindows ? 'ffprobe.exe' : 'ffprobe');
   Directory(outDir).createSync(recursive: true);
   var failures = 0;
 
   for (final video in videos) {
-    final name = videoOutputName(video, packing);
+    final name = sphere != null ? sphereOutputName(video) : videoOutputName(video, packing);
     final output = p.join(outDir, name);
     final folder = Directory(p.join(outDir, '$videoWorkPrefix${p.basenameWithoutExtension(name)}'));
     final windowMs = <int>[];
     _NpyWriter? frames;
     _NpyWriter? maps;
-    final session = runtime.openSession(modelPath, settings: OrtSessionSettings.forThisComputer());
+    final settings = OrtSessionSettings.forThisComputer();
+    DepthSession? depth;
+    DepthSession openFor(int width, int height) {
+      final opened = depth = openDepthSession(
+        processorLibrary: ortLibrary,
+        cardLibrary: cardLibrary,
+        modelPath: modelPath,
+        width: width,
+        height: height,
+        settings: settings,
+        choice: cardLibrary == null ? depthDeviceProcessor : options['--device'] ?? depthDeviceAuto,
+        allowSoftware: flags.contains('--allow-software'),
+      );
+      for (final line in opened.lines) {
+        _emit('log', {'line': line});
+      }
+      return opened;
+    }
+
     var paused = false;
     VideoConversion make() {
       late VideoConversion conversion;
@@ -129,9 +269,10 @@ Future<int> runVideo3dProbe(List<String> args) async {
           relief: relief,
           alignment: alignment,
           segmentSeconds: int.parse(options['--segment'] ?? '30'),
+          sphereEyeWidth: sphere,
           keys: {
-            'com.immuch360.kind': 'StereoVideo',
-            'com.immuch360.pipeline': 'relief-v1-video',
+            'com.immuch360.kind': sphere != null ? 'StereoVideo360' : 'StereoVideo',
+            'com.immuch360.pipeline': sphere != null ? 'relief-360-video' : 'relief-v1-video',
             'com.immuch360.parallax': '$parallax',
             'com.immuch360.convergence': '${relief.convergence}',
             'com.immuch360.model': 'video-depth-anything-small-onnx',
@@ -157,20 +298,43 @@ Future<int> runVideo3dProbe(List<String> args) async {
           }
           final ops = nativeVideoFrameOps(threads: 2) ?? const DartVideoFrameOps();
           _emit('log', {'line': 'frame work: ${ops.name}'});
-          return LocalVideoFrameWorker(
-            ops: ops,
-            model: (input, width, height) {
-              final watch = Stopwatch()..start();
-              final output = session
+          final opened = depth ?? openFor(modelWidth, modelHeight);
+          Float32List run(Float32List input, int width, int height) {
+            final watch = Stopwatch()..start();
+            final output = runDepthWindow(
+              onCard: opened.session.provider.isGraphicsCard,
+              run: () => opened.session
                   .runNamed({
                     'frames': OrtTensor([1, vdaWindowLength, 3, height, width], input),
                   })
                   .values
-                  .single;
-              windowMs.add(watch.elapsedMilliseconds);
-              _emit('window', {'ms_run': watch.elapsedMilliseconds});
-              return output.values;
-            },
+                  .single
+                  .values,
+              toProcessor: (reason) {
+                opened.session.close();
+                opened.session = opened.runtime.openSession(modelPath, settings: settings);
+                _emit('log', {'line': 'the graphics card failed during the job ($reason): on the processor now'});
+              },
+            );
+            windowMs.add(watch.elapsedMilliseconds);
+            _emit('window', {'ms_run': watch.elapsedMilliseconds, 'on': opened.session.provider.toString()});
+            return output;
+          }
+
+          if (sphere != null) {
+            return LocalSphereVideoFrameWorker(
+              ops: ops,
+              model: run,
+              eyeWidth: eyeWidth,
+              eyeHeight: eyeHeight,
+              side: modelWidth,
+              shiftDegrees: relief.sphereShiftDegrees,
+              alignment: alignment,
+            );
+          }
+          return LocalVideoFrameWorker(
+            ops: ops,
+            model: run,
             eyeWidth: eyeWidth,
             eyeHeight: eyeHeight,
             modelWidth: modelWidth,
@@ -239,11 +403,20 @@ Future<int> runVideo3dProbe(List<String> args) async {
         'parallax': parallax,
         'alignment': alignment.name,
       });
+      if (sphere != null) {
+        _emit('sphere', {
+          'output': output,
+          'st3d_top_bottom': probe.stereo == StereoLayout.topBottom,
+          'sv3d': probe.hasSphericalMetadata,
+          'half_sphere': probe.halfSphere,
+          ...await _sphereFrame(ffmpeg, output, video, 50),
+        });
+      }
     } on Object catch (error, stack) {
       failures++;
       _emit('failed', {'video': video, 'error': '$error', 'stack': '$stack'.split('\n').take(6).join(' | ')});
     } finally {
-      session.close();
+      depth?.session.close();
     }
   }
   return failures;

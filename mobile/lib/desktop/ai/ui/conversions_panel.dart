@@ -71,6 +71,7 @@ import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -234,6 +235,9 @@ String conversionFailureText(
 }) => switch (code) {
   ImmersiveErrorCode.cancelled => t.ai_immersive_state_cancelled,
   ImmersiveErrorCode.decodeFailed => t.ai_immersive_failed_decode,
+  // No encoder of this computer finished the frame: the encoder, the frame, a smaller 360° size, FFmpeg's words
+  ImmersiveErrorCode.modelFailed when kind == ConversionKind.stereoVideo && videoEncoderDeadEndOf(message) != null =>
+    videoEncoderDeadEndText(t, videoEncoderDeadEndOf(message)!),
   // The words of FFmpeg or of the engine, which the log of the job tells in full
   ImmersiveErrorCode.modelFailed when kind == ConversionKind.stereoVideo => t.ai_immersive_video_failed(
     message: message ?? '',
@@ -243,6 +247,11 @@ String conversionFailureText(
   ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
   ImmersiveErrorCode.writeFailed when message == libraryNotReadyMessage => t.ai_immersive_library_not_ready,
   ImmersiveErrorCode.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),
+  // The download of the original of a 3D video found too little room before it wrote a byte: both figures
+  ImmersiveErrorCode.diskFull when videoDownloadRoomOf(message) != null => t.ai_immersive_video_download_disk_short(
+    free: formatBytes(videoDownloadRoomOf(message)!.free),
+    space: formatBytes(videoDownloadRoomOf(message)!.need),
+  ),
   ImmersiveErrorCode.diskFull => t.ai_immersive_failed_disk_full,
   ImmersiveErrorCode.readOnly => t.ai_immersive_failed_read_only,
   ImmersiveErrorCode.sourceLost => t.ai_immersive_failed_source,
@@ -302,16 +311,18 @@ String conversionFailureText(
 
 /// What a job makes, in the words of the panel: "2D to 3D SBS", "2D to 3D scene", "2D to 360° panorama", "360° to 3D
 /// 360°", "Photos to splat scene", or "Video to splat scene" for a splat scene of a video ([fromVideo],
-/// ConversionJob.fromVideo)
-String conversionKindText(Translations t, ConversionKind kind, {bool fromVideo = false}) => switch (kind) {
-  ConversionKind.sbsFromPhoto => t.ai_immersive_job_type,
-  ConversionKind.sceneFromPhoto => t.ai_immersive_job_type_scene,
-  ConversionKind.panoramaFromPhoto => t.ai_immersive_job_type_panorama,
-  ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_job_type_stereo_panorama,
-  ConversionKind.splatScene when fromVideo => t.ai_immersive_job_type_splat_video,
-  ConversionKind.splatScene => t.ai_immersive_job_type_splat_photos,
-  ConversionKind.stereoVideo => t.ai_immersive_job_type_video,
-};
+/// ConversionJob.fromVideo); "360° video to 360° 3D" for a 3D video of a 360° one ([sphere])
+String conversionKindText(Translations t, ConversionKind kind, {bool fromVideo = false, bool sphere = false}) =>
+    switch (kind) {
+      ConversionKind.sbsFromPhoto => t.ai_immersive_job_type,
+      ConversionKind.sceneFromPhoto => t.ai_immersive_job_type_scene,
+      ConversionKind.panoramaFromPhoto => t.ai_immersive_job_type_panorama,
+      ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_job_type_stereo_panorama,
+      ConversionKind.splatScene when fromVideo => t.ai_immersive_job_type_splat_video,
+      ConversionKind.splatScene => t.ai_immersive_job_type_splat_photos,
+      ConversionKind.stereoVideo when sphere => t.ai_immersive_job_type_video_360,
+      ConversionKind.stereoVideo => t.ai_immersive_job_type_video,
+    };
 
 /// The honesty label of the files of a kind, as the head of the panel says it
 String conversionKindLabel(Translations t, ConversionKind kind) => switch (kind) {
@@ -488,6 +499,63 @@ String? videoProgressText(Translations t, ConversionJob job) {
       ? '$frames  •  ${t.ai_immersive_video_segment(index: progress.segmentsDone + 1)}'
       : frames;
 }
+
+/// "Downloading the video: 1.2 GB of 4.0 GB" while the first step of a 3D video of the server or of a share runs, "1.2
+/// GB of the video downloaded: Resume goes on from there" once paused there; null otherwise
+String? videoDownloadText(Translations t, ConversionJob job) {
+  final download = job.videoDownload;
+  if (download == null) {
+    return null;
+  }
+  final copied = formatBytes(download.copied);
+  if (job.state == ConversionState.paused) {
+    return download.copied > 0 ? t.ai_immersive_video_download_kept(copied: copied) : null;
+  }
+  if (!job.state.isActive) {
+    return null;
+  }
+  final whole = download.total;
+  return whole == null
+      ? t.ai_immersive_video_downloading_size_unknown(copied: copied)
+      : t.ai_immersive_video_downloading(copied: copied, whole: formatBytes(whole));
+}
+
+/// How far the bar of [job] is, from 0 to 1; null for a bar that only moves: its download while the total is told, else
+/// its progress once it computes
+double? conversionBarValue(ConversionJob job) {
+  if (job.videoDownload case (:final copied, total: final whole?) when whole > 0) {
+    return (copied / whole).clamp(0.0, 1.0);
+  }
+  return job.phase == ConversionPhase.preparing ? null : job.progress;
+}
+
+/// The error of a 3D video that no encoder of this computer finished at its frame
+String videoEncoderDeadEndText(
+  Translations t,
+  ({VideoEncoder encoder, String frame, String? smaller, String said}) deadEnd,
+) => switch (deadEnd.smaller) {
+  final smaller? => t.ai_immersive_video_encoder_dead_end_smaller(
+    encoder: videoEncoderName(deadEnd.encoder),
+    frame: deadEnd.frame,
+    smaller: smaller,
+    said: deadEnd.said,
+  ),
+  null => t.ai_immersive_video_encoder_dead_end(
+    encoder: videoEncoderName(deadEnd.encoder),
+    frame: deadEnd.frame,
+    said: deadEnd.said,
+  ),
+};
+
+/// "The H.264 hardware (Media Foundation) encoder stopped: continuing with H.264 software (Media Foundation)" in the row
+/// of a 3D video whose encoder stopped, null otherwise
+String? videoEncoderSwitchText(Translations t, ConversionJob job) => switch (job.videoProgress?.encoderSwitch) {
+  (:final from, :final to) => t.ai_immersive_video_encoder_switched(
+    from: videoEncoderName(from),
+    to: videoEncoderName(to),
+  ),
+  null => null,
+};
 
 /// "H.264" or "AV1": how a 3D video was encoded
 String videoEncoderText(VideoEncoder encoder) => encoder.codec.contains('av1') ? 'AV1' : 'H.264';
@@ -756,10 +824,11 @@ class _JobRowState extends ConsumerState<_JobRow> {
     final photo = job.kind.output == ImmersiveKind.stereoPhoto && !video;
     final splat = job.kind == ConversionKind.splatScene;
     final videoLine = video ? videoProgressText(t, job) : null;
+    final downloadLine = video ? videoDownloadText(t, job) : null;
     final lines = <Widget>[
       Text(
         [
-          conversionKindText(t, job.kind, fromVideo: job.fromVideo),
+          conversionKindText(t, job.kind, fromVideo: job.fromVideo, sphere: job.video?.sphere ?? false),
           if (job.batchSize > 1) t.ai_immersive_progress_count(index: job.batchIndex, total: job.batchSize),
         ].join('  •  '),
         style: secondary,
@@ -773,8 +842,11 @@ class _JobRowState extends ConsumerState<_JobRow> {
         ),
       if (job.state.isActive) ...[
         const SizedBox(height: 4),
-        LinearProgressIndicator(value: job.phase == ConversionPhase.preparing ? null : job.progress),
+        LinearProgressIndicator(value: conversionBarValue(job)),
+        if (downloadLine != null) Text(downloadLine, key: const Key('ai_job_video_download'), style: secondary),
         if (videoLine != null) Text(videoLine, key: const Key('ai_job_video_frames'), style: secondary),
+        if (video && videoEncoderSwitchText(t, job) != null)
+          Text(videoEncoderSwitchText(t, job)!, key: const Key('ai_job_video_encoder_switched'), style: secondary),
         if (progress != null)
           Text(progress, key: const Key('ai_job_time_left'), style: secondary)
         else if (video && job.state == ConversionState.depth)
@@ -793,6 +865,7 @@ class _JobRowState extends ConsumerState<_JobRow> {
           _splatIncomplete(t, placed.placed, placed.images, colors),
       ],
       if (job.state == ConversionState.paused) ...[
+        if (downloadLine != null) Text(downloadLine, key: const Key('ai_job_video_download'), style: secondary),
         if (videoLine != null) Text(videoLine, key: const Key('ai_job_video_frames'), style: secondary),
         if (videoMissingText(t, job) case final missing?)
           Text(

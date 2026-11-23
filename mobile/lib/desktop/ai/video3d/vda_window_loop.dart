@@ -105,11 +105,71 @@ double vdaBlendWeight(VideoDepthAlignment mode, int i) => switch (mode) {
   VideoDepthAlignment.tenFrame => 0.5 - 0.5 * math.cos(math.pi * i / (vdaBlended - 1)),
 };
 
-/// The percentiles 2 and 98 of [map] by nearest rank
+/// The percentiles 2 and 98 of [map] by nearest rank. The two ranks are selected in place of a copy (quickselect, in
+/// linear time) rather than by sorting the whole map: the same values, some ten times faster on a face of 392 x 392,
+/// which a 360° video does six times a frame (lot ai-360-3d-51); a map holding NaN is sorted as before.
 (double, double) vdaPercentiles(Float64List map) {
-  final sorted = Float64List.fromList(map)..sort();
-  int rank(int percent) => math.max(1, (percent * sorted.length + 99) ~/ 100) - 1;
-  return (sorted[rank(2)], sorted[rank(98)]);
+  final values = Float64List.fromList(map);
+  int rank(int percent) => math.max(1, (percent * values.length + 99) ~/ 100) - 1;
+  if (values.any((value) => value.isNaN)) {
+    values.sort();
+    return (values[rank(2)], values[rank(98)]);
+  }
+  final low = rank(2);
+  final high = rank(98);
+  _select(values, low, 0, values.length - 1);
+  // Everything after [low] is at least values[low]: the higher rank is selected there
+  _select(values, high, low, values.length - 1);
+  return (values[low], values[high]);
+}
+
+/// Puts into values[k] the value it would hold if values[from..to] were sorted, the smaller ones before it and the
+/// larger ones after (Hoare's partition, the median of three as the pivot)
+void _select(Float64List values, int k, int from, int to) {
+  var lo = from;
+  var hi = to;
+  while (hi > lo) {
+    final mid = lo + ((hi - lo) >> 1);
+    // The median of three at mid
+    if (values[mid] < values[lo]) {
+      _swap(values, mid, lo);
+    }
+    if (values[hi] < values[lo]) {
+      _swap(values, hi, lo);
+    }
+    if (values[hi] < values[mid]) {
+      _swap(values, hi, mid);
+    }
+    final pivot = values[mid];
+    var i = lo;
+    var j = hi;
+    while (i <= j) {
+      while (values[i] < pivot) {
+        i++;
+      }
+      while (values[j] > pivot) {
+        j--;
+      }
+      if (i <= j) {
+        _swap(values, i, j);
+        i++;
+        j--;
+      }
+    }
+    if (k <= j) {
+      hi = j;
+    } else if (k >= i) {
+      lo = i;
+    } else {
+      return;
+    }
+  }
+}
+
+void _swap(Float64List values, int a, int b) {
+  final kept = values[a];
+  values[a] = values[b];
+  values[b] = kept;
 }
 
 /// The median of [values], the mean of the two middle ones for an even count
@@ -192,6 +252,8 @@ class VdaLoopState {
     required this.distances,
     required this.firstHeld,
     this.resets = const {},
+    this.views = const [],
+    this.alignment,
   });
 
   /// The index of the next frame the loop takes
@@ -222,6 +284,15 @@ class VdaLoopState {
 
   /// Frames not given out yet whose normalisation starts again (a cut too close to the scene's start)
   final Set<int> resets;
+
+  /// For a 360° video (sphere_video_worker.dart): the state of the loop of each face of the cube, this state holding
+  /// the cut detector of the whole frame, the smoothed percentiles of the map of the sphere ([lo], [hi]) and the
+  /// frames whose smoothing starts again ([resets]); empty for a flat video
+  final List<VdaLoopState> views;
+
+  /// For a 360° video: the smoothed scale and shift of each face, two values a face (NaN for a face left out); null
+  /// before the first frame or for a flat video
+  final Float64List? alignment;
 }
 
 /// The window loop over a whole video, scene after scene
@@ -273,17 +344,23 @@ class VdaWindowLoop {
   /// Windows run so far over the whole video
   var windowsRun = 0;
 
+  /// The time spent in the model so far, in microseconds (the timings of the job log)
+  var modelMicros = 0;
+
   /// The index of the next frame [add] takes
   int get nextIndex => _next;
 
   /// The frames given out so far
   int get given => _given;
 
-  /// Takes the eye frame [rgb] of the next index; gives the frames that became final, in order
-  List<VdaFinalFrame> add(Uint8List rgb) {
+  /// Takes the eye frame [rgb] of the next index; gives the frames that became final, in order. [cut], when given,
+  /// says whether a cut comes right before this frame instead of the loop's own detector: the faces of a 360° video
+  /// each run a loop, and the cuts are found once on the whole frame (sphere_video_worker.dart)
+  List<VdaFinalFrame> add(Uint8List rgb, {bool? cut}) {
     final out = <VdaFinalFrame>[];
     final index = _next++;
-    if (detectCuts && _detector.add(ops.lumaHistogram(rgb, eyeWidth, eyeHeight)) && index > 0) {
+    final isCut = cut ?? (detectCuts && _detector.add(ops.lumaHistogram(rgb, eyeWidth, eyeHeight)));
+    if (isCut && index > 0) {
       if (index - _sceneStart < vdaStep) {
         normalisationResets.add(index);
         _resets.add(index);
@@ -397,7 +474,9 @@ class VdaWindowLoop {
       slots.add(input);
       window.setAll(slot * _inputLength, input);
     }
+    final watch = Stopwatch()..start();
     final output = model(window, modelWidth, modelHeight);
+    modelMicros += watch.elapsedMicroseconds;
     final plane = modelWidth * modelHeight;
     if (output.length != vdaWindowLength * plane) {
       throw StateError('The model gave ${output.length} values for a window of ${vdaWindowLength * plane}');

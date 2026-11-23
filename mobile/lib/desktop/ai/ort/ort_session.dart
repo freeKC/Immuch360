@@ -19,6 +19,13 @@
 // logical processors minus two (at least one), inter-op threads = 1, and session.intra_op.allow_spinning = 0 so that
 // ONNX Runtime's threads do not spin between two passes.
 //
+// A session may also run on a graphics card (lot ai-360-3d-51, 23 Nov 2026): [OrtSessionSettings.provider] appends an
+// execution provider of the library by its name, DirectML ("DML", on a DXGI adapter index) in the DirectML build of
+// ONNX Runtime 1.24.4 on Windows, Core ML ("CoreML") of the official 1.31.0 for Apple silicon; and
+// [OrtSessionSettings.fixedDimensions] fixes the free dimensions of the model (its height and width) so that a
+// provider compiles its graph once. [OrtRuntime.executionDevices] lists the devices the library offers (GetEpDevices):
+// the processor, and on Windows each adapter DirectML sees with its name, memory and place in the order of the system.
+//
 // The official builds of ONNX Runtime 1.31.0 send telemetry to Microsoft unless told not to (its docs/Privacy.md): on
 // Linux and macOS, at the first OrtEnv, they write a device id and queue an event for
 // mobile.events.data.microsoft.com; on Windows, the DLL reports through ETW. The app is local only, so both are
@@ -82,6 +89,8 @@ class OrtSessionSettings {
     this.interOpThreads = 1,
     this.allowSpinning = false,
     this.cpuMemArena = true,
+    this.provider = OrtProvider.cpu,
+    this.fixedDimensions = const {},
   });
 
   /// The settings of the design for a computer with [logicalProcessors]: all of them but two for one pass
@@ -101,13 +110,126 @@ class OrtSessionSettings {
   /// gives it back after each pass (DisableCpuMemArena: MoGe peaks at 1.35 GB instead of 2.25, measure M2)
   final bool cpuMemArena;
 
+  /// Where the model runs: the processor, or a provider of a graphics card the library has
+  final OrtProvider provider;
+
+  /// Free dimensions of the model fixed by name (AddFreeDimensionOverrideByName): {'height': 392, 'width': 392}
+  final Map<String, int> fixedDimensions;
+
   /// These settings with [cpuMemArena] set
-  OrtSessionSettings withCpuMemArena(bool keep) => OrtSessionSettings(
-    intraOpThreads: intraOpThreads,
-    interOpThreads: interOpThreads,
-    allowSpinning: allowSpinning,
-    cpuMemArena: keep,
-  );
+  OrtSessionSettings withCpuMemArena(bool keep) => copyWith(cpuMemArena: keep);
+
+  /// These settings with the fields given changed
+  OrtSessionSettings copyWith({bool? cpuMemArena, OrtProvider? provider, Map<String, int>? fixedDimensions}) =>
+      OrtSessionSettings(
+        intraOpThreads: intraOpThreads,
+        interOpThreads: interOpThreads,
+        allowSpinning: allowSpinning,
+        cpuMemArena: cpuMemArena ?? this.cpuMemArena,
+        provider: provider ?? this.provider,
+        fixedDimensions: fixedDimensions ?? this.fixedDimensions,
+      );
+}
+
+/// The kinds of execution provider the app asks for
+enum OrtProviderKind { cpu, directMl, coreMl }
+
+/// The execution provider of a session: the processor, DirectML on one adapter, or Core ML
+class OrtProvider {
+  const OrtProvider._(this.kind, this.adapter);
+
+  /// DirectML on the DXGI adapter of index [adapter] (IDXGIFactory::EnumAdapters, DxgiAdapterNumber of the device)
+  const OrtProvider.directMl(int this.adapter) : kind = OrtProviderKind.directMl;
+
+  static const cpu = OrtProvider._(OrtProviderKind.cpu, null);
+
+  /// Core ML in the ML Program format on every unit Core ML chooses (GPU, Neural Engine, processor)
+  static const coreMl = OrtProvider._(OrtProviderKind.coreMl, null);
+
+  final OrtProviderKind kind;
+  final int? adapter;
+
+  bool get isGraphicsCard => kind != OrtProviderKind.cpu;
+
+  /// The name SessionOptionsAppendExecutionProvider takes
+  String get ortName => switch (kind) {
+    OrtProviderKind.cpu => 'CPU',
+    OrtProviderKind.directMl => 'DML',
+    OrtProviderKind.coreMl => 'CoreML',
+  };
+
+  /// What the job log calls it
+  String get title => switch (kind) {
+    OrtProviderKind.cpu => 'the processor',
+    OrtProviderKind.directMl => 'DirectML',
+    OrtProviderKind.coreMl => 'Core ML',
+  };
+
+  /// The options given with the provider
+  Map<String, String> get options => switch (kind) {
+    OrtProviderKind.cpu => const {},
+    OrtProviderKind.directMl => {'device_id': '$adapter'},
+    OrtProviderKind.coreMl => const {'ModelFormat': 'MLProgram', 'MLComputeUnits': 'ALL'},
+  };
+
+  @override
+  bool operator ==(Object other) => other is OrtProvider && other.kind == kind && other.adapter == adapter;
+
+  @override
+  int get hashCode => Object.hash(kind, adapter);
+
+  @override
+  String toString() => adapter == null ? ortName : '$ortName($adapter)';
+}
+
+/// A device a library offers to run models on (OrtEpDevice and its OrtHardwareDevice): [epName] is the provider,
+/// such as DmlExecutionProvider or CPUExecutionProvider; [metadata] holds what the library read of it (Description,
+/// Discrete, DxgiAdapterNumber, DxgiHighPerformanceIndex, DxgiVideoMemory, LUID on Windows)
+class OrtEpDeviceInfo {
+  const OrtEpDeviceInfo({
+    required this.epName,
+    required this.type,
+    required this.vendor,
+    required this.vendorId,
+    required this.deviceId,
+    this.metadata = const {},
+  });
+
+  final String epName;
+
+  /// OrtHardwareDeviceType: 0 the processor, 1 a graphics card, 2 an NPU
+  final int type;
+  final String vendor;
+  final int vendorId;
+  final int deviceId;
+  final Map<String, String> metadata;
+
+  bool get isGraphicsCard => type == 1;
+
+  /// Its name: "NVIDIA GeForce RTX 4060 Laptop GPU"
+  String get description => metadata['Description'] ?? vendor;
+
+  /// Its index for IDXGIFactory::EnumAdapters, the device_id of DirectML
+  int? get dxgiAdapter => int.tryParse(metadata['DxgiAdapterNumber'] ?? '');
+
+  /// Its place in the order of the system for high performance (0 the card Windows takes for a game)
+  int? get highPerformanceIndex => int.tryParse(metadata['DxgiHighPerformanceIndex'] ?? '');
+
+  bool get discrete => metadata['Discrete'] == '1';
+
+  /// "7956 MB", as the library gives it
+  String? get videoMemory => metadata['DxgiVideoMemory'];
+
+  /// WARP, the renderer of Windows on the processor (Microsoft Basic Render Driver, vendor 0x1414)
+  bool get isSoftware => vendorId == 0x1414 || description.contains('Basic Render');
+
+  @override
+  String toString() =>
+      '$epName ${isGraphicsCard
+          ? 'GPU'
+          : type == 0
+          ? 'CPU'
+          : 'NPU'} $description $metadata';
 }
 
 /// ONNX Runtime opened from one file, and its table of functions at API [ortApiVersion]
@@ -179,6 +301,33 @@ final class OrtRuntime {
   OrtSession openSession(String modelPath, {OrtSessionSettings? settings}) =>
       OrtSession._open(this, modelPath, settings ?? OrtSessionSettings.forThisComputer());
 
+  /// The devices this library offers to run models on (GetEpDevices of API 22): the processor, and with a provider
+  /// of graphics cards (DirectML) each adapter it sees. Throws [OrtException] when ONNX Runtime refuses.
+  List<OrtEpDeviceInfo> executionDevices() => using((arena) {
+    final envOut = arena<Pointer<ort.OrtEnv>>();
+    _calls.check(
+      _calls.createEnv(
+        ort.OrtLoggingLevel.ORT_LOGGING_LEVEL_WARNING,
+        'immuch360'.toNativeUtf8(allocator: arena).cast(),
+        envOut,
+      ),
+      'CreateEnv',
+    );
+    _calls.made('OrtEnv');
+    final env = envOut.value;
+    try {
+      _calls.check(_calls.disableTelemetryEvents(env), 'DisableTelemetryEvents');
+      _calls.telemetryOff++;
+      final listOut = arena<Pointer<Pointer<ort.OrtEpDevice>>>();
+      final countOut = arena<Size>();
+      _calls.check(_calls.getEpDevices(env, listOut, countOut), 'GetEpDevices');
+      return [for (var i = 0; i < countOut.value; i++) _calls.epDevice(listOut.value[i], arena)];
+    } finally {
+      // The devices belong to the environment: read before it goes
+      _calls.releaseEnv(env);
+    }
+  });
+
   /// The options of the runs of one job, to be given back by [OrtRunOptions.release]
   OrtRunOptions createRunOptions() => using((arena) {
     final out = arena<Pointer<ort.OrtRunOptions>>();
@@ -235,7 +384,7 @@ final class OrtRunOptions {
 
 /// A model loaded by ONNX Runtime, ready to run; [close] gives its memory back
 final class OrtSession {
-  OrtSession._(this.runtime, this.modelPath, this._env, this._session, this.inputs, this.outputs);
+  OrtSession._(this.runtime, this.modelPath, this._env, this._session, this.inputs, this.outputs, this.provider);
 
   static OrtSession _open(OrtRuntime runtime, String modelPath, OrtSessionSettings settings) {
     final calls = runtime._calls;
@@ -278,6 +427,36 @@ final class OrtSession {
             ),
             'AddSessionConfigEntry',
           );
+          for (final MapEntry(key: name, value: size) in settings.fixedDimensions.entries) {
+            calls.check(
+              calls.addFreeDimensionOverrideByName(options, name.toNativeUtf8(allocator: arena).cast(), size),
+              'AddFreeDimensionOverrideByName',
+            );
+          }
+          final provider = settings.provider;
+          if (provider.kind == OrtProviderKind.directMl) {
+            // DirectML runs without the memory patterns of the processor (its documentation)
+            calls.check(calls.disableMemPattern(options), 'DisableMemPattern');
+          }
+          if (provider.isGraphicsCard) {
+            final entries = provider.options.entries.toList(growable: false);
+            final keys = arena<Pointer<Char>>(math.max(1, entries.length));
+            final values = arena<Pointer<Char>>(math.max(1, entries.length));
+            for (final (i, entry) in entries.indexed) {
+              keys[i] = entry.key.toNativeUtf8(allocator: arena).cast();
+              values[i] = entry.value.toNativeUtf8(allocator: arena).cast();
+            }
+            calls.check(
+              calls.appendExecutionProvider(
+                options,
+                provider.ortName.toNativeUtf8(allocator: arena).cast(),
+                keys,
+                values,
+                entries.length,
+              ),
+              'SessionOptionsAppendExecutionProvider(${provider.ortName})',
+            );
+          }
           final sessionOut = arena<Pointer<ort.OrtSession>>();
           calls.check(calls.createSession(env, _nativePath(modelPath, arena), options, sessionOut), 'CreateSession');
           calls.made('OrtSession');
@@ -287,7 +466,7 @@ final class OrtSession {
         }
         final inputs = calls.specs(session, input: true);
         final outputs = calls.specs(session, input: false);
-        return OrtSession._(runtime, modelPath, env, session, inputs, outputs);
+        return OrtSession._(runtime, modelPath, env, session, inputs, outputs, settings.provider);
       } catch (_) {
         if (session != nullptr) {
           calls.releaseSession(session);
@@ -306,6 +485,9 @@ final class OrtSession {
   /// The inputs and outputs, as the model names them
   final List<OrtTensorSpec> inputs;
   final List<OrtTensorSpec> outputs;
+
+  /// Where it runs, as it was opened
+  final OrtProvider provider;
 
   bool _closed = false;
 
@@ -484,6 +666,46 @@ final class _OrtCalls {
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>, int)>();
   late final addSessionConfigEntry = _api.ref.AddSessionConfigEntry
       .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>, Pointer<Char>, Pointer<Char>)>();
+  late final addFreeDimensionOverrideByName = _api.ref.AddFreeDimensionOverrideByName
+      .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>, Pointer<Char>, int)>();
+  late final disableMemPattern = _api.ref.DisableMemPattern
+      .asFunction<Pointer<ort.OrtStatus> Function(Pointer<ort.OrtSessionOptions>)>();
+  late final appendExecutionProvider = _api.ref.SessionOptionsAppendExecutionProvider
+      .asFunction<
+        Pointer<ort.OrtStatus> Function(
+          Pointer<ort.OrtSessionOptions>,
+          Pointer<Char>,
+          Pointer<Pointer<Char>>,
+          Pointer<Pointer<Char>>,
+          int,
+        )
+      >();
+  late final getEpDevices = _api.ref.GetEpDevices
+      .asFunction<
+        Pointer<ort.OrtStatus> Function(Pointer<ort.OrtEnv>, Pointer<Pointer<Pointer<ort.OrtEpDevice>>>, Pointer<Size>)
+      >();
+  late final epDeviceEpName = _api.ref.EpDevice_EpName.asFunction<Pointer<Char> Function(Pointer<ort.OrtEpDevice>)>();
+  late final epDeviceDevice = _api.ref.EpDevice_Device
+      .asFunction<Pointer<ort.OrtHardwareDevice> Function(Pointer<ort.OrtEpDevice>)>();
+  late final hardwareDeviceType = _api.ref.HardwareDevice_Type
+      .asFunction<int Function(Pointer<ort.OrtHardwareDevice>)>();
+  late final hardwareDeviceVendorId = _api.ref.HardwareDevice_VendorId
+      .asFunction<int Function(Pointer<ort.OrtHardwareDevice>)>();
+  late final hardwareDeviceVendor = _api.ref.HardwareDevice_Vendor
+      .asFunction<Pointer<Char> Function(Pointer<ort.OrtHardwareDevice>)>();
+  late final hardwareDeviceDeviceId = _api.ref.HardwareDevice_DeviceId
+      .asFunction<int Function(Pointer<ort.OrtHardwareDevice>)>();
+  late final hardwareDeviceMetadata = _api.ref.HardwareDevice_Metadata
+      .asFunction<Pointer<ort.OrtKeyValuePairs> Function(Pointer<ort.OrtHardwareDevice>)>();
+  late final getKeyValuePairs = _api.ref.GetKeyValuePairs
+      .asFunction<
+        void Function(
+          Pointer<ort.OrtKeyValuePairs>,
+          Pointer<Pointer<Pointer<Char>>>,
+          Pointer<Pointer<Pointer<Char>>>,
+          Pointer<Size>,
+        )
+      >();
   late final releaseSessionOptions = _counted(
     'OrtSessionOptions',
     _api.ref.ReleaseSessionOptions.asFunction<void Function(Pointer<ort.OrtSessionOptions>)>(),
@@ -641,6 +863,30 @@ final class _OrtCalls {
       check(getTensorMutableData(value, dataOut), 'GetTensorMutableData');
       return OrtTensor.copyOf(type, described.shape, dataOut.value.cast<Uint8>().asTypedList(length));
     });
+  }
+
+  /// What [device] says of itself; its strings and pairs belong to the environment, copied here
+  OrtEpDeviceInfo epDevice(Pointer<ort.OrtEpDevice> device, Allocator arena) {
+    final hardware = epDeviceDevice(device);
+    final metadata = <String, String>{};
+    final pairs = hardwareDeviceMetadata(hardware);
+    if (pairs != nullptr) {
+      final keysOut = arena<Pointer<Pointer<Char>>>();
+      final valuesOut = arena<Pointer<Pointer<Char>>>();
+      final countOut = arena<Size>();
+      getKeyValuePairs(pairs, keysOut, valuesOut, countOut);
+      for (var i = 0; i < countOut.value; i++) {
+        metadata[_string(keysOut.value[i])] = _string(valuesOut.value[i]);
+      }
+    }
+    return OrtEpDeviceInfo(
+      epName: _string(epDeviceEpName(device)),
+      type: hardwareDeviceType(hardware),
+      vendor: _string(hardwareDeviceVendor(hardware)),
+      vendorId: hardwareDeviceVendorId(hardware),
+      deviceId: hardwareDeviceDeviceId(hardware),
+      metadata: metadata,
+    );
   }
 
   /// The name, type and shape of the inputs or outputs of [session]
