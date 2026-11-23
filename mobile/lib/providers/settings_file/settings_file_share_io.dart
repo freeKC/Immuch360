@@ -33,8 +33,18 @@ final settingsFileSharesProvider = Provider<List<NetworkSource>>(
 /// the network shares until the app starts again
 final settingsFileNoPickerProvider = StateProvider<bool>((ref) => false);
 
-/// Whether the system file picker and save dialog may be offered here: not once the device said it has none
-final settingsFileSystemPickerProvider = Provider<bool>((ref) => !ref.watch(settingsFileNoPickerProvider));
+/// Whether a TV offers the network shares only: a TV with a share set up. Google TV most often has no file picker,
+/// no save dialog and nothing in the share sheet, so their buttons would only end on "no file picker"; a TV without
+/// any share keeps them (Settings is then its only entry)
+final settingsFileSharesOnlyProvider = Provider<bool>(
+  (ref) => ref.watch(tvDeviceProvider).isTelevision && ref.watch(settingsFileSharesProvider).isNotEmpty,
+);
+
+/// Whether the system file picker and save dialog may be offered here: not once the device said it has none, nor on a
+/// TV that has a share ([settingsFileSharesOnlyProvider])
+final settingsFileSystemPickerProvider = Provider<bool>(
+  (ref) => !ref.watch(settingsFileNoPickerProvider) && !ref.watch(settingsFileSharesOnlyProvider),
+);
 
 /// Whether the Library shows its "Settings file" card: everywhere, except on a TV (or a device that said it has no
 /// file picker) without any share to save the file on or open it from, where both actions would end on "no file
@@ -54,6 +64,9 @@ abstract interface class SettingsFileShareIo {
   /// Writes [text] as [fileName] in [folder] of the share [sourceId], under the first free name: the path written
   Future<String> save(String text, String fileName, {required String sourceId, required String folder});
 }
+
+/// The name of the file at [path] of a share (its paths use "/")
+String shareFileNameOf(String path) => path.split('/').where((part) => part.isNotEmpty).lastOrNull ?? path;
 
 /// The text of the file at [path] of [fileSystem]; a [SettingsFileIoException] (too large) for a file larger than a
 /// settings file, told by one byte more than the largest one, without reading it all

@@ -135,6 +135,13 @@ void main() {
       expect(device(television: true, shares: [_nas]).read(settingsFileCardProvider), isTrue);
     });
 
+    test('on a TV with a share: the share only, the system picker and save dialog not offered', () {
+      expect(device(television: true, shares: [_nas]).read(settingsFileSystemPickerProvider), isFalse);
+      expect(device(television: true, shares: [_nas]).read(settingsFileSharesOnlyProvider), isTrue);
+      expect(device(television: true).read(settingsFileSystemPickerProvider), isTrue);
+      expect(device(television: false, shares: [_nas]).read(settingsFileSystemPickerProvider), isTrue);
+    });
+
     test('a device that said it has no file picker: only with a share', () {
       final alone = device(television: false);
       alone.read(settingsFileNoPickerProvider.notifier).state = true;

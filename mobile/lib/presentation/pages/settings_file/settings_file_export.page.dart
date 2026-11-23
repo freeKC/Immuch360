@@ -47,6 +47,7 @@ class SettingsFileExportPage extends HookConsumerWidget {
     final io = ref.watch(settingsFileIoProvider);
     final hasShares = ref.watch(settingsFileSharesProvider).isNotEmpty;
     final systemPicker = ref.watch(settingsFileSystemPickerProvider);
+    final sharesOnly = ref.watch(settingsFileSharesOnlyProvider);
     final level = useState(SettingsFileLevel.settings);
     final passphrase = useTextEditingController();
     final confirm = useTextEditingController();
@@ -100,8 +101,15 @@ class SettingsFileExportPage extends HookConsumerWidget {
             );
         final name = SettingsFile.fileName(DateTime.now());
         if (place != null) {
-          await ref.read(settingsFileShareIoProvider).save(text, name, sourceId: place.source.id, folder: place.path);
-          messenger?.showSnackBar(SnackBar(content: Text(t.settings_file_saved_on_share(share: place.source.name))));
+          final written = await ref
+              .read(settingsFileShareIoProvider)
+              .save(text, name, sourceId: place.source.id, folder: place.path);
+          // The name written: "(1)" when the name was taken, the writer never writing over a file
+          messenger?.showSnackBar(
+            SnackBar(
+              content: Text(t.settings_file_saved_on_share(share: place.source.name, name: shareFileNameOf(written))),
+            ),
+          );
         } else if (action == _Action.share) {
           await io.share(text, name, origin: origin);
         } else if (await io.save(text, name)) {
@@ -241,7 +249,7 @@ class SettingsFileExportPage extends HookConsumerWidget {
                       label: Text(context.t.settings_file_save),
                       onPressed: ready ? () => unawaited(run(_Action.save)) : null,
                     ),
-                  if (io.canShare)
+                  if (io.canShare && !sharesOnly)
                     FilledButton.icon(
                       key: shareKey,
                       icon: const Icon(Icons.share_rounded),

@@ -1,8 +1,9 @@
-// Writing new files on a share opened in the app, on a computer: the versions the AI makes next to their originals on
-// an SMB or WebDAV share (FreeKC, 30 October 2026, "Make 3D (AI)" on a photo of a share). The file systems of the
-// shares read only (domain/services/network_file_system.dart), and the phones never write on a share: the writer is
-// desktop code, with a connection of its own that it closes once its files are written. DLNA, Plex, Jellyfin and
-// Emby take no file.
+// Writing new files on a share opened in the app: the versions the AI makes next to their originals on an SMB or
+// WebDAV share, on a computer (FreeKC, 30 October 2026, "Make 3D (AI)" on a photo of a share), and since release 51
+// the settings file saved on a share from the phones, the TVs, the Quest and iOS too (Library, "Settings file" card,
+// providers/settings_file/settings_file_share_io.dart): the one writing path outside the computers, not yet tried on
+// a device. The file systems of the shares read only (domain/services/network_file_system.dart); the writer has a
+// connection of its own that it closes once its files are written. DLNA, Plex, Jellyfin and Emby take no file.
 //
 // It never writes over a file and never touches an original: a version goes first into a hidden partial file of its
 // folder (".salon_3D.jpg.<id>.partial", a name the browser of the shares does not show), then is renamed onto its

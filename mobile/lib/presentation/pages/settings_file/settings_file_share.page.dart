@@ -142,7 +142,9 @@ class SettingsFileSharePage extends HookConsumerWidget {
         Padding(
           padding: const EdgeInsets.all(16),
           child: Text(
-            context.t.network_share_failed(error: e is NetworkFileSystemException ? e.message : e.toString()),
+            e is NetworkFileSystemException
+                ? context.t.network_share_failed(error: e.message)
+                : context.t.scaffold_body_error_occurred,
             key: const Key('settings_file_share_error'),
             style: TextStyle(color: context.colorScheme.error),
           ),

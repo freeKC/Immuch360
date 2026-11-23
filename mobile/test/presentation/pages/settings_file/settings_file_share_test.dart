@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/settings_file/settings_file.dart';
 import 'package:immich_mobile/domain/services/network_file_system.dart';
+import 'package:immich_mobile/platform/tv_api.g.dart';
 import 'package:immich_mobile/presentation/pages/settings_file/settings_file_export.page.dart';
 import 'package:immich_mobile/presentation/pages/settings_file/settings_file_import.page.dart';
 import 'package:immich_mobile/presentation/pages/settings_file/settings_file_share.page.dart';
@@ -67,11 +68,15 @@ class _FakeIo implements SettingsFileIo {
 const _settingsPath = '/Backups/immuch360-settings-2026-11-22.json';
 
 class _FakeShareIo implements SettingsFileShareIo {
-  _FakeShareIo({required this.file, this.failSave});
+  _FakeShareIo({required this.file, this.failSave, this.failList, this.writtenAs});
 
   /// The text of the settings file of the share
   final String file;
   final Exception? failSave;
+  final Exception? failList;
+
+  /// The name the share gave the file, when its own was taken
+  final String? writtenAs;
   final listed = <String>[];
   final read_ = <String>[];
   final saved = <(String, String, String, String)>[];
@@ -89,6 +94,9 @@ class _FakeShareIo implements SettingsFileShareIo {
   @override
   Future<List<NetworkEntry>> list(String sourceId, String path) async {
     listed.add('$sourceId:$path');
+    if (failList != null) {
+      throw failList!;
+    }
     final entries = _tree[path];
     if (entries == null) {
       throw const NetworkFileSystemException('No such folder', isNotFound: true);
@@ -108,7 +116,7 @@ class _FakeShareIo implements SettingsFileShareIo {
       throw failSave!;
     }
     saved.add((text, fileName, sourceId, folder));
-    return sharePathIn(folder, fileName);
+    return sharePathIn(folder, writtenAs ?? fileName);
   }
 }
 
@@ -154,17 +162,21 @@ void main() {
     List<NetworkSource> shares = const [_nas],
     bool noPicker = false,
     Exception? failSave,
+    Exception? failList,
+    String? writtenAs,
     bool tvMode = false,
+    bool television = false,
   }) async {
     tester.view
       ..physicalSize = const Size(1200, 2400)
       ..devicePixelRatio = 2;
     addTearDown(tester.view.reset);
-    final shareIo = _FakeShareIo(file: clearFile, failSave: failSave);
+    final shareIo = _FakeShareIo(file: clearFile, failSave: failSave, failList: failList, writtenAs: writtenAs);
     await tester.pumpConsumerWidget(
       page,
       overrides: [
         tvModeProvider.overrideWithValue(tvMode),
+        tvDeviceProvider.overrideWithValue(TvDeviceInfo(isTelevision: television, isLowRamDevice: false)),
         settingsFileSharesProvider.overrideWithValue(shares),
         settingsFileShareIoProvider.overrideWithValue(shareIo),
         settingsFileIoProvider.overrideWithValue(_FakeIo(noPicker: noPicker)),
@@ -190,7 +202,7 @@ void main() {
 
     testWidgets('a share: its folders, the JSON files, Back goes up, the file opens its preview', (tester) async {
       final io = await pump(tester, const SettingsFileImportPage());
-      expect(find.text('Choose on a network share'), findsOneWidget);
+      expect(find.text('Open from a network share'), findsOneWidget);
       expect(chooseFile, findsOneWidget);
 
       await tester.tap(chooseShare);
@@ -267,6 +279,27 @@ void main() {
       expect(chooseShare, findsOneWidget);
     });
 
+    testWidgets('a TV with a share: the share only, no system picker that would do nothing', (tester) async {
+      await pump(tester, const SettingsFileImportPage(), television: true);
+      expect(chooseShare, findsOneWidget);
+      expect(chooseFile, findsNothing);
+    });
+
+    testWidgets('a TV without a share keeps the system picker', (tester) async {
+      await pump(tester, const SettingsFileImportPage(), shares: const [], television: true);
+      expect(chooseFile, findsOneWidget);
+    });
+
+    testWidgets('a failure that is not one of the share says an error occurred, not its raw text', (tester) async {
+      await pump(
+        tester,
+        const SettingsFileSharePage(mode: SettingsFileShareMode.open),
+        failList: const FormatException('an inner detail'),
+      );
+      expect(find.text('Error occurred'), findsOneWidget);
+      expect(find.textContaining('inner detail'), findsNothing);
+    });
+
     testWidgets('with a remote: OK on a folder opens it, Back goes up', (tester) async {
       await pump(tester, const SettingsFileSharePage(mode: SettingsFileShareMode.open), tvMode: true);
       // The first entry has the focus
@@ -307,9 +340,9 @@ void main() {
       expect(find.byKey(const Key('settings_file_save')), findsOneWidget);
     });
 
-    testWidgets('Save on a network share: the folder chosen, the file of the service, said saved', (tester) async {
+    testWidgets('Save to a network share: the folder chosen, the file of the service, said saved', (tester) async {
       final io = await pump(tester, const SettingsFileExportPage());
-      expect(find.text('Save on a network share'), findsOneWidget);
+      expect(find.text('Save to a network share'), findsOneWidget);
       await saveInBackups(tester);
 
       expect(find.byType(SettingsFileSharePage), findsNothing);
@@ -318,7 +351,28 @@ void main() {
       expect(name, startsWith('immuch360-settings-'));
       expect(sourceId, 'nas');
       expect(folder, '/Backups');
-      expect(find.text('Settings file saved on NAS'), findsOneWidget);
+      expect(find.text('Settings file saved on NAS: $name'), findsOneWidget);
+    });
+
+    testWidgets('a name already taken on the share: the snack bar names the file written', (tester) async {
+      await pump(tester, const SettingsFileExportPage(), writtenAs: 'immuch360-settings-2026-11-23 (1).json');
+      await saveInBackups(tester);
+      expect(find.text('Settings file saved on NAS: immuch360-settings-2026-11-23 (1).json'), findsOneWidget);
+    });
+
+    testWidgets('a TV with a share: Save to a network share only, no Save nor Share that would do nothing', (
+      tester,
+    ) async {
+      await pump(tester, const SettingsFileExportPage(), television: true);
+      expect(find.byKey(const Key('settings_file_save_share')), findsOneWidget);
+      expect(find.byKey(const Key('settings_file_save')), findsNothing);
+      expect(find.widgetWithText(FilledButton, 'Share'), findsNothing);
+    });
+
+    testWidgets('a TV without a share keeps Save and Share', (tester) async {
+      await pump(tester, const SettingsFileExportPage(), shares: const [], television: true);
+      expect(find.byKey(const Key('settings_file_save')), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Share'), findsOneWidget);
     });
 
     testWidgets('Back in the folder browser leaves the export as it was', (tester) async {
