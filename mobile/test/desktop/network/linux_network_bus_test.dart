@@ -104,6 +104,45 @@ void main() {
       await subscription.cancel();
     });
 
+    test('two streams share the plugin: its failure after the first one left turns the second to polling', () async {
+      var addresses = {'eth0 192.168.1.20'};
+      final failure = Completer<void>();
+      var listens = 0;
+      // Never closed: the plugin's stream lives as long as the app
+      // ignore: close_sinks
+      final plugin = StreamController<void>.broadcast(
+        onListen: () async {
+          listens++;
+          await failure.future;
+          throw StateError('org.freedesktop.NetworkManager went away');
+        },
+      );
+      final changes = LinuxNetworkChanges(
+        networkManagerAnswers: () async => true,
+        connectivity: () => plugin.stream,
+        addresses: () async => addresses,
+        pollEvery: _poll,
+      );
+      var first = 0;
+      var second = 0;
+      final pairing = changes.stream().listen((_) => first++);
+      await Future<void>.delayed(_poll);
+      final player = changes.stream().listen((_) => second++);
+      await Future<void>.delayed(_poll);
+      plugin.add(null);
+      await Future<void>.delayed(_poll);
+      expect((first, second, listens), (1, 1, 1), reason: 'one subscription to the plugin for both');
+
+      // The pairing panel closes, then NetworkManager goes away
+      await pairing.cancel();
+      failure.complete();
+      await Future<void>.delayed(_poll * 3);
+      addresses = {'eth0 192.168.1.21'};
+      await Future<void>.delayed(_poll * 4);
+      expect(second, 2, reason: 'the player polls the addresses instead');
+      await player.cancel();
+    });
+
     test('a plugin error when it stops is caught too', () async {
       final changes = LinuxNetworkChanges(
         networkManagerAnswers: () async => true,

@@ -84,13 +84,18 @@ class LinuxNetworkChanges {
     };
   }
 
+  // The one subscription to the plugin, shared by the streams that listen with NetworkManager: connectivity_plus on
+  // Linux is one broadcast stream whose onListen runs in the zone of its first listener only. One guarded zone of
+  // ours holds it, and its failure turns every stream listening then to polling, whichever stream started it
+  final _pluginListeners = <_PluginListener>{};
+  // Cancelled by _stopPlugin, in its zone, once no stream listens
+  // ignore: cancel_subscriptions
+  StreamSubscription<void>? _plugin;
+  Zone? _pluginZone;
+
   Stream<void> stream() {
     var cancelled = false;
     var polling = false;
-    StreamSubscription<void>? plugin;
-    // The zone the plugin is listened to and cancelled in: its errors, at the start and at the stop (it opens and
-    // closes its D-Bus client in callbacks nobody awaits), end in this zone's handler, never in the app's
-    Zone? pluginZone;
     Timer? poll;
     // Closed by its listener, when it cancels
     // ignore: close_sinks
@@ -114,11 +119,7 @@ class LinuxNetworkChanges {
       });
     }
 
-    void stopPlugin() {
-      pluginZone?.run(() => unawaited(plugin?.cancel().then<void>((_) {}, onError: (Object _) {})));
-      plugin = null;
-    }
-
+    final listener = _PluginListener(onEvent: () => controller.add(null), onFailure: () => unawaited(startPolling()));
     controller = StreamController<void>(
       onListen: () async {
         bool withNetworkManager;
@@ -135,33 +136,66 @@ class LinuxNetworkChanges {
           await startPolling();
           return;
         }
-        runZonedGuarded(
-          () {
-            pluginZone = Zone.current;
-            plugin = _connectivity().listen(
-              controller.add,
-              onError: (Object error) => _log.info('Network changes: ${error.runtimeType}'),
-            );
-          },
-          (error, _) {
-            if (cancelled) {
-              _log.fine('Network changes: the plugin did not stop cleanly: ${error.runtimeType}');
-              return;
-            }
-            _log.info('NetworkManager stopped answering (${error.runtimeType}): the network is polled');
-            stopPlugin();
-            unawaited(startPolling());
-          },
-        );
+        _listenToPlugin(listener);
       },
       onCancel: () {
         cancelled = true;
         poll?.cancel();
         poll = null;
-        stopPlugin();
+        _leavePlugin(listener);
       },
     );
     return controller.stream;
+  }
+
+  void _listenToPlugin(_PluginListener listener) {
+    _pluginListeners.add(listener);
+    if (_plugin != null) {
+      return;
+    }
+    // The zone the plugin is listened to and cancelled in: its errors, at the start and at the stop (it opens and
+    // closes its D-Bus client in callbacks nobody awaits), end in this zone's handler, never in the app's
+    Zone? zone;
+    runZonedGuarded(
+      () {
+        zone = Zone.current;
+        _pluginZone = zone;
+        _plugin = _connectivity().listen((_) {
+          for (final listener in [..._pluginListeners]) {
+            listener.onEvent();
+          }
+        }, onError: (Object error) => _log.info('Network changes: ${error.runtimeType}'));
+      },
+      (error, _) {
+        if (!identical(zone, _pluginZone) || _pluginListeners.isEmpty) {
+          _log.fine('Network changes: the plugin did not stop cleanly: ${error.runtimeType}');
+          return;
+        }
+        _log.info('NetworkManager stopped answering (${error.runtimeType}): the network is polled');
+        final failed = [..._pluginListeners];
+        _pluginListeners.clear();
+        _stopPlugin();
+        for (final listener in failed) {
+          listener.onFailure();
+        }
+      },
+    );
+  }
+
+  void _leavePlugin(_PluginListener listener) {
+    if (_pluginListeners.remove(listener) && _pluginListeners.isEmpty) {
+      _stopPlugin();
+    }
+  }
+
+  void _stopPlugin() {
+    final plugin = _plugin;
+    final zone = _pluginZone;
+    _plugin = null;
+    _pluginZone = null;
+    if (plugin != null) {
+      (zone ?? Zone.current).run(() => unawaited(plugin.cancel().then<void>((_) {}, onError: (Object _) {})));
+    }
   }
 
   Future<Set<String>> _safeAddresses() async {
@@ -172,6 +206,16 @@ class LinuxNetworkChanges {
       return const {};
     }
   }
+}
+
+/// A stream of [LinuxNetworkChanges.stream] that listens to the shared plugin
+class _PluginListener {
+  _PluginListener({required this.onEvent, required this.onFailure});
+
+  final void Function() onEvent;
+
+  /// The plugin failed while this stream listened: it polls instead
+  final void Function() onFailure;
 }
 
 final _linuxNetworkChanges = LinuxNetworkChanges();
