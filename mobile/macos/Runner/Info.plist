@@ -260,6 +260,7 @@
 		<string>_webdavs._tcp</string>
 		<string>_http._tcp</string>
 		<string>_https._tcp</string>
+		<string>_immuch360-pair._tcp</string>
 	</array>
 	<key>NSDesktopFolderUsageDescription</key>
 	<string>Immuch360 Desktop shows the photos and videos of the folders you choose on your desktop.</string>
