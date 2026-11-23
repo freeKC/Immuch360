@@ -1159,7 +1159,8 @@ jobs:
       # (lot SP0) join them, for test/desktop/ai/splat, and the probe of their runners (lot SP4), which the suite kills
       # while COLMAP or Brush runs under it, and which runs the archives of COLMAP and Brush on the PC of the essay; and
       # splat_probe (lot SP6), the engine of the splat scenes from the photos to the .spz, which installs the archives
-      # of a mirror once and makes a scene on the PC of the essay, killed by the suite during its training
+      # of a mirror once and makes a scene on the PC of the essay, killed by the suite during its training; and
+      # enhance_probe (release 51), the engine of Enhance (AI) on one photo with the files of the published components
       - name: The fake sd-cli, COLMAP and Brush, and the probes of a generation, a panorama and the splat scenes
         id: fake_sd_cli
         working-directory: mobile
@@ -1174,6 +1175,7 @@ jobs:
           dart compile exe test/desktop/ai/tools/splat_runner_probe.dart -o "$tools/splat-runner-probe.exe"
           dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$tools/splat_probe.exe"
           dart compile exe test/desktop/ai/tools/depth_provider_probe.dart -o "$tools/depth-provider-probe.exe"
+          dart compile exe test/desktop/ai/tools/enhance_probe.dart -o "$tools/enhance-probe.exe"
           echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
           echo "colmap=$(cygpath -w "$tools/fake-colmap.exe")" >> "$GITHUB_OUTPUT"
           echo "brush=$(cygpath -w "$tools/fake-brush.exe")" >> "$GITHUB_OUTPUT"

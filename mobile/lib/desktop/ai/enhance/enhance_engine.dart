@@ -2,8 +2,9 @@
 // model of the level runs behind EnhanceBackend (sharpen_backend.dart, rebuild_backend.dart, natural_backend.dart;
 // fakes in the tests); around it, this engine:
 //  1. reads the photo (never opened for writing) and decodes it upright: a JPEG by the codecs of the app with its EXIF
-//     orientation applied, another format by the engine of Flutter on the root isolate (engine_picture.dart), as the
-//     other kinds do; the ICC profile its pixels are in goes with them;
+//     orientation applied, another format by the decoder the caller gives (the app: the engine of Flutter on the root
+//     isolate, engine_picture.dart, as the other kinds do); the ICC profile its pixels are in goes with them. This file
+//     imports nothing of Flutter, so that a program compiled by `dart compile exe` (tools/enhance_probe.dart) runs it;
 //  2. refuses a photo of more than 50 megapixels (tooLarge), and a run while the memory free is below the need of the
 //     level (outOfMemory with enhanceMemoryMessage, which the panel says as "close other programs"): sd.cpp refused
 //     SeedVR2 three times on the 16 GB laptop of the probe with 1 to 2 GB free;
@@ -24,7 +25,6 @@ import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/codec/dart_sbs_codec.dart' show orientDecoded;
-import 'package:immich_mobile/desktop/ai/codec/engine_picture.dart';
 import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
@@ -152,7 +152,7 @@ class EnhanceEngine implements ImmersiveEngine {
     this.memory = const SystemMemoryProbe(),
     Future<SbsDecoded> Function(Uint8List bytes)? decodeOther,
     this.dropWorkFolder,
-  }) : _decodeOther = decodeOther ?? decodeWithEngine;
+  }) : _decodeOther = decodeOther ?? _noOtherDecoder;
 
   final EnhanceBackend backend;
 
@@ -163,7 +163,13 @@ class EnhanceEngine implements ImmersiveEngine {
   final void Function(Directory folder)? dropWorkFolder;
   final SbsCodecChoice codecs;
   final MemoryProbe memory;
+
+  /// The decoder of a photo that is not a JPEG: the app gives decodeWithEngine (engine_picture.dart); without one, such
+  /// a photo is unsupportedFormat
   final Future<SbsDecoded> Function(Uint8List bytes) _decodeOther;
+
+  static Future<SbsDecoded> _noOtherDecoder(Uint8List bytes) async =>
+      throw const SbsCodecException('No decoder for this format here, only JPEG');
 
   @override
   Future<ImmersiveResult> run(

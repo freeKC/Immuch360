@@ -9,6 +9,7 @@
 import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/codec/engine_picture.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
@@ -93,6 +94,7 @@ class DesktopEnhanceEngine implements ImmersiveEngine, KeptAiEngine {
       final session = _session();
       final engine = EnhanceEngine(
         backend: backend,
+        decodeOther: decodeWithEngine,
         workFolder: (id) => session.folders.create('enhance-$id'),
         dropWorkFolder: (folder) => session.folders.delete(folder),
       );
