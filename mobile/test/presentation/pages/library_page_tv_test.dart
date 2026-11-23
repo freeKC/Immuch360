@@ -1,5 +1,5 @@
 // The Library with a remote control: it starts on the 360° button, the arrows reach the collection cards, OK opens
-// the network shares, and the map of the places is not offered on a TV.
+// the network shares or the page of the settings file, and the map of the places is not offered on a TV.
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -114,6 +114,21 @@ void main() {
     return finder.evaluate().any((element) => element == focused || _isAncestor(element, focused));
   }
 
+  /// Down from the 360° button to the row of the cards, then left or right along it until [target] has the focus
+  Future<void> moveTo(WidgetTester tester, Finder target) async {
+    for (var i = 0; i < 6 && !focusedIn(tester, target); i++) {
+      final LogicalKeyboardKey key;
+      if (focusedIn(tester, find.widgetWithText(FilledButton, '360°'))) {
+        key = LogicalKeyboardKey.arrowDown;
+      } else {
+        final focused = FocusManager.instance.primaryFocus!.rect.center.dx;
+        key = focused > tester.getCenter(target).dx ? LogicalKeyboardKey.arrowLeft : LogicalKeyboardKey.arrowRight;
+      }
+      await tester.sendKeyEvent(key);
+      await tester.pumpAndSettle();
+    }
+  }
+
   testWidgets('starts on the 360° button', (tester) async {
     await pumpLibrary(tester, tvMode: true);
 
@@ -124,20 +139,26 @@ void main() {
     await pumpLibrary(tester, tvMode: true);
     final sharesCard = find.ancestor(of: find.text('Network shares'), matching: find.byType(RemoteFocusable));
 
-    for (var i = 0; i < 4 && !focusedIn(tester, sharesCard); i++) {
-      await tester.sendKeyEvent(
-        focusedIn(tester, find.widgetWithText(FilledButton, '360°'))
-            ? LogicalKeyboardKey.arrowDown
-            : LogicalKeyboardKey.arrowRight,
-      );
-      await tester.pumpAndSettle();
-    }
+    await moveTo(tester, sharesCard);
     expect(focusedIn(tester, sharesCard), isTrue);
 
     await tester.sendKeyEvent(LogicalKeyboardKey.select);
     await tester.pumpAndSettle();
 
     expect(find.text('shares page'), findsOneWidget);
+  });
+
+  testWidgets('the arrows reach the Settings file card, and OK opens its page', (tester) async {
+    await pumpLibrary(tester, tvMode: true);
+    final settingsFileCard = find.byKey(const Key('settings_file_card'));
+
+    await moveTo(tester, settingsFileCard);
+    expect(focusedIn(tester, settingsFileCard), isTrue);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('settings_file_library_page')), findsOneWidget);
   });
 
   testWidgets('no initial focus out of the remote control layout', (tester) async {

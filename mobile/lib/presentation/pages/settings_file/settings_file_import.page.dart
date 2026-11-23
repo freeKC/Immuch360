@@ -1,6 +1,7 @@
-// Restore settings from a file (issue 16), from the welcome screen or Settings, or when a settings file is shared to
-// the app: the file, its passphrase when it holds accounts, a preview of what it holds, merge or replace, then a
-// report of what was restored and what was not. Nothing is written before the user taps Restore.
+// Restore settings from a file (issue 16), from the welcome screen, Settings or the Library, or when a settings file is
+// shared to the app: the file (the system picker, or a network share set up in the app), its passphrase when it holds
+// accounts, a preview of what it holds, merge or replace, then a report of what was restored and what was not.
+// Nothing is written before the user taps Restore.
 
 import 'dart:async';
 
@@ -10,12 +11,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/settings_file/settings_file.dart';
+import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/domain/services/settings_file/settings_file_crypto.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/settings_file/settings_file_share.page.dart';
 import 'package:immich_mobile/providers/settings_file/settings_file.provider.dart';
 import 'package:immich_mobile/providers/settings_file/settings_file_io.dart';
+import 'package:immich_mobile/providers/settings_file/settings_file_share_io.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 
@@ -41,6 +45,8 @@ class SettingsFileImportPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final io = ref.watch(settingsFileIoProvider);
+    final hasShares = ref.watch(settingsFileSharesProvider).isNotEmpty;
+    final systemPicker = ref.watch(settingsFileSystemPickerProvider);
     final file = useState<SettingsFile?>(null);
     final content = useState<SettingsFileContent?>(null);
     final report = useState<SettingsFileReport?>(null);
@@ -58,9 +64,11 @@ class SettingsFileImportPage extends HookConsumerWidget {
         SettingsFileException(error: SettingsFileError.newerVersion) => t.settings_file_newer_version,
         SettingsFileException(error: SettingsFileError.damaged) => t.settings_file_damaged,
         SettingsFileException(error: SettingsFileError.wrongPassphrase) => t.settings_file_wrong_passphrase,
-        SettingsFileIoException(error: SettingsFileIoError.noPicker) => t.settings_file_no_picker,
+        SettingsFileIoException(error: SettingsFileIoError.noPicker) =>
+          hasShares ? t.settings_file_no_picker_shares : t.settings_file_no_picker,
         SettingsFileIoException(error: SettingsFileIoError.tooLarge) => t.settings_file_too_large,
         SettingsFileIoException() => t.settings_file_read_failed,
+        NetworkFileSystemException(:final message) => t.network_share_failed(error: message),
         _ => t.scaffold_body_error_occurred,
       };
     }
@@ -97,7 +105,35 @@ class SettingsFileImportPage extends HookConsumerWidget {
         }
       } catch (e) {
         _log.warning('No settings file picked: $e');
+        if (e is SettingsFileIoException && e.error == SettingsFileIoError.noPicker) {
+          // No file picker here: its button makes way for the shares
+          ref.read(settingsFileNoPickerProvider.notifier).state = true;
+        }
         error.value = e;
+      }
+    }
+
+    Future<void> pickOnShare() async {
+      error.value = null;
+      final place = await chooseSettingsFileSharePlace(context, SettingsFileShareMode.open);
+      if (place == null || !context.mounted) {
+        return;
+      }
+      working.value = true;
+      try {
+        final text = await ref.read(settingsFileShareIoProvider).read(place.source.id, place.path);
+        if (context.mounted) {
+          read(text);
+        }
+      } catch (e) {
+        _log.warning('The settings file could not be read from the share: $e');
+        if (context.mounted) {
+          error.value = e;
+        }
+      } finally {
+        if (context.mounted) {
+          working.value = false;
+        }
       }
     }
 
@@ -164,7 +200,7 @@ class SettingsFileImportPage extends HookConsumerWidget {
     }
 
     final List<Widget> children;
-    final Widget? action;
+    final Widget action;
     if (report.value != null) {
       children = [SettingsFileReportView(report: report.value!)];
       action = FilledButton(
@@ -216,6 +252,7 @@ class SettingsFileImportPage extends HookConsumerWidget {
         child: Text(context.t.settings_file_open),
       );
     } else {
+      final canPick = io.canPick && systemPicker;
       children = [
         Text(context.t.settings_file_import_subtitle, style: context.textTheme.bodyLarge),
         if (!io.canPick) ...[
@@ -223,14 +260,27 @@ class SettingsFileImportPage extends HookConsumerWidget {
           Text(context.t.settings_file_ios_open_hint, style: context.textTheme.bodyMedium),
         ],
       ];
-      action = io.canPick
-          ? FilledButton.icon(
+      action = Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        alignment: WrapAlignment.end,
+        children: [
+          if (hasShares)
+            OutlinedButton.icon(
+              key: const Key('settings_file_choose_share'),
+              icon: const Icon(Icons.lan_outlined),
+              onPressed: working.value ? null : () => unawaited(pickOnShare()),
+              label: Text(context.t.settings_file_choose_share),
+            ),
+          if (canPick)
+            FilledButton.icon(
               key: const Key('settings_file_choose'),
               icon: const Icon(Icons.file_open_outlined),
               onPressed: working.value ? null : () => unawaited(pick()),
               label: Text(context.t.settings_file_choose_file),
-            )
-          : null;
+            ),
+        ],
+      );
     }
 
     return Scaffold(
@@ -255,7 +305,7 @@ class SettingsFileImportPage extends HookConsumerWidget {
               spacing: 12,
               children: [
                 if (working.value) const SizedBox.square(dimension: 32, child: CircularProgressIndicator()),
-                ?action,
+                Flexible(child: action),
               ],
             ),
           ],

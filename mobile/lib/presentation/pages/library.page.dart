@@ -17,6 +17,7 @@ import 'package:immich_mobile/presentation/widgets/images/local_album_thumbnail.
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/people/partner_user_avatar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/settings_file/settings_file_card.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/album.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/device_features.provider.dart';
@@ -26,6 +27,7 @@ import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/user.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
+import 'package:immich_mobile/providers/settings_file/settings_file_share_io.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/image_url_builder.dart';
@@ -219,6 +221,9 @@ class _CollectionCards extends ConsumerWidget {
             // The DJI functions have a place of their own, not under Network shares: hidden on iOS, a computer, and
             // when both DJI settings are off; a TV watches a phone's relay there
             if (ref.watch(droneCardProvider) != DroneCardTarget.none) const DroneCollectionCard(),
+            // Export and restore of the settings file beside Drone (FreeKC, 22 November 2026), on every device that can
+            // save or open one; Settings keeps its entry
+            if (ref.watch(settingsFileCardProvider)) const SettingsFileCollectionCard(),
             if (hasServer) const _MemoriesCollectionCard(),
           ],
         ),
