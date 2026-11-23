@@ -434,10 +434,18 @@ void main() {
       expect(takeEncoded(await request(images, 't1', width: 0, height: 0, preferEncoded: true)), tiff);
     });
 
-    test('a TIFF with transparency on Linux keeps it: a PNG', () async {
+    test('a TIFF with transparency on Linux keeps it: a PNG of the picture, not the tile', () async {
+      // 64 by 32, its alpha from 0 to 255 (make_tiffs.py); the tile of a bucket is square and opaque, a PNG too
       put('t2', 'alpha.tif', File('test/fixtures/tiff/rgba8_deflate_pred.tif').readAsBytesSync());
-      final encoded = takeEncoded(await request(api(tiffInDart: true), 't2', width: 64, height: 64));
+      final images = api(tiffInDart: true);
+      final encoded = takeEncoded(await request(images, 't2', width: 64, height: 64));
       expect(sniffImageFormat(encoded), SniffedFormat.png);
+      final thumbnail = await decode(encoded);
+      expect(thumbnail.width, 2 * thumbnail.height, reason: 'the shape of the picture, not the square tile');
+      final pixels = (await thumbnail.toByteData(format: ui.ImageByteFormat.rawStraightRgba))!;
+      expect(pixels.getUint8(3), lessThan(255), reason: 'the corner of the picture is partly transparent');
+      thumbnail.dispose();
+      await images.idle();
     });
 
     test('a camera raw file built on TIFF keeps its tile on Linux, by its name or by its tags', () async {
