@@ -45,15 +45,18 @@ class _Screen implements RateAppScreen {
   bool kioskActive = false;
 
   @override
-  bool versionWarning = false;
-
-  RateAppAnswer? answer = RateAppAnswer.notNow;
-  int invites = 0;
+  bool remoteControl = false;
 
   @override
-  Future<RateAppAnswer?> showInvite() async {
-    invites++;
-    return answer;
+  bool appOutOfDate = false;
+
+  bool lineShows = true;
+  int lines = 0;
+
+  @override
+  Future<bool> showLine() async {
+    lines++;
+    return lineShows;
   }
 }
 
@@ -203,16 +206,82 @@ void main() {
     });
   });
 
-  test('a crash report of this build blocks, a low memory kill does not', () {
+  test('a crash report is kept with the time of the crash, a low memory kill is not kept', () {
     run((async, wait) {
       final rate = service();
       unawaited(rate.start());
       rate.exitReported(
-        'The app ended on 2026-11-10 22:40:01: killed for low memory, in the foreground [Immuch360 $_build quest]',
+        'The app ended on 2026-11-19 22:40:01: killed for low memory, in the foreground [Immuch360 $_build quest]',
       );
       expect(rate.state.problemBuild, isNull);
-      rate.exitReported('The app ended on 2026-11-10 22:40:01: native crash, visible [Immuch360 $_build quest]');
-      expect(rate.state.problemBuild, _build);
+      rate.exitReported('The app ended on 2026-11-19 22:40:01: native crash, visible [Immuch360 $_build quest]');
+      expect((rate.state.problemBuild, rate.state.problemAt), (_build, DateTime(2026, 11, 19, 22, 40, 1)));
+      // An older report read later keeps the latest crash; a time ahead of the clock is now
+      rate.exitReported('The app ended on 2026-11-12 08:00:00: crash, in the foreground [Immuch360 3030042 quest]');
+      expect(rate.state.problemAt, DateTime(2026, 11, 19, 22, 40, 1));
+      rate.exitReported('The app ended on 2026-12-25 08:00:00: crash, in the foreground [Immuch360 $_build quest]');
+      expect(rate.state.problemAt, now);
+    });
+  });
+
+  test('a crash of the last days holds the ask, one of four days ago does not', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
+      final rate = service();
+      unawaited(rate.start());
+      rate.exitReported('The app ended on 2026-11-18 18:00:00: crash, in the foreground [Immuch360 $_build quest]');
+      rate.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(rate.lastDecision, 'a crash 48 h ago');
+      expect(screen.lines, 0);
+    });
+    run((async, wait) {
+      memory = _Memory()..text = _almostDue(now);
+      screen = _Screen();
+      final rate = service();
+      unawaited(rate.start());
+      rate.exitReported('The app ended on 2026-11-16 17:00:00: crash, in the foreground [Immuch360 $_build quest]');
+      rate.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(rate.lastDecision, 'due');
+    });
+  });
+
+  test('a video that could not play holds the ask for the session, and the next session may ask', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
+      final rate = service();
+      unawaited(rate.start());
+      rate.videoProblem();
+      rate.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(rate.lastDecision, 'an error in this session');
+      rate.paused();
+      wait(const Duration(minutes: 31));
+      rate.resumed();
+      rate.succeeded(RateAppViewing.sphericalVideo);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(rate.lastDecision, 'due');
+      expect(screen.lines, 1);
+    });
+  });
+
+  test('a viewer that ended on an error holds the ask for the session', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
+      final rate = service();
+      unawaited(rate.start());
+      rate.viewingOpened(RateAppViewing.splat);
+      wait(const Duration(minutes: 2));
+      rate.viewingClosed(RateAppViewing.splat, normal: false);
+      rate.succeeded(RateAppViewing.panorama);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(rate.lastDecision, 'an error in this session');
     });
   });
 
@@ -240,59 +309,140 @@ void main() {
     });
   });
 
-  test('the Quest store build: due after the pause on a browse page, once; Not now is kept', () {
+  test('the Quest store build: the quiet line after the pause on a browse page, once; it waits in Settings', () {
     run((async, wait) {
       memory.text = _almostDue(now);
       final rate = service();
       unawaited(rate.start());
+      expect(rate.line.value, isFalse);
       rate.viewingOpened(RateAppViewing.immersive);
       wait(const Duration(seconds: 30));
       rate.viewingClosed(RateAppViewing.immersive);
       wait(const Duration(seconds: 1));
-      expect(screen.invites, 0);
+      expect(screen.lines, 0);
       wait(const Duration(seconds: 1));
       async.flushMicrotasks();
-      expect(screen.invites, 1);
+      expect(screen.lines, 1);
       expect(rate.lastDecision, 'due');
-      expect(store.reviews, 0);
-      expect(store.pages, 0);
-      expect(rate.state.asks.single.answer, RateAppAnswer.notNow);
-      // Another viewing in the same build: nothing
+      expect((store.reviews, store.pages), (0, 0));
+      expect(rate.state.asks.single.answer, RateAppAnswer.none);
+      expect(rate.line.value, isTrue, reason: 'the line waits in Settings');
+      // Another viewing in the same build: nothing more
       rate.viewingOpened(RateAppViewing.immersive);
       wait(const Duration(seconds: 30));
       rate.viewingClosed(RateAppViewing.immersive);
       wait(kRateAppSettle);
       async.flushMicrotasks();
-      expect(screen.invites, 1);
+      expect(screen.lines, 1);
       expect(rate.lastDecision, 'asked in this build');
     });
   });
 
-  test('Rate opens the store page and ends the invitation', () {
+  test('the line still waits at the next start of the build, and leaves with the update', () {
     run((async, wait) {
-      memory.text = _almostDue(now);
-      screen.answer = RateAppAnswer.rate;
-      final rate = service();
-      unawaited(rate.start());
-      rate.succeeded(RateAppViewing.film);
-      wait(kRateAppSettle);
+      memory.text = rateAppAsked(
+        RateAppState.decode(_almostDue(now)),
+        RateAppAsk(build: _build, at: now, channel: RateAppChannel.horizonStore),
+      ).encode();
+      final again = service();
+      unawaited(again.start());
       async.flushMicrotasks();
-      expect((screen.invites, store.pages), (1, 1));
-      expect(rate.state.rated, isTrue);
+      expect(again.line.value, isTrue);
+      final updated = service(build: _build + 1);
+      unawaited(updated.start());
+      async.flushMicrotasks();
+      expect(updated.line.value, isFalse);
     });
   });
 
-  test('a dialog that could not show is no ask', () {
+  test('No thanks on the line ends the invitation for good', () {
     run((async, wait) {
       memory.text = _almostDue(now);
-      screen.answer = null;
+      final rate = service();
+      unawaited(rate.start());
+      rate.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      unawaited(rate.answer(RateAppAnswer.noThanks));
+      async.flushMicrotasks();
+      expect(rate.line.value, isFalse);
+      expect(RateAppState.decode(memory.text).declined, isTrue);
+      expect(store.pages, 0);
+      // Months later, in another build: never again
+      now = now.add(const Duration(days: 200));
+      final later = service(build: _build + 5);
+      unawaited(later.start());
+      later.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(later.lastDecision, 'no thanks');
+      expect(screen.lines, 1);
+    });
+  });
+
+  test('Rate on the line opens the store page and ends the invitation', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
+      final rate = service();
+      unawaited(rate.start());
+      rate.succeeded(RateAppViewing.panorama);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      unawaited(rate.answer(RateAppAnswer.rate));
+      async.flushMicrotasks();
+      expect((screen.lines, store.pages), (1, 1));
+      expect(rate.state.rated, isTrue);
+      expect(rate.line.value, isFalse);
+    });
+  });
+
+  test('a line that could not show is no ask', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
+      screen.lineShows = false;
+      final rate = service();
+      unawaited(rate.start());
+      rate.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(screen.lines, 1);
+      expect(rate.state.asks, isEmpty);
+      expect(rate.line.value, isFalse);
+    });
+  });
+
+  test('a film counts among the viewings but is not the moment', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
       final rate = service();
       unawaited(rate.start());
       rate.succeeded(RateAppViewing.film);
       wait(kRateAppSettle);
       async.flushMicrotasks();
-      expect(screen.invites, 1);
-      expect(rate.state.asks, isEmpty);
+      expect(rate.state.successes, kRateAppMinSuccesses);
+      expect((rate.lastDecision, screen.lines), (null, 0));
+      wait(const Duration(seconds: 10));
+      rate.succeeded(RateAppViewing.spatialVideo);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect((rate.lastDecision, screen.lines), ('due', 1));
+    });
+  });
+
+  test('Rate Immuch360 in Settings opens the store page, and nothing is asked again', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
+      final rate = service(channel: RateAppChannel.googlePlay);
+      unawaited(rate.start());
+      unawaited(rate.rateFromSettings());
+      async.flushMicrotasks();
+      expect((store.pages, store.reviews), (1, 0));
+      expect(RateAppState.decode(memory.text).rateOpenedAt, now);
+      rate.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(rate.lastDecision, 'rated already');
+      expect(store.reviews, 0);
     });
   });
 
@@ -307,7 +457,8 @@ void main() {
         rate.succeeded(RateAppViewing.panorama);
         wait(kRateAppSettle);
         async.flushMicrotasks();
-        expect((screen.invites, store.reviews), (0, 1), reason: channel.name);
+        expect((screen.lines, store.reviews), (0, 1), reason: channel.name);
+        expect(rate.line.value, isFalse, reason: channel.name);
         expect(rate.state.asks.single.answer, RateAppAnswer.none, reason: channel.name);
         expect(rate.state.asks.single.channel, channel, reason: channel.name);
       });
@@ -320,18 +471,18 @@ void main() {
       screen.browsing = false;
       final rate = service();
       unawaited(rate.start());
-      rate.succeeded(RateAppViewing.film);
+      rate.succeeded(RateAppViewing.immersive);
       wait(const Duration(seconds: 10));
-      expect(screen.invites, 0);
+      expect(screen.lines, 0);
       screen.browsing = true;
       rate.pageShown();
       wait(kRateAppSettle);
       async.flushMicrotasks();
-      expect(screen.invites, 1);
+      expect(screen.lines, 1);
     });
   });
 
-  test('early: opens 4 of 5, nothing asked, the decision says why', () {
+  test('early: opens 3 of 4, nothing asked, the decision says why', () {
     run((async, wait) {
       memory.text = RateAppState(
         opens: 2,
@@ -342,33 +493,41 @@ void main() {
       ).encode();
       final rate = service();
       unawaited(rate.start());
-      rate.succeeded(RateAppViewing.film);
+      rate.succeeded(RateAppViewing.immersive);
       wait(kRateAppSettle);
       async.flushMicrotasks();
-      expect(screen.invites, 0);
-      expect(rate.lastDecision, 'not yet, opens 3 of 5, days 1 of 3');
+      expect(screen.lines, 0);
+      expect(rate.lastDecision, 'not yet, opens 3 of 4, days 1 of 3');
     });
   });
 
-  test('the kiosk and the version warning hold the ask', () {
+  test('the kiosk, the remote control layout and an app too old for the server hold the ask', () {
     run((async, wait) {
       memory.text = _almostDue(now);
       screen.kioskActive = true;
-      final rate = service();
+      final rate = service(channel: RateAppChannel.googlePlay);
       unawaited(rate.start());
-      rate.succeeded(RateAppViewing.film);
+      rate.succeeded(RateAppViewing.immersive);
       wait(kRateAppSettle);
       async.flushMicrotasks();
       expect(rate.lastDecision, 'kiosk mode');
       screen
         ..kioskActive = false
-        ..versionWarning = true;
+        ..remoteControl = true;
       wait(const Duration(seconds: 10));
-      rate.succeeded(RateAppViewing.film);
+      rate.succeeded(RateAppViewing.immersive);
       wait(kRateAppSettle);
       async.flushMicrotasks();
-      expect(rate.lastDecision, 'the version warning shows');
-      expect(screen.invites, 0);
+      expect(rate.lastDecision, 'remote control layout');
+      screen
+        ..remoteControl = false
+        ..appOutOfDate = true;
+      wait(const Duration(seconds: 10));
+      rate.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(rate.lastDecision, 'the app is out of date for the server');
+      expect((screen.lines, store.reviews), (0, 0));
     });
   });
 

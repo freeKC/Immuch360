@@ -1,9 +1,10 @@
 // The invitation to rate the app (lib/domain/models/rate_app.dart): counts the opens and the viewings that ended well,
 // keeps the crashes and the asks, and at the moment of the rule asks the store of the build. Google Play and the App
 // Store get their own prompt with nothing of the app's before it (their rules forbid a question first, a button that
-// calls them, or a review prompt of the app's own); the Quest store build gets the app's sentence, with Not now and
-// Rate. The moment: a viewing just ended well, then the app shows a browse page with nothing above it for a short
-// pause.
+// calls them, or a review prompt of the app's own); the Quest store build gets a quiet line of the app's, which fades
+// by itself and waits in Settings until the user answers Rate or No thanks. The moment: a 360°, 3D or immersive
+// viewing just ended well, then the app shows a browse page with nothing above it for a short pause. Settings also
+// open the store page at any time (Rate Immuch360), which ends the invitation.
 //
 // The viewers, the players and the health reports tell what happens through RateAppSignals, one line each, so that the
 // files of Immich carry no more than that line. Nothing of it leaves the device.
@@ -49,12 +50,15 @@ abstract interface class RateAppScreen {
   /// The kiosk mode of the Quest is on
   bool get kioskActive;
 
-  /// The version warning of the profile menu is present
-  bool get versionWarning;
+  /// The remote control layout is on
+  bool get remoteControl;
 
-  /// Shows the app's invitation and gives what the user chose (Back or a tap outside is Not now); null when it could
-  /// not show
-  Future<RateAppAnswer?> showInvite();
+  /// The server says this app is too old for it
+  bool get appOutOfDate;
+
+  /// Shows the quiet line of the Quest store build, which fades by itself; false when it could not show. Its Rate
+  /// calls [RateAppService.answer]
+  Future<bool> showLine();
 }
 
 /// See the top of this file
@@ -110,6 +114,13 @@ class RateAppService {
   final _spoiled = <RateAppViewing>{};
   DateTime? _lastSuccess;
 
+  // Something went wrong since this session began (a video that could not play, a viewer that ended on an error)
+  bool _trouble = false;
+  bool _disposed = false;
+
+  /// Whether the quiet line of the Quest store build waits in Settings for an answer
+  final ValueNotifier<bool> line = ValueNotifier(false);
+
   // A viewing ended well: the next browse page may ask
   bool _pending = false;
   bool _asking = false;
@@ -137,6 +148,7 @@ class RateAppService {
     if (useForegroundMarker) {
       _state = _state.copyWith(foreground: true);
     }
+    _showLine();
     await _save();
   }
 
@@ -145,6 +157,8 @@ class RateAppService {
     final away = _backgroundAt;
     _backgroundAt = null;
     if (away != null && _now().difference(away) >= kRateAppReopenAfter) {
+      // A new session: what went wrong in the last one is behind
+      _trouble = false;
       _opened();
       unawaited(_save());
     }
@@ -185,6 +199,9 @@ class RateAppService {
       return;
     }
     final open = _now().difference(since);
+    if (!normal) {
+      _trouble = true;
+    }
     if (spoiled || !rateAppViewingCounts(open, normal: normal)) {
       _log.fine(
         'A ${kind.name} viewing of ${open.inSeconds} s does not count'
@@ -195,7 +212,8 @@ class RateAppService {
     succeeded(kind);
   }
 
-  /// A viewing of [kind] ended well: a film turned watched, or a viewer that stayed open long enough
+  /// A viewing of [kind] ended well: a film turned watched, or a viewer that stayed open long enough. A 360°, 3D or
+  /// immersive one makes the next browse page the moment of a possible ask
   void succeeded(RateAppViewing kind) {
     final now = _now();
     final last = _lastSuccess;
@@ -207,22 +225,56 @@ class RateAppService {
     _state = _state.copyWith(successes: _state.successes + 1);
     unawaited(_save());
     _log.info('A ${kind.name} viewing ended well (${_state.successes})');
-    _pending = true;
+    if (kind.isMoment) {
+      _pending = true;
+    }
     _schedule();
   }
 
-  /// A video could not play (AppHealth): the viewings open now do not count
-  void videoProblem() => _spoiled.addAll(_open.keys);
+  /// A video could not play (AppHealth): the viewings open now do not count, and nothing is asked in this session
+  void videoProblem() {
+    _spoiled.addAll(_open.keys);
+    _trouble = true;
+  }
 
-  /// An exit report of AppHealth.kt: a crash of a build blocks the asks in that build
+  /// An exit report of AppHealth.kt: a crash holds the asks for [kRateAppQuietAfterCrash] from the time it happened
   void exitReported(String text) {
     if (!rateAppExitIsCrash(text)) {
       return;
     }
+    final now = _now();
     final crashed = rateAppExitBuild(text) ?? build;
-    _log.info('A crash of build $crashed was reported');
-    _state = _state.copyWith(problemBuild: crashed, problemAt: _now());
+    final reported = rateAppExitTime(text);
+    final at = reported == null || reported.isAfter(now) ? now : reported;
+    final last = _state.problemAt;
+    if (last != null && last.isAfter(at)) {
+      return;
+    }
+    _log.info('A crash of build $crashed was reported, at $at');
+    _state = _state.copyWith(problemBuild: crashed, problemAt: at);
     unawaited(_save());
+  }
+
+  /// The user answered the quiet line of the Quest store build: Rate opens the store page, No thanks ends the
+  /// invitation; both are kept, and the line leaves Settings
+  Future<void> answer(RateAppAnswer answer) async {
+    _state = rateAppAnswered(_state, build: build, answer: answer);
+    _showLine();
+    await _save();
+    _log.info('The invitation was answered: ${answer.name}');
+    if (answer == RateAppAnswer.rate && !await store.openStorePage()) {
+      _log.warning('The store page did not open');
+    }
+  }
+
+  /// Rate Immuch360 in Settings: opens the store page, and nothing is asked again. True when the page opened
+  Future<bool> rateFromSettings() async {
+    _state = _state.copyWith(rateOpenedAt: _now());
+    _showLine();
+    await _save();
+    final opened = await store.openStorePage();
+    _log.info(opened ? 'The store page opened from Settings' : 'The store page did not open from Settings');
+    return opened;
   }
 
   /// The What's new notice showed
@@ -232,7 +284,13 @@ class RateAppService {
   }
 
   /// Stops the pending pause
-  void dispose() => _settleTimer?.cancel();
+  void dispose() {
+    _settleTimer?.cancel();
+    if (!_disposed) {
+      _disposed = true;
+      line.dispose();
+    }
+  }
 
   void _opened() => _state = rateAppOpened(_state, now: _now(), build: build);
 
@@ -257,7 +315,9 @@ class RateAppService {
         enabled: enabled,
         screenshotMode: screenshotMode,
         kioskActive: screen.kioskActive,
-        versionWarning: screen.versionWarning,
+        remoteControl: screen.remoteControl,
+        appOutOfDate: screen.appOutOfDate,
+        sessionTrouble: _trouble,
       ),
     );
     _pending = false;
@@ -278,18 +338,14 @@ class RateAppService {
 
   Future<void> _ask() async {
     if (channel == RateAppChannel.horizonStore) {
-      _log.info('Due: the invitation of the app shows');
-      final answer = await screen.showInvite();
-      if (answer == null) {
-        _log.info('The invitation could not show');
+      _log.info('Due: the quiet line of the app shows');
+      if (!await screen.showLine()) {
+        _log.info('The line could not show');
         return;
       }
-      _record(answer);
+      _record(RateAppAnswer.none);
+      _showLine();
       await _save();
-      _log.info('The invitation was answered: ${answer.name}');
-      if (answer == RateAppAnswer.rate && !await store.openStorePage()) {
-        _log.warning('The store page did not open');
-      }
       return;
     }
     // Play and StoreKit never say whether their prompt showed: the ask counts as made, before the request
@@ -302,6 +358,12 @@ class RateAppService {
 
   void _record(RateAppAnswer answer) =>
       _state = rateAppAsked(_state, RateAppAsk(build: build, at: _now(), channel: channel, answer: answer));
+
+  void _showLine() {
+    if (!_disposed) {
+      line.value = rateAppLineWaits(_state, channel: channel, build: build);
+    }
+  }
 
   Future<void> _save() {
     final text = _state.encode();
