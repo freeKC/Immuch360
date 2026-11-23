@@ -235,6 +235,9 @@ String conversionFailureText(
 }) => switch (code) {
   ImmersiveErrorCode.cancelled => t.ai_immersive_state_cancelled,
   ImmersiveErrorCode.decodeFailed => t.ai_immersive_failed_decode,
+  // No encoder of this computer finished the frame: the encoder, the frame, a smaller 360° size, FFmpeg's words
+  ImmersiveErrorCode.modelFailed when kind == ConversionKind.stereoVideo && videoEncoderDeadEndOf(message) != null =>
+    videoEncoderDeadEndText(t, videoEncoderDeadEndOf(message)!),
   // The words of FFmpeg or of the engine, which the log of the job tells in full
   ImmersiveErrorCode.modelFailed when kind == ConversionKind.stereoVideo => t.ai_immersive_video_failed(
     message: message ?? '',
@@ -526,6 +529,34 @@ double? conversionBarValue(ConversionJob job) {
   return job.phase == ConversionPhase.preparing ? null : job.progress;
 }
 
+/// The error of a 3D video that no encoder of this computer finished at its frame
+String videoEncoderDeadEndText(
+  Translations t,
+  ({VideoEncoder encoder, String frame, String? smaller, String said}) deadEnd,
+) => switch (deadEnd.smaller) {
+  final smaller? => t.ai_immersive_video_encoder_dead_end_smaller(
+    encoder: videoEncoderName(deadEnd.encoder),
+    frame: deadEnd.frame,
+    smaller: smaller,
+    said: deadEnd.said,
+  ),
+  null => t.ai_immersive_video_encoder_dead_end(
+    encoder: videoEncoderName(deadEnd.encoder),
+    frame: deadEnd.frame,
+    said: deadEnd.said,
+  ),
+};
+
+/// "The H.264 hardware (Media Foundation) encoder stopped: continuing with H.264 software (Media Foundation)" in the row
+/// of a 3D video whose encoder stopped, null otherwise
+String? videoEncoderSwitchText(Translations t, ConversionJob job) => switch (job.videoProgress?.encoderSwitch) {
+  (:final from, :final to) => t.ai_immersive_video_encoder_switched(
+    from: videoEncoderName(from),
+    to: videoEncoderName(to),
+  ),
+  null => null,
+};
+
 /// "H.264" or "AV1": how a 3D video was encoded
 String videoEncoderText(VideoEncoder encoder) => encoder.codec.contains('av1') ? 'AV1' : 'H.264';
 
@@ -814,6 +845,8 @@ class _JobRowState extends ConsumerState<_JobRow> {
         LinearProgressIndicator(value: conversionBarValue(job)),
         if (downloadLine != null) Text(downloadLine, key: const Key('ai_job_video_download'), style: secondary),
         if (videoLine != null) Text(videoLine, key: const Key('ai_job_video_frames'), style: secondary),
+        if (video && videoEncoderSwitchText(t, job) != null)
+          Text(videoEncoderSwitchText(t, job)!, key: const Key('ai_job_video_encoder_switched'), style: secondary),
         if (progress != null)
           Text(progress, key: const Key('ai_job_time_left'), style: secondary)
         else if (video && job.state == ConversionState.depth)

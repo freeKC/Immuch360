@@ -8,6 +8,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:immich_mobile/desktop/ai/video3d/ffmpeg_commands.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:path/path.dart' as p;
@@ -53,8 +54,21 @@ class _FakeSink implements StreamConsumer<List<int>> {
   final bytes = BytesBuilder(copy: false);
   final done = Completer<void>();
 
+  /// The program closes its input once it holds this many bytes, as an encoder that dies does (null: never)
+  int? closesAfter;
+  void Function()? onClosed;
+
   @override
-  Future<void> addStream(Stream<List<int>> stream) => stream.forEach(bytes.add);
+  Future<void> addStream(Stream<List<int>> stream) async {
+    await for (final chunk in stream) {
+      final limit = closesAfter;
+      if (limit != null && bytes.length + chunk.length > limit) {
+        onClosed?.call();
+        throw const SocketException('Write failed', osError: OSError('The pipe is being closed', 232));
+      }
+      bytes.add(chunk);
+    }
+  }
 
   @override
   Future<void> close() async {
@@ -67,6 +81,8 @@ class _FakeSink implements StreamConsumer<List<int>> {
 class FakeVideoProgram implements VideoProgram {
   FakeVideoProgram() : _sink = _FakeSink() {
     stdin = IOSink(_sink);
+    // As the real programs: a closed input is told by the writes, not as an error of its own
+    unawaited(stdin.done.then<void>((_) {}, onError: (Object _) {}));
   }
 
   final _out = StreamController<List<int>>();
@@ -79,8 +95,11 @@ class FakeVideoProgram implements VideoProgram {
   @override
   Stream<List<int>> get stdout => _out.stream;
 
+  /// What the program writes on its error output
+  var errorText = '';
+
   @override
-  Future<String> get errors async => '';
+  Future<String> get errors async => errorText;
 
   @override
   Future<int> get exitCode => _exit.future;
@@ -101,7 +120,17 @@ class FakeVideoProgram implements VideoProgram {
 /// The FFmpeg program played in Dart: ffprobe answers [probe], the decoder serves [frames] frames at [times], the
 /// encoders keep a digest of what they were given, the mux joins the segments
 class FakeFfmpegRunner implements VideoProgramRunner {
-  FakeFfmpegRunner({required this.probe, required this.times, this.failMux = false, this.mp4Mux = false});
+  FakeFfmpegRunner({
+    required this.probe,
+    required this.times,
+    this.failMux = false,
+    this.mp4Mux = false,
+    this.passing = const {VideoEncoder.svtAv1},
+    Map<VideoEncoder, int>? diesAfter,
+    this.dieAtSegment = 1,
+    this.remakeFails = false,
+    this.testFramesLost = 0,
+  }) : diesAfter = diesAfter ?? {};
 
   final Map<String, Object?> probe;
   final List<double> times;
@@ -112,9 +141,52 @@ class FakeFfmpegRunner implements VideoProgramRunner {
 
   /// The mux fails, as a full disk or a killed app would make it
   final bool failMux;
-  final passing = const {'libsvtav1'};
+
+  /// The encoders whose test passes
+  final Set<VideoEncoder> passing;
+
+  /// The encoders that die in a job after this many frames of their segments (their test passes), as the Intel
+  /// Quick Sync H.264 MFT did on FreeKC's PC under Matroska: an entry is taken off once it fired
+  final Map<VideoEncoder, int> diesAfter;
+
+  /// The segment of that encoder (1 for its first) where it dies
+  final int dieAtSegment;
+  final _segmentsBy = <VideoEncoder?, int>{};
+
+  /// The making again of a segment by another encoder fails
+  final bool remakeFails;
+
+  /// The file of an encoder test holds this many frames fewer than it was given (an encoder that drops its last ones)
+  final int testFramesLost;
   final calls = <List<String>>[];
   String? concatList;
+
+  /// The frames each encoder test wrote, by its file
+  final _testFrames = <String, int>{};
+
+  /// What a dying encoder writes, as FFmpeg 9 wrote it on FreeKC's PC
+  static const dyingWords =
+      '[out#0/matroska @ 000001c1cb674b40] Could not write header (incorrect codec parameters ?): Invalid data found '
+      'when processing input\n'
+      '[vf#0:0 @ 000001c1cb675440] Error sending frames to consumers: Invalid data found when processing input\n';
+
+  /// The encoder of a command of a segment, a test or a making again
+  static VideoEncoder? encoderOf(List<String> arguments) {
+    final at = arguments.indexOf('-c:v');
+    if (at < 0) {
+      return null;
+    }
+    return switch (arguments[at + 1]) {
+      'h264_mf' => arguments.contains('-hw_encoding') ? VideoEncoder.h264MfHardware : VideoEncoder.h264Mf,
+      'h264_vaapi' =>
+        arguments[arguments.indexOf('-low_power') + 1] == '1'
+            ? VideoEncoder.h264VaapiLowPower
+            : VideoEncoder.h264VaapiFull,
+      'h264_videotoolbox' => VideoEncoder.h264VideoToolbox,
+      'libsvtav1' => VideoEncoder.svtAv1,
+      _ => null,
+    };
+  }
 
   /// -ss counts from the start time of the file, as FFmpeg adds it to an input seek and to its accurate trim
   double get _formatStart => double.parse('${(probe['format']! as Map)['start_time']}');
@@ -123,11 +195,51 @@ class FakeFfmpegRunner implements VideoProgramRunner {
   Future<VideoProgram> start(String executable, List<String> arguments) async {
     calls.add(arguments);
     final program = FakeVideoProgram();
-    if (executable.endsWith('ffprobe')) {
+    final encoder = encoderOf(arguments);
+    if (executable.endsWith('ffprobe') && arguments.contains('-count_frames')) {
+      final frames = _testFrames[arguments.last];
+      program._out.add(
+        utf8.encode(
+          jsonEncode({
+            'streams': [
+              if (frames != null) {'codec_name': 'h264', 'nb_read_frames': '$frames'},
+            ],
+          }),
+        ),
+      );
+      program.end(0);
+    } else if (executable.endsWith('ffprobe')) {
       program._out.add(utf8.encode(jsonEncode(probe)));
       program.end(0);
-    } else if (arguments.contains('lavfi')) {
-      program.end(passing.contains(arguments[arguments.indexOf('-c:v') + 1]) ? 0 : 1);
+    } else if (p.basename(arguments.last).startsWith('encoder-test-')) {
+      final path = arguments.last;
+      final size = arguments[arguments.indexOf('-s') + 1].split('x').map(int.parse).toList();
+      if (!passing.contains(encoder)) {
+        // Dies at its header, as the hardware MFT under Matroska
+        program
+          ..errorText = dyingWords
+          .._sink.closesAfter = 0
+          .._sink.onClosed = () => program.end(-1094995529);
+        return program;
+      }
+      unawaited(
+        program._sink.done.future.then((_) {
+          final bytes = program._sink.bytes.takeBytes();
+          _testFrames[path] = bytes.length ~/ (size[0] * size[1] * 3) - testFramesLost;
+          File(path).writeAsBytesSync([1, 2, 3]);
+          program.end(0);
+        }),
+      );
+    } else if (arguments.last.endsWith('.remade')) {
+      if (remakeFails) {
+        program
+          ..errorText = dyingWords
+          ..end(1);
+        return program;
+      }
+      final input = arguments[arguments.indexOf('-i') + 1];
+      File(arguments.last).writeAsStringSync('remade by ${encoder?.name}: ${File(input).readAsStringSync()}');
+      program.end(0);
     } else if (arguments.contains('-stats_enc_pre')) {
       unawaited(_decode(program, arguments));
     } else if (arguments.contains('concat')) {
@@ -148,6 +260,16 @@ class FakeFfmpegRunner implements VideoProgramRunner {
       program.end(0);
     } else {
       final path = arguments.last;
+      final ordinal = _segmentsBy[encoder] = (_segmentsBy[encoder] ?? 0) + 1;
+      if (ordinal >= dieAtSegment && diesAfter.containsKey(encoder)) {
+        final frames = diesAfter.remove(encoder)!;
+        final size = arguments[arguments.indexOf('-s') + 1].split('x').map(int.parse).toList();
+        program
+          ..errorText = dyingWords
+          .._sink.closesAfter = frames * size[0] * size[1] * 3
+          .._sink.onClosed = () => program.end(-1094995529);
+        return program;
+      }
       unawaited(
         program._sink.done.future.then((_) {
           final bytes = program._sink.bytes.takeBytes();

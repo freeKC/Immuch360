@@ -1063,12 +1063,16 @@ final aiMonoPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>((ref
 });
 
 /// What the dialog reads of the videos of a 3D video job with the FFmpeg program: each video, and the encoder that
-/// passes its one second test at a size
+/// passes its test at a size (the command of a segment, as the job runs it)
 abstract interface class VideoDialogProbe {
   /// [marked360]: the app takes it for a 360° video already (aiVideo360Provider)
   Future<VideoDialogFacts> read(String path, {bool marked360 = false});
 
   Future<VideoEncoder?> encoder(int width, int height, VideoRate rate);
+
+  /// The first encoder of this computer that stopped during a 3D video at [width] x [height] although its test passed
+  /// (skipped there since), null for none
+  Future<VideoEncoder?> stoppedBefore(int width, int height);
 }
 
 /// The probe of the programs of [setup]
@@ -1082,8 +1086,49 @@ class SetupVideoDialogProbe implements VideoDialogProbe {
       readVideoDialogFacts(setup, path, marked360: marked360);
 
   @override
-  Future<VideoEncoder?> encoder(int width, int height, VideoRate rate) =>
-      chooseVideoEncoder(setup.runner, setup.ffmpeg, VideoEncoder.forThisComputer, width, height, rate);
+  Future<VideoEncoder?> encoder(int width, int height, VideoRate rate) async {
+    final order = VideoEncoder.forThisComputer;
+    final stopped = await _stopped(width, height);
+    final folder = await Directory.systemTemp.createTemp('immuch360-encoder-test-');
+    try {
+      // A square frame is a 360° one (top and bottom, not marked); the mark changes nothing for the encoder
+      Future<VideoEncoder?> among(Set<VideoEncoder> skip) => chooseVideoEncoder(
+        setup.runner,
+        setup.ffmpeg,
+        setup.ffprobe,
+        order,
+        width,
+        height,
+        rate,
+        folder: folder,
+        markLeftRight: width != height,
+        skip: skip,
+      );
+      final first = await among(stopped);
+      return first != null || !order.any(stopped.contains) ? first : await among(const {});
+    } finally {
+      try {
+        await folder.delete(recursive: true);
+      } on FileSystemException catch (error) {
+        _log.fine('The folder of the encoder test stays: ${error.message}');
+      }
+    }
+  }
+
+  @override
+  Future<VideoEncoder?> stoppedBefore(int width, int height) async {
+    final stopped = await _stopped(width, height);
+    return VideoEncoder.forThisComputer.where(stopped.contains).firstOrNull;
+  }
+
+  Future<Set<VideoEncoder>> _stopped(int width, int height) async {
+    try {
+      return await setup.encoderMemory?.stoppedAt(width, height) ?? const {};
+    } catch (error) {
+      _log.fine('The encoders that stopped before are not known: $error');
+      return const {};
+    }
+  }
 }
 
 /// The probe of the dialog once the components of the 3D videos are there, null before; the tests give theirs
@@ -1303,6 +1348,13 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   VideoEncoder? _sphereEncoder;
   int? _sphereEncoderWidth;
   int? _sphereEncoderTesting;
+
+  /// The encoder that stopped during a 3D video at the frame of [_sphereEncoderWidth] on this computer, skipped since
+  VideoEncoder? _sphereStopped;
+
+  /// The same for the flat videos, at the frame [_flatStoppedFrame] ("3840 x 1080")
+  VideoEncoder? _flatStopped;
+  String? _flatStoppedFrame;
 
   /// When the encoder at the size chosen is AV1 (which a Quest 2 and many phones cannot play), the one tested at
   /// [sphereFastRateEyeWidth] (2048 x 2048): H.264 there is said as the way to keep H.264
@@ -1741,15 +1793,18 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     }
     _sphereEncoderTesting = width;
     VideoEncoder? encoder;
+    VideoEncoder? stopped;
     try {
       final rate = _videoAccepted.map((each) => each.check.grid?.rate).nonNulls.firstOrNull ?? const VideoRate(30, 1);
       encoder = await probe.encoder(width, width, rate);
+      stopped = await probe.stoppedBefore(width, width);
     } catch (error) {
       _log.warning('The encoders of this computer could not be tested at $width x $width: $error');
     }
     if (mounted && !_closed && _sphereEncoderTesting == width) {
       setState(() {
         _sphereEncoder = encoder;
+        _sphereStopped = stopped == encoder ? null : stopped;
         _sphereEncoderWidth = width;
         _sphereEncoderTesting = null;
       });
@@ -1860,9 +1915,11 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     _flatEncoderTesting = true;
     final eye = videoEyeSize(video);
     VideoEncoder? encoder;
+    VideoEncoder? stopped;
     try {
       // At the size of Full side by side, the larger one
       encoder = await probe.encoder(eye.width * 2, eye.height, grid.rate);
+      stopped = await probe.stoppedBefore(eye.width * 2, eye.height);
     } catch (error) {
       _log.warning('The encoders of this computer could not be tested: $error');
     }
@@ -1870,6 +1927,8 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     if (mounted && !_closed) {
       setState(() {
         _videoEncoder = encoder;
+        _flatStopped = stopped == encoder ? null : stopped;
+        _flatStoppedFrame = '${eye.width * 2} x ${eye.height}';
         _videoEncoderTested = true;
       });
     }
@@ -2707,6 +2766,14 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
               error: encoder == null,
             ),
           );
+          if (_sphereStopped case final stopped?) {
+            facts.add(
+              ConversionNote(
+                key: const Key('ai_conversion_video_sphere_encoder_stopped'),
+                text: t.ai_immersive_video_encoder_stopped_before(encoder: videoEncoderName(stopped), frame: size),
+              ),
+            );
+          }
           // AV1 at a large frame (an H.264 encoder that stops at 4096 x 2304 or 4096 x 2160): 2048 x 2048 may keep
           // H.264, which the Quest 2 and phones play; tested once and said when it does
           if (encoder == VideoEncoder.svtAv1 &&
@@ -2763,6 +2830,14 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
             error: encoder == null,
           ),
         );
+        if ((_flatStopped, _flatStoppedFrame) case (final stopped?, final frame?)) {
+          facts.add(
+            ConversionNote(
+              key: const Key('ai_conversion_video_encoder_stopped'),
+              text: t.ai_immersive_video_encoder_stopped_before(encoder: videoEncoderName(stopped), frame: frame),
+            ),
+          );
+        }
       }
       // The time of the work, the memory and the disk, over every video
       var low = Duration.zero;

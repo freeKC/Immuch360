@@ -183,8 +183,10 @@ void main() {
       expect(result.frames, 40);
       final decoder = runner.calls.firstWhere((call) => call.contains('-stats_enc_pre'));
       expect(decoder[decoder.indexOf('-vf') + 1], 'scale=56:28:flags=area,format=rgb24');
-      final test = runner.calls.firstWhere((call) => call.contains('lavfi'));
-      expect(test, contains('color=c=gray:s=56x56:r=25/1'));
+      // The test of the encoder: the command of a segment at the square frame, unmarked as the segments
+      final test = runner.calls.firstWhere((call) => p.basename(call.last).startsWith('encoder-test-'));
+      expect(test, containsAllInOrder(['-s', '56x56', '-framerate', '25/1', '-i', 'pipe:0']));
+      expect(test, isNot(contains('stereo_mode=left_right')));
       final segments = runner.calls.where((call) => call.contains('matroska')).toList();
       expect(segments, isNotEmpty);
       for (final segment in segments) {

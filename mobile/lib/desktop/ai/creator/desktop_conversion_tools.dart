@@ -75,6 +75,7 @@ import 'package:immich_mobile/desktop/ai/splat/splat_engine.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_images.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_app_runtime.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_encoder_memory.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/files/save_to_folder.dart';
@@ -1083,6 +1084,7 @@ Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession s
     ffprobe: p.join(bin, windows ? 'ffprobe.exe' : 'ffprobe'),
     runner: ManagedVideoProgramRunner(session.runner(linuxLauncher: launcher)),
     modelSha256: videoDepthModelComponent.sha256,
+    encoderMemory: FileVideoEncoderMemory.instance,
     worker: (sizes, relief) => IsolateVideoFrameWorker.spawn(
       VideoWorkerSetup(
         ortLibrary: runtime,

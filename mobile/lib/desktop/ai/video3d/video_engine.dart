@@ -111,6 +111,16 @@ class VideoJobException implements Exception {
   String toString() => 'VideoJobException: $message';
 }
 
+/// The encoder of a segment stopped during a job (it closed its input, or ended with an error): [said] is the end of
+/// what FFmpeg wrote. The job falls back to the next encoder once (VideoConversion.run); this reaches the queue only
+/// through the error of a dead end.
+class VideoEncoderStopped extends VideoJobException {
+  const VideoEncoderStopped(super.message, {required this.encoder, required this.said});
+
+  final VideoEncoder encoder;
+  final String said;
+}
+
 /// The job was stopped by Pause or Cancel
 class VideoJobStopped implements Exception {
   const VideoJobStopped(this.cancelled);
@@ -274,6 +284,7 @@ class VideoJobProgress {
     this.windows = 0,
     this.segmentsDone = 0,
     this.muxing = false,
+    this.encoderSwitch,
   });
 
   /// Frames final and encoded, of about [framesTotal]
@@ -290,6 +301,20 @@ class VideoJobProgress {
 
   /// Every frame is in a segment: the final mux runs
   final bool muxing;
+
+  /// The encoder of the job stopped and the job went on with the next one: said in its row
+  final ({VideoEncoder from, VideoEncoder to})? encoderSwitch;
+
+  VideoJobProgress withSwitch(({VideoEncoder from, VideoEncoder to})? value) => VideoJobProgress(
+    framesDone: framesDone,
+    framesTotal: framesTotal,
+    framesPerSecond: framesPerSecond,
+    timeLeft: timeLeft,
+    windows: windows,
+    segmentsDone: segmentsDone,
+    muxing: muxing,
+    encoderSwitch: value,
+  );
 
   double get fraction => framesTotal <= 0 ? 0 : math.min(1, framesDone / framesTotal);
 }
@@ -383,7 +408,10 @@ Future<Map<String, Object?>> probeVideo(VideoProgramRunner runner, String ffprob
   final text = await program.stdout.transform(const Utf8Decoder(allowMalformed: true)).join();
   final code = await program.exitCode.timeout(const Duration(minutes: 10));
   if (code != 0) {
-    throw VideoJobException('ffprobe stopped with $code: ${await program.errors}', refusal: VideoRefusal.unreadable);
+    throw VideoJobException(
+      'ffprobe stopped with $code: ${videoProgramTail(await program.errors)}',
+      refusal: VideoRefusal.unreadable,
+    );
   }
   try {
     return (jsonDecode(text) as Map).cast<String, Object?>();
@@ -392,46 +420,170 @@ Future<Map<String, Object?>> probeVideo(VideoProgramRunner runner, String ffprob
   }
 }
 
-/// The first encoder of [order] whose one second test at [width] x [height] passes within [timeout], null for none
+/// The test of [encoder] at [width] x [height] and [rate], as a job runs it: the command of a segment, fed
+/// [videoEncoderTestFrames] RGB frames on its standard input, written into a Matroska file in [folder], that file read
+/// back by ffprobe (decoded, every frame there), then deleted. Null when it passed, else why it failed (the end of what
+/// FFmpeg said).
+Future<String?> testVideoEncoder(
+  VideoProgramRunner runner,
+  String ffmpeg,
+  String ffprobe,
+  VideoEncoder encoder,
+  int width,
+  int height,
+  VideoRate rate, {
+  required Directory folder,
+  bool markLeftRight = true,
+  Duration timeout = const Duration(seconds: 90),
+}) async {
+  await folder.create(recursive: true);
+  final output = File(p.join(folder.path, 'encoder-test-${encoder.name}-${width}x$height.mkv'));
+  final program = await runner.start(
+    ffmpeg,
+    videoEncoderTestArguments(encoder, width, height, rate, outputPath: output.path, markLeftRight: markLeftRight),
+  );
+  unawaited(program.stdout.drain<void>().then<void>((_) {}, onError: (Object _) {}));
+  try {
+    int code;
+    try {
+      code = await () async {
+        await _feedTestFrames(program, width, height);
+        return program.exitCode;
+      }().timeout(timeout);
+    } on TimeoutException {
+      program.kill();
+      return 'no answer in ${timeout.inSeconds} s';
+    }
+    if (code != 0) {
+      final said = videoProgramTail(await program.errors.timeout(const Duration(seconds: 5), onTimeout: () => ''));
+      return 'stopped with $code${said.isEmpty ? '' : ': $said'}';
+    }
+    // Decodable, with every frame: the file the job's mux would read
+    final check = await runner.start(ffprobe, videoTestCheckArguments(output.path));
+    unawaited(check.stdin.close().then<void>((_) {}, onError: (Object _) {}));
+    String text;
+    int checkCode;
+    try {
+      text = await check.stdout.transform(const Utf8Decoder(allowMalformed: true)).join().timeout(timeout);
+      checkCode = await check.exitCode.timeout(timeout);
+    } on TimeoutException {
+      check.kill();
+      return 'its file was not read in ${timeout.inSeconds} s';
+    }
+    if (checkCode != 0) {
+      return 'its file cannot be read: ${videoProgramTail(await check.errors)}';
+    }
+    Object? json;
+    try {
+      json = jsonDecode(text);
+    } on FormatException {
+      json = null;
+    }
+    final frames = videoTestFrameCount(json);
+    if (frames != videoEncoderTestFrames) {
+      return 'its file holds ${frames ?? 'no'} frames of $videoEncoderTestFrames';
+    }
+    return null;
+  } finally {
+    await _deleteQuietly(output);
+  }
+}
+
+/// [work] on the input of [program], or the end of [program] if it comes first: a write to a program that died
+/// between two flushes fails the done future of its input, and a later flush would wait for ever
+Future<void> _whileRunning(VideoProgram program, Future<void> work) => Future.any([
+  work,
+  program.exitCode.then<void>((code) => throw StateError('the program ended with $code while it was written to')),
+]);
+
+/// The frames of an encoder test: a gradient that moves, two pictures in turn (a plain grey is no work for an encoder)
+Future<void> _feedTestFrames(VideoProgram program, int width, int height) async {
+  final stdin = program.stdin;
+  Uint8List picture(int shift) {
+    final rgb = Uint8List(width * height * 3);
+    var at = 0;
+    for (var y = 0; y < height; y++) {
+      final g = (y * 255 ~/ math.max(1, height - 1)) & 0xFF;
+      for (var x = 0; x < width; x++) {
+        rgb[at++] = ((x + shift) * 255 ~/ math.max(1, width - 1)) & 0xFF;
+        rgb[at++] = g;
+        rgb[at++] = (x ^ y) & 0xFF;
+      }
+    }
+    return rgb;
+  }
+
+  final pictures = [picture(0), picture(math.max(1, width ~/ 64))];
+  try {
+    for (var i = 0; i < videoEncoderTestFrames; i++) {
+      stdin.add(pictures[i % 2]);
+      await _whileRunning(program, stdin.flush());
+    }
+    await Future.any([stdin.close(), program.exitCode]);
+  } on Object {
+    // The encoder closed its input: its exit code and its words say why (its input is left as it is: a flush given up
+    // keeps it bound)
+  }
+}
+
+/// The first encoder of [order] whose test ([testVideoEncoder]) at [width] x [height] passes, null for none; those of
+/// [skip] are not tried (they stopped during a job at this size on this computer)
 Future<VideoEncoder?> chooseVideoEncoder(
   VideoProgramRunner runner,
   String ffmpeg,
+  String ffprobe,
   List<VideoEncoder> order,
   int width,
   int height,
   VideoRate rate, {
-  Duration timeout = const Duration(seconds: 60),
-  void Function(VideoEncoder encoder, bool passed, String errors)? onTest,
+  required Directory folder,
+  bool markLeftRight = true,
+  Set<VideoEncoder> skip = const {},
+  Duration timeout = const Duration(seconds: 90),
+  void Function(VideoEncoder encoder, bool passed, String reason)? onTest,
 }) async {
   for (final encoder in order) {
-    final program = await runner.start(ffmpeg, videoEncoderTestArguments(encoder, width, height, rate));
-    unawaited(program.stdin.close());
-    unawaited(program.stdout.drain<void>());
-    int code;
-    try {
-      code = await program.exitCode.timeout(timeout);
-    } on TimeoutException {
-      program.kill();
-      code = -1;
+    if (skip.contains(encoder)) {
+      continue;
     }
-    final passed = code == 0;
-    onTest?.call(
+    final failure = await testVideoEncoder(
+      runner,
+      ffmpeg,
+      ffprobe,
       encoder,
-      passed,
-      passed ? '' : await program.errors.timeout(const Duration(seconds: 5), onTimeout: () => ''),
+      width,
+      height,
+      rate,
+      folder: folder,
+      markLeftRight: markLeftRight,
+      timeout: timeout,
     );
-    if (passed) {
+    onTest?.call(encoder, failure == null, failure ?? '');
+    if (failure == null) {
       return encoder;
     }
   }
   return null;
 }
 
+/// The eye width of the 360° 3D videos below [eye] that the dialog offers, null for a flat video or the smallest size
+int? videoSmallerSphereEye(int? eye) => eye == null ? null : sphereEyeWidths.where((width) => width < eye).lastOrNull;
+
+/// What a computer remembers of its encoders: those that stopped during a job at a frame size although their test
+/// passed, so that the next jobs and the dialog skip them there (video_encoder_memory.dart keeps it in a file)
+abstract interface class VideoEncoderMemory {
+  /// The encoders that stopped at [width] x [height]
+  Future<Set<VideoEncoder>> stoppedAt(int width, int height);
+
+  Future<void> remember(VideoEncoder encoder, int width, int height, String said);
+}
+
 /// Reads frames of exactly [frameBytes] bytes from a byte stream
 class _FrameReader {
-  _FrameReader(Stream<List<int>> stream, this.frameBytes) : _iterator = StreamIterator(stream);
+  _FrameReader(Stream<List<int>> stream, this.frameBytes, this._errors) : _iterator = StreamIterator(stream);
 
   final int frameBytes;
+  final Future<String> Function() _errors;
   final StreamIterator<List<int>> _iterator;
   Uint8List? _pending;
   var _pendingAt = 0;
@@ -447,7 +599,8 @@ class _FrameReader {
           if (filled == 0) {
             return null;
           }
-          throw VideoJobException('The decoder stopped inside a frame ($filled of $frameBytes bytes)');
+          final said = videoProgramTail(await _errors().timeout(const Duration(seconds: 5), onTimeout: () => ''));
+          throw VideoJobException('The decoder stopped inside a frame ($filled of $frameBytes bytes): $said');
         }
         final chunk = _iterator.current;
         pending = _pending = chunk is Uint8List ? chunk : Uint8List.fromList(chunk);
@@ -517,37 +670,67 @@ class _StatsTail {
   }
 }
 
-/// One encoder process writing one segment
+/// One encoder process writing one segment; an encoder that closes its input or ends with an error is a
+/// [VideoEncoderStopped] with the end of what it said
 class _SegmentWriter {
-  _SegmentWriter(this.index, this.path, this.program, this.firstFrame);
+  _SegmentWriter(this.index, this.path, this.program, this.firstFrame, this.encoder);
 
   final int index;
   final String path;
   final VideoProgram program;
   final int firstFrame;
+  final VideoEncoder encoder;
   var slots = 0;
   var _unflushed = 0;
 
   Future<void> write(Uint8List bytes, int repeats) async {
-    for (var r = 0; r < repeats; r++) {
-      program.stdin.add(bytes);
-      slots++;
-      _unflushed += bytes.length;
-      // Held back by the encoder rather than kept in memory
-      if (_unflushed >= 32 * 1024 * 1024) {
-        await program.stdin.flush();
-        _unflushed = 0;
+    try {
+      for (var r = 0; r < repeats; r++) {
+        program.stdin.add(bytes);
+        slots++;
+        _unflushed += bytes.length;
+        // Held back by the encoder rather than kept in memory
+        if (_unflushed >= 32 * 1024 * 1024) {
+          await _whileRunning(program, program.stdin.flush());
+          _unflushed = 0;
+        }
       }
+    } on Object catch (error) {
+      throw await _stopped('$error');
     }
   }
 
   Future<void> close() async {
-    await program.stdin.flush();
-    await program.stdin.close();
+    try {
+      await _whileRunning(program, program.stdin.flush());
+      // Its end may come before the close is told
+      await Future.any([program.stdin.close(), program.exitCode]);
+    } on Object catch (error) {
+      throw await _stopped('$error');
+    }
     final code = await program.exitCode.timeout(const Duration(minutes: 10));
     if (code != 0) {
-      throw VideoJobException('The encoder of ${p.basename(path)} stopped with $code: ${await program.errors}');
+      throw await _stopped(null, code);
     }
+  }
+
+  Future<VideoEncoderStopped> _stopped(String? writeError, [int? exit]) async {
+    final code =
+        exit ??
+        await program.exitCode.timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            program.kill();
+            return -1;
+          },
+        );
+    final said = videoProgramTail(await program.errors.timeout(const Duration(seconds: 5), onTimeout: () => ''));
+    final words = said.isNotEmpty ? said : (writeError ?? 'no word from FFmpeg');
+    return VideoEncoderStopped(
+      'The encoder ${encoder.name} of ${p.basename(path)} stopped with $code after $slots frames: $words',
+      encoder: encoder,
+      said: words,
+    );
   }
 }
 
@@ -560,6 +743,7 @@ class VideoConversion {
     this.onProgress,
     this.onLog,
     this.betweenWindows,
+    this.encoderMemory,
     DateTime Function()? now,
   }) : _now = now ?? DateTime.now;
 
@@ -573,7 +757,18 @@ class VideoConversion {
   /// asked meanwhile run then, the session of the model kept (video3d-plan.md, section 2). The time it takes is left
   /// out of the pace of the job.
   final Future<void> Function()? betweenWindows;
+
+  /// The encoders that stopped during a job on this computer: skipped at their size, and told of the one that stops
+  final VideoEncoderMemory? encoderMemory;
   final DateTime Function() _now;
+
+  /// The frame of the encoder, once the job read its source
+  ({int width, int height, VideoRate rate, bool markLeftRight})? _frame;
+
+  /// The encoder the job went on with after the one it chose stopped; the switch said in its row
+  VideoEncoder? _switchedTo;
+  ({VideoEncoder from, VideoEncoder to})? _switch;
+  VideoJobProgress? _lastProgress;
 
   var _stop = 0; // 0 run, 1 pause, 2 cancel
   final _running = <VideoProgram>[];
@@ -592,7 +787,43 @@ class VideoConversion {
 
   void _log(String line) => onLog?.call(line);
 
+  void _emit(VideoJobProgress progress) {
+    final told = progress.withSwitch(_switch);
+    _lastProgress = told;
+    onProgress?.call(told);
+  }
+
+  /// Makes the job. An encoder that stops during it (its test passed: a driver, a size it takes only at first) does not
+  /// fail the job: it goes on once with the next encoder of the list that passes its test at this size, from the last
+  /// segment kept (the segments before made again by the new encoder), and this computer remembers the one that stopped.
+  /// A second stop, or no encoder left, is the error of a dead end: the encoder, the size, a smaller size to choose.
   Future<VideoJobResult> run() async {
+    while (true) {
+      try {
+        return await _runResuming();
+      } on VideoEncoderStopped catch (stopped) {
+        _log(stopped.message);
+        if (_stop > 0) {
+          throw VideoJobStopped(_stop == 2);
+        }
+        if (_switch != null) {
+          throw _deadEnd(stopped);
+        }
+        VideoEncoder? next;
+        try {
+          next = await _fallBack(stopped);
+        } on VideoEncoderStopped catch (again) {
+          _log(again.message);
+          throw _deadEnd(again);
+        }
+        if (next == null) {
+          throw _deadEnd(stopped);
+        }
+      }
+    }
+  }
+
+  Future<VideoJobResult> _runResuming() async {
     try {
       return await _run(resume: true);
     } on _ResumeRefused catch (refused) {
@@ -602,6 +833,135 @@ class VideoConversion {
       return _run(resume: false);
     }
   }
+
+  /// After [stopped]: remembered for this computer, the next encoder of the list tested at the frame of the job, the
+  /// segments written so far made again by it, the job file told; null when no encoder is left
+  Future<VideoEncoder?> _fallBack(VideoEncoderStopped stopped) async {
+    final frame = _frame;
+    if (frame == null) {
+      return null;
+    }
+    try {
+      await encoderMemory?.remember(stopped.encoder, frame.width, frame.height, stopped.said);
+    } on Object catch (error) {
+      _log('the stop of the encoder was not remembered: $error');
+    }
+    final order = request.encoders ?? VideoEncoder.forThisComputer;
+    final at = order.indexOf(stopped.encoder);
+    final rest = at < 0 ? const <VideoEncoder>[] : order.sublist(at + 1);
+    final next = await chooseVideoEncoder(
+      runner,
+      request.ffmpeg,
+      request.ffprobe,
+      rest,
+      frame.width,
+      frame.height,
+      frame.rate,
+      folder: request.workFolder,
+      markLeftRight: frame.markLeftRight,
+      onTest: _logTest,
+    );
+    if (next == null) {
+      return null;
+    }
+    final job = await VideoJobFile.read(request.workFolder);
+    if (job != null) {
+      if (job.segments.isNotEmpty) {
+        await _remakeSegments(job, next, frame);
+      }
+      job.settings['encoder'] = next.name;
+      await job.write(request.workFolder);
+    }
+    _switchedTo = next;
+    _switch = (from: stopped.encoder, to: next);
+    _log('the encoder ${stopped.encoder.name} stopped: continuing with ${next.name} from the last segment kept');
+    if (_lastProgress case final last?) {
+      _emit(last);
+    }
+    return next;
+  }
+
+  /// The segments of [job] made again by [encoder], each into a file of its own first, then all put in place
+  Future<void> _remakeSegments(
+    VideoJobFile job,
+    VideoEncoder encoder,
+    ({int width, int height, VideoRate rate, bool markLeftRight}) frame,
+  ) async {
+    final folder = request.workFolder;
+    final remade = <String>[];
+    for (final segment in job.segments) {
+      _checkStop();
+      final input = p.join(folder.path, segment.name);
+      final output = '$input.remade';
+      final program = await runner.start(
+        request.ffmpeg,
+        videoSegmentTranscodeArguments(
+          encoder: encoder,
+          width: frame.width,
+          height: frame.height,
+          rate: frame.rate,
+          inputPath: input,
+          segmentPath: output,
+          markLeftRight: frame.markLeftRight,
+        ),
+      );
+      _running.add(program);
+      unawaited(program.stdin.close().then<void>((_) {}, onError: (Object _) {}));
+      unawaited(program.stdout.drain<void>().then<void>((_) {}, onError: (Object _) {}));
+      final code = await program.exitCode;
+      _running.remove(program);
+      if (code != 0) {
+        for (final path in [...remade, output]) {
+          await _deleteQuietly(File(path));
+        }
+        final said = videoProgramTail(await program.errors);
+        throw VideoEncoderStopped(
+          'The encoder ${encoder.name} could not make ${segment.name} again (exit $code): $said',
+          encoder: encoder,
+          said: said,
+        );
+      }
+      remade.add(output);
+      _log('segment ${segment.index} made again by ${encoder.name}');
+    }
+    final segments = <VideoSegment>[];
+    for (final (i, segment) in job.segments.indexed) {
+      final file = await File(remade[i]).rename(p.join(folder.path, segment.name));
+      segments.add(
+        VideoSegment(
+          index: segment.index,
+          name: segment.name,
+          firstFrame: segment.firstFrame,
+          endFrame: segment.endFrame,
+          slots: segment.slots,
+          bytes: file.lengthSync(),
+          sha256: await sha256OfFile(file),
+        ),
+      );
+    }
+    job.segments
+      ..clear()
+      ..addAll(segments);
+  }
+
+  /// The error of a job no encoder of this computer can finish at its size: the encoder, the size and, for a 360° video
+  /// made above 2048, the smaller size to choose
+  VideoJobException _deadEnd(VideoEncoderStopped stopped) {
+    final frame = _frame;
+    final smaller = videoSmallerSphereEye(request.sphereEyeWidth);
+    return VideoJobException(
+      videoEncoderDeadEndMessage(
+        encoder: stopped.encoder,
+        width: frame?.width ?? 0,
+        height: frame?.height ?? 0,
+        smaller: smaller,
+        said: stopped.said,
+      ),
+    );
+  }
+
+  void _logTest(VideoEncoder encoder, bool passed, String reason) =>
+      _log('encoder test ${encoder.name}: ${passed ? 'passed' : 'failed $reason'}');
 
   Future<VideoJobResult> _run({required bool resume}) async {
     final folder = request.workFolder;
@@ -697,20 +1057,16 @@ class VideoConversion {
       job = null;
     }
 
-    final encoder = job != null && job.settings['encoder'] is String
-        ? VideoEncoder.values.byName(job.settings['encoder']! as String)
-        : await chooseVideoEncoder(
-            runner,
-            request.ffmpeg,
-            request.encoders ?? VideoEncoder.forThisComputer,
-            outWidth,
-            outHeight,
-            grid.rate,
-            onTest: (encoder, passed, errors) =>
-                _log('encoder test ${encoder.name}: ${passed ? 'passed' : 'failed ${errors.trim()}'}'),
-          );
+    _frame = (width: outWidth, height: outHeight, rate: grid.rate, markLeftRight: sphereEye == null);
+    final encoder =
+        _switchedTo ??
+        (job != null && job.settings['encoder'] is String
+            ? VideoEncoder.values.byName(job.settings['encoder']! as String)
+            : await _chooseEncoder(outWidth, outHeight, grid.rate, markLeftRight: sphereEye == null));
     if (encoder == null) {
-      throw const VideoJobException('No encoder of the FFmpeg program passed its one second test');
+      throw VideoJobException(
+        'No encoder of the FFmpeg program passed its test at ${outWidth}x$outHeight (the log of the job says why)',
+      );
     }
     if (job == null) {
       for (final entity in folder.listSync()) {
@@ -732,7 +1088,7 @@ class VideoConversion {
     // Stopped during the final mux: every frame is in a segment already
     if (jobFile.encoded case final encoded?) {
       _log('every frame is in a segment already: the final mux');
-      onProgress?.call(
+      _emit(
         VideoJobProgress(
           framesDone: encoded.frames,
           framesTotal: encoded.frames,
@@ -798,8 +1154,8 @@ class VideoConversion {
         ),
       );
       _running.add(program);
-      unawaited(program.stdout.drain<void>());
-      return _SegmentWriter(segmentIndex, path, program, firstFrame);
+      unawaited(program.stdout.drain<void>().then<void>((_) {}, onError: (Object _) {}));
+      return _SegmentWriter(segmentIndex, path, program, firstFrame, encoder);
     }
 
     // The decoder, from the start or from the first frame the state holds back
@@ -828,7 +1184,7 @@ class VideoConversion {
     );
     _running.add(decoder);
     unawaited(decoder.stdin.close());
-    final reader = _FrameReader(decoder.stdout, frameBytes);
+    final reader = _FrameReader(decoder.stdout, frameBytes, () => decoder.errors);
     final stats = _StatsTail(statsFile);
     var decodedHere = 0;
 
@@ -844,7 +1200,7 @@ class VideoConversion {
           left = Duration(seconds: (math.max(0, total - done) / fps).round());
         }
       }
-      onProgress?.call(
+      _emit(
         VideoJobProgress(
           framesDone: done,
           framesTotal: math.max(total, done),
@@ -978,7 +1334,7 @@ class VideoConversion {
       }
       final code = await decoder.exitCode;
       if (code != 0) {
-        throw VideoJobException('The decoder stopped with $code: ${await decoder.errors}');
+        throw VideoJobException('The decoder stopped with $code: ${videoProgramTail(await decoder.errors)}');
       }
       _running.remove(decoder);
       pendingFrames.addAll(await worker.finish());
@@ -1030,6 +1386,35 @@ class VideoConversion {
     return _mux(jobFile, encoded, json, info, check.audio, grid, encoder, started);
   }
 
+  /// The encoder of a new job: the first of the list that passes its test at this frame, those that stopped during a
+  /// job here at this size skipped (tried after all when none other passes)
+  Future<VideoEncoder?> _chooseEncoder(int width, int height, VideoRate rate, {required bool markLeftRight}) async {
+    final order = request.encoders ?? VideoEncoder.forThisComputer;
+    var stopped = const <VideoEncoder>{};
+    try {
+      stopped = await encoderMemory?.stoppedAt(width, height) ?? const {};
+    } on Object catch (error) {
+      _log('the encoders that stopped before are not known: $error');
+    }
+    for (final encoder in order.where(stopped.contains)) {
+      _log('encoder test ${encoder.name}: skipped, it stopped during a 3D video at ${width}x$height on this computer');
+    }
+    Future<VideoEncoder?> among(Set<VideoEncoder> skip) => chooseVideoEncoder(
+      runner,
+      request.ffmpeg,
+      request.ffprobe,
+      order,
+      width,
+      height,
+      rate,
+      folder: request.workFolder,
+      markLeftRight: markLeftRight,
+      skip: skip,
+      onTest: _logTest,
+    );
+    return await among(stopped) ?? (order.any(stopped.contains) ? among(const {}) : null);
+  }
+
   /// The final mux of a job whose frames are all in segments, then the work folder removed
   Future<VideoJobResult> _mux(
     VideoJobFile jobFile,
@@ -1067,7 +1452,7 @@ class VideoConversion {
       unawaited(mux.stdout.drain<void>());
       final muxCode = await mux.exitCode;
       if (muxCode != 0) {
-        throw VideoJobException('The mux stopped with $muxCode: ${await mux.errors}');
+        throw VideoJobException('The mux stopped with $muxCode: ${videoProgramTail(await mux.errors)}');
       }
     } finally {
       _running.remove(mux);

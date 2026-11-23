@@ -384,6 +384,7 @@ class VideoJobSetup {
     required this.runner,
     required this.worker,
     this.modelSha256,
+    this.encoderMemory,
   });
 
   final String ffmpeg;
@@ -397,6 +398,9 @@ class VideoJobSetup {
   )
   worker;
   final String? modelSha256;
+
+  /// The encoders that stopped during a job on this computer (video_encoders.json), none in the tests
+  final VideoEncoderMemory? encoderMemory;
 }
 
 /// Keeps the computer awake while a job runs; SystemSleepGuard in the app, nothing in the tests
@@ -543,6 +547,7 @@ class DesktopVideoJobEngine implements VideoJobEngine {
         },
         onLog: log,
         betweenWindows: control.betweenWindows,
+        encoderMemory: found.encoderMemory,
       );
       control.onStop = () {
         if (control.isCancelled) {

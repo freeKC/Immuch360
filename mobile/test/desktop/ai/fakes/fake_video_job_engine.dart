@@ -30,6 +30,9 @@ class FakeVideoJobEngine implements VideoJobEngine {
   /// Where its log would be; null for none
   final String? logFolder;
 
+  /// Its encoder stopped and it went on with the next one: told with each progress
+  ({VideoEncoder from, VideoEncoder to})? encoderSwitch;
+
   final runs = <VideoJobSpec>[];
 
   /// The size of the file each run read, null when it was not there
@@ -103,6 +106,7 @@ class FakeVideoJobEngine implements VideoJobEngine {
           timeLeft: fps == null ? null : Duration(seconds: ((frames - done) / fps).round()),
           windows: windows,
           segmentsDone: segments,
+          encoderSwitch: encoderSwitch,
         ),
       );
       await control.betweenWindows?.call();

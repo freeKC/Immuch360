@@ -170,6 +170,12 @@ class _Probe implements VideoDialogProbe {
     tested.add((width, height));
     return encoderAt != null ? encoderAt!(width) : encoderFound;
   }
+
+  /// The encoder this computer remembers as stopped during a 3D video, by the frame ("3072x3072")
+  final stopped = <String, VideoEncoder>{};
+
+  @override
+  Future<VideoEncoder?> stoppedBefore(int width, int height) async => stopped['${width}x$height'];
 }
 
 class _GateFiles implements AiComponentFiles {
@@ -582,6 +588,47 @@ void main() {
       // The partial file of the check of the folder is not left behind
       await settle(tester);
       expect(Directory(videos).listSync().where((entity) => isPartFileName(p.basename(entity.path))), isEmpty);
+    });
+
+    testWidgets('an encoder that stopped during a 3D video at this frame on this computer is said, the next one used '
+        '(FreeKC\'s PC, 23 Nov 2026)', (tester) async {
+      original('VID_20250710_134925_00_082.mp4');
+      probe
+        ..byName['VID_20250710_134925_00_082.mp4'] = _autoFacts(_sphereJson(), 'VID_20250710_134925_00_082.mp4')
+        ..encoderFound = VideoEncoder.h264Mf
+        ..stopped['3072x3072'] = VideoEncoder.h264MfHardware;
+      await openDialog(tester, [_asset('VID_20250710_134925_00_082.mp4', width: 5760, height: 2880)]);
+      expect(find.text('H.264 at 3072 x 3072, by the encoder of this computer'), findsOneWidget);
+      expect(
+        find.text(
+          'The H.264 hardware (Media Foundation) encoder stopped during a 3D video at 3072 x 3072 on this computer: it '
+          'is skipped at this size',
+        ),
+        findsOneWidget,
+      );
+      expect(convertEnabled(tester), isTrue);
+
+      // At 2048 nothing stopped
+      await tester.tap(find.byKey(const Key('ai_conversion_video_sphere_2048')));
+      await settle(tester);
+      expect(find.text('H.264 at 2048 x 2048, by the encoder of this computer'), findsOneWidget);
+      expect(find.byKey(const Key('ai_conversion_video_sphere_encoder_stopped')), findsNothing);
+    });
+
+    testWidgets('a flat video: the encoder that stopped at its Full side by side frame is said too', (tester) async {
+      original('IMG_1234.MOV');
+      probe
+        ..byName['IMG_1234.MOV'] = _facts(_phone(audio: ['aac']), 'IMG_1234.MOV')
+        ..encoderFound = VideoEncoder.h264Mf
+        ..stopped['2160x1920'] = VideoEncoder.h264MfHardware;
+      await openDialog(tester, [_asset('IMG_1234.MOV', width: 1080, height: 1920)]);
+      expect(
+        find.text(
+          'The H.264 hardware (Media Foundation) encoder stopped during a 3D video at 2160 x 1920 on this computer: it '
+          'is skipped at this size',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('a 360° video (lot ai-360-3d-51): made 360° 3D, top and bottom; the sizes of its frame offered, 3072 '
@@ -1224,6 +1271,64 @@ void main() {
         ),
         'Not enough room to download the video: 1.0 GiB free on the drive of the destination, 3.0 GiB needed. Free '
         'some space, then Resume',
+      );
+    });
+
+    testWidgets('its encoder stopped and it went on with the next one: said in its row', (tester) async {
+      engine
+        ..holdAfter = 1
+        ..encoderSwitch = (from: VideoEncoder.h264MfHardware, to: VideoEncoder.h264Mf);
+      final container = await pumpPanel(tester);
+      final id = add(container, 'clip.mp4');
+      await settle(tester);
+      expect(
+        inRow(
+          id,
+          find.text(
+            'The H.264 hardware (Media Foundation) encoder stopped: continuing with H.264 software (Media Foundation)',
+          ),
+        ),
+        findsOneWidget,
+      );
+      engine
+        ..encoderSwitch = null
+        ..release();
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.single.state.isEnded);
+    });
+
+    testWidgets('no encoder of this computer finished it: the encoder, the frame, the smaller size, FFmpeg\'s words', (
+      tester,
+    ) async {
+      engine.failure = videoEncoderDeadEndMessage(
+        encoder: VideoEncoder.h264Mf,
+        width: 3072,
+        height: 3072,
+        smaller: 2048,
+        said: '[out#0/matroska] Could not write header',
+      );
+      final container = await pumpPanel(tester);
+      final id = add(container, 'clip.mp4');
+      await settle(tester, until: () => container.read(conversionQueueProvider).jobs.single.state.isEnded);
+      expect(
+        inRow(
+          id,
+          find.text(
+            'The H.264 software (Media Foundation) encoder stopped at 3072 x 3072 and no other encoder of this computer '
+            'could go on: choose 2048 x 2048 in the dialog and convert again. FFmpeg said: [out#0/matroska] Could not '
+            'write header',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        conversionFailureText(
+          tester.element(find.byType(ConversionsPanel)).t,
+          ImmersiveErrorCode.modelFailed,
+          videoEncoderDeadEndMessage(encoder: VideoEncoder.svtAv1, width: 3840, height: 1080, said: 'x'),
+          kind: ConversionKind.stereoVideo,
+        ),
+        'The AV1 (SVT-AV1) encoder stopped at 3840 x 1080 and no other encoder of this computer could go on. FFmpeg '
+        'said: x',
       );
     });
 
