@@ -1874,7 +1874,7 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
           resumeUponEnteringForegroundMode: false,
         );
         if (!_showsFlat) {
-          return video(BoxFit.fill);
+          return video(sphereVideoFit(_rendering));
         }
         // A 3D video shown flat: the eye the sphere would show (flat_eye_view.dart)
         final crop = _flatEyeCrop;
@@ -1885,9 +1885,16 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     );
   }
 
-  /// Whether the video shows flat: decided, or, before renderer C answered, where it does not exist (Linux, macOS)
+  /// Whether the video shows flat: decided, or, before renderer C answered, where it does not exist (Linux, macOS). On
+  /// Windows before it answered, the frame stays letterboxed as before release 51 ([sphereVideoFit])
   bool get _showsFlat => _rendering?.isFlat ?? !(_deps.pluginSupported ?? PluginRenderer.supported);
 
   /// The eye of a 3D video shown flat, null for a video of one picture and the lenses of a raw file
   FlatEyeCrop? get _flatEyeCrop => _params.isRaw ? null : flatEyeCrop(_params.layout, _params.eye);
 }
+
+/// The fit of the video of the sphere where renderer C exists (Windows): the window's shape once it draws, the frame
+/// letterboxed while it has not answered yet and once it fell back to flat, so that no frame is ever stretched to the
+/// window
+@visibleForTesting
+BoxFit sphereVideoFit(SphereRendering? rendering) => (rendering?.isFlat ?? true) ? BoxFit.contain : BoxFit.fill;

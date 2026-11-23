@@ -356,6 +356,12 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  test('Windows: the frame letterboxed until renderer C answers, the window\'s shape once it draws', () {
+    expect(sphereVideoFit(null), BoxFit.contain, reason: 'before the attach, as before release 51');
+    expect(sphereVideoFit(const SphereRendering.plugin(PluginTier.w2880)), BoxFit.fill);
+    expect(sphereVideoFit(const SphereRendering.flat(FlatReason.refused)), BoxFit.contain);
+  });
+
   testWidgets('the view is on before the file opens, and the video plays at once', (tester) async {
     await pumpLauncher(tester, const SphericalPlayerArgs(url: '/videos/sphere.mp4', title: 'sphere.mp4'));
     final engine = players.made.single;
