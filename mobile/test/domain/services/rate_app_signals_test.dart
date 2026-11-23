@@ -30,10 +30,12 @@ class _Store implements RateAppStoreApi {
     return true;
   }
 
+  bool opens = true;
+
   @override
   Future<bool> openStorePage() async {
     pages++;
-    return true;
+    return opens;
   }
 }
 
@@ -58,6 +60,11 @@ class _Screen implements RateAppScreen {
     lines++;
     return lineShows;
   }
+
+  int hides = 0;
+
+  @override
+  void hideLine() => hides++;
 }
 
 /// A state that waits for one more viewing that ends well at [now]
@@ -396,6 +403,39 @@ void main() {
     });
   });
 
+  test('Rate on the line whose store page did not open: not kept, the line still waits', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
+      store.opens = false;
+      final rate = service();
+      unawaited(rate.start());
+      rate.succeeded(RateAppViewing.panorama);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      bool? kept;
+      unawaited(rate.answer(RateAppAnswer.rate).then((value) => kept = value));
+      async.flushMicrotasks();
+      expect((kept, store.pages), (false, 1));
+      expect(rate.state.rated, isFalse);
+      expect(RateAppState.decode(memory.text).rated, isFalse);
+      expect(rate.line.value, isTrue, reason: 'the line waits in Settings for another try');
+    });
+  });
+
+  test('the line is taken away as a viewing opens or the app leaves the browse page', () {
+    run((async, wait) {
+      final rate = service();
+      unawaited(rate.start());
+      rate.pageShown();
+      expect(screen.hides, 0, reason: 'still on a browse page');
+      screen.browsing = false;
+      rate.pageShown();
+      expect(screen.hides, 1);
+      rate.viewingOpened(RateAppViewing.panorama);
+      expect(screen.hides, 2);
+    });
+  });
+
   test('a line that could not show is no ask', () {
     run((async, wait) {
       memory.text = _almostDue(now);
@@ -443,6 +483,25 @@ void main() {
       async.flushMicrotasks();
       expect(rate.lastDecision, 'rated already');
       expect(store.reviews, 0);
+    });
+  });
+
+  test('Rate Immuch360 in Settings whose page did not open changes nothing: the ask still comes', () {
+    run((async, wait) {
+      memory.text = _almostDue(now);
+      store.opens = false;
+      final rate = service(channel: RateAppChannel.googlePlay);
+      unawaited(rate.start());
+      bool? opened;
+      unawaited(rate.rateFromSettings().then((value) => opened = value));
+      async.flushMicrotasks();
+      expect((opened, store.pages), (false, 1));
+      expect(RateAppState.decode(memory.text).rateOpenedAt, isNull);
+      rate.succeeded(RateAppViewing.immersive);
+      wait(kRateAppSettle);
+      async.flushMicrotasks();
+      expect(rate.lastDecision, 'due');
+      expect(store.reviews, 1);
     });
   });
 

@@ -59,6 +59,10 @@ abstract interface class RateAppScreen {
   /// Shows the quiet line of the Quest store build, which fades by itself; false when it could not show. Its Rate
   /// calls [RateAppService.answer]
   Future<bool> showLine();
+
+  /// Takes the quiet line away at once if it still shows: the user left the browse page (a viewer opened), and the line
+  /// never follows onto a viewing. It still waits in Settings
+  void hideLine();
 }
 
 /// See the top of this file
@@ -183,10 +187,16 @@ class RateAppService {
   }
 
   /// The app shows another page
-  void pageShown() => _schedule();
+  void pageShown() {
+    if (!screen.browsing) {
+      screen.hideLine();
+    }
+    _schedule();
+  }
 
   /// A viewing of [kind] opens
   void viewingOpened(RateAppViewing kind) {
+    screen.hideLine();
     _open[kind] = _now();
     _spoiled.remove(kind);
   }
@@ -256,24 +266,30 @@ class RateAppService {
   }
 
   /// The user answered the quiet line of the Quest store build: Rate opens the store page, No thanks ends the
-  /// invitation; both are kept, and the line leaves Settings
-  Future<void> answer(RateAppAnswer answer) async {
+  /// invitation; both are kept, and the line leaves Settings. Rate is kept only once the page opened: a page that
+  /// did not open leaves the line waiting. True when the answer was kept
+  Future<bool> answer(RateAppAnswer answer) async {
+    if (answer == RateAppAnswer.rate && !await store.openStorePage()) {
+      _log.warning('The store page did not open: the line still waits');
+      return false;
+    }
     _state = rateAppAnswered(_state, build: build, answer: answer);
     _showLine();
     await _save();
     _log.info('The invitation was answered: ${answer.name}');
-    if (answer == RateAppAnswer.rate && !await store.openStorePage()) {
-      _log.warning('The store page did not open');
-    }
+    return true;
   }
 
-  /// Rate Immuch360 in Settings: opens the store page, and nothing is asked again. True when the page opened
+  /// Rate Immuch360 in Settings: opens the store page, and nothing is asked again once it opened (a page that did not
+  /// open changes nothing). True when the page opened
   Future<bool> rateFromSettings() async {
-    _state = _state.copyWith(rateOpenedAt: _now());
-    _showLine();
-    await _save();
     final opened = await store.openStorePage();
     _log.info(opened ? 'The store page opened from Settings' : 'The store page did not open from Settings');
+    if (opened) {
+      _state = _state.copyWith(rateOpenedAt: _now());
+      _showLine();
+      await _save();
+    }
     return opened;
   }
 

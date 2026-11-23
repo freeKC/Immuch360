@@ -199,6 +199,9 @@ class RouterRateAppScreen implements RateAppScreen {
   @override
   bool get appOutOfDate => rateAppHeldByVersion(_ref.read(serverInfoProvider).versionStatus);
 
+  // The line while it shows, to take it away when the user leaves the browse page
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? _line;
+
   @override
   Future<bool> showLine() async {
     final context = _ref.read(appRouterProvider).navigatorKey.currentContext;
@@ -206,7 +209,9 @@ class RouterRateAppScreen implements RateAppScreen {
     if (context == null || !context.mounted || messenger == null) {
       return false;
     }
-    messenger.showSnackBar(
+    // Shown now, not after the snack bars waiting in the queue (by then the user may be in a viewer)
+    showRateAppLine(
+      messenger,
       rateAppSnackBar(
         context.t,
         onRate: () {
@@ -216,8 +221,41 @@ class RouterRateAppScreen implements RateAppScreen {
           }
         },
       ),
+      onShown: (line) => _line = line,
     );
     return true;
+  }
+
+  @override
+  void hideLine() {
+    if (_line == null) {
+      return;
+    }
+    _line = null;
+    hideRateAppLine(scaffoldMessengerKey.currentState);
+  }
+}
+
+/// Shows [line] at once on [messenger]: the snack bars showing or waiting go first. [onShown] gets its controller, and
+/// null again once it closed
+void showRateAppLine(
+  ScaffoldMessengerState messenger,
+  SnackBar line, {
+  required void Function(ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? line) onShown,
+}) {
+  messenger
+    ..clearSnackBars()
+    ..removeCurrentSnackBar();
+  final controller = messenger.showSnackBar(line);
+  onShown(controller);
+  unawaited(controller.closed.then((_) => onShown(null)));
+}
+
+/// Takes the line of [showRateAppLine] away while it shows: it is then the current snack bar of [messenger], the ones
+/// shown after it waiting behind it
+void hideRateAppLine(ScaffoldMessengerState? messenger) {
+  if (messenger != null && messenger.mounted) {
+    messenger.hideCurrentSnackBar();
   }
 }
 

@@ -80,6 +80,9 @@ class _Screen implements RateAppScreen {
 
   @override
   Future<bool> showLine() async => true;
+
+  @override
+  void hideLine() {}
 }
 
 /// Whether anything under [finder] holds the focus
