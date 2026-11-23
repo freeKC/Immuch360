@@ -33,6 +33,7 @@ import 'package:flutter/scheduler.dart';
 // ignore: depend_on_referenced_packages
 import 'package:image/image.dart' as img;
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
+import 'package:immich_mobile/desktop/platform/linux_launch_hints.dart';
 import 'package:immich_mobile/desktop/video/decoder_measure.dart';
 import 'package:immich_mobile/desktop/video/player_resource_options.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -449,6 +450,15 @@ bool isDecoderProbeLine(String prefix, String text) =>
 
 const _probedDecoders = {'vaapi', 'vdpau', 'cuda'};
 
+/// Whether a line of mpv's log says the FFmpeg in use has no decoder for a track, or that the decoder refused it (the
+/// OpenH264 of Fedora's FFmpeg with an H.264 High profile): mpv then plays the file on without that track
+@visibleForTesting
+bool isMissingDecoderLine(String level, String text) =>
+    (level == 'error' || level == 'fatal') &&
+    (text.startsWith('Failed to initialize a decoder for codec') ||
+        text.startsWith('Could not open codec') ||
+        text.startsWith('Failed to open decoder'));
+
 /// Writes a line of mpv's log to the app's log, redacted. mpv's errors are warnings of the app (a bad frame, a
 /// share that stalls): a file that cannot be played at all reaches the user through [PlayerEventKind.failed].
 @visibleForTesting
@@ -459,6 +469,11 @@ void logPlayerLine(String level, String prefix, String text) {
   if ((prefix == 'media_kit' && text.contains('property not found')) || isDecoderProbeLine(prefix, text)) {
     _log.fine(line);
     return;
+  }
+  if (isMissingDecoderLine(level, text)) {
+    // A video whose decoder this FFmpeg lacks plays without its picture rather than failing: on Fedora with its own
+    // FFmpeg, the FFmpeg of RPM Fusion, said once a session (linux_launch_hints.dart)
+    unawaited(FedoraFfmpegHint.instance.playbackFailed());
   }
   switch (level) {
     case 'fatal' || 'error':

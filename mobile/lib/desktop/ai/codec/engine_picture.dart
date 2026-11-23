@@ -20,6 +20,9 @@
 //    SkCreateCGImageRef.cpp, same revision): the pixels are sRGB, no profile.
 // 4. Linux has no HEIC decoder: the photo is not readable here.
 // TIFF and the raw files through WIC are not measured: no profile is written for them.
+// 5. Linux has no TIFF decoder in its engine either: a TIFF is decoded by the app's Dart decoder (tiff_decoder.dart),
+//    as its viewers and its folder library decode it, which converts no colours: the pixels are in the ICC profile of
+//    an RGB TIFF, written with them; a camera raw file built on TIFF (DNG, NEF) stays unreadable here.
 
 import 'dart:io';
 import 'dart:math' as math;
@@ -28,11 +31,16 @@ import 'dart:ui' as ui;
 
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/library/local_image_codec.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 
 /// The pixels of the photo [bytes] as the engine decodes it, transparency on black, with the profile they are in;
 /// a photo wider than [maxWidth] is decoded straight to that width, its height in proportion. [windows] stands for
-/// the system in the tests. Root isolate only. Throws [SbsCodecException] when the engine cannot decode it here.
-Future<SbsDecoded> decodeWithEngine(Uint8List bytes, {int? maxWidth, bool? windows}) async {
+/// the system in the tests, and [linux] too, where a TIFF goes to the Dart decoder ([decodeTiffInDart]). Root isolate
+/// only. Throws [SbsCodecException] when the engine cannot decode it here.
+Future<SbsDecoded> decodeWithEngine(Uint8List bytes, {int? maxWidth, bool? windows, bool? linux}) async {
+  if ((linux ?? Platform.isLinux) && hasTiffSignature(bytes)) {
+    return decodeTiffInDart(bytes, maxWidth: maxWidth);
+  }
   ui.ImmutableBuffer? buffer;
   ui.ImageDescriptor? descriptor;
   ui.Codec? codec;
@@ -73,6 +81,32 @@ Future<SbsDecoded> decodeWithEngine(Uint8List bytes, {int? maxWidth, bool? windo
     descriptor?.dispose();
     buffer?.dispose();
   }
+}
+
+/// The TIFF [bytes] decoded by the Dart decoder in its turns, at most [maxWidth] wide once upright, transparency on
+/// black, with the ICC profile of an RGB TIFF (point 5 at the top of this file). Throws [SbsCodecException] when it
+/// does not decode or is a camera raw file.
+Future<SbsDecoded> decodeTiffInDart(Uint8List bytes, {int? maxWidth}) async {
+  final TiffPixels pixels;
+  final TiffHead head;
+  try {
+    (pixels, head) = await decodeTiffFitting(() async => bytes, maxWidth: maxWidth);
+  } on TiffDecodeException catch (error) {
+    throw SbsCodecException('The TIFF could not be decoded here: ${error.reason}');
+  } on TiffDecodeCancelled {
+    throw const SbsCodecException('The TIFF decode was given up');
+  }
+  final rgba = pixels.rgba;
+  for (var index = 0; index < rgba.length; index += 4) {
+    final alpha = rgba[index + 3];
+    if (alpha != 0xFF) {
+      rgba[index] = rgba[index] * alpha ~/ 0xFF;
+      rgba[index + 1] = rgba[index + 1] * alpha ~/ 0xFF;
+      rgba[index + 2] = rgba[index + 2] * alpha ~/ 0xFF;
+      rgba[index + 3] = 0xFF;
+    }
+  }
+  return SbsDecoded(width: pixels.width, height: pixels.height, rgba: rgba, iccProfile: head.iccProfile);
 }
 
 /// The ICC profile the pixels the engine decodes from [bytes] are in, by the rules at the top of this file: the

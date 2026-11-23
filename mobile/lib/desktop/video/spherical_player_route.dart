@@ -40,6 +40,7 @@ import 'package:immich_mobile/desktop/video/desktop_stabilization.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_view.dart';
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
+import 'package:immich_mobile/desktop/video/flat_eye_view.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
@@ -1111,8 +1112,12 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
       case FlatReason.tooSlow:
         _setNotice(t.desktop_video_360_needs_gpu);
       case FlatReason.unsupported || FlatReason.refused:
-        // A raw file shows its lenses as the camera recorded them: the phones' words for it
-        _setNotice(_params.isRaw ? t.raw_video_unstitched : t.desktop_video_360_flat);
+        // A raw file shows its lenses as the camera recorded them: the phones' words for it; a 3D video one eye
+        _setNotice(
+          _params.isRaw
+              ? t.raw_video_unstitched
+              : (_flatEyeCrop != null ? t.desktop_video_3d_flat_one_eye : t.desktop_video_360_flat),
+        );
     }
   }
 
@@ -1851,21 +1856,38 @@ class DesktopSphericalPlayerPageState extends ConsumerState<DesktopSphericalPlay
     }
     return ValueListenableBuilder<VideoController?>(
       valueListenable: _controller.videoController,
-      builder: (context, videoController, _) => videoController == null
-          ? const SizedBox.expand()
-          : Video(
-              key: ObjectKey(videoController),
-              controller: videoController,
-              controls: NoVideoControls,
-              // The view fills the window: its texture has the window's shape (renderer C), or the frame letterboxed
-              // when flat
-              fit: (_rendering?.isFlat ?? true) ? BoxFit.contain : BoxFit.fill,
-              fill: Colors.black,
-              filterQuality: FilterQuality.medium,
-              wakelock: true,
-              pauseUponEnteringBackgroundMode: false,
-              resumeUponEnteringForegroundMode: false,
-            ),
+      builder: (context, videoController, _) {
+        if (videoController == null) {
+          return const SizedBox.expand();
+        }
+        Widget video(BoxFit fit) => Video(
+          key: ObjectKey(videoController),
+          controller: videoController,
+          controls: NoVideoControls,
+          // The view fills the window: its texture has the window's shape (renderer C), or the frame letterboxed
+          // when flat
+          fit: fit,
+          fill: Colors.black,
+          filterQuality: FilterQuality.medium,
+          wakelock: true,
+          pauseUponEnteringBackgroundMode: false,
+          resumeUponEnteringForegroundMode: false,
+        );
+        if (!_showsFlat) {
+          return video(BoxFit.fill);
+        }
+        // A 3D video shown flat: the eye the sphere would show (flat_eye_view.dart)
+        final crop = _flatEyeCrop;
+        return crop == null
+            ? video(BoxFit.contain)
+            : FlatEyeView(frame: videoController.rect, crop: crop, video: video);
+      },
     );
   }
+
+  /// Whether the video shows flat: decided, or, before renderer C answered, where it does not exist (Linux, macOS)
+  bool get _showsFlat => _rendering?.isFlat ?? !(_deps.pluginSupported ?? PluginRenderer.supported);
+
+  /// The eye of a 3D video shown flat, null for a video of one picture and the lenses of a raw file
+  FlatEyeCrop? get _flatEyeCrop => _params.isRaw ? null : flatEyeCrop(_params.layout, _params.eye);
 }

@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:immich_mobile/desktop/platform/linux_launch_hints.dart';
 import 'package:immich_mobile/domain/services/splat_viewer_host.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -56,7 +57,9 @@ class DesktopSplatViewerHost implements SplatViewerHost {
     Future<SplatWindowPlace> Function()? place,
     Future<Directory> Function()? supportFolder,
     bool Function()? highPerformanceGpu,
+    Future<void> Function()? beforeFirstWindow,
   }) : _createWindow = createWindow ?? _createPluginWindow,
+       _beforeFirstWindow = beforeFirstWindow ?? applyWebkitDmabufHint,
        _isAvailable = isAvailable ?? WebviewWindow.isWebviewAvailable,
        _place = place ?? appWindowPlace,
        _supportFolder = supportFolder ?? getApplicationSupportDirectory,
@@ -67,6 +70,10 @@ class DesktopSplatViewerHost implements SplatViewerHost {
   final Future<SplatWindowPlace> Function() _place;
   final Future<Directory> Function() _supportFolder;
   final bool Function() _highPerformanceGpu;
+
+  /// What is set before the first web view of the session: on Linux with an NVIDIA card, the variable of WebKitGTK's
+  /// DMABUF renderer (linux_launch_hints.dart)
+  final Future<void> Function() _beforeFirstWindow;
 
   SplatWindow? _window;
 
@@ -82,6 +89,7 @@ class DesktopSplatViewerHost implements SplatViewerHost {
   @override
   Future<SplatHostClosed> open(Uri pageUrl, {required String title}) async {
     await close();
+    await _beforeFirstWindow();
     if (!await _isAvailable()) {
       _log.warning('No web view on this computer: the splat viewer cannot open');
       return SplatHostClosed.noWebView;

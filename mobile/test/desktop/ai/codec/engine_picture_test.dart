@@ -112,4 +112,36 @@ void main() {
       expect(decoded.iccProfile, codecFixture('display_p3.icc'));
     }, skip: Platform.isWindows ? false : 'The decoder of the system for HEIC is measured on Windows only');
   });
+
+  group('a TIFF on Linux, by the Dart decoder', () {
+    Uint8List fixture(String name) => File('test/fixtures/tiff/$name').readAsBytesSync();
+
+    test('decoded opaque, at most the width asked, upright', () async {
+      final decoded = await decodeWithEngine(fixture('rgb8_lzw_pred.tif'), linux: true);
+      expect(decoded.width, greaterThan(0));
+      expect(decoded.rgba, hasLength(decoded.width * decoded.height * 4));
+      for (var alpha = 3; alpha < decoded.rgba.length; alpha += 4) {
+        expect(decoded.rgba[alpha], 255);
+      }
+      final capped = await decodeWithEngine(fixture('rgb8_lzw_pred.tif'), maxWidth: decoded.width ~/ 2, linux: true);
+      expect(capped.width, lessThanOrEqualTo(decoded.width ~/ 2));
+      final turned = await decodeWithEngine(fixture('rgb8_lzw_pred_orientation6.tif'), linux: true);
+      expect((turned.width, turned.height), (decoded.height, decoded.width), reason: 'orientation 6');
+    });
+
+    test('16 bit, tiled and with transparency (put on black)', () async {
+      for (final name in ['rgb16_tiled_lzw_pred.tif', 'gray16_lzw_pred.tif', 'rgba8_deflate_pred.tif']) {
+        final decoded = await decodeWithEngine(fixture(name), linux: true);
+        expect(decoded.rgba, hasLength(decoded.width * decoded.height * 4), reason: name);
+        expect(decoded.iccProfile, isNull, reason: '$name has no profile');
+      }
+    });
+
+    test('a damaged TIFF is a codec error, not a crash', () async {
+      await expectLater(
+        decodeWithEngine(Uint8List.fromList([0x49, 0x49, 0x2A, 0x00, 1, 2, 3]), linux: true),
+        throwsA(isA<SbsCodecException>()),
+      );
+    });
+  });
 }
