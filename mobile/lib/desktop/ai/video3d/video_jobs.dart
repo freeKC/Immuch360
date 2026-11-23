@@ -10,7 +10,9 @@
 // MP4 is there (the app quit between the two) only gets its name.
 //
 // The lines of each job go to `video3d-<id>.log` in the logs folder of the app, which "Save logs to a file" gathers:
-// the log to send with a report. The log of a job that ends well, is stopped or discarded is deleted.
+// the log to send with a report. The log of a job that ends well is kept, with the timings of its stages (FreeKC's
+// runs of 23 November 2026: the card, the encoder and the pace are read there); those older than [videoLogKeptFor]
+// go when another job ends well. The log of a job stopped or discarded is deleted.
 
 import 'dart:async';
 import 'dart:convert';
@@ -31,6 +33,9 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 final _log = Logger('Video3dJobs');
+
+/// How long the log of a 3D video that ended well is kept in the logs folder
+const videoLogKeptFor = Duration(days: 30);
 
 /// What the dialog chose for a 3D video, kept with its job (and in video_jobs.json for a resume)
 class VideoJobSettings {
@@ -473,6 +478,7 @@ class DesktopVideoJobEngine implements VideoJobEngine {
     }
 
     var ended = false;
+    var madeWell = false;
     try {
       log(
         'source ${spec.sourcePath}, ${settings.quality.name}, ${settings.strength.name}, '
@@ -566,6 +572,7 @@ class DesktopVideoJobEngine implements VideoJobEngine {
       final path = await _place(made, spec);
       log('saved as $path');
       ended = true;
+      madeWell = true;
       final fps = last?.framesPerSecond;
       return VideoJobDone(
         path: path,
@@ -605,9 +612,30 @@ class DesktopVideoJobEngine implements VideoJobEngine {
       await _sleep.release();
       await sink?.flush();
       await sink?.close();
-      if (ended && logFile != null) {
-        await _deleteQuietly(logFile);
+      if (logFile != null) {
+        if (madeWell) {
+          await _forgetOldLogs(logFile);
+        } else if (ended) {
+          await _deleteQuietly(logFile);
+        }
       }
+    }
+  }
+
+  /// The logs of the 3D videos made more than [videoLogKeptFor] ago, beside [kept]
+  static Future<void> _forgetOldLogs(File kept) async {
+    final before = DateTime.now().subtract(videoLogKeptFor);
+    try {
+      await for (final entry in kept.parent.list()) {
+        final name = p.basename(entry.path);
+        if (entry is File && name.startsWith('video3d-') && name.endsWith('.log') && entry.path != kept.path) {
+          if (entry.lastModifiedSync().isBefore(before)) {
+            await _deleteQuietly(entry);
+          }
+        }
+      }
+    } on FileSystemException catch (error) {
+      _log.fine('The old logs of the 3D videos stay: ${error.message}');
     }
   }
 

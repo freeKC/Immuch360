@@ -757,8 +757,29 @@ void main() {
       expect(made.readAsStringSync(), wholeBytes);
       expect(work.existsSync(), isFalse, reason: 'the work folder goes once the MP4 is in place');
       expect(File(videoMadePathOf(work.path)).existsSync(), isFalse);
-      expect(File(p.join(root.path, 'logs', 'video3d-job1.log')).existsSync(), isFalse);
+      // The log of a job that ended well is kept, with the timings of its stages
+      final log = File(p.join(root.path, 'logs', 'video3d-job1.log')).readAsStringSync();
+      expect(log, contains('saved as ${made.path}'));
+      expect(log, contains('timings of this run'));
       expect(await store.read(), isEmpty);
+    });
+
+    test('a job that ends well forgets the logs of jobs older than 30 days, not the recent ones', () async {
+      engine = real();
+      final notifier = queue();
+      final logs = Directory(p.join(root.path, 'logs'))..createSync(recursive: true);
+      final old = File(p.join(logs.path, 'video3d-old.log'))..writeAsStringSync('old');
+      old.setLastModifiedSync(DateTime.now().subtract(videoLogKeptFor + const Duration(days: 1)));
+      final recent = File(p.join(logs.path, 'video3d-recent.log'))..writeAsStringSync('recent');
+      final other = File(p.join(logs.path, 'app.log'))..writeAsStringSync('the app');
+      other.setLastModifiedSync(DateTime.now().subtract(const Duration(days: 90)));
+      final id = addVideos(notifier, [video('clip.mp4')]).single;
+      await until((state) => state.byId(id)!.state.isEnded, within: const Duration(seconds: 60));
+      expect(job(id).state, ConversionState.done, reason: '${job(id).message}');
+      expect(old.existsSync(), isFalse);
+      expect(recent.existsSync(), isTrue);
+      expect(other.existsSync(), isTrue, reason: 'only the logs of the 3D videos');
+      expect(File(p.join(logs.path, 'video3d-job0.log')).existsSync(), isTrue);
     });
 
     /// Pauses the video [id] once its first segment is closed, through [stop], and waits until it ended
