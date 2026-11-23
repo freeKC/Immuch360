@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:image/image.dart' as img;
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
@@ -20,12 +20,12 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_files.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
-import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/natural_backend.dart';
+import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
+import 'package:immich_mobile/desktop/ai/panorama/control_image.dart' show encodePngPicture;
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
-import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -93,8 +93,12 @@ class _Facts implements EnhanceDialogFacts {
 }
 
 EnhanceFiles _ready(EnhanceLevel level) => switch (level) {
-  EnhanceLevel.sharpen => const EnhanceFiles(sharpen: SharpenFiles(sdCli: 'sd-cli', upscaler: 'x4plus.pth')),
-  EnhanceLevel.rebuild => const EnhanceFiles(rebuild: RebuildFiles(sdCli: 'sd-cli', dit: 'dit', vae: 'vae')),
+  EnhanceLevel.sharpen => const EnhanceFiles(
+    sharpen: SharpenFiles(sdCli: 'sd-cli', upscaler: 'x4plus.pth'),
+  ),
+  EnhanceLevel.rebuild => const EnhanceFiles(
+    rebuild: RebuildFiles(sdCli: 'sd-cli', dit: 'dit', vae: 'vae'),
+  ),
   EnhanceLevel.natural => const EnhanceFiles(
     natural: VosrFiles(library: 'ort', imageEncoder: 'a', vaeEncoder: 'b', transformer: 'c', vaeDecoder: 'd'),
   ),
@@ -191,7 +195,10 @@ void main() {
           builder: (context) => TextButton(
             key: const Key('open'),
             onPressed: () async {
-              final result = await showDialog<bool>(context: context, builder: (_) => EnhanceDialog(assets: assets));
+              final result = await showDialog<bool>(
+                context: context,
+                builder: (_) => EnhanceDialog(assets: assets),
+              );
               answer?.add(result);
             },
             child: const Text('open'),
@@ -273,11 +280,7 @@ void main() {
   });
 
   testWidgets('on a Mac: Natural is chosen, the levels of the graphics card say why they wait', (tester) async {
-    facts.machineNow = const EnhanceMachine(
-      platform: AiPlatform.macosArm64,
-      physicalMemory: 16 * _gib,
-      processors: 10,
-    );
+    facts.machineNow = const EnhanceMachine(platform: AiPlatform.macosArm64, physicalMemory: 16 * _gib, processors: 10);
     original('salon.jpg');
     await open(tester, [_photo('salon.jpg')]);
     expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_natural'))).selected, isTrue);
@@ -306,7 +309,10 @@ void main() {
 
   testWidgets('names the folder of the developer override when its files are used', (tester) async {
     facts.files[EnhanceLevel.sharpen] = (
-      files: const EnhanceFiles(sharpen: SharpenFiles(sdCli: 'a', upscaler: 'b'), fromProbe: true),
+      files: const EnhanceFiles(
+        sharpen: SharpenFiles(sdCli: 'a', upscaler: 'b'),
+        fromProbe: true,
+      ),
       missing: const <AiComponent>[],
       notInThisVersion: false,
     );
@@ -352,9 +358,13 @@ void main() {
 
   testWidgets('the comparison moves its divider with the keys and closes with Escape', (tester) async {
     String png(String name, int value) {
-      final image = img.Image(width: 40, height: 30)..clear(img.ColorRgb8(value, value, value));
+      final rgba = Uint8List(40 * 30 * 4);
+      for (var i = 0; i < rgba.length; i += 4) {
+        rgba.fillRange(i, i + 3, value);
+        rgba[i + 3] = 255;
+      }
       final path = p.join(root.path, name);
-      File(path).writeAsBytesSync(img.encodePng(image));
+      File(path).writeAsBytesSync(encodePngPicture(SbsDecoded(width: 40, height: 30, rgba: rgba)));
       return path;
     }
 
@@ -415,24 +425,27 @@ void main() {
     expect(naturalPhysicalMemory, lessThan(16 * _gib));
   });
 
-  test('the folder of the developer override: off by default, Windows only, each level when all its files are there', () {
-    expect(enhanceProbeFolder(environment: const {}, windows: true), isNull);
-    final folder = Directory(p.join(root.path, 'probe'))..createSync();
-    expect(enhanceProbeFolder(environment: {enhanceProbeVariable: folder.path}, windows: false), isNull);
-    expect(enhanceProbeFolder(environment: {enhanceProbeVariable: folder.path}, windows: true), folder.path);
-    expect(enhanceProbeFiles(EnhanceLevel.sharpen, folder.path), isNull);
-    for (final path in [
-      ['engines', 'shipped', 'sd-cpp-vulkan-win-x64', 'sd-cli.exe'],
-      ['engines', 'shipped', 'models', 'RealESRGAN_x4plus.pth'],
-    ]) {
-      File(p.joinAll([folder.path, ...path]))
-        ..createSync(recursive: true)
-        ..writeAsStringSync('x');
-    }
-    final files = enhanceProbeFiles(EnhanceLevel.sharpen, folder.path)!;
-    expect(files.fromProbe, isTrue);
-    expect(files.sharpen!.sdCli, endsWith('sd-cli.exe'));
-    expect(enhanceProbeFiles(EnhanceLevel.rebuild, folder.path), isNull);
-    expect(enhanceProbeFiles(EnhanceLevel.natural, folder.path), isNull);
-  });
+  test(
+    'the folder of the developer override: off by default, Windows only, each level when all its files are there',
+    () {
+      expect(enhanceProbeFolder(environment: const {}, windows: true), isNull);
+      final folder = Directory(p.join(root.path, 'probe'))..createSync();
+      expect(enhanceProbeFolder(environment: {enhanceProbeVariable: folder.path}, windows: false), isNull);
+      expect(enhanceProbeFolder(environment: {enhanceProbeVariable: folder.path}, windows: true), folder.path);
+      expect(enhanceProbeFiles(EnhanceLevel.sharpen, folder.path), isNull);
+      for (final path in [
+        ['engines', 'shipped', 'sd-cpp-vulkan-win-x64', 'sd-cli.exe'],
+        ['engines', 'shipped', 'models', 'RealESRGAN_x4plus.pth'],
+      ]) {
+        File(p.joinAll([folder.path, ...path]))
+          ..createSync(recursive: true)
+          ..writeAsStringSync('x');
+      }
+      final files = enhanceProbeFiles(EnhanceLevel.sharpen, folder.path)!;
+      expect(files.fromProbe, isTrue);
+      expect(files.sharpen!.sdCli, endsWith('sd-cli.exe'));
+      expect(enhanceProbeFiles(EnhanceLevel.rebuild, folder.path), isNull);
+      expect(enhanceProbeFiles(EnhanceLevel.natural, folder.path), isNull);
+    },
+  );
 }

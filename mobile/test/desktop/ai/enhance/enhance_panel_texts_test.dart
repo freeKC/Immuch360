@@ -13,6 +13,29 @@ import '../creator/english_texts.dart';
 void main() {
   setUpAll(loadEnglishTexts);
 
+  test('the steps of an enhanced photo are said in its own words', () {
+    final t = StaticTranslations.instance;
+    final job = ConversionJob(
+      id: 'conversion-1',
+      source: LocalFileSource('/p/salon.jpg'),
+      batchIndex: 1,
+      batchSize: 1,
+      kind: ConversionKind.enhanceSharpen,
+      state: ConversionState.generating,
+    );
+    expect(conversionStageText(t, job), 'Enhancing, tile by tile');
+    expect(conversionStageText(t, job.copyWith(state: ConversionState.pasteBack)), startsWith('Keeping the colours'));
+    final panorama = ConversionJob(
+      id: 'conversion-2',
+      source: LocalFileSource('/p/salon.jpg'),
+      batchIndex: 1,
+      batchSize: 1,
+      kind: ConversionKind.panoramaFromPhoto,
+      state: ConversionState.generating,
+    );
+    expect(conversionStageText(t, panorama), 'Generating the surroundings');
+  });
+
   test('the failures of an enhanced photo say what to do', () {
     final t = StaticTranslations.instance;
     String said(ImmersiveErrorCode code, String? message, {ConversionKind kind = ConversionKind.enhanceRebuild}) =>
@@ -34,6 +57,14 @@ void main() {
       isNot(contains('close other programs')),
     );
     expect(conversionKindText(t, ConversionKind.enhanceNatural), 'Enhance (AI): Natural');
+    expect(
+      gpuShortfallText(
+        t,
+        const GpuShortfall(need: 9 << 29, free: 1 << 30),
+        kind: ConversionKind.enhanceRebuild,
+      ),
+      startsWith('Enhance (AI) needs 4.5'),
+    );
     expect(conversionKindLabel(t, ConversionKind.enhanceSharpen), startsWith('Details are invented by AI'));
   });
 }

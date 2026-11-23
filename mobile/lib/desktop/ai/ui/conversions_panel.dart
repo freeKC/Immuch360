@@ -356,6 +356,9 @@ String conversionJobLabel(Translations t, ConversionJob job, ConversionJobInfo? 
 /// matches_importer for a video of more than 200 frames; until lot SPF1 the frames of a video were matched one after
 /// the other).
 String? conversionStageText(Translations t, ConversionJob job) => switch (job.state) {
+  // "Enhance (AI)": its model runs tile after tile, then the colour fix and the strength
+  ConversionState.generating when job.kind.isEnhance => t.ai_enhance_stage_tiles,
+  ConversionState.pasteBack when job.kind.isEnhance => t.ai_enhance_stage_finish,
   ConversionState.geometry => t.ai_immersive_stage_geometry,
   ConversionState.layers => t.ai_immersive_stage_layers,
   ConversionState.inpaint => switch ((job.step, job.steps)) {
@@ -466,6 +469,12 @@ String gpuShortfallText(
   final needed = formatBytes(shortfall.need);
   final free = formatBytes(shortfall.free);
   final splat = kind == ConversionKind.splatScene;
+  if (kind.isEnhance) {
+    final app = shortfall.appHolds;
+    return app != null && app >= appGraphicsShareShownFrom
+        ? t.ai_enhance_gpu_budget_need_app(needed: needed, free: free, app: formatBytes(app))
+        : t.ai_enhance_gpu_budget_need(needed: needed, free: free);
+  }
   return switch (shortfall.appHolds) {
     final app? when app >= appGraphicsShareShownFrom =>
       splat

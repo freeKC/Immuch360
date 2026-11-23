@@ -154,11 +154,10 @@ void main() {
     final specs = levels[EnhanceLevel.rebuild]!.specs;
     expect(specs.map((spec) => (spec.level, spec.strength)).toSet(), {(EnhanceLevel.rebuild, 50)});
     expect(specs.map((spec) => spec.source.name), ['a.jpg', 'b.png', 'c.heic']);
-    expect([for (final id in ids) p.basename(job(id).writtenPath!)], [
-      'a_enhanced.jpg',
-      'b_enhanced.jpg',
-      'c_enhanced.jpg',
-    ]);
+    expect(
+      [for (final id in ids) p.basename(job(id).writtenPath!)],
+      ['a_enhanced.jpg', 'b_enhanced.jpg', 'c_enhanced.jpg'],
+    );
     expect(job(ids.first).enhance, const EnhanceSettings(level: EnhanceLevel.rebuild, strength: 50));
     expect(job(ids.first).details, isA<EnhanceResultDetails>());
     expect(job(ids.first).kind.lane, ConversionLane.gpu);
@@ -221,11 +220,10 @@ void main() {
     queue().pause(ids[2]);
     queue().cancelAll();
     await until((state) => !state.byId(ids[0])!.state.isActive);
-    expect([for (final id in ids) job(id).state], [
-      ConversionState.cancelled,
-      ConversionState.cancelled,
-      ConversionState.paused,
-    ]);
+    expect(
+      [for (final id in ids) job(id).state],
+      [ConversionState.cancelled, ConversionState.cancelled, ConversionState.paused],
+    );
     queue().cancel(ids[2]);
     expect(job(ids[2]).state, ConversionState.cancelled);
     expect(engine.specs, hasLength(1));
