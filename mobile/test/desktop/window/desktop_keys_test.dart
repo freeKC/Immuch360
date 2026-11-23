@@ -158,7 +158,7 @@ void main() {
     test('F11 and Escape anywhere, F alone and only while not typing', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       expect(desktopWindowKeyOf(_down(LogicalKeyboardKey.f11)), DesktopWindowKey.toggleFullScreen);
-      expect(desktopWindowKeyOf(_down(LogicalKeyboardKey.escape)), DesktopWindowKey.leaveFullScreenOrViewer);
+      expect(desktopWindowKeyOf(_down(LogicalKeyboardKey.escape)), DesktopWindowKey.escape);
       expect(
         desktopWindowKeyOf(_down(LogicalKeyboardKey.keyF, character: 'f'), typing: false),
         DesktopWindowKey.toggleFullScreenInViewer,
@@ -212,6 +212,39 @@ void main() {
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       expect(desktopWindowKeyOf(_down(LogicalKeyboardKey.keyF), typing: false), DesktopWindowKey.toggleFullScreen);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Alt Left goes back on Windows and Linux, Command [ on macOS, never while typing', (tester) async {
+      final left = _down(LogicalKeyboardKey.arrowLeft, physical: PhysicalKeyboardKey.arrowLeft);
+      final bracket = _down(LogicalKeyboardKey.bracketLeft, character: '[', physical: PhysicalKeyboardKey.bracketLeft);
+      for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+        debugDefaultTargetPlatformOverride = platform;
+        expect(
+          desktopWindowKeyOf(left, typing: false),
+          isNull,
+          reason: '${platform.name}: Left alone is the viewers\'',
+        );
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        expect(desktopWindowKeyOf(left, typing: false), DesktopWindowKey.back, reason: platform.name);
+        expect(desktopWindowKeyOf(left, typing: true), isNull, reason: '${platform.name}: the field keeps it');
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        expect(desktopWindowKeyOf(left, typing: false), isNull, reason: '${platform.name}: with Shift');
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        expect(desktopWindowKeyOf(bracket, typing: false), isNull, reason: '${platform.name}: Control [');
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      }
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      expect(desktopWindowKeyOf(left, typing: false), isNull, reason: 'Option Left moves by word on macOS');
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+      expect(desktopWindowKeyOf(bracket, typing: false), DesktopWindowKey.back);
+      expect(desktopWindowKeyOf(bracket, typing: true), isNull);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
       debugDefaultTargetPlatformOverride = null;
     });
