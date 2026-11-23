@@ -7,7 +7,8 @@
 //    Qwen-Image VAE (vae_encoder, "lq"), the one-step transformer (lq_latent, noise drawn from the seed, tokens) and
 //    the decoder of the VAE (vae_decoder, "latent");
 //  - the tiles blended with their feather, then VOSR's colour fix against the photo (enhance_pixels.dart).
-// The sessions take the threads of the app's other ONNX Runtime work (the logical processors less two). A stop is
+// The sessions take the threads of the app's other ONNX Runtime work (the logical processors less two), lowered as
+// those of the 3D photos (thread_priority.dart). A stop is
 // read between two graphs: within a few seconds. Measured on the i9 of 24 threads: 16 s per tile (339.9 s for 3 MP,
 // 989.9 s for 12 MP), 5.5 GB of working set and 8.5 to 9.7 GB of commit.
 
@@ -19,6 +20,7 @@ import 'dart:typed_data';
 import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
@@ -130,6 +132,7 @@ void _vosrMain(_VosrRequest request) {
   final port = request.port;
   final cancelled = NativeCancelFlag.readerOf(request.cancel);
   final sessions = <OrtSession>[];
+  final priority = ComputePriority(ThreadPriorityPlatform.system());
   try {
     final rgba = request.rgba.materialize().asUint8List();
     final out = runVosr(
@@ -140,8 +143,14 @@ void _vosrMain(_VosrRequest request) {
       isCancelled: cancelled,
       onTile: (tile, all) => port.send(('step', tile, all)),
       open: (path) {
+        // Loaded first, so that what loading starts is not taken for a thread of the session; the threads of each
+        // session are lowered, as those of the 3D photos, so that the computer stays usable for the minutes it runs
         final runtime = OrtRuntime.load(request.files.library);
-        final session = runtime.openSession(path, settings: OrtSessionSettings(intraOpThreads: request.threads));
+        final session = priority
+            .lowerThreadsBornDuring(
+              () => runtime.openSession(path, settings: OrtSessionSettings(intraOpThreads: request.threads)),
+            )
+            .value;
         sessions.add(session);
         return _OrtGraph(session);
       },
