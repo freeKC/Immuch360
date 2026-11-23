@@ -8,7 +8,8 @@
 //   entries to everyone, side by side: nothing asks first whether the user is happy (the stores forbid steering only
 //   the happy users to a rating).
 // * The line of the Quest store build, at the top of Settings after it showed at the end of a viewing: the sentence,
-//   Rate, Something not working? and No thanks. Nothing takes the focus.
+//   Rate, Something not working? and No thanks, three written buttons. Nothing takes the focus.
+// * A page that did not open shows its address, to open on another device.
 
 import 'dart:async';
 
@@ -18,15 +19,51 @@ import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/tv/open_url.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/rate_app.provider.dart';
 import 'package:immich_mobile/utils/store_channel.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Opens the GitHub issues of Immuch360 (an address to copy in the remote control layout, which has no browser)
-Future<void> openRateAppProblemPage(BuildContext context) async {
-  await openUrl(context, Uri.parse(kImmuch360IssuesLink), mode: LaunchMode.externalApplication);
+/// Opens the GitHub issues of Immuch360 (an address to copy in the remote control layout, which has no browser). A
+/// page that did not open shows its address
+Future<void> openRateAppProblemPage(BuildContext context, {required bool tvMode}) async {
+  final url = Uri.parse(kImmuch360IssuesLink);
+  final opened = await openUrl(context, url, mode: LaunchMode.externalApplication, tvMode: tvMode);
+  // The remote control layout already showed the address
+  if (!opened && !tvMode && context.mounted) {
+    await showRateAppAddress(context, url);
+  }
 }
+
+/// Rate Immuch360: the store page, or its address when it did not open on this device
+Future<void> openRateAppStorePage(BuildContext context, WidgetRef ref, RateAppChannel channel) async {
+  if (await rateAppFromSettings(ref)) {
+    return;
+  }
+  final pages = rateAppStorePages(channel).where((url) => url.isScheme('https'));
+  if (pages.isNotEmpty && context.mounted) {
+    await showRateAppAddress(context, pages.last);
+  }
+}
+
+/// A page that did not open: its address, to open elsewhere
+Future<void> showRateAppAddress(BuildContext context, Uri url) => showDialog<void>(
+  context: context,
+  builder: (context) => AlertDialog(
+    key: const Key('rate_app_address'),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(context.t.rate_app_page_not_opened),
+        const SizedBox(height: 12),
+        SelectableText(url.toString(), style: const TextStyle(fontWeight: FontWeight.w600)),
+      ],
+    ),
+    actions: [TextButton(autofocus: true, onPressed: () => Navigator.of(context).pop(), child: Text(context.t.close))],
+  ),
+);
 
 /// The lasting entries of Settings: Rate Immuch360 on a store build, Something not working? on every build. [cards]
 /// for the list of the phones, list tiles for the two panes of the tablets, the TVs and the Quest
@@ -42,6 +79,7 @@ class RateAppSettingsEntries extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final channel = ref.watch(rateAppChannelProvider).valueOrNull ?? RateAppChannel.none;
     final store = channel.canAsk ? rateAppStoreName(channel) : null;
+    final tvMode = ref.watch(tvModeProvider);
     final t = context.t;
     Widget entry({
       required Key key,
@@ -61,14 +99,14 @@ class RateAppSettingsEntries extends ConsumerWidget {
             icon: Icons.star_outline_rounded,
             title: t.rate_app_settings_title,
             subtitle: t.rate_app_settings_subtitle(store: store),
-            onTap: () => unawaited(rateAppFromSettings(ref)),
+            onTap: () => unawaited(openRateAppStorePage(context, ref, channel)),
           ),
         entry(
           key: problemKey,
           icon: Icons.bug_report_outlined,
           title: t.rate_app_problem,
           subtitle: t.rate_app_problem_subtitle,
-          onTap: () => unawaited(openRateAppProblemPage(context)),
+          onTap: () => unawaited(openRateAppProblemPage(context, tvMode: tvMode)),
         ),
       ],
     );
@@ -95,7 +133,7 @@ class RateAppSettingsLine extends ConsumerWidget {
       builder: (context, waits, _) => waits
           ? RateAppLine(
               onRate: () => unawaited(service.answer(RateAppAnswer.rate)),
-              onProblem: () => unawaited(openRateAppProblemPage(context)),
+              onProblem: () => unawaited(openRateAppProblemPage(context, tvMode: ref.read(tvModeProvider))),
               onNoThanks: () => unawaited(service.answer(RateAppAnswer.noThanks)),
             )
           : const SizedBox.shrink(),
@@ -123,7 +161,7 @@ class RateAppLine extends StatelessWidget {
         color: context.colorScheme.surfaceContainerHigh,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
+          padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -144,16 +182,16 @@ class RateAppLine extends StatelessWidget {
                           onPressed: onProblem,
                           child: Text(t.rate_app_problem),
                         ),
+                        // Written out: it ends the invitation for good, which a close icon would not say
+                        TextButton(
+                          key: RateAppSettingsLine.noThanksKey,
+                          onPressed: onNoThanks,
+                          child: Text(t.rate_app_no_thanks),
+                        ),
                       ],
                     ),
                   ],
                 ),
-              ),
-              IconButton(
-                key: RateAppSettingsLine.noThanksKey,
-                tooltip: t.rate_app_no_thanks,
-                icon: const Icon(Icons.close_rounded),
-                onPressed: onNoThanks,
               ),
             ],
           ),

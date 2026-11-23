@@ -16,6 +16,7 @@ import 'package:immich_mobile/models/server_info/server_info.model.dart';
 import 'package:immich_mobile/platform/store_review_api.g.dart';
 import 'package:immich_mobile/presentation/widgets/rate_app/rate_app_settings.dart';
 import 'package:immich_mobile/providers/rate_app.provider.dart';
+import 'package:immich_mobile/utils/store_channel.dart';
 
 const _sentence = 'If Immuch360 is useful to you, a rating on the Meta Horizon Store helps other people find it.';
 
@@ -58,10 +59,12 @@ class _Store implements RateAppStoreApi {
     return true;
   }
 
+  bool opens = true;
+
   @override
   Future<bool> openStorePage() async {
     pages++;
-    return true;
+    return opens;
   }
 }
 
@@ -108,7 +111,8 @@ void main() {
     expect(find.text(_sentence), findsOneWidget);
     expect(find.widgetWithText(TextButton, 'Rate'), findsOneWidget);
     expect(find.widgetWithText(TextButton, 'Something not working?'), findsOneWidget);
-    expect(find.byTooltip('No thanks'), findsOneWidget);
+    expect(find.widgetWithText(TextButton, 'No thanks'), findsOneWidget, reason: 'written out, not a close icon');
+    expect(find.byIcon(Icons.close_rounded), findsNothing);
     expect(_focusIn(find.byKey(RateAppSettingsLine.lineKey)), isFalse);
 
     await tester.tap(find.byKey(RateAppSettingsLine.rateKey));
@@ -157,6 +161,51 @@ void main() {
     await tester.tap(find.byKey(RateAppSettingsEntries.rateKey));
     await tester.pumpAndSettle();
     expect((store.pages, store.reviews), (1, 0), reason: 'the store page, never the review API, from a button');
+  });
+
+  testWidgets('Rate Immuch360 whose page did not open shows the address of the page', (tester) async {
+    final store = _Store()..opens = false;
+    await _pumpApp(
+      tester,
+      const RateAppSettingsEntries(),
+      overrides: [
+        rateAppChannelProvider.overrideWith((ref) async => RateAppChannel.googlePlay),
+        rateAppServiceProvider.overrideWith((ref) async => null),
+        rateAppStoreApiProvider.overrideWithValue(store),
+      ],
+    );
+    await tester.tap(find.byKey(RateAppSettingsEntries.rateKey));
+    await tester.pumpAndSettle();
+    expect(store.pages, 1);
+    expect(find.text('The page did not open on this device. Its address:'), findsOneWidget);
+    final https = rateAppStorePages(RateAppChannel.googlePlay).where((url) => url.isScheme('https')).last;
+    expect(find.text(https.toString()), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Close'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('rate_app_address')), findsNothing);
+  });
+
+  testWidgets('the line shows at once over a waiting snack bar, and leaves when it is taken away', (tester) async {
+    await _pumpApp(tester, const SizedBox());
+    final messenger = _messenger.currentState!;
+    messenger.showSnackBar(const SnackBar(content: Text('an older snack bar'), duration: Duration(seconds: 30)));
+    messenger.showSnackBar(const SnackBar(content: Text('a waiting snack bar')));
+    await tester.pumpAndSettle();
+    ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? line;
+    showRateAppLine(
+      messenger,
+      rateAppSnackBar(_messenger.currentContext!.t, onRate: () {}),
+      onShown: (value) => line = value,
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(rateAppSnackBarKey), findsOneWidget, reason: 'not after the 30 s of the older one');
+    expect(find.text('an older snack bar'), findsNothing);
+    expect(line, isNotNull);
+    hideRateAppLine(messenger);
+    await tester.pumpAndSettle();
+    expect(find.byKey(rateAppSnackBarKey), findsNothing);
+    expect(find.text('a waiting snack bar'), findsNothing, reason: 'the queue went with the line');
+    expect(line, isNull, reason: 'closed');
   });
 
   testWidgets('Settings of a GitHub build or a computer: Something not working? alone', (tester) async {

@@ -3844,6 +3844,7 @@
   "rate_app_horizon_invite": "If Immuch360 is useful to you, a rating on the Meta Horizon Store helps other people find it.",
   "rate_app_no_thanks": "No thanks",
   "rate_app_not_now": "Not now",
+  "rate_app_page_not_opened": "The page did not open on this device. Its address:",
   "rate_app_problem": "Something not working?",
   "rate_app_problem_subtitle": "Report it on GitHub so that we can fix it",
   "rate_app_rate": "Rate",
