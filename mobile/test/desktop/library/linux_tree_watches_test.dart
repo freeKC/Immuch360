@@ -94,6 +94,37 @@ void main() {
     await subscription.cancel();
   });
 
+  test('the files deleted in a large tree cost no walk of the watched folders each', () async {
+    final root = folder('Pictures');
+    for (var i = 0; i < 3000; i++) {
+      folder('Pictures/f$i');
+    }
+    final tree = watches(budget: 4000);
+    final subscription = tree.watch(root).listen((_) {});
+    await settle();
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    expect(tree.watching[root], hasLength(3001));
+
+    // 6000 photos deleted (folders emptied): no folder of theirs is watched
+    final clock = Stopwatch()..start();
+    for (var i = 0; i < 6000; i++) {
+      streams[root]!.add(FileSystemDeleteEvent(p.join(root, 'f${i % 3000}', 'photo$i.jpg'), false));
+    }
+    await settle();
+    clock.stop();
+    expect(tree.watching[root], hasLength(3001));
+    // Without the fast path, each event compared its path with the 3001 folders: 18 million comparisons, 4 s on the PC
+    // of the project; with it, a lookup each
+    expect(clock.elapsed, lessThan(const Duration(milliseconds: 1500)));
+
+    // A watched folder deleted is still let go, with what is below it
+    streams[root]!.add(FileSystemDeleteEvent(p.join(root, 'f7'), true));
+    await settle();
+    expect(tree.watching[root], hasLength(3000));
+    expect(tree.watching[root], isNot(contains(p.join(root, 'f7'))));
+    await subscription.cancel();
+  });
+
   test('the budget is shared by the roots, and the deepest folders are left out first', () async {
     final pictures = folder('Pictures');
     folder('Pictures/a/b/c');

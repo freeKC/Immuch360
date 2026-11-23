@@ -371,6 +371,11 @@ class _Tree {
 
   /// Lets go of [folder] and the folders below it, deleted or moved out
   void _drop(String folder) {
+    // A path that is no watched folder has none below it either (a folder is watched only from a watched parent): the
+    // files deleted cost a lookup each, not a walk of every watched folder
+    if (!_folders.containsKey(folder)) {
+      return;
+    }
     for (final watched in _folders.keys.where((path) => p.equals(path, folder) || p.isWithin(folder, path)).toList()) {
       if (p.equals(watched, root)) {
         continue;
