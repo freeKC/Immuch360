@@ -27,7 +27,6 @@ import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
-import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('DesktopEnhance');

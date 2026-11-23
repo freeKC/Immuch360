@@ -33,8 +33,9 @@ name: Immuch360 Desktop release
 # With with_sdcpp_seedvr2 (by hand, with sign_test), the build also makes the second archive of stable-diffusion.cpp,
 # the engine of "Rebuild details" of Enhance (AI) at 0d71f963 (the sdcpp-seedvr2 jobs of immuch360-desktop.yml), and
 # sign-windows signs and checks every .exe and .dll of its Windows archive as for with_sdcpp, in place of the artifact
-# under the same name: enhance_components.py make --artifact takes it from there for ai-components-7. Never with
-# with_sdcpp in the same run (both archives are Immuch360-AI-sdcpp-*: the step of with_sdcpp then finds two and stops).
+# under the same name: publish_ai_components.py --release ai-components-7 --from-run <run> takes it from there.
+# Never with with_sdcpp in the same run (both archives are Immuch360-AI-sdcpp-*: the step of with_sdcpp then finds two
+# and stops).
 # A release of the app never builds it, and a run with with_sdcpp_seedvr2 never reaches the release job.
 #
 # This is the one desktop workflow that writes to the repository, its release job only, with "contents: write", and

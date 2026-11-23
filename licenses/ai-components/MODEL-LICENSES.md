@@ -1,8 +1,9 @@
 # Licences of the AI components of Immuch360
 
-Date: 2026-11-18. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases
+Date: 2026-11-23. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases
 `ai-components-1` (3D photos), `ai-components-2` (3D scenes), `ai-components-3` (360° panoramas), `ai-components-4`
-(splat scenes) and `ai-components-5` (3D videos):
+(splat scenes), `ai-components-5` (3D videos), `ai-components-6` (the graphics card of the 3D videos) and
+`ai-components-7` (Enhance (AI)):
 https://github.com/freeKC/Immuch360/releases
 
 The app downloads a component only when the user asks for it, checks its SHA-256 against the catalogue built
@@ -575,6 +576,93 @@ The FFmpeg program the 3D videos also download (ffmpeg and ffprobe, LGPL-2.1-or-
 part) is not in this release: its archives are those of a release `ffmpeg-lgpl-*` of
 https://github.com/immuch360/libmpv-builds, with their licence texts, `PATENTS-NOTE.md` and corresponding
 source, checked by their SHA-256 like these files.
+
+<!-- ai-components-6 -->
+## ai-components-6: the graphics card of the 3D videos
+
+https://github.com/freeKC/Immuch360/releases/tag/ai-components-6. ONNX Runtime with DirectML for Windows x64, MIT: it runs
+the depth model of the 3D videos on the graphics card, through the DirectML.dll of Windows itself
+(System32). DirectML.dll of the package Microsoft.AI.DirectML is not shipped (its licence, below under "Not
+used"). ONNX Runtime has other libraries built in, each under its own licence, listed in its notices (below).
+
+| File | Component | Installed file | Size (bytes) | SHA-256 | Download (bytes) | Official package | Package SHA-256 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `onnxruntime-directml-1.24.4-win-x64.dll.gz` | `onnxruntime-directml-1.24.4-win-x64` | `onnxruntime.dll` | 17328152 | `e7eedec6a6f26dc39dc948276a75ef6d2bee3fff944d874ceed0bbd3b97bff40` | 6157978 | https://api.nuget.org/v3-flatcontainer/microsoft.ml.onnxruntime.directml/1.24.4/microsoft.ml.onnxruntime.directml.1.24.4.nupkg | `57e9f11b73437bef7a309496135d4c1f96b1a8e9ddba60013fa27bfc1d788681` |
+
+The library is `runtimes/win-x64/native/onnxruntime.dll` of the official package, as it is (its Authenticode
+signature of Microsoft kept), gzip compressed for the download; the app unpacks it and checks the SHA-256 of
+the installed file. Licence: MIT, the `LICENSE` of the package ("MIT License, Copyright (c) Microsoft
+Corporation"). The licence and the notices of the package:
+
+| File | Size (bytes) | SHA-256 |
+| --- | --- | --- |
+| `onnxruntime-directml-1.24.4-LICENSE.txt` | 1094 | `c250d6278f0b47a6439fb7592b08b58a55eb9f535aa49a1db63211c3f982b674` |
+| `onnxruntime-directml-1.24.4-ThirdPartyNotices.txt` | 331175 | `fb0af774b4d7cffc5b9d046f2aaeade2f37df2f80abf8033c95dfffcc77a8866` |
+
+The app turns the telemetry of this library off as for ai-components-1 (`DisableTelemetryEvents` on each
+environment it makes). The app first checks the graphics card against the processor on a small pattern and
+keeps the processor when the card gives another depth.
+
+<!-- ai-components-7 -->
+## ai-components-7: Enhance (AI)
+
+https://github.com/freeKC/Immuch360/releases/tag/ai-components-7
+
+| File | Component | Size (bytes) | SHA-256 | Licence | Source, pinned revision |
+| --- | --- | --- | --- | --- | --- |
+| `seedvr2_3b_int8_convrot.safetensors` | `seedvr2-3b-int8-convrot` | 3458259704 | `c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157` | Apache-2.0 | https://huggingface.co/Comfy-Org/SeedVR2, revision `df488797`, `diffusion_models/seedvr2_3b_int8_convrot.safetensors` |
+| `seedvr2_ema_vae_fp16.safetensors` | `seedvr2-ema-vae-fp16` | 501324814 | `20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1` | Apache-2.0 | https://huggingface.co/Comfy-Org/SeedVR2, revision `df488797`, `vae/seedvr2_ema_vae_fp16.safetensors` |
+| `vosr2-int8-image_encoder.onnx` | `vosr2-1.4b-int8-image-encoder` | 460494444 | `991f96af4a0dedf5da19d5a69a8c77f106138cacffdc82fadeef2397dd3c37cd` | Apache-2.0 | https://huggingface.co/moonbox-dev/VOSR-ONNX, revision `46811283`, `int8/image_encoder/model.onnx` |
+| `vosr2-int8-vae_encoder.onnx` | `vosr2-1.4b-int8-vae-encoder` | 38701657 | `c3efac4d5f173692c45002aa90d79f155898697db73cfcef1fb90a56d07ea161` | Apache-2.0 | https://huggingface.co/moonbox-dev/VOSR-ONNX, revision `46811283`, `int8/vae_encoder/model.onnx` |
+| `vosr2-int8-transformer.onnx` | `vosr2-1.4b-int8-transformer` | 1409190442 | `e38ab963051515bdc39fb1a096d8eb3ee895355cdc1b658bbd7ce9fa3af8bd62` | Apache-2.0 | https://huggingface.co/moonbox-dev/VOSR-ONNX, revision `46811283`, `int8/transformer/model.onnx` |
+| `vosr2-int8-vae_decoder.onnx` | `vosr2-1.4b-int8-vae-decoder` | 50689496 | `3ca755f97a8d57ad5f793c757f0d3a65200067d98528f110d765b4b28ef989ba` | Apache-2.0 | https://huggingface.co/moonbox-dev/VOSR-ONNX, revision `46811283`, `int8/vae_decoder/model.onnx` |
+
+The files of 2 GiB or more are in parts (GitHub refuses a larger asset), put end to end by the app, which
+checks the sum of each part and of the whole:
+
+| Part | Of | Size (bytes) | SHA-256 |
+| --- | --- | --- | --- |
+| `seedvr2_3b_int8_convrot.safetensors.001` | 1 of 2 of `seedvr2_3b_int8_convrot.safetensors` | 2039480320 | `fb7ada88ecaf1ba03f53d913ae4ca13a6a8b33b4c76f92ec5822998b76cb3843` |
+| `seedvr2_3b_int8_convrot.safetensors.002` | 2 of 2 of `seedvr2_3b_int8_convrot.safetensors` | 1418779384 | `51e7c59c254dea0a0d362aba225917c095cb215450d93056b96df174697a3a8b` |
+
+`sd-cpp-seedvr2-vulkan-win-x64`: pending, written by this script from the artifacts of our CI.
+
+`sd-cpp-seedvr2-vulkan-linux-x64`: pending, written by this script from the artifacts of our CI.
+
+SeedVR2 3B: Apache-2.0. The card of ByteDance-Seed/SeedVR2-3B says `license: apache-2.0` and "SeedVR and
+SeedVR2 are licensed under the Apache 2.0."; the files are the repack of Comfy-Org/SeedVR2 at
+`df48879708206a403d2a61acd55578c2e80fd233` (card `license: apache-2.0`, "Repackaged model files for
+ComfyUI"). SeedVR2 was trained from scratch (arXiv 2506.05301, section 4: a 7B model "from scratch", the 3B
+one "distilled from the original 7B one"), so it inherits no base model; the weights of SeedVR v1,
+initialised from SD3-Medium, are not used. Its VAE was trained from scratch too.
+
+VOSR 2.0 1.4B int8: the ONNX export of moonbox-dev/VOSR-ONNX at `46811283f2b767d9d634cdd3d8e465594712df61`,
+whose card says "Apache-2.0. These files are a derivative of the original model and carry its license", of
+the checkpoints of CSWRY/VOSR (card `license: apache-2.0`), whose table gives "VOSR checkpoints (`VOSR2/`,
+`VOSR_*/`) and project-authored decoder files" the terms "Apache-2.0 under the project license", and its
+`Qwen-Image-vae-2d/` VAE "the applicable upstream terms" of Wan2.1 (GitHub `Apache License 2.0`) and
+Qwen-Image (card `apache-2.0`), and DINOv2 (facebookresearch/dinov2, `Apache License 2.0`). Only the 1.4B
+models are used: the 0.5B ones take the VAE of Stable Diffusion 2.1, under OpenRAIL++, which this project
+does not ship.
+
+stable-diffusion.cpp and ggml: MIT
+(https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE,
+https://github.com/leejet/ggml/blob/eeda9ec48fc84a3df0bb9dcc19ae9053075a2539/LICENSE), built by our CI at the
+commits of `.github/desktop/ai/sd_cpp_seedvr2.lock.json`, run by the app as a child process; the licences of
+the code built into it are in the `licenses/` folder of each archive. No CUDA: the graphics card is reached
+through Vulkan only. Sharpen takes the stable-diffusion.cpp and Real-ESRGAN x4plus of ai-components-3.
+
+The licence texts, as read on 23 November 2026, are files of the release: `ByteDance-Seed_SeedVR-LICENSE.txt`
+(the LICENSE of ByteDance-Seed/SeedVR, Apache License, Version 2.0, SHA-256
+`5967a0c153e731109b76c5d83b5e0fae2382b6aaf7b898d08ff03702eea59430`), `cswry_VOSR-LICENSE.txt` (the LICENSE of
+cswry/VOSR, the same text in moonbox-dev/VOSR-ONNX, Apache License, Version 2.0, SHA-256
+`6cf63d87586c7c25c3ab8e62eef5c75bbaa982b0a6f9c00c59e2720255aac9ec`) and
+`leejet_stable-diffusion.cpp-LICENSE.txt` (MIT, SHA-256
+`b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee`).
+
+The programs and libraries of `sd-cpp-seedvr2-vulkan-win-x64` are signed by APROGSYS (Azure Artifact Signing),
+those of Microsoft keeping their own signature. Linux programs carry no signature. The app checks each archive and
+each of its files by its SHA-256 when it installs them.
 
 <!-- end of the releases -->
 ## The splat module of the Meta Spatial SDK 0.14.0 (in the quest APK, not downloaded)

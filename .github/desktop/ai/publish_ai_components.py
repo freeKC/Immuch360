@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The files of the prereleases ai-components-1 to 5: the AI components Immuch360 downloads when the user asks.
+"""The files of the prereleases ai-components-1 to 7: the AI components Immuch360 downloads when the user asks.
 
 Design: store/m2/ai-immersive-2026-10-26/design-final-2026-10-26.md, sections 2.2 and 4.6 (lot A3b), and
 phase23/design-final-2026-10-27.md, sections 7.1 to 7.4 (lot C2). The app carries a catalogue of these files with the
@@ -44,6 +44,15 @@ ai-components-5, the 3D videos (store/m2/release-49/lots/video3d-plan.md, sectio
      validated against them), from its source pinned to a revision, its card read again as for 5. The FFmpeg program
      the 3D videos also need is not in this release: its archives are those of a release of immuch360/libmpv-builds,
      held to its manifest by --check (below), as the AV2 decoder.
+ai-components-6, the graphics card of the 3D videos on Windows (store/m2/release-51/ai-360-3d-2026-11-22.md):
+ 10. onnxruntime.dll of the official NuGet package Microsoft.ML.OnnxRuntime.DirectML 1.24.4 (MIT), checked by its
+     SHA-256 (PACKAGES below), as it is (its Authenticode signature kept), gzip compressed as the libraries of
+     ai-components-1, with the LICENSE and ThirdPartyNotices.txt of the package; never DirectML.dll (EXCLUDED).
+ai-components-7, Enhance (AI) (store/m2/release-51/ai-enhance-2026-11-23.md):
+ 11. SeedVR2 3B int8 and its VAE (Apache-2.0) and the four graphs of VOSR 2.0 1.4B int8 (Apache-2.0) from their
+     sources pinned to a revision, as 5; and the second engine of stable-diffusion.cpp, at the commits of
+     sd_cpp_seedvr2.lock.json, the artifacts Immuch360-AI-sdcpp-<lock>-<platform>.zip of a run of the release workflow
+     with with_sdcpp_seedvr2 (its Windows programs signed), as 7.
 Every release also holds MODEL-LICENSES.md (the copy of licenses/ai-components/MODEL-LICENSES.md, dated, one section
 per release, the other sections kept as they are) and SHA256SUMS.
 
@@ -65,7 +74,7 @@ per release, the other sections kept as they are) and SHA256SUMS.
       no release workflow runs on it (the upstream workflows that run on a published release are disabled in the
       fork). A release that exists already is never touched.
   publish_ai_components.py --check [--release TAG]
-      offline, for the five releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
+      offline, for the seven releases (or TAG): every component of the catalogue is complete (an engine of P2 may still
       be pending, said), in the release of its family, its file, parts and sums are those of the tables below, and
       MODEL-LICENSES.md names each file with its size and SHA-256 (test/desktop/ci/publish_ai_components_test.dart);
       and, whatever TAG, the three archives of the AV2 decoder (a release of immuch360/av2-companion, not made by this
@@ -122,9 +131,13 @@ TAG_PANORAMAS = 'ai-components-3'
 TAG_SPLATS = 'ai-components-4'
 # The 3D videos of the computers (store/m2/release-49/lots/video3d-plan.md, section 3): Video Depth Anything Small
 TAG_VIDEOS = 'ai-components-5'
-RELEASES = (TAG, TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS)
+# The graphics card of the 3D videos on Windows (release 51, lot ai-360-3d-51): the DirectML build of ONNX Runtime
+TAG_GPU = 'ai-components-6'
+# Enhance (AI) (release 51, lots E1 to E3): SeedVR2 3B, VOSR 2.0 1.4B int8 and a second stable-diffusion.cpp
+TAG_ENHANCE = 'ai-components-7'
+RELEASES = (TAG, TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS, TAG_GPU, TAG_ENHANCE)
 FAMILIES = {TAG: '3D photos', TAG_SCENES: '3D scenes', TAG_PANORAMAS: '360° panoramas', TAG_SPLATS: 'splat scenes',
-            TAG_VIDEOS: '3D videos'}
+            TAG_VIDEOS: '3D videos', TAG_GPU: 'the graphics card of the 3D videos', TAG_ENHANCE: 'Enhance (AI)'}
 SUMS = 'SHA256SUMS'
 # GitHub refuses an asset of 2 GiB or more; a larger file goes in parts of the largest whole number of MiB under 1.9 GiB
 ASSET_LIMIT = 2 * 1024 ** 3
@@ -212,6 +225,31 @@ MODELS = (
           'the Meta Quest, fp32 LiteRT'),
 )
 
+
+@dataclasses.dataclass(frozen=True)
+class Package:
+    """A NuGet package of ONNX Runtime and the library the app installs from it (ai-components-6)"""
+    component: str
+    name: str
+    url: str
+    size: int
+    sha256: str
+    library: str
+    version: str
+
+
+PACKAGES = (
+    Package('onnxruntime-directml-1.24.4-win-x64', 'microsoft.ml.onnxruntime.directml.1.24.4.nupkg',
+            'https://api.nuget.org/v3-flatcontainer/microsoft.ml.onnxruntime.directml/1.24.4/'
+            'microsoft.ml.onnxruntime.directml.1.24.4.nupkg', 12458649,
+            '57e9f11b73437bef7a309496135d4c1f96b1a8e9ddba60013fa27bfc1d788681',
+            'runtimes/win-x64/native/onnxruntime.dll', '1.24.4'),
+)
+
+
+def package_text(package: Package, kind: str) -> str:
+    """The asset of the LICENSE or ThirdPartyNotices of a package: onnxruntime-directml-1.24.4-LICENSE.txt"""
+    return f'onnxruntime-directml-{package.version}-{kind}.txt'
 
 
 @dataclasses.dataclass(frozen=True)
@@ -323,6 +361,33 @@ UPSTREAM = (
              'video-depth-anything-small-dynamic-fp32.onnx', 'apache-2.0',
              'the depth of a video, 32 frames at a time: Video Depth Anything Small, ONNX export of looplj (fp32, '
              'opset 17)'),
+    # Enhance (AI): SeedVR2 3B as Comfy-Org repacked it (int8 convrot), its VAE, and the ONNX export of VOSR 2.0 1.4B
+    # by moonbox-dev (int8), the files the probe of 23 November 2026 measured (store/m2/ai-enhance-2026-11-22)
+    Upstream('seedvr2-3b-int8-convrot', TAG_ENHANCE,
+             f'{HF}/Comfy-Org/SeedVR2/resolve/df48879708206a403d2a61acd55578c2e80fd233/diffusion_models/'
+             'seedvr2_3b_int8_convrot.safetensors', 3458259704,
+             'c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157', 'Comfy-Org/SeedVR2',
+             'df48879708206a403d2a61acd55578c2e80fd233', 'diffusion_models/seedvr2_3b_int8_convrot.safetensors',
+             'apache-2.0', 'the model of Rebuild details: SeedVR2 3B (ByteDance Seed, Apache-2.0), int8 convrot'),
+    Upstream('seedvr2-ema-vae-fp16', TAG_ENHANCE,
+             f'{HF}/Comfy-Org/SeedVR2/resolve/df48879708206a403d2a61acd55578c2e80fd233/vae/'
+             'seedvr2_ema_vae_fp16.safetensors', 501324814,
+             '20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1', 'Comfy-Org/SeedVR2',
+             'df48879708206a403d2a61acd55578c2e80fd233', 'vae/seedvr2_ema_vae_fp16.safetensors', 'apache-2.0',
+             'the VAE of SeedVR2, fp16'),
+    *(Upstream(f'vosr2-1.4b-int8-{part.replace("_", "-")}', TAG_ENHANCE,
+               f'{HF}/moonbox-dev/VOSR-ONNX/resolve/46811283f2b767d9d634cdd3d8e465594712df61/int8/{part}/model.onnx',
+               size, digest, 'moonbox-dev/VOSR-ONNX', '46811283f2b767d9d634cdd3d8e465594712df61',
+               f'int8/{part}/model.onnx', 'apache-2.0', f'Natural: VOSR 2.0 1.4B int8, {use}')
+      for part, size, digest, use in (
+          ('image_encoder', 460494444, '991f96af4a0dedf5da19d5a69a8c77f106138cacffdc82fadeef2397dd3c37cd',
+           'its image encoder (DINOv2-L)'),
+          ('vae_encoder', 38701657, 'c3efac4d5f173692c45002aa90d79f155898697db73cfcef1fb90a56d07ea161',
+           'the encoder of its VAE'),
+          ('transformer', 1409190442, 'e38ab963051515bdc39fb1a096d8eb3ee895355cdc1b658bbd7ce9fa3af8bd62',
+           'its transformer'),
+          ('vae_decoder', 50689496, '3ca755f97a8d57ad5f793c757f0d3a65200067d98528f110d765b4b28ef989ba',
+           'the decoder of its VAE'))),
 )
 
 ENGINES = (
@@ -335,6 +400,13 @@ ENGINES = (
     Engine('colmap-cpu-linux-x64', 'linux-x64', TAG_SPLATS, 'Immuch360-AI-colmap-', 'colmap.lock.json', False),
     Engine('brush-vulkan-win-x64', 'windows-x64', TAG_SPLATS, 'Immuch360-AI-brush-', 'brush.lock.json', True),
     Engine('brush-vulkan-linux-x64', 'linux-x64', TAG_SPLATS, 'Immuch360-AI-brush-', 'brush.lock.json', False),
+    # ai-components-7 (release 51): stable-diffusion.cpp at the commits of sd_cpp_seedvr2.lock.json, for SeedVR2 in
+    # its script mode, from a run of the release workflow with with_sdcpp_seedvr2 and sign_test (its Windows programs
+    # signed by APROGSYS); never in the same run as with_sdcpp, whose artifacts have the same prefix
+    Engine('sd-cpp-seedvr2-vulkan-win-x64', 'windows-x64', TAG_ENHANCE, 'Immuch360-AI-sdcpp-',
+           'sd_cpp_seedvr2.lock.json', True),
+    Engine('sd-cpp-seedvr2-vulkan-linux-x64', 'linux-x64', TAG_ENHANCE, 'Immuch360-AI-sdcpp-',
+           'sd_cpp_seedvr2.lock.json', False),
 )
 ENGINE_ARTIFACT_PREFIX = 'Immuch360-AI-sdcpp-'
 # The folder of the locks of the engines
@@ -673,7 +745,8 @@ def licences_header(date: str) -> list:
         '',
         f'Date: {date}. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases',
         f'`{TAG}` (3D photos), `{TAG_SCENES}` (3D scenes), `{TAG_PANORAMAS}` (360° panoramas), `{TAG_SPLATS}`',
-        f'(splat scenes) and `{TAG_VIDEOS}` (3D videos):',
+        f'(splat scenes), `{TAG_VIDEOS}` (3D videos), `{TAG_GPU}` (the graphics card of the 3D videos) and',
+        f'`{TAG_ENHANCE}` (Enhance (AI)):',
         f'https://github.com/{REPO}/releases',
         '',
         'The app downloads a component only when the user asks for it, checks its SHA-256 against the catalogue built',
@@ -879,6 +952,109 @@ FAMILY_NOTES = {
         'https://github.com/immuch360/libmpv-builds, with their licence texts, `PATENTS-NOTE.md` and corresponding',
         'source, checked by their SHA-256 like these files.',
     ],
+    TAG_ENHANCE: [
+        'SeedVR2 3B: Apache-2.0. The card of ByteDance-Seed/SeedVR2-3B says `license: apache-2.0` and "SeedVR and',
+        'SeedVR2 are licensed under the Apache 2.0."; the files are the repack of Comfy-Org/SeedVR2 at',
+        '`df48879708206a403d2a61acd55578c2e80fd233` (card `license: apache-2.0`, "Repackaged model files for',
+        'ComfyUI"). SeedVR2 was trained from scratch (arXiv 2506.05301, section 4: a 7B model "from scratch", the 3B',
+        'one "distilled from the original 7B one"), so it inherits no base model; the weights of SeedVR v1,',
+        'initialised from SD3-Medium, are not used. Its VAE was trained from scratch too.',
+        '',
+        'VOSR 2.0 1.4B int8: the ONNX export of moonbox-dev/VOSR-ONNX at `46811283f2b767d9d634cdd3d8e465594712df61`,',
+        'whose card says "Apache-2.0. These files are a derivative of the original model and carry its license", of',
+        'the checkpoints of CSWRY/VOSR (card `license: apache-2.0`), whose table gives "VOSR checkpoints (`VOSR2/`,',
+        '`VOSR_*/`) and project-authored decoder files" the terms "Apache-2.0 under the project license", and its',
+        '`Qwen-Image-vae-2d/` VAE "the applicable upstream terms" of Wan2.1 (GitHub `Apache License 2.0`) and',
+        'Qwen-Image (card `apache-2.0`), and DINOv2 (facebookresearch/dinov2, `Apache License 2.0`). Only the 1.4B',
+        'models are used: the 0.5B ones take the VAE of Stable Diffusion 2.1, under OpenRAIL++, which this project',
+        'does not ship.',
+        '',
+        'stable-diffusion.cpp and ggml: MIT',
+        '(https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE,',
+        'https://github.com/leejet/ggml/blob/eeda9ec48fc84a3df0bb9dcc19ae9053075a2539/LICENSE), built by our CI at the',
+        'commits of `.github/desktop/ai/sd_cpp_seedvr2.lock.json`, run by the app as a child process; the licences of',
+        'the code built into it are in the `licenses/` folder of each archive. No CUDA: the graphics card is reached',
+        'through Vulkan only. Sharpen takes the stable-diffusion.cpp and Real-ESRGAN x4plus of ai-components-3.',
+        '',
+        'The licence texts, as read on 23 November 2026, are files of the release: `ByteDance-Seed_SeedVR-LICENSE.txt`',
+        '(the LICENSE of ByteDance-Seed/SeedVR, Apache License, Version 2.0, SHA-256',
+        '`5967a0c153e731109b76c5d83b5e0fae2382b6aaf7b898d08ff03702eea59430`), `cswry_VOSR-LICENSE.txt` (the LICENSE of',
+        'cswry/VOSR, the same text in moonbox-dev/VOSR-ONNX, Apache License, Version 2.0, SHA-256',
+        '`6cf63d87586c7c25c3ab8e62eef5c75bbaa982b0a6f9c00c59e2720255aac9ec`) and',
+        '`leejet_stable-diffusion.cpp-LICENSE.txt` (MIT, SHA-256',
+        '`b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee`).',
+    ],
+}
+
+
+def gpu_section(catalogue: dict, texts: dict | None = None) -> str:
+    """The section of ai-components-6 from the catalogue and PACKAGES. [texts]: asset name -> (size, sha256) of the
+    LICENSE and the notices, as made; else the notices of the catalogue and the LICENSE of GPU_TEXTS"""
+    lines = [
+        RELEASE_MARK.format(tag=TAG_GPU),
+        f'## {TAG_GPU}: {FAMILIES[TAG_GPU]}',
+        '',
+        f'https://github.com/{REPO}/releases/tag/{TAG_GPU}. ONNX Runtime with DirectML for Windows x64, MIT: it runs',
+        'the depth model of the 3D videos on the graphics card, through the DirectML.dll of Windows itself',
+        '(System32). DirectML.dll of the package Microsoft.AI.DirectML is not shipped (its licence, below under "Not',
+        'used"). ONNX Runtime has other libraries built in, each under its own licence, listed in its notices (below).',
+        '',
+        '| File | Component | Installed file | Size (bytes) | SHA-256 | Download (bytes) | Official package | '
+        'Package SHA-256 |',
+        '| --- | --- | --- | --- | --- | --- | --- | --- |',
+    ]
+    shown = dict(texts or {})
+    for package in PACKAGES:
+        component = catalogue.get(package.component)
+        if component is None:
+            continue
+        lines.append(f'| `{component["assetName"]}` | `{package.component}` | '
+                     f'`{component.get("installPath", "").rsplit("/", 1)[-1]}` | {component.get("size")} | '
+                     f'`{component.get("sha256")}` | {component.get("downloadSize")} | {package.url} | '
+                     f'`{package.sha256}` |')
+        if texts is None:
+            notice = component.get('notices') or {}
+            shown[notice.get('assetName')] = (notice.get('size'), notice.get('sha256'))
+            shown.update({name: value for name, value in GPU_TEXTS.items() if name.endswith('-LICENSE.txt')})
+    lines += [
+        '',
+        'The library is `runtimes/win-x64/native/onnxruntime.dll` of the official package, as it is (its Authenticode',
+        'signature of Microsoft kept), gzip compressed for the download; the app unpacks it and checks the SHA-256 of',
+        'the installed file. Licence: MIT, the `LICENSE` of the package ("MIT License, Copyright (c) Microsoft',
+        'Corporation"). The licence and the notices of the package:',
+        '',
+        '| File | Size (bytes) | SHA-256 |',
+        '| --- | --- | --- |',
+    ]
+    for asset in sorted(name for name in shown if name):
+        size, digest = shown[asset]
+        lines.append(f'| `{asset}` | {size} | `{digest}` |')
+    lines += [
+        '',
+        'The app turns the telemetry of this library off as for ai-components-1 (`DisableTelemetryEvents` on each',
+        'environment it makes). The app first checks the graphics card against the processor on a small pattern and',
+        'keeps the processor when the card gives another depth.',
+        '',
+    ]
+    return '\n'.join(lines)
+
+
+# The licence texts a release carries as files of its own, found in a --cache folder by their name and SHA-256 (the
+# probe of 23 November 2026 kept them in its folder licences/, D:/DEV/immuch/ai-enhance-probe/licences)
+LICENCE_FILES = {
+    TAG_ENHANCE: (
+        ('ByteDance-Seed_SeedVR-LICENSE.txt', 11334, '5967a0c153e731109b76c5d83b5e0fae2382b6aaf7b898d08ff03702eea59430'),
+        ('cswry_VOSR-LICENSE.txt', 9156, '6cf63d87586c7c25c3ab8e62eef5c75bbaa982b0a6f9c00c59e2720255aac9ec'),
+        ('leejet_stable-diffusion.cpp-LICENSE.txt', 1062,
+         'b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee'),
+    ),
+}
+
+# The LICENSE and ThirdPartyNotices.txt of the DirectML package, as gpu_runtime.py read them (23 November 2026)
+GPU_TEXTS = {
+    'onnxruntime-directml-1.24.4-LICENSE.txt': (1094, 'c250d6278f0b47a6439fb7592b08b58a55eb9f535aa49a1db63211c3f982b674'),
+    'onnxruntime-directml-1.24.4-ThirdPartyNotices.txt': (331175,
+                                                          'fb0af774b4d7cffc5b9d046f2aaeade2f37df2f80abf8033c95dfffcc77a8866'),
 }
 
 
@@ -945,7 +1121,7 @@ def family_section(tag: str, catalogue: dict, upstream: tuple = UPSTREAM) -> str
             '',
         ]
     lines += FAMILY_NOTES[tag]
-    if tag == TAG_SPLATS:
+    if tag in (TAG_SPLATS, TAG_ENHANCE):
         lines += ['', signatures_note(made_here)]
     lines.append('')
     return '\n'.join(lines)
@@ -1032,11 +1208,15 @@ def licences_for(date: str, catalogue: dict, kept: str, made: dict | None = None
     """MODEL-LICENSES.md: the section of [release] from [made] (the photos) or from the catalogue (a family), the
     other families from the catalogue, the photos kept from [kept] when [release] is another one"""
     sections = {tag: family_section(tag, catalogue, upstream)
-                for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS)}
+                for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS, TAG_ENHANCE)}
     if release == TAG and made is not None:
         sections[TAG] = made['photos']
     else:
         sections[TAG] = sections_of(kept).get(TAG) or photos_section_of_catalogue(catalogue)
+    if release == TAG_GPU and made is not None:
+        sections[TAG_GPU] = made['gpu']
+    else:
+        sections[TAG_GPU] = gpu_section(catalogue)
     return licences_text(date, sections)
 
 
@@ -1150,6 +1330,70 @@ def prepare(args, catalogue: dict) -> dict:
         'licences': text.decode('utf-8'),
         'pending': [],
     }
+
+
+def prepare_gpu(args, catalogue: dict) -> dict:
+    """Makes the files of ai-components-6 in args.out from the package of PACKAGES; returns what the catalogue and
+    MODEL-LICENSES.md should say, as prepare does for ai-components-1"""
+    out = args.out
+    out.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    if args.cache:
+        downloads = args.cache[0]
+    else:
+        temporary = tempfile.TemporaryDirectory(prefix='ai-components-')
+        downloads = pathlib.Path(temporary.name)
+    places = [*args.cache, out, downloads]
+    try:
+        files, libraries, texts, notices = {}, {}, {}, {}
+        for package in PACKAGES:
+            component = catalogue.get(package.component)
+            if component is None:
+                raise Failure(f'the catalogue has no component {package.component}')
+            source = fetch(package.name, package.url, package.size, package.sha256, places, downloads)
+            with zipfile.ZipFile(source) as bundle:
+                names = bundle.namelist()
+                if any(name.lower().endswith('directml.dll') for name in names):
+                    raise Failure(f'{package.name} holds a DirectML.dll: it must never be taken')
+                library = bundle.read(package.library)
+                licence = bundle.read('LICENSE')
+                notice = bundle.read('ThirdPartyNotices.txt')
+            if not licence.lstrip(b'\xef\xbb\xbf').startswith(b'MIT License') or b'Microsoft Corporation' not in licence:
+                raise Failure(f'{package.name}: its LICENSE is not the MIT licence of Microsoft')
+            installed = component['installPath'].rsplit('/', 1)[-1]
+            if installed != package.library.rsplit('/', 1)[-1]:
+                raise Failure(f'{package.component}: the catalogue installs {installed}, the package holds '
+                              f'{package.library}')
+            data = packed(library)
+            write_file(out / component['assetName'], data)
+            files[component['assetName']] = (len(data), sha256_bytes(data))
+            libraries[package.component] = (len(library), sha256_bytes(library), len(data))
+            for kind, text in (('LICENSE', licence), ('ThirdPartyNotices', notice)):
+                asset = package_text(package, kind)
+                write_file(out / asset, text)
+                texts[asset] = files[asset] = (len(text), sha256_bytes(text))
+            notices[package_text(package, 'ThirdPartyNotices')] = texts[package_text(package, 'ThirdPartyNotices')]
+        kept = args.licences.read_text(encoding='utf-8') if args.licences.is_file() else ''
+        upstream = load_sources(args.sources)[3]
+        # The section from the catalogue as the files give it
+        written = read_catalogue(write_catalogue(args.catalogue.read_text(encoding='utf-8'), libraries, notices))
+        gpu = gpu_section(written, texts)
+        text = licences_for(args.date, written, kept, {'gpu': gpu}, TAG_GPU, upstream).encode('utf-8')
+        write_file(out / LICENCES_NAME, text)
+        files[LICENCES_NAME] = (len(text), sha256_bytes(text))
+        sums = ''.join(f'{files[name][1]}  {name}\n' for name in sorted(files)).encode('utf-8')
+        write_file(out / SUMS, sums)
+        files[SUMS] = (len(sums), sha256_bytes(sums))
+    finally:
+        if temporary is not None:
+            temporary.cleanup()
+    print()
+    print(f'Files of {TAG_GPU} in {out}:')
+    for name in sorted(files):
+        size, digest = files[name]
+        print(f'  {name}  {size} bytes  {digest}')
+    return {'files': files, 'libraries': libraries, 'notices': notices, 'gpu': gpu, 'licences': text.decode('utf-8'),
+            'pending': []}
 
 
 def catalogue_findings(catalogue: dict, made: dict) -> list:
@@ -1488,6 +1732,13 @@ def prepare_family(args, catalogue: dict, release: str, token: str | None) -> di
                 shutil.copyfile(source, out / f'{asset}.tmp')
                 os.replace(out / f'{asset}.tmp', out / asset)
             files[asset] = (model.size, model.sha256)
+        for asset, size, digest in LICENCE_FILES.get(release, ()):
+            source = find_in(places, asset, size, digest)
+            if source is None:
+                raise Failure(f'{asset}: the licence text ({size} bytes, SHA-256 {digest}) is in no --cache folder')
+            if source.resolve() != (out / asset).resolve():
+                shutil.copyfile(source, out / asset)
+            files[asset] = (size, digest)
         for engine in ENGINES:
             component = catalogue.get(engine.component)
             if component is None or component.get('releaseTag') != release:
@@ -1641,7 +1892,9 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
     models = {model.component: model for model in models_table}
     upstream = {model.component: model for model in upstream_table}
     engines = {engine.component: engine for engine in ENGINES}
+    packages = {package.component: package for package in PACKAGES}
     family = {**{component: TAG for component in [*archives, *models]},
+              **{component: TAG_GPU for component in packages},
               **{component: model.release for component, model in upstream.items()},
               **{component: engine.release for component, engine in engines.items()},
               **{component: outside.tag for outside in OUTSIDE for component in outside.ids}}
@@ -1722,21 +1975,30 @@ def check(catalogue: dict, licences: str, sources: pathlib.Path | None = None, r
                 found.append(f'{component_id}: the catalogue installs {component.get("installPath")}, the archive '
                              f'holds {archive.library}')
             notice = component.get('notices') or {}
+            package = packages.get(component_id)
             if archive and notice.get('assetName') != text_asset(archive.version, 'ThirdPartyNotices'):
                 found.append(f'{component_id}: its notices must be {text_asset(archive.version, "ThirdPartyNotices")}')
-            elif archive:
+            elif package and notice.get('assetName') != package_text(package, 'ThirdPartyNotices'):
+                found.append(f'{component_id}: its notices must be {package_text(package, "ThirdPartyNotices")}')
+            elif archive or package:
                 notice_row = f'| `{notice.get("assetName")}` | {notice.get("size")} | `{notice.get("sha256")}` |'
                 if notice_row not in licences:
                     found.append(f'{LICENCES_NAME} lacks the row {notice_row}')
+            if package and component.get('installPath', '').rsplit('/', 1)[-1] != package.library.rsplit('/', 1)[-1]:
+                found.append(f'{component_id}: the catalogue installs {component.get("installPath")}, the package '
+                             f'holds {package.library}')
             row = (f'| `{asset}` | `{component_id}` | `{component.get("installPath", "").rsplit("/", 1)[-1]}` | '
                    f'{size} | `{digest}` | {download} |')
         if row not in licences:
             found.append(f'{LICENCES_NAME} lacks the row {row}')
     sections = sections_of(licences)
-    for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS):
+    for tag in (TAG_SCENES, TAG_PANORAMAS, TAG_SPLATS, TAG_VIDEOS, TAG_ENHANCE):
         if tag in releases and sections.get(tag) != family_section(tag, catalogue, tuple(upstream_table)):
             found.append(f'the section of {tag} in {LICENCES_NAME} is not what the catalogue gives: run with '
                          f'--write-licences')
+    if TAG_GPU in releases and sections.get(TAG_GPU) != gpu_section(catalogue).rstrip('\n') + '\n':
+        found.append(f'the section of {TAG_GPU} in {LICENCES_NAME} is not what the catalogue gives: run with '
+                     f'--write-licences')
     if not re.search(r'^Date: \d{4}-\d{2}-\d{2}\.', licences, re.MULTILINE):
         found.append(f'{LICENCES_NAME} has no date')
     return found, pending
@@ -1762,12 +2024,20 @@ NOTES = {
                 '(Apache-2.0, Copyright (2025) Bytedance Ltd.), the ONNX export of looplj at a pinned revision, '
                 'which gives the depth of a video 32 frames at a time on the processor. The FFmpeg program the '
                 'feature also needs comes from a release of immuch360/libmpv-builds.',
+    TAG_GPU: 'The runtime of the graphics card of the 3D videos of Immuch360 Desktop on Windows x64: onnxruntime.dll '
+             'of the official package Microsoft.ML.OnnxRuntime.DirectML 1.24.4 (MIT), as Microsoft built and signed '
+             'it, which runs the depth model on a DirectX 12 card through the DirectML.dll of Windows. The app checks '
+             'the card against the processor first and keeps the processor when they differ.',
+    TAG_ENHANCE: 'The AI components of Enhance (AI) of Immuch360 Desktop: SeedVR2 3B int8 and its VAE (Apache-2.0) '
+                 'for Rebuild details, the four ONNX graphs of VOSR 2.0 1.4B int8 (Apache-2.0) for Natural, and '
+                 'stable-diffusion.cpp on Vulkan (MIT) at the commit SeedVR2 needs, built by our CI. The files of '
+                 '2 GiB or more are in parts, which the app puts end to end. Sharpen uses the files of ai-components-3.',
 }
 
 
 def notes_of(tag: str) -> str:
     """The text of the release [tag]: NOTES, and for the splat scenes what is signed"""
-    if tag != TAG_SPLATS:
+    if tag not in (TAG_SPLATS, TAG_ENHANCE):
         return NOTES[tag]
     windows = [engine for engine in ENGINES if engine.release == tag and engine.windows]
     if all(engine.signed for engine in windows):
@@ -1916,7 +2186,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--out', type=pathlib.Path, help='the folder of the files of the release')
     parser.add_argument('--release', choices=RELEASES, help=f'the release to make or check ({TAG} by default when '
-                        'making, all five when checking)')
+                        'making, all seven when checking)')
     parser.add_argument('--cache', type=pathlib.Path, action='append', default=[],
                         help='a folder of files already downloaded or made; downloads go to the first one')
     parser.add_argument('--from-run', help='the run of our CI whose artifacts give the engines of '
@@ -2008,6 +2278,9 @@ def main(argv=None) -> int:
             made = prepare(args, catalogue)
             if args.write:
                 new = write_catalogue(catalogue_text, made['libraries'], made['notices'])
+        elif args.release == TAG_GPU:
+            made = prepare_gpu(args, catalogue)
+            new = write_catalogue(catalogue_text, made['libraries'], made['notices'])
         else:
             made = prepare_family(args, catalogue, args.release, token)
             new = write_catalogue_family(catalogue_text, made['parts'], made['archives'])
@@ -2016,13 +2289,14 @@ def main(argv=None) -> int:
                 args.catalogue.write_text(new, encoding='utf-8', newline='\n')
                 print(f'written: {args.catalogue}')
             catalogue = read_catalogue(new)
-        if args.release != TAG:
+        if args.release not in (TAG, TAG_GPU):
             finish_family(args, made, catalogue, args.release)
         if args.write:
             args.licences.parent.mkdir(parents=True, exist_ok=True)
             args.licences.write_text(made['licences'], encoding='utf-8', newline='\n')
             print(f'written: {args.licences}')
-        found = catalogue_findings(catalogue, made) if args.release == TAG else family_findings(catalogue, made)
+        found = catalogue_findings(catalogue, made) if args.release in (TAG, TAG_GPU) \
+            else family_findings(catalogue, made)
         licences = args.licences.read_text(encoding='utf-8') if args.licences.is_file() else ''
         if without_date(licences) != without_date(made['licences']):
             found.append(f'{args.licences} differs from the one of these files')

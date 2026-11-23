@@ -46,6 +46,12 @@ const aiComponentsPanoramasReleaseTag = 'ai-components-3';
 const aiComponentsSplatsReleaseTag = 'ai-components-4';
 const aiComponentsVideosReleaseTag = 'ai-components-5';
 
+/// The runtime of the graphics card of the 3D videos on Windows (release 51, ai_gpu_runtime_manifest.dart)
+const aiComponentsGpuReleaseTag = 'ai-components-6';
+
+/// The components of "Enhance (AI)" (release 51, ai_enhance_manifest.dart)
+const aiComponentsEnhanceReleaseTag = 'ai-components-7';
+
 /// The repository whose releases host the components, but the AV2 decoder ([av2DecoderRepository])
 const aiComponentsRepository = 'freeKC/Immuch360';
 
@@ -3189,6 +3195,216 @@ const ffmpegMacComponent = AiComponent(
   ],
 );
 
+// ai-components-6: the runtime of the graphics card of the 3D videos on Windows (lot ai-360-3d-51), made by
+// .github/desktop/ai/publish_ai_components.py from the package Microsoft.ML.OnnxRuntime.DirectML 1.24.4; where the
+// app finds it: ai_gpu_runtime_manifest.dart
+
+/// ThirdPartyNotices.txt of the package (CRLF line ends, as the package holds it)
+const _directMlNotices = AiNoticesFile(
+  assetName: 'onnxruntime-directml-1.24.4-ThirdPartyNotices.txt',
+  size: 331175,
+  sha256: 'fb0af774b4d7cffc5b9d046f2aaeade2f37df2f80abf8033c95dfffcc77a8866',
+);
+
+/// ONNX Runtime 1.24.4 with DirectML for Windows x64: runtimes/win-x64/native/onnxruntime.dll of the package, as it
+/// is (its Authenticode signature kept), gzip compressed for the release
+const onnxRuntimeDirectMlComponent = AiComponent(
+  id: 'onnxruntime-directml-1.24.4-win-x64',
+  name: 'ONNX Runtime 1.24.4 DirectML',
+  version: '1.24.4',
+  kind: AiComponentKind.runtime,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'onnxruntime-directml-1.24.4-win-x64.dll.gz',
+  installPath: 'runtime/onnxruntime-directml-1.24.4/onnxruntime.dll',
+  size: 17328152,
+  sha256: 'e7eedec6a6f26dc39dc948276a75ef6d2bee3fff944d874ceed0bbd3b97bff40',
+  compression: AiCompression.gzip,
+  downloadSize: 6157978,
+  licence: 'MIT',
+  licenceUrl: 'https://www.nuget.org/packages/Microsoft.ML.OnnxRuntime.DirectML/1.24.4/License',
+  notices: _directMlNotices,
+  features: {AiFeature.stereoVideo},
+  releaseTag: aiComponentsGpuReleaseTag,
+);
+
+// ai-components-7: the components of "Enhance (AI)" (lots E1 to E3 of release 51; which level takes which:
+// ai_enhance_manifest.dart and desktop/ai/enhance/enhance_files.dart)
+
+const _gib = 1024 * 1024 * 1024;
+
+const _seedVr2Licence = 'https://huggingface.co/ByteDance-Seed/SeedVR2-3B';
+const _seedVr2Revision = 'https://huggingface.co/Comfy-Org/SeedVR2/resolve/df48879708206a403d2a61acd55578c2e80fd233';
+const _vosrLicence =
+    'https://huggingface.co/moonbox-dev/VOSR-ONNX/blob/46811283f2b767d9d634cdd3d8e465594712df61/LICENSE';
+const _vosrRevision = 'https://huggingface.co/moonbox-dev/VOSR-ONNX/resolve/46811283f2b767d9d634cdd3d8e465594712df61';
+
+const _gpuSystems = {AiPlatform.windowsX64, AiPlatform.linuxX64};
+const _vosrSystems = {AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64};
+
+/// SeedVR2 3B, int8 convrot (3,458,259,704 bytes): the DiT of Rebuild details
+const seedVr2DitComponent = AiComponent(
+  id: 'seedvr2-3b-int8-convrot',
+  name: 'SeedVR2 3B (int8)',
+  version: 'df488797',
+  kind: AiComponentKind.model,
+  platforms: _gpuSystems,
+  assetName: 'seedvr2_3b_int8_convrot.safetensors',
+  installPath: 'models/seedvr2/seedvr2_3b_int8_convrot.safetensors',
+  size: 3458259704,
+  sha256: 'c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _seedVr2Licence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_seedVr2Revision/diffusion_models/seedvr2_3b_int8_convrot.safetensors'],
+  parts: [
+    AiComponentPart(
+      assetName: 'seedvr2_3b_int8_convrot.safetensors.001',
+      size: 2039480320,
+      sha256: 'fb7ada88ecaf1ba03f53d913ae4ca13a6a8b33b4c76f92ec5822998b76cb3843',
+    ),
+    AiComponentPart(
+      assetName: 'seedvr2_3b_int8_convrot.safetensors.002',
+      size: 1418779384,
+      sha256: '51e7c59c254dea0a0d362aba225917c095cb215450d93056b96df174697a3a8b',
+    ),
+  ],
+  minGraphicsMemory: 6 * _gib,
+);
+
+/// The VAE of SeedVR2 in fp16 (501,324,814 bytes)
+const seedVr2VaeComponent = AiComponent(
+  id: 'seedvr2-ema-vae-fp16',
+  name: 'SeedVR2 VAE',
+  version: 'df488797',
+  kind: AiComponentKind.model,
+  platforms: _gpuSystems,
+  assetName: 'seedvr2_ema_vae_fp16.safetensors',
+  installPath: 'models/seedvr2/seedvr2_ema_vae_fp16.safetensors',
+  size: 501324814,
+  sha256: '20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _seedVr2Licence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_seedVr2Revision/vae/seedvr2_ema_vae_fp16.safetensors'],
+);
+
+/// stable-diffusion.cpp at 0d71f963 on Vulkan for Windows x64, the engine of Rebuild details: pending the run of our CI
+/// that builds and signs it (no size, no sum, no files: never offered before)
+const sdCppSeedVr2WindowsComponent = AiComponent(
+  id: 'sd-cpp-seedvr2-vulkan-win-x64',
+  name: 'stable-diffusion.cpp for SeedVR2 (Vulkan)',
+  version: '0d71f96-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'sd-cpp-seedvr2-vulkan-win-x64.zip',
+  installPath: 'engines/sd-cpp-seedvr2-vulkan-win-x64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'MIT',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE',
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+);
+
+/// The same for Linux x64, with the launcher immuch360-run
+const sdCppSeedVr2LinuxComponent = AiComponent(
+  id: 'sd-cpp-seedvr2-vulkan-linux-x64',
+  name: 'stable-diffusion.cpp for SeedVR2 (Vulkan)',
+  version: '0d71f96-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.linuxX64},
+  assetName: 'sd-cpp-seedvr2-vulkan-linux-x64.zip',
+  installPath: 'engines/sd-cpp-seedvr2-vulkan-linux-x64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'MIT',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE',
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+);
+
+/// VOSR 2.0 1.4B int8, DINOv2-L: a graph of Natural
+const vosrImageEncoderComponent = AiComponent(
+  id: 'vosr2-1.4b-int8-image-encoder',
+  name: 'VOSR 2.0 1.4B int8 (DINOv2-L)',
+  version: '46811283',
+  kind: AiComponentKind.model,
+  platforms: _vosrSystems,
+  assetName: 'vosr2-int8-image_encoder.onnx',
+  installPath: 'models/vosr2-int8/image_encoder/model.onnx',
+  size: 460494444,
+  sha256: '991f96af4a0dedf5da19d5a69a8c77f106138cacffdc82fadeef2397dd3c37cd',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _vosrLicence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_vosrRevision/int8/image_encoder/model.onnx'],
+);
+
+/// VOSR 2.0 1.4B int8, VAE encoder: a graph of Natural
+const vosrVaeEncoderComponent = AiComponent(
+  id: 'vosr2-1.4b-int8-vae-encoder',
+  name: 'VOSR 2.0 1.4B int8 (VAE encoder)',
+  version: '46811283',
+  kind: AiComponentKind.model,
+  platforms: _vosrSystems,
+  assetName: 'vosr2-int8-vae_encoder.onnx',
+  installPath: 'models/vosr2-int8/vae_encoder/model.onnx',
+  size: 38701657,
+  sha256: 'c3efac4d5f173692c45002aa90d79f155898697db73cfcef1fb90a56d07ea161',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _vosrLicence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_vosrRevision/int8/vae_encoder/model.onnx'],
+);
+
+/// VOSR 2.0 1.4B int8, transformer: a graph of Natural
+const vosrTransformerComponent = AiComponent(
+  id: 'vosr2-1.4b-int8-transformer',
+  name: 'VOSR 2.0 1.4B int8 (transformer)',
+  version: '46811283',
+  kind: AiComponentKind.model,
+  platforms: _vosrSystems,
+  assetName: 'vosr2-int8-transformer.onnx',
+  installPath: 'models/vosr2-int8/transformer/model.onnx',
+  size: 1409190442,
+  sha256: 'e38ab963051515bdc39fb1a096d8eb3ee895355cdc1b658bbd7ce9fa3af8bd62',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _vosrLicence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_vosrRevision/int8/transformer/model.onnx'],
+);
+
+/// VOSR 2.0 1.4B int8, VAE decoder: a graph of Natural
+const vosrVaeDecoderComponent = AiComponent(
+  id: 'vosr2-1.4b-int8-vae-decoder',
+  name: 'VOSR 2.0 1.4B int8 (VAE decoder)',
+  version: '46811283',
+  kind: AiComponentKind.model,
+  platforms: _vosrSystems,
+  assetName: 'vosr2-int8-vae_decoder.onnx',
+  installPath: 'models/vosr2-int8/vae_decoder/model.onnx',
+  size: 50689496,
+  sha256: '3ca755f97a8d57ad5f793c757f0d3a65200067d98528f110d765b4b28ef989ba',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _vosrLicence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_vosrRevision/int8/vae_decoder/model.onnx'],
+);
+
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)
 /// ask for it.
 const aiComponents = <AiComponent>[
@@ -3219,6 +3435,15 @@ const aiComponents = <AiComponent>[
   ffmpegWindowsComponent,
   ffmpegLinuxComponent,
   ffmpegMacComponent,
+  onnxRuntimeDirectMlComponent,
+  seedVr2DitComponent,
+  seedVr2VaeComponent,
+  sdCppSeedVr2WindowsComponent,
+  sdCppSeedVr2LinuxComponent,
+  vosrImageEncoderComponent,
+  vosrVaeEncoderComponent,
+  vosrTransformerComponent,
+  vosrVaeDecoderComponent,
 ];
 
 /// The components [platform] needs for [feature] (the 3D photo when not given), the runtimes first, then the

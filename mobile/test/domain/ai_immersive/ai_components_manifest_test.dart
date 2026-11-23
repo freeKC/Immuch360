@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show aiEnhanceComponents;
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences.dart';
 
@@ -31,7 +32,8 @@ void main() {
     test('the runtimes carry what the publication script read from the official archives', () {
       final runtimes = aiComponents.where((component) => component.kind == AiComponentKind.runtime);
 
-      expect(runtimes, hasLength(4));
+      // ONNX Runtime 1.31.0 and 1.23.2, and the DirectML build of the 3D videos on Windows (ai-components-6)
+      expect(runtimes, hasLength(5));
       for (final runtime in runtimes) {
         expect(runtime.isComplete, isTrue, reason: runtime.id);
         expect(runtime.compression, AiCompression.gzip);
@@ -45,6 +47,8 @@ void main() {
       expect(onnxRuntimeLinuxComponent.size, 29345384);
       expect(onnxRuntimeMacArmComponent.size, 44830288);
       expect(onnxRuntimeMacIntelComponent.size, 39742608);
+      expect(onnxRuntimeDirectMlComponent.size, 17328152);
+      expect(onnxRuntimeDirectMlComponent.releaseTag, aiComponentsGpuReleaseTag);
     });
 
     test('every component has a name; ONNX Runtime has its notices, downloaded as a file of their own', () {
@@ -96,7 +100,12 @@ void main() {
       expect(depthModelOnnxComponent.features, {AiFeature.stereoPhoto, AiFeature.stereoPanorama});
       expect(depthModelTfliteComponent.features, {AiFeature.stereoPhoto});
       // Every feature runs on ONNX Runtime but the splat scene, made by COLMAP and Brush
-      for (final runtime in aiComponents.where((component) => component.kind == AiComponentKind.runtime)) {
+      // The DirectML build serves the 3D videos only, on Windows (release 51)
+      expect(onnxRuntimeDirectMlComponent.features, {AiFeature.stereoVideo});
+      expect(onnxRuntimeDirectMlComponent.platforms, {AiPlatform.windowsX64});
+      for (final runtime in aiComponents.where(
+        (component) => component.kind == AiComponentKind.runtime && component != onnxRuntimeDirectMlComponent,
+      )) {
         expect(
           runtime.features,
           AiFeature.values.where((feature) => feature.isAi).toSet()..remove(AiFeature.splatScene),
@@ -155,6 +164,10 @@ void main() {
         final ffmpeg = component.id.startsWith('ffmpeg-lgpl-');
         final family = av2
             ? av2DecoderReleaseTag
+            : component == onnxRuntimeDirectMlComponent
+            ? aiComponentsGpuReleaseTag
+            : aiEnhanceComponents.contains(component)
+            ? aiComponentsEnhanceReleaseTag
             : ffmpeg
             ? ffmpegProgramReleaseTag
             : component.features.contains(AiFeature.stereoPhoto)
@@ -302,6 +315,7 @@ void main() {
       expect(aiComponents.where((component) => component.isInParts).map((component) => component.id), [
         'flux2-klein-base-4b-q4_0',
         'qwen3-4b-q4_k_m',
+        'seedvr2-3b-int8-convrot',
       ]);
     });
 
@@ -314,6 +328,8 @@ void main() {
         // The FFmpeg program too, with its corresponding source named in licenses/FFmpeg-SOURCE.txt
         if (component == sdCppWindowsComponent ||
             component == sdCppLinuxComponent ||
+            component == sdCppSeedVr2WindowsComponent ||
+            component == sdCppSeedVr2LinuxComponent ||
             component.id.startsWith('ffmpeg-lgpl-')) {
           expect(text, 'See ${component.licenceUrl}\n', reason: component.id);
           continue;
@@ -420,7 +436,8 @@ void main() {
       final splats = windows.firstWhere((group) => group.group == AiFeatureGroup.splats);
       expect(splats.all, [colmapWindowsComponent, brushWindowsComponent]);
       expect(splats.own, [colmapWindowsComponent, brushWindowsComponent]);
-      expect(windows.last.own, [ffmpegWindowsComponent, videoDepthModelComponent]);
+      // The 3D videos on Windows: the DirectML build of ONNX Runtime too (ai-components-6, release 51)
+      expect(windows.last.own, [onnxRuntimeDirectMlComponent, ffmpegWindowsComponent, videoDepthModelComponent]);
       expect(windows.first.own, [onnxRuntimeWindowsComponent, depthModelOnnxComponent]);
       expect(windows[1].all, [onnxRuntimeWindowsComponent, mogeGeometryComponent, lamaInpaintComponent]);
       expect(windows[1].own, [mogeGeometryComponent, lamaInpaintComponent]);
@@ -538,6 +555,8 @@ void main() {
             // On every computer, Intel Macs included since release 51 (ONNX Runtime 1.23.2 runs the model, lot L06)
             platform == AiPlatform.questArm64
                 ? isEmpty
+                : platform == AiPlatform.windowsX64
+                ? [AiComponentKind.runtime, AiComponentKind.runtime, AiComponentKind.archive, AiComponentKind.model]
                 : [AiComponentKind.runtime, AiComponentKind.archive, AiComponentKind.model],
             reason: platform.name,
           );

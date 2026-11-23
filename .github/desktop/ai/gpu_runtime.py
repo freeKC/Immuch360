@@ -14,9 +14,10 @@ and with --plain DIR the DLL unpacked (DIR/onnxruntime.dll), for the tests and t
 of the package Microsoft.AI.DirectML is NOT taken: its licence (Microsoft software licence terms) is not one this
 project allows; the library calls the DirectML.dll of Windows (System32) instead.
 
-The entry of the app (mobile/lib/domain/models/ai_immersive/ai_gpu_runtime_manifest.dart) must give the same size, sum
-and download size, and the same size and sum of the notices: checked, exit 1 when they differ. Nothing is published:
-the prerelease is made by hand once it is decided (the command printed at the end).
+The entry of the app (onnxRuntimeDirectMlComponent of mobile/lib/domain/models/ai_immersive/ai_components_manifest.dart)
+must give the same size, sum and download size, and the same size and sum of the notices: checked, exit 1 when they
+differ. Nothing is published here: the CI makes these files for its tests and probes, and the prerelease ai-components-6
+is made by publish_ai_components.py --release ai-components-6 (the same files, with MODEL-LICENSES.md).
 
   gpu_runtime.py --out DIR [--plain DIR] [--cache DIR]
 """
@@ -33,7 +34,7 @@ import urllib.request
 import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
-MANIFEST = ROOT / 'mobile' / 'lib' / 'domain' / 'models' / 'ai_immersive' / 'ai_gpu_runtime_manifest.dart'
+MANIFEST = ROOT / 'mobile' / 'lib' / 'domain' / 'models' / 'ai_immersive' / 'ai_components_manifest.dart'
 TAG = 'ai-components-6'
 VERSION = '1.24.4'
 PACKAGE = ('microsoft.ml.onnxruntime.directml.1.24.4.nupkg',
@@ -149,11 +150,6 @@ def main() -> int:
         print('\n'.join(wrong), file=sys.stderr)
         return 1
     print(f'{MANIFEST.name} agrees with the files')
-    total = sum(len(data) for data in files.values()) + len(sums)
-    print(f'to publish (not done here): the prerelease {TAG} of freeKC/Immuch360, never Latest, {len(files) + 1} '
-          f'files, {total} bytes:')
-    print(f'  gh release create {TAG} --repo freeKC/Immuch360 --prerelease --latest=false --title "{TAG}" '
-          f'--notes-file <notes> {" ".join(sorted([*files, "SHA256SUMS"]))}')
     return 0
 
 

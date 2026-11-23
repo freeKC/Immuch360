@@ -31,7 +31,6 @@ import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
-import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart';
 import 'package:path/path.dart' as p;
 
 final _clock = Stopwatch()..start();

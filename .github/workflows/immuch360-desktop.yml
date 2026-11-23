@@ -1126,10 +1126,11 @@ jobs:
 
       # The runtime of the graphics card of the 3D videos (lot ai-360-3d-51): onnxruntime.dll of the official NuGet
       # package Microsoft.ML.OnnxRuntime.DirectML 1.24.4 (MIT), checked by its SHA-256, made into the files of the
-      # prerelease ai-components-6 (not published by this workflow: the artifact ai-components-6-candidate holds them),
-      # its sizes and sums held to mobile/lib/domain/models/ai_immersive/ai_gpu_runtime_manifest.dart. No DirectML.dll:
-      # the library calls the one of Windows. The runner has no graphics card; DirectML runs on WARP there, which the
-      # app never takes as a card, the tests and probes below do (--allow-software)
+      # prerelease ai-components-6 (published since release 51; the artifact ai-components-6-candidate holds the files
+      # of this run), its sizes and sums held to the catalogue (ai_components_manifest.dart), for the tests and probes
+      # below; the app downloads it like the other components. No DirectML.dll: the library calls the one of Windows.
+      # The runner has no graphics card; DirectML runs on WARP there, which the app never takes as a card, the tests
+      # and probes below do (--allow-software)
       - name: The DirectML runtime of the graphics card
         id: ort_card
         run: |
@@ -1143,7 +1144,7 @@ jobs:
           powershell -NoProfile -Command '(Get-Item C:\Windows\System32\DirectML.dll).VersionInfo.FileVersion' \
             || echo "no DirectML.dll in System32"
 
-      - name: Upload the files of ai-components-6 (not published)
+      - name: Upload the files of ai-components-6 made by this run
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ai-components-6-candidate
@@ -1342,27 +1343,6 @@ jobs:
           if info is None:
               sys.exit('::error::no immuch_sbs_codec.dll next to immuch360.exe in the ZIP')
           print(f'immuch_sbs_codec.dll: {info.file_size} bytes in the ZIP')
-          PY
-
-      # The runtime of the graphics card in the test ZIP only (lot ai-360-3d-51), while ai-components-6 is not
-      # published: ai-gpu/onnxruntime-directml-1.24.4/ beside the executable, the DLL with its MIT licence and notices,
-      # which the app takes when its size and SHA-256 are those of its catalogue. Not in the installer, not in a
-      # release build (tags)
-      - name: The DirectML runtime in the test ZIP
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        env:
-          ZIP: ${{ steps.bundle.outputs.zip }}
-          PLAIN: ${{ steps.ort_card.outputs.plain }}
-        run: |
-          python - "$ZIP" "$PLAIN" <<'PY'
-          import hashlib, pathlib, sys, zipfile
-          archive, plain = sys.argv[1], pathlib.Path(sys.argv[2])
-          top = 'Immuch360 Desktop/ai-gpu/onnxruntime-directml-1.24.4/'
-          with zipfile.ZipFile(archive, 'a', compression=zipfile.ZIP_DEFLATED) as bundle:
-              for name in ('onnxruntime.dll', 'LICENSE.txt', 'ThirdPartyNotices.txt'):
-                  data = (plain / name).read_bytes()
-                  bundle.writestr(top + name, data)
-                  print(f'{top}{name}: {len(data)} bytes, SHA-256 {hashlib.sha256(data).hexdigest()}')
           PY
 
       # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
