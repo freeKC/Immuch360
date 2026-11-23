@@ -3302,13 +3302,146 @@ const sdCppSeedVr2WindowsComponent = AiComponent(
   platforms: {AiPlatform.windowsX64},
   assetName: 'sd-cpp-seedvr2-vulkan-win-x64.zip',
   installPath: 'engines/sd-cpp-seedvr2-vulkan-win-x64',
-  size: null,
-  sha256: null,
+  size: 32008928,
+  sha256: '2a9aaebf1edacbeabb537f20551169ac13783e9a35b00310c0791e5d4005cf63',
   compression: AiCompression.none,
   licence: 'MIT',
   licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE',
   features: {},
   releaseTag: aiComponentsEnhanceReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 866,
+      sha256: 'c01236e410bf31a60957592d75be9dc0279200de38c95a035a6195cc337a0722',
+    ),
+    AiArchiveFile(
+      path: 'ggml-base.dll',
+      size: 757576,
+      sha256: 'c63a10665f6dc5fba7e1e0642715f5aebb8022fe1d217f90461848c09d09b5c6',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-alderlake.dll',
+      size: 1011016,
+      sha256: 'f72e6cc46e8f92b2c19af0e5fdbc22ef4fe4577aa7f2265368e72cca5f02734d',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-cannonlake.dll',
+      size: 1056584,
+      sha256: '3346f1561bab7089725fa86738b08ced611e6f89b6578a28dbe642e3fae5fd32',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-cascadelake.dll',
+      size: 1057608,
+      sha256: '0527db0b3f13f5d7587d5fe57188e0ba6171289a868db96df6af0b94b8d9a853',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-haswell.dll',
+      size: 1012040,
+      sha256: '823379f82508907ef8dad06bbe3878e70e1e4f8b2b0a1d084f640fb57f7e46ae',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-icelake.dll',
+      size: 1057608,
+      sha256: '407b415a2f28f29a710307abdcc1c01751c7c95389ceb95901242a2ae63f8319',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-sandybridge.dll',
+      size: 1033032,
+      sha256: '56d765c57f70632aeb14b384175289772a3c2237fa059fe0bcfcdef99e3c9dd6',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-skylakex.dll',
+      size: 1056584,
+      sha256: '1c0406d7903f8c6dbb8554e9eb96fb570c243bc79c1bed1cf6d860223d800376',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-sse42.dll',
+      size: 870728,
+      sha256: 'f758c7caf3d0c58b1aef340223eab6b18f5168f84598af308b275c0bb5225dff',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-x64.dll',
+      size: 871752,
+      sha256: 'e3d28a1d340968c709e7b937cab81d27bf2896c2996c1eed4b588fe5434d662c',
+    ),
+    AiArchiveFile(
+      path: 'ggml-vulkan.dll',
+      size: 40779080,
+      sha256: '187780065ef79cf3704ef61415d06f708fe858ba67cfbfc37a8c7a1048e281d0',
+    ),
+    AiArchiveFile(
+      path: 'ggml.dll',
+      size: 76104,
+      sha256: '89d886a95ed58f577fc8cc66b7208eb5ac8e4cbd25479471b9349ca5a5679e41',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 1185,
+      sha256: '26f980b88d5210da2e6024efbd56d3d2ca77de7010bc73989b660187ce53528a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 6968,
+      sha256: '0d58c599729e84498452fce4fbafa819cc6529683d0711c60b3a965132444b70',
+    ),
+    AiArchiveFile(
+      path: 'licenses/darts-clone-LICENSE.txt',
+      size: 1491,
+      sha256: 'ed8437dc7358a40ef10afd3635ac1cd43c88fbaaaf6cd27c414f8ada5d68f447',
+    ),
+    AiArchiveFile(
+      path: 'licenses/ggml-LICENSE.txt',
+      size: 1099,
+      sha256: 'bcd8ec749126d45cb06737d0690295d73df4b6e7e194205bcf91190368f27285',
+    ),
+    AiArchiveFile(
+      path: 'licenses/oniguruma-COPYING.txt',
+      size: 1366,
+      sha256: '0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933',
+    ),
+    AiArchiveFile(
+      path: 'licenses/stable-diffusion.cpp-LICENSE.txt',
+      size: 1082,
+      sha256: '4e76049398df734a97db46f3bd4b5cbc460cb5f6bfaf737cdc3d6fbb8ab3de27',
+    ),
+    AiArchiveFile(
+      path: 'licenses/utf8proc-LICENSE.md',
+      size: 5218,
+      sha256: '767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644',
+    ),
+    AiArchiveFile(
+      path: 'msvcp140.dll',
+      size: 557728,
+      sha256: '0f885b509a685d2bbfa652fed26b5fb31d88fbdab0a978c641d1c7b8aa460aa9',
+    ),
+    AiArchiveFile(
+      path: 'msvcp140_codecvt_ids.dll',
+      size: 31872,
+      sha256: 'f2069a52880ec885ee7f0511186100eb7fada0411a2b4948fafea7735b878a18',
+    ),
+    AiArchiveFile(
+      path: 'sd-cli.exe',
+      size: 623944,
+      sha256: '749934f4449beb4c625e74a4b09c29609689868a90b6ca9a20e47e1283b2e47b',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'stable-diffusion.dll',
+      size: 38794056,
+      sha256: '12428bbcbd4fd4868254933927a152e7d279dce35c7a442579006702044797c0',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140.dll',
+      size: 124544,
+      sha256: 'd5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140_1.dll',
+      size: 49792,
+      sha256: '1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f',
+    ),
+  ],
 );
 
 /// The same for Linux x64, with the launcher immuch360-run
@@ -3320,13 +3453,157 @@ const sdCppSeedVr2LinuxComponent = AiComponent(
   platforms: {AiPlatform.linuxX64},
   assetName: 'sd-cpp-seedvr2-vulkan-linux-x64.zip',
   installPath: 'engines/sd-cpp-seedvr2-vulkan-linux-x64',
-  size: null,
-  sha256: null,
+  size: 37741231,
+  sha256: '62ae653e2d3e49ba4c9e62741adb69e3c43e18d35a85bf2f13397ef8c798cf29',
   compression: AiCompression.none,
   licence: 'MIT',
   licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE',
   features: {},
   releaseTag: aiComponentsEnhanceReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 816,
+      sha256: '37a9b1833e914dffc9ac6aa86d1bab2a72bf0deae3dc80cdbd32b137fffa8cd4',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-run',
+      size: 16552,
+      sha256: '779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'libggml-base.so.1',
+      size: 1002488,
+      sha256: '3aad50895abdb6caab6b14d10256cb697f968629df05d07f418b85b2b0eb19e1',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-alderlake.so',
+      size: 1299000,
+      sha256: 'e039ace50f89eaee5278aa935b05a20c169dae6f53c260f086367fefa284f988',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cannonlake.so',
+      size: 1381032,
+      sha256: '3da6ac901d6d775c556f93442251284e4c61eb9818e56a34a7b5506be6d5f2e2',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cascadelake.so',
+      size: 1397120,
+      sha256: 'bea3e369404f8cc4312b3cd40a953181babab888471283161a0f60b69126a9b6',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cooperlake.so',
+      size: 1397120,
+      sha256: '1cea9ebd9d93ff4dc21ad56522355ede08eceafb5c438ffb72413c01edba2f95',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-haswell.so',
+      size: 1303096,
+      sha256: '719969d9ba782813e24e0474865440fcf766caedb9d41f5336f6a377e9074e3d',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-icelake.so',
+      size: 1397120,
+      sha256: 'e791c694f05b474d430bad437a843c1525ffc0377a4cf0bbf17283883fb4c260',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-ivybridge.so',
+      size: 1235880,
+      sha256: 'd1441f9e8b7424d95427c10b75e1dbe53bc11e3bed6f414709fa597c8873cc91',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-piledriver.so',
+      size: 1235880,
+      sha256: 'b3b3a7c2315f7d9eddca2526451d45b29706753a731a7a205ed2a9f0957299ec',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sandybridge.so',
+      size: 1248328,
+      sha256: 'b7c1b0904ea3610f9935600eddd7a9b78fc36bad096b48d6fc14b0db31a0b050',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sapphirerapids.so',
+      size: 1697448,
+      sha256: '9010d4153ea9114b7b18bbc23568cf9a7d7ff4f2650c6ada07d3c071d74856a8',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-skylakex.so',
+      size: 1381032,
+      sha256: '820ba034c7ff3bda86dae8bdc89ebd66273ab87464b98e096d4e1954ca513c5c',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sse42.so',
+      size: 985408,
+      sha256: '80112abb0da4e1b9d2132b2e816771096971433c6f3ef6c85d18071408905064',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-x64.so',
+      size: 985536,
+      sha256: '282377079ea2dfacaf467074db1527ec8abbba2ee22b8a70e5938d1090eda3b9',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-zen4.so',
+      size: 1397120,
+      sha256: 'cc1c5f7a291f2d4a3280b9e59bdd06c6ca14627bb01ec82866d2bb46e5e3b405',
+    ),
+    AiArchiveFile(
+      path: 'libggml-vulkan.so',
+      size: 41424648,
+      sha256: 'e9344c1e8614afa15cc9c922490d5bf59ec7114cfb93729d8b99919ca774d181',
+    ),
+    AiArchiveFile(
+      path: 'libggml.so.1',
+      size: 51040,
+      sha256: '6a6b8efcaed753fd4c30e89be56846376aeef0726db59d380a97520452f0ca39',
+    ),
+    AiArchiveFile(
+      path: 'libstable-diffusion.so',
+      size: 45861728,
+      sha256: '6bce5e93470f3360f63ee5c4df17578f8c996c7664e13816a6f78ad60aaf42b8',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 1169,
+      sha256: 'dfc8ee008f776c77648f9c6692fce332ad190a2479653c6399bc2873b5d7e8be',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 6862,
+      sha256: 'de31b8552d1bdb1765a3b75781df6763f576d8762fc9a58d652a4d4733bcf70b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/darts-clone-LICENSE.txt',
+      size: 1481,
+      sha256: '155f59997298ee336602c49f9c1110f268ac394ca2197eb02647a3555935ad52',
+    ),
+    AiArchiveFile(
+      path: 'licenses/ggml-LICENSE.txt',
+      size: 1078,
+      sha256: '94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/oniguruma-COPYING.txt',
+      size: 1366,
+      sha256: '0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933',
+    ),
+    AiArchiveFile(
+      path: 'licenses/stable-diffusion.cpp-LICENSE.txt',
+      size: 1062,
+      sha256: 'b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee',
+    ),
+    AiArchiveFile(
+      path: 'licenses/utf8proc-LICENSE.md',
+      size: 5218,
+      sha256: '767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644',
+    ),
+    AiArchiveFile(
+      path: 'sd-cli',
+      size: 1185464,
+      sha256: '5199f72285d63c2999d7d00b2866d6e7e1de579dab9e1c7533c01d1323276bed',
+      executable: true,
+    ),
+  ],
 );
 
 /// VOSR 2.0 1.4B int8, DINOv2-L: a graph of Natural

@@ -480,15 +480,27 @@ void main() {
     expect(enhanceSkipOf(_photo('fifty.jpg', width: 10000, height: 5000), const ConversionPhotoFacts()), isNull);
   });
 
-  test('the components of ai-components-7 are not offered while it is not published', () async {
+  test('the components of ai-components-7 are offered since it is published, never while it is not', () async {
     final files = _NoFiles();
-    expect(aiEnhanceComponentsPublished, isFalse);
+    // Published on 24 November 2026 (release 51)
+    expect(aiEnhanceComponentsPublished, isTrue);
     for (final platform in [AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64]) {
-      final natural = await enhanceComponentFiles(EnhanceLevel.natural, platform, files);
+      final natural = await enhanceComponentFiles(EnhanceLevel.natural, platform, files, published: false);
       expect(natural.notInThisVersion, isTrue, reason: '$platform');
       expect(natural.missing, isEmpty);
     }
-    expect((await enhanceComponentFiles(EnhanceLevel.rebuild, AiPlatform.windowsX64, files)).notInThisVersion, isTrue);
+    expect(
+      (await enhanceComponentFiles(
+        EnhanceLevel.rebuild,
+        AiPlatform.windowsX64,
+        files,
+        published: false,
+      )).notInThisVersion,
+      isTrue,
+    );
+    final rebuild = await enhanceComponentFiles(EnhanceLevel.rebuild, AiPlatform.windowsX64, files);
+    expect(rebuild.notInThisVersion, isFalse);
+    expect(rebuild.missing, [sdCppSeedVr2WindowsComponent, seedVr2DitComponent, seedVr2VaeComponent]);
     // Sharpen takes the components of ai-components-3: offered, to download
     final sharpen = await enhanceComponentFiles(EnhanceLevel.sharpen, AiPlatform.windowsX64, files);
     expect(sharpen.notInThisVersion, isFalse);
@@ -585,8 +597,10 @@ void main() {
     expect(enhanceComponentsOf(EnhanceLevel.natural, AiPlatform.macosArm64).first, onnxRuntimeMacArmComponent);
     expect(enhanceComponentsOf(EnhanceLevel.sharpen, AiPlatform.macosArm64), isEmpty);
     expect(enhanceComponentsOf(EnhanceLevel.rebuild, AiPlatform.macosArm64), isEmpty);
-    // The engine of Rebuild details waits for its CI run: never offered before
-    expect(sdCppSeedVr2WindowsComponent.isComplete, isFalse);
+    // The engines of Rebuild details, from the run of the release workflow that signed the Windows one
+    expect(sdCppSeedVr2WindowsComponent.isComplete, isTrue);
+    expect(sdCppSeedVr2LinuxComponent.isComplete, isTrue);
+    expect(sdCppSeedVr2WindowsComponent.archiveFiles.map((file) => file.path), contains('sd-cli.exe'));
     expect(seedVr2DitComponent.parts.fold<int>(0, (sum, part) => sum + part.size), seedVr2DitComponent.size);
     expect(seedVr2DitComponent.parts.every((part) => part.size < aiReleaseAssetLimit), isTrue);
     expect(vosrComponents.every((component) => component.size! < aiReleaseAssetLimit), isTrue);

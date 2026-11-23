@@ -1,6 +1,6 @@
 # Licences of the AI components of Immuch360
 
-Date: 2026-11-23. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases
+Date: 2026-11-24. Written by `.github/desktop/ai/publish_ai_components.py` from the files of the prereleases
 `ai-components-1` (3D photos), `ai-components-2` (3D scenes), `ai-components-3` (360° panoramas), `ai-components-4`
 (splat scenes), `ai-components-5` (3D videos), `ai-components-6` (the graphics card of the 3D videos) and
 `ai-components-7` (Enhance (AI)):
@@ -616,6 +616,8 @@ https://github.com/freeKC/Immuch360/releases/tag/ai-components-7
 | `vosr2-int8-vae_encoder.onnx` | `vosr2-1.4b-int8-vae-encoder` | 38701657 | `c3efac4d5f173692c45002aa90d79f155898697db73cfcef1fb90a56d07ea161` | Apache-2.0 | https://huggingface.co/moonbox-dev/VOSR-ONNX, revision `46811283`, `int8/vae_encoder/model.onnx` |
 | `vosr2-int8-transformer.onnx` | `vosr2-1.4b-int8-transformer` | 1409190442 | `e38ab963051515bdc39fb1a096d8eb3ee895355cdc1b658bbd7ce9fa3af8bd62` | Apache-2.0 | https://huggingface.co/moonbox-dev/VOSR-ONNX, revision `46811283`, `int8/transformer/model.onnx` |
 | `vosr2-int8-vae_decoder.onnx` | `vosr2-1.4b-int8-vae-decoder` | 50689496 | `3ca755f97a8d57ad5f793c757f0d3a65200067d98528f110d765b4b28ef989ba` | Apache-2.0 | https://huggingface.co/moonbox-dev/VOSR-ONNX, revision `46811283`, `int8/vae_decoder/model.onnx` |
+| `sd-cpp-seedvr2-vulkan-win-x64.zip` | `sd-cpp-seedvr2-vulkan-win-x64` | 32008928 | `2a9aaebf1edacbeabb537f20551169ac13783e9a35b00310c0791e5d4005cf63` | MIT | built and signed by our CI |
+| `sd-cpp-seedvr2-vulkan-linux-x64.zip` | `sd-cpp-seedvr2-vulkan-linux-x64` | 37741231 | `62ae653e2d3e49ba4c9e62741adb69e3c43e18d35a85bf2f13397ef8c798cf29` | MIT | built by our CI |
 
 The files of 2 GiB or more are in parts (GitHub refuses a larger asset), put end to end by the app, which
 checks the sum of each part and of the whole:
@@ -625,9 +627,69 @@ checks the sum of each part and of the whole:
 | `seedvr2_3b_int8_convrot.safetensors.001` | 1 of 2 of `seedvr2_3b_int8_convrot.safetensors` | 2039480320 | `fb7ada88ecaf1ba03f53d913ae4ca13a6a8b33b4c76f92ec5822998b76cb3843` |
 | `seedvr2_3b_int8_convrot.safetensors.002` | 2 of 2 of `seedvr2_3b_int8_convrot.safetensors` | 1418779384 | `51e7c59c254dea0a0d362aba225917c095cb215450d93056b96df174697a3a8b` |
 
-`sd-cpp-seedvr2-vulkan-win-x64`: pending, written by this script from the artifacts of our CI.
+`sd-cpp-seedvr2-vulkan-win-x64.zip` holds, unpacked into `engines/sd-cpp-seedvr2-vulkan-win-x64`:
 
-`sd-cpp-seedvr2-vulkan-linux-x64`: pending, written by this script from the artifacts of our CI.
+| File | Size (bytes) | SHA-256 | Program |
+| --- | --- | --- | --- |
+| `BUILD-INFO.txt` | 866 | `c01236e410bf31a60957592d75be9dc0279200de38c95a035a6195cc337a0722` | no |
+| `ggml-base.dll` | 757576 | `c63a10665f6dc5fba7e1e0642715f5aebb8022fe1d217f90461848c09d09b5c6` | no |
+| `ggml-cpu-alderlake.dll` | 1011016 | `f72e6cc46e8f92b2c19af0e5fdbc22ef4fe4577aa7f2265368e72cca5f02734d` | no |
+| `ggml-cpu-cannonlake.dll` | 1056584 | `3346f1561bab7089725fa86738b08ced611e6f89b6578a28dbe642e3fae5fd32` | no |
+| `ggml-cpu-cascadelake.dll` | 1057608 | `0527db0b3f13f5d7587d5fe57188e0ba6171289a868db96df6af0b94b8d9a853` | no |
+| `ggml-cpu-haswell.dll` | 1012040 | `823379f82508907ef8dad06bbe3878e70e1e4f8b2b0a1d084f640fb57f7e46ae` | no |
+| `ggml-cpu-icelake.dll` | 1057608 | `407b415a2f28f29a710307abdcc1c01751c7c95389ceb95901242a2ae63f8319` | no |
+| `ggml-cpu-sandybridge.dll` | 1033032 | `56d765c57f70632aeb14b384175289772a3c2237fa059fe0bcfcdef99e3c9dd6` | no |
+| `ggml-cpu-skylakex.dll` | 1056584 | `1c0406d7903f8c6dbb8554e9eb96fb570c243bc79c1bed1cf6d860223d800376` | no |
+| `ggml-cpu-sse42.dll` | 870728 | `f758c7caf3d0c58b1aef340223eab6b18f5168f84598af308b275c0bb5225dff` | no |
+| `ggml-cpu-x64.dll` | 871752 | `e3d28a1d340968c709e7b937cab81d27bf2896c2996c1eed4b588fe5434d662c` | no |
+| `ggml-vulkan.dll` | 40779080 | `187780065ef79cf3704ef61415d06f708fe858ba67cfbfc37a8c7a1048e281d0` | no |
+| `ggml.dll` | 76104 | `89d886a95ed58f577fc8cc66b7208eb5ac8e4cbd25479471b9349ca5a5679e41` | no |
+| `licenses/README.md` | 1185 | `26f980b88d5210da2e6024efbd56d3d2ca77de7010bc73989b660187ce53528a` | no |
+| `licenses/THIRD-PARTY.md` | 6968 | `0d58c599729e84498452fce4fbafa819cc6529683d0711c60b3a965132444b70` | no |
+| `licenses/darts-clone-LICENSE.txt` | 1491 | `ed8437dc7358a40ef10afd3635ac1cd43c88fbaaaf6cd27c414f8ada5d68f447` | no |
+| `licenses/ggml-LICENSE.txt` | 1099 | `bcd8ec749126d45cb06737d0690295d73df4b6e7e194205bcf91190368f27285` | no |
+| `licenses/oniguruma-COPYING.txt` | 1366 | `0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933` | no |
+| `licenses/stable-diffusion.cpp-LICENSE.txt` | 1082 | `4e76049398df734a97db46f3bd4b5cbc460cb5f6bfaf737cdc3d6fbb8ab3de27` | no |
+| `licenses/utf8proc-LICENSE.md` | 5218 | `767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644` | no |
+| `msvcp140.dll` | 557728 | `0f885b509a685d2bbfa652fed26b5fb31d88fbdab0a978c641d1c7b8aa460aa9` | no |
+| `msvcp140_codecvt_ids.dll` | 31872 | `f2069a52880ec885ee7f0511186100eb7fada0411a2b4948fafea7735b878a18` | no |
+| `sd-cli.exe` | 623944 | `749934f4449beb4c625e74a4b09c29609689868a90b6ca9a20e47e1283b2e47b` | yes |
+| `stable-diffusion.dll` | 38794056 | `12428bbcbd4fd4868254933927a152e7d279dce35c7a442579006702044797c0` | no |
+| `vcruntime140.dll` | 124544 | `d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066` | no |
+| `vcruntime140_1.dll` | 49792 | `1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f` | no |
+
+`sd-cpp-seedvr2-vulkan-linux-x64.zip` holds, unpacked into `engines/sd-cpp-seedvr2-vulkan-linux-x64`:
+
+| File | Size (bytes) | SHA-256 | Program |
+| --- | --- | --- | --- |
+| `BUILD-INFO.txt` | 816 | `37a9b1833e914dffc9ac6aa86d1bab2a72bf0deae3dc80cdbd32b137fffa8cd4` | no |
+| `immuch360-run` | 16552 | `779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b` | yes |
+| `libggml-base.so.1` | 1002488 | `3aad50895abdb6caab6b14d10256cb697f968629df05d07f418b85b2b0eb19e1` | no |
+| `libggml-cpu-alderlake.so` | 1299000 | `e039ace50f89eaee5278aa935b05a20c169dae6f53c260f086367fefa284f988` | no |
+| `libggml-cpu-cannonlake.so` | 1381032 | `3da6ac901d6d775c556f93442251284e4c61eb9818e56a34a7b5506be6d5f2e2` | no |
+| `libggml-cpu-cascadelake.so` | 1397120 | `bea3e369404f8cc4312b3cd40a953181babab888471283161a0f60b69126a9b6` | no |
+| `libggml-cpu-cooperlake.so` | 1397120 | `1cea9ebd9d93ff4dc21ad56522355ede08eceafb5c438ffb72413c01edba2f95` | no |
+| `libggml-cpu-haswell.so` | 1303096 | `719969d9ba782813e24e0474865440fcf766caedb9d41f5336f6a377e9074e3d` | no |
+| `libggml-cpu-icelake.so` | 1397120 | `e791c694f05b474d430bad437a843c1525ffc0377a4cf0bbf17283883fb4c260` | no |
+| `libggml-cpu-ivybridge.so` | 1235880 | `d1441f9e8b7424d95427c10b75e1dbe53bc11e3bed6f414709fa597c8873cc91` | no |
+| `libggml-cpu-piledriver.so` | 1235880 | `b3b3a7c2315f7d9eddca2526451d45b29706753a731a7a205ed2a9f0957299ec` | no |
+| `libggml-cpu-sandybridge.so` | 1248328 | `b7c1b0904ea3610f9935600eddd7a9b78fc36bad096b48d6fc14b0db31a0b050` | no |
+| `libggml-cpu-sapphirerapids.so` | 1697448 | `9010d4153ea9114b7b18bbc23568cf9a7d7ff4f2650c6ada07d3c071d74856a8` | no |
+| `libggml-cpu-skylakex.so` | 1381032 | `820ba034c7ff3bda86dae8bdc89ebd66273ab87464b98e096d4e1954ca513c5c` | no |
+| `libggml-cpu-sse42.so` | 985408 | `80112abb0da4e1b9d2132b2e816771096971433c6f3ef6c85d18071408905064` | no |
+| `libggml-cpu-x64.so` | 985536 | `282377079ea2dfacaf467074db1527ec8abbba2ee22b8a70e5938d1090eda3b9` | no |
+| `libggml-cpu-zen4.so` | 1397120 | `cc1c5f7a291f2d4a3280b9e59bdd06c6ca14627bb01ec82866d2bb46e5e3b405` | no |
+| `libggml-vulkan.so` | 41424648 | `e9344c1e8614afa15cc9c922490d5bf59ec7114cfb93729d8b99919ca774d181` | no |
+| `libggml.so.1` | 51040 | `6a6b8efcaed753fd4c30e89be56846376aeef0726db59d380a97520452f0ca39` | no |
+| `libstable-diffusion.so` | 45861728 | `6bce5e93470f3360f63ee5c4df17578f8c996c7664e13816a6f78ad60aaf42b8` | no |
+| `licenses/README.md` | 1169 | `dfc8ee008f776c77648f9c6692fce332ad190a2479653c6399bc2873b5d7e8be` | no |
+| `licenses/THIRD-PARTY.md` | 6862 | `de31b8552d1bdb1765a3b75781df6763f576d8762fc9a58d652a4d4733bcf70b` | no |
+| `licenses/darts-clone-LICENSE.txt` | 1481 | `155f59997298ee336602c49f9c1110f268ac394ca2197eb02647a3555935ad52` | no |
+| `licenses/ggml-LICENSE.txt` | 1078 | `94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d` | no |
+| `licenses/oniguruma-COPYING.txt` | 1366 | `0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933` | no |
+| `licenses/stable-diffusion.cpp-LICENSE.txt` | 1062 | `b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee` | no |
+| `licenses/utf8proc-LICENSE.md` | 5218 | `767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644` | no |
+| `sd-cli` | 1185464 | `5199f72285d63c2999d7d00b2866d6e7e1de579dab9e1c7533c01d1323276bed` | yes |
 
 SeedVR2 3B: Apache-2.0. The card of ByteDance-Seed/SeedVR2-3B says `license: apache-2.0` and "SeedVR and
 SeedVR2 are licensed under the Apache 2.0."; the files are the repack of Comfy-Org/SeedVR2 at

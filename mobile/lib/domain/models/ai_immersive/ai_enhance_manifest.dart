@@ -29,14 +29,11 @@ export 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
         vosrVaeDecoderComponent,
         vosrVaeEncoderComponent;
 
-/// Whether ai-components-7 is published and its entries are in the catalogue of ai_components_manifest.dart. Until
-/// then, a level that needs one of these components is "not in this version yet" (enhance_files.dart), the developer
-/// override aside: outside the catalogue, the service of the AI components would not keep the .part of an interrupted
-/// download (AiComponentsService._cleanTmp) and its settings tile, Move and Remove would not see the files, so nothing
-/// of them is downloaded, not even from the official address of a model. Sharpen takes components of ai-components-3
-/// and is not held. Set to true in the same change that moves the entries into that catalogue and the tables of
-/// publish_ai_components.py, once the release is made.
-const aiEnhanceComponentsPublished = false;
+/// Whether ai-components-7 is published and its entries are in the catalogue of ai_components_manifest.dart: true
+/// since release 51 (published on 24 November 2026). Set back to false, a level that needs one of these components is
+/// "not in this version yet" (enhance_files.dart), the developer override aside; Sharpen takes components of
+/// ai-components-3 and is never held by it.
+const aiEnhanceComponentsPublished = true;
 
 /// The graphs of VOSR in the order the pipeline runs them
 const vosrComponents = <AiComponent>[
