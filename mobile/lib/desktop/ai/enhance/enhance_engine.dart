@@ -228,7 +228,7 @@ class EnhanceEngine implements ImmersiveEngine {
         throw _Stop(ImmersiveErrorCode.tooLarge, '$width x $height is more than ${enhanceMaxPixels ~/ 1000000} MP');
       }
       final available = memory.read().available;
-      final need = enhanceFreeMemoryOf(job.level);
+      final need = enhanceFreeMemoryOf(job.level, pixels: width * height);
       if (available != null && available < need) {
         throw _Stop(
           ImmersiveErrorCode.outOfMemory,

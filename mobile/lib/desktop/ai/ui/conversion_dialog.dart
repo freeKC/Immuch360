@@ -479,6 +479,7 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
       ConversionSkipReason.unreadableVideo => t.ai_immersive_skipped_unreadable_video,
       ConversionSkipReason.photo => t.ai_immersive_skipped_photo,
       ConversionSkipReason.videoNotLocal => t.ai_immersive_skipped_video_not_local,
+      ConversionSkipReason.tooLarge => t.ai_enhance_refused_too_large,
     };
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere (a raw one of a 360°

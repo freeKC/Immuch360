@@ -4,7 +4,8 @@
 // The components (ai_enhance_manifest.dart): Sharpen takes the sd-cli and x4plus of the 360° panoramas, Rebuild details
 // the sd-cli of the script mode and SeedVR2 3B with its VAE, Natural the ONNX Runtime of the 3D photos and the four
 // graphs of VOSR. A level whose components are incomplete in this version (the sd-cli of Rebuild details until
-// ai-components-7 is published) is "not in this version yet".
+// ai-components-7 is published), or are in ai-components-7 while it is not published (Rebuild details and Natural:
+// aiEnhanceComponentsPublished), is "not in this version yet".
 //
 // The developer override, off by default: when the variable IMMUCH360_ENHANCE_PROBE names a folder laid out as the
 // probe's (D:\DEV\immuch\ai-enhance-probe on the owner's PC: engines\shipped\, engines\sdcpp-master-1117-0d71f96-win-vulkan\,
@@ -73,16 +74,20 @@ List<AiComponent> enhanceComponentsOf(EnhanceLevel level, AiPlatform platform) {
 }
 
 /// What the components of [level] give on [platform]: the files when all are installed, else those missing (to
-/// download) or, for a component of this version without its size or sum, the level is not in this version yet
+/// download) or, for a component of this version without its size or sum, or of ai-components-7 while it is not
+/// published ([published], aiEnhanceComponentsPublished), the level is not in this version yet
 typedef EnhanceComponentsFound = ({EnhanceFiles? files, List<AiComponent> missing, bool notInThisVersion});
 
 Future<EnhanceComponentsFound> enhanceComponentFiles(
   EnhanceLevel level,
   AiPlatform platform,
-  AiComponentFiles components,
-) async {
+  AiComponentFiles components, {
+  bool published = aiEnhanceComponentsPublished,
+}) async {
   final needed = enhanceComponentsOf(level, platform);
-  if (needed.isEmpty || needed.any((component) => !component.isComplete)) {
+  if (needed.isEmpty ||
+      needed.any((component) => !component.isComplete) ||
+      (!published && needed.any((component) => component.releaseTag == aiComponentsEnhanceReleaseTag))) {
     return (files: null, missing: const <AiComponent>[], notInThisVersion: true);
   }
   final found = <String, String>{};

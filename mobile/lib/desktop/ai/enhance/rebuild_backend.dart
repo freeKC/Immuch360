@@ -10,6 +10,10 @@
 //    with enhanceNoIntDotMessage, the panel then names Natural), a line of a fall back to the processor (kept, said in
 //    the panel), and a refusal of its memory checks (outOfMemory with enhanceMemoryMessage: "close other programs");
 //  - the tiles blended with their feather into the picture (enhance_pixels.dart), in an isolate.
+// The paths sd-cli reads in the program (the work folder, the DiT, the VAE) are given as ASCII paths
+// (rebuildAsciiPath): on Windows an account named with an accent (C:\Users\Frédéric) puts one in the temporary folder
+// and in the folder of the components, and sd-cli may open a file through the narrow code page, as COLMAP did for
+// the splat scenes (splat_work_folder.dart, asciiPathOf). Where Windows has no short name, the path stays as it is.
 // Measured on the RTX 4060 Laptop: 35.0 s for 3 MP, 93.9 s for 12 MP, 3.7 to 3.9 GB of the card.
 
 import 'dart:io';
@@ -25,6 +29,7 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/seedvr2_dgl.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/panorama/control_image.dart' show decodePngPicture, encodePngPicture;
+import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart' show isAsciiPath, windowsShortPath;
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -46,6 +51,21 @@ String rebuildVramBudget(int? free) {
   const gib = 1024 * 1024 * 1024;
   final budget = free == null ? seedVr2MaxVramGib * gib : math.min(seedVr2MaxVramGib * gib, free - gib ~/ 2);
   return sdCppVramBudget(math.max(gib, budget));
+}
+
+/// [path] (a file or a folder that exists) as sd-cli is given it: its own when it is ASCII, else its short name on
+/// Windows ([shortPathOf], GetShortPathNameW by default) when that one is ASCII, else as it is
+String rebuildAsciiPath(String path, {bool? isWindows, String? Function(String path)? shortPathOf}) {
+  if (isAsciiPath(path) || !(isWindows ?? Platform.isWindows)) {
+    return path;
+  }
+  String? short;
+  try {
+    short = (shortPathOf ?? windowsShortPath)(path);
+  } catch (error) {
+    _log.fine('No short name for $path: $error');
+  }
+  return short != null && isAsciiPath(short) ? short : path;
 }
 
 /// The arguments of the run of [script] on [vulkan]
@@ -71,7 +91,8 @@ class SdCppRebuildBackend implements EnhanceBackend {
     required this.files,
     required this.modelSha256,
     this.graphicsFree,
-  });
+    String Function(String path)? asciiPath,
+  }) : _asciiPath = asciiPath ?? rebuildAsciiPath;
 
   final ProcessRunner runner;
 
@@ -81,6 +102,9 @@ class SdCppRebuildBackend implements EnhanceBackend {
 
   /// The free memory of the card the queue read before the job, null when unknown
   final int? graphicsFree;
+
+  /// The ASCII path of a file or folder that exists, for sd-cli (rebuildAsciiPath; the tests give theirs)
+  final String Function(String path) _asciiPath;
 
   @override
   final String modelSha256;
@@ -102,8 +126,10 @@ class SdCppRebuildBackend implements EnhanceBackend {
     fellBack = false;
     final width = picture.width;
     final height = picture.height;
-    final input = p.join(workFolder, 'input.png');
-    final tileFolder = Directory(p.join(workFolder, 'tiles'))..createSync(recursive: true);
+    // The work folder as sd-cli reads it, and every file of the run under it
+    final folder = _asciiPath(workFolder);
+    final input = p.join(folder, 'input.png');
+    final tileFolder = Directory(p.join(folder, 'tiles'))..createSync(recursive: true);
     final rgba = picture.rgba;
     final png = await Isolate.run(
       () => encodePngPicture(SbsDecoded(width: width, height: height, rgba: rgba)),
@@ -111,11 +137,11 @@ class SdCppRebuildBackend implements EnhanceBackend {
     );
     await File(input).writeAsBytes(png, flush: true);
     final tiles = planTiles(width, height);
-    final script = p.join(workFolder, 'rebuild.dgl');
+    final script = p.join(folder, 'rebuild.dgl');
     await File(script).writeAsString(
       seedVr2Program(
-        ditPath: files.dit,
-        vaePath: files.vae,
+        ditPath: _asciiPath(files.dit),
+        vaePath: _asciiPath(files.vae),
         inputPath: input,
         tiles: tiles,
         tileFolder: tileFolder.path,
@@ -128,7 +154,7 @@ class SdCppRebuildBackend implements EnhanceBackend {
     final budget = rebuildVramBudget(graphicsFree);
     await SdCppScriptRun(runner: runner, device: SdCppDevice(settings)).run(
       arguments: (vulkan) => rebuildArguments(script, vulkan, budget: budget, threads: settings.threads),
-      workFolder: workFolder,
+      workFolder: folder,
       what: 'SeedVR2 3B on ${tiles.length} tiles of ${width}x$height',
       cancel: cancel,
       onStart: () => done = 0,

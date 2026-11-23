@@ -15,6 +15,11 @@
 //    this version yet" for a level whose engine is not published, or the folder of the developer override when it is on;
 //  - where the files go: beside each original as name_enhanced.jpg, the original never changed; a photo of the server
 //    (or one whose folder refuses a file) in the folder of my choice, with Change; the question of a network folder.
+// A 360° photo (a raw one of a 360° camera and a VR180 one among them), a photo with two eyes (side by side by its name
+// and frame, one of our 3D photos, a version of ours that holds two, an Apple spatial photo) and the picture of a 3D
+// scene or a splat scene are skipped with their reason ("360° and 3D photos come in a later version"): the engine
+// writes a flat picture with our XMP only, so the GPano tags or the two eyes would be lost (enhanceSkipOf). A photo
+// above 50 megapixels is skipped too, and the levels are judged on the others.
 // "Protect faces" of the study is not offered: it needs a face detector, a model this lot does not add.
 // Escape closes the dialog (a dialog of the shell, lot feat-desktop-escape-51).
 
@@ -44,6 +49,8 @@ import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart' show decideStereoPhoto;
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
@@ -156,7 +163,7 @@ Future<void> openEnhanceDialog(
 
 /// A photo of the selection as the dialog read it: where its original is (null when this computer cannot reach it)
 class _Photo {
-  const _Photo(this.asset, this.found, this.id);
+  const _Photo(this.asset, this.found, this.id, {this.skip});
 
   final BaseAsset asset;
   final ({OriginalLocation location, ConversionSource source})? found;
@@ -164,10 +171,65 @@ class _Photo {
   /// Its id in the destination session, null for one skipped
   final String? id;
 
-  (int, int) get size => switch ((asset.width, asset.height)) {
-    (final width?, final height?) when width > 0 && height > 0 => (width, height),
-    _ => _unknownSize,
-  };
+  /// Why it is skipped, known before anything runs; null for one that runs, or one this computer cannot reach
+  final ConversionSkipReason? skip;
+
+  (int, int) get size => enhanceSizeOf(asset);
+}
+
+/// The size of [asset] as the library knows it, 12 MP when it does not
+(int, int) enhanceSizeOf(BaseAsset asset) => switch ((asset.width, asset.height)) {
+  (final width?, final height?) when width > 0 && height > 0 => (width, height),
+  _ => _unknownSize,
+};
+
+/// The reasons to skip a photo that tell a 360° or 3D one, said together in the dialog
+const enhanceImmersiveSkips = {
+  ConversionSkipReason.sphere360,
+  ConversionSkipReason.vr180,
+  ConversionSkipReason.raw360,
+  ConversionSkipReason.alreadyStereo,
+  ConversionSkipReason.spatial,
+  ConversionSkipReason.alreadyVersion,
+};
+
+/// Why "Enhance (AI)" skips [asset], from its [facts] as the dialog of "Make 3D (AI)" reads them; null when it runs:
+///  - a video;
+///  - a 360° photo (a raw one of a 360° camera, a VR180 one, a panorama the app generated): the result would be a flat
+///    picture of 2:1, its GPano tags lost, and the seam of the sphere would not match;
+///  - two eyes (side by side, ours, a version of ours that holds two, an Apple spatial photo): each eye would get
+///    other invented details, and the result would be shown flat;
+///  - the picture of a 3D scene or a splat scene of ours, which carries its scene: the original is the one to enhance;
+///  - above 50 megapixels by the size the library knows (the engine checks the picture it decodes too).
+/// An enhanced photo may be enhanced again.
+ConversionSkipReason? enhanceSkipOf(BaseAsset asset, ConversionPhotoFacts facts) {
+  if (asset.isVideo || !asset.isImage) {
+    return ConversionSkipReason.video;
+  }
+  if (facts.isRaw360) {
+    return ConversionSkipReason.raw360;
+  }
+  final version = facts.version?.kind;
+  if (facts.isPanorama || version == ImmersiveKind.panorama360) {
+    final half =
+        (facts.coverage ?? guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height)) ==
+        SphereCoverage.half;
+    return half ? ConversionSkipReason.vr180 : ConversionSkipReason.sphere360;
+  }
+  if (facts.isStereo || (facts.version != null && versionHoldsTwoEyes(facts.version!))) {
+    return ConversionSkipReason.alreadyStereo;
+  }
+  if (facts.isSpatial) {
+    return ConversionSkipReason.spatial;
+  }
+  if (facts.version != null && version != ImmersiveKind.enhancedPhoto) {
+    return ConversionSkipReason.alreadyVersion;
+  }
+  final (width, height) = enhanceSizeOf(asset);
+  if (width * height > enhanceMaxPixels) {
+    return ConversionSkipReason.tooLarge;
+  }
+  return null;
 }
 
 /// The words of a refusal of a level
@@ -230,10 +292,26 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
 
   Future<void> _load() async {
     final locator = ref.read(conversionAssetFilesProvider);
+    final readFacts = ref.read(conversionFactsReaderProvider);
+    final probe = ref.read(conversionFileProbeProvider);
     final photos = <_Photo>[];
     for (final (index, asset) in widget.assets.indexed) {
       if (!asset.isImage) {
-        photos.add(_Photo(asset, null, null));
+        photos.add(_Photo(asset, null, null, skip: ConversionSkipReason.video));
+        continue;
+      }
+      ConversionPhotoFacts facts;
+      try {
+        facts = await readFacts(asset);
+      } catch (error) {
+        _log.warning('The facts of ${asset.name} could not be read: $error');
+        // Two eyes by its name and frame at least
+        facts = ConversionPhotoFacts(
+          isStereo: decideStereoPhoto(name: asset.name, width: asset.width, height: asset.height) != null,
+        );
+      }
+      if (enhanceSkipOf(asset, facts) case final skip?) {
+        photos.add(_Photo(asset, null, null, skip: skip));
         continue;
       }
       ({OriginalLocation location, ConversionSource source})? found;
@@ -241,6 +319,21 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
         found = await locator.locate(asset);
       } catch (error) {
         _log.warning('The original of ${asset.name} is not found: $error');
+      }
+      // A photo of the frame of a whole sphere the scan has not flagged: its file tells whether it is a 360° one, as
+      // the dialog of "Make 3D (AI)" reads it
+      if (found != null && isEquirectFrame(asset.width, asset.height)) {
+        try {
+          if (await probe(found.source, asset) case final read?) {
+            facts = facts.withFileRead(isPanorama: read.isPanorama, isRaw360: read.raw360);
+          }
+        } catch (error) {
+          _log.fine('${asset.name} could not be read for a 360° projection: $error');
+        }
+        if (enhanceSkipOf(asset, facts) case final skip?) {
+          photos.add(_Photo(asset, null, null, skip: skip));
+          continue;
+        }
       }
       photos.add(_Photo(asset, found, found == null ? null : 'enhance-$index'));
     }
@@ -292,13 +385,20 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
 
   Iterable<_Photo> get _runs => (_photos ?? const []).where((photo) => photo.id != null);
 
-  /// The verdict of [level] for the selection: refused when it is refused for its largest photo
+  /// The verdict of [level] for the selection: refused when it is refused for its largest photo. The photos above 50
+  /// megapixels are skipped and left out of it, unless no other runs: the levels then say why.
   EnhanceVerdict _verdict(EnhanceLevel level) {
     final machine = _machine;
     if (machine == null) {
       return EnhanceVerdict(level, refusal: EnhanceRefusal.notOnThisSystem);
     }
-    final sizes = [for (final photo in _runs) photo.size];
+    var sizes = [for (final photo in _runs) photo.size];
+    if (sizes.isEmpty) {
+      sizes = [
+        for (final photo in _photos ?? const <_Photo>[])
+          if (photo.skip == ConversionSkipReason.tooLarge) photo.size,
+      ];
+    }
     final (width, height) = sizes.isEmpty ? _unknownSize : sizes.reduce((a, b) => a.$1 * a.$2 >= b.$1 * b.$2 ? a : b);
     final largest = enhanceVerdict(level, machine, width: width, height: height);
     if (!largest.isOffered || sizes.length <= 1) {
@@ -379,11 +479,12 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
         requests.add(
           ConversionRequest(
             source: found?.source ?? _Unreachable(photo.asset.name),
-            skip: photo.asset.isImage ? ConversionSkipReason.unreachable : ConversionSkipReason.video,
+            skip: photo.skip ?? ConversionSkipReason.unreachable,
           ),
         );
         continue;
       }
+      final (width, height) = photo.size;
       requests.add(
         ConversionRequest(
           source: found.source,
@@ -391,6 +492,7 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
             folder: plan.folder,
             fileName: versionTargetName(ImmersiveKind.enhancedPhoto, found.location.name),
           ),
+          pixels: width * height,
         ),
       );
     }
@@ -441,7 +543,9 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
     final verdict = _verdict(_level);
     final files = _files[_level];
     final runs = _runs.length;
-    final skipped = photos.length - runs;
+    final immersive = photos.where((photo) => enhanceImmersiveSkips.contains(photo.skip)).length;
+    final tooLarge = photos.where((photo) => photo.skip == ConversionSkipReason.tooLarge).length;
+    final skipped = photos.length - runs - immersive - tooLarge;
     final filesReady = files?.files != null;
     final canStart = verdict.isOffered && filesReady && _ready(session) && !_launched;
     final warn = TextStyle(color: colors.error);
@@ -491,6 +595,18 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
               const SizedBox(height: 8),
               ..._componentsPart(t, files),
               ..._destinationPart(t, session, secondary),
+              if (immersive > 0)
+                Text(
+                  t.ai_enhance_skipped_immersive(count: immersive),
+                  key: const Key('ai_enhance_skipped_immersive'),
+                  style: secondary,
+                ),
+              if (tooLarge > 0)
+                Text(
+                  t.ai_enhance_skipped_too_large(count: tooLarge),
+                  key: const Key('ai_enhance_skipped_too_large'),
+                  style: secondary,
+                ),
               if (skipped > 0) Text(t.ai_enhance_skipped(count: skipped), style: secondary),
             ],
           ),

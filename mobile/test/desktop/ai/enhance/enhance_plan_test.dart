@@ -126,6 +126,22 @@ void main() {
     });
   });
 
+  test('the memory a photo needs grows above the 12 MP the probe measured', () {
+    for (final level in EnhanceLevel.values) {
+      expect(enhanceJobMemoryOf(level, pixels: 12000000), enhanceJobMemoryOf(level));
+      expect(enhanceFreeMemoryOf(level, pixels: 3000000), enhanceFreeMemoryOf(level));
+      // The float sums of the blend and the colour fix of 50 MP, about 1.5 GB more
+      expect(enhanceJobMemoryOf(level, pixels: 50000000) - enhanceJobMemoryOf(level), 40 * 38000000);
+    }
+    expect(enhanceJobMemoryOf(EnhanceLevel.sharpen, pixels: 50000000), greaterThan(3 * _gib));
+    // The dialog says to close other programs for a large photo sooner than for a small one
+    final free = _with(free: 4 * _gib);
+    expect(enhanceVerdict(EnhanceLevel.rebuild, free, width: 4000, height: 3000).warnings, isEmpty);
+    final large = enhanceVerdict(EnhanceLevel.rebuild, free, width: 8000, height: 6000);
+    expect(large.warnings, contains(EnhanceWarning.closeOtherPrograms));
+    expect(large.memoryNeeded, rebuildFreeMemory + 40 * 36000000);
+  });
+
   test('the time of a batch is the sum of its photos', () {
     final sizes = [(4000, 3000), (2000, 1500)];
     final total = enhanceBatchEstimate(EnhanceLevel.rebuild, _laptop, sizes);

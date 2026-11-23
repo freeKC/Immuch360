@@ -14,6 +14,9 @@
 //  - the memory free of the computer: the engine refused SeedVR2 runs three times on the 16 GB laptop when 1 to 2 GB
 //    were free ("RAM graph capacity exceeded"), so the dialog says "close other programs" below the need of the level
 //    (1.5 GB for Sharpen, 3 GB for Rebuild details), and the engine turns such a refusal into the same words;
+//  - those needs were measured up to 12 MP; above, the buffers of the app grow with the photo (the float sums of the
+//    blend, the colour fix, the copies between isolates: about 40 bytes a pixel), so each need takes 40 bytes for
+//    every pixel above 12 MP, 1.5 GB more at 50 MP (enhanceExtraMemoryOf);
 //  - on a Mac, Natural runs on an Apple chip; Sharpen and Rebuild details wait for the Metal build of stable-diffusion.cpp
 //    (a later lot): the sd-cli the app ships has no Mac build, and x4plus on a processor took 8.3 minutes for 3 MP. An
 //    Intel Mac has ONNX Runtime 1.23.2, on which VOSR was never run: not offered there.
@@ -145,19 +148,33 @@ class EnhanceVerdict {
   bool get isOffered => refusal == null;
 }
 
-/// The memory free [level] needs on the computer
-int enhanceFreeMemoryOf(EnhanceLevel level) => switch (level) {
-  EnhanceLevel.sharpen => sharpenFreeMemory,
-  EnhanceLevel.rebuild => rebuildFreeMemory,
-  EnhanceLevel.natural => naturalFreeMemory,
-};
+/// The size up to which the needs of memory were measured, in pixels
+const enhanceMeasuredPixels = 12 * 1000 * 1000;
 
-/// What a job of [level] may take of the memory of the computer
-int enhanceJobMemoryOf(EnhanceLevel level) => switch (level) {
-  EnhanceLevel.sharpen => sharpenJobMemory,
-  EnhanceLevel.rebuild => rebuildJobMemory,
-  EnhanceLevel.natural => naturalJobMemory,
-};
+/// What the buffers of the app take per pixel of the photo (see the top of this file)
+const enhanceBytesPerPixel = 40;
+
+/// The memory a photo of [pixels] needs above the needs measured up to 12 MP; nothing when its size is not known
+int enhanceExtraMemoryOf(int? pixels) =>
+    pixels == null ? 0 : enhanceBytesPerPixel * math.max(0, pixels - enhanceMeasuredPixels);
+
+/// The memory free [level] needs on the computer for a photo of [pixels]
+int enhanceFreeMemoryOf(EnhanceLevel level, {int? pixels}) =>
+    enhanceExtraMemoryOf(pixels) +
+    switch (level) {
+      EnhanceLevel.sharpen => sharpenFreeMemory,
+      EnhanceLevel.rebuild => rebuildFreeMemory,
+      EnhanceLevel.natural => naturalFreeMemory,
+    };
+
+/// What a job of [level] may take of the memory of the computer for a photo of [pixels]
+int enhanceJobMemoryOf(EnhanceLevel level, {int? pixels}) =>
+    enhanceExtraMemoryOf(pixels) +
+    switch (level) {
+      EnhanceLevel.sharpen => sharpenJobMemory,
+      EnhanceLevel.rebuild => rebuildJobMemory,
+      EnhanceLevel.natural => naturalJobMemory,
+    };
 
 /// The memory free on the card [level] needs when its run starts; null for Natural, which runs on the processor
 int? enhanceFreeGraphicsMemoryOf(EnhanceLevel level) => switch (level) {
@@ -206,7 +223,7 @@ EnhanceVerdict enhanceVerdict(EnhanceLevel level, EnhanceMachine machine, {requi
       return refused(EnhanceRefusal.memoryTooSmall);
     }
   }
-  final need = enhanceFreeMemoryOf(level);
+  final need = enhanceFreeMemoryOf(level, pixels: width * height);
   final free = machine.freeMemory;
   if (free != null && free < need) {
     warnings.add(EnhanceWarning.closeOtherPrograms);

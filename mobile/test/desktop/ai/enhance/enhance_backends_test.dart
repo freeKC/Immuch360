@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -174,12 +175,17 @@ void main() {
       threads: 22,
     );
 
-    SdCppRebuildBackend backendWith(_ScriptRunner runner) => SdCppRebuildBackend(
+    SdCppRebuildBackend backendWith(
+      _ScriptRunner runner, {
+      RebuildFiles files = const RebuildFiles(sdCli: 'sd-cli', dit: '/m/dit.safetensors', vae: '/m/vae.safetensors'),
+      String Function(String path)? asciiPath,
+    }) => SdCppRebuildBackend(
       runner: runner,
       settings: settings(),
-      files: const RebuildFiles(sdCli: 'sd-cli', dit: '/m/dit.safetensors', vae: '/m/vae.safetensors'),
+      files: files,
       modelSha256: 'c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157',
       graphicsFree: 7 << 30,
+      asciiPath: asciiPath,
     );
 
     setUp(SdCppDevice.forgetLearned);
@@ -247,6 +253,47 @@ void main() {
         ).enhance(_picture(600, 600), workFolder: temp.path, seed: 42, cancel: NativeCancelFlag(), onStep: (_, _) {}),
         throwsA(isA<BackendException>().having((error) => error.code, 'code', ImmersiveErrorCode.outputRejected)),
       );
+    });
+
+    test('sd-cli reads the program, the photo, the tiles and the models through ASCII paths', () async {
+      // A Windows account named with an accent: its temporary folder and its components, and their short names
+      final accented = Directory(p.join(temp.path, 'Frédéric'))..createSync();
+      final short = Directory(p.join(temp.path, 'FREDER~1'))..createSync();
+      String ascii(String path) => path.replaceAll(accented.path, short.path);
+      final runner = _ScriptRunner();
+      final picture = _picture(700, 600);
+      final out = await backendWith(
+        runner,
+        files: RebuildFiles(
+          sdCli: 'sd-cli',
+          dit: p.join(accented.path, 'dit.safetensors'),
+          vae: p.join(accented.path, 'vae.safetensors'),
+        ),
+        asciiPath: ascii,
+      ).enhance(picture, workFolder: accented.path, seed: 42, cancel: NativeCancelFlag(), onStep: (_, _) {});
+      _expectClose(out, picture.rgba);
+      final script = runner.launches.single.arguments[3];
+      expect(script, p.join(short.path, 'rebuild.dgl'));
+      final program = File(script).readAsStringSync();
+      expect(program.codeUnits.every((unit) => unit < 0x80), isTrue);
+      expect(
+        program,
+        contains('dit_path = ${jsonEncode(p.join(short.path, 'dit.safetensors').replaceAll(r'\', '/'))}'),
+      );
+    });
+
+    test('an ASCII path: its own, else its short name on Windows, else as it is', () {
+      expect(rebuildAsciiPath('/tmp/plain', isWindows: true, shortPathOf: (_) => 'X'), '/tmp/plain');
+      expect(
+        rebuildAsciiPath(r'C:\Users\Frédéric\a', isWindows: true, shortPathOf: (_) => r'C:\Users\FREDER~1\a'),
+        r'C:\Users\FREDER~1\a',
+      );
+      // No short name (8.3 names off on that drive), or one that is not ASCII: as it is
+      expect(
+        rebuildAsciiPath(r'C:\Users\Frédéric\a', isWindows: true, shortPathOf: (_) => null),
+        r'C:\Users\Frédéric\a',
+      );
+      expect(rebuildAsciiPath('/home/frédéric', isWindows: false, shortPathOf: (_) => 'X'), '/home/frédéric');
     });
 
     test('the budget of the card: 6 GiB, or what is free less 512 MiB', () {

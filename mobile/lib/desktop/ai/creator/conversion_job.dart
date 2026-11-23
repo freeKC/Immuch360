@@ -346,6 +346,9 @@ enum ConversionSkipReason {
   /// A 3D video: a video this computer has no file of and cannot download either (a source that gives no bytes); the
   /// videos of the server and of a share are downloaded by their job first (video_original_copy.dart)
   videoNotLocal,
+
+  /// An enhanced photo: a photo above 50 megapixels (enhance_plan.dart, enhanceMaxPixels)
+  tooLarge,
 }
 
 /// What a batch does with a photo that already has a version with the same settings. A name taken by another file is
@@ -498,7 +501,7 @@ class SplatSelection {
 
 /// One photo to convert, as the dialog hands it to the queue
 class ConversionRequest {
-  const ConversionRequest({required this.source, this.target, this.quarterTurns = 0, this.skip})
+  const ConversionRequest({required this.source, this.target, this.quarterTurns = 0, this.skip, this.pixels})
     : assert(target != null || skip != null, 'A job that runs has a destination');
 
   final ConversionSource source;
@@ -511,6 +514,10 @@ class ConversionRequest {
 
   /// Known before anything runs: a video, a 360° photo, a 3D photo already, a format this system cannot read
   final ConversionSkipReason? skip;
+
+  /// The pixels of the photo as the library knows them, for the memory an enhanced photo holds (EnhanceSettings.pixels);
+  /// null when not known, and for the other kinds
+  final int? pixels;
 }
 
 /// A job of the queue, unchanged once made: the queue replaces it with a copy at each change

@@ -23,6 +23,15 @@ import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 /// The prerelease that will host the components of "Enhance (AI)"
 const aiComponentsEnhanceReleaseTag = 'ai-components-7';
 
+/// Whether ai-components-7 is published and its entries are in the catalogue of ai_components_manifest.dart. Until
+/// then, a level that needs one of these components is "not in this version yet" (enhance_files.dart), the developer
+/// override aside: outside the catalogue, the service of the AI components would not keep the .part of an interrupted
+/// download (AiComponentsService._cleanTmp) and its settings tile, Move and Remove would not see the files, so nothing
+/// of them is downloaded, not even from the official address of a model. Sharpen takes components of ai-components-3
+/// and is not held. Set to true in the same change that moves the entries into that catalogue and the tables of
+/// publish_ai_components.py, once the release is made.
+const aiEnhanceComponentsPublished = false;
+
 const _gib = 1024 * 1024 * 1024;
 
 const _seedVr2Licence = 'https://huggingface.co/ByteDance-Seed/SeedVR2-3B';

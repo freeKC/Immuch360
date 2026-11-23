@@ -22,13 +22,19 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/enhance/natural_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
+import 'package:immich_mobile/desktop/ai/hardware_gate.dart' show AiComponentFiles;
 import 'package:immich_mobile/desktop/ai/panorama/control_image.dart' show encodePngPicture;
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
+import 'package:immich_mobile/desktop/library/library_index.dart' show IndexedOrigin;
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart' show AiComponentState;
+import 'package:immich_mobile/domain/services/local_panorama.service.dart' show LocalPanoramaProbe;
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/utils/asset_filter.dart';
@@ -92,6 +98,15 @@ class _Facts implements EnhanceDialogFacts {
       files[level] ?? (files: _ready(level), missing: const <AiComponent>[], notInThisVersion: false);
 }
 
+/// No component installed
+class _NoFiles implements AiComponentFiles {
+  @override
+  Future<File?> verifiedFile(AiComponent component) async => null;
+
+  @override
+  AiComponentState stateOf(AiComponent component) => AiComponentState.notInstalled;
+}
+
 EnhanceFiles _ready(EnhanceLevel level) => switch (level) {
   EnhanceLevel.sharpen => const EnhanceFiles(
     sharpen: SharpenFiles(sdCli: 'sd-cli', upscaler: 'x4plus.pth'),
@@ -120,6 +135,8 @@ void main() {
   late DesktopAiSettingsStore store;
   late _Originals originals;
   late _Facts facts;
+  late Map<String, ConversionPhotoFacts> photoFacts;
+  late Map<String, LocalPanoramaProbe> probes;
 
   setUp(() {
     root = Directory.systemTemp.createTempSync('enhance_dialog');
@@ -135,6 +152,8 @@ void main() {
     store = DesktopAiSettingsStore(settingsDirectory: () async => support);
     originals = _Originals();
     facts = _Facts(_pc);
+    photoFacts = {};
+    probes = {};
   });
 
   tearDown(() => root.deleteSync(recursive: true));
@@ -171,6 +190,11 @@ void main() {
       safeWriterOutputProvider.overrideWithValue(output),
       aiAppVersionProvider.overrideWith((ref) async => '3.4.6'),
       enhanceDialogFactsProvider.overrideWithValue(facts),
+      conversionFactsReaderProvider.overrideWith(
+        (ref) =>
+            (asset) async => photoFacts[asset.name] ?? const ConversionPhotoFacts(),
+      ),
+      conversionFileProbeProvider.overrideWithValue((source, asset) async => probes[asset.name]),
       conversionToolsProvider.overrideWithValue(
         ConversionTools(
           engine: FakeImmersiveEngine(),
@@ -263,7 +287,9 @@ void main() {
     expect(answers, [true]);
     final jobs = container.read(conversionQueueProvider).jobs;
     expect(jobs.map((job) => job.kind).toSet(), {ConversionKind.enhanceRebuild});
-    expect(jobs.map((job) => job.enhance).toSet(), {const EnhanceSettings(level: EnhanceLevel.rebuild, strength: 0)});
+    expect(jobs.map((job) => job.enhance).toSet(), {
+      const EnhanceSettings(level: EnhanceLevel.rebuild, strength: 0, pixels: 12000000),
+    });
     expect(jobs.map((job) => job.target!.fileName), ['salon_enhanced.jpg', 'jardin_enhanced.jpg']);
     expect(jobs.map((job) => job.target!.folder).toSet(), {photos});
     expect(jobs.map((job) => job.existing).toSet(), {ExistingVersionChoice.newVersion});
@@ -329,6 +355,148 @@ void main() {
     expect(find.byKey(const Key('ai_enhance_install_natural')), findsOneWidget);
     expect(startEnabled(tester), isFalse);
     expect(find.textContaining('1 skipped'), findsOneWidget);
+  });
+
+  testWidgets('a 360° photo and a 3D photo are skipped with their reason, never made flat', (tester) async {
+    for (final name in ['theta.jpg', 'salon_3D_LRF_Full_SBS.jpg', 'pano.jpg', 'salon.jpg', 'spatial.heic']) {
+      original(name);
+    }
+    photoFacts['theta.jpg'] = const ConversionPhotoFacts(isPanorama: true);
+    photoFacts['salon_3D_LRF_Full_SBS.jpg'] = const ConversionPhotoFacts(isStereo: true);
+    photoFacts['spatial.heic'] = const ConversionPhotoFacts(isSpatial: true);
+    // A whole sphere by its frame, which only its file tells 360°
+    probes['pano.jpg'] = (isPanorama: true, halfSphere: false, raw360: false);
+    final answers = <bool?>[];
+    final container = await open(tester, [
+      _photo('theta.jpg', width: 6720, height: 3360),
+      _photo('salon_3D_LRF_Full_SBS.jpg', width: 8000, height: 3000),
+      _photo('pano.jpg', width: 4096, height: 2048),
+      _photo('salon.jpg'),
+      _photo('spatial.heic'),
+    ], answer: answers);
+    expect(find.text('4 skipped: 360° and 3D photos come in a later version'), findsOneWidget);
+    expect(find.text('About 2 min for this photo on this computer'), findsOneWidget);
+    await tester.ensureVisible(start());
+    await tester.tap(start());
+    await settleStill(tester);
+    expect(answers, [true]);
+    final jobs = container.read(conversionQueueProvider).jobs;
+    expect(jobs.map((job) => job.skipReason), [
+      ConversionSkipReason.sphere360,
+      ConversionSkipReason.alreadyStereo,
+      ConversionSkipReason.sphere360,
+      null,
+      ConversionSkipReason.spatial,
+    ]);
+    expect(jobs.where((job) => job.skipReason == null).single.target!.fileName, 'salon_enhanced.jpg');
+  });
+
+  testWidgets('a photo that is only 360° or 3D leaves nothing to start', (tester) async {
+    original('pano.jpg');
+    photoFacts['pano.jpg'] = const ConversionPhotoFacts(
+      version: (origin: IndexedOrigin.generated, kind: ImmersiveKind.panorama360),
+    );
+    await open(tester, [_photo('pano.jpg', width: 4096, height: 2048)]);
+    expect(find.byKey(const Key('ai_enhance_skipped_immersive')), findsOneWidget);
+    expect(startEnabled(tester), isFalse);
+  });
+
+  testWidgets('a photo above 50 MP is skipped and the levels are judged on the others', (tester) async {
+    original('insta.jpg');
+    original('salon.jpg');
+    final answers = <bool?>[];
+    final container = await open(tester, [
+      _photo('insta.jpg', width: 12000, height: 6000),
+      _photo('salon.jpg'),
+    ], answer: answers);
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_sharpen'))).enabled, isTrue);
+    expect(find.text('1 skipped: above 50 megapixels, reduce it first'), findsOneWidget);
+    expect(startEnabled(tester), isTrue);
+    await tester.ensureVisible(start());
+    await tester.tap(start());
+    await settleStill(tester);
+    final jobs = container.read(conversionQueueProvider).jobs;
+    expect(jobs.map((job) => job.skipReason), [ConversionSkipReason.tooLarge, null]);
+  });
+
+  testWidgets('a single photo above 50 MP: every level says why', (tester) async {
+    original('insta.jpg');
+    await open(tester, [_photo('insta.jpg', width: 12000, height: 6000)]);
+    for (final level in EnhanceLevel.values) {
+      expect(tester.widget<ListTile>(find.byKey(Key('ai_enhance_level_${level.name}'))).enabled, isFalse);
+    }
+    expect(find.textContaining('Photos above 50 megapixels are not enhanced'), findsNWidgets(3));
+    expect(startEnabled(tester), isFalse);
+  });
+
+  test('what Enhance (AI) skips before anything runs', () {
+    final flat = _photo('salon.jpg');
+    expect(enhanceSkipOf(flat, const ConversionPhotoFacts()), isNull);
+    expect(
+      enhanceSkipOf(_photo('clip.mp4', type: AssetType.video), const ConversionPhotoFacts()),
+      ConversionSkipReason.video,
+    );
+    expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isRaw360: true)), ConversionSkipReason.raw360);
+    expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isPanorama: true)), ConversionSkipReason.sphere360);
+    expect(
+      enhanceSkipOf(
+        _photo('trip_vr180.jpg'),
+        const ConversionPhotoFacts(isPanorama: true, coverage: SphereCoverage.half),
+      ),
+      ConversionSkipReason.vr180,
+    );
+    expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isStereo: true)), ConversionSkipReason.alreadyStereo);
+    expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isSpatial: true)), ConversionSkipReason.spatial);
+    // The versions of the app: a 3D one holds two eyes, a scene carries its scene, an enhanced photo may be enhanced
+    expect(
+      enhanceSkipOf(
+        flat,
+        const ConversionPhotoFacts(version: (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto)),
+      ),
+      ConversionSkipReason.alreadyStereo,
+    );
+    expect(
+      enhanceSkipOf(flat, const ConversionPhotoFacts(version: (origin: IndexedOrigin.other, kind: null))),
+      ConversionSkipReason.alreadyStereo,
+    );
+    expect(
+      enhanceSkipOf(
+        flat,
+        const ConversionPhotoFacts(version: (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene)),
+      ),
+      ConversionSkipReason.alreadyVersion,
+    );
+    expect(
+      enhanceSkipOf(
+        flat,
+        const ConversionPhotoFacts(version: (origin: IndexedOrigin.other, kind: ImmersiveKind.enhancedPhoto)),
+      ),
+      isNull,
+    );
+    expect(
+      enhanceSkipOf(_photo('big.jpg', width: 10000, height: 5001), const ConversionPhotoFacts()),
+      ConversionSkipReason.tooLarge,
+    );
+    expect(enhanceSkipOf(_photo('fifty.jpg', width: 10000, height: 5000), const ConversionPhotoFacts()), isNull);
+  });
+
+  test('the components of ai-components-7 are not offered while it is not published', () async {
+    final files = _NoFiles();
+    expect(aiEnhanceComponentsPublished, isFalse);
+    for (final platform in [AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64]) {
+      final natural = await enhanceComponentFiles(EnhanceLevel.natural, platform, files);
+      expect(natural.notInThisVersion, isTrue, reason: '$platform');
+      expect(natural.missing, isEmpty);
+    }
+    expect((await enhanceComponentFiles(EnhanceLevel.rebuild, AiPlatform.windowsX64, files)).notInThisVersion, isTrue);
+    // Sharpen takes the components of ai-components-3: offered, to download
+    final sharpen = await enhanceComponentFiles(EnhanceLevel.sharpen, AiPlatform.windowsX64, files);
+    expect(sharpen.notInThisVersion, isFalse);
+    expect(sharpen.missing, [sdCppWindowsComponent, upscalerComponent]);
+    // Once published, Natural lists its files to download
+    final published = await enhanceComponentFiles(EnhanceLevel.natural, AiPlatform.windowsX64, files, published: true);
+    expect(published.notInThisVersion, isFalse);
+    expect(published.missing, [onnxRuntimeWindowsComponent, ...vosrComponents]);
   });
 
   testWidgets('Escape closes the dialog without handing anything to the queue', (tester) async {

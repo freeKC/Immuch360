@@ -109,12 +109,13 @@ void main() {
   ConversionQueueState current() => container.read(conversionQueueProvider);
   ConversionJob job(String id) => current().byId(id)!;
 
-  ConversionRequest photo(String name) {
+  ConversionRequest photo(String name, {int? pixels}) {
     final path = p.join(root.path, name);
     File(path).writeAsBytesSync(Uint8List.fromList(List.generate(64, (i) => (i * 7 + name.length) & 0xff)));
     return ConversionRequest(
       source: LocalFileSource(path, hash: (path, cancel) async => 'c2hh'),
       target: ConversionTarget(folder: root.path, fileName: versionTargetName(ImmersiveKind.enhancedPhoto, name)),
+      pixels: pixels,
     );
   }
 
@@ -190,6 +191,23 @@ void main() {
     expect(naturalJobMemory, greaterThan(4 * _gib));
     sharpen.hold!.complete();
     await until((state) => state.byId(natural.single)!.state == ConversionState.done);
+  });
+
+  test('a photo of 50 MP holds more memory beside the other lane than one of 12 MP', () async {
+    final natural = levels[EnhanceLevel.natural]!..hold = Completer<void>();
+    queue().add([photo('n.jpg')], kind: ConversionKind.enhanceNatural);
+    await running([natural], 1);
+    // 3.5 GB free: Sharpen of 12 MP takes 2 GB and the reserve of 1 GB, Sharpen of 50 MP 1.5 GB more
+    memory.available = 7 * _gib ~/ 2;
+    final small = queue().add([photo('small.jpg', pixels: 12000000)], kind: ConversionKind.enhanceSharpen);
+    await until((state) => state.byId(small.single)!.state == ConversionState.done);
+    final big = queue().add([photo('big.jpg', pixels: 50000000)], kind: ConversionKind.enhanceSharpen);
+    await until((state) => state.byId(big.single)!.waitingFor == ConversionWait.memory);
+    expect(job(big.single).enhance!.pixels, 50000000);
+    memory.available = 16 * _gib;
+    await until((state) => state.byId(big.single)!.state == ConversionState.done);
+    natural.hold!.complete();
+    await until((state) => state.jobs.every((job) => job.state == ConversionState.done));
   });
 
   test('Pause stops the photo under way and keeps the next one out; Resume runs them again from the start', () async {

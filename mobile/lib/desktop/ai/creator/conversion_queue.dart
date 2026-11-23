@@ -540,7 +540,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         skipReason: request.skip,
         fromVideo: fromVideo && kind == ConversionKind.splatScene,
         enhance: switch (kind.enhanceLevel) {
-          final level? => enhance?.level == level ? enhance : EnhanceSettings.of(level),
+          final level? => (enhance?.level == level ? enhance! : EnhanceSettings.of(level)).forPixels(request.pixels),
           null => null,
         },
       );
@@ -1081,7 +1081,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   static int _memoryNeedOf(ConversionJob job) =>
       job.video?.quality.jobMemoryBytes ??
       switch (job.kind.enhanceLevel) {
-        final level? => enhanceJobMemoryOf(level),
+        final level? => enhanceJobMemoryOf(level, pixels: job.enhance?.pixels),
         null => jobMemoryNeedOf(job.kind.output),
       };
 

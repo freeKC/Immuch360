@@ -40,24 +40,32 @@ enum EnhanceLevel {
 
 /// What the dialog chose for a batch: the level and the strength, 0 to 100 percent
 class EnhanceSettings {
-  const EnhanceSettings({required this.level, required this.strength})
+  const EnhanceSettings({required this.level, required this.strength, this.pixels})
     : assert(strength >= 0 && strength <= 100, 'A strength is a percentage');
 
   /// The level at its default strength
-  EnhanceSettings.of(this.level) : strength = level.defaultStrength;
+  EnhanceSettings.of(this.level, {this.pixels}) : strength = level.defaultStrength;
 
   final EnhanceLevel level;
   final int strength;
 
+  /// The pixels of the photo as the library knows them, for the memory the queue holds for its job
+  /// (enhanceJobMemoryOf); null when not known
+  final int? pixels;
+
   /// The share of the result in the file written, 0 to 1
   double get blend => strength / 100;
 
-  @override
-  bool operator ==(Object other) => other is EnhanceSettings && other.level == level && other.strength == strength;
+  /// The same settings for a photo of [pixels]
+  EnhanceSettings forPixels(int? pixels) => EnhanceSettings(level: level, strength: strength, pixels: pixels);
 
   @override
-  int get hashCode => Object.hash(level, strength);
+  bool operator ==(Object other) =>
+      other is EnhanceSettings && other.level == level && other.strength == strength && other.pixels == pixels;
 
   @override
-  String toString() => 'EnhanceSettings(${level.name}, $strength %)';
+  int get hashCode => Object.hash(level, strength, pixels);
+
+  @override
+  String toString() => 'EnhanceSettings(${level.name}, $strength %${pixels == null ? '' : ', $pixels px'})';
 }
