@@ -126,7 +126,8 @@ def main() -> int:
     for name, data in files.items():
         (args.out / name).write_bytes(data)
     sums = ''.join(f'{sha256(data)}  {name}\n' for name, data in sorted(files.items()))
-    (args.out / 'SHA256SUMS').write_text(sums, encoding='ascii')
+    # LF on every system: write_text would give CRLF on the Windows runner
+    (args.out / 'SHA256SUMS').write_bytes(sums.encode('ascii'))
     if args.plain:
         args.plain.mkdir(parents=True, exist_ok=True)
         (args.plain / 'onnxruntime.dll').write_bytes(library)
