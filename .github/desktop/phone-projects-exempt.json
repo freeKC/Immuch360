@@ -156,8 +156,8 @@
     "reason": "DJI link (feat-dji-link, 12ccff821): the accessory attached entry, which only brings the application forward; fix round of 22 October: the review findings of stage 1; DJI live video (feat-dji-ux): the entry marks the launch for the live screen; DJI build 30 (build-30): the comment of the attach entry, on by default on a phone"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkController.kt": {
-    "blob": "d9df2fc9c0180463a68a8fef59e268ab392b76b2",
-    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot; DJI live video (feat-dji-ux): the link that ends follows the attach entry policy; DJI decoder fix round (feat-dji-ux): the memory of the decoders, the relayed key picture kept for the decoder and the new switch reasons; DJI finalisation (feat-dji-final): the values ten times a second, the obstacle alert and its beep, the control frame ring, the reception record and the export written once; DJI on Android TV (feat-dji-tv): the TVs given to the relay, a TV that says so in its hello, and no volume warning where the volume is fixed; DJI on Android TV fix round (feat-dji-tv): the comment of the hello of a TV, a comment line under 120 columns; DJI relay smoothness (feat-dji-relay): both ends of the relay in the exports, the long pings and the snapshot, and the delay with the jitter buffer; DJI relay fix round (feat-dji-relay): the delay lines from the pictures shown, and the lowest delay of a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring decided with the phone's relayed choices, the tick and its tap, the sample; DJI obstacle ring fix round (feat-dji-obstacle-ui): the tick of the ring through ObstacleRingTicker, a sample ended when the motors start; DJI integration (feat-dji-30): the shape of the indicator chosen on a headset, to its flight view; DJI proof gates (feat-dji-proof): the height and the speeds of the live frame in the air only; DJI proof fix round (feat-dji-proof): the height of the live frame after the height hold; DJI relay bandwidth (feat-dji-bandwidth): the steady stream wired between the tee and the relay, Relay quality, the thermal status, the pilot's decoder and the battery watched while sending, the receiver's Wi-Fi in its pings; DJI build 30 (build-30): the comment of the attach entry where the link ends, on by default on a phone"
+    "blob": "ec89643e271c29d4057a66e2e555330116556a2d",
+    "reason": "DJI link (feat-dji-link, 12ccff821): the process scoped owner of the link, the codecs, the capture and the safety rules; fix round of 22 October: the review findings of stage 1; DJI link stage 2 (feat-dji-link-2): the video pipeline, the capture player, the session log and the states that follow the picture; stage 2 fix round (feat-dji-link-2): the findings of the stage 2 review; DJI link stage 2b (feat-dji-link-3): owners, the relay, the receiver, the flight view and their snapshot; DJI live video (feat-dji-ux): the link that ends follows the attach entry policy; DJI decoder fix round (feat-dji-ux): the memory of the decoders, the relayed key picture kept for the decoder and the new switch reasons; DJI finalisation (feat-dji-final): the values ten times a second, the obstacle alert and its beep, the control frame ring, the reception record and the export written once; DJI on Android TV (feat-dji-tv): the TVs given to the relay, a TV that says so in its hello, and no volume warning where the volume is fixed; DJI on Android TV fix round (feat-dji-tv): the comment of the hello of a TV, a comment line under 120 columns; DJI relay smoothness (feat-dji-relay): both ends of the relay in the exports, the long pings and the snapshot, and the delay with the jitter buffer; DJI relay fix round (feat-dji-relay): the delay lines from the pictures shown, and the lowest delay of a headset; DJI obstacle ring (feat-dji-obstacle-ui): the ring decided with the phone's relayed choices, the tick and its tap, the sample; DJI obstacle ring fix round (feat-dji-obstacle-ui): the tick of the ring through ObstacleRingTicker, a sample ended when the motors start; DJI integration (feat-dji-30): the shape of the indicator chosen on a headset, to its flight view; DJI proof gates (feat-dji-proof): the height and the speeds of the live frame in the air only; DJI proof fix round (feat-dji-proof): the height of the live frame after the height hold; DJI relay bandwidth (feat-dji-bandwidth): the steady stream wired between the tee and the relay, Relay quality, the thermal status, the pilot's decoder and the battery watched while sending, the receiver's Wi-Fi in its pings; DJI build 30 (build-30): the comment of the attach entry where the link ends, on by default on a phone; crashes of release 51 (fix-crashes-51, Meta cluster 934bfc): the DJI flight view refuses to start below Android 13, which the Meta Spatial SDK needs"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/djilink/DjiLinkRelayService.kt": {
     "blob": "5d9c39edca4d9bd8d60af2ea3a40f39c484d0505",
@@ -363,9 +363,13 @@
     "blob": "8d1929f81176656bde5086e19ba545b507be3c8f",
     "reason": "Image decode guard (fix-crash-image-decode, crash M1 of the Meta Quest store, 8 November 2026): the formats Flutter's engine decodes with codecs of its own, read from the first bytes, pure; not yet on the phone branch"
   },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/images/GlideHandOver.kt": {
+    "blob": "a3df1578997f3c50740804be55cebb9b810ef741",
+    "reason": "crashes of release 51 (fix-crashes-51, Play cluster 427264): the hand over of a Glide bitmap before Android 10, a cancel during the decode waking the worker"
+  },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/images/LocalImagesImpl.kt": {
-    "blob": "d401a475929dd27fdc98351877d162d31fb57925",
-    "reason": "TIFF on Android (fix-tiff-android, fix round): the encoded file of a device photo read for the Dart TIFF decoder is refused before it is read when it is larger than the device holds (a sixteenth of its memory), read straight into the native buffer Dart takes, and a request always ends, an OutOfMemoryError included; not yet on the phone branch"
+    "blob": "f9585f704b13a3eb9b9f34da7cc860cb07ffd9ef",
+    "reason": "TIFF on Android (fix-tiff-android, fix round): the encoded file of a device photo read for the Dart TIFF decoder is refused before it is read when it is larger than the device holds (a sixteenth of its memory), read straight into the native buffer Dart takes, and a request always ends, an OutOfMemoryError included; not yet on the phone branch; crashes of release 51 (fix-crashes-51, Play cluster 427264): each request its own bitmap before Android 10, through GlideHandOver"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/images/NativeDecodeSize.kt": {
     "blob": "eec4055bddcd972bfb3361ab4c986dea582b3501",
@@ -404,8 +408,8 @@
     "reason": "AI immersive phases 2 and 3, lot P4: our packet at the head of a panorama generated beyond the edges of a photo, the yaw that opens it on its photo, its passing text and panel lines; feat-ai-immersive, not yet on the phone branch; V3 of AI immersive (feat-ai-immersive-v3-quest-panorama): no outline on the 3D version of a generated panorama, the flags on one line of the panel"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveApiImpl.kt": {
-    "blob": "47c9867da837b0394464edcae2423df8cd7c8509",
-    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Sharper flat screens setting handed to the viewer; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the opening carries the kiosk JSON to the immersive viewer; not yet on the phone branch; decoder limit (fix-decoder-limit): open and showAdjacent carry the notice of the file chosen and the refusal of a video nothing decodes; fix round of the splats: the Gaussian splats setting handed to the viewer; the decision of 30 October on the splats: splatsInThisBuild, false in the Meta Horizon Store build; integration of 31 October: one opening carries the notice, the refusal and the Gaussian splats setting; watch progress (feat-watch-progress): the threshold of the films and the start notice handed to the viewer, the start of a film shown next, and the progress event towards Flutter; Quest gallery (feat-quest-gallery-49, issue 19): the slideshow time and the frosted background of the Pigeon open"
+    "blob": "b8c4e725ea1f1ec294a7338cb9f06d5ae127aba3",
+    "reason": "Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the Sharper flat screens setting handed to the viewer; quest kiosk (feat-quest-kiosk, from the exhibition builds of ppawelstachh-sys/Immuch360): the opening carries the kiosk JSON to the immersive viewer; not yet on the phone branch; decoder limit (fix-decoder-limit): open and showAdjacent carry the notice of the file chosen and the refusal of a video nothing decodes; fix round of the splats: the Gaussian splats setting handed to the viewer; the decision of 30 October on the splats: splatsInThisBuild, false in the Meta Horizon Store build; integration of 31 October: one opening carries the notice, the refusal and the Gaussian splats setting; watch progress (feat-watch-progress): the threshold of the films and the start notice handed to the viewer, the start of a film shown next, and the progress event towards Flutter; Quest gallery (feat-quest-gallery-49, issue 19): the slideshow time and the frosted background of the Pigeon open; crashes of release 51 (fix-crashes-51, Meta cluster 934bfc): the immersive viewer refuses to start below Android 13, which the Meta Spatial SDK needs"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveCacheCleaning.kt": {
     "blob": "65200849240f4826132ce88be3f19d1f62a0a91e",
@@ -454,6 +458,10 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/SpatialHold.kt": {
     "blob": "f451572baae3b6a8c4e9caa513ab6273b93ea045",
     "reason": "quest shutdown fix (fix-quest-shutdown): the objects of the scene of the immersive viewer, null once onSpatialShutdown ran, so that no entity is touched after the SDK cleared EntityContext; hardening of the quest shutdown (hardening-quest-shutdown): the name of the hold in its KDoc; not yet on the phone branch"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/SpatialSdkSupport.kt": {
+    "blob": "e469600747ad9642ce5a4a0ba1b25e908d059230",
+    "reason": "crashes of release 51 (fix-crashes-51, Meta cluster 934bfc): whether this headset runs the Meta Spatial SDK (Android 13 or later)"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
     "blob": "54e4c7e563f7f5be104debc0c2c915160b53c35f",
@@ -1419,6 +1427,10 @@
     "blob": "c7c4c6bcc96a1c960658a4cce246183e7be26a79",
     "reason": "Image decode guard (fix-crash-image-decode, crash M1 of the Meta Quest store, 8 November 2026): the tests of EngineImageFormats, on the table of the Dart probe; not yet on the phone branch"
   },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/images/GlideHandOverTest.kt": {
+    "blob": "9b7f50664a59bb09de1828f7be3134d8be073cc0",
+    "reason": "crashes of release 51 (fix-crashes-51): the tests of GlideHandOver, with a fake that behaves like Glide 4.16"
+  },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/images/NativeDecodeSizeTest.kt": {
     "blob": "c179d103a7742037e3544bf25dd7bb1313fe784d",
     "reason": "Image decode guard (fix-crash-image-decode, crash M1 of the Meta Quest store, 8 November 2026): the tests of NativeDecodeSize; not yet on the phone branch"
@@ -1522,6 +1534,10 @@
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SpatialHoldWiringTest.kt": {
     "blob": "3b86545085f139e110bd4e727b352ce31f8ab284",
     "reason": "hardening of the quest shutdown (hardening-quest-shutdown): the source of the immersive viewer read for its wiring of SpatialHold (no plain field of a scene type, shutDown first in onSpatialShutdown, the lazy creators guarded), run by the Kotlin unit tests job; not yet on the phone branch"
+  },
+  "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SpatialSdkSupportTest.kt": {
+    "blob": "b0227549202155f8472a821bf85758e700af51ad",
+    "reason": "crashes of release 51 (fix-crashes-51): the tests of SpatialSdkSupport and of its wiring"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/SplatStickReplayTest.kt": {
     "blob": "e47a9f7edeffd8b081750cbd9a846d7d113c58b7",
