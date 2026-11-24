@@ -82,7 +82,8 @@ class _Immich implements ScreenImmichAccess {
   @override
   PageRouteInfo routeOf(RemoteAsset asset) {
     opened.add(asset.id);
-    return const PageRouteInfo('AssetViewerRoute');
+    // Arguments of their own, as AssetViewerRoute has: the router keeps that very object for the page
+    return PageRouteInfo('AssetViewerRoute', args: [asset.id]);
   }
 
   @override
@@ -128,6 +129,9 @@ void main() {
   late _Immich immich;
   late List<(String, bool)> routes;
   late int closed;
+
+  /// The page in front of the router: the last one a play opened, or one the screen's user opened
+  late ScreenPlayerFront front;
   late ProviderContainer container;
 
   setUpAll(() async {
@@ -151,12 +155,15 @@ void main() {
     immich = _Immich();
     routes = [];
     closed = 0;
+    front = (name: 'TabShellRoute', args: null);
     container = ProviderContainer(
       overrides: [
         screenImmichAccessProvider.overrideWithValue(immich),
-        screenPlayerOpenProvider.overrideWithValue(
-          (route, {required replace}) async => routes.add((route.routeName, replace)),
-        ),
+        screenPlayerOpenProvider.overrideWithValue((route, {required replace}) async {
+          routes.add((route.routeName, replace));
+          front = (name: route.routeName, args: route.args);
+        }),
+        screenPlayerFrontProvider.overrideWithValue(() => front),
         screenPlayerShowsProvider.overrideWithValue((name) => false),
         screenPlayerCloseProvider.overrideWithValue(() async => closed++),
         playLinkSecretsProvider.overrideWithValue(secrets),
@@ -289,10 +296,10 @@ void main() {
   });
 
   group('Immich', () {
-    Map<String, Object?> play({PlayMedia media = PlayMedia.photo, List<String> endpoints = const []}) => {
+    Map<String, Object?> play({PlayMedia media = PlayMedia.photo}) => {
       'type': 'play',
       ...PlayItem.of(
-        ImmichPlayTarget(asset: _asset, user: _phoneUser, endpoints: endpoints, media: media),
+        ImmichPlayTarget(asset: _asset, user: _phoneUser, media: media),
         title: 'IMG_0001.jpg',
       ).toJson(),
     };
@@ -333,6 +340,63 @@ void main() {
       expect(closed, 1);
     });
 
+    test('the next photo of the same phone replaces the one it opened, without asking again nor a new toast', () async {
+      kind = PairingScreenKind.headset;
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final first = await connection.command(play());
+      await connection.status(after: first.state.seq, wait: const Duration(seconds: 2));
+      expect(prompts.asked, hasLength(1));
+      expect(prompts.toasts, hasLength(1));
+
+      final second = await connection.command(play());
+      expect(second.state.reason, isNull);
+      expect(routes.map((route) => route.$2), [false, true], reason: 'the second replaces the page the phone opened');
+      expect(prompts.asked, hasLength(1), reason: 'the Quest asked for the first item only');
+      expect(prompts.toasts, hasLength(1));
+
+      // Once the screen's user closed it, the next play asks again
+      final shown = await connection.status(after: second.state.seq, wait: const Duration(seconds: 2));
+      expect(shown.phase, ScreenPlayPhase.showing);
+      immich.shown = false;
+      final closedByOwner = await connection.status(after: shown.seq, wait: const Duration(seconds: 2));
+      expect(closedByOwner.phase, ScreenPlayPhase.idle);
+      immich.shown = true;
+      front = (name: 'TabShellRoute', args: null);
+      await connection.command(play());
+      expect(prompts.asked, hasLength(2));
+    });
+
+    test('a page the screen\'s user opened stays under a phone\'s play, and Stop does not close it', () async {
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      // The TV's owner looks at a photo of their own
+      front = (name: 'AssetViewerRoute', args: Object());
+      await connection.command(play());
+      expect(routes.single, ('AssetViewerRoute', false), reason: 'pushed over the owner\'s photo, not in its place');
+
+      // The phone's page in front: Stop closes it
+      await connection.command({'type': 'stop'});
+      expect(closed, 1);
+
+      // The owner's page in front again (Back went to it): Stop from the phone leaves it
+      await connection.command(play());
+      front = (name: 'AssetViewerRoute', args: Object());
+      await connection.command({'type': 'stop'});
+      expect(closed, 1);
+    });
+
+    test('a film\'s player in front is replaced, as build 51 did', () async {
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      front = (name: 'NetworkVideoRoute', args: Object());
+      await connection.command(play());
+      expect(routes.single, ('AssetViewerRoute', true));
+    });
+
     test('a video: the server\'s word wins over the phone\'s, and the TV prompt says play', () async {
       container.read(playFromPhoneAskProvider.notifier).state = true;
       immich.answer = (asset: _remote(type: AssetType.video), reason: null);
@@ -366,10 +430,13 @@ void main() {
     });
 
     test('the refusal sentence: same user, another account at the same address, another server', () {
-      const target = ImmichPlayTarget(
+      final target = ImmichPlayTarget(
         asset: _asset,
         user: _phoneUser,
-        endpoints: ['https://photos.example.org', 'http://192.168.1.10:2283'],
+        endpointHashes: [
+          immichEndpointHash('https://photos.example.org')!,
+          immichEndpointHash('http://192.168.1.10:2283')!,
+        ],
       );
       expect(
         immichRefusalReason(screenUser: _phoneUser.toUpperCase(), screenEndpoints: const [], target: target),

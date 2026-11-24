@@ -3,6 +3,7 @@
 // The loopback stands for the screen's LAN address (192.168.1.20): the client refuses anything but a private IPv4.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -474,12 +475,14 @@ void main() {
       expect(photo.isPhoto, isTrue);
       expect(target.asset, asset.toLowerCase());
       expect(target.user, user);
-      expect(target.endpoints, [
-        'https://photos.example.org',
-        'http://192.168.1.10:2283',
-        'http://10.0.0.2:2283',
-        'http://10.0.0.3:2283',
+      expect(target.endpointHashes, [
+        immichEndpointHash('https://photos.example.org'),
+        immichEndpointHash('http://192.168.1.10:2283'),
+        immichEndpointHash('http://10.0.0.2:2283'),
+        immichEndpointHash('http://10.0.0.3:2283'),
       ]);
+      expect(jsonEncode(photo.item.toJson()), isNot(contains('photos.example.org')));
+      expect(jsonEncode(photo.item.toJson()), isNot(contains('192.168.1.10')));
       expect(photo.immich?.locked, isFalse);
       expect(request(remote(visibility: AssetVisibility.locked)).immich?.locked, isTrue);
       expect(request(remote(type: AssetType.video)).isPhoto, isFalse);
@@ -502,16 +505,7 @@ void main() {
       final played = actions.played!;
       expect(played.kind, PlayKind.immich);
       expect((played.target as ImmichPlayTarget).asset, asset.toLowerCase());
-      expect(played.toJson().keys.toSet(), {
-        'kind',
-        'asset',
-        'user',
-        'endpoints',
-        'media',
-        'title',
-        'offsetMs',
-        'serverName',
-      });
+      expect(played.toJson().keys.toSet(), {'kind', 'asset', 'user', 'endpointHashes', 'media', 'title', 'offsetMs'});
       expect(playback()?.isOfAsset(asset), isTrue);
       actions.set(actions.state.next(phase: ScreenPlayPhase.showing));
       await _until(() => playback()?.state.phase == ScreenPlayPhase.showing);

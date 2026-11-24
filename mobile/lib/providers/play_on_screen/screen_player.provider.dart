@@ -5,8 +5,10 @@
 // A play opens the film the way OK on its poster would: the screen finds its own Plex source of the machine
 // identifier the phone named, asks that server for the item with its own token (no token ever comes with a play),
 // and opens the usual player at the phone's position, with a toast "From (phone)". The remote keeps control: what it
-// does shows in the state the phone follows. A film playing is replaced; the Quest asks first, and a TV or a computer
-// when "Ask before a phone plays" is on.
+// does shows in the state the phone follows. A film playing is replaced, and so is a page a phone opened (a photo, a
+// video); a page the screen's user opened stays under the new one, Back goes to it. The Quest asks first, and a TV
+// or a computer when "Ask before a phone plays" is on; the next items of the same phone while one of its photos or
+// videos is shown (a swipe, its slideshow) open without asking again nor a new toast.
 //
 // Nothing here goes to the logs but kinds and outcomes: never a title, a position, a key or a token.
 
@@ -326,8 +328,33 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
   bool _playerSeen = false;
   PlayItem? _pendingTracks;
 
+  /// The arguments of the route a phone's play opened: the very object the router keeps for that page, so that the
+  /// page in front is known to be that one (a page of the screen's user has other arguments)
+  Object? _openedArgs;
+
   @override
   ScreenPlayState get state => _state;
+
+  /// Whether the page in front is the one a phone's play opened
+  bool get _phonePageInFront {
+    final opened = _openedArgs;
+    if (opened == null) {
+      return false;
+    }
+    final front = _ref.read(screenPlayerFrontProvider)();
+    return screenPlayerPageNames.contains(front.name) && identical(front.args, opened);
+  }
+
+  /// Whether the next item of [from] follows the one it shows now (a swipe or its slideshow): a photo or a video of
+  /// the same phone still shown, or a video of it that ended
+  bool _follows(PlayItem item, LinkedPeer from) {
+    final current = _state;
+    return item.kind != PlayKind.plex &&
+        current.fromId == from.id &&
+        current.media != null &&
+        current.item == null &&
+        (current.isActive || current.phase == ScreenPlayPhase.ended);
+  }
 
   @override
   Stream<ScreenPlayState> get states => _states.stream;
@@ -350,7 +377,8 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
 
   @override
   Future<void> play(PlayItem item, LinkedPeer from) async {
-    final ask = kind == PairingScreenKind.headset || _ref.read(playFromPhoneAskProvider);
+    final follows = _follows(item, from);
+    final ask = !follows && (kind == PairingScreenKind.headset || _ref.read(playFromPhoneAskProvider));
     final plex = item.kind == PlayKind.plex;
     _stopPolling();
     _set(
@@ -364,6 +392,7 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
         media: plex ? null : item.media,
         title: item.title,
         from: from.name,
+        fromId: from.id,
         positionMs: item.offsetMs,
       ),
     );
@@ -381,7 +410,9 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     if (!opened) {
       return;
     }
-    _prompts.toast(from: from.name);
+    if (!follows) {
+      _prompts.toast(from: from.name);
+    }
     _log.info('Play from a phone: ${item.media == PlayMedia.photo ? 'showing' : 'playing'} (${item.kind.wire})');
     _startPolling();
   }
@@ -510,7 +541,9 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
   /// Opens [route], in place of a page a phone opened (or a player) when one is in front, and follows its player
   /// ([playerKey]) or, for a photo, whether it is still shown ([showing])
   Future<bool> _openRoute(PageRouteInfo route, {String? playerKey, bool Function()? showing}) async {
-    final replace = _ref.read(screenPlayerShowsProvider)(null);
+    // A film's player in front is replaced (as build 51 did), and the page a phone opened; any other page stays
+    final replace = _ref.read(screenPlayerFrontProvider)().name == NetworkVideoRoute.name || _phonePageInFront;
+    _openedArgs = route.args;
     _playerKey = playerKey;
     _showing = showing;
     _openedAt = DateTime.now();
@@ -695,7 +728,11 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     _playerKey = null;
     _showing = null;
     _pendingTracks = null;
-    if ((key != null && _ref.exists(videoPlayerProvider(key))) || (showing != null && showing())) {
+    // Only the page the phone opened closes (or a film's player, as build 51 did): never a page of the screen's user
+    final front = _ref.read(screenPlayerFrontProvider)().name;
+    final phonePage = _phonePageInFront || (key != null && front == NetworkVideoRoute.name);
+    _openedArgs = null;
+    if (phonePage && ((key != null && _ref.exists(videoPlayerProvider(key))) || (showing != null && showing()))) {
       await _ref.read(screenPlayerCloseProvider)();
     }
     _set((state) => state.next(phase: ScreenPlayPhase.idle, clearReason: true));
@@ -745,7 +782,17 @@ final screenPlayerOpenProvider = Provider<ScreenPlayerOpen>((ref) {
 /// The pages a play of a phone opens
 const screenPlayerPageNames = {NetworkVideoRoute.name, NetworkPhotoRoute.name, AssetViewerRoute.name};
 
-/// Whether the page in front is [name], or with null one of the pages a play opens: a new play then takes its place
+/// The page in front of the router: its name, and its arguments (the very object the route of a play carried)
+typedef ScreenPlayerFront = ({String name, Object? args});
+
+final screenPlayerFrontProvider = Provider<ScreenPlayerFront Function()>((ref) {
+  return () {
+    final current = ref.read(appRouterProvider).current;
+    return (name: current.name, args: current.args);
+  };
+});
+
+/// Whether the page in front is [name], or with null one of the pages a play opens
 final screenPlayerShowsProvider = Provider<bool Function(String? name)>((ref) {
   return (name) {
     final current = ref.read(appRouterProvider).current.name;

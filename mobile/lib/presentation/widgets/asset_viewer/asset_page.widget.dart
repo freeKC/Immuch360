@@ -32,6 +32,7 @@ import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.pro
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_play_no_loop.provider.dart';
 import 'package:immich_mobile/providers/view_intent/view_intent_file_path.provider.dart';
 import 'package:immich_mobile/widgets/common/immich_loading_indicator.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
@@ -536,6 +537,10 @@ class _AssetPageState extends ConsumerState<AssetPage> {
         image: Image(image: imageProvider, fit: BoxFit.contain, alignment: Alignment.center),
         // A film resumes where it was left (see VideoWatchRecorder)
         watchProgress: true,
+        // A video a phone opened on this screen plays once (screen_play_no_loop.provider.dart)
+        loopOverride: asset.remoteId != null && ref.watch(screenPlayNoLoopAssetProvider) == asset.remoteId
+            ? false
+            : null,
       ),
     );
     // Immuch360 Desktop: an AV2 video (.ivf, .obu) plays once its decoder is there, its setting on and its speed told

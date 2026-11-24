@@ -1,12 +1,17 @@
 // "Play on..." of a photo or a video of the Immich library (release 52): the request of the asset the viewer shows
-// (its id, the phone's account and the addresses of its server, never a session), the sheet, and the viewer followed
+// (its id, the phone's account and hashes of its server's addresses, never a session), the sheet, and the viewer followed
 // while a screen or a Cast device shows one of its assets: a swipe to the next photo sends that one, 300 ms after
 // the last swipe, so that three fast swipes send the last photo only.
 //
 // The slideshow the phone steers: Previous and Next of the dock move the phone's viewer (the album, the search, the
 // timeline it was opened on), whose move sends the photo; Slideshow moves it every few seconds, waiting for a video
-// to end on the screen. It stops at the end of the viewer's list, once nothing is sent any more, or when the viewer
-// closes on the phone.
+// to end on the screen (a paused one included). A video that ended there still counts as sent: the next item goes.
+// It stops at the end of the viewer's list, once nothing is sent any more (Stop, Back on the remote, the screen
+// gone), or when the viewer closes on the phone.
+//
+// The viewer followed never sends a locked item, nor an archived one unless the item sent before was archived too
+// (the sheet asked before that one): an item skipped stays on the phone, the screen keeps the one before, and the
+// next move sends again.
 
 import 'dart:async';
 
@@ -60,12 +65,23 @@ Future<bool> showPlayOnSheetForAsset(BuildContext context, WidgetRef ref, BaseAs
 /// The viewer the last "Play on..." of an asset was opened from: its moves are the slideshow's steps
 final playOnViewerJumpProvider = StateProvider<AssetViewerJump?>((_) => null);
 
+/// Whether [remote] shows an item of the phone's viewer: under way, or an Immich video that ended there (the next item
+/// of the viewer may follow it)
+bool playOnRemoteFollows(RemotePlayback? remote) =>
+    remote != null &&
+    !remote.lost &&
+    (!remote.ended || (remote.state.phase == ScreenPlayPhase.ended && remote.request.sourceId == playOnImmichSource));
+
+/// The same for a cast
+bool playOnCastFollows(CastPlayback? cast) =>
+    cast != null && cast.request.sourceId == playOnImmichSource && (cast.live || cast.phase == CastPhase.ended);
+
 /// Whether a screen or a Cast device shows an item of this phone now, and whether that item is a video under way
 ({bool sending, bool videoUnderWay}) playOnSendingState(Ref ref) {
   final remote = ref.read(remotePlaybackProvider);
   final cast = ref.read(castPlaybackProvider);
-  if (remote != null && !remote.lost && !remote.ended) {
-    final phase = remote.state.phase;
+  if (playOnRemoteFollows(remote)) {
+    final phase = remote!.state.phase;
     final video = remote.state.media == PlayMedia.video || (remote.state.media == null && !remote.request.isPhoto);
     return (
       sending: true,
@@ -73,15 +89,13 @@ final playOnViewerJumpProvider = StateProvider<AssetViewerJump?>((_) => null);
           video &&
           (phase == ScreenPlayPhase.opening ||
               phase == ScreenPlayPhase.playing ||
+              phase == ScreenPlayPhase.paused ||
               phase == ScreenPlayPhase.buffering ||
               phase == ScreenPlayPhase.asking),
     );
   }
-  if (cast != null && cast.live) {
-    return (
-      sending: true,
-      videoUnderWay: !cast.request.isPhoto && cast.phase != CastPhase.paused && cast.phase != CastPhase.showing,
-    );
+  if (playOnCastFollows(cast)) {
+    return (sending: true, videoUnderWay: !cast!.request.isPhoto && cast.live && cast.phase != CastPhase.showing);
   }
   return (sending: false, videoUnderWay: false);
 }
@@ -150,6 +164,8 @@ const playOnFollowDelay = Duration(milliseconds: 300);
 /// as long as the app
 final playOnViewerFollowProvider = Provider<void>((ref) {
   Timer? timer;
+  // The last item the follow did not send (locked, archived, on this phone only): moving on from it still follows
+  String? skipped;
   ref.onDispose(() => timer?.cancel());
   ref.listen(assetViewerProvider.select((state) => state.currentAsset), (previous, next) {
     final before = previous?.remoteId;
@@ -158,28 +174,32 @@ final playOnViewerFollowProvider = Provider<void>((ref) {
     }
     final remote = ref.read(remotePlaybackProvider);
     final cast = ref.read(castPlaybackProvider);
-    // The photo before is the one the screen shows, or one swiped past while the next was waiting to go
-    final waiting = timer?.isActive ?? false;
-    final screenShows = remote != null && !remote.lost && !remote.ended && (remote.isOfAsset(before) || waiting);
+    // The photo before is the one the screen shows, or one swiped past while the next was waiting to go, or one the
+    // follow skipped
+    final waiting = (timer?.isActive ?? false) || before == skipped;
+    final screenShows = playOnRemoteFollows(remote) && (remote!.isOfAsset(before) || waiting);
     final castShows =
-        !screenShows &&
-        cast != null &&
-        cast.live &&
-        cast.request.sourceId == playOnImmichSource &&
-        (cast.request.ratingKey == before.toLowerCase() || waiting);
+        !screenShows && playOnCastFollows(cast) && (cast!.request.ratingKey == before.toLowerCase() || waiting);
     if (!screenShows && !castShows) {
+      skipped = null;
       return;
     }
     timer?.cancel();
     timer = Timer(playOnFollowDelay, () {
       final request = ref.read(playOnAssetRequestProvider)(next);
-      if (request == null) {
-        // On this phone only: the screen keeps the one before
+      final sent = screenShows ? ref.read(remotePlaybackProvider)?.request : ref.read(castPlaybackProvider)?.request;
+      final private = request?.immich;
+      // On this phone only, locked, or archived while the item sent was not (the sheet asks before an archived item):
+      // the screen keeps the one before
+      if (request == null ||
+          private == null ||
+          private.locked ||
+          (private.archived && !(sent?.immich?.archived ?? false))) {
+        skipped = next.remoteId;
+        _log.info('Play on: the viewer moved to an item that is not sent');
         return;
       }
-      if (request.immich?.locked ?? false) {
-        return;
-      }
+      skipped = null;
       _log.info('Play on: the viewer moved, the next item goes');
       if (screenShows) {
         unawaited(ref.read(remotePlaybackProvider.notifier).showNext(request));

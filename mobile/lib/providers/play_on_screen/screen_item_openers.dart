@@ -3,9 +3,9 @@
 // page. Each with the screen's own access to the source, never one that came with the play.
 //
 // Immich: the screen asks its own server, with its own session, for the asset the phone named. Its server decides
-// what its account may see (the owner, a partner, a shared album). The phone's user id and server addresses only
-// choose the sentence of a refusal: the same user is the same server for sure; another user at an address the phone
-// uses too is another account; else another server. A locked asset never opens on a screen (its session has no PIN
+// what its account may see (the owner, a partner, a shared album). The phone's user id and the hashes of its server
+// addresses only choose the sentence of a refusal: the same user is the same server for sure; another user at an
+// address the phone uses too is another account; else another server. A locked asset never opens on a screen (its session has no PIN
 // elevation, and the deep link code refuses one too); a hidden one (the motion part of a live photo) neither.
 //
 // Shares and media servers: the screen's source of the same identity (the DLNA UDN or Jellyfin/Emby server id the
@@ -27,6 +27,7 @@ import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_play_no_loop.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/services/api.service.dart';
@@ -60,8 +61,8 @@ ScreenPlayReason immichRefusalReason({
     // The same account: the same server, which no longer has the asset
     return ScreenPlayReason.notFound;
   }
-  final own = {for (final endpoint in screenEndpoints) ?normaliseImmichEndpoint(endpoint)};
-  if (target.endpoints.any(own.contains)) {
+  final own = {for (final endpoint in screenEndpoints) ?immichEndpointHash(endpoint)};
+  if (target.endpointHashes.any(own.contains)) {
     return ScreenPlayReason.otherAccount;
   }
   return ScreenPlayReason.otherServer;
@@ -131,6 +132,8 @@ class AppScreenImmichAccess implements ScreenImmichAccess {
     if (asset.isVideo) {
       viewer.setControls(false);
     }
+    // A phone's video plays once: its end moves the phone's slideshow on
+    _ref.read(screenPlayNoLoopAssetProvider.notifier).state = asset.isVideo ? asset.id : null;
     viewer.setAsset(asset);
     return AssetViewerRoute(
       initialIndex: 0,

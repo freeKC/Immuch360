@@ -4,6 +4,9 @@
 // the phone's user id, a share's identity with a path, a Jellyfin or Emby item (build 52, [PlayTarget]). A build 51
 // screen answers "invalid" to a kind it does not know: the phone then asks to update it.
 
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 
 /// What the screen does now
@@ -296,14 +299,16 @@ class PlexPlayTarget extends PlayTarget {
   }
 }
 
-/// A photo or a video of an Immich server: the asset id, the phone's user id and the addresses the phone reaches its
-/// server at. The screen asks its own server, with its own session, and that server decides what it may see; the
-/// addresses only choose the sentence of a refusal ("another server" or "another account").
+/// A photo or a video of an Immich server: the asset id, the phone's user id and the hashes of the addresses the phone
+/// reaches its server at ([immichEndpointHash]). The screen asks its own server, with its own session, and that
+/// server decides what it may see; the hashes only choose the sentence of a refusal ("another server" or "another
+/// account"), the screen comparing them with the hashes of its own addresses: the phone's addresses (an outside host
+/// name, the home network's) never go to the screen.
 class ImmichPlayTarget extends PlayTarget {
   const ImmichPlayTarget({
     required this.asset,
     required this.user,
-    this.endpoints = const [],
+    this.endpointHashes = const [],
     this.media = PlayMedia.video,
     this.projection = PlayProjection.flat,
   });
@@ -312,7 +317,9 @@ class ImmichPlayTarget extends PlayTarget {
 
   final String asset;
   final String user;
-  final List<String> endpoints;
+
+  /// [immichEndpointHash] of each address, 4 at most
+  final List<String> endpointHashes;
   @override
   final PlayMedia media;
   @override
@@ -332,7 +339,7 @@ class ImmichPlayTarget extends PlayTarget {
     'kind': 'immich',
     'asset': asset,
     'user': user,
-    if (endpoints.isNotEmpty) 'endpoints': endpoints,
+    if (endpointHashes.isNotEmpty) 'endpointHashes': endpointHashes,
     'media': media.wire,
     if (projection != PlayProjection.flat) 'projection': projection.wire,
   };
@@ -340,30 +347,42 @@ class ImmichPlayTarget extends PlayTarget {
   static ImmichPlayTarget? _fromJson(Map<String, Object?> json) {
     final asset = json['asset'];
     final user = json['user'];
-    final endpoints = json['endpoints'];
+    final hashes = json['endpointHashes'];
     final media = PlayMedia.fromWire(json['media']);
     if (asset is! String || !_uuid.hasMatch(asset) || user is! String || !_uuid.hasMatch(user) || media == null) {
       return null;
     }
-    if (endpoints != null && (endpoints is! List || endpoints.length > maxEndpoints)) {
+    if (hashes != null && (hashes is! List || hashes.length > maxEndpoints)) {
       return null;
     }
-    final addresses = <String>[];
-    for (final endpoint in (endpoints as List?) ?? const []) {
-      final normalised = endpoint is String && endpoint.length <= 512 ? normaliseImmichEndpoint(endpoint) : null;
-      if (normalised == null) {
+    final endpointHashes = <String>[];
+    for (final hash in (hashes as List?) ?? const []) {
+      if (hash is! String || !_endpointHash.hasMatch(hash)) {
         return null;
       }
-      addresses.add(normalised);
+      endpointHashes.add(hash);
     }
     return ImmichPlayTarget(
       asset: asset.toLowerCase(),
       user: user.toLowerCase(),
-      endpoints: addresses,
+      endpointHashes: endpointHashes,
       media: media,
       projection: PlayProjection.fromWire(json['projection']),
     );
   }
+}
+
+final _endpointHash = RegExp(r'^[0-9a-f]{32}$');
+
+/// What a play gives of an Immich server's address: the first 16 bytes of the SHA-256 of [normaliseImmichEndpoint] of
+/// it, in lower case hex; null for an address that does not normalise
+String? immichEndpointHash(String endpoint) {
+  final normalised = normaliseImmichEndpoint(endpoint);
+  if (normalised == null) {
+    return null;
+  }
+  final digest = sha256.convert(utf8.encode(normalised)).bytes;
+  return digest.take(16).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
 }
 
 /// An Immich server's address the way two devices can compare it: scheme and host in lower case, the port only when it
@@ -610,6 +629,7 @@ class ScreenPlayState {
     this.tracks = const [],
     this.reason,
     this.from,
+    this.fromId,
   });
 
   final int seq;
@@ -632,6 +652,9 @@ class ScreenPlayState {
 
   /// The name of the phone that asked for what plays
   final String? from;
+
+  /// The install id of that phone, kept on the screen: never sent ([toJson])
+  final String? fromId;
 
   bool get isActive =>
       phase == ScreenPlayPhase.opening ||
@@ -656,6 +679,7 @@ class ScreenPlayState {
     ScreenPlayReason? reason,
     bool clearReason = false,
     String? from,
+    String? fromId,
   }) => ScreenPlayState(
     seq: seq + 1,
     phase: phase ?? this.phase,
@@ -669,7 +693,11 @@ class ScreenPlayState {
     tracks: tracks ?? this.tracks,
     reason: clearReason ? null : (reason ?? this.reason),
     from: from ?? this.from,
+    fromId: fromId ?? this.fromId,
   );
+
+  /// What another phone than the one that played reads: the phase and who played, never what
+  ScreenPlayState withoutItem() => ScreenPlayState(seq: seq, phase: phase, from: from, fromId: fromId);
 
   /// Whether [other] says the same, its number apart
   bool sameAs(ScreenPlayState other) =>
@@ -683,6 +711,7 @@ class ScreenPlayState {
       other.title == title &&
       other.reason == reason &&
       other.from == from &&
+      other.fromId == fromId &&
       _sameTracks(other.tracks, tracks);
 
   static bool _sameTracks(List<PlayTrack> a, List<PlayTrack> b) {

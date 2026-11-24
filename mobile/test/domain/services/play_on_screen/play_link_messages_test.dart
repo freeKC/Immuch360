@@ -45,7 +45,7 @@ void main() {
         ImmichPlayTarget(
           asset: _asset,
           user: _user,
-          endpoints: ['https://photos.example.org'],
+          endpointHashes: ['0123456789abcdef0123456789abcdef'],
           media: PlayMedia.photo,
           projection: PlayProjection.equirect,
         ),
@@ -56,7 +56,7 @@ void main() {
       expect(back.kind, PlayKind.immich);
       expect(target.asset, _asset);
       expect(target.user, _user);
-      expect(target.endpoints, ['https://photos.example.org']);
+      expect(target.endpointHashes, ['0123456789abcdef0123456789abcdef']);
       expect(target.media, PlayMedia.photo);
       expect(target.projection, PlayProjection.equirect);
       expect(back.title, 'IMG_0001.jpg');
@@ -82,11 +82,14 @@ void main() {
       expect(PlayItem.fromJson(play({'asset': '42'})), isNull);
       expect(PlayItem.fromJson(play({'user': null})), isNull);
       expect(PlayItem.fromJson(play({'media': 'film'})), isNull);
-      expect(PlayItem.fromJson(play({'endpoints': List.filled(5, 'https://a.example')})), isNull);
+      final hash = immichEndpointHash('https://a.example')!;
+      expect(PlayItem.fromJson(play({'endpointHashes': List.filled(4, hash)})), isNotNull);
+      expect(PlayItem.fromJson(play({'endpointHashes': List.filled(5, hash)})), isNull);
+      // An address in clear is no hash: refused
       expect(
         PlayItem.fromJson(
           play({
-            'endpoints': ['file:///etc'],
+            'endpointHashes': ['https://a.example'],
           }),
         ),
         isNull,
@@ -94,12 +97,24 @@ void main() {
       expect(
         PlayItem.fromJson(
           play({
-            'endpoints': ['https://user:pw@a.example'],
+            'endpointHashes': [hash.toUpperCase()],
           }),
         ),
         isNull,
       );
-      expect(PlayItem.fromJson(play({'endpoints': 'https://a.example'})), isNull);
+      expect(PlayItem.fromJson(play({'endpointHashes': hash})), isNull);
+    });
+
+    test('an address goes as the hash of its normalised form only', () {
+      final hash = immichEndpointHash('HTTPS://Photos.Example.org:443/api/')!;
+      expect(hash, matches(RegExp(r'^[0-9a-f]{32}$')));
+      expect(immichEndpointHash('https://photos.example.org'), hash);
+      expect(immichEndpointHash('https://other.example.org'), isNot(hash));
+      expect(immichEndpointHash('ftp://example.org'), isNull);
+      final json = jsonEncode(
+        PlayItem.of(ImmichPlayTarget(asset: _asset, user: _user, endpointHashes: [hash])).toJson(),
+      );
+      expect(json, isNot(contains('photos.example')));
     });
 
     test('addresses compare whatever the way they were typed', () {

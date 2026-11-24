@@ -153,7 +153,8 @@ class PlayOnRequest {
        subtitle = null;
 
   /// The Immich asset [asset] of this phone's server, null for one that is on this device only. [userId] is the
-  /// phone's account, [endpoints] the addresses it reaches its server at, [serverName] what the sheet calls it.
+  /// phone's account, [endpoints] the addresses it reaches its server at (only their hashes go), [serverName] what the
+  /// sheet calls it (it stays on the phone).
   static PlayOnRequest? ofAsset(
     BaseAsset asset, {
     required String userId,
@@ -166,11 +167,12 @@ class PlayOnRequest {
       return null;
     }
     final visibility = asset is RemoteAsset ? asset.visibility : AssetVisibility.timeline;
-    final addresses = <String>[];
+    // The addresses as hashes: the screen compares them with its own, it never reads them
+    final hashes = <String>[];
     for (final endpoint in endpoints) {
-      final normalised = normaliseImmichEndpoint(endpoint);
-      if (normalised != null && !addresses.contains(normalised) && addresses.length < ImmichPlayTarget.maxEndpoints) {
-        addresses.add(normalised);
+      final hash = immichEndpointHash(endpoint);
+      if (hash != null && !hashes.contains(hash) && hashes.length < ImmichPlayTarget.maxEndpoints) {
+        hashes.add(hash);
       }
     }
     final media = asset.isVideo ? PlayMedia.video : PlayMedia.photo;
@@ -179,7 +181,7 @@ class PlayOnRequest {
       target: ImmichPlayTarget(
         asset: id.toLowerCase(),
         user: userId.toLowerCase(),
-        endpoints: addresses,
+        endpointHashes: hashes,
         media: media,
         projection: projection,
       ),
@@ -292,7 +294,13 @@ class PlayOnRequest {
           audio: audio,
           subtitle: subtitle,
         )
-      : PlayItem.of(_target, serverName: serverName, title: title, offsetMs: offsetMs);
+      // An Immich server's name is the host of the phone's address: it stays on the phone (the screen names its own)
+      : PlayItem.of(
+          _target,
+          serverName: _target.kind == PlayKind.immich ? null : serverName,
+          title: title,
+          offsetMs: offsetMs,
+        );
 
   /// The request for the source [sourceId] and the file at [path] of its open connection: null when the source is
   /// no Plex server, or the connection does not know the rating key of the file

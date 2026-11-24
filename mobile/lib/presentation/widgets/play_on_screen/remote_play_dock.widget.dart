@@ -195,12 +195,15 @@ class _CastDockBarState extends ConsumerState<_CastDockBar> {
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.cast_stop),
                       onPressed: () => unawaited(controller.stop()),
                     ),
-                  ] else
+                  ] else ...[
+                    // An Immich video that ended: the viewer's next item may still follow
+                    if (playOnCastFollows(playback)) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('cast_dock_close'),
                       icon: Icon(Icons.close_rounded, semanticLabel: t.close),
                       onPressed: () => unawaited(controller.dismiss()),
                     ),
+                  ],
                 ],
               ),
             ),
@@ -298,12 +301,15 @@ class _DockBar extends ConsumerWidget {
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.play_bar_stop),
                       onPressed: () => unawaited(controller.stop()),
                     ),
-                  ] else
+                  ] else ...[
+                    // An Immich video that ended: the viewer's next item may still follow
+                    if (playOnRemoteFollows(playback)) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('remote_play_dock_close'),
                       icon: Icon(Icons.close_rounded, semanticLabel: t.close),
                       onPressed: controller.dismiss,
                     ),
+                  ],
                 ],
               ),
             ),

@@ -325,7 +325,14 @@ class ScreenPlayerSession {
     return (status: 200, body: session.channel.seal(answer));
   }
 
-  Map<String, Object?> _withState(String status) => {'status': status, 'state': _actions.state.toJson()};
+  /// Only the phone whose play the state tells ([ScreenPlayState.fromId]) reads what plays: its title, its item, its
+  /// source. Another linked phone reads the phase and the name of the phone that played, which tell it that the
+  /// screen was taken.
+  Map<String, Object?> _withState(_Session session, String status) {
+    final state = _actions.state;
+    final own = state.fromId == null || state.fromId == session.phone.id;
+    return {'status': status, 'state': (own ? state : state.withoutItem()).toJson()};
+  }
 
   Future<Map<String, Object?>> _handle(_Session session, Map<String, Object?> message) async {
     switch (message['type']) {
@@ -336,40 +343,40 @@ class ScreenPlayerSession {
           after is int ? after : -1,
           wait is int && wait > 0 ? Duration(milliseconds: min(wait, maxWait.inMilliseconds)) : Duration.zero,
         );
-        return _withState('ok');
+        return _withState(session, 'ok');
       case 'play':
         final item = PlayItem.fromJson(message);
         if (item == null || !kinds.contains(item.kind)) {
-          return _withState('invalid');
+          return _withState(session, 'invalid');
         }
         await _actions.play(item, session.phone);
-        return _withState('ok');
+        return _withState(session, 'ok');
       case 'pause':
         await _actions.pause();
-        return _withState('ok');
+        return _withState(session, 'ok');
       case 'resume':
         await _actions.resume();
-        return _withState('ok');
+        return _withState(session, 'ok');
       case 'seek':
         final position = message['positionMs'];
         if (position is! int || position < 0) {
-          return _withState('invalid');
+          return _withState(session, 'invalid');
         }
         await _actions.seek(position);
-        return _withState('ok');
+        return _withState(session, 'ok');
       case 'track':
         final kind = PlayTrackKind.fromWire(message['kind']);
         final id = message['id'];
         if (kind == null ||
             (id != null && (id is! String || id.length > 64)) ||
             (id == null && kind != PlayTrackKind.subtitle)) {
-          return _withState('invalid');
+          return _withState(session, 'invalid');
         }
         await _actions.track(kind, id as String?);
-        return _withState('ok');
+        return _withState(session, 'ok');
       case 'stop':
         await _actions.stop();
-        return _withState('ok');
+        return _withState(session, 'ok');
       case 'handoverHello':
         return _handoverHello(session, message);
       case 'handoverServer':
