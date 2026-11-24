@@ -51,10 +51,12 @@ import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/creator/remote_video_sources.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/dart_immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/desktop_enhance.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/gpu/app_graphics_memory.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
@@ -62,6 +64,7 @@ import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
 import 'package:immich_mobile/desktop/ai/gpu/graphics_release.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
+import 'package:immich_mobile/desktop/ai/ort/depth_provider.dart';
 import 'package:immich_mobile/desktop/ai/panorama/panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/panorama/stereo_panorama_engine.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
@@ -74,12 +77,14 @@ import 'package:immich_mobile/desktop/ai/splat/splat_engine.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_images.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_app_runtime.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_encoder_memory.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/files/save_to_folder.dart';
 import 'package:immich_mobile/desktop/library/folder_library.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_gpu_runtime_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -1020,6 +1025,7 @@ final keptAiEnginesProvider = Provider<List<KeptAiEngine>>(
     ref.watch(desktopStereoPanoramaEngineProvider),
     ref.watch(desktopPanoramaEngineProvider),
     ref.watch(desktopSplatEngineProvider),
+    ...ref.watch(desktopEnhanceEnginesProvider).values,
   ],
 );
 
@@ -1034,6 +1040,9 @@ final conversionEnginesProvider = Provider<Map<ConversionKind, ConversionEngine>
       ref.watch(desktopStereoPanoramaEngineProvider),
     ),
     ConversionKind.splatScene: splatConversionEngine(ref.watch(desktopSplatEngineProvider)),
+    // "Enhance (AI)" of release 51, one engine per level (enhance/desktop_enhance.dart)
+    for (final MapEntry(key: level, value: engine) in ref.watch(desktopEnhanceEnginesProvider).entries)
+      ConversionKind.enhanceAt(level): enhanceConversionEngine(engine),
   },
 );
 
@@ -1077,11 +1086,32 @@ Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession s
   final bin = p.dirname(ffmpeg);
   final windows = platform == AiPlatform.windowsX64;
   final launcher = platform == AiPlatform.linuxX64 ? p.join(bin, linuxLauncherName) : null;
+  // The graphics card of the depth model (lot ai-360-3d-51): the DirectML runtime installed beside the others
+  // (runtime/onnxruntime-1.31.0/ of the components folder), or carried by a test build beside its executable
+  final cardLibrary = windows
+      ? await findDirectMlRuntime(
+          componentsFolder: p.normalize(p.join(p.dirname(runtime), '..', '..')),
+          executableFolder: p.dirname(Platform.resolvedExecutable),
+        )
+      : null;
+  var depthDevice = depthDeviceAuto;
+  try {
+    depthDevice = (await DesktopAiSettingsStore.instance.read()).videoDepthDevice;
+  } on Object catch (error) {
+    _log.warning('The setting of the depth device was not read: $error');
+  }
+  String? depthCardMemory;
+  try {
+    depthCardMemory = p.join((await getApplicationSupportDirectory()).path, DepthCardMemory.fileName);
+  } on Object catch (error) {
+    _log.warning('The cards that failed their check are not kept: $error');
+  }
   return VideoJobSetup(
     ffmpeg: ffmpeg,
     ffprobe: p.join(bin, windows ? 'ffprobe.exe' : 'ffprobe'),
     runner: ManagedVideoProgramRunner(session.runner(linuxLauncher: launcher)),
     modelSha256: videoDepthModelComponent.sha256,
+    encoderMemory: FileVideoEncoderMemory.instance,
     worker: (sizes, relief) => IsolateVideoFrameWorker.spawn(
       VideoWorkerSetup(
         ortLibrary: runtime,
@@ -1095,6 +1125,10 @@ Future<VideoJobSetup> desktopVideoJobSetup(HardwareGate gate, AiProcessSession s
         half: relief.packing == VideoSbsPacking.half,
         edgeFade: relief.edgeFade,
         alignment: VideoDepthAlignment.upstream,
+        sphereShiftDegrees: relief.sphere ? relief.sphereShiftDegrees : null,
+        cardLibrary: cardLibrary,
+        depthDevice: depthDevice,
+        depthCardMemory: depthCardMemory,
       ),
     ),
   );
@@ -1141,6 +1175,10 @@ ConversionTools desktopConversionTools(Ref ref) {
     video: ref.watch(videoJobEngineProvider),
     videoJobs: ref.watch(videoJobsStoreProvider),
     appVersion: version,
+    // A 3D video of the server or of a share: the room of its drive read before its download, its source made again
+    // at the next start
+    freeSpace: ref.watch(aiFreeSpaceProvider),
+    remoteVideoSource: (descriptor) => desktopRemoteVideoSource(ref, descriptor),
     // The answer of the probe the gate keeps is asked again, so that the dialog and the settings see it too
     gpuBudget: GpuBudget(
       probe: () => gate.gpuReport(fresh: true),

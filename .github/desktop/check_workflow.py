@@ -39,6 +39,8 @@ stable-diffusion.cpp never touches a release of the app.
 With --release, the with_splat input (lot SP14 of the splat maker: COLMAP and Brush signed for ai-components-4) is held
 as with_sdcpp is: passed to the build as "colmap: ${{ inputs.with_splat == true }}" and "brush: ${{ inputs.with_splat
 == true }}" and nothing else, and the job that writes the contents never runs with it.
+The with_sdcpp_seedvr2 input (the stable-diffusion.cpp of Enhance (AI), signed for ai-components-7) is held the same:
+passed to the build as "sdcpp_seedvr2: ${{ inputs.with_sdcpp_seedvr2 == true }}" only, never to the release job.
 
 .github/workflows/immuch360-webos.yml, which builds the LG webOS app, is held to the rules of the desktop workflow, and
 .github/workflows/immuch360-webos-release.yml to those of a release workflow on its own tags: --tag-prefix webos-v.
@@ -63,7 +65,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-PINNED_RUNNER = re.compile(r'^(ubuntu-\d\d\.\d\d|windows-20\d\d|windows-11-arm|macos-\d+)$')
+PINNED_RUNNER = re.compile(r'^(ubuntu-\d\d\.\d\d|windows-20\d\d|windows-11-arm|macos-\d+(?:-intel)?)$')
 USES = re.compile(r'^\s*(?:-\s*)?uses:\s*([^\s#]+)\s*(?:#\s*(\S+))?')
 PINNED_ACTION = re.compile(r'^[\w.-]+/[\w./-]+@[0-9a-f]{40}$')
 MISE_FLUTTER = re.compile(r'^\[tools\."aqua:flutter/flutter"\]\s*\n\s*version\s*=\s*"([^"]+)"', re.MULTILINE)
@@ -74,7 +76,13 @@ SIGNING_SECRETS = ('AZURE_TENANT_ID', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET')
 SIGNING_LINE = re.compile(r'^(\s+)(' + '|'.join(SIGNING_SECRETS) + r'):\s*\$\{\{\s*secrets\.(\w+)\s*\}\}\s*$')
 # The jobs that build stable-diffusion.cpp, by the start of their names, and the image each system builds on
 SDCPP_JOB = 'sdcpp'
-SDCPP_RUNNERS = {'sdcpp-windows': 'windows-2022', 'sdcpp-linux': 'ubuntu-22.04'}
+SDCPP_RUNNERS = {
+    'sdcpp-windows': 'windows-2022',
+    'sdcpp-linux': 'ubuntu-22.04',
+    # The second archive, that of Enhance (AI): asked by inputs.sdcpp_seedvr2, which the check finds as inputs.sdcpp
+    'sdcpp-seedvr2-windows': 'windows-2022',
+    'sdcpp-seedvr2-linux': 'ubuntu-22.04',
+}
 # The jobs that build a program the AI features run beside the app, by the start of their names: what they build, the
 # image of each job and the input that asks for them
 SIDECAR_JOBS = {
@@ -207,6 +215,11 @@ def release_sdcpp(workflow: str, lines: list, owners: list) -> list:
     return release_component(workflow, lines, owners, 'with_sdcpp', 'sdcpp')
 
 
+def release_sdcpp_seedvr2(workflow: str, lines: list, owners: list) -> list:
+    """Nor the second archive of stable-diffusion.cpp, that of Enhance (AI), signed for ai-components-7"""
+    return release_component(workflow, lines, owners, 'with_sdcpp_seedvr2', 'sdcpp_seedvr2')
+
+
 def release_splat(workflow: str, lines: list, owners: list) -> list:
     """Nor COLMAP and Brush, which it builds and signs for ai-components-4"""
     found = release_component(workflow, lines, owners, 'with_splat', 'colmap')
@@ -295,6 +308,7 @@ def findings(workflow: str, mise: str, release: bool = False, tag_prefix: str = 
         found += release_triggers(workflow, tag_prefix)
         found += release_sdcpp(workflow, lines, owners)
         found += [line for line in release_splat(workflow, lines, owners) if line not in found]
+        found += [line for line in release_sdcpp_seedvr2(workflow, lines, owners) if line not in found]
     return found
 
 

@@ -499,7 +499,13 @@ void main() {
       expect(released, 1);
 
       queue().checkGraphicsCardAgain();
-      await Future<void>.delayed(const Duration(milliseconds: 10));
+      // A loaded runner may take more than a turn of the timer to get there (macOS, runs of 23 November 2026)
+      for (var i = 0; i < 300 && released < 2; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+      expect(released, 2);
+      // The timer goes on asking, and lets go of nothing more
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       expect(released, 2);
       queue().cancel(pano);
     });

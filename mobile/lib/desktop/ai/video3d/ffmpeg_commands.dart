@@ -1,6 +1,6 @@
 // What the 3D videos ask of the FFmpeg program (store/m2/release-49/lots/video3d-plan.md, sections 2.1, 2.4 and 2.5),
 // the arguments only, so that the tests read them: the probe, the decoder that gives the eye frames as RGB on its
-// standard output with each frame's time, the one second test of an encoder at the real size, the encoder of a
+// standard output with each frame's time, the test of an encoder (the command of a segment), the encoder of a
 // segment (Matroska marked left right), and the final mux (the segments joined, the source's audio, tags and chapters,
 // our keys, st3d written by FFmpeg). Also the grid of the output: how many slots of the constant rate each decoded
 // frame takes, so that a variable rate phone clip keeps its timing with no extra depth work.
@@ -19,7 +19,7 @@ const videoToneMap =
 /// Bits per pixel and frame an encoder with a bitrate target is given: 18.7 Mbit/s for 3840 x 1080 at 30 fps
 const videoBitsPerPixel = 0.15;
 
-/// The encoders, in the order a computer tries them (the first whose one second test passes)
+/// The encoders, in the order a computer tries them (the first whose test passes)
 enum VideoEncoder {
   /// Media Foundation on Windows, the hardware MFT
   h264MfHardware('h264_mf', 'H.264'),
@@ -62,6 +62,45 @@ enum VideoEncoder {
   /// [orderFor] this computer
   static List<VideoEncoder> get forThisComputer =>
       orderFor(Platform.isWindows ? 'windows' : (Platform.isMacOS ? 'macos' : 'linux'));
+}
+
+/// The name of [encoder] as the panel and the dialog say it (not translated: the names of the programs)
+String videoEncoderName(VideoEncoder encoder) => switch (encoder) {
+  VideoEncoder.h264MfHardware => 'H.264 hardware (Media Foundation)',
+  VideoEncoder.h264Mf => 'H.264 software (Media Foundation)',
+  VideoEncoder.h264VideoToolbox => 'H.264 (VideoToolbox)',
+  VideoEncoder.h264VaapiFull || VideoEncoder.h264VaapiLowPower => 'H.264 hardware (VA-API)',
+  VideoEncoder.svtAv1 => 'AV1 (SVT-AV1)',
+};
+
+/// The error of a job that no encoder of this computer finishes at its frame: the encoder that stopped last, the frame,
+/// the eye width of a smaller 360° frame to choose, and the end of what FFmpeg said ([videoEncoderDeadEndOf] reads it)
+String videoEncoderDeadEndMessage({
+  required VideoEncoder encoder,
+  required int width,
+  required int height,
+  int? smaller,
+  required String said,
+}) =>
+    'The encoder ${encoder.name} stopped at ${width}x$height'
+    '${smaller == null ? '' : ' (smaller: ${smaller}x$smaller)'}: ${said.isEmpty ? 'no word from FFmpeg' : said}';
+
+/// What [videoEncoderDeadEndMessage] wrote into [message], null for another message
+({VideoEncoder encoder, String frame, String? smaller, String said})? videoEncoderDeadEndOf(String? message) {
+  final match = RegExp(
+    r'^The encoder (\w+) stopped at (\d+)x(\d+)(?: \(smaller: (\d+)x(\d+)\))?: (.*)$',
+    dotAll: true,
+  ).firstMatch(message ?? '');
+  final encoder = match == null ? null : VideoEncoder.values.asNameMap()[match.group(1)];
+  if (match == null || encoder == null) {
+    return null;
+  }
+  return (
+    encoder: encoder,
+    frame: '${match.group(2)} x ${match.group(3)}',
+    smaller: match.group(4) == null ? null : '${match.group(4)} x ${match.group(5)}',
+    said: match.group(6)!,
+  );
 }
 
 /// The render node the VA-API encoders open
@@ -188,38 +227,118 @@ List<String> videoDecoderArguments({
   'pipe:1',
 ];
 
-/// The one second test of [encoder] at [width] x [height] and [rate]: 30 frames of grey to nothing
-List<String> videoEncoderTestArguments(VideoEncoder encoder, int width, int height, VideoRate rate) {
+/// The frames of the test of an encoder: one second at 30 fps, enough for the encoders that hold frames back (the
+/// asynchronous Media Foundation ones) to give their packets and finish
+const videoEncoderTestFrames = 30;
+
+/// The test of [encoder] at [width] x [height] and [rate]: exactly the command of a segment ([videoSegmentArguments]),
+/// RGB frames on its standard input into the Matroska file [outputPath]. A test that wrote to nothing (the null muxer)
+/// passed on FreeKC's PC (23 Nov 2026) while the job failed at once: the Intel Quick Sync H.264 MFT gives no
+/// sequence header when it opens ("Didn't get extradata in 70 ms"), which the null muxer takes and Matroska refuses
+/// ("Could not write header (incorrect codec parameters ?)").
+List<String> videoEncoderTestArguments(
+  VideoEncoder encoder,
+  int width,
+  int height,
+  VideoRate rate, {
+  required String outputPath,
+  bool markLeftRight = true,
+}) => videoSegmentArguments(
+  encoder: encoder,
+  width: width,
+  height: height,
+  rate: rate,
+  segmentPath: outputPath,
+  markLeftRight: markLeftRight,
+);
+
+/// ffprobe of the file of an encoder test: its first video stream decoded and its frames counted
+List<String> videoTestCheckArguments(String path) => [
+  '-v',
+  'error',
+  '-count_frames',
+  '-select_streams',
+  'v:0',
+  '-show_entries',
+  'stream=codec_name,width,height,nb_read_frames',
+  '-of',
+  'json',
+  path,
+];
+
+/// The frames [videoTestCheckArguments] counted in [json] (ffprobe's answer), null when it found no video stream
+int? videoTestFrameCount(Object? json) {
+  if (json is! Map || json['streams'] is! List) {
+    return null;
+  }
+  for (final stream in json['streams'] as List) {
+    if (stream is Map) {
+      final frames = stream['nb_read_frames'];
+      return frames is int ? frames : int.tryParse('$frames');
+    }
+  }
+  return null;
+}
+
+/// The segment [inputPath] (made by another encoder) made again by [encoder] into [segmentPath], frame for frame and
+/// with the marks of a segment: after the encoder of a job stopped, the segments written before it are made by the
+/// next encoder too, so that the final mux joins one stream of one codec
+List<String> videoSegmentTranscodeArguments({
+  required VideoEncoder encoder,
+  required int width,
+  required int height,
+  required VideoRate rate,
+  required String inputPath,
+  required String segmentPath,
+  bool markLeftRight = true,
+}) {
   final options = videoEncoderOptions(encoder, width, height, rate);
   return [
     '-nostdin',
     '-hide_banner',
     '-v',
     'error',
+    '-y',
     ...options.device,
-    '-f',
-    'lavfi',
     '-i',
-    'color=c=gray:s=${width}x$height:r=${rate.ffmpeg}',
-    '-frames:v',
-    '30',
+    inputPath,
+    '-map',
+    '0:v:0',
+    '-fps_mode',
+    'passthrough',
     '-vf',
     options.filter,
     ...options.codec,
+    '-g',
+    '${math.max(1, (2 * rate.value).round())}',
+    ..._colourTags,
+    if (markLeftRight) ...['-metadata:s:v:0', 'stereo_mode=left_right'],
     '-f',
-    'null',
-    '-',
+    'matroska',
+    segmentPath,
   ];
 }
 
+/// The last [lines] lines of what an FFmpeg program wrote on its error output, the addresses of its contexts left out
+/// ("[out#0/matroska @ 000001c1cb674b40]" becomes "[out#0/matroska]"): what the log and the error of a job quote
+String videoProgramTail(String errors, {int lines = 6}) {
+  final kept = [
+    for (final line in errors.split(RegExp(r'[\r\n]+')))
+      if (line.trim().isNotEmpty) line.trim().replaceAll(RegExp(r' @ (0x)?[0-9a-fA-F]{6,}\]'), ']'),
+  ];
+  return kept.sublist(math.max(0, kept.length - lines)).join('\n');
+}
+
 /// The encoder of one segment: RGB frames of [width] x [height] on its standard input at [rate], written by [encoder]
-/// into the Matroska file [segmentPath] marked left right
+/// into the Matroska file [segmentPath] marked left right; with [markLeftRight] false (a 360° video, top and bottom)
+/// not marked at all: the marks of a sphere go into the MP4 after the mux (spherical_mp4_writer.dart)
 List<String> videoSegmentArguments({
   required VideoEncoder encoder,
   required int width,
   required int height,
   required VideoRate rate,
   required String segmentPath,
+  bool markLeftRight = true,
 }) {
   final options = videoEncoderOptions(encoder, width, height, rate);
   return [
@@ -245,8 +364,7 @@ List<String> videoSegmentArguments({
     '-g',
     '${math.max(1, (2 * rate.value).round())}',
     ..._colourTags,
-    '-metadata:s:v:0',
-    'stereo_mode=left_right',
+    if (markLeftRight) ...['-metadata:s:v:0', 'stereo_mode=left_right'],
     '-f',
     'matroska',
     segmentPath,

@@ -47,7 +47,7 @@ the gate is per desktop and is noted.
 | `lib/domain/services/sync_stream.service.dart:210` | Android media management | right |
 | `lib/domain/services/sync_stream.service.dart:217` | Android media management | right |
 | `lib/domain/services/sync_stream.service.dart:223` | Android media management | right |
-| `lib/domain/services/tiff_photos.dart:67` | Android has no TIFF decoder: the server's JPEG of a TIFF, the Dart decoder for the device and the shares (fix-tiff-android, 31 October 2026) | right: the computers keep their decoders (WIC on Windows, Core Graphics on macOS read TIFF; Linux keeps its folder library tile) |
+| `lib/domain/services/tiff_photos.dart:67` | Android has no TIFF decoder: the server's JPEG of a TIFF, the Dart decoder for the device and the shares (fix-tiff-android, 31 October 2026) | right: Windows and macOS keep their decoders (WIC, Core Graphics); Linux, whose engine reads no TIFF, takes the Dart decoder too (parity lot L07, release 51) |
 | `lib/domain/utils/cloud_id_resolver.dart:20` | iOS cloud ids | right |
 | `lib/domain/utils/migrate_cloud_ids.dart:32` | iOS cloud ids | right |
 | `lib/infrastructure/network/plex/plex_client.dart:184` | Plex platform header, else Platform.operatingSystem | right: "windows", "linux", "macos" |
@@ -121,9 +121,9 @@ the gate is per desktop and is noted.
 | `lib/providers/network/phone_share.provider.dart:390` | iOS pause in background | right: a computer keeps sharing |
 | `lib/providers/network/phone_share.provider.dart:407` | Android notification permission | right |
 | `lib/providers/permission.provider.dart:13` | initial notification permission state | right: notifications hidden on the computers |
-| `lib/providers/rate_app.provider.dart:34` | the store of the build, for the invitation to rate the app: phones, tablets and the Quest only | right: the computers resolve to no store before reading anything, and start no invitation |
-| `lib/providers/rate_app.provider.dart:38` | Horizon OS asked on Android only | right: not reached on the computers |
-| `lib/providers/rate_app.provider.dart:57` | the crash marker of the foreground on iOS | right: not reached on the computers, which start no invitation |
+| `lib/providers/rate_app.provider.dart:37` | the store of the build, for the invitation to rate the app: phones, tablets and the Quest only | right: the computers resolve to no store before reading anything, and start no invitation |
+| `lib/providers/rate_app.provider.dart:41` | Horizon OS asked on Android only | right: not reached on the computers |
+| `lib/providers/rate_app.provider.dart:60` | the crash marker of the foreground on iOS | right: not reached on the computers, which start no invitation |
 | `lib/providers/raw/raw_video.provider.dart:43` | two stream raw playback on iOS | wired (phase 2d): the computers are neither, and play two streams where libmpv loaded (`CurrentPlatform.isDesktop` term of the same expression, the 360° route stacks them or falls back) |
 | `lib/providers/raw/raw_video.provider.dart:45` | two stream raw playback on Android and Quest | wired (phase 2d): idem |
 | `lib/providers/raw/raw_video.provider.dart:73` | the stabilisation of raw videos with the motion track of their camera (issue 14): the Android player (lot c), the immersive viewer of the Meta Quest (lot d3), the iOS player (lot d1), and the computers where renderer C draws the 360° view (lot d2, `desktopStabilizationSupported`, desktop_stabilization.dart) | Windows: on, the table goes to renderer C of media_kit_360 v1.1.0, which turns each frame drawn by its own correction; Linux and macOS: hidden, the 360° videos play flat there and no table is built; the computers are neither Android nor iOS, so the phone term is false there |

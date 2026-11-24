@@ -20,6 +20,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:immich_mobile/desktop/platform/linux_launch_hints.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
@@ -418,6 +419,8 @@ class CameraLiveSession {
     if (_retry != null || _status == CameraLiveStatus.stopped) {
       return;
     }
+    // On Fedora with its own FFmpeg (H.264 Main and High, HEVC): the FFmpeg of RPM Fusion, said once a session
+    unawaited(FedoraFfmpegHint.instance.playbackFailed());
     if (_refused(reason) || !_played) {
       await _giveUp(reason);
     } else {

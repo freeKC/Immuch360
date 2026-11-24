@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_bar_button.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
@@ -114,7 +115,8 @@ void main() {
       final actions = withDesktopSelectionActions(const [SizedBox.shrink()]);
       expect(actions.whereType<DesktopMakeImmersiveButton>(), hasLength(computer ? 1 : 0), reason: platform.name);
       expect(actions.whereType<DesktopMakeSplatButton>(), hasLength(computer ? 1 : 0), reason: platform.name);
-      expect(actions, hasLength(computer ? 3 : 1), reason: platform.name);
+      expect(actions.whereType<DesktopEnhanceButton>(), hasLength(computer ? 1 : 0), reason: platform.name);
+      expect(actions, hasLength(computer ? 4 : 1), reason: platform.name);
     }
   });
 
@@ -129,13 +131,14 @@ void main() {
       ];
       String nameOf(Widget widget) =>
           widget is ActionColumnButton ? widget.action.runtimeType.toString() : widget.runtimeType.toString();
-      // The AI entries come last on the computers, "Make 3D (AI)" then "Make a splat scene (AI)"
+      // The AI entries come last on the computers, "Make 3D (AI)", "Enhance (AI)" then "Make a splat scene (AI)"
       const computers = [
         'UploadAction',
         'AssetDebugAction',
         'ShareAction',
         'CleanupLocalAction',
         'DesktopMakeImmersiveButton',
+        'DesktopEnhanceButton',
         'DesktopMakeSplatButton',
       ];
       const phones = ['AssetDebugAction', 'ShareAction', 'CleanupLocalAction', 'UploadAction'];
@@ -177,6 +180,23 @@ void main() {
       ),
       isFalse,
     );
+  });
+
+  test('"Enhance (AI)" is in the menu of the viewer of a photo, on the computers only', () {
+    for (final platform in TargetPlatform.values) {
+      debugDefaultTargetPlatformOverride = platform;
+      final computer = _desktops.contains(platform);
+      expect(ActionButtonType.enhancePhoto.shouldShow(_viewerContext(_remote)), computer, reason: platform.name);
+      expect(
+        ActionButtonType.enhancePhoto.buildButton(_viewerContext(_remote)),
+        computer ? isA<DesktopEnhanceButton>() : isNot(isA<DesktopEnhanceButton>()),
+        reason: platform.name,
+      );
+    }
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    // Nothing leaves the locked folder nor the trash
+    expect(ActionButtonType.enhancePhoto.shouldShow(_viewerContext(_remote, locked: true)), isFalse);
+    expect(ActionButtonType.enhancePhoto.shouldShow(_viewerContext(_remote, origin: TimelineOrigin.trash)), isFalse);
   });
 
   test('"Make a splat scene (AI)" is in the menu of the viewer of a video, on the computers only', () {

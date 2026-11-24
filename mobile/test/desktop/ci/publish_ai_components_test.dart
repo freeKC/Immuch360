@@ -539,8 +539,8 @@ void main() {
       expect(
         run.output,
         contains(
-          '21 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, ai-components-5, '
-          'each complete',
+          '30 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, ai-components-5, '
+          'ai-components-6, ai-components-7, each complete',
         ),
       );
       // The archives of av2-companion v1.0.1, as the manifest of the release gives them
@@ -757,7 +757,8 @@ void main() {
         expect(
           run.output,
           contains(
-            '21 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, ai-components-5',
+            '30 components in ai-components-1, ai-components-2, ai-components-3, ai-components-4, ai-components-5, '
+            'ai-components-6, ai-components-7',
           ),
         );
       }

@@ -256,8 +256,11 @@ class VideoJobFile {
 const _stateMagic = 0x53563349; // "I3VS"
 
 /// The state of the window loop as bytes: "I3VS", the version, the length of a JSON header, the header (the numbers and
-/// the shapes), then the held maps and ref (float64), the key inputs (float32) and the last histogram (float64)
+/// the shapes), then the held maps and ref (float64), the key inputs (float32) and the last histogram (float64); for a
+/// 360° video then the alignment of the faces (float64) and the state of each face, each encoded the same way
 Uint8List encodeVdaLoopState(VdaLoopState state) {
+  // The faces of a 360° video, each a state of its own after the rest
+  final viewBytes = [for (final view in state.views) encodeVdaLoopState(view)];
   final header = utf8.encode(
     jsonEncode({
       'nextIndex': state.nextIndex,
@@ -273,6 +276,8 @@ Uint8List encodeVdaLoopState(VdaLoopState state) {
       'ref': [for (final map in state.ref) map.length],
       'keyInputs': [for (final input in state.keyInputs) input.length],
       'histogram': state.previousHistogram?.length,
+      if (state.alignment != null) 'alignment': state.alignment!.length,
+      if (state.views.isNotEmpty) 'views': [for (final view in viewBytes) view.length],
     }),
   );
   final builder = BytesBuilder(copy: false);
@@ -293,6 +298,12 @@ Uint8List encodeVdaLoopState(VdaLoopState state) {
   }
   if (state.previousHistogram != null) {
     add(state.previousHistogram!);
+  }
+  if (state.alignment != null) {
+    add(state.alignment!);
+  }
+  for (final view in viewBytes) {
+    builder.add(view);
   }
   return builder.takeBytes();
 }
@@ -329,6 +340,17 @@ VdaLoopState? decodeVdaLoopState(Uint8List bytes) {
     final keyInputs = [for (final count in (header['keyInputs']! as List).cast<int>()) floats(count)];
     final histogramLength = header['histogram'] as int?;
     final histogram = histogramLength == null ? null : doubles(histogramLength);
+    final alignmentLength = header['alignment'] as int?;
+    final alignment = alignmentLength == null ? null : doubles(alignmentLength);
+    final views = <VdaLoopState>[];
+    for (final length in ((header['views'] as List?) ?? const []).cast<int>()) {
+      final view = decodeVdaLoopState(Uint8List.sublistView(bytes, at, at + length));
+      if (view == null) {
+        return null;
+      }
+      views.add(view);
+      at += length;
+    }
     if (at != bytes.length) {
       return null;
     }
@@ -346,6 +368,8 @@ VdaLoopState? decodeVdaLoopState(Uint8List bytes) {
       distances: [for (final distance in header['distances']! as List) (distance as num).toDouble()],
       firstHeld: header['firstHeld']! as int,
       resets: {...(header['resets']! as List).cast<int>()},
+      views: views,
+      alignment: alignment,
     );
   } on Object {
     return null;

@@ -426,6 +426,32 @@ class GpuAdapter {
   return (parts.isNotEmpty ? int.tryParse(parts[0]) ?? 0 : 0, parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0);
 }
 
+/// The card of a splat scene among the cards of [report] (splatCardOf of hardware_gate.dart, which says why it refuses
+/// one; here without Flutter, so that the end to end check of the CI, splat_probe.dart, takes the card by the same
+/// rule): the dedicated card of Vulkan 1.2 with the most memory among those Vulkan lists, else the integrated one of
+/// Vulkan 1.2 with the most memory (the gate refuses it), else null; null too when the instance of Vulkan is older than
+/// 1.2
+GpuAdapter? splatCardIn(GpuReport report) {
+  bool atLeast12((int, int) version) => version.$1 > 1 || (version.$1 == 1 && version.$2 >= 2);
+  if (report.instanceVersion != null && !atLeast12(vulkanMajorMinor(report.instanceVersion))) {
+    return null;
+  }
+  GpuAdapter? best(GpuKind kind) {
+    GpuAdapter? found;
+    for (final adapter in report.adapters) {
+      if (adapter.source == 'vulkan' &&
+          adapter.kind == kind &&
+          atLeast12(adapter.vulkanVersion) &&
+          (found == null || adapter.localMemory > found.localMemory)) {
+        found = adapter;
+      }
+    }
+    return found;
+  }
+
+  return best(GpuKind.discrete) ?? best(GpuKind.integrated);
+}
+
 /// Why the probe has no adapter to tell
 enum GpuProbeProblem {
   /// No Vulkan loader on the system (vulkan-1.dll, libvulkan.so.1)

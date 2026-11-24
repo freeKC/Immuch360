@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/network/computer_share.dart';
+import 'package:immich_mobile/desktop/network/linux_network_bus.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/screen_pairing_session.dart';
@@ -129,6 +130,7 @@ class _PairingPanelState extends ConsumerState<PairingPanel> {
       linkOnly: widget.linkOnly,
       now: DateTime.now(),
       onShowNewCode: () => unawaited(_controller.showNewCode()),
+      avahiUnanswered: ref.watch(avahiUnansweredProvider),
     );
   }
 }
@@ -142,6 +144,7 @@ class PairingPanelContent extends StatelessWidget {
     required this.onShowNewCode,
     this.compact = false,
     this.linkOnly = false,
+    this.avahiUnanswered = false,
   });
 
   final ScreenPairingView view;
@@ -151,6 +154,9 @@ class PairingPanelContent extends StatelessWidget {
 
   /// The panel of "Play from a phone": its title says so, and the browser page (a sign in) is not offered
   final bool linkOnly;
+
+  /// Linux: the code was not announced, Avahi does not answer (linux_network_bus.dart)
+  final bool avahiUnanswered;
 
   @override
   Widget build(BuildContext context) {
@@ -329,6 +335,13 @@ class PairingPanelContent extends StatelessWidget {
           if (computer && view.port != null)
             Text(
               t.pairing_screen_firewall_port(port: '${view.port}'),
+              style: small,
+              textAlign: TextAlign.center,
+            ),
+          if (computer && avahiUnanswered)
+            Text(
+              t.pairing_screen_no_avahi,
+              key: const Key('pairing_no_avahi'),
               style: small,
               textAlign: TextAlign.center,
             ),

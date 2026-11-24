@@ -32,7 +32,11 @@ enum ImmersiveKind {
   /// A splat scene, splat-v1: in this version a plain `<name>_splat.spz` written by the computers, which carries no
   /// XMP; the photo that will carry it with our XMP comes after the first test (plan 2026-11-01, decision D2), and a
   /// packet of this kind is read until then as one of a kind this build cannot show
-  gaussianSplat('GaussianSplat');
+  gaussianSplat('GaussianSplat'),
+
+  /// A photo made sharper by "Enhance (AI)" on a computer (lots E1 to E3 of release 51): `<name>_enhanced.jpg`, the
+  /// same picture at the same size, flat, with details the AI invented; never a source of another version
+  enhancedPhoto('EnhancedPhoto');
 
   const ImmersiveKind(this.xmp);
 
@@ -188,7 +192,7 @@ List<ReliefQualityFlag> qualityFlagsOf(ImmersiveKind kind) => switch (kind) {
     ReliefQualityFlag.mostlyInvented,
   ],
   // What a splat scene left out is told by its counts (SplatResultDetails), not by flags
-  ImmersiveKind.gaussianSplat => const [],
+  ImmersiveKind.gaussianSplat || ImmersiveKind.enhancedPhoto => const [],
 };
 
 /// The flags of [text] (Immuch360:QualityFlags, tokens separated by commas or spaces), the unknown ones left out
@@ -294,14 +298,20 @@ const splatHeadsetCopySuffix = '.headset';
 /// "salon_splat (1).headset.spz"
 String splatHeadsetCopyNameOf(String spzName) => '${fileStem(spzName)}$splatHeadsetCopySuffix$splatFileExtension';
 
+/// What follows the name of the original in the name of a photo made sharper by "Enhance (AI)": "salon_enhanced.jpg",
+/// a JPEG whatever the original was
+const enhancedNameSuffix = '_enhanced';
+
 /// The suffixes of the names of the versions of an original: a 3D photo, a 360° 3D panorama, a 3D scene, a 360°
-/// panorama and the 3D version of a 360° photo (isDerivedNameCandidate tries each, so their order does not matter)
+/// panorama, the 3D version of a 360° photo and an enhanced photo (isDerivedNameCandidate tries each, so their order
+/// does not matter)
 const derivedNameSuffixes = [
   sbsFullNameSuffix,
   stereoPanoramaNameSuffix,
   sceneNameSuffix,
   panoramaNameSuffix,
   stereoOf360NameSuffix,
+  enhancedNameSuffix,
 ];
 
 // The words of a name that says 360° as the devices read it: "360" on its own, not within a longer number, or "pano"
@@ -323,6 +333,7 @@ String derivedNameEnd(ImmersiveKind kind, String originalName) => switch (kind) 
         ? '$stereoOf360NameSuffix$sbsFileExtension'
         : '$stereoPanoramaNameSuffix$sbsFileExtension',
   ImmersiveKind.gaussianSplat => '$splatNameSuffix$splatFileExtension',
+  ImmersiveKind.enhancedPhoto => '$enhancedNameSuffix$sbsFileExtension',
 };
 
 /// The name of the version of [kind] of [originalName], before the safe file name of the computers: "salon.jpg" gives
@@ -906,6 +917,18 @@ const stereoPanoramaDescription =
 const stereo360Description =
     '3D version of a 360° photo made by Immuch360. The relief is estimated by AI; areas hidden in the photo are filled '
     'in.';
+
+/// The honesty sentence of an enhanced photo, everywhere it shows: what the probe of 23 November 2026 saw every level
+/// do on small text and faces
+const enhancedHonesty = 'Details are invented by AI: faces, text and small objects may not match reality';
+
+/// The mark of an enhanced photo at the head of its description, which a person reads in any viewer
+const enhancedMark = 'AI enhanced';
+
+/// The description of an enhanced photo made at [level] ("Sharpen", "Rebuild details", "Natural") with [strength]
+/// percent of the result
+String enhancedDescription(String level, int strength) =>
+    '$enhancedMark ($level, $strength %) by Immuch360 from a photo. $enhancedHonesty; the original is kept.';
 
 /// The IPTC digital source type of every scene and panorama Immuch360 makes, "Edited using Generative AI": the
 /// marking a machine reads (AI Act, article 50(2)), written as Iptc4xmpExt:DigitalSourceType

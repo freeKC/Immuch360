@@ -52,6 +52,7 @@ import 'package:immich_mobile/infrastructure/network/plex/plex_transcode.dart';
 import 'package:immich_mobile/presentation/actions/watch_progress.action.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/display_rate_pacer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_open_error.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/immersive_viewer.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/spatial_viewer.dart';
@@ -1827,7 +1828,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         );
       } catch (error) {
         _log.warning('Could not open the immersive viewer: $error');
-        messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+        messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
       }
       return;
     }
@@ -1927,7 +1928,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
   /// closes, the page's player takes it back where the viewer left it (see [SingleVideoImmersiveNavigator]).
   Future<void> _openFlat3d(_Video video, FlatStereoFormat format) async {
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final errorMessage = context.t.immersive_viewer_open_failed;
+    final t = context.t;
     final stereoLabels = stereoPhotoViewerLabels(context.t);
     final request = ImmersiveRequest(
       url: video.url.toString(),
@@ -1960,7 +1961,7 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
       );
     } catch (error) {
       _log.warning('Could not open $_name in 3D: $error');
-      messenger?.showSnackBar(SnackBar(content: Text(errorMessage)));
+      messenger?.showSnackBar(SnackBar(content: Text(immersiveOpenFailedMessage(t, error))));
     }
   }
 

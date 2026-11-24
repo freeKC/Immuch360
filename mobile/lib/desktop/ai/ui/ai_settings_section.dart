@@ -28,6 +28,8 @@
 
 import 'dart:async';
 import 'dart:ffi' show Abi;
+import 'dart:io';
+import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -39,6 +41,8 @@ import 'package:immich_mobile/desktop/ai/creator/network_root_consent.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
+import 'package:immich_mobile/desktop/ai/ort/depth_provider.dart';
+import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
@@ -46,6 +50,7 @@ import 'package:immich_mobile/desktop/files/download_folder.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/video/gpu_decoders.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_gpu_runtime_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -240,6 +245,7 @@ class DesktopAiSettingsSection extends ConsumerWidget {
         if (enabled && settings != null) ...[
           _SaveTo(settings: settings),
           _ReliefQuality(settings: settings),
+          if (platform != null && ref.watch(aiVideosOfferedProvider)) _VideoDepthDevice(settings: settings),
           _WhenExists(settings: settings),
           SwitchListTile(
             key: const Key('ai_settings_skip_existing'),
@@ -367,6 +373,108 @@ class _ReliefQuality extends ConsumerWidget {
                   title: Text(label),
                   subtitle: Text(subtitle),
                 ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Whether the 3D videos are offered here: the setting of their depth is shown then
+final aiVideosOfferedProvider = Provider.autoDispose<bool>(
+  (ref) => ref.watch(offeredConversionKindsProvider).any((kind) => kind.isVideo),
+);
+
+/// The graphics cards DirectML offers for the depth of the 3D videos (Windows), by name, in the order of the system:
+/// read from the DirectML runtime of this computer in an isolate of its own; null when this computer has none
+final videoDepthCardsProvider = FutureProvider.autoDispose<List<String>?>((ref) async {
+  if (!Platform.isWindows) {
+    return const [];
+  }
+  final library = await findDirectMlRuntime(
+    componentsFolder: (await desktopAiComponentsFolder()).path,
+    executableFolder: p.dirname(Platform.resolvedExecutable),
+  );
+  if (library == null) {
+    return null;
+  }
+  try {
+    return await Isolate.run(
+      () => [for (final card in depthCards(OrtRuntime.load(library).executionDevices())) card.description],
+    );
+  } on Object catch (error) {
+    _log.warning('The graphics cards of DirectML were not read: $error');
+    return const [];
+  }
+});
+
+/// "Depth of the 3D videos": the card the system names for high performance, one card by its name, or the processor
+/// (lot ai-360-3d-51, ort/depth_provider.dart); read by each 3D video when it starts
+class _VideoDepthDevice extends ConsumerWidget {
+  const _VideoDepthDevice({required this.settings});
+
+  final DesktopAiSettings settings;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
+    final secondary = TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant);
+    if (Platform.isLinux) {
+      return ListTile(
+        key: const Key('ai_settings_depth_device'),
+        title: Text(t.ai_immersive_depth_device),
+        subtitle: Text(t.ai_immersive_depth_device_linux, style: secondary),
+      );
+    }
+    final cards = Platform.isWindows ? ref.watch(videoDepthCardsProvider).valueOrNull : const <String>[];
+    final chosen = settings.videoDepthDevice;
+    final names = {
+      ...?cards,
+      // A card chosen before and not seen now stays listed, so that the choice shows
+      if (chosen.startsWith(depthDeviceCardPrefix) &&
+          !(cards ?? const []).contains(chosen.substring(depthDeviceCardPrefix.length)))
+        chosen.substring(depthDeviceCardPrefix.length),
+    };
+    return Column(
+      key: const Key('ai_settings_depth_device'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListTile(
+          title: Text(t.ai_immersive_depth_device),
+          subtitle: Platform.isWindows && cards == null
+              ? Text(t.ai_immersive_depth_device_no_runtime, style: secondary)
+              : null,
+        ),
+        RadioGroup<String>(
+          groupValue: chosen,
+          onChanged: (value) {
+            if (value != null) {
+              unawaited(_update(ref, (kept) => kept.copyWith(videoDepthDevice: value)));
+            }
+          },
+          child: Column(
+            children: [
+              RadioListTile<String>(
+                key: const Key('ai_settings_depth_device_auto'),
+                value: depthDeviceAuto,
+                title: Text(t.ai_immersive_depth_device_auto),
+                subtitle: Text(
+                  Platform.isMacOS ? t.ai_immersive_depth_device_auto_mac : t.ai_immersive_depth_device_auto_windows,
+                ),
+              ),
+              for (final name in names)
+                RadioListTile<String>(
+                  key: Key('ai_settings_depth_device_card_$name'),
+                  value: '$depthDeviceCardPrefix$name',
+                  title: Text(t.ai_immersive_depth_device_card(name: name)),
+                ),
+              RadioListTile<String>(
+                key: const Key('ai_settings_depth_device_processor'),
+                value: depthDeviceProcessor,
+                title: Text(t.ai_immersive_depth_device_processor),
+                subtitle: Text(t.ai_immersive_depth_device_processor_subtitle),
+              ),
             ],
           ),
         ),

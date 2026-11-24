@@ -15,6 +15,7 @@ import 'package:immich_mobile/desktop/video/av2_decoding.dart';
 import 'package:immich_mobile/desktop/video/av2_playback.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_thumbnail_grabber.dart';
+import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/platform/local_image_api.g.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -35,6 +36,9 @@ import 'package:thumbhash/thumbhash.dart' as thumbhash_codec;
 ///   nothing is downloaded (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.2).
 /// - A file the engine cannot decode (HEIC or a camera raw file without a decoder of the system) gets a tile with
 ///   the format's name.
+/// - A TIFF on Linux, whose engine has no TIFF decoder (see tiff_photos.dart): its thumbnails are decoded by the Dart
+///   decoder and kept in the cache as the others are; a larger request gets the file itself, which the viewers decode
+///   with the same decoder (LocalTiffImageRequest). A camera raw file built on TIFF (DNG, NEF) keeps its tile.
 class DesktopLocalImageApi implements LocalImageApi {
   DesktopLocalImageApi({
     Future<File?> Function(String assetId)? fileForAsset,
@@ -42,8 +46,10 @@ class DesktopLocalImageApi implements LocalImageApi {
     int concurrentDecodes = 3,
     this._videoFrame,
     this._av2Frame,
+    bool? tiffInDart,
   }) : _fileForAsset = fileForAsset ?? _libraryFile,
        _thumbnails = thumbnails ?? ThumbnailCache.shared,
+       _tiffInDart = tiffInDart ?? Platform.isLinux,
        _queue = DecodeQueue(concurrentDecodes),
        _videoQueue = DecodeQueue(1);
 
@@ -73,6 +79,9 @@ class DesktopLocalImageApi implements LocalImageApi {
   final DecodeQueue _videoQueue;
   final VideoFrameGrab? _videoFrame;
   final VideoFrameGrab? _av2Frame;
+
+  /// Whether the TIFFs are decoded by the Dart decoder rather than the engine: on Linux (the tests set it)
+  final bool _tiffInDart;
 
   /// A frame of an AV2 video through the AV2 decoder: [appVideoFrame], set with the app's AV2 playbacks at the start of
   /// the window (av2PlaybacksProvider), whose grabber opens the video through its decoder and gives no frame yet
@@ -194,11 +203,17 @@ class DesktopLocalImageApi implements LocalImageApi {
     if (stat.size == 0 || stat.size > maxImageBytes || _undecodable.contains(version)) {
       return _tile(tileSize, label: label);
     }
+    // By its name first: a camera raw file built on TIFF never is one (isTiffPhoto), then by its first bytes
+    final tiff = _tiffInDart && isTiffPhoto(file.path);
 
     if (bucket == null) {
       final bytes = await file.readAsBytes();
       if (_cancelled.contains(requestId)) {
         return null;
+      }
+      if (tiff && hasTiffSignature(bytes)) {
+        // The viewers decode it in Dart (LocalTiffImageRequest), and say so when it does not decode
+        return bytes;
       }
       if (await engineCanDecode(bytes)) {
         return bytes;
@@ -213,7 +228,10 @@ class DesktopLocalImageApi implements LocalImageApi {
       return cached;
     }
     return _queue.run('$version|$bucket', requestId, () async {
-      final thumbnail = await renderThumbnail(await file.readAsBytes(), bucket);
+      final encoded = await file.readAsBytes();
+      final thumbnail = tiff && hasTiffSignature(encoded)
+          ? await _tiffThumbnail(encoded, bucket)
+          : await renderThumbnail(encoded, bucket);
       if (thumbnail == null) {
         _undecodable.add(version);
         return _tile(bucket, label: label);
@@ -223,6 +241,20 @@ class DesktopLocalImageApi implements LocalImageApi {
       unawaited(write.whenComplete(() => _writes.remove(write)));
       return thumbnail;
     });
+  }
+
+  /// A thumbnail of the TIFF [bytes] covering a [box] by [box] square, decoded by the Dart decoder in its turns (the tiles
+  /// after the photos of the viewers); null when it does not decode or is a camera raw file
+  static Future<Uint8List?> _tiffThumbnail(Uint8List bytes, int box) async {
+    try {
+      final (pixels, _) = await decodeTiffFitting(() async => bytes, cover: box, work: TiffWork.tile);
+      return await thumbnailOfPixels(pixels.rgba, pixels.width, pixels.height);
+    } on TiffDecodeException catch (error) {
+      _log.fine('A TIFF of the library does not decode: ${error.reason}');
+      return null;
+    } on TiffDecodeCancelled {
+      return null;
+    }
   }
 
   /// A frame of the video [file] covering a [box] by [box] square, from the thumbnail cache or grabbed once; the film

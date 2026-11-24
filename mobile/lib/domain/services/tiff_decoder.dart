@@ -1,4 +1,4 @@
-// The TIFF decoder of the devices that have none (Android, see tiff_photos.dart), in pure Dart. It reads the strips or
+// The TIFF decoder of the devices that have none (Android and Linux, see tiff_photos.dart), in pure Dart. It reads the strips or
 // the tiles of the first image one band at a time and scales each band down as it comes: the whole picture is never in
 // memory at its full size, only the file, one band and the picture shown.
 //
@@ -53,6 +53,59 @@ TiffPixels decodeTiffPixels(Uint8List bytes, {required int maxSide, required int
   }
 }
 
+/// What the header of a TIFF tells before any decode (see [readTiffHead])
+class TiffHead {
+  const TiffHead({required this.width, required this.height, required this.cameraRaw, this.iccProfile});
+
+  /// The size of the first image, upright as its orientation tag says
+  final int width;
+  final int height;
+
+  /// Whether the file is a camera raw file built on TIFF (DNG, CR2, NEF, ARW and the like), which the decoder must not
+  /// show: its first image is the camera's preview, or the sensor data, never the photo
+  final bool cameraRaw;
+
+  /// The ICC profile of an RGB image (tag 34675), which the decoded pixels are in: the decoder converts no colours.
+  /// Null for the other kinds of colours (gray, a palette, CMYK, whose profile would not describe RGB pixels)
+  final Uint8List? iccProfile;
+}
+
+/// The head of [bytes], a TIFF, null when its header does not read. Reads the tags only, decodes nothing. A camera raw
+/// file says so by its DNGVersion tag (50706), the "CR" of a Canon CR2 after the header, or a first image marked as a
+/// reduced copy (NewSubfileType, tag 254, bit 0): the cameras put their preview there and the sensor data elsewhere.
+TiffHead? readTiffHead(Uint8List bytes) {
+  try {
+    final decoder = img.TiffDecoder();
+    final info = decoder.startDecode(bytes);
+    final first = info?.images.firstOrNull;
+    if (info == null || first == null || first.width <= 0 || first.height <= 0) {
+      return null;
+    }
+    final tiff = _Tiff(first, bytes, bigEndian: info.bigEndian ?? false);
+    final ifd = decoder.exif?.imageIfd;
+    final orientation = ifd != null && ifd.hasOrientation ? ifd.orientation ?? 1 : 1;
+    final turned = orientation >= 5 && orientation <= 8;
+    final cr2 = bytes.length > 10 && bytes[8] == 0x43 && bytes[9] == 0x52;
+    final reduced = ((tiff.ints(_newSubfileType)?.first ?? 0) & 1) != 0;
+    Uint8List? profile;
+    if (tiff.photometric == _rgb) {
+      final values = tiff.ints(_iccProfile);
+      // An RGB profile only ("RGB " at byte 16 of its header)
+      if (values != null && values.length > 20 && String.fromCharCodes(values.sublist(16, 20)) == 'RGB ') {
+        profile = Uint8List.fromList(values);
+      }
+    }
+    return TiffHead(
+      width: turned ? first.height : first.width,
+      height: turned ? first.width : first.height,
+      cameraRaw: cr2 || reduced || first.tags.containsKey(_dngVersion),
+      iccProfile: profile,
+    );
+  } catch (_) {
+    return null;
+  }
+}
+
 TiffPixels _decode(Uint8List bytes, int maxSide, int maxDecodedBytes) {
   final decoder = img.TiffDecoder();
   final img.TiffInfo? info;
@@ -94,6 +147,9 @@ const _inkSet = 332;
 const _extraSamples = 338;
 const _sampleFormat = 339;
 const _jpegTables = 347;
+const _newSubfileType = 254;
+const _iccProfile = 34675;
+const _dngVersion = 50706;
 
 // The compressions
 const _none = 1;

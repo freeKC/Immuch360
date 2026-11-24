@@ -10,8 +10,14 @@
 // | Linux   | nice 10 by setpriority on the threads that appear in      | unchanged: Linux does not let a thread come    |
 // |         | /proc/self/task while the session opens                   | back to 0 without a privilege, and the thread  |
 // |         |                                                           | serves other isolates afterwards               |
-// | macOS   | unchanged in phase 1 (the quality of service of another   | unchanged                                      |
-// |         | thread is not set without native code)                    |                                                |
+// | macOS   | opened by a thread in the utility class of quality of     | the utility class (pthread_set_qos_class_self_ |
+// |         | service, which the threads it creates take as their own   | np), its class put back at the end of the job  |
+// |         | (the other threads of a process are not listed there)     |                                                |
+//
+// macOS since release 51 (lot L51 of the desktop parity plan): the quality of service of another thread is not set
+// without native code, so the thread that opens the session and runs the job takes QOS_CLASS_UTILITY for that time,
+// through libSystem by FFI, and ONNX Runtime creates its threads from it. That they keep the utility class was not
+// measured: the threads of another are not read on macOS without Mach calls.
 //
 // The body of a job runs as one synchronous event of its isolate, so its thread does not change on the way.
 //
@@ -42,6 +48,9 @@ abstract interface class ThreadPriorityPlatform {
     }
     if (Platform.isLinux) {
       return const LinuxThreadPriority();
+    }
+    if (Platform.isMacOS) {
+      return const MacThreadPriority();
     }
     return const UnchangedThreadPriority();
   }
@@ -78,11 +87,13 @@ class ComputePriority {
 
   /// Runs [open], the call that makes the threads of a session, then lowers the threads it made: those born
   /// meanwhile, with the name [sessionThreadName] where threads take the name of their creator. Gives what [open]
-  /// gave and how many threads were lowered. A failure of [open] lowers nothing: its threads are gone with it.
+  /// gave and how many threads were lowered. A failure of [open] lowers nothing: its threads are gone with it. Where
+  /// threads are not listed (macOS), [open] runs with the calling thread lowered, whose class the threads it creates
+  /// take, and none is counted.
   ({T value, int lowered}) lowerThreadsBornDuring<T>(T Function() open) {
     final before = platform.threads();
     if (before == null) {
-      return (value: open(), lowered: 0);
+      return (value: whileLowered(open), lowered: 0);
     }
     final restoreName = platform.nameCurrentThread(sessionThreadName);
     final T value;
@@ -115,7 +126,7 @@ class ComputePriority {
   }
 }
 
-/// macOS, and any other system: nothing is changed
+/// Any other system: nothing is changed
 class UnchangedThreadPriority implements ThreadPriorityPlatform {
   const UnchangedThreadPriority();
 
@@ -136,6 +147,81 @@ class UnchangedThreadPriority implements ThreadPriorityPlatform {
 
   @override
   int? currentThreadId() => null;
+}
+
+// --- macOS ------------------------------------------------------------------------------------------------------------
+
+/// QOS_CLASS_UTILITY of `<sys/qos.h>`: long work the user asked for, which the system runs with less of the processor
+/// and in favour of the battery
+const macUtilityQos = 0x11;
+
+/// QOS_CLASS_DEFAULT and QOS_CLASS_UNSPECIFIED of `<sys/qos.h>`
+const _macDefaultQos = 0x15;
+const _macUnspecifiedQos = 0x00;
+
+typedef _QosSelfNative = Uint32 Function();
+typedef _QosSelf = int Function();
+typedef _SetQosSelfNative = Int32 Function(Uint32, Int32);
+typedef _SetQosSelf = int Function(int, int);
+typedef _ThreadIdNative = Int32 Function(Pointer<Void>, Pointer<Uint64>);
+typedef _ThreadId = int Function(Pointer<Void>, Pointer<Uint64>);
+
+/// The functions of libSystem, looked up once per isolate
+final class _LibSystem {
+  _LibSystem() {
+    final system = DynamicLibrary.process();
+    qosSelf = system.lookupFunction<_QosSelfNative, _QosSelf>('qos_class_self');
+    setQosSelf = system.lookupFunction<_SetQosSelfNative, _SetQosSelf>('pthread_set_qos_class_self_np');
+    threadId = system.lookupFunction<_ThreadIdNative, _ThreadId>('pthread_threadid_np');
+  }
+
+  late final _QosSelf qosSelf;
+  late final _SetQosSelf setQosSelf;
+  late final _ThreadId threadId;
+}
+
+final _libSystem = _LibSystem();
+
+/// macOS: the calling thread in the utility class of quality of service for the time of a job, and its class put
+/// back after; the other threads of the process are neither listed nor changed
+class MacThreadPriority implements ThreadPriorityPlatform {
+  const MacThreadPriority();
+
+  @override
+  Map<int, String?>? threads() => null;
+
+  @override
+  void Function()? nameCurrentThread(String name) => null;
+
+  @override
+  bool lowerThread(int id) => false;
+
+  @override
+  void Function()? lowerCurrentThread() {
+    final system = _libSystem;
+    final previous = system.qosSelf();
+    // Already utility or background: left as it is
+    if (previous != _macUnspecifiedQos && previous <= macUtilityQos) {
+      return null;
+    }
+    if (system.setQosSelf(macUtilityQos, 0) != 0) {
+      return null;
+    }
+    // A thread without a class gets the default one back, the class the system gives such a thread
+    final back = previous == _macUnspecifiedQos ? _macDefaultQos : previous;
+    return () => system.setQosSelf(back, 0);
+  }
+
+  /// The class of quality of service of the calling thread when [id] is its own (QOS_CLASS_UTILITY is 0x11), null for
+  /// another thread
+  @override
+  int? priorityOf(int id) => id == currentThreadId() ? _libSystem.qosSelf() : null;
+
+  @override
+  int? currentThreadId() => using((arena) {
+    final id = arena<Uint64>();
+    return _libSystem.threadId(nullptr, id) == 0 ? id.value : null;
+  });
 }
 
 // --- Linux ------------------------------------------------------------------------------------------------------------

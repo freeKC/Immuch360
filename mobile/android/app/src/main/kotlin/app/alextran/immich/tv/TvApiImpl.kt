@@ -67,7 +67,12 @@ class TvApiImpl(private val activity: Activity) : TvApi {
       }
       done
     }
-    dialog.setOnShowListener { field.requestFocus() }
+    dialog.setOnShowListener {
+      // Down from the field goes to OK: the arrows chose the button nearest below the middle of the field, Cancel on a
+      // wide TV dialog, so Back (to close the keyboard), Down and OK dropped the text typed
+      field.nextFocusDownId = android.R.id.button1
+      field.requestFocus()
+    }
     dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     dialog.show()
   }

@@ -375,18 +375,18 @@ void main() {
   });
 
   group('the feature and its components', () {
-    test('Windows only, a group of its own, offered since ai-components-4 is made', () {
-      expect(AiFeature.splatScene.platforms, [AiPlatform.windowsX64]);
+    test('Windows and Linux (release 51), a group of its own, offered since ai-components-4 is made', () {
+      expect(AiFeature.splatScene.platforms, [AiPlatform.windowsX64, AiPlatform.linuxX64]);
       expect(AiFeatureGroup.splats.features, {AiFeature.splatScene});
       // Held from lot SP8 to lot SP14, until ai-components-4 was made
       // Nothing held since the screens of the 3D videos (release 49)
       expect(aiHeldFeatureGroups, isEmpty);
       expect(aiComponentsSplatsReleaseTag, 'ai-components-4');
       expect(aiComponentGroupsFor(AiPlatform.windowsX64).map((group) => group.group), contains(AiFeatureGroup.splats));
-      expect(
-        aiComponentGroupsFor(AiPlatform.linuxX64).map((group) => group.group),
-        isNot(contains(AiFeatureGroup.splats)),
-      );
+      expect(aiComponentGroupsFor(AiPlatform.linuxX64).map((group) => group.group), contains(AiFeatureGroup.splats));
+      for (final mac in [AiPlatform.macosArm64, AiPlatform.macosX64]) {
+        expect(aiComponentGroupsFor(mac).map((group) => group.group), isNot(contains(AiFeatureGroup.splats)));
+      }
       expect(
         aiComponentGroupsFor(AiPlatform.windowsX64, held: const {AiFeatureGroup.splats}).map((group) => group.group),
         isNot(contains(AiFeatureGroup.splats)),
@@ -399,7 +399,10 @@ void main() {
         colmapWindowsComponent,
         brushWindowsComponent,
       ]);
-      expect(aiComponentsFor(AiPlatform.linuxX64, feature: AiFeature.splatScene), isEmpty);
+      expect(aiComponentsFor(AiPlatform.linuxX64, feature: AiFeature.splatScene), [
+        colmapLinuxComponent,
+        brushLinuxComponent,
+      ]);
       expect(aiComponentsFor(AiPlatform.macosArm64, feature: AiFeature.splatScene), isEmpty);
       final splats = [colmapWindowsComponent, colmapLinuxComponent, brushWindowsComponent, brushLinuxComponent];
       expect(splats.map((component) => component.id), [
@@ -512,32 +515,42 @@ void main() {
       );
     });
 
-    test('the gate offers the feature on Windows on this branch, refuses it while a version holds it back, and on '
-        'the other systems', () async {
-      HardwareGate gate(Abi abi, {Set<AiFeatureGroup> held = aiHeldFeatureGroups}) => HardwareGate(
-        components: _Installed(),
-        facts: () => AiHardwareFacts(abi: abi, processors: 32, physicalMemory: 16 * _gib),
-        loadRuntime: (path) async => (version: '1.31.0', error: null),
-        heldGroups: held,
-        gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
-      );
-      final windows = await gate(Abi.windowsX64).evaluate(feature: AiFeature.splatScene);
-      expect(windows.isAvailable, isTrue, reason: '$windows');
-      expect(windows.fileOf(colmapWindowsComponent.id), isNotNull);
-      expect(windows.fileOf(brushWindowsComponent.id), isNotNull);
-      expect(
-        (await gate(
-          Abi.windowsX64,
-          held: const {AiFeatureGroup.splats},
-        ).evaluate(feature: AiFeature.splatScene)).reason,
-        AiGateReason.notInThisVersion,
-      );
-      for (final abi in [Abi.linuxX64, Abi.macosArm64, Abi.macosX64]) {
-        expect((await gate(abi).evaluate(feature: AiFeature.splatScene)).reason, AiGateReason.notHere, reason: '$abi');
-      }
-      // The 3D photo is not touched by the hold
-      expect((await gate(Abi.windowsX64, held: const {AiFeatureGroup.splats}).evaluate()).isAvailable, isTrue);
-    });
+    test(
+      'the gate offers the feature on Windows and Linux, refuses it while a version holds it back, and on a Mac',
+      () async {
+        HardwareGate gate(Abi abi, {Set<AiFeatureGroup> held = aiHeldFeatureGroups}) => HardwareGate(
+          components: _Installed(),
+          facts: () => AiHardwareFacts(abi: abi, processors: 32, physicalMemory: 16 * _gib),
+          loadRuntime: (path) async => (version: '1.31.0', error: null),
+          heldGroups: held,
+          gpu: FakeGpuProbe.of(FakeGpuReports.rtx4060),
+        );
+        final windows = await gate(Abi.windowsX64).evaluate(feature: AiFeature.splatScene);
+        expect(windows.isAvailable, isTrue, reason: '$windows');
+        expect(windows.fileOf(colmapWindowsComponent.id), isNotNull);
+        expect(windows.fileOf(brushWindowsComponent.id), isNotNull);
+        expect(
+          (await gate(
+            Abi.windowsX64,
+            held: const {AiFeatureGroup.splats},
+          ).evaluate(feature: AiFeature.splatScene)).reason,
+          AiGateReason.notInThisVersion,
+        );
+        final linux = await gate(Abi.linuxX64).evaluate(feature: AiFeature.splatScene);
+        expect(linux.isAvailable, isTrue, reason: '$linux');
+        expect(linux.fileOf(colmapLinuxComponent.id), isNotNull);
+        expect(linux.fileOf(brushLinuxComponent.id), isNotNull);
+        for (final abi in [Abi.macosArm64, Abi.macosX64]) {
+          expect(
+            (await gate(abi).evaluate(feature: AiFeature.splatScene)).reason,
+            AiGateReason.notHere,
+            reason: '$abi',
+          );
+        }
+        // The 3D photo is not touched by the hold
+        expect((await gate(Abi.windowsX64, held: const {AiFeatureGroup.splats}).evaluate()).isAvailable, isTrue);
+      },
+    );
   });
 
   group('the settings', () {

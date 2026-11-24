@@ -1,29 +1,31 @@
 // The invitation to rate the app (lib/domain/services/rate_app.service.dart), wired to the app: the store of the
-// build, its review API, the app's store, the clock, the router and the dialog of the Quest store build. Each part is
-// a provider the lab tests replace (integration_test/lab_rate_app_test.dart). Started once by the app's engine; a build
-// with no store to rate in starts nothing.
+// build, its review API and its page, the app's store, the clock, the router and the quiet line of the Quest store
+// build. Each part is a provider the lab tests replace (integration_test/lab_rate_app_test.dart). Started once by the
+// app's engine; a build with no store to rate in starts nothing.
 
 import 'dart:async';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/constants.dart';
 import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/rate_app.service.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/models/server_info/server_info.model.dart';
 import 'package:immich_mobile/platform/store_review_api.g.dart';
-import 'package:immich_mobile/presentation/widgets/rate_app/rate_app_dialog.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/server_info.provider.dart';
-import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/utils/store_channel.dart';
+import 'package:immich_ui/immich_ui.dart' show scaffoldMessengerKey;
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -78,10 +80,13 @@ final rateAppMemoryProvider = Provider<RateAppMemory>((ref) {
   );
 });
 
-/// The review API of the store of the build, through pigeon
-final rateAppStoreApiProvider = Provider<RateAppStoreApi>((ref) => PigeonRateAppStoreApi(StoreReviewApi()));
+/// The review API of the store of the build, through pigeon, and the addresses of its page
+final rateAppStoreApiProvider = Provider<RateAppStoreApi>((ref) {
+  final channel = ref.watch(rateAppChannelProvider).valueOrNull ?? RateAppChannel.none;
+  return PigeonRateAppStoreApi(StoreReviewApi(), storePages: rateAppStorePages(channel));
+});
 
-/// The screen: the router, the settings and the dialog of the Quest store build
+/// The screen: the router, the settings and the quiet line of the Quest store build
 final rateAppScreenProvider = Provider<RateAppScreen>((ref) => RouterRateAppScreen(ref));
 
 /// The service, started once by the app's engine (main.dart); null for a build with no store to rate in, whose
@@ -115,6 +120,22 @@ final rateAppServiceProvider = FutureProvider<RateAppService?>((ref) async {
   return service;
 });
 
+/// Rate Immuch360 in Settings: the store page of the build, kept by the invitation so that it never asks again.
+/// True when the page opened
+Future<bool> rateAppFromSettings(WidgetRef ref) async {
+  try {
+    final service = await ref.read(rateAppServiceProvider.future);
+    if (service != null) {
+      return await service.rateFromSettings();
+    }
+    await ref.read(rateAppChannelProvider.future);
+    return await ref.read(rateAppStoreApiProvider).openStorePage();
+  } catch (error, stackTrace) {
+    _log.warning('The store page did not open from Settings', error, stackTrace);
+    return false;
+  }
+}
+
 /// Starts the invitation, once, from the app's engine; a failure is only logged
 Future<void> startRateApp(WidgetRef ref) async {
   try {
@@ -128,6 +149,12 @@ Future<void> startRateApp(WidgetRef ref) async {
 /// the tabs of the app alone, no dialog or sheet over them ([canPop] false), the app in the foreground ([resumed])
 bool rateAppBrowsing(List<String> stack, {required bool canPop, required bool resumed}) =>
     resumed && !canPop && stack.length == 1 && stack.single == TabShellRoute.name;
+
+/// Whether the version [status] of the server holds the invitation: only an app too old for the server. The other
+/// warnings of the profile menu held it in the builds 45 to 50: a server behind its latest release (shown to the
+/// admins, most users of a self hosted server, for as long as they keep an older server) and a server version that did
+/// not read (a server out of reach, outside home), so most users never reached an ask
+bool rateAppHeldByVersion(VersionStatus status) => status == VersionStatus.clientOutOfDate;
 
 /// See [rateAppScreenProvider]
 class RouterRateAppScreen implements RateAppScreen {
@@ -160,26 +187,103 @@ class RouterRateAppScreen implements RateAppScreen {
   }
 
   @override
-  bool get versionWarning => _ref.read(versionWarningPresentProvider(_ref.read(currentUserProvider)));
+  bool get remoteControl {
+    try {
+      return _ref.read(tvModeProvider);
+    } catch (error) {
+      _log.fine('No remote control layout: $error');
+      return false;
+    }
+  }
 
   @override
-  Future<RateAppAnswer?> showInvite() async {
+  bool get appOutOfDate => rateAppHeldByVersion(_ref.read(serverInfoProvider).versionStatus);
+
+  // The line while it shows, to take it away when the user leaves the browse page
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? _line;
+
+  @override
+  Future<bool> showLine() async {
     final context = _ref.read(appRouterProvider).navigatorKey.currentContext;
-    if (context == null || !context.mounted) {
-      return null;
+    final messenger = scaffoldMessengerKey.currentState;
+    if (context == null || !context.mounted || messenger == null) {
+      return false;
     }
-    return showRateAppDialog(context);
+    // Shown now, not after the snack bars waiting in the queue (by then the user may be in a viewer)
+    showRateAppLine(
+      messenger,
+      rateAppSnackBar(
+        context.t,
+        onRate: () {
+          final service = RateAppSignals.service;
+          if (service != null) {
+            unawaited(service.answer(RateAppAnswer.rate));
+          }
+        },
+      ),
+      onShown: (line) => _line = line,
+    );
+    return true;
+  }
+
+  @override
+  void hideLine() {
+    if (_line == null) {
+      return;
+    }
+    _line = null;
+    hideRateAppLine(scaffoldMessengerKey.currentState);
   }
 }
 
-/// [RateAppStoreApi] through pigeon; the store page falls back to its address
+/// Shows [line] at once on [messenger]: the snack bars showing or waiting go first. [onShown] gets its controller, and
+/// null again once it closed
+void showRateAppLine(
+  ScaffoldMessengerState messenger,
+  SnackBar line, {
+  required void Function(ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? line) onShown,
+}) {
+  messenger
+    ..clearSnackBars()
+    ..removeCurrentSnackBar();
+  final controller = messenger.showSnackBar(line);
+  onShown(controller);
+  unawaited(controller.closed.then((_) => onShown(null)));
+}
+
+/// Takes the line of [showRateAppLine] away while it shows: it is then the current snack bar of [messenger], the ones
+/// shown after it waiting behind it
+void hideRateAppLine(ScaffoldMessengerState? messenger) {
+  if (messenger != null && messenger.mounted) {
+    messenger.hideCurrentSnackBar();
+  }
+}
+
+/// The quiet line of the Quest store build at the end of a viewing: one sentence and Rate, gone by itself after
+/// [kRateAppLineShows]; it takes no focus and blocks nothing
+SnackBar rateAppSnackBar(Translations t, {required VoidCallback onRate}) => SnackBar(
+  key: rateAppSnackBarKey,
+  content: Text(t.rate_app_horizon_invite),
+  duration: kRateAppLineShows,
+  persist: false,
+  behavior: SnackBarBehavior.floating,
+  action: SnackBarAction(label: t.rate_app_rate, onPressed: onRate),
+);
+
+/// The key of [rateAppSnackBar]
+const rateAppSnackBarKey = Key('rate_app_snack_bar');
+
+/// [RateAppStoreApi] through pigeon; the store page falls back to its addresses
 class PigeonRateAppStoreApi implements RateAppStoreApi {
-  PigeonRateAppStoreApi(this._api, {this.storePageUrl = kHorizonStoreLink});
+  PigeonRateAppStoreApi(this._api, {required this.storePages, Future<bool> Function(Uri url)? launch})
+    : _launch = launch ?? ((url) => launchUrl(url, mode: LaunchMode.externalApplication));
 
   final StoreReviewApi _api;
 
-  /// The address opened when the store page does not open natively
-  final String storePageUrl;
+  /// The addresses of the store page, tried in turn when it does not open natively (rateAppStorePages)
+  final List<Uri> storePages;
+
+  final Future<bool> Function(Uri url) _launch;
 
   @override
   Future<bool> requestReview() async {
@@ -200,11 +304,15 @@ class PigeonRateAppStoreApi implements RateAppStoreApi {
     } catch (error) {
       _log.warning('The store page did not open natively: $error');
     }
-    try {
-      return await launchUrl(Uri.parse(storePageUrl), mode: LaunchMode.externalApplication);
-    } catch (error) {
-      _log.warning('The address of the store page did not open: $error');
-      return false;
+    for (final url in storePages) {
+      try {
+        if (await _launch(url)) {
+          return true;
+        }
+      } catch (error) {
+        _log.warning('The store page did not open at ${url.scheme}: $error');
+      }
     }
+    return false;
   }
 }

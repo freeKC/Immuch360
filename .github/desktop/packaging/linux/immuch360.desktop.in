@@ -9,6 +9,7 @@ Icon=com.aprogsys.immuch360
 Terminal=false
 StartupNotify=true
 StartupWMClass=com.aprogsys.immuch360
+PrefersNonDefaultGPU=true
 Categories=Graphics;Viewer;Photography;
 Keywords=Immich;360;Photo;Video;Panorama;VR;
 MimeType=@MIME_TYPES@

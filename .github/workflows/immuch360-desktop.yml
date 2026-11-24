@@ -21,7 +21,12 @@ name: Immuch360 Desktop
 #                  the AV2 decoder serves it (check_y4m.py), the serve of the macOS archive of the AV2 decoder the app
 #                  downloads (immuch360/av2-companion) on fixtures and a 1080p clip, with the options of the app
 #                  (check_y4m.py companion), and a self check of the app on the runner (a folder and a video on the
-#                  command line, the keychain, five seconds of libmpv, the y4m over HTTP)
+#                  command line, the keychain, five seconds of libmpv, the y4m over HTTP), a failed check failing the job
+#   macos-tests    test/desktop on an arm64 Mac, then ONNX Runtime by FFI on the library the app installs there (the
+#                  tiny models, the engines of the scenes, the panoramas and the 3D videos), and a whole 3D video through
+#                  the macOS FFmpeg program the app downloads
+#   macos-intel-video3d
+#                  ONNX Runtime 1.23.2 on an Intel Mac, and a whole 3D video there with the real model
 #   windows        desktop tests on a real Windows (ONNX Runtime 1.31.0 and the job object of sd-cli included), the
 #                  fake sd-cli and the probes of a generation, of a panorama and of the splat scenes as the artifact
 #                  Immuch360-AI-tools-windows-x64, the release build, the ZIP and the installer (Inno Setup) for the
@@ -73,6 +78,10 @@ on:
         description: Also build stable-diffusion.cpp (the sdcpp jobs), as when sd_cpp.lock.json changes
         type: boolean
         default: false
+      sdcpp_seedvr2:
+        description: Also build the stable-diffusion.cpp of Enhance (AI), as when sd_cpp_seedvr2.lock.json changes
+        type: boolean
+        default: false
       spark:
         description: Also build Spark for the splat viewer (the spark job), as when its lock changes
         type: boolean
@@ -90,6 +99,10 @@ on:
     inputs:
       sdcpp:
         description: Also build stable-diffusion.cpp, for the release workflow to sign it (never for a release)
+        type: boolean
+        default: false
+      sdcpp_seedvr2:
+        description: Also build the stable-diffusion.cpp of Enhance (AI), for the release workflow to sign it (never for a release)
         type: boolean
         default: false
       colmap:
@@ -126,6 +139,7 @@ jobs:
       file_version: ${{ steps.version.outputs.file_version }}
       label: ${{ steps.version.outputs.label }}
       sdcpp_lock_changed: ${{ steps.sdcpp.outputs.changed }}
+      sdcpp_seedvr2_lock_changed: ${{ steps.sdcpp.outputs.seedvr2_changed }}
       spark_lock_changed: ${{ steps.sdcpp.outputs.spark_changed }}
       colmap_lock_changed: ${{ steps.colmap.outputs.changed }}
       brush_lock_changed: ${{ steps.brush.outputs.changed }}
@@ -164,6 +178,14 @@ jobs:
           fi
           echo "sd_cpp.lock.json changed since ${base:-no base}: $changed"
           echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          # The same for the second archive, that of Enhance (AI): its lock and the help its runner is frozen by
+          seedvr2_changed=false
+          if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/ai/sd_cpp_seedvr2.lock.json \
+            mobile/test/fixtures/ai_immersive/sd_cli_seedvr2_help.txt; then
+            seedvr2_changed=true
+          fi
+          echo "sd_cpp_seedvr2.lock.json changed since ${base:-no base}: $seedvr2_changed"
+          echo "seedvr2_changed=$seedvr2_changed" >> "$GITHUB_OUTPUT"
           # The same for Spark, the renderer of the splat viewer: its lock, its patches and its build script
           spark_changed=false
           if [ -n "$base" ] && ! git diff --quiet "$base" HEAD -- .github/desktop/splat_viewer/spark.lock.json \
@@ -519,6 +541,7 @@ jobs:
       # and tiny_vda.onnx: a 4 s clip with a cut made by the program itself, the encoder test (no VA-API on
       # the runner: SVT-AV1), the segments, the mux, st3d read back by the app's own probe
       - name: A 3D video through the real FFmpeg program and the tiny model
+        id: video3d_tiny
         working-directory: mobile
         run: |
           work="$RUNNER_TEMP/video3d"
@@ -532,12 +555,51 @@ jobs:
           mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
             | tee "$work/run.log"
           python3 ../.github/desktop/ai/video3d_ci_clip.py check "$work/run.log"
+          # A 360° video made 360° 3D (lot ai-360-3d-51): the six faces through tiny_vda.onnx, the frame top and
+          # bottom, st3d and sv3d written into the MP4 and read back by the app, the eyes of a frame compared
+          python3 ../.github/desktop/ai/video3d_ci_clip.py make360 "$work/ffmpeg/bin/ffmpeg" "$work/sphere_360.mkv"
+          export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$RUNNER_TEMP/onnxruntime/onnxruntime-linux-x64-1.31.0/lib/libonnxruntime.so.1.31.0\",\"--model\",\"$PWD/test/fixtures/ai_immersive/tiny_vda.onnx\",\"--out\",\"$work/out360\",\"--quality\",\"fast\",\"--strength\",\"strong\",\"--segment\",\"1\",\"--sphere\",\"512\",\"$work/sphere_360.mkv\"]"
+          mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
+            | tee "$work/run360.log"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py check360 "$work/run360.log"
           # Sound and picture over a long film: 12 segments joined by the concat list of the engine, each with its
           # exact length, end on the grid (the Matroska durations alone lose about 0.6 ms a segment)
           python3 ../.github/desktop/ai/video3d_ci_clip.py drift "$work/ffmpeg/bin/ffmpeg" "$work/drift"
           # Every audio decoder the app counts on is in the program, and no other
           python3 ../.github/desktop/ai/video3d_ci_clip.py decoders "$work/ffmpeg/bin/ffmpeg" \
             lib/desktop/ai/video3d/video_source.dart
+
+      # The real model (lot L06 of the desktop parity plan, 21 November 2026): Video Depth Anything Small of
+      # ai-components-5, the file the app downloads, checked by the sum of the catalogue and cached, on ONNX Runtime
+      # 1.23.2, the last release for Intel Macs and the one the app installs there, through the same FFmpeg program and
+      # clip as the step above. The same checks: 100 frames, st3d left right, the cut at frame 50
+      - name: Video Depth Anything Small archive cache
+        if: ${{ !cancelled() }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/vda
+          key: video-depth-anything-small-ff810849-eb5926ad
+
+      # The FFmpeg program and the clip of the step above
+      - name: A 3D video with the real model on ONNX Runtime 1.23.2
+        if: ${{ !cancelled() && steps.video3d_tiny.outcome == 'success' }}
+        working-directory: mobile
+        run: |
+          set -o pipefail
+          work="$RUNNER_TEMP/video3d"
+          model="$RUNNER_TEMP/vda/video-depth-anything-small-dynamic-fp32.onnx"
+          mkdir -p "$RUNNER_TEMP/vda"
+          [ -f "$model" ] || curl -sSfL --retry 3 -o "$model" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-5/video-depth-anything-small-dynamic-fp32.onnx
+          echo "eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99  $model" | sha256sum -c -
+          ort="$RUNNER_TEMP/onnxruntime/onnxruntime-linux-x64-1.23.2/lib/libonnxruntime.so.1.23.2"
+          export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$ort\",\"--model\",\"$model\",\"--out\",\"$work/out-real\",\"--quality\",\"fast\",\"--segment\",\"1\",\"$work/clip.mkv\"]"
+          start=$(date +%s)
+          mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
+            | tee "$work/run-real.log"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py check "$work/run-real.log"
+          echo "the real model on ONNX Runtime 1.23.2 (Linux x64): $(( $(date +%s) - start )) s for the 4 s clip" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
 
       # The glTF-Validator of Khronos on the 3D scenes of phase 2 (lot S1; design-final 2026-10-27, section 8.2): the
       # fixture of make_scene_fixture.py, the one the engine wrote with the fakes (tiny_scene3D_dart.jpg, which the
@@ -563,7 +625,7 @@ jobs:
     name: Linux build
     runs-on: ubuntu-22.04
     needs: codegen
-    timeout-minutes: 45
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -825,6 +887,56 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      # The splat scenes on Linux end to end (lot L03 of the desktop parity plan, 21 November 2026; offered on Linux
+      # since release 51): COLMAP and Brush of ai-components-4 as the app downloads them, checked by the sums of the
+      # catalogue and installed with their licences, then the 24 views of make_splat_dataset.py (two cameras) made
+      # into a scene by the engine of the app (splat_probe, the engine of lot SP6, COLMAP and Brush started through
+      # the immuch360-run of the archive). The card is what the probe of the graphics cards of this build reports,
+      # chosen by the rule of the gate (splatCardIn, which splatCardOf takes): the runner has no graphics card, so
+      # Mesa's software Vulkan (lavapipe) is installed here and taken by --software-card, the override of the gate's
+      # refusal that only this check uses; 30 steps at 128 pixels. The .spz must be written from every view placed,
+      # and read by the probe of the app. A real dedicated card (NVIDIA proprietary Vulkan, RADV) stays unproven on
+      # Linux
+      - name: A splat scene made by the engine of the app with COLMAP and Brush of ai-components-4 (lavapipe)
+        if: ${{ !cancelled() && steps.packages.outcome == 'success' }}
+        timeout-minutes: 30
+        working-directory: mobile
+        run: |
+          set -o pipefail
+          sudo sh ../.github/desktop/packaging/linux/apt_install.sh mesa-vulkan-drivers
+          work="$RUNNER_TEMP/splat-e2e"
+          mkdir -p "$work/mirror" "$work/out"
+          for asset in colmap-cpu-linux-x64.zip brush-vulkan-linux-x64.zip; do
+            curl -sSfL --retry 3 -o "$work/mirror/$asset" \
+              "https://github.com/freeKC/Immuch360/releases/download/ai-components-4/$asset"
+          done
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$work/splat-probe"
+          "$work/splat-probe" install --mirror "$work/mirror" --components "$work/components" --platform linux \
+            | tee "$work/install.log"
+          python3 ../.github/desktop/ai/make_splat_dataset.py --out "$work/dataset"
+          export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json
+          timeout 60 build/linux/x64/release/bundle/immuch360 --immuch360-gpu-probe="$work/gpu.json"
+          cat "$work/gpu.json"
+          echo
+          "$work/splat-probe" run --components "$work/components" --photos "$work/dataset/images" --out "$work/out" \
+            --name room --work-root "$work/work" --steps 30 --resolution 128 --card "report:$work/gpu.json" \
+            --software-card --need-mib 0 --stall-seconds 900 \
+            --launcher "$work/components/engines/colmap-cpu-linux-x64/immuch360-run" \
+            --env "VK_ICD_FILENAMES=$VK_ICD_FILENAMES" | tee "$work/run.log"
+          python3 ../.github/desktop/ai/splat_e2e_check.py "$work/run.log" --views 24
+
+      - name: Upload the splat scene made on Linux
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: linux-splat-e2e
+          path: |
+            ${{ runner.temp }}/splat-e2e/out/
+            ${{ runner.temp }}/splat-e2e/*.log
+            ${{ runner.temp }}/splat-e2e/gpu.json
+          retention-days: 14
+          if-no-files-found: ignore
+
   # Each package installed as a user would install it, in a clean container: the package manager brings the
   # dependencies the package declares, then every library the ELF files need must be found, libmpv and libsmb2 among
   # them, the desktop entry must be valid, the MIME types of the raw camera files registered, and the installed app
@@ -1012,6 +1124,34 @@ jobs:
           PY
           echo "lib=$(cygpath -w "$ort/onnxruntime.dll")" >> "$GITHUB_OUTPUT"
 
+      # The runtime of the graphics card of the 3D videos (lot ai-360-3d-51): onnxruntime.dll of the official NuGet
+      # package Microsoft.ML.OnnxRuntime.DirectML 1.24.4 (MIT), checked by its SHA-256, made into the files of the
+      # prerelease ai-components-6 (published since release 51; the artifact ai-components-6-candidate holds the files
+      # of this run), its sizes and sums held to the catalogue (ai_components_manifest.dart), for the tests and probes
+      # below; the app downloads it like the other components. No DirectML.dll: the library calls the one of Windows.
+      # The runner has no graphics card; DirectML runs on WARP there, which the app never takes as a card, the tests
+      # and probes below do (--allow-software)
+      - name: The DirectML runtime of the graphics card
+        id: ort_card
+        run: |
+          out="$(cygpath -u "$RUNNER_TEMP")/ai-components-6"
+          plain="$(cygpath -u "$RUNNER_TEMP")/ort-directml"
+          python .github/desktop/ai/gpu_runtime.py --out "$(cygpath -w "$out")" --plain "$(cygpath -w "$plain")"
+          echo "lib=$(cygpath -w "$plain/onnxruntime.dll")" >> "$GITHUB_OUTPUT"
+          echo "plain=$(cygpath -w "$plain")" >> "$GITHUB_OUTPUT"
+          echo "out=$(cygpath -w "$out")" >> "$GITHUB_OUTPUT"
+          ls -l "$out" "$plain"
+          powershell -NoProfile -Command '(Get-Item C:\Windows\System32\DirectML.dll).VersionInfo.FileVersion' \
+            || echo "no DirectML.dll in System32"
+
+      - name: Upload the files of ai-components-6 made by this run
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ai-components-6-candidate
+          path: ${{ steps.ort_card.outputs.out }}
+          retention-days: 14
+          if-no-files-found: error
+
       # The fake sd-cli of the 360° panoramas, for the tests of the runner and of the job object below (lot P2),
       # sdcpp_probe, the program that runs a real generation through the same runner and launcher on a PC with a
       # graphics card (the essay of lot P2), and panorama_probe, the engine of the panoramas on the same PC (the essay
@@ -1020,7 +1160,8 @@ jobs:
       # (lot SP0) join them, for test/desktop/ai/splat, and the probe of their runners (lot SP4), which the suite kills
       # while COLMAP or Brush runs under it, and which runs the archives of COLMAP and Brush on the PC of the essay; and
       # splat_probe (lot SP6), the engine of the splat scenes from the photos to the .spz, which installs the archives
-      # of a mirror once and makes a scene on the PC of the essay, killed by the suite during its training
+      # of a mirror once and makes a scene on the PC of the essay, killed by the suite during its training; and
+      # enhance_probe (release 51), the engine of Enhance (AI) on one photo with the files of the published components
       - name: The fake sd-cli, COLMAP and Brush, and the probes of a generation, a panorama and the splat scenes
         id: fake_sd_cli
         working-directory: mobile
@@ -1034,6 +1175,8 @@ jobs:
           dart compile exe test/desktop/ai/tools/panorama_probe.dart -o "$tools/panorama-probe.exe"
           dart compile exe test/desktop/ai/tools/splat_runner_probe.dart -o "$tools/splat-runner-probe.exe"
           dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$tools/splat_probe.exe"
+          dart compile exe test/desktop/ai/tools/depth_provider_probe.dart -o "$tools/depth-provider-probe.exe"
+          dart compile exe test/desktop/ai/tools/enhance_probe.dart -o "$tools/enhance-probe.exe"
           echo "fake=$(cygpath -w "$tools/fake-sd-cli.exe")" >> "$GITHUB_OUTPUT"
           echo "colmap=$(cygpath -w "$tools/fake-colmap.exe")" >> "$GITHUB_OUTPUT"
           echo "brush=$(cygpath -w "$tools/fake-brush.exe")" >> "$GITHUB_OUTPUT"
@@ -1065,6 +1208,7 @@ jobs:
         working-directory: mobile
         env:
           ORT_LIB: ${{ steps.ort.outputs.lib }}
+          ORT_CARD_LIB: ${{ steps.ort_card.outputs.lib }}
         run: |
           work="$(cygpath -u "$RUNNER_TEMP")/video3d"
           mkdir -p "$work/ffmpeg"
@@ -1074,21 +1218,38 @@ jobs:
           (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
           python ../.github/desktop/ai/video3d_ci_clip.py make "$(cygpath -w "$work/ffmpeg/bin/ffmpeg.exe")" "$(cygpath -w "$work/clip.mkv")"
           IMMUCH360_VIDEO3D_ARGS="$(python - "$(cygpath -w "$work")" "$ORT_LIB" "$(cygpath -w "$PWD/test/fixtures/ai_immersive/tiny_vda.onnx")" <<'PY'
-          import json, sys
+          import json, os, sys
           work, ort, model = sys.argv[1:4]
           print(json.dumps(['--ffmpeg', work + '\\ffmpeg', '--ort', ort, '--model', model, '--out', work + '\\out',
-                            '--quality', 'fast', '--segment', '1', work + '\\clip.mkv']))
+                            '--quality', 'fast', '--segment', '1', '--card', os.environ['ORT_CARD_LIB'],
+                            '--allow-software', work + '\\clip.mkv']))
           PY
           )"
           export IMMUCH360_VIDEO3D_ARGS
           flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded | tee "$work/run.log"
           python ../.github/desktop/ai/video3d_ci_clip.py check "$(cygpath -w "$work/run.log")"
+          # A 360° video made 360° 3D (lot ai-360-3d-51), with the encoder of the runner
+          python ../.github/desktop/ai/video3d_ci_clip.py make360 "$(cygpath -w "$work/ffmpeg/bin/ffmpeg.exe")" "$(cygpath -w "$work/sphere_360.mkv")"
+          IMMUCH360_VIDEO3D_ARGS="$(python - "$(cygpath -w "$work")" "$ORT_LIB" "$(cygpath -w "$PWD/test/fixtures/ai_immersive/tiny_vda.onnx")" <<'PY'
+          import json, os, sys
+          work, ort, model = sys.argv[1:4]
+          print(json.dumps(['--ffmpeg', work + '\\ffmpeg', '--ort', ort, '--model', model, '--out', work + '\\out360',
+                            '--quality', 'fast', '--strength', 'strong', '--segment', '1', '--sphere', '512',
+                            '--card', os.environ['ORT_CARD_LIB'], '--allow-software', work + '\\sphere_360.mkv']))
+          PY
+          )"
+          export IMMUCH360_VIDEO3D_ARGS
+          flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded | tee "$work/run360.log"
+          python ../.github/desktop/ai/video3d_ci_clip.py check360 "$(cygpath -w "$work/run360.log")"
+          # Where the depth model ran, as the job logs say it (the card of the runner is WARP, counted here only)
+          grep -h -o '"line":"[^"]*\(graphics card\|depth model\|check of\|timings of\)[^"]*"' "$work/run.log" "$work/run360.log" || true
 
       # IMMUCH360_REQUIRE_SBS_CODEC: the dart:ffi tests of the JPEG codec fail rather than skip without the library
       - name: Desktop tests on Windows (paths, file locking, DPAPI, the CI scripts, ONNX Runtime, the job object)
         working-directory: mobile
         env:
           IMMUCH360_ORT_LIB: ${{ steps.ort.outputs.lib }}
+          IMMUCH360_ORT_CARD_LIB: ${{ steps.ort_card.outputs.lib }}
           IMMUCH360_REQUIRE_SBS_CODEC: '1'
           IMMUCH360_FAKE_SD_CLI: ${{ steps.fake_sd_cli.outputs.fake }}
           IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
@@ -1366,6 +1527,21 @@ jobs:
       # The app as Flutter builds it: universal, signed for the computer that runs it only ("Sign to Run Locally", no
       # Apple certificate) and not notarized, so macOS asks for a confirmation at the first start. Zipped with ditto,
       # which keeps the attributes of the bundle, and in a DMG with a link to the Applications folder
+      # Core ML of ONNX Runtime 1.31.0 for Apple silicon (lot ai-360-3d-51): the library the app installs (the asset of
+      # ai-components-1, checked by the SHA-256 of the catalogue), the depth model's check against the processor and
+      # one window on Core ML; the runner proves it loads and runs, not the speed of a Mac
+      - name: Core ML of ONNX Runtime for the depth model
+        working-directory: mobile
+        run: |
+          ort="$RUNNER_TEMP/ort-macos"
+          mkdir -p "$ort"
+          curl -sSfL --retry 3 -o "$ort/ort.dylib.gz" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-1/onnxruntime-1.31.0-osx-arm64.dylib.gz
+          gunzip -c "$ort/ort.dylib.gz" > "$ort/libonnxruntime.1.31.0.dylib"
+          echo "2a50a63e7f41f8d4d551d3ee47248df3864f6540109fce8ad520ca3b51af4b70  $ort/libonnxruntime.1.31.0.dylib" | shasum -a 256 -c -
+          IMMUCH360_ORT_LIB="$ort/libonnxruntime.1.31.0.dylib" IMMUCH360_ORT_COREML=1 \
+            mise exec -- flutter test test/desktop/ai/ort/depth_provider_test.dart --reporter expanded
+
       - name: ZIP and DMG
         id: app
         env:
@@ -1426,6 +1602,27 @@ jobs:
           [ -n "$notices" ] || { echo "::error::no NOTICES.md of the video libraries in the app"; exit 1; }
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
+
+      # immuch360-run in Contents/MacOS, beside the executable (lot L10, the build phase of mobile/macos/Runner.xcodeproj):
+      # both slices, its ad hoc signature valid, and the checks of check_launcher.sh on it, the stand-in for the app
+      # killed with SIGKILL included
+      - name: immuch360-run in the app
+        run: |
+          launcher="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app/Contents/MacOS/immuch360-run"
+          [ -x "$launcher" ] || { echo "::error::no immuch360-run in Contents/MacOS of the app"; exit 1; }
+          archs=$(lipo -archs "$launcher")
+          echo "immuch360-run: $archs, minimum macOS $(vtool -show-build "$launcher" | awk '/minos/ {print $2; exit}')"
+          for arch in arm64 x86_64; do
+            case " $archs " in
+              *" $arch "*) ;;
+              *) echo "::error::immuch360-run has no $arch slice: $archs"; exit 1 ;;
+            esac
+          done
+          codesign --verify --strict --verbose=2 "$launcher"
+          # The seal of the whole app with the launcher inside: said, not asked (the app is signed to run locally only)
+          codesign --verify --deep --strict "mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app" \
+            || echo "::warning::codesign --verify --deep --strict refuses the app"
+          bash .github/desktop/packaging/macos/check_launcher.sh "$PWD/$launcher"
 
       # The y4m that the AV2 decoder of the app serves libmpv over HTTP on 127.0.0.1: the frameworks of the app read it,
       # 8 and 10 bit, from a file and over HTTP with exact seeks, on each architecture this runner runs
@@ -1547,10 +1744,10 @@ jobs:
       # (AppDelegate.application(_:open:)), after which the video is handed to the copy that runs. Last, a start
       # without arguments that plays the 10 bit y4m of check_y4m.py over HTTP from 127.0.0.1, the stream the AV2 decoder
       # serves, in the app's own player. A capture of the screen each time. The window server of a runner is not a Mac
-      # on a desk: the next step says what passed
+      # on a desk: the next step says what passed. It passed its 14 checks on the five runs of 19 to 21 November 2026,
+      # none failed, so since release 51 a failed check fails the job (lot L04 of the desktop parity plan)
       - name: Self check on the runner
         id: self_check
-        continue-on-error: true
         run: |
           app="$PWD/mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
           exe="$app/Contents/MacOS/Immuch360 Desktop"
@@ -1637,14 +1834,17 @@ jobs:
           cat "$out/finder.state"
           tail -n 40 "$out/finder.log" 2>/dev/null || true
 
-          # The y4m over HTTP, ten seconds of it, from a server on 127.0.0.1 that answers ranges as the AV2 decoder does
+          # The y4m over HTTP, ten seconds of it, from a server on 127.0.0.1 that answers ranges as the AV2 decoder does.
+          # It once took more than 10 s to start on a busy runner (22 November 2026): up to 60 s, the time it took said
           python3 .github/desktop/libmpv-macos/check_y4m.py serve --seconds 10 --port-file "$RUNNER_TEMP/y4m.port" \
             > "$out/y4m-server.log" 2>&1 &
           y4m_server=$!
-          for _ in $(seq 1 20); do
-            [ -s "$RUNNER_TEMP/y4m.port" ] && break
+          waited=0
+          while [ ! -s "$RUNNER_TEMP/y4m.port" ] && [ "$waited" -lt 120 ] && kill -0 "$y4m_server" 2>/dev/null; do
             sleep 0.5
+            waited=$((waited + 1))
           done
+          echo "y4m server: $((waited / 2)) s to give its port"
           if [ -s "$RUNNER_TEMP/y4m.port" ]; then
             IMMUCH360_SELF_CHECK_VIDEO="http://127.0.0.1:$(cat "$RUNNER_TEMP/y4m.port")/fixture-10bit.y4m" run_app y4m
           else
@@ -1661,13 +1861,13 @@ jobs:
 
       - name: What the self check found
         if: always()
-        continue-on-error: true
-        # pipefail: a failed check marks this step, the job stays green (continue-on-error)
+        # pipefail: a failed check fails this step and the job
         run: |
           set -o pipefail
           python3 .github/desktop/packaging/macos/self_check_summary.py first-start --strict | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the macOS ZIP
+        if: ${{ !cancelled() && steps.app.outcome == 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           path: ${{ steps.app.outputs.zip }}
@@ -1676,6 +1876,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload the DMG
+        if: ${{ !cancelled() && steps.app.outcome == 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           path: ${{ steps.app.outputs.dmg }}
@@ -1691,6 +1892,261 @@ jobs:
           path: first-start/
           retention-days: 14
           if-no-files-found: ignore
+
+  # The desktop tests on macOS (lots L04 and L05 of the desktop parity plan, 21 November 2026), beside the build: until
+  # release 51 they never ran on a Mac, the build job only compiled the app and started it. test/desktop on this arm64
+  # runner with the fakes of the AI features compiled here, then ONNX Runtime by FFI on the library the app installs on
+  # Apple silicon (onnxruntime-1.31.0-osx-arm64.dylib.gz of the release ai-components-1, checked by the SHA-256 of the
+  # download and by that of the catalogue once unpacked): the tiny models, the engines of the 3D scenes and of the 360°
+  # panoramas, the 3D videos, and a whole 3D video through the macOS FFmpeg program of immuch360/libmpv-builds that the
+  # app downloads. A runner is no Mac on a desk: no graphics card the AI uses, no Retina screen, no keychain prompt
+  macos-tests:
+    name: macOS desktop tests and ONNX Runtime
+    runs-on: macos-15
+    needs: codegen
+    if: >-
+      ${{ !cancelled() && needs.codegen.result == 'success'
+      && (github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')) }}
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install Flutter
+        run: cd mobile && mise install
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Flutter dependencies
+        working-directory: mobile
+        run: |
+          tar -xf generated-dart.tar && rm generated-dart.tar
+          mise exec -- flutter pub get --enforce-lockfile
+
+      # The fakes of the AI features and the probes of the splat scenes, compiled as the test job compiles them
+      - name: The fake sd-cli, the fake COLMAP, the fake Brush, the probes of the splat scenes and the fake AV2 companion
+        id: fakes
+        working-directory: mobile
+        run: |
+          fakes="$RUNNER_TEMP/ai-fakes"
+          mkdir -p "$fakes"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_sd_cli.dart -o "$fakes/fake-sd-cli"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_colmap.dart -o "$fakes/fake-colmap"
+          mise exec -- dart compile exe test/desktop/ai/fakes/fake_brush.dart -o "$fakes/fake-brush"
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_runner_probe.dart -o "$fakes/splat-runner-probe"
+          mise exec -- dart compile exe test/desktop/ai/tools/splat_probe.dart -o "$fakes/splat-probe"
+          mise exec -- dart compile exe test/desktop/video/fakes/fake_av2.dart -o "$fakes/fake-av2"
+          echo "dir=$fakes" >> "$GITHUB_OUTPUT"
+
+      # immuch360-run, the launcher that makes the programs of the app die with it (lot L10), built here as the build
+      # phase of the app builds it: its exit codes, and a stand-in for the app killed with SIGKILL while a program runs
+      # under it (check_launcher.sh). The suite below then kills the hosts of the fakes started through it
+      - name: immuch360-run, the launcher of the programs, on macOS
+        working-directory: mobile
+        run: |
+          xcrun clang -O2 -Wall -Wextra -Werror -o "${{ steps.fakes.outputs.dir }}/immuch360-run" \
+            ../.github/desktop/ai/immuch360_run.c
+          bash ../.github/desktop/packaging/macos/check_launcher.sh "${{ steps.fakes.outputs.dir }}/immuch360-run"
+
+      # test/desktop as the windows job runs it. IMMUCH360_REQUIRE_SBS_CODEC: the build hook must have built the JPEG
+      # codec for this Mac
+      - name: Desktop tests on macOS
+        working-directory: mobile
+        env:
+          IMMUCH360_REQUIRE_SBS_CODEC: '1'
+          IMMUCH360_FAKE_SD_CLI: ${{ steps.fakes.outputs.dir }}/fake-sd-cli
+          IMMUCH360_FAKE_COLMAP: ${{ steps.fakes.outputs.dir }}/fake-colmap
+          IMMUCH360_FAKE_BRUSH: ${{ steps.fakes.outputs.dir }}/fake-brush
+          IMMUCH360_SPLAT_PROBE: ${{ steps.fakes.outputs.dir }}/splat-runner-probe
+          IMMUCH360_SPLAT_SCENE_PROBE: ${{ steps.fakes.outputs.dir }}/splat-probe
+          IMMUCH360_FAKE_AV2: ${{ steps.fakes.outputs.dir }}/fake-av2
+          IMMUCH360_RUN_LAUNCHER: ${{ steps.fakes.outputs.dir }}/immuch360-run
+        run: mise exec -- flutter test test/desktop
+
+      # For the record, not a check: macOS refused the test authority of tls_contract_test.dart and of the downloader
+      # tests on the first run of the suite on a Mac (22 November 2026), so those tests are skipped there. The same
+      # authority and server certificate made by the openssl of this runner, its version, the extensions it wrote, and
+      # what the trust evaluation of macOS (security verify-cert, policy ssl, 127.0.0.1) says of them
+      - name: TLS diagnostics (information only)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: |
+          tls="$RUNNER_TEMP/tls-diagnostics"
+          mkdir -p "$tls"
+          cd "$tls"
+          printf '[req]\ndistinguished_name = dn\n[dn]\n' > openssl.cnf
+          export OPENSSL_CONF="$tls/openssl.cnf"
+          command -v openssl
+          openssl version
+          openssl req -x509 -newkey rsa:2048 -nodes -keyout ca.key -out ca.pem -days 2 \
+            -subj '/CN=Immuch360 Test Authority' -addext 'basicConstraints=critical,CA:TRUE' \
+            -addext 'keyUsage=critical,keyCertSign,cRLSign'
+          printf 'subjectAltName=IP:127.0.0.1,DNS:localhost\nbasicConstraints=CA:FALSE\nextendedKeyUsage=serverAuth\n' \
+            > server.ext
+          openssl req -newkey rsa:2048 -nodes -keyout server.key -out server.csr -subj '/CN=127.0.0.1'
+          openssl x509 -req -in server.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out server.pem -days 2 \
+            -extfile server.ext
+          openssl x509 -in server.pem -noout -text | sed -n '/X509v3 extensions/,$p' | head -20
+          security verify-cert -c server.pem -r ca.pem -p ssl -s 127.0.0.1 -L -v || true
+          security verify-cert -c ca.pem -r ca.pem -L -v || true
+
+      - name: ONNX Runtime archive cache
+        if: ${{ !cancelled() }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/onnxruntime-macos
+          key: onnxruntime-osx-arm64-1.31.0-fa5c0ea9-2a50a63e
+
+      # The library the app installs on Apple silicon, the gzip of the release checked by its SHA-256, the library by
+      # that of the catalogue (onnxRuntimeMacArmComponent of ai_components_manifest.dart)
+      - name: ONNX Runtime by FFI on 1.31.0 (osx-arm64)
+        id: ort
+        if: ${{ !cancelled() }}
+        working-directory: mobile
+        run: |
+          ort="$RUNNER_TEMP/onnxruntime-macos"
+          mkdir -p "$ort"
+          archive="$ort/onnxruntime-1.31.0-osx-arm64.dylib.gz"
+          [ -f "$archive" ] || curl -sSfL --retry 3 -o "$archive" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-1/onnxruntime-1.31.0-osx-arm64.dylib.gz
+          echo "fa5c0ea9c33f3ea1eb86e3aa989d92c1d78b8f4dbef50c77ea9c6c54919f33b8  $archive" | shasum -a 256 -c -
+          lib="$ort/libonnxruntime.1.31.0.dylib"
+          gzip -dc "$archive" > "$lib"
+          echo "2a50a63e7f41f8d4d551d3ee47248df3864f6540109fce8ad520ca3b51af4b70  $lib" | shasum -a 256 -c -
+          echo "lib=$lib" >> "$GITHUB_OUTPUT"
+          IMMUCH360_ORT_LIB="$lib" IMMUCH360_SCENE_OUT="$RUNNER_TEMP/scenes-1.31.0" \
+            mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene \
+              test/desktop/ai/panorama/panorama_engine_ort_test.dart test/desktop/ai/video3d
+          ls -l "$RUNNER_TEMP/scenes-1.31.0" || true
+
+      # A whole 3D video as the test job makes it, with the macOS FFmpeg program the app downloads
+      # (ffmpegMacComponent: one universal archive, signed ad hoc) and this ONNX Runtime
+      - name: A 3D video through the real FFmpeg program and the tiny model (macOS)
+        if: ${{ !cancelled() && steps.ort.outcome == 'success' }}
+        working-directory: mobile
+        env:
+          ORT_LIB: ${{ steps.ort.outputs.lib }}
+        run: |
+          set -o pipefail
+          work="$RUNNER_TEMP/video3d"
+          mkdir -p "$work/ffmpeg"
+          curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/Immuch360-ffmpeg-9.0.2-2-macos-universal.zip
+          echo "b0d76f497d989283dd5d77c1076792e02371a7df092899f2a8d12857c65cf6b7  $work/ffmpeg.zip" | shasum -a 256 -c -
+          (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
+          lipo -archs "$work/ffmpeg/bin/ffmpeg"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py make "$work/ffmpeg/bin/ffmpeg" "$work/clip.mkv"
+          export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$ORT_LIB\",\"--model\",\"$PWD/test/fixtures/ai_immersive/tiny_vda.onnx\",\"--out\",\"$work/out\",\"--quality\",\"fast\",\"--segment\",\"1\",\"$work/clip.mkv\"]"
+          mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
+            | tee "$work/run.log"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py check "$work/run.log"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py drift "$work/ffmpeg/bin/ffmpeg" "$work/drift"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py decoders "$work/ffmpeg/bin/ffmpeg" \
+            lib/desktop/ai/video3d/video_source.dart
+
+  # The 3D videos on an Intel Mac (lot L06 of the desktop parity plan, 21 November 2026): the only ONNX Runtime for
+  # Intel Macs is 1.23.2 (the app installs onnxruntime-1.23.2-osx-x86_64.dylib.gz of ai-components-1 there), and
+  # whether it runs Video Depth Anything Small was never checked, so the 3D videos were offered on Apple chips only.
+  # On the macos-15-intel runner: the ONNX tests on the tiny models (test/desktop/ai/ort and video3d), then a whole 3D
+  # video with the real model of ai-components-5 and the macOS FFmpeg program the app downloads, with the checks of
+  # video3d_ci_clip.py (frames, st3d, cut, drift). The time it took is said; the speed on a real Intel Mac is not
+  macos-intel-video3d:
+    name: 3D videos on an Intel Mac
+    runs-on: macos-15-intel
+    needs: codegen
+    if: >-
+      ${{ !cancelled() && needs.codegen.result == 'success'
+      && (github.event_name != 'push' || github.ref == 'refs/heads/desktop' || startsWith(github.ref, 'refs/tags/')) }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install Flutter
+        run: cd mobile && mise install
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Flutter dependencies
+        working-directory: mobile
+        run: |
+          uname -m
+          [ "$(uname -m)" = x86_64 ] || { echo "::error::this runner is not an Intel Mac"; exit 1; }
+          tar -xf generated-dart.tar && rm generated-dart.tar
+          mise exec -- flutter pub get --enforce-lockfile
+
+      - name: ONNX Runtime and model cache (Intel)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/ai-intel
+          key: onnxruntime-osx-x86_64-1.23.2-1b4431b1-8c9c78de-vda-eb5926ad
+
+      # The library the app installs on Intel Macs, the gzip of the release checked by its SHA-256, the library by
+      # that of the catalogue (onnxRuntimeMacIntelComponent); the model by that of videoDepthModelComponent
+      - name: ONNX Runtime 1.23.2 (osx-x86_64) and the tiny models
+        id: ort
+        working-directory: mobile
+        run: |
+          ai="$RUNNER_TEMP/ai-intel"
+          mkdir -p "$ai"
+          archive="$ai/onnxruntime-1.23.2-osx-x86_64.dylib.gz"
+          [ -f "$archive" ] || curl -sSfL --retry 3 -o "$archive" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-1/onnxruntime-1.23.2-osx-x86_64.dylib.gz
+          echo "1b4431b1075470edb270745ec2ce3bcde18330531ea17c94c5763a56cbc2a141  $archive" | shasum -a 256 -c -
+          lib="$ai/libonnxruntime.1.23.2.dylib"
+          gzip -dc "$archive" > "$lib"
+          echo "8c9c78de65ea3786f987c0d980e9c1b13a3a5fbc6b3e2965ba05b450e6e4c054  $lib" | shasum -a 256 -c -
+          lipo -archs "$lib"
+          model="$ai/video-depth-anything-small-dynamic-fp32.onnx"
+          [ -f "$model" ] || curl -sSfL --retry 3 -o "$model" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-5/video-depth-anything-small-dynamic-fp32.onnx
+          echo "eb5926ad36741e911c43cb010cc2f74604aa524744feeaf57979c178ede4bb99  $model" | shasum -a 256 -c -
+          echo "lib=$lib" >> "$GITHUB_OUTPUT"
+          echo "model=$model" >> "$GITHUB_OUTPUT"
+          IMMUCH360_ORT_LIB="$lib" mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/video3d
+
+      - name: A 3D video with the real model on an Intel Mac
+        working-directory: mobile
+        env:
+          ORT_LIB: ${{ steps.ort.outputs.lib }}
+          MODEL: ${{ steps.ort.outputs.model }}
+        run: |
+          set -o pipefail
+          work="$RUNNER_TEMP/video3d"
+          mkdir -p "$work/ffmpeg"
+          curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/Immuch360-ffmpeg-9.0.2-2-macos-universal.zip
+          echo "b0d76f497d989283dd5d77c1076792e02371a7df092899f2a8d12857c65cf6b7  $work/ffmpeg.zip" | shasum -a 256 -c -
+          (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
+          python3 ../.github/desktop/ai/video3d_ci_clip.py make "$work/ffmpeg/bin/ffmpeg" "$work/clip.mkv"
+          export IMMUCH360_VIDEO3D_ARGS="[\"--ffmpeg\",\"$work/ffmpeg\",\"--ort\",\"$ORT_LIB\",\"--model\",\"$MODEL\",\"--out\",\"$work/out\",\"--quality\",\"fast\",\"--segment\",\"1\",\"$work/clip.mkv\"]"
+          start=$(date +%s)
+          mise exec -- flutter test test/desktop/ai/video3d/video3d_integration_test.dart --reporter expanded \
+            | tee "$work/run.log"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py check "$work/run.log"
+          echo "the real model on ONNX Runtime 1.23.2 (Intel Mac runner, $(sysctl -n hw.ncpu) processors): $(( $(date +%s) - start )) s for the 4 s clip" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 ../.github/desktop/ai/video3d_ci_clip.py drift "$work/ffmpeg/bin/ffmpeg" "$work/drift"
 
   # The seven files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
   # release: a file missing or added shows on every run, not on the day of a release
@@ -1857,6 +2313,145 @@ jobs:
         run: |
           python3 .github/desktop/ai/sdcpp_build.py pack --system linux-x64 --source "$RUNNER_TEMP/sdcpp" \
             --bin "$RUNNER_TEMP/sdcpp-build/bin" --launcher "$RUNNER_TEMP/immuch360-run" --out dist
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
+          chmod +x "$RUNNER_TEMP/unpacked/sd-cli"
+          LD_LIBRARY_PATH= "$RUNNER_TEMP/unpacked/sd-cli" --list-devices || echo "no device listed (no GPU on the runner)"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  # The second archive of stable-diffusion.cpp, the engine of "Rebuild details" of Enhance (AI) (release 51,
+  # store/m2/ai-enhance-2026-11-22): SeedVR2 3B runs only through the script mode (DGL) of a newer commit, 0d71f963
+  # (tag master-1117-0d71f96, the build the probe of 23 November 2026 measured), so it is built apart from the archive
+  # of the 360° panoramas, whose commit and measures stay as they are. The same script and options as the sdcpp jobs
+  # above, with sd_cpp_seedvr2.lock.json and the help of that commit (sd_cli_seedvr2_help.txt); only when asked (the
+  # sdcpp_seedvr2 input) or when that lock or that help changed. Its artifact Immuch360-AI-sdcpp-0d71f96-1-<system>.zip
+  # is for ai-components-7; nothing here publishes it.
+  sdcpp-seedvr2-windows:
+    name: stable-diffusion.cpp of Enhance (AI) for Windows
+    runs-on: windows-2022
+    needs: codegen
+    if: ${{ inputs.sdcpp_seedvr2 || needs.codegen.outputs.sdcpp_seedvr2_lock_changed == 'true' }}
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+    env:
+      LOCK: .github/desktop/ai/sd_cpp_seedvr2.lock.json
+      HELP: mobile/test/fixtures/ai_immersive/sd_cli_seedvr2_help.txt
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" lock --system windows-x64 --github-output
+
+      - name: Sources of stable-diffusion.cpp and ggml at the commits of the lock
+        run: python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" sources --dir "$RUNNER_TEMP/sdcpp"
+
+      - name: Vulkan SDK of LunarG
+        env:
+          SDK_URL: ${{ steps.lock.outputs.sdk_url }}
+          SDK_SHA256: ${{ steps.lock.outputs.sdk_sha256 }}
+          SDK_VERSION: ${{ steps.lock.outputs.sdk_version }}
+        run: |
+          installer="$RUNNER_TEMP/vulkansdk.exe"
+          curl -sSfL --retry 3 -o "$installer" "$SDK_URL"
+          echo "$SDK_SHA256  $installer" | sha256sum -c -
+          "$installer" --accept-licenses --default-answer --confirm-command install
+          echo "VULKAN_SDK=C:\\VulkanSDK\\$SDK_VERSION" >> "$GITHUB_ENV"
+          echo "C:\\VulkanSDK\\$SDK_VERSION\\Bin" >> "$GITHUB_PATH"
+
+      - name: Build
+        run: |
+          glslc --version
+          python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" build --system windows-x64 \
+            --source "$RUNNER_TEMP/sdcpp" --build "$RUNNER_TEMP/sdcpp-build"
+
+      - name: sd-cli --help as the fixture says
+        run: |
+          "$RUNNER_TEMP/sdcpp-build/bin/sd-cli.exe" --help > "$RUNNER_TEMP/sd-cli-help.txt"
+          python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" help --output "$RUNNER_TEMP/sd-cli-help.txt" \
+            --fixture "$HELP"
+
+      - name: The archive
+        run: |
+          python .github/desktop/ai/sdcpp_build.py --lock "$LOCK" pack --system windows-x64 \
+            --source "$RUNNER_TEMP/sdcpp" --bin "$RUNNER_TEMP/sdcpp-build/bin" --out dist
+          "$RUNNER_TEMP/sdcpp-build/bin/sd-cli.exe" --list-devices || echo "no device listed (no GPU on the runner)"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+  sdcpp-seedvr2-linux:
+    name: stable-diffusion.cpp of Enhance (AI) for Linux
+    runs-on: ubuntu-22.04
+    needs: codegen
+    if: ${{ inputs.sdcpp_seedvr2 || needs.codegen.outputs.sdcpp_seedvr2_lock_changed == 'true' }}
+    timeout-minutes: 120
+    env:
+      LOCK: .github/desktop/ai/sd_cpp_seedvr2.lock.json
+      HELP: mobile/test/fixtures/ai_immersive/sd_cli_seedvr2_help.txt
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" lock --system linux-x64 --github-output
+
+      - name: Sources of stable-diffusion.cpp and ggml at the commits of the lock
+        run: python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" sources --dir "$RUNNER_TEMP/sdcpp"
+
+      - name: Vulkan SDK of LunarG
+        env:
+          SDK_URL: ${{ steps.lock.outputs.sdk_url }}
+          SDK_SHA256: ${{ steps.lock.outputs.sdk_sha256 }}
+          SDK_VERSION: ${{ steps.lock.outputs.sdk_version }}
+        run: |
+          tarball="$RUNNER_TEMP/vulkansdk.tar.xz"
+          curl -sSfL --retry 3 -o "$tarball" "$SDK_URL"
+          echo "$SDK_SHA256  $tarball" | sha256sum -c -
+          tar -xJf "$tarball" -C "$RUNNER_TEMP"
+          sdk="$RUNNER_TEMP/$SDK_VERSION/x86_64"
+          echo "VULKAN_SDK=$sdk" >> "$GITHUB_ENV"
+          echo "$sdk/bin" >> "$GITHUB_PATH"
+          echo "LD_LIBRARY_PATH=$sdk/lib" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: |
+          glslc --version
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" build --system linux-x64 \
+            --source "$RUNNER_TEMP/sdcpp" --build "$RUNNER_TEMP/sdcpp-build"
+
+      - name: immuch360-run
+        run: gcc -O2 -Wall -Wextra -Werror -o "$RUNNER_TEMP/immuch360-run" .github/desktop/ai/immuch360_run.c
+
+      - name: sd-cli --help as the fixture says
+        run: |
+          LD_LIBRARY_PATH= "$RUNNER_TEMP/sdcpp-build/bin/sd-cli" --help > "$RUNNER_TEMP/sd-cli-help.txt"
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" help --output "$RUNNER_TEMP/sd-cli-help.txt" \
+            --fixture "$HELP"
+
+      - name: The archive
+        run: |
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" pack --system linux-x64 \
+            --source "$RUNNER_TEMP/sdcpp" --bin "$RUNNER_TEMP/sdcpp-build/bin" --launcher "$RUNNER_TEMP/immuch360-run" \
+            --out dist
           mkdir -p "$RUNNER_TEMP/unpacked"
           python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$RUNNER_TEMP/unpacked"
           chmod +x "$RUNNER_TEMP/unpacked/sd-cli"

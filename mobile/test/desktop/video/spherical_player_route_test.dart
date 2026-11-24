@@ -356,6 +356,12 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  test('Windows: the frame letterboxed until renderer C answers, the window\'s shape once it draws', () {
+    expect(sphereVideoFit(null), BoxFit.contain, reason: 'before the attach, as before release 51');
+    expect(sphereVideoFit(const SphereRendering.plugin(PluginTier.w2880)), BoxFit.fill);
+    expect(sphereVideoFit(const SphereRendering.flat(FlatReason.refused)), BoxFit.contain);
+  });
+
   testWidgets('the view is on before the file opens, and the video plays at once', (tester) async {
     await pumpLauncher(tester, const SphericalPlayerArgs(url: '/videos/sphere.mp4', title: 'sphere.mp4'));
     final engine = players.made.single;
@@ -451,6 +457,8 @@ void main() {
   // plays flat in the same player, with the message, and the plugin is never asked for a projection
   group('without renderer C (Linux)', () {
     const flatMessage = 'This computer cannot show the 360° view of this video: it plays flat.';
+    // A 3D video shown flat shows one eye (flat_eye_view.dart, parity lot L02), and says so
+    const oneEyeMessage = 'This computer cannot show the 360° view of this 3D video: it plays flat, one eye only.';
 
     testWidgets('a 360° video plays flat at once, with the message', (tester) async {
       await pumpLauncher(
@@ -469,7 +477,7 @@ void main() {
       expect(session.closings, [(StereoLayout.mono, SphereCoverage.full)]);
     });
 
-    testWidgets('a VR180 3D video plays flat, with the message', (tester) async {
+    testWidgets('a VR180 3D video plays flat, one eye, with the message', (tester) async {
       await pumpLauncher(
         tester,
         const SphericalPlayerArgs(
@@ -481,7 +489,8 @@ void main() {
         pluginSupported: false,
       );
       expect(page(tester).rendering, const SphereRendering.flat(FlatReason.unsupported));
-      expect(find.text(flatMessage), findsOneWidget);
+      expect(find.text(oneEyeMessage), findsOneWidget);
+      expect(find.text(flatMessage), findsNothing);
       expect(players.made.single.calls, contains('open /videos/vr180.mp4 at 0'));
       expect(channel.setups, isEmpty);
       await close(tester);

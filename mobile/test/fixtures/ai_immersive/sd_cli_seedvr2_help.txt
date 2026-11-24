@@ -1,0 +1,255 @@
+stable-diffusion.cpp version unknown, commit 0d71f96
+Usage: sd-cli.exe [options]
+
+CLI Options:
+  -o, --output <string>          path to write result image to. you can use printf-style %d format specifiers for image
+                                 sequences (default: ./output.png) (eg. output_%03d.png). Single-file video outputs
+                                 support .avi, .webm, and animated .webp
+  --image <string>               path to the image or video to inspect (for metadata mode)
+  --metadata-format <string>     metadata output format, one of [text, json] (default: text)
+  --preview-path <string>        path to write preview image to (default: ./preview.png). For image generation, the
+                                 filename can have %03d placeholder for sequential numbering. Multi-frame previews
+                                 support .avi, .webm, and animated .webp
+  --imat-out <string>            compute the imatrix for this run and save it to the provided path
+  --preview-interval <int>       preview interval: in each sampling pass, positive N updates every Nth denoiser step and
+                                 -N previews only completed logical step N; 0 previews the final completed step of the
+                                 first pass (base-resolution or high-noise). Default: 1
+  --output-begin-idx <int>       starting index for output image sequence, must be non-negative (default 0 if specified
+                                 %d in output path, 1 otherwise)
+  --compression-quality <int>    compression quality of video and JPEG / WebP images (90 by default)
+  --convert-name                 convert tensor name (for convert mode)
+  --color                        colors the logging tags according to level
+  --preview-noisy                enables previewing noisy inputs of the models rather than the denoised outputs
+  --metadata-raw                 include raw hex previews for unparsed metadata payloads
+  --metadata-brief               truncate long metadata text values in text output
+  --metadata-all                 include structural/container entries such as IHDR, IDAT, and non-metadata JPEG segments
+  -M, --mode                     run mode, one of [img_gen, vid_gen, convert, upscale, metadata, dgl], default: img_gen
+  --preview                      preview method. must be one of the following [none, proj, tae, vae] (default is none)
+  -h, --help                     show this help message and exit
+  --imat-in                      load an imatrix file for quantization or continued collection; can be specified
+                                 multiple times
+  --log-level                    minimum log level, one of [debug, verbose, info, warn, error] (default: info)
+  -v, --verbose                  equivalent to --log-level verbose
+
+Context Options:
+  -m, --model <string>                     path to full model
+  --clip_l <string>                        path to the clip-l text encoder
+  --clip_g <string>                        path to the clip-g text encoder
+  --clip_vision <string>                   path to the clip-vision encoder
+  --t5xxl <string>                         path to the t5xxl text encoder
+  --llm <string>                           path to the llm text encoder. For example: (qwenvl2.5 for qwen-image,
+                                           mistral-small3.2 for flux2, ...)
+  --tokenizer <string>                     tokenizer.json path, or comma-separated main=FILE,clip-l=FILE,clip-g=FILE
+                                           assignments; required for PiD and Lens
+  --llm_vision <string>                    path to the llm vit
+  --qwen2vl <string>                       alias of --llm. Deprecated.
+  --qwen2vl_vision <string>                alias of --llm_vision. Deprecated.
+  --diffusion-model <string>               path to the standalone diffusion model
+  --high-noise-diffusion-model <string>    path to the standalone high noise diffusion model
+  --uncond-diffusion-model <string>        path to the standalone unconditional diffusion model, currently used by
+                                           Ideogram4 CFG
+  --embeddings-connectors <string>         path to embeddings connectors (LTXAV or P-H3-Image)
+  --vae <string>                           path to standalone vae model
+  --vae-format <string>                    VAE latent format override: auto, flux, sd3, flux2, or wan (default: auto)
+  --audio-vae <string>                     path to standalone LTX audio vae model
+  --audio-encoder <string>                 path to wav2vec2 audio encoder model (Wan2.2 S2V)
+  --taesd <string>                         path to taesd. Using Tiny AutoEncoder for fast decoding (low quality)
+  --tae <string>                           alias of --taesd
+  --control-net <string>                   path to control net model
+  --embd-dir <string>                      embeddings directory
+  --lora-model-dir <string>                lora model directory
+  --hires-upscalers-dir <string>           highres fix upscaler model directory
+  --tensor-type-rules <string>             weight type per tensor pattern (example: "^vae\.=f16,model\.=q8_0")
+  --model-args <string>                    extra model args, key=value list. Supports chroma_use_dit_mask,
+                                           chroma_use_t5_mask, chroma_t5_mask_pad, qwen_image_zero_cond_t,
+                                           qwen_image_2_1_prefix_cache, qwen_image_2_1_prefix_cache_type (auto or a type
+                                           name from --type)
+  --upscale-model <string>                 path to esrgan model.
+  --backend <string>                       runtime backend assignment, e.g. cpu or clip=cpu,vae=cuda0,diffusion=vulkan0
+  --params-backend <string>                parameter backend assignment, e.g. disk, cpu, or diffusion=disk,clip=cpu
+  --split-mode <string>                    weight distribution for modules assigned multiple devices (--backend
+                                           "diffusion=cuda0&cuda1"): layer (whole transformer blocks per device,
+                                           default) or row (matmul rows split across devices, CUDA only). Accepts a
+                                           single mode or per-module assignments, e.g. row or diffusion=row,te=layer
+  --rpc-servers <string>                   comma-separated list of RPC servers to connect to for offloading, in the
+                                           format host:port, e.g. localhost:50052,192.168.1.3:50052
+  --max-vram <string>                      optional per-device budget in GiB for managed weights and runner buffers
+                                           during automatic graph-cut execution. Accepts a single value or assignments
+                                           by backend/device, e.g. 6 or cuda0=6,vulkan0=4. 0 uses live free VRAM without
+                                           an explicit budget; a negative value reserves that much free VRAM
+  -t, --threads <int>                      positive number of computation threads; unset uses the library CPU core
+                                           selection
+  --conditioning-cache-size <int>          maximum cached conditioning results; unset uses the library default, 0
+                                           disables caching
+  --list-devices                           list available ggml backend devices, including --rpc-servers (one
+                                           'name<TAB>description' per line), and exit; the names are the device names
+                                           accepted by --backend and --params-backend
+  --disable-prefetch                       disable asynchronous next-segment weight prefetch (defaults to false)
+  --disable-segmented-compute              force monolithic graph execution even when automatic graph cutting is needed
+                                           (defaults to false)
+  --eager-load                             load all params into the params backend at model-load time instead of lazily
+                                           on first use (defaults to false)
+  --force-sdxl-vae-conv-scale              force use of conv scale on sdxl vae
+  --offload-to-cpu                         place the weights in RAM to save VRAM, and automatically load them into VRAM
+                                           when needed
+  --mmap                                   whether to memory-map model
+  --control-net-cpu                        deprecated; use --backend controlnet=cpu
+  --clip-on-cpu                            deprecated; use --backend te=cpu
+  --vae-on-cpu                             deprecated; use --backend vae=cpu
+  --sage-attn                              use native CUDA SageAttention in the diffusion model, with flash/default
+                                           attention fallback
+  --taesd-preview-only                     prevents usage of taesd for decoding the final image; the VAE keeps encoding
+                                           / decoding and taesd is only used for step previews
+  --linear-scale                           linear input scale override (float, default: 0 = model default, 1 = no
+                                           scaling)
+  --attn-scale                             flash-attention K/V scale override (float, default: 0 = model default, 1 = no
+                                           scaling); applies when flash attention is selected
+  --diffusion-conv-direct                  deprecated; use --conv-direct auto,diffusion=on,controlnet=on
+  --vae-conv-direct                        deprecated; use --conv-direct auto,vae=on
+  --conv-direct                            on|off|auto or diffusion/vae/controlnet assignments (default: auto), e.g.
+                                           auto,vae=off. Overrides legacy convolution flags
+  --flash-attn                             on|off|auto or module assignments (default: auto), e.g. auto,te=off,vae=on.
+                                           Last repeated option wins
+  --fa                                     deprecated; use --flash-attn on
+  --diffusion-fa                           deprecated; use --flash-attn off,diffusion=on
+  --auto-fit                               on|off (default: on). Preserve --backend (otherwise select one GPU) and place
+                                           weights on the compute GPU, RAM, another GPU, or disk in that order,
+                                           according to available memory (--max-vram limits GPU budgets). Disabled by
+                                           explicit --params-backend; uses automatic graph segmentation when needed
+  --batched-cfg                            on|off (default: on). Run the conditional and unconditional CFG branches in
+                                           one batched UNet forward when supported
+  --type                                   weight type (examples: f32, f16, q4_0, q4_1, q5_0, q5_1, q8_0, q2_K, q3_K,
+                                           q4_K). If not specified, the default is the type of the weight file
+  --rng                                    RNG, one of [std_default, cuda, cpu], default: cuda(sd-webui), cpu(comfyui)
+  --sampler-rng                            sampler RNG, one of [std_default, cuda, cpu]. If not specified, use --rng
+  --prediction                             prediction type override, one of [eps, v, edm_v, flow, flux_flow, sefi_flow,
+                                           minit2i_flow, sensenova_u1_flow, flux3_flow, h3_av_flow, ming_image_flow]
+  --lora-apply-mode                        Select auto (default), immediately, or at_runtime for LoRA application. Auto
+                                           merges unquantized weights on the compute backend when row splitting is off.
+                                           It applies LoRA at runtime for quantized, offloaded, or row-split weights.
+
+Generation Options:
+  -p, --prompt <string>                 the prompt to render
+  -n, --negative-prompt <string>        the negative prompt (default: "")
+  -i, --init-img <string>               path to the init image
+  --end-img <string>                    path to the end image, required by flf2v
+  --mask <string>                       path to the mask image
+  --control-image <string>              path to control image, control net
+  --control-video <string>              control video file (AVI, WebP or independent-frame VP8 WebM) or frame directory
+                                        in filename order; files are sampled at the output FPS without audio
+  --hires-upscaler <string>             highres fix upscaler, Lanczos, Nearest, Latent, Latent (nearest), Latent
+                                        (nearest-exact), Latent (antialiased), Latent (bicubic), Latent (bicubic
+                                        antialiased), or a model name under --hires-upscalers-dir (default: Latent)
+  --control-type <string>               kind of the control image, one of [openpose, depth, scribble, canny, normal,
+                                        segment, tile, repaint]. Required by an SDXL Control Net Union model (tile and
+                                        repaint only exist in its ProMax variant), ignored by any other Control Net.
+                                        Also accepted: hed, softedge, pidi, ted (scribble); lineart, anime_lineart, mlsd
+                                        (canny); seg (segment); inpaint, outpaint (repaint)
+  --extra-sample-args <string>          extra sampler/scheduler/guidance args, key=value list. CFG supports
+                                        guidance_schedule; APG supports apg_eta, apg_momentum, apg_norm_threshold,
+                                        apg_norm_threshold_smoothing; lcm supports noise_clip_std, noise_scale_start,
+                                        noise_scale_end; flux supports base_shift, max_shift; ltx2 supports max_shift,
+                                        base_shift, stretch, terminal; euler_ge supports gamma; beta scheduler supports
+                                        alpha, beta; logit_normal supports mu, std, logsnr_min, logsnr_max,
+                                        resolution_aware; llada_image supports uniform; lms supports lms_max_order,
+                                        lms_shift, lms_divisions; noise-injecting samplers support noise_sampler with
+                                        value iid (default except for dpm++2m_sde_bt) or brownian_tree;
+                                        brownian_tree_rng supports cpu (default), cuda, std_default or sampler_rng
+  --extra-tiling-args <string>          extra VAE tiling args, key=value list. Supported video VAEs accept
+                                        temporal_tile_frames/temporal_tile_size (default: 4), temporal_tile_overlap
+                                        (default: 1); Wan2.2 TI2V 5B accepts temporal_decode_frames (default: 1)
+  -H, --height <int>                    image height, in pixel space (default: 512)
+  -W, --width <int>                     image width, in pixel space (default: 512)
+  --steps <int>                         number of sample steps (default: 20)
+  --high-noise-steps <int>              high-noise steps; >= 0 adds to --steps, -1 splits --steps at --moe-boundary
+                                        (default: -1)
+  --clip-skip <int>                     ignore last layers of CLIP network; 1 ignores none, 2 ignores one layer
+                                        (default: -1). <= 0 represents unspecified, will be 1 for SD1.x, 2 for SD2.x
+  -b, --batch-count <int>               batch count
+  --qwen-image-layers <int>             number of Qwen Image Layered layers; latent/output count is layers + 1 (default:
+                                        3)
+  --video-frames <int>                  video frames; unset uses the library default
+  --fps <int>                           fps (default: 24)
+  --upscale-repeats <int>               Run the ESRGAN upscaler this many times (default: 1)
+  --upscale-tile-size <int>             tile size for ESRGAN upscaling (default: 128)
+  --hires-width <int>                   highres fix target width, 0 to use --hires-scale (default: 0)
+  --hires-height <int>                  highres fix target height, 0 to use --hires-scale (default: 0)
+  --hires-steps <int>                   highres fix second pass sample steps, 0 to reuse --steps (default: 0)
+  --hires-upscale-tile-size <int>       highres fix upscaler tile size, reserved for model-backed upscalers (default:
+                                        128)
+  --cfg-scale <float>                   unconditional guidance scale: (default: 7.0)
+  --img-cfg-scale <float>               image guidance scale for inpaint or image edit models: (default: same as
+                                        --cfg-scale)
+  --guidance <float>                    distilled guidance scale for models with guidance input (default: 3.5)
+  --eta <float>                         noise multiplier (default: 0 for ddim_trailing, tcd, res_multistep and res_2s; 1
+                                        for euler_a, er_sde, dpm++2s_a, dpm++2m_sde and dpm++2m_sde_bt)
+  --flow-shift <float>                  shift value for Flow models like SD3.x or WAN (default: auto)
+  --strength <float>                    strength for noising/unnoising (default: 0.75)
+  --control-strength <float>            strength to apply Control Net (default: 0.9). 1.0 corresponds to full
+                                        destruction of information in init image
+  --moe-boundary <float>                timestep boundary for Wan2.2 MoE model. (default: 0.875). Only enabled if
+                                        `--high-noise-steps` is set to -1
+  --vace-strength <float>               wan vace strength
+  --vae-tile-overlap <float>            tile overlap for vae tiling, in fraction of tile size (default: 0.5)
+  --hires-scale <float>                 highres fix scale when target size is not set (default: 2.0)
+  --hires-denoising-strength <float>    highres fix second pass denoising strength (default: 0.7)
+  --circular                            enable circular padding on both axes for tileable output
+  --circularx                           enable circular padding on x-axis (width) only
+  --circulary                           enable circular padding on y-axis (height) only
+  --disable-image-metadata              do not embed generation metadata in image or video files (including DGL saves)
+  --vae-tiling                          process vae encode and decode in spatial tiles to reduce memory usage (default:
+                                        256x256 image pixels)
+  --temporal-tiling                     enable temporal tiling for supported video VAE decode
+  --hires                               enable highres fix
+  -s, --seed                            RNG seed (default: 42); a negative value requests a random seed
+  --sampling-method                     sampling method, one of [euler, euler_a, heun, dpm2, dpm++2s_a, dpm++2m,
+                                        dpm++2mv2, ipndm, ipndm_v, lcm, ddim_trailing, tcd, res_multistep, res_2s,
+                                        er_sde, euler_cfg_pp, euler_a_cfg_pp, euler_ge, dpm++2m_sde, dpm++2m_sde_bt,
+                                        lms], default: euler for Flux/SD3/Wan, euler_a otherwise
+  --scheduler                           denoiser sigma scheduler, one of [discrete, karras, exponential, ays, gits,
+                                        sgm_uniform, simple, smoothstep, kl_optimal, lcm, bong_tangent, ltx2,
+                                        logit_normal, flux2, flux, beta, llada_image], alias: normal=discrete, default:
+                                        model-specific
+  --sigmas                              custom sigma values for the sampler, comma-separated (e.g., "14.61,7.8,3.5,0.0")
+                                        or preset: qwen-image-2.1-turbo, p-h3-image, minimax-h3-image,
+                                        hyperflow-h3-flash-4, hyperflow-h3-flash-6, hyperflow-h3-flash-8.
+  --hires-sigmas                        custom sigma values for the highres fix second pass, comma-separated (e.g.,
+                                        "0.85,0.725,0.421875,0.0") or preset: qwen-image-2.1-turbo, p-h3-image,
+                                        minimax-h3-image, hyperflow-h3-flash-4, hyperflow-h3-flash-6,
+                                        hyperflow-h3-flash-8.
+  -r, --ref-image                       reference image for Flux Kontext or MiniMax-H3 Ref2VA (can be used multiple
+                                        times)
+  --ref-video                           MiniMax-H3 Ref2VA reference video file or frame directory, sampled at 24 fps
+                                        (can be used multiple times)
+  --ref-video-audio                     WAV soundtrack overriding embedded audio, paired by index with --ref-video (can
+                                        be used multiple times)
+  --ref-audio                           standalone WAV reference for MiniMax-H3 Ref2VA (can be used multiple times)
+  --audio                               driving audio track (Wan2.2 S2V; can be used once)
+  --cache-mode                          caching method: 'easycache' (DiT), 'ucache' (UNET),
+                                        'dbcache'/'taylorseer'/'cache-dit' (DiT condition-level), 'spectrum' (UNET/DiT
+                                        Chebyshev+Taylor forecasting)
+  --cache-option                        named cache params (key=value format, comma-separated). easycache/ucache:
+                                        threshold=,start=,end=,decay=,relative=,reset=; dbcache/taylorseer/cache-dit:
+                                        threshold=,warmup= (Fn/Bn are ignored with a warning); spectrum:
+                                        w=,m=,lam=,window=,flex=,warmup=,stop=. Examples: "threshold=0.25" or
+                                        "threshold=1.5,reset=0"
+  --scm-mask                            SCM steps mask for cache-dit: comma-separated 0/1 (e.g., "1,1,1,0,0,1,0,0,1,0")
+                                        - 1=compute, 0=can cache
+  --scm-policy                          SCM policy: 'dynamic' (default) or 'static'
+  --vae-tile-size                       tile size for vae encode and decode in image pixels, format [W]x[H] or [S]
+                                        (default: 256x256; requires --vae-tiling)
+  --vae-relative-tile-size              relative tile size for vae encode and decode, format [W]x[H] or [S]: <=1 is a
+                                        dimension fraction, >1 a target tile count (overrides --vae-tile-size; requires
+                                        --vae-tiling)
+  --prompt-file                         path to the file containing the prompt to render
+  --negative-prompt-file                path to the file containing the negative prompt
+
+DGL Options:
+  --script <string>            path to the .dgl program
+  --write-builtins <string>    write the DGL built-in catalog to a file
+  --check-builtins <string>    verify a file against the DGL built-in catalog
+  --max-ram <string>           limit DGL context weight residency in GiB
+  --check                      check the DGL script without loading models
+  --list-builtins              print the DGL built-in catalog
+  --run-once                   on|off (default: on). Release DGL models after their last use when on
+  --tensor                     save a named result tensor as .npy (NAME FILE, repeatable)

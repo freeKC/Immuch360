@@ -3,13 +3,16 @@
 // job at that quality when there was one, else an estimate scaled from the ai1 measures by the logical processors and
 // held to the study's 2.0 to 2.8 times for a large processor), the free space it needs (2.2 times the estimated
 // output: about 135 MB a minute for H.264 at 1080p side by side, 50 for AV1, 0.6 times for Half SBS, plus two states
-// of the window loop), and the qualities the memory allows (Fine with 16 GB or more only, Fast only under 8 GB). The real
-// time left replaces the guess after two windows of the job, from its own pace, never from the photos' timings.
+// of the window loop; a 360° video 3.2 times, its MP4 written once more with its marks), and the qualities the memory
+// allows (Fine with 16 GB or more only, Fast only under 8 GB). The real time left replaces the guess after two
+// windows of the job, from its own pace, never from the photos' timings.
 //
 // Pure Dart.
 
 import 'dart:math' as math;
 
+import 'package:immich_mobile/desktop/ai/video3d/sphere_depth.dart' show sphereViewCount;
+import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart' show vdaBlended, vdaWindowLength;
 import 'package:immich_mobile/desktop/ai/video3d/video_job_file.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 
@@ -39,6 +42,7 @@ const videoSpeedUpOverAi1 = (low: 2.0, high: 2.8);
   required VideoDepthQuality quality,
   required int logicalProcessors,
   int? keptMillisPerFrame,
+  int? sphereEyeWidth,
 }) {
   if (keptMillisPerFrame != null && keptMillisPerFrame > 0) {
     final total = keptMillisPerFrame / 1000 * frames;
@@ -48,12 +52,51 @@ const videoSpeedUpOverAi1 = (low: 2.0, high: 2.8);
   final byThreads = threads / (_ai1Processors - 2);
   final fastest = math.min(byThreads, videoSpeedUpOverAi1.high);
   final slowest = math.min(byThreads, videoSpeedUpOverAi1.low);
-  final ai1 = videoAi1SecondsPerFrame[quality]! * frames;
+  final ai1 = videoAi1SecondsPerFrame[quality]! * frames * (sphereEyeWidth == null ? 1 : sphereDepthFactor(quality));
+  // The work of the sphere besides the model runs on one thread of the processor: no faster with more of them
+  final extra = sphereEyeWidth == null ? 0.0 : sphereAi1SecondsPerPixel * sphereEyeWidth * sphereEyeWidth / 2 * frames;
   return (
-    low: Duration(seconds: (ai1 / fastest * 0.75).round()),
-    high: Duration(seconds: (ai1 / slowest * 1.25).round()),
+    low: Duration(seconds: ((ai1 / fastest + extra / sphereSingleThreadSpeedUp) * 0.75).round()),
+    high: Duration(seconds: ((ai1 / slowest + extra) * 1.25).round()),
   );
 }
+
+/// How many times the depth of a flat video the depth of a 360° video costs at [quality]: the pixels of its six faces
+/// (side x side each) over those of the model's input of a 16:9 flat video (700 x 392 at Standard), 3.4 times. The
+/// model's time is taken to follow its pixels (measured for the flat qualities, not for the faces)
+double sphereDepthFactor(VideoDepthQuality quality) {
+  final flat = videoModelSize(1920, 1080, quality);
+  return sphereViewCount * quality.shortSide * quality.shortSide / (flat.width * flat.height);
+}
+
+/// Seconds a pixel of the eye of a 360° video takes on ai1 besides the model: the faces read, the maps merged, the
+/// right eye drawn and filled, in Dart on one thread. An estimate (0.1 µs a pixel, 0.47 s a frame at 3072 x 1536),
+/// not measured: the job's own pace replaces it after two windows
+const sphereAi1SecondsPerPixel = 0.1e-6;
+
+/// How much faster than ai1 one thread of a large processor is taken to be
+const sphereSingleThreadSpeedUp = 1.3;
+
+/// The key of the pace kept for a 3D video of [quality] (videoFrameMillis), with the eye width of a 360° one
+String videoPaceKey(VideoDepthQuality quality, {int? sphereEyeWidth}) =>
+    sphereEyeWidth == null ? quality.name : '360-${quality.name}-$sphereEyeWidth';
+
+/// The memory a 360° job holds at [quality] for eyes [eyeWidth] wide: the model's pass at the size of a face (taken
+/// as the flat one's, a little more than it needs), the frames of the sphere held until their map is final (a window
+/// and the 8 blended frames, with their top and bottom frames), the inputs each face keeps for its windows, and the
+/// tables of the faces and the map
+int sphereJobMemoryBytes(VideoDepthQuality quality, int eyeWidth) {
+  final eye = eyeWidth * (eyeWidth ~/ 2) * 3;
+  final side = quality.shortSide;
+  final held = (vdaWindowLength + vdaBlended) * 3 * eye;
+  final inputs = sphereViewCount * (vdaWindowLength + 10) * 3 * side * side * 4;
+  final tables = 4 * side * 2 * side * 2 * 20;
+  return quality.jobMemoryBytes + held + inputs + tables;
+}
+
+/// The bytes of one state of a 360° job: one state of a window loop per face
+int sphereStateBytes(VideoDepthQuality quality) =>
+    sphereViewCount * videoStateBytes(quality.shortSide, quality.shortSide);
 
 /// Bytes a minute of the output: H.264 at 1080p side by side 135 MB, AV1 50 MB (study 4.2), for the pixels of a
 /// 3840 x 1080 frame; Half SBS 0.6 times
@@ -73,10 +116,15 @@ int videoDiskNeed({
   required int modelHeight,
   int outWidth = 3840,
   int outHeight = 1080,
+  int? stateBytes,
+  bool sphere = false,
 }) =>
-    (2.2 * videoBytesPerMinute(av1: av1, half: half, outWidth: outWidth, outHeight: outHeight) * durationSeconds / 60)
+    ((sphere ? 3.2 : 2.2) *
+            videoBytesPerMinute(av1: av1, half: half, outWidth: outWidth, outHeight: outHeight) *
+            durationSeconds /
+            60)
         .round() +
-    2 * videoStateBytes(modelWidth, modelHeight);
+    2 * (stateBytes ?? videoStateBytes(modelWidth, modelHeight));
 
 /// The qualities a computer with [physicalMemory] bytes is offered: Fast only under 8 GB, Fine only with 16 GB or more
 List<VideoDepthQuality> videoQualitiesFor(int physicalMemory) {

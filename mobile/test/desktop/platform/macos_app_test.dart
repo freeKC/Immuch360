@@ -1,11 +1,12 @@
-// What the macOS app declares and how it keeps its secrets: the local network keys of macOS 15 cover every Bonjour
-// type the app browses, and the secure storage stays out of the data protection keychain, which the builds signed for
-// the computer that runs them cannot use, while the other systems keep the plugin's defaults.
+// What the macOS app declares and how it keeps its secrets: the local network keys of macOS 15 cover every Bonjour type
+// the app browses or announces, and the secure storage stays out of the data protection keychain, which the builds
+// signed for the computer that runs them cannot use, while the other systems keep the plugin's defaults.
 
 import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/repositories/secure_storage.repository.dart';
@@ -32,10 +33,11 @@ void main() {
       expect(_string(plist, 'NSLocalNetworkUsageDescription')!.length, greaterThan(40));
     });
 
-    test('lists every Bonjour type the app browses, and the one of the phone shares', () {
+    test('lists every Bonjour type the app browses or announces: the shares, and the pairing of phones', () {
       final services = _strings(plist, 'NSBonjourServices');
       expect(services, isNotNull);
-      expect(services, containsAll({...MdnsProbe.serviceTypes, phoneShareServiceType}));
+      // pairingServiceType: "Sign in with your phone" and "Play from a phone" announce this computer with it
+      expect(services, containsAll({...MdnsProbe.serviceTypes, phoneShareServiceType, pairingServiceType}));
       for (final service in services!) {
         expect(service, matches(RegExp(r'^_[a-z0-9-]+\._(tcp|udp)$')));
       }

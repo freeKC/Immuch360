@@ -12,6 +12,12 @@ import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:path/path.dart' as p;
 
+/// Why the tests against the HTTPS server of the test authority are skipped on macOS
+const macOsTestAuthorityRefused =
+    'macOS refuses the test authority made by openssl (CERTIFICATE_VERIFY_FAILED: application verification '
+    'failure), found when test/desktop first ran on a Mac (lot L04, 22 November 2026): an open point, see the '
+    'TLS diagnostics step of the macos-tests job';
+
 /// The openssl of Git for Windows, which the Windows machines of the project have when openssl is not on the PATH
 const _gitForWindowsOpenssl = [
   r'C:\Program Files\Git\mingw64\bin\openssl.exe',

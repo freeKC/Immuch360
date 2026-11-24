@@ -1,6 +1,7 @@
 // Whether the computer runs on its battery (lot C6; design-final 2026-10-27, section 4.7, point 5): what
 // GetSystemPowerStatus says on Windows, the supplies of /sys/class/power_supply on Linux (a laptop plugged in or not,
-// a desktop, the battery of a mouse, a battery that says nothing), and the probe of this computer answering.
+// a desktop, the battery of a mouse, a battery that says nothing), the source IOKit names on macOS (lot L51), and the
+// probe of this computer answering.
 
 import 'dart:io';
 
@@ -66,6 +67,23 @@ void main() {
     test('no such folder: not known', () {
       expect(onBatteryFromPowerSupply(Directory(p.join(folder.path, 'missing'))), isNull);
     });
+  });
+
+  group('macOS', () {
+    test('the source that powers the Mac: its battery, the mains, a UPS; anything else is not known', () {
+      expect(onBatteryFromProvidingType('Battery Power'), isTrue);
+      expect(onBatteryFromProvidingType('AC Power'), isFalse);
+      expect(onBatteryFromProvidingType('UPS Power'), isTrue);
+      expect(onBatteryFromProvidingType('Off Line'), isNull);
+      expect(onBatteryFromProvidingType(null), isNull);
+    });
+
+    // The runner of the CI is a virtual Mac on the mains: IOKit must name a source there, through the FFI of the app
+    test('IOKit of this Mac names the source that powers it', () {
+      final type = macProvidingPowerSourceType();
+      expect(type, isIn(['AC Power', 'Battery Power', 'UPS Power']));
+      expect(const SystemPowerProbe().onBattery(), onBatteryFromProvidingType(type));
+    }, skip: Platform.isMacOS ? null : 'macOS only');
   });
 
   test('the probe of this computer answers without failing', () {

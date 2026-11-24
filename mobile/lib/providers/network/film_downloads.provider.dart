@@ -12,9 +12,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/files/download_folder.dart';
+import 'package:immich_mobile/desktop/network/linux_network_bus.dart';
 import 'package:immich_mobile/domain/models/film_download.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/film_download/film_download_link.dart';
@@ -193,7 +193,7 @@ final filmDownloadEnvironmentProvider = Provider<FilmDownloadEnvironment>((ref) 
       FilmDownloadFolderKind.appFiles => (await indexFolder()).create(recursive: true),
     },
     capabilities: () => ref.read(connectivityApiProvider).getCapabilities(),
-    networkChanges: () => Connectivity().onConnectivityChanged.map<void>((_) {}),
+    networkChanges: deviceNetworkChanges,
     keepAlive: filmDownloadKeepAliveOf(platform),
     isDesktop: isDesktop,
   );

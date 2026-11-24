@@ -10,18 +10,20 @@
 // MP4 is there (the app quit between the two) only gets its name.
 //
 // The lines of each job go to `video3d-<id>.log` in the logs folder of the app, which "Save logs to a file" gathers:
-// the log to send with a report. The log of a job that ends well, is stopped or discarded is deleted.
+// the log to send with a report. The log of a job that ends well is kept, with the timings of its stages (FreeKC's
+// runs of 23 November 2026: the card, the encoder and the pace are read there); those older than [videoLogKeptFor]
+// go when another job ends well. The log of a job stopped or discarded is deleted.
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_app_runtime.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_estimates.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_job_file.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
@@ -32,6 +34,9 @@ import 'package:path_provider/path_provider.dart';
 
 final _log = Logger('Video3dJobs');
 
+/// How long the log of a 3D video that ended well is kept in the logs folder
+const videoLogKeptFor = Duration(days: 30);
+
 /// What the dialog chose for a 3D video, kept with its job (and in video_jobs.json for a resume)
 class VideoJobSettings {
   const VideoJobSettings({
@@ -40,6 +45,7 @@ class VideoJobSettings {
     this.quality = VideoDepthQuality.standard,
     this.strength = ReliefStrength.subtle,
     this.packing = VideoSbsPacking.full,
+    this.sphereEyeWidth,
   });
 
   /// Its id in video_jobs.json, also the end of the name of its work folder and of its log
@@ -51,7 +57,12 @@ class VideoJobSettings {
   final ReliefStrength strength;
   final VideoSbsPacking packing;
 
+  /// A 360° video made 360° 3D, top and bottom: the width of each eye (sphereEyeWidths); null for a flat video
+  final int? sphereEyeWidth;
+
   bool get half => packing == VideoSbsPacking.half;
+
+  bool get sphere => sphereEyeWidth != null;
 
   Map<String, Object?> toJson() => {
     'recordId': recordId,
@@ -59,6 +70,7 @@ class VideoJobSettings {
     'quality': quality.name,
     'strength': strength.name,
     'packing': packing.name,
+    'sphereEyeWidth': ?sphereEyeWidth,
   };
 
   static VideoJobSettings? fromJson(Object? json) {
@@ -76,6 +88,10 @@ class VideoJobSettings {
       quality: VideoDepthQuality.values.asNameMap()[json['quality']] ?? VideoDepthQuality.standard,
       strength: ReliefStrength.named(json['strength']),
       packing: VideoSbsPacking.values.asNameMap()[json['packing']] ?? VideoSbsPacking.full,
+      sphereEyeWidth: switch (json['sphereEyeWidth']) {
+        final int width when width >= 4 && width % 4 == 0 => width,
+        _ => null,
+      },
     );
   }
 }
@@ -97,9 +113,15 @@ class VideoJobRecord {
     required this.fileName,
     required this.settings,
     this.perMille = 0,
+    this.original,
   });
 
+  /// The file the engine reads: the original on this computer, or the copy of one downloaded first ([original])
   final String sourcePath;
+
+  /// The original that is not on this computer, as its source describes it (DownloadableOriginal.descriptor): the
+  /// next start makes the source again to go on with its download; null for a file of this computer
+  final Map<String, Object?>? original;
 
   /// The destination folder and the name the MP4 is to take there
   final String folder;
@@ -111,8 +133,14 @@ class VideoJobRecord {
 
   String get id => settings.recordId;
 
-  VideoJobRecord withPerMille(int value) =>
-      VideoJobRecord(sourcePath: sourcePath, folder: folder, fileName: fileName, settings: settings, perMille: value);
+  VideoJobRecord withPerMille(int value) => VideoJobRecord(
+    sourcePath: sourcePath,
+    folder: folder,
+    fileName: fileName,
+    settings: settings,
+    perMille: value,
+    original: original,
+  );
 
   Map<String, Object?> toJson() => {
     'sourcePath': sourcePath,
@@ -120,6 +148,7 @@ class VideoJobRecord {
     'fileName': fileName,
     'perMille': perMille,
     'settings': settings.toJson(),
+    'original': ?original,
   };
 
   static VideoJobRecord? fromJson(Object? json) {
@@ -134,12 +163,14 @@ class VideoJobRecord {
       return null;
     }
     final perMille = json['perMille'];
+    final original = json['original'];
     return VideoJobRecord(
       sourcePath: source,
       folder: folder,
       fileName: name,
       settings: settings,
       perMille: perMille is int ? perMille.clamp(0, 1000) : 0,
+      original: original is Map ? original.cast<String, Object?>() : null,
     );
   }
 }
@@ -291,8 +322,10 @@ class VideoJobDone {
 }
 
 /// What a 3D video lacks to go on: its original, or the destination folder its work and its MP4 are in (a drive or a
-/// share of the NAS not connected, a file moved or renamed). Its work stays for a Resume once it is back.
-enum VideoMissing { original, folder }
+/// share of the NAS not connected, a file moved or renamed), or, for a video of the server or of a share whose download
+/// a quit stopped, the server or the share to download the rest from (signed out, the share gone): [source]. Its work
+/// stays for a Resume once it is back.
+enum VideoMissing { original, folder, source }
 
 /// A 3D video that cannot go on now, its work kept: [path] is what is not there
 class VideoJobUnreachable implements Exception {
@@ -345,6 +378,8 @@ ConversionSkipReason videoSkipReason(VideoRefusal refusal) => switch (refusal) {
   VideoRefusal.dolbyVisionProfile5 => ConversionSkipReason.dolbyVisionProfile5,
   VideoRefusal.oddRotation => ConversionSkipReason.oddRotation,
   VideoRefusal.unreadable => ConversionSkipReason.unreadableVideo,
+  VideoRefusal.raw360 => ConversionSkipReason.raw360Video,
+  VideoRefusal.sphereLayout => ConversionSkipReason.sphereLayout,
 };
 
 /// What a job runs with on this computer, found when it starts: the programs of the FFmpeg archive and their runner,
@@ -356,6 +391,7 @@ class VideoJobSetup {
     required this.runner,
     required this.worker,
     this.modelSha256,
+    this.encoderMemory,
   });
 
   final String ffmpeg;
@@ -369,6 +405,9 @@ class VideoJobSetup {
   )
   worker;
   final String? modelSha256;
+
+  /// The encoders that stopped during a job on this computer (video_encoders.json), none in the tests
+  final VideoEncoderMemory? encoderMemory;
 }
 
 /// Keeps the computer awake while a job runs; SystemSleepGuard in the app, nothing in the tests
@@ -439,8 +478,12 @@ class DesktopVideoJobEngine implements VideoJobEngine {
     }
 
     var ended = false;
+    var madeWell = false;
     try {
-      log('source ${spec.sourcePath}, ${settings.quality.name}, ${settings.strength.name}, ${settings.packing.name}');
+      log(
+        'source ${spec.sourcePath}, ${settings.quality.name}, ${settings.strength.name}, '
+        '${settings.sphere ? '360° top and bottom, eyes of ${settings.sphereEyeWidth}' : settings.packing.name}',
+      );
       // The app quit between the end of the mux and the final name
       if (!work.existsSync() && made.existsSync()) {
         log('the MP4 was made: it only takes its name');
@@ -458,7 +501,11 @@ class DesktopVideoJobEngine implements VideoJobEngine {
       }
       await _sleep.hold();
       VideoFrameWorker? worker;
-      final relief = VideoReliefSettings(parallax: settings.strength.parallax, packing: settings.packing);
+      final relief = VideoReliefSettings(
+        parallax: settings.strength.parallax,
+        packing: settings.packing,
+        sphere: settings.sphere,
+      );
       VideoJobProgress? last;
       final conversion = VideoConversion(
         request: VideoJobRequest(
@@ -470,11 +517,20 @@ class DesktopVideoJobEngine implements VideoJobEngine {
           quality: settings.quality,
           relief: relief,
           segmentSeconds: segmentSeconds,
+          sphereEyeWidth: settings.sphereEyeWidth,
           keys: {
-            'com.immuch360.kind': 'StereoVideo',
-            'com.immuch360.pipeline': 'relief-v1-video',
+            if (settings.sphere) ...{
+              'com.immuch360.kind': 'StereoVideo360',
+              'com.immuch360.pipeline': 'relief-360-video',
+              'com.immuch360.projection': 'equirectangular',
+              'com.immuch360.stereo': 'top-bottom',
+              'com.immuch360.max_shift_degrees': '${relief.sphereShiftDegrees}',
+            } else ...{
+              'com.immuch360.kind': 'StereoVideo',
+              'com.immuch360.pipeline': 'relief-v1-video',
+              'com.immuch360.convergence': '${relief.convergence}',
+            },
             'com.immuch360.parallax': '${relief.parallax}',
-            'com.immuch360.convergence': '${relief.convergence}',
             'com.immuch360.model': 'video-depth-anything-small-onnx',
             'com.immuch360.model.sha256': ?found.modelSha256,
             'com.immuch360.depth.short_side': '${settings.quality.shortSide}',
@@ -499,6 +555,7 @@ class DesktopVideoJobEngine implements VideoJobEngine {
         },
         onLog: log,
         betweenWindows: control.betweenWindows,
+        encoderMemory: found.encoderMemory,
       );
       control.onStop = () {
         if (control.isCancelled) {
@@ -515,6 +572,7 @@ class DesktopVideoJobEngine implements VideoJobEngine {
       final path = await _place(made, spec);
       log('saved as $path');
       ended = true;
+      madeWell = true;
       final fps = last?.framesPerSecond;
       return VideoJobDone(
         path: path,
@@ -554,9 +612,30 @@ class DesktopVideoJobEngine implements VideoJobEngine {
       await _sleep.release();
       await sink?.flush();
       await sink?.close();
-      if (ended && logFile != null) {
-        await _deleteQuietly(logFile);
+      if (logFile != null) {
+        if (madeWell) {
+          await _forgetOldLogs(logFile);
+        } else if (ended) {
+          await _deleteQuietly(logFile);
+        }
       }
+    }
+  }
+
+  /// The logs of the 3D videos made more than [videoLogKeptFor] ago, beside [kept]
+  static Future<void> _forgetOldLogs(File kept) async {
+    final before = DateTime.now().subtract(videoLogKeptFor);
+    try {
+      await for (final entry in kept.parent.list()) {
+        final name = p.basename(entry.path);
+        if (entry is File && name.startsWith('video3d-') && name.endsWith('.log') && entry.path != kept.path) {
+          if (entry.lastModifiedSync().isBefore(before)) {
+            await _deleteQuietly(entry);
+          }
+        }
+      }
+    } on FileSystemException catch (error) {
+      _log.fine('The old logs of the 3D videos stay: ${error.message}');
     }
   }
 
@@ -597,6 +676,8 @@ class DesktopVideoJobEngine implements VideoJobEngine {
       }
       await _deleteQuietly(File(videoMadePathOf(work.path)));
       await _deleteQuietly(File('${videoMadePathOf(work.path)}.part'));
+      // The copy of an original of the server or of a share, downloaded for this job
+      await deleteVideoOriginalCopy(work.path);
     }
   }
 }
@@ -614,18 +695,51 @@ Future<void> _deleteQuietly(File file) async {
 /// What the dialog reads of a video before Convert: the verdict of its ffprobe and of the app's own probe of its MP4
 /// boxes, and the figures of its job
 class VideoDialogFacts {
-  const VideoDialogFacts({required this.check, this.durationSeconds, this.frames});
+  const VideoDialogFacts({
+    required this.check,
+    this.durationSeconds,
+    this.frames,
+    this.source,
+    this.spherical,
+    this.fileName,
+    this.marked360 = false,
+  });
 
+  /// The verdict read as the video says (VideoProjectionAsk.auto)
   final VideoSourceCheck check;
   final double? durationSeconds;
   final int? frames;
+
+  /// What ffprobe and the app's probe read, and the name, so that the verdict can be read again for a 2:1 video the
+  /// user says is a 360° one
+  final VideoSource? source;
+  final SphericalProbe? spherical;
+  final String? fileName;
+  final bool marked360;
+
+  /// The verdict for a video the user says is 360° ([as360] true) or flat (false); [check] when [as360] is null or
+  /// the video was not read
+  VideoSourceCheck checkAs(bool? as360) {
+    final name = fileName;
+    if (as360 == null || name == null || !check.looksLike360) {
+      return check;
+    }
+    return checkVideoSource(
+      source,
+      fileName: name,
+      spherical: spherical,
+      marked360: marked360,
+      ask: as360 ? VideoProjectionAsk.sphere : VideoProjectionAsk.flat,
+    );
+  }
 }
 
-/// Reads [path] with ffprobe of [setup] and the app's probe of the st3d and sv3d boxes
-Future<VideoDialogFacts> readVideoDialogFacts(VideoJobSetup setup, String path) async {
+/// Reads [path] with ffprobe of [setup] and the app's probe of the st3d and sv3d boxes; [marked360] when the app takes
+/// it for a 360° video already (aiVideo360Provider)
+Future<VideoDialogFacts> readVideoDialogFacts(VideoJobSetup setup, String path, {bool marked360 = false}) async {
   SphericalProbe? spherical;
   try {
-    spherical = await probeSphericalMetadata(_fileRangeReader(path));
+    spherical = await probeSphericalMetadata(videoFileRangeReader(path));
   } on Object catch (error) {
     _log.fine('The boxes of $path were not read: $error');
   }
@@ -636,22 +750,22 @@ Future<VideoDialogFacts> readVideoDialogFacts(VideoJobSetup setup, String path) 
     return VideoDialogFacts(check: checkVideoSource(null, fileName: p.basename(path)));
   }
   final source = VideoSource.fromFfprobe(json);
-  final check = checkVideoSource(source, fileName: p.basename(path), spherical: spherical);
+  final name = p.basename(path);
+  final check = checkVideoSource(
+    source,
+    fileName: name,
+    spherical: spherical,
+    marked360: marked360,
+    ask: VideoProjectionAsk.auto,
+  );
   final grid = check.grid;
   return VideoDialogFacts(
     check: check,
     durationSeconds: source?.duration,
     frames: source == null || grid == null ? null : videoFramesOf(source, grid),
+    source: source,
+    spherical: spherical,
+    fileName: name,
+    marked360: marked360,
   );
 }
-
-/// The bytes of [path] from [offset], for the probe of its boxes
-ByteRangeReader _fileRangeReader(String path) => (offset, length) async {
-  final file = await File(path).open();
-  try {
-    await file.setPosition(offset);
-    return Uint8List.fromList(await file.read(length));
-  } finally {
-    await file.close();
-  }
-};

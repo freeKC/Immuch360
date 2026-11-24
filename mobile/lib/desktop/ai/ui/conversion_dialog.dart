@@ -73,7 +73,13 @@
 // first guess (this computer's last 3D video at that quality, else an estimate from the measures of the study), the
 // memory it takes, the free space it needs on the drive of its destination (Convert waits for room), and where the MP4
 // goes, `<name>_3D_LRF_Full_SBS.mp4` by the rules of the photos (next to the original or a folder of my choice). A video
-// with no file on this computer (on the server or a share) is skipped with that reason in this version.
+// of the server or of a share is downloaded by its job first (lot ai3d-remote-51).
+//
+// A 360° video of one eye (lot ai-360-3d-51: its side data, sv3d or V1 box, name, or the app's mark) is made a 360° 3D
+// video top and bottom, `<name>_360_3D.mp4`: the dialog says so under "360° 3D video", offers the eye sizes its frame
+// allows (2048, 3072 by default, 4096) and tests the encoder at that square frame; Full or Half applies to the flat
+// ones only. A 2:1 video with no mark is asked ("360° or flat?") and Convert waits for the answer. A VR180 video, one
+// in two eyes already, the raw file of a 360° camera and a cube map are skipped with their reason.
 
 import 'dart:async';
 import 'dart:io';
@@ -81,7 +87,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/desktop/ai/codec/exif_minimal.dart';
 import 'package:immich_mobile/desktop/ai/codec/jpeg_segments.dart';
@@ -91,7 +96,8 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
-import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/original_bytes.dart';
+import 'package:immich_mobile/desktop/ai/creator/remote_video_sources.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/creator/write_probe.dart';
@@ -133,7 +139,6 @@ import 'package:immich_mobile/domain/services/local_panorama.service.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart' show isSideBySideFrame;
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
-import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/install_sheet.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_strength_choice.dart';
@@ -148,7 +153,6 @@ import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart
 import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
-import 'package:immich_mobile/services/api.service.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:immich_mobile/utils/editor.utils.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -227,6 +231,10 @@ AiFeature aiFeatureOf(ConversionKind kind) => switch (kind) {
   ConversionKind.stereoPanoramaFromPanorama => AiFeature.stereoPanorama,
   ConversionKind.splatScene => AiFeature.splatScene,
   ConversionKind.stereoVideo => AiFeature.stereoVideo,
+  // Never asked here: "Enhance (AI)" has a dialog and gates of its own (enhance_dialog.dart, enhance_plan.dart). Its
+  // levels of the card take the sd-cli of the panoramas, Natural the ONNX Runtime of the 3D photos.
+  ConversionKind.enhanceSharpen || ConversionKind.enhanceRebuild => AiFeature.panorama,
+  ConversionKind.enhanceNatural => AiFeature.stereoPhoto,
 };
 
 /// The name of a type of version in the dialog: "3D photo", "3D scene"
@@ -237,6 +245,9 @@ String conversionKindName(Translations t, ConversionKind kind) => switch (kind) 
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_type_stereo_360,
   ConversionKind.splatScene => t.ai_immersive_type_splat,
   ConversionKind.stereoVideo => t.ai_immersive_type_video,
+  ConversionKind.enhanceSharpen => t.ai_enhance_level_sharpen,
+  ConversionKind.enhanceRebuild => t.ai_enhance_level_rebuild,
+  ConversionKind.enhanceNatural => t.ai_enhance_level_natural,
 };
 
 /// What a type of version is, in the words of its honesty label; the 3D version of a panorama the app [generated] is
@@ -249,6 +260,9 @@ String conversionKindHonesty(Translations t, ConversionKind kind, {bool generate
   ConversionKind.stereoPanoramaFromPanorama => t.ai_immersive_relief_estimated,
   ConversionKind.splatScene => t.ai_immersive_splat_honesty,
   ConversionKind.stereoVideo => t.ai_immersive_video_line,
+  ConversionKind.enhanceSharpen ||
+  ConversionKind.enhanceRebuild ||
+  ConversionKind.enhanceNatural => t.ai_enhance_invented,
 };
 
 /// "6 s", "4 min": a time of the conversions, the seconds rounded up under a minute, the minutes rounded above
@@ -452,8 +466,9 @@ String aiGateReasonText(Translations t, AiGateResult gate) => switch (gate.reaso
 String conversionSkipText(Translations t, ConversionSkipReason reason, {String? name, bool video = false}) =>
     switch (reason) {
       ConversionSkipReason.video => t.ai_immersive_skipped_video,
-      ConversionSkipReason.sphere360 => video ? t.ai_immersive_skipped_360_video : t.ai_immersive_skipped_360,
-      ConversionSkipReason.vr180 => video ? t.ai_immersive_skipped_vr180_video : t.ai_immersive_skipped_vr180,
+      // A 3D video: a 360° one is refused only when it was said flat, VR180 is a later lot
+      ConversionSkipReason.sphere360 => video ? t.ai_immersive_skipped_360_video_as_flat : t.ai_immersive_skipped_360,
+      ConversionSkipReason.vr180 => video ? t.ai_immersive_skipped_vr180_video_later : t.ai_immersive_skipped_vr180,
       ConversionSkipReason.spatial => t.ai_immersive_skipped_spatial,
       ConversionSkipReason.alreadyStereo => video ? t.ai_immersive_skipped_3d_video : t.ai_immersive_skipped_3d,
       ConversionSkipReason.alreadyVersion => t.ai_immersive_skipped_ai_version,
@@ -471,6 +486,9 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
       ConversionSkipReason.unreadableVideo => t.ai_immersive_skipped_unreadable_video,
       ConversionSkipReason.photo => t.ai_immersive_skipped_photo,
       ConversionSkipReason.videoNotLocal => t.ai_immersive_skipped_video_not_local,
+      ConversionSkipReason.raw360Video => t.ai_immersive_skipped_raw_360_video,
+      ConversionSkipReason.sphereLayout => t.ai_immersive_skipped_sphere_layout,
+      ConversionSkipReason.tooLarge => t.ai_enhance_refused_too_large,
     };
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere (a raw one of a 360°
@@ -566,6 +584,7 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
   return (asset) async {
     final turns = ref.listen(displayQuarterTurnsProvider(asset), (_, _) {});
     final panorama = ref.listen(isPanoramaProvider(asset), (_, _) {});
+    final video360 = ref.listen(aiVideo360Provider(asset), (_, _) {});
     final raw = ref.listen(rawMediaKindProvider(asset), (_, _) {});
     try {
       final localId = asset.localId;
@@ -595,7 +614,8 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
           _log.fine('${asset.name} could not be read for a spatial photo: $error');
         }
       }
-      final isPanorama = panorama.read();
+      // A video by the rules of its players (isPanoramaProvider takes photos only), read once its exif answered
+      final isPanorama = asset.isVideo ? video360.read() : panorama.read();
       // One of our 3D photos renamed, which only our XMP tells: its head is read as the viewer reads it
       if (!isStereo && !isPanorama && FlatStereoService.isCandidate(asset)) {
         try {
@@ -632,6 +652,7 @@ final conversionFactsReaderProvider = Provider<ConversionFactsReader>((ref) {
     } finally {
       turns.close();
       panorama.close();
+      video360.close();
       raw.close();
     }
   };
@@ -687,17 +708,14 @@ class DesktopConversionAssetFiles implements ConversionAssetFiles {
     }
     return (
       location: ServerOriginal(name: asset.name),
-      source: ServerOriginalSource(
+      source: desktopServerOriginalSource(
         name: asset.name,
         remoteId: remoteId,
         endpoint: endpoint,
         exif: _exifOf(asset),
-        fetch: (url) => NetworkRepository.client.send(http.Request('GET', url)..headers.addAll(_headers())),
       ),
     );
   }
-
-  static Map<String, String> _headers() => ApiService.getRequestHeaders();
 }
 
 /// The date of a photo that is not a JPEG for its 3D photo: the engine reads the EXIF of a JPEG itself, nothing reads
@@ -744,6 +762,7 @@ class ConversionCandidate {
     this.id,
     this.generated = false,
     this.byFrame = false,
+    this.marked360 = false,
   });
 
   final BaseAsset asset;
@@ -765,6 +784,9 @@ class ConversionCandidate {
   /// Its id in the destination session of the dialog, null for a photo skipped
   final String? id;
 
+  /// A video the app takes for a 360° one (aiVideo360Provider): made 360° 3D
+  final bool marked360;
+
   bool get runs => skip == null;
 }
 
@@ -772,7 +794,10 @@ class ConversionCandidate {
 /// not know (or not read again since the index learnt the kinds), which is never made into another version either. The
 /// picture that will carry a splat scene is one flat image, as that of a 3D scene.
 bool versionHoldsTwoEyes(IndexedVersion version) => switch (version.kind) {
-  ImmersiveKind.volumetricScene || ImmersiveKind.panorama360 || ImmersiveKind.gaussianSplat => false,
+  ImmersiveKind.volumetricScene ||
+  ImmersiveKind.panorama360 ||
+  ImmersiveKind.gaussianSplat ||
+  ImmersiveKind.enhancedPhoto => false,
   ImmersiveKind.stereoPhoto || ImmersiveKind.stereoPanorama360 || null => true,
 };
 
@@ -841,24 +866,40 @@ ConversionSkipReason? conversionSkipOf(
 }
 
 /// The reason to skip [asset] for a 3D video known before its file is read, from its [facts]: a photo; a video the
-/// 360° rules take (its coverage telling a VR180 one); one already 3D, by the index of the versions, its name words
-/// (SBS, OU...) or its frame (two eyes side by side or stacked). The ffprobe of the file tells the rest
-/// (checkVideoSource).
+/// 360° rules take that this version does not make 360° 3D (the raw file of a 360° camera, a VR180 one by its
+/// coverage, one holding two eyes by its frame or its name); one already 3D, by the index of the versions, its name
+/// words (SBS, OU...) or its frame (two eyes side by side or stacked). A 360° video of one eye runs: made 360° 3D (lot
+/// ai-360-3d-51). The ffprobe of the file tells the rest (checkVideoSource).
 ConversionSkipReason? videoSkipOf(BaseAsset asset, ConversionPhotoFacts facts) {
   if (!asset.isVideo) {
     return ConversionSkipReason.photo;
   }
   if (facts.isPanorama) {
+    if (facts.isRaw360) {
+      return ConversionSkipReason.raw360Video;
+    }
     final half =
         (facts.coverage ?? guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height)) ==
         SphereCoverage.half;
-    return half ? ConversionSkipReason.vr180 : ConversionSkipReason.sphere360;
+    if (half) {
+      return ConversionSkipReason.vr180;
+    }
+    if (facts.isStereo || isStereoSphereVideoByLook(asset)) {
+      return ConversionSkipReason.alreadyStereo;
+    }
+    return null;
   }
   if (facts.isStereo || isStereoVideoByLook(asset)) {
     return ConversionSkipReason.alreadyStereo;
   }
   return null;
 }
+
+/// Whether a 360° video [asset] shows two eyes by its frame (square or 4:1, as the 360° viewers read it) or its name
+/// words
+bool isStereoSphereVideoByLook(BaseAsset asset) =>
+    guessFlatStereoFormat(fileName: asset.name, isVideo: true) != null ||
+    guessStereoLayout(width: asset.width, height: asset.height) != StereoLayout.mono;
 
 /// Whether [asset] shows two eyes by its name words or its frame alone, as the players read a video
 bool isStereoVideoByLook(BaseAsset asset) =>
@@ -945,17 +986,39 @@ final aiSourceProvider = Provider.autoDispose.family<bool, ({BaseAsset asset, Co
           ConversionKind.stereoPanoramaFromPanorama => ref.watch(aiMonoPanoramaProvider(source.asset)),
           ConversionKind.splatScene => false,
           ConversionKind.stereoVideo => ref.watch(aiFlatVideoProvider(source.asset)),
+          // Offered by its own button (enhance_dialog.dart)
+          ConversionKind.enhanceSharpen || ConversionKind.enhanceRebuild || ConversionKind.enhanceNatural => false,
         },
 );
 
-/// Whether the viewer offers "Make 3D (AI)" for [asset] as a 3D video: a video the 360° rules leave flat, neither two
-/// eyes by its name or its frame, nor a version the app made. Its file tells the rest in the dialog.
+/// Whether the viewer offers "Make 3D (AI)" for [asset] as a 3D video: a flat video, neither two eyes by its name or
+/// its frame, nor a version the app made; or a 360° video of one eye of a whole sphere (made 360° 3D, lot
+/// ai-360-3d-51), not the raw file of a 360° camera, not a VR180 one, not two eyes already. Its file tells the rest in
+/// the dialog.
 final aiFlatVideoProvider = Provider.autoDispose.family<bool, BaseAsset>((ref, asset) {
-  if (!asset.isVideo || ref.watch(isPanoramaProvider(asset)) || _versionOf(ref, asset) != null) {
+  if (!asset.isVideo || _versionOf(ref, asset) != null) {
     return false;
+  }
+  if (ref.watch(aiVideo360Provider(asset))) {
+    if (ref.watch(rawMediaKindProvider(asset)) != null || isStereoSphereVideoByLook(asset)) {
+      return false;
+    }
+    final coverage =
+        ref.watch(sphereCoverageOverrideProvider(asset)) ??
+        guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height);
+    return coverage == SphereCoverage.full;
   }
   return !isStereoVideoByLook(asset);
 });
+
+/// Whether [asset] is a 360° video by the rules of its players, as the splat scenes read it (splatVideo360Reader): the
+/// raw file of a 360° camera (.insv, .360, .osv), flagged equirectangular by the server, found so on this computer, or
+/// viewed as 360° by the user. isPanoramaProvider takes photos only, so a 360° video was offered "Make 3D (AI)" as a flat
+/// one before (lot ai3d-remote-51); since lot ai-360-3d-51 such a video is made 360° 3D.
+final aiVideo360Provider = Provider.autoDispose.family<bool, BaseAsset>(
+  (ref, asset) =>
+      asset.isVideo && (ref.watch(isEquirectangularProvider(asset)) || ref.watch(rawMediaKindProvider(asset)) != null),
+);
 
 /// Whether the viewer offers "Make 3D (AI)" for [asset]: a flat photo this system can read, neither 360°, nor two eyes
 /// side by side, nor a version the app made, nor an Apple spatial photo (hidden until the check of a HEIF photo
@@ -1016,11 +1079,16 @@ final aiMonoPanoramaProvider = Provider.autoDispose.family<bool, BaseAsset>((ref
 });
 
 /// What the dialog reads of the videos of a 3D video job with the FFmpeg program: each video, and the encoder that
-/// passes its one second test at a size
+/// passes its test at a size (the command of a segment, as the job runs it)
 abstract interface class VideoDialogProbe {
-  Future<VideoDialogFacts> read(String path);
+  /// [marked360]: the app takes it for a 360° video already (aiVideo360Provider)
+  Future<VideoDialogFacts> read(String path, {bool marked360 = false});
 
   Future<VideoEncoder?> encoder(int width, int height, VideoRate rate);
+
+  /// The first encoder of this computer that stopped during a 3D video at [width] x [height] although its test passed
+  /// (skipped there since), null for none
+  Future<VideoEncoder?> stoppedBefore(int width, int height);
 }
 
 /// The probe of the programs of [setup]
@@ -1030,11 +1098,53 @@ class SetupVideoDialogProbe implements VideoDialogProbe {
   final VideoJobSetup setup;
 
   @override
-  Future<VideoDialogFacts> read(String path) => readVideoDialogFacts(setup, path);
+  Future<VideoDialogFacts> read(String path, {bool marked360 = false}) =>
+      readVideoDialogFacts(setup, path, marked360: marked360);
 
   @override
-  Future<VideoEncoder?> encoder(int width, int height, VideoRate rate) =>
-      chooseVideoEncoder(setup.runner, setup.ffmpeg, VideoEncoder.forThisComputer, width, height, rate);
+  Future<VideoEncoder?> encoder(int width, int height, VideoRate rate) async {
+    final order = VideoEncoder.forThisComputer;
+    final stopped = await _stopped(width, height);
+    final folder = await Directory.systemTemp.createTemp('immuch360-encoder-test-');
+    try {
+      // A square frame is a 360° one (top and bottom, not marked); the mark changes nothing for the encoder
+      Future<VideoEncoder?> among(Set<VideoEncoder> skip) => chooseVideoEncoder(
+        setup.runner,
+        setup.ffmpeg,
+        setup.ffprobe,
+        order,
+        width,
+        height,
+        rate,
+        folder: folder,
+        markLeftRight: width != height,
+        skip: skip,
+      );
+      final first = await among(stopped);
+      return first != null || !order.any(stopped.contains) ? first : await among(const {});
+    } finally {
+      try {
+        await folder.delete(recursive: true);
+      } on FileSystemException catch (error) {
+        _log.fine('The folder of the encoder test stays: ${error.message}');
+      }
+    }
+  }
+
+  @override
+  Future<VideoEncoder?> stoppedBefore(int width, int height) async {
+    final stopped = await _stopped(width, height);
+    return VideoEncoder.forThisComputer.where(stopped.contains).firstOrNull;
+  }
+
+  Future<Set<VideoEncoder>> _stopped(int width, int height) async {
+    try {
+      return await setup.encoderMemory?.stoppedAt(width, height) ?? const {};
+    } catch (error) {
+      _log.fine('The encoders that stopped before are not known: $error');
+      return const {};
+    }
+  }
 }
 
 /// The probe of the dialog once the components of the 3D videos are there, null before; the tests give theirs
@@ -1070,6 +1180,9 @@ String videoPlanNoteText(Translations t, VideoPlanNote note) => switch (note) {
   VideoPlanNote.subtitlesNotKept => t.ai_immersive_video_note_subtitles,
   VideoPlanNote.dataNotKept => t.ai_immersive_video_note_data,
   VideoPlanNote.long => t.ai_immersive_video_note_long,
+  VideoPlanNote.spatialAudioKept => t.ai_immersive_video_note_spatial_audio_kept,
+  VideoPlanNote.spatialAudioPlain => t.ai_immersive_video_note_spatial_audio_plain,
+  VideoPlanNote.spatialAudioUnmarked => t.ai_immersive_video_note_spatial_audio_unmarked,
 };
 
 /// The name of a quality of the depth of a 3D video
@@ -1239,6 +1352,34 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   VideoEncoder? _videoEncoder;
   var _videoEncoderTested = false;
 
+  /// A video with a 2:1 frame and no 360° mark: the user's answer, 360° (true) or flat (false), null until answered
+  /// (Convert waits for it: never a silent guess)
+  bool? _as360;
+
+  /// The width of each eye of the 360° 3D videos chosen here, null for the default (sphereDefaultEyeWidthOf)
+  int? _sphereEyeWidth;
+
+  /// The encoder of the 360° 3D videos, tested at the frame of [_sphereEncoderWidth] (square, top and bottom); the
+  /// test under way for a width
+  VideoEncoder? _sphereEncoder;
+  int? _sphereEncoderWidth;
+  int? _sphereEncoderTesting;
+
+  /// The encoder that stopped during a 3D video at the frame of [_sphereEncoderWidth] on this computer, skipped since
+  VideoEncoder? _sphereStopped;
+
+  /// The same for the flat videos, at the frame [_flatStoppedFrame] ("3840 x 1080")
+  VideoEncoder? _flatStopped;
+  String? _flatStoppedFrame;
+
+  /// When the encoder at the size chosen is AV1 (which a Quest 2 and many phones cannot play), the one tested at
+  /// [sphereFastRateEyeWidth] (2048 x 2048): H.264 there is said as the way to keep H.264
+  VideoEncoder? _sphereSmallEncoder;
+  var _sphereSmallTested = false;
+  var _sphereSmallTesting = false;
+  var _flatEncoderTesting = false;
+  VideoDialogProbe? _probe;
+
   /// The free space of the drive of the destination of the 3D videos, read for the folder [_videoFreeFolder]
   AiFreeSpace? _videoFree;
   String? _videoFreeFolder;
@@ -1367,10 +1508,10 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
   }
 
   /// The files of a share the dialog was opened on: each photo copied once through the media bridge, its name and its
-  /// bytes shown meanwhile, then its facts read from that copy; a video is not copied, the plan skips it. A photo whose
-  /// copy fails cannot be reached; once a copy finds no room on this computer, that photo and the ones after it are
-  /// skipped with "Disk full", without trying their copies. Null once the dialog closed meanwhile (Cancel): the copy
-  /// under way stops.
+  /// bytes shown meanwhile, then its facts read from that copy; a video is not copied, the job of its 3D video
+  /// downloads it. A photo whose copy fails cannot be reached; once a copy finds no room on this computer, that photo
+  /// and the ones after it are skipped with "Disk full", without trying their copies. Null once the dialog closed
+  /// meanwhile (Cancel): the copy under way stops.
   Future<List<_Photo>?> _readShareFiles() async {
     final make = ref.read(shareConversionSourceProvider);
     final read = ref.read(shareCopyFactsReaderProvider);
@@ -1389,6 +1530,19 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     for (final (index, entry) in files.indexed) {
       if (_closed) {
         return null;
+      }
+      if (entry.isVideo) {
+        // Not copied here: the job of its 3D video downloads it first, and its 3D video goes to a folder of this
+        // computer (a 3D video is not written into a share in this version)
+        final source = make(entry);
+        _shareSources.add(source);
+        photos.add(
+          _Photo(shareConversionAsset(entry), const ConversionPhotoFacts(), (
+            location: ShareOriginal(name: entry.name),
+            source: source,
+          )),
+        );
+        continue;
       }
       if (!entry.isImage) {
         photos.add(_Photo(shareConversionAsset(entry), const ConversionPhotoFacts(), null));
@@ -1499,8 +1653,9 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     }
   }
 
-  /// Why [photo] is skipped for a version of [kind], null when it runs. A 3D video reads a file of this computer, and
-  /// once the FFmpeg program read it, its verdict.
+  /// Why [photo] is skipped for a version of [kind], null when it runs. A 3D video of a file of this computer, once the
+  /// FFmpeg program read it, its verdict; one of the server or of a share runs, its job downloading it first, and the
+  /// engine reads its verdict then.
   ConversionSkipReason? _skipOf(_Photo photo, ConversionKind kind) {
     final known =
         conversionSkipOf(photo.asset, photo.facts, kind: kind) ?? (photo.found == null ? photo.missing : null);
@@ -1508,13 +1663,168 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       return known;
     }
     final source = photo.found!.source;
+    if (source is DownloadableOriginal) {
+      return null;
+    }
     if (source is! LocalFileSource) {
       return ConversionSkipReason.videoNotLocal;
     }
-    return switch (_videoFacts[source.path]?.check.skip) {
+    return switch (_videoFacts[source.path]?.checkAs(_as360).skip) {
       final refusal? => videoSkipReason(refusal),
       null => null,
     };
+  }
+
+  /// Whether [candidate] is made a 360° 3D video (true) or a flat one (false); null for a 2:1 video with no 360° mark
+  /// whose answer is not given yet. A video of the server or of a share, not read before its job, by the app's marks
+  /// and its frame
+  bool? _sphereOf(ConversionCandidate candidate) {
+    final source = candidate.source;
+    if (source is LocalFileSource) {
+      final facts = _videoFacts[source.path];
+      if (facts == null) {
+        return candidate.marked360;
+      }
+      if (facts.check.looksLike360 && _as360 == null) {
+        return null;
+      }
+      return facts.checkAs(_as360).sphere;
+    }
+    if (candidate.marked360) {
+      return true;
+    }
+    if (_remoteMayBe360(candidate)) {
+      return _as360;
+    }
+    return false;
+  }
+
+  /// A video of the server or of a share with no 360° mark of the app whose frame is 2:1, or not known: it may be a
+  /// 360° one, its file read only after its download, so the user is asked (never a silent guess)
+  bool _remoteMayBe360(ConversionCandidate candidate) {
+    final width = candidate.asset.width ?? 0;
+    final height = candidate.asset.height ?? 0;
+    return !candidate.marked360 && (width <= 0 || height <= 0 || isTwoToOne(width, height));
+  }
+
+  /// The videos whose answer, 360° or flat, the user has to give
+  bool _asksAs360(ConversionCandidate candidate) {
+    final source = candidate.source;
+    if (source is LocalFileSource) {
+      return _videoFacts[source.path]?.check.looksLike360 ?? false;
+    }
+    return _remoteMayBe360(candidate);
+  }
+
+  /// The eye widths the 360° videos of the selection are offered: those of the smallest one read, all of them when
+  /// none was read (videos of the server, their size known only after their download)
+  List<int> get _sphereEyeWidths {
+    List<int>? offered;
+    for (final candidate in _runs) {
+      if (_sphereOf(candidate) != true) {
+        continue;
+      }
+      final facts = candidate.source is LocalFileSource
+          ? _videoFacts[(candidate.source as LocalFileSource).path]
+          : null;
+      final video = facts?.check.source;
+      final widths = video != null
+          ? sphereEyeWidthsFor(video)
+          : [
+              for (final eye in sphereEyeWidths)
+                if ((candidate.asset.width ?? 0) <= 0 || eye <= candidate.asset.width!) eye,
+            ];
+      if (widths.isNotEmpty && (offered == null || widths.last < offered.last)) {
+        offered = widths;
+      }
+    }
+    return offered ?? sphereEyeWidths;
+  }
+
+  int get _sphereEyeWidthChosen => sphereDefaultEyeWidthOf(_sphereEyeWidths, _sphereEyeWidth, rate: _sphereRate);
+
+  /// The highest frame rate of the 360° videos read (the grid of their output), null when none was read (videos of
+  /// the server, taken as 30 until their download)
+  double? get _sphereRate => _videoAccepted
+      .where((each) => each.check.sphere)
+      .map((each) => each.check.grid?.rate.value)
+      .nonNulls
+      .fold<double?>(null, (highest, rate) => highest == null || rate > highest ? rate : highest);
+
+  /// What a size of 360° 3D video means for the players, at the frame rate [rate] of the videos
+  String _sphereSizeLine(Translations t, int width, double? rate) {
+    final fast = rate != null && rate > sphereFastRate;
+    if (width > sphereDefaultEyeWidth) {
+      return t.ai_immersive_video_sphere_size_large;
+    }
+    if (width == sphereDefaultEyeWidth) {
+      return fast
+          ? t.ai_immersive_video_sphere_size_fast_rate(rate: _rateText(rate))
+          : t.ai_immersive_video_sphere_size_default;
+    }
+    return fast && width == sphereFastRateEyeWidth
+        ? t.ai_immersive_video_sphere_size_small_fast
+        : t.ai_immersive_video_sphere_size_small;
+  }
+
+  /// 50, 59.94, 29.97: a frame rate as people read it
+  static String _rateText(double rate) {
+    final text = rate.toStringAsFixed(2);
+    return text.endsWith('.00') ? text.substring(0, text.length - 3) : text.replaceFirst(RegExp(r'0$'), '');
+  }
+
+  /// Tests the encoder of this computer at the frame of 2048 x 2048, once, when the size chosen gave AV1
+  Future<void> _testSphereSmallEncoder() async {
+    final probe = _probe;
+    if (probe == null || _sphereSmallTesting || _sphereSmallTested) {
+      return;
+    }
+    _sphereSmallTesting = true;
+    VideoEncoder? encoder;
+    try {
+      final rate = _videoAccepted.map((each) => each.check.grid?.rate).nonNulls.firstOrNull ?? const VideoRate(30, 1);
+      encoder = await probe.encoder(sphereFastRateEyeWidth, sphereFastRateEyeWidth, rate);
+    } catch (error) {
+      _log.warning('The encoders of this computer could not be tested at $sphereFastRateEyeWidth: $error');
+    }
+    if (mounted && !_closed) {
+      setState(() {
+        _sphereSmallEncoder = encoder;
+        _sphereSmallTested = true;
+        _sphereSmallTesting = false;
+      });
+    }
+  }
+
+  /// The name of the MP4 of [candidate]: `<name>_360_3D.mp4` for a 360° one, `<name>_3D_LRF_Full_SBS.mp4` (or Half)
+  String _videoNameOf(ConversionCandidate candidate) => _sphereOf(candidate) == true
+      ? sphereOutputName(candidate.location!.name)
+      : videoOutputName(candidate.location!.name, _videoPacking);
+
+  /// Tests the encoder of this computer at the frame of 360° 3D videos of eyes [width] wide, once per width
+  Future<void> _testSphereEncoder(int width) async {
+    final probe = _probe;
+    if (probe == null || _sphereEncoderTesting == width || _sphereEncoderWidth == width) {
+      return;
+    }
+    _sphereEncoderTesting = width;
+    VideoEncoder? encoder;
+    VideoEncoder? stopped;
+    try {
+      final rate = _videoAccepted.map((each) => each.check.grid?.rate).nonNulls.firstOrNull ?? const VideoRate(30, 1);
+      encoder = await probe.encoder(width, width, rate);
+      stopped = await probe.stoppedBefore(width, width);
+    } catch (error) {
+      _log.warning('The encoders of this computer could not be tested at $width x $width: $error');
+    }
+    if (mounted && !_closed && _sphereEncoderTesting == width) {
+      setState(() {
+        _sphereEncoder = encoder;
+        _sphereStopped = stopped == encoder ? null : stopped;
+        _sphereEncoderWidth = width;
+        _sphereEncoderTesting = null;
+      });
+    }
   }
 
   VideoSbsPacking get _videoPacking => _videoHalf ? VideoSbsPacking.half : VideoSbsPacking.full;
@@ -1581,13 +1891,14 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       });
       return;
     }
+    _probe = probe;
     for (final candidate in _runs.toList()) {
       final source = candidate.source;
       if (source is! LocalFileSource || _videoFacts.containsKey(source.path)) {
         continue;
       }
       try {
-        _videoFacts[source.path] = await probe.read(source.path);
+        _videoFacts[source.path] = await probe.read(source.path, marked360: candidate.marked360);
       } catch (error) {
         _log.warning('${candidate.asset.name} could not be read for a 3D video: $error');
         _videoFacts[source.path] = VideoDialogFacts(check: checkVideoSource(null, fileName: candidate.asset.name));
@@ -1603,32 +1914,48 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     if (_kind.isVideo) {
       await _plan();
     }
-    final first = _videoAccepted.firstOrNull?.check;
+    await _testFlatEncoder();
+  }
+
+  /// Tests the encoder of this computer at the size of Full side by side of the first flat video read, once; a
+  /// selection with no flat video read waits (a 2:1 video answered flat later is tested then, from _videoPlan). The 360°
+  /// ones are tested at their own size (_testSphereEncoder).
+  Future<void> _testFlatEncoder() async {
+    final probe = _probe;
+    final first = _videoAccepted.where((each) => !each.check.sphere).firstOrNull?.check;
     final video = first?.source;
     final grid = first?.grid;
-    if (video != null && grid != null && mounted && !_closed) {
-      final eye = videoEyeSize(video);
-      VideoEncoder? encoder;
-      try {
-        // At the size of Full side by side, the larger one
-        encoder = await probe.encoder(eye.width * 2, eye.height, grid.rate);
-      } catch (error) {
-        _log.warning('The encoders of this computer could not be tested: $error');
-      }
-      if (mounted && !_closed) {
-        setState(() {
-          _videoEncoder = encoder;
-          _videoEncoderTested = true;
-        });
-      }
+    if (probe == null || video == null || grid == null || _flatEncoderTesting || _videoEncoderTested) {
+      return;
+    }
+    _flatEncoderTesting = true;
+    final eye = videoEyeSize(video);
+    VideoEncoder? encoder;
+    VideoEncoder? stopped;
+    try {
+      // At the size of Full side by side, the larger one
+      encoder = await probe.encoder(eye.width * 2, eye.height, grid.rate);
+      stopped = await probe.stoppedBefore(eye.width * 2, eye.height);
+    } catch (error) {
+      _log.warning('The encoders of this computer could not be tested: $error');
+    }
+    _flatEncoderTesting = false;
+    if (mounted && !_closed) {
+      setState(() {
+        _videoEncoder = encoder;
+        _flatStopped = stopped == encoder ? null : stopped;
+        _flatStoppedFrame = '${eye.width * 2} x ${eye.height}';
+        _videoEncoderTested = true;
+      });
     }
   }
 
-  /// What the FFmpeg program read of the videos that run
-  List<VideoDialogFacts> get _videoAccepted => [
+  /// What the FFmpeg program read of the videos that run, each with its verdict as the user answered for a 2:1 one
+  List<({VideoDialogFacts facts, VideoSourceCheck check})> get _videoAccepted => [
     for (final candidate in _runs)
       if (candidate.source case LocalFileSource(:final path))
-        if (_videoFacts[path] case final facts? when facts.check.accepted) facts,
+        if (_videoFacts[path] case final facts?)
+          if (facts.checkAs(_as360) case final check when check.accepted) (facts: facts, check: check),
   ];
 
   /// Reads the free space of the drive of [folder], once per folder
@@ -1665,6 +1992,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           id: 'photo-$index',
           generated: photo.facts.version?.kind == ImmersiveKind.panorama360,
           byFrame: kind == ConversionKind.stereoPanoramaFromPanorama && !photo.facts.isPanorama,
+          marked360: kind.isVideo && photo.facts.isPanorama,
         ),
   ];
 
@@ -1709,7 +2037,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
             id: candidate.id!,
             original: candidate.location!,
             kind: kind.output,
-            fileName: kind.isVideo ? videoOutputName(candidate.location!.name, _videoPacking) : null,
+            fileName: kind.isVideo ? _videoNameOf(candidate) : null,
           ),
     ];
     final session = jobs.isEmpty
@@ -1968,17 +2296,21 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       _videoQualities(ref.read(aiGateResultForProvider(AiFeature.stereoVideo)).valueOrNull),
     );
     final packing = _videoPacking;
+    final sphereWidth = _sphereEyeWidthChosen;
     final requests = <ConversionRequest>[];
+    final spheres = <bool>[];
     for (final candidate in candidates) {
       final plan = candidate.runs ? session.destinations[candidate.id] : null;
       // A folder of a share is not written into by a 3D video in this version
       final folder = plan == null || plan.share != null ? null : plan.folder;
+      final sphere = candidate.runs && _sphereOf(candidate) == true;
+      spheres.add(sphere);
       requests.add(
         folder == null
             ? ConversionRequest(source: candidate.source, skip: candidate.skip ?? ConversionSkipReason.unreachable)
             : ConversionRequest(
                 source: candidate.source,
-                target: ConversionTarget(folder: folder, fileName: videoOutputName(candidate.location!.name, packing)),
+                target: ConversionTarget(folder: folder, fileName: _videoNameOf(candidate)),
               ),
       );
     }
@@ -1996,6 +2328,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
               quality: quality,
               strength: _videoStrength,
               packing: packing,
+              sphereEyeWidth: spheres[index] ? sphereWidth : null,
             );
           },
         );
@@ -2203,9 +2536,59 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
     final offered = _videoQualities(gate);
     final quality = _videoQualityOf(offered);
     final title = Theme.of(context).textTheme.titleSmall;
+    final runs = _runs.toList();
+    final asking = runs.where(_asksAs360).toList();
+    final spheres = [
+      for (final candidate in runs)
+        if (_sphereOf(candidate) == true) candidate,
+    ];
+    final flats = runs.where((candidate) => _sphereOf(candidate) != true).toList();
+    final sphereWidths = _sphereEyeWidths;
+    final sphereWidth = _sphereEyeWidthChosen;
     final choices = <Widget>[
       ConversionNote(key: const Key('ai_conversion_video_experimental'), text: t.ai_immersive_video_experimental),
       const SizedBox(height: 8),
+      // A 2:1 frame with no 360° mark: asked, never guessed
+      if (asking.isNotEmpty) ...[
+        ConversionNote(
+          key: const Key('ai_conversion_video_looks_360'),
+          // A video of the server or of a share is asked before its file is read: only its frame, if that
+          text: switch ((asking.length, asking.any((candidate) => candidate.source is! LocalFileSource))) {
+            (1, false) => t.ai_immersive_video_looks_360(name: asking.single.asset.name),
+            (1, true) => t.ai_immersive_video_may_be_360(name: asking.single.asset.name),
+            (_, false) => t.ai_immersive_video_looks_360_many(count: asking.length),
+            (_, true) => t.ai_immersive_video_may_be_360_many(count: asking.length),
+          },
+          error: _as360 == null,
+        ),
+        RadioGroup<bool>(
+          groupValue: _as360,
+          onChanged: (value) {
+            if (value != null && value != _as360 && !busy) {
+              setState(() => _as360 = value);
+              // The verdict, the name and the destination of each such video change with it
+              unawaited(_plan());
+            }
+          },
+          child: Column(
+            children: [
+              for (final (sphere, label) in [
+                (true, t.ai_immersive_video_as_360),
+                (false, t.ai_immersive_video_as_flat),
+              ])
+                RadioListTile<bool>(
+                  key: Key('ai_conversion_video_as_${sphere ? '360' : 'flat'}'),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  value: sphere,
+                  enabled: !busy,
+                  title: Text(label),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
       Text(t.ai_immersive_video_quality, style: title),
       Text(t.ai_immersive_video_quality_subtitle, style: Theme.of(context).textTheme.bodySmall),
       RadioGroup<VideoDepthQuality>(
@@ -2238,38 +2621,68 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         value: _videoStrength,
         onChanged: busy ? null : (strength) => setState(() => _videoStrength = strength),
       ),
-      const SizedBox(height: 8),
-      Text(t.ai_immersive_video_output, style: title),
-      RadioGroup<bool>(
-        groupValue: _videoHalf,
-        onChanged: (half) {
-          if (half != null && half != _videoHalf && !busy) {
-            setState(() => _videoHalf = half);
-            // The name of each MP4 changes with it
-            unawaited(_plan());
-          }
-        },
-        child: Column(
-          children: [
-            for (final (half, label) in [
-              (false, t.ai_immersive_video_packing_full),
-              (true, t.ai_immersive_video_packing_half),
-            ])
-              RadioListTile<bool>(
-                key: Key('ai_conversion_video_packing_${half ? 'half' : 'full'}'),
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-                value: half,
-                enabled: !busy,
-                title: Text(label),
-              ),
-          ],
+      if (spheres.isNotEmpty) ...[
+        const SizedBox(height: 8),
+        Text(t.ai_immersive_video_sphere_title, style: title),
+        Text(t.ai_immersive_video_sphere_line, style: Theme.of(context).textTheme.bodySmall),
+        RadioGroup<int>(
+          groupValue: sphereWidth,
+          onChanged: (value) {
+            if (value != null && value != sphereWidth && !busy) {
+              setState(() => _sphereEyeWidth = value);
+            }
+          },
+          child: Column(
+            children: [
+              for (final width in sphereWidths)
+                RadioListTile<int>(
+                  key: Key('ai_conversion_video_sphere_$width'),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  value: width,
+                  enabled: !busy,
+                  title: Text(
+                    t.ai_immersive_video_sphere_size(frame: '$width x $width', eye: '$width x ${width ~/ 2}'),
+                  ),
+                  subtitle: Text(_sphereSizeLine(t, width, _sphereRate)),
+                ),
+            ],
+          ),
         ),
-      ),
+      ],
+      if (flats.isNotEmpty) ...[
+        const SizedBox(height: 8),
+        Text(t.ai_immersive_video_output, style: title),
+        RadioGroup<bool>(
+          groupValue: _videoHalf,
+          onChanged: (half) {
+            if (half != null && half != _videoHalf && !busy) {
+              setState(() => _videoHalf = half);
+              // The name of each MP4 changes with it
+              unawaited(_plan());
+            }
+          },
+          child: Column(
+            children: [
+              for (final (half, label) in [
+                (false, t.ai_immersive_video_packing_full),
+                (true, t.ai_immersive_video_packing_half),
+              ])
+                RadioListTile<bool>(
+                  key: Key('ai_conversion_video_packing_${half ? 'half' : 'full'}'),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  value: half,
+                  enabled: !busy,
+                  title: Text(label),
+                ),
+            ],
+          ),
+        ),
+      ],
     ];
-    final runs = _runs.toList();
     final facts = <Widget>[];
-    var ready = runs.isNotEmpty;
+    var ready = runs.isNotEmpty && (asking.isEmpty || _as360 != null);
     if (!_videoProbed) {
       ready = false;
       if (_videoReading) {
@@ -2300,6 +2713,12 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       }
     } else if (runs.isNotEmpty) {
       final accepted = _videoAccepted;
+      // Downloaded by their job first: read by the FFmpeg program then, their encoder tested by the engine
+      if (runs.any((candidate) => candidate.source is DownloadableOriginal)) {
+        facts.add(
+          ConversionNote(key: const Key('ai_conversion_video_download'), text: t.ai_immersive_video_download_first),
+        );
+      }
       // What the jobs do to the videos, each line once
       final notes = {for (final each in accepted) ...each.check.notes};
       final oneSound = accepted.any((each) => each.check.audio.length == 1);
@@ -2315,12 +2734,103 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
           ConversionNote(key: const Key('ai_conversion_video_note_sound'), text: t.ai_immersive_video_note_audio_one),
         );
       }
-      if (!_videoEncoderTested) {
+      // The 360° ones: each eye made at most at the size chosen, the encoder tested at that frame
+      // A video of the server or of a share by the width the server gives, its file read after its download
+      final largest = [
+        ...accepted.where((each) => each.check.sphere).map((each) => each.check.source?.displayWidth ?? 0),
+        for (final candidate in spheres)
+          if (candidate.source is! LocalFileSource) candidate.asset.width ?? 0,
+      ].fold(0, math.max);
+      if (largest > sphereWidth) {
+        facts.add(
+          ConversionNote(
+            key: const Key('ai_conversion_video_sphere_downscaled'),
+            text: t.ai_immersive_video_sphere_downscaled(source: '$largest', eye: '$sphereWidth'),
+          ),
+        );
+      }
+      if (spheres.isNotEmpty) {
+        final size = '$sphereWidth x $sphereWidth';
+        if (_sphereEncoderWidth != sphereWidth) {
+          ready = false;
+          if (_sphereEncoderTesting != sphereWidth) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && !_closed) {
+                unawaited(_testSphereEncoder(sphereWidth));
+              }
+            });
+          }
+          facts.add(
+            ConversionNote(
+              key: const Key('ai_conversion_video_sphere_encoder'),
+              text: t.ai_immersive_video_encoder_testing,
+            ),
+          );
+        } else {
+          final encoder = _sphereEncoder;
+          if (encoder == null) {
+            ready = false;
+          }
+          facts.add(
+            ConversionNote(
+              key: const Key('ai_conversion_video_sphere_encoder'),
+              text: switch (encoder) {
+                null => t.ai_immersive_video_sphere_encoder_none(frame: size),
+                VideoEncoder.svtAv1 => t.ai_immersive_video_sphere_encoder_av1(frame: size),
+                _ => t.ai_immersive_video_sphere_encoder_h264(frame: size),
+              },
+              error: encoder == null,
+            ),
+          );
+          if (_sphereStopped case final stopped?) {
+            facts.add(
+              ConversionNote(
+                key: const Key('ai_conversion_video_sphere_encoder_stopped'),
+                text: t.ai_immersive_video_encoder_stopped_before(encoder: videoEncoderName(stopped), frame: size),
+              ),
+            );
+          }
+          // AV1 at a large frame (an H.264 encoder that stops at 4096 x 2304 or 4096 x 2160): 2048 x 2048 may keep
+          // H.264, which the Quest 2 and phones play; tested once and said when it does
+          if (encoder == VideoEncoder.svtAv1 &&
+              sphereWidth > sphereFastRateEyeWidth &&
+              sphereWidths.contains(sphereFastRateEyeWidth)) {
+            if (!_sphereSmallTested) {
+              if (!_sphereSmallTesting) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && !_closed) {
+                    unawaited(_testSphereSmallEncoder());
+                  }
+                });
+              }
+            } else if (_sphereSmallEncoder case final small? when small != VideoEncoder.svtAv1) {
+              facts.add(
+                ConversionNote(
+                  key: const Key('ai_conversion_video_sphere_smaller_h264'),
+                  text: t.ai_immersive_video_sphere_av1_smaller(
+                    frame: '$sphereFastRateEyeWidth x $sphereFastRateEyeWidth',
+                  ),
+                ),
+              );
+            }
+          }
+        }
+      }
+      final flatAccepted = accepted.where((each) => !each.check.sphere).toList();
+      if (flatAccepted.isNotEmpty && !_videoEncoderTested && !_flatEncoderTesting) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && !_closed) {
+            unawaited(_testFlatEncoder());
+          }
+        });
+      }
+      // Only videos to download: nothing read here yet, nothing to test before their job
+      if (flatAccepted.isNotEmpty && !_videoEncoderTested) {
         ready = false;
         facts.add(
           ConversionNote(key: const Key('ai_conversion_video_encoder'), text: t.ai_immersive_video_encoder_testing),
         );
-      } else {
+      } else if (flatAccepted.isNotEmpty) {
         final encoder = _videoEncoder;
         if (encoder == null) {
           ready = false;
@@ -2336,21 +2846,55 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
             error: encoder == null,
           ),
         );
+        if ((_flatStopped, _flatStoppedFrame) case (final stopped?, final frame?)) {
+          facts.add(
+            ConversionNote(
+              key: const Key('ai_conversion_video_encoder_stopped'),
+              text: t.ai_immersive_video_encoder_stopped_before(encoder: videoEncoderName(stopped), frame: frame),
+            ),
+          );
+        }
       }
       // The time of the work, the memory and the disk, over every video
       var low = Duration.zero;
       var high = Duration.zero;
       var disk = 0;
       final av1 = _videoEncoder == VideoEncoder.svtAv1;
-      for (final each in accepted) {
-        final source = each.check.source;
+      var memory = 0;
+      for (final (facts: read, :check) in accepted) {
+        final source = check.source;
         if (source == null) {
           continue;
         }
+        if (check.sphere) {
+          final range = videoTimeRange(
+            frames: read.frames ?? 0,
+            quality: quality,
+            logicalProcessors: gate?.processors ?? Platform.numberOfProcessors,
+            keptMillisPerFrame: _settings.videoFrameMillis[videoPaceKey(quality, sphereEyeWidth: sphereWidth)],
+            sphereEyeWidth: sphereWidth,
+          );
+          low += range.low;
+          high += range.high;
+          disk += videoDiskNeed(
+            durationSeconds: read.durationSeconds ?? 0,
+            av1: _sphereEncoder == VideoEncoder.svtAv1,
+            half: false,
+            modelWidth: quality.shortSide,
+            modelHeight: quality.shortSide,
+            outWidth: sphereWidth,
+            outHeight: sphereWidth,
+            stateBytes: sphereStateBytes(quality),
+            sphere: true,
+          );
+          memory = math.max(memory, sphereJobMemoryBytes(quality, sphereWidth));
+          continue;
+        }
+        memory = math.max(memory, quality.jobMemoryBytes);
         final eye = videoEyeSize(source);
         final model = videoModelSize(eye.width, eye.height, quality);
         final range = videoTimeRange(
-          frames: each.frames ?? 0,
+          frames: read.frames ?? 0,
           quality: quality,
           logicalProcessors: gate?.processors ?? Platform.numberOfProcessors,
           keptMillisPerFrame: _settings.videoFrameMillis[quality.name],
@@ -2358,7 +2902,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
         low += range.low;
         high += range.high;
         disk += videoDiskNeed(
-          durationSeconds: each.durationSeconds ?? 0,
+          durationSeconds: read.durationSeconds ?? 0,
           av1: av1,
           half: _videoHalf,
           modelWidth: model.width,
@@ -2378,7 +2922,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       facts.add(
         ConversionNote(
           key: const Key('ai_conversion_video_memory'),
-          text: t.ai_immersive_video_memory(space: formatBytes(quality.jobMemoryBytes)),
+          text: t.ai_immersive_video_memory(space: formatBytes(memory > 0 ? memory : quality.jobMemoryBytes)),
         ),
       );
       if (disk > 0) {
@@ -2410,12 +2954,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
       }
     }
     final single = runs.length == 1 ? runs.first.location : null;
-    return (
-      choices: choices,
-      facts: facts,
-      fileName: single == null ? null : videoOutputName(single.name, _videoPacking),
-      ready: ready,
-    );
+    return (choices: choices, facts: facts, fileName: single == null ? null : _videoNameOf(runs.first), ready: ready);
   }
 
   /// The components of [features] on [platform], each once, those of a panorama in the variant its card takes (the

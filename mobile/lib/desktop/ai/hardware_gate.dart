@@ -288,32 +288,13 @@ PanoramaCard splatCardOf(GpuReport report, {bool integratedAllowed = false}) {
     case null:
       break;
   }
-  bool atLeast12((int, int) version) => version.$1 > 1 || (version.$1 == 1 && version.$2 >= 2);
-  if (report.instanceVersion != null && !atLeast12(vulkanMajorMinor(report.instanceVersion))) {
-    return (card: null, refusal: AiGateReason.gpuNone);
-  }
-  GpuAdapter? best(GpuKind kind) {
-    GpuAdapter? found;
-    for (final adapter in report.adapters) {
-      if (adapter.source == 'vulkan' &&
-          adapter.kind == kind &&
-          atLeast12(adapter.vulkanVersion) &&
-          (found == null || adapter.localMemory > found.localMemory)) {
-        found = adapter;
-      }
-    }
-    return found;
-  }
-
-  final discrete = best(GpuKind.discrete);
-  if (discrete != null) {
-    return (card: discrete, refusal: null);
-  }
-  final integrated = best(GpuKind.integrated);
-  if (integrated != null) {
-    return (card: integrated, refusal: AiGateReason.splatGpuIntegrated);
-  }
-  return (card: null, refusal: AiGateReason.gpuNone);
+  // The choice itself in splatCardIn (backends.dart), which the end to end check of the CI takes too
+  final card = splatCardIn(report);
+  return switch (card?.kind) {
+    null => (card: null, refusal: AiGateReason.gpuNone),
+    GpuKind.discrete => (card: card, refusal: null),
+    _ => (card: card, refusal: AiGateReason.splatGpuIntegrated),
+  };
 }
 
 /// Why [abi] is refused: "not yet on this processor" for Windows and Linux on another processor, "not on this system

@@ -1076,6 +1076,11 @@ class DjiLinkController private constructor(private val context: Context) : Link
     if (!app.alextran.immich.immersive.isHorizonOsDevice()) {
       return false
     }
+    // The flight view is an activity of the Spatial SDK, which ends the app on a headset older than Android 13
+    if (!app.alextran.immich.immersive.SpatialSdkSupport.here) {
+      Log.w(TAG, "flight view refused: Android API ${Build.VERSION.SDK_INT}, the Spatial SDK needs API 33")
+      return false
+    }
     val nowNs = SystemClock.elapsedRealtimeNanos()
     if (!videoStatistics.outputWithin(nowNs, VIDEO_READY_WINDOW_NS)) {
       return false

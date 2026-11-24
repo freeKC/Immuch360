@@ -6,7 +6,10 @@
 // original moved kept paused; Cancel all pausing the videos with work done. Then the real engine (VideoConversion, the
 // window loop, relief-v1 in Dart) on a synthetic clip played by an FFmpeg in Dart, paused after its first segment and
 // resumed through the queue: the bytes of an uninterrupted job; a Resume while the original is moved keeping the work
-// and the record, a destination not reachable making no folder, Cancel all keeping the work folder.
+// and the record, a destination not reachable making no folder, Cancel all keeping the work folder. A video of the
+// server or of a share (lot ai3d-remote-51): queued at once, its original downloaded as its first step with its bytes
+// told, read by the engine from the copy, deleted once made; Stop deleting the copy, Pause keeping its part for Resume,
+// too little room failing as a disk full, a quit during the download coming back paused with its part.
 
 import 'dart:async';
 import 'dart:io';
@@ -16,6 +19,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/creator/original_bytes.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
@@ -23,11 +27,14 @@ import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_frame_ops.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_job_file.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:path/path.dart' as p;
 
 import '../fakes/fake_conversion_output.dart';
+import '../fakes/fake_downloadable_original.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_video_job_engine.dart';
 import '../video3d/fake_ffmpeg.dart';
@@ -90,7 +97,10 @@ void main() {
     }
   });
 
-  ConversionQueueNotifier queue() {
+  ConversionQueueNotifier queue({
+    AiFreeSpaceReader? freeSpace,
+    DownloadableOriginal? Function(Map<String, Object?> descriptor)? remote,
+  }) {
     container = ProviderContainer(
       overrides: [
         conversionToolsProvider.overrideWith(
@@ -105,6 +115,8 @@ void main() {
             appVersion: '3.4.4',
             // Room for a 3D photo beside a video, whatever this computer has free
             memory: const _Memory(),
+            freeSpace: freeSpace,
+            remoteVideoSource: remote,
           ),
         ),
       ],
@@ -278,6 +290,8 @@ void main() {
       VideoRefusal.dolbyVisionProfile5: ConversionSkipReason.dolbyVisionProfile5,
       VideoRefusal.oddRotation: ConversionSkipReason.oddRotation,
       VideoRefusal.unreadable: ConversionSkipReason.unreadableVideo,
+      VideoRefusal.raw360: ConversionSkipReason.raw360Video,
+      VideoRefusal.sphereLayout: ConversionSkipReason.sphereLayout,
     };
     expect(reasons.keys, VideoRefusal.values);
     final notifier = queue();
@@ -327,7 +341,198 @@ void main() {
     await until((state) => state.byId(id)!.state == ConversionState.done);
   });
 
-  test('a video with no file on this computer is skipped with that reason', () async {
+  /// Until [test] holds, looked at every 10 ms
+  Future<void> poll(bool Function() test, {Duration within = const Duration(seconds: 20)}) async {
+    final watch = Stopwatch()..start();
+    while (!test()) {
+      if (watch.elapsed > within) {
+        fail('Not reached in time');
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+  }
+
+  final serverBytes = List.generate(5000, (i) => (i * 13) % 256);
+
+  ConversionRequest serverVideo(DownloadableOriginal source) => ConversionRequest(
+    source: source,
+    target: ConversionTarget(folder: videos, fileName: videoOutputName(source.name, VideoSbsPacking.full)),
+  );
+
+  test('a video of the server is queued at once: its first step downloads it beside its work folder, the engine reads '
+      'the copy, deleted once the 3D video is made', () async {
+    final notifier = queue();
+    final source = FakeDownloadableOriginal('VID_20261120.mp4', serverBytes);
+    final downloads = <({int copied, int? total})>[];
+    final states = <ConversionState>[];
+    container.listen(conversionQueueProvider, (_, next) {
+      final job = next.jobs.single;
+      if (job.videoDownload case final download? when downloads.isEmpty || downloads.last != download) {
+        downloads.add(download);
+      }
+      if (states.isEmpty || states.last != job.state) {
+        states.add(job.state);
+      }
+    });
+    Map<String, Object?>? kept;
+    source.beforeChunk = () async => kept ??= (await store.read()).single.original;
+    final id = addVideos(notifier, [serverVideo(source)]).single;
+    await until((state) => state.byId(id)!.state.isEnded);
+
+    final fake = engine as FakeVideoJobEngine;
+    final work = fake.runs.single.settings.workFolder;
+    expect(job(id).state, ConversionState.done);
+    expect(states.take(2), [ConversionState.waiting, ConversionState.reading]);
+    expect(downloads.first, (copied: 0, total: 5000));
+    expect(downloads.last, (copied: 5000, total: 5000));
+    expect(job(id).videoDownload, isNull, reason: 'once whole, its frames are told');
+    expect(fake.runs.single.sourcePath, videoOriginalCopyPathOf(work, 'VID_20261120.mp4'));
+    expect(fake.sourceLengths, [5000], reason: 'the engine read the whole copy');
+    expect(kept, {'kind': 'fake', 'name': 'VID_20261120.mp4'}, reason: 'video_jobs.json can make it again');
+    expect(Directory('$work-original').existsSync(), isFalse, reason: 'the copy deleted once made');
+    expect(job(id).writtenPath, p.join(videos, 'VID_20261120_3D_LRF_Full_SBS.mp4'));
+    expect(await store.read(), isEmpty);
+  });
+
+  test(
+    'Pause while it downloads keeps the part and Resume asks for the rest; Stop deletes the copy and the record',
+    () async {
+      final notifier = queue();
+      final source = FakeDownloadableOriginal('VID_pause.mp4', serverBytes);
+      var chunks = 0;
+      final hold = Completer<void>();
+      source.beforeChunk = () async {
+        if (++chunks == 3) {
+          await hold.future;
+        }
+      };
+      final id = addVideos(notifier, [serverVideo(source)]).single;
+      await poll(() => chunks >= 3);
+      notifier.pause(id);
+      await until((state) => state.byId(id)!.state == ConversionState.paused);
+      final work = job(id).video!.workFolder;
+      final part = File('${videoOriginalCopyPathOf(work, 'VID_pause.mp4')}.part');
+      expect(part.lengthSync(), 2000);
+      expect(job(id).videoDownload, (copied: 2000, total: 5000));
+      expect((engine as FakeVideoJobEngine).runs, isEmpty);
+      expect((await store.read()).single.original, isNotNull, reason: 'its record kept for the next start');
+
+      source.beforeChunk = null;
+      notifier.retry(id);
+      await until((state) => state.byId(id)!.state == ConversionState.done);
+      expect(source.offsets, [0, 2000]);
+      expect((engine as FakeVideoJobEngine).sourceLengths, [5000]);
+
+      // Stop during the download: nothing of it is left
+      final other = FakeDownloadableOriginal('VID_stop.mp4', serverBytes);
+      var otherChunks = 0;
+      other.beforeChunk = () async {
+        if (++otherChunks == 2) {
+          await hold.future;
+        }
+      };
+      final stopped = addVideos(notifier, [serverVideo(other)]).single;
+      await poll(() => otherChunks >= 2);
+      notifier.cancel(stopped);
+      await until((state) => state.byId(stopped)!.state == ConversionState.cancelled);
+      expect(Directory('${job(stopped).video!.workFolder}-original').existsSync(), isFalse);
+      expect(await store.read(), isEmpty);
+      hold.complete();
+    },
+  );
+
+  test('too little room to download it fails as a disk full with both figures and pauses the queue; Resume once there '
+      'is room', () async {
+    var free = 1000;
+    final asked = <String>[];
+    final notifier = queue(
+      freeSpace: (folder) async {
+        asked.add(folder.path);
+        return AiFreeSpace(free: free, volume: '/');
+      },
+    );
+    final source = FakeDownloadableOriginal('VID_big.mp4', serverBytes);
+    final id = addVideos(notifier, [serverVideo(source)]).single;
+    await until((state) => state.byId(id)!.state.isEnded);
+    expect(job(id).state, ConversionState.failed);
+    expect(job(id).error, ImmersiveErrorCode.diskFull);
+    expect(videoDownloadRoomOf(job(id).message), (free: 1000, need: 5000 + videoDownloadMargin));
+    expect(state().isPaused, isTrue);
+    expect(asked.single, '${job(id).video!.workFolder}-original');
+
+    free = 1 << 40;
+    notifier.resume();
+    await until((state) => state.byId(id)!.state == ConversionState.done);
+  });
+
+  test('a download a quit stopped comes back paused with its part and goes on from it; one whose source cannot be '
+      'made again waits for its server or share, made again at Resume', () async {
+    final source = FakeDownloadableOriginal('VID_quit.mp4', serverBytes);
+    final work = videoWorkFolderIn(videos, 'quit');
+    final copy = videoOriginalCopyPathOf(work, 'VID_quit.mp4');
+    Directory(p.dirname(copy)).createSync(recursive: true);
+    File('$copy.part').writeAsBytesSync(serverBytes.sublist(0, 3000));
+    await store.put(
+      VideoJobRecord(
+        sourcePath: copy,
+        folder: videos,
+        fileName: 'VID_quit_3D_LRF_Full_SBS.mp4',
+        settings: VideoJobSettings(recordId: 'quit', workFolder: work),
+        original: source.descriptor,
+      ),
+    );
+    final lostWork = videoWorkFolderIn(videos, 'lost');
+    final lostCopy = videoOriginalCopyPathOf(lostWork, 'VID_lost.mp4');
+    Directory(p.dirname(lostCopy)).createSync(recursive: true);
+    File('$lostCopy.part').writeAsBytesSync([1, 2, 3]);
+    await store.put(
+      VideoJobRecord(
+        sourcePath: lostCopy,
+        folder: videos,
+        fileName: 'VID_lost_3D_LRF_Full_SBS.mp4',
+        settings: VideoJobSettings(recordId: 'lost', workFolder: lostWork),
+        original: const {'kind': 'fake', 'name': 'VID_lost.mp4'},
+      ),
+    );
+    final lostSource = FakeDownloadableOriginal('VID_lost.mp4', serverBytes);
+    var signedIn = false;
+    final notifier = queue(
+      remote: (descriptor) => switch (descriptor['name']) {
+        'VID_quit.mp4' => source,
+        'VID_lost.mp4' when signedIn => lostSource,
+        _ => null,
+      },
+    );
+    final restored = await notifier.restoreVideoJobs();
+
+    expect(restored, hasLength(2));
+    final back = restored.firstWhere((job) => job.video!.recordId == 'quit');
+    expect(back.state, ConversionState.paused);
+    expect(back.source, same(source));
+    expect(back.videoDownload, (copied: 3000, total: null));
+    expect(back.videoMissing, isNull);
+    final lost = restored.firstWhere((job) => job.video!.recordId == 'lost');
+    expect(lost.videoMissing, VideoMissing.source, reason: 'never "put back" a hidden copy the user never had');
+
+    notifier.retry(back.id);
+    await until((state) => state.byId(back.id)!.state == ConversionState.done);
+    expect(source.offsets, [3000]);
+    expect((engine as FakeVideoJobEngine).sourceLengths, [5000]);
+    expect(Directory(p.dirname(copy)).existsSync(), isFalse);
+
+    // Still signed out: Resume leaves it paused with its reason
+    notifier.retry(lost.id);
+    expect(job(lost.id).state, ConversionState.paused);
+    expect(job(lost.id).videoMissing, VideoMissing.source);
+    // Signed in again: Resume makes its source again and it goes on
+    signedIn = true;
+    notifier.retry(lost.id);
+    expect(job(lost.id).source, same(lostSource));
+    expect(job(lost.id).videoMissing, isNull);
+    await until((state) => state.byId(lost.id)!.state == ConversionState.done);
+  });
+
+  test('a video with no file on this computer and no bytes to download is skipped with that reason', () async {
     final notifier = queue();
     final id = notifier.addVideos([
       ConversionRequest(
@@ -552,8 +757,29 @@ void main() {
       expect(made.readAsStringSync(), wholeBytes);
       expect(work.existsSync(), isFalse, reason: 'the work folder goes once the MP4 is in place');
       expect(File(videoMadePathOf(work.path)).existsSync(), isFalse);
-      expect(File(p.join(root.path, 'logs', 'video3d-job1.log')).existsSync(), isFalse);
+      // The log of a job that ended well is kept, with the timings of its stages
+      final log = File(p.join(root.path, 'logs', 'video3d-job1.log')).readAsStringSync();
+      expect(log, contains('saved as ${made.path}'));
+      expect(log, contains('timings of this run'));
       expect(await store.read(), isEmpty);
+    });
+
+    test('a job that ends well forgets the logs of jobs older than 30 days, not the recent ones', () async {
+      engine = real();
+      final notifier = queue();
+      final logs = Directory(p.join(root.path, 'logs'))..createSync(recursive: true);
+      final old = File(p.join(logs.path, 'video3d-old.log'))..writeAsStringSync('old');
+      old.setLastModifiedSync(DateTime.now().subtract(videoLogKeptFor + const Duration(days: 1)));
+      final recent = File(p.join(logs.path, 'video3d-recent.log'))..writeAsStringSync('recent');
+      final other = File(p.join(logs.path, 'app.log'))..writeAsStringSync('the app');
+      other.setLastModifiedSync(DateTime.now().subtract(const Duration(days: 90)));
+      final id = addVideos(notifier, [video('clip.mp4')]).single;
+      await until((state) => state.byId(id)!.state.isEnded, within: const Duration(seconds: 60));
+      expect(job(id).state, ConversionState.done, reason: '${job(id).message}');
+      expect(old.existsSync(), isFalse);
+      expect(recent.existsSync(), isTrue);
+      expect(other.existsSync(), isTrue, reason: 'only the logs of the 3D videos');
+      expect(File(p.join(logs.path, 'video3d-job0.log')).existsSync(), isTrue);
     });
 
     /// Pauses the video [id] once its first segment is closed, through [stop], and waits until it ended

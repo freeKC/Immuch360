@@ -59,16 +59,28 @@ void main() {
       expect(photoDecodePath('scan.tif', fromServer: false, platformKeepsTiffPath: true), PhotoDecodePath.platform);
     });
 
-    test('Android has no TIFF decoder; iOS and the computers keep their path', () {
+    test('Android and Linux have no TIFF decoder; iOS, Windows and macOS keep their path', () {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      expect(thisPlatformKeepsItsTiffPath, isFalse);
-      expect(photoDecodePath('scan.tif', fromServer: true), PhotoDecodePath.serverPreview);
-      for (final platform in [TargetPlatform.iOS, TargetPlatform.windows, TargetPlatform.macOS, TargetPlatform.linux]) {
+      for (final platform in [TargetPlatform.android, TargetPlatform.linux]) {
+        debugDefaultTargetPlatformOverride = platform;
+        expect(thisPlatformKeepsItsTiffPath, isFalse, reason: '$platform');
+        expect(photoDecodePath('scan.tif', fromServer: true), PhotoDecodePath.serverPreview, reason: '$platform');
+        expect(photoDecodePath('scan.tif', fromServer: false), PhotoDecodePath.dartTiff, reason: '$platform');
+        expect(photoDecodePath('IMG_1.dng', fromServer: false), PhotoDecodePath.platform, reason: '$platform');
+      }
+      for (final platform in [TargetPlatform.iOS, TargetPlatform.windows, TargetPlatform.macOS]) {
         debugDefaultTargetPlatformOverride = platform;
         expect(thisPlatformKeepsItsTiffPath, isTrue, reason: '$platform');
         expect(photoDecodePath('scan.tif', fromServer: false), PhotoDecodePath.platform, reason: '$platform');
       }
+    });
+
+    test('the tiles of the TIFFs of the device: by the providers on Android, by the folder library on Linux', () {
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      expect(tiffTilesDecodedByProviders, isTrue);
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      expect(tiffTilesDecodedByProviders, isFalse);
     });
   });
 
@@ -284,4 +296,120 @@ void main() {
       expect(photos.failureOf('share:/0.tif'), isNull);
     });
   });
+
+  group('the head of a TIFF and the side to decode it to', () {
+    test('the size of the first image, upright, and an RGB TIFF is no raw file', () {
+      final head = readTiffHead(tiffOf(60, 20))!;
+      expect((head.width, head.height), (60, 20));
+      expect(head.cameraRaw, isFalse);
+      final turned = readTiffHead(tiffOf(60, 20, orientation: 6))!;
+      expect((turned.width, turned.height), (20, 60), reason: 'orientation 6 turns it a quarter');
+    });
+
+    test('the fixtures of the decoder read, the 16 bit, tiled and planar ones too', () {
+      for (final name in ['rgb8_lzw_pred.tif', 'rgb16_tiled_lzw_pred.tif', 'gray16_lzw_pred.tif', 'cmyk8_lzw.tif']) {
+        final head = readTiffHead(File('test/fixtures/tiff/$name').readAsBytesSync());
+        expect(head, isNotNull, reason: name);
+        expect(head!.cameraRaw, isFalse, reason: name);
+        expect(head.width, greaterThan(0), reason: name);
+      }
+      expect(readTiffHead(File('test/fixtures/tiff/cmyk8_lzw.tif').readAsBytesSync())!.iccProfile, isNull);
+    });
+
+    test('a camera raw file by its DNGVersion tag or a reduced first image, and bytes that are no TIFF', () {
+      expect(
+        readTiffHead(
+          _tiffStructure(const [
+            (50706, 4, [0x01040000]),
+          ]),
+        )!.cameraRaw,
+        isTrue,
+        reason: 'DNG',
+      );
+      expect(
+        readTiffHead(
+          _tiffStructure(const [
+            (254, 4, [1]),
+          ]),
+        )!.cameraRaw,
+        isTrue,
+        reason: 'a preview first',
+      );
+      expect(readTiffHead(_tiffStructure(const []))!.cameraRaw, isFalse);
+      expect(readTiffHead(Uint8List.fromList(List.filled(64, 7))), isNull);
+    });
+
+    test('the side covers a box, keeps a width cap, and never enlarges', () {
+      const head = TiffHead(width: 6000, height: 4000, cameraRaw: false);
+      expect(tiffDecodeSide(head), 6000);
+      expect(tiffDecodeSide(head, cover: 320), 480, reason: 'the short side 320');
+      expect(tiffDecodeSide(head, maxWidth: 3000), 3000);
+      expect(tiffDecodeSide(head, maxWidth: 8000), 6000);
+      const portrait = TiffHead(width: 2000, height: 4000, cameraRaw: false);
+      expect(tiffDecodeSide(portrait, maxWidth: 1000), 2000, reason: 'the long side of a portrait 1000 wide');
+      expect(tiffDecodeSide(const TiffHead(width: 100, height: 50, cameraRaw: false), cover: 320), 100);
+    });
+
+    test('decodeTiffFitting decodes to the side asked and refuses a raw file', () async {
+      final (pixels, head) = await decodeTiffFitting(() async => tiffOf(400, 200), cover: 50);
+      expect((pixels.width, pixels.height), (100, 50));
+      expect((head.width, head.height), (400, 200));
+      await expectLater(
+        decodeTiffFitting(
+          () async => _tiffStructure(const [
+            (50706, 4, [0x01040000]),
+          ]),
+        ),
+        throwsA(isA<TiffDecodeException>()),
+      );
+    });
+  });
+}
+
+/// A little endian TIFF of one 4 by 2 image of 8 bit RGB samples, uncompressed, with [extra] fields in its IFD
+Uint8List _tiffStructure(List<(int, int, List<int>)> extra) {
+  final fields = <(int, int, List<int>)>[
+    (254, 4, const [0]),
+    (256, 3, const [4]),
+    (257, 3, const [2]),
+    (258, 3, const [8]),
+    (259, 3, const [1]),
+    (262, 3, const [2]),
+    (273, 4, const [0]),
+    (277, 3, const [3]),
+    (278, 3, const [2]),
+    (279, 4, const [24]),
+  ];
+  for (final field in extra) {
+    fields.removeWhere((known) => known.$1 == field.$1);
+    fields.add(field);
+  }
+  fields.sort((a, b) => a.$1.compareTo(b.$1));
+  final ifdSize = 2 + fields.length * 12 + 4;
+  final dataAt = 8 + ifdSize;
+  final out = ByteData(dataAt + 24);
+  out
+    ..setUint8(0, 0x49)
+    ..setUint8(1, 0x49)
+    ..setUint16(2, 42, Endian.little)
+    ..setUint32(4, 8, Endian.little)
+    ..setUint16(8, fields.length, Endian.little);
+  for (var index = 0; index < fields.length; index++) {
+    final (tag, type, values) = fields[index];
+    final at = 10 + index * 12;
+    out
+      ..setUint16(at, tag, Endian.little)
+      ..setUint16(at + 2, type, Endian.little)
+      ..setUint32(at + 4, values.length, Endian.little);
+    final value = tag == 273 ? dataAt : values.first;
+    if (type == 3) {
+      out.setUint16(at + 8, value, Endian.little);
+    } else {
+      out.setUint32(at + 8, value, Endian.little);
+    }
+  }
+  for (var index = 0; index < 24; index++) {
+    out.setUint8(dataAt + index, index * 10);
+  }
+  return out.buffer.asUint8List();
 }

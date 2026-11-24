@@ -144,4 +144,40 @@ void main() {
     expect(File('android/app/build.gradle').readAsStringSync(), contains('applicationId "$kImmuch360PackageName"'));
     expect(File('ios/Signing.xcconfig').readAsStringSync(), contains('IMMICH_BUNDLE_ID_PROD = $kImmuch360PackageName'));
   });
+
+  group('the store page', () {
+    test('Google Play: its app, then its web page', () {
+      expect(rateAppStorePages(RateAppChannel.googlePlay).map((url) => '$url'), [
+        'market://details?id=$kImmuch360PackageName',
+        kImmichPlayStoreLink,
+      ]);
+    });
+
+    test('the App Store: the page of the app with its review sheet open', () {
+      expect(
+        rateAppStorePages(RateAppChannel.appStore).single.toString(),
+        'https://apps.apple.com/app/id$kAppStoreAppId?action=write-review',
+      );
+      expect(kImmichAppStoreLink, endsWith('/id$kAppStoreAppId'));
+    });
+
+    test('the Meta Horizon Store: its web page, after the deep link of the Kotlin side', () {
+      expect(rateAppStorePages(RateAppChannel.horizonStore).single.toString(), kHorizonStoreLink);
+    });
+
+    test('no store, no page and no name', () {
+      for (final channel in [RateAppChannel.github, RateAppChannel.none]) {
+        expect(rateAppStorePages(channel), isEmpty, reason: channel.name);
+        expect(rateAppStoreName(channel), isNull, reason: channel.name);
+      }
+      expect(
+        [for (final channel in RateAppChannel.values.where((channel) => channel.canAsk)) rateAppStoreName(channel)],
+        ['Google Play', 'App Store', 'Meta Horizon Store'],
+      );
+    });
+
+    test('the issues page is the one of the start screen', () {
+      expect(File('lib/pages/common/splash_screen.page.dart').readAsStringSync(), contains("'$kImmuch360IssuesLink'"));
+    });
+  });
 }

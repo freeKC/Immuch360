@@ -10,6 +10,7 @@ import 'package:immich_mobile/desktop/settings/computer_settings.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/rate_app/rate_app_settings.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_focus_ring.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/auth.provider.dart';
@@ -219,7 +220,12 @@ class _MobileLayout extends ConsumerWidget {
         onTap: () => context.pushRoute(const WhatsNewRoute()),
       ),
     );
-    return ListView(padding: const EdgeInsets.only(top: 10.0, bottom: 60), children: [...settings]);
+    // Immuch360: the invitation to rate (lib/presentation/widgets/rate_app/rate_app_settings.dart), its line first
+    // while it waits for an answer, its entries last
+    return ListView(
+      padding: const EdgeInsets.only(top: 10.0, bottom: 60),
+      children: [const RateAppSettingsLine(), ...settings, const RateAppSettingsEntries()],
+    );
   }
 }
 
@@ -240,6 +246,8 @@ class _TabletLayout extends HookConsumerWidget {
           flex: 2,
           child: CustomScrollView(
             slivers: [
+              // Immuch360: the line of the invitation to rate, while it waits for an answer
+              const SliverToBoxAdapter(child: RateAppSettingsLine()),
               if (!hasServer)
                 SliverToBoxAdapter(
                   child: ListTile(
@@ -286,6 +294,8 @@ class _TabletLayout extends HookConsumerWidget {
                   onTap: () => context.pushRoute(const WhatsNewRoute()),
                 ),
               ),
+              // Immuch360: Rate Immuch360 on a store build, Something not working? on every build
+              const SliverToBoxAdapter(child: RateAppSettingsEntries(cards: false)),
             ],
           ),
         ),

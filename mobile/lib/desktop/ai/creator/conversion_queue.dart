@@ -64,7 +64,17 @@
 // loses at most the segment under way. A video that cannot be made 3D (a 360° video, interlaced...) is skipped with its
 // reason, its work deleted. Cancel all pauses a video with work done rather than deleting it. A video whose original or
 // destination folder is not there (moved, renamed, a drive or a share of the NAS not connected) is paused with its work
-// and its record kept, and says what it waits for.
+// and its record kept, and says what it waits for. A video of the server or of a share is queued as any other: its
+// first step downloads its original beside its work folder (video_original_copy.dart), its bytes told in its row, Pause
+// and Resume going on with the download, the free space read first; the copy is deleted with its work once the 3D
+// video is made, stopped, refused or discarded, and the next start makes its source again (ConversionTools
+// .remoteVideoSource) to go on with a download a quit stopped.
+//
+// An enhanced photo of "Enhance (AI)" (release 51) is a job of one of three kinds, by its level: Sharpen and Rebuild
+// details on the lane of the graphics card (each asking the card with its own need, enhance_gpu.dart), Natural on the
+// processor (its memory told by its level, enhance_plan.dart). Its settings (level and strength) go with the job. It
+// always makes a new version beside the others. Pause stops one under way at its next check (a tile of its model) or
+// keeps one waiting out of the queue: the state paused, Resume running the photo again from its start, as Retry does.
 
 import 'dart:async';
 import 'dart:io';
@@ -75,21 +85,27 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/creator/original_bytes.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_gpu.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/ai/gpu/graphics_release.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_estimates.dart' show sphereJobMemoryBytes, videoPaceKey;
 import 'package:immich_mobile/desktop/ai/video3d/video_jobs.dart';
-import 'package:immich_mobile/desktop/ai/video3d/video_source.dart';
+import 'package:immich_mobile/desktop/ai/video3d/video_original_copy.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/derived_file_rule.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_photo_xmp.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
@@ -238,6 +254,8 @@ class ConversionTools {
     this.video,
     this.videoJobs,
     this.appVersion = '',
+    this.freeSpace,
+    this.remoteVideoSource,
     DateTime Function()? now,
     String Function()? newDerivativeId,
     int Function()? newSeed,
@@ -302,6 +320,13 @@ class ConversionTools {
 
   /// The version of the app, written into each 3D video
   final String appVersion;
+
+  /// Reads the free space of a drive, before the original of a 3D video is downloaded; null: not read
+  final AiFreeSpaceReader? freeSpace;
+
+  /// Makes again the source of a 3D video of the server or of a share from what video_jobs.json kept of it
+  /// (DownloadableOriginal.descriptor), at the next start; null, or null for it: its download cannot go on
+  final DownloadableOriginal? Function(Map<String, Object?> descriptor)? remoteVideoSource;
 
   late final _sbs = ConversionEngine(
     engine: engine,
@@ -399,6 +424,13 @@ class ConversionQueueState {
   /// A job failed that a Retry may mend: not a splat scene of too few images placed, which would place the same ones
   bool get hasFailed => jobs.any((job) => job.state == ConversionState.failed && !job.retryGivesTheSame);
 
+  /// Enhanced photos waiting or under way, which Pause all stops
+  bool get hasEnhanceToPause =>
+      jobs.any((job) => job.kind.isEnhance && (job.state == ConversionState.waiting || job.state.isActive));
+
+  /// Enhanced photos paused, which Resume all runs again
+  bool get hasEnhancePaused => jobs.any((job) => job.kind.isEnhance && job.state == ConversionState.paused);
+
   /// A job Clear finished would forget: a 3D video paused stays, its work kept for Resume
   bool get hasEnded => jobs.any((job) => job.state.isEnded && job.state != ConversionState.paused);
 
@@ -418,8 +450,15 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// The jobs a disk full failed since the queue paused: Resume runs them again
   final _diskFull = <String>{};
 
+  // The 3D videos of the server or of a share restored without their source (VideoMissing.source): what describes
+  // their original, to make the source again at Resume (the user signed in or reconnected the share since)
+  final _unbuiltSources = <String, Map<String, Object?>>{};
+
   /// The control of each 3D video under way: Pause and Cancel
   final _videoControls = <String, VideoJobControl>{};
+
+  /// The enhanced photos under way asked to pause: their stop ends them paused, not cancelled
+  final _pausing = <String>{};
 
   /// When the step shown of each job under way started, for its time left
   final _stepStarted = <String, DateTime>{};
@@ -482,6 +521,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     bool alsoStereo = false,
     bool fromVideo = false,
     ReliefStrength reliefStrength = ReliefStrength.normal,
+    EnhanceSettings? enhance,
   }) {
     if (requests.isEmpty) {
       return const [];
@@ -503,6 +543,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         state: request.skip == null ? ConversionState.waiting : ConversionState.skipped,
         skipReason: request.skip,
         fromVideo: fromVideo && kind == ConversionKind.splatScene,
+        enhance: switch (kind.enhanceLevel) {
+          final level? => (enhance?.level == level ? enhance! : EnhanceSettings.of(level)).forPixels(request.pixels),
+          null => null,
+        },
       );
       jobs.add(job);
       final target = request.target;
@@ -615,16 +659,41 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         continue;
       }
       final work = record.settings.workFolder;
-      final missing = videoMissingOf(record.sourcePath, record.folder);
+      // A video of the server or of a share: its source made again, so that its download goes on
+      final original = record.original;
+      DownloadableOriginal? remote;
+      if (original != null) {
+        try {
+          remote = tools.remoteVideoSource?.call(original);
+        } catch (error) {
+          _log.warning('The source of the 3D video ${record.fileName} cannot be made again: $error');
+        }
+      }
+      final copied = File(record.sourcePath).existsSync();
+      final part = File('${record.sourcePath}.part');
+      final downloaded = original != null && Directory(videoOriginalCopyFolderOf(work)).existsSync();
+      final ({VideoMissing missing, String path})? missing;
+      if (original == null) {
+        missing = videoMissingOf(record.sourcePath, record.folder);
+      } else if (!Directory(record.folder).existsSync()) {
+        missing = (missing: VideoMissing.folder, path: record.folder);
+      } else if (remote == null && !copied) {
+        // Neither its copy whole nor a way to download the rest (signed out of the server, the share gone): Resume
+        // makes the source again
+        missing = (missing: VideoMissing.source, path: record.sourcePath);
+      } else {
+        missing = null;
+      }
       if (missing?.missing != VideoMissing.folder &&
           !Directory(work).existsSync() &&
-          !File(videoMadePathOf(work)).existsSync()) {
+          !File(videoMadePathOf(work)).existsSync() &&
+          !downloaded) {
         await store.remove(record.id);
         continue;
       }
       final job = ConversionJob(
         id: 'conversion-${++_lastId}',
-        source: LocalFileSource(record.sourcePath),
+        source: remote ?? LocalFileSource(record.sourcePath),
         kind: ConversionKind.stereoVideo,
         batchIndex: 1,
         batchSize: 1,
@@ -634,18 +703,50 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         perMille: record.perMille,
         video: record.settings,
         videoMissing: missing?.missing,
+        videoDownload: !copied && part.existsSync() ? (copied: part.lengthSync(), total: null) : null,
       );
+      if (missing?.missing == VideoMissing.source) {
+        _unbuiltSources[job.id] = original!;
+      }
       added.add(job);
       state = state.copyWith(jobs: [...state.jobs, job]);
     }
     return added;
   }
 
+  /// Makes again the source of a 3D video restored without it (VideoMissing.source), true when it is made; false
+  /// leaves the job paused with that reason
+  bool _rebuildSource(String id) {
+    final descriptor = _unbuiltSources[id];
+    if (descriptor == null) {
+      return true;
+    }
+    DownloadableOriginal? remote;
+    try {
+      remote = ref.read(conversionToolsProvider).remoteVideoSource?.call(descriptor);
+    } catch (error) {
+      _log.warning('The source of the 3D video $id cannot be made again: $error');
+    }
+    if (remote == null) {
+      _log.info('The server or the share of the 3D video $id is still out of reach: it stays paused');
+      return false;
+    }
+    _unbuiltSources.remove(id);
+    _set(id, (job) => job.copyWith(source: remote, videoMissing: () => null));
+    return true;
+  }
+
   /// Pauses a 3D video: the one under way stops at its next frame (the model's run in progress within a second) with
-  /// its work kept, one waiting stays out of the queue until Resume. Nothing for the other kinds.
+  /// its work kept, one waiting stays out of the queue until Resume. An enhanced photo under way stops at its next
+  /// check and runs again from its start at Resume. Nothing for the other kinds.
   void pause(String id) {
     final job = state.byId(id);
-    if (job == null || !job.kind.isVideo) {
+    if (job == null || !(job.kind.isVideo || job.kind.isEnhance)) {
+      return;
+    }
+    if (job.kind.isEnhance && job.state.isActive) {
+      _pausing.add(id);
+      _flags[id]?.cancel();
       return;
     }
     if (job.state == ConversionState.waiting) {
@@ -654,6 +755,30 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     } else if (job.state.isActive) {
       _videoControls[id]?.pause();
     }
+  }
+
+  /// Pauses every enhanced photo waiting or under way (a batch of "Enhance (AI)"): see [pause]
+  void pauseEnhance() {
+    for (final job in state.jobs) {
+      if (job.kind.isEnhance && (job.state == ConversionState.waiting || job.state.isActive)) {
+        pause(job.id);
+      }
+    }
+  }
+
+  /// Runs every enhanced photo paused again, from its start, in the order they came; ends a pause of the queue as
+  /// Retry does
+  void resumeEnhance() {
+    final ids = {
+      for (final job in state.jobs)
+        if (job.kind.isEnhance && job.state == ConversionState.paused) job.id,
+    };
+    if (ids.isEmpty) {
+      return;
+    }
+    _gpuShort = null;
+    state = ConversionQueueState(jobs: _restarted(ids), isPaused: state.isPaused);
+    _pump();
   }
 
   /// Cancels a job: one waiting never runs (nor the 3D version chained after it), the one under way stops at its next
@@ -695,6 +820,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     try {
       final tools = ref.read(conversionToolsProvider);
       await tools.video?.discard(settings);
+      // The copy of an original of the server or of a share, whatever the engine deletes
+      await deleteVideoOriginalCopy(settings.workFolder);
       await tools.videoJobs?.remove(settings.recordId);
     } catch (error) {
       _log.warning('The work of the 3D video ${job.source.name} could not be deleted: $error');
@@ -718,7 +845,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     state = ConversionQueueState(
       jobs: [
         for (final job in state.jobs)
-          if (job.state == ConversionState.waiting && job.kind.isVideo && job.perMille > 0)
+          if (job.state == ConversionState.waiting && job.kind.isVideo && _videoWorkDone(job))
             job.copyWith(state: ConversionState.paused, waitingFor: () => null)
           else if (job.state == ConversionState.waiting && !waitsForParent(job))
             job.copyWith(state: ConversionState.cancelled, waitingFor: () => null)
@@ -731,7 +858,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
     for (final MapEntry(key: id, value: control) in _videoControls.entries) {
       // Nothing done yet, nothing to keep: cancelled as the other jobs are
-      if ((state.byId(id)?.perMille ?? 0) > 0) {
+      if (state.byId(id) case final job? when _videoWorkDone(job)) {
         control.pause();
       } else {
         control.cancel();
@@ -751,6 +878,9 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   void retry(String id) {
     final job = state.byId(id);
     if (job == null || !_retriable(job)) {
+      return;
+    }
+    if (!_rebuildSource(id)) {
       return;
     }
     _diskFull.remove(id);
@@ -850,12 +980,15 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     _pump();
   }
 
+  /// Whether the 3D video [job] has work to keep: frames made, or part of its original downloaded
+  static bool _videoWorkDone(ConversionJob job) => job.perMille > 0 || (job.videoDownload?.copied ?? 0) > 0;
+
   /// A job failed or cancelled; a 3D video paused too, Resume being its Retry
   bool _retriable(ConversionJob job) =>
       job.target != null &&
       (job.state == ConversionState.failed ||
           job.state == ConversionState.cancelled ||
-          (job.kind.isVideo && job.state == ConversionState.paused));
+          ((job.kind.isVideo || job.kind.isEnhance) && job.state == ConversionState.paused));
 
   /// The jobs with [ids] as they were added, and the jobs chained after them that were skipped for them; those of the
   /// graphics card let go of the app's share again when they are asked
@@ -978,11 +1111,21 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
 
   /// What a job may take of the memory: that of its kind, that of its quality for a 3D video (one pass of the model
   /// and the frames it holds, VideoDepthQuality.jobMemoryBytes)
-  static int _memoryNeedOf(ConversionJob job) => job.video?.quality.jobMemoryBytes ?? jobMemoryNeedOf(job.kind.output);
+  static int _memoryNeedOf(ConversionJob job) => switch (job.video) {
+    final video? when video.sphereEyeWidth != null => sphereJobMemoryBytes(video.quality, video.sphereEyeWidth!),
+    final video? => video.quality.jobMemoryBytes,
+    null => switch (job.kind.enhanceLevel) {
+      final level? => enhanceJobMemoryOf(level, pixels: job.enhance?.pixels),
+      null => jobMemoryNeedOf(job.kind.output),
+    },
+  };
 
   /// What a job under way may still take: a 3D video holds its need once its frames run
   static int _memoryStillNeeded(ConversionJob job) => job.kind.isVideo
       ? (job.state.index >= ConversionState.depth.index ? 0 : _memoryNeedOf(job))
+      // An enhanced photo holds the need of its level once its model runs
+      : job.kind.isEnhance
+      ? (job.state.index >= ConversionState.generating.index ? 0 : _memoryNeedOf(job))
       : jobMemoryStillNeeded(job.kind.output, job.state.stage);
 
   Future<void> _run(ConversionJob job) async {
@@ -1265,6 +1408,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _flags.remove(id);
       _stepStarted.remove(id);
       _graphicsFree.remove(id);
+      _pausing.remove(id);
       cancel.free();
     }
   }
@@ -1280,7 +1424,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       _end(id, ImmersiveErrorCode.componentsMissing, 'This build makes no 3D video');
       return;
     }
-    if (source is! LocalFileSource) {
+    final remote = source is DownloadableOriginal ? source : null;
+    if (source is! LocalFileSource && remote == null) {
       _set(id, (job) => job.copyWith(state: ConversionState.skipped, skipReason: ConversionSkipReason.videoNotLocal));
       return;
     }
@@ -1288,11 +1433,14 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     _videoControls[id] = control;
     _set(id, (job) => job.copyWith(state: ConversionState.reading, waitingFor: () => null, remaining: () => null));
     final record = VideoJobRecord(
-      sourcePath: source.path,
+      sourcePath: remote == null
+          ? (source as LocalFileSource).path
+          : videoOriginalCopyPathOf(settings.workFolder, remote.name),
       folder: target.folder,
       fileName: target.fileName,
       settings: settings,
       perMille: job.perMille,
+      original: remote?.descriptor,
     );
     var keptSegments = -1;
     Future<void> keep(int perMille) async {
@@ -1312,10 +1460,55 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
 
     await keep(job.perMille);
+    if (remote != null) {
+      // Its first step: the original downloaded beside the work folder, or the rest of it
+      if (!Directory(target.folder).existsSync()) {
+        // A drive or a share not connected: paused with what it waits for, as the engine does
+        _videoControls.remove(id);
+        _set(
+          id,
+          (job) => job.copyWith(
+            state: ConversionState.paused,
+            remaining: () => null,
+            videoMissing: () => VideoMissing.folder,
+          ),
+        );
+        return;
+      }
+      try {
+        await downloadVideoOriginal(
+          remote,
+          settings.workFolder,
+          isStopping: () => control.isStopping,
+          freeSpace: tools.freeSpace,
+          onProgress: (progress) =>
+              _set(id, (job) => job.state.isActive ? job.copyWith(videoDownload: () => progress) : job),
+        );
+      } on ConversionException catch (error) {
+        _videoControls.remove(id);
+        if (control.isCancelled) {
+          await deleteVideoOriginalCopy(settings.workFolder);
+          await forget();
+          _set(id, (job) => job.copyWith(state: ConversionState.cancelled, perMille: 0, videoDownload: () => null));
+        } else if (control.isStopping) {
+          // Paused: its part stays, Resume asks for the rest
+          _set(id, (job) => job.copyWith(state: ConversionState.paused, remaining: () => null));
+        } else {
+          _end(id, error.code, error.message);
+        }
+        return;
+      } catch (error, stack) {
+        _videoControls.remove(id);
+        _log.warning('The original of the 3D video $id could not be downloaded', error, stack);
+        _end(id, ImmersiveErrorCode.sourceLost, '$error', null, true);
+        return;
+      }
+      _set(id, (job) => job.copyWith(videoDownload: () => null));
+    }
     try {
       final done = await engine.run(
         VideoJobSpec(
-          sourcePath: source.path,
+          sourcePath: record.sourcePath,
           folder: target.folder,
           fileName: target.fileName,
           settings: settings,
@@ -1331,8 +1524,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         },
       );
       await forget();
+      // The copy of an original of the server or of a share is no longer needed
+      await deleteVideoOriginalCopy(settings.workFolder);
       if (done.millisPerFrame case final millis?) {
-        await _keepVideoPace(tools, settings.quality, millis);
+        await _keepVideoPace(tools, videoPaceKey(settings.quality, sphereEyeWidth: settings.sphereEyeWidth), millis);
       }
       _set(
         id,
@@ -1444,6 +1639,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
                 job.state == ConversionState.waiting &&
                 job.kind.lane == ConversionLane.cpu &&
                 !job.kind.isVideo &&
+                // Natural of "Enhance (AI)" takes minutes a photo, a batch hours: it waits for the end of the video
+                !job.kind.isEnhance &&
                 (job.parentId == null || job.inputPath != null),
           )
           .firstOrNull;
@@ -1465,15 +1662,16 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
     }
   }
 
-  /// Keeps the pace of a 3D video of [quality] on this computer, the first guess of the next one (videoFrameMillis)
-  Future<void> _keepVideoPace(ConversionTools tools, VideoDepthQuality quality, int millis) async {
+  /// Keeps the pace of a 3D video under [key] (videoPaceKey: its quality, and the eye of a 360° one) on this computer,
+  /// the first guess of the next one (videoFrameMillis)
+  Future<void> _keepVideoPace(ConversionTools tools, String key, int millis) async {
     final store = tools.settings;
     if (store == null) {
       return;
     }
     try {
       await store.update(
-        (settings) => settings.copyWith(videoFrameMillis: {...settings.videoFrameMillis, quality.name: millis}),
+        (settings) => settings.copyWith(videoFrameMillis: {...settings.videoFrameMillis, key: millis}),
       );
     } catch (error) {
       _log.warning('The pace of the 3D video could not be kept: $error');
@@ -1587,7 +1785,12 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// a card that did not answer
   Future<GpuBudgetCheck> _askCard(String id, GpuBudget budget, ConversionKind kind) async {
     try {
-      return await budget.check(need: gpuNeedOf(kind.output));
+      return await budget.check(
+        need: switch (kind.enhanceLevel) {
+          final level? => enhanceGpuNeedOf(level),
+          null => gpuNeedOf(kind.output),
+        },
+      );
     } catch (error, stack) {
       _log.warning('The graphics card could not be asked for $id', error, stack);
       return const GpuBudgetUnavailable(AiGateReason.gpuNoAnswer);
@@ -1690,6 +1893,19 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       case ConversionKind.stereoVideo:
         // Run by its own engine (_runVideo)
         return null;
+      case ConversionKind.enhanceSharpen || ConversionKind.enhanceRebuild || ConversionKind.enhanceNatural:
+        final settings = job.enhance ?? EnhanceSettings.of(job.kind.enhanceLevel!);
+        return EnhanceJob(
+          id: job.id,
+          source: source,
+          partPath: part,
+          derivativeId: derivativeId,
+          creatorTool: tools.creatorTool,
+          created: created,
+          level: settings.level,
+          strength: settings.strength,
+          exif: exif,
+        );
       case ConversionKind.stereoPanoramaFromPanorama:
         return StereoPanoramaJob(
           id: job.id,
@@ -1867,6 +2083,11 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// kind, its code and the first line of [message], the engine of a panorama writing the whole message with the end of
   /// sd-cli's output; none when the caller [logged] it already, with its stack
   void _end(String id, ImmersiveErrorCode code, [String? message, String? keptFolder, bool logged = false]) {
+    // An enhanced photo asked to pause ends paused whatever stopped it, and runs again from its start at Resume
+    if (_pausing.remove(id) && (code == ImmersiveErrorCode.cancelled || code == ImmersiveErrorCode.modelFailed)) {
+      _set(id, (job) => job.copyWith(state: ConversionState.paused, remaining: () => null));
+      return;
+    }
     if (code == ImmersiveErrorCode.cancelled) {
       _set(id, (job) => job.copyWith(state: ConversionState.cancelled, remaining: () => null));
       return;

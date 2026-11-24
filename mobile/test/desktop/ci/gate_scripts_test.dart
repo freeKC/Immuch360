@@ -1148,6 +1148,13 @@ abstract class SyncEvents {
       expect(run.output, contains('runner windows-latest is not a pinned label'));
     });
 
+    test('an Intel Mac by its pinned label passes (the 3D videos on an Intel Mac, lot L06); a moving one fails', () {
+      expect(check(_goodWorkflow.replaceFirst('windows-2022', 'macos-15-intel')).exitCode, 0);
+      final run = check(_goodWorkflow.replaceFirst('windows-2022', 'macos-latest-large'));
+      expect(run.exitCode, 1, reason: '$run');
+      expect(run.output, contains('runner macos-latest-large is not a pinned label'));
+    });
+
     test('fails on an action pinned to a tag only, or without its version comment', () {
       expect(check(_goodWorkflow.replaceFirst(RegExp(r'checkout@\w+ # v7.0.1'), 'checkout@v7')).exitCode, 1);
       final run = check(_goodWorkflow.replaceFirst(' # v2.23.0', ''));

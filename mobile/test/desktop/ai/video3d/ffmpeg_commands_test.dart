@@ -80,13 +80,49 @@ void main() {
     expect(videoEncoderOptions(VideoEncoder.h264VideoToolbox, 64, 64, rate).codec, contains('h264_videotoolbox'));
   });
 
-  test('the one second test and the encoder of a segment', () {
-    final probe = videoEncoderTestArguments(VideoEncoder.svtAv1, 3840, 1080, const VideoRate(30000, 1001));
+  test('the test of an encoder is the command of a segment, into a Matroska file, at the real frame and bitrate', () {
+    const rate = VideoRate(30000, 1001);
+    for (final encoder in VideoEncoder.values) {
+      for (final marked in [true, false]) {
+        final probe = videoEncoderTestArguments(
+          encoder,
+          3072,
+          3072,
+          rate,
+          outputPath: '/w/t.mkv',
+          markLeftRight: marked,
+        );
+        expect(
+          probe,
+          videoSegmentArguments(
+            encoder: encoder,
+            width: 3072,
+            height: 3072,
+            rate: rate,
+            segmentPath: '/w/t.mkv',
+            markLeftRight: marked,
+          ),
+        );
+      }
+    }
+    final hardware = videoEncoderTestArguments(VideoEncoder.h264MfHardware, 3072, 3072, rate, outputPath: '/w/t.mkv');
+    expect(hardware, isNot(contains('lavfi')));
+    expect(hardware, containsAllInOrder(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', '3072x3072', '-i', 'pipe:0']));
+    // 0.15 bit a pixel at 3072 x 3072 and 29.97 fps, as the job
+    expect(hardware, containsAllInOrder(['-c:v', 'h264_mf', '-hw_encoding', '1', '-b:v', '42424903']));
+    expect(hardware.sublist(hardware.length - 3), ['-f', 'matroska', '/w/t.mkv']);
+    expect(videoEncoderTestFrames, 30);
+    expect(videoTestCheckArguments('/w/t.mkv'), containsAllInOrder(['-count_frames', '-select_streams', 'v:0']));
     expect(
-      probe,
-      containsAllInOrder(['-f', 'lavfi', '-i', 'color=c=gray:s=3840x1080:r=30000/1001', '-frames:v', '30']),
+      videoTestFrameCount({
+        'streams': [
+          {'codec_name': 'h264', 'nb_read_frames': '30'},
+        ],
+      }),
+      30,
     );
-    expect(probe.sublist(probe.length - 3), ['-f', 'null', '-']);
+    expect(videoTestFrameCount({'streams': <Object?>[]}), isNull);
+    expect(videoTestFrameCount('nothing'), isNull);
     final segment = videoSegmentArguments(
       encoder: VideoEncoder.h264VaapiFull,
       width: 2160,
@@ -107,6 +143,65 @@ void main() {
       'matroska',
       '/w/seg-0001.seg',
     ]);
+  });
+
+  test('a segment made again by another encoder, frame for frame, its marks kept', () {
+    final again = videoSegmentTranscodeArguments(
+      encoder: VideoEncoder.h264Mf,
+      width: 2048,
+      height: 2048,
+      rate: const VideoRate(30, 1),
+      inputPath: '/w/seg-0001.mkv',
+      segmentPath: '/w/seg-0001.mkv.remade',
+      markLeftRight: false,
+    );
+    expect(again, containsAllInOrder(['-i', '/w/seg-0001.mkv', '-map', '0:v:0', '-fps_mode', 'passthrough']));
+    expect(again, containsAllInOrder(['-c:v', 'h264_mf', '-b:v', '18874368', '-g', '60']));
+    expect(again, isNot(contains('-hw_encoding')));
+    expect(again, isNot(contains('stereo_mode=left_right')));
+    expect(again.sublist(again.length - 3), ['-f', 'matroska', '/w/seg-0001.mkv.remade']);
+  });
+
+  test('the end of what FFmpeg said: its last lines, the addresses of its contexts left out', () {
+    const said =
+        '[out#0/matroska @ 000001c1cb674b40] Could not write header (incorrect codec parameters ?): Invalid data\r\n'
+        '\n'
+        '[vf#0:0 @ 000001c1cb675440] Error sending frames to consumers\n';
+    expect(
+      videoProgramTail(said),
+      '[out#0/matroska] Could not write header (incorrect codec parameters ?): Invalid data\n'
+      '[vf#0:0] Error sending frames to consumers',
+    );
+    expect(videoProgramTail([for (var i = 0; i < 10; i++) 'line $i'].join('\n')).split('\n'), [
+      for (var i = 4; i < 10; i++) 'line $i',
+    ]);
+    expect(videoProgramTail(''), '');
+  });
+
+  test('the error of a dead end is read back: encoder, frame, smaller size, FFmpeg\'s words', () {
+    final message = videoEncoderDeadEndMessage(
+      encoder: VideoEncoder.h264Mf,
+      width: 3072,
+      height: 3072,
+      smaller: 2048,
+      said: 'Could not write header\nsecond line',
+    );
+    expect(
+      message,
+      'The encoder h264Mf stopped at 3072x3072 (smaller: 2048x2048): Could not write header\nsecond line',
+    );
+    final read = videoEncoderDeadEndOf(message)!;
+    expect(read.encoder, VideoEncoder.h264Mf);
+    expect(read.frame, '3072 x 3072');
+    expect(read.smaller, '2048 x 2048');
+    expect(read.said, 'Could not write header\nsecond line');
+    final flat = videoEncoderDeadEndOf(
+      videoEncoderDeadEndMessage(encoder: VideoEncoder.svtAv1, width: 3840, height: 1080, said: ''),
+    )!;
+    expect(flat.smaller, isNull);
+    expect(flat.said, 'no word from FFmpeg');
+    expect(videoEncoderDeadEndOf('The decoder stopped with 1: x'), isNull);
+    expect(videoEncoderName(VideoEncoder.h264MfHardware), 'H.264 hardware (Media Foundation)');
   });
 
   test('the final mux: segments, every audio track copied or made AAC, the source\'s tags, our keys', () {

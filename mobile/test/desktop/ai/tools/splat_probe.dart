@@ -15,19 +15,27 @@
 //
 //   splat_probe install --mirror DIR --components DIR [--platform windows|linux]
 //       the archives of COLMAP and Brush of the mirror (colmap-cpu-<system>-x64.zip, brush-vulkan-<system>-x64.zip,
-//       the names of the catalogue), each checked against its SHA-256 in DIR/SHA256SUMS before anything is unpacked,
-//       unpacked once into DIR/engines/<id>/ with their licences (licenses/ must be there); an archive installed
-//       already with the same sum is left as it is
+//       the names of the catalogue), each checked against its SHA-256 in DIR/SHA256SUMS before anything is unpacked
+//       (without that file, against the size and the sum of the catalogue: the archives of ai-components-4 as the app
+//       downloads them), unpacked once into DIR/engines/<id>/ with their licences (licenses/ must be there); an
+//       archive installed already with the same sum is left as it is
 //   splat_probe run (--components DIR | --colmap EXE --brush EXE) --photos DIR --out DIR [--name salon]
 //       [--work-root DIR] [--cache DIR] [--steps N] [--max-gaussians N] [--resolution N] [--subject place|object]
-//       [--ply] [--video] [--card nvidia-smi|fake-rtx] [--need-mib N] [--cancel-at STAGE[:COUNT]] [--launcher RUN]
-//       [--env NAME=VALUE]...
-//       a scene of the JPEG photos of DIR (in the order of their names, each a member read in place and summed, as a
-//       photo of the library is) written to <out>/<name>_splat.spz (and .ply), through the engine of the app. The
-//       photos are copied as they are into one camera: the preparation of lot SP5 needs Flutter, so the photos of an
-//       essay are given prepared already (1 600 pixels at most). The card is read from nvidia-smi on the PC, or is
-//       the RTX the fake Brush knows. A second run of the same photos and settings in the same work root starts again
-//       from the poses the first one kept (Retry). --env goes to COLMAP and Brush (the fakes take their modes so).
+//       [--ply] [--video] [--card nvidia-smi|fake-rtx|report:FILE] [--software-card] [--need-mib N]
+//       [--cancel-at STAGE[:COUNT]] [--launcher RUN] [--stall-seconds N] [--env NAME=VALUE]...
+//       a scene of the JPEG (or PNG) photos of DIR (in the order of their names, each a member read in place and
+//       summed, as a photo of the library is) written to <out>/<name>_splat.spz (and .ply), through the engine of the
+//       app. The photos are copied as they are into one camera, or into one camera per folder when DIR holds folders
+//       (images/cam0 and cam1 of make_splat_dataset.py): the preparation of lot SP5 needs Flutter, so the photos of an
+//       essay are given prepared already (1 600 pixels at most). The card is read from nvidia-smi on the PC, is the
+//       RTX the fake Brush knows, or is the dedicated card of Vulkan with the most memory among those of FILE, the JSON
+//       of the probe of the graphics cards of the app (immuch360 --immuch360-gpu-probe=FILE): the rule of the gate
+//       (splatCardIn of backends.dart, the choice splatCardOf of hardware_gate.dart takes). --software-card, for the end
+//       to end check of the CI only (lot L03 of the desktop parity plan), takes Mesa's software device of Vulkan
+//       (lavapipe) when there is no dedicated card, and says so. A second run of the same photos and settings in the
+//       same work root starts again from the poses the first one kept (Retry). --env goes to COLMAP and Brush (the
+//       fakes take their modes so). --stall-seconds replaces the silence after which Brush is stopped (300 s), for
+//       the processor of the CI, which compiles its kernels slowly.
 //
 // Exit codes: 0 done, 1 a failure (its code and message in the last JSON line), 2 bad arguments, 3 cancelled.
 
@@ -74,7 +82,7 @@ Future<void> main(List<String> arguments) async {
       _usage('unexpected $name');
     }
     final key = name.substring(2);
-    if (key == 'ply' || key == 'video') {
+    if (key == 'ply' || key == 'video' || key == 'software-card') {
       options[key] = 'true';
     } else if (i + 1 < arguments.length) {
       final value = arguments[++i];
@@ -107,18 +115,24 @@ Future<int> _install(Map<String, String> options) async {
   final mirror = Directory(options['mirror'] ?? _usage('--mirror'));
   final components = Directory(options['components'] ?? _usage('--components'));
   final sumsFile = File(p.join(mirror.path, 'SHA256SUMS'));
-  if (!sumsFile.existsSync()) {
-    _event('failed', {'code': 'componentsMissing', 'message': 'No SHA256SUMS in ${mirror.path}'});
-    return 1;
-  }
+  // Without SHA256SUMS: the sums of the catalogue, the archives of the release as the app downloads them
+  final catalogue = !sumsFile.existsSync();
   final sums = <String, String>{
-    for (final line in sumsFile.readAsLinesSync())
-      if (RegExp(r'^([0-9a-f]{64})\s+\*?(.+)$').firstMatch(line.trim()) case final match?)
-        p.basename(match.group(2)!): match.group(1)!,
+    if (!catalogue)
+      for (final line in sumsFile.readAsLinesSync())
+        if (RegExp(r'^([0-9a-f]{64})\s+\*?(.+)$').firstMatch(line.trim()) case final match?)
+          p.basename(match.group(2)!): match.group(1)!,
   };
   for (final component in _componentsOf(options['platform'] ?? (Platform.isWindows ? 'windows' : 'linux'))) {
     final archive = File(p.join(mirror.path, component.assetName));
-    final expected = sums[component.assetName];
+    final expected = catalogue ? component.sha256 : sums[component.assetName];
+    if (catalogue && archive.existsSync() && archive.lengthSync() != component.size) {
+      _event('failed', {
+        'code': 'componentsMissing',
+        'message': '${component.assetName}: ${archive.lengthSync()} bytes, not the ${component.size} of the catalogue',
+      });
+      return 1;
+    }
     if (!archive.existsSync() || expected == null) {
       _event('failed', {'code': 'componentsMissing', 'message': '${component.assetName}: not in the mirror'});
       return 1;
@@ -179,11 +193,12 @@ Future<int> _install(Map<String, String> options) async {
   return 0;
 }
 
-/// A photo of the essay: read in place, summed at each read
+/// A photo of the essay: read in place, summed at each read; [folder] names its camera when the photos are in folders
 class _Photo implements SplatMember {
-  _Photo(this.file, this.taken);
+  _Photo(this.file, this.taken, {this.folder});
 
   final File file;
+  final String? folder;
   @override
   final DateTime taken;
 
@@ -217,14 +232,16 @@ Future<SplatPrepared> _copyPhotos(
   required NativeCancelFlag cancel,
   required void Function(int done, int total) onProgress,
 }) async {
-  final folder = Directory(p.join(imagesFolder, video ? 'video' : 'cam1'))..createSync(recursive: true);
   for (final (index, member) in members.indexed) {
     if (cancel.isCancelled) {
       throw const BackendException(ImmersiveErrorCode.cancelled, 'Cancelled');
     }
+    final camera = video ? 'video' : (member is _Photo ? member.folder : null) ?? 'cam1';
+    final folder = Directory(p.join(imagesFolder, camera))..createSync(recursive: true);
     final source = await member.load(cancel);
     try {
-      await File(source.path!).copy(p.join(folder.path, '${'${index + 1}'.padLeft(5, '0')}.jpg'));
+      final extension = p.extension(source.path!).toLowerCase() == '.png' ? '.png' : '.jpg';
+      await File(source.path!).copy(p.join(folder.path, '${'${index + 1}'.padLeft(5, '0')}$extension'));
     } finally {
       await member.release();
     }
@@ -267,6 +284,32 @@ Future<GpuReport> _nvidiaSmi() async {
   );
 }
 
+/// The card of the report of the probe of the app at [path] by the rule of the gate (splatCardIn of backends.dart,
+/// which splatCardOf takes: a dedicated card of Vulkan 1.2, an integrated one refused); with [software], Mesa's
+/// software device of Vulkan (lavapipe) when there is none: the end to end check of the CI only
+Future<BrushCard> _reportCard(String path, {required bool software, required int need}) async {
+  final report = GpuReport.fromJson(jsonDecode(await File(path).readAsString()));
+  final chosen = splatCardIn(report);
+  var found = chosen?.kind == GpuKind.discrete ? chosen : null;
+  if (found == null) {
+    final lavapipe = software
+        ? report.adapters.where((adapter) => adapter.source == 'vulkan' && adapter.kind == GpuKind.cpu).firstOrNull
+        : null;
+    _event('gate', {
+      'refusal': 'no dedicated card of Vulkan',
+      'card': null,
+      'cards': [for (final adapter in report.adapters) '${adapter.name} (${adapter.kind.json}, ${adapter.source})'],
+      'softwareCard': lavapipe?.name,
+    });
+    if (lavapipe == null) {
+      return const BrushCardRefused('gpuNone');
+    }
+    found = lavapipe;
+  }
+  _event('card', {'name': found.name, 'kind': found.kind.json, 'free': found.freeMemory, 'need': need});
+  return found.freeMemory >= need ? BrushCardReady(found, report) : BrushCardWait(found.freeMemory);
+}
+
 /// The RTX the fake Brush knows
 const _fakeRtx = GpuAdapter(
   name: 'NVIDIA GeForce RTX 4060 Laptop GPU',
@@ -299,18 +342,34 @@ Future<int> _run(Map<String, String> options, Map<String, String> environment) a
     trainingResolution: int.tryParse(options['resolution'] ?? '') ?? SplatV1.trainingResolution,
     keepPly: options['ply'] == 'true',
   );
-  final photos = [
-    for (final entity in photosFolder.listSync())
-      if (entity is File && RegExp(r'\.jpe?g$', caseSensitive: false).hasMatch(entity.path)) entity,
+  List<File> photosOf(Directory folder) => [
+    for (final entity in folder.listSync())
+      if (entity is File && RegExp(r'\.(jpe?g|png)$', caseSensitive: false).hasMatch(entity.path)) entity,
   ]..sort((a, b) => p.basename(a.path).compareTo(p.basename(b.path)));
+  // One camera per folder when the photos are in folders, in the order of their names
+  final cameras = [
+    for (final entity in photosFolder.listSync())
+      if (entity is Directory) entity,
+  ]..sort((a, b) => p.basename(a.path).compareTo(p.basename(b.path)));
+  final photos = [
+    if (cameras.isEmpty)
+      for (final file in photosOf(photosFolder)) (file, null)
+    else
+      for (final camera in cameras)
+        for (final file in photosOf(camera)) (file, p.basename(camera.path)),
+  ];
   final base = DateTime.utc(2026, 11, 1);
-  final members = [for (final (index, file) in photos.indexed) _Photo(file, base.add(Duration(seconds: index)))];
+  final members = [
+    for (final (index, (file, folder)) in photos.indexed)
+      _Photo(file, base.add(Duration(seconds: index)), folder: folder),
+  ];
   if (members.isEmpty) {
-    _usage('no JPEG photos in ${photosFolder.path}');
+    _usage('no JPEG or PNG photos in ${photosFolder.path}');
   }
 
   final launcher = options['launcher'];
-  final runner = ManagedProcessRunner(linuxLauncher: launcher == null ? null : p.absolute(launcher));
+  final absolute = launcher == null ? null : p.absolute(launcher);
+  final runner = ManagedProcessRunner(linuxLauncher: absolute, macLauncher: absolute);
   final need = (int.tryParse(options['need-mib'] ?? '') ?? SplatV1.freeGraphicsMemory ~/ (1 << 20)) << 20;
   final card = options['card'] ?? 'nvidia-smi';
   final roots = [if (options['work-root'] case final root?) SplatWorkRoot(Directory(root)) else ...splatWorkRoots()];
@@ -322,10 +381,20 @@ Future<int> _run(Map<String, String> options, Map<String, String> environment) a
       brush: brush,
       cacheRoot: Directory(options['cache'] ?? p.join(out.path, 'brush-cache')),
       recheck: const Duration(seconds: 5),
+      stallTimeout: options['stall-seconds'] == null
+          ? SplatV1.brushSilence
+          : Duration(seconds: int.parse(options['stall-seconds']!)),
       environment: environment,
       cardCheck: () async {
         if (card == 'fake-rtx') {
           return const BrushCardReady(_fakeRtx, GpuReport(adapters: [_fakeRtx]));
+        }
+        if (card.startsWith('report:')) {
+          return _reportCard(
+            card.substring('report:'.length),
+            software: options['software-card'] == 'true',
+            need: need,
+          );
         }
         final report = await _nvidiaSmi();
         final found = report.adapters.isEmpty ? null : report.adapters.first;

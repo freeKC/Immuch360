@@ -5,12 +5,17 @@
 // hour old. Nothing is ever sent to the server: the 3D photo goes to a folder of this computer (destination.dart).
 //
 // A copy that finds no room fails as a disk full, which pauses the queue as for the 3D photo itself.
+//
+// A 3D video reads the same original, downloaded whole by its job before the conversion (video_original_copy.dart):
+// [ServerOriginalSource.openBytes] asks for it from an offset with a Range request, so that a download stopped goes on
+// where it stopped.
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/creator/original_bytes.dart';
 import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/files/saved_files.dart';
@@ -21,6 +26,9 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 final _log = Logger('ServerOriginalSource');
+
+/// The kind of a [ServerOriginalSource] in its descriptor
+const serverOriginalKind = 'immich';
 
 /// The folder of the temporary copies in the temporary folder of the system
 const aiCopiesFolderName = 'immuch360-ai';
@@ -34,12 +42,13 @@ typedef OriginalFetcher = Future<http.StreamedResponse> Function(Uri url);
 var _copies = 0;
 
 /// A photo of the Immich server, copied before its conversion
-class ServerOriginalSource implements ConversionSource {
+class ServerOriginalSource implements DownloadableOriginal {
   ServerOriginalSource({
     required this.name,
     required this.remoteId,
     required this.endpoint,
     required this._fetch,
+    this._fetchRange,
     this.exif = const ImmersiveExif(),
     Future<Directory> Function()? copiesFolder,
     Future<String> Function(String path, NativeCancelFlag cancel)? hash,
@@ -55,6 +64,9 @@ class ServerOriginalSource implements ConversionSource {
   @override
   final ImmersiveExif exif;
   final OriginalFetcher _fetch;
+
+  /// The request of the original from an offset, for the download of a 3D video; null: from the first byte, by [_fetch]
+  final OriginalRangeFetcher? _fetchRange;
   final Future<Directory> Function() _copiesFolder;
   final Future<String> Function(String path, NativeCancelFlag cancel) _hash;
 
@@ -123,6 +135,29 @@ class ServerOriginalSource implements ConversionSource {
     } on FileSystemException catch (error) {
       throw ConversionException(ImmersiveErrorCode.sourceLost, error.osError?.message ?? error.message);
     }
+  }
+
+  /// What video_jobs.json keeps of a 3D video of the server: the session of the app gives the rest at the next start
+  @override
+  Map<String, Object?> get descriptor => {
+    'kind': serverOriginalKind,
+    'name': name,
+    'remoteId': remoteId,
+    'endpoint': endpoint,
+  };
+
+  @override
+  Future<OriginalBytes> openBytes({int offset = 0, Future<void>? abort}) async {
+    final ranged = _fetchRange;
+    final http.StreamedResponse response;
+    try {
+      response = ranged == null ? await _fetch(url) : await ranged(url, offset: offset, abort: abort);
+    } on http.RequestAbortedException {
+      throw const ConversionException(ImmersiveErrorCode.cancelled);
+    } on Exception catch (error) {
+      throw ConversionException(ImmersiveErrorCode.sourceLost, '$error');
+    }
+    return originalBytesOf(response, ranged == null ? 0 : offset, 'server');
   }
 
   /// A write of the copy that failed: a disk full pauses the queue, anything else fails the photo

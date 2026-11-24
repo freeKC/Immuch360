@@ -15,8 +15,10 @@ import 'package:dbus/dbus.dart';
 import 'package:ffi/ffi.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/thread_priority.dart';
+import 'package:immich_mobile/desktop/ai/ort/depth_provider.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
+import 'package:immich_mobile/desktop/ai/video3d/sphere_video_worker.dart';
 import 'package:immich_mobile/desktop/ai/video3d/vda_window_loop.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_frame_ops.dart';
@@ -74,6 +76,11 @@ class VideoWorkerSetup {
     this.intraOpThreads,
     this.cpuMemArena = true,
     this.lowPriority = true,
+    this.sphereShiftDegrees,
+    this.cardLibrary,
+    this.depthDevice = depthDeviceAuto,
+    this.allowSoftwareCard = false,
+    this.depthCardMemory,
   });
 
   final String ortLibrary;
@@ -94,6 +101,22 @@ class VideoWorkerSetup {
 
   /// The threads of the session lowered as those of the photos (thread_priority.dart)
   final bool lowPriority;
+
+  /// A 360° video: the shift of the nearest point at the equator (the worker of the sphere, sphere_video_worker.dart,
+  /// its faces of modelWidth x modelWidth); null for a flat video
+  final double? sphereShiftDegrees;
+
+  /// The DirectML build of ONNX Runtime (Windows), null when this computer has none: the processor then
+  final String? cardLibrary;
+
+  /// Where the depth model runs, as "This computer" says (depth_provider.dart): auto, processor or card: then the name
+  final String depthDevice;
+
+  /// The renderer of Windows on the processor (WARP) counted as a card: the CI only
+  final bool allowSoftwareCard;
+
+  /// video_depth_cards.json, the cards whose check gave another depth (DepthCardMemory); null: none kept
+  final String? depthCardMemory;
 }
 
 /// The worker of a job in an isolate of its own: the frames go there as TransferableTypedData, the side by side frames
@@ -199,6 +222,12 @@ class IsolateVideoFrameWorker implements VideoFrameWorker {
   }
 
   @override
+  Future<VideoWorkerReport> report() async {
+    final (lines, stages) = await _call<(List<String>, Map<String, int>)>('report');
+    return VideoWorkerReport(lines: lines, stages: stages);
+  }
+
+  @override
   Future<void> close() async {
     if (_closed) {
       return;
@@ -225,52 +254,94 @@ class _WorkerError {
 void _workerMain((SendPort, VideoWorkerSetup) start) {
   final (replies, setup) = start;
   final commands = ReceivePort('video3d commands');
-  OrtSession? session;
+  DepthSession? depth;
   OrtRunOptions? options;
   VideoFrameOps? ops;
-  LocalVideoFrameWorker? worker;
+  VideoFrameWorker? worker;
+  final lines = <String>[];
   try {
-    final runtime = OrtRuntime.load(setup.ortLibrary);
     final settings = OrtSessionSettings(
       intraOpThreads: setup.intraOpThreads ?? math.max(1, Platform.numberOfProcessors - 2),
       cpuMemArena: setup.cpuMemArena,
     );
-    session = setup.lowPriority
-        ? ComputePriority(
-            ThreadPriorityPlatform.system(),
-          ).lowerThreadsBornDuring(() => runtime.openSession(setup.modelPath, settings: settings)).value
-        : runtime.openSession(setup.modelPath, settings: settings);
-    final runOptions = options = runtime.createRunOptions();
-    final model = session;
-    ops = nativeVideoFrameOps(threads: 2) ?? const DartVideoFrameOps();
-    worker = LocalVideoFrameWorker(
-      ops: ops,
-      model: (input, width, height) => model
-          .runNamed(
-            {
-              model.inputs.first.name: OrtTensor([1, vdaWindowLength, 3, height, width], input),
-            },
-            outputs: [model.outputs.first.name],
-            options: runOptions,
-          )
-          .values
-          .single
-          .values,
-      eyeWidth: setup.eyeWidth,
-      eyeHeight: setup.eyeHeight,
-      modelWidth: setup.modelWidth,
-      modelHeight: setup.modelHeight,
-      relief: VideoReliefSettings(
-        parallax: setup.parallax,
-        convergence: setup.convergence,
-        packing: setup.half ? VideoSbsPacking.half : VideoSbsPacking.full,
-        edgeFade: setup.edgeFade,
-      ),
-      alignment: setup.alignment,
+    final priority = setup.lowPriority ? ComputePriority(ThreadPriorityPlatform.system()) : null;
+    OrtSession wrap(OrtSession Function() open) =>
+        priority == null ? open() : priority.lowerThreadsBornDuring(open).value;
+    final opened = depth = openDepthSession(
+      processorLibrary: setup.ortLibrary,
+      cardLibrary: setup.cardLibrary,
+      modelPath: setup.modelPath,
+      width: setup.modelWidth,
+      height: setup.sphereShiftDegrees != null ? setup.modelWidth : setup.modelHeight,
+      settings: settings,
+      choice: setup.depthDevice,
+      allowSoftware: setup.allowSoftwareCard,
+      wrap: wrap,
+      cardMemory: switch (setup.depthCardMemory) {
+        final String path => DepthCardMemory(path),
+        null => null,
+      },
     );
+    lines.addAll(opened.lines);
+    final runOptions = options = opened.runtime.createRunOptions();
+    ops = nativeVideoFrameOps(threads: 2) ?? const DartVideoFrameOps();
+    Float32List runOn(OrtSession model, Float32List input, int width, int height) => model
+        .runNamed(
+          {
+            model.inputs.first.name: OrtTensor([1, vdaWindowLength, 3, height, width], input),
+          },
+          outputs: [model.outputs.first.name],
+          options: runOptions,
+        )
+        .values
+        .single
+        .values;
+    // A card that fails during the job (a driver reset, its memory full, values that are not numbers): the window run
+    // again on the processor of the same library, so that the options Cancel and Pause stop stay those of the job
+    Float32List run(Float32List input, int width, int height) => runDepthWindow(
+      onCard: opened.session.provider.isGraphicsCard,
+      run: () => runOn(opened.session, input, width, height),
+      toProcessor: (reason) {
+        final card = opened.plan.title;
+        opened.session.close();
+        opened.session = wrap(() => opened.runtime.openSession(setup.modelPath, settings: settings));
+        opened.plan = const DepthProviderPlan(OrtProvider.cpu, why: 'the graphics card failed during the job');
+        lines.add(
+          'the graphics card failed during the job ($card: $reason): the depth model goes on on the processor, '
+          'ONNX Runtime ${opened.runtime.version}, ${settings.intraOpThreads} threads',
+        );
+      },
+    );
+
+    final shift = setup.sphereShiftDegrees;
+    worker = shift != null
+        ? LocalSphereVideoFrameWorker(
+            ops: ops,
+            model: run,
+            eyeWidth: setup.eyeWidth,
+            eyeHeight: setup.eyeHeight,
+            side: setup.modelWidth,
+            shiftDegrees: shift,
+            alignment: setup.alignment,
+          )
+        : LocalVideoFrameWorker(
+            ops: ops,
+            model: run,
+            eyeWidth: setup.eyeWidth,
+            eyeHeight: setup.eyeHeight,
+            modelWidth: setup.modelWidth,
+            modelHeight: setup.modelHeight,
+            relief: VideoReliefSettings(
+              parallax: setup.parallax,
+              convergence: setup.convergence,
+              packing: setup.half ? VideoSbsPacking.half : VideoSbsPacking.full,
+              edgeFade: setup.edgeFade,
+            ),
+            alignment: setup.alignment,
+          );
     replies.send((commands.sendPort, runOptions.handle));
   } on Object catch (error) {
-    session?.close();
+    depth?.session.close();
     replies.send('$error');
     commands.close();
     return;
@@ -295,12 +366,18 @@ void _workerMain((SendPort, VideoWorkerSetup) start) {
           final counts = await job.counts();
           return (counts.windows, counts.cuts);
         }(),
+        'report' => await () async {
+          final told = await job.report();
+          final drained = [...lines, ...told.lines];
+          lines.clear();
+          return (drained, told.stages);
+        }(),
         'close' => null,
         _ => throw ArgumentError('unknown command $op'),
       };
       if (op == 'close') {
         await job.close();
-        session?.close();
+        depth?.session.close();
         options?.release();
         replies.send((id, null));
         commands.close();

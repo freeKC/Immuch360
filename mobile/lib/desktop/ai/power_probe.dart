@@ -6,7 +6,9 @@
 //    BatteryFlag (128: no system battery, a desktop);
 //  - Linux: /sys/class/power_supply, a mains supply (Mains, USB) online meaning plugged in, a battery of the system
 //    (not the battery of a mouse, scope Device) discharging meaning on battery;
-//  - macOS: not read, the panoramas waiting for a lot of their own there.
+//  - macOS (lot L51 of the desktop parity plan, 21 November 2026): the source that powers the Mac now, as IOKit gives
+//    it (IOPSCopyPowerSourcesInfo, then IOPSGetProvidingPowerSourceType): "Battery Power" on battery, "AC Power" on
+//    the mains or without a battery (a Mac mini, a Mac Studio), "UPS Power" on a UPS, which runs on its battery too.
 // Unknown is null: nothing is asked then.
 
 import 'dart:ffi';
@@ -33,6 +35,9 @@ class SystemPowerProbe implements PowerProbe {
       }
       if (Platform.isLinux) {
         return onBatteryFromPowerSupply(Directory('/sys/class/power_supply'));
+      }
+      if (Platform.isMacOS) {
+        return onBatteryFromProvidingType(macProvidingPowerSourceType());
       }
     } on Object {
       // A missing symbol or folder: not known
@@ -95,6 +100,55 @@ bool? onBatteryFromPowerSupply(Directory folder) {
     return true;
   }
   return statuses.isEmpty ? null : false;
+}
+
+/// Whether a Mac runs on its battery after the type of the source that powers it (kIOPMBatteryPowerKey,
+/// kIOPMACPowerKey, kIOPMUPSPowerKey of IOKit), null for another or none
+bool? onBatteryFromProvidingType(String? type) => switch (type) {
+  'Battery Power' || 'UPS Power' => true,
+  'AC Power' => false,
+  _ => null,
+};
+
+typedef _CopyPowerSourcesNative = Pointer<Void> Function();
+typedef _CopyPowerSources = Pointer<Void> Function();
+typedef _ProvidingTypeNative = Pointer<Void> Function(Pointer<Void>);
+typedef _ProvidingType = Pointer<Void> Function(Pointer<Void>);
+typedef _CFStringGetCStringNative = Uint8 Function(Pointer<Void>, Pointer<Utf8>, IntPtr, Uint32);
+typedef _CFStringGetCString = int Function(Pointer<Void>, Pointer<Utf8>, int, int);
+typedef _CFReleaseNative = Void Function(Pointer<Void>);
+typedef _CFRelease = void Function(Pointer<Void>);
+
+// kCFStringEncodingUTF8
+const _cfUtf8 = 0x08000100;
+
+/// The type of the source that powers this Mac ("AC Power", "Battery Power", "UPS Power"), from IOKit; null when it
+/// gives none. Throws where IOKit is not (another system)
+String? macProvidingPowerSourceType() {
+  final iokit = DynamicLibrary.open('/System/Library/Frameworks/IOKit.framework/IOKit');
+  final foundation = DynamicLibrary.open('/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation');
+  final copy = iokit.lookupFunction<_CopyPowerSourcesNative, _CopyPowerSources>('IOPSCopyPowerSourcesInfo');
+  final providing = iokit.lookupFunction<_ProvidingTypeNative, _ProvidingType>('IOPSGetProvidingPowerSourceType');
+  final cString = foundation.lookupFunction<_CFStringGetCStringNative, _CFStringGetCString>('CFStringGetCString');
+  final release = foundation.lookupFunction<_CFReleaseNative, _CFRelease>('CFRelease');
+  final info = copy();
+  if (info == nullptr) {
+    return null;
+  }
+  try {
+    // Owned by the snapshot (the get rule of Core Foundation): not released
+    final type = providing(info);
+    if (type == nullptr) {
+      return null;
+    }
+    return using((arena) {
+      const length = 64;
+      final buffer = arena<Uint8>(length).cast<Utf8>();
+      return cString(type, buffer, length, _cfUtf8) == 0 ? null : buffer.toDartString();
+    });
+  } finally {
+    release(info);
+  }
 }
 
 // SYSTEM_POWER_STATUS: ACLineStatus, BatteryFlag, BatteryLifePercent, SystemStatusFlag, then two DWORD

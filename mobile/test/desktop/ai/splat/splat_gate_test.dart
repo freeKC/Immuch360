@@ -174,13 +174,58 @@ void main() {
       expect(probe.calls, 0);
     });
 
-    test('not on Linux nor on a Mac in the first test build, without starting the probe', () async {
-      for (final abi in [Abi.linuxX64, Abi.macosArm64, Abi.macosX64]) {
+    test('not on a Mac yet, without starting the probe', () async {
+      for (final abi in [Abi.macosArm64, Abi.macosX64]) {
         final probe = FakeGpuProbe.of(FakeGpuReports.rtx4060);
         final result = await gate(probe, abi: abi).evaluate(feature: AiFeature.splatScene);
         expect(result.reason, AiGateReason.notHere, reason: '$abi');
         expect(probe.calls, 0, reason: '$abi');
       }
+    });
+  });
+
+  group('on Linux (release 51)', () {
+    test('the archives of Linux, the dedicated card', () async {
+      final result = await splat(FakeGpuReports.twoCards, abi: Abi.linuxX64);
+
+      expect(result.isAvailable, isTrue, reason: '$result');
+      expect(result.gpu!.name, rtx4060Laptop.name);
+      expect(result.fileOf(colmapLinuxComponent.id), isNotNull);
+      expect(result.fileOf(brushLinuxComponent.id), isNotNull);
+      expect(result.fileOf(colmapWindowsComponent.id), isNull);
+      expect(runtimeLoads, 0);
+    });
+
+    test(
+      'the same rules as Windows: integrated graphics refused, a card too small, a computer short of memory',
+      () async {
+        expect((await splat(FakeGpuReports.integratedOnly, abi: Abi.linuxX64)).reason, AiGateReason.splatGpuIntegrated);
+        expect(
+          (await splat(
+            GpuReport(adapters: [_card(memory: 3 * _gib)]),
+            abi: Abi.linuxX64,
+          )).reason,
+          AiGateReason.splatGpuTooSmall,
+        );
+        expect(
+          (await splat(FakeGpuReports.rtx4060, abi: Abi.linuxX64, memory: 6 * _gib + 922 * _mib)).reason,
+          AiGateReason.splatMemory,
+        );
+      },
+    );
+
+    test('Mesa on the processor (lavapipe, the CI) is no graphics card with Vulkan', () async {
+      const lavapipe = GpuAdapter(
+        name: 'llvmpipe (LLVM 15.0.7, 256 bits)',
+        kind: GpuKind.cpu,
+        localMemory: 16 * _gib,
+        vendorId: 0x10005,
+        deviceId: 0,
+        apiVersion: '1.3.230',
+        vulkanIndex: 0,
+      );
+      final result = await splat(const GpuReport(adapters: [lavapipe]), abi: Abi.linuxX64);
+      expect(result.reason, AiGateReason.gpuNone);
     });
   });
 
@@ -266,6 +311,28 @@ void main() {
       expect(choice.card!.name, irisXe.name);
       expect(choice.refusal, AiGateReason.splatGpuIntegrated);
       expect(splatCardOf(FakeGpuReports.twoCards, integratedAllowed: false).refusal, isNull);
+    });
+
+    test('the end to end check of the CI takes the card of the gate: splatCardIn is the choice of splatCardOf', () {
+      final reports = [
+        FakeGpuReports.integratedOnly,
+        FakeGpuReports.twoCards,
+        FakeGpuReports.rtx4060,
+        GpuReport(adapters: [_card(api: '1.1.130')]),
+        GpuReport(adapters: [_card()], instanceVersion: '1.1.121'),
+        GpuReport(adapters: [_card(source: 'dxgi')]),
+        GpuReport(
+          adapters: [
+            _card(name: 'Small', memory: 4 * _gib),
+            _card(name: 'Large', memory: 12 * _gib),
+          ],
+        ),
+      ];
+      for (final report in reports) {
+        expect(splatCardIn(report)?.name, splatCardOf(report).card?.name);
+      }
+      // Vulkan 1.1 only: no card for the check either, as for the gate
+      expect(splatCardIn(GpuReport(adapters: [_card(api: '1.1.130')])), isNull);
     });
   });
 

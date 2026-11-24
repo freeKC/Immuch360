@@ -253,7 +253,13 @@ void main() {
       clock.stop();
 
       expect(clock.elapsed, greaterThanOrEqualTo(timeout));
-      expect(clock.elapsed, lessThan(timeout * 1.5), reason: 'the second try waited only for what was left');
+      // The sleeps of a macOS runner last longer than asked (2.4 s measured on 22 November 2026): there the sum asked
+      // below is the proof
+      expect(
+        clock.elapsed,
+        lessThan(timeout * (Platform.isMacOS ? 3 : 1.5)),
+        reason: 'the second try waited only for what was left',
+      );
       final asked = files.waits.fold(Duration.zero, (sum, wait) => sum + wait);
       expect(asked, lessThan(timeout * 1.25), reason: 'SQLite was asked to wait one time out in all');
       // The connection keeps the time out it had

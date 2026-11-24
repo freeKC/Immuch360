@@ -151,16 +151,17 @@ class LocalFullImageProvider extends ImageProvider<LocalFullImageProvider> {
       );
     }
 
+    // The tile of the timeline: decoded in Dart too where the providers decode the tiles of the TIFFs
     final thumbnail = LocalThumbProvider(
       id: key.id,
       assetType: key.assetType,
       checksum: key.checksum,
-      decodeInDart: key.decodeInDart,
+      decodeInDart: key.decodeInDart && tiffTilesDecodedByProviders,
     );
     return OneFramePlaceholderImageStreamCompleter(
       _codec(loader, key, decode),
       // A TIFF decoded in Dart starts from its tile when it is in memory, rather than decoding its file twice
-      initialImage: key.decodeInDart && !PaintingBinding.instance.imageCache.containsKey(thumbnail)
+      initialImage: thumbnail.decodeInDart && !PaintingBinding.instance.imageCache.containsKey(thumbnail)
           ? null
           : loader.getInitialImage(thumbnail),
       informationCollector: () => <DiagnosticsNode>[

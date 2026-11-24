@@ -48,7 +48,12 @@ void main() {
     addTearDown(tester.view.reset);
   }
 
-  Future<void> pumpPanel(WidgetTester tester, ScreenPairingView view, {VoidCallback? onShowNewCode}) async {
+  Future<void> pumpPanel(
+    WidgetTester tester,
+    ScreenPairingView view, {
+    VoidCallback? onShowNewCode,
+    bool avahiUnanswered = false,
+  }) async {
     await tester.pumpWidget(
       EasyLocalization(
         supportedLocales: locales.values.toList(),
@@ -73,7 +78,12 @@ void main() {
                   height: 474,
                   child: SingleChildScrollView(
                     child: Center(
-                      child: PairingPanelContent(view: view, now: _now, onShowNewCode: onShowNewCode ?? () {}),
+                      child: PairingPanelContent(
+                        view: view,
+                        now: _now,
+                        onShowNewCode: onShowNewCode ?? () {},
+                        avahiUnanswered: avahiUnanswered,
+                      ),
                     ),
                   ),
                 ),
@@ -118,6 +128,22 @@ void main() {
     await pumpPanel(tester, _view(kind: PairingScreenKind.computer));
     expect(find.text('Your phone must be on the same network as this computer'), findsOneWidget);
     expect(find.text("If your phone can't reach this computer, allow port 8361 in its firewall."), findsOneWidget);
+    expect(find.byKey(const Key('pairing_no_avahi')), findsNothing);
+  });
+
+  testWidgets('a Linux computer without Avahi says why phones will not list it, and keeps the QR code', (tester) async {
+    await pumpPanel(tester, _view(kind: PairingScreenKind.computer), avahiUnanswered: true);
+    expect(
+      find.text(
+        'Avahi does not answer on this computer, so phones will not list it under Enter a code. Scan the QR code, '
+        'or start avahi-daemon.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byType(QrCodeView), findsOneWidget);
+    // Only a computer announces itself with Avahi
+    await pumpPanel(tester, _view(), avahiUnanswered: true);
+    expect(find.byKey(const Key('pairing_no_avahi')), findsNothing);
   });
 
   testWidgets('what the phone does shows under the code', (tester) async {

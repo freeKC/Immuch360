@@ -46,6 +46,12 @@ const aiComponentsPanoramasReleaseTag = 'ai-components-3';
 const aiComponentsSplatsReleaseTag = 'ai-components-4';
 const aiComponentsVideosReleaseTag = 'ai-components-5';
 
+/// The runtime of the graphics card of the 3D videos on Windows (release 51, ai_gpu_runtime_manifest.dart)
+const aiComponentsGpuReleaseTag = 'ai-components-6';
+
+/// The components of "Enhance (AI)" (release 51, ai_enhance_manifest.dart)
+const aiComponentsEnhanceReleaseTag = 'ai-components-7';
+
 /// The repository whose releases host the components, but the AV2 decoder ([av2DecoderRepository])
 const aiComponentsRepository = 'freeKC/Immuch360';
 
@@ -77,17 +83,19 @@ enum AiFeature {
   panorama([AiPlatform.windowsX64, AiPlatform.linuxX64]),
   stereoPanorama(_computers),
 
-  /// Windows only in the first test build (plan 2026-11-01, section 4.1): Linux once a Linux computer with a dedicated
-  /// card has run it (its archives are built from the start), macOS later
-  splatScene([AiPlatform.windowsX64]),
+  /// Windows since the first test build (plan 2026-11-01, section 4.1), Linux since release 51 (lot L03 of the desktop
+  /// parity plan: the same rule of the dedicated card, the chain run end to end on the CI on lavapipe; no Linux PC
+  /// with a dedicated card has run it yet), macOS later
+  splatScene([AiPlatform.windowsX64, AiPlatform.linuxX64]),
 
   /// The AV2 videos of the computers, decoded by the processor with the AV2 decoder: no AI, see [isAi]
   av2Video(_computers),
 
   /// A flat video made 3D side by side on the computers (experimental, video3d-plan.md): Video Depth Anything Small on
-  /// the processor and the FFmpeg program of immuch360/libmpv-builds. Not on Intel Macs: whether ONNX Runtime 1.23.2
-  /// runs the model there was not checked, as the plan asks before that platform is offered
-  stereoVideo([AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64]);
+  /// the processor and the FFmpeg program of immuch360/libmpv-builds. On Intel Macs since release 51 (lot L06 of the
+  /// desktop parity plan): ONNX Runtime 1.23.2 runs the model there, on the Intel runner of the CI and on Linux; slow
+  /// on the processor of such a Mac, whose speed was not measured on a real one
+  stereoVideo(_computers);
 
   const AiFeature(this.platforms);
 
@@ -1237,8 +1245,8 @@ const av2DecoderMacComponent = AiComponent(
 // builds T1 to T3, colmap.exe and brush_app.exe of the Windows archives signed by APROGSYS), each file with its size
 // and SHA-256, colmap.exe and brush_app.exe the programs the engines run. Neither has an official
 // source: the official binaries of COLMAP carry SiftGPU (non commercial), LSD (AGPL 3) and the GPL parts of CHOLMOD,
-// and those of Brush the LPIPS weights, whose origin is not written. The Linux entries are complete too, but the
-// splat scenes are offered on Windows only in this version (AiFeature.splatScene).
+// and those of Brush the LPIPS weights, whose origin is not written. The Linux entries, complete from the start, are
+// offered since release 51 (AiFeature.splatScene).
 
 /// The licence of COLMAP at the tag 4.2.1 (its COPYING.txt: the new BSD licence of ETH Zurich and UNC Chapel Hill)
 const _colmapLicenceUrl = 'https://github.com/colmap/colmap/blob/4.2.1/COPYING.txt';
@@ -3187,6 +3195,493 @@ const ffmpegMacComponent = AiComponent(
   ],
 );
 
+// ai-components-6: the runtime of the graphics card of the 3D videos on Windows (lot ai-360-3d-51), made by
+// .github/desktop/ai/publish_ai_components.py from the package Microsoft.ML.OnnxRuntime.DirectML 1.24.4; where the
+// app finds it: ai_gpu_runtime_manifest.dart
+
+/// ThirdPartyNotices.txt of the package (CRLF line ends, as the package holds it)
+const _directMlNotices = AiNoticesFile(
+  assetName: 'onnxruntime-directml-1.24.4-ThirdPartyNotices.txt',
+  size: 331175,
+  sha256: 'fb0af774b4d7cffc5b9d046f2aaeade2f37df2f80abf8033c95dfffcc77a8866',
+);
+
+/// ONNX Runtime 1.24.4 with DirectML for Windows x64: runtimes/win-x64/native/onnxruntime.dll of the package, as it
+/// is (its Authenticode signature kept), gzip compressed for the release
+const onnxRuntimeDirectMlComponent = AiComponent(
+  id: 'onnxruntime-directml-1.24.4-win-x64',
+  name: 'ONNX Runtime 1.24.4 DirectML',
+  version: '1.24.4',
+  kind: AiComponentKind.runtime,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'onnxruntime-directml-1.24.4-win-x64.dll.gz',
+  installPath: 'runtime/onnxruntime-directml-1.24.4/onnxruntime.dll',
+  size: 17328152,
+  sha256: 'e7eedec6a6f26dc39dc948276a75ef6d2bee3fff944d874ceed0bbd3b97bff40',
+  compression: AiCompression.gzip,
+  downloadSize: 6157978,
+  licence: 'MIT',
+  licenceUrl: 'https://www.nuget.org/packages/Microsoft.ML.OnnxRuntime.DirectML/1.24.4/License',
+  notices: _directMlNotices,
+  features: {AiFeature.stereoVideo},
+  releaseTag: aiComponentsGpuReleaseTag,
+);
+
+// ai-components-7: the components of "Enhance (AI)" (lots E1 to E3 of release 51; which level takes which:
+// ai_enhance_manifest.dart and desktop/ai/enhance/enhance_files.dart)
+
+const _gib = 1024 * 1024 * 1024;
+
+const _seedVr2Licence = 'https://huggingface.co/ByteDance-Seed/SeedVR2-3B';
+const _seedVr2Revision = 'https://huggingface.co/Comfy-Org/SeedVR2/resolve/df48879708206a403d2a61acd55578c2e80fd233';
+const _vosrLicence =
+    'https://huggingface.co/moonbox-dev/VOSR-ONNX/blob/46811283f2b767d9d634cdd3d8e465594712df61/LICENSE';
+const _vosrRevision = 'https://huggingface.co/moonbox-dev/VOSR-ONNX/resolve/46811283f2b767d9d634cdd3d8e465594712df61';
+
+const _gpuSystems = {AiPlatform.windowsX64, AiPlatform.linuxX64};
+const _vosrSystems = {AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64};
+
+/// SeedVR2 3B, int8 convrot (3,458,259,704 bytes): the DiT of Rebuild details
+const seedVr2DitComponent = AiComponent(
+  id: 'seedvr2-3b-int8-convrot',
+  name: 'SeedVR2 3B (int8)',
+  version: 'df488797',
+  kind: AiComponentKind.model,
+  platforms: _gpuSystems,
+  assetName: 'seedvr2_3b_int8_convrot.safetensors',
+  installPath: 'models/seedvr2/seedvr2_3b_int8_convrot.safetensors',
+  size: 3458259704,
+  sha256: 'c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _seedVr2Licence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_seedVr2Revision/diffusion_models/seedvr2_3b_int8_convrot.safetensors'],
+  parts: [
+    AiComponentPart(
+      assetName: 'seedvr2_3b_int8_convrot.safetensors.001',
+      size: 2039480320,
+      sha256: 'fb7ada88ecaf1ba03f53d913ae4ca13a6a8b33b4c76f92ec5822998b76cb3843',
+    ),
+    AiComponentPart(
+      assetName: 'seedvr2_3b_int8_convrot.safetensors.002',
+      size: 1418779384,
+      sha256: '51e7c59c254dea0a0d362aba225917c095cb215450d93056b96df174697a3a8b',
+    ),
+  ],
+  minGraphicsMemory: 6 * _gib,
+);
+
+/// The VAE of SeedVR2 in fp16 (501,324,814 bytes)
+const seedVr2VaeComponent = AiComponent(
+  id: 'seedvr2-ema-vae-fp16',
+  name: 'SeedVR2 VAE',
+  version: 'df488797',
+  kind: AiComponentKind.model,
+  platforms: _gpuSystems,
+  assetName: 'seedvr2_ema_vae_fp16.safetensors',
+  installPath: 'models/seedvr2/seedvr2_ema_vae_fp16.safetensors',
+  size: 501324814,
+  sha256: '20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _seedVr2Licence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_seedVr2Revision/vae/seedvr2_ema_vae_fp16.safetensors'],
+);
+
+/// stable-diffusion.cpp at 0d71f963 on Vulkan for Windows x64, the engine of Rebuild details: pending the run of our CI
+/// that builds and signs it (no size, no sum, no files: never offered before)
+const sdCppSeedVr2WindowsComponent = AiComponent(
+  id: 'sd-cpp-seedvr2-vulkan-win-x64',
+  name: 'stable-diffusion.cpp for SeedVR2 (Vulkan)',
+  version: '0d71f96-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.windowsX64},
+  assetName: 'sd-cpp-seedvr2-vulkan-win-x64.zip',
+  installPath: 'engines/sd-cpp-seedvr2-vulkan-win-x64',
+  size: 32008928,
+  sha256: '2a9aaebf1edacbeabb537f20551169ac13783e9a35b00310c0791e5d4005cf63',
+  compression: AiCompression.none,
+  licence: 'MIT',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE',
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 866,
+      sha256: 'c01236e410bf31a60957592d75be9dc0279200de38c95a035a6195cc337a0722',
+    ),
+    AiArchiveFile(
+      path: 'ggml-base.dll',
+      size: 757576,
+      sha256: 'c63a10665f6dc5fba7e1e0642715f5aebb8022fe1d217f90461848c09d09b5c6',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-alderlake.dll',
+      size: 1011016,
+      sha256: 'f72e6cc46e8f92b2c19af0e5fdbc22ef4fe4577aa7f2265368e72cca5f02734d',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-cannonlake.dll',
+      size: 1056584,
+      sha256: '3346f1561bab7089725fa86738b08ced611e6f89b6578a28dbe642e3fae5fd32',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-cascadelake.dll',
+      size: 1057608,
+      sha256: '0527db0b3f13f5d7587d5fe57188e0ba6171289a868db96df6af0b94b8d9a853',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-haswell.dll',
+      size: 1012040,
+      sha256: '823379f82508907ef8dad06bbe3878e70e1e4f8b2b0a1d084f640fb57f7e46ae',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-icelake.dll',
+      size: 1057608,
+      sha256: '407b415a2f28f29a710307abdcc1c01751c7c95389ceb95901242a2ae63f8319',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-sandybridge.dll',
+      size: 1033032,
+      sha256: '56d765c57f70632aeb14b384175289772a3c2237fa059fe0bcfcdef99e3c9dd6',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-skylakex.dll',
+      size: 1056584,
+      sha256: '1c0406d7903f8c6dbb8554e9eb96fb570c243bc79c1bed1cf6d860223d800376',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-sse42.dll',
+      size: 870728,
+      sha256: 'f758c7caf3d0c58b1aef340223eab6b18f5168f84598af308b275c0bb5225dff',
+    ),
+    AiArchiveFile(
+      path: 'ggml-cpu-x64.dll',
+      size: 871752,
+      sha256: 'e3d28a1d340968c709e7b937cab81d27bf2896c2996c1eed4b588fe5434d662c',
+    ),
+    AiArchiveFile(
+      path: 'ggml-vulkan.dll',
+      size: 40779080,
+      sha256: '187780065ef79cf3704ef61415d06f708fe858ba67cfbfc37a8c7a1048e281d0',
+    ),
+    AiArchiveFile(
+      path: 'ggml.dll',
+      size: 76104,
+      sha256: '89d886a95ed58f577fc8cc66b7208eb5ac8e4cbd25479471b9349ca5a5679e41',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 1185,
+      sha256: '26f980b88d5210da2e6024efbd56d3d2ca77de7010bc73989b660187ce53528a',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 6968,
+      sha256: '0d58c599729e84498452fce4fbafa819cc6529683d0711c60b3a965132444b70',
+    ),
+    AiArchiveFile(
+      path: 'licenses/darts-clone-LICENSE.txt',
+      size: 1491,
+      sha256: 'ed8437dc7358a40ef10afd3635ac1cd43c88fbaaaf6cd27c414f8ada5d68f447',
+    ),
+    AiArchiveFile(
+      path: 'licenses/ggml-LICENSE.txt',
+      size: 1099,
+      sha256: 'bcd8ec749126d45cb06737d0690295d73df4b6e7e194205bcf91190368f27285',
+    ),
+    AiArchiveFile(
+      path: 'licenses/oniguruma-COPYING.txt',
+      size: 1366,
+      sha256: '0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933',
+    ),
+    AiArchiveFile(
+      path: 'licenses/stable-diffusion.cpp-LICENSE.txt',
+      size: 1082,
+      sha256: '4e76049398df734a97db46f3bd4b5cbc460cb5f6bfaf737cdc3d6fbb8ab3de27',
+    ),
+    AiArchiveFile(
+      path: 'licenses/utf8proc-LICENSE.md',
+      size: 5218,
+      sha256: '767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644',
+    ),
+    AiArchiveFile(
+      path: 'msvcp140.dll',
+      size: 557728,
+      sha256: '0f885b509a685d2bbfa652fed26b5fb31d88fbdab0a978c641d1c7b8aa460aa9',
+    ),
+    AiArchiveFile(
+      path: 'msvcp140_codecvt_ids.dll',
+      size: 31872,
+      sha256: 'f2069a52880ec885ee7f0511186100eb7fada0411a2b4948fafea7735b878a18',
+    ),
+    AiArchiveFile(
+      path: 'sd-cli.exe',
+      size: 623944,
+      sha256: '749934f4449beb4c625e74a4b09c29609689868a90b6ca9a20e47e1283b2e47b',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'stable-diffusion.dll',
+      size: 38794056,
+      sha256: '12428bbcbd4fd4868254933927a152e7d279dce35c7a442579006702044797c0',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140.dll',
+      size: 124544,
+      sha256: 'd5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066',
+    ),
+    AiArchiveFile(
+      path: 'vcruntime140_1.dll',
+      size: 49792,
+      sha256: '1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f',
+    ),
+  ],
+);
+
+/// The same for Linux x64, with the launcher immuch360-run
+const sdCppSeedVr2LinuxComponent = AiComponent(
+  id: 'sd-cpp-seedvr2-vulkan-linux-x64',
+  name: 'stable-diffusion.cpp for SeedVR2 (Vulkan)',
+  version: '0d71f96-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.linuxX64},
+  assetName: 'sd-cpp-seedvr2-vulkan-linux-x64.zip',
+  installPath: 'engines/sd-cpp-seedvr2-vulkan-linux-x64',
+  size: 37741231,
+  sha256: '62ae653e2d3e49ba4c9e62741adb69e3c43e18d35a85bf2f13397ef8c798cf29',
+  compression: AiCompression.none,
+  licence: 'MIT',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE',
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 816,
+      sha256: '37a9b1833e914dffc9ac6aa86d1bab2a72bf0deae3dc80cdbd32b137fffa8cd4',
+    ),
+    AiArchiveFile(
+      path: 'immuch360-run',
+      size: 16552,
+      sha256: '779dfe821cc14fbbd8e6f7420ccba3f08509a5802f89d18a5f5a606b2dd79a7b',
+      executable: true,
+    ),
+    AiArchiveFile(
+      path: 'libggml-base.so.1',
+      size: 1002488,
+      sha256: '3aad50895abdb6caab6b14d10256cb697f968629df05d07f418b85b2b0eb19e1',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-alderlake.so',
+      size: 1299000,
+      sha256: 'e039ace50f89eaee5278aa935b05a20c169dae6f53c260f086367fefa284f988',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cannonlake.so',
+      size: 1381032,
+      sha256: '3da6ac901d6d775c556f93442251284e4c61eb9818e56a34a7b5506be6d5f2e2',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cascadelake.so',
+      size: 1397120,
+      sha256: 'bea3e369404f8cc4312b3cd40a953181babab888471283161a0f60b69126a9b6',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-cooperlake.so',
+      size: 1397120,
+      sha256: '1cea9ebd9d93ff4dc21ad56522355ede08eceafb5c438ffb72413c01edba2f95',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-haswell.so',
+      size: 1303096,
+      sha256: '719969d9ba782813e24e0474865440fcf766caedb9d41f5336f6a377e9074e3d',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-icelake.so',
+      size: 1397120,
+      sha256: 'e791c694f05b474d430bad437a843c1525ffc0377a4cf0bbf17283883fb4c260',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-ivybridge.so',
+      size: 1235880,
+      sha256: 'd1441f9e8b7424d95427c10b75e1dbe53bc11e3bed6f414709fa597c8873cc91',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-piledriver.so',
+      size: 1235880,
+      sha256: 'b3b3a7c2315f7d9eddca2526451d45b29706753a731a7a205ed2a9f0957299ec',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sandybridge.so',
+      size: 1248328,
+      sha256: 'b7c1b0904ea3610f9935600eddd7a9b78fc36bad096b48d6fc14b0db31a0b050',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sapphirerapids.so',
+      size: 1697448,
+      sha256: '9010d4153ea9114b7b18bbc23568cf9a7d7ff4f2650c6ada07d3c071d74856a8',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-skylakex.so',
+      size: 1381032,
+      sha256: '820ba034c7ff3bda86dae8bdc89ebd66273ab87464b98e096d4e1954ca513c5c',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-sse42.so',
+      size: 985408,
+      sha256: '80112abb0da4e1b9d2132b2e816771096971433c6f3ef6c85d18071408905064',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-x64.so',
+      size: 985536,
+      sha256: '282377079ea2dfacaf467074db1527ec8abbba2ee22b8a70e5938d1090eda3b9',
+    ),
+    AiArchiveFile(
+      path: 'libggml-cpu-zen4.so',
+      size: 1397120,
+      sha256: 'cc1c5f7a291f2d4a3280b9e59bdd06c6ca14627bb01ec82866d2bb46e5e3b405',
+    ),
+    AiArchiveFile(
+      path: 'libggml-vulkan.so',
+      size: 41424648,
+      sha256: 'e9344c1e8614afa15cc9c922490d5bf59ec7114cfb93729d8b99919ca774d181',
+    ),
+    AiArchiveFile(
+      path: 'libggml.so.1',
+      size: 51040,
+      sha256: '6a6b8efcaed753fd4c30e89be56846376aeef0726db59d380a97520452f0ca39',
+    ),
+    AiArchiveFile(
+      path: 'libstable-diffusion.so',
+      size: 45861728,
+      sha256: '6bce5e93470f3360f63ee5c4df17578f8c996c7664e13816a6f78ad60aaf42b8',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 1169,
+      sha256: 'dfc8ee008f776c77648f9c6692fce332ad190a2479653c6399bc2873b5d7e8be',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 6862,
+      sha256: 'de31b8552d1bdb1765a3b75781df6763f576d8762fc9a58d652a4d4733bcf70b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/darts-clone-LICENSE.txt',
+      size: 1481,
+      sha256: '155f59997298ee336602c49f9c1110f268ac394ca2197eb02647a3555935ad52',
+    ),
+    AiArchiveFile(
+      path: 'licenses/ggml-LICENSE.txt',
+      size: 1078,
+      sha256: '94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/oniguruma-COPYING.txt',
+      size: 1366,
+      sha256: '0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933',
+    ),
+    AiArchiveFile(
+      path: 'licenses/stable-diffusion.cpp-LICENSE.txt',
+      size: 1062,
+      sha256: 'b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee',
+    ),
+    AiArchiveFile(
+      path: 'licenses/utf8proc-LICENSE.md',
+      size: 5218,
+      sha256: '767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644',
+    ),
+    AiArchiveFile(
+      path: 'sd-cli',
+      size: 1185464,
+      sha256: '5199f72285d63c2999d7d00b2866d6e7e1de579dab9e1c7533c01d1323276bed',
+      executable: true,
+    ),
+  ],
+);
+
+/// VOSR 2.0 1.4B int8, DINOv2-L: a graph of Natural
+const vosrImageEncoderComponent = AiComponent(
+  id: 'vosr2-1.4b-int8-image-encoder',
+  name: 'VOSR 2.0 1.4B int8 (DINOv2-L)',
+  version: '46811283',
+  kind: AiComponentKind.model,
+  platforms: _vosrSystems,
+  assetName: 'vosr2-int8-image_encoder.onnx',
+  installPath: 'models/vosr2-int8/image_encoder/model.onnx',
+  size: 460494444,
+  sha256: '991f96af4a0dedf5da19d5a69a8c77f106138cacffdc82fadeef2397dd3c37cd',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _vosrLicence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_vosrRevision/int8/image_encoder/model.onnx'],
+);
+
+/// VOSR 2.0 1.4B int8, VAE encoder: a graph of Natural
+const vosrVaeEncoderComponent = AiComponent(
+  id: 'vosr2-1.4b-int8-vae-encoder',
+  name: 'VOSR 2.0 1.4B int8 (VAE encoder)',
+  version: '46811283',
+  kind: AiComponentKind.model,
+  platforms: _vosrSystems,
+  assetName: 'vosr2-int8-vae_encoder.onnx',
+  installPath: 'models/vosr2-int8/vae_encoder/model.onnx',
+  size: 38701657,
+  sha256: 'c3efac4d5f173692c45002aa90d79f155898697db73cfcef1fb90a56d07ea161',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _vosrLicence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_vosrRevision/int8/vae_encoder/model.onnx'],
+);
+
+/// VOSR 2.0 1.4B int8, transformer: a graph of Natural
+const vosrTransformerComponent = AiComponent(
+  id: 'vosr2-1.4b-int8-transformer',
+  name: 'VOSR 2.0 1.4B int8 (transformer)',
+  version: '46811283',
+  kind: AiComponentKind.model,
+  platforms: _vosrSystems,
+  assetName: 'vosr2-int8-transformer.onnx',
+  installPath: 'models/vosr2-int8/transformer/model.onnx',
+  size: 1409190442,
+  sha256: 'e38ab963051515bdc39fb1a096d8eb3ee895355cdc1b658bbd7ce9fa3af8bd62',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _vosrLicence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_vosrRevision/int8/transformer/model.onnx'],
+);
+
+/// VOSR 2.0 1.4B int8, VAE decoder: a graph of Natural
+const vosrVaeDecoderComponent = AiComponent(
+  id: 'vosr2-1.4b-int8-vae-decoder',
+  name: 'VOSR 2.0 1.4B int8 (VAE decoder)',
+  version: '46811283',
+  kind: AiComponentKind.model,
+  platforms: _vosrSystems,
+  assetName: 'vosr2-int8-vae_decoder.onnx',
+  installPath: 'models/vosr2-int8/vae_decoder/model.onnx',
+  size: 50689496,
+  sha256: '3ca755f97a8d57ad5f793c757f0d3a65200067d98528f110d765b4b28ef989ba',
+  compression: AiCompression.none,
+  licence: 'Apache-2.0',
+  licenceUrl: _vosrLicence,
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+  officialUrls: ['$_vosrRevision/int8/vae_decoder/model.onnx'],
+);
+
 /// Every component of this version of the app. MiDaS v2.1 Small (MIT) joins only if the measures of the Quest (Q0)
 /// ask for it.
 const aiComponents = <AiComponent>[
@@ -3217,6 +3712,15 @@ const aiComponents = <AiComponent>[
   ffmpegWindowsComponent,
   ffmpegLinuxComponent,
   ffmpegMacComponent,
+  onnxRuntimeDirectMlComponent,
+  seedVr2DitComponent,
+  seedVr2VaeComponent,
+  sdCppSeedVr2WindowsComponent,
+  sdCppSeedVr2LinuxComponent,
+  vosrImageEncoderComponent,
+  vosrVaeEncoderComponent,
+  vosrTransformerComponent,
+  vosrVaeDecoderComponent,
 ];
 
 /// The components [platform] needs for [feature] (the 3D photo when not given), the runtimes first, then the

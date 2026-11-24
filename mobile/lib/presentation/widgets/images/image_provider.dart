@@ -271,7 +271,8 @@ ImageProvider? getThumbnailImageProvider(
       size: size,
       assetType: asset.type,
       checksum: asset.checksum,
-      decodeInDart: photoDecodePathOfAsset(asset) == PhotoDecodePath.dartTiff,
+      // Linux's folder library makes the tiles of its TIFFs itself (tiffTilesDecodedByProviders)
+      decodeInDart: tiffTilesDecodedByProviders && photoDecodePathOfAsset(asset) == PhotoDecodePath.dartTiff,
       variant: localVariant ?? localThumbnailVariantOf?.call(asset),
     );
   }
