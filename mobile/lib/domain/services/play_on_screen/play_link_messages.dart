@@ -1,7 +1,8 @@
 // The messages of "Play on the TV" (play_link_protocol.dart): what the phone asks the screen, and the state the screen
-// tells back. The play message names the film on the screen's own access to the same server, never a token: the
-// Plex machine identifier of the server and the rating key of the item. Not Plex specific beyond that: "kind" leaves
-// room for an Immich asset or a file of a share later.
+// tells back. The play message names the item on the screen's own access to the same source, never a token: the
+// Plex machine identifier of the server and the rating key of a film (build 51, unchanged), an Immich asset id with
+// the phone's user id, a share's identity with a path, a Jellyfin or Emby item (build 52, [PlayTarget]). A build 51
+// screen answers "invalid" to a kind it does not know: the phone then asks to update it.
 
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 
@@ -19,6 +20,9 @@ enum ScreenPlayPhase {
   paused('paused'),
   buffering('buffering'),
   ended('ended'),
+
+  /// A photo is on the screen (build 52: never told to a phone that sent a film)
+  showing('showing'),
 
   /// It did not play: [ScreenPlayState.reason] tells why
   failed('failed');
@@ -51,7 +55,25 @@ enum ScreenPlayReason {
   busy('busy'),
 
   /// Anything else
-  failed('failed');
+  failed('failed'),
+
+  /// The screen is not signed in to an Immich server
+  notSignedIn('notSignedIn'),
+
+  /// The screen's Immich server says the asset is not for its account, at an address the phone uses too
+  otherAccount('otherAccount'),
+
+  /// The screen's Immich server does not know the asset, and the phone uses another address
+  otherServer('otherServer'),
+
+  /// The screen's account may not see the asset (a shared album or a partner it does not have)
+  notVisible('notVisible'),
+
+  /// The asset is in a locked folder: a screen never opens one
+  locked('locked'),
+
+  /// The screen has no source of that identity (a share, a Jellyfin or Emby server)
+  noSuchSource('noSuchSource');
 
   const ScreenPlayReason(this.wire);
   final String wire;
@@ -146,23 +168,381 @@ class PlayTrackChoice {
   }
 }
 
-/// What to play: an item of a Plex server, by the screen's own access to it
-class PlayItem {
-  const PlayItem({
+/// Whether an item is a video or a photo: a photo has no position, the screen shows it until the next one or Stop
+enum PlayMedia {
+  video('video'),
+  photo('photo');
+
+  const PlayMedia(this.wire);
+  final String wire;
+
+  static PlayMedia? fromWire(Object? value) => PlayMedia.values.where((media) => media.wire == value).firstOrNull;
+}
+
+/// How the picture of an item is laid out, for the screen's matching viewer: flat, a whole sphere, a half sphere, two
+/// eyes side by side or over and under
+enum PlayProjection {
+  flat('none'),
+  equirect('equirect'),
+  vr180('vr180'),
+  sbs('sbs'),
+  ou('ou');
+
+  const PlayProjection(this.wire);
+  final String wire;
+
+  bool get isSphere => this == PlayProjection.equirect || this == PlayProjection.vr180;
+
+  static PlayProjection fromWire(Object? value) =>
+      PlayProjection.values.where((projection) => projection.wire == value).firstOrNull ?? PlayProjection.flat;
+}
+
+/// The kinds of source a play names its item in
+enum PlayKind {
+  plex('plex'),
+  immich('immich'),
+  share('share'),
+  mediaServer('mediaServer');
+
+  const PlayKind(this.wire);
+  final String wire;
+}
+
+/// The protocols of a share a play may name
+enum PlayShareType {
+  smb('smb'),
+  webdav('webdav'),
+  dlna('dlna');
+
+  const PlayShareType(this.wire);
+  final String wire;
+
+  static PlayShareType? fromWire(Object? value) => PlayShareType.values.where((type) => type.wire == value).firstOrNull;
+}
+
+/// The media servers a play may name an item of, besides Plex
+enum PlayMediaServerType {
+  jellyfin('jellyfin'),
+  emby('emby');
+
+  const PlayMediaServerType(this.wire);
+  final String wire;
+
+  static PlayMediaServerType? fromWire(Object? value) =>
+      PlayMediaServerType.values.where((type) => type.wire == value).firstOrNull;
+}
+
+final _uuid = RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+final _machineId = RegExp(r'^[0-9a-zA-Z]{8,64}$');
+
+/// What a play names: the item in a source the screen reaches with its own access, never a credential. The fields
+/// sit at the top level of the play message, beside "kind", as the Plex play of build 51 has them.
+sealed class PlayTarget {
+  const PlayTarget();
+
+  PlayKind get kind;
+
+  /// Which server or source the item is of, as the state tells it back ("server")
+  String get serverKey;
+
+  /// The item in it, as the state tells it back ("itemKey")
+  String get itemKey;
+
+  PlayMedia get media => PlayMedia.video;
+  PlayProjection get projection => PlayProjection.flat;
+
+  Map<String, Object?> toJson();
+
+  /// The target of a play message; null for anything this build does not take, or takes with a field out of bounds
+  static PlayTarget? fromJson(Map<String, Object?> json) => switch (json['kind']) {
+    'plex' => PlexPlayTarget._fromJson(json),
+    'immich' => ImmichPlayTarget._fromJson(json),
+    'share' => SharePlayTarget._fromJson(json),
+    'mediaServer' => MediaServerPlayTarget._fromJson(json),
+    _ => null,
+  };
+}
+
+/// A film of a Plex server: its machine identifier and the rating key
+class PlexPlayTarget extends PlayTarget {
+  const PlexPlayTarget({required this.server, required this.item});
+
+  final String server;
+  final String item;
+
+  @override
+  PlayKind get kind => PlayKind.plex;
+
+  @override
+  String get serverKey => server;
+
+  @override
+  String get itemKey => item;
+
+  @override
+  Map<String, Object?> toJson() => {'kind': 'plex', 'server': server, 'item': item};
+
+  static PlexPlayTarget? _fromJson(Map<String, Object?> json) {
+    final server = json['server'];
+    final item = json['item'];
+    if (server is! String ||
+        !_machineId.hasMatch(server) ||
+        item is! String ||
+        !RegExp(r'^[0-9]{1,12}$').hasMatch(item)) {
+      return null;
+    }
+    return PlexPlayTarget(server: server.toLowerCase(), item: item);
+  }
+}
+
+/// A photo or a video of an Immich server: the asset id, the phone's user id and the addresses the phone reaches its
+/// server at. The screen asks its own server, with its own session, and that server decides what it may see; the
+/// addresses only choose the sentence of a refusal ("another server" or "another account").
+class ImmichPlayTarget extends PlayTarget {
+  const ImmichPlayTarget({
+    required this.asset,
+    required this.user,
+    this.endpoints = const [],
+    this.media = PlayMedia.video,
+    this.projection = PlayProjection.flat,
+  });
+
+  static const maxEndpoints = 4;
+
+  final String asset;
+  final String user;
+  final List<String> endpoints;
+  @override
+  final PlayMedia media;
+  @override
+  final PlayProjection projection;
+
+  @override
+  PlayKind get kind => PlayKind.immich;
+
+  @override
+  String get serverKey => 'immich';
+
+  @override
+  String get itemKey => asset;
+
+  @override
+  Map<String, Object?> toJson() => {
+    'kind': 'immich',
+    'asset': asset,
+    'user': user,
+    if (endpoints.isNotEmpty) 'endpoints': endpoints,
+    'media': media.wire,
+    if (projection != PlayProjection.flat) 'projection': projection.wire,
+  };
+
+  static ImmichPlayTarget? _fromJson(Map<String, Object?> json) {
+    final asset = json['asset'];
+    final user = json['user'];
+    final endpoints = json['endpoints'];
+    final media = PlayMedia.fromWire(json['media']);
+    if (asset is! String || !_uuid.hasMatch(asset) || user is! String || !_uuid.hasMatch(user) || media == null) {
+      return null;
+    }
+    if (endpoints != null && (endpoints is! List || endpoints.length > maxEndpoints)) {
+      return null;
+    }
+    final addresses = <String>[];
+    for (final endpoint in (endpoints as List?) ?? const []) {
+      final normalised = endpoint is String && endpoint.length <= 512 ? normaliseImmichEndpoint(endpoint) : null;
+      if (normalised == null) {
+        return null;
+      }
+      addresses.add(normalised);
+    }
+    return ImmichPlayTarget(
+      asset: asset.toLowerCase(),
+      user: user.toLowerCase(),
+      endpoints: addresses,
+      media: media,
+      projection: PlayProjection.fromWire(json['projection']),
+    );
+  }
+}
+
+/// An Immich server's address the way two devices can compare it: scheme and host in lower case, the port only when it
+/// is not the scheme's, the path without "/api" nor a trailing slash. Null for anything that is not http or https.
+String? normaliseImmichEndpoint(String endpoint) {
+  final uri = Uri.tryParse(endpoint.trim());
+  if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https') || uri.host.isEmpty || uri.userInfo.isNotEmpty) {
+    return null;
+  }
+  var path = uri.path;
+  while (path.endsWith('/')) {
+    path = path.substring(0, path.length - 1);
+  }
+  if (path.toLowerCase().endsWith('/api')) {
+    path = path.substring(0, path.length - 4);
+  }
+  final port = uri.hasPort && uri.port != (uri.scheme == 'https' ? 443 : 80) ? ':${uri.port}' : '';
+  return '${uri.scheme}://${uri.host.toLowerCase()}$port$path';
+}
+
+/// A file of a share (SMB, WebDAV, DLNA): the share's identity and the path from its root. The identity is the
+/// DLNA server's UDN, else "host[:port]/share" as both devices write it (network_source.dart).
+class SharePlayTarget extends PlayTarget {
+  const SharePlayTarget({
+    required this.type,
+    required this.source,
+    required this.path,
+    this.media = PlayMedia.video,
+    this.projection = PlayProjection.flat,
+  });
+
+  final PlayShareType type;
+  final String source;
+  final String path;
+  @override
+  final PlayMedia media;
+  @override
+  final PlayProjection projection;
+
+  @override
+  PlayKind get kind => PlayKind.share;
+
+  @override
+  String get serverKey => '${type.wire}:$source';
+
+  @override
+  String get itemKey => path.length > 64 ? path.substring(path.length - 64) : path;
+
+  @override
+  Map<String, Object?> toJson() => {
+    'kind': 'share',
+    'type': type.wire,
+    'source': source,
+    'path': path,
+    'media': media.wire,
+    if (projection != PlayProjection.flat) 'projection': projection.wire,
+  };
+
+  static SharePlayTarget? _fromJson(Map<String, Object?> json) {
+    final type = PlayShareType.fromWire(json['type']);
+    final source = json['source'];
+    final path = json['path'];
+    final media = PlayMedia.fromWire(json['media']);
+    if (type == null || media == null || source is! String || source.isEmpty || source.length > 300) {
+      return null;
+    }
+    if (source.contains(RegExp(r'[\s@?#\\]')) || source.contains('..')) {
+      return null;
+    }
+    if (path is! String || !isSafePlayPath(path)) {
+      return null;
+    }
+    return SharePlayTarget(
+      type: type,
+      source: source,
+      path: path,
+      media: media,
+      projection: PlayProjection.fromWire(json['projection']),
+    );
+  }
+}
+
+/// Whether [path] is a path from a share's root a screen may open: absolute, no "." nor ".." segment, no backslash, no
+/// control character, 1024 characters at most
+bool isSafePlayPath(String path) {
+  if (path.isEmpty || path.length > 1024 || !path.startsWith('/') || path.contains('\\')) {
+    return false;
+  }
+  if (path.codeUnits.any((unit) => unit < 0x20 || unit == 0x7f)) {
+    return false;
+  }
+  return path.split('/').every((segment) => segment != '.' && segment != '..');
+}
+
+/// An item of a Jellyfin or Emby server: the server's id and the item's
+class MediaServerPlayTarget extends PlayTarget {
+  const MediaServerPlayTarget({
+    required this.type,
     required this.server,
     required this.item,
+    this.media = PlayMedia.video,
+  });
+
+  final PlayMediaServerType type;
+  final String server;
+  final String item;
+  @override
+  final PlayMedia media;
+
+  @override
+  PlayKind get kind => PlayKind.mediaServer;
+
+  @override
+  String get serverKey => server;
+
+  @override
+  String get itemKey => item;
+
+  @override
+  Map<String, Object?> toJson() => {
+    'kind': 'mediaServer',
+    'type': type.wire,
+    'server': server,
+    'item': item,
+    'media': media.wire,
+  };
+
+  static MediaServerPlayTarget? _fromJson(Map<String, Object?> json) {
+    final type = PlayMediaServerType.fromWire(json['type']);
+    final server = json['server'];
+    final item = json['item'];
+    final media = PlayMedia.fromWire(json['media']);
+    final id = RegExp(r'^[0-9a-zA-Z-]{1,64}$');
+    if (type == null || media == null || server is! String || !id.hasMatch(server) || item is! String) {
+      return null;
+    }
+    if (!id.hasMatch(item)) {
+      return null;
+    }
+    return MediaServerPlayTarget(type: type, server: server.toLowerCase(), item: item, media: media);
+  }
+}
+
+/// What to play: an item ([target]) by the screen's own access to its source, the texts of the screen's prompt, where
+/// to start and the tracks
+class PlayItem {
+  /// A film of a Plex server: the play message of build 51, byte for byte
+  const PlayItem({
+    required String server,
+    required String item,
     this.serverName,
     this.title,
     this.offsetMs = 0,
     this.audio,
     this.subtitle,
-  });
+  }) : _server = server,
+       _item = item,
+       _target = null;
 
-  /// The machine identifier of the Plex server (the source's discoveryId)
-  final String server;
+  /// Any other item
+  const PlayItem.of(PlayTarget target, {this.serverName, this.title, this.offsetMs = 0, this.audio, this.subtitle})
+    : _target = target,
+      _server = null,
+      _item = null;
 
-  /// Its rating key
-  final String item;
+  final String? _server;
+  final String? _item;
+  final PlayTarget? _target;
+
+  PlayTarget get target => _target ?? PlexPlayTarget(server: _server!, item: _item!);
+
+  /// The machine identifier of the Plex server (the source's discoveryId), or what stands for the source of another
+  /// kind in the state
+  String get server => _server ?? _target!.serverKey;
+
+  /// Its rating key, or the item of another kind
+  String get item => _item ?? _target!.itemKey;
+
+  PlayKind get kind => target.kind;
+  PlayMedia get media => target.media;
 
   /// For the screen's texts only: "Add (server)", the toast. Never logged.
   final String? serverName;
@@ -172,9 +552,7 @@ class PlayItem {
   final PlayTrackChoice? subtitle;
 
   Map<String, Object?> toJson() => {
-    'kind': 'plex',
-    'server': server,
-    'item': item,
+    ...target.toJson(),
     if (serverName != null) 'serverName': serverName,
     if (title != null) 'title': title,
     'offsetMs': offsetMs,
@@ -183,29 +561,39 @@ class PlayItem {
   };
 
   static PlayItem? fromJson(Map<String, Object?> json) {
-    final server = json['server'];
-    final item = json['item'];
-    final offset = json['offsetMs'];
-    if (json['kind'] != 'plex' ||
-        server is! String ||
-        !RegExp(r'^[0-9a-zA-Z]{8,64}$').hasMatch(server) ||
-        item is! String ||
-        !RegExp(r'^[0-9]{1,12}$').hasMatch(item)) {
+    final target = PlayTarget.fromJson(json);
+    if (target == null) {
       return null;
     }
-    return PlayItem(
-      server: server.toLowerCase(),
-      item: item,
-      serverName: _shortText(json['serverName'], 64),
-      title: _shortText(json['title'], 160),
-      offsetMs: offset is int && offset > 0 && offset < const Duration(days: 2).inMilliseconds ? offset : 0,
-      audio: PlayTrackChoice.fromJson(json['audio']),
-      subtitle: PlayTrackChoice.fromJson(json['subtitle']),
+    final offset = json['offsetMs'];
+    final serverName = _shortText(json['serverName'], 64);
+    final title = _shortText(json['title'], 160);
+    final offsetMs = offset is int && offset > 0 && offset < const Duration(days: 2).inMilliseconds ? offset : 0;
+    final audio = PlayTrackChoice.fromJson(json['audio']);
+    final subtitle = PlayTrackChoice.fromJson(json['subtitle']);
+    if (target is PlexPlayTarget) {
+      return PlayItem(
+        server: target.server,
+        item: target.item,
+        serverName: serverName,
+        title: title,
+        offsetMs: offsetMs,
+        audio: audio,
+        subtitle: subtitle,
+      );
+    }
+    return PlayItem.of(
+      target,
+      serverName: serverName,
+      title: title,
+      offsetMs: offsetMs,
+      audio: audio,
+      subtitle: subtitle,
     );
   }
 
   @override
-  String toString() => 'PlayItem(plex)';
+  String toString() => 'PlayItem(${kind.wire})';
 }
 
 /// What the screen tells of its playback, numbered: the phone's long poll asks for a state after the one it has
@@ -217,6 +605,8 @@ class ScreenPlayState {
     this.durationMs,
     this.server,
     this.item,
+    this.itemKey,
+    this.media,
     this.title,
     this.tracks = const [],
     this.reason,
@@ -228,7 +618,15 @@ class ScreenPlayState {
   final int positionMs;
   final int? durationMs;
   final String? server;
+
+  /// The rating key of a Plex film, 16 characters at most (what a build 51 phone reads)
   final String? item;
+
+  /// The item of any kind, 64 characters at most (an Immich asset id is 36)
+  final String? itemKey;
+
+  /// A photo or a video; null from a build 51 screen (a film)
+  final PlayMedia? media;
   final String? title;
   final List<PlayTrack> tracks;
   final ScreenPlayReason? reason;
@@ -240,7 +638,11 @@ class ScreenPlayState {
       phase == ScreenPlayPhase.opening ||
       phase == ScreenPlayPhase.playing ||
       phase == ScreenPlayPhase.paused ||
-      phase == ScreenPlayPhase.buffering;
+      phase == ScreenPlayPhase.buffering ||
+      phase == ScreenPlayPhase.showing;
+
+  /// The item, whichever build told it
+  String? get key => itemKey ?? item;
 
   ScreenPlayState next({
     ScreenPlayPhase? phase,
@@ -248,6 +650,8 @@ class ScreenPlayState {
     int? durationMs,
     String? server,
     String? item,
+    String? itemKey,
+    PlayMedia? media,
     String? title,
     List<PlayTrack>? tracks,
     ScreenPlayReason? reason,
@@ -260,6 +664,8 @@ class ScreenPlayState {
     durationMs: durationMs ?? this.durationMs,
     server: server ?? this.server,
     item: item ?? this.item,
+    itemKey: itemKey ?? this.itemKey,
+    media: media ?? this.media,
     title: title ?? this.title,
     tracks: tracks ?? this.tracks,
     reason: clearReason ? null : (reason ?? this.reason),
@@ -273,6 +679,8 @@ class ScreenPlayState {
       other.durationMs == durationMs &&
       other.server == server &&
       other.item == item &&
+      other.itemKey == itemKey &&
+      other.media == media &&
       other.title == title &&
       other.reason == reason &&
       other.from == from &&
@@ -297,6 +705,8 @@ class ScreenPlayState {
     if (durationMs != null) 'durationMs': durationMs,
     if (server != null) 'server': server,
     if (item != null) 'item': item,
+    if (itemKey != null) 'itemKey': itemKey,
+    if (media != null) 'media': media!.wire,
     if (title != null) 'title': title,
     if (tracks.isNotEmpty) 'tracks': [for (final track in tracks) track.toJson()],
     if (reason != null) 'reason': reason!.wire,
@@ -318,6 +728,8 @@ class ScreenPlayState {
       durationMs: duration is int && duration > 0 ? duration : null,
       server: _shortText(json['server'], 64),
       item: _shortText(json['item'], 16),
+      itemKey: _shortText(json['itemKey'], 64),
+      media: PlayMedia.fromWire(json['media']),
       title: _shortText(json['title'], 160),
       tracks: [
         if (tracks is List)
