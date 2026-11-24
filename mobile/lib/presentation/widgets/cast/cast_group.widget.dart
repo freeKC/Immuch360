@@ -111,9 +111,17 @@ class _CastGroupState extends ConsumerState<CastGroup> {
         context: context,
         builder: (dialog) => AlertDialog(
           key: const Key('cast_cannot_dialog'),
-          title: Text(_film ? t.cast_cannot_title(device: target.name) : t.cast_cannot_title_item(device: target.name)),
+          title: Text(
+            widget.request.isPhoto
+                ? t.cast_cannot_title_photo(device: target.name)
+                : _film
+                ? t.cast_cannot_title(device: target.name)
+                : t.cast_cannot_title_item(device: target.name),
+          ),
           content: Text(
-            _film
+            widget.request.isPhoto
+                ? t.cast_cannot_body_photo(reasons: castReasonsText(t, check.reasons))
+                : _film
                 ? t.cast_cannot_body(reasons: castReasonsText(t, check.reasons))
                 : t.cast_cannot_body_item(reasons: castReasonsText(t, check.reasons)),
           ),
@@ -204,9 +212,9 @@ class _CastGroupState extends ConsumerState<CastGroup> {
     final scheme = context.colorScheme;
     final photo = film?.photo ?? false;
     final version = film == null || photo ? null : castVersionFor(film, castProfileOf(target.model));
-    final check = version?.check;
+    final check = photo ? film?.photoCheck : version?.check;
     final verdict = photo
-        ? t.cast_shows_photo
+        ? (check == null ? t.cast_shows_photo : t.cast_cannot_show(reasons: castReasonsText(t, check.reasons)))
         : switch (check?.support) {
             null => checking ? (_film ? t.cast_checking : t.cast_checking_item) : null,
             CastSupport.yes => _film ? t.cast_plays : t.cast_plays_video,

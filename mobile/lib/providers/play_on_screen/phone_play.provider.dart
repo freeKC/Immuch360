@@ -16,6 +16,7 @@ import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
+import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
@@ -24,6 +25,7 @@ import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('PhonePlay');
@@ -76,6 +78,16 @@ final nearbyPlayScreensProvider =
 
 /// The servers each screen said it does not have, by screen id: its row offers "Add (server) to (screen)"
 final screensWithoutServerProvider = StateProvider<Map<String, Set<String>>>((_) => const {});
+
+/// The id of the Jellyfin or Emby item a path of its connection names (`/.items/(id)/(source)/(name)`), else null
+String? playMediaServerItemOfPath(String path) {
+  final segments = path.split('/').where((segment) => segment.isNotEmpty).toList();
+  if (segments.length < 3 || '/${segments.first}' != JellyfinFileSystem.itemFolder) {
+    return null;
+  }
+  final id = Uri.decodeComponent(segments[1]);
+  return RegExp(r'^[0-9a-zA-Z-]{1,64}$').hasMatch(id) ? id : null;
+}
 
 /// The source key of every Immich request: the phone has one Immich server
 const playOnImmichSource = 'immich';
@@ -185,6 +197,47 @@ class PlayOnRequest {
         projection: projection,
         asset: asset,
       ),
+    );
+  }
+
+  /// A file of a share (SMB, WebDAV, DLNA) or an item of a Jellyfin or Emby server, at [path] of its connection on
+  /// this phone; null for a source of another type, or a Jellyfin path that names no item
+  static PlayOnRequest? ofShareFile({
+    required NetworkSource source,
+    required String path,
+    required bool photo,
+    String? title,
+    int offsetMs = 0,
+  }) {
+    final media = photo ? PlayMedia.photo : PlayMedia.video;
+    final PlayTarget target;
+    if (source.type == NetworkSourceType.jellyfin) {
+      final server = (source.discoveryId ?? source.jellyfin?.serverId)?.toLowerCase();
+      final item = playMediaServerItemOfPath(path);
+      if (server == null || item == null) {
+        return null;
+      }
+      target = MediaServerPlayTarget(
+        type: (source.jellyfin?.isEmby ?? false) ? PlayMediaServerType.emby : PlayMediaServerType.jellyfin,
+        server: server,
+        item: item,
+        media: media,
+      );
+    } else {
+      final type = playShareTypeOf(source.type);
+      final key = playShareSourceKey(source);
+      if (type == null || key == null || !isSafePlayPath(path)) {
+        return null;
+      }
+      target = SharePlayTarget(type: type, source: key, path: path, media: media);
+    }
+    return PlayOnRequest.forTarget(
+      sourceId: source.id,
+      target: target,
+      serverName: source.name,
+      title: title,
+      offsetMs: photo || offsetMs < 0 ? 0 : offsetMs,
+      path: path,
     );
   }
 

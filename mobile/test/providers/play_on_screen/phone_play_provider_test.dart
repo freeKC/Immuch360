@@ -9,6 +9,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
@@ -572,5 +573,90 @@ void main() {
         expect(playback(), isNull);
       });
     }
+  });
+
+  group('shares and media servers', () {
+    NetworkSource source(
+      NetworkSourceType type, {
+      String host = 'NAS.local',
+      String share = 'Videos',
+      String? discoveryId,
+      JellyfinServerInfo? jellyfin,
+    }) => NetworkSource(
+      id: 'share-1',
+      type: type,
+      name: 'NAS',
+      host: host,
+      share: share,
+      discoveryId: discoveryId,
+      jellyfin: jellyfin,
+    );
+
+    test('a file of a share names the share and the path, never its user or password', () {
+      final request = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.smb),
+        path: '/Holidays/beach.mp4',
+        photo: false,
+        offsetMs: 4000,
+      )!;
+      final target = request.target as SharePlayTarget;
+      expect(target.type, PlayShareType.smb);
+      expect(target.source, 'nas.local/Videos');
+      expect(target.path, '/Holidays/beach.mp4');
+      expect(request.offsetMs, 4000);
+      expect(request.item.toJson().keys, isNot(contains('password')));
+
+      final dlna = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.dlna, discoveryId: 'uuid:4d696e69'),
+        path: '/0/1/a.jpg',
+        photo: true,
+        offsetMs: 4000,
+      )!;
+      expect((dlna.target as SharePlayTarget).source, 'uuid:4d696e69');
+      expect(dlna.isPhoto, isTrue);
+      expect(dlna.offsetMs, 0);
+    });
+
+    test('a Jellyfin or Emby item names the server id and the item id of its path', () {
+      final jellyfin = PlayOnRequest.ofShareFile(
+        source: source(
+          NetworkSourceType.jellyfin,
+          discoveryId: 'F00DCAFE',
+          jellyfin: const JellyfinServerInfo(serverId: 'f00dcafe', userId: 'u', product: 'emby'),
+        ),
+        path: '/.items/1234/-/Film.mkv',
+        photo: false,
+      )!;
+      final target = jellyfin.target as MediaServerPlayTarget;
+      expect(target.type, PlayMediaServerType.emby);
+      expect(target.server, 'f00dcafe');
+      expect(target.item, '1234');
+      expect(playMediaServerItemOfPath('/Films/Film.mkv'), isNull);
+    });
+
+    test('nothing for a folder of this device, or a path that climbs out', () {
+      expect(
+        PlayOnRequest.ofShareFile(source: source(NetworkSourceType.documentTree), path: '/a.jpg', photo: true),
+        isNull,
+      );
+      expect(
+        PlayOnRequest.ofShareFile(source: source(NetworkSourceType.webdav), path: '/../a.jpg', photo: true),
+        isNull,
+      );
+    });
+
+    test('a play of a share file reaches the screen whole', () async {
+      final request = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.webdav, share: '/dav'),
+        path: '/Photos/a.jpg',
+        photo: true,
+      )!;
+      expect(await controller().play(screen, address, request), PlayOnOutcome.playing);
+      final played = actions.played!.target as SharePlayTarget;
+      expect(played.type, PlayShareType.webdav);
+      expect(played.source, 'nas.local/dav');
+      expect(played.path, '/Photos/a.jpg');
+      expect(played.media, PlayMedia.photo);
+    });
   });
 }

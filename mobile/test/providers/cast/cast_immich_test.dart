@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/cast/cast_media.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/spherical_probe.dart';
@@ -304,6 +305,36 @@ void main() {
       expect(answer.headers.contentType?.mimeType, 'image/jpeg');
       await answer.drain<void>();
       expect(answer.headers.value(_sessionHeader), isNull);
+    });
+  });
+
+  group('a file of a share', () {
+    test('a JPEG photo shows; a HEIC one cannot, and says why', () {
+      PlayOnRequest photo(String name) => PlayOnRequest.ofShareFile(
+        source: const NetworkSource(id: 's', type: NetworkSourceType.smb, name: 'NAS', host: 'nas', share: 'p'),
+        path: '/2026/$name',
+        photo: true,
+      )!;
+      final jpeg = castShareInfoOf(photo('a.JPG'))!;
+      expect(jpeg.photo, isTrue);
+      expect(jpeg.contentType, 'image/jpeg');
+      expect(jpeg.photoCheck, isNull);
+      final heic = castShareInfoOf(photo('b.heic'))!;
+      expect(heic.photoCheck?.support, CastSupport.no);
+      expect(heic.photoCheck?.reasons.single.name, 'HEIC');
+    });
+
+    test('a video goes through the bridge with the format of its name', () {
+      final info = castShareInfoOf(
+        PlayOnRequest.ofShareFile(
+          source: const NetworkSource(id: 's', type: NetworkSourceType.webdav, name: 'NAS', host: 'nas', share: '/d'),
+          path: '/v/clip.avi',
+          photo: false,
+        )!,
+      )!;
+      expect(info.path, '/v/clip.avi');
+      expect(info.upstream, isNull);
+      expect(checkCastFormat(info.format, CastDeviceProfile.unknown).support, CastSupport.no);
     });
   });
 }

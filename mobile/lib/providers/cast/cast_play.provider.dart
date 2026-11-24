@@ -16,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/cast/cast_media.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/infrastructure/network/cast/cast_channel.dart';
 import 'package:immich_mobile/infrastructure/network/cast/cast_relay.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
@@ -125,7 +126,17 @@ class CastFilmInfo {
     this.photo = false,
     this.flat360 = false,
     this.contentType,
+    this.photoFormat,
   }) : assert(path != null || upstream != null);
+
+  /// A photo whose format a Cast device does not show ("HEIC", "TIFF"), null for one it shows
+  final String? photoFormat;
+
+  /// The check of a photo: a format the devices show, or not
+  CastFormatCheck? get photoCheck {
+    final format = photoFormat;
+    return format == null ? null : CastFormatCheck([CastIssue(CastIssueKind.container, CastSupport.no, format)]);
+  }
 
   final String title;
   final int? year;
@@ -249,14 +260,52 @@ Future<CastFilmInfo?> _readFilmInfo(Ref ref, PlayOnRequest request) async {
   );
 }
 
+/// The content type a Cast device shows a photo file of [fileName] with, null for a format it does not show (HEIC,
+/// TIFF, RAW: Immuch360 on a TV or the Quest shows those)
+String? castPhotoContentTypeOf(String fileName) {
+  final dot = fileName.lastIndexOf('.');
+  return switch (dot < 0 ? '' : fileName.substring(dot + 1).toLowerCase()) {
+    'jpg' || 'jpeg' => 'image/jpeg',
+    'png' => 'image/png',
+    'webp' => 'image/webp',
+    'gif' => 'image/gif',
+    'bmp' => 'image/bmp',
+    _ => null,
+  };
+}
+
+/// What the cast of a file of a share, or of a Jellyfin or Emby item, reads beforehand: the file through the media
+/// bridge, its format from its name (the bridge reads the server with the phone's own access)
+CastFilmInfo? castShareInfoOf(PlayOnRequest request) {
+  final path = request.path;
+  if (path == null) {
+    return null;
+  }
+  final name = Uri.decodeComponent(path.split('/').where((segment) => segment.isNotEmpty).lastOrNull ?? '');
+  final dot = name.lastIndexOf('.');
+  final extension = dot < 0 ? null : name.substring(dot + 1).toLowerCase();
+  return CastFilmInfo(
+    title: request.title ?? name,
+    path: path,
+    fileName: name,
+    photo: request.isPhoto,
+    contentType: request.isPhoto ? castPhotoContentTypeOf(name) : null,
+    format: CastFilmFormat(container: request.isPhoto ? null : extension),
+    photoFormat: request.isPhoto && castPhotoContentTypeOf(name) == null ? (extension ?? '').toUpperCase() : null,
+    flat360: request.target.projection.isSphere,
+  );
+}
+
 final castEnvironmentProvider = Provider<CastEnvironment>((ref) {
   return CastEnvironment(
     connect: (target) => CastSocketChannel.connect(target.host, target.port),
     localAddresses: phoneShareLocalAddresses,
     bindRelay: (address) => CastRelayServer.bind(address),
-    filmInfo: (request) => request.sourceId == playOnImmichSource
-        ? readImmichCastInfo(ref.read(castImmichEnvironmentProvider), request)
-        : _readFilmInfo(ref, request),
+    filmInfo: (request) => switch (request.kind) {
+      PlayKind.immich => readImmichCastInfo(ref.read(castImmichEnvironmentProvider), request),
+      PlayKind.plex => _readFilmInfo(ref, request),
+      PlayKind.share || PlayKind.mediaServer => Future.value(castShareInfoOf(request)),
+    },
     bridgeUrl: (sourceId, path) async {
       await ref.read(mediaBridgeProvider).start();
       return ref.read(networkConnectionsProvider).mediaUrl(sourceId, path);

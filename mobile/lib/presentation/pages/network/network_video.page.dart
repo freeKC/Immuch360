@@ -1965,11 +1965,31 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     }
   }
 
+  /// The sources whose videos "Play on..." sends
+  static const _playOnTypes = {
+    NetworkSourceType.plex,
+    NetworkSourceType.smb,
+    NetworkSourceType.webdav,
+    NetworkSourceType.dlna,
+    NetworkSourceType.jellyfin,
+  };
+
   /// The film as "Play on..." sends it: the Plex server, the rating key, where the phone's player is and its tracks;
-  /// null for a file of another share, or one the connection does not know the key of
+  /// a video of a share (its identity and path) or of a Jellyfin or Emby server (its id and the item's), where the
+  /// phone's player is; null for a folder of this device, or a file the connection does not know the key of
   PlayOnRequest? _playOnRequest() {
     final fileSystem = _shareFileSystem;
     final playback = ref.read(videoPlayerProvider(_playerKey));
+    final source = ref.read(networkSourceProvider(widget.sourceId));
+    if (source != null && source.type != NetworkSourceType.plex) {
+      return PlayOnRequest.ofShareFile(
+        source: source,
+        path: widget.path,
+        photo: false,
+        title: _name,
+        offsetMs: playback.status == VideoPlaybackStatus.completed ? 0 : playback.position.inMilliseconds,
+      );
+    }
     final tracks = _notifier.lastTracks;
     final audio = tracks.where((track) => track.type == NativeVideoTrackType.audio && track.selected).firstOrNull;
     final text = tracks.where((track) => track.type == NativeVideoTrackType.text && track.selected).firstOrNull;
@@ -2138,9 +2158,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                         child: Icon(Icons.offline_pin_rounded),
                       ),
                     ),
-                  // Play on a linked screen: a Plex film, from a phone or a tablet (a TV, the Quest and the computers
-                  // are the screens)
-                  if (video != null && canPlayOn && _shareType == NetworkSourceType.plex)
+                  // Play on a linked screen: a Plex film, a video of a share, of a Jellyfin or Emby server, from a
+                  // phone or a tablet (a TV, the Quest and the computers are the screens)
+                  if (video != null && canPlayOn && _playOnTypes.contains(_shareType))
                     IconButton(
                       key: const Key('network_video_play_on'),
                       icon: const Icon(Icons.cast_rounded),

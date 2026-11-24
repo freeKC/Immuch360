@@ -41,6 +41,8 @@ import 'package:immich_mobile/presentation/widgets/images/tiff_views.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_tiff_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_upload.widget.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on.sheet.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_back_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/providers/ai_immersive/relief_gate.provider.dart';
@@ -51,7 +53,9 @@ import 'package:immich_mobile/providers/infrastructure/local_session.provider.da
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('NetworkPhotoPage');
@@ -581,6 +585,24 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     }
   }
 
+  /// The photo at [path] as "Play on..." sends it: the share's identity and the path, never its password; null for
+  /// a source a screen cannot reach by itself (a folder of this device)
+  PlayOnRequest? _playOnRequest(String path) {
+    final source = ref.read(networkSourceProvider(widget.sourceId));
+    if (source == null) {
+      return null;
+    }
+    final name = path.split('/').where((segment) => segment.isNotEmpty).lastOrNull;
+    return PlayOnRequest.ofShareFile(source: source, path: path, photo: true, title: name);
+  }
+
+  Future<void> _playOn(String path) async {
+    final request = _playOnRequest(path);
+    if (request != null) {
+      await showPlayOnSheet(context, request);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Asked early, so that the 360° button knows where to open the photo right away
@@ -669,6 +691,14 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                         tooltip: context.t.editor_rotate_right,
                         onPressed: () => _rotate(photo, 1),
                       ),
+                    ),
+                  // Immuch360: "Play on..." of a photo of a share, from a phone or a tablet (release 52)
+                  if (photo != null && canPlayOnScreens(ref) && _playOnRequest(photo.entry.path) != null)
+                    IconButton(
+                      key: const Key('network_photo_play_on'),
+                      icon: const Icon(Icons.cast_rounded),
+                      tooltip: context.t.play_on_title,
+                      onPressed: () => unawaited(_playOn(photo.entry.path)),
                     ),
                   if (photo != null && stereoPair != null)
                     IconButton(
