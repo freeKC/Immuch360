@@ -12,6 +12,7 @@ import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on.sheet.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/cast/cast_play.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
@@ -60,10 +61,17 @@ final playOnViewerFollowProvider = Provider<void>((ref) {
       return;
     }
     final remote = ref.read(remotePlaybackProvider);
+    final cast = ref.read(castPlaybackProvider);
     // The photo before is the one the screen shows, or one swiped past while the next was waiting to go
-    final screenShows =
-        remote != null && !remote.lost && !remote.ended && (remote.isOfAsset(before) || (timer?.isActive ?? false));
-    if (!screenShows) {
+    final waiting = timer?.isActive ?? false;
+    final screenShows = remote != null && !remote.lost && !remote.ended && (remote.isOfAsset(before) || waiting);
+    final castShows =
+        !screenShows &&
+        cast != null &&
+        cast.live &&
+        cast.request.sourceId == playOnImmichSource &&
+        (cast.request.ratingKey == before.toLowerCase() || waiting);
+    if (!screenShows && !castShows) {
       return;
     }
     timer?.cancel();
@@ -77,7 +85,11 @@ final playOnViewerFollowProvider = Provider<void>((ref) {
         return;
       }
       _log.info('Play on: the viewer moved, the next item goes');
-      unawaited(ref.read(remotePlaybackProvider.notifier).showNext(request));
+      if (screenShows) {
+        unawaited(ref.read(remotePlaybackProvider.notifier).showNext(request));
+      } else {
+        unawaited(ref.read(castPlaybackProvider.notifier).castNext(request));
+      }
     });
   });
 });

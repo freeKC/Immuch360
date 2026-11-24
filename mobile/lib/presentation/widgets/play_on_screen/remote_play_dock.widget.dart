@@ -121,6 +121,7 @@ class _CastDockBarState extends ConsumerState<_CastDockBar> {
     final controller = ref.read(castPlaybackProvider.notifier);
     final duration = playback.durationMs ?? 0;
     final started = playback.phase == CastPhase.playing || playback.phase == CastPhase.paused;
+    final photo = playback.phase == CastPhase.showing || playback.request.isPhoto;
     return Material(
       key: const Key('cast_dock'),
       color: scheme.surfaceContainerHigh,
@@ -179,14 +180,15 @@ class _CastDockBarState extends ConsumerState<_CastDockBar> {
                     ),
                   ),
                   if (playback.live) ...[
-                    IconButton(
-                      key: const Key('cast_dock_play'),
-                      icon: Icon(
-                        playback.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                        semanticLabel: playback.isPlaying ? t.pause : t.play,
+                    if (!photo)
+                      IconButton(
+                        key: const Key('cast_dock_play'),
+                        icon: Icon(
+                          playback.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                          semanticLabel: playback.isPlaying ? t.pause : t.play,
+                        ),
+                        onPressed: started ? (playback.isPlaying ? controller.pause : controller.play) : null,
                       ),
-                      onPressed: started ? (playback.isPlaying ? controller.pause : controller.play) : null,
-                    ),
                     IconButton(
                       key: const Key('cast_dock_stop'),
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.cast_stop),

@@ -93,7 +93,11 @@ class PlayOnImmichAsset {
     this.locked = false,
     this.archived = false,
     this.projection = PlayProjection.flat,
+    this.asset,
   });
+
+  /// The asset itself, for the probe of a video's codecs before a cast
+  final BaseAsset? asset;
 
   final String id;
   final bool video;
@@ -179,6 +183,7 @@ class PlayOnRequest {
         locked: visibility == AssetVisibility.locked,
         archived: visibility == AssetVisibility.archive,
         projection: projection,
+        asset: asset,
       ),
     );
   }

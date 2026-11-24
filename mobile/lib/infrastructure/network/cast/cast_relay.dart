@@ -1,8 +1,10 @@
-// The relay a Cast device reads a Plex film from: a small HTTP server of the phone, bound to its address on the
-// device's network, that serves a film only under a random path made for one cast ([CastRelayLease]) and forgets it
-// when that cast ends. A request is forwarded, Range included, to the phone's media bridge on the loopback, which
-// reads the film from the Plex server with the token in a header (plex_client.dart): no token, no address of the
-// server is ever in a URL the device sees. The poster is served from memory under the same path.
+// The relay a Cast device reads a film, a photo or a video from: a small HTTP server of the phone, bound to its
+// address on the device's network, that serves an item only under a random path made for one cast
+// ([CastRelayLease]) and forgets it when that cast ends. A request is forwarded, Range included, to the phone's media
+// bridge on the loopback, which reads a Plex film from the server with the token in a header (plex_client.dart), or
+// to the phone's Immich server through the app's own HTTP client, which adds the session itself
+// ([CastRelayContent.upstream]): no token, no session, no address of the server is ever in a URL the device sees.
+// The poster is served from memory under the same path.
 //
 // Rules: GET and HEAD only, private IPv4 clients only (and the loopback, the tests), an unknown or revoked path is a
 // 404 without a body, the path never logged, a lease revoked after [CastRelayServer.leaseIdle] without a request or
@@ -13,17 +15,23 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('CastRelay');
 
-/// What a lease serves: the film from [film] (the bridge URL of its file, asked at each request so that a bridge bound
-/// again is followed), and the poster's bytes
-class CastRelayContent {
-  const CastRelayContent({required this.film, this.poster, this.posterType = 'image/jpeg'});
+/// A request of the item to its source, with the device's Range and If-Range: what the relay forwards
+typedef CastRelayUpstream = Future<http.StreamedResponse> Function(String method, Map<String, String> headers);
 
-  final Future<Uri> Function() film;
+/// What a lease serves: the item from [film] (the bridge URL of its file, asked at each request so that a bridge bound
+/// again is followed) or from [upstream] (a request of the app's own HTTP client), and the poster's bytes
+class CastRelayContent {
+  const CastRelayContent({this.film, this.upstream, this.poster, this.posterType = 'image/jpeg'})
+    : assert(film != null || upstream != null);
+
+  final Future<Uri> Function()? film;
+  final CastRelayUpstream? upstream;
   final Uint8List? poster;
   final String posterType;
 }
@@ -206,10 +214,14 @@ class CastRelayServer {
   ];
 
   Future<void> _forward(HttpRequest request, CastRelayLease lease) async {
+    final upstreamRequest = lease._content.upstream;
+    if (upstreamRequest != null) {
+      return _forwardUpstream(request, upstreamRequest);
+    }
     final response = request.response;
     final Uri upstream;
     try {
-      upstream = await lease._content.film();
+      upstream = await lease._content.film!();
     } catch (error) {
       _log.info('The film could not be found for the relay: ${error.runtimeType}');
       await _end(response, HttpStatus.badGateway);
@@ -243,6 +255,46 @@ class CastRelayServer {
     }
     // Stops reading the bridge (and the bridge the server) as soon as the device goes away
     await answer.pipe(response);
+  }
+
+  Future<void> _forwardUpstream(HttpRequest request, CastRelayUpstream upstream) async {
+    final response = request.response;
+    final headers = <String, String>{
+      HttpHeaders.rangeHeader: ?request.headers.value(HttpHeaders.rangeHeader),
+      HttpHeaders.ifRangeHeader: ?request.headers.value(HttpHeaders.ifRangeHeader),
+    };
+    final http.StreamedResponse answer;
+    try {
+      answer = await upstream(request.method, headers);
+    } catch (error) {
+      _log.info('The item could not be read for the relay: ${error.runtimeType}');
+      await _end(response, HttpStatus.badGateway);
+      return;
+    }
+    // A refusal of the server (its session ended, the asset is gone) is not the device's business
+    if (answer.statusCode >= 300) {
+      await answer.stream.drain<void>();
+      await _end(response, answer.statusCode == HttpStatus.notFound ? HttpStatus.notFound : HttpStatus.badGateway);
+      return;
+    }
+    response.statusCode = answer.statusCode;
+    for (final name in _forwardedAnswerHeaders) {
+      final value = answer.headers[name];
+      if (value != null) {
+        response.headers.set(name, value);
+      }
+    }
+    final length = answer.contentLength;
+    if (length != null && length >= 0) {
+      response.headers.contentLength = length;
+    }
+    if (request.method == 'HEAD') {
+      await answer.stream.drain<void>();
+      await response.close();
+      return;
+    }
+    await response.addStream(answer.stream);
+    await response.close();
   }
 
   static Future<void> _end(HttpResponse response, int status) async {
