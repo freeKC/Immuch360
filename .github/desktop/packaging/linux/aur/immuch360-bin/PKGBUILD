@@ -1,9 +1,10 @@
 # Maintainer: FreeKC <7538438+freeKC@users.noreply.github.com>
 #
 # Immuch360 Desktop for Arch Linux, from the .deb of a desktop release of github.com/freeKC/Immuch360: the program
-# and its libraries in /opt/immuch360, the launcher /usr/bin/immuch360, the desktop entry, the icons and the MIME types
-# of the raw camera files, as the .deb installs them. The libraries of the desktop come from Arch: GTK 3, WebKitGTK
-# 4.1, libsecret and mpv, whose libmpv plays the videos. libsmb2 (LGPL-2.1-or-later), the library of the SMB shares,
+# and its libraries in /usr/lib/immuch360 (the .deb has them in /opt/immuch360, where namcap wants no ELF file), the
+# launcher /usr/bin/immuch360, the desktop entry, the icons and the MIME types of the raw camera files. The libraries
+# of the desktop come from Arch: GTK 3, WebKitGTK 4.1, libsecret and mpv, whose libmpv plays the videos (opened when
+# the app starts, not linked, hence the warning of namcap that mpv may not be needed). libsmb2 (LGPL-2.1-or-later), the library of the SMB shares,
 # is built by the project and comes with its notice and its source inside the app. Checked by the desktop workflow of
 # the project (namcap, makepkg, the package installed in an archlinux container).
 # The source of this file: .github/desktop/packaging/linux/aur/immuch360-bin in the repository.
@@ -17,8 +18,8 @@ pkgdesc='Photos and videos, 360° included, from Immich, your folders and your n
 arch=('x86_64')
 url='https://immuch360.com'
 license=('AGPL-3.0-only' 'LGPL-2.1-or-later')
-depends=('gcc-libs' 'glib2' 'glibc' 'gtk3' 'hicolor-icon-theme' 'libepoxy' 'libsecret' 'libsoup3' 'mpv'
-         'webkit2gtk-4.1' 'xdg-user-dirs')
+depends=('at-spi2-core' 'cairo' 'fontconfig' 'gdk-pixbuf2' 'glib2' 'glibc' 'gtk3' 'harfbuzz' 'hicolor-icon-theme'
+         'libepoxy' 'libgcc' 'libsecret' 'libsoup3' 'libstdc++' 'mpv' 'pango' 'webkit2gtk-4.1' 'xdg-user-dirs')
 optdepends=('gnome-keyring: keep the passwords of the servers between two starts'
             'kwallet: keep the passwords of the servers between two starts, on KDE Plasma')
 provides=('immuch360')
@@ -37,8 +38,12 @@ prepare() {
 }
 
 package() {
-  cp -a root/opt "$pkgdir/"
-  install -Dm755 root/usr/bin/immuch360 "$pkgdir/usr/bin/immuch360"
+  # The program finds its data and its libraries next to itself, wherever it is
+  install -d "$pkgdir/usr/lib"
+  cp -a root/opt/immuch360 "$pkgdir/usr/lib/immuch360"
+  # The launcher of the .deb, pointed at /usr/lib/immuch360
+  sed 's|/opt/immuch360|/usr/lib/immuch360|g' root/usr/bin/immuch360 > immuch360.sh
+  install -Dm755 immuch360.sh "$pkgdir/usr/bin/immuch360"
   install -Dm644 root/usr/share/applications/com.aprogsys.immuch360.desktop \
     "$pkgdir/usr/share/applications/com.aprogsys.immuch360.desktop"
   install -Dm644 root/usr/share/mime/packages/com.aprogsys.immuch360.xml \

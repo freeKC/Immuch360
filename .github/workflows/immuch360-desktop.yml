@@ -20,6 +20,8 @@ name: Immuch360 Desktop
 #   linux-appimage the AppImage run without any package of the app in a clean container of Arch Linux, Fedora, Debian,
 #                  Ubuntu and openSUSE: the packages its check names installed with the command it gives, then its
 #                  libraries, its files, a start and a video
+#   linux-aur      the AUR package immuch360-bin made from the .deb of the release its PKGBUILD names, checked by namcap
+#                  and installed in an archlinux container
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
 #                  Launch Services, libmpv and its notices checked in the app, the libmpv of the app reading a y4m as
 #                  the AV2 decoder serves it (check_y4m.py), the serve of the macOS archive of the AV2 decoder the app
@@ -1155,11 +1157,16 @@ jobs:
           file=$(cd dist && ls ./*.AppImage)
           mkdir -p video-smoke
           echo '/tmp/core.%p' | sudo tee /proc/sys/kernel/core_pattern
+          status=0
           docker run --rm --ulimit core=-1 -v "$PWD/dist:/pkgs:ro" \
             -v "$PWD/.github/desktop/packaging/linux:/check:ro" -v "$PWD/mobile/test/fixtures/video:/clips:ro" \
             -v "$PWD/video-smoke:/out" "$IMAGE" \
             sh /check/check_appimage.sh "/pkgs/${file#./}" /clips/flat-6s.mp4 /out /clips/flat-6s-theora.mkv \
-            | tee "$RUNNER_TEMP/check.log"
+            | tee "$RUNNER_TEMP/check.log" || status=$?
+          if grep -q 'the video check failed once: made once more' "$RUNNER_TEMP/check.log"; then
+            echo "::warning title=$IMAGE::the video check of the AppImage failed once and was made once more"
+          fi
+          exit "$status"
 
       - name: Upload the video start
         if: always()
@@ -1169,6 +1176,24 @@ jobs:
           path: video-smoke/
           retention-days: 14
           if-no-files-found: ignore
+
+  # The AUR package immuch360-bin (packaging/linux/aur, written for issue 22; the AUR account is the owner's): namcap on
+  # its PKGBUILD and on the package, .SRCINFO as makepkg --printsrcinfo writes it, the package made by makepkg from
+  # the .deb of the desktop release the PKGBUILD names (its SHA-256 checked) and installed with the dependencies of
+  # Arch, then its version, its libraries, libmpv and its desktop entry (packaging/linux/aur/check_aur.sh). It reads a
+  # published release, not this build: the PKGBUILD moves to the next release once that release is out
+  linux-aur:
+    name: AUR package immuch360-bin
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: namcap, makepkg and the package installed in archlinux
+        run: |
+          docker run --rm -v "$PWD/.github/desktop/packaging/linux/aur:/aur:ro" archlinux:latest sh /aur/check_aur.sh
 
   windows:
     name: Windows desktop tests, build and ZIP
@@ -2276,7 +2301,7 @@ jobs:
             | tee -a "$GITHUB_STEP_SUMMARY"
           python3 ../.github/desktop/ai/video3d_ci_clip.py drift "$work/ffmpeg/bin/ffmpeg" "$work/drift"
 
-  # The seven files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
+  # The eight files of the build in one place with their SHA-256, as immuch360-desktop-release.yml attaches them to a
   # release: a file missing or added shows on every run, not on the day of a release
   packages:
     name: Package files and checksums

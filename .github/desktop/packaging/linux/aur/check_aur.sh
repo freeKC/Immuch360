@@ -4,7 +4,7 @@
 #     checks its SHA-256, and namcap on the package made: no error (its warnings are printed);
 #   - .SRCINFO, which the AUR needs beside the PKGBUILD, is the one makepkg --printsrcinfo writes;
 #   - the package installed with pacman, its dependencies from Arch: immuch360 --version answers, every library of every
-#     ELF file of /opt/immuch360 is found, libmpv is there, the desktop entry is valid.
+#     ELF file of /usr/lib/immuch360 is found, libmpv is there, the desktop entry is valid.
 #
 #   docker run --rm -v "$PWD/.github/desktop/packaging/linux/aur:/aur:ro" archlinux:latest sh /aur/check_aur.sh
 #
@@ -67,7 +67,7 @@ echo "  $version"
 case "$version" in "Immuch360 Desktop "*) ;; *) echo "  unexpected answer"; exit 1 ;; esac
 missing=0
 count=0
-for file in /opt/immuch360/immuch360 /opt/immuch360/lib/*.so*; do
+for file in /usr/lib/immuch360/immuch360 /usr/lib/immuch360/lib/*.so*; do
   count=$((count + 1))
   problems=$(ldd "$file" 2>&1 | grep 'not found' || true)
   [ -z "$problems" ] || { echo "  $file: $problems"; missing=1; }
@@ -78,7 +78,7 @@ ldconfig -p | grep -E 'libmpv\.so(\.[12])? ' | sed 's/^\s*/  /'
 desktop-file-validate /usr/share/applications/com.aprogsys.immuch360.desktop
 echo "  desktop-file-validate: no error"
 for file in /usr/share/licenses/immuch360-bin/copyright /usr/share/licenses/immuch360-bin/libsmb2/NOTICE \
-  /opt/immuch360/data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz; do
+  /usr/lib/immuch360/data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz; do
   [ -f "$file" ] || { echo "  no $file"; exit 1; }
 done
 echo "  the licences and the source of libsmb2 are there"

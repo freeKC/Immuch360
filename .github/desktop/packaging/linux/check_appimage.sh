@@ -15,11 +15,11 @@
 #   - the AppImage started with --appimage-extract-and-run on a virtual screen still runs after 20 seconds;
 #   - with CLIP, the app plays it on a virtual screen (video_smoke.sh, next to this script), with the distribution's
 #     libmpv. Where the distribution's FFmpeg has no H.264 decoder of its own (Fedora, openSUSE: OpenH264 at best, the
-#     noopenh264 stub at worst), the H.264 clip is played for information and FALLBACK, the same picture in Theora,
-#     is the one that must play, as in check_package.sh. Arch Linux too: its mpv and FFmpeg play the H.264 clip, but
-#     first try CUDA for it and log "CUDA: Cannot load libcuda.so.1" in a container without a graphics card, which the
-#     video check counts as errors of the player (probe run 45501319632 of 24 November 2026); Theora is never handed
-#     to a hardware decoder.
+#     noopenh264 stub at worst), the H.264 clip is played first and FALLBACK, the same picture in Theora,
+#     is the one that must play when the H.264 one did not. Arch Linux plays the Theora clip only: its mpv and FFmpeg
+#     play the H.264 clip, but first try CUDA for it and log "CUDA: Cannot load libcuda.so.1" in a container without
+#     a graphics card, which the video check counts as errors of the player (probe run 45501319632 of 24 November
+#     2026); Theora is never handed to a hardware decoder.
 # xdg-user-dirs is not installed: the stand-in of the AppImage answers the app (AppRun).
 #
 #   docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" \
@@ -177,21 +177,36 @@ if [ -n "$clip" ]; then
   smoke() {
     xvfb-run -a -s "-screen 0 1280x800x24" sh "$(dirname "$0")/video_smoke.sh" "$root/AppRun" "$1" "$2"
   }
+  # The clip that must play, made once more when the app did not get to it, since a start in a fresh home of a
+  # container sometimes misses the file it was handed (desktop probe run 45502082442, Fedora 44): the failure of the
+  # first attempt stays in the output, with a warning line the workflow shows
+  must_play() {
+    if smoke "$1" "$smoke_out"; then
+      return 0
+    fi
+    echo "  the video check failed once: made once more"
+    smoke "$1" "$smoke_out/second-attempt"
+  }
   case "$family" in
-    arch | fedora | suse)
-      [ -n "$fallback" ] || { echo "  $family needs the Theora clip too"; exit 1; }
-      echo "-- the H.264 clip, for information only (see the top of this script)"
-      if smoke "$clip" "$smoke_out/h264-information"; then
-        echo "  (information) the H.264 clip played"
+    arch)
+      [ -n "$fallback" ] || { echo "  arch needs the Theora clip"; exit 1; }
+      echo "-- a video played on a virtual screen, the Theora clip (see the top of this script)"
+      must_play "$fallback"
+      ;;
+    fedora | suse)
+      echo "-- the H.264 clip, which $family's own FFmpeg may not decode"
+      if smoke "$clip" "$smoke_out/h264"; then
+        echo "  the H.264 clip played"
       else
-        echo "  (information) the H.264 clip did not play"
+        [ -n "$fallback" ] || { echo "  $family needs the Theora clip too"; exit 1; }
+        echo "  the H.264 clip did not play: the Theora clip must"
+        echo "-- a video played on a virtual screen, the Theora clip"
+        must_play "$fallback"
       fi
-      echo "-- a video played on a virtual screen, the Theora clip"
-      smoke "$fallback" "$smoke_out"
       ;;
     *)
       echo "-- a video played on a virtual screen"
-      smoke "$clip" "$smoke_out"
+      must_play "$clip"
       ;;
   esac
 fi
