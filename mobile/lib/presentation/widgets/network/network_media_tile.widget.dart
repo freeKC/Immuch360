@@ -1,10 +1,10 @@
 // The tiles of the network share browser: a photo with its thumbnail (or the one its server made), a video with a
-// frame of it, a 360° badge on the files that declare a 360° projection, a 3D badge on the 3D photos and videos, a
-// "3D scene" badge on the photos that carry a 3D scene and a "360° AI" badge on the panoramas generated beyond the
-// edges of a photo, a badge on the files sent to the server before, the selection
-// mark and the progress of an upload, and the folder rows. On a computer, an AV2 file (.ivf, .obu whose head says so)
-// gets the "AV2" badge of the 3D splat tiles, on a neutral tile until the AV2 decoder is installed, then on a frame
-// that the grabber takes through it.
+// frame of it, its name written over the picture on a scrim once the picture shows (on the placeholder before), a 360°
+// badge on the files that declare a 360° projection, a 3D badge on the 3D photos and videos, a "3D scene" badge on the
+// photos that carry a 3D scene and a "360° AI" badge on the panoramas generated beyond the edges of a photo, a badge on
+// the files sent to the server before, the selection mark and the progress of an upload, and the folder rows. On a
+// computer, an AV2 file (.ivf, .obu whose head says so) gets the "AV2" badge of the 3D splat tiles, on a neutral tile
+// until the AV2 decoder is installed, then on a frame that the grabber takes through it.
 
 import 'dart:async';
 import 'dart:collection';
@@ -13,6 +13,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/platform/desktop_apis.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
@@ -33,6 +34,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/network/video_thumbnail_disk_cache.dart';
 import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/tiff_image_completer.dart';
 import 'package:immich_mobile/presentation/widgets/network/film_download.widget.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_server_thumbnail_image.dart';
@@ -407,7 +409,7 @@ NetworkStereoBadge? _declaredStereoBadge(NetworkMediaInfo? info) {
 }
 
 /// A photo or a video of a share in the grid of the browser. [url] is its media bridge URL, null when there is none.
-class NetworkMediaTile extends ConsumerWidget {
+class NetworkMediaTile extends HookConsumerWidget {
   const NetworkMediaTile({
     super.key,
     required this.entry,
@@ -417,6 +419,8 @@ class NetworkMediaTile extends ConsumerWidget {
     this.isSelected,
     this.autofocus = false,
     this.frameUrl,
+    this.showName = true,
+    this.bottomBadges = false,
   });
 
   final NetworkEntry entry;
@@ -434,8 +438,18 @@ class NetworkMediaTile extends ConsumerWidget {
   /// Whether the file is picked, null when the browser is not picking files
   final bool? isSelected;
 
+  /// Whether the name is written over the picture once it shows (the placeholder writes it always): false where a
+  /// caption under the tile writes it (the films of a Plex server)
+  final bool showName;
+
+  /// Whether the parent draws marks along the bottom edge over the tile (the drone tiles): the name goes above them
+  final bool bottomBadges;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Set once a picture (a photo, a frame of a video, the picture of the server) has drawn: the name is written over it
+    // from then on, on its scrim, the placeholder writing it before
+    final pictureShown = useValueNotifier(false);
     final is360 = ref.watch(
       networkMediaInfoProvider(networkMediaKey(entry)).select((info) => info.valueOrNull?.is360 ?? false),
     );
@@ -480,10 +494,12 @@ class NetworkMediaTile extends ConsumerWidget {
       final NetworkThumbnailSource source => source,
       _ => null,
     };
-    Widget withServerThumbnail(Widget picture) => _withServerThumbnail(entry, picture, serverPictures);
+    Widget withServerThumbnail(Widget picture) => _withServerThumbnail(entry, picture, serverPictures, pictureShown);
 
     // The title of a Plex film rather than its file name
     final name = entry.shownName;
+    // The play mark, the download mark, the sent or trash mark, the watch check, or the parent's marks
+    final bottomRow = entry.isVideo || mayBeDownloaded || wasSent || inTrash || bottomBadges;
     return Semantics(
       label: wasSent
           ? '$name, ${context.t.network_upload_sent_before}'
@@ -509,13 +525,34 @@ class NetworkMediaTile extends ConsumerWidget {
             children: [
               ColoredBox(color: context.colorScheme.surfaceContainerHighest),
               if (hasThumbnail)
-                withServerThumbnail(_PhotoThumbnail(url: url, name: entry.name))
+                withServerThumbnail(_PhotoThumbnail(url: url, name: entry.name, shown: pictureShown))
               else if (hasFrame)
-                withServerThumbnail(_VideoThumbnail(entry: entry, url: frameUrl ?? url))
+                withServerThumbnail(_VideoThumbnail(entry: entry, url: frameUrl ?? url, shown: pictureShown))
               else
                 // A photo too large to read for a thumbnail still shows the picture its server made of it
                 withServerThumbnail(
                   _Placeholder(icon: entry.isVideo ? Icons.movie_outlined : Icons.image_outlined, name: name),
+                ),
+              // The tint of a picked file under the name and the marks, which stay as readable
+              if (isSelected != null) _SelectionMark(isSelected: isSelected),
+              if (showName)
+                ValueListenableBuilder(
+                  valueListenable: pictureShown,
+                  builder: (context, shown, _) => shown
+                      ? PictureLabel(
+                          key: const Key('network_media_name'),
+                          // Above the row of marks along the bottom edge when there is one
+                          padding: EdgeInsets.fromLTRB(6, 2, 6, bottomRow ? 28 : 6),
+                          child: MiddleEllipsisText(
+                            name,
+                            // The colour of the theme's style would win over the white of the scrim
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: PictureLabelShade.text,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
               if (entry.isVideo)
                 const Positioned(
@@ -535,20 +572,17 @@ class NetworkMediaTile extends ConsumerWidget {
                   // Left of the 360° badge when both show
                   right: is360 ? 28 : 6,
                   top: 6,
-                  child: Text(
-                    // The honesty label of a relief estimated by AI, "3D scene" for a scene, "360° AI" for a panorama
-                    // generated beyond the edges of a photo, "3D" for a real pair or another tool's file
-                    switch (stereoBadge) {
-                      NetworkStereoBadge.estimated => context.t.ai_immersive_badge,
-                      NetworkStereoBadge.scene => context.t.ai_immersive_badge_scene,
-                      NetworkStereoBadge.generatedPanorama => context.t.ai_immersive_badge_360,
-                      NetworkStereoBadge.stereo => '3D',
-                    },
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      shadows: _shadows,
+                  child: PictureBadge(
+                    child: Text(
+                      // The honesty label of a relief estimated by AI, "3D scene" for a scene, "360° AI" for a
+                      // panorama generated beyond the edges of a photo, "3D" for a real pair or another tool's file
+                      switch (stereoBadge) {
+                        NetworkStereoBadge.estimated => context.t.ai_immersive_badge,
+                        NetworkStereoBadge.scene => context.t.ai_immersive_badge_scene,
+                        NetworkStereoBadge.generatedPanorama => context.t.ai_immersive_badge_360,
+                        NetworkStereoBadge.stereo => '3D',
+                      },
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -591,7 +625,6 @@ class NetworkMediaTile extends ConsumerWidget {
               if (entry.isVideo) WatchProgressOverlay(watchKey: WatchKey.ofEntry(entry)),
               if (uploadProgress != null)
                 Positioned.fill(child: NetworkUploadProgressOverlay(progress: uploadProgress)),
-              if (isSelected != null) _SelectionMark(isSelected: isSelected),
             ],
           ),
         ),
@@ -602,18 +635,25 @@ class NetworkMediaTile extends ConsumerWidget {
 
 /// The picture the server made of [entry] when it tells one (a DLNA media server gives its URL), or when the open
 /// connection of its share makes them ([serverPictures], a Plex server), else [picture]
-Widget _withServerThumbnail(NetworkEntry entry, Widget picture, NetworkThumbnailSource? serverPictures) {
+Widget _withServerThumbnail(
+  NetworkEntry entry,
+  Widget picture,
+  NetworkThumbnailSource? serverPictures,
+  ValueNotifier<bool> shown,
+) {
   final thumbnailUrl = entry.thumbnailUrl;
   if (thumbnailUrl != null) {
     return _ServerThumbnail(
       image: GuardedNetworkImage(thumbnailUrl, source: 'dlnaPicture', maxWidth: _ServerThumbnail.size, maxHeight: 0),
       fallback: picture,
+      shown: shown,
     );
   }
   if (serverPictures != null) {
     return _ServerThumbnail(
       image: NetworkServerThumbnailImage(serverPictures, entry, size: _ServerThumbnail.size),
       fallback: picture,
+      shown: shown,
     );
   }
   return picture;
@@ -623,10 +663,11 @@ Widget _withServerThumbnail(NetworkEntry entry, Widget picture, NetworkThumbnail
 /// from the server: no read of the file through the bridge, no video frame to take. [fallback] (the bridge picture,
 /// the video frame) when the server does not give it.
 class _ServerThumbnail extends ConsumerWidget {
-  const _ServerThumbnail({required this.image, required this.fallback});
+  const _ServerThumbnail({required this.image, required this.fallback, required this.shown});
 
   final ImageProvider image;
   final Widget fallback;
+  final ValueNotifier<bool> shown;
 
   /// The server pictures are small already (160 pixels for JPEG_TN): this only bounds a large album art
   static const size = 256;
@@ -642,6 +683,7 @@ class _ServerThumbnail extends ConsumerWidget {
       frameBuilder: (context, child, frame, _) {
         if (frame != null) {
           ref.read(networkThumbnailCacheProvider).retain(image);
+          _tellShown(context, shown);
         }
         return child;
       },
@@ -687,11 +729,24 @@ class _SelectionMark extends StatelessWidget {
 
 const _shadows = [Shadow(blurRadius: 5.0, color: Color.fromRGBO(0, 0, 0, 0.6))];
 
+/// Tells [shown] after this frame that a picture drew in [context], the tile being still there
+void _tellShown(BuildContext context, ValueNotifier<bool> shown) {
+  if (shown.value) {
+    return;
+  }
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (context.mounted) {
+      shown.value = true;
+    }
+  });
+}
+
 class _PhotoThumbnail extends ConsumerWidget {
-  const _PhotoThumbnail({required this.url, required this.name});
+  const _PhotoThumbnail({required this.url, required this.name, required this.shown});
 
   final Uri url;
   final String name;
+  final ValueNotifier<bool> shown;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -703,6 +758,7 @@ class _PhotoThumbnail extends ConsumerWidget {
       frameBuilder: (context, child, frame, _) {
         if (frame != null) {
           ref.read(networkThumbnailCacheProvider).retain(image);
+          _tellShown(context, shown);
         }
         return child;
       },
@@ -713,10 +769,11 @@ class _PhotoThumbnail extends ConsumerWidget {
 
 /// A frame of the video, the placeholder until it comes and when there is none
 class _VideoThumbnail extends ConsumerWidget {
-  const _VideoThumbnail({required this.entry, required this.url});
+  const _VideoThumbnail({required this.entry, required this.url, required this.shown});
 
   final NetworkEntry entry;
   final Uri url;
+  final ValueNotifier<bool> shown;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -743,6 +800,7 @@ class _VideoThumbnail extends ConsumerWidget {
           return placeholder;
         }
         ref.read(networkThumbnailCacheProvider).retain(image);
+        _tellShown(context, shown);
         return child;
       },
       errorBuilder: (context, _, _) => placeholder,

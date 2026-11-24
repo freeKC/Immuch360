@@ -30,6 +30,9 @@ String _getBirthdayTitle(Translations t, MemoryData data, RemoteAsset? asset) {
   return t.birthday_memory_title_with_age(name: name, age: age);
 }
 
+/// The style of a title of a memory over its picture, on the scrim of a PictureLabel that makes it white
+const memoryTitleOnPicture = TextStyle(fontWeight: FontWeight.w600, fontSize: 15);
+
 class MemoryTitle extends StatelessWidget {
   final Memory memory;
   final TextStyle? style;

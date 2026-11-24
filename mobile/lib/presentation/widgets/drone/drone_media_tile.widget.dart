@@ -65,6 +65,8 @@ class DroneMediaTile extends StatelessWidget {
           onTap: onTap,
           onLongPress: onLongPress,
           isSelected: isSelected,
+          // The mark of a source shot and the note of the sound along the bottom edge
+          bottomBadges: item.isSource || media?.soundApart != null,
         ),
         if (item.isSource)
           const Positioned(

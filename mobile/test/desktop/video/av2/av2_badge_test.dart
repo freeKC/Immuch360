@@ -1,6 +1,6 @@
 // The "AV2" badge of the thumbnails of the folder library (av2_badge.dart; store/m2/av2-2026-11-02/plan-2026-11-02.md,
-// section 1.2): read from the index, again when a local sync ends, on a video the scan found AV2, in the primary colour
-// as the "3D splat" badge; nothing on another video, a photo, or a phone.
+// section 1.2): read from the index, again when a local sync ends, on a video the scan found AV2, white on the pill of
+// the labels over a picture; nothing on another video, a photo, or a phone.
 
 import 'dart:io';
 
@@ -15,12 +15,14 @@ import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail_tile.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
 import 'package:path/path.dart' as p;
 
+import '../../../test_utils/picture_label_contrast.dart';
 import '../../../unit/presentation/presentation_context.dart';
 import '../../library/library_test_support.dart';
 
@@ -93,15 +95,17 @@ void main() {
       );
     }
 
-    testWidgets('"AV2" in the primary colour, as the 3D splat badge, on a video the index knows as AV2', (
+    testWidgets('"AV2" white on the pill of a badge, readable on any frame, on a video the index knows as AV2', (
       tester,
     ) async {
       await pumpBadge(tester, _video('v1', 'clip.ivf'), {'v1'});
       expect(find.text('AV2'), findsOneWidget);
       final text = tester.widget<Text>(find.text('AV2'));
-      final theme = Theme.of(tester.element(find.text('AV2')));
-      expect(text.style?.color, theme.colorScheme.primary);
       expect(text.style?.fontWeight, FontWeight.w700);
+      final badge = find.byType(Av2BadgeLabel);
+      expect(find.descendant(of: badge, matching: find.byKey(PictureBadge.pillKey)), findsOneWidget);
+      expect(textColorsIn(tester, badge), everyElement(Colors.white));
+      expect(lowestContrast(tester, badge), greaterThanOrEqualTo(smallTextContrast));
     });
 
     testWidgets('nothing on another video, on a photo, nor on a video the index does not hold', (tester) async {

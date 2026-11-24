@@ -12,6 +12,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_asset_loader.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/overview/overview_layout.dart';
@@ -251,32 +252,20 @@ class OverviewYearCell extends StatelessWidget {
                       ? const SizedBox.shrink()
                       : OverviewThumbnail(asset: assets.first, side: side),
                 ),
-                const Align(
-                  alignment: Alignment.bottomCenter,
-                  child: SizedBox(
-                    height: 22,
-                    width: double.infinity,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Color(0x00000000), Color(0x99000000)],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 3, left: 2, right: 2),
-                    child: Text(
-                      name,
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
-                      softWrap: false,
-                      style: context.textTheme.labelSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                // The name of the year on the scrim of the labels over a picture, readable on any cover and on the
+                // tint before it comes
+                PictureLabel(
+                  fade: 8,
+                  padding: const EdgeInsets.fromLTRB(2, 0, 2, 3),
+                  child: Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: PictureLabelShade.text,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

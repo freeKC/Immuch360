@@ -21,6 +21,7 @@ import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/sheet_tile.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_button.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_photo_launch.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_tile.widget.dart';
@@ -217,14 +218,9 @@ class SplatPhotoBadge extends ConsumerWidget {
     return Padding(
       key: const Key('splat_photo_badge'),
       padding: const EdgeInsets.only(right: 10.0, top: 6.0),
-      child: Text(
-        context.t.splat_badge,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          shadows: [Shadow(blurRadius: 5.0, color: Color.fromRGBO(0, 0, 0, 0.6), offset: Offset.zero)],
-        ),
+      // On the pill of a badge, readable on a white sky as on a black night
+      child: PictureBadge(
+        child: Text(context.t.splat_badge, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
       ),
     );
   }
