@@ -46,6 +46,33 @@ Future<bool> showPlayOnSheet(BuildContext context, PlayOnRequest request) async 
       cast.request.ratingKey == request.ratingKey;
 }
 
+/// Asks before an archived or a locked item of the Immich library goes to [device]: true on Show. Anything else is
+/// asked nothing.
+Future<bool> confirmPrivatePlayOn(BuildContext context, PlayOnRequest request, String device) async {
+  final asset = request.immich;
+  if (asset == null || (!asset.locked && !asset.archived)) {
+    return true;
+  }
+  final t = context.t;
+  final answer = await showDialog<bool>(
+    context: context,
+    builder: (dialog) => AlertDialog(
+      key: const Key('play_on_private_dialog'),
+      title: Text(asset.locked ? t.play_on_locked_title(device: device) : t.play_on_archived_title(device: device)),
+      content: Text(asset.locked ? t.play_on_locked_body(device: device) : t.play_on_archived_body(device: device)),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(dialog).pop(false), child: Text(t.cancel)),
+        TextButton(
+          key: const Key('play_on_private_show'),
+          onPressed: () => Navigator.of(dialog).pop(true),
+          child: Text(t.play_on_show),
+        ),
+      ],
+    ),
+  );
+  return answer ?? false;
+}
+
 /// What a row of the sheet says of a screen
 enum PlayScreenRowState { ready, notAnnounced, withoutServer }
 
@@ -107,6 +134,14 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
 
   Future<void> _play(LinkedPeer screen, PlayScreenAddress address) async {
     final t = context.t;
+    // A screen never opens a locked item with its own session (screen_item_openers.dart): nothing to send
+    if (widget.request.immich?.locked ?? false) {
+      _say(t.play_on_err_locked);
+      return;
+    }
+    if (!await confirmPrivatePlayOn(context, widget.request, screen.name) || !mounted) {
+      return;
+    }
     setState(() => _busy = screen.id);
     final outcome = await ref.read(remotePlaybackProvider.notifier).play(screen, address, widget.request);
     if (!mounted) {

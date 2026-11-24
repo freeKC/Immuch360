@@ -203,6 +203,19 @@ class PlayOnRequest {
 
   /// The Immich asset, for an Immich request
   final PlayOnImmichAsset? immich;
+
+  // Two requests of the same item are the same: the Cast check of the sheet is keyed by its request
+  @override
+  bool operator ==(Object other) =>
+      other is PlayOnRequest &&
+      other.kind == kind &&
+      other.sourceId == sourceId &&
+      other.server == server &&
+      other.ratingKey == ratingKey &&
+      other.path == path;
+
+  @override
+  int get hashCode => Object.hash(kind, sourceId, server, ratingKey, path);
   final String? title;
   final int offsetMs;
   final PlayTrackChoice? audio;
@@ -386,6 +399,7 @@ final phonePlayEnvironmentProvider = Provider<PhonePlayEnvironment>((ref) {
 /// See the top of this file: the playback on a screen, null while nothing plays on one
 class RemotePlaybackController extends Notifier<RemotePlayback?> {
   PlayLinkConnection? _connection;
+  PlayScreenAddress? _address;
   int _generation = 0;
 
   /// How long one status request waits for a change
@@ -416,9 +430,30 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     return _connection = await client.connect(host: address.host, port: address.port, screen: screen);
   }
 
+  /// Sends [request] to the screen that shows something of this phone now: the next photo or video of the viewer the
+  /// user swiped to. Null when no screen shows anything of this phone.
+  Future<PlayOnOutcome?> showNext(PlayOnRequest request) async {
+    final playback = state;
+    final address = _address;
+    if (playback == null || address == null || playback.lost) {
+      return null;
+    }
+    final outcome = await play(playback.screen, address, request);
+    if (outcome != PlayOnOutcome.playing && identical(state, playback)) {
+      // The screen keeps the item before on its screen, the dock says the new one did not go
+      state = RemotePlayback(
+        screen: playback.screen,
+        request: request,
+        state: playback.state.next(phase: ScreenPlayPhase.failed),
+      );
+    }
+    return outcome;
+  }
+
   /// Plays [request] on [screen] at [address]
   Future<PlayOnOutcome> play(LinkedPeer screen, PlayScreenAddress address, PlayOnRequest request) async {
     final generation = ++_generation;
+    _address = address;
     final ({String status, ScreenPlayState state}) answer;
     try {
       final connection = await _connect(screen, address);

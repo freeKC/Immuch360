@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
@@ -51,12 +52,13 @@ void main() {
     Map<String, PlayScreenAddress> nearby = const {},
     Map<String, Set<String>> withoutServer = const {},
     void Function(bool)? answered,
+    PlayOnRequest request = _request,
   }) async {
     playOnPhoneScreen(tester);
     await pumpPlayOn(
       tester,
       playOnOpener((context) async {
-        final playing = await showPlayOnSheet(context, _request);
+        final playing = await showPlayOnSheet(context, request);
         answered?.call(playing);
       }),
       overrides: [
@@ -181,5 +183,58 @@ void main() {
       ),
       PlayScreenRowState.notAnnounced,
     );
+  });
+
+  group('Immich', () {
+    PlayOnRequest photo({AssetVisibility visibility = AssetVisibility.timeline}) => PlayOnRequest.ofAsset(
+      RemoteAsset(
+        id: '3f2504e0-4f89-11d3-9a0c-0305e82c3301',
+        name: 'IMG_0001.jpg',
+        ownerId: 'a1b2c3d4-0000-4000-8000-00000000abcd',
+        checksum: 'c',
+        type: AssetType.image,
+        createdAt: DateTime.utc(2026),
+        updatedAt: DateTime.utc(2026),
+        visibility: visibility,
+        isEdited: false,
+      ),
+      userId: 'a1b2c3d4-0000-4000-8000-00000000abcd',
+      endpoints: const [],
+      serverName: 'photos.example.org',
+    )!;
+
+    testWidgets('with no linked screen, the text speaks of photos and videos', (tester) async {
+      await open(tester, request: photo());
+      expect(find.textContaining('Show your photos and videos on the TV'), findsOneWidget);
+    });
+
+    testWidgets('a locked item is never sent to a screen: the sheet says so and sends nothing', (tester) async {
+      await open(
+        tester,
+        request: photo(visibility: AssetVisibility.locked),
+        screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+        nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+      );
+      await tester.tap(find.byKey(const ValueKey('play_on_$_tvId')));
+      await tester.pump();
+      expect(find.text('Items of the locked folder are never shown on a screen'), findsOneWidget);
+      expect(find.byKey(const Key('play_on_private_dialog')), findsNothing);
+    });
+
+    testWidgets('an archived item asks first; Cancel sends nothing', (tester) async {
+      await open(
+        tester,
+        request: photo(visibility: AssetVisibility.archive),
+        screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+        nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+      );
+      await tester.tap(find.byKey(const ValueKey('play_on_$_tvId')));
+      await tester.pumpAndSettle();
+      expect(find.text('Show an archived item on Living room TV?'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('play_on_private_dialog')), findsNothing);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+    });
   });
 }
