@@ -31,6 +31,16 @@ and videos, each extension with a one line description. This script turns that l
       and into /usr/share/licenses/immuch360/libsmb2/ of the .rpm (mobile/packages/dart_smb2/libsmb2), and the bundle
       must hold its corresponding source, data/flutter_assets/packages/dart_smb2/libsmb2/
       Immuch360-libsmb2-sources.tar.gz, which `mise //mobile:codegen` packs before the build
+  desktop_installers.py appimage-tools --out DIR
+      appimagetool and the AppImage runtime, with the corresponding source of the runtime, downloaded into DIR and
+      checked by the SHA-256 of packaging/linux/appimage/appimage.lock.json (a file already there with the right sum
+      is kept)
+  desktop_installers.py appimage --bundle DIR --label LABEL --out DIR --tools DIR [--patchelf FILE] [--appdir-only]
+      the same bundle staged as for the packages, laid out as an AppDir (the bundle in immuch360/, the AppRun of
+      packaging/linux/appimage that checks the libraries of the system before the start, the desktop entry, the icons,
+      the MIME types, the AppStream description, the licences, the notice and the source of the runtime), then made
+      into <out>/Immuch360-Desktop-<label>-linux-x86_64.AppImage by appimagetool with the pinned runtime, zstd
+      compressed. With --appdir-only, the AppDir only (<out>/AppDir)
   desktop_installers.py versions --label LABEL
       the version of the Linux packages for a label of desktop_version.py
 
@@ -41,6 +51,7 @@ fixtures). Only the Python standard library is used, as on every runner.
 from __future__ import annotations
 
 import argparse
+import datetime
 import hashlib
 import json
 import os
@@ -50,6 +61,7 @@ import re
 import shutil
 import subprocess
 import sys
+import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 HERE = pathlib.Path(__file__).resolve().parent
@@ -183,6 +195,12 @@ LIBSMB2_LICENSES = 'usr/share/licenses/immuch360/libsmb2'
 # Its corresponding source, an asset of the app that the code generation packs and NOTICE names
 LIBSMB2_SOURCES = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz'
 ICON_SIZES = (16, 32, 64, 128, 256, 512)
+# The AppImage (issue 22, release 52): its templates, and the tools and runtime sources pinned by their SHA-256
+APPIMAGE_TEMPLATES = LINUX_TEMPLATES / 'appimage'
+APPIMAGE_LOCK = APPIMAGE_TEMPLATES / 'appimage.lock.json'
+APPIMAGE_RUNTIME_DOC = 'usr/share/doc/immuch360/appimage-runtime'
+# The glibc the AppImage says it needs when objdump cannot read the bundle: that of Ubuntu 22.04, where it is built
+APPIMAGE_GLIBC = '2.35'
 
 
 class Problem(Exception):
@@ -624,6 +642,159 @@ def linux(args, types: dict) -> int:
     return 0
 
 
+# --- the AppImage ------------------------------------------------------------------------------------------------
+
+
+def appimage_lock(path: pathlib.Path = APPIMAGE_LOCK) -> dict:
+    """The pins of appimage.lock.json: appimagetool, the runtime, the sources of the runtime"""
+    lock = json.loads(path.read_text(encoding='utf-8'))
+    entries = [lock.get('appimagetool'), lock.get('runtime'), *(lock.get('sources') or [])]
+    for entry in entries:
+        if not isinstance(entry, dict) or not all(isinstance(entry.get(key), str) for key in ('url', 'sha256', 'file')):
+            raise Problem(f'{path.name}: every entry needs its url, sha256 and file')
+        if not re.fullmatch(r'[0-9a-f]{64}', entry['sha256']) or not entry['url'].startswith('https://'):
+            raise Problem(f'{path.name}: {entry["file"]} needs an https address and a SHA-256 of 64 hex digits')
+        if '/' in entry['file']:
+            raise Problem(f'{path.name}: {entry["file"]} is a file name, not a path')
+    if len(lock.get('sources') or []) < 1:
+        raise Problem(f'{path.name}: the corresponding source of the runtime must be listed')
+    return lock
+
+
+def appimage_tools(args) -> int:
+    """Downloads what the lock pins into args.out, each file checked by its SHA-256"""
+    lock = appimage_lock(args.lock)
+    args.out.mkdir(parents=True, exist_ok=True)
+    for entry in [lock['appimagetool'], lock['runtime'], *lock['sources']]:
+        target = args.out / entry['file']
+        if target.is_file() and sha256(target) == entry['sha256']:
+            print(f'{entry["file"]}: already there')
+            continue
+        partial = target.with_name(target.name + '.partial')
+        for attempt in range(1, 4):
+            try:
+                request = urllib.request.Request(entry['url'], headers={'User-Agent': 'immuch360-desktop-installers'})
+                with urllib.request.urlopen(request, timeout=300) as response, open(partial, 'wb') as stream:
+                    shutil.copyfileobj(response, stream, 1 << 20)
+                break
+            except OSError as error:
+                print(f'{entry["file"]}: attempt {attempt} of 3 failed ({error})')
+                if attempt == 3:
+                    raise
+        found = sha256(partial)
+        if found != entry['sha256']:
+            partial.unlink()
+            raise Problem(f'{entry["file"]}: SHA-256 {found}, the lock pins {entry["sha256"]}')
+        partial.replace(target)
+        print(f'{entry["file"]}: {target.stat().st_size} bytes, SHA-256 checked')
+    for entry in (lock['appimagetool'], lock['runtime']):
+        (args.out / entry['file']).chmod(0o755)
+    return 0
+
+
+def glibc_needed(app: pathlib.Path) -> str:
+    """The newest glibc version the ELF files of [app] ask for (GLIBC_2.34 in objdump -T), APPIMAGE_GLIBC when objdump
+    is not there"""
+    objdump = shutil.which('objdump')
+    if not objdump:
+        return APPIMAGE_GLIBC
+    newest = (0, 0)
+    for path in [app / 'immuch360', *sorted((app / 'lib').glob('*.so*'))]:
+        if not path.is_file() or path.read_bytes()[:4] != b'\x7fELF':
+            continue
+        result = subprocess.run([objdump, '-T', str(path)], capture_output=True, text=True)
+        for major, minor in re.findall(r'\bGLIBC_(\d+)\.(\d+)\b', result.stdout):
+            newest = max(newest, (int(major), int(minor)))
+    return f'{newest[0]}.{newest[1]}' if newest != (0, 0) else APPIMAGE_GLIBC
+
+
+def appimage_desktop_entry(text: str, label: str) -> str:
+    """The desktop entry of the packages for the AppImage: no TryExec (the tools that integrate an AppImage rewrite
+    Exec, and a TryExec they leave would hide the entry), and the version of the AppImage"""
+    lines = [line for line in text.splitlines() if not line.startswith('TryExec=')]
+    return '\n'.join(lines) + f'\nX-AppImage-Version={label}\n'
+
+
+def stage_appimage(args, types: dict) -> pathlib.Path:
+    """The AppDir of the AppImage, in <out>/AppDir, from the folder the packages are staged from"""
+    lock = appimage_lock(args.lock)
+    stage_linux(args, types)
+    stage = args.out / 'stage'
+    appdir = args.out / 'AppDir'
+    if appdir.exists():
+        shutil.rmtree(appdir)
+    shutil.copytree(stage / 'opt' / 'immuch360', appdir / 'immuch360', symlinks=True)
+    shutil.copytree(stage / 'usr' / 'share', appdir / 'usr' / 'share', symlinks=True)
+
+    def write(relative, text, mode=0o644):
+        path = appdir / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding='utf-8', newline='\n')
+        path.chmod(mode)
+
+    glibc = glibc_needed(appdir / 'immuch360')
+    apprun = (APPIMAGE_TEMPLATES / 'AppRun.in').read_text(encoding='utf-8')
+    write('AppRun', apprun.replace('@LABEL@', args.label).replace('@GLIBC@', glibc), 0o755)
+    write('fallback/xdg-user-dir', (APPIMAGE_TEMPLATES / 'xdg-user-dir').read_text(encoding='utf-8'), 0o755)
+    entry = appimage_desktop_entry((stage / 'usr' / 'share' / 'applications' / f'{APP_ID}.desktop')
+                                   .read_text(encoding='utf-8'), args.label)
+    write(f'{APP_ID}.desktop', entry)
+    write(f'usr/share/applications/{APP_ID}.desktop', entry)
+    shutil.copyfile(ICONS / 'app_icon_256.png', appdir / f'{APP_ID}.png')
+    (appdir / '.DirIcon').symlink_to(f'{APP_ID}.png')
+    epoch = int(os.environ.get('SOURCE_DATE_EPOCH') or 0) or None
+    day = (datetime.datetime.fromtimestamp(epoch, datetime.timezone.utc) if epoch
+           else datetime.datetime.now(datetime.timezone.utc)).strftime('%Y-%m-%d')
+    metainfo = (APPIMAGE_TEMPLATES / f'{APP_ID}.metainfo.xml.in').read_text(encoding='utf-8')
+    write(f'usr/share/metainfo/{APP_ID}.metainfo.xml',
+          metainfo.replace('@VERSION@', linux_version(args.label)['version']).replace('@DATE@', day))
+    # The notice and the corresponding source of the runtime, which statically links libfuse (LGPL-2.1-or-later)
+    doc = appdir / APPIMAGE_RUNTIME_DOC
+    doc.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(APPIMAGE_TEMPLATES / 'RUNTIME-NOTICE.txt', doc / 'RUNTIME-NOTICE.txt')
+    shutil.copyfile(LIBSMB2_NOTICES / 'LICENCE-LGPL-2.1.txt', doc / 'LICENCE-LGPL-2.1.txt')
+    for entry in lock['sources']:
+        source = args.tools / entry['file']
+        if not source.is_file() or sha256(source) != entry['sha256']:
+            raise Problem(f'{source} is not the file the lock pins: run appimage-tools --out {args.tools} first')
+        shutil.copyfile(source, doc / entry['file'])
+    for path in doc.iterdir():
+        path.chmod(0o644)
+    print(f'AppDir in {appdir}: the bundle in immuch360/, AppRun asking glibc {glibc} or later')
+    return appdir
+
+
+def appimage(args, types: dict) -> int:
+    parse_label(args.label)
+    args.out.mkdir(parents=True, exist_ok=True)
+    appdir = stage_appimage(args, types)
+    if args.appdir_only:
+        return 0
+    lock = appimage_lock(args.lock)
+    tool = args.tools / lock['appimagetool']['file']
+    runtime = args.tools / lock['runtime']['file']
+    for entry, path in ((lock['appimagetool'], tool), (lock['runtime'], runtime)):
+        if not path.is_file() or sha256(path) != entry['sha256']:
+            raise Problem(f'{path} is not the file the lock pins: run appimage-tools --out {args.tools} first')
+    target = args.out / f'Immuch360-Desktop-{args.label}-linux-x86_64.AppImage'
+    if target.exists():
+        target.unlink()
+    # appimagetool is an AppImage itself: extracted and run, without FUSE; no update information (the Latest release
+    # of the repository is the Android one, which a gh-releases-zsync line would point at)
+    env = dict(os.environ, APPIMAGE_EXTRACT_AND_RUN='1', ARCH='x86_64')
+    result = subprocess.run([str(tool), '--no-appstream', '--comp', 'zstd', '--runtime-file', str(runtime),
+                             str(appdir), str(target)], env=env)
+    if result.returncode != 0 or not target.is_file():
+        print(f'appimagetool failed (exit {result.returncode})')
+        return 1
+    target.chmod(0o755)
+    head = target.read_bytes()[:12]
+    if head[:4] != b'\x7fELF' or head[8:11] != b'AI\x02':
+        raise Problem(f'{target.name} does not start with the ELF header and the AI 2 mark of a type 2 AppImage')
+    print(f'{target.name}: {target.stat().st_size / 1e6:.1f} MB, SHA-256 {sha256(target)}')
+    return 0
+
+
 # --- command line ------------------------------------------------------------------------------------------------
 
 
@@ -655,6 +826,17 @@ def main(argv=None) -> int:
     lin.add_argument('--nfpm', help='the nfpm program')
     lin.add_argument('--patchelf', help='the patchelf program, for the RUNPATH of the libraries')
     lin.add_argument('--stage-only', action='store_true', help='stage and write the nFPM configuration only')
+    tools = commands.add_parser('appimage-tools', help='appimagetool, the runtime and its source, checked')
+    tools.add_argument('--out', type=pathlib.Path, required=True)
+    tools.add_argument('--lock', type=pathlib.Path, default=APPIMAGE_LOCK)
+    image = commands.add_parser('appimage', help='the AppImage')
+    image.add_argument('--bundle', type=pathlib.Path, required=True, help='build/linux/x64/release/bundle')
+    image.add_argument('--label', required=True)
+    image.add_argument('--out', type=pathlib.Path, required=True)
+    image.add_argument('--tools', type=pathlib.Path, required=True, help='the folder of appimage-tools')
+    image.add_argument('--lock', type=pathlib.Path, default=APPIMAGE_LOCK)
+    image.add_argument('--patchelf', help='the patchelf program, for the RUNPATH of the libraries')
+    image.add_argument('--appdir-only', action='store_true', help='lay out the AppDir only')
     versions = commands.add_parser('versions', help='the version of the Linux packages')
     versions.add_argument('--label', required=True)
     args = parser.parse_args(argv)
@@ -664,6 +846,8 @@ def main(argv=None) -> int:
             for key, value in linux_version(args.label).items():
                 print(f'{key}={value}')
             return 0
+        if args.command == 'appimage-tools':
+            return appimage_tools(args)
         types = load(args.associations)
         if args.command == 'check':
             # The plist is compared with a list whose every type is known
@@ -691,6 +875,8 @@ def main(argv=None) -> int:
             return 0
         if args.command == 'windows':
             return windows(args, types)
+        if args.command == 'appimage':
+            return appimage(args, types)
         return linux(args, types)
     except (Problem, OSError, ValueError, plistlib.InvalidFileException, subprocess.CalledProcessError) as error:
         print(f'desktop_installers: {error}')

@@ -1,0 +1,246 @@
+#!/bin/sh
+# Immuch360 Desktop @LABEL@, the AppImage (.github/desktop/desktop_installers.py appimage). The AppImage carries the
+# bundle of `flutter build linux` (the program, its plugins, the Flutter engine, libsmb2 built on Ubuntu 22.04, the
+# JPEG codec of the AI features) and takes the desktop libraries from the system, as the .deb and the .rpm do: glibc
+# @GLIBC@ or later, GTK 3, WebKitGTK 4.1 with libsoup 3, libsecret, libepoxy, and libmpv for the videos.
+#
+# Before the program starts, the libraries it links are looked for with the system's loader. When one is missing the
+# program could not start: this says which packages bring them, with the command of the distribution named by
+# /etc/os-release (Arch, Fedora, Debian and Ubuntu, openSUSE), in the terminal and in a dialog when one can be shown,
+# and stops. Without libmpv the app starts and shows photos, and its video player says what to install; the terminal
+# gets the same line now. xdg-user-dir, which the app asks for the documents folder, comes from xdg-user-dirs; where it
+# is not installed, a stand-in of the AppImage answers from ~/.config/user-dirs.dirs.
+#
+#   Immuch360.AppImage [FILE...]          the app, with the files to open
+#   Immuch360.AppImage --version          the version, as the launcher of the packages answers
+#   Immuch360.AppImage --immuch360-check  every library of every program and library of the AppImage, and libmpv,
+#                                         looked for and printed; exit 0 when all are found, 1 otherwise
+#
+# Without FUSE (a container, some immutable systems), add --appimage-extract-and-run after the name of the AppImage.
+
+here=${APPDIR:-$(dirname "$(readlink -f "$0")")}
+app="$here/immuch360"
+label='@LABEL@'
+
+if [ "${1:-}" = "--version" ]; then
+  echo "Immuch360 Desktop $label"
+  exit 0
+fi
+
+# The x86_64 loader of glibc, at the path the ABI fixes, or where a distribution keeps it
+loader=
+for candidate in /lib64/ld-linux-x86-64.so.2 /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /usr/lib/ld-linux-x86-64.so.2 \
+  /usr/lib64/ld-linux-x86-64.so.2; do
+  if [ -x "$candidate" ]; then
+    loader=$candidate
+    break
+  fi
+done
+
+# The distribution family, from /etc/os-release: arch, fedora, debian, suse, or other
+family=other
+ubuntu_2204=no
+if [ -r /etc/os-release ]; then
+  # shellcheck disable=SC1091
+  ids=$(. /etc/os-release && echo "${ID:-} ${ID_LIKE:-}")
+  # shellcheck disable=SC1091
+  version=$(. /etc/os-release && echo "${ID:-}-${VERSION_ID:-}")
+  case " $ids " in
+    *" arch "*) family=arch ;;
+    *" fedora "* | *" rhel "* | *" centos "*) family=fedora ;;
+    *" suse "* | *" opensuse "* | *" opensuse-tumbleweed "* | *" opensuse-leap "* | *" sles "*) family=suse ;;
+    *" debian "* | *" ubuntu "*) family=debian ;;
+  esac
+  [ "$version" != "ubuntu-22.04" ] || ubuntu_2204=yes
+fi
+
+# The package that brings a library on this family, by the start of the library's name
+package_of() {
+  case "$1" in
+    libwebkit2gtk-4.1* | libjavascriptcoregtk-4.1*)
+      set -- "$1" webkit2gtk-4.1 webkit2gtk4.1 libwebkit2gtk-4.1-0 libwebkit2gtk-4_1-0 ;;
+    libsoup-3.0*) set -- "$1" libsoup3 libsoup3 libsoup-3.0-0 libsoup-3_0-0 ;;
+    libsecret-1*) set -- "$1" libsecret libsecret libsecret-1-0 libsecret-1-0 ;;
+    libepoxy*) set -- "$1" libepoxy libepoxy libepoxy0 libepoxy0 ;;
+    libstdc++* | libgcc_s*) set -- "$1" gcc-libs libstdc++ libstdc++6 libstdc++6 ;;
+    libmpv*)
+      if [ "$ubuntu_2204" = yes ]; then
+        set -- "$1" mpv mpv-libs libmpv1 libmpv2
+      else
+        set -- "$1" mpv mpv-libs libmpv2 libmpv2
+      fi
+      ;;
+    # GTK 3 brings GDK, Pango, Cairo, GdkPixbuf, ATK, HarfBuzz and GLib with it
+    libgtk-3* | libgdk-3* | libgdk_pixbuf* | libpango* | libcairo* | libatk* | libharfbuzz* | libglib-2.0* | \
+      libgobject-2.0* | libgio-2.0* | libgmodule-2.0* | libfontconfig* | libfreetype* | libX11* | libxkbcommon*)
+      set -- "$1" gtk3 gtk3 libgtk-3-0 libgtk-3-0 ;;
+    *) echo ""; return ;;
+  esac
+  case "$family" in
+    arch) echo "$2" ;;
+    fedora) echo "$3" ;;
+    debian) echo "$4" ;;
+    suse) echo "$5" ;;
+    *) echo "" ;;
+  esac
+}
+
+install_command() {
+  case "$family" in
+    arch) echo "sudo pacman -S --needed $*" ;;
+    fedora) echo "sudo dnf install $*" ;;
+    debian) echo "sudo apt install $*" ;;
+    suse) echo "sudo zypper install $*" ;;
+    *) echo "" ;;
+  esac
+}
+
+# The libraries the loader does not find for one file, one name a line ("libfoo.so.1"), and the versions of glibc or of
+# libstdc++ it lacks ("GLIBC_2.35", "GLIBCXX_3.4.30"): the loader lists them as ldd has it list them, nothing run
+missing_of() {
+  LD_TRACE_LOADED_OBJECTS=1 LD_LIBRARY_PATH="$app/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" "$loader" "$1" 2>&1 \
+    | sed -n -e 's/^[[:space:]]*\([^[:space:]]*\) => not found.*/\1/p' \
+      -e "s/.*version \`\([A-Z]*_[0-9.]*\)' not found.*/\1/p"
+}
+
+# libmpv, which media_kit opens when the app starts (libmpv.so, .so.2 or .so.1), never linked: the loader's cache, the
+# folders of the libraries, then LD_LIBRARY_PATH
+libmpv_found() {
+  for ldconfig in ldconfig /sbin/ldconfig /usr/sbin/ldconfig; do
+    if command -v "$ldconfig" >/dev/null 2>&1; then
+      if "$ldconfig" -p 2>/dev/null | grep -Eq 'libmpv\.so(\.[12])? '; then
+        return 0
+      fi
+      break
+    fi
+  done
+  old_ifs=$IFS
+  IFS=:
+  for folder in ${LD_LIBRARY_PATH:-} /usr/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu /usr/lib64 /lib64 /usr/lib \
+    /usr/local/lib; do
+    for name in libmpv.so libmpv.so.2 libmpv.so.1; do
+      if [ -n "$folder" ] && [ -e "$folder/$name" ]; then
+        IFS=$old_ifs
+        return 0
+      fi
+    done
+  done
+  IFS=$old_ifs
+  return 1
+}
+
+# The text for libraries that are missing ($1: one name a line), with the packages and the command of this system
+advice() {
+  packages=
+  unknown=
+  glibc=
+  for name in $1; do
+    case "$name" in
+      GLIBC_* | GLIBCXX_* | CXXABI_*) glibc="$glibc $name"; continue ;;
+    esac
+    package=$(package_of "$name")
+    if [ -n "$package" ]; then
+      case " $packages " in *" $package "*) ;; *) packages="${packages:+$packages }$package" ;; esac
+    else
+      unknown="${unknown:+$unknown }$name"
+    fi
+  done
+  if [ -n "$glibc" ]; then
+    echo "This system's C or C++ library is too old for Immuch360 Desktop, which needs glibc @GLIBC@ or later (missing:$glibc):"
+    echo "Ubuntu 22.04, Debian 12, Fedora 36, openSUSE Tumbleweed, Arch Linux or a later system."
+    return
+  fi
+  if [ -n "$packages" ] && [ "$family" != other ]; then
+    echo "Install them with:"
+    echo "  $(install_command "$packages")"
+  fi
+  if [ -n "$unknown" ] || [ "$family" = other ]; then
+    echo "Install the packages of your distribution that provide:${unknown:+ $unknown}"
+    if [ "$family" = other ]; then
+      echo "GTK 3, WebKitGTK 4.1, libsecret, libepoxy and libmpv."
+    fi
+  fi
+}
+
+# Shown where the user started the AppImage: the terminal, and a dialog when there is no terminal and a screen
+tell() {
+  title=$1
+  text=$2
+  printf '%s\n%s\n' "$title" "$text" >&2
+  if [ -t 2 ] || { [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; }; then
+    return
+  fi
+  if command -v kdialog >/dev/null 2>&1 && kdialog --title "Immuch360 Desktop" --error "$title
+
+$text" 2>/dev/null; then
+    return
+  fi
+  if command -v zenity >/dev/null 2>&1 && zenity --error --title "Immuch360 Desktop" --no-markup \
+    --text "$title
+
+$text" 2>/dev/null; then
+    return
+  fi
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send -a "Immuch360 Desktop" "$title" "$text" 2>/dev/null && return
+  fi
+  if command -v xmessage >/dev/null 2>&1; then
+    xmessage -center "$title
+
+$text" 2>/dev/null || true
+  fi
+}
+
+if [ -z "$loader" ]; then
+  tell "Immuch360 Desktop cannot start." "This AppImage is for x86_64 systems with glibc @GLIBC@ or later."
+  exit 127
+fi
+
+if [ "${1:-}" = "--immuch360-check" ]; then
+  echo "Immuch360 Desktop $label, the AppImage in $here"
+  echo "system: $(. /etc/os-release 2>/dev/null && echo "${PRETTY_NAME:-unknown}") (family $family), loader $loader"
+  all=
+  count=0
+  for file in "$app/immuch360" "$app"/lib/*.so*; do
+    [ -f "$file" ] || continue
+    count=$((count + 1))
+    missing=$(missing_of "$file" | sort -u)
+    if [ -n "$missing" ]; then
+      echo "  ${file#"$here"/}: $(echo "$missing" | tr '\n' ' ')"
+      all="$all
+$missing"
+    fi
+  done
+  all=$(echo "$all" | sed '/^$/d' | sort -u)
+  status=0
+  if [ -n "$all" ]; then
+    echo "libraries: $(echo "$all" | wc -l) missing in $count files"
+    advice "$all"
+    status=1
+  else
+    echo "libraries: $count files, every library found"
+  fi
+  if libmpv_found; then
+    echo "libmpv: found"
+  else
+    echo "libmpv: not found, videos will not play"
+    advice libmpv.so.2
+    status=1
+  fi
+  exit "$status"
+fi
+
+missing=$(missing_of "$app/immuch360" | sort -u)
+if [ -n "$missing" ]; then
+  tell "Immuch360 Desktop cannot start: this system lacks $(echo "$missing" | tr '\n' ' ')" "$(advice "$missing")"
+  exit 127
+fi
+if ! libmpv_found; then
+  printf '%s\n%s\n' "Immuch360 Desktop: libmpv was not found, videos will not play." "$(advice libmpv.so.2)" >&2
+fi
+
+if ! command -v xdg-user-dir >/dev/null 2>&1; then
+  PATH="${PATH:+$PATH:}$here/fallback"
+  export PATH
+fi
+exec "$app/immuch360" "$@"

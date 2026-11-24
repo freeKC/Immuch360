@@ -1,0 +1,23 @@
+#!/bin/sh
+# The stand-in of xdg-user-dir that the AppImage of Immuch360 Desktop puts last in the PATH when xdg-user-dirs is not
+# installed (AppRun): path_provider asks `xdg-user-dir DOCUMENTS` for the documents folder, and a system without the
+# program (a minimal Fedora, a container) would leave the app on its splash page. It answers as xdg-user-dir does: the
+# folder of ~/.config/user-dirs.dirs (XDG_CONFIG_HOME), the home folder otherwise, DESKTOP being ~/Desktop.
+name=${1:-}
+[ -n "$name" ] || { echo "usage: xdg-user-dir NAME" >&2; exit 1; }
+config="${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+if [ -r "$config" ]; then
+  value=$(sed -n "s/^XDG_${name}_DIR=\"\(.*\)\"[[:space:]]*\$/\1/p" "$config" | tail -n 1)
+  if [ -n "$value" ]; then
+    case "$value" in
+      '$HOME'*) echo "$HOME${value#\$HOME}" ;;
+      *) echo "$value" ;;
+    esac
+    exit 0
+  fi
+fi
+if [ "$name" = DESKTOP ]; then
+  echo "$HOME/Desktop"
+else
+  echo "$HOME"
+fi

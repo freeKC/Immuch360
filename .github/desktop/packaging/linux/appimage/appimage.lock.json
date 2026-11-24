@@ -1,0 +1,36 @@
+{
+  "comment": "What makes the AppImage of Immuch360 Desktop, each file pinned by its SHA-256 (desktop_installers.py appimage-tools). appimagetool (MIT) only builds the AppImage and is not in it. The runtime (type2-runtime, MIT) is the head of every AppImage: it statically links libfuse 3.15.0 (LGPL-2.1-or-later, with the patch of the type2-runtime tree), squashfuse 0.5.2 (BSD-2-Clause), musl, zstd, zlib and mimalloc (permissive licences); its source, the tree of the commit its release was built from, and the sources of libfuse and squashfuse its build script checks by the same SHA-256 travel inside the AppImage with their notice (usr/share/doc/immuch360/appimage-runtime).",
+  "appimagetool": {
+    "version": "1.9.1",
+    "url": "https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage",
+    "sha256": "ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0",
+    "file": "appimagetool-x86_64.AppImage"
+  },
+  "runtime": {
+    "version": "20251108",
+    "commit": "dd6cebedcbddde9c82f89b011e8e1d40b6e43868",
+    "url": "https://github.com/AppImage/type2-runtime/releases/download/20251108/runtime-x86_64",
+    "sha256": "2fca8b443c92510f1483a883f60061ad09b46b978b2631c807cd873a47ec260d",
+    "file": "runtime-x86_64"
+  },
+  "sources": [
+    {
+      "name": "type2-runtime at dd6cebe, the source of the runtime and the patch it applies to libfuse",
+      "url": "https://github.com/AppImage/type2-runtime/archive/dd6cebedcbddde9c82f89b011e8e1d40b6e43868.tar.gz",
+      "sha256": "f5fec23be76e50e2445ed2d018bac49b367490fc483c62c4637e99ec705d27ba",
+      "file": "type2-runtime-dd6cebedcbddde9c82f89b011e8e1d40b6e43868.tar.gz"
+    },
+    {
+      "name": "libfuse 3.15.0",
+      "url": "https://github.com/libfuse/libfuse/releases/download/fuse-3.15.0/fuse-3.15.0.tar.xz",
+      "sha256": "70589cfd5e1cff7ccd6ac91c86c01be340b227285c5e200baa284e401eea2ca0",
+      "file": "fuse-3.15.0.tar.xz"
+    },
+    {
+      "name": "squashfuse 0.5.2",
+      "url": "https://github.com/vasi/squashfuse/archive/0.5.2.tar.gz",
+      "sha256": "db0238c5981dabbd80ee09ae15387f390091668ca060a7bc38047912491443d3",
+      "file": "squashfuse-0.5.2.tar.gz"
+    }
+  ]
+}
