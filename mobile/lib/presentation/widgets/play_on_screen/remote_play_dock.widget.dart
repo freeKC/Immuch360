@@ -189,6 +189,7 @@ class _CastDockBarState extends ConsumerState<_CastDockBar> {
                         ),
                         onPressed: started ? (playback.isPlaying ? controller.pause : controller.play) : null,
                       ),
+                    if (playback.request.sourceId == playOnImmichSource) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('cast_dock_stop'),
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.cast_stop),
@@ -291,6 +292,7 @@ class _DockBar extends ConsumerWidget {
                         ),
                         onPressed: () => unawaited(playing ? controller.pause() : controller.resume()),
                       ),
+                    if (playback.request.sourceId == playOnImmichSource) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('remote_play_dock_stop'),
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.play_bar_stop),

@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on_asset.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
@@ -116,4 +117,51 @@ void main() {
     await wait();
     expect(remote.sent, isEmpty, reason: 'the screen shows another photo than the one the viewer had');
   });
+
+  group('slideshow', () {
+    test('Next and Previous move the phone\'s viewer; the end of its list stops the slideshow', () async {
+      final container = containerFor(showing(1));
+      final jump = _Jump(count: 3);
+      container.read(playOnViewerJumpProvider.notifier).state = jump;
+      final slideshow = container.read(playOnSlideshowProvider.notifier);
+      expect(await slideshow.step(1), isTrue);
+      expect(jump.index, 1);
+      expect(await slideshow.step(-1), isTrue);
+      expect(jump.index, 0);
+      expect(await slideshow.step(-1), isFalse, reason: 'nothing before the first');
+      jump.index = 2;
+      slideshow.play();
+      expect(container.read(playOnSlideshowProvider), isTrue);
+      expect(await slideshow.step(1), isFalse);
+      slideshow.pause();
+      expect(container.read(playOnSlideshowProvider), isFalse);
+    });
+
+    test('no viewer left on the phone: nothing moves, the slideshow stops', () async {
+      final container = containerFor(showing(1));
+      container.read(playOnViewerJumpProvider.notifier).state = _Jump(count: 3)..gone = true;
+      final slideshow = container.read(playOnSlideshowProvider.notifier)..play();
+      expect(await slideshow.step(1), isFalse);
+      expect(container.read(playOnSlideshowProvider), isFalse);
+    });
+  });
+}
+
+/// The phone's viewer: an index in a list of [count] items
+class _Jump extends AssetViewerJump {
+  _Jump({required this.count});
+
+  final int count;
+  int index = 0;
+  bool gone = false;
+
+  @override
+  int? get currentIndex => gone ? null : index;
+
+  @override
+  Future<void> jumpTo(int target) async {
+    if (target >= 0 && target < count) {
+      index = target;
+    }
+  }
 }

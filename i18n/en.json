@@ -3674,6 +3674,8 @@
   "play_bar_playing_on": "Playing on {device}",
   "play_bar_previous": "Previous",
   "play_bar_showing_on": "Showing on {device}",
+  "play_bar_slideshow": "Slideshow",
+  "play_bar_slideshow_pause": "Pause the slideshow",
   "play_bar_stop": "Stop on the screen",
   "play_bar_stopped": "Stopped on {device}",
   "play_bar_video_ended": "The video ended on {device}",
