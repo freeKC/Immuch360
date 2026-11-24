@@ -3,8 +3,12 @@
 // itself (network.repository.dart): no session key ever goes into an address the Cast device sees, unlike Immich's
 // own Cast (gcast.service.dart), which put one there.
 //
-// A photo goes as the server's JPEG of full size (the server gives its preview when it makes no full size one),
-// oriented by the server: HEIC, TIFF and RAW originals included. A 360° photo goes flat, with a note.
+// A photo goes as the server's JPEG of full size, oriented by the server: HEIC, TIFF and RAW originals included. A
+// server with no full size image of it (the default: Immich makes them only when image.fullsize.enabled is on)
+// redirects to its preview; the relay follows no redirect, so the phone asks once beforehand (a HEAD) and gives the
+// relay the address the server redirects to, when it is the same server and the same asset's thumbnail; else the
+// preview itself. A redirect elsewhere is never followed: the session and the custom headers go with every request.
+// A 360° photo goes flat, with a note.
 //
 // A video: the probe of its original's first bytes gives its codecs (spherical_probe.dart), the format check of the
 // device says whether it should play; when it should not, the version the server converted for playback
@@ -130,6 +134,51 @@ Future<int?> _lengthOf(CastImmichEnvironment environment, Uri url) async {
   }
 }
 
+/// The address a redirect of the photo [from] goes to when it stays on the same server and on the thumbnail of the same
+/// asset [id] of [endpoint]; null for anything else (another host, port or scheme, another path)
+Uri? castImmichPhotoRedirect(Uri from, String endpoint, String id, String? location) {
+  if (location == null || location.isEmpty) {
+    return null;
+  }
+  final Uri resolved;
+  try {
+    resolved = from.resolve(location);
+  } on FormatException {
+    return null;
+  }
+  final thumbnail = castImmichUrl(endpoint, id, 'thumbnail');
+  if (resolved.scheme != from.scheme ||
+      resolved.host.toLowerCase() != from.host.toLowerCase() ||
+      resolved.port != from.port ||
+      resolved.userInfo.isNotEmpty ||
+      resolved.path != thumbnail.path) {
+    return null;
+  }
+  return resolved.removeFragment();
+}
+
+/// The address of the photo [id] the relay reads: its full size JPEG when the server has one, else where the server
+/// redirects (its preview), else the preview
+Future<Uri> castImmichPhotoUrl(CastImmichEnvironment environment, String endpoint, String id) async {
+  final fullsize = castImmichUrl(endpoint, id, 'thumbnail', {'size': 'fullsize', 'edited': 'true'});
+  final preview = castImmichUrl(endpoint, id, 'thumbnail', {'size': 'preview', 'edited': 'true'});
+  try {
+    final answer = await environment
+        .send(http.Request('HEAD', fullsize)..followRedirects = false)
+        .timeout(const Duration(seconds: 8));
+    await answer.stream.drain<void>();
+    if (answer.statusCode == 200) {
+      return fullsize;
+    }
+    if (const {301, 302, 303, 307, 308}.contains(answer.statusCode)) {
+      return castImmichPhotoRedirect(fullsize, endpoint, id, answer.headers['location']) ?? preview;
+    }
+  } catch (error) {
+    _log.fine('Cast: the full size photo could not be checked (${error.runtimeType})');
+  }
+  return preview;
+}
+
 /// What the cast of the Immich asset of [request] reads beforehand; null for a request of another source
 Future<CastFilmInfo?> readImmichCastInfo(CastImmichEnvironment environment, PlayOnRequest request) async {
   final asset = request.immich;
@@ -144,10 +193,7 @@ Future<CastFilmInfo?> readImmichCastInfo(CastImmichEnvironment environment, Play
       photo: true,
       format: const CastFilmFormat(),
       contentType: 'image/jpeg',
-      upstream: castImmichUpstream(
-        environment,
-        castImmichUrl(endpoint, asset.id, 'thumbnail', {'size': 'fullsize', 'edited': 'true'}),
-      ),
+      upstream: castImmichUpstream(environment, await castImmichPhotoUrl(environment, endpoint, asset.id)),
       flat360: asset.projection.isSphere,
       fileName: asset.fileName,
     );

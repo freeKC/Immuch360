@@ -153,7 +153,7 @@ void main() {
             localAddresses: () async => addresses,
             bindRelay: (address) async {
               expect(address, '192.168.1.20');
-              final relay = await CastRelayServer.bind('127.0.0.1', port: 0);
+              final relay = await CastRelayServer.bind('127.0.0.1', port: 0, allowLoopback: true);
               relays.add(relay);
               return relay;
             },

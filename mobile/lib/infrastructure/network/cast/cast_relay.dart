@@ -6,9 +6,12 @@
 // ([CastRelayContent.upstream]): no token, no session, no address of the server is ever in a URL the device sees.
 // The poster is served from memory under the same path.
 //
-// Rules: GET and HEAD only, private IPv4 clients only (and the loopback, the tests), an unknown or revoked path is a
-// 404 without a body, the path never logged, a lease revoked after [CastRelayServer.leaseIdle] without a request or
-// [CastRelayServer.leaseMaxAge] at most.
+// Rules: GET and HEAD only, private IPv4 clients only, an unknown or revoked path is a 404 without a body, the path
+// never logged, a lease revoked after [CastRelayServer.leaseIdle] without a request or [CastRelayServer.leaseMaxAge]
+// at most. A lease answers only the Cast device it was made for ([CastRelayLease.client], its IPv4 address): the
+// device tells what it plays, the relay's address included, to any sender of the network that asks, so the path alone
+// is no secret on the home network. Any other client gets the 404 of an unknown path. The loopback is let in only when
+// the relay was bound with allowLoopback (the tests).
 
 import 'dart:async';
 import 'dart:io';
@@ -38,9 +41,12 @@ class CastRelayContent {
 
 /// One film served under one random path
 class CastRelayLease {
-  CastRelayLease._(this._server, this.id, this._content, DateTime now) : _created = now, _lastUse = now;
+  CastRelayLease._(this._server, this.id, this._content, this.client, DateTime now) : _created = now, _lastUse = now;
 
   final CastRelayServer _server;
+
+  /// The IPv4 address of the only client served: the Cast device
+  final String client;
 
   /// 128 random bits in hex: the path's only secret
   final String id;
@@ -61,9 +67,14 @@ class CastRelayLease {
 }
 
 class CastRelayServer {
-  CastRelayServer._(this._http, this._address, {HttpClient? client, DateTime Function()? clock})
-    : _client = client ?? (HttpClient()..autoUncompress = false),
-      _clock = clock ?? DateTime.now {
+  CastRelayServer._(
+    this._http,
+    this._address, {
+    HttpClient? client,
+    DateTime Function()? clock,
+    this.allowLoopback = false,
+  }) : _client = client ?? (HttpClient()..autoUncompress = false),
+       _clock = clock ?? DateTime.now {
     _http.listen((request) => unawaited(_handle(request)));
   }
 
@@ -79,6 +90,7 @@ class CastRelayServer {
     int port = preferredPort,
     HttpClient? client,
     DateTime Function()? clock,
+    bool allowLoopback = false,
   }) async {
     HttpServer http;
     try {
@@ -88,11 +100,14 @@ class CastRelayServer {
     }
     http.autoCompress = false;
     http.idleTimeout = const Duration(seconds: 30);
-    return CastRelayServer._(http, address, client: client, clock: clock);
+    return CastRelayServer._(http, address, client: client, clock: clock, allowLoopback: allowLoopback);
   }
 
   final HttpServer _http;
   final String _address;
+
+  /// Whether a client on the loopback is served whatever the lease's device (the tests, where everything is there)
+  final bool allowLoopback;
   final HttpClient _client;
   final DateTime Function() _clock;
   final Map<String, CastRelayLease> _leases = {};
@@ -103,11 +118,11 @@ class CastRelayServer {
   int get port => _http.port;
   bool get isClosed => _closed;
 
-  /// A new path for [content]
-  CastRelayLease lease(CastRelayContent content) {
+  /// A new path for [content], served to the device at [client] (an IPv4 address) only
+  CastRelayLease lease(CastRelayContent content, {required String client}) {
     final bytes = List<int>.generate(16, (_) => _random.nextInt(256));
     final id = bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
-    final lease = CastRelayLease._(this, id, content, _clock());
+    final lease = CastRelayLease._(this, id, content, client, _clock());
     _leases[id] = lease;
     return lease;
   }
@@ -126,22 +141,38 @@ class CastRelayServer {
     _client.close(force: true);
   }
 
-  static bool _clientAllowed(InternetAddress? remote) {
+  /// The IPv4 address of [remote], an IPv4 mapped in IPv6 included
+  static String? _ipv4Of(InternetAddress? remote) {
+    if (remote == null) {
+      return null;
+    }
+    return remote.type == InternetAddressType.IPv6 && remote.address.toLowerCase().startsWith('::ffff:')
+        ? remote.address.substring(7)
+        : remote.address;
+  }
+
+  bool _clientAllowed(InternetAddress? remote) {
     if (remote == null) {
       return false;
     }
-    if (remote.isLoopback) {
-      return true;
-    }
-    final address = remote.type == InternetAddressType.IPv6 && remote.address.startsWith('::ffff:')
-        ? remote.address.substring(7)
-        : remote.address;
-    return isPrivatePairingIPv4(address);
+    // The loopback passes here; the lease's device decides below
+    final address = _ipv4Of(remote);
+    return remote.isLoopback || (address != null && isPrivatePairingIPv4(address));
   }
 
-  CastRelayLease? _leaseOf(String id) {
+  /// Whether [remote] is the device [lease] was made for
+  bool _servesClient(CastRelayLease lease, InternetAddress? remote) =>
+      _ipv4Of(remote) == lease.client || (allowLoopback && (remote?.isLoopback ?? false));
+
+  /// The lease of [id] when [remote] is its device; another client of the network learns nothing, not even that the
+  /// path exists, and does not keep the lease alive
+  CastRelayLease? _leaseOf(String id, InternetAddress? remote) {
     final lease = _leases[id];
     if (lease == null) {
+      return null;
+    }
+    if (!_servesClient(lease, remote)) {
+      _log.info('A client that is not the Cast device asked for a cast');
       return null;
     }
     final now = _clock();
@@ -171,7 +202,7 @@ class CastRelayServer {
         await _end(response, HttpStatus.notFound);
         return;
       }
-      final lease = _leaseOf(segments[1]);
+      final lease = _leaseOf(segments[1], request.connectionInfo?.remoteAddress);
       if (lease == null) {
         await _end(response, HttpStatus.notFound);
         return;

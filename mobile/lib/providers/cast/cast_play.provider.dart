@@ -506,7 +506,8 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
       return _fail(generation, CastOutcome.noNetwork, CastFailure.noNetwork);
     }
     _relay = relay;
-    final lease = _lease = relay.lease(_contentOf(info, target, poster, request.sourceId));
+    // Served to the device only (castRelayAddressFor took its host as a private IPv4 address)
+    final lease = _lease = relay.lease(_contentOf(info, target, poster, request.sourceId), client: target.host);
     final title = info.title.isNotEmpty ? info.title : (request.title ?? info.fileName ?? '');
     _film = _filmOf(info, lease, title, request);
     state = CastPlayback(
@@ -600,7 +601,10 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
       return CastOutcome.film;
     }
     final before = _lease;
-    final lease = _lease = relay.lease(_contentOf(info, playback.target, null, request.sourceId));
+    final lease = _lease = relay.lease(
+      _contentOf(info, playback.target, null, request.sourceId),
+      client: playback.target.host,
+    );
     final title = info.title.isNotEmpty ? info.title : (request.title ?? info.fileName ?? '');
     final film = _film = _filmOf(info, lease, title, request);
     _replaced = _mediaSessionId;

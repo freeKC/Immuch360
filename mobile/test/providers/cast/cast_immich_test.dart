@@ -111,12 +111,26 @@ void main() {
   late Map<String, int> lengths;
   late CastImmichEnvironment immich;
 
+  /// Where the server redirects a full size photo, as Immich does when it made no full size image (its default):
+  /// "/api/assets/<id>/thumbnail?size=preview&edited=true"; null for a server that has one
+  String? Function(String id)? fullsizeRedirect;
+
   setUp(() async {
     served = [];
     lengths = {'original': 5000, 'playback': 1200};
+    fullsizeRedirect = null;
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     server.listen((request) async {
       served.add(request);
+      final redirect = request.uri.queryParameters['size'] == 'fullsize'
+          ? fullsizeRedirect?.call(request.uri.pathSegments[2])
+          : null;
+      if (redirect != null) {
+        request.response.statusCode = HttpStatus.found;
+        request.response.headers.set(HttpHeaders.locationHeader, redirect);
+        await request.response.close();
+        return;
+      }
       final playback = request.uri.path.endsWith('/video/playback');
       final length = request.uri.path.endsWith('/original')
           ? lengths['original']!
@@ -161,9 +175,11 @@ void main() {
       final answer = await info.upstream!('GET', const {});
       expect(answer.statusCode, 200);
       await answer.stream.drain<void>();
-      expect(served.single.uri.path, '/api/assets/${_asset(1).id}/thumbnail');
-      expect(served.single.uri.queryParameters['size'], 'fullsize');
-      expect(served.single.headers.value(_sessionHeader), 'secret');
+      // A HEAD first (the server has a full size image here), then the relay's GET
+      expect(served.map((request) => request.method), ['HEAD', 'GET']);
+      expect(served.last.uri.path, '/api/assets/${_asset(1).id}/thumbnail');
+      expect(served.last.uri.queryParameters['size'], 'fullsize');
+      expect(served.last.headers.value(_sessionHeader), 'secret');
 
       final sphere = PlayOnRequest.ofAsset(
         _asset(2),
@@ -174,6 +190,45 @@ void main() {
       )!;
       expect((await readImmichCastInfo(immich, sphere))!.flat360, isTrue);
     });
+
+    test('a server with no full size image (Immich\'s default) redirects: the preview it redirects to goes', () async {
+      fullsizeRedirect = (id) => '/api/assets/$id/thumbnail?size=preview&edited=true';
+      final info = (await readImmichCastInfo(immich, _request(_asset(1))))!;
+      final answer = await info.upstream!('GET', const {});
+      expect(answer.statusCode, 200);
+      await answer.stream.drain<void>();
+      expect(served.last.method, 'GET');
+      expect(served.last.uri.path, '/api/assets/${_asset(1).id}/thumbnail');
+      expect(served.last.uri.queryParameters, {'size': 'preview', 'edited': 'true'});
+      expect(served.last.headers.value(_sessionHeader), 'secret');
+    });
+
+    test(
+      'a redirect to another host, or to another asset, is never followed: the preview of this asset goes',
+      () async {
+        final id = _asset(1).id;
+        final endpoint = 'http://127.0.0.1:${server.port}/api';
+        final from = castImmichUrl(endpoint, id, 'thumbnail', {'size': 'fullsize', 'edited': 'true'});
+        expect(castImmichPhotoRedirect(from, endpoint, id, 'https://cdn.example/a.jpg'), isNull);
+        expect(castImmichPhotoRedirect(from, endpoint, id, 'http://127.0.0.1:1/api/assets/$id/thumbnail'), isNull);
+        expect(
+          castImmichPhotoRedirect(from, endpoint, id, '/api/assets/${_asset(2).id}/thumbnail?size=preview'),
+          isNull,
+        );
+        expect(castImmichPhotoRedirect(from, endpoint, id, '/api/assets/$id/original'), isNull);
+        expect(castImmichPhotoRedirect(from, endpoint, id, '/api/assets/$id/../${_asset(2).id}/thumbnail'), isNull);
+        expect(
+          castImmichPhotoRedirect(from, endpoint, id, 'thumbnail?size=preview&edited=true'),
+          Uri.parse('http://127.0.0.1:${server.port}/api/assets/$id/thumbnail?size=preview&edited=true'),
+        );
+
+        fullsizeRedirect = (_) => 'http://cdn.example/elsewhere.jpg';
+        final info = (await readImmichCastInfo(immich, _request(_asset(1))))!;
+        await (await info.upstream!('GET', const {})).stream.drain<void>();
+        expect(served.last.uri.queryParameters, {'size': 'preview', 'edited': 'true'});
+        expect(served.every((request) => request.uri.path.startsWith('/api/assets/$id/')), isTrue);
+      },
+    );
 
     test('an HEVC video the server converted: the converted version goes to a device without HEVC', () async {
       final info = (await readImmichCastInfo(immich, _request(_asset(3, type: AssetType.video))))!;
@@ -228,9 +283,14 @@ void main() {
     late ProviderContainer container;
     late List<CastRelayServer> relays;
 
+    /// Whether the test's client on the loopback stands for the Cast device (the relay then serves it whatever the
+    /// lease's device)
+    late bool loopbackIsTheDevice;
+
     setUp(() {
       device = _Device();
       relays = [];
+      loopbackIsTheDevice = true;
       container = ProviderContainer(
         overrides: [
           castImmichEnvironmentProvider.overrideWithValue(immich),
@@ -239,7 +299,7 @@ void main() {
               connect: (_) async => device,
               localAddresses: () async => ['192.168.1.20'],
               bindRelay: (_) async {
-                final relay = await CastRelayServer.bind('127.0.0.1', port: 0);
+                final relay = await CastRelayServer.bind('127.0.0.1', port: 0, allowLoopback: loopbackIsTheDevice);
                 relays.add(relay);
                 return relay;
               },
@@ -305,6 +365,32 @@ void main() {
       expect(answer.headers.contentType?.mimeType, 'image/jpeg');
       await answer.drain<void>();
       expect(answer.headers.value(_sessionHeader), isNull);
+    });
+
+    test('on a server with Immich\'s default settings, the device gets the preview the server redirects to', () async {
+      fullsizeRedirect = (id) => '/api/assets/$id/thumbnail?size=preview&edited=true';
+      expect(await controller().cast(_target, _request(_asset(1))), CastOutcome.playing);
+      final url = Uri.parse((device.loads().single['media']! as Map)['contentUrl']! as String);
+      final client = HttpClient();
+      addTearDown(() => client.close(force: true));
+      final answer = await (await client.getUrl(url.replace(host: '127.0.0.1', port: relays.single.port))).close();
+      expect(answer.statusCode, 200);
+      expect(answer.headers.contentType?.mimeType, 'image/jpeg');
+      await answer.drain<void>();
+      expect(served.last.uri.queryParameters['size'], 'preview');
+    });
+
+    test('the relay serves the Cast device only: another client of the network with the path gets a 404', () async {
+      // The device's address is 192.168.1.42; the test's client on the loopback is another device here
+      loopbackIsTheDevice = false;
+      expect(await controller().cast(_target, _request(_asset(1))), CastOutcome.playing);
+      final url = Uri.parse((device.loads().single['media']! as Map)['contentUrl']! as String);
+      final client = HttpClient();
+      addTearDown(() => client.close(force: true));
+      final answer = await (await client.getUrl(url.replace(host: '127.0.0.1', port: relays.single.port))).close();
+      expect(answer.statusCode, HttpStatus.notFound);
+      await answer.drain<void>();
+      expect(served.where((request) => request.method == 'GET'), isEmpty);
     });
   });
 
