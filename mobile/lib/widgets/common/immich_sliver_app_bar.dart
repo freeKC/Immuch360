@@ -5,6 +5,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/ui/ai_updates.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_bar_button.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -79,8 +80,10 @@ class ImmichSliverAppBar extends ConsumerWidget {
                 icon: Icon(isCasting ? Icons.cast_connected_rounded : Icons.cast_rounded),
               ),
             ...?actions,
-            // Immuch360 Desktop: the 3D conversions under way, which open their panel (lib/desktop/ai/ui)
+            // Immuch360 Desktop: the 3D conversions under way, which open their panel, and the updates of the AI
+            // components (lib/desktop/ai/ui)
             if (CurrentPlatform.isDesktop) const DesktopConversionsBarButton(),
+            if (CurrentPlatform.isDesktop) const AiUpdatesBarButton(),
             if (showUploadButton && !isViewOnly && hasServer) const _BackupIndicator(),
             const _ProfileIndicator(),
             const SizedBox(width: 8),

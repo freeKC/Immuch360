@@ -23,6 +23,10 @@
 // "Splat scenes (experimental)" sits right under the switch of the AI features, on by default as every experimental
 // feature of the app; off, no "Make a splat scene (AI)" anywhere.
 //
+// Release 52 (issue 21, ai_updates.dart): the updates of the installed components above their tile (the line with
+// Update all, the progress with Pause and Resume, the files no component needs any more), Update on each older
+// version, and "Update AI components automatically", on by default.
+//
 // The settings of the conversions live in desktop_ai.json (DesktopAiSettings); the switch of the AI features is a
 // setting shared with the Meta Quest (AiImmersiveConfig).
 
@@ -44,6 +48,7 @@ import 'package:immich_mobile/desktop/ai/library/generated_album.dart';
 import 'package:immich_mobile/desktop/ai/ort/depth_provider.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
+import 'package:immich_mobile/desktop/ai/ui/ai_updates.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/desktop/files/download_folder.dart';
@@ -53,6 +58,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 import 'package:immich_mobile/domain/models/ai_immersive/ai_gpu_runtime_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_updater.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
@@ -234,11 +240,21 @@ class DesktopAiSettingsSection extends ConsumerWidget {
         // The components stay listed with the features off, so that their space can still be freed; nothing is
         // downloaded then
         if (platform != null) ...[
+          AiUpdatesPanel(canDownload: enabled),
           AiComponentsTile(
             platform: platform,
             onCancelConversions: () => stopConversionsForRemoval(ref),
             canDownload: enabled,
+            onUpdate: (component) => startAiUpdate(context, ref.read(aiComponentsUpdaterProvider), only: component),
           ),
+          if (enabled && settings != null)
+            SwitchListTile(
+              key: const Key('ai_settings_auto_update'),
+              value: settings.autoUpdateComponents,
+              title: Text(t.ai_immersive_auto_update),
+              subtitle: Text(t.ai_immersive_auto_update_subtitle(size: formatBytes(aiUpdateConfirmBytes))),
+              onChanged: (on) => unawaited(_update(ref, (kept) => kept.copyWith(autoUpdateComponents: on))),
+            ),
           const _MoveComponents(),
         ] else
           ListTile(title: Text(t.ai_immersive_unavailable_system, style: secondary)),

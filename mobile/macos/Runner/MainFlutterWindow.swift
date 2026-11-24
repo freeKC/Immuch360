@@ -1,5 +1,6 @@
 import Cocoa
 import FlutterMacOS
+import Network
 
 class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {
@@ -10,6 +11,7 @@ class MainFlutterWindow: NSWindow {
 
     RegisterGeneratedPlugins(registry: flutterViewController)
     OpenFilesChannel.shared.attach(to: flutterViewController)
+    NetworkCostChannel.shared.attach(to: flutterViewController)
 
     super.awakeFromNib()
   }
@@ -86,5 +88,45 @@ final class FileDropView: NSView {
       info.draggingPasteboard.readObjects(
         forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
     return urls.map { $0.path }
+  }
+}
+
+/// Tells Dart whether the connection is metered now (lib/desktop/platform/metered_connection.dart): an expensive path
+/// (an iPhone hotspot) or a constrained one (Low Data Mode). The AI components never update by themselves on one.
+final class NetworkCostChannel {
+  static let shared = NetworkCostChannel()
+
+  private let monitor = NWPathMonitor()
+  private let queue = DispatchQueue(label: "immuch360.network-cost")
+  // Read and written on the queue only
+  private var path: NWPath?
+  private var channel: FlutterMethodChannel?
+
+  func attach(to controller: FlutterViewController) {
+    monitor.pathUpdateHandler = { [weak self] path in
+      self?.path = path
+    }
+    monitor.start(queue: queue)
+    let channel = FlutterMethodChannel(
+      name: "immuch360/network", binaryMessenger: controller.engine.binaryMessenger)
+    channel.setMethodCallHandler { [weak self] call, result in
+      guard call.method == "isMetered" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      guard let self = self else {
+        result(nil)
+        return
+      }
+      self.queue.async {
+        let current = self.path ?? self.monitor.currentPath
+        // macOS 12 at least (the deployment target): isConstrained is there
+        let metered = current.isExpensive || current.isConstrained
+        DispatchQueue.main.async {
+          result(NSNumber(value: metered))
+        }
+      }
+    }
+    self.channel = channel
   }
 }

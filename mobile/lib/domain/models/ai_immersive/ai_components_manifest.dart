@@ -1,6 +1,8 @@
 // The catalogue of the AI components the app downloads when the user asks for them: the depth model and, on the
 // computers, ONNX Runtime (design-final 2026-10-26, section 2.2). Compiled into the app: no remote manifest, so no
-// network call without a gesture of the user, and a new version of a component comes with a new version of the app.
+// network call without a gesture of the user, and a new version of a component comes with a new version of the app:
+// another SHA-256 under the same id, or a new id that lists the older one in [AiComponent.replaces], which the app
+// then offers as an update of what the user installed (issue 21, ai_components_service.dart).
 // The sums are always checked, whatever the source, so a mirror can serve nothing else.
 //
 // Phases 2 and 3 (design-final 2026-10-27, section 7.1): each component lists the features it serves (AiFeature), so
@@ -197,6 +199,7 @@ class AiComponent {
     this.archiveFiles = const [],
     this.variantOf,
     this.minGraphicsMemory,
+    this.replaces = const [],
   });
 
   /// "depth-anything-v2-small-onnx"
@@ -258,6 +261,12 @@ class AiComponent {
 
   /// The memory of graphics card it needs, in bytes; null for a component of the processor
   final int? minGraphicsMemory;
+
+  /// The ids an earlier version of the app gave the same component (issue 21): ONNX Runtime carries its version in its
+  /// id, so its next version comes under a new id. An installed one of them makes this component an update, and its
+  /// files go once this one is installed and checked. A component that keeps its id needs nothing here: another
+  /// SHA-256 under the same id is the update.
+  final List<String> replaces;
 
   /// Whether it comes in parts
   bool get isInParts => parts.isNotEmpty;

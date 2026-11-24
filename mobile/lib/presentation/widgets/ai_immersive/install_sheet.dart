@@ -8,7 +8,9 @@
 // Also here, for the tile of the components: the licence link and its dialog (the licence copied at the
 // installation, else the text the app keeps, and the notices of the libraries inside ONNX Runtime), and the text of
 // each download failure. Phases 2 and 3 (design-final 2026-10-27, section 7.1): the free space of the drive is asked
-// for all the missing components before the first byte, and a drive too small is named with the way out.
+// for all the missing components before the first byte, and a drive too small is named with the way out. A
+// component whose older version is installed (issue 21) says both versions: the download is its update, and the
+// older version stays until the new one is checked.
 
 import 'dart:async';
 import 'dart:io';
@@ -185,7 +187,12 @@ class _AiInstallPanelState extends ConsumerState<AiInstallPanel> {
               t.ai_immersive_install_prompt(size: formatBytes(AiComponentsService.downloadBytesOf(missing))),
               key: const Key('ai_install_prompt'),
             ),
-            for (final component in missing) _InstallRow(component: component, status: _service.statusOf(component)),
+            for (final component in missing)
+              _InstallRow(
+                component: component,
+                status: _service.statusOf(component),
+                installedVersion: _service.installedVersionOf(component),
+              ),
             if (failure != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -218,10 +225,13 @@ class _AiInstallPanelState extends ConsumerState<AiInstallPanel> {
 }
 
 class _InstallRow extends StatelessWidget {
-  const _InstallRow({required this.component, required this.status});
+  const _InstallRow({required this.component, required this.status, this.installedVersion});
 
   final AiComponent component;
   final AiComponentStatus status;
+
+  /// The version installed of an older version this download updates
+  final String? installedVersion;
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +246,8 @@ class _InstallRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(component.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+          if (status.state == AiComponentState.outdated)
+            Text(t.ai_immersive_component_outdated(installed: installedVersion ?? '', version: component.version)),
           Text(aiComponentSizes(t, component)),
           AiLicenceLink(component: component),
           if (downloading) ...[

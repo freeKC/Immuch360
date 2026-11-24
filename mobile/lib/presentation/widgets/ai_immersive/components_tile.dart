@@ -15,6 +15,10 @@
 // group, Remove shown only where it would remove something, and a component another installed group needs stays, its
 // row saying which ("Kept while 3D scenes use it"). While the components are being moved to another folder, nothing
 // is downloaded nor removed from here. The Quest keeps the one list of phase 1.
+//
+// An older version waiting for its update (issue 21) says which version is installed and which this app brings, its
+// group offers Update in place of Download (the install sheet, which updates it), and a computer passes [onUpdate] for
+// the Update of each component (the updater of ai_components_updater.dart, with its pause and its questions).
 
 import 'dart:async';
 
@@ -42,6 +46,7 @@ class AiComponentsTile extends ConsumerStatefulWidget {
     required this.onCancelConversions,
     this.canDownload = true,
     this.platform,
+    this.onUpdate,
   });
 
   /// The one list of a system without groups (the Quest)
@@ -51,6 +56,9 @@ class AiComponentsTile extends ConsumerStatefulWidget {
   final AiPlatform? platform;
   final Future<void> Function() onCancelConversions;
   final bool canDownload;
+
+  /// Updates one component whose older version is installed; null where the group's Update is the only way
+  final Future<void> Function(AiComponent component)? onUpdate;
 
   @override
   ConsumerState<AiComponentsTile> createState() => _AiComponentsTileState();
@@ -144,6 +152,15 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
     await _refresh();
   }
 
+  /// The Update of [component], when the computer gives one and downloads are allowed
+  VoidCallback? _updateOf(AiComponent component) {
+    final update = widget.onUpdate;
+    if (update == null || !widget.canDownload || _service.isMoving) {
+      return null;
+    }
+    return () => unawaited(update(component).whenComplete(_refresh));
+  }
+
   /// A group: its title and size, Download and Remove, then the components it brings
   Widget _group(BuildContext context, AiPlatform platform, AiGroupComponents group) {
     final t = context.t;
@@ -151,9 +168,15 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
     // What removeGroup takes: a component of the group installed (or damaged) that no other installed group keeps
     final removable = group.all.any((component) {
       final state = _service.statusOf(component).state;
-      return (state == AiComponentState.installed || state == AiComponentState.damaged) &&
+      return (state == AiComponentState.installed ||
+              state == AiComponentState.damaged ||
+              state == AiComponentState.outdated) &&
           _service.groupsUsing(platform, component, besides: group.group).isEmpty;
     });
+    // Older versions alone: the install sheet updates them
+    final updating =
+        missing.isNotEmpty &&
+        missing.every((component) => _service.statusOf(component).state == AiComponentState.outdated);
     final moving = _service.isMoving;
     final name = group.group.name;
     return Column(
@@ -169,7 +192,7 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
                 TextButton(
                   key: Key('ai_components_group_download_$name'),
                   onPressed: moving ? null : () => unawaited(_install(missing)),
-                  child: Text(t.ai_immersive_download),
+                  child: Text(updating ? t.ai_immersive_update : t.ai_immersive_download),
                 ),
               if (removable)
                 IconButton(
@@ -188,6 +211,8 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
             onRemove: null,
             inGroup: true,
             keptFor: _service.groupsUsing(platform, component, besides: group.group).firstOrNull,
+            installedVersion: _service.installedVersionOf(component),
+            onUpdate: _updateOf(component),
           ),
       ],
     );
@@ -220,6 +245,8 @@ class _AiComponentsTileState extends ConsumerState<AiComponentsTile> {
                   component: component,
                   status: _service.statusOf(component),
                   onRemove: _removing || moving ? null : () => unawaited(_remove(component)),
+                  installedVersion: _service.installedVersionOf(component),
+                  onUpdate: _updateOf(component),
                 )
             else
               for (final group in groups) _group(context, platform!, group),
@@ -283,6 +310,8 @@ class _ComponentRow extends StatelessWidget {
     required this.onRemove,
     this.inGroup = false,
     this.keptFor,
+    this.installedVersion,
+    this.onUpdate,
   });
 
   final AiComponent component;
@@ -295,6 +324,12 @@ class _ComponentRow extends StatelessWidget {
 
   /// The installed group that keeps this component when its own group goes
   final AiFeatureGroup? keptFor;
+
+  /// The version installed.json gives, for an older version waiting for its update
+  final String? installedVersion;
+
+  /// The Update of an older version
+  final VoidCallback? onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -316,6 +351,13 @@ class _ComponentRow extends StatelessWidget {
         ],
         AiComponentState.damaged => [Text(t.ai_immersive_component_damaged, style: error)],
         AiComponentState.removedNextStart => [Text(t.ai_immersive_removed_next_start)],
+        AiComponentState.outdated => [
+          Text(
+            t.ai_immersive_component_outdated(installed: installedVersion ?? '', version: component.version),
+            key: Key('ai_component_outdated_${component.id}'),
+          ),
+          Text(aiComponentSizes(t, component)),
+        ],
       },
       if (failure != null && status.state != AiComponentState.downloading)
         Text(aiDownloadFailureText(t, failure), style: error),
@@ -327,17 +369,33 @@ class _ComponentRow extends StatelessWidget {
       ),
     ];
     final removable =
-        !inGroup && (status.state == AiComponentState.installed || status.state == AiComponentState.damaged);
+        !inGroup &&
+        (status.state == AiComponentState.installed ||
+            status.state == AiComponentState.damaged ||
+            status.state == AiComponentState.outdated);
+    final update = status.state == AiComponentState.outdated ? onUpdate : null;
     return ListTile(
       key: Key('ai_component_${component.id}'),
       title: Text(component.title),
       subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: lines),
-      trailing: removable
-          ? IconButton(
-              key: Key('ai_component_remove_${component.id}'),
-              icon: const Icon(Icons.delete_outline_rounded),
-              tooltip: t.ai_immersive_remove,
-              onPressed: onRemove,
+      trailing: removable || update != null
+          ? Wrap(
+              spacing: 4,
+              children: [
+                if (update != null)
+                  TextButton(
+                    key: Key('ai_component_update_${component.id}'),
+                    onPressed: update,
+                    child: Text(t.ai_immersive_update),
+                  ),
+                if (removable)
+                  IconButton(
+                    key: Key('ai_component_remove_${component.id}'),
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    tooltip: t.ai_immersive_remove,
+                    onPressed: onRemove,
+                  ),
+              ],
             )
           : null,
     );
