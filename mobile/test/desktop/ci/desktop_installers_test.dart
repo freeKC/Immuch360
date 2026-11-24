@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -241,6 +242,109 @@ void main() {
           '/usr/share/licenses/immuch360/libsmb2/LICENCE-LGPL-2.1.txt',
         ]),
       );
+    });
+
+    group('the AppImage', () {
+      // A lock as appimage.lock.json has it, its tools and the source of the runtime faked by files of a few bytes
+      String sha(String text) => sha256.convert(utf8.encode(text)).toString();
+      Map<String, String> lock({String runtimeSource = 'the source of the runtime'}) => {
+        'lock.json': jsonEncode({
+          'appimagetool': {'url': 'https://example.org/appimagetool', 'sha256': sha('tool'), 'file': 'appimagetool'},
+          'runtime': {'url': 'https://example.org/runtime', 'sha256': sha('runtime'), 'file': 'runtime-x86_64'},
+          'sources': [
+            {'url': 'https://example.org/src.tar.gz', 'sha256': sha(runtimeSource), 'file': 'runtime-src.tar.gz'},
+          ],
+        }),
+        'tools/appimagetool': 'tool',
+        'tools/runtime-x86_64': 'runtime',
+        'tools/runtime-src.tar.gz': 'the source of the runtime',
+      };
+      Map<String, String> bundle() => {
+        'list.json': _list(),
+        'bundle/immuch360': 'ELF',
+        'bundle/data/icudtl.dat': 'data',
+        'bundle/lib/libapp.so': 'ELF',
+        'bundle/lib/libdartjni.so': 'ELF',
+        'bundle/lib/libsmb2.so': 'ELF',
+        'bundle/$_libsmb2Sources': 'the sources of libsmb2',
+      };
+      ScriptRun appdir(Directory root) => installers(root, [
+        'appimage',
+        '--bundle',
+        p.join(root.path, 'bundle'),
+        '--label',
+        '3.4.7-desktop.32',
+        '--out',
+        p.join(root.path, 'out'),
+        '--tools',
+        p.join(root.path, 'tools'),
+        '--lock',
+        p.join(root.path, 'lock.json'),
+        '--appdir-only',
+      ]);
+
+      test(
+        'the AppDir: the bundle, the AppRun that checks the libraries, the entry, the licences, the runtime source',
+        () {
+          final root = tree({...bundle(), ...lock()});
+          final run = appdir(root);
+          expect(run.exitCode, 0, reason: '$run');
+          final dir = p.join(root.path, 'out', 'AppDir');
+          String read(String path) => File(p.joinAll([dir, ...path.split('/')])).readAsStringSync();
+          expect(read('immuch360/lib/libapp.so'), 'ELF');
+          expect(File(p.join(dir, 'immuch360', 'lib', 'libdartjni.so')).existsSync(), isFalse);
+          expect(read('immuch360/$_libsmb2Sources'), 'the sources of libsmb2');
+          final apprun = read('AppRun');
+          expect(apprun, contains("label='3.4.7-desktop.32'"));
+          expect(apprun, contains('glibc 2.35 or later'));
+          expect(apprun, isNot(contains('@LABEL@')));
+          expect(apprun, isNot(contains('@GLIBC@')));
+          expect(File(p.join(dir, 'AppRun')).statSync().mode & 0x49, 0x49, reason: 'executable');
+          expect(File(p.join(dir, 'fallback', 'xdg-user-dir')).statSync().mode & 0x49, 0x49, reason: 'executable');
+          final entry = read('com.aprogsys.immuch360.desktop');
+          expect(entry, isNot(contains('TryExec=')));
+          expect(entry, contains('X-AppImage-Version=3.4.7-desktop.32\n'));
+          expect(entry, contains('PrefersNonDefaultGPU=true\n'));
+          expect(read('usr/share/applications/com.aprogsys.immuch360.desktop'), entry);
+          expect(Link(p.join(dir, '.DirIcon')).targetSync(), 'com.aprogsys.immuch360.png');
+          expect(File(p.join(dir, 'com.aprogsys.immuch360.png')).existsSync(), isTrue);
+          final metainfo = read('usr/share/metainfo/com.aprogsys.immuch360.metainfo.xml');
+          expect(metainfo, contains('<release version="3.4.7" date="'));
+          expect(metainfo, contains('<launchable type="desktop-id">com.aprogsys.immuch360.desktop</launchable>'));
+          expect(read('usr/share/doc/immuch360/copyright'), contains('GNU LESSER GENERAL PUBLIC LICENSE'));
+          expect(read('usr/share/licenses/immuch360/libsmb2/NOTICE'), isNotEmpty);
+          const runtime = 'usr/share/doc/immuch360/appimage-runtime';
+          expect(read('$runtime/runtime-src.tar.gz'), 'the source of the runtime');
+          expect(read('$runtime/RUNTIME-NOTICE.txt'), contains('libfuse 3.15.0'));
+          expect(read('$runtime/LICENCE-LGPL-2.1.txt'), contains('GNU LESSER GENERAL PUBLIC LICENSE'));
+          // The AppRun answers its version before it looks for any library
+          final version = Process.runSync('sh', [p.join(dir, 'AppRun'), '--version']);
+          expect(version.stdout, 'Immuch360 Desktop 3.4.7-desktop.32\n');
+        },
+        skip: Platform.isWindows ? 'the AppImage is made on Linux (symbolic links, sh)' : false,
+      );
+
+      test('refuses a source of the runtime that is not the one the lock pins', () {
+        final root = tree({...bundle(), ...lock(runtimeSource: 'another source')});
+        final run = appdir(root);
+        expect(run.exitCode, 1, reason: '$run');
+        expect(run.output, contains('is not the file the lock pins'));
+      }, skip: Platform.isWindows ? 'the AppImage is made on Linux' : false);
+
+      test('refuses a lock without the source of the runtime or with an address that is not https', () {
+        final root = tree({
+          ...bundle(),
+          ...lock(),
+          'lock.json': jsonEncode({
+            'appimagetool': {'url': 'http://example.org/t', 'sha256': sha('tool'), 'file': 'appimagetool'},
+            'runtime': {'url': 'https://example.org/r', 'sha256': sha('runtime'), 'file': 'runtime-x86_64'},
+            'sources': <Object>[],
+          }),
+        });
+        final run = appdir(root);
+        expect(run.exitCode, 1, reason: '$run');
+        expect(run.output, contains('needs an https address'));
+      });
     });
 
     test('refuses a bundle with lib/libsmb2.so whose assets lack the archive of its sources', () {
