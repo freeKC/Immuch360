@@ -16,8 +16,9 @@ import 'package:immich_ui/immich_ui.dart';
 
 /// See the top of this file; a fake in the tests
 abstract interface class ScreenPlayerPrompts {
-  /// "(phone) wants to play (title)": true on Play; false on Not now, or after [askTimeout]
-  Future<bool> askPlay({required String phone, String? title});
+  /// "(phone) wants to play (title)", or "wants to show" a [photo]: true on Play; false on Not now, or after
+  /// [askTimeout]
+  Future<bool> askPlay({required String phone, String? title, bool photo = false});
 
   /// "Add (server) from (phone)?" with the warning and [check]: true on Add; false on Not now, or once [cancel]
   /// completes
@@ -67,15 +68,16 @@ class _AppScreenPlayerPrompts implements ScreenPlayerPrompts {
   }
 
   @override
-  Future<bool> askPlay({required String phone, String? title}) => _ask(
+  Future<bool> askPlay({required String phone, String? title, bool photo = false}) => _ask(
     (context) => AlertDialog(
       key: const Key('play_from_phone_ask'),
       icon: const Icon(Icons.cast_connected_rounded),
-      title: Text(
-        title == null
-            ? context.t.play_from_phone_ask_untitled(phone: phone)
-            : context.t.play_from_phone_ask(phone: phone, title: title),
-      ),
+      title: Text(switch ((title, photo)) {
+        (null, false) => context.t.play_from_phone_ask_untitled(phone: phone),
+        (null, true) => context.t.play_from_phone_ask_item_untitled(phone: phone),
+        (final title?, false) => context.t.play_from_phone_ask(phone: phone, title: title),
+        (final title?, true) => context.t.play_from_phone_ask_item(phone: phone, title: title),
+      }),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.t.play_from_phone_not_now)),
         FilledButton(

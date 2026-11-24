@@ -17,6 +17,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/network/linux_network_bus.dart';
 import 'package:immich_mobile/desktop/network/windows_dns_sd.dart';
+import 'package:immich_mobile/domain/models/media_server_item.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
@@ -42,6 +43,7 @@ import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -317,6 +319,9 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
   final _states = StreamController<ScreenPlayState>.broadcast();
   Timer? _poll;
   String? _playerKey;
+
+  /// Whether the photo a phone sent is still on the screen
+  bool Function()? _showing;
   DateTime? _openedAt;
   bool _playerSeen = false;
   PlayItem? _pendingTracks;
@@ -346,38 +351,137 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
   @override
   Future<void> play(PlayItem item, LinkedPeer from) async {
     final ask = kind == PairingScreenKind.headset || _ref.read(playFromPhoneAskProvider);
+    final plex = item.kind == PlayKind.plex;
+    _stopPolling();
     _set(
       (state) => ScreenPlayState(
         seq: state.seq + 1,
         phase: ask ? ScreenPlayPhase.asking : ScreenPlayPhase.opening,
         server: item.server,
-        item: item.item,
+        // The 16 characters a build 51 phone reads are a Plex rating key's
+        item: plex ? item.item : null,
+        itemKey: item.item,
+        media: plex ? null : item.media,
         title: item.title,
         from: from.name,
         positionMs: item.offsetMs,
       ),
     );
-    if (ask && !await _prompts.askPlay(phone: from.name, title: item.title)) {
+    if (ask && !await _prompts.askPlay(phone: from.name, title: item.title, photo: item.media == PlayMedia.photo)) {
       _log.info('Play from a phone: declined on the screen');
       return _fail(ScreenPlayReason.declined);
     }
     _set((state) => state.next(phase: ScreenPlayPhase.opening));
+    final opened = switch (item.target) {
+      PlexPlayTarget() => await _openPlex(item),
+      final ImmichPlayTarget target => await _openImmich(item, target),
+      final SharePlayTarget target => await _openShare(item, target),
+      final MediaServerPlayTarget target => await _openMediaServer(item, target),
+    };
+    if (!opened) {
+      return;
+    }
+    _prompts.toast(from: from.name);
+    _log.info('Play from a phone: ${item.media == PlayMedia.photo ? 'showing' : 'playing'} (${item.kind.wire})');
+    _startPolling();
+  }
+
+  /// A film of a Plex server: the screen's own source of that machine identifier, the path of the rating key
+  Future<bool> _openPlex(PlayItem item) async {
     final source = _ref
         .read(networkSourcesProvider)
         .where((source) => source.type == NetworkSourceType.plex && source.discoveryId?.toLowerCase() == item.server)
         .firstOrNull;
     if (source == null) {
       _log.info('Play from a phone: no such Plex server here');
-      return _fail(ScreenPlayReason.noSuchServer);
+      _fail(ScreenPlayReason.noSuchServer);
+      return false;
     }
     final String path;
     try {
       final fileSystem = await _ref.read(networkConnectionsProvider).fileSystem(source.id);
       if (fileSystem is! PlexFileSystem) {
-        return _fail(ScreenPlayReason.noSuchServer);
+        _fail(ScreenPlayReason.noSuchServer);
+        return false;
       }
       path = await fileSystem.pathOfItem(item.item);
-    } on NetworkFileSystemException catch (error) {
+    } catch (error) {
+      _failOf(error);
+      return false;
+    }
+    return _openVideoPage(item, source.id, path);
+  }
+
+  /// A Jellyfin or Emby item: the screen's own server of that id, the path of the item
+  Future<bool> _openMediaServer(PlayItem item, MediaServerPlayTarget target) async {
+    final source = findPlayMediaServerSource(_ref.read(networkSourcesProvider), target);
+    if (source == null) {
+      _log.info('Play from a phone: no such media server here');
+      _fail(ScreenPlayReason.noSuchSource);
+      return false;
+    }
+    final String path;
+    try {
+      final fileSystem = await _ref.read(networkConnectionsProvider).fileSystem(source.id);
+      if (fileSystem is! MediaServerItemSource) {
+        _fail(ScreenPlayReason.noSuchSource);
+        return false;
+      }
+      path = await (fileSystem as MediaServerItemSource).pathOfItem(target.item);
+    } catch (error) {
+      _failOf(error);
+      return false;
+    }
+    return _openVideoPage(item, source.id, path);
+  }
+
+  /// A file of a share: the screen's own source of that identity, the same path from its root
+  Future<bool> _openShare(PlayItem item, SharePlayTarget target) async {
+    final source = findPlayShareSource(_ref.read(networkSourcesProvider), target);
+    if (source == null) {
+      _log.info('Play from a phone: no such share here');
+      _fail(ScreenPlayReason.noSuchSource);
+      return false;
+    }
+    if (target.media == PlayMedia.video) {
+      return _openVideoPage(item, source.id, target.path);
+    }
+    return _openRoute(
+      NetworkPhotoRoute(sourceId: source.id, path: target.path),
+      showing: () => _ref.read(screenPlayerShowsProvider)(NetworkPhotoRoute.name),
+    );
+  }
+
+  /// An Immich photo or video: the screen's own server and account decide (screen_item_openers.dart)
+  Future<bool> _openImmich(PlayItem item, ImmichPlayTarget target) async {
+    final access = _ref.read(screenImmichAccessProvider);
+    final ScreenImmichResolution found;
+    try {
+      found = await access.resolve(target);
+    } catch (error) {
+      _log.warning('Play from a phone: the asset could not be looked up: ${error.runtimeType}');
+      _fail(ScreenPlayReason.unreachable);
+      return false;
+    }
+    final asset = found.asset;
+    if (asset == null) {
+      _log.info('Play from a phone: the asset does not open here (${found.reason?.wire})');
+      _fail(found.reason ?? ScreenPlayReason.failed);
+      return false;
+    }
+    // What the screen's server says the asset is wins over what the phone said
+    final photo = !asset.isVideo;
+    _set((state) => state.next(media: photo ? PlayMedia.photo : PlayMedia.video));
+    final route = access.routeOf(asset);
+    if (photo) {
+      return _openRoute(route, showing: () => access.showing(asset.id));
+    }
+    _pendingTracks = null;
+    return _openRoute(route, playerKey: asset.id);
+  }
+
+  void _failOf(Object error) {
+    if (error is NetworkFileSystemException) {
       _log.info('Play from a phone: the server did not give the item (${error.runtimeType})');
       return _fail(
         error.isAuthentication
@@ -386,30 +490,41 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
             ? ScreenPlayReason.notFound
             : ScreenPlayReason.unreachable,
       );
-    } catch (error) {
-      _log.warning('Play from a phone: the item did not open: ${error.runtimeType}');
-      return _fail(ScreenPlayReason.failed);
     }
-    final router = _ref.read(appRouterProvider);
-    final replace = router.current.name == NetworkVideoRoute.name;
-    final route = NetworkVideoRoute(
-      sourceId: source.id,
-      path: path,
-      startAt: item.offsetMs > 0 ? Duration(milliseconds: item.offsetMs) : null,
+    _log.warning('Play from a phone: the item did not open: ${error.runtimeType}');
+    _fail(ScreenPlayReason.failed);
+  }
+
+  Future<bool> _openVideoPage(PlayItem item, String sourceId, String path) {
+    _pendingTracks = item.audio != null || item.subtitle != null ? item : null;
+    return _openRoute(
+      NetworkVideoRoute(
+        sourceId: sourceId,
+        path: path,
+        startAt: item.offsetMs > 0 ? Duration(milliseconds: item.offsetMs) : null,
+      ),
+      playerKey: 'network:$sourceId:$path',
     );
-    _playerKey = 'network:${source.id}:$path';
+  }
+
+  /// Opens [route], in place of a page a phone opened (or a player) when one is in front, and follows its player
+  /// ([playerKey]) or, for a photo, whether it is still shown ([showing])
+  Future<bool> _openRoute(PageRouteInfo route, {String? playerKey, bool Function()? showing}) async {
+    final replace = _ref.read(screenPlayerShowsProvider)(null);
+    _playerKey = playerKey;
+    _showing = showing;
     _openedAt = DateTime.now();
     _playerSeen = false;
-    _pendingTracks = item.audio != null || item.subtitle != null ? item : null;
     try {
       await _ref.read(screenPlayerOpenProvider)(route, replace: replace);
     } catch (error) {
-      _log.warning('Play from a phone: the player did not open: ${error.runtimeType}');
-      return _fail(ScreenPlayReason.failed);
+      _log.warning('Play from a phone: the page did not open: ${error.runtimeType}');
+      _playerKey = null;
+      _showing = null;
+      _fail(ScreenPlayReason.failed);
+      return false;
     }
-    _prompts.toast(from: from.name);
-    _log.info('Play from a phone: playing');
-    _startPolling();
+    return true;
   }
 
   VideoPlayerNotifier? get _notifier {
@@ -433,6 +548,10 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
   /// Follows the player of the page: its status, position and tracks; the page gone (Back on the remote), nothing
   /// plays any more
   Future<void> _follow() async {
+    final showing = _showing;
+    if (showing != null) {
+      return _followPhoto(showing);
+    }
     final key = _playerKey;
     if (key == null) {
       return _stopPolling();
@@ -477,6 +596,23 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
         clearReason: phase != ScreenPlayPhase.failed,
       ),
     );
+  }
+
+  /// A photo: shown while its page is in front; Back on the remote, or another page, ends it
+  void _followPhoto(bool Function() showing) {
+    if (showing()) {
+      _playerSeen = true;
+      _set((state) => state.next(phase: ScreenPlayPhase.showing, clearReason: true));
+      return;
+    }
+    if (_playerSeen) {
+      _stopPolling();
+      _showing = null;
+      _set((state) => state.next(phase: ScreenPlayPhase.idle, clearReason: true));
+    } else if (DateTime.now().difference(_openedAt ?? DateTime.now()) > openGrace) {
+      _showing = null;
+      _fail(ScreenPlayReason.failed);
+    }
   }
 
   /// The tracks of [item]'s choice, matched by language: the ids of the two players differ
@@ -554,10 +690,12 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
   @override
   Future<void> stop() async {
     final key = _playerKey;
+    final showing = _showing;
     _stopPolling();
     _playerKey = null;
+    _showing = null;
     _pendingTracks = null;
-    if (key != null && _ref.exists(videoPlayerProvider(key))) {
+    if ((key != null && _ref.exists(videoPlayerProvider(key))) || (showing != null && showing())) {
       await _ref.read(screenPlayerCloseProvider)();
     }
     _set((state) => state.next(phase: ScreenPlayPhase.idle, clearReason: true));
@@ -604,11 +742,22 @@ final screenPlayerOpenProvider = Provider<ScreenPlayerOpen>((ref) {
   };
 });
 
-/// Closes the player a play of a phone opened: Stop on the phone
+/// The pages a play of a phone opens
+const screenPlayerPageNames = {NetworkVideoRoute.name, NetworkPhotoRoute.name, AssetViewerRoute.name};
+
+/// Whether the page in front is [name], or with null one of the pages a play opens: a new play then takes its place
+final screenPlayerShowsProvider = Provider<bool Function(String? name)>((ref) {
+  return (name) {
+    final current = ref.read(appRouterProvider).current.name;
+    return name == null ? screenPlayerPageNames.contains(current) : current == name;
+  };
+});
+
+/// Closes the page a play of a phone opened: Stop on the phone
 final screenPlayerCloseProvider = Provider<Future<void> Function()>((ref) {
   return () async {
     final router = ref.read(appRouterProvider);
-    if (router.current.name == NetworkVideoRoute.name) {
+    if (screenPlayerPageNames.contains(router.current.name)) {
       router.pop();
     }
   };

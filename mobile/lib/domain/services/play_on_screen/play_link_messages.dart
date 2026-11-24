@@ -236,7 +236,8 @@ final _uuid = RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]
 final _machineId = RegExp(r'^[0-9a-zA-Z]{8,64}$');
 
 /// What a play names: the item in a source the screen reaches with its own access, never a credential. The fields
-/// sit at the top level of the play message, beside "kind", as the Plex play of build 51 has them.
+/// sit at the top level of the play message, beside "kind", as the Plex play of build 51 has them: none may be called
+/// "type", the command's own key.
 sealed class PlayTarget {
   const PlayTarget();
 
@@ -414,7 +415,7 @@ class SharePlayTarget extends PlayTarget {
   @override
   Map<String, Object?> toJson() => {
     'kind': 'share',
-    'type': type.wire,
+    'protocol': type.wire,
     'source': source,
     'path': path,
     'media': media.wire,
@@ -422,7 +423,7 @@ class SharePlayTarget extends PlayTarget {
   };
 
   static SharePlayTarget? _fromJson(Map<String, Object?> json) {
-    final type = PlayShareType.fromWire(json['type']);
+    final type = PlayShareType.fromWire(json['protocol']);
     final source = json['source'];
     final path = json['path'];
     final media = PlayMedia.fromWire(json['media']);
@@ -484,14 +485,14 @@ class MediaServerPlayTarget extends PlayTarget {
   @override
   Map<String, Object?> toJson() => {
     'kind': 'mediaServer',
-    'type': type.wire,
+    'product': type.wire,
     'server': server,
     'item': item,
     'media': media.wire,
   };
 
   static MediaServerPlayTarget? _fromJson(Map<String, Object?> json) {
-    final type = PlayMediaServerType.fromWire(json['type']);
+    final type = PlayMediaServerType.fromWire(json['product']);
     final server = json['server'];
     final item = json['item'];
     final media = PlayMedia.fromWire(json['media']);
@@ -511,16 +512,14 @@ class MediaServerPlayTarget extends PlayTarget {
 class PlayItem {
   /// A film of a Plex server: the play message of build 51, byte for byte
   const PlayItem({
-    required String server,
-    required String item,
+    required this._server,
+    required this._item,
     this.serverName,
     this.title,
     this.offsetMs = 0,
     this.audio,
     this.subtitle,
-  }) : _server = server,
-       _item = item,
-       _target = null;
+  }) : _target = null;
 
   /// Any other item
   const PlayItem.of(PlayTarget target, {this.serverName, this.title, this.offsetMs = 0, this.audio, this.subtitle})

@@ -8,6 +8,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
@@ -62,7 +63,8 @@ class _FakeActions implements ScreenPlayerActions {
         seq: _state.seq + 1,
         phase: reason == null ? ScreenPlayPhase.opening : ScreenPlayPhase.failed,
         server: item.server,
-        item: item.item,
+        item: item.kind == PlayKind.plex ? item.item : null,
+        itemKey: item.item,
         title: item.title,
         from: from.name,
         positionMs: item.offsetMs,
@@ -429,5 +431,146 @@ void main() {
         HandoverResult.unreachable,
       );
     });
+  });
+
+  group('Immich', () {
+    const asset = '3F2504E0-4F89-11D3-9A0C-0305E82C3301';
+    const user = 'a1b2c3d4-0000-4000-8000-00000000abcd';
+
+    RemoteAsset remote({AssetType type = AssetType.image, AssetVisibility visibility = AssetVisibility.timeline}) =>
+        RemoteAsset(
+          id: asset,
+          name: 'IMG_0001.HEIC',
+          ownerId: user,
+          checksum: 'c',
+          type: type,
+          createdAt: DateTime.utc(2026),
+          updatedAt: DateTime.utc(2026),
+          visibility: visibility,
+          isEdited: false,
+          width: 4032,
+          height: 3024,
+        );
+
+    PlayOnRequest request(BaseAsset of) => PlayOnRequest.ofAsset(
+      of,
+      userId: user,
+      endpoints: const [
+        'https://Photos.example.org/api',
+        'https://photos.example.org:443/api/',
+        'http://192.168.1.10:2283/api',
+        'http://10.0.0.2:2283/api',
+        'http://10.0.0.3:2283/api',
+        'http://10.0.0.4:2283/api',
+      ],
+      serverName: 'photos.example.org',
+    )!;
+
+    test('the request names the asset, the account and four addresses at most, the same address once', () {
+      final photo = request(remote());
+      final target = photo.target as ImmichPlayTarget;
+      expect(photo.kind, PlayKind.immich);
+      expect(photo.isPhoto, isTrue);
+      expect(target.asset, asset.toLowerCase());
+      expect(target.user, user);
+      expect(target.endpoints, [
+        'https://photos.example.org',
+        'http://192.168.1.10:2283',
+        'http://10.0.0.2:2283',
+        'http://10.0.0.3:2283',
+      ]);
+      expect(photo.immich?.locked, isFalse);
+      expect(request(remote(visibility: AssetVisibility.locked)).immich?.locked, isTrue);
+      expect(request(remote(type: AssetType.video)).isPhoto, isFalse);
+      // A photo on this phone only: nothing a screen could ask its server for
+      final local = LocalAsset(
+        id: 'local-1',
+        name: 'a.jpg',
+        type: AssetType.image,
+        createdAt: DateTime.utc(2026),
+        updatedAt: DateTime.utc(2026),
+        playbackStyle: AssetPlaybackStyle.image,
+        isEdited: false,
+      );
+      expect(PlayOnRequest.ofAsset(local, userId: user, endpoints: const [], serverName: 'x'), isNull);
+    });
+
+    test('a play names the asset, never a token, and the controller follows the photo on the screen', () async {
+      final photo = request(remote());
+      expect(await controller().play(screen, address, photo), PlayOnOutcome.playing);
+      final played = actions.played!;
+      expect(played.kind, PlayKind.immich);
+      expect((played.target as ImmichPlayTarget).asset, asset.toLowerCase());
+      expect(played.toJson().keys.toSet(), {
+        'kind',
+        'asset',
+        'user',
+        'endpoints',
+        'media',
+        'title',
+        'offsetMs',
+        'serverName',
+      });
+      expect(playback()?.isOfAsset(asset), isTrue);
+      actions.set(actions.state.next(phase: ScreenPlayPhase.showing));
+      await _until(() => playback()?.state.phase == ScreenPlayPhase.showing);
+      expect(playback()?.ended, isFalse);
+    });
+
+    test('the next photo sent while the screen shows one takes its place, the controller stays', () async {
+      expect(await controller().play(screen, address, request(remote())), PlayOnOutcome.playing);
+      final next = PlayOnRequest.ofAsset(
+        RemoteAsset(
+          id: '00000000-0000-4000-8000-000000000002',
+          name: 'b.jpg',
+          ownerId: user,
+          checksum: 'd',
+          type: AssetType.image,
+          createdAt: DateTime.utc(2026),
+          updatedAt: DateTime.utc(2026),
+          isEdited: false,
+        ),
+        userId: user,
+        endpoints: const [],
+        serverName: 'x',
+      )!;
+      expect(await controller().play(screen, address, next), PlayOnOutcome.playing);
+      actions.set(actions.state.next(phase: ScreenPlayPhase.showing));
+      await _until(() => playback()?.state.phase == ScreenPlayPhase.showing);
+      expect(playback()?.isOfAsset('00000000-0000-4000-8000-000000000002'), isTrue);
+    });
+
+    test('a build 51 screen, which plays Plex films only, asks for an update', () async {
+      await server.stop();
+      session.close();
+      session = ScreenPlayerSession(
+        screenId: _screenId,
+        phones: () => [_peer(_phoneId, name: 'Galaxy S24+')],
+        actions: actions,
+        kinds: const {PlayKind.plex},
+        random: Random(6),
+      );
+      server = PlayLinkServer(session: session, preferredPort: 0, requestTimeout: const Duration(seconds: 2));
+      final old = (host: '192.168.1.20', port: await server.start());
+      expect(await controller().play(screen, old, request(remote())), PlayOnOutcome.needsUpdate);
+      expect(actions.played, isNull);
+      // A film still plays there
+      expect(await controller().play(screen, old, _request), PlayOnOutcome.playing);
+    });
+
+    for (final (reason, outcome) in [
+      (ScreenPlayReason.notSignedIn, PlayOnOutcome.notSignedIn),
+      (ScreenPlayReason.otherAccount, PlayOnOutcome.otherAccount),
+      (ScreenPlayReason.otherServer, PlayOnOutcome.otherServer),
+      (ScreenPlayReason.notVisible, PlayOnOutcome.notVisible),
+      (ScreenPlayReason.locked, PlayOnOutcome.locked),
+      (ScreenPlayReason.noSuchSource, PlayOnOutcome.noSuchSource),
+    ]) {
+      test('a screen that answers ${reason.wire} is ${outcome.name}, and no controller shows', () async {
+        actions.playReason = reason;
+        expect(await controller().play(screen, address, request(remote())), outcome);
+        expect(playback(), isNull);
+      });
+    }
   });
 }

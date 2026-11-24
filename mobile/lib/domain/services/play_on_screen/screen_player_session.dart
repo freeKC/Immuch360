@@ -158,6 +158,7 @@ class ScreenPlayerSession {
     required this.screenId,
     required this._phones,
     required this._actions,
+    this.kinds = const {PlayKind.plex, PlayKind.immich, PlayKind.share, PlayKind.mediaServer},
     DateTime Function()? clock,
     Random? random,
   }) : _clock = clock ?? DateTime.now,
@@ -175,6 +176,10 @@ class ScreenPlayerSession {
   static const handoverLifetime = Duration(minutes: 2);
 
   final String screenId;
+
+  /// The kinds of item this screen opens: a play of another kind is "invalid", as build 51 answers anything but a
+  /// Plex film
+  final Set<PlayKind> kinds;
   final List<LinkedPeer> Function() _phones;
   final ScreenPlayerActions _actions;
   final DateTime Function() _clock;
@@ -334,7 +339,7 @@ class ScreenPlayerSession {
         return _withState('ok');
       case 'play':
         final item = PlayItem.fromJson(message);
-        if (item == null) {
+        if (item == null || !kinds.contains(item.kind)) {
           return _withState('invalid');
         }
         await _actions.play(item, session.phone);

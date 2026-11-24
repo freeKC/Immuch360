@@ -10,6 +10,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
@@ -76,7 +77,37 @@ final nearbyPlayScreensProvider =
 /// The servers each screen said it does not have, by screen id: its row offers "Add (server) to (screen)"
 final screensWithoutServerProvider = StateProvider<Map<String, Set<String>>>((_) => const {});
 
-/// What a film to play on a screen is, as the page that offers "Play on..." knows it
+/// The source key of every Immich request: the phone has one Immich server
+const playOnImmichSource = 'immich';
+
+/// What the phone knows of an Immich asset it sends, for the Cast check and the viewer it follows
+@immutable
+class PlayOnImmichAsset {
+  const PlayOnImmichAsset({
+    required this.id,
+    required this.video,
+    this.fileName,
+    this.durationMs,
+    this.width,
+    this.height,
+    this.locked = false,
+    this.archived = false,
+    this.projection = PlayProjection.flat,
+  });
+
+  final String id;
+  final bool video;
+  final String? fileName;
+  final int? durationMs;
+  final int? width;
+  final int? height;
+  final bool locked;
+  final bool archived;
+  final PlayProjection projection;
+}
+
+/// What an item to play on a screen is, as the page that offers "Play on..." knows it: a Plex film (the first
+/// constructor, build 51), or any [PlayTarget] ([PlayOnRequest.forTarget])
 class PlayOnRequest {
   const PlayOnRequest({
     required this.sourceId,
@@ -88,15 +119,90 @@ class PlayOnRequest {
     this.audio,
     this.subtitle,
     this.path,
-  });
+  }) : _target = null,
+       immich = null;
 
-  /// The Plex source on this phone
+  PlayOnRequest.forTarget({
+    required this.sourceId,
+    required PlayTarget target,
+    required this.serverName,
+    this.title,
+    this.offsetMs = 0,
+    this.path,
+    this.immich,
+  }) : _target = target,
+       server = target.serverKey,
+       ratingKey = target.itemKey,
+       audio = null,
+       subtitle = null;
+
+  /// The Immich asset [asset] of this phone's server, null for one that is on this device only. [userId] is the
+  /// phone's account, [endpoints] the addresses it reaches its server at, [serverName] what the sheet calls it.
+  static PlayOnRequest? ofAsset(
+    BaseAsset asset, {
+    required String userId,
+    required List<String> endpoints,
+    required String serverName,
+    PlayProjection projection = PlayProjection.flat,
+  }) {
+    final id = asset.remoteId;
+    if (id == null || !asset.hasRemote || (!asset.isImage && !asset.isVideo)) {
+      return null;
+    }
+    final visibility = asset is RemoteAsset ? asset.visibility : AssetVisibility.timeline;
+    final addresses = <String>[];
+    for (final endpoint in endpoints) {
+      final normalised = normaliseImmichEndpoint(endpoint);
+      if (normalised != null && !addresses.contains(normalised) && addresses.length < ImmichPlayTarget.maxEndpoints) {
+        addresses.add(normalised);
+      }
+    }
+    final media = asset.isVideo ? PlayMedia.video : PlayMedia.photo;
+    return PlayOnRequest.forTarget(
+      sourceId: playOnImmichSource,
+      target: ImmichPlayTarget(
+        asset: id.toLowerCase(),
+        user: userId.toLowerCase(),
+        endpoints: addresses,
+        media: media,
+        projection: projection,
+      ),
+      serverName: serverName,
+      title: asset.name.isEmpty ? null : asset.name,
+      immich: PlayOnImmichAsset(
+        id: id,
+        video: asset.isVideo,
+        fileName: asset.name.isEmpty ? null : asset.name,
+        durationMs: asset.durationMs,
+        width: asset.width,
+        height: asset.height,
+        locked: visibility == AssetVisibility.locked,
+        archived: visibility == AssetVisibility.archive,
+        projection: projection,
+      ),
+    );
+  }
+
+  final PlayTarget? _target;
+
+  /// What the play names
+  PlayTarget get target => _target ?? PlexPlayTarget(server: server, item: ratingKey);
+
+  PlayKind get kind => target.kind;
+  bool get isPhoto => target.media == PlayMedia.photo;
+
+  /// The source on this phone: a Plex source's id, [playOnImmichSource]
   final String sourceId;
 
-  /// Its machine identifier
+  /// The machine identifier of a Plex server, else what stands for the source in the state
   final String server;
   final String serverName;
+
+  /// The rating key of a Plex film, else the item's key
   final String ratingKey;
+
+  /// The Immich asset, for an Immich request
+  final PlayOnImmichAsset? immich;
   final String? title;
   final int offsetMs;
   final PlayTrackChoice? audio;
@@ -105,15 +211,17 @@ class PlayOnRequest {
   /// The path of the file on this phone's connection, for "Continue on this phone" on the same page
   final String? path;
 
-  PlayItem get item => PlayItem(
-    server: server,
-    item: ratingKey,
-    serverName: serverName,
-    title: title,
-    offsetMs: offsetMs,
-    audio: audio,
-    subtitle: subtitle,
-  );
+  PlayItem get item => _target == null
+      ? PlayItem(
+          server: server,
+          item: ratingKey,
+          serverName: serverName,
+          title: title,
+          offsetMs: offsetMs,
+          audio: audio,
+          subtitle: subtitle,
+        )
+      : PlayItem.of(_target, serverName: serverName, title: title, offsetMs: offsetMs);
 
   /// The request for the source [sourceId] and the file at [path] of its open connection: null when the source is
   /// no Plex server, or the connection does not know the rating key of the file
@@ -192,6 +300,27 @@ enum PlayOnOutcome {
 
   /// The server does not know that film
   notFound,
+
+  /// The screen runs a build that plays Plex films only
+  needsUpdate,
+
+  /// Immich: the screen is signed in to no server
+  notSignedIn,
+
+  /// Immich: the screen's account on the same server may not see the asset
+  otherAccount,
+
+  /// Immich: the screen uses another server
+  otherServer,
+
+  /// The screen's account may not see it
+  notVisible,
+
+  /// Immich: a locked item
+  locked,
+
+  /// The screen has no source of that identity (a share, a Jellyfin or Emby server)
+  noSuchSource,
   failed,
 }
 
@@ -214,6 +343,10 @@ class RemotePlayback {
 
   /// Whether this is the file at [path] of the source [sourceId] (its page shows the whole controller)
   bool isOf(String sourceId, String path) => request.sourceId == sourceId && request.path == path;
+
+  /// Whether this is the Immich asset [assetId]
+  bool isOfAsset(String assetId) =>
+      request.sourceId == playOnImmichSource && request.ratingKey == assetId.toLowerCase();
 
   /// Whether the screen still plays the file at [path] of [sourceId]: its page opened again leaves the phone's player
   /// waiting
@@ -305,15 +438,11 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     }
     final state = answer.state;
     final outcome = answer.status != 'ok'
-        ? PlayOnOutcome.failed
-        : switch (state.reason) {
-            ScreenPlayReason.noSuchServer => PlayOnOutcome.noSuchServer,
-            ScreenPlayReason.declined => PlayOnOutcome.declined,
-            ScreenPlayReason.tokenRefused || ScreenPlayReason.unreachable => PlayOnOutcome.screenCannotOpen,
-            ScreenPlayReason.notFound => PlayOnOutcome.notFound,
-            ScreenPlayReason.busy || ScreenPlayReason.failed => PlayOnOutcome.failed,
-            null => state.phase == ScreenPlayPhase.failed ? PlayOnOutcome.failed : PlayOnOutcome.playing,
-          };
+        // A build 51 screen takes no other kind than a Plex film: its play answers "invalid"
+        ? (answer.status == 'invalid' && request.kind != PlayKind.plex
+              ? PlayOnOutcome.needsUpdate
+              : PlayOnOutcome.failed)
+        : playOnOutcomeOf(state);
     final without = ref.read(screensWithoutServerProvider.notifier);
     final missing = {...?without.state[screen.id]};
     if (outcome == PlayOnOutcome.noSuchServer ? missing.add(request.server) : missing.remove(request.server)) {
@@ -326,6 +455,22 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     unawaited(_follow(generation));
     return outcome;
   }
+
+  /// The outcome a play's answer tells
+  static PlayOnOutcome playOnOutcomeOf(ScreenPlayState state) => switch (state.reason) {
+    ScreenPlayReason.noSuchServer => PlayOnOutcome.noSuchServer,
+    ScreenPlayReason.declined => PlayOnOutcome.declined,
+    ScreenPlayReason.tokenRefused || ScreenPlayReason.unreachable => PlayOnOutcome.screenCannotOpen,
+    ScreenPlayReason.notFound => PlayOnOutcome.notFound,
+    ScreenPlayReason.notSignedIn => PlayOnOutcome.notSignedIn,
+    ScreenPlayReason.otherAccount => PlayOnOutcome.otherAccount,
+    ScreenPlayReason.otherServer => PlayOnOutcome.otherServer,
+    ScreenPlayReason.notVisible => PlayOnOutcome.notVisible,
+    ScreenPlayReason.locked => PlayOnOutcome.locked,
+    ScreenPlayReason.noSuchSource => PlayOnOutcome.noSuchSource,
+    ScreenPlayReason.busy || ScreenPlayReason.failed => PlayOnOutcome.failed,
+    null => state.phase == ScreenPlayPhase.failed ? PlayOnOutcome.failed : PlayOnOutcome.playing,
+  };
 
   /// Follows the state of the screen until the playback ends or another starts
   Future<void> _follow(int generation) async {
@@ -343,11 +488,11 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
           return;
         }
         state = playback.withState(next);
-        if (next.phase == ScreenPlayPhase.idle && next.item == null) {
+        if (next.phase == ScreenPlayPhase.idle && next.key == null) {
           return;
         }
         // Another phone played something else there: this phone's controller ends
-        if (next.item != playback.request.ratingKey || next.server != playback.request.server) {
+        if (next.key != playback.request.ratingKey || next.server != playback.request.server) {
           _end();
           return;
         }

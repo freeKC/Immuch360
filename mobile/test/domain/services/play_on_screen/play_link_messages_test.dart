@@ -41,8 +41,8 @@ void main() {
 
   group('Immich', () {
     test('round trip of a photo of a 360 panorama', () {
-      final item = PlayItem.of(
-        const ImmichPlayTarget(
+      const item = PlayItem.of(
+        ImmichPlayTarget(
           asset: _asset,
           user: _user,
           endpoints: ['https://photos.example.org'],
@@ -65,7 +65,7 @@ void main() {
     });
 
     test('no token, no session, no password in what goes', () {
-      final json = PlayItem.of(const ImmichPlayTarget(asset: _asset, user: _user)).toJson();
+      final json = const PlayItem.of(ImmichPlayTarget(asset: _asset, user: _user)).toJson();
       expect(json.keys.toSet(), {'kind', 'asset', 'user', 'media', 'offsetMs'});
     });
 
@@ -114,8 +114,8 @@ void main() {
   group('shares and media servers', () {
     test('round trip of a share file and of a Jellyfin item', () {
       final share = PlayItem.fromJson(
-        PlayItem.of(
-          const SharePlayTarget(type: PlayShareType.smb, source: 'nas.local/Videos', path: '/Holidays/2025/beach.mp4'),
+        const PlayItem.of(
+          SharePlayTarget(type: PlayShareType.smb, source: 'nas.local/Videos', path: '/Holidays/2025/beach.mp4'),
         ).toJson(),
       )!;
       final target = share.target as SharePlayTarget;
@@ -125,8 +125,8 @@ void main() {
       expect(share.server, 'smb:nas.local/Videos');
 
       final jellyfin = PlayItem.fromJson(
-        PlayItem.of(
-          const MediaServerPlayTarget(type: PlayMediaServerType.jellyfin, server: 'F00D', item: 'abc123'),
+        const PlayItem.of(
+          MediaServerPlayTarget(type: PlayMediaServerType.jellyfin, server: 'F00D', item: 'abc123'),
         ).toJson(),
       )!;
       final film = jellyfin.target as MediaServerPlayTarget;
@@ -138,7 +138,7 @@ void main() {
     test('a path that climbs out of the share, or carries a control character, is refused', () {
       Map<String, Object?> play(String path) => {
         'kind': 'share',
-        'type': 'webdav',
+        'protocol': 'webdav',
         'source': 'cloud.example:8443/dav',
         'path': path,
         'media': 'photo',
@@ -150,7 +150,18 @@ void main() {
       expect(PlayItem.fromJson(play('/a/\u0000b.jpg')), isNull);
       expect(PlayItem.fromJson(play('/${'x' * 1100}')), isNull);
       expect(PlayItem.fromJson({...play('/a.jpg'), 'source': 'user@nas/share'}), isNull);
-      expect(PlayItem.fromJson({...play('/a.jpg'), 'type': 'ftp'}), isNull);
+      expect(PlayItem.fromJson({...play('/a.jpg'), 'protocol': 'ftp'}), isNull);
+    });
+
+    test('no target writes "type", the key of the command it travels in', () {
+      for (final target in const <PlayTarget>[
+        PlexPlayTarget(server: 'abcdef0123456789', item: '1'),
+        ImmichPlayTarget(asset: _asset, user: _user),
+        SharePlayTarget(type: PlayShareType.dlna, source: 'uuid:1', path: '/a.mp4'),
+        MediaServerPlayTarget(type: PlayMediaServerType.emby, server: 'f00d', item: '12'),
+      ]) {
+        expect(PlayItem.of(target).toJson().containsKey('type'), isFalse, reason: target.kind.wire);
+      }
     });
 
     test('a kind this build does not know is no item', () {

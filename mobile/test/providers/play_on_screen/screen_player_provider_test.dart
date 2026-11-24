@@ -3,12 +3,15 @@
 
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:drift/native.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
@@ -19,6 +22,7 @@ import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_cl
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/screen_player_prompts.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_player.provider.dart';
 
 import '../../test_utils.dart';
@@ -38,9 +42,12 @@ class _Prompts implements ScreenPlayerPrompts {
   final asked = <String>[];
   final toasts = <String>[];
 
+  final askedPhoto = <bool>[];
+
   @override
-  Future<bool> askPlay({required String phone, String? title}) async {
+  Future<bool> askPlay({required String phone, String? title, bool photo = false}) async {
     asked.add(phone);
+    askedPhoto.add(photo);
     return answer;
   }
 
@@ -55,6 +62,45 @@ class _Prompts implements ScreenPlayerPrompts {
   @override
   void toast({required String from}) => toasts.add(from);
 }
+
+const _asset = '3f2504e0-4f89-11d3-9a0c-0305e82c3301';
+const _phoneUser = 'a1b2c3d4-0000-4000-8000-00000000abcd';
+
+/// The screen's own Immich server and asset viewer
+class _Immich implements ScreenImmichAccess {
+  ScreenImmichResolution answer = (asset: null, reason: ScreenPlayReason.notSignedIn);
+  final resolved = <ImmichPlayTarget>[];
+  final opened = <String>[];
+  bool shown = true;
+
+  @override
+  Future<ScreenImmichResolution> resolve(ImmichPlayTarget target) async {
+    resolved.add(target);
+    return answer;
+  }
+
+  @override
+  PageRouteInfo routeOf(RemoteAsset asset) {
+    opened.add(asset.id);
+    return const PageRouteInfo('AssetViewerRoute');
+  }
+
+  @override
+  bool showing(String assetId) => shown && opened.contains(assetId);
+}
+
+RemoteAsset _remote({AssetType type = AssetType.image, AssetVisibility visibility = AssetVisibility.timeline}) =>
+    RemoteAsset(
+      id: _asset,
+      name: 'IMG_0001.jpg',
+      ownerId: _phoneUser,
+      checksum: 'c',
+      type: type,
+      createdAt: DateTime.utc(2026),
+      updatedAt: DateTime.utc(2026),
+      visibility: visibility,
+      isEdited: false,
+    );
 
 final _phone = LinkedPeer(
   id: 'aabbccdd00112233',
@@ -79,6 +125,9 @@ void main() {
   late PairingScreenKind kind;
   late _Secrets secrets;
   late _Prompts prompts;
+  late _Immich immich;
+  late List<(String, bool)> routes;
+  late int closed;
   late ProviderContainer container;
 
   setUpAll(() async {
@@ -99,8 +148,17 @@ void main() {
     kind = PairingScreenKind.tv;
     secrets = _Secrets();
     prompts = _Prompts();
+    immich = _Immich();
+    routes = [];
+    closed = 0;
     container = ProviderContainer(
       overrides: [
+        screenImmichAccessProvider.overrideWithValue(immich),
+        screenPlayerOpenProvider.overrideWithValue(
+          (route, {required replace}) async => routes.add((route.routeName, replace)),
+        ),
+        screenPlayerShowsProvider.overrideWithValue((name) => false),
+        screenPlayerCloseProvider.overrideWithValue(() async => closed++),
         playLinkSecretsProvider.overrideWithValue(secrets),
         screenPlayerPromptsProvider.overrideWithValue(prompts),
         screenPlayerEnvironmentProvider.overrideWith(
@@ -228,5 +286,158 @@ void main() {
     });
     expect(prompts.asked, hasLength(1));
     expect(answer.state.reason, ScreenPlayReason.declined);
+  });
+
+  group('Immich', () {
+    Map<String, Object?> play({PlayMedia media = PlayMedia.photo, List<String> endpoints = const []}) => {
+      'type': 'play',
+      ...PlayItem.of(
+        ImmichPlayTarget(asset: _asset, user: _phoneUser, endpoints: endpoints, media: media),
+        title: 'IMG_0001.jpg',
+      ).toJson(),
+    };
+
+    test('a photo the screen\'s account sees opens in the asset viewer, and the state says showing', () async {
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final answer = await connection.command(play());
+      expect(answer.state.reason, isNull);
+      expect(answer.state.itemKey, _asset);
+      expect(answer.state.server, 'immich');
+      expect(answer.state.item, isNull, reason: 'the 16 characters of build 51 are for Plex rating keys');
+      expect(answer.state.media, PlayMedia.photo);
+      expect(immich.resolved.single.user, _phoneUser);
+      expect(routes.single.$1, 'AssetViewerRoute');
+      expect(prompts.toasts, ["Fred's Pixel"]);
+      final next = await connection.status(after: answer.state.seq, wait: const Duration(seconds: 2));
+      expect(next.phase, ScreenPlayPhase.showing);
+    });
+
+    test('Stop closes the viewer the phone opened; Back on the remote ends it too', () async {
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final answer = await connection.command(play());
+      final showing = await connection.status(after: answer.state.seq, wait: const Duration(seconds: 2));
+      expect(showing.phase, ScreenPlayPhase.showing);
+      immich.shown = false;
+      final gone = await connection.status(after: showing.seq, wait: const Duration(seconds: 2));
+      expect(gone.phase, ScreenPlayPhase.idle);
+      expect(closed, 0);
+
+      immich.shown = true;
+      await connection.command(play());
+      final stopped = await connection.command({'type': 'stop'});
+      expect(stopped.state.phase, ScreenPlayPhase.idle);
+      expect(closed, 1);
+    });
+
+    test('a video: the server\'s word wins over the phone\'s, and the TV prompt says play', () async {
+      container.read(playFromPhoneAskProvider.notifier).state = true;
+      immich.answer = (asset: _remote(type: AssetType.video), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final answer = await connection.command(play(media: PlayMedia.video));
+      expect(prompts.askedPhoto, [false]);
+      expect(answer.state.media, PlayMedia.video);
+      expect(answer.state.phase, ScreenPlayPhase.opening);
+    });
+
+    test('each refusal goes back as its reason, and nothing opens', () async {
+      final view = await start();
+      final connection = await connect(view.port!);
+      for (final reason in [
+        ScreenPlayReason.notSignedIn,
+        ScreenPlayReason.otherAccount,
+        ScreenPlayReason.otherServer,
+        ScreenPlayReason.notVisible,
+        ScreenPlayReason.locked,
+        ScreenPlayReason.notFound,
+        ScreenPlayReason.unreachable,
+      ]) {
+        immich.answer = (asset: null, reason: reason);
+        final answer = await connection.command(play());
+        expect(answer.state.phase, ScreenPlayPhase.failed, reason: reason.wire);
+        expect(answer.state.reason, reason);
+      }
+      expect(routes, isEmpty);
+      expect(prompts.toasts, isEmpty);
+    });
+
+    test('the refusal sentence: same user, another account at the same address, another server', () {
+      const target = ImmichPlayTarget(
+        asset: _asset,
+        user: _phoneUser,
+        endpoints: ['https://photos.example.org', 'http://192.168.1.10:2283'],
+      );
+      expect(
+        immichRefusalReason(screenUser: _phoneUser.toUpperCase(), screenEndpoints: const [], target: target),
+        ScreenPlayReason.notFound,
+      );
+      expect(
+        immichRefusalReason(
+          screenUser: 'other',
+          screenEndpoints: const ['http://192.168.1.10:2283/api'],
+          target: target,
+        ),
+        ScreenPlayReason.otherAccount,
+      );
+      expect(
+        immichRefusalReason(screenUser: 'other', screenEndpoints: const ['https://else.example/api'], target: target),
+        ScreenPlayReason.otherServer,
+      );
+    });
+
+    test('a locked asset never opens on a screen, a hidden one neither; archived ones do', () {
+      expect(immichScreenRefusal(_remote(visibility: AssetVisibility.locked)), ScreenPlayReason.locked);
+      expect(immichScreenRefusal(_remote(visibility: AssetVisibility.hidden)), ScreenPlayReason.notVisible);
+      expect(immichScreenRefusal(_remote(visibility: AssetVisibility.archive)), isNull);
+      expect(immichScreenRefusal(_remote()), isNull);
+    });
+  });
+
+  group('shares and media servers', () {
+    test('a share this screen does not have answers noSuchSource', () async {
+      final view = await start();
+      final connection = await connect(view.port!);
+      final answer = await connection.command({
+        'type': 'play',
+        ...const PlayItem.of(
+          SharePlayTarget(type: PlayShareType.smb, source: 'nas.local/videos', path: '/a.mp4'),
+        ).toJson(),
+      });
+      expect(answer.state.reason, ScreenPlayReason.noSuchSource, reason: '${answer.status} ${answer.state.toJson()}');
+      final jellyfin = await connection.command({
+        'type': 'play',
+        ...const PlayItem.of(
+          MediaServerPlayTarget(type: PlayMediaServerType.jellyfin, server: 'f00d', item: 'abc'),
+        ).toJson(),
+      });
+      expect(jellyfin.state.reason, ScreenPlayReason.noSuchSource);
+      expect(routes, isEmpty);
+    });
+
+    test('the identity of a share: the UDN of a DLNA server, else host, port and share', () {
+      NetworkSource source(
+        NetworkSourceType type, {
+        String host = 'NAS.local',
+        int? port,
+        String share = 'Videos',
+        String? id,
+      }) => NetworkSource(id: 's', type: type, name: 'n', host: host, port: port, share: share, discoveryId: id);
+      expect(playShareSourceKey(source(NetworkSourceType.smb)), 'nas.local/Videos');
+      expect(playShareSourceKey(source(NetworkSourceType.webdav, port: 8443, share: '/dav')), 'nas.local:8443/dav');
+      expect(playShareSourceKey(source(NetworkSourceType.dlna, id: 'uuid:1234')), 'uuid:1234');
+      expect(playShareSourceKey(source(NetworkSourceType.plex)), isNull);
+      final sources = [source(NetworkSourceType.smb), source(NetworkSourceType.webdav, share: 'Videos')];
+      expect(
+        findPlayShareSource(
+          sources,
+          const SharePlayTarget(type: PlayShareType.webdav, source: 'nas.local/Videos', path: '/a.mp4'),
+        )?.type,
+        NetworkSourceType.webdav,
+      );
+    });
   });
 }
