@@ -71,3 +71,15 @@ jobs:
           docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" \
             -v "$PWD/mobile/test/fixtures/video:/clips:ro" -v "$PWD/video-smoke:/out" "$IMAGE" \
             sh /check/check_appimage.sh "/pkgs/${file#./}" /clips/flat-6s.mp4 /out /clips/flat-6s-theora.mkv
+
+  aur:
+    name: AUR package immuch360-bin
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: namcap, makepkg and the package installed in archlinux
+        run: |
+          docker run --rm -v "$PWD/.github/desktop/packaging/linux/aur:/aur:ro" archlinux:latest sh /aur/check_aur.sh

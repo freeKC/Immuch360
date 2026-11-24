@@ -16,7 +16,10 @@
 #   - with CLIP, the app plays it on a virtual screen (video_smoke.sh, next to this script), with the distribution's
 #     libmpv. Where the distribution's FFmpeg has no H.264 decoder of its own (Fedora, openSUSE: OpenH264 at best, the
 #     noopenh264 stub at worst), the H.264 clip is played for information and FALLBACK, the same picture in Theora,
-#     is the one that must play, as in check_package.sh.
+#     is the one that must play, as in check_package.sh. Arch Linux too: its mpv and FFmpeg play the H.264 clip, but
+#     first try CUDA for it and log "CUDA: Cannot load libcuda.so.1" in a container without a graphics card, which the
+#     video check counts as errors of the player (probe run 45501319632 of 24 November 2026); Theora is never handed
+#     to a hardware decoder.
 # xdg-user-dirs is not installed: the stand-in of the AppImage answers the app (AppRun).
 #
 #   docker run --rm -v "$PWD/dist:/pkgs:ro" -v "$PWD/.github/desktop/packaging/linux:/check:ro" \
@@ -175,9 +178,9 @@ if [ -n "$clip" ]; then
     xvfb-run -a -s "-screen 0 1280x800x24" sh "$(dirname "$0")/video_smoke.sh" "$root/AppRun" "$1" "$2"
   }
   case "$family" in
-    fedora | suse)
+    arch | fedora | suse)
       [ -n "$fallback" ] || { echo "  $family needs the Theora clip too"; exit 1; }
-      echo "-- the H.264 clip, for information only: $family's own FFmpeg may not decode it"
+      echo "-- the H.264 clip, for information only (see the top of this script)"
       if smoke "$clip" "$smoke_out/h264-information"; then
         echo "  (information) the H.264 clip played"
       else

@@ -201,21 +201,22 @@ if [ "${1:-}" = "--immuch360-check" ]; then
   echo "system: $(. /etc/os-release 2>/dev/null && echo "${PRETTY_NAME:-unknown}") (family $family), loader $loader"
   all=
   count=0
+  # Each file with what it lacks beyond the files before it (the plugins lack what the program lacks)
   for file in "$app/immuch360" "$app"/lib/*.so*; do
     [ -f "$file" ] || continue
     count=$((count + 1))
-    missing=$(missing_of "$file" | sort -u)
-    if [ -n "$missing" ]; then
-      echo "  ${file#"$here"/}: $(echo "$missing" | tr '\n' ' ')"
-      all="$all
-$missing"
+    new=
+    for name in $(missing_of "$file" | sort -u); do
+      case " $all " in *" $name "*) ;; *) new="${new:+$new }$name" ;; esac
+    done
+    if [ -n "$new" ]; then
+      echo "  ${file#"$here"/} lacks $new"
+      all="${all:+$all }$new"
     fi
   done
-  all=$(echo "$all" | sed '/^$/d' | sort -u)
   status=0
   if [ -n "$all" ]; then
-    echo "libraries: $(echo "$all" | wc -l) missing in $count files"
-    advice "$all"
+    echo "libraries: $(echo "$all" | wc -w) missing in $count files"
     status=1
   else
     echo "libraries: $count files, every library found"
@@ -224,18 +225,23 @@ $missing"
     echo "libmpv: found"
   else
     echo "libmpv: not found, videos will not play"
-    advice libmpv.so.2
+    all="${all:+$all }libmpv.so.2"
     status=1
   fi
+  [ -z "$all" ] || advice "$all"
   exit "$status"
 fi
 
+# libmpv is offered with the libraries the program needs, so that one command brings all of them
 missing=$(missing_of "$app/immuch360" | sort -u)
+mpv=
+libmpv_found || mpv=libmpv.so.2
 if [ -n "$missing" ]; then
-  tell "Immuch360 Desktop cannot start: this system lacks $(echo "$missing" | tr '\n' ' ')" "$(advice "$missing")"
+  tell "Immuch360 Desktop cannot start: this system lacks $(echo "$missing" | tr '\n' ' ')" \
+    "$(advice "$missing${mpv:+ $mpv}")"
   exit 127
 fi
-if ! libmpv_found; then
+if [ -n "$mpv" ]; then
   printf '%s\n%s\n' "Immuch360 Desktop: libmpv was not found, videos will not play." "$(advice libmpv.so.2)" >&2
 fi
 
