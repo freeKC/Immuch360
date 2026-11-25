@@ -109,6 +109,16 @@ Future<EnhanceComparePair> fetchEnhanceCompare(
   }
 }
 
+/// Why the files of a comparison did not come, in words of the app: the message of the share or of the bridge (an
+/// http answer, a local address of the bridge) goes to the log only
+String enhanceCompareFailureText(Translations t, Object error) => switch (error) {
+  ConversionException(code: ImmersiveErrorCode.cancelled) => t.ai_immersive_state_cancelled,
+  ConversionException(code: ImmersiveErrorCode.diskFull) => t.ai_immersive_failed_disk_full,
+  ConversionException(code: ImmersiveErrorCode.writeFailed || ImmersiveErrorCode.readOnly) =>
+    t.ai_enhance_compare_copy_failed,
+  _ => t.ai_enhance_compare_unreachable,
+};
+
 /// Opens the comparison of a done job of "Enhance (AI)" whose original is [source] (see the top of this file)
 Future<void> showRemoteEnhanceCompare(
   BuildContext context,
@@ -194,9 +204,7 @@ class _RemoteEnhanceCompareState extends ConsumerState<RemoteEnhanceCompare> {
               ? [Text(t.ai_enhance_compare_fetching), const SizedBox(height: 12), const LinearProgressIndicator()]
               : [
                   Text(
-                    t.ai_enhance_compare_failed(
-                      reason: error is ConversionException ? (error.message ?? error.code.name) : '$error',
-                    ),
+                    t.ai_enhance_compare_failed(reason: enhanceCompareFailureText(t, error)),
                     key: const Key('ai_enhance_compare_failed'),
                   ),
                 ],

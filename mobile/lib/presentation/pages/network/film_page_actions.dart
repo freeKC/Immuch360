@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
+import 'package:immich_mobile/presentation/pages/network/film_ai_actions.dart';
 import 'package:immich_mobile/presentation/pages/network/film_page_download_action.dart';
 import 'package:immich_mobile/presentation/pages/network/film_page_play_on.dart';
 
@@ -34,5 +35,6 @@ class FilmPageContext {
 /// for instance)
 typedef FilmPageActionBuilder = Widget? Function(BuildContext context, WidgetRef ref, FilmPageContext film);
 
-/// The actions of the row after Play, in order: Download (lot B), then "Play on..." (lot C)
-const List<FilmPageActionBuilder> filmPageActions = [filmPageDownloadAction, playOnFilmAction];
+/// The actions of the row after Play, in order: Download (lot B), then "Play on..." (lot C), then the AI of a computer
+/// (release 53, film_ai_actions.dart)
+const List<FilmPageActionBuilder> filmPageActions = [filmPageDownloadAction, playOnFilmAction, filmPageAiAction];

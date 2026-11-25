@@ -44,6 +44,7 @@ import 'package:immich_mobile/desktop/network/share_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/view_rotation.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/view_rotation.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
@@ -52,6 +53,7 @@ import 'package:path/path.dart' as p;
 import '../../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
+import '../creator/english_texts.dart';
 import '../fakes/fake_immersive_engine.dart';
 import '../fakes/fake_share_writer.dart';
 import '../fakes/recording_creator_files.dart';
@@ -352,6 +354,23 @@ void main() {
     expect(find.byKey(const Key('ai_job_enhance_compare')), findsOneWidget);
   });
 
+  testWidgets('a share not allowed yet: the question speaks of the enhanced photos, never of 3D photos', (
+    tester,
+  ) async {
+    folderOf = (entry) => nas;
+    final salon = shared('/2024/salon.jpg', jpegFile(width: 4000, height: 3000));
+    await openDialog(tester, [salon]);
+
+    expect(
+      find.text(
+        'Save the enhanced photos in the folders of this network folder? Immuch360 writes new files there, never over '
+        'the originals.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('3D photos'), findsNothing);
+  });
+
   testWidgets('a photo of a media server: the folder of my choice, said with why, before anything runs', (
     tester,
   ) async {
@@ -490,5 +509,66 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await settle(tester, until: () => copies().isEmpty);
     expect(copies(), isEmpty);
+  });
+
+  testWidgets('Compare that cannot fetch a photo says why in words of the app, never those of the share', (
+    tester,
+  ) async {
+    // The result is no longer on the share: the bridge answers 404
+    final salon = shared('/2024/salon.jpg', jpegFile(width: 40, height: 30));
+    const target = ShareVersionTarget(folder: nas, fallbackFolder: '/tmp');
+    await tester.pumpConsumerWidget(
+      Scaffold(
+        body: Builder(
+          builder: (context) => TextButton(
+            key: const Key('open'),
+            onPressed: () => unawaited(
+              showRemoteEnhanceCompare(
+                context,
+                shareSource(salon),
+                publish: const SharePublish(target, state: SharePublishState.saved, path: '/2024/gone_enhanced.jpg'),
+              ),
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+      overrides: overrides(),
+    );
+    await tester.tap(find.byKey(const Key('open')));
+    await settle(tester, until: () => find.byKey(const Key('ai_enhance_compare_failed')).evaluate().isNotEmpty);
+    final said = tester.widget<Text>(find.byKey(const Key('ai_enhance_compare_failed'))).data!;
+    expect(
+      said,
+      'The photos could not be fetched for the comparison: the share or the server cannot be reached, or the photo is '
+      'no longer there',
+    );
+    expect(said, isNot(contains('answered')));
+    expect(copies(), isEmpty, reason: 'the copy of the original deleted with the failure');
+  });
+
+  test('the reasons of a failed Compare, in words of the app', () {
+    loadEnglishTexts();
+    final t = StaticTranslations.instance;
+    expect(
+      enhanceCompareFailureText(t, const ConversionException(ImmersiveErrorCode.cancelled)),
+      t.ai_immersive_state_cancelled,
+    );
+    expect(
+      enhanceCompareFailureText(t, const ConversionException(ImmersiveErrorCode.diskFull, 'ENOSPC at /tmp/x')),
+      t.ai_immersive_failed_disk_full,
+    );
+    expect(
+      enhanceCompareFailureText(t, const ConversionException(ImmersiveErrorCode.writeFailed, 'errno 13')),
+      t.ai_enhance_compare_copy_failed,
+    );
+    for (final error in [
+      const ConversionException(ImmersiveErrorCode.sourceLost, 'http://127.0.0.1:4711/file?token=x: 404'),
+      StateError('http://127.0.0.1:4711/'),
+    ]) {
+      final said = enhanceCompareFailureText(t, error);
+      expect(said, t.ai_enhance_compare_unreachable);
+      expect(said, isNot(contains('127.0.0.1')));
+    }
   });
 }

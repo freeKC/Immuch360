@@ -580,6 +580,32 @@ void main() {
     );
   });
 
+  test('top and bottom eyes need a name that says so and a frame that agrees; a French "ou" is no 3D mark', () {
+    EnhanceLayout of(String name, int width, int height) =>
+        enhanceLayoutOf(_photo(name, width: width, height: height), const ConversionPhotoFacts());
+    const stacked = EnhanceLayout(eyes: EnhanceEyes.topBottom);
+    // "or" in French, "crazy", a table: ordinary words written in small letters, in a landscape or a portrait frame
+    expect(of('Paris ou Lyon.jpg', 4000, 3000), EnhanceLayout.flat);
+    expect(of('Paris ou Lyon.jpg', 3000, 4000), EnhanceLayout.flat);
+    expect(of('chien_fou.jpg', 3000, 4000), EnhanceLayout.flat);
+    expect(of('my tab.jpg', 3000, 4000), EnhanceLayout.flat);
+    // The marks of the rippers and the players, in capitals, or the words no title uses, in any case
+    expect(of('Paris_OU.jpg', 3000, 4000), stacked);
+    expect(of('castle-3D-TB.jpg', 1920, 2160), stacked);
+    expect(of('castle_overunder.jpg', 2000, 2000), stacked);
+    expect(of('castle.ftb.jpg', 4000, 4000), stacked);
+    // Two full eyes stacked make a frame 1:1 to 1:2; a landscape frame is a flat photo whatever its name...
+    expect(of('castle_TB.jpg', 4000, 3000), EnhanceLayout.flat);
+    expect(of('castle_TB.jpg', 1000, 3000), EnhanceLayout.flat);
+    // ...unless the name says the eyes are squeezed to half their height
+    expect(of('castle_HTB.jpg', 1920, 1080), stacked);
+    expect(of('castle_htab.jpg', 1920, 1080), stacked);
+    expect(of('castle_HTB.jpg', 6000, 1000), EnhanceLayout.flat);
+    // Rebuild details is offered again on such a flat photo
+    expect(enhanceTakesStereo(EnhanceLevel.rebuild), isFalse);
+    expect(of('Paris ou Lyon.jpg', 3000, 4000).isStereo, isFalse);
+  });
+
   test('the components of ai-components-7 are offered since it is published, never while it is not', () async {
     final files = _NoFiles();
     // Published on 24 November 2026 (release 51)

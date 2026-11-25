@@ -184,8 +184,16 @@ int? enhanceFreeGraphicsMemoryOf(EnhanceLevel level) => switch (level) {
   EnhanceLevel.natural => null,
 };
 
-/// The verdict of [level] for a photo of [width] x [height] on [machine] (see the top of this file)
-EnhanceVerdict enhanceVerdict(EnhanceLevel level, EnhanceMachine machine, {required int width, required int height}) {
+/// The verdict of [level] for a photo of [width] x [height] laid out as [layout] on [machine] (see the top of this
+/// file): the memory it needs counts every pixel the model works on (enhanceWorkPixels), the seam copy and the faces of
+/// the poles of a 360° photo with its own
+EnhanceVerdict enhanceVerdict(
+  EnhanceLevel level,
+  EnhanceMachine machine, {
+  required int width,
+  required int height,
+  EnhanceLayout layout = EnhanceLayout.flat,
+}) {
   EnhanceVerdict refused(EnhanceRefusal reason) => EnhanceVerdict(level, refusal: reason);
   final platform = machine.platform;
   final mac = platform == AiPlatform.macosArm64 || platform == AiPlatform.macosX64;
@@ -224,7 +232,7 @@ EnhanceVerdict enhanceVerdict(EnhanceLevel level, EnhanceMachine machine, {requi
       return refused(EnhanceRefusal.memoryTooSmall);
     }
   }
-  final need = enhanceFreeMemoryOf(level, pixels: width * height);
+  final need = enhanceFreeMemoryOf(level, pixels: enhanceWorkPixels(width, height, layout));
   final free = machine.freeMemory;
   if (free != null && free < need) {
     warnings.add(EnhanceWarning.closeOtherPrograms);

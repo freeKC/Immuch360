@@ -10,6 +10,7 @@ import 'package:immich_mobile/domain/services/network_file_system.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/pages/network/film_ai_actions.dart';
 import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_status.widget.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
@@ -276,20 +277,14 @@ Future<void> _play(
 }) async {
   final String target;
   try {
-    target = path ?? await (await ref.read(mediaServerSourceProvider(sourceId).future)).pathOfItem(item.id);
+    target = path ?? await _pathOf(ref, sourceId, item);
   } catch (_) {
     return;
   }
   if (!context.mounted) {
     return;
   }
-  final connections = ref.read(networkConnectionsProvider);
-  NetworkEntry? entry;
-  try {
-    entry = await (await connections.fileSystem(sourceId)).stat(target);
-  } catch (_) {
-    entry = null;
-  }
+  final entry = await _entryAt(ref, sourceId, target);
   if (!context.mounted) {
     return;
   }
@@ -310,6 +305,29 @@ Future<void> _play(
     }
   }
   unawaited(context.pushRoute(NetworkVideoRoute(sourceId: sourceId, path: target)));
+}
+
+Future<String> _pathOf(WidgetRef ref, String sourceId, MediaServerItem item) async =>
+    (await ref.read(mediaServerSourceProvider(sourceId).future)).pathOfItem(item.id);
+
+/// The file at [path] as the share lists it, null when it does not answer
+Future<NetworkEntry?> _entryAt(WidgetRef ref, String sourceId, String path) async {
+  try {
+    return await (await ref.read(networkConnectionsProvider).fileSystem(sourceId)).stat(path);
+  } catch (_) {
+    return null;
+  }
+}
+
+/// The file of [item] as the share lists it, for the AI of a computer (film_ai_actions.dart); null when it is not known
+Future<NetworkEntry?> _entryOfItem(WidgetRef ref, String sourceId, MediaServerItem item, String? path) async {
+  final String target;
+  try {
+    target = path ?? await _pathOf(ref, sourceId, item);
+  } catch (_) {
+    return null;
+  }
+  return _entryAt(ref, sourceId, target);
 }
 
 /// The place to resume [item] at: the app's own record of the tile's file first, else the server's
@@ -340,6 +358,7 @@ class _FilmButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resumeAt = _resumeAt(ref, sourceId, item, path);
+    final ai = filmAiOffers(ref);
     return Wrap(
       spacing: 12,
       runSpacing: 8,
@@ -364,6 +383,8 @@ class _FilmButtons extends ConsumerWidget {
             onPressed: () =>
                 unawaited(_play(context, ref, sourceId: sourceId, item: item, path: path, fromStart: true)),
           ),
+        // "Make 3D (AI)" and "Make a splat scene (AI)" on a computer (release 53)
+        if (ai.make3d || ai.splat) FilmAiButtons(entryOf: () => _entryOfItem(ref, sourceId, item, path)),
       ],
     );
   }

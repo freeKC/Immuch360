@@ -63,7 +63,6 @@ import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
-import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart' show decideStereoPhoto;
@@ -324,7 +323,8 @@ ConversionSkipReason? enhanceSkipOf(BaseAsset asset, ConversionPhotoFacts facts)
 ///  - a 360° photo: a picture of the sphere, or two of them stacked (a square frame) or side by side (a 4:1 frame), as
 ///    the 360° viewers tell them by their frame;
 ///  - a 3D photo side by side by its name and frame (or one of ours by its XMP): its eyes as the viewers read them;
-///  - a photo whose name says its eyes are one above the other (_TB, _OU...);
+///  - a photo whose name says its eyes are one above the other (_TB, _OU...) and whose frame agrees
+///    ([enhanceTopBottomOf]);
 ///  - else a flat photo.
 EnhanceLayout enhanceLayoutOf(BaseAsset asset, ConversionPhotoFacts facts) {
   final width = asset.width;
@@ -345,11 +345,46 @@ EnhanceLayout enhanceLayoutOf(BaseAsset asset, ConversionPhotoFacts facts) {
       rightFirst: told?.eyeOrder == EyeOrder.rightLeft,
     );
   }
-  final named = guessSpatialLayout(fileName: asset.name);
-  if (named == SpatialStereoLayout.topBottom || named == SpatialStereoLayout.topBottomSwapped) {
+  if (enhanceTopBottomOf(asset.name, width, height)) {
     return const EnhanceLayout(eyes: EnhanceEyes.topBottom);
   }
   return EnhanceLayout.flat;
+}
+
+// The words of a name that mark eyes one above the other. Those no title uses count in any case; the short ones are
+// words of languages too (French "ou", "fou", a "tab") and count only in capitals, as the rippers and players write
+// them ("_OU", "3D-TB"). Those of [_halfTopBottomWords], or "half" next to one, say the eyes are squeezed to half their
+// height.
+const _topBottomWordsAnyCase = {'overunder', 'topbottom', '3dou', 'htb', 'ftb', 'htab'};
+const _topBottomWordsInCapitals = {'OU', 'TB', 'TAB', 'HOU', 'FOU'};
+const _halfTopBottomWords = {'htb', 'htab', 'hou'};
+
+/// Whether a photo named [name] of [width] x [height] holds two eyes one above the other: its name says so (see the
+/// words above) and its frame agrees: 1:1 to 1:2 for two full eyes (each 1:1 to 2:1), 1:1 to 2.4:1 for eyes squeezed
+/// to half their height. A photo whose frame is not known is told by its name.
+bool enhanceTopBottomOf(String name, int? width, int? height) {
+  final words = name.split(RegExp(r'[._\- ]+'));
+  var stacked = false;
+  var half = false;
+  for (var at = 0; at < words.length; at++) {
+    final word = words[at];
+    final lower = word.toLowerCase();
+    if (_topBottomWordsAnyCase.contains(lower) || _topBottomWordsInCapitals.contains(word)) {
+      stacked = true;
+      half |=
+          _halfTopBottomWords.contains(lower) ||
+          (at > 0 && words[at - 1].toLowerCase() == 'half') ||
+          (at + 1 < words.length && words[at + 1].toLowerCase() == 'half');
+    }
+  }
+  if (!stacked) {
+    return false;
+  }
+  if (width == null || height == null || width <= 0 || height <= 0) {
+    return true;
+  }
+  final ratio = width / height;
+  return half ? ratio >= 1.0 && ratio <= 2.4 : ratio >= 0.5 && ratio <= 1.0;
 }
 
 /// The words of a refusal of a level
@@ -646,15 +681,19 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
       return EnhanceVerdict(level, refusal: EnhanceRefusal.notOnThisSystem);
     }
     final runs = _runsAt(level).toList();
-    var sizes = [for (final photo in runs) photo.size];
+    var sizes = [for (final photo in runs) (photo.size, photo.layout)];
     if (sizes.isEmpty) {
       sizes = [
         for (final photo in _photos ?? const <_Photo>[])
-          if (photo.skip == ConversionSkipReason.tooLarge) photo.size,
+          if (photo.skip == ConversionSkipReason.tooLarge) (photo.size, photo.layout),
       ];
     }
-    final (width, height) = sizes.isEmpty ? _unknownSize : sizes.reduce((a, b) => a.$1 * a.$2 >= b.$1 * b.$2 ? a : b);
-    final largest = enhanceVerdict(level, machine, width: width, height: height);
+    // The largest in the pixels the model works on, which decides the memory (a 360° photo works on more than its own)
+    int work(((int, int), EnhanceLayout) photo) => enhanceWorkPixels(photo.$1.$1, photo.$1.$2, photo.$2);
+    final ((width, height), layout) = sizes.isEmpty
+        ? (_unknownSize, EnhanceLayout.flat)
+        : sizes.reduce((a, b) => work(a) >= work(b) ? a : b);
+    final largest = enhanceVerdict(level, machine, width: width, height: height, layout: layout);
     if (!largest.isOffered || runs.isEmpty || (runs.length == 1 && runs.single.layout.isFlat)) {
       return largest;
     }
@@ -1051,7 +1090,7 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
         ),
       ],
       for (final MapEntry(key: consent, value: folder) in session.pendingConsents.entries) ...[
-        Text(t.ai_immersive_network_root_ask),
+        Text(t.ai_enhance_network_root_ask),
         Text(folder, style: secondary),
         Wrap(
           spacing: 8,

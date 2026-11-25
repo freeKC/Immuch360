@@ -134,6 +134,12 @@ Uint8List finishEnhanced(
   return result;
 }
 
+/// The pixel work of a 360° or 3D photo (enhance_layout.dart) in an isolate of its own. Top-level, never built inside
+/// EnhanceEngine.run: a closure built there would keep the scope of run, the progress callback of the queue with it,
+/// which no isolate takes (issue 23); [work] itself is built by the top-level functions of enhance_layout.dart.
+Future<Uint8List> enhanceLayoutWorkInIsolate(Uint8List Function() work) =>
+    Isolate.run(work, debugName: 'enhance-layout');
+
 /// The words of a level in the description of the file
 String enhanceLevelWords(EnhanceLevel level) => switch (level) {
   EnhanceLevel.sharpen => 'Sharpen',
@@ -238,8 +244,9 @@ class EnhanceEngine implements ImmersiveEngine {
       if (width * height > enhanceMaxPixels) {
         throw _Stop(ImmersiveErrorCode.tooLarge, '$width x $height is more than ${enhanceMaxPixels ~/ 1000000} MP');
       }
+      // The memory of every pixel the model works on: a 360° photo also holds its seam copy and the faces of its poles
       final available = memory.read().available;
-      final need = enhanceFreeMemoryOf(job.level, pixels: width * height);
+      final need = enhanceFreeMemoryOf(job.level, pixels: enhanceWorkPixels(width, height, job.layout));
       if (available != null && available < need) {
         throw _Stop(
           ImmersiveErrorCode.outOfMemory,
@@ -275,7 +282,7 @@ class EnhanceEngine implements ImmersiveEngine {
           cover: cover,
           onStep: (done, all) =>
               enter(ImmersiveStage.generating, all == 0 ? 80 : 80 + 780 * done ~/ all, step: done, steps: all),
-          compute: (piece) => Isolate.run(piece, debugName: 'enhance-layout'),
+          compute: enhanceLayoutWorkInIsolate,
         );
       } on BackendException catch (error) {
         throw _Stop(error.code, error.message);
