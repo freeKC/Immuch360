@@ -61,8 +61,11 @@ def attribute_string(name: str, value: str) -> bytes:
 
 def pool(name: str, output: str, side: int, size: int, doc: str) -> bytes:
     nodes = [
+        # The pads written out: without them the Core ML provider of ONNX Runtime 1.31.0 refuses the pool ("Required
+        # param 'pad' is missing", the macOS runner, run 45664805010), and the backend opens the graph on the processor
         node("AveragePool", ["lq"], [output], "pool", [attribute_ints("kernel_shape", [side, side]),
-                                                       attribute_ints("strides", [side, side])]),
+                                                       attribute_ints("strides", [side, side]),
+                                                       attribute_ints("pads", [0, 0, 0, 0])]),
     ]
     inputs = [value_info("lq", FLOAT, [1, 3, TILE, TILE])]
     outputs = [value_info(output, FLOAT, [1, 3, size, size])]
