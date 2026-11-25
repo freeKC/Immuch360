@@ -12,6 +12,7 @@ import 'package:immich_mobile/desktop/spatial/spatial_settings.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immuch_head_tracker/immuch_head_tracker.dart';
 
+import '../../widget_tester_extensions.dart';
 import 'head_fakes.dart';
 
 class _Store implements DesktopSpatialSettingsStore {
@@ -40,19 +41,17 @@ void main() {
     observeLifecycle: false,
   );
 
-  Widget page({bool shown = true}) => MaterialApp(
-    home: TickerMode(
-      enabled: shown,
-      child: Scaffold(
-        body: SizedBox(
-          width: 800,
-          height: 600,
-          child: Stack(
-            children: [
-              const Positioned.fill(child: ColoredBox(color: Colors.black)),
-              Positioned.fill(child: HeadTrackingOverlay(source: head)),
-            ],
-          ),
+  Widget view({bool shown = true}) => TickerMode(
+    enabled: shown,
+    child: Scaffold(
+      body: SizedBox(
+        width: 800,
+        height: 600,
+        child: Stack(
+          children: [
+            const Positioned.fill(child: ColoredBox(color: Colors.black)),
+            Positioned.fill(child: HeadTrackingOverlay(source: head)),
+          ],
         ),
       ),
     ),
@@ -64,7 +63,7 @@ void main() {
 
   testWidgets('the card of the first time, then the camera icon while the webcam is open', (tester) async {
     make(const DesktopSpatialSettings());
-    await tester.pumpWidget(page());
+    await tester.pumpConsumerWidget(view());
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('spatial_consent_card')), findsOneWidget);
     expect(find.text(tr(tester).desktop_spatial_camera_intro), findsOneWidget);
@@ -80,12 +79,12 @@ void main() {
     expect(tooltip.message, tr(tester).desktop_spatial_camera_on);
 
     // Covered by another page: the webcam closes and its icon goes
-    await tester.pumpWidget(page(shown: false));
+    await tester.pumpConsumerWidget(view(shown: false));
     await tester.pumpAndSettle();
     expect(source.last.released, isTrue);
     expect(find.byKey(const Key('spatial_camera_indicator')), findsNothing);
     // Shown again: opened again
-    await tester.pumpWidget(page());
+    await tester.pumpConsumerWidget(view());
     await tester.pumpAndSettle();
     expect(source.sessions, hasLength(2));
 
@@ -97,7 +96,7 @@ void main() {
 
   testWidgets('"Use the mouse" on the card: no webcam, the head unusable for this view', (tester) async {
     make(const DesktopSpatialSettings());
-    await tester.pumpWidget(page());
+    await tester.pumpConsumerWidget(view());
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('spatial_consent_mouse')));
     await tester.pumpAndSettle();
@@ -109,7 +108,7 @@ void main() {
 
   testWidgets('a problem shows its message, and "Try the webcam again" tries once more', (tester) async {
     make(const DesktopSpatialSettings(consent: true));
-    await tester.pumpWidget(page());
+    await tester.pumpConsumerWidget(view());
     await tester.pumpAndSettle();
     source.last.fail(HeadTrackerStatus.cameraBusy);
     await tester.pumpAndSettle();
@@ -124,7 +123,7 @@ void main() {
 
   testWidgets('each problem has its text on each system, the camera off one naming the system', (tester) async {
     make(const DesktopSpatialSettings());
-    await tester.pumpWidget(const MaterialApp(home: Scaffold()));
+    await tester.pumpConsumerWidget(const Scaffold());
     final context = tester.element(find.byType(Scaffold).first);
     for (final problem in SpatialTrackingProblem.values) {
       for (final platform in [TargetPlatform.windows, TargetPlatform.linux, TargetPlatform.macOS]) {

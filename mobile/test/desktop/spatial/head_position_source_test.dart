@@ -282,6 +282,7 @@ void main() {
       final samples = trackSamples();
       for (final value in samples) {
         session.push(value);
+        await settle();
       }
       final faces = samples.where((s) => s.hasFace).length;
       // One position a face, and one lost position when the face is lost (from 8.3 s)
@@ -311,10 +312,13 @@ void main() {
       head.positions.listen(positions.add);
       final samples = trackSamples().where((s) => s.hasFace).toList();
       source.last.push(samples[0]);
+      await settle();
       source.last.push(samples[20]);
+      await settle();
       expect(positions.last.x.abs(), greaterThan(0.5));
       head.recenter();
       source.last.push(samples[21]);
+      await settle();
       // The centre is the filtered head of that face; the position is that head one frame ahead by its speed
       final ahead = samples[21].velocityX.clamp(-2.0, 2.0) * HeadPositionSource.lookahead.inMicroseconds / 1e6;
       expect(positions.last.x, closeTo(ahead / HeadPositionSource.headRange, 1e-6));
@@ -326,6 +330,7 @@ void main() {
       final positions = <ViewerPosition>[];
       head.positions.listen(positions.add);
       source.last.push(trackSamples().firstWhere((s) => s.hasFace));
+      await settle();
       head.detach();
       await settle();
       expect(positions.map((p) => p.seen), [true, false]);
