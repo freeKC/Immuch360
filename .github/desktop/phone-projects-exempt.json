@@ -1854,5 +1854,9 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveStabilization.kt": {
     "blob": "496ee74587fac55d335393b936969c6080bcd863",
     "reason": "Release 52 assembly (FreeKC's rule of 24 Nov 2026): the English fallbacks lose \"(experimental)\", as en.json does; reaches the phone branch with the merge of release 52"
+  },
+  "mobile/ios/Runner/Core/RawStitchSpec.swift": {
+    "blob": "98a026a81c94291242b04170863296c8d5ee9cd3",
+    "reason": "Release 52 assembly: the rows of a matrix built one at a time, which Xcode 27 type-checks (iOS 27 SDK, ITMS-90725); reaches the phone branch with the merge of release 52"
   }
 }

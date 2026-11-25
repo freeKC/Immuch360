@@ -6,7 +6,9 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 90
     environment:
-      xcode: latest
+      # Xcode 27.2, the iOS 27 SDK Apple asks for from April 2027 (ITMS-90725): Codemagic's latest is still 26.6, and
+      # the free iOS compile check builds with 27.2 (release 52)
+      xcode: 27.2
       cocoapods: default
       vars:
         MISE_YES: "1"
@@ -29,7 +31,7 @@ workflows:
           export PATH="$HOME/.local/bin:$PATH"
           mise //mobile:install:ci
           mise //mobile:codegen
-      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+      - name: Metal toolchain of the Xcode (compiles the Spatial shaders)
         script: |
           xcodebuild -downloadComponent MetalToolchain
       - name: iOS device build (release, no codesign)
@@ -79,7 +81,9 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 90
     environment:
-      xcode: latest
+      # Xcode 27.2, the iOS 27 SDK Apple asks for from April 2027 (ITMS-90725): Codemagic's latest is still 26.6, and
+      # the free iOS compile check builds with 27.2 (release 52)
+      xcode: 27.2
       cocoapods: default
       vars:
         MISE_YES: "1"
@@ -116,7 +120,7 @@ workflows:
           export PATH="$HOME/.local/bin:$PATH"
           mise //mobile:install:ci
           mise //mobile:codegen
-      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+      - name: Metal toolchain of the Xcode (compiles the Spatial shaders)
         script: |
           xcodebuild -downloadComponent MetalToolchain
       - name: iOS simulator build (debug)
@@ -172,7 +176,9 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 120
     environment:
-      xcode: latest
+      # Xcode 27.2, the iOS 27 SDK Apple asks for from April 2027 (ITMS-90725): Codemagic's latest is still 26.6, and
+      # the free iOS compile check builds with 27.2 (release 52)
+      xcode: 27.2
       cocoapods: default
       vars:
         MISE_YES: "1"
@@ -217,7 +223,7 @@ workflows:
           agvtool new-marketing-version "$APP_VERSION"
           agvtool new-version -all "$PROJECT_BUILD_NUMBER"
           xcode-project use-profiles
-      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+      - name: Metal toolchain of the Xcode (compiles the Spatial shaders)
         script: |
           xcodebuild -downloadComponent MetalToolchain
       - name: Flutter iOS release build (compiles the Dart side and installs the pods)
