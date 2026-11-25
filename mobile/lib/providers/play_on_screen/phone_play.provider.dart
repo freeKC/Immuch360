@@ -20,6 +20,7 @@ import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
+import 'package:immich_mobile/infrastructure/network/pairing/pairing_client.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/presentation/pages/pairing/enter_code.page.dart';
@@ -785,13 +786,14 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     }
     onSent?.call();
     final label = cleanPairingLabel(screen.name) ?? 'TV';
+    // The system the screen said, as "Sign in with your phone" names the session; its kind when it said none
+    final os = pairingSessionOs(
+      PairingScreenDevice(label: label, kind: screen.kind, os: handover.screenOs ?? '', app: ''),
+    );
     final sessions = ref.read(pairingSessionsProvider);
     final ({String id, String token}) session;
     try {
-      session = await sessions.create(
-        deviceType: pairingSessionName(label),
-        deviceOS: screen.kind == PairingScreenKind.computer ? 'Linux' : 'Android',
-      );
+      session = await sessions.create(deviceType: pairingSessionName(label), deviceOS: os);
     } on PairingSessionsException catch (error) {
       _log.info('Play on: no session for the screen (${error.failure.name})');
       await handover.cancel();
@@ -802,15 +804,7 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
       };
     }
     final screens = ref.read(pairedScreensProvider.notifier);
-    await screens.add(
-      PairedScreen(
-        sessionId: session.id,
-        label: label,
-        kind: screen.kind,
-        os: screen.kind == PairingScreenKind.computer ? 'Linux' : 'Android',
-        at: DateTime.now(),
-      ),
-    );
+    await screens.add(PairedScreen(sessionId: session.id, label: label, kind: screen.kind, os: os, at: DateTime.now()));
     HandoverResult result;
     try {
       result = await handover.sendSignIn({

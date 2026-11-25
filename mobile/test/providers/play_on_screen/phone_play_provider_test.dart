@@ -13,6 +13,7 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
+import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
@@ -140,6 +141,7 @@ class _FakeActions implements ScreenPlayerActions {
 /// The sessions of the phone's account on its server
 class _Sessions implements PairingSessions {
   final created = <String>[];
+  final oses = <String>[];
   final deleted = <String>[];
   PairingSessionsFailure? failure;
 
@@ -149,6 +151,7 @@ class _Sessions implements PairingSessions {
       throw PairingSessionsException(failure);
     }
     created.add(deviceType);
+    oses.add(deviceOS);
     return (id: 'session-${created.length}', token: 'screen-token-${created.length}');
   }
 
@@ -531,6 +534,7 @@ void main() {
         expect(actions.check, shown, reason: 'the screen shows the number the phone shows');
         expect(account?.userName, 'Fred');
         expect(sessions.created, ['Immuch360 on Living room TV']);
+        expect(sessions.oses, ['Android'], reason: 'a TV that says no system is an Android TV');
         expect(sessions.deleted, isEmpty);
         final payload = actions.signedInWith.single;
         expect(payload['token'], 'screen-token-1');
@@ -541,6 +545,34 @@ void main() {
         expect(container.read(screensSignedOutProvider), isEmpty);
       },
     );
+
+    test('a computer is named in Immich after the system it says, as "Sign in with your phone" does', () async {
+      await server.stop();
+      session.close();
+      session = ScreenPlayerSession(
+        screenId: _screenId,
+        phones: () => [_peer(_phoneId, name: 'Galaxy S24+')],
+        actions: actions,
+        os: 'Windows',
+        random: Random(6),
+      );
+      server = PlayLinkServer(session: session, preferredPort: 0, requestTimeout: const Duration(seconds: 2));
+      final computer = (host: '192.168.1.20', port: await server.start());
+      final desk = LinkedPeer(
+        id: _screenId,
+        name: 'Desk PC',
+        key: screen.key,
+        linkedAt: screen.linkedAt,
+        kind: PairingScreenKind.computer,
+      );
+      container.read(screensSignedOutProvider.notifier).state = {_screenId};
+      expect(
+        await controller().signInScreen(desk, computer, confirm: (_, _) async => true),
+        ScreenSignInOutcome.signedIn,
+      );
+      expect(sessions.oses, ['Windows']);
+      expect(container.read(pairedScreensProvider).single.os, 'Windows');
+    });
 
     test('the screen says Not now, or cannot reach the server: its session is deleted at once', () async {
       actions.acceptHandover = false;

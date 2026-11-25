@@ -74,6 +74,7 @@ class ScreenPlayerEnvironment {
     required this.deviceName,
     this.preferredPort = playLinkDefaultPort,
     this.nativeViewer = _noNativeViewer,
+    this.os = '',
     this.nativeViewerCheck = const Duration(seconds: 5),
   });
 
@@ -94,6 +95,9 @@ class ScreenPlayerEnvironment {
 
   /// How often the receiver checks where such a viewer stands while the window is stopped
   final Duration nativeViewerCheck;
+
+  /// The system of this screen, as "Sign in with your phone" tells it (ScreenPlayerSession.os)
+  final String os;
 }
 
 Future<NativeViewerPlace> _noNativeViewer() async => NativeViewerPlace.none;
@@ -124,6 +128,7 @@ final screenPlayerEnvironmentProvider = Provider<ScreenPlayerEnvironment>((ref) 
       return label != null && label.trim().isNotEmpty ? label.trim() : (await pairing.deviceName()).trim();
     },
     nativeViewer: () => ref.read(screenNativeViewersProvider).place(),
+    os: pairing.os,
   );
 });
 
@@ -325,7 +330,12 @@ class ScreenPlayerController extends Notifier<ScreenPlayerView> {
       final screenId = await _environment.installId();
       final kind = await _environment.kind();
       final actions = _actions ??= AppScreenPlayerActions(ref, kind: kind);
-      final session = ScreenPlayerSession(screenId: screenId, phones: () => _phones, actions: actions);
+      final session = ScreenPlayerSession(
+        screenId: screenId,
+        phones: () => _phones,
+        actions: actions,
+        os: _environment.os,
+      );
       final server = PlayLinkServer(
         session: session,
         servedAddresses: _environment.localAddresses,

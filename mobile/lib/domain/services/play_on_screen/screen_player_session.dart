@@ -173,6 +173,7 @@ class ScreenPlayerSession {
     required this._phones,
     required this._actions,
     this.kinds = const {PlayKind.plex, PlayKind.immich, PlayKind.share, PlayKind.mediaServer},
+    this.os = '',
     DateTime Function()? clock,
     Random? random,
   }) : _clock = clock ?? DateTime.now,
@@ -194,6 +195,10 @@ class ScreenPlayerSession {
   /// The kinds of item this screen opens: a play of another kind is "invalid", as build 51 answers anything but a
   /// Plex film
   final Set<PlayKind> kinds;
+
+  /// The system of this screen, "Android", "Windows", "Linux" or "macOS" (as "Sign in with your phone" says it): a
+  /// phone that signs the screen in names its session in Immich after it. Empty when unknown.
+  final String os;
   final List<LinkedPeer> Function() _phones;
   final ScreenPlayerActions _actions;
   final DateTime Function() _clock;
@@ -479,7 +484,7 @@ class ScreenPlayerSession {
         )
         .catchError((Object _) => false);
     session.handover = _PendingHandover(handover, accepted, cancel, _clock(), signIn: signIn);
-    return {'status': 'ok', 'pk': pairingBase64(own.publicKey)};
+    return {'status': 'ok', 'pk': pairingBase64(own.publicKey), if (signIn && os.isNotEmpty) 'os': os};
   }
 
   Future<Map<String, Object?>> _handoverServer(_Session session, Map<String, Object?> message) async {

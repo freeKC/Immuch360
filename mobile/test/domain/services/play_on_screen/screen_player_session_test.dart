@@ -606,6 +606,35 @@ void main() {
         expect(payload['token'], 'session-token-1234');
       });
 
+      test('a sign in hello is answered with the system of the screen; a Plex hello is not', () async {
+        session = ScreenPlayerSession(
+          screenId: _screenId,
+          phones: () => phones,
+          actions: actions,
+          os: 'macOS',
+          clock: () => now,
+          random: Random(3),
+        );
+        final channel = connect();
+        final signIn = await send(channel, {
+          'type': 'handoverHello',
+          'pk': pairingBase64(PairingKeyPair.generate(Random(9)).publicKey),
+          'serverName': 'photos.example.org',
+          'purpose': 'signIn',
+          'user': 'Fred',
+        });
+        expect(signIn['status'], 'ok');
+        expect(signIn['os'], 'macOS');
+        await send(channel, {'type': 'handoverCancel'});
+        final plex = await send(channel, {
+          'type': 'handoverHello',
+          'pk': pairingBase64(PairingKeyPair.generate(Random(10)).publicKey),
+          'serverName': 'Plex at home',
+        });
+        expect(plex['status'], 'ok');
+        expect(plex.containsKey('os'), isFalse);
+      });
+
       test('declined on the screen: nothing signs in', () async {
         final channel = connect();
         actions.acceptHandover = false;

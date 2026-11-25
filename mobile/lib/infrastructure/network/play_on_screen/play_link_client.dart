@@ -245,10 +245,14 @@ class _Answer {
 /// The phone's side of "Add (server) to (screen)", inside [connection]: the fresh hello, then the check number for
 /// the user, then the server and its token sealed under the keys of that hello
 class PhoneHandover {
-  PhoneHandover._(this._connection, this._handover);
+  PhoneHandover._(this._connection, this._handover, this.screenOs);
 
   final PlayLinkConnection _connection;
   final PlayHandover _handover;
+
+  /// The system the screen said it runs in its answer to a sign in hello ("Android", "Windows", "Linux" or "macOS",
+  /// as in "Sign in with your phone"), for the name of its session in Immich; null when it said none
+  final String? screenOs;
 
   /// The six digits the screen shows too
   String get check => _handover.check;
@@ -281,7 +285,8 @@ class PhoneHandover {
     if (handover == null) {
       throw const PlayLinkException(PlayLinkFailure.invalid);
     }
-    return PhoneHandover._(connection, handover);
+    final os = answer['os'];
+    return PhoneHandover._(connection, handover, os is String && os.length <= 16 ? os : null);
   }
 
   /// The user of the phone cancelled: the question goes from the screen. Never throws.
