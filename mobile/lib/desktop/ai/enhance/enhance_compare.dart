@@ -1,14 +1,17 @@
 // "Compare" of an enhanced photo (release 51): the original and the enhanced photo one over the other, the original on
 // the left of a divider and the enhanced photo on its right, the divider moved by its slider, by a drag on the picture
 // or by the keys Left and Right (5 percent a press). Both have the same size, so the same pixels meet at the divider.
-// "100 %" shows the pixels one to one (the gain is seen at full size), dragged and zoomed with the mouse; "Fit" the whole
-// picture. Escape closes it as any dialog: the keys this view reads are Left and Right only, the others go on to the
-// shell (lot feat-desktop-escape-51).
+// "100 %" shows the pixels one to one (the gain is seen at full size), "Fit" the whole picture. The wheel, a trackpad,
+// a double click and the keys + - 0 1 zoom as in the viewers (lib/desktop/window/desktop_photo_zoom.dart, release
+// 53); zoomed in, a drag moves the picture rather than the divider, and Escape shows it whole first. Escape then closes
+// it as any dialog: the other keys go on to the shell (lot feat-desktop-escape-51).
 
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 
@@ -33,13 +36,55 @@ class EnhanceCompareDialog extends StatefulWidget {
 class _EnhanceCompareDialogState extends State<EnhanceCompareDialog> {
   /// Where the divider is, 0 (all enhanced) to 1 (all original)
   var _divider = 0.5;
-  var _actualSize = false;
   final _focus = FocusNode(debugLabel: 'enhance-compare');
+  final _zoom = DesktopZoomController();
+  var _zoomed = false;
+
+  /// The pixels of the pictures (both have the same), once the original is decoded
+  Size? _pixels;
+  ImageStream? _pixelStream;
+  late final _pixelListener = ImageStreamListener(_onPixels, onError: (_, _) {});
+
+  @override
+  void initState() {
+    super.initState();
+    _zoom.addListener(_onZoom);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The same provider as the picture shown: no second decode
+    _pixelStream ??= FileImage(File(widget.originalPath)).resolve(createLocalImageConfiguration(context))
+      ..addListener(_pixelListener);
+  }
+
+  void _onPixels(ImageInfo info, bool _) {
+    final pixels = Size(info.image.width.toDouble(), info.image.height.toDouble());
+    info.dispose();
+    if (mounted && pixels != _pixels) {
+      setState(() => _pixels = pixels);
+    }
+  }
+
+  void _onZoom() {
+    final zoomed = desktopZoomed(_zoom);
+    if (zoomed != _zoomed && mounted) {
+      setState(() => _zoomed = zoomed);
+    }
+  }
 
   @override
   void dispose() {
+    _pixelStream?.removeListener(_pixelListener);
+    _zoom.dispose();
     _focus.dispose();
     super.dispose();
+  }
+
+  void _toggleSize() {
+    final animate = !desktopReducedMotion(context);
+    _zoomed ? desktopZoomFit(_zoom, animate: animate) : desktopZoomOneToOne(_zoom, animate: animate);
   }
 
   void _move(double by) => setState(() => _divider = (_divider + by).clamp(0.0, 1.0));
@@ -56,6 +101,13 @@ class _EnhanceCompareDialogState extends State<EnhanceCompareDialog> {
       _move(0.05);
       return KeyEventResult.handled;
     }
+    // The zoom keys; the arrows stay the divider's
+    final zoomKey = desktopZoomKeyOf(event);
+    if (zoomKey != null &&
+        !isDesktopZoomArrow(zoomKey) &&
+        desktopZoomApplyKey(_zoom, zoomKey, animate: !desktopReducedMotion(context))) {
+      return KeyEventResult.handled;
+    }
     return KeyEventResult.ignored;
   }
 
@@ -63,19 +115,16 @@ class _EnhanceCompareDialogState extends State<EnhanceCompareDialog> {
   Widget build(BuildContext context) {
     final t = context.t;
     final size = MediaQuery.sizeOf(context);
-    final pictures = LayoutBuilder(
-      builder: (context, constraints) {
-        final stack = _Wipe(
-          original: File(widget.originalPath),
-          enhanced: File(widget.enhancedPath),
-          divider: _divider,
-          onDrag: (fraction) => setState(() => _divider = fraction.clamp(0.0, 1.0)),
-        );
-        if (!_actualSize) {
-          return stack;
-        }
-        return InteractiveViewer(constrained: false, minScale: 0.1, maxScale: 8, child: stack);
-      },
+    final pictures = DesktopZoomView(
+      controller: _zoom,
+      pixelSize: _pixels,
+      child: _Wipe(
+        original: File(widget.originalPath),
+        enhanced: File(widget.enhancedPath),
+        divider: _divider,
+        // Zoomed in, a drag moves the picture
+        onDrag: _zoomed ? null : (fraction) => setState(() => _divider = fraction.clamp(0.0, 1.0)),
+      ),
     );
     return Focus(
       focusNode: _focus,
@@ -96,8 +145,9 @@ class _EnhanceCompareDialogState extends State<EnhanceCompareDialog> {
                     Expanded(child: Text(t.ai_enhance_compare_title, style: context.textTheme.titleMedium)),
                     TextButton(
                       key: const Key('ai_enhance_compare_size'),
-                      onPressed: () => setState(() => _actualSize = !_actualSize),
-                      child: Text(_actualSize ? t.ai_enhance_fit : t.ai_enhance_actual_size),
+                      // Once the pixels are known; nothing for a picture whose pixels are smaller than the window
+                      onPressed: _zoomed || _pixels != null ? _toggleSize : null,
+                      child: Text(_zoomed ? t.ai_enhance_fit : t.ai_enhance_actual_size),
                     ),
                     IconButton(
                       key: const Key('ai_enhance_compare_close'),
@@ -127,7 +177,11 @@ class _EnhanceCompareDialogState extends State<EnhanceCompareDialog> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text(t.ai_enhance_compare_keys, style: context.textTheme.bodySmall),
+                child: Text(
+                  '${t.ai_enhance_compare_keys} ${t.desktop_zoom_hint}',
+                  style: context.textTheme.bodySmall,
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
           ),
@@ -144,7 +198,9 @@ class _Wipe extends StatelessWidget {
   final File original;
   final File enhanced;
   final double divider;
-  final ValueChanged<double> onDrag;
+
+  /// Null while the picture is zoomed in: the drag moves it then
+  final ValueChanged<double>? onDrag;
 
   @override
   Widget build(BuildContext context) {
@@ -170,8 +226,10 @@ class _Wipe extends StatelessWidget {
         return GestureDetector(
           key: const Key('ai_enhance_compare_area'),
           behavior: HitTestBehavior.opaque,
-          onHorizontalDragUpdate: width == null ? null : (details) => onDrag(details.localPosition.dx / width),
-          onTapDown: width == null ? null : (details) => onDrag(details.localPosition.dx / width),
+          onHorizontalDragUpdate: width == null || onDrag == null
+              ? null
+              : (details) => onDrag!(details.localPosition.dx / width),
+          onTapDown: width == null || onDrag == null ? null : (details) => onDrag!(details.localPosition.dx / width),
           child: content,
         );
       },
