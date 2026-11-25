@@ -12,7 +12,9 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/pairing/big_screen_headers.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
+import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
@@ -25,6 +27,7 @@ import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
+import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 import 'package:logging/logging.dart';
 
@@ -78,6 +81,36 @@ final nearbyPlayScreensProvider =
 
 /// The servers each screen said it does not have, by screen id: its row offers "Add (server) to (screen)"
 final screensWithoutServerProvider = StateProvider<Map<String, Set<String>>>((_) => const {});
+
+/// The screens that said they are signed in to no Immich server: their row offers "Sign (screen) in to (server)"
+final screensSignedOutProvider = StateProvider<Set<String>>((_) => const {});
+
+/// How "Sign (screen) in to (server)" went
+enum ScreenSignInOutcome {
+  signedIn,
+
+  /// The user of the screen said Not now, or did not answer in time
+  declined,
+
+  /// The screen is signed in to a server already: nothing changed
+  alreadySignedIn,
+
+  /// The screen could not reach the server at any address of this phone
+  serverUnreachable,
+
+  /// The server refused the session at the screen
+  tokenRejected,
+
+  /// The phone's server makes no session for another device (older than v1.133)
+  serverTooOld,
+
+  /// The phone could not reach its own server
+  phoneOffline,
+
+  /// The screen did not answer
+  unreachable,
+  failed,
+}
 
 /// The id of the Jellyfin or Emby item a path of its connection names (`/.items/(id)/(source)/(name)`), else null
 String? playMediaServerItemOfPath(String path) {
@@ -549,6 +582,14 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     if (outcome == PlayOnOutcome.noSuchServer ? missing.add(request.server) : missing.remove(request.server)) {
       without.state = {...without.state, screen.id: missing};
     }
+    if (request.kind == PlayKind.immich) {
+      final signedOut = ref.read(screensSignedOutProvider.notifier);
+      if (outcome == PlayOnOutcome.notSignedIn) {
+        signedOut.state = {...signedOut.state, screen.id};
+      } else if (signedOut.state.contains(screen.id)) {
+        signedOut.state = {...signedOut.state}..remove(screen.id);
+      }
+    }
     if (outcome != PlayOnOutcome.playing || generation != _generation) {
       return outcome;
     }
@@ -666,6 +707,103 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
 
   /// Forgets a playback that the screen ended or that was lost
   void dismiss() => _end();
+
+  /// "Sign (screen) in to (server)" for a screen signed in to no server (release 53): the fresh hello inside a session,
+  /// then [confirm] with its check number and the account (the sheet with the warning of "Sign in with your phone"),
+  /// then a new session of this phone's account for the screen alone, sealed under the keys of that hello, which the
+  /// screen opens once its user accepted too. The session is listed among the screens this phone signed in before it
+  /// leaves, and deleted on anything but a sign in: no orphan token. The custom headers of this phone never go: "Sign
+  /// in with your phone" asks for them. Null when the user of the phone cancelled.
+  Future<ScreenSignInOutcome?> signInScreen(
+    LinkedPeer screen,
+    PlayScreenAddress address, {
+    required Future<bool> Function(String check, PhonePairingAccount account) confirm,
+    void Function()? onSent,
+  }) async {
+    final account = await ref.read(phonePairingAccountProvider)();
+    final server = Uri.tryParse(account.server)?.host ?? account.server;
+    final user = account.userName.isNotEmpty ? account.userName : account.userEmail;
+    final PlayLinkConnection connection;
+    final PhoneHandover handover;
+    try {
+      connection = await _connect(screen, address);
+      handover = await PhoneHandover.start(connection, serverName: server, signInAs: user);
+    } on PlayHandoverRefused {
+      _log.info('Play on: the screen is signed in already');
+      return ScreenSignInOutcome.alreadySignedIn;
+    } on PlayLinkException catch (error) {
+      _log.info('Play on: no sign in with the screen (${error.failure.name})');
+      _connection = null;
+      return ScreenSignInOutcome.unreachable;
+    }
+    if (!await confirm(handover.check, account)) {
+      await handover.cancel();
+      return null;
+    }
+    onSent?.call();
+    final label = cleanPairingLabel(screen.name) ?? 'TV';
+    final sessions = ref.read(pairingSessionsProvider);
+    final ({String id, String token}) session;
+    try {
+      session = await sessions.create(
+        deviceType: pairingSessionName(label),
+        deviceOS: screen.kind == PairingScreenKind.computer ? 'Linux' : 'Android',
+      );
+    } on PairingSessionsException catch (error) {
+      _log.info('Play on: no session for the screen (${error.failure.name})');
+      await handover.cancel();
+      return switch (error.failure) {
+        PairingSessionsFailure.serverTooOld => ScreenSignInOutcome.serverTooOld,
+        PairingSessionsFailure.phoneOffline => ScreenSignInOutcome.phoneOffline,
+        PairingSessionsFailure.refused => ScreenSignInOutcome.failed,
+      };
+    }
+    final screens = ref.read(pairedScreensProvider.notifier);
+    await screens.add(
+      PairedScreen(
+        sessionId: session.id,
+        label: label,
+        kind: screen.kind,
+        os: screen.kind == PairingScreenKind.computer ? 'Linux' : 'Android',
+        at: DateTime.now(),
+      ),
+    );
+    HandoverResult result;
+    try {
+      result = await handover.sendSignIn({
+        'server': account.server,
+        'endpoints': account.endpoints,
+        'token': session.token,
+        'sessionId': session.id,
+        'label': label,
+        'user': {'name': account.userName, 'email': account.userEmail},
+        'phone': account.phoneName,
+        'issuedAt': DateTime.now().toUtc().toIso8601String(),
+      });
+    } on PlayLinkException {
+      result = HandoverResult.failed;
+    }
+    _log.info('Play on: the sign in of the screen ended (${result.wire})');
+    if (result != HandoverResult.added) {
+      try {
+        await sessions.delete(session.id);
+      } catch (error) {
+        // Its token went nowhere the phone trusts; the user still sees it in Authorized devices
+        _log.warning('Play on: the session made for the screen could not be deleted: ${error.runtimeType}');
+      }
+      await screens.remove(session.id);
+      return switch (result) {
+        HandoverResult.declined => ScreenSignInOutcome.declined,
+        HandoverResult.alreadySignedIn => ScreenSignInOutcome.alreadySignedIn,
+        HandoverResult.unreachable => ScreenSignInOutcome.serverUnreachable,
+        HandoverResult.tokenRefused => ScreenSignInOutcome.tokenRejected,
+        _ => ScreenSignInOutcome.failed,
+      };
+    }
+    final signedOut = ref.read(screensSignedOutProvider.notifier);
+    signedOut.state = {...signedOut.state}..remove(screen.id);
+    return ScreenSignInOutcome.signedIn;
+  }
 
   /// "Add (server) to (screen)": the fresh hello inside a session, then [confirm] with its check number (the sheet
   /// with the warning), then the server and its token once the user of the phone accepted, and the answer once the

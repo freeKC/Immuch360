@@ -13,11 +13,13 @@ import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
+import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_client.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_server.dart';
+import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
 
 const _screenId = '0123456789abcdef';
@@ -96,12 +98,27 @@ class _FakeActions implements ScreenPlayerActions {
     set(_state.next(phase: ScreenPlayPhase.idle));
   }
 
+  /// "Sign (screen) in": whether this screen is signed out, what its sign in ends in, the sessions it got
+  bool signedOut = true;
+  HandoverResult signInResult = HandoverResult.added;
+  final signedInWith = <Map<String, Object?>>[];
+
+  @override
+  Future<bool> canBeSignedIn() async => signedOut;
+
+  @override
+  Future<HandoverResult> signIn(LinkedPeer from, Map<String, Object?> payload) async {
+    signedInWith.add(payload);
+    return signInResult;
+  }
+
   @override
   Future<bool> askHandover({
     required LinkedPeer from,
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   }) async {
     this.check = check;
     if (waitForCancel) {
@@ -117,6 +134,41 @@ class _FakeActions implements ScreenPlayerActions {
     added.add((server, token));
     return HandoverResult.added;
   }
+}
+
+/// The sessions of the phone's account on its server
+class _Sessions implements PairingSessions {
+  final created = <String>[];
+  final deleted = <String>[];
+  PairingSessionsFailure? failure;
+
+  @override
+  Future<({String id, String token})> create({required String deviceType, required String deviceOS}) async {
+    if (failure case final failure?) {
+      throw PairingSessionsException(failure);
+    }
+    created.add(deviceType);
+    return (id: 'session-${created.length}', token: 'screen-token-${created.length}');
+  }
+
+  @override
+  Future<void> delete(String id) async => deleted.add(id);
+
+  @override
+  Future<List<({String id, DateTime? updatedAt})>> list() async => const [];
+}
+
+/// The screens this phone signed in, without the store
+class _PairedScreens extends PairedScreensNotifier {
+  @override
+  List<PairedScreen> build() => const [];
+
+  @override
+  Future<void> add(PairedScreen screen) async => state = [screen, ...state];
+
+  @override
+  Future<void> remove(String sessionId) async =>
+      state = state.where((screen) => screen.sessionId != sessionId).toList();
 }
 
 LinkedPeer _peer(String id, {String name = 'Peer'}) => LinkedPeer(
@@ -166,6 +218,7 @@ void main() {
   late PlayLinkServer server;
   late ProviderContainer container;
   late PlayScreenAddress address;
+  late _Sessions sessions;
   final screen = _peer(_screenId, name: 'Living room TV');
 
   setUp(() async {
@@ -178,8 +231,21 @@ void main() {
     );
     server = PlayLinkServer(session: session, preferredPort: 0, requestTimeout: const Duration(seconds: 2));
     address = (host: '192.168.1.20', port: await server.start());
+    sessions = _Sessions();
     container = ProviderContainer(
       overrides: [
+        pairingSessionsProvider.overrideWithValue(sessions),
+        pairedScreensProvider.overrideWith(_PairedScreens.new),
+        phonePairingAccountProvider.overrideWithValue(
+          () async => const PhonePairingAccount(
+            server: 'https://photos.example.org',
+            endpoints: ['http://192.168.1.10:2283', 'https://photos.example.org'],
+            headers: {'X-Proxy-Secret': 'never-sent'},
+            userName: 'Fred',
+            userEmail: 'fred@example.org',
+            phoneName: 'Galaxy S24+',
+          ),
+        ),
         phonePlayEnvironmentProvider.overrideWithValue(
           PhonePlayEnvironment(
             client: () async => PlayLinkClient(
@@ -432,6 +498,90 @@ void main() {
         await controller().addServer(screen, (host: '192.168.1.20', port: port), _source, confirm: (_) async => true),
         HandoverResult.unreachable,
       );
+    });
+  });
+
+  group('Sign (screen) in', () {
+    test(
+      'both users accept: a new session of the account goes to the screen, listed among the screens signed in',
+      () async {
+        container.read(screensSignedOutProvider.notifier).state = {_screenId};
+        String? shown;
+        PhonePairingAccount? account;
+        final result = await controller().signInScreen(
+          screen,
+          address,
+          confirm: (check, of) async {
+            shown = check;
+            account = of;
+            return true;
+          },
+        );
+        expect(result, ScreenSignInOutcome.signedIn);
+        expect(actions.check, shown, reason: 'the screen shows the number the phone shows');
+        expect(account?.userName, 'Fred');
+        expect(sessions.created, ['Immuch360 on Living room TV']);
+        expect(sessions.deleted, isEmpty);
+        final payload = actions.signedInWith.single;
+        expect(payload['token'], 'screen-token-1');
+        expect(payload['sessionId'], 'session-1');
+        expect(payload['endpoints'], ['http://192.168.1.10:2283', 'https://photos.example.org']);
+        expect(payload.containsKey('headers'), isFalse, reason: 'the custom headers of the phone never go this way');
+        expect(container.read(pairedScreensProvider).single.sessionId, 'session-1');
+        expect(container.read(screensSignedOutProvider), isEmpty);
+      },
+    );
+
+    test('the screen says Not now, or cannot reach the server: its session is deleted at once', () async {
+      actions.acceptHandover = false;
+      expect(
+        await controller().signInScreen(screen, address, confirm: (_, _) async => true),
+        ScreenSignInOutcome.declined,
+      );
+      expect(sessions.deleted, ['session-1']);
+      expect(actions.signedInWith, isEmpty);
+      actions.acceptHandover = true;
+      actions.signInResult = HandoverResult.unreachable;
+      expect(
+        await controller().signInScreen(screen, address, confirm: (_, _) async => true),
+        ScreenSignInOutcome.serverUnreachable,
+      );
+      expect(sessions.deleted, ['session-1', 'session-2']);
+      expect(container.read(pairedScreensProvider), isEmpty);
+    });
+
+    test('cancelled on the phone: no session is made', () async {
+      actions.waitForCancel = true;
+      expect(await controller().signInScreen(screen, address, confirm: (_, _) async => false), isNull);
+      await _until(() => actions.cancelled);
+      expect(sessions.created, isEmpty);
+    });
+
+    test('a screen signed in already: nothing asked, no session made', () async {
+      actions.signedOut = false;
+      var asked = false;
+      expect(
+        await controller().signInScreen(
+          screen,
+          address,
+          confirm: (_, _) async {
+            asked = true;
+            return true;
+          },
+        ),
+        ScreenSignInOutcome.alreadySignedIn,
+      );
+      expect(asked, isFalse);
+      expect(sessions.created, isEmpty);
+    });
+
+    test('a server too old to make a session for another device', () async {
+      sessions.failure = PairingSessionsFailure.serverTooOld;
+      expect(
+        await controller().signInScreen(screen, address, confirm: (_, _) async => true),
+        ScreenSignInOutcome.serverTooOld,
+      );
+      expect(actions.signedInWith, isEmpty);
     });
   });
 

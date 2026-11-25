@@ -42,6 +42,10 @@ const playLinkDefaultPort = 8363;
 /// The kind of the TXT record of the screen's listener, under the pairing type (no third service type)
 const playLinkKind = 'player';
 
+/// The purpose of a handover that signs a screen in to the phone's Immich server (release 53); a handover without
+/// one hands a Plex server over
+const playHandoverSignIn = 'signIn';
+
 /// Bytes of a link key, of a nonce
 const playLinkKeyBytes = 32;
 const playLinkNonceBytes = 16;

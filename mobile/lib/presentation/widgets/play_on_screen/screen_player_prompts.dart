@@ -34,13 +34,14 @@ abstract interface class ScreenPlayerPrompts {
   /// immersive viewer opens with.
   Future<ScreenSphereChoice?> askPlaySphere({required String phone, String? title, bool photo = false});
 
-  /// "Add (server) from (phone)?" with the warning and [check]: true on Add; false on Not now, or once [cancel]
-  /// completes
+  /// "Add (server) from (phone)?" with the warning and [check], or "Sign in to (server) with (phone)?" for the
+  /// account [signInAs]: true on Add or Sign in; false on Not now, or once [cancel] completes
   Future<bool> askHandover({
     required String phone,
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   });
 
   /// "From (phone)", fading after a few seconds
@@ -155,11 +156,16 @@ class _AppScreenPlayerPrompts implements ScreenPlayerPrompts {
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   }) => _ask(
     (context) => AlertDialog(
       key: const Key('play_handover_ask'),
-      icon: const Icon(Icons.dns_rounded),
-      title: Text(context.t.play_handover_screen_title(server: server, phone: phone)),
+      icon: Icon(signInAs == null ? Icons.dns_rounded : Icons.login_rounded),
+      title: Text(
+        signInAs == null
+            ? context.t.play_handover_screen_title(server: server, phone: phone)
+            : context.t.play_sign_in_screen_title(server: server, phone: phone),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -170,7 +176,11 @@ class _AppScreenPlayerPrompts implements ScreenPlayerPrompts {
               hint: context.t.play_handover_screen_check(phone: phone),
             ),
             const SizedBox(height: ImmichSpacing.md),
-            Text(context.t.play_handover_screen_warning(server: server, phone: phone)),
+            Text(
+              signInAs == null
+                  ? context.t.play_handover_screen_warning(server: server, phone: phone)
+                  : context.t.play_sign_in_screen_body(user: signInAs, phone: phone),
+            ),
           ],
         ),
       ),
@@ -180,7 +190,10 @@ class _AppScreenPlayerPrompts implements ScreenPlayerPrompts {
           onPressed: () => Navigator.of(context).pop(false),
           child: Text(context.t.play_from_phone_not_now),
         ),
-        FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.t.play_handover_add)),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(signInAs == null ? context.t.play_handover_add : context.t.pairing_confirm_button),
+        ),
       ],
     ),
     cancel,

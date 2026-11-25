@@ -51,6 +51,7 @@ void main() {
     List<LinkedPeer> screens = const [],
     Map<String, PlayScreenAddress> nearby = const {},
     Map<String, Set<String>> withoutServer = const {},
+    Set<String> signedOut = const {},
     void Function(bool)? answered,
     PlayOnRequest request = _request,
   }) async {
@@ -65,6 +66,7 @@ void main() {
         linkedScreensProvider.overrideWith(() => _Screens(screens)),
         nearbyPlayScreensProvider.overrideWith(() => _Nearby(nearby)),
         screensWithoutServerProvider.overrideWith((_) => withoutServer),
+        screensSignedOutProvider.overrideWith((_) => signedOut),
       ],
     );
     await tester.tap(find.text('open'));
@@ -183,6 +185,28 @@ void main() {
       ),
       PlayScreenRowState.notAnnounced,
     );
+    // Signed out: for an Immich item only
+    expect(
+      playScreenRowState(
+        screen: tv,
+        nearby: const {_tvId: address},
+        withoutServer: const {},
+        server: 'immich',
+        signedOut: const {_tvId},
+        immich: true,
+      ),
+      PlayScreenRowState.signedOut,
+    );
+    expect(
+      playScreenRowState(
+        screen: tv,
+        nearby: const {_tvId: address},
+        withoutServer: const {},
+        server: _machine,
+        signedOut: const {_tvId},
+      ),
+      PlayScreenRowState.ready,
+    );
   });
 
   group('Immich', () {
@@ -202,6 +226,19 @@ void main() {
       endpoints: const [],
       serverName: 'photos.example.org',
     )!;
+
+    testWidgets('a screen that said it is signed out offers to sign it in, and can still be tried', (tester) async {
+      await open(
+        tester,
+        request: photo(),
+        screens: [_screen(_tvId, 'Living room TV', PairingScreenKind.tv)],
+        nearby: {_tvId: (host: '192.168.1.20', port: playLinkDefaultPort)},
+        signedOut: {_tvId},
+      );
+      expect(find.text('Not signed in to photos.example.org'), findsOneWidget);
+      expect(find.text('Sign Living room TV in to photos.example.org'), findsOneWidget);
+      expect(tile(tester, _tvId).onTap, isNotNull);
+    });
 
     testWidgets('with no linked screen, the text speaks of photos and videos', (tester) async {
       await open(tester, request: photo());

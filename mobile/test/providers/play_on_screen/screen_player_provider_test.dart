@@ -68,6 +68,7 @@ class _Prompts implements ScreenPlayerPrompts {
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   }) async => false;
 
   @override

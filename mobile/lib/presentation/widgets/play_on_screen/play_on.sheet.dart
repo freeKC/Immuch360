@@ -74,20 +74,26 @@ Future<bool> confirmPrivatePlayOn(BuildContext context, PlayOnRequest request, S
 }
 
 /// What a row of the sheet says of a screen
-enum PlayScreenRowState { ready, notAnnounced, withoutServer }
+enum PlayScreenRowState { ready, notAnnounced, withoutServer, signedOut }
 
-/// The state of [screen] for [server]: announced or not, and whether it said it lacks the server
+/// The state of [screen] for [server]: announced or not, whether it said it lacks the server, and for an Immich item
+/// ([immich]) whether it said it is signed in to no server
 PlayScreenRowState playScreenRowState({
   required LinkedPeer screen,
   required Map<String, PlayScreenAddress> nearby,
   required Map<String, Set<String>> withoutServer,
   required String server,
+  Set<String> signedOut = const {},
+  bool immich = false,
 }) {
   if (!nearby.containsKey(screen.id)) {
     return PlayScreenRowState.notAnnounced;
   }
   if (withoutServer[screen.id]?.contains(server) ?? false) {
     return PlayScreenRowState.withoutServer;
+  }
+  if (immich && signedOut.contains(screen.id)) {
+    return PlayScreenRowState.signedOut;
   }
   return PlayScreenRowState.ready;
 }
@@ -133,6 +139,7 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
     PlayScreenRowState.notAnnounced =>
       screen.kind == PairingScreenKind.headset ? t.play_on_open_app_headset : t.play_on_open_app,
     PlayScreenRowState.withoutServer => t.play_on_without_server(server: widget.request.serverName),
+    PlayScreenRowState.signedOut => t.play_on_signed_out(server: widget.request.serverName),
   };
 
   Future<void> _play(LinkedPeer screen, PlayScreenAddress address) async {
@@ -229,10 +236,71 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
         _say(t.play_handover_err_unreachable(device: screen.name, server: source.name));
       case HandoverResult.otherServer:
         _say(t.play_handover_err_other(device: screen.name, server: source.name));
-      case HandoverResult.failed:
+      case HandoverResult.failed || HandoverResult.alreadySignedIn:
         _say(t.play_on_err_failed(device: screen.name));
     }
   }
+
+  /// "Sign (screen) in to (server)": the sheet with the check number, then the sign in, then what the user wanted
+  Future<void> _signIn(LinkedPeer screen, PlayScreenAddress address) async {
+    final t = context.t;
+    final server = widget.request.serverName;
+    setState(() => _busy = screen.id);
+    final outcome = await ref
+        .read(remotePlaybackProvider.notifier)
+        .signInScreen(
+          screen,
+          address,
+          confirm: (check, account) async =>
+              mounted &&
+              await showPlaySignInSheet(
+                context,
+                screen: screen.name,
+                server: server,
+                user: account.userName.isNotEmpty ? account.userName : account.userEmail,
+                check: check,
+              ),
+          onSent: () {
+            if (mounted) {
+              _say(t.play_handover_waiting(device: screen.name));
+            }
+          },
+        );
+    if (!mounted) {
+      return;
+    }
+    setState(() => _busy = null);
+    switch (outcome) {
+      case null:
+        return;
+      case ScreenSignInOutcome.signedIn:
+        _say(t.play_sign_in_done(device: screen.name, server: server));
+        // What the user wanted in the first place, once the screen has left its sign in page
+        await Future<void>.delayed(signInSettle);
+        if (mounted) {
+          await _play(screen, address);
+        }
+      case ScreenSignInOutcome.declined:
+        _say(t.play_on_err_declined(device: screen.name));
+      case ScreenSignInOutcome.alreadySignedIn:
+        _say(t.play_sign_in_err_already(device: screen.name));
+      case ScreenSignInOutcome.serverUnreachable:
+        _say(t.pairing_err_screen_cannot_reach(device: screen.name, server: server));
+      case ScreenSignInOutcome.tokenRejected:
+        _say(t.pairing_err_token_rejected(device: screen.name));
+      case ScreenSignInOutcome.serverTooOld:
+        _say(t.pairing_err_server_old);
+      case ScreenSignInOutcome.phoneOffline:
+        _say(t.pairing_err_phone_offline);
+      case ScreenSignInOutcome.unreachable:
+        _say(t.play_on_err_unreachable(device: screen.name));
+      case ScreenSignInOutcome.failed:
+        _say(t.play_on_err_failed(device: screen.name));
+    }
+  }
+
+  /// How long the sheet waits after a sign in before it plays: the screen leaves its sign in page meanwhile
+  static const signInSettle = Duration(seconds: 2);
 
   @override
   Widget build(BuildContext context) {
@@ -242,6 +310,7 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
     final screens = ref.watch(linkedScreensProvider).valueOrNull ?? const <LinkedPeer>[];
     final nearby = ref.watch(nearbyPlayScreensProvider);
     final withoutServer = ref.watch(screensWithoutServerProvider);
+    final signedOut = ref.watch(screensSignedOutProvider);
     final message = _message;
     return SafeArea(
       child: Padding(
@@ -288,6 +357,8 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
                       nearby: nearby,
                       withoutServer: withoutServer,
                       server: widget.request.server,
+                      signedOut: signedOut,
+                      immich: widget.request.kind == PlayKind.immich,
                     ),
                     nearby[screen.id],
                   ),
@@ -340,6 +411,17 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
               label: Text(t.play_handover_button(server: widget.request.serverName, device: screen.name)),
             ),
           )
+        : state == PlayScreenRowState.signedOut && address != null
+        ? Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton.icon(
+              key: ValueKey('play_on_sign_in_${screen.id}'),
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              icon: const Icon(Icons.login_rounded),
+              onPressed: idle ? () => unawaited(_signIn(screen, address)) : null,
+              label: Text(t.play_on_sign_in_button(device: screen.name, server: widget.request.serverName)),
+            ),
+          )
         : null;
     return ListTile(
       key: ValueKey('play_on_${screen.id}'),
@@ -350,7 +432,7 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
           : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [line, addServer]),
       enabled: state != PlayScreenRowState.notAnnounced,
       trailing: busy ? const SizedBox.square(dimension: 24, child: CircularProgressIndicator(strokeWidth: 3)) : null,
-      onTap: state == PlayScreenRowState.ready && address != null && idle
+      onTap: (state == PlayScreenRowState.ready || state == PlayScreenRowState.signedOut) && address != null && idle
           ? () => unawaited(_play(screen, address))
           : null,
     );

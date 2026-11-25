@@ -253,11 +253,14 @@ class PhoneHandover {
   /// The six digits the screen shows too
   String get check => _handover.check;
 
-  /// Starts the handover of [serverName]: the screen shows its question with the check number. Throws
-  /// [PlayLinkException]; [PlayLinkFailure.invalid] also when the screen is busy with another one.
+  /// Starts the handover of [serverName]: the screen shows its question with the check number. With [signInAs], the
+  /// name of this phone's account, it signs the screen in to that Immich server ([sendSignIn]) rather than hand a
+  /// Plex server over. Throws [PlayLinkException]; [PlayLinkFailure.invalid] also when the screen is busy with
+  /// another one; [PlayHandoverRefused] when the screen is signed in already.
   static Future<PhoneHandover> start(
     PlayLinkConnection connection, {
     required String serverName,
+    String? signInAs,
     Random? random,
   }) async {
     final own = PairingKeyPair.generate(random);
@@ -265,7 +268,11 @@ class PhoneHandover {
       'type': 'handoverHello',
       'pk': pairingBase64(own.publicKey),
       'serverName': serverName,
+      if (signInAs != null) ...{'purpose': playHandoverSignIn, 'user': signInAs},
     });
+    if (answer['status'] == HandoverResult.alreadySignedIn.wire) {
+      throw const PlayHandoverRefused(HandoverResult.alreadySignedIn);
+    }
     final screenKey = pairingDecodeBase64(answer['pk']);
     if (answer['status'] != 'ok' || screenKey == null) {
       throw const PlayLinkException(PlayLinkFailure.invalid);
@@ -286,6 +293,17 @@ class PhoneHandover {
     }
   }
 
+  /// The user of the phone accepted "Sign (screen) in": the Immich [session] this phone made for the screen goes
+  /// (what "Sign in with your phone" sends), and the answer comes once the user of the screen answered and the screen
+  /// signed in with it
+  Future<HandoverResult> sendSignIn(Map<String, Object?> session) async {
+    final answer = await _connection.send({
+      'type': 'handoverServer',
+      'h': _handover.channel(isPhone: true).seal({'immich': session}),
+    }, timeout: ScreenPlayerSession.handoverLifetime + const Duration(seconds: 30));
+    return HandoverResult.fromWire(answer['status']);
+  }
+
   /// The user of the phone accepted: [server] and [token] go, and the answer comes once the user of the screen
   /// answered and the screen checked the server
   Future<HandoverResult> send(HandedPlexServer server, String token) async {
@@ -295,4 +313,14 @@ class PhoneHandover {
     }, timeout: ScreenPlayerSession.handoverLifetime + const Duration(seconds: 30));
     return HandoverResult.fromWire(answer['status']);
   }
+}
+
+/// The screen refused a handover before any question: [result] says why
+class PlayHandoverRefused implements Exception {
+  const PlayHandoverRefused(this.result);
+
+  final HandoverResult result;
+
+  @override
+  String toString() => 'PlayHandoverRefused(${result.wire})';
 }

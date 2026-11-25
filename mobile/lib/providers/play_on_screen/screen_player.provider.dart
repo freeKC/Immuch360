@@ -47,6 +47,7 @@ import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_native_viewers.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_play_sign_in.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -861,11 +862,19 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     required String server,
     required String check,
     required Future<void> cancel,
-  }) => _prompts.askHandover(phone: from.name, server: server, check: check, cancel: cancel);
+    String? signInAs,
+  }) => _prompts.askHandover(phone: from.name, server: server, check: check, cancel: cancel, signInAs: signInAs);
 
   @override
   Future<HandoverResult> addServer(HandedPlexServer server, String token) =>
       _ref.read(screenPlexHandoverProvider)(server, token);
+
+  @override
+  Future<bool> canBeSignedIn() async => _ref.read(screenPlaySignInProvider).signedOut;
+
+  @override
+  Future<HandoverResult> signIn(LinkedPeer from, Map<String, Object?> payload) =>
+      _ref.read(screenPlaySignInProvider).signIn(from.name, payload);
 }
 
 /// The id of a track of the native player, as the phone sends it back

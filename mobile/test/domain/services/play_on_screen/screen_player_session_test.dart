@@ -86,8 +86,10 @@ class _FakeActions implements ScreenPlayerActions {
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   }) {
     asked = (from: from, server: server, check: check);
+    askedSignInAs = signInAs;
     handoverCancel = cancel;
     return handoverAnswer?.future ?? Future.value(acceptHandover);
   }
@@ -96,6 +98,21 @@ class _FakeActions implements ScreenPlayerActions {
   Future<HandoverResult> addServer(HandedPlexServer server, String token) async {
     added.add((server, token));
     return addResult;
+  }
+
+  /// "Sign (screen) in": whether this screen is signed out, and the sessions it signed in with
+  bool signedOut = true;
+  String? askedSignInAs;
+  final signedInWith = <(String, Map<String, Object?>)>[];
+  HandoverResult signInResult = HandoverResult.added;
+
+  @override
+  Future<bool> canBeSignedIn() async => signedOut;
+
+  @override
+  Future<HandoverResult> signIn(LinkedPeer from, Map<String, Object?> payload) async {
+    signedInWith.add((from.name, payload));
+    return signInResult;
   }
 }
 
@@ -545,6 +562,98 @@ void main() {
         'invalid',
       );
       expect(actions.asked, isNull);
+    });
+
+    group('Sign (screen) in', () {
+      Future<PlayHandover?> startSignIn(PlayLinkChannel channel) async {
+        final own = PairingKeyPair.generate(Random(9));
+        final answer = await send(channel, {
+          'type': 'handoverHello',
+          'pk': pairingBase64(own.publicKey),
+          'serverName': 'photos.example.org',
+          'purpose': 'signIn',
+          'user': 'Fred',
+        });
+        if (answer['status'] != 'ok') {
+          return null;
+        }
+        return PlayHandover.of(own: own, peerKey: pairingDecodeBase64(answer['pk'])!, isPhone: true, session: channel);
+      }
+
+      Map<String, Object?> signInMessage(PlayHandover handover) => {
+        'type': 'handoverServer',
+        'h': handover.channel(isPhone: true).seal({
+          'immich': {
+            'token': 'session-token-1234',
+            'endpoints': ['http://192.168.1.10:2283'],
+          },
+        }),
+      };
+
+      test('a screen signed out asks with the account, and opens the session only once its user accepted', () async {
+        final channel = connect();
+        actions.handoverAnswer = Completer<bool>();
+        final handover = (await startSignIn(channel))!;
+        expect(actions.askedSignInAs, 'Fred');
+        expect(actions.asked!.server, 'photos.example.org');
+        final pending = send(channel, signInMessage(handover));
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        expect(actions.signedInWith, isEmpty);
+        actions.handoverAnswer!.complete(true);
+        expect((await pending)['status'], 'added');
+        final (phone, payload) = actions.signedInWith.single;
+        expect(phone, 'Galaxy S24+', reason: 'the name of the link');
+        expect(payload['token'], 'session-token-1234');
+      });
+
+      test('declined on the screen: nothing signs in', () async {
+        final channel = connect();
+        actions.acceptHandover = false;
+        final handover = (await startSignIn(channel))!;
+        expect((await send(channel, signInMessage(handover)))['status'], 'declined');
+        expect(actions.signedInWith, isEmpty);
+      });
+
+      test('a screen signed in already refuses before any question', () async {
+        final channel = connect();
+        actions.signedOut = false;
+        final own = PairingKeyPair.generate(Random(9));
+        final answer = await send(channel, {
+          'type': 'handoverHello',
+          'pk': pairingBase64(own.publicKey),
+          'serverName': 'photos.example.org',
+          'purpose': 'signIn',
+          'user': 'Fred',
+        });
+        expect(answer['status'], 'alreadySignedIn');
+        expect(actions.asked, isNull);
+      });
+
+      test('a sign in hello without the account is invalid; a Plex server never signs a screen in', () async {
+        final channel = connect();
+        expect(
+          (await send(channel, {
+            'type': 'handoverHello',
+            'pk': pairingBase64(PairingKeyPair.generate(Random(6)).publicKey),
+            'serverName': 'x',
+            'purpose': 'signIn',
+          }))['status'],
+          'invalid',
+        );
+        final handover = (await startSignIn(channel))!;
+        // The Plex message on a sign in handover: nothing added, nothing signed in
+        expect((await send(channel, serverMessage(handover)))['status'], 'failed');
+        expect(actions.added, isEmpty);
+        expect(actions.signedInWith, isEmpty);
+      });
+
+      test('a session on a Plex handover is never signed in with', () async {
+        final channel = connect();
+        final handover = await start(channel);
+        expect(actions.askedSignInAs, isNull);
+        expect((await send(channel, signInMessage(handover)))['status'], 'failed');
+        expect(actions.signedInWith, isEmpty);
+      });
     });
 
     test('the question on the screen is cancelled when the phone is removed', () async {
