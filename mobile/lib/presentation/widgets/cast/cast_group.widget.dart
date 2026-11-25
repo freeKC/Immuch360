@@ -167,18 +167,7 @@ class _CastGroupState extends ConsumerState<CastGroup> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(ImmichSpacing.sm, ImmichSpacing.md, ImmichSpacing.sm, 0),
-          child: Row(
-            children: [
-              Flexible(child: Text(t.cast_group_title, style: theme.titleSmall)),
-              const SizedBox(width: ImmichSpacing.sm),
-              Container(
-                key: const Key('cast_experimental'),
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(color: scheme.tertiaryContainer, borderRadius: BorderRadius.circular(6)),
-                child: Text(t.cast_experimental, style: theme.labelSmall?.copyWith(color: scheme.onTertiaryContainer)),
-              ),
-            ],
-          ),
+          child: Text(t.cast_group_title, style: theme.titleSmall),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: ImmichSpacing.sm, vertical: ImmichSpacing.xs),

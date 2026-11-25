@@ -138,7 +138,7 @@ void main() {
     await pumpSettings(tester);
     await scrollTo(tester, meshSwitch);
 
-    expect(find.text('Open AI reliefs in 2.5D (experimental)'), findsOneWidget);
+    expect(find.text('Open AI reliefs in 2.5D'), findsOneWidget);
     // A mesh of one layer: what a near object hides is never shown, the text promises no look behind it
     expect(
       find.text(

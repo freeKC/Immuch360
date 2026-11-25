@@ -304,7 +304,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('A network share (NAS, computer, media server)'), findsOneWidget);
         expect(find.text('A Plex Media Server'), findsOneWidget);
-        expect(find.text('A Jellyfin or Emby server (experimental)'), findsOneWidget);
+        expect(find.text('A Jellyfin or Emby server'), findsOneWidget);
         expect(find.text('A Tapo camera'), findsOneWidget);
 
         await tester.tap(find.byKey(Key(choice)));

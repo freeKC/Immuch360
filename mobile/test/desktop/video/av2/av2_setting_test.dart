@@ -1,4 +1,4 @@
-// "AV2 videos (experimental)" in the settings of the videos on a computer (av2_setting.dart; store/m2/av2-2026-11-02/
+// "AV2 videos" in the settings of the videos on a computer (av2_setting.dart; store/m2/av2-2026-11-02/
 // plan-2026-11-02.md, sections 1.3 and 4): the switch on by default, what it does, the decoder installed with its size
 // and Remove, the size it downloads at the first AV2 video, or not in this version; its licence; nothing on a phone.
 
@@ -25,7 +25,7 @@ import 'av2_test_components.dart';
 // 10-bit at the limit, 4K in 8 bit too slow even on the i9 (18.6 to 20.6 frames a second kept, the pictures of 12 MB
 // that the player takes being the limit as much as the decoder), so no promise of 4K on four cores
 const _description =
-    'Decodes AV2 videos with the processor (experimental). In our tests, 8-bit videos up to 1080p play smoothly; '
+    'Decodes AV2 videos with the processor. In our tests, 8-bit videos up to 1080p play smoothly; '
     '10-bit and 4K videos may need more than the computer can give, and then pause to catch up. Video decoding, in the '
     'details of a video, shows how fast this computer decodes it. Decoding uses every core and warms the computer.';
 
@@ -41,7 +41,7 @@ void main() {
   tearDown(() => context.dispose());
 
   final desktop = TargetPlatformVariant.only(TargetPlatform.windows);
-  final switchTile = find.widgetWithText(SwitchListTile, 'AV2 videos (experimental)');
+  final switchTile = find.widgetWithText(SwitchListTile, 'AV2 videos');
 
   Future<void> pumpSetting(WidgetTester tester, {Widget widget = const Av2VideoSetting()}) => tester.pumpTestWidget(
     context,
@@ -72,24 +72,29 @@ void main() {
     );
   }, variant: desktop);
 
-  test('promises no more than the app measured, in every language: no smooth 4K, no four cores, experimental', () {
-    final folder = Directory('../i18n');
-    final english = jsonDecode(File('${folder.path}/en.json').readAsStringSync()) as Map<String, dynamic>;
-    final text = english['av2_settings_description'] as String;
-    expect(text, _description);
-    expect(text, contains('experimental'));
-    expect(text, isNot(matches(RegExp(r'four.core|smoothly up to 4K', caseSensitive: false))));
-    final locales = folder.listSync().whereType<File>().where((file) => file.path.endsWith('.json'));
-    expect(locales, hasLength(89));
-    for (final file in locales) {
-      final values = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
-      final value = values['av2_settings_description'];
-      expect(value, isA<String>(), reason: file.path);
-      // The text before lot AD11 promised 4K in 8 bit on four cores: its 4K came before 10-bit
-      expect((value as String).contains('1080p'), isTrue, reason: file.path);
-      expect(value.indexOf('1080p') < value.indexOf('4K'), isTrue, reason: '${file.path}: $value');
-    }
-  });
+  test(
+    'promises no more than the app measured, in every language: no smooth 4K, no four cores, no "experimental" label',
+    () {
+      final folder = Directory('../i18n');
+      final english = jsonDecode(File('${folder.path}/en.json').readAsStringSync()) as Map<String, dynamic>;
+      final text = english['av2_settings_description'] as String;
+      expect(text, _description);
+      // FreeKC's rule of 24 Nov 2026: no "experimental" label in the app, the facts stay ("In our tests")
+      expect(text, isNot(contains('experimental')));
+      expect(text, contains('In our tests'));
+      expect(text, isNot(matches(RegExp(r'four.core|smoothly up to 4K', caseSensitive: false))));
+      final locales = folder.listSync().whereType<File>().where((file) => file.path.endsWith('.json'));
+      expect(locales, hasLength(89));
+      for (final file in locales) {
+        final values = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+        final value = values['av2_settings_description'];
+        expect(value, isA<String>(), reason: file.path);
+        // The text before lot AD11 promised 4K in 8 bit on four cores: its 4K came before 10-bit
+        expect((value as String).contains('1080p'), isTrue, reason: file.path);
+        expect(value.indexOf('1080p') < value.indexOf('4K'), isTrue, reason: '${file.path}: $value');
+      }
+    },
+  );
 
   testWidgets('turns the AV2 videos off and on', (tester) async {
     await pumpSetting(tester);

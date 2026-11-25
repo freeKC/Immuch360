@@ -376,7 +376,7 @@ class Av2TurnedOff extends Av2PlaybackException {
   const Av2TurnedOff();
 
   @override
-  String get message => 'AV2 videos are turned off: Settings, Asset Viewer, AV2 videos (experimental)';
+  String get message => 'AV2 videos are turned off: Settings, Asset Viewer, AV2 videos';
 }
 
 /// The AV2 decoder is not installed (the card of lot AD5 offers it)

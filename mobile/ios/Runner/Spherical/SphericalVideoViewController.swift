@@ -1679,7 +1679,7 @@ final class SphericalVideoViewController: UIViewController, UIGestureRecognizerD
     let stabilizationSymbol = UIImage(systemName: "level") == nil ? "camera.metering.center.weighted" : "level"
     configure(stabilizationButton, symbol: stabilizationSymbol, pointSize: 20, action: #selector(stabilizationTapped))
     stabilizationButton.accessibilityLabel = stereoText(
-      "stabilization", fallback: "Stabilize with the camera's gyroscope (experimental)")
+      "stabilization", fallback: "Stabilize with the camera's gyroscope")
     stabilizationButton.isHidden = true
 
     // A text button, 360° or 180°: see updateCoverageButton

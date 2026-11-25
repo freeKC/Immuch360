@@ -222,7 +222,8 @@ void main() {
   ) async {
     discovery.servers = const [_found, _nas];
     await pumpPage(tester);
-    expect(key('jellyfin_experimental'), findsOneWidget);
+    expect(key('jellyfin_experimental'), findsNothing);
+    expect(find.textContaining(RegExp('xperimental')), findsNothing);
     expect(find.text('Some NAS'), findsNothing, reason: 'the found list shows Jellyfin and Emby servers only');
     await tap(tester, find.text('Home').first);
     expect(connector.asked.first, 'info http://192.168.1.50:8096');

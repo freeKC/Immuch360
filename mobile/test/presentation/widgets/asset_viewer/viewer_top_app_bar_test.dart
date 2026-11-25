@@ -378,7 +378,7 @@ void main() {
   };
   // The switch of the stabilisation with the camera's gyroscope, its states and its notices (issue 14)
   const englishStabilizationLabels = {
-    'stabilization': "Stabilize with the camera's gyroscope (experimental)",
+    'stabilization': "Stabilize with the camera's gyroscope",
     'stabilizationEnabled': 'Enabled',
     'stabilizationDisabled': 'Disabled',
     'stabilizationOn': "Stabilized with the camera's gyroscope",
@@ -3970,7 +3970,7 @@ void main() {
         expect(captured[0], '$server/assets/${asset.id}/original', reason: 'the original, as for the sphere');
         expect(captured[1], isTrue, reason: 'a video');
         final labels = captured[2] as Map<String, String>;
-        expect(labels['flat3dNotice'], '3D told by the file name (experimental)');
+        expect(labels['flat3dNotice'], '3D told by the file name');
         expect(labels['flat3dNoNavigation'], 'A 3D video plays on its own: B or Y goes back to the app');
         expect(labels['spatial3d'], '3D');
         expect(labels['spatial2d'], '2D (left eye)');
@@ -4020,7 +4020,7 @@ void main() {
       expect(captured[0], '$server/assets/${asset.id}/original?edited=false');
       expect(captured[1], isFalse, reason: 'a photo');
       expect(jsonDecode(captured[4] as String), {'kind': 'flat3d', 'version': 1, 'format': 'halfTb'});
-      expect((captured[2] as Map<String, String>)['flat3dNotice'], '3D told by the file name (experimental)');
+      expect((captured[2] as Map<String, String>)['flat3dNotice'], '3D told by the file name');
     });
 
     testWidgets('leaves the photos named side by side to the stereo photo probe', (tester) async {
@@ -4182,7 +4182,7 @@ void main() {
         labels['bigScreenNoNavigation'],
         'On the big screen, a photo or video shows on its own: B or Y goes back to the app',
       );
-      expect(labels['sharpScreensNotice'], 'Sharper flat screen (experimental)');
+      expect(labels['sharpScreensNotice'], 'Sharper flat screen');
       expect(jsonDecode(captured[4] as String), {'kind': 'bigScreen', 'version': 1});
       expect(captured[5], isTrue, reason: 'Sharper flat screens is on by default');
       expect(calls, ['immersive']);

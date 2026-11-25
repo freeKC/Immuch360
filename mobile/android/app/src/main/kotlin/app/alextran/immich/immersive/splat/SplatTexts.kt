@@ -48,7 +48,7 @@ internal object SplatTexts {
     mapOf(
       LABEL_PREPARING to "Preparing the splat",
       LABEL_LOADING to "Loading the splat",
-      LABEL_NOTICE to "Gaussian splat (experimental)",
+      LABEL_NOTICE to "Gaussian splat",
       LABEL_DISCLAIMER to
         "Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: " +
           "any defect is Immuch360's own.",

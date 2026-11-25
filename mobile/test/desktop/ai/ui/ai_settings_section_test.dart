@@ -8,7 +8,7 @@
 // before a move. Phase 3: the engine of the 3D versions of the 360° panoramas let go with them; the 360° panoramas this
 // version offers (nothing held back by default), the line of the graphics card for them and "Try on integrated
 // graphics (untested)", kept, with its warning that fades; a group held back keeps the line of phase 1. The splat
-// scenes (lot SP7): "Splat scenes (experimental)" under the switch of the AI features, on by default and kept, once
+// scenes (lot SP7): "Splat scenes" under the switch of the AI features, on by default and kept, once
 // this version has their engine and does not hold them back.
 
 import 'dart:async';
@@ -340,7 +340,7 @@ void main() {
       defaultReliefVersion,
     );
     expect(find.text('v1, fast'), findsOneWidget);
-    expect(find.text('v2, better edges (experimental)'), findsOneWidget);
+    expect(find.text('v2, better edges'), findsOneWidget);
 
     await tapIn(tester, find.byKey(const Key('ai_settings_relief_v1')));
     expect((await keptSettings(tester)).reliefVersion, ReliefVersion.v1);
@@ -822,9 +822,7 @@ void main() {
     expect(tester.widget<SwitchListTile>(tile).value, isTrue);
   });
 
-  testWidgets('"Splat scenes (experimental)" under the AI features: on by default, kept; absent while held back', (
-    tester,
-  ) async {
+  testWidgets('"Splat scenes" under the AI features: on by default, kept; absent while held back', (tester) async {
     final splats = {
       ConversionKind.splatScene: ConversionEngine(engine: FakeImmersiveEngine(), settingsKey: (source, turns) => null),
     };
@@ -844,7 +842,7 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await pump(tester, gate: gateHolding(const {}), engines: splats);
     final tile = find.byKey(const Key('ai_settings_splat_scenes'));
-    expect(find.text('Splat scenes (experimental)'), findsOneWidget);
+    expect(find.text('Splat scenes'), findsOneWidget);
     expect(
       find.text(
         'Rebuild a place or an object from photos or a video, to walk through in a Meta Quest. Off: no button to make '
