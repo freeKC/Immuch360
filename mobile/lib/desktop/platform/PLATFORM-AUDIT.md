@@ -170,6 +170,8 @@ the gate is per desktop and is noted.
 | `lib/providers/settings_file/settings_file_io.dart:94` | the settings file: the Android picker (DocumentTreeApi) | right: the computers took the branch before it |
 | `lib/providers/settings_file/settings_file_io.dart:117` | the settings file: the copy in the cache deleted after the read, on Android | right: the computers read the file where it is and delete nothing |
 | `lib/providers/settings_file/settings_file_io.dart:138` | the settings file: no save dialog off Android | right: the computers returned before it |
+| `lib/providers/play_on_screen/screen_native_viewers.dart:42` | Play from a phone: whether the immersive viewer of the Quest is open, read on Android only | right: the computers read their 360° player's session alone |
+| `lib/providers/play_on_screen/screen_native_viewers.dart:64` | Play from a phone: the native 360° player and immersive viewer closed through the Android channel | right: the computers pop their 360° player route in the branch before it |
 
 ## Desktop gates added outside these lines
 
