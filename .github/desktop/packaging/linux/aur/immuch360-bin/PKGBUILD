@@ -10,9 +10,9 @@
 # The source of this file: .github/desktop/packaging/linux/aur/immuch360-bin in the repository.
 
 pkgname=immuch360-bin
-_label=3.4.6-desktop.31
-_tag=desktop-v3.4.6-31
-pkgver=3.4.6.31
+_label=3.4.7-desktop.32
+_tag=desktop-v3.4.7-32
+pkgver=3.4.7.32
 pkgrel=1
 pkgdesc='Photos and videos, 360° included, from Immich, your folders and your network shares'
 arch=('x86_64')
@@ -28,7 +28,7 @@ conflicts=('immuch360')
 options=('!strip' '!debug')
 source=("https://github.com/freeKC/Immuch360/releases/download/${_tag}/Immuch360-Desktop-${_label}-linux-amd64.deb")
 noextract=("Immuch360-Desktop-${_label}-linux-amd64.deb")
-sha256sums=('2bee82f21611d0a3dd68fad685f7ab0b7c441ee4271ffeab86f1e1dc43921e77')
+sha256sums=('473545a9ef271a1410bf7c0f338d1674dd53f8b5fc1615869cbb71ff7de09ad1')
 
 prepare() {
   mkdir -p deb
