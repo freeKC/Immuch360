@@ -31,12 +31,17 @@ which desktop_version.py gives a release tag only) is refused with it, unless th
 notice (copyright, build, where its source is) and licence texts in licenses/libsmb2/ (--libsmb2-notices, by default
 mobile/packages/dart_smb2/libsmb2), and with its corresponding source: the folder must hold the archive its NOTICE
 names, data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz, which `mise //mobile:codegen`
-packs before the build (.github/desktop/libsmb2/pack_sources.py); a folder without it is refused.
+packs before the build (.github/desktop/libsmb2/pack_sources.py); a folder without it is refused. The face detector of
+the head tracker, libfacedetection (3-clause BSD, built into immuch_head_tracker_detect.dll and
+immuch_head_tracker_detect_avx2.dll), travels with its LICENSE in licenses/libfacedetection/ (--libfacedetection, by
+default mobile/packages/immuch_head_tracker/third_party/libfacedetection); a folder with a detector DLL and without it
+is refused, as is an immuch_head_tracker.dll that imports Media Foundation (it loads it at run time, so that it loads
+on a Windows N edition without the Media Feature Pack).
 
   windows_bundle.py --release DIR --out DIR [--name "Immuch360 Desktop"] [--arch x64] [--crt-dir DIR]
                     [--system-dir DIR] [--zip FILE] [--symbols DIR] [--info KEY=VALUE ...]
                     [--file-version A.B.C.D] [--notices DIR] [--libmpv DIR] [--public] [--accept-2024-libmpv]
-                    [--libsmb2-notices DIR]
+                    [--libsmb2-notices DIR] [--libfacedetection DIR]
   windows_bundle.py --imports FILE ...      print the imports of PE files as JSON
 
 --crt-dir defaults to the newest Microsoft.VC*.CRT folder of the Visual Studio found by vswhere (Windows only);
@@ -92,6 +97,15 @@ LIBSMB2_NOTICES_DIR = ROOT / 'mobile' / 'packages' / 'dart_smb2' / 'libsmb2'
 LIBSMB2_TEXTS = ('NOTICE', 'COPYING', 'LICENCE-LGPL-2.1.txt')
 # Its corresponding source, an asset of the app that the code generation packs and NOTICE names
 LIBSMB2_SOURCES = 'data/flutter_assets/packages/dart_smb2/libsmb2/Immuch360-libsmb2-sources.tar.gz'
+# libfacedetection (BSD-3-Clause), built into the two face detector DLLs of immuch_head_tracker: its licence asks for
+# the copyright, the conditions and the disclaimer with a binary distribution (also on the licence page of the app)
+FACE_DETECTOR_FILES = ('immuch_head_tracker_detect.dll', 'immuch_head_tracker_detect_avx2.dll')
+# The head tracker loads Media Foundation at run time (ht_windows.cpp): a DLL that imported it would not load at all on
+# a Windows N edition without the Media Feature Pack, and the page would say "Head tracking could not start" instead of
+# naming the pack. Its imports are held to that.
+HEAD_TRACKER = 'immuch_head_tracker.dll'
+MEDIA_FOUNDATION = re.compile(r'(?i)^(mfplat|mfreadwrite|mf|mfcore|mfsensorgroup|evr)\.dll$')
+LIBFACEDETECTION_DIR = ROOT / 'mobile' / 'packages' / 'immuch_head_tracker' / 'third_party' / 'libfacedetection'
 # The lines of BUILD-INFO.txt about the signature. The CI build is not signed; the release workflow signs it with
 # windows_sign.py, which replaces these lines by its own
 UNSIGNED_NOTE = (
@@ -278,6 +292,9 @@ def check(folder: pathlib.Path, arch: str, crt: dict, system: set, copied: list)
             problems.append(f'{relative}: built for {info["machine"]}, the folder is {arch}')
         for name, how in [(n, '') for n in info['imports']] + [(n, ' (delay loaded)') for n in info['delay_imports']]:
             lower = name.lower()
+            if path.name.lower() == HEAD_TRACKER and MEDIA_FOUNDATION.match(lower):
+                problems.append(f'{relative}: imports {name}{how}; Media Foundation must be loaded at run time, '
+                                'so that the head tracker loads on a Windows N edition without the Media Feature Pack')
             if DEBUG_RUNTIME.match(lower):
                 problems.append(f'{relative}: imports {name}{how}, a debug runtime that cannot be shipped (debug build?)')
             elif lower in present or API_SET.match(lower):
@@ -351,6 +368,17 @@ def copy_libsmb2_notices(folder: pathlib.Path, notices: pathlib.Path) -> list:
         for name in LIBSMB2_TEXTS:
             shutil.copy2(notices / name, target / name)
     return missing
+
+
+def copy_libfacedetection_licence(folder: pathlib.Path, source: pathlib.Path) -> bool:
+    """Copies the LICENSE of libfacedetection into licenses/libfacedetection/; False when there is none."""
+    licence = source / 'LICENSE'
+    if not licence.is_file():
+        return False
+    target = folder / 'licenses' / 'libfacedetection'
+    target.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(licence, target / 'LICENSE')
+    return True
 
 
 def write_zip(folder: pathlib.Path, zip_path: pathlib.Path) -> str:
@@ -461,6 +489,14 @@ def bundle(args) -> int:
         notes.append('libsmb2.dll (SMB shares): GNU LGPL 2.1 or later; licenses/libsmb2/NOTICE says where its sources')
         notes.append('are, with the licence texts next to it.')
         print('notice and licence of libsmb2 copied to licenses/libsmb2/')
+    if names & set(FACE_DETECTOR_FILES):
+        if not copy_libfacedetection_licence(folder, args.libfacedetection):
+            print(f'the licence of libfacedetection must travel with the face detector, not found: '
+                  f'{args.libfacedetection / "LICENSE"}')
+            return 2
+        notes.append('immuch_head_tracker_detect*.dll (face detector of the head tracking): libfacedetection, BSD')
+        notes.append('3-Clause; its licence is licenses/libfacedetection/LICENSE.')
+        print('licence of libfacedetection copied to licenses/libfacedetection/')
 
     info = ['Immuch360 Desktop'] + [line.replace('=', ': ', 1) for line in args.info] + [
         '',
@@ -529,6 +565,8 @@ def main(argv=None) -> int:
                         'folder of media_kit_video as flutter pub get resolved it)')
     parser.add_argument('--libsmb2-notices', type=pathlib.Path, default=LIBSMB2_NOTICES_DIR,
                         help='the folder of the notice and licence texts of libsmb2')
+    parser.add_argument('--libfacedetection', type=pathlib.Path, default=LIBFACEDETECTION_DIR,
+                        help='the folder of the LICENSE of libfacedetection')
     parser.add_argument('--libmpv', type=pathlib.Path,
                         help='the extracted libmpv archive of the build (default build/windows/<arch>/libmpv)')
     parser.add_argument('--public', action='store_true', help='the ZIP is for a release, whatever its version')

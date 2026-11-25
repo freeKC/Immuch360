@@ -1,0 +1,20 @@
+painted-head-12s.mp4: the recorded clip of the head tracker tests (packages/immuch_head_tracker/test_native and
+test/desktop/spatial/head_tracker_windows_test.dart). 320 x 240, 15 fps, 12 s, H.264 High, no audio, 180 frames.
+
+The face is a detail of "Mona Lisa, by Leonardo da Vinci, from C2RMF retouched.jpg" (Wikimedia Commons, public domain:
+the painting is from the early 16th century, and the photograph a faithful reproduction of a two dimensional work).
+A painting rather than a photograph of a real person keeps anyone's likeness out of the repository.
+
+Made with ffmpeg on 22 October 2026 from that image (monalisa.jpg):
+
+  X='if(lt(t,8),105+90*sin(2*PI*t/4),if(lt(t,9),400,105+40*sin(2*PI*(t-9)/3)))'
+  Y='50+6*sin(2*PI*t/1.7)'
+  ffmpeg -f lavfi -i "gradients=s=320x240:r=15:c0=0x5a6470:c1=0xb0a890:speed=0.002,format=yuv420p" \
+    -loop 1 -framerate 15 -i monalisa.jpg \
+    -filter_complex "[1:v]crop=600:660:305:152,scale=110:-2[f];[0:v][f]overlay=x='$X':y='$Y':eval=frame,eq=brightness='0.06*sin(2*PI*t/5)':eval=frame,noise=alls=10:allf=t,gblur=sigma=0.6,format=yuv420p" \
+    -t 12 -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart painted-head-12s.mp4
+
+Ground truth: the face, 110 pixels wide, has its left edge at X above, so its centre is at (X + 55) / 320 of the
+width: from 0 s to 8 s it swings over most of the width with a period of 4 s, from 8 s to 9 s it is out of the picture
+(frames 120 to 134), then it swings with a smaller amplitude and a period of 3 s. The picture also bobs up and down,
+its brightness changes, and it carries noise and a slight blur.

@@ -72,11 +72,12 @@ void main() {
         ...extra,
       ]);
 
-  Set<String> bundled() => Directory(path('dist/Immuch360 Desktop'))
-      .listSync(recursive: true)
-      .whereType<File>()
-      .map((file) => p.relative(file.path, from: path('dist/Immuch360 Desktop')).replaceAll(r'\', '/'))
-      .toSet();
+  Set<String> bundled() =>
+      Directory(path('dist/Immuch360 Desktop'))
+          .listSync(recursive: true)
+          .whereType<File>()
+          .map((file) => p.relative(file.path, from: path('dist/Immuch360 Desktop')).replaceAll(r'\', '/'))
+          .toSet();
 
   setUp(() => root = Directory.systemTemp.createTempSync('immuch360_bundle_'));
 
@@ -461,6 +462,48 @@ void main() {
         expect(run.output, contains('the corresponding source of libsmb2 must travel with it'));
         expect(run.output, contains(sources));
         expect(File(path('dist/Immuch360-Desktop-test-windows-x64.zip')).existsSync(), isFalse);
+      });
+    });
+
+    group('the licence of libfacedetection', () {
+      String folderText(String name) => File(path('dist/Immuch360 Desktop/$name')).readAsStringSync();
+
+      test('travels with the face detector DLLs of the head tracker, in licenses/libfacedetection/', () {
+        writeBuild();
+        writePe('Release/immuch_head_tracker.dll', fakePe(imports: ['ole32.dll', ..._runtime, ..._kernel]));
+        writePe('Release/immuch_head_tracker_detect.dll', fakePe(imports: [..._runtime, ..._kernel]));
+        writePe('Release/immuch_head_tracker_detect_avx2.dll', fakePe(imports: [..._runtime, ..._kernel]));
+        writeFiles(root, {'System32/ole32.dll': ''});
+        final run = bundle();
+        expect(run.exitCode, 0, reason: '$run');
+        expect(bundled(), contains('licenses/libfacedetection/LICENSE'));
+        expect(folderText('licenses/libfacedetection/LICENSE'), contains('License Agreement For libfacedetection'));
+        expect(folderText('BUILD-INFO.txt'), contains('licenses/libfacedetection/LICENSE'));
+      });
+
+      test('stops on a head tracker that imports Media Foundation, which it must load at run time', () {
+        writeBuild();
+        writePe(
+          'Release/immuch_head_tracker.dll',
+          fakePe(imports: ['mfplat.dll', 'ole32.dll', ..._runtime, ..._kernel]),
+        );
+        writeFiles(root, {'System32/ole32.dll': '', 'System32/mfplat.dll': ''});
+        final run = bundle();
+        expect(run.exitCode, 1, reason: '$run');
+        expect(
+          run.output,
+          contains('immuch_head_tracker.dll: imports mfplat.dll; Media Foundation must be loaded at run'),
+        );
+      });
+
+      test('stops when it is missing, and is not added without a detector DLL', () {
+        writeBuild();
+        expect(bundle().exitCode, 0);
+        expect(bundled(), isNot(contains('licenses/libfacedetection/LICENSE')));
+        writePe('Release/immuch_head_tracker_detect.dll', fakePe(imports: [..._runtime, ..._kernel]));
+        final run = bundle(extra: ['--libfacedetection', path('none')]);
+        expect(run.exitCode, 2, reason: '$run');
+        expect(run.output, contains('the licence of libfacedetection must travel with the face detector'));
       });
     });
 

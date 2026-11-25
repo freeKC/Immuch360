@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_head_setting.dart';
 import 'package:immich_mobile/desktop/video/av2_setting.dart';
 import 'package:immich_mobile/desktop/video/xr/headset_view_setting.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
@@ -110,6 +111,8 @@ class VideoViewerSettings extends HookConsumerWidget {
             title: context.t.spatial_2_5d_experimental_title,
             subtitle: context.t.spatial_2_5d_experimental_subtitle,
           ),
+        // Immuch360 Desktop: what moves the view of Spatial 2.5D, and the webcam (lib/desktop/spatial)
+        if (CurrentPlatform.isDesktop && useSpatial25d.value) const SpatialHeadTrackingSetting(),
         // Raw 360° videos whose camera recorded its motion play level and steady (issue 14)
         if (stabilizationSupported)
           SettingsSwitchListTile(
