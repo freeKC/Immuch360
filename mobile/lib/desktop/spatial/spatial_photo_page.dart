@@ -191,10 +191,13 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
       info.dispose();
       return;
     }
-    setState(() {
+    // A picture already in the cache comes during didChangeDependencies, which the build follows anyway
+    void keep() {
       _info?.dispose();
       _info = info;
-    });
+    }
+
+    synchronousCall ? keep() : setState(keep);
     unawaited(_measure(info.image));
   }
 
@@ -207,7 +210,7 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
 
   Future<void> _measure(ui.Image frame) async {
     final run = ++_depthRun;
-    if (_depth == null) {
+    if (_depth == null && _depthState != SpatialDepthState.measuring) {
       setState(() => _depthState = SpatialDepthState.measuring);
     }
     final clone = frame.clone();

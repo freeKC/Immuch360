@@ -79,9 +79,8 @@ void main() {
   }) => [
     spatialPhotoProgramProvider.overrideWithValue(() async => program),
     spatialPhotoDepthProvider.overrideWithValue(
-      (image, layout) async => depthFails
-          ? throw StateError('no depth')
-          : SpatialPhotoDepth(map: map.clone(), minimum: -2, range: 4),
+      (image, layout) async =>
+          depthFails ? throw StateError('no depth') : SpatialPhotoDepth(map: map.clone(), minimum: -2, range: 4),
     ),
     if (sources != null) viewerPositionSourcesProvider.overrideWithValue(sources),
   ];
@@ -246,7 +245,10 @@ void main() {
         const SpatialPhotoLayout(packing: SpatialPhotoPacking.sideBySide, swapped: true, squeezed: true),
       );
       expect(spatialLayoutOfSideBySide(const FlatStereoPhoto(eyes: StereoEyes.full)), _sbs);
-      expect(spatialLayoutOfStacked(FlatStereoFormat.tb), const SpatialPhotoLayout(packing: SpatialPhotoPacking.topBottom));
+      expect(
+        spatialLayoutOfStacked(FlatStereoFormat.tb),
+        const SpatialPhotoLayout(packing: SpatialPhotoPacking.topBottom),
+      );
       expect(
         spatialLayoutOfStacked(FlatStereoFormat.halfTb),
         const SpatialPhotoLayout(packing: SpatialPhotoPacking.topBottom, squeezed: true),
@@ -264,7 +266,10 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpTestWidget(
         context,
-        ColoredBox(color: Colors.black, child: DesktopSpatialPhotoButton(asset: asset)),
+        ColoredBox(
+          color: Colors.black,
+          child: DesktopSpatialPhotoButton(asset: asset),
+        ),
         overrides: [
           flatStereoProvider(asset).overrideWith((ref) async => photo),
           isEquirectangularProvider(asset).overrideWithValue(equirect),
