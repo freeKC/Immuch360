@@ -200,10 +200,29 @@ void main() {
     final found = samples.where((s) => s.hasFace).length;
     expect(found, greaterThanOrEqualTo(withFace * samples.length ~/ lines.length - 10));
     expect(samples.any((s) => s.lost), isTrue, reason: 'the face is lost in the gap of the clip');
-    // The eye midpoint is the track's, the filter starts on it
+    // The eye midpoint is the one of the track's line of the sample (every line is analysed: sequence n is line n), and
+    // the filter starts on the first face. The first sample delivered is mostly the first frame: then its filtered value
+    // is its head_x exactly. When a loaded runner skipped it, the filter ran on the frames before at their real times,
+    // which no test can know; each step of a One Euro filter lies between its last value and its input, so the value
+    // lies within the head_x of the frames so far.
+    expect(lines.first.$2, isNotEmpty, reason: 'the clip starts on the face');
     final first = samples.firstWhere((s) => s.hasFace);
-    expect(lines.any((line) => line.$2.any((face) => (face.eyeX - first.eyeX).abs() < 1e-9)), isTrue);
-    expect(first.filteredX.isFinite, isTrue);
+    final line = lines[first.sequence - 1];
+    expect(line.$2, isNotEmpty);
+    expect(first.eyeX, closeTo(line.$2.first.eyeX, 1e-9));
+    if (first.sequence == 1) {
+      expect(first.filteredX, closeTo(0.5 - first.eyeX, 1e-9));
+    } else {
+      final heads = [
+        for (final (_, faces) in lines.take(first.sequence))
+          if (faces.isNotEmpty) 0.5 - faces.first.eyeX,
+      ];
+      final low = heads.reduce((a, b) => a < b ? a : b);
+      final high = heads.reduce((a, b) => a > b ? a : b);
+      expect(first.filteredX, inInclusiveRange(low - 1e-9, high + 1e-9));
+    }
+    // ignore: avoid_print
+    print('first sample with a face: sequence ${first.sequence}');
     // The painted head goes to the right of the frame in its first second (the user's left): the view moves to the
     // left camera, below the middle, as on the phones
     final second = samples.indexWhere((s) => s.timeUs - samples.first.timeUs > 900000);
