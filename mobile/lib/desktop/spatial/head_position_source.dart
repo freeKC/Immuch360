@@ -68,6 +68,9 @@ class HeadPositionSource extends ChangeNotifier with WidgetsBindingObserver impl
   final bool _observeLifecycle;
   late final SpatialHeadTracking _tracking;
   DesktopSpatialSettings _settings;
+
+  /// Writes of this source's choices not done yet
+  int _saving = 0;
   final _positions = StreamController<ViewerPosition>.broadcast(sync: true);
   ViewerPosition? _latest;
   double? _centre;
@@ -117,12 +120,17 @@ class HeadPositionSource extends ChangeNotifier with WidgetsBindingObserver impl
   @visibleForTesting
   bool get shouldRunCamera => _onScreen && _windowShown && !_away.value && usable && !_closed;
 
-  /// A view shows this source: the webcam may open
+  /// A view shows this source: the webcam may open. The settings are read again first: the settings page covers the
+  /// view, so "Use the webcam for head tracking" or the webcam may have changed there meanwhile.
   void attach() {
     if (_onScreen || _closed) {
       return;
     }
     _onScreen = true;
+    if (_saving == 0) {
+      // While a choice of this source is being written, the one it holds is the newest
+      _settings = _store.read();
+    }
     _update();
     _notify();
   }
@@ -186,10 +194,13 @@ class HeadPositionSource extends ChangeNotifier with WidgetsBindingObserver impl
 
   Future<void> _save(DesktopSpatialSettings settings) async {
     _settings = settings;
+    _saving++;
     try {
       await _store.write(settings);
     } catch (error) {
       _log.warning('The Spatial 2.5D settings were not saved: $error');
+    } finally {
+      _saving--;
     }
   }
 
@@ -213,7 +224,9 @@ class HeadPositionSource extends ChangeNotifier with WidgetsBindingObserver impl
     }
     _tracking.removeListener(_onTracking);
     _tracking.onSample = null;
-    final released = _tracking.released;
+    // The stop that releases the webcam begins here (the dispose after it finds nothing open), so that the close waits
+    // for this release and not an older one
+    final released = _tracking.stop();
     _tracking.dispose();
     await _positions.close();
     // The webcam's light off before the close is done

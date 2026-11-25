@@ -9,8 +9,9 @@
 // never reach Dart: only the position of the face comes out of the native code, one sample per analysed frame.
 //
 // A start waits for the release of the previous webcam session (its capture thread ends in a background isolate), so
-// that a quick minimise and restore, or the mouse then the head again, never finds the webcam still held by this app
-// (which the page would call busy). A webcam taken by default is opened as colour only: one whose formats are all grey
+// that a quick minimise and restore, the mouse then the head again, or a page closed and opened again at once, never
+// finds the webcam still held by this app (which the page would call busy). That wait is shared by every
+// SpatialHeadTracking of the app. A webcam taken by default is opened as colour only: one whose formats are all grey
 // (an infrared camera with a plain name) is refused before it streams, marked infrared, and the next one is taken.
 
 import 'dart:async';
@@ -144,8 +145,10 @@ class SpatialHeadTracking extends ChangeNotifier {
   final _greyOnly = <String>{};
   HeadTrackingSession? _session;
 
-  /// The release of the sessions closed last, until it is done: a start or a listing waits for it
-  Future<void>? _closing;
+  /// The release of the sessions closed last, until it is done: a start or a listing waits for it. Shared by every
+  /// head tracking of the app, since they share the webcam: a page reopened at once, or a view that swaps its source,
+  /// has a new one, and its start must wait for the release of the old one as well.
+  static Future<void>? _closing;
   bool _reversed = false;
   StreamSubscription<HeadSample>? _subscription;
   SpatialTrackingState _state = SpatialTrackingState.off;
@@ -170,7 +173,8 @@ class SpatialHeadTracking extends ChangeNotifier {
     ]);
   }
 
-  /// Done once every webcam session closed so far has released its camera (its light off)
+  /// Done once every webcam session closed so far, by any head tracking of the app, has released its camera (its light
+  /// off)
   Future<void> get released => _closing ?? Future<void>.value();
 
   /// The head's direction reversed, for a webcam whose own software mirrors its pictures: a head moving to the user's

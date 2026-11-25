@@ -5,6 +5,7 @@
 // the first time; usable false (the view takes the mouse) while the head cannot be used; the problems; the positions
 // of the track, their centre, their loss; the settings.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
@@ -269,6 +270,82 @@ void main() {
       await head.close();
       expect(source.last.released, isTrue);
       expect(await done, isEmpty);
+    });
+
+    test('close waits for a release the capture thread holds', () async {
+      make(settings: const DesktopSpatialSettings(consent: true)).attach();
+      await settle();
+      expect(cameraOpen(), isTrue);
+      source.holdRelease = Completer<void>();
+      var closed = false;
+      final closing = head.close().then((_) => closed = true);
+      for (var i = 0; i < 5; i++) {
+        await settle();
+      }
+      expect(source.last.closing, isTrue);
+      expect(closed, isFalse, reason: 'the capture thread still holds the webcam');
+      source.holdRelease!.complete();
+      await closing;
+      expect(source.last.released, isTrue);
+    });
+
+    test('a view opened again at once, with a new source, waits for the release of the old one', () async {
+      final first = make(settings: const DesktopSpatialSettings(consent: true))..attach();
+      await settle();
+      source.holdRelease = Completer<void>();
+      final closing = first.close();
+      await settle();
+      expect(source.last.released, isFalse);
+      make(settings: const DesktopSpatialSettings(consent: true)).attach();
+      for (var i = 0; i < 5; i++) {
+        await settle();
+      }
+      expect(source.sessions, hasLength(1), reason: 'not opened while the old session holds the webcam');
+      source.holdRelease!.complete();
+      await closing;
+      for (var i = 0; i < 5; i++) {
+        await settle();
+      }
+      expect(source.sessions, hasLength(2));
+      expect(source.busy, 0, reason: 'never found busy by this app');
+      expect(head.problem, isNull);
+      expect(cameraOpen(), isTrue);
+    });
+
+    test('the webcam turned off on the settings page holds once the view is back', () async {
+      make(settings: const DesktopSpatialSettings(consent: true)).attach();
+      await settle();
+      expect(source.sessions, hasLength(1));
+      // The settings page covers the view, the user turns the webcam off there, then comes back
+      head.detach();
+      await settle();
+      store.settings = store.settings.copyWith(webcam: false);
+      head.attach();
+      await settle();
+      expect(source.sessions, hasLength(1), reason: 'the webcam stays closed');
+      expect(head.usable, isFalse, reason: 'the view takes the mouse');
+      expect(head.settings.webcam, isFalse);
+      // Turned on again there: the webcam opens on the way back
+      head.detach();
+      store.settings = store.settings.copyWith(webcam: true);
+      head.attach();
+      await settle();
+      expect(source.sessions, hasLength(2));
+      expect(cameraOpen(), isTrue);
+    });
+
+    test('the webcam picked on the settings page is the one opened once the view is back', () async {
+      source.list = const [fakeInfrared, fakeWebcam, fakeExternal];
+      make(settings: const DesktopSpatialSettings(consent: true)).attach();
+      await settle();
+      expect(source.last.camera, fakeWebcam);
+      head.detach();
+      await settle();
+      store.settings = store.settings.copyWith(cameraId: fakeExternal.id);
+      head.attach();
+      await settle();
+      expect(source.sessions, hasLength(2));
+      expect(source.last.camera, fakeExternal);
     });
   });
 
