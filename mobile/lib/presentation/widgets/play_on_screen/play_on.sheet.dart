@@ -26,14 +26,14 @@ import 'package:immich_ui/immich_ui.dart';
 
 /// Opens the sheet for [request]; true once the film plays on a screen (the page then shows the mini controller) or
 /// is cast to a Cast device (the dock shows its controls): the phone's player then pauses
-Future<bool> showPlayOnSheet(BuildContext context, PlayOnRequest request) async {
+Future<bool> showPlayOnSheet(BuildContext context, PlayOnRequest request, {String? title}) async {
   final container = ProviderScope.containerOf(context, listen: false);
   final playing =
       await showModalBottomSheet<bool>(
         context: context,
         isScrollControlled: true,
         showDragHandle: true,
-        builder: (_) => PlayOnSheet(request: request),
+        builder: (_) => PlayOnSheet(request: request, title: title),
       ) ??
       false;
   if (playing) {
@@ -93,9 +93,12 @@ PlayScreenRowState playScreenRowState({
 }
 
 class PlayOnSheet extends ConsumerStatefulWidget {
-  const PlayOnSheet({super.key, required this.request});
+  const PlayOnSheet({super.key, required this.request, this.title});
 
   final PlayOnRequest request;
+
+  /// The sheet's title in place of "Play on…": "Slideshow on…" for a selection or an album
+  final String? title;
 
   @override
   ConsumerState<PlayOnSheet> createState() => _PlayOnSheetState();
@@ -251,7 +254,7 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: ImmichSpacing.sm),
-                child: Text(t.play_on_title, style: theme.titleLarge),
+                child: Text(widget.title ?? t.play_on_title, style: theme.titleLarge),
               ),
               const SizedBox(height: ImmichSpacing.sm),
               ListTile(

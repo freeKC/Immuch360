@@ -12,6 +12,11 @@
 // The viewer followed never sends a locked item, nor an archived one unless the item sent before was archived too
 // (the sheet asked before that one): an item skipped stays on the phone, the screen keeps the one before, and the
 // next move sends again.
+//
+// A selection of the timeline, or an album, goes as a slideshow without the viewer (release 53): "Slideshow on…"
+// sends its first item that may go, then the same Previous, Slideshow and Next step through the list the phone
+// keeps ([playOnQueueProvider]), with the same rules for locked and archived items. The phone's clock drives it: the
+// app stays open on the phone meanwhile.
 
 import 'dart:async';
 
@@ -20,6 +25,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
+import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
@@ -70,7 +76,75 @@ Future<bool> showPlayOnSheetForAsset(BuildContext context, WidgetRef ref, BaseAs
     return false;
   }
   ref.read(playOnViewerJumpProvider.notifier).state = ref.read(assetViewerJumpProvider);
+  ref.read(playOnQueueProvider.notifier).state = null;
   return showPlayOnSheet(context, request);
+}
+
+/// Whether the follow or the slideshow passes over [request] rather than send it, while [sent] is on the screen: an
+/// item on this phone only, a locked one, an archived one unless [sent] was archived too (the sheet asked for that one)
+bool playOnSkips(PlayOnRequest? request, PlayOnRequest? sent) {
+  final private = request?.immich;
+  return request == null ||
+      private == null ||
+      private.locked ||
+      (private.archived && !(sent?.immich?.archived ?? false));
+}
+
+/// The most items a selection or an album sends as a slideshow
+const playOnQueueMax = 1000;
+
+/// The list a slideshow of a selection or an album steps through, and where it is
+@immutable
+class PlayOnQueue {
+  const PlayOnQueue({required this.items, required this.index});
+
+  final List<BaseAsset> items;
+  final int index;
+
+  PlayOnQueue at(int index) => PlayOnQueue(items: items, index: index);
+}
+
+/// The slideshow of a selection or an album the phone steps through; null while the viewer is the list
+final playOnQueueProvider = StateProvider<PlayOnQueue?>((_) => null);
+
+/// "Slideshow on…" of [assets] (a selection, an album, in that order, [playOnQueueMax] at most): the sheet for the
+/// first one that may go, then the slideshow runs once it shows on a screen or a Cast device. False when nothing
+/// went: none may go (all on this phone only, or locked), or the user chose nothing.
+Future<bool> showPlayOnSlideshow(BuildContext context, WidgetRef ref, List<BaseAsset> assets) async {
+  final requestOf = ref.read(playOnAssetRequestProvider);
+  final items = assets.take(playOnQueueMax).toList(growable: false);
+  final first = items.indexWhere((asset) => !playOnSkips(requestOf(asset), null) || _archivedOnly(requestOf(asset)));
+  if (first < 0) {
+    return false;
+  }
+  final request = requestOf(items[first])!;
+  final playing = await showPlayOnSheet(context, request, title: context.t.play_on_slideshow);
+  if (!playing) {
+    return false;
+  }
+  ref.read(playOnViewerJumpProvider.notifier).state = null;
+  ref.read(playOnQueueProvider.notifier).state = PlayOnQueue(items: items, index: first);
+  ref.read(playOnSlideshowProvider.notifier).play();
+  return true;
+}
+
+/// An archived item the sheet asks for: it may open a slideshow
+bool _archivedOnly(PlayOnRequest? request) {
+  final private = request?.immich;
+  return private != null && !private.locked && private.archived;
+}
+
+/// "Slideshow on…" of an album: its items, [playOnQueueMax] at most, in the album's order
+Future<bool> showPlayOnSlideshowOfTimeline(BuildContext context, WidgetRef ref, TimelineService timeline) async {
+  final count = timeline.totalAssets < playOnQueueMax ? timeline.totalAssets : playOnQueueMax;
+  if (count == 0) {
+    return false;
+  }
+  final assets = await timeline.loadAssets(0, count);
+  if (!context.mounted) {
+    return false;
+  }
+  return showPlayOnSlideshow(context, ref, assets);
 }
 
 /// The viewer the last "Play on..." of an asset was opened from: its moves are the slideshow's steps
@@ -124,11 +198,16 @@ class PlayOnSlideshowController extends Notifier<bool> {
     return false;
   }
 
-  /// Whether the phone's viewer is there to move
-  bool get canStep => ref.read(playOnViewerJumpProvider)?.currentIndex != null;
+  /// Whether the phone's viewer, or the list of a selection or an album, is there to move
+  bool get canStep => ref.read(playOnQueueProvider) != null || ref.read(playOnViewerJumpProvider)?.currentIndex != null;
 
-  /// Moves the phone's viewer by [delta]; false when it could not (the end of its list, or no viewer)
+  /// Moves the phone's viewer by [delta], or the list of a selection or an album; false when it could not (the end of
+  /// its list, or no viewer)
   Future<bool> step(int delta) async {
+    final queue = ref.read(playOnQueueProvider);
+    if (queue != null) {
+      return _stepQueue(queue, delta);
+    }
     final jump = ref.read(playOnViewerJumpProvider);
     final index = jump?.currentIndex;
     if (jump == null || index == null) {
@@ -137,6 +216,33 @@ class PlayOnSlideshowController extends Notifier<bool> {
     }
     await jump.jumpTo(index + delta);
     return jump.currentIndex != index;
+  }
+
+  /// The next item of the list that may go, [delta] away (one by one past those skipped), sent where the item before
+  /// shows; false at the end of the list, or once nothing shows any more
+  Future<bool> _stepQueue(PlayOnQueue queue, int delta) async {
+    if (!playOnSendingState(ref).sending || delta == 0) {
+      return false;
+    }
+    final remote = ref.read(remotePlaybackProvider);
+    final toScreen = playOnRemoteFollows(remote);
+    final sent = toScreen ? remote!.request : ref.read(castPlaybackProvider)?.request;
+    final requestOf = ref.read(playOnAssetRequestProvider);
+    for (var index = queue.index + delta.sign; index >= 0 && index < queue.items.length; index += delta.sign) {
+      final request = requestOf(queue.items[index]);
+      if (playOnSkips(request, sent)) {
+        continue;
+      }
+      ref.read(playOnQueueProvider.notifier).state = queue.at(index);
+      _log.info('Play on: the slideshow of a list moves on');
+      if (toScreen) {
+        await ref.read(remotePlaybackProvider.notifier).showNext(request!);
+      } else {
+        await ref.read(castPlaybackProvider.notifier).castNext(request!);
+      }
+      return true;
+    }
+    return false;
   }
 
   void play() {
@@ -199,13 +305,9 @@ final playOnViewerFollowProvider = Provider<void>((ref) {
     timer = Timer(playOnFollowDelay, () {
       final request = ref.read(playOnAssetRequestProvider)(next);
       final sent = screenShows ? ref.read(remotePlaybackProvider)?.request : ref.read(castPlaybackProvider)?.request;
-      final private = request?.immich;
       // On this phone only, locked, or archived while the item sent was not (the sheet asks before an archived item):
       // the screen keeps the one before
-      if (request == null ||
-          private == null ||
-          private.locked ||
-          (private.archived && !(sent?.immich?.archived ?? false))) {
+      if (playOnSkips(request, sent)) {
         skipped = next.remoteId;
         _log.info('Play on: the viewer moved to an item that is not sent');
         return;
@@ -213,9 +315,9 @@ final playOnViewerFollowProvider = Provider<void>((ref) {
       skipped = null;
       _log.info('Play on: the viewer moved, the next item goes');
       if (screenShows) {
-        unawaited(ref.read(remotePlaybackProvider.notifier).showNext(request));
+        unawaited(ref.read(remotePlaybackProvider.notifier).showNext(request!));
       } else {
-        unawaited(ref.read(castPlaybackProvider.notifier).castNext(request));
+        unawaited(ref.read(castPlaybackProvider.notifier).castNext(request!));
       }
     });
   });
@@ -227,7 +329,7 @@ class PlayOnSlideshowButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(playOnViewerJumpProvider) == null) {
+    if (ref.watch(playOnViewerJumpProvider) == null && ref.watch(playOnQueueProvider) == null) {
       return const SizedBox.shrink();
     }
     final t = context.t;

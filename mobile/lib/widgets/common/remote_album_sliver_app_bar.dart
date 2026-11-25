@@ -8,6 +8,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/datetime_extensions.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on_asset.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/sliver_app_bar/item_count_text.widget.dart';
 import 'package:immich_mobile/presentation/widgets/sliver_app_bar/random_asset_background_image.widget.dart';
 import 'package:immich_mobile/providers/infrastructure/current_album.provider.dart';
@@ -120,6 +123,14 @@ class _MesmerizingSliverAppBarState extends ConsumerState<RemoteAlbumSliverAppBa
           onPressed: () => context.pushRoute(SlideshowRoute(timeline: ref.read(timelineServiceProvider))),
           icon: Icon(Icons.slideshow_outlined, color: actionIconColor, shadows: actionIconShadows),
         ),
+        // Immuch360: the album as a slideshow on a linked screen or a Cast device (release 53)
+        if (canPlayOnScreens(ref))
+          IconButton(
+            key: const Key('album_play_on_slideshow'),
+            tooltip: context.t.play_on_slideshow,
+            onPressed: () => unawaited(showPlayOnSlideshowOfTimeline(context, ref, ref.read(timelineServiceProvider))),
+            icon: Icon(Icons.cast_rounded, color: actionIconColor, shadows: actionIconShadows),
+          ),
         if (currentAlbum.isActivityEnabled && currentAlbum.isShared)
           IconButton(
             icon: Icon(Icons.chat_outlined, color: actionIconColor, shadows: actionIconShadows),

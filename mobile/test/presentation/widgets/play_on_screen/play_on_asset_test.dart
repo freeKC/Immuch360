@@ -209,6 +209,63 @@ void main() {
       expect(container.read(playOnSlideshowProvider), isFalse);
     });
 
+    test(
+      'a selection or an album: Next and Previous step through its list, past what may not go, to its ends',
+      () async {
+        final container = containerFor(showing(1));
+        container.read(playOnQueueProvider.notifier).state = PlayOnQueue(
+          items: [
+            _asset(1),
+            _asset(2, visibility: AssetVisibility.locked),
+            _asset(3, visibility: AssetVisibility.archive),
+            _asset(4, type: AssetType.video),
+            _asset(5),
+          ],
+          index: 0,
+        );
+        final slideshow = container.read(playOnSlideshowProvider.notifier);
+        expect(slideshow.canStep, isTrue);
+        expect(await slideshow.step(1), isTrue);
+        expect(remote.sent.map((request) => request.ratingKey), [_asset(4).id], reason: 'locked and archived skipped');
+        expect(container.read(playOnQueueProvider)!.index, 3);
+        expect(await slideshow.step(1), isTrue);
+        expect(await slideshow.step(1), isFalse, reason: 'nothing after the last');
+        expect(await slideshow.step(-1), isTrue);
+        expect(remote.sent.last.ratingKey, _asset(4).id);
+        expect(container.read(playOnQueueProvider)!.index, 3);
+      },
+    );
+
+    test('a list whose item sent was archived sends its archived items too', () async {
+      final container = containerFor(showing(1, visibility: AssetVisibility.archive));
+      container.read(playOnQueueProvider.notifier).state = PlayOnQueue(
+        items: [
+          _asset(1, visibility: AssetVisibility.archive),
+          _asset(2, visibility: AssetVisibility.archive),
+        ],
+        index: 0,
+      );
+      expect(await container.read(playOnSlideshowProvider.notifier).step(1), isTrue);
+      expect(remote.sent.single.ratingKey, _asset(2).id);
+    });
+
+    test('a list while nothing shows on a screen any more: nothing goes', () async {
+      final container = containerFor(null);
+      container.read(playOnQueueProvider.notifier).state = PlayOnQueue(items: [_asset(1), _asset(2)], index: 0);
+      expect(await container.read(playOnSlideshowProvider.notifier).step(1), isFalse);
+      expect(remote.sent, isEmpty);
+    });
+
+    test('what a selection or the follow passes over', () {
+      final plain = _requestOf(_asset(1));
+      final archived = _requestOf(_asset(2, visibility: AssetVisibility.archive));
+      expect(playOnSkips(plain, null), isFalse);
+      expect(playOnSkips(null, plain), isTrue);
+      expect(playOnSkips(_requestOf(_asset(3, visibility: AssetVisibility.locked)), archived), isTrue);
+      expect(playOnSkips(archived, plain), isTrue);
+      expect(playOnSkips(archived, archived), isFalse);
+    });
+
     test('no viewer left on the phone: nothing moves, the slideshow stops', () async {
       final container = containerFor(showing(1));
       container.read(playOnViewerJumpProvider.notifier).state = _Jump(count: 3)..gone = true;
