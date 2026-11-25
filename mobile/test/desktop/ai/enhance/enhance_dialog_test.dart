@@ -233,7 +233,8 @@ void main() {
       overrides: overrides(),
     );
     await tester.tap(find.byKey(const Key('open')));
-    await settleStill(tester);
+    // Until the dialog read the photos and this computer: a loaded Windows runner may pause longer than the still time
+    await settleStill(tester, until: () => find.byKey(const Key('ai_enhance_start')).evaluate().isNotEmpty);
     return ProviderScope.containerOf(tester.element(find.byKey(const Key('ai_enhance_dialog'))));
   }
 
