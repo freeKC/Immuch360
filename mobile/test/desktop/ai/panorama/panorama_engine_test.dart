@@ -34,6 +34,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
+import '../fakes/app_progress.dart';
 import '../fakes/fake_backends.dart';
 import '../fakes/fake_engine_tools.dart';
 import '../scene/scene_test_support.dart';
@@ -504,11 +505,13 @@ void main() {
 
     test('the steps sent to isolates of their own, as the app runs them; the generator asked from this one', () async {
       final generator = FakeGeneratorBackend();
+      final heard = <ImmersiveProgress>[];
+      // As the queue of the app gives it: a callback no isolate takes (issue 23)
       final result = await engineOf(
         generator: generator,
         models: const _SentModels(),
         compute: panoramaInIsolate,
-      ).run(jobOf(photo(focal: false)), cancel: cancel);
+      ).run(jobOf(photo(focal: false)), cancel: cancel, onProgress: appLikeCallback(heard));
       expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
       // The fake counts its calls here: the generator, a child process in the app, starts from the engine's isolate
       expect(generator.requests, hasLength(1));

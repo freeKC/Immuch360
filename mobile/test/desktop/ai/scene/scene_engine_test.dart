@@ -32,6 +32,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.
 import 'package:path/path.dart' as p;
 
 import '../codec/codec_fixtures.dart';
+import '../fakes/app_progress.dart';
 import '../fakes/fake_backends.dart';
 import '../fakes/fake_engine_tools.dart';
 import '../fakes/fake_thread_priority.dart';
@@ -684,7 +685,8 @@ void main() {
       final result = await engine.run(
         sceneJobFor(path, partPath: scenePartIn(folder, 'salon.jpg'), sha1: sha1OfFile(path)),
         cancel: cancel,
-        onProgress: seen.add,
+        // As the queue of the app gives it: a callback no isolate takes (issue 23)
+        onProgress: appLikeCallback(seen),
       );
 
       expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
