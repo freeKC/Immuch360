@@ -171,6 +171,15 @@ void main() {
       'slideshowPaused': 'Slideshow paused',
       'slideshowEnd': 'End of the slideshow',
       'slideshowTooWarm': 'Headset too warm: the slideshow goes on in 2D',
+      // The background and the transition of the photos (issue 19), SlideshowLook.kt
+      'slideshowBackgroundInfo': 'Background: {choice}',
+      'slideshowBackground_black': 'Black',
+      'slideshowBackground_blurred': 'Blurred photo',
+      'slideshowBackground_passthrough': 'Your room',
+      'slideshowTransitionInfo': 'Transition: {choice}',
+      'slideshowTransition_none': 'None',
+      'slideshowTransition_crossFade': 'Cross fade',
+      'slideshowTransition_slide': 'Slide',
     });
   });
 
