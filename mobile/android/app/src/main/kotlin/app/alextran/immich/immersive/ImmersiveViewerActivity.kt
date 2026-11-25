@@ -101,11 +101,14 @@ import com.meta.spatial.core.Pose
 import com.meta.spatial.core.Quaternion
 import com.meta.spatial.core.SpatialFeature
 import com.meta.spatial.core.Vector3
+import com.meta.spatial.core.Vector4
 import com.meta.spatial.isdk.IsdkSystem
 import com.meta.spatial.runtime.AddressMode
+import com.meta.spatial.runtime.BlendFactor
 import com.meta.spatial.runtime.ButtonBits
 import com.meta.spatial.runtime.EquirectLayerConfig
 import com.meta.spatial.runtime.Filter
+import com.meta.spatial.runtime.LayerAlphaBlend
 import com.meta.spatial.runtime.MaterialSidedness
 import com.meta.spatial.runtime.PanelSceneObject
 import com.meta.spatial.runtime.PanelShapeType
@@ -379,11 +382,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      */
     val slideshowSeconds: Long = 0L,
     /**
-     * The "Frosted background behind photos" setting when the app opened the viewer (experimental, on by default,
-     * issue 19): a blurred copy of the photo of a flat screen fills the box around it (see FrostedBackdrop). A
-     * previous or next media keeps the value of its opening.
+     * The background and the transition of the photos of a flat screen (issue 19, see SlideshowLook): the settings of
+     * the app when it opened the viewer, then what the buttons of the panel chose in this opening, which a previous or
+     * next media takes from the media before.
      */
-    val frostedBackground: Boolean = true,
+    val slideshowLook: SlideshowLook = SlideshowLook(),
   ) {
     /** Where this media shows and how its flat screen behaves, see [FlatScreenMedia]: pure, unit tested there. */
     private val screenMedia: FlatScreenMedia by lazy {
@@ -627,10 +630,46 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   // Photo layer: the photos of a flat screen on a compositor quad layer while Sharper flat screens is on, see
   // FlatScreenLayer and drawPhotoLayer
-  /** Its entity, made at the first photo that goes on it, and its panel and Surface once the SDK made them. */
-  private var photoLayerEntity: Entity? by sceneHold.ref()
-  private var photoLayerPanel: PanelSceneObject? by sceneHold.ref()
-  private var photoLayerSurface: Surface? by sceneHold.ref()
+  /**
+   * One of the two photo layers: its entity, made at the first photo that goes on a layer, its panel and Surface once
+   * the SDK made them, its pose without the shift of a slide, and the opacity its colour scale has. The photo shown is
+   * on [shownLayer]; a transition (issue 19, see PhotoTransition) draws the next photo on the other one, lays it over
+   * and fades or slides between them, then the other one becomes [shownLayer]. Without a transition the next photo
+   * goes on [shownLayer] in place, as before.
+   */
+  private inner class PhotoLayer(val panelId: Int, val name: String) {
+    var entity: Entity? by sceneHold.ref()
+    var panel: PanelSceneObject? by sceneHold.ref()
+    var surface: Surface? by sceneHold.ref()
+    var pose: Pose? = null
+    var alpha = 1f
+    var zIndex = PHOTO_LAYER_Z
+  }
+
+  private val photoLayers =
+    arrayOf(
+      PhotoLayer(R.id.immersive_photo_layer_panel, "photo layer"),
+      PhotoLayer(R.id.immersive_photo_layer_twin_panel, "twin photo layer"),
+    )
+  private var shownLayerIndex = 0
+  private val shownLayer: PhotoLayer
+    get() = photoLayers[shownLayerIndex]
+
+  /** The transition between the photo before ([outgoingLayer]) and the photo shown, while it runs. */
+  private var photoTransition: PhotoTransition? = null
+  private var outgoingLayer: PhotoLayer? = null
+  /** The next photo drawn on the photo layers gives way with this transition (see armPhotoTransition). */
+  private var armedTransition: Pair<SlideshowTransition, Int>? = null
+  /** The copy of the next photo waits for the middle of the transition before it goes on the blurred background. */
+  private var backdropWaitsForMiddle = false
+
+  /**
+   * The background and the transition chosen on the panel for the opening [lookOpening] (see lookOf), and whether the
+   * passthrough is on (Your room).
+   */
+  private var chosenLook: SlideshowLook? = null
+  private var lookOpening: Long? = null
+  private var passthroughOn = false
   /** The photo on the layer, kept to draw it again on a new Surface; null while the layer shows nothing. */
   private var photoLayerTexture: StereoTexture? = null
   /** [photoLayerTexture] is on the Surface. */
@@ -647,6 +686,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private var backdropBitmap: Bitmap? = null
   private var backdropDrawn = false
   private var frostedNoticeShown = false
+  /** The opacity of the blurred background, below 1 during a transition only. */
+  private var backdropAlpha = 1f
+  /** A layer refused its opacity once: said once in the log. */
+  private var layerLookFailed = false
 
   /** Where the flat screen shown stands (a movable photo of the stereo quad, the flat video screen), null before. */
   private var screenPlace: ScreenPlace? = null
@@ -845,6 +888,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** The Size and the Distance of a movable flat screen, in place of previous and next, see [updateScreenControls]. */
   private var screenRow: View? = null
   private var keepFrameButton: Button? = null
+  /** "Background: Blurred photo" and "Transition: Cross fade" of a photo of a flat screen, see [updateLookButtons]. */
+  private var lookRow: View? = null
+  private var backgroundButton: Button? = null
+  private var transitionButton: Button? = null
   private var sizeRow: View? = null
   private var sizeView: TextView? = null
   private var sizeLessButton: Button? = null
@@ -1121,6 +1168,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         startPositionMs = KioskSession.savedStartPositionMs(media.kiosk != null, currentPositionMs(media)),
         // Said once: a recreation carries on where the video was, without it
         startNotice = null,
+        // The background and the transition chosen on the panel since
+        slideshowLook = lookOf(media),
       )
     outState.putBundle(STATE_REQUEST, extrasOf(shown))
     // The choices on screen once its showStereoPhoto ran (before, they are those of another photo or the defaults),
@@ -1307,45 +1356,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       // which the compositor samples once, straight to the display, with its quality filters, where the quad mesh goes
       // through the eye buffer first: a sharper photo. An idea and a first version of Gaurav Mukherjee
       // (gmfun/Immuch360, branch quest/flat-3d). Behind the panels, as the sphere; made at the first such photo, shaped
-      // for each one (applyPhotoLayerShape).
-      VideoSurfacePanelRegistration(
-        R.id.immersive_photo_layer_panel,
-        surfaceConsumer = { _, surface ->
-          Log.i(TAG, "photo layer surface ready")
-          runOnUiThread {
-            // Posted: the scene may be gone by then
-            if (sceneHold.isDown) return@runOnUiThread
-            photoLayerSurface = surface
-            // A new Surface holds nothing: the photo goes on it again
-            photoLayerDrawn = false
-            drawPhotoLayer()
-          }
-        },
-        settingsCreator = {
-          MediaPanelSettings(
-            shape = QuadShapeOptions(width = 1f, height = 0.75f),
-            display =
-              PixelDisplayOptions(width = FlatScreenLayer.SURFACE_WIDTH_PX, height = FlatScreenLayer.SURFACE_HEIGHT_PX),
-            rendering =
-              MediaPanelRenderOptions(
-                stereoMode = StereoMode.None,
-                layerFilters = FlatScreenLayer.filters(request?.sharpFlatScreens != false),
-                zIndex = -1,
-              ),
-          )
-        },
-        panelSetup = { panel, _ ->
-          Log.i(TAG, "photo layer ready")
-          photoLayerPanel = panel
-          // After the panel creation returns: the photo waits for this panel
-          scope.launch(Dispatchers.Main) {
-            applyLayerFilters(panel)
-            drawPhotoLayer()
-          }
-        },
-      ),
-      // Frosted background (issue 19, experimental): a small Surface under the photo layer (zIndex -2, the photo layer
-      // and the flat video screen being -1), on which the blurred copy of each photo is drawn once; the compositor
+      // for each one (applyPhotoLayerShape). Its twin takes the next photo while a transition runs (issue 19).
+      photoLayerRegistration(photoLayers[0]),
+      photoLayerRegistration(photoLayers[1]),
+      // Blurred background (issue 19): a small Surface under the photo layers (zIndex -3, the photo layers being -1
+      // and -2, the flat video screen -1), on which the blurred copy of each photo is drawn once; the compositor
       // magnifies it to the box around the photo with its bilinear filter (see FrostedBackdrop)
       VideoSurfacePanelRegistration(
         R.id.immersive_backdrop_panel,
@@ -1363,16 +1378,87 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
             shape = QuadShapeOptions(width = 1f, height = 0.5625f),
             display =
               PixelDisplayOptions(width = FrostedBackdrop.SURFACE_WIDTH, height = FrostedBackdrop.SURFACE_HEIGHT),
-            rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = -2),
+            rendering = MediaPanelRenderOptions(stereoMode = StereoMode.None, zIndex = BACKDROP_Z),
           )
         },
         panelSetup = { panel, _ ->
           Log.i(TAG, "backdrop layer ready")
           backdropPanel = panel
-          scope.launch(Dispatchers.Main) { drawBackdrop() }
+          scope.launch(Dispatchers.Main) {
+            // Its opacity goes through the colour scale during a transition, over what is behind it
+            setLayerLook(panel, backdropAlpha, BACKDROP_Z)
+            drawBackdrop()
+          }
         },
       ),
     )
+
+  /**
+   * The registration of the photo layer [layer]: the photos of a flat screen drawn on its Surface, a quad of the
+   * compositor behind the panels, made at the first such photo and shaped for each one (see applyPhotoLayerShape),
+   * with the alpha blend that lets a transition fade it over the other one (see setLayerLook).
+   */
+  private fun photoLayerRegistration(layer: PhotoLayer) =
+    VideoSurfacePanelRegistration(
+      layer.panelId,
+      surfaceConsumer = { _, surface ->
+        Log.i(TAG, "${layer.name} surface ready")
+        runOnUiThread {
+          // Posted: the scene may be gone by then
+          if (sceneHold.isDown) return@runOnUiThread
+          layer.surface = surface
+          if (layer === shownLayer) {
+            // A new Surface holds nothing: the photo goes on it again
+            photoLayerDrawn = false
+            drawPhotoLayer()
+          } else if (layer === outgoingLayer) {
+            // The photo before is gone from it: the transition ends at once
+            endPhotoTransition()
+          }
+        }
+      },
+      settingsCreator = {
+        MediaPanelSettings(
+          shape = QuadShapeOptions(width = 1f, height = 0.75f),
+          display =
+            PixelDisplayOptions(width = FlatScreenLayer.SURFACE_WIDTH_PX, height = FlatScreenLayer.SURFACE_HEIGHT_PX),
+          rendering =
+            MediaPanelRenderOptions(
+              stereoMode = StereoMode.None,
+              layerFilters = FlatScreenLayer.filters(request?.sharpFlatScreens != false),
+              zIndex = PHOTO_LAYER_Z,
+            ),
+        )
+      },
+      panelSetup = { panel, _ ->
+        Log.i(TAG, "${layer.name} ready")
+        layer.panel = panel
+        // After the panel creation returns: the photo waits for this panel
+        scope.launch(Dispatchers.Main) {
+          applyLayerFilters(panel)
+          setLayerLook(panel, layer.alpha, layer.zIndex)
+          if (layer === shownLayer) drawPhotoLayer()
+        }
+      },
+    )
+
+  /**
+   * The opacity [alpha] of the compositor layer of [panel], through its colour scale with a premultiplied alpha blend
+   * (an opaque photo at 1 shows as without them), and its order [zIndex] among the layers behind the panels. A few
+   * calls into the SDK, made once per frame at most during a transition. A layer that refuses them is logged once.
+   */
+  private fun setLayerLook(panel: PanelSceneObject, alpha: Float, zIndex: Int) {
+    try {
+      // Null until the SDK made the layer of the panel
+      val layer = panel.layer ?: return
+      layer.setAlphaBlend(PREMULTIPLIED_BLEND)
+      layer.setColorScaleBias(Vector4(alpha, alpha, alpha, alpha), NO_BIAS)
+      layer.setZIndex(zIndex)
+    } catch (e: Exception) {
+      if (!layerLookFailed) Log.w(TAG, "the opacity of a layer could not be set: ${e.message}")
+      layerLookFailed = true
+    }
+  }
 
   /** The media to show, or null for an intent without the launch token (not started by this app) or without url. */
   private fun parse(intent: Intent?): MediaRequest? {
@@ -1429,6 +1515,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     // Each media places its own flat screen
     screenPlace = null
     stabilization.onMedia(media?.url, media?.isRawVideo == true)
+    // Your room behind the photos of a flat screen, the black surroundings for any other media (issue 19)
+    applyPassthrough()
     if (media == null) {
       showError(getString(R.string.immersive_error_nothing))
       return
@@ -1495,6 +1583,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     nextButton = root.findViewById(R.id.immersive_next)
     screenRow = root.findViewById(R.id.immersive_screen_row)
     keepFrameButton = root.findViewById(R.id.immersive_keep_frame)
+    lookRow = root.findViewById(R.id.immersive_look_row)
+    backgroundButton = root.findViewById(R.id.immersive_background)
+    transitionButton = root.findViewById(R.id.immersive_transition)
     sizeRow = root.findViewById(R.id.immersive_size_row)
     sizeView = root.findViewById(R.id.immersive_size)
     sizeLessButton = root.findViewById(R.id.immersive_size_less)
@@ -1520,6 +1611,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     onPanelClick(distanceMoreButton) { changeScreenDistance(1) }
     onPanelClick(keepFrameButton) { toggleKeepFrame() }
     onPanelClick(reliefStrengthButton) { cycleReliefStrength() }
+    onPanelClick(backgroundButton) { cycleBackground() }
+    onPanelClick(transitionButton) { cycleTransition() }
     // Previous and next handle the auto hide themselves: the panel stays until Flutter answers
     previousButton?.setOnClickListener { navigate(-1) }
     nextButton?.setOnClickListener { navigate(1) }
@@ -1620,6 +1713,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     seekRow?.visibility = visibility
     updateProgress()
+    updateLookButtons()
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -1628,6 +1722,82 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /** A photo of a flat screen, which browses: a slideshow goes through those. */
   private fun isSlideshowPhoto(media: MediaRequest): Boolean =
     !media.isVideo && media.isStereoPhoto && media.isMovableScreen && !media.isExplorable
+
+  /** The background and the transition of [media]: those chosen on the panel in its opening, else those it came with. */
+  private fun lookOf(media: MediaRequest): SlideshowLook =
+    chosenLook?.takeIf { lookOpening == media.openingId } ?: media.slideshowLook
+
+  /**
+   * "Background: Blurred photo" and "Transition: Cross fade" on a photo of a flat screen (issue 19), in the row of the
+   * time bar, which a photo never shows; hidden for any other media. The transition is said for every photo of a flat
+   * screen, though only the photos the compositor draws (Sharper flat screens) give way with it.
+   */
+  private fun updateLookButtons() {
+    val media = request
+    val row = lookRow ?: return
+    if (media == null || !isSlideshowPhoto(media) || media.kiosk != null) {
+      row.visibility = View.GONE
+      return
+    }
+    val look = lookOf(media)
+    val labels = media.stereoLabels
+    fun said(info: String, key: String): String =
+      StereoComposer.label(labels, info).replace(SlideshowTransition.CHOICE, StereoComposer.label(labels, key))
+    backgroundButton?.text = said(SlideshowBackground.LABEL_INFO, look.background.labelKey)
+    transitionButton?.text = said(SlideshowTransition.LABEL_INFO, look.transition.labelKey)
+    row.visibility = View.VISIBLE
+  }
+
+  /** The next background (Black, Blurred photo, Your room), at once, for the rest of the opening and in the app. */
+  private fun cycleBackground() {
+    val media = request ?: return
+    val look = lookOf(media)
+    chooseLook(media, look.copy(background = look.background.next))
+    // The blurred copy of the photo shown, made now from the photo on the layer (Sharper flat screens); a photo on the
+    // quad mesh, whose picture is gone, has it from the next photo on
+    val texture = photoLayerTexture
+    if (lookOf(media).blurred && texture != null && !texture.bitmap.isRecycled) {
+      makeBackdrop(media, texture)
+    } else if (!lookOf(media).blurred) {
+      forgetBackdrop()
+    }
+    placeBackdrop()
+    applyPassthrough()
+  }
+
+  /** The next transition (None, Cross fade, Slide), from the next photo on, for the rest of the opening and in the app. */
+  private fun cycleTransition() {
+    val media = request ?: return
+    val look = lookOf(media)
+    chooseLook(media, look.copy(transition = look.transition.next))
+  }
+
+  private fun chooseLook(media: MediaRequest, look: SlideshowLook) {
+    chosenLook = look
+    lookOpening = media.openingId
+    Log.i(TAG, "slideshow look for opening ${media.openingId}: ${look.background.wire}, ${look.transition.wire}")
+    ImmersiveApiImpl.notifySlideshowLookChanged(media.openingId, look.background.wire, look.transition.wire)
+    updateLookButtons()
+  }
+
+  /**
+   * The passthrough of the Spatial SDK (Scene.enablePassthrough, as the flight view of DJI link) on while a photo of a
+   * flat screen shows with Your room, off otherwise; called at each media and at each choice. A headset that refuses it
+   * keeps its black surroundings, logged.
+   */
+  private fun applyPassthrough() {
+    if (!sceneReady || sceneHold.isDown) return
+    val media = request
+    val wanted = media != null && media.kiosk == null && lookOf(media).passthrough(isSlideshowPhoto(media))
+    if (wanted == passthroughOn) return
+    try {
+      scene.enablePassthrough(wanted)
+      passthroughOn = wanted
+      Log.i(TAG, "passthrough ${if (wanted) "on" else "off"} behind the photos of the flat screen")
+    } catch (e: Exception) {
+      Log.w(TAG, "the passthrough could not be turned ${if (wanted) "on" else "off"}: ${e.message}")
+    }
+  }
 
   /** The slideshow of the opening of [media], made at its first flat screen photo. */
   private fun slideshowFor(media: MediaRequest): SlideshowClock {
@@ -2437,6 +2607,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     followScreenGrips()
     keepPanelsBeforeScreen()
+    // A transition between two photos of a flat screen moves with the frames of the headset (issue 19)
+    updatePhotoTransition(now)
     if (infoPlaced) return
     if (lastHeadPosition != null || ++framesWithoutHead > 180) {
       if (lastHeadPosition == null) Log.w(TAG, "no head pose after 180 frames, default info panel position")
@@ -3139,7 +3311,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         browseView = if (slideshow?.let { it.playing && it.twoD } == true) StereoView.TWO_D
         else keptBrowseView(current),
         slideshowSeconds = current.slideshowSeconds,
-        frostedBackground = current.frostedBackground,
+        slideshowLook = lookOf(current),
       )
     swapInPlace =
       PhotoSwap.keepsShown(
@@ -3148,6 +3320,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         nextIsScreenPhoto = request?.let(::isSlideshowPhoto) == true,
         shownIn25d = reliefMeshShown,
       )
+    // The photo shown gives way to the next one with the transition of the opening, when both are on photo layers
+    val next = request
+    armedTransition = null
+    if (swapInPlace && next != null) armPhotoTransition(next, navigationStep)
     // A thumbstick request with the panel still hidden: the feedback panel shows the title, the info panel stays away
     val quiet = navigationQuiet && !infoVisible
     val label = getString(if (navigationStep < 0) R.string.immersive_previous else R.string.immersive_next)
@@ -3798,6 +3974,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       Log.i(TAG, "stereo photo: the one shown stays until the first picture of the next one")
       dropForSwap()
     } else {
+      // hideStereoQuad forgets an armed transition with the photo layers
       hideStereoQuad()
     }
     val kind = media.stereoKind
@@ -4857,6 +5034,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
     val media = request
     val onLayer = media?.photoOnLayer == true
+    // The first picture of a photo reached by browsing gives way to the photo before with a transition (issue 19)
+    val transition = if (onLayer) takeArmedTransition() else null
+    if (!onLayer) armedTransition = null
+    if (transition != null) beginPhotoTransition(transition.first, transition.second)
     // Made before the photo goes on the mesh, which recycles its bitmap
     if (media != null) makeBackdrop(media, stereo)
     if (onLayer) {
@@ -4969,17 +5150,145 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     photoLayerTexture = stereo
     photoLayerDrawn = false
     stereoQuadEntity?.setComponent(Visible(false))
-    if (photoLayerEntity == null) {
-      photoLayerEntity =
+    // Both layers at the first photo, so that the twin has its Surface by the next one
+    for (layer in photoLayers) {
+      if (layer.entity != null) continue
+      layer.entity =
         Entity.create(
           // Never hit by the controller ray: it would stand in front of the info panel and take its clicks, and the
           // grips find the screen by their own ray test (see pointsAtScreen)
-          Panel(R.id.immersive_photo_layer_panel, MeshCollision.NoCollision),
+          Panel(layer.panelId, MeshCollision.NoCollision),
           Transform(Pose(Vector3(0f, DEFAULT_EYE_HEIGHT, StereoComposer.DISTANCE_M), Quaternion(0f, 0f, 0f))),
           Visible(false),
         )
-      Log.i(TAG, "photo layer created")
+      Log.i(TAG, "${layer.name} created")
     }
+  }
+
+  /**
+   * The next photo reached by browsing gives way to the one shown with the transition of the opening, as previous or
+   * next ([step]) asked: only when the photo shown is drawn on a photo layer, the next one goes on a layer too, and the
+   * twin layer has its Surface; any other photo goes at once, as before. Taken by the first picture of the photo.
+   */
+  private fun armPhotoTransition(next: MediaRequest, step: Int) {
+    val kind = lookOf(next).transition
+    val twin = photoLayers[1 - shownLayerIndex]
+    armedTransition =
+      if (kind != SlideshowTransition.NONE && next.photoOnLayer && photoOnLayer && photoLayerDrawn &&
+        twin.panel != null && twin.surface?.isValid == true
+      ) {
+        kind to step
+      } else {
+        null
+      }
+  }
+
+  /** The transition armed for the first picture of the photo being shown, once, while the photo before is up. */
+  private fun takeArmedTransition(): Pair<SlideshowTransition, Int>? {
+    val armed = armedTransition ?: return null
+    armedTransition = null
+    val twin = photoLayers[1 - shownLayerIndex]
+    if (!photoOnLayer || !photoLayerDrawn || twin.panel == null || twin.surface?.isValid != true) return null
+    return armed
+  }
+
+  /**
+   * The photo shown stays on its layer, under the other one, which takes the next photo, transparent until the frames
+   * of the transition bring it in (see updatePhotoTransition). A transition still running ends at once first. The
+   * blurred background keeps the copy of the photo before until the middle of the transition.
+   */
+  private fun beginPhotoTransition(kind: SlideshowTransition, step: Int) {
+    endPhotoTransition()
+    val outgoing = shownLayer
+    shownLayerIndex = 1 - shownLayerIndex
+    val incoming = shownLayer
+    outgoing.zIndex = PHOTO_LAYER_BELOW_Z
+    outgoing.panel?.let { setLayerLook(it, outgoing.alpha, outgoing.zIndex) }
+    incoming.alpha = 0f
+    incoming.zIndex = PHOTO_LAYER_Z
+    incoming.panel?.let { setLayerLook(it, 0f, incoming.zIndex) }
+    outgoingLayer = outgoing
+    photoTransition = PhotoTransition(kind, step)
+    backdropWaitsForMiddle = true
+    Log.i(TAG, "photo transition ${kind.wire} from the ${outgoing.name} to the ${incoming.name}")
+  }
+
+  /**
+   * One frame of the transition running (from onFrame, at the display rate): the opacity of both layers, their shift
+   * for a slide, the blurred background going out and back with the copy of the next photo at the middle. Nothing
+   * before the next photo is drawn: its first frame starts the time. A few calls into the SDK, no drawing, no
+   * allocation of a picture.
+   */
+  private fun updatePhotoTransition(nowNanos: Long) {
+    val transition = photoTransition ?: return
+    if (!photoLayerDrawn) return
+    val outgoing = outgoingLayer
+    val incoming = shownLayer
+    val frame = transition.frame(nowNanos)
+    setLayerAlpha(incoming, frame.incomingAlpha)
+    if (outgoing != null) setLayerAlpha(outgoing, frame.outgoingAlpha)
+    if (transition.kind == SlideshowTransition.SLIDE) {
+      shiftLayer(incoming, frame.incomingShift)
+      if (outgoing != null) shiftLayer(outgoing, frame.outgoingShift)
+    }
+    if (frame.atMiddle) {
+      backdropWaitsForMiddle = false
+      backdropDrawn = false
+      drawBackdrop()
+    }
+    setBackdropAlpha(frame.backdropAlpha)
+    if (frame.done) {
+      Log.i(TAG, transition.summary())
+      endPhotoTransition()
+    }
+  }
+
+  /** [layer] at [alpha], once per change. */
+  private fun setLayerAlpha(layer: PhotoLayer, alpha: Float) {
+    if (layer.alpha == alpha) return
+    layer.alpha = alpha
+    layer.panel?.let { setLayerLook(it, alpha, layer.zIndex) }
+  }
+
+  /** [layer] [shift] widths of its photo to the right of its place, along the screen. */
+  private fun shiftLayer(layer: PhotoLayer, shift: Float) {
+    val pose = layer.pose ?: return
+    val config = layer.panel?.panelShapeConfig
+    val width = config?.width ?: return
+    val right = pose.q * Vector3(1f, 0f, 0f)
+    layer.entity?.setComponent(Transform(Pose(pose.t + right * (shift * width), pose.q)))
+  }
+
+  /**
+   * The transition running, if any, ends: the photo shown whole at its place, the photo before hidden under it and
+   * left transparent for the next transition, the blurred background whole with the copy of the photo shown.
+   */
+  private fun endPhotoTransition() {
+    val transition = photoTransition ?: return
+    photoTransition = null
+    if (!transition.started) Log.i(TAG, "photo transition ${transition.kind.wire} ended before its first frame")
+    val incoming = shownLayer
+    setLayerAlpha(incoming, 1f)
+    incoming.pose?.let { incoming.entity?.setComponent(Transform(it)) }
+    outgoingLayer?.let { outgoing ->
+      outgoing.entity?.setComponent(Visible(false))
+      setLayerAlpha(outgoing, 0f)
+      outgoing.pose?.let { outgoing.entity?.setComponent(Transform(it)) }
+    }
+    outgoingLayer = null
+    if (backdropWaitsForMiddle) {
+      backdropWaitsForMiddle = false
+      backdropDrawn = false
+      drawBackdrop()
+    }
+    setBackdropAlpha(1f)
+  }
+
+  /** The blurred background at [alpha], once per change. */
+  private fun setBackdropAlpha(alpha: Float) {
+    if (backdropAlpha == alpha) return
+    backdropAlpha = alpha
+    backdropPanel?.let { setLayerLook(it, alpha, BACKDROP_Z) }
   }
 
   /**
@@ -4991,8 +5300,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   private fun drawPhotoLayer(): Boolean {
     val texture = photoLayerTexture ?: return false
     if (photoLayerDrawn) return true
-    val surface = photoLayerSurface ?: return false
-    if (photoLayerPanel == null || !surface.isValid || texture.bitmap.isRecycled) return false
+    val layer = shownLayer
+    val surface = layer.surface ?: return false
+    if (layer.panel == null || !surface.isValid || texture.bitmap.isRecycled) return false
     val drawn =
       try {
         val canvas = surface.lockHardwareCanvas()
@@ -5015,7 +5325,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       }
     if (!drawn) {
       photoLayerTexture = null
-      photoLayerEntity?.setComponent(Visible(false))
+      // A transition gives way at once: the photo before must not stay over the quad mesh
+      endPhotoTransition()
+      layer.entity?.setComponent(Visible(false))
       if (showOnMesh(texture)) {
         applyStereoMode()
         applyStereoScale()
@@ -5026,10 +5338,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     photoLayerDrawn = true
     applyPhotoLayerShape()
     applyStereoPlacement()
-    photoLayerEntity?.setComponent(Visible(true))
+    layer.entity?.setComponent(Visible(true))
     Log.i(
       TAG,
-      "photo layer drawn: ${if (texture.hasSecondEye) "two eyes" else "one picture"} of " +
+      "${layer.name} drawn: ${if (texture.hasSecondEye) "two eyes" else "one picture"} of " +
         "${texture.eyeWidth}x${texture.eyeHeight}, sharp ${request?.sharpFlatScreens != false}",
     )
     return true
@@ -5042,7 +5354,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
    */
   private fun applyPhotoLayerShape() {
     val texture = photoLayerTexture ?: return
-    val panel = photoLayerPanel ?: return
+    val layer = shownLayer
+    val panel = layer.panel ?: return
     val config = panel.panelShapeConfig ?: return
     val distance = screenPlace?.distance ?: screenDistanceM
     val mode = FlatScreenLayer.stereoMode(texture.hasSecondEye, stereoView() == StereoView.THREE_D)
@@ -5053,7 +5366,9 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       config.width = width
       config.height = height
       panel.reshape(config)
-      Log.i(TAG, "photo layer is now $mode, ${width}x$height m")
+      // Its opacity and its order again, in case the reshape made a new layer of the compositor
+      setLayerLook(panel, layer.alpha, layer.zIndex)
+      Log.i(TAG, "${layer.name} is now $mode, ${width}x$height m")
     } catch (e: Exception) {
       Log.e(TAG, "could not set the photo layer to $mode, ${width}x$height m", e)
     }
@@ -5061,11 +5376,16 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
 
   /**
    * The frosted copy of the photo of [stereo] for the backdrop of a flat screen (see FrostedBackdrop): its left eye
-   * scaled to a few pixels, blurred, desaturated and veiled, then drawn on the backdrop layer. Nothing with the setting
-   * off or for any other media.
+   * scaled to a few pixels, blurred, desaturated and veiled, then drawn on the backdrop layer (at the middle of a
+   * transition, see updatePhotoTransition). Nothing with another background or for any other media.
    */
   private fun makeBackdrop(media: MediaRequest, stereo: StereoTexture) {
-    if (!media.frostedBackground || !isSlideshowPhoto(media) || sceneHold.isDown) return
+    if (!isSlideshowPhoto(media) || sceneHold.isDown) return
+    if (!lookOf(media).blurred) {
+      // No copy of a photo before may come back when Blurred photo is chosen again
+      forgetBackdrop()
+      return
+    }
     val small =
       try {
         val (width, height) = FrostedBackdrop.smallSize(stereo.eyeWidth, stereo.eyeHeight)
@@ -5096,8 +5416,20 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     drawBackdrop()
   }
 
-  /** Draws the frosted copy on the Surface of the backdrop once both are there, then places it. */
+  /** The frosted copy goes: the backdrop hides until the copy of another photo is made. */
+  private fun forgetBackdrop() {
+    backdropBitmap?.recycle()
+    backdropBitmap = null
+    backdropDrawn = false
+    backdropEntity?.setComponent(Visible(false))
+  }
+
+  /**
+   * Draws the frosted copy on the Surface of the backdrop once both are there, then places it; the copy of the next
+   * photo waits for the middle of a transition, the backdrop showing the photo before until then.
+   */
   private fun drawBackdrop() {
+    if (backdropWaitsForMiddle) return
     val bitmap = backdropBitmap ?: return
     val surface = backdropSurface ?: return
     if (backdropDrawn || backdropPanel == null || !surface.isValid || bitmap.isRecycled) return
@@ -5121,14 +5453,14 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   /**
    * The backdrop around the flat screen shown: the box the user set when the photo stands in it, else the photo
    * itself, [FrostedBackdrop.MARGIN] past each side and [FrostedBackdrop.BEHIND_M] behind it; hidden without a
-   * movable photo, in 2.5D, with the setting off, or before its copy is drawn. Said once to be experimental.
+   * movable photo, in 2.5D, with another background, or before its copy is drawn. Named once as it first shows.
    */
   private fun placeBackdrop() {
     val entity = backdropEntity ?: return
     val media = request
     val place = screenPlace
     val screen = screenSize()
-    if (media == null || !media.frostedBackground || !isSlideshowPhoto(media) || place == null || screen == null ||
+    if (media == null || !lookOf(media).blurred || !isSlideshowPhoto(media) || place == null || screen == null ||
       !backdropDrawn
     ) {
       entity.setComponent(Visible(false))
@@ -5161,9 +5493,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
   }
 
-  /** The photo layer shows nothing any more: hidden, its bitmap recycled. */
+  /** The photo layers show nothing any more: a transition ends, both hidden, the bitmap recycled. */
   private fun dropPhotoLayer() {
-    photoLayerEntity?.setComponent(Visible(false))
+    armedTransition = null
+    endPhotoTransition()
+    for (layer in photoLayers) layer.entity?.setComponent(Visible(false))
     photoLayerTexture?.bitmap?.recycle()
     photoLayerTexture = null
     photoLayerDrawn = false
@@ -5506,7 +5840,10 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     placeBackdrop()
     val pose = Pose(place.center, StereoComposer.quadRotation(place.direction))
     if (photoOnLayer) {
-      photoLayerEntity?.setComponent(Transform(pose))
+      val layer = shownLayer
+      layer.pose = pose
+      // During a slide the frames of the transition shift it from there
+      if (photoTransition?.kind != SlideshowTransition.SLIDE) layer.entity?.setComponent(Transform(pose))
       applyPhotoLayerShape()
       return
     }
@@ -7760,10 +8097,27 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     private const val EXTRA_START_NOTICE = "app.alextran.immich.immersive.START_NOTICE"
     /** The slideshow duration of the opening, see [MediaRequest] */
     private const val EXTRA_SLIDESHOW_SECONDS = "app.alextran.immich.immersive.SLIDESHOW_SECONDS"
-    /** The frosted background setting of the opening, see [MediaRequest] */
-    private const val EXTRA_FROSTED_BACKGROUND = "app.alextran.immich.immersive.FROSTED_BACKGROUND"
+    /** The background and the transition of the photos of a flat screen, see [MediaRequest.slideshowLook] */
+    private const val EXTRA_SLIDESHOW_BACKGROUND = "app.alextran.immich.immersive.SLIDESHOW_BACKGROUND"
+    private const val EXTRA_SLIDESHOW_TRANSITION = "app.alextran.immich.immersive.SLIDESHOW_TRANSITION"
     /** How often the slideshow looks whether the next photo is due */
     private const val SLIDESHOW_TICK_MS = 250L
+    /**
+     * The order of the layers behind the panels: the photo shown at -1 (as the flat video screen), the photo before it
+     * at -2 while a transition runs, the blurred background at -3 under both.
+     */
+    private const val PHOTO_LAYER_Z = -1
+    private const val PHOTO_LAYER_BELOW_Z = -2
+    private const val BACKDROP_Z = -3
+    /** Source colour times one, the layers below times one minus its alpha: the colour scale is premultiplied. */
+    private val PREMULTIPLIED_BLEND =
+      LayerAlphaBlend(
+        BlendFactor.ONE,
+        BlendFactor.ONE_MINUS_SOURCE_ALPHA,
+        BlendFactor.ONE,
+        BlendFactor.ONE_MINUS_SOURCE_ALPHA,
+      )
+    private val NO_BIAS = Vector4(0f, 0f, 0f, 0f)
     /** The folder of the cache the original of a video that cannot stream is downloaded to, see downloadOriginal */
     private const val DOWNLOAD_DIR = "immersive_video"
     private const val DOWNLOAD_BUFFER_BYTES = 256 * 1024
@@ -8016,7 +8370,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
       watchMinDurationMs: Long = WatchReport.OFF,
       startNotice: String? = null,
       slideshowSeconds: Long = 0L,
-      frostedBackground: Boolean = true,
+      slideshowBackground: String? = null,
+      slideshowTransition: String? = null,
     ): Intent {
       val token = UUID.randomUUID().toString()
       launchToken = token
@@ -8041,7 +8396,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
           watchMinDurationMs = watchMinDurationMs,
           startNotice = startNotice,
           slideshowSeconds = slideshowSeconds,
-          frostedBackground = frostedBackground,
+          slideshowLook =
+            SlideshowLook(SlideshowBackground.ofWire(slideshowBackground), SlideshowTransition.ofWire(slideshowTransition)),
         )
       return Intent(context, ImmersiveViewerActivity::class.java).apply {
         action = Intent.ACTION_MAIN
@@ -8075,7 +8431,8 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         putLong(EXTRA_WATCH_MIN_DURATION_MS, media.watchMinDurationMs)
         putString(EXTRA_START_NOTICE, media.startNotice)
         putLong(EXTRA_SLIDESHOW_SECONDS, media.slideshowSeconds)
-        putBoolean(EXTRA_FROSTED_BACKGROUND, media.frostedBackground)
+        putString(EXTRA_SLIDESHOW_BACKGROUND, media.slideshowLook.background.wire)
+        putString(EXTRA_SLIDESHOW_TRANSITION, media.slideshowLook.transition.wire)
       }
     }
 
@@ -8118,7 +8475,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
         watchMinDurationMs = extras.getLong(EXTRA_WATCH_MIN_DURATION_MS, WatchReport.OFF),
         startNotice = extras.getString(EXTRA_START_NOTICE)?.takeIf { it.isNotBlank() },
         slideshowSeconds = extras.getLong(EXTRA_SLIDESHOW_SECONDS, 0L),
-        frostedBackground = extras.getBoolean(EXTRA_FROSTED_BACKGROUND, true),
+        slideshowLook =
+          SlideshowLook(
+            SlideshowBackground.ofWire(extras.getString(EXTRA_SLIDESHOW_BACKGROUND)),
+            SlideshowTransition.ofWire(extras.getString(EXTRA_SLIDESHOW_TRANSITION)),
+          ),
       )
     }
 

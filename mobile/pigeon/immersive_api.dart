@@ -69,9 +69,12 @@ abstract class ImmersiveApi {
   /// of the opening, the kiosk ignores it. [startNotice] is what to say once the video plays, in the language of the app
   /// ("Resumed at 42:10" for a film that starts where it was left), null for nothing. [slideshowSeconds] is how long
   /// each photo of the slideshow of a flat screen stays (the slideshow duration of the app, issue 19), 0 for the 5 s
-  /// of the viewer; previous and next keep the value of the opening. [frostedBackground] is the "Frosted background
-  /// behind photos" setting (experimental, on by default, issue 19): a blurred, darker copy of the photo of a flat
-  /// screen fills the box around it; previous and next keep the value of the opening.
+  /// of the viewer; previous and next keep the value of the opening. [slideshowBackground] is what surrounds the photos
+  /// of a flat screen (issue 19): black, blurred (a blurred, darker copy of the photo fills the box around it, the
+  /// default) or passthrough (the room seen through the cameras of the headset); [slideshowTransition] how one gives
+  /// way to the next: none, crossFade (the default) or slide. Both are the names of SlideshowBackground and
+  /// SlideshowTransition; the buttons of the panel change them for the rest of the opening, see
+  /// [ImmersiveEvents.slideshowLookChanged].
   void open(
     String url,
     Map<String, String> headers,
@@ -94,7 +97,8 @@ abstract class ImmersiveApi {
     int watchMinDurationMs = -1,
     String? startNotice,
     int slideshowSeconds = 0,
-    bool frostedBackground = true,
+    String slideshowBackground = 'blurred',
+    String slideshowTransition = 'crossFade',
   });
 
   /// Answers [ImmersiveEvents.requestAdjacent]: shows [url] in place of the media of the viewer that asked, identified
@@ -191,4 +195,9 @@ abstract class ImmersiveEvents {
   /// 4): the settings of the app follow, as for [stabilizationChanged], so that the next reliefs, in the headset and
   /// in the app, start from them (an opening Flutter no longer follows still counts, the press was the user's).
   void reliefSettingsChanged(int openingId, String strength, String? mode);
+
+  /// The user chose the background ([background]: black, blurred or passthrough) or the transition ([transition]:
+  /// none, crossFade or slide) of the photos of a flat screen on the panel of the viewer of [openingId] (issue 19): the
+  /// settings of the app follow, as for [reliefSettingsChanged], so that the next openings start from them.
+  void slideshowLookChanged(int openingId, String background, String transition);
 }

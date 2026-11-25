@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/film_player_preference.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 
 part 'viewer_config.freezed.dart';
 
@@ -59,10 +60,19 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// On by default (Settings, Advanced turns it off: the photos then go on the quad mesh, without filters)
     @Default(true) bool sharpFlatScreens,
 
-    /// Meta Quest immersive viewer, experimental (issue 19): a blurred, darker copy of the photo of a flat screen fills
-    /// the box the user set around it, on a compositor layer behind it. On by default (Settings, Advanced, "Frosted
-    /// background behind photos")
+    /// Meta Quest immersive viewer (issue 19): a blurred, darker copy of the photo of a flat screen fills the box the
+    /// user set around it, on a compositor layer behind it. The switch of build 49, on by default; [slideshowBackground]
+    /// follows it until the user picks a background (see HeadsetSlideshowLook.ofSettings)
     @Default(true) bool frostedFlatScreens,
+
+    /// Meta Quest immersive viewer (issue 19): what surrounds the photos of a flat screen (black, the blurred photo, or
+    /// the room through the passthrough), null until the user picks one in Settings, Advanced or on the panel of the
+    /// viewer
+    SlideshowBackground? slideshowBackground,
+
+    /// Meta Quest immersive viewer (issue 19): how a photo of a flat screen gives way to the next one, in the slideshow
+    /// and as the user browses; a cross fade by default
+    @Default(SlideshowTransition.crossFade) SlideshowTransition slideshowTransition,
 
     /// Experimental: the Gaussian splat files of other tools (.spz, .ply) of the shares are listed and open in the
     /// immersive viewer of a Quest 3 or 3S (lot S5), and in the splat viewer of the computers, phones and tablets. On

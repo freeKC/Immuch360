@@ -26,8 +26,12 @@ class SpatialHoldWiringTest {
   }
 
   @Test
-  fun `the photo layer of the crash of build 33 is held by the hold`() {
-    assertTrue(Regex("""var\s+photoLayerEntity\s*:\s*Entity\?\s+by\s+sceneHold\.ref\(\)""").containsMatchIn(source))
+  fun `the photo layers of the crash of build 33 are held by the hold`() {
+    // The photo layer and its twin of the transitions (issue 19) keep their objects in a PhotoLayer each
+    val layer = source.substringAfter("private inner class PhotoLayer(").substringBefore("\n  }")
+    for (field in listOf("""entity\s*:\s*Entity""", """panel\s*:\s*PanelSceneObject""", """surface\s*:\s*Surface""")) {
+      assertTrue(field, Regex("""var\s+$field\?\s+by\s+sceneHold\.ref\(\)""").containsMatchIn(layer))
+    }
   }
 
   @Test

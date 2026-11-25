@@ -4,6 +4,7 @@ import 'package:immich_mobile/constants/enums.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/film_player_preference.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
 import 'package:immich_mobile/domain/models/value_codec.dart';
@@ -47,8 +48,12 @@ enum SettingsKey<T> {
   // ViewerConfig.sharpFlatScreens
   viewerSharpFlatScreens<bool>(),
   // A blurred, darker copy of the photo around it on the flat screens of the Meta Quest immersive viewer, see
-  // ViewerConfig.frostedFlatScreens
+  // ViewerConfig.frostedFlatScreens: what viewerSlideshowBackground follows until the user picks a background
   viewerFrostedFlatScreens<bool>(),
+  // The background and the transition of the photos of a flat screen of the Meta Quest immersive viewer (issue 19),
+  // see ViewerConfig.slideshowBackground and slideshowTransition; null until the user picks a background
+  viewerSlideshowBackground<SlideshowBackground?>(codec: EnumCodec<SlideshowBackground>(SlideshowBackground.values)),
+  viewerSlideshowTransition<SlideshowTransition>(codec: EnumCodec(SlideshowTransition.values)),
   // The Gaussian splat files of other tools on a Meta Quest 3 or 3S, see ViewerConfig.gaussianSplats and largeSplats
   viewerGaussianSplats<bool>(),
   viewerLargeSplats<bool>(),
