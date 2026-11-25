@@ -9,7 +9,7 @@ This guide covers every function of Immuch360, for your ordinary photos and vide
 **Which problem do you have?**
 
 - **"My 360° photos show as a flat, stretched strip, and my 360° videos play flat."** See [360° photos and videos as a sphere](#360-photos-and-videos-as-a-sphere).
-- **"My 360° videos force landscape on my phone, drift while I drag them, do not zoom and stop before the top and the bottom."** See [The controls of 360° photos in the 360° video player](#the-controls-of-360-photos-in-the-360-video-player-from-build-49) (not yet tried on a phone).
+- **"My 360° videos force landscape on my phone, drift while I drag them, do not zoom and stop before the top and the bottom."** See [The controls of 360° photos in the 360° video player](#the-controls-of-360-photos-in-the-360-video-player-from-build-49) (tried by a user on a Samsung Galaxy S25 Ultra, not yet on an iPhone).
 - **"I have no server, and I do not want an account."** See [Without a server or an account](#without-a-server-or-an-account).
 - **"I want to watch the videos of my NAS, on the phone or in the headset, without copying them."** See [Network shares](#network-shares-a-nas-a-computer-or-a-media-server).
 - **"Plex plays my 360° videos flat, and I want my Plex library in the headset, on the TV and away from home."** See [Plex Media Server, without plex.tv](#plex-media-server-without-plextv).
@@ -174,7 +174,7 @@ The player plays the file stored on the phone, or the file of a network share, w
 
 ### The controls of 360° photos in the 360° video player (from build 49)
 
-From build 49 on Android phones and tablets, and from version 3.4.4 on iPhone and iPad, the 360° video player has the controls of the 360° photo viewer, as TheBatAss asked in [issue 20](https://github.com/freeKC/Immuch360/issues/20). Not yet tried on a phone by the project.
+From build 49 on Android phones and tablets, and from version 3.4.4 on iPhone and iPad, the 360° video player has the controls of the 360° photo viewer, as TheBatAss asked in [issue 20](https://github.com/freeKC/Immuch360/issues/20). Tried by TheBatAss on a Samsung Galaxy S25 Ultra (issue 20), not yet on an iPhone.
 
 - **Portrait or landscape**: the player follows the rotation of the device, as the rest of the app does, and the system rotation lock; it no longer forces landscape. Below 400 dp of width the buttons of its top bar sit without margins, so that the title keeps some room in portrait with every button shown.
 - **The gyroscope button**: the compass at the right end of the top bar, the button of the 360° photos, one setting for both, off by default. Off, the motion of the phone is not read at all, so nothing drifts while you drag; on, turning the phone turns the view, as on photos, and a drag adds to it. A choice made in a photo holds in the next video and the other way round; a TV and the Quest never turn it on. iOS starts from that setting too, where its player used to start with the motion on. If you would rather have a separate choice for videos, say so in the issue.
