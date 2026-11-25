@@ -10,6 +10,7 @@ import 'package:immich_mobile/extensions/duration_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/extensions/theme_extensions.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_photo_button.dart';
 import 'package:immich_mobile/presentation/widgets/timeline/constants.dart';
@@ -291,14 +292,9 @@ class _VideoIndicator extends StatelessWidget {
       // CrossAxisAlignment.start looks more centered vertically than CrossAxisAlignment.center
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          duration.format(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            shadows: [Shadow(blurRadius: 5.0, color: Color.fromRGBO(0, 0, 0, 0.6))],
-          ),
+        // On the pill of a badge, readable on a white sky as on a black night
+        PictureBadge(
+          child: Text(duration.format(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ),
         const _TileOverlayIcon(Icons.play_circle_outline_rounded),
       ],

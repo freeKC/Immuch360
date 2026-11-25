@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/memory.model.dart';
 import 'package:immich_mobile/presentation/pages/memory.page.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/memory/memory_title.widget.dart';
 import 'package:immich_mobile/providers/haptic_feedback.provider.dart';
@@ -82,14 +83,11 @@ class MemoryCard extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        Positioned(
-          left: 16,
-          right: 16,
-          bottom: 16,
-          child: MemoryTitle(
-            memory: memory,
-            style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 15),
-          ),
+        // On the scrim of the labels over a picture, readable on a white sky as on a black night
+        PictureLabel(
+          fade: 24,
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+          child: MemoryTitle(memory: memory, style: memoryTitleOnPicture),
         ),
       ],
     );

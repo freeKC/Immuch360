@@ -1,5 +1,6 @@
-// The "AV2" badge of the thumbnails (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.2), in the style of the
-// "3D splat" badge of the shares: the word in the primary colour, bold, the same in every language. A thumbnail never
+// The "AV2" badge of the thumbnails (store/m2/av2-2026-11-02/plan-2026-11-02.md, section 1.2): the word bold, the same
+// in every language, white on the dark pill of the labels over a picture (picture_label.widget.dart), readable on any
+// frame (it was in the primary colour, which a dark or a busy frame swallowed). A thumbnail never
 // reads the file: the scan of the folder library wrote "av2" in the index for each .ivf and .obu whose head starts an
 // AV2 stream (library_index.dart, video_codec), and the badge reads the index again at the end of each local sync. The
 // tiles of the shares read the head of the file in turn with the other tiles (network_media_tile.widget.dart).
@@ -18,9 +19,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/library/folder_library_controller.dart';
 import 'package:immich_mobile/desktop/video/av2_decoder.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
-import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
 
 /// The AV2 streams of the folder library, by asset id, read from its index again each time a local sync ends
@@ -30,16 +31,13 @@ final av2LibraryVideosProvider = FutureProvider<Set<String>>((ref) async {
   return library.index.av2VideoIds();
 });
 
-/// "AV2" in the style of the "3D splat" badge
+/// "AV2" on the pill of a badge over a picture
 class Av2BadgeLabel extends StatelessWidget {
   const Av2BadgeLabel({super.key});
 
-  static const _shadows = [Shadow(blurRadius: 4, color: Colors.black54)];
-
   @override
-  Widget build(BuildContext context) => Text(
-    context.t.av2_badge,
-    style: TextStyle(color: context.colorScheme.primary, fontSize: 12, fontWeight: FontWeight.w700, shadows: _shadows),
+  Widget build(BuildContext context) => PictureBadge(
+    child: Text(context.t.av2_badge, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
   );
 }
 

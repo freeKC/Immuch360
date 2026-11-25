@@ -950,6 +950,8 @@ class _FolderView extends StatelessWidget {
                       onLongPress: onSelect == null ? null : () => onSelect!(entry),
                       isSelected: selection.isActive ? selection.contains(entry.path) : null,
                       autofocus: focusFirst && folders.isEmpty && index == 0,
+                      // The caption under the tile writes the title
+                      showName: !captioned,
                     );
                     // Immuch360 Desktop: a right click opens the menu of the selection
                     final shown = withDesktopNetworkTile(context, entry, tile);
