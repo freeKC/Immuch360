@@ -1,7 +1,7 @@
-// Spatial 2.5D of a 3D photo on the computers (release 53, lot P2): the page that opens from the viewer where a 3D photo
-// shows one eye (spatial_photo_button.dart). The photo becomes a window: as the viewer moves, near things slide over
-// far ones. Its depth is measured once when the photo opens (spatial_photo_render.dart); until then, and if it cannot
-// be measured, the left eye shows as it is.
+// Spatial 2.5D of a 3D photo on the computers (release 53, lot P2): the page that opens from the viewer where a 3D
+// photo shows one eye (spatial_photo_button.dart). The photo becomes a window: as the viewer moves, near things slide
+// over far ones. Its depth is measured once when the photo opens (spatial_photo_render.dart); until then, and if it
+// cannot be measured, the left eye shows as it is.
 //
 // What moves the view (viewer_position.dart), picked in the bar and kept in the settings:
 // - Mouse: the pointer across the picture; leaving the window glides the view back to its centre;

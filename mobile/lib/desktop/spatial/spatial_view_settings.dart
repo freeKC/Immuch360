@@ -1,6 +1,7 @@
-// Spatial 2.5D on the computers (release 53, lot P2): its settings, under the Spatial 2.5D switch of Settings, Asset
-// Viewer, Videos, while it is on: what moves the view, how far, and which way. Kept with the other settings, so that
-// the settings file carries them. The webcam settings of the head tracker come with its own lot.
+// Spatial 2.5D on the computers (release 53, lot P2): the settings of the view, under the Spatial 2.5D switch of
+// Settings, Asset Viewer, Videos, while it is on: what moves the view, how far, and which way, the same for every
+// source. Kept with the other settings, so that the settings file carries them. The webcam's own settings are those of
+// the head tracker lot (spatial_settings.dart there).
 
 import 'dart:async';
 
@@ -14,8 +15,8 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_ui/immich_ui.dart';
 
-class DesktopSpatialSettings extends HookConsumerWidget {
-  const DesktopSpatialSettings({super.key});
+class DesktopSpatialViewSettings extends HookConsumerWidget {
+  const DesktopSpatialViewSettings({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,8 +47,7 @@ class DesktopSpatialSettings extends HookConsumerWidget {
               }
             },
             items: [
-              for (final item in kinds)
-                DropdownMenuItem(value: item, child: Text(viewerPositionKindLabel(item, t))),
+              for (final item in kinds) DropdownMenuItem(value: item, child: Text(viewerPositionKindLabel(item, t))),
             ],
           ),
         ),

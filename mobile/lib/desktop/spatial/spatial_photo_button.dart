@@ -55,20 +55,21 @@ SpatialPhotoLayout? spatialLayoutOfStacked(FlatStereoFormat format) => switch (f
 }
 
 /// Opens the 2.5D page over the window; replaced in the tests
-final spatialPhotoOpenerProvider = Provider<void Function(BuildContext context, BaseAsset asset, SpatialPhotoLayout, bool)>(
-  (ref) =>
-      (context, asset, layout, estimatedRelief) => unawaited(
-        Navigator.of(context, rootNavigator: true).push(
-          SpatialPhotoPage.route(
-            // Twice the window: the frame holds two eyes, and each is shown as large as the window
-            image: getFullImageProvider(asset, size: MediaQuery.sizeOf(context) * 2),
-            layout: layout,
-            title: asset.name,
-            estimatedRelief: estimatedRelief,
+final spatialPhotoOpenerProvider =
+    Provider<void Function(BuildContext context, BaseAsset asset, SpatialPhotoLayout, bool)>(
+      (ref) =>
+          (context, asset, layout, estimatedRelief) => unawaited(
+            Navigator.of(context, rootNavigator: true).push(
+              SpatialPhotoPage.route(
+                // Twice the window: the frame holds two eyes, and each is shown as large as the window
+                image: getFullImageProvider(asset, size: MediaQuery.sizeOf(context) * 2),
+                layout: layout,
+                title: asset.name,
+                estimatedRelief: estimatedRelief,
+              ),
+            ),
           ),
-        ),
-      ),
-);
+    );
 
 /// "Spatial 2.5D" in the top bar of the viewer of a computer, on a 3D photo; nothing on any other photo
 class DesktopSpatialPhotoButton extends ConsumerWidget {

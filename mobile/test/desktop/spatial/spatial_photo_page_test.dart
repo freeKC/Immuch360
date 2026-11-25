@@ -12,7 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_page.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_render.dart';
-import 'package:immich_mobile/desktop/spatial/spatial_settings.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_view_settings.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_viewpoint.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position_sources.dart';
@@ -306,7 +306,7 @@ void main() {
 
   group('settings', () {
     testWidgets('what moves the view, the strength and the direction are written to the settings', (tester) async {
-      await tester.pumpTestWidget(context, const SingleChildScrollView(child: DesktopSpatialSettings()));
+      await tester.pumpTestWidget(context, const SingleChildScrollView(child: DesktopSpatialViewSettings()));
       expect(find.text('Move the view with'), findsOneWidget);
       expect(find.text('Strength of the movement: 100 %'), findsOneWidget);
       await tester.tap(find.byType(DropdownButton<ViewerPositionKind>));

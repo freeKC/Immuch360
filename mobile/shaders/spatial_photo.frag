@@ -1,12 +1,13 @@
 #version 460 core
 
-// Spatial 2.5D of a 3D photo on the computers (release 53, lot P2): the view of the scene from the viewpoint p, between
-// the left eye (0) and the right one (1), drawn from both eyes of the photo and its disparity map
-// (lib/desktop/spatial/stereo_disparity.dart, computed once per photo). The steps are those of the SYNTHESIS pass of the
-// phones (SpatialShaders.kt): for an output pixel x, the left source is xL = x + p d(xL) and the right source
-// xR = x - (1 - p) d(xR), each found by three fixed point steps; an eye whose step does not settle sees an occluded point
-// and is left out; when both are, the nearest pixel along the row where one works gives the colour, the farther first,
-// so that a hole is never black. Mode 1 shows the left map instead: near bright, far dark, unreliable pixels reddish.
+// Spatial 2.5D of a 3D photo on the computers (release 53, lot P2): the view of the scene from the viewpoint p,
+// between the left eye (0) and the right one (1), drawn from both eyes of the photo and its disparity map
+// (lib/desktop/spatial/stereo_disparity.dart, computed once per photo). The steps are those of the SYNTHESIS pass of
+// the phones (SpatialShaders.kt): for an output pixel x, the left source is xL = x + p d(xL) and the right source
+// xR = x - (1 - p) d(xR), each found by three fixed point steps; an eye whose step does not settle sees an occluded
+// point and is left out; when both are, the nearest pixel along the row where one works gives the colour, the farther
+// first, so that a hole is never black. Mode 1 shows the left map instead: near bright, far dark, unreliable pixels
+// reddish.
 //
 // Everything is in the coordinates of one eye (0 to 1, y down, as Flutter draws); the eyes are read from the frame of
 // the photo through their rectangles, kept half a texel away from the other eye. The SkSL backend of Flutter accepts
