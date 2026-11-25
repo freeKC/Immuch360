@@ -46,6 +46,64 @@ class PhotoTransitionWiringTest {
     assertTrue(bodyOf("private fun dropPhotoLayer()").contains("endPhotoTransition()"))
   }
 
+  @Test
+  fun `the blurred background keeps the copy of the photo before until the middle`() {
+    // Review of 25 November: makeBackdrop cleared backdropDrawn while the copy waited, and placeBackdrop hid the
+    // background at the start of each transition instead of fading it out
+    val make = bodyOf("private fun makeBackdrop(")
+    val waits = make.indexOf("if (backdropWaitsForMiddle) {")
+    assertTrue("makeBackdrop keeps the next copy apart while it waits", waits >= 0)
+    val waitBranch = make.substring(waits, make.indexOf("} else {", waits))
+    assertTrue(waitBranch.contains("pendingBackdropBitmap = small"))
+    assertFalse("the copy shown stays drawn while the next one waits", waitBranch.contains("backdropDrawn"))
+    assertFalse(waitBranch.contains("backdropBitmap = "))
+    assertTrue("backdropDrawn is cleared only outside the wait",
+      make.indexOf("backdropDrawn = false") > waits)
+    // The copy before can still be drawn (a new Surface), and the next one goes in at the middle or at the end
+    assertFalse(bodyOf("private fun drawBackdrop()").contains("backdropWaitsForMiddle"))
+    assertTrue(bodyOf("private fun updatePhotoTransition(").contains("if (frame.atMiddle) swapInBackdrop()"))
+    assertTrue(bodyOf("private fun endPhotoTransition()").contains("if (backdropWaitsForMiddle) swapInBackdrop()"))
+    assertTrue(bodyOf("private fun swapInBackdrop()").contains("backdropBitmap = pending"))
+    assertTrue(bodyOf("private fun forgetBackdrop()").contains("pendingBackdropBitmap = null"))
+  }
+
+  @Test
+  fun `a later picture of the photo waits for the end of its transition`() {
+    // Review of 25 November: the original of a server photo, after its preview, came during the transition and was
+    // drawn on the layer of 4096 x 2048 in the middle of the fade, on the main thread
+    val apply = bodyOf("private fun applyStereoTexture(")
+    val later = apply.indexOf("laterPicture = LaterPicture(")
+    assertTrue(later >= 0)
+    assertTrue(apply.contains("photoTransition != null && media === transitionRequest"))
+    assertTrue("deferred before any drawing", later < apply.indexOf("showOnLayer(stereo)"))
+    assertTrue("deferred before the backdrop copy", later < apply.indexOf("makeBackdrop(media, stereo)"))
+    assertTrue(bodyOf("private fun beginPhotoTransition(").contains("transitionRequest = request"))
+    val end = bodyOf("private fun endPhotoTransition()")
+    assertTrue(end.contains("transitionRequest = null"))
+    assertTrue("applied from the main loop after the end",
+      end.contains("mainHandler.post { applyLaterPicture(later) }"))
+    val applyLater = bodyOf("private fun applyLaterPicture(")
+    assertTrue("dropped once the viewer moved on", applyLater.contains("request !== later.media"))
+    assertTrue(applyLater.contains("later.stereo.bitmap.recycle()"))
+  }
+
+  @Test
+  fun `the twin photo layer is made only while a transition is chosen`() {
+    val make = bodyOf("private fun makePhotoLayers()")
+    assertTrue(make.contains("lookOf(it).transition != SlideshowTransition.NONE"))
+    assertTrue(make.contains("layer !== shownLayer && !twinWanted"))
+    assertTrue(bodyOf("private fun showOnLayer(").contains("makePhotoLayers()"))
+    assertTrue(bodyOf("private fun cycleTransition()").contains("makePhotoLayers()"))
+  }
+
+  @Test
+  fun `a slide moves both photos by one distance from both widths`() {
+    val update = bodyOf("private fun updatePhotoTransition(")
+    assertTrue(update.contains("PhotoTransition.slideDistance(incomingWidth, outgoingWidth)"))
+    assertTrue(update.contains("shiftLayer(incoming, frame.incomingShift * distance)"))
+    assertTrue(update.contains("shiftLayer(outgoing, frame.outgoingShift * distance)"))
+  }
+
   /** The body of the function [declaration] begins, up to its closing brace at the indent of the members */
   private fun bodyOf(declaration: String): String {
     val start = source.indexOf(declaration)

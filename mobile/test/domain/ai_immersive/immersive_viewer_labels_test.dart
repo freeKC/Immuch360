@@ -171,7 +171,6 @@ void main() {
       'slideshowPaused': 'Slideshow paused',
       'slideshowEnd': 'End of the slideshow',
       'slideshowTooWarm': 'Headset too warm: the slideshow goes on in 2D',
-      'frostedNotice': 'Frosted background',
     });
   });
 

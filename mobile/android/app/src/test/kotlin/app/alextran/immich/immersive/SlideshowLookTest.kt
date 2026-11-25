@@ -76,21 +76,43 @@ class SlideshowLookTest {
   @Test
   fun `a slide brings the next photo from the right and the previous one from the left`() {
     val next0 = PhotoTransition.frameAt(SlideshowTransition.SLIDE, 1, 0f)
-    assertEquals(PhotoTransition.SLIDE_DISTANCE, next0.incomingShift, 1e-6f)
+    assertEquals(1f, next0.incomingShift, 1e-6f)
     assertEquals(0f, next0.outgoingShift, 1e-6f)
     val next1 = PhotoTransition.frameAt(SlideshowTransition.SLIDE, 1, 1f)
     assertEquals(0f, next1.incomingShift, 1e-6f)
-    assertEquals(-PhotoTransition.SLIDE_DISTANCE, next1.outgoingShift, 1e-6f)
+    assertEquals(-1f, next1.outgoingShift, 1e-6f)
     assertEquals(0f, next1.outgoingAlpha, 1e-6f)
     val previous0 = PhotoTransition.frameAt(SlideshowTransition.SLIDE, -1, 0f)
-    assertEquals(-PhotoTransition.SLIDE_DISTANCE, previous0.incomingShift, 1e-6f)
+    assertEquals(-1f, previous0.incomingShift, 1e-6f)
     val previous1 = PhotoTransition.frameAt(SlideshowTransition.SLIDE, -1, 1f)
-    assertEquals(PhotoTransition.SLIDE_DISTANCE, previous1.outgoingShift, 1e-6f)
-    // The two photos never overlap: the gap between them stays the distance of the slide
+    assertEquals(1f, previous1.outgoingShift, 1e-6f)
+    // The centres stay one slide distance apart
     for (i in 0..20) {
       val f = PhotoTransition.frameAt(SlideshowTransition.SLIDE, 1, i / 20f)
-      assertEquals(PhotoTransition.SLIDE_DISTANCE, f.incomingShift - f.outgoingShift, 1e-5f)
+      assertEquals(1f, f.incomingShift - f.outgoingShift, 1e-5f)
     }
+  }
+
+  @Test
+  fun `a slide between a wide photo and a narrow one never overlaps them`() {
+    // A landscape after a portrait and the other way round, both ways, from 2:1 to 4:1 in width
+    for ((incomingWidth, outgoingWidth) in listOf(2f to 1f, 1f to 2f, 4f to 1f, 1f to 4f, 1.5f to 1.5f)) {
+      val distance = PhotoTransition.slideDistance(incomingWidth, outgoingWidth)
+      for (step in listOf(1, -1)) {
+        for (i in 0..1000) {
+          val f = PhotoTransition.frameAt(SlideshowTransition.SLIDE, step, i / 1000f)
+          val incomingCentre = f.incomingShift * distance
+          val outgoingCentre = f.outgoingShift * distance
+          val gap = kotlin.math.abs(incomingCentre - outgoingCentre) - (incomingWidth + outgoingWidth) / 2f
+          assertTrue("gap $gap at ${i / 1000f}, widths $incomingWidth and $outgoingWidth, step $step", gap > 0f)
+        }
+      }
+    }
+    // Each photo shifted by its own width, as before, overlapped them for a 2:1 ratio
+    val f = PhotoTransition.frameAt(SlideshowTransition.SLIDE, 1, 0.2f)
+    val ownWidths = kotlin.math.abs(f.incomingShift * PhotoTransition.SLIDE_DISTANCE * 1f -
+      f.outgoingShift * PhotoTransition.SLIDE_DISTANCE * 2f) - (1f + 2f) / 2f
+    assertTrue("own widths gap $ownWidths", ownWidths < 0f)
   }
 
   @Test

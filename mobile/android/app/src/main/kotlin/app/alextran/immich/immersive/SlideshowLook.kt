@@ -76,9 +76,9 @@ internal data class SlideshowLook(
 
 /**
  * One frame of a [PhotoTransition]: the opacity of the photo that comes ([incomingAlpha]) and of the one that goes
- * ([outgoingAlpha]), how far each stands from its place, in widths of its box, to the right for a positive value
- * ([incomingShift], [outgoingShift]), and the opacity of the blurred background ([backdropAlpha]), which goes out and
- * comes back with the copy of the next photo at [atMiddle].
+ * ([outgoingAlpha]), how far each stands from its place, in slide distances (see [PhotoTransition.slideDistance], the
+ * same for both), to the right for a positive value ([incomingShift], [outgoingShift]), and the opacity of the blurred
+ * background ([backdropAlpha]), which goes out and comes back with the copy of the next photo at [atMiddle].
  */
 internal data class TransitionFrame(
   val incomingAlpha: Float,
@@ -145,8 +145,18 @@ internal class PhotoTransition(val kind: SlideshowTransition, val step: Int) {
   }
 
   companion object {
-    /** How far a slide takes each photo: its width and a little more, so that the two never overlap at the middle. */
+    /** How far a slide takes each photo, in half the sum of both widths: a little more, so that they never overlap. */
     const val SLIDE_DISTANCE = 1.08f
+
+    /**
+     * The distance a slide moves both photos, from the width of the photo that comes and of the one that goes (any
+     * unit, the same for both). Their centres stay that far apart from start to end, the one that comes at
+     * TransitionFrame.incomingShift times it, the one that goes at TransitionFrame.outgoingShift times it, so the gap
+     * between their facing edges is this distance less half the sum of their widths: positive at every frame, whatever
+     * the shapes (a landscape after a portrait).
+     */
+    fun slideDistance(incomingWidth: Float, outgoingWidth: Float): Float =
+      SLIDE_DISTANCE * (incomingWidth + outgoingWidth) / 2f
 
     /** Smoothstep: starts and ends slowly. */
     fun ease(t: Float): Float {
@@ -158,7 +168,7 @@ internal class PhotoTransition(val kind: SlideshowTransition, val step: Int) {
      * The state of a transition of [kind] at [t] (0 to 1). A cross fade lays the next photo over the one shown and
      * brings it from transparent to opaque, while the one shown fades out in the second half only, where the next one
      * covers it nearly whole: the background never shows through the middle of the photo, and a photo of another
-     * shape leaves no part of the one before behind. A slide moves both by [SLIDE_DISTANCE] widths, the one shown
+     * shape leaves no part of the one before behind. A slide moves both by one [slideDistance], the one shown
      * fading out and the next one fading in, so that neither appears or vanishes at an edge.
      */
     fun frameAt(kind: SlideshowTransition, step: Int, t: Float, atMiddle: Boolean = false): TransitionFrame {
@@ -182,8 +192,8 @@ internal class PhotoTransition(val kind: SlideshowTransition, val step: Int) {
           TransitionFrame(
             incomingAlpha = e,
             outgoingAlpha = 1f - e,
-            incomingShift = side * SLIDE_DISTANCE * (1f - e),
-            outgoingShift = -side * SLIDE_DISTANCE * e,
+            incomingShift = side * (1f - e),
+            outgoingShift = -side * e,
             backdropAlpha = backdrop,
             atMiddle = atMiddle,
             done = done,

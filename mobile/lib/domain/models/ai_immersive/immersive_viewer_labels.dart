@@ -91,7 +91,6 @@ Map<String, String> flatScreenViewerLabels(Translations t) => {
   'slideshowPaused': t.immersive_slideshow_paused,
   'slideshowEnd': t.immersive_slideshow_end,
   'slideshowTooWarm': t.immersive_slideshow_too_warm,
-  'frostedNotice': t.immersive_frosted_notice,
   // The buttons of the background and of the transition of the photos (issue 19), the name of the choice where
   // {choice} is (SlideshowLook.kt)
   'slideshowBackgroundInfo': t.immersive_slideshow_background_info(choice: '{choice}'),
