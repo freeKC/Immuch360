@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/film_player_preference.dart';
@@ -34,6 +35,11 @@ enum SettingsKey<T> {
   // The date and time of a photo at the bottom left with the controls on a TV, see ViewerConfig.tvShowDateTime
   viewerTvShowDateTime<bool>(),
   viewerSpatial25d<bool>(),
+  // Spatial 2.5D of the 3D photos on the computers: what moves the view, how far, which way, see
+  // ViewerConfig.spatialMoveWith, spatialSensitivity and spatialReverse
+  viewerSpatialMoveWith<ViewerPositionKind?>(codec: EnumCodec<ViewerPositionKind>(ViewerPositionKind.values)),
+  viewerSpatialSensitivity<int>(),
+  viewerSpatialReverse<bool>(),
   // The stabilisation of the raw 360° videos with the motion track of their camera, see ViewerConfig.stabilizeVideos
   viewerStabilizeVideos<bool>(),
   // The gyroscope of the 360° photo viewer and of the 360° video player of the phones, one choice for both, see

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_settings.dart';
 import 'package:immich_mobile/desktop/video/av2_setting.dart';
 import 'package:immich_mobile/desktop/video/xr/headset_view_setting.dart';
 import 'package:immich_mobile/domain/services/video_source_policy.dart';
@@ -108,8 +109,12 @@ class VideoViewerSettings extends HookConsumerWidget {
           SettingsSwitchListTile(
             valueNotifier: useSpatial25d,
             title: context.t.spatial_2_5d_experimental_title,
-            subtitle: context.t.spatial_2_5d_experimental_subtitle,
+            // Immuch360 Desktop: the 3D photos, followed by the mouse, a sway or the keys (lib/desktop/spatial)
+            subtitle: CurrentPlatform.isDesktop
+                ? context.t.desktop_spatial_setting_subtitle
+                : context.t.spatial_2_5d_experimental_subtitle,
           ),
+        if (CurrentPlatform.isDesktop && useSpatial25d.value) const DesktopSpatialSettings(),
         // Raw 360° videos whose camera recorded its motion play level and steady (issue 14)
         if (stabilizationSupported)
           SettingsSwitchListTile(

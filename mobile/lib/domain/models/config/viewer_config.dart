@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/domain/models/film_player_preference.dart';
 
 part 'viewer_config.freezed.dart';
@@ -32,6 +33,16 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// Experimental Spatial 2.5D player for stereoscopic videos on phones, on by default (Settings, Asset Viewer,
     /// Videos turns it off)
     @Default(true) bool spatial25d,
+
+    /// Immuch360 Desktop, Spatial 2.5D of the 3D photos (release 53): what moves the view, null until the user picks
+    /// one (the mouse then; the head tracker of the webcam is another lot). See lib/desktop/spatial/viewer_position.dart
+    ViewerPositionKind? spatialMoveWith,
+
+    /// Immuch360 Desktop, Spatial 2.5D: how far the view moves, in percent of the default (25 to 200)
+    @Default(100) int spatialSensitivity,
+
+    /// Immuch360 Desktop, Spatial 2.5D: the view moves the other way
+    @Default(false) bool spatialReverse,
 
     /// Experimental: a raw 360° video whose camera recorded its motion (the gyroscope of an Insta360, CORI and GRAV of a
     /// GoPro, the attitude of a DJI Osmo 360) plays stabilised, the horizon level and the shake gone, the view following
