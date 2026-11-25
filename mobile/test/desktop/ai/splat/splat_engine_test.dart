@@ -33,6 +33,8 @@ import 'package:immich_mobile/domain/models/splat/splat_header.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
+import '../fakes/app_progress.dart';
+
 final _colmap = Platform.environment['IMMUCH360_FAKE_COLMAP'] ?? '';
 final _brush = Platform.environment['IMMUCH360_FAKE_BRUSH'] ?? '';
 final _launcher = Platform.environment['IMMUCH360_RUN_LAUNCHER'];
@@ -302,7 +304,8 @@ void main() {
         ply: true,
         settings: const SplatSettings(steps: 1000, maxGaussians: 3000, subject: SplatSubject.object),
       );
-      final result = await engine().run(splat, cancel: cancel, onProgress: progress.add);
+      // As the queue of the app gives it: a callback no isolate takes (issue 23)
+      final result = await engine().run(splat, cancel: cancel, onProgress: appLikeCallback(progress));
 
       expect(result.isDone, isTrue, reason: '${result.error}: ${result.message}');
       final details = result.details! as SplatResultDetails;

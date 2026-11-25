@@ -58,10 +58,7 @@ class SdCppSharpenBackend implements EnhanceBackend {
     final height = picture.height;
     final (halfWidth, halfHeight) = sharpenHalfSize(width, height);
     final rgba = picture.rgba;
-    final half = await Isolate.run(
-      () => resizeRgba(rgba, width, height, halfWidth, halfHeight),
-      debugName: 'enhance-half',
-    );
+    final half = await resizeRgbaInIsolate(rgba, width, height, halfWidth, halfHeight);
     final pieces = planTiles(halfWidth, halfHeight, tile: sharpenPiece, overlap: sharpenPieceOverlap);
     final grown = <Uint8List>[];
     for (final (index, piece) in pieces.indexed) {
@@ -70,16 +67,7 @@ class SdCppSharpenBackend implements EnhanceBackend {
       }
       final input = p.join(workFolder, 'piece_$index.png');
       final output = p.join(workFolder, 'piece_${index}_x4.png');
-      final png = await Isolate.run(
-        () => encodePngPicture(
-          SbsDecoded(
-            width: piece.width,
-            height: piece.height,
-            rgba: cropRgbaAt(half, halfWidth, piece.x, piece.y, piece.width, piece.height),
-          ),
-        ),
-        debugName: 'enhance-piece',
-      );
+      final png = await encodePieceInIsolate(half, halfWidth, piece);
       await File(input).writeAsBytes(png, flush: true);
       await upscaler.upscale(
         UpscaleRequest(inputPath: input, outputPath: output, workFolder: workFolder, scale: 4),
@@ -87,19 +75,49 @@ class SdCppSharpenBackend implements EnhanceBackend {
       );
       final (pieceWidth, pieceHeight) = (piece.width, piece.height);
       try {
-        grown.add(await Isolate.run(() => pieceTwice(output, pieceWidth, pieceHeight), debugName: 'enhance-x2'));
+        grown.add(await pieceTwiceInIsolate(output, pieceWidth, pieceHeight));
       } on FormatException catch (error) {
         throw BackendException(ImmersiveErrorCode.outputRejected, error.message);
       }
       File(output).deleteSync();
       onStep(index + 1, pieces.length);
     }
-    return Isolate.run(
-      () => joinPieces(pieces, grown, halfWidth, halfHeight, width, height),
-      debugName: 'enhance-join',
-    );
+    return joinPiecesInIsolate(pieces, grown, halfWidth, halfHeight, width, height);
   }
 }
+
+// The isolates of the backend are started by the functions below, never from inside enhance, so that each closure holds
+// its arguments only and nothing of the engine or the queue that called it (issue 23, see enhance_engine.dart)
+
+/// [resizeRgba] in an isolate of its own
+Future<Uint8List> resizeRgbaInIsolate(Uint8List rgba, int width, int height, int toWidth, int toHeight) =>
+    Isolate.run(() => resizeRgba(rgba, width, height, toWidth, toHeight), debugName: 'enhance-half');
+
+/// The PNG of [piece] of the half picture [half] of [halfWidth] px wide, encoded in an isolate of its own
+Future<Uint8List> encodePieceInIsolate(Uint8List half, int halfWidth, EnhanceTile piece) => Isolate.run(
+  () => encodePngPicture(
+    SbsDecoded(
+      width: piece.width,
+      height: piece.height,
+      rgba: cropRgbaAt(half, halfWidth, piece.x, piece.y, piece.width, piece.height),
+    ),
+  ),
+  debugName: 'enhance-piece',
+);
+
+/// [pieceTwice] in an isolate of its own
+Future<Uint8List> pieceTwiceInIsolate(String path, int width, int height) =>
+    Isolate.run(() => pieceTwice(path, width, height), debugName: 'enhance-x2');
+
+/// [joinPieces] in an isolate of its own
+Future<Uint8List> joinPiecesInIsolate(
+  List<EnhanceTile> pieces,
+  List<Uint8List> grown,
+  int halfWidth,
+  int halfHeight,
+  int width,
+  int height,
+) => Isolate.run(() => joinPieces(pieces, grown, halfWidth, halfHeight, width, height), debugName: 'enhance-join');
 
 /// The x4 output of sd-cli at [path] for a piece of [width] x [height], brought to twice that size. Pure.
 Uint8List pieceTwice(String path, int width, int height) {

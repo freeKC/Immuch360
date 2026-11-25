@@ -16,7 +16,8 @@
 //     upright (the photo shows the same way); the profile of its pixels; and our XMP packet (EnhancedPhotoXmp): the
 //     level, the strength, the model and its sum, Origin GeneratedContent, the IPTC digital source type of trained
 //     algorithmic media, the software in CreatorTool and a description that starts with "AI enhanced".
-// The heavy pixel work runs in isolates of its own, so that the window stays responsive. Never throws: a failure is an
+// The heavy pixel work runs in isolates of its own, so that the window stays responsive; each is started from a
+// top-level function given plain data (see decodeEnhanceJpegInIsolate). Never throws: a failure is an
 // ImmersiveResult.failed, the work folder deleted either way.
 
 import 'dart:async';
@@ -132,6 +133,38 @@ Uint8List finishEnhanced(
   return result;
 }
 
+// The isolates of the engine are started by the functions below, never from inside EnhanceEngine.run: a closure keeps
+// the whole context of the scope it is built in, and the one of run holds the progress callback of the queue, which
+// holds the queue, its tools and their settings store, whose futures no isolate takes ("Illegal argument in isolate
+// message: object is unsendable", issue 23: every photo of every level failed so in desktop builds 31 and 32). Built
+// here, each closure holds its arguments only: bytes, numbers, enums and plain records.
+
+/// [decodeEnhanceJpeg] in an isolate of its own
+Future<EnhancePhoto?> decodeEnhanceJpegInIsolate(Uint8List bytes, ImmersiveExif jobExif, SbsCodecChoice choice) =>
+    Isolate.run(() => decodeEnhanceJpeg(bytes, jobExif, choice: choice), debugName: 'enhance-decode');
+
+/// [finishEnhanced] in an isolate of its own
+Future<Uint8List> finishEnhancedInIsolate(
+  Uint8List result,
+  Uint8List original,
+  int width,
+  int height,
+  EnhanceLevel level,
+  int strength,
+) => Isolate.run(() => finishEnhanced(result, original, width, height, level, strength), debugName: 'enhance-finish');
+
+/// [encodeEnhancedJpeg] in an isolate of its own
+Future<Uint8List> encodeEnhancedJpegInIsolate(
+  SbsDecoded picture, {
+  required int quality,
+  required ImmersiveExif exif,
+  required String xmp,
+  SbsCodecChoice choice = SbsCodecChoice.auto,
+}) => Isolate.run(
+  () => encodeEnhancedJpeg(picture, quality: quality, exif: exif, xmp: xmp, choice: choice),
+  debugName: 'enhance-encode',
+);
+
 /// The words of a level in the description of the file
 String enhanceLevelWords(EnhanceLevel level) => switch (level) {
   EnhanceLevel.sharpen => 'Sharpen',
@@ -219,7 +252,7 @@ class EnhanceEngine implements ImmersiveEngine {
       final codecs = this.codecs;
       EnhancePhoto? photo;
       try {
-        photo = await Isolate.run(() => decodeEnhanceJpeg(bytes, jobExif, choice: codecs), debugName: 'enhance-decode');
+        photo = await decodeEnhanceJpegInIsolate(bytes, jobExif, codecs);
       } on FormatException catch (error) {
         throw _Stop(ImmersiveErrorCode.decodeFailed, error.message);
       }
@@ -270,10 +303,7 @@ class EnhanceEngine implements ImmersiveEngine {
       final original = picture.rgba;
       final level = job.level;
       final strength = job.strength;
-      final finished = await Isolate.run(
-        () => finishEnhanced(result, original, width, height, level, strength),
-        debugName: 'enhance-finish',
-      );
+      final finished = await finishEnhancedInIsolate(result, original, width, height, level, strength);
       check();
 
       enter(ImmersiveStage.encoding, 920);
@@ -297,15 +327,12 @@ class EnhanceEngine implements ImmersiveEngine {
       final profile = picture.iccProfile;
       final Uint8List jpeg;
       try {
-        jpeg = await Isolate.run(
-          () => encodeEnhancedJpeg(
-            SbsDecoded(width: width, height: height, rgba: finished, iccProfile: profile),
-            quality: quality,
-            exif: exif,
-            xmp: xmp,
-            choice: codecs,
-          ),
-          debugName: 'enhance-encode',
+        jpeg = await encodeEnhancedJpegInIsolate(
+          SbsDecoded(width: width, height: height, rgba: finished, iccProfile: profile),
+          quality: quality,
+          exif: exif,
+          xmp: xmp,
+          choice: codecs,
         );
       } on SbsCodecException catch (error) {
         throw _Stop(ImmersiveErrorCode.writeFailed, error.message);

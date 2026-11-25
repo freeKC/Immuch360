@@ -17,6 +17,8 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:path/path.dart' as p;
 
+import '../fakes/app_progress.dart';
+
 const _fixtures = 'test/fixtures/ai_immersive/codec';
 
 /// A model that adds [add] to every channel, tile after tile, and remembers what it was given
@@ -109,9 +111,10 @@ void main() {
       final backend = _FakeBackend();
       final stages = <ImmersiveStage>[];
       final job = jobOf('exif_camera.jpg');
-      final result = await engineWith(
-        backend,
-      ).run(job, cancel: NativeCancelFlag(), onProgress: (progress) => stages.add(progress.stage));
+      final heard = <ImmersiveProgress>[];
+      // As the queue of the app gives it: a callback no isolate takes (issue 23)
+      final result = await engineWith(backend).run(job, cancel: NativeCancelFlag(), onProgress: appLikeCallback(heard));
+      stages.addAll(heard.map((progress) => progress.stage));
 
       expect(result.isDone, isTrue, reason: result.message);
       expect(File('$_fixtures/exif_camera.jpg').readAsBytesSync(), original);

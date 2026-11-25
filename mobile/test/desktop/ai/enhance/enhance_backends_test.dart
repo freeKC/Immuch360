@@ -14,11 +14,10 @@ import 'package:immich_mobile/desktop/ai/enhance/seedvr2_dgl.dart';
 import 'package:immich_mobile/desktop/ai/enhance/sharpen_backend.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
-import 'package:immich_mobile/desktop/ai/panorama/control_image.dart' show decodePngPicture, encodePngPicture;
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:path/path.dart' as p;
 
-import '../fakes/fake_process_runner.dart';
+import '../fakes/fake_enhance_tools.dart';
 
 /// A picture with a gradient and a checker, so that a misplaced tile shows
 SbsDecoded _picture(int width, int height) {
@@ -47,109 +46,8 @@ void _expectClose(Uint8List a, Uint8List b, {int tolerance = 2}) {
   expect(worst, lessThanOrEqualTo(tolerance));
 }
 
-/// sd-cli in script mode as far as the backend sees it: its device list, the items of each phase, and each tile
-/// written as the crop of the input it was given (or not written)
-class _ScriptRunner implements ProcessRunner {
-  _ScriptRunner({
-    this.intDot = 1,
-    this.refuseMemory = false,
-    this.writeTiles = true,
-    this.metal = false,
-    this.metalLine,
-  });
-
-  final int intDot;
-  final bool refuseMemory;
-  final bool writeTiles;
-
-  /// The Metal build of a Mac: ggml lists its GPU, no Vulkan device; [metalLine] said before the work when given
-  final bool metal;
-  final String? metalLine;
-  final launches = <ProcessLaunch>[];
-
-  @override
-  Future<RunningProcess> start(ProcessLaunch launch) async {
-    launches.add(launch);
-    final script = File(launch.arguments[launch.arguments.indexOf('--script') + 1]).readAsStringSync();
-    final input = RegExp(r'input_path = "([^"]+)"').firstMatch(script)!.group(1)!;
-    final picture = decodePngPicture(File(input).readAsBytesSync());
-    final tiles = RegExp(r'\{x = (\d+), y = (\d+), path = "([^"]+)"\}').allMatches(script).toList();
-    final width = int.parse(RegExp(r'tile_w = (\d+)').firstMatch(script)!.group(1)!);
-    final height = int.parse(RegExp(r'tile_h = (\d+)').firstMatch(script)!.group(1)!);
-    if (writeTiles && !refuseMemory) {
-      for (final tile in tiles) {
-        final x = int.parse(tile.group(1)!);
-        final y = int.parse(tile.group(2)!);
-        final crop = cropRgbaAt(picture.rgba, picture.width, x, y, width, height);
-        File(tile.group(3)!).writeAsBytesSync(encodePngPicture(SbsDecoded(width: width, height: height, rgba: crop)));
-      }
-    }
-    final count = tiles.length;
-    final lines = <(String, {bool isError})>[
-      if (metal) ...[
-        ('ggml_metal_device_init: GPU name:   MTL0 (Apple M1)', isError: false),
-        ('ggml_metal_device_init: GPU family: MTLGPUFamilyApple7  (1007)', isError: false),
-        ('ggml_metal_device_init: has unified memory    = true', isError: false),
-        if (metalLine case final line?) (line, isError: false),
-      ] else ...[
-        ('ggml_vulkan: Found 2 Vulkan devices:', isError: false),
-        (
-          'ggml_vulkan: 0 = Intel(R) UHD Graphics (Intel Corporation) | uma: 1 | fp16: 1 | int dot: 1 | '
-              'matrix cores: none',
-          isError: false,
-        ),
-        (
-          'ggml_vulkan: 1 = NVIDIA GeForce RTX 4060 Laptop GPU (NVIDIA) | uma: 0 | fp16: 1 | int dot: $intDot | '
-              'matrix cores: NV_coopmat2',
-          isError: false,
-        ),
-      ],
-      if (refuseMemory)
-        ('[E] RAM graph capacity exceeded. Requested 3892568608 bytes, 708513792 bytes available', isError: true),
-      if (!refuseMemory)
-        for (final phase in ['encode', 'sample', 'decode'])
-          for (var item = 1; item <= count; item++)
-            ('[V] map ${phase}_tile: item $item/$count --- executor.cpp:168', isError: false),
-    ];
-    return FakeRunningProcess(
-      4000 + launches.length,
-      launch,
-      FakeProcessScript(lines: lines, exitCode: refuseMemory ? 1 : 0),
-    );
-  }
-}
-
-/// x4plus as far as the backend sees it: each pixel made four by four, or a picture of the wrong size
-class _FourTimes implements UpscaleBackend {
-  _FourTimes({this.wrongSize = false});
-
-  final bool wrongSize;
-  final requests = <UpscaleRequest>[];
-
-  @override
-  String get modelSha256 => '4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1';
-
-  @override
-  Future<void> upscale(
-    UpscaleRequest request, {
-    required NativeCancelFlag cancel,
-    void Function(GeneratorProgress progress)? onProgress,
-  }) async {
-    requests.add(request);
-    final picture = decodePngPicture(File(request.inputPath).readAsBytesSync());
-    final scale = wrongSize ? 3 : request.scale;
-    final width = picture.width * scale;
-    final height = picture.height * scale;
-    final out = Uint8List(width * height * 4);
-    for (var y = 0; y < height; y++) {
-      for (var x = 0; x < width; x++) {
-        final from = 4 * ((y ~/ scale) * picture.width + x ~/ scale);
-        out.setRange(4 * (y * width + x), 4 * (y * width + x) + 4, picture.rgba, from);
-      }
-    }
-    File(request.outputPath).writeAsBytesSync(encodePngPicture(SbsDecoded(width: width, height: height, rgba: out)));
-  }
-}
+typedef _ScriptRunner = FakeSeedVr2Runner;
+typedef _FourTimes = FakeX4Upscaler;
 
 /// A graph whose run fails as Core ML could, or is stopped
 class _FailingGraph implements VosrGraph {
