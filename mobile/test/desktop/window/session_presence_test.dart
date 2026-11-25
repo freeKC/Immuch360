@@ -151,5 +151,5 @@ void main() {
       await _settle();
       expect(presence.away.value, isTrue);
     });
-  }, skip: Platform.isWindows ? 'no Unix socket for the bus of the test' : null);
+  }, skip: Platform.isLinux ? null : 'Linux only: logind, and the dbus package authenticates on Linux only');
 }
