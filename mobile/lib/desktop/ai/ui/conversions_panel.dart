@@ -66,6 +66,7 @@ import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/desktop_enhance.dart' show enhanceNotInThisVersion;
 import 'package:immich_mobile/desktop/ai/enhance/enhance_compare.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart' show enhanceNoIntDotMessage;
+import 'package:immich_mobile/desktop/ai/enhance/enhance_remote_compare.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
@@ -1145,6 +1146,17 @@ class _JobRowState extends ConsumerState<_JobRow> {
             onPressed: () => unawaited(showEnhanceCompare(context, originalPath: path, enhancedPath: written)),
             child: Text(t.ai_enhance_compare),
           ),
+      // One of a photo of the server or of a share: its original copied again, and its result from its share when it
+      // went there (enhance_remote_compare.dart)
+      if (job.kind.isEnhance &&
+          job.state == ConversionState.done &&
+          job.source is! LocalFileSource &&
+          canCompareRemote(job.source, written: written, publish: publish))
+        TextButton(
+          key: const Key('ai_job_enhance_compare'),
+          onPressed: () => unawaited(showRemoteEnhanceCompare(context, job.source, written: written, publish: publish)),
+          child: Text(t.ai_enhance_compare),
+        ),
       if (!video && job.state == ConversionState.done && written != null) ...[
         // A scene is judged here before it goes to the NAS; the panel stays under the preview for the next one
         if (job.kind == ConversionKind.sceneFromPhoto)

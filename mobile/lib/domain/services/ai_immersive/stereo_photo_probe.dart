@@ -9,6 +9,8 @@
 //     so (then however wide) or when the frame is 2.2 to 4.0 times as wide as high, half width eyes otherwise. The
 //     frame alone never decides: a flat 3:1 panorama stays flat.
 //  3. Else a flat photo.
+// A 3D photo made sharper by "Enhance (AI)" carries our XMP of an enhanced photo with the eyes of its original
+// (Immuch360:StereoLayout and EyeOrder): two eyes side by side, as its original.
 //
 // A photo of the library is read only when its name or its frame makes it a candidate (see isStereoPhotoCandidate):
 // an ordinary photo costs no read. The photos of the shares are read for their GPano tags anyway: their head is looked
@@ -172,6 +174,11 @@ FlatStereoPhoto? decideStereoPhoto({
     // A kind this build does not know, of a newer format, is still ours: shown flat with the reason
     if (kind == ImmersiveKind.stereoPhoto || (kind == null && xmp.isNewerFormat)) {
       return FlatStereoPhoto(eyes: xmp.eyes ?? StereoEyes.full, eyeOrder: xmp.eyeOrder ?? EyeOrder.leftRight, xmp: xmp);
+    }
+    // A 3D photo enhanced by "Enhance (AI)" (release 53): its eyes as its original had them, told as another tool's
+    // file is, so that the viewer labels it as it labelled its original
+    if (kind == ImmersiveKind.enhancedPhoto && xmp.eyes != null) {
+      return FlatStereoPhoto(eyes: xmp.eyes!, eyeOrder: xmp.eyeOrder ?? EyeOrder.leftRight);
     }
     // Another kind of ours (a 360° panorama, later) is no flat 3D photo, whatever its name
     return null;

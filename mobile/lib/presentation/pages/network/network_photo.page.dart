@@ -5,7 +5,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/library/share_versions_button.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart' show aiFeaturesEnabledProvider;
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
@@ -633,6 +635,14 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
             height: _info?.frameHeight ?? _imageSize?.height.round(),
           )
         : null;
+    // Immuch360 Desktop: "Enhance (AI)" in the menu, for any photo of the share while the AI features are on: the
+    // dialog says what it takes (lib/desktop/ai/enhance/enhance_dialog.dart)
+    final enhance =
+        CurrentPlatform.isDesktop &&
+        current != null &&
+        !tvMode &&
+        current.entry.isImage &&
+        ref.watch(aiFeaturesEnabledProvider);
     // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
     final reliefGate = isHorizonOs && current != null && _canRotate ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
     // The view a relief first shows in, read with the gate: a page without the button reads no setting
@@ -807,7 +817,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                     ),
                   // Immuch360 Desktop: the window in full screen (lib/desktop/window/full_screen.dart)
                   if (CurrentPlatform.isDesktop) const DesktopFullScreenButton(),
-                  if (photo != null && (!is360 || canUpload || makeImmersive != null))
+                  if (photo != null && (!is360 || canUpload || makeImmersive != null || enhance))
                     PopupMenuButton<void>(
                       tooltip: context.t.more,
                       itemBuilder: (context) => [
@@ -838,6 +848,11 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                             makeImmersive,
                             onOpen: () =>
                                 unawaited(ref.read(shareConversionOpenerProvider)(this.context, [photo.entry])),
+                          ),
+                        if (enhance)
+                          desktopShareEnhanceMenuItem(
+                            context,
+                            onOpen: () => unawaited(ref.read(shareEnhanceOpenerProvider)(this.context, [photo.entry])),
                           ),
                       ],
                     ),

@@ -214,8 +214,8 @@ ByteRangeReader _fileReader(String path) => (offset, length) async {
 };
 
 /// The photo of a share at [entry] as the plan sees it, of [width] x [height] pixels as its copy tells (else as its
-/// share listed): its name, its kind, its frame and its date, nothing else. Its id names the share and the path, so
-/// that it is never taken for a photo of the library.
+/// share listed): its name, its kind, its frame, its date and the length of a video, nothing else. Its id names the
+/// share and the path, so that it is never taken for a photo of the library.
 LocalAsset shareConversionAsset(NetworkEntry entry, {int? width, int? height}) {
   final date = entry.modified ?? DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
   return LocalAsset(
@@ -230,6 +230,8 @@ LocalAsset shareConversionAsset(NetworkEntry entry, {int? width, int? height}) {
     updatedAt: date,
     width: width ?? entry.width,
     height: height ?? entry.height,
+    // The length its share lists, for the frames a splat scene takes of a video
+    durationMs: entry.durationMs,
     playbackStyle: entry.isVideo ? AssetPlaybackStyle.video : AssetPlaybackStyle.image,
     isEdited: false,
   );

@@ -15,11 +15,20 @@
 //    this version yet" for a level whose engine is not published, or the folder of the developer override when it is on;
 //  - where the files go: beside each original as name_enhanced.jpg, the original never changed; a photo of the server
 //    (or one whose folder refuses a file) in the folder of my choice, with Change; the question of a network folder.
-// A 360° photo (a raw one of a 360° camera and a VR180 one among them), a photo with two eyes (side by side by its name
-// and frame, one of our 3D photos, a version of ours that holds two, an Apple spatial photo) and the picture of a 3D
-// scene or a splat scene are skipped with their reason ("360° and 3D photos come in a later version"): the engine
-// writes a flat picture with our XMP only, so the GPano tags or the two eyes would be lost (enhanceSkipOf). A photo
-// above 50 megapixels is skipped too, and the levels are judged on the others.
+// A 360° photo and a 3D photo (side by side or one above the other, a 360° 3D photo too) are enhanced as such since
+// release 53 (enhance_layout.dart): each eye alike, the seam of the sphere wrapped and its poles on faces of a cube,
+// the GPano tags and the eyes written in the result; Rebuild details is not offered on a 3D photo, whose eyes would get
+// other invented details (the dialog says so). Still skipped with their reason: a VR180 photo, an Apple spatial photo,
+// a raw photo of a 360° camera, and a version the app made (its original is the one to enhance) (enhanceSkipOf). A
+// photo above 50 megapixels is skipped too, and the levels are judged on the others.
+//
+// Every source (FreeKC, 22 and 25 November 2026: the AI functions take remote files, downloading them themselves): a
+// photo of the library or opened with the program is read in place, one of the Immich server downloaded by its job,
+// one of a share opened in the app (SMB, WebDAV, DLNA, Plex, Jellyfin, Emby) copied once as the dialog opens, its name
+// and its bytes shown with Cancel, as the dialog of "Make 3D (AI)" does (share_conversion.dart). Its result goes beside
+// its original on a share that takes files (SMB, WebDAV, through the writer of the shares: under its name, or the first
+// free "name (n)", never over a file; share_publisher.dart), else to the folder of my choice; the dialog says which
+// before anything runs.
 // "Protect faces" of the study is not offered: it needs a face detector, a model this lot does not add.
 // Escape closes the dialog (a dialog of the shell, lot feat-desktop-escape-51).
 
@@ -34,10 +43,13 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/desktop_enhance.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_files.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_gpu.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -45,11 +57,15 @@ import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
+import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/spatial_media.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart' show decideStereoPhoto;
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -161,9 +177,75 @@ Future<void> openEnhanceDialog(
   }
 }
 
+/// Opens the dialog on [entries], files of one share opened in the app; once photos were handed to the queue, the
+/// panel of the conversions shows. True once they were.
+Future<bool> openShareEnhanceDialog(BuildContext context, List<NetworkEntry> entries) async {
+  // The page that opened the dialog may be gone when it closes: the panel opens from the navigator
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final launched = await showDialog<bool>(
+    context: context,
+    builder: (context) => EnhanceDialog(shareFiles: entries),
+  );
+  if (launched != true) {
+    return false;
+  }
+  final overlay = navigator.mounted ? navigator.overlay : null;
+  if (overlay != null && overlay.mounted) {
+    unawaited(showConversionsPanel(overlay.context));
+  }
+  return true;
+}
+
+/// Opens the dialog of "Enhance (AI)" on files of a share, true once they were handed to the queue; replaced in tests
+final shareEnhanceOpenerProvider = Provider<Future<bool> Function(BuildContext context, List<NetworkEntry> entries)>(
+  (ref) => openShareEnhanceDialog,
+);
+
+/// "Enhance (AI)" in the menu of the page of a photo of a share (network_photo.page.dart), shown while the AI features
+/// are on; [onOpen] opens the dialog once the menu closed
+PopupMenuItem<void> desktopShareEnhanceMenuItem(BuildContext context, {required VoidCallback onOpen}) =>
+    PopupMenuItem<void>(
+      key: const Key('ai_enhance'),
+      onTap: onOpen,
+      child: ListTile(
+        leading: const Icon(Icons.auto_fix_high_outlined),
+        title: Text(context.t.ai_enhance_action),
+        contentPadding: EdgeInsets.zero,
+      ),
+    );
+
+/// "Enhance (AI)" in the bar of a selection of the browser of a share, next to "Make 3D (AI)": the dialog on the files
+/// picked ([entries]); greyed for a selection without a photo. [onLaunched] once photos were handed to the queue.
+class DesktopShareEnhanceButton extends ConsumerWidget {
+  const DesktopShareEnhanceButton({super.key, required this.entries, required this.onLaunched});
+
+  final List<NetworkEntry> entries;
+  final VoidCallback onLaunched;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(aiFeaturesEnabledProvider)) {
+      return const SizedBox.shrink();
+    }
+    final photos = entries.any((entry) => entry.isImage);
+    Future<void> open() async {
+      if (await ref.read(shareEnhanceOpenerProvider)(context, entries)) {
+        onLaunched();
+      }
+    }
+
+    return FilledButton.tonalIcon(
+      key: const Key('ai_enhance'),
+      icon: const Icon(Icons.auto_fix_high_outlined),
+      label: Text(context.t.ai_enhance_action),
+      onPressed: photos ? () => unawaited(open()) : null,
+    );
+  }
+}
+
 /// A photo of the selection as the dialog read it: where its original is (null when this computer cannot reach it)
 class _Photo {
-  const _Photo(this.asset, this.found, this.id, {this.skip});
+  const _Photo(this.asset, this.found, this.id, {this.skip, this.layout = EnhanceLayout.flat});
 
   final BaseAsset asset;
   final ({OriginalLocation location, ConversionSource source})? found;
@@ -174,7 +256,16 @@ class _Photo {
   /// Why it is skipped, known before anything runs; null for one that runs, or one this computer cannot reach
   final ConversionSkipReason? skip;
 
+  /// What it is: flat, 360°, 3D (enhance_layout.dart)
+  final EnhanceLayout layout;
+
   (int, int) get size => enhanceSizeOf(asset);
+
+  /// A 3D photo, which Rebuild details does not take
+  bool get isStereo => layout.isStereo;
+
+  /// A photo of a share opened in the app
+  bool get onShare => found?.location is ShareOriginal;
 }
 
 /// The size of [asset] as the library knows it, 12 MP when it does not
@@ -183,8 +274,8 @@ class _Photo {
   _ => _unknownSize,
 };
 
-/// The reasons to skip a photo that tell a 360° or 3D one, said together in the dialog
-const enhanceImmersiveSkips = {
+/// The reasons to skip a photo that tell a kind of photo Enhance does not take, said together in the dialog
+const enhanceKindSkips = {
   ConversionSkipReason.sphere360,
   ConversionSkipReason.vr180,
   ConversionSkipReason.raw360,
@@ -193,15 +284,16 @@ const enhanceImmersiveSkips = {
   ConversionSkipReason.alreadyVersion,
 };
 
-/// Why "Enhance (AI)" skips [asset], from its [facts] as the dialog of "Make 3D (AI)" reads them; null when it runs:
+/// Why "Enhance (AI)" skips [asset], from its [facts] as the dialog of "Make 3D (AI)" reads them; null when it runs
+/// (a flat, 360° or 3D photo, see [enhanceLayoutOf]):
 ///  - a video;
-///  - a 360° photo (a raw one of a 360° camera, a VR180 one, a panorama the app generated): the result would be a flat
-///    picture of 2:1, its GPano tags lost, and the seam of the sphere would not match;
-///  - two eyes (side by side, ours, a version of ours that holds two, an Apple spatial photo): each eye would get
-///    other invented details, and the result would be shown flat;
-///  - the picture of a 3D scene or a splat scene of ours, which carries its scene: the original is the one to enhance;
+///  - a raw photo of a 360° camera: its two lenses are not stitched into a picture of the sphere;
+///  - a version the app made (a 3D photo, a 3D scene, a panorama generated, its 3D version, the picture of a splat
+///    scene): its original is the one to enhance, then the version made again. An enhanced photo may be enhanced
+///    again;
+///  - an Apple spatial photo: its two pictures live in a HEIC file, which the engine does not write;
+///  - a VR180 photo: two half spheres side by side, whose edges and poles the engine does not handle yet;
 ///  - above 50 megapixels by the size the library knows (the engine checks the picture it decodes too).
-/// An enhanced photo may be enhanced again.
 ConversionSkipReason? enhanceSkipOf(BaseAsset asset, ConversionPhotoFacts facts) {
   if (asset.isVideo || !asset.isImage) {
     return ConversionSkipReason.video;
@@ -209,27 +301,55 @@ ConversionSkipReason? enhanceSkipOf(BaseAsset asset, ConversionPhotoFacts facts)
   if (facts.isRaw360) {
     return ConversionSkipReason.raw360;
   }
-  final version = facts.version?.kind;
-  if (facts.isPanorama || version == ImmersiveKind.panorama360) {
-    final half =
-        (facts.coverage ?? guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height)) ==
-        SphereCoverage.half;
-    return half ? ConversionSkipReason.vr180 : ConversionSkipReason.sphere360;
-  }
-  if (facts.isStereo || (facts.version != null && versionHoldsTwoEyes(facts.version!))) {
-    return ConversionSkipReason.alreadyStereo;
+  final version = facts.version;
+  if (version != null && version.kind != ImmersiveKind.enhancedPhoto) {
+    return ConversionSkipReason.alreadyVersion;
   }
   if (facts.isSpatial) {
     return ConversionSkipReason.spatial;
   }
-  if (facts.version != null && version != ImmersiveKind.enhancedPhoto) {
-    return ConversionSkipReason.alreadyVersion;
+  if (facts.isPanorama &&
+      (facts.coverage ?? guessSphereCoverage(fileName: asset.name, width: asset.width, height: asset.height)) ==
+          SphereCoverage.half) {
+    return ConversionSkipReason.vr180;
   }
   final (width, height) = enhanceSizeOf(asset);
   if (width * height > enhanceMaxPixels) {
     return ConversionSkipReason.tooLarge;
   }
   return null;
+}
+
+/// What [asset] is for the engine, once [enhanceSkipOf] took it:
+///  - a 360° photo: a picture of the sphere, or two of them stacked (a square frame) or side by side (a 4:1 frame), as
+///    the 360° viewers tell them by their frame;
+///  - a 3D photo side by side by its name and frame (or one of ours by its XMP): its eyes as the viewers read them;
+///  - a photo whose name says its eyes are one above the other (_TB, _OU...);
+///  - else a flat photo.
+EnhanceLayout enhanceLayoutOf(BaseAsset asset, ConversionPhotoFacts facts) {
+  final width = asset.width;
+  final height = asset.height;
+  if (facts.isPanorama) {
+    final eyes = switch (guessStereoLayout(width: width, height: height, hasGPanoCrop: facts.partialSphere)) {
+      StereoLayout.topBottom => EnhanceEyes.topBottom,
+      StereoLayout.leftRight => EnhanceEyes.sideBySide,
+      StereoLayout.mono => EnhanceEyes.none,
+    };
+    return EnhanceLayout(eyes: eyes, sphere: true);
+  }
+  if (facts.isStereo) {
+    final told = decideStereoPhoto(name: asset.name, width: width, height: height);
+    return EnhanceLayout(
+      eyes: EnhanceEyes.sideBySide,
+      halfEyes: told?.eyes == StereoEyes.half,
+      rightFirst: told?.eyeOrder == EyeOrder.rightLeft,
+    );
+  }
+  final named = guessSpatialLayout(fileName: asset.name);
+  if (named == SpatialStereoLayout.topBottom || named == SpatialStereoLayout.topBottomSwapped) {
+    return const EnhanceLayout(eyes: EnhanceEyes.topBottom);
+  }
+  return EnhanceLayout.flat;
 }
 
 /// The words of a refusal of a level
@@ -257,11 +377,18 @@ String _levelLine(Translations t, EnhanceLevel level) => switch (level) {
   EnhanceLevel.natural => t.ai_enhance_level_natural_line,
 };
 
+/// Whether [level] takes a 3D photo: Rebuild details invents details, other ones in each eye (enhance_layout.dart)
+bool enhanceTakesStereo(EnhanceLevel level) => level != EnhanceLevel.rebuild;
+
 /// See the top of this file
 class EnhanceDialog extends ConsumerStatefulWidget {
-  const EnhanceDialog({super.key, required this.assets});
+  const EnhanceDialog({super.key, this.assets = const [], this.shareFiles = const []});
 
   final List<BaseAsset> assets;
+
+  /// The files of a share opened in the app it is opened on instead of [assets]: each photo is copied once through
+  /// the media bridge as the dialog opens, and its facts read from that copy (share_conversion.dart)
+  final List<NetworkEntry> shareFiles;
 
   @override
   ConsumerState<EnhanceDialog> createState() => _EnhanceDialogState();
@@ -277,6 +404,16 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
   final _strengths = {for (final level in EnhanceLevel.values) level: level.defaultStrength};
   var _gestures = 0;
   var _launched = false;
+  var _closed = false;
+
+  /// The copy of the photos of a share under way: which photo, of how many, and its bytes copied of their total
+  ({int index, int count, String name, int copied, int? total})? _copying;
+
+  /// The copies of the photos of a share this dialog made; those no job takes are deleted as it closes or launches
+  final _shareSources = <ShareFileSource>[];
+
+  /// The photos are being read (or copied from their share): their copies are deleted once that ends
+  var _reading = false;
 
   @override
   void initState() {
@@ -286,11 +423,81 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
 
   @override
   void dispose() {
+    _closed = true;
     unawaited(_session?.close());
+    // A copy under way stops at its next bytes, and its photos are deleted once the reading ends
+    if (!_launched && !_reading) {
+      _releaseShareSources();
+    }
     super.dispose();
   }
 
+  /// Deletes the copies of the photos of a share no job took
+  void _releaseShareSources({Set<ConversionSource> kept = const {}}) {
+    for (final source in _shareSources) {
+      if (!kept.contains(source)) {
+        unawaited(source.release());
+      }
+    }
+    _shareSources.clear();
+  }
+
+  int get _count => widget.shareFiles.isNotEmpty
+      ? widget.shareFiles.where((entry) => entry.isImage).length
+      : widget.assets.where((asset) => asset.isImage).length;
+
   Future<void> _load() async {
+    _reading = true;
+    List<_Photo>? photos;
+    try {
+      photos = widget.shareFiles.isEmpty ? await _readAssets() : await _readShareFiles();
+    } finally {
+      _reading = false;
+    }
+    if (photos == null || _closed || !mounted) {
+      if (!_launched) {
+        _releaseShareSources();
+      }
+      return;
+    }
+    final session = ref.read(destinationSessionFactoryProvider)([
+      for (final photo in photos)
+        if (photo.found case final found? when photo.id != null)
+          DestinationJob(id: photo.id!, original: found.location, kind: ImmersiveKind.enhancedPhoto),
+    ], _store);
+    final facts = ref.read(enhanceDialogFactsProvider);
+    EnhanceMachine machine;
+    try {
+      machine = await facts.machine();
+    } catch (error) {
+      _log.warning('The facts of this computer could not be read: $error');
+      machine = const EnhanceMachine(platform: null);
+    }
+    final platform = machine.platform;
+    if (platform != null) {
+      for (final level in EnhanceLevel.values) {
+        try {
+          _files[level] = await facts.filesOf(level, platform);
+        } catch (error) {
+          _log.warning('The files of ${level.name} could not be read: $error');
+        }
+      }
+    }
+    if (!mounted || _closed) {
+      unawaited(session.close());
+      return;
+    }
+    setState(() {
+      _photos = photos;
+      _session = session;
+      _machine = machine;
+      _level = _firstOffered();
+    });
+    await _gesture(session.open);
+  }
+
+  /// The photos of the app the dialog was opened on, as it reads them once
+  Future<List<_Photo>> _readAssets() async {
     final locator = ref.read(conversionAssetFilesProvider);
     final readFacts = ref.read(conversionFactsReaderProvider);
     final probe = ref.read(conversionFileProbeProvider);
@@ -322,7 +529,7 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
       }
       // A photo of the frame of a whole sphere the scan has not flagged: its file tells whether it is a 360° one, as
       // the dialog of "Make 3D (AI)" reads it
-      if (found != null && isEquirectFrame(asset.width, asset.height)) {
+      if (found != null && !facts.isPanorama && isEquirectFrame(asset.width, asset.height)) {
         try {
           if (await probe(found.source, asset) case final read?) {
             facts = facts.withFileRead(isPanorama: read.isPanorama, isRaw360: read.raw360);
@@ -335,48 +542,90 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
           continue;
         }
       }
-      photos.add(_Photo(asset, found, found == null ? null : 'enhance-$index'));
+      photos.add(_Photo(asset, found, found == null ? null : 'enhance-$index', layout: enhanceLayoutOf(asset, facts)));
     }
-    final session = ref.read(destinationSessionFactoryProvider)([
-      for (final photo in photos)
-        if (photo.found case final found? when photo.id != null)
-          DestinationJob(id: photo.id!, original: found.location, kind: ImmersiveKind.enhancedPhoto),
-    ], _store);
-    final facts = ref.read(enhanceDialogFactsProvider);
-    EnhanceMachine machine;
-    try {
-      machine = await facts.machine();
-    } catch (error) {
-      _log.warning('The facts of this computer could not be read: $error');
-      machine = const EnhanceMachine(platform: null);
-    }
-    final platform = machine.platform;
-    if (platform != null) {
-      for (final level in EnhanceLevel.values) {
-        try {
-          _files[level] = await facts.filesOf(level, platform);
-        } catch (error) {
-          _log.warning('The files of ${level.name} could not be read: $error');
+    return photos;
+  }
+
+  /// The files of a share the dialog was opened on: each photo copied once through the media bridge, its name and its
+  /// bytes shown meanwhile, then its facts read from that copy as the dialog of "Make 3D (AI)" reads them. A photo
+  /// whose copy fails cannot be reached; once a copy finds no room on this computer, that photo and the ones after it
+  /// are skipped with "Disk full", without trying their copies. Null once the dialog closed meanwhile (Cancel): the
+  /// copy under way stops.
+  Future<List<_Photo>?> _readShareFiles() async {
+    final make = ref.read(shareConversionSourceProvider);
+    final read = ref.read(shareCopyFactsReaderProvider);
+    // A share that takes files has its versions next to their originals (destination.dart); a media server has not
+    final folderOf = ref.read(shareFolderOfProvider);
+    final files = widget.shareFiles;
+    final photos = <_Photo>[];
+    var full = false;
+    for (final (index, entry) in files.indexed) {
+      if (_closed) {
+        return null;
+      }
+      final listed = shareConversionAsset(entry);
+      if (!entry.isImage) {
+        photos.add(_Photo(listed, null, null, skip: ConversionSkipReason.video));
+        continue;
+      }
+      if (full) {
+        photos.add(_Photo(listed, null, null, skip: ConversionSkipReason.diskFull));
+        continue;
+      }
+      final source = make(entry);
+      _shareSources.add(source);
+      void show(int copied, int? total) {
+        if (mounted && !_closed) {
+          setState(
+            () => _copying = (index: index, count: files.length, name: entry.name, copied: copied, total: total),
+          );
         }
       }
+
+      show(0, entry.size);
+      try {
+        final copy = await source.copy(isCancelled: () => _closed, onProgress: show);
+        final known = await read(entry, copy);
+        source.exif = known.exif;
+        final asset = shareConversionAsset(entry, width: known.width, height: known.height);
+        if (enhanceSkipOf(asset, known.facts) case final skip?) {
+          _shareSources.remove(source);
+          unawaited(source.release());
+          photos.add(_Photo(asset, null, null, skip: skip));
+          continue;
+        }
+        photos.add(
+          _Photo(
+            asset,
+            (location: ShareOriginal(name: entry.name, folder: folderOf(entry)), source: source),
+            'enhance-$index',
+            layout: enhanceLayoutOf(asset, known.facts),
+          ),
+        );
+      } on Object catch (error) {
+        if (_closed) {
+          return null;
+        }
+        _log.warning('${entry.name} could not be copied from its share: $error');
+        _shareSources.remove(source);
+        unawaited(source.release());
+        full = error is ConversionException && error.code == ImmersiveErrorCode.diskFull;
+        photos.add(
+          _Photo(listed, null, null, skip: full ? ConversionSkipReason.diskFull : ConversionSkipReason.unreachable),
+        );
+      }
     }
-    if (!mounted) {
-      unawaited(session.close());
-      return;
+    if (mounted && !_closed) {
+      setState(() => _copying = null);
     }
-    setState(() {
-      _photos = photos;
-      _session = session;
-      _machine = machine;
-      _level = _firstOffered();
-    });
-    await _gesture(session.open);
+    return photos;
   }
 
   /// Sharpen when it is offered for the photos, else Natural, else Rebuild details
   EnhanceLevel _firstOffered() {
     for (final level in [EnhanceLevel.sharpen, EnhanceLevel.natural, EnhanceLevel.rebuild]) {
-      if (_verdict(level).isOffered) {
+      if (_verdict(level).isOffered && _runsAt(level).isNotEmpty) {
         return level;
       }
     }
@@ -385,14 +634,19 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
 
   Iterable<_Photo> get _runs => (_photos ?? const []).where((photo) => photo.id != null);
 
+  /// The photos [level] runs on: Rebuild details leaves the 3D photos out
+  Iterable<_Photo> _runsAt(EnhanceLevel level) => _runs.where((photo) => enhanceTakesStereo(level) || !photo.isStereo);
+
   /// The verdict of [level] for the selection: refused when it is refused for its largest photo. The photos above 50
-  /// megapixels are skipped and left out of it, unless no other runs: the levels then say why.
+  /// megapixels are skipped and left out of it, unless no other runs: the levels then say why. The time is that of
+  /// every photo it runs on, each in its pieces (the eyes of a 3D photo, the seam and the poles of a 360° one).
   EnhanceVerdict _verdict(EnhanceLevel level) {
     final machine = _machine;
     if (machine == null) {
       return EnhanceVerdict(level, refusal: EnhanceRefusal.notOnThisSystem);
     }
-    var sizes = [for (final photo in _runs) photo.size];
+    final runs = _runsAt(level).toList();
+    var sizes = [for (final photo in runs) photo.size];
     if (sizes.isEmpty) {
       sizes = [
         for (final photo in _photos ?? const <_Photo>[])
@@ -401,10 +655,14 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
     }
     final (width, height) = sizes.isEmpty ? _unknownSize : sizes.reduce((a, b) => a.$1 * a.$2 >= b.$1 * b.$2 ? a : b);
     final largest = enhanceVerdict(level, machine, width: width, height: height);
-    if (!largest.isOffered || sizes.length <= 1) {
+    if (!largest.isOffered || runs.isEmpty || (runs.length == 1 && runs.single.layout.isFlat)) {
       return largest;
     }
-    final total = enhanceBatchEstimate(level, machine, sizes);
+    var total = Duration.zero;
+    for (final photo in runs) {
+      final (photoWidth, photoHeight) = photo.size;
+      total += enhanceLayoutEstimate(level, photoWidth, photoHeight, photo.layout, processors: machine.processors);
+    }
     return EnhanceVerdict(
       level,
       warnings: [
@@ -461,7 +719,7 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
     if (session.pendingConsents.isNotEmpty || _gestures > 0) {
       return false;
     }
-    final runs = _runs.toList();
+    final runs = _runsAt(_level).toList();
     return runs.isNotEmpty && runs.every((photo) => session.checkOf(photo.id!)?.accepted ?? false);
   }
 
@@ -470,12 +728,27 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
       return;
     }
     _launched = true;
+    final level = _level;
     final photos = _photos!;
     final requests = <ConversionRequest>[];
     for (final photo in photos) {
       final found = photo.found;
       final plan = photo.id == null ? null : session.destinations[photo.id];
-      if (found == null || plan == null || plan.share != null) {
+      if (found != null && photo.isStereo && !enhanceTakesStereo(level)) {
+        requests.add(ConversionRequest(source: found.source, skip: ConversionSkipReason.enhanceStereoInvents));
+        continue;
+      }
+      // A result beside its original on a share is made here first, in a folder of its own, then put there
+      var folder = plan?.folder;
+      if (plan?.share != null) {
+        try {
+          folder = await ref.read(shareStagingFolderProvider)();
+        } catch (error) {
+          _log.warning('No folder to make the enhanced photo of ${photo.asset.name} in: $error');
+          folder = null;
+        }
+      }
+      if (found == null || plan == null || folder == null) {
         requests.add(
           ConversionRequest(
             source: found?.source ?? _Unreachable(photo.asset.name),
@@ -489,10 +762,11 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
         ConversionRequest(
           source: found.source,
           target: ConversionTarget(
-            folder: plan.folder,
+            folder: folder,
             fileName: versionTargetName(ImmersiveKind.enhancedPhoto, found.location.name),
           ),
           pixels: width * height,
+          enhanceLayout: photo.layout,
         ),
       );
     }
@@ -503,21 +777,42 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
         .read(conversionQueueProvider.notifier)
         .add(
           requests,
-          kind: ConversionKind.enhanceAt(_level),
+          kind: ConversionKind.enhanceAt(level),
           existing: ExistingVersionChoice.newVersion,
-          enhance: EnhanceSettings(level: _level, strength: _strengths[_level]!),
+          enhance: EnhanceSettings(level: level, strength: _strengths[level]!),
         );
+    // The copies of the photos of a share go with their jobs; those of the photos skipped go now
+    _releaseShareSources(
+      kept: {
+        for (final request in requests)
+          if (request.skip == null) request.source,
+      },
+    );
     final infos = <String, ConversionJobInfo>{};
+    final shared = <String, ShareVersionTarget>{};
     for (final (index, id) in ids.indexed) {
       final photo = photos[index];
       final plan = photo.id == null ? null : session.destinations[photo.id];
-      final part = photo.id == null ? null : session.takePart(photo.id!);
+      if (plan?.share case final folder? when requests[index].skip == null) {
+        // Never over a file: under its name, or the first free "name (n)"
+        shared[id] = ShareVersionTarget(
+          folder: folder,
+          fallbackFolder: session.chosenFolder,
+          fallbackIsNetwork: session.chosenFolderIsNetwork,
+        );
+      }
+      final part = photo.id == null || plan?.share != null ? null : session.takePart(photo.id!);
       if (part != null) {
         output.adopt(id, part);
       }
-      infos[id] = ConversionJobInfo(asset: photo.asset, isNetwork: plan?.isNetwork ?? false);
+      infos[id] = ConversionJobInfo(
+        // A photo of a share is no photo of the app: its row shows no thumbnail of the timeline
+        asset: photo.onShare ? null : photo.asset,
+        isNetwork: plan?.isNetwork ?? false,
+      );
     }
     ref.read(conversionJobInfoProvider.notifier).addAll(infos);
+    ref.read(sharePublisherProvider.notifier).follow(shared);
     if (mounted) {
       Navigator.of(context).pop(true);
     }
@@ -528,24 +823,39 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
     final t = context.t;
     final photos = _photos;
     final session = _session;
-    final count = widget.assets.where((asset) => asset.isImage).length;
+    final count = _count;
     final title = Text(count > 1 ? t.ai_enhance_action_count(count: count) : t.ai_enhance_action);
     if (photos == null || session == null) {
+      final copying = _copying;
       return AlertDialog(
         key: const Key('ai_enhance_dialog'),
         title: title,
-        content: const SizedBox(width: 560, child: LinearProgressIndicator()),
-        actions: [TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(t.cancel))],
+        content: SizedBox(
+          width: 560,
+          child: copying != null
+              ? ShareCopyLine(key: const Key('ai_enhance_share_copy'), copying: copying)
+              : const LinearProgressIndicator(),
+        ),
+        actions: [
+          TextButton(
+            key: const Key('ai_enhance_cancel'),
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(t.cancel),
+          ),
+        ],
       );
     }
     final colors = context.colorScheme;
     final secondary = TextStyle(color: colors.onSurfaceVariant);
     final verdict = _verdict(_level);
     final files = _files[_level];
-    final runs = _runs.length;
-    final immersive = photos.where((photo) => enhanceImmersiveSkips.contains(photo.skip)).length;
+    final runs = _runsAt(_level).length;
+    final kinds = photos.where((photo) => enhanceKindSkips.contains(photo.skip)).length;
     final tooLarge = photos.where((photo) => photo.skip == ConversionSkipReason.tooLarge).length;
-    final skipped = photos.length - runs - immersive - tooLarge;
+    final stereoLeft = _runs.length - runs;
+    final skipped = photos.length - _runs.length - kinds - tooLarge;
+    final spheres = _runsAt(_level).any((photo) => photo.layout.sphere);
+    final stereo = _runsAt(_level).any((photo) => photo.isStereo);
     final filesReady = files?.files != null;
     final canStart = verdict.isOffered && filesReady && _ready(session) && !_launched;
     final warn = TextStyle(color: colors.error);
@@ -581,6 +891,10 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
               if (_level == EnhanceLevel.rebuild)
                 Text(t.ai_enhance_rebuild_faces, key: const Key('ai_enhance_rebuild_faces'), style: warn),
               Text(t.ai_enhance_shake, style: secondary),
+              if (spheres)
+                Text(t.ai_enhance_layout_sphere, key: const Key('ai_enhance_layout_sphere'), style: secondary),
+              if (stereo)
+                Text(t.ai_enhance_layout_stereo, key: const Key('ai_enhance_layout_stereo'), style: secondary),
               const SizedBox(height: 8),
               Text(t.ai_enhance_strength(percent: _strengths[_level]!)),
               Slider(
@@ -595,10 +909,16 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
               const SizedBox(height: 8),
               ..._componentsPart(t, files),
               ..._destinationPart(t, session, secondary),
-              if (immersive > 0)
+              if (kinds > 0)
                 Text(
-                  t.ai_enhance_skipped_immersive(count: immersive),
-                  key: const Key('ai_enhance_skipped_immersive'),
+                  t.ai_enhance_skipped_kinds(count: kinds),
+                  key: const Key('ai_enhance_skipped_kinds'),
+                  style: secondary,
+                ),
+              if (stereoLeft > 0)
+                Text(
+                  t.ai_enhance_skipped_rebuild_3d(count: stereoLeft),
+                  key: const Key('ai_enhance_skipped_rebuild_3d'),
                   style: secondary,
                 ),
               if (tooLarge > 0)
@@ -630,16 +950,20 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
   Widget _levelTile(Translations t, EnhanceLevel level) {
     final verdict = _verdict(level);
     final files = _files[level];
+    // Rebuild details on 3D photos only: none it takes
+    final onlyStereo = _runs.isNotEmpty && _runsAt(level).isEmpty;
     final reason = switch (verdict.refusal) {
       final refusal? => enhanceRefusalText(t, refusal),
+      null when onlyStereo => t.ai_enhance_refused_rebuild_3d,
       null when files?.notInThisVersion ?? false => t.ai_enhance_refused_not_yet,
       null => null,
     };
+    final offered = verdict.isOffered && !onlyStereo;
     final chosen = level == _level;
     return ListTile(
       key: Key('ai_enhance_level_${level.name}'),
       contentPadding: EdgeInsets.zero,
-      enabled: verdict.isOffered,
+      enabled: offered,
       selected: chosen,
       leading: Icon(chosen ? Icons.radio_button_checked : Icons.radio_button_unchecked),
       title: Text(enhanceLevelName(t, level)),
@@ -685,18 +1009,37 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
     return const [];
   }
 
+  /// Where the results go, said before anything runs: beside each original (on its share for a photo of a share that
+  /// takes files), or in the folder of my choice with why and Change
   List<Widget> _destinationPart(Translations t, DestinationSession session, TextStyle secondary) {
-    final plans = [for (final photo in _runs) ?session.destinations[photo.id]];
+    final runs = _runsAt(_level).toList();
+    final plans = [for (final photo in runs) ?session.destinations[photo.id]];
     if (plans.isEmpty) {
       return const [];
     }
-    final beside = plans.every((plan) => plan.kind == DestinationKind.nextToOriginal);
+    final shares = {for (final plan in plans) ?plan.share?.label};
+    final beside = plans.where((plan) => plan.kind == DestinationKind.nextToOriginal && plan.share == null).isNotEmpty;
+    final chosen = plans.any((plan) => plan.kind == DestinationKind.chosenFolder);
+    // A media server (DLNA, Plex, Jellyfin, Emby) takes no file
+    final mediaServer = runs.any(
+      (photo) => switch (photo.found?.location) {
+        ShareOriginal(:final folder) => folder == null,
+        _ => false,
+      },
+    );
     return [
-      if (beside)
-        Text(t.ai_enhance_saved_beside, key: const Key('ai_enhance_saved_beside'))
-      else ...[
+      if (beside) Text(t.ai_enhance_saved_beside, key: const Key('ai_enhance_saved_beside')),
+      for (final label in shares)
+        Text(t.ai_enhance_saved_share(folder: label), key: const Key('ai_enhance_saved_share')),
+      if (chosen) ...[
         Text(t.ai_enhance_saved_folder(folder: session.chosenFolder), key: const Key('ai_enhance_saved_folder')),
-        if (plans.any((plan) => plan.reason == DestinationReason.sourceReadOnly))
+        if (mediaServer)
+          Text(
+            t.ai_enhance_saved_folder_media_server,
+            key: const Key('ai_enhance_saved_folder_media'),
+            style: secondary,
+          )
+        else if (plans.any((plan) => plan.reason == DestinationReason.sourceReadOnly))
           Text(t.ai_enhance_saved_folder_why, style: secondary),
         Align(
           alignment: AlignmentDirectional.centerStart,

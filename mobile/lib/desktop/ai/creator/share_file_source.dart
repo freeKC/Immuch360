@@ -88,7 +88,7 @@ NetworkEntry? shareEntryOfDescriptor(Map<String, Object?> descriptor) {
 /// A file of a share, copied once into the cache of this computer before its conversion. Its versions are looked for
 /// in the folder of the original on the share too ([versions]), where a batch that skips a photo with a version made
 /// with the same settings finds the one a computer put there.
-class ShareFileSource implements DownloadableOriginal, RemoteVersionLookup {
+class ShareFileSource implements DownloadableOriginal, RemoteVersionLookup, RecopiableOriginal {
   ShareFileSource({
     required this.entry,
     required this._url,
@@ -124,6 +124,18 @@ class ShareFileSource implements DownloadableOriginal, RemoteVersionLookup {
 
   @override
   String get name => entry.name;
+
+  @override
+  ShareFileSource recopy() => ShareFileSource(
+    entry: entry,
+    url: _url,
+    fetch: _fetch,
+    fetchRange: _fetchRange,
+    exif: exif,
+    versions: _versions,
+    copiesFolder: _copiesFolder,
+    hash: _hash,
+  );
 
   /// The share it is on
   String get sourceId => entry.sourceId;

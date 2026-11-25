@@ -16,9 +16,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
@@ -104,6 +106,9 @@ void main() {
   late int memory;
   late List<ConversionKind> kinds;
   late List<List<String>> opened;
+  late List<List<String>> enhanced;
+  late List<List<String>> splats;
+  late bool splatOn;
   late bool launches;
   HttpOverrides? previousOverrides;
 
@@ -135,6 +140,9 @@ void main() {
     memory = 16 * _gib;
     kinds = [ConversionKind.sbsFromPhoto, ConversionKind.stereoPanoramaFromPanorama];
     opened = [];
+    enhanced = [];
+    splats = [];
+    splatOn = false;
     launches = true;
   });
 
@@ -179,6 +187,15 @@ void main() {
         opened.add([for (final entry in entries) entry.path]);
         return launches;
       }),
+      shareEnhanceOpenerProvider.overrideWithValue((context, entries) async {
+        enhanced.add([for (final entry in entries) entry.path]);
+        return launches;
+      }),
+      shareSplatOpenerProvider.overrideWithValue((context, entries) async {
+        splats.add([for (final entry in entries) entry.path]);
+        return launches;
+      }),
+      aiSplatScenesOnProvider.overrideWith((ref) => splatOn),
     ];
   }
 
@@ -267,12 +284,31 @@ void main() {
       });
     });
 
+    testWidgets('offers Enhance (AI) on a computer, a 360° photo too, which opens its dialog on that photo', (
+      tester,
+    ) async {
+      await onComputer(() async {
+        await pumpPhoto(tester, '/pano.jpg', read: shows360Button);
+        await openMenu(tester);
+
+        expect(find.text('Enhance (AI)'), findsOneWidget);
+        await tester.tap(find.text('Enhance (AI)'));
+        await tester.pumpAndSettle();
+
+        expect(enhanced, [
+          ['/pano.jpg'],
+        ]);
+        await endRealIo(tester);
+      });
+    });
+
     testWidgets('is absent while the AI features are off, and on a phone', (tester) async {
       enabled = false;
       await onComputer(() async {
         await pumpPhoto(tester, '/flat.jpg');
         await openMenu(tester);
         expect(find.text('Make 3D (AI)'), findsNothing);
+        expect(find.text('Enhance (AI)'), findsNothing);
         await endRealIo(tester);
       });
 
@@ -281,6 +317,7 @@ void main() {
       await openMenu(tester);
       expect(find.text(t.view_as_360), findsOneWidget);
       expect(find.text('Make 3D (AI)'), findsNothing, reason: 'a phone');
+      expect(find.text('Enhance (AI)'), findsNothing, reason: 'a phone');
       await endRealIo(tester);
     });
   });
@@ -349,6 +386,34 @@ void main() {
           ['/cuisine.jpg', '/flat.jpg'],
         ]);
         expect(find.text('Make 3D (AI)'), findsNothing, reason: 'the selection ends once the photos are in the queue');
+        await endRealIo(tester);
+      });
+    });
+
+    testWidgets('has Enhance (AI) and Make a splat scene (AI) after it, each on the files picked', (tester) async {
+      splatOn = true;
+      await onComputer(() async {
+        await pumpBrowser(tester);
+        await tester.longPress(tileOf('flat.jpg'));
+        await tester.pump();
+        await tester.tap(tileOf('clip.mp4'));
+        await tester.pump();
+
+        expect(find.text('Enhance (AI)'), findsOneWidget);
+        expect(find.text('Make a splat scene (AI)'), findsOneWidget);
+        await tester.tap(find.text('Make a splat scene (AI)'));
+        await tester.pumpAndSettle();
+        expect(splats, [
+          ['/clip.mp4', '/flat.jpg'],
+        ]);
+
+        await tester.longPress(tileOf('cuisine.jpg'));
+        await tester.pump();
+        await tester.tap(find.text('Enhance (AI)'));
+        await tester.pumpAndSettle();
+        expect(enhanced, [
+          ['/cuisine.jpg'],
+        ]);
         await endRealIo(tester);
       });
     });

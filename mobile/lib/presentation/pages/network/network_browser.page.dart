@@ -4,7 +4,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart' show DesktopShareMakeSplatButton;
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/desktop/selection/network_selection.dart';
 import 'package:immich_mobile/domain/models/media_server_item.dart';
@@ -608,20 +610,33 @@ class _NetworkBrowserPageState extends ConsumerState<NetworkBrowserPage> {
                         onPressed: selection.paths.isEmpty ? null : () => unawaited(_downloadSelection()),
                       )
                     : null,
-                // Immuch360 Desktop: "Make 3D (AI)" next to Upload to Immich (lib/desktop/ai/ui/share_conversion.dart)
-                desktopAction: CurrentPlatform.isDesktop
-                    ? DesktopShareMakeImmersiveButton(
-                        entries: [
-                          for (final entry in _media)
-                            if (selection.contains(entry.path)) entry,
-                        ],
-                        onLaunched: selectionNotifier.end,
-                      )
-                    : null,
+                // Immuch360 Desktop: "Make 3D (AI)" then "Enhance (AI)" next to Upload to Immich
+                // (lib/desktop/ai/ui/share_conversion.dart, lib/desktop/ai/enhance/enhance_dialog.dart)
+                desktopAction: CurrentPlatform.isDesktop ? _desktopAiActions(selection, selectionNotifier) : null,
               )
             : null,
         body: _buildBody(selection, source, tvMode: tvMode),
       ),
+    );
+  }
+
+  /// The AI entries of a selection on a computer: "Make 3D (AI)", "Enhance (AI)" and "Make a splat scene (AI)" on the
+  /// files picked
+  Widget _desktopAiActions(NetworkSelection selection, NetworkSelectionNotifier selectionNotifier) {
+    final entries = [
+      for (final entry in _media)
+        if (selection.contains(entry.path)) entry,
+    ];
+    // One under the other when the window is too narrow for them side by side
+    return OverflowBar(
+      spacing: 8,
+      overflowSpacing: 8,
+      overflowAlignment: OverflowBarAlignment.end,
+      children: [
+        DesktopShareMakeImmersiveButton(entries: entries, onLaunched: selectionNotifier.end),
+        DesktopShareEnhanceButton(entries: entries, onLaunched: selectionNotifier.end),
+        DesktopShareMakeSplatButton(entries: entries, onLaunched: selectionNotifier.end),
+      ],
     );
   }
 
@@ -827,7 +842,7 @@ extension on _SelectionBar {
             children: [
               Expanded(child: upload),
               if (download != null) ...[const SizedBox(width: 12), download],
-              if (action != null) ...[const SizedBox(width: 12), action],
+              if (action != null) ...[const SizedBox(width: 12), Flexible(flex: 2, child: action)],
             ],
           );
   }

@@ -489,6 +489,7 @@ String conversionSkipText(Translations t, ConversionSkipReason reason, {String? 
       ConversionSkipReason.raw360Video => t.ai_immersive_skipped_raw_360_video,
       ConversionSkipReason.sphereLayout => t.ai_immersive_skipped_sphere_layout,
       ConversionSkipReason.tooLarge => t.ai_enhance_refused_too_large,
+      ConversionSkipReason.enhanceStereoInvents => t.ai_enhance_skipped_rebuild_3d_job,
     };
 
 /// What the dialog needs to know of a photo before anything runs: whether it is shown as a sphere (a raw one of a 360°
@@ -2447,7 +2448,7 @@ class _ConversionDialogState extends ConsumerState<ConversionDialog> {
                 ),
               const SizedBox(height: 12),
               if (_copying case final copying?)
-                _ShareCopyLine(key: const Key('ai_conversion_share_copy'), copying: copying)
+                ShareCopyLine(key: const Key('ai_conversion_share_copy'), copying: copying)
               else if (gates.any((each) => each.isLoading) || candidates == null)
                 const Padding(
                   padding: EdgeInsets.all(16),
@@ -3147,8 +3148,8 @@ class _ChosenFolderStore extends DesktopAiSettingsStore {
 
 /// The copy of a photo of a share under way: "Copying salon.jpg from the share: 4.2 MiB of 12.0 MiB", "2 of 5" for a
 /// selection, and its bar
-class _ShareCopyLine extends StatelessWidget {
-  const _ShareCopyLine({super.key, required this.copying});
+class ShareCopyLine extends StatelessWidget {
+  const ShareCopyLine({super.key, required this.copying});
 
   final ({int index, int count, String name, int copied, int? total}) copying;
 

@@ -8,14 +8,17 @@
 //  2. refuses a photo of more than 50 megapixels (tooLarge), and a run while the memory free is below the need of the
 //     level (outOfMemory with enhanceMemoryMessage, which the panel says as "close other programs"): sd.cpp refused
 //     SeedVR2 three times on the 16 GB laptop of the probe with 1 to 2 GB free;
-//  3. runs the model of the level, its tiles told as "step 12 of 63";
+//  3. runs the model of the level, its tiles told as "step 12 of 63": on the whole picture of a flat photo, on each eye
+//     of a 3D photo, on the seam and the poles of a 360° photo apart (enhance_layout.dart, release 53);
 //  4. takes the colour fix for Rebuild details (SeedVR2 shifts tones; VOSR takes its own inside Natural), then the
 //     strength: the result blended with the photo;
 //  5. writes a JPEG of the quality of the original (85 to 97, 92 without one): the EXIF of the version keeps the date
 //     taken, its offset and the GPS position of the original, with the orientation 1 since the pixels are written
 //     upright (the photo shows the same way); the profile of its pixels; and our XMP packet (EnhancedPhotoXmp): the
 //     level, the strength, the model and its sum, Origin GeneratedContent, the IPTC digital source type of trained
-//     algorithmic media, the software in CreatorTool and a description that starts with "AI enhanced".
+//     algorithmic media, the software in CreatorTool and a description that starts with "AI enhanced"; the GPano tags
+//     of the original (those of a whole sphere for a 360° photo only its camera tells), and for a 3D photo side by side
+//     its eyes as our 3D photos write them.
 // The heavy pixel work runs in isolates of its own, so that the window stays responsive. Never throws: a failure is an
 // ImmersiveResult.failed, the work folder deleted either way.
 
@@ -31,12 +34,14 @@ import 'package:immich_mobile/desktop/ai/codec/sbs_codec.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_chain.dart' show SbsCodecChoice, mergedExif;
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/scene/scene_textures.dart' show encodeScenePicture;
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart' show EyeOrder, StereoEyes;
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:logging/logging.dart';
 
@@ -243,17 +248,34 @@ class EnhanceEngine implements ImmersiveEngine {
       }
       check();
 
+      // A 360° photo keeps its GPano tags, those of a whole sphere when only its camera told it; any other photo keeps
+      // those it has (a flat panorama)
+      final layout = job.layout;
+      var gpano = gpanoTagsOfFile(bytes);
+      if (layout.sphere && gpano.isEmpty) {
+        gpano = wholeSphereGPanoTags(width, height);
+      }
+      final cover = layout.sphere ? sphereCoverOfTags(gpano) : EnhanceSphereCover.whole;
+
       enter(ImmersiveStage.loadingModels, 60);
-      folder = workFolder(job.id);
+      final work = folder = workFolder(job.id);
+      var pieces = 0;
       final Uint8List result;
       try {
-        result = await backend.enhance(
+        result = await enhanceLaidOut(
           picture,
-          workFolder: folder.path,
-          seed: job.seed,
-          cancel: cancel,
+          layout,
+          (piece, onStep) {
+            // Each piece of a 360° or 3D photo in a folder of its own: the model writes its tiles there
+            final into = pieces++ == 0
+                ? work.path
+                : (Directory('${work.path}${Platform.pathSeparator}piece-$pieces')..createSync(recursive: true)).path;
+            return backend.enhance(piece, workFolder: into, seed: job.seed, cancel: cancel, onStep: onStep);
+          },
+          cover: cover,
           onStep: (done, all) =>
               enter(ImmersiveStage.generating, all == 0 ? 80 : 80 + 780 * done ~/ all, step: done, steps: all),
+          compute: (piece) => Isolate.run(piece, debugName: 'enhance-layout'),
         );
       } on BackendException catch (error) {
         throw _Stop(error.code, error.message);
@@ -288,6 +310,15 @@ class EnhanceEngine implements ImmersiveEngine {
         created: job.created,
         creatorTool: job.creatorTool,
         derivativeId: job.derivativeId,
+        input: layout.xmp,
+        // Two eyes side by side as a 3D photo of ours tells them, so that the viewers show it in 3D
+        stereoEyes: layout.eyes == EnhanceEyes.sideBySide && !layout.sphere
+            ? (layout.halfEyes ? StereoEyes.half : StereoEyes.full)
+            : null,
+        eyeOrder: layout.eyes == EnhanceEyes.sideBySide && !layout.sphere
+            ? (layout.rightFirst ? EyeOrder.rightLeft : EyeOrder.leftRight)
+            : null,
+        gpano: gpano,
       ).toXml();
       final exif = photo.exif;
       final quality = sbsQualityFor(photo.quality);

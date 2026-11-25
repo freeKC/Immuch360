@@ -9,6 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart' show ConversionKind;
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart'
+    show aiFeaturesEnabledProvider, offeredConversionKindsProvider;
+import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart' show shareConversionOpenerProvider;
+import 'package:immich_mobile/desktop/ai/ui/splat_dialog.dart' show aiSplatScenesOnProvider, shareSplatOpenerProvider;
 import 'package:immich_mobile/desktop/video/android_mpv.dart';
 import 'package:immich_mobile/desktop/video/av2_gate.dart';
 import 'package:immich_mobile/desktop/video/desktop_audio_track_button.dart';
@@ -2061,6 +2066,14 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
     // The flat 3D videos told by their file name on a Meta Quest, experimental and on by default (Settings, Advanced)
     final flat3dByName = isHorizonOs == true && ref.watch(appConfigProvider.select((c) => c.viewer.flat3dByName));
     final canUpload = !tvMode && ref.watch(hasServerProvider);
+    // Immuch360 Desktop: "Make 3D (AI)" (a 3D video) and "Make a splat scene (AI)" of a video of a share, as for a
+    // video of the library (lib/desktop/ai/ui/share_conversion.dart, lib/desktop/ai/ui/splat_dialog.dart)
+    final aiDesktop = CurrentPlatform.isDesktop && !tvMode;
+    final aiMake3d =
+        aiDesktop &&
+        ref.watch(aiFeaturesEnabledProvider) &&
+        ref.watch(offeredConversionKindsProvider).contains(ConversionKind.stereoVideo);
+    final aiSplat = aiDesktop && ref.watch(aiSplatScenesOnProvider);
     final canPlayOn = !tvMode && isHorizonOs == false && !CurrentPlatform.isDesktop;
     // The player of a film, on a build with libmpv (the Meta Quest build of release 46): Automatic, Device or mpv
     final canChoosePlayer = !CurrentPlatform.isDesktop && (ref.watch(androidMpvAvailableProvider).valueOrNull ?? false);
@@ -2174,7 +2187,9 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                           canDownload ||
                           canChoosePlayer ||
                           watchActions.restart ||
-                          watchActions.unwatch))
+                          watchActions.unwatch ||
+                          aiMake3d ||
+                          aiSplat))
                     PopupMenuButton<void>(
                       tooltip: context.t.more,
                       itemBuilder: (context) => [
@@ -2235,6 +2250,27 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
                             child: ListTile(
                               leading: const Icon(Icons.backup_outlined),
                               title: Text(context.t.network_upload_action),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        if (aiMake3d)
+                          PopupMenuItem<void>(
+                            key: const Key('ai_make_3d'),
+                            onTap: () =>
+                                unawaited(ref.read(shareConversionOpenerProvider)(this.context, [video.entry])),
+                            child: ListTile(
+                              leading: const Icon(Icons.view_in_ar_outlined),
+                              title: Text(context.t.ai_immersive_make_3d),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        if (aiSplat)
+                          PopupMenuItem<void>(
+                            key: const Key('ai_make_splat'),
+                            onTap: () => unawaited(ref.read(shareSplatOpenerProvider)(this.context, [video.entry])),
+                            child: ListTile(
+                              leading: const Icon(Icons.scatter_plot_outlined),
+                              title: Text(context.t.ai_immersive_splat_make),
                               contentPadding: EdgeInsets.zero,
                             ),
                           ),

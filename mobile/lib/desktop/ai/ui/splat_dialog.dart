@@ -30,6 +30,13 @@
 // with the name, the file, what was filmed and the .ply. The launcher gives it to the queue of the splat scenes (lot
 // SP6, wired by lot SP8): one job whose source names the scene and reads its first photo, and whose members the engine
 // reads one after the other, an original of the server with the checksum Immich gives for it.
+//
+// From a share opened in the app too (release 53; FreeKC, 22 November 2026: the AI functions take remote files): the
+// photos or the video picked in the browser of a share, or the video of its page. Nothing is copied while the dialog
+// plans them: each member is copied by the job when it reads it (ShareFileSource.prepare), and the scene goes to the
+// folder of my choice, as the 3D videos of a share do (a scene is never written into a share in this version). What the
+// dialog knows of such a photo is its name and its frame as the share listed them: a 360° photo is told by its frame,
+// a 360° video by its frame or its name.
 
 import 'dart:async';
 import 'dart:io';
@@ -43,6 +50,7 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/desktop_conversion_tools.dart';
 import 'package:immich_mobile/desktop/ai/creator/destination.dart';
 import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_file_source.dart';
 import 'package:immich_mobile/desktop/ai/creator/splat_members.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
@@ -53,12 +61,15 @@ import 'package:immich_mobile/desktop/ai/splat/splat_quality.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_parts.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversions_panel.dart';
+import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/desktop/ai/ui/splat_plan.dart';
 import 'package:immich_mobile/desktop/files/file_pickers.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/actions/action.dart';
@@ -455,11 +466,81 @@ Future<void> openSplatDialog(
   }
 }
 
+/// Opens the dialog of a splat scene on [entries], files of one share opened in the app; once the scene was handed to
+/// the queue, the panel of the conversions shows. True once it was.
+Future<bool> openShareSplatDialog(BuildContext context, List<NetworkEntry> entries) async {
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final launched = await showDialog<bool>(
+    context: context,
+    builder: (context) => SplatDialog(shareFiles: entries),
+  );
+  if (launched != true) {
+    return false;
+  }
+  final overlay = navigator.mounted ? navigator.overlay : null;
+  if (overlay != null && overlay.mounted) {
+    unawaited(showConversionsPanel(overlay.context));
+  }
+  return true;
+}
+
+/// Opens the dialog of a splat scene on files of a share, true once the scene was handed to the queue; replaced in
+/// tests
+final shareSplatOpenerProvider = Provider<Future<bool> Function(BuildContext context, List<NetworkEntry> entries)>(
+  (ref) => openShareSplatDialog,
+);
+
+/// "Make a splat scene (AI)" in the bar of a selection of the browser of a share, after "Enhance (AI)": greyed for a
+/// selection without a photo or a video, and with the reason of the gate when it refuses
+class DesktopShareMakeSplatButton extends ConsumerWidget {
+  const DesktopShareMakeSplatButton({super.key, required this.entries, required this.onLaunched});
+
+  final List<NetworkEntry> entries;
+  final VoidCallback onLaunched;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(aiSplatScenesOnProvider)) {
+      return const SizedBox.shrink();
+    }
+    final gate = ref.watch(aiGateResultForProvider(AiFeature.splatScene)).valueOrNull;
+    final refusal = aiGateRefuses(gate) ? splatGateReasonText(context.t, gate!) : null;
+    final media = entries.any((entry) => entry.isImage || entry.isVideo);
+    Future<void> open() async {
+      if (await ref.read(shareSplatOpenerProvider)(context, entries)) {
+        onLaunched();
+      }
+    }
+
+    final button = FilledButton.tonalIcon(
+      key: const Key('ai_make_splat'),
+      icon: const Icon(Icons.scatter_plot_outlined),
+      label: Text(context.t.ai_immersive_splat_make),
+      onPressed: media && refusal == null ? () => unawaited(open()) : null,
+    );
+    return refusal == null ? button : Tooltip(key: const Key('ai_make_splat_refused'), message: refusal, child: button);
+  }
+}
+
+/// A video of a share that is 360°, as far as its listing tells: the frame of a whole sphere, the words of its name
+/// (360, vr, equirect), or the file of a 360° camera
+bool shareVideoLooks360(NetworkEntry entry) {
+  final name = entry.name.toLowerCase();
+  return name.endsWith('.insv') ||
+      name.endsWith('.360') ||
+      isEquirectFrame(entry.width, entry.height) ||
+      guessSphereCoverage(fileName: entry.name, width: null, height: null) != SphereCoverage.full ||
+      RegExp(r'(^|[._\- ])(360|vr|equirect)([._\- ]|$)').hasMatch(name);
+}
+
 /// See the top of this file
 class SplatDialog extends ConsumerStatefulWidget {
-  const SplatDialog({super.key, required this.assets});
+  const SplatDialog({super.key, this.assets = const [], this.shareFiles = const []});
 
   final List<BaseAsset> assets;
+
+  /// The files of a share opened in the app it is opened on instead of [assets] (see the top of this file)
+  final List<NetworkEntry> shareFiles;
 
   @override
   ConsumerState<SplatDialog> createState() => _SplatDialogState();
@@ -571,6 +652,9 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
   /// and a video, several videos) is not read. Null once the dialog closed meanwhile. The focal lengths are read after,
   /// for the photos used only (_readLenses).
   Future<List<SplatCandidate>?> _read() async {
+    if (widget.shareFiles.isNotEmpty) {
+      return _readShare();
+    }
     final assets = widget.assets;
     final videos = assets.where((asset) => asset.isVideo).length;
     if (videos > 1 || (videos == 1 && assets.any((asset) => !asset.isVideo))) {
@@ -604,6 +688,24 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
       candidates.add(SplatCandidate(asset: asset, facts: known, found: await files.locate(asset)));
     }
     return candidates;
+  }
+
+  /// The photos or the video of a share, as its listing tells them, each read by its job when it runs; the scene goes
+  /// to the folder of my choice (see the top of this file)
+  List<SplatCandidate> _readShare() {
+    final make = ref.read(shareConversionSourceProvider);
+    return [
+      for (final entry in widget.shareFiles)
+        if (!entry.isImage && !entry.isVideo)
+          SplatCandidate(asset: shareConversionAsset(entry))
+        else
+          SplatCandidate(
+            asset: shareConversionAsset(entry),
+            facts: ConversionPhotoFacts(isPanorama: entry.isImage && isEquirectFrame(entry.width, entry.height)),
+            isVideo360: entry.isVideo && shareVideoLooks360(entry),
+            found: (location: ShareOriginal(name: entry.name), source: make(entry)),
+          ),
+    ];
   }
 
   /// [plan] with the lenses of the photos it uses, read from the heads of their files: only the photos used (200 at
@@ -793,7 +895,12 @@ class _SplatDialogState extends ConsumerState<SplatDialog> {
       return;
     }
     ref.read(conversionJobInfoProvider.notifier).addAll({
-      for (final id in ids) id: ConversionJobInfo(asset: members.first.asset, isNetwork: destination.isNetwork),
+      for (final id in ids)
+        id: ConversionJobInfo(
+          // A file of a share is no photo of the app: its row shows no thumbnail of the timeline
+          asset: members.first.source is ShareFileSource ? null : members.first.asset,
+          isNetwork: destination.isNetwork,
+        ),
     });
     final kept = await _store.read();
     if (kept.splatSubject != _subject || kept.splatKeepPly != _keepPly) {

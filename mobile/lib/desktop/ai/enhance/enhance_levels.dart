@@ -11,6 +11,8 @@
 //  - Natural: VOSR 2.0 1.4B int8 (Apache-2.0) through the ONNX Runtime of the app, on the processor: the most
 //    faithful of the three in the probe, and the level a Mac or a computer without a suitable card gets.
 
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
+
 /// The three levels of "Enhance (AI)", in the order of the dialog
 enum EnhanceLevel {
   sharpen('Sharpen', 60),
@@ -40,11 +42,11 @@ enum EnhanceLevel {
 
 /// What the dialog chose for a batch: the level and the strength, 0 to 100 percent
 class EnhanceSettings {
-  const EnhanceSettings({required this.level, required this.strength, this.pixels})
+  const EnhanceSettings({required this.level, required this.strength, this.pixels, this.layout = EnhanceLayout.flat})
     : assert(strength >= 0 && strength <= 100, 'A strength is a percentage');
 
   /// The level at its default strength
-  EnhanceSettings.of(this.level, {this.pixels}) : strength = level.defaultStrength;
+  EnhanceSettings.of(this.level, {this.pixels, this.layout = EnhanceLayout.flat}) : strength = level.defaultStrength;
 
   final EnhanceLevel level;
   final int strength;
@@ -53,19 +55,33 @@ class EnhanceSettings {
   /// (enhanceJobMemoryOf); null when not known
   final int? pixels;
 
+  /// What the photo is: flat, 360°, 3D (enhance_layout.dart)
+  final EnhanceLayout layout;
+
   /// The share of the result in the file written, 0 to 1
   double get blend => strength / 100;
 
   /// The same settings for a photo of [pixels]
-  EnhanceSettings forPixels(int? pixels) => EnhanceSettings(level: level, strength: strength, pixels: pixels);
+  EnhanceSettings forPixels(int? pixels) =>
+      EnhanceSettings(level: level, strength: strength, pixels: pixels, layout: layout);
+
+  /// The same settings for a photo of [pixels] laid out as [layout]
+  EnhanceSettings forPhoto({int? pixels, EnhanceLayout? layout}) =>
+      EnhanceSettings(level: level, strength: strength, pixels: pixels, layout: layout ?? this.layout);
 
   @override
   bool operator ==(Object other) =>
-      other is EnhanceSettings && other.level == level && other.strength == strength && other.pixels == pixels;
+      other is EnhanceSettings &&
+      other.level == level &&
+      other.strength == strength &&
+      other.pixels == pixels &&
+      other.layout == layout;
 
   @override
-  int get hashCode => Object.hash(level, strength, pixels);
+  int get hashCode => Object.hash(level, strength, pixels, layout);
 
   @override
-  String toString() => 'EnhanceSettings(${level.name}, $strength %${pixels == null ? '' : ', $pixels px'})';
+  String toString() =>
+      'EnhanceSettings(${level.name}, $strength %${pixels == null ? '' : ', $pixels px'}'
+      '${layout.isFlat ? '' : ', $layout'})';
 }
