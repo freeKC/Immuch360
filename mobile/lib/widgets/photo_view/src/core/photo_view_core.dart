@@ -183,7 +183,12 @@ class PhotoViewCoreState extends State<PhotoViewCore>
       details.focalPoint.dx - scaleBoundaries.outerSize.width / 2,
       details.focalPoint.dy - scaleBoundaries.outerSize.height / 2,
     );
-    final double newScale = _scaleBefore! * details.scale;
+    var newScale = _scaleBefore! * details.scale;
+    // Immuch360 Desktop: a trackpad pinch stays between the fit and the largest zoom of the wheel
+    final limits = widget.desktopZoom ? controller.desktopScaleLimits?.call() : null;
+    if (limits != null && limits.max >= limits.min) {
+      newScale = newScale.clamp(limits.min, limits.max);
+    }
     final double scaleDelta = newScale / scale;
     final Offset newPosition =
         (controller.position + details.focalPointDelta) * scaleDelta - centeredFocalPoint * (scaleDelta - 1);

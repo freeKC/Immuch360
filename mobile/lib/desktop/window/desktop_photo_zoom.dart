@@ -26,7 +26,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
-import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 import 'package:intl/intl.dart';
 
@@ -219,6 +218,9 @@ bool desktopZoomPan(DesktopZoomTarget target, Offset delta) {
   return true;
 }
 
+final _zoomInKeys = desktopZoomInKeys({LogicalKeyboardKey.zoomIn});
+final _zoomOutKeys = desktopZoomOutKeys({LogicalKeyboardKey.zoomOut});
+
 /// What a key does to a still picture on a computer
 enum DesktopZoomKey { zoomIn, zoomOut, fit, oneToOne, panLeft, panRight, panUp, panDown, escape }
 
@@ -238,10 +240,11 @@ DesktopZoomKey? desktopZoomKeyOf(KeyEvent event, {bool? typing}) {
   if (!plain) {
     return null;
   }
-  if (isRemoteZoomIn(event)) {
+  // + and - of any layout and the zoom keys; not the page keys and the channels, which zoom on a TV remote only
+  if (_zoomInKeys.contains(key) || typesZoomInCharacter(event)) {
     return DesktopZoomKey.zoomIn;
   }
-  if (isRemoteZoomOut(event)) {
+  if (_zoomOutKeys.contains(key) || typesZoomOutCharacter(event)) {
     return DesktopZoomKey.zoomOut;
   }
   if (key == LogicalKeyboardKey.digit0 || key == LogicalKeyboardKey.numpad0) {
@@ -315,10 +318,15 @@ bool isDesktopZoomArrow(DesktopZoomKey key) => switch (key) {
 /// The animation of [DesktopZoomTarget.animateTo], on the ticker of the [DesktopPhotoZoom] that shows the target
 /// ([attachTicker]): the scale goes geometrically, so that the zoom looks even, each step through [setTransform] as
 /// a move at once would. At once without a ticker. A move at once ([apply]) stops it.
+///
+/// Its start and end are kept as shares of the fit, and each step is put back in the scale of the frame shown then:
+/// the asset viewer puts the original in place of the preview as soon as a photo is zoomed in, often during the
+/// animation itself (an original in the cache, a fast local one), and the same zoom is then another scale (25 times
+/// the fit, past the largest zoom, before the repair round of release 53).
 mixin DesktopZoomAnimator on ChangeNotifier implements DesktopZoomTarget {
   AnimationController? _animation;
-  ({double scale, Offset position})? _from;
-  ({double scale, Offset position})? _to;
+  ({double zoom, Offset position})? _from;
+  ({double zoom, Offset position})? _to;
 
   /// Moves the picture, the animation's steps included
   @protected
@@ -336,14 +344,14 @@ mixin DesktopZoomAnimator on ChangeNotifier implements DesktopZoomTarget {
     final from = _from;
     final to = _to;
     final animation = _animation;
-    if (from == null || to == null || animation == null) {
+    final frame = this.frame;
+    if (from == null || to == null || animation == null || frame == null) {
       return;
     }
     final t = Curves.easeOutCubic.transform(animation.value);
-    setTransform(
-      from.scale * math.pow(to.scale / from.scale, t),
-      t >= 1 ? to.position : Offset.lerp(from.position, to.position, t)!,
-    );
+    final scale = (frame.fitScale * from.zoom * math.pow(to.zoom / from.zoom, t)).clamp(frame.fitScale, frame.maxScale);
+    final position = t >= 1 ? to.position : Offset.lerp(from.position, to.position, t)!;
+    setTransform(scale, desktopZoomClamp(frame, scale, position));
   }
 
   @override
@@ -355,12 +363,13 @@ mixin DesktopZoomAnimator on ChangeNotifier implements DesktopZoomTarget {
   @override
   Future<void> animateTo(double scale, Offset position) {
     final animation = _animation;
-    if (animation == null || this.scale <= 0 || scale <= 0) {
+    final frame = this.frame;
+    if (animation == null || frame == null || frame.fitScale <= 0 || this.scale <= 0 || scale <= 0) {
       apply(scale, position);
       return Future.value();
     }
-    _from = (scale: this.scale, position: this.position);
-    _to = (scale: scale, position: position);
+    _from = (zoom: this.scale / frame.fitScale, position: this.position);
+    _to = (zoom: scale / frame.fitScale, position: position);
     return animation.forward(from: 0).orCancel.catchError((_) {});
   }
 
@@ -395,8 +404,23 @@ class PhotoViewZoomTarget extends ChangeNotifier with DesktopZoomAnimator {
     if (identical(controller, _controller)) {
       return;
     }
+    _releaseLimits();
     _controller = controller;
+    // A trackpad pinch, read by the PhotoView itself, keeps the limits of the wheel
+    controller?.desktopScaleLimits = _scaleLimits;
     _follow();
+  }
+
+  ({double min, double max})? _scaleLimits() {
+    final frame = _disposed ? null : this.frame;
+    return frame == null ? null : (min: frame.fitScale, max: frame.maxScale);
+  }
+
+  void _releaseLimits() {
+    final controller = _controller;
+    if (controller != null && controller.desktopScaleLimits == _scaleLimits) {
+      controller.desktopScaleLimits = null;
+    }
   }
 
   void _follow() {
@@ -459,6 +483,7 @@ class PhotoViewZoomTarget extends ChangeNotifier with DesktopZoomAnimator {
 
   @override
   void dispose() {
+    _releaseLimits();
     _disposed = true;
     unawaited(_changes?.cancel());
     _changes = null;
@@ -757,12 +782,16 @@ class _DesktopPhotoZoomState extends State<DesktopPhotoZoom> with TickerProvider
     });
   }
 
+  /// Whether [event] is the left button on a zoomed picture, which pans it
+  bool _pans(PointerDownEvent event) =>
+      widget.enabled &&
+      widget.mouseDrag &&
+      event.kind == PointerDeviceKind.mouse &&
+      event.buttons == kPrimaryMouseButton &&
+      desktopZoomed(widget.target);
+
   void _onPointerDown(PointerDownEvent event) {
-    if (widget.enabled &&
-        widget.mouseDrag &&
-        event.kind == PointerDeviceKind.mouse &&
-        event.buttons == kPrimaryMouseButton &&
-        desktopZoomed(widget.target)) {
+    if (_pans(event)) {
       setState(() => _panPointer = event.pointer);
     }
   }
@@ -843,6 +872,12 @@ class _DesktopPhotoZoomState extends State<DesktopPhotoZoom> with TickerProvider
       child: RawGestureDetector(
         behavior: HitTestBehavior.translucent,
         gestures: {
+          // A drag that pans is no click: without it a short sideways drag, which no drag of the viewer takes, ended
+          // as a tap (the bars of the asset viewer shown or hidden, or the next photo with tapToNavigate)
+          _MousePanClaim: GestureRecognizerFactoryWithHandlers<_MousePanClaim>(
+            () => _MousePanClaim(debugOwner: this),
+            (recognizer) => recognizer.claims = _pans,
+          ),
           DoubleTapGestureRecognizer: GestureRecognizerFactoryWithHandlers<DoubleTapGestureRecognizer>(
             () => DoubleTapGestureRecognizer(debugOwner: this),
             (recognizer) => recognizer
@@ -891,4 +926,35 @@ class _DesktopPhotoZoomState extends State<DesktopPhotoZoom> with TickerProvider
       ),
     );
   }
+}
+
+/// Takes the gesture of a left button that pans a zoomed picture as soon as it moves, so that the tap, the double click
+/// and the drags of the views under it lose it; a press that does not move stays a click
+class _MousePanClaim extends OneSequenceGestureRecognizer {
+  _MousePanClaim({super.debugOwner}) : super(supportedDevices: const {PointerDeviceKind.mouse});
+
+  /// Whether a press pans, asked as it comes (before the listener of the pan sees it)
+  bool Function(PointerDownEvent event) claims = _never;
+
+  static bool _never(PointerDownEvent event) => false;
+
+  @override
+  bool isPointerAllowed(PointerDownEvent event) => super.isPointerAllowed(event) && claims(event);
+
+  @override
+  void handleEvent(PointerEvent event) {
+    if (event is PointerMoveEvent && event.delta != Offset.zero) {
+      resolve(GestureDisposition.accepted);
+      stopTrackingPointer(event.pointer);
+    } else if (event is PointerUpEvent || event is PointerCancelEvent) {
+      resolve(GestureDisposition.rejected);
+      stopTrackingPointer(event.pointer);
+    }
+  }
+
+  @override
+  void didStopTrackingLastPointer(int pointer) {}
+
+  @override
+  String get debugDescription => 'desktop zoom pan';
 }

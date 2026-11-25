@@ -107,6 +107,10 @@ void main() {
       expect(of(LogicalKeyboardKey.escape), DesktopZoomKey.escape);
       expect(of(LogicalKeyboardKey.digit1, character: '1', typing: true), isNull);
       expect(of(LogicalKeyboardKey.keyA, character: 'a'), isNull);
+      // The page keys of a TV remote zoom there only: on a computer they keep their meaning (repair round of 53)
+      expect(of(LogicalKeyboardKey.pageUp), isNull);
+      expect(of(LogicalKeyboardKey.pageDown), isNull);
+      expect(of(LogicalKeyboardKey.channelUp), isNull);
     });
 
     test('the zoom keys are always taken, the arrows and Escape only once zoomed in', () {
