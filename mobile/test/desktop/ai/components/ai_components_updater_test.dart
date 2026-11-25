@@ -341,8 +341,34 @@ void main() {
     await updates.refresh();
     expect(updates.unused.bytes, 64);
 
-    expect(await updates.removeUnused(), AiRemoveOutcome.removed);
+    expect(await updates.removeUnused(listed: updates.unused), AiRemoveOutcome.removed);
     expect(leftover.existsSync(), isFalse);
     expect(updates.unused.isEmpty, isTrue);
+  });
+
+  test('Resume asks again when the connection became metered during the pause', () async {
+    final components = service();
+    var metered = false;
+    final updates = AiComponentsUpdater(
+      service: components,
+      platform: AiPlatform.linuxX64,
+      metered: () async => metered,
+    );
+    downloader.hold = Completer<void>();
+    final run = updates.updateAll();
+    await downloader.reached.future;
+    updates.pause();
+    expect(await run, AiUpdateOutcome.paused);
+    downloader.hold = null;
+
+    metered = true;
+    expect(await updates.resume(), AiUpdateOutcome.needsConfirmation);
+    expect(updates.phase, AiUpdatePhase.paused);
+    expect(downloader.asked, ['depth'], reason: 'nothing more downloaded before the answer');
+    expect((await updates.askFor(updates.pausedBytes))?.metered, isTrue);
+
+    expect(await updates.resume(confirmed: true), AiUpdateOutcome.updated);
+    expect(at(depth2).readAsBytesSync(), depthNew);
+    expect(updates.phase, AiUpdatePhase.done);
   });
 }

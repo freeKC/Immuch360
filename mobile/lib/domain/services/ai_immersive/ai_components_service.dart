@@ -197,6 +197,7 @@ class AiComponentsService extends ChangeNotifier {
     @visibleForTesting Future<void> Function(FileSystemEntity entity)? delete,
     this._setExecutable = setExecutableBit,
     this.freeSpace,
+    this.catalogueRelease = aiComponentsCatalogueRelease,
   }) : _downloader = downloader ?? AiComponentDownloader(),
        inUse = inUse ?? _never,
        _now = now ?? DateTime.now,
@@ -211,6 +212,9 @@ class AiComponentsService extends ChangeNotifier {
 
   /// Reads the free space of the drive of the components; null where it is not checked (the Quest)
   final AiFreeSpaceReader? freeSpace;
+
+  /// The release of the app the catalogue comes with ([aiComponentsCatalogueRelease]), written into each entry
+  final int catalogueRelease;
 
   /// Whether a conversion runs, set by the engine: removal waits for its end
   bool Function() inUse;
@@ -470,6 +474,14 @@ class AiComponentsService extends ChangeNotifier {
   static bool _isCurrent(AiComponent component, Map<String, dynamic> entry) =>
       component.sha256 == null || entry['sha256'] == component.sha256;
 
+  /// Whether [entry] of installed.json was written by a newer version of the app sharing this folder (its catalogue
+  /// is of a later release): never updated back to the version of this catalogue by itself, never counted as unused.
+  /// The entries written before release 52 carry no release and are older.
+  bool _fromNewerApp(Map<String, dynamic> entry) {
+    final release = entry['catalogue'];
+    return release is int && release > catalogueRelease;
+  }
+
   /// Whether the file or folder [entry] of installed.json names is in [root]
   static bool _entryOnDisk(Directory root, Map<String, dynamic> entry) {
     final path = entry['path'];
@@ -665,6 +677,7 @@ class AiComponentsService extends ChangeNotifier {
         'sha256': component.sha256,
         'installedAt': installedAt.toUtc().toIso8601String(),
         'source': source,
+        'catalogue': catalogueRelease,
       };
       // Not written: not installed, and the next call writes it (the file in place is kept when its sum is right)
       await _save(
@@ -786,7 +799,7 @@ class AiComponentsService extends ChangeNotifier {
       if ((platform == null || component.platforms.contains(platform)) &&
           component.isComplete &&
           statusOf(component).state == AiComponentState.outdated)
-        if (_formersOf(component).firstOrNull case final former?)
+        if (_formersOf(component).firstOrNull case final former? when !_fromNewerApp(former.entry))
           AiComponentUpdate(component, installedVersion: '${former.entry['version'] ?? ''}'),
   ];
 
@@ -819,8 +832,9 @@ class AiComponentsService extends ChangeNotifier {
     }
 
     final entries = [
-      for (final id in _installed.components.keys)
-        if (!_ids.contains(id) && (replacedBy[id] == null || replacedAlready(replacedBy[id]!))) id,
+      for (final MapEntry(key: id, value: entry) in _installed.components.entries)
+        if (!_ids.contains(id) && !_fromNewerApp(entry) && (replacedBy[id] == null || replacedAlready(replacedBy[id]!)))
+          id,
     ];
     final needed = <String>{
       for (final component in catalogue) ...[
@@ -866,14 +880,25 @@ class AiComponentsService extends ChangeNotifier {
     return AiUnusedFiles(entries: entries, paths: paths, bytes: bytes);
   }
 
-  /// Deletes what unusedFiles() finds: the entries first, then the files, a file the system holds at the next start.
-  /// Refused while a conversion, a download or a move runs.
-  Future<AiRemoveOutcome> removeUnused() async {
+  /// Deletes what unusedFiles() finds and [listed] holds (the list the user was shown and confirmed: nothing else goes,
+  /// whatever was added since): the entries first, then the files, a file the system holds at the next start. Refused
+  /// while a conversion, a download or a move runs.
+  Future<AiRemoveOutcome> removeUnused({required AiUnusedFiles listed}) async {
     await load();
     if (inUse() || _installs.isNotEmpty || _move != null) {
       return AiRemoveOutcome.busy;
     }
-    final unused = await unusedFiles();
+    final found = await unusedFiles();
+    final unused = AiUnusedFiles(
+      entries: [
+        for (final id in found.entries)
+          if (listed.entries.contains(id)) id,
+      ],
+      paths: [
+        for (final path in found.paths)
+          if (listed.paths.contains(path)) path,
+      ],
+    );
     if (unused.isEmpty) {
       return AiRemoveOutcome.removed;
     }

@@ -14,6 +14,7 @@ import 'package:immich_mobile/domain/services/ai_immersive/ai_components_updater
 import 'package:immich_mobile/presentation/widgets/ai_immersive/components_tile.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/utils/bytes_units.dart';
+import 'package:immich_ui/immich_ui.dart' show SettingsCard;
 
 import '../../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../../widget_tester_extensions.dart';
@@ -40,6 +41,11 @@ class _FakeUpdater extends AiComponentsUpdater {
   var pauses = 0;
   var resumes = 0;
   var removals = 0;
+
+  /// What resume answers first: needsConfirmation when the connection became metered during the pause
+  AiUpdateOutcome resumeAnswer = AiUpdateOutcome.updated;
+  final resumeCalls = <bool>[];
+  AiUnusedFiles? removedListed;
 
   void changed() => notifyListeners();
 
@@ -86,14 +92,19 @@ class _FakeUpdater extends AiComponentsUpdater {
   void pause() => pauses++;
 
   @override
-  Future<AiUpdateOutcome> resume() async {
+  Future<AiUpdateOutcome> resume({bool confirmed = false}) async {
     resumes++;
-    return AiUpdateOutcome.updated;
+    resumeCalls.add(confirmed);
+    return confirmed ? AiUpdateOutcome.updated : resumeAnswer;
   }
 
   @override
-  Future<AiRemoveOutcome> removeUnused() async {
+  int get pausedBytes => fakeTotal - fakeReceived;
+
+  @override
+  Future<AiRemoveOutcome> removeUnused({required AiUnusedFiles listed}) async {
     removals++;
+    removedListed = listed;
     return AiRemoveOutcome.removed;
   }
 }
@@ -200,7 +211,7 @@ void main() {
       await pump(tester, const AiUpdatesPanel());
 
       expect(
-        find.text('No connection. The installed versions stay; the update is tried again at the next start.'),
+        find.text('No connection. The installed versions stay: update them once the connection is back.'),
         findsOneWidget,
       );
       // Update all stays offered
@@ -226,7 +237,40 @@ void main() {
       expect(find.text('Files no longer used: 3.0 MiB'), findsOneWidget);
       await tester.tap(find.byKey(const Key('ai_updates_remove_unused')));
       await tester.pumpAndSettle();
+      // Asked first, with the list: another version of the app may use them
+      expect(find.byKey(const Key('ai_unused_confirm')), findsOneWidget);
+      expect(find.text('engines/x.new/run'), findsOneWidget);
+      expect(find.textContaining('Another version of Immuch360 on this computer may still use them'), findsOneWidget);
+      expect(updater.removals, 0);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(updater.removals, 0);
+
+      await tester.tap(find.byKey(const Key('ai_updates_remove_unused')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('ai_unused_confirm_yes')));
+      await tester.pumpAndSettle();
       expect(updater.removals, 1);
+      expect(updater.removedListed?.paths, ['engines/x.new/run'], reason: 'the list shown is the list removed');
+    });
+
+    testWidgets('Resume asks first when the connection became metered during the pause', (tester) async {
+      updater
+        ..fakeUpdates = twoUpdates
+        ..fakePhase = AiUpdatePhase.paused
+        ..fakeReceived = 50 * 1024 * 1024
+        ..fakeTotal = 100 * 1024 * 1024
+        ..resumeAnswer = AiUpdateOutcome.needsConfirmation
+        ..ask = const AiUpdateAsk(bytes: 50 * 1024 * 1024, metered: true);
+      await pump(tester, const AiUpdatesPanel());
+
+      await tester.tap(find.byKey(const Key('ai_updates_resume')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('ai_update_confirm')), findsOneWidget);
+      expect(find.text('This connection is metered. The update downloads 50.0 MiB.'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('ai_update_confirm_yes')));
+      await tester.pumpAndSettle();
+      expect(updater.resumeCalls, [false, true]);
     });
 
     testWidgets('with the AI features off nothing is downloaded from it', (tester) async {
@@ -261,6 +305,28 @@ void main() {
       await pump(tester, const AiUpdatesBarButton(), aiOn: false);
 
       expect(find.byKey(const Key('ai_updates_button')), findsNothing);
+    });
+
+    testWidgets('the narrow list of the settings shows the same badge on its card', (tester) async {
+      updater.fakeUpdates = twoUpdates;
+      await pump(
+        tester,
+        SettingsCard(
+          icon: Icons.computer_outlined,
+          title: 'This computer',
+          subtitle: '',
+          onTap: () {},
+          decorateIcon: (icon) => AiUpdatesBadge(child: icon),
+        ),
+      );
+      expect(tester.widget<Badge>(find.byKey(const Key('ai_updates_badge'))).isLabelVisible, isTrue);
+      expect(find.text('2'), findsOneWidget);
+    });
+
+    testWidgets('no count on This computer while the AI features are off', (tester) async {
+      updater.fakeUpdates = twoUpdates;
+      await pump(tester, const AiUpdatesBadge(child: Icon(Icons.computer_outlined)), aiOn: false);
+      expect(tester.widget<Badge>(find.byKey(const Key('ai_updates_badge'))).isLabelVisible, isFalse);
     });
 
     testWidgets('the badge of This computer counts the updates', (tester) async {

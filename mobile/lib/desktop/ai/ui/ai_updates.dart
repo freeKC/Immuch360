@@ -97,6 +97,69 @@ Future<bool> confirmAiUpdate(BuildContext context, AiUpdateAsk ask) async {
   return answer ?? false;
 }
 
+/// Asks before the files no longer used go, listing them: another version of the app sharing the folder may still use
+/// them (an AppImage beside an older package, a test build beside the release); true to remove them
+Future<bool> confirmAiRemoveUnused(BuildContext context, AiUnusedFiles unused) async {
+  final answer = await showDialog<bool>(
+    context: context,
+    builder: (context) {
+      final t = context.t;
+      final theme = Theme.of(context);
+      final lines = [...unused.entries, ...unused.paths];
+      return AlertDialog(
+        key: const Key('ai_unused_confirm'),
+        title: Text(t.ai_immersive_unused_confirm_title),
+        content: SizedBox(
+          width: 520,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(t.ai_immersive_unused_confirm_body(size: formatBytes(unused.bytes))),
+              const SizedBox(height: 12),
+              Flexible(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 240),
+                  child: ListView(
+                    key: const Key('ai_unused_list'),
+                    shrinkWrap: true,
+                    children: [
+                      for (final line in lines)
+                        Text(line, style: theme.textTheme.bodySmall?.copyWith(fontFamily: 'monospace')),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(autofocus: true, onPressed: () => Navigator.of(context).pop(false), child: Text(t.cancel)),
+          FilledButton(
+            key: const Key('ai_unused_confirm_yes'),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(t.ai_immersive_remove),
+          ),
+        ],
+      );
+    },
+  );
+  return answer ?? false;
+}
+
+/// Goes on with a paused update, asking first when the connection became metered during the pause
+Future<AiUpdateOutcome> resumeAiUpdate(BuildContext context, AiComponentsUpdater updater) async {
+  var outcome = await updater.resume();
+  if (outcome == AiUpdateOutcome.needsConfirmation) {
+    final ask = await updater.askFor(updater.pausedBytes);
+    if (!context.mounted || (ask != null && !await confirmAiUpdate(context, ask))) {
+      return AiUpdateOutcome.notStarted;
+    }
+    outcome = await updater.resume(confirmed: true);
+  }
+  return outcome;
+}
+
 /// Updates every component, or [only] that one, asking first when the updater says so
 Future<AiUpdateOutcome> startAiUpdate(BuildContext context, AiComponentsUpdater updater, {AiComponent? only}) async {
   Future<AiUpdateOutcome> run({required bool confirmed}) =>
@@ -147,9 +210,14 @@ class _AiUpdatesPanelState extends ConsumerState<AiUpdatesPanel> {
   Future<void> _removeUnused() async {
     final t = context.t;
     final messenger = ScaffoldMessenger.maybeOf(context);
+    // The list the user is shown is the one removed, nothing more (review of issue 21)
+    final listed = _updater.unused;
+    if (!await confirmAiRemoveUnused(context, listed) || !mounted) {
+      return;
+    }
     setState(() => _removing = true);
     try {
-      final outcome = await _updater.removeUnused();
+      final outcome = await _updater.removeUnused(listed: listed);
       final message = switch (outcome) {
         AiRemoveOutcome.removed => null,
         AiRemoveOutcome.nextStart => t.ai_immersive_removed_next_start,
@@ -205,7 +273,7 @@ class _AiUpdatesPanelState extends ConsumerState<AiUpdatesPanel> {
             title: Text(t.ai_immersive_updates_paused(done: progress.done, total: progress.total)),
             trailing: TextButton(
               key: const Key('ai_updates_resume'),
-              onPressed: widget.canDownload ? () => unawaited(updater.resume()) : null,
+              onPressed: widget.canDownload ? () => unawaited(resumeAiUpdate(context, updater)) : null,
               child: Text(t.ai_immersive_resume),
             ),
           )
@@ -339,11 +407,13 @@ class AiUpdatesBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final updater = ref.watch(aiComponentsUpdaterProvider);
+    // No count while the AI features are off, as the button of the app bar
+    final enabled = ref.watch(aiFeaturesEnabledProvider);
     return ListenableBuilder(
       listenable: updater,
       builder: (context, _) => Badge(
         key: const Key('ai_updates_badge'),
-        isLabelVisible: updater.updates.isNotEmpty,
+        isLabelVisible: enabled && updater.updates.isNotEmpty,
         label: Text('${updater.updates.length}'),
         child: child,
       ),

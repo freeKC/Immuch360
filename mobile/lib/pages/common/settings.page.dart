@@ -172,6 +172,10 @@ class _MobileLayout extends ConsumerWidget {
                     title: setting.title(context.t),
                     subtitle: setting.subtitle(context.t),
                     icon: setting.icon,
+                    // Immuch360 Desktop: the AI components that can be updated, as in the wide layout
+                    decorateIcon: setting == SettingSection.thisComputer && CurrentPlatform.isDesktop
+                        ? (icon) => AiUpdatesBadge(child: icon)
+                        : null,
                     onTap: () => context.pushRoute(SettingsSubRoute(section: setting)),
                   ),
                 ],

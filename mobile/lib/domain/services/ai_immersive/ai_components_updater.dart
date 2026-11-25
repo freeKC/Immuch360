@@ -209,8 +209,17 @@ class AiComponentsUpdater extends ChangeNotifier {
     }
   }
 
-  /// Goes on with what the pause left, from the bytes received
-  Future<AiUpdateOutcome> resume() => _start(_pausedOnly, confirmed: true);
+  /// Goes on with what the pause left, from the bytes received. The size was accepted before the pause, but the
+  /// connection may have become metered since: then needsConfirmation, and the caller asks before [confirmed]
+  Future<AiUpdateOutcome> resume({bool confirmed = false}) async {
+    if (_running == null && !confirmed && await _isMetered()) {
+      return AiUpdateOutcome.needsConfirmation;
+    }
+    return _start(_pausedOnly, confirmed: true);
+  }
+
+  /// What is left to download after the pause, for the question of [resume]
+  int get pausedBytes => _phase == AiUpdatePhase.paused ? (_totalBytes - _doneBytes).clamp(0, _totalBytes) : 0;
 
   /// The automatic update at the start of the app: when [enabled], on a connection that is not metered, and for at
   /// most [confirmAbove] bytes; otherwise the notice stays for the user
@@ -231,9 +240,9 @@ class AiComponentsUpdater extends ChangeNotifier {
     return updateAll(confirmed: true);
   }
 
-  /// Deletes what no component needs any more
-  Future<AiRemoveOutcome> removeUnused() async {
-    final outcome = await service.removeUnused();
+  /// Deletes what no component needs any more, of what [listed] holds (the list the user confirmed)
+  Future<AiRemoveOutcome> removeUnused({required AiUnusedFiles listed}) async {
+    final outcome = await service.removeUnused(listed: listed);
     await refresh();
     return outcome;
   }

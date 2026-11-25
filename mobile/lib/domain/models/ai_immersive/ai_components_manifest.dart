@@ -54,6 +54,13 @@ const aiComponentsGpuReleaseTag = 'ai-components-6';
 /// The components of "Enhance (AI)" (release 51, ai_enhance_manifest.dart)
 const aiComponentsEnhanceReleaseTag = 'ai-components-7';
 
+/// The release of the app this catalogue comes with (its versionCode less 3029998, so 52 for 3030050), written into
+/// each entry of installed.json: an older version of the app that shares the folder of the components (an AppImage
+/// beside an older .deb, a CI build beside the release) knows by it a file that a newer version installed, and never
+/// puts its own older version in its place by itself nor counts it as no longer used (review of issue 21, release
+/// 52). ai_components_catalogue_release_test.dart keeps it equal to the release of pubspec.yaml.
+const aiComponentsCatalogueRelease = 52;
+
 /// The repository whose releases host the components, but the AV2 decoder ([av2DecoderRepository])
 const aiComponentsRepository = 'freeKC/Immuch360';
 

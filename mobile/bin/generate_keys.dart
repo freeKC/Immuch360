@@ -126,6 +126,7 @@ const _kParamTypeOverrides = <String, String>{
   'ai_immersive_splat_quality_estimate.size': 'String',
   // The updates of the AI components (issue 21), their sizes written with formatBytes
   'ai_immersive_auto_update_subtitle.size': 'String',
+  'ai_immersive_unused_confirm_body.size': 'String',
   'ai_immersive_unused_files.size': 'String',
   'ai_immersive_update_confirm_large.size': 'String',
   'ai_immersive_update_confirm_metered.size': 'String',

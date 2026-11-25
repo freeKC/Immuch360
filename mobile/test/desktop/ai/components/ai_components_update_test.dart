@@ -13,8 +13,10 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/files/zip_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_component_archive.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/ai_components_updater.dart';
 import 'package:path/path.dart' as p;
 
 final _r1 = Uint8List.fromList(List.generate(24 * 1024, (index) => (index * 7) % 256));
@@ -90,13 +92,15 @@ void main() {
   void serve(AiComponent component, List<int> bytes) =>
       File(p.join(mirror.path, component.assetName)).writeAsBytesSync(bytes);
 
-  AiComponentsService service(List<AiComponent> catalogue, {bool Function()? inUse}) => AiComponentsService(
-    folder: () async => root,
-    downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
-    catalogue: catalogue,
-    inUse: inUse,
-    now: () => DateTime.utc(2026, 11, 24, 12),
-  );
+  AiComponentsService service(List<AiComponent> catalogue, {bool Function()? inUse, int? release}) =>
+      AiComponentsService(
+        folder: () async => root,
+        downloader: AiComponentDownloader(mirror: () => Uri.directory(mirror.path).toString()),
+        catalogue: catalogue,
+        inUse: inUse,
+        now: () => DateTime.utc(2026, 11, 24, 12),
+        catalogueRelease: release ?? aiComponentsCatalogueRelease,
+      );
 
   Map<String, dynamic> installedJson([Directory? folder]) {
     final file = File(p.join((folder ?? root).path, 'installed.json'));
@@ -419,7 +423,7 @@ void main() {
         ..writeAsBytesSync(List.filled(10, 1));
       final components = service([r1]);
 
-      expect(await components.removeUnused(), AiRemoveOutcome.removed);
+      expect(await components.removeUnused(listed: await components.unusedFiles()), AiRemoveOutcome.removed);
 
       expect(entries().keys, ['test-model']);
       expect(Directory(p.join(root.path, 'models', 'gone')).existsSync(), isFalse);
@@ -437,8 +441,136 @@ void main() {
 
       final components = service([r1], inUse: () => true);
 
-      expect(await components.removeUnused(), AiRemoveOutcome.busy);
+      expect(await components.removeUnused(listed: await components.unusedFiles()), AiRemoveOutcome.busy);
       expect(at(gone.installPath).existsSync(), isTrue);
+    });
+  });
+
+  group('another version of the app sharing the folder (review of issue 21)', () {
+    test('each entry names the release of the catalogue that installed it', () async {
+      serve(r1, _r1);
+      await service([r1], release: 52).install(r1);
+      expect((entries()['test-model'] as Map)['catalogue'], 52);
+    });
+
+    test('a file a newer version of the app installed is never offered as an update back to an older one', () async {
+      serve(r2, _r2);
+      await service([r2], release: 53).install(r2);
+
+      final older = service([r1], release: 52);
+      await older.load();
+
+      expect(older.updates(), isEmpty, reason: 'no badge, no Update all, no automatic update');
+      expect(at(r1.installPath).readAsBytesSync(), _r2);
+      expect((await older.unusedFiles()).isEmpty, isTrue);
+      final updates = AiComponentsUpdater(service: older);
+      expect(await updates.automatic(enabled: true), AiUpdateOutcome.nothing);
+      expect(at(r1.installPath).readAsBytesSync(), _r2);
+    });
+
+    test('an entry written before release 52 (no release) is older and still offered', () async {
+      await installEarlier(r1, _r1);
+      final json = installedJson();
+      ((json['components'] as Map<String, dynamic>)['test-model'] as Map).remove('catalogue');
+      File(p.join(root.path, 'installed.json')).writeAsStringSync(jsonEncode(json));
+
+      final components = service([r2], release: 52);
+      await components.load();
+      expect(components.updates().map((update) => update.component.id), ['test-model']);
+    });
+
+    test('the components of a newer version of the app are not unused for an older one', () async {
+      final newer = _model('n1', utf8.encode('newer'), id: 'newer-only', installPath: 'models/newer-only/n.bin');
+      serve(newer, utf8.encode('newer'));
+      await service([newer], release: 53).install(newer);
+      final dropped = _model('d1', utf8.encode('dropped'), id: 'dropped', installPath: 'models/dropped/d.bin');
+      serve(dropped, utf8.encode('dropped'));
+      await service([dropped], release: 51).install(dropped);
+
+      final unused = await service([r1], release: 52).unusedFiles();
+
+      expect(unused.entries, ['dropped']);
+      expect(unused.paths, isNot(contains(newer.installPath)));
+      expect(unused.paths, isNot(contains('licenses/newer-only.txt')));
+    });
+
+    test('Remove takes only what the user was shown, not what came since', () async {
+      final shown = _model('s1', utf8.encode('shown'), id: 'shown', installPath: 'models/shown/s.bin');
+      await installEarlier(shown, utf8.encode('shown'));
+      final components = service([r1]);
+      final listed = await components.unusedFiles();
+      expect(listed.entries, ['shown']);
+      at('engines/test-engine.new/run')
+        ..parent.createSync(recursive: true)
+        ..writeAsBytesSync(List.filled(10, 1));
+
+      expect(await components.removeUnused(listed: listed), AiRemoveOutcome.removed);
+
+      expect(at(shown.installPath).existsSync(), isFalse);
+      expect(at('engines/test-engine.new/run').existsSync(), isTrue);
+      expect((await components.unusedFiles()).paths, ['engines/test-engine.new/run']);
+    });
+  });
+
+  group('the swap of an archive folder (review of issue 21)', () {
+    final v1Files = {'run': utf8.encode('program one ' * 40)};
+    final v2Files = {'run': utf8.encode('program two ' * 40)};
+    final v2Zip = _zipOf(v2Files);
+    final v2 = _engine('2', v2Zip, v2Files);
+    late Directory folder;
+    late File archive;
+
+    setUp(() {
+      folder = Directory(p.join(root.path, 'engines', 'test-engine'))..createSync(recursive: true);
+      File(p.join(folder.path, 'run')).writeAsBytesSync(v1Files['run']!);
+      archive = File(p.join(temp.path, 'v2.zip'))..writeAsBytesSync(v2Zip);
+    });
+
+    test('the new folder in place, nothing left beside it', () async {
+      await installAiArchive(archive, folder, v2.archiveFiles);
+      expect(File(p.join(folder.path, 'run')).readAsBytesSync(), v2Files['run']);
+      expect(
+        root.listSync(recursive: true).map((entity) => p.basename(entity.path)),
+        isNot(contains('test-engine.old')),
+      );
+      expect(Directory('${folder.path}.new').existsSync(), isFalse);
+    });
+
+    test('a new folder that cannot take its place puts the old one back', () async {
+      var calls = 0;
+      Future<void> failSecond(Directory from, String to) async {
+        calls++;
+        if (calls == 2) {
+          throw const FileSystemException('held by the system');
+        }
+        await from.rename(to);
+      }
+
+      await expectLater(
+        installAiArchive(archive, folder, v2.archiveFiles, renameFolder: failSecond),
+        throwsA(isA<AiDownloadException>().having((error) => error.failure, 'failure', AiDownloadFailure.writeFailed)),
+      );
+
+      expect(File(p.join(folder.path, 'run')).readAsBytesSync(), v1Files['run']);
+      expect(Directory('${folder.path}.old').existsSync(), isFalse);
+      expect(Directory('${folder.path}.new').existsSync(), isFalse);
+    });
+
+    test('an old folder the system holds (it cannot be renamed) stays as it was', () async {
+      Future<void> failFirst(Directory from, String to) async {
+        if (from.path == folder.path) {
+          throw const FileSystemException('a file inside is held');
+        }
+        await from.rename(to);
+      }
+
+      await expectLater(
+        installAiArchive(archive, folder, v2.archiveFiles, renameFolder: failFirst),
+        throwsA(isA<AiDownloadException>()),
+      );
+
+      expect(File(p.join(folder.path, 'run')).readAsBytesSync(), v1Files['run']);
+      expect(Directory('${folder.path}.new').existsSync(), isFalse);
     });
   });
 
