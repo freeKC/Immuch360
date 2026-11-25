@@ -362,9 +362,15 @@ struct RawStitchSpec: Decodable {
     guard values.count == 9, values.allSatisfy({ $0.isFinite }) else {
       throw RawStitchError(reason: "\(name) is not 9 finite numbers")
     }
-    return (0..<3).map { row in
-      SIMD4<Float>(Float(values[3 * row]), Float(values[3 * row + 1]), Float(values[3 * row + 2]), 0)
+    // One row at a time with its types named: Xcode 27 gave up type-checking the map of a single expression
+    var result: [SIMD4<Float>] = []
+    for row in 0..<3 {
+      let x = Float(values[3 * row])
+      let y = Float(values[3 * row + 1])
+      let z = Float(values[3 * row + 2])
+      result.append(SIMD4<Float>(x, y, z, 0))
     }
+    return result
   }
 
   /// The determinant of a row major 3x3 matrix of 9 numbers
