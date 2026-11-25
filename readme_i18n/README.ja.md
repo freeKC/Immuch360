@@ -12,9 +12,9 @@
 
 デバイス、NAS、Immichサーバー、カメラ、ドローンにあるフラット、360°、3Dの写真と動画を。アカウントは不要です。Immuch360は無料のオープンソースアプリで、写真や動画を保存場所にあるまま読み込み、それぞれに合ったビューアーで再生します。フラットに、見回せる球体として、3Dで、あるいはヘッドセットで周囲全体に表示します。スマートフォン、タブレット、テレビ、Meta Questヘッドセット、コンピューターで動作します。アプリのウェブサイト[immuch360.com](https://immuch360.com/ja/)では、各画面でできることを89言語で紹介しています。
 
-**ビルド51とデスクトップビルド31 (バージョン3.4.6) の新機能。** WindowsとLinuxでは、[高画質化 (AI)](#make-a-photo-sharper-on-your-computer-ai)が甘い写真のよりシャープなコピーを元の写真の横に作ります。レベルは三つ: シャープ化、もっともらしい細部を作り出す細部を再構築、そして最も忠実で、Appleチップ搭載のMacでも提供されるナチュラルです (Macではまだ試していません)。各レベルはRTX 4060を搭載した一台のPCで一回ずつ実行しました。コンピューターがAIで[360°動画を360° 3D動画にします](#a-360-video-turned-into-a-360-3d-video) (実験的)。Windowsでは3D動画の深度をグラフィックスカードが推定します: RTX 4060でフレームあたり1.1 s、プロセッサーでは3.1 sです。AI機能はImmichサーバーと共有の動画を直接受け取り、開始前にダウンロードします。設定ファイルには[ライブラリに専用のカード](#keep-your-settings-in-a-file)があり、テレビはネットワーク共有に保存し、そこから復元します。コンピューターではEscapeで一つ前に戻ります。ストア版のビルドは[評価のお願いを減らし、より控えめに](#privacy)なり、設定に「Immuch360 を評価」と「うまく動作しませんか？」が加わります。Linuxでは、TIFF写真、新しいファイルを自動で表示するフォルダー、写真から作るスプラットシーン、片目で表示する3D動画に対応します。Android TVの写真の拡大はAndroid TVエミュレーターで動作を確認し、二つのクラッシュを修正しました: Android 9以前でのデバイスの写真と、Horizon OSが古すぎるQuestのイマーシブビューで、こちらは今はアップデートを促します。
+**ビルド52とデスクトップビルド32 (バージョン3.4.7) の新機能。** スマートフォンの[「再生先…」](#show-your-photos-and-videos-on-the-tv-from-your-phone)が、Immichライブラリ、共有、JellyfinとEmbyの写真と動画を、Immuch360を実行しているテレビ、Meta Quest、コンピューター (それぞれ自身のアカウントで開きます) や、ChromecastやGoogle TVに送れるようになり、スマートフォンの「前へ」、「スライドショー」、「次へ」で大画面を進められます。実機や実際のCastデバイスではまだ試していません。写真と動画の名前は[サムネイルの上でも読みやすいまま表示され](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)、バッジ、再生時間、タイムラインの月も同様です。コンピューターでは、インストールしたAIコンポーネントのどれかについて後のビルドが新しいバージョンを持ってきたとき、[ワンクリックで更新されます](#update-the-ai-components-in-one-click)。従量制の接続では更新せず、インストール済みの各バージョンは更新が検証されるまで残ります。Linuxには、インストールせずに動作し、ライブラリが足りないときはそれをインストールするディストリビューションのコマンドを示す[AppImage](#linux)が加わり、CIがArch Linux、openSUSE Tumbleweed、Ubuntu 22.04、Debian 12、Fedora 44で確認しました。iPhoneとiPadのアプリはXcode 27とiOS 27 SDKでビルドされています。
 
-**ビルド33から50の新機能。** [映画は止めたところから続きを再生します](#pick-up-a-film-where-you-stopped)。映画はより早く始まり、遅いサーバーからでも[止まらずに再生が続きます](#when-a-video-waits-or-will-not-play)。スマートフォンとコンピューターでは、タイムラインが[月と年までズームアウトします](#find-a-month-or-a-year-in-a-long-timeline)。AndroidスマートフォンやMeta Questでは、[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)でデバイスのフォルダーを共有のように開けて、TIFF写真も表示されます。Android TVは[リモコンで日付から検索でき](#on-android-tv-and-google-tv)、Meta Quest 3または3Sは[ガウシアンスプラットを開け](#explore-gaussian-splats-in-a-meta-quest-3-or-3s) (実験的)、右スティックでの回転とSPZバージョン4にも対応し、コンピューターは[NASの写真の3D版を作成します](#turn-one-photo-into-3d-a-scene-a-panorama)。グラフィックスチップを二つ持つWindowsノートPCでは、アプリが[速い方のチップで動くようになり](#when-a-video-waits-or-will-not-play)、8Kの映画も滑らかに再生されます。ガウシアンスプラットは[コンピューターとAndroidのスマートフォンやタブレットで開けるようになり](#explore-gaussian-splats-on-your-phone-tablet-or-computer)、WindowsコンピューターはAIで[写真や動画からスプラットシーンを作成し](#make-a-splat-scene-from-your-photos-or-a-video-ai)、あなたのImmichサーバーは[それを写真の中に保管し](#keep-a-splat-scene-on-your-immich-server)、その写真はタイムラインから開けます。コンピューターは[AV2動画を再生します](#play-av2-videos-on-your-computer)。いずれも実験的です。ビルド42からは、Immichライブラリ、共有、フォルダーにあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画が、Androidのスマートフォン、タブレット、テレビで[カメラのジャイロスコープで手ぶれ補正されて再生され](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)、デスクトップビルド22のスプラットシーンの作成では、近くで見るシーン向けに[「詳細」の品質を選べ](#make-a-splat-scene-from-your-photos-or-a-video-ai)、360°パノラマは[グラフィックスカードに3.5 GiBの空きがあれば始まります](#turn-one-photo-into-3d-a-scene-a-panorama)。いずれも実験的です。iPhoneとiPadのアプリは[App Storeで公開されています](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) (バージョン3.4.3)。ビルド43からは、アプリの更新通知がスマートフォンとタブレットでGoogle PlayまたはApp Storeを開きます。アプリのウェブサイト[immuch360.com](https://immuch360.com/ja/)は11月7日に公開されました。ビルド44とデスクトップビルド24からは、Meta Quest 3または3Sが[最大300,000個のガウシアンのスプラットを表示し](#explore-gaussian-splats-in-a-meta-quest-3-or-3s) (実験的)、コンピューターは[CtrlとShiftで複数の写真や動画を選択でき](#use-your-computer-as-the-media-player)、デコーダーが動画を受け付けないテレビは[サーバーのもう一方のファイルを自動で再生し](#when-a-video-waits-or-will-not-play)、グラフィックスカードを二つ持つノートPCでは選ばれた方のカードでパノラマが動き (実験的)、Questとコンピューターでは更新通知がそれぞれのストアまたはダウンロードページを開きます。ほかにも多くの修正があります。ビルド45とデスクトップビルド25からは、すべてのプラットフォームでバージョン3.4.0となり、アプリはImmich 3.4.0アプリに、その後のImmichの修正11件を加えたものに追従し、[Immich 3.4サーバーのJPEG XL写真](#keep-your-immich-library-with-more)を表示し、[Plexの映画を年ごとに](#watch-your-plex-films)開いて、映画ごとのページ、デバイスへのダウンロード、スマートフォンからのテレビでの再生に対応し (実験的)、ストア版のビルドでは評価をお願いすることがあり、コンピューターでは動画コンポーネントを[それぞれのオープンなリポジトリ](#licences-and-credits)から取り込みます。ビルド46とデスクトップビルド26 (バージョン3.4.1) からは、360°カメラのRAW動画がiPhoneとiPad、Meta Quest、Windowsでも[手ぶれ補正して再生され](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)、Meta Questは[自身のプレーヤーがデコードできないPlexの映画をlibmpvで再生し](#watch-your-plex-films)、スマートフォンは[そうした映画をChromecastやGoogle TVに送り](#watch-your-plex-films)、3D写真のAIによる立体感は[選んだ強さになります](#turn-one-photo-into-3d-a-scene-a-panorama)。いずれも実験的です。また、Plexアカウントでのログインで新しいサーバーを追加することもでき、アプリは[設定をファイルに保存します](#keep-your-settings-in-a-file)。ビルド47とデスクトップビルド27 (バージョン3.4.2) からは、Plexの映画が[デバイスでデコードできる音声トラックを再生して](#watch-your-plex-films)どのトラックかを表示し、画面に合ったバージョンを開き、接続が遅いときはより軽いバージョンを提案します。WindowsとmacOSではそのDolby TrueHDの音声を再生し、Androidは[ダウンロードを通知に表示し](#watch-your-plex-films)、Android TVでも映画をダウンロードでき、[バッテリー式のTapoカメラもライブ映像を表示します](#watch-your-home-cameras-on-the-big-screen) (実験的)。アカウントを含む設定ファイルを復元すると、Immichサーバーにもログインするようになりました。ビルド48とデスクトップビルド28 (バージョン3.4.3) からは、Windowsコンピューターが[動画をPC VRヘッドセットで再生します](#watch-your-videos-in-a-pc-vr-headset-from-windows)。SteamVR、Meta Horizon Link、またはほかのOpenXRランタイムを使います (プロジェクトではまだヘッドセットで試していません)。[他社製カメラがライブ映像を表示し](#cameras-of-other-brands-over-onvif-or-rtsp)、ONVIFで見つけるか、RTSPリンクで追加します (シミュレートしたカメラで確認済み、他社製の実機カメラはまだ試していません)。[DJI Osmo 360 IIとGoPro MAX 2のRAW動画は手ぶれ補正して再生され](#open-the-raw-files-of-360-cameras) (実験的)、Plexの映画は[スマートフォンでデータ不足にならなくなり](#when-a-video-waits-or-will-not-play)、LGとSamsungのテレビは[横倒しの動画をボタン一つで回転させ](#on-a-samsung-tv-tizen) (LGテレビではまだ試していません、Issue 17 の Samsung テレビは回転を拒否しました)、最新のサーバーに「サーバーをアップデートできます」と表示されることはなくなりました。ビルド49とデスクトップビルド29、バージョン3.4.4からは、アプリが[JellyfinとEmbyのサーバーを自ら読み込み](#watch-your-jellyfin-and-emby-libraries) (実験的、実機ではまだ試していません)、ネットワーク上で見つけ、テレビやヘッドセットではQuick Connectでログインし、元のファイルを再生するので360°動画は360°のままです。Meta Questの大画面では、写真が[閲覧中も設定したサイズと位置を保ち、スライドショーとして再生されます](#browse-your-photos-on-the-big-screen-of-the-quest) (プロジェクトではまだヘッドセットで試していません)。スマートフォンとタブレットの360°動画プレーヤーは[360°写真と同じ操作](#360-videos-on-your-phone-with-the-controls-of-360-photos)、ジャイロスコープボタン、ピンチでのズーム、真上や真下へのドラッグに対応します (ユーザーがSamsung Galaxy S25 Ultraで試しましたが、iPhoneではまだ試していません)。コンピューターはAIで[2D動画を3D動画にします](#turn-your-2d-videos-into-3d-on-your-computer-experimental) (実験的、3Dディスプレイやヘッドセットではまだ試していません)。そしてSamsungのテレビは[回転が必要な動画をSamsung自身のプレーヤーに渡します](#on-a-samsung-tv-tizen)。Issue 17のテレビはそれを再生しますが、回転は拒否します。ビルド50とデスクトップビルド30、バージョン3.4.5からは、Meta Questの2Dウィンドウで動画を再生している間、ウィンドウはビルド48と49のように毎秒約10回ではなく、[ディスプレイのリフレッシュレートで再描画されます](#step-inside-your-photos-and-videos-with-a-meta-quest) (Meta Quest 3で計測)。Android TVは[リモコンで写真を拡大し](#on-android-tv-and-google-tv)、矢印キーで動かします (新機能、テレビではまだ試していません)。さらに、mlc70のAndroid TVフォークから三つの修正が入りました。素早いスワイプで、離れた写真の詳細が表示されなくなり、アニメーション写真がメモリを解放し、場所フィルターが新しい国の都市を表示します。
+**ビルド33から51の新機能。** [映画は止めたところから続きを再生します](#pick-up-a-film-where-you-stopped)。映画はより早く始まり、遅いサーバーからでも[止まらずに再生が続きます](#when-a-video-waits-or-will-not-play)。スマートフォンとコンピューターでは、タイムラインが[月と年までズームアウトします](#find-a-month-or-a-year-in-a-long-timeline)。AndroidスマートフォンやMeta Questでは、[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)でデバイスのフォルダーを共有のように開けて、TIFF写真も表示されます。Android TVは[リモコンで日付から検索でき](#on-android-tv-and-google-tv)、Meta Quest 3または3Sは[ガウシアンスプラットを開け](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)、右スティックでの回転とSPZバージョン4にも対応し、コンピューターは[NASの写真の3D版を作成します](#turn-one-photo-into-3d-a-scene-a-panorama)。グラフィックスチップを二つ持つWindowsノートPCでは、アプリが[速い方のチップで動くようになり](#when-a-video-waits-or-will-not-play)、8Kの映画も滑らかに再生されます。ガウシアンスプラットは[コンピューターとAndroidのスマートフォンやタブレットで開けるようになり](#explore-gaussian-splats-on-your-phone-tablet-or-computer)、WindowsコンピューターはAIで[写真や動画からスプラットシーンを作成し](#make-a-splat-scene-from-your-photos-or-a-video-ai)、あなたのImmichサーバーは[それを写真の中に保管し](#keep-a-splat-scene-on-your-immich-server)、その写真はタイムラインから開けます。コンピューターは[AV2動画を再生します](#play-av2-videos-on-your-computer)。ビルド42からは、Immichライブラリ、共有、フォルダーにあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画が、Androidのスマートフォン、タブレット、テレビで[カメラのジャイロスコープで手ぶれ補正されて再生され](#stabilise-your-360-videos-with-the-cameras-gyroscope)、デスクトップビルド22のスプラットシーンの作成では、近くで見るシーン向けに[「詳細」の品質を選べ](#make-a-splat-scene-from-your-photos-or-a-video-ai)、360°パノラマは[グラフィックスカードに3.5 GiBの空きがあれば始まります](#turn-one-photo-into-3d-a-scene-a-panorama)。iPhoneとiPadのアプリは[App Storeで公開されています](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) (バージョン3.4.3)。ビルド43からは、アプリの更新通知がスマートフォンとタブレットでGoogle PlayまたはApp Storeを開きます。アプリのウェブサイト[immuch360.com](https://immuch360.com/ja/)は11月7日に公開されました。ビルド44とデスクトップビルド24からは、Meta Quest 3または3Sが[最大300,000個のガウシアンのスプラットを表示し](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)、コンピューターは[CtrlとShiftで複数の写真や動画を選択でき](#use-your-computer-as-the-media-player)、デコーダーが動画を受け付けないテレビは[サーバーのもう一方のファイルを自動で再生し](#when-a-video-waits-or-will-not-play)、グラフィックスカードを二つ持つノートPCでは選ばれた方のカードでパノラマが動き、Questとコンピューターでは更新通知がそれぞれのストアまたはダウンロードページを開きます。ほかにも多くの修正があります。ビルド45とデスクトップビルド25からは、すべてのプラットフォームでバージョン3.4.0となり、アプリはImmich 3.4.0アプリに、その後のImmichの修正11件を加えたものに追従し、[Immich 3.4サーバーのJPEG XL写真](#keep-your-immich-library-with-more)を表示し、[Plexの映画を年ごとに](#watch-your-plex-films)開いて、映画ごとのページ、デバイスへのダウンロード、スマートフォンからのテレビでの再生に対応し、ストア版のビルドでは評価をお願いすることがあり、コンピューターでは動画コンポーネントを[それぞれのオープンなリポジトリ](#licences-and-credits)から取り込みます。ビルド46とデスクトップビルド26 (バージョン3.4.1) からは、360°カメラのRAW動画がiPhoneとiPad、Meta Quest、Windowsでも[手ぶれ補正して再生され](#stabilise-your-360-videos-with-the-cameras-gyroscope)、Meta Questは[自身のプレーヤーがデコードできないPlexの映画をlibmpvで再生し](#watch-your-plex-films)、スマートフォンは[そうした映画をChromecastやGoogle TVに送り](#watch-your-plex-films)、3D写真のAIによる立体感は[選んだ強さになります](#turn-one-photo-into-3d-a-scene-a-panorama)。また、Plexアカウントでのログインで新しいサーバーを追加することもでき、アプリは[設定をファイルに保存します](#keep-your-settings-in-a-file)。ビルド47とデスクトップビルド27 (バージョン3.4.2) からは、Plexの映画が[デバイスでデコードできる音声トラックを再生して](#watch-your-plex-films)どのトラックかを表示し、画面に合ったバージョンを開き、接続が遅いときはより軽いバージョンを提案します。WindowsとmacOSではそのDolby TrueHDの音声を再生し、Androidは[ダウンロードを通知に表示し](#watch-your-plex-films)、Android TVでも映画をダウンロードでき、[バッテリー式のTapoカメラもライブ映像を表示します](#watch-your-home-cameras-on-the-big-screen)。アカウントを含む設定ファイルを復元すると、Immichサーバーにもログインするようになりました。ビルド48とデスクトップビルド28 (バージョン3.4.3) からは、Windowsコンピューターが[動画をPC VRヘッドセットで再生します](#watch-your-videos-in-a-pc-vr-headset-from-windows)。SteamVR、Meta Horizon Link、またはほかのOpenXRランタイムを使います (プロジェクトではまだヘッドセットで試していません)。[他社製カメラがライブ映像を表示し](#cameras-of-other-brands-over-onvif-or-rtsp)、ONVIFで見つけるか、RTSPリンクで追加します (シミュレートしたカメラで確認済み、他社製の実機カメラはまだ試していません)。[DJI Osmo 360 IIとGoPro MAX 2のRAW動画は手ぶれ補正して再生され](#open-the-raw-files-of-360-cameras)、Plexの映画は[スマートフォンでデータ不足にならなくなり](#when-a-video-waits-or-will-not-play)、LGとSamsungのテレビは[横倒しの動画をボタン一つで回転させ](#on-a-samsung-tv-tizen) (LGテレビではまだ試していません、Issue 17 の Samsung テレビは回転を拒否しました)、最新のサーバーに「サーバーをアップデートできます」と表示されることはなくなりました。ビルド49とデスクトップビルド29、バージョン3.4.4からは、アプリが[JellyfinとEmbyのサーバーを自ら読み込み](#watch-your-jellyfin-and-emby-libraries) (実機ではまだ試していません)、ネットワーク上で見つけ、テレビやヘッドセットではQuick Connectでログインし、元のファイルを再生するので360°動画は360°のままです。Meta Questの大画面では、写真が[閲覧中も設定したサイズと位置を保ち、スライドショーとして再生されます](#browse-your-photos-on-the-big-screen-of-the-quest) (プロジェクトではまだヘッドセットで試していません)。スマートフォンとタブレットの360°動画プレーヤーは[360°写真と同じ操作](#360-videos-on-your-phone-with-the-controls-of-360-photos)、ジャイロスコープボタン、ピンチでのズーム、真上や真下へのドラッグに対応します (ユーザーがSamsung Galaxy S25 Ultraで試しましたが、iPhoneではまだ試していません)。コンピューターはAIで[2D動画を3D動画にします](#turn-your-2d-videos-into-3d-on-your-computer) (3Dディスプレイやヘッドセットではまだ試していません)。そしてSamsungのテレビは[回転が必要な動画をSamsung自身のプレーヤーに渡します](#on-a-samsung-tv-tizen)。Issue 17のテレビはそれを再生しますが、回転は拒否します。ビルド50とデスクトップビルド30、バージョン3.4.5からは、Meta Questの2Dウィンドウで動画を再生している間、ウィンドウはビルド48と49のように毎秒約10回ではなく、[ディスプレイのリフレッシュレートで再描画されます](#step-inside-your-photos-and-videos-with-a-meta-quest) (Meta Quest 3で計測)。Android TVは[リモコンで写真を拡大し](#on-android-tv-and-google-tv)、矢印キーで動かします (新機能、テレビではまだ試していません)。さらに、mlc70のAndroid TVフォークから三つの修正が入りました。素早いスワイプで、離れた写真の詳細が表示されなくなり、アニメーション写真がメモリを解放し、場所フィルターが新しい国の都市を表示します。ビルド51とデスクトップビルド31 (バージョン3.4.6) からは、WindowsとLinuxで[高画質化 (AI)](#make-a-photo-sharper-on-your-computer-ai)が甘い写真のよりシャープなコピーを元の写真の横に三つのレベルで作り (各レベルはRTX 4060を搭載した一台のPCで一回ずつ実行)、ナチュラルはAppleチップ搭載のMacでも提供され (Macではまだ試していません)、コンピューターがAIで[360°動画を360° 3D動画にし](#a-360-video-turned-into-a-360-3d-video)、Windowsでは3D動画の深度をグラフィックスカードが推定し、AI機能はサーバーと共有の動画を直接受け取り、設定ファイルには[ライブラリに専用のカード](#keep-your-settings-in-a-file)があり、テレビはそれをネットワーク共有に保存し、コンピューターではEscapeで一つ前に戻り、ストア版のビルドは[評価のお願いを減らし、より控えめに](#privacy)なり、LinuxはTIFF写真、スプラットシーン、片目で表示する3D動画に対応し、二つのクラッシュを修正しました。
 
 <p align="center">
   <sub>Immichモバイルアプリの非公式フォークです。ImmichやFUTOとの提携関係はありません。この名前は「I am much 360」と読むことができます。</sub>
@@ -30,11 +30,12 @@
 - [使い方](#how-to)
   - [サーバーの有無にかかわらず写真と動画を見る](#watch-your-photos-and-videos-with-or-without-a-server)
   - [パノラマ、360°、VR180、3Dを探索する](#explore-panoramas-360-vr180-and-3d): [スマートフォンの360°動画](#360-videos-on-your-phone-with-the-controls-of-360-photos)
-  - [1枚の写真を3D、シーン、パノラマにする](#turn-one-photo-into-3d-a-scene-a-panorama)
-  - [コンピューターで2D動画を3Dにする (実験的)](#turn-your-2d-videos-into-3d-on-your-computer-experimental): [360°動画を360° 3Dに](#a-360-video-turned-into-a-360-3d-video)
+  - [1枚の写真を3D、シーン、パノラマにする](#turn-one-photo-into-3d-a-scene-a-panorama): [ワンクリックで更新するAIコンポーネント](#update-the-ai-components-in-one-click)
+  - [コンピューターで2D動画を3Dにする](#turn-your-2d-videos-into-3d-on-your-computer): [360°動画を360° 3Dに](#a-360-video-turned-into-a-360-3d-video)
   - [コンピューターで写真をよりシャープにする (AI)](#make-a-photo-sharper-on-your-computer-ai)
   - [リモコンを使ってテレビで見る](#watch-on-the-tv-with-the-remote): [Android TVとGoogle TV](#on-android-tv-and-google-tv)、[LG](#on-an-lg-tv-webos)、[Samsung](#on-a-samsung-tv-tizen)
   - [スマートフォンでテレビ、ヘッドセット、コンピューターにログインする](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)
+  - [スマートフォンから写真と動画をテレビに映す](#show-your-photos-and-videos-on-the-tv-from-your-phone)
   - [Meta Questで写真や動画の中に入る](#step-inside-your-photos-and-videos-with-a-meta-quest): [大画面](#browse-your-photos-on-the-big-screen-of-the-quest)、[キオスクモード](#kiosk-mode-for-an-exhibition-or-a-shop)
   - [Meta Quest 3または3Sでガウシアンスプラットを探索する](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)
   - [スマートフォン、タブレット、コンピューターでガウシアンスプラットを探索する](#explore-gaussian-splats-on-your-phone-tablet-or-computer)
@@ -47,9 +48,9 @@
   - [Immichライブラリはそのままに、さらに多くの機能を](#keep-your-immich-library-with-more)
   - [長いタイムラインで月や年を見つける](#find-a-month-or-a-year-in-a-long-timeline)
   - [家庭用カメラを大画面で見る](#watch-your-home-cameras-on-the-big-screen): [他社製](#cameras-of-other-brands-over-onvif-or-rtsp)
-  - [DJIドローン (実験的)](#your-dji-drone-experimental): [ライブ映像](#see-what-your-drone-sees-on-your-phone)、[Meta QuestやAndroid TVで](#watch-it-in-a-meta-quest-or-on-an-android-tv)、[取り込み](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
+  - [DJIドローン](#your-dji-drone): [ライブ映像](#see-what-your-drone-sees-on-your-phone)、[Meta QuestやAndroid TVで](#watch-it-in-a-meta-quest-or-on-an-android-tv)、[取り込み](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich)
   - [360°カメラのRAWファイルを開く](#open-the-raw-files-of-360-cameras)
-  - [カメラのジャイロスコープで360°動画を手ぶれ補正する (実験的)](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)
+  - [カメラのジャイロスコープで360°動画を手ぶれ補正する](#stabilise-your-360-videos-with-the-cameras-gyroscope)
   - [キー1つで写真を回転する](#turn-a-photo-with-one-key)
   - [コンピューターをメディアプレーヤーとして使う](#use-your-computer-as-the-media-player)
   - [Windowsから動画をPC VRヘッドセットで見る](#watch-your-videos-in-a-pc-vr-headset-from-windows)
@@ -67,23 +68,23 @@
 ## 誰のためのアプリか
 
 - **360°や3Dで撮影する方**で、撮ったものをフラット、二重、引き伸ばされた状態で見るのではなく、その中を見回したい場合、またスマートフォンの360°動画を写真と同じように回したい場合: [360°、VR180、3D](#explore-panoramas-360-vr180-and-3d)、[スマートフォンの360°動画](#360-videos-on-your-phone-with-the-controls-of-360-photos)。
-- **360°カメラを手に持って、自転車で、またはヘルメットに付けて撮影する方**で、Immich、共有、フォルダーに保管したInsta360、GoPro MAXまたはMAX 2、DJI Osmo 360またはOsmo 360 IIカメラのRAW動画を、スマートフォン、テレビ、Meta Quest、Windowsコンピューターで水平に安定して再生したい場合 (実験的): [カメラのジャイロスコープで手ぶれ補正](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)。
+- **360°カメラを手に持って、自転車で、またはヘルメットに付けて撮影する方**で、Immich、共有、フォルダーに保管したInsta360、GoPro MAXまたはMAX 2、DJI Osmo 360またはOsmo 360 IIカメラのRAW動画を、スマートフォン、テレビ、Meta Quest、Windowsコンピューターで水平に安定して再生したい場合: [カメラのジャイロスコープで手ぶれ補正](#stabilise-your-360-videos-with-the-cameras-gyroscope)。
 - **写真や映画がNAS、コンピューター、Plex、Immichにある方**で、何もコピーせずにテレビで見たい場合: [テレビで](#watch-on-the-tv-with-the-remote)、[NAS、共有、Plex](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)。
-- **映画をPlexサーバーに置いている方**で、年ごとに選び、始まる前にどんな映画か確かめ、旅行に持って行き、スマートフォンからテレビやChromecastで再生し、Androidスマートフォン、テレビ、Meta Questがデコードできない映画まで再生したい場合 (実験的): [年ごとの映画](#watch-your-plex-films)。
-- **JellyfinやEmbyのサーバーに映画を置いている方**で、それをMeta Quest、テレビ、スマートフォンで、360°と3Dをそのままに、視聴位置をサーバーに保存して見たい場合 (実験的、実機ではまだ試していません): [JellyfinとEmby](#watch-your-jellyfin-and-emby-libraries)。
+- **映画をPlexサーバーに置いている方**で、年ごとに選び、始まる前にどんな映画か確かめ、旅行に持って行き、スマートフォンからテレビやChromecastで再生し、Androidスマートフォン、テレビ、Meta Questがデコードできない映画まで再生したい場合: [年ごとの映画](#watch-your-plex-films)。
+- **JellyfinやEmbyのサーバーに映画を置いている方**で、それをMeta Quest、テレビ、スマートフォンで、360°と3Dをそのままに、視聴位置をサーバーに保存して見たい場合 (実機ではまだ試していません): [JellyfinとEmby](#watch-your-jellyfin-and-emby-libraries)。
 - **Meta Questをお持ちの方**で、自分の写真や動画の中に入りたい場合: [ヘッドセットで](#step-inside-your-photos-and-videos-with-a-meta-quest)。また、大画面で写真を設定したサイズと位置のまま、スライドショーでも閲覧したい場合 (プロジェクトではまだヘッドセットで試していません): [大画面](#browse-your-photos-on-the-big-screen-of-the-quest)。
 - **WindowsコンピューターにPC VRヘッドセットをつないでいる方**で、その中で360°動画を周囲に、映画を大きなスクリーンに表示したい場合 (プロジェクトではまだヘッドセットで試していません): [PC VRヘッドセットで](#watch-your-videos-in-a-pc-vr-headset-from-windows)。
 - **写真が平面のままの方**で、3Dカメラなしで、それを3Dで、ヘッドセットで覗き込めるシーンとして、あるいは360°パノラマの中で見たい場合: [1枚の写真を3D、シーン、パノラマにする](#turn-one-photo-into-3d-a-scene-a-panorama)。新機能で、あなた自身のコンピューター上でAIが作成します。
-- **動画がフラットな方**で、スマートフォンのクリップも含めて、ヘッドセットや3Dディスプレイ用に、そして360°動画を360° 3Dに、自分のコンピューターで3Dにしたい場合 (実験的、3Dディスプレイやヘッドセットではまだ試していません): [2D動画を3Dに](#turn-your-2d-videos-into-3d-on-your-computer-experimental)、[360°を360° 3Dに](#a-360-video-turned-into-a-360-3d-video)。
+- **動画がフラットな方**で、スマートフォンのクリップも含めて、ヘッドセットや3Dディスプレイ用に、そして360°動画を360° 3Dに、自分のコンピューターで3Dにしたい場合 (3Dディスプレイやヘッドセットではまだ試していません): [2D動画を3Dに](#turn-your-2d-videos-into-3d-on-your-computer)、[360°を360° 3Dに](#a-360-video-turned-into-a-360-3d-video)。
 - **写真が甘い方**で、少しピントが外れていたり暗い場所で撮ったりした写真の、よりシャープなコピーを元の写真の横に、自分のコンピューターで作りたい場合。作り出した細部ははっきり伝えます: [高画質化 (AI)](#make-a-photo-sharper-on-your-computer-ai)。
 - **Immichを運用している方**で、そのアプリに加えて、イマーシブビューアーと、スマートフォンからログインさせる大画面が欲しい場合: [Immichライブラリ](#keep-your-immich-library-with-more)、[Immichとの比較](#compared-with-immich)。
-- **Tapoカメラで自宅を見守っている方**で、バッテリー式のカメラも含めて (実験的)、またはONVIFやRTSPの他社製カメラで、写真の隣に、テレビでもカメラを表示したい場合 (シミュレートしたカメラで確認済み): [家庭用カメラ](#watch-your-home-cameras-on-the-big-screen)。
-- **DJIドローンを飛ばす方**で、DJI Flyなしでスマートフォンにライブ映像を映し、同行者のためにMeta QuestやAndroid TVにも映したい場合 (実験的): [ドローン](#see-what-your-drone-sees-on-your-phone)。
-- **場所や物を3Dで、ガウシアンスプラットとしてキャプチャーする方**、またはそれを自分の写真から作りたい方で、スマートフォン、コンピューター、またはヘッドセットでその中を歩きたい場合 (実験的): [スマートフォン、タブレット、コンピューターで](#explore-gaussian-splats-on-your-phone-tablet-or-computer)、[写真から作成](#make-a-splat-scene-from-your-photos-or-a-video-ai)、[Immichに保管](#keep-a-splat-scene-on-your-immich-server)。
-- **AV2動画を持っている方**で、AV1の後継となるこのフォーマットをコンピューターで見たい場合 (実験的): [コンピューターでAV2](#play-av2-videos-on-your-computer)。
+- **Tapoカメラで自宅を見守っている方**で、バッテリー式のカメラも含めて、またはONVIFやRTSPの他社製カメラで、写真の隣に、テレビでもカメラを表示したい場合 (シミュレートしたカメラで確認済み): [家庭用カメラ](#watch-your-home-cameras-on-the-big-screen)。
+- **DJIドローンを飛ばす方**で、DJI Flyなしでスマートフォンにライブ映像を映し、同行者のためにMeta QuestやAndroid TVにも映したい場合: [ドローン](#see-what-your-drone-sees-on-your-phone)。
+- **場所や物を3Dで、ガウシアンスプラットとしてキャプチャーする方**、またはそれを自分の写真から作りたい方で、スマートフォン、コンピューター、またはヘッドセットでその中を歩きたい場合: [スマートフォン、タブレット、コンピューターで](#explore-gaussian-splats-on-your-phone-tablet-or-computer)、[写真から作成](#make-a-splat-scene-from-your-photos-or-a-video-ai)、[Immichに保管](#keep-a-splat-scene-on-your-immich-server)。
+- **AV2動画を持っている方**で、AV1の後継となるこのフォーマットをコンピューターで見たい場合: [コンピューターでAV2](#play-av2-videos-on-your-computer)。
 - **自宅に複数の画面がある方**で、それらを連携させたい場合: [画面を組み合わせてできること](#use-cases)。
 
-作成するImmuch360アカウントはなく、私たちに送られるものもありません。アプリが通信するのは、あなたのデバイスと、あなたが選んだサーバーだけで、ビルド45からは映画のページのためにWikipediaとも通信し (実験的)、ビルド46からはplex.tvでログインするときにplex.tvとも通信します。AIコンポーネントやAV2デコーダーをダウンロードするのも、あなたが求めたときだけです。
+作成するImmuch360アカウントはなく、私たちに送られるものもありません。アプリが通信するのは、あなたのデバイスと、あなたが選んだサーバーだけで、ビルド45からは映画のページのためにWikipediaとも通信し、ビルド46からはplex.tvでログインするときにplex.tvとも通信します。AIコンポーネントやAV2デコーダーをダウンロードするのも、あなたが求めたときだけです。
 
 <a id="which-screens"></a>
 ## 対応する画面
@@ -92,14 +93,14 @@
 
 | プラットフォーム | 入手方法 | 2026 年 11 月時点の状況 |
 |---|---|---|
-| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** スマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playで提供中 (ビルド47を11月16日に公開。ビルド48は11月16日からGoogleの審査中。ビルド51がこの後に続きます)、GitHubでビルド51。[RAW 360°動画を手ぶれ補正して再生し](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental) (実験的)、[映画は止めたところから続きを再生し](#pick-up-a-film-where-you-stopped)、[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)でスマートフォンのフォルダーを開け、共有から、または[Immichのタイムラインから](#keep-a-splat-scene-on-your-immich-server)、[ガウシアンスプラットを開けます](#explore-gaussian-splats-on-your-phone-tablet-or-computer) (実験的)。[設定はファイルに保存でき](#keep-your-settings-in-a-file)、[映画のダウンロードは通知に表示されます](#watch-your-plex-films)。ビルド48からは[他社製カメラのライブ映像](#cameras-of-other-brands-over-onvif-or-rtsp)にも対応 (シミュレートしたカメラで確認済み)。ビルド49からは[JellyfinとEmbyのサーバー](#watch-your-jellyfin-and-emby-libraries) (実験的、実機ではまだ試していません) と[360°動画プレーヤーでの360°写真と同じ操作](#360-videos-on-your-phone-with-the-controls-of-360-photos) (ユーザーがSamsung Galaxy S25 Ultraで試しました) にも対応し、ビルド51からは[ライブラリの設定ファイルのカード](#keep-your-settings-in-a-file)と、ネットワーク共有へのファイルの保存にも対応 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhoneとiPad** | [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) | 11月22日からApp Storeでバージョン3.4.5を提供中。[タイムラインの月と年](#find-a-month-or-a-year-in-a-long-timeline)、[止めたところから続きを再生する映画](#pick-up-a-film-where-you-stopped)、スマートフォンからの[テレビ、ヘッドセット、コンピューターへのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、Immichに保管したスプラットシーンの写真としての表示、Immich 3.4.0の修正とそのJPEG XL写真、[手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental) (実験的)、[ファイルに保存する設定](#keep-your-settings-in-a-file)、[バッテリー式Tapoカメラのライブ映像](#watch-your-home-cameras-on-the-big-screen) (実験的)、[他社製カメラのライブ映像](#cameras-of-other-brands-over-onvif-or-rtsp) (シミュレートしたカメラで確認済み) に対応し、バージョン3.4.4からは[JellyfinとEmbyのサーバー](#watch-your-jellyfin-and-emby-libraries) (実験的、実機ではまだ試していません) と[360°動画プレーヤーでの360°写真と同じ操作](#360-videos-on-your-phone-with-the-controls-of-360-photos) (iPhoneではまだ試していません) にも対応しています。ビルド51のiPhoneとiPad版であるバージョン3.4.6がこの後に続き、[設定ファイルのカード](#keep-your-settings-in-a-file)とネットワーク共有からの復元に対応します。[自分でビルド](../docs/immuch360/build.md)することもできます |
-| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TVとGoogle TV** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](#android-tv-and-google-tv) | Android TVとGoogle TVでアプリを提供するGoogle Play、そしてGitHubでビルド51: [手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental) (実験的)、[リモコンでの日付検索](#on-android-tv-and-google-tv)、QRコードを読み取る[スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、動画プレーヤーでリモコンから使えるタイムバー、音声、字幕、スマートフォンが中継する[ドローンのライブ映像](#watch-it-in-a-meta-quest-or-on-an-android-tv) (実験的)、[テレビへの映画のダウンロード](#watch-your-plex-films)、ビルド49からはQuick Connectでログインする[JellyfinとEmbyのサーバー](#watch-your-jellyfin-and-emby-libraries) (実験的、実機ではまだ試していません)、ビルド50からは[リモコンで拡大する写真](#on-android-tv-and-google-tv) (Android TVエミュレーターで動作を確認、テレビではまだ試していません)、ビルド51からは[ネットワーク共有への設定ファイルの保存と復元](#keep-your-settings-in-a-file) (Android TVエミュレーターで動作を確認) |
+| <img src="../.github/readme/logos/android.svg" width="22" alt="Android" align="absmiddle"> **Android** スマートフォンとタブレット | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](https://github.com/freeKC/Immuch360/releases) | Google Playで提供中 (ビルド47を11月16日に公開。ビルド51は11月24日からGoogleの審査中。ビルド52がこの後に続きます)、GitHubでビルド52。[RAW 360°動画を手ぶれ補正して再生し](#stabilise-your-360-videos-with-the-cameras-gyroscope)、[映画は止めたところから続きを再生し](#pick-up-a-film-where-you-stopped)、[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)でスマートフォンのフォルダーを開け、共有から、または[Immichのタイムラインから](#keep-a-splat-scene-on-your-immich-server)、[ガウシアンスプラットを開けます](#explore-gaussian-splats-on-your-phone-tablet-or-computer)。[設定はファイルに保存でき](#keep-your-settings-in-a-file)、[映画のダウンロードは通知に表示されます](#watch-your-plex-films)。ビルド48からは[他社製カメラのライブ映像](#cameras-of-other-brands-over-onvif-or-rtsp)にも対応 (シミュレートしたカメラで確認済み)。ビルド49からは[JellyfinとEmbyのサーバー](#watch-your-jellyfin-and-emby-libraries) (実機ではまだ試していません) と[360°動画プレーヤーでの360°写真と同じ操作](#360-videos-on-your-phone-with-the-controls-of-360-photos) (ユーザーがSamsung Galaxy S25 Ultraで試しました) にも対応し、ビルド51からは[ライブラリの設定ファイルのカード](#keep-your-settings-in-a-file)と、ネットワーク共有へのファイルの保存にも対応し、ビルド52からは「再生先…」で[写真と動画をテレビやChromecastに送信](#show-your-photos-and-videos-on-the-tv-from-your-phone)できます (実機ではまだ試していません) |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="Apple" align="absmiddle"> **iPhoneとiPad** | [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965) | 11月22日からApp Storeでバージョン3.4.5を提供中。[タイムラインの月と年](#find-a-month-or-a-year-in-a-long-timeline)、[止めたところから続きを再生する映画](#pick-up-a-film-where-you-stopped)、スマートフォンからの[テレビ、ヘッドセット、コンピューターへのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、Immichに保管したスプラットシーンの写真としての表示、Immich 3.4.0の修正とそのJPEG XL写真、[手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope)、[ファイルに保存する設定](#keep-your-settings-in-a-file)、[バッテリー式Tapoカメラのライブ映像](#watch-your-home-cameras-on-the-big-screen)、[他社製カメラのライブ映像](#cameras-of-other-brands-over-onvif-or-rtsp) (シミュレートしたカメラで確認済み) に対応し、バージョン3.4.4からは[JellyfinとEmbyのサーバー](#watch-your-jellyfin-and-emby-libraries) (実機ではまだ試していません) と[360°動画プレーヤーでの360°写真と同じ操作](#360-videos-on-your-phone-with-the-controls-of-360-photos) (iPhoneではまだ試していません) にも対応しています。Appleの承認を受けた、ビルド51のiPhoneとiPad版であるバージョン3.4.6がこの後に続き、[設定ファイルのカード](#keep-your-settings-in-a-file)とネットワーク共有からの復元に対応します。その次は、Xcode 27でビルドした、ビルド52のiPhoneとiPad版であるバージョン3.4.7です。[自分でビルド](../docs/immuch360/build.md)することもできます |
+| <img src="../.github/readme/logos/googletv.svg" width="22" alt="Google TV" align="absmiddle"> **Android TVとGoogle TV** | [Google Play](https://play.google.com/store/apps/details?id=com.aprogsys.immuch360) · [APK](#android-tv-and-google-tv) | Android TVとGoogle TVでアプリを提供するGoogle Play、そしてGitHubでビルド52: [手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope)、[リモコンでの日付検索](#on-android-tv-and-google-tv)、QRコードを読み取る[スマートフォンでのログイン](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、動画プレーヤーでリモコンから使えるタイムバー、音声、字幕、スマートフォンが中継する[ドローンのライブ映像](#watch-it-in-a-meta-quest-or-on-an-android-tv)、[テレビへの映画のダウンロード](#watch-your-plex-films)、ビルド49からはQuick Connectでログインする[JellyfinとEmbyのサーバー](#watch-your-jellyfin-and-emby-libraries) (実機ではまだ試していません)、ビルド50からは[リモコンで拡大する写真](#on-android-tv-and-google-tv) (Android TVエミュレーターで動作を確認、テレビではまだ試していません)、ビルド51からは[ネットワーク共有への設定ファイルの保存と復元](#keep-your-settings-in-a-file) (Android TVエミュレーターで動作を確認)、ビルド52からは[スマートフォンが「再生先…」で送る写真と動画](#show-your-photos-and-videos-on-the-tv-from-your-phone) (テレビではまだ試していません) |
 | **LGテレビ** (webOS 5.0以降) | [.ipk、バージョン1.0.5](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.5) · LG Content Store (審査中) | バージョン1.0.0は10月24日にLG Content Storeへ申請し、10月26日からLGのテスト中です。10月27日からGitHubにあるバージョン1.0.1は、矢印キーで写真をズームでき、写真がまだ読み込み中であることを表示します。ビルド46とともにGitHubにあるバージョン1.0.2は、日本語で「サインイン」ではなくログインと表示し、ビルド47とともに出るバージョン1.0.3は、DLNAサーバーのフォルダーにテレビのライブチャンネルがあるとき、まだ再生できないことを表示します。ビルド48とともに出るバージョン1.0.4は、[横倒しの動画をボタン一つで回転させます](#on-an-lg-tv-webos) (LGテレビではまだ試していません)。ビルド49とともに出るバージョン1.0.5は、DLNAサーバーの中にDLNAプラグイン付きのJellyfinを挙げます。LGがアプリを公開するまでは[Developer Mode](#lg-tvs-webos)でインストールします。バージョン1.0.0はLGのCloud Test LabのwebOS 25テレビで動作しました |
-| **Samsungテレビ** (Tizen 5.5以降) | [.wgtテストビルド](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.3.6) | 同じテレビアプリのテストビルド0.3.6。ご自身のSamsung証明書で署名し、[Developer mode](#samsung-tvs-tizen)でインストールします。0.1.0はテスターのSamsungテレビで動作し、0.2.0にはそのときに見つかった問題の修正が入っており、0.3.0ではLGバージョン1.0.1の写真のズームと「読み込み中」の表示が、0.3.1ではLGバージョン1.0.2の日本語の表記が加わり、0.3.2はスマートフォンで縦向きに撮影した動画を正しい向きで再生します ([Issue 17](https://github.com/freeKC/Immuch360/issues/17))。0.3.3と0.3.4は[縦向きと報告するテレビでも動画を回転させ](#on-a-samsung-tv-tizen)、手動で回転させるボタンを加えます。0.3.5と0.3.6はそうした動画をSamsung自身のプレーヤーに渡します。報告者のテレビでは、0.3.4と0.3.5は映像を横倒しのままにし、テレビは回転を拒否しました。そこでの解決策は、Immichサーバーがトランスコードして正立で保存した動画です。Samsungのストアにはありません |
-| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3、3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storeで提供中 (ビルド47を11月19日に公開。動画の再生中に2Dウィンドウがディスプレイのリフレッシュレートで再描画されるビルド50は11月21日からMetaの審査中。ビルド51がこの後に続きます)、GitHubでビルド51。[キオスクモード](#kiosk-mode-for-an-exhibition-or-a-shop)、イマーシブビューでの[手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)、[デコードできない映画のlibmpvによる再生](#watch-your-plex-films)に対応し、Quest 3と3Sでは[ガウシアンスプラット](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)と平面写真の[AIによる立体感](#turn-one-photo-into-3d-a-scene-a-panorama)にも対応 (いずれも実験的)。ビルド49からは[大画面で閲覧する写真](#browse-your-photos-on-the-big-screen-of-the-quest)を設定したサイズで、スライドショーでも表示し (プロジェクトではまだヘッドセットで試していません)、Quick Connectでログインする[JellyfinとEmbyのサーバー](#watch-your-jellyfin-and-emby-libraries) (実験的、実機ではまだ試していません) にも対応し、ビルド51からは、Horizon OSがイマーシブビューには古すぎるヘッドセットで、アプリを閉じる代わりにアップデートを促します (そのようなヘッドセットでは試していません) |
-| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [インストーラーまたはZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.6-31) | デスクトップビルド31、署名付きプレビュー：写真、フラットおよび360°動画、共有、Plex、カメラ (シミュレートしたカメラで確認済み)、スマートフォンでのログイン、キー1つでの写真の回転、89言語のインターフェース、そしてAIによる[写真からの3D写真、3Dシーン、360°パノラマの作成](#turn-one-photo-into-3d-a-scene-a-panorama) (実験的、NASの写真からも);[ガウシアンスプラット](#explore-gaussian-splats-on-your-phone-tablet-or-computer)の表示、[写真や動画からの作成](#make-a-splat-scene-from-your-photos-or-a-video-ai)、[Immichへの保管](#keep-a-splat-scene-on-your-immich-server)、[AV2動画](#play-av2-videos-on-your-computer)、デスクトップビルド22からは[スプラットシーンの品質の選択](#make-a-splat-scene-from-your-photos-or-a-video-ai)と[グラフィックスメモリの空き3.5 GiBからの360°パノラマ](#turn-one-photo-into-3d-a-scene-a-panorama)、そしてデスクトップビルド26からは[手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)と[立体感の強さを選べ、輪郭がよりシャープな3D写真](#turn-one-photo-into-3d-a-scene-a-panorama) (いずれも実験的)、デスクトップビルド27からは[映画のDolby TrueHDの音声とBlu-rayの字幕](#watch-your-plex-films)、デスクトップビルド28からは[PC VRヘッドセットでの動画再生](#watch-your-videos-in-a-pc-vr-headset-from-windows) (プロジェクトではまだヘッドセットで試していません)、デスクトップビルド29からはAIによる[2D動画から作る3D動画](#turn-your-2d-videos-into-3d-on-your-computer-experimental) (実験的、3Dディスプレイやヘッドセットではまだ試していません)、デスクトップビルド31からはAIによる[写真のよりシャープなコピー](#make-a-photo-sharper-on-your-computer-ai)とAIによる[360° 3D動画にした360°動画](#a-360-video-turned-into-a-360-3d-video) (実験的)、グラフィックスカードによる深度推定、サーバーと共有の動画の直接の受け取り、Escapeで一つ前に戻る操作 |
-| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOSとLinux** | [.deb、.rpm、DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.6-31) | デスクトップビルド31、プレビュー: 写真、360°写真、フラット動画 (360°動画はフラットで再生)、Immichサーバー、ネットワーク共有に対応し、AIによる写真からの[3D写真と3Dシーン](#turn-one-photo-into-3d-a-scene-a-panorama)の作成、Linuxでは8 GBのグラフィックスカード (そのうち3.5 GiBの空きから) での360°パノラマにも対応し、[ガウシアンスプラット](#explore-gaussian-splats-on-your-phone-tablet-or-computer)と[AV2動画](#play-av2-videos-on-your-computer)にも対応 (実験的、Macではまだ試していません)。デスクトップビルド11を10月26日にUbuntu 24.04のコンテナとMacで試しました。デスクトップビルド27からは、macOSで映画のDolby TrueHDの音声に対応。デスクトップビルド29からは、LinuxとAppleチップ搭載のMacでAIによる[2D動画から作る3D動画](#turn-your-2d-videos-into-3d-on-your-computer-experimental) (実験的、3Dディスプレイやヘッドセットではまだ試していません)。デスクトップビルド31からは、LinuxでAIによる[写真のよりシャープなコピー](#make-a-photo-sharper-on-your-computer-ai)、TIFF写真、新しいファイルを自動で表示するフォルダー、4 GBのグラフィックスカードで写真から作るスプラットシーン、片目でフラットに表示する3D動画に対応し、Appleチップ搭載のMacでは高画質化 (AI) のナチュラルのレベルに対応 (Macではまだ試していません)。macOSでは署名なし |
+| **Samsungテレビ** (Tizen 5.5以降) | [.wgt、バージョン0.3.6](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.3.6) | 同じテレビアプリのバージョン0.3.6。ご自身のSamsung証明書で署名し、[Developer mode](#samsung-tvs-tizen)でインストールします。0.1.0はテスターのSamsungテレビで動作し、0.2.0にはそのときに見つかった問題の修正が入っており、0.3.0ではLGバージョン1.0.1の写真のズームと「読み込み中」の表示が、0.3.1ではLGバージョン1.0.2の日本語の表記が加わり、0.3.2はスマートフォンで縦向きに撮影した動画を正しい向きで再生します ([Issue 17](https://github.com/freeKC/Immuch360/issues/17))。0.3.3と0.3.4は[縦向きと報告するテレビでも動画を回転させ](#on-a-samsung-tv-tizen)、手動で回転させるボタンを加えます。0.3.5と0.3.6はそうした動画をSamsung自身のプレーヤーに渡します。報告者のテレビでは、0.3.4と0.3.5は映像を横倒しのままにし、テレビは回転を拒否しました。そこでの解決策は、Immichサーバーがトランスコードして正立で保存した動画です。Samsungのストアにはありません |
+| <img src="../.github/readme/logos/meta.svg" width="22" alt="Meta" align="absmiddle"> **Meta Quest** 2、Pro、3、3S | [Horizon Store](https://www.meta.com/experiences/immuch360/1384208401440714/) · [APK](#meta-quest) | Horizon Storeで提供中 (動画の再生中に2Dウィンドウがディスプレイのリフレッシュレートで再描画されるビルド50を11月25日に公開。ビルド52がこの後に続きます)、GitHubでビルド52。[キオスクモード](#kiosk-mode-for-an-exhibition-or-a-shop)、イマーシブビューでの[手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope)、[デコードできない映画のlibmpvによる再生](#watch-your-plex-films)に対応し、Quest 3と3Sでは[ガウシアンスプラット](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)と平面写真の[AIによる立体感](#turn-one-photo-into-3d-a-scene-a-panorama)にも対応。ビルド49からは[大画面で閲覧する写真](#browse-your-photos-on-the-big-screen-of-the-quest)を設定したサイズで、スライドショーでも表示し (プロジェクトではまだヘッドセットで試していません)、Quick Connectでログインする[JellyfinとEmbyのサーバー](#watch-your-jellyfin-and-emby-libraries) (実機ではまだ試していません) にも対応し、ビルド51からは、Horizon OSがイマーシブビューには古すぎるヘッドセットで、アプリを閉じる代わりにアップデートを促します (そのようなヘッドセットでは試していません) |
+| <img src="../.github/readme/logos/windows.svg" width="22" alt="Windows" align="absmiddle"> **Windows** | [インストーラーまたはZIP](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.7-32) | デスクトップビルド32、署名付き：写真、フラットおよび360°動画、共有、Plex、カメラ (シミュレートしたカメラで確認済み)、スマートフォンでのログイン、キー1つでの写真の回転、89言語のインターフェース、そしてAIによる[写真からの3D写真、3Dシーン、360°パノラマの作成](#turn-one-photo-into-3d-a-scene-a-panorama) (NASの写真からも);[ガウシアンスプラット](#explore-gaussian-splats-on-your-phone-tablet-or-computer)の表示、[写真や動画からの作成](#make-a-splat-scene-from-your-photos-or-a-video-ai)、[Immichへの保管](#keep-a-splat-scene-on-your-immich-server)、[AV2動画](#play-av2-videos-on-your-computer)、デスクトップビルド22からは[スプラットシーンの品質の選択](#make-a-splat-scene-from-your-photos-or-a-video-ai)と[グラフィックスメモリの空き3.5 GiBからの360°パノラマ](#turn-one-photo-into-3d-a-scene-a-panorama)、そしてデスクトップビルド26からは[手ぶれ補正したRAW 360°動画](#stabilise-your-360-videos-with-the-cameras-gyroscope)と[立体感の強さを選べ、輪郭がよりシャープな3D写真](#turn-one-photo-into-3d-a-scene-a-panorama)、デスクトップビルド27からは[映画のDolby TrueHDの音声とBlu-rayの字幕](#watch-your-plex-films)、デスクトップビルド28からは[PC VRヘッドセットでの動画再生](#watch-your-videos-in-a-pc-vr-headset-from-windows) (プロジェクトではまだヘッドセットで試していません)、デスクトップビルド29からはAIによる[2D動画から作る3D動画](#turn-your-2d-videos-into-3d-on-your-computer) (3Dディスプレイやヘッドセットではまだ試していません)、デスクトップビルド31からはAIによる[写真のよりシャープなコピー](#make-a-photo-sharper-on-your-computer-ai)とAIによる[360° 3D動画にした360°動画](#a-360-video-turned-into-a-360-3d-video)、グラフィックスカードによる深度推定、サーバーと共有の動画の直接の受け取り、Escapeで一つ前に戻る操作、デスクトップビルド32からは[ワンクリックで更新するAIコンポーネント](#update-the-ai-components-in-one-click) |
+| <img src="../.github/readme/logos/apple.svg" width="22" alt="macOS" align="absmiddle"> <img src="../.github/readme/logos/linux.svg" width="22" alt="Linux" align="absmiddle"> **macOSとLinux** | [.deb、.rpm、AppImage、DMG](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.7-32) | デスクトップビルド32: 写真、360°写真、フラット動画 (360°動画はフラットで再生)、Immichサーバー、ネットワーク共有に対応し、AIによる写真からの[3D写真と3Dシーン](#turn-one-photo-into-3d-a-scene-a-panorama)の作成、Linuxでは8 GBのグラフィックスカード (そのうち3.5 GiBの空きから) での360°パノラマにも対応し、[ガウシアンスプラット](#explore-gaussian-splats-on-your-phone-tablet-or-computer)と[AV2動画](#play-av2-videos-on-your-computer)にも対応 (Macではまだ試していません)。デスクトップビルド11を10月26日にUbuntu 24.04のコンテナとMacで試しました。デスクトップビルド27からは、macOSで映画のDolby TrueHDの音声に対応。デスクトップビルド29からは、LinuxとAppleチップ搭載のMacでAIによる[2D動画から作る3D動画](#turn-your-2d-videos-into-3d-on-your-computer) (3Dディスプレイやヘッドセットではまだ試していません)。デスクトップビルド31からは、LinuxでAIによる[写真のよりシャープなコピー](#make-a-photo-sharper-on-your-computer-ai)、TIFF写真、新しいファイルを自動で表示するフォルダー、4 GBのグラフィックスカードで写真から作るスプラットシーン、片目でフラットに表示する3D動画に対応し、Appleチップ搭載のMacでは高画質化 (AI) のナチュラルのレベルに対応 (Macではまだ試していません)。デスクトップビルド32からは、ほかのLinuxディストリビューション向けの[AppImage](#linux) (CIがArch LinuxとopenSUSEで確認)。macOSでは署名なし |
 
 *ステータスはリリースごとに更新されます。各ストアにあるもの、審査中のもの、各ビルドは[リリースステータス](../docs/immuch360/release-status.md)に記載されています。ウェブサイト[immuch360.com](https://immuch360.com/ja/)では、各画面でできること、機能ごとの使い方、ストアへのリンクを89言語で紹介しています。*
 
@@ -134,7 +135,8 @@
 
 スマートフォンでは、Immuch360はImmichモバイルアプリの機能をすべて残したまま、360°、VR180、3Dのビューアーを加え、公式アプリと並べてインストールできます。サーバーにログインすると、大画面をログインさせます: テレビやコンピューターのQRコードをスキャンするか、ヘッドセットに表示されたコードをスマートフォンに入力します。パスワードはスマートフォンにとどまります。使い方: [スマートフォンでテレビ、ヘッドセット、コンピューターにログインする](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)。
 
-#### 平面の写真を3Dに、コンピューターからヘッドセットへ (実験的)
+<a id="your-flat-photos-in-3d-from-your-computer-to-the-headset-experimental"></a>
+#### 平面の写真を3Dに、コンピューターからヘッドセットへ
 
 <p align="center">
   <img src="../.github/readme/usecases/uc-03-ai3d.jpg" width="720" alt="イラストで、アプリの実際のキャプチャを1枚含みます: 印刷した写真とNASの横でImmuch360を実行するノートパソコンと、Immuch360を実行するヘッドセットを着けた後ろ姿の人。その人の前には、それらの風景の1つが立体的に立ち上がっている">
@@ -144,7 +146,8 @@
 
 コンピューター自体が写真を3D写真や3Dシーンに変換し、WindowsまたはLinuxで8 GBのグラフィックカードがあれば360°パノラマにも変換して、元のファイルの隣に保存します。ヘッドセットは3D写真を本物の3Dで表示し、シーンを部屋の中に置き、パノラマをあなたの周り全体に広げます。スマートフォンやテレビはパノラマを360°ビューアーで開きます。使い方: [1枚の写真を3D、シーン、パノラマにする](#turn-one-photo-into-3d-a-scene-a-panorama)。
 
-#### ドローンのライブ映像をヘッドセットやテレビで (実験的)
+<a id="your-drones-live-view-in-a-headset-or-on-the-tv-experimental"></a>
+#### ドローンのライブ映像をヘッドセットやテレビで
 
 <p align="center">
   <img src="../.github/readme/usecases/uc-04-drone.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 夕暮れのテラスで、後ろ姿のパイロットがコントローラーにスマートフォンを付けてドローンを飛ばしている。スマートフォンはライブ映像を一方向だけでヘッドセットとテレビに中継している">
@@ -172,7 +175,7 @@
 
 **必要なもの:** Plex Media Server、JellyfinまたはEmbyのサーバー、またはminidlnaなどのDLNAサーバーと、各画面のImmuch360: Android TV、Meta Quest、スマートフォン、タブレット、Windows。
 
-Plexはライブラリの元のファイルを渡すので、360°動画は360°のまま、ヘッドセットではあなたの周り全体に広がります。自宅でも、ポートフォワーディングを通して外出先でも同じです。DLNAサーバーは自宅のネットワークで見つかります。ImmichサーバーにログインしたLGテレビでも再生できます。ビルド45からは、スマートフォン、タブレット、Android TV、Quest、コンピューターでPlexの映画ライブラリをすべての映画が年ごとに並ぶ形で開け、映画ごとにページがあり、スマートフォンで選んだ映画をAndroid TV、Quest、コンピューターで再生でき、操作はリモコンが担います (実験的)。ビルド46からは、Questが自身のプレーヤーでデコードできない映画をlibmpvで再生し、Androidデバイスのどのプレーヤーもデコードできない映画はPlexサーバーが変換し、スマートフォンは映画をChromecastやGoogle TVに送ります (実験的)。ビルド47からは、映画がデバイスでデコードできる音声トラックを再生してどのトラックかを表示し、画面に合ったバージョンを開き、WindowsとmacOSではDolby TrueHDの音声を再生します (実験的)。DLNAサーバーのテレビのライブチャンネルのフォルダーは、まだ再生できないことを表示します。ビルド49からは、JellyfinやEmbyのサーバーにも独自の種類があり、自動的に見つかり、テレビやヘッドセットではQuick Connectでログインし、元のファイルを再生するので360°は360°のままで、視聴位置はサーバーに保存されます (実験的、実機ではまだ試していません)。使い方: [NAS、コンピューター、メディアサーバー、Plexのファイルを再生する](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)、[Plexの映画を見る](#watch-your-plex-films)、[JellyfinとEmbyのライブラリを見る](#watch-your-jellyfin-and-emby-libraries)。
+Plexはライブラリの元のファイルを渡すので、360°動画は360°のまま、ヘッドセットではあなたの周り全体に広がります。自宅でも、ポートフォワーディングを通して外出先でも同じです。DLNAサーバーは自宅のネットワークで見つかります。ImmichサーバーにログインしたLGテレビでも再生できます。ビルド45からは、スマートフォン、タブレット、Android TV、Quest、コンピューターでPlexの映画ライブラリをすべての映画が年ごとに並ぶ形で開け、映画ごとにページがあり、スマートフォンで選んだ映画をAndroid TV、Quest、コンピューターで再生でき、操作はリモコンが担います。ビルド46からは、Questが自身のプレーヤーでデコードできない映画をlibmpvで再生し、Androidデバイスのどのプレーヤーもデコードできない映画はPlexサーバーが変換し、スマートフォンは映画をChromecastやGoogle TVに送ります。ビルド47からは、映画がデバイスでデコードできる音声トラックを再生してどのトラックかを表示し、画面に合ったバージョンを開き、WindowsとmacOSではDolby TrueHDの音声を再生します。DLNAサーバーのテレビのライブチャンネルのフォルダーは、まだ再生できないことを表示します。ビルド49からは、JellyfinやEmbyのサーバーにも独自の種類があり、自動的に見つかり、テレビやヘッドセットではQuick Connectでログインし、元のファイルを再生するので360°は360°のままで、視聴位置はサーバーに保存されます (実機ではまだ試していません)。使い方: [NAS、コンピューター、メディアサーバー、Plexのファイルを再生する](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex)、[Plexの映画を見る](#watch-your-plex-films)、[JellyfinとEmbyのライブラリを見る](#watch-your-jellyfin-and-emby-libraries)。
 
 #### スマートフォンやWindowsコンピューターを、ヘッドセットで開く
 
@@ -192,9 +195,10 @@ Plexはライブラリの元のファイルを渡すので、360°動画は360°
 
 **必要なもの:** 自宅のネットワークにあるTapoカメラと、Androidスマートフォン、Android TV、Meta Quest、WindowsコンピューターのいずれかのImmuch360。
 
-各画面はカメラをライブで表示し、メモリーカードの録画を日ごとに写真の隣で再生します。スマートフォンはクリップをImmichサーバーに送ります。アプリはお使いのネットワーク内だけでカメラと通信し、TP-Linkのサーバーを経由することはありません。ビルド47からは、バッテリー式のカメラもメディアポートを通じて、スマートフォン、タブレット、Android TV、Questでライブ映像を表示します (実験的)。ビルド48からは、他社製カメラもその隣でライブ映像を表示し、ONVIFで見つけるか、RTSPリンクで追加します。シミュレートしたカメラで確認済みです。使い方: [家庭用カメラを大画面で見る](#watch-your-home-cameras-on-the-big-screen)。
+各画面はカメラをライブで表示し、メモリーカードの録画を日ごとに写真の隣で再生します。スマートフォンはクリップをImmichサーバーに送ります。アプリはお使いのネットワーク内だけでカメラと通信し、TP-Linkのサーバーを経由することはありません。ビルド47からは、バッテリー式のカメラもメディアポートを通じて、スマートフォン、タブレット、Android TV、Questでライブ映像を表示します。ビルド48からは、他社製カメラもその隣でライブ映像を表示し、ONVIFで見つけるか、RTSPリンクで追加します。シミュレートしたカメラで確認済みです。使い方: [家庭用カメラを大画面で見る](#watch-your-home-cameras-on-the-big-screen)。
 
-#### 部屋の中にガウシアンスプラットを、Meta Quest 3または3Sで (実験的)
+<a id="gaussian-splats-in-your-room-in-a-meta-quest-3-or-3s-experimental"></a>
+#### 部屋の中にガウシアンスプラットを、Meta Quest 3または3Sで
 
 <p align="center">
   <img src="../.github/readme/usecases/uc-09-splats.jpg" width="720" alt="イラストで、実際のキャプチャではありません: リビングで、Immuch360を実行するヘッドセットを着けた後ろ姿の人が、輝く光でできた、棚の上のNASから開かれた実物大の噴水の前に立っている">
@@ -202,9 +206,10 @@ Plexはライブラリの元のファイルを渡すので、360°動画は360°
 
 **必要なもの:** Polycam、Scaniverse、Lumaなどのツールで作った、NASまたはヘッドセット内の.spzまたはバイナリ.plyファイルのスプラットと、Meta Quest 3または3SのImmuch360。
 
-ヘッドセットは場所や物を実際の大きさで、目の前またはあなたの周り全体に置きます: 周りを歩いて回り、左のサムスティックで中を滑るように進み、右のサムスティックで向きを変えます。ガウシアンスプラットは Meta Spatial SDK の試験運用版 API を使用しており、Meta はこの API をサポートも保証もしていません。不具合の責任はすべて Immuch360 にあります。使い方: [Meta Quest 3または3Sでガウシアンスプラットを探索する](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)。
+ヘッドセットは場所や物を実際の大きさで、目の前またはあなたの周り全体に置きます: 周りを歩いて回り、左のサムスティックで中を滑るように進み、右のサムスティックで向きを変えます。ガウシアンスプラットは Meta Spatial SDK のうち Meta がサポートも保証もしていない部分を使用しています。不具合の責任はすべて Immuch360 にあります。使い方: [Meta Quest 3または3Sでガウシアンスプラットを探索する](#explore-gaussian-splats-in-a-meta-quest-3-or-3s)。
 
-#### 来場者のためのMeta Quest (実験的)
+<a id="a-meta-quest-for-your-visitors-experimental"></a>
+#### 来場者のためのMeta Quest
 
 <p align="center">
   <img src="../.github/readme/usecases/uc-10-kiosk.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 小さな展示室で、キオスクモードのImmuch360を実行するヘッドセットを着けた後ろ姿の来場者が座り、ほかの2人が順番を待っている">
@@ -218,7 +223,7 @@ Plexはライブラリの元のファイルを渡すので、360°動画は360°
 <a id="what-each-screen-does"></a>
 ### 各画面でできること
 
-スマートフォン、タブレット、Android TV、Meta Quest、コンピューターは1つのコードベースで動作し、LGテレビには別のテレビアプリがあります。このアプリはSamsungテレビ向けにもテストビルドとしてパッケージされています。現時点での各画面の機能:
+スマートフォン、タブレット、Android TV、Meta Quest、コンピューターは1つのコードベースで動作し、LGテレビには別のテレビアプリがあります。このアプリはSamsungテレビ向けにもパッケージされており、ご自身でインストールします。現時点での各画面の機能:
 
 | 機能 | Android | iPhone、iPad | Android TV | LG webOS | Samsung Tizen | Quest |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -237,43 +242,44 @@ Plexはライブラリの元のファイルを渡すので、360°動画は360°
 | 映画は止めたところから続きを再生 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ イマーシブでも |
 | 動画のソース: このデバイスがデコードするファイル | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 | 遅いサーバー: 動画が待つ時間とその理由 | ✅ | 独自の待機ルール | ✅ | ❌ | ❌ | ✅ |
-| AV2動画 (実験的) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| AV2動画 | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | 3DとVR180 | ✅ 片目 | ✅ 片目 | ✅ 片目 | 写真は片目、動画はフラット | 写真は片目、動画はフラット | ✅ 本物の3D |
-| ファイル名による平面3D、動かせるよりシャープなスクリーン (実験的) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| ファイル名による平面3D、動かせるよりシャープなスクリーン | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | 大画面の写真: 閲覧、スライドショー、サイズと位置の保持 | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ ビルド49から、ヘッドセットではまだ試していません |
-| 来場者向けのキオスクモード (実験的) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| Spatial 2.5D (ヘッドトラッキング) | ✅ 実験的 | ✅ 実験的 | ❌ | ❌ | ❌ | ❌ |
+| 来場者向けのキオスクモード | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Spatial 2.5D (ヘッドトラッキング) | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Appleの空間写真 | ✅ 片目 | ✅ 片目 | ✅ 片目 | ❌ | ❌ | ✅ 3D |
-| ガウシアンスプラット、.spzと.ply (実験的) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ Quest 3と3S |
-| Immichに写真として保管されたスプラットシーン (実験的) | ✅ | 写真 | 写真 | 写真 | 写真 | ✅ Quest 3と3S、ヘッドセットではまだ試していません |
+| ガウシアンスプラット、.spzと.ply | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ Quest 3と3S |
+| Immichに写真として保管されたスプラットシーン | ✅ | 写真 | 写真 | 写真 | 写真 | ✅ Quest 3と3S、ヘッドセットではまだ試していません |
 | 2D写真からの3D写真 (AI) | ✅ 開く、左右並び | ✅ 開く、左右並び | ✅ 開く、左右並び | ✅ 開く、左右並び | ✅ 開く、左右並び | ✅ ヘッドセットでAIによる立体感 (Quest 3と3S)、3Dで表示、控えめ、標準、強め |
 | 2D写真からの3Dシーン (AI) | ✅ 開く、写真として | ✅ 開く、写真として | ✅ 開く、写真として | ✅ 開く、写真として | ✅ 開く、写真として | ✅ 3Dで探索 |
 | 2D写真からの360°パノラマ (AI) | ✅ 開く、AIラベル付き | ✅ 360°写真として開く、ラベルは🔜 | ✅ 開く、AIラベル付き | ✅ 360°写真として開く、ラベルは🔜 | ✅ 360°写真として開く、ラベルは🔜 | ✅ 周囲全体に開く、AIラベル付き |
 | 共有の写真の隣の3D版 (AI) | ✅ 読み込む | ✅ 読み込む | ✅ 読み込む | ✅ 読み込む | ❌ | ✅ 読み込む |
 | 写真や動画からのスプラットシーン (AI) | ✅ 開く | ❌ | ❌ | ❌ | ❌ | ✅ 開く、Quest 3と3S、ヘッドセットではまだ試していません |
-| 2D動画からの3D動画 (AI、実験的) | ✅ 読み込み、左右 | ✅ 読み込み、左右 | ✅ 読み込み、左右 | フラットな動画、左右 | フラットな動画、左右 | ✅ 大画面で3D、ヘッドセットではまだ試していません |
+| 2D動画からの3D動画 (AI) | ✅ 読み込み、左右 | ✅ 読み込み、左右 | ✅ 読み込み、左右 | フラットな動画、左右 | フラットな動画、左右 | ✅ 大画面で3D、ヘッドセットではまだ試していません |
 | Insta360、GoPro、DJIのRAWファイル | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
-| カメラのジャイロスコープで手ぶれ補正したRAW 360°動画 (実験的) | ✅ Insta360、GoPro MAXとMAX 2、DJI Osmo 360とOsmo 360 II、ライブラリ、共有、フォルダーから | ✅ バージョン3.4.1から、iPhoneではまだ試していません | ✅ Insta360、GoPro MAXとMAX 2、DJI Osmo 360とOsmo 360 II、ライブラリと共有から | ❌ | ❌ | ✅ イマーシブビューで、ヘッドセットではまだ試していません |
+| カメラのジャイロスコープで手ぶれ補正したRAW 360°動画 | ✅ Insta360、GoPro MAXとMAX 2、DJI Osmo 360とOsmo 360 II、ライブラリ、共有、フォルダーから | ✅ バージョン3.4.1から、iPhoneではまだ試していません | ✅ Insta360、GoPro MAXとMAX 2、DJI Osmo 360とOsmo 360 II、ライブラリと共有から | ❌ | ❌ | ✅ イマーシブビューで、ヘッドセットではまだ試していません |
 | SMB、WebDAV、DLNA共有 | ✅ | ✅ | ✅ | ✅ SMBはwebOS 22から | ❌ | ✅ |
 | Plex Media Server | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
 | Plexアカウントでログイン (plex.tv) | ✅ ブラウザーで | ✅ ブラウザーで | ✅ plex.tv/linkでコード | ✅ plex.tv/linkでコード | ❌ | ✅ plex.tv/linkでコード |
-| このデバイスでデコードできないPlexの映画 (実験的) | ✅ Plexサーバーが変換 | ❌ | ✅ Plexサーバーが変換 | ❌ | ❌ | ✅ libmpv、それ以外はPlexサーバーが変換 |
-| ChromecastやGoogle TVに送るPlexの映画 (実験的) | ✅ | ✅ アプリを開いている間 | ❌ | ❌ | ❌ | ❌ |
+| このデバイスでデコードできないPlexの映画 | ✅ Plexサーバーが変換 | ❌ | ✅ Plexサーバーが変換 | ❌ | ❌ | ✅ libmpv、それ以外はPlexサーバーが変換 |
+| ChromecastやGoogle TVに送るPlexの映画 | ✅ | ✅ アプリを開いている間 | ❌ | ❌ | ❌ | ❌ |
+| Immichと共有の写真と動画を「再生先…」でテレビやChromecastに送信 (ビルド52から、実機ではまだ試していません) | ✅ 送信、Chromecastにも | 同じコード、iPhoneではまだ試していません | ✅ 表示 | ❌ | ❌ | ✅ ウィンドウに表示 |
 | 複数のバージョンがあるPlexの映画: 画面に合ったものを選び、あなたの選択を保存 | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 | このデバイスがデコードできないPlexの映画の音声トラック: 別のトラックを通知付きで | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
-| JellyfinとEmbyのサーバー (実験的) | ✅ | ✅ バージョン3.4.4から | ✅ Quick Connectが先 | ❌ DLNA経由、そのプラグインで | ❌ | ✅ Quick Connectが先 |
+| JellyfinとEmbyのサーバー | ✅ | ✅ バージョン3.4.4から | ✅ Quick Connectが先 | ❌ DLNA経由、そのプラグインで | ❌ | ✅ Quick Connectが先 |
 | Tapoカメラ: 録画 | ✅ | ✅ | ✅ | 🔜 早くても2026年12月 | ❌ | ✅ |
 | Tapoカメラ: ライブ映像 | ✅ | ✅ iPhoneではまだ試していません | ✅ | ✅ 映像のみ | ❌ | ✅ |
-| バッテリー式Tapoカメラ: ライブ映像 (実験的) | ✅ 映像のみ | ✅ 音声付き、iPhoneではまだ試していません | ✅ 映像のみ | ❌ | ❌ | ✅ 映像のみ |
+| バッテリー式Tapoカメラ: ライブ映像 | ✅ 映像のみ | ✅ 音声付き、iPhoneではまだ試していません | ✅ 映像のみ | ❌ | ❌ | ✅ 映像のみ |
 | 他社製カメラ (ONVIFまたはRTSP): ライブ映像 | ✅ H.264、H.265、MPEG-4 | ✅ H.264、バージョン3.4.3から、アドレスかリンクで追加 | ✅ | ❌ | ❌ | ✅ |
 | このデバイスをネットワークで共有 | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | 共有やデバイスからImmichにアップロード | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | 設定をファイルに保存して復元 | ✅ | ✅ ファイルと共有から、iPhoneではまだ試していません | ✅ ファイル選択で、またはビルド51からはネットワーク共有で | ❌ | ❌ | ✅ |
-| USB経由でDJIドローンやカードから取り込み (実験的) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| DJIドローンのライブ映像 (実験的) | ✅ RC-N3で | ❌ | ✅ スマートフォンが中継 | ❌ | ❌ | ✅ スマートフォンが中継 |
+| USB経由でDJIドローンやカードから取り込み | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| DJIドローンのライブ映像 | ✅ RC-N3で | ❌ | ✅ スマートフォンが中継 | ❌ | ❌ | ✅ スマートフォンが中継 |
 | ダークテーマ | システムに従う | システムに従う | ✅ 既定 | ✅ 唯一のテーマ | ✅ 唯一のテーマ | システムに従う |
 | 入力 | タッチ、ジャイロスコープ | タッチ、ジャイロスコープ | リモコン。動画再生中とそのタイムバーでも左右キー、詳細はMenuキー | リモコン、Magic Remote | リモコン | コントローラー、手 |
-| 入手先 | Google Play、APK | App Store | Google Play、APK | .ipk、LG Content Store (審査中) | .wgtテストビルド、ご自身で署名 | Horizon Store、APK |
+| 入手先 | Google Play、APK | App Store | Google Play、APK | .ipk、LG Content Store (審査中) | .wgt、ご自身で署名 | Horizon Store、APK |
 
 | 機能 | Windows | Linux | macOS |
 |---|:---:|:---:|:---:|
@@ -292,60 +298,62 @@ Plexはライブラリの元のファイルを渡すので、360°動画は360°
 | 映画は止めたところから続きを再生 | ✅ | ✅ | ✅ |
 | 動画のソース: このデバイスがデコードするファイル | ✅ | ✅ | ✅ |
 | 遅いサーバー: 動画が待つ時間とその理由 | ✅ | ✅ | ✅ |
-| AV2動画 (実験的) | ✅ | ✅ | ✅ CIで確認済み |
+| AV2動画 | ✅ | ✅ | ✅ CIで確認済み |
 | 3DとVR180 | ✅ 片目 | 写真は片目、動画は片目でフラット、デスクトップビルド31から | 写真は片目、動画は片目でフラット、デスクトップビルド31から、CIでビルド |
-| ファイル名による平面3D、動かせるよりシャープなスクリーン (実験的) | ❌ | ❌ | ❌ |
-| 来場者向けのキオスクモード (実験的) | ❌ | ❌ | ❌ |
+| ファイル名による平面3D、動かせるよりシャープなスクリーン | ❌ | ❌ | ❌ |
+| 来場者向けのキオスクモード | ❌ | ❌ | ❌ |
 | PC VRヘッドセット: 360°、180°、フラットの動画 | ✅ デスクトップビルド28から、ヘッドセットではまだ試していません | ❌ | ❌ |
 | Spatial 2.5D (ヘッドトラッキング) | 🔜 開発中 | ❌ | ❌ |
 | Appleの空間写真 | ✅ 片目 | ✅ 片目、サーバーから | ✅ 片目 |
-| ガウシアンスプラット、.spzと.ply (実験的) | ✅ | ✅ | ✅ CIでビルド |
-| Immichに写真として保管されたスプラットシーン (実験的) | ✅ | ✅ | ✅ CIでビルド |
+| ガウシアンスプラット、.spzと.ply | ✅ | ✅ | ✅ CIでビルド |
+| Immichに写真として保管されたスプラットシーン | ✅ | ✅ | ✅ CIでビルド |
 | 2D写真からの3D写真 (AI) | ✅ 三つの強さ、よりシャープな輪郭 | ✅ 三つの強さ、よりシャープな輪郭 | ✅ CIでビルド、三つの強さ、よりシャープな輪郭 |
 | 2D写真からの3Dシーン (AI) | ✅ | ✅ | ✅ CIでビルド |
 | 2D写真からの360°パノラマ (AI) | ✅ 8 GBのグラフィックスカード | ✅ 8 GBのグラフィックスカード、Intelグラフィックスで小さいサイズで実行済み | 🔜 ロードマップに記載 |
 | 共有の写真の隣の3D版 (AI) | ✅ | ✅ | ✅ 3D写真とシーン |
 | 写真や動画からのスプラットシーン (AI) | ✅ 4 GBのグラフィックスカード | ✅ デスクトップビルド31から、4 GBのグラフィックスカード、CIがプロセッサー上で実行、グラフィックスカード搭載のLinux PCではまだ試していません | ✅ 開く、CIでビルド |
-| 2D動画からの3D動画 (AI、実験的) | ✅ デスクトップビルド31からグラフィックスカード上、それ以外はプロセッサー上 | ✅ プロセッサー上 | ✅ AppleチップではCore ML、IntelのMacではプロセッサー、CIで実行、Macではまだ試していません |
-| 360°動画からの360° 3D動画 (AI、実験的) | ✅ デスクトップビルド31から、グラフィックスカード上 | ✅ デスクトップビルド31から、プロセッサー上、CIで実行 | ✅ デスクトップビルド31から、CIでビルド、Macでは実行していません |
+| 2D動画からの3D動画 (AI) | ✅ デスクトップビルド31からグラフィックスカード上、それ以外はプロセッサー上 | ✅ プロセッサー上 | ✅ AppleチップではCore ML、IntelのMacではプロセッサー、CIで実行、Macではまだ試していません |
+| 360°動画からの360° 3D動画 (AI) | ✅ デスクトップビルド31から、グラフィックスカード上 | ✅ デスクトップビルド31から、プロセッサー上、CIで実行 | ✅ デスクトップビルド31から、CIでビルド、Macでは実行していません |
 | 写真の高画質化 (AI): シャープ化、細部を再構築、ナチュラル | ✅ デスクトップビルド31から: シャープ化と細部を再構築はグラフィックスカード上 (細部を再構築: 6 GBの専用カード)、ナチュラルはプロセッサー上 (16 GB) | ✅ 同じ、CIでビルド、グラフィックスカード搭載のLinux PCでは試していません | Appleチップでナチュラル (Macではまだ試していません)。シャープ化と細部を再構築はまだ |
 | Insta360、GoPro、DJIのRAWファイル | ✅ | ✅ 写真、動画はフラット | ✅ 写真、動画はフラット |
-| カメラのジャイロスコープで手ぶれ補正したRAW 360°動画 (実験的) | ✅ 360°プレーヤーで、カメラのファイルではまだ試していません | ❌ | ❌ |
+| カメラのジャイロスコープで手ぶれ補正したRAW 360°動画 | ✅ 360°プレーヤーで、カメラのファイルではまだ試していません | ❌ | ❌ |
 | SMB、WebDAV、DLNA共有 | ✅ | ✅ | ✅ |
 | Plex Media Server | ✅ | 🔧 CI | 🔧 CI |
 | Plexアカウントでログイン (plex.tv) | ✅ ブラウザーで | 🔧 CI | 🔧 CI |
 | 複数のバージョンがあるPlexの映画: 画面に合ったものを選び、あなたの選択を保存 | ✅ | 🔧 CI | 🔧 CI |
-| JellyfinとEmbyのサーバー (実験的) | ✅ | 🔧 CI | 🔧 CI |
+| JellyfinとEmbyのサーバー | ✅ | 🔧 CI | 🔧 CI |
+| スマートフォンが「再生先…」で送る写真と動画 (デスクトップビルド32から、まだ試していません) | ✅ | 🔧 CI | 🔧 CI |
+| ワンクリックで更新するAIコンポーネント (デスクトップビルド32から) | ✅ | ✅ | ✅ CIでビルド |
 | 映画のDolby TrueHDの音声とBlu-ray (PGS) の字幕 | ✅ デスクトップビルド27から | ✅ システムのlibmpv | ✅ デスクトップビルド27からTrueHD、CIでビルド |
 | Tapoカメラ: 録画 | ✅ | 🔧 CI | 🔧 CI |
 | Tapoカメラ: ライブ映像 | ✅ | 🔧 CI | 🔧 CI |
-| バッテリー式Tapoカメラ: ライブ映像 (実験的) | 🔜 今後のバージョン | 🔜 | 🔜 |
+| バッテリー式Tapoカメラ: ライブ映像 | 🔜 今後のバージョン | 🔜 | 🔜 |
 | 他社製カメラ (ONVIFまたはRTSP): ライブ映像 | ✅ | 🔧 CI | 🔧 CI |
 | このデバイスをネットワークで共有 | ✅ | ❌ | ❌ |
 | 共有やデバイスからImmichにアップロード | ✅ | ✅ | ✅ |
 | 設定をファイルに保存して復元 | ✅ | ✅ | ✅ |
 | Ctrl+クリック、Shift+クリック、Ctrl+Aでの複数の写真の選択、右クリックでの操作 | ✅ | ✅ | ✅ Commandで、Macではまだ試していません |
-| USB経由でDJIドローンやカードから取り込み (実験的) | ❌ | ❌ | ❌ |
-| DJIドローンのライブ映像 (実験的) | ❌ | ❌ | ❌ |
+| USB経由でDJIドローンやカードから取り込み | ❌ | ❌ | ❌ |
+| DJIドローンのライブ映像 | ❌ | ❌ | ❌ |
 | ダークテーマ | システムに従う | システムに従う | システムに従う |
 | 入力 | マウス、キーボード、Escapeで戻る | マウス、キーボード、Escapeで戻る | マウス、キーボード、トラックパッド、Escapeで戻る |
-| 入手先 | インストーラーまたはZIP (署名付きプレビュー) | .deb、.rpm (プレビュー) | DMGまたはZIP (署名なしのプレビュー) |
+| 入手先 | インストーラーまたはZIP (署名付き) | .deb、.rpm、AppImage | DMGまたはZIP (署名なし) |
 
-*LinuxとmacOS: デスクトップビルド11を2026年10月26日に、テスト用のImmichサーバーとテスト用の共有を用意したUbuntu 24.04のコンテナで試し、作者がMacでも試しました。AIの行は、デスクトップビルド13のコードのテストビルドで2026年10月27日から29日にかけて確認したものです: 3D写真はLinux PC上のコンテナでLinuxアプリが作成、シーンはRTX 4060搭載のノートパソコンでWindowsアプリが、またそのLinux PCでエンジンが作成、360°パノラマはそのノートパソコンで作成。ビルド33から39の行: 月別と年別の表示はデスクトップビルド14を使ったWindows PCで、SambaとWebDAVの共有に書き込む3D版はプロジェクトのビルドマシンで、「フォルダを参照」はAndroid 16のエミュレーターで、ストリーミング動画の開始は速度を落とした回線越しのAndroidエミュレーターで、キオスクモードとよりシャープな平面スクリーンはビルド35を使ったQuest 3で、ビルド39のスプラットファイルは10月31日にQuest 3のスプラットモジュールで、映画と動画のソースはプロジェクトのCIとビルドマシンのテストで確認しました。ビルド41とデスクトップビルド21の行: スプラットはGalaxy S24+、RTX 4060搭載のノートパソコン上のWindowsアプリ、CIのコンテナー内のLinuxで、スプラットシーンはそのノートパソコンで作成し、スプラット写真はテスト用のImmichサーバー3.3.0と3.2.4で、AV2はそのノートパソコン、Ubuntu 22.04と24.04のコンテナー、そして画面なしでCIのMacで確認しました。ビルド42とデスクトップビルド22の行: 手ぶれ補正はInsta360 X3、X4、X5、GoPro MAX、DJI Osmo 360カメラのサンプルファイルのモーショントラックを使ったプロジェクトのCIとビルドマシンのテストで、品質の選択はそのテストとRTX 4060搭載のノートパソコンでの学習の計測で、iPhoneとiPadの列はApp Storeのバージョン3.3.2で確認しました。ビルド46とデスクトップビルド26の行と欄: 手ぶれ補正、立体感の強さとよりシャープな輪郭、Plexアカウントでのログイン、デバイスがデコードできないPlexの映画、Chromecast、設定ファイルは、プロジェクトのCIとビルドマシンのテストで確認しました。実機ではまだ何も確認していません。ビルド47とデスクトップビルド27の行と欄: Plexの映画のバージョンと音声トラック、Dolby TrueHDとBlu-rayの字幕、バッテリー式Tapoカメラは、プロジェクトのCIとビルドマシンのテストで確認しました。実機ではまだ何も確認していません。ビルド48とデスクトップビルド28の行と欄: 他社製カメラはプロジェクトのCIのテストとローカルのRTSPサーバーで、PC VRヘッドセット表示はWindows上のプロジェクトのCIのテストで (ヘッドセットなし)、GoPro MAX 2とDJI Osmo 360 IIは公開サンプルファイルでのプロジェクトのテストで確認しました。実機ではまだ何も確認していません。ビルド49とデスクトップビルド29の行と欄: JellyfinとEmbyのサーバーはプロジェクトのビルドマシン上のDockerでJellyfin 12.4、Jellyfin 10.10、Emby 4.10に対して、360°動画の操作はAndroidとiOSでのプロジェクトのテストで、Questの大画面はプロジェクトのテストとCIのエミュレーターで、3D動画は実際のFFmpegプログラムとモデルを使ってプロジェクトのビルドマシンとCIで確認しました。実機ではまだ何も確認しておらず、3Dディスプレイやヘッドセットで見た3D動画もありません。*
+*LinuxとmacOS: デスクトップビルド11を2026年10月26日に、テスト用のImmichサーバーとテスト用の共有を用意したUbuntu 24.04のコンテナで試し、作者がMacでも試しました。AIの行は、この確認のために作ったデスクトップビルド13のコードのビルドで2026年10月27日から29日にかけて確認したものです: 3D写真はLinux PC上のコンテナでLinuxアプリが作成、シーンはRTX 4060搭載のノートパソコンでWindowsアプリが、またそのLinux PCでエンジンが作成、360°パノラマはそのノートパソコンで作成。ビルド33から39の行: 月別と年別の表示はデスクトップビルド14を使ったWindows PCで、SambaとWebDAVの共有に書き込む3D版はプロジェクトのビルドマシンで、「フォルダを参照」はAndroid 16のエミュレーターで、ストリーミング動画の開始は速度を落とした回線越しのAndroidエミュレーターで、キオスクモードとよりシャープな平面スクリーンはビルド35を使ったQuest 3で、ビルド39のスプラットファイルは10月31日にQuest 3のスプラットモジュールで、映画と動画のソースはプロジェクトのCIとビルドマシンのテストで確認しました。ビルド41とデスクトップビルド21の行: スプラットはGalaxy S24+、RTX 4060搭載のノートパソコン上のWindowsアプリ、CIのコンテナー内のLinuxで、スプラットシーンはそのノートパソコンで作成し、スプラット写真はテスト用のImmichサーバー3.3.0と3.2.4で、AV2はそのノートパソコン、Ubuntu 22.04と24.04のコンテナー、そして画面なしでCIのMacで確認しました。ビルド42とデスクトップビルド22の行: 手ぶれ補正はInsta360 X3、X4、X5、GoPro MAX、DJI Osmo 360カメラのサンプルファイルのモーショントラックを使ったプロジェクトのCIとビルドマシンのテストで、品質の選択はそのテストとRTX 4060搭載のノートパソコンでの学習の計測で、iPhoneとiPadの列はApp Storeのバージョン3.3.2で確認しました。ビルド46とデスクトップビルド26の行と欄: 手ぶれ補正、立体感の強さとよりシャープな輪郭、Plexアカウントでのログイン、デバイスがデコードできないPlexの映画、Chromecast、設定ファイルは、プロジェクトのCIとビルドマシンのテストで確認しました。実機ではまだ何も確認していません。ビルド47とデスクトップビルド27の行と欄: Plexの映画のバージョンと音声トラック、Dolby TrueHDとBlu-rayの字幕、バッテリー式Tapoカメラは、プロジェクトのCIとビルドマシンのテストで確認しました。実機ではまだ何も確認していません。ビルド48とデスクトップビルド28の行と欄: 他社製カメラはプロジェクトのCIのテストとローカルのRTSPサーバーで、PC VRヘッドセット表示はWindows上のプロジェクトのCIのテストで (ヘッドセットなし)、GoPro MAX 2とDJI Osmo 360 IIは公開サンプルファイルでのプロジェクトのテストで確認しました。実機ではまだ何も確認していません。ビルド49とデスクトップビルド29の行と欄: JellyfinとEmbyのサーバーはプロジェクトのビルドマシン上のDockerでJellyfin 12.4、Jellyfin 10.10、Emby 4.10に対して、360°動画の操作はAndroidとiOSでのプロジェクトのテストで、Questの大画面はプロジェクトのテストとCIのエミュレーターで、3D動画は実際のFFmpegプログラムとモデルを使ってプロジェクトのビルドマシンとCIで確認しました。実機ではまだ何も確認しておらず、3Dディスプレイやヘッドセットで見た3D動画もありません。*
 
-✅ そのプラットフォームのアプリで利用可能 · ❌ 提供なし · 🔜 予定あり · 🔧 CI ソースに含まれ、そのシステム上でプロジェクトのCIがビルドと起動を行っている · フラットのみ: コンピューターの360°動画レンダラーはWindows専用のため、動画はメッセージを表示したうえでフラットで再生される。LGテレビでは、webOSが動画フレームを球体に渡せるかどうかをまだ計測していない。テスターのSamsungテレビでは、ブラウザーが3Dビューに黒い動画フレームを渡した。「片目」とは、3Dファイルの左目側だけがフラットな画面に表示されることを意味します。LGとSamsungの列は1つの別のテレビアプリです。LGはバージョン1.0.0で、共有とPlexは実際のサーバーに対して、カメラはシミュレートしたカメラに対して、プロジェクトのビルドホストで確認済みです。Samsungはテストビルド0.3.6です。どこで何を確認したか、何がまだ確認待ちかは、[機能一覧](../docs/immuch360/features.md)、[プラットフォームサポート](../docs/immuch360/platform-support.md)、[互換性](../docs/immuch360/compatibility.md)に記載されています。
+✅ そのプラットフォームのアプリで利用可能 · ❌ 提供なし · 🔜 予定あり · 🔧 CI ソースに含まれ、そのシステム上でプロジェクトのCIがビルドと起動を行っている · フラットのみ: コンピューターの360°動画レンダラーはWindows専用のため、動画はメッセージを表示したうえでフラットで再生される。LGテレビでは、webOSが動画フレームを球体に渡せるかどうかをまだ計測していない。テスターのSamsungテレビでは、ブラウザーが3Dビューに黒い動画フレームを渡した。「片目」とは、3Dファイルの左目側だけがフラットな画面に表示されることを意味します。LGとSamsungの列は1つの別のテレビアプリです。LGはバージョン1.0.0で、共有とPlexは実際のサーバーに対して、カメラはシミュレートしたカメラに対して、プロジェクトのビルドホストで確認済みです。Samsungはバージョン0.3.6です。どこで何を確認したか、何がまだ確認待ちかは、[機能一覧](../docs/immuch360/features.md)、[プラットフォームサポート](../docs/immuch360/platform-support.md)、[互換性](../docs/immuch360/compatibility.md)に記載されています。
 
 AIの行の「開く」は、コンピューターが作ったものをデバイスが開くだけで、デバイス自身は何も作らないという意味です: 3D写真は2つの目を左右に並べて表示し、シーンは小さな3D SCENEマーク付きの写真として表示され、パノラマは360°ビューアーで開きます。AIラベルとは「AI 360°」バッジ、「写真の端の外側は AI が生成」という文、元の写真の輪郭のことで、iPhone、iPad、LG、Samsungのアプリにはロードマップで追加されます。何かを作るのはコンピューターとQuestだけです。これらの行のために確認した内容は[ハウツー](#turn-one-photo-into-3d-a-scene-a-panorama)にあります。
 
-- **Androidスマートフォンとタブレット**: 完全版のアプリで、タッチとジャイロスコープに対応し、すべてのソースを使えます。ビルド32からは、コンピューターで作った360°パノラマをAIラベル付きで開けます。ビルド38からはデバイスのフォルダーを参照し、TIFF写真を表示し、映画を止めたところから続きを再生します。ビルド39からはストリーミング動画が接続の許す限りすぐに始まり、待っている理由を表示します。ビルド41からはガウシアンスプラットと、Immichに保管されたスプラットシーンを開けます (実験的)。ビルド42からは、360°プレーヤーが、Immichライブラリ、共有、デバイスのフォルダーにあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画を、カメラのジャイロスコープで手ぶれ補正します (実験的)。ビルド46からは、このデバイスでデコードできないPlexの映画をPlexサーバーが変換でき、Plexの映画をスマートフォンからChromecastやGoogle TVで再生でき (どちらも実験的)、設定をファイルに保存でき、手ぶれ補正したビューは水平な状態で始まり、およそ一秒以内にカメラの向きへ回ります。ビルド47からは、Plexの映画がデバイスでデコードできる音声トラックを再生してどのトラックかを表示し、画面に合ったバージョンを開き、Plexサーバーが変換する理由を表示し、接続が遅いときはより軽いバージョンか、接続が運べる速度への変換を提案します。映画のダウンロードは進行状況を通知に表示し、バッテリー式のTapoカメラは映像のみでライブ映像を表示します (実験的)。ビルド48からは、他社製カメラがライブ映像を表示し (ONVIFで見つけるか、RTSPリンクで追加)、DJI Osmo 360 IIやGoPro MAX 2のRAW動画も手ぶれ補正して再生し (実験的)、Plexの映画がデータ不足にならなくなりました: ビルド48の候補を入れたGalaxy S24は32から40 Mbit/sを受信し、ビルド47では4から8でした。ビルド49からは、JellyfinとEmbyのサーバーに独自の種類があり (実験的)、360°動画プレーヤーは横向きを強制せずにデバイスの回転に従います。360°写真と共通で初期設定ではオフのジャイロスコープボタン、ピンチとダブルタップのズーム、真上と真下まで届くドラッグに対応します。ユーザーがSamsung Galaxy S25 Ultraで試しました。
-- **iPhoneとiPad**: 完全版のアプリです。360°動画プレーヤーはバージョン3.4.4から360°写真の操作に対応し (iPhoneではまだ試していません)、DLNA検索はAppleがマルチキャストの権限を許可するまでユニキャストでリクエストを送信します。2026年11月6日に公開されたバージョン3.3.2では、スマートフォンでのログインのスマートフォン側、タイムラインの月と年、止めたところから続きを再生する映画、動画のソース、Tapoのライブ映像に対応しました (iPhoneではまだ試していません)。2026年11月9日に公開されたバージョン3.3.3では、App Storeを開く更新通知が加わりました。2026年11月10日に公開されたバージョン3.3.4は、3.3.3の内容にビルド44の修正を加えたものでした。2026年11月12日に公開されたバージョン3.4.0は、Immich 3.4.0の修正、Immich 3.4サーバーのJPEG XL写真、メジャーバージョンの差に対する更新通知、Plexの年ごとの映画、そのページ、アプリを開いている間のダウンロード、テレビやコンピューターへの「再生先…」 (実験的)、そしてApp Store自身によるアプリの評価の案内をもたらしました。Plexの音声と字幕のメニューは、iPhoneとiPadにはまだありません。2026年11月12日に公開されたバージョン3.4.1は、Insta360、GoPro MAX、DJI Osmo 360カメラのRAW 360°動画をカメラのジャイロスコープで手ぶれ補正し、アプリを開いている間にPlexの映画をChromecastやGoogle TVに送り (どちらも実験的)、PlexアカウントでのログインでPlexサーバーを追加し、ファイルと共有を通じて設定をファイルに保存します。いずれもiPhoneではまだ試していません。ビルド47のバージョンであるバージョン3.4.2は、2026年11月14日からApp Storeで公開中で、次のものをもたらしました: 音声付きのバッテリー式Tapoカメラのライブ映像 (実験的)、Plexの映画のバージョン、ダウンロード完了時の通知、そしてアカウントを含めて復元するとサーバーにログインする設定ファイルです。こちらもiPhoneではまだ試していません。ビルド48のバージョンであるバージョン3.4.3は、2026年11月16日からApp Storeで公開中で、次のものをもたらしました: H.264の他社製カメラのライブ映像 (ネットワークの検索にはAppleのマルチキャストの権限が必要なため、アドレスかRTSPリンクで追加)、手ぶれ補正したDJI Osmo 360 IIやGoPro MAX 2のRAW動画 (実験的)、そして最新のサーバーで「サーバーをアップデートできます」の通知が出なくなることです。iPhoneではまだ試していません。ビルド49のバージョンであるバージョン3.4.4は、2026年11月20日からApp Storeで公開中で、次のものをもたらしました: JellyfinとEmbyのサーバー (実験的)、そして360°動画プレーヤーでの15°から115°までのピンチ、ダブルタップ、真上と真下へのドラッグ、360°写真と共通で初期設定ではオフのジャイロスコープボタンです。iPhoneではまだ試していません。ビルド50のバージョンであるバージョン3.4.5は2026年11月22日からApp Storeで公開中です。ビルド51のバージョンであるバージョン3.4.6がこの後に続き、設定ファイルのカードとネットワーク共有からの復元に対応します。
-- **Android TVとGoogle TV**: 同じAPKをリモコンで操作し、既定でダークテーマです。ビューアー専用で、バックアップ、アップロード、エディターは表示されず、詳細は読み取り専用ですが、写真はキー1つで回転できます。すべての検索フィルターがリモコンで使えます。場所とカメラは選択肢をリストで開き、日付フィルターはすべての選択肢を表示し、タグ、場所、日付、メディアの種類、星評価、表示オプションのシートは、選択肢の横の右に1つ移動した位置にクリアと適用を置き、画面の高さのほとんどを使います。写真グリッドは画像メモリの使用量を減らし、矢印を押し続けても移動は最大で毎秒約10行です。ビルド28からは、スマートフォンからQRコードまたは短いコードでログインできます (2台のエミュレーター間でコードを入力して試しました)。ビルド29からは、動画のタイムバーにリモコンのフォーカスが移り、映画に音声と字幕のメニューが付き、共有の次のファイルは専用のコントロール付きで開きます。Google TVエミュレーターで確認済みです。ビルド28は10月23日に実機のAndroid TVで動作し、そこで見つかった動画の問題はビルド29で修正しました。修正はエミュレーターで確認済みです。ビルド30からは、Droneカードに、スマートフォンが中継するDJIドローンのライブ映像が、ドローンの数値と障害物リングとともに表示されます (実験的)。ペアリングと映像は10月25日にTCLのAndroid TVで試しましたが、以前の中継ではカクつきと緑がかった色が出ました。10月26日、ビルド30では、これに対応する安定ストリームにより、そのテレビは飛行中も映像を表示し続けました。フリーズは7回でした。ビルド33からは、検索とその日付範囲がリモコンで使え、写真の左下に日付が表示され、タイムバーの素早い連打でより遠くへ移動します。ビルド38からは、映画を止めたところから続きを再生し、TIFF写真も表示されます。ビルド42からは、360°プレーヤーが、Immichライブラリや共有にあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画を、カメラのジャイロスコープで手ぶれ補正します (実験的)。ビルド46からは、テレビがデコードできないPlexの映画をPlexサーバーが変換でき (実験的)、Plexサーバーはplex.tv/linkでのコードで追加します。ビルド47からは、Plexの映画をテレビにダウンロードでき、テレビはまず映画のサイズと空き容量を表示します。ビルド48からは、他社製カメラがライブ映像を表示し、DJI Osmo 360 IIやGoPro MAX 2のRAW動画も手ぶれ補正して再生します (実験的)。ビルド49からは、JellyfinやEmbyのサーバーをQuick Connectで追加でき、リモコンで何も入力しなくて済むようにコードを先に表示します (実験的)。360°プレーヤーは矢印キーをそのまま使います。
+- **Androidスマートフォンとタブレット**: 完全版のアプリで、タッチとジャイロスコープに対応し、すべてのソースを使えます。ビルド32からは、コンピューターで作った360°パノラマをAIラベル付きで開けます。ビルド38からはデバイスのフォルダーを参照し、TIFF写真を表示し、映画を止めたところから続きを再生します。ビルド39からはストリーミング動画が接続の許す限りすぐに始まり、待っている理由を表示します。ビルド41からはガウシアンスプラットと、Immichに保管されたスプラットシーンを開けます。ビルド42からは、360°プレーヤーが、Immichライブラリ、共有、デバイスのフォルダーにあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画を、カメラのジャイロスコープで手ぶれ補正します。ビルド46からは、このデバイスでデコードできないPlexの映画をPlexサーバーが変換でき、Plexの映画をスマートフォンからChromecastやGoogle TVで再生でき、設定をファイルに保存でき、手ぶれ補正したビューは水平な状態で始まり、およそ一秒以内にカメラの向きへ回ります。ビルド47からは、Plexの映画がデバイスでデコードできる音声トラックを再生してどのトラックかを表示し、画面に合ったバージョンを開き、Plexサーバーが変換する理由を表示し、接続が遅いときはより軽いバージョンか、接続が運べる速度への変換を提案します。映画のダウンロードは進行状況を通知に表示し、バッテリー式のTapoカメラは映像のみでライブ映像を表示します。ビルド48からは、他社製カメラがライブ映像を表示し (ONVIFで見つけるか、RTSPリンクで追加)、DJI Osmo 360 IIやGoPro MAX 2のRAW動画も手ぶれ補正して再生し、Plexの映画がデータ不足にならなくなりました: ビルド48の候補を入れたGalaxy S24は32から40 Mbit/sを受信し、ビルド47では4から8でした。ビルド49からは、JellyfinとEmbyのサーバーに独自の種類があり、360°動画プレーヤーは横向きを強制せずにデバイスの回転に従います。360°写真と共通で初期設定ではオフのジャイロスコープボタン、ピンチとダブルタップのズーム、真上と真下まで届くドラッグに対応します。ユーザーがSamsung Galaxy S25 Ultraで試しました。
+- **iPhoneとiPad**: 完全版のアプリです。360°動画プレーヤーはバージョン3.4.4から360°写真の操作に対応し (iPhoneではまだ試していません)、DLNA検索はAppleがマルチキャストの権限を許可するまでユニキャストでリクエストを送信します。2026年11月6日に公開されたバージョン3.3.2では、スマートフォンでのログインのスマートフォン側、タイムラインの月と年、止めたところから続きを再生する映画、動画のソース、Tapoのライブ映像に対応しました (iPhoneではまだ試していません)。2026年11月9日に公開されたバージョン3.3.3では、App Storeを開く更新通知が加わりました。2026年11月10日に公開されたバージョン3.3.4は、3.3.3の内容にビルド44の修正を加えたものでした。2026年11月12日に公開されたバージョン3.4.0は、Immich 3.4.0の修正、Immich 3.4サーバーのJPEG XL写真、メジャーバージョンの差に対する更新通知、Plexの年ごとの映画、そのページ、アプリを開いている間のダウンロード、テレビやコンピューターへの「再生先…」、そしてApp Store自身によるアプリの評価の案内をもたらしました。Plexの音声と字幕のメニューは、iPhoneとiPadにはまだありません。2026年11月12日に公開されたバージョン3.4.1は、Insta360、GoPro MAX、DJI Osmo 360カメラのRAW 360°動画をカメラのジャイロスコープで手ぶれ補正し、アプリを開いている間にPlexの映画をChromecastやGoogle TVに送り、PlexアカウントでのログインでPlexサーバーを追加し、ファイルと共有を通じて設定をファイルに保存します。いずれもiPhoneではまだ試していません。ビルド47のバージョンであるバージョン3.4.2は、2026年11月14日からApp Storeで公開中で、次のものをもたらしました: 音声付きのバッテリー式Tapoカメラのライブ映像、Plexの映画のバージョン、ダウンロード完了時の通知、そしてアカウントを含めて復元するとサーバーにログインする設定ファイルです。こちらもiPhoneではまだ試していません。ビルド48のバージョンであるバージョン3.4.3は、2026年11月16日からApp Storeで公開中で、次のものをもたらしました: H.264の他社製カメラのライブ映像 (ネットワークの検索にはAppleのマルチキャストの権限が必要なため、アドレスかRTSPリンクで追加)、手ぶれ補正したDJI Osmo 360 IIやGoPro MAX 2のRAW動画、そして最新のサーバーで「サーバーをアップデートできます」の通知が出なくなることです。iPhoneではまだ試していません。ビルド49のバージョンであるバージョン3.4.4は、2026年11月20日からApp Storeで公開中で、次のものをもたらしました: JellyfinとEmbyのサーバー、そして360°動画プレーヤーでの15°から115°までのピンチ、ダブルタップ、真上と真下へのドラッグ、360°写真と共通で初期設定ではオフのジャイロスコープボタンです。iPhoneではまだ試していません。ビルド50のバージョンであるバージョン3.4.5は2026年11月22日からApp Storeで公開中です。ビルド51のバージョンであるバージョン3.4.6がこの後に続き、設定ファイルのカードとネットワーク共有からの復元に対応します。
+- **Android TVとGoogle TV**: 同じAPKをリモコンで操作し、既定でダークテーマです。ビューアー専用で、バックアップ、アップロード、エディターは表示されず、詳細は読み取り専用ですが、写真はキー1つで回転できます。すべての検索フィルターがリモコンで使えます。場所とカメラは選択肢をリストで開き、日付フィルターはすべての選択肢を表示し、タグ、場所、日付、メディアの種類、星評価、表示オプションのシートは、選択肢の横の右に1つ移動した位置にクリアと適用を置き、画面の高さのほとんどを使います。写真グリッドは画像メモリの使用量を減らし、矢印を押し続けても移動は最大で毎秒約10行です。ビルド28からは、スマートフォンからQRコードまたは短いコードでログインできます (2台のエミュレーター間でコードを入力して試しました)。ビルド29からは、動画のタイムバーにリモコンのフォーカスが移り、映画に音声と字幕のメニューが付き、共有の次のファイルは専用のコントロール付きで開きます。Google TVエミュレーターで確認済みです。ビルド28は10月23日に実機のAndroid TVで動作し、そこで見つかった動画の問題はビルド29で修正しました。修正はエミュレーターで確認済みです。ビルド30からは、Droneカードに、スマートフォンが中継するDJIドローンのライブ映像が、ドローンの数値と障害物リングとともに表示されます。ペアリングと映像は10月25日にTCLのAndroid TVで試しましたが、以前の中継ではカクつきと緑がかった色が出ました。10月26日、ビルド30では、これに対応する安定ストリームにより、そのテレビは飛行中も映像を表示し続けました。フリーズは7回でした。ビルド33からは、検索とその日付範囲がリモコンで使え、写真の左下に日付が表示され、タイムバーの素早い連打でより遠くへ移動します。ビルド38からは、映画を止めたところから続きを再生し、TIFF写真も表示されます。ビルド42からは、360°プレーヤーが、Immichライブラリや共有にあるInsta360、GoPro MAX、DJI Osmo 360カメラのRAW動画を、カメラのジャイロスコープで手ぶれ補正します。ビルド46からは、テレビがデコードできないPlexの映画をPlexサーバーが変換でき、Plexサーバーはplex.tv/linkでのコードで追加します。ビルド47からは、Plexの映画をテレビにダウンロードでき、テレビはまず映画のサイズと空き容量を表示します。ビルド48からは、他社製カメラがライブ映像を表示し、DJI Osmo 360 IIやGoPro MAX 2のRAW動画も手ぶれ補正して再生します。ビルド49からは、JellyfinやEmbyのサーバーをQuick Connectで追加でき、リモコンで何も入力しなくて済むようにコードを先に表示します。360°プレーヤーは矢印キーをそのまま使います。
 - **LGテレビ (webOS 5.0以降)**: リモコンとMagic Remote向けの別アプリで、[immich-tv-webos](https://github.com/Seeky91/immich-tv-webos)をベースにしています。360°写真を球体で表示し、キー1つで写真を回転でき、ダークテーマとアプリの89言語に対応したImmichビューアーです (テレビアプリ独自のわずかなテキストは今のところ英語)。ネットワーク共有、Plex、Tapoカメラのライブ映像は、テレビ上の独自サービスを通じて利用します (SMBはwebOS 22から)。360°動画はフラットです。10月24日にLG Content Storeへ申請したバージョン1.0.0は、LGのCloud Test Labで3機種のwebOS 25テレビで動作しました: ログイン、スマートフォンでのログインページ、写真、アルバム、動画、360°ビュー、スライドショー、検索、すべてのページからの戻る操作です。バージョン0.1.0はテスターのLGテレビ (webOS 22) で動作しました。共有とPlexは実際のサーバーに対して、カメラはシミュレートしたカメラに対して、プロジェクトのビルドホストで確認済みです。ビルド46とともにGitHubにあるバージョン1.0.2は、Immichアプリと同じく、日本語で「サインイン」ではなくログインと表示します。ビルド47とともにGitHubにあるバージョン1.0.3は、DLNAサーバーのフォルダーにテレビのライブチャンネルがあるとき、まだ再生できないことを表示します。ビルド48とともにGitHubにあるバージョン1.0.4は、横倒しの動画のために、動画の上部バーに「映像を回転」と「画面に合わせる」を加えます。LGテレビでは、アプリは動画の回転をテレビのプレーヤーに任せ、求められたときに回転させます (LGテレビではまだ試していません)。ビルド49とともにGitHubにあるバージョン1.0.5は、DLNAの種類を「DLNA メディアサーバー (DLNA プラグイン付きの Jellyfin、NAS、TV ボックス)」と表示します。Jellyfin 10.9からは、そのプラグインがないとJellyfinサーバーにDLNAがないためです。テレビアプリには独自のJellyfinの種類はありません。
-- **Samsungテレビ (Tizen 5.5以降)**: LGテレビアプリをSamsungテレビ向けにパッケージしたテストビルド0.3.6で、ご自身で署名してインストールします。リモコン向けのImmichビューアーで、入力によるログイン (サーバーのアドレス、次にメールアドレスとパスワード、またはAPIキー)、スライドショー、球体での360°写真、キー1つでの写真の回転、テレビの対応状況を示す「このテレビについて」ページに対応します。スマートフォンでのログイン、共有、Plex、カメラはロードマップにあります。360°動画は通知を表示してフラットで再生します。バージョン0.1.0はTizen 9のテスターのSamsungテレビで動作しました: 4Kまでの写真と動画は再生でき、4Kを超えるものはデコードできず、テレビのブラウザーは3Dビューに黒い動画フレームを渡しました。バージョン0.2.0にはそのときの修正 (テレビのデコーダーの上限を超える動画や途中で止まる動画へのメッセージ、通知付きでフラット再生される360°動画) が入っており、プロジェクトのCIがテレビの代わりとなるブラウザーで確認しました。テストビルド0.3.0では、LGバージョン1.0.1の写真のズームと「読み込み中」の表示が、0.3.1ではLGバージョン1.0.2の日本語の表記が加わりました。テストビルド0.3.2は、Samsungのプレーヤーが横倒しのままにしていた、スマートフォンで縦向きに撮影した動画を正しい向きで再生します ([Issue 17](https://github.com/freeKC/Immuch360/issues/17))。テストビルド0.3.3は、縦向きと報告しながら横倒しで描画するテレビ (このIssueのケース) でも回転させ、動画の上部バーに「映像を回転」と「画面に合わせる」を加えます。0.3.4ではその表示が89言語になりました。報告者のテレビ (Tizen 9.0のGQ65S90C) では、0.3.4でも映像は横倒しのままでした。11月16日に公開したテストビルド0.3.5は、回転が必要な動画をSamsung自身のプレーヤーであるAVPlayに渡し、標準プレーヤーを代替とします (「Samsung の動画プレーヤーでこの動画を再生できませんでした: 標準プレーヤーで再生します。」)。報告者のテレビでは動画は再生されましたが、テレビが回転を拒否したため、そこでの解決策はImmichサーバーに動画をトランスコードさせ、正立で保存することです。ビルド49とともに出るテストビルド0.3.6は、その通知を89言語にした0.3.5です。ほかのSamsungテレビではまだ0.3.5も0.3.6も動作させていません。
-- **Meta Quest 2、Pro、3、3S**: ウィンドウとしてのアプリに加え、イマーシブビューと、ビルド30からはスマートフォンが中継するDJIドローンのライブ映像を表示するDroneカード (実験的、ビルド30で初めてテスト) があります。安全なコーデックはHEVCで、H.264はQuest 3では4096x2304前後が上限です。アプリはQuest 3で確認済みです。ビルド32からは、Quest 3または3SでAIによる立体感が平面写真をヘッドセット内で計算して3Dで表示し、コンピューターで作った3D写真、シーン、パノラマも3Dで開きます (実験的)。ビルド33からは動かせる平面3Dスクリーンとキオスクモード、ビルド38からはイマーシブビューでの映画の続きの再生とTIFF写真、ビルド39からはQuest 3と3Sでのガウシアンスプラットに対応します。ビルド46からは、Insta360、GoPro MAX、DJI Osmo 360カメラのRAW 360°動画がイマーシブビューで手ぶれ補正して再生されるとともに、ヘッドセットがデコードできないPlexの映画はlibmpvまたはPlexサーバーの変換で再生され (どちらも実験的)、最初の立体感は約7秒ではなく約4秒で、選んだ強さで表示されるはずです。ビルド47からは、ヘッドセットがデコードできない音声トラック (たとえばDolby TrueHD) を持つPlexの映画は別のトラックを再生してどのトラックかを表示し、mpvで再生するDolby Visionプロファイル5の映画は色が正しくない可能性があることを警告し、バッテリー式のTapoカメラは映像のみでライブ映像を表示します (実験的)。ビルド48からは、他社製カメラがライブ映像を表示し、DJI Osmo 360 IIやGoPro MAX 2のRAW動画をイマーシブビューで手ぶれ補正して再生します (実験的)。ビルド49からは、大画面で開いた写真は、左のサムスティックやパネルで閲覧する間も設定したサイズと位置を保ち、スライドショーとして再生されます。近づけた写真は小さくならなくなり、「立体感: 標準」で表示中の写真のAIによる立体感の強さを変え、写真のぼかしたコピーで後ろのフレームを埋められます (実験的)。いずれもプロジェクトではまだヘッドセットで試していません。JellyfinやEmbyのサーバーはQuick Connectで追加します (実験的)。
-- **Windows 10と11**: プレビューで、ギャラリーの代わりにフォルダーを使い、フラットおよび360°動画向けの専用動画プレーヤー (libmpv)、グラフィックチップでスティッチされるRAWファイル、プログラムで開いた、またはウィンドウにドロップしたファイルやフォルダー、APROGSYSが署名したインストーラーまたはZIPがあります。デスクトップビルド13からは、「3D を作成 (AI)」で写真をプロセッサー上で3D写真と3Dシーンに、8 GBのグラフィックスカード上で360°パノラマに変換できます。デスクトップビルド16からは「3D を作成 (AI)」がネットワーク共有の写真でも使え、デスクトップビルド17からは動画をこのコンピューターがデコードできるファイルから再生し、デスクトップビルド18からは映画を止めたところから続きを再生し、デスクトップビルド19からは遅いサーバーの映画も再生が続き、待っている理由を表示します。デスクトップビルド20からは、映画がネットワーク共有を待っている間でもウィンドウがすぐに閉じます。開いている映画は止めたところが保存され、セッションのログが書き込まれます。デスクトップビルド21からは、グラフィックスチップを二つ持つノートPCでアプリが速い方のチップで動き、動画の詳細に映画のデコード方法が表示されます。同じビルドでガウシアンスプラットを開き、4 GBのグラフィックスカードで写真や動画からスプラットシーンを作成し、AV2動画を再生します。いずれも実験的です。デスクトップビルド22からは、グラフィックスカードに3.5 GiBの空きがあれば360°パノラマが始まり、スプラットシーンは「ヘッドセット」、「詳細」、「最大」の三つの品質で作れます (実験的)。デスクトップビルド26からは、360°プレーヤーがInsta360、GoPro MAX、DJI Osmo 360カメラのRAW 360°動画をカメラのジャイロスコープで手ぶれ補正するとともに、3D写真は立体感の強さを選べ、輪郭がよりシャープになり (どちらも実験的)、設定をファイルに保存できます。デスクトップビルド27からは、映画のDolby TrueHDの音声とBlu-ray (PGS) の字幕を再生し、Plexの映画はバージョンを選べ、Dolby Visionプロファイル5の映画は色が正しくない可能性があることを警告します。デスクトップビルド28からは、「ヘッドセットで見る」で360°と180°の動画を周囲に、映画を大きなスクリーンに、PC VRヘッドセットで表示します。SteamVR、Meta Horizon Link、Virtual Desktop、またはほかのOpenXRランタイムを使います (プロジェクトではまだヘッドセットで試していません)。他社製カメラのライブ映像にも対応し、プロフィールメニューのApp Versionの行にデスクトップビルドが表示されます。デスクトップビルド29からは、「3D を作成 (AI)」がプロセッサー上で2D動画を左右の3D動画にします。最初の見積もりで動画の一分あたり約10から30分の作業で、一時停止と再開に対応します (実験的、3Dディスプレイやヘッドセットではまだ試していません)。JellyfinとEmbyのサーバーには独自の種類があります (実験的)。デスクトップビルド31からは、「高画質化 (AI)」が写真のよりシャープなコピーを作り、360°動画は360° 3D動画になり (実験的)、3D動画の深度はDirectMLを通じてグラフィックスカードが推定し、サーバーと共有の動画を直接受け取り、Escapeで一つ前に戻ります。
-- **Linux**: プロジェクトのCIでビルドされた.debと.rpmで、Ubuntu 22.04と24.04、Debian 12、Fedora 40と44でインストールして確認済みです。写真、360°写真、フラット動画はシステムのlibmpvで再生し (360°、3D、RAWの動画はメッセージを表示してフラットで再生)、デスクトップビルド7からはX11セッションでもハードウェア経由で描画します。SMB共有はUbuntu 22.04とDebian 12以降で使えます。キーリング (GNOME KeyringまたはKWallet) がなくても、初回起動時にアプリが25秒間フリーズすることはなくなりました。パスワードはそのセッションの間だけ保持され、設定にその旨が表示されます。デスクトップビルド13からは、「3D を作成 (AI)」でプロセッサー上で3D写真とシーンを、8 GBのグラフィックスカード上で360°パノラマを作成できます (Intelグラフィックスで小さいサイズのみ試行)。WSLgとコンテナー内で確認済みです。デスクトップビルド16からは「3D を作成 (AI)」がネットワーク共有の写真でも使え、デスクトップビルド17からは動画をこのコンピューターがデコードできるファイルから再生し、デスクトップビルド18からは映画を止めたところから続きを再生し、デスクトップビルド19からは遅いサーバーの映画も再生が続き、待っている理由を表示します。デスクトップビルド20からは、映画がネットワーク共有を待っている間でもウィンドウがすぐに閉じます。開いている映画は止めたところが保存され、セッションのログが書き込まれます。デスクトップビルド21からは、ガウシアンスプラットを開き、AV2動画を再生します (実験的)。デスクトップビルド22からは、グラフィックスカードに3.5 GiBの空きがあれば360°パノラマが始まります。デスクトップビルド26からは、3D写真は立体感の強さを選べ、輪郭がよりシャープになり (実験的)、設定をファイルに保存できます。デスクトップビルド27からは、Plexの映画はバージョンを選べ、Dolby Visionプロファイル5の映画は色が正しくない可能性があることを警告します。デスクトップビルド28からは、システムのlibmpvで他社製カメラのライブ映像を再生し (CIで確認)、プロフィールメニューのApp Versionの行にデスクトップビルドが表示されます。デスクトップビルド29からは、「3D を作成 (AI)」がプロセッサー上で2D動画を左右の3D動画にします (実験的、3Dディスプレイやヘッドセットではまだ試していません)。JellyfinとEmbyのサーバーには独自の種類があり、CIで確認しています (実験的)。デスクトップビルド31からは、TIFF写真を表示し (DNGとその他のRAWファイルを除く)、フォルダーの新しいファイルは更新なしで表示され、スプラットシーンは4 GBのグラフィックスカードで作成され、3D動画は片目でフラットに再生され、「高画質化 (AI)」が写真のよりシャープなコピーを作り、デスクトップエントリーは二つのグラフィックスチップを持つノートPCの高速なチップを要求し、独自のFFmpegを使うFedoraではRPM Fusionのものをインストールする方法をアプリが案内します。TIFF写真とAvahiのアナウンスは、Ubuntu 24.04のコンテナで.debを使って動作を確認しました。
-- **macOS**: プロジェクトのCIでビルドされたDMGとZIPで、ユニバーサル、署名なしです (Gatekeeperが一度だけ確認を求めます)。アプリは起動し、Finderからのものも含め、渡されたファイルやフォルダーを開き、シークレットをログインキーチェーンに保存し、独自のlibmpvでフラット動画を再生します。これらはまずプロジェクトのCIのMacで確認しました。2026年10月26日に作者がMacでデスクトップビルド11を試し、動作しました。デスクトップビルド13からは、プロジェクトのCIでビルドされたMacアプリが3D写真とシーンもプロセッサー上で作成し、Macでの360°パノラマはロードマップにあります。デスクトップビルド16からは「3D を作成 (AI)」がネットワーク共有の写真でも使え、デスクトップビルド17からは動画をこのコンピューターがデコードできるファイルから再生し、デスクトップビルド18からは映画を止めたところから続きを再生し、デスクトップビルド19からは遅いサーバーの映画も再生が続き、待っている理由を表示します。デスクトップビルド20からは、映画がネットワーク共有を待っている間でもウィンドウがすぐに閉じます。開いている映画は止めたところが保存され、セッションのログが書き込まれます。デスクトップビルド21からは、プロジェクトのCIでビルドしたMacアプリもガウシアンスプラットを開き、AV2動画を再生します (実験的)。Macではまだ試していません。デスクトップビルド26からは、その3D写真も立体感の強さを選べ、輪郭がよりシャープになり (実験的)、設定をファイルに保存できます。デスクトップビルド27からは、映画のDolby TrueHDの音声を再生し、Plexの映画はバージョンを選べ、Dolby Visionプロファイル5の映画は色が正しくない可能性があることを警告します。デスクトップビルド28からは、他社製カメラのライブ映像を再生し (CIで確認)、プロフィールメニューのApp Versionの行にデスクトップビルドが表示されます。デスクトップビルド29からは、Appleチップ搭載のMacで「3D を作成 (AI)」が2D動画を左右の3D動画にします。プロジェクトのCIでビルドしたもので、Macではまだ試していません (実験的)。JellyfinとEmbyのサーバーには独自の種類があります (実験的)。デスクトップビルド31からは、3D動画はAppleチップでCore MLを通じて深度モデルを実行し、IntelのMacでも時間はかかりますが利用でき、「高画質化 (AI)」のナチュラルのレベルがAppleチップで写真のよりシャープなコピーを作り、プロジェクトのCIがMacでデスクトップのテストを実行します。いずれもMacではまだ試していません。
+- **Samsungテレビ (Tizen 5.5以降)**: LGテレビアプリをSamsungテレビ向けにパッケージしたバージョン0.3.6で、ご自身で署名してインストールします。リモコン向けのImmichビューアーで、入力によるログイン (サーバーのアドレス、次にメールアドレスとパスワード、またはAPIキー)、スライドショー、球体での360°写真、キー1つでの写真の回転、テレビの対応状況を示す「このテレビについて」ページに対応します。スマートフォンでのログイン、共有、Plex、カメラはロードマップにあります。360°動画は通知を表示してフラットで再生します。バージョン0.1.0はTizen 9のテスターのSamsungテレビで動作しました: 4Kまでの写真と動画は再生でき、4Kを超えるものはデコードできず、テレビのブラウザーは3Dビューに黒い動画フレームを渡しました。バージョン0.2.0にはそのときの修正 (テレビのデコーダーの上限を超える動画や途中で止まる動画へのメッセージ、通知付きでフラット再生される360°動画) が入っており、プロジェクトのCIがテレビの代わりとなるブラウザーで確認しました。バージョン0.3.0では、LGバージョン1.0.1の写真のズームと「読み込み中」の表示が、0.3.1ではLGバージョン1.0.2の日本語の表記が加わりました。バージョン0.3.2は、Samsungのプレーヤーが横倒しのままにしていた、スマートフォンで縦向きに撮影した動画を正しい向きで再生します ([Issue 17](https://github.com/freeKC/Immuch360/issues/17))。バージョン0.3.3は、縦向きと報告しながら横倒しで描画するテレビ (このIssueのケース) でも回転させ、動画の上部バーに「映像を回転」と「画面に合わせる」を加えます。0.3.4ではその表示が89言語になりました。報告者のテレビ (Tizen 9.0のGQ65S90C) では、0.3.4でも映像は横倒しのままでした。11月16日に公開したバージョン0.3.5は、回転が必要な動画をSamsung自身のプレーヤーであるAVPlayに渡し、標準プレーヤーを代替とします (「Samsung の動画プレーヤーでこの動画を再生できませんでした: 標準プレーヤーで再生します。」)。報告者のテレビでは動画は再生されましたが、テレビが回転を拒否したため、そこでの解決策はImmichサーバーに動画をトランスコードさせ、正立で保存することです。ビルド49とともに出るバージョン0.3.6は、その通知を89言語にした0.3.5です。ほかのSamsungテレビではまだ0.3.5も0.3.6も動作させていません。
+- **Meta Quest 2、Pro、3、3S**: ウィンドウとしてのアプリに加え、イマーシブビューと、ビルド30からはスマートフォンが中継するDJIドローンのライブ映像を表示するDroneカード (ビルド30で初めてテスト) があります。安全なコーデックはHEVCで、H.264はQuest 3では4096x2304前後が上限です。アプリはQuest 3で確認済みです。ビルド32からは、Quest 3または3SでAIによる立体感が平面写真をヘッドセット内で計算して3Dで表示し、コンピューターで作った3D写真、シーン、パノラマも3Dで開きます。ビルド33からは動かせる平面3Dスクリーンとキオスクモード、ビルド38からはイマーシブビューでの映画の続きの再生とTIFF写真、ビルド39からはQuest 3と3Sでのガウシアンスプラットに対応します。ビルド46からは、Insta360、GoPro MAX、DJI Osmo 360カメラのRAW 360°動画がイマーシブビューで手ぶれ補正して再生されるとともに、ヘッドセットがデコードできないPlexの映画はlibmpvまたはPlexサーバーの変換で再生され、最初の立体感は約7秒ではなく約4秒で、選んだ強さで表示されるはずです。ビルド47からは、ヘッドセットがデコードできない音声トラック (たとえばDolby TrueHD) を持つPlexの映画は別のトラックを再生してどのトラックかを表示し、mpvで再生するDolby Visionプロファイル5の映画は色が正しくない可能性があることを警告し、バッテリー式のTapoカメラは映像のみでライブ映像を表示します。ビルド48からは、他社製カメラがライブ映像を表示し、DJI Osmo 360 IIやGoPro MAX 2のRAW動画をイマーシブビューで手ぶれ補正して再生します。ビルド49からは、大画面で開いた写真は、左のサムスティックやパネルで閲覧する間も設定したサイズと位置を保ち、スライドショーとして再生されます。近づけた写真は小さくならなくなり、「立体感: 標準」で表示中の写真のAIによる立体感の強さを変え、写真のぼかしたコピーで後ろのフレームを埋められます。いずれもプロジェクトではまだヘッドセットで試していません。JellyfinやEmbyのサーバーはQuick Connectで追加します。
+- **Windows 10と11**: アプリで、ギャラリーの代わりにフォルダーを使い、フラットおよび360°動画向けの専用動画プレーヤー (libmpv)、グラフィックチップでスティッチされるRAWファイル、プログラムで開いた、またはウィンドウにドロップしたファイルやフォルダー、APROGSYSが署名したインストーラーまたはZIPがあります。デスクトップビルド13からは、「3D を作成 (AI)」で写真をプロセッサー上で3D写真と3Dシーンに、8 GBのグラフィックスカード上で360°パノラマに変換できます。デスクトップビルド16からは「3D を作成 (AI)」がネットワーク共有の写真でも使え、デスクトップビルド17からは動画をこのコンピューターがデコードできるファイルから再生し、デスクトップビルド18からは映画を止めたところから続きを再生し、デスクトップビルド19からは遅いサーバーの映画も再生が続き、待っている理由を表示します。デスクトップビルド20からは、映画がネットワーク共有を待っている間でもウィンドウがすぐに閉じます。開いている映画は止めたところが保存され、セッションのログが書き込まれます。デスクトップビルド21からは、グラフィックスチップを二つ持つノートPCでアプリが速い方のチップで動き、動画の詳細に映画のデコード方法が表示されます。同じビルドでガウシアンスプラットを開き、4 GBのグラフィックスカードで写真や動画からスプラットシーンを作成し、AV2動画を再生します。デスクトップビルド22からは、グラフィックスカードに3.5 GiBの空きがあれば360°パノラマが始まり、スプラットシーンは「ヘッドセット」、「詳細」、「最大」の三つの品質で作れます。デスクトップビルド26からは、360°プレーヤーがInsta360、GoPro MAX、DJI Osmo 360カメラのRAW 360°動画をカメラのジャイロスコープで手ぶれ補正するとともに、3D写真は立体感の強さを選べ、輪郭がよりシャープになり、設定をファイルに保存できます。デスクトップビルド27からは、映画のDolby TrueHDの音声とBlu-ray (PGS) の字幕を再生し、Plexの映画はバージョンを選べ、Dolby Visionプロファイル5の映画は色が正しくない可能性があることを警告します。デスクトップビルド28からは、「ヘッドセットで見る」で360°と180°の動画を周囲に、映画を大きなスクリーンに、PC VRヘッドセットで表示します。SteamVR、Meta Horizon Link、Virtual Desktop、またはほかのOpenXRランタイムを使います (プロジェクトではまだヘッドセットで試していません)。他社製カメラのライブ映像にも対応し、プロフィールメニューのApp Versionの行にデスクトップビルドが表示されます。デスクトップビルド29からは、「3D を作成 (AI)」がプロセッサー上で2D動画を左右の3D動画にします。最初の見積もりで動画の一分あたり約10から30分の作業で、一時停止と再開に対応します (3Dディスプレイやヘッドセットではまだ試していません)。JellyfinとEmbyのサーバーには独自の種類があります。デスクトップビルド31からは、「高画質化 (AI)」が写真のよりシャープなコピーを作り、360°動画は360° 3D動画になり、3D動画の深度はDirectMLを通じてグラフィックスカードが推定し、サーバーと共有の動画を直接受け取り、Escapeで一つ前に戻ります。
+- **Linux**: プロジェクトのCIでビルドされた.debと.rpmで、Ubuntu 22.04と24.04、Debian 12、Fedora 40と44でインストールして確認済みです。写真、360°写真、フラット動画はシステムのlibmpvで再生し (360°、3D、RAWの動画はメッセージを表示してフラットで再生)、デスクトップビルド7からはX11セッションでもハードウェア経由で描画します。SMB共有はUbuntu 22.04とDebian 12以降で使えます。キーリング (GNOME KeyringまたはKWallet) がなくても、初回起動時にアプリが25秒間フリーズすることはなくなりました。パスワードはそのセッションの間だけ保持され、設定にその旨が表示されます。デスクトップビルド13からは、「3D を作成 (AI)」でプロセッサー上で3D写真とシーンを、8 GBのグラフィックスカード上で360°パノラマを作成できます (Intelグラフィックスで小さいサイズのみ試行)。WSLgとコンテナー内で確認済みです。デスクトップビルド16からは「3D を作成 (AI)」がネットワーク共有の写真でも使え、デスクトップビルド17からは動画をこのコンピューターがデコードできるファイルから再生し、デスクトップビルド18からは映画を止めたところから続きを再生し、デスクトップビルド19からは遅いサーバーの映画も再生が続き、待っている理由を表示します。デスクトップビルド20からは、映画がネットワーク共有を待っている間でもウィンドウがすぐに閉じます。開いている映画は止めたところが保存され、セッションのログが書き込まれます。デスクトップビルド21からは、ガウシアンスプラットを開き、AV2動画を再生します。デスクトップビルド22からは、グラフィックスカードに3.5 GiBの空きがあれば360°パノラマが始まります。デスクトップビルド26からは、3D写真は立体感の強さを選べ、輪郭がよりシャープになり、設定をファイルに保存できます。デスクトップビルド27からは、Plexの映画はバージョンを選べ、Dolby Visionプロファイル5の映画は色が正しくない可能性があることを警告します。デスクトップビルド28からは、システムのlibmpvで他社製カメラのライブ映像を再生し (CIで確認)、プロフィールメニューのApp Versionの行にデスクトップビルドが表示されます。デスクトップビルド29からは、「3D を作成 (AI)」がプロセッサー上で2D動画を左右の3D動画にします (3Dディスプレイやヘッドセットではまだ試していません)。JellyfinとEmbyのサーバーには独自の種類があり、CIで確認しています。デスクトップビルド31からは、TIFF写真を表示し (DNGとその他のRAWファイルを除く)、フォルダーの新しいファイルは更新なしで表示され、スプラットシーンは4 GBのグラフィックスカードで作成され、3D動画は片目でフラットに再生され、「高画質化 (AI)」が写真のよりシャープなコピーを作り、デスクトップエントリーは二つのグラフィックスチップを持つノートPCの高速なチップを要求し、独自のFFmpegを使うFedoraではRPM Fusionのものをインストールする方法をアプリが案内します。TIFF写真とAvahiのアナウンスは、Ubuntu 24.04のコンテナで.debを使って動作を確認しました。デスクトップビルド32からは、AppImageがほかのディストリビューションでも動作し、CIがArch Linux、openSUSE Tumbleweed、Ubuntu 22.04、Debian 12、Fedora 44のコンテナで確認しました。システムに足りないパッケージを、それをインストールするコマンドとともに示します。
+- **macOS**: プロジェクトのCIでビルドされたDMGとZIPで、ユニバーサル、署名なしです (Gatekeeperが一度だけ確認を求めます)。アプリは起動し、Finderからのものも含め、渡されたファイルやフォルダーを開き、シークレットをログインキーチェーンに保存し、独自のlibmpvでフラット動画を再生します。これらはまずプロジェクトのCIのMacで確認しました。2026年10月26日に作者がMacでデスクトップビルド11を試し、動作しました。デスクトップビルド13からは、プロジェクトのCIでビルドされたMacアプリが3D写真とシーンもプロセッサー上で作成し、Macでの360°パノラマはロードマップにあります。デスクトップビルド16からは「3D を作成 (AI)」がネットワーク共有の写真でも使え、デスクトップビルド17からは動画をこのコンピューターがデコードできるファイルから再生し、デスクトップビルド18からは映画を止めたところから続きを再生し、デスクトップビルド19からは遅いサーバーの映画も再生が続き、待っている理由を表示します。デスクトップビルド20からは、映画がネットワーク共有を待っている間でもウィンドウがすぐに閉じます。開いている映画は止めたところが保存され、セッションのログが書き込まれます。デスクトップビルド21からは、プロジェクトのCIでビルドしたMacアプリもガウシアンスプラットを開き、AV2動画を再生します。Macではまだ試していません。デスクトップビルド26からは、その3D写真も立体感の強さを選べ、輪郭がよりシャープになり、設定をファイルに保存できます。デスクトップビルド27からは、映画のDolby TrueHDの音声を再生し、Plexの映画はバージョンを選べ、Dolby Visionプロファイル5の映画は色が正しくない可能性があることを警告します。デスクトップビルド28からは、他社製カメラのライブ映像を再生し (CIで確認)、プロフィールメニューのApp Versionの行にデスクトップビルドが表示されます。デスクトップビルド29からは、Appleチップ搭載のMacで「3D を作成 (AI)」が2D動画を左右の3D動画にします。プロジェクトのCIでビルドしたもので、Macではまだ試していません。JellyfinとEmbyのサーバーには独自の種類があります。デスクトップビルド31からは、3D動画はAppleチップでCore MLを通じて深度モデルを実行し、IntelのMacでも時間はかかりますが利用でき、「高画質化 (AI)」のナチュラルのレベルがAppleチップで写真のよりシャープなコピーを作り、プロジェクトのCIがMacでデスクトップのテストを実行します。いずれもMacではまだ試していません。
 
 <a id="what-you-can-do"></a>
 ## できること
@@ -354,33 +362,35 @@ AIの行の「開く」は、コンピューターが作ったものをデバイ
 
 1. [サーバーの有無にかかわらず写真と動画を見る](#watch-your-photos-and-videos-with-or-without-a-server): ギャラリーとプレーヤー。デバイス単体でも、Immichサーバーと組み合わせても使えます。
 2. [360°の写真と動画、パノラマ、VR180、3Dを見回す](#explore-panoramas-360-vr180-and-3d): 指、スマートフォン、リモコンで回せる球体。ビルド49からは、写真と同じ操作の[スマートフォンの360°動画](#360-videos-on-your-phone-with-the-controls-of-360-photos) (ユーザーがSamsung Galaxy S25 Ultraで試しましたが、iPhoneではまだ試していません)。
-3. [1枚の写真を3D写真、3Dシーン、360°パノラマにする](#turn-one-photo-into-3d-a-scene-a-panorama): コンピューター上でAIが作成し、Meta Questで3Dで見られます。Questはどんな平面写真にも、選んだ強さで立体感を与えます。*新機能、実験的。*
-4. [リモコンを使ってテレビで見る](#watch-on-the-tv-with-the-remote): Android TVとGoogle TV、LGテレビ、そしてテストビルドとしてSamsungテレビ。
+3. [1枚の写真を3D写真、3Dシーン、360°パノラマにする](#turn-one-photo-into-3d-a-scene-a-panorama): コンピューター上でAIが作成し、Meta Questで3Dで見られます。Questはどんな平面写真にも、選んだ強さで立体感を与えます。*新機能。*
+4. [リモコンを使ってテレビで見る](#watch-on-the-tv-with-the-remote): Android TVとGoogle TV、LGテレビ、そしてご自身でインストールするSamsungテレビ。
 5. [スマートフォンでテレビ、ヘッドセット、コンピューターにログインする](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone): QRコードを読み取り、確認して、見るだけ。
 6. [Meta Questで写真や動画の中に入る](#step-inside-your-photos-and-videos-with-a-meta-quest): 360°はあなたの周囲全体に、3Dは本物の3Dで。ビルド49からは、設定したサイズで、スライドショーでも[大画面で閲覧する写真](#browse-your-photos-on-the-big-screen-of-the-quest) (プロジェクトではまだヘッドセットで試していません)。
-7. [Meta Quest 3または3Sでガウシアンスプラットを探索する](#explore-gaussian-splats-in-a-meta-quest-3-or-3s): Polycam、Scaniverse、Lumaで撮った3Dキャプチャーを自分の部屋で。*実験的。*
-8. [スマートフォン、タブレット、コンピューターでガウシアンスプラットを探索する](#explore-gaussian-splats-on-your-phone-tablet-or-computer): Androidのスマートフォンやタブレット、またはWindows、Linux、macOSで、シーンの中を歩けます。*実験的。*
-9. [写真や動画からスプラットシーンを作成する (AI)](#make-a-splat-scene-from-your-photos-or-a-video-ai): Windowsコンピューターで場所や物を再構成し、その中を歩けます。*実験的。*
-10. [Immichサーバーにスプラットシーンを保管する](#keep-a-splat-scene-on-your-immich-server): シーンを写した写真の中に入れ、タイムラインから開きます。*実験的。*
-11. [NAS、コンピューター、メディアサーバー、Plexのファイルを再生する](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): その場で再生し、何もコピーしません。また、[Plexの映画](#watch-your-plex-films)を年ごとに、それぞれのページ付きで、旅行用にダウンロードしたり、スマートフォンからテレビやChromecastで再生したり、Androidデバイスやヘッドセットがデコードできない場合でも、デバイスが再生できる音声トラックで再生したりできます (実験的)。
+7. [Meta Quest 3または3Sでガウシアンスプラットを探索する](#explore-gaussian-splats-in-a-meta-quest-3-or-3s): Polycam、Scaniverse、Lumaで撮った3Dキャプチャーを自分の部屋で。
+8. [スマートフォン、タブレット、コンピューターでガウシアンスプラットを探索する](#explore-gaussian-splats-on-your-phone-tablet-or-computer): Androidのスマートフォンやタブレット、またはWindows、Linux、macOSで、シーンの中を歩けます。
+9. [写真や動画からスプラットシーンを作成する (AI)](#make-a-splat-scene-from-your-photos-or-a-video-ai): Windowsコンピューターで場所や物を再構成し、その中を歩けます。
+10. [Immichサーバーにスプラットシーンを保管する](#keep-a-splat-scene-on-your-immich-server): シーンを写した写真の中に入れ、タイムラインから開きます。
+11. [NAS、コンピューター、メディアサーバー、Plexのファイルを再生する](#play-the-files-of-a-nas-a-computer-a-media-server-or-plex): その場で再生し、何もコピーしません。また、[Plexの映画](#watch-your-plex-films)を年ごとに、それぞれのページ付きで、旅行用にダウンロードしたり、スマートフォンからテレビやChromecastで再生したり、Androidデバイスやヘッドセットがデコードできない場合でも、デバイスが再生できる音声トラックで再生したりできます。
 12. [スマートフォンやヘッドセットのフォルダーを参照する](#browse-a-folder-of-your-phone-or-headset): デバイスのフォルダーを共有のように開き、そのTIFF写真も表示。
 13. [映画を止めたところから続きを見る](#pick-up-a-film-where-you-stopped): サムネイルにバーが表示され、止めたところから続きを再生。
 14. [動画が待っている、または再生されないとき](#when-a-video-waits-or-will-not-play): このデバイスがデコードするファイル、開始までの時間、その理由。
 15. [Immichライブラリはそのままに、さらに多くの機能を](#keep-your-immich-library-with-more): Immichモバイルアプリに、イマーシブビューアーと大画面を加えたもの。
 16. [長いタイムラインで月や年を見つける](#find-a-month-or-a-year-in-a-long-timeline): 月、次に年、タップ1回で開く。
-17. [Tapoカメラを見る](#watch-your-home-cameras-on-the-big-screen): ライブ映像、バッテリー式カメラのライブ映像 (実験的)、メモリーカードの録画、そしてビルド48からはONVIFまたはRTSPでの[他社製カメラ](#cameras-of-other-brands-over-onvif-or-rtsp)のライブ映像。シミュレートしたカメラで確認済みで、他社製の実際のカメラはまだ試していません。
-18. [DJIドローンのライブ映像をスマートフォンで見る](#see-what-your-drone-sees-on-your-phone)、そして[Meta QuestやAndroid TVで見る](#watch-it-in-a-meta-quest-or-on-an-android-tv): DJI RC-N3コントローラー経由で、受信のみ。*実験的。*
-19. [ドローンやカメラのカードの写真と動画をImmichに取り込む](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): Androidスマートフォンから、USB経由で。*実験的。*
+17. [Tapoカメラを見る](#watch-your-home-cameras-on-the-big-screen): ライブ映像、バッテリー式カメラのライブ映像、メモリーカードの録画、そしてビルド48からはONVIFまたはRTSPでの[他社製カメラ](#cameras-of-other-brands-over-onvif-or-rtsp)のライブ映像。シミュレートしたカメラで確認済みで、他社製の実際のカメラはまだ試していません。
+18. [DJIドローンのライブ映像をスマートフォンで見る](#see-what-your-drone-sees-on-your-phone)、そして[Meta QuestやAndroid TVで見る](#watch-it-in-a-meta-quest-or-on-an-android-tv): DJI RC-N3コントローラー経由で、受信のみ。
+19. [ドローンやカメラのカードの写真と動画をImmichに取り込む](#bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich): Androidスマートフォンから、USB経由で。
 20. [360°カメラのRAWファイルを開く](#open-the-raw-files-of-360-cameras): Insta360、GoPro MAXとMAX 2、DJI Osmo 360とOsmo 360 IIのファイルを、アプリがスティッチします。
-21. [カメラのジャイロスコープで360°動画を手ぶれ補正する (実験的)](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental): Androidのスマートフォン、タブレット、テレビ、iPhoneとiPad、Meta Quest、Windowsで、水平線をまっすぐにし、揺れを取り除きます。
+21. [カメラのジャイロスコープで360°動画を手ぶれ補正する](#stabilise-your-360-videos-with-the-cameras-gyroscope): Androidのスマートフォン、タブレット、テレビ、iPhoneとiPad、Meta Quest、Windowsで、水平線をまっすぐにし、揺れを取り除きます。
 22. [キー1つで写真を回転する](#turn-a-photo-with-one-key): ボタン、キーボードのキー、またはリモコンのカラーキーで。
-23. [コンピューターをメディアプレーヤーとして使う](#use-your-computer-as-the-media-player): 自分のフォルダー、プログラムから開く、ウィンドウへのファイルのドロップ、Ctrl、Shift、Ctrl+Aでの複数の写真の選択、Escapeで一つ前に戻る操作。*プレビュー。*
-24. [コンピューターでAV2動画を再生する](#play-av2-videos-on-your-computer): プロセッサーでデコードし、コンピューターが許す限りの速さで再生します。*実験的。*
+23. [コンピューターをメディアプレーヤーとして使う](#use-your-computer-as-the-media-player): 自分のフォルダー、プログラムから開く、ウィンドウへのファイルのドロップ、Ctrl、Shift、Ctrl+Aでの複数の写真の選択、Escapeで一つ前に戻る操作。
+24. [コンピューターでAV2動画を再生する](#play-av2-videos-on-your-computer): プロセッサーでデコードし、コンピューターが許す限りの速さで再生します。
 25. [設定をファイルに保存する](#keep-your-settings-in-a-file)、ライブラリのカードから: サーバー、共有、設定、バックアップアルバムを保存し、再インストールのあと、別のデバイスで、またはストアのビルドとGitHubのビルドの間を移るときに復元します。ネットワーク共有でも使えます。
 26. [Windowsから動画をPC VRヘッドセットで見る](#watch-your-videos-in-a-pc-vr-headset-from-windows): 360°動画を周囲に、フラットと3Dの映画を大きなスクリーンに、SteamVR、Meta Horizon Link、またはほかのOpenXRランタイムで表示します。*プロジェクトではまだヘッドセットで試していません。*
-27. [コンピューターで2D動画を3Dにする](#turn-your-2d-videos-into-3d-on-your-computer-experimental): コンピューター、サーバー、共有の動画からAIが作る左右の3D動画と、[360°動画からの360° 3D動画](#a-360-video-turned-into-a-360-3d-video)を、Windowsではグラフィックスカードで深度を推定して、ヘッドセットや3Dディスプレイ向けに、Windows、Linux、Appleチップ搭載のMacで作成します。*実験的、3Dディスプレイやヘッドセットではまだ試していません。*
-28. [JellyfinとEmbyのライブラリを見る](#watch-your-jellyfin-and-emby-libraries): ページ付きの映画とシリーズ、360°が360°のままになる元のファイル、テレビやヘッドセットでのQuick Connect、サーバーに保存される視聴位置。*実験的、実機ではまだ試していません。*
+27. [コンピューターで2D動画を3Dにする](#turn-your-2d-videos-into-3d-on-your-computer): コンピューター、サーバー、共有の動画からAIが作る左右の3D動画と、[360°動画からの360° 3D動画](#a-360-video-turned-into-a-360-3d-video)を、Windowsではグラフィックスカードで深度を推定して、ヘッドセットや3Dディスプレイ向けに、Windows、Linux、Appleチップ搭載のMacで作成します。*3Dディスプレイやヘッドセットではまだ試していません。*
+28. [JellyfinとEmbyのライブラリを見る](#watch-your-jellyfin-and-emby-libraries): ページ付きの映画とシリーズ、360°が360°のままになる元のファイル、テレビやヘッドセットでのQuick Connect、サーバーに保存される視聴位置。*実機ではまだ試していません。*
 29. [コンピューターで写真をよりシャープにする](#make-a-photo-sharper-on-your-computer-ai): 忠実なものから印象的なものまで三つのレベルで、元の写真の横にAIがよりシャープなコピーをWindowsとLinuxで作ります。AppleチップのMacではナチュラルも使えます。作り出した細部ははっきり伝えます。*新機能。*
+30. [スマートフォンから写真と動画をテレビに映す](#show-your-photos-and-videos-on-the-tv-from-your-phone): 「再生先…」で、Immichライブラリ、共有、Jellyfin、Embyの写真と動画を、テレビ、Quest、コンピューターのImmuch360やChromecastに送り、スマートフォンからスライドショーを操作します。*新機能、実機ではまだ試していません。*
+31. [AIコンポーネントをワンクリックで更新する](#update-the-ai-components-in-one-click): コンピューターで、後のビルドに新しいバージョンがあるとき、インストールしたコンポーネントを最新にします。新しいものはダウンロードしません。*新機能。*
 
 <a id="install"></a>
 <a id="get-it-on-your-device"></a>
@@ -395,7 +405,7 @@ AIの行の「開く」は、コンピューターが作ったものをデバイ
 
 ### iPhoneとiPad
 
-1. [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965): バージョン3.4.5 (ビルド50のiPhoneとiPad版)、2026年11月22日公開。バージョン3.4.6 (ビルド51のiPhoneとiPad版) がこの後に続きます。または、Mac上のXcodeでアプリをビルドしてください。[自分でビルドする](../docs/immuch360/build.md)を参照してください。
+1. [App Store](https://apps.apple.com/us/app/immuch360-360-3d-player/id6817655965): バージョン3.4.5 (ビルド50のiPhoneとiPad版)、2026年11月22日公開。Appleの承認を受けたバージョン3.4.6 (ビルド51のiPhoneとiPad版) がこの後に続き、その次はバージョン3.4.7 (ビルド52のiPhoneとiPad版) です。または、Mac上のXcodeでアプリをビルドしてください。[自分でビルドする](../docs/immuch360/build.md)を参照してください。
 2. 「サーバーなしで使用」をタップするか、サーバーにログインするには「Immichサーバーに接続」をタップします。どちらもビルド24からウェルカムページにあります。
 
 <a id="android-tv-and-google-tv"></a>
@@ -411,15 +421,15 @@ AIの行の「開く」は、コンピューターが作ったものをデバイ
 
 1. バージョン1.0.0はLGの審査中です。LG Content Storeで公開されるまでは、Developer Modeでインストールします。webOS 5.0以降のLGテレビ、同じネットワーク上のコンピューター、無料のLG開発者アカウントが必要です。テレビでLG Content StoreからDeveloper Modeをインストールしてサインインし、Dev Mode Statusをオンにしてテレビを再起動させます。テレビのIPアドレスと、アプリに表示されるパスフレーズを控えておきます。
 2. コンピューターにwebOS CLI (Node.js 18以降) をインストールします: `npm install -g @webos-tools/cli`。続いて`ares-setup-device` (テレビのIPアドレス、ポート9922、ユーザー`prisoner`) と`ares-novacom --device <name> --getkey`でテレビを登録します。後者はパスフレーズを尋ねます。
-3. [webOS 1.0.5のプレリリース](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.5)から、UHDテレビなら`Immuch360-webOS-1.0.5.ipk`を、LGが1280x720のアプリを割り当てるフルHDテレビなら`Immuch360-webOS-1.0.5-1280x720.ipk`をダウンロードします。`SHA256SUMS.txt`で確認してから、`ares-install --device <name> Immuch360-webOS-1.0.5.ipk`を実行します。webosbrewの[webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop)を使えば、コマンドラインなしで同じことができます。
+3. [webOS 1.0.5のリリース](https://github.com/freeKC/Immuch360/releases/tag/webos-v1.0.5)から、UHDテレビなら`Immuch360-webOS-1.0.5.ipk`を、LGが1280x720のアプリを割り当てるフルHDテレビなら`Immuch360-webOS-1.0.5-1280x720.ipk`をダウンロードします。`SHA256SUMS.txt`で確認してから、`ares-install --device <name> Immuch360-webOS-1.0.5.ipk`を実行します。webosbrewの[webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop)を使えば、コマンドラインなしで同じことができます。
 4. Developer Modeのセッションは1000時間有効で、Developer ModeアプリのEXTENDボタンで延長できます。期限が切れると、テレビはこの方法でインストールしたアプリを削除します。詳細は[webos/README.md](../webos/README.md#install-on-a-tv-in-developer-mode)にあります。
 5. アプリがLG Content Storeで公開されたら、Developer Mode版を削除し、ストアからインストールしてください。
 
 <a id="samsung-tvs-tizen"></a>
 ### Samsungテレビ (Tizen)
 
-1. テストビルド0.3.6はSamsungのストアにはなく、ご自身でインストールします。Tizen 5.5以降のSamsungテレビ (2020年以降のモデル)、同じネットワーク上のコンピューター、Samsungアカウントが必要です。テレビで、アプリ、アプリの設定を開き、12345と入力してDeveloper modeをオンにし、コンピューターのIPアドレスを入力してから、テレビを再起動します。
-2. [Tizenのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.3.6)から`Immuch360-Tizen-0.3.6.wgt`をダウンロードし、`SHA256SUMS.txt`で確認します。Samsungテレビはそのテレビ用に署名されたアプリしかインストールしないため、テレビのDUIDを含むSamsung証明書でパッケージを署名し直す必要があります。コミュニティ製ツールの[Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung)は、DUIDを読み取り、Samsungアカウントでパッケージに署名してインストールします。Samsung Certificate Extensionを入れたTizen Studioでも、同じことを手作業で行えます。
+1. バージョン0.3.6はSamsungのストアにはなく、ご自身でインストールします。Tizen 5.5以降のSamsungテレビ (2020年以降のモデル)、同じネットワーク上のコンピューター、Samsungアカウントが必要です。テレビで、アプリ、アプリの設定を開き、12345と入力してDeveloper modeをオンにし、コンピューターのIPアドレスを入力してから、テレビを再起動します。
+2. [Tizen 0.3.6のリリース](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.3.6)から`Immuch360-Tizen-0.3.6.wgt`をダウンロードし、`SHA256SUMS.txt`で確認します。Samsungテレビはそのテレビ用に署名されたアプリしかインストールしないため、テレビのDUIDを含むSamsung証明書でパッケージを署名し直す必要があります。コミュニティ製ツールの[Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung)は、DUIDを読み取り、Samsungアカウントでパッケージに署名してインストールします。Samsung Certificate Extensionを入れたTizen Studioでも、同じことを手作業で行えます。
 3. アプリを開き、サーバーのアドレス、次にメールアドレスとパスワード、またはAPIキーを入力してログインします。「このテレビについて」には、テレビの対応状況がテキストとQRコードで表示されます。そのテキストを、動かない点とあわせて[Issues](https://github.com/freeKC/Immuch360/issues)または[Discussions](https://github.com/freeKC/Immuch360/discussions)に投稿していただくのが一番の助けになります。
 
 <a id="meta-quest"></a>
@@ -432,18 +442,21 @@ AIの行の「開く」は、コンピューターが作ったものをデバイ
 <a id="windows"></a>
 ### Windows
 
-1. [デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.6-31)から`Immuch360-Desktop-3.4.6-desktop.31-windows-x64-setup.exe`をダウンロードし (`SHA256SUMS.txt`で確認できます)、開きます。インストーラーとZIPは署名済みで、Windowsには発行元としてAPROGSYSが表示されます。発行元がSmartScreenにとってまだ新しいうちは、一度だけ確認されることがあります。その場合は「詳細情報」、続いて「実行」を選びます。
+1. [デスクトップのリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.7-32)から`Immuch360-Desktop-3.4.7-desktop.32-windows-x64-setup.exe`をダウンロードし (`SHA256SUMS.txt`で確認できます)、開きます。インストーラーとZIPは署名済みで、Windowsには発行元としてAPROGSYSが表示されます。発行元がSmartScreenにとってまだ新しいうちは、一度だけ確認されることがあります。その場合は「詳細情報」、続いて「実行」を選びます。
 2. 「Install for me only」(管理者権限不要) または「Install for all users」を選び、続いてインストーラーの言語を選びます。Windowsの言語がすでに選択されています。
 3. スタートメニューからImmuch360 Desktopを起動します。写真や動画は「プログラムから開く」に表示されます (ファイルを右クリックし、プログラムから開く)。既定のプログラムに設定されることはありません。新しいビルドを初めて起動する際は、Windowsがファイルをスキャンするため最大1分ほどかかることがあります。
 4. Windows 10または11、64ビット。更新するには、次のビルドのインストーラーを開きます：ログイン、フォルダー、設定はそのまま保持されます。デスクトップビルド24からは、プロフィールメニューの更新通知がウェブサイトの[ダウンロードページ](https://immuch360.com/ja/download/)を開きます。同じリリースのZIPは同じプログラムをフォルダーの形にしたもので、どこにでも解凍して`immuch360.exe`を起動できます。デスクトップビルド4から8が起動時に「duplicate column name: group_date」で止まっていたコンピューターでも、ビルド9はそのデータベースを開き、データを保持します。
 
+<a id="linux"></a>
 ### Linux
 
-Ubuntu 22.04以降とDebian 12以降では`sudo apt install ./Immuch360-Desktop-3.4.6-desktop.31-linux-amd64.deb`を、Fedora 40以降では`sudo dnf install ./Immuch360-Desktop-3.4.6-desktop.31-linux-x86_64.rpm`を実行します。どちらも[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.6-31)にあります。その後、アプリケーション一覧からImmuch360 Desktopを起動します。プレビューです：コンピューターのフォルダー、写真と360°写真の球体表示、そしてパッケージがインストールするシステムのlibmpvによるフラット動画に対応します (360°、3D、RAWの動画はメッセージを表示してフラットで再生)。SMB共有はUbuntu 22.04とDebian 12以降で使えます。Fedoraでは、カメラの動画にRPM FusionのFFmpegが必要です。GNOME KeyringやKWalletがない場合、パスワードはそのセッションの間だけ保持され、アプリの設定にその旨が表示されます。
+Ubuntu 22.04以降とDebian 12以降では`sudo apt install ./Immuch360-Desktop-3.4.7-desktop.32-linux-amd64.deb`を、Fedora 40以降では`sudo dnf install ./Immuch360-Desktop-3.4.7-desktop.32-linux-x86_64.rpm`を実行します。どちらも[デスクトップのリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.7-32)にあります。その後、アプリケーション一覧からImmuch360 Desktopを起動します。表示できるもの：コンピューターのフォルダー、写真と360°写真の球体表示、そしてパッケージがインストールするシステムのlibmpvによるフラット動画に対応します (360°、3D、RAWの動画はメッセージを表示してフラットで再生)。SMB共有はUbuntu 22.04とDebian 12以降で使えます。Fedoraでは、カメラの動画にRPM FusionのFFmpegが必要です。GNOME KeyringやKWalletがない場合、パスワードはそのセッションの間だけ保持され、アプリの設定にその旨が表示されます。
+
+Arch LinuxやopenSUSEを含むほかのディストリビューションでは、デスクトップビルド32から、同じリリースのAppImageがインストールせずに動作します。`chmod +x Immuch360-Desktop-3.4.7-desktop.32-linux-x86_64.AppImage`で実行可能にしてから起動します。GTK 3、WebKitGTK 4.1、libsecret、libmpvはシステムのものを使い、足りないものがあれば、ターミナルまたはウィンドウでパッケージ名とディストリビューションのコマンドを示します。たとえば何も入っていないArch Linuxでは`sudo pacman -S --needed gtk3 libepoxy webkit2gtk-4.1 libsoup3 mpv`、Fedoraでは`sudo dnf install`、DebianとUbuntuでは`sudo apt install`、openSUSEでは`sudo zypper install`です。FUSEがない場合は`--appimage-extract-and-run`を付けます。まだ自動では更新されないので、次のものはリリースから入手してください。CIがArch Linux、openSUSE Tumbleweed、Ubuntu 22.04、Debian 12、Fedora 44のクリーンなコンテナで確認し、動画を再生しました。Linuxのデスクトップではまだ試していません。
 
 ### macOS
 
-[デスクトップのプレリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.6-31)から`Immuch360-Desktop-3.4.6-desktop.31-macos.dmg`を開き、アプリをアプリケーションにドラッグします (Apple SiliconとIntel、macOS 12以降)。署名されていないため、macOSが一度だけ確認を求めます。macOS 14以前ではControlキーを押しながらクリックして開くを選び、macOS 15以降ではシステム設定、プライバシーとセキュリティで「このまま開く」を選びます。2026年10月26日に作者がMacでデスクトップビルド11を試し、動作しました。ほかのMacやmacOSのバージョンからの報告を歓迎します。
+[デスクトップのリリース](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.7-32)から`Immuch360-Desktop-3.4.7-desktop.32-macos.dmg`を開き、アプリをアプリケーションにドラッグします (Apple SiliconとIntel、macOS 12以降)。署名されていないため、macOSが一度だけ確認を求めます。macOS 14以前ではControlキーを押しながらクリックして開くを選び、macOS 15以降ではシステム設定、プライバシーとセキュリティで「このまま開く」を選びます。2026年10月26日に作者がMacでデスクトップビルド11を試し、動作しました。ほかのMacやmacOSのバージョンからの報告を歓迎します。
 
 <a id="how-to"></a>
 ## 使い方
@@ -484,7 +497,7 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 3. 3Dボタンは「モノ (3D ではない)」、「3D、上下」、「3D、左右」の順に切り替わります。360°/180°ボタンは全球とVR180の半球を切り替えます。
 4. 360°ファイルなのにフラットに表示される場合は、右上の⋮をタップして「360°で表示」を選びます。
 
-スマートフォンやタブレットでは、立体視動画をフラットな画面でも奥行きのある表示にできます。Spatial 2.5Dプレーヤーがフロントカメラで頭の動きを追跡し、両目の間から見た映像を表示します (実験的機能)。iPhoneで撮影されたAppleの空間写真は認識され、Meta Questでは3Dで表示されます。
+スマートフォンやタブレットでは、立体視動画をフラットな画面でも奥行きのある表示にできます。Spatial 2.5Dプレーヤーがフロントカメラで頭の動きを追跡し、両目の間から見た映像を表示します。iPhoneで撮影されたAppleの空間写真は認識され、Meta Questでは3Dで表示されます。
 
 <a id="360-videos-on-your-phone-with-the-controls-of-360-photos"></a>
 #### スマートフォンの360°動画を、360°写真と同じ操作で
@@ -500,12 +513,12 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 
 詳細: ユーザーガイドの[360°動画プレーヤー](../docs/immuch360/user-guide.md#the-controls-of-360-photos-in-the-360-video-player-from-build-49)と、[ビルド49](https://github.com/freeKC/Immuch360/releases/tag/v3.4.4-49)のリリースノート。
 
-詳細: [360°写真と360°動画](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere)、[3DとVR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos)、[Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d-experimental)、[Appleの空間写真と空間動画](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos)、[360°リスト](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list)。
+詳細: [360°写真と360°動画](../docs/immuch360/user-guide.md#360-photos-and-videos-as-a-sphere)、[3DとVR180](../docs/immuch360/user-guide.md#3d-and-vr180-photos-and-videos)、[Spatial 2.5D](../docs/immuch360/user-guide.md#depth-on-a-flat-screen-spatial-25d)、[Appleの空間写真と空間動画](../docs/immuch360/user-guide.md#apple-spatial-photos-and-videos)、[360°リスト](../docs/immuch360/user-guide.md#find-your-360-shots-the-360-list)。
 
 <a id="turn-one-photo-into-3d-a-scene-a-panorama"></a>
 ### 1枚の写真を3D、シーン、パノラマにする
 
-写真の多くは平面で、撮り直しに戻って3Dで撮ることはできません。Immuch360はそれらに奥行きを与えます。コンピューター上で、1枚の写真が**3D写真**に、ヘッドセットで覗き込める**3Dシーン**に、あるいは周囲の残りの空間を想像して描く**360°パノラマ**になります。Quest 3または3Sは、どんな平面写真にも自分で立体感を付けます。すべてあなた自身のコンピューターとヘッドセットで動作します: クラウドなし、アカウントなし、元の写真は一切変更されません。ビルド32とデスクトップビルド13の新機能で、実験的、初期設定でオンです。Immichアプリにはこのような機能はありません。
+写真の多くは平面で、撮り直しに戻って3Dで撮ることはできません。Immuch360はそれらに奥行きを与えます。コンピューター上で、1枚の写真が**3D写真**に、ヘッドセットで覗き込める**3Dシーン**に、あるいは周囲の残りの空間を想像して描く**360°パノラマ**になります。Quest 3または3Sは、どんな平面写真にも自分で立体感を付けます。すべてあなた自身のコンピューターとヘッドセットで動作します: クラウドなし、アカウントなし、元の写真は一切変更されません。ビルド32とデスクトップビルド13の新機能で、初期設定でオンです。Immichアプリにはこのような機能はありません。
 
 <p align="center">
   <img src="../.github/readme/ai-3d-photo-wiggle.webp" width="600" alt="Immuch360が、回廊、柱、シャンデリアのある古いホールを写したごく普通の写真1枚から作成した3D写真をウィグル表示にしたもの: 左目と右目を1秒に約6回交互に表示し、柱が壁から浮き出て見える">
@@ -520,7 +533,7 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 4. 「変換」。ジョブはプロセッサーとグラフィックスカードの2つのレーンに並び、各ステップと残り時間が表示されます。「キャンセル」でいつでも1つを止められ、アプリを終了するときは先に確認されます。
 5. 結果を開きます。3D写真は「左目」、「左右」、「ウィグル」 (上のアニメーション)、またはメガネ用の「赤とシアン」で表示されます。シーンには、マウスやタッチパッドで回せる「3D でプレビュー」と、「他の 3D アプリ用にエクスポート (.glb)」があります。パノラマは360°ビューアーで開きます。
 
-**立体感の強さと品質**、デスクトップビルド26から (実験的): 3D写真では、ダイアログに「立体感の強さ」があり、近くの物が背景からどれだけ浮き出るかを選べます: 控えめ、標準 (これまでのビルドの立体感)、または強め (より印象的ですが、目が早く疲れることがあります)。強さごとに別のバージョンが作られ、3D写真の詳細にどの強さで作ったかが表示されます (「立体感: 強め」)。設定の「AI と 3D」にある「3D 写真の立体感の品質」では「v2、よりきれいな輪郭 (試験運用)」が既定で選ばれています: 奥行きが写真の輪郭に沿うため、物体が背景のハローを引きずらなくなり、360°パノラマのコンポーネントがインストールされていれば、新しい目に見えてくる部分をMI-GANが埋めます。「v1、高速」はこれまでのビルドの立体感で、Questが作るものと同じです。一枚の10 Mpxの写真を24スレッドのノートパソコンで測定すると、v2は約0.25 s、MI-GANによる補完は約7 s余計にかかりました。
+**立体感の強さと品質**、デスクトップビルド26から: 3D写真では、ダイアログに「立体感の強さ」があり、近くの物が背景からどれだけ浮き出るかを選べます: 控えめ、標準 (これまでのビルドの立体感)、または強め (より印象的ですが、目が早く疲れることがあります)。強さごとに別のバージョンが作られ、3D写真の詳細にどの強さで作ったかが表示されます (「立体感: 強め」)。設定の「AI と 3D」にある「3D 写真の立体感の品質」では「v2、よりきれいな輪郭」が既定で選ばれています: 奥行きが写真の輪郭に沿うため、物体が背景のハローを引きずらなくなり、360°パノラマのコンポーネントがインストールされていれば、新しい目に見えてくる部分をMI-GANが埋めます。「v1、高速」はこれまでのビルドの立体感で、Questが作るものと同じです。一枚の10 Mpxの写真を24スレッドのノートパソコンで測定すると、v2は約0.25 s、MI-GANによる補完は約7 s余計にかかりました。
 
 <p align="center">
   <img src="../.github/readme/ai-windows-make-3d-dialog.png" width="330" alt="Windowsアプリの「3D を作成 (AI)」ダイアログ: 3D 写真、3D シーン、360° パノラマ (選択中)、360° 写真の 3D 版。写真の端の外側は AI が生成。このパノラマの約 96% は AI が作り出したものになります。変換が完了しても、よい結果になるとは限りません。このグラフィックス カードで写真 1 枚あたり約 5 分。3D 版も作成 (チェック済み)。保存先: 元の写真の隣、または自分で選んだフォルダー。キャンセルと変換">
@@ -547,7 +560,7 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 
 **Meta Questで**、ビルド32を使います:
 
-- **AIによる立体感**: ライブラリや共有から平面写真を開き、上部バーの「AI による立体感」を押します: ヘッドセット自身が立体感を推定し、写真を3Dで表示します (「AI が推定した立体感」)。モデル (99.5 MB) は最初に押したときにダウンロードされ、立体感はキャッシュに保存されます。設定、詳細設定、「AI と 3D」にある「AI による立体感を 2.5D で開く (試験運用)」をオンにすると、頭を動かしたときに近くの物が背景の前で動きます。Quest 2やQuest Proではボタンはグレーのままで、「このヘッドセットではまだ検証されていません」と表示されます。同じ場所で「Quest 2 と Quest Pro での AI による立体感 (未検証)」をオンにすると使えます。ビルド46からは、同じ設定の「立体感の強さ」で控えめ、標準、強めを選べ、別の強さで表示した写真は立体感を計算し直します (Quest 3で約2 s)。ヘッドセットでの最初の立体感は約7秒ではなく約4秒で表示されるはずで、グラフィックスチップの確認はその後、システムの更新ごとに一度行います: 2026年10月30日にQuest 3で測定したところ、奥行きの処理はグラフィックスチップで一秒未満、立体感全体で約2 s、戻ってきた写真は0.2 sでした。ビルド46ではまだヘッドセットで確認していません。「立体感を停止」は仕上げ中のマップを残し、2:1の写真は、メタデータが360°写真だと示していない限り立体感が付きます。
+- **AIによる立体感**: ライブラリや共有から平面写真を開き、上部バーの「AI による立体感」を押します: ヘッドセット自身が立体感を推定し、写真を3Dで表示します (「AI が推定した立体感」)。モデル (99.5 MB) は最初に押したときにダウンロードされ、立体感はキャッシュに保存されます。設定、詳細設定、「AI と 3D」にある「AI による立体感を 2.5D で開く」をオンにすると、頭を動かしたときに近くの物が背景の前で動きます。Quest 2やQuest Proではボタンはグレーのままで、「このヘッドセットではまだ検証されていません」と表示されます。同じ場所で「Quest 2 と Quest Pro での AI による立体感 (未検証)」をオンにすると使えます。ビルド46からは、同じ設定の「立体感の強さ」で控えめ、標準、強めを選べ、別の強さで表示した写真は立体感を計算し直します (Quest 3で約2 s)。ヘッドセットでの最初の立体感は約7秒ではなく約4秒で表示されるはずで、グラフィックスチップの確認はその後、システムの更新ごとに一度行います: 2026年10月30日にQuest 3で測定したところ、奥行きの処理はグラフィックスチップで一秒未満、立体感全体で約2 s、戻ってきた写真は0.2 sでした。ビルド46ではまだヘッドセットで確認していません。「立体感を停止」は仕上げ中のマップを残し、2:1の写真は、メタデータが360°写真だと示していない限り立体感が付きます。
 - **コンピューターで作った3D写真とシーン**: 「3D で表示」で3D写真を本物の3Dで表示します。元の写真で「3D シーンを表示」、またはシーンで「3D シーンを探索」を選ぶと、シーンがあなたの部屋に置かれます: 身を乗り出して覗き込むか、再構成された範囲の中を左スティックで滑るように移動します (上に示した部屋では「動ける範囲: 各方向に約 0.5 m」)。範囲の端ではレイヤーが平らになって暗くなり、A、Xまたはグリップで表示されるパネルの「リセット」でシーンが目の前に置き直され、BまたはYで戻ります。
 - **パノラマ**: 生成されたパノラマはあなたの写真を正面にして周囲全体に開き、「写真の端の外側は AI が生成」という表示と元の写真の細い輪郭が出て、数秒後に消えます。その3D版は本物の3Dです。
 
@@ -555,7 +568,7 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 
 **何が本物で何が本物でないかを、常に明示します。** これが要点であり、細かい注意書きではありません。3D写真の立体感は1枚の写真から推定したもので、写真で隠れている部分は埋めたものであって本物ではありません。シーンは「1 枚の写真から再構成されたもの。その限界の範囲内で探索してください」です。パノラマはあなたの本物のピクセルを元の位置に残し、残りを作り出します。一般的な写真なら球の約90%で、その割合は始める前にダイアログが示します。アプリは目に入る場所で「AI が推定した立体感」、「写真の端の外側は AI が生成」、そしてバッジでそれを伝え、ファイルもそれを伝えます: 私たちのXMPに、そしてシーンとパノラマではAIで作られた画像を示すIPTCのデジタルソースタイプに記録するので、他のアプリも生成されたパノラマと本物の360°写真を見分けられます。元の写真が変更されることはなく、コンピューターやヘッドセットから何かが出ていくこともありません。ダイアログの言葉どおり: 「変換が完了しても、よい結果になるとは限りません。」
 
-**確認済みの内容** (2026年10月29日時点、このコードのテストビルドで): 3D写真はLinux PC上のコンテナでLinuxアプリが作成し、オフラインでも確認。シーンはRTX 4060 Laptop GPU搭載のノートパソコンでWindowsアプリが作成し (10枚で2 min 39 s)、Linux PCでエンジンも作成。そのノートパソコンでパノラマ4枚を各4 min 16 sから4 min 44 sで作成し、その3D版は約30 sで作成。キャンセル、アプリの強制終了、別のプログラムによるグラフィックスカードの占有も試し、テスト中アプリはネットワークに一切接続しませんでした。
+**確認済みの内容** (2026年10月29日時点、この確認のために作ったこのコードのビルドで): 3D写真はLinux PC上のコンテナでLinuxアプリが作成し、オフラインでも確認。シーンはRTX 4060 Laptop GPU搭載のノートパソコンでWindowsアプリが作成し (10枚で2 min 39 s)、Linux PCでエンジンも作成。そのノートパソコンでパノラマ4枚を各4 min 16 sから4 min 44 sで作成し、その3D版は約30 sで作成。キャンセル、アプリの強制終了、別のプログラムによるグラフィックスカードの占有も試し、テスト中アプリはネットワークに一切接続しませんでした。
 
 制限事項: 360°パノラマには適切なグラフィックスカードを備えたWindowsまたはLinuxコンピューターが必要です。そうでない場合は理由をダイアログが示します (「Mac ではまだ利用できません」、「Vulkan 対応のグラフィックス カードが見つかりません」、「内蔵グラフィックスはコンピューターのメモリを共有するため、パノラマには遅すぎます」。それでも試すには「内蔵グラフィックスで試す (未検証)」)。デスクトップビルド21からは、パノラマを始める前に、アプリ自身が使っているグラフィックスメモリ (一時停止中の動画とキャッシュした画像) を解放し、デスクトップビルド22からはカードに3.5 GiBの空きを求め (約5.6 GiB未満では、同じ画像のまま生成を分割して行うため遅くなり、コンピューターのメモリを最大8 GB使います)、足りなければ空き容量を示しながら待ちます ([各カードでできること](../docs/immuch360/user-guide.md#360-panoramas-and-the-graphics-card-memory))。パノラマの中では、写真の端が色調のはっきりした段差として見えることがあります。ほとんどのシーンには「視野を推定しました: 形がずれている可能性があります」と表示されます。シーンには約2 GBの空きメモリが必要です (足りないと「メモリが足りません」)。AIバージョンをバックアップすると、Immichの重複検出が各写真をそのシーンと組にし、重いほうのファイルであるシーンを残すよう提案することがよくあります: 元の写真を残してください。スマートフォンとテレビは何も作らず、ヘッドセットが作るのは立体感だけです。シーンは1枚の写真から作られ、複数の写真や動画からはWindowsコンピューターが[スプラットシーンを作成します](#make-a-splat-scene-from-your-photos-or-a-video-ai)。
 
@@ -563,14 +576,27 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 
 詳しくは: [ビルド32](https://github.com/freeKC/Immuch360/releases/tag/v3.3.0-rc.0-32)、[デスクトップビルド13](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-13)、[デスクトップビルド15](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-15)、[デスクトップビルド16](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-16)、[デスクトップビルド21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)、[デスクトップビルド22](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-22)、[ビルド46](https://github.com/freeKC/Immuch360/releases/tag/v3.4.1-46)、[デスクトップビルド26](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.1-26)のリリースノート、そして[モデル、そのライセンス、出典、チェックサム](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)。
 
-<a id="turn-your-2d-videos-into-3d-on-your-computer-experimental"></a>
-### コンピューターで2D動画を3Dにする (実験的)
+<a id="update-the-ai-components-in-one-click"></a>
+#### AIコンポーネントをワンクリックで更新する
 
-スマートフォンのクリップ、カメラの映像、旅行の動画など、動画はフラットです。Immuch360 Desktopはコンピューター上でそのうちの一本から左右の3D動画を作り、ヘッドセットや3Dディスプレイで見られるようにします: 各フレームの立体感をAIが推定し、フレームからフレームへ安定させ、元の動画の音声、日付、場所を残します。すべてあなた自身のコンピューターで、そのプロセッサー、またはデスクトップビルド31からはWindowsでそのグラフィックスカードで動き、元の動画は一切変更せず、止めた作業は止まったところから再開します。デスクトップビルド29から、実験的で、AI機能とともにオンになっています。3Dディスプレイやヘッドセットではまだ試していません。Immichアプリは3Dのものを何も作りません。
+アプリの後のビルドが、インストールしたモデルやエンジンの新しいバージョンを持ってくることがあります。デスクトップビルド32からは、Windows、Linux、macOSで、アプリがそれを知らせ、ワンクリックで更新します。更新するのはインストールしたコンポーネントだけで、新しいものはダウンロードせず、インストール済みの各バージョンは更新がダウンロードされ検証されるまで残ります。
+
+1. 上部バーの変換の横に件数付きの更新アイコンが、設定の「このコンピューター」にバッジが表示されます。「AI と 3D」は「2 個の AI コンポーネントを更新できます」の行で開き、ダウンロードするサイズも表示されます。
+2. 「すべて更新」、または一つのコンポーネントで「更新する」を選びます。一時停止はダウンロードを止め、届いた分を保持します。再開はそこから続け、その間に接続が従量制になった場合はもう一度確認します。
+3. 初期設定でオンの「AI コンポーネントを自動で更新」は、起動後に自動で更新します。従量制の接続では更新せず、1 GiBを超えるときは先に確認します。更新に失敗しても、インストール済みのバージョンはそのまま残ります。
+4. 「使われなくなったファイル」は、古いバージョンが残したものをサイズとともに一覧表示します。削除は一覧を表示して先に確認します。このコンピューター上の別のバージョンのImmuch360がまだ使っている可能性があるためです。
+
+ビルド52ではコンポーネントの変更がないため、この通知が初めて表示されるのは、後のビルドがどれかの新しいバージョンを持ってきたときです。プロジェクトのテストと三つのシステムでのCIで確認済みです。macOSとLinuxの従量制の接続は、実際のコンピューターではまだ読み取っていません。
+
+<a id="turn-your-2d-videos-into-3d-on-your-computer-experimental"></a>
+<a id="turn-your-2d-videos-into-3d-on-your-computer"></a>
+### コンピューターで2D動画を3Dにする
+
+スマートフォンのクリップ、カメラの映像、旅行の動画など、動画はフラットです。Immuch360 Desktopはコンピューター上でそのうちの一本から左右の3D動画を作り、ヘッドセットや3Dディスプレイで見られるようにします: 各フレームの立体感をAIが推定し、フレームからフレームへ安定させ、元の動画の音声、日付、場所を残します。すべてあなた自身のコンピューターで、そのプロセッサー、またはデスクトップビルド31からはWindowsでそのグラフィックスカードで動き、元の動画は一切変更せず、止めた作業は止まったところから再開します。デスクトップビルド29から、AI機能とともにオンになっています。3Dディスプレイやヘッドセットではまだ試していません。Immichアプリは3Dのものを何も作りません。
 
 **必要なもの:** Windows、Linux、またはAppleチップ搭載のMac上のImmuch360 Desktopビルド29、コンピューターの動画、またはデスクトップビルド31からはImmichサーバーや共有の動画、そのドライブの空き容量 (必要な量はボックスに表示されます)、そして時間です: コンピューターは動画の一分あたり約10から30分作業します。これはプロジェクトの測定による最初の見積もりです。
 
-1. コンピューターのフォルダー、サーバー、または共有にあるフラットな動画を選択するか開き、「3D を作成 (AI)」、「3D 動画 (試験運用)」と進みます。
+1. コンピューターのフォルダー、サーバー、または共有にあるフラットな動画を選択するか開き、「3D を作成 (AI)」、「3D 動画」と進みます。
 2. 最初は、ボックスが3D動画の二つのコンポーネントを、サイズとライセンスとともに提示します: プロジェクトのFFmpegプログラム (LGPL 2.1以降、システムにより8から15 MB) と、モデルVideo Depth Anything Small (Apache 2.0、約111 MB) です。ダウンロードは一度だけで、その後はオフラインで動きます。
 3. ボックスが動画を読み込み、どう処理するか (「HDR はトーンマッピングで SDR にします」、「すべての音声トラックを残します」)、エンコーダー (「H.264、このコンピューターのエンコーダーを使用」)、かかりそうな時間のおおよその見込み (最初の推測)、必要なメモリと空き容量を表示します。品質: 高速、標準 (初期設定)、高精細 (16 GB以上のメモリ)。立体感の強さ: 控えめ (動画の初期設定)、標準、強め。フル左右 (初期設定) またはハーフ左右。変換。
 4. パネルに完了したフレーム、ペース、残り時間が表示され、一時停止と停止を使えます。一時停止は作業を保持し (「作業内容は保持されます: 「再開」で停止した所から続けます」)、終了や再起動で途中になった動画は、次の起動時に再開を提案されます。作業中はコンピューターがスリープしません。
@@ -579,9 +605,9 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 <a id="a-360-video-turned-into-a-360-3d-video"></a>
 #### 360°動画を360° 3D動画に
 
-デスクトップビルド31から (実験的)、360°動画が360° 3D動画になります: 球全体の立体感を周囲の六つのビューでAIが推定し、左目を上に置き、ファイルには360° 3Dの印を付けるので、ヘッドセットや360°プレーヤーが周囲いっぱいに3Dで表示します。立体感は球の上端と下端に向かって消え、控えめなままです。
+デスクトップビルド31から、360°動画が360° 3D動画になります: 球全体の立体感を周囲の六つのビューでAIが推定し、左目を上に置き、ファイルには360° 3Dの印を付けるので、ヘッドセットや360°プレーヤーが周囲いっぱいに3Dで表示します。立体感は球の上端と下端に向かって消え、控えめなままです。
 
-1. ライブラリ、フォルダー、Immichサーバー、または共有で360°動画を選択し、「3D を作成 (AI)」、「3D 動画 (試験運用)」と進みます。360°の印がない2:1の動画では、「はい、360° 動画です: 360° 3D 動画にする」か「いいえ、通常の動画です: 左右並びの 3D 動画にする」かを尋ねられます。
+1. ライブラリ、フォルダー、Immichサーバー、または共有で360°動画を選択し、「3D を作成 (AI)」、「3D 動画」と進みます。360°の印がない2:1の動画では、「はい、360° 動画です: 360° 3D 動画にする」か「いいえ、通常の動画です: 左右並びの 3D 動画にする」かを尋ねられます。
 2. 「360° 3D 動画」では、3072 x 3072、片目あたり3072 x 1536のままにします: 「ほとんどのヘッドセット、電話、コンピューターで毎秒 30 フレームまで再生できます (H.264 レベル 5.2)」。2048 x 2048はより軽く、4096 x 4096はデコーダーが対応するプレーヤー向けによりシャープです。変換します。
 3. ファイル`<name>_360_3D.mp4`は元の動画の横か選んだフォルダーに置かれ、元の動画に空間オーディオがあればそれも残ります。サーバーや共有の動画は、作業の開始前にその3D動画のドライブにダウンロードされ、進行状況、一時停止、再開が表示され、3D動画ができるとそのコピーは削除されます。
 
@@ -591,7 +617,7 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 
 **プロジェクトのビルドマシンで測定、3Dディスプレイやヘッドセットではまだ見ていません。** 8スレッドのi5-1145G7で、標準品質の場合: 一フレームあたり約0.9 sで、毎秒25または30フレームの映画の一分あたり約26分の作業です。より速いコンピューターならもっと短いはずですが、まだ測定していません。各フレームの深度は、三つのテストクリップで、モデル自身のプログラムに対して範囲の約千分の一まで一致し、一時停止して再開した作業はバイト単位で同じファイルになり、出力はFFmpegとアプリ自身の3D判定で読み戻しました。3Dディスプレイやヘッドセットでは何も見ていません: 見え方を[Issues](https://github.com/freeKC/Immuch360/issues)で教えてください。
 
-詳細: ユーザーガイドの[3D動画](../docs/immuch360/user-guide.md#3d-videos-from-your-2d-videos-from-desktop-build-29-experimental)、[デスクトップビルド29](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.4-29)のリリースノート、[モデル、そのライセンスとチェックサム](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)。
+詳細: ユーザーガイドの[3D動画](../docs/immuch360/user-guide.md#3d-videos-from-your-2d-videos-from-desktop-build-29)、[デスクトップビルド29](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.4-29)のリリースノート、[モデル、そのライセンスとチェックサム](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)。
 
 <a id="make-a-photo-sharper-on-your-computer-ai"></a>
 ### コンピューターで写真をよりシャープにする (AI)
@@ -625,7 +651,7 @@ Immuch360は、フラットな写真や動画、パノラマ、360°の写真や
 
 - **Android TVとGoogle TV**: Androidアプリそのもので、Android TVとGoogle TV向けにGoogle Playで提供され、GitHubではビルド49です。
 - **LGテレビ (webOS 5.0以降)**: 専用のテレビアプリ (バージョン1.0.0) で、LG Content Store向けにLGの審査中です。GitHubにはバージョン1.0.5があります。
-- **Samsungテレビ (Tizen 5.5以降)**: LGテレビと同じテレビアプリのテストビルド0.3.6で、ご自身で署名してインストールします。
+- **Samsungテレビ (Tizen 5.5以降)**: LGテレビと同じテレビアプリのバージョン0.3.6で、ご自身で署名してインストールします。
 
 <p align="center">
   <img src="../.github/readme/lg-tv-webos.png" width="720" alt="イラストで、実際のキャプチャではありません: 夕暮れのリビングにある大きなテレビに、アイコンの列の横に風景写真のグリッドが表示され、コーヒーテーブルにリモコンが置かれている">
@@ -674,18 +700,18 @@ Immich自身のアプリはLGテレビにインストールできません。Imm
 <a id="on-a-samsung-tv-tizen"></a>
 #### Samsungテレビ (Tizen) で
 
-Tizen 5.5以降のSamsungテレビ (2020年以降のテレビ) には、同じテレビアプリがテストビルド0.3.6として提供されます。Samsungのストアにはありません。入力によるログイン、タイムライン、アルバム、ビューアーとスライドショー、球体での360°写真、キー1つでの写真の回転に対応します。ロードマップにあるもの: スマートフォンでのログイン、共有、Plex、カメラ。これらはLGテレビではバックグラウンドサービスで動作します。
+Tizen 5.5以降のSamsungテレビ (2020年以降のテレビ) には、同じテレビアプリがバージョン0.3.6として提供されます。Samsungのストアにはありません。入力によるログイン、タイムライン、アルバム、ビューアーとスライドショー、球体での360°写真、キー1つでの写真の回転に対応します。ロードマップにあるもの: スマートフォンでのログイン、共有、Plex、カメラ。これらはLGテレビではバックグラウンドサービスで動作します。
 
 1. テレビ用にパッケージに署名し、Developer modeでインストールします。[インストール](#samsung-tvs-tizen)を参照してください。
 2. サーバーのアドレス、次にメールアドレスとパスワード、またはAPIキーを入力してログインします。
 3. 矢印キーとOKで閲覧します。360°写真は球体に表示されます。360°動画は、初回に通知を表示してフラットで再生されます。テスターのテレビで、テレビのブラウザーが3Dビューに黒い動画フレームを渡したためです。
 4. テレビのデコーダーが受け付ける範囲を超える動画は、読み込みを続ける代わりに、テレビで再生できるサイズとファイルのサイズを示してその旨を表示します。途中で止まる動画は、ビットレートと対処法を示す通知を表示します: 重いファイルはImmichでトランスコードするか、より速い回線を使ってください。「このテレビについて」でテレビの動画の上限を確認できます。
 
-バージョン0.1.0はTizen 9のテスターのSamsungテレビで動作し、0.2.0にはそのときの修正が入っており、プロジェクトのCIがテレビの代わりとなるブラウザーで確認しました。テストビルド0.3.0からは、LGテレビのバージョン1.0.1と同じく、上キーで写真をすぐにズームインし、その後は矢印で移動、戻るキーでズームアウトでき、写真の読み込み中は「読み込み中」の表示が出ます。CIのエンドツーエンドテストがズームを確認しており、0.3.0を動作させたSamsungテレビはまだありません。テストビルド0.3.1は日本語の表記だけを変更しています。テストビルド0.3.2は、スマートフォンで縦向きに撮影した動画を正しい向きで再生します。Samsungのプレーヤーがファイルに保存された回転を無視していたため、映像が横倒しになっていました ([Issue 17](https://github.com/freeKC/Immuch360/issues/17))。報告者のテレビではまだ横倒しのままでした: テレビは動画を縦向きと報告しながら、保存された映像を横倒しで描画していたため、テストビルド0.3.3はその場合にも回転させ、下で説明するボタンを加えます。0.3.4ではその表示が89言語になりました。報告者のテレビ (Tizen 9.0のGQ65S90C) では、0.3.4は映像を広くしたり狭くしたりしましたが、一度も回転させませんでした: テレビはアプリが求めたサイズは受け入れ、回転は無視しました。お使いのテレビでまだ動画が横倒しになる場合は、「このテレビについて」の「Video turn」の行をIssueに投稿してください。試した後に「このテレビについて」ページのテキストを[Discussions](https://github.com/freeKC/Immuch360/discussions)または[Issues](https://github.com/freeKC/Immuch360/issues)に投稿していただくのが一番の助けになります。
+バージョン0.1.0はTizen 9のテスターのSamsungテレビで動作し、0.2.0にはそのときの修正が入っており、プロジェクトのCIがテレビの代わりとなるブラウザーで確認しました。バージョン0.3.0からは、LGテレビのバージョン1.0.1と同じく、上キーで写真をすぐにズームインし、その後は矢印で移動、戻るキーでズームアウトでき、写真の読み込み中は「読み込み中」の表示が出ます。CIのエンドツーエンドテストがズームを確認しており、0.3.0を動作させたSamsungテレビはまだありません。バージョン0.3.1は日本語の表記だけを変更しています。バージョン0.3.2は、スマートフォンで縦向きに撮影した動画を正しい向きで再生します。Samsungのプレーヤーがファイルに保存された回転を無視していたため、映像が横倒しになっていました ([Issue 17](https://github.com/freeKC/Immuch360/issues/17))。報告者のテレビではまだ横倒しのままでした: テレビは動画を縦向きと報告しながら、保存された映像を横倒しで描画していたため、バージョン0.3.3はその場合にも回転させ、下で説明するボタンを加えます。0.3.4ではその表示が89言語になりました。報告者のテレビ (Tizen 9.0のGQ65S90C) では、0.3.4は映像を広くしたり狭くしたりしましたが、一度も回転させませんでした: テレビはアプリが求めたサイズは受け入れ、回転は無視しました。お使いのテレビでまだ動画が横倒しになる場合は、「このテレビについて」の「Video turn」の行をIssueに投稿してください。試した後に「このテレビについて」ページのテキストを[Discussions](https://github.com/freeKC/Immuch360/discussions)または[Issues](https://github.com/freeKC/Immuch360/issues)に投稿していただくのが一番の助けになります。
 
-**映像を回転** (テストビルド0.3.3から、LGテレビではバージョン1.0.4から): 動画で上を押すと、「映像を回転」が選ばれた状態で動画の上部バーが表示され、OKを押すたびに映像が時計回りに四分の一回転します。再生中は黄色と青のキーでどちらの向きにも四分の一ずつ回転できます。テレビが報告するサイズとファイルのサイズの縦横の形が違う場合は、右で「画面に合わせる」に移り、回転した映像の二つの合わせ方を切り替えます。上部バーには「手動で回転: 90°、この動画で保持」と表示され、次にその動画を開いたときも選択が戻ります。下または戻るで動画に戻り、もう一度戻るで閉じます。報告者のSamsungテレビでは映像の形が変わっただけで回転せず、LGテレビではまだ試していません: テレビはアプリが求める回転を無視することがあり、「このテレビについて」の「Video turn」の行に実際に適用されたものが表示されます。詳細: [横倒しの動画](../docs/immuch360/user-guide.md#a-video-on-its-side-on-an-lg-or-samsung-tv)。
+**映像を回転** (バージョン0.3.3から、LGテレビではバージョン1.0.4から): 動画で上を押すと、「映像を回転」が選ばれた状態で動画の上部バーが表示され、OKを押すたびに映像が時計回りに四分の一回転します。再生中は黄色と青のキーでどちらの向きにも四分の一ずつ回転できます。テレビが報告するサイズとファイルのサイズの縦横の形が違う場合は、右で「画面に合わせる」に移り、回転した映像の二つの合わせ方を切り替えます。上部バーには「手動で回転: 90°、この動画で保持」と表示され、次にその動画を開いたときも選択が戻ります。下または戻るで動画に戻り、もう一度戻るで閉じます。報告者のSamsungテレビでは映像の形が変わっただけで回転せず、LGテレビではまだ試していません: テレビはアプリが求める回転を無視することがあり、「このテレビについて」の「Video turn」の行に実際に適用されたものが表示されます。詳細: [横倒しの動画](../docs/immuch360/user-guide.md#a-video-on-its-side-on-an-lg-or-samsung-tv)。
 
-**Samsung自身のプレーヤー** (11月16日に公開した[テストビルド0.3.5](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.3.5)から、ビルド49とともに0.3.6): Samsungテレビでは、ファイルによって、または「映像を回転」によって回転が必要な動画は、テレビのブラウザーのプレーヤーではなく、独自の回転機能を持つSamsungテレビの動画プレーヤーAVPlayで再生され、標準プレーヤーの動画で「映像を回転」を選ぶと、その時点の位置でAVPlayに移ります。AVPlayで動画を再生できないときは、標準プレーヤーが同じ位置から引き継ぎ (「Samsung の動画プレーヤーでこの動画を再生できませんでした: 標準プレーヤーで再生します。」)、そのセッションの間はそのままです。「このテレビについて」の「Video turn」の行には、プレーヤーとテレビの応答が表示されます。報告者のテレビ (Tizen 9.0のGQ65S90C) では、AVPlayは動画を再生しましたが、テレビが回転を拒否したため (`PLAYER_DISPLAY_ROTATION_90 NotSupportedError`)、映像は横倒しのままでした。ほかのSamsungテレビではまだ動作させていません。LGテレビは自身のプレーヤーをそのまま使います。
+**Samsung自身のプレーヤー** (11月16日に公開した[バージョン0.3.5](https://github.com/freeKC/Immuch360/releases/tag/tizen-v0.3.5)から、ビルド49とともに0.3.6): Samsungテレビでは、ファイルによって、または「映像を回転」によって回転が必要な動画は、テレビのブラウザーのプレーヤーではなく、独自の回転機能を持つSamsungテレビの動画プレーヤーAVPlayで再生され、標準プレーヤーの動画で「映像を回転」を選ぶと、その時点の位置でAVPlayに移ります。AVPlayで動画を再生できないときは、標準プレーヤーが同じ位置から引き継ぎ (「Samsung の動画プレーヤーでこの動画を再生できませんでした: 標準プレーヤーで再生します。」)、そのセッションの間はそのままです。「このテレビについて」の「Video turn」の行には、プレーヤーとテレビの応答が表示されます。報告者のテレビ (Tizen 9.0のGQ65S90C) では、AVPlayは動画を再生しましたが、テレビが回転を拒否したため (`PLAYER_DISPLAY_ROTATION_90 NotSupportedError`)、映像は横倒しのままでした。ほかのSamsungテレビではまだ動作させていません。LGテレビは自身のプレーヤーをそのまま使います。
 
 **テレビが回転を拒否する場合**は、Immichサーバーに動画を回転させてください: そのWebアプリでAdministration、Settings、Video Transcoding Settingsと進み、「Transcode policy」を「Videos higher than target resolution or not in an accepted format」(または「All videos」) にし、「Target resolution」を選び (1080pが手始めにおすすめです: 4Kへの変換はサーバーに重い処理です)、回転をフラグとして残すことがあるため、まず「Hardware Acceleration」をオフにして試し、その後Administration、Jobsで「Transcode videos」を「Missing」に対して実行します。変換した動画は正立で保存され、テレビアプリはそのまま再生します。
 
@@ -710,6 +736,27 @@ Tizen 5.5以降のSamsungテレビ (2020年以降のテレビ) には、同じ�
 
 詳細: [スマートフォンでのログイン](../docs/immuch360/user-guide.md#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)、[画面が送信し保持するもの](../docs/immuch360/technical-details.md#sign-in-with-your-phone)。
 
+<a id="show-your-photos-and-videos-on-the-tv-from-your-phone"></a>
+### スマートフォンから写真と動画をテレビに映す
+
+旅行の写真を、テレビを何かに新しくログインさせたりファイルをコピーしたりせずに、家族とテレビで見たいとします。ビルド52からは、スマートフォンのビューアーの「再生先…」が、見ている写真や動画をテレビ、Meta Quest、コンピューターのImmuch360、またはChromecastやGoogle TVに送り、スマートフォンで操作します: スワイプで次の写真へ、またはスライドショーを開始します。Plexの映画と同じように、Immichライブラリ、SMB、WebDAV、DLNAの共有、JellyfinとEmbyの写真と動画で使えます。
+
+**必要なもの:** スマートフォンと画面の両方にImmuch360のビルド52、両方が同じホームネットワークにあること、そして画面とスマートフォンを一度リンクしておくことです: [スマートフォンで画面にログインする](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)ときに「この電話からの映画の再生も許可する」をオンのままにするか、画面で設定、「電話から再生」、「電話をペアリング」を開きます。Chromecast、Google TV、Cast内蔵のテレビには何もインストールする必要はありません。
+
+1. スマートフォンで写真か動画を開き、メニューの「再生先…」かCastアイコンを選びます。一覧には画面とWi-FiのCastデバイスが表示され、それぞれ表示できるかどうかがわかります。
+2. テレビをタップします。Immuch360を実行している画面は、いつものビューアーで自身のImmichアカウントを使って開くので、パスワードもセッションもスマートフォンから出ません。スマートフォン下部のバーには「テレビ で表示中」と表示され、「前へ」、「スライドショー」、「次へ」、停止があります。
+3. スマートフォンでスワイプすると、次の写真がテレビに表示されます。スライドショーは6 sごとに進み、動画は最後まで再生してから進み、一時停止中は待ちます。停止でテレビ側も閉じ、テレビのリモコンもそのまま使えます。
+4. Castデバイスには、写真はサーバーのJPEG (HEICとRAWも含む) が、動画は再生できるバージョンが届きます: 元の動画がそこで再生できないときは、Immichサーバーが変換したものです (「Immich サーバーが変換したバージョンを再生します」)。スマートフォンが中継するので、その間はスマートフォンでImmuch360を開いたままにしてください。セッションがスマートフォンから出ることはなく、中継はそのデバイスにだけ応答します。
+5. 共有やJellyfinとEmbyの動画は、同じ共有やサーバーを持つ画面で開きます。そうでない場合は、一覧にそこへ追加するよう表示されます。
+
+ロックされたフォルダーの写真がリンクした画面に送られることはなく、Castデバイスには確認後にだけ送られます。アーカイブした写真は先に確認します。別のアカウントやサーバーにログインしている画面、またはログインしていない画面は理由を表示します。まだビルド51の画面はアップデートを求め、映画はそのまま再生します。
+
+**まだないもの**: このスマートフォンにだけあり、アップロードしていない写真と動画。選択した写真のスライドショーや、画面の時計で進むスライドショー。スマートフォンから回す360°ビュー (Castデバイスは360°写真をフラットで表示します)。LGとSamsungのテレビアプリ。iPhoneとiPadでも同じコードが動きますが、iPhoneではまだ試していません。スライドショーとCastにはアプリが前面にある必要があります。
+
+**プロジェクトのテストでビルドと確認を済ませていますが、実機ではまだ試していません。** スマートフォンと画面は、一台のコンピューターのループバック上でテストの中で互いに試し、Castの経路はシミュレートしたデバイスに対して試しました。この方法で送った写真を表示したテレビ、ヘッドセット、実際のCastデバイスはまだありません。一覧の画面キャプチャー付きで[Issues](https://github.com/freeKC/Immuch360/issues)に報告していただくのが一番の助けになります。
+
+詳しくは: [スマートフォンからテレビで映画を再生する](../docs/immuch360/user-guide.md#play-a-film-on-your-tv-from-your-phone)、そして[ビルド52](https://github.com/freeKC/Immuch360/releases/tag/v3.4.7-52)のリリースノート。
+
 <a id="go-immersive-on-meta-quest"></a>
 <a id="step-inside-your-photos-and-videos-with-a-meta-quest"></a>
 ### Meta Questで写真や動画の中に入る
@@ -727,7 +774,7 @@ Meta Questでは同じアプリがウィンドウとして動作し、ライブ�
 3. 360°の写真や動画を開いて360°を押すと、イマーシブビューが開きます。BまたはYボタン、あるいは情報パネルの戻るボタンでウィンドウに戻ります。
 4. イマーシブビューでは、右スティックを左右に倒すと、その方向にビューが30°回転します。ビルド29からは、多くのヘッドセットアプリと同じく倒した方向に回転します。ビルド17から28では逆方向に回転していました。設定、アセットビューアー、動画、「スティックの回転を反転」でその方向に戻せます。
 5. ウィンドウでは、スティックを右に倒すと次の写真や動画、左に倒すと前のものに移ります。Gaurav Mukherjee ([gmfun](https://github.com/gmfun/Immuch360)) のコミットを元にしています。
-6. 「大画面で表示」は、写真や動画を目の前の大きな平面スクリーンに表示します。グリップボタンを押したままにすると移動し、スティックを倒すと近づけたり遠ざけたりでき、両方のグリップボタンを押したままにするとサイズを変えられます。`Movie_SBS.mp4`、`Film.Half-OU.mkv`、`clip_LR.mp4` のような名前の動画には「3D で表示」が付き、そのスクリーン上で3Dで再生されます (「ファイル名による 3D (試験運用)」)。「よりシャープな平面スクリーン (試験運用)」は、ヘッドセット自身のスーパーサンプリングとシャープ化でスクリーンを描画します。どちらも「設定」の「詳細設定」にあります。
+6. 「大画面で表示」は、写真や動画を目の前の大きな平面スクリーンに表示します。グリップボタンを押したままにすると移動し、スティックを倒すと近づけたり遠ざけたりでき、両方のグリップボタンを押したままにするとサイズを変えられます。`Movie_SBS.mp4`、`Film.Half-OU.mkv`、`clip_LR.mp4` のような名前の動画には「3D で表示」が付き、そのスクリーン上で3Dで再生されます (「ファイル名による 3D」)。「よりシャープな平面スクリーン」は、ヘッドセット自身のスーパーサンプリングとシャープ化でスクリーンを描画します。どちらも「設定」の「詳細設定」にあります。
 7. デコーダーが途中で動画を止めたときは、ビューアーが失敗した部分の先から再生し直し、そのことを表示します。映画は止めたところから続きを再生し、TIFF写真はイマーシブビューでも表示されます。
 
 <a id="browse-your-photos-on-the-big-screen-of-the-quest"></a>
@@ -740,7 +787,7 @@ Meta Questでは同じアプリがウィンドウとして動作し、ライブ�
 3. パネルの再生を押すか、パネルを隠した状態でトリガーを押すと、同じフレームでスライドショーになります。各写真はアプリのスライドショーの表示時間だけ表示され、次の写真の準備ができるまで表示中の写真が残るので、間に黒い画面が挟まりません。グリップを押し続けると一時停止し、最後の写真の後に「スライドショーの終わり」が表示されます。
 4. AIによる立体感では、パネルの「立体感: 標準」で表示中の写真の控えめ、標準、強めを切り替え、その設定を保持します。立体感から閲覧すると、表示される写真ごとに立体感が付き、選んだ3D、2.5D、または「2D (オリジナル)」の表示は閲覧中も変わりません: 2Dで閲覧した写真は、3Dを押したときにだけ計算されます。
 
-「写真の背景をすりガラス風に (試験運用)」(設定、高度な設定、初期設定でオン) は、写真の周りのフレームを、ぼかして暗くしたその写真のコピーで埋めます (「すりガラス風の背景 (試験運用)」が一度表示されます)。ぼかしが写真を覆うことがあればオフにしてください。このビルドにないもの: フォルダー全体の一括変換 (後のビルドで予定)、写真間のクロスフェード、この閲覧での動画、スライドショーのリピートやシャッフル、そして単独で開く共有の写真です。プロジェクトのテストとCIのエミュレーターで確認しました。プロジェクトではまだヘッドセットで試していません。
+「写真の背景をすりガラス風に」(設定、高度な設定、初期設定でオン) は、写真の周りのフレームを、ぼかして暗くしたその写真のコピーで埋めます (「すりガラス風の背景」が一度表示されます)。ぼかしが写真を覆うことがあればオフにしてください。このビルドにないもの: フォルダー全体の一括変換 (後のビルドで予定)、写真間のクロスフェード、この閲覧での動画、スライドショーのリピートやシャッフル、そして単独で開く共有の写真です。プロジェクトのテストとCIのエミュレーターで確認しました。プロジェクトではまだヘッドセットで試していません。
 
 詳細: ユーザーガイドの[大画面](../docs/immuch360/user-guide.md#photos-on-the-big-screen-browse-slideshow-size-and-place-from-build-49)と、[ビルド49](https://github.com/freeKC/Immuch360/releases/tag/v3.4.4-49)のリリースノート。
 
@@ -749,7 +796,7 @@ Meta Questでは同じアプリがウィンドウとして動作し、ライブ�
 
 ヘッドセットを来場者に渡すと、誰かが装着するたびに、あなたの360°写真や動画を最初から自動で開きます。このアイデアは [ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) の展示用ビルドから生まれ、私たちのコードで書き直しました。
 
-1. 「設定」の「詳細設定」、「キオスクモード (試験運用)」で、「キオスクのメディア」として360°写真または動画を選び、必要なら「終了カードのテキスト」を入力します (入力しない場合は「旅にご一緒いただき、ありがとうございました」)。
+1. 「設定」の「詳細設定」、「キオスクモード」で、「キオスクのメディア」として360°写真または動画を選び、必要なら「終了カードのテキスト」を入力します (入力しない場合は「旅にご一緒いただき、ありがとうございました」)。
 2. 次回の起動時、ヘッドセットはキオスクのメディアの名前を数秒間「キャンセル」付きで表示してから開きます。
 3. 映画は誰かがヘッドセットを装着するたびに最初から始まり、カードで終わります。キオスクは押下を受け付けません。終了するにはBまたはYを1秒間押し続けます。
 
@@ -760,14 +807,14 @@ Meta Questでは同じアプリがウィンドウとして動作し、ライブ�
 <a id="explore-gaussian-splats-in-a-meta-quest-3-or-3s"></a>
 ### Meta Quest 3または3Sでガウシアンスプラットを探索する
 
-ガウシアンスプラットは、場所や物を3Dでキャプチャーしたもので、Polycam、Scaniverse、Postshot、Lumaなどのツールで作ります。Meta Quest 3または3Sでは、Immuch360がそれを実物大で目の前やまわりに置き、まわりを歩いたり中をすり抜けたりできます。実験的機能で、既定でオンです。
+ガウシアンスプラットは、場所や物を3Dでキャプチャーしたもので、Polycam、Scaniverse、Postshot、Lumaなどのツールで作ります。Meta Quest 3または3Sでは、Immuch360がそれを実物大で目の前やまわりに置き、まわりを歩いたり中をすり抜けたりできます。既定でオンです。
 
 1. .spzまたは.plyのスプラットをSMBまたはWebDAVの共有、またはヘッドセットのフォルダーに置きます (「フォルダを参照」、または「ネットワーク共有」の+メニューの「スプラットファイルを開く」)。写真と動画の後に、「3D スプラット」のバッジとガウシアンの数付きで表示されます。
 2. 1つを開き、「スプラットのシーンを探索」を選びます。物は目の高さで目の前に立ち、場所はまわりに広がります。左スティックで中をすり抜け、右スティックでは、たどり着いた場所を保ったままビューを自分のまわりに30°ずつ回します (「サムスティックの回転を反転」で逆向きになります)。A、Xまたはグリップで表示されるパネルの「リセット」で今立っている位置から置き直し、「向きを直す」で横倒しや逆さまのものを回転させ、そのファイルについて記憶します。
-3. スプラットに表示されるガウシアンは最大300,000個で、それより大きいものは最も強い300,000個を表示します (「452,451 個中 300,000 個のガウシアンに削減」)。「設定」の「詳細設定」にある「大きなスプラット (試験運用)」では1,000,000個まで表示できます。
+3. スプラットに表示されるガウシアンは最大300,000個で、それより大きいものは最も強い300,000個を表示します (「452,451 個中 300,000 個のガウシアンに削減」)。「設定」の「詳細設定」にある「大きなスプラット」では1,000,000個まで表示できます。
 4. ヘッドセットはバイナリの.plyファイルとバージョン1から4までのSPZを読み込みます。バージョン4はビルド40から対応しています。
 
-ガウシアンスプラットは Meta Spatial SDK の試験運用版 API を使用しており、Meta はこの API をサポートも保証もしていません。不具合の責任はすべて Immuch360 にあります。Quest 2やQuest Proではスプラットは一覧に表示され、「スプラットのシーンを探索」では「ガウシアンスプラットには Meta Quest 3 または 3S が必要です」と表示されます。試せるファイル: [InnerSceneのスプラットビューアーのページ](https://www.innerscene.com/tools/gaussian-splat-viewer)にあるCC0のサンプル。
+ガウシアンスプラットは Meta Spatial SDK のうち Meta がサポートも保証もしていない部分を使用しています。不具合の責任はすべて Immuch360 にあります。Quest 2やQuest Proではスプラットは一覧に表示され、「スプラットのシーンを探索」では「ガウシアンスプラットには Meta Quest 3 または 3S が必要です」と表示されます。試せるファイル: [InnerSceneのスプラットビューアーのページ](https://www.innerscene.com/tools/gaussian-splat-viewer)にあるCC0のサンプル。
 
 10月31日にQuest 3で確認しました: ビルド39のコードがそれらのサンプルから用意したファイルは、アプリが使うMeta Spatial SDKのスプラットモジュールで開き、どれも見える位置にまっすぐ立って表示されました。ビルド40では、プロジェクトのテストとCIが回転とSPZバージョン4を確認しました: ビルド39でQuest 3で記録したスティック操作をテストで再生すると、押すごとにビューが30°回り、リセットされることはありません。回転しても滑って移動した場所は保たれ、テスト用のバージョン4のファイルは、元のバージョン3のファイルとバイト単位で同じようにヘッドセット向けに用意されます。
 
@@ -776,7 +823,7 @@ Meta Questでは同じアプリがウィンドウとして動作し、ライブ�
 <a id="explore-gaussian-splats-on-your-phone-tablet-or-computer"></a>
 ### スマートフォン、タブレット、コンピューターでガウシアンスプラットを探索する
 
-Polycam、Scaniverse、Postshot、Lumaなどのツールで作ったスプラットや、あなたのコンピューターが写真から作ったスプラットは、AndroidのスマートフォンやタブレットとWindows、Linux、macOSで開き、ヘッドセットと同じようにその中を歩けます。実験的機能で、既定でオンです。Immichアプリはスプラットを開きません。
+Polycam、Scaniverse、Postshot、Lumaなどのツールで作ったスプラットや、あなたのコンピューターが写真から作ったスプラットは、AndroidのスマートフォンやタブレットとWindows、Linux、macOSで開き、ヘッドセットと同じようにその中を歩けます。既定でオンです。Immichアプリはスプラットを開きません。
 
 <p align="center">
   <img src="../.github/readme/howto/splat-viewer.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 夜のリビングで、後ろ姿の人がAndroidスマートフォンを持ち、低いテーブルの上のノートPCが暖炉のある同じ部屋を映している。どちらもImmuch360を実行し、棚の上のNASからそのガウシアンスプラットを開いている">
@@ -786,7 +833,7 @@ Polycam、Scaniverse、Postshot、Lumaなどのツールで作ったスプラッ
 2. ひとつを開きます: 場所はまわりに広がり、物は目の前に置かれます。コンピューターでは、ドラッグで見回し、W、A、S、D (AZERTYではZ、Q、S、D) または矢印キーで歩き、ホイールで前後に進み、EとQで上下に移動し、Rでリセット、Escで戻ります。「周りを回る」では、歩く代わりに物のまわりを回ります。スマートフォンでは、左の親指で歩き、ドラッグで見回し、ピンチで前後に進み、二本指でスライドし、ダブルタップでリセットします。ジャイロスコープボタンを使うと、スマートフォンの向きを変えるにつれて見回せます。
 3. 「リセット」でシーンを置き直し、「向きを直す」で横倒しや逆さまのものを回転させ、このデバイスでそのファイルについて記憶します。情報シートには、表示中のガウシアンの数と描画の速さが表示されます。
 
-表示されるガウシアンの数はデバイスによって異なります。スマートフォンやタブレットでは最も強いものを最大150,000個表示し (「452,451 個中 150,000 個のガウシアンに削減」)、「設定」の「詳細設定」にある「大きなスプラット (試験運用)」では500,000個まで表示します。専用のグラフィックスカードを持つコンピューターは、メモリに収まる範囲でスプラットをすべて表示し (16 GBのメモリと8 GBのカードを持つノートPCで約1000万個のガウシアン)、それを超えると「このコンピューターには大きすぎます」と表示します。コンピューターのメモリを共有するグラフィックスチップでは最大1,000,000個を表示します。ただし、「設定」の「詳細設定」にある「すべてのガウシアンを保持 (試験運用)」ですべてを求めた場合は除きます。すべて表示したスプラットの描画が遅すぎるときは、ビューアーが軽いコピーにするか、すべて保持するかを提案し、そのファイルについての答えを記憶します。Windowsでは、既定でオンの「より高性能なグラフィックスカードでスプラット (試験運用)」が、カードを二つ持つノートPCで専用カードを使って描画します。
+表示されるガウシアンの数はデバイスによって異なります。スマートフォンやタブレットでは最も強いものを最大150,000個表示し (「452,451 個中 150,000 個のガウシアンに削減」)、「設定」の「詳細設定」にある「大きなスプラット」では500,000個まで表示します。専用のグラフィックスカードを持つコンピューターは、メモリに収まる範囲でスプラットをすべて表示し (16 GBのメモリと8 GBのカードを持つノートPCで約1000万個のガウシアン)、それを超えると「このコンピューターには大きすぎます」と表示します。コンピューターのメモリを共有するグラフィックスチップでは最大1,000,000個を表示します。ただし、「設定」の「詳細設定」にある「すべてのガウシアンを保持」ですべてを求めた場合は除きます。すべて表示したスプラットの描画が遅すぎるときは、ビューアーが軽いコピーにするか、すべて保持するかを提案し、そのファイルについての答えを記憶します。Windowsでは、既定でオンの「より高性能なグラフィックスカードでスプラット」が、カードを二つ持つノートPCで専用カードを使って描画します。
 
 Galaxy S24+で確認しました。テストのスプラットはほぼすぐに表示され、滑らかに動きました。RTX 4060搭載のノートPC上のWindowsアプリでは、637,401個のガウシアンの部屋を含め、どれも毎秒約120フレームで描画されました。Ubuntu、Debian、FedoraではプロジェクトのCIで確認しました。iPhone、iPad、テレビはスプラットを開きません。MacではビューアーはプロジェクトのCIでビルドされていますが、まだ試していません。NVIDIAのカードを搭載したLinuxでビューアーに何も描画されないときは、アプリの案内どおり`WEBKIT_DISABLE_DMABUF_RENDERER=1`を付けてImmuch360を起動してください。
 
@@ -795,7 +842,7 @@ Galaxy S24+で確認しました。テストのスプラットはほぼすぐに
 <a id="make-a-splat-scene-from-your-photos-or-a-video-ai"></a>
 ### 写真や動画からスプラットシーンを作成する (AI)
 
-部屋、庭、像を撮影して、もう一度その中に立ちたいとします。Windowsコンピューターでは、Immuch360 Desktopが写真や動画からそれをガウシアンスプラットとして再構成し、Meta Quest 3または3Sや、上のスプラットビューアーでその中を歩けます。すべてあなたのコンピューターで動作します: クラウドもアカウントも不要です。実験的機能で、既定でオンです。Immichアプリには同様の機能はありません。
+部屋、庭、像を撮影して、もう一度その中に立ちたいとします。Windowsコンピューターでは、Immuch360 Desktopが写真や動画からそれをガウシアンスプラットとして再構成し、Meta Quest 3または3Sや、上のスプラットビューアーでその中を歩けます。すべてあなたのコンピューターで動作します: クラウドもアカウントも不要です。既定でオンです。Immichアプリには同様の機能はありません。
 
 <p align="center">
   <img src="../.github/readme/howto/splat-maker.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 石のフクロウのまわりで撮った写真が輪になって浮かび、WindowsでImmuch360を実行するノートPCに流れ込み、ノートPCがフクロウをスプラットシーンとして再構成している。Immuch360を実行するヘッドセットがサイドテーブルの上で、それをNASから開くのを待っている">
@@ -826,7 +873,7 @@ Galaxy S24+で確認しました。テストのスプラットはほぼすぐに
 <a id="keep-a-splat-scene-on-your-immich-server"></a>
 ### Immichサーバーにスプラットシーンを保管する
 
-Immichサーバーは.spzや.plyのファイルを受け付けません。Immuch360はスプラットシーンを、そのシーンを写した写真`<name>_splat.jpg`の中に保存し、どのImmichサーバーもこれを他の写真と同じように保管します: すべてのデバイスのタイムラインに表示され、Immuch360はそこからシーンを開きます。実験的機能で、既定でオンです。サーバー側で変更するものはありません。
+Immichサーバーは.spzや.plyのファイルを受け付けません。Immuch360はスプラットシーンを、そのシーンを写した写真`<name>_splat.jpg`の中に保存し、どのImmichサーバーもこれを他の写真と同じように保管します: すべてのデバイスのタイムラインに表示され、Immuch360はそこからシーンを開きます。既定でオンです。サーバー側で変更するものはありません。
 
 <p align="center">
   <img src="../.github/readme/howto/splat-photo.jpg" width="720" alt="イラストで、実際のキャプチャではありません: Immichサーバーがスプラットシーンを写真として保管し、テレビはそれを小さな3Dマーク付きで表示し、Immuch360を実行するスマートフォンとヘッドセットは同じ部屋を3Dで開いている。ヘッドセットではまわり全体に広がっている">
@@ -859,7 +906,7 @@ Immich 3.3.0と3.2.4のテストサーバーで確認しました: 38,884から1
 4. Plexサーバーの場合: ネットワーク共有で+と「Plex Media Server」を選び、「ネットワーク上で見つかったサーバー」の下のサーバーをタップして、トークンを一度だけ貼り付けます (ページの「入手方法」に場所が書かれています)。ビルド46からは代わりに「Plex でログイン」 (下記) をタップすることもできます。続いて「接続をテスト」と保存をタップします。
 5. Immichサーバーを接続している場合、フォルダー内のファイルを選択して「Immichにアップロード」をタップすると、サーバーに送信できます。
 
-プレーヤーは、アプリ内部のブリッジを通じてバイト範囲指定で必要なバイトだけを読み込むため、シークが機能し、デバイスには何も保存されません。SMBの動画は最大6つの接続を並列で使って読み込まれ、スムーズに再生されます。ビルド29からは、M2TSで記録された映画 (Blu-ray、AVCHDビデオカメラ、テレビレコーダー) を、SMBやWebDAVの共有、およびトランスポートストリームとして一覧表示するDLNAサーバーからAndroidアプリで再生でき、サイズを0と表示するDLNAサーバーでも空の動画にならなくなりました。
+プレーヤーは、アプリ内部のブリッジを通じてバイト範囲指定で必要なバイトだけを読み込むため、シークが機能し、デバイスには何も保存されません。SMBの動画は最大6つの接続を並列で使って読み込まれ、スムーズに再生されます。ビルド29からは、M2TSで記録された映画 (Blu-ray、AVCHDビデオカメラ、テレビレコーダー) を、SMBやWebDAVの共有、およびトランスポートストリームとして一覧表示するDLNAサーバーからAndroidアプリで再生でき、サイズを0と表示するDLNAサーバーでも空の動画にならなくなりました。ビルド52とデスクトップビルド32からは、各写真と動画の名前が、画像が表示された後もサムネイルの上の暗い帯に残り、長い名前は末尾を残して表示され (「PXL_2026…0815.jpg」)、3D、AV2、360°のバッジと再生時間は暗いピルの上に置かれ、白い空の上でも暗い部屋でも読めます。タイムラインの月と思い出のタイトルも同様です。実機ではまだ確認していません。
 
 DLNAメディアサーバーが一覧に表示するのは、インデックスに登録したファイルだけです。360°カメラのRAWファイル (.insv、.360、.osv) やスプラットのファイル (.ply、.spz) は通常そこに表示されないため、SMBまたはWebDAVの共有か、デバイスのフォルダーから開いてください。ビルド47とデスクトップビルド27から、またLGテレビではバージョン1.0.3から、Freeboxのテレビチャンネルのようなテレビのライブチャンネルのフォルダーは、空のまま開く代わりに「テレビのライブチャンネルは、ここではまだ再生できません」と表示します。
 
@@ -870,7 +917,7 @@ DLNAメディアサーバーが一覧に表示するのは、インデックス�
 <a id="watch-your-plex-films"></a>
 #### Plexの映画を見る
 
-映画をPlexサーバーに置いていて、すべてを新しい順に見渡し、始まる前にどんな映画か知り、旅行に一本持って行き、あるいはスマートフォンでテレビに再生させたいとします。ビルド45とデスクトップビルド25からは、Plexの映画ライブラリが映画一覧のページで開き、映画ごとに専用のページがあり、映画をデバイスにダウンロードしたり、スマートフォンからテレビで再生したりできます。ビルド46からは、Meta Questが自身のプレーヤーでデコードできない映画をlibmpvで再生し、Androidデバイスのどのプレーヤーもデコードできない映画はPlexサーバーが変換し、スマートフォンは映画をChromecastやGoogle TVに送ります。ビルド47とデスクトップビルド27からは、映画がデバイスでデコードできる音声トラックを再生してどのトラックかを表示し、バージョンを表示し、Plexサーバーが変換する理由を表示し、WindowsとmacOSではDolby TrueHDの音声を再生します。実験的機能で、既定でオンです。ImmichアプリにはPlexクライアントがなく、Plexのアプリはplex.tvを通してログインしますが、Immuch360はあなたのサーバーと直接通信します。
+映画をPlexサーバーに置いていて、すべてを新しい順に見渡し、始まる前にどんな映画か知り、旅行に一本持って行き、あるいはスマートフォンでテレビに再生させたいとします。ビルド45とデスクトップビルド25からは、Plexの映画ライブラリが映画一覧のページで開き、映画ごとに専用のページがあり、映画をデバイスにダウンロードしたり、スマートフォンからテレビで再生したりできます。ビルド46からは、Meta Questが自身のプレーヤーでデコードできない映画をlibmpvで再生し、Androidデバイスのどのプレーヤーもデコードできない映画はPlexサーバーが変換し、スマートフォンは映画をChromecastやGoogle TVに送ります。ビルド47とデスクトップビルド27からは、映画がデバイスでデコードできる音声トラックを再生してどのトラックかを表示し、バージョンを表示し、Plexサーバーが変換する理由を表示し、WindowsとmacOSではDolby TrueHDの音声を再生します。既定でオンです。ImmichアプリにはPlexクライアントがなく、Plexのアプリはplex.tvを通してログインしますが、Immuch360はあなたのサーバーと直接通信します。
 
 **必要なもの:** 映画ライブラリのあるPlex Media Server (上のとおりネットワーク共有に追加したもの) と、見る画面のImmuch360: スマートフォン、タブレット、Android TV、Meta Quest、コンピューター。
 
@@ -881,7 +928,7 @@ DLNAメディアサーバーが一覧に表示するのは、インデックス�
 5. **音声と字幕**: プレーヤーの音声と字幕のメニューには、Plexが付けたトラック名と、Plexが映画の横に置いている字幕ファイルが表示されます。映画はPlexで選んだトラックで始まり、あなたの選択はPlexに保存されます。これが、アプリがPlexサーバーに書き込む唯一のものです。コンピューターでは字幕メニューが音声の隣にあります。ビルド47からは、このデバイスが映画の音声トラックをデコードできないとき (たとえばMeta QuestでのDolby TrueHD)、アプリは別のトラックを、あれば同じ言語で再生し、どのトラックかを表示します (「音声: フランス語 AC3 5.1 (TrueHD はこのデバイスで再生できません)」)。このデバイスで再生できる音声がない映画はそれを表示し、Androidでは「サーバーで変換」を提案します。
 6. **ダウンロード**: 映画のページまたはポスターの長押しメニューにある「このデバイスにダウンロード」で、映画をサーバー上のまま丸ごと、スマートフォン、タブレット、Meta Quest、コンピューターのアプリのストレージにコピーします。ギャラリーには入りません (コンピューターではアプリのダウンロードフォルダー、既定ではDownloads/Immuch360)。既定ではWi-Fiを待ち、「今回はモバイルデータでダウンロード」も選べます。接続が切れても止まったところから再開し、Androidでは画面がオフでも続きます。ネットワーク共有の「ダウンロードした映画」から、サーバーなしで止めたところから再生できます。ビルド47からは、Androidでは通知がコピーの進行状況、速度、残り時間を一時停止とキャンセル付きで表示し、その後「ダウンロード済み」または停止した理由を再試行付きで表示します (Android 13以降では最初のダウンロードで許可を求めます)。ダウンロードでは映画のどのバージョンをコピーするかを尋ね、Android TVでも映画をダウンロードでき、まず映画のサイズと空き容量を表示します。iPhoneとiPadでは、ダウンロード中はアプリを開いたままにしてください。完了は通知でお知らせします。
 7. **スマートフォンからテレビで**: [スマートフォンでテレビにログインする](#sign-in-a-tv-a-headset-or-a-computer-with-your-phone)ときに「この電話からの映画の再生も許可する」をオンのままにするか、テレビで設定、「電話から再生」、「電話をペアリング」を開きます。テレビでImmuch360を開いた状態で、スマートフォンで映画を開き、「再生先…」を選ぶと、テレビ、Questのウィンドウ、またはコンピューターがいつものプレーヤーでスマートフォンの位置から再生し、操作はリモコンが担います。スマートフォンは位置、音声、字幕、「画面での再生を停止」、「この電話で続きを見る」を備えたリモコンになります。スマートフォンが送るのはどの映画かだけで、Plexのトークンは決して送りません。Plexサーバーのないテレビには「(サーバー) を (画面) に追加」が表示され、両方で同じ六桁を確認したあとに追加されます。
-8. **このデバイスでデコードできない映画**: ビルド46から、アプリは映画が始まる前にプレーヤーを選びます。Meta Questは自身のプレーヤーで再生できないもの (DTS音声、DivX 3、WMAとWMV、10 bitのH.264) をlibmpvで再生し、ハードウェアによる動画デコードはそのまま使います。どのAndroidデバイスでも、デバイスのどのプレーヤーもデコードできない映画 (たとえばTrueHD音声) は、Plexサーバーがそのプロセッサーまたはグラフィックスカードで変換します: 設定、詳細設定の「このデバイスで再生できないものを Plex サーバーで変換 (試験運用)」は既定でオンです。デバイスのプレーヤーが失敗すると、アプリは自動で切り替え、そのことを表示します (「このデバイスでは映画を再生できませんでした: mpv が引き継ぎます」)。Questでは、動画ページのメニューにある「プレーヤー: 自動」と、設定、詳細設定の「映画のプレーヤー」で、自動、デバイス、mpvを選べます。ビルド47からは、Plexサーバーが映画を変換するとき、アプリは数秒間その理由を表示し (「Plex サーバーによる変換: このデバイスでは DTS を再生できません」)、プレーヤーの変換アイコンをタップすると再び表示され、映画のページでも再生の前に知らせます。libmpvや一部のAndroidデバイスが色を正しく表示できないDolby Visionプロファイル5の映画は「Dolby Vision プロファイル 5: このデバイスでは色が正しく表示されない可能性があります」と表示し、Androidでは「サーバーで変換」を提案します。
+8. **このデバイスでデコードできない映画**: ビルド46から、アプリは映画が始まる前にプレーヤーを選びます。Meta Questは自身のプレーヤーで再生できないもの (DTS音声、DivX 3、WMAとWMV、10 bitのH.264) をlibmpvで再生し、ハードウェアによる動画デコードはそのまま使います。どのAndroidデバイスでも、デバイスのどのプレーヤーもデコードできない映画 (たとえばTrueHD音声) は、Plexサーバーがそのプロセッサーまたはグラフィックスカードで変換します: 設定、詳細設定の「このデバイスで再生できないものを Plex サーバーで変換」は既定でオンです。デバイスのプレーヤーが失敗すると、アプリは自動で切り替え、そのことを表示します (「このデバイスでは映画を再生できませんでした: mpv が引き継ぎます」)。Questでは、動画ページのメニューにある「プレーヤー: 自動」と、設定、詳細設定の「映画のプレーヤー」で、自動、デバイス、mpvを選べます。ビルド47からは、Plexサーバーが映画を変換するとき、アプリは数秒間その理由を表示し (「Plex サーバーによる変換: このデバイスでは DTS を再生できません」)、プレーヤーの変換アイコンをタップすると再び表示され、映画のページでも再生の前に知らせます。libmpvや一部のAndroidデバイスが色を正しく表示できないDolby Visionプロファイル5の映画は「Dolby Vision プロファイル 5: このデバイスでは色が正しく表示されない可能性があります」と表示し、Androidでは「サーバーで変換」を提案します。
 9. **ChromecastやGoogle TVで** (ビルド46から): 同じ「再生先…」シートに「Cast デバイス」が表示され、Wi-Fi上のChromecast、Google TV、Cast内蔵のテレビ (Immuch360は不要) が並びます。それぞれに「この映画を再生できるはずです」、「再生できない可能性があります」、「再生できません」とその理由 (「DTS 音声」、「AVI ファイル」) が付きます。一つをタップすると、スマートフォンがタイトル、年、ポスターとともに映画を中継し、シートと各ページのバーで操作できます。映画の再生中はスマートフォンでImmuch360を開いたままにしてください。Plexトークンがスマートフォンから出ることはありません。
 
 テレビでは、映画一覧のページに一列七枚のポスターが並び、検索にはテレビのキーボードを使います。ビルド47からは、Android TVでも映画をダウンロードできます。コンピューターでは、Ctrl F、Command F、または/で検索に移動し、CtrlまたはCommandを押しながらホイールを回すと一列のポスターの数が変わります。iPhoneとiPadには映画一覧のページ、映画のページ、ダウンロード、「再生先…」があり、トラックのメニューはありません。Questはスマートフォンが映画を再生する前に確認を求め、テレビやコンピューターでは「電話から再生する前に確認する」で同じようにできます。
@@ -893,16 +940,16 @@ DLNAメディアサーバーが一覧に表示するのは、インデックス�
 <a id="watch-your-jellyfin-and-emby-libraries"></a>
 #### JellyfinとEmbyのライブラリを見る
 
-映画やシリーズがJellyfinやEmbyのサーバーにあり、それをヘッドセット、テレビ、スマートフォンで、360°動画は球体として、3D映画は3Dで見たいという場合です。Jellyfin 10.9からは、プラグインを追加しない限りサーバーにDLNAがないため、DLNAの種類では見つかりません。ビルド49とデスクトップビルド29から、JellyfinやEmbyのサーバーに独自の種類ができました。実験的で初期設定でオン、実機ではまだ試していません: 自動的に見つかり、Quick Connectまたはパスワードでログインし、ライブラリ、映画、シリーズを閲覧し、元のファイルをアプリのすべてのビューアーで再生し、視聴位置をサーバーのほかのアプリのためにサーバーに保存します。ImmichアプリにはJellyfinクライアントがありません。
+映画やシリーズがJellyfinやEmbyのサーバーにあり、それをヘッドセット、テレビ、スマートフォンで、360°動画は球体として、3D映画は3Dで見たいという場合です。Jellyfin 10.9からは、プラグインを追加しない限りサーバーにDLNAがないため、DLNAの種類では見つかりません。ビルド49とデスクトップビルド29から、JellyfinやEmbyのサーバーに独自の種類ができました。初期設定でオン、実機ではまだ試していません: 自動的に見つかり、Quick Connectまたはパスワードでログインし、ライブラリ、映画、シリーズを閲覧し、元のファイルをアプリのすべてのビューアーで再生し、視聴位置をサーバーのほかのアプリのためにサーバーに保存します。ImmichアプリにはJellyfinクライアントがありません。
 
 **必要なもの:** ネットワーク上のJellyfinサーバー (10.10と12.4ではQuick Connectが初期設定でオン) またはEmbyサーバー、そのサーバーのユーザー、そして見る画面のImmuch360: AndroidのスマートフォンやタブレットのほかiPhoneやiPad (バージョン3.4.4から)、Android TV、Meta Quest、またはWindows、Linux、macOSのコンピューター。
 
-1. ライブラリ、ネットワーク共有、+、「Jellyfin または Emby サーバー (試験運用)」と進みます。ネットワーク上のサーバーがJellyfinまたはEmbyのタグ付きで自動的に表示されます。自分のサーバーをタップするか、「サーバーのアドレス」にアドレスを入力し (`http://192.168.1.20:8096`、またはリバースプロキシの後ろなら`https://media.example.org/jellyfin`)、接続を押します。
+1. ライブラリ、ネットワーク共有、+、「Jellyfin または Emby サーバー」と進みます。ネットワーク上のサーバーがJellyfinまたはEmbyのタグ付きで自動的に表示されます。自分のサーバーをタップするか、「サーバーのアドレス」にアドレスを入力し (`http://192.168.1.20:8096`、またはリバースプロキシの後ろなら`https://media.example.org/jellyfin`)、接続を押します。
 2. ログインします。「Quick Connect」は六桁のコードとQRコードを表示します: すでにサーバーにログインしているスマートフォンやコンピューターでプロフィールを開き、Quick Connectを選んでコードを入力するか、QRコードを読み取ります。テレビとMeta QuestはQuick Connectを先に表示するので、リモコンやヘッドセットで何も入力せずに済みます。または「ユーザーとパスワード」です。EmbyにはQuick Connectがありません (「Emby には Quick Connect がありません。ユーザーとパスワードでログインしてください。」)。保存: セッションはデバイスの安全なストレージに保存され、パスワードはどこにも保存されません。
 3. ライブラリを開きます。映画は自身のページを開きます: ポスター、年、長さ、ファイルのストリームを一行で、ここやサーバーのアプリで止めたところからの「再開」、そして「最初から再生」です。シリーズはシーズンとエピソードを「次のエピソード」とともに表示します。ホームビデオと写真は、サーバーが一覧にするとおりに表示されます。
-4. 再生します。アプリはサーバーのディスクにあるままのファイルを読み込むので、360°動画は球体として開き、3D映画はQuestで3Dで再生され、WindowsのPC VRビューとAndroid TVはNASのファイルと同じように再生します。このデバイスでデコードできない映画は、Questとコンピューターではlibmpvで、Androidではサーバーの変換で再生されます。Plexと同じです (設定、高度な設定の「このデバイスで再生できないものをメディアサーバーで変換 (試験運用)」)。映画の再生中、アプリは毎分と一時停止のたびに現在位置をサーバーに伝えるので、ヘッドセットで止めた映画をスマートフォンで再開できます。
+4. 再生します。アプリはサーバーのディスクにあるままのファイルを読み込むので、360°動画は球体として開き、3D映画はQuestで3Dで再生され、WindowsのPC VRビューとAndroid TVはNASのファイルと同じように再生します。このデバイスでデコードできない映画は、Questとコンピューターではlibmpvで、Androidではサーバーの変換で再生されます。Plexと同じです (設定、高度な設定の「このデバイスで再生できないものをメディアサーバーで変換」)。映画の再生中、アプリは毎分と一時停止のたびに現在位置をサーバーに伝えるので、ヘッドセットで止めた映画をスマートフォンで再開できます。ビルド52からは、[「再生先…」](#show-your-photos-and-videos-on-the-tv-from-your-phone)で、同じサーバーを持つ画面やCastデバイスに項目を送れます。
 
-**まだないもの**: フィルターと検索付きの年ごとの映画ページ、ダウンロード、スマートフォンからの「次で再生…」、映画のバージョンの選択、サーバーへの音声と字幕の書き戻し、音楽、ライブテレビ、コレクション、プレイリスト、本、自己署名のhttps証明書、そしてDLNAの種類 (DLNAプラグイン付きのJellyfin) を使い続けるLGとSamsungのテレビアプリです。JellyfinとEmbyは360°カメラのRAWファイルをインデックスしません: 同じフォルダーをSMBかWebDAVの共有として追加してください。
+**まだないもの**: フィルターと検索付きの年ごとの映画ページ、ダウンロード、映画のバージョンの選択、サーバーへの音声と字幕の書き戻し、音楽、ライブテレビ、コレクション、プレイリスト、本、自己署名のhttps証明書、そしてDLNAの種類 (DLNAプラグイン付きのJellyfin) を使い続けるLGとSamsungのテレビアプリです。JellyfinとEmbyは360°カメラのRAWファイルをインデックスしません: 同じフォルダーをSMBかWebDAVの共有として追加してください。
 
 **実際のサーバーで確認、実機ではまだ試していません。** プロジェクトは、ビルドマシン上のDockerでJellyfin 12.4、Jellyfin 10.10、Emby 4.10に対してアプリのコードを動かしました: 検出、両方のログイン方法、すべてのライブラリ、最後のバイトまで読み戻したすべてのファイル、360°と3Dのファイル、書き込んで読み戻した視聴位置、そして変換です。スマートフォン、テレビ、ヘッドセット、コンピューターのどれも、まだJellyfinの映画を再生していません。ページの「診断」の行を添えた[Issues](https://github.com/freeKC/Immuch360/issues)への報告が最も役に立ちます。Immuch360はJellyfinプロジェクトともEmby LLCとも提携していません。
 
@@ -955,7 +1002,7 @@ Immichライブラリのビューアー、ネットワーク共有とデバイ�
 - **サーバーが止まったとき。** 「サーバーがこの動画の送信を止めました。サーバーが応答すると再生が続きます」: 映画はサーバーを待ち、応答があるとすぐに再生を続けます。共有でも同じです。
 - **応答しなくなったPlexサーバー。** ビルド46からは、たとえば再起動中に、ページはリモートアクセスの助言ではなく「Plex サーバーから応答がなくなりました」と「再試行」を表示します。アプリは数秒ごとに、まとめてではなく、サーバーに問い合わせ直し、応答があればページは自動で戻ります。開始部分の送信が遅いサーバーを映画は最大三分待ち (「サーバーを待っています…」、「キャンセル」付き)、NASの再起動後にディスクがオフラインになっているなど、サーバーが今ファイルを読めない映画は「サーバーにもうありません」ではなくそのことを表示し、再生エラーは「Response code: 500」ではなくサーバーが示す理由を表示します。プロジェクトのテストで確認済みです。実際に止まるサーバーではまだ試していません。
 - **スマートフォンでの受信が遅すぎるPlexの映画。** ビルド48からは、スマートフォンは画面を描画するアプリの部分とは別にPlexの映画を読み込み、そのプレーヤーは位置の報告を毎秒125回から十回に減らしました: 11月14日、ビルド48の候補を入れたGalaxy S24は、21 Mbit/sの映画を32から40 Mbit/sで受信しました。ビルド47では4から8で、数秒ごとに一時停止していました。設定は不要です。テレビ、Quest、コンピューターも同じ方法でPlexを読み込みますが、そこではまだ測定していません。
-- **このデバイスでデコードできないPlexの映画**も、ビルド46からは再生できます: Meta Questはlibmpvに渡し、どのAndroidデバイスでもPlexサーバーが変換できます (実験的)。[Plexの映画を見る](#watch-your-plex-films)を参照してください。
+- **このデバイスでデコードできないPlexの映画**も、ビルド46からは再生できます: Meta Questはlibmpvに渡し、どのAndroidデバイスでもPlexサーバーが変換できます。[Plexの映画を見る](#watch-your-plex-films)を参照してください。
 - **グラフィックスチップを二つ持つノートPC。** デスクトップビルド21から、Windowsアプリは速い方のチップで動きます: 作者のノートPCでは、内蔵チップで毎秒15から19枚の画像しか出ず、黒い画像も混じっていた8K HEVCの映画が、今は黒い画像なしで毎秒約30枚表示されます。再生中の映画の詳細 (Iキー) では、「動画のデコード」がグラフィックスカードとデコーダーを示し (「ハードウェア (NVIDIA GeForce RTX 4060 Laptop GPU) • d3d11va」)、4Kや8Kの映画で、Windowsのグラフィックス設定の「省電力」がアプリを内蔵チップに留めているときは、「高パフォーマンス」を選ぶ場所を示します: Windowsの「設定」、「システム」、「ディスプレイ」、「グラフィックス」を開き、そのあとアプリを再起動します。バッテリー駆動では、そこで「省電力」にするとアプリは内蔵チップに留まって電力を節約しますが、4Kと8Kの再生は犠牲になります。内蔵チップでは、8Kはデスクトップビルド20より良く再生されますが、滑らかではありません: 毎秒約23枚で、黒い画像が少し混じります。
 
 iPhoneとiPadは、システムのデコーダーと独自の待機ルールを使います。0.6から3 Mbit/sに速度を落としたサーバーと共有を使ってAndroidエミュレーターで確認しました: ビルド38が20秒で諦めていた映画が再生されるようになり、サーバーが1分間応答しなくなった映画は、サーバーの応答から1.3秒後に再生が続きました。
@@ -1010,7 +1057,7 @@ TP-LinkのTapoカメラを、Tapoアプリなしで写真の隣に。アプリ�
 3. 録画用にはTP-Linkアカウントのパスワードを、ライブ映像用にはカメラアカウントを、または両方を入力します。続いて「カメラをテスト」、保存をタップします。
 4. カメラをタップします: ページの上部にライブ映像があり、音声、SDまたはHD、全画面が使えます。その下に録画のある日が並びます。クリップをタップすると取得して再生します。その⋮メニューには「Immichにアップロード」があります。
 
-**バッテリー式カメラ** (ビルド47から、実験的): C400からC460にはカメラアカウントもRTSPストリームもないため、そのライブ映像は、Tapoアプリと同じく、TP-Linkアカウントのパスワードを使ってカメラのメディアポートを通じて届きます。スマートフォン、タブレット、Android TV、Questで表示でき、iPhoneとiPadでは音声付き、Androidでは今のところ映像のみです。スリープ中のカメラには何度か試行し、それでも応答しない場合は、Tapoアプリでライブ映像を開いてカメラを起こすよう、再試行付きで案内します。これらの画面では、カメラアカウントのないコンセント給電のカメラも、TP-Linkのパスワードがあれば同じライブ映像を表示し、ファームウェア1.3.5のC410は録画のためにもメディアポートにログインするようになりました。ライブ映像に失敗すると理由を表示し、再試行と、[Issues](https://github.com/freeKC/Immuch360/issues)に投稿するための「診断:」の行が出ます。実際のカメラではまだ試していません。コンピューターでのこのライブ映像は今後のバージョンで対応し、Tapoハブとペアリングしたカメラはまだこの方法でストリーミングできません。
+**バッテリー式カメラ** (ビルド47から): C400からC460にはカメラアカウントもRTSPストリームもないため、そのライブ映像は、Tapoアプリと同じく、TP-Linkアカウントのパスワードを使ってカメラのメディアポートを通じて届きます。スマートフォン、タブレット、Android TV、Questで表示でき、iPhoneとiPadでは音声付き、Androidでは今のところ映像のみです。スリープ中のカメラには何度か試行し、それでも応答しない場合は、Tapoアプリでライブ映像を開いてカメラを起こすよう、再試行付きで案内します。これらの画面では、カメラアカウントのないコンセント給電のカメラも、TP-Linkのパスワードがあれば同じライブ映像を表示し、ファームウェア1.3.5のC410は録画のためにもメディアポートにログインするようになりました。ライブ映像に失敗すると理由を表示し、再試行と、[Issues](https://github.com/freeKC/Immuch360/issues)に投稿するための「診断:」の行が出ます。実際のカメラではまだ試していません。コンピューターでのこのライブ映像は今後のバージョンで対応し、Tapoハブとペアリングしたカメラはまだこの方法でストリーミングできません。
 
 **ビルド48からは**、ログインはpytapo、Home Assistant Tapo Control、python-kasaが2026年11月13日までに得た知見に従います: およそ十分ごとにセッションを失うカメラ (たとえばファームウェア1.4のC100、C200、C220) はすぐに再ログインし、一部のファームウェアが求める新しい形式のパスワードを理解し、拒否されたパスワードは止まる前に次の形式を試し、試行が多すぎてロックされたカメラはそのことを伝えます。シミュレートしたカメラで確認済みで、実際のカメラではまだです。
 
@@ -1046,9 +1093,10 @@ Reolink、Hikvision、Dahua、Axisなどの他社製カメラを、それぞれ�
 詳細: [他社製カメラ](../docs/immuch360/user-guide.md#cameras-of-other-brands-onvif-or-rtsp-from-build-48)、そして[ビルド48](https://github.com/freeKC/Immuch360/releases/tag/v3.4.3-48)のリリースノート。
 
 <a id="your-dji-drone-experimental"></a>
-### DJIドローン (実験的)
+<a id="your-dji-drone"></a>
+### DJIドローン
 
-ライブラリにあるDroneカードは、実験的で既定でオンになっており、Immuch360がDJIドローンでできることをまとめています。Androidスマートフォンでは、コントローラー経由のドローンのライブ映像と、USB経由でImmichに取り込む写真と動画。Meta QuestやAndroid TVでは、スマートフォンが中継するそのライブ映像の視聴です。Immuch360はDJIの製品ではなく、DJIの承認も受けておらず、DJIには何も送信されません。
+ライブラリにあるDroneカードは、既定でオンになっており、Immuch360がDJIドローンでできることをまとめています。Androidスマートフォンでは、コントローラー経由のドローンのライブ映像と、USB経由でImmichに取り込む写真と動画。Meta QuestやAndroid TVでは、スマートフォンが中継するそのライブ映像の視聴です。Immuch360はDJIの製品ではなく、DJIの承認も受けておらず、DJIには何も送信されません。
 
 <a id="your-dji-drones-live-video-on-your-phone-experimental"></a>
 <a id="see-what-your-drone-sees-on-your-phone"></a>
@@ -1058,7 +1106,7 @@ Reolink、Hikvision、Dahua、Axisなどの他社製カメラを、それぞれ�
   <img src="../.github/readme/drone-live-phone.png" width="720" alt="イラストで、実際のキャプチャではありません: 上部にスマートフォンを取り付けたドローンのコントローラーを両手で持ち、その画面には海岸のライブ空撮映像が映っている。夕暮れの入り江の上を小さなドローンが飛んでいる">
 </p>
 
-DJIドローンが見ているものを、DJI Flyもアカウントも使わずにAndroidスマートフォンで見られます。DJI RC-N3コントローラーをケーブルでスマートフォンに接続すると、Immuch360がドローンのライブ映像を横向きの全画面で表示し (H.265、1080p)、ケーブルから読み取った飛行の数値も表示します。ドローンの操作はすべてコントローラーに残ります。RC-N3、DJI Neo 2、Samsung Galaxy S24+で試しました: ビルド29では地上で、ビルド30のテストビルドでは10月24日と25日に、続いてビルド30では10月26日に飛行中に試しています。
+DJIドローンが見ているものを、DJI Flyもアカウントも使わずにAndroidスマートフォンで見られます。DJI RC-N3コントローラーをケーブルでスマートフォンに接続すると、Immuch360がドローンのライブ映像を横向きの全画面で表示し (H.265、1080p)、ケーブルから読み取った飛行の数値も表示します。ドローンの操作はすべてコントローラーに残ります。RC-N3、DJI Neo 2、Samsung Galaxy S24+で試しました: ビルド29では地上で、ビルド30の初期のビルドでは10月24日と25日に、続いてビルド30では10月26日に飛行中に試しています。
 
 **対応するコントローラーとドローン** (2026年10月26日時点): ライブ映像は、ケーブルでスマートフォンをつないだDJIコントローラーを経由して届きます。ほかの組み合わせを試しましたか? ライブ画面で「詳細設定」、続いて「診断」を開き、使ったドローンとコントローラー、「診断」に表示された内容を[Issues](https://github.com/freeKC/Immuch360/issues)でお知らせください。
 
@@ -1070,9 +1118,9 @@ DJIドローンが見ているものを、DJI Flyもアカウントも使わず�
 
 ライブ画面: ドローンのバッテリーとモーター稼働時間、飛行中は離陸地点からの高度、垂直速度、速度、ドローン直下までの距離。数値は、私たち自身の飛行キャプチャで裏付けが取れたものだけを表示します: 高度、速度、直下までの距離は、10月25日の屋内飛行2回のキャプチャで、高さ1.8 mと1.5 m/sまで裏付けられましたが、それ以上はまだです。これらをここに表示するのはビルド30の新機能で、ビルド30で初めてテストされます。高度は離陸から約1.5秒後、ドローンが地面や手から離れた時点で表示され、どの航空機にもありえない跳ね方をした場合は、モーターが止まるまで非表示のままです。Advancedではバッテリーの電圧と温度、機首方位 (ゼロ点は北と照合していません)、モーターが追加され、Diagnosticsではバッテリー電流を含め、リンクが提供するすべての数値が表示されます。衛星、位置、ホームからの距離は表示しません。数値はまだDJI Flyと比較していないため、これを頼りに飛行しないでください。
 
-**障害物リング**は既定でオンです: ドローンのセンサーが近くに何かを捉えると、映像の中央を囲む半透明の円が表示され、障害物の方向に弧が現れます。弧は近づくにつれて琥珀色から赤に変わり、横に距離が表示され、短い音が次第に速くなります。近くに何もなければ何も表示されません。円と弧の向きは、10月25日に屋内の飛行中に、向きがオプションだったテストビルドで確認しました。既定で表示する形はビルド30で初めてテストされます。Advancedでは距離 (「Glow from」3.0 m、「Strong glow from」1.0 m) を設定したり、円の代わりに映像の端の枠を選んだり、リング、その音、振動をオフにしたりできます。表示されるのはドローンのセンサーが報告するものだけです。Sportモードや障害物回避がオフのときは何も表示されず、光っていないからといって進路が安全とは限りません。情報表示のみです: Immuch360がドローンを操縦したり止めたりすることはありません。
+**障害物リング**は既定でオンです: ドローンのセンサーが近くに何かを捉えると、映像の中央を囲む半透明の円が表示され、障害物の方向に弧が現れます。弧は近づくにつれて琥珀色から赤に変わり、横に距離が表示され、短い音が次第に速くなります。近くに何もなければ何も表示されません。円と弧の向きは、10月25日に屋内の飛行中に、向きがオプションだったビルドで確認しました。既定で表示する形はビルド30で初めてテストされます。Advancedでは距離 (「Glow from」3.0 m、「Strong glow from」1.0 m) を設定したり、円の代わりに映像の端の枠を選んだり、リング、その音、振動をオフにしたりできます。表示されるのはドローンのセンサーが報告するものだけです。Sportモードや障害物回避がオフのときは何も表示されず、光っていないからといって進路が安全とは限りません。情報表示のみです: Immuch360がドローンを操縦したり止めたりすることはありません。
 
-1. Droneカードはライブラリにあり、そのページに「DJI live video」があります: 設定、詳細設定の「DJI live video (experimental)」は既定でオンです。
+1. Droneカードはライブラリにあり、そのページに「DJI live video」があります: 設定、詳細設定の「DJI live video」は既定でオンです。
 2. ドローンとコントローラーの電源を入れ、DJI Flyを閉じてから、「DJI live video」を開き、安全に関する注意を読みます。
 3. コントローラーをケーブルでスマートフォンに接続します。どのアプリで開くかAndroidに聞かれたら、「常時」を選ばずにImmuch360を選びます。「常時」を選ぶと、コントローラーがDJI Flyで使えなくなります。USBモードを聞かれたら、充電のみを選びます。以後は、コントローラーを接続するとこの画面が自動的に開きます (Advancedの「Open this screen when the remote is plugged in」、既定でオン)。
 4. Remote、Drone、Pictureが順に点灯し、数秒で映像が全画面で表示されます。3つのボタン (終了、「Send to a headset or a TV」、Advanced) と数値は、映像の横の黒い帯に配置されます。「Live」などの表示は約5秒で消え、どこかをタップすると再び表示されます。映像上のどの操作もドローンには影響しません。対応が必要なエラーは表示されたままになります。
@@ -1099,20 +1147,20 @@ DJIドローンが見ているものを、DJI Flyもアカウントも使わず�
 <a id="bring-a-drones-or-a-camera-cards-photos-and-videos-to-immich"></a>
 #### ドローンやカメラのカードの写真と動画をImmichに取り込む
 
-DJIドローンの写真と動画をUSB経由でImmichサーバーに直接取り込めます。ドローンまたはカードリーダーをAndroidスマートフォンに接続し、新しいファイルを選んで送信します。動画はドローンのフライトデータから地図上に配置され、ドローンの360°球体写真は360°として表示されます。Immichアプリはスマートフォンのギャラリーにすでにあるものしかバックアップせず、ImmichサーバーはまだDJI Neo 2の動画の撮影場所を読み取れません。このページは実験的機能で、Androidのスマートフォンとタブレットのみに対応し、テスト用のファイルを使ってAndroidエミュレーターで確認しました。実際のDJI Neo 2での試験はロードマップにあります。
+DJIドローンの写真と動画をUSB経由でImmichサーバーに直接取り込めます。ドローンまたはカードリーダーをAndroidスマートフォンに接続し、新しいファイルを選んで送信します。動画はドローンのフライトデータから地図上に配置され、ドローンの360°球体写真は360°として表示されます。Immichアプリはスマートフォンのギャラリーにすでにあるものしかバックアップせず、ImmichサーバーはまだDJI Neo 2の動画の撮影場所を読み取れません。このページはAndroidのスマートフォンとタブレットのみに対応し、テスト用のファイルを使ってAndroidエミュレーターで確認しました。実際のDJI Neo 2での試験はロードマップにあります。
 
 <p align="center">
   <img src="../.github/readme/dji-drone-import.png" width="720" alt="イラストで、実際のキャプチャではありません: テラスのテーブルに置かれたドローンがケーブルでスマートフォンに接続され、その写真と動画がドローンからスマートフォンのギャラリーへ弧を描いて移っていく">
 </p>
 
-1. ライブラリのDroneカードを開き、「Photos and videos from the drone」を選びます。その設定である、設定、詳細設定の「DJI drones (experimental)」は既定でオンです。そこでオフにするとそのページが非表示になります。
+1. ライブラリのDroneカードを開き、「Photos and videos from the drone」を選びます。その設定である、設定、詳細設定の「DJI drones」は既定でオンです。そこでオフにするとそのページが非表示になります。
 2. ドローン (Neo 2は電源オフのままで構いません) またはカードリーダーを、USB-Cデータケーブルでスマートフォンに接続します。画面のないDJIコントローラー (RC-N1、RC-N2、RC-N3) には写真は保存されていません。DJIドローンのページで「ドローンまたはカードを選択」をタップし、ピッカーのサイドメニューでそれを選び、DCIMフォルダーを開くかドライブ全体のままにして、「このフォルダを使用」と「許可」をタップします。
 3. ページには写真と動画が日付ごとに一覧表示され、.LRF、.SRT、.THM、.m4aの付属ファイルは除外されます。「新しいものをすべて選択」をタップし、続いて「Immichにアップロード」をタップします。以前に送信したファイルには雲のマークが付き、スキップされます。「デバイスに保存」を選ぶと、代わりにファイルがスマートフォンのギャラリーの「Immuch360 import」アルバムにコピーされます。
 4. 動画を地図上に配置するには、飛行前にDJI Flyで動画字幕をオンにします (動画モード、設定、カメラ)。するとドローンは各動画の横に.SRTファイルを書き込み、アプリはそこから撮影場所を読み取り、Immichが場所を見つけられなかった場合はアップロード後にサーバーに設定します。
 
 DJIドローン (Mini、Air、Mavicなど、カメラから識別) の360°球体写真は、360°タグがなくてもImmuch360では360°として表示されます。Immichにはそのタグが必要です。アップロードオプション「ドローンの球体写真をImmich向けに360°としてタグ付け」(既定ではオフ) は、写真をそのままにして小さな.xmpファイルを添えて送信するため、Immichでも球体として表示されます。Neo 2には球体モードやパノラマモードがなく、写真も動画もフラットです。スマートフォンがNeo 2のクリップの音声を録音した場合、その音声は別の.m4aファイルにあります。ページはそのクリップに印を付け、Immichは音声なしで受け取ります (音声を残すにはDJI Flyでダウンロードしてください)。DCIMフォルダーのあるカメラのカードであれば、カードリーダーで同じように使えます。DJIには何も送信されません。
 
-詳細: [USB経由のDJIドローン](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb-experimental)、[DJIリンク診断](../docs/immuch360/user-guide.md#dji-link-diagnostics-experimental)。
+詳細: [USB経由のDJIドローン](../docs/immuch360/user-guide.md#dji-drones-photos-and-videos-over-usb)、[DJIリンク診断](../docs/immuch360/user-guide.md#dji-link-diagnostics)。
 
 <a id="open-the-raw-files-of-360-cameras"></a>
 ### 360°カメラのRAWファイルを開く
@@ -1121,9 +1169,9 @@ Insta360カメラのRAWの.insp写真と.insv動画 (1つまたは2つのレン�
 
 1. RAWファイルを、アプリが読み込める場所に置きます: SMBまたはWebDAVの共有、Immichサーバー (受け付けるのは.inspと.insvのみ)、またはコンピューターのフォルダー。AndroidスマートフォンのギャラリーはRAWファイルを一覧表示しないため、スマートフォンにコピーしたRAWファイルはギャラリーにもアプリにも表示されません。
 2. 2つのファイルで構成される録画は、2つのファイルを一緒に置いてください: アプリは1つ目のファイルの隣にもう1つを探します。
-3. ファイルを開いて360°をタップします。写真には「アプリがスティッチしたRAW 360°ファイル」とキャリブレーションの出どころが表示され、動画は再生しながらスティッチされます。Androidのスマートフォン、タブレット、テレビ、そしてビルド46からはiPhoneとiPad、Meta Quest、Windowsでも、Insta360、GoPro MAXまたはMAX 2、DJI Osmo 360またはOsmo 360 IIの動画を[カメラのジャイロスコープで手ぶれ補正して](#stabilise-your-360-videos-with-the-cameras-gyroscope-experimental)再生することもできます (実験的)。
+3. ファイルを開いて360°をタップします。写真には「アプリがスティッチしたRAW 360°ファイル」とキャリブレーションの出どころが表示され、動画は再生しながらスティッチされます。Androidのスマートフォン、タブレット、テレビ、そしてビルド46からはiPhoneとiPad、Meta Quest、Windowsでも、Insta360、GoPro MAXまたはMAX 2、DJI Osmo 360またはOsmo 360 IIの動画を[カメラのジャイロスコープで手ぶれ補正して](#stabilise-your-360-videos-with-the-cameras-gyroscope)再生することもできます。
 
-| カメラ | RAWファイル | スティッチ | 手ぶれ補正 (実験的) | 確認に使ったもの |
+| カメラ | RAWファイル | スティッチ | 手ぶれ補正 | 確認に使ったもの |
 |---|---|---|---|---|
 | Insta360 X3、X4、X5 | .insp、.insv | ✅ | ✅ ビルド42から | 各カメラのサンプルファイル |
 | Insta360 X6、X4 Air | .insp、.insv | 見込み | 見込み | ファイルがまだ見つかっていません: 実ファイルでは未確認 |
@@ -1141,13 +1189,14 @@ LinuxとmacOSではRAW動画はフラットで再生され、デュアル魚眼�
 詳細: [360°カメラのRAWファイル](../docs/immuch360/user-guide.md#raw-360-camera-files-without-the-cameras-app)。
 
 <a id="stabilise-your-360-videos-with-the-cameras-gyroscope-experimental"></a>
-### カメラのジャイロスコープで360°動画を手ぶれ補正する (実験的)
+<a id="stabilise-your-360-videos-with-the-cameras-gyroscope"></a>
+### カメラのジャイロスコープで360°動画を手ぶれ補正する
 
-手に持って、自転車で、またはヘルメットに付けて撮影した360°動画は揺れ、水平線が傾きます。カメラは自身の動きをRAWファイルに記録しますが、そのピクセルは補正しません。ビルド42からは、Androidのスマートフォン、タブレット、テレビの360°プレーヤーが、カメラのジャイロスコープが記録したその動きを読み取り、各フレームを逆に回転させます: 水平線がまっすぐに保たれ、揺れが消え、曲がるときは視点が道に沿って進みます。ビルド46とデスクトップビルド26からは、iPhoneとiPadの360°プレーヤー、Meta Questのイマーシブビュー、Windowsの360°プレーヤーも同じことをします。実験的機能で、既定でオンです。Immichアプリには同様の機能はありません。
+手に持って、自転車で、またはヘルメットに付けて撮影した360°動画は揺れ、水平線が傾きます。カメラは自身の動きをRAWファイルに記録しますが、そのピクセルは補正しません。ビルド42からは、Androidのスマートフォン、タブレット、テレビの360°プレーヤーが、カメラのジャイロスコープが記録したその動きを読み取り、各フレームを逆に回転させます: 水平線がまっすぐに保たれ、揺れが消え、曲がるときは視点が道に沿って進みます。ビルド46とデスクトップビルド26からは、iPhoneとiPadの360°プレーヤー、Meta Questのイマーシブビュー、Windowsの360°プレーヤーも同じことをします。既定でオンです。Immichアプリには同様の機能はありません。
 
 1. RAW動画をアプリが読み込める場所に置きます: ImmichサーバーはInsta360 X3、X4、X5の.insv動画をそのまま受け付け、ネットワーク共有やデバイスのフォルダーには、Immichサーバーが受け付けないGoPro MAXとMAX 2 (.360)、DJI Osmo 360とOsmo 360 II (.osv) の動画も置けます。二つのファイルで構成される録画は、[360°カメラのRAWファイルを開く](#open-the-raw-files-of-360-cameras)と同じように、両方のファイルを一緒に置いてください。
 2. タイムライン、共有、または[「フォルダを参照」](#browse-a-folder-of-your-phone-or-headset)から動画を開き、360°をタップします: すぐに始まり、「カメラのジャイロスコープで手ぶれ補正済み」が数秒間表示されます。
-3. プレーヤーの上部バーで音声、360°、3Dのボタンの隣にある手ぶれ補正ボタンで、撮影したままの動画を見るためにオフにしたり、またオンにしたりできます。「設定」の「アセットビューアー」、「動画」にある「カメラのジャイロスコープで手ぶれ補正 (試験運用)」はボタンに連動し、次の動画にも選択を引き継ぎます。iPhoneとiPadではボタンは360°プレーヤーの上部バーにもあり、Windowsでは360°プレーヤーの上部に、Meta Questではイマーシブビューのパネルに「カメラのジャイロスコープで手ぶれ補正 (試験運用)」があります。
+3. プレーヤーの上部バーで音声、360°、3Dのボタンの隣にある手ぶれ補正ボタンで、撮影したままの動画を見るためにオフにしたり、またオンにしたりできます。「設定」の「アセットビューアー」、「動画」にある「カメラのジャイロスコープで手ぶれ補正」はボタンに連動し、次の動画にも選択を引き継ぎます。iPhoneとiPadではボタンは360°プレーヤーの上部バーにもあり、Windowsでは360°プレーヤーの上部に、Meta Questではイマーシブビューのパネルに「カメラのジャイロスコープで手ぶれ補正」があります。
 
 GoPro MAXの動画は一つのファイルで確認しました: 水平線と揺れは補正されますが、カメラがほぼ真上か真下を向いている間は揺れの一部が残ります。DJI Osmo 360の動画は、最初の5秒間でRAWの映像から手ぶれ補正された映像に移ります。その数秒間のカメラの記録は最大20°傾くことがあるためです。ビルド48からは、GoPro MAX 2の動画も手ぶれ補正され、そのトラックはビューの軸に合わせて読み取られます。DJI Osmo 360 IIの動画は独自のキャリブレーションでスティッチされて手ぶれ補正され、その姿勢は独自のトラックから読み取られます。どのファイルで確認したかは[カメラの表](#open-the-raw-files-of-360-cameras)にあります。任意の位置から読み取れないファイルは、ボタンなしで今までどおり再生されます: サイズを知らせないDLNAやPlexサーバーのファイル、一部を求められてもファイル全体を送るサーバー、各ファイルを先頭から送るデバイスです。モーショントラックのない動画は、ボタンなしで今までどおり再生され、視点が横を向いた状態で始まることがありますが、水平線はまっすぐです。LinuxとmacOSでは、これらの動画は手ぶれ補正なしでフラットに再生されます。Meta Questでは、視点は約2秒かけてカメラの向きに追従し、毎秒30度より速く回ることはありません。ヘッドセットでは世界が急に回るほうが揺れよりも不快だからです。ビルド46からはAndroidで、視点はカメラの正面に水平に合わせて始まり、およそ一秒以内にカメラの向きへ回ります。以前はInsta360 X5での走行で最大49度ずれたままになることがありました。一時停止した動画はすぐに手ぶれ補正したフレームを表示し、Androidがバックグラウンドで閉じたプレーヤーも手ぶれ補正した状態で戻ります。
 
@@ -1175,19 +1224,19 @@ GoPro MAXの動画は一つのファイルで確認しました: 水平線と揺
 <a id="use-your-computer-as-the-media-player"></a>
 ### コンピューターをメディアプレーヤーとして使う
 
-Windowsコンピューターでは、Immuch360 Desktopがサーバーなしで選んだフォルダーを読み込み、フラットおよび360°動画を専用プレーヤーで再生し、同じ共有やサーバーを閲覧し、家庭内でコンピューターをヘッドセットと共有できます。LinuxとmacOSではプレビューとして提供され、360°動画はフラットで再生されます。
+Windowsコンピューターでは、Immuch360 Desktopがサーバーなしで選んだフォルダーを読み込み、フラットおよび360°動画を専用プレーヤーで再生し、同じ共有やサーバーを閲覧し、家庭内でコンピューターをヘッドセットと共有できます。LinuxとmacOSでも提供され、360°動画はフラットで再生されます。
 
 <p align="center">
   <img src="../.github/readme/desktop-b4-video.jpg" width="440" alt="WindowsのImmuch360 Desktopの動画プレーヤー: ウィンドウ内で再生される街の動画、一時停止ボタン、タイムバー、共有、Immichにアップロードの各ボタンがある">
 </p>
 
-1. プレビューをインストールするか、ZIPを展開して`immuch360.exe`を起動します。[インストール](#windows)を参照してください。ウェルカムページで「サーバーなしで使用」を選ぶとフォルダーの選択が開き、「Immichサーバーに接続」を選ぶと、スマートフォン用のQRコード付きのログインページが開きます。
+1. インストールするか、ZIPを展開して`immuch360.exe`を起動します。[インストール](#windows)を参照してください。ウェルカムページで「サーバーなしで使用」を選ぶとフォルダーの選択が開き、「Immichサーバーに接続」を選ぶと、スマートフォン用のQRコード付きのログインページが開きます。
 2. プログラムで開いた、またはウィンドウにドロップした写真、動画、フォルダーはすぐに開き、360°のものは360°ビューで開きます。複数のファイルは1つのページにまとめて開きます。写真や動画は「プログラムから開く」に表示されますが、アプリが自分を既定のプログラムにすることはありません。
 3. ビューアーではキーボードで操作できます: Spaceで再生と一時停止、JとLで戻ると進む、Fで全画面、RとShift+Rで写真を回転します。
 4. 多くの写真や動画をまとめてアップロード、共有、変換するには、デスクトップビルド24から、ファイルマネージャーと同じように選択します。タイムライン、アルバム、コンピューターや共有のフォルダーで、Ctrl+クリックで写真や動画を追加または除外し、Shift+クリックで最後にクリックしたものからすべてを追加し、Ctrl+Aでグリッド全体を選択し、Escで選択を解除します。右クリックで選択全体の操作が開き、先頭は「Immichにアップロード」です。プロジェクトのテストでWindowsとLinuxで確認済みです。MacではCtrlの代わりにCommandを使いますが、まだ試していません。
 5. デスクトップビルド31から、Escapeで一つ前に戻ります: メニューやダイアログを閉じ、テキスト欄から離れ、選択を解除し、全画面を終了し、ビューアーを閉じ、次に一つ前のページに戻ります。メインページでは何もしません。Alt+Left、MacのCommand+[、マウスの戻るボタンでも戻れます。実行中の3D変換は続きます。
 
-詳細: [Windowsコンピューターで](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop-preview)、[プラットフォームサポート](../docs/immuch360/platform-support.md)。
+詳細: [Windowsコンピューターで](../docs/immuch360/user-guide.md#on-a-windows-computer-immuch360-desktop)、[プラットフォームサポート](../docs/immuch360/platform-support.md)。
 
 <a id="watch-your-videos-in-a-pc-vr-headset-from-windows-experimental"></a>
 <a id="watch-your-videos-in-a-pc-vr-headset-from-windows"></a>
@@ -1212,7 +1261,7 @@ Windowsコンピューターでは、Immuch360 Desktopがサーバーなしで�
 <a id="play-av2-videos-on-your-computer"></a>
 ### コンピューターでAV2動画を再生する
 
-AV2はAV1の後継となる動画フォーマットで、2026年にAlliance for Open Mediaが最終決定しました。私たちの知る限り、これをデコードできるスマートフォン、テレビ、グラフィックスカードはまだありません。Immuch360 DesktopはソフトウェアデコードでAV2ファイルを読みます: コンピューターのプロセッサーがVideoLANのdav2dで、コンピューターが許す限りの速さでデコードします。Immichはこれを再生しません。実験的機能で、既定でオンです。WindowsとLinuxで動作し、macOSではプロジェクトのCIでのみ確認しており、Macではまだ試していません。
+AV2はAV1の後継となる動画フォーマットで、2026年にAlliance for Open Mediaが最終決定しました。私たちの知る限り、これをデコードできるスマートフォン、テレビ、グラフィックスカードはまだありません。Immuch360 DesktopはソフトウェアデコードでAV2ファイルを読みます: コンピューターのプロセッサーがVideoLANのdav2dで、コンピューターが許す限りの速さでデコードします。Immichはこれを再生しません。既定でオンです。WindowsとLinuxで動作し、macOSではプロジェクトのCIでのみ確認しており、Macではまだ試していません。
 
 <p align="center">
   <img src="../.github/readme/howto/av2-on-computer.jpg" width="720" alt="イラストで、実際のキャプチャではありません: 夜、後ろ姿の人がImmuch360を実行するノートPCで灯台の映画を見ており、そのファイルは棚の上のNASにある。下には、AV2バッジ付きの映画のタイルと、詳細の行 Video decoding: AV2, decoded by the processor">
@@ -1222,7 +1271,7 @@ AV2はAV1の後継となる動画フォーマットで、2026年にAlliance for 
 2. ひとつを開きます。初回だけ、「ダウンロードして再生」がAV2デコーダーを取得し (約1 MB、Macでは1.7 MB。WindowsのものはAPROGSYSが署名)、SHA-256で検証します。その後はオフラインで動作し、AV2動画にサムネイルが付きます。デスクトップビルド25からは[av2-companion](https://github.com/immuch360/av2-companion)から取得し、以前のビルドがインストールしたデコーダーはアプリの起動時に削除されるため、次のAV2動画では再び「ダウンロードして再生」が表示されます。
 3. 動画の詳細 (Iキー) の「動画のデコード」に、このコンピューターがどれだけ速くデコードするかが表示されます。Intel Core i9-13980HXを搭載した作者のノートPCでは、1080pまでの8ビットの動画は滑らかに再生され、10ビットの1080pはぎりぎり追いつき、4Kは8ビットでも10ビットでも追いつきません: そのような動画は追いつくために一時停止します。このコンピューターでのデコードが遅すぎる動画は、再生前にそのことを示し、「それでも再生」を選べます。
 
-オフにするには: 「設定」の「アセットビューアー」、「AV2 動画 (試験運用)」。「AV2 デコーダーを削除」もそこにあります。デコードはプロセッサーのすべてのコアを使い、コンピューターが温まります。スマートフォン、テレビ、QuestはまだAV2を再生せず、Immichサーバーは`.ivf`と`.obu`のファイルを受け付けません。
+オフにするには: 「設定」の「アセットビューアー」、「AV2 動画」。「AV2 デコーダーを削除」もそこにあります。デコードはプロセッサーのすべてのコアを使い、コンピューターが温まります。スマートフォン、テレビ、QuestはまだAV2を再生せず、Immichサーバーは`.ivf`と`.obu`のファイルを受け付けません。
 
 詳しくは: [デスクトップビルド21](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.3.0-rc.0-21)と[デスクトップビルド25](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.0-25)のリリースノート、そして[AV2デコーダー、そのソースとライセンス](https://github.com/immuch360/av2-companion)、リリース[v1.0.1](https://github.com/immuch360/av2-companion/releases/tag/v1.0.1) (MIT、WindowsのプログラムはAPROGSYSが署名)。
 
@@ -1250,19 +1299,19 @@ Immuch360はImmichモバイルアプリをすべて残したうえで、その�
 |---|---|
 | **同じもの** | ImmichサーバーとImmichアカウント: バックアップ、タイムライン、アルバム、検索、人物、思い出、共有とパートナー、すべてサーバーと同期します。公式アプリと並べてインストールできます。 |
 | **サーバー不要** | サーバーやアカウントなしでも、デバイスの写真と動画、コンピューターのフォルダー、ネットワーク共有で動作します。Plexとカメラはそれぞれ独自のログインを使い、Immuch360アカウントは一切使いません。 |
-| **360°とイマーシブ** | 球体としての360°の写真と動画、パノラマ、VR180と3D、Meta Questでのイマーシブビュー、360°バッジと360°リスト、そしてスマートフォン、タブレット、テレビ、Meta Quest、Windowsでは、カメラのジャイロスコープで手ぶれ補正したInsta360、GoPro MAXとMAX 2、DJI Osmo 360とOsmo 360 IIカメラのRAW動画 (実験的)、そしてデスクトップビルド28からはWindowsでのPC VRヘッドセットでの動画再生 (プロジェクトではまだヘッドセットで試していません)、そしてビルド49からは360°写真と同じ操作のスマートフォンの360°動画と、設定したサイズで閲覧しスライドショーで再生するQuestの大画面の写真 (360°動画はユーザーがSamsung Galaxy S25 Ultraで試しましたが、大画面はプロジェクトではまだヘッドセットで試していません)。Immichモバイルアプリでの360°表示は2024年1月から要望されていますが、まだ実現していません。 |
-| **写真から3D** | コンピューターで1枚の写真が3D写真、3Dシーン、360°パノラマになり、Meta Quest 3または3Sではどんな平面写真にも選んだ強さで立体感が付きます: あなた自身のコンピューターとヘッドセットでAIが作成し、そのことをアプリとファイルに明記し、元の写真は一切変更しません。デスクトップビルド29からは、コンピューターで2D動画が左右の3D動画になります (実験的、3Dディスプレイやヘッドセットではまだ試していません)。デスクトップビルド31からは、360°動画が360° 3D動画になります (実験的)。Immichアプリは3Dのものを何も作りません。 |
+| **360°とイマーシブ** | 球体としての360°の写真と動画、パノラマ、VR180と3D、Meta Questでのイマーシブビュー、360°バッジと360°リスト、そしてスマートフォン、タブレット、テレビ、Meta Quest、Windowsでは、カメラのジャイロスコープで手ぶれ補正したInsta360、GoPro MAXとMAX 2、DJI Osmo 360とOsmo 360 IIカメラのRAW動画、そしてデスクトップビルド28からはWindowsでのPC VRヘッドセットでの動画再生 (プロジェクトではまだヘッドセットで試していません)、そしてビルド49からは360°写真と同じ操作のスマートフォンの360°動画と、設定したサイズで閲覧しスライドショーで再生するQuestの大画面の写真 (360°動画はユーザーがSamsung Galaxy S25 Ultraで試しましたが、大画面はプロジェクトではまだヘッドセットで試していません)。Immichモバイルアプリでの360°表示は2024年1月から要望されていますが、まだ実現していません。 |
+| **写真から3D** | コンピューターで1枚の写真が3D写真、3Dシーン、360°パノラマになり、Meta Quest 3または3Sではどんな平面写真にも選んだ強さで立体感が付きます: あなた自身のコンピューターとヘッドセットでAIが作成し、そのことをアプリとファイルに明記し、元の写真は一切変更しません。デスクトップビルド29からは、コンピューターで2D動画が左右の3D動画になります (3Dディスプレイやヘッドセットではまだ試していません)。デスクトップビルド31からは、360°動画が360° 3D動画になります。Immichアプリは3Dのものを何も作りません。 |
 | **よりシャープな写真** | デスクトップビルド31から、「高画質化 (AI)」が自分のコンピューターで写真のよりシャープなコピーを元の写真の横に三つのレベルで作り、作り出した細部ははっきり伝えます。Immichアプリは写真を高画質化しません。 |
 | **ガウシアンスプラット** | Androidのスマートフォンとタブレット、コンピューター、Meta Quest 3と3Sで開け、Windowsコンピューターで写真や動画から作成でき、サーバーは.spzや.plyのファイルを受け付けないため、写真の中に入れてImmichサーバーに保管します。Immichアプリはスプラットを開きません。 |
-| **テレビで** | Android TVとGoogle TVでは同じアプリ、LGテレビには専用のテレビアプリがあり、これはSamsungテレビ向けにもテストビルドとしてパッケージされています。Immich自身のアプリはLGテレビにインストールできません。 |
-| **スマートフォンでログイン** | テレビ、ヘッドセット、コンピューターは、スマートフォンでそのQRコードを読み取るとログインし、パスワードはスマートフォンから出ません。Immichアプリにはこのような機能はありません。 |
-| **共有とPlex** | SMB、WebDAV、DLNAの共有とPlexサーバーをその場で再生し、そのファイルを手動でサーバーに送信できます。ビルド45からは、Plexライブラリの映画を年ごとに、映画ごとのページ、デバイスへのダウンロード、スマートフォンからのテレビでの再生に対応します (実験的)。ビルド46からは、Plexアカウントでのログイン、デバイスがデコードできない映画のQuestでのlibmpvによる再生またはPlexサーバーによる変換、Chromecastへの映画の送信にも対応します (どちらも実験的)。ビルド47からは、デバイスが再生できる音声トラック、映画のバージョン、そしてAndroidではダウンロードの通知表示にも対応します。ビルド49からは、独自の種類としてJellyfinとEmbyのサーバーに対応し、自動的に見つけ、Quick Connectでログインし、元のファイルを再生し、視聴位置をサーバーに保存します (実験的、実機ではまだ試していません)。ImmichアプリにはPlexやJellyfinのクライアントがありません。 |
-| **Tapoカメラ** | ライブ映像、ビルド47からはバッテリー式カメラのライブ映像 (実験的)、そしてメモリーカードの録画を写真の隣に表示します。シミュレートしたカメラで確認済みです。 |
+| **テレビで** | Android TVとGoogle TVでは同じアプリ、LGテレビには専用のテレビアプリがあり、これはSamsungテレビ向けにもパッケージされており、ご自身でインストールします。Immich自身のアプリはLGテレビにインストールできません。 |
+| **スマートフォンでログイン** | テレビ、ヘッドセット、コンピューターは、スマートフォンでそのQRコードを読み取るとログインし、パスワードはスマートフォンから出ません。Immichアプリにはこのような機能はありません。ビルド52からは、「再生先…」で写真や動画をその画面 (自身のアカウントで開きます) に、またはスマートフォン経由でChromecastに送り、セッションはスマートフォンに残ります。一方、ImmichアプリのCastはデバイスにセッションキー付きのアドレスを渡します。 |
+| **共有とPlex** | SMB、WebDAV、DLNAの共有とPlexサーバーをその場で再生し、そのファイルを手動でサーバーに送信できます。ビルド45からは、Plexライブラリの映画を年ごとに、映画ごとのページ、デバイスへのダウンロード、スマートフォンからのテレビでの再生に対応します。ビルド46からは、Plexアカウントでのログイン、デバイスがデコードできない映画のQuestでのlibmpvによる再生またはPlexサーバーによる変換、Chromecastへの映画の送信にも対応します。ビルド47からは、デバイスが再生できる音声トラック、映画のバージョン、そしてAndroidではダウンロードの通知表示にも対応します。ビルド49からは、独自の種類としてJellyfinとEmbyのサーバーに対応し、自動的に見つけ、Quick Connectでログインし、元のファイルを再生し、視聴位置をサーバーに保存します (実機ではまだ試していません)。ImmichアプリにはPlexやJellyfinのクライアントがありません。 |
+| **Tapoカメラ** | ライブ映像、ビルド47からはバッテリー式カメラのライブ映像、そしてメモリーカードの録画を写真の隣に表示します。シミュレートしたカメラで確認済みです。 |
 | **他社製カメラ** | ビルド48から、ネットワークで見つけるかリンクで追加したONVIFとRTSPのカメラのライブ映像を写真の隣に表示します。シミュレートしたカメラで確認済みです。Immichアプリにはカメラの表示はありません。 |
 | **キー1つで回転** | Immichアプリはエディターで写真を回転します。Immuch360はキー1つで回転し、Immich 2.6以降にある自分の写真では同じサーバーのエディターを経由するため、ウェブアプリやほかのデバイスでも回転した状態で表示されます。 |
-| **動画** | ImmichアプリのAndroidプレーヤーにはない、Androidプレーヤーの音声と字幕のメニュー。動画ごとに選べる元のファイルまたはトランスコードされたストリーム。動画の技術的な詳細。止めたところから続きを再生する映画。このデバイスがデコードできるファイルを自動で選び、遅いサーバーと止まったサーバーを区別。コンピューターでは、プロセッサーでデコードするAV2動画 (実験的)、デスクトップビルド27からはWindowsとmacOSでの映画のDolby TrueHDの音声。 |
+| **動画** | ImmichアプリのAndroidプレーヤーにはない、Androidプレーヤーの音声と字幕のメニュー。動画ごとに選べる元のファイルまたはトランスコードされたストリーム。動画の技術的な詳細。止めたところから続きを再生する映画。このデバイスがデコードできるファイルを自動で選び、遅いサーバーと止まったサーバーを区別。コンピューターでは、プロセッサーでデコードするAV2動画、デスクトップビルド27からはWindowsとmacOSでの映画のDolby TrueHDの音声。 |
 | **あなたの設定** | ビルド46から、ファイルに保存し、再インストール後や新しいデバイスで復元でき、アカウントとパスワードは自分で選んだパスフレーズで暗号化されます。Immichアプリには設定のエクスポートがありません。 |
-| **ドローン** | DJIドローンの写真と動画をUSB経由で送信し、動画は飛行データから地図上に配置します。Immichアプリがバックアップするのは、すでにスマートフォンのギャラリーにあるものだけです。さらに、RC-N3コントローラー経由のドローンのライブ映像を、飛行の数値と障害物リングとともにスマートフォンで表示し、Meta QuestやAndroid TVに中継します。どちらも実験的です。 |
+| **ドローン** | DJIドローンの写真と動画をUSB経由で送信し、動画は飛行データから地図上に配置します。Immichアプリがバックアップするのは、すでにスマートフォンのギャラリーにあるものだけです。さらに、RC-N3コントローラー経由のドローンのライブ映像を、飛行の数値と障害物リングとともにスマートフォンで表示し、Meta QuestやAndroid TVに中継します。 |
 | **報告先** | [Immuch360のIssues](https://github.com/freeKC/Immuch360/issues)。Immichプロジェクトではありません。 |
 
 機能ごとの比較は[Immichアプリとの比較](../docs/immuch360/compatibility.md#compared-with-the-immich-app)にあります。
@@ -1270,15 +1319,15 @@ Immuch360はImmichモバイルアプリをすべて残したうえで、その�
 <a id="privacy"></a>
 ## プライバシー
 
-開発者には何も送信されません。アカウントなし、解析なし、クラッシュ報告サービスなし、広告なしです。ビルド51からは、ストア版のビルドは評価のお願いを減らし、より控えめにします。アプリを三日間で四回開き、二回の視聴が問題なく終わり、そのうち一回が360°、3D、またはイマーシブだったあとです: AndroidのスマートフォンとタブレットではGoogle Play自身のカード、iPhoneとiPadではApp Store自身の案内、QuestのHorizon Store版では8秒後に自然に消える「評価する」付きの一行です。リモコンで操作するテレビ、GitHubのビルド、コンピューターでは決して表示せず、更新から24時間以内やクラッシュから3日以内にも表示せず、多くても三回、60日の間隔を空け、「評価する」か「結構です」のあとは二度と表示しません。設定には、ストア版のビルドで「Immuch360 を評価」、すべてのビルドでプロジェクトのIssuesを開く「うまく動作しませんか？」があります。その判断に使う回数はデバイスに残ります。アプリが通信するのは、あなたが選んだサーバー (Immichサーバー、共有、Plexサーバー、カメラ) と、ビルド45からはPlexの映画のページを開いたときのWikipedia (実験的)、ビルド46からは選んだ場合の「Plex でログイン」の間のplex.tvのみで、サーバーを使わない場合はどこにも通信しません。パスワードとトークンはデバイスのセキュアストレージに保存されます。LGとSamsungのテレビにはアプリ用のものがないため、そこではアプリ自身のストレージに暗号化せずに保存されます。ビルド45からは、ログアウトするとスマートフォン、テレビ、コンピューターでアプリのCookieも消去されます。カメラはデバイス上でのみ、Spatial 2.5Dプレーヤーと、ログインさせる画面のコードの読み取りに使用され、その映像は保存されることも、どこかに送信されることもありません。スマートフォンからログインした画面には専用のセッションが自宅のネットワーク上で暗号化して送られ、パスワードが送られることはありません。LGテレビはスマートフォンのブラウザーのページからログインし、このページがメールアドレスとパスワードを自宅のネットワーク上で暗号化せずにテレビへ送ります。テレビはセッションだけを保持します。ドローンのページのキャプチャと受信記録は、あなたが共有しない限りデバイスに残ります: これらにはドローンの映像が含まれ、位置が含まれることもあり、キャプチャにはコントローラーと機体のシリアル番号も含まれます。ドローンの映像と数値は、スマートフォンから、あなたがペアリングしたヘッドセットとテレビにだけ、ローカルネットワーク上で暗号化せずに送られます。Wi-Fiで共有したスマートフォンの場合と同じです。DJIにもTP-Linkにも何も送信されません。ビルド47からは、バッテリー式Tapoカメラのライブ映像は、録画がすでにそうしているように、TP-Linkアカウントのパスワードをお使いのネットワーク上でカメラ自体に送ります。完全なポリシーは[PRIVACY.md](../PRIVACY.md)に、ソースごとの詳細は[ユーザーガイド](../docs/immuch360/user-guide.md#privacy)にあります。映画の視聴位置はデバイス上のデータベースに保存され、サーバーに送られることはありません。
+開発者には何も送信されません。アカウントなし、解析なし、クラッシュ報告サービスなし、広告なしです。ビルド51からは、ストア版のビルドは評価のお願いを減らし、より控えめにします。アプリを三日間で四回開き、二回の視聴が問題なく終わり、そのうち一回が360°、3D、またはイマーシブだったあとです: AndroidのスマートフォンとタブレットではGoogle Play自身のカード、iPhoneとiPadではApp Store自身の案内、QuestのHorizon Store版では8秒後に自然に消える「評価する」付きの一行です。リモコンで操作するテレビ、GitHubのビルド、コンピューターでは決して表示せず、更新から24時間以内やクラッシュから3日以内にも表示せず、多くても三回、60日の間隔を空け、「評価する」か「結構です」のあとは二度と表示しません。設定には、ストア版のビルドで「Immuch360 を評価」、すべてのビルドでプロジェクトのIssuesを開く「うまく動作しませんか？」があります。その判断に使う回数はデバイスに残ります。アプリが通信するのは、あなたが選んだサーバー (Immichサーバー、共有、Plexサーバー、カメラ) と、ビルド45からはPlexの映画のページを開いたときのWikipedia、ビルド46からは選んだ場合の「Plex でログイン」の間のplex.tvのみで、サーバーを使わない場合はどこにも通信しません。パスワードとトークンはデバイスのセキュアストレージに保存されます。LGとSamsungのテレビにはアプリ用のものがないため、そこではアプリ自身のストレージに暗号化せずに保存されます。ビルド45からは、ログアウトするとスマートフォン、テレビ、コンピューターでアプリのCookieも消去されます。カメラはデバイス上でのみ、Spatial 2.5Dプレーヤーと、ログインさせる画面のコードの読み取りに使用され、その映像は保存されることも、どこかに送信されることもありません。スマートフォンからログインした画面には専用のセッションが自宅のネットワーク上で暗号化して送られ、パスワードが送られることはありません。LGテレビはスマートフォンのブラウザーのページからログインし、このページがメールアドレスとパスワードを自宅のネットワーク上で暗号化せずにテレビへ送ります。テレビはセッションだけを保持します。ドローンのページのキャプチャと受信記録は、あなたが共有しない限りデバイスに残ります: これらにはドローンの映像が含まれ、位置が含まれることもあり、キャプチャにはコントローラーと機体のシリアル番号も含まれます。ドローンの映像と数値は、スマートフォンから、あなたがペアリングしたヘッドセットとテレビにだけ、ローカルネットワーク上で暗号化せずに送られます。Wi-Fiで共有したスマートフォンの場合と同じです。DJIにもTP-Linkにも何も送信されません。ビルド47からは、バッテリー式Tapoカメラのライブ映像は、録画がすでにそうしているように、TP-Linkアカウントのパスワードをお使いのネットワーク上でカメラ自体に送ります。完全なポリシーは[PRIVACY.md](../PRIVACY.md)に、ソースごとの詳細は[ユーザーガイド](../docs/immuch360/user-guide.md#privacy)にあります。映画の視聴位置はデバイス上のデータベースに保存され、サーバーに送られることはありません。
 
-**Plexの映画とWikipedia** (ビルド45から、実験的): Plexの映画のページは、Wikimedia Foundationが運営するWikidataとWikipediaにその映画の記事を問い合わせ、映画のIMDbまたはTMDBの番号と記事のタイトルを送ります。Plexのトークン、サーバーのアドレス、ライブラリのその他の情報は決して送りません。見つかった記事はデバイスに30日間保存され、設定、詳細設定の「ウィキペディアの映画の詳細」でオフにすると削除されます。アプリがPlexサーバーに書き込むのは一つだけです: 映画に選んだ音声トラックと字幕です。スマートフォンからテレビに送る映画は、六桁の確認で一度だけ作ったリンクを通り、自宅のネットワーク上で暗号化され、トークンは含みません。
+**Plexの映画とWikipedia** (ビルド45から): Plexの映画のページは、Wikimedia Foundationが運営するWikidataとWikipediaにその映画の記事を問い合わせ、映画のIMDbまたはTMDBの番号と記事のタイトルを送ります。Plexのトークン、サーバーのアドレス、ライブラリのその他の情報は決して送りません。見つかった記事はデバイスに30日間保存され、設定、詳細設定の「ウィキペディアの映画の詳細」でオフにすると削除されます。アプリがPlexサーバーに書き込むのは一つだけです: 映画に選んだ音声トラックと字幕です。スマートフォンからテレビに送る映画は、六桁の確認で一度だけ作ったリンクを通り、自宅のネットワーク上で暗号化され、トークンは含みません。
 
-**Plex でログイン、Chromecast、設定ファイル** (ビルド46から): 「Plex でログイン」は、新しいサーバーのページで選んだときに一度だけplex.tvと通信し、トークンとサーバーの一覧を取得します。その後アプリはあなたのサーバーとだけ通信します。ChromecastやGoogle TVに送った映画 (実験的) は、タイトル、年、ポスターとともに、スマートフォンから自宅のネットワークを通って送られます: デバイスはどのCastアプリでも同じようにGoogleのデフォルトメディアレシーバーを読み込み、Plexトークンはスマートフォンに残ります。設定ファイルは、共有するか保存するまでデバイスに残ります。「設定のみ」にはパスワードが含まれず、「設定、アカウント、パスワード」はパスフレーズで暗号化されます。
+**Plex でログイン、Chromecast、設定ファイル** (ビルド46から): 「Plex でログイン」は、新しいサーバーのページで選んだときに一度だけplex.tvと通信し、トークンとサーバーの一覧を取得します。その後アプリはあなたのサーバーとだけ通信します。ChromecastやGoogle TVに送った映画 は、タイトル、年、ポスターとともに、スマートフォンから自宅のネットワークを通って送られます: デバイスはどのCastアプリでも同じようにGoogleのデフォルトメディアレシーバーを読み込み、Plexトークンはスマートフォンに残ります。設定ファイルは、共有するか保存するまでデバイスに残ります。「設定のみ」にはパスワードが含まれず、「設定、アカウント、パスワード」はパスフレーズで暗号化されます。
 
 **他社製カメラとPC VRヘッドセット** (ビルド48から): アプリはお使いのネットワーク上のカメラと通信し、メーカーのサーバーとは通信しません。カメラが求めるまでアカウントを送らず、パスワードを暗号化せずに送ることになるBasic認証しか受け付けないカメラは拒否し、カメラには何も書き込みません。カメラのパスワードと、トークンを含むことがあるストリームのアドレスはデバイスの安全なストレージに残り、ログではアドレスを伏せます。ヘッドセット表示はコンピューター、そのランタイム、ヘッドセットの間で動作し、そのログにはアドレス、パス、トークン、タイトルは含まれません。
 
-**Jellyfin、Embyと3D動画** (ビルド49から): アプリはお使いのJellyfinまたはEmbyサーバーとだけ通信し、セッションはデバイスの安全なストレージに保存してパスワードは保存せず、サーバー自身のアプリと同じく映画が止まった位置をサーバーに伝えます。ホームネットワークの外のhttpアドレスには警告が出ます。3D動画はコンピューター上で作られてどこにも送られず、その二つのコンポーネントは求めたときにプロジェクトのリリースからダウンロードされ、それぞれSHA-256で検証されます。
+**Jellyfin、Embyと3D動画** (ビルド49から): アプリはお使いのJellyfinまたはEmbyサーバーとだけ通信し、セッションはデバイスの安全なストレージに保存してパスワードは保存せず、サーバー自身のアプリと同じく映画が止まった位置をサーバーに伝えます。ホームネットワークの外のhttpアドレスには警告が出ます。3D動画はコンピューター上で作られてどこにも送られず、その二つのコンポーネントは求めたときにプロジェクトのリリースからダウンロードされ、それぞれSHA-256で検証されます。ビルド52からは、「再生先…」はリンクした画面に、写真や動画のIDとサーバーのアドレスのハッシュを送ります。パスワード、セッション、アドレスそのものは決して送りません。Castデバイスには、スマートフォンがその項目のために作ったアドレスで画像や動画を中継し、そのアドレスはそのデバイスにだけ応答します。AIコンポーネントの更新は、インストールしたコンポーネントの新しいバージョンだけを同じリリースからダウンロードし、それぞれSHA-256で検証します。
 
 **AI機能**はあなたのデバイス上だけで動作します。写真、その立体感、シーン、パノラマはあなたのコンピューターまたはヘッドセットで計算され、どこにも送られません。アプリが接続するのは、あなたが求めたコンポーネントをダウンロードするときだけで、GitHub上のこのプロジェクトのリリースから、それができない場合はモデルの公式ページがあればそこから取得し、各ファイルをSHA-256で検証し、その後はオフラインで動作します。コンピューターでモデルを実行するONNX Runtimeは、公式ビルドではMicrosoftにテレメトリを送信しますが、Immuch360はそれをオフにしています。新しいファイルは元のファイルの隣に保存されて上書きすることはなく、「AI バージョンもバックアップ」をオンにした場合にのみImmichサーバーに届きます (バックアップアルバムで「全て選択」を使ってもオンになります)。
 
@@ -1292,11 +1341,11 @@ Immuch360は[Immich](https://github.com/immich-app/immich)モバイルアプリ�
 
 **動画コンポーネントはそれぞれ独立したオープンなプロジェクトです** (デスクトップビルド25から): アプリはAV2デコーダーを[av2-companion](https://github.com/immuch360/av2-companion) v1.0.1からダウンロードし、WindowsとmacOSのビルドのlibmpvを[libmpv-builds](https://github.com/immuch360/libmpv-builds)から、360°、VR180、3Dのレンダラーを含む動画プレーヤーのパッケージを[media_kit_360](https://github.com/immuch360/media_kit_360) (デスクトップビルド26からはRAW 360°動画の手ぶれ補正のためにv1.1.0、デスクトップビルド27からはDolby TrueHDとBlu-ray (PGS) の字幕のためにv1.1.1、デスクトップビルド28からはそのOpenXRヘッドセット表示) から取り込みます。いずれも[immuch360](https://github.com/immuch360)組織のリポジトリで、独自のコードはMITライセンスです。移したときの中身は以前と同じmpv、FFmpeg、レンダラーで、ほかのアプリも利用できます。ウェブサイトの[コンポーネントのページ](https://immuch360.com/ja/components/)に一覧があります。
 
-ビルド33では、Michael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV)) の検索ナビゲーションを本人のコミットとともに取り込み、Gaurav Mukherjee ([gmfun](https://github.com/gmfun/Immuch360)) のコミットとアイデアも取り入れ、[ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) の展示用ビルドのアイデアを私たちのコードで書き直しました。月別と年別の表示は、[Discussion 10](https://github.com/freeKC/Immuch360/discussions/10)でのChazyChaxxxさんの要望に応えたものです。皆さんに感謝します。ビルド42は、[Issue 14](https://github.com/freeKC/Immuch360/issues/14)で360°動画の手ぶれ補正を要望したAoaodacatさんと、[Issue 13](https://github.com/freeKC/Immuch360/issues/13)での報告がデスクトップビルド22のパノラマのメモリ対応につながったgthrepwoodさんに応えたものです。お二人に感謝します。ビルド46は、[Issue 16](https://github.com/freeKC/Immuch360/issues/16)で再インストールをまたいで設定を残す方法を要望したgthrepwoodさんに再び応え、Issue 14の手ぶれ補正をiPhoneとiPad、Quest、Windowsにもたらします。ビルド47は、[Issue 17](https://github.com/freeKC/Immuch360/issues/17)の報告でSamsungテレビで縦向きの動画が横倒しになることを示してくれたDeltaTango69さんに応えます。DeltaTango69さん、ありがとうございます。ビルド48は、Issue 16の報告で最新のサーバーに「サーバーをアップデートできます」の通知が出ることを示してくれたgthrepwoodさんと、Issue 17の「Video turn」の行がSamsungテストビルド0.3.3の回転につながったDeltaTango69さんに、改めて応えます。お二人とも、ありがとうございます。ビルド49は、[Issue 18](https://github.com/freeKC/Immuch360/issues/18)でJellyfinを、[Issue 19](https://github.com/freeKC/Immuch360/issues/19)でQuestの大画面を要望したLiquidXCodeさん、[Issue 20](https://github.com/freeKC/Immuch360/issues/20)で360°動画プレーヤーでの360°写真と同じ操作を要望したTheBatAssさん、そしてSamsungテストビルド0.3.4と0.3.5を試してテレビが回転を拒否することを示してくれたDeltaTango69さんに、改めて応えます。皆さん、ありがとうございます。
+ビルド33では、Michael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV)) の検索ナビゲーションを本人のコミットとともに取り込み、Gaurav Mukherjee ([gmfun](https://github.com/gmfun/Immuch360)) のコミットとアイデアも取り入れ、[ppawelstachh-sys](https://github.com/ppawelstachh-sys/Immuch360) の展示用ビルドのアイデアを私たちのコードで書き直しました。月別と年別の表示は、[Discussion 10](https://github.com/freeKC/Immuch360/discussions/10)でのChazyChaxxxさんの要望に応えたものです。皆さんに感謝します。ビルド42は、[Issue 14](https://github.com/freeKC/Immuch360/issues/14)で360°動画の手ぶれ補正を要望したAoaodacatさんと、[Issue 13](https://github.com/freeKC/Immuch360/issues/13)での報告がデスクトップビルド22のパノラマのメモリ対応につながったgthrepwoodさんに応えたものです。お二人に感謝します。ビルド46は、[Issue 16](https://github.com/freeKC/Immuch360/issues/16)で再インストールをまたいで設定を残す方法を要望したgthrepwoodさんに再び応え、Issue 14の手ぶれ補正をiPhoneとiPad、Quest、Windowsにもたらします。ビルド47は、[Issue 17](https://github.com/freeKC/Immuch360/issues/17)の報告でSamsungテレビで縦向きの動画が横倒しになることを示してくれたDeltaTango69さんに応えます。DeltaTango69さん、ありがとうございます。ビルド48は、Issue 16の報告で最新のサーバーに「サーバーをアップデートできます」の通知が出ることを示してくれたgthrepwoodさんと、Issue 17の「Video turn」の行がSamsungバージョン0.3.3の回転につながったDeltaTango69さんに、改めて応えます。お二人とも、ありがとうございます。ビルド49は、[Issue 18](https://github.com/freeKC/Immuch360/issues/18)でJellyfinを、[Issue 19](https://github.com/freeKC/Immuch360/issues/19)でQuestの大画面を要望したLiquidXCodeさん、[Issue 20](https://github.com/freeKC/Immuch360/issues/20)で360°動画プレーヤーでの360°写真と同じ操作を要望したTheBatAssさん、そしてSamsungバージョン0.3.4と0.3.5を試してテレビが回転を拒否することを示してくれたDeltaTango69さんに、改めて応えます。皆さん、ありがとうございます。
 
-ビルド50では、Michael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV)) のAndroid TVフォークから四つの機能を移植し、各コミットの共著者にmlc70を記載して私たちのコードで書き直しました: リモコンでの写真の拡大、遅れて届いた応答で離れた写真の詳細が表示されなくなること、アニメーション写真のメモリの解放、場所フィルターでの新しい国の都市です。TheBatAssさんはビルド49の360°動画の操作をSamsung Galaxy S25 Ultraで試し、Issue 20で知らせてくれました。お二人に感謝します。
+ビルド50では、Michael Cloutier ([mlc70](https://github.com/mlc70/Immuch-Android-TV)) のAndroid TVフォークから四つの機能を移植し、各コミットの共著者にmlc70を記載して私たちのコードで書き直しました: リモコンでの写真の拡大、遅れて届いた応答で離れた写真の詳細が表示されなくなること、アニメーション写真のメモリの解放、場所フィルターでの新しい国の都市です。TheBatAssさんはビルド49の360°動画の操作をSamsung Galaxy S25 Ultraで試し、Issue 20で知らせてくれました。お二人に感謝します。ビルド52は、[Issue 21](https://github.com/freeKC/Immuch360/issues/21)でAIコンポーネントのワンクリック更新を要望したgthrepwoodさんと、[Issue 22](https://github.com/freeKC/Immuch360/issues/22)でAppImageを要望したPTALTS-LKさんに応えます。お二人とも、ありがとうございます。
 
-AI機能は他者が作ったモデルとエンジンを実行します。これらはあなたが求めたときだけ、このリポジトリのプレリリース[ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1)、[ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2)、[ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3)、[ai-components-4](https://github.com/freeKC/Immuch360/releases/tag/ai-components-4)、デスクトップビルド29からは[ai-components-5](https://github.com/freeKC/Immuch360/releases/tag/ai-components-5)、デスクトップビルド31からは[ai-components-6](https://github.com/freeKC/Immuch360/releases/tag/ai-components-6)と[ai-components-7](https://github.com/freeKC/Immuch360/releases/tag/ai-components-7)からダウンロードされます。各ファイル、その出典、ライセンス、SHA-256は[MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)に記載されています。作者の皆さんに感謝します:
+AI機能は他者が作ったモデルとエンジンを実行します。これらはあなたが求めたときだけ、このリポジトリのリリース[ai-components-1](https://github.com/freeKC/Immuch360/releases/tag/ai-components-1)、[ai-components-2](https://github.com/freeKC/Immuch360/releases/tag/ai-components-2)、[ai-components-3](https://github.com/freeKC/Immuch360/releases/tag/ai-components-3)、[ai-components-4](https://github.com/freeKC/Immuch360/releases/tag/ai-components-4)、デスクトップビルド29からは[ai-components-5](https://github.com/freeKC/Immuch360/releases/tag/ai-components-5)、デスクトップビルド31からは[ai-components-6](https://github.com/freeKC/Immuch360/releases/tag/ai-components-6)と[ai-components-7](https://github.com/freeKC/Immuch360/releases/tag/ai-components-7)からダウンロードされます。各ファイル、その出典、ライセンス、SHA-256は[MODEL-LICENSES.md](https://github.com/freeKC/Immuch360/blob/immuch360/licenses/ai-components/MODEL-LICENSES.md)に記載されています。作者の皆さんに感謝します:
 
 - **3D写真**: Depth Anything V2 Small (Apache 2.0)。コンピューターではONNX Runtime (MIT) で、ヘッドセットではQuest APKに組み込んだLiteRT 2.3.0 (Apache 2.0) で実行します。
 - **3Dシーン**: MoGe-2 ViT-S (MIT)。MITライセンスの重みからプロジェクトがONNXにエクスポートしました。そしてLaMa (Apache 2.0)。
@@ -1314,15 +1363,15 @@ nomadoorの360° LoRAは、そのカードによればApache 2.0で、CC0とパ�
 
 まだ実現していないことを、可能性の高い順に並べています。ここにあるものは約束ではありません。[Issue トラッカー](https://github.com/freeKC/Immuch360/issues) でのフィードバックが、何を優先するかを決める助けになります。
 
-- **各ストア**: ビルド48のGoogle Play (11月16日からGoogleの審査中、ビルド47は11月16日に公開) とその後のビルド51、ビルド50のMeta Horizon Store (11月21日からMetaの審査中、ビルド47は11月19日に公開) とその後のビルド51、ビルド51のバージョン3.4.6のApp Store (3.4.5は11月22日に公開)、LG Content Store (バージョン1.0.0が10月24日からLGの審査中、その後バージョン1.0.5)、そして後日Samsungのストア。
+- **各ストア**: ビルド51のGoogle Play (11月24日からGoogleの審査中、ビルド47は11月16日に公開) とその後のビルド52、ビルド52のMeta Horizon Store (ビルド50は11月25日に公開)、ビルド51のバージョン3.4.6のApp Store (Appleの承認済み、3.4.5は11月22日に公開) とその後のビルド52のバージョン3.4.7、LG Content Store (バージョン1.0.0が10月24日からLGの審査中、その後バージョン1.0.5)、そして後日Samsungのストア。
 - **AIクリエイター**: 3Dディスプレイとヘッドセットでの3D動画と360° 3D動画の目視確認、続いてVR180と360°カメラのRAWファイル (バッテリーについての確認付き)。360°写真と3D写真、共有の写真への高画質化 (AI)、Macでのシャープ化と細部を再構築、その後は動画への対応。Macでの360°パノラマ。Linuxでのスプラットシーンの作成、内蔵グラフィックスでの作成、360°写真と動画からの作成。「詳細」と「最大」のスプラットシーンのヘッドセット用コピーのヘッドセットでの計測。iOS、LG、SamsungアプリでのAIラベル。グラフィックスカード搭載のLinux PC、およびAMDとIntelのカードでのパノラマの試行。
 - **ドローン**: 1.8 mと1.5 m/sを超える高度と速度、および障害物までの距離を巻き尺で裏付けるための屋外飛行、続いて衛星とホームからの距離の表示。中継の安定した映像をヘッドセットで確認すること。LGとSamsungのテレビへの中継。iPhoneとiPadでのドローン (未着手)。実機のDJI Neo 2での取り込みページのテスト、続いてスマートフォンが録音した音声をクリップに統合すること。これらのテストより前に、ドローンにコマンドを送る機能を計画することはありません。
-- **テレビ**: 動画のコントロールとスマートフォンでのログインを含む、実機のAndroid TVでのビルド29のテスト。実機のLGテレビでのLGアプリの共有、Plex、ライブ映像のテストと、webOS 26。より多くのSamsungテレビでのSamsungテストビルド0.3.6のテスト (Issue 17の回転を含む)、回転を拒否するテレビのためのアプリ内での映像回転の検討、続いてSamsungテレビでのスマートフォンでのログイン、共有、Plex、カメラ。その後、LGテレビの球体での360°動画、カメラの音声とその録画 (早くても2026年12月) です。
+- **テレビ**: 動画のコントロールとスマートフォンでのログインを含む、実機のAndroid TVでのビルド29のテスト。実機のLGテレビでのLGアプリの共有、Plex、ライブ映像のテストと、webOS 26。より多くのSamsungテレビでのSamsungバージョン0.3.6のテスト (Issue 17の回転を含む)、回転を拒否するテレビのためのアプリ内での映像回転の検討、続いてSamsungテレビでのスマートフォンでのログイン、共有、Plex、カメラ。その後、LGテレビの球体での360°動画、カメラの音声とその録画 (早くても2026年12月) です。
 - **カメラ**: 実際のカメラでのTapoカメラの確認 (バッテリー式も含む)。コンピューターでのバッテリー式カメラのライブ映像、Androidでのその音声、Tapoハブ経由の対応。実際のカメラでの他社製カメラの確認、その録画 (ONVIF Profile G)、スマートフォンとテレビでのMJPEG、iPhoneとiPadでのH.265とAACの音声、そしてLGとSamsungのテレビでの対応。
-- **コンピューター**: スマートフォンでのログインを含む、Windows PCでの各機能の手動テスト。Meta Horizon LinkとSteam Linkを使った、ヘッドセットでのPC VRヘッドセット表示の確認、その後ヘッドセットでの写真、二つのレンズのRAWファイル、手ぶれ補正。Windowsでのウェブカメラを使ったSpatial 2.5D (2026年11月に向けて開発中)。続いてLinuxとmacOSでの360°動画レンダラー、実機のLinux PCでのテスト、その後自動更新と署名付きのmacOSアプリ、そしてImmichサーバーが受け付けるMKV、WebM、MP4ファイルでのAV2、本来の色でのDolby Visionプロファイル5、そしてコンピューターでのPlexサーバーによる変換です。
+- **コンピューター**: スマートフォンでのログインを含む、Windows PCでの各機能の手動テスト。Meta Horizon LinkとSteam Linkを使った、ヘッドセットでのPC VRヘッドセット表示の確認、その後ヘッドセットでの写真、二つのレンズのRAWファイル、手ぶれ補正。Windowsでのウェブカメラを使ったSpatial 2.5D (2026年11月に向けて開発中)。続いてLinuxとmacOSでの360°動画レンダラー、実機のLinux PCでのテスト、その後AppImageを含むアプリの自動更新、AppImage内の独自のlibmpvとArch LinuxのAURパッケージ、署名付きのmacOSアプリ、そしてImmichサーバーが受け付けるMKV、WebM、MP4ファイルでのAV2、本来の色でのDolby Visionプロファイル5、そしてコンピューターでのPlexサーバーによる変換です。
 - **スマートフォンとタブレット**: 360°動画プレーヤーでの360°写真と同じ操作のiPhoneでのテスト、iOSの360°動画プレーヤーへのタイムバーの追加、スマートフォンの360°プレーヤーへの前へ・次への追加、iOSのフラットプレーヤーへの音声トラックと字幕のメニューの追加、iPhoneとiPadでのスプラットビューアー、そしてQuestと同じく、スマートフォン、タブレット、テレビの映画のためのlibmpv、そしてQuestのlibmpvでのDolby TrueHDです。
 - **イマーシブメディア**: デュアル魚眼の.dng、LinuxとmacOSでのRAW動画の手ぶれ補正、毎秒50と60フレームのInsta360 X6とOsmo 360 IIの実ファイルでの確認、iPhone、Quest、Windowsでのその目視確認、デコーダーが対応していればQuestで空間動画を3D表示する機能、ヘッドセット内で空間写真を前へ・次へと切り替える機能、ヘッドセットでのQuestの大画面のテスト、続いてフォルダーのAIによる立体感への一括変換と写真間のクロスフェードです。
-- **ソース**: 各画面での実際のサーバーを使ったJellyfinとEmbyのテスト、続いてその年ごとの映画ページ、ダウンロード、「次で再生…」、LGとSamsungのテレビアプリ。共有フォルダー内のファイル間をスワイプする機能、WebDAVのダイジェスト認証、すでに追加したサーバーでの「Plex でログイン」、Immichと共有の動画のChromecastでの再生、PlexのIPv6対応、H.265のTapo録画、DLNAサーバーのテレビのライブチャンネル、テレビのホーム画面のチャンネルです。
+- **ソース**: 各画面での実際のサーバーを使ったJellyfinとEmbyのテスト、続いてその年ごとの映画ページ、ダウンロード、LGとSamsungのテレビアプリ。共有フォルダー内のファイル間をスワイプする機能、WebDAVのダイジェスト認証、すでに追加したサーバーでの「Plex でログイン」、テレビと実際のCastデバイスでの「再生先…」のテスト、続いてアップロードしていない写真と動画、選択、360°ビューへの対応、そしてLGとSamsungのテレビでの対応、PlexのIPv6対応、H.265のTapo録画、DLNAサーバーのテレビのライブチャンネル、テレビのホーム画面のチャンネルです。
 - **アップストリーム**：360° 写真ビューアーから始めて、メンテナーが望む部分について Immich に小さなプルリクエストを送ること。
 
 各機能について実機確認がまだ必要なものを含む完全なリストは、[リリースステータス](../docs/immuch360/release-status.md#roadmap)にあります。
@@ -1350,15 +1399,15 @@ nomadoorの360° LoRAは、そのカードによればApache 2.0で、CC0とパ�
 <details>
 <summary><b>フォーマット、ソース、再生、ハードウェアの詳細</b></summary>
 
-- **フォーマット**: フラットな写真や動画 (デバイスがデコードできる形式: MP4、MOV、MKVなど)、正距円筒図法の360°写真や動画、部分的なパノラマ (GPanoクロップ)、VR180、上下または左右の立体視3D (ファイルのst3dボックスから読み取る、またはフレームから推測)、Appleの空間写真 (HEICステレオペア) と空間動画 (MV-HEVC、片目)、Insta360の.inspと.insv、GoProの.360、DJIの.osvのRAWファイル、球体上でトーンマッピングされる10bit HLGおよびPQソース。AndroidでアプリがデコードするTIFF (8ビットと16ビット、グレー、RGB、パレット、CMYK、非圧縮またはLZW、Deflate、PackBits、JPEG圧縮)。ビルド45とデスクトップビルド25からは、Immich 3.4サーバーのJPEG XLのサムネイルとプレビューを、AndroidとQuestではImmich自身のRustコア (jxl-rs) で、コンピューターではdart:ffiを通して同じコアでデコード。Meta Quest 3と3Sでの、そしてビルド41とデスクトップビルド21からはAndroidのスマートフォンとタブレットとコンピューターでの、バージョン1から4までの.spzとバイナリ.plyのガウシアンスプラット、およびアプリがImmichに保存する`_splat.jpg`写真の中のガウシアンスプラット。コンピューターでの.ivfと.obuファイルのAV2 (実験的)。ビルド49とデスクトップビルド29からは、名前にFull SBSとある左右の動画は、フレームの形にかかわらず両目をフルで保ちます。縦向きのスマートフォンのクリップから作った3D動画も同じです。
+- **フォーマット**: フラットな写真や動画 (デバイスがデコードできる形式: MP4、MOV、MKVなど)、正距円筒図法の360°写真や動画、部分的なパノラマ (GPanoクロップ)、VR180、上下または左右の立体視3D (ファイルのst3dボックスから読み取る、またはフレームから推測)、Appleの空間写真 (HEICステレオペア) と空間動画 (MV-HEVC、片目)、Insta360の.inspと.insv、GoProの.360、DJIの.osvのRAWファイル、球体上でトーンマッピングされる10bit HLGおよびPQソース。AndroidでアプリがデコードするTIFF (8ビットと16ビット、グレー、RGB、パレット、CMYK、非圧縮またはLZW、Deflate、PackBits、JPEG圧縮)。ビルド45とデスクトップビルド25からは、Immich 3.4サーバーのJPEG XLのサムネイルとプレビューを、AndroidとQuestではImmich自身のRustコア (jxl-rs) で、コンピューターではdart:ffiを通して同じコアでデコード。Meta Quest 3と3Sでの、そしてビルド41とデスクトップビルド21からはAndroidのスマートフォンとタブレットとコンピューターでの、バージョン1から4までの.spzとバイナリ.plyのガウシアンスプラット、およびアプリがImmichに保存する`_splat.jpg`写真の中のガウシアンスプラット。コンピューターでの.ivfと.obuファイルのAV2。ビルド49とデスクトップビルド29からは、名前にFull SBSとある左右の動画は、フレームの形にかかわらず両目をフルで保ちます。縦向きのスマートフォンのクリップから作った3D動画も同じです。
 - **投影とメタデータ**: サーバーや共有に対してはレンジリクエストで、GPanoや球面メタデータをファイルから読み取ります。カメラの初期視点を維持し、DJIドローンの球体写真はカメラから識別し、Immichでも認識されるよう任意で.xmpサイドカーを添えます。「360°で表示」の設定はデバイスに記憶され、VR180はファイルまたはファイル名から認識されます。ドローン動画の撮影場所は.SRTフライトログから読み取ります。常に元のファイルを再生するため、変換されたコピーではなくメタデータがそのまま保持されます。90°の回転はImmichのエディター経由で保存するかデバイス上に保持し、イマーシブなファイルには適用しません。
-- **ネイティブ再生**: AndroidとTVはMedia3、iOSはSceneKitとAVFoundation、ヘッドセットはMeta Spatial SDK、Windowsは[libmpv-builds](https://github.com/immuch360/libmpv-builds)のlibmpvと、デスクトップビルド25からは[media_kit_360](https://github.com/immuch360/media_kit_360)のパッケージを使用します。ビルド46からはQuestで、自身のデコーダーが受け付けないPlexの映画にlibmpvを使い、ハードウェアデコードを保ち (mediacodec-copy)、ストリームごとにFFmpegを使います。デバイスのどのプレーヤーも映画をデコードできないときは、PlexサーバーによるHLSへの変換をMedia3で再生します (実験的)。ビルド47とデスクトップビルド27からは、音声が始まる前、またはmpvがデコーダーの失敗や8秒の無音を報告したときに、プレーヤーがデコードできる音声トラックを選び、画面とデコーダーに応じてPlexの映画のバージョンを選び、遅い接続にはより軽いバージョンか測定した速度の70 %での変換で応え、WindowsとmacOSのlibmpvにFFmpegのTrueHD、MLP、PGSデコーダーを含めます。デスクトップビルド28からはWindowsで、media_kit_360の360°レンダラーのフレームを各目ごとにOpenXRセッションへ描画し、360°と180°の動画を周囲に、フラットまたは3Dの映画をスクリーンに表示し、ヘッドセットのリフレッシュレートを動画のフレームレートの倍数で要求します (実験的、プロジェクトではまだヘッドセットで試していません)。デバイスがデコードできる形式に応じて元のファイルかトランスコード済みストリームを選択し、ビルド44からAndroidでは再生中のものをデコーダーが受け付けない場合にもう一方に切り替えます。デバイスの動画デコーダー一覧は設定、高度な設定で確認できます。ビルド49からは、Androidスマートフォンの360°動画プレーヤーがMedia3のビューを自ら操作し、経度、上下それぞれ90°までの緯度、目の空間でのズームを扱い、iOSのプレーヤーはスマートフォンの回転速度からカメラを回します。ジャイロスコープは初期設定ではオフです。音声トラックの選択、Androidプレーヤーでの字幕、バッファリング表示にも対応し、ビルド45からはPlexの映画について、Plexが付けたトラック名、Plexが映画の横に置いている字幕ファイル (メディアブリッジが配信)、サーバーへの選択の書き戻し、コンピューターでの字幕メニューにも対応します (実験的)。接続が運ぶ量と動画に必要な量を比べて決めるストリーミング動画の開始と、サーバーが応答しない間に待つ動画。AV2はVideoLANのdav2dでプロセッサー上でデコードし、プロジェクトの小さなプログラム (デスクトップビルド25からは[av2-companion](https://github.com/immuch360/av2-companion)) がフレームをコンピューター上でのみlibmpvに渡します。コンピューター、スマートフォン、タブレットのガウシアンスプラットは、システムのWebビュー (WebView2、WebKitGTK、WKWebView、Android System WebView) 内でthree.js上のSpark 2.4.0が描画し、アプリがデバイス上でのみ配信します。
-- **デバイス上でスティッチされるRAWファイル**: 写真にはFlutterのフラグメントシェーダーを使用し、単一トラックの動画ではプレーヤー内のGPUエフェクトを使用します。トラックまたはファイルごとに1レンズの動画では、2つのハードウェアデコーダーを同時に使い、GPUコンポジタで合成します (AndroidとQuestではOpenGL ES 3、iOSではMetal、Windowsではデスクトップ版ビルド5以降、2つのlibmpvプレーヤーのフレームをアプリがグラフィックチップ上でペアリングします)。カメラ自体のキャリブレーション (Mei、V6、等距離モデル) と加速度センサーの記録も使用します。デバイスが2つのデコーダーを同時に実行できない場合は、1レンズ、トランスコード済みストリーム、カメラのLRVコピー、またはスティッチされていない動画にフォールバックします。ビルド42からは、カメラのモーショントラック (Insta360のジャイロスコープ、GoPro MAXの向きと重力、DJI Osmo 360の姿勢、ビルド48からはOsmo 360 IIのcamdトラック、GoPro MAX 2の軸、ONE X2のミリ秒単位のフレーム時刻、ONE RSのIMUの軸) をファイルから読み取ってフレームごとに一つの回転に変換し、Androidの360°プレーヤーがそれを各フレームとともにMedia3に渡します (実験的)。ビルド46からはiPhoneとiPadのMetalのスティッチが各フレームをその合成時刻で回転させ、Questはより遅い向きの追従でスティッチ内で回転させ、デスクトップビルド26からはWindowsの360°パスがフレーム自身の時刻で回転させます (実験的)。
-- **ソース**: デバイスのギャラリー、コンピューターのフォルダー、システムのフォルダーピッカー経由でUSB接続したドローンまたはカメラのカード (Android、実験的)、ドローンのライブ映像用にケーブルで接続したDJI RC-N3コントローラー (Android、実験的、ローカルネットワーク経由でMeta QuestやAndroid TVに中継)、Immichサーバー、SMB 2および3、WebDAV、DLNA/UPnP (ビルド47からはそのテレビのライブチャンネルを区別)、サーバー自身の証明書で検証するHTTPS経由のPlex (ビルド45からは、その映画ライブラリを年ごとに、年を先に読み込んだ100件ずつのページで表示し、映画ごとのページ、バイト範囲の再開によるデバイスへの映画のコピー、六桁の確認で一度だけ作ったリンクを通したスマートフォンからテレビへの映画の送信、そのコマンドはAES-256-GCMで保護) (実験的)、ビルド46からはplex.tvのPINによるログインと、その映画のために作ったアドレスでスマートフォンがCastデバイスに中継するPlexの映画、トークンはスマートフォンに残ります (実験的)、ローカルネットワーク上のTapoカメラ (HTTPSとRTSP、ビルド47からはメディアポートも)、バッテリー式カメラのライブストリームをデバイス上でHLSプレイリストに変換 (実験的)、ビルド48からはWS-Discoveryで見つけ、書き込みを行わないONVIF Media 1の呼び出し (デバイス、そのプロファイル、ストリームとスナップショットのアドレス) で読み取る他社製カメラ、ONVIF UsernameTokenのダイジェストとHTTP Digest (MD5、SHA-256) で応答するアカウント (Basicは使いません)、そしてTCP上のRTSPストリームをMedia3、libmpv、またはiPhoneとiPadではデバイス上で作るHLSプレイリストで再生、ビルド49からは、ポート7359へのUDPの問い合わせとポート8096のスキャンで見つけるJellyfin 10.9以降とEmbyのサーバー。Quick Connectまたはパスワードでログインし、HTTP APIで読み込み、元のファイルをバイト範囲でストリーミングし、視聴ごとに一つの再生セッションで位置を報告し、HLS変換はセッションをアドレスではなくヘッダーに入れて読み込みます (実験的)。Wi-Fi上でWebDAVサーバーとして共有されたスマートフォンやコンピューター。サーバーはBonjour/mDNS、ローカルネットワークスキャン、SSDP、GDM、TP-Linkのディスカバリーで見つけ、アドレスが変わっても追跡します。システムのフォルダーピッカーを使ったAndroidスマートフォン、タブレット、Meta Questのフォルダー。
+- **ネイティブ再生**: AndroidとTVはMedia3、iOSはSceneKitとAVFoundation、ヘッドセットはMeta Spatial SDK、Windowsは[libmpv-builds](https://github.com/immuch360/libmpv-builds)のlibmpvと、デスクトップビルド25からは[media_kit_360](https://github.com/immuch360/media_kit_360)のパッケージを使用します。ビルド46からはQuestで、自身のデコーダーが受け付けないPlexの映画にlibmpvを使い、ハードウェアデコードを保ち (mediacodec-copy)、ストリームごとにFFmpegを使います。デバイスのどのプレーヤーも映画をデコードできないときは、PlexサーバーによるHLSへの変換をMedia3で再生します。ビルド47とデスクトップビルド27からは、音声が始まる前、またはmpvがデコーダーの失敗や8秒の無音を報告したときに、プレーヤーがデコードできる音声トラックを選び、画面とデコーダーに応じてPlexの映画のバージョンを選び、遅い接続にはより軽いバージョンか測定した速度の70 %での変換で応え、WindowsとmacOSのlibmpvにFFmpegのTrueHD、MLP、PGSデコーダーを含めます。デスクトップビルド28からはWindowsで、media_kit_360の360°レンダラーのフレームを各目ごとにOpenXRセッションへ描画し、360°と180°の動画を周囲に、フラットまたは3Dの映画をスクリーンに表示し、ヘッドセットのリフレッシュレートを動画のフレームレートの倍数で要求します (プロジェクトではまだヘッドセットで試していません)。デバイスがデコードできる形式に応じて元のファイルかトランスコード済みストリームを選択し、ビルド44からAndroidでは再生中のものをデコーダーが受け付けない場合にもう一方に切り替えます。デバイスの動画デコーダー一覧は設定、高度な設定で確認できます。ビルド49からは、Androidスマートフォンの360°動画プレーヤーがMedia3のビューを自ら操作し、経度、上下それぞれ90°までの緯度、目の空間でのズームを扱い、iOSのプレーヤーはスマートフォンの回転速度からカメラを回します。ジャイロスコープは初期設定ではオフです。音声トラックの選択、Androidプレーヤーでの字幕、バッファリング表示にも対応し、ビルド45からはPlexの映画について、Plexが付けたトラック名、Plexが映画の横に置いている字幕ファイル (メディアブリッジが配信)、サーバーへの選択の書き戻し、コンピューターでの字幕メニューにも対応します。接続が運ぶ量と動画に必要な量を比べて決めるストリーミング動画の開始と、サーバーが応答しない間に待つ動画。AV2はVideoLANのdav2dでプロセッサー上でデコードし、プロジェクトの小さなプログラム (デスクトップビルド25からは[av2-companion](https://github.com/immuch360/av2-companion)) がフレームをコンピューター上でのみlibmpvに渡します。コンピューター、スマートフォン、タブレットのガウシアンスプラットは、システムのWebビュー (WebView2、WebKitGTK、WKWebView、Android System WebView) 内でthree.js上のSpark 2.4.0が描画し、アプリがデバイス上でのみ配信します。
+- **デバイス上でスティッチされるRAWファイル**: 写真にはFlutterのフラグメントシェーダーを使用し、単一トラックの動画ではプレーヤー内のGPUエフェクトを使用します。トラックまたはファイルごとに1レンズの動画では、2つのハードウェアデコーダーを同時に使い、GPUコンポジタで合成します (AndroidとQuestではOpenGL ES 3、iOSではMetal、Windowsではデスクトップ版ビルド5以降、2つのlibmpvプレーヤーのフレームをアプリがグラフィックチップ上でペアリングします)。カメラ自体のキャリブレーション (Mei、V6、等距離モデル) と加速度センサーの記録も使用します。デバイスが2つのデコーダーを同時に実行できない場合は、1レンズ、トランスコード済みストリーム、カメラのLRVコピー、またはスティッチされていない動画にフォールバックします。ビルド42からは、カメラのモーショントラック (Insta360のジャイロスコープ、GoPro MAXの向きと重力、DJI Osmo 360の姿勢、ビルド48からはOsmo 360 IIのcamdトラック、GoPro MAX 2の軸、ONE X2のミリ秒単位のフレーム時刻、ONE RSのIMUの軸) をファイルから読み取ってフレームごとに一つの回転に変換し、Androidの360°プレーヤーがそれを各フレームとともにMedia3に渡します。ビルド46からはiPhoneとiPadのMetalのスティッチが各フレームをその合成時刻で回転させ、Questはより遅い向きの追従でスティッチ内で回転させ、デスクトップビルド26からはWindowsの360°パスがフレーム自身の時刻で回転させます。
+- **ソース**: デバイスのギャラリー、コンピューターのフォルダー、システムのフォルダーピッカー経由でUSB接続したドローンまたはカメラのカード (Android)、ドローンのライブ映像用にケーブルで接続したDJI RC-N3コントローラー (Android、ローカルネットワーク経由でMeta QuestやAndroid TVに中継)、Immichサーバー、SMB 2および3、WebDAV、DLNA/UPnP (ビルド47からはそのテレビのライブチャンネルを区別)、サーバー自身の証明書で検証するHTTPS経由のPlex (ビルド45からは、その映画ライブラリを年ごとに、年を先に読み込んだ100件ずつのページで表示し、映画ごとのページ、バイト範囲の再開によるデバイスへの映画のコピー、六桁の確認で一度だけ作ったリンクを通したスマートフォンからテレビへの映画の送信、そのコマンドはAES-256-GCMで保護)、ビルド46からはplex.tvのPINによるログインと、その映画のために作ったアドレスでスマートフォンがCastデバイスに中継するPlexの映画、トークンはスマートフォンに残ります、ローカルネットワーク上のTapoカメラ (HTTPSとRTSP、ビルド47からはメディアポートも)、バッテリー式カメラのライブストリームをデバイス上でHLSプレイリストに変換、ビルド48からはWS-Discoveryで見つけ、書き込みを行わないONVIF Media 1の呼び出し (デバイス、そのプロファイル、ストリームとスナップショットのアドレス) で読み取る他社製カメラ、ONVIF UsernameTokenのダイジェストとHTTP Digest (MD5、SHA-256) で応答するアカウント (Basicは使いません)、そしてTCP上のRTSPストリームをMedia3、libmpv、またはiPhoneとiPadではデバイス上で作るHLSプレイリストで再生、ビルド49からは、ポート7359へのUDPの問い合わせとポート8096のスキャンで見つけるJellyfin 10.9以降とEmbyのサーバー。Quick Connectまたはパスワードでログインし、HTTP APIで読み込み、元のファイルをバイト範囲でストリーミングし、視聴ごとに一つの再生セッションで位置を報告し、HLS変換はセッションをアドレスではなくヘッダーに入れて読み込みます。Wi-Fi上でWebDAVサーバーとして共有されたスマートフォンやコンピューター。サーバーはBonjour/mDNS、ローカルネットワークスキャン、SSDP、GDM、TP-Linkのディスカバリーで見つけ、アドレスが変わっても追跡します。システムのフォルダーピッカーを使ったAndroidスマートフォン、タブレット、Meta Questのフォルダー。
 - **オンデマンド読み込み**: ローカルブリッジがバイト範囲とセッションごとのトークンでプレーヤーにデータを提供します。大きなブロック単位の先読みと、最大6つのSMB接続の並列処理に対応し、各動画のフレームからサムネイルを生成し、デバイスには何もコピーされません。
 - **ハードウェア**: 存在する場合は必ずハードウェアデコーダーを使用し、実測した上限に従います (Quest 3のH.264の上限、ソフトウェアデコーダーでは最大2048x2048の2レンズまで)。Windowsでは、デコードされた各フレームから360°ビューをグラフィックチップで描画し、各コンピューターでフレームサイズを計測し、統合型または専用のグラフィックチップを検出し、デスクトップビルド21からは、チップを二つ持つノートPCでドライバーに専用チップを要求します。コンピューターでは、スプラットのガウシアンをコンピューターとそのグラフィックスカードのメモリと照らし合わせて数えます。
 - **プラットフォーム固有の機能**: スマートフォンではジャイロスコープ (360°写真と、ビルド49からは360°動画で共通の一つの設定) とSpatial 2.5Dプレーヤー、Questではイマーシブビュー、コントローラー、手、Android TVではリモコン用レイアウト、キーボードダイアログ、TVバナーです。コンピューターでは、マウスとキーボード、デスクトップビルド24からのCtrl+クリック、Shift+クリック、Ctrl+Aでの選択、フルスクリーン、1つのウィンドウに対応し、プログラムで開いた、またはそのウィンドウにドロップしたファイルやフォルダーはフォルダー内のファイルと同じように読み込まれ、Windowsにデコーダーがあればフォルダー内のHEIC、AVIF、TIFF、カメラRAW写真も読み込めるほか、パスワードとトークンにはWindowsのデータ保護が使われます。
-- **AIクリエイター**: 3D写真は全幅の左右並びJPEGで左目が先、立体感はプロセッサー上のONNX Runtime 1.31.0 (Intel Macでは1.23.2) によるDepth Anything V2 Smallから。デスクトップビルド26からは、XMPに書き込む視差1.5、2、3 %で、relief-v2では写真の色に導かれて奥行きをアップサンプリングし (joint bilateral)、インストールされていればMI-GANが現れた領域を埋めます (実験的)。シーンは、奥行きが途切れる位置で切り分けたレイヤー構造のglTFシーンを内包したJPEGで、MoGe-2 ViT-SとLaMaから作成し、.glbエクスポート付き。360°パノラマは6144 x 3072で、Vulkan上のstable-diffusion.cppを通じてFLUX.2 klein base 4Bと360° LoRAが生成し、継ぎ目をMI-GANでつなぎ、Real-ESRGANで細部を高め、本物のピクセルを元に戻します。360°写真の3D版は上下形式。すべてのファイルに私たちのXMP (種類、由来、元の写真のSHA-1、品質フラグ)、シーンとパノラマにはIPTCのデジタルソースタイプ。Questの立体感はLiteRTでグラフィックスチップまたはプロセッサー上で計算し、キャッシュに保存。ビルド46からは同じ三つの強さで、プロセッサーのマップをすぐに表示し、その後グラフィックスチップをそれと照合します。コンピューターでは2レーンのキューと、Vulkan経由でグラフィックスカードを読み取り、パノラマの前にアプリ自身が使っている分を解放し、デスクトップビルド22からは3.5 GiBの空きを求め (約5.6 GiB未満では生成を分割)、他のプログラムがメモリを使っている間は待ち、デスクトップビルド24からはジェネレーター自身のカード一覧で名前から見つけたそのカードでジェネレーターを動かすゲート。各コンポーネントはSHA-256で検証し、Windowsのジェネレーターは署名済み。共有の写真の隣にSMBとWebDAVで書き込む3D版。20から200枚の写真または動画からのスプラットシーン: カメラはプロセッサー上のCOLMAP 4.2.1が配置し、スプラットはVulkan上のBrush 0.3.0が学習し、物は置かれている面の上にまっすぐ立て、最大150,000個のガウシアンのバージョン2のSPZとして、またはデスクトップビルド22からは「詳細」と「最大」でシーン全体と、ヘッドセット用に最も強い300,000個のガウシアンのコピーとして書き込み、求めに応じて.plyとしても書き込みます。デスクトップビルド29からは、プロセッサー上でVideo Depth Anything Smallが作る3D動画: 一度に32フレームを処理し、各区切りを前の区切りと共有するフレームで揃え、シーンの切り替わりでやり直し、右目は3D写真と同じように描画し、フレームはプロジェクトのFFmpegプログラムでデコードとエンコードを行い、コンピューターのエンコーダーによるH.264、それがなければAV1で、止めた作業が再開できる約30 sのセグメントに分け、最後にすべての音声トラックと左右動画のst3dボックスとともに多重化します (実験的)。デスクトップビルド31からは、360° 3D動画: 深度を立方体の六つの面で推定し、360° 3D動画の印とともに上下に書き込みます。3D動画の深度モデルは、WindowsではDirectML、MacではCore MLでグラフィックスカード上で動きます。高画質化した写真は、Real-ESRGAN x4plus、SeedVR2 3B、またはVOSR 2.0でタイルごとに処理し、元の写真と混ぜ合わせ、独自のXMPとIPTCのデジタルソースタイプを付けます。
-- **設計レベルでのプライバシー**: アカウントなし、クラウドなし、解析なし。パスワードとトークンはデバイスのセキュアストレージに保存されます (LGとSamsungのテレビにはアプリ用のものがないため、アプリ自身のストレージに暗号化せずに保存します)。スマートフォンからログインした画面には専用のセッションが自宅のネットワーク上で暗号化して送られ、パスワードが送られることはありません (LGテレビはスマートフォンのブラウザーのページからパスワードを受け取ります。これは自宅のネットワーク上で暗号化されずに送られ、テレビはセッションだけを保持します)。Spatialプレーヤーとコードスキャナーのカメラはデバイス上でのみ使用され、共有、Plex、カメラへのアクセスはあなたのネットワーク内に限られます。AIはデバイス上で計算し、そのコンポーネントは求めたときだけダウンロードしてSHA-256で検証し、ONNX Runtimeのテレメトリはオフにしています。デバイス上に保存する映画の視聴位置。ビルド45からは、Plexの映画のページのためにWikipediaへ送るのはその映画のIMDbまたはTMDBの番号と記事のタイトルだけで (実験的)、サーバーの情報は何も送らず、評価の案内に使う回数もデバイスに残ります。ビルド46からは、「Plex でログイン」を選んだときにplex.tvにトークンを一度だけ求め、アカウントとパスワードを含む設定ファイルは、パスフレーズからArgon2idで導出した鍵でAES-256-GCMにより暗号化されます。ビルド48からは、他社製カメラのパスワードとストリームのアドレスを安全なストレージに保存し、カメラが求めるまでアカウントを送らず、ヘッドセット表示のログにはアドレス、パス、トークン、タイトルを残しません。ビルド49からは、JellyfinやEmbyのサーバーのセッションを安全なストレージに保存し、パスワードは保存せず、コンピューターで作った3D動画はどこにも送りません。
+- **AIクリエイター**: 3D写真は全幅の左右並びJPEGで左目が先、立体感はプロセッサー上のONNX Runtime 1.31.0 (Intel Macでは1.23.2) によるDepth Anything V2 Smallから。デスクトップビルド26からは、XMPに書き込む視差1.5、2、3 %で、relief-v2では写真の色に導かれて奥行きをアップサンプリングし (joint bilateral)、インストールされていればMI-GANが現れた領域を埋めます。シーンは、奥行きが途切れる位置で切り分けたレイヤー構造のglTFシーンを内包したJPEGで、MoGe-2 ViT-SとLaMaから作成し、.glbエクスポート付き。360°パノラマは6144 x 3072で、Vulkan上のstable-diffusion.cppを通じてFLUX.2 klein base 4Bと360° LoRAが生成し、継ぎ目をMI-GANでつなぎ、Real-ESRGANで細部を高め、本物のピクセルを元に戻します。360°写真の3D版は上下形式。すべてのファイルに私たちのXMP (種類、由来、元の写真のSHA-1、品質フラグ)、シーンとパノラマにはIPTCのデジタルソースタイプ。Questの立体感はLiteRTでグラフィックスチップまたはプロセッサー上で計算し、キャッシュに保存。ビルド46からは同じ三つの強さで、プロセッサーのマップをすぐに表示し、その後グラフィックスチップをそれと照合します。コンピューターでは2レーンのキューと、Vulkan経由でグラフィックスカードを読み取り、パノラマの前にアプリ自身が使っている分を解放し、デスクトップビルド22からは3.5 GiBの空きを求め (約5.6 GiB未満では生成を分割)、他のプログラムがメモリを使っている間は待ち、デスクトップビルド24からはジェネレーター自身のカード一覧で名前から見つけたそのカードでジェネレーターを動かすゲート。各コンポーネントはSHA-256で検証し、Windowsのジェネレーターは署名済み。共有の写真の隣にSMBとWebDAVで書き込む3D版。20から200枚の写真または動画からのスプラットシーン: カメラはプロセッサー上のCOLMAP 4.2.1が配置し、スプラットはVulkan上のBrush 0.3.0が学習し、物は置かれている面の上にまっすぐ立て、最大150,000個のガウシアンのバージョン2のSPZとして、またはデスクトップビルド22からは「詳細」と「最大」でシーン全体と、ヘッドセット用に最も強い300,000個のガウシアンのコピーとして書き込み、求めに応じて.plyとしても書き込みます。デスクトップビルド29からは、プロセッサー上でVideo Depth Anything Smallが作る3D動画: 一度に32フレームを処理し、各区切りを前の区切りと共有するフレームで揃え、シーンの切り替わりでやり直し、右目は3D写真と同じように描画し、フレームはプロジェクトのFFmpegプログラムでデコードとエンコードを行い、コンピューターのエンコーダーによるH.264、それがなければAV1で、止めた作業が再開できる約30 sのセグメントに分け、最後にすべての音声トラックと左右動画のst3dボックスとともに多重化します。デスクトップビルド31からは、360° 3D動画: 深度を立方体の六つの面で推定し、360° 3D動画の印とともに上下に書き込みます。3D動画の深度モデルは、WindowsではDirectML、MacではCore MLでグラフィックスカード上で動きます。高画質化した写真は、Real-ESRGAN x4plus、SeedVR2 3B、またはVOSR 2.0でタイルごとに処理し、元の写真と混ぜ合わせ、独自のXMPとIPTCのデジタルソースタイプを付けます。
+- **設計レベルでのプライバシー**: アカウントなし、クラウドなし、解析なし。パスワードとトークンはデバイスのセキュアストレージに保存されます (LGとSamsungのテレビにはアプリ用のものがないため、アプリ自身のストレージに暗号化せずに保存します)。スマートフォンからログインした画面には専用のセッションが自宅のネットワーク上で暗号化して送られ、パスワードが送られることはありません (LGテレビはスマートフォンのブラウザーのページからパスワードを受け取ります。これは自宅のネットワーク上で暗号化されずに送られ、テレビはセッションだけを保持します)。Spatialプレーヤーとコードスキャナーのカメラはデバイス上でのみ使用され、共有、Plex、カメラへのアクセスはあなたのネットワーク内に限られます。AIはデバイス上で計算し、そのコンポーネントは求めたときだけダウンロードしてSHA-256で検証し、ONNX Runtimeのテレメトリはオフにしています。デバイス上に保存する映画の視聴位置。ビルド45からは、Plexの映画のページのためにWikipediaへ送るのはその映画のIMDbまたはTMDBの番号と記事のタイトルだけで、サーバーの情報は何も送らず、評価の案内に使う回数もデバイスに残ります。ビルド46からは、「Plex でログイン」を選んだときにplex.tvにトークンを一度だけ求め、アカウントとパスワードを含む設定ファイルは、パスフレーズからArgon2idで導出した鍵でAES-256-GCMにより暗号化されます。ビルド48からは、他社製カメラのパスワードとストリームのアドレスを安全なストレージに保存し、カメラが求めるまでアカウントを送らず、ヘッドセット表示のログにはアドレス、パス、トークン、タイトルを残しません。ビルド49からは、JellyfinやEmbyのサーバーのセッションを安全なストレージに保存し、パスワードは保存せず、コンピューターで作った3D動画はどこにも送りません。
 
 </details>
