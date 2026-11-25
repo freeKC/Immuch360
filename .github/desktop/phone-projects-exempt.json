@@ -464,8 +464,8 @@
     "reason": "crashes of release 51 (fix-crashes-51, Meta cluster 934bfc): whether this headset runs the Meta Spatial SDK (Android 13 or later)"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhoto.kt": {
-    "blob": "54e4c7e563f7f5be104debc0c2c915160b53c35f",
-    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the stereo quad cuts the eyes of a flat 3D photo as its frame packs them, the English texts of the flat 3D media; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens; Quest gallery (feat-quest-gallery-49, issue 19): a 3D photo brought near keeps its size"
+    "blob": "bf412914760cd764c65f63fac8d2f3e99354fdfe",
+    "reason": "AI immersive lots A7, A9a and A11: 2D (original), Relief estimated by AI, the 60 degree cap of an estimated relief, the labels of a relief made in the headset, and 3D, 2.5D and 2D on the 3D button; phases 2 and 3, lot S3: the English texts of a 3D scene; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, from the quest/flat-3d branch of Gaurav Mukherjee): the stereo quad cuts the eyes of a flat 3D photo as its frame packs them, the English texts of the flat 3D media; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens; Quest gallery (feat-quest-gallery-49, issue 19): a 3D photo brought near keeps its size; release 52 assembly (FreeKC's rule of 24 Nov 2026): the English fallbacks lose \"(experimental)\", as en.json does"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/StereoPhotoKind.kt": {
     "blob": "18f069534b5c55b70c7139396c9b5ecb8a2b71b5",
@@ -548,8 +548,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): the splat entity in the world, its glide, Reset and Turn upright; not yet on the phone branch; the splats on the Quest 3 (fix-quest-splats-device): every pose handed to the module converted to its frame at one place, the centre of the file mirrored, the last check before the entity, Loading the splat and the check of the renderer; the orientation chosen for the file, else the one its gaussians say, else the default; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the snap turn about the head, the glide kept; Splat photos (feat-splat-photo, lot L4): the up of the request as the orientation when the user chose none for that scene on the headset"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatTexts.kt": {
-    "blob": "0315932a09871621a52f2bedb6ae7d8b17ccbf2d",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): the English texts of the splats and their lines; not yet on the phone branch; the decision of 30 October: the notice of the first splat with the words that Meta neither supports nor warrants its API; the texts of a compressed PLY and of a newer SPZ say what the headset reads; the splats on the Quest 3 (fix-quest-splats-device): Loading the splat and the sentences of a splat this device cannot show; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the hint of a splat, no text refusing version 4"
+    "blob": "e01c746916a28bd38d7fde3acf3c773695af6d32",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): the English texts of the splats and their lines; not yet on the phone branch; the decision of 30 October: the notice of the first splat with the words that Meta neither supports nor warrants its API; the texts of a compressed PLY and of a newer SPZ say what the headset reads; the splats on the Quest 3 (fix-quest-splats-device): Loading the splat and the sentences of a splat this device cannot show; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the hint of a splat, no text refusing version 4; release 52 assembly (FreeKC's rule of 24 Nov 2026): the English fallbacks lose \"(experimental)\", as en.json does"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/splat/SplatViewerOptions.kt": {
     "blob": "982ea77a3d097ba97c0bb331074d651d1d3261ef",
@@ -608,8 +608,8 @@
     "reason": "360 video controls (feat-360-video-controls-49, issue 20): the view maths of the 360 video player, as the photo viewer: latitude to the poles, zoom, gyroscope"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideoActivity.kt": {
-    "blob": "a77db91520068ef057adea1fd7b8b8341b6760ec",
-    "reason": "TV lot (5e7bf8e27, e66574872, cced20e83): the 360 video player of the phone app and its error view; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the 360 player starts a streamed video from its link, with the retries and the buffering line of the link; Video stabilization (feat-video-stabilization, issue 14, lot c): the table of the camera turns each stitched frame through the camera motion listener, the switch in the top bar and the fading notice; 360 video controls (feat-360-video-controls-49, issue 20): the gyroscope button, the view controller, the top bar fitted in portrait"
+    "blob": "a3dec9c343fe6dbfa850d00e4431a2828c073778",
+    "reason": "TV lot (5e7bf8e27, e66574872, cced20e83): the 360 video player of the phone app and its error view; Video adaptive start (feat-video-adaptive-start, 31 October 2026): the 360 player starts a streamed video from its link, with the retries and the buffering line of the link; Video stabilization (feat-video-stabilization, issue 14, lot c): the table of the camera turns each stitched frame through the camera motion listener, the switch in the top bar and the fading notice; 360 video controls (feat-360-video-controls-49, issue 20): the gyroscope button, the view controller, the top bar fitted in portrait; release 52 assembly (FreeKC's rule of 24 Nov 2026): the English fallbacks lose \"(experimental)\", as en.json does"
   },
   "mobile/android/app/src/main/kotlin/app/alextran/immich/spherical/SphericalVideoApiImpl.kt": {
     "blob": "b489bba882727b13f63eafc00e830883e6421d2f",
@@ -1544,8 +1544,8 @@
     "reason": "The splat turn and SPZ version 4 (fix-quest-splat-navigation): the thumbsticks of a splat replayed at 90 and 72 Hz from the log of 1 November; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoComposerTest.kt": {
-    "blob": "21e2203097b75546ee4d9a4208bedb2c010d6864",
-    "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, fix round): the English fallbacks of the flat 3D texts against en.json; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens against en.json"
+    "blob": "666ba936b5d9f0e51595ca783518ef0ba8bea4a9",
+    "reason": "AI immersive lots A7, A9a and A11: tests of the 60 degree cap, the labels, those of a relief made in the headset, and the 3D button through 2.5D; feat-ai-immersive, not yet on the phone branch; Quest flat 3D and thumbstick paging (feat-quest-flat3d, fix round): the English fallbacks of the flat 3D texts against en.json; Quest flat screens (feat-quest-flat-screens, on ideas of Gaurav Mukherjee, gmfun/Immuch360 quest/flat-3d): the English texts of the big screen and of Sharper flat screens against en.json; release 52 assembly (FreeKC's rule of 24 Nov 2026): the English fallbacks lose \"(experimental)\", as en.json does"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/StereoPhotoKindTest.kt": {
     "blob": "60bf53529057dacf9460c3cd2c3a0b657da6dd23",
@@ -1648,8 +1648,8 @@
     "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the life of the splat entity; not yet on the phone branch"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatTextsTest.kt": {
-    "blob": "4a2c9b4719d6cdd80a9ecb5a2d1f7242fc8f2b0a",
-    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the texts, against en.json; not yet on the phone branch; the decision of 30 October: the notice of the first splat and its words on the API; the splats on the Quest 3 (fix-quest-splats-device): the new sentences, the English texts against en.json; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the hint of a splat"
+    "blob": "f8acb31f90b043af12797988b7cb571f7b040711",
+    "reason": "Gaussian splats (feat-quest-splats, lot S5): unit tests of the texts, against en.json; not yet on the phone branch; the decision of 30 October: the notice of the first splat and its words on the API; the splats on the Quest 3 (fix-quest-splats-device): the new sentences, the English texts against en.json; the splat turn and SPZ version 4 (fix-quest-splat-navigation): the hint of a splat; release 52 assembly (FreeKC's rule of 24 Nov 2026): the English fallbacks lose \"(experimental)\", as en.json does"
   },
   "mobile/android/app/src/test/kotlin/app/alextran/immich/immersive/splat/SplatTurnPoseTest.kt": {
     "blob": "ebfaae7066498ab5937f8bd5cdb10664a80b5717",
@@ -1816,8 +1816,8 @@
     "reason": "Video stabilization (feat-video-stabilization, issue 14, lot c): the iOS stub of setStabilization of the Pigeon API (the iOS player applies no table yet); 360 video controls (feat-360-video-controls-49, issue 20): setMotion of the Pigeon API"
   },
   "mobile/ios/Runner/Spherical/SphericalVideoViewController.swift": {
-    "blob": "0b680eb985d1d9463732a38a2bad49b13238816d",
-    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the gyroscope from the setting, pinch limits and double tap, a drag to the poles"
+    "blob": "ef0c858401cb9ec08442e03e2639d6cc67946c8a",
+    "reason": "360 video controls (feat-360-video-controls-49, issue 20): the gyroscope from the setting, pinch limits and double tap, a drag to the poles; release 52 assembly (FreeKC's rule of 24 Nov 2026): the English fallbacks lose \"(experimental)\", as en.json does"
   },
   "mobile/ios/SwiftTests/main.swift": {
     "blob": "ad5bf4f9b362d95402519c1637dd1ff022cb3e25",
@@ -1850,5 +1850,13 @@
   "mobile/android/app/src/main/kotlin/app/alextran/immich/tv/TvApiImpl.kt": {
     "blob": "1ec23ca4914fcf2fe5671918fe80203e5167e9b1",
     "reason": "release 51 integration (device checks of 23 November 2026): Down from the field of the TV text dialog goes to OK, not to Cancel, so that Back, Down and OK keep the text typed"
+  },
+  "mobile/android/app/src/main/kotlin/app/alextran/immich/immersive/ImmersiveStabilization.kt": {
+    "blob": "496ee74587fac55d335393b936969c6080bcd863",
+    "reason": "Release 52 assembly (FreeKC's rule of 24 Nov 2026): the English fallbacks lose \"(experimental)\", as en.json does; reaches the phone branch with the merge of release 52"
+  },
+  "mobile/ios/Runner/Core/RawStitchSpec.swift": {
+    "blob": "98a026a81c94291242b04170863296c8d5ee9cd3",
+    "reason": "Release 52 assembly: the rows of a matrix built one at a time, which Xcode 27 type-checks (iOS 27 SDK, ITMS-90725); reaches the phone branch with the merge of release 52"
   }
 }

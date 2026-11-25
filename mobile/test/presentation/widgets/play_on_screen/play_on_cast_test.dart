@@ -1,4 +1,4 @@
-// The "Play on" sheet with its two groups: the linked screens, then the Cast devices (experimental) with what the Plex
+// The "Play on" sheet with its two groups: the linked screens, then the Cast devices with what the Plex
 // metadata says of the film on each, the question before casting to one that cannot play it, the controls of a cast,
 // and the dock of a cast on the other pages
 
@@ -149,14 +149,15 @@ void main() {
     return cast;
   }
 
-  testWidgets('two groups: Your screens, then the Cast devices, labelled experimental, with their verdicts', (
+  testWidgets('two groups: Your screens, then the Cast devices, with no experimental chip, with their verdicts', (
     tester,
   ) async {
     await open(tester);
     expect(find.text('Your screens'), findsOneWidget);
     expect(find.byKey(const ValueKey('play_on_$_tvId')), findsOneWidget);
     expect(find.text('Cast devices'), findsOneWidget);
-    expect(find.text('Experimental'), findsOneWidget);
+    expect(find.byKey(const Key('cast_experimental')), findsNothing);
+    expect(find.textContaining(RegExp('xperimental')), findsNothing);
     expect(tester.getTopLeft(find.text('Your screens')).dy, lessThan(tester.getTopLeft(find.text('Cast devices')).dy));
 
     // The TV that runs Immuch360 is not listed twice

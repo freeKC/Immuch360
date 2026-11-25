@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/locales.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart' show aiFeaturesEnabledProvider;
 import 'package:immich_mobile/generated/codegen_loader.g.dart';
 import 'package:immich_mobile/pages/common/settings.page.dart';
 import 'package:immich_mobile/providers/infrastructure/local_session.provider.dart';
@@ -60,7 +61,11 @@ void main() {
         useFallbackTranslations: true,
         assetLoader: const CodegenLoader(),
         child: ProviderScope(
-          overrides: [localSessionProvider.overrideWith(() => _Session(local: local))],
+          overrides: [
+            localSessionProvider.overrideWith(() => _Session(local: local)),
+            // The badge of the AI components on "This computer" reads whether the AI features are on
+            aiFeaturesEnabledProvider.overrideWith((ref) => true),
+          ],
           child: Builder(
             builder: (context) => MaterialApp.router(
               debugShowCheckedModeBanner: false,
@@ -111,6 +116,14 @@ void main() {
       await pumpSettings(tester, local: false);
 
       expect(find.widgetWithText(SettingsCard, 'This computer'), findsOneWidget);
+      // The narrow list carries the badge of the AI components that can be updated, as the wide one does
+      expect(
+        find.descendant(
+          of: find.widgetWithText(SettingsCard, 'This computer'),
+          matching: find.byKey(const Key('ai_updates_badge')),
+        ),
+        findsOneWidget,
+      );
       for (final title in ['Free Up Space', 'Notifications']) {
         expect(find.widgetWithText(SettingsCard, title), findsNothing, reason: title);
       }

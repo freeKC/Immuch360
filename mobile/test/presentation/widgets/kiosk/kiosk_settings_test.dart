@@ -73,7 +73,7 @@ void main() {
     await pumpSettings(tester);
     await scrollTo(tester, mediaTile);
 
-    expect(find.text('Kiosk mode (experimental)'), findsOneWidget);
+    expect(find.text('Kiosk mode'), findsOneWidget);
     expect(
       find.text(
         'At start, the headset opens the chosen 360° photo or video for visitors. The film starts again each time the '
@@ -183,6 +183,6 @@ void main() {
     await scrollTo(tester, find.byType(CustomProxyHeaderSettings));
 
     expect(find.byType(KioskSettings, skipOffstage: false), findsNothing);
-    expect(find.text('Kiosk mode (experimental)', skipOffstage: false), findsNothing);
+    expect(find.text('Kiosk mode', skipOffstage: false), findsNothing);
   });
 }

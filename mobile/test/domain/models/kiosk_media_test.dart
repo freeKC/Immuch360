@@ -109,7 +109,7 @@ void main() {
     });
   });
 
-  group('Kiosk mode (experimental)', () {
+  group('Kiosk mode', () {
     test('is on by default, with nothing chosen: the app starts as usual', () {
       expect(const AppConfig().kiosk.enabled, isTrue);
       expect(defaultConfig.read(SettingsKey.kioskEnabled), isTrue);

@@ -12,6 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/ui/ai_updates.dart';
 import 'package:immich_mobile/desktop/ai/ui/video_resume_offer.dart';
 import 'package:immich_mobile/desktop/selection/desktop_selection.dart';
 import 'package:immich_mobile/desktop/video/av2_badge.dart';
@@ -143,7 +144,14 @@ class _DesktopShellState extends ConsumerState<DesktopShell> with WindowListener
     }
     _offered = true;
     _mainPage?.removeListener(_onMainPage);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _offerStoppedVideos());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _offerStoppedVideos();
+      // The AI components a new version of the app updates, by themselves when the setting and the connection allow
+      // it (issue 21, ai_updates.dart)
+      if (mounted) {
+        unawaited(runAiUpdatesAtStart(ref));
+      }
+    });
   }
 
   void _offerStoppedVideos() {

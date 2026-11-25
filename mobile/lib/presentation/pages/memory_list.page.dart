@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/extensions/asyncvalue_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/pages/memory.page.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/presentation/widgets/memory/memory_title.widget.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_focusable.widget.dart';
@@ -66,25 +67,30 @@ class _MemoryListPageState extends ConsumerState<MemoryListPage> {
                       children: [
                         ClipRRect(
                           borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          child: ColorFiltered(
-                            colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.2), BlendMode.darken),
-                            child: AbsorbPointer(
-                              child: Thumbnail.remote(
-                                remoteId: memories[index].assets[0].id,
-                                thumbhash: memories[index].assets[0].thumbHash ?? "",
-                                fit: BoxFit.cover,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              ColorFiltered(
+                                colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.2), BlendMode.darken),
+                                child: AbsorbPointer(
+                                  child: Thumbnail.remote(
+                                    remoteId: memories[index].assets[0].id,
+                                    thumbhash: memories[index].assets[0].thumbHash ?? "",
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 16,
-                          left: 16,
-                          right: 16,
-                          child: MemoryTitle(
-                            memory: memories[index],
-                            style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 15),
-                            preferDate: true,
+                              // On the scrim of the labels over a picture, inside the rounded corners
+                              PictureLabel(
+                                fade: 24,
+                                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                                child: MemoryTitle(
+                                  memory: memories[index],
+                                  style: memoryTitleOnPicture,
+                                  preferDate: true,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         if (memories[index].isSaved)

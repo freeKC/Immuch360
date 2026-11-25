@@ -67,6 +67,12 @@ class FakeAiComponentsService extends AiComponentsService {
     notifyListeners();
   }
 
+  /// The versions installedVersionOf gives, by id: those of the older versions an update replaces (issue 21)
+  final versions = <String, String>{};
+
+  @override
+  String? installedVersionOf(AiComponent component) => versions[component.id];
+
   @override
   Future<void> load() async {}
 
@@ -79,6 +85,12 @@ class FakeAiComponentsService extends AiComponentsService {
 
   @override
   Future<int> aiSpaceUsed() async => space;
+
+  /// What unusedFiles answers
+  AiUnusedFiles unused = const AiUnusedFiles();
+
+  @override
+  Future<AiUnusedFiles> unusedFiles() async => unused;
 
   @override
   Future<void> install(AiComponent component) async {

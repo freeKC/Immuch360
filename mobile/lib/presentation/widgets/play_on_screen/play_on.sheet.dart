@@ -10,6 +10,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -43,6 +44,33 @@ Future<bool> showPlayOnSheet(BuildContext context, PlayOnRequest request) async 
       cast.live &&
       cast.request.sourceId == request.sourceId &&
       cast.request.ratingKey == request.ratingKey;
+}
+
+/// Asks before an archived or a locked item of the Immich library goes to [device]: true on Show. Anything else is
+/// asked nothing.
+Future<bool> confirmPrivatePlayOn(BuildContext context, PlayOnRequest request, String device) async {
+  final asset = request.immich;
+  if (asset == null || (!asset.locked && !asset.archived)) {
+    return true;
+  }
+  final t = context.t;
+  final answer = await showDialog<bool>(
+    context: context,
+    builder: (dialog) => AlertDialog(
+      key: const Key('play_on_private_dialog'),
+      title: Text(asset.locked ? t.play_on_locked_title(device: device) : t.play_on_archived_title(device: device)),
+      content: Text(asset.locked ? t.play_on_locked_body(device: device) : t.play_on_archived_body(device: device)),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(dialog).pop(false), child: Text(t.cancel)),
+        TextButton(
+          key: const Key('play_on_private_show'),
+          onPressed: () => Navigator.of(dialog).pop(true),
+          child: Text(t.play_on_show),
+        ),
+      ],
+    ),
+  );
+  return answer ?? false;
 }
 
 /// What a row of the sheet says of a screen
@@ -106,6 +134,14 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
 
   Future<void> _play(LinkedPeer screen, PlayScreenAddress address) async {
     final t = context.t;
+    // A screen never opens a locked item with its own session (screen_item_openers.dart): nothing to send
+    if (widget.request.immich?.locked ?? false) {
+      _say(t.play_on_err_locked);
+      return;
+    }
+    if (!await confirmPrivatePlayOn(context, widget.request, screen.name) || !mounted) {
+      return;
+    }
     setState(() => _busy = screen.id);
     final outcome = await ref.read(remotePlaybackProvider.notifier).play(screen, address, widget.request);
     if (!mounted) {
@@ -126,7 +162,25 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
       case PlayOnOutcome.screenCannotOpen:
         _say(t.play_on_err_screen_cannot_open(device: screen.name, server: widget.request.serverName));
       case PlayOnOutcome.notFound:
-        _say(t.play_on_err_not_found(server: widget.request.serverName));
+        _say(
+          widget.request.kind == PlayKind.plex
+              ? t.play_on_err_not_found(server: widget.request.serverName)
+              : t.play_on_err_item_not_found(server: widget.request.serverName),
+        );
+      case PlayOnOutcome.needsUpdate:
+        _say(t.play_on_err_update_screen(device: screen.name));
+      case PlayOnOutcome.notSignedIn:
+        _say(t.play_on_err_not_signed_in(device: screen.name, server: widget.request.serverName));
+      case PlayOnOutcome.otherAccount:
+        _say(t.play_on_err_other_account(device: screen.name));
+      case PlayOnOutcome.otherServer:
+        _say(t.play_on_err_other_server(device: screen.name));
+      case PlayOnOutcome.notVisible:
+        _say(t.play_on_err_not_visible(device: screen.name));
+      case PlayOnOutcome.locked:
+        _say(t.play_on_err_locked);
+      case PlayOnOutcome.noSuchSource:
+        _say(t.play_on_err_no_server(device: screen.name, server: widget.request.serverName));
       case PlayOnOutcome.failed:
         _say(t.play_on_err_failed(device: screen.name));
     }
@@ -211,7 +265,11 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
                 const Divider(),
                 Padding(
                   padding: const EdgeInsets.all(ImmichSpacing.sm),
-                  child: Text(t.play_on_empty, key: const Key('play_on_empty'), style: theme.bodyMedium),
+                  child: Text(
+                    widget.request.kind == PlayKind.plex ? t.play_on_empty : t.play_on_empty_item,
+                    key: const Key('play_on_empty'),
+                    style: theme.bodyMedium,
+                  ),
                 ),
               ] else ...[
                 Padding(

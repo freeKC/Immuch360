@@ -30,14 +30,22 @@ bool isSafeArchivePath(String path) =>
 /// Makes [path] executable by its owner, its group and the others (mode 755); nothing on Windows
 typedef AiSetExecutable = Future<void> Function(String path);
 
+/// Renames [folder] to [path]; replaced in tests to fail where a held file would
+typedef AiRenameFolder = Future<void> Function(Directory folder, String path);
+
+Future<void> _renameFolder(Directory folder, String path) => folder.rename(path);
+
 /// Unpacks [archive] into [folder], replacing what is there, each file checked against [files]; see the top of this
 /// file. Throws an [AiDownloadException]: damaged for an archive that is not the one of the catalogue, diskFull or
-/// writeFailed when a file cannot be written. On any failure the folder of the engine is left as it was.
+/// writeFailed when a file cannot be written. On any failure the folder of the engine is left as it was: the folder in
+/// place is renamed aside before the new one takes its place, and renamed back when that fails (an update whose old
+/// folder holds a file the system keeps fails before anything moves).
 Future<void> installAiArchive(
   File archive,
   Directory folder,
   List<AiArchiveFile> files, {
   AiSetExecutable setExecutable = setExecutableBit,
+  AiRenameFolder renameFolder = _renameFolder,
 }) async {
   final bytes = await archive.readAsBytes();
   final entries = _readCentralDirectory(bytes);
@@ -88,9 +96,22 @@ Future<void> installAiArchive(
         await setExecutable(target.path);
       }
     }
-    await _deleteIfThere(folder);
     await folder.parent.create(recursive: true);
-    await staging.rename(folder.path);
+    final aside = await _asideOf(folder);
+    final hadFolder = FileSystemEntity.typeSync(folder.path, followLinks: false) != FileSystemEntityType.notFound;
+    if (hadFolder) {
+      await renameFolder(folder, aside.path);
+    }
+    try {
+      await renameFolder(staging, folder.path);
+    } on Object {
+      if (hadFolder && FileSystemEntity.typeSync(folder.path, followLinks: false) == FileSystemEntityType.notFound) {
+        await renameFolder(aside, folder.path).catchError((Object _) {});
+      }
+      rethrow;
+    }
+    // A file of the old folder the system still holds keeps it; the files no longer used show it then
+    await _deleteIfThere(aside).catchError((Object _) {});
   } on FileSystemException catch (error) {
     await _deleteIfThere(staging).catchError((Object _) {});
     throw AiDownloadException(
@@ -100,6 +121,23 @@ Future<void> installAiArchive(
   } on Object {
     await _deleteIfThere(staging).catchError((Object _) {});
     rethrow;
+  }
+}
+
+/// Where the folder in place waits while the new one takes its place: `<folder>.old`, or a free name beside it when an
+/// earlier one could not be deleted
+Future<Directory> _asideOf(Directory folder) async {
+  final first = Directory('${folder.path}.old');
+  try {
+    await _deleteIfThere(first);
+    return first;
+  } on FileSystemException {
+    for (var n = 2; ; n++) {
+      final next = Directory('${folder.path}.old$n');
+      if (FileSystemEntity.typeSync(next.path, followLinks: false) == FileSystemEntityType.notFound) {
+        return next;
+      }
+    }
   }
 }
 

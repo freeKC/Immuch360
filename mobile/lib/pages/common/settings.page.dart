@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/store.dart';
 import 'package:immich_mobile/data/store/passkey.dart';
+import 'package:immich_mobile/desktop/ai/ui/ai_updates.dart';
 import 'package:immich_mobile/desktop/settings/computer_settings.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
@@ -171,6 +172,10 @@ class _MobileLayout extends ConsumerWidget {
                     title: setting.title(context.t),
                     subtitle: setting.subtitle(context.t),
                     icon: setting.icon,
+                    // Immuch360 Desktop: the AI components that can be updated, as in the wide layout
+                    decorateIcon: setting == SettingSection.thisComputer && CurrentPlatform.isDesktop
+                        ? (icon) => AiUpdatesBadge(child: icon)
+                        : null,
                     onTap: () => context.pushRoute(SettingsSubRoute(section: setting)),
                   ),
                 ],
@@ -269,7 +274,10 @@ class _TabletLayout extends HookConsumerWidget {
                 (s) => SliverToBoxAdapter(
                   child: ListTile(
                     title: Text(s.title(context.t)),
-                    leading: Icon(s.icon),
+                    // Immuch360 Desktop: the AI components that can be updated (lib/desktop/ai/ui/ai_updates.dart)
+                    leading: s == SettingSection.thisComputer && CurrentPlatform.isDesktop
+                        ? AiUpdatesBadge(child: Icon(s.icon))
+                        : Icon(s.icon),
                     selected: s.index == shownSection.index,
                     selectedColor: context.primaryColor,
                     selectedTileColor: context.themeData.highlightColor,

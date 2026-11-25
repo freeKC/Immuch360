@@ -3,11 +3,14 @@
 // The loopback stands for the screen's LAN address (192.168.1.20): the client refuses anything but a private IPv4.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
+import 'package:immich_mobile/domain/models/jellyfin_server_info.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/plex_server_info.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
@@ -62,7 +65,8 @@ class _FakeActions implements ScreenPlayerActions {
         seq: _state.seq + 1,
         phase: reason == null ? ScreenPlayPhase.opening : ScreenPlayPhase.failed,
         server: item.server,
-        item: item.item,
+        item: item.kind == PlayKind.plex ? item.item : null,
+        itemKey: item.item,
         title: item.title,
         from: from.name,
         positionMs: item.offsetMs,
@@ -428,6 +432,225 @@ void main() {
         await controller().addServer(screen, (host: '192.168.1.20', port: port), _source, confirm: (_) async => true),
         HandoverResult.unreachable,
       );
+    });
+  });
+
+  group('Immich', () {
+    const asset = '3F2504E0-4F89-11D3-9A0C-0305E82C3301';
+    const user = 'a1b2c3d4-0000-4000-8000-00000000abcd';
+
+    RemoteAsset remote({AssetType type = AssetType.image, AssetVisibility visibility = AssetVisibility.timeline}) =>
+        RemoteAsset(
+          id: asset,
+          name: 'IMG_0001.HEIC',
+          ownerId: user,
+          checksum: 'c',
+          type: type,
+          createdAt: DateTime.utc(2026),
+          updatedAt: DateTime.utc(2026),
+          visibility: visibility,
+          isEdited: false,
+          width: 4032,
+          height: 3024,
+        );
+
+    PlayOnRequest request(BaseAsset of) => PlayOnRequest.ofAsset(
+      of,
+      userId: user,
+      endpoints: const [
+        'https://Photos.example.org/api',
+        'https://photos.example.org:443/api/',
+        'http://192.168.1.10:2283/api',
+        'http://10.0.0.2:2283/api',
+        'http://10.0.0.3:2283/api',
+        'http://10.0.0.4:2283/api',
+      ],
+      serverName: 'photos.example.org',
+    )!;
+
+    test('the request names the asset, the account and four addresses at most, the same address once', () {
+      final photo = request(remote());
+      final target = photo.target as ImmichPlayTarget;
+      expect(photo.kind, PlayKind.immich);
+      expect(photo.isPhoto, isTrue);
+      expect(target.asset, asset.toLowerCase());
+      expect(target.user, user);
+      expect(target.endpointHashes, [
+        immichEndpointHash('https://photos.example.org'),
+        immichEndpointHash('http://192.168.1.10:2283'),
+        immichEndpointHash('http://10.0.0.2:2283'),
+        immichEndpointHash('http://10.0.0.3:2283'),
+      ]);
+      expect(jsonEncode(photo.item.toJson()), isNot(contains('photos.example.org')));
+      expect(jsonEncode(photo.item.toJson()), isNot(contains('192.168.1.10')));
+      expect(photo.immich?.locked, isFalse);
+      expect(request(remote(visibility: AssetVisibility.locked)).immich?.locked, isTrue);
+      expect(request(remote(type: AssetType.video)).isPhoto, isFalse);
+      // A photo on this phone only: nothing a screen could ask its server for
+      final local = LocalAsset(
+        id: 'local-1',
+        name: 'a.jpg',
+        type: AssetType.image,
+        createdAt: DateTime.utc(2026),
+        updatedAt: DateTime.utc(2026),
+        playbackStyle: AssetPlaybackStyle.image,
+        isEdited: false,
+      );
+      expect(PlayOnRequest.ofAsset(local, userId: user, endpoints: const [], serverName: 'x'), isNull);
+    });
+
+    test('a play names the asset, never a token, and the controller follows the photo on the screen', () async {
+      final photo = request(remote());
+      expect(await controller().play(screen, address, photo), PlayOnOutcome.playing);
+      final played = actions.played!;
+      expect(played.kind, PlayKind.immich);
+      expect((played.target as ImmichPlayTarget).asset, asset.toLowerCase());
+      expect(played.toJson().keys.toSet(), {'kind', 'asset', 'user', 'endpointHashes', 'media', 'title', 'offsetMs'});
+      expect(playback()?.isOfAsset(asset), isTrue);
+      actions.set(actions.state.next(phase: ScreenPlayPhase.showing));
+      await _until(() => playback()?.state.phase == ScreenPlayPhase.showing);
+      expect(playback()?.ended, isFalse);
+    });
+
+    test('the next photo sent while the screen shows one takes its place, the controller stays', () async {
+      expect(await controller().play(screen, address, request(remote())), PlayOnOutcome.playing);
+      final next = PlayOnRequest.ofAsset(
+        RemoteAsset(
+          id: '00000000-0000-4000-8000-000000000002',
+          name: 'b.jpg',
+          ownerId: user,
+          checksum: 'd',
+          type: AssetType.image,
+          createdAt: DateTime.utc(2026),
+          updatedAt: DateTime.utc(2026),
+          isEdited: false,
+        ),
+        userId: user,
+        endpoints: const [],
+        serverName: 'x',
+      )!;
+      expect(await controller().play(screen, address, next), PlayOnOutcome.playing);
+      actions.set(actions.state.next(phase: ScreenPlayPhase.showing));
+      await _until(() => playback()?.state.phase == ScreenPlayPhase.showing);
+      expect(playback()?.isOfAsset('00000000-0000-4000-8000-000000000002'), isTrue);
+    });
+
+    test('a build 51 screen, which plays Plex films only, asks for an update', () async {
+      await server.stop();
+      session.close();
+      session = ScreenPlayerSession(
+        screenId: _screenId,
+        phones: () => [_peer(_phoneId, name: 'Galaxy S24+')],
+        actions: actions,
+        kinds: const {PlayKind.plex},
+        random: Random(6),
+      );
+      server = PlayLinkServer(session: session, preferredPort: 0, requestTimeout: const Duration(seconds: 2));
+      final old = (host: '192.168.1.20', port: await server.start());
+      expect(await controller().play(screen, old, request(remote())), PlayOnOutcome.needsUpdate);
+      expect(actions.played, isNull);
+      // A film still plays there
+      expect(await controller().play(screen, old, _request), PlayOnOutcome.playing);
+    });
+
+    for (final (reason, outcome) in [
+      (ScreenPlayReason.notSignedIn, PlayOnOutcome.notSignedIn),
+      (ScreenPlayReason.otherAccount, PlayOnOutcome.otherAccount),
+      (ScreenPlayReason.otherServer, PlayOnOutcome.otherServer),
+      (ScreenPlayReason.notVisible, PlayOnOutcome.notVisible),
+      (ScreenPlayReason.locked, PlayOnOutcome.locked),
+      (ScreenPlayReason.noSuchSource, PlayOnOutcome.noSuchSource),
+    ]) {
+      test('a screen that answers ${reason.wire} is ${outcome.name}, and no controller shows', () async {
+        actions.playReason = reason;
+        expect(await controller().play(screen, address, request(remote())), outcome);
+        expect(playback(), isNull);
+      });
+    }
+  });
+
+  group('shares and media servers', () {
+    NetworkSource source(
+      NetworkSourceType type, {
+      String host = 'NAS.local',
+      String share = 'Videos',
+      String? discoveryId,
+      JellyfinServerInfo? jellyfin,
+    }) => NetworkSource(
+      id: 'share-1',
+      type: type,
+      name: 'NAS',
+      host: host,
+      share: share,
+      discoveryId: discoveryId,
+      jellyfin: jellyfin,
+    );
+
+    test('a file of a share names the share and the path, never its user or password', () {
+      final request = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.smb),
+        path: '/Holidays/beach.mp4',
+        photo: false,
+        offsetMs: 4000,
+      )!;
+      final target = request.target as SharePlayTarget;
+      expect(target.type, PlayShareType.smb);
+      expect(target.source, 'nas.local/Videos');
+      expect(target.path, '/Holidays/beach.mp4');
+      expect(request.offsetMs, 4000);
+      expect(request.item.toJson().keys, isNot(contains('password')));
+
+      final dlna = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.dlna, discoveryId: 'uuid:4d696e69'),
+        path: '/0/1/a.jpg',
+        photo: true,
+        offsetMs: 4000,
+      )!;
+      expect((dlna.target as SharePlayTarget).source, 'uuid:4d696e69');
+      expect(dlna.isPhoto, isTrue);
+      expect(dlna.offsetMs, 0);
+    });
+
+    test('a Jellyfin or Emby item names the server id and the item id of its path', () {
+      final jellyfin = PlayOnRequest.ofShareFile(
+        source: source(
+          NetworkSourceType.jellyfin,
+          discoveryId: 'F00DCAFE',
+          jellyfin: const JellyfinServerInfo(serverId: 'f00dcafe', userId: 'u', product: 'emby'),
+        ),
+        path: '/.items/1234/-/Film.mkv',
+        photo: false,
+      )!;
+      final target = jellyfin.target as MediaServerPlayTarget;
+      expect(target.type, PlayMediaServerType.emby);
+      expect(target.server, 'f00dcafe');
+      expect(target.item, '1234');
+      expect(playMediaServerItemOfPath('/Films/Film.mkv'), isNull);
+    });
+
+    test('nothing for a folder of this device, or a path that climbs out', () {
+      expect(
+        PlayOnRequest.ofShareFile(source: source(NetworkSourceType.documentTree), path: '/a.jpg', photo: true),
+        isNull,
+      );
+      expect(
+        PlayOnRequest.ofShareFile(source: source(NetworkSourceType.webdav), path: '/../a.jpg', photo: true),
+        isNull,
+      );
+    });
+
+    test('a play of a share file reaches the screen whole', () async {
+      final request = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.webdav, share: '/dav'),
+        path: '/Photos/a.jpg',
+        photo: true,
+      )!;
+      expect(await controller().play(screen, address, request), PlayOnOutcome.playing);
+      final played = actions.played!.target as SharePlayTarget;
+      expect(played.type, PlayShareType.webdav);
+      expect(played.source, 'nas.local/dav');
+      expect(played.path, '/Photos/a.jpg');
+      expect(played.media, PlayMedia.photo);
     });
   });
 }

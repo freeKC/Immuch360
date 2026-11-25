@@ -7,7 +7,7 @@ import 'package:immich_mobile/providers/raw/raw_video.provider.dart';
 // exception, off by default (decision D7 of the splats: 300 000 gaussians by default since 8 November 2026, 1 000 000
 // with it), and Keep every gaussian another, off on the computers whose graphics chip shares their memory (lot SVC)
 void main() {
-  group('DJI drones (experimental)', () {
+  group('DJI drones', () {
     test('is on by default', () {
       expect(const AppConfig().djiImportEnabled, isTrue);
       expect(defaultConfig.read(SettingsKey.djiImportEnabled), isTrue);
@@ -21,7 +21,7 @@ void main() {
     });
   });
 
-  group('DJI link diagnostics (experimental)', () {
+  group('DJI link diagnostics', () {
     test('is on by default', () {
       expect(const AppConfig().djiLinkEnabled, isTrue);
       expect(defaultConfig.read(SettingsKey.djiLinkEnabled), isTrue);
@@ -35,7 +35,7 @@ void main() {
     });
   });
 
-  group('3D by file name on the Meta Quest (experimental)', () {
+  group('3D by file name on the Meta Quest', () {
     test('is on by default', () {
       expect(const AppConfig().viewer.flat3dByName, isTrue);
       expect(defaultConfig.read(SettingsKey.viewerFlat3dByName), isTrue);
@@ -49,7 +49,7 @@ void main() {
     });
   });
 
-  group('Sharper flat screens on the Meta Quest (experimental)', () {
+  group('Sharper flat screens on the Meta Quest', () {
     test('is on by default', () {
       expect(const AppConfig().viewer.sharpFlatScreens, isTrue);
       expect(defaultConfig.read(SettingsKey.viewerSharpFlatScreens), isTrue);
@@ -63,7 +63,7 @@ void main() {
     });
   });
 
-  group('Frosted background behind photos on the Meta Quest (experimental)', () {
+  group('Frosted background behind photos on the Meta Quest', () {
     test('is on by default', () {
       expect(const AppConfig().viewer.frostedFlatScreens, isTrue);
       expect(defaultConfig.read(SettingsKey.viewerFrostedFlatScreens), isTrue);
@@ -77,7 +77,7 @@ void main() {
     });
   });
 
-  group('AV2 videos on the computers (experimental)', () {
+  group('AV2 videos on the computers', () {
     test('are on by default', () {
       expect(const AppConfig().viewer.av2Videos, isTrue);
       expect(defaultConfig.read(SettingsKey.viewerAv2Videos), isTrue);
@@ -91,7 +91,7 @@ void main() {
     });
   });
 
-  group('Gaussian splats on the Meta Quest (experimental)', () {
+  group('Gaussian splats on the Meta Quest', () {
     test('are on by default', () {
       expect(const AppConfig().viewer.gaussianSplats, isTrue);
       expect(defaultConfig.read(SettingsKey.viewerGaussianSplats), isTrue);
@@ -146,7 +146,7 @@ void main() {
     });
   });
 
-  group('Spatial 2.5D (experimental)', () {
+  group('Spatial 2.5D', () {
     test('is on by default', () {
       expect(const AppConfig().viewer.spatial25d, isTrue);
       expect(defaultConfig.read(SettingsKey.viewerSpatial25d), isTrue);
@@ -160,7 +160,7 @@ void main() {
     });
   });
 
-  group("Stabilize with the camera's gyroscope (experimental)", () {
+  group("Stabilize with the camera's gyroscope", () {
     test('is on by default, the lab rule', () {
       expect(const AppConfig().viewer.stabilizeVideos, isTrue);
       expect(defaultConfig.read(SettingsKey.viewerStabilizeVideos), isTrue);

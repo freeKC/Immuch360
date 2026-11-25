@@ -1,6 +1,6 @@
 // The screens of "2D videos to 3D on the computer" (release 49, video3d-plan.md sections 4.2, 4.3 and 4.5), with a fake
 // engine of the videos and a fake FFmpeg probe: "Make 3D (AI)" on a flat video in a selection and in the viewer; the
-// dialog with its type "3D video (experimental)", what it does, the experimental line, Quality, Strength and Full or
+// dialog with its type "3D video", what it does, the experimental line, Quality, Strength and Full or
 // Half with their defaults, the components with their sizes and licences before the videos can be read, then each
 // refusal and each note of the plan with its words, the encoder of the one second test, the first guess, the memory,
 // the free space needed (Convert waits for room), the name of the MP4, and Convert handing the job to the queue with
@@ -511,12 +511,9 @@ void main() {
         tester.widget<RadioGroup<ConversionKind>>(find.byKey(const Key('ai_conversion_types'))).groupValue,
         ConversionKind.stereoVideo,
       );
-      expect(find.text('3D video (experimental)'), findsOneWidget);
+      expect(find.text('3D video'), findsOneWidget);
       expect(find.text('Relief estimated by AI from a single camera, 32 frames at a time'), findsOneWidget);
-      expect(
-        find.text('Experimental. Not checked yet on a 3D screen or in a headset: tell us how it looks.'),
-        findsOneWidget,
-      );
+      expect(find.text('Not checked yet on a 3D screen or in a headset: tell us how it looks.'), findsOneWidget);
       expect(
         tester.widget<RadioGroup<VideoDepthQuality>>(find.byType(RadioGroup<VideoDepthQuality>)).groupValue,
         VideoDepthQuality.standard,
@@ -1113,7 +1110,7 @@ void main() {
       await settle(tester);
 
       expect(find.text('Relief estimated by AI from a single camera, 32 frames at a time'), findsOneWidget);
-      expect(inRow(id, find.text('2D video to 3D side by side (experimental)')), findsOneWidget);
+      expect(inRow(id, find.text('2D video to 3D side by side')), findsOneWidget);
       expect(inRow(id, find.textContaining('Computing')), findsOneWidget);
       expect(inRow(id, find.text('22 of 110 frames  •  segment 1')), findsOneWidget);
       expect(inRow(id, find.text('The time left is known after the first two windows of 32 frames')), findsOneWidget);

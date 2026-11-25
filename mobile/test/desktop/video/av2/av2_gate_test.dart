@@ -113,7 +113,7 @@ void main() {
     await pumpGate(tester);
     expect(find.byKey(const Key('av2_notice_off')), findsOneWidget);
     // Where the setting is: the Asset Viewer section of the settings, its Videos group
-    expect(find.text('AV2 videos are turned off: Settings, Asset Viewer, AV2 videos (experimental)'), findsOneWidget);
+    expect(find.text('AV2 videos are turned off: Settings, Asset Viewer, AV2 videos'), findsOneWidget);
     expect(find.text('the player'), findsNothing);
 
     await tester.tap(find.byKey(const Key('av2_turn_on')));
@@ -126,7 +126,7 @@ void main() {
     tester,
   ) async {
     await pumpGate(tester);
-    expect(find.text('Play AV2 videos (experimental)'), findsOneWidget);
+    expect(find.text('Play AV2 videos'), findsOneWidget);
     expect(
       find.text(
         'This video is AV2, a format no device decodes in hardware yet. Immuch360 can decode it with the processor of '

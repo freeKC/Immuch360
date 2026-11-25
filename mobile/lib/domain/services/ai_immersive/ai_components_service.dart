@@ -26,6 +26,17 @@
 // conversion or a download runs, into a folder that is not empty, and when the drive cannot take the copies. While
 // the copies are made nothing is removed nor handed out (a job would load the old folder, emptied right after), and a
 // download asked meanwhile waits for the new folder.
+//
+// Updates (issue 21, store/m2/release-52/ai-components-update-2026-11-24.md): a new version of the app may carry a
+// newer version of a component, under the same id with another SHA-256 (a model at a new revision, a program built
+// again), or under a new id that names the old one in AiComponent.replaces (ONNX Runtime carries its version in its
+// id). Until release 51 the load deleted the older file at once and the feature asked for a download
+// again. Now the older version stays on the disk, its state is outdated (never handed to an engine, which expects the
+// version of its catalogue), and install() is its update: the new file comes into a .part and an archive into a
+// folder beside its place, each checked by its sum, and only then does it replace the old one; an old version at
+// another path, its licence and its entry go once the new entry is written. A failed update leaves the old version as
+// it was. unusedFiles() finds what no entry of the catalogue needs any more (an id this version does not know, a
+// folder an interrupted unpacking left), and removeUnused() deletes it when the user asks.
 
 import 'dart:async';
 import 'dart:convert';
@@ -71,7 +82,39 @@ enum AiComponentState {
 
   /// Removed, but the system keeps its file until the app starts again (a loaded DLL on Windows)
   removedNextStart,
+
+  /// An older version is installed (issue 21): kept on the disk until its update is installed and checked, never
+  /// handed to an engine; install() updates it
+  outdated,
 }
+
+/// A component whose installed version is older than the one of the catalogue (issue 21)
+class AiComponentUpdate {
+  const AiComponentUpdate(this.component, {required this.installedVersion});
+
+  final AiComponent component;
+
+  /// The version installed, as installed.json names it
+  final String installedVersion;
+
+  /// What the update downloads, from the catalogue
+  int get downloadBytes => AiComponentsService.downloadBytesOf([component]);
+}
+
+/// What the folder of the components holds that no entry of the catalogue needs any more (issue 21): the entries of
+/// installed.json of an id this version does not know, and the files ("/" between folders) of no component
+class AiUnusedFiles {
+  const AiUnusedFiles({this.entries = const [], this.paths = const [], this.bytes = 0});
+
+  final List<String> entries;
+  final List<String> paths;
+  final int bytes;
+
+  bool get isEmpty => entries.isEmpty && paths.isEmpty;
+}
+
+/// An older version of a component in installed.json: its id there and its entry
+typedef _Former = ({String id, Map<String, dynamic> entry});
 
 /// What the screens show of a component
 class AiComponentStatus {
@@ -154,6 +197,7 @@ class AiComponentsService extends ChangeNotifier {
     @visibleForTesting Future<void> Function(FileSystemEntity entity)? delete,
     this._setExecutable = setExecutableBit,
     this.freeSpace,
+    this.catalogueRelease = aiComponentsCatalogueRelease,
   }) : _downloader = downloader ?? AiComponentDownloader(),
        inUse = inUse ?? _never,
        _now = now ?? DateTime.now,
@@ -168,6 +212,9 @@ class AiComponentsService extends ChangeNotifier {
 
   /// Reads the free space of the drive of the components; null where it is not checked (the Quest)
   final AiFreeSpaceReader? freeSpace;
+
+  /// The release of the app the catalogue comes with ([aiComponentsCatalogueRelease]), written into each entry
+  final int catalogueRelease;
 
   /// Whether a conversion runs, set by the engine: removal waits for its end
   bool Function() inUse;
@@ -319,8 +366,8 @@ class AiComponentsService extends ChangeNotifier {
     }
   }
 
-  /// Reads installed.json once: frees the files noted for deletion, drops the older versions, checks the size of
-  /// each installed file and cleans tmp/
+  /// Reads installed.json once: frees the files noted for deletion, forgets the older versions whose files are gone
+  /// (those still there wait for their update), checks the size of each installed file and cleans tmp/
   Future<void> load() => _loaded ??= _load().catchError((Object error, StackTrace stack) {
     // Tried again at the next call
     _loaded = null;
@@ -338,21 +385,25 @@ class AiComponentsService extends ChangeNotifier {
       changed = _installed.pendingDeletes.length != before;
     }
     for (final component in catalogue) {
-      final entry = _installed.components[component.id];
       // An entry of the catalogue without its sum (held until its release is made, as the splat scenes are) tells no
       // version: what a build with the sums installed in the same folder stays (review of lot SP0, 1 November 2026)
-      if (entry != null && component.sha256 != null && entry['sha256'] != component.sha256) {
-        // An older version: its file goes, the new one is downloaded when asked
-        _log.info('${component.id}: version ${entry['version']} replaced by ${component.version}');
-        final path = entry['path'];
-        if (path is String) {
-          final old = _entityIn(root, path);
-          if (old != null && !await _tryDelete(old, _delete)) {
-            _installed.pendingDeletes.add(path);
-          }
+      if (component.sha256 == null) {
+        continue;
+      }
+      for (final id in [component.id, ...component.replaces]) {
+        final entry = _installed.components[id];
+        if (entry == null ||
+            (id == component.id && _isCurrent(component, entry)) ||
+            (id != component.id && _ids.contains(id))) {
+          continue;
         }
-        _installed.components.remove(component.id);
-        changed = true;
+        if (_entryOnDisk(root, entry)) {
+          // An older version: it stays until its update is installed and checked (issue 21)
+          _log.info('$id: version ${entry['version']} installed, ${component.version} in the catalogue');
+        } else {
+          _installed.components.remove(id);
+          changed = true;
+        }
       }
     }
     if (changed && !await _trySave()) {
@@ -415,14 +466,58 @@ class AiComponentsService extends ChangeNotifier {
     return File(p.joinAll([(_root ?? await _folder()).path, ...notices.installPath.split('/')]));
   }
 
+  /// The ids of the catalogue
+  late final Set<String> _ids = {for (final component in catalogue) component.id};
+
+  /// Whether [entry] of installed.json is the version of [component] in the catalogue (an entry of the catalogue
+  /// without its sum tells no version, so any entry is)
+  static bool _isCurrent(AiComponent component, Map<String, dynamic> entry) =>
+      component.sha256 == null || entry['sha256'] == component.sha256;
+
+  /// Whether [entry] of installed.json was written by a newer version of the app sharing this folder (its catalogue
+  /// is of a later release): never updated back to the version of this catalogue by itself, never counted as unused.
+  /// The entries written before release 52 carry no release and are older.
+  bool _fromNewerApp(Map<String, dynamic> entry) {
+    final release = entry['catalogue'];
+    return release is int && release > catalogueRelease;
+  }
+
+  /// Whether the file or folder [entry] of installed.json names is in [root]
+  static bool _entryOnDisk(Directory root, Map<String, dynamic> entry) {
+    final path = entry['path'];
+    if (path is! String) {
+      return false;
+    }
+    final entity = _entityIn(root, path);
+    return entity != null &&
+        FileSystemEntity.typeSync(entity.path, followLinks: false) != FileSystemEntityType.notFound;
+  }
+
+  /// The older versions of [component] installed and still on the disk: its own entry when it has another sum than
+  /// the catalogue, and the entries of the ids it replaces (none for an entry of the catalogue without its sum)
+  List<_Former> _formersOf(AiComponent component) {
+    final root = _root;
+    if (root == null || component.sha256 == null) {
+      return const [];
+    }
+    return [
+      if (_installed.components[component.id] case final own?
+          when !_isCurrent(component, own) && _entryOnDisk(root, own))
+        (id: component.id, entry: own),
+      for (final id in component.replaces)
+        if (!_ids.contains(id))
+          if (_installed.components[id] case final entry? when _entryOnDisk(root, entry)) (id: id, entry: entry),
+    ];
+  }
+
   /// The state the disk gives, the size checked
   Future<AiComponentState> _stateOnDisk(AiComponent component) async {
     if (_installed.pendingDeletes.contains(component.installPath)) {
       return AiComponentState.removedNextStart;
     }
     final entry = _installed.components[component.id];
-    if (entry == null) {
-      return AiComponentState.notInstalled;
+    if (entry == null || !_isCurrent(component, entry)) {
+      return _formersOf(component).isEmpty ? AiComponentState.notInstalled : AiComponentState.outdated;
     }
     final expected = component.isArchive
         ? {for (final file in component.archiveFiles) _archiveFileOf(component, file.path): file.size}
@@ -571,6 +666,8 @@ class AiComponentsService extends ChangeNotifier {
         await _downloader.download(notices, target: _fileOf(notices), part: _partOf(notices), cancel: cancel);
       }
       final installedAt = _now();
+      // The older versions this one replaces, read before its entry takes the place of theirs
+      final formers = _formersOf(component);
       await _writeLicence(component, source: source, installedAt: installedAt);
       final before = _installed.components[component.id];
       _installed.components[component.id] = {
@@ -580,6 +677,7 @@ class AiComponentsService extends ChangeNotifier {
         'sha256': component.sha256,
         'installedAt': installedAt.toUtc().toIso8601String(),
         'source': source,
+        'catalogue': catalogueRelease,
       };
       // Not written: not installed, and the next call writes it (the file in place is kept when its sum is right)
       await _save(
@@ -591,6 +689,7 @@ class AiComponentsService extends ChangeNotifier {
           }
         },
       );
+      await _dropFormers(component, formers);
       _set(component, const AiComponentStatus(AiComponentState.installed));
     } on AiDownloadException catch (error) {
       _set(component, AiComponentStatus(await _stateAfterFailure(component), failure: error));
@@ -603,6 +702,213 @@ class AiComponentsService extends ChangeNotifier {
       _set(component, AiComponentStatus(await _stateAfterFailure(component), failure: failure));
       throw failure;
     }
+  }
+
+  /// Once [component] is installed and written: the older versions [formers] go, their files where the new version
+  /// did not take their place, the licence and the notices of an older id, and its entry. Noted in installed.json
+  /// first, so that a file the system holds goes at the next start. An installed.json that cannot be written leaves
+  /// them as they are, which unusedFiles() then shows.
+  Future<void> _dropFormers(AiComponent component, List<_Former> formers) async {
+    if (formers.isEmpty) {
+      return;
+    }
+    final paths = <String>[];
+    final entries = <String, Map<String, dynamic>>{};
+    for (final former in formers) {
+      final path = former.entry['path'];
+      if (path is String && !_overlaps(path, component.installPath)) {
+        paths.add(path);
+      }
+      if (former.id != component.id) {
+        entries[former.id] = former.entry;
+        _installed.components.remove(former.id);
+        paths.addAll(['$_licenses/${former.id}.txt', '$_licenses/${former.id}-ThirdPartyNotices.txt']);
+      }
+    }
+    await _deleteNoted(paths, undo: () => _installed.components.addAll(entries));
+  }
+
+  /// Whether one of the paths [a] and [b] ("/" between folders) is the other or holds it
+  static bool _overlaps(String a, String b) => a == b || a.startsWith('$b/') || b.startsWith('$a/');
+
+  /// Deletes [paths] of the folder that exist, noted in installed.json first (with what the caller changed in it,
+  /// which [undo] takes back when it cannot be written); a path the system keeps stays noted for the next start.
+  /// Returns those kept, null when installed.json could not be written and nothing was deleted.
+  Future<List<String>?> _deleteNoted(List<String> paths, {void Function()? undo}) async {
+    final root = _root!;
+    final noted = <String>[];
+    for (final path in paths) {
+      final entity = _entityIn(root, path);
+      if (entity != null &&
+          FileSystemEntity.typeSync(entity.path, followLinks: false) != FileSystemEntityType.notFound &&
+          !_installed.pendingDeletes.contains(path) &&
+          !noted.contains(path)) {
+        noted.add(path);
+      }
+    }
+    _installed.pendingDeletes.addAll(noted);
+    final written = await _trySave(
+      undo: () {
+        _installed.pendingDeletes.removeWhere(noted.contains);
+        undo?.call();
+      },
+    );
+    if (!written) {
+      return null;
+    }
+    final kept = <String>[];
+    for (final path in noted) {
+      final entity = _entityIn(root, path);
+      if (entity != null && !await _tryDelete(entity, _delete)) {
+        kept.add(path);
+      }
+    }
+    _pruneEmptyFolders(root, noted.where((path) => !kept.contains(path)));
+    if (noted.length != kept.length) {
+      _installed.pendingDeletes.removeWhere((path) => noted.contains(path) && !kept.contains(path));
+      if (!await _trySave()) {
+        _log.warning('the files deleted stay noted in installed.json until the next write');
+      }
+    }
+    return kept;
+  }
+
+  /// Deletes the folders [deleted] leaves empty, from the deepest up to the folders of the app, which stay
+  static void _pruneEmptyFolders(Directory root, Iterable<String> deleted) {
+    for (final path in deleted) {
+      final parts = path.split('/');
+      for (var length = parts.length - 1; length > 1; length--) {
+        final folder = Directory(p.joinAll([root.path, ...parts.take(length)]));
+        try {
+          if (FileSystemEntity.typeSync(folder.path, followLinks: false) != FileSystemEntityType.directory ||
+              folder.listSync().isNotEmpty) {
+            break;
+          }
+          folder.deleteSync();
+        } on FileSystemException {
+          break;
+        }
+      }
+    }
+  }
+
+  /// The updates of the installed components (issue 21): each component of the catalogue for [platform] (any when
+  /// null) whose installed version is older; never a component that is not installed. After load().
+  List<AiComponentUpdate> updates({AiPlatform? platform}) => [
+    for (final component in catalogue)
+      if ((platform == null || component.platforms.contains(platform)) &&
+          component.isComplete &&
+          statusOf(component).state == AiComponentState.outdated)
+        if (_formersOf(component).firstOrNull case final former? when !_fromNewerApp(former.entry))
+          AiComponentUpdate(component, installedVersion: '${former.entry['version'] ?? ''}'),
+  ];
+
+  /// The version of [component] installed.json gives, an older one included; null when none is installed
+  String? installedVersionOf(AiComponent component) {
+    final entry = _installed.components[component.id] ?? _formersOf(component).firstOrNull?.entry;
+    final version = entry?['version'];
+    return version == null ? null : '$version';
+  }
+
+  /// What no entry of the catalogue needs any more (issue 21), with the bytes it takes: the entries of an id this
+  /// version does not know (another version of the app, a component dropped since) or of an older id whose component
+  /// is installed in its version, and the files of the folders of the app that no component names (a folder an
+  /// interrupted unpacking left beside its place, a licence of an id gone). An older version waiting for its update is
+  /// not unused, nor what waits for the next start. Empty while a download or a move runs.
+  Future<AiUnusedFiles> unusedFiles() async {
+    await load();
+    if (_installs.isNotEmpty || _move != null) {
+      return const AiUnusedFiles();
+    }
+    final root = _root!;
+    final replacedBy = {
+      for (final component in catalogue)
+        for (final id in component.replaces) id: component,
+    };
+    // An older id waits for the update of its component, until that component is installed in its version
+    bool replacedAlready(AiComponent component) {
+      final own = _installed.components[component.id];
+      return own != null && _isCurrent(component, own);
+    }
+
+    final entries = [
+      for (final MapEntry(key: id, value: entry) in _installed.components.entries)
+        if (!_ids.contains(id) && !_fromNewerApp(entry) && (replacedBy[id] == null || replacedAlready(replacedBy[id]!)))
+          id,
+    ];
+    final needed = <String>{
+      for (final component in catalogue) ...[
+        component.installPath,
+        '$_licenses/${component.id}.txt',
+        ?component.noticesDownload?.installPath,
+      ],
+      for (final MapEntry(key: id, value: entry) in _installed.components.entries)
+        if (!entries.contains(id)) ...[
+          if (entry['path'] case final String path) path,
+          '$_licenses/$id.txt',
+          '$_licenses/$id-ThirdPartyNotices.txt',
+        ],
+      ..._installed.pendingDeletes,
+    };
+    bool isNeeded(String relative) => needed.any((path) => relative == path || relative.startsWith('$path/'));
+    final paths = <String>[];
+    var bytes = 0;
+    for (final name in const ['runtime', 'models', 'engines', _licenses]) {
+      final folder = Directory(p.join(root.path, name));
+      if (FileSystemEntity.typeSync(folder.path, followLinks: false) != FileSystemEntityType.directory) {
+        continue;
+      }
+      await for (final entity in folder.list(recursive: true, followLinks: false)) {
+        if (entity is Directory) {
+          continue;
+        }
+        final relative = p.split(p.relative(entity.path, from: root.path)).join('/');
+        if (isNeeded(relative)) {
+          continue;
+        }
+        paths.add(relative);
+        if (entity is File) {
+          try {
+            bytes += await entity.length();
+          } on FileSystemException {
+            // Gone meanwhile
+          }
+        }
+      }
+    }
+    paths.sort();
+    return AiUnusedFiles(entries: entries, paths: paths, bytes: bytes);
+  }
+
+  /// Deletes what unusedFiles() finds and [listed] holds (the list the user was shown and confirmed: nothing else goes,
+  /// whatever was added since): the entries first, then the files, a file the system holds at the next start. Refused
+  /// while a conversion, a download or a move runs.
+  Future<AiRemoveOutcome> removeUnused({required AiUnusedFiles listed}) async {
+    await load();
+    if (inUse() || _installs.isNotEmpty || _move != null) {
+      return AiRemoveOutcome.busy;
+    }
+    final found = await unusedFiles();
+    final unused = AiUnusedFiles(
+      entries: [
+        for (final id in found.entries)
+          if (listed.entries.contains(id)) id,
+      ],
+      paths: [
+        for (final path in found.paths)
+          if (listed.paths.contains(path)) path,
+      ],
+    );
+    if (unused.isEmpty) {
+      return AiRemoveOutcome.removed;
+    }
+    final entries = {for (final id in unused.entries) id: _installed.components.remove(id)!};
+    final kept = await _deleteNoted(unused.paths, undo: () => _installed.components.addAll(entries));
+    _notify();
+    if (kept == null) {
+      return AiRemoveOutcome.writeFailed;
+    }
+    return kept.isEmpty ? AiRemoveOutcome.removed : AiRemoveOutcome.nextStart;
   }
 
   Future<AiComponentState> _stateAfterFailure(AiComponent component) async =>
@@ -672,6 +978,8 @@ class AiComponentsService extends ChangeNotifier {
     await _stop(component);
     final root = _root!;
     final path = component.installPath;
+    // An older version waiting for its update goes too, at its own path or under its older id
+    final formers = _formersOf(component);
     // Written first: the entry goes and the file is noted for the next start, then the file goes
     final entry = _installed.components.remove(component.id);
     final noted = _installedOf(component).existsSync() && !_installed.pendingDeletes.contains(path);
@@ -707,13 +1015,17 @@ class AiComponentsService extends ChangeNotifier {
       // The file is gone: the start pass finds nothing to delete at the path still noted
       _log.warning('$path stays noted in installed.json until the next write');
     }
+    await _dropFormers(component, formers);
     _set(component, AiComponentStatus(deferred ? AiComponentState.removedNextStart : AiComponentState.notInstalled));
     return deferred ? AiRemoveOutcome.nextStart : AiRemoveOutcome.removed;
   }
 
-  /// Whether every component of [group] on [platform] is installed
-  bool _isInstalled(AiGroupComponents group) =>
-      group.all.every((component) => statusOf(component).state == AiComponentState.installed);
+  /// Whether every component of [group] on [platform] is installed, in its version or an older one waiting for its
+  /// update
+  bool _isInstalled(AiGroupComponents group) => group.all.every((component) {
+    final state = statusOf(component).state;
+    return state == AiComponentState.installed || state == AiComponentState.outdated;
+  });
 
   /// The other groups of [platform], installed, that need [component] beside the group [besides]: a shared component
   /// stays while one of them does (design-final 2026-10-27, section 7.1, point 7)
@@ -920,11 +1232,18 @@ class AiComponentsService extends ChangeNotifier {
     final kept = <String, Map<String, dynamic>>{};
     for (final MapEntry(key: id, value: entry) in _installed.components.entries) {
       final component = catalogue.where((component) => component.id == id).firstOrNull;
-      if (component == null) {
-        // A component of a newer version: its file goes along as it is
+      if (component == null || statusOf(component).state == AiComponentState.outdated) {
+        // A component of a newer version, or an older one waiting for its update: its files go along as they are,
+        // with its licence and its notices
         final path = entry['path'];
-        if (path is String && _entityIn(old, path) is File && File(p.join(old.path, path)).existsSync()) {
-          copies.add((path: path, size: null, sha256: null));
+        final files = path is String ? _filesUnder(old, path) : const <String>[];
+        if (files.isNotEmpty) {
+          copies.addAll([for (final file in files) (path: file, size: null, sha256: null)]);
+          for (final text in ['$_licenses/$id.txt', '$_licenses/$id-ThirdPartyNotices.txt']) {
+            if (File(p.joinAll([old.path, ...text.split('/')])).existsSync()) {
+              copies.add((path: text, size: null, sha256: null));
+            }
+          }
           kept[id] = entry;
         }
         continue;
@@ -995,6 +1314,22 @@ class AiComponentsService extends ChangeNotifier {
     }
     _notify();
     return AiMoveResult(emptied ? AiMoveOutcome.moved : AiMoveOutcome.movedNextStart);
+  }
+
+  /// The files at [path] in [root] ("/" between folders): the file itself, or each file of the folder; none when
+  /// nothing is there or the path leaves the folder
+  static List<String> _filesUnder(Directory root, String path) {
+    final entity = _entityIn(root, path);
+    if (entity is File && entity.existsSync()) {
+      return [path];
+    }
+    if (entity is Directory && entity.existsSync()) {
+      return [
+        for (final file in entity.listSync(recursive: true, followLinks: false).whereType<File>())
+          p.split(p.relative(file.path, from: root.path)).join('/'),
+      ]..sort();
+    }
+    return const [];
   }
 
   /// Copies [copy] from [from] into [to], beside then renamed, its size and sum checked; returns the bytes copied so far

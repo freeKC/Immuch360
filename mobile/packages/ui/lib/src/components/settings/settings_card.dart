@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:immich_ui/extensions/build_context_extensions.dart';
 
 class SettingsCard extends StatelessWidget {
-  const SettingsCard({super.key, required this.icon, required this.title, required this.subtitle, required this.onTap});
+  const SettingsCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+    this.decorateIcon,
+  });
 
   final IconData icon;
+
+  /// Wraps the icon (Immuch360: the badge of the AI components that can be updated on "This computer")
+  final Widget Function(Widget icon)? decorateIcon;
   final String title;
   final String subtitle;
   final Function() onTap;
@@ -27,7 +37,8 @@ class SettingsCard extends StatelessWidget {
               color: context.isDarkTheme ? Colors.black26 : Colors.white.withAlpha(100),
             ),
             padding: const EdgeInsets.all(16.0),
-            child: Icon(icon, color: context.primaryColor),
+            child:
+                decorateIcon?.call(Icon(icon, color: context.primaryColor)) ?? Icon(icon, color: context.primaryColor),
           ),
           title: Text(title, style: context.textTheme.titleMedium!.copyWith(color: context.primaryColor)),
           subtitle: Text(subtitle, style: context.textTheme.bodyMedium),

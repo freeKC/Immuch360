@@ -69,7 +69,7 @@ void main() {
     expect(find.text('c2.qti.hevc.decoder'), findsOneWidget);
   });
 
-  group('DJI drones (experimental)', () {
+  group('DJI drones', () {
     final djiSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_dji_import')),
       matching: find.byType(SwitchListTile),
@@ -88,7 +88,7 @@ void main() {
     testWidgets('reads on by default', (tester) async {
       await pumpOnPhone(tester);
 
-      expect(find.text('DJI drones (experimental)'), findsOneWidget);
+      expect(find.text('DJI drones'), findsOneWidget);
       expect(tester.widget<SwitchListTile>(djiSwitch).value, isTrue);
       expect(SettingsRepository.instance.appConfig.djiImportEnabled, isTrue);
     });
@@ -118,7 +118,7 @@ void main() {
     });
   });
 
-  group('Film details from Wikipedia (experimental)', () {
+  group('Film details from Wikipedia', () {
     final wikipediaSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_film_wikipedia')),
       matching: find.byType(SwitchListTile),
@@ -155,7 +155,7 @@ void main() {
     });
   });
 
-  group('3D by file name (experimental)', () {
+  group('3D by file name', () {
     final flat3dSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_flat_3d')),
       matching: find.byType(SwitchListTile),
@@ -182,7 +182,7 @@ void main() {
     testWidgets('reads on by default, and says which names it reads', (tester) async {
       await pumpOnQuest(tester);
 
-      expect(find.text('3D by file name (experimental)'), findsOneWidget);
+      expect(find.text('3D by file name'), findsOneWidget);
       expect(
         find.text(
           'Videos named _SBS, _HSBS, _LR, _TB, _OU or Half-SBS, and photos named _TB, _OU or _HTB, open in 3D on a '
@@ -218,7 +218,7 @@ void main() {
     });
   });
 
-  group('Sharper flat screens (experimental)', () {
+  group('Sharper flat screens', () {
     final sharpSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_sharp_screens')),
       matching: find.byType(SwitchListTile),
@@ -244,7 +244,7 @@ void main() {
     testWidgets('reads on by default, and says what it changes', (tester) async {
       await pumpOnQuest(tester);
 
-      expect(find.text('Sharper flat screens (experimental)'), findsOneWidget);
+      expect(find.text('Sharper flat screens'), findsOneWidget);
       expect(
         find.text(
           'On a Meta Quest, the photos and videos of a flat screen go through the headset compositor, with its super '
@@ -304,7 +304,7 @@ void main() {
     testWidgets('reads on by default, next to Sharper flat screens, and says what it does', (tester) async {
       await pumpOnQuest(tester);
 
-      expect(find.text('Frosted background behind photos (experimental)'), findsOneWidget);
+      expect(find.text('Frosted background behind photos'), findsOneWidget);
       expect(
         find.text('A blurred copy of the photo fills the frame around it on the big screen of the headset'),
         findsOneWidget,
@@ -337,7 +337,7 @@ void main() {
     });
   });
 
-  group('Gaussian splats (experimental)', () {
+  group('Gaussian splats', () {
     final splatSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_gaussian_splats')),
       matching: find.byType(SwitchListTile),
@@ -367,7 +367,7 @@ void main() {
     testWidgets('Gaussian splats reads on by default, Large splats off, and they say what they change', (tester) async {
       await pumpOnQuest(tester);
 
-      expect(find.text('Gaussian splats (experimental)'), findsOneWidget);
+      expect(find.text('Gaussian splats'), findsOneWidget);
       expect(
         find.text(
           'Lists the .spz and .ply splats of the shares and opens them on a Meta Quest 3 or 3S\n'
@@ -376,7 +376,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('Large splats (experimental)'), findsOneWidget);
+      expect(find.text('Large splats'), findsOneWidget);
       expect(tester.widget<SwitchListTile>(splatSwitch).value, isTrue);
       expect(tester.widget<SwitchListTile>(largeSwitch).value, isFalse);
       await tester.ensureVisible(largeSwitch);
@@ -496,7 +496,7 @@ void main() {
       await tester.ensureVisible(gpuSwitch);
       await tester.pumpAndSettle();
       // Review of 2 November 2026: labelled experimental, and about the splats only (it moves the splats' WebView2)
-      expect(find.text('Splats on the more powerful graphics card (experimental)'), findsOneWidget);
+      expect(find.text('Splats on the more powerful graphics card'), findsOneWidget);
       expect(tester.widget<SwitchListTile>(gpuSwitch).value, isTrue);
       await tester.tap(gpuSwitch);
       await tester.pumpAndSettle();
@@ -517,7 +517,7 @@ void main() {
       await tester.scrollUntilVisible(keepSwitch, 100, scrollable: find.byType(Scrollable).first);
       await tester.pumpAndSettle();
 
-      expect(find.text('Keep every gaussian (experimental)'), findsOneWidget);
+      expect(find.text('Keep every gaussian'), findsOneWidget);
       expect(find.byKey(const Key('advanced_settings_splat_gpu')), findsNothing, reason: 'Windows only');
       expect(tester.widget<SwitchListTile>(keepSwitch).value, isFalse);
       await tester.tap(keepSwitch);
@@ -576,7 +576,7 @@ void main() {
     });
   });
 
-  group('DJI live video (experimental)', () {
+  group('DJI live video', () {
     final linkSwitch = find.descendant(
       of: find.byKey(const Key('advanced_settings_dji_link')),
       matching: find.byType(SwitchListTile),
@@ -598,7 +598,7 @@ void main() {
     testWidgets('reads on by default', (tester) async {
       await pumpWhereSupported(tester);
 
-      expect(find.text('DJI live video (experimental)'), findsOneWidget);
+      expect(find.text('DJI live video'), findsOneWidget);
       expect(tester.widget<SwitchListTile>(linkSwitch).value, isTrue);
       expect(SettingsRepository.instance.appConfig.djiLinkEnabled, isTrue);
     });

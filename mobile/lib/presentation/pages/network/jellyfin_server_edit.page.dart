@@ -511,20 +511,6 @@ class _JellyfinServerEditPageState extends ConsumerState<JellyfinServerEditPage>
           padding: const EdgeInsets.symmetric(horizontal: 20),
           children: [
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Icon(Icons.science_outlined, size: 18, color: context.colorScheme.tertiary),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    context.t.jellyfin_experimental,
-                    key: const Key('jellyfin_experimental'),
-                    style: context.textTheme.bodySmall?.copyWith(color: context.colorScheme.tertiary),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
             if (_showsDiscovery) ...[
               FoundServersList(
                 servers: _servers,

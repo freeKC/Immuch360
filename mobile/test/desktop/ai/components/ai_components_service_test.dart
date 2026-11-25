@@ -3,8 +3,8 @@
 // removal, removal refused during a conversion, the deferred deletion of a locked file (simulated everywhere, and a
 // real loaded DLL on Windows), remove all (a link is deleted as a link, only the folders of the app), and an
 // installed.json that cannot be written, and the notices of the libraries inside ONNX Runtime downloaded and removed
-// with it. Shared with the Quest; kept under test/desktop so that the Windows job runs it
-// on a real Windows.
+// with it. The updates of issue 21 are in ai_components_update_test.dart. Shared with the Quest; kept under
+// test/desktop so that the Windows job runs it on a real Windows.
 
 import 'dart:async';
 import 'dart:convert';
@@ -923,21 +923,31 @@ void main() {
       expect(components.statusOf(_modelComponent).state, AiComponentState.damaged);
     });
 
-    test('an older version of a component is deleted at load; an id this version does not know is kept', () async {
-      await service().install(_modelComponent);
-      final json = installedJson();
-      final entries = json['components'] as Map<String, dynamic>;
-      entries['test-model'] = {...(entries['test-model'] as Map), 'version': 'r0', 'sha256': 'f' * 64};
-      entries['future-model'] = {'version': '9', 'path': 'models/future/future.bin', 'size': 3, 'sha256': 'e' * 64};
-      File(p.join(root.path, 'installed.json')).writeAsStringSync(jsonEncode(json));
+    test(
+      'an older version of a component stays at load until its update; an id this version does not know is kept',
+      () async {
+        // Issue 21 (ai_components_update_test.dart): before release 52 the older file was deleted here
+        await service().install(_modelComponent);
+        final json = installedJson();
+        final entries = json['components'] as Map<String, dynamic>;
+        entries['test-model'] = {...(entries['test-model'] as Map), 'version': 'r0', 'sha256': 'f' * 64};
+        entries['future-model'] = {'version': '9', 'path': 'models/future/future.bin', 'size': 3, 'sha256': 'e' * 64};
+        File(p.join(root.path, 'installed.json')).writeAsStringSync(jsonEncode(json));
 
-      final later = service();
-      await later.load();
+        final later = service();
+        await later.load();
 
-      expect(later.statusOf(_modelComponent).state, AiComponentState.notInstalled);
-      expect(installedFile(_modelComponent).existsSync(), isFalse);
-      expect((installedJson()['components'] as Map).keys, ['future-model']);
-    });
+        expect(later.statusOf(_modelComponent).state, AiComponentState.outdated);
+        expect(await later.verifiedFile(_modelComponent), isNull);
+        expect(installedFile(_modelComponent).existsSync(), isTrue);
+        expect((installedJson()['components'] as Map).keys, unorderedEquals(['test-model', 'future-model']));
+
+        // Its update: the file of the catalogue is downloaded again, the entry says its version
+        await later.install(_modelComponent);
+        expect(later.statusOf(_modelComponent).state, AiComponentState.installed);
+        expect(((installedJson()['components'] as Map)['test-model'] as Map)['version'], 'r1');
+      },
+    );
 
     test('an entry the catalogue holds without its sums keeps what a build with the sums installed', () async {
       // The splat scenes (plan 2026-11-01): the test build installs COLMAP and Brush with their sums from the branch of
@@ -971,12 +981,14 @@ void main() {
       final again = service(catalogue: [engine]);
       await again.load();
       expect(again.statusOf(engine).state, AiComponentState.installed);
-      // Another sum in the catalogue is still a newer version: the old one goes
+      // Another sum in the catalogue is still a newer version: the old one waits for its update (issue 21)
       final newer = _engineComponent(_zipOf({'sd-cli': utf8.encode('a newer program')}), {
         'sd-cli': utf8.encode('a newer program'),
       }, id: 'test-splat-engine');
-      await service(catalogue: [newer]).load();
-      expect(Directory(p.join(root.path, 'engines', engine.id)).existsSync(), isFalse);
+      final updating = service(catalogue: [newer]);
+      await updating.load();
+      expect(updating.statusOf(newer).state, AiComponentState.outdated);
+      expect(Directory(p.join(root.path, 'engines', engine.id)).existsSync(), isTrue);
     });
 
     test('a load that failed is tried again at the next call', () async {

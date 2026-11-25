@@ -147,7 +147,7 @@ class StereoComposerTest {
       StereoComposer.viewLabelKey(StereoView.TWO_D, leftEyeIsOriginal = true),
     )
     assertEquals(StereoComposer.LABEL_2D, StereoComposer.viewLabelKey(StereoView.TWO_D, leftEyeIsOriginal = false))
-    assertEquals("2.5D (experimental)", StereoComposer.label(emptyMap(), StereoComposer.LABEL_25D))
+    assertEquals("2.5D", StereoComposer.label(emptyMap(), StereoComposer.LABEL_25D))
     assertEquals("2,5D (expérimental)", StereoComposer.label(mapOf("ai25d" to "2,5D (expérimental)"), "ai25d"))
   }
 

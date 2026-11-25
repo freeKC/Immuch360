@@ -36,10 +36,11 @@ env:
 jobs:
   swift-tests:
     name: Swift unit tests of the 360° player (stabilisation)
-    runs-on: macos-15
+    # The image of Xcode 27 (the iOS 27 SDK Apple asks for from April 2027, ITMS-90725)
+    runs-on: xcode-27
     timeout-minutes: 20
     env:
-      XCODE_VERSION: '26.3'
+      XCODE_VERSION: '27.2'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -60,17 +61,17 @@ jobs:
 
   ios:
     name: iOS release build without signing
-    runs-on: macos-15
+    runs-on: xcode-27
     timeout-minutes: 120
     env:
-      # One Xcode, named here, as in the macOS job of immuch360-desktop.yml (Codemagic takes its newest stable one)
-      XCODE_VERSION: '26.3'
+      # One Xcode, named here (Codemagic takes its newest stable one); 27 for the iOS 27 SDK of ITMS-90725
+      XCODE_VERSION: '27.2'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Xcode with the iOS 26 SDK
+      - name: Xcode with the iOS 27 SDK
         run: |
           xcode="/Applications/Xcode_$XCODE_VERSION.app"
           if [ ! -d "$xcode" ]; then
@@ -82,8 +83,8 @@ jobs:
           xcodebuild -version
           sdk=$(xcrun --sdk iphoneos --show-sdk-version)
           echo "$xcode, iOS SDK $sdk"
-          if [ "${sdk%%.*}" -lt 26 ]; then
-            echo "::error::$xcode has the iOS $sdk SDK, not 26 or later"
+          if [ "${sdk%%.*}" -lt 27 ]; then
+            echo "::error::$xcode has the iOS $sdk SDK, not 27 or later"
             exit 1
           fi
 
@@ -104,7 +105,7 @@ jobs:
           mise //mobile:install:ci
           mise //mobile:codegen
 
-      - name: Metal toolchain for Xcode 26 (compiles the Spatial shaders)
+      - name: Metal toolchain of the Xcode (compiles the Spatial shaders)
         run: xcodebuild -downloadComponent MetalToolchain
 
       - name: iOS release build without signing

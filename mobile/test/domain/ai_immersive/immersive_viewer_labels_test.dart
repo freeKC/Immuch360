@@ -122,7 +122,7 @@ void main() {
   ) async {
     final labels = splatViewerLabels(await english(tester));
 
-    expect(labels['splatNotice'], 'Gaussian splat (experimental)');
+    expect(labels['splatNotice'], 'Gaussian splat');
     expect(
       labels['splatDisclaimer'],
       'Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: '
@@ -131,7 +131,7 @@ void main() {
   });
 
   testWidgets('the 3D button names the 2.5D view of a relief, experimental', (tester) async {
-    expect(aiImmersiveViewerLabels(await english(tester))['ai25d'], '2.5D (experimental)');
+    expect(aiImmersiveViewerLabels(await english(tester))['ai25d'], '2.5D');
   });
 
   testWidgets('a failed relief keeps the place of its reason for the headset', (tester) async {
@@ -156,7 +156,7 @@ void main() {
 
     // The English texts of StereoComposer.defaultLabels in StereoPhoto.kt
     expect(labels, {
-      'sharpScreensNotice': 'Sharper flat screen (experimental)',
+      'sharpScreensNotice': 'Sharper flat screen',
       'bigScreenNoNavigation': 'On the big screen, a photo or video shows on its own: B or Y goes back to the app',
       'screenNearLimit3d': 'Make it smaller first: a 3D photo this close tires the eyes',
       'flatScreenBrowseHint':
@@ -171,7 +171,7 @@ void main() {
       'slideshowPaused': 'Slideshow paused',
       'slideshowEnd': 'End of the slideshow',
       'slideshowTooWarm': 'Headset too warm: the slideshow goes on in 2D',
-      'frostedNotice': 'Frosted background (experimental)',
+      'frostedNotice': 'Frosted background',
     });
   });
 
@@ -181,7 +181,7 @@ void main() {
     final labels = flat3dViewerLabels(await english(tester));
 
     expect(labels, {
-      'flat3dNotice': '3D told by the file name (experimental)',
+      'flat3dNotice': '3D told by the file name',
       'flat3dNoNavigation': 'A 3D video plays on its own: B or Y goes back to the app',
     });
   });

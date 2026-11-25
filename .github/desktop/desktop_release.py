@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
-"""Attaches the files of an Immuch360 Desktop build to its GitHub pre-release, with SHA256SUMS.txt.
+"""Attaches the files of an Immuch360 Desktop build to its GitHub release, with SHA256SUMS.txt.
 
-A desktop pre-release has the tag desktop-v<version>-<n>, for desktop build n (desktop-v3.3.0-rc.0-4 is desktop
+A desktop release has the tag desktop-v<version>-<n>, for desktop build n (desktop-v3.3.0-rc.0-4 is desktop
 build 4). Two ways lead to it, and both run this script, so that they give the same release:
   - the workflow immuch360-desktop-release.yml, on the push of such a tag: the Windows ZIP and installer, the Linux
-    .deb and .rpm, the macOS ZIP and DMG that immuch360-desktop.yml built from the tag, and the archive of the
-    corresponding source of libsmb2 (LGPL), which every package carries as an asset of the app and which
-    .github/desktop/libsmb2/pack_sources.py makes for every build, with the token of the run;
+    .deb, .rpm and AppImage (the AppImage from desktop build 32), the macOS ZIP and DMG that immuch360-desktop.yml
+    built from the tag, and the archive of the corresponding source of libsmb2 (LGPL), which every package carries as
+    an asset of the app and which .github/desktop/libsmb2/pack_sources.py makes for every build, with the token of the
+    run;
   - the owner, from a computer, with a token of their own: the release notes, or a file built elsewhere.
 
   desktop_release.py --repo OWNER/NAME --tag TAG [--commit SHA] [--name NAME] [--notes FILE] [FILE ...]
   desktop_release.py --dry-run [--label LABEL] [--sums FILE] FILE ...
 
-The release is created, as a pre-release, when the tag has none (on the commit given, or the tag's own). Its name and
+The release is created when the tag has none (on the commit given, or the tag's own), as a full release that never
+becomes the Latest (prerelease false, make_latest "false", from release 52: the Latest of the repository stays the
+release of the phones, which the app reads, and winget refuses pre-releases). Its name and
 notes are set only when they are given, so that the workflow never replaces notes written by hand. A file replaces
 the asset of the same name. SHA256SUMS.txt is then written again for every asset of the release, whichever way it
 came: from the digest GitHub keeps for each asset, from the file itself, or by reading the asset.
 
 The token comes from GH_TOKEN or GITHUB_TOKEN, or from --token-file, and is never printed. --api points at another
-server (the tests use a fake one). --dry-run reads the files only: with --label it checks that the seven files of a
+server (the tests use a fake one). --dry-run reads the files only: with --label it checks that the eight files of a
 build are all there and nothing else, and it prints SHA256SUMS.txt (or writes it with --sums), without the network.
 Exit codes: 0 done, 1 a check failed or GitHub refused, 2 bad arguments, files or token.
 """
@@ -44,6 +47,7 @@ CONTENT_TYPES = {
     '.exe': 'application/vnd.microsoft.portable-executable',
     '.deb': 'application/vnd.debian.binary-package',
     '.rpm': 'application/x-rpm',
+    '.appimage': 'application/vnd.appimage',
     '.dmg': 'application/x-apple-diskimage',
     '.gz': 'application/gzip',
     '.txt': 'text/plain',
@@ -58,7 +62,8 @@ def build_files(label: str) -> list:
     """The files of a build of immuch360-desktop.yml for a label of desktop_version.py"""
     stem = f'Immuch360-Desktop-{label}'
     return [f'{stem}-windows-x64.zip', f'{stem}-windows-x64-setup.exe', f'{stem}-linux-amd64.deb',
-            f'{stem}-linux-x86_64.rpm', f'{stem}-macos.zip', f'{stem}-macos.dmg', f'{stem}-libsmb2-sources.tar.gz']
+            f'{stem}-linux-x86_64.rpm', f'{stem}-linux-x86_64.AppImage', f'{stem}-macos.zip', f'{stem}-macos.dmg',
+            f'{stem}-libsmb2-sources.tar.gz']
 
 
 def sha256(path: pathlib.Path) -> str:
@@ -76,14 +81,14 @@ def sums_text(sums: dict) -> str:
 
 def default_name(tag: str) -> str:
     version, build = DESKTOP_TAG.match(tag).groups()
-    return f'Immuch360 Desktop {version}, desktop build {build} (preview)'
+    return f'Immuch360 Desktop {version}, desktop build {build}'
 
 
 def default_notes(tag: str) -> str:
     _, build = DESKTOP_TAG.match(tag).groups()
-    return (f'Immuch360 Desktop, desktop build {build}: the Windows installer and ZIP, the Linux .deb and .rpm and the '
-            f'macOS app are below, with the sources of libsmb2 (LGPL) and {SUMS} to check them. The release notes '
-            f'follow.\n')
+    return (f'Immuch360 Desktop, desktop build {build}: the Windows installer and ZIP, the Linux .deb, .rpm and '
+            f'AppImage and the macOS app are below, with the sources of libsmb2 (LGPL) and {SUMS} to check them. The '
+            f'release notes follow.\n')
 
 
 class GitHub:
@@ -129,7 +134,8 @@ def publish(args, files: list, token: str) -> int:
     release = github.call('GET', f'/repos/{args.repo}/releases/tags/{tag}')
     if release is None:
         body = {'tag_name': args.tag, 'name': args.name or default_name(args.tag),
-                'body': notes if notes is not None else default_notes(args.tag), 'prerelease': True, 'draft': False}
+                'body': notes if notes is not None else default_notes(args.tag), 'prerelease': False,
+                'make_latest': 'false', 'draft': False}
         if args.commit:
             body['target_commitish'] = args.commit
         release = github.call('POST', f'/repos/{args.repo}/releases', body)
@@ -208,7 +214,7 @@ def main(argv=None) -> int:
     parser.add_argument('--token-file', type=pathlib.Path, help='a file holding the token')
     parser.add_argument('--api', default=API, help=argparse.SUPPRESS)
     parser.add_argument('--dry-run', action='store_true', help='check and sum the files, no network')
-    parser.add_argument('--label', help='with --dry-run: the label of the build, whose seven files must be there')
+    parser.add_argument('--label', help='with --dry-run: the label of the build, whose eight files must be there')
     parser.add_argument('--sums', type=pathlib.Path, help=f'with --dry-run: write {SUMS} there')
     args = parser.parse_args(argv)
 
@@ -226,7 +232,7 @@ def main(argv=None) -> int:
         print('--repo OWNER/NAME is needed')
         return 2
     if not args.tag or not DESKTOP_TAG.match(args.tag):
-        print(f'--tag {args.tag!r} is not a desktop pre-release tag (desktop-v<version>-<n>)')
+        print(f'--tag {args.tag!r} is not a desktop release tag (desktop-v<version>-<n>)')
         return 2
     if args.notes and not args.notes.is_file():
         print(f'no notes file at {args.notes}')

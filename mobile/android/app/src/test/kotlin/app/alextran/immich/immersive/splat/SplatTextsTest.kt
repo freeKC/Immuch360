@@ -160,9 +160,9 @@ class SplatTextsTest {
   }
 
   @Test
-  fun `the notice of the first splat says it is experimental, then that Meta neither supports nor warrants its API`() {
+  fun `the notice of the first splat names it, then says that its API is experimental and that Meta neither supports nor warrants its API`() {
     assertEquals(
-      "Gaussian splat (experimental)\n" +
+      "Gaussian splat\n" +
         "Gaussian splats use an experimental API of the Meta Spatial SDK, which Meta neither supports nor warrants: " +
         "any defect is Immuch360's own.",
       SplatTexts.noticeText(emptyMap()),

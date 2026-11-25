@@ -290,4 +290,14 @@ void main() {
       expect(DesktopAiSettings.fromJson({'videoDepthDevice': value}).videoDepthDevice, 'auto');
     }
   });
+
+  test('"Update AI components automatically" (issue 21): on by default and in a file of an earlier version, kept', () {
+    expect(const DesktopAiSettings().autoUpdateComponents, isTrue);
+    expect(DesktopAiSettings.fromJson({'videoQuality': 'fine'}).autoUpdateComponents, isTrue);
+    expect(DesktopAiSettings.fromJson({'autoUpdateComponents': 'no'}).autoUpdateComponents, isTrue);
+    final off = const DesktopAiSettings().copyWith(autoUpdateComponents: false);
+    expect(off.toJson()['autoUpdateComponents'], isFalse);
+    expect(DesktopAiSettings.fromJson(off.toJson()), off);
+    expect(off, isNot(const DesktopAiSettings()));
+  });
 }

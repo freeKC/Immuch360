@@ -191,7 +191,7 @@ internal class ImmersiveStabilization(
     // English, for an opening without the labels
     private val DEFAULT_LABELS =
       mapOf(
-        LABEL_STABILIZATION to "Stabilise with the camera's gyroscope (experimental)",
+        LABEL_STABILIZATION to "Stabilise with the camera's gyroscope",
         LABEL_STABILIZATION_ENABLED to "Enabled",
         LABEL_STABILIZATION_DISABLED to "Disabled",
         LABEL_STABILIZATION_ON to "Stabilised with the camera's gyroscope",

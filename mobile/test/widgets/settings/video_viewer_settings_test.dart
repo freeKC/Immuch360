@@ -23,7 +23,7 @@ void main() {
     await context.dispose();
   });
 
-  final spatialSwitch = find.widgetWithText(SwitchListTile, 'Spatial 2.5D (experimental)');
+  final spatialSwitch = find.widgetWithText(SwitchListTile, 'Spatial 2.5D');
 
   testWidgets('offers the Spatial 2.5D player on a phone, off by default', (tester) async {
     await tester.pumpTestWidget(
@@ -77,10 +77,7 @@ void main() {
   });
 
   group("stabilisation with the camera's gyroscope", () {
-    final stabilizationSwitch = find.widgetWithText(
-      SwitchListTile,
-      "Stabilize with the camera's gyroscope (experimental)",
-    );
+    final stabilizationSwitch = find.widgetWithText(SwitchListTile, "Stabilize with the camera's gyroscope");
 
     testWidgets('offered where the 360° player applies it, on by default', (tester) async {
       await tester.pumpTestWidget(

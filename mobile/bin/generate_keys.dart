@@ -124,6 +124,17 @@ const _kParamTypeOverrides = <String, String>{
   'ai_immersive_splat_headset_copy.size': 'String',
   'ai_immersive_splat_keep_ply_hint.size': 'String',
   'ai_immersive_splat_quality_estimate.size': 'String',
+  // The updates of the AI components (issue 21), their sizes written with formatBytes
+  'ai_immersive_auto_update_subtitle.size': 'String',
+  'ai_immersive_unused_confirm_body.size': 'String',
+  'ai_immersive_unused_files.size': 'String',
+  'ai_immersive_update_confirm_large.size': 'String',
+  'ai_immersive_update_confirm_metered.size': 'String',
+  'ai_immersive_updates_available.size': 'String',
+  'ai_immersive_updates_paused.done': 'String',
+  'ai_immersive_updates_paused.total': 'String',
+  'ai_immersive_updates_progress.done': 'String',
+  'ai_immersive_updates_progress.total': 'String',
   // A length in millimetres, which the caller writes with its decimals for the locale
   'apple_spatial_baseline.mm': 'String',
   // The size of each eye of a spatial photo: the digits alone, as for the frame sizes below

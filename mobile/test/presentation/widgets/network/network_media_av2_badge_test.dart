@@ -22,6 +22,7 @@ import 'package:immich_mobile/presentation/widgets/network/network_media_tile.wi
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 
+import '../../../test_utils/picture_label_contrast.dart';
 import '../../../unit/presentation/presentation_context.dart';
 import '../../pages/network/network_viewer_fakes.dart';
 
@@ -112,8 +113,9 @@ void main() {
     expect(share.reads, [('/clips/cosmos.ivf', 0, 32)]);
     expect(badge, findsOneWidget);
     expect(find.descendant(of: badge, matching: find.text('AV2')), findsOneWidget);
-    final style = tester.widget<Text>(find.text('AV2')).style!;
-    expect(style.color, Theme.of(tester.element(badge)).colorScheme.primary);
+    // White on the pill of a badge, readable on the neutral tile as on a frame
+    expect(textColorsIn(tester, badge), everyElement(Colors.white));
+    expect(lowestContrast(tester, badge), greaterThanOrEqualTo(smallTextContrast));
     expect(find.text('cosmos.ivf'), findsOneWidget, reason: 'the name on the neutral tile');
     expect(frames, isEmpty);
     expect(find.bySemanticsLabel('cosmos.ivf, AV2'), findsOneWidget);

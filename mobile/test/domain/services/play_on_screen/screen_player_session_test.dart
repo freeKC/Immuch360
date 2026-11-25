@@ -51,7 +51,15 @@ class _FakeActions implements ScreenPlayerActions {
     calls.add('play');
     played = item;
     playedFrom = from;
-    set(_state.next(phase: ScreenPlayPhase.opening, server: item.server, item: item.item, from: from.name));
+    set(
+      _state.next(
+        phase: ScreenPlayPhase.opening,
+        server: item.server,
+        item: item.item,
+        from: from.name,
+        fromId: from.id,
+      ),
+    );
   }
 
   @override
@@ -260,6 +268,39 @@ void main() {
       final state = ScreenPlayState.fromJson(answer['state']);
       expect(state.phase, ScreenPlayPhase.opening);
       expect(state.from, 'Galaxy S24+');
+    });
+
+    test('another linked phone reads that the screen is taken, never what plays there', () async {
+      final mine = connect();
+      final other = connect(phoneId: _otherPhoneId);
+      await send(mine, {'type': 'play', ...const PlayItem(server: 'abcdef0123456789', item: '4242').toJson()});
+      actions.set(
+        actions.state.next(
+          phase: ScreenPlayPhase.playing,
+          title: 'IMG_0042.MOV',
+          itemKey: '4242',
+          durationMs: 60000,
+          tracks: const [PlayTrack(kind: PlayTrackKind.audio, id: '1.0', label: 'English')],
+        ),
+      );
+
+      final seen = ScreenPlayState.fromJson((await send(other, {'type': 'status'}))['state']);
+      expect(seen.phase, ScreenPlayPhase.playing);
+      expect(seen.from, 'Galaxy S24+');
+      expect(seen.seq, actions.state.seq);
+      expect([seen.title, seen.item, seen.itemKey, seen.server, seen.durationMs], everyElement(isNull));
+      expect(seen.tracks, isEmpty);
+
+      final own = ScreenPlayState.fromJson((await send(mine, {'type': 'status'}))['state']);
+      expect(own.title, 'IMG_0042.MOV');
+      expect(own.item, '4242');
+      expect(own.server, 'abcdef0123456789');
+
+      // Once the other phone plays, the first one reads only that the screen was taken
+      await send(other, {'type': 'play', ...const PlayItem(server: 'abcdef0123456789', item: '77').toJson()});
+      final taken = ScreenPlayState.fromJson((await send(mine, {'type': 'status'}))['state']);
+      expect(taken.item, isNull);
+      expect(taken.from, 'Pixel');
     });
 
     test('an item that is no Plex rating key is refused before the player hears of it', () async {

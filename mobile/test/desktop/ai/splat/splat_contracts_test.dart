@@ -554,7 +554,7 @@ void main() {
   });
 
   group('the settings', () {
-    test('"Splat scenes (experimental)" on by default, a place, no .ply', () {
+    test('"Splat scenes" on by default, a place, no .ply', () {
       const settings = DesktopAiSettings();
 
       expect(settings.splatScenes, isTrue);
@@ -598,7 +598,7 @@ void main() {
       expect(aiFeatureGroupName(t, AiFeatureGroup.splats), 'Splat scenes');
       expect(t.ai_immersive_components_splats(size: '183 MB'), 'Splat scenes: 183 MB');
       expect(t.ai_immersive_splat_make, 'Make a splat scene (AI)');
-      expect(t.ai_immersive_splat_setting, 'Splat scenes (experimental)');
+      expect(t.ai_immersive_splat_setting, 'Splat scenes');
     });
 
     test('of each failure, with the counts it carries', () {

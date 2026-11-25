@@ -17,6 +17,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/images/picture_label.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/sync_status.provider.dart';
 
@@ -80,8 +81,6 @@ final generatedVersionsProvider = FutureProvider<Map<String, IndexedVersion>>((r
   return library.index.generatedVersions();
 });
 
-const _shadows = [Shadow(blurRadius: 5.0, color: Color.fromRGBO(0, 0, 0, 0.6))];
-
 /// The badge of the thumbnail of [asset], beside the 360° one; nothing for a photo that is neither one of our versions
 /// nor two eyes side by side
 class DesktopStereoBadge extends ConsumerWidget {
@@ -129,10 +128,13 @@ class DesktopStereoBadge extends ConsumerWidget {
     };
     final label = Padding(
       padding: const EdgeInsets.only(right: 10.0, top: 6.0),
-      child: Text(
-        text,
-        key: Key(key),
-        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700, shadows: _shadows),
+      // On the pill of a badge, readable on a white sky as on a black night
+      child: PictureBadge(
+        child: Text(
+          text,
+          key: Key(key),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+        ),
       ),
     );
     return honesty == null ? label : Tooltip(message: honesty, child: label);

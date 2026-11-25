@@ -2,7 +2,7 @@
 // the app bar only returns to the photo, and a photo that cannot be had shows Retry, which Down and OK reach. A flat
 // photo turns with the one-key rotation (OK then OK, R, the yellow and blue keys), kept on the device for its file;
 // a 360° or 3D one, or one not read yet, never does. A photo named like a 3D one (street_TB.jpg) turns as any other,
-// but on a Meta Quest with "3D by file name (experimental)" on, which offers it in 3D.
+// but on a Meta Quest with "3D by file name" on, which offers it in 3D.
 
 import 'dart:async';
 

@@ -46,7 +46,7 @@ void main() {
       const SingleChildScrollView(child: FilmPlayerSettings(android: true)),
       overrides: [androidMpvAvailableProvider.overrideWith((ref) async => true)],
     );
-    expect(find.text('Let the media server convert what this device cannot play (experimental)'), findsOneWidget);
+    expect(find.text('Let the media server convert what this device cannot play'), findsOneWidget);
     expect(tester.widget<SwitchListTile>(conversionSwitch).value, isTrue);
     expect(SettingsRepository.instance.appConfig.viewer.plexConversion, isTrue);
 

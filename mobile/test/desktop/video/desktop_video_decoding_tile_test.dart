@@ -248,18 +248,15 @@ void main() {
       decoding.value = (hwdec: 'no', size: _hd);
       av2.value = const Av2DecodingStats(neededFps: 30, simd: 'avx2');
       await pumpTile(tester, (inUse: _rtx, gpus: _laptop));
-      expect(subtitle(tester), 'AV2, decoded by the processor (experimental)');
+      expect(subtitle(tester), 'AV2, decoded by the processor');
 
       av2.value = const Av2DecodingStats(neededFps: 30, decodedFps: 120.3, simd: 'avx2');
       await tester.pump();
-      expect(subtitle(tester), 'AV2, decoded by the processor: 120 fps on this computer, 30 fps needed (experimental)');
+      expect(subtitle(tester), 'AV2, decoded by the processor: 120 fps on this computer, 30 fps needed');
 
       av2.value = const Av2DecodingStats(neededFps: 23.976, decodedFps: 7.44, simd: 'avx512icl');
       await tester.pump();
-      expect(
-        subtitle(tester),
-        'AV2, decoded by the processor: 7.4 fps on this computer, 23.98 fps needed (experimental)',
-      );
+      expect(subtitle(tester), 'AV2, decoded by the processor: 7.4 fps on this computer, 23.98 fps needed');
     });
 
     testWidgets('a processor without AVX2 is said; an ARM processor is not', (tester) async {
@@ -268,7 +265,7 @@ void main() {
       await pumpTile(tester, (inUse: null, gpus: null));
       expect(
         subtitle(tester),
-        'AV2, decoded by the processor: 19 fps on this computer, 30 fps needed (experimental)\n'
+        'AV2, decoded by the processor: 19 fps on this computer, 30 fps needed\n'
         'This processor has no AVX2: AV2 decodes slowly here',
       );
       for (final simd in ['ssse3', 'sse2']) {
@@ -298,7 +295,7 @@ void main() {
       addTearDown(() => activeAv2Decoding.value = null);
       activeAv2Decoding.value = const Av2DecodingStats(neededFps: 30, decodedFps: 61, simd: 'avx2');
       await pumpTile(tester, (inUse: _rtx, gpus: _laptop), given: false);
-      expect(subtitle(tester), 'AV2, decoded by the processor: 61 fps on this computer, 30 fps needed (experimental)');
+      expect(subtitle(tester), 'AV2, decoded by the processor: 61 fps on this computer, 30 fps needed');
     });
   });
 }
