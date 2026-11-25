@@ -39,7 +39,7 @@
   "ai_enhance_refused_card_small": "การ์ดจอมีหน่วยความจำน้อยเกินไปสำหรับระดับนี้",
   "ai_enhance_refused_dedicated": "ต้องใช้การ์ดจอแยกขนาด 6 GB “ธรรมชาติ” ทำงานบนโปรเซสเซอร์",
   "ai_enhance_refused_intel_mac": "บ่มีบน Mac Intel: ยังบ่ได้ตรวจโมเดลกับ ONNX Runtime รุ่นที่เครื่องนั้นมี",
-  "ai_enhance_refused_mac": "ยังบ่มีบน Mac: เอนจินสำหรับ Mac จะมาในรุ่นหลัง “ธรรมชาติ” ใช้ได้บน Mac",
+  "ai_enhance_refused_mac": "ยังบ่มีบน Mac: เอนจินสำหรับ Mac จะมาในรุ่นหลัง “ธรรมชาติ” มีให้เลือกบน Mac",
   "ai_enhance_refused_memory": "ต้องใช้คอมพิวเตอร์ที่มีหน่วยความจำ 16 GB",
   "ai_enhance_refused_no_card": "บ่มีการ์ดจอที่เอนจินใช้ได้ (Vulkan) “ธรรมชาติ” ทำงานบนโปรเซสเซอร์",
   "ai_enhance_refused_not_yet": "ยังบ่มีในรุ่นนี้: ไฟล์ของระดับนี้ยังบ่ได้เผยแพร่",

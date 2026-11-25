@@ -522,7 +522,7 @@
   "ai_enhance_refused_card_small": "Näytönohjaimessa on liian vähän muistia tälle tasolle.",
   "ai_enhance_refused_dedicated": "Vaatii erillisen näytönohjaimen, jossa on 6 Gt muistia. Luonnollinen toimii suorittimella.",
   "ai_enhance_refused_intel_mac": "Ei Intel-Macilla: mallia ei ole tarkistettu sen ONNX Runtime -version kanssa.",
-  "ai_enhance_refused_mac": "Ei vielä Macilla: sen Mac-moottori tulee myöhemmässä versiossa. Luonnollinen toimii Macilla.",
+  "ai_enhance_refused_mac": "Ei vielä Macilla: sen Mac-moottori tulee myöhemmässä versiossa. Luonnollinen on tarjolla Macilla.",
   "ai_enhance_refused_memory": "Vaatii tietokoneen, jossa on 16 Gt muistia.",
   "ai_enhance_refused_no_card": "Ei näytönohjainta, jota moottori voi käyttää (Vulkan). Luonnollinen toimii suorittimella.",
   "ai_enhance_refused_not_yet": "Ei vielä tässä versiossa: sen tiedostoja ei ole julkaistu.",

@@ -553,7 +553,7 @@
   "ai_enhance_refused_card_small": "لدى بطاقة الرسومات ذاكرة أقل مما يلزم لهذا المستوى.",
   "ai_enhance_refused_dedicated": "يحتاج إلى بطاقة رسومات مستقلة بذاكرة 6 GB. يعمل «طبيعي» على المعالج.",
   "ai_enhance_refused_intel_mac": "غير متاح على Mac بمعالج Intel: لم يُفحص النموذج مع إصدار ONNX Runtime الموجود عليه.",
-  "ai_enhance_refused_mac": "ليس متاحًا على Mac بعد: محرك هذا المستوى الخاص بـ Mac يأتي في إصدار لاحق. يعمل «طبيعي» على Mac.",
+  "ai_enhance_refused_mac": "ليس متاحًا على Mac بعد: محرك هذا المستوى الخاص بـ Mac يأتي في إصدار لاحق. يُعرض «طبيعي» على Mac.",
   "ai_enhance_refused_memory": "يحتاج إلى حاسوب بذاكرة 16 GB.",
   "ai_enhance_refused_no_card": "لا توجد بطاقة رسومات يستطيع المحرك استخدامها (Vulkan). يعمل «طبيعي» على المعالج.",
   "ai_enhance_refused_not_yet": "ليس في هذا الإصدار بعد: ملفاته لم تُنشر.",

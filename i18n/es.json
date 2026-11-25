@@ -567,7 +567,7 @@
   "ai_enhance_refused_card_small": "La tarjeta gráfica tiene muy poca memoria para este nivel.",
   "ai_enhance_refused_dedicated": "Necesita una tarjeta gráfica dedicada de 6 GB. Natural se ejecuta en el procesador.",
   "ai_enhance_refused_intel_mac": "No en un Mac con Intel: el modelo no se ha comprobado con la versión de ONNX Runtime que tiene.",
-  "ai_enhance_refused_mac": "Todavía no en Mac: su motor para Mac llegará en una versión posterior. Natural funciona en Mac.",
+  "ai_enhance_refused_mac": "Todavía no en Mac: su motor para Mac llegará en una versión posterior. Natural se ofrece en Mac.",
   "ai_enhance_refused_memory": "Necesita un ordenador con 16 GB de memoria.",
   "ai_enhance_refused_no_card": "No hay ninguna tarjeta gráfica que el motor pueda usar (Vulkan). Natural se ejecuta en el procesador.",
   "ai_enhance_refused_not_yet": "Aún no en esta versión: sus archivos no están publicados.",

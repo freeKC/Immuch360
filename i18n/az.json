@@ -208,7 +208,7 @@
   "ai_enhance_refused_card_small": "Qrafik kartın yaddaşı bu səviyyə üçün çox azdır.",
   "ai_enhance_refused_dedicated": "6 GB-lıq diskret qrafik kart lazımdır. «Təbii» prosessorda işləyir.",
   "ai_enhance_refused_intel_mac": "Intel Mac-da yox: model onun ONNX Runtime versiyası ilə yoxlanılmayıb.",
-  "ai_enhance_refused_mac": "Mac-da hələ yox: onun Mac üçün mühərriki sonrakı versiyalardan birində gələcək. «Təbii» Mac-da işləyir.",
+  "ai_enhance_refused_mac": "Mac-da hələ yox: onun Mac üçün mühərriki sonrakı versiyalardan birində gələcək. «Təbii» Mac-da təklif olunur.",
   "ai_enhance_refused_memory": "16 GB yaddaşlı kompüter lazımdır.",
   "ai_enhance_refused_no_card": "Mühərrikin istifadə edə biləcəyi qrafik kart yoxdur (Vulkan). «Təbii» prosessorda işləyir.",
   "ai_enhance_refused_not_yet": "Bu versiyada hələ yox: onun faylları dərc edilməyib.",

@@ -51,7 +51,7 @@
   "ai_enhance_refused_card_small": "Bu daraja uchun videokarta xotirasi juda kam.",
   "ai_enhance_refused_dedicated": "6 GB li alohida videokarta kerak. «Tabiiy» protsessorda ishlaydi.",
   "ai_enhance_refused_intel_mac": "Intel Mac'da emas: model undagi ONNX Runtime versiyasi bilan tekshirilmagan.",
-  "ai_enhance_refused_mac": "Mac'da hali yo'q: uning Mac uchun dvigateli keyingi versiyalardan birida keladi. «Tabiiy» Mac'da ishlaydi.",
+  "ai_enhance_refused_mac": "Mac'da hali yo'q: uning Mac uchun dvigateli keyingi versiyalardan birida keladi. «Tabiiy» Mac'da taklif etiladi.",
   "ai_enhance_refused_memory": "16 GB xotirali kompyuter kerak.",
   "ai_enhance_refused_no_card": "Dvigatel foydalana oladigan videokarta yo'q (Vulkan). «Tabiiy» protsessorda ishlaydi.",
   "ai_enhance_refused_not_yet": "Bu versiyada hali yo'q: uning fayllari nashr etilmagan.",

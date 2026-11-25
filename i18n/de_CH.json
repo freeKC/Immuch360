@@ -291,7 +291,7 @@
   "ai_enhance_refused_card_small": "D Grafikcharte het z wenig Speicher für die Stufe.",
   "ai_enhance_refused_dedicated": "Bruucht e dedizierti Grafikcharte mit 6 GB. Natürlich lauft uf em Prozessor.",
   "ai_enhance_refused_intel_mac": "Nöd uf eme Intel-Mac: S Modell isch nöd mit de Version vo ONNX Runtime prüeft worde, wo det druf isch.",
-  "ai_enhance_refused_mac": "No nöd uf em Mac: D Engine für de Mac chunnt in ere spötere Version. Natürlich lauft uf em Mac.",
+  "ai_enhance_refused_mac": "No nöd uf em Mac: D Engine für de Mac chunnt in ere spötere Version. Natürlich wird uf em Mac aabotte.",
   "ai_enhance_refused_memory": "Bruucht en Computer mit 16 GB Arbeitsspeicher.",
   "ai_enhance_refused_no_card": "Kei Grafikcharte, wo d Engine cha bruuche (Vulkan). Natürlich lauft uf em Prozessor.",
   "ai_enhance_refused_not_yet": "No nöd i dere Version: D Dateie dezue sind nöd veröffentlicht.",

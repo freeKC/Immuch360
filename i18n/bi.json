@@ -52,7 +52,7 @@
   "ai_enhance_refused_card_small": "Grafik kad i no gat inaf memori blong level ia.",
   "ai_enhance_refused_dedicated": "I nidim wan grafik kad blong hem wan, we i gat 6 GB. Naturol i ron long prosesa.",
   "ai_enhance_refused_intel_mac": "I no long wan Intel Mac: oli no jekem model wetem vesen blong ONNX Runtime we Mac ia i gat.",
-  "ai_enhance_refused_mac": "I no stap long Mac yet: enjin blong hem blong Mac bae i kam long wan vesen biaen. Naturol i ron long Mac.",
+  "ai_enhance_refused_mac": "I no stap long Mac yet: enjin blong hem blong Mac bae i kam long wan vesen biaen. Naturol i stap long Mac.",
   "ai_enhance_refused_memory": "I nidim wan kompiuta wetem 16 GB memori.",
   "ai_enhance_refused_no_card": "I no gat grafik kad we enjin i save yusum (Vulkan). Naturol i ron long prosesa.",
   "ai_enhance_refused_not_yet": "I no stap long vesen ia yet: oli no pablisim ol fael blong hem.",

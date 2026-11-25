@@ -567,7 +567,7 @@
   "ai_enhance_refused_card_small": "A tarxeta gráfica ten demasiado pouca memoria para este nivel.",
   "ai_enhance_refused_dedicated": "Necesita unha tarxeta gráfica dedicada de 6 GB. Natural execútase no procesador.",
   "ai_enhance_refused_intel_mac": "Non nun Mac Intel: o modelo non se comprobou coa versión de ONNX Runtime que ten.",
-  "ai_enhance_refused_mac": "Aínda non en Mac: o seu motor para Mac chega nunha versión posterior. Natural funciona en Mac.",
+  "ai_enhance_refused_mac": "Aínda non en Mac: o seu motor para Mac chega nunha versión posterior. Natural ofrécese en Mac.",
   "ai_enhance_refused_memory": "Necesita un ordenador con 16 GB de memoria.",
   "ai_enhance_refused_no_card": "Ningunha tarxeta gráfica que o motor poida usar (Vulkan). Natural execútase no procesador.",
   "ai_enhance_refused_not_yet": "Aínda non nesta versión: os seus ficheiros non están publicados.",

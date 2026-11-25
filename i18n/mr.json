@@ -512,7 +512,7 @@
   "ai_enhance_refused_card_small": "या स्तरासाठी ग्राफिक्स कार्डमध्ये खूप कमी मेमरी आहे.",
   "ai_enhance_refused_dedicated": "6 GB चे स्वतंत्र ग्राफिक्स कार्ड लागते. नैसर्गिक प्रोसेसरवर चालते.",
   "ai_enhance_refused_intel_mac": "Intel Mac वर नाही: त्यात असलेल्या ONNX Runtime च्या आवृत्तीसोबत मॉडेल तपासलेले नाही.",
-  "ai_enhance_refused_mac": "Mac वर अजून नाही: Mac साठीचे त्याचे इंजिन नंतरच्या आवृत्तीत येईल. नैसर्गिक Mac वर चालते.",
+  "ai_enhance_refused_mac": "Mac वर अजून नाही: Mac साठीचे त्याचे इंजिन नंतरच्या आवृत्तीत येईल. नैसर्गिक Mac वर उपलब्ध आहे.",
   "ai_enhance_refused_memory": "16 GB मेमरी असलेला संगणक लागतो.",
   "ai_enhance_refused_no_card": "इंजिन वापरू शकेल असे ग्राफिक्स कार्ड नाही (Vulkan). नैसर्गिक प्रोसेसरवर चालते.",
   "ai_enhance_refused_not_yet": "या आवृत्तीत अजून नाही: त्याच्या फाइल प्रकाशित झालेल्या नाहीत.",

@@ -560,7 +560,7 @@
   "ai_enhance_refused_card_small": "La grafika karto havas tro malmulte da memoro por ĉi tiu nivelo.",
   "ai_enhance_refused_dedicated": "Bezonas apartan grafikan karton de 6 GB. Natura ruliĝas sur la procesoro.",
   "ai_enhance_refused_intel_mac": "Ne en Mac kun Intel: la modelo ne estis kontrolita kun la versio de ONNX Runtime, kiun ĝi havas.",
-  "ai_enhance_refused_mac": "Ankoraŭ ne en Mac: ĝia motoro por Mac venos en posta versio. Natura funkcias en Mac.",
+  "ai_enhance_refused_mac": "Ankoraŭ ne en Mac: ĝia motoro por Mac venos en posta versio. Natura estas proponata en Mac.",
   "ai_enhance_refused_memory": "Bezonas komputilon kun 16 GB da memoro.",
   "ai_enhance_refused_no_card": "Neniu grafika karto uzebla de la motoro (Vulkan). Natura ruliĝas sur la procesoro.",
   "ai_enhance_refused_not_yet": "Ankoraŭ ne en ĉi tiu versio: ĝiaj dosieroj ne estas publikigitaj.",

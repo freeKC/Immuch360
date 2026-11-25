@@ -76,7 +76,7 @@
   "ai_enhance_refused_card_small": "Masyadong kaunti ang memorya ng graphics card para sa antas na ito.",
   "ai_enhance_refused_dedicated": "Kailangan ng dedicated na graphics card na may 6 GB. Tumatakbo sa processor ang Natural.",
   "ai_enhance_refused_intel_mac": "Wala sa Intel Mac: hindi nasuri ang model sa bersyon ng ONNX Runtime na mayroon ito.",
-  "ai_enhance_refused_mac": "Wala pa sa Mac: darating sa susunod na bersyon ang engine nito para sa Mac. Tumatakbo sa Mac ang Natural.",
+  "ai_enhance_refused_mac": "Wala pa sa Mac: darating sa susunod na bersyon ang engine nito para sa Mac. Inaalok sa Mac ang Natural.",
   "ai_enhance_refused_memory": "Kailangan ng computer na may 16 GB na memorya.",
   "ai_enhance_refused_no_card": "Walang graphics card na magagamit ng engine (Vulkan). Tumatakbo sa processor ang Natural.",
   "ai_enhance_refused_not_yet": "Wala pa sa bersyong ito: hindi nailalathala ang mga file nito.",

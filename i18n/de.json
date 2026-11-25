@@ -567,7 +567,7 @@
   "ai_enhance_refused_card_small": "Die Grafikkarte hat zu wenig Speicher für diese Stufe.",
   "ai_enhance_refused_dedicated": "Benötigt eine dedizierte Grafikkarte mit 6 GB. Natürlich läuft auf dem Prozessor.",
   "ai_enhance_refused_intel_mac": "Nicht auf einem Intel-Mac: Das Modell wurde nicht mit der Version von ONNX Runtime geprüft, die dort verfügbar ist.",
-  "ai_enhance_refused_mac": "Noch nicht auf dem Mac: Die Engine für den Mac kommt in einer späteren Version. Natürlich läuft auf dem Mac.",
+  "ai_enhance_refused_mac": "Noch nicht auf dem Mac: Die Engine für den Mac kommt in einer späteren Version. Natürlich wird auf dem Mac angeboten.",
   "ai_enhance_refused_memory": "Benötigt einen Computer mit 16 GB Arbeitsspeicher.",
   "ai_enhance_refused_no_card": "Keine Grafikkarte, die die Engine nutzen kann (Vulkan). Natürlich läuft auf dem Prozessor.",
   "ai_enhance_refused_not_yet": "Noch nicht in dieser Version: Die zugehörigen Dateien sind nicht veröffentlicht.",

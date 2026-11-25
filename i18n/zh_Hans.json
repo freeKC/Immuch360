@@ -567,7 +567,7 @@
   "ai_enhance_refused_card_small": "显卡显存太小，无法使用此级别。",
   "ai_enhance_refused_dedicated": "需要 6 GB 的独立显卡。「自然」在处理器上运行。",
   "ai_enhance_refused_intel_mac": "不支持 Intel Mac：模型未在其自带的 ONNX Runtime 版本上验证过。",
-  "ai_enhance_refused_mac": "Mac 上暂不支持：Mac 版引擎将在后续版本中提供。「自然」可在 Mac 上运行。",
+  "ai_enhance_refused_mac": "Mac 上暂不支持：Mac 版引擎将在后续版本中提供。「自然」在 Mac 上提供。",
   "ai_enhance_refused_memory": "需要配备 16 GB 内存的电脑。",
   "ai_enhance_refused_no_card": "没有引擎可用的显卡（Vulkan）。「自然」在处理器上运行。",
   "ai_enhance_refused_not_yet": "此版本暂不支持：其文件尚未发布。",

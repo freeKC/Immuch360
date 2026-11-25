@@ -39,7 +39,7 @@
   "ai_enhance_refused_card_small": "Kad grafik ado memori sikit sangat untuk tahap ni.",
   "ai_enhance_refused_dedicated": "Perlu kad grafik khas 6 GB. Semulo jadi jale kat pemproses.",
   "ai_enhance_refused_intel_mac": "Tok leh kat Mac Intel: model belum diperikso nga versi ONNX Runtime hok ado kat dio.",
-  "ai_enhance_refused_mac": "Belum ado lagi kat Mac: enjin dio untuk Mac mari dale versi lepah ni. Semulo jadi jale kat Mac.",
+  "ai_enhance_refused_mac": "Belum ado lagi kat Mac: enjin dio untuk Mac mari dale versi lepah ni. Semulo jadi ado kat Mac.",
   "ai_enhance_refused_memory": "Perlu komputer nga 16 GB memori.",
   "ai_enhance_refused_no_card": "Takdok kad grafik hok enjin buleh guno (Vulkan). Semulo jadi jale kat pemproses.",
   "ai_enhance_refused_not_yet": "Belum ado lagi dale versi ni: fail dio belum diterbitke.",

@@ -549,7 +549,7 @@
   "ai_enhance_refused_card_small": "Txartel grafikoak memoria gutxiegi du maila honetarako.",
   "ai_enhance_refused_dedicated": "6 GB-ko txartel grafiko dedikatu bat behar du. Naturala prozesadorean exekutatzen da.",
   "ai_enhance_refused_intel_mac": "Ez Intel Mac batean: eredua ez da egiaztatu Mac horrek duen ONNX Runtime bertsioarekin.",
-  "ai_enhance_refused_mac": "Oraindik ez Mac-en: Mac-erako bere motorra geroko bertsio batean dator. Naturala Mac-en exekutatzen da.",
+  "ai_enhance_refused_mac": "Oraindik ez Mac-en: Mac-erako bere motorra geroko bertsio batean dator. Naturala Mac-en eskaintzen da.",
   "ai_enhance_refused_memory": "16 GB memoria dituen ordenagailu bat behar du.",
   "ai_enhance_refused_no_card": "Ez dago motorrak erabil dezakeen txartel grafikorik (Vulkan). Naturala prozesadorean exekutatzen da.",
   "ai_enhance_refused_not_yet": "Oraindik ez bertsio honetan: bere fitxategiak ez dira argitaratu.",

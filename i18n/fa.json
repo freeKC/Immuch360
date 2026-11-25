@@ -562,7 +562,7 @@
   "ai_enhance_refused_card_small": "حافظهٔ کارت گرافیک برای این سطح بسیار کم است.",
   "ai_enhance_refused_dedicated": "به کارت گرافیک مجزا با 6 GB نیاز دارد. «طبیعی» روی پردازنده اجرا می‌شود.",
   "ai_enhance_refused_intel_mac": "نه روی Mac با Intel: مدل با نسخهٔ ONNX Runtime آن بررسی نشده است.",
-  "ai_enhance_refused_mac": "هنوز روی Mac نه: موتور آن برای Mac در نسخه‌ای بعدی می‌آید. «طبیعی» روی Mac اجرا می‌شود.",
+  "ai_enhance_refused_mac": "هنوز روی Mac نه: موتور آن برای Mac در نسخه‌ای بعدی می‌آید. «طبیعی» روی Mac ارائه می‌شود.",
   "ai_enhance_refused_memory": "به رایانه‌ای با 16 GB حافظه نیاز دارد.",
   "ai_enhance_refused_no_card": "هیچ کارت گرافیکی که موتور بتواند به کار گیرد (Vulkan) نیست. «طبیعی» روی پردازنده اجرا می‌شود.",
   "ai_enhance_refused_not_yet": "هنوز در این نسخه نه: فایل‌های آن منتشر نشده‌اند.",

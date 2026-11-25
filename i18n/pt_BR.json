@@ -566,7 +566,7 @@
   "ai_enhance_refused_card_small": "A placa de vídeo tem memória insuficiente para este nível.",
   "ai_enhance_refused_dedicated": "Precisa de uma placa de vídeo dedicada de 6 GB. Natural roda no processador.",
   "ai_enhance_refused_intel_mac": "Não disponível em um Mac Intel: o modelo não foi verificado com a versão do ONNX Runtime que ele tem.",
-  "ai_enhance_refused_mac": "Ainda não disponível no Mac: o mecanismo para Mac chega em uma versão futura. Natural funciona no Mac.",
+  "ai_enhance_refused_mac": "Ainda não disponível no Mac: o mecanismo para Mac chega em uma versão futura. Natural é oferecido no Mac.",
   "ai_enhance_refused_memory": "Precisa de um computador com 16 GB de memória.",
   "ai_enhance_refused_no_card": "Nenhuma placa de vídeo que o mecanismo possa usar (Vulkan). Natural roda no processador.",
   "ai_enhance_refused_not_yet": "Ainda não disponível nesta versão: os arquivos dele não foram publicados.",

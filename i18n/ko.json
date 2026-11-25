@@ -567,7 +567,7 @@
   "ai_enhance_refused_card_small": "그래픽 카드 메모리가 이 수준에는 너무 적습니다.",
   "ai_enhance_refused_dedicated": "6 GB 전용 그래픽 카드가 필요합니다. ‘자연스럽게’는 프로세서에서 실행됩니다.",
   "ai_enhance_refused_intel_mac": "Intel Mac에서는 사용할 수 없습니다: 이 Mac에 있는 ONNX Runtime 버전으로 모델을 확인하지 않았습니다.",
-  "ai_enhance_refused_mac": "Mac에서는 아직 사용할 수 없습니다: Mac용 엔진은 이후 버전에서 제공됩니다. ‘자연스럽게’는 Mac에서 실행됩니다.",
+  "ai_enhance_refused_mac": "Mac에서는 아직 사용할 수 없습니다: Mac용 엔진은 이후 버전에서 제공됩니다. ‘자연스럽게’는 Mac에서 제공됩니다.",
   "ai_enhance_refused_memory": "16 GB 메모리를 갖춘 컴퓨터가 필요합니다.",
   "ai_enhance_refused_no_card": "엔진이 사용할 수 있는 그래픽 카드(Vulkan)가 없습니다. ‘자연스럽게’는 프로세서에서 실행됩니다.",
   "ai_enhance_refused_not_yet": "이 버전에는 아직 없습니다: 파일이 공개되지 않았습니다.",

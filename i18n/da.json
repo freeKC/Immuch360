@@ -560,7 +560,7 @@
   "ai_enhance_refused_card_small": "Grafikkortet har for lidt hukommelse til dette niveau.",
   "ai_enhance_refused_dedicated": "Kræver et dedikeret grafikkort med 6 GB. Naturlig kører på processoren.",
   "ai_enhance_refused_intel_mac": "Ikke på en Intel Mac: modellen er ikke afprøvet med den version af ONNX Runtime, den har.",
-  "ai_enhance_refused_mac": "Endnu ikke på Mac: motoren til Mac kommer i en senere version. Naturlig kører på Mac.",
+  "ai_enhance_refused_mac": "Endnu ikke på Mac: motoren til Mac kommer i en senere version. Naturlig tilbydes på Mac.",
   "ai_enhance_refused_memory": "Kræver en computer med 16 GB hukommelse.",
   "ai_enhance_refused_no_card": "Intet grafikkort, som motoren kan bruge (Vulkan). Naturlig kører på processoren.",
   "ai_enhance_refused_not_yet": "Endnu ikke i denne version: dens filer er ikke udgivet.",

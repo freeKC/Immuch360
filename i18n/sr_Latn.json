@@ -556,7 +556,7 @@
   "ai_enhance_refused_card_small": "Grafička kartica ima premalo memorije za ovaj nivo.",
   "ai_enhance_refused_dedicated": "Potrebna je namenska grafička kartica od 6 GB. Prirodno radi na procesoru.",
   "ai_enhance_refused_intel_mac": "Nije dostupno na Intel Mac računaru: model nije proveren sa verzijom ONNX Runtime koju on ima.",
-  "ai_enhance_refused_mac": "Još nije dostupno na Mac računaru: mehanizam ovog nivoa za Mac stiže u kasnijoj verziji. Prirodno radi na Mac računaru.",
+  "ai_enhance_refused_mac": "Još nije dostupno na Mac računaru: mehanizam ovog nivoa za Mac stiže u kasnijoj verziji. Prirodno se nudi na Mac računaru.",
   "ai_enhance_refused_memory": "Potreban je računar sa 16 GB memorije.",
   "ai_enhance_refused_no_card": "Nema grafičke kartice koju mehanizam može da koristi (Vulkan). Prirodno radi na procesoru.",
   "ai_enhance_refused_not_yet": "Još nije u ovoj verziji: njegove datoteke nisu objavljene.",

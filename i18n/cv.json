@@ -94,7 +94,7 @@
   "ai_enhance_refused_card_small": "Ку шай валли видеокартӑн асӑмӗ ытла сахал.",
   "ai_enhance_refused_dedicated": "6 GB асӑмлӑ уйрӑм видеокарта кирлӗ. «Натураллӑ» процессор ҫинче ӗҫлет.",
   "ai_enhance_refused_intel_mac": "Intel Mac ҫинче мар: модельне унти ONNX Runtime версийӗпе тӗрӗслемен.",
-  "ai_enhance_refused_mac": "Mac ҫинче халлӗхе ҫук: унӑн Mac валли движокӗ каярахри версире пулать. «Натураллӑ» Mac ҫинче ӗҫлет.",
+  "ai_enhance_refused_mac": "Mac ҫинче халлӗхе ҫук: унӑн Mac валли движокӗ каярахри версире пулать. «Натураллӑ» Mac ҫинче пур.",
   "ai_enhance_refused_memory": "16 GB асӑмлӑ компьютер кирлӗ.",
   "ai_enhance_refused_no_card": "Движок усӑ курма пултаракан видеокарта ҫук (Vulkan). «Натураллӑ» процессор ҫинче ӗҫлет.",
   "ai_enhance_refused_not_yet": "Ку версире халлӗхе ҫук: унӑн файлӗсене кӑларман.",

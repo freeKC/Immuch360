@@ -567,7 +567,7 @@
   "ai_enhance_refused_card_small": "Card đồ họa có quá ít bộ nhớ cho mức này.",
   "ai_enhance_refused_dedicated": "Cần card đồ họa rời 6 GB. Tự nhiên chạy trên bộ xử lý.",
   "ai_enhance_refused_intel_mac": "Không có trên Mac Intel: mô hình chưa được kiểm tra với phiên bản ONNX Runtime mà máy có.",
-  "ai_enhance_refused_mac": "Chưa có trên Mac: công cụ xử lý cho Mac sẽ có trong một phiên bản sau. Tự nhiên chạy được trên Mac.",
+  "ai_enhance_refused_mac": "Chưa có trên Mac: công cụ xử lý cho Mac sẽ có trong một phiên bản sau. Tự nhiên có sẵn trên Mac.",
   "ai_enhance_refused_memory": "Cần máy tính có 16 GB bộ nhớ.",
   "ai_enhance_refused_no_card": "Không có card đồ họa nào mà công cụ xử lý dùng được (Vulkan). Tự nhiên chạy trên bộ xử lý.",
   "ai_enhance_refused_not_yet": "Chưa có trong phiên bản này: các tệp của nó chưa được phát hành.",

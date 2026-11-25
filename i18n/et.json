@@ -567,7 +567,7 @@
   "ai_enhance_refused_card_small": "Graafikakaardil on selle taseme jaoks liiga vähe mälu.",
   "ai_enhance_refused_dedicated": "Vajab 6 GB eraldi graafikakaarti. Loomulik töötab protsessoril.",
   "ai_enhance_refused_intel_mac": "Mitte Intel-Macis: mudelit pole kontrollitud selles oleva ONNX Runtime’i versiooniga.",
-  "ai_enhance_refused_mac": "Macis veel mitte: selle Maci mootor tuleb hilisemas versioonis. Loomulik töötab Macis.",
+  "ai_enhance_refused_mac": "Macis veel mitte: selle Maci mootor tuleb hilisemas versioonis. Loomulik on Macis pakutud.",
   "ai_enhance_refused_memory": "Vajab arvutit, millel on 16 GB mälu.",
   "ai_enhance_refused_no_card": "Pole graafikakaarti, mida mootor saaks kasutada (Vulkan). Loomulik töötab protsessoril.",
   "ai_enhance_refused_not_yet": "Selles versioonis veel mitte: selle failid pole avaldatud.",

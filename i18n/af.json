@@ -201,7 +201,7 @@
   "ai_enhance_refused_card_small": "Die grafiese kaart het te min geheue vir hierdie vlak.",
   "ai_enhance_refused_dedicated": "Benodig ’n toegewyde grafiese kaart van 6 GB. Natuurlik loop op die verwerker.",
   "ai_enhance_refused_intel_mac": "Nie op ’n Intel Mac nie: die model is nie nagegaan met die weergawe van ONNX Runtime wat dit het nie.",
-  "ai_enhance_refused_mac": "Nog nie op ’n Mac nie: sy enjin vir die Mac kom in ’n latere weergawe. Natuurlik loop op ’n Mac.",
+  "ai_enhance_refused_mac": "Nog nie op ’n Mac nie: sy enjin vir die Mac kom in ’n latere weergawe. Natuurlik word op ’n Mac aangebied.",
   "ai_enhance_refused_memory": "Benodig ’n rekenaar met 16 GB geheue.",
   "ai_enhance_refused_no_card": "Geen grafiese kaart wat die enjin kan gebruik nie (Vulkan). Natuurlik loop op die verwerker.",
   "ai_enhance_refused_not_yet": "Nog nie in hierdie weergawe nie: sy lêers is nie gepubliseer nie.",
