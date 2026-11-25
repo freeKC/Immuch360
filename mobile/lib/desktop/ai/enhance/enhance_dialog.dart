@@ -259,6 +259,7 @@ String enhanceRefusalText(Translations t, EnhanceRefusal refusal) => switch (ref
   EnhanceRefusal.appleChipNeeded => t.ai_enhance_refused_mac,
   EnhanceRefusal.intelMacNotChecked => t.ai_enhance_refused_intel_mac,
   EnhanceRefusal.macGraphicsUnusable => t.ai_enhance_refused_mac_graphics,
+  EnhanceRefusal.macRebuildNotYet => t.ai_enhance_refused_mac_rebuild,
   EnhanceRefusal.noGraphicsCard => t.ai_enhance_refused_no_card,
   EnhanceRefusal.dedicatedCardNeeded => t.ai_enhance_refused_dedicated,
   EnhanceRefusal.graphicsCardTooSmall => t.ai_enhance_refused_card_small,
@@ -273,9 +274,11 @@ String enhanceLevelName(Translations t, EnhanceLevel level) => switch (level) {
   EnhanceLevel.natural => t.ai_enhance_level_natural,
 };
 
-String _levelLine(Translations t, EnhanceLevel level) => switch (level) {
+/// [appleChip]: on a Mac with an Apple chip Natural opens its graphs with Core ML first (natural_backend.dart)
+String _levelLine(Translations t, EnhanceLevel level, {required bool appleChip}) => switch (level) {
   EnhanceLevel.sharpen => t.ai_enhance_level_sharpen_line,
   EnhanceLevel.rebuild => t.ai_enhance_level_rebuild_line,
+  EnhanceLevel.natural when appleChip => t.ai_enhance_level_natural_line_mac,
   EnhanceLevel.natural => t.ai_enhance_level_natural_line,
 };
 
@@ -663,6 +666,7 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
       null => null,
     };
     final chosen = level == _level;
+    final line = _levelLine(t, level, appleChip: _machine?.platform == AiPlatform.macosArm64);
     return ListTile(
       key: Key('ai_enhance_level_${level.name}'),
       contentPadding: EdgeInsets.zero,
@@ -670,7 +674,7 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
       selected: chosen,
       leading: Icon(chosen ? Icons.radio_button_checked : Icons.radio_button_unchecked),
       title: Text(enhanceLevelName(t, level)),
-      subtitle: Text(reason == null ? _levelLine(t, level) : '${_levelLine(t, level)}\n$reason'),
+      subtitle: Text(reason == null ? line : '$line\n$reason'),
       onTap: () => setState(() => _level = level),
     );
   }

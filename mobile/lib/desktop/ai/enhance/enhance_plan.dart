@@ -50,6 +50,7 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
 import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show aiEnhanceMacRebuildOffered;
 
 const _mib = 1024 * 1024;
 const _gib = 1024 * _mib;
@@ -130,6 +131,9 @@ enum EnhanceRefusal {
 
   /// Natural on an Intel Mac, whose ONNX Runtime never ran the model
   intelMacNotChecked,
+
+  /// Rebuild details on a Mac while it has not run on a real Apple chip (aiEnhanceMacRebuildOffered)
+  macRebuildNotYet,
 
   /// Sharpen and Rebuild details on a Mac whose graphics Metal does not give, or for Rebuild details not of the Apple
   /// family 7 its int8 weights need
@@ -226,7 +230,14 @@ int? enhanceFreeGraphicsMemoryOf(EnhanceLevel level) => switch (level) {
 };
 
 /// The verdict of [level] for a photo of [width] x [height] on [machine] (see the top of this file)
-EnhanceVerdict enhanceVerdict(EnhanceLevel level, EnhanceMachine machine, {required int width, required int height}) {
+/// [macRebuildOffered]: aiEnhanceMacRebuildOffered, given by the tests of the gates of a Mac
+EnhanceVerdict enhanceVerdict(
+  EnhanceLevel level,
+  EnhanceMachine machine, {
+  required int width,
+  required int height,
+  bool macRebuildOffered = aiEnhanceMacRebuildOffered,
+}) {
   EnhanceVerdict refused(EnhanceRefusal reason) => EnhanceVerdict(level, refusal: reason);
   final platform = machine.platform;
   if (platform == null || platform == AiPlatform.questArm64) {
@@ -241,6 +252,9 @@ EnhanceVerdict enhanceVerdict(EnhanceLevel level, EnhanceMachine machine, {requi
   final warnings = <EnhanceWarning>[];
   final card = machine.card;
   if (platform == AiPlatform.macosArm64) {
+    if (level == EnhanceLevel.rebuild && !macRebuildOffered) {
+      return refused(EnhanceRefusal.macRebuildNotYet);
+    }
     final physical = machine.physicalMemory;
     if (level != EnhanceLevel.sharpen && physical != null && physical < naturalPhysicalMemory) {
       return refused(EnhanceRefusal.memoryTooSmall);

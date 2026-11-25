@@ -110,6 +110,20 @@ class SdCppCard {
 /// one GPU itself (its auto-fit "otherwise select one GPU"), Metal, the Apple GPU; no list of Vulkan devices is read
 const sdCppMetalDevice = 'Metal';
 
+/// The lines of ggml that say Metal could not be used: it could not make its library, its command queue or its
+/// shaders, or a buffer of the GPU failed (ggml-metal-device.m at eeda9ec4; "buffer is nil" seen on GitHub's macOS
+/// runner)
+final _metalFailure = RegExp(
+  r'ggml_metal\w*: error|failed to create (?:the )?(?:Metal )?(?:library|command queue)|error compiling source',
+  caseSensitive: false,
+);
+
+/// Whether [line] of sd-cli on a Mac says its GPU is not used
+bool sdCppMetalFailure(String line) => _metalFailure.hasMatch(line);
+
+/// The line of sd-cli that starts the GPU of a Mac ("Initializing backend: MTL0", with -v)
+final _metalBackend = RegExp(r'Initializing backend: MTL\d');
+
 /// How sd-cli ran: the program, the models, the graphics card, the threads, and the watchdogs
 class SdCppSettings {
   SdCppSettings({
@@ -922,11 +936,17 @@ class SdCppUpscaler implements UpscaleBackend {
     required this.modelSha256,
     SdCppDevice? device,
     Duration Function()? elapsed,
+    this.noMetalMessage = 'sd-cli did not run on the GPU of this Mac',
   }) : device = device ?? SdCppDevice(settings),
        _elapsed = elapsed ?? sidecarStopwatch();
 
   final ProcessRunner runner;
   final SdCppSettings settings;
+
+  /// On a Mac ([SdCppSettings.metal]): the start of the failure when sd-cli does not run on the GPU, a line of Metal
+  /// failing or no "Initializing backend: MTL0" before the upscale starts, so that x4plus never runs on the processor
+  /// unsaid (8.3 minutes for 3 MP, enhance_plan.dart)
+  final String noMetalMessage;
 
   /// The card of the job, the one its generator settled ([SdCppDevice])
   final SdCppDevice device;
@@ -953,6 +973,7 @@ class SdCppUpscaler implements UpscaleBackend {
     }
     var tiling = false;
     var done = 0;
+    var onMetal = false;
     await _sdCppRunOn(
       device,
       runner: runner,
@@ -964,8 +985,20 @@ class SdCppUpscaler implements UpscaleBackend {
       onStart: () {
         tiling = false;
         done = 0;
+        onMetal = false;
       },
       onLine: (line, vulkan, check) {
+        if (settings.metal) {
+          if (_metalBackend.hasMatch(line)) {
+            onMetal = true;
+          }
+          if (sdCppMetalFailure(line)) {
+            return BackendException(ImmersiveErrorCode.gpuUnavailable, '$noMetalMessage: $line');
+          }
+          if (line.contains('upscaling from') && !onMetal) {
+            return BackendException(ImmersiveErrorCode.gpuUnavailable, '$noMetalMessage: no Metal backend started');
+          }
+        }
         if (line.contains('upscaling from')) {
           tiling = true;
           return check.atWork();

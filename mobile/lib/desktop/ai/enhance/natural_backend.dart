@@ -16,7 +16,9 @@
 // ML chooses, the provider the 3D videos take there, depth_provider.dart), which runs what it can of the graph on the
 // GPU and the Neural Engine and leaves the rest (the int8 matrix products, most likely) to the processor of the same
 // session. A graph Core ML refuses to open, or whose run fails on it, is opened again on the processor alone and the
-// job goes on there, a line in the log saying so. Checked on the macOS runner with tiny graphs of the same inputs and
+// job goes on there, a line in the log saying so and the photo marked as partly run on the processor (fellBack, the
+// warning ai_enhance_fell_back of the panel); the session Core ML failed a run on is closed before the graph opens
+// again, so that a 16 GB Mac never holds the graph twice. Checked on the macOS runner with tiny graphs of the same inputs and
 // outputs (make_tiny_vosr.py), against the processor; whether Core ML is faster than the processor for the real int8
 // graphs was never measured, nor was any run on a Mac.
 
@@ -68,7 +70,7 @@ class OrtNaturalBackend implements EnhanceBackend {
   /// The provider each graph is opened with first: the processor, or Core ML on Apple silicon
   final OrtProvider provider;
 
-  /// What the last run said of its provider: the lines the worker sent ("Core ML refused ..., on the processor")
+  /// What the last run said of its provider: the lines the worker sent ("Core ML refused ...: on the processor")
   final notes = <String>[];
 
   /// The SHA-256 of the transformer, the file that tells the version of the model
@@ -78,8 +80,9 @@ class OrtNaturalBackend implements EnhanceBackend {
   @override
   String get model => 'VOSR 2.0 1.4B int8';
 
+  /// Whether a graph of the last run went on the processor instead of [provider] (see the top of this file)
   @override
-  bool get fellBack => false;
+  bool get fellBack => notes.any((note) => note.endsWith(vosrOnProcessorNote) || note.endsWith(vosrFellBackNote));
 
   @override
   Future<Uint8List> enhance(
@@ -89,6 +92,7 @@ class OrtNaturalBackend implements EnhanceBackend {
     required NativeCancelFlag cancel,
     required void Function(int done, int all) onStep,
   }) async {
+    notes.clear();
     final port = ReceivePort();
     final done = Completer<Uint8List>();
     final subscription = port.listen((message) {
@@ -186,7 +190,19 @@ void _vosrMain(_VosrRequest request) {
         }
 
         void note(String text) => port.send(('note', text));
-        return openVosrGraph(path, request.provider, open: (provider) => _OrtGraph(openOn(provider)), note: note);
+        void release(VosrGraph graph) {
+          if (graph is _OrtGraph && sessions.remove(graph.session)) {
+            graph.session.close();
+          }
+        }
+
+        return openVosrGraph(
+          path,
+          request.provider,
+          open: (provider) => _OrtGraph(openOn(provider)),
+          note: note,
+          release: release,
+        );
       },
       files: request.files,
     );
@@ -211,13 +227,21 @@ void _vosrMain(_VosrRequest request) {
   }
 }
 
+/// The end of the note of a graph a provider refused to open, now on the processor
+const vosrOnProcessorNote = ': on the processor';
+
+/// The end of the note of a graph whose run failed on its provider, now on the processor
+const vosrFellBackNote = ': on the processor from now on';
+
 /// The graph at [path] opened with [provider] by [open], on the processor when that provider refuses it or fails a
-/// run (see the top of this file), [note] told each time; a stop of the run is never a failure of the provider
+/// run (see the top of this file), [note] told each time, the graph that failed a run given to [release] before the
+/// graph opens on the processor; a stop of the run is never a failure of the provider
 VosrGraph openVosrGraph(
   String path,
   OrtProvider provider, {
   required VosrGraph Function(OrtProvider provider) open,
   required void Function(String note) note,
+  void Function(VosrGraph graph)? release,
 }) {
   final name = path.split(RegExp(r'[/\\]')).last;
   if (provider == OrtProvider.cpu) {
@@ -227,25 +251,26 @@ VosrGraph openVosrGraph(
     final graph = open(provider);
     note('$name opened with ${provider.title}');
     return _FallbackGraph(graph, () => open(OrtProvider.cpu), (error) {
-      note('$name failed a run with ${provider.title} ($error): on the processor from now on');
-    });
+      note('$name failed a run with ${provider.title} ($error)$vosrFellBackNote');
+    }, release ?? (_) {});
   } on OrtRunStopped {
     rethrow;
   } on OrtLoadException {
     rethrow;
   } on OrtException catch (error) {
-    note('${provider.title} refused $name (${error.message}): on the processor');
+    note('${provider.title} refused $name (${error.message})$vosrOnProcessorNote');
     return open(OrtProvider.cpu);
   }
 }
 
 /// A graph on a provider that falls back to the processor at its first failed run, the run made again there
 class _FallbackGraph implements VosrGraph {
-  _FallbackGraph(this._graph, this._onProcessor, this._failed);
+  _FallbackGraph(this._graph, this._onProcessor, this._failed, this._release);
 
   VosrGraph _graph;
   final VosrGraph Function() _onProcessor;
   final void Function(Object error) _failed;
+  final void Function(VosrGraph graph) _release;
   var _fellBack = false;
 
   @override
@@ -263,6 +288,8 @@ class _FallbackGraph implements VosrGraph {
       }
       _fellBack = true;
       _failed(error.message);
+      // The session of the provider goes first: the graph is never held twice
+      _release(_graph);
       _graph = _onProcessor();
       return _graph.run(given);
     }

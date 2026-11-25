@@ -430,24 +430,30 @@ void main() {
       expect(refused.firstInput, 'lq');
       expect(notes.single, contains('Core ML refused model.onnx'));
 
-      // Opened, then a run fails: the processor from then on, the run made again there
+      // Opened, then a run fails: the session of Core ML closed first, then the processor from then on, the run made
+      // again there
       notes.clear();
       opened.clear();
       var failing = true;
+      final events = <String>[];
+      final coreMl = _FailingGraph();
       final graph = openVosrGraph(
         '/m/vae_decoder/model.onnx',
         OrtProvider.coreMl,
         open: (provider) {
           opened.add(provider);
-          return provider == OrtProvider.coreMl && failing ? _FailingGraph() : _Graph('vae_decoder', memory);
+          events.add(provider == OrtProvider.coreMl ? 'open coreMl' : 'open cpu');
+          return provider == OrtProvider.coreMl && failing ? coreMl : _Graph('vae_decoder', memory);
         },
         note: notes.add,
+        release: (released) => events.add(identical(released, coreMl) ? 'release coreMl' : 'release other'),
       );
       memory['lq'] = OrtTensor(const [1], Float32List(1));
       expect(graph.run({'latent': memory['lq']!}).shape, [1]);
       failing = false;
       expect(opened, [OrtProvider.coreMl, OrtProvider.cpu]);
-      expect(notes, [contains('opened with Core ML'), contains('on the processor from now on')]);
+      expect(events, ['open coreMl', 'release coreMl', 'open cpu']);
+      expect(notes, [contains('opened with Core ML'), endsWith(vosrFellBackNote)]);
 
       // A stop is never a failure of Core ML
       final stopping = openVosrGraph(
@@ -461,6 +467,24 @@ void main() {
       notes.clear();
       openVosrGraph('y.onnx', OrtProvider.cpu, open: (_) => _Graph('x', memory), note: notes.add);
       expect(notes, isEmpty);
+    });
+
+    test('a graph moved to the processor marks the photo as fallen back, so that the panel says it', () {
+      final backend = OrtNaturalBackend(
+        files: const VosrFiles(library: 'ort', imageEncoder: 'a', vaeEncoder: 'b', transformer: 'c', vaeDecoder: 'd'),
+        modelSha256: 'x',
+        threads: 1,
+        provider: OrtProvider.coreMl,
+      );
+      expect(backend.fellBack, isFalse);
+      backend.notes.add('model.onnx opened with Core ML');
+      expect(backend.fellBack, isFalse);
+      backend.notes.add('Core ML refused model.onnx (no pad)$vosrOnProcessorNote');
+      expect(backend.fellBack, isTrue);
+      backend.notes
+        ..clear()
+        ..add('model.onnx failed a run with Core ML (buffer)$vosrFellBackNote');
+      expect(backend.fellBack, isTrue);
     });
 
     test('stops between two graphs when asked', () {

@@ -3,6 +3,7 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show aiEnhanceMacRebuildOffered;
 
 const _gib = 1024 * 1024 * 1024;
 
@@ -44,13 +45,16 @@ void main() {
   group('a Mac with an Apple chip (release 53, not tried on a Mac yet)', () {
     test('8 GB: Sharpen only, Rebuild details and Natural need 16 GB', () {
       final mac = _mac(8);
-      expect(enhanceVerdict(EnhanceLevel.sharpen, mac, width: 4000, height: 3000).refusal, isNull);
       expect(
-        enhanceVerdict(EnhanceLevel.rebuild, mac, width: 4000, height: 3000).refusal,
+        enhanceVerdict(EnhanceLevel.sharpen, mac, width: 4000, height: 3000, macRebuildOffered: true).refusal,
+        isNull,
+      );
+      expect(
+        enhanceVerdict(EnhanceLevel.rebuild, mac, width: 4000, height: 3000, macRebuildOffered: true).refusal,
         EnhanceRefusal.memoryTooSmall,
       );
       expect(
-        enhanceVerdict(EnhanceLevel.natural, mac, width: 4000, height: 3000).refusal,
+        enhanceVerdict(EnhanceLevel.natural, mac, width: 4000, height: 3000, macRebuildOffered: true).refusal,
         EnhanceRefusal.memoryTooSmall,
       );
     });
@@ -58,25 +62,60 @@ void main() {
     test('the graphics: none from Metal, not of the Apple family 7, too small a working set', () {
       for (final level in [EnhanceLevel.sharpen, EnhanceLevel.rebuild]) {
         expect(
-          enhanceVerdict(level, _mac(16, metal: false), width: 100, height: 100).refusal,
+          enhanceVerdict(level, _mac(16, metal: false), width: 100, height: 100, macRebuildOffered: true).refusal,
           EnhanceRefusal.macGraphicsUnusable,
           reason: level.name,
         );
       }
       // A virtual Mac without the family of the Apple chips: Sharpen runs, Rebuild details and its int8 weights not
       final virtual = _mac(16, apple7: false);
-      expect(enhanceVerdict(EnhanceLevel.sharpen, virtual, width: 100, height: 100).refusal, isNull);
       expect(
-        enhanceVerdict(EnhanceLevel.rebuild, virtual, width: 100, height: 100).refusal,
+        enhanceVerdict(EnhanceLevel.sharpen, virtual, width: 100, height: 100, macRebuildOffered: true).refusal,
+        isNull,
+      );
+      expect(
+        enhanceVerdict(EnhanceLevel.rebuild, virtual, width: 100, height: 100, macRebuildOffered: true).refusal,
         EnhanceRefusal.macGraphicsUnusable,
       );
       // Natural needs no graphics
-      expect(enhanceVerdict(EnhanceLevel.natural, _mac(16, metal: false), width: 100, height: 100).refusal, isNull);
       expect(
-        enhanceVerdict(EnhanceLevel.rebuild, _mac(32, workingSet: 4 * _gib), width: 100, height: 100).refusal,
+        enhanceVerdict(
+          EnhanceLevel.natural,
+          _mac(16, metal: false),
+          width: 100,
+          height: 100,
+          macRebuildOffered: true,
+        ).refusal,
+        isNull,
+      );
+      expect(
+        enhanceVerdict(
+          EnhanceLevel.rebuild,
+          _mac(32, workingSet: 4 * _gib),
+          width: 100,
+          height: 100,
+          macRebuildOffered: true,
+        ).refusal,
         EnhanceRefusal.graphicsCardTooSmall,
       );
-      expect(enhanceVerdict(EnhanceLevel.rebuild, _mac(24), width: 100, height: 100).refusal, isNull);
+      expect(
+        enhanceVerdict(EnhanceLevel.rebuild, _mac(24), width: 100, height: 100, macRebuildOffered: true).refusal,
+        isNull,
+      );
+    });
+
+    test('Rebuild details is held on every Mac until it has run on a real Apple chip; Sharpen and Natural are not', () {
+      expect(aiEnhanceMacRebuildOffered, isFalse);
+      for (final mac in [_mac(16), _mac(64)]) {
+        expect(
+          enhanceVerdict(EnhanceLevel.rebuild, mac, width: 4000, height: 3000).refusal,
+          EnhanceRefusal.macRebuildNotYet,
+        );
+        expect(enhanceVerdict(EnhanceLevel.sharpen, mac, width: 4000, height: 3000).refusal, isNull);
+        expect(enhanceVerdict(EnhanceLevel.natural, mac, width: 4000, height: 3000).refusal, isNull);
+      }
+      // Windows and Linux never wait for it
+      expect(enhanceVerdict(EnhanceLevel.rebuild, _laptop, width: 4000, height: 3000).refusal, isNull);
     });
 
     test('two jobs side by side only when the memory holds both whole, macOS and the app apart', () {
@@ -156,7 +195,7 @@ void main() {
     test('on a Mac: every level on an Apple chip of 16 GB, none on an Intel Mac', () {
       final mac = _mac(16);
       for (final level in EnhanceLevel.values) {
-        final verdict = enhanceVerdict(level, mac, width: 4000, height: 3000);
+        final verdict = enhanceVerdict(level, mac, width: 4000, height: 3000, macRebuildOffered: true);
         expect(verdict.refusal, isNull, reason: level.name);
         // macOS gives no figure of the memory free: no warning made up
         expect(verdict.warnings, isNot(contains(EnhanceWarning.closeOtherPrograms)), reason: level.name);

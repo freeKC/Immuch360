@@ -13,11 +13,20 @@ void main() {
     final english = jsonDecode(File('${folder.path}/en.json').readAsStringSync()) as Map<String, dynamic>;
     expect(english['ai_enhance_refused_mac'], 'Needs a Mac with an Apple chip (M1 or later).');
     expect(english['ai_enhance_mac_untried'], startsWith('Not tried on a Mac yet'));
+    // The one failure seen on Metal was an error of its buffers then a crash, not a run on the processor
+    expect(english['ai_enhance_failed_no_metal'], 'The graphics of this Mac could not run this model. Use Natural.');
     final locales = folder.listSync().whereType<File>().where((file) => file.path.endsWith('.json')).toList();
     expect(locales, hasLength(89));
     for (final file in locales) {
       final values = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
-      for (final key in ['ai_enhance_refused_mac', 'ai_enhance_refused_mac_graphics', 'ai_enhance_mac_untried']) {
+      for (final key in [
+        'ai_enhance_refused_mac',
+        'ai_enhance_refused_mac_graphics',
+        'ai_enhance_refused_mac_rebuild',
+        'ai_enhance_mac_untried',
+        'ai_enhance_failed_no_metal',
+        'ai_enhance_level_natural_line_mac',
+      ]) {
         final value = values[key];
         if (value == null) {
           continue;

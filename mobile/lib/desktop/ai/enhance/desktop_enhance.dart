@@ -40,7 +40,8 @@ final _log = Logger('DesktopEnhance');
 const enhanceNotInThisVersion = 'notInThisVersion';
 
 /// How long sd-cli may stay silent on an integrated chip (Sharpen allows one), and on a Mac, whose times were never
-/// measured (ggml compiles its Metal shaders when sd-cli starts)
+/// measured on a real one (on GitHub's virtual Mac ggml compiled its Metal shaders for about 25 s at the first start
+/// after the install, 0.2 s at the next ones, and a tile of x4plus took about 29 s on its paravirtual GPU)
 const _integratedStall = Duration(minutes: 15);
 
 /// See the top of this file
@@ -187,7 +188,12 @@ class DesktopEnhanceEngine implements ImmersiveEngine, KeptAiEngine {
     );
     final runner = _session().runner(linuxLauncher: sharpen?.linuxLauncher ?? rebuild?.linuxLauncher);
     if (sharpen != null) {
-      final upscaler = SdCppUpscaler(runner: runner, settings: settings, modelSha256: upscalerComponent.sha256!);
+      final upscaler = SdCppUpscaler(
+        runner: runner,
+        settings: settings,
+        modelSha256: upscalerComponent.sha256!,
+        noMetalMessage: enhanceNoMetalMessage,
+      );
       return SdCppSharpenBackend(upscaler: upscaler);
     }
     return SdCppRebuildBackend(

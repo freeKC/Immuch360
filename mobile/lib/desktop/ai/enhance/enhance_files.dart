@@ -86,8 +86,9 @@ List<AiComponent> enhanceComponentsOf(EnhanceLevel level, AiPlatform platform) {
 
 /// What the components of [level] give on [platform]: the files when all are installed, else those missing (to
 /// download) or, for a component of this version without its size or sum, of ai-components-7 while it is not
-/// published ([published], aiEnhanceComponentsPublished), or the Metal engine while it is not published
-/// ([macPublished], aiEnhanceMacEnginePublished), the level is not in this version yet
+/// published ([published], aiEnhanceComponentsPublished), the Metal engine while it is not published
+/// ([macPublished], aiEnhanceMacEnginePublished), or Rebuild details on a Mac while it is not offered there
+/// ([macRebuildOffered], aiEnhanceMacRebuildOffered: nothing downloaded for it), the level is not in this version yet
 typedef EnhanceComponentsFound = ({EnhanceFiles? files, List<AiComponent> missing, bool notInThisVersion});
 
 Future<EnhanceComponentsFound> enhanceComponentFiles(
@@ -96,12 +97,14 @@ Future<EnhanceComponentsFound> enhanceComponentFiles(
   AiComponentFiles components, {
   bool published = aiEnhanceComponentsPublished,
   bool macPublished = aiEnhanceMacEnginePublished,
+  bool macRebuildOffered = aiEnhanceMacRebuildOffered,
 }) async {
   final needed = enhanceComponentsOf(level, platform);
   if (needed.isEmpty ||
       needed.any((component) => !component.isComplete) ||
       (!published && needed.any((component) => component.releaseTag == aiComponentsEnhanceReleaseTag)) ||
-      (!macPublished && needed.contains(sdCppSeedVr2MacArmComponent))) {
+      (!macPublished && needed.contains(sdCppSeedVr2MacArmComponent)) ||
+      (!macRebuildOffered && level == EnhanceLevel.rebuild && platform == AiPlatform.macosArm64)) {
     return (files: null, missing: const <AiComponent>[], notInThisVersion: true);
   }
   final found = <String, String>{};

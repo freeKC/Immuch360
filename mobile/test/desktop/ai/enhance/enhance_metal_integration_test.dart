@@ -98,7 +98,9 @@ void main() {
     );
     outcome['sharpen'] = {'ms': watch.elapsedMilliseconds, 'width': 320, 'height': 240, 'bytes': result.length};
     expect(result.length, picture.rgba.length);
-    // ggml compiles its Metal shaders at each start of sd-cli: 29 s on the runner's virtual GPU (run 45654794148)
+    // The time is the compute of the tiles on the runner's paravirtual GPU (about 29 s a tile in run 45677228907); ggml
+    // compiled its Metal shaders for about 25 s at the first start after the install only (--list-devices), 0.2 s here
+    // Passed through the check of SdCppUpscaler: "Initializing backend: MTL0" was said before the upscale started
   }, timeout: const Timeout(Duration(minutes: 20)));
 
   test(

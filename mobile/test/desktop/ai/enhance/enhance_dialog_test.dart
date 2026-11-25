@@ -306,27 +306,38 @@ void main() {
     expect(find.byKey(const Key('ai_enhance_change_folder')), findsOneWidget);
   });
 
-  testWidgets('on a Mac with an Apple chip: the three levels, and the plain fact that none was tried on a Mac', (
-    tester,
-  ) async {
-    facts.machineNow = const EnhanceMachine(
-      platform: AiPlatform.macosArm64,
-      physicalMemory: 16 * _gib,
-      processors: 10,
-      metal: MetalFacts(name: 'Apple M1', workingSet: 10 * _gib, unifiedMemory: true, apple7: true),
-    );
-    original('salon.jpg');
-    await open(tester, [_photo('salon.jpg')]);
-    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_sharpen'))).selected, isTrue);
-    for (final level in EnhanceLevel.values) {
-      expect(tester.widget<ListTile>(find.byKey(Key('ai_enhance_level_${level.name}'))).enabled, isTrue);
-    }
-    expect(find.text('Not tried on a Mac yet: these times were measured on a Windows laptop.'), findsOneWidget);
-    expect(find.text('Times measured on an RTX 4060 Laptop; other graphics cards were not measured.'), findsNothing);
-    await choose(tester, EnhanceLevel.natural);
-    expect(find.byKey(const Key('ai_enhance_measured_on')), findsOneWidget);
-    expect(find.textContaining('Not tried on a Mac yet'), findsOneWidget);
-  });
+  testWidgets(
+    'on a Mac with an Apple chip: Sharpen and Natural, Rebuild details held, and the plain fact that none was '
+    'tried on a Mac',
+    (tester) async {
+      facts.machineNow = const EnhanceMachine(
+        platform: AiPlatform.macosArm64,
+        physicalMemory: 16 * _gib,
+        processors: 10,
+        metal: MetalFacts(name: 'Apple M1', workingSet: 10 * _gib, unifiedMemory: true, apple7: true),
+      );
+      original('salon.jpg');
+      await open(tester, [_photo('salon.jpg')]);
+      expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_sharpen'))).selected, isTrue);
+      for (final level in [EnhanceLevel.sharpen, EnhanceLevel.natural]) {
+        expect(tester.widget<ListTile>(find.byKey(Key('ai_enhance_level_${level.name}'))).enabled, isTrue);
+      }
+      // Rebuild details failed on the only Metal GPU tried (the runner's): held until a real Apple chip ran it
+      expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_rebuild'))).enabled, isFalse);
+      expect(
+        find.textContaining('Not on a Mac in this version yet: it has not run on an Apple chip so far.'),
+        findsOneWidget,
+      );
+      // Natural opens with Core ML there, not "on the processor"
+      expect(find.textContaining('Runs through Core ML, the processor taking what Core ML cannot.'), findsOneWidget);
+      expect(find.textContaining('Runs on the processor, slowly.'), findsNothing);
+      expect(find.text('Not tried on a Mac yet: these times were measured on a Windows laptop.'), findsOneWidget);
+      expect(find.text('Times measured on an RTX 4060 Laptop; other graphics cards were not measured.'), findsNothing);
+      await choose(tester, EnhanceLevel.natural);
+      expect(find.byKey(const Key('ai_enhance_measured_on')), findsOneWidget);
+      expect(find.textContaining('Not tried on a Mac yet'), findsOneWidget);
+    },
+  );
 
   testWidgets('on a Mac of 8 GB: Sharpen only, the others say why', (tester) async {
     facts.machineNow = const EnhanceMachine(
@@ -340,7 +351,9 @@ void main() {
     expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_sharpen'))).enabled, isTrue);
     expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_rebuild'))).enabled, isFalse);
     expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_natural'))).enabled, isFalse);
-    expect(find.textContaining('Needs a computer with 16 GB of memory.'), findsNWidgets(2));
+    // Natural for its memory; Rebuild details is held on every Mac first (aiEnhanceMacRebuildOffered)
+    expect(find.textContaining('Needs a computer with 16 GB of memory.'), findsOneWidget);
+    expect(find.textContaining('Not on a Mac in this version yet'), findsOneWidget);
   });
 
   testWidgets('on an Intel Mac: no level, and why', (tester) async {

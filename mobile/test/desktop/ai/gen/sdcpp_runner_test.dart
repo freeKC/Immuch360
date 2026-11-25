@@ -1351,6 +1351,61 @@ void main() {
         throwsA(isA<BackendException>().having((error) => error.code, 'code', ImmersiveErrorCode.generatorFailed)),
       );
     });
+
+    test('on a Mac: x4plus must start on the GPU, else it stops before the processor takes it', () async {
+      final input = p.join(folder.path, 'piece.png');
+      File(input).writeAsBytesSync(img.encodePng(_varied(20, 10)));
+      final metal = SdCppSettings(
+        sdCli: '/engines/sd-cpp-seedvr2-metal-macos-arm64/sd-cli',
+        models: const SdCppModels(diffusionModel: '', vae: '', textEncoder: '', lora: '', upscaler: '/m/x4.pth'),
+        device: sdCppMetalDevice,
+        threads: 8,
+      );
+      const upscaling = ('[I] upscaling from (20 x 10) to (80 x 40) --- upscaler.cpp:97', isError: false);
+      const tiles = ('  |=========>      |  1/1 -  29.87s/it', isError: false);
+      Future<void> run(List<(String, {bool isError})> lines, String out) =>
+          SdCppUpscaler(
+            runner: _WritingRunner(FakeProcessRunner([FakeProcessScript(lines: lines)]), image: _varied(80, 40)),
+            settings: metal,
+            modelSha256: '',
+            noMetalMessage: 'no Metal',
+          ).upscale(
+            UpscaleRequest(inputPath: input, outputPath: out, workFolder: folder.path),
+            cancel: cancel,
+          );
+      Matcher stopped(String why) => throwsA(
+        isA<BackendException>()
+            .having((error) => error.code, 'code', ImmersiveErrorCode.gpuUnavailable)
+            .having((error) => error.message, 'message', allOf(startsWith('no Metal: '), contains(why))),
+      );
+
+      // The lines of the macOS runner (run 45677228907): MTL0 started, then the upscale
+      await run([
+        ('[V] Initializing backend: MTL0 --- ggml_extend_backend.cpp:421', isError: false),
+        ('[V]   load_upscaler: 31.87 MiB params -> MTL0 --- run_plan.cpp:79', isError: false),
+        upscaling,
+        tiles,
+      ], p.join(folder.path, 'ok.png'));
+      expect(File(p.join(folder.path, 'ok.png')).existsSync(), isTrue);
+      // Metal never started: sd-cli would run x4plus on the processor
+      await expectLater(
+        run([
+          ('[V] Initializing backend: CPU --- ggml_extend_backend.cpp:421', isError: false),
+          upscaling,
+          tiles,
+        ], p.join(folder.path, 'cpu.png')),
+        stopped('no Metal backend started'),
+      );
+      // A Metal error, as the paravirtual GPU of the runner gave in Rebuild details
+      await expectLater(
+        run([
+          ('[V] Initializing backend: MTL0 --- ggml_extend_backend.cpp:421', isError: false),
+          ("[E] ggml: ggml_metal_buffer_get_id: error: tensor ' (view)' buffer is nil", isError: true),
+          upscaling,
+        ], p.join(folder.path, 'nil.png')),
+        stopped('buffer is nil'),
+      );
+    });
   });
 
   test('PanoV1 gives the generation its default size and steps', () {
