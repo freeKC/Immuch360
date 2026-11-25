@@ -21,7 +21,7 @@ name: Immuch360 Desktop
 #                  Ubuntu and openSUSE: the packages its check names installed with the command it gives, then its
 #                  libraries, its files, a start and a video
 #   linux-aur      the AUR package immuch360-bin made from the .deb of the release its PKGBUILD names, checked by namcap
-#                  and installed in an archlinux container
+#                  and installed in an archlinux container; never in a release, as it reads a published one
 #   macos          the macOS build (universal, unsigned), the app zipped and in a DMG, its document types checked with
 #                  Launch Services, libmpv and its notices checked in the app, the libmpv of the app reading a y4m as
 #                  the AV2 decoder serves it (check_y4m.py), the serve of the macOS archive of the AV2 decoder the app
@@ -1123,20 +1123,29 @@ jobs:
     needs: linux
     if: ${{ !cancelled() }}
     timeout-minutes: 30
+    # The two rolling images (archlinux:latest, opensuse/tumbleweed:latest) change under the release: in a release (a
+    # desktop-v* tag) a failure there shows as a failed job and a warning, without stopping the release; Fedora 44,
+    # Debian 12 and Ubuntu 22.04 still hold it, and every other run holds all five
+    continue-on-error: ${{ matrix.rolling && startsWith(github.ref, 'refs/tags/desktop-v') }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - image: archlinux:latest
             slug: archlinux
+            rolling: true
           - image: fedora:44
             slug: fedora-44
+            rolling: false
           - image: debian:12
             slug: debian-12
+            rolling: false
           - image: ubuntu:22.04
             slug: ubuntu-22.04
+            rolling: false
           - image: opensuse/tumbleweed:latest
             slug: opensuse-tumbleweed
+            rolling: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -1152,6 +1161,7 @@ jobs:
       - name: Run and check
         env:
           IMAGE: ${{ matrix.image }}
+          ROLLING: ${{ matrix.rolling }}
         run: |
           set -o pipefail
           file=$(cd dist && ls ./*.AppImage)
@@ -1165,6 +1175,9 @@ jobs:
             | tee "$RUNNER_TEMP/check.log" || status=$?
           if grep -q 'the video check failed once: made once more' "$RUNNER_TEMP/check.log"; then
             echo "::warning title=$IMAGE::the video check of the AppImage failed once and was made once more"
+          fi
+          if [ "$status" != 0 ] && [ "$ROLLING" = true ] && [ "${GITHUB_REF#refs/tags/desktop-v}" != "$GITHUB_REF" ]; then
+            echo "::warning title=$IMAGE::the AppImage check failed on this rolling image; the release goes on, look at it before the delivery reply"
           fi
           exit "$status"
 
@@ -1181,10 +1194,14 @@ jobs:
   # its PKGBUILD and on the package, .SRCINFO as makepkg --printsrcinfo writes it, the package made by makepkg from
   # the .deb of the desktop release the PKGBUILD names (its SHA-256 checked) and installed with the dependencies of
   # Arch, then its version, its libraries, libmpv and its desktop entry (packaging/linux/aur/check_aur.sh). It reads a
-  # published release, not this build: the PKGBUILD moves to the next release once that release is out
+  # published release, not this build, so it never runs in a release (a desktop-v* tag, or this workflow called by
+  # immuch360-desktop-release.yml), where a GitHub or Arch mirror hiccup or a new namcap rule would stop the release
+  # for a file the release does not carry. The PKGBUILD moves to the next release only once that release is
+  # published; this job (or check_aur.sh in an archlinux container) is then run once before the push to the AUR
   linux-aur:
     name: AUR package immuch360-bin
     runs-on: ubuntu-24.04
+    if: ${{ !startsWith(github.ref, 'refs/tags/desktop-v') && github.workflow != 'Immuch360 Desktop release' }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
