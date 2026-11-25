@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "Grafická karta má na túto úroveň príliš málo pamäte.",
   "ai_enhance_refused_dedicated": "Potrebuje samostatnú grafickú kartu so 6 GB. Úroveň Prirodzená beží na procesore.",
   "ai_enhance_refused_intel_mac": "Nie na Macu s procesorom Intel: model nebol overený s verziou ONNX Runtime, ktorú má.",
-  "ai_enhance_refused_mac": "Zatiaľ nie na Macu: jeho jadro pre Mac príde v neskoršej verzii. Úroveň Prirodzená sa na Macu ponúka.",
   "ai_enhance_refused_memory": "Potrebuje počítač so 16 GB pamäte.",
   "ai_enhance_refused_no_card": "Žiadna grafická karta, ktorú jadro môže použiť (Vulkan). Úroveň Prirodzená beží na procesore.",
   "ai_enhance_refused_not_yet": "V tejto verzii zatiaľ nie: jej súbory nie sú zverejnené.",

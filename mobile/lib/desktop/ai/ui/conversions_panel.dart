@@ -65,7 +65,8 @@ import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/desktop_enhance.dart' show enhanceNotInThisVersion;
 import 'package:immich_mobile/desktop/ai/enhance/enhance_compare.dart';
-import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart' show enhanceNoIntDotMessage;
+import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart'
+    show enhanceNoIntDotMessage, enhanceNoMetalMessage;
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/library/scene_glb_export.dart';
 import 'package:immich_mobile/desktop/ai/library/versions_section.dart';
@@ -253,6 +254,8 @@ String conversionFailureText(
   ImmersiveErrorCode.componentsMissing when message == enhanceNotInThisVersion => t.ai_enhance_refused_not_yet,
   ImmersiveErrorCode.gpuUnavailable when message?.startsWith(enhanceNoIntDotMessage) ?? false =>
     t.ai_enhance_failed_no_int_dot,
+  ImmersiveErrorCode.gpuUnavailable when message?.startsWith(enhanceNoMetalMessage) ?? false =>
+    t.ai_enhance_failed_no_metal,
   ImmersiveErrorCode.outOfMemory => t.ai_immersive_unavailable_memory,
   ImmersiveErrorCode.writeFailed when message == libraryNotReadyMessage => t.ai_immersive_library_not_ready,
   ImmersiveErrorCode.writeFailed => t.ai_immersive_failed_write(message: message ?? ''),

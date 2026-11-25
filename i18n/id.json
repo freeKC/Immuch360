@@ -560,7 +560,6 @@
   "ai_enhance_refused_card_small": "Memori kartu grafis terlalu kecil untuk tingkat ini.",
   "ai_enhance_refused_dedicated": "Memerlukan kartu grafis terpisah 6 GB. Alami berjalan di prosesor.",
   "ai_enhance_refused_intel_mac": "Tidak tersedia di Mac Intel: model belum diperiksa dengan versi ONNX Runtime yang dimilikinya.",
-  "ai_enhance_refused_mac": "Belum tersedia di Mac: mesinnya untuk Mac hadir di versi mendatang. Alami ditawarkan di Mac.",
   "ai_enhance_refused_memory": "Memerlukan komputer dengan memori 16 GB.",
   "ai_enhance_refused_no_card": "Tidak ada kartu grafis yang dapat dipakai mesin (Vulkan). Alami berjalan di prosesor.",
   "ai_enhance_refused_not_yet": "Belum ada di versi ini: file-nya belum dipublikasikan.",

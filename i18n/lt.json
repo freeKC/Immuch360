@@ -559,7 +559,6 @@
   "ai_enhance_refused_card_small": "Vaizdo plokštė turi per mažai atminties šiam lygiui.",
   "ai_enhance_refused_dedicated": "Reikia atskiros 6 GB vaizdo plokštės. Natūralus veikia procesoriuje.",
   "ai_enhance_refused_intel_mac": "Ne Intel Mac kompiuteryje: modelis nebuvo patikrintas su jame esančia ONNX Runtime versija.",
-  "ai_enhance_refused_mac": "Mac kompiuteriuose dar nėra: šio lygio variklis Mac kompiuteriams bus vėlesnėje versijoje. Natūralus siūlomas Mac kompiuteryje.",
   "ai_enhance_refused_memory": "Reikia kompiuterio su 16 GB atminties.",
   "ai_enhance_refused_no_card": "Nėra vaizdo plokštės, kurią variklis galėtų naudoti (Vulkan). Natūralus veikia procesoriuje.",
   "ai_enhance_refused_not_yet": "Šioje versijoje dar nėra: šio lygio failai nepaskelbti.",

@@ -39,7 +39,6 @@
   "ai_enhance_refused_card_small": "Kadi ya michoro ina kumbukumbu ndogo mno kwa kiwango hiki.",
   "ai_enhance_refused_dedicated": "Inahitaji kadi ya michoro inayojitegemea ya 6 GB. Asilia inafanya kazi kwenye prosesa.",
   "ai_enhance_refused_intel_mac": "Si kwenye Mac ya Intel: modeli haikukaguliwa na toleo la ONNX Runtime lililo kwenye Mac hiyo.",
-  "ai_enhance_refused_mac": "Bado haipatikani kwenye Mac: injini yake ya Mac itakuja katika toleo la baadaye. Asilia inatolewa kwenye Mac.",
   "ai_enhance_refused_memory": "Inahitaji kompyuta yenye kumbukumbu ya 16 GB.",
   "ai_enhance_refused_no_card": "Hakuna kadi ya michoro ambayo injini inaweza kutumia (Vulkan). Asilia inafanya kazi kwenye prosesa.",
   "ai_enhance_refused_not_yet": "Bado haimo katika toleo hili: faili zake hazijachapishwa.",

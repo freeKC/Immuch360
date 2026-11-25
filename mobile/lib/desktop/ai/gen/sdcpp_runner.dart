@@ -106,6 +106,10 @@ class SdCppCard {
   final bool integrated;
 }
 
+/// The device of a Mac (release 53, the Metal build of Enhance (AI)): sd-cli is given no --backend there and takes its
+/// one GPU itself (its auto-fit "otherwise select one GPU"), Metal, the Apple GPU; no list of Vulkan devices is read
+const sdCppMetalDevice = 'Metal';
+
 /// How sd-cli ran: the program, the models, the graphics card, the threads, and the watchdogs
 class SdCppSettings {
   SdCppSettings({
@@ -118,14 +122,20 @@ class SdCppSettings {
     this.pollInterval = const Duration(milliseconds: 200),
     this.environment = const {},
   }) : threads = threads ?? math.max(1, Platform.numberOfProcessors - 2),
-       assert(RegExp(r'^Vulkan\d+$').hasMatch(device), 'A Vulkan device of ggml, Vulkan0, Vulkan1...');
+       assert(
+         device == sdCppMetalDevice || RegExp(r'^Vulkan\d+$').hasMatch(device),
+         'A Vulkan device of ggml, Vulkan0, Vulkan1..., or Metal',
+       );
 
   final String sdCli;
   final SdCppModels models;
 
   /// The graphics card by ggml's name for it, "Vulkan1": a first guess from the order of the probe (ggmlVulkanIndexOf),
-  /// which sd-cli's own list confirms or corrects when [card] is given ([SdCppDevice])
+  /// which sd-cli's own list confirms or corrects when [card] is given ([SdCppDevice]); [sdCppMetalDevice] on a Mac
   final String device;
+
+  /// Whether sd-cli runs on the GPU of a Mac, which it chooses itself
+  bool get metal => device == sdCppMetalDevice;
 
   /// The card the gate chose, as sd-cli must list it; null: not checked (the measure programs without --card)
   final SdCppCard? card;
@@ -360,7 +370,7 @@ class SdCppDevice {
   final SdCppSettings settings;
 
   /// The index the order of the probe gives the card, from [SdCppSettings.device]
-  int get guess => int.parse(settings.device.substring('Vulkan'.length));
+  int get guess => settings.metal ? 0 : int.parse(settings.device.substring('Vulkan'.length));
 
   late int _index;
 
@@ -373,8 +383,8 @@ class SdCppDevice {
   /// The index of the card in sd-cli's own list, as far as known
   int get index => _index;
 
-  /// The device as sd-cli takes it, "Vulkan1"
-  String get name => 'Vulkan$_index';
+  /// The device as sd-cli takes it, "Vulkan1"; [sdCppMetalDevice] on a Mac
+  String get name => settings.metal ? sdCppMetalDevice : 'Vulkan$_index';
 
   /// The index sd-cli listed each card at in this session, by the path of sd-cli and the name of the card
   static final _learned = <(String, String), int>{};
@@ -632,7 +642,8 @@ List<String> sdCppGenerationArguments(SdCppSettings settings, GeneratorRequest r
   ];
 }
 
-/// The arguments of one upscale by Real-ESRGAN x4plus on the same card, [device] or [SdCppSettings.device]
+/// The arguments of one upscale by Real-ESRGAN x4plus on the same card, [device] or [SdCppSettings.device]; on a Mac
+/// ([sdCppMetalDevice]) no --backend, sd-cli taking its GPU itself
 List<String> sdCppUpscaleArguments(SdCppSettings settings, UpscaleRequest request, {String? device}) => [
   '-M',
   'upscale',
@@ -640,8 +651,7 @@ List<String> sdCppUpscaleArguments(SdCppSettings settings, UpscaleRequest reques
   request.inputPath,
   '--upscale-model',
   settings.models.upscaler,
-  '--backend',
-  device ?? settings.device,
+  if (device ?? settings.device case final named when named != sdCppMetalDevice) ...['--backend', named],
   '-t',
   '${settings.threads}',
   '-v',

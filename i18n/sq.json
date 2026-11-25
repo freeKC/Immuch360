@@ -553,7 +553,6 @@
   "ai_enhance_refused_card_small": "Karta grafike ka shumë pak kujtesë për këtë nivel.",
   "ai_enhance_refused_dedicated": "Kërkon një kartë grafike të dedikuar me 6 GB. Natyral punon në procesor.",
   "ai_enhance_refused_intel_mac": "Jo në një Mac Intel: modeli nuk është kontrolluar me versionin e ONNX Runtime që ka ai.",
-  "ai_enhance_refused_mac": "Ende jo në Mac: motori i tij për Mac vjen në një version të mëvonshëm. Natyral ofrohet në Mac.",
   "ai_enhance_refused_memory": "Kërkon një kompjuter me 16 GB memorie.",
   "ai_enhance_refused_no_card": "Asnjë kartë grafike që motori mund ta përdorë (Vulkan). Natyral punon në procesor.",
   "ai_enhance_refused_not_yet": "Ende jo në këtë version: skedarët e tij nuk janë publikuar.",

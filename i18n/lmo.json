@@ -39,7 +39,6 @@
   "ai_enhance_refused_card_small": "La scheda grafica la gh’ha tròpp poca memoria per sto livell.",
   "ai_enhance_refused_dedicated": "Ghe voeur ona scheda grafica dedicada de 6 GB. Natural el va sul processor.",
   "ai_enhance_refused_intel_mac": "Minga su on Mac Intel: el modell l’è minga staa controllaa cont la version de ONNX Runtime che el gh’ha.",
-  "ai_enhance_refused_mac": "Minga anmò su Mac: el sò motor per Mac el riva in d’ona version pussee in là. Natural l’è offert su Mac.",
   "ai_enhance_refused_memory": "Ghe voeur on computer cont 16 GB de memoria.",
   "ai_enhance_refused_no_card": "Nissuna scheda grafica che el motor el pò doperà (Vulkan). Natural el va sul processor.",
   "ai_enhance_refused_not_yet": "Minga anmò in sta version: i sò file hinn minga publicaa.",

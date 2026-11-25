@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "Karta graficzna ma za mało pamięci na ten poziom.",
   "ai_enhance_refused_dedicated": "Wymaga dedykowanej karty graficznej z 6 GB pamięci. Naturalny działa na procesorze.",
   "ai_enhance_refused_intel_mac": "Niedostępne na Macu z procesorem Intel: modelu nie sprawdzono z wersją ONNX Runtime, której używa.",
-  "ai_enhance_refused_mac": "Jeszcze nie na Macu: silnik dla Maca pojawi się w późniejszej wersji. Naturalny jest dostępny na Macu.",
   "ai_enhance_refused_memory": "Wymaga komputera z 16 GB pamięci.",
   "ai_enhance_refused_no_card": "Brak karty graficznej, której silnik może użyć (Vulkan). Naturalny działa na procesorze.",
   "ai_enhance_refused_not_yet": "Jeszcze nie w tej wersji: jego pliki nie zostały opublikowane.",

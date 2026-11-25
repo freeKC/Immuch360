@@ -22,6 +22,7 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/enhance/natural_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
+import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart' show AiComponentFiles;
 import 'package:immich_mobile/desktop/ai/panorama/control_image.dart' show encodePngPicture;
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
@@ -305,15 +306,51 @@ void main() {
     expect(find.byKey(const Key('ai_enhance_change_folder')), findsOneWidget);
   });
 
-  testWidgets('on a Mac: Natural is chosen, the levels of the graphics card say why they wait', (tester) async {
-    facts.machineNow = const EnhanceMachine(platform: AiPlatform.macosArm64, physicalMemory: 16 * _gib, processors: 10);
+  testWidgets('on a Mac with an Apple chip: the three levels, and the plain fact that none was tried on a Mac', (
+    tester,
+  ) async {
+    facts.machineNow = const EnhanceMachine(
+      platform: AiPlatform.macosArm64,
+      physicalMemory: 16 * _gib,
+      processors: 10,
+      metal: MetalFacts(name: 'Apple M1', workingSet: 10 * _gib, unifiedMemory: true, apple7: true),
+    );
     original('salon.jpg');
     await open(tester, [_photo('salon.jpg')]);
-    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_natural'))).selected, isTrue);
-    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_sharpen'))).enabled, isFalse);
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_sharpen'))).selected, isTrue);
+    for (final level in EnhanceLevel.values) {
+      expect(tester.widget<ListTile>(find.byKey(Key('ai_enhance_level_${level.name}'))).enabled, isTrue);
+    }
+    expect(find.text('Not tried on a Mac yet: these times were measured on a Windows laptop.'), findsOneWidget);
+    expect(find.text('Times measured on an RTX 4060 Laptop; other graphics cards were not measured.'), findsNothing);
+    await choose(tester, EnhanceLevel.natural);
+    expect(find.byKey(const Key('ai_enhance_measured_on')), findsOneWidget);
+    expect(find.textContaining('Not tried on a Mac yet'), findsOneWidget);
+  });
+
+  testWidgets('on a Mac of 8 GB: Sharpen only, the others say why', (tester) async {
+    facts.machineNow = const EnhanceMachine(
+      platform: AiPlatform.macosArm64,
+      physicalMemory: 8 * _gib,
+      processors: 8,
+      metal: MetalFacts(name: 'Apple M1', workingSet: 5 * _gib, unifiedMemory: true, apple7: true),
+    );
+    original('salon.jpg');
+    await open(tester, [_photo('salon.jpg')]);
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_sharpen'))).enabled, isTrue);
     expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_rebuild'))).enabled, isFalse);
-    expect(find.textContaining('Not on a Mac yet'), findsNWidgets(2));
-    expect(find.text('Times measured on a processor of 24 threads; fewer threads take longer.'), findsOneWidget);
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_natural'))).enabled, isFalse);
+    expect(find.textContaining('Needs a computer with 16 GB of memory.'), findsNWidgets(2));
+  });
+
+  testWidgets('on an Intel Mac: no level, and why', (tester) async {
+    facts.machineNow = const EnhanceMachine(platform: AiPlatform.macosX64, physicalMemory: 32 * _gib, processors: 12);
+    original('salon.jpg');
+    await open(tester, [_photo('salon.jpg')]);
+    for (final level in EnhanceLevel.values) {
+      expect(tester.widget<ListTile>(find.byKey(Key('ai_enhance_level_${level.name}'))).enabled, isFalse);
+    }
+    expect(find.textContaining('Needs a Mac with an Apple chip (M1 or later).'), findsNWidgets(2));
   });
 
   testWidgets('says to close other programs, and waits for an engine not published yet', (tester) async {
@@ -584,6 +621,36 @@ void main() {
     expect(find.byKey(const Key('ai_enhance_compare')), findsNothing);
   });
 
+  test('the Metal engine of the Mac is held until it is published; Natural on a Mac never waits for it', () async {
+    final files = _NoFiles();
+    expect(aiEnhanceMacEnginePublished, isFalse);
+    for (final level in [EnhanceLevel.sharpen, EnhanceLevel.rebuild]) {
+      final found = await enhanceComponentFiles(level, AiPlatform.macosArm64, files, macPublished: false);
+      expect(found.notInThisVersion, isTrue, reason: level.name);
+    }
+    final natural = await enhanceComponentFiles(
+      EnhanceLevel.natural,
+      AiPlatform.macosArm64,
+      files,
+      macPublished: false,
+    );
+    expect(natural.notInThisVersion, isFalse);
+    expect(natural.missing, isNotEmpty);
+    // Windows and Linux never wait for it
+    final windows = await enhanceComponentFiles(
+      EnhanceLevel.sharpen,
+      AiPlatform.windowsX64,
+      files,
+      macPublished: false,
+    );
+    expect(windows.notInThisVersion, isFalse);
+    // Its entry: the archive of the Metal build, for Apple chips, in ai-components-7, MIT
+    expect(sdCppSeedVr2MacArmComponent.platforms, {AiPlatform.macosArm64});
+    expect(sdCppSeedVr2MacArmComponent.releaseTag, aiComponentsEnhanceReleaseTag);
+    expect(sdCppSeedVr2MacArmComponent.licence, 'MIT');
+    expect(sdCppSeedVr2MacArmComponent.isArchive, isTrue);
+  });
+
   test('the levels the components serve on each system', () {
     expect(enhanceComponentsOf(EnhanceLevel.sharpen, AiPlatform.windowsX64), [
       sdCppWindowsComponent,
@@ -595,8 +662,18 @@ void main() {
       seedVr2VaeComponent,
     ]);
     expect(enhanceComponentsOf(EnhanceLevel.natural, AiPlatform.macosArm64).first, onnxRuntimeMacArmComponent);
-    expect(enhanceComponentsOf(EnhanceLevel.sharpen, AiPlatform.macosArm64), isEmpty);
-    expect(enhanceComponentsOf(EnhanceLevel.rebuild, AiPlatform.macosArm64), isEmpty);
+    // On Apple chips both levels of the graphics take the Metal build of the sd-cli of Rebuild details
+    expect(enhanceComponentsOf(EnhanceLevel.sharpen, AiPlatform.macosArm64), [
+      sdCppSeedVr2MacArmComponent,
+      upscalerComponent,
+    ]);
+    expect(enhanceComponentsOf(EnhanceLevel.rebuild, AiPlatform.macosArm64), [
+      sdCppSeedVr2MacArmComponent,
+      seedVr2DitComponent,
+      seedVr2VaeComponent,
+    ]);
+    expect(enhanceComponentsOf(EnhanceLevel.sharpen, AiPlatform.macosX64), isEmpty);
+    expect(enhanceComponentsOf(EnhanceLevel.natural, AiPlatform.macosX64), isEmpty);
     // The engines of Rebuild details, from the run of the release workflow that signed the Windows one
     expect(sdCppSeedVr2WindowsComponent.isComplete, isTrue);
     expect(sdCppSeedVr2LinuxComponent.isComplete, isTrue);

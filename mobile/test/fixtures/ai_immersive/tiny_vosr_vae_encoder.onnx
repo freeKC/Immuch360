@@ -1,0 +1,17 @@
+immuch360 make_tiny_models.py12bA stand in for the VAE encoder of VOSR 2.0 in the tests of Immuch360: the average of 8 x 8 blocks.:©
+K
+lq	lq_latentpool"AveragePool*
+kernel_shape@@ *
+strides@@ tiny_vosr_vae_encoderZ
+lq
+
+
+
+€
+€b#
+	lq_latent
+
+
+
+@
+@B

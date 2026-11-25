@@ -15,6 +15,10 @@
 // and in the folder of the components, and sd-cli may open a file through the narrow code page, as COLMAP did for
 // the splat scenes (splat_work_folder.dart, asciiPathOf). Where Windows has no short name, the path stays as it is.
 // Measured on the RTX 4060 Laptop: 35.0 s for 3 MP, 93.9 s for 12 MP, 3.7 to 3.9 GB of the card.
+// On a Mac with an Apple chip (release 53, not tried on a Mac yet) the Metal build of the same commit runs the same
+// program: no --backend (sd-cli takes the one GPU itself, sdCppMetalDevice), the same budget; a line that says Metal
+// did not start or the plan put the DiT on the processor stops the run (enhanceNoMetalMessage), as int dot 0 does on
+// Vulkan.
 
 import 'dart:io';
 import 'dart:isolate';
@@ -68,14 +72,13 @@ String rebuildAsciiPath(String path, {bool? isWindows, String? Function(String p
   return short != null && isAsciiPath(short) ? short : path;
 }
 
-/// The arguments of the run of [script] on [vulkan]
+/// The arguments of the run of [script] on [vulkan]; on a Mac ([sdCppMetalDevice]) no --backend
 List<String> rebuildArguments(String script, String vulkan, {required String budget, required int threads}) => [
   '-M',
   'dgl',
   '--script',
   script,
-  '--backend',
-  vulkan,
+  if (vulkan != sdCppMetalDevice) ...['--backend', vulkan],
   '--max-vram',
   budget,
   '-t',
@@ -161,6 +164,9 @@ class SdCppRebuildBackend implements EnhanceBackend {
       onLine: (line, vulkan) {
         if (ggmlIntDotOf(line) case (:final index, :final intDot) when 'Vulkan$index' == vulkan && !intDot) {
           return BackendException(ImmersiveErrorCode.gpuUnavailable, '$enhanceNoIntDotMessage: $line');
+        }
+        if (vulkan == sdCppMetalDevice && seedVr2MetalUnavailable(line)) {
+          return BackendException(ImmersiveErrorCode.gpuUnavailable, '$enhanceNoMetalMessage: $line');
         }
         if (seedVr2MemoryRefusal(line)) {
           return BackendException(ImmersiveErrorCode.outOfMemory, '$enhanceMemoryMessage: $line');

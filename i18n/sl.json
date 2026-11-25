@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "Grafična kartica ima premalo pomnilnika za to raven.",
   "ai_enhance_refused_dedicated": "Potrebuje namensko grafično kartico s 6 GB. Raven Naravno teče na procesorju.",
   "ai_enhance_refused_intel_mac": "Ni na voljo na Macu s procesorjem Intel: model ni bil preverjen z različico ONNX Runtime, ki jo ima.",
-  "ai_enhance_refused_mac": "Na Macu še ni na voljo: njegov mehanizem za Mac pride v poznejši različici. Raven Naravno je na Macu na voljo.",
   "ai_enhance_refused_memory": "Potrebuje računalnik s 16 GB pomnilnika.",
   "ai_enhance_refused_no_card": "Ni grafične kartice, ki bi jo mehanizem lahko uporabil (Vulkan). Raven Naravno teče na procesorju.",
   "ai_enhance_refused_not_yet": "V tej različici še ni: njene datoteke niso objavljene.",

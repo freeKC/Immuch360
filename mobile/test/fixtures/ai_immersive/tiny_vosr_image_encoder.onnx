@@ -1,0 +1,17 @@
+immuch360 make_tiny_models.py12fA stand in for the image encoder of VOSR 2.0 in the tests of Immuch360: the average of 32 x 32 blocks.:¥
+H
+lqtokenspool"AveragePool*
+kernel_shape@ @  *
+strides@ @  tiny_vosr_image_encoderZ
+lq
+
+
+
+€
+€b 
+tokens
+
+
+
+
+B

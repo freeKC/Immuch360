@@ -88,7 +88,6 @@
   "ai_enhance_refused_card_small": "Bîra karta grafîkê ji bo vê astê pir kêm e.",
   "ai_enhance_refused_dedicated": "Karteke grafîkê ya taybet a 6 GB pêwîst e. Xwezayî li ser pêvajokerê dixebite.",
   "ai_enhance_refused_intel_mac": "Ne li ser Macekî Intel: model bi guhertoya ONNX Runtime ya ku tê de heye nehatiye kontrolkirin.",
-  "ai_enhance_refused_mac": "Hîn ne li ser Mac: motorê wê yê ji bo Mac di guhertoyeke paştir de tê. Xwezayî li ser Mac tê pêşkêşkirin.",
   "ai_enhance_refused_memory": "Komputereke bi 16 GB bîr pêwîst e.",
   "ai_enhance_refused_no_card": "Tu karta grafîkê ya ku motor dikare bi kar bîne tune (Vulkan). Xwezayî li ser pêvajokerê dixebite.",
   "ai_enhance_refused_not_yet": "Hîn ne di vê guhertoyê de: pelên wê nehatine weşandin.",

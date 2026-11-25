@@ -560,7 +560,6 @@
   "ai_enhance_refused_card_small": "Placa grafică are prea puțină memorie pentru acest nivel.",
   "ai_enhance_refused_dedicated": "Necesită o placă grafică dedicată de 6 GB. Natural rulează pe procesor.",
   "ai_enhance_refused_intel_mac": "Nu pe un Mac Intel: modelul nu a fost verificat cu versiunea de ONNX Runtime pe care o are.",
-  "ai_enhance_refused_mac": "Încă nu pe Mac: motorul pentru Mac vine într-o versiune ulterioară. Natural este oferit pe Mac.",
   "ai_enhance_refused_memory": "Necesită un computer cu 16 GB de memorie.",
   "ai_enhance_refused_no_card": "Nicio placă grafică pe care motorul să o poată folosi (Vulkan). Natural rulează pe procesor.",
   "ai_enhance_refused_not_yet": "Încă nu în această versiune: fișierele lui nu sunt publicate.",

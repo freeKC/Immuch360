@@ -11,6 +11,14 @@
 // those of the 3D photos (thread_priority.dart). A stop is
 // read between two graphs: within a few seconds. Measured on the i9 of 24 threads: 16 s per tile (339.9 s for 3 MP,
 // 989.9 s for 12 MP), 5.5 GB of working set and 8.5 to 9.7 GB of commit.
+//
+// On a Mac with an Apple chip (release 53) each graph is opened with Core ML (the ML Program format on every unit Core
+// ML chooses, the provider the 3D videos take there, depth_provider.dart), which runs what it can of the graph on the
+// GPU and the Neural Engine and leaves the rest (the int8 matrix products, most likely) to the processor of the same
+// session. A graph Core ML refuses to open, or whose run fails on it, is opened again on the processor alone and the
+// job goes on there, a line in the log saying so. Checked on the macOS runner with tiny graphs of the same inputs and
+// outputs (make_tiny_vosr.py), against the processor; whether Core ML is faster than the processor for the real int8
+// graphs was never measured, nor was any run on a Mac.
 
 import 'dart:async';
 import 'dart:isolate';
@@ -25,6 +33,9 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
 import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('EnhanceNatural');
 
 /// The library of ONNX Runtime and the four graphs of VOSR
 class VosrFiles {
@@ -43,13 +54,22 @@ class VosrFiles {
   final String vaeDecoder;
 }
 
+/// Where the graphs of VOSR run: Core ML on Apple silicon, else the processor (see the top of this file)
+OrtProvider naturalProviderOf({required bool appleSilicon}) => appleSilicon ? OrtProvider.coreMl : OrtProvider.cpu;
+
 /// See the top of this file
 class OrtNaturalBackend implements EnhanceBackend {
-  OrtNaturalBackend({required this.files, required this.modelSha256, int? threads})
+  OrtNaturalBackend({required this.files, required this.modelSha256, int? threads, this.provider = OrtProvider.cpu})
     : threads = threads ?? OrtSessionSettings.forThisComputer().intraOpThreads;
 
   final VosrFiles files;
   final int threads;
+
+  /// The provider each graph is opened with first: the processor, or Core ML on Apple silicon
+  final OrtProvider provider;
+
+  /// What the last run said of its provider: the lines the worker sent ("Core ML refused ..., on the processor")
+  final notes = <String>[];
 
   /// The SHA-256 of the transformer, the file that tells the version of the model
   @override
@@ -75,6 +95,9 @@ class OrtNaturalBackend implements EnhanceBackend {
       switch (message) {
         case ('step', final int tile, final int all):
           onStep(tile, all);
+        case ('note', final String note):
+          notes.add(note);
+          _log.info(note);
         case ('done', final TransferableTypedData data):
           done.complete(data.materialize().asUint8List());
         case ('failed', final String code, final String text):
@@ -94,6 +117,7 @@ class OrtNaturalBackend implements EnhanceBackend {
       seed: seed,
       cancel: cancel.address,
       threads: threads,
+      provider: provider,
     );
     final isolate = await Isolate.spawn(_vosrMain, request, debugName: 'enhance-vosr', onExit: port.sendPort);
     try {
@@ -116,6 +140,7 @@ class _VosrRequest {
     required this.seed,
     required this.cancel,
     required this.threads,
+    required this.provider,
   });
 
   final SendPort port;
@@ -126,6 +151,7 @@ class _VosrRequest {
   final int seed;
   final int cancel;
   final int threads;
+  final OrtProvider provider;
 }
 
 void _vosrMain(_VosrRequest request) {
@@ -146,13 +172,21 @@ void _vosrMain(_VosrRequest request) {
         // Loaded first, so that what loading starts is not taken for a thread of the session; the threads of each
         // session are lowered, as those of the 3D photos, so that the computer stays usable for the minutes it runs
         final runtime = OrtRuntime.load(request.files.library);
-        final session = priority
-            .lowerThreadsBornDuring(
-              () => runtime.openSession(path, settings: OrtSessionSettings(intraOpThreads: request.threads)),
-            )
-            .value;
-        sessions.add(session);
-        return _OrtGraph(session);
+        OrtSession openOn(OrtProvider provider) {
+          final session = priority
+              .lowerThreadsBornDuring(
+                () => runtime.openSession(
+                  path,
+                  settings: OrtSessionSettings(intraOpThreads: request.threads, provider: provider),
+                ),
+              )
+              .value;
+          sessions.add(session);
+          return session;
+        }
+
+        void note(String text) => port.send(('note', text));
+        return openVosrGraph(path, request.provider, open: (provider) => _OrtGraph(openOn(provider)), note: note);
       },
       files: request.files,
     );
@@ -173,6 +207,64 @@ void _vosrMain(_VosrRequest request) {
   } finally {
     for (final session in sessions) {
       session.close();
+    }
+  }
+}
+
+/// The graph at [path] opened with [provider] by [open], on the processor when that provider refuses it or fails a
+/// run (see the top of this file), [note] told each time; a stop of the run is never a failure of the provider
+VosrGraph openVosrGraph(
+  String path,
+  OrtProvider provider, {
+  required VosrGraph Function(OrtProvider provider) open,
+  required void Function(String note) note,
+}) {
+  final name = path.split(RegExp(r'[/\\]')).last;
+  if (provider == OrtProvider.cpu) {
+    return open(OrtProvider.cpu);
+  }
+  try {
+    final graph = open(provider);
+    note('$name opened with ${provider.title}');
+    return _FallbackGraph(graph, () => open(OrtProvider.cpu), (error) {
+      note('$name failed a run with ${provider.title} ($error): on the processor from now on');
+    });
+  } on OrtRunStopped {
+    rethrow;
+  } on OrtLoadException {
+    rethrow;
+  } on OrtException catch (error) {
+    note('${provider.title} refused $name (${error.message}): on the processor');
+    return open(OrtProvider.cpu);
+  }
+}
+
+/// A graph on a provider that falls back to the processor at its first failed run, the run made again there
+class _FallbackGraph implements VosrGraph {
+  _FallbackGraph(this._graph, this._onProcessor, this._failed);
+
+  VosrGraph _graph;
+  final VosrGraph Function() _onProcessor;
+  final void Function(Object error) _failed;
+  var _fellBack = false;
+
+  @override
+  String get firstInput => _graph.firstInput;
+
+  @override
+  OrtTensor run(Map<String, OrtTensor> given) {
+    try {
+      return _graph.run(given);
+    } on OrtRunStopped {
+      rethrow;
+    } on OrtException catch (error) {
+      if (_fellBack) {
+        rethrow;
+      }
+      _fellBack = true;
+      _failed(error.message);
+      _graph = _onProcessor();
+      return _graph.run(given);
     }
   }
 }

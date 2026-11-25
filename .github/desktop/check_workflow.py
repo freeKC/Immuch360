@@ -25,8 +25,9 @@ a command (never a step that uses an action, which would get them too), in a job
 writes holds no secret, the job that holds the secrets cannot write, and the build it signs ran without them.
 
 stable-diffusion.cpp, the generator of the 360° panoramas (lot P2), is built by the jobs whose names start with
-"sdcpp" (sdcpp-windows, sdcpp-linux): each runs on the image of the desktop build of its system (windows-2022 with
-Visual Studio 2022, ubuntu-22.04 for its glibc), only when asked or when the lock changed (an "if:" that reads
+"sdcpp" (sdcpp-windows, sdcpp-linux, and those of Enhance (AI), sdcpp-seedvr2-windows, -linux and -macos): each runs
+on the image of the desktop build of its system (windows-2022 with Visual Studio 2022, ubuntu-22.04 for its glibc,
+macos-15 on Apple silicon), only when asked or when the lock changed (an "if:" that reads
 inputs.sdcpp), and names no artifact Immuch360-Desktop-*, the files a release attaches. COLMAP, which places the photos
 of the splat scenes (lot SP1 of the splat maker), is built the same way by the jobs whose names start with "colmap"
 (colmap-windows, colmap-linux), when asked by inputs.colmap or when its lock changed. Brush, the trainer of the
@@ -83,6 +84,8 @@ SDCPP_RUNNERS = {
     # The second archive, that of Enhance (AI): asked by inputs.sdcpp_seedvr2, which the check finds as inputs.sdcpp
     'sdcpp-seedvr2-windows': 'windows-2022',
     'sdcpp-seedvr2-linux': 'ubuntu-22.04',
+    # Its Metal build for Apple silicon (release 53), on the arm64 image of the macOS build of the app
+    'sdcpp-seedvr2-macos': 'macos-15',
 }
 # The jobs that build a program the AI features run beside the app, by the start of their names: what they build, the
 # image of each job and the input that asks for them

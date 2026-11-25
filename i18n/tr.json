@@ -560,7 +560,6 @@
   "ai_enhance_refused_card_small": "Ekran kartının belleği bu düzey için yetersiz.",
   "ai_enhance_refused_dedicated": "6 GB belleği olan harici bir ekran kartı gerekir. Doğal işlemcide çalışır.",
   "ai_enhance_refused_intel_mac": "Intel Mac’te yok: model, bu Mac’teki ONNX Runtime sürümüyle denetlenmedi.",
-  "ai_enhance_refused_mac": "Mac’te henüz yok: Mac için motoru sonraki bir sürümde gelecek. Doğal, Mac’te sunulur.",
   "ai_enhance_refused_memory": "16 GB belleği olan bir bilgisayar gerekir.",
   "ai_enhance_refused_no_card": "Motorun kullanabileceği bir ekran kartı yok (Vulkan). Doğal işlemcide çalışır.",
   "ai_enhance_refused_not_yet": "Bu sürümde henüz yok: dosyaları yayımlanmadı.",

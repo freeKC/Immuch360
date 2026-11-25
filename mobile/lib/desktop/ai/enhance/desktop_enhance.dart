@@ -5,6 +5,10 @@
 // the need of the level, enhance_gpu.dart). Nothing is kept between two jobs: sd-cli is a program of its own for each
 // run, and the graphs of VOSR are opened by the worker of each job (9 s of loading in the probe). Its programs run in
 // the AiProcessSession of the app, its work folders are those of the session.
+//
+// On a Mac with an Apple chip (release 53) the levels of the graphics run the Metal build of sd-cli on the GPU Metal
+// gives (metal_probe.dart), sd-cli choosing it itself (sdCppMetalDevice): no probe of Vulkan cards, no card checked by
+// name; Natural runs through Core ML (natural_backend.dart). Not tried on a Mac yet.
 
 import 'dart:async';
 
@@ -23,6 +27,7 @@ import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/sharpen_backend.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_probe.dart';
+import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/process/managed_process.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
@@ -34,14 +39,24 @@ final _log = Logger('DesktopEnhance');
 /// The message of a level whose components are not complete in this version
 const enhanceNotInThisVersion = 'notInThisVersion';
 
-/// How long sd-cli may stay silent on an integrated chip (Sharpen allows one)
+/// How long sd-cli may stay silent on an integrated chip (Sharpen allows one), and on a Mac, whose times were never
+/// measured (ggml compiles its Metal shaders when sd-cli starts)
 const _integratedStall = Duration(minutes: 15);
 
 /// See the top of this file
 class DesktopEnhanceEngine implements ImmersiveEngine, KeptAiEngine {
-  DesktopEnhanceEngine({required this.level, required this.gate, required this._session, this._environment});
+  DesktopEnhanceEngine({
+    required this.level,
+    required this.gate,
+    required this._session,
+    this._environment,
+    this.metal = const SystemMetalProbe(),
+  });
 
   final EnhanceLevel level;
+
+  /// The GPU of a Mac
+  final MetalProbe metal;
   final HardwareGate gate;
   final AiProcessSession Function() _session;
   final Map<String, String>? _environment;
@@ -86,7 +101,7 @@ class DesktopEnhanceEngine implements ImmersiveEngine, KeptAiEngine {
               : found.missing.map((component) => component.title).join(', '),
         );
       }
-      final (backend, refused) = await _backendOf(files);
+      final (backend, refused) = await _backendOf(files, platform);
       if (backend == null) {
         return refused!;
       }
@@ -107,9 +122,25 @@ class DesktopEnhanceEngine implements ImmersiveEngine, KeptAiEngine {
   }
 
   /// The backend of the level on [files], or the failure that stops the job
-  Future<(EnhanceBackend?, ImmersiveResult?)> _backendOf(EnhanceFiles files) async {
+  Future<(EnhanceBackend?, ImmersiveResult?)> _backendOf(EnhanceFiles files, AiPlatform platform) async {
+    final appleChip = platform == AiPlatform.macosArm64;
     if (level == EnhanceLevel.natural) {
-      return (OrtNaturalBackend(files: files.natural!, modelSha256: vosrTransformerComponent.sha256!), null);
+      return (
+        OrtNaturalBackend(
+          files: files.natural!,
+          modelSha256: vosrTransformerComponent.sha256!,
+          provider: naturalProviderOf(appleSilicon: appleChip),
+        ),
+        null,
+      );
+    }
+    if (appleChip) {
+      final gpu = metal.read();
+      if (gpu == null || (level == EnhanceLevel.rebuild && !gpu.apple7)) {
+        return (null, const ImmersiveResult.failed(ImmersiveErrorCode.gpuUnavailable, message: enhanceNoMetalMessage));
+      }
+      _log.info('Enhance (${level.name}) on the GPU of this Mac: $gpu');
+      return (_sdCppBackendOf(files, sdCppMetalDevice, card: null, stall: _integratedStall, graphicsFree: null), null);
     }
     final report = await gate.gpuReport(fresh: true);
     final choice = level == EnhanceLevel.sharpen ? sharpenCardOf(report) : rebuildCardOf(report);
@@ -125,28 +156,47 @@ class DesktopEnhanceEngine implements ImmersiveEngine, KeptAiEngine {
       );
     }
     final integrated = card.kind == GpuKind.integrated;
+    return (
+      _sdCppBackendOf(
+        files,
+        'Vulkan$index',
+        card: SdCppCard(name: card.name, integrated: integrated),
+        stall: integrated ? _integratedStall : const Duration(seconds: 180),
+        graphicsFree: card.budget == null ? null : card.freeMemory,
+      ),
+      null,
+    );
+  }
+
+  /// The backend of Sharpen or Rebuild details through sd-cli on [device] (a Vulkan device, or sdCppMetalDevice)
+  EnhanceBackend _sdCppBackendOf(
+    EnhanceFiles files,
+    String device, {
+    required SdCppCard? card,
+    required Duration stall,
+    required int? graphicsFree,
+  }) {
     final sharpen = files.sharpen;
     final rebuild = files.rebuild;
     final settings = SdCppSettings(
       sdCli: sharpen?.sdCli ?? rebuild!.sdCli,
       models: SdCppModels(diffusionModel: '', vae: '', textEncoder: '', lora: '', upscaler: sharpen?.upscaler ?? ''),
-      device: 'Vulkan$index',
-      card: SdCppCard(name: card.name, integrated: integrated),
-      stallTimeout: integrated ? _integratedStall : const Duration(seconds: 180),
+      device: device,
+      card: card,
+      stallTimeout: stall,
     );
     final runner = _session().runner(linuxLauncher: sharpen?.linuxLauncher ?? rebuild?.linuxLauncher);
     if (sharpen != null) {
       final upscaler = SdCppUpscaler(runner: runner, settings: settings, modelSha256: upscalerComponent.sha256!);
-      return (SdCppSharpenBackend(upscaler: upscaler), null);
+      return SdCppSharpenBackend(upscaler: upscaler);
     }
-    final backend = SdCppRebuildBackend(
+    return SdCppRebuildBackend(
       runner: runner,
       settings: settings,
       files: rebuild!,
       modelSha256: seedVr2DitComponent.sha256!,
-      graphicsFree: card.budget == null ? null : card.freeMemory,
+      graphicsFree: graphicsFree,
     );
-    return (backend, null);
   }
 
   @override

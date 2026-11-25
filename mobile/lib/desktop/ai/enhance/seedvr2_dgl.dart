@@ -177,5 +177,18 @@ bool seedVr2MemoryRefusal(String line) =>
 
 final _fallback = RegExp(r'fall(?:s|ing)? back to (?:the )?CPU', caseSensitive: false);
 
+/// The lines of ggml and sd-cli that say the GPU of a Mac is not used (release 53): Metal could not make its library,
+/// its command queue or its shaders (ggml-metal-device.m at eeda9ec4), or the auto-fit plan put the diffusion model on
+/// the processor
+final _metalUnavailable = RegExp(
+  r'ggml_metal\w*: error|failed to create (?:the )?(?:Metal )?(?:library|command queue)|error compiling source|'
+  r'auto-fit: --backend .*\bdiffusion=cpu\b',
+  caseSensitive: false,
+);
+
+/// Whether [line], on a Mac, says sd-cli does not run on its GPU: Rebuild details would then run on the processor,
+/// minutes a tile, so the run is stopped
+bool seedVr2MetalUnavailable(String line) => _metalUnavailable.hasMatch(line);
+
 /// Whether [line] says a part of the work fell back to the processor
 bool seedVr2ProcessorFallback(String line) => _fallback.hasMatch(line);

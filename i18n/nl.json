@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "De videokaart heeft te weinig geheugen voor dit niveau.",
   "ai_enhance_refused_dedicated": "Vereist een losse videokaart van 6 GB. Natuurlijk draait op de processor.",
   "ai_enhance_refused_intel_mac": "Niet op een Intel-Mac: het model is niet gecontroleerd met de versie van ONNX Runtime die deze heeft.",
-  "ai_enhance_refused_mac": "Nog niet op Mac: de engine voor Mac komt in een latere versie. Natuurlijk wordt op Mac aangeboden.",
   "ai_enhance_refused_memory": "Vereist een computer met 16 GB geheugen.",
   "ai_enhance_refused_no_card": "Geen videokaart die de engine kan gebruiken (Vulkan). Natuurlijk draait op de processor.",
   "ai_enhance_refused_not_yet": "Nog niet in deze versie: de bestanden ervan zijn niet gepubliceerd.",

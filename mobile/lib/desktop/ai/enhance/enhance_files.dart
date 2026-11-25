@@ -5,7 +5,9 @@
 // the sd-cli of the script mode and SeedVR2 3B with its VAE, Natural the ONNX Runtime of the 3D photos and the four
 // graphs of VOSR. A level whose components are incomplete in this version (the sd-cli of Rebuild details until
 // ai-components-7 is published), or are in ai-components-7 while it is not published (Rebuild details and Natural:
-// aiEnhanceComponentsPublished), is "not in this version yet".
+// aiEnhanceComponentsPublished), is "not in this version yet". On a Mac with an Apple chip (release 53) Sharpen and
+// Rebuild details take the Metal build of that sd-cli (sdCppSeedVr2MacArmComponent, with x4plus for Sharpen, SeedVR2
+// for Rebuild details): "not in this version yet" until it is published (aiEnhanceMacEnginePublished).
 //
 // The developer override, off by default: when the variable IMMUCH360_ENHANCE_PROBE names a folder laid out as the
 // probe's (D:\DEV\immuch\ai-enhance-probe on the owner's PC: engines\shipped\, engines\sdcpp-master-1117-0d71f96-win-vulkan\,
@@ -51,13 +53,22 @@ class EnhanceFiles {
 List<AiComponent> enhanceComponentsOf(EnhanceLevel level, AiPlatform platform) {
   final windows = platform == AiPlatform.windowsX64;
   final linux = platform == AiPlatform.linuxX64;
+  final appleChip = platform == AiPlatform.macosArm64;
   return switch (level) {
-    EnhanceLevel.sharpen when windows || linux => [
-      windows ? sdCppWindowsComponent : sdCppLinuxComponent,
+    EnhanceLevel.sharpen when windows || linux || appleChip => [
+      windows
+          ? sdCppWindowsComponent
+          : linux
+          ? sdCppLinuxComponent
+          : sdCppSeedVr2MacArmComponent,
       upscalerComponent,
     ],
-    EnhanceLevel.rebuild when windows || linux => [
-      windows ? sdCppSeedVr2WindowsComponent : sdCppSeedVr2LinuxComponent,
+    EnhanceLevel.rebuild when windows || linux || appleChip => [
+      windows
+          ? sdCppSeedVr2WindowsComponent
+          : linux
+          ? sdCppSeedVr2LinuxComponent
+          : sdCppSeedVr2MacArmComponent,
       seedVr2DitComponent,
       seedVr2VaeComponent,
     ],
@@ -74,8 +85,9 @@ List<AiComponent> enhanceComponentsOf(EnhanceLevel level, AiPlatform platform) {
 }
 
 /// What the components of [level] give on [platform]: the files when all are installed, else those missing (to
-/// download) or, for a component of this version without its size or sum, or of ai-components-7 while it is not
-/// published ([published], aiEnhanceComponentsPublished), the level is not in this version yet
+/// download) or, for a component of this version without its size or sum, of ai-components-7 while it is not
+/// published ([published], aiEnhanceComponentsPublished), or the Metal engine while it is not published
+/// ([macPublished], aiEnhanceMacEnginePublished), the level is not in this version yet
 typedef EnhanceComponentsFound = ({EnhanceFiles? files, List<AiComponent> missing, bool notInThisVersion});
 
 Future<EnhanceComponentsFound> enhanceComponentFiles(
@@ -83,11 +95,13 @@ Future<EnhanceComponentsFound> enhanceComponentFiles(
   AiPlatform platform,
   AiComponentFiles components, {
   bool published = aiEnhanceComponentsPublished,
+  bool macPublished = aiEnhanceMacEnginePublished,
 }) async {
   final needed = enhanceComponentsOf(level, platform);
   if (needed.isEmpty ||
       needed.any((component) => !component.isComplete) ||
-      (!published && needed.any((component) => component.releaseTag == aiComponentsEnhanceReleaseTag))) {
+      (!published && needed.any((component) => component.releaseTag == aiComponentsEnhanceReleaseTag)) ||
+      (!macPublished && needed.contains(sdCppSeedVr2MacArmComponent))) {
     return (files: null, missing: const <AiComponent>[], notInThisVersion: true);
   }
   final found = <String, String>{};

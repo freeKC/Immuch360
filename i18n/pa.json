@@ -67,7 +67,6 @@
   "ai_enhance_refused_card_small": "ਇਸ ਪੱਧਰ ਲਈ ਗ੍ਰਾਫਿਕਸ ਕਾਰਡ ਵਿੱਚ ਬਹੁਤ ਘੱਟ ਮੈਮਰੀ ਹੈ।",
   "ai_enhance_refused_dedicated": "6 GB ਦਾ ਡੈਡੀਕੇਟਿਡ ਗ੍ਰਾਫਿਕਸ ਕਾਰਡ ਚਾਹੀਦਾ ਹੈ। “ਕੁਦਰਤੀ” ਪ੍ਰੋਸੈਸਰ ’ਤੇ ਚੱਲਦਾ ਹੈ।",
   "ai_enhance_refused_intel_mac": "Intel Mac ’ਤੇ ਨਹੀਂ: ਮਾਡਲ ਨੂੰ ਇਸ ਵਿੱਚ ਮੌਜੂਦ ONNX Runtime ਦੇ ਸੰਸਕਰਣ ਨਾਲ ਜਾਂਚਿਆ ਨਹੀਂ ਗਿਆ।",
-  "ai_enhance_refused_mac": "Mac ’ਤੇ ਅਜੇ ਨਹੀਂ: Mac ਲਈ ਇਸ ਦਾ ਇੰਜਣ ਕਿਸੇ ਅਗਲੇ ਸੰਸਕਰਣ ਵਿੱਚ ਆਵੇਗਾ। “ਕੁਦਰਤੀ” Mac ’ਤੇ ਉਪਲਬਧ ਹੈ।",
   "ai_enhance_refused_memory": "16 GB ਮੈਮਰੀ ਵਾਲਾ ਕੰਪਿਊਟਰ ਚਾਹੀਦਾ ਹੈ।",
   "ai_enhance_refused_no_card": "ਕੋਈ ਗ੍ਰਾਫਿਕਸ ਕਾਰਡ ਨਹੀਂ ਜੋ ਇੰਜਣ ਵਰਤ ਸਕੇ (Vulkan)। “ਕੁਦਰਤੀ” ਪ੍ਰੋਸੈਸਰ ’ਤੇ ਚੱਲਦਾ ਹੈ।",
   "ai_enhance_refused_not_yet": "ਇਸ ਸੰਸਕਰਣ ਵਿੱਚ ਅਜੇ ਨਹੀਂ: ਇਸ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਜਾਰੀ ਨਹੀਂ ਹੋਈਆਂ।",

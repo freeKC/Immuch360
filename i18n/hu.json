@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "A videokártyának túl kevés memóriája van ehhez a szinthez.",
   "ai_enhance_refused_dedicated": "Dedikált, 6 GB-os videokártyát igényel. A Természetes a processzoron fut.",
   "ai_enhance_refused_intel_mac": "Intel Macen nem: a modellt nem ellenőrizték a rajta lévő ONNX Runtime verzióval.",
-  "ai_enhance_refused_mac": "Macen még nem: a Macre szánt motorja egy későbbi verzióban jön. A Természetes Macen is elérhető.",
   "ai_enhance_refused_memory": "16 GB memóriával rendelkező számítógépet igényel.",
   "ai_enhance_refused_no_card": "Nincs a motor által használható videokártya (Vulkan). A Természetes a processzoron fut.",
   "ai_enhance_refused_not_yet": "Ebben a verzióban még nem: a fájljai nincsenek közzétéve.",

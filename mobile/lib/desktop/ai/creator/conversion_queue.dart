@@ -75,6 +75,10 @@
 // processor (its memory told by its level, enhance_plan.dart). Its settings (level and strength) go with the job. It
 // always makes a new version beside the others. Pause stops one under way at its next check (a tile of its model) or
 // keeps one waiting out of the queue: the state paused, Resume running the photo again from its start, as Retry does.
+// On a Mac with an Apple chip (release 53, ConversionTools.unifiedMemory) the GPU shares the memory of the computer and
+// macOS gives no figure of the memory free: the levels of the graphics ask no card (the gate checked the memory of the
+// Mac, enhance_plan.dart), and an enhanced photo runs beside a job of the other lane only when the memory of the Mac
+// holds both whole, macOS and the app apart (enhanceFitsBesideOnUnifiedMemory); otherwise it waits for that job.
 
 import 'dart:async';
 import 'dart:io';
@@ -256,6 +260,7 @@ class ConversionTools {
     this.appVersion = '',
     this.freeSpace,
     this.remoteVideoSource,
+    this.unifiedMemory = false,
     DateTime Function()? now,
     String Function()? newDerivativeId,
     int Function()? newSeed,
@@ -327,6 +332,10 @@ class ConversionTools {
   /// Makes again the source of a 3D video of the server or of a share from what video_jobs.json kept of it
   /// (DownloadableOriginal.descriptor), at the next start; null, or null for it: its download cannot go on
   final DownloadableOriginal? Function(Map<String, Object?> descriptor)? remoteVideoSource;
+
+  /// Whether the graphics share the memory of the computer, which says no figure of its memory free: a Mac with an
+  /// Apple chip (see the top of this file)
+  final bool unifiedMemory;
 
   late final _sbs = ConversionEngine(
     engine: engine,
@@ -1083,6 +1092,22 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       // The job under way on the other lane, one started a moment before in this pass included
       final beside = [for (final id in _lanes.values) state.byId(id)].nonNulls.firstOrNull;
       if (tools != null &&
+          tools.unifiedMemory &&
+          beside != null &&
+          !beside.state.isEnded &&
+          (next.kind.isEnhance || beside.kind.isEnhance) &&
+          !enhanceFitsBesideOnUnifiedMemory(
+            _unifiedNeedOf(next),
+            _unifiedNeedOf(beside),
+            tools.memory.read().physical,
+          )) {
+        // Waits for the job beside it, whose end runs the queue again
+        if (next.waitingFor != ConversionWait.memory) {
+          _set(next.id, (job) => job.copyWith(waitingFor: () => ConversionWait.memory));
+        }
+        continue;
+      }
+      if (tools != null &&
           _lanes.isNotEmpty &&
           !fitsBeside(
             _memoryNeedOf(next),
@@ -1118,6 +1143,13 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
       final level? => enhanceJobMemoryOf(level, pixels: job.enhance?.pixels),
       null => jobMemoryNeedOf(job.kind.output),
     },
+  };
+
+  /// What a job may take of the memory of a Mac: an enhanced photo its need on the computer and on the GPU together
+  /// (enhanceUnifiedJobMemoryOf), another job that of its kind
+  static int _unifiedNeedOf(ConversionJob job) => switch (job.kind.enhanceLevel) {
+    final level? when job.video == null => enhanceUnifiedJobMemoryOf(level, pixels: job.enhance?.pixels),
+    _ => _memoryNeedOf(job),
   };
 
   /// What a job under way may still take: a 3D video holds its need once its frames run
@@ -1688,7 +1720,8 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
   /// can take it. False too when it was cancelled meanwhile.
   Future<bool> _graphicsCardReady(String id, ConversionTools tools, ConversionKind kind) async {
     final budget = tools.gpuBudget;
-    if (budget == null) {
+    // An enhanced photo on a Mac asks no card: Metal gives no figure of the memory free (see the top of this file)
+    if (budget == null || (tools.unifiedMemory && kind.isEnhance)) {
       return true;
     }
     // Behind a job that left the queue for the memory, a job of the card asks it once and goes the same way unless the
