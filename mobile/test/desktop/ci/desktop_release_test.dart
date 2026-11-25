@@ -106,6 +106,7 @@ class _FakeGitHub {
         body: json['body'] as String,
       );
       created['prerelease'] = json['prerelease'];
+      created['make_latest'] = json['make_latest'];
       created['target_commitish'] = json['target_commitish'];
       return send(201, created);
     }
@@ -211,30 +212,34 @@ void main() {
         environment: {'GH_TOKEN': token, 'GITHUB_TOKEN': ''},
       );
 
-      test('creates the pre-release of a new tag, attaches the files and SHA256SUMS.txt', () async {
-        final root = tree(files);
-        final run = await release([
-          '--tag',
-          tag,
-          '--commit',
-          'abc1234',
-          for (final n in files.keys) p.join(root.path, n),
-        ]);
-        expect(run.exitCode, 0, reason: '$run');
-        expect(github.releases, hasLength(1));
-        final created = github.releases.single;
-        expect(created['name'], 'Immuch360 Desktop 3.3.0-rc.0, desktop build 5');
-        expect(created['prerelease'], isTrue);
-        expect(created['target_commitish'], 'abc1234');
-        expect(created['body'], contains('The release notes follow.'));
-        expect(github.assetNames(created), containsAll([...files.keys, 'SHA256SUMS.txt']));
-        expect(github.assetNames(created), hasLength(9));
-        final sums = github.assetText(created, 'SHA256SUMS.txt');
-        for (final entry in files.entries) {
-          expect(sums, contains('${line(entry.key, entry.value)}\n'));
-        }
-        expect(run.output, isNot(contains(_token)));
-      });
+      test(
+        'creates the release of a new tag, full and never the Latest, attaches the files and SHA256SUMS.txt',
+        () async {
+          final root = tree(files);
+          final run = await release([
+            '--tag',
+            tag,
+            '--commit',
+            'abc1234',
+            for (final n in files.keys) p.join(root.path, n),
+          ]);
+          expect(run.exitCode, 0, reason: '$run');
+          expect(github.releases, hasLength(1));
+          final created = github.releases.single;
+          expect(created['name'], 'Immuch360 Desktop 3.3.0-rc.0, desktop build 5');
+          expect(created['prerelease'], isFalse);
+          expect(created['make_latest'], 'false');
+          expect(created['target_commitish'], 'abc1234');
+          expect(created['body'], contains('The release notes follow.'));
+          expect(github.assetNames(created), containsAll([...files.keys, 'SHA256SUMS.txt']));
+          expect(github.assetNames(created), hasLength(9));
+          final sums = github.assetText(created, 'SHA256SUMS.txt');
+          for (final entry in files.entries) {
+            expect(sums, contains('${line(entry.key, entry.value)}\n'));
+          }
+          expect(run.output, isNot(contains(_token)));
+        },
+      );
 
       test('on a release made by hand: its notes kept, a file replaced, every asset in SHA256SUMS.txt', () async {
         final existing = github.addRelease(tag, name: 'Desktop build 5', body: 'Notes written by hand');
@@ -277,12 +282,12 @@ void main() {
         expect(github.assetNames(existing), ['Immuch360-Desktop-$label-linux-amd64.deb', 'SHA256SUMS.txt']);
       });
 
-      test('refuses a tag that is not a desktop pre-release, a missing token, and never prints the token', () async {
+      test('refuses a tag that is not a desktop release, a missing token, and never prints the token', () async {
         final root = tree(files);
         final file = p.join(root.path, files.keys.first);
         var run = await release(['--tag', 'v3.3.0-rc.0-23', file]);
         expect(run.exitCode, 2, reason: '$run');
-        expect(run.output, contains('is not a desktop pre-release tag'));
+        expect(run.output, contains('is not a desktop release tag'));
 
         run = await release(['--tag', tag, file], token: '');
         expect(run.exitCode, 2, reason: '$run');

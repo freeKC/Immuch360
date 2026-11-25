@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Attaches the files of an Immuch360 Desktop build to its GitHub pre-release, with SHA256SUMS.txt.
+"""Attaches the files of an Immuch360 Desktop build to its GitHub release, with SHA256SUMS.txt.
 
-A desktop pre-release has the tag desktop-v<version>-<n>, for desktop build n (desktop-v3.3.0-rc.0-4 is desktop
+A desktop release has the tag desktop-v<version>-<n>, for desktop build n (desktop-v3.3.0-rc.0-4 is desktop
 build 4). Two ways lead to it, and both run this script, so that they give the same release:
   - the workflow immuch360-desktop-release.yml, on the push of such a tag: the Windows ZIP and installer, the Linux
     .deb, .rpm and AppImage (the AppImage from desktop build 32), the macOS ZIP and DMG that immuch360-desktop.yml
@@ -13,7 +13,9 @@ build 4). Two ways lead to it, and both run this script, so that they give the s
   desktop_release.py --repo OWNER/NAME --tag TAG [--commit SHA] [--name NAME] [--notes FILE] [FILE ...]
   desktop_release.py --dry-run [--label LABEL] [--sums FILE] FILE ...
 
-The release is created, as a pre-release, when the tag has none (on the commit given, or the tag's own). Its name and
+The release is created when the tag has none (on the commit given, or the tag's own), as a full release that never
+becomes the Latest (prerelease false, make_latest "false", from release 52: the Latest of the repository stays the
+release of the phones, which the app reads, and winget refuses pre-releases). Its name and
 notes are set only when they are given, so that the workflow never replaces notes written by hand. A file replaces
 the asset of the same name. SHA256SUMS.txt is then written again for every asset of the release, whichever way it
 came: from the digest GitHub keeps for each asset, from the file itself, or by reading the asset.
@@ -132,7 +134,8 @@ def publish(args, files: list, token: str) -> int:
     release = github.call('GET', f'/repos/{args.repo}/releases/tags/{tag}')
     if release is None:
         body = {'tag_name': args.tag, 'name': args.name or default_name(args.tag),
-                'body': notes if notes is not None else default_notes(args.tag), 'prerelease': True, 'draft': False}
+                'body': notes if notes is not None else default_notes(args.tag), 'prerelease': False,
+                'make_latest': 'false', 'draft': False}
         if args.commit:
             body['target_commitish'] = args.commit
         release = github.call('POST', f'/repos/{args.repo}/releases', body)
@@ -229,7 +232,7 @@ def main(argv=None) -> int:
         print('--repo OWNER/NAME is needed')
         return 2
     if not args.tag or not DESKTOP_TAG.match(args.tag):
-        print(f'--tag {args.tag!r} is not a desktop pre-release tag (desktop-v<version>-<n>)')
+        print(f'--tag {args.tag!r} is not a desktop release tag (desktop-v<version>-<n>)')
         return 2
     if args.notes and not args.notes.is_file():
         print(f'no notes file at {args.notes}')
