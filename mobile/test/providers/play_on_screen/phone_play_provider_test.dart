@@ -503,6 +503,14 @@ void main() {
     });
   });
 
+  test('the debug address of the linked screens: a private IPv4 with a port only', () {
+    expect(playOnDebugScreen('10.0.2.2:18363'), (host: '10.0.2.2', port: 18363));
+    expect(playOnDebugScreen(''), isNull);
+    expect(playOnDebugScreen('10.0.2.2'), isNull);
+    expect(playOnDebugScreen('8.8.8.8:8363'), isNull);
+    expect(playOnDebugScreen('tv.local:8363'), isNull);
+  });
+
   group('Sign (screen) in', () {
     test(
       'both users accept: a new session of the account goes to the screen, listed among the screens signed in',

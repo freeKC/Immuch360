@@ -28,6 +28,7 @@ import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 import 'package:logging/logging.dart';
 
@@ -36,6 +37,19 @@ final _log = Logger('PhonePlay');
 /// Where a linked screen listens, as it announces itself
 typedef PlayScreenAddress = ({String host, int port});
 
+/// A debug build may find its linked screens at one address, for two emulators that reach each other only through
+/// the host, where no announcement crosses (`--dart-define=IMMUCH_PLAY_ON_SCREEN=10.0.2.2:18363`, the TV emulator's
+/// port 8363 redirected there); a release build ignores it, as IMMUCH_PAIRING_ADVERTISE
+const _debugScreen = String.fromEnvironment('IMMUCH_PLAY_ON_SCREEN');
+
+/// The address of [_debugScreen], null for none or one that is not a private IPv4 with a port
+PlayScreenAddress? playOnDebugScreen(String value) {
+  final colon = value.lastIndexOf(':');
+  final port = colon > 0 ? int.tryParse(value.substring(colon + 1)) : null;
+  final host = colon > 0 ? value.substring(0, colon) : '';
+  return port != null && port > 0 && port < 65536 && isPrivatePairingIPv4(host) ? (host: host, port: port) : null;
+}
+
 /// The linked screens announced nearby, by id, while something watches it (the "Play on" sheet)
 class NearbyPlayScreensNotifier extends AutoDisposeNotifier<Map<String, PlayScreenAddress>> {
   StreamSubscription<MdnsService>? _browse;
@@ -43,6 +57,14 @@ class NearbyPlayScreensNotifier extends AutoDisposeNotifier<Map<String, PlayScre
 
   @override
   Map<String, PlayScreenAddress> build() {
+    final debug = kDebugMode ? playOnDebugScreen(_debugScreen) : null;
+    if (debug != null) {
+      unawaited(
+        ref.read(linkedScreensProvider.future).then((screens) {
+          state = {...state, for (final screen in screens) screen.id: debug};
+        }, onError: (Object _) {}),
+      );
+    }
     final browse = ref.read(pairingBrowseProvider);
     _browse = browse(
       pairingServiceType,
