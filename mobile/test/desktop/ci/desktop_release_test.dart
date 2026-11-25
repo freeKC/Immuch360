@@ -223,7 +223,7 @@ void main() {
         expect(run.exitCode, 0, reason: '$run');
         expect(github.releases, hasLength(1));
         final created = github.releases.single;
-        expect(created['name'], 'Immuch360 Desktop 3.3.0-rc.0, desktop build 5 (preview)');
+        expect(created['name'], 'Immuch360 Desktop 3.3.0-rc.0, desktop build 5');
         expect(created['prerelease'], isTrue);
         expect(created['target_commitish'], 'abc1234');
         expect(created['body'], contains('The release notes follow.'));

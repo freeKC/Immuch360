@@ -38,20 +38,22 @@ for candidate in /lib64/ld-linux-x86-64.so.2 /lib/x86_64-linux-gnu/ld-linux-x86-
 done
 
 # The distribution family, from /etc/os-release: arch, fedora, debian, suse, or other
+# jammy: Ubuntu 22.04 and the systems made on it (Linux Mint 21, Pop!_OS 22.04, Zorin 17, elementary 7), which name
+# its codename in UBUNTU_CODENAME; they have libmpv1, no libmpv2
 family=other
-ubuntu_2204=no
+jammy=no
 if [ -r /etc/os-release ]; then
   # shellcheck disable=SC1091
   ids=$(. /etc/os-release && echo "${ID:-} ${ID_LIKE:-}")
   # shellcheck disable=SC1091
-  version=$(. /etc/os-release && echo "${ID:-}-${VERSION_ID:-}")
+  codename=$(. /etc/os-release && echo "${UBUNTU_CODENAME:-${VERSION_CODENAME:-}}")
   case " $ids " in
     *" arch "*) family=arch ;;
     *" fedora "* | *" rhel "* | *" centos "*) family=fedora ;;
     *" suse "* | *" opensuse "* | *" opensuse-tumbleweed "* | *" opensuse-leap "* | *" sles "*) family=suse ;;
     *" debian "* | *" ubuntu "*) family=debian ;;
   esac
-  [ "$version" != "ubuntu-22.04" ] || ubuntu_2204=yes
+  [ "$codename" != jammy ] || jammy=yes
 fi
 
 # The package that brings a library on this family, by the start of the library's name
@@ -64,7 +66,7 @@ package_of() {
     libepoxy*) set -- "$1" libepoxy libepoxy libepoxy0 libepoxy0 ;;
     libstdc++* | libgcc_s*) set -- "$1" gcc-libs libstdc++ libstdc++6 libstdc++6 ;;
     libmpv*)
-      if [ "$ubuntu_2204" = yes ]; then
+      if [ "$jammy" = yes ]; then
         set -- "$1" mpv mpv-libs libmpv1 libmpv2
       else
         set -- "$1" mpv mpv-libs libmpv2 libmpv2
@@ -147,7 +149,7 @@ advice() {
   done
   if [ -n "$glibc" ]; then
     echo "This system's C or C++ library is too old for Immuch360 Desktop, which needs glibc @GLIBC@ or later (missing:$glibc):"
-    echo "Ubuntu 22.04, Debian 12, Fedora 36, openSUSE Tumbleweed, Arch Linux or a later system."
+    echo "Ubuntu 22.04, Debian 12, Fedora 40, openSUSE Tumbleweed, Arch Linux or a later system."
     return
   fi
   if [ -n "$packages" ] && [ "$family" != other ]; then

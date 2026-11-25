@@ -324,6 +324,56 @@ void main() {
         skip: Platform.isWindows ? 'the AppImage is made on Linux (symbolic links, sh)' : false,
       );
 
+      test('the AppRun names libmpv1 on Ubuntu 22.04 and the systems made on it, libmpv2 or mpv elsewhere', () {
+        final root = tree({...bundle(), ...lock()});
+        final run = appdir(root);
+        expect(run.exitCode, 0, reason: '$run');
+        final dir = p.join(root.path, 'out', 'AppDir');
+        final apprun = File(p.join(dir, 'AppRun')).readAsStringSync();
+        const check = 'if [ "\${1:-}" = "--immuch360-check" ]; then';
+        expect(apprun, contains(check));
+        expect(apprun, contains('/etc/os-release'));
+        // The os-release of each system as it ships it (the fields the AppRun reads), and the advice for a missing
+        // libmpv printed by a copy of the AppRun that reads that file and stops before any library is looked for
+        const systems = {
+          'ubuntu-22.04':
+              'ID=ubuntu\nID_LIKE=debian\nVERSION_ID="22.04"\nVERSION_CODENAME=jammy\nUBUNTU_CODENAME=jammy\n',
+          'linuxmint-21':
+              'ID=linuxmint\nID_LIKE="ubuntu debian"\nVERSION_ID="21"\nVERSION_CODENAME=vanessa\nUBUNTU_CODENAME=jammy\n',
+          'pop-22.04':
+              'ID=pop\nID_LIKE="ubuntu debian"\nVERSION_ID="22.04"\nVERSION_CODENAME=jammy\nUBUNTU_CODENAME=jammy\n',
+          'zorin-17': 'ID=zorin\nID_LIKE=ubuntu\nVERSION_ID="17"\nVERSION_CODENAME=jammy\nUBUNTU_CODENAME=jammy\n',
+          'elementary-7':
+              'ID=elementary\nID_LIKE=ubuntu\nVERSION_ID="7"\nVERSION_CODENAME=horus\nUBUNTU_CODENAME=jammy\n',
+          'ubuntu-24.04':
+              'ID=ubuntu\nID_LIKE=debian\nVERSION_ID="24.04"\nVERSION_CODENAME=noble\nUBUNTU_CODENAME=noble\n',
+          'linuxmint-22':
+              'ID=linuxmint\nID_LIKE="ubuntu debian"\nVERSION_ID="22"\nVERSION_CODENAME=wilma\nUBUNTU_CODENAME=noble\n',
+          'debian-12': 'ID=debian\nVERSION_ID="12"\nVERSION_CODENAME=bookworm\n',
+          'arch': 'ID=arch\n',
+        };
+        String advice(String system) {
+          final release = File(p.join(root.path, 'os-release-$system'))..writeAsStringSync(systems[system]!);
+          final copy = File(p.join(dir, 'AppRun-$system'))
+            ..writeAsStringSync(
+              apprun
+                  .replaceAll('/etc/os-release', release.path)
+                  .replaceFirst(check, 'if [ "\${1:-}" = "--advice" ]; then advice libmpv.so.2; exit 0; fi\n$check'),
+            );
+          final out = Process.runSync('sh', [copy.path, '--advice']);
+          expect(out.exitCode, 0, reason: '$system: ${out.stderr}');
+          return out.stdout as String;
+        }
+
+        for (final system in ['ubuntu-22.04', 'linuxmint-21', 'pop-22.04', 'zorin-17', 'elementary-7']) {
+          expect(advice(system), contains('sudo apt install libmpv1\n'), reason: system);
+        }
+        for (final system in ['ubuntu-24.04', 'linuxmint-22', 'debian-12']) {
+          expect(advice(system), contains('sudo apt install libmpv2\n'), reason: system);
+        }
+        expect(advice('arch'), contains('sudo pacman -S --needed mpv\n'));
+      }, skip: Platform.isLinux ? false : 'the AppRun runs on Linux (its loader)');
+
       test('refuses a source of the runtime that is not the one the lock pins', () {
         final root = tree({...bundle(), ...lock(runtimeSource: 'another source')});
         final run = appdir(root);

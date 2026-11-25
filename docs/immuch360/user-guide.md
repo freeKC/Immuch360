@@ -1489,7 +1489,7 @@ Immuch360 Desktop comes as desktop pre-releases on the [Releases](https://github
 | Windows 10 and 11, 64 bit | `Immuch360-Desktop-<version>-windows-x64.zip` | The same program as a folder, to unzip anywhere |
 | Ubuntu 22.04 or later, Debian 12 or later, 64 bit | `Immuch360-Desktop-<version>-linux-amd64.deb` | The package for Debian and Ubuntu |
 | Fedora 40 or later, 64 bit | `Immuch360-Desktop-<version>-linux-x86_64.rpm` | The package for Fedora |
-| Linux with glibc 2.35 or later (Arch Linux, openSUSE Tumbleweed, Ubuntu 22.04, Debian 12, Fedora 36 and later), 64 bit | `Immuch360-Desktop-<version>-linux-x86_64.AppImage` | The app in one file, to run without installing (from desktop build 32) |
+| Linux with glibc 2.35 or later, 64 bit (checked on Arch Linux, openSUSE Tumbleweed, Ubuntu 22.04, Debian 12 and Fedora 44) | `Immuch360-Desktop-<version>-linux-x86_64.AppImage` | The app in one file, to run without installing (from desktop build 32) |
 | macOS 12 or later, Apple silicon or Intel | `Immuch360-Desktop-<version>-macos.dmg` | The app in a disk image |
 | macOS 12 or later, Apple silicon or Intel | `Immuch360-Desktop-<version>-macos.zip` | The same app, zipped |
 | Every system | `Immuch360-Desktop-<version>-libsmb2-sources.tar.gz` | The corresponding source of libsmb2, the SMB library inside the app (from desktop build 7; the app carries the same archive), see [License and trademarks](platform-support.md#license-and-trademarks) |

@@ -79,7 +79,7 @@ def sums_text(sums: dict) -> str:
 
 def default_name(tag: str) -> str:
     version, build = DESKTOP_TAG.match(tag).groups()
-    return f'Immuch360 Desktop {version}, desktop build {build} (preview)'
+    return f'Immuch360 Desktop {version}, desktop build {build}'
 
 
 def default_notes(tag: str) -> str:
