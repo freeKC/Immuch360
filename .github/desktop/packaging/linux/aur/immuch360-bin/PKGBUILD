@@ -1,0 +1,61 @@
+# Maintainer: FreeKC <7538438+freeKC@users.noreply.github.com>
+#
+# Immuch360 Desktop for Arch Linux, from the .deb of a desktop release of github.com/freeKC/Immuch360: the program
+# and its libraries in /usr/lib/immuch360 (the .deb has them in /opt/immuch360, where namcap wants no ELF file), the
+# launcher /usr/bin/immuch360, the desktop entry, the icons and the MIME types of the raw camera files. The libraries
+# of the desktop come from Arch: GTK 3, WebKitGTK 4.1, libsecret and mpv, whose libmpv plays the videos (opened when
+# the app starts, not linked, hence the warning of namcap that mpv may not be needed). libsmb2 (LGPL-2.1-or-later), the library of the SMB shares,
+# is built by the project and comes with its notice and its source inside the app. Checked by the desktop workflow of
+# the project (namcap, makepkg, the package installed in an archlinux container).
+# The source of this file: .github/desktop/packaging/linux/aur/immuch360-bin in the repository.
+
+pkgname=immuch360-bin
+_label=3.4.6-desktop.31
+_tag=desktop-v3.4.6-31
+pkgver=3.4.6.31
+pkgrel=1
+pkgdesc='Photos and videos, 360° included, from Immich, your folders and your network shares'
+arch=('x86_64')
+url='https://immuch360.com'
+license=('AGPL-3.0-only' 'LGPL-2.1-or-later')
+depends=('at-spi2-core' 'cairo' 'fontconfig' 'gdk-pixbuf2' 'glib2' 'glibc' 'gtk3' 'harfbuzz' 'hicolor-icon-theme'
+         'libepoxy' 'libgcc' 'libsecret' 'libsoup3' 'libstdc++' 'mpv' 'pango' 'webkit2gtk-4.1' 'xdg-user-dirs')
+optdepends=('gnome-keyring: keep the passwords of the servers between two starts'
+            'kwallet: keep the passwords of the servers between two starts, on KDE Plasma')
+provides=('immuch360')
+conflicts=('immuch360')
+# The Dart code of the app is compiled into libapp.so, which strip would break
+options=('!strip' '!debug')
+source=("https://github.com/freeKC/Immuch360/releases/download/${_tag}/Immuch360-Desktop-${_label}-linux-amd64.deb")
+noextract=("Immuch360-Desktop-${_label}-linux-amd64.deb")
+sha256sums=('2bee82f21611d0a3dd68fad685f7ab0b7c441ee4271ffeab86f1e1dc43921e77')
+
+prepare() {
+  mkdir -p deb
+  bsdtar -xf "Immuch360-Desktop-${_label}-linux-amd64.deb" -C deb
+  mkdir -p root
+  bsdtar -xf deb/data.tar.* -C root
+}
+
+package() {
+  # The program finds its data and its libraries next to itself, wherever it is
+  install -d "$pkgdir/usr/lib"
+  cp -a root/opt/immuch360 "$pkgdir/usr/lib/immuch360"
+  # The launcher of the .deb, pointed at /usr/lib/immuch360
+  sed 's|/opt/immuch360|/usr/lib/immuch360|g' root/usr/bin/immuch360 > immuch360.sh
+  install -Dm755 immuch360.sh "$pkgdir/usr/bin/immuch360"
+  install -Dm644 root/usr/share/applications/com.aprogsys.immuch360.desktop \
+    "$pkgdir/usr/share/applications/com.aprogsys.immuch360.desktop"
+  install -Dm644 root/usr/share/mime/packages/com.aprogsys.immuch360.xml \
+    "$pkgdir/usr/share/mime/packages/com.aprogsys.immuch360.xml"
+  local size
+  for size in 16 32 64 128 256 512; do
+    install -Dm644 "root/usr/share/icons/hicolor/${size}x${size}/apps/com.aprogsys.immuch360.png" \
+      "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/com.aprogsys.immuch360.png"
+  done
+  # The licence of the app and the section of libsmb2, with its notice and the LGPL, as the copyright file of the .deb
+  install -Dm644 root/usr/share/doc/immuch360/copyright "$pkgdir/usr/share/licenses/$pkgname/copyright"
+  local assets=root/opt/immuch360/data/flutter_assets/packages/dart_smb2/libsmb2
+  install -Dm644 "$assets/NOTICE" "$pkgdir/usr/share/licenses/$pkgname/libsmb2/NOTICE"
+  install -Dm644 "$assets/LICENCE-LGPL-2.1.txt" "$pkgdir/usr/share/licenses/$pkgname/libsmb2/LICENCE-LGPL-2.1.txt"
+}

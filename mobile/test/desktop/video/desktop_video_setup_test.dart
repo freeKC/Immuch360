@@ -88,6 +88,18 @@ void main() {
     expect(log.single.message, contains('next to immuch360.exe'));
   });
 
+  group('the Linux family of the package of libmpv', () {
+    test('by the ID and ID_LIKE of /etc/os-release', () {
+      expect(libmpvFamilyOf('ID=arch\n'), LibmpvFamily.arch);
+      expect(libmpvFamilyOf('ID=manjaro\nID_LIKE=arch\n'), LibmpvFamily.arch);
+      expect(libmpvFamilyOf('ID="opensuse-tumbleweed"\nID_LIKE="opensuse suse"\n'), LibmpvFamily.suse);
+      expect(libmpvFamilyOf('ID="opensuse-leap"\n'), LibmpvFamily.suse);
+      expect(libmpvFamilyOf('ID=fedora\n'), LibmpvFamily.other);
+      expect(libmpvFamilyOf('ID=debian\n'), LibmpvFamily.other);
+      expect(libmpvFamilyOf(''), LibmpvFamily.other);
+    });
+  });
+
   group('the placeholder of the viewer', () {
     Future<void> pump(WidgetTester tester) async {
       await tester.pumpWidget(
@@ -112,11 +124,33 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('on Linux it names the package that brings libmpv', (tester) async {
+    final osRelease = readOsRelease;
+    tearDown(() {
+      readOsRelease = osRelease;
+      forgetLibmpvFamily();
+    });
+
+    Future<void> pumpOn(WidgetTester tester, String text) async {
+      readOsRelease = () => text;
+      forgetLibmpvFamily();
       debugDefaultTargetPlatformOverride = TargetPlatform.linux;
       await pump(tester);
-      expect(find.textContaining('install the libmpv2 package'), findsOneWidget);
       debugDefaultTargetPlatformOverride = null;
+    }
+
+    testWidgets('on Linux it names the package that brings libmpv', (tester) async {
+      await pumpOn(tester, 'ID=ubuntu\nID_LIKE=debian\nVERSION_ID="24.04"\n');
+      expect(find.textContaining('install the libmpv2 package (libmpv1 on Ubuntu 22.04'), findsOneWidget);
+    });
+
+    testWidgets('on Arch Linux and the systems built on it, the mpv package through pacman', (tester) async {
+      await pumpOn(tester, 'NAME="EndeavourOS"\nID="endeavouros"\nID_LIKE="arch"\n');
+      expect(find.textContaining('install the mpv package (sudo pacman -S mpv)'), findsOneWidget);
+    });
+
+    testWidgets('on openSUSE, libmpv2 through zypper', (tester) async {
+      await pumpOn(tester, 'NAME="openSUSE Tumbleweed"\nID="opensuse-tumbleweed"\nID_LIKE="opensuse suse"\n');
+      expect(find.textContaining('sudo zypper install libmpv2'), findsOneWidget);
     });
 
     testWidgets('elsewhere it says that playback comes later', (tester) async {

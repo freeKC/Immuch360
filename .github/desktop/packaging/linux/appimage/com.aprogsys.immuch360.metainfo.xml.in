@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The AppStream description of the AppImage of Immuch360 Desktop, which the tools that integrate AppImages show;
+     made by .github/desktop/desktop_installers.py appimage -->
+<component type="desktop-application">
+  <id>com.aprogsys.immuch360</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-only</project_license>
+  <name>Immuch360 Desktop</name>
+  <summary>Photos and videos, 360° included, with or without an Immich server</summary>
+  <description>
+    <p>
+      Immuch360 Desktop is the computer version of Immuch360, a media app for 360° photos and videos and for flat
+      ones: the timeline and albums of your Immich server, the folders of the computer, SMB, WebDAV and DLNA shares and
+      Plex, Jellyfin and Emby servers, in one window.
+    </p>
+  </description>
+  <launchable type="desktop-id">com.aprogsys.immuch360.desktop</launchable>
+  <url type="homepage">https://immuch360.com</url>
+  <url type="bugtracker">https://github.com/freeKC/Immuch360/issues</url>
+  <url type="vcs-browser">https://github.com/freeKC/Immuch360</url>
+  <developer id="com.aprogsys">
+    <name>Immuch360</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="@VERSION@" date="@DATE@"/>
+  </releases>
+</component>
