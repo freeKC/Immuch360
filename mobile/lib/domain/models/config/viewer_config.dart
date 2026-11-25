@@ -98,12 +98,10 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// AV2 video then says so instead of playing)
     @Default(true) bool av2Videos,
 
-    /// Immuch360 Desktop, Spatial 2.5D (lib/desktop/spatial/spatial_settings.dart): what moves the view, "head",
-    /// "mouse", "sway" or "keys"; null until the user picks one (the head when a webcam is present, else the mouse)
-    String? spatialInput,
-
-    /// Use the webcam for head tracking: on by default. The webcam still opens only once [spatialWebcamConsent] is
-    /// given on the card of the first time; off, the view follows the mouse
+    /// Immuch360 Desktop, Spatial 2.5D, the head tracked by the webcam (lib/desktop/spatial/spatial_settings.dart):
+    /// "Use the webcam for head tracking", on by default. The webcam still opens only once [spatialWebcamConsent] is
+    /// given on the card of the first time, and only while a Spatial 2.5D view is on screen; off, the view follows the
+    /// mouse
     @Default(true) bool spatialWebcam,
 
     /// The user said yes on the card that explains the webcam, the first time the head moved the view
@@ -111,13 +109,6 @@ abstract class ViewerConfig with _$ViewerConfig {
 
     /// The webcam picked in the menu, null for the default one (never an infrared camera)
     String? spatialCamera,
-
-    /// The head's direction reversed, for a webcam whose own software mirrors its pictures
-    @Default(false) bool spatialReverseHead,
-
-    /// The head sensitivity in tenths (5 to 40): 3.0 by default on a computer, the user sitting further from the
-    /// screen than from a phone
-    @Default(30) int spatialSensitivity,
 
     /// Experimental: the page of a film of a Plex server shows the opening of its Wikipedia article in the language of
     /// the app, found through Wikidata by the film's IMDb or TMDB number (store/m2/plex-films-2026-11-10/report.md,

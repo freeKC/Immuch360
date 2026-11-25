@@ -60,14 +60,11 @@ enum SettingsKey<T> {
   viewerMarkSplatPhotos<bool>(),
   // The AV2 videos of the computers, decoded by the processor, see ViewerConfig.av2Videos
   viewerAv2Videos<bool>(),
-  // Spatial 2.5D on the computers: what moves the view, the webcam, its consent, the webcam picked, the head direction
-  // and the sensitivity, see ViewerConfig.spatialInput and the fields after it
-  viewerSpatialInput<String?>(),
+  // Spatial 2.5D on the computers, the head tracked by the webcam: whether the webcam may be used, the user's yes on
+  // the card of the first time, the webcam picked, see ViewerConfig.spatialWebcam and the fields after it
   viewerSpatialWebcam<bool>(),
   viewerSpatialWebcamConsent<bool>(),
   viewerSpatialCamera<String?>(),
-  viewerSpatialReverseHead<bool>(),
-  viewerSpatialSensitivity<int>(),
   // Null until the user picks a source: viewerLoadOriginalVideo tells it until then, see ViewerConfig.videoSource
   viewerVideoSource<VideoSourcePolicy?>(codec: EnumCodec<VideoSourcePolicy>(VideoSourcePolicy.values)),
   // The Wikipedia block of the film page of a Plex film, see ViewerConfig.filmWikipedia

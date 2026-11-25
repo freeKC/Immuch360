@@ -179,6 +179,18 @@ typedef _Info = int Function(Pointer<Void> tracker, Pointer<HtInfo> info);
 typedef _CloseNative = Void Function(Pointer<Void> tracker);
 typedef _Close = void Function(Pointer<Void> tracker);
 
+/// ht_api_version of the macOS code asset of hook/build.dart, only for finding its file
+@Native<_VersionNative>(symbol: 'ht_api_version', assetId: 'package:immuch_head_tracker/immuch_head_tracker.dart')
+external int _assetApiVersion();
+
+/// Dl_info of <dlfcn.h>
+final class _DlInfo extends Struct {
+  external Pointer<Utf8> fileName;
+  external Pointer<Void> fileBase;
+  external Pointer<Utf8> symbolName;
+  external Pointer<Void> symbolAddress;
+}
+
 /// The functions of the tracker's library. [library] is its path, the app's own library by default (the tests give a
 /// build folder, or on Linux a gcc build of test_native).
 class NativeHeadTracker {
@@ -208,15 +220,40 @@ class NativeHeadTracker {
   }
 
   /// The app's library: the DLL next to the executable on Windows, the .so of the bundle's lib folder on Linux (found
-  /// through the executable's run path), the framework the build hook's dylib becomes inside the app on macOS
+  /// through the executable's run path); on macOS the code asset of the build hook, wherever Flutter put it (the
+  /// framework inside the app, or the build folder of a test run), found by its own address
   static String get defaultLibrary {
     if (Platform.isWindows) {
       return 'immuch_head_tracker.dll';
     }
     if (Platform.isMacOS) {
-      return '@executable_path/../Frameworks/immuch_head_tracker.framework/immuch_head_tracker';
+      return macosAssetPath() ?? '@executable_path/../Frameworks/immuch_head_tracker.framework/immuch_head_tracker';
     }
     return 'libimmuch_head_tracker.so';
+  }
+
+  /// The file of the macOS code asset: the address of one of its functions, resolved by the Dart runtime, then dladdr
+  /// for the image that holds it. Null when the asset is not there.
+  static String? macosAssetPath() {
+    try {
+      final address = Native.addressOf<NativeFunction<_VersionNative>>(_assetApiVersion);
+      final dladdr = DynamicLibrary.process()
+          .lookupFunction<
+            Int32 Function(Pointer<Void>, Pointer<_DlInfo>),
+            int Function(Pointer<Void>, Pointer<_DlInfo>)
+          >('dladdr');
+      final info = calloc<_DlInfo>();
+      try {
+        if (dladdr(address.cast(), info) == 0 || info.ref.fileName == nullptr) {
+          return null;
+        }
+        return info.ref.fileName.toDartString();
+      } finally {
+        calloc.free(info);
+      }
+    } catch (_) {
+      return null;
+    }
   }
 
   final String path;

@@ -401,6 +401,20 @@ class SpatialHeadTracking extends ChangeNotifier {
     return _viewpoint.predictedAt(now, predicted);
   }
 
+  /// The head position (headX, the phones' convention, never reversed) [aheadUs] after now, moved on by the head's
+  /// speed for at most 40 ms (ht_predict's rule), and the time it is for in the clock of the samples; null without a
+  /// face or without the tracker's filter
+  ({double x, int timeUs})? predictedHead({int aheadUs = 0}) {
+    final session = _session;
+    final latest = _latest;
+    if (session == null || latest == null || !latest.hasFace || !latest.filteredX.isFinite) {
+      return null;
+    }
+    final at = session.nowUs() + aheadUs;
+    final x = latest.predictedAt(at);
+    return x == null ? null : (x: x, timeUs: at);
+  }
+
   /// Whether the viewpoint eases by itself now (a face lost or found again)
   bool isAnimating() {
     final session = _session;

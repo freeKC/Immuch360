@@ -12,8 +12,8 @@
 // - On macOS, the clip itself through the camera path of AVFoundation ("file:"), with the NEON detector on arm64.
 //
 // Which library: IMMUCH360_HEAD_TRACKER_LIBRARY (the gcc build of test_native on Linux), else the app's build on
-// Windows (IMMUCH360_BUILD_DIR or build/windows/x64/runner/*), else on macOS the dylib the package's build hook made
-// for this test run (under build/). Without one the tests are skipped, unless IMMUCH360_REQUIRE_HEAD_TRACKER is 1 (the
+// Windows (IMMUCH360_BUILD_DIR or build/windows/x64/runner/*), else on macOS the code asset the package's build hook
+// made for this test run. Without one the tests are skipped, unless IMMUCH360_REQUIRE_HEAD_TRACKER is 1 (the
 // desktop workflow sets it where a library must be there).
 
 import 'dart:async';
@@ -26,18 +26,6 @@ import 'package:path/path.dart' as p;
 
 const _track = 'test/fixtures/spatial/painted-head-12s.track';
 const _clip = 'test/fixtures/video/painted-head-12s.mp4';
-
-String? _findIn(Directory folder, bool Function(File file) wanted) {
-  if (!folder.existsSync()) {
-    return null;
-  }
-  for (final entity in folder.listSync(recursive: true, followLinks: false)) {
-    if (entity is File && wanted(entity)) {
-      return entity.absolute.path;
-    }
-  }
-  return null;
-}
 
 String? _library() {
   final given = Platform.environment['IMMUCH360_HEAD_TRACKER_LIBRARY'];
@@ -58,13 +46,8 @@ String? _library() {
     return null;
   }
   if (Platform.isMacOS) {
-    // The build hook's output for this run: a dylib, or the framework Flutter made of it
-    return _findIn(Directory('build'), (file) {
-      final name = p.basename(file.path);
-      return name == 'libimmuch_head_tracker.dylib' ||
-          (name == 'immuch_head_tracker' && p.basename(file.parent.path) == 'immuch_head_tracker.framework') ||
-          (name == 'immuch_head_tracker' && file.path.contains('immuch_head_tracker.framework'));
-    });
+    // The code asset the package's build hook made for this run, found by its own address
+    return NativeHeadTracker.macosAssetPath();
   }
   return null;
 }
@@ -131,12 +114,15 @@ void main() {
         processor = tracker.openFrames();
       }
       final row = rows[i];
-      final x = (row[1] as num).toDouble();
-      // head_x = 0.5 - eye_x, the filter runs on head_x x 640
+      // The filter runs on head_x x 640 and head_x stays within -0.5 and 0.5: the vectors (pixels of a 640 pixel wide
+      // image) are fed 320 lower. The One Euro filter follows a shift of its input (its cutoff depends on the speed
+      // only), so the output is shifted back.
+      final x = (row[1] as num).toDouble() - 320;
+      // head_x = 0.5 - eye_x
       final sample = processor.processLandmarks([
         HeadLandmarks(score: 90, eyeX: 0.5 - x / 640, eyeY: 0.5, eyeDistance: 0.1),
       ], (row[0] as num).toInt());
-      expect(sample.filteredX * 640, closeTo((row[2] as num).toDouble(), 1e-6), reason: 'row $i');
+      expect(sample.filteredX * 640 + 320, closeTo((row[2] as num).toDouble(), 1e-6), reason: 'row $i');
     }
     processor.close();
   }, skip: skip);

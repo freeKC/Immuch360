@@ -442,7 +442,7 @@ jobs:
         run: |
           mise exec -- dart format --output=none --set-exit-if-changed lib/desktop lib/main_desktop.dart \
             test/desktop integration_test/desktop_smoke_test.dart packages/flutter_secure_storage_windows \
-            packages/immuch_sbs_codec
+            packages/immuch_sbs_codec packages/immuch_head_tracker/lib packages/immuch_head_tracker/hook
 
       # The Rust JPEG codec of the AI features (mobile/packages/immuch_sbs_codec), in release as its build hook makes
       # it: round trip, ICC profile, quality, subsampling, segments, a panic turned into a status, the C functions.
@@ -508,6 +508,33 @@ jobs:
           IMMUCH360_RUN_LAUNCHER: ${{ steps.fake_sd_cli.outputs.launcher }}
           IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
         run: mise exec -- flutter test
+
+      # The head tracker of Spatial 2.5D (mobile/packages/immuch_head_tracker) built with gcc with -Wall -Wextra -Werror,
+      # V4L2 for the webcams (none here) and both builds of libfacedetection: its native tests (the box filter, the face
+      # states, the eye midpoint, the face followed, the far switch, the One Euro filter against the phones' values,
+      # the prediction, the fake cameras, the recorded clip frame by frame and through the y4m fake camera, the plain and
+      # AVX2 builds giving the same faces), then the Dart side on that library: the native filter against the Kotlin
+      # values, ht_predict against the Dart prediction, the recorded landmark track through the fake camera, and the
+      # clip through the raw frame entry point. The clip is decoded by the pinned FFmpeg of the step above
+      - name: The head tracker on Linux (native tests and the Dart tests on its library)
+        working-directory: mobile
+        env:
+          IMMUCH360_REQUIRE_HEAD_TRACKER: '1'
+        run: |
+          work="$RUNNER_TEMP/head-tracker"
+          mkdir -p "$work/ffmpeg"
+          curl -sSfL --retry 3 -o "$work/ffmpeg.zip" \
+            https://github.com/immuch360/libmpv-builds/releases/download/ffmpeg-lgpl-20261118-9/Immuch360-ffmpeg-9.0.2-2-linux-x64.zip
+          echo "6a3102ce743507395370c1d4aacb67ea153d065cb05636806af436ca6d2e13f4  $work/ffmpeg.zip" | sha256sum -c -
+          (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
+          export PATH="$work/ffmpeg/bin:$PATH"
+          bash packages/immuch_head_tracker/test_native/run.sh "$work/build" "$work/painted-head-12s.track"
+          # The fixture is what the tracker writes from the clip today
+          diff test/fixtures/spatial/painted-head-12s.track "$work/painted-head-12s.track"
+          ls -l "$work/build"/libimmuch_head_tracker*.so
+          IMMUCH360_HEAD_TRACKER_LIBRARY="$work/build/libimmuch_head_tracker.so" mise exec -- flutter test \
+            test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/head_tracker_windows_test.dart \
+            --reporter expanded
 
       # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
       # installs, and of 1.23.2, the last release for Intel Macs (the proof that the table of API 23 holds), one run each
@@ -797,6 +824,28 @@ jobs:
           grep -qxF /opt/immuch360/lib/libimmuch_sbs_codec.so "$RUNNER_TEMP/rpm.txt" \
             || { echo "::error::no libimmuch_sbs_codec.so in the .rpm"; exit 1; }
           echo "libimmuch_sbs_codec.so: $(stat -c %s "$codec") bytes, in the bundle, the .deb and the .rpm"
+
+      # The head tracker of Spatial 2.5D (FFI plugin mobile/packages/immuch_head_tracker, built by CMake with the app's
+      # -Wall -Werror): the tracker and both builds of libfacedetection in lib/ of the bundle and of both packages, the
+      # tracker linking no camera library (V4L2 is the kernel's interface, no libv4l)
+      - name: The head tracker in the bundle and the packages
+        run: |
+          lib=mobile/build/linux/x64/release/bundle/lib
+          for name in libimmuch_head_tracker.so libimmuch_head_tracker_detect.so libimmuch_head_tracker_detect_avx2.so; do
+            if [ ! -f "$lib/$name" ]; then
+              echo "::error::no $name in the bundle"
+              ls "$lib"
+              exit 1
+            fi
+            grep -qxF "./opt/immuch360/lib/$name" "$RUNNER_TEMP/deb.txt" || { echo "::error::no $name in the .deb"; exit 1; }
+            grep -qxF "/opt/immuch360/lib/$name" "$RUNNER_TEMP/rpm.txt" || { echo "::error::no $name in the .rpm"; exit 1; }
+            echo "$name: $(stat -c %s "$lib/$name") bytes, sha256 $(sha256sum "$lib/$name" | cut -c1-64)"
+          done
+          objdump -p "$lib/libimmuch_head_tracker.so" | awk '/NEEDED/ {print $2}' | tee "$RUNNER_TEMP/ht-needed.txt"
+          if grep -qiE 'v4l|camera|pipewire' "$RUNNER_TEMP/ht-needed.txt"; then
+            echo "::error::the head tracker links a camera library"
+            exit 1
+          fi
 
       # The AppImage (issue 22, release 52): the bundle staged as for the packages, laid out as an AppDir whose AppRun
       # looks for the libraries of the system before the start and says which packages to install, with the command
@@ -1515,6 +1564,32 @@ jobs:
           print(f'immuch_sbs_codec.dll: {info.file_size} bytes in the ZIP')
           PY
 
+      # The head tracker of Spatial 2.5D (immuch_head_tracker): its DLL, the two builds of the face detector, and the
+      # licence of libfacedetection (BSD-3-Clause) that the detector builds carry; windows_bundle.py has checked that
+      # the tracker does not import Media Foundation (loaded at run time, for the Windows N editions)
+      - name: The head tracker and the licence of its face detector in the ZIP
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+        run: |
+          python - "$ZIP" mobile/packages/immuch_head_tracker/third_party/libfacedetection/LICENSE <<'PY'
+          import hashlib, pathlib, sys, zipfile
+          archive, licence = sys.argv[1], pathlib.Path(sys.argv[2])
+          top = 'Immuch360 Desktop/'
+          dlls = ('immuch_head_tracker.dll', 'immuch_head_tracker_detect.dll', 'immuch_head_tracker_detect_avx2.dll')
+          wanted = [top + name for name in dlls] + [top + 'licenses/libfacedetection/LICENSE']
+          with zipfile.ZipFile(archive) as bundle:
+              missing = [name for name in wanted if name not in bundle.namelist()]
+              if missing:
+                  sys.exit('::error::not in the ZIP: ' + ', '.join(missing))
+              for name in dlls:
+                  data = bundle.read(top + name)
+                  print(f'{name}: {len(data)} bytes, sha256 {hashlib.sha256(data).hexdigest()}')
+              packed = bundle.read(top + 'licenses/libfacedetection/LICENSE')
+          if packed.replace(b'\r\n', b'\n') != licence.read_bytes().replace(b'\r\n', b'\n'):
+              sys.exit('::error::licenses/libfacedetection/LICENSE in the ZIP is not the vendored LICENSE')
+          print('the ZIP holds the head tracker, both face detector builds and the licence of libfacedetection')
+          PY
+
       # The installer of the same folder as the ZIP (Inno Setup 6 of the runner image): for one user or for every
       # user of the PC, "Open with" for the types of .github/desktop/file-associations.json, an uninstaller
       - name: Installer
@@ -1577,15 +1652,42 @@ jobs:
       # companion (the fake) with its duration and its seeks (av2_libmpv_test), the frames of a splat scene taken from
       # a video filmed upright (video_frames_libmpv_test). The tests that need a GPU's video decoder or mpv drawing
       # into ANGLE (decoder_probe_windows_test, libmpv_probe_test) stay on the PC.
-      - name: Desktop tests on the build (libmpv, ANGLE)
+      # The head tracker's test opens a recorded clip through Media Foundation, the same reader as a webcam. Windows
+      # Server has Media Foundation as a feature the runner image may not install: added here, without the restart it
+      # asks for; the test says so if the clip still does not open.
+      - name: Media Foundation for the head tracker test
+        shell: pwsh
+        run: |
+          $files = 'mfplat.dll', 'mfreadwrite.dll', 'mf.dll', 'msmpeg2vdec.dll'
+          $missing = $files | Where-Object { -not (Test-Path (Join-Path $env:SystemRoot "System32\$_")) }
+          if ($missing) {
+            Write-Host "Not in System32: $($missing -join ', '); adding the Server-Media-Foundation feature"
+            try {
+              $result = Install-WindowsFeature Server-Media-Foundation
+              Write-Host "Success: $($result.Success), restart needed: $($result.RestartNeeded), exit code: $($result.ExitCode)"
+            } catch {
+              Write-Host "::warning::Server-Media-Foundation could not be added: $_"
+            }
+          }
+          foreach ($file in $files) {
+            Write-Host "$file in System32: $(Test-Path (Join-Path $env:SystemRoot "System32\$file"))"
+          }
+
+      # With the head tracker of the build (Spatial 2.5D): the recorded clip through the Media Foundation file reader
+      # and through the camera path ("file:"), both builds of the detector, the raw frame entry point
+      # (head_tracker_windows_test), and the native filter against the phones' values, the prediction, the recorded
+      # landmark track through the fake camera (head_tracker_native_test). No webcam: the runners have none.
+      - name: Desktop tests on the build (libmpv, ANGLE, head tracker)
         working-directory: mobile
         env:
           IMMUCH360_BUILD_DIR: build/windows/x64/runner/Release
           IMMUCH360_FAKE_AV2: ${{ steps.fake_av2.outputs.fake }}
+          IMMUCH360_REQUIRE_HEAD_TRACKER: '1'
         run: |
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
             test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/av2/av2_libmpv_test.dart \
-            test/desktop/ai/splat/video_frames_libmpv_test.dart
+            test/desktop/ai/splat/video_frames_libmpv_test.dart test/desktop/spatial/head_tracker_windows_test.dart \
+            test/desktop/spatial/head_tracker_native_test.dart
 
       # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
       # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
@@ -1772,6 +1874,43 @@ jobs:
           [ -n "$notices" ] || { echo "::error::no NOTICES.md of the video libraries in the app"; exit 1; }
           echo "notices: ${notices#"$app/"}"
           ls "$(dirname "$notices")"
+
+      # The head tracker of Spatial 2.5D (the code asset of mobile/packages/immuch_head_tracker/hook/build.dart):
+      # Flutter's framework of it in the app with both slices, AVFoundation linked, no path of the build machine; the
+      # camera's usage text in the app's Info.plist (macOS ends an app that opens a camera without it) and the camera
+      # entitlement in the signature of the app (lot S7). No camera is opened: the runner has none.
+      - name: The head tracker and the camera permission in the app
+        run: |
+          app="mobile/build/macos/Build/Products/Release/Immuch360 Desktop.app"
+          tracker="$app/Contents/Frameworks/immuch_head_tracker.framework/immuch_head_tracker"
+          if [ ! -f "$tracker" ]; then
+            echo "::error::no immuch_head_tracker.framework in the app"
+            ls "$app/Contents/Frameworks"
+            exit 1
+          fi
+          archs=$(lipo -archs "$tracker")
+          echo "immuch_head_tracker: $archs, $(stat -f %z "$tracker") bytes, sha256 $(shasum -a 256 "$tracker" | cut -c1-64)"
+          case "$archs" in *arm64*x86_64*|*x86_64*arm64*) ;; *) echo "::error::the tracker lacks a slice: $archs"; exit 1;; esac
+          otool -L "$tracker" | tee "$RUNNER_TEMP/tracker-links.txt"
+          grep -q 'AVFoundation.framework' "$RUNNER_TEMP/tracker-links.txt" || { echo "::error::AVFoundation not linked"; exit 1; }
+          if grep -E '^[[:space:]]+/(nix|Users|private|tmp)/' "$RUNNER_TEMP/tracker-links.txt"; then
+            echo "::error::the tracker names a library by a path of the build machine"
+            exit 1
+          fi
+          nm -gU "$tracker" | grep -E ' _ht_(api_version|open_camera|predict|recenter)$'
+          usage=$(/usr/libexec/PlistBuddy -c 'Print :NSCameraUsageDescription' "$app/Contents/Info.plist")
+          [ -n "$usage" ] || { echo "::error::no NSCameraUsageDescription in the app"; exit 1; }
+          echo "NSCameraUsageDescription: $usage"
+          codesign -d --entitlements - --xml "$app" 2>/dev/null > "$RUNNER_TEMP/entitlements.plist" || true
+          if grep -q 'com.apple.security.device.camera' "$RUNNER_TEMP/entitlements.plist"; then
+            echo "the camera entitlement is in the signature of the app"
+          elif grep -q '<key>' "$RUNNER_TEMP/entitlements.plist"; then
+            echo "::error::the signature of the app carries entitlements, the camera's not among them"
+            cat "$RUNNER_TEMP/entitlements.plist"
+            exit 1
+          else
+            echo "::warning::the ad hoc signature of this build carries no entitlements; Release.entitlements has the camera (macos_camera_permission_test)"
+          fi
 
       # immuch360-run in Contents/MacOS, beside the executable (lot L10, the build phase of mobile/macos/Runner.xcodeproj):
       # both slices, its ad hoc signature valid, and the checks of check_launcher.sh on it, the stand-in for the app
@@ -2141,6 +2280,9 @@ jobs:
           IMMUCH360_SPLAT_SCENE_PROBE: ${{ steps.fakes.outputs.dir }}/splat-probe
           IMMUCH360_FAKE_AV2: ${{ steps.fakes.outputs.dir }}/fake-av2
           IMMUCH360_RUN_LAUNCHER: ${{ steps.fakes.outputs.dir }}/immuch360-run
+          # The head tracker's library, built by its hook for this run: the recorded track through the fake camera,
+          # the clip through AVFoundation's camera path (head_tracker_native_test.dart)
+          IMMUCH360_REQUIRE_HEAD_TRACKER: '1'
         run: mise exec -- flutter test test/desktop
 
       # For the record, not a check: macOS refused the test authority of tls_contract_test.dart and of the downloader
