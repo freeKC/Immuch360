@@ -131,10 +131,7 @@ class SdCppRebuildBackend implements EnhanceBackend {
     final input = p.join(folder, 'input.png');
     final tileFolder = Directory(p.join(folder, 'tiles'))..createSync(recursive: true);
     final rgba = picture.rgba;
-    final png = await Isolate.run(
-      () => encodePngPicture(SbsDecoded(width: width, height: height, rgba: rgba)),
-      debugName: 'enhance-input-png',
-    );
+    final png = await encodePngInIsolate(width, height, rgba);
     await File(input).writeAsBytes(png, flush: true);
     final tiles = planTiles(width, height);
     final script = p.join(folder, 'rebuild.dgl');
@@ -184,12 +181,26 @@ class SdCppRebuildBackend implements EnhanceBackend {
     );
     final paths = [for (var index = 0; index < tiles.length; index++) p.join(tileFolder.path, seedVr2TileName(index))];
     try {
-      return await Isolate.run(() => blendTileFiles(tiles, paths, width, height), debugName: 'enhance-blend');
+      return await blendTileFilesInIsolate(tiles, paths, width, height);
     } on FormatException catch (error) {
       throw BackendException(ImmersiveErrorCode.outputRejected, error.message);
     }
   }
 }
+
+// The isolates of the backend are started by the two functions below, never from inside enhance: its closures (the
+// lines of sd-cli) hold the backend and the step callback of the engine, which reaches the queue of the app and its
+// futures, and a closure built there would carry them to the isolate (issue 23, see enhance_engine.dart).
+
+/// The PNG of [rgba] of [width] x [height], encoded in an isolate of its own
+Future<Uint8List> encodePngInIsolate(int width, int height, Uint8List rgba) => Isolate.run(
+  () => encodePngPicture(SbsDecoded(width: width, height: height, rgba: rgba)),
+  debugName: 'enhance-input-png',
+);
+
+/// [blendTileFiles] in an isolate of its own
+Future<Uint8List> blendTileFilesInIsolate(List<EnhanceTile> tiles, List<String> paths, int width, int height) =>
+    Isolate.run(() => blendTileFiles(tiles, paths, width, height), debugName: 'enhance-blend');
 
 /// The picture of [width] x [height] made of the PNGs at [paths], one per tile of [tiles], blended with their feather.
 /// Throws [FormatException] for a tile missing or of another size. Pure: runs in an isolate.
