@@ -24,18 +24,18 @@
 
 #include "ht_tracker.h"
 
+// ht::ThreadState is always written in full here: the macOS SDK has a ThreadState of its own (MacTypes)
 using ht::LumaPlane;
-using ht::ThreadState;
 
 @interface HtFrameDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
-- (instancetype)initWithState:(std::shared_ptr<ThreadState>)state;
+- (instancetype)initWithState:(std::shared_ptr<ht::ThreadState>)state;
 @end
 
 @implementation HtFrameDelegate {
-  std::shared_ptr<ThreadState> _state;
+  std::shared_ptr<ht::ThreadState> _state;
 }
 
-- (instancetype)initWithState:(std::shared_ptr<ThreadState>)state {
+- (instancetype)initWithState:(std::shared_ptr<ht::ThreadState>)state {
   self = [super init];
   if (self != nil) {
     _state = state;
@@ -153,7 +153,7 @@ AVCaptureDeviceFormat* ClosestFormat(AVCaptureDevice* device, const HtOptions& o
   return best;
 }
 
-void Publish(const std::shared_ptr<ThreadState>& state, int32_t width, int32_t height, double fps, uint32_t fourcc,
+void Publish(const std::shared_ptr<ht::ThreadState>& state, int32_t width, int32_t height, double fps, uint32_t fourcc,
              int32_t framing) {
   std::lock_guard<std::mutex> lock(state->shared->mutex);
   state->shared->info.width = width;
@@ -164,7 +164,7 @@ void Publish(const std::shared_ptr<ThreadState>& state, int32_t width, int32_t h
   state->shared->info.framing = framing;
 }
 
-void RunCamera(std::shared_ptr<ThreadState> state) {
+void RunCamera(std::shared_ptr<ht::ThreadState> state) {
   @autoreleasepool {
     const int32_t authorised = Authorise();
     if (authorised != HT_OK) {
@@ -182,7 +182,10 @@ void RunCamera(std::shared_ptr<ThreadState> state) {
     NSError* error = nil;
     AVCaptureDeviceInput* input = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
     if (input == nil) {
-      state->Fail(error.code == AVErrorApplicationIsNotAuthorizedToUseDevice ? HT_E_ACCESS_DENIED : HT_E_CAMERA_BUSY);
+      // Refused by the system, or held by another app
+      const bool allowed =
+          [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusAuthorized;
+      state->Fail(allowed ? HT_E_CAMERA_BUSY : HT_E_ACCESS_DENIED);
       return;
     }
     AVCaptureSession* session = [[AVCaptureSession alloc] init];
@@ -361,7 +364,7 @@ class AssetFrames {
   AVAssetReaderTrackOutput* output_ = nil;
 };
 
-void RunFile(std::shared_ptr<ThreadState> state, std::string path) {
+void RunFile(std::shared_ptr<ht::ThreadState> state, std::string path) {
   @autoreleasepool {
     AssetFrames frames;
     const int32_t opened = frames.Open(path);
@@ -453,9 +456,9 @@ int32_t OpenCamera(Tracker* tracker, const std::string& id, std::unique_ptr<Sour
   auto state = NewThreadState(tracker, id);
   if (id.compare(0, 5, "file:") == 0) {
     const std::string path = id.substr(5);
-    *source = std::make_unique<ThreadSource>(state, [path](std::shared_ptr<ThreadState> s) { RunFile(s, path); });
+    *source = std::make_unique<ThreadSource>(state, [path](std::shared_ptr<ht::ThreadState> s) { RunFile(s, path); });
   } else {
-    *source = std::make_unique<ThreadSource>(state, [](std::shared_ptr<ThreadState> s) { RunCamera(s); });
+    *source = std::make_unique<ThreadSource>(state, [](std::shared_ptr<ht::ThreadState> s) { RunCamera(s); });
   }
   return HT_OK;
 }
