@@ -203,6 +203,15 @@ void main() {
       expect(back.sameAs(state), isTrue);
     });
 
+    test('a 360° view of the screen goes as view: sphere, and never to another phone', () {
+      const state = ScreenPlayState(seq: 4, phase: ScreenPlayPhase.playing, media: PlayMedia.video, sphere: true);
+      expect(state.toJson()['view'], 'sphere');
+      expect(ScreenPlayState.fromJson(state.toJson()).sphere, isTrue);
+      expect(ScreenPlayState.fromJson({'seq': 1, 'phase': 'playing'}).sphere, isFalse);
+      expect(state.withoutItem().toJson().containsKey('view'), isFalse);
+      expect(state.sameAs(state.next(sphere: false)), isFalse);
+    });
+
     test('a state of build 51 gives its item as the key', () {
       final back = ScreenPlayState.fromJson({'seq': 1, 'phase': 'playing', 'server': 'abc', 'item': '42'});
       expect(back.key, '42');

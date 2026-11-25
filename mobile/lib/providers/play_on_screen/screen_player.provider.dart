@@ -46,6 +46,7 @@ import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_native_viewers.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:logging/logging.dart';
 import 'package:native_video_player/native_video_player.dart';
@@ -71,6 +72,8 @@ class ScreenPlayerEnvironment {
     required this.installId,
     required this.deviceName,
     this.preferredPort = playLinkDefaultPort,
+    this.nativeViewerOpen = _noNativeViewer,
+    this.nativeViewerCheck = const Duration(seconds: 5),
   });
 
   final Future<List<String>> Function() localAddresses;
@@ -83,7 +86,16 @@ class ScreenPlayerEnvironment {
   final Future<String> Function() installId;
   final Future<String> Function() deviceName;
   final int preferredPort;
+
+  /// Whether one of the app's own 360° or immersive viewers is in front (screen_native_viewers.dart): the window of
+  /// the app is stopped then, the receiver keeps listening
+  final bool Function() nativeViewerOpen;
+
+  /// How often the receiver checks that such a viewer is still open while the window is stopped
+  final Duration nativeViewerCheck;
 }
+
+bool _noNativeViewer() => false;
 
 final screenPlayerEnvironmentProvider = Provider<ScreenPlayerEnvironment>((ref) {
   final pairing = ref.watch(screenPairingEnvironmentProvider);
@@ -110,6 +122,7 @@ final screenPlayerEnvironmentProvider = Provider<ScreenPlayerEnvironment>((ref) 
       final label = Store.tryGet(StoreKey.pairingScreenLabel);
       return label != null && label.trim().isNotEmpty ? label.trim() : (await pairing.deviceName()).trim();
     },
+    nativeViewerOpen: () => ref.read(screenNativeViewersProvider).open,
   );
 });
 
@@ -141,6 +154,9 @@ class ScreenPlayerController extends Notifier<ScreenPlayerView> {
   bool _background = false;
   int _generation = 0;
 
+  /// While one of the app's 360° viewers keeps the listener up with the window stopped: checks that it is still open
+  Timer? _nativeViewerWatch;
+
   /// The phones linked now, read by the session at each open
   List<LinkedPeer> _phones = const [];
 
@@ -159,6 +175,8 @@ class ScreenPlayerController extends Notifier<ScreenPlayerView> {
     _lifecycle = _environment.lifecycle().listen(_onLifecycle);
     ref.onDispose(() {
       _generation++;
+      _nativeViewerWatch?.cancel();
+      _actions?.dispose();
       unawaited(_lifecycle?.cancel());
       unawaited(_bringDown());
     });
@@ -172,11 +190,20 @@ class ScreenPlayerController extends Notifier<ScreenPlayerView> {
   void _onLifecycle(AppLifecycleState lifecycle) {
     switch (lifecycle) {
       case AppLifecycleState.paused || AppLifecycleState.hidden || AppLifecycleState.detached:
+        // The app's own 360° player or immersive viewer in front: the app is in use, the phone keeps the screen (its
+        // next item closes the viewer). Once the viewer is gone while the window still is not back, the app is in the
+        // background.
+        if (!_background && lifecycle != AppLifecycleState.detached && _environment.nativeViewerOpen()) {
+          _watchNativeViewer();
+          return;
+        }
+        _nativeViewerWatch?.cancel();
         if (!_background) {
           _background = true;
           unawaited(_sync());
         }
       case AppLifecycleState.resumed:
+        _nativeViewerWatch?.cancel();
         if (_background) {
           _background = false;
           unawaited(_sync());
@@ -184,6 +211,26 @@ class ScreenPlayerController extends Notifier<ScreenPlayerView> {
       case AppLifecycleState.inactive:
         break;
     }
+  }
+
+  void _watchNativeViewer() {
+    _nativeViewerWatch?.cancel();
+    // Two checks in a row: the viewer that just closed gives the window back a moment later
+    var gone = 0;
+    _nativeViewerWatch = Timer.periodic(_environment.nativeViewerCheck, (timer) {
+      if (_environment.nativeViewerOpen()) {
+        gone = 0;
+        return;
+      }
+      if (++gone < 2) {
+        return;
+      }
+      timer.cancel();
+      if (!_background) {
+        _background = true;
+        unawaited(_sync());
+      }
+    });
   }
 
   Future<bool> _wanted() async =>
@@ -332,6 +379,15 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
   /// page in front is known to be that one (a page of the screen's user has other arguments)
   Object? _openedArgs;
 
+  /// The Quest's choice for the 360° items of the phone that shows them now (asked once, kept for its next items)
+  ScreenSphereChoice? _sphereChoice;
+
+  /// The item the play opened shows in one of the app's 360° viewers of their own (the 360° video player, the
+  /// immersive viewer): its pause and seek are the remote's and the headset's, the state says so
+  bool _nativeSphere = false;
+
+  ScreenNativeViewers get _native => _ref.read(screenNativeViewersProvider);
+
   @override
   ScreenPlayState get state => _state;
 
@@ -378,7 +434,13 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
   @override
   Future<void> play(PlayItem item, LinkedPeer from) async {
     final follows = _follows(item, from);
-    final ask = !follows && (kind == PairingScreenKind.headset || _ref.read(playFromPhoneAskProvider));
+    final headset = kind == PairingScreenKind.headset;
+    if (!follows) {
+      _sphereChoice = null;
+    }
+    // The Quest asks where a 360° item goes, once for a phone's items: the first, or the first 360° one
+    final askSphere = headset && item.target.projection.isSphere && _sphereChoice == null;
+    final ask = askSphere || (!follows && (headset || _ref.read(playFromPhoneAskProvider)));
     final plex = item.kind == PlayKind.plex;
     _stopPolling();
     _set(
@@ -396,10 +458,28 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
         positionMs: item.offsetMs,
       ),
     );
-    if (ask && !await _prompts.askPlay(phone: from.name, title: item.title, photo: item.media == PlayMedia.photo)) {
+    if (askSphere) {
+      final choice = await _prompts.askPlaySphere(
+        phone: from.name,
+        title: item.title,
+        photo: item.media == PlayMedia.photo,
+      );
+      if (choice == null) {
+        _log.info('Play from a phone: declined on the screen');
+        return _fail(ScreenPlayReason.declined);
+      }
+      _sphereChoice = choice;
+    } else if (ask &&
+        !await _prompts.askPlay(phone: from.name, title: item.title, photo: item.media == PlayMedia.photo)) {
       _log.info('Play from a phone: declined on the screen');
       return _fail(ScreenPlayReason.declined);
     }
+    // A 360° viewer of the app in front (this phone's item before, or the screen user's own): the new item goes
+    // under it otherwise
+    if (_native.open) {
+      await _native.close();
+    }
+    _nativeSphere = false;
     _set((state) => state.next(phase: ScreenPlayPhase.opening));
     final opened = switch (item.target) {
       PlexPlayTarget() => await _openPlex(item),
@@ -502,8 +582,24 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     }
     // What the screen's server says the asset is wins over what the phone said
     final photo = !asset.isVideo;
-    _set((state) => state.next(media: photo ? PlayMedia.photo : PlayMedia.video));
+    // A 360° item in the screen's matching view: the 360° photo viewer of the window; the 360° video player of the
+    // TV or the computer; the immersive viewer of the Quest when its user chose "In the headset", else its window
+    final sphere = target.projection.isSphere && access.canSphere(asset);
+    final inHeadset = kind == PairingScreenKind.headset && _sphereChoice == ScreenSphereChoice.headset;
+    final nativeSphere = sphere && (inHeadset || (!photo && kind != PairingScreenKind.headset));
+    _set(
+      (state) =>
+          state.next(media: photo ? PlayMedia.photo : PlayMedia.video, sphere: sphere && (photo || nativeSphere)),
+    );
+    if (photo && sphere && !inHeadset) {
+      final route = access.panoramaRouteOf(asset);
+      return _openRoute(route, showing: () => _phonePageInFront);
+    }
     final route = access.routeOf(asset);
+    if (nativeSphere) {
+      access.openSphere(asset);
+      _nativeSphere = true;
+    }
     if (photo) {
       return _openRoute(route, showing: () => access.showing(asset.id));
     }
@@ -578,6 +674,9 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     _poll = null;
   }
 
+  /// The receiver goes for good: nothing is followed any more
+  void dispose() => _stopPolling();
+
   /// Follows the player of the page: its status, position and tracks; the page gone (Back on the remote), nothing
   /// plays any more
   Future<void> _follow() async {
@@ -588,6 +687,17 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     final key = _playerKey;
     if (key == null) {
       return _stopPolling();
+    }
+    // The 360° player or the immersive viewer plays it: no position nor pause reach this side. Once it closed (Back on
+    // the remote), the viewer's own player is followed again.
+    if (_nativeSphere && _native.open) {
+      _playerSeen = true;
+      _set((state) => state.next(phase: ScreenPlayPhase.playing, sphere: true, clearReason: true));
+      return;
+    }
+    if (_nativeSphere) {
+      _nativeSphere = false;
+      _set((state) => state.next(sphere: false));
     }
     if (!_ref.exists(videoPlayerProvider(key))) {
       if (_playerSeen) {
@@ -725,17 +835,24 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     final key = _playerKey;
     final showing = _showing;
     _stopPolling();
+    // The 360° viewer the play opened goes first: the page under it is the play's
+    if (_nativeSphere && _native.open) {
+      await _native.close();
+    }
+    _nativeSphere = false;
     _playerKey = null;
     _showing = null;
     _pendingTracks = null;
     // Only the page the phone opened closes (or a film's player, as build 51 did): never a page of the screen's user
     final front = _ref.read(screenPlayerFrontProvider)().name;
     final phonePage = _phonePageInFront || (key != null && front == NetworkVideoRoute.name);
+    // Before the arguments go: the 360° photo viewer's "shown" is whether its page is in front
+    final shown = showing != null && showing();
     _openedArgs = null;
-    if (phonePage && ((key != null && _ref.exists(videoPlayerProvider(key))) || (showing != null && showing()))) {
+    if (phonePage && ((key != null && _ref.exists(videoPlayerProvider(key))) || shown)) {
       await _ref.read(screenPlayerCloseProvider)();
     }
-    _set((state) => state.next(phase: ScreenPlayPhase.idle, clearReason: true));
+    _set((state) => state.next(phase: ScreenPlayPhase.idle, sphere: false, clearReason: true));
   }
 
   @override
@@ -780,7 +897,12 @@ final screenPlayerOpenProvider = Provider<ScreenPlayerOpen>((ref) {
 });
 
 /// The pages a play of a phone opens
-const screenPlayerPageNames = {NetworkVideoRoute.name, NetworkPhotoRoute.name, AssetViewerRoute.name};
+const screenPlayerPageNames = {
+  NetworkVideoRoute.name,
+  NetworkPhotoRoute.name,
+  AssetViewerRoute.name,
+  PanoramaViewerRoute.name,
+};
 
 /// The page in front of the router: its name, and its arguments (the very object the route of a play carried)
 typedef ScreenPlayerFront = ({String name, Object? args});

@@ -89,6 +89,8 @@ class MainActivity : FlutterFragmentActivity() {
     SpatialVideoApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     ImmersiveApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SplatViewerApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    // "Play from a phone" closes the 360° player or the immersive viewer before it shows a phone's next item
+    NativeViewersChannel.attach(flutterEngine.dartExecutor.binaryMessenger)
     // The Stop action of the phone share notification, for the engine that runs the share
     PhoneShareApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     val messenger = flutterEngine.dartExecutor.binaryMessenger
@@ -147,6 +149,7 @@ class MainActivity : FlutterFragmentActivity() {
     SpatialVideoApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     ImmersiveApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SplatViewerApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
+    NativeViewersChannel.detach(flutterEngine.dartExecutor.binaryMessenger)
     PhoneShareApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     FilmDownloadApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     FilmDownloadApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)

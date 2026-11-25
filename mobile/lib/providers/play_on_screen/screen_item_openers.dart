@@ -23,10 +23,12 @@ import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/asset_extensions.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_native_viewers.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_play_no_loop.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -49,6 +51,16 @@ abstract interface class ScreenImmichAccess {
 
   /// Whether the asset viewer shows the asset [assetId] now
   bool showing(String assetId);
+
+  /// The 360° photo viewer on [asset] alone (as the 360° button opens it)
+  PageRouteInfo panoramaRouteOf(RemoteAsset asset);
+
+  /// Whether this screen has a 360° view for [asset]: the 360° photo viewer for a photo; for a video the 360° player
+  /// where the platform has one, the immersive viewer on the Meta Quest
+  bool canSphere(RemoteAsset asset);
+
+  /// Asks the asset viewer that is about to show [asset] to open its 360° view (ScreenPlaySphereOpener)
+  void openSphere(RemoteAsset asset);
 }
 
 /// The reason a refusal of the screen's server gives, from who the phone is and where its server is
@@ -147,6 +159,16 @@ class AppScreenImmichAccess implements ScreenImmichAccess {
     final current = _ref.read(assetViewerProvider).currentAsset;
     return router.current.name == AssetViewerRoute.name && current is RemoteAsset && current.id == assetId;
   }
+
+  @override
+  PageRouteInfo panoramaRouteOf(RemoteAsset asset) => PanoramaViewerRoute(asset: asset);
+
+  @override
+  bool canSphere(RemoteAsset asset) => _ref.read(can360ViewProvider(asset));
+
+  @override
+  void openSphere(RemoteAsset asset) =>
+      _ref.read(screenPlaySphereRequestProvider.notifier).state = asset.id.toLowerCase();
 }
 
 final screenImmichAccessProvider = Provider<ScreenImmichAccess>(AppScreenImmichAccess.new);

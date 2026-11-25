@@ -512,6 +512,19 @@ void main() {
       expect(playback()?.ended, isFalse);
     });
 
+    test('a 360° photo carries its projection to the screen, for the screen\'s 360° viewer', () async {
+      final pano = PlayOnRequest.ofAsset(
+        remote(),
+        userId: user,
+        endpoints: const [],
+        serverName: 'x',
+        projection: PlayProjection.equirect,
+      )!;
+      expect(await controller().play(screen, address, pano), PlayOnOutcome.playing);
+      expect(actions.played!.target.projection, PlayProjection.equirect);
+      expect(pano.immich!.projection, PlayProjection.equirect);
+    });
+
     test('the next photo sent while the screen shows one takes its place, the controller stays', () async {
       expect(await controller().play(screen, address, request(remote())), PlayOnOutcome.playing);
       final next = PlayOnRequest.ofAsset(

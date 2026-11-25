@@ -143,6 +143,13 @@ void main() {
     expect(controller.calls, ['pause', 'stop']);
   });
 
+  testWidgets('a video in a 360° view of the screen: no play or pause from here, Stop stays', (tester) async {
+    final playback = _playback(ScreenPlayPhase.playing);
+    await show(tester, playback.withState(playback.state.next(media: PlayMedia.video, sphere: true)));
+    expect(find.byKey(const Key('remote_play_dock_play')), findsNothing);
+    expect(find.byKey(const Key('remote_play_dock_stop')), findsOneWidget);
+  });
+
   testWidgets('paused on the screen: play resumes it', (tester) async {
     await show(tester, _playback(ScreenPlayPhase.paused));
     expect(find.bySemanticsLabel('Play'), findsOneWidget);

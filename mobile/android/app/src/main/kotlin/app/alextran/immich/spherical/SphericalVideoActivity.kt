@@ -144,6 +144,23 @@ private const val STABILIZATION_FADE_MS = 500L
 @OptIn(UnstableApi::class)
 class SphericalVideoActivity : ComponentActivity() {
   companion object {
+    /**
+     * The player on screen, for [closeCurrent]: set in onCreate, cleared in onDestroy while it still points to this
+     * player. Weak, so that a destroyed player is never kept. Main thread only.
+     */
+    private var current: java.lang.ref.WeakReference<SphericalVideoActivity>? = null
+
+    /**
+     * Closes the player on screen, as its close button does (a phone's next item or Stop on a screen, see
+     * NativeViewersChannel): Flutter hears the closed event from onDestroy. False when no player is open.
+     */
+    fun closeCurrent(): Boolean {
+      val player = current?.get() ?: return false
+      if (player.isFinishing) return false
+      player.finish()
+      return true
+    }
+
     private const val EXTRA_URL = "url"
     private const val EXTRA_HEADERS = "headers"
     private const val EXTRA_TITLE = "title"
@@ -608,6 +625,7 @@ class SphericalVideoActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    current = java.lang.ref.WeakReference(this)
     // The system may restore this activity alone after the process died
     HttpClientManager.initialize(this)
 
@@ -951,6 +969,7 @@ class SphericalVideoActivity : ComponentActivity() {
     // A table of an hour of video is a few megabytes: it goes with its player once closed. Destroyed by the system
     // without closing, the player may come back: the table waits for it, in the inbox, and on disk if it was saved
     if (isFinishing) forgetStabilizationTable()
+    if (current?.get() === this) current = null
     super.onDestroy()
   }
 

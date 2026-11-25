@@ -3706,6 +3706,8 @@
   "play_from_phone_ask_untitled": "{phone} wants to play a film",
   "play_from_phone_footer": "A phone plays a film here with this screen's own access to the server: no password nor token comes with it. Removing a phone here, or this screen on the phone, ends the link.",
   "play_from_phone_headset_asks": "The headset always asks before a phone plays: someone may be wearing it.",
+  "play_from_phone_in_headset": "In the headset",
+  "play_from_phone_in_window": "In the window",
   "play_from_phone_intro": "Choose a film, a photo or a video on your phone, then Play on, and it opens here in the usual viewer. The remote stays in charge.",
   "play_from_phone_link_button": "Link a phone",
   "play_from_phone_linked_empty": "No phone yet. Link one: it then finds this screen by itself while Immuch360 is open here.",

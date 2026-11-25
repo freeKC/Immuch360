@@ -7947,6 +7947,17 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     @SuppressLint("StaticFieldLeak") private var liveViewer: ImmersiveViewerActivity? = null
 
     /**
+     * Closes the viewer on screen, as Back does (a phone's next item or Stop on the headset, see NativeViewersChannel):
+     * onStop or onDestroy sends the closed event. False when no viewer is open. Main thread only.
+     */
+    fun closeLive(): Boolean {
+      val viewer = liveViewer ?: return false
+      if (viewer.isFinishing) return false
+      viewer.finish()
+      return true
+    }
+
+    /**
      * Number of the last previous or next request. Counted for the whole process rather than per viewer, so that a
      * late answer meant for a viewer that closed never matches a request of the next one. Main thread only.
      */

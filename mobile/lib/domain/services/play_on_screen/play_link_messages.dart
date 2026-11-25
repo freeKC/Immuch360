@@ -630,6 +630,7 @@ class ScreenPlayState {
     this.reason,
     this.from,
     this.fromId,
+    this.sphere = false,
   });
 
   final int seq;
@@ -656,6 +657,10 @@ class ScreenPlayState {
   /// The install id of that phone, kept on the screen: never sent ([toJson])
   final String? fromId;
 
+  /// The item shows in a 360° view of the screen (build 53): the phone's pause and seek do not reach that player, the
+  /// remote and the headset turn it
+  final bool sphere;
+
   bool get isActive =>
       phase == ScreenPlayPhase.opening ||
       phase == ScreenPlayPhase.playing ||
@@ -680,6 +685,7 @@ class ScreenPlayState {
     bool clearReason = false,
     String? from,
     String? fromId,
+    bool? sphere,
   }) => ScreenPlayState(
     seq: seq + 1,
     phase: phase ?? this.phase,
@@ -694,6 +700,7 @@ class ScreenPlayState {
     reason: clearReason ? null : (reason ?? this.reason),
     from: from ?? this.from,
     fromId: fromId ?? this.fromId,
+    sphere: sphere ?? this.sphere,
   );
 
   /// What another phone than the one that played reads: the phase and who played, never what
@@ -712,6 +719,7 @@ class ScreenPlayState {
       other.reason == reason &&
       other.from == from &&
       other.fromId == fromId &&
+      other.sphere == sphere &&
       _sameTracks(other.tracks, tracks);
 
   static bool _sameTracks(List<PlayTrack> a, List<PlayTrack> b) {
@@ -739,6 +747,7 @@ class ScreenPlayState {
     if (tracks.isNotEmpty) 'tracks': [for (final track in tracks) track.toJson()],
     if (reason != null) 'reason': reason!.wire,
     if (from != null) 'from': from,
+    if (sphere) 'view': 'sphere',
   };
 
   static ScreenPlayState fromJson(Object? json) {
@@ -765,6 +774,7 @@ class ScreenPlayState {
       ],
       reason: ScreenPlayReason.fromWire(json['reason']),
       from: _shortText(json['from'], 64),
+      sphere: json['view'] == 'sphere',
     );
   }
 

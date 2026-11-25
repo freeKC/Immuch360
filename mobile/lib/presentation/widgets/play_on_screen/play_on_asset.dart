@@ -25,6 +25,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on.sheet.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/cast/cast_play.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
@@ -47,8 +48,18 @@ final playOnAssetRequestProvider = Provider<PlayOnRequest? Function(BaseAsset as
       userId: user.id,
       endpoints: ApiService.getServerUrls(),
       serverName: host == null || host.isEmpty ? endpoint : host,
+      projection: ref.read(playOnProjectionProvider)(asset),
     );
   };
+});
+
+/// The hint a play gives of how [asset] is laid out, for the screen's matching viewer: a whole sphere when this phone
+/// views it as 360° (its exif, the user's "View as 360°", the scan of the device) or it is the raw file of a 360°
+/// camera, which the screen's 360° viewers stitch; else flat. The screen still checks it has a 360° view for it.
+final playOnProjectionProvider = Provider<PlayProjection Function(BaseAsset asset)>((ref) {
+  return (asset) => ref.read(isEquirectangularProvider(asset)) || ref.read(rawMediaKindProvider(asset)) != null
+      ? PlayProjection.equirect
+      : PlayProjection.flat;
 });
 
 /// Opens the "Play on..." sheet for [asset]; false when it has no request (on this device only). The viewer it is

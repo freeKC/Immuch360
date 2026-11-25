@@ -14,11 +14,25 @@ import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
 import 'package:immich_ui/immich_ui.dart';
 
+/// Where the Meta Quest shows a phone's 360° item
+enum ScreenSphereChoice {
+  /// In the immersive viewer
+  headset,
+
+  /// In the app's window, as on a TV
+  window,
+}
+
 /// See the top of this file; a fake in the tests
 abstract interface class ScreenPlayerPrompts {
   /// "(phone) wants to play (title)", or "wants to show" a [photo]: true on Play; false on Not now, or after
   /// [askTimeout]
   Future<bool> askPlay({required String phone, String? title, bool photo = false});
+
+  /// The same for a 360° item on the Meta Quest, asked before the user puts the headset view on: "In the headset" or
+  /// "In the window"; null on Not now, or after [askTimeout]. The tap on "In the headset" is the user's gesture the
+  /// immersive viewer opens with.
+  Future<ScreenSphereChoice?> askPlaySphere({required String phone, String? title, bool photo = false});
 
   /// "Add (server) from (phone)?" with the warning and [check]: true on Add; false on Not now, or once [cancel]
   /// completes
@@ -89,6 +103,51 @@ class _AppScreenPlayerPrompts implements ScreenPlayerPrompts {
     ),
     Future<void>.delayed(askTimeout),
   );
+
+  @override
+  Future<ScreenSphereChoice?> askPlaySphere({required String phone, String? title, bool photo = false}) async {
+    final context = _context;
+    if (context == null) {
+      return null;
+    }
+    var open = true;
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final answer = showDialog<ScreenSphereChoice>(
+      context: context,
+      builder: (context) => AlertDialog(
+        key: const Key('play_from_phone_ask_sphere'),
+        icon: const Icon(Icons.vrpano_rounded),
+        title: Text(switch ((title, photo)) {
+          (null, false) => context.t.play_from_phone_ask_untitled(phone: phone),
+          (null, true) => context.t.play_from_phone_ask_item_untitled(phone: phone),
+          (final title?, false) => context.t.play_from_phone_ask(phone: phone, title: title),
+          (final title?, true) => context.t.play_from_phone_ask_item(phone: phone, title: title),
+        }),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(context.t.play_from_phone_not_now)),
+          TextButton(
+            key: const Key('play_from_phone_in_window'),
+            onPressed: () => Navigator.of(context).pop(ScreenSphereChoice.window),
+            child: Text(context.t.play_from_phone_in_window),
+          ),
+          FilledButton(
+            key: const Key('play_from_phone_in_headset'),
+            autofocus: true,
+            onPressed: () => Navigator.of(context).pop(ScreenSphereChoice.headset),
+            child: Text(context.t.play_from_phone_in_headset),
+          ),
+        ],
+      ),
+    ).whenComplete(() => open = false);
+    unawaited(
+      Future<void>.delayed(askTimeout).then((_) {
+        if (open && navigator.mounted) {
+          navigator.pop();
+        }
+      }),
+    );
+    return answer;
+  }
 
   @override
   Future<bool> askHandover({
