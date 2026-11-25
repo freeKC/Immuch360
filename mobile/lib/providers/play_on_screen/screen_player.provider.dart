@@ -897,11 +897,15 @@ PlayTrack? playTrackOf(NativeVideoTrack track) => PlayTrack(
   selected: track.selected,
 );
 
-/// Opens a route for a play of a phone: in place of the player of a film playing, else over the page shown
+/// Opens a route for a play of a phone: in place of the player of a film playing, else over the page shown. A page
+/// of the same name goes first, then the new one is pushed: the asset viewer's duplicate guard refuses a replace
+/// by itself, which left a TV on the phone's first photo (found on the emulators, 25 November 2026).
 final screenPlayerOpenProvider = Provider<ScreenPlayerOpen>((ref) {
   return (route, {required replace}) async {
     final router = ref.read(appRouterProvider);
-    if (replace) {
+    if (replace && router.current.name == route.routeName) {
+      unawaited(router.popAndPush(route));
+    } else if (replace) {
       unawaited(router.replace(route));
     } else {
       unawaited(router.push(route));

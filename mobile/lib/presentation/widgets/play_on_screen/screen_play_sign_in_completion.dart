@@ -8,13 +8,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/pairing/screen_sign_in.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/screen_player_prompts.dart';
 import 'package:immich_mobile/providers/pairing/paired_screen_check.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_mobile/widgets/common/immich_toast.dart';
 import 'package:immich_mobile/widgets/forms/login/sign_in_completion.dart';
 
 Future<void> completeScreenPlaySignIn(WidgetRef ref, ScreenSignedIn signedIn) async {
-  final context = ref.read(appRouterProvider).navigatorKey.currentContext;
+  // Under the navigator's overlay: the toast needs it, and the dialogs and the router are above it
+  final context = overlayChildContext(ref.read(appRouterProvider).navigatorKey);
   if (context == null || !context.mounted) {
     return;
   }

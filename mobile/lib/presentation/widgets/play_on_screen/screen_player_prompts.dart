@@ -48,6 +48,30 @@ abstract interface class ScreenPlayerPrompts {
   void toast({required String from});
 }
 
+/// A context under the overlay of the navigator of [key], for a toast: the navigator's own context is above its
+/// overlay, where a toast finds none (found on the TV emulator, 25 November 2026)
+BuildContext? overlayChildContext(GlobalKey<NavigatorState> key) {
+  final overlay = key.currentState?.overlay;
+  if (overlay == null || !overlay.mounted) {
+    return null;
+  }
+  // The first element down the overlay that finds it: the overlay tells its entries apart from its own children
+  Element? found;
+  void visit(Element element) {
+    if (found != null) {
+      return;
+    }
+    if (Overlay.maybeOf(element) != null) {
+      found = element;
+      return;
+    }
+    element.visitChildElements(visit);
+  }
+
+  (overlay.context as Element).visitChildElements(visit);
+  return found;
+}
+
 /// How long the screen waits for its user before a phone's play is taken as Not now
 const askTimeout = Duration(seconds: 60);
 
@@ -201,8 +225,8 @@ class _AppScreenPlayerPrompts implements ScreenPlayerPrompts {
 
   @override
   void toast({required String from}) {
-    final context = _context;
-    if (context == null) {
+    final context = overlayChildContext(_ref.read(appRouterProvider).navigatorKey);
+    if (context == null || !context.mounted) {
       return;
     }
     ImmichToast.show(
