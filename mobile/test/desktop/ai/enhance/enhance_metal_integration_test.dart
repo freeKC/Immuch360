@@ -90,7 +90,8 @@ void main() {
     );
     outcome['sharpen'] = {'ms': watch.elapsedMilliseconds, 'width': 320, 'height': 240, 'bytes': result.length};
     expect(result.length, picture.rgba.length);
-  });
+    // ggml compiles its Metal shaders at each start of sd-cli: 29 s on the runner's virtual GPU (run 45654794148)
+  }, timeout: const Timeout(Duration(minutes: 20)));
 
   test(
     'Rebuild details: one tile of SeedVR2 on the GPU of the Mac, or a stop that says the GPU was not used',

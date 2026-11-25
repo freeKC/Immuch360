@@ -2755,6 +2755,7 @@ jobs:
       # blocking: the virtual GPU of the runner and its 7 GB of memory may refuse it, which the outcome says
       - name: One tile of Rebuild details on the GPU of this Mac (information)
         id: rebuild
+        if: ${{ !cancelled() && steps.archive.outcome == 'success' }}
         continue-on-error: true
         timeout-minutes: 45
         working-directory: mobile
