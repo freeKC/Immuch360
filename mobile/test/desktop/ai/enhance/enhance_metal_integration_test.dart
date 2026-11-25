@@ -44,7 +44,13 @@ void main() {
   final outcome = <String, Object?>{};
   late Directory work;
 
-  setUp(() => work = Directory.systemTemp.createTempSync('enhance-metal-'));
+  // With [out], the work folder of each test is kept under it (the program, the input, the tiles, the log), so that
+  // the job can run sd-cli again on the same program by itself; else a temporary one, deleted
+  setUp(
+    () => work = out == null
+        ? Directory.systemTemp.createTempSync('enhance-metal-')
+        : (Directory(p.join(out, 'work'))..createSync(recursive: true)),
+  );
   tearDown(() {
     final log = File(p.join(work.path, 'logs', 'sd-cli.log'));
     if (out != null && log.existsSync()) {
@@ -55,7 +61,9 @@ void main() {
       // ignore: avoid_print
       print(log.readAsStringSync());
     }
-    work.deleteSync(recursive: true);
+    if (out == null) {
+      work.deleteSync(recursive: true);
+    }
   });
   tearDownAll(() {
     if (out != null) {

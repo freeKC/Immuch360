@@ -2778,6 +2778,25 @@ jobs:
           mise exec -- flutter test test/desktop/ai/enhance/enhance_metal_integration_test.dart --reporter expanded \
             --plain-name "Rebuild details"
 
+      # The same program again through sd-cli alone, past the line that made the app stop it, to see how far the
+      # virtual GPU goes: its exit code and the tiles it wrote (information only, the app never does this)
+      - name: The program of Rebuild details through sd-cli alone (information)
+        if: ${{ !cancelled() && steps.rebuild.outcome != 'skipped' }}
+        continue-on-error: true
+        timeout-minutes: 30
+        env:
+          SD_CLI: ${{ steps.archive.outputs.sdcli }}
+        run: |
+          work="$RUNNER_TEMP/metal-out/rebuild/work"
+          ls -l "$work" "$work/tiles" || true
+          [ -f "$work/rebuild.dgl" ] || { echo "no program kept"; exit 0; }
+          set +e
+          "$SD_CLI" -M dgl --script "$work/rebuild.dgl" --max-vram 6 -t 3 -v > "$RUNNER_TEMP/metal-out/rebuild/alone.log" 2>&1
+          echo "sd-cli ended with $?" | tee -a "$RUNNER_TEMP/metal-out/rebuild/alone.log"
+          grep -E 'error|\[E\]|\[W\]|item [0-9]+/|auto-fit|params ->|budget' "$RUNNER_TEMP/metal-out/rebuild/alone.log" | head -40
+          tail -5 "$RUNNER_TEMP/metal-out/rebuild/alone.log"
+          ls -l "$work/tiles"
+
       - name: What this Mac said
         if: ${{ !cancelled() }}
         run: |
