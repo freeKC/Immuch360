@@ -225,6 +225,7 @@ flutter:
   # Stitches the raw dual fisheye photos of Insta360 cameras into equirect pictures (dual_fisheye_stitcher.dart)
   shaders:
     - shaders/dual_fisheye.frag
+    - shaders/spatial_photo.frag
   assets:
     - assets/
     - assets/feature_message/
