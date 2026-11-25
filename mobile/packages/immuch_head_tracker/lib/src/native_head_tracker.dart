@@ -120,56 +120,50 @@ typedef _NowNative = Int64 Function();
 typedef _Now = int Function();
 typedef _ListNative = Int32 Function(Pointer<Uint8> json, Int32 capacity);
 typedef _List = int Function(Pointer<Uint8> json, int capacity);
-typedef _OpenCameraNative = Pointer<Void> Function(
-  Pointer<Utf8> id,
-  Pointer<HtOptions> options,
-  Pointer<NativeFunction<HtSampleCallbackNative>> callback,
-  Pointer<Int32> status,
-);
-typedef _OpenCamera = Pointer<Void> Function(
-  Pointer<Utf8> id,
-  Pointer<HtOptions> options,
-  Pointer<NativeFunction<HtSampleCallbackNative>> callback,
-  Pointer<Int32> status,
-);
+typedef _OpenCameraNative =
+    Pointer<Void> Function(
+      Pointer<Utf8> id,
+      Pointer<HtOptions> options,
+      Pointer<NativeFunction<HtSampleCallbackNative>> callback,
+      Pointer<Int32> status,
+    );
+typedef _OpenCamera =
+    Pointer<Void> Function(
+      Pointer<Utf8> id,
+      Pointer<HtOptions> options,
+      Pointer<NativeFunction<HtSampleCallbackNative>> callback,
+      Pointer<Int32> status,
+    );
 typedef _OpenFileNative = Pointer<Void> Function(Pointer<Utf8> path, Pointer<HtOptions> options, Pointer<Int32> status);
 typedef _OpenFile = Pointer<Void> Function(Pointer<Utf8> path, Pointer<HtOptions> options, Pointer<Int32> status);
 typedef _OpenFramesNative = Pointer<Void> Function(Pointer<HtOptions> options, Pointer<Int32> status);
 typedef _OpenFrames = Pointer<Void> Function(Pointer<HtOptions> options, Pointer<Int32> status);
 typedef _NextNative = Int32 Function(Pointer<Void> tracker, Pointer<HtSample> sample);
 typedef _Next = int Function(Pointer<Void> tracker, Pointer<HtSample> sample);
-typedef _ProcessNative = Int32 Function(
-  Pointer<Void> tracker,
-  Pointer<Uint8> grey,
-  Int32 width,
-  Int32 height,
-  Int32 stride,
-  Int64 timeNs,
-  Pointer<HtSample> sample,
-);
-typedef _Process = int Function(
-  Pointer<Void> tracker,
-  Pointer<Uint8> grey,
-  int width,
-  int height,
-  int stride,
-  int timeNs,
-  Pointer<HtSample> sample,
-);
-typedef _LandmarksNative = Int32 Function(
-  Pointer<Void> tracker,
-  Pointer<HtFace> faces,
-  Int32 count,
-  Int64 timeNs,
-  Pointer<HtSample> sample,
-);
-typedef _Landmarks = int Function(
-  Pointer<Void> tracker,
-  Pointer<HtFace> faces,
-  int count,
-  int timeNs,
-  Pointer<HtSample> sample,
-);
+typedef _ProcessNative =
+    Int32 Function(
+      Pointer<Void> tracker,
+      Pointer<Uint8> grey,
+      Int32 width,
+      Int32 height,
+      Int32 stride,
+      Int64 timeNs,
+      Pointer<HtSample> sample,
+    );
+typedef _Process =
+    int Function(
+      Pointer<Void> tracker,
+      Pointer<Uint8> grey,
+      int width,
+      int height,
+      int stride,
+      int timeNs,
+      Pointer<HtSample> sample,
+    );
+typedef _LandmarksNative =
+    Int32 Function(Pointer<Void> tracker, Pointer<HtFace> faces, Int32 count, Int64 timeNs, Pointer<HtSample> sample);
+typedef _Landmarks =
+    int Function(Pointer<Void> tracker, Pointer<HtFace> faces, int count, int timeNs, Pointer<HtSample> sample);
 typedef _PredictNative = Int32 Function(Pointer<Void> tracker, Int64 nowUs, Pointer<Double> headX);
 typedef _Predict = int Function(Pointer<Void> tracker, int nowUs, Pointer<Double> headX);
 typedef _RecenterNative = Int32 Function(Pointer<Void> tracker);

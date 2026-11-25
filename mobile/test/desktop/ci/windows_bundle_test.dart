@@ -72,12 +72,11 @@ void main() {
         ...extra,
       ]);
 
-  Set<String> bundled() =>
-      Directory(path('dist/Immuch360 Desktop'))
-          .listSync(recursive: true)
-          .whereType<File>()
-          .map((file) => p.relative(file.path, from: path('dist/Immuch360 Desktop')).replaceAll(r'\', '/'))
-          .toSet();
+  Set<String> bundled() => Directory(path('dist/Immuch360 Desktop'))
+      .listSync(recursive: true)
+      .whereType<File>()
+      .map((file) => p.relative(file.path, from: path('dist/Immuch360 Desktop')).replaceAll(r'\', '/'))
+      .toSet();
 
   setUp(() => root = Directory.systemTemp.createTempSync('immuch360_bundle_'));
 

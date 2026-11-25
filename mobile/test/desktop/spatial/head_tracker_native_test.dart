@@ -101,9 +101,9 @@ void main() {
   }, skip: skip);
 
   test("the native One Euro filter gives the values of the phones' OneEuroFilter.kt", () {
-    final vectors = jsonDecode(
-      File('test/fixtures/spatial/head_viewpoint_vectors.json').readAsStringSync(),
-    ) as Map<String, Object?>;
+    final vectors =
+        jsonDecode(File('test/fixtures/spatial/head_viewpoint_vectors.json').readAsStringSync())
+            as Map<String, Object?>;
     final rows = (vectors['oneEuro']! as List).cast<List>();
     final tracker = HeadTracker.load(library);
     var processor = tracker.openFrames();
