@@ -12,5 +12,16 @@ track="${2:-$build/painted-head-12s.track}"
 cmake -S "$here" -B "$build" -DCMAKE_BUILD_TYPE=Release > /dev/null
 cmake --build "$build" -j "$(nproc)" > /dev/null
 ffmpeg -nostdin -v error -y -i "$clip" -vf format=gray -f rawvideo "$build/clip-320x240.y8"
-ffmpeg -nostdin -v error -y -i "$clip" -pix_fmt gray -f yuv4mpegpipe -strict -1 "$build/clip.y4m"
+# The same frames as a YUV4MPEG2 file for the y4m fake camera, written here: a minimal FFmpeg build may lack the
+# yuv4mpegpipe muxer. The clip is 320 x 240 at 15 frames a second (painted-head-12s.txt).
+python3 - "$build/clip-320x240.y8" "$build/clip.y4m" <<'PY'
+import sys
+frame = 320 * 240
+data = open(sys.argv[1], 'rb').read()
+with open(sys.argv[2], 'wb') as out:
+    out.write(b'YUV4MPEG2 W320 H240 F15:1 Ip A1:1 Cmono\n')
+    for start in range(0, len(data) - frame + 1, frame):
+        out.write(b'FRAME\n')
+        out.write(data[start:start + frame])
+PY
 TMPDIR="$build" "$build/ht_core_test" "$build/clip-320x240.y8" 320 240 "$build/clip.y4m" "$track"

@@ -529,8 +529,22 @@ jobs:
           (cd "$work/ffmpeg" && unzip -q ../ffmpeg.zip)
           export PATH="$work/ffmpeg/bin:$PATH"
           bash packages/immuch_head_tracker/test_native/run.sh "$work/build" "$work/painted-head-12s.track"
-          # The fixture is what the tracker writes from the clip today
-          diff test/fixtures/spatial/painted-head-12s.track "$work/painted-head-12s.track"
+          # The fixture is what the tracker writes from the clip today: the same frames with a face, the same numbers
+          # within 0.002 (another compiler may round the detector's last digits otherwise)
+          python3 - test/fixtures/spatial/painted-head-12s.track "$work/painted-head-12s.track" <<'PY'
+          import sys
+          def lines(path):
+              return [line.split() for line in open(path) if line.strip() and not line.startswith('#')]
+          fixture, made = lines(sys.argv[1]), lines(sys.argv[2])
+          if len(fixture) != len(made):
+              sys.exit(f'::error::the track has {len(made)} lines, the fixture {len(fixture)}')
+          for number, (a, b) in enumerate(zip(fixture, made), 1):
+              if len(a) != len(b) or a[0] != b[0] or a[1:2] != b[1:2]:
+                  sys.exit(f'::error::line {number} of the track differs: {b} for {a}')
+              if any(abs(float(x) - float(y)) > 0.002 for x, y in zip(a[2:], b[2:])):
+                  sys.exit(f'::error::line {number} of the track differs by more than 0.002: {b} for {a}')
+          print(f'the track of the clip matches the fixture, {len(made)} lines')
+          PY
           ls -l "$work/build"/libimmuch_head_tracker*.so
           IMMUCH360_HEAD_TRACKER_LIBRARY="$work/build/libimmuch_head_tracker.so" mise exec -- flutter test \
             test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/head_tracker_windows_test.dart \
