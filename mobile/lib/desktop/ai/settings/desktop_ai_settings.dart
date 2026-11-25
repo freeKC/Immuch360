@@ -10,7 +10,8 @@
 // 3D photo (Normal by default, the parallax of every earlier version) and "Relief quality" of the 3D photos (relief-v1
 // or relief-v2, lot I3), its default [defaultReliefVersion]. Kept in desktop_ai.json of the support folder, beside
 // desktop_files.json and written the same way: a whole new file renamed over the old one, so a crash never leaves half
-// a setting. Keys this build does not know (a newer version) are kept as they are.
+// a setting. Keys this build does not know (a newer version) are kept as they are. Release 52 adds "Update AI
+// components automatically" (issue 21), on by default.
 //
 // The shared switches (the AI features on or off, the older headsets) are SettingsKey entries, see AiImmersiveConfig.
 
@@ -71,6 +72,7 @@ class DesktopAiSettings {
     this.videoFrameMillis = const {},
     this.reliefVersion = defaultReliefVersion,
     this.videoDepthDevice = 'auto',
+    this.autoUpdateComponents = true,
   });
 
   final AiDestination destination;
@@ -147,6 +149,10 @@ class DesktopAiSettings {
   /// performance card of the system, checked against the processor), "processor", or "card:" and the name of a card
   final String videoDepthDevice;
 
+  /// "Update AI components automatically" (issue 21): on by default, the app being a lab; never on a metered
+  /// connection, and never above aiUpdateConfirmBytes without asking (ai_components_updater.dart)
+  final bool autoUpdateComponents;
+
   DesktopAiSettings copyWith({
     AiDestination? destination,
     String? Function()? folder,
@@ -172,6 +178,7 @@ class DesktopAiSettings {
     bool? videoHalfSbs,
     Map<String, int>? videoFrameMillis,
     String? videoDepthDevice,
+    bool? autoUpdateComponents,
   }) => DesktopAiSettings(
     destination: destination ?? this.destination,
     folder: folder == null ? this.folder : folder(),
@@ -197,6 +204,7 @@ class DesktopAiSettings {
     videoHalfSbs: videoHalfSbs ?? this.videoHalfSbs,
     videoFrameMillis: videoFrameMillis ?? this.videoFrameMillis,
     videoDepthDevice: videoDepthDevice ?? this.videoDepthDevice,
+    autoUpdateComponents: autoUpdateComponents ?? this.autoUpdateComponents,
   );
 
   Map<String, Object?> toJson() => {
@@ -224,6 +232,7 @@ class DesktopAiSettings {
     'videoHalfSbs': videoHalfSbs,
     'videoFrameMillis': videoFrameMillis,
     'videoDepthDevice': videoDepthDevice,
+    'autoUpdateComponents': autoUpdateComponents,
   };
 
   /// The settings of [json], a default for each value that is missing or not understood
@@ -289,6 +298,7 @@ class DesktopAiSettings {
           ? json['videoQuality']! as String
           : defaults.videoQuality,
       videoHalfSbs: flag('videoHalfSbs', defaults.videoHalfSbs),
+      autoUpdateComponents: flag('autoUpdateComponents', defaults.autoUpdateComponents),
       videoDepthDevice: switch (json['videoDepthDevice']) {
         final String kept when kept == 'auto' || kept == 'processor' || (kept.startsWith('card:') && kept.length > 5) =>
           kept,
@@ -330,6 +340,7 @@ class DesktopAiSettings {
       other.videoQuality == videoQuality &&
       other.videoHalfSbs == videoHalfSbs &&
       other.videoDepthDevice == videoDepthDevice &&
+      other.autoUpdateComponents == autoUpdateComponents &&
       _sameMap(
         other.videoFrameMillis.map((k, v) => MapEntry(k, '$v')),
         videoFrameMillis.map((k, v) => MapEntry(k, '$v')),
@@ -361,6 +372,7 @@ class DesktopAiSettings {
     videoHalfSbs,
     Object.hashAllUnordered(videoFrameMillis.keys),
     videoDepthDevice,
+    autoUpdateComponents,
   ]);
 }
 
