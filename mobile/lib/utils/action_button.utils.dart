@@ -174,7 +174,8 @@ enum ActionButtonType {
             context.timelineOrigin != TimelineOrigin.localAlbum &&
             context.isOwner,
       // Not on a computer until Google Cast is checked there
-      ActionButtonType.cast => !CurrentPlatform.isDesktop && (context.isCasting || context.asset.hasRemote),
+      // Immuch360: "Play on..." (cast.action.dart), which hides itself on a TV and the Quest
+      ActionButtonType.cast => !CurrentPlatform.isDesktop && context.asset.hasRemote,
       ActionButtonType.slideshow => true,
       // The action decides from the exif and the choices kept on the device: "View as 360°", or "Stop treating as
       // 360°" once chosen. Nothing changes on the server, so it stays in the locked view too.

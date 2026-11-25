@@ -11,8 +11,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/cast/cast_media.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on.sheet.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/remote_play_bar.widget.dart';
 import 'package:immich_mobile/providers/cast/cast_play.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
@@ -36,26 +38,33 @@ String castPhaseLine(Translations t, CastPlayback playback) {
     CastPhase.connecting => t.cast_connecting(device: device),
     CastPhase.loading || CastPhase.buffering => t.cast_opening(device: device),
     CastPhase.playing || CastPhase.paused => t.cast_playing_on(device: device),
-    CastPhase.ended => t.cast_ended(device: device),
+    CastPhase.showing => t.cast_showing_on(device: device),
+    CastPhase.ended =>
+      playback.request.kind == PlayKind.plex ? t.cast_ended(device: device) : t.cast_video_ended(device: device),
     CastPhase.takenOver => t.cast_taken_over(device: device),
     CastPhase.lost => t.cast_lost(device: device),
     CastPhase.failed => t.cast_failed(device: device),
   };
 }
 
-/// The sentence for an outcome other than playing
-String castOutcomeText(Translations t, CastOutcome outcome, {required String device, required String server}) =>
-    switch (outcome) {
-      CastOutcome.playing => t.cast_playing_on(device: device),
-      CastOutcome.noNetwork => t.cast_err_no_network(device: device),
-      CastOutcome.film => t.cast_err_film(server: server),
-      CastOutcome.unreachable => t.cast_err_unreachable(device: device),
-      CastOutcome.launch => t.cast_err_launch(device: device),
-      CastOutcome.load => t.cast_err_load(device: device),
-    };
+/// The sentence for an outcome other than playing; [film] for a Plex film, else a photo or a video
+String castOutcomeText(
+  Translations t,
+  CastOutcome outcome, {
+  required String device,
+  required String server,
+  bool film = true,
+}) => switch (outcome) {
+  CastOutcome.playing => t.cast_playing_on(device: device),
+  CastOutcome.noNetwork => t.cast_err_no_network(device: device),
+  CastOutcome.film => film ? t.cast_err_film(server: server) : t.cast_err_item(server: server),
+  CastOutcome.unreachable => t.cast_err_unreachable(device: device),
+  CastOutcome.launch => t.cast_err_launch(device: device),
+  CastOutcome.load => film ? t.cast_err_load(device: device) : t.cast_err_load_item(device: device),
+};
 
-/// The key of the film's information for [request]
-(String, String, String?) castFilmKeyOf(PlayOnRequest request) => (request.sourceId, request.ratingKey, request.path);
+/// The key of the item's information for [request]
+PlayOnRequest castFilmKeyOf(PlayOnRequest request) => request;
 
 class CastGroup extends ConsumerStatefulWidget {
   const CastGroup({super.key, required this.request, required this.screenHosts});
@@ -90,15 +99,32 @@ class _CastGroupState extends ConsumerState<CastGroup> {
     });
   }
 
+  bool get _film => widget.request.kind == PlayKind.plex;
+
   Future<void> _cast(CastTarget target, CastFormatCheck? check) async {
     final t = context.t;
+    if (!await confirmPrivatePlayOn(context, widget.request, target.name) || !mounted) {
+      return;
+    }
     if (check != null && check.support == CastSupport.no) {
       final go = await showDialog<bool>(
         context: context,
         builder: (dialog) => AlertDialog(
           key: const Key('cast_cannot_dialog'),
-          title: Text(t.cast_cannot_title(device: target.name)),
-          content: Text(t.cast_cannot_body(reasons: castReasonsText(t, check.reasons))),
+          title: Text(
+            widget.request.isPhoto
+                ? t.cast_cannot_title_photo(device: target.name)
+                : _film
+                ? t.cast_cannot_title(device: target.name)
+                : t.cast_cannot_title_item(device: target.name),
+          ),
+          content: Text(
+            widget.request.isPhoto
+                ? t.cast_cannot_body_photo(reasons: castReasonsText(t, check.reasons))
+                : _film
+                ? t.cast_cannot_body(reasons: castReasonsText(t, check.reasons))
+                : t.cast_cannot_body_item(reasons: castReasonsText(t, check.reasons)),
+          ),
           actions: [
             TextButton(onPressed: () => Navigator.of(dialog).pop(false), child: Text(t.cancel)),
             TextButton(
@@ -120,7 +146,7 @@ class _CastGroupState extends ConsumerState<CastGroup> {
     }
     setState(() => _busy = null);
     if (outcome != CastOutcome.playing) {
-      _say(castOutcomeText(t, outcome, device: target.name, server: widget.request.serverName));
+      _say(castOutcomeText(t, outcome, device: target.name, server: widget.request.serverName, film: _film));
     }
   }
 
@@ -156,7 +182,7 @@ class _CastGroupState extends ConsumerState<CastGroup> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: ImmichSpacing.sm, vertical: ImmichSpacing.xs),
-          child: Text(t.cast_group_hint, style: theme.bodySmall),
+          child: Text(_film ? t.cast_group_hint : t.cast_group_hint_item, style: theme.bodySmall),
         ),
         if (cast != null) CastControls(playback: cast),
         for (final target in rows) _row(context, target, info.whenOrNull(data: (film) => film), info.isLoading, cast),
@@ -184,25 +210,34 @@ class _CastGroupState extends ConsumerState<CastGroup> {
   Widget _row(BuildContext context, CastTarget target, CastFilmInfo? film, bool checking, CastPlayback? cast) {
     final t = context.t;
     final scheme = context.colorScheme;
-    final check = film == null ? null : checkCastFormat(film.format, castProfileOf(target.model));
-    final verdict = switch (check?.support) {
-      null => checking ? t.cast_checking : null,
-      CastSupport.yes => t.cast_plays,
-      CastSupport.maybe => t.cast_may_not_play(reasons: castReasonsText(t, check!.reasons)),
-      CastSupport.no => t.cast_cannot_play(reasons: castReasonsText(t, check!.reasons)),
-    };
+    final photo = film?.photo ?? false;
+    final version = film == null || photo ? null : castVersionFor(film, castProfileOf(target.model));
+    final check = photo ? film?.photoCheck : version?.check;
+    final verdict = photo
+        ? (check == null ? t.cast_shows_photo : t.cast_cannot_show(reasons: castReasonsText(t, check.reasons)))
+        : switch (check?.support) {
+            null => checking ? (_film ? t.cast_checking : t.cast_checking_item) : null,
+            CastSupport.yes => _film ? t.cast_plays : t.cast_plays_video,
+            CastSupport.maybe => t.cast_may_not_play(reasons: castReasonsText(t, check!.reasons)),
+            CastSupport.no => t.cast_cannot_play(reasons: castReasonsText(t, check!.reasons)),
+          };
     final model = target.model;
-    final lines = [if (model != null && model != target.name) model, ?verdict];
+    final lines = [
+      if (model != null && model != target.name) model,
+      ?verdict,
+      if (version?.converted ?? false) t.cast_converted_version,
+      if (film?.flat360 ?? false) t.cast_flat_360,
+    ];
     final busy = _busy == target.id;
     final current = cast != null && cast.live && cast.target.id == target.id;
     return ListTile(
+      isThreeLine: lines.length > 1,
       key: ValueKey('cast_${target.id}'),
       leading: Icon(current ? Icons.cast_connected_rounded : Icons.cast_rounded),
       title: Text(target.name),
       subtitle: lines.isEmpty
           ? null
           : Text(lines.join('\n'), style: check?.support == CastSupport.no ? TextStyle(color: scheme.error) : null),
-      isThreeLine: lines.length > 1,
       trailing: busy ? const SizedBox.square(dimension: 24, child: CircularProgressIndicator(strokeWidth: 3)) : null,
       onTap: _busy == null ? () => unawaited(_cast(target, check)) : null,
     );

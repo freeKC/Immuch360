@@ -18,6 +18,7 @@ import 'package:immich_mobile/extensions/build_context_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/cast/cast_group.widget.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on.sheet.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on_asset.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/remote_play_bar.widget.dart';
 import 'package:immich_mobile/providers/cast/cast_play.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
@@ -60,6 +61,8 @@ class RemotePlayDock extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // A swipe in the viewer sends the next photo while a screen shows one of its photos
+    ref.watch(playOnViewerFollowProvider);
     final playback = ref.watch(remotePlaybackProvider);
     final cast = ref.watch(castPlaybackProvider);
     final pageShowsItsOwn = ref.watch(remotePlayBarsShownProvider) > 0;
@@ -118,6 +121,7 @@ class _CastDockBarState extends ConsumerState<_CastDockBar> {
     final controller = ref.read(castPlaybackProvider.notifier);
     final duration = playback.durationMs ?? 0;
     final started = playback.phase == CastPhase.playing || playback.phase == CastPhase.paused;
+    final photo = playback.phase == CastPhase.showing || playback.request.isPhoto;
     return Material(
       key: const Key('cast_dock'),
       color: scheme.surfaceContainerHigh,
@@ -176,25 +180,30 @@ class _CastDockBarState extends ConsumerState<_CastDockBar> {
                     ),
                   ),
                   if (playback.live) ...[
-                    IconButton(
-                      key: const Key('cast_dock_play'),
-                      icon: Icon(
-                        playback.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                        semanticLabel: playback.isPlaying ? t.pause : t.play,
+                    if (!photo)
+                      IconButton(
+                        key: const Key('cast_dock_play'),
+                        icon: Icon(
+                          playback.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                          semanticLabel: playback.isPlaying ? t.pause : t.play,
+                        ),
+                        onPressed: started ? (playback.isPlaying ? controller.pause : controller.play) : null,
                       ),
-                      onPressed: started ? (playback.isPlaying ? controller.pause : controller.play) : null,
-                    ),
+                    if (playback.request.sourceId == playOnImmichSource) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('cast_dock_stop'),
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.cast_stop),
                       onPressed: () => unawaited(controller.stop()),
                     ),
-                  ] else
+                  ] else ...[
+                    // An Immich video that ended: the viewer's next item may still follow
+                    if (playOnCastFollows(playback)) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('cast_dock_close'),
                       icon: Icon(Icons.close_rounded, semanticLabel: t.close),
                       onPressed: () => unawaited(controller.dismiss()),
                     ),
+                  ],
                 ],
               ),
             ),
@@ -221,6 +230,8 @@ class _DockBar extends ConsumerWidget {
     final duration = state.durationMs ?? 0;
     final playing = state.phase == ScreenPlayPhase.playing || state.phase == ScreenPlayPhase.buffering;
     final live = !playback.lost && !playback.ended;
+    // A photo has nothing to play or pause: Stop only
+    final photo = state.media == PlayMedia.photo || (state.media == null && playback.request.isPhoto);
     return Material(
       key: const Key('remote_play_dock'),
       color: scheme.surfaceContainerHigh,
@@ -275,25 +286,30 @@ class _DockBar extends ConsumerWidget {
                     ),
                   ),
                   if (live) ...[
-                    IconButton(
-                      key: const Key('remote_play_dock_play'),
-                      icon: Icon(
-                        playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                        semanticLabel: playing ? t.pause : t.play,
+                    if (!photo)
+                      IconButton(
+                        key: const Key('remote_play_dock_play'),
+                        icon: Icon(
+                          playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                          semanticLabel: playing ? t.pause : t.play,
+                        ),
+                        onPressed: () => unawaited(playing ? controller.pause() : controller.resume()),
                       ),
-                      onPressed: () => unawaited(playing ? controller.pause() : controller.resume()),
-                    ),
+                    if (playback.request.sourceId == playOnImmichSource) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('remote_play_dock_stop'),
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.play_bar_stop),
                       onPressed: () => unawaited(controller.stop()),
                     ),
-                  ] else
+                  ] else ...[
+                    // An Immich video that ended: the viewer's next item may still follow
+                    if (playOnRemoteFollows(playback)) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('remote_play_dock_close'),
                       icon: Icon(Icons.close_rounded, semanticLabel: t.close),
                       onPressed: controller.dismiss,
                     ),
+                  ],
                 ],
               ),
             ),

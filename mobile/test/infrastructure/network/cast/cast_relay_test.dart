@@ -1,5 +1,6 @@
 // The relay a Cast device reads a Plex film from: the one time path, Range forwarded to the media bridge, the poster
-// from memory, a revoked or idle path refused, nothing but GET and HEAD
+// from memory, a revoked or idle path refused, nothing but GET and HEAD, nobody but the lease's device served. The
+// tests' client is on the loopback: it is the device of a lease made for 127.0.0.1.
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -86,8 +87,10 @@ void main() {
     return (status: response.statusCode, headers: response.headers, body: body);
   }
 
-  CastRelayLease lease({Uint8List? withPoster}) =>
-      relay.lease(CastRelayContent(film: () async => bridge.url, poster: withPoster));
+  CastRelayLease lease({Uint8List? withPoster, String client = '127.0.0.1'}) => relay.lease(
+    CastRelayContent(film: () async => bridge.url, poster: withPoster),
+    client: client,
+  );
 
   test('the film under a random path of 128 bits on the relay address, a new one per lease', () {
     final first = lease();
@@ -154,7 +157,33 @@ void main() {
   });
 
   test('a bridge that cannot give the film is a 502', () async {
-    final leased = relay.lease(CastRelayContent(film: () async => throw StateError('no bridge')));
+    final leased = relay.lease(CastRelayContent(film: () async => throw StateError('no bridge')), client: '127.0.0.1');
     expect((await get(leased.filmUrl)).status, HttpStatus.badGateway);
+  });
+
+  test(
+    'another client of the network with the path gets the 404 of an unknown path, the device gets the film',
+    () async {
+      // The Cast device tells its media status, the relay's URL included, to any sender that asks: the path alone is no
+      // secret. A lease made for the device 192.168.1.50 does not answer the loopback client, which stands for another
+      // device of the home network here.
+      final forDevice = lease(client: '192.168.1.50', withPoster: poster);
+      expect((await get(forDevice.filmUrl, range: 'bytes=0-9')).status, HttpStatus.notFound);
+      expect((await get(forDevice.posterUrl!)).status, HttpStatus.notFound);
+      expect((await get(forDevice.filmUrl, method: 'HEAD')).status, HttpStatus.notFound);
+      expect(bridge.asked, isEmpty);
+      expect(forDevice.isRevoked, isFalse);
+
+      final forThisClient = lease();
+      expect((await get(forThisClient.filmUrl, range: 'bytes=0-9')).status, HttpStatus.partialContent);
+      expect(bridge.asked, hasLength(1));
+    },
+  );
+
+  test('the loopback is every device only on a relay bound for the tests', () async {
+    final open = await CastRelayServer.bind('127.0.0.1', port: 0, allowLoopback: true);
+    addTearDown(open.close);
+    final leased = open.lease(CastRelayContent(film: () async => bridge.url), client: '192.168.1.50');
+    expect((await get(leased.filmUrl, range: 'bytes=0-9')).status, HttpStatus.partialContent);
   });
 }

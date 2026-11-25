@@ -135,7 +135,7 @@ void main() {
         );
         expect(card, findsOneWidget);
         expect(find.text('Play from a phone'), findsOneWidget);
-        expect(find.text('Let your phones play their films on this screen'), findsOneWidget);
+        expect(find.text('Let your phones play their films, photos and videos on this screen'), findsOneWidget);
       });
     }
 

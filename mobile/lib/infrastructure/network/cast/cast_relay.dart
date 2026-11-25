@@ -1,38 +1,52 @@
-// The relay a Cast device reads a Plex film from: a small HTTP server of the phone, bound to its address on the
-// device's network, that serves a film only under a random path made for one cast ([CastRelayLease]) and forgets it
-// when that cast ends. A request is forwarded, Range included, to the phone's media bridge on the loopback, which
-// reads the film from the Plex server with the token in a header (plex_client.dart): no token, no address of the
-// server is ever in a URL the device sees. The poster is served from memory under the same path.
+// The relay a Cast device reads a film, a photo or a video from: a small HTTP server of the phone, bound to its
+// address on the device's network, that serves an item only under a random path made for one cast
+// ([CastRelayLease]) and forgets it when that cast ends. A request is forwarded, Range included, to the phone's media
+// bridge on the loopback, which reads a Plex film from the server with the token in a header (plex_client.dart), or
+// to the phone's Immich server through the app's own HTTP client, which adds the session itself
+// ([CastRelayContent.upstream]): no token, no session, no address of the server is ever in a URL the device sees.
+// The poster is served from memory under the same path.
 //
-// Rules: GET and HEAD only, private IPv4 clients only (and the loopback, the tests), an unknown or revoked path is a
-// 404 without a body, the path never logged, a lease revoked after [CastRelayServer.leaseIdle] without a request or
-// [CastRelayServer.leaseMaxAge] at most.
+// Rules: GET and HEAD only, private IPv4 clients only, an unknown or revoked path is a 404 without a body, the path
+// never logged, a lease revoked after [CastRelayServer.leaseIdle] without a request or [CastRelayServer.leaseMaxAge]
+// at most. A lease answers only the Cast device it was made for ([CastRelayLease.client], its IPv4 address): the
+// device tells what it plays, the relay's address included, to any sender of the network that asks, so the path alone
+// is no secret on the home network. Any other client gets the 404 of an unknown path. The loopback is let in only when
+// the relay was bound with allowLoopback (the tests).
 
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('CastRelay');
 
-/// What a lease serves: the film from [film] (the bridge URL of its file, asked at each request so that a bridge bound
-/// again is followed), and the poster's bytes
-class CastRelayContent {
-  const CastRelayContent({required this.film, this.poster, this.posterType = 'image/jpeg'});
+/// A request of the item to its source, with the device's Range and If-Range: what the relay forwards
+typedef CastRelayUpstream = Future<http.StreamedResponse> Function(String method, Map<String, String> headers);
 
-  final Future<Uri> Function() film;
+/// What a lease serves: the item from [film] (the bridge URL of its file, asked at each request so that a bridge bound
+/// again is followed) or from [upstream] (a request of the app's own HTTP client), and the poster's bytes
+class CastRelayContent {
+  const CastRelayContent({this.film, this.upstream, this.poster, this.posterType = 'image/jpeg'})
+    : assert(film != null || upstream != null);
+
+  final Future<Uri> Function()? film;
+  final CastRelayUpstream? upstream;
   final Uint8List? poster;
   final String posterType;
 }
 
 /// One film served under one random path
 class CastRelayLease {
-  CastRelayLease._(this._server, this.id, this._content, DateTime now) : _created = now, _lastUse = now;
+  CastRelayLease._(this._server, this.id, this._content, this.client, DateTime now) : _created = now, _lastUse = now;
 
   final CastRelayServer _server;
+
+  /// The IPv4 address of the only client served: the Cast device
+  final String client;
 
   /// 128 random bits in hex: the path's only secret
   final String id;
@@ -53,9 +67,14 @@ class CastRelayLease {
 }
 
 class CastRelayServer {
-  CastRelayServer._(this._http, this._address, {HttpClient? client, DateTime Function()? clock})
-    : _client = client ?? (HttpClient()..autoUncompress = false),
-      _clock = clock ?? DateTime.now {
+  CastRelayServer._(
+    this._http,
+    this._address, {
+    HttpClient? client,
+    DateTime Function()? clock,
+    this.allowLoopback = false,
+  }) : _client = client ?? (HttpClient()..autoUncompress = false),
+       _clock = clock ?? DateTime.now {
     _http.listen((request) => unawaited(_handle(request)));
   }
 
@@ -71,6 +90,7 @@ class CastRelayServer {
     int port = preferredPort,
     HttpClient? client,
     DateTime Function()? clock,
+    bool allowLoopback = false,
   }) async {
     HttpServer http;
     try {
@@ -80,11 +100,14 @@ class CastRelayServer {
     }
     http.autoCompress = false;
     http.idleTimeout = const Duration(seconds: 30);
-    return CastRelayServer._(http, address, client: client, clock: clock);
+    return CastRelayServer._(http, address, client: client, clock: clock, allowLoopback: allowLoopback);
   }
 
   final HttpServer _http;
   final String _address;
+
+  /// Whether a client on the loopback is served whatever the lease's device (the tests, where everything is there)
+  final bool allowLoopback;
   final HttpClient _client;
   final DateTime Function() _clock;
   final Map<String, CastRelayLease> _leases = {};
@@ -95,11 +118,11 @@ class CastRelayServer {
   int get port => _http.port;
   bool get isClosed => _closed;
 
-  /// A new path for [content]
-  CastRelayLease lease(CastRelayContent content) {
+  /// A new path for [content], served to the device at [client] (an IPv4 address) only
+  CastRelayLease lease(CastRelayContent content, {required String client}) {
     final bytes = List<int>.generate(16, (_) => _random.nextInt(256));
     final id = bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
-    final lease = CastRelayLease._(this, id, content, _clock());
+    final lease = CastRelayLease._(this, id, content, client, _clock());
     _leases[id] = lease;
     return lease;
   }
@@ -118,22 +141,38 @@ class CastRelayServer {
     _client.close(force: true);
   }
 
-  static bool _clientAllowed(InternetAddress? remote) {
+  /// The IPv4 address of [remote], an IPv4 mapped in IPv6 included
+  static String? _ipv4Of(InternetAddress? remote) {
+    if (remote == null) {
+      return null;
+    }
+    return remote.type == InternetAddressType.IPv6 && remote.address.toLowerCase().startsWith('::ffff:')
+        ? remote.address.substring(7)
+        : remote.address;
+  }
+
+  bool _clientAllowed(InternetAddress? remote) {
     if (remote == null) {
       return false;
     }
-    if (remote.isLoopback) {
-      return true;
-    }
-    final address = remote.type == InternetAddressType.IPv6 && remote.address.startsWith('::ffff:')
-        ? remote.address.substring(7)
-        : remote.address;
-    return isPrivatePairingIPv4(address);
+    // The loopback passes here; the lease's device decides below
+    final address = _ipv4Of(remote);
+    return remote.isLoopback || (address != null && isPrivatePairingIPv4(address));
   }
 
-  CastRelayLease? _leaseOf(String id) {
+  /// Whether [remote] is the device [lease] was made for
+  bool _servesClient(CastRelayLease lease, InternetAddress? remote) =>
+      _ipv4Of(remote) == lease.client || (allowLoopback && (remote?.isLoopback ?? false));
+
+  /// The lease of [id] when [remote] is its device; another client of the network learns nothing, not even that the
+  /// path exists, and does not keep the lease alive
+  CastRelayLease? _leaseOf(String id, InternetAddress? remote) {
     final lease = _leases[id];
     if (lease == null) {
+      return null;
+    }
+    if (!_servesClient(lease, remote)) {
+      _log.info('A client that is not the Cast device asked for a cast');
       return null;
     }
     final now = _clock();
@@ -163,7 +202,7 @@ class CastRelayServer {
         await _end(response, HttpStatus.notFound);
         return;
       }
-      final lease = _leaseOf(segments[1]);
+      final lease = _leaseOf(segments[1], request.connectionInfo?.remoteAddress);
       if (lease == null) {
         await _end(response, HttpStatus.notFound);
         return;
@@ -206,10 +245,14 @@ class CastRelayServer {
   ];
 
   Future<void> _forward(HttpRequest request, CastRelayLease lease) async {
+    final upstreamRequest = lease._content.upstream;
+    if (upstreamRequest != null) {
+      return _forwardUpstream(request, upstreamRequest);
+    }
     final response = request.response;
     final Uri upstream;
     try {
-      upstream = await lease._content.film();
+      upstream = await lease._content.film!();
     } catch (error) {
       _log.info('The film could not be found for the relay: ${error.runtimeType}');
       await _end(response, HttpStatus.badGateway);
@@ -243,6 +286,46 @@ class CastRelayServer {
     }
     // Stops reading the bridge (and the bridge the server) as soon as the device goes away
     await answer.pipe(response);
+  }
+
+  Future<void> _forwardUpstream(HttpRequest request, CastRelayUpstream upstream) async {
+    final response = request.response;
+    final headers = <String, String>{
+      HttpHeaders.rangeHeader: ?request.headers.value(HttpHeaders.rangeHeader),
+      HttpHeaders.ifRangeHeader: ?request.headers.value(HttpHeaders.ifRangeHeader),
+    };
+    final http.StreamedResponse answer;
+    try {
+      answer = await upstream(request.method, headers);
+    } catch (error) {
+      _log.info('The item could not be read for the relay: ${error.runtimeType}');
+      await _end(response, HttpStatus.badGateway);
+      return;
+    }
+    // A refusal of the server (its session ended, the asset is gone) is not the device's business
+    if (answer.statusCode >= 300) {
+      await answer.stream.drain<void>();
+      await _end(response, answer.statusCode == HttpStatus.notFound ? HttpStatus.notFound : HttpStatus.badGateway);
+      return;
+    }
+    response.statusCode = answer.statusCode;
+    for (final name in _forwardedAnswerHeaders) {
+      final value = answer.headers[name];
+      if (value != null) {
+        response.headers.set(name, value);
+      }
+    }
+    final length = answer.contentLength;
+    if (length != null && length >= 0) {
+      response.headers.contentLength = length;
+    }
+    if (request.method == 'HEAD') {
+      await answer.stream.drain<void>();
+      await response.close();
+      return;
+    }
+    await response.addStream(answer.stream);
+    await response.close();
   }
 
   static Future<void> _end(HttpResponse response, int status) async {

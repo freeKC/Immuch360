@@ -1,6 +1,6 @@
-// Google Cast for a Plex film ("Play on..." through Cast, experimental): what the phone tells the default media
-// receiver of a Chromecast, a Google TV, an Android TV with Cast built in or a Nest Hub, and what it knows beforehand
-// of whether that device decodes the film.
+// Google Cast for a Plex film, an Immich photo or video ("Play on..." through Cast): what the phone tells the
+// default media receiver of a Chromecast, a Google TV, an Android TV with Cast built in or a Nest Hub, and what it
+// knows beforehand of whether that device decodes the film or the video.
 //
 // The receiver reads the film from the phone's relay (cast_relay.dart), never from the Plex server: the LOAD message
 // carries the relay's one time address and the film's title, year and poster (through the relay too), never a token
@@ -33,7 +33,11 @@ class CastFilm {
     this.posterUrl,
     this.durationMs,
     this.startMs = 0,
+    this.photo = false,
   });
+
+  /// A photo: PhotoMediaMetadata (metadataType 4), no duration, no start position
+  final bool photo;
 
   final Uri contentUrl;
   final String contentType;
@@ -50,6 +54,19 @@ Map<String, Object?> castLoadMessage(CastFilm film) {
   final year = film.year;
   final poster = film.posterUrl;
   final duration = film.durationMs;
+  if (film.photo) {
+    return {
+      'type': 'LOAD',
+      'autoplay': true,
+      'media': {
+        'contentId': film.contentUrl.toString(),
+        'contentUrl': film.contentUrl.toString(),
+        'streamType': 'NONE',
+        'contentType': film.contentType,
+        'metadata': {'metadataType': 4, 'title': film.title},
+      },
+    };
+  }
   return {
     'type': 'LOAD',
     'autoplay': true,

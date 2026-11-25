@@ -1,5 +1,5 @@
-// "Play on..." through Google Cast (experimental): the Cast devices found nearby, what the Plex metadata tells of the
-// film before casting, and the session with the device a film plays on.
+// "Play on..." through Google Cast: the Cast devices found nearby, what the Plex metadata tells of the film (or the
+// phone of an Immich photo or video, cast_immich.dart) before casting, and the session with the device it plays on.
 //
 // A cast: the phone binds its relay (cast_relay.dart) to its address on the device's network and makes a one time
 // path for the film and its poster; connects to the device (cast_channel.dart), launches the default media receiver
@@ -16,11 +16,13 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/services/cast/cast_media.dart';
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/infrastructure/network/cast/cast_channel.dart';
 import 'package:immich_mobile/infrastructure/network/cast/cast_relay.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_films.dart';
+import 'package:immich_mobile/providers/cast/cast_immich.dart';
 import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
@@ -106,18 +108,35 @@ class CastDevicesNotifier extends AutoDisposeNotifier<CastDiscovery> {
 
 final castDevicesProvider = NotifierProvider.autoDispose<CastDevicesNotifier, CastDiscovery>(CastDevicesNotifier.new);
 
-/// What the phone knows of the film before casting it: its texts, the file to send and its format
+/// What the phone knows of the film (or the photo, the video) before casting it: its texts, the file to send and its
+/// format
 @immutable
 class CastFilmInfo {
   const CastFilmInfo({
     required this.title,
-    required this.path,
     required this.format,
+    this.path,
     this.year,
     this.durationMs,
     this.thumb,
     this.fileName,
-  });
+    this.upstream,
+    this.convertedUpstream,
+    this.convertedFormat,
+    this.photo = false,
+    this.flat360 = false,
+    this.contentType,
+    this.photoFormat,
+  }) : assert(path != null || upstream != null);
+
+  /// A photo whose format a Cast device does not show ("HEIC", "TIFF"), null for one it shows
+  final String? photoFormat;
+
+  /// The check of a photo: a format the devices show, or not
+  CastFormatCheck? get photoCheck {
+    final format = photoFormat;
+    return format == null ? null : CastFormatCheck([CastIssue(CastIssueKind.container, CastSupport.no, format)]);
+  }
 
   final String title;
   final int? year;
@@ -126,10 +145,40 @@ class CastFilmInfo {
   /// The poster's request path on the server, for its photo transcoder
   final String? thumb;
 
-  /// The file's path on this phone's connection, which the media bridge serves
-  final String path;
+  /// The file's path on this phone's connection, which the media bridge serves (a Plex film)
+  final String? path;
+
+  /// Else the request the relay forwards (an Immich asset, through the app's client)
+  final CastRelayUpstream? upstream;
+
+  /// The version the server converted for playback, and its format, when it made one
+  final CastRelayUpstream? convertedUpstream;
+  final CastFilmFormat? convertedFormat;
   final String? fileName;
   final CastFilmFormat format;
+
+  /// A photo: no format check, PhotoMediaMetadata
+  final bool photo;
+
+  /// A 360° item, which a Cast device shows flat
+  final bool flat360;
+
+  /// The content type of the LOAD, else from the container
+  final String? contentType;
+}
+
+/// Which version of [info] goes to a device of [profile]: the original when it should play there, else the version
+/// the server converted when that one should, else the original (with its check)
+({bool converted, CastFormatCheck check}) castVersionFor(CastFilmInfo info, CastDeviceProfile profile) {
+  final original = checkCastFormat(info.format, profile);
+  final convertedFormat = info.convertedFormat;
+  if (original.support != CastSupport.yes && convertedFormat != null && info.convertedUpstream != null) {
+    final converted = checkCastFormat(convertedFormat, profile);
+    if (converted.support == CastSupport.yes) {
+      return (converted: true, check: converted);
+    }
+  }
+  return (converted: false, check: original);
 }
 
 /// The version of [details] the file [path] is (its last segment), else the first one with a file
@@ -211,12 +260,52 @@ Future<CastFilmInfo?> _readFilmInfo(Ref ref, PlayOnRequest request) async {
   );
 }
 
+/// The content type a Cast device shows a photo file of [fileName] with, null for a format it does not show (HEIC,
+/// TIFF, RAW: Immuch360 on a TV or the Quest shows those)
+String? castPhotoContentTypeOf(String fileName) {
+  final dot = fileName.lastIndexOf('.');
+  return switch (dot < 0 ? '' : fileName.substring(dot + 1).toLowerCase()) {
+    'jpg' || 'jpeg' => 'image/jpeg',
+    'png' => 'image/png',
+    'webp' => 'image/webp',
+    'gif' => 'image/gif',
+    'bmp' => 'image/bmp',
+    _ => null,
+  };
+}
+
+/// What the cast of a file of a share, or of a Jellyfin or Emby item, reads beforehand: the file through the media
+/// bridge, its format from its name (the bridge reads the server with the phone's own access)
+CastFilmInfo? castShareInfoOf(PlayOnRequest request) {
+  final path = request.path;
+  if (path == null) {
+    return null;
+  }
+  final name = Uri.decodeComponent(path.split('/').where((segment) => segment.isNotEmpty).lastOrNull ?? '');
+  final dot = name.lastIndexOf('.');
+  final extension = dot < 0 ? null : name.substring(dot + 1).toLowerCase();
+  return CastFilmInfo(
+    title: request.title ?? name,
+    path: path,
+    fileName: name,
+    photo: request.isPhoto,
+    contentType: request.isPhoto ? castPhotoContentTypeOf(name) : null,
+    format: CastFilmFormat(container: request.isPhoto ? null : extension),
+    photoFormat: request.isPhoto && castPhotoContentTypeOf(name) == null ? (extension ?? '').toUpperCase() : null,
+    flat360: request.target.projection.isSphere,
+  );
+}
+
 final castEnvironmentProvider = Provider<CastEnvironment>((ref) {
   return CastEnvironment(
     connect: (target) => CastSocketChannel.connect(target.host, target.port),
     localAddresses: phoneShareLocalAddresses,
     bindRelay: (address) => CastRelayServer.bind(address),
-    filmInfo: (request) => _readFilmInfo(ref, request),
+    filmInfo: (request) => switch (request.kind) {
+      PlayKind.immich => readImmichCastInfo(ref.read(castImmichEnvironmentProvider), request),
+      PlayKind.plex => _readFilmInfo(ref, request),
+      PlayKind.share || PlayKind.mediaServer => Future.value(castShareInfoOf(request)),
+    },
     bridgeUrl: (sourceId, path) async {
       await ref.read(mediaBridgeProvider).start();
       return ref.read(networkConnectionsProvider).mediaUrl(sourceId, path);
@@ -228,16 +317,13 @@ final castEnvironmentProvider = Provider<CastEnvironment>((ref) {
   );
 });
 
-/// The film's information for the sheet's check, by source, rating key and path
-final castFilmInfoProvider = FutureProvider.autoDispose.family<CastFilmInfo?, (String, String, String?)>((ref, key) {
-  final (sourceId, ratingKey, path) = key;
-  return ref
-      .read(castEnvironmentProvider)
-      .filmInfo(PlayOnRequest(sourceId: sourceId, server: '', serverName: '', ratingKey: ratingKey, path: path));
+/// The item's information for the sheet's check, by its request
+final castFilmInfoProvider = FutureProvider.autoDispose.family<CastFilmInfo?, PlayOnRequest>((ref, request) {
+  return ref.read(castEnvironmentProvider).filmInfo(request);
 });
 
 /// Where a cast is
-enum CastPhase { connecting, loading, buffering, playing, paused, ended, failed, takenOver, lost }
+enum CastPhase { connecting, loading, buffering, playing, paused, showing, ended, failed, takenOver, lost }
 
 /// Why a cast did not start or stopped
 enum CastFailure {
@@ -298,7 +384,8 @@ class CastPlayback {
       phase == CastPhase.loading ||
       phase == CastPhase.buffering ||
       phase == CastPhase.playing ||
-      phase == CastPhase.paused;
+      phase == CastPhase.paused ||
+      phase == CastPhase.showing;
 
   /// Whether this is the file at [path] of the source [sourceId]
   bool isOf(String sourceId, String path) => request.sourceId == sourceId && request.path == path;
@@ -356,6 +443,9 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
   String? _sessionId;
   int? _mediaSessionId;
   CastFilm? _film;
+
+  /// The media session a LOAD of [castNext] replaced: its INTERRUPTED is this phone's own doing
+  int? _replaced;
   Completer<CastOutcome>? _started;
   int _generation = 0;
 
@@ -416,19 +506,10 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
       return _fail(generation, CastOutcome.noNetwork, CastFailure.noNetwork);
     }
     _relay = relay;
-    final lease = _lease = relay.lease(
-      CastRelayContent(film: () => environment.bridgeUrl(request.sourceId, info!.path), poster: poster),
-    );
+    // Served to the device only (castRelayAddressFor took its host as a private IPv4 address)
+    final lease = _lease = relay.lease(_contentOf(info, target, poster, request.sourceId), client: target.host);
     final title = info.title.isNotEmpty ? info.title : (request.title ?? info.fileName ?? '');
-    _film = CastFilm(
-      contentUrl: lease.filmUrl,
-      contentType: castContentTypeOf(container: info.format.container, fileName: info.fileName),
-      title: title,
-      year: info.year,
-      posterUrl: lease.posterUrl,
-      durationMs: info.durationMs,
-      startMs: request.offsetMs,
-    );
+    _film = _filmOf(info, lease, title, request);
     state = CastPlayback(
       target: target,
       request: request,
@@ -470,6 +551,82 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
         _transportId == null ? CastFailure.launch : CastFailure.load,
       ),
     );
+  }
+
+  /// What the relay serves of [info] for [target]: the version that should play there
+  CastRelayContent _contentOf(CastFilmInfo info, CastTarget target, Uint8List? poster, String sourceId) {
+    final upstream = info.upstream;
+    if (upstream != null) {
+      final converted = castVersionFor(info, castProfileOf(target.model)).converted;
+      return CastRelayContent(upstream: converted ? info.convertedUpstream : upstream, poster: poster);
+    }
+    final environment = _environment;
+    final path = info.path!;
+    return CastRelayContent(film: () => environment.bridgeUrl(sourceId, path), poster: poster);
+  }
+
+  CastFilm _filmOf(CastFilmInfo info, CastRelayLease lease, String title, PlayOnRequest request) => CastFilm(
+    contentUrl: lease.filmUrl,
+    contentType: info.contentType ?? castContentTypeOf(container: info.format.container, fileName: info.fileName),
+    title: title,
+    year: info.year,
+    posterUrl: lease.posterUrl,
+    durationMs: info.durationMs,
+    startMs: info.photo ? 0 : request.offsetMs,
+    photo: info.photo,
+  );
+
+  /// The next photo or video of the viewer while one of its items is on the device: a LOAD on the same receiver,
+  /// under a new path of the relay; the path before goes once the device moved on. Without a cast under way, a cast.
+  Future<CastOutcome> castNext(PlayOnRequest request) async {
+    final playback = state;
+    final relay = _relay;
+    final channel = _channel;
+    final transport = _transportId;
+    if (playback == null) {
+      return CastOutcome.unreachable;
+    }
+    if (!playback.live || relay == null || channel == null || transport == null) {
+      return cast(playback.target, request);
+    }
+    final generation = _generation;
+    final CastFilmInfo? info;
+    try {
+      info = await _environment.filmInfo(request);
+    } catch (error) {
+      _log.info('Cast: the next item could not be read (${error.runtimeType})');
+      return CastOutcome.film;
+    }
+    if (info == null || generation != _generation || _channel != channel) {
+      return CastOutcome.film;
+    }
+    final before = _lease;
+    final lease = _lease = relay.lease(
+      _contentOf(info, playback.target, null, request.sourceId),
+      client: playback.target.host,
+    );
+    final title = info.title.isNotEmpty ? info.title : (request.title ?? info.fileName ?? '');
+    final film = _film = _filmOf(info, lease, title, request);
+    _replaced = _mediaSessionId;
+    _mediaSessionId = null;
+    final started = _started = Completer<CastOutcome>();
+    state = CastPlayback(
+      target: playback.target,
+      request: request,
+      title: title,
+      phase: CastPhase.loading,
+      at: clock(),
+      durationMs: info.durationMs,
+      volume: playback.volume,
+      muted: playback.muted,
+    );
+    channel.send(castNamespaceMedia, castLoadMessage(film), destination: transport);
+    final outcome = await started.future.timeout(
+      _environment.answerTimeout,
+      onTimeout: () => _fail(generation, CastOutcome.load, CastFailure.load),
+    );
+    before?.revoke();
+    return outcome;
   }
 
   CastOutcome _fail(int generation, CastOutcome outcome, CastFailure failure) {
@@ -567,6 +724,10 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
       return;
     }
     final session = status['mediaSessionId'];
+    // The media a LOAD of castNext replaced tells it was interrupted: this phone's own doing
+    if (session is int && session == _replaced) {
+      return;
+    }
     if (session is int) {
       _mediaSessionId = session;
     }
@@ -574,18 +735,27 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
     final media = status['media'];
     final duration = media is Map ? media['duration'] : null;
     final rate = status['playbackRate'];
-    final phase = switch (status['playerState']) {
-      'PLAYING' => CastPhase.playing,
-      'PAUSED' => CastPhase.paused,
-      'BUFFERING' || 'LOADING' => CastPhase.buffering,
-      'IDLE' => switch (status['idleReason']) {
-        'FINISHED' => CastPhase.ended,
-        'ERROR' => CastPhase.failed,
-        'INTERRUPTED' || 'CANCELLED' => CastPhase.takenOver,
-        _ => null,
-      },
-      _ => null,
-    };
+    final photo = _film?.photo ?? false;
+    final idleReason = status['idleReason'];
+    final phase = photo
+        // A photo shows until the next LOAD: the receiver's player state of an image says little more
+        ? switch ((status['playerState'], idleReason)) {
+            ('IDLE', 'ERROR') => CastPhase.failed,
+            ('IDLE', 'INTERRUPTED' || 'CANCELLED') => CastPhase.takenOver,
+            _ => CastPhase.showing,
+          }
+        : switch (status['playerState']) {
+            'PLAYING' => CastPhase.playing,
+            'PAUSED' => CastPhase.paused,
+            'BUFFERING' || 'LOADING' => CastPhase.buffering,
+            'IDLE' => switch (idleReason) {
+              'FINISHED' => CastPhase.ended,
+              'ERROR' => CastPhase.failed,
+              'INTERRUPTED' || 'CANCELLED' => CastPhase.takenOver,
+              _ => null,
+            },
+            _ => null,
+          };
     state = playback.copyWith(
       phase: phase,
       positionMs: current is num ? (current * 1000).round() : null,
@@ -594,7 +764,10 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
       rate: rate is num ? rate.toDouble() : null,
       failure: phase == CastPhase.failed ? CastFailure.load : null,
     );
-    if (phase == CastPhase.playing || phase == CastPhase.paused || phase == CastPhase.buffering) {
+    if (phase == CastPhase.playing ||
+        phase == CastPhase.paused ||
+        phase == CastPhase.buffering ||
+        phase == CastPhase.showing) {
       _complete(CastOutcome.playing);
       _statusTimer ??= Timer.periodic(_environment.statusEvery, (_) => _askStatus());
     } else if (phase == CastPhase.failed) {
@@ -736,6 +909,7 @@ class CastPlaybackController extends Notifier<CastPlayback?> {
     _transportId = null;
     _sessionId = null;
     _mediaSessionId = null;
+    _replaced = null;
     _film = null;
     await messages?.cancel();
     if (channel != null) {
