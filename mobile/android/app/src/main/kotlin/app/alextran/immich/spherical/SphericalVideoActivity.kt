@@ -161,6 +161,19 @@ class SphericalVideoActivity : ComponentActivity() {
       return true
     }
 
+    /**
+     * Players between their onStart and their onStop, for [inFront]: a counter rather than a flag, so that a player
+     * stopping after the next one started never hides it. Main thread only.
+     */
+    private var startedPlayers = 0
+
+    /**
+     * Whether a player is on screen, in front of the app's window ("inFront" of NativeViewersChannel). False once Home
+     * sent it to the background, even while it is not destroyed: a screen then stops listening for phones.
+     */
+    val inFront: Boolean
+      get() = startedPlayers > 0
+
     private const val EXTRA_URL = "url"
     private const val EXTRA_HEADERS = "headers"
     private const val EXTRA_TITLE = "title"
@@ -777,6 +790,7 @@ class SphericalVideoActivity : ComponentActivity() {
 
   override fun onStart() {
     super.onStart()
+    startedPlayers++
     initializePlayer()
     if (rawMessageOnStart) {
       rawMessageOnStart = false
@@ -800,6 +814,7 @@ class SphericalVideoActivity : ComponentActivity() {
 
   override fun onStop() {
     super.onStop()
+    startedPlayers = (startedPlayers - 1).coerceAtLeast(0)
     look?.stop()
     remoteLook?.cancel()
     playerView.onPause()

@@ -2,9 +2,11 @@
 // (release 53): the 360° player of Android TV (an activity of its own) and of the computers (a route over the
 // window), and the immersive viewer of the Meta Quest (an activity of its own).
 //
-// While one of them is in front, the window of the app is stopped: the receiver keeps listening then
-// (ScreenPlayerController), so that the phone keeps the screen. A phone's next item, or its Stop, closes the viewer
-// first, as its close button or Back would: the page under it is the one the play replaces or closes.
+// While one of the activities is in front, the window of the app is stopped: the receiver keeps listening then
+// (ScreenPlayerController), so that the phone keeps the screen. Sent to the background by Home or the Meta button, the
+// activity stays open (not destroyed) but no longer is in front: the receiver stops then. A phone's next item, or its
+// Stop, closes the viewer first, as its close button or Back would: the page under it is the one the play replaces or
+// closes.
 
 import 'dart:async';
 
@@ -19,10 +21,25 @@ import 'package:logging/logging.dart';
 
 final _log = Logger('ScreenPlayer');
 
+/// Where the app's own viewer activities stand, read while the window of the app is stopped
+enum NativeViewerPlace {
+  /// None open (or, on a computer, the 360° player only: a route of the window, which the window's lifecycle follows)
+  none,
+
+  /// One of them is on screen: the app is in use
+  front,
+
+  /// One is still open but in the background (Home or the Meta button pressed in it)
+  behind,
+}
+
 /// See the top of this file; a fake in the tests
 abstract interface class ScreenNativeViewers {
   /// Whether one of the app's 360° or immersive viewers is open, as the sessions that opened it know
   bool get open;
+
+  /// Whether one of the viewer activities is on screen, open in the background, or none is open. Never throws.
+  Future<NativeViewerPlace> place();
 
   /// Closes it, as its close button does; nothing when none is open. Never throws.
   Future<void> close();
@@ -43,6 +60,20 @@ class AppScreenNativeViewers implements ScreenNativeViewers {
     } catch (error) {
       _log.fine('Play from a phone: the 360° viewers did not say whether one is open (${error.runtimeType})');
       return false;
+    }
+  }
+
+  @override
+  Future<NativeViewerPlace> place() async {
+    if (!CurrentPlatform.isAndroid || !open) {
+      return NativeViewerPlace.none;
+    }
+    try {
+      final inFront = await _channel.invokeMethod<bool>('inFront');
+      return inFront == true ? NativeViewerPlace.front : NativeViewerPlace.behind;
+    } catch (error) {
+      _log.fine('Play from a phone: the 360° viewers did not say whether one is in front (${error.runtimeType})');
+      return NativeViewerPlace.none;
     }
   }
 

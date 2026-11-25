@@ -73,7 +73,7 @@ class ScreenPlayerEnvironment {
     required this.installId,
     required this.deviceName,
     this.preferredPort = playLinkDefaultPort,
-    this.nativeViewerOpen = _noNativeViewer,
+    this.nativeViewer = _noNativeViewer,
     this.nativeViewerCheck = const Duration(seconds: 5),
   });
 
@@ -88,15 +88,15 @@ class ScreenPlayerEnvironment {
   final Future<String> Function() deviceName;
   final int preferredPort;
 
-  /// Whether one of the app's own 360° or immersive viewers is in front (screen_native_viewers.dart): the window of
-  /// the app is stopped then, the receiver keeps listening
-  final bool Function() nativeViewerOpen;
+  /// Where the app's own 360° or immersive viewer activities stand (screen_native_viewers.dart): while one is in front,
+  /// the window of the app is stopped and the receiver keeps listening
+  final Future<NativeViewerPlace> Function() nativeViewer;
 
-  /// How often the receiver checks that such a viewer is still open while the window is stopped
+  /// How often the receiver checks where such a viewer stands while the window is stopped
   final Duration nativeViewerCheck;
 }
 
-bool _noNativeViewer() => false;
+Future<NativeViewerPlace> _noNativeViewer() async => NativeViewerPlace.none;
 
 final screenPlayerEnvironmentProvider = Provider<ScreenPlayerEnvironment>((ref) {
   final pairing = ref.watch(screenPairingEnvironmentProvider);
@@ -123,7 +123,7 @@ final screenPlayerEnvironmentProvider = Provider<ScreenPlayerEnvironment>((ref) 
       final label = Store.tryGet(StoreKey.pairingScreenLabel);
       return label != null && label.trim().isNotEmpty ? label.trim() : (await pairing.deviceName()).trim();
     },
-    nativeViewerOpen: () => ref.read(screenNativeViewersProvider).open,
+    nativeViewer: () => ref.read(screenNativeViewersProvider).place(),
   );
 });
 
@@ -155,8 +155,14 @@ class ScreenPlayerController extends Notifier<ScreenPlayerView> {
   bool _background = false;
   int _generation = 0;
 
-  /// While one of the app's 360° viewers keeps the listener up with the window stopped: checks that it is still open
+  /// While one of the app's 360° viewers is open with the window stopped: checks whether it still is in front
   Timer? _nativeViewerWatch;
+
+  /// The window of the app stopped (paused or hidden), and not resumed since
+  bool _windowStopped = false;
+
+  /// Counts the changes of the window, so that the answer of a viewer check made before the last one is dropped
+  int _windowTurn = 0;
 
   /// The phones linked now, read by the session at each open
   List<LinkedPeer> _phones = const [];
@@ -190,47 +196,91 @@ class ScreenPlayerController extends Notifier<ScreenPlayerView> {
 
   void _onLifecycle(AppLifecycleState lifecycle) {
     switch (lifecycle) {
-      case AppLifecycleState.paused || AppLifecycleState.hidden || AppLifecycleState.detached:
-        // The app's own 360° player or immersive viewer in front: the app is in use, the phone keeps the screen (its
-        // next item closes the viewer). Once the viewer is gone while the window still is not back, the app is in the
-        // background.
-        if (!_background && lifecycle != AppLifecycleState.detached && _environment.nativeViewerOpen()) {
-          _watchNativeViewer();
+      case AppLifecycleState.paused || AppLifecycleState.hidden:
+        // Hidden then paused: one stop of the window
+        if (_windowStopped) {
           return;
         }
+        _windowStopped = true;
+        unawaited(_followNativeViewer(++_windowTurn));
+      case AppLifecycleState.detached:
+        _windowStopped = true;
+        _windowTurn++;
         _nativeViewerWatch?.cancel();
-        if (!_background) {
-          _background = true;
-          unawaited(_sync());
-        }
+        _setBackground(true);
       case AppLifecycleState.resumed:
+        _windowStopped = false;
+        _windowTurn++;
         _nativeViewerWatch?.cancel();
-        if (_background) {
-          _background = false;
-          unawaited(_sync());
-        }
+        _setBackground(false);
       case AppLifecycleState.inactive:
         break;
     }
   }
 
-  void _watchNativeViewer() {
+  void _setBackground(bool background) {
+    if (_background != background) {
+      _background = background;
+      unawaited(_sync());
+    }
+  }
+
+  Future<NativeViewerPlace> _nativeViewerPlace() async {
+    try {
+      return await _environment.nativeViewer();
+    } catch (_) {
+      return NativeViewerPlace.none;
+    }
+  }
+
+  /// The window stopped: the app's own 360° player or immersive viewer in front keeps the app in use, the phone keeps
+  /// the screen (its next item closes the viewer). Anything else is the app in the background.
+  Future<void> _followNativeViewer(int turn) async {
+    final place = await _nativeViewerPlace();
+    if (turn != _windowTurn) {
+      return;
+    }
+    switch (place) {
+      case NativeViewerPlace.front:
+        _watchNativeViewer(turn);
+      case NativeViewerPlace.behind:
+        _setBackground(true);
+        _watchNativeViewer(turn);
+      case NativeViewerPlace.none:
+        _setBackground(true);
+    }
+  }
+
+  /// While the window stays stopped with a viewer open: the viewer sent to the background (Home, the Meta button)
+  /// stops the listener, the viewer brought back to the front (Recents) starts it again, and once it closed without
+  /// the window back the watch ends.
+  void _watchNativeViewer(int turn) {
     _nativeViewerWatch?.cancel();
     // Two checks in a row: the viewer that just closed gives the window back a moment later
-    var gone = 0;
-    _nativeViewerWatch = Timer.periodic(_environment.nativeViewerCheck, (timer) {
-      if (_environment.nativeViewerOpen()) {
-        gone = 0;
+    var away = 0;
+    var checking = false;
+    _nativeViewerWatch = Timer.periodic(_environment.nativeViewerCheck, (timer) async {
+      if (checking) {
         return;
       }
-      if (++gone < 2) {
+      checking = true;
+      final place = await _nativeViewerPlace();
+      checking = false;
+      if (turn != _windowTurn || !timer.isActive) {
         return;
       }
-      timer.cancel();
-      if (!_background) {
-        _background = true;
-        unawaited(_sync());
+      if (place == NativeViewerPlace.front) {
+        away = 0;
+        _setBackground(false);
+        return;
       }
+      if (++away < 2) {
+        return;
+      }
+      if (place == NativeViewerPlace.none) {
+        timer.cancel();
+      }
+      _setBackground(true);
     });
   }
 

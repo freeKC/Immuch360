@@ -79,7 +79,17 @@ class _Prompts implements ScreenPlayerPrompts {
 class _Native implements ScreenNativeViewers {
   @override
   bool open = false;
+
+  /// On screen, rather than open in the background after Home or the Meta button
+  bool inFront = true;
   int closes = 0;
+
+  @override
+  Future<NativeViewerPlace> place() async => !open
+      ? NativeViewerPlace.none
+      : inFront
+      ? NativeViewerPlace.front
+      : NativeViewerPlace.behind;
 
   @override
   Future<void> close() async {
@@ -229,7 +239,7 @@ void main() {
             installId: () async => _screen.id,
             deviceName: () async => 'Living room TV',
             preferredPort: 0,
-            nativeViewerOpen: () => native.open,
+            nativeViewer: native.place,
             nativeViewerCheck: const Duration(milliseconds: 10),
           ),
         ),
@@ -306,7 +316,7 @@ void main() {
       lifecycle.add(AppLifecycleState.resumed);
       await settle();
       expect(container.read(screenPlayerProvider).listening, isTrue);
-      // Open again, then gone while the app stays in the background (Home pressed in the viewer)
+      // Open again, then closed while the app stays in the background, the window not back
       native.open = true;
       lifecycle.add(AppLifecycleState.paused);
       await settle();
@@ -320,6 +330,43 @@ void main() {
       expect(container.read(screenPlayerProvider).listening, isTrue);
     },
   );
+
+  test(
+    'a 360° viewer sent to the background by Home stays open but stops the listener; back in front, it listens again',
+    () async {
+      await start();
+      native.open = true;
+      lifecycle.add(AppLifecycleState.hidden);
+      lifecycle.add(AppLifecycleState.paused);
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      // Home (Android TV) or the Meta button (Quest) in the viewer: stopped, not destroyed, so still open
+      native.inFront = false;
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isFalse);
+      expect(stopped, 1);
+      // Back to the viewer from Recents, the window still stopped under it
+      native.inFront = true;
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      // The viewer closed and the window came back
+      native.open = false;
+      lifecycle.add(AppLifecycleState.resumed);
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      expect(stopped, 1);
+    },
+  );
+
+  test('a 360° viewer already in the background when the window stops never keeps the listener up', () async {
+    await start();
+    native.open = true;
+    native.inFront = false;
+    lifecycle.add(AppLifecycleState.paused);
+    await settle();
+    expect(container.read(screenPlayerProvider).listening, isFalse);
+    expect(stopped, 1);
+  });
 
   test('removing the phone ends its session at once', () async {
     final view = await start();
