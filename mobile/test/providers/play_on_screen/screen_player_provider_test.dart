@@ -203,6 +203,8 @@ void main() {
       overrides: [
         screenImmichAccessProvider.overrideWithValue(immich),
         screenNativeViewersProvider.overrideWithValue(native),
+        // No lookup of the network in the tests
+        playHostResolverProvider.overrideWithValue((_) async => null),
         screenPlayerOpenProvider.overrideWithValue((route, {required replace}) async {
           routes.add((route.routeName, replace));
           front = (name: route.routeName, args: route.args);
@@ -681,6 +683,45 @@ void main() {
       });
       expect(jellyfin.state.reason, ScreenPlayReason.noSuchSource);
       expect(routes, isEmpty);
+    });
+
+    test('a share known by its address on one device and by its name on the other is the same share', () async {
+      NetworkSource share(
+        String host, {
+        String shareName = 'Videos',
+        int? port,
+        NetworkSourceType type = NetworkSourceType.smb,
+      }) => NetworkSource(id: host, type: type, name: 'NAS', host: host, port: port, share: shareName);
+      Future<String?> resolve(String host) async => switch (host) {
+        'nas.local' => '192.168.1.10',
+        'other.local' => '192.168.1.99',
+        'outside.example.org' => '203.0.113.5',
+        _ => null,
+      };
+      const byName = SharePlayTarget(type: PlayShareType.smb, source: 'nas.local/Videos', path: '/a.mp4');
+      // The screen knows it by its address: the address the phone found, or the one the screen finds for the name
+      for (final target in [
+        byName.withHostAddresses(['192.168.1.10']),
+        byName,
+      ]) {
+        expect((await matchPlayShareSource([share('192.168.1.10')], target, resolve: resolve))?.id, '192.168.1.10');
+      }
+      // The phone knows it by its address, the screen by its name
+      const byAddress = SharePlayTarget(type: PlayShareType.smb, source: '192.168.1.10/Videos', path: '/a.mp4');
+      expect((await matchPlayShareSource([share('NAS.local')], byAddress, resolve: resolve))?.id, 'NAS.local');
+      // Another machine, another share, another port, another protocol, an address outside home: none
+      expect(await matchPlayShareSource([share('other.local')], byAddress, resolve: resolve), isNull);
+      expect(
+        await matchPlayShareSource([share('192.168.1.10', shareName: 'Photos')], byName, resolve: resolve),
+        isNull,
+      );
+      expect(await matchPlayShareSource([share('192.168.1.10', port: 4450)], byName, resolve: resolve), isNull);
+      expect(
+        await matchPlayShareSource([share('192.168.1.10', type: NetworkSourceType.webdav)], byName, resolve: resolve),
+        isNull,
+      );
+      const outside = SharePlayTarget(type: PlayShareType.smb, source: 'outside.example.org/Videos', path: '/a.mp4');
+      expect(await matchPlayShareSource([share('203.0.113.5')], outside, resolve: resolve), isNull);
     });
 
     test('the identity of a share: the UDN of a DLNA server, else host, port and share', () {

@@ -549,7 +549,11 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
 
   /// A file of a share: the screen's own source of that identity, the same path from its root
   Future<bool> _openShare(PlayItem item, SharePlayTarget target) async {
-    final source = findPlayShareSource(_ref.read(networkSourcesProvider), target);
+    final source = await matchPlayShareSource(
+      _ref.read(networkSourcesProvider),
+      target,
+      resolve: _ref.read(playHostResolverProvider),
+    );
     if (source == null) {
       _log.info('Play from a phone: no such share here');
       _fail(ScreenPlayReason.noSuchSource);

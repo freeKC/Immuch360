@@ -556,11 +556,9 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     final ({String status, ScreenPlayState state}) answer;
     try {
       final connection = await _connect(screen, address);
+      final message = await _playMessage(request);
       // Once the Quest asked its user: a minute and a half
-      answer = await connection.command({
-        'type': 'play',
-        ...request.item.toJson(),
-      }, timeout: const Duration(seconds: 90));
+      answer = await connection.command(message, timeout: const Duration(seconds: 90));
     } on PlayLinkException catch (error) {
       _log.info('Play on: the screen did not take it (${error.failure.name})');
       _connection = null;
@@ -596,6 +594,29 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     this.state = RemotePlayback(screen: screen, request: request, state: state);
     unawaited(_follow(generation));
     return outcome;
+  }
+
+  /// The play message of [request]: a file of a share known by a host name carries the address this phone finds for
+  /// it, so that a screen that knows the machine by its address finds its share (and the other way round)
+  Future<Map<String, Object?>> _playMessage(PlayOnRequest request) async {
+    final item = request.item;
+    final target = item.target;
+    final host = target is SharePlayTarget && target.hostAddresses.isEmpty ? target.host : null;
+    if (target is SharePlayTarget && host != null && !isPrivatePairingIPv4(host)) {
+      final found = await ref.read(playHostResolverProvider)(host).catchError((Object _) => null);
+      if (found != null && isPrivatePairingIPv4(found)) {
+        return {
+          'type': 'play',
+          ...PlayItem.of(
+            target.withHostAddresses([found]),
+            serverName: item.serverName,
+            title: item.title,
+            offsetMs: item.offsetMs,
+          ).toJson(),
+        };
+      }
+    }
+    return {'type': 'play', ...item.toJson()};
   }
 
   /// The outcome a play's answer tells

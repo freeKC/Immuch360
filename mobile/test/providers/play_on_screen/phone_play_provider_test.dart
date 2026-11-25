@@ -21,6 +21,7 @@ import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_cl
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_server.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 
 const _screenId = '0123456789abcdef';
 const _phoneId = 'fedcba9876543210';
@@ -235,6 +236,7 @@ void main() {
     container = ProviderContainer(
       overrides: [
         pairingSessionsProvider.overrideWithValue(sessions),
+        playHostResolverProvider.overrideWithValue((host) async => host == 'nas.local' ? '192.168.1.10' : null),
         pairedScreensProvider.overrideWith(_PairedScreens.new),
         phonePairingAccountProvider.overrideWithValue(
           () async => const PhonePairingAccount(
@@ -748,6 +750,26 @@ void main() {
       discoveryId: discoveryId,
       jellyfin: jellyfin,
     );
+
+    test('a share known by a host name goes with the address this phone finds for it', () async {
+      final byName = PlayOnRequest.ofShareFile(source: source(NetworkSourceType.smb), path: '/a.mp4', photo: false)!;
+      expect(await controller().play(screen, address, byName), PlayOnOutcome.playing);
+      expect((actions.played!.target as SharePlayTarget).hostAddresses, ['192.168.1.10']);
+      final byAddress = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.smb, host: '192.168.1.11'),
+        path: '/a.mp4',
+        photo: false,
+      )!;
+      expect(await controller().play(screen, address, byAddress), PlayOnOutcome.playing);
+      expect((actions.played!.target as SharePlayTarget).hostAddresses, isEmpty, reason: 'the address is the host');
+      final unknown = PlayOnRequest.ofShareFile(
+        source: source(NetworkSourceType.webdav, host: 'nowhere.local'),
+        path: '/a.mp4',
+        photo: false,
+      )!;
+      expect(await controller().play(screen, address, unknown), PlayOnOutcome.playing);
+      expect((actions.played!.target as SharePlayTarget).hostAddresses, isEmpty);
+    });
 
     test('a file of a share names the share and the path, never its user or password', () {
       final request = PlayOnRequest.ofShareFile(

@@ -404,7 +404,10 @@ String? normaliseImmichEndpoint(String endpoint) {
 }
 
 /// A file of a share (SMB, WebDAV, DLNA): the share's identity and the path from its root. The identity is the
-/// DLNA server's UDN, else "host[:port]/share" as both devices write it (network_source.dart).
+/// DLNA server's UDN, else "host[:port]/share" as both devices write it (network_source.dart). [hostAddresses] are the
+/// home network's IPv4 addresses the phone finds for that host (build 53), so that a screen that knows the NAS by
+/// its address matches the phone that knows it by its name, and the other way round: addresses only, never a
+/// password.
 class SharePlayTarget extends PlayTarget {
   const SharePlayTarget({
     required this.type,
@@ -412,11 +415,47 @@ class SharePlayTarget extends PlayTarget {
     required this.path,
     this.media = PlayMedia.video,
     this.projection = PlayProjection.flat,
+    this.hostAddresses = const [],
   });
+
+  static const maxHostAddresses = 4;
 
   final PlayShareType type;
   final String source;
   final String path;
+
+  /// Private IPv4 addresses of the share's host, [maxHostAddresses] at most
+  final List<String> hostAddresses;
+
+  /// The host of [source], its port and share left out; null for a DLNA UDN
+  String? get host {
+    if (type == PlayShareType.dlna && !source.contains('/')) {
+      return null;
+    }
+    final authority = source.split('/').first;
+    final colon = authority.lastIndexOf(':');
+    return colon > 0 && !authority.substring(0, colon).contains(':') ? authority.substring(0, colon) : authority;
+  }
+
+  /// [source] with its host left out: the port and the share, which two devices that know the host by other names
+  /// still write alike
+  String get sourceWithoutHost {
+    final slash = source.indexOf('/');
+    final authority = slash < 0 ? source : source.substring(0, slash);
+    final colon = authority.lastIndexOf(':');
+    final port = colon > 0 && !authority.substring(0, colon).contains(':') ? authority.substring(colon) : '';
+    return '$port${slash < 0 ? '' : source.substring(slash)}';
+  }
+
+  /// The same with [addresses] the phone found for its host
+  SharePlayTarget withHostAddresses(List<String> addresses) => SharePlayTarget(
+    type: type,
+    source: source,
+    path: path,
+    media: media,
+    projection: projection,
+    hostAddresses: addresses.take(maxHostAddresses).toList(growable: false),
+  );
   @override
   final PlayMedia media;
   @override
@@ -439,6 +478,7 @@ class SharePlayTarget extends PlayTarget {
     'path': path,
     'media': media.wire,
     if (projection != PlayProjection.flat) 'projection': projection.wire,
+    if (hostAddresses.isNotEmpty) 'hostAddresses': hostAddresses,
   };
 
   static SharePlayTarget? _fromJson(Map<String, Object?> json) {
@@ -455,12 +495,20 @@ class SharePlayTarget extends PlayTarget {
     if (path is! String || !isSafePlayPath(path)) {
       return null;
     }
+    final addresses = json['hostAddresses'];
+    if (addresses != null &&
+        (addresses is! List ||
+            addresses.length > maxHostAddresses ||
+            addresses.any((address) => address is! String || !isPrivatePairingIPv4(address)))) {
+      return null;
+    }
     return SharePlayTarget(
       type: type,
       source: source,
       path: path,
       media: media,
       projection: PlayProjection.fromWire(json['projection']),
+      hostAddresses: [...?(addresses as List?)?.cast<String>()],
     );
   }
 }
