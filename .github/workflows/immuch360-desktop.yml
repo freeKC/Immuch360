@@ -1903,7 +1903,7 @@ jobs:
             exit 1
           fi
           archs=$(lipo -archs "$tracker")
-          echo "immuch_head_tracker: $archs, $(stat -f %z "$tracker") bytes, sha256 $(shasum -a 256 "$tracker" | cut -c1-64)"
+          echo "immuch_head_tracker: $archs, $(stat -L -f %z "$tracker") bytes, sha256 $(shasum -a 256 "$tracker" | cut -c1-64)"
           case "$archs" in *arm64*x86_64*|*x86_64*arm64*) ;; *) echo "::error::the tracker lacks a slice: $archs"; exit 1;; esac
           otool -L "$tracker" | tee "$RUNNER_TEMP/tracker-links.txt"
           grep -q 'AVFoundation.framework' "$RUNNER_TEMP/tracker-links.txt" || { echo "::error::AVFoundation not linked"; exit 1; }
