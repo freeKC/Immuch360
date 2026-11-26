@@ -39,7 +39,7 @@ final headsetViewLog = Logger('HeadsetView');
 
 /// The commit of media_kit_360 that mobile/pubspec.yaml pins, for the first lines of the headset log: the plugin
 /// knows its own only when it was built from a git checkout (a test checks both stay the same)
-const headsetPluginCommit = '4ce1ebad9e56a814b5f46920957fef624e4d529f';
+const headsetPluginCommit = '46566dd722f1bc25f4e259fd6b9a2d5073397b39';
 
 /// What the crash guard found at the app's start
 enum HeadsetCrashCheck {

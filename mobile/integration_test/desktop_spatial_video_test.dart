@@ -15,12 +15,14 @@
 // Ported from the October branch feat-windows-spatial (desktop_spatial_renderer_test.dart), whose second test drove
 // that branch's own route: the page of release 53 (spatial_video_page.dart) is tested with a fake plugin channel and
 // recorded tracks in test/desktop/spatial/spatial_video_page_test.dart.
-// Run in the Windows and macOS build jobs of the desktop workflow:
+// The macOS debug app runs in its sandbox, so there the clip is the same pattern written as a y4m in its temporary
+// folder. Run in the Windows and macOS build jobs of the desktop workflow:
 //   flutter test integration_test/desktop_spatial_video_test.dart -d windows   (or -d macos)
 //   IMMUCH360_SPATIAL_CLIP   another clip of the same pattern (default: the fixture, from the app's folder)
 
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +36,81 @@ String _clip() {
   if (given != null && given.isNotEmpty) {
     return given;
   }
-  return p.absolute(p.join('test', 'fixtures', 'video', 'spatial-sbs-dots-4s.mp4'));
+  final fixture = p.absolute(p.join('test', 'fixtures', 'video', 'spatial-sbs-dots-4s.mp4'));
+  if (File(fixture).existsSync()) {
+    return fixture;
+  }
+  // The debug app of macOS runs in its sandbox, which reads no file of the repository: the same pattern written as
+  // a y4m in its own temporary folder (the libmpv of the app reads y4m, as the macOS build job checks)
+  return _writeDotsY4m(p.join(Directory.systemTemp.path, 'spatial-sbs-dots-4s.y4m'));
+}
+
+/// The pattern of test/fixtures/video/spatial-sbs-dots.py (each eye 640 x 360, green dots of 4 x 4 pixels at
+/// disparity 0, a 160 x 180 square of red dots 24 pixels nearer, its left edge at x 332 in the left eye and 308 in
+/// the right one), 4 s at 15 frames a second of uncompressed 4:2:0, BT.601 limited range
+String _writeDotsY4m(String path) {
+  const width = 640;
+  const height = 360;
+  const disparity = 24;
+  const squareX = 332;
+  const squareWidth = 160;
+  const squareY = 90;
+  const squareHeight = 180;
+  const frameWidth = 2 * width;
+  // The dots of the script's generator are not reproduced: any random dots of the same sizes do
+  final random = math.Random(20261022);
+  final background = List.generate((height ~/ 4) * (width ~/ 4), (_) => random.nextBool());
+  final square = List.generate((squareHeight ~/ 4) * (squareWidth ~/ 4), (_) => random.nextBool());
+  (int, int, int) rgb(int x, int y) {
+    final eye = x < width ? 0 : 1;
+    final ex = x - eye * width;
+    final left = squareX - eye * disparity;
+    if (ex >= left && ex < left + squareWidth && y >= squareY && y < squareY + squareHeight) {
+      final bit = square[((y - squareY) ~/ 4) * (squareWidth ~/ 4) + (ex - left) ~/ 4];
+      return (bit ? 220 : 70, 20, 20);
+    }
+    return (20, background[(y ~/ 4) * (width ~/ 4) + ex ~/ 4] ? 200 : 50, 20);
+  }
+
+  final luma = Uint8List(frameWidth * height);
+  final cb = Uint8List(frameWidth * height ~/ 4);
+  final cr = Uint8List(frameWidth * height ~/ 4);
+  for (var y = 0; y < height; y++) {
+    for (var x = 0; x < frameWidth; x++) {
+      final (r, g, b) = rgb(x, y);
+      luma[y * frameWidth + x] = (16 + (65.481 * r + 128.553 * g + 24.966 * b) / 255).round().clamp(0, 255);
+    }
+  }
+  for (var y = 0; y < height ~/ 2; y++) {
+    for (var x = 0; x < frameWidth ~/ 2; x++) {
+      var r = 0;
+      var g = 0;
+      var b = 0;
+      for (final (dx, dy) in const [(0, 0), (1, 0), (0, 1), (1, 1)]) {
+        final (pr, pg, pb) = rgb(2 * x + dx, 2 * y + dy);
+        r += pr;
+        g += pg;
+        b += pb;
+      }
+      final (fr, fg, fb) = (r / 4, g / 4, b / 4);
+      cb[y * (frameWidth ~/ 2) + x] = (128 + (-37.797 * fr - 74.203 * fg + 112.0 * fb) / 255).round().clamp(0, 255);
+      cr[y * (frameWidth ~/ 2) + x] = (128 + (112.0 * fr - 93.786 * fg - 18.214 * fb) / 255).round().clamp(0, 255);
+    }
+  }
+  final out = File(path).openSync(mode: FileMode.write);
+  try {
+    out.writeStringSync('YUV4MPEG2 W$frameWidth H$height F15:1 Ip A1:1 C420jpeg\n');
+    for (var frame = 0; frame < 60; frame++) {
+      out
+        ..writeStringSync('FRAME\n')
+        ..writeFromSync(luma)
+        ..writeFromSync(cb)
+        ..writeFromSync(cr);
+    }
+  } finally {
+    out.closeSync();
+  }
+  return path;
 }
 
 int _red(int pixel) => pixel & 0xff;
