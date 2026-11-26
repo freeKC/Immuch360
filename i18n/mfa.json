@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "Frasa lalue saloh",
   "share_skipped_companions": "{count, plural, one {# fail proksi atau data penerbange dilangkau} other {# fail proksi atau data penerbange dilangkau}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: buat gambo 3D nga AI dulu, lepah tu bukak dio",
   "spatial_2_5d_experimental_subtitle": "Video stereo dapat dalang ate skrin rata: pandange ikut kepalo demo, dikesan nga kamera depe dale peranti jah",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Akses kamera ditolak: guno gelonsor nok gerak titik pandange",

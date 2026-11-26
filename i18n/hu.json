@@ -4508,6 +4508,7 @@
   "sort_title": "Cím",
   "source": "Forrás",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: előbb MI-vel elkészíti a 3D fotót, majd megnyitja",
   "spatial_2_5d_experimental_subtitle": "A sztereoszkópikus videók mélységet kapnak a lapos képernyőn: a nézet követi a fejedet, amelyet csak az eszközön követ az előlapi kamera",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kamerahozzáférés megtagadva: a nézőpont mozgatásához használd a csúszkát",

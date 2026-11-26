@@ -4508,6 +4508,7 @@
   "sort_title": "Teideal",
   "source": "Foinse",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: déanann sé an grianghraf 3D le IS ar dtús, ansin osclaíonn sé é",
   "spatial_2_5d_experimental_subtitle": "Faigheann físeáin steiréascópacha doimhneacht ar scáileán cothrom: leanann an t-amharc do cheann, a rianaítear leis an gceamara tosaigh ar an ngléas amháin",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Diúltaíodh rochtain ar an gceamara: úsáid an sleamhnán chun an dearcadh a bhogadh",

@@ -4508,6 +4508,7 @@
   "sort_title": "Pealkiri",
   "source": "Lähtekood",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: teeb kõigepealt TI abil 3D-foto ja avab selle siis",
   "spatial_2_5d_experimental_subtitle": "Stereoskoopilised videod saavad lameekraanil sügavuse: vaade järgib su pead, mida jälgitakse esikaameraga ainult seadmes",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kaamera juurdepääs keelatud: kasuta vaatepunkti liigutamiseks liugurit",

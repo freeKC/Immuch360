@@ -2458,6 +2458,7 @@
   "settings_file_wrong_passphrase": "ખોટું પાસફ્રેઝ",
   "share_skipped_companions": "{count, plural, one {# પ્રૉક્સી કે ફ્લાઇટ ડેટા ફાઇલ છોડી} other {# પ્રૉક્સી કે ફ્લાઇટ ડેટા ફાઇલો છોડી}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: પહેલાં AI વડે 3D ફોટો બનાવે છે, પછી તેને ખોલે છે",
   "spatial_2_5d_experimental_subtitle": "સ્ટીરિયોસ્કોપિક વિડિયો સપાટ સ્ક્રીન પર ઊંડાણ મેળવે છે: દૃશ્ય તમારા માથાને અનુસરે છે, જેને ફક્ત ઉપકરણ પર જ આગળના કેમેરા વડે ટ્રૅક કરવામાં આવે છે",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "કેમેરા ઍક્સેસ નકારી: દૃષ્ટિબિંદુ ખસેડવા માટે સ્લાઇડરનો ઉપયોગ કરો",

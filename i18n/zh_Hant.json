@@ -4508,6 +4508,7 @@
   "sort_title": "標題",
   "source": "來源",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D：先以 AI 製作 3D 相片，再將其開啟",
   "spatial_2_5d_experimental_subtitle": "立體影片在平面螢幕上呈現深度：視角跟隨你的頭部移動，頭部僅在裝置上透過前置鏡頭追蹤",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "相機存取遭拒：使用滑桿移動視點",

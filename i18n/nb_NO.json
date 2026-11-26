@@ -4508,6 +4508,7 @@
   "sort_title": "Tittel",
   "source": "Kilde",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: lager først 3D-bildet med KI, og åpner det deretter",
   "spatial_2_5d_experimental_subtitle": "Stereoskopiske videoer får dybde på en flat skjerm: visningen følger hodet ditt, som spores med frontkameraet kun på enheten",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kameratilgang nektet: bruk glidebryteren for å flytte synsvinkelen",

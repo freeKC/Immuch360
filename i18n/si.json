@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "වැරදි මුරවැකිය",
   "share_skipped_companions": "{count, plural, one {ප්‍රොක්සි හෝ පියාසැරි දත්ත ගොනු # ක් මඟ හැරියා} other {ප්‍රොක්සි හෝ පියාසැරි දත්ත ගොනු # ක් මඟ හැරියා}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: පළමුව AI මගින් 3D ඡායාරූපය සාදා, ඉන්පසු එය විවෘත කරයි",
   "spatial_2_5d_experimental_subtitle": "ස්ටීරියෝස්කෝපික් වීඩියෝ පැතලි තිරයක ගැඹුරක් ලබයි: දර්ශනය ඔබේ හිස අනුගමනය කරයි, එය උපාංගය මත පමණක් ඉදිරිපස කැමරාවෙන් ලුහුබඳිනු ලැබේ",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "කැමරා ප්‍රවේශය ප්‍රතික්ෂේප විය: දෘෂ්ටි කෝණය ගෙන යාමට ස්ලයිඩරය භාවිතා කරන්න",

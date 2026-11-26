@@ -42,7 +42,8 @@ import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position_sources.dart';
 import 'package:immich_mobile/desktop/video/desktop_player.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
-import 'package:immich_mobile/desktop/video/desktop_video_view.dart' show desktopAppVideoResolver;
+import 'package:immich_mobile/desktop/video/desktop_video_view.dart'
+    show desktopAppVideoDecoding, desktopAppVideoRelease, desktopAppVideoResolver;
 import 'package:immich_mobile/desktop/video/external_player_closed.provider.dart';
 import 'package:immich_mobile/desktop/video/media_kit_controller_adapter.dart';
 import 'package:immich_mobile/desktop/video/player_pool.dart';
@@ -390,6 +391,9 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
       prepare: _prepare,
       unprepare: _unprepare,
       onScreen: () => mounted && !_closed,
+      // As the 360° page: an AV2 file's companion reports its decoding, and stops once the page lets the video go
+      decodingOf: _deps.resolve == null ? desktopAppVideoDecoding(ref) : null,
+      release: _deps.resolve == null ? desktopAppVideoRelease(ref) : null,
     );
     _controller.onPlaybackReady.addListener(_onReady);
     _controller.onPlaybackStatusChanged.addListener(_onStatus);
@@ -483,11 +487,25 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
       _drawing = true;
       _flat = false;
     });
+    // Always sent: on Windows the depth view stays on a pooled player after the page that turned it on closed
+    await _passes.setDebug(handle, disparityMap: _showDisparity);
+    if (!mounted || handle != _handle) {
+      return;
+    }
     if (_projection != SpatialProjection.flat) {
       await _passes.setView(handle, _view, sharp: true);
     }
-    if (_showDisparity) {
-      await _passes.setDebug(handle, disparityMap: true);
+    if (!mounted || handle != _handle) {
+      return;
+    }
+    // What changed while the first enable ran (it compiles every pass: up to a second): the layout picked in the menu,
+    // the window's box, the viewpoint, which _applySetup and _flushViewpoint left alone until the passes were on
+    final now = _setup();
+    if (now.layout != setup.layout || now.outputWidth != setup.outputWidth || now.outputHeight != setup.outputHeight) {
+      // The new setup carries the viewpoint of now too
+      await _applySetup();
+    } else if ((_sent - (setup.viewpoint ?? _sent)).abs() >= viewpointDeadBand) {
+      await _passes.setViewpoint(handle, _sent);
     }
   }
 

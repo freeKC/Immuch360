@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "Pogrešna pristupna fraza",
   "share_skipped_companions": "{count, plural, one {Preskočena # proxy datoteka ili datoteka podataka o letu} few {Preskočene # proxy datoteke ili datoteke podataka o letu} other {Preskočeno # proxy datoteka ili datoteka podataka o letu}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: prvo pomoću AI napravi 3D fotografiju, zatim je otvori",
   "spatial_2_5d_experimental_subtitle": "Stereoskopski videozapisi dobijaju dubinu na ravnom ekranu: prikaz prati vašu glavu, koju prati prednja kamera samo na uređaju",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Pristup kameri odbijen: koristite klizač za pomjeranje tačke gledišta",

@@ -2537,6 +2537,7 @@
   "settings_file_wrong_passphrase": "Yanlış parol ifadəsi",
   "share_skipped_companions": "{count, plural, one {# proksi və ya uçuş məlumatı faylı buraxıldı} other {# proksi və ya uçuş məlumatı faylı buraxıldı}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: əvvəlcə Sİ ilə 3D foto yaradır, sonra onu açır",
   "spatial_2_5d_experimental_subtitle": "Stereoskopik videolar düz ekranda dərinlik qazanır: görüntü başınızı izləyir, baş yalnız cihazda ön kamera ilə izlənilir",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kameraya giriş rədd edildi: baxış nöqtəsini hərəkət etdirmək üçün sürgüdən istifadə edin",

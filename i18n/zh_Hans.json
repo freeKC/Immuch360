@@ -4508,6 +4508,7 @@
   "sort_title": "标题",
   "source": "GitHub源代码",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D：先用 AI 生成 3D 照片，再将其打开",
   "spatial_2_5d_experimental_subtitle": "立体视频在平面屏幕上呈现深度：视角跟随你的头部移动，头部仅在设备上通过前置摄像头追踪",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "相机访问被拒绝：使用滑块移动视点",

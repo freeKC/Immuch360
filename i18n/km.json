@@ -2465,6 +2465,7 @@
   "settings_file_wrong_passphrase": "ឃ្លាសម្ងាត់ខុស",
   "share_skipped_companions": "{count, plural, one {បានរំលងឯកសារប្រូកស៊ី ឬទិន្នន័យហោះហើរ #} other {បានរំលងឯកសារប្រូកស៊ី ឬទិន្នន័យហោះហើរ #}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D៖ បង្កើតរូបថត 3D ដោយ AI ជាមុនសិន រួចបើកវា",
   "spatial_2_5d_experimental_subtitle": "វីដេអូស្តេរ៉េអូទទួលបានជម្រៅនៅលើអេក្រង់រាបស្មើ៖ ទិដ្ឋភាពធ្វើតាមក្បាលរបស់អ្នក ដែលតាមដានដោយកាមេរ៉ាមុខនៅលើឧបករណ៍តែប៉ុណ្ណោះ",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "ការចូលប្រើកាមេរ៉ាត្រូវបានបដិសេធ៖ ប្រើគ្រាប់រំកិលដើម្បីផ្លាស់ទីចំណុចមើល",

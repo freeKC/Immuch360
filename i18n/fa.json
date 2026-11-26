@@ -4462,6 +4462,7 @@
   "sort_title": "عنوان",
   "source": "منبع",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: ابتدا عکس 3D را با هوش مصنوعی می‌سازد، سپس آن را باز می‌کند",
   "spatial_2_5d_experimental_subtitle": "ویدیوهای استریوسکوپی روی صفحه تخت عمق پیدا می‌کنند: نما سر شما را دنبال می‌کند که فقط روی دستگاه با دوربین جلو ردیابی می‌شود",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "دسترسی به دوربین رد شد: برای جابه‌جایی نقطه دید از لغزنده استفاده کنید",

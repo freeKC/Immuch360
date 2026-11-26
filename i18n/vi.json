@@ -4508,6 +4508,7 @@
   "sort_title": "Tiêu đề",
   "source": "Mã nguồn",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: tạo ảnh 3D bằng AI trước, rồi mở ảnh đó",
   "spatial_2_5d_experimental_subtitle": "Video lập thể có thêm chiều sâu trên màn hình phẳng: góc nhìn đi theo đầu bạn, được theo dõi bằng camera trước chỉ trên thiết bị",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Quyền truy cập camera bị từ chối: dùng thanh trượt để di chuyển điểm nhìn",

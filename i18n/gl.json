@@ -4508,6 +4508,7 @@
   "sort_title": "Título",
   "source": "Fonte",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: primeiro crea a foto 3D coa IA e despois ábrea",
   "spatial_2_5d_experimental_subtitle": "Os vídeos estereoscópicos gañan profundidade nunha pantalla plana: a vista segue a túa cabeza, detectada coa cámara frontal só no dispositivo",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Acceso á cámara denegado: usa o control desprazable para mover o punto de vista",

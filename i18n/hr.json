@@ -4410,6 +4410,7 @@
   "sort_title": "Naslov",
   "source": "Izvor",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: najprije pomoću AI-ja napravi 3D fotografiju, zatim je otvori",
   "spatial_2_5d_experimental_subtitle": "Stereoskopski videozapisi dobivaju dubinu na ravnom zaslonu: prikaz prati vašu glavu, koju prati prednja kamera samo na uređaju",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Pristup kameri odbijen: koristite klizač za pomicanje točke gledišta",

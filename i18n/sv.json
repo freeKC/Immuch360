@@ -4508,6 +4508,7 @@
   "sort_title": "Rubrik",
   "source": "Källa",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: skapar först 3D-fotot med AI och öppnar det sedan",
   "spatial_2_5d_experimental_subtitle": "Stereoskopiska videor får djup på en platt skärm: vyn följer ditt huvud, som spåras med frontkameran endast på enheten",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kameraåtkomst nekad: använd skjutreglaget för att flytta betraktningsvinkeln",

@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "Falsche Passphrase",
   "share_skipped_companions": "{count, plural, one {# Proxy- oder Flugdatadatei übersprunga} other {# Proxy- oder Flugdatadateia übersprunga}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: macht zerst mit dr KI s 3D-Foto ond macht's no auf",
   "spatial_2_5d_experimental_subtitle": "Stereoskopische Videos kriagad Diafe uff ma flacha Bildschirm: D'Aasicht folgt deim Kopf, der bloß uffm Gerät mit dr Frontkamera verfolgt wird",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kamerazugriff verweigert: Nimm dr Schieberegler, om da Blickwinkel zom verschieba",

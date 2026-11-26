@@ -2461,6 +2461,7 @@
   "setup_pin_code": "ایک نیا پن کوڈ ترتیب دیں",
   "share_skipped_companions": "{count, plural, one {# پراکسی یا فلائٹ ڈیٹا فائل چھوڑ دی گئی} other {# پراکسی یا فلائٹ ڈیٹا فائلیں چھوڑ دی گئیں}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: پہلے اے آئی سے 3D تصویر بناتا ہے، پھر اسے کھولتا ہے",
   "spatial_2_5d_experimental_subtitle": "اسٹیریوسکوپک ویڈیوز چپٹی اسکرین پر گہرائی حاصل کرتی ہیں: منظر آپ کے سر کی پیروی کرتا ہے، جسے صرف ڈیوائس پر ہی سامنے والے کیمرے سے ٹریک کیا جاتا ہے",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "کیمرے تک رسائی مسترد: نقطۂ نظر کو منتقل کرنے کے لیے سلائیڈر استعمال کریں",

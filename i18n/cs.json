@@ -4508,6 +4508,7 @@
   "sort_title": "Název alba",
   "source": "Zdroj",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: nejdřív vytvoří 3D fotku pomocí AI, pak ji otevře",
   "spatial_2_5d_experimental_subtitle": "Stereoskopická videa získají hloubku na plochém displeji: pohled sleduje vaši hlavu, sledovanou přední kamerou pouze v zařízení",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Přístup ke kameře odepřen: k posunu úhlu pohledu použijte posuvník",

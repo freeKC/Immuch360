@@ -8,6 +8,8 @@
 // - the mouse moves the view while the head cannot be used (no tracker on the test machine), and in the mouse mode;
 // - the layout picked is a new setup of the same passes; closing turns the passes off, reports where the video was and
 //   the layout shown last, and lets the viewer behind take its video back;
+// - the depth view a page left on the pooled player is turned off by the next page, and what changed while the first
+//   enable ran (the layout, the window's box, the viewpoint) reaches the passes once it ends;
 // - refused passes play the video as it is, with the message; the original failing plays the transcoded stream;
 // - a VR180 3D video sets the view, turns with a drag and zooms with the wheel;
 // - DesktopSpatialVideoApi: supported where a renderer exists and libmpv loaded, open pushes the page, its closing
@@ -38,10 +40,17 @@ import '../video/fake_playback_engine.dart';
 import 'fake_viewer_position_source.dart';
 
 class _Passes implements SpatialPassesChannel {
-  _Passes(this.players, {this.refuse});
+  _Passes(this.players, {this.refuse, this.debugShown = false, this.firstEnable});
 
   final FakePlayers players;
   final String? refuse;
+
+  /// The depth view of the player's output, kept as Windows keeps it on a pooled player: neither disable nor a new
+  /// enable turns it off
+  bool debugShown;
+
+  /// Holds the first enable until completed, when set: the first enable compiles every pass
+  final Completer<void>? firstEnable;
   final calls = <String>[];
   final setups = <mkv.SpatialSetup>[];
   final viewpoints = <double>[];
@@ -55,6 +64,10 @@ class _Passes implements SpatialPassesChannel {
   Future<mkv.ProjectionResult> enable(int handle, mkv.SpatialSetup setup) async {
     calls.add('enable');
     setups.add(setup);
+    final gate = firstEnable;
+    if (gate != null && setups.length == 1) {
+      await gate.future;
+    }
     playerCallsAtEnable ??= [...players.made.first.calls];
     if (refuse != null) {
       return mkv.ProjectionResult(ok: false, reason: refuse);
@@ -88,6 +101,7 @@ class _Passes implements SpatialPassesChannel {
   @override
   Future<bool> setDebug(int handle, {required bool disparityMap}) async {
     debug.add(disparityMap);
+    debugShown = disparityMap;
     return true;
   }
 
@@ -145,12 +159,14 @@ void main() {
     ),
     Map<ViewerPositionKind, ViewerPositionSource Function()>? sources,
     String? refuse,
+    bool debugLeftOn = false,
+    Completer<void>? firstEnable,
     List<Override> overrides = const [],
   }) async {
     tester.view.physicalSize = const Size(1600, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    passes = _Passes(players, refuse: refuse);
+    passes = _Passes(players, refuse: refuse, debugShown: debugLeftOn, firstEnable: firstEnable);
     mpv = [];
     final closings = <(int, bool, SpatialStereoLayout, SpatialProjection)>[];
     final deps = SpatialVideoDependencies(
@@ -359,6 +375,50 @@ void main() {
     expect(closings.single.$3, SpatialStereoLayout.topBottom);
     expect(closings.single.$4, SpatialProjection.flat);
     expect(raised, 1);
+  });
+
+  testWidgets('the depth view left on by an earlier page on the pooled player is turned off', (tester) async {
+    await pumpPage(tester, sources: {ViewerPositionKind.mouse: MousePositionSource.new}, debugLeftOn: true);
+    expect(page(tester).drawing, isTrue);
+    expect(passes.debugShown, isFalse, reason: 'the depth button is off: the view shows, not the depth map');
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyD);
+    await tester.pump();
+    expect(passes.debugShown, isTrue, reason: 'one press shows the depth map');
+    await close(tester);
+  });
+
+  testWidgets('what changed while the first enable ran reaches the passes once it ends', (tester) async {
+    final firstEnable = Completer<void>();
+    await pumpPage(tester, sources: {ViewerPositionKind.mouse: MousePositionSource.new}, firstEnable: firstEnable);
+    expect(page(tester).drawing, isFalse, reason: 'the first enable still runs');
+    await tester.tap(find.byKey(const Key('spatial_video_layout')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.tap(find.byKey(const Key('spatial_video_layout_topBottom')).last);
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(page(tester).layout, SpatialStereoLayout.topBottom, reason: 'the menu took it');
+    // The pointer moved meanwhile: the page keeps the viewpoint it could not send yet
+    final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await mouse.addPointer(location: const Offset(800, 450));
+    await mouse.moveTo(const Offset(1599, 450));
+    for (var i = 0; i < 60; i++) {
+      await advance(tester, 16);
+    }
+    final viewpoint = page(tester).sentViewpoint;
+    expect(viewpoint, greaterThan(0.6));
+    expect(passes.setups, hasLength(1), reason: 'nothing else sent before the passes are on');
+
+    firstEnable.complete();
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(page(tester).drawing, isTrue);
+    expect(passes.setups.last.layout, mkv.SpatialLayout.topBottom, reason: 'the layout shown is the one picked');
+    expect(passes.setups.last.outputWidth, 1600, reason: 'the window\'s box');
+    expect(passes.setups.last.outputHeight, 900);
+    expect(passes.setups.last.viewpoint, closeTo(viewpoint, SpatialVideoPageState.viewpointDeadBand));
+    await mouse.removePointer();
+    await close(tester);
   });
 
   testWidgets('refused passes: the video plays as it is, with the message', (tester) async {

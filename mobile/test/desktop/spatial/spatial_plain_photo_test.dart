@@ -3,8 +3,9 @@
 // not refuse, a photo "Make 3D (AI)" takes), with its own tooltip; never on another photo, and a 3D photo keeps its
 // button. Pressed: the 3D photo made by AI known for it opens at once; otherwise the conversion dialog on the 3D photo
 // alone, Convert, the job in the real queue with the fake engine, its dialog, then the 2.5D page on the file written;
-// a failure in the words of the panel, Cancel and Escape that cancel the job. The choices of the 3D photo and of a
-// version of a share, and what a job ended with.
+// a failure in the words of the panel, Cancel and Escape that cancel the job, and so does the dialog removed by
+// anything else. The choices of the 3D photo and of a version of a share, and what a job ended with. On a share: the
+// folder listed again once a version was put in it, and a skip for a version of this computer opens its file here.
 
 import 'dart:async';
 import 'dart:io';
@@ -15,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
@@ -39,6 +41,7 @@ import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:path/path.dart' as p;
 
 import '../../domain/ai_immersive/stereo_photo_fixtures.dart';
+import '../../presentation/pages/network/network_viewer_fakes.dart';
 import '../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
 import '../../widget_tester_extensions.dart';
 import '../ai/fakes/fake_conversion_engines.dart';
@@ -358,6 +361,173 @@ void main() {
         expect(job().state, ConversionState.cancelled);
         expect(find.byKey(const Key('spatial_conversion_dialog')), findsNothing);
         expect(opened, isEmpty);
+      });
+    });
+  });
+
+  testWidgets('a lookup that never answers holds the button 10 s at most, then the conversion is offered', (
+    tester,
+  ) async {
+    var launched = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => TextButton(
+            onPressed: () => unawaited(
+              runSpatialConversion(
+                context,
+                name: 'salon.jpg',
+                known: () => Completer<SpatialMadePhoto?>().future,
+                launch: () async {
+                  launched++;
+                  return null;
+                },
+                existing: (path) async => null,
+                open: (photo) => fail('nothing to open'),
+              ),
+            ),
+            child: const Text('press'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('press'));
+    await tester.pump(const Duration(seconds: 9));
+    expect(launched, 0, reason: 'still looking');
+    await tester.pump(const Duration(seconds: 2));
+    expect(launched, 1, reason: 'taken for none past 10 s');
+  });
+
+  group('the dialog removed by something else than its buttons', () {
+    late SpatialAiWorld world;
+
+    setUp(() => world = SpatialAiWorld());
+    tearDown(() => world.dispose());
+
+    for (final waiting in [false, true]) {
+      testWidgets('its job is cancelled, without an error (${waiting ? 'a job waiting' : 'the job running'})', (
+        tester,
+      ) async {
+        world.engine = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+        final path = world.original('salon.jpg');
+        tester.view.physicalSize = const Size(1600, 1200);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpConsumerWidget(
+          const Scaffold(body: SizedBox.expand()),
+          overrides: [
+            ...world.overrides(),
+            appConfigProvider.overrideWithValue(const AppConfig(viewer: ViewerConfig(spatial25d: true))),
+          ],
+        );
+        await settleStill(tester);
+        final context = tester.element(find.byType(Scaffold));
+        final container = ProviderScope.containerOf(context);
+        final queue = container.read(conversionQueueProvider.notifier);
+        ConversionRequest request(String name) => ConversionRequest(
+          source: LocalFileSource(path),
+          target: ConversionTarget(folder: world.photos, fileName: name),
+        );
+        var id = queue.add([request('a_3D_LRF_Full_SBS.jpg')]).first;
+        if (waiting) {
+          final first = id;
+          await settleStill(
+            tester,
+            until: () => container.read(conversionQueueProvider).byId(first)!.state == ConversionState.depth,
+          );
+          id = queue.add([request('b_3D_LRF_Full_SBS.jpg')]).first;
+        }
+        final done = showDialog<SpatialMadePhoto>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => SpatialConversionDialog(jobId: id, name: 'salon.jpg', photoOf: (job) async => null),
+        );
+        await settleStill(tester);
+        expect(find.byKey(const Key('spatial_conversion_dialog')), findsOneWidget);
+
+        // As the desktop Back, a logout or a page popping under it would
+        Navigator.of(context).pop();
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        world.engine.release();
+        world.engine.release();
+        await settleStill(tester, until: () => container.read(conversionQueueProvider).byId(id)!.state.isEnded);
+        expect(await done, isNull);
+        expect(container.read(conversionQueueProvider).byId(id)!.state, ConversionState.cancelled);
+        expect(tester.takeException(), isNull, reason: 'no element left listening to the queue');
+      });
+    }
+  });
+
+  group('a photo of a share', () {
+    const source = NetworkSource(id: 'nas', type: NetworkSourceType.smb, name: 'Home NAS', host: 'nas', share: 'media');
+    const originalSize = 4182311;
+    const original = NetworkEntry(sourceId: 'nas', path: '/Photos/salon.jpg', isDirectory: false, size: originalSize);
+    const made = '/Photos/salon_3D_LRF_Full_SBS.jpg';
+
+    test('the folder is listed again once a version was put in it: the 3D photo just made is found', () async {
+      final share = MemoryShare(source, folders: {'/Photos': []});
+      share.folders['/Photos'] = [original];
+      final container = ProviderContainer(overrides: [overrideConnections((ref) => FakeConnections(ref, share))]);
+      addTearDown(container.dispose);
+      // The files the browser read when the page opened
+      final neighbours = [original];
+      final look = container.read(spatialMadeVersionOfShareProvider);
+      expect(await look(original, neighbours), isNull);
+      expect(share.listed, isEmpty, reason: 'the browser\'s files, no listing');
+
+      // The job made the 3D photo and the publisher put it next to the original
+      share.files[made] = jpegFile(width: 8000, height: 3000, xmp: ourXmp());
+      share.folders['/Photos'] = [original, share.file(made)];
+      container.read(shareFolderChangesProvider.notifier).changed('nas', '/Photos');
+
+      final found = await look(original, neighbours);
+      expect(found?.entry.path, made, reason: 'pressed again: it opens, nothing is made a second time');
+      expect(share.listed, ['/Photos']);
+    });
+
+    group('the version a job was skipped for', () {
+      late Directory folder;
+      late List<String> asked;
+
+      setUp(() {
+        folder = Directory.systemTemp.createTempSync('spatial_share_skip');
+        asked = [];
+      });
+      tearDown(() => folder.deleteSync(recursive: true));
+
+      Future<Uri> mediaUrl(String sourceId, String path) async {
+        asked.add(path);
+        return Uri.parse('http://127.0.0.1:9/$sourceId$path');
+      }
+
+      test('found on this computer (the folder of my choice, the library): its file here', () async {
+        final local = File(p.join(folder.path, 'salon_3D_LRF_Full_SBS.jpg'))..writeAsBytesSync([1, 2, 3]);
+        final image = await spatialShareExistingImage(
+          original,
+          local.path,
+          mediaUrl: mediaUrl,
+          imageOf: (url, file) => fail('not on the share'),
+        );
+        expect(((image! as ResizeImage).imageProvider as FileImage).file.path, local.path);
+        expect(asked, isEmpty);
+      });
+
+      test('found on the share: the file of that name beside the photo', () async {
+        final marker = _Marker();
+        final files = <NetworkEntry>[];
+        final image = await spatialShareExistingImage(
+          original,
+          p.join('/Photos', 'salon_3D_LRF_Full_SBS.jpg'),
+          mediaUrl: mediaUrl,
+          imageOf: (url, file) {
+            files.add(file);
+            return marker;
+          },
+        );
+        expect(image, same(marker));
+        expect(asked, [made]);
+        expect(files.single.path, made);
       });
     });
   });

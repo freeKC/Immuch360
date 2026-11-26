@@ -2477,6 +2477,7 @@
   "shared_link_edit_expire_after_option_year": "{count} taon",
   "shared_link_edit_password_hint": "I-enter ang share password",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: ginagawa muna ang 3D na larawan gamit ang AI, pagkatapos ay binubuksan ito",
   "spatial_2_5d_experimental_subtitle": "Nagkakaroon ng lalim ang mga stereoscopic na video sa patag na screen: sinusundan ng view ang iyong ulo, na sinusubaybayan ng front camera sa device lamang",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Tinanggihan ang access sa camera: gamitin ang slider para ilipat ang viewpoint",

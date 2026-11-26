@@ -43,6 +43,16 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// After a tap that starts the view: waits for the start itself rather than the fixed turns of [settle], which a
+  /// slow runner (the Windows job of the Desktop CI) can outlast while the start writes its files, then settles
+  Future<void> settleStarted(WidgetTester tester) async {
+    for (var i = 0; i < 250 && api.starts.isEmpty; i++) {
+      await tester.pumpAndSettle();
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+    }
+    await settle(tester);
+  }
+
   Widget bar() => const ColoredBox(
     color: Colors.black,
     child: Align(alignment: Alignment.topRight, child: HeadsetViewButton()),
@@ -100,7 +110,7 @@ void main() {
         expect(find.byKey(const Key('headset_view_stop')), findsNothing, reason: 'nothing runs');
 
         await tester.tap(find.byKey(const Key('headset_view_around')));
-        await settle(tester);
+        await settleStarted(tester);
         expect(api.starts.single.content.mode, XrHeadsetMode.sphere);
         await tester.runAsync(service.tick);
         await tester.pumpAndSettle();
@@ -268,7 +278,7 @@ void main() {
       await settle(tester);
       expect(opened, [p.join(folder.path, 'headset')]);
       await tester.tap(find.byKey(const Key('headset_view_pattern_30')));
-      await settle(tester);
+      await settleStarted(tester);
       expect(api.starts.single.content.mode, XrHeadsetMode.pattern);
       expect(api.starts.single.content.fps, 30);
       await tester.tap(find.byKey(const Key('headset_view_setting_stop')));

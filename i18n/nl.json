@@ -4508,6 +4508,7 @@
   "sort_title": "Titel",
   "source": "Bron",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: maakt eerst de 3D-foto met AI en opent die daarna",
   "spatial_2_5d_experimental_subtitle": "Stereoscopische video's krijgen diepte op een plat scherm: het beeld volgt je hoofd, dat alleen op het apparaat met de frontcamera wordt gevolgd",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Cameratoegang geweigerd: gebruik de schuifregelaar om het gezichtspunt te verplaatsen",

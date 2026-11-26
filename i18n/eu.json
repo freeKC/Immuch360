@@ -4397,6 +4397,7 @@
   "sort_title": "Izenburua",
   "source": "Iturburua",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: lehenik 3D argazkia sortzen du AA bidez, eta gero irekitzen du",
   "spatial_2_5d_experimental_subtitle": "Bideo estereoskopikoek sakonera irabazten dute pantaila lauan: ikuspegiak zure burua jarraitzen du, aurreko kamerarekin gailuan bakarrik jarraitua",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kamerarako sarbidea ukatu da: erabili graduatzailea ikuspuntua mugitzeko",
