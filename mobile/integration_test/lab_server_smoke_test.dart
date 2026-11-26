@@ -28,6 +28,7 @@ import 'package:immich_mobile/domain/models/settings_key.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/infrastructure/loaders/image_request.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/images/guarded_image.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/remote_image_provider.dart';
@@ -132,6 +133,14 @@ void main() {
             expect(UndecodablePhotos.instance.failureOf(key), isNull, reason: 'the original of $name not undecodable');
           }
           await container.read(appRouterProvider).maybePop();
+          // The tiles stay in the tree under the viewer: wait for the viewer itself to go (the end of its closing
+          // transition), else the next tap can land on the closing viewer and open nothing (run 45905588523)
+          await pumpUntil(
+            tester,
+            () => find.byType(AssetViewerPage).evaluate().isEmpty,
+            reason: 'the viewer of $name closed',
+            timeout: const Duration(seconds: 30),
+          );
           await pumpUntil(tester, () => labTile(name).evaluate().isNotEmpty, reason: 'the timeline again after $name');
         }
       });
