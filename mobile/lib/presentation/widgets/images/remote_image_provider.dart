@@ -86,6 +86,10 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
   /// is mostly its scene (plan of 3 November 2026, section 4)
   final bool previewOnly;
 
+  /// Immuch360 Desktop: the original after all, the picture zoomed in past the preview (desktop_photo_zoom.dart) while
+  /// "Load original image" is off. The picture on screen stays while it comes, and stays if it does not come.
+  final bool zoomOriginal;
+
   const RemoteFullImageProvider({
     required this.assetId,
     required this.thumbhash,
@@ -95,6 +99,7 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
     this.thumbnailSize,
     this.serverJpegForOriginal = false,
     this.previewOnly = false,
+    this.zoomOriginal = false,
   });
 
   /// The key of the original of [assetId] among the photos that did not decode in the session (see UndecodablePhotos)
@@ -119,6 +124,19 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
           DiagnosticsProperty<ImageProvider>('Image provider', this),
           DiagnosticsProperty<String>('Asset Id', key.assetId),
           DiagnosticsProperty<bool>('isAnimated', key.isAnimated),
+        ],
+        onLastListenerRemoved: loader.cancel,
+      );
+    }
+
+    if (key.zoomOriginal) {
+      return OneFramePlaceholderImageStreamCompleter(
+        _zoomCodec(loader, key, decode),
+        // What showed before, the preview, from the cache
+        initialImage: loader.getInitialImage(key._shown),
+        informationCollector: () => <DiagnosticsNode>[
+          DiagnosticsProperty<ImageProvider>('Image provider', this),
+          DiagnosticsProperty<String>('Asset Id', key.assetId),
         ],
         onLastListenerRemoved: loader.cancel,
       );
@@ -192,6 +210,44 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
     );
   }
 
+  /// The provider of the same picture without [zoomOriginal]: the one the viewer showed until the zoom
+  RemoteFullImageProvider get _shown => RemoteFullImageProvider(
+    assetId: assetId,
+    thumbhash: thumbhash,
+    assetType: assetType,
+    isAnimated: isAnimated,
+    edited: edited,
+    thumbnailSize: thumbnailSize,
+    serverJpegForOriginal: serverJpegForOriginal,
+    previewOnly: previewOnly,
+  );
+
+  /// The picture shown, then the original (or the full size JPEG of the server, see [serverJpegForOriginal]); not
+  /// final, so that a failure leaves the picture shown on screen rather than an error
+  Stream<ImageInfo> _zoomCodec(ImageLoader loader, RemoteFullImageProvider key, ImageDecoderCallback decode) async* {
+    yield* loader.initialImageStream();
+    final undecodable = undecodableKey(key.assetId, edited: key.edited);
+    if (loader.isCancelled || UndecodablePhotos.instance.failureOf(undecodable) != null) {
+      return;
+    }
+    final originalRequest = loader.request = key.serverJpegForOriginal
+        ? RemoteImageRequest(
+            uri: getThumbnailUrlForRemoteId(
+              key.assetId,
+              type: AssetMediaSize.fullsize,
+              thumbhash: key.thumbhash,
+              edited: key.edited,
+            ),
+          )
+        : _originalRequest(key);
+    yield* loader.loadRequest(
+      originalRequest,
+      decode,
+      isFinal: false,
+      onDecodeFailure: (error) => UndecodablePhotos.instance.remember(undecodable, error),
+    );
+  }
+
   Stream<Object> _animatedCodec(ImageLoader loader, RemoteFullImageProvider key, ImageDecoderCallback decode) async* {
     yield* loader.initialImageStream();
 
@@ -241,7 +297,8 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
           isAnimated == other.isAnimated &&
           edited == other.edited &&
           serverJpegForOriginal == other.serverJpegForOriginal &&
-          previewOnly == other.previewOnly;
+          previewOnly == other.previewOnly &&
+          zoomOriginal == other.zoomOriginal;
     }
 
     return false;
@@ -254,5 +311,6 @@ class RemoteFullImageProvider extends ImageProvider<RemoteFullImageProvider> {
       isAnimated.hashCode ^
       edited.hashCode ^
       serverJpegForOriginal.hashCode ^
-      previewOnly.hashCode;
+      previewOnly.hashCode ^
+      Object.hash(zoomOriginal, 'zoom');
 }

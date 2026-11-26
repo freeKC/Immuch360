@@ -1742,6 +1742,7 @@
   "desktop_video_seek_back": "Back 10 seconds",
   "desktop_video_seek_forward": "Forward 10 seconds",
   "desktop_video_unmute": "Unmute",
+  "desktop_zoom_hint": "The wheel zooms; zoomed in, a drag moves the picture, and a double click, 0 or Escape shows it whole.",
   "details": "Details",
   "device_folder_browse": "Browse a folder",
   "device_folder_browse_device": "Browse a folder of this device",

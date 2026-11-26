@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,6 +29,7 @@ import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/library/folder_roots.dart';
 import 'package:immich_mobile/desktop/library/library_index.dart' show IndexedOrigin;
+import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -536,21 +538,24 @@ void main() {
     expect(find.byKey(const Key('ai_enhance')), findsNothing);
   });
 
-  testWidgets('the comparison moves its divider with the keys and closes with Escape', (tester) async {
+  testWidgets('the comparison moves its divider with the keys, zooms, and closes with Escape once whole', (
+    tester,
+  ) async {
+    // Larger than the dialog: "100 %" shows more than the whole picture
     String png(String name, int value) {
-      final rgba = Uint8List(40 * 30 * 4);
+      final rgba = Uint8List(800 * 600 * 4);
       for (var i = 0; i < rgba.length; i += 4) {
         rgba.fillRange(i, i + 3, value);
         rgba[i + 3] = 255;
       }
       final path = p.join(root.path, name);
-      File(path).writeAsBytesSync(encodePngPicture(SbsDecoded(width: 40, height: 30, rgba: rgba)));
+      File(path).writeAsBytesSync(encodePngPicture(SbsDecoded(width: 800, height: 600, rgba: rgba)));
       return path;
     }
 
     final before = png('before.png', 40);
     final after = png('after.png', 200);
-    tester.view.physicalSize = const Size(1600, 1200);
+    tester.view.physicalSize = const Size(640, 480);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpConsumerWidget(
@@ -567,6 +572,13 @@ void main() {
     await tester.tap(find.byKey(const Key('open')));
     await settleStill(tester);
     expect(find.byKey(const Key('ai_enhance_compare')), findsOneWidget);
+    // The pictures decode outside the fake clock: their pixels give "100 %" its scale
+    bool sizeReady() => tester.widget<TextButton>(find.byKey(const Key('ai_enhance_compare_size'))).onPressed != null;
+    for (var i = 0; i < 50 && !sizeReady(); i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+    expect(sizeReady(), isTrue);
     double divider() => tester.widget<Slider>(find.byKey(const Key('ai_enhance_compare_slider'))).value;
     expect(divider(), 0.5);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
@@ -576,11 +588,40 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
     await tester.pump();
     expect(divider(), closeTo(0.55, 1e-9));
+    // The zoom takes desktopZoomAnimation of the fake clock
+    Future<void> zoomed(WidgetTester tester) async {
+      await tester.pump();
+      await tester.pump(desktopZoomAnimation + const Duration(milliseconds: 20));
+    }
+
     await tester.tap(find.byKey(const Key('ai_enhance_compare_size')));
-    await tester.pump();
+    await zoomed(tester);
     expect(find.text('Fit'), findsOneWidget);
+    // Zoomed in, a drag moves the picture, not the divider
+    await tester.dragFrom(
+      tester.getCenter(find.byKey(const Key('ai_enhance_compare_area'))),
+      const Offset(-80, 0),
+      kind: PointerDeviceKind.mouse,
+    );
+    await zoomed(tester);
+    expect(divider(), closeTo(0.55, 1e-9));
+    // Escape shows the picture whole first, then closes the comparison
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await zoomed(tester);
+    expect(find.byKey(const Key('ai_enhance_compare')), findsOneWidget);
+    expect(find.text('100 %'), findsOneWidget);
+    // At fit the wheel zooms again, around the pointer
+    final mouse = TestPointer(71, PointerDeviceKind.mouse);
+    await tester.sendEventToBinding(mouse.hover(tester.getCenter(find.byKey(const Key('ai_enhance_compare_area')))));
+    await tester.sendEventToBinding(mouse.scroll(const Offset(0, -300)));
+    await zoomed(tester);
+    expect(find.text('Fit'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.digit0, character: '0');
+    await zoomed(tester);
+    expect(find.text('100 %'), findsOneWidget);
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await settleStill(tester);
+    await tester.pump(const Duration(seconds: 2));
     expect(find.byKey(const Key('ai_enhance_compare')), findsNothing);
   });
 

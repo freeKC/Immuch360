@@ -8,10 +8,12 @@ import 'dart:async';
 
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
@@ -239,6 +241,39 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
   }
+
+  testWidgets('a computer: + zooms, zoomed the arrows move the photo, Escape shows it whole first, R too', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    try {
+      await pumpPhoto(tester, detection: _Detection(const NetworkMediaInfo(frameWidth: 4000, frameHeight: 3000)));
+      final zoom = tester.widget<DesktopZoomView>(find.byType(DesktopZoomView)).controller;
+      expect(desktopZoomed(zoom), isFalse);
+      expect(zoom.frame!.oneToOneScale, greaterThan(1), reason: 'the pixels the file declares, not those decoded');
+
+      await press(tester, LogicalKeyboardKey.numpadAdd);
+      await tester.pump(desktopZoomAnimation);
+      expect(desktopZoomed(zoom), isTrue);
+      await press(tester, LogicalKeyboardKey.arrowRight);
+      expect(tester.widget<NetworkPhotoPage>(find.byType(NetworkPhotoPage)).path, '/a.jpg');
+      expect(zoom.position.dx, lessThan(0), reason: 'more of its right side comes into view');
+
+      await press(tester, LogicalKeyboardKey.escape);
+      await tester.pump(desktopZoomAnimation);
+      expect(desktopZoomed(zoom), isFalse);
+      expect(find.byType(NetworkPhotoPage), findsOneWidget);
+
+      await press(tester, LogicalKeyboardKey.numpadAdd);
+      await tester.pump(desktopZoomAnimation);
+      await press(tester, LogicalKeyboardKey.keyR);
+      expect(desktopZoomed(zoom), isFalse, reason: 'a turned photo shows whole');
+      expect(turnsOnScreen(tester), 1);
+      await tester.pumpWidget(const SizedBox.shrink());
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
 
   testWidgets('a flat photo turns with R and the colour keys, and turns again when the page opens again', (
     tester,

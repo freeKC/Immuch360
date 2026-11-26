@@ -54,7 +54,12 @@ mixin PhotoViewControllerDelegate on State<PhotoViewCore> {
     if (controller.scale == controller.prevValue.scale) {
       return;
     }
-    final PhotoViewScaleState newScaleState = (scale > scaleBoundaries.initialScale)
+    // Immuch360 Desktop: the desktop zoom sets the fit itself (desktop_photo_zoom.dart), which is the first state
+    // again, so that the viewer shows its bars again as after a pinch back to it
+    final initial = scaleBoundaries.initialScale;
+    final PhotoViewScaleState newScaleState = widget.desktopZoom && (scale - initial).abs() <= initial * 1e-6
+        ? PhotoViewScaleState.initial
+        : (scale > initial)
         ? PhotoViewScaleState.zoomedIn
         : PhotoViewScaleState.zoomedOut;
 

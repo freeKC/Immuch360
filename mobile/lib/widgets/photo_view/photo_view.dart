@@ -269,6 +269,7 @@ class PhotoView extends StatefulWidget {
     this.errorBuilder,
     this.enablePanAlways,
     this.quarterTurns = 0,
+    this.desktopZoom = false,
   }) : child = null,
        childSize = null;
 
@@ -311,6 +312,7 @@ class PhotoView extends StatefulWidget {
     this.disableScaleGestures,
     this.disableGestures,
     this.enablePanAlways,
+    this.desktopZoom = false,
   }) : semanticLabel = null,
        errorBuilder = null,
        imageProvider = null,
@@ -459,6 +461,11 @@ class PhotoView extends StatefulWidget {
   /// Useful when you want to drag a widget without restrictions.
   final bool? enablePanAlways;
 
+  /// Immuch360 Desktop: the zoom of a computer drives this view (lib/desktop/window/desktop_photo_zoom.dart), which
+  /// then leaves the double click and the mouse to it: no double tap of its own, its pinch and pan for the touch screens
+  /// and the trackpads only, and the fit again its first scale state. Off on the phones, the TV and the Quest.
+  final bool desktopZoom;
+
   final int index;
 
   bool get _isCustomChild {
@@ -587,6 +594,7 @@ class _PhotoViewState extends State<PhotoView> with AutomaticKeepAliveClientMixi
                 disableGestures: widget.disableGestures,
                 disableScaleGestures: widget.disableScaleGestures,
                 enablePanAlways: widget.enablePanAlways,
+                desktopZoom: widget.desktopZoom,
                 child: widget.child,
               )
             : ImageWrapper(
@@ -621,6 +629,7 @@ class _PhotoViewState extends State<PhotoView> with AutomaticKeepAliveClientMixi
                 disableScaleGestures: widget.disableScaleGestures,
                 errorBuilder: widget.errorBuilder,
                 enablePanAlways: widget.enablePanAlways,
+                desktopZoom: widget.desktopZoom,
                 index: widget.index,
                 quarterTurns: widget.quarterTurns,
               );

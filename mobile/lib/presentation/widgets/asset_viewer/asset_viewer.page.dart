@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
+import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/hover_chevrons.dart';
 import 'package:immich_mobile/domain/models/album/album.model.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
@@ -173,6 +175,9 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
   /// The controllers of the photos of the pages built, by page: a TV zooms and moves the photo on screen with the keys
   /// of its remote, which has no pinch (see tv_photo_zoom.dart)
   final _photoControllers = <int, PhotoViewControllerBase>{};
+
+  /// Immuch360 Desktop: the zoom of the photo of each page built, by page (lib/desktop/window/desktop_photo_zoom.dart)
+  final _desktopZooms = <int, DesktopZoomTarget>{};
 
   /// "Zoomed in: the arrows move the photo" shows once per opening of the viewer
   bool _zoomHintShown = false;
@@ -388,6 +393,12 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       if (left != null && tvPhotoZoomed(left)) {
         tvPhotoZoomReset(left);
       }
+    } else if (index != _currentPage && CurrentPlatform.isDesktop) {
+      // A computer: the same with its zoom
+      final left = _desktopZooms[_currentPage];
+      if (left != null) {
+        desktopZoomFit(left);
+      }
     }
     _currentPage = index;
 
@@ -539,6 +550,15 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     if (rotation != 0 && video == null) {
       return _rotate(rotation, press: press);
     }
+    // Immuch360 Desktop: + and - zoom the photo, 0 fits it, 1 shows its pixels one to one; zoomed in, the arrows of
+    // the viewer itself move it and Escape shows it whole before it closes the viewer (desktop_photo_zoom.dart)
+    final desktopZoom = CurrentPlatform.isDesktop && !tvMode ? _desktopZoomOnScreen : null;
+    final zoomKey = desktopZoom == null ? null : desktopZoomKeyOf(event);
+    if (desktopZoom != null && zoomKey != null && (node.hasPrimaryFocus || !isDesktopZoomArrow(zoomKey))) {
+      if (desktopZoomApplyKey(desktopZoom, zoomKey, animate: !desktopReducedMotion(context))) {
+        return KeyEventResult.handled;
+      }
+    }
     // The zoom keys of a remote (channel up and down on most): the photo on screen zooms in or out, held as pressed
     final zoomIn = isRemoteZoomIn(event)
         ? true
@@ -659,6 +679,18 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       return null;
     }
     return _photoControllers[_currentPage];
+  }
+
+  /// Immuch360 Desktop: the zoom of the photo on screen, none for a video, nor over the details
+  DesktopZoomTarget? get _desktopZoomOnScreen =>
+      _videoPlayer != null || ref.read(assetViewerProvider).showingDetails ? null : _desktopZooms[_currentPage];
+
+  void _onDesktopZoom(int index, DesktopZoomTarget zoom, {required bool attached}) {
+    if (attached) {
+      _desktopZooms[index] = zoom;
+    } else if (identical(_desktopZooms[index], zoom)) {
+      _desktopZooms.remove(index);
+    }
   }
 
   /// [_zoomablePhoto] when zoomed in
@@ -997,6 +1029,9 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
                     onTapNavigate: _onTapNavigate,
                     onPhotoController: (controller, {required attached}) =>
                         _onPhotoController(index, controller, attached: attached),
+                    onDesktopZoom: CurrentPlatform.isDesktop
+                        ? (zoom, {required attached}) => _onDesktopZoom(index, zoom, attached: attached)
+                        : null,
                   ),
                 ),
               ),
