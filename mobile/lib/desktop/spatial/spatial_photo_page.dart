@@ -15,10 +15,16 @@
 //   problem): the webcam opens only after the yes.
 // R recenters, D shows the depth map (near bright, far dark), Escape closes. The sensitivity, the direction and the
 // webcam are in Settings, Asset Viewer, Videos, Spatial 2.5D, and behind the settings button of the bar.
+//
+// A 360° or VR180 3D photo (its layout names the part of the sphere its eyes cover) opens as the 360° photo viewer
+// shows it, drawn by spatial_sphere_render.dart: a drag turns the view, the wheel zooms, the arrows turn it too (left
+// and right step the viewpoint instead in Keys only), and the viewpoint moves inside the view as for a flat 3D photo.
+// Until the depth is measured, and if it cannot be, the left eye shows in the same view.
 
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -29,10 +35,12 @@ import 'package:immich_mobile/desktop/spatial/spatial_head_setting.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_input_widgets.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_render.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_settings.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_sphere_render.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_view_settings.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_viewpoint.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/desktop/spatial/viewer_position_sources.dart';
+import 'package:immich_mobile/desktop/video/projection_params.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immuch_head_tracker/immuch_head_tracker.dart';
@@ -73,6 +81,17 @@ ui.FragmentProgram? _program;
 
 Future<ui.FragmentProgram> _loadProgram() async =>
     _program ??= await ui.FragmentProgram.fromAsset(spatialPhotoShaderAsset);
+
+/// Loads the shader of the page of a 3D sphere; replaced in the tests. Loaded once, a failed load tried again next time.
+final spatialSphereProgramProvider = Provider<Future<ui.FragmentProgram> Function()>((ref) => _loadSphereProgram);
+
+ui.FragmentProgram? _sphereProgram;
+
+Future<ui.FragmentProgram> _loadSphereProgram() async =>
+    _sphereProgram ??= await ui.FragmentProgram.fromAsset(spatialSphereShaderAsset);
+
+/// How far an arrow turns the view of a 3D sphere, in degrees
+const spatialSphereArrowStep = 10.0;
 
 /// The name of [kind] in the menu and the settings
 String viewerPositionKindLabel(ViewerPositionKind kind, Translations t) => switch (kind) {
@@ -121,6 +140,8 @@ class SpatialPhotoPage extends ConsumerStatefulWidget {
 
   /// The whole frame of the photo, both eyes
   final ImageProvider image;
+
+  /// Where its eyes are; with a part of the sphere, a 3D sphere shown as the 360° viewer shows it
   final SpatialPhotoLayout layout;
 
   /// The name of the photo, in the bar
@@ -178,6 +199,9 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
   bool _picked = false;
   final _viewpoint = SpatialViewpoint(followTime: Duration.zero);
   final _p = ValueNotifier<double>(spatialViewpointCentre);
+
+  /// The direction and the field of view of a 3D sphere, turned by a drag and the arrows, zoomed by the wheel
+  final _view = ValueNotifier<ViewAngles>(const ViewAngles());
   late final Ticker _ticker = createTicker(_onTick);
   bool _showDepth = false;
   bool _disposed = false;
@@ -241,12 +265,13 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
     _info?.dispose();
     _depth?.dispose();
     _p.dispose();
+    _view.dispose();
     super.dispose();
   }
 
   Future<void> _loadShader() async {
     try {
-      final shader = await ref.read(spatialPhotoProgramProvider)();
+      final shader = await ref.read(_isSphere ? spatialSphereProgramProvider : spatialPhotoProgramProvider)();
       if (!_disposed) {
         setState(() => _shader = shader);
       }
@@ -424,12 +449,43 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
     ),
   );
 
+  /// A 3D sphere: shown as the 360° viewer shows it
+  bool get _isSphere => widget.layout.sphere != null;
+
+  /// Left and right: the viewpoint in Keys only, else the view of a 3D sphere turns
   void _nudge(int steps) {
     final source = _source;
     if (source is KeysPositionSource) {
       source.nudge(steps);
+    } else if (_isSphere) {
+      _turn(Offset(steps * spatialSphereArrowStep, 0));
     }
   }
+
+  /// The view of a 3D sphere turned by [degrees] of yaw (x) and pitch (y)
+  void _turn(Offset degrees) {
+    if (_isSphere) {
+      _view.value = _view.value.turned(degrees);
+    }
+  }
+
+  /// Around the picture of a 3D sphere: a drag turns the view (the picture follows the pointer, as on the 360° photo
+  /// viewer), the wheel zooms; nothing around a flat 3D photo
+  Widget _sphereGestures({required double height, required Widget child}) => !_isSphere
+      ? child
+      : Listener(
+          onPointerSignal: (event) {
+            if (event is PointerScrollEvent) {
+              _view.value = _view.value.zoomed(event.scrollDelta.dy > 0 ? 1.1 : 1 / 1.1);
+            }
+          },
+          child: GestureDetector(
+            key: const Key('spatial_photo_sphere_drag'),
+            behavior: HitTestBehavior.opaque,
+            onPanUpdate: (details) => _view.value = _view.value.dragged(details.delta, height),
+            child: child,
+          ),
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -453,27 +509,41 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
       final source = _source;
       final head = source is HeadPositionSource ? source : null;
       picture = LayoutBuilder(
-        builder: (context, constraints) => MouseRegion(
-          onHover: (event) => _mouse?.pointerAt(event.localPosition, constraints.biggest),
-          onExit: (_) => _mouse?.pointerLeft(),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CustomPaint(
-                key: const Key('spatial_photo_canvas'),
-                size: Size.infinite,
-                painter: SpatialPhotoPainter(
-                  program: ready ? _shader : null,
-                  frame: info.image,
-                  layout: widget.layout,
-                  depth: ready ? _depth : null,
-                  viewpoint: _p,
-                  showDepth: _showDepth,
+        builder: (context, constraints) => _sphereGestures(
+          height: constraints.maxHeight,
+          child: MouseRegion(
+            onHover: (event) => _mouse?.pointerAt(event.localPosition, constraints.biggest),
+            onExit: (_) => _mouse?.pointerLeft(),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CustomPaint(
+                  key: const Key('spatial_photo_canvas'),
+                  size: Size.infinite,
+                  painter: _isSphere
+                      // The shader draws the left eye in the view until the depth is there
+                      ? SpatialSpherePainter(
+                          program: _shader,
+                          frame: info.image,
+                          layout: widget.layout,
+                          depth: ready ? _depth : null,
+                          viewpoint: _p,
+                          view: _view,
+                          showDepth: ready && _showDepth,
+                        )
+                      : SpatialPhotoPainter(
+                          program: ready ? _shader : null,
+                          frame: info.image,
+                          layout: widget.layout,
+                          depth: ready ? _depth : null,
+                          viewpoint: _p,
+                          showDepth: _showDepth,
+                        ),
                 ),
-              ),
-              // The card of the first time, the camera icon while the webcam is open, the problems
-              if (head != null) HeadTrackingOverlay(key: ObjectKey(head), source: head),
-            ],
+                // The card of the first time, the camera icon while the webcam is open, the problems
+                if (head != null) HeadTrackingOverlay(key: ObjectKey(head), source: head),
+              ],
+            ),
           ),
         ),
       );
@@ -494,6 +564,8 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
         const SingleActivator(LogicalKeyboardKey.keyD): () => setState(() => _showDepth = !_showDepth),
         const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _nudge(-1),
         const SingleActivator(LogicalKeyboardKey.arrowRight): () => _nudge(1),
+        const SingleActivator(LogicalKeyboardKey.arrowUp): () => _turn(const Offset(0, spatialSphereArrowStep)),
+        const SingleActivator(LogicalKeyboardKey.arrowDown): () => _turn(const Offset(0, -spatialSphereArrowStep)),
       },
       child: Focus(
         autofocus: true,
@@ -581,6 +653,13 @@ class _SpatialPhotoPageState extends ConsumerState<SpatialPhotoPage> with Single
                       textAlign: TextAlign.center,
                       style: const TextStyle(color: Colors.white70, fontSize: 12),
                     ),
+                    if (_isSphere)
+                      Text(
+                        t.desktop_spatial_sphere_hint,
+                        key: const Key('spatial_photo_sphere_hint'),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
                   ],
                 ),
               ),

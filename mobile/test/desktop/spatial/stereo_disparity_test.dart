@@ -226,5 +226,24 @@ void main() {
       expect(shaders, contains('if (m.g < 0.5) color *= vec3(1.0, 0.55, 0.55);'));
       expect(photo, contains('color *= vec3(1.0, 0.55, 0.55);'));
     });
+
+    test('the sphere shader takes the same synthesis, word for word', () {
+      // A Windows checkout ends its lines with CR LF
+      final photo = File('shaders/spatial_photo.frag').readAsStringSync().replaceAll('\r\n', '\n');
+      final sphere = File('shaders/spatial_sphere.frag').readAsStringSync().replaceAll('\r\n', '\n');
+      String between(String source, String from, String to) {
+        final start = source.indexOf(from);
+        return source.substring(start, source.indexOf(to, start));
+      }
+
+      // The steps of each eye and the blend, the search along the row and the last resort
+      for (final (from, to) in [
+        ('vec3 solveLeft(vec2 uv) {', '// The right source'),
+        ('vec3 solveRight(vec2 uv) {', '\n}\n'),
+        ('  float p = uParams.w;\n  vec3 left = solveLeft(uv);', '  fragColor = vec4(color, 1.0);\n}'),
+      ]) {
+        expect(between(sphere, from, to), between(photo, from, to), reason: from);
+      }
+    });
   });
 }

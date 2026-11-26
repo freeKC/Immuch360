@@ -231,6 +231,7 @@ flutter:
   shaders:
     - shaders/dual_fisheye.frag
     - shaders/spatial_photo.frag
+    - shaders/spatial_sphere.frag
   assets:
     - assets/
     - assets/feature_message/

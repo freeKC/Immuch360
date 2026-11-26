@@ -21,15 +21,18 @@ import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_conversion.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_render.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/apple_spatial/heic_stereo_probe.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
+import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
@@ -42,11 +45,22 @@ import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 
 import '../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../presentation/pages/network/network_viewer_fakes.dart';
+import '../ai/fakes/fake_conversion_engines.dart';
+import '../ai/fakes/fake_scene_engine.dart' show fakeJpegWithXmp;
+import '../ai/fakes/fake_stereo_panorama_engine.dart';
 import '../ai/ui/settle_still.dart';
 import 'spatial_ai_fakes.dart';
 
 const _sbs = SpatialPhotoLayout(packing: SpatialPhotoPacking.sideBySide);
 const _tb = SpatialPhotoLayout(packing: SpatialPhotoPacking.topBottom);
+const _tbSphere = SpatialPhotoLayout(packing: SpatialPhotoPacking.topBottom, sphere: fullSphereCrop);
+const _sbsSphere = SpatialPhotoLayout(packing: SpatialPhotoPacking.sideBySide, sphere: fullSphereCrop);
+
+/// GPano tags of an equirectangular photo, in the packet of a real JPEG
+const _gpanoPacket =
+    '<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">'
+    '<rdf:Description xmlns:GPano="http://ns.google.com/photos/1.0/panorama/" GPano:ProjectionType="equirectangular"/>'
+    '</rdf:RDF></x:xmpmeta>';
 
 const _source = NetworkSource(id: 'nas', type: NetworkSourceType.smb, name: 'Home NAS', host: 'nas', share: 'media');
 
@@ -62,6 +76,14 @@ class _PendingImage extends ImageProvider<_PendingImage> {
   @override
   ImageStreamCompleter loadImage(_PendingImage key, ImageDecoderCallback decode) =>
       OneFrameImageStreamCompleter(Completer<ImageInfo>().future);
+}
+
+/// Lets the real I/O of the page (the photo read and decoded) run for a while, for what must not come
+Future<void> _idleRealIo(WidgetTester tester) async {
+  for (var i = 0; i < 40; i++) {
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+    await tester.pump();
+  }
 }
 
 void main() {
@@ -118,6 +140,50 @@ void main() {
       expect(spatialPhotoOfShareFile('salon_3D_LRF_Full_SBS.jpg', newer), isNull);
     });
 
+    test('a 360° photo of two eyes as its 360° button lays them out; nothing for one eye, a raw photo, no frame', () {
+      const sphere = NetworkMediaInfo(cameraEquirect: true);
+      expect(spatialPhotoOfShareFile('pano_3D_TB.jpg', sphere, decoded: const Size(2048, 2048)), (
+        layout: _tbSphere,
+        estimatedRelief: false,
+      ));
+      expect(
+        spatialPhotoOfShareFile('pano.jpg', sphere, decoded: const Size(4096, 1024))?.layout,
+        _sbsSphere,
+        reason: 'two eyes side by side, by the frame alone',
+      );
+      expect(
+        spatialPhotoOfShareFile(
+          'pano.jpg',
+          const NetworkMediaInfo(cameraEquirect: true, frameWidth: 5760, frameHeight: 5760),
+        )?.layout,
+        _tbSphere,
+        reason: 'its EXIF frame before it is decoded',
+      );
+      expect(
+        spatialPhotoOfShareFile('lac_VR180.jpg', sphere, decoded: const Size(4096, 2048))?.layout,
+        const SpatialPhotoLayout(packing: SpatialPhotoPacking.sideBySide, sphere: halfSphereCrop),
+      );
+      expect(spatialPhotoOfShareFile('pano.jpg', sphere, decoded: const Size(4096, 2048)), isNull, reason: 'one eye');
+      expect(spatialPhotoOfShareFile('pano_3D_TB.jpg', sphere), isNull, reason: 'no frame yet');
+      expect(
+        spatialPhotoOfShareFile(
+          'IMG_0001.insp',
+          const NetworkMediaInfo(rawKind: RawMediaKind.insta360Photo),
+          decoded: const Size(2048, 2048),
+        ),
+        isNull,
+        reason: 'a raw photo of a 360° camera',
+      );
+      const ours = NetworkMediaInfo(
+        cameraEquirect: true,
+        panorama: GeneratedPanoramaInfo(kind: ImmersiveKind.stereoPanorama360, origin: ImmersiveOrigin.estimatedDepth),
+      );
+      expect(spatialPhotoOfShareFile('pano_360_3D.jpg', ours, decoded: const Size(4096, 4096)), (
+        layout: _tbSphere,
+        estimatedRelief: true,
+      ));
+    });
+
     test('a frame the probe could not read: told by the name and the size the page decoded it at', () {
       const read = NetworkMediaInfo();
       expect(spatialPhotoOfShareFile('salon_LR.heic', read), isNull, reason: 'no frame yet');
@@ -171,6 +237,8 @@ void main() {
           '/salon_3D_LRF_Full_SBS.jpg': jpegFile(width: 8000, height: 3000, xmp: ourXmp()),
           '/chateau_3D_TB.jpg': fakePhoto(),
           '/pano_3D_TB.jpg': fakePhoto(equirectangularXmp),
+          '/pano_360_TB.jpg': fakeJpegWithXmp(_gpanoPacket, width: 64, height: 64),
+          '/PANO_0001.jpg': fakeJpegWithXmp(_gpanoPacket, width: 128, height: 64),
           '/IMG_1234.jpg': jpegFile(width: 4000, height: 3000),
         },
       );
@@ -287,6 +355,26 @@ void main() {
         await pumpPhoto(tester, '/IMG_1234.jpg');
         await pumpRealIo(tester, () => shows(rotate));
         expect(rotate, findsOneWidget, reason: 'its file was read');
+        expect(button, findsNothing);
+        await endRealIo(tester);
+      });
+    });
+
+    testWidgets('a 360° photo of two eyes, by its decoded frame: offered, and opens as a sphere', (tester) async {
+      await onComputer(() async {
+        await pumpPhoto(tester, '/pano_360_TB.jpg');
+        await pumpRealIo(tester, () => shows(button));
+        expect(find.byTooltip('360°'), findsOneWidget);
+        expect(find.byTooltip('Spatial 2.5D'), findsOneWidget);
+        await tester.tap(button);
+        await tester.pump();
+        expect(opened, [('pano_360_TB.jpg', (layout: _tbSphere, estimatedRelief: false))]);
+        await endRealIo(tester);
+
+        // One eye: nothing with the AI off
+        await pumpPhoto(tester, '/PANO_0001.jpg');
+        await pumpRealIo(tester, () => shows(find.byTooltip('360°')));
+        await _idleRealIo(tester);
         expect(button, findsNothing);
         await endRealIo(tester);
       });
@@ -443,6 +531,47 @@ void main() {
           expect(opened, [('IMG_1234_3D_LRF_Full_SBS.jpg', (layout: _sbs, estimatedRelief: true))]);
           expect(find.byKey(const Key('spatial_conversion_dialog')), findsNothing);
           await endRealIo(tester);
+        });
+      });
+
+      group('a 360° photo of one eye, while this computer makes its 3D version', () {
+        const convertFirst360 = 'Spatial 2.5D: makes the 360° 3D photo with AI first, then opens it';
+
+        /// The job of the 3D version handed to the queue at once, as Convert does, for a copy of it on this computer
+        Override sphereAtOnce() => spatialSphereConversionLauncherProvider.overrideWith(
+          (ref) =>
+              (context, {assets = const [], shareFiles = const []}) async =>
+                  ref.read(conversionQueueProvider.notifier).add([
+                    ConversionRequest(
+                      source: LocalFileSource(world.original(shareFiles.single.name)),
+                      target: ConversionTarget(folder: world.photos, fileName: 'PANO_0001_3D.jpg'),
+                    ),
+                  ], kind: ConversionKind.stereoPanoramaFromPanorama).first,
+        );
+
+        testWidgets('offered with its own tooltip, not without the engine; pressed: the job, then the sphere', (
+          tester,
+        ) async {
+          await onComputer(() async {
+            await pumpPhoto(tester, '/PANO_0001.jpg', ai: [...world.overrides(), sphereAtOnce()]);
+            await pumpRealIo(tester, () => shows(find.byTooltip('360°')));
+            await _idleRealIo(tester);
+            expect(button, findsNothing, reason: 'this build does not make the type');
+            await endRealIo(tester);
+
+            world.kinds = fakeConversionEngines(stereoPanorama: FakeStereoPanoramaEngine());
+            await pumpPhoto(tester, '/PANO_0001.jpg', ai: [...world.overrides(), sphereAtOnce()]);
+            await pumpRealIo(tester, () => shows(button));
+            expect(find.byTooltip(convertFirst360), findsOneWidget);
+            await tester.tap(button);
+            await settleStill(tester, until: () => opened.isNotEmpty);
+            final container = ProviderScope.containerOf(tester.element(find.byType(NetworkPhotoPage)));
+            final job = container.read(conversionQueueProvider).jobs.single;
+            expect(job.kind, ConversionKind.stereoPanoramaFromPanorama);
+            expect(job.state, ConversionState.done);
+            expect(opened, [('PANO_0001_3D.jpg', (layout: _tbSphere, estimatedRelief: true))]);
+            await endRealIo(tester);
+          });
         });
       });
     });
