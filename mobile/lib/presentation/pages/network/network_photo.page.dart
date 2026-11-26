@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/library/share_versions_button.dart';
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
 import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
 import 'package:immich_mobile/desktop/window/full_screen.dart';
@@ -666,6 +667,11 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
             height: _info?.frameHeight ?? _imageSize?.height.round(),
           )
         : null;
+    // Immuch360 Desktop: "Spatial 2.5D" for a photo of two eyes once its file was read, as in the viewer of a library
+    // photo (lib/desktop/spatial/spatial_photo_button.dart)
+    final spatialPhoto = CurrentPlatform.isDesktop && current != null && !tvMode
+        ? spatialPhotoOfShare(ref, _name, _info, decoded: _imageSize)
+        : null;
     // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
     final reliefGate = isHorizonOs && current != null && _canRotate ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
     // The view a relief first shows in, read with the gate: a page without the button reads no setting
@@ -829,6 +835,16 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                       icon: const Icon(Icons.threesixty_rounded),
                       tooltip: '360°',
                       onPressed: () => unawaited(_open360(photo)),
+                    ),
+                  if (photo != null && spatialPhoto != null)
+                    SpatialPhotoIconButton(
+                      // The picture the page shows, from the image cache: the frame whole, at most 4096 pixels
+                      onOpen: () => ref.read(spatialSharePhotoOpenerProvider)(
+                        context,
+                        networkPhotoImage(photo.url, mimeType: photo.entry.mimeType, size: photo.entry.size),
+                        photo.entry.name,
+                        spatialPhoto,
+                      ),
                     ),
                   // Immuch360 Desktop: the versions of the photo on its share, and its original for a version
                   // (lib/desktop/ai/library/share_versions_button.dart)
