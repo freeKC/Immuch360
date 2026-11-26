@@ -171,7 +171,9 @@ class HeadTrackingSession {
       return;
     }
     if (read.status < 0) {
-      _error = HeadTrackerException.fromStatus(read.status, hresult: _testLatest == null ? info().hresult : 0);
+      // A test session gives the HRESULT of its info when it has one
+      final hresult = _testLatest == null ? info().hresult : (_testInfo?.call().hresult ?? 0);
+      _error = HeadTrackerException.fromStatus(read.status, hresult: hresult);
       _samples.addError(_error!);
       return;
     }

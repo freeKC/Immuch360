@@ -68,7 +68,20 @@ class FakeHeadSession {
     session.signal(value.sequence, 0);
   }
 
-  void fail(int status) {
+  /// The error [status] stops the camera; [hresult]: the Windows code the tracker recorded with it
+  void fail(int status, {int hresult = 0}) {
+    if (hresult != 0) {
+      info = HeadTrackerInfo(
+        detector: info.detector,
+        framing: info.framing,
+        width: info.width,
+        height: info.height,
+        fpsNumerator: info.fpsNumerator,
+        fpsDenominator: info.fpsDenominator,
+        nativeFourcc: info.nativeFourcc,
+        hresult: hresult,
+      );
+    }
     _latest = (sample: _latest?.sample ?? sample(0), status: status);
     session.signal(-1, status);
   }

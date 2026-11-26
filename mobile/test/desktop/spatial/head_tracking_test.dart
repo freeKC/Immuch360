@@ -4,7 +4,9 @@
 // right moves it toward the right camera); a face lost long enough offers the slider; each error of the webcam is a
 // problem, releases it and is never retried by itself; a stop while the webcams are listed opens none; automatic
 // framing is read from the tracker; a start waits for the webcam the previous session still holds; a default webcam
-// whose formats are all grey is skipped; the head's direction can be reversed.
+// whose formats are all grey is skipped; the head's direction can be reversed; a transient failure (the Windows camera
+// service's call broken, the webcam gone in its first seconds) is tried again once after a pause, never with two
+// readers, never after a stop, and a second failure is the problem.
 
 import 'dart:async';
 
@@ -21,7 +23,11 @@ void main() {
 
     setUp(() {
       source = FakeHeadSource(list: const [fakeInfrared, fakeWebcam, fakeExternal]);
-      tracking = SpatialHeadTracking(source: source, manualAfterLost: const Duration(milliseconds: 20));
+      tracking = SpatialHeadTracking(
+        source: source,
+        manualAfterLost: const Duration(milliseconds: 20),
+        retryPause: const Duration(milliseconds: 10),
+      );
     });
 
     tearDown(() => tracking.dispose());
@@ -135,6 +141,13 @@ void main() {
         await tracking.start();
         source.last.fail(status);
         await settle();
+        if (status == HeadTrackerStatus.deviceLost) {
+          // Gone at once: a transient failure, tried again once; gone again, it is the problem
+          expect(tracking.problem, isNull);
+          await Future<void>.delayed(const Duration(milliseconds: 30));
+          source.last.fail(status);
+          await settle();
+        }
         expect(tracking.problem, problem, reason: 'status $status');
       }
       source.listError = const HeadTrackerException(HeadTrackerError.noMediaFoundation);
@@ -265,6 +278,153 @@ void main() {
       expect(tracking.cameras, [fakeInfrared, fakeWebcam, fakeExternal]);
       expect(source.sessions, isEmpty);
       expect(tracking.cameraOpen, isFalse);
+    });
+
+    group('a transient failure', () {
+      // RPC_S_CALL_FAILED as the tracker's info gives it: a signed 32 bit value
+      const rpcCallFailed = 0x800706BE - 0x100000000;
+      const pause = Duration(milliseconds: 30);
+
+      test('is tried again once after a pause, once the webcam is released, and then runs', () async {
+        await tracking.start();
+        final first = source.last;
+        source.holdRelease = Completer<void>();
+        first.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        expect(tracking.state, SpatialTrackingState.starting, reason: 'no message, the page waits');
+        expect(tracking.problem, isNull);
+        expect(tracking.cameraOpen, isFalse, reason: 'the light goes off meanwhile');
+        expect(first.closing, isTrue);
+        // The page asking again meanwhile starts nothing of its own
+        await tracking.start();
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(1), reason: 'the capture thread still holds the webcam: nothing opens');
+        source.holdRelease!.complete();
+        await tracking.released;
+        await settle();
+        await settle();
+        expect(source.sessions, hasLength(2));
+        expect(source.busy, 0, reason: 'never two readers');
+        expect(source.last.camera, fakeWebcam);
+        expect(tracking.state, SpatialTrackingState.running);
+        expect(tracking.problem, isNull);
+        source.last.push(sample(1, faceX: 0.5));
+        await settle();
+        expect(tracking.latest?.sequence, 1);
+      });
+
+      test('failing again is the problem: the webcam released, the slider, and no third try', () async {
+        await tracking.start();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(2));
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        expect(tracking.problem, SpatialTrackingProblem.failed);
+        expect(tracking.state, SpatialTrackingState.failed);
+        expect(tracking.cameraOpen, isFalse);
+        expect(source.last.session.isClosed, isTrue);
+        expect(tracking.viewpointNow(), isNull, reason: 'the page falls back');
+        await Future<void>.delayed(pause * 3);
+        expect(source.sessions, hasLength(2), reason: 'no third try');
+        // The user asks again: a start of its own, with its own new try
+        await tracking.start();
+        expect(source.sessions, hasLength(3));
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(4));
+      });
+
+      test('a stop during the pause opens nothing afterwards', () async {
+        await tracking.start(cameraId: fakeExternal.id);
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        expect(tracking.state, SpatialTrackingState.starting);
+        await tracking.stop();
+        expect(tracking.state, SpatialTrackingState.off);
+        await Future<void>.delayed(pause * 3);
+        expect(source.sessions, hasLength(1));
+        expect(tracking.cameraOpen, isFalse);
+        expect(tracking.problem, isNull);
+      });
+
+      test('the page saying no by the end of the pause opens nothing', () async {
+        var allowed = true;
+        tracking.mayRetry = () => allowed;
+        await tracking.start();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        allowed = false;
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(1));
+        expect(tracking.state, SpatialTrackingState.off);
+      });
+
+      test('the new try opens the webcam the page asked for', () async {
+        await tracking.start(cameraId: fakeExternal.id);
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        expect(source.sessions.map((session) => session.camera), [fakeExternal, fakeExternal]);
+      });
+
+      test('the webcam gone: tried again in its first seconds only', () async {
+        await tracking.start();
+        source.last.push(sample(1, faceX: 0.5, timeUs: 2000000));
+        source.last.fail(HeadTrackerStatus.deviceLost);
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(2), reason: 'gone after 2 s: tried again');
+        expect(tracking.state, SpatialTrackingState.running);
+        // After 11 s: unplugged, not a hiccup
+        source.last.push(sample(1, faceX: 0.5, timeUs: 11000000));
+        source.last.fail(HeadTrackerStatus.deviceLost);
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(2));
+        expect(tracking.problem, SpatialTrackingProblem.cameraLost);
+      });
+
+      test('a new try that ran well has a new try of its own for a later failure', () async {
+        await tracking.start();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(2));
+        source.last.push(sample(1, faceX: 0.5, timeUs: 60000000));
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(3));
+        expect(tracking.state, SpatialTrackingState.running);
+      });
+
+      test('other failures are not tried again', () async {
+        for (final status in [HeadTrackerStatus.accessDenied, HeadTrackerStatus.cameraBusy, HeadTrackerStatus.failed]) {
+          await tracking.start();
+          final count = source.sessions.length;
+          source.last.fail(status, hresult: status == HeadTrackerStatus.failed ? 0x80004005 - 0x100000000 : 0);
+          await Future<void>.delayed(pause);
+          expect(source.sessions, hasLength(count), reason: 'status $status');
+          expect(tracking.state, SpatialTrackingState.failed);
+        }
+      });
+
+      test('is told by its HRESULT', () {
+        for (final hresult in transientWebcamHresults) {
+          expect(
+            isTransientWebcamFailure(HeadTrackerException(HeadTrackerError.failed, hresult: hresult), early: false),
+            isTrue,
+          );
+          expect(
+            isTransientWebcamFailure(
+              HeadTrackerException(HeadTrackerError.failed, hresult: hresult - 0x100000000),
+              early: false,
+            ),
+            isTrue,
+            reason: 'signed as the tracker gives it',
+          );
+        }
+        const lost = HeadTrackerException(HeadTrackerError.deviceLost, hresult: 0xC00D3EA2);
+        expect(isTransientWebcamFailure(lost, early: true), isTrue);
+        expect(isTransientWebcamFailure(lost, early: false), isFalse);
+        const denied = HeadTrackerException(HeadTrackerError.accessDenied, hresult: 0x80070005);
+        expect(isTransientWebcamFailure(denied, early: true), isFalse);
+      });
     });
 
     test('without the tracker DLL, tracking fails quietly', () async {

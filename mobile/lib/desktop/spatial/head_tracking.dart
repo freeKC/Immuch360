@@ -5,8 +5,13 @@
 //
 // The page decides when the webcam runs, by the rules of the lot: only while the Spatial page shows with head tracking
 // chosen, closed when the page closes, when the window is minimised and when tracking is turned off; an error never
-// starts it again by itself (the user turns tracking on again, or comes back from the camera settings). The pictures
-// never reach Dart: only the position of the face comes out of the native code, one sample per analysed frame.
+// starts it again by itself (the user turns tracking on again, or comes back from the camera settings), with one
+// exception: a transient failure (isTransientWebcamFailure: the call to the Windows camera service failed, or the
+// webcam went away in its first seconds) is tried again once by itself after a short pause, the state staying
+// "starting" meanwhile, and only a second failure is the problem. The pause ends with any stop (the page closed, the
+// window minimised, tracking off), and the new try asks the page's rules first ([SpatialHeadTracking.mayRetry]). The
+// pictures never reach Dart: only the position of the face comes out of the native code, one sample per analysed
+// frame.
 //
 // A start waits for the release of the previous webcam session (its capture thread ends in a background isolate), so
 // that a quick minimise and restore, the mouse then the head again, or a page closed and opened again at once, never
@@ -94,6 +99,17 @@ SpatialTrackingProblem spatialProblemOf(HeadTrackerError error) => switch (error
   _ => SpatialTrackingProblem.failed,
 };
 
+/// The HRESULTs of a call to another process that failed or lost its server: RPC_S_SERVER_UNAVAILABLE,
+/// RPC_S_CALL_FAILED, RPC_S_CALL_FAILED_DNE and RPC_E_DISCONNECTED. On Windows a webcam is opened and read through the
+/// Windows Camera Frame Server service, so these say that the service's call broke, not that the webcam is wrong.
+const transientWebcamHresults = {0x800706BA, 0x800706BE, 0x800706BF, 0x80010108};
+
+/// A failure of the webcam worth one new try by itself: a call to the Windows camera service that broke (see
+/// [transientWebcamHresults]), or the webcam gone [early], within the first seconds after it opened
+bool isTransientWebcamFailure(HeadTrackerException error, {required bool early}) =>
+    transientWebcamHresults.contains(error.hresult & 0xFFFFFFFF) ||
+    (early && error.error == HeadTrackerError.deviceLost);
+
 /// Where head tracking is
 enum SpatialTrackingState {
   /// No webcam open
@@ -116,11 +132,24 @@ class SpatialHeadTracking extends ChangeNotifier {
     double sensitivity = HeadViewpoint.desktopSensitivity,
     this.manualAfterLost = const Duration(seconds: 3),
     this.framingCheckInterval = const Duration(milliseconds: 500),
+    this.retryPause = const Duration(seconds: 2),
+    this.startupWindow = const Duration(seconds: 10),
   }) {
     _viewpoint.sensitivity = sensitivity;
   }
 
   final SpatialHeadSource? _source;
+
+  /// The pause before the one new try after a transient failure of the webcam (isTransientWebcamFailure)
+  final Duration retryPause;
+
+  /// The first seconds of a session: the webcam gone within them is a transient failure. A session that ran longer has
+  /// recovered: a later transient failure has a new try of its own.
+  final Duration startupWindow;
+
+  /// Asked before the new try after a transient failure opens the webcam: whether the page's rules still let it run
+  /// (HeadPositionSource gives shouldRunCamera). Null: they do. Answering no stops tracking quietly.
+  bool Function()? mayRetry;
 
   /// The face lost for this long, the page shows the manual slider (the phones' MANUAL_AFTER_LOST_MS)
   final Duration manualAfterLost;
@@ -161,6 +190,18 @@ class SpatialHeadTracking extends ChangeNotifier {
   int _lastFramingCheckUs = -1;
   int _generation = 0;
   bool _disposed = false;
+
+  /// The webcam the page asked for at the last start, for the new try after a transient failure
+  String? _askedCameraId;
+
+  /// The new try after a transient failure was made since the last start
+  bool _retried = false;
+
+  /// The pause before that new try
+  Timer? _retryTimer;
+
+  /// When the session in use opened, in the clock of its samples
+  int _sessionStartUs = 0;
 
   /// The webcams listed when tracking started first, null before; a camera found grey only is marked infrared
   List<HeadCamera>? get cameras {
@@ -247,7 +288,15 @@ class SpatialHeadTracking extends ChangeNotifier {
     }
     final generation = ++_generation;
     _problem = null;
+    _askedCameraId = cameraId;
+    _retried = false;
     _setState(SpatialTrackingState.starting);
+    await _open(generation);
+  }
+
+  /// Lists the webcams and opens the one asked for at the last start ([_askedCameraId]), as start [generation]
+  Future<void> _open(int generation) async {
+    final cameraId = _askedCameraId;
     final source = _source;
     if (source == null) {
       _fail(SpatialTrackingProblem.failed, 'no head tracker on this computer');
@@ -298,6 +347,7 @@ class SpatialHeadTracking extends ChangeNotifier {
       return;
     }
     _session = session;
+    _sessionStartUs = _clockOf(session);
     _latest = null;
     _faceLost = false;
     _lostTooLong = false;
@@ -338,27 +388,42 @@ class SpatialHeadTracking extends ChangeNotifier {
   /// Closes the webcam (its light goes off once this returns). [keepProblem]: the message of a problem stays.
   Future<void> stop({bool keepProblem = false}) async {
     _generation++;
+    // A new try waiting after a transient failure is called off: nothing opens the webcam after a stop
+    _retryTimer?.cancel();
+    _retryTimer = null;
+    final session = _detachSession();
+    if (!keepProblem) {
+      _problem = null;
+    }
+    _setState(_problem != null ? SpatialTrackingState.failed : SpatialTrackingState.off);
+    await _releaseSession(session);
+  }
+
+  /// The session in use, no longer listened to (null when there is none); [_releaseSession] lets its webcam go
+  HeadTrackingSession? _detachSession() {
     final session = _session;
     _session = null;
     _lostTimer?.cancel();
     _faceLost = false;
     _lostTooLong = false;
-    if (!keepProblem) {
-      _problem = null;
-    }
     // Cancelled without waiting: a broadcast subscription stops at once, and the webcam need not wait for it
     unawaited(_subscription?.cancel());
     _subscription = null;
-    _setState(_problem != null ? SpatialTrackingState.failed : SpatialTrackingState.off);
-    if (session != null) {
-      _log.info('Webcam closed');
-      final previous = _closing;
-      final closing = _release(previous, session);
-      _closing = closing;
-      await closing;
-      if (identical(_closing, closing)) {
-        _closing = null;
-      }
+    return session;
+  }
+
+  /// Closes [session] after the sessions closed before it; a start or a listing waits for it meanwhile ([_closing])
+  Future<void> _releaseSession(HeadTrackingSession? session) async {
+    if (session == null) {
+      return;
+    }
+    _log.info('Webcam closed');
+    final previous = _closing;
+    final closing = _release(previous, session);
+    _closing = closing;
+    await closing;
+    if (identical(_closing, closing)) {
+      _closing = null;
     }
   }
 
@@ -493,8 +558,67 @@ class SpatialHeadTracking extends ChangeNotifier {
       unawaited(_startNext());
       return;
     }
+    final when = _ranFor(session);
+    if (error is HeadTrackerException && _shouldRetry(session, error)) {
+      _retrySoon(error, when);
+      return;
+    }
     final problem = error is HeadTrackerException ? spatialProblemOf(error.error) : SpatialTrackingProblem.failed;
-    _fail(problem, 'the webcam stopped: $error');
+    _fail(problem, 'the webcam stopped $when: $error');
+  }
+
+  /// Whether [error], which stopped [session], gets the one new try: a transient failure, and no new try made since
+  /// the start, or the one made has recovered (its session ran past [startupWindow])
+  bool _shouldRetry(HeadTrackingSession session, HeadTrackerException error) {
+    final early = _clockOf(session) - _sessionStartUs < startupWindow.inMicroseconds;
+    if (_retried && !early) {
+      // The new try ran well: this failure is a new one
+      _retried = false;
+    }
+    return !_retried && isTransientWebcamFailure(error, early: early);
+  }
+
+  /// The webcam released at once, and opened again after [retryPause] unless a stop comes first or the page's rules
+  /// say no by then ([mayRetry]); the state stays "starting" meanwhile, so that the page starts nothing of its own.
+  /// The new open waits for the release ([_closing]): two readers never run together.
+  void _retrySoon(HeadTrackerException error, String when) {
+    _retried = true;
+    _log.warning('Head tracking: the webcam stopped $when: $error; tried again in ${retryPause.inMilliseconds} ms');
+    final generation = ++_generation;
+    final session = _detachSession();
+    _setState(SpatialTrackingState.starting);
+    unawaited(_releaseSession(session));
+    _retryTimer = Timer(retryPause, () {
+      _retryTimer = null;
+      if (generation != _generation || _disposed) {
+        return;
+      }
+      if (!(mayRetry?.call() ?? true)) {
+        unawaited(stop());
+        return;
+      }
+      _log.info('Head tracking: the webcam tried again');
+      unawaited(_open(generation));
+    });
+  }
+
+  /// When [session] stopped, for the log: before its first frame (the webcam never streamed), or after how long
+  String _ranFor(HeadTrackingSession session) {
+    final latest = session.latest;
+    if (latest == null) {
+      return 'before its first frame';
+    }
+    final seconds = (_clockOf(session) - _sessionStartUs) / Duration.microsecondsPerSecond;
+    return 'after ${seconds.toStringAsFixed(1)} s and ${latest.sequence} frames analysed';
+  }
+
+  /// The clock of [session]'s samples, 0 when it has none
+  static int _clockOf(HeadTrackingSession session) {
+    try {
+      return session.nowUs();
+    } catch (_) {
+      return 0;
+    }
   }
 
   Future<void> _startNext() async {
