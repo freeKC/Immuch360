@@ -31,6 +31,8 @@ import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.da
 import 'package:immich_mobile/domain/services/apple_spatial/heic_stereo_probe.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
+import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
@@ -199,10 +201,11 @@ void main() {
       String path, {
       bool spatial = true,
       List<Override> ai = const [],
+      String sourceId = 'nas',
     }) async {
       await pumpNetworkRouter(
         tester,
-        home: NetworkPhotoPage(sourceId: _source.id, path: path),
+        home: NetworkPhotoPage(sourceId: sourceId, path: path),
         settle: false,
         overrides: [
           storeServiceProvider.overrideWithValue(store),
@@ -356,6 +359,32 @@ void main() {
           await pumpRealIo(tester, () => shows(rotate));
           expect(rotate, findsOneWidget, reason: 'its file was read');
           expect(button, findsNothing);
+          await endRealIo(tester);
+        });
+      });
+
+      testWidgets('not for a photo a phone sends from its relay: nothing is written next to it (release 53)', (
+        tester,
+      ) async {
+        const relay = NetworkSource(
+          id: 'tree:relay-00112233445566778899aabbccddeeff',
+          type: NetworkSourceType.phoneRelay,
+          name: 'Pixel',
+          host: '192.168.1.20',
+        );
+        expect(isPlayRelaySource(relay.id), isTrue);
+        final t = StaticTranslations.instance;
+        await store.put(StoreKey.networkSources, NetworkSource.encodeList(const [_source, relay]));
+        share = MemoryShare(relay, files: {'/IMG_1234.jpg': jpegFile(width: 4000, height: 3000)});
+        server.share = share;
+        await onComputer(() async {
+          await pumpPhoto(tester, '/IMG_1234.jpg', sourceId: relay.id, ai: world.overrides());
+          // The relayed photo does not turn, so its menu tells the file was read; then give the button its chance
+          await pumpRealIo(tester, () => shows(find.byTooltip(t.more)));
+          expect(find.byTooltip(t.more), findsOneWidget, reason: 'its file was read');
+          await pumpRealIo(tester, () => shows(button));
+          expect(button, findsNothing);
+          expect(find.byTooltip(convertFirst), findsNothing);
           await endRealIo(tester);
         });
       });
