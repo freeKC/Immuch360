@@ -18,15 +18,20 @@ import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
+import 'package:immich_mobile/infrastructure/network/cast/cast_relay.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_client.dart';
+import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/screen_player_prompts.dart';
+import 'package:immich_mobile/providers/infrastructure/media_bridge.provider.dart';
+import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_native_viewers.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_player.provider.dart';
 
 import '../../test_utils.dart';
+import '../network/fakes.dart';
 
 class _Secrets implements PlayLinkSecrets {
   final Map<String, String> values = {};
@@ -181,6 +186,7 @@ void main() {
   late List<(String, bool)> routes;
   late int closed;
   late _Native native;
+  late FakeMediaBridge bridge;
 
   /// The page in front of the router: the last one a play opened, or one the screen's user opened
   late ScreenPlayerFront front;
@@ -208,9 +214,11 @@ void main() {
     routes = [];
     closed = 0;
     native = _Native();
+    bridge = FakeMediaBridge();
     front = (name: 'TabShellRoute', args: null);
     container = ProviderContainer(
       overrides: [
+        mediaBridgeProvider.overrideWithValue(bridge),
         screenImmichAccessProvider.overrideWithValue(immich),
         screenNativeViewersProvider.overrideWithValue(native),
         // No lookup of the network in the tests
@@ -241,6 +249,8 @@ void main() {
             preferredPort: 0,
             nativeViewer: native.place,
             nativeViewerCheck: const Duration(milliseconds: 10),
+            // The loopback stands for the phone's address on the home network
+            relayHostOf: (client) => client == '127.0.0.1' ? '127.0.0.1' : null,
           ),
         ),
       ],
@@ -792,5 +802,108 @@ void main() {
         NetworkSourceType.webdav,
       );
     });
+  });
+
+  group('an item a phone sends from its relay (release 53)', () {
+    final video = Uint8List.fromList(List<int>.generate(30000, (index) => index % 199));
+    final photo = Uint8List.fromList([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3, 0xff, 0xd9]);
+    late CastRelayServer phoneRelay;
+
+    setUp(() async => phoneRelay = await CastRelayServer.bind('127.0.0.1', port: 0));
+    tearDown(() => phoneRelay.close());
+
+    /// A lease of the phone's relay for the screen at the loopback, under the K_relay of [connection]'s sessions
+    CastRelayLease lease(PlayLinkConnection connection, Uint8List bytes, {required String type, List<int>? key}) =>
+        phoneRelay.lease(
+          CastRelayContent.local(bytes: bytes, contentType: type),
+          client: '127.0.0.1',
+          macKeys: () => key == null ? connection.relayKeys : [key],
+        );
+
+    Map<String, Object?> play(CastRelayLease lease, {bool photo = false, int? size}) => {
+      'type': 'play',
+      ...PlayItem.of(
+        RelayPlayTarget(
+          lease: lease.id,
+          port: lease.port,
+          name: photo ? 'IMG_0002.jpg' : 'VID_0001.mp4',
+          mime: photo ? 'image/jpeg' : 'video/mp4',
+          size: size,
+          media: photo ? PlayMedia.photo : PlayMedia.video,
+        ),
+        title: photo ? 'IMG_0002.jpg' : 'VID_0001.mp4',
+      ).toJson(),
+    };
+
+    test('a video opens in the network video page over a source in memory, read from the phone with the MAC of the '
+        'session, and is followed by its player', () async {
+      final view = await start();
+      final connection = await connect(view.port!);
+      final leased = lease(connection, video, type: 'video/mp4');
+      final answer = await connection.command(play(leased));
+      expect(answer.state.reason, isNull, reason: answer.state.toJson().toString());
+      expect(answer.state.server, 'relay');
+      expect(answer.state.itemKey, leased.id);
+      expect(answer.state.media, PlayMedia.video);
+      final sourceId = playRelaySourceId(leased.id);
+      expect(routes.single.$1, 'NetworkVideoRoute');
+      expect(front.args.toString(), contains(sourceId));
+      expect(container.read(importSourcesProvider)[sourceId]?.type, NetworkSourceType.phoneRelay);
+      final fileSystem = bridge.registered[sourceId]! as RelayFileSystem;
+      final entry = await fileSystem.stat(fileSystem.path);
+      expect(entry.size, video.length);
+      expect(await fileSystem.readRange(fileSystem.path, 1000, 500), video.sublist(1000, 1500));
+      expect(prompts.toasts, ["Fred's Pixel"]);
+    });
+
+    test('the next item of the phone replaces it, and the source before goes once its page was replaced', () async {
+      final view = await start();
+      final connection = await connect(view.port!);
+      final first = lease(connection, video, type: 'video/mp4');
+      await connection.command(play(first));
+      final second = lease(connection, photo, type: 'image/jpeg');
+      final answer = await connection.command(play(second, photo: true));
+      expect(answer.state.reason, isNull);
+      expect(routes.map((route) => route.$1), ['NetworkVideoRoute', 'NetworkPhotoRoute']);
+      expect(routes.last.$2, isTrue, reason: 'the page the phone opened is replaced');
+      expect(prompts.toasts, hasLength(1), reason: 'the next item of the same phone: no new toast');
+      expect(bridge.registered.keys, contains(playRelaySourceId(first.id)));
+      await Future<void>.delayed(AppScreenPlayerActions.relayCloseDelay + const Duration(milliseconds: 300));
+      expect(bridge.registered.keys, [playRelaySourceId(second.id)]);
+      expect(container.read(importSourcesProvider).keys, [playRelaySourceId(second.id)]);
+      final next = await connection.status(after: answer.state.seq, wait: const Duration(seconds: 2));
+      expect(next.phase, ScreenPlayPhase.showing);
+    });
+
+    test('Stop closes the page the phone opened, then its source', () async {
+      final view = await start();
+      final connection = await connect(view.port!);
+      final leased = lease(connection, photo, type: 'image/jpeg');
+      final answer = await connection.command(play(leased, photo: true));
+      await connection.status(after: answer.state.seq, wait: const Duration(seconds: 2));
+      final stopped = await connection.command({'type': 'stop'});
+      expect(stopped.state.phase, ScreenPlayPhase.idle);
+      expect(closed, 1);
+      await Future<void>.delayed(AppScreenPlayerActions.relayCloseDelay + const Duration(milliseconds: 300));
+      expect(bridge.registered, isEmpty);
+      expect(container.read(importSourcesProvider), isEmpty);
+    });
+
+    test(
+      'a phone relay that refuses the screen (another session\'s MAC, a revoked lease): relayFailed, nothing opens',
+      () async {
+        final view = await start();
+        final connection = await connect(view.port!);
+        final otherKey = lease(connection, video, type: 'video/mp4', key: List.filled(32, 1));
+        final refused = await connection.command(play(otherKey));
+        expect(refused.state.reason, ScreenPlayReason.relayFailed);
+        final revoked = lease(connection, video, type: 'video/mp4')..revoke();
+        final gone = await connection.command(play(revoked));
+        expect(gone.state.reason, ScreenPlayReason.relayFailed);
+        expect(routes, isEmpty);
+        expect(bridge.registered, isEmpty);
+        expect(container.read(importSourcesProvider), isEmpty);
+      },
+    );
   });
 }

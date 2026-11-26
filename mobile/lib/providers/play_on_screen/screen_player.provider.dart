@@ -10,6 +10,10 @@
 // or a computer when "Ask before a phone plays" is on; the next items of the same phone while one of its photos or
 // videos is shown (a swipe, its slideshow) open without asking again nor a new toast.
 //
+// An item the phone sends from its relay (release 53) opens in the network photo or video page over a source in
+// memory (relay_file_system.dart), read from the phone's address of the session only, with the session's MAC: it goes
+// with the item (the next one, Stop, Back on the remote), and nothing of it is kept on the screen.
+//
 // Nothing here goes to the logs but kinds and outcomes: never a title, a position, a key or a token.
 
 import 'dart:async';
@@ -31,6 +35,7 @@ import 'package:immich_mobile/domain/services/play_on_screen/screen_player_sessi
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/infrastructure/network/play_on_screen/play_link_server.dart';
+import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_client.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_direct.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
@@ -76,6 +81,7 @@ class ScreenPlayerEnvironment {
     this.nativeViewer = _noNativeViewer,
     this.os = '',
     this.nativeViewerCheck = const Duration(seconds: 5),
+    this.relayHostOf = playRelayClientIPv4,
   });
 
   final Future<List<String>> Function() localAddresses;
@@ -98,6 +104,10 @@ class ScreenPlayerEnvironment {
 
   /// The system of this screen, as "Sign in with your phone" tells it (ScreenPlayerSession.os)
   final String os;
+
+  /// The host an item a phone sends from its relay is read at, from the address of the phone's request: its private
+  /// IPv4 address (ScreenPlayerSession, release 53; the tests map the loopback)
+  final String? Function(String client) relayHostOf;
 }
 
 Future<NativeViewerPlace> _noNativeViewer() async => NativeViewerPlace.none;
@@ -335,6 +345,7 @@ class ScreenPlayerController extends Notifier<ScreenPlayerView> {
         phones: () => _phones,
         actions: actions,
         os: _environment.os,
+        relayHostOf: _environment.relayHostOf,
       );
       final server = PlayLinkServer(
         session: session,
@@ -432,6 +443,9 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
 
   /// Whether the photo a phone sent is still on the screen
   bool Function()? _showing;
+
+  /// The source in memory of the item a phone sends from its relay, while its page may show it
+  String? _relaySource;
   DateTime? _openedAt;
   bool _playerSeen = false;
   PlayItem? _pendingTracks;
@@ -542,12 +556,18 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     }
     _nativeSphere = false;
     _set((state) => state.next(phase: ScreenPlayPhase.opening));
+    final relayBefore = _relaySource;
     final opened = switch (item.target) {
       PlexPlayTarget() => await _openPlex(item),
       final ImmichPlayTarget target => await _openImmich(item, target),
       final SharePlayTarget target => await _openShare(item, target),
       final MediaServerPlayTarget target => await _openMediaServer(item, target),
+      final RelayPlayTarget target => await _openRelay(item, target, from),
     };
+    // The item the phone sent from its relay before: its page is replaced meanwhile
+    if (relayBefore != null && relayBefore != _relaySource) {
+      _closeRelay(relayBefore, after: relayCloseDelay);
+    }
     if (!opened) {
       return;
     }
@@ -626,6 +646,75 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
       NetworkPhotoRoute(sourceId: source.id, path: target.path),
       showing: () => _ref.read(screenPlayerShowsProvider)(NetworkPhotoRoute.name),
     );
+  }
+
+  /// An item the phone sends from its relay: a source in memory over the phone's lease, read from the address of the
+  /// session's own requests with its MAC, opened in the network photo or video page; the source of the item before
+  /// goes once the new page is in front
+  Future<bool> _openRelay(PlayItem item, RelayPlayTarget target, LinkedPeer from) async {
+    final NetworkFileSystem fileSystem;
+    try {
+      fileSystem = await _ref.read(screenRelayOpenProvider)(target, phone: from.name);
+    } catch (error) {
+      _log.info('Play from a phone: the relay of the phone did not answer (${error.runtimeType})');
+      _fail(ScreenPlayReason.relayFailed);
+      return false;
+    }
+    final sourceId = fileSystem.source.id;
+    try {
+      _ref.read(importSourcesProvider.notifier).put(fileSystem.source);
+      await _ref.read(networkConnectionsProvider).adopt(fileSystem);
+    } catch (error) {
+      _log.warning('Play from a phone: the relayed item could not be served here: ${error.runtimeType}');
+      _ref.read(importSourcesProvider.notifier).remove(sourceId);
+      await fileSystem.close().catchError((Object _) {});
+      _fail(ScreenPlayReason.relayFailed);
+      return false;
+    }
+    _relaySource = sourceId;
+    final path = fileSystem is RelayFileSystem ? fileSystem.path : '/${target.name}';
+    _set((state) => state.next(media: target.media));
+    final bool opened;
+    if (target.media == PlayMedia.video) {
+      opened = await _openVideoPage(item, sourceId, path);
+    } else {
+      opened = await _openRoute(
+        NetworkPhotoRoute(sourceId: sourceId, path: path),
+        showing: () => _phonePageInFront,
+      );
+    }
+    if (!opened) {
+      _closeRelay(sourceId);
+    }
+    return opened;
+  }
+
+  /// How long the source of the item before stays after the next page opened: the page it showed is replaced meanwhile
+  static const relayCloseDelay = Duration(seconds: 3);
+
+  /// Ends the source in memory of a relayed item, [after] a while; the current one is forgotten
+  void _closeRelay(String sourceId, {Duration after = Duration.zero}) {
+    if (_relaySource == sourceId) {
+      _relaySource = null;
+    }
+    Future<void> close() async {
+      // The same lease may have been sent again meanwhile; the receiver gone, the connections close with the app
+      if (_relaySource == sourceId || _disposed) {
+        return;
+      }
+      _ref.read(importSourcesProvider.notifier).remove(sourceId);
+      await _ref.read(networkConnectionsProvider).close(sourceId);
+    }
+
+    unawaited(after == Duration.zero ? close() : Future<void>.delayed(after, close));
+  }
+
+  /// The item a phone sent from its relay is no longer shown: its source goes
+  void _endRelay() {
+    final source = _relaySource;
+    if (source != null) {
+      _closeRelay(source);
+    }
   }
 
   /// An Immich photo or video: the screen's own server and account decide (screen_item_openers.dart)
@@ -739,8 +828,14 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     _poll = null;
   }
 
-  /// The receiver goes for good: nothing is followed any more
-  void dispose() => _stopPolling();
+  /// The receiver goes for good: nothing is followed any more. The source of a relayed item goes with the open
+  /// connections, which close theirs with the app.
+  void dispose() {
+    _stopPolling();
+    _disposed = true;
+  }
+
+  bool _disposed = false;
 
   /// Follows the player of the page: its status, position and tracks; the page gone (Back on the remote), nothing
   /// plays any more
@@ -768,6 +863,7 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
       if (_playerSeen) {
         _stopPolling();
         _playerKey = null;
+        _endRelay();
         _set((state) => state.next(phase: ScreenPlayPhase.idle, clearReason: true));
       } else if (DateTime.now().difference(_openedAt ?? DateTime.now()) > openGrace) {
         _playerKey = null;
@@ -816,6 +912,7 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     if (_playerSeen) {
       _stopPolling();
       _showing = null;
+      _endRelay();
       _set((state) => state.next(phase: ScreenPlayPhase.idle, clearReason: true));
     } else if (DateTime.now().difference(_openedAt ?? DateTime.now()) > openGrace) {
       _showing = null;
@@ -917,6 +1014,10 @@ class AppScreenPlayerActions implements ScreenPlayerActions {
     if (phonePage && ((key != null && _ref.exists(videoPlayerProvider(key))) || shown)) {
       await _ref.read(screenPlayerCloseProvider)();
     }
+    final relay = _relaySource;
+    if (relay != null) {
+      _closeRelay(relay, after: relayCloseDelay);
+    }
     _set((state) => state.next(phase: ScreenPlayPhase.idle, sphere: false, clearReason: true));
   }
 
@@ -956,6 +1057,12 @@ PlayTrack? playTrackOf(NativeVideoTrack track) => PlayTrack(
   language: track.language,
   selected: track.selected,
 );
+
+/// Opens the relay of the phone for a relayed item (relay_file_system.dart): replaced in the tests
+final screenRelayOpenProvider =
+    Provider<Future<NetworkFileSystem> Function(RelayPlayTarget target, {required String phone})>((ref) {
+      return (target, {required phone}) => RelayFileSystem.open(target, name: phone);
+    });
 
 /// Opens a route for a play of a phone: in place of the player of a film playing, else over the page shown. A page
 /// of the same name goes first, then the new one is pushed: the asset viewer's duplicate guard refuses a replace

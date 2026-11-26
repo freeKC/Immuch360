@@ -490,7 +490,8 @@ class _NetworkShareEditPageState extends ConsumerState<NetworkShareEditPage> {
       NetworkSourceType.tapo ||
       NetworkSourceType.ipCamera ||
       NetworkSourceType.documentTree ||
-      NetworkSourceType.deviceFolder => null,
+      NetworkSourceType.deviceFolder ||
+      NetworkSourceType.phoneRelay => null,
     };
     if (share == null) {
       return null;

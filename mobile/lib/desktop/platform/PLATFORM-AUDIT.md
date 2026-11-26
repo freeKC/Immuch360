@@ -173,6 +173,8 @@ the gate is per desktop and is noted.
 | `lib/providers/play_on_screen/screen_native_viewers.dart:59` | Play from a phone: whether the immersive viewer of the Quest is open, read on Android only | right: the computers read their 360° player's session alone |
 | `lib/providers/play_on_screen/screen_native_viewers.dart:68` | Play from a phone: whether a native viewer activity is in front, asked through the Android channel | right: on the computers the 360° player is a route of the window, whose own lifecycle the receiver follows (none) |
 | `lib/providers/play_on_screen/screen_native_viewers.dart:95` | Play from a phone: the native 360° player and immersive viewer closed through the Android channel | right: the computers pop their 360° player route in the branch before it |
+| `lib/providers/play_on_screen/phone_relay.provider.dart:215` | Play on (release 53): the foreground service that keeps the phone's relay sending with its screen off, on Android | right: the computers never send (the sheet is for phones and tablets), they take the last branch, no keep alive |
+| `lib/providers/play_on_screen/phone_relay.provider.dart:217` | Play on: the screen of an iPhone kept on while its relay sends | right: idem, the computers take the branch after it |
 
 ## Desktop gates added outside these lines
 

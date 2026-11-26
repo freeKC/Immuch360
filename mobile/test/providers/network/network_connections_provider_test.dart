@@ -102,10 +102,13 @@ void main() {
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
-    // But the cameras of other brands (release 48): live view only, no files
+    // But the cameras of other brands (release 48): live view only, no files; and the item a phone sends a screen
+    // from its relay (release 53), handed over open (NetworkConnections.adopt), never opened by type
     expect(
       container.read(networkFileSystemOpenersProvider).keys.toSet(),
-      NetworkSourceType.values.toSet()..remove(NetworkSourceType.ipCamera),
+      NetworkSourceType.values.toSet()
+        ..remove(NetworkSourceType.ipCamera)
+        ..remove(NetworkSourceType.phoneRelay),
     );
   });
 
@@ -200,6 +203,29 @@ void main() {
       expect(second, isNot(same(first)));
       expect((second as FakeFileSystem).password, 'new-password');
       expect(bridge.registered[smbSource.id], same(second));
+    });
+
+    test('keeps a connection handed over open (an item a phone sends, release 53), until it is closed', () async {
+      final container = await withSources();
+      final connections = container.read(networkConnectionsProvider);
+      const relayed = NetworkSource(
+        id: 'tree:relay-00112233445566778899aabbccddeeff',
+        type: NetworkSourceType.phoneRelay,
+        name: 'Pixel',
+        host: '192.168.1.42',
+      );
+      final fileSystem = FakeFileSystem(relayed);
+      await connections.adopt(fileSystem);
+      expect(connections.opened(relayed.id), same(fileSystem));
+      expect(await connections.fileSystem(relayed.id), same(fileSystem));
+      expect(bridge.registered[relayed.id], same(fileSystem));
+      expect(opened, isEmpty, reason: 'never opened by its type');
+
+      await connections.close(relayed.id);
+      expect(fileSystem.closed, isTrue);
+      expect(bridge.registered, isEmpty);
+      // Gone for good: no client opens one of this type
+      await expectLater(connections.fileSystem(relayed.id), throwsA(isA<NetworkFileSystemException>()));
     });
 
     test('drops a connection closed while it was opening', () async {

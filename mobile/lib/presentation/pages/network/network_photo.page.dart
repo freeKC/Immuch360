@@ -29,6 +29,7 @@ import 'package:immich_mobile/domain/services/spherical_probe.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/relief_button.dart';
 import 'package:immich_mobile/presentation/widgets/ai_immersive/scene_button.dart';
@@ -256,7 +257,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
   /// turn the camera rather than the picture, or hold their eyes or their scene where they are.
   bool get _canRotate {
     final info = _info;
+    // An item a phone sends from its relay: nothing of it is kept here, its turns neither
     return info != null &&
+        !isPlayRelaySource(widget.sourceId) &&
         !info.is360 &&
         info.stereoPair == null &&
         info.stereoPhoto == null &&
@@ -609,7 +612,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final isHorizonOs = ref.watch(isHorizonOsProvider).valueOrNull ?? false;
     // A TV is a viewer: nothing is sent from it
     final tvMode = ref.watch(tvModeProvider);
-    final canUpload = !tvMode && ref.watch(hasServerProvider);
+    // An item a phone sends from its relay (release 53) is shown, never kept on this device
+    final relayed = isPlayRelaySource(widget.sourceId);
+    final canUpload = !tvMode && !relayed && ref.watch(hasServerProvider);
     final isUploading = ref.watch(networkUploadProvider.select((upload) => upload.isRunning));
     // The page covers the screen, under the app bar too: from the menu, Left would land on it rather than on the Back
     // button. Out of the directional moves while the app bar has the focus (set here, not while the focus changes);
@@ -623,7 +628,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
     final turns = current == null ? 0 : _turnsOf(current);
     // Immuch360 Desktop: "Make 3D (AI)" in the menu, as for a photo of the library
     // (lib/desktop/ai/ui/share_conversion.dart)
-    final makeImmersive = CurrentPlatform.isDesktop && current != null && !tvMode
+    final makeImmersive = CurrentPlatform.isDesktop && current != null && !tvMode && !relayed
         ? watchShareMakeImmersive(
             ref,
             context.t,
@@ -634,7 +639,9 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
           )
         : null;
     // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
-    final reliefGate = isHorizonOs && current != null && _canRotate ? ref.watch(reliefGateProvider) : ReliefGate.hidden;
+    final reliefGate = isHorizonOs && current != null && _canRotate && !relayed
+        ? ref.watch(reliefGateProvider)
+        : ReliefGate.hidden;
     // The view a relief first shows in, read with the gate: a page without the button reads no setting
     final reliefMode = reliefGate.visible
         ? ref.watch(appConfigProvider.select((config) => config.aiImmersive.questMode))
@@ -799,7 +806,7 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                     ),
                   // Immuch360 Desktop: the versions of the photo on its share, and its original for a version
                   // (lib/desktop/ai/library/share_versions_button.dart)
-                  if (CurrentPlatform.isDesktop && photo != null)
+                  if (CurrentPlatform.isDesktop && photo != null && !relayed)
                     DesktopShareVersionsButton(
                       key: ValueKey('versions:${photo.entry.path}'),
                       entry: photo.entry,

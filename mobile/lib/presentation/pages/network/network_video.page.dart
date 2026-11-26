@@ -43,6 +43,7 @@ import 'package:immich_mobile/domain/services/video_link_rule.dart';
 import 'package:immich_mobile/domain/services/video_watch_recorder.dart';
 import 'package:immich_mobile/extensions/platform_extensions.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_streams.dart';
 import 'package:immich_mobile/infrastructure/network/plex/plex_film_versions.dart';
@@ -2060,7 +2061,8 @@ class NetworkVideoPageState extends ConsumerState<NetworkVideoPage> with Widgets
         !tvMode && isHorizonOs == false && ref.watch(appConfigProvider.select((c) => c.viewer.spatial25d));
     // The flat 3D videos told by their file name on a Meta Quest, experimental and on by default (Settings, Advanced)
     final flat3dByName = isHorizonOs == true && ref.watch(appConfigProvider.select((c) => c.viewer.flat3dByName));
-    final canUpload = !tvMode && ref.watch(hasServerProvider);
+    // An item a phone sends from its relay (release 53) is shown, never kept on this device
+    final canUpload = !tvMode && !isPlayRelaySource(widget.sourceId) && ref.watch(hasServerProvider);
     final canPlayOn = !tvMode && isHorizonOs == false && !CurrentPlatform.isDesktop;
     // The player of a film, on a build with libmpv (the Meta Quest build of release 46): Automatic, Device or mpv
     final canChoosePlayer = !CurrentPlatform.isDesktop && (ref.watch(androidMpvAvailableProvider).valueOrNull ?? false);
