@@ -144,6 +144,7 @@ void main() {
     late MemoryShare share;
     late TestMediaServer server;
     late List<(String, SpatialPhoto)> opened;
+    late List<ImageProvider> images;
     HttpOverrides? previousOverrides;
 
     setUpAll(() async {
@@ -175,6 +176,7 @@ void main() {
       );
       server.share = share;
       opened = [];
+      images = [];
       PaintingBinding.instance.imageCache
         ..clear()
         ..clearLiveImages();
@@ -217,7 +219,10 @@ void main() {
           networkThumbnailImageProvider.overrideWithValue(_PendingImage.new),
           if (ai.isEmpty) aiFeaturesEnabledProvider.overrideWith((ref) => false),
           ...ai,
-          spatialSharePhotoOpenerProvider.overrideWithValue((context, image, name, photo) => opened.add((name, photo))),
+          spatialSharePhotoOpenerProvider.overrideWithValue((context, image, name, photo) {
+            images.add(image);
+            opened.add((name, photo));
+          }),
         ],
       );
     }
@@ -237,6 +242,12 @@ void main() {
         await tester.tap(button);
         await tester.pump();
         expect(opened, [('salon_LR.jpg', (layout: _sbs, estimatedRelief: false))]);
+        // The picture the page shows, from the image cache: no second download nor decode, the same 4096 px cap
+        expect(
+          find.byWidgetPredicate((widget) => widget is Image && widget.image == images.single),
+          findsWidgets,
+          reason: 'the 2.5D page gets the provider of the photo shown',
+        );
         await endRealIo(tester);
       });
     });

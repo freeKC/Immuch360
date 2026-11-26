@@ -15,6 +15,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/share_publisher.dart'
+    show shareFolderChangeKey, shareFolderChangesProvider;
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/desktop/network/share_writer.dart' show sharePathIn;
@@ -87,8 +89,9 @@ SpatialPhoto? spatialPhotoOf(WidgetRef ref, BaseAsset asset) {
 
 /// What the 2.5D page opens the photo of a share named [name] with, from [info], what the page read of its file: null
 /// until it was read, and for a photo it does not take (see the top of this file). Two eyes side by side are those the
-/// probe told; for a file whose frame the probe could not read (a HEIF, an AVIF, a TIFF), they are told by the name and
-/// [decoded], the size the page decoded the photo at (scaled down, with its aspect ratio). The switch is the caller's.
+/// probe told; for any file the probe told no two eyes of (meant for those whose frame it could not read: a HEIF, an
+/// AVIF, a TIFF), they are told again by the name and [decoded], the size the page decoded the photo at (scaled down,
+/// with its aspect ratio), without our XMP. The switch is the caller's.
 SpatialPhoto? spatialPhotoOfShareFile(String name, NetworkMediaInfo? info, {Size? decoded}) {
   // The desktop viewer does not read the second eye of an Apple spatial photo; a 3D scene has its own page
   if (info == null || info.stereoPair != null || info.scene != null) {
@@ -237,12 +240,16 @@ Future<void> runLibrarySpatialConversion(BuildContext context, WidgetRef ref, Ba
 );
 
 /// The 3D photo made by AI from the photo of a share at [entry] among the files of its folder ([neighbours], those the
-/// browser read, else its folder is listed), as the Versions of its page find them; replaced in the tests
+/// browser read, else its folder is listed), as the Versions of its page find them; replaced in the tests. Once a
+/// version was put in that folder (shareFolderChangesProvider), the browser's files are out of date: the folder is
+/// listed again, so that the 3D photo just made opens at the next press instead of being made a second time.
 final spatialMadeVersionOfShareProvider =
     Provider<Future<ShareVersion?> Function(NetworkEntry entry, List<NetworkEntry>? neighbours)>(
       (ref) => (entry, neighbours) async {
+        final folder = shareFolderOf(entry.path);
+        final changed = ref.read(shareFolderChangesProvider)[shareFolderChangeKey(entry.sourceId, folder)] != null;
         final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(entry.sourceId);
-        final listed = neighbours ?? await fileSystem.list(shareFolderOf(entry.path));
+        final listed = (changed ? null : neighbours) ?? await fileSystem.list(folder);
         final versions = await findShareVersions(
           entry,
           listed,
@@ -279,17 +286,26 @@ Future<void> runShareSpatialConversion(
       );
     },
     launch: () => ref.read(spatialConversionLauncherProvider)(context, shareFiles: [entry]),
-    // The version the job found is in the folder of the photo on its share
-    existing: (path) async {
-      final file = NetworkEntry(
-        sourceId: entry.sourceId,
-        path: sharePathIn(shareFolderOf(entry.path), p.basename(path)),
-        isDirectory: false,
-      );
-      return imageOf(await connections.mediaUrl(file.sourceId, file.path), file);
-    },
+    existing: (path) => spatialShareExistingImage(entry, path, mediaUrl: connections.mediaUrl, imageOf: imageOf),
     open: (photo) => openSpatialMadePhoto(context, ref, photo),
   );
+}
+
+/// The picture of the version at [path] a job of the photo of a share at [entry] was skipped for: a file of this
+/// computer when the queue found it here (the folder of my choice, the library, where it looks first), else the file of
+/// that name in the folder of the photo on its share, through [mediaUrl] and [imageOf]
+Future<ImageProvider?> spatialShareExistingImage(
+  NetworkEntry entry,
+  String path, {
+  required Future<Uri> Function(String sourceId, String path) mediaUrl,
+  required ImageProvider Function(Uri url, NetworkEntry file) imageOf,
+}) async {
+  final folder = shareFolderOf(entry.path);
+  if (!p.equals(p.dirname(path), folder) && File(path).existsSync()) {
+    return spatialCappedImage(FileImage(File(path)));
+  }
+  final file = NetworkEntry(sourceId: entry.sourceId, path: sharePathIn(folder, p.basename(path)), isDirectory: false);
+  return imageOf(await mediaUrl(file.sourceId, file.path), file);
 }
 
 /// "Spatial 2.5D" in the top bar of the viewer of a computer, on a 3D photo, and on a plain photo whose 3D photo this
