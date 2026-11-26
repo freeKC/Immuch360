@@ -49,6 +49,8 @@ import app.alextran.immich.permission.PermissionApiImpl
 import app.alextran.immich.phoneshare.PhoneShareApi
 import app.alextran.immich.phoneshare.PhoneShareApiImpl
 import app.alextran.immich.phoneshare.PhoneShareService
+import app.alextran.immich.playrelay.PlayRelayChannel
+import app.alextran.immich.playrelay.PlayRelayService
 import app.alextran.immich.review.StoreReviewApi
 import app.alextran.immich.review.StoreReviewApiImpl
 import app.alextran.immich.spatial.SpatialVideoApi
@@ -91,6 +93,7 @@ class MainActivity : FlutterFragmentActivity() {
     SplatViewerApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     // "Play from a phone" closes the 360° player or the immersive viewer before it shows a phone's next item
     NativeViewersChannel.attach(flutterEngine.dartExecutor.binaryMessenger)
+    PlayRelayChannel.attach(this, flutterEngine.dartExecutor.binaryMessenger)
     // The Stop action of the phone share notification, for the engine that runs the share
     PhoneShareApiImpl.attachEvents(flutterEngine.dartExecutor.binaryMessenger)
     val messenger = flutterEngine.dartExecutor.binaryMessenger
@@ -150,6 +153,7 @@ class MainActivity : FlutterFragmentActivity() {
     ImmersiveApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     SplatViewerApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     NativeViewersChannel.detach(flutterEngine.dartExecutor.binaryMessenger)
+    PlayRelayChannel.detach(flutterEngine.dartExecutor.binaryMessenger)
     PhoneShareApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
     FilmDownloadApi.setUp(flutterEngine.dartExecutor.binaryMessenger, null)
     FilmDownloadApiImpl.detachEvents(flutterEngine.dartExecutor.binaryMessenger)
@@ -170,6 +174,8 @@ class MainActivity : FlutterFragmentActivity() {
     // The app is closed: the phone share served from its engine is gone, its foreground service must not stay
     if (isFinishing) {
       PhoneShareService.stop(this)
+      // Nor the relay of "Play on…", served from the same engine
+      PlayRelayService.stop(this)
     }
     super.onDestroy()
   }

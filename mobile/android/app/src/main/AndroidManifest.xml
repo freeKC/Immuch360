@@ -91,6 +91,13 @@
       android:exported="false"
       android:foregroundServiceType="connectedDevice" />
 
+    <!-- "Play on…" sending a photo or a video of this phone to a linked screen, started by the app only while its relay
+         serves one, see playrelay/PlayRelayService.kt -->
+    <service
+      android:name=".playrelay.PlayRelayService"
+      android:exported="false"
+      android:foregroundServiceType="connectedDevice" />
+
     <!-- Download of a Plex film: keeps the Dart copy running while the screen is off, with a notification that tells
          the progress and offers Pause and Cancel. Started by the app only, see filmdownload/FilmDownloadService.kt; it
          never sees the address of the server nor its token -->
