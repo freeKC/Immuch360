@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 import 'package:immich_mobile/domain/models/rate_app.dart';
 import 'package:immich_mobile/domain/services/immersive_navigation.service.dart';
 import 'package:immich_mobile/domain/services/rate_app.service.dart';
@@ -123,6 +124,7 @@ class ImmersiveSession implements ImmersiveEvents {
     this.searchDeadline = immersiveSearchDeadline,
     this.onStabilizationChanged,
     this.onReliefSettingsChanged,
+    this.onSlideshowLookChanged,
   });
 
   /// Longest a request for another media is answered in, see [immersiveSearchDeadline]
@@ -134,6 +136,10 @@ class ImmersiveSession implements ImmersiveEvents {
   /// Stores the relief strength and the first view the user chose on a relief in the viewer, the settings of the app
   /// (see [reliefSettingsChanged]); [mode] null leaves the first view as it is
   final Future<void> Function(ReliefStrength strength, ReliefViewMode? mode)? onReliefSettingsChanged;
+
+  /// Stores the background and the transition of the photos of a flat screen chosen on the panel of the viewer, the
+  /// settings of the app (see [slideshowLookChanged])
+  final Future<void> Function(SlideshowBackground background, SlideshowTransition transition)? onSlideshowLookChanged;
 
   // What to do once the media the viewer shows goes away: another media, the viewer closed or not opened
   final _onMediaGone = <void Function()>[];
@@ -326,6 +332,23 @@ class ImmersiveSession implements ImmersiveEvents {
   }
 
   @override
+  void slideshowLookChanged(int openingId, String background, String transition) {
+    // The press was the user's, whichever opening it came from. A name this build does not know changes nothing
+    final chosenBackground = HeadsetSlideshowLook.backgroundNamed(background);
+    final chosenTransition = HeadsetSlideshowLook.transitionNamed(transition);
+    _log.info('Slideshow look chosen in the immersive viewer of opening $openingId: $background, $transition');
+    final store = onSlideshowLookChanged;
+    if (store == null || chosenBackground == null || chosenTransition == null) {
+      return;
+    }
+    unawaited(
+      store(chosenBackground, chosenTransition).catchError((Object error, StackTrace stackTrace) {
+        _log.warning('Could not store the slideshow background and transition', error, stackTrace);
+      }),
+    );
+  }
+
+  @override
   void progress(int openingId, String url, int positionMs, int durationMs) {
     if (!isCurrent(openingId)) {
       // A viewer gone already: what it played was told before its closing
@@ -353,6 +376,12 @@ final immersiveSessionProvider = Provider<ImmersiveSession>((ref) {
       if (mode != null) {
         await SettingsRepository.instance.write(.aiReliefQuestMode, mode);
       }
+    },
+    // The background and the transition chosen on the panel are those of Settings, Advanced: the next openings start
+    // from them
+    onSlideshowLookChanged: (background, transition) async {
+      await SettingsRepository.instance.write(.viewerSlideshowBackground, background);
+      await SettingsRepository.instance.write(.viewerSlideshowTransition, transition);
     },
   );
   ImmersiveEvents.setUp(session);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_cache.dart';
 import 'package:immich_mobile/infrastructure/wikipedia/wikipedia_film_client.dart';
@@ -19,6 +20,7 @@ import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/tv.provider.dart';
 import 'package:immich_mobile/providers/wikipedia.provider.dart';
 import 'package:immich_mobile/widgets/settings/advanced_settings.dart';
+import 'package:immich_ui/immich_ui.dart';
 
 import '../../presentation/pages/drone/dji_link_fakes.dart';
 import '../../presentation/widgets/ai_immersive/fake_ai_components_service.dart';
@@ -280,11 +282,18 @@ void main() {
     });
   });
 
-  group('Frosted background behind photos (experimental, issue 19)', () {
-    final frostedSwitch = find.descendant(
-      of: find.byKey(const Key('advanced_settings_frosted_screens')),
-      matching: find.byType(SwitchListTile),
-    );
+  group('Background and transition of the photos in the headset (issue 19)', () {
+    final backgroundGroup = find.byKey(const Key('advanced_settings_slideshow_background'));
+    final transitionGroup = find.byKey(const Key('advanced_settings_slideshow_transition'));
+
+    Finder choice(Finder group, String title) => find.descendant(of: group, matching: find.text(title));
+
+    Future<void> pick(WidgetTester tester, Finder group, String title) async {
+      await tester.ensureVisible(choice(group, title));
+      await tester.pumpAndSettle();
+      await tester.tap(choice(group, title));
+      await tester.pumpAndSettle();
+    }
 
     Future<void> pumpOnQuest(WidgetTester tester) async {
       await tester.pumpTestWidget(
@@ -296,34 +305,46 @@ void main() {
           aiComponentsServiceProvider.overrideWithValue(FakeAiComponentsService()),
         ],
       );
-      await tester.scrollUntilVisible(frostedSwitch, 100, scrollable: find.byType(Scrollable).first);
-      await tester.ensureVisible(frostedSwitch);
+      await tester.scrollUntilVisible(transitionGroup, 100, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(transitionGroup);
       await tester.pumpAndSettle();
     }
 
-    testWidgets('reads on by default, next to Sharper flat screens, and says what it does', (tester) async {
+    T groupValue<T>(WidgetTester tester, Finder group) => tester.widget<SettingsRadioListTile<T>>(group).groupBy;
+
+    testWidgets('reads Blurred photo and Cross fade by default, and says what they do', (tester) async {
       await pumpOnQuest(tester);
 
-      expect(find.text('Frosted background behind photos'), findsOneWidget);
-      expect(
-        find.text('A blurred copy of the photo fills the frame around it on the big screen of the headset'),
-        findsOneWidget,
-      );
-      expect(tester.widget<SwitchListTile>(frostedSwitch).value, isTrue);
-      expect(SettingsRepository.instance.appConfig.viewer.frostedFlatScreens, isTrue);
+      expect(find.text('Background of the photos in the headset'), findsOneWidget);
+      expect(find.text('Transition between photos in the headset'), findsOneWidget);
+      for (final title in ['Black', 'Blurred photo', 'Your room']) {
+        expect(find.descendant(of: backgroundGroup, matching: find.text(title)), findsOneWidget);
+      }
+      for (final title in ['None', 'Cross fade', 'Slide']) {
+        expect(find.descendant(of: transitionGroup, matching: find.text(title)), findsOneWidget);
+      }
+      expect(groupValue<SlideshowBackground>(tester, backgroundGroup), SlideshowBackground.blurred);
+      expect(groupValue<SlideshowTransition>(tester, transitionGroup), SlideshowTransition.crossFade);
+      expect(SettingsRepository.instance.appConfig.viewer.slideshowBackground, isNull);
     });
 
-    testWidgets('turns off and on again', (tester) async {
+    testWidgets('keeps the choice of the frosted switch of build 49 until a background is picked', (tester) async {
+      await SettingsRepository.instance.write(.viewerFrostedFlatScreens, false);
       await pumpOnQuest(tester);
 
-      await tester.tap(frostedSwitch);
-      await tester.pumpAndSettle();
-      expect(tester.widget<SwitchListTile>(frostedSwitch).value, isFalse);
-      expect(SettingsRepository.instance.appConfig.viewer.frostedFlatScreens, isFalse);
+      expect(groupValue<SlideshowBackground>(tester, backgroundGroup), SlideshowBackground.black);
+    });
 
-      await tester.tap(frostedSwitch);
-      await tester.pumpAndSettle();
-      expect(SettingsRepository.instance.appConfig.viewer.frostedFlatScreens, isTrue);
+    testWidgets('stores the background and the transition picked', (tester) async {
+      await pumpOnQuest(tester);
+
+      await pick(tester, backgroundGroup, 'Your room');
+      expect(SettingsRepository.instance.appConfig.viewer.slideshowBackground, SlideshowBackground.passthrough);
+      expect(groupValue<SlideshowBackground>(tester, backgroundGroup), SlideshowBackground.passthrough);
+
+      await pick(tester, transitionGroup, 'Slide');
+      expect(SettingsRepository.instance.appConfig.viewer.slideshowTransition, SlideshowTransition.slide);
+      expect(groupValue<SlideshowTransition>(tester, transitionGroup), SlideshowTransition.slide);
     });
 
     testWidgets('is not offered on a phone, which has no immersive viewer', (tester) async {
@@ -333,6 +354,8 @@ void main() {
         overrides: [isHorizonOsProvider.overrideWith((ref) => false)],
       );
 
+      expect(backgroundGroup, findsNothing);
+      expect(transitionGroup, findsNothing);
       expect(find.byKey(const Key('advanced_settings_frosted_screens')), findsNothing);
     });
   });

@@ -21,6 +21,7 @@ import 'package:immich_mobile/domain/models/config/theme_config.dart';
 import 'package:immich_mobile/domain/models/config/timeline_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/film_player_preference.dart';
+import 'package:immich_mobile/domain/models/headset_slideshow_look.dart';
 import 'package:immich_mobile/domain/models/log.model.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
 import 'package:immich_mobile/domain/models/timeline.model.dart';
@@ -92,6 +93,8 @@ abstract class AppConfig with _$AppConfig {
             .viewerFlat3dByName => viewer.flat3dByName,
             .viewerSharpFlatScreens => viewer.sharpFlatScreens,
             .viewerFrostedFlatScreens => viewer.frostedFlatScreens,
+            .viewerSlideshowBackground => viewer.slideshowBackground,
+            .viewerSlideshowTransition => viewer.slideshowTransition,
             .viewerGaussianSplats => viewer.gaussianSplats,
             .viewerLargeSplats => viewer.largeSplats,
             .viewerHighPerformanceGpu => viewer.highPerformanceGpu,
@@ -185,6 +188,12 @@ abstract class AppConfig with _$AppConfig {
       .viewerFlat3dByName => copyWith(viewer: viewer.copyWith(flat3dByName: value as bool)),
       .viewerSharpFlatScreens => copyWith(viewer: viewer.copyWith(sharpFlatScreens: value as bool)),
       .viewerFrostedFlatScreens => copyWith(viewer: viewer.copyWith(frostedFlatScreens: value as bool)),
+      .viewerSlideshowBackground => copyWith(
+        viewer: viewer.copyWith(slideshowBackground: value as SlideshowBackground?),
+      ),
+      .viewerSlideshowTransition => copyWith(
+        viewer: viewer.copyWith(slideshowTransition: value as SlideshowTransition),
+      ),
       .viewerGaussianSplats => copyWith(viewer: viewer.copyWith(gaussianSplats: value as bool)),
       .viewerLargeSplats => copyWith(viewer: viewer.copyWith(largeSplats: value as bool)),
       .viewerHighPerformanceGpu => copyWith(viewer: viewer.copyWith(highPerformanceGpu: value as bool)),

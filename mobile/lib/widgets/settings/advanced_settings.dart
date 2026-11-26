@@ -30,6 +30,7 @@ import 'package:immich_mobile/utils/bytes_units.dart';
 import 'package:immich_mobile/utils/hooks/app_settings_update_hook.dart';
 import 'package:immich_mobile/widgets/settings/custom_proxy_headers_settings/custom_proxy_headers_settings.dart';
 import 'package:immich_mobile/widgets/settings/film_player_settings.dart';
+import 'package:immich_mobile/widgets/settings/slideshow_look_settings.dart';
 import 'package:immich_mobile/widgets/settings/ssl_client_cert_settings.dart';
 import 'package:immich_ui/immich_ui.dart';
 import 'package:logging/logging.dart';
@@ -90,12 +91,6 @@ class AdvancedSettings extends HookConsumerWidget {
     final sharpFlatScreens = useState(ref.watch(appConfigProvider).viewer.sharpFlatScreens);
     useValueChanged<bool, void>(sharpFlatScreens.value, (_, _) {
       unawaited(ref.read(settingsProvider).write(.viewerSharpFlatScreens, sharpFlatScreens.value));
-    });
-    // The blurred copy of a photo around it on the flat screens of the immersive viewer of a Meta Quest (issue 19),
-    // experimental and on by default
-    final frostedFlatScreens = useState(ref.watch(appConfigProvider).viewer.frostedFlatScreens);
-    useValueChanged<bool, void>(frostedFlatScreens.value, (_, _) {
-      unawaited(ref.read(settingsProvider).write(.viewerFrostedFlatScreens, frostedFlatScreens.value));
     });
     // The Gaussian splat files of other tools in the immersive viewer of a Meta Quest 3 or 3S, experimental and on by
     // default, and the larger count of Large splats (1 000 000 instead of 300 000), off by default (decision D7)
@@ -248,13 +243,9 @@ class AdvancedSettings extends HookConsumerWidget {
           title: context.t.setting_immersive_sharp_screens_title,
           subtitle: context.t.setting_immersive_sharp_screens_subtitle,
         ),
-      if (isHorizonOs)
-        SettingsSwitchListTile(
-          key: const Key('advanced_settings_frosted_screens'),
-          valueNotifier: frostedFlatScreens,
-          title: context.t.advanced_settings_frosted_flat_screens_title,
-          subtitle: context.t.advanced_settings_frosted_flat_screens_subtitle,
-        ),
+      // The background and the transition of the photos of a flat screen of the immersive viewer (issue 19), in place
+      // of the switch of the frosted background of build 49
+      if (isHorizonOs) const SlideshowLookSettings(),
       if (splatsInThisBuild)
         SettingsSwitchListTile(
           key: const Key('advanced_settings_gaussian_splats'),
