@@ -1740,6 +1740,15 @@ jobs:
             test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/spatial_photo_head_native_test.dart \
             --reporter expanded
 
+      # The Spatial 2.5D passes of the video plugin in a built app (media_kit_360 patch 17, renderer C, here on WARP):
+      # a side by side clip of random dots with a nearer square, played then paused, its views at three viewpoints,
+      # the disparity map and a VR180 eye read through SpatialStats and its probe. flutter test builds the test as a
+      # debug app and runs it in a window
+      - name: The Spatial passes on a stereo clip in a built app (WARP)
+        working-directory: mobile
+        timeout-minutes: 20
+        run: flutter test integration_test/desktop_spatial_video_test.dart -d windows --reporter expanded
+
       # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
       # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
       # hosted runners have no graphics card, so what it found is printed, not asked for
@@ -2252,6 +2261,16 @@ jobs:
           path: first-start/
           retention-days: 14
           if-no-files-found: ignore
+
+      # The Spatial 2.5D passes of the video plugin in a built app (media_kit_360 patch 18, in Metal, here on the
+      # runner's paravirtual device): the checks of the Windows job, through the plugin's macOS code with mpv's real
+      # frames. Last of the job: its debug app has the bundle id of the app, which Launch Services must not pick for
+      # the first start above
+      - name: The Spatial passes on a stereo clip in a built app (Metal)
+        if: success()
+        working-directory: mobile
+        timeout-minutes: 25
+        run: mise exec -- flutter test integration_test/desktop_spatial_video_test.dart -d macos --reporter expanded
 
   # The desktop tests on macOS (lots L04 and L05 of the desktop parity plan, 21 November 2026), beside the build: until
   # release 51 they never ran on a Mac, the build job only compiled the app and started it. test/desktop on this arm64
