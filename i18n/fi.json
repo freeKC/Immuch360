@@ -4313,6 +4313,7 @@
   "sort_title": "Otsikko",
   "source": "Lähdekoodi",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: tekee ensin 3D-kuvan tekoälyllä ja avaa sen sitten",
   "spatial_2_5d_experimental_subtitle": "Stereoskooppiset videot saavat syvyyttä tasaisella näytöllä: näkymä seuraa päätäsi, jota seurataan etukameralla vain laitteella",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kameran käyttö estetty: siirrä katselukulmaa liukusäätimellä",

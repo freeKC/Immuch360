@@ -4488,6 +4488,7 @@
   "sort_title": "Judul",
   "source": "Sumber",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: membuat foto 3D dengan AI terlebih dahulu, lalu membukanya",
   "spatial_2_5d_experimental_subtitle": "Video stereoskopis mendapatkan kedalaman di layar datar: tampilan mengikuti kepala Anda, yang dilacak dengan kamera depan hanya di perangkat",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Akses kamera ditolak: gunakan penggeser untuk memindahkan sudut pandang",

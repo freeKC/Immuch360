@@ -4490,6 +4490,7 @@
   "sort_title": "Titel",
   "source": "Kilde",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: laver først 3D-billedet med AI og åbner det derefter",
   "spatial_2_5d_experimental_subtitle": "Stereoskopiske videoer får dybde på en flad skærm: visningen følger dit hoved, der spores med frontkameraet udelukkende på enheden",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kameraadgang nægtet: brug skyderen til at flytte synsvinklen",

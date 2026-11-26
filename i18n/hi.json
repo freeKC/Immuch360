@@ -4237,6 +4237,7 @@
   "sort_title": "शीर्षक",
   "source": "स्रोत",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: पहले AI से 3D फ़ोटो बनाता है, फिर उसे खोलता है",
   "spatial_2_5d_experimental_subtitle": "स्टीरियोस्कोपिक वीडियो सपाट स्क्रीन पर गहराई पाते हैं: दृश्य आपके सिर का अनुसरण करता है, जिसे केवल डिवाइस पर ही सामने वाले कैमरे से ट्रैक किया जाता है",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "कैमरा एक्सेस अस्वीकृत: दृष्टिकोण बदलने के लिए स्लाइडर का उपयोग करें",

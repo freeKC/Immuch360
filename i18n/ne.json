@@ -2388,6 +2388,7 @@
   "settings_file_wrong_passphrase": "गलत पासफ्रेज",
   "share_skipped_companions": "{count, plural, one {# प्रोक्सी वा उडान डेटा फाइल छाडियो} other {# प्रोक्सी वा उडान डेटा फाइलहरू छाडिए}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: पहिले AI ले 3D फोटो बनाउँछ, त्यसपछि यसलाई खोल्छ",
   "spatial_2_5d_experimental_subtitle": "स्टेरियोस्कोपिक भिडियोहरूले समतल स्क्रिनमा गहिराइ पाउँछन्: दृश्यले तपाईंको टाउकोलाई पछ्याउँछ, जुन यन्त्रमा मात्र अगाडिको क्यामेराले ट्र्याक गरिन्छ",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "क्यामेरा पहुँच अस्वीकार गरियो: दृष्टिकोण सार्न स्लाइडर प्रयोग गर्नुहोस्",

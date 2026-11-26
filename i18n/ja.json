@@ -4508,6 +4508,7 @@
   "sort_title": "タイトル",
   "source": "ソース",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: 先に AI で 3D 写真を作成してから開きます",
   "spatial_2_5d_experimental_subtitle": "ステレオ動画が平面の画面で奥行きを持ちます。視点は頭の動きに合わせて変わり、頭の位置はデバイス上でのみフロントカメラで追跡されます",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "カメラへのアクセスが拒否されました。スライダーで視点を動かしてください",

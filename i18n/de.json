@@ -4508,6 +4508,7 @@
   "sort_title": "Titel",
   "source": "Quelle",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: erstellt zuerst das 3D-Foto mit KI und öffnet es dann",
   "spatial_2_5d_experimental_subtitle": "Stereoskopische Videos erhalten Tiefe auf einem flachen Bildschirm: Die Ansicht folgt deinem Kopf, der nur auf dem Gerät mit der Frontkamera erfasst wird",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kamerazugriff verweigert: Verwende den Schieberegler, um den Blickwinkel zu verschieben",

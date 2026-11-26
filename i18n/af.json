@@ -2568,6 +2568,7 @@
   "settings_file_wrong_passphrase": "Verkeerde wagfrase",
   "share_skipped_companions": "{count, plural, one {# proksie- of vlugdatalêer oorgeslaan} other {# proksie- of vlugdatalêers oorgeslaan}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: maak eers die 3D-foto met KI en maak dit dan oop",
   "spatial_2_5d_experimental_subtitle": "Stereoskopiese video's kry diepte op 'n plat skerm: die aansig volg jou kop, wat slegs op die toestel met die voorkamera gevolg word",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kameratoegang geweier: gebruik die skuifbalk om die gesigspunt te skuif",

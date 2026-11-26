@@ -4470,6 +4470,7 @@
   "sort_title": "หัวข้อ",
   "source": "แหล่ง",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: สร้างภาพ 3D ด้วย AI ก่อน แล้วจึงเปิดภาพนั้น",
   "spatial_2_5d_experimental_subtitle": "วิดีโอสเตอริโอสโคปิกมีมิติความลึกบนหน้าจอแบน: มุมมองจะเคลื่อนตามศีรษะของคุณ ซึ่งติดตามด้วยกล้องหน้าบนอุปกรณ์เท่านั้น",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "การเข้าถึงกล้องถูกปฏิเสธ: ใช้แถบเลื่อนเพื่อย้ายมุมมอง",

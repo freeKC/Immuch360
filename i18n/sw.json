@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "Kaulisiri si sahihi",
   "share_skipped_companions": "{count, plural, one {Faili # ya proksi au data ya safari imerukwa} other {Faili # za proksi au data ya safari zimerukwa}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: kwanza hutengeneza picha ya 3D kwa AI, kisha huifungua",
   "spatial_2_5d_experimental_subtitle": "Video za stereo hupata kina kwenye skrini bapa: mwonekano unafuata kichwa chako, kinachofuatiliwa kwa kamera ya mbele kwenye kifaa pekee",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Ufikiaji wa kamera umekataliwa: tumia kitelezi kusogeza mahali pa kutazama",

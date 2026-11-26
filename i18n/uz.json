@@ -2379,6 +2379,7 @@
   "settings_file_wrong_passphrase": "Parol iborasi noto'g'ri",
   "share_skipped_companions": "{count, plural, one {# ta proksi yoki parvoz ma'lumotlari fayli o'tkazib yuborildi} other {# ta proksi yoki parvoz ma'lumotlari fayli o'tkazib yuborildi}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: avval SI yordamida 3D surat yaratadi, so'ng uni ochadi",
   "spatial_2_5d_experimental_subtitle": "Stereoskopik videolar tekis ekranda chuqurlik kasb etadi: koʻrinish boshingizni kuzatadi, u faqat qurilmada old kamera orqali kuzatiladi",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kameraga ruxsat rad etildi: koʻrish nuqtasini siljitish uchun slayderdan foydalaning",

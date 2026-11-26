@@ -4490,6 +4490,7 @@
   "sort_title": "Titlu",
   "source": "Sursă",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: creează mai întâi fotografia 3D cu IA, apoi o deschide",
   "spatial_2_5d_experimental_subtitle": "Videoclipurile stereoscopice capătă profunzime pe un ecran plat: imaginea vă urmărește capul, detectat cu camera frontală doar pe dispozitiv",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Acces la cameră refuzat: folosiți glisorul pentru a muta punctul de vedere",

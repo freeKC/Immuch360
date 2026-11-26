@@ -4508,6 +4508,7 @@
   "sort_title": "Títol",
   "source": "Codi font",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: primer crea la foto 3D amb la IA i després l’obre",
   "spatial_2_5d_experimental_subtitle": "Els vídeos estereoscòpics guanyen profunditat en una pantalla plana: la vista segueix el teu cap, detectat amb la càmera frontal només al dispositiu",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Accés a la càmera denegat: fes servir el control lliscant per moure el punt de vista",

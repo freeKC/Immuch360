@@ -4508,6 +4508,7 @@
   "sort_title": "Tytuł",
   "source": "Źródło",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: najpierw tworzy zdjęcie 3D za pomocą AI, a potem je otwiera",
   "spatial_2_5d_experimental_subtitle": "Filmy stereoskopowe zyskują głębię na płaskim ekranie: widok podąża za Twoją głową, śledzoną przednim aparatem wyłącznie na urządzeniu",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Odmówiono dostępu do aparatu: użyj suwaka, aby przesunąć punkt widzenia",

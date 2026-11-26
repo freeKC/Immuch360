@@ -4435,6 +4435,7 @@
   "sort_title": "Pavadinimas",
   "source": "Šaltinis",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: pirmiausia sukuria 3D nuotrauką su DI, tada ją atidaro",
   "spatial_2_5d_experimental_subtitle": "Stereoskopiniai vaizdo įrašai įgauna gylį plokščiame ekrane: vaizdas seka jūsų galvą, kuri sekama priekine kamera tik įrenginyje",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Prieiga prie kameros atmesta: naudokite slankiklį, kad pakeistumėte žiūrėjimo tašką",

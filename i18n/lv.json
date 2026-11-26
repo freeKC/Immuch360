@@ -4288,6 +4288,7 @@
   "sort_title": "Nosaukums",
   "source": "Pirmkods",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: vispirms ar MI izveido 3D fotoattēlu, pēc tam to atver",
   "spatial_2_5d_experimental_subtitle": "Stereoskopiski video iegūst dziļumu plakanā ekrānā: skats seko jūsu galvai, ko izseko priekšējā kamera tikai ierīcē",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Piekļuve kamerai liegta: izmantojiet slīdni, lai pārvietotu skatpunktu",

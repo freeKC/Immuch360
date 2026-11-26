@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "วลีรหัสผ่านบ่ถูกต้อง",
   "share_skipped_companions": "{count, plural, one {ข้ามไฟล์พร็อกซีหรือไฟล์ข้อมูลการบิน # ไฟล์} other {ข้ามไฟล์พร็อกซีหรือไฟล์ข้อมูลการบิน # ไฟล์}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: ทำรูป 3D ด้วย AI ก่อน แล้วเปิดมัน",
   "spatial_2_5d_experimental_subtitle": "วิดีโอสเตอริโอได้ความลึกบนจอแบน: มุมมองตามหัวของเจ้า ติดตามด้วยกล้องหน้าในเครื่องเท่านั้น",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "การเข้าถึงกล้องถูกปฏิเสธ: ใช้แถบเลื่อนเพื่อย้ายมุมมอง",

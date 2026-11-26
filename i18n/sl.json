@@ -4508,6 +4508,7 @@
   "sort_title": "Naslov",
   "source": "Vir",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: najprej z UI ustvari fotografijo 3D, nato jo odpre",
   "spatial_2_5d_experimental_subtitle": "Stereoskopski videoposnetki dobijo globino na ravnem zaslonu: pogled sledi vaši glavi, ki jo sprednja kamera spremlja samo v napravi",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Dostop do kamere zavrnjen: z drsnikom premaknite zorni kot",

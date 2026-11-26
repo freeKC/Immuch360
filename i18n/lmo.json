@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "Frase segreta sbagliada",
   "share_skipped_companions": "{count, plural, one {Saltaa # file proxy o de dati de vol} other {Saltaa # file proxy o de dati de vol}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: prima el fa la foto 3D cont l'IA, poeu el la derviss",
   "spatial_2_5d_experimental_subtitle": "I video stereoscopich ciapen profonditaa sora on schermo piatt: la vista la seguta la toa testa, tracciada cont la fotocamera frontal domà in sul dispositiv",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Access a la fotocamera negaa: dovra el cursor per mover el pont de vista",

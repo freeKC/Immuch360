@@ -2389,6 +2389,7 @@
   "settings_file_wrong_passphrase": "Құпия фраза қате",
   "share_skipped_companions": "{count, plural, one {# прокси не ұшу деректері файлы өткізілді} other {# прокси не ұшу деректері файлы өткізілді}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: алдымен ЖИ арқылы 3D фото жасайды, содан кейін оны ашады",
   "spatial_2_5d_experimental_subtitle": "Стереоскопиялық бейнелер жалпақ экранда тереңдікке ие болады: көрініс басыңызға ілеседі, ол тек құрылғыда алдыңғы камерамен бақыланады",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Камераға кіруге тыйым салынды: көру нүктесін жылжыту үшін сырғытпаны пайдаланыңыз",

@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "Tafyirt tuffirt ur telhi ara",
   "share_skipped_companions": "{count, plural, one {Yettwazgel # n ufaylu n upṛuksi neɣ n yisefka n uwafeg} other {Ttwazeglen # n yifuyla n upṛuksi neɣ n yisefka n uwafeg}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: ad d-yesnulfu qbel tawlaft 3D s AI, syen ad tt-yeldi",
   "spatial_2_5d_experimental_subtitle": "Tividyutin stiriyu ttawint-d tiɣmert ɣef ugdil amsawi: tamuɣli tettḍafar aqerru-ik, i d-yettwaḍefren s tkamirat n zdat deg yibenk kan",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Anekcum ɣer tkamirat yettwagi: seqdec afeggag i usenkez n tmuɣli",

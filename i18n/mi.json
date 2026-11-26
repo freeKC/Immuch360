@@ -2367,6 +2367,7 @@
   "settings_file_wrong_passphrase": "He hē te kīanga huna",
   "share_skipped_companions": "{count, plural, one {I pekehia te # kōnae takawaenga, raraunga rere rānei} other {I pekehia ngā kōnae takawaenga, raraunga rere rānei e #}}",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: ka hanga tuatahi i te whakaahua 3D mā te AI, kātahi ka whakatuwhera i a ia",
   "spatial_2_5d_experimental_subtitle": "Ka whiwhi hōhonutanga ngā ataata stereo i runga i te mata papatahi: ka whai te tirohanga i tō māhunga, ka arohia e te kāmera o mua i te pūrere anake",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Kua whakakāhoretia te uru ki te kāmera: whakamahia te rēreti hei neke i te tirohanga",

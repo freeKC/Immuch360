@@ -4508,6 +4508,7 @@
   "sort_title": "제목",
   "source": "소스",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: 먼저 AI로 3D 사진을 만든 다음 엽니다",
   "spatial_2_5d_experimental_subtitle": "스테레오 동영상이 평면 화면에서 입체감을 얻습니다: 시점이 머리를 따라 움직이며, 머리 위치는 기기에서만 전면 카메라로 추적됩니다",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "카메라 접근 거부됨: 슬라이더로 시점을 이동하세요",

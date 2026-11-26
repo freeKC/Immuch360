@@ -4508,6 +4508,7 @@
   "sort_title": "Titre",
   "source": "Source",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D : crée d'abord la photo 3D avec l'IA, puis l'ouvre",
   "spatial_2_5d_experimental_subtitle": "Les vidéos stéréoscopiques gagnent en profondeur sur un écran plat : la vue suit votre tête, détectée par la caméra frontale uniquement sur l'appareil",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Accès à la caméra refusé : utilisez le curseur pour déplacer le point de vue",

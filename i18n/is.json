@@ -3557,6 +3557,7 @@
   "share_skipped_companions": "{count, plural, one {Sleppti # staðgengilsskrá eða fluggagnaskrá} other {Sleppti # staðgengilsskrám eða fluggagnaskrám}}",
   "sharing": "Deiling",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: býr fyrst til 3D myndina með gervigreind og opnar hana svo",
   "spatial_2_5d_experimental_subtitle": "Steríómyndbönd fá dýpt á flötum skjá: sjónarhornið fylgir höfðinu þínu, sem er rakið með frammyndavélinni eingöngu á tækinu",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Aðgangi að myndavél hafnað: notaðu sleðann til að færa sjónarhornið",
