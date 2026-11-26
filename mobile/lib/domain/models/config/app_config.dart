@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:immich_mobile/constants/colors.dart';
 import 'package:immich_mobile/constants/enums.dart';
+import 'package:immich_mobile/desktop/spatial/viewer_position.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/relief_strength.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/stereo_pair_requests.dart';
 import 'package:immich_mobile/domain/models/config/ai_immersive_config.dart';
@@ -82,6 +83,9 @@ abstract class AppConfig with _$AppConfig {
             .viewerTapToNavigate => viewer.tapToNavigate,
             .viewerTvShowDateTime => viewer.tvShowDateTime,
             .viewerSpatial25d => viewer.spatial25d,
+            .viewerSpatialMoveWith => viewer.spatialMoveWith,
+            .viewerSpatialSensitivity => viewer.spatialSensitivity,
+            .viewerSpatialReverse => viewer.spatialReverse,
             .viewerStabilizeVideos => viewer.stabilizeVideos,
             .viewerPanoramaGyroscope => viewer.panoramaGyroscope,
             .viewerReverseThumbstickTurn => viewer.reverseThumbstickTurn,
@@ -169,6 +173,9 @@ abstract class AppConfig with _$AppConfig {
       .viewerTapToNavigate => copyWith(viewer: viewer.copyWith(tapToNavigate: value as bool)),
       .viewerTvShowDateTime => copyWith(viewer: viewer.copyWith(tvShowDateTime: value as bool)),
       .viewerSpatial25d => copyWith(viewer: viewer.copyWith(spatial25d: value as bool)),
+      .viewerSpatialMoveWith => copyWith(viewer: viewer.copyWith(spatialMoveWith: value as ViewerPositionKind?)),
+      .viewerSpatialSensitivity => copyWith(viewer: viewer.copyWith(spatialSensitivity: value as int)),
+      .viewerSpatialReverse => copyWith(viewer: viewer.copyWith(spatialReverse: value as bool)),
       .viewerStabilizeVideos => copyWith(viewer: viewer.copyWith(stabilizeVideos: value as bool)),
       .viewerPanoramaGyroscope => copyWith(viewer: viewer.copyWith(panoramaGyroscope: value as bool)),
       .viewerReverseThumbstickTurn => copyWith(viewer: viewer.copyWith(reverseThumbstickTurn: value as bool)),
