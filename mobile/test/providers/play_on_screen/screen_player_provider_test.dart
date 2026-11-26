@@ -23,6 +23,7 @@ import 'package:immich_mobile/infrastructure/repositories/store.repository.dart'
 import 'package:immich_mobile/presentation/widgets/play_on_screen/screen_player_prompts.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_native_viewers.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_player.provider.dart';
 
 import '../../test_utils.dart';
@@ -51,16 +52,50 @@ class _Prompts implements ScreenPlayerPrompts {
     return answer;
   }
 
+  /// What the Quest's user answers to a 360° item
+  ScreenSphereChoice? sphereAnswer = ScreenSphereChoice.window;
+  final askedSphere = <String>[];
+
+  @override
+  Future<ScreenSphereChoice?> askPlaySphere({required String phone, String? title, bool photo = false}) async {
+    askedSphere.add(phone);
+    return sphereAnswer;
+  }
+
   @override
   Future<bool> askHandover({
     required String phone,
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   }) async => false;
 
   @override
   void toast({required String from}) => toasts.add(from);
+}
+
+/// The app's 360° player and immersive viewer, as the sessions that open them know them
+class _Native implements ScreenNativeViewers {
+  @override
+  bool open = false;
+
+  /// On screen, rather than open in the background after Home or the Meta button
+  bool inFront = true;
+  int closes = 0;
+
+  @override
+  Future<NativeViewerPlace> place() async => !open
+      ? NativeViewerPlace.none
+      : inFront
+      ? NativeViewerPlace.front
+      : NativeViewerPlace.behind;
+
+  @override
+  Future<void> close() async {
+    closes++;
+    open = false;
+  }
 }
 
 const _asset = '3f2504e0-4f89-11d3-9a0c-0305e82c3301';
@@ -88,6 +123,22 @@ class _Immich implements ScreenImmichAccess {
 
   @override
   bool showing(String assetId) => shown && opened.contains(assetId);
+
+  /// Whether this screen has a 360° view for the asset
+  bool sphere = true;
+  final sphereOpened = <String>[];
+
+  @override
+  PageRouteInfo panoramaRouteOf(RemoteAsset asset) {
+    opened.add(asset.id);
+    return PageRouteInfo('PanoramaViewerRoute', args: [asset.id, 'panorama']);
+  }
+
+  @override
+  bool canSphere(RemoteAsset asset) => sphere;
+
+  @override
+  void openSphere(RemoteAsset asset) => sphereOpened.add(asset.id);
 }
 
 RemoteAsset _remote({AssetType type = AssetType.image, AssetVisibility visibility = AssetVisibility.timeline}) =>
@@ -129,6 +180,7 @@ void main() {
   late _Immich immich;
   late List<(String, bool)> routes;
   late int closed;
+  late _Native native;
 
   /// The page in front of the router: the last one a play opened, or one the screen's user opened
   late ScreenPlayerFront front;
@@ -155,10 +207,14 @@ void main() {
     immich = _Immich();
     routes = [];
     closed = 0;
+    native = _Native();
     front = (name: 'TabShellRoute', args: null);
     container = ProviderContainer(
       overrides: [
         screenImmichAccessProvider.overrideWithValue(immich),
+        screenNativeViewersProvider.overrideWithValue(native),
+        // No lookup of the network in the tests
+        playHostResolverProvider.overrideWithValue((_) async => null),
         screenPlayerOpenProvider.overrideWithValue((route, {required replace}) async {
           routes.add((route.routeName, replace));
           front = (name: route.routeName, args: route.args);
@@ -183,6 +239,8 @@ void main() {
             installId: () async => _screen.id,
             deviceName: () async => 'Living room TV',
             preferredPort: 0,
+            nativeViewer: native.place,
+            nativeViewerCheck: const Duration(milliseconds: 10),
           ),
         ),
       ],
@@ -241,6 +299,73 @@ void main() {
     container.read(playFromPhoneEnabledProvider.notifier).state = false;
     await settle();
     expect(container.read(screenPlayerProvider).listening, isFalse);
+  });
+
+  test(
+    'a 360° viewer of the app in front keeps it listening; once it closed without the window back, it stops',
+    () async {
+      await start();
+      native.open = true;
+      lifecycle.add(AppLifecycleState.hidden);
+      lifecycle.add(AppLifecycleState.paused);
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      expect(stopped, 0);
+      // Closed, and the window came back: nothing changes
+      native.open = false;
+      lifecycle.add(AppLifecycleState.resumed);
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      // Open again, then closed while the app stays in the background, the window not back
+      native.open = true;
+      lifecycle.add(AppLifecycleState.paused);
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      native.open = false;
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isFalse);
+      expect(stopped, 1);
+      lifecycle.add(AppLifecycleState.resumed);
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+    },
+  );
+
+  test(
+    'a 360° viewer sent to the background by Home stays open but stops the listener; back in front, it listens again',
+    () async {
+      await start();
+      native.open = true;
+      lifecycle.add(AppLifecycleState.hidden);
+      lifecycle.add(AppLifecycleState.paused);
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      // Home (Android TV) or the Meta button (Quest) in the viewer: stopped, not destroyed, so still open
+      native.inFront = false;
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isFalse);
+      expect(stopped, 1);
+      // Back to the viewer from Recents, the window still stopped under it
+      native.inFront = true;
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      // The viewer closed and the window came back
+      native.open = false;
+      lifecycle.add(AppLifecycleState.resumed);
+      await settle();
+      expect(container.read(screenPlayerProvider).listening, isTrue);
+      expect(stopped, 1);
+    },
+  );
+
+  test('a 360° viewer already in the background when the window stops never keeps the listener up', () async {
+    await start();
+    native.open = true;
+    native.inFront = false;
+    lifecycle.add(AppLifecycleState.paused);
+    await settle();
+    expect(container.read(screenPlayerProvider).listening, isFalse);
+    expect(stopped, 1);
   });
 
   test('removing the phone ends its session at once', () async {
@@ -464,6 +589,128 @@ void main() {
     });
   });
 
+  group('360° items', () {
+    Map<String, Object?> play({
+      PlayMedia media = PlayMedia.photo,
+      PlayProjection projection = PlayProjection.equirect,
+    }) => {
+      'type': 'play',
+      ...PlayItem.of(
+        ImmichPlayTarget(asset: _asset, user: _phoneUser, media: media, projection: projection),
+        title: 'PANO_0001.jpg',
+      ).toJson(),
+    };
+
+    test('a 360° photo opens in the 360° photo viewer of a TV, which Stop closes', () async {
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final answer = await connection.command(play());
+      expect(routes.single.$1, 'PanoramaViewerRoute');
+      expect(answer.state.sphere, isTrue);
+      final showing = await connection.status(after: answer.state.seq, wait: const Duration(seconds: 2));
+      expect(showing.phase, ScreenPlayPhase.showing);
+      expect(showing.sphere, isTrue);
+      final stopped = await connection.command({'type': 'stop'});
+      expect(closed, 1);
+      expect(stopped.state.phase, ScreenPlayPhase.idle);
+      expect(stopped.state.sphere, isFalse);
+    });
+
+    test('the same photo without the hint, or on a screen without a 360° view, opens in the asset viewer', () async {
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final flat = await connection.command(play(projection: PlayProjection.flat));
+      expect(routes.last.$1, 'AssetViewerRoute');
+      expect(flat.state.sphere, isFalse);
+      immich.sphere = false;
+      final video = await connection.command(play(media: PlayMedia.video));
+      expect(routes.last.$1, 'AssetViewerRoute');
+      expect(immich.sphereOpened, isEmpty);
+      expect(video.state.sphere, isFalse);
+    });
+
+    test('a 360° video on a TV: the asset viewer opens its 360° player; while that plays the phone reads a playing '
+        'sphere; the next item closes it first', () async {
+      immich.answer = (asset: _remote(type: AssetType.video), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final answer = await connection.command(play(media: PlayMedia.video));
+      expect(routes.single.$1, 'AssetViewerRoute');
+      expect(immich.sphereOpened, [_asset]);
+      native.open = true;
+      final playing = await connection.status(after: answer.state.seq, wait: const Duration(seconds: 2));
+      expect(playing.phase, ScreenPlayPhase.playing);
+      expect(playing.sphere, isTrue);
+      // The phone's next item: the 360° player goes, the asset viewer the play opened is replaced
+      immich.answer = (asset: _remote(), reason: null);
+      final next = await connection.command(play(projection: PlayProjection.flat));
+      expect(native.closes, 1);
+      expect(routes.last, ('AssetViewerRoute', true));
+      expect(next.state.sphere, isFalse);
+      expect(prompts.toasts, hasLength(1), reason: 'the next item of the same phone shows no new toast');
+    });
+
+    test('Stop closes the 360° player first', () async {
+      immich.answer = (asset: _remote(type: AssetType.video), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      await connection.command(play(media: PlayMedia.video));
+      native.open = true;
+      await connection.command({'type': 'stop'});
+      expect(native.closes, 1);
+    });
+
+    test('the Quest asks headset or window once for a phone\'s 360° items', () async {
+      kind = PairingScreenKind.headset;
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      // In the window: the 360° photo viewer of the window
+      final answer = await connection.command(play());
+      expect(prompts.askedSphere, ["Fred's Pixel"]);
+      expect(prompts.asked, isEmpty, reason: 'one question, not two');
+      expect(routes.single.$1, 'PanoramaViewerRoute');
+      expect(immich.sphereOpened, isEmpty);
+      await connection.status(after: answer.state.seq, wait: const Duration(seconds: 2));
+      // Its next 360° item: no question again
+      await connection.command(play());
+      expect(prompts.askedSphere, hasLength(1));
+      expect(routes.last, ('PanoramaViewerRoute', true));
+    });
+
+    test('In the headset: the asset viewer opens the immersive viewer, for a photo as for a video', () async {
+      kind = PairingScreenKind.headset;
+      prompts.sphereAnswer = ScreenSphereChoice.headset;
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final answer = await connection.command(play());
+      expect(routes.single.$1, 'AssetViewerRoute');
+      expect(immich.sphereOpened, [_asset]);
+      expect(answer.state.sphere, isTrue);
+      prompts.sphereAnswer = null;
+      // Not now on a new phone's first item ends it there
+      await connection.command({'type': 'stop'});
+      final declined = await connection.command(play(media: PlayMedia.video));
+      expect(declined.state.reason, ScreenPlayReason.declined);
+    });
+
+    test('a flat item of a phone on the Quest asks the usual question, then its first 360° item asks where', () async {
+      kind = PairingScreenKind.headset;
+      immich.answer = (asset: _remote(), reason: null);
+      final view = await start();
+      final connection = await connect(view.port!);
+      final answer = await connection.command(play(projection: PlayProjection.flat));
+      expect(prompts.asked, hasLength(1));
+      await connection.status(after: answer.state.seq, wait: const Duration(seconds: 2));
+      await connection.command(play());
+      expect(prompts.asked, hasLength(1));
+      expect(prompts.askedSphere, hasLength(1));
+    });
+  });
+
   group('shares and media servers', () {
     test('a share this screen does not have answers noSuchSource', () async {
       final view = await start();
@@ -483,6 +730,45 @@ void main() {
       });
       expect(jellyfin.state.reason, ScreenPlayReason.noSuchSource);
       expect(routes, isEmpty);
+    });
+
+    test('a share known by its address on one device and by its name on the other is the same share', () async {
+      NetworkSource share(
+        String host, {
+        String shareName = 'Videos',
+        int? port,
+        NetworkSourceType type = NetworkSourceType.smb,
+      }) => NetworkSource(id: host, type: type, name: 'NAS', host: host, port: port, share: shareName);
+      Future<String?> resolve(String host) async => switch (host) {
+        'nas.local' => '192.168.1.10',
+        'other.local' => '192.168.1.99',
+        'outside.example.org' => '203.0.113.5',
+        _ => null,
+      };
+      const byName = SharePlayTarget(type: PlayShareType.smb, source: 'nas.local/Videos', path: '/a.mp4');
+      // The screen knows it by its address: the address the phone found, or the one the screen finds for the name
+      for (final target in [
+        byName.withHostAddresses(['192.168.1.10']),
+        byName,
+      ]) {
+        expect((await matchPlayShareSource([share('192.168.1.10')], target, resolve: resolve))?.id, '192.168.1.10');
+      }
+      // The phone knows it by its address, the screen by its name
+      const byAddress = SharePlayTarget(type: PlayShareType.smb, source: '192.168.1.10/Videos', path: '/a.mp4');
+      expect((await matchPlayShareSource([share('NAS.local')], byAddress, resolve: resolve))?.id, 'NAS.local');
+      // Another machine, another share, another port, another protocol, an address outside home: none
+      expect(await matchPlayShareSource([share('other.local')], byAddress, resolve: resolve), isNull);
+      expect(
+        await matchPlayShareSource([share('192.168.1.10', shareName: 'Photos')], byName, resolve: resolve),
+        isNull,
+      );
+      expect(await matchPlayShareSource([share('192.168.1.10', port: 4450)], byName, resolve: resolve), isNull);
+      expect(
+        await matchPlayShareSource([share('192.168.1.10', type: NetworkSourceType.webdav)], byName, resolve: resolve),
+        isNull,
+      );
+      const outside = SharePlayTarget(type: PlayShareType.smb, source: 'outside.example.org/Videos', path: '/a.mp4');
+      expect(await matchPlayShareSource([share('203.0.113.5')], outside, resolve: resolve), isNull);
     });
 
     test('the identity of a share: the UDN of a DLNA server, else host, port and share', () {

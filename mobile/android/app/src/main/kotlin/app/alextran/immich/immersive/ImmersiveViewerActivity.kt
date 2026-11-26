@@ -7637,6 +7637,11 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
     }
   }
 
+  override fun onStart() {
+    super.onStart()
+    startedViewers++
+  }
+
   override fun onResume() {
     super.onResume()
     resumed = true
@@ -7656,6 +7661,7 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
   }
 
   override fun onStop() {
+    startedViewers = (startedViewers - 1).coerceAtLeast(0)
     // Closed by the system (not through Back): Flutter still learns which media was shown last and where it stopped
     if (isFinishing) {
       endNavigation()
@@ -7945,6 +7951,31 @@ class ImmersiveViewerActivity : AppSystemActivity(), ImmersiveInputSystem.Listen
      * one only clears the reference while it still points to itself.
      */
     @SuppressLint("StaticFieldLeak") private var liveViewer: ImmersiveViewerActivity? = null
+
+    /**
+     * Closes the viewer on screen, as Back does (a phone's next item or Stop on the headset, see NativeViewersChannel):
+     * onStop or onDestroy sends the closed event. False when no viewer is open. Main thread only.
+     */
+    fun closeLive(): Boolean {
+      val viewer = liveViewer ?: return false
+      if (viewer.isFinishing) return false
+      viewer.finish()
+      return true
+    }
+
+    /**
+     * Viewers between their onStart and their onStop, for [inFront]: a counter rather than a flag, so that a viewer
+     * stopping after the next one started never hides it. Main thread only.
+     */
+    private var startedViewers = 0
+
+    /**
+     * Whether a viewer is on screen, in front of the app's window ("inFront" of NativeViewersChannel). False once the
+     * Meta button or Home sent it to the background, even while it is not finishing: a headset then stops listening
+     * for phones.
+     */
+    val inFront: Boolean
+      get() = startedViewers > 0
 
     /**
      * Number of the last previous or next request. Counted for the whole process rather than per viewer, so that a

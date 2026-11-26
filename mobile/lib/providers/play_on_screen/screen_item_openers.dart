@@ -19,14 +19,18 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
+import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/extensions/asset_extensions.dart';
+import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/view_360.dart';
 import 'package:immich_mobile/providers/api.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/timeline.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_native_viewers.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_play_no_loop.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
@@ -49,6 +53,16 @@ abstract interface class ScreenImmichAccess {
 
   /// Whether the asset viewer shows the asset [assetId] now
   bool showing(String assetId);
+
+  /// The 360° photo viewer on [asset] alone (as the 360° button opens it)
+  PageRouteInfo panoramaRouteOf(RemoteAsset asset);
+
+  /// Whether this screen has a 360° view for [asset]: the 360° photo viewer for a photo; for a video the 360° player
+  /// where the platform has one, the immersive viewer on the Meta Quest
+  bool canSphere(RemoteAsset asset);
+
+  /// Asks the asset viewer that is about to show [asset] to open its 360° view (ScreenPlaySphereOpener)
+  void openSphere(RemoteAsset asset);
 }
 
 /// The reason a refusal of the screen's server gives, from who the phone is and where its server is
@@ -147,6 +161,16 @@ class AppScreenImmichAccess implements ScreenImmichAccess {
     final current = _ref.read(assetViewerProvider).currentAsset;
     return router.current.name == AssetViewerRoute.name && current is RemoteAsset && current.id == assetId;
   }
+
+  @override
+  PageRouteInfo panoramaRouteOf(RemoteAsset asset) => PanoramaViewerRoute(asset: asset);
+
+  @override
+  bool canSphere(RemoteAsset asset) => _ref.read(can360ViewProvider(asset));
+
+  @override
+  void openSphere(RemoteAsset asset) =>
+      _ref.read(screenPlaySphereRequestProvider.notifier).state = asset.id.toLowerCase();
 }
 
 final screenImmichAccessProvider = Provider<ScreenImmichAccess>(AppScreenImmichAccess.new);
@@ -179,6 +203,57 @@ PlayShareType? playShareTypeOf(NetworkSourceType type) => switch (type) {
 NetworkSource? findPlayShareSource(Iterable<NetworkSource> sources, SharePlayTarget target) => sources
     .where((source) => playShareTypeOf(source.type) == target.type && playShareSourceKey(source) == target.source)
     .firstOrNull;
+
+/// The IPv4 address a host name has on the home network, null when none answers: the lookup of the phone and of the
+/// screen (release 53), replaced in the tests
+final playHostResolverProvider = Provider<Future<String?> Function(String host)>((_) => lookupIPv4);
+
+/// The source of this screen [target] names (release 53): its identity as both devices write it, else a share of the
+/// same protocol, port and share on the same machine known by another name, an address on one device and a name on
+/// the other. The same machine is an address the phone found for its host, or the address this screen finds for
+/// either name with [resolve]: private IPv4 addresses only, compared, never a password.
+Future<NetworkSource?> matchPlayShareSource(
+  Iterable<NetworkSource> sources,
+  SharePlayTarget target, {
+  required Future<String?> Function(String host) resolve,
+}) async {
+  final exact = findPlayShareSource(sources, target);
+  final targetHost = target.host?.toLowerCase();
+  if (exact != null || targetHost == null) {
+    return exact;
+  }
+  final candidates = [
+    for (final source in sources)
+      if (playShareTypeOf(source.type) == target.type &&
+          (source.discoveryId == null || source.discoveryId!.isEmpty || source.type != NetworkSourceType.dlna))
+        if (playShareSourceKey(source) case final key?)
+          if (SharePlayTarget(type: target.type, source: key, path: '/').sourceWithoutHost == target.sourceWithoutHost)
+            source,
+  ];
+  if (candidates.isEmpty) {
+    return null;
+  }
+  Future<String?> addressOf(String host) async {
+    if (isPrivatePairingIPv4(host)) {
+      return host;
+    }
+    final found = await resolve(host).catchError((Object _) => null);
+    return found != null && isPrivatePairingIPv4(found) ? found : null;
+  }
+
+  final wanted = {...target.hostAddresses, ?await addressOf(targetHost)};
+  if (wanted.isEmpty) {
+    return null;
+  }
+  for (final source in candidates) {
+    final address = await addressOf(source.host.toLowerCase());
+    if (address != null && wanted.contains(address)) {
+      _log.info('Play from a phone: a share matched by its address');
+      return source;
+    }
+  }
+  return null;
+}
 
 /// The Jellyfin or Emby server of this screen [target] names
 NetworkSource? findPlayMediaServerSource(Iterable<NetworkSource> sources, MediaServerPlayTarget target) => sources

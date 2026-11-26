@@ -27,6 +27,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/infrastructure/repositories/network.repository.dart';
 import 'package:immich_mobile/pages/common/splash_screen.page.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/remote_play_dock.widget.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/screen_play_sign_in_completion.dart';
 import 'package:immich_mobile/presentation/widgets/tv/tv_shell.widget.dart';
 import 'package:immich_mobile/providers/app_life_cycle.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/share_intent_upload.provider.dart';
@@ -40,6 +41,7 @@ import 'package:immich_mobile/providers/locale_provider.dart';
 import 'package:immich_mobile/providers/network/film_downloads.provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
 import 'package:immich_mobile/providers/pairing/screen_pairing.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/screen_play_sign_in.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_player.provider.dart';
 import 'package:immich_mobile/providers/rate_app.provider.dart';
 import 'package:immich_mobile/providers/routes.provider.dart';
@@ -397,6 +399,13 @@ class ImmichAppState extends ConsumerState<ImmichApp> with WidgetsBindingObserve
     final router = ref.watch(appRouterProvider);
     final immichTheme = ref.watch(immichThemeProvider);
     final tvMode = ref.watch(tvModeProvider);
+    // A linked phone signed this screen in from "Play on…": the app leaves its sign in page, as after any sign in
+    ref.listen(screenPlaySignedInProvider, (_, signedIn) {
+      if (signedIn != null) {
+        ref.read(screenPlaySignedInProvider.notifier).state = null;
+        unawaited(completeScreenPlaySignIn(ref, signedIn));
+      }
+    });
 
     return ProviderScope(
       overrides: [localeProvider.overrideWithValue(context.locale)],

@@ -24,6 +24,7 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/rotate_button.wi
 import 'package:immich_mobile/presentation/widgets/asset_viewer/tv_zoom_button.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_bottom_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/viewer_top_app_bar.widget.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/screen_play_sphere_opener.dart';
 import 'package:immich_mobile/presentation/widgets/splat/splat_photo_button.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_keys.dart';
 import 'package:immich_mobile/presentation/widgets/tv/remote_seek_series.dart';
@@ -1011,6 +1012,8 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
         bottomNavigationBar: Focus(focusNode: _bottomBarFocus, child: const ViewerBottomAppBar()),
         body: Stack(
           children: [
+            // A phone's 360° item on a big screen: its 360° view, as the 360° button opens it (Play on, release 53)
+            const ScreenPlaySphereOpener(),
             NotificationListener<ScrollEndNotification>(
               onNotification: _onScrollEnd,
               child: PhotoViewGestureDetectorScope(

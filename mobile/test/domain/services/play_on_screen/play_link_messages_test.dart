@@ -203,6 +203,39 @@ void main() {
       expect(back.sameAs(state), isTrue);
     });
 
+    test('a 360° view of the screen goes as view: sphere, and never to another phone', () {
+      const state = ScreenPlayState(seq: 4, phase: ScreenPlayPhase.playing, media: PlayMedia.video, sphere: true);
+      expect(state.toJson()['view'], 'sphere');
+      expect(ScreenPlayState.fromJson(state.toJson()).sphere, isTrue);
+      expect(ScreenPlayState.fromJson({'seq': 1, 'phase': 'playing'}).sphere, isFalse);
+      expect(state.withoutItem().toJson().containsKey('view'), isFalse);
+      expect(state.sameAs(state.next(sphere: false)), isFalse);
+    });
+
+    test('a share carries the home addresses of its host, four at most, private IPv4 only', () {
+      const target = SharePlayTarget(type: PlayShareType.smb, source: 'nas.local:445/Videos', path: '/a.mp4');
+      expect(target.host, 'nas.local');
+      expect(target.sourceWithoutHost, ':445/Videos');
+      expect(
+        const SharePlayTarget(type: PlayShareType.webdav, source: '192.168.1.10/dav', path: '/a').host,
+        '192.168.1.10',
+      );
+      final json = {
+        ...target.withHostAddresses(['192.168.1.10']).toJson(),
+        'type': 'play',
+      };
+      expect((PlayTarget.fromJson(json)! as SharePlayTarget).hostAddresses, ['192.168.1.10']);
+      expect(target.toJson().containsKey('hostAddresses'), isFalse);
+      for (final bad in [
+        ['8.8.8.8'],
+        ['nas.local'],
+        ['192.168.1.1', '192.168.1.2', '192.168.1.3', '192.168.1.4', '192.168.1.5'],
+        '192.168.1.10',
+      ]) {
+        expect(PlayTarget.fromJson({...target.toJson(), 'hostAddresses': bad}), isNull, reason: '$bad');
+      }
+    });
+
     test('a state of build 51 gives its item as the key', () {
       final back = ScreenPlayState.fromJson({'seq': 1, 'phase': 'playing', 'server': 'abc', 'item': '42'});
       expect(back.key, '42');

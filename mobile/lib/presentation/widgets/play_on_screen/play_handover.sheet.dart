@@ -20,12 +20,52 @@ Future<bool> showPlayHandoverSheet(
     ) ??
     false;
 
+/// "Sign (screen) in?" (release 53): the check number, who the screen will be signed in as, and the warning of "Sign
+/// in with your phone", before a session of this phone's account goes to the screen. True when the user signs it in.
+Future<bool> showPlaySignInSheet(
+  BuildContext context, {
+  required String screen,
+  required String server,
+  required String user,
+  required String check,
+}) async =>
+    await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => PlayHandoverSheet(
+        screen: screen,
+        server: server,
+        check: check,
+        title: context.t.pairing_confirm_title(device: screen),
+        body: context.t.pairing_confirm_body(device: screen, server: server, user: user),
+        warning: context.t.pairing_confirm_cascade,
+        confirm: context.t.pairing_confirm_button,
+      ),
+    ) ??
+    false;
+
 class PlayHandoverSheet extends StatelessWidget {
-  const PlayHandoverSheet({super.key, required this.screen, required this.server, required this.check});
+  const PlayHandoverSheet({
+    super.key,
+    required this.screen,
+    required this.server,
+    required this.check,
+    this.title,
+    this.body,
+    this.warning,
+    this.confirm,
+  });
 
   final String screen;
   final String server;
   final String check;
+
+  /// The texts of "Sign (screen) in?" in place of those of "Add (server) to (screen)?"
+  final String? title;
+  final String? body;
+  final String? warning;
+  final String? confirm;
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +82,13 @@ class PlayHandoverSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                t.play_handover_title(server: server, device: screen),
+                title ?? t.play_handover_title(server: server, device: screen),
                 style: theme.titleLarge,
               ),
+              if (body case final body?) ...[
+                const SizedBox(height: ImmichSpacing.sm),
+                Text(body, key: const Key('play_handover_body'), style: theme.bodyLarge),
+              ],
               const SizedBox(height: ImmichSpacing.md),
               PlayCheckNumber(
                 check: check,
@@ -58,7 +102,7 @@ class PlayHandoverSheet extends StatelessWidget {
                   const SizedBox(width: ImmichSpacing.sm),
                   Expanded(
                     child: Text(
-                      t.play_handover_warning(device: screen, server: server),
+                      warning ?? t.play_handover_warning(device: screen, server: server),
                       key: const Key('play_handover_warning'),
                       style: theme.bodyMedium?.copyWith(color: scheme.error),
                     ),
@@ -74,7 +118,7 @@ class PlayHandoverSheet extends StatelessWidget {
                   FilledButton(
                     key: const Key('play_handover_confirm'),
                     onPressed: () => Navigator.of(context).pop(true),
-                    child: Text(t.play_handover_add),
+                    child: Text(confirm ?? t.play_handover_add),
                   ),
                 ],
               ),

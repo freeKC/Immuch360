@@ -56,11 +56,18 @@ class _FakeActions implements ScreenPlayerActions {
   Future<void> stop() async => set(_state.next(phase: ScreenPlayPhase.idle));
 
   @override
+  Future<bool> canBeSignedIn() async => false;
+
+  @override
+  Future<HandoverResult> signIn(LinkedPeer from, Map<String, Object?> payload) async => HandoverResult.failed;
+
+  @override
   Future<bool> askHandover({
     required LinkedPeer from,
     required String server,
     required String check,
     required Future<void> cancel,
+    String? signInAs,
   }) async {
     this.check = check;
     return acceptHandover;
