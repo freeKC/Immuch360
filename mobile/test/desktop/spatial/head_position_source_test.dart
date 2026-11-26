@@ -3,7 +3,7 @@
 // (test/fixtures/spatial/painted-head-12s.track): the webcam opens only while a view shows the source, the window is
 // shown, someone is there, the webcam is allowed and agreed to; it closes as soon as one of those stops; the card of
 // the first time; usable false (the view takes the mouse) while the head cannot be used; the problems; one new try
-// after a transient failure, never once the view is gone; the positions of the track, their centre, their loss; the
+// after a transient failure, never once the view is gone, called off by a webcam picked meanwhile; the positions of the track, their centre, their loss; the
 // settings.
 
 import 'dart:async';
@@ -326,6 +326,20 @@ void main() {
         head.didChangeAppLifecycleState(AppLifecycleState.resumed);
         await settle();
         expect(source.sessions, hasLength(2));
+      });
+
+      test('a webcam picked in the menu during the pause is the one that opens', () async {
+        source.list = const [fakeInfrared, fakeWebcam, fakeExternal];
+        make(settings: const DesktopSpatialSettings(consent: true)).attach();
+        await settle();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        await head.setCamera(fakeExternal.id);
+        await Future<void>.delayed(pause * 3);
+        expect(source.sessions.map((session) => session.camera), [fakeWebcam, fakeExternal]);
+        expect(store.settings.cameraId, fakeExternal.id);
+        expect(head.cameraOpen, isTrue);
+        expect(head.problem, isNull);
       });
     });
 

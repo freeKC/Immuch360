@@ -8,9 +8,11 @@
 // starts it again by itself (the user turns tracking on again, or comes back from the camera settings), with one
 // exception: a transient failure (isTransientWebcamFailure: the call to the Windows camera service failed, or the
 // webcam went away in its first seconds) is tried again once by itself after a short pause, the state staying
-// "starting" meanwhile, and only a second failure is the problem. The pause ends with any stop (the page closed, the
-// window minimised, tracking off), and the new try asks the page's rules first ([SpatialHeadTracking.mayRetry]). The
-// pictures never reach Dart: only the position of the face comes out of the native code, one sample per analysed
+// "starting" meanwhile, and a second failure in a row is the problem. A session that ran well has a new try of its own
+// for a later failure, three new tries at most until the next start. The new try opens the same webcam or none: one no
+// longer listed is gone (the problem), never replaced by another camera. The pause ends with any stop (the page
+// closed, the window minimised, tracking off, another webcam picked), and the new try asks the page's rules first
+// ([SpatialHeadTracking.mayRetry]). The pictures never reach Dart: only the position of the face comes out of the native code, one sample per analysed
 // frame.
 //
 // A start waits for the release of the previous webcam session (its capture thread ends in a background isolate), so
@@ -194,8 +196,14 @@ class SpatialHeadTracking extends ChangeNotifier {
   /// The webcam the page asked for at the last start, for the new try after a transient failure
   String? _askedCameraId;
 
-  /// The new try after a transient failure was made since the last start
+  /// The new tries after a transient failure at most from one start to the next
+  static const maxRetries = 3;
+
+  /// A new try after a transient failure was made, and its session has not run past [startupWindow] yet
   bool _retried = false;
+
+  /// The new tries made since the last start
+  int _retries = 0;
 
   /// The pause before that new try
   Timer? _retryTimer;
@@ -290,12 +298,14 @@ class SpatialHeadTracking extends ChangeNotifier {
     _problem = null;
     _askedCameraId = cameraId;
     _retried = false;
+    _retries = 0;
     _setState(SpatialTrackingState.starting);
     await _open(generation);
   }
 
-  /// Lists the webcams and opens the one asked for at the last start ([_askedCameraId]), as start [generation]
-  Future<void> _open(int generation) async {
+  /// Lists the webcams and opens the one asked for at the last start ([_askedCameraId]), as start [generation].
+  /// [again]: the new try after a transient failure of that webcam, which opens it again or none
+  Future<void> _open(int generation, {HeadCamera? again}) async {
     final cameraId = _askedCameraId;
     final source = _source;
     if (source == null) {
@@ -328,14 +338,27 @@ class SpatialHeadTracking extends ChangeNotifier {
       return;
     }
     _cameras = List.unmodifiable(cameras);
-    final picked = cameras.where((camera) => camera.id == cameraId).firstOrNull;
-    final chosen = picked ?? defaultHeadCamera(this.cameras!, except: _greyOnly);
-    if (chosen == null) {
-      _fail(SpatialTrackingProblem.noCamera, 'no webcam: ${cameras.length} camera(s), infrared only');
-      return;
+    final HeadCamera chosen;
+    if (again != null) {
+      // Unplugged meanwhile: gone, as when it goes while it streams; another camera (the built-in one) never turns on
+      // by itself. The webcam taken by default stays so (opened as colour only).
+      final same = cameras.where((camera) => camera.id == again.id).firstOrNull;
+      if (same == null) {
+        _fail(SpatialTrackingProblem.cameraLost, '$again is no longer listed at the new try');
+        return;
+      }
+      chosen = same;
+    } else {
+      final picked = cameras.where((camera) => camera.id == cameraId).firstOrNull;
+      final taken = picked ?? defaultHeadCamera(this.cameras!, except: _greyOnly);
+      if (taken == null) {
+        _fail(SpatialTrackingProblem.noCamera, 'no webcam: ${cameras.length} camera(s), infrared only');
+        return;
+      }
+      chosen = taken;
+      _cameraByDefault = picked == null;
     }
     _camera = chosen;
-    _cameraByDefault = picked == null;
     final HeadTrackingSession session;
     try {
       session = source.start(chosen, colourOnly: _cameraByDefault);
@@ -567,15 +590,16 @@ class SpatialHeadTracking extends ChangeNotifier {
     _fail(problem, 'the webcam stopped $when: $error');
   }
 
-  /// Whether [error], which stopped [session], gets the one new try: a transient failure, and no new try made since
-  /// the start, or the one made has recovered (its session ran past [startupWindow])
+  /// Whether [error], which stopped [session], gets a new try: a transient failure, no new try made since the start or
+  /// the last one made has recovered (its session ran past [startupWindow]), and fewer than [maxRetries] made since
+  /// the start
   bool _shouldRetry(HeadTrackingSession session, HeadTrackerException error) {
     final early = _clockOf(session) - _sessionStartUs < startupWindow.inMicroseconds;
     if (_retried && !early) {
       // The new try ran well: this failure is a new one
       _retried = false;
     }
-    return !_retried && isTransientWebcamFailure(error, early: early);
+    return !_retried && _retries < maxRetries && isTransientWebcamFailure(error, early: early);
   }
 
   /// The webcam released at once, and opened again after [retryPause] unless a stop comes first or the page's rules
@@ -583,6 +607,8 @@ class SpatialHeadTracking extends ChangeNotifier {
   /// The new open waits for the release ([_closing]): two readers never run together.
   void _retrySoon(HeadTrackerException error, String when) {
     _retried = true;
+    _retries++;
+    final camera = _camera;
     _log.warning('Head tracking: the webcam stopped $when: $error; tried again in ${retryPause.inMilliseconds} ms');
     final generation = ++_generation;
     final session = _detachSession();
@@ -598,7 +624,7 @@ class SpatialHeadTracking extends ChangeNotifier {
         return;
       }
       _log.info('Head tracking: the webcam tried again');
-      unawaited(_open(generation));
+      unawaited(_open(generation, again: camera));
     });
   }
 

@@ -10,8 +10,9 @@
 // - the last try did not end on a problem (a refusal of the system, no webcam, the webcam busy or gone): the problem
 //   is shown with its message, and nothing opens the webcam again but the user (retry). A transient failure (the call
 //   to the Windows camera service broke, the webcam gone in its first seconds) is tried again once by the tracking
-//   itself after a short pause (head_tracking.dart), only while all of these still hold (mayRetry is
-//   shouldRunCamera); a second failure is the problem.
+//   itself after a short pause, on the same webcam only (head_tracking.dart), only while all of these still hold
+//   (mayRetry is shouldRunCamera); a second failure in a row is the problem, and three new tries at most are made
+//   until the next start.
 // Whenever one stops holding, the webcam closes and its light goes off. While the head cannot be used ([usable] false:
 // no tracker on this computer, no consent yet, said no, the webcam off in the settings, a problem), the view moves with
 // the mouse instead, never an error page.
@@ -182,10 +183,12 @@ class HeadPositionSource extends ChangeNotifier with WidgetsBindingObserver impl
     _notify();
   }
 
-  /// The webcam picked in the menu (null for the default one); an open webcam is changed at once
+  /// The webcam picked in the menu (null for the default one); an open webcam is changed at once, and one starting or
+  /// waiting for its new try after a transient failure starts again with the new one
   Future<void> setCamera(String? cameraId) async {
     await _save(_settings.copyWith(cameraId: cameraId, clearCamera: cameraId == null));
-    if (_tracking.cameraOpen) {
+    final state = _tracking.state;
+    if (state == SpatialTrackingState.running || state == SpatialTrackingState.starting) {
       await _tracking.stop();
       _update();
     }

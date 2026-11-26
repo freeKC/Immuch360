@@ -6,7 +6,8 @@
 // framing is read from the tracker; a start waits for the webcam the previous session still holds; a default webcam
 // whose formats are all grey is skipped; the head's direction can be reversed; a transient failure (the Windows camera
 // service's call broken, the webcam gone in its first seconds) is tried again once after a pause, never with two
-// readers, never after a stop, and a second failure is the problem.
+// readers, never after a stop, on the same webcam only, three times at most per start, and a second failure in a row
+// is the problem.
 
 import 'dart:async';
 
@@ -364,6 +365,62 @@ void main() {
         source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
         await Future<void>.delayed(pause);
         expect(source.sessions.map((session) => session.camera), [fakeExternal, fakeExternal]);
+      });
+
+      test('the new try opens the same webcam or none: one unplugged meanwhile is never replaced by another', () async {
+        // The webcam picked, unplugged in its first seconds: the built-in one never turns on by itself
+        await tracking.start(cameraId: fakeExternal.id);
+        source.last.push(sample(1, faceX: 0.5, timeUs: 1000000));
+        source.list = const [fakeInfrared, fakeWebcam];
+        source.last.fail(HeadTrackerStatus.deviceLost);
+        await Future<void>.delayed(pause);
+        expect(source.sessions.map((session) => session.camera), [fakeExternal]);
+        expect(tracking.problem, SpatialTrackingProblem.cameraLost, reason: 'the message, and the mouse');
+        expect(tracking.state, SpatialTrackingState.failed);
+        expect(tracking.cameraOpen, isFalse);
+        // The webcam taken by default, unplugged the same way: the next one is not taken by itself either
+        source.list = const [fakeInfrared, fakeWebcam, fakeExternal];
+        await tracking.start();
+        expect(source.last.camera, fakeWebcam);
+        source.list = const [fakeInfrared, fakeExternal];
+        source.last.fail(HeadTrackerStatus.deviceLost);
+        await Future<void>.delayed(pause);
+        expect(source.sessions.map((session) => session.camera), [fakeExternal, fakeWebcam]);
+        expect(tracking.problem, SpatialTrackingProblem.cameraLost);
+        // The user's own start takes the default one
+        await tracking.start();
+        expect(source.last.camera, fakeExternal);
+      });
+
+      test('the new try of a webcam taken by default opens it as colour only again', () async {
+        await tracking.start();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        expect(source.sessions.map((session) => (session.camera, session.colourOnly)), [
+          (fakeWebcam, true),
+          (fakeWebcam, true),
+        ]);
+      });
+
+      test('three new tries at most per start, even when each session ran well before it failed', () async {
+        await tracking.start();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        for (var i = 0; i < 3; i++) {
+          source.last.push(sample(1, faceX: 0.5, timeUs: 11000000));
+          source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+          await Future<void>.delayed(pause);
+        }
+        expect(source.sessions, hasLength(4), reason: 'the start and its three new tries');
+        expect(tracking.problem, SpatialTrackingProblem.failed);
+        expect(tracking.state, SpatialTrackingState.failed);
+        expect(tracking.cameraOpen, isFalse);
+        // The user asks again: three new tries of its own
+        await tracking.start();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(6));
+        expect(tracking.state, SpatialTrackingState.running);
       });
 
       test('the webcam gone: tried again in its first seconds only', () async {
