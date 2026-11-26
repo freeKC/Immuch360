@@ -1009,7 +1009,7 @@ const upscalerComponent = AiComponent(
   name: 'Real-ESRGAN x4plus',
   version: 'v0.1.0',
   kind: AiComponentKind.model,
-  platforms: {AiPlatform.windowsX64, AiPlatform.linuxX64},
+  platforms: {AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64},
   assetName: 'RealESRGAN_x4plus.pth',
   installPath: 'models/realesrgan/RealESRGAN_x4plus.pth',
   size: 67040989,
@@ -3259,7 +3259,9 @@ const _vosrLicence =
     'https://huggingface.co/moonbox-dev/VOSR-ONNX/blob/46811283f2b767d9d634cdd3d8e465594712df61/LICENSE';
 const _vosrRevision = 'https://huggingface.co/moonbox-dev/VOSR-ONNX/resolve/46811283f2b767d9d634cdd3d8e465594712df61';
 
-const _gpuSystems = {AiPlatform.windowsX64, AiPlatform.linuxX64};
+// macosArm64 since release 53: the Metal engine of a Mac (ai_enhance_manifest.dart) is published, Rebuild details stays
+// held on a Mac (aiEnhanceMacRebuildOffered) and downloads nothing there
+const _gpuSystems = {AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64};
 const _vosrSystems = {AiPlatform.windowsX64, AiPlatform.linuxX64, AiPlatform.macosArm64};
 
 /// SeedVR2 3B, int8 convrot (3,458,259,704 bytes): the DiT of Rebuild details

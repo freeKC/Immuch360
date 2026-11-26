@@ -803,7 +803,16 @@ void main() {
 
   test('the Metal engine of the Mac is held until it is published; Natural on a Mac never waits for it', () async {
     final files = _NoFiles();
-    expect(aiEnhanceMacEnginePublished, isFalse);
+    // Published in ai-components-7 on 26 November 2026 (release 53): Sharpen on an Apple chip downloads it with x4plus,
+    // Rebuild details stays held on a Mac and downloads nothing
+    expect(aiEnhanceMacEnginePublished, isTrue);
+    expect(sdCppSeedVr2MacArmComponent.isComplete, isTrue);
+    final sharpen = await enhanceComponentFiles(EnhanceLevel.sharpen, AiPlatform.macosArm64, files);
+    expect(sharpen.notInThisVersion, isFalse);
+    expect(sharpen.missing, [sdCppSeedVr2MacArmComponent, upscalerComponent]);
+    final rebuild = await enhanceComponentFiles(EnhanceLevel.rebuild, AiPlatform.macosArm64, files);
+    expect(rebuild.notInThisVersion, isTrue);
+    expect(rebuild.missing, isEmpty);
     for (final level in [EnhanceLevel.sharpen, EnhanceLevel.rebuild]) {
       final found = await enhanceComponentFiles(level, AiPlatform.macosArm64, files, macPublished: false);
       expect(found.notInThisVersion, isTrue, reason: level.name);

@@ -331,6 +331,20 @@ void main() {
       expect(sdCppSeedVr2MacArmComponent.platforms, {AiPlatform.macosArm64});
     });
 
+    test('once the Metal engine is published, a Mac lists the components of Sharpen and Rebuild details', () {
+      expect(aiEnhanceMacEnginePublished, isTrue);
+      expect(sdCppSeedVr2MacArmComponent.size, 18223800);
+      expect(sdCppSeedVr2MacArmComponent.archiveFiles.where((file) => file.executable).map((file) => file.path), [
+        'sd-cli',
+      ]);
+      for (final component in [upscalerComponent, seedVr2DitComponent, seedVr2VaeComponent]) {
+        expect(component.platforms, contains(AiPlatform.macosArm64), reason: component.id);
+        expect(component.platforms, isNot(contains(AiPlatform.macosX64)), reason: component.id);
+      }
+      // x4plus on a Mac serves Enhance only: the panoramas are still not offered there
+      expect(aiComponentsFor(AiPlatform.macosArm64, feature: AiFeature.panorama), isEmpty);
+    });
+
     test('the app keeps the text of every licence, with its copyright line; stable-diffusion.cpp brings its own', () {
       for (final component in aiComponents) {
         final text = aiLicenceText(component);

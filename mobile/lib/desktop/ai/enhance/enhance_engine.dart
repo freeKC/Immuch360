@@ -169,6 +169,7 @@ Future<Uint8List> encodeEnhancedJpegInIsolate(
   () => encodeEnhancedJpeg(picture, quality: quality, exif: exif, xmp: xmp, choice: choice),
   debugName: 'enhance-encode',
 );
+
 /// The pixel work of a 360° or 3D photo (enhance_layout.dart) in an isolate of its own. Top-level, never built inside
 /// EnhanceEngine.run: a closure built there would keep the scope of run, the progress callback of the queue with it,
 /// which no isolate takes (issue 23); [work] itself is built by the top-level functions of enhance_layout.dart.

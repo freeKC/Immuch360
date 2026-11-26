@@ -36,9 +36,10 @@ export 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 const aiEnhanceComponentsPublished = true;
 
 /// Whether the Metal archive of stable-diffusion.cpp for Apple silicon ([sdCppSeedVr2MacArmComponent], release 53) is
-/// published in ai-components-7: false until the main session uploads it. Until then Sharpen and Rebuild details on a
-/// Mac are "not in this version yet" (enhance_files.dart); Natural on a Mac does not need it.
-const aiEnhanceMacEnginePublished = false;
+/// published in ai-components-7: true since 26 November 2026 (the artifact of run 45677228907, uploaded as
+/// sd-cpp-seedvr2-metal-macos-arm64.zip). Set back to false, Sharpen and Rebuild details on a Mac are "not in this
+/// version yet" (enhance_files.dart); Natural on a Mac does not need it.
+const aiEnhanceMacEnginePublished = true;
 
 /// Whether Rebuild details is offered on a Mac with an Apple chip once its engine is published: false until one run on
 /// a real Apple chip has succeeded (review of 25 November 2026). The only Metal GPU it ran on, the paravirtual one of
@@ -64,13 +65,61 @@ const sdCppSeedVr2MacArmComponent = AiComponent(
   platforms: {AiPlatform.macosArm64},
   assetName: 'sd-cpp-seedvr2-metal-macos-arm64.zip',
   installPath: 'engines/sd-cpp-seedvr2-metal-macos-arm64',
-  size: null,
-  sha256: null,
+  size: 18223800,
+  sha256: 'c86fbae15d35b91bc56ccf905bc8849065e7433c53cb61980eb3b9809a1e93a0',
   compression: AiCompression.none,
   licence: 'MIT',
   licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE',
   features: {},
   releaseTag: aiComponentsEnhanceReleaseTag,
+  archiveFiles: [
+    AiArchiveFile(
+      path: 'BUILD-INFO.txt',
+      size: 873,
+      sha256: 'bc557f74654e27e38bc683010b1ffe40c30055f42caf948de7da9b21e1fe9a14',
+    ),
+    AiArchiveFile(
+      path: 'licenses/README.md',
+      size: 1169,
+      sha256: 'dfc8ee008f776c77648f9c6692fce332ad190a2479653c6399bc2873b5d7e8be',
+    ),
+    AiArchiveFile(
+      path: 'licenses/THIRD-PARTY.md',
+      size: 6862,
+      sha256: 'de31b8552d1bdb1765a3b75781df6763f576d8762fc9a58d652a4d4733bcf70b',
+    ),
+    AiArchiveFile(
+      path: 'licenses/darts-clone-LICENSE.txt',
+      size: 1481,
+      sha256: '155f59997298ee336602c49f9c1110f268ac394ca2197eb02647a3555935ad52',
+    ),
+    AiArchiveFile(
+      path: 'licenses/ggml-LICENSE.txt',
+      size: 1078,
+      sha256: '94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d',
+    ),
+    AiArchiveFile(
+      path: 'licenses/oniguruma-COPYING.txt',
+      size: 1366,
+      sha256: '0dff717fb611b9c9bd9776a5df9c4e029030f8dbc023b77f3678cf495495b933',
+    ),
+    AiArchiveFile(
+      path: 'licenses/stable-diffusion.cpp-LICENSE.txt',
+      size: 1062,
+      sha256: 'b53fa08f515cb5a6fff7b9fd8fcd0961a4b80df29d74372d25e1f9171aa042ee',
+    ),
+    AiArchiveFile(
+      path: 'licenses/utf8proc-LICENSE.md',
+      size: 5218,
+      sha256: '767edbcafb23016d7f203aaf2cbdef5690ad58bcede52ee241427dcb816cd644',
+    ),
+    AiArchiveFile(
+      path: 'sd-cli',
+      size: 50863280,
+      sha256: '9a69aafa79e1eef4a635b90d46e2b970c8ac5b129f9f313e1ecc134d2fb01248',
+      executable: true,
+    ),
+  ],
 );
 
 /// The graphs of VOSR in the order the pipeline runs them
