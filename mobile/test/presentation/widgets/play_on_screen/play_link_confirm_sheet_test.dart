@@ -1,4 +1,4 @@
-// "Let this phone play films on Living room TV?": the sheet the phone shows before it links a screen
+// "Let this phone play films, photos and videos on Living room TV?": the sheet the phone shows before it links a screen
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,7 +36,14 @@ void main() {
     );
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
-    expect(find.text('Let this phone play films on Living room TV?'), findsOneWidget);
+    expect(find.text('Let this phone play films, photos and videos on Living room TV?'), findsOneWidget);
+    expect(
+      find.text(
+        'Living room TV will open the films, photos and videos this phone sends it, with its own access to the server '
+        'or from this phone. Nothing else is shared.',
+      ),
+      findsOneWidget,
+    );
     final link = find.byKey(const Key('play_link_confirm_button'));
     await tester.ensureVisible(link);
     await tester.pumpAndSettle();
