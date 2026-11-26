@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
 import 'package:immich_mobile/desktop/video/av2_gate.dart';
+import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/events.model.dart';
 import 'package:immich_mobile/domain/services/tiff_photos.dart';
@@ -39,6 +40,17 @@ import 'package:immich_mobile/widgets/photo_view/photo_view.dart';
 
 enum _DragIntent { none, scroll, dismiss }
 
+/// The pixel size of the original of [asset], turned by [quarterTurns] as the viewer shows it; null when unknown. The
+/// desktop zoom shows these pixels one to one at 100 % (lib/desktop/window/desktop_photo_zoom.dart).
+Size? desktopOriginalPixelsOf(BaseAsset asset, int quarterTurns) {
+  final width = asset.width;
+  final height = asset.height;
+  if (width == null || height == null || width <= 0 || height <= 0) {
+    return null;
+  }
+  return quarterTurns.isOdd ? Size(height.toDouble(), width.toDouble()) : Size(width.toDouble(), height.toDouble());
+}
+
 /// Whether the line "Shown as the server's preview: this device does not decode TIFF" was said in this session (see
 /// photoDecodePath): once, whatever the number of TIFFs shown after; the details say it for each
 @visibleForTesting
@@ -53,12 +65,17 @@ class AssetPage extends ConsumerStatefulWidget {
   /// and moves the photo on screen with the keys of a TV remote (see tv_photo_zoom.dart)
   final void Function(PhotoViewControllerBase controller, {required bool attached})? onPhotoController;
 
+  /// Immuch360 Desktop: the zoom of the photo of this page, once the page is built and again once it goes, for the
+  /// keys of the viewer (lib/desktop/window/desktop_photo_zoom.dart)
+  final void Function(DesktopZoomTarget zoom, {required bool attached})? onDesktopZoom;
+
   const AssetPage({
     super.key,
     required this.index,
     required this.heroOffset,
     this.onTapNavigate,
     this.onPhotoController,
+    this.onDesktopZoom,
   });
 
   @override
@@ -91,11 +108,26 @@ class _AssetPageState extends ConsumerState<AssetPage> {
 
   BaseAsset? _asset;
 
+  /// Immuch360 Desktop: the zoom of the mouse, the wheel and the keyboard, on the controller of the photo shown
+  /// (lib/desktop/window/desktop_photo_zoom.dart); none on the phones, the TV and the Quest
+  final _desktopZoom = CurrentPlatform.isDesktop ? PhotoViewZoomTarget() : null;
+
+  /// The photo, by its hero tag, whose original is loaded since it was zoomed in, "Load original image" off: the
+  /// preview alone would only grow blurred
+  String? _zoomOriginalOf;
+
+  /// The asset shown, a child of its stack included, as of the last build
+  BaseAsset? _shownAsset;
+
   @override
   void initState() {
     super.initState();
     _eventSubscription = EventStream.shared.listen(_onEvent);
     _asset = ref.read(timelineServiceProvider).getAssetSafe(widget.index);
+    final zoom = _desktopZoom;
+    if (zoom != null) {
+      widget.onDesktopZoom?.call(zoom, attached: true);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_scrollController.hasClients) {
         return;
@@ -122,6 +154,11 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       widget.onPhotoController?.call(controller, attached: false);
     }
     _scrollController.dispose();
+    final zoom = _desktopZoom;
+    if (zoom != null) {
+      widget.onDesktopZoom?.call(zoom, attached: false);
+      zoom.dispose();
+    }
     unawaited(_scaleBoundarySub?.cancel());
     unawaited(_eventSubscription?.cancel());
     super.dispose();
@@ -345,6 +382,11 @@ class _AssetPageState extends ConsumerState<AssetPage> {
   void _onScaleStateChanged(PhotoViewScaleState scaleState) {
     _isZoomed = scaleState == PhotoViewScaleState.zoomedIn || scaleState == PhotoViewScaleState.covering;
     _viewer.setZoomed(_isZoomed);
+    // Immuch360 Desktop: zoomed in, the original replaces the preview (see getFullImageProvider)
+    final shown = _shownAsset;
+    if (CurrentPlatform.isDesktop && _isZoomed && shown != null && _zoomOriginalOf != shown.heroTag && mounted) {
+      setState(() => _zoomOriginalOf = shown.heroTag);
+    }
 
     if (scaleState != PhotoViewScaleState.initial) {
       if (_dragStart == null) {
@@ -408,6 +450,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
 
   void _onPageBuild(PhotoViewControllerBase controller) {
     _viewController = controller;
+    _desktopZoom?.attach(controller);
     widget.onPhotoController?.call(controller, attached: true);
     _listenForScaleBoundaries(controller);
   }
@@ -427,6 +470,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       size: size,
       localFilePath: localFilePath,
       remoteThumbnailSize: remoteThumbnailSize,
+      zoomOriginal: CurrentPlatform.isDesktop && _zoomOriginalOf == asset.heroTag && !isPlayingMotionVideo,
     );
 
     // Immuch360 Desktop: a photo of two eyes side by side, one eye, both, each in turn or in red and cyan, in the mode of
@@ -458,6 +502,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
           tightMode: true,
           onPageBuild: _onPageBuild,
           enablePanAlways: true,
+          desktopZoom: true,
           child: SbsPhotoView(
             image: provider,
             photo: sbsPhoto,
@@ -487,6 +532,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
           filterQuality: FilterQuality.high,
           tightMode: true,
           enablePanAlways: true,
+          desktopZoom: CurrentPlatform.isDesktop,
           maxScale: _maxImagePixelSize,
           disableScaleGestures: _showingDetails,
           scaleStateChangedCallback: _onScaleStateChanged,
@@ -556,6 +602,24 @@ class _AssetPageState extends ConsumerState<AssetPage> {
         : player;
   }
 
+  /// Immuch360 Desktop: the wheel, the mouse and the trackpad zoom and pan a still photo (desktop_photo_zoom.dart),
+  /// not over its details; a video and a motion photo playing keep what they do. [child] alone elsewhere.
+  Widget _withDesktopZoom(
+    BaseAsset asset, {
+    required int quarterTurns,
+    required bool isPlayingMotionVideo,
+    required Widget child,
+  }) {
+    final zoom = _desktopZoom;
+    if (zoom == null || !asset.isImage || isPlayingMotionVideo) {
+      return child;
+    }
+    // A photo of two eyes side by side is laid out at the size of its pixels shown (sbsShownSize)
+    final sbs = quarterTurns == 0 && desktopSbsPhotoOf(ref, asset) != null;
+    zoom.originalPixels = sbs ? null : desktopOriginalPixelsOf(asset, quarterTurns);
+    return DesktopPhotoZoom(target: zoom, enabled: !_showingDetails, child: child);
+  }
+
   @override
   Widget build(BuildContext context) {
     final (currentAsset, thumbnailSize) = ref.watch(
@@ -584,6 +648,7 @@ class _AssetPageState extends ConsumerState<AssetPage> {
       displayAsset = stackChildren.elementAt(safeStackIndex);
     }
 
+    _shownAsset = displayAsset;
     final isCurrent = currentAsset != null && currentAsset.refersToSameAsset(displayAsset);
     // A TIFF of the server on Android shows as the JPEG the server made of it: told once in the session, as it shows
     if (isCurrent && photoDecodePathOfAsset(displayAsset) == PhotoDecodePath.serverPreview) {
@@ -634,16 +699,21 @@ class _AssetPageState extends ConsumerState<AssetPage> {
                 SizedBox(
                   width: viewportWidth,
                   height: viewportHeight,
-                  child: _buildPhotoView(
-                    asset: displayAsset,
-                    heroAttributes: isCurrent
-                        ? PhotoViewHeroAttributes(tag: '${asset.heroTag}_${widget.heroOffset}')
-                        : null,
-                    isCurrent: isCurrent,
-                    isPlayingMotionVideo: isPlayingMotionVideo,
-                    localFilePath: viewIntentFilePath,
-                    remoteThumbnailSize: thumbnailSize,
+                  child: _withDesktopZoom(
+                    displayAsset,
                     quarterTurns: quarterTurns,
+                    isPlayingMotionVideo: isPlayingMotionVideo,
+                    child: _buildPhotoView(
+                      asset: displayAsset,
+                      heroAttributes: isCurrent
+                          ? PhotoViewHeroAttributes(tag: '${asset.heroTag}_${widget.heroOffset}')
+                          : null,
+                      isCurrent: isCurrent,
+                      isPlayingMotionVideo: isPlayingMotionVideo,
+                      localFilePath: viewIntentFilePath,
+                      remoteThumbnailSize: thumbnailSize,
+                      quarterTurns: quarterTurns,
+                    ),
                   ),
                 ),
                 // The text boxes are those of the picture as the server holds it: not drawn over a turned one

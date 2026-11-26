@@ -39,6 +39,7 @@ class ImageWrapper extends StatefulWidget {
     this.disableScaleGestures,
     required this.errorBuilder,
     required this.enablePanAlways,
+    this.desktopZoom = false,
     required this.index,
     this.quarterTurns = 0,
   });
@@ -74,6 +75,9 @@ class ImageWrapper extends StatefulWidget {
   final bool? disableGestures;
   final bool? disableScaleGestures;
   final bool? enablePanAlways;
+
+  /// See [PhotoView.desktopZoom]
+  final bool desktopZoom;
   final int index;
 
   /// See [PhotoView.quarterTurns]
@@ -234,6 +238,7 @@ class _ImageWrapperState extends State<ImageWrapper> {
         disableGestures: widget.disableGestures,
         disableScaleGestures: true,
         enablePanAlways: widget.enablePanAlways,
+        desktopZoom: widget.desktopZoom,
         child: _loading ? _buildLoading(context) : _buildError(context),
       );
     }
@@ -264,6 +269,7 @@ class _ImageWrapperState extends State<ImageWrapper> {
       disableGestures: widget.disableGestures ?? false,
       disableScaleGestures: widget.disableScaleGestures ?? false,
       enablePanAlways: widget.enablePanAlways ?? false,
+      desktopZoom: widget.desktopZoom,
       quarterTurns: _quarterTurns,
     );
   }
@@ -315,6 +321,7 @@ class CustomChildWrapper extends StatelessWidget {
     required this.disableGestures,
     this.disableScaleGestures,
     required this.enablePanAlways,
+    this.desktopZoom = false,
   });
 
   final Widget? child;
@@ -348,6 +355,9 @@ class CustomChildWrapper extends StatelessWidget {
   final bool? disableScaleGestures;
   final bool? disableGestures;
   final bool? enablePanAlways;
+
+  /// See [PhotoView.desktopZoom]
+  final bool desktopZoom;
 
   @override
   Widget build(BuildContext context) {
@@ -383,6 +393,7 @@ class CustomChildWrapper extends StatelessWidget {
       disableGestures: disableGestures ?? false,
       disableScaleGestures: disableScaleGestures ?? false,
       enablePanAlways: enablePanAlways ?? false,
+      desktopZoom: desktopZoom,
     );
   }
 }

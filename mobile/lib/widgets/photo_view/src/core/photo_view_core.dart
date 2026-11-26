@@ -54,6 +54,7 @@ class PhotoViewCore extends StatefulWidget {
     required this.disableScaleGestures,
     required this.enablePanAlways,
     this.quarterTurns = 0,
+    this.desktopZoom = false,
   }) : customChild = null;
 
   const PhotoViewCore.customChild({
@@ -81,6 +82,7 @@ class PhotoViewCore extends StatefulWidget {
     required this.disableGestures,
     required this.disableScaleGestures,
     required this.enablePanAlways,
+    this.desktopZoom = false,
   }) : semanticLabel = null,
        imageProvider = null,
        gaplessPlayback = false,
@@ -116,6 +118,9 @@ class PhotoViewCore extends StatefulWidget {
   final bool disableGestures;
   final bool disableScaleGestures;
   final bool enablePanAlways;
+
+  /// See [PhotoView.desktopZoom]
+  final bool desktopZoom;
 
   final FilterQuality filterQuality;
 
@@ -178,7 +183,12 @@ class PhotoViewCoreState extends State<PhotoViewCore>
       details.focalPoint.dx - scaleBoundaries.outerSize.width / 2,
       details.focalPoint.dy - scaleBoundaries.outerSize.height / 2,
     );
-    final double newScale = _scaleBefore! * details.scale;
+    var newScale = _scaleBefore! * details.scale;
+    // Immuch360 Desktop: a trackpad pinch stays between the fit and the largest zoom of the wheel
+    final limits = widget.desktopZoom ? controller.desktopScaleLimits?.call() : null;
+    if (limits != null && limits.max >= limits.min) {
+      newScale = newScale.clamp(limits.min, limits.max);
+    }
     final double scaleDelta = newScale / scale;
     final Offset newPosition =
         (controller.position + details.focalPointDelta) * scaleDelta - centeredFocalPoint * (scaleDelta - 1);
@@ -399,7 +409,9 @@ class PhotoViewCoreState extends State<PhotoViewCore>
 
           return PhotoViewGestureDetector(
             disableScaleGestures: widget.disableScaleGestures,
-            onDoubleTap: widget.disableScaleGestures ? null : onDoubleTap,
+            // A computer: the double click belongs to its zoom, and so does the mouse (desktop_photo_zoom.dart)
+            desktopZoom: widget.desktopZoom,
+            onDoubleTap: widget.disableScaleGestures || widget.desktopZoom ? null : onDoubleTap,
             onScaleStart: widget.disableScaleGestures ? null : onScaleStart,
             onScaleUpdate: widget.disableScaleGestures ? null : onScaleUpdate,
             onScaleEnd: widget.disableScaleGestures ? null : onScaleEnd,

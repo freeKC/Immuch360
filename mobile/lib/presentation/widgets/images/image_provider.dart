@@ -179,7 +179,15 @@ ImageProvider getFullImageProvider(
   bool edited = true,
   String? localFilePath,
   Size? remoteThumbnailSize,
+  // Immuch360 Desktop: the original once the photo is zoomed in past its preview, "Load original image" off (see
+  // RemoteFullImageProvider.zoomOriginal); never for an animated picture, a TIFF decoded in Dart or a splat photo
+  bool zoomOriginal = false,
 }) {
+  final zoom =
+      zoomOriginal &&
+      asset.isImage &&
+      !asset.isAnimatedImage &&
+      !SettingsRepository.instance.appConfig.image.loadOriginal;
   // Create new provider and cache it
   final ImageProvider provider;
   if (localFilePath != null) {
@@ -200,6 +208,7 @@ ImageProvider getFullImageProvider(
       height: asset.height,
       checksum: asset.checksum,
       decodeInDart: photoDecodePathOfAsset(asset) == PhotoDecodePath.dartTiff,
+      zoomOriginal: zoom && photoDecodePathOfAsset(asset) != PhotoDecodePath.dartTiff,
     );
   } else {
     final String assetId;
@@ -223,6 +232,7 @@ ImageProvider getFullImageProvider(
       serverJpegForOriginal: photoDecodePathOfAsset(asset) == PhotoDecodePath.serverPreview,
       // A photo named like a splat photo: its file is mostly the scene, the preview shows the same picture
       previewOnly: isSplatPhotoCandidate(asset.name),
+      zoomOriginal: zoom && !isSplatPhotoCandidate(asset.name),
     );
   }
 
