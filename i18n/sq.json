@@ -565,7 +565,6 @@
   "ai_enhance_saved_folder_why": "Fotot e një serveri ose të një dosjeje të ndarë shkojnë në këtë dosje.",
   "ai_enhance_shake": "Dridhja e fortë e kamerës nuk riparohet.",
   "ai_enhance_skipped": "{count, plural, one {# u kapërcye: një video, ose një skedar që ky kompjuter nuk e arrin} other {# u kapërcyen: video, ose skedarë që ky kompjuter nuk i arrin}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# u kapërcye: fotot 360° dhe 3D vijnë në një version të mëvonshëm} other {# u kapërcyen: fotot 360° dhe 3D vijnë në një version të mëvonshëm}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# u kapërcye: mbi 50 megapiksel, zvogëlojeni fillimisht} other {# u kapërcyen: mbi 50 megapiksel, zvogëlojini fillimisht}}",
   "ai_enhance_stage_finish": "Po ruhen ngjyrat e fotos dhe po bëhet përzierja",
   "ai_enhance_stage_tiles": "Po përmirësohet, pllakë pas pllake",

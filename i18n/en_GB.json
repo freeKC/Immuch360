@@ -571,7 +571,6 @@
   "ai_enhance_saved_folder_why": "Photos of a server or of a share go to this folder.",
   "ai_enhance_shake": "Strong camera shake is not repaired.",
   "ai_enhance_skipped": "{count, plural, one {# skipped: a video, or a file this computer cannot reach} other {# skipped: videos, or files this computer cannot reach}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# skipped: 360° and 3D photos come in a later version} other {# skipped: 360° and 3D photos come in a later version}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# skipped: above 50 megapixels, reduce it first} other {# skipped: above 50 megapixels, reduce them first}}",
   "ai_enhance_stage_finish": "Keeping the colours of the photo and blending",
   "ai_enhance_stage_tiles": "Enhancing, tile by tile",

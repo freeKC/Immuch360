@@ -572,7 +572,6 @@
   "ai_enhance_saved_folder_why": "תמונות משרת או משיתוף נשמרות בתיקייה הזו.",
   "ai_enhance_shake": "רעידת מצלמה חזקה לא מתוקנת.",
   "ai_enhance_skipped": "{count, plural, one {# דולג: סרטון, או קובץ שהמחשב הזה לא יכול להגיע אליו} other {# דולגו: סרטונים, או קבצים שהמחשב הזה לא יכול להגיע אליהם}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# דולגה: תמונות 360° ו-3D יגיעו בגרסה מאוחרת יותר} other {# דולגו: תמונות 360° ו-3D יגיעו בגרסה מאוחרת יותר}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# דולגה: מעל 50 מגה-פיקסל, הקטינו אותה קודם} other {# דולגו: מעל 50 מגה-פיקסל, הקטינו אותן קודם}}",
   "ai_enhance_stage_finish": "שמירת צבעי התמונה ומיזוג",
   "ai_enhance_stage_tiles": "משפר, אריח אחר אריח",

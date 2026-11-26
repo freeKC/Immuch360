@@ -64,7 +64,6 @@
   "ai_enhance_saved_folder_why": "Ol foto blong wan seva o blong wan sea oli go long folda ia.",
   "ai_enhance_shake": "Taem kamera i seksek strong, app i no save stretem.",
   "ai_enhance_skipped": "{count, plural, one {# i livim: wan video, o wan fael we kompiuta ia i no save kasem} other {# i livim: ol video, o ol fael we kompiuta ia i no save kasem}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# i livim: ol 360° mo 3D foto bae oli kam long wan vesen biaen} other {# i livim: ol 360° mo 3D foto bae oli kam long wan vesen biaen}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# i livim: i bigwan moa long 50 megapiksel, mekem i smol moa fastaem} other {# i livim: oli bigwan moa long 50 megapiksel, mekem oli smol moa fastaem}}",
   "ai_enhance_stage_finish": "I stap kipim ol kala blong foto mo miksim",
   "ai_enhance_stage_tiles": "I stap mekem i gud, wan pis afta narawan",

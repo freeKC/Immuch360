@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Foto's van een server of een share komen in deze map.",
   "ai_enhance_shake": "Sterke bewegingsonscherpte door de camera wordt niet hersteld.",
   "ai_enhance_skipped": "{count, plural, one {# overgeslagen: een video, of een bestand dat deze computer niet kan bereiken} other {# overgeslagen: video’s, of bestanden die deze computer niet kan bereiken}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# overgeslagen: 360°- en 3D-foto’s komen in een latere versie} other {# overgeslagen: 360°- en 3D-foto’s komen in een latere versie}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# overgeslagen: boven 50 megapixel, verklein die eerst} other {# overgeslagen: boven 50 megapixel, verklein ze eerst}}",
   "ai_enhance_stage_finish": "Kleuren van de foto behouden en overvloeien",
   "ai_enhance_stage_tiles": "Verbeteren, tegel voor tegel",

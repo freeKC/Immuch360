@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Foton från en server eller en delad mapp hamnar i den här mappen.",
   "ai_enhance_shake": "Kraftig kameraskakning repareras inte.",
   "ai_enhance_skipped": "{count, plural, one {# överhoppad: en video, eller en fil som den här datorn inte når} other {# överhoppade: videor, eller filer som den här datorn inte når}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# överhoppad: 360°- och 3D-foton kommer i en senare version} other {# överhoppade: 360°- och 3D-foton kommer i en senare version}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# överhoppad: över 50 megapixlar, minska den först} other {# överhoppade: över 50 megapixlar, minska dem först}}",
   "ai_enhance_stage_finish": "Behåller fotots färger och blandar",
   "ai_enhance_stage_tiles": "Förbättrar, bit för bit",

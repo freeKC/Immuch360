@@ -572,7 +572,6 @@
   "ai_enhance_saved_folder_why": "Myndir af þjóni eða sameign fara í þessa möppu.",
   "ai_enhance_shake": "Mikill hristingur myndavélar er ekki lagaður.",
   "ai_enhance_skipped": "{count, plural, one {# sleppt: myndskeið, eða skrá sem þessi tölva nær ekki í} other {# sleppt: myndskeið, eða skrár sem þessi tölva nær ekki í}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# sleppt: 360° og 3D myndir koma í síðari útgáfu} other {# sleppt: 360° og 3D myndir koma í síðari útgáfu}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# sleppt: yfir 50 megapixlum, minnkaðu hana fyrst} other {# sleppt: yfir 50 megapixlum, minnkaðu þær fyrst}}",
   "ai_enhance_stage_finish": "Held litum myndarinnar og blanda saman",
   "ai_enhance_stage_tiles": "Bæti, reit fyrir reit",

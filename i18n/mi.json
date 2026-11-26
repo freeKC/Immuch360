@@ -51,7 +51,6 @@
   "ai_enhance_saved_folder_why": "Ka haere ngā whakaahua o tētahi tūmau, o tētahi tiritahi rānei ki tēnei kōpaki.",
   "ai_enhance_shake": "Kāore e whakatikaina te kōrehu nā te rū nui o te kāmera.",
   "ai_enhance_skipped": "{count, plural, one {# kua pekea: he ataata, he kōnae rānei kāore e taea e tēnei rorohiko te toro} other {# kua pekea: he ataata, he kōnae rānei kāore e taea e tēnei rorohiko te toro}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# kua pekea: ka tae mai ngā whakaahua 360° me 3D i tētahi putanga ā muri} other {# kua pekea: ka tae mai ngā whakaahua 360° me 3D i tētahi putanga ā muri}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# kua pekea: neke atu i te 50 megapika, whakaitia i te tuatahi} other {# kua pekea: neke atu i te 50 megapika, whakaitia i te tuatahi}}",
   "ai_enhance_stage_finish": "E pupuri ana i ngā tae o te whakaahua, e whakaranu ana",
   "ai_enhance_stage_tiles": "E whakapai ake ana, ia taera, ia taera",

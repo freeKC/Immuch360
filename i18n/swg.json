@@ -51,7 +51,6 @@
   "ai_enhance_saved_folder_why": "Fotos vo ma Server oder ra Freigab kommat en den Ordner.",
   "ai_enhance_shake": "Starks Verwackla wird ned korrigiert.",
   "ai_enhance_skipped": "{count, plural, one {# übersprunga: a Video oder a Datei, wo der Computer ned erreicht} other {# übersprunga: Videos oder Dateia, wo der Computer ned erreicht}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# übersprunga: 360°- ond 3D-Fotos kommat en ra spätera Version} other {# übersprunga: 360°- ond 3D-Fotos kommat en ra spätera Version}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# übersprunga: über 50 Megapixel, mach's zerst kloiner} other {# übersprunga: über 50 Megapixel, mach se zerst kloiner}}",
   "ai_enhance_stage_finish": "D Farba vom Foto bhalta ond überblenda",
   "ai_enhance_stage_tiles": "Verbessera, Kachel für Kachel",

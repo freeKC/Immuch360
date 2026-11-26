@@ -534,7 +534,6 @@
   "ai_enhance_saved_folder_why": "Fotoattēli no servera vai koplietojuma tiek saglabāti šajā mapē.",
   "ai_enhance_shake": "Stipra kameras trīce netiek novērsta.",
   "ai_enhance_skipped": "{count, plural, one {Izlaists: # (videoklips vai fails, ko šis dators nevar sasniegt)} other {Izlaisti: # (videoklipi vai faili, ko šis dators nevar sasniegt)}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {Izlaists: # (360° un 3D fotoattēli būs vēlākā versijā)} other {Izlaisti: # (360° un 3D fotoattēli būs vēlākā versijā)}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {Izlaists: # (virs 50 megapikseļiem, vispirms samaziniet to)} other {Izlaisti: # (virs 50 megapikseļiem, vispirms samaziniet tos)}}",
   "ai_enhance_stage_finish": "Saglabā fotoattēla krāsas un sapludina",
   "ai_enhance_stage_tiles": "Uzlabo pa fragmentiem",

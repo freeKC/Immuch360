@@ -51,7 +51,6 @@
   "ai_enhance_saved_folder_why": "I foto de on server o de ona condivision vann in sta cartella.",
   "ai_enhance_shake": "On mòss fort de la fotocamera el vegn minga giustaa.",
   "ai_enhance_skipped": "{count, plural, one {# saltaa: on video, o on file che sto computer el riva minga a ragiung} other {# saltaa: video, o file che sto computer el riva minga a ragiung}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# saltaa: i foto 360° e 3D rivaran in d’ona version pussee in là} other {# saltaa: i foto 360° e 3D rivaran in d’ona version pussee in là}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# saltaa: pussee de 50 megapixel, riducela prima} other {# saltaa: pussee de 50 megapixel, riducej prima}}",
   "ai_enhance_stage_finish": "Se tegnen i color de la foto e se fa la fusion",
   "ai_enhance_stage_tiles": "Mejorament, tassell per tassell",

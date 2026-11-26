@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "来自服务器或共享文件夹的照片会保存到此文件夹。",
   "ai_enhance_shake": "无法修复严重的相机抖动。",
   "ai_enhance_skipped": "{count, plural, one {已跳过 # 个：视频，或此电脑无法访问的文件} other {已跳过 # 个：视频，或此电脑无法访问的文件}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {已跳过 # 张：360° 和 3D 照片将在后续版本中支持} other {已跳过 # 张：360° 和 3D 照片将在后续版本中支持}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {已跳过 # 张：超过 50 百万像素，请先缩小} other {已跳过 # 张：超过 50 百万像素，请先缩小}}",
   "ai_enhance_stage_finish": "正在保留照片色彩并融合",
   "ai_enhance_stage_tiles": "正在逐块增强",

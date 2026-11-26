@@ -572,7 +572,6 @@
   "ai_enhance_saved_folder_why": "Billeder fra en server eller et delt drev gemmes i denne mappe.",
   "ai_enhance_shake": "Kraftig kamerarystelse rettes ikke.",
   "ai_enhance_skipped": "{count, plural, one {# sprunget over: en video eller en fil, som denne computer ikke kan nå} other {# sprunget over: videoer eller filer, som denne computer ikke kan nå}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# sprunget over: 360°- og 3D-billeder kommer i en senere version} other {# sprunget over: 360°- og 3D-billeder kommer i en senere version}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# sprunget over: over 50 megapixel, formindsk det først} other {# sprunget over: over 50 megapixel, formindsk dem først}}",
   "ai_enhance_stage_finish": "Bevarer billedets farver og blander",
   "ai_enhance_stage_tiles": "Forbedrer, flise for flise",

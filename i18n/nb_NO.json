@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Bilder fra en server eller en delt mappe havner i denne mappen.",
   "ai_enhance_shake": "Kraftig kamerarystelse repareres ikke.",
   "ai_enhance_skipped": "{count, plural, one {# hoppet over: en video, eller en fil denne datamaskinen ikke når} other {# hoppet over: videoer, eller filer denne datamaskinen ikke når}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# hoppet over: 360°- og 3D-bilder kommer i en senere versjon} other {# hoppet over: 360°- og 3D-bilder kommer i en senere versjon}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# hoppet over: over 50 megapiksler, reduser det først} other {# hoppet over: over 50 megapiksler, reduser dem først}}",
   "ai_enhance_stage_finish": "Beholder fargene i bildet og blander",
   "ai_enhance_stage_tiles": "Forbedrer, bit for bit",

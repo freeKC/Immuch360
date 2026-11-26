@@ -100,7 +100,6 @@
   "ai_enhance_saved_folder_why": "Wêneyên serverekê an parvekirinekê diçin vê peldankê.",
   "ai_enhance_shake": "Lerizîna xurt a kamerayê nayê sererastkirin.",
   "ai_enhance_skipped": "{count, plural, one {# hat derbaskirin: vîdyoyek, an pelek ku ev komputer nagihîjê} other {# hatin derbaskirin: vîdyo, an pelên ku ev komputer nagihîjê}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# hat derbaskirin: wêneyên 360° û 3D di guhertoyeke paştir de tên} other {# hatin derbaskirin: wêneyên 360° û 3D di guhertoyeke paştir de tên}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# hat derbaskirin: ji 50 megapîkselan mezintir, pêşî wê biçûk bike} other {# hatin derbaskirin: ji 50 megapîkselan mezintir, pêşî wan biçûk bike}}",
   "ai_enhance_stage_finish": "Rengên wêneyê tên parastin û encam tê tevlihevkirin",
   "ai_enhance_stage_tiles": "Tê baştirkirin, parçe bi parçe",

@@ -565,7 +565,6 @@
   "ai_enhance_saved_folder_why": "Fotografije s poslužitelja ili iz dijeljene mape idu u ovu mapu.",
   "ai_enhance_shake": "Snažno podrhtavanje fotoaparata ne ispravlja se.",
   "ai_enhance_skipped": "{count, plural, one {# preskočena: videozapis ili datoteka do koje ovo računalo ne može doći} few {# preskočene: videozapisi ili datoteke do kojih ovo računalo ne može doći} other {# preskočeno: videozapisi ili datoteke do kojih ovo računalo ne može doći}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# preskočena: 360° i 3D fotografije dolaze u kasnijoj verziji} few {# preskočene: 360° i 3D fotografije dolaze u kasnijoj verziji} other {# preskočeno: 360° i 3D fotografije dolaze u kasnijoj verziji}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# preskočena: više od 50 megapiksela, najprije je smanjite} few {# preskočene: više od 50 megapiksela, najprije ih smanjite} other {# preskočeno: više od 50 megapiksela, najprije ih smanjite}}",
   "ai_enhance_stage_finish": "Zadržavanje boja fotografije i stapanje",
   "ai_enhance_stage_tiles": "Poboljšavanje, pločicu po pločicu",

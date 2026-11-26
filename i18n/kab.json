@@ -51,7 +51,6 @@
   "ai_enhance_saved_folder_why": "Tiwlafin n uqeddac neɣ n ukaram yettwabḍan ttruḥunt ɣer ukaram-a.",
   "ai_enhance_shake": "Tergigit tuǧhid n tkamiṛat ur tettwaseggam ara.",
   "ai_enhance_skipped": "{count, plural, one {# tettwazgel: d tavidyut, neɣ d afaylu ur yezmir uselkim-a ad t-yaweḍ} other {# ttwazeglent: d tividyutin, neɣ d ifuyla ur yezmir uselkim-a ad ten-yaweḍ}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# tettwazgel: tiwlafin 360° d 3D ad d-asent deg lqem nniḍen ticki} other {# ttwazeglent: tiwlafin 360° d 3D ad d-asent deg lqem nniḍen ticki}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# tettwazgel: ugar n 50 n yimegapiksilen, senqes-itt qbel} other {# ttwazeglent: ugar n 50 n yimegapiksilen, senqes-itent qbel}}",
   "ai_enhance_stage_finish": "Aḥraz n yiniten n tewlaft d usdukkel",
   "ai_enhance_stage_tiles": "Aseggem, aferdis s aferdis",

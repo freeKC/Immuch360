@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Téann grianghraif ó fhreastalaí nó ó chomhroinnt chuig an bhfillteán seo.",
   "ai_enhance_shake": "Ní dheisítear croitheadh láidir ceamara.",
   "ai_enhance_skipped": "{count, plural, one {# fágtha ar lár: físeán, nó comhad nach féidir leis an ríomhaire seo a shroicheadh} other {# fágtha ar lár: físeáin, nó comhaid nach féidir leis an ríomhaire seo a shroicheadh}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# fágtha ar lár: tiocfaidh grianghraif 360° agus 3D i leagan níos déanaí} other {# fágtha ar lár: tiocfaidh grianghraif 360° agus 3D i leagan níos déanaí}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# fágtha ar lár: os cionn 50 meigeapicteilín, laghdaigh é ar dtús} other {# fágtha ar lár: os cionn 50 meigeapicteilín, laghdaigh iad ar dtús}}",
   "ai_enhance_stage_finish": "Dathanna an ghrianghraif á gcoinneáil agus an cumasc á dhéanamh",
   "ai_enhance_stage_tiles": "Á fheabhsú, tíl ar thíl",

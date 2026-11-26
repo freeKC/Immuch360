@@ -572,7 +572,6 @@
   "ai_enhance_saved_folder_why": "Fotografiile de pe un server sau dintr-o partajare ajung în acest folder.",
   "ai_enhance_shake": "Tremuratul puternic al camerei nu este corectat.",
   "ai_enhance_skipped": "{count, plural, one {# element omis: un videoclip sau un fișier pe care acest computer nu îl poate accesa} few {# elemente omise: videoclipuri sau fișiere pe care acest computer nu le poate accesa} other {# de elemente omise: videoclipuri sau fișiere pe care acest computer nu le poate accesa}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# fotografie omisă: fotografiile 360° și 3D vin într-o versiune ulterioară} few {# fotografii omise: fotografiile 360° și 3D vin într-o versiune ulterioară} other {# de fotografii omise: fotografiile 360° și 3D vin într-o versiune ulterioară}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# fotografie omisă: peste 50 de megapixeli, reduceți-o mai întâi} few {# fotografii omise: peste 50 de megapixeli, reduceți-le mai întâi} other {# de fotografii omise: peste 50 de megapixeli, reduceți-le mai întâi}}",
   "ai_enhance_stage_finish": "Se păstrează culorile fotografiei și se îmbină",
   "ai_enhance_stage_tiles": "Se îmbunătățește, bucată cu bucată",

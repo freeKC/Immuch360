@@ -63,7 +63,6 @@
   "ai_enhance_saved_folder_why": "Server yoki umumiy jilddagi suratlar shu jildga tushadi.",
   "ai_enhance_shake": "Kameraning kuchli silkinishi tuzatilmaydi.",
   "ai_enhance_skipped": "{count, plural, one {# ta o'tkazib yuborildi: video yoki shu kompyuterdan kirib bo'lmaydigan fayl} other {# ta o'tkazib yuborildi: videolar yoki shu kompyuterdan kirib bo'lmaydigan fayllar}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# ta o'tkazib yuborildi: 360° va 3D suratlar keyingi versiyalardan birida qo'shiladi} other {# ta o'tkazib yuborildi: 360° va 3D suratlar keyingi versiyalardan birida qo'shiladi}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# ta o'tkazib yuborildi: 50 megapikseldan katta, avval uni kichraytiring} other {# ta o'tkazib yuborildi: 50 megapikseldan katta, avval ularni kichraytiring}}",
   "ai_enhance_stage_finish": "Surat ranglari saqlanmoqda va aralashtirilmoqda",
   "ai_enhance_stage_tiles": "Yaxshilanmoqda, bo'lakma-bo'lak",

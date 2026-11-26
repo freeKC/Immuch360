@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Fotky zo servera alebo zo sieťového úložiska idú do tohto priečinka.",
   "ai_enhance_shake": "Silné roztrasenie fotoaparátu sa neopraví.",
   "ai_enhance_skipped": "{count, plural, one {Preskočené: # (video alebo súbor nedostupný z tohto počítača)} other {Preskočené: # (videá alebo súbory nedostupné z tohto počítača)}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {Preskočené: # (360° a 3D fotky prídu v neskoršej verzii)} other {Preskočené: # (360° a 3D fotky prídu v neskoršej verzii)}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# preskočená fotka: nad 50 megapixelov, najprv ju zmenšite} few {# preskočené fotky: nad 50 megapixelov, najprv ich zmenšite} many {# preskočené fotky: nad 50 megapixelov, najprv ich zmenšite} other {# preskočených fotiek: nad 50 megapixelov, najprv ich zmenšite}}",
   "ai_enhance_stage_finish": "Zachovanie farieb fotky a zmiešanie",
   "ai_enhance_stage_tiles": "Vylepšovanie, dlaždicu po dlaždici",

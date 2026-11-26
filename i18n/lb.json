@@ -51,7 +51,6 @@
   "ai_enhance_saved_folder_why": "Fotoe vun engem Server oder enger Freigab kommen an dësen Dossier.",
   "ai_enhance_shake": "Staarkt Wackele vun der Kamera gëtt net behuewen.",
   "ai_enhance_skipped": "{count, plural, one {# iwwersprongen: e Video, oder e Fichier, deen dëse Computer net erreeche kann} other {# iwwersprongen: Videoen, oder Fichieren, déi dëse Computer net erreeche kann}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# iwwersprongen: 360°- an 3D-Fotoe kommen an enger spéiderer Versioun} other {# iwwersprongen: 360°- an 3D-Fotoe kommen an enger spéiderer Versioun}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# iwwersprongen: iwwer 50 Megapixel, reduzéier se als éischt} other {# iwwersprongen: iwwer 50 Megapixel, reduzéier se als éischt}}",
   "ai_enhance_stage_finish": "Faarwe vun der Foto behalen an iwwerblenden",
   "ai_enhance_stage_tiles": "Gëtt verbessert, Kachel fir Kachel",

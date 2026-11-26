@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Ảnh từ máy chủ hoặc thư mục chia sẻ được lưu vào thư mục này.",
   "ai_enhance_shake": "Ảnh bị rung máy mạnh không được khắc phục.",
   "ai_enhance_skipped": "{count, plural, one {Bỏ qua #: một video, hoặc một tệp mà máy tính này không truy cập được} other {Bỏ qua #: video, hoặc tệp mà máy tính này không truy cập được}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {Bỏ qua #: ảnh 360° và 3D sẽ được hỗ trợ trong một phiên bản sau} other {Bỏ qua #: ảnh 360° và 3D sẽ được hỗ trợ trong một phiên bản sau}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {Bỏ qua #: trên 50 megapixel, hãy thu nhỏ ảnh trước} other {Bỏ qua #: trên 50 megapixel, hãy thu nhỏ các ảnh trước}}",
   "ai_enhance_stage_finish": "Đang giữ màu của ảnh và hòa trộn",
   "ai_enhance_stage_tiles": "Đang cải thiện, từng ô một",

@@ -509,7 +509,6 @@
   "ai_enhance_saved_folder_why": "Foto daripada pelayan atau folder kongsi disimpan dalam folder ini.",
   "ai_enhance_shake": "Goncangan kamera yang kuat tidak dibaiki.",
   "ai_enhance_skipped": "{count, plural, one {# dilangkau: video, atau fail yang tidak dapat dicapai oleh komputer ini} other {# dilangkau: video, atau fail yang tidak dapat dicapai oleh komputer ini}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# dilangkau: foto 360° dan 3D akan hadir dalam versi akan datang} other {# dilangkau: foto 360° dan 3D akan hadir dalam versi akan datang}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# dilangkau: melebihi 50 megapiksel, kecilkannya dahulu} other {# dilangkau: melebihi 50 megapiksel, kecilkannya dahulu}}",
   "ai_enhance_stage_finish": "Mengekalkan warna foto dan menggabungkan",
   "ai_enhance_stage_tiles": "Meningkatkan, jubin demi jubin",

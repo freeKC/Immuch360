@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Fotografije s strežnika ali iz skupne rabe gredo v to mapo.",
   "ai_enhance_shake": "Močan tresljaj fotoaparata se ne popravi.",
   "ai_enhance_skipped": "{count, plural, one {Preskočeno: # (videoposnetek ali datoteka, ki je ta računalnik ne doseže)} other {Preskočeno: # (videoposnetki ali datoteke, ki jih ta računalnik ne doseže)}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {Preskočeno: # (fotografije 360° in 3D pridejo v poznejši različici)} other {Preskočeno: # (fotografije 360° in 3D pridejo v poznejši različici)}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {Preskočeno: # (nad 50 megapikslov, najprej zmanjšajte ločljivost)} other {Preskočeno: # (nad 50 megapikslov, najprej zmanjšajte ločljivost)}}",
   "ai_enhance_stage_finish": "Ohranjanje barv fotografije in zlivanje",
   "ai_enhance_stage_tiles": "Izboljševanje, ploščico za ploščico",

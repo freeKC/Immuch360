@@ -572,7 +572,6 @@
   "ai_enhance_saved_folder_why": "Fotoj de servilo aŭ de kundividaĵo iras al ĉi tiu dosierujo.",
   "ai_enhance_shake": "Forta skuiĝo de la kamerao ne estas riparata.",
   "ai_enhance_skipped": "{count, plural, one {# preterlasita: video, aŭ dosiero, kiun ĉi tiu komputilo ne povas atingi} other {# preterlasitaj: videoj, aŭ dosieroj, kiujn ĉi tiu komputilo ne povas atingi}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# preterlasita: 360°- kaj 3D-fotoj venos en posta versio} other {# preterlasitaj: 360°- kaj 3D-fotoj venos en posta versio}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# preterlasita: super 50 megapikseloj, unue malgrandigu ĝin} other {# preterlasitaj: super 50 megapikseloj, unue malgrandigu ilin}}",
   "ai_enhance_stage_finish": "Konservado de la koloroj de la foto kaj miksado",
   "ai_enhance_stage_tiles": "Plibonigado, kahelon post kahelo",

@@ -88,7 +88,6 @@
   "ai_enhance_saved_folder_why": "Napupunta sa folder na ito ang mga larawan mula sa server o share.",
   "ai_enhance_shake": "Hindi naaayos ang matinding pag-alog ng camera.",
   "ai_enhance_skipped": "{count, plural, one {# ang nilaktawan: video, o file na hindi maabot ng computer na ito} other {# ang nilaktawan: mga video, o mga file na hindi maabot ng computer na ito}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# ang nilaktawan: darating sa susunod na bersyon ang 360° at 3D na larawan} other {# ang nilaktawan: darating sa susunod na bersyon ang 360° at 3D na larawan}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# ang nilaktawan: higit sa 50 megapixel, paliitin muna ito} other {# ang nilaktawan: higit sa 50 megapixel, paliitin muna ang mga ito}}",
   "ai_enhance_stage_finish": "Pinapanatili ang mga kulay ng larawan at pinaghahalo",
   "ai_enhance_stage_tiles": "Pinapahusay, isa-isang tile",

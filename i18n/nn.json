@@ -360,7 +360,6 @@
   "ai_enhance_saved_folder_why": "Bilete frå ein tenar eller ei nettverksdeling hamnar i denne mappa.",
   "ai_enhance_shake": "Kraftig kameraristing blir ikkje retta opp.",
   "ai_enhance_skipped": "{count, plural, one {# hoppa over: ein video, eller ei fil som denne datamaskina ikkje når} other {# hoppa over: videoar, eller filer som denne datamaskina ikkje når}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# hoppa over: 360°- og 3D-bilete kjem i ein seinare versjon} other {# hoppa over: 360°- og 3D-bilete kjem i ein seinare versjon}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# hoppa over: over 50 megapikslar, skaler det ned først} other {# hoppa over: over 50 megapikslar, skaler dei ned først}}",
   "ai_enhance_stage_finish": "Held på fargane i biletet og blandar",
   "ai_enhance_stage_tiles": "Forbetrar, rute for rute",

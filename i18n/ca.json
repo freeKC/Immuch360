@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Les fotos d’un servidor o d’una carpeta compartida van a aquesta carpeta.",
   "ai_enhance_shake": "No es corregeix un moviment fort de la càmera.",
   "ai_enhance_skipped": "{count, plural, one {# omesa: un vídeo, o un fitxer al qual aquest ordinador no pot accedir} other {# omeses: vídeos, o fitxers als quals aquest ordinador no pot accedir}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# omesa: les fotos 360° i 3D arriben en una versió posterior} other {# omeses: les fotos 360° i 3D arriben en una versió posterior}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# omesa: més de 50 megapíxels, redueix-la primer} other {# omeses: més de 50 megapíxels, redueix-les primer}}",
   "ai_enhance_stage_finish": "Conservació dels colors de la foto i fusió",
   "ai_enhance_stage_tiles": "S’està millorant, tessel·la per tessel·la",

@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Le foto di un server o di una cartella condivisa vanno in questa cartella.",
   "ai_enhance_shake": "Il mosso forte della fotocamera non viene corretto.",
   "ai_enhance_skipped": "{count, plural, one {# saltato: un video, o un file che questo computer non riesce a raggiungere} other {# saltati: video, o file che questo computer non riesce a raggiungere}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# saltata: le foto 360° e 3D arrivano in una versione futura} other {# saltate: le foto 360° e 3D arrivano in una versione futura}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# saltata: oltre 50 megapixel, riducila prima} other {# saltate: oltre 50 megapixel, riducile prima}}",
   "ai_enhance_stage_finish": "Conservazione dei colori della foto e fusione",
   "ai_enhance_stage_tiles": "Miglioramento, riquadro per riquadro",

@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "A szerverről vagy megosztásról származó fotók ebbe a mappába kerülnek.",
   "ai_enhance_shake": "Az erős bemozdulást nem javítja ki.",
   "ai_enhance_skipped": "{count, plural, one {# kihagyva: videó, vagy olyan fájl, amelyet ez a számítógép nem ér el} other {# kihagyva: videók, vagy olyan fájlok, amelyeket ez a számítógép nem ér el}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# kihagyva: a 360°-os és a 3D fotók egy későbbi verzióban jönnek} other {# kihagyva: a 360°-os és a 3D fotók egy későbbi verzióban jönnek}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# kihagyva: 50 megapixelnél nagyobb, előbb kicsinyítse le} other {# kihagyva: 50 megapixelnél nagyobbak, előbb kicsinyítse le őket}}",
   "ai_enhance_stage_finish": "A fotó színeinek megtartása és összeolvasztás",
   "ai_enhance_stage_tiles": "Feljavítás csempénként",

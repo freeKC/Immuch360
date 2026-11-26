@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "來自伺服器或共用資料夾的相片會存到此資料夾。",
   "ai_enhance_shake": "無法修復嚴重的相機晃動。",
   "ai_enhance_skipped": "{count, plural, one {已跳過 # 個：影片，或這台電腦無法存取的檔案} other {已跳過 # 個：影片，或這台電腦無法存取的檔案}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {已跳過 # 張：360° 和 3D 相片將在後續版本支援} other {已跳過 # 張：360° 和 3D 相片將在後續版本支援}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {已跳過 # 張：超過 50 百萬畫素，請先縮小} other {已跳過 # 張：超過 50 百萬畫素，請先縮小}}",
   "ai_enhance_stage_finish": "正在保留相片色彩並混合",
   "ai_enhance_stage_tiles": "正在逐塊增強",

@@ -220,7 +220,6 @@
   "ai_enhance_saved_folder_why": "Serverdəki və ya paylaşılan qovluqdakı fotolar bu qovluğa düşür.",
   "ai_enhance_shake": "Kameranın güclü titrəməsi düzəldilmir.",
   "ai_enhance_skipped": "{count, plural, one {# ötürüldü: video və ya bu kompüterin çata bilmədiyi fayl} other {# ötürüldü: videolar və ya bu kompüterin çata bilmədiyi fayllar}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# ötürüldü: 360° və 3D fotolar sonrakı versiyalardan birində gələcək} other {# ötürüldü: 360° və 3D fotolar sonrakı versiyalardan birində gələcək}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# ötürüldü: 50 meqapikseldən böyük, əvvəlcə onu kiçildin} other {# ötürüldü: 50 meqapikseldən böyük, əvvəlcə onları kiçildin}}",
   "ai_enhance_stage_finish": "Fotonun rəngləri saxlanılır və qarışdırılır",
   "ai_enhance_stage_tiles": "Yaxşılaşdırılır, hissə-hissə",

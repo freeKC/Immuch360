@@ -534,7 +534,6 @@
   "ai_enhance_saved_folder_why": "Palvelimen tai verkkojaon kuvat menevät tähän kansioon.",
   "ai_enhance_shake": "Voimakasta kameran tärähtämistä ei korjata.",
   "ai_enhance_skipped": "{count, plural, one {# ohitettu: video tai tiedosto, jota tämä tietokone ei tavoita} other {# ohitettu: videoita tai tiedostoja, joita tämä tietokone ei tavoita}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# ohitettu: 360°- ja 3D-kuvat tulevat myöhemmässä versiossa} other {# ohitettu: 360°- ja 3D-kuvat tulevat myöhemmässä versiossa}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# ohitettu: yli 50 megapikseliä, pienennä se ensin} other {# ohitettu: yli 50 megapikseliä, pienennä ne ensin}}",
   "ai_enhance_stage_finish": "Säilytetään kuvan värit ja sekoitetaan",
   "ai_enhance_stage_tiles": "Parannetaan lohko kerrallaan",

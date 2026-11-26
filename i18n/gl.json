@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "As fotos dun servidor ou dun cartafol compartido van a este cartafol.",
   "ai_enhance_shake": "Non se corrixe un movemento forte da cámara.",
   "ai_enhance_skipped": "{count, plural, one {# omitida: un vídeo, ou un ficheiro ao que este ordenador non pode acceder} other {# omitidas: vídeos, ou ficheiros aos que este ordenador non pode acceder}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# omitida: as fotos 360° e 3D chegan nunha versión posterior} other {# omitidas: as fotos 360° e 3D chegan nunha versión posterior}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# omitida: máis de 50 megapíxeles, redúcea primeiro} other {# omitidas: máis de 50 megapíxeles, redúceas primeiro}}",
   "ai_enhance_stage_finish": "Conservando as cores da foto e mesturando",
   "ai_enhance_stage_tiles": "Mellorando, tesela a tesela",

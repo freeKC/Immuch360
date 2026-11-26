@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Fotos von einem Server oder einer Freigabe landen in diesem Ordner.",
   "ai_enhance_shake": "Starkes Verwackeln wird nicht behoben.",
   "ai_enhance_skipped": "{count, plural, one {# übersprungen: ein Video oder eine Datei, die dieser Computer nicht erreicht} other {# übersprungen: Videos oder Dateien, die dieser Computer nicht erreicht}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# übersprungen: 360°- und 3D-Fotos kommen in einer späteren Version} other {# übersprungen: 360°- und 3D-Fotos kommen in einer späteren Version}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# übersprungen: über 50 Megapixel, verkleinere es zuerst} other {# übersprungen: über 50 Megapixel, verkleinere sie zuerst}}",
   "ai_enhance_stage_finish": "Farben des Fotos bewahren und überblenden",
   "ai_enhance_stage_tiles": "Wird verbessert, Kachel für Kachel",

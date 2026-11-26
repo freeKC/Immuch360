@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "來自伺服器或者共用資料夾嘅相會放入呢個資料夾。",
   "ai_enhance_shake": "嚴重手震唔會修正。",
   "ai_enhance_skipped": "{count, plural, one {跳過 # 個：一段影片，或者呢部電腦存取唔到嘅檔案} other {跳過 # 個：影片，或者呢部電腦存取唔到嘅檔案}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {跳過 # 張：360° 同 3D 相會喺之後嘅版本推出} other {跳過 # 張：360° 同 3D 相會喺之後嘅版本推出}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {跳過 # 張：超過 50 百萬像素，請先縮細} other {跳過 # 張：超過 50 百萬像素，請先縮細}}",
   "ai_enhance_stage_finish": "保留相嘅顏色同混合緊",
   "ai_enhance_stage_tiles": "逐個圖塊增強緊",

@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Zdjęcia z serwera lub z udziału sieciowego trafiają do tego folderu.",
   "ai_enhance_shake": "Silne poruszenie aparatu nie jest naprawiane.",
   "ai_enhance_skipped": "{count, plural, one {Pominięto #: wideo lub plik, do którego ten komputer nie ma dostępu} few {Pominięto #: filmy lub pliki, do których ten komputer nie ma dostępu} many {Pominięto #: filmy lub pliki, do których ten komputer nie ma dostępu} other {Pominięto #: filmy lub pliki, do których ten komputer nie ma dostępu}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {Pominięto #: zdjęcia 360° i 3D pojawią się w późniejszej wersji} few {Pominięto #: zdjęcia 360° i 3D pojawią się w późniejszej wersji} many {Pominięto #: zdjęcia 360° i 3D pojawią się w późniejszej wersji} other {Pominięto #: zdjęcia 360° i 3D pojawią się w późniejszej wersji}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {Pominięto #: powyżej 50 megapikseli, najpierw je zmniejsz} few {Pominięto #: powyżej 50 megapikseli, najpierw je zmniejsz} many {Pominięto #: powyżej 50 megapikseli, najpierw je zmniejsz} other {Pominięto #: powyżej 50 megapikseli, najpierw je zmniejsz}}",
   "ai_enhance_stage_finish": "Zachowywanie kolorów zdjęcia i łączenie",
   "ai_enhance_stage_tiles": "Ulepszanie, kafelek po kafelku",

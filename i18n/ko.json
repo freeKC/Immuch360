@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "서버나 공유 폴더의 사진은 이 폴더에 저장됩니다.",
   "ai_enhance_shake": "심한 손떨림은 복구되지 않습니다.",
   "ai_enhance_skipped": "{count, plural, one {#개 건너뜀: 동영상이거나 이 컴퓨터에서 접근할 수 없는 파일} other {#개 건너뜀: 동영상이거나 이 컴퓨터에서 접근할 수 없는 파일}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {#개 건너뜀: 360° 사진과 3D 사진은 이후 버전에서 지원됩니다} other {#개 건너뜀: 360° 사진과 3D 사진은 이후 버전에서 지원됩니다}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {#개 건너뜀: 50메가픽셀 초과, 먼저 크기를 줄이세요} other {#개 건너뜀: 50메가픽셀 초과, 먼저 크기를 줄이세요}}",
   "ai_enhance_stage_finish": "사진의 색상을 유지하며 합성하는 중",
   "ai_enhance_stage_tiles": "타일 단위로 화질 향상 중",

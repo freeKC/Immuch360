@@ -571,7 +571,6 @@
   "ai_enhance_saved_folder_why": "Nuotraukos iš serverio ar bendrinamo aplanko išsaugomos šiame aplanke.",
   "ai_enhance_shake": "Stiprus fotoaparato drebėjimas netaisomas.",
   "ai_enhance_skipped": "{count, plural, one {Praleista: # (vaizdo įrašas arba failas, kurio šis kompiuteris negali pasiekti)} other {Praleista: # (vaizdo įrašai arba failai, kurių šis kompiuteris negali pasiekti)}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {Praleista: # (360° ir 3D nuotraukos bus vėlesnėje versijoje)} other {Praleista: # (360° ir 3D nuotraukos bus vėlesnėje versijoje)}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {Praleista: # (daugiau nei 50 megapikselių, pirmiausia ją sumažinkite)} other {Praleista: # (daugiau nei 50 megapikselių, pirmiausia jas sumažinkite)}}",
   "ai_enhance_stage_finish": "Išlaikomos nuotraukos spalvos, vyksta sumaišymas",
   "ai_enhance_stage_tiles": "Gerinama, plytelė po plytelės",

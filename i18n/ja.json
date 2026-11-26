@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "サーバーや共有フォルダーの写真は、このフォルダーに保存されます。",
   "ai_enhance_shake": "大きな手ぶれは補正されません。",
   "ai_enhance_skipped": "{count, plural, one {# 件をスキップ: 動画、またはこのコンピューターからアクセスできないファイル} other {# 件をスキップ: 動画、またはこのコンピューターからアクセスできないファイル}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# 件をスキップ: 360° 写真と 3D 写真は今後のバージョンで対応します} other {# 件をスキップ: 360° 写真と 3D 写真は今後のバージョンで対応します}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# 件をスキップ: 50 メガピクセル超、先に縮小してください} other {# 件をスキップ: 50 メガピクセル超、先に縮小してください}}",
   "ai_enhance_stage_finish": "写真の色を保ちながら合成中",
   "ai_enhance_stage_tiles": "タイルごとに高画質化中",

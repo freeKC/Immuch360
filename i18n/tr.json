@@ -572,7 +572,6 @@
   "ai_enhance_saved_folder_why": "Bir sunucudaki veya paylaşımdaki fotoğraflar bu klasöre gider.",
   "ai_enhance_shake": "Güçlü kamera sarsıntısı onarılmaz.",
   "ai_enhance_skipped": "{count, plural, one {# atlandı: bir video veya bu bilgisayarın ulaşamadığı bir dosya} other {# atlandı: videolar veya bu bilgisayarın ulaşamadığı dosyalar}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# atlandı: 360° ve 3D fotoğraflar sonraki bir sürümde gelecek} other {# atlandı: 360° ve 3D fotoğraflar sonraki bir sürümde gelecek}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# atlandı: 50 megapikselden büyük, önce küçültün} other {# atlandı: 50 megapikselden büyük, önce küçültün}}",
   "ai_enhance_stage_finish": "Fotoğrafın renkleri korunuyor ve harmanlanıyor",
   "ai_enhance_stage_tiles": "Karo karo iyileştiriliyor",

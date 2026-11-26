@@ -51,7 +51,6 @@
   "ai_enhance_saved_folder_why": "Picha za seva au za folda iliyoshirikiwa huenda kwenye folda hii.",
   "ai_enhance_shake": "Mtikisiko mkubwa wa kamera haurekebishwi.",
   "ai_enhance_skipped": "{count, plural, one {# imerukwa: video, au faili ambayo kompyuta hii haiwezi kuifikia} other {# zimerukwa: video, au faili ambazo kompyuta hii haiwezi kuzifikia}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# imerukwa: picha za 360° na 3D zitakuja katika toleo la baadaye} other {# zimerukwa: picha za 360° na 3D zitakuja katika toleo la baadaye}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# imerukwa: zaidi ya megapikseli 50, ipunguze kwanza} other {# zimerukwa: zaidi ya megapikseli 50, zipunguze kwanza}}",
   "ai_enhance_stage_finish": "Inahifadhi rangi za picha na kuchanganya",
   "ai_enhance_stage_tiles": "Inaboresha, kigae kwa kigae",

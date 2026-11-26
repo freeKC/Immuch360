@@ -578,7 +578,6 @@
   "ai_enhance_saved_folder_why": "As fotos de um servidor ou de uma partilha vão para esta pasta.",
   "ai_enhance_shake": "Um tremor forte da câmara não é corrigido.",
   "ai_enhance_skipped": "{count, plural, one {# ignorada: um vídeo, ou um ficheiro a que este computador não consegue aceder} other {# ignoradas: vídeos, ou ficheiros a que este computador não consegue aceder}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# ignorada: as fotos 360° e 3D chegam numa versão posterior} other {# ignoradas: as fotos 360° e 3D chegam numa versão posterior}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# ignorada: mais de 50 megapíxeis, reduza-a primeiro} other {# ignoradas: mais de 50 megapíxeis, reduza-as primeiro}}",
   "ai_enhance_stage_finish": "A manter as cores da foto e a misturar",
   "ai_enhance_stage_tiles": "A melhorar, bloco a bloco",

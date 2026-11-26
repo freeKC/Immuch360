@@ -303,7 +303,6 @@
   "ai_enhance_saved_folder_why": "Fotos vomene Server oder ere Freigab chömed i dä Ordner.",
   "ai_enhance_shake": "Starchs Verwackle wird nöd behobe.",
   "ai_enhance_skipped": "{count, plural, one {# übersprunge: es Video oder e Datei, wo dä Computer nöd erreicht} other {# übersprunge: Videos oder Dateie, wo dä Computer nöd erreicht}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# übersprunge: 360°- und 3D-Fotos chömed in ere spötere Version} other {# übersprunge: 360°- und 3D-Fotos chömed in ere spötere Version}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# übersprunge: über 50 Megapixel, verchliner s zerscht} other {# übersprunge: über 50 Megapixel, verchliner si zerscht}}",
   "ai_enhance_stage_finish": "D Farbe vom Foto bhalte und überblände",
   "ai_enhance_stage_tiles": "Wird verbesseret, Kachle für Kachle",

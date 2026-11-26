@@ -572,7 +572,6 @@
   "ai_enhance_saved_folder_why": "Foto dari server atau folder bersama disimpan di folder ini.",
   "ai_enhance_shake": "Guncangan kamera yang kuat tidak diperbaiki.",
   "ai_enhance_skipped": "{count, plural, one {# dilewati: sebuah video, atau file yang tidak dapat dijangkau komputer ini} other {# dilewati: video, atau file yang tidak dapat dijangkau komputer ini}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# dilewati: foto 360° dan 3D hadir di versi mendatang} other {# dilewati: foto 360° dan 3D hadir di versi mendatang}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# dilewati: di atas 50 megapiksel, perkecil dulu} other {# dilewati: di atas 50 megapiksel, perkecil dulu}}",
   "ai_enhance_stage_finish": "Mempertahankan warna foto dan memadukan",
   "ai_enhance_stage_tiles": "Meningkatkan, petak demi petak",

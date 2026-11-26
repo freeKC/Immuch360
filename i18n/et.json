@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Serveri või võrgukausta fotod lähevad sellesse kausta.",
   "ai_enhance_shake": "Tugevat kaamera värinat ei parandata.",
   "ai_enhance_skipped": "{count, plural, one {# vahele jäetud: video või fail, millele see arvuti ligi ei pääse} other {# vahele jäetud: videod või failid, millele see arvuti ligi ei pääse}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# vahele jäetud: 360° ja 3D-fotod tulevad hilisemas versioonis} other {# vahele jäetud: 360° ja 3D-fotod tulevad hilisemas versioonis}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# vahele jäetud: üle 50 megapiksli, vähenda seda kõigepealt} other {# vahele jäetud: üle 50 megapiksli, vähenda neid kõigepealt}}",
   "ai_enhance_stage_finish": "Foto värvide säilitamine ja sulandamine",
   "ai_enhance_stage_tiles": "Täiustamine, paan paani haaval",

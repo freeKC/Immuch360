@@ -213,7 +213,6 @@
   "ai_enhance_saved_folder_why": "Foto’s van ’n bediener of ’n deelmap gaan na hierdie vouer.",
   "ai_enhance_shake": "Sterk kamerabewing word nie herstel nie.",
   "ai_enhance_skipped": "{count, plural, one {# oorgeslaan: ’n video, of ’n lêer wat hierdie rekenaar nie kan bereik nie} other {# oorgeslaan: video’s, of lêers wat hierdie rekenaar nie kan bereik nie}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# oorgeslaan: 360°- en 3D-foto’s kom in ’n latere weergawe} other {# oorgeslaan: 360°- en 3D-foto’s kom in ’n latere weergawe}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# oorgeslaan: groter as 50 megapieksels, verklein dit eers} other {# oorgeslaan: groter as 50 megapieksels, verklein hulle eers}}",
   "ai_enhance_stage_finish": "Behou die kleure van die foto en meng",
   "ai_enhance_stage_tiles": "Verbeter, teël vir teël",

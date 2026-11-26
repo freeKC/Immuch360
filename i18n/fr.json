@@ -579,7 +579,6 @@
   "ai_enhance_saved_folder_why": "Les photos d’un serveur ou d’un partage vont dans ce dossier.",
   "ai_enhance_shake": "Un flou de bougé important n’est pas corrigé.",
   "ai_enhance_skipped": "{count, plural, one {# ignorée : une vidéo, ou un fichier inaccessible depuis cet ordinateur} other {# ignorées : des vidéos, ou des fichiers inaccessibles depuis cet ordinateur}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# ignorée : les photos 360° et 3D arrivent dans une prochaine version} other {# ignorées : les photos 360° et 3D arrivent dans une prochaine version}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# ignorée : plus de 50 mégapixels, réduisez-la d’abord} other {# ignorées : plus de 50 mégapixels, réduisez-les d’abord}}",
   "ai_enhance_stage_finish": "Conservation des couleurs de la photo et fusion",
   "ai_enhance_stage_tiles": "Amélioration, tuile par tuile",

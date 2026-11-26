@@ -561,7 +561,6 @@
   "ai_enhance_saved_folder_why": "Zerbitzari bateko edo partekatutako karpeta bateko argazkiak karpeta honetara doaz.",
   "ai_enhance_shake": "Kamera-mugimendu handia ez da konpontzen.",
   "ai_enhance_skipped": "{count, plural, one {# saltatuta: bideo bat, edo ordenagailu honetatik eskuratu ezin den fitxategi bat} other {# saltatuta: bideoak, edo ordenagailu honetatik eskuratu ezin diren fitxategiak}}",
-  "ai_enhance_skipped_immersive": "{count, plural, one {# saltatuta: 360° eta 3D argazkiak geroko bertsio batean datoz} other {# saltatuta: 360° eta 3D argazkiak geroko bertsio batean datoz}}",
   "ai_enhance_skipped_too_large": "{count, plural, one {# saltatuta: 50 megapixel baino gehiago, txikitu ezazu lehenik} other {# saltatuta: 50 megapixel baino gehiago, txikitu itzazu lehenik}}",
   "ai_enhance_stage_finish": "Argazkiaren koloreak mantentzen eta nahasten",
   "ai_enhance_stage_tiles": "Hobetzen, lauzaz lauza",
