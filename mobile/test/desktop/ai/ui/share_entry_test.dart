@@ -33,6 +33,7 @@ import 'package:immich_mobile/domain/services/network_video_thumbnail.service.da
 import 'package:immich_mobile/domain/services/store.service.dart';
 import 'package:immich_mobile/domain/services/upload_record_store.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/play_on_screen/relay_file_system.dart';
 import 'package:immich_mobile/infrastructure/repositories/store.repository.dart';
 import 'package:immich_mobile/presentation/pages/network/network_browser.page.dart';
 import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart';
@@ -320,6 +321,43 @@ void main() {
       expect(find.text('Enhance (AI)'), findsNothing, reason: 'a phone');
       await endRealIo(tester);
     });
+  });
+
+  testWidgets('a photo a phone sends from its relay is shown only: no Make 3D (AI) nor Enhance (AI) (release 53)', (
+    tester,
+  ) async {
+    const relay = NetworkSource(
+      id: 'tree:relay-00112233445566778899aabbccddeeff',
+      type: NetworkSourceType.phoneRelay,
+      name: 'Pixel',
+      host: '192.168.1.20',
+    );
+    expect(isPlayRelaySource(relay.id), isTrue);
+    // Real IO out of the fake clock of the widget test
+    await tester.runAsync(() async {
+      await server.close();
+      share = MemoryShare(relay, files: {'/IMG_0001.jpg': fakePhoto()});
+      server = await TestMediaServer.start(share);
+    });
+    await onComputer(() async {
+      await pumpNetworkRouter(
+        tester,
+        home: NetworkPhotoPage(sourceId: relay.id, path: '/IMG_0001.jpg'),
+        settle: false,
+        overrides: overrides(),
+      );
+      await settle(tester);
+      expect(find.byType(NetworkPhotoPage), findsOneWidget);
+      if (find.byTooltip(t.more).evaluate().isNotEmpty) {
+        await openMenu(tester);
+      }
+      expect(find.text('Enhance (AI)'), findsNothing);
+      expect(find.text('Make 3D (AI)'), findsNothing);
+      expect(find.text(t.network_upload_action), findsNothing);
+      await endRealIo(tester);
+    });
+    expect(enhanced, isEmpty);
+    expect(opened, isEmpty);
   });
 
   test('the types that take a photo of a share follow the rule of the plan, with what its page read of it', () {
