@@ -812,7 +812,7 @@ PhotoRegion? _regionOf(_Shared read) {
 }
 
 /// The GPano tags of a whole sphere of [width] x [height] pixels: equirectangular, the crop the whole frame
-List<(String, String)> _sphereTags(int? width, int? height) => width == null || height == null
+List<(String, String)> wholeSphereGPanoTags(int? width, int? height) => width == null || height == null
     ? const []
     : [
         ('ProjectionType', 'equirectangular'),
@@ -955,7 +955,7 @@ final class PanoramaXmp extends ImmersiveVersionXmp {
   }
 
   @override
-  List<(String, String)> get gpanoTags => _sphereTags(width, height);
+  List<(String, String)> get gpanoTags => wholeSphereGPanoTags(width, height);
 
   @override
   List<(String, String)> get kindFields => [
@@ -1134,7 +1134,7 @@ final class StereoPanoramaXmp extends ImmersiveVersionXmp {
   }
 
   @override
-  List<(String, String)> get gpanoTags => _sphereTags(width, height);
+  List<(String, String)> get gpanoTags => wholeSphereGPanoTags(width, height);
 
   @override
   List<(String, String)> get kindFields => [
@@ -1211,6 +1211,10 @@ final class EnhancedPhotoXmp extends ImmersiveVersionXmp {
     this.modelSha256,
     this.width,
     this.height,
+    this.input,
+    this.stereoEyes,
+    this.eyeOrder,
+    this.gpano = const [],
     super.derivativeId,
     super.sourceName,
     super.sourceSize,
@@ -1240,6 +1244,10 @@ final class EnhancedPhotoXmp extends ImmersiveVersionXmp {
     required String created,
     required String creatorTool,
     String? derivativeId,
+    String? input,
+    StereoEyes? stereoEyes,
+    EyeOrder? eyeOrder,
+    List<(String, String)> gpano = const [],
   }) => EnhancedPhotoXmp(
     origin: ImmersiveOrigin.generatedContent,
     pipeline: enhancePipeline,
@@ -1249,6 +1257,10 @@ final class EnhancedPhotoXmp extends ImmersiveVersionXmp {
     modelSha256: modelSha256,
     width: width,
     height: height,
+    input: input,
+    stereoEyes: stereoEyes,
+    eyeOrder: eyeOrder,
+    gpano: gpano,
     derivativeId: derivativeId ?? newImmersiveDerivativeId(),
     sourceName: sourceName,
     sourceSize: sourceSize,
@@ -1275,6 +1287,21 @@ final class EnhancedPhotoXmp extends ImmersiveVersionXmp {
   final int? width;
   final int? height;
 
+  /// Immuch360:EnhanceInput, what the original was when it was no flat photo (release 53): "Sphere" (a 360° photo),
+  /// "SideBySide" or "TopBottom" (a 3D photo), "SphereSideBySide" or "SphereTopBottom" (a 360° 3D photo)
+  final String? input;
+
+  /// The eyes of a 3D photo side by side, Immuch360:StereoLayout and Immuch360:EyeOrder as a 3D photo of ours writes
+  /// them, so that the viewers show the enhanced photo in 3D as they showed its original (decideStereoPhoto)
+  final StereoEyes? stereoEyes;
+  final EyeOrder? eyeOrder;
+
+  /// The GPano tags of the original, written again as they were: the viewers show a 360° photo by them
+  final List<(String, String)> gpano;
+
+  @override
+  List<(String, String)> get gpanoTags => gpano;
+
   @override
   String? get settingsKey {
     final chosen = level;
@@ -1295,10 +1322,24 @@ final class EnhancedPhotoXmp extends ImmersiveVersionXmp {
     if (modelSha256 case final value?) ('EnhanceModelSha256', value),
     if (width case final value?) ('Width', '$value'),
     if (height case final value?) ('Height', '$value'),
+    if (input case final value?) ('EnhanceInput', value),
+    if (stereoEyes case final value?) ('StereoLayout', value.xmp),
+    if (eyeOrder case final value?) ('EyeOrder', value.xmp),
   ];
 
   @override
-  List<Object?> get kindValues => [level, strength, model, modelSha256, width, height];
+  List<Object?> get kindValues => [
+    level,
+    strength,
+    model,
+    modelSha256,
+    width,
+    height,
+    input,
+    stereoEyes,
+    eyeOrder,
+    [for (final (name, value) in gpano) '$name=$value'],
+  ];
 
   /// The fields of the packet [xmp], null when it is not ours or not of an enhanced photo
   static EnhancedPhotoXmp? parse(String xmp) {
@@ -1316,6 +1357,13 @@ final class EnhancedPhotoXmp extends ImmersiveVersionXmp {
       modelSha256: read.field('EnhanceModelSha256'),
       width: read.integer('Width'),
       height: read.integer('Height'),
+      input: read.field('EnhanceInput'),
+      stereoEyes: StereoEyes.fromXmp(read.field('StereoLayout')),
+      eyeOrder: EyeOrder.fromXmp(read.field('EyeOrder')),
+      gpano: [
+        for (final name in enhanceGPanoNames)
+          if (read.gpano(name) case final value?) (name, value),
+      ],
       derivativeId: read.field('DerivativeId'),
       sourceName: read.field('SourceName'),
       sourceSize: read.integer('SourceSize'),
@@ -1330,3 +1378,24 @@ final class EnhancedPhotoXmp extends ImmersiveVersionXmp {
     );
   }
 }
+
+/// The GPano tags an enhanced photo keeps from its original, in this order (those the viewers and the cameras write)
+const enhanceGPanoNames = [
+  'ProjectionType',
+  'UsePanoramaViewer',
+  'CaptureSoftware',
+  'StitchingSoftware',
+  'PoseHeadingDegrees',
+  'PosePitchDegrees',
+  'PoseRollDegrees',
+  'InitialViewHeadingDegrees',
+  'InitialViewPitchDegrees',
+  'InitialViewRollDegrees',
+  'InitialHorizontalFOVDegrees',
+  'FullPanoWidthPixels',
+  'FullPanoHeightPixels',
+  'CroppedAreaImageWidthPixels',
+  'CroppedAreaImageHeightPixels',
+  'CroppedAreaLeftPixels',
+  'CroppedAreaTopPixels',
+];

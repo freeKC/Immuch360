@@ -46,6 +46,7 @@
 
 import 'dart:math' as math;
 
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
 import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
@@ -229,7 +230,9 @@ int? enhanceFreeGraphicsMemoryOf(EnhanceLevel level) => switch (level) {
   EnhanceLevel.natural => null,
 };
 
-/// The verdict of [level] for a photo of [width] x [height] on [machine] (see the top of this file)
+/// The verdict of [level] for a photo of [width] x [height] laid out as [layout] on [machine] (see the top of this
+/// file): the memory it needs counts every pixel the model works on (enhanceWorkPixels), the seam copy and the faces of
+/// the poles of a 360° photo with its own
 /// [macRebuildOffered]: aiEnhanceMacRebuildOffered, given by the tests of the gates of a Mac
 EnhanceVerdict enhanceVerdict(
   EnhanceLevel level,
@@ -237,6 +240,7 @@ EnhanceVerdict enhanceVerdict(
   required int width,
   required int height,
   bool macRebuildOffered = aiEnhanceMacRebuildOffered,
+  EnhanceLayout layout = EnhanceLayout.flat,
 }) {
   EnhanceVerdict refused(EnhanceRefusal reason) => EnhanceVerdict(level, refusal: reason);
   final platform = machine.platform;
@@ -289,7 +293,7 @@ EnhanceVerdict enhanceVerdict(
       return refused(EnhanceRefusal.memoryTooSmall);
     }
   }
-  final need = enhanceFreeMemoryOf(level, pixels: width * height);
+  final need = enhanceFreeMemoryOf(level, pixels: enhanceWorkPixels(width, height, layout));
   final free = machine.freeMemory;
   if (free != null && free < need) {
     warnings.add(EnhanceWarning.closeOtherPrograms);
@@ -311,6 +315,16 @@ Duration enhanceEstimate(EnhanceLevel level, int width, int height, {int process
     EnhanceLevel.natural => 9 + tiles * 16.0 * 22 / math.max(1, processors - 2),
   };
   return Duration(milliseconds: (seconds * 1000).round());
+}
+
+/// How long [level] takes for a photo of [width] x [height] laid out as [layout]: the model runs once per piece
+/// (enhancePiecesOf), each eye of a 3D photo, and the seam and the poles of a 360° one apart
+Duration enhanceLayoutEstimate(EnhanceLevel level, int width, int height, EnhanceLayout layout, {int processors = 24}) {
+  var total = Duration.zero;
+  for (final piece in enhancePiecesOf(width, height, layout)) {
+    total += enhanceEstimate(level, piece.width, piece.height, processors: processors);
+  }
+  return total;
 }
 
 /// The time of a batch of photos of [sizes] (width, height) at [level], the refused ones apart

@@ -19,6 +19,7 @@ import 'package:immich_mobile/desktop/ai/creator/safe_writer.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_compare.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_files.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/enhance/natural_backend.dart';
@@ -235,7 +236,8 @@ void main() {
       overrides: overrides(),
     );
     await tester.tap(find.byKey(const Key('open')));
-    await settleStill(tester);
+    // Until the dialog read the photos and this computer: a loaded Windows runner may pause longer than the still time
+    await settleStill(tester, until: () => find.byKey(const Key('ai_enhance_start')).evaluate().isNotEmpty);
     return ProviderScope.containerOf(tester.element(find.byKey(const Key('ai_enhance_dialog'))));
   }
 
@@ -409,13 +411,29 @@ void main() {
     expect(find.textContaining('1 skipped'), findsOneWidget);
   });
 
-  testWidgets('a 360° photo and a 3D photo are skipped with their reason, never made flat', (tester) async {
-    for (final name in ['theta.jpg', 'salon_3D_LRF_Full_SBS.jpg', 'pano.jpg', 'salon.jpg', 'spatial.heic']) {
+  testWidgets('360° and 3D photos are enhanced as such; VR180, spatial photos and versions of the app are skipped', (
+    tester,
+  ) async {
+    for (final name in [
+      'theta.jpg',
+      'salon_3D_LRF_Full_SBS.jpg',
+      'pano.jpg',
+      'salon.jpg',
+      'spatial.heic',
+      'trip_vr180.jpg',
+      'castle_TB.jpg',
+      'salon_3D.jpg',
+    ]) {
       original(name);
     }
     photoFacts['theta.jpg'] = const ConversionPhotoFacts(isPanorama: true);
     photoFacts['salon_3D_LRF_Full_SBS.jpg'] = const ConversionPhotoFacts(isStereo: true);
     photoFacts['spatial.heic'] = const ConversionPhotoFacts(isSpatial: true);
+    photoFacts['trip_vr180.jpg'] = const ConversionPhotoFacts(isPanorama: true, coverage: SphereCoverage.half);
+    photoFacts['salon_3D.jpg'] = const ConversionPhotoFacts(
+      isStereo: true,
+      version: (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto),
+    );
     // A whole sphere by its frame, which only its file tells 360°
     probes['pano.jpg'] = (isPanorama: true, halfSphere: false, raw360: false);
     final answers = <bool?>[];
@@ -425,31 +443,89 @@ void main() {
       _photo('pano.jpg', width: 4096, height: 2048),
       _photo('salon.jpg'),
       _photo('spatial.heic'),
+      _photo('trip_vr180.jpg', width: 5760, height: 2880),
+      _photo('castle_TB.jpg', width: 3000, height: 4000),
+      _photo('salon_3D.jpg', width: 8000, height: 3000),
     ], answer: answers);
-    expect(find.text('4 skipped: 360° and 3D photos come in a later version'), findsOneWidget);
-    expect(find.text('About 2 min for this photo on this computer'), findsOneWidget);
+    expect(
+      find.text(
+        '3 skipped: VR180, Apple spatial and raw 360° photos are not enhanced yet, nor the 3D and 360° versions this '
+        'app made (enhance their original)',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('ai_enhance_layout_sphere')), findsOneWidget);
+    expect(find.byKey(const Key('ai_enhance_layout_stereo')), findsOneWidget);
     await tester.ensureVisible(start());
     await tester.tap(start());
     await settleStill(tester);
     expect(answers, [true]);
     final jobs = container.read(conversionQueueProvider).jobs;
     expect(jobs.map((job) => job.skipReason), [
-      ConversionSkipReason.sphere360,
-      ConversionSkipReason.alreadyStereo,
-      ConversionSkipReason.sphere360,
+      null,
+      null,
+      null,
       null,
       ConversionSkipReason.spatial,
+      ConversionSkipReason.vr180,
+      null,
+      ConversionSkipReason.alreadyVersion,
     ]);
-    expect(jobs.where((job) => job.skipReason == null).single.target!.fileName, 'salon_enhanced.jpg');
+    expect(jobs.where((job) => job.skipReason == null).map((job) => job.enhance?.layout), [
+      const EnhanceLayout(sphere: true),
+      const EnhanceLayout(eyes: EnhanceEyes.sideBySide),
+      const EnhanceLayout(sphere: true),
+      EnhanceLayout.flat,
+      const EnhanceLayout(eyes: EnhanceEyes.topBottom),
+    ]);
+    expect(jobs.where((job) => job.skipReason == null).map((job) => job.target!.fileName), [
+      'theta_enhanced.jpg',
+      'salon_3D_LRF_Full_SBS_enhanced.jpg',
+      'pano_enhanced.jpg',
+      'salon_enhanced.jpg',
+      'castle_TB_enhanced.jpg',
+    ]);
   });
 
-  testWidgets('a photo that is only 360° or 3D leaves nothing to start', (tester) async {
+  testWidgets('Rebuild details leaves the 3D photos out, and says why when only 3D photos are chosen', (tester) async {
+    original('salon_3D_LRF_Full_SBS.jpg');
+    original('salon.jpg');
+    photoFacts['salon_3D_LRF_Full_SBS.jpg'] = const ConversionPhotoFacts(isStereo: true);
+    final answers = <bool?>[];
+    final container = await open(tester, [
+      _photo('salon_3D_LRF_Full_SBS.jpg', width: 8000, height: 3000),
+      _photo('salon.jpg'),
+    ], answer: answers);
+    expect(find.byKey(const Key('ai_enhance_skipped_rebuild_3d')), findsNothing);
+    await choose(tester, EnhanceLevel.rebuild);
+    expect(find.text('1 3D photo left out: Rebuild details would invent other details in each eye'), findsOneWidget);
+    expect(find.textContaining('for this photo on this computer'), findsOneWidget);
+    await tester.ensureVisible(start());
+    await tester.tap(start());
+    await settleStill(tester);
+    expect(answers, [true]);
+    final jobs = container.read(conversionQueueProvider).jobs;
+    expect(jobs.map((job) => job.skipReason), [ConversionSkipReason.enhanceStereoInvents, null]);
+  });
+
+  testWidgets('a 3D photo alone: Rebuild details is greyed with its reason, Sharpen and Natural run', (tester) async {
+    original('salon_3D_LRF_Full_SBS.jpg');
+    photoFacts['salon_3D_LRF_Full_SBS.jpg'] = const ConversionPhotoFacts(isStereo: true);
+    await open(tester, [_photo('salon_3D_LRF_Full_SBS.jpg', width: 8000, height: 3000)]);
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_rebuild'))).enabled, isFalse);
+    expect(find.textContaining('Not on 3D photos: it would invent other details in each eye'), findsOneWidget);
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_sharpen'))).enabled, isTrue);
+    expect(tester.widget<ListTile>(find.byKey(const Key('ai_enhance_level_natural'))).enabled, isTrue);
+    expect(startEnabled(tester), isTrue);
+  });
+
+  testWidgets('a photo that is only a version of the app leaves nothing to start', (tester) async {
     original('pano.jpg');
     photoFacts['pano.jpg'] = const ConversionPhotoFacts(
       version: (origin: IndexedOrigin.generated, kind: ImmersiveKind.panorama360),
     );
     await open(tester, [_photo('pano.jpg', width: 4096, height: 2048)]);
-    expect(find.byKey(const Key('ai_enhance_skipped_immersive')), findsOneWidget);
+    expect(find.byKey(const Key('ai_enhance_skipped_kinds')), findsOneWidget);
     expect(startEnabled(tester), isFalse);
   });
 
@@ -481,7 +557,7 @@ void main() {
     expect(startEnabled(tester), isFalse);
   });
 
-  test('what Enhance (AI) skips before anything runs', () {
+  test('what Enhance (AI) skips before anything runs, and what it makes of the others', () {
     final flat = _photo('salon.jpg');
     expect(enhanceSkipOf(flat, const ConversionPhotoFacts()), isNull);
     expect(
@@ -489,7 +565,7 @@ void main() {
       ConversionSkipReason.video,
     );
     expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isRaw360: true)), ConversionSkipReason.raw360);
-    expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isPanorama: true)), ConversionSkipReason.sphere360);
+    expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isPanorama: true)), isNull);
     expect(
       enhanceSkipOf(
         _photo('trip_vr180.jpg'),
@@ -497,27 +573,16 @@ void main() {
       ),
       ConversionSkipReason.vr180,
     );
-    expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isStereo: true)), ConversionSkipReason.alreadyStereo);
+    expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isStereo: true)), isNull);
     expect(enhanceSkipOf(flat, const ConversionPhotoFacts(isSpatial: true)), ConversionSkipReason.spatial);
-    // The versions of the app: a 3D one holds two eyes, a scene carries its scene, an enhanced photo may be enhanced
-    expect(
-      enhanceSkipOf(
-        flat,
-        const ConversionPhotoFacts(version: (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPhoto)),
-      ),
-      ConversionSkipReason.alreadyStereo,
-    );
-    expect(
-      enhanceSkipOf(flat, const ConversionPhotoFacts(version: (origin: IndexedOrigin.other, kind: null))),
-      ConversionSkipReason.alreadyStereo,
-    );
-    expect(
-      enhanceSkipOf(
-        flat,
-        const ConversionPhotoFacts(version: (origin: IndexedOrigin.reconstructed, kind: ImmersiveKind.volumetricScene)),
-      ),
-      ConversionSkipReason.alreadyVersion,
-    );
+    // The versions of the app: their original is the one to enhance; an enhanced photo may be enhanced again
+    for (final kind in [ImmersiveKind.stereoPhoto, ImmersiveKind.volumetricScene, ImmersiveKind.panorama360, null]) {
+      expect(
+        enhanceSkipOf(flat, ConversionPhotoFacts(version: (origin: IndexedOrigin.estimated, kind: kind))),
+        ConversionSkipReason.alreadyVersion,
+        reason: '$kind',
+      );
+    }
     expect(
       enhanceSkipOf(
         flat,
@@ -530,6 +595,67 @@ void main() {
       ConversionSkipReason.tooLarge,
     );
     expect(enhanceSkipOf(_photo('fifty.jpg', width: 10000, height: 5000), const ConversionPhotoFacts()), isNull);
+
+    expect(enhanceLayoutOf(flat, const ConversionPhotoFacts()), EnhanceLayout.flat);
+    expect(
+      enhanceLayoutOf(_photo('theta.jpg', width: 6720, height: 3360), const ConversionPhotoFacts(isPanorama: true)),
+      const EnhanceLayout(sphere: true),
+    );
+    // Two spheres stacked in a square frame, side by side in a 4:1 one, as the 360° viewers tell them
+    expect(
+      enhanceLayoutOf(_photo('vr.jpg', width: 4096, height: 4096), const ConversionPhotoFacts(isPanorama: true)),
+      const EnhanceLayout(eyes: EnhanceEyes.topBottom, sphere: true),
+    );
+    expect(
+      enhanceLayoutOf(_photo('vr.jpg', width: 8192, height: 2048), const ConversionPhotoFacts(isPanorama: true)),
+      const EnhanceLayout(eyes: EnhanceEyes.sideBySide, sphere: true),
+    );
+    // A phone panorama that leaves part of the sphere out, whatever its frame
+    expect(
+      enhanceLayoutOf(
+        _photo('phone.jpg', width: 4096, height: 4096),
+        const ConversionPhotoFacts(isPanorama: true, partialSphere: true),
+      ),
+      const EnhanceLayout(sphere: true),
+    );
+    expect(
+      enhanceLayoutOf(_photo('beach_HSBS.jpg', width: 1920, height: 1080), const ConversionPhotoFacts(isStereo: true)),
+      const EnhanceLayout(eyes: EnhanceEyes.sideBySide, halfEyes: true),
+    );
+    expect(
+      enhanceLayoutOf(_photo('beach_RLF.jpg', width: 7680, height: 2160), const ConversionPhotoFacts(isStereo: true)),
+      const EnhanceLayout(eyes: EnhanceEyes.sideBySide, rightFirst: true),
+    );
+    expect(
+      enhanceLayoutOf(_photo('castle_TB.jpg', width: 3000, height: 4000), const ConversionPhotoFacts()),
+      const EnhanceLayout(eyes: EnhanceEyes.topBottom),
+    );
+  });
+
+  test('top and bottom eyes need a name that says so and a frame that agrees; a French "ou" is no 3D mark', () {
+    EnhanceLayout of(String name, int width, int height) =>
+        enhanceLayoutOf(_photo(name, width: width, height: height), const ConversionPhotoFacts());
+    const stacked = EnhanceLayout(eyes: EnhanceEyes.topBottom);
+    // "or" in French, "crazy", a table: ordinary words written in small letters, in a landscape or a portrait frame
+    expect(of('Paris ou Lyon.jpg', 4000, 3000), EnhanceLayout.flat);
+    expect(of('Paris ou Lyon.jpg', 3000, 4000), EnhanceLayout.flat);
+    expect(of('chien_fou.jpg', 3000, 4000), EnhanceLayout.flat);
+    expect(of('my tab.jpg', 3000, 4000), EnhanceLayout.flat);
+    // The marks of the rippers and the players, in capitals, or the words no title uses, in any case
+    expect(of('Paris_OU.jpg', 3000, 4000), stacked);
+    expect(of('castle-3D-TB.jpg', 1920, 2160), stacked);
+    expect(of('castle_overunder.jpg', 2000, 2000), stacked);
+    expect(of('castle.ftb.jpg', 4000, 4000), stacked);
+    // Two full eyes stacked make a frame 1:1 to 1:2; a landscape frame is a flat photo whatever its name...
+    expect(of('castle_TB.jpg', 4000, 3000), EnhanceLayout.flat);
+    expect(of('castle_TB.jpg', 1000, 3000), EnhanceLayout.flat);
+    // ...unless the name says the eyes are squeezed to half their height
+    expect(of('castle_HTB.jpg', 1920, 1080), stacked);
+    expect(of('castle_htab.jpg', 1920, 1080), stacked);
+    expect(of('castle_HTB.jpg', 6000, 1000), EnhanceLayout.flat);
+    // Rebuild details is offered again on such a flat photo
+    expect(enhanceTakesStereo(EnhanceLevel.rebuild), isFalse);
+    expect(of('Paris ou Lyon.jpg', 3000, 4000).isStereo, isFalse);
   });
 
   test('the components of ai-components-7 are offered since it is published, never while it is not', () async {

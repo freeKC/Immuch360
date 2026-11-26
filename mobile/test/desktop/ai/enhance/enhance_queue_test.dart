@@ -13,6 +13,7 @@ import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/backends.dart' show GpuProbeProblem, GpuReport;
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
@@ -171,6 +172,36 @@ void main() {
     final ids = queue().add([photo('a.jpg')], kind: ConversionKind.enhanceSharpen);
     await until((state) => state.byId(ids.single)!.state == ConversionState.done);
     expect(levels[EnhanceLevel.sharpen]!.specs.single.strength, EnhanceLevel.sharpen.defaultStrength);
+  });
+
+  test('each photo keeps what it is, flat, 360° or 3D, from its request to the engine', () async {
+    ConversionRequest laidOut(String name, EnhanceLayout layout) {
+      final request = photo(name);
+      return ConversionRequest(
+        source: request.source,
+        target: request.target,
+        pixels: request.pixels,
+        enhanceLayout: layout,
+      );
+    }
+
+    final ids = queue().add(
+      [
+        photo('flat.jpg'),
+        laidOut('theta.jpg', const EnhanceLayout(sphere: true)),
+        laidOut('beach_SBS.jpg', const EnhanceLayout(eyes: EnhanceEyes.sideBySide)),
+      ],
+      kind: ConversionKind.enhanceSharpen,
+      existing: ExistingVersionChoice.newVersion,
+      enhance: const EnhanceSettings(level: EnhanceLevel.sharpen, strength: 60),
+    );
+    await until((state) => ids.every((id) => state.byId(id)!.state == ConversionState.done));
+    expect(levels[EnhanceLevel.sharpen]!.specs.map((spec) => spec.layout), [
+      EnhanceLayout.flat,
+      const EnhanceLayout(sphere: true),
+      const EnhanceLayout(eyes: EnhanceEyes.sideBySide),
+    ]);
+    expect(job(ids[1]).enhance!.layout, const EnhanceLayout(sphere: true));
   });
 
   test('Natural runs on the processor beside a level of the graphics card', () async {

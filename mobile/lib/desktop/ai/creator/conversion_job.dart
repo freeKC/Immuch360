@@ -23,6 +23,7 @@ import 'dart:isolate';
 import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
 import 'package:immich_mobile/desktop/ai/video3d/video_engine.dart';
@@ -355,6 +356,10 @@ enum ConversionSkipReason {
 
   /// An enhanced photo: a photo above 50 megapixels (enhance_plan.dart, enhanceMaxPixels)
   tooLarge,
+
+  /// An enhanced photo at Rebuild details: a 3D photo, whose two eyes would get other invented details
+  /// (enhance_layout.dart)
+  enhanceStereoInvents,
 }
 
 /// What a batch does with a photo that already has a version with the same settings. A name taken by another file is
@@ -401,6 +406,13 @@ abstract interface class ConversionSource {
 
   /// Deletes what [prepare] copied; nothing for a file read in place
   Future<void> release();
+}
+
+/// An original that is not a file of this computer (a photo of the Immich server, a file of a share), of which a copy
+/// of its own can be made again once its job ended and deleted its copy: "Compare" of an enhanced photo reads it
+abstract interface class RecopiableOriginal {
+  /// A new source of the same original, whose copy is its own
+  ConversionSource recopy();
 }
 
 /// A source whose versions may be where neither the index of this computer nor the folder of its job sees them: the
@@ -507,8 +519,14 @@ class SplatSelection {
 
 /// One photo to convert, as the dialog hands it to the queue
 class ConversionRequest {
-  const ConversionRequest({required this.source, this.target, this.quarterTurns = 0, this.skip, this.pixels})
-    : assert(target != null || skip != null, 'A job that runs has a destination');
+  const ConversionRequest({
+    required this.source,
+    this.target,
+    this.quarterTurns = 0,
+    this.skip,
+    this.pixels,
+    this.enhanceLayout,
+  }) : assert(target != null || skip != null, 'A job that runs has a destination');
 
   final ConversionSource source;
 
@@ -524,6 +542,9 @@ class ConversionRequest {
   /// The pixels of the photo as the library knows them, for the memory an enhanced photo holds (EnhanceSettings.pixels);
   /// null when not known, and for the other kinds
   final int? pixels;
+
+  /// What an enhanced photo is: flat, 360°, 3D (EnhanceSettings.layout); null for a flat one, and for the other kinds
+  final EnhanceLayout? enhanceLayout;
 }
 
 /// A job of the queue, unchanged once made: the queue replaces it with a copy at each change

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/ai/enhance/enhance_layout.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
 import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
@@ -262,6 +263,19 @@ void main() {
     final large = enhanceVerdict(EnhanceLevel.rebuild, free, width: 8000, height: 6000);
     expect(large.warnings, contains(EnhanceWarning.closeOtherPrograms));
     expect(large.memoryNeeded, rebuildFreeMemory + 40 * 36000000);
+  });
+
+  test('a 360 photo needs the memory of all its work pixels: the seam copy and the faces of the poles', () {
+    const sphere = EnhanceLayout(sphere: true);
+    final work = enhanceWorkPixels(9600, 4800, sphere);
+    expect(work, greaterThan(9600 * 4800 * 13 ~/ 10));
+    final flat = enhanceVerdict(EnhanceLevel.sharpen, _laptop, width: 9600, height: 4800);
+    final round = enhanceVerdict(EnhanceLevel.sharpen, _laptop, width: 9600, height: 4800, layout: sphere);
+    expect(flat.memoryNeeded, enhanceFreeMemoryOf(EnhanceLevel.sharpen, pixels: 9600 * 4800));
+    expect(round.memoryNeeded, enhanceFreeMemoryOf(EnhanceLevel.sharpen, pixels: work));
+    // A 3D photo side by side works on its own pixels only
+    const stereo = EnhanceLayout(eyes: EnhanceEyes.sideBySide);
+    expect(enhanceWorkPixels(8000, 4000, stereo), 8000 * 4000);
   });
 
   test('the time of a batch is the sum of its photos', () {

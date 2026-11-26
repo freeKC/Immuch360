@@ -553,7 +553,10 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
         skipReason: request.skip,
         fromVideo: fromVideo && kind == ConversionKind.splatScene,
         enhance: switch (kind.enhanceLevel) {
-          final level? => (enhance?.level == level ? enhance! : EnhanceSettings.of(level)).forPixels(request.pixels),
+          final level? => (enhance?.level == level ? enhance! : EnhanceSettings.of(level)).forPhoto(
+            pixels: request.pixels,
+            layout: request.enhanceLayout,
+          ),
           null => null,
         },
       );
@@ -1937,6 +1940,7 @@ class ConversionQueueNotifier extends Notifier<ConversionQueueState> {
           created: created,
           level: settings.level,
           strength: settings.strength,
+          layout: settings.layout,
           exif: exif,
         );
       case ConversionKind.stereoPanoramaFromPanorama:
