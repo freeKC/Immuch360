@@ -17,7 +17,6 @@ import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on_asset.
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/cast/cast_play.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
-import 'package:immich_mobile/providers/play_on_screen/phone_relay.provider.dart';
 
 const _user = 'a1b2c3d4-0000-4000-8000-00000000abcd';
 

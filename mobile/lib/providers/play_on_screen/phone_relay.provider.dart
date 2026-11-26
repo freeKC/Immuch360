@@ -267,6 +267,10 @@ class PhoneRelayController extends Notifier<PhoneRelayView?> {
   @visibleForTesting
   Iterable<CastRelayLease> get leases => _server?.leases ?? const [];
 
+  /// Whether the relay listens, for the tests
+  @visibleForTesting
+  bool get listening => _server != null;
+
   /// A lease of [item] for the screen at [screenHost] named [screenName], asking for the MAC of its path under one of
   /// [macKeys] (the K_relay of the sessions of the connection that sends the play); null when the item cannot be read
   /// or the relay cannot listen. The lease stays pending until [settle].
@@ -286,8 +290,12 @@ class PhoneRelayController extends Notifier<PhoneRelayView?> {
     if (made == null) {
       return null;
     }
-    final server = await _serverFor(screenHost);
-    if (server == null) {
+    var server = await _serverFor(screenHost);
+    // Closed meanwhile by the end of the item before: bound again
+    if (server != null && server.isClosed) {
+      server = await _serverFor(screenHost);
+    }
+    if (server == null || server.isClosed) {
       return null;
     }
     final lease = server.lease(made.content, client: _environment.clientOf(screenHost), macKeys: macKeys);
@@ -387,9 +395,15 @@ class PhoneRelayController extends Notifier<PhoneRelayView?> {
     );
   }
 
+  /// Nothing to send any more: the relay stops listening (no port left open for the network), the service goes
   void _idle() {
     if (state != null) {
       state = null;
+    }
+    final server = _server;
+    if (server != null && _pending.isEmpty) {
+      _server = null;
+      unawaited(server.close());
     }
     if (_keptAlive) {
       _keptAlive = false;

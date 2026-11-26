@@ -322,10 +322,9 @@ void main() {
     await _until(() => leases().isEmpty);
     expect(keepAlive.running, isFalse);
     expect(container.read(phoneRelayProvider), isNull);
-    await expectLater(
-      opened.readRange(opened.path, 0, 10),
-      throwsA(isA<NetworkFileSystemException>().having((error) => error.isNotFound, 'isNotFound', isTrue)),
-    );
+    expect(relay().listening, isFalse, reason: 'no port of the relay stays open once nothing is sent');
+    // The relay no longer listens: nothing to read, not even a 404
+    await expectLater(opened.readRange(opened.path, 0, 10), throwsA(isA<NetworkFileSystemException>()));
   });
 
   test('the end of the video on the screen ends the lease; the service stays for the next item of the slideshow '
