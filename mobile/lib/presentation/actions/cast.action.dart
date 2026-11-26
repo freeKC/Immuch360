@@ -13,7 +13,8 @@ import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart'
 /// Immuch360: "Play on..." of the asset the viewer shows (play_on_asset.dart), to a linked screen or a Cast device
 /// through this phone's relay. In place of Immich's own Cast dialog, whose Cast device got a session key of the
 /// account in its address (gcast.service.dart): here no credential leaves the phone. Not on a TV, the Quest nor a
-/// computer, which are the screens; not for an asset on this device only.
+/// computer, which are the screens. An asset on this device only goes to a linked screen from the phone's relay
+/// (release 53), never to a Cast device.
 class CastAction extends ActionBuilder {
   const CastAction();
 
