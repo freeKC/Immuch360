@@ -332,6 +332,68 @@ void main() {
       expect(actions.calls, isEmpty);
     });
 
+    group('an item sent from the relay of the phone (release 53)', () {
+      final relayPlay = {
+        'type': 'play',
+        'kind': 'relay',
+        'lease': '00112233445566778899aabbccddeeff',
+        'port': 8364,
+        'name': 'PXL_20261126.mp4',
+        'mime': 'video/mp4',
+        'size': 123456,
+        'media': 'video',
+        'title': 'PXL_20261126.mp4',
+      };
+
+      test('is read from the address of the session\'s request, under its K_relay', () async {
+        final channel = connect();
+        final answer = await session.command(channel.seal(relayPlay), client: '192.168.1.42');
+        expect(channel.open(answer.body)!['status'], 'ok');
+        final target = actions.played!.target as RelayPlayTarget;
+        expect(target.origin!.host, '192.168.1.42');
+        expect(target.origin!.relayKey, channel.keys.relay);
+        expect(target.path, '/cast/00112233445566778899aabbccddeeff/film');
+        expect(actions.played!.item, '00112233445566778899aabbccddeeff');
+        // An IPv4 address mapped in IPv6 is the same address
+        await session.command(channel.seal(relayPlay), client: '::ffff:192.168.1.43');
+        expect((actions.played!.target as RelayPlayTarget).origin!.host, '192.168.1.43');
+      });
+
+      test('a host in the message is never read: the screen reads the phone it talks to', () async {
+        final channel = connect();
+        await session.command(
+          channel.seal({...relayPlay, 'host': '192.168.1.1', 'origin': '10.0.0.1'}),
+          client: '192.168.1.42',
+        );
+        expect((actions.played!.target as RelayPlayTarget).origin!.host, '192.168.1.42');
+      });
+
+      test('without a private address to read it from, or out of bounds, it is refused before the player', () async {
+        final channel = connect();
+        expect(channel.open((await session.command(channel.seal(relayPlay))).body)!['status'], 'invalid');
+        expect(
+          channel.open((await session.command(channel.seal(relayPlay), client: '8.8.8.8')).body)!['status'],
+          'invalid',
+        );
+        for (final bad in [
+          {...relayPlay, 'lease': 'ABC'},
+          {...relayPlay, 'port': 0},
+          {...relayPlay, 'name': '../secret.mp4'},
+          {...relayPlay, 'name': 'a\nb.mp4'},
+          {...relayPlay, 'mime': 'text/html'},
+          {...relayPlay, 'mime': 'image/jpeg'},
+          {...relayPlay, 'size': -1},
+        ]) {
+          expect(
+            channel.open((await session.command(channel.seal(bad), client: '192.168.1.42')).body)!['status'],
+            'invalid',
+            reason: '$bad',
+          );
+        }
+        expect(actions.calls, isEmpty);
+      });
+    });
+
     test('pause, resume, seek, the tracks and stop go to the player', () async {
       final channel = connect();
       await send(channel, {'type': 'pause'});

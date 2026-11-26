@@ -79,6 +79,22 @@ class NetworkConnections {
     }
   }
 
+  /// Keeps [fileSystem], open already, under the id of its source, registered on the media bridge: on a big screen, the
+  /// item a linked phone sends from its relay (release 53), whose source lives among the import sources. [close] ends
+  /// it; it is never opened again by itself.
+  Future<void> adopt(NetworkFileSystem fileSystem) async {
+    final sourceId = fileSystem.source.id;
+    await close(sourceId);
+    try {
+      await _bridge.start();
+    } catch (_) {
+      await _closeQuietly(fileSystem);
+      rethrow;
+    }
+    _bridge.register(fileSystem);
+    _open[sourceId] = fileSystem;
+  }
+
   /// The media bridge URL of a file of a share, for the image widgets and the players
   Future<Uri> mediaUrl(String sourceId, String path) async {
     await fileSystem(sourceId);

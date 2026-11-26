@@ -296,7 +296,7 @@ class _DockBar extends ConsumerWidget {
                         ),
                         onPressed: () => unawaited(playing ? controller.pause() : controller.resume()),
                       ),
-                    if (playback.request.sourceId == playOnImmichSource) const PlayOnSlideshowButtons(),
+                    if (playback.request.ofViewer) const PlayOnSlideshowButtons(),
                     IconButton(
                       key: const Key('remote_play_dock_stop'),
                       icon: Icon(Icons.stop_rounded, semanticLabel: t.play_bar_stop),

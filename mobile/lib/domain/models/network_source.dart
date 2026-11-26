@@ -37,13 +37,18 @@ enum NetworkSourceType {
 
   /// A Jellyfin or Emby server (release 49), signed in with a token. Last of the list: the builds before 49 keep a
   /// source of this type whole, as one of a type they do not know.
-  jellyfin;
+  jellyfin,
+
+  /// On a big screen, the item a linked phone sends from its relay (release 53, relay_file_system.dart): in memory only,
+  /// one file under an id that starts with NetworkEntry.importSourcePrefix, gone with the item. Never stored, never
+  /// listed, never written to nor saved on the screen.
+  phoneRelay;
 
   /// Stored in StoreKey.networkSources, the list that builds 19 and older read and write back
   bool get inLegacyList => this == smb || this == webdav || this == dlna;
 
   /// Whether a source of this type is ever stored with the shares
-  bool get isStored => this != documentTree && this != deviceFolder;
+  bool get isStored => this != documentTree && this != deviceFolder && this != phoneRelay;
 
   /// Whether its folders hold the files as a camera or a drone wrote them, side files included (the .SRT of a video):
   /// a file share or a picked folder, not a media server, which lists media only

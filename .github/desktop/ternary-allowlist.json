@@ -11,6 +11,7 @@
   "mobile/lib/presentation/widgets/splat/splat_viewer_launch.dart": 3,
   "mobile/lib/providers/asset_viewer/local_panorama.provider.dart": 1,
   "mobile/lib/providers/permission.provider.dart": 1,
+  "mobile/lib/providers/play_on_screen/phone_relay.provider.dart": 2,
   "mobile/lib/providers/raw/raw_video.provider.dart": 1,
   "mobile/lib/providers/splat/splat_viewer.provider.dart": 1,
   "mobile/lib/repositories/asset_media.repository.dart": 1,

@@ -60,6 +60,8 @@ String networkSourceAddress(NetworkSource source) {
     NetworkSourceType.documentTree => 'usb://${source.name}',
     // A folder of the device: where it is on its volume
     NetworkSourceType.deviceFolder => deviceFolderPath(source.share) ?? source.name,
+    // An item a phone sends to a screen (release 53): the phone's name
+    NetworkSourceType.phoneRelay => source.name,
   };
 }
 
@@ -76,6 +78,7 @@ IconData networkSourceIcon(NetworkSourceType type) => switch (type) {
   NetworkSourceType.ipCamera => Icons.videocam_outlined,
   NetworkSourceType.documentTree => Icons.usb_rounded,
   NetworkSourceType.deviceFolder => Icons.folder_outlined,
+  NetworkSourceType.phoneRelay => Icons.smartphone_rounded,
 };
 
 /// The page that opens a source: its own pages for a camera, which is not browsed as folders; the browser at the start
@@ -89,7 +92,8 @@ PageRouteInfo networkSourceOpenRoute(NetworkSource source) => switch (source.typ
   NetworkSourceType.dlna ||
   NetworkSourceType.plex ||
   NetworkSourceType.jellyfin ||
-  NetworkSourceType.deviceFolder => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
+  NetworkSourceType.deviceFolder ||
+  NetworkSourceType.phoneRelay => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
 };
 
 /// The page that edits a source; [focusCredentials] opens it on its password or token, after the server refused them
@@ -103,6 +107,8 @@ PageRouteInfo networkSourceEditRoute(NetworkSource source, {bool focusCredential
   NetworkSourceType.documentTree => const DroneImportRoute(),
   // Nothing to edit: On this device lists it, and removes it
   NetworkSourceType.deviceFolder => const LocalAlbumsRoute(),
+  // Never listed with the shares: nothing to edit (release 53)
+  NetworkSourceType.phoneRelay => NetworkBrowserRoute(sourceId: source.id, path: source.rootPath),
 };
 
 /// What the add sheet gives back for the choices that open a system picker first rather than a page: "Open a splat

@@ -218,7 +218,7 @@ class PlayLinkServer {
       await _json(response, HttpStatus.badRequest, {'v': playLinkProtocolVersion, 'error': 'invalid'});
       return route;
     }
-    final answer = route == 'open' ? _session.open(message) : await _session.command(message);
+    final answer = route == 'open' ? _session.open(message) : await _session.command(message, client: client);
     // A gone session is no attack: the phone opens a new one
     if (answer.status != HttpStatus.ok && answer.status != HttpStatus.gone) {
       _recordFailure(client);

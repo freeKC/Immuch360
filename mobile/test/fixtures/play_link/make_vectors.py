@@ -43,14 +43,15 @@ def seal(key: bytes, transcript: bytes, direction: int, counter: int, plain: byt
     return AESGCM(key).encrypt(nonce, plain, transcript + bytes([direction]) + counter_bytes)
 
 
-def vector(name, key, screen_id, phone_id, nonce_s, nonce_p, up, down, phone_hex, screen_hex, token_plain, token_nonce):
+def vector(name, key, screen_id, phone_id, nonce_s, nonce_p, up, down, phone_hex, screen_hex, token_plain, token_nonce,
+           relay_path):
     transcript = hashlib.sha256(
         lp(LABEL) + lp(screen_id.encode()) + lp(phone_id.encode()) + lp(nonce_s) + lp(nonce_p)
     ).digest()
     proof_phone = mac(key, b'phone' + transcript)
     proof_screen = mac(key, b'screen' + transcript)
     prk = mac(transcript, key)
-    keys = {info: mac(prk, info.encode() + b'\x01') for info in ('up', 'down', 'handover')}
+    keys = {info: mac(prk, info.encode() + b'\x01') for info in ('up', 'down', 'handover', 'relay')}
     up_bytes = json.dumps(up, separators=(',', ':')).encode()
     down_bytes = json.dumps(down, separators=(',', ':')).encode()
     sealed_up = seal(keys['up'], transcript, 1, 1, up_bytes)
@@ -83,6 +84,10 @@ def vector(name, key, screen_id, phone_id, nonce_s, nonce_p, up, down, phone_hex
         'kUp': b64(keys['up']),
         'kDown': b64(keys['down']),
         'kHandover': b64(keys['handover']),
+        # The relay of the phone (release 53): K_relay, and the header a lease of the phone asks for its path
+        'kRelay': b64(keys['relay']),
+        'relayPath': relay_path,
+        'relayMac': b64(mac(keys['relay'], relay_path.encode())),
         'plainUp': b64(up_bytes),
         'counterUp': 1,
         'sealedUp': b64(sealed_up),
@@ -122,6 +127,7 @@ def main():
             '7a6b5c4d3e2f1011121314151617181920212223242526272829303132333435',
             {'server': {'name': 'Plex at home', 'machineIdentifier': 'abcdef0123456789'}, 'token': 'example-token'},
             bytes(range(1, 13)),
+            '/cast/000102030405060708090a0b0c0d0e0f/film',
         ),
         vector(
             'headset, other bytes',
@@ -136,6 +142,7 @@ def main():
             '2222222222222222222222222222222222222222222222222222222222222222',
             {'token': 'another-token'},
             bytes(12),
+            '/cast/ffeeddccbbaa99887766554433221100/film',
         ),
     ]
     print(json.dumps({'version': 1, 'vectors': vectors}, indent=2, ensure_ascii=False))

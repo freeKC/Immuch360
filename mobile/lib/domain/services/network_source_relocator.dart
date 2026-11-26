@@ -56,6 +56,7 @@ class NetworkSourceRelocator {
     // Found again by its WS-Discovery endpoint, at the port of its device service
     NetworkSourceType.ipCamera => source.ipCamera?.onvifPort ?? 80,
     // Never found on the network: a folder picked on the device
-    NetworkSourceType.documentTree || NetworkSourceType.deviceFolder => 0,
+    // Never found on the network either: an item a phone sends to a screen (release 53)
+    NetworkSourceType.documentTree || NetworkSourceType.deviceFolder || NetworkSourceType.phoneRelay => 0,
   };
 }

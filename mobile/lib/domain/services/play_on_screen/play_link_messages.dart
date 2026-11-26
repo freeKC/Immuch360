@@ -1,8 +1,9 @@
 // The messages of "Play on the TV" (play_link_protocol.dart): what the phone asks the screen, and the state the screen
 // tells back. The play message names the item on the screen's own access to the same source, never a token: the
 // Plex machine identifier of the server and the rating key of a film (build 51, unchanged), an Immich asset id with
-// the phone's user id, a share's identity with a path, a Jellyfin or Emby item (build 52, [PlayTarget]). A build 51
-// screen answers "invalid" to a kind it does not know: the phone then asks to update it.
+// the phone's user id, a share's identity with a path, a Jellyfin or Emby item (build 52, [PlayTarget]), or an item the
+// phone serves itself from its relay (build 53, [RelayPlayTarget]). A build 51 screen answers "invalid" to a kind it
+// does not know: the phone then asks to update it.
 
 import 'dart:convert';
 
@@ -76,7 +77,10 @@ enum ScreenPlayReason {
   locked('locked'),
 
   /// The screen has no source of that identity (a share, a Jellyfin or Emby server)
-  noSuchSource('noSuchSource');
+  noSuchSource('noSuchSource'),
+
+  /// The screen could not read the item the phone sends from its relay (build 53)
+  relayFailed('relayFailed');
 
   const ScreenPlayReason(this.wire);
   final String wire;
@@ -205,7 +209,10 @@ enum PlayKind {
   plex('plex'),
   immich('immich'),
   share('share'),
-  mediaServer('mediaServer');
+  mediaServer('mediaServer'),
+
+  /// An item the phone sends from its own relay (build 53)
+  relay('relay');
 
   const PlayKind(this.wire);
   final String wire;
@@ -263,6 +270,7 @@ sealed class PlayTarget {
     'immich' => ImmichPlayTarget._fromJson(json),
     'share' => SharePlayTarget._fromJson(json),
     'mediaServer' => MediaServerPlayTarget._fromJson(json),
+    'relay' => RelayPlayTarget._fromJson(json),
     _ => null,
   };
 }
@@ -571,6 +579,135 @@ class MediaServerPlayTarget extends PlayTarget {
       return null;
     }
     return MediaServerPlayTarget(type: type, server: server.toLowerCase(), item: item, media: media);
+  }
+}
+
+/// Where the screen reads a relayed item, set by the screen's session and never read from a message: the address the
+/// session's own requests came from (the phone), and the K_relay of that session
+class PlayRelayOrigin {
+  const PlayRelayOrigin({required this.host, required this.relayKey});
+
+  final String host;
+  final List<int> relayKey;
+
+  @override
+  String toString() => 'PlayRelayOrigin';
+}
+
+/// An item the phone serves from its relay (release 53): a photo or a video on the phone only, or an item the screen
+/// cannot reach with its own access (an Immich item of another account or server, a share it does not have), when
+/// the user of the phone chose "Send it from this phone". The message names the lease (128 random bits), the port of
+/// the relay, the file's name (for its extension and the texts), its type and size; never a host: the screen reads
+/// the lease from the address of the session's own requests only ([origin], set by the session), so a play cannot
+/// send the screen to another machine. Each read carries the MAC of the lease's path under the session's K_relay.
+class RelayPlayTarget extends PlayTarget {
+  const RelayPlayTarget({
+    required this.lease,
+    required this.port,
+    required this.name,
+    required this.mime,
+    this.size,
+    this.media = PlayMedia.video,
+    this.projection = PlayProjection.flat,
+    this.origin,
+  });
+
+  /// 32 lower case hex digits
+  final String lease;
+  final int port;
+
+  /// One path segment, 120 characters at most
+  final String name;
+
+  /// image/... or video/...
+  final String mime;
+  final int? size;
+  @override
+  final PlayMedia media;
+  @override
+  final PlayProjection projection;
+
+  /// Null until the screen's session bound it
+  final PlayRelayOrigin? origin;
+
+  /// The path of the lease on the phone's relay
+  String get path => '/cast/$lease/film';
+
+  /// The same, read from [host] under [relayKey]
+  RelayPlayTarget boundTo(PlayRelayOrigin origin) => RelayPlayTarget(
+    lease: lease,
+    port: port,
+    name: name,
+    mime: mime,
+    size: size,
+    media: media,
+    projection: projection,
+    origin: origin,
+  );
+
+  @override
+  PlayKind get kind => PlayKind.relay;
+
+  @override
+  String get serverKey => 'relay';
+
+  @override
+  String get itemKey => lease;
+
+  @override
+  Map<String, Object?> toJson() => {
+    'kind': 'relay',
+    'lease': lease,
+    'port': port,
+    'name': name,
+    'mime': mime,
+    if (size != null) 'size': size,
+    'media': media.wire,
+    if (projection != PlayProjection.flat) 'projection': projection.wire,
+  };
+
+  static final _lease = RegExp(r'^[0-9a-f]{32}$');
+  static final _mime = RegExp(r'^(image|video)/[0-9a-z.+-]{1,64}$');
+
+  /// Whether [name] may name a relayed file: one segment, no control character, 120 characters at most
+  static bool isSafeName(String name) =>
+      name.isNotEmpty &&
+      name.length <= 120 &&
+      name != '.' &&
+      name != '..' &&
+      !name.contains('/') &&
+      !name.contains('\\') &&
+      !name.codeUnits.any((unit) => unit < 0x20 || unit == 0x7f);
+
+  static RelayPlayTarget? _fromJson(Map<String, Object?> json) {
+    final lease = json['lease'];
+    final port = json['port'];
+    final name = json['name'];
+    final mime = json['mime'];
+    final size = json['size'];
+    final media = PlayMedia.fromWire(json['media']);
+    if (lease is! String || !_lease.hasMatch(lease) || port is! int || port < 1 || port > 65535 || media == null) {
+      return null;
+    }
+    if (name is! String || !isSafeName(name) || mime is! String || !_mime.hasMatch(mime)) {
+      return null;
+    }
+    if (size != null && (size is! int || size < 1)) {
+      return null;
+    }
+    // The type and the media agree: a photo is an image, a video a video
+    if (mime.startsWith('image/') != (media == PlayMedia.photo)) {
+      return null;
+    }
+    return RelayPlayTarget(
+      lease: lease,
+      port: port,
+      name: name,
+      mime: mime,
+      size: size as int?,
+      media: media,
+      projection: PlayProjection.fromWire(json['projection']),
+    );
   }
 }
 

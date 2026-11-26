@@ -6,6 +6,12 @@
 // ([CastRelayContent.upstream]): no token, no session, no address of the server is ever in a URL the device sees.
 // The poster is served from memory under the same path.
 //
+// The same relay serves a linked screen of "Play on…" (release 53): the phone's own photos and videos, read from the
+// device ([CastRelayContent.file], [CastRelayContent.bytes]), and items the screen cannot reach with its own access.
+// Such a lease is pinned to the screen's address like a Cast lease, and also asks for the header x-immuch-relay, the
+// MAC of its path under the K_relay of the play link session ([CastRelayLease.macKeys], play_link_protocol.dart):
+// another device of the network, or the screen without the session, gets the same 404 as for an unknown path.
+//
 // Rules: GET and HEAD only, private IPv4 clients only, an unknown or revoked path is a 404 without a body, the path
 // never logged, a lease revoked after [CastRelayServer.leaseIdle] without a request or [CastRelayServer.leaseMaxAge]
 // at most. A lease answers only the Cast device it was made for ([CastRelayLease.client], its IPv4 address): the
@@ -20,6 +26,7 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:immich_mobile/domain/services/pairing/pairing_protocol.dart';
+import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:logging/logging.dart';
 
 final _log = Logger('CastRelay');
@@ -28,25 +35,51 @@ final _log = Logger('CastRelay');
 typedef CastRelayUpstream = Future<http.StreamedResponse> Function(String method, Map<String, String> headers);
 
 /// What a lease serves: the item from [film] (the bridge URL of its file, asked at each request so that a bridge bound
-/// again is followed) or from [upstream] (a request of the app's own HTTP client), and the poster's bytes
+/// again is followed), from [upstream] (a request of the app's own HTTP client), from [file] (a file of this device,
+/// read at each request with its range) or from [bytes] (a picture made in memory), and the poster's bytes
 class CastRelayContent {
   const CastRelayContent({this.film, this.upstream, this.poster, this.posterType = 'image/jpeg'})
-    : assert(film != null || upstream != null);
+    : file = null,
+      bytes = null,
+      contentType = null,
+      assert(film != null || upstream != null);
+
+  /// A photo or a video of this device, served by the relay itself (release 53)
+  const CastRelayContent.local({this.file, this.bytes, required String this.contentType})
+    : film = null,
+      upstream = null,
+      poster = null,
+      posterType = 'image/jpeg',
+      assert((file == null) != (bytes == null));
 
   final Future<Uri> Function()? film;
   final CastRelayUpstream? upstream;
   final Uint8List? poster;
   final String posterType;
+
+  /// The file asked for at each request (a file of the gallery is looked up again: it may move)
+  final Future<File?> Function()? file;
+  final Uint8List? bytes;
+
+  /// The type of [file] or [bytes]
+  final String? contentType;
 }
 
 /// One film served under one random path
 class CastRelayLease {
-  CastRelayLease._(this._server, this.id, this._content, this.client, DateTime now) : _created = now, _lastUse = now;
+  CastRelayLease._(this._server, this.id, this._content, this.client, DateTime now, {this.macKeys})
+    : _created = now,
+      _lastUse = now;
 
   final CastRelayServer _server;
 
-  /// The IPv4 address of the only client served: the Cast device
+  /// The IPv4 address of the only client served: the Cast device, or the linked screen
   final String client;
+
+  /// For a linked screen: the K_relay of the sessions the play may have gone through (the session that sealed it, or
+  /// the one opened again after the screen forgot it), asked at each request; null for a Cast device, which cannot
+  /// send a header
+  final List<List<int>> Function()? macKeys;
 
   /// 128 random bits in hex: the path's only secret
   final String id;
@@ -55,7 +88,13 @@ class CastRelayLease {
   DateTime _lastUse;
 
   /// The film's address on the network
-  Uri get filmUrl => _server._urlOf('/cast/$id/film');
+  Uri get filmUrl => _server._urlOf(path);
+
+  /// The film's path, the one its MAC is made of
+  String get path => '/cast/$id/film';
+
+  /// The port of the relay
+  int get port => _server.port;
 
   /// The poster's address, null without a poster
   Uri? get posterUrl => _content.poster == null ? null : _server._urlOf('/cast/$id/poster.jpg');
@@ -118,16 +157,20 @@ class CastRelayServer {
   int get port => _http.port;
   bool get isClosed => _closed;
 
-  /// A new path for [content], served to the device at [client] (an IPv4 address) only
-  CastRelayLease lease(CastRelayContent content, {required String client}) {
+  /// A new path for [content], served to the device at [client] (an IPv4 address) only; with [macKeys], to requests
+  /// that carry the MAC of the path under one of them only (a linked screen)
+  CastRelayLease lease(CastRelayContent content, {required String client, List<List<int>> Function()? macKeys}) {
     final bytes = List<int>.generate(16, (_) => _random.nextInt(256));
     final id = bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
-    final lease = CastRelayLease._(this, id, content, client, _clock());
+    final lease = CastRelayLease._(this, id, content, client, _clock(), macKeys: macKeys);
     _leases[id] = lease;
     return lease;
   }
 
   int get leaseCount => _leases.length;
+
+  /// The leases alive now
+  Iterable<CastRelayLease> get leases => List.unmodifiable(_leases.values);
 
   Uri _urlOf(String path) => Uri(scheme: 'http', host: _address, port: _http.port, path: path);
 
@@ -164,15 +207,42 @@ class CastRelayServer {
   bool _servesClient(CastRelayLease lease, InternetAddress? remote) =>
       _ipv4Of(remote) == lease.client || (allowLoopback && (remote?.isLoopback ?? false));
 
-  /// The lease of [id] when [remote] is its device; another client of the network learns nothing, not even that the
-  /// path exists, and does not keep the lease alive
-  CastRelayLease? _leaseOf(String id, InternetAddress? remote) {
+  /// Whether [request] carries the MAC of [lease]'s path under one of its keys; true for a lease without keys
+  static bool _carriesMac(CastRelayLease lease, HttpRequest request) {
+    final keysOf = lease.macKeys;
+    if (keysOf == null) {
+      return true;
+    }
+    final values = request.headers[playRelayHeader];
+    final given = values == null || values.length != 1 ? null : pairingDecodeBase64(values.single);
+    if (given == null) {
+      return false;
+    }
+    final keys = keysOf();
+    var found = false;
+    // Every key is tried, found or not: the time does not tell which one matched
+    for (final key in keys) {
+      final expected = pairingDecodeBase64(playRelayMac(key, lease.path));
+      if (expected != null && pairingSameBytes(expected, given)) {
+        found = true;
+      }
+    }
+    return found;
+  }
+
+  /// The lease of [id] when [remote] is its device, with the MAC of its path when it asks for one; another client of
+  /// the network learns nothing, not even that the path exists, and does not keep the lease alive
+  CastRelayLease? _leaseOf(String id, InternetAddress? remote, HttpRequest request) {
     final lease = _leases[id];
     if (lease == null) {
       return null;
     }
     if (!_servesClient(lease, remote)) {
-      _log.info('A client that is not the Cast device asked for a cast');
+      _log.info('A client that is not the device of a lease asked for it');
+      return null;
+    }
+    if (!_carriesMac(lease, request)) {
+      _log.info('A request without the MAC of its lease was refused');
       return null;
     }
     final now = _clock();
@@ -202,7 +272,7 @@ class CastRelayServer {
         await _end(response, HttpStatus.notFound);
         return;
       }
-      final lease = _leaseOf(segments[1], request.connectionInfo?.remoteAddress);
+      final lease = _leaseOf(segments[1], request.connectionInfo?.remoteAddress, request);
       if (lease == null) {
         await _end(response, HttpStatus.notFound);
         return;
@@ -245,6 +315,10 @@ class CastRelayServer {
   ];
 
   Future<void> _forward(HttpRequest request, CastRelayLease lease) async {
+    final content = lease._content;
+    if (content.bytes != null || content.file != null) {
+      return _serveLocal(request, content);
+    }
     final upstreamRequest = lease._content.upstream;
     if (upstreamRequest != null) {
       return _forwardUpstream(request, upstreamRequest);
@@ -328,9 +402,86 @@ class CastRelayServer {
     await response.close();
   }
 
+  /// A file of this device or bytes made in memory, with one range at most (what players and image widgets ask)
+  Future<void> _serveLocal(HttpRequest request, CastRelayContent content) async {
+    final response = request.response;
+    final bytes = content.bytes;
+    File? file;
+    if (bytes == null) {
+      try {
+        file = await content.file!();
+      } catch (error) {
+        _log.info('The file of a lease could not be found: ${error.runtimeType}');
+      }
+      if (file == null) {
+        await _end(response, HttpStatus.notFound);
+        return;
+      }
+    }
+    final int length;
+    try {
+      length = bytes?.length ?? await file!.length();
+    } on FileSystemException {
+      await _end(response, HttpStatus.notFound);
+      return;
+    }
+    final range = castRelayRangeOf(request.headers.value(HttpHeaders.rangeHeader), length);
+    if (range == null) {
+      response.headers.set(HttpHeaders.contentRangeHeader, 'bytes */$length');
+      await _end(response, HttpStatus.requestedRangeNotSatisfiable);
+      return;
+    }
+    response.headers.contentType = ContentType.parse(content.contentType!);
+    response.headers.set(HttpHeaders.acceptRangesHeader, 'bytes');
+    if (range.partial) {
+      response.statusCode = HttpStatus.partialContent;
+      response.headers.set(HttpHeaders.contentRangeHeader, 'bytes ${range.start}-${range.end - 1}/$length');
+    }
+    response.headers.contentLength = range.end - range.start;
+    if (request.method == 'HEAD' || range.end == range.start) {
+      await response.close();
+      return;
+    }
+    if (bytes != null) {
+      response.add(Uint8List.sublistView(bytes, range.start, range.end));
+      await response.close();
+      return;
+    }
+    await response.addStream(file!.openRead(range.start, range.end));
+    await response.close();
+  }
+
   static Future<void> _end(HttpResponse response, int status) async {
     response.statusCode = status;
     response.headers.contentLength = 0;
     await response.close();
   }
+}
+
+/// The bytes [header] (a Range header) asks of a file of [length] bytes: the whole file without one (or with one that is
+/// not a single byte range, which a server may ignore), null when the range is past the end
+({int start, int end, bool partial})? castRelayRangeOf(String? header, int length) {
+  final whole = (start: 0, end: length, partial: false);
+  if (header == null) {
+    return whole;
+  }
+  final match = RegExp(r'^bytes=(\d*)-(\d*)$').firstMatch(header.trim());
+  if (match == null || (match[1]!.isEmpty && match[2]!.isEmpty)) {
+    return whole;
+  }
+  final first = int.tryParse(match[1]!);
+  final last = int.tryParse(match[2]!);
+  if (first == null) {
+    // The last bytes
+    if (last == null || last == 0) {
+      return null;
+    }
+    final start = last >= length ? 0 : length - last;
+    return (start: start, end: length, partial: true);
+  }
+  if (first >= length || (last != null && last < first)) {
+    return null;
+  }
+  final end = last == null || last >= length ? length : last + 1;
+  return (start: first, end: end, partial: true);
 }

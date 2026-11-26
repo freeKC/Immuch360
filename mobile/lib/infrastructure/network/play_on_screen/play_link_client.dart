@@ -41,15 +41,26 @@ class _NoOverrides extends HttpOverrides {}
 
 /// An open session with a screen
 class PlayLinkConnection {
-  PlayLinkConnection._(this._client, this.screen, this._base, this._channel);
+  PlayLinkConnection._(this._client, this.screen, this._base, this._channel) : _relayKeys = [_channel.keys.relay];
 
   final PlayLinkClient _client;
   final LinkedPeer screen;
   final Uri _base;
   PlayLinkChannel _channel;
 
+  /// The K_relay of the sessions this connection opened, the newest last, [maxRelayKeys] at most (release 53)
+  final List<Uint8List> _relayKeys;
+
+  /// How many sessions' K_relay a lease of the relay takes: the one a play was sealed in, and the one the connection
+  /// opened again when the screen had forgotten it, while the play went
+  static const maxRelayKeys = 3;
+
   /// The address the session talks to
   String get address => '${_base.host}:${_base.port}';
+
+  /// The K_relay a request of the screen to this phone's relay may be made with: those of the sessions of this
+  /// connection
+  List<List<int>> get relayKeys => List.unmodifiable(_relayKeys);
 
   /// Sends [message] sealed and gives the sealed answer, opened. A session the screen no longer has (it restarted) is
   /// opened again once.
@@ -64,6 +75,10 @@ class PlayLinkConnection {
       );
       if (answer.status == HttpStatus.gone && attempt == 0) {
         _channel = await _client._open(_base, screen);
+        _relayKeys.add(_channel.keys.relay);
+        if (_relayKeys.length > maxRelayKeys) {
+          _relayKeys.removeAt(0);
+        }
         continue;
       }
       if (answer.status != HttpStatus.ok) {

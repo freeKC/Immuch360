@@ -58,6 +58,10 @@ void main() {
         expect(pairingBase64(keys.up), vector['kUp']);
         expect(pairingBase64(keys.down), vector['kDown']);
         expect(pairingBase64(keys.handover), vector['kHandover']);
+        // The relay of the phone (release 53)
+        expect(pairingBase64(keys.relay), vector['kRelay']);
+        expect(playRelayMac(keys.relay, vector['relayPath']), vector['relayMac']);
+        expect(playRelayMac(keys.up, vector['relayPath']), isNot(vector['relayMac']));
 
         final sealedUp = playLinkSeal(
           keys: keys,
