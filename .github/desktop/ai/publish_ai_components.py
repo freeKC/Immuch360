@@ -2020,7 +2020,7 @@ NOTES = {
                 'Brush 0.3.0 (Apache-2.0), which trains the splat on the graphics card through Vulkan, built by our CI '
                 'without its LPIPS weights. For Windows x64 and Linux x64; this version of the app offers the splat '
                 'scenes on Windows only.',
-    TAG_VIDEOS: 'The AI component of the 3D videos of Immuch360 Desktop (experimental): Video Depth Anything Small '
+    TAG_VIDEOS: 'The AI component of the 3D videos of Immuch360 Desktop: Video Depth Anything Small '
                 '(Apache-2.0, Copyright (2025) Bytedance Ltd.), the ONNX export of looplj at a pinned revision, '
                 'which gives the depth of a video 32 frames at a time on the processor. The FFmpeg program the '
                 'feature also needs comes from a release of immuch360/libmpv-builds.',
