@@ -1555,7 +1555,7 @@ If something goes wrong, please open an [issue](https://github.com/freeKC/Immuch
 
 ## Install it on a computer: Windows, Linux and macOS
 
-Immuch360 Desktop comes as desktop releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 32](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.7-32). From desktop build 28, the App Version line of the profile menu names the desktop build, as `immuch360 --version` does on Linux, rather than the build of the phones. From desktop build 7, each desktop release has seven files (six in desktop builds 5 and 6, eight from desktop build 32 with the AppImage), with `SHA256SUMS.txt` to check them:
+Immuch360 Desktop comes as desktop releases on the [Releases](https://github.com/freeKC/Immuch360/releases) page of GitHub; the current one is [desktop build 34](https://github.com/freeKC/Immuch360/releases/tag/desktop-v3.4.8-34). From desktop build 28, the App Version line of the profile menu names the desktop build, as `immuch360 --version` does on Linux, rather than the build of the phones. From desktop build 7, each desktop release has seven files (six in desktop builds 5 and 6, eight from desktop build 32 with the AppImage), with `SHA256SUMS.txt` to check them:
 
 | Computer | File | What it is |
 |---|---|---|
