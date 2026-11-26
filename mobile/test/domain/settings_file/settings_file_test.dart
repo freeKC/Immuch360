@@ -98,7 +98,14 @@ void main() {
       final text = sealed.encode();
       expect(text.contains('session-token'), isFalse);
       expect(text.contains('smb-pass'), isFalse);
-      expect(text.contains('NAS'), isFalse, reason: 'the whole content is encrypted, names included');
+      // As a JSON string: three letters alone turn up in the random base64 of the salt, the nonce or the cipher text
+      // about once in 250 runs (CI of test-25d-53, 26 November 2026), while a quote never does
+      expect(text.contains('"NAS"'), isFalse, reason: 'the whole content is encrypted, names included');
+      expect(
+        jsonEncode(_content.toJson()),
+        contains('"NAS"'),
+        reason: 'the name the check looks for is in the content',
+      );
       final read = SettingsFile.parse(text);
       expect(read.isEncrypted, isTrue);
       final content = await openSettingsFile(read, passphrase: 'correct horse');
