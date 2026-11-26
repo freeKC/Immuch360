@@ -78,6 +78,8 @@ void main() {
     bool depthFails = false,
   }) => [
     spatialPhotoProgramProvider.overrideWithValue(() async => program),
+    // No head tracker unless a test gives one (spatial_photo_head_test.dart)
+    spatialHeadSourceProvider.overrideWithValue(null),
     spatialPhotoDepthProvider.overrideWithValue(
       (image, layout) async =>
           depthFails ? throw StateError('no depth') : SpatialPhotoDepth(map: map.clone(), minimum: -2, range: 4),
@@ -127,7 +129,7 @@ void main() {
       expect(find.byKey(const Key('spatial_photo_move_mouse')), findsOneWidget);
       expect(find.byKey(const Key('spatial_photo_move_sway')), findsOneWidget);
       expect(find.byKey(const Key('spatial_photo_move_keys')), findsOneWidget);
-      // No head without the tracker of its own lot
+      // No head on a computer without the head tracker
       expect(find.byKey(const Key('spatial_photo_move_head')), findsNothing);
       await tester.tapAt(Offset.zero);
       await tester.pumpAndSettle();
@@ -311,7 +313,11 @@ void main() {
 
   group('settings', () {
     testWidgets('what moves the view, the strength and the direction are written to the settings', (tester) async {
-      await tester.pumpTestWidget(context, const SingleChildScrollView(child: DesktopSpatialViewSettings()));
+      await tester.pumpTestWidget(
+        context,
+        const SingleChildScrollView(child: DesktopSpatialViewSettings()),
+        overrides: [spatialHeadSourceProvider.overrideWithValue(null)],
+      );
       expect(find.text('Move the view with'), findsOneWidget);
       expect(find.text('Strength of the movement: 100 %'), findsOneWidget);
       await tester.tap(find.byType(DropdownButton<ViewerPositionKind>));

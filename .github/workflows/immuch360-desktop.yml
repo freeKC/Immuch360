@@ -548,7 +548,7 @@ jobs:
           ls -l "$work/build"/libimmuch_head_tracker*.so
           IMMUCH360_HEAD_TRACKER_LIBRARY="$work/build/libimmuch_head_tracker.so" mise exec -- flutter test \
             test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/head_tracker_windows_test.dart \
-            --reporter expanded
+            test/desktop/spatial/spatial_photo_head_native_test.dart --reporter expanded
 
       # ONNX Runtime by FFI (lot A4a): test/desktop/ai/ort on the official Linux libraries of 1.31.0, the one the app
       # installs, and of 1.23.2, the last release for Intel Macs (the proof that the table of API 23 holds), one run each
@@ -1592,12 +1592,24 @@ jobs:
           dlls = ('immuch_head_tracker.dll', 'immuch_head_tracker_detect.dll', 'immuch_head_tracker_detect_avx2.dll')
           wanted = [top + name for name in dlls] + [top + 'licenses/libfacedetection/LICENSE']
           with zipfile.ZipFile(archive) as bundle:
+              # The listing of what sits next to immuch360.exe, for the record of the run
+              for info in sorted(bundle.infolist(), key=lambda i: i.filename.lower()):
+                  rest = info.filename[len(top):]
+                  if info.filename.startswith(top) and '/' not in rest and rest.lower().endswith(('.exe', '.dll')):
+                      print(f'  {rest}: {info.file_size} bytes')
               missing = [name for name in wanted if name not in bundle.namelist()]
               if missing:
                   sys.exit('::error::not in the ZIP: ' + ', '.join(missing))
               for name in dlls:
                   data = bundle.read(top + name)
                   print(f'{name}: {len(data)} bytes, sha256 {hashlib.sha256(data).hexdigest()}')
+                  # The face model of libfacedetection is compiled into each detector build (no file to download)
+                  if name != 'immuch_head_tracker.dll' and len(data) < 200_000:
+                      sys.exit(f'::error::{name} is {len(data)} bytes: too small to hold the face model')
+              tracker = bundle.read(top + 'immuch_head_tracker.dll')
+              for symbol in (b'ht_api_version', b'ht_list_cameras', b'ht_open_camera', b'ht_predict'):
+                  if symbol not in tracker:
+                      sys.exit(f'::error::immuch_head_tracker.dll of the ZIP does not export {symbol.decode()}')
               packed = bundle.read(top + 'licenses/libfacedetection/LICENSE')
           if packed.replace(b'\r\n', b'\n') != licence.read_bytes().replace(b'\r\n', b'\n'):
               sys.exit('::error::licenses/libfacedetection/LICENSE in the ZIP is not the vendored LICENSE')
@@ -1701,7 +1713,32 @@ jobs:
           flutter test test/desktop/video/camera_live_libmpv_test.dart test/desktop/video/mpv_references_test.dart \
             test/desktop/video/desktop_player_libmpv_test.dart test/desktop/video/av2/av2_libmpv_test.dart \
             test/desktop/ai/splat/video_frames_libmpv_test.dart test/desktop/spatial/head_tracker_windows_test.dart \
-            test/desktop/spatial/head_tracker_native_test.dart
+            test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/spatial_photo_head_native_test.dart
+
+      # The head tracker as the ZIP ships it, not as the build folder holds it: the ZIP unpacked in a folder of its own,
+      # then the same tests on its DLLs (the clip through Media Foundation and both detector builds, whose face model is
+      # compiled in; the recorded track through the fake camera; the 2.5D photo page following that track). A ZIP
+      # without the tracker, or with DLLs that do not load or do not find faces, fails here.
+      - name: The head tracker of the ZIP itself
+        working-directory: mobile
+        env:
+          ZIP: ${{ steps.bundle.outputs.zip }}
+          IMMUCH360_REQUIRE_HEAD_TRACKER: '1'
+        shell: bash
+        run: |
+          unpacked="$RUNNER_TEMP/zip-head-tracker"
+          python - "$GITHUB_WORKSPACE/$ZIP" "$unpacked" <<'PY'
+          import pathlib, sys, zipfile
+          target = pathlib.Path(sys.argv[2])
+          target.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile(sys.argv[1]) as bundle:
+              bundle.extractall(target)
+          for dll in sorted((target / 'Immuch360 Desktop').glob('immuch_head_tracker*.dll')):
+              print(f'{dll.name}: {dll.stat().st_size} bytes, unpacked from the ZIP')
+          PY
+          IMMUCH360_BUILD_DIR="$unpacked/Immuch360 Desktop" flutter test test/desktop/spatial/head_tracker_windows_test.dart \
+            test/desktop/spatial/head_tracker_native_test.dart test/desktop/spatial/spatial_photo_head_native_test.dart \
+            --reporter expanded
 
       # The probe of the graphics cards of the AI features (lot C6, windows/runner/gpu_probe.cpp): the app of the build
       # started with --immuch360-gpu-probe=<file>, as the app starts it, must answer within 10 s without crashing. The
