@@ -3,8 +3,8 @@
 // not refuse, a photo "Make 3D (AI)" takes), with its own tooltip; never on another photo, and a 3D photo keeps its
 // button. Pressed: the 3D photo made by AI known for it opens at once; otherwise the conversion dialog on the 3D photo
 // alone, Convert, the job in the real queue with the fake engine, its dialog, then the 2.5D page on the file written;
-// a failure in the words of the panel, Cancel and Escape that cancel the job. The choices of the 3D photo and of a
-// version of a share, and what a job ended with.
+// a failure in the words of the panel, Cancel and Escape that cancel the job, and so does the dialog removed by
+// anything else. The choices of the 3D photo and of a version of a share, and what a job ended with.
 
 import 'dart:async';
 import 'dart:io';
@@ -360,6 +360,100 @@ void main() {
         expect(opened, isEmpty);
       });
     });
+  });
+
+  testWidgets('a lookup that never answers holds the button 10 s at most, then the conversion is offered', (
+    tester,
+  ) async {
+    var launched = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => TextButton(
+            onPressed: () => unawaited(
+              runSpatialConversion(
+                context,
+                name: 'salon.jpg',
+                known: () => Completer<SpatialMadePhoto?>().future,
+                launch: () async {
+                  launched++;
+                  return null;
+                },
+                existing: (path) async => null,
+                open: (photo) => fail('nothing to open'),
+              ),
+            ),
+            child: const Text('press'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('press'));
+    await tester.pump(const Duration(seconds: 9));
+    expect(launched, 0, reason: 'still looking');
+    await tester.pump(const Duration(seconds: 2));
+    expect(launched, 1, reason: 'taken for none past 10 s');
+  });
+
+  group('the dialog removed by something else than its buttons', () {
+    late SpatialAiWorld world;
+
+    setUp(() => world = SpatialAiWorld());
+    tearDown(() => world.dispose());
+
+    for (final waiting in [false, true]) {
+      testWidgets('its job is cancelled, without an error (${waiting ? 'a job waiting' : 'the job running'})', (
+        tester,
+      ) async {
+        world.engine = FakeImmersiveEngine(holdStage: ImmersiveStage.depth);
+        final path = world.original('salon.jpg');
+        tester.view.physicalSize = const Size(1600, 1200);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpConsumerWidget(
+          const Scaffold(body: SizedBox.expand()),
+          overrides: [
+            ...world.overrides(),
+            appConfigProvider.overrideWithValue(const AppConfig(viewer: ViewerConfig(spatial25d: true))),
+          ],
+        );
+        await settleStill(tester);
+        final context = tester.element(find.byType(Scaffold));
+        final container = ProviderScope.containerOf(context);
+        final queue = container.read(conversionQueueProvider.notifier);
+        ConversionRequest request(String name) => ConversionRequest(
+          source: LocalFileSource(path),
+          target: ConversionTarget(folder: world.photos, fileName: name),
+        );
+        var id = queue.add([request('a_3D_LRF_Full_SBS.jpg')]).first;
+        if (waiting) {
+          final first = id;
+          await settleStill(
+            tester,
+            until: () => container.read(conversionQueueProvider).byId(first)!.state == ConversionState.depth,
+          );
+          id = queue.add([request('b_3D_LRF_Full_SBS.jpg')]).first;
+        }
+        final done = showDialog<SpatialMadePhoto>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => SpatialConversionDialog(jobId: id, name: 'salon.jpg', photoOf: (job) async => null),
+        );
+        await settleStill(tester);
+        expect(find.byKey(const Key('spatial_conversion_dialog')), findsOneWidget);
+
+        // As the desktop Back, a logout or a page popping under it would
+        Navigator.of(context).pop();
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        world.engine.release();
+        world.engine.release();
+        await settleStill(tester, until: () => container.read(conversionQueueProvider).byId(id)!.state.isEnded);
+        expect(await done, isNull);
+        expect(container.read(conversionQueueProvider).byId(id)!.state, ConversionState.cancelled);
+        expect(tester.takeException(), isNull, reason: 'no element left listening to the queue');
+      });
+    }
   });
 
   group('what a job ended with', () {

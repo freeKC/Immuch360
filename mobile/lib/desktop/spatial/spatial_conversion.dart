@@ -216,7 +216,8 @@ class SpatialConversionDialog extends ConsumerStatefulWidget {
 }
 
 class _SpatialConversionDialogState extends ConsumerState<SpatialConversionDialog> {
-  late final ConversionQueueNotifier _queue = ref.read(conversionQueueProvider.notifier);
+  /// Read in initState: closed from outside, the dialog cancels its job from dispose, where ref is no longer read
+  late final ConversionQueueNotifier _queue;
 
   /// Why no 3D photo opens: the words of the failure or of the skip, shown with Close
   String? _error;
@@ -231,6 +232,7 @@ class _SpatialConversionDialogState extends ConsumerState<SpatialConversionDialo
   @override
   void initState() {
     super.initState();
+    _queue = ref.read(conversionQueueProvider.notifier);
     // A job that ended before the first frame (a version with the same settings, a photo skipped)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -241,10 +243,15 @@ class _SpatialConversionDialogState extends ConsumerState<SpatialConversionDialo
 
   @override
   void dispose() {
-    // Closed by anything else than its buttons: the job does not go on unseen
+    // Closed by anything else than its buttons (the route removed from outside): the job does not go on unseen. After
+    // the frame: a cancel changes the queue, which no provider may do while the tree is being built or torn down
     if (!_closed) {
       _closed = true;
-      _cancelJob();
+      if (!_jobEnded) {
+        final queue = _queue;
+        final id = widget.jobId;
+        scheduleMicrotask(() => queue.cancel(id));
+      }
     }
     super.dispose();
   }
