@@ -13,12 +13,18 @@
 // (the sheet asked before that one): an item skipped stays on the phone, the screen keeps the one before, and the
 // next move sends again.
 //
+// A photo or a video on this phone only goes from the phone's relay (release 53, phone_relay.provider.dart), to a
+// linked screen only (a Cast device keeps passing over it); so does an Immich item the screen cannot see once the user
+// chose "Send it from this phone", and the next items of the viewer while it sends them so.
+//
 // A selection of the timeline, or an album, goes as a slideshow without the viewer (release 53): "Slideshow on…"
 // sends its first item that may go, then the same Previous, Slideshow and Next step through the list the phone
 // keeps ([playOnQueueProvider]), with the same rules for locked and archived items. The phone's clock drives it: the
 // app stays open on the phone meanwhile.
 
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -28,21 +34,32 @@ import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.
 import 'package:immich_mobile/domain/services/timeline.service.dart';
 import 'package:immich_mobile/entities/store.entity.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/infrastructure/network/cast/cast_relay.dart';
+import 'package:immich_mobile/infrastructure/repositories/storage.repository.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/asset_viewer.page.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on.sheet.dart';
 import 'package:immich_mobile/providers/asset_viewer/asset_viewer.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/cast/cast_immich.dart';
 import 'package:immich_mobile/providers/cast/cast_play.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
+import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/phone_relay.provider.dart';
 import 'package:immich_mobile/providers/user.provider.dart';
 import 'package:immich_mobile/services/api.service.dart';
 import 'package:logging/logging.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 final _log = Logger('PhonePlay');
 
-/// The request of an asset of this phone's Immich server: null for an asset on this device only, or with no server
+/// The request of an asset of this phone's Immich server; for an asset on this device only, the request that sends it
+/// from the phone's relay (release 53); null for anything else
 final playOnAssetRequestProvider = Provider<PlayOnRequest? Function(BaseAsset asset)>((ref) {
   return (asset) {
+    if (asset.isLocalOnly) {
+      return ref.read(playOnLocalRequestProvider)(asset);
+    }
     final user = ref.read(currentUserProvider);
     final endpoint = Store.tryGet(StoreKey.serverEndpoint);
     if (user == null || endpoint == null || endpoint.isEmpty) {
@@ -68,6 +85,199 @@ final playOnProjectionProvider = Provider<PlayProjection Function(BaseAsset asse
       : PlayProjection.flat;
 });
 
+/// The largest side of the picture the relay sends of a photo that is no JPEG (HEIC, RAW, PNG): drawn by the system's
+/// decoders on the phone, oriented, as a JPEG every screen reads; a 360° photo keeps more of its pixels
+const playRelayPhotoSide = 3840;
+const playRelaySpherePhotoSide = 8192;
+
+/// What reads the media of this device for the relay, replaced in the tests
+class PlayRelayDevice {
+  const PlayRelayDevice({required this.file, required this.picture});
+
+  /// The original file of the asset [localId], null when the device has none (any more)
+  final Future<File?> Function(String localId) file;
+
+  /// A JPEG of the asset [localId], [side] pixels at most on its long side
+  final Future<Uint8List?> Function(String localId, int side) picture;
+}
+
+final playRelayDeviceProvider = Provider<PlayRelayDevice>((ref) {
+  final StorageRepository storage = ref.read(storageRepositoryProvider);
+  return PlayRelayDevice(
+    file: storage.getFileForAsset,
+    picture: (localId, side) async {
+      final entity = await AssetEntity.fromId(localId);
+      return entity?.thumbnailDataWithSize(ThumbnailSize(side, side), format: ThumbnailFormat.jpeg, quality: 90);
+    },
+  );
+});
+
+/// Whether the file [name] is a JPEG, sent as it is (its XMP, the 360° projection among it, stays)
+bool _isJpeg(String name) {
+  final lower = name.toLowerCase();
+  return lower.endsWith('.jpg') || lower.endsWith('.jpeg');
+}
+
+/// The name of the JPEG the relay draws of [name]
+String _jpegName(String name) {
+  final dot = name.lastIndexOf('.');
+  return '${dot > 0 ? name.substring(0, dot) : name}.jpg';
+}
+
+/// What the relay serves of the asset [localId] of this device named [name]: a video or a JPEG as it is, its file;
+/// another photo, a JPEG the system draws of it
+PlayOnRelayItem playOnDeviceRelayItem(
+  PlayRelayDevice device, {
+  required String key,
+  required String localId,
+  required String name,
+  required bool video,
+  required PlayProjection projection,
+}) {
+  final photoAsItIs = !video && _isJpeg(name);
+  final sent = playRelayNameOf(video || photoAsItIs ? name : _jpegName(name), photo: !video);
+  return PlayOnRelayItem(
+    key: key,
+    name: sent,
+    media: video ? PlayMedia.video : PlayMedia.photo,
+    projection: projection,
+    content: () async {
+      if (video || photoAsItIs) {
+        final file = await device.file(localId);
+        return file == null ? null : playRelayFile(file, mime: playRelayMimeOf(sent, photo: !video)!);
+      }
+      final jpeg = await device.picture(localId, projection.isSphere ? playRelaySpherePhotoSide : playRelayPhotoSide);
+      return jpeg == null || jpeg.isEmpty ? null : playRelayPicture(jpeg);
+    },
+  );
+}
+
+/// The request of a photo or a video on this phone only: sent from the relay, to a linked screen
+final playOnLocalRequestProvider = Provider<PlayOnRequest? Function(BaseAsset asset)>((ref) {
+  return (asset) {
+    final localId = asset.localId;
+    if (localId == null || (!asset.isImage && !asset.isVideo)) {
+      return null;
+    }
+    final title = asset.name.isEmpty ? null : asset.name;
+    return PlayOnRequest.relayed(
+      sourceId: playOnLocalSource,
+      serverName: '',
+      title: title,
+      localAssetId: localId,
+      relay: playOnDeviceRelayItem(
+        ref.read(playRelayDeviceProvider),
+        key: 'local:$localId',
+        localId: localId,
+        name: asset.name.isEmpty ? (asset.isVideo ? 'video.mp4' : 'photo.jpg') : asset.name,
+        video: asset.isVideo,
+        projection: ref.read(playOnProjectionProvider)(asset),
+      ),
+    );
+  };
+});
+
+/// "Send it from this phone": [request] of an item the screen cannot reach, sent from the phone's relay instead. An
+/// Immich item goes from this device when it has the file, else read from the server with the phone's own session
+/// (the relay's client adds it: nothing of it reaches the screen); a file of a share or a media server through the
+/// phone's media bridge. Null for a locked item (its session ends with the locked folder's view), or anything else.
+final playOnSendFromPhoneProvider = Provider<PlayOnRequest? Function(PlayOnRequest request)>((ref) {
+  return (request) {
+    if (request.relay != null) {
+      return request;
+    }
+    final immich = request.immich;
+    if (immich != null) {
+      if (immich.locked) {
+        return null;
+      }
+      final name = playRelayNameOf(immich.fileName ?? (immich.video ? 'video.mp4' : 'photo.jpg'), photo: !immich.video);
+      final localId = immich.asset?.localId;
+      final PlayOnRelayItem relay;
+      if (localId != null) {
+        relay = playOnDeviceRelayItem(
+          ref.read(playRelayDeviceProvider),
+          key: 'immich:${immich.id}',
+          localId: localId,
+          name: name,
+          video: immich.video,
+          projection: immich.projection,
+        );
+      } else {
+        final environment = ref.read(castImmichEnvironmentProvider);
+        final sent = immich.video ? name : playRelayNameOf(_jpegName(name), photo: true);
+        relay = PlayOnRelayItem(
+          key: 'immich:${immich.id}',
+          name: sent,
+          media: immich.video ? PlayMedia.video : PlayMedia.photo,
+          projection: immich.projection,
+          content: () async {
+            final endpoint = environment.serverEndpoint();
+            if (endpoint == null || endpoint.isEmpty) {
+              return null;
+            }
+            // A photo as the server's JPEG (HEIC, RAW and TIFF originals included), a video as its original
+            final url = immich.video
+                ? castImmichUrl(endpoint, immich.id, 'original')
+                : await castImmichPhotoUrl(environment, endpoint, immich.id);
+            return PlayOnRelayContent(
+              content: CastRelayContent(upstream: castImmichUpstream(environment, url)),
+              mime: playRelayMimeOf(sent, photo: !immich.video)!,
+            );
+          },
+        );
+      }
+      return PlayOnRequest.relayed(
+        sourceId: playOnImmichSource,
+        serverName: request.serverName,
+        title: request.title,
+        immich: immich,
+        relay: relay,
+      );
+    }
+    final path = request.path;
+    if (path == null || request.kind == PlayKind.relay) {
+      return null;
+    }
+    final photo = request.isPhoto;
+    final name = playRelayNameOf(
+      Uri.decodeComponent(path.split('/').where((part) => part.isNotEmpty).last),
+      photo: photo,
+    );
+    final sourceId = request.sourceId;
+    final connections = ref.read(networkConnectionsProvider);
+    return PlayOnRequest.relayed(
+      sourceId: sourceId,
+      serverName: request.serverName,
+      title: request.title,
+      path: path,
+      relay: PlayOnRelayItem(
+        key: 'share:$sourceId:$path',
+        name: name,
+        media: photo ? PlayMedia.photo : PlayMedia.video,
+        projection: request.target.projection,
+        content: () async => PlayOnRelayContent(
+          content: CastRelayContent(film: () => connections.mediaUrl(sourceId, path)),
+          mime: playRelayMimeOf(name, photo: photo)!,
+        ),
+      ),
+    );
+  };
+});
+
+/// The key the follow of the viewer knows [asset] by: its Immich id, else its id on this device
+String? playOnAssetKeyOf(BaseAsset? asset) => asset?.remoteId ?? asset?.localId;
+
+/// The request the follow or the slideshow sends for [asset] after [sent]: the phone keeps sending from its relay
+/// once the user chose "Send it from this phone" for what the screen could not see
+PlayOnRequest? playOnNextRequest(Ref ref, BaseAsset asset, PlayOnRequest? sent) {
+  final request = ref.read(playOnAssetRequestProvider)(asset);
+  if (request == null || request.relay != null || sent?.relay == null || sent?.sourceId != playOnImmichSource) {
+    return request;
+  }
+  return ref.read(playOnSendFromPhoneProvider)(request) ?? request;
+}
+
 /// Opens the "Play on..." sheet for [asset]; false when it has no request (on this device only). The viewer it is
 /// opened from becomes the one the slideshow moves.
 Future<bool> showPlayOnSheetForAsset(BuildContext context, WidgetRef ref, BaseAsset asset) async {
@@ -81,8 +291,12 @@ Future<bool> showPlayOnSheetForAsset(BuildContext context, WidgetRef ref, BaseAs
 }
 
 /// Whether the follow or the slideshow passes over [request] rather than send it, while [sent] is on the screen: an
-/// item on this phone only, a locked one, an archived one unless [sent] was archived too (the sheet asked for that one)
-bool playOnSkips(PlayOnRequest? request, PlayOnRequest? sent) {
+/// item on this phone only on a Cast device ([toScreen] false; a linked screen gets it from the phone's relay), a
+/// locked one, an archived one unless [sent] was archived too (the sheet asked for that one)
+bool playOnSkips(PlayOnRequest? request, PlayOnRequest? sent, {bool toScreen = false}) {
+  if (request != null && request.sourceId == playOnLocalSource) {
+    return !toScreen;
+  }
   final private = request?.immich;
   return request == null ||
       private == null ||
@@ -113,7 +327,10 @@ final playOnQueueProvider = StateProvider<PlayOnQueue?>((_) => null);
 Future<bool> showPlayOnSlideshow(BuildContext context, WidgetRef ref, List<BaseAsset> assets) async {
   final requestOf = ref.read(playOnAssetRequestProvider);
   final items = assets.take(playOnQueueMax).toList(growable: false);
-  final first = items.indexWhere((asset) => !playOnSkips(requestOf(asset), null) || _archivedOnly(requestOf(asset)));
+  // What may go to a linked screen: the phone's own items go from its relay
+  final first = items.indexWhere(
+    (asset) => !playOnSkips(requestOf(asset), null, toScreen: true) || _archivedOnly(requestOf(asset)),
+  );
   if (first < 0) {
     return false;
   }
@@ -155,7 +372,7 @@ final playOnViewerJumpProvider = StateProvider<AssetViewerJump?>((_) => null);
 bool playOnRemoteFollows(RemotePlayback? remote) =>
     remote != null &&
     !remote.lost &&
-    (!remote.ended || (remote.state.phase == ScreenPlayPhase.ended && remote.request.sourceId == playOnImmichSource));
+    (!remote.ended || (remote.state.phase == ScreenPlayPhase.ended && remote.request.ofViewer));
 
 /// The same for a cast
 bool playOnCastFollows(CastPlayback? cast) =>
@@ -227,10 +444,9 @@ class PlayOnSlideshowController extends Notifier<bool> {
     final remote = ref.read(remotePlaybackProvider);
     final toScreen = playOnRemoteFollows(remote);
     final sent = toScreen ? remote!.request : ref.read(castPlaybackProvider)?.request;
-    final requestOf = ref.read(playOnAssetRequestProvider);
     for (var index = queue.index + delta.sign; index >= 0 && index < queue.items.length; index += delta.sign) {
-      final request = requestOf(queue.items[index]);
-      if (playOnSkips(request, sent)) {
+      final request = playOnNextRequest(ref, queue.items[index], sent);
+      if (playOnSkips(request, sent, toScreen: toScreen)) {
         continue;
       }
       ref.read(playOnQueueProvider.notifier).state = queue.at(index);
@@ -285,8 +501,8 @@ final playOnViewerFollowProvider = Provider<void>((ref) {
   String? skipped;
   ref.onDispose(() => timer?.cancel());
   ref.listen(assetViewerProvider.select((state) => state.currentAsset), (previous, next) {
-    final before = previous?.remoteId;
-    if (next == null || before == null || next.remoteId == before) {
+    final before = playOnAssetKeyOf(previous);
+    if (next == null || before == null || playOnAssetKeyOf(next) == before) {
       return;
     }
     final remote = ref.read(remotePlaybackProvider);
@@ -303,12 +519,12 @@ final playOnViewerFollowProvider = Provider<void>((ref) {
     }
     timer?.cancel();
     timer = Timer(playOnFollowDelay, () {
-      final request = ref.read(playOnAssetRequestProvider)(next);
       final sent = screenShows ? ref.read(remotePlaybackProvider)?.request : ref.read(castPlaybackProvider)?.request;
+      final request = screenShows ? playOnNextRequest(ref, next, sent) : ref.read(playOnAssetRequestProvider)(next);
       // On this phone only, locked, or archived while the item sent was not (the sheet asks before an archived item):
       // the screen keeps the one before
-      if (playOnSkips(request, sent)) {
-        skipped = next.remoteId;
+      if (playOnSkips(request, sent, toScreen: screenShows)) {
+        skipped = playOnAssetKeyOf(next);
         _log.info('Play on: the viewer moved to an item that is not sent');
         return;
       }

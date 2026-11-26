@@ -18,6 +18,7 @@ import 'package:immich_mobile/domain/services/pairing/phone_pairing.service.dart
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_messages.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/play_link_protocol.dart';
 import 'package:immich_mobile/domain/services/play_on_screen/screen_player_session.dart';
+import 'package:immich_mobile/infrastructure/network/cast/cast_relay.dart';
 import 'package:immich_mobile/infrastructure/network/jellyfin/jellyfin_file_system.dart';
 import 'package:immich_mobile/infrastructure/network/network_discovery_probes.dart';
 import 'package:immich_mobile/infrastructure/network/pairing/pairing_client.dart';
@@ -29,6 +30,7 @@ import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/network/phone_share.provider.dart';
 import 'package:immich_mobile/providers/network/plex_learned_addresses.provider.dart';
 import 'package:immich_mobile/providers/pairing/phone_pairing.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/phone_relay.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/screen_item_openers.dart';
 import 'package:logging/logging.dart';
@@ -148,6 +150,9 @@ String? playMediaServerItemOfPath(String path) {
 /// The source key of every Immich request: the phone has one Immich server
 const playOnImmichSource = 'immich';
 
+/// The source key of a photo or a video on this phone only, which goes from the phone's relay (release 53)
+const playOnLocalSource = 'local';
+
 /// What the phone knows of an Immich asset it sends, for the Cast check and the viewer it follows
 @immutable
 class PlayOnImmichAsset {
@@ -192,7 +197,9 @@ class PlayOnRequest {
     this.subtitle,
     this.path,
   }) : _target = null,
-       immich = null;
+       immich = null,
+       relay = null,
+       localAssetId = null;
 
   PlayOnRequest.forTarget({
     required this.sourceId,
@@ -202,11 +209,67 @@ class PlayOnRequest {
     this.offsetMs = 0,
     this.path,
     this.immich,
+    this.relay,
+    this.localAssetId,
   }) : _target = target,
        server = target.serverKey,
        ratingKey = target.itemKey,
        audio = null,
        subtitle = null;
+
+  /// [relay], an item the phone sends from its relay (release 53): a photo or a video on this phone only
+  /// ([localAssetId]), or an item of [sourceId] the screen cannot reach ([immich], [path]). Its lease is made when it
+  /// is sent ([withLease]).
+  PlayOnRequest.relayed({
+    required this.sourceId,
+    required PlayOnRelayItem this.relay,
+    required this.serverName,
+    this.title,
+    this.path,
+    this.immich,
+    this.localAssetId,
+  }) : _target = RelayPlayTarget(
+         lease: '',
+         port: 0,
+         name: relay.name,
+         mime: relay.media == PlayMedia.photo ? 'image/jpeg' : 'video/mp4',
+         media: relay.media,
+         projection: relay.projection,
+       ),
+       server = 'relay',
+       ratingKey = '',
+       offsetMs = 0,
+       audio = null,
+       subtitle = null;
+
+  /// The same request, sent under [lease] of the relay with what [made] says of the item
+  PlayOnRequest withLease(CastRelayLease lease, PlayOnRelayContent made) => PlayOnRequest.forTarget(
+    sourceId: sourceId,
+    target: RelayPlayTarget(
+      lease: lease.id,
+      port: lease.port,
+      name: relay!.name,
+      mime: made.mime,
+      size: made.size,
+      media: relay!.media,
+      projection: relay!.projection,
+    ),
+    serverName: serverName,
+    title: title,
+    path: path,
+    immich: immich,
+    relay: relay,
+    localAssetId: localAssetId,
+  );
+
+  /// What the relay sends, for a request the phone sends from its relay
+  final PlayOnRelayItem? relay;
+
+  /// The id of the asset on this device, for a photo or a video on this phone only
+  final String? localAssetId;
+
+  /// Whether it is an item of the phone's viewer, or of a selection or an album (Immich, or on this phone only)
+  bool get ofViewer => sourceId == playOnImmichSource || sourceId == playOnLocalSource;
 
   /// The Immich asset [asset] of this phone's server, null for one that is on this device only. [userId] is the
   /// phone's account, [endpoints] the addresses it reaches its server at (only their hashes go), [serverName] what the
@@ -307,7 +370,7 @@ class PlayOnRequest {
   PlayKind get kind => target.kind;
   bool get isPhoto => target.media == PlayMedia.photo;
 
-  /// The source on this phone: a Plex source's id, [playOnImmichSource]
+  /// The source on this phone: a Plex source's id, [playOnImmichSource], [playOnLocalSource]
   final String sourceId;
 
   /// The machine identifier of a Plex server, else what stands for the source in the state
@@ -328,10 +391,11 @@ class PlayOnRequest {
       other.sourceId == sourceId &&
       other.server == server &&
       other.ratingKey == ratingKey &&
-      other.path == path;
+      other.path == path &&
+      other.relay?.key == relay?.key;
 
   @override
-  int get hashCode => Object.hash(kind, sourceId, server, ratingKey, path);
+  int get hashCode => Object.hash(kind, sourceId, server, ratingKey, path, relay?.key);
   final String? title;
   final int offsetMs;
   final PlayTrackChoice? audio;
@@ -456,6 +520,9 @@ enum PlayOnOutcome {
 
   /// The screen has no source of that identity (a share, a Jellyfin or Emby server)
   noSuchSource,
+
+  /// The phone could not send it from its relay, or the screen could not read it there (release 53)
+  relayFailed,
   failed,
 }
 
@@ -479,9 +546,13 @@ class RemotePlayback {
   /// Whether this is the file at [path] of the source [sourceId] (its page shows the whole controller)
   bool isOf(String sourceId, String path) => request.sourceId == sourceId && request.path == path;
 
-  /// Whether this is the Immich asset [assetId]
-  bool isOfAsset(String assetId) =>
-      request.sourceId == playOnImmichSource && request.ratingKey == assetId.toLowerCase();
+  /// Whether this is the asset [assetId] of the phone's viewer: an Immich asset by its id (sent from the phone or not),
+  /// or one on this phone only by its id on the device
+  bool isOfAsset(String assetId) {
+    final id = assetId.toLowerCase();
+    return (request.sourceId == playOnImmichSource && request.immich?.id.toLowerCase() == id) ||
+        (request.sourceId == playOnLocalSource && request.localAssetId?.toLowerCase() == id);
+  }
 
   /// Whether the screen still plays the file at [path] of [sourceId]: its page opened again leaves the phone's player
   /// waiting
@@ -572,13 +643,45 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     return outcome;
   }
 
-  /// Plays [request] on [screen] at [address]
+  /// Plays [request] on [screen] at [address]; an item the phone sends from its relay gets its lease first, for that
+  /// screen alone and the sessions of this connection
   Future<PlayOnOutcome> play(LinkedPeer screen, PlayScreenAddress address, PlayOnRequest request) async {
+    String? lease;
+    var outcome = PlayOnOutcome.failed;
+    try {
+      final played = await _play(screen, address, request, (id) => lease = id);
+      outcome = played;
+      return played;
+    } finally {
+      if (lease case final id?) {
+        ref.read(phoneRelayProvider.notifier).settle(id, playing: outcome == PlayOnOutcome.playing);
+      }
+    }
+  }
+
+  Future<PlayOnOutcome> _play(
+    LinkedPeer screen,
+    PlayScreenAddress address,
+    PlayOnRequest original,
+    void Function(String lease) leased,
+  ) async {
     final generation = ++_generation;
     _address = address;
+    var request = original;
     final ({String status, ScreenPlayState state}) answer;
     try {
       final connection = await _connect(screen, address);
+      final relay = request.relay;
+      if (relay != null) {
+        final made = await ref
+            .read(phoneRelayProvider.notifier)
+            .lease(screenHost: address.host, screenName: screen.name, item: relay, macKeys: () => connection.relayKeys);
+        if (made == null) {
+          return PlayOnOutcome.relayFailed;
+        }
+        leased(made.lease.id);
+        request = request.withLease(made.lease, made.made);
+      }
       final message = await _playMessage(request);
       // Once the Quest asked its user: a minute and a half
       answer = await connection.command(message, timeout: const Duration(seconds: 90));
@@ -654,6 +757,7 @@ class RemotePlaybackController extends Notifier<RemotePlayback?> {
     ScreenPlayReason.notVisible => PlayOnOutcome.notVisible,
     ScreenPlayReason.locked => PlayOnOutcome.locked,
     ScreenPlayReason.noSuchSource => PlayOnOutcome.noSuchSource,
+    ScreenPlayReason.relayFailed => PlayOnOutcome.relayFailed,
     ScreenPlayReason.busy || ScreenPlayReason.failed => PlayOnOutcome.failed,
     null => state.phase == ScreenPlayPhase.failed ? PlayOnOutcome.failed : PlayOnOutcome.playing,
   };

@@ -2,7 +2,11 @@
 // state: Ready (announced nearby), "Open Immuch360 on it" (linked, not announced; "Put on the headset and open
 // Immuch360" for the Quest), "Does not have (server) yet" (it said so), with "Add (server) to (screen)". Footer
 // "Add a screen", the Connect page. With no linked screen, how to link one. Then the Cast devices nearby
-// (experimental, cast_group.widget.dart), with the controls of a cast under way.
+// (cast_group.widget.dart), with the controls of a cast under way.
+//
+// Release 53: a photo or a video on this phone only goes to a linked screen from the phone's relay (no Cast group
+// then), and a screen that cannot reach an item (another account or server, a share it does not have) gets "Send it
+// from this phone" under its row. On iPhone and iPad the sheet says to keep the app open while it sends.
 
 import 'dart:async';
 
@@ -17,9 +21,11 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/cast/cast_group.widget.dart';
 import 'package:immich_mobile/presentation/widgets/pairing/pairing_confirm.sheet.dart';
 import 'package:immich_mobile/presentation/widgets/play_on_screen/play_handover.sheet.dart';
+import 'package:immich_mobile/presentation/widgets/play_on_screen/play_on_asset.dart';
 import 'package:immich_mobile/providers/cast/cast_play.provider.dart';
 import 'package:immich_mobile/providers/network/network_sources.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/phone_play.provider.dart';
+import 'package:immich_mobile/providers/play_on_screen/phone_relay.provider.dart';
 import 'package:immich_mobile/providers/play_on_screen/play_links.provider.dart';
 import 'package:immich_mobile/routing/router.dart';
 import 'package:immich_ui/immich_ui.dart';
@@ -73,6 +79,15 @@ Future<bool> confirmPrivatePlayOn(BuildContext context, PlayOnRequest request, S
   return answer ?? false;
 }
 
+/// Whether a screen that answered [outcome] cannot reach the item with its own access, so that the phone may send it
+bool playOnSendableFromPhone(PlayOnOutcome outcome) => switch (outcome) {
+  PlayOnOutcome.otherAccount ||
+  PlayOnOutcome.otherServer ||
+  PlayOnOutcome.notVisible ||
+  PlayOnOutcome.noSuchSource => true,
+  _ => false,
+};
+
 /// What a row of the sheet says of a screen
 enum PlayScreenRowState { ready, notAnnounced, withoutServer, signedOut }
 
@@ -114,6 +129,9 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
   /// The screen a play or a handover is under way with
   String? _busy;
 
+  /// The screens that said they cannot reach the item: their row offers "Send it from this phone"
+  final Set<String> _unreachableThere = {};
+
   /// What the last attempt said, one sentence that fades
   String? _message;
   Timer? _messageTimer;
@@ -142,22 +160,37 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
     PlayScreenRowState.signedOut => t.play_on_signed_out(server: widget.request.serverName),
   };
 
-  Future<void> _play(LinkedPeer screen, PlayScreenAddress address) async {
+  /// [widget.request] for [screen], or with [fromPhone] the same item sent from this phone's relay
+  Future<void> _play(LinkedPeer screen, PlayScreenAddress address, {bool fromPhone = false}) async {
     final t = context.t;
     // A screen never opens a locked item with its own session (screen_item_openers.dart): nothing to send
     if (widget.request.immich?.locked ?? false) {
       _say(t.play_on_err_locked);
       return;
     }
-    if (!await confirmPrivatePlayOn(context, widget.request, screen.name) || !mounted) {
+    final request = fromPhone ? ref.read(playOnSendFromPhoneProvider)(widget.request) : widget.request;
+    if (request == null) {
+      return;
+    }
+    if (!await confirmPrivatePlayOn(context, request, screen.name) || !mounted) {
       return;
     }
     setState(() => _busy = screen.id);
-    final outcome = await ref.read(remotePlaybackProvider.notifier).play(screen, address, widget.request);
+    final outcome = await ref.read(remotePlaybackProvider.notifier).play(screen, address, request);
     if (!mounted) {
       return;
     }
-    setState(() => _busy = null);
+    final canSendFromPhone =
+        request.relay == null && ref.read(playOnSendFromPhoneProvider)(widget.request)?.relay != null;
+    setState(() {
+      _busy = null;
+      // What the screen cannot reach with its own access goes from this phone, on the user's choice
+      if (canSendFromPhone && playOnSendableFromPhone(outcome)) {
+        _unreachableThere.add(screen.id);
+      } else if (outcome == PlayOnOutcome.playing) {
+        _unreachableThere.remove(screen.id);
+      }
+    });
     switch (outcome) {
       case PlayOnOutcome.playing:
         Navigator.of(context).pop(true);
@@ -191,6 +224,8 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
         _say(t.play_on_err_locked);
       case PlayOnOutcome.noSuchSource:
         _say(t.play_on_err_no_server(device: screen.name, server: widget.request.serverName));
+      case PlayOnOutcome.relayFailed:
+        _say(t.play_on_err_relay(device: screen.name));
       case PlayOnOutcome.failed:
         _say(t.play_on_err_failed(device: screen.name));
     }
@@ -312,6 +347,10 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
     final withoutServer = ref.watch(screensWithoutServerProvider);
     final signedOut = ref.watch(screensSignedOutProvider);
     final message = _message;
+    // On this phone only: no Cast device reads it, the phone's relay sends it to a linked screen
+    final local = widget.request.kind == PlayKind.relay;
+    final keepOpen =
+        (local || _unreachableThere.isNotEmpty) && ref.read(phoneRelayEnvironmentProvider).keepAlive.needsAppOpen;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(ImmichSpacing.md, 0, ImmichSpacing.md, ImmichSpacing.md),
@@ -363,7 +402,18 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
                     nearby[screen.id],
                   ),
               ],
-              CastGroup(request: widget.request, screenHosts: {for (final address in nearby.values) address.host}),
+              if (local)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(ImmichSpacing.sm, ImmichSpacing.sm, ImmichSpacing.sm, 0),
+                  child: Text(t.play_on_local_note, key: const Key('play_on_local_note'), style: theme.bodySmall),
+                ),
+              if (keepOpen)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(ImmichSpacing.sm, ImmichSpacing.sm, ImmichSpacing.sm, 0),
+                  child: Text(t.play_on_keep_open, key: const Key('play_on_keep_open'), style: theme.bodySmall),
+                ),
+              if (!local)
+                CastGroup(request: widget.request, screenHosts: {for (final address in nearby.values) address.host}),
               if (message != null)
                 Padding(
                   padding: const EdgeInsets.all(ImmichSpacing.sm),
@@ -409,6 +459,17 @@ class _PlayOnSheetState extends ConsumerState<PlayOnSheet> {
               icon: const Icon(Icons.dns_rounded),
               onPressed: idle ? () => unawaited(_addServer(screen, address)) : null,
               label: Text(t.play_handover_button(server: widget.request.serverName, device: screen.name)),
+            ),
+          )
+        : _unreachableThere.contains(screen.id) && address != null
+        ? Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton.icon(
+              key: ValueKey('play_on_send_from_phone_${screen.id}'),
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              icon: const Icon(Icons.send_to_mobile_rounded),
+              onPressed: idle ? () => unawaited(_play(screen, address, fromPhone: true)) : null,
+              label: Text(t.play_on_send_from_phone),
             ),
           )
         : state == PlayScreenRowState.signedOut && address != null
