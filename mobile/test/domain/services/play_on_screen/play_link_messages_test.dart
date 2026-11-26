@@ -248,4 +248,59 @@ void main() {
       }
     });
   });
+
+  group('sent from the relay of the phone (release 53)', () {
+    const target = RelayPlayTarget(
+      lease: '00112233445566778899aabbccddeeff',
+      port: 8364,
+      name: 'PXL_20261126_101010.mp4',
+      mime: 'video/mp4',
+      size: 1234567,
+      projection: PlayProjection.equirect,
+    );
+
+    test('a round trip names the lease, the port, the file and its type, never a host nor a key', () {
+      final json = const PlayItem.of(target, title: 'PXL').toJson();
+      expect(json, {
+        'kind': 'relay',
+        'lease': '00112233445566778899aabbccddeeff',
+        'port': 8364,
+        'name': 'PXL_20261126_101010.mp4',
+        'mime': 'video/mp4',
+        'size': 1234567,
+        'media': 'video',
+        'projection': 'equirect',
+        'title': 'PXL',
+        'offsetMs': 0,
+      });
+      final back = PlayItem.fromJson(json)!.target as RelayPlayTarget;
+      expect(back.lease, target.lease);
+      expect(back.port, 8364);
+      expect(back.size, 1234567);
+      expect(back.projection, PlayProjection.equirect);
+      expect(back.origin, isNull, reason: 'only the session binds where it is read');
+      expect(back.path, '/cast/00112233445566778899aabbccddeeff/film');
+      expect(back.serverKey, 'relay');
+      expect(back.itemKey, target.lease);
+    });
+
+    test('names and types out of bounds are refused', () {
+      for (final name in ['', '.', '..', 'a/b.jpg', 'a\\b.jpg', 'a\u0000.jpg', 'x' * 121]) {
+        expect(RelayPlayTarget.isSafeName(name), isFalse, reason: name);
+      }
+      expect(RelayPlayTarget.isSafeName('IMG 0001 (2).HEIC'), isTrue);
+      Map<String, Object?> with_(String key, Object? value) => {...target.toJson(), key: value};
+      for (final json in [
+        with_('lease', '0011'),
+        with_('lease', '00112233445566778899AABBCCDDEEFF'),
+        with_('port', 70000),
+        with_('port', '8364'),
+        with_('mime', 'application/octet-stream'),
+        with_('media', 'photo'),
+        with_('size', 0),
+      ]) {
+        expect(PlayItem.fromJson(json), isNull, reason: '$json');
+      }
+    });
+  });
 }
