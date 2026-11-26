@@ -133,8 +133,12 @@ void main() {
       expect(await api.getCloudIdForAssetIds(['a']), isEmpty);
     });
 
-    test('Spatial and 360 video players unsupported until they exist', () async {
-      expect((await DesktopSpatialVideoApi().capabilities()).supported, isFalse);
+    test('the Spatial player unsupported where no renderer draws its passes or libmpv is missing', () async {
+      expect((await DesktopSpatialVideoApi(rendererExists: false).capabilities()).supported, isFalse);
+      expect(
+        (await DesktopSpatialVideoApi(rendererExists: true, videoAvailable: () => false).capabilities()).supported,
+        isFalse,
+      );
       expect(DesktopSpatialVideoApi().open, isNotNull);
       expect(await DesktopVideoThumbnailApi().thumbnailForUrl('http://127.0.0.1/v', const {}, 0, 320), isEmpty);
     });

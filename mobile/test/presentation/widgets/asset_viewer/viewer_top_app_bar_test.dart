@@ -2637,15 +2637,15 @@ void main() {
       }
     });
 
-    testWidgets('says on a computer that the player comes in a later version', (tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    testWidgets('says on a computer without the passes (Linux) that 3D videos come in a later version', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
       try {
         when(spatialVideoApi.capabilities).thenAnswer(
           (_) async => SpatialCapabilities(
             supported: false,
             frontCamera: false,
             cameraPermissionGranted: false,
-            reason: 'not on the computers yet',
+            reason: 'no Spatial renderer for videos on this system',
           ),
         );
         await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
@@ -2655,7 +2655,7 @@ void main() {
 
         expect(calls, isEmpty);
         verifyNever(() => spatialVideoApi.open(any()));
-        expect(find.text('Spatial 2.5D comes to Immuch360 Desktop in a later version'), findsOneWidget);
+        expect(find.text('On Linux, Spatial 2.5D shows 3D photos: 3D videos come in a later version'), findsOneWidget);
         expect(find.text('Spatial 2.5D is not available on this device'), findsNothing);
       } finally {
         debugDefaultTargetPlatformOverride = null;
