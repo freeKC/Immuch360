@@ -2686,6 +2686,30 @@ void main() {
       }
     });
 
+    testWidgets('says nothing of Linux on Windows when libmpv did not load', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        when(spatialVideoApi.capabilities).thenAnswer(
+          (_) async => SpatialCapabilities(
+            supported: false,
+            frontCamera: false,
+            cameraPermissionGranted: false,
+            reason: 'no libmpv',
+          ),
+        );
+        await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
+
+        await tester.tap(spatialButton);
+        await tester.pumpAndSettle();
+
+        verifyNever(() => spatialVideoApi.open(any()));
+        expect(find.text('Spatial 2.5D is not available on this device'), findsOneWidget);
+        expect(find.textContaining('On Linux'), findsNothing);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
     testWidgets('gives the viewer its video back where and as it was when the player cannot open', (tester) async {
       when(() => spatialVideoApi.open(any())).thenThrow(PlatformException(code: 'channel-error'));
       await pumpTopBar(tester, owned(type: .video), appConfig: spatialOn);
