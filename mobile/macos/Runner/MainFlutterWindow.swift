@@ -12,8 +12,37 @@ class MainFlutterWindow: NSWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
     OpenFilesChannel.shared.attach(to: flutterViewController)
     NetworkCostChannel.shared.attach(to: flutterViewController)
+    SessionPresenceChannel.shared.attach(to: flutterViewController)
 
     super.awakeFromNib()
+  }
+}
+
+/// Tells Dart when the session locks or unlocks and when the displays sleep or wake
+/// (lib/desktop/window/session_presence.dart), on the channel the Windows runner uses: the webcam of Spatial 2.5D
+/// closes while nobody can be in front of the computer.
+final class SessionPresenceChannel {
+  static let shared = SessionPresenceChannel()
+
+  private var channel: FlutterMethodChannel?
+  private var observers: [(NotificationCenter, NSObjectProtocol)] = []
+
+  func attach(to controller: FlutterViewController) {
+    channel = FlutterMethodChannel(
+      name: "immuch360/session", binaryMessenger: controller.engine.binaryMessenger)
+    let distributed = DistributedNotificationCenter.default()
+    let workspace = NSWorkspace.shared.notificationCenter
+    for (center, name, message) in [
+      (distributed as NotificationCenter, Notification.Name("com.apple.screenIsLocked"), "locked"),
+      (distributed as NotificationCenter, Notification.Name("com.apple.screenIsUnlocked"), "unlocked"),
+      (workspace, NSWorkspace.screensDidSleepNotification, "displayOff"),
+      (workspace, NSWorkspace.screensDidWakeNotification, "displayOn"),
+    ] {
+      let observer = center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+        self?.channel?.invokeMethod(message, arguments: nil)
+      }
+      observers.append((center, observer))
+    }
   }
 }
 

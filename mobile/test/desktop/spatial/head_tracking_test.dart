@@ -1,0 +1,278 @@
+// The head tracking of the Spatial page of the computers (lib/desktop/spatial/head_tracking.dart) over a fake webcam:
+// the default webcam is never an infrared one and a chosen one wins; a computer with infrared cameras only has no
+// webcam; the samples move the viewpoint the phones' way (the first face sets the centre, a head moving to the user's
+// right moves it toward the right camera); a face lost long enough offers the slider; each error of the webcam is a
+// problem, releases it and is never retried by itself; a stop while the webcams are listed opens none; automatic
+// framing is read from the tracker; a start waits for the webcam the previous session still holds; a default webcam
+// whose formats are all grey is skipped; the head's direction can be reversed.
+
+import 'dart:async';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:immich_mobile/desktop/spatial/head_tracking.dart';
+import 'package:immuch_head_tracker/immuch_head_tracker.dart';
+
+import 'head_fakes.dart';
+
+void main() {
+  group('SpatialHeadTracking', () {
+    late FakeHeadSource source;
+    late SpatialHeadTracking tracking;
+
+    setUp(() {
+      source = FakeHeadSource(list: const [fakeInfrared, fakeWebcam, fakeExternal]);
+      tracking = SpatialHeadTracking(source: source, manualAfterLost: const Duration(milliseconds: 20));
+    });
+
+    tearDown(() => tracking.dispose());
+
+    test('opens the first webcam that is not infrared, or the one chosen when it is listed', () async {
+      await tracking.start();
+      expect(source.last.camera, fakeWebcam);
+      expect(tracking.state, SpatialTrackingState.running);
+      expect(tracking.cameraOpen, isTrue);
+      expect(tracking.cameras, [fakeInfrared, fakeWebcam, fakeExternal]);
+      await tracking.stop();
+      expect(source.last.session.isClosed, isTrue, reason: 'the light goes off');
+      expect(tracking.cameraOpen, isFalse);
+
+      await tracking.start(cameraId: fakeExternal.id);
+      expect(source.last.camera, fakeExternal);
+      await tracking.stop();
+      await tracking.start(cameraId: 'unplugged');
+      expect(source.last.camera, fakeWebcam, reason: 'a webcam no longer listed gives the default one');
+    });
+
+    test('a computer with an infrared camera only has no webcam, and opens none', () async {
+      source.list = const [fakeInfrared];
+      await tracking.start();
+      expect(source.sessions, isEmpty);
+      expect(tracking.problem, SpatialTrackingProblem.noCamera);
+      expect(tracking.state, SpatialTrackingState.failed);
+      // The infrared one is still in the menu, for whoever picks it
+      await tracking.start(cameraId: fakeInfrared.id);
+      expect(source.last.camera, fakeInfrared);
+    });
+
+    test('the head moves the viewpoint the phones way, from the centre the first face sets', () async {
+      tracking.sensitivity = HeadViewpoint.desktopSensitivity;
+      await tracking.start();
+      final webcam = source.last;
+      expect(tracking.viewpointNow(), 0.5);
+      // The face in the middle of the picture: the centre
+      for (var i = 1; i <= 10; i++) {
+        webcam.push(sample(i, faceX: 0.5));
+      }
+      await settle();
+      expect(tracking.viewpointNow(), closeTo(0.5, 1e-6));
+      // The picture is not mirrored: a head moving to the user's right shows on the left of the picture
+      for (var i = 11; i <= 60; i++) {
+        webcam.push(sample(i, faceX: 0.45));
+      }
+      await settle();
+      expect(tracking.viewpointNow(), closeTo(0.5 + 0.05 * 3, 0.01), reason: 'toward the right camera');
+      for (var i = 61; i <= 110; i++) {
+        webcam.push(sample(i, faceX: 0.9));
+      }
+      await settle();
+      expect(tracking.viewpointNow(), HeadViewpoint.minViewpoint, reason: 'kept within 0.15 and 0.85');
+      // Recenter: the next face is the new centre, eased in over 0.3 s
+      tracking.recenter();
+      webcam.push(sample(111, faceX: 0.9));
+      await settle();
+      webcam.nowUs += 400000;
+      expect(tracking.viewpointNow(), closeTo(0.5, 1e-6));
+    });
+
+    test('a face lost long enough offers the slider, and a face found again takes it back', () async {
+      await tracking.start();
+      final webcam = source.last;
+      var changes = 0;
+      tracking.addListener(() => changes++);
+      webcam.push(sample(1, faceX: 0.5));
+      await settle();
+      expect(tracking.faceLost, isFalse);
+      webcam.push(sample(2, state: HeadFaceState.lost));
+      await settle();
+      expect(tracking.faceLost, isTrue);
+      expect(tracking.lostTooLong, isFalse);
+      await Future<void>.delayed(const Duration(milliseconds: 40));
+      expect(tracking.lostTooLong, isTrue);
+      webcam.push(sample(3, faceX: 0.5));
+      await settle();
+      expect(tracking.faceLost, isFalse);
+      expect(tracking.lostTooLong, isFalse);
+      expect(changes, 3, reason: 'one change each: lost, lost too long, found; not one per sample');
+    });
+
+    test('camera access turned off is a problem, releases the webcam and is not tried again by itself', () async {
+      await tracking.start();
+      final webcam = source.last;
+      webcam.fail(HeadTrackerStatus.accessDenied);
+      await settle();
+      expect(tracking.problem, SpatialTrackingProblem.cameraOff);
+      expect(tracking.state, SpatialTrackingState.failed);
+      expect(tracking.cameraOpen, isFalse);
+      expect(webcam.session.isClosed, isTrue);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(source.sessions, hasLength(1));
+      expect(tracking.viewpointNow(), isNull, reason: 'the page falls back to the slider');
+      // The user turns it on again: tried once more
+      await tracking.start();
+      expect(source.sessions, hasLength(2));
+      expect(tracking.problem, isNull);
+    });
+
+    test('each error of the webcam has its message', () async {
+      final cases = {
+        HeadTrackerStatus.cameraBusy: SpatialTrackingProblem.cameraBusy,
+        HeadTrackerStatus.deviceLost: SpatialTrackingProblem.cameraLost,
+        HeadTrackerStatus.noCamera: SpatialTrackingProblem.noCamera,
+        HeadTrackerStatus.format: SpatialTrackingProblem.unsupportedFormat,
+        HeadTrackerStatus.failed: SpatialTrackingProblem.failed,
+      };
+      for (final MapEntry(key: status, value: problem) in cases.entries) {
+        await tracking.start();
+        source.last.fail(status);
+        await settle();
+        expect(tracking.problem, problem, reason: 'status $status');
+      }
+      source.listError = const HeadTrackerException(HeadTrackerError.noMediaFoundation);
+      await tracking.start();
+      expect(tracking.problem, SpatialTrackingProblem.mediaFeaturePack);
+      source.listError = null;
+      source.startError = const HeadTrackerException(HeadTrackerError.noDetector);
+      await tracking.start();
+      expect(tracking.problem, SpatialTrackingProblem.failed);
+      expect(tracking.cameraOpen, isFalse);
+    });
+
+    test('a stop while the webcams are listed opens none', () async {
+      source.holdList = Completer<void>();
+      final starting = tracking.start();
+      await settle();
+      expect(tracking.state, SpatialTrackingState.starting);
+      await tracking.stop();
+      source.holdList!.complete();
+      await starting;
+      expect(source.sessions, isEmpty);
+      expect(tracking.state, SpatialTrackingState.off);
+    });
+
+    test('reads automatic framing from the tracker once the camera streams', () async {
+      await tracking.start();
+      final webcam = source.last;
+      webcam.push(sample(1, faceX: 0.5));
+      await settle();
+      expect(tracking.framing, AutoFramingState.unknown);
+      webcam.info = HeadTrackerInfo(
+        detector: webcam.info.detector,
+        framing: AutoFramingState.stuckOn,
+        width: 640,
+        height: 480,
+        fpsNumerator: 30,
+        fpsDenominator: 1,
+        nativeFourcc: 'MJPG',
+        hresult: 0,
+      );
+      webcam.push(sample(2, faceX: 0.5, timeUs: 66667 * 2));
+      await settle();
+      expect(tracking.framing, AutoFramingState.unknown, reason: 'read twice a second at most');
+      webcam.push(sample(20, faceX: 0.5));
+      await settle();
+      expect(tracking.framing, AutoFramingState.stuckOn);
+      expect(tracking.info()?.nativeFourcc, 'MJPG');
+    });
+
+    test('a start waits for the webcam the previous session still holds', () async {
+      source.holdRelease = Completer<void>();
+      await tracking.start();
+      final first = source.last;
+      final stopping = tracking.stop();
+      await settle();
+      expect(first.closing, isTrue);
+      expect(first.released, isFalse, reason: 'the capture thread still holds the webcam');
+      // Minimised and restored at once: the second start waits rather than finding the webcam busy
+      final starting = tracking.start();
+      await settle();
+      expect(source.sessions, hasLength(1));
+      expect(tracking.state, SpatialTrackingState.starting);
+      source.holdRelease!.complete();
+      await stopping;
+      await starting;
+      await settle();
+      expect(source.sessions, hasLength(2));
+      expect(source.busy, 0);
+      expect(tracking.problem, isNull);
+      expect(tracking.state, SpatialTrackingState.running);
+      // The listing for the menu waits as well
+      source.holdRelease = Completer<void>();
+      final again = tracking.stop();
+      final listings = source.listings;
+      final listing = tracking.refreshCameras();
+      await settle();
+      expect(source.listings, listings);
+      source.holdRelease!.complete();
+      await again;
+      await listing;
+      expect(source.listings, listings + 1);
+      await tracking.released;
+    });
+
+    test('a default webcam whose formats are all grey is skipped, and marked infrared', () async {
+      const plain = HeadCamera(id: r'\\?\usb#vid_0004', name: 'Integrated Camera');
+      source
+        ..list = const [plain, fakeWebcam]
+        ..greyOnly = {plain.id};
+      await tracking.start();
+      for (var i = 0; i < 5; i++) {
+        await settle();
+      }
+      await tracking.released;
+      await settle();
+      expect(source.sessions.map((session) => (session.camera, session.colourOnly)), [
+        (plain, true),
+        (fakeWebcam, true),
+      ]);
+      expect(source.sessions.first.session.isClosed, isTrue);
+      expect(tracking.camera, fakeWebcam);
+      expect(tracking.problem, isNull);
+      expect(tracking.state, SpatialTrackingState.running);
+      expect(tracking.cameras!.first.infrared, isTrue, reason: 'the menu says it');
+      await tracking.stop();
+      // Picked by the user, it opens without the check, as it is
+      await tracking.start(cameraId: plain.id);
+      expect(source.last.camera, plain);
+      expect(source.last.colourOnly, isFalse);
+    });
+
+    test("reversed, a head moving to the user's right moves the viewpoint toward the left camera", () async {
+      await tracking.start();
+      final webcam = source.last;
+      tracking.reversed = true;
+      for (var i = 1; i <= 10; i++) {
+        webcam.push(sample(i, faceX: 0.5));
+      }
+      for (var i = 11; i <= 60; i++) {
+        webcam.push(sample(i, faceX: 0.45));
+      }
+      await settle();
+      expect(tracking.viewpointNow(), closeTo(0.5 - 0.05 * 3, 0.01));
+    });
+
+    test('lists the webcams for the menu without opening any', () async {
+      await tracking.refreshCameras();
+      expect(tracking.cameras, [fakeInfrared, fakeWebcam, fakeExternal]);
+      expect(source.sessions, isEmpty);
+      expect(tracking.cameraOpen, isFalse);
+    });
+
+    test('without the tracker DLL, tracking fails quietly', () async {
+      final none = SpatialHeadTracking(source: null);
+      await none.start();
+      expect(none.problem, SpatialTrackingProblem.failed);
+      expect(none.viewpointNow(), isNull);
+      none.dispose();
+    });
+  });
+}

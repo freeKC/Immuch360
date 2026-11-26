@@ -11,10 +11,12 @@ import 'package:immich_mobile/desktop/ai/creator/server_original_source.dart';
 import 'package:immich_mobile/desktop/ai/splat/splat_work_folder.dart';
 import 'package:immich_mobile/desktop/files/open_files.dart';
 import 'package:immich_mobile/desktop/platform/linux_secret_storage.dart';
+import 'package:immich_mobile/desktop/spatial/head_tracker_licenses.dart';
 import 'package:immich_mobile/desktop/splat/splat_window_licenses.dart';
 import 'package:immich_mobile/desktop/video/av2_licenses.dart';
 import 'package:immich_mobile/desktop/video/desktop_video_setup.dart';
 import 'package:immich_mobile/desktop/video/video_licenses.dart';
+import 'package:immich_mobile/desktop/window/session_presence.dart';
 import 'package:immich_mobile/desktop/window/single_instance.dart';
 import 'package:immich_mobile/desktop/window/window_setup.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
@@ -38,6 +40,9 @@ Future<void> startDesktop(List<String> args) async {
     LinuxSecretStorage.install();
   }
   listenForLaterStarts();
+  // The session locked or the display off, for the webcam of Spatial 2.5D (read from the start, so that no message
+  // waits)
+  DesktopSessionPresence.instance.listen();
   // An AI component removed while it was loaded (a DLL on Windows) is deleted now, before anything loads it
   unawaited(AiComponentsService.freePendingAtStart(desktopAiComponentsFolder));
   // The partial 3D photos a crash or a power cut left in the folders of the user, deleted while the app starts
@@ -55,5 +60,7 @@ Future<void> startDesktop(List<String> args) async {
   registerSbsCodecLicenses();
   // The WebView2 SDK and wil of the splat viewer's window (Windows)
   registerSplatWindowLicenses();
+  // The face detector of the head tracking of Spatial 2.5D (libfacedetection, the three systems)
+  registerHeadTrackerLicenses();
   await setUpDesktopWindow();
 }
