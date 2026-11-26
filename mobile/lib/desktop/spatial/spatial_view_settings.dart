@@ -23,7 +23,8 @@ class DesktopSpatialViewSettings extends HookConsumerWidget {
     final t = context.t;
     final viewer = ref.watch(appConfigProvider.select((config) => config.viewer));
     final kinds = ref.watch(viewerPositionSourcesProvider).keys.toList();
-    final kind = spatialStartKind(viewer.spatialMoveWith, kinds);
+    // The head is the page's default while the webcam may be used (spatial_photo_page.dart)
+    final kind = spatialStartKind(viewer.spatialMoveWith, kinds, headByDefault: viewer.spatialWebcam);
     final sensitivity = useState(viewer.spatialSensitivity.clamp(spatialSensitivityMin, spatialSensitivityMax));
     final reverse = useState(viewer.spatialReverse);
     useValueChanged<bool, void>(reverse.value, (_, _) {
