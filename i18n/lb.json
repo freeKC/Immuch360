@@ -39,7 +39,6 @@
   "ai_enhance_refused_card_small": "D'Grafikkaart huet ze wéineg Späicher fir dësen Niveau.",
   "ai_enhance_refused_dedicated": "Brauch eng dedizéiert Grafikkaart mat 6 GB. Natierlech leeft um Prozessor.",
   "ai_enhance_refused_intel_mac": "Net op engem Intel-Mac: de Modell gouf net mat der Versioun vun ONNX Runtime gepréift, déi en huet.",
-  "ai_enhance_refused_mac": "Nach net um Mac: seng Engine fir de Mac kënnt an enger spéiderer Versioun. Natierlech gëtt um Mac ugebueden.",
   "ai_enhance_refused_memory": "Brauch e Computer mat 16 GB Späicher.",
   "ai_enhance_refused_no_card": "Keng Grafikkaart, déi d'Engine benotze kann (Vulkan). Natierlech leeft um Prozessor.",
   "ai_enhance_refused_not_yet": "Nach net an dëser Versioun: seng Fichiere sinn net publizéiert.",

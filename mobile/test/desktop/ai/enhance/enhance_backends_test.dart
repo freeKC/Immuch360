@@ -10,9 +10,10 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/natural_backend.dart';
 import 'package:immich_mobile/desktop/ai/enhance/rebuild_backend.dart';
+import 'package:immich_mobile/desktop/ai/enhance/seedvr2_dgl.dart';
 import 'package:immich_mobile/desktop/ai/enhance/sharpen_backend.dart';
 import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart';
-import 'package:immich_mobile/desktop/ai/ort/ort_tensor.dart';
+import 'package:immich_mobile/desktop/ai/ort/ort_session.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:path/path.dart' as p;
 
@@ -47,6 +48,20 @@ void _expectClose(Uint8List a, Uint8List b, {int tolerance = 2}) {
 
 typedef _ScriptRunner = FakeSeedVr2Runner;
 typedef _FourTimes = FakeX4Upscaler;
+
+/// A graph whose run fails as Core ML could, or is stopped
+class _FailingGraph implements VosrGraph {
+  _FailingGraph({this.stop = false});
+
+  final bool stop;
+
+  @override
+  String get firstInput => 'latent';
+
+  @override
+  OrtTensor run(Map<String, OrtTensor> given) =>
+      throw stop ? const OrtRunStopped('Run: stopped') : const OrtException('Run: Core ML failed');
+}
 
 /// A graph of VOSR that keeps what its encoder saw and gives it back from its decoder
 class _Graph implements VosrGraph {
@@ -212,6 +227,102 @@ void main() {
       expect(rebuildAsciiPath('/home/frédéric', isWindows: false, shortPathOf: (_) => 'X'), '/home/frédéric');
     });
 
+    group('on a Mac (the Metal build, not tried on a Mac yet)', () {
+      SdCppRebuildBackend onMetal(_ScriptRunner runner) => SdCppRebuildBackend(
+        runner: runner,
+        settings: SdCppSettings(
+          sdCli: p.join(temp.path, 'sd-cli'),
+          models: const SdCppModels(diffusionModel: '', vae: '', textEncoder: '', lora: '', upscaler: ''),
+          device: sdCppMetalDevice,
+          threads: 8,
+        ),
+        files: const RebuildFiles(sdCli: 'sd-cli', dit: '/m/dit.safetensors', vae: '/m/vae.safetensors'),
+        modelSha256: 'c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157',
+        asciiPath: (path) => path,
+      );
+
+      test('no --backend: sd-cli takes the GPU itself; the tiles blend back', () async {
+        final runner = _ScriptRunner(metal: true);
+        final picture = _picture(700, 600);
+        final out = await onMetal(
+          runner,
+        ).enhance(picture, workFolder: temp.path, seed: 42, cancel: NativeCancelFlag(), onStep: (_, _) {});
+        _expectClose(out, picture.rgba);
+        expect(runner.launches.single.arguments, [
+          '-M',
+          'dgl',
+          '--script',
+          p.join(temp.path, 'rebuild.dgl'),
+          '--max-vram',
+          '6.0000',
+          '-t',
+          '8',
+          '-v',
+        ]);
+      });
+
+      for (final line in [
+        'ggml_metal_device_init: error: failed to create library',
+        'ggml_metal_library_init: error compiling source',
+        '[I] auto-fit: --backend "diffusion=CPU,vae=CPU" --- backend_fit.cpp:470',
+      ]) {
+        test('stopped when sd-cli says the GPU is not used: $line', () async {
+          await expectLater(
+            onMetal(_ScriptRunner(metal: true, metalLine: line)).enhance(
+              _picture(600, 600),
+              workFolder: temp.path,
+              seed: 42,
+              cancel: NativeCancelFlag(),
+              onStep: (_, _) {},
+            ),
+            throwsA(
+              isA<BackendException>()
+                  .having((error) => error.code, 'code', ImmersiveErrorCode.gpuUnavailable)
+                  .having((error) => error.message, 'message', startsWith(enhanceNoMetalMessage)),
+            ),
+          );
+        });
+      }
+
+      test('the lines of a run on the GPU are no fall back', () {
+        expect(seedVr2MetalUnavailable('ggml_metal_device_init: GPU name:   MTL0 (Apple M1)'), isFalse);
+        expect(seedVr2MetalUnavailable('[I] auto-fit: --backend "diffusion=MTL0,vae=MTL0"'), isFalse);
+        expect(seedVr2MetalUnavailable('ggml_metal_library_init: using embedded metal library'), isFalse);
+      });
+
+      test('Sharpen on a Mac: x4plus with no --backend either', () {
+        final settings = SdCppSettings(
+          sdCli: 'sd-cli',
+          models: const SdCppModels(diffusionModel: '', vae: '', textEncoder: '', lora: '', upscaler: 'x4.pth'),
+          device: sdCppMetalDevice,
+          threads: 8,
+        );
+        const request = UpscaleRequest(inputPath: 'in.png', outputPath: 'out.png', workFolder: 'w', scale: 4);
+        expect(sdCppUpscaleArguments(settings, request), [
+          '-M',
+          'upscale',
+          '-i',
+          'in.png',
+          '--upscale-model',
+          'x4.pth',
+          '-t',
+          '8',
+          '-v',
+          '-o',
+          'out.png',
+        ]);
+        expect(SdCppDevice(settings).name, sdCppMetalDevice);
+        // On Vulkan the device is named
+        expect(
+          sdCppUpscaleArguments(
+            SdCppSettings(sdCli: 'sd-cli', models: settings.models, device: 'Vulkan1', threads: 8),
+            request,
+          ),
+          containsAllInOrder(['--backend', 'Vulkan1']),
+        );
+      });
+    });
+
     test('the budget of the card: 6 GiB, or what is free less 512 MiB', () {
       expect(rebuildVramBudget(null), '6.0000');
       expect(rebuildVramBudget(8 << 30), '6.0000');
@@ -291,6 +402,89 @@ void main() {
       expect(transformer.keys.toSet(), {'lq_latent', 'noise', 'tokens'});
       expect(transformer['noise']!.shape, transformer['lq_latent']!.shape);
       expect(graphs['image_encoder']!.seen.first['lq']!.shape, [1, 3, 512, 512]);
+    });
+
+    test('Core ML on Apple silicon, the processor elsewhere', () {
+      expect(naturalProviderOf(appleSilicon: true), OrtProvider.coreMl);
+      expect(naturalProviderOf(appleSilicon: false), OrtProvider.cpu);
+    });
+
+    test('a graph Core ML refuses opens on the processor; a run that fails there goes on on the processor', () {
+      final notes = <String>[];
+      final opened = <OrtProvider>[];
+      final memory = <String, OrtTensor>{};
+      // Refused at its opening
+      final refused = openVosrGraph(
+        '/m/transformer/model.onnx',
+        OrtProvider.coreMl,
+        open: (provider) {
+          opened.add(provider);
+          if (provider == OrtProvider.coreMl) {
+            throw const OrtException('CreateSession: Core ML could not compile the model');
+          }
+          return _Graph('transformer', memory);
+        },
+        note: notes.add,
+      );
+      expect(opened, [OrtProvider.coreMl, OrtProvider.cpu]);
+      expect(refused.firstInput, 'lq');
+      expect(notes.single, contains('Core ML refused model.onnx'));
+
+      // Opened, then a run fails: the session of Core ML closed first, then the processor from then on, the run made
+      // again there
+      notes.clear();
+      opened.clear();
+      var failing = true;
+      final events = <String>[];
+      final coreMl = _FailingGraph();
+      final graph = openVosrGraph(
+        '/m/vae_decoder/model.onnx',
+        OrtProvider.coreMl,
+        open: (provider) {
+          opened.add(provider);
+          events.add(provider == OrtProvider.coreMl ? 'open coreMl' : 'open cpu');
+          return provider == OrtProvider.coreMl && failing ? coreMl : _Graph('vae_decoder', memory);
+        },
+        note: notes.add,
+        release: (released) => events.add(identical(released, coreMl) ? 'release coreMl' : 'release other'),
+      );
+      memory['lq'] = OrtTensor(const [1], Float32List(1));
+      expect(graph.run({'latent': memory['lq']!}).shape, [1]);
+      failing = false;
+      expect(opened, [OrtProvider.coreMl, OrtProvider.cpu]);
+      expect(events, ['open coreMl', 'release coreMl', 'open cpu']);
+      expect(notes, [contains('opened with Core ML'), endsWith(vosrFellBackNote)]);
+
+      // A stop is never a failure of Core ML
+      final stopping = openVosrGraph(
+        'x.onnx',
+        OrtProvider.coreMl,
+        open: (_) => _FailingGraph(stop: true),
+        note: (_) {},
+      );
+      expect(() => stopping.run(const {}), throwsA(isA<OrtRunStopped>()));
+      // The processor alone: no note
+      notes.clear();
+      openVosrGraph('y.onnx', OrtProvider.cpu, open: (_) => _Graph('x', memory), note: notes.add);
+      expect(notes, isEmpty);
+    });
+
+    test('a graph moved to the processor marks the photo as fallen back, so that the panel says it', () {
+      final backend = OrtNaturalBackend(
+        files: const VosrFiles(library: 'ort', imageEncoder: 'a', vaeEncoder: 'b', transformer: 'c', vaeDecoder: 'd'),
+        modelSha256: 'x',
+        threads: 1,
+        provider: OrtProvider.coreMl,
+      );
+      expect(backend.fellBack, isFalse);
+      backend.notes.add('model.onnx opened with Core ML');
+      expect(backend.fellBack, isFalse);
+      backend.notes.add('Core ML refused model.onnx (no pad)$vosrOnProcessorNote');
+      expect(backend.fellBack, isTrue);
+      backend.notes
+        ..clear()
+        ..add('model.onnx failed a run with Core ML (buffer)$vosrFellBackNote');
+      expect(backend.fellBack, isTrue);
     });
 
     test('stops between two graphs when asked', () {

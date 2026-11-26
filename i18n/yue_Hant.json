@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "顯示卡記憶體太少，用唔到呢個級別。",
   "ai_enhance_refused_dedicated": "需要 6 GB 嘅獨立顯示卡。「自然」喺處理器上行。",
   "ai_enhance_refused_intel_mac": "Intel Mac 用唔到：模型未用佢嗰個版本嘅 ONNX Runtime 檢查過。",
-  "ai_enhance_refused_mac": "Mac 暫時未有：Mac 用嘅引擎會喺之後嘅版本推出。「自然」喺 Mac 上有得揀。",
   "ai_enhance_refused_memory": "需要有 16 GB 記憶體嘅電腦。",
   "ai_enhance_refused_no_card": "冇引擎用得到嘅顯示卡（Vulkan）。「自然」喺處理器上行。",
   "ai_enhance_refused_not_yet": "呢個版本暫時未有：佢嘅檔案未發佈。",

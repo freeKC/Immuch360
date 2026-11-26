@@ -13,6 +13,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/desktop/files/zip_writer.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show sdCppSeedVr2MacArmComponent;
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_archive.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_downloader.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
@@ -433,6 +434,41 @@ void main() {
       expect(installedJson()['pendingDeletes'], isEmpty);
       expect((await components.unusedFiles()).isEmpty, isTrue);
       expect(components.statusOf(r1).state, AiComponentState.installed);
+    });
+
+    test('the Metal engine of a Mac, once installed, is never unused (release 53)', () async {
+      // As the app writes it once the archive is published: its entry, its program and its licence
+      const engine = sdCppSeedVr2MacArmComponent;
+      at('${engine.installPath}/sd-cli')
+        ..parent.createSync(recursive: true)
+        ..writeAsBytesSync(List.filled(16, 7));
+      at('licenses/${engine.id}.txt')
+        ..parent.createSync(recursive: true)
+        ..writeAsStringSync('See ${engine.licenceUrl}\n');
+      final json = installedJson();
+      (json['components'] as Map<String, dynamic>)[engine.id] = {
+        'version': engine.version,
+        'path': engine.installPath,
+        'size': 18223800,
+        'sha256': 'c86fbae15d35b91bc56ccf905bc8849065e7433c53cb61980eb3b9809a1e93a0',
+      };
+      root.createSync(recursive: true);
+      File(p.join(root.path, 'installed.json')).writeAsStringSync(jsonEncode(json));
+
+      final unused = await service(aiComponents).unusedFiles();
+
+      expect(aiComponents, contains(engine));
+      expect(unused.entries, isNot(contains(engine.id)));
+      expect(unused.paths.where((path) => path.startsWith(engine.installPath)), isEmpty);
+      expect(unused.paths, isNot(contains('licenses/${engine.id}.txt')));
+      // A catalogue without it (the head before the review of 25 November 2026) offered to delete it
+      final without = [
+        for (final component in aiComponents)
+          if (component != engine) component,
+      ];
+      final before = await service(without).unusedFiles();
+      expect(before.entries, contains(engine.id));
+      expect(before.paths, contains('${engine.installPath}/sd-cli'));
     });
 
     test('refused while a conversion runs', () async {

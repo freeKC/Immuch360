@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "La scheda grafica ha troppo poca memoria per questo livello.",
   "ai_enhance_refused_dedicated": "Richiede una scheda grafica dedicata da 6 GB. Naturale funziona sul processore.",
   "ai_enhance_refused_intel_mac": "Non su un Mac Intel: il modello non è stato verificato con la versione di ONNX Runtime che ha.",
-  "ai_enhance_refused_mac": "Non ancora su Mac: il suo motore per Mac arriverà in una versione futura. Naturale è offerto su Mac.",
   "ai_enhance_refused_memory": "Richiede un computer con 16 GB di memoria.",
   "ai_enhance_refused_no_card": "Nessuna scheda grafica utilizzabile dal motore (Vulkan). Naturale funziona sul processore.",
   "ai_enhance_refused_not_yet": "Non ancora in questa versione: i suoi file non sono pubblicati.",

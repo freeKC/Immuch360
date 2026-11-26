@@ -497,7 +497,6 @@
   "ai_enhance_refused_card_small": "Kad grafik mempunyai terlalu sedikit memori untuk tahap ini.",
   "ai_enhance_refused_dedicated": "Memerlukan kad grafik khusus 6 GB. Semula jadi berjalan pada pemproses.",
   "ai_enhance_refused_intel_mac": "Tiada pada Mac Intel: model belum disemak dengan versi ONNX Runtime yang ada padanya.",
-  "ai_enhance_refused_mac": "Belum ada pada Mac: enjinnya untuk Mac akan hadir dalam versi akan datang. Semula jadi ditawarkan pada Mac.",
   "ai_enhance_refused_memory": "Memerlukan komputer dengan memori 16 GB.",
   "ai_enhance_refused_no_card": "Tiada kad grafik yang boleh digunakan oleh enjin (Vulkan). Semula jadi berjalan pada pemproses.",
   "ai_enhance_refused_not_yet": "Belum ada dalam versi ini: failnya belum diterbitkan.",

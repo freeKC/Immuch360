@@ -35,6 +35,44 @@ export 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 /// ai-components-3 and is never held by it.
 const aiEnhanceComponentsPublished = true;
 
+/// Whether the Metal archive of stable-diffusion.cpp for Apple silicon ([sdCppSeedVr2MacArmComponent], release 53) is
+/// published in ai-components-7: false until the main session uploads it. Until then Sharpen and Rebuild details on a
+/// Mac are "not in this version yet" (enhance_files.dart); Natural on a Mac does not need it.
+const aiEnhanceMacEnginePublished = false;
+
+/// Whether Rebuild details is offered on a Mac with an Apple chip once its engine is published: false until one run on
+/// a real Apple chip has succeeded (review of 25 November 2026). The only Metal GPU it ran on, the paravirtual one of
+/// GitHub's macOS runner, failed in its VAE stage ("buffer is nil", then a crash of sd-cli), and a real Mac takes
+/// another path (the DiT on the GPU), which no run went through. Publishing the archive offers Sharpen only; Rebuild
+/// details then says it is not on a Mac in this version (enhance_plan.dart) and downloads nothing (enhance_files.dart).
+const aiEnhanceMacRebuildOffered = false;
+
+/// stable-diffusion.cpp at 0d71f963 on Metal for Apple silicon, the engine of Sharpen and Rebuild details on a Mac
+/// (release 53, store/m2/release-53/enhance-mac-2026-11-25.md): built by the job sdcpp-seedvr2-macos of our CI from
+/// sd_cpp_seedvr2.lock.json (the macos-arm64 options: SD_METAL, the Metal shaders embedded, everything static), one
+/// program signed ad hoc (no Developer ID yet), with the licences and BUILD-INFO.txt. In the list aiComponents of
+/// ai_components_manifest.dart already, held without its size and sum (load() of the service skips such an entry, the
+/// cleanup of unused files keeps its folder), but defined here, outside what publish_ai_components.py reads, until that
+/// script handles a macOS engine; its size, sum and files are those of the artifact of the CI run the report names. Sharpen takes it too on a Mac, with Real-ESRGAN x4plus of
+/// ai-components-3: the sd-cli of the panoramas has no Mac build. Its programs start through immuch360-run of the app
+/// (Contents/MacOS), as every program of the AI features on macOS.
+const sdCppSeedVr2MacArmComponent = AiComponent(
+  id: 'sd-cpp-seedvr2-metal-macos-arm64',
+  name: 'stable-diffusion.cpp for SeedVR2 (Metal)',
+  version: '0d71f96-1',
+  kind: AiComponentKind.archive,
+  platforms: {AiPlatform.macosArm64},
+  assetName: 'sd-cpp-seedvr2-metal-macos-arm64.zip',
+  installPath: 'engines/sd-cpp-seedvr2-metal-macos-arm64',
+  size: null,
+  sha256: null,
+  compression: AiCompression.none,
+  licence: 'MIT',
+  licenceUrl: 'https://github.com/leejet/stable-diffusion.cpp/blob/0d71f963af9c94941f4a67e8ea145935651dd756/LICENSE',
+  features: {},
+  releaseTag: aiComponentsEnhanceReleaseTag,
+);
+
 /// The graphs of VOSR in the order the pipeline runs them
 const vosrComponents = <AiComponent>[
   vosrImageEncoderComponent,
@@ -51,3 +89,7 @@ const aiEnhanceComponents = <AiComponent>[
   sdCppSeedVr2LinuxComponent,
   ...vosrComponents,
 ];
+
+/// The components of "Enhance (AI)" for Apple silicon, outside the publication of ai-components-7 by its script yet
+/// (release 53)
+const aiEnhanceMacComponents = <AiComponent>[sdCppSeedVr2MacArmComponent];

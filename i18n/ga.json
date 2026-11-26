@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "Níl go leor cuimhne ag an gcárta grafaice don leibhéal seo.",
   "ai_enhance_refused_dedicated": "Teastaíonn cárta grafaice tiomnaithe 6 GB. Ritheann Nádúrtha ar an bpróiseálaí.",
   "ai_enhance_refused_intel_mac": "Ní ar Mac Intel: níor seiceáladh an tsamhail leis an leagan de ONNX Runtime atá air.",
-  "ai_enhance_refused_mac": "Níl ar Mac fós: tiocfaidh a inneall don Mac i leagan níos déanaí. Tairgtear Nádúrtha ar Mac.",
   "ai_enhance_refused_memory": "Teastaíonn ríomhaire le 16 GB cuimhne.",
   "ai_enhance_refused_no_card": "Níl aon chárta grafaice is féidir leis an inneall a úsáid (Vulkan). Ritheann Nádúrtha ar an bpróiseálaí.",
   "ai_enhance_refused_not_yet": "Níl sé sa leagan seo fós: níor foilsíodh a chomhaid.",

@@ -11,20 +11,25 @@ attaches it; immuch360-desktop-release.yml signs the Windows one (with_sdcpp), a
 takes both into ai-components-3.
 
   sdcpp_build.py lock --system SYSTEM [--github-output]
-      the id of the lock, the commits, the SDK of SYSTEM (windows-x64 or linux-x64) and the name of the artifact
+      the id of the lock, the commits, the SDK of SYSTEM (windows-x64 or linux-x64) and the name of the artifact;
+      macos-arm64 (the Metal archive of Enhance (AI), sd_cpp_seedvr2.lock.json only) has no SDK
   sdcpp_build.py sources --dir DIR
       stable-diffusion.cpp at the commit of the lock, and its ggml submodule only (no web frontend, no WebP, no WebM),
       checked against the commit of the lock
   sdcpp_build.py build --system SYSTEM --source DIR --build DIR
       cmake with the options of the lock, then the build; on Windows inside the environment of the newest Visual
-      Studio with the C++ tools (vswhere, VsDevCmd), so that Ninja and cl are those of Visual Studio 2022
+      Studio with the C++ tools (vswhere, VsDevCmd), so that Ninja and cl are those of Visual Studio 2022. macOS takes
+      its own list of the lock whole (the common one names Vulkan): Metal (SD_METAL, its shaders embedded in the
+      program, GGML_METAL_EMBED_LIBRARY), everything static, so that the archive is one program
   sdcpp_build.py pack --system SYSTEM --source DIR --bin DIR --out DIR [--launcher FILE] [--crt-dir DIR]
                       [--system-dir DIR]
       the archive of the engine in DIR: sd-cli, the libraries of stable-diffusion.cpp and of ggml (every CPU variant
       and the Vulkan backend, which ggml loads from the folder of the program), on Windows the Visual C++ runtime DLLs
       they import (a clean Windows has none) and every import checked as windows_bundle.py does, on Linux the launcher
       immuch360-run and every library they need found in the archive or in the base of any distribution (libvulkan.so.1
-      comes with the graphics driver); the licences of licenses/sdcpp in licenses/ (those of stable-diffusion.cpp and
+      comes with the graphics driver), on macOS the one program sd-cli, which may link only the libraries and
+      frameworks of the system (otool -L), signed ad hoc (codesign) as the app signs immuch360-run (lot L10: no
+      Developer ID yet); the licences of licenses/sdcpp in licenses/ (those of stable-diffusion.cpp and
       ggml compared with the sources built), and BUILD-INFO.txt. Sorted names, fixed dates: the same files give the
       same bytes.
   sdcpp_build.py help --output FILE [--fixture FILE]
@@ -54,7 +59,11 @@ ROOT = pathlib.Path(__file__).resolve().parents[3]
 LOCK = pathlib.Path(__file__).resolve().parent / 'sd_cpp.lock.json'
 LICENCES = ROOT / 'licenses' / 'sdcpp'
 FIXTURE = ROOT / 'mobile' / 'test' / 'fixtures' / 'ai_immersive' / 'sd_cli_help.txt'
-SYSTEMS = ('windows-x64', 'linux-x64')
+SYSTEMS = ('windows-x64', 'linux-x64', 'macos-arm64')
+# The systems built on Vulkan, whose lock names the SDK of LunarG; macOS builds on Metal, part of the system
+VULKAN_SYSTEMS = ('windows-x64', 'linux-x64')
+# What sd-cli of macOS may link: the libraries and frameworks of macOS itself
+MAC_SYSTEM = re.compile(r'^(/usr/lib/|/System/Library/)')
 ARTIFACT_PREFIX = 'Immuch360-AI-sdcpp-'
 # The files of a Windows build that make the engine: the program, the library of stable-diffusion.cpp, and those of
 # ggml (ggml, ggml-base, ggml-vulkan and the CPU variants); sd-server and the build tools stay out
@@ -84,7 +93,7 @@ def load_lock(path: pathlib.Path = LOCK) -> dict:
     for name in ('stableDiffusionCpp', 'ggml'):
         if not re.fullmatch(r'[0-9a-f]{40}', lock[name]['commit']):
             raise Failure(f'{path.name}: the commit of {name} is not a full commit')
-    for system in SYSTEMS:
+    for system in VULKAN_SYSTEMS:
         sdk = lock['vulkanSdk'].get(system) or {}
         if not re.fullmatch(r'[0-9a-f]{64}', sdk.get('sha256', '')) or not sdk.get('url', '').startswith('https://'):
             raise Failure(f'{path.name}: the Vulkan SDK of {system} has no https address or SHA-256')
@@ -107,17 +116,27 @@ def output(command: list, cwd: pathlib.Path | None = None) -> str:
 
 # --- lock ------------------------------------------------------------------------------------------------------------
 
+def cmake_options(lock: dict, system: str) -> list:
+    """The options of the build of [system]: the common ones and those of the system, or on macOS its own list whole"""
+    if system not in lock['cmake']:
+        raise Failure(f'the lock {lock["id"]} has no build for {system}')
+    if system in VULKAN_SYSTEMS:
+        return [*lock['cmake']['common'], *lock['cmake'][system]]
+    return list(lock['cmake'][system])
+
+
 def command_lock(args) -> int:
     lock = load_lock(args.lock)
-    sdk = lock['vulkanSdk'][args.system]
+    cmake_options(lock, args.system)
+    sdk = lock['vulkanSdk'].get(args.system) or {}
     values = {
         'id': lock['id'],
         'artifact': artifact_name(lock, args.system),
         'commit': lock['stableDiffusionCpp']['commit'],
         'ggml_commit': lock['ggml']['commit'],
-        'sdk_version': lock['vulkanSdk']['version'],
-        'sdk_url': sdk['url'],
-        'sdk_sha256': sdk['sha256'],
+        'sdk_version': lock['vulkanSdk']['version'] if sdk else '',
+        'sdk_url': sdk.get('url', ''),
+        'sdk_sha256': sdk.get('sha256', ''),
     }
     for key, value in values.items():
         print(f'{key}={value}')
@@ -175,11 +194,11 @@ def batch_quote(part: str) -> str:
 
 def command_build(args) -> int:
     lock = load_lock(args.lock)
-    options = [*lock['cmake']['common'], *lock['cmake'][args.system]]
+    options = cmake_options(lock, args.system)
     configure = ['cmake', '-S', str(args.source), '-B', str(args.build), *options]
     # Four jobs, the processors of the hosted runners: more is the out of memory killer on the Vulkan backend
     build = ['cmake', '--build', str(args.build), '--config', 'Release', '--parallel', '4']
-    if args.system == 'linux-x64':
+    if args.system != 'windows-x64':
         run(configure)
         run(build)
         return 0
@@ -275,6 +294,28 @@ def windows_files(bin_dir: pathlib.Path, crt_dir: pathlib.Path | None, system_di
         return {path.name: path.read_bytes() for path in sorted(folder.iterdir())}, problems
 
 
+def mac_files(bin_dir: pathlib.Path) -> tuple:
+    """The file of the macOS engine, sd-cli alone (everything static), signed ad hoc, and the problems: a library it
+    links that is not one of macOS, a program that is not arm64"""
+    program = bin_dir / 'sd-cli'
+    if not program.is_file():
+        raise Failure(f'no sd-cli in {bin_dir}')
+    problems = []
+    for line in output(['otool', '-L', program]).splitlines()[1:]:
+        library = line.strip().split(' (')[0]
+        if library and not MAC_SYSTEM.match(library):
+            problems.append(f'sd-cli links {library}, which is not a library of macOS')
+    archs = output(['lipo', '-archs', program]).split()
+    if archs != ['arm64']:
+        problems.append(f'sd-cli is built for {" ".join(archs)}, not arm64 alone')
+    with tempfile.TemporaryDirectory(prefix='sdcpp-') as temporary:
+        signed = pathlib.Path(temporary) / 'sd-cli'
+        shutil.copy2(program, signed)
+        run(['codesign', '--force', '--sign', '-', '--timestamp=none', signed])
+        run(['codesign', '--verify', '--strict', '--verbose=2', signed])
+        return {'sd-cli': signed.read_bytes()}, problems
+
+
 def write_archive(target: pathlib.Path, files: dict, programs: set):
     target.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(target, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
@@ -297,6 +338,9 @@ def command_pack(args) -> int:
     if args.system == 'windows-x64':
         files, found = windows_files(args.bin, args.crt_dir, args.system_dir)
         programs = {'sd-cli.exe'}
+    elif args.system == 'macos-arm64':
+        files, found = mac_files(args.bin)
+        programs = {'sd-cli'}
     else:
         files, found = linux_files(args.bin, args.launcher)
         programs = {'sd-cli', 'immuch360-run'} & set(files)
@@ -308,12 +352,15 @@ def command_pack(args) -> int:
     if os.environ.get('GITHUB_RUN_ID'):
         run_url = (f'{os.environ.get("GITHUB_SERVER_URL", "https://github.com")}/{os.environ.get("GITHUB_REPOSITORY")}'
                    f'/actions/runs/{os.environ["GITHUB_RUN_ID"]}')
+    metal = args.system not in VULKAN_SYSTEMS
     files['BUILD-INFO.txt'] = '\n'.join([
-        f'stable-diffusion.cpp on Vulkan for Immuch360 Desktop, {args.system}, lock {lock["id"]}',
+        f'stable-diffusion.cpp on {"Metal" if metal else "Vulkan"} for Immuch360 Desktop, {args.system}, '
+        f'lock {lock["id"]}',
         f'stable-diffusion.cpp {lock["stableDiffusionCpp"]["repository"]} {lock["stableDiffusionCpp"]["commit"]}',
         f'ggml {lock["ggml"]["repository"]} {lock["ggml"]["commit"]}',
-        f'Vulkan SDK of LunarG {lock["vulkanSdk"]["version"]}',
-        'CMake options: ' + ' '.join([*lock['cmake']['common'], *lock['cmake'][args.system]]),
+        *([] if metal else [f'Vulkan SDK of LunarG {lock["vulkanSdk"]["version"]}']),
+        'CMake options: ' + ' '.join(cmake_options(lock, args.system)),
+        *(['Signed ad hoc (codesign --sign -), no Developer ID'] if metal else []),
         *([f'Built by {run_url}'] if run_url else []),
         'Licences: licenses/ (stable-diffusion.cpp and ggml under the MIT licence, the code built into them in '
         'licenses/THIRD-PARTY.md)',

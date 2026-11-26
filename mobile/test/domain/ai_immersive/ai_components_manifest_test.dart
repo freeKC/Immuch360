@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
-import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show aiEnhanceComponents;
+import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart'
+    show aiEnhanceComponents, aiEnhanceMacComponents, aiEnhanceMacEnginePublished, sdCppSeedVr2MacArmComponent;
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_component_licences.dart';
 
@@ -166,7 +167,7 @@ void main() {
             ? av2DecoderReleaseTag
             : component == onnxRuntimeDirectMlComponent
             ? aiComponentsGpuReleaseTag
-            : aiEnhanceComponents.contains(component)
+            : aiEnhanceComponents.contains(component) || aiEnhanceMacComponents.contains(component)
             ? aiComponentsEnhanceReleaseTag
             : ffmpeg
             ? ffmpegProgramReleaseTag
@@ -183,9 +184,10 @@ void main() {
         expect(component.variantOf, isNull, reason: component.id);
         // Every archive lists its files: the AV2 decoder's as the manifest of av2-companion v1.0.1 gives them, the
         // splat scenes' since ai-components-4 is made (lot SP14)
+        // The Metal engine of a Mac is held without its sum, and so without its files, until its archive is published
         expect(
           component.archiveFiles.isNotEmpty,
-          component.isArchive,
+          component.isArchive && component.sha256 != null,
           reason: '${component.id}: files of archives only',
         );
         expect(
@@ -319,6 +321,16 @@ void main() {
       ]);
     });
 
+    test('the Metal engine of a Mac is in the catalogue, held without its sum until it is published (release 53)', () {
+      expect(aiComponents, contains(sdCppSeedVr2MacArmComponent));
+      expect(aiComponentById(sdCppSeedVr2MacArmComponent.id), same(sdCppSeedVr2MacArmComponent));
+      // Complete exactly when its publication flag is on: the flag and the sums go in one change
+      expect(sdCppSeedVr2MacArmComponent.isComplete, aiEnhanceMacEnginePublished);
+      // Never offered by a feature of the catalogue (Enhance (AI) names its components itself) nor on another system
+      expect(sdCppSeedVr2MacArmComponent.features, isEmpty);
+      expect(sdCppSeedVr2MacArmComponent.platforms, {AiPlatform.macosArm64});
+    });
+
     test('the app keeps the text of every licence, with its copyright line; stable-diffusion.cpp brings its own', () {
       for (final component in aiComponents) {
         final text = aiLicenceText(component);
@@ -330,6 +342,7 @@ void main() {
             component == sdCppLinuxComponent ||
             component == sdCppSeedVr2WindowsComponent ||
             component == sdCppSeedVr2LinuxComponent ||
+            component == sdCppSeedVr2MacArmComponent ||
             component.id.startsWith('ffmpeg-lgpl-')) {
           expect(text, 'See ${component.licenceUrl}\n', reason: component.id);
           continue;

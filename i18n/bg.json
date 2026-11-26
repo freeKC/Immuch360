@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "Видеокартата има твърде малко памет за това ниво.",
   "ai_enhance_refused_dedicated": "Изисква дискретна видеокарта с 6 GB. Естествено работи на процесора.",
   "ai_enhance_refused_intel_mac": "Не на Intel Mac: моделът не е проверен с версията на ONNX Runtime, която има.",
-  "ai_enhance_refused_mac": "Още не на Mac: двигателят му за Mac идва в по-късна версия. Естествено се предлага на Mac.",
   "ai_enhance_refused_memory": "Изисква компютър с 16 GB памет.",
   "ai_enhance_refused_no_card": "Няма видеокарта, която двигателят да може да използва (Vulkan). Естествено работи на процесора.",
   "ai_enhance_refused_not_yet": "Още не е в тази версия: файловете му не са публикувани.",

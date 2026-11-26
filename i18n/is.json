@@ -560,7 +560,6 @@
   "ai_enhance_refused_card_small": "Skjákortið er með of lítið minni fyrir þetta stig.",
   "ai_enhance_refused_dedicated": "Þarf sérstakt skjákort með 6 GB. Náttúrulegt keyrir á örgjörvanum.",
   "ai_enhance_refused_intel_mac": "Ekki á Intel Mac: líkanið var ekki prófað með þeirri útgáfu af ONNX Runtime sem þar er.",
-  "ai_enhance_refused_mac": "Ekki enn á Mac: vélin fyrir Mac kemur í síðari útgáfu. Náttúrulegt er í boði á Mac.",
   "ai_enhance_refused_memory": "Þarf tölvu með 16 GB af minni.",
   "ai_enhance_refused_no_card": "Ekkert skjákort sem vélin getur notað (Vulkan). Náttúrulegt keyrir á örgjörvanum.",
   "ai_enhance_refused_not_yet": "Ekki enn í þessari útgáfu: skrárnar hafa ekki verið gefnar út.",

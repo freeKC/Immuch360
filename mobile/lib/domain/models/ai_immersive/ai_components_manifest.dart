@@ -39,6 +39,11 @@
 //
 // Shared with the Meta Quest, which reads the LiteRT model from it.
 
+// The Metal engine of "Enhance (AI)" for Apple silicon is defined in ai_enhance_manifest.dart, outside the text
+// publish_ai_components.py reads, until that script handles a macOS engine; it is in the catalogue below all the same,
+// without its size and sum until its archive is published (release 53, enhance-mac-2026-11-25.md).
+import 'package:immich_mobile/domain/models/ai_immersive/ai_enhance_manifest.dart' show sdCppSeedVr2MacArmComponent;
+
 /// The tag of the prerelease that hosts the files of phase 1 (never "Latest": the app reads releases/latest)
 const aiComponentsReleaseTag = 'ai-components-1';
 
@@ -3737,6 +3742,9 @@ const aiComponents = <AiComponent>[
   vosrVaeEncoderComponent,
   vosrTransformerComponent,
   vosrVaeDecoderComponent,
+  // Held (no size, no sum) until its archive is in ai-components-7: in the catalogue so that, once a Mac installs it,
+  // the cleanup of unused files never takes it for the file of another version (review of 25 November 2026)
+  sdCppSeedVr2MacArmComponent,
 ];
 
 /// The components [platform] needs for [feature] (the 3D photo when not given), the runtimes first, then the

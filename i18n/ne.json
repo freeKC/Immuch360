@@ -60,7 +60,6 @@
   "ai_enhance_refused_card_small": "यो स्तरका लागि ग्राफिक्स कार्डमा धेरै कम मेमोरी छ।",
   "ai_enhance_refused_dedicated": "6 GB को छुट्टै ग्राफिक्स कार्ड चाहिन्छ। प्राकृतिक प्रोसेसरमा चल्छ।",
   "ai_enhance_refused_intel_mac": "Intel Mac मा होइन: यसमा भएको ONNX Runtime को संस्करणसँग मोडेल जाँचिएको छैन।",
-  "ai_enhance_refused_mac": "Mac मा अहिले छैन: Mac का लागि यसको इन्जिन पछिको संस्करणमा आउँछ। प्राकृतिक Mac मा उपलब्ध छ।",
   "ai_enhance_refused_memory": "16 GB मेमोरी भएको कम्प्युटर चाहिन्छ।",
   "ai_enhance_refused_no_card": "इन्जिनले प्रयोग गर्न सक्ने ग्राफिक्स कार्ड छैन (Vulkan)। प्राकृतिक प्रोसेसरमा चल्छ।",
   "ai_enhance_refused_not_yet": "यो संस्करणमा अझै छैन: यसका फाइलहरू प्रकाशित भएका छैनन्।",

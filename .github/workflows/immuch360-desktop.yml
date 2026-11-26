@@ -377,6 +377,10 @@ jobs:
       - name: The tiny models of ONNX Runtime are what their script writes
         run: python3 .github/desktop/ai/make_tiny_models.py --check
 
+      # The four tiny graphs that stand for those of VOSR 2.0 in the tests of Natural of Enhance (AI) (release 53)
+      - name: The tiny graphs of VOSR are what their script writes
+        run: python3 .github/desktop/ai/make_tiny_vosr.py --check
+
       # The synthetic room of the splat scenes (lot SP0): 24 views of two cameras around three boxes, ray cast in pure
       # Python, with their exact poses for the measures of lots SP1 and SP4; the same pixels on every system
       - name: The synthetic dataset of the splat scenes is what its script writes
@@ -581,7 +585,8 @@ jobs:
             IMMUCH360_ORT_LIB="$ort/onnxruntime-linux-x64-$version/lib/libonnxruntime.so.$version" \
               IMMUCH360_SCENE_OUT="$RUNNER_TEMP/scenes-$version" \
               mise exec -- flutter test test/desktop/ai/ort test/desktop/ai/scene \
-                test/desktop/ai/panorama/panorama_engine_ort_test.dart test/desktop/ai/video3d
+                test/desktop/ai/panorama/panorama_engine_ort_test.dart test/desktop/ai/video3d \
+                test/desktop/ai/enhance/natural_ort_test.dart
           done
 
       # A whole 3D video (release 49) with the real FFmpeg program of immuch360/libmpv-builds, checked by its SHA-256,
@@ -1873,6 +1878,10 @@ jobs:
           echo "2a50a63e7f41f8d4d551d3ee47248df3864f6540109fce8ad520ca3b51af4b70  $ort/libonnxruntime.1.31.0.dylib" | shasum -a 256 -c -
           IMMUCH360_ORT_LIB="$ort/libonnxruntime.1.31.0.dylib" IMMUCH360_ORT_COREML=1 \
             mise exec -- flutter test test/desktop/ai/ort/depth_provider_test.dart --reporter expanded
+          # Natural of Enhance (AI) through Core ML (release 53): the backend of the app on the tiny graphs of VOSR
+          # (make_tiny_vosr.py), every graph opened with Core ML, the picture the processor gives
+          IMMUCH360_ORT_LIB="$ort/libonnxruntime.1.31.0.dylib" IMMUCH360_ORT_COREML=1 \
+            mise exec -- flutter test test/desktop/ai/enhance/natural_ort_test.dart --reporter expanded
 
       - name: ZIP and DMG
         id: app
@@ -2846,6 +2855,184 @@ jobs:
           archive: false
           retention-days: 14
           if-no-files-found: error
+
+  # The same stable-diffusion.cpp on Metal for Apple silicon (release 53, store/m2/release-53/enhance-mac-2026-11-25.md):
+  # the engine of Sharpen and Rebuild details on a Mac, at the commits of sd_cpp_seedvr2.lock.json with its macos-arm64
+  # options (SD_METAL, the Metal shaders embedded, everything static: one program sd-cli, signed ad hoc, no Developer
+  # ID yet), its --help compared with the same fixture. Then what this virtual Mac can prove, its GPU being "Apple
+  # Paravirtual device": the devices ggml lists, Sharpen through the backend of the app on Real-ESRGAN x4plus (the
+  # asset of ai-components-3, checked by its SHA-256), and, not blocking, one tile of Rebuild details on SeedVR2 3B
+  # (the assets of ai-components-7), which either runs on the GPU or stops and says the GPU was not used. Not the speed
+  # nor the memory of a real Mac. Its artifact Immuch360-AI-sdcpp-0d71f96-1-macos-arm64.zip is for ai-components-7;
+  # nothing here publishes it.
+  sdcpp-seedvr2-macos:
+    name: stable-diffusion.cpp of Enhance (AI) for Apple silicon (Metal)
+    runs-on: macos-15
+    needs: codegen
+    if: ${{ inputs.sdcpp_seedvr2 || needs.codegen.outputs.sdcpp_seedvr2_lock_changed == 'true' }}
+    timeout-minutes: 120
+    env:
+      LOCK: .github/desktop/ai/sd_cpp_seedvr2.lock.json
+      HELP: mobile/test/fixtures/ai_immersive/sd_cli_seedvr2_help.txt
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: The lock
+        id: lock
+        run: python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" lock --system macos-arm64 --github-output
+
+      - name: Sources of stable-diffusion.cpp and ggml at the commits of the lock
+        run: python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" sources --dir "$RUNNER_TEMP/sdcpp"
+
+      - name: Build
+        run: |
+          uname -m
+          xcrun clang --version | head -1
+          sw_vers
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" build --system macos-arm64 \
+            --source "$RUNNER_TEMP/sdcpp" --build "$RUNNER_TEMP/sdcpp-build"
+
+      - name: sd-cli --help as the fixture says
+        run: |
+          "$RUNNER_TEMP/sdcpp-build/bin/sd-cli" --help > "$RUNNER_TEMP/sd-cli-help.txt"
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" help --output "$RUNNER_TEMP/sd-cli-help.txt" \
+            --fixture "$HELP"
+
+      - name: The archive
+        id: archive
+        run: |
+          python3 .github/desktop/ai/sdcpp_build.py --lock "$LOCK" pack --system macos-arm64 \
+            --source "$RUNNER_TEMP/sdcpp" --bin "$RUNNER_TEMP/sdcpp-build/bin" --out dist
+          unpacked="$RUNNER_TEMP/unpacked"
+          mkdir -p "$unpacked"
+          python3 -m zipfile -e "dist/${{ steps.lock.outputs.artifact }}" "$unpacked"
+          chmod +x "$unpacked/sd-cli"
+          otool -L "$unpacked/sd-cli"
+          vtool -show-build "$unpacked/sd-cli" || true
+          codesign --verify --strict --verbose=2 "$unpacked/sd-cli"
+          echo "sdcli=$unpacked/sd-cli" >> "$GITHUB_OUTPUT"
+          mkdir -p "$RUNNER_TEMP/metal-out"
+          "$unpacked/sd-cli" --list-devices 2>&1 | tee "$RUNNER_TEMP/metal-out/list-devices.txt" \
+            || echo "no device listed"
+
+      - name: Upload the archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: dist/${{ steps.lock.outputs.artifact }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Install mise
+        uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          install: false
+          cache: true
+
+      - name: Install Flutter
+        run: cd mobile && mise install
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-dart
+          path: mobile
+
+      - name: Flutter dependencies
+        working-directory: mobile
+        run: |
+          tar -xf generated-dart.tar
+          mise exec -- flutter pub get --enforce-lockfile
+
+      # Real-ESRGAN x4plus as the app installs it (upscalerComponent, ai-components-3), then Sharpen of a picture of
+      # 320 x 240 through SdCppSharpenBackend and SdCppUpscaler on sdCppMetalDevice: no --backend, sd-cli takes the GPU
+      - name: Sharpen on the GPU of this Mac through the backend of the app
+        working-directory: mobile
+        env:
+          SD_CLI: ${{ steps.archive.outputs.sdcli }}
+        run: |
+          models="$RUNNER_TEMP/models"
+          mkdir -p "$models"
+          curl -sSfL --retry 3 -o "$models/RealESRGAN_x4plus.pth" \
+            https://github.com/freeKC/Immuch360/releases/download/ai-components-3/RealESRGAN_x4plus.pth
+          echo "4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1  $models/RealESRGAN_x4plus.pth" \
+            | shasum -a 256 -c -
+          export IMMUCH360_ENHANCE_METAL="{\"sdCli\":\"$SD_CLI\",\"upscaler\":\"$models/RealESRGAN_x4plus.pth\",\"out\":\"$RUNNER_TEMP/metal-out/sharpen\"}"
+          mise exec -- flutter test test/desktop/ai/enhance/enhance_metal_integration_test.dart --reporter expanded \
+            --plain-name Sharpen
+
+      # SeedVR2 3B int8 convrot and its VAE as the app installs them (ai-components-7: the DiT in two parts, put end to
+      # end and checked by the SHA-256 of the whole file), then one tile of 512 px through SdCppRebuildBackend. Not
+      # blocking: the virtual GPU of the runner and its 7 GB of memory may refuse it, which the outcome says
+      - name: One tile of Rebuild details on the GPU of this Mac (information)
+        id: rebuild
+        if: ${{ !cancelled() && steps.archive.outcome == 'success' }}
+        continue-on-error: true
+        timeout-minutes: 45
+        working-directory: mobile
+        env:
+          SD_CLI: ${{ steps.archive.outputs.sdcli }}
+        run: |
+          models="$RUNNER_TEMP/models"
+          base=https://github.com/freeKC/Immuch360/releases/download/ai-components-7
+          { curl -sSfL --retry 3 "$base/seedvr2_3b_int8_convrot.safetensors.001"
+            curl -sSfL --retry 3 "$base/seedvr2_3b_int8_convrot.safetensors.002"; } \
+            > "$models/seedvr2_3b_int8_convrot.safetensors"
+          echo "c3dec8bcc5916843a8a858572970597462e1f2dc598d6dfd818f6cd40f53a157  $models/seedvr2_3b_int8_convrot.safetensors" \
+            | shasum -a 256 -c -
+          curl -sSfL --retry 3 -o "$models/seedvr2_ema_vae_fp16.safetensors" "$base/seedvr2_ema_vae_fp16.safetensors"
+          echo "20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1  $models/seedvr2_ema_vae_fp16.safetensors" \
+            | shasum -a 256 -c -
+          sysctl hw.memsize
+          df -h "$RUNNER_TEMP"
+          export IMMUCH360_ENHANCE_METAL="{\"sdCli\":\"$SD_CLI\",\"upscaler\":\"\",\"dit\":\"$models/seedvr2_3b_int8_convrot.safetensors\",\"vae\":\"$models/seedvr2_ema_vae_fp16.safetensors\",\"out\":\"$RUNNER_TEMP/metal-out/rebuild\"}"
+          mise exec -- flutter test test/desktop/ai/enhance/enhance_metal_integration_test.dart --reporter expanded \
+            --plain-name "Rebuild details"
+
+      # The same program again through sd-cli alone, past the line that made the app stop it, to see how far the
+      # virtual GPU goes: its exit code and the tiles it wrote (information only, the app never does this)
+      - name: The program of Rebuild details through sd-cli alone (information)
+        if: ${{ !cancelled() && steps.rebuild.outcome != 'skipped' }}
+        continue-on-error: true
+        timeout-minutes: 30
+        env:
+          SD_CLI: ${{ steps.archive.outputs.sdcli }}
+        run: |
+          work="$RUNNER_TEMP/metal-out/rebuild/work"
+          ls -l "$work" "$work/tiles" || true
+          [ -f "$work/rebuild.dgl" ] || { echo "no program kept"; exit 0; }
+          set +e
+          "$SD_CLI" -M dgl --script "$work/rebuild.dgl" --max-vram 6 -t 3 -v > "$RUNNER_TEMP/metal-out/rebuild/alone.log" 2>&1
+          echo "sd-cli ended with $?" | tee -a "$RUNNER_TEMP/metal-out/rebuild/alone.log"
+          grep -E 'error|\[E\]|\[W\]|item [0-9]+/|auto-fit|params ->|budget' "$RUNNER_TEMP/metal-out/rebuild/alone.log" | head -40
+          tail -5 "$RUNNER_TEMP/metal-out/rebuild/alone.log"
+          ls -l "$work/tiles"
+
+      - name: What this Mac said
+        if: ${{ !cancelled() }}
+        run: |
+          out="$RUNNER_TEMP/metal-out"
+          {
+            echo "### sd-cli on Metal, ${{ steps.lock.outputs.artifact }}"
+            echo '```'
+            cat "$out/list-devices.txt" 2>/dev/null || true
+            for part in sharpen rebuild; do
+              echo "--- $part"
+              cat "$out/$part/outcome.json" 2>/dev/null || echo "no outcome"
+              grep -h -i -E 'ggml_metal|MTL|auto-fit|fall|error' "$out/$part/sd-cli.log" 2>/dev/null | head -40 || true
+            done
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload what this Mac said
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: enhance-metal-logs-macos-arm64
+          path: ${{ runner.temp }}/metal-out
+          retention-days: 14
+          if-no-files-found: ignore
 
   # COLMAP 4.2.1 on the processor, without its GPL parts, which places the photos of the splat scenes (lot SP1 of the
   # splat maker, plan of 2026-11-01, section 3): built from the commit of .github/desktop/ai/colmap.lock.json with the

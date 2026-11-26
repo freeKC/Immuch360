@@ -39,7 +39,6 @@
   "ai_enhance_refused_card_small": "මෙම මට්ටම සඳහා ග්‍රැෆික්ස් කාඩ්පතේ මතකය ඉතා අඩුය.",
   "ai_enhance_refused_dedicated": "6 GB කැපවූ ග්‍රැෆික්ස් කාඩ්පතක් අවශ්‍යයි. “ස්වාභාවික” ප්‍රොසෙසරය මත ධාවනය වේ.",
   "ai_enhance_refused_intel_mac": "Intel Mac හි නොවේ: එහි ඇති ONNX Runtime අනුවාදය සමඟ ආකෘතිය පරීක්ෂා කර නැත.",
-  "ai_enhance_refused_mac": "Mac හි තවම නැත: Mac සඳහා එහි එන්ජිම පසු අනුවාදයකින් පැමිණේ. “ස්වාභාවික” Mac හි ලබා දේ.",
   "ai_enhance_refused_memory": "16 GB මතකයක් ඇති පරිගණකයක් අවශ්‍යයි.",
   "ai_enhance_refused_no_card": "එන්ජිමට භාවිත කළ හැකි ග්‍රැෆික්ස් කාඩ්පතක් නැත (Vulkan). “ස්වාභාවික” ප්‍රොසෙසරය මත ධාවනය වේ.",
   "ai_enhance_refused_not_yet": "මෙම අනුවාදයේ තවම නැත: එහි ගොනු ප්‍රකාශයට පත් කර නැත.",

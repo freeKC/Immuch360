@@ -567,7 +567,6 @@
   "ai_enhance_refused_card_small": "グラフィックス カードのメモリが、このレベルには不足しています。",
   "ai_enhance_refused_dedicated": "メモリ 6 GB の専用グラフィックス カードが必要です。「ナチュラル」はプロセッサーで実行します。",
   "ai_enhance_refused_intel_mac": "Intel Mac では利用できません: その Mac の ONNX Runtime のバージョンで、モデルが検証されていません。",
-  "ai_enhance_refused_mac": "Mac ではまだ利用できません: Mac 用のエンジンは今後のバージョンで提供されます。「ナチュラル」は Mac でも選べます。",
   "ai_enhance_refused_memory": "16 GB のメモリを搭載したコンピューターが必要です。",
   "ai_enhance_refused_no_card": "エンジンが使えるグラフィックス カード (Vulkan) がありません。「ナチュラル」はプロセッサーで実行します。",
   "ai_enhance_refused_not_yet": "このバージョンではまだ利用できません: ファイルが公開されていません。",

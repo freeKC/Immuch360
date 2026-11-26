@@ -11,9 +11,11 @@ import 'package:immich_mobile/desktop/ai/creator/collisions.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
 import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/creator/existing_version_finder.dart';
+import 'package:immich_mobile/desktop/ai/engine/backends.dart' show GpuProbeProblem, GpuReport;
 import 'package:immich_mobile/desktop/ai/engine/immersive_engine.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
+import 'package:immich_mobile/desktop/ai/gpu/gpu_budget.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/library/isolate_cancel.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -66,9 +68,10 @@ class _FakeEnhance implements ImmersiveEngine {
 
 class _Memory implements MemoryProbe {
   int? available = 16 * _gib;
+  int physical = 32 * _gib;
 
   @override
-  MemoryFacts read() => MemoryFacts(physical: 32 * _gib, available: available);
+  MemoryFacts read() => MemoryFacts(physical: physical, available: available);
 }
 
 void main() {
@@ -191,6 +194,64 @@ void main() {
     expect(naturalJobMemory, greaterThan(4 * _gib));
     sharpen.hold!.complete();
     await until((state) => state.byId(natural.single)!.state == ConversionState.done);
+  });
+
+  group('on a Mac with an Apple chip (unified memory, no figure of the memory free)', () {
+    /// The tools of a Mac of [gigabytes]: a probe of the cards that answers as on macOS, which the levels of the
+    /// graphics never ask
+    void mac(int gigabytes) {
+      memory
+        ..physical = gigabytes * _gib
+        ..available = null;
+      final onMac = ProviderContainer(
+        overrides: [
+          conversionToolsProvider.overrideWith(
+            (ref) => ConversionTools(
+              engine: FakeImmersiveEngine(),
+              engines: {
+                for (final MapEntry(key: level, value: engine) in levels.entries)
+                  ConversionKind.enhanceAt(level): ConversionEngine(engine: engine, settingsKey: (_, _) => null),
+              },
+              output: output,
+              finder: ExistingVersionFinder(),
+              creatorTool: 'Immuch360 Desktop 3.4.6 (macos)',
+              memory: memory,
+              memoryRecheck: const Duration(milliseconds: 20),
+              gpuBudget: GpuBudget(probe: () async => const GpuReport(problem: GpuProbeProblem.notSupported)),
+              unifiedMemory: true,
+            ),
+          ),
+        ],
+      );
+      addTearDown(onMac.dispose);
+      container = onMac;
+    }
+
+    test('16 GB: Natural waits for Rebuild details, which asks no card', () async {
+      mac(16);
+      final rebuild = levels[EnhanceLevel.rebuild]!..hold = Completer<void>();
+      final card = queue().add([photo('a.jpg')], kind: ConversionKind.enhanceRebuild);
+      await running([rebuild], 1);
+      final natural = queue().add([photo('b.jpg')], kind: ConversionKind.enhanceNatural);
+      await until((state) => state.byId(natural.single)!.waitingFor == ConversionWait.memory);
+      expect(levels[EnhanceLevel.natural]!.running, 0);
+      rebuild.hold!.complete();
+      await until((state) => state.jobs.every((job) => job.state.isEnded));
+      expect(job(card.single).state, ConversionState.done);
+      expect(job(natural.single).state, ConversionState.done);
+    });
+
+    test('32 GB: Rebuild details and Natural side by side', () async {
+      mac(32);
+      final rebuild = levels[EnhanceLevel.rebuild]!..hold = Completer<void>();
+      final natural = levels[EnhanceLevel.natural]!..hold = Completer<void>();
+      queue().add([photo('a.jpg')], kind: ConversionKind.enhanceRebuild);
+      queue().add([photo('b.jpg')], kind: ConversionKind.enhanceNatural);
+      await running([rebuild, natural], 2);
+      rebuild.hold!.complete();
+      natural.hold!.complete();
+      await until((state) => state.jobs.every((job) => job.state == ConversionState.done));
+    });
   });
 
   test('a photo of 50 MP holds more memory beside the other lane than one of 12 MP', () async {

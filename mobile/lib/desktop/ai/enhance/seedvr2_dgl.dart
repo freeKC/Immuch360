@@ -22,6 +22,7 @@
 import 'dart:convert';
 
 import 'package:immich_mobile/desktop/ai/enhance/enhance_pixels.dart';
+import 'package:immich_mobile/desktop/ai/gen/sdcpp_runner.dart' show sdCppMetalFailure;
 
 /// The commit of stable-diffusion.cpp the program is written for (tag master-1117-0d71f96)
 const seedVr2SdCppCommit = '0d71f963af9c94941f4a67e8ea145935651dd756';
@@ -176,6 +177,13 @@ bool seedVr2MemoryRefusal(String line) =>
     line.contains('RAM graph capacity exceeded') || line.contains('RAM weight capacity exceeded');
 
 final _fallback = RegExp(r'fall(?:s|ing)? back to (?:the )?CPU', caseSensitive: false);
+
+/// The line of sd-cli's auto-fit plan that puts the diffusion model on the processor (release 53)
+final _ditOnProcessor = RegExp(r'auto-fit: --backend .*\bdiffusion=cpu\b', caseSensitive: false);
+
+/// Whether [line], on a Mac, says sd-cli does not run on its GPU (sdCppMetalFailure) or put the DiT on the processor:
+/// Rebuild details would then run on the processor, minutes a tile, or crash, so the run is stopped
+bool seedVr2MetalUnavailable(String line) => sdCppMetalFailure(line) || _ditOnProcessor.hasMatch(line);
 
 /// Whether [line] says a part of the work fell back to the processor
 bool seedVr2ProcessorFallback(String line) => _fallback.hasMatch(line);

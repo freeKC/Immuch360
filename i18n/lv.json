@@ -522,7 +522,6 @@
   "ai_enhance_refused_card_small": "Grafikas kartei ir par maz atmiņas šim līmenim.",
   "ai_enhance_refused_dedicated": "Vajag atsevišķu grafikas karti ar 6 GB. Dabisks darbojas procesorā.",
   "ai_enhance_refused_intel_mac": "Nav pieejams Intel Mac datorā: modelis nav pārbaudīts ar tajā esošo ONNX Runtime versiju.",
-  "ai_enhance_refused_mac": "Mac datorā vēl nav: šī līmeņa dzinējs Mac datoriem būs vēlākā versijā. Dabisks tiek piedāvāts Mac datorā.",
   "ai_enhance_refused_memory": "Vajag datoru ar 16 GB atmiņas.",
   "ai_enhance_refused_no_card": "Nav grafikas kartes, ko dzinējs var izmantot (Vulkan). Dabisks darbojas procesorā.",
   "ai_enhance_refused_not_yet": "Šajā versijā vēl nav: šī līmeņa faili nav publicēti.",

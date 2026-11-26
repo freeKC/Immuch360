@@ -49,6 +49,9 @@ const enhanceMemoryMessage = 'enhance: not enough memory free on this computer';
 /// The message of a card without the integer dot product SeedVR2 needs on it
 const enhanceNoIntDotMessage = 'enhance: the graphics card lacks the integer dot product';
 
+/// The message of a run of Rebuild details on a Mac stopped because sd-cli did not take the GPU (release 53)
+const enhanceNoMetalMessage = 'enhance: the graphics of this Mac could not be used';
+
 /// The model of one level, run on the whole picture
 abstract interface class EnhanceBackend {
   /// The model as the XMP names it, "Real-ESRGAN x4plus"

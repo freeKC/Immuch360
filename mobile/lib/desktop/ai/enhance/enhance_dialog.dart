@@ -21,6 +21,9 @@
 // writes a flat picture with our XMP only, so the GPano tags or the two eyes would be lost (enhanceSkipOf). A photo
 // above 50 megapixels is skipped too, and the levels are judged on the others.
 // "Protect faces" of the study is not offered: it needs a face detector, a model this lot does not add.
+// On a Mac with an Apple chip (release 53) the three levels are offered by the gates of the Mac (enhance_plan.dart:
+// the memory of the Mac and its GPU as Metal tells it), and the line of the times says plainly that nothing was tried on
+// a Mac yet: the times are those measured on the Windows laptop.
 // Escape closes the dialog (a dialog of the shell, lot feat-desktop-escape-51).
 
 import 'dart:async';
@@ -40,6 +43,7 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_files.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_gpu.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_levels.dart';
 import 'package:immich_mobile/desktop/ai/enhance/enhance_plan.dart';
+import 'package:immich_mobile/desktop/ai/gpu/metal_probe.dart';
 import 'package:immich_mobile/desktop/ai/hardware_gate.dart';
 import 'package:immich_mobile/desktop/ai/memory_probe.dart';
 import 'package:immich_mobile/desktop/ai/settings/desktop_ai_settings.dart';
@@ -73,16 +77,33 @@ abstract interface class EnhanceDialogFacts {
 
 /// The facts of this computer: its memory, the card of each level of the card, the files of each level
 class DesktopEnhanceDialogFacts implements EnhanceDialogFacts {
-  const DesktopEnhanceDialogFacts(this.gate, this.engines, {this.memory = const SystemMemoryProbe()});
+  const DesktopEnhanceDialogFacts(
+    this.gate,
+    this.engines, {
+    this.memory = const SystemMemoryProbe(),
+    this.metal = const SystemMetalProbe(),
+  });
 
   final HardwareGate gate;
   final Map<EnhanceLevel, DesktopEnhanceEngine> engines;
   final MemoryProbe memory;
+  final MetalProbe metal;
 
   @override
   Future<EnhanceMachine> machine() async {
     final facts = AiHardwareFacts.ofThisComputer();
     final read = memory.read();
+    final platform = aiPlatformOf(facts.abi);
+    if (platform == AiPlatform.macosArm64 || platform == AiPlatform.macosX64) {
+      // No Vulkan on a Mac: the GPU as Metal tells it
+      return EnhanceMachine(
+        platform: platform,
+        physicalMemory: read.physical ?? facts.physicalMemory,
+        freeMemory: read.available,
+        processors: facts.processors,
+        metal: platform == AiPlatform.macosArm64 ? metal.read() : null,
+      );
+    }
     final report = await gate.gpuReport();
     // The card the dialog tells of: that of Rebuild details when there is one, else that of Sharpen
     final card = enhanceCardOf(EnhanceLevel.rebuild, report) ?? enhanceCardOf(EnhanceLevel.sharpen, report);
@@ -235,8 +256,10 @@ ConversionSkipReason? enhanceSkipOf(BaseAsset asset, ConversionPhotoFacts facts)
 /// The words of a refusal of a level
 String enhanceRefusalText(Translations t, EnhanceRefusal refusal) => switch (refusal) {
   EnhanceRefusal.notOnThisSystem => t.ai_enhance_refused_system,
-  EnhanceRefusal.macNotYet => t.ai_enhance_refused_mac,
+  EnhanceRefusal.appleChipNeeded => t.ai_enhance_refused_mac,
   EnhanceRefusal.intelMacNotChecked => t.ai_enhance_refused_intel_mac,
+  EnhanceRefusal.macGraphicsUnusable => t.ai_enhance_refused_mac_graphics,
+  EnhanceRefusal.macRebuildNotYet => t.ai_enhance_refused_mac_rebuild,
   EnhanceRefusal.noGraphicsCard => t.ai_enhance_refused_no_card,
   EnhanceRefusal.dedicatedCardNeeded => t.ai_enhance_refused_dedicated,
   EnhanceRefusal.graphicsCardTooSmall => t.ai_enhance_refused_card_small,
@@ -251,9 +274,11 @@ String enhanceLevelName(Translations t, EnhanceLevel level) => switch (level) {
   EnhanceLevel.natural => t.ai_enhance_level_natural,
 };
 
-String _levelLine(Translations t, EnhanceLevel level) => switch (level) {
+/// [appleChip]: on a Mac with an Apple chip Natural opens its graphs with Core ML first (natural_backend.dart)
+String _levelLine(Translations t, EnhanceLevel level, {required bool appleChip}) => switch (level) {
   EnhanceLevel.sharpen => t.ai_enhance_level_sharpen_line,
   EnhanceLevel.rebuild => t.ai_enhance_level_rebuild_line,
+  EnhanceLevel.natural when appleChip => t.ai_enhance_level_natural_line_mac,
   EnhanceLevel.natural => t.ai_enhance_level_natural_line,
 };
 
@@ -570,7 +595,12 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
                     key: const Key('ai_enhance_estimate'),
                   ),
                 Text(
-                  _level.onGraphicsCard ? t.ai_enhance_estimate_card : t.ai_enhance_estimate_processor,
+                  _machine?.platform == AiPlatform.macosArm64
+                      ? t.ai_enhance_mac_untried
+                      : _level.onGraphicsCard
+                      ? t.ai_enhance_estimate_card
+                      : t.ai_enhance_estimate_processor,
+                  key: const Key('ai_enhance_measured_on'),
                   style: secondary,
                 ),
                 if (_level == EnhanceLevel.rebuild) Text(t.ai_enhance_first_run, style: secondary),
@@ -636,6 +666,7 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
       null => null,
     };
     final chosen = level == _level;
+    final line = _levelLine(t, level, appleChip: _machine?.platform == AiPlatform.macosArm64);
     return ListTile(
       key: Key('ai_enhance_level_${level.name}'),
       contentPadding: EdgeInsets.zero,
@@ -643,7 +674,7 @@ class _EnhanceDialogState extends ConsumerState<EnhanceDialog> {
       selected: chosen,
       leading: Icon(chosen ? Icons.radio_button_checked : Icons.radio_button_unchecked),
       title: Text(enhanceLevelName(t, level)),
-      subtitle: Text(reason == null ? _levelLine(t, level) : '${_levelLine(t, level)}\n$reason'),
+      subtitle: Text(reason == null ? line : '$line\n$reason'),
       onTap: () => setState(() => _level = level),
     );
   }

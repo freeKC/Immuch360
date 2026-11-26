@@ -15,11 +15,21 @@ import 'fake_process_runner.dart';
 /// sd-cli in script mode as far as the backend sees it: its device list, the items of each phase, and each tile
 /// written as the crop of the input it was given (or not written)
 class FakeSeedVr2Runner implements ProcessRunner {
-  FakeSeedVr2Runner({this.intDot = 1, this.refuseMemory = false, this.writeTiles = true});
+  FakeSeedVr2Runner({
+    this.intDot = 1,
+    this.refuseMemory = false,
+    this.writeTiles = true,
+    this.metal = false,
+    this.metalLine,
+  });
 
   final int intDot;
   final bool refuseMemory;
   final bool writeTiles;
+
+  /// The Metal build of a Mac: ggml lists its GPU, no Vulkan device; [metalLine] said before the work when given
+  final bool metal;
+  final String? metalLine;
   final launches = <ProcessLaunch>[];
 
   @override
@@ -41,16 +51,24 @@ class FakeSeedVr2Runner implements ProcessRunner {
     }
     final count = tiles.length;
     final lines = <(String, {bool isError})>[
-      ('ggml_vulkan: Found 2 Vulkan devices:', isError: false),
-      (
-        'ggml_vulkan: 0 = Intel(R) UHD Graphics (Intel Corporation) | uma: 1 | fp16: 1 | int dot: 1 | matrix cores: none',
-        isError: false,
-      ),
-      (
-        'ggml_vulkan: 1 = NVIDIA GeForce RTX 4060 Laptop GPU (NVIDIA) | uma: 0 | fp16: 1 | int dot: $intDot | '
-            'matrix cores: NV_coopmat2',
-        isError: false,
-      ),
+      if (metal) ...[
+        ('ggml_metal_device_init: GPU name:   MTL0 (Apple M1)', isError: false),
+        ('ggml_metal_device_init: GPU family: MTLGPUFamilyApple7  (1007)', isError: false),
+        ('ggml_metal_device_init: has unified memory    = true', isError: false),
+        if (metalLine case final line?) (line, isError: false),
+      ] else ...[
+        ('ggml_vulkan: Found 2 Vulkan devices:', isError: false),
+        (
+          'ggml_vulkan: 0 = Intel(R) UHD Graphics (Intel Corporation) | uma: 1 | fp16: 1 | int dot: 1 | '
+              'matrix cores: none',
+          isError: false,
+        ),
+        (
+          'ggml_vulkan: 1 = NVIDIA GeForce RTX 4060 Laptop GPU (NVIDIA) | uma: 0 | fp16: 1 | int dot: $intDot | '
+              'matrix cores: NV_coopmat2',
+          isError: false,
+        ),
+      ],
       if (refuseMemory)
         ('[E] RAM graph capacity exceeded. Requested 3892568608 bytes, 708513792 bytes available', isError: true),
       if (!refuseMemory)

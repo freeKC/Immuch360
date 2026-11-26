@@ -560,7 +560,6 @@
   "ai_enhance_refused_card_small": "לכרטיס המסך יש מעט מדי זיכרון לרמה הזו.",
   "ai_enhance_refused_dedicated": "נדרש כרטיס מסך ייעודי של 6 GB. טבעי רץ על המעבד.",
   "ai_enhance_refused_intel_mac": "לא ב-Mac עם Intel: המודל לא נבדק עם גרסת ONNX Runtime שיש בו.",
-  "ai_enhance_refused_mac": "עדיין לא ב-Mac: המנוע שלו ל-Mac יגיע בגרסה מאוחרת יותר. טבעי מוצע ב-Mac.",
   "ai_enhance_refused_memory": "נדרש מחשב עם 16 GB זיכרון.",
   "ai_enhance_refused_no_card": "אין כרטיס מסך שהמנוע יכול להשתמש בו (Vulkan). טבעי רץ על המעבד.",
   "ai_enhance_refused_not_yet": "עדיין לא בגרסה הזו: הקבצים שלה לא פורסמו.",
