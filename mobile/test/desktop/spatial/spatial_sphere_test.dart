@@ -35,17 +35,21 @@ import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/config/app_config.dart';
 import 'package:immich_mobile/domain/models/config/viewer_config.dart';
+import 'package:immich_mobile/domain/models/exif.model.dart';
 import 'package:immich_mobile/domain/models/settings_key.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/raw/raw_360_detection.dart';
 import 'package:immich_mobile/infrastructure/repositories/settings.repository.dart';
+import 'package:immich_mobile/presentation/widgets/images/local_image_provider.dart';
 import 'package:immich_mobile/providers/ai_immersive/flat_stereo.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
 
+import '../../unit/factories/remote_asset_factory.dart';
 import '../../unit/presentation/presentation_context.dart';
 import '../../widget_tester_extensions.dart';
 import '../ai/fakes/fake_conversion_engines.dart';
@@ -577,6 +581,44 @@ void main() {
     });
   });
 
+  group('the decode of a 3D sphere of the library', () {
+    /// The size the decoder of a photo of the device gives a photo of [width] x [height] for [box] at [dpr]: the box at
+    /// the pixel ratio (LocalFullImageProvider.previewTargetSize), covered (image_request.dart, _targetSize), rounded up
+    (int, int) decoded(int width, int height, Size box, double dpr) {
+      final target = LocalFullImageProvider.previewTargetSize(
+        box.width * dpr,
+        box.height * dpr,
+        width,
+        height,
+        previewIsFinal: true,
+      );
+      final scale = math.max(target.width / width, target.height / height);
+      return scale >= 1 ? (width, height) : ((width * scale).ceil(), (height * scale).ceil());
+    }
+
+    test('at most 4096 pixels on the long side, whatever the shape and the pixel ratio of the window', () {
+      for (final (width, height, dpr) in [
+        (8192, 4096, 1.0), // VR180 side by side
+        (7680, 7680, 1.5), // one above the other, a window at 150 %
+        (11520, 2880, 1.25), // a 360° photo side by side
+        (5760, 11520, 2.0), // VR180 one above the other
+      ]) {
+        final (w, h) = decoded(
+          width,
+          height,
+          sphereDecodeBox(width: width, height: height, devicePixelRatio: dpr),
+          dpr,
+        );
+        expect(math.max(w, h), sphereMaxDecodeSide, reason: '$width x $height at $dpr');
+        expect(w / h, closeTo(width / height, 0.01), reason: 'the shape kept');
+      }
+      // A smaller sphere at its own size
+      expect(decoded(4000, 4000, sphereDecodeBox(width: 4000, height: 4000, devicePixelRatio: 1.5), 1.5), (4000, 4000));
+      // Unknown size: a square box at the pixel ratio
+      expect(sphereDecodeBox(width: null, height: 2000, devicePixelRatio: 2), const Size.square(2048));
+    });
+  });
+
   group('the viewer of the library', () {
     late SpatialAiWorld world;
     late List<(String, SpatialPhoto)> opened;
@@ -587,6 +629,7 @@ void main() {
     late Map<String, IndexedVersion> versions;
     late bool raw;
     late bool splat;
+    late Future<SphereFileFacts> Function() facts;
 
     setUp(() {
       world = SpatialAiWorld();
@@ -598,6 +641,7 @@ void main() {
       versions = {};
       raw = false;
       splat = false;
+      facts = () async => (gpanoCrop: null, estimatedRelief: false);
     });
 
     tearDown(() => world.dispose());
@@ -628,6 +672,7 @@ void main() {
           rawMediaKindProvider(asset).overrideWithValue(raw ? RawMediaKind.insta360Photo : null),
           splatPhotoHoldsProvider(asset).overrideWithValue(splat),
           sphereCoverageOverrideProvider(asset).overrideWithValue(coverage),
+          spatialSphereFileFactsProvider(asset).overrideWith((ref) => facts()),
           generatedVersionsProvider.overrideWith((ref) async => versions),
           // The rule of the dialog for a 360° photo of one eye is aiMonoPanoramaProvider's (conversion_dialog_test)
           aiSourceProvider.overrideWith(
@@ -678,6 +723,69 @@ void main() {
         final ours = _photo('salon_360_3D.jpg', width: 4096, height: 4096);
         versions = {ours.id: (origin: IndexedOrigin.estimated, kind: ImmersiveKind.stereoPanorama360)};
         await pumpViewer(tester, ours);
+        await tester.tap(button);
+        expect(opened, [('salon_360_3D.jpg', (layout: _tbSphere, estimatedRelief: true))]);
+      });
+
+      testWidgets('a partial panorama is one picture, as the 360° viewer shows it, whatever its shape', (tester) async {
+        // A band of the sphere of 8000 x 2000, a 4:1 frame, and a square Photo Sphere of part of it
+        facts = () async => (gpanoCrop: const Rect.fromLTWH(0, 0.375, 1, 0.25), estimatedRelief: false);
+        await pumpViewer(tester, _photo('PANO_band.jpg', width: 8000, height: 2000));
+        expect(button, findsNothing, reason: 'a band of the sphere is no two eyes side by side');
+        facts = () async => (gpanoCrop: const Rect.fromLTWH(0.3, 0.2, 0.4, 0.6), estimatedRelief: false);
+        await pumpViewer(tester, _photo('PANO_part.jpg', width: 4000, height: 4000));
+        expect(button, findsNothing, reason: 'part of the sphere is no two eyes one above the other');
+        // The crop tags many cameras write on a full sphere change nothing
+        facts = () async => (gpanoCrop: fullSphereCrop, estimatedRelief: false);
+        await pumpViewer(tester, _photo('salon_360.jpg', width: 5760, height: 5760));
+        await tester.tap(button);
+        expect(opened, [('salon_360.jpg', (layout: _tbSphere, estimatedRelief: false))]);
+      });
+
+      testWidgets('nothing until the file was read for its crop', (tester) async {
+        final reading = Completer<SphereFileFacts>();
+        facts = () => reading.future;
+        await pumpViewer(tester, _photo('salon_360.jpg', width: 5760, height: 5760));
+        expect(button, findsNothing);
+        reading.complete((gpanoCrop: null, estimatedRelief: false));
+        await settleStill(tester);
+        expect(button, findsOneWidget);
+      });
+
+      testWidgets('an asset the server edited: the frame of its file decides, as in the 360° viewer', (tester) async {
+        // A 3D sphere of 5760 x 5760 the server cropped to 5760 x 2880, and a mono sphere cropped to a square
+        const stereoFile = ExifInfo(width: 5760, height: 5760);
+        const monoFile = ExifInfo(width: 8000, height: 4000);
+        final stereo = RemoteAssetFactory.create(
+          width: 5760,
+          height: 2880,
+          name: 'salon_360.jpg',
+        ).copyWith(isEdited: true);
+        await pumpViewer(
+          tester,
+          stereo,
+          extra: [assetExifProvider(stereo).overrideWith((ref) => Stream.value(stereoFile))],
+        );
+        await tester.tap(button);
+        expect(opened, [('salon_360.jpg', (layout: _tbSphere, estimatedRelief: false))]);
+        final mono = RemoteAssetFactory.create(width: 4000, height: 4000, name: 'lac_360.jpg').copyWith(isEdited: true);
+        await pumpViewer(tester, mono, extra: [assetExifProvider(mono).overrideWith((ref) => Stream.value(monoFile))]);
+        expect(button, findsNothing, reason: 'a mono sphere the server cropped square is no two eyes');
+        // Until its exif is known, nothing
+        await pumpViewer(
+          tester,
+          stereo,
+          extra: [assetExifProvider(stereo).overrideWith((ref) => const Stream.empty())],
+        );
+        expect(button, findsNothing);
+      });
+
+      testWidgets('the 3D version made on another computer, on the server only: its packet says the relief is AI', (
+        tester,
+      ) async {
+        final uploaded = RemoteAssetFactory.create(width: 4096, height: 4096, name: 'salon_360_3D.jpg');
+        facts = () async => (gpanoCrop: null, estimatedRelief: true);
+        await pumpViewer(tester, uploaded);
         await tester.tap(button);
         expect(opened, [('salon_360_3D.jpg', (layout: _tbSphere, estimatedRelief: true))]);
       });

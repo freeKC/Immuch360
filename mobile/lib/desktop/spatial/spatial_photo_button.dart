@@ -8,8 +8,9 @@
 // - a photo of two eyes one above the other by its name (_TB, _OU, _HTB..., stackedPhotoFormatOf), never a 360° one;
 // - a 360° or VR180 photo of two eyes (lot P3), as the 360° viewers lay its eyes out (resolveSphereView: one above the
 //   other in a square frame, side by side in a 4:1 one, the coverage picked in a 360° viewer or guessed, the 3D
-//   versions of 360° photos the app makes), shown as the 360° viewer shows it (spatial_sphere_render.dart); never the
-//   raw photo of a 360° camera, nor a splat photo.
+//   versions of 360° photos the app makes; from the frame before any edit of the server, and a partial panorama by its
+//   GPano crop is one picture), shown as the 360° viewer shows it (spatial_sphere_render.dart); never the raw photo of
+//   a 360° camera, nor a splat photo.
 // Nothing on any other photo (an Apple spatial pair and a 3D scene included), nor while the Spatial 2.5D switch of the
 // settings is off; but an ordinary 2D photo gets it too when this computer makes its 3D photo with AI: pressed, the 3D
 // photo made by AI is opened, made first when there is none yet (spatial_conversion.dart); and so does a 360° photo of
@@ -17,6 +18,9 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -30,22 +34,31 @@ import 'package:immich_mobile/desktop/spatial/spatial_conversion.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_page.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_render.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_sphere_render.dart';
+import 'package:immich_mobile/domain/models/ai_immersive/generated_panorama.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/models/stereo_layout.dart';
+import 'package:immich_mobile/domain/models/unedited_frame.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
+import 'package:immich_mobile/presentation/widgets/asset_viewer/panorama_viewer.widget.dart'
+    show fetchGPano, panoramaGPanoClientProvider, panoramaOriginalReaderProvider, readGPanoFile;
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/asset_viewer/asset.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/storage.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
 import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
+import 'package:immich_mobile/utils/image_url_builder.dart';
+import 'package:logging/logging.dart';
+import 'package:openapi/api.dart' show AssetMediaSize;
 import 'package:path/path.dart' as p;
 
 /// The layout of a photo of two eyes side by side as the probe told it
@@ -105,30 +118,106 @@ SpatialPhoto? spatialPhotoOf(WidgetRef ref, BaseAsset asset) {
   return spatialPhotoFrom(name: asset.name, sideBySide: desktopSbsPhotoOf(ref, asset), isSphere: () => false);
 }
 
-/// The 360° photo [asset] of two eyes as the 360° viewers lay them out (from its frame and its name, the coverage the
-/// user picked); the 3D version of a 360° photo the app made (a square frame, two eyes one above the other) says its
-/// relief was estimated by AI. The frame decides first, so that a 360° photo of one eye reads nothing more; never a raw
-/// photo nor a splat photo.
+/// The 360° photo [asset] of two eyes as the 360° viewer lays them out: from its frame before any edit of the server
+/// (uneditedFrameOf, as the viewer reads it), its name, its GPano crop (a partial panorama is one picture, whatever its
+/// shape) and the coverage the user picked. The frame decides first, so that a 360° photo of one eye reads nothing
+/// more; until its file was read for the crop, nothing. Its relief was estimated by AI when the index of the versions
+/// of this computer says so, or our packet in its file. Never a raw photo nor a splat photo.
 SpatialPhoto? _spatialSphereOfAsset(WidgetRef ref, BaseAsset asset) {
-  final view = resolveSphereView(
+  final frame = uneditedFrameOf(asset, hasEditedFrame(asset) ? ref.watch(assetExifProvider(asset)).valueOrNull : null);
+  if (!isKnownFrame(frame)) {
+    return null;
+  }
+  final chosenCoverage = ref.watch(sphereCoverageOverrideProvider(asset));
+  SphereView view({Rect? gpanoCrop}) => resolveSphereView(
     fileName: asset.name,
-    width: asset.width,
-    height: asset.height,
-    chosenCoverage: ref.watch(sphereCoverageOverrideProvider(asset)),
+    width: frame.width,
+    height: frame.height,
+    gpanoCrop: gpanoCrop,
+    chosenCoverage: chosenCoverage,
   );
-  if (view.layout == StereoLayout.mono ||
+  if (view().layout == StereoLayout.mono ||
       ref.watch(rawMediaKindProvider(asset)) != null ||
       ref.watch(splatPhotoHoldsProvider(asset))) {
+    return null;
+  }
+  final facts = ref.watch(spatialSphereFileFactsProvider(asset)).valueOrNull;
+  if (facts == null) {
+    return null;
+  }
+  final sphere = view(gpanoCrop: facts.gpanoCrop);
+  if (sphere.layout == StereoLayout.mono) {
     return null;
   }
   final localId = asset.localId;
   final version = localId == null
       ? null
       : ref.watch(generatedVersionsProvider.select((versions) => versions.valueOrNull?[localId]));
-  return spatialSphereFrom(
-    view,
-    estimatedRelief: version?.kind == ImmersiveKind.stereoPanorama360 && version?.origin == IndexedOrigin.estimated,
-  );
+  final indexed = version?.kind == ImmersiveKind.stereoPanorama360 && version?.origin == IndexedOrigin.estimated;
+  return spatialSphereFrom(sphere, gpanoCrop: facts.gpanoCrop, estimatedRelief: indexed || facts.estimatedRelief);
+}
+
+/// What the file of a 360° library photo of two eyes tells the 2.5D page: its GPano crop, and whether our packet says
+/// its relief was estimated by AI (a 3D version made on another computer and uploaded)
+typedef SphereFileFacts = ({Rect? gpanoCrop, bool estimatedRelief});
+
+const SphereFileFacts _noSphereFacts = (gpanoCrop: null, estimatedRelief: false);
+
+/// [SphereFileFacts] of [asset], read where the 360° viewer reads them: the GPano crop from the unedited preview of
+/// the server (its XMP holds the tags), our packet from the head of its original there; for a photo only on this
+/// computer, both from its file. A read that fails or does not come within a few seconds tells nothing, as in the
+/// viewer: the full sphere. Replaced in the tests.
+final spatialSphereFileFactsProvider = FutureProvider.autoDispose.family<SphereFileFacts, BaseAsset>((
+  ref,
+  asset,
+) async {
+  final remoteId = asset.remoteId;
+  try {
+    if (remoteId != null) {
+      final gpano = await fetchGPano(
+        ref.read(panoramaGPanoClientProvider),
+        Uri.parse(getThumbnailUrlForRemoteId(remoteId, type: AssetMediaSize.preview, edited: false)),
+      );
+      var estimated = false;
+      final read = ref.read(panoramaOriginalReaderProvider)(remoteId);
+      if (read != null) {
+        try {
+          final head = await read(0, generatedPanoramaHeadLength).timeout(_sphereReadTimeout);
+          estimated = generatedPanoramaOfHead(head)?.isEstimatedRelief ?? false;
+        } catch (error) {
+          _log.info('Could not read the head of the original of ${asset.name}: $error');
+        }
+      }
+      return (gpanoCrop: gpano?.crop, estimatedRelief: estimated);
+    }
+    final localId = asset.localId;
+    if (localId == null) {
+      return _noSphereFacts;
+    }
+    final file = await ref.read(storageRepositoryProvider).getFileForAsset(localId).timeout(_sphereReadTimeout);
+    if (file == null) {
+      return _noSphereFacts;
+    }
+    final tags = await readGPanoFile(file).timeout(_sphereReadTimeout);
+    final head = await _headOf(file).timeout(_sphereReadTimeout);
+    return (gpanoCrop: tags?.crop, estimatedRelief: generatedPanoramaOfHead(head)?.isEstimatedRelief ?? false);
+  } catch (error) {
+    _log.info('Could not read the GPano tags of ${asset.name}: $error');
+    return _noSphereFacts;
+  }
+});
+
+const _sphereReadTimeout = Duration(seconds: 5);
+
+final _log = Logger('SpatialPhotoButton');
+
+Future<Uint8List> _headOf(File file) async {
+  final handle = await file.open();
+  try {
+    return await handle.read(generatedPanoramaHeadLength);
+  } finally {
+    await handle.close();
+  }
 }
 
 /// What the 2.5D page opens the photo of a share named [name] with, from [info], what the page read of its file: null
@@ -193,9 +282,18 @@ final spatialPhotoOpenerProvider =
           (context, asset, layout, estimatedRelief) => openSpatialPhoto(
             context,
             // Twice the window: the frame holds two eyes, and each is shown as large as the window. A sphere at most
-            // 4096 pixels, as a share decodes it, never edited, as the 360° viewer shows it: the view shows a part
+            // 4096 pixels on its long side, as a share decodes it, never edited, as the 360° viewer shows it: the view
+            // shows a part (sphereDecodeBox)
             image: layout.sphere != null
-                ? getFullImageProvider(asset, size: sphereMaxDecodeSize, edited: false)
+                ? getFullImageProvider(
+                    asset,
+                    size: sphereDecodeBox(
+                      width: asset.width,
+                      height: asset.height,
+                      devicePixelRatio: PlatformDispatcher.instance.views.first.devicePixelRatio,
+                    ),
+                    edited: false,
+                  )
                 : getFullImageProvider(asset, size: MediaQuery.sizeOf(context) * 2),
             layout: layout,
             title: asset.name,
@@ -216,8 +314,23 @@ final spatialSharePhotoOpenerProvider =
           ),
     );
 
-/// The largest frame a 3D sphere of the library is decoded at for the 2.5D page
-const sphereMaxDecodeSize = Size.square(4096);
+/// The longest side a 3D sphere of the library is decoded at for the 2.5D page
+const sphereMaxDecodeSide = 4096;
+
+/// The logical box the 2.5D page asks the decoder of a library photo of [width] x [height] pixels for, so that a 3D
+/// sphere comes at most [sphereMaxDecodeSide] pixels on its long side: the photo's own shape, divided by
+/// [devicePixelRatio], as the decoder covers the box at the pixel ratio of the window (LocalFullImageProvider, then
+/// the cover scale of the request); a square box for a photo of unknown size. A server photo shows its preview
+/// whatever the box, and "Load original image" decodes the original at its full size after it, as the other viewers.
+Size sphereDecodeBox({required int? width, required int? height, required double devicePixelRatio}) {
+  final ratio = devicePixelRatio > 0 ? devicePixelRatio : 1.0;
+  if (width == null || height == null || width <= 0 || height <= 0) {
+    return Size.square(sphereMaxDecodeSide / ratio);
+  }
+  // Half a pixel under the bound: the decoder rounds the sides up
+  final scale = math.min(1.0, (sphereMaxDecodeSide - 0.5) / math.max(width, height));
+  return Size(width * scale / ratio, height * scale / ratio);
+}
 
 /// The "Spatial 2.5D" button itself, which calls [onOpen]; [tooltip], its words when not "Spatial 2.5D"
 class SpatialPhotoIconButton extends StatelessWidget {
