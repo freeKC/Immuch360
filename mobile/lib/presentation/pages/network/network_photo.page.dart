@@ -9,6 +9,7 @@ import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/library/share_versions_button.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart' show aiFeaturesEnabledProvider;
 import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_conversion.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
 import 'package:immich_mobile/desktop/window/desktop_photo_zoom.dart';
 import 'package:immich_mobile/desktop/window/desktop_shortcuts.dart';
@@ -689,6 +690,21 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         !relayed &&
         current.entry.isImage &&
         ref.watch(aiFeaturesEnabledProvider);
+    // And for a plain photo whose 3D photo this computer makes with AI: made first, then opened
+    // (lib/desktop/spatial/spatial_conversion.dart); never for an item a phone sends from its relay, as above
+    final spatialConvert =
+        CurrentPlatform.isDesktop &&
+        current != null &&
+        !tvMode &&
+        !relayed &&
+        spatialPhoto == null &&
+        spatialConversionOfferedForShare(
+          ref,
+          current.entry,
+          _info,
+          width: _info?.frameWidth ?? _imageSize?.width.round(),
+          height: _info?.frameHeight ?? _imageSize?.height.round(),
+        );
     // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
     final reliefGate = isHorizonOs && current != null && _canRotate && !relayed
         ? ref.watch(reliefGateProvider)
@@ -863,6 +879,17 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                         networkPhotoImage(photo.url, mimeType: photo.entry.mimeType, size: photo.entry.size),
                         photo.entry.name,
                         spatialPhoto,
+                      ),
+                    ),
+                  if (photo != null && spatialConvert)
+                    SpatialConvertPhotoButton(
+                      key: ValueKey('spatial-convert:${photo.entry.path}'),
+                      run: () => runShareSpatialConversion(
+                        this.context,
+                        ref,
+                        photo.entry,
+                        neighbours: widget.folder?.entries,
+                        imageOf: (url, file) => networkPhotoImage(url, mimeType: file.mimeType, size: file.size),
                       ),
                     ),
                   // Immuch360 Desktop: the versions of the photo on its share, and its original for a version

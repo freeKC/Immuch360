@@ -7,24 +7,33 @@
 //   page of a share as the probe of its file told it (its frame, else the size the page decoded it at);
 // - a photo of two eyes one above the other by its name (_TB, _OU, _HTB..., stackedPhotoFormatOf), never a 360° one.
 // Nothing on any other photo (an Apple spatial pair and a 3D scene included), nor while the Spatial 2.5D switch of the
-// settings is off.
+// settings is off; but an ordinary 2D photo gets it too when this computer makes its 3D photo with AI: pressed, the 3D
+// photo made by AI is opened, made first when there is none yet (spatial_conversion.dart).
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
+import 'package:immich_mobile/desktop/network/share_writer.dart' show sharePathIn;
+import 'package:immich_mobile/desktop/spatial/spatial_conversion.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_page.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_render.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
+import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
+import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:path/path.dart' as p;
 
 /// The layout of a photo of two eyes side by side as the probe told it
 SpatialPhotoLayout spatialLayoutOfSideBySide(FlatStereoPhoto photo) => SpatialPhotoLayout(
@@ -141,22 +150,150 @@ final spatialSharePhotoOpenerProvider =
           ),
     );
 
-/// The "Spatial 2.5D" button itself, which calls [onOpen]
+/// The "Spatial 2.5D" button itself, which calls [onOpen]; [tooltip], its words when not "Spatial 2.5D"
 class SpatialPhotoIconButton extends StatelessWidget {
-  const SpatialPhotoIconButton({super.key, required this.onOpen});
+  const SpatialPhotoIconButton({super.key, required this.onOpen, this.tooltip});
 
-  final VoidCallback onOpen;
+  final VoidCallback? onOpen;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) => IconButton(
     key: const Key('desktop_spatial_photo'),
     icon: const Icon(Icons.threed_rotation_rounded),
-    tooltip: context.t.spatial_2_5d,
+    tooltip: tooltip ?? context.t.spatial_2_5d,
     onPressed: onOpen,
   );
 }
 
-/// "Spatial 2.5D" in the top bar of the viewer of a computer, on a 3D photo; nothing on any other photo
+/// "Spatial 2.5D" on a plain photo (spatial_conversion.dart): its tooltip says the 3D photo is made first, and a
+/// second press does nothing while [run] is under way
+class SpatialConvertPhotoButton extends StatefulWidget {
+  const SpatialConvertPhotoButton({super.key, required this.run});
+
+  final Future<void> Function() run;
+
+  @override
+  State<SpatialConvertPhotoButton> createState() => _SpatialConvertPhotoButtonState();
+}
+
+class _SpatialConvertPhotoButtonState extends State<SpatialConvertPhotoButton> {
+  var _running = false;
+
+  Future<void> _press() async {
+    if (_running) {
+      return;
+    }
+    setState(() => _running = true);
+    try {
+      await widget.run();
+    } finally {
+      if (mounted) {
+        setState(() => _running = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => SpatialPhotoIconButton(
+    tooltip: context.t.spatial_2_5d_convert_first,
+    onOpen: _running ? null : () => unawaited(_press()),
+  );
+}
+
+/// Opens the 2.5D page on a 3D photo made by AI ([SpatialMadePhoto]), through the opener of the photos of a share
+void openSpatialMadePhoto(BuildContext context, WidgetRef ref, SpatialMadePhoto photo) => ref.read(
+  spatialSharePhotoOpenerProvider,
+)(context, photo.image, photo.name, (layout: photo.layout, estimatedRelief: true));
+
+/// The 3D photo made by AI from the library photo [asset] that the details of the viewer list (PhotoVersionsFinder),
+/// null when it has none that can be opened now; replaced in the tests
+final spatialMadeVersionOfAssetProvider = Provider<Future<SpatialMadePhoto?> Function(BaseAsset asset)>(
+  (ref) => (asset) async {
+    final localId = asset.localId;
+    if (localId == null || !asset.isImage) {
+      return null;
+    }
+    final finder = await ref.read(photoVersionsFinderProvider.future);
+    final version = madeStereoVersionOf(await finder.find(localId, checksum: asset.checksum));
+    return version == null
+        ? null
+        : (
+            image: spatialCappedImage(FileImage(File(version.path))),
+            name: version.name,
+            layout: spatialMadePhotoLayout,
+          );
+  },
+);
+
+/// "Spatial 2.5D" on the plain library photo [asset] (spatial_conversion.dart)
+Future<void> runLibrarySpatialConversion(BuildContext context, WidgetRef ref, BaseAsset asset) => runSpatialConversion(
+  context,
+  name: asset.name,
+  known: () => ref.read(spatialMadeVersionOfAssetProvider)(asset),
+  launch: () => ref.read(spatialConversionLauncherProvider)(context, assets: [asset]),
+  existing: (path) async => spatialCappedImage(FileImage(File(path))),
+  open: (photo) => openSpatialMadePhoto(context, ref, photo),
+);
+
+/// The 3D photo made by AI from the photo of a share at [entry] among the files of its folder ([neighbours], those the
+/// browser read, else its folder is listed), as the Versions of its page find them; replaced in the tests
+final spatialMadeVersionOfShareProvider =
+    Provider<Future<ShareVersion?> Function(NetworkEntry entry, List<NetworkEntry>? neighbours)>(
+      (ref) => (entry, neighbours) async {
+        final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(entry.sourceId);
+        final listed = neighbours ?? await fileSystem.list(shareFolderOf(entry.path));
+        final versions = await findShareVersions(
+          entry,
+          listed,
+          readerOf: (neighbour) => networkFileReader(fileSystem, neighbour.path),
+        );
+        return madeShareStereoVersionOf(versions);
+      },
+    );
+
+/// "Spatial 2.5D" on the plain photo of a share at [entry] (spatial_conversion.dart); [neighbours], the files of its
+/// folder the browser read; [imageOf], the picture of a file of the share at its media bridge URL, as its page shows it
+Future<void> runShareSpatialConversion(
+  BuildContext context,
+  WidgetRef ref,
+  NetworkEntry entry, {
+  List<NetworkEntry>? neighbours,
+  required ImageProvider Function(Uri url, NetworkEntry file) imageOf,
+}) {
+  final connections = ref.read(networkConnectionsProvider);
+  return runSpatialConversion(
+    context,
+    name: entry.name,
+    known: () async {
+      final version = await ref.read(spatialMadeVersionOfShareProvider)(entry, neighbours);
+      final photo = version?.photo;
+      if (version == null || photo == null) {
+        return null;
+      }
+      final file = version.entry;
+      return (
+        image: imageOf(await connections.mediaUrl(file.sourceId, file.path), file),
+        name: file.name,
+        layout: spatialLayoutOfSideBySide(photo),
+      );
+    },
+    launch: () => ref.read(spatialConversionLauncherProvider)(context, shareFiles: [entry]),
+    // The version the job found is in the folder of the photo on its share
+    existing: (path) async {
+      final file = NetworkEntry(
+        sourceId: entry.sourceId,
+        path: sharePathIn(shareFolderOf(entry.path), p.basename(path)),
+        isDirectory: false,
+      );
+      return imageOf(await connections.mediaUrl(file.sourceId, file.path), file);
+    },
+    open: (photo) => openSpatialMadePhoto(context, ref, photo),
+  );
+}
+
+/// "Spatial 2.5D" in the top bar of the viewer of a computer, on a 3D photo, and on a plain photo whose 3D photo this
+/// computer makes; nothing on any other photo
 class DesktopSpatialPhotoButton extends ConsumerWidget {
   const DesktopSpatialPhotoButton({super.key, required this.asset});
 
@@ -166,7 +303,9 @@ class DesktopSpatialPhotoButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final photo = spatialPhotoOf(ref, asset);
     if (photo == null) {
-      return const SizedBox.shrink();
+      return spatialConversionOffered(ref, asset)
+          ? SpatialConvertPhotoButton(run: () => runLibrarySpatialConversion(context, ref, asset))
+          : const SizedBox.shrink();
     }
     return SpatialPhotoIconButton(
       onOpen: () => ref.read(spatialPhotoOpenerProvider)(context, asset, photo.layout, photo.estimatedRelief),

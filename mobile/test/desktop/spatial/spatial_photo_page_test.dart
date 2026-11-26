@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_page.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_render.dart';
@@ -273,6 +274,8 @@ void main() {
           child: DesktopSpatialPhotoButton(asset: asset),
         ),
         overrides: [
+          // The AI off: a plain photo gets the button only through its 3D photo made first (spatial_plain_photo_test)
+          aiFeaturesEnabledProvider.overrideWith((ref) => false),
           flatStereoProvider(asset).overrideWith((ref) async => photo),
           isEquirectangularProvider(asset).overrideWithValue(equirect),
           spatialPhotoOpenerProvider.overrideWithValue(

@@ -4529,6 +4529,7 @@
   "sort_title": "Title",
   "source": "Source",
   "spatial_2_5d": "Spatial 2.5D",
+  "spatial_2_5d_convert_first": "Spatial 2.5D: makes the 3D photo with AI first, then opens it",
   "spatial_2_5d_experimental_subtitle": "Stereoscopic videos gain depth on a flat screen: the view follows your head, tracked with the front camera on the device only",
   "spatial_2_5d_experimental_title": "Spatial 2.5D",
   "spatial_camera_denied": "Camera access refused: use the slider to move the viewpoint",
