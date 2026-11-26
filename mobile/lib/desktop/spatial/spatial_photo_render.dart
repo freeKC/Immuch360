@@ -21,7 +21,7 @@ enum SpatialPhotoPacking { sideBySide, topBottom }
 /// Where the eyes of a 3D photo are, and how they are meant to be seen
 @immutable
 class SpatialPhotoLayout {
-  const SpatialPhotoLayout({required this.packing, this.swapped = false, this.squeezed = false});
+  const SpatialPhotoLayout({required this.packing, this.swapped = false, this.squeezed = false, this.sphere});
 
   final SpatialPhotoPacking packing;
 
@@ -30,6 +30,11 @@ class SpatialPhotoLayout {
 
   /// Each eye squeezed into half the width (side by side) or half the height (top bottom) of the frame
   final bool squeezed;
+
+  /// For a 360° or VR180 3D photo, the part of the sphere each eye covers, as fractions of the whole sphere (longitude
+  /// left to right, latitude top to bottom, as a GPano crop: the whole sphere or its front half); null for a flat 3D
+  /// photo. Each eye is then an equirectangular picture, shown by spatial_sphere_render.dart.
+  final Rect? sphere;
 
   /// The part of the frame that holds the left eye, or the right one when [left] is false, as fractions of the frame
   Rect eyeRect({required bool left}) {
@@ -40,21 +45,36 @@ class SpatialPhotoLayout {
     };
   }
 
-  /// The size one eye is shown at, for a frame of [frame] pixels: as stored, or stretched back when squeezed
-  Size eyeShownSize(Size frame) => switch (packing) {
-    SpatialPhotoPacking.sideBySide => Size(squeezed ? frame.width : frame.width / 2, frame.height),
-    SpatialPhotoPacking.topBottom => Size(frame.width, squeezed ? frame.height : frame.height / 2),
-  };
+  /// The size one eye is shown at, for a frame of [frame] pixels: as stored, or stretched back when squeezed. An eye of
+  /// a sphere takes the shape of the part of the sphere it covers (2:1 for the whole sphere, square for VR180) at the
+  /// width it is stored at, whatever the packing squeezed.
+  Size eyeShownSize(Size frame) {
+    final sphere = this.sphere;
+    if (sphere != null) {
+      final width = frame.width * eyeRect(left: true).width;
+      return Size(width, width * sphere.height / (2 * sphere.width));
+    }
+    return switch (packing) {
+      SpatialPhotoPacking.sideBySide => Size(squeezed ? frame.width : frame.width / 2, frame.height),
+      SpatialPhotoPacking.topBottom => Size(frame.width, squeezed ? frame.height : frame.height / 2),
+    };
+  }
 
   @override
   bool operator ==(Object other) =>
-      other is SpatialPhotoLayout && other.packing == packing && other.swapped == swapped && other.squeezed == squeezed;
+      other is SpatialPhotoLayout &&
+      other.packing == packing &&
+      other.swapped == swapped &&
+      other.squeezed == squeezed &&
+      other.sphere == sphere;
 
   @override
-  int get hashCode => Object.hash(packing, swapped, squeezed);
+  int get hashCode => Object.hash(packing, swapped, squeezed, sphere);
 
   @override
-  String toString() => 'SpatialPhotoLayout(${packing.name}${swapped ? ', swapped' : ''}${squeezed ? ', half' : ''})';
+  String toString() =>
+      'SpatialPhotoLayout(${packing.name}${swapped ? ', swapped' : ''}${squeezed ? ', half' : ''}'
+      '${sphere != null ? ', sphere $sphere' : ''})';
 }
 
 /// The depth of a photo as the shader reads it: the map picture and how its values decode

@@ -5,34 +5,47 @@
 // - a photo of two eyes side by side: in the viewer as it shows it in its modes, ours, made by "2D to 3D" (full width
 //   eyes, our XMP), and those of other tools, full or half width, eyes crossed or not (stereo_photo_probe.dart); on the
 //   page of a share as the probe of its file told it (its frame, else the size the page decoded it at);
-// - a photo of two eyes one above the other by its name (_TB, _OU, _HTB..., stackedPhotoFormatOf), never a 360° one.
+// - a photo of two eyes one above the other by its name (_TB, _OU, _HTB..., stackedPhotoFormatOf), never a 360° one;
+// - a 360° or VR180 photo of two eyes (lot P3), as the 360° viewers lay its eyes out (resolveSphereView: one above the
+//   other in a square frame, side by side in a 4:1 one, the coverage picked in a 360° viewer or guessed, the 3D
+//   versions of 360° photos the app makes), shown as the 360° viewer shows it (spatial_sphere_render.dart); never the
+//   raw photo of a 360° camera, nor a splat photo.
 // Nothing on any other photo (an Apple spatial pair and a 3D scene included), nor while the Spatial 2.5D switch of the
 // settings is off; but an ordinary 2D photo gets it too when this computer makes its 3D photo with AI: pressed, the 3D
-// photo made by AI is opened, made first when there is none yet (spatial_conversion.dart).
+// photo made by AI is opened, made first when there is none yet (spatial_conversion.dart); and so does a 360° photo of
+// one eye when this computer makes its 3D version.
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/library/stereo_badge.dart';
 import 'package:immich_mobile/desktop/ai/library/versions.provider.dart';
 import 'package:immich_mobile/desktop/ai/sbs_view_modes.dart';
+import 'package:immich_mobile/desktop/library/library_index.dart';
 import 'package:immich_mobile/desktop/network/share_writer.dart' show sharePathIn;
 import 'package:immich_mobile/desktop/spatial/spatial_conversion.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_page.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_render.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_sphere_render.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/flat_stereo.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
+import 'package:immich_mobile/domain/models/stereo_layout.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/stereo_photo_probe.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/providers/asset_viewer/panorama.provider.dart';
+import 'package:immich_mobile/providers/asset_viewer/sphere_coverage.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/network/network_connections.provider.dart';
+import 'package:immich_mobile/providers/splat/splat_photo.provider.dart';
 import 'package:path/path.dart' as p;
 
 /// The layout of a photo of two eyes side by side as the probe told it
@@ -69,6 +82,13 @@ SpatialPhoto? spatialPhotoFrom({required String name, FlatStereoPhoto? sideBySid
   return layout == null ? null : (layout: layout, estimatedRelief: false);
 }
 
+/// What the 2.5D page opens a 360° photo with, from [view], how the 360° viewers show it, and the GPano crop of each
+/// eye when known ([gpanoCrop]); null for a sphere of one eye
+SpatialPhoto? spatialSphereFrom(SphereView view, {Rect? gpanoCrop, bool estimatedRelief = false}) {
+  final layout = spatialSphereLayout(view.layout, crop: sphereCrop(view.coverage, gpanoCrop: gpanoCrop));
+  return layout == null ? null : (layout: layout, estimatedRelief: estimatedRelief);
+}
+
 /// Whether the Spatial 2.5D switch of the settings is on
 bool _spatialEnabled(WidgetRef ref) => ref.watch(appConfigProvider.select((config) => config.viewer.spatial25d));
 
@@ -78,10 +98,36 @@ SpatialPhoto? spatialPhotoOf(WidgetRef ref, BaseAsset asset) {
   if (!asset.isImage || !_spatialEnabled(ref)) {
     return null;
   }
-  return spatialPhotoFrom(
-    name: asset.name,
-    sideBySide: desktopSbsPhotoOf(ref, asset),
-    isSphere: () => ref.watch(isEquirectangularProvider(asset)),
+  if (ref.watch(isEquirectangularProvider(asset))) {
+    return _spatialSphereOfAsset(ref, asset);
+  }
+  // A 360° photo was told above: two eyes of a band of the sphere are no flat 3D photo
+  return spatialPhotoFrom(name: asset.name, sideBySide: desktopSbsPhotoOf(ref, asset), isSphere: () => false);
+}
+
+/// The 360° photo [asset] of two eyes as the 360° viewers lay them out (from its frame and its name, the coverage the
+/// user picked); the 3D version of a 360° photo the app made (a square frame, two eyes one above the other) says its
+/// relief was estimated by AI. The frame decides first, so that a 360° photo of one eye reads nothing more; never a raw
+/// photo nor a splat photo.
+SpatialPhoto? _spatialSphereOfAsset(WidgetRef ref, BaseAsset asset) {
+  final view = resolveSphereView(
+    fileName: asset.name,
+    width: asset.width,
+    height: asset.height,
+    chosenCoverage: ref.watch(sphereCoverageOverrideProvider(asset)),
+  );
+  if (view.layout == StereoLayout.mono ||
+      ref.watch(rawMediaKindProvider(asset)) != null ||
+      ref.watch(splatPhotoHoldsProvider(asset))) {
+    return null;
+  }
+  final localId = asset.localId;
+  final version = localId == null
+      ? null
+      : ref.watch(generatedVersionsProvider.select((versions) => versions.valueOrNull?[localId]));
+  return spatialSphereFrom(
+    view,
+    estimatedRelief: version?.kind == ImmersiveKind.stereoPanorama360 && version?.origin == IndexedOrigin.estimated,
   );
 }
 
@@ -93,6 +139,23 @@ SpatialPhoto? spatialPhotoOfShareFile(String name, NetworkMediaInfo? info, {Size
   // The desktop viewer does not read the second eye of an Apple spatial photo; a 3D scene has its own page
   if (info == null || info.stereoPair != null || info.scene != null) {
     return null;
+  }
+  // A 360° photo of two eyes as its 360° button lays them out (the size the page decoded it at, else its EXIF frame);
+  // never the raw photo of a 360° camera, one picture over the sphere once stitched
+  if (info.is360) {
+    if (info.rawKind != null) {
+      return null;
+    }
+    final view = info.sphereView(
+      name,
+      width: decoded?.width.round() ?? info.frameWidth,
+      height: decoded?.height.round() ?? info.frameHeight,
+    );
+    return spatialSphereFrom(
+      view,
+      gpanoCrop: info.gpano?.crop,
+      estimatedRelief: info.panorama?.isEstimatedRelief ?? false,
+    );
   }
   var sideBySide = info.stereoPhoto;
   // Our packet of a panorama is no flat 3D photo, whatever its name
@@ -129,8 +192,11 @@ final spatialPhotoOpenerProvider =
       (ref) =>
           (context, asset, layout, estimatedRelief) => openSpatialPhoto(
             context,
-            // Twice the window: the frame holds two eyes, and each is shown as large as the window
-            image: getFullImageProvider(asset, size: MediaQuery.sizeOf(context) * 2),
+            // Twice the window: the frame holds two eyes, and each is shown as large as the window. A sphere at most
+            // 4096 pixels, as a share decodes it, never edited, as the 360° viewer shows it: the view shows a part
+            image: layout.sphere != null
+                ? getFullImageProvider(asset, size: sphereMaxDecodeSize, edited: false)
+                : getFullImageProvider(asset, size: MediaQuery.sizeOf(context) * 2),
             layout: layout,
             title: asset.name,
             estimatedRelief: estimatedRelief,
@@ -150,6 +216,9 @@ final spatialSharePhotoOpenerProvider =
           ),
     );
 
+/// The largest frame a 3D sphere of the library is decoded at for the 2.5D page
+const sphereMaxDecodeSize = Size.square(4096);
+
 /// The "Spatial 2.5D" button itself, which calls [onOpen]; [tooltip], its words when not "Spatial 2.5D"
 class SpatialPhotoIconButton extends StatelessWidget {
   const SpatialPhotoIconButton({super.key, required this.onOpen, this.tooltip});
@@ -166,12 +235,13 @@ class SpatialPhotoIconButton extends StatelessWidget {
   );
 }
 
-/// "Spatial 2.5D" on a plain photo (spatial_conversion.dart): its tooltip says the 3D photo is made first, and a
-/// second press does nothing while [run] is under way
+/// "Spatial 2.5D" on a plain photo (spatial_conversion.dart): its tooltip says the 3D photo (the 3D version of a 360°
+/// photo for a [sphere]) is made first, and a second press does nothing while [run] is under way
 class SpatialConvertPhotoButton extends StatefulWidget {
-  const SpatialConvertPhotoButton({super.key, required this.run});
+  const SpatialConvertPhotoButton({super.key, required this.run, this.sphere = false});
 
   final Future<void> Function() run;
+  final bool sphere;
 
   @override
   State<SpatialConvertPhotoButton> createState() => _SpatialConvertPhotoButtonState();
@@ -196,7 +266,7 @@ class _SpatialConvertPhotoButtonState extends State<SpatialConvertPhotoButton> {
 
   @override
   Widget build(BuildContext context) => SpatialPhotoIconButton(
-    tooltip: context.t.spatial_2_5d_convert_first,
+    tooltip: widget.sphere ? context.t.spatial_2_5d_convert_first_360 : context.t.spatial_2_5d_convert_first,
     onOpen: _running ? null : () => unawaited(_press()),
   );
 }
@@ -226,59 +296,106 @@ final spatialMadeVersionOfAssetProvider = Provider<Future<SpatialMadePhoto?> Fun
   },
 );
 
-/// "Spatial 2.5D" on the plain library photo [asset] (spatial_conversion.dart)
-Future<void> runLibrarySpatialConversion(BuildContext context, WidgetRef ref, BaseAsset asset) => runSpatialConversion(
-  context,
-  name: asset.name,
-  known: () => ref.read(spatialMadeVersionOfAssetProvider)(asset),
-  launch: () => ref.read(spatialConversionLauncherProvider)(context, assets: [asset]),
-  existing: (path) async => spatialCappedImage(FileImage(File(path))),
-  open: (photo) => openSpatialMadePhoto(context, ref, photo),
+/// The 3D version made by AI of the 360° library photo [asset] that the details of the viewer list, null when it has
+/// none that can be opened now; replaced in the tests
+final spatialMadeSphereOfAssetProvider = Provider<Future<SpatialMadePhoto?> Function(BaseAsset asset)>(
+  (ref) => (asset) async {
+    final localId = asset.localId;
+    if (localId == null || !asset.isImage) {
+      return null;
+    }
+    final finder = await ref.read(photoVersionsFinderProvider.future);
+    final version = madeSphereVersionOf(await finder.find(localId, checksum: asset.checksum));
+    return version == null
+        ? null
+        : (
+            image: spatialCappedImage(FileImage(File(version.path))),
+            name: version.name,
+            layout: spatialMadeSphereLayout,
+          );
+  },
 );
+
+/// "Spatial 2.5D" on the plain library photo [asset] (spatial_conversion.dart): its 3D photo, or for [kind] the 3D
+/// version of a 360° photo
+Future<void> runLibrarySpatialConversion(
+  BuildContext context,
+  WidgetRef ref,
+  BaseAsset asset, {
+  ConversionKind kind = ConversionKind.sbsFromPhoto,
+}) {
+  final sphere = kind == ConversionKind.stereoPanoramaFromPanorama;
+  return runSpatialConversion(
+    context,
+    name: asset.name,
+    known: () => ref.read(sphere ? spatialMadeSphereOfAssetProvider : spatialMadeVersionOfAssetProvider)(asset),
+    launch: () => ref.read(sphere ? spatialSphereConversionLauncherProvider : spatialConversionLauncherProvider)(
+      context,
+      assets: [asset],
+    ),
+    existing: (path) async => spatialCappedImage(FileImage(File(path))),
+    open: (photo) => openSpatialMadePhoto(context, ref, photo),
+  );
+}
 
 /// The 3D photo made by AI from the photo of a share at [entry] among the files of its folder ([neighbours], those the
 /// browser read, else its folder is listed), as the Versions of its page find them; replaced in the tests
 final spatialMadeVersionOfShareProvider =
     Provider<Future<ShareVersion?> Function(NetworkEntry entry, List<NetworkEntry>? neighbours)>(
-      (ref) => (entry, neighbours) async {
-        final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(entry.sourceId);
-        final listed = neighbours ?? await fileSystem.list(shareFolderOf(entry.path));
-        final versions = await findShareVersions(
-          entry,
-          listed,
-          readerOf: (neighbour) => networkFileReader(fileSystem, neighbour.path),
-        );
-        return madeShareStereoVersionOf(versions);
-      },
+      (ref) =>
+          (entry, neighbours) async => madeShareStereoVersionOf(await _shareVersionsOf(ref, entry, neighbours)),
     );
 
-/// "Spatial 2.5D" on the plain photo of a share at [entry] (spatial_conversion.dart); [neighbours], the files of its
-/// folder the browser read; [imageOf], the picture of a file of the share at its media bridge URL, as its page shows it
+/// The same for the 3D version made by AI of a 360° photo of a share; replaced in the tests
+final spatialMadeSphereOfShareProvider =
+    Provider<Future<ShareVersion?> Function(NetworkEntry entry, List<NetworkEntry>? neighbours)>(
+      (ref) =>
+          (entry, neighbours) async => madeShareSphereVersionOf(await _shareVersionsOf(ref, entry, neighbours)),
+    );
+
+/// The versions of the photo of a share at [entry] in its folder, as its Versions button finds them
+Future<List<ShareVersion>> _shareVersionsOf(Ref ref, NetworkEntry entry, List<NetworkEntry>? neighbours) async {
+  final fileSystem = await ref.read(networkConnectionsProvider).fileSystem(entry.sourceId);
+  final listed = neighbours ?? await fileSystem.list(shareFolderOf(entry.path));
+  return findShareVersions(entry, listed, readerOf: (neighbour) => networkFileReader(fileSystem, neighbour.path));
+}
+
+/// "Spatial 2.5D" on the plain photo of a share at [entry] (spatial_conversion.dart), its 3D photo or for [kind] the
+/// 3D version of a 360° photo; [neighbours], the files of its folder the browser read; [imageOf], the picture of a file
+/// of the share at its media bridge URL, as its page shows it
 Future<void> runShareSpatialConversion(
   BuildContext context,
   WidgetRef ref,
   NetworkEntry entry, {
   List<NetworkEntry>? neighbours,
   required ImageProvider Function(Uri url, NetworkEntry file) imageOf,
+  ConversionKind kind = ConversionKind.sbsFromPhoto,
 }) {
   final connections = ref.read(networkConnectionsProvider);
+  final sphere = kind == ConversionKind.stereoPanoramaFromPanorama;
   return runSpatialConversion(
     context,
     name: entry.name,
     known: () async {
-      final version = await ref.read(spatialMadeVersionOfShareProvider)(entry, neighbours);
+      final version = await ref.read(sphere ? spatialMadeSphereOfShareProvider : spatialMadeVersionOfShareProvider)(
+        entry,
+        neighbours,
+      );
       final photo = version?.photo;
-      if (version == null || photo == null) {
+      if (version == null || (photo == null && !sphere)) {
         return null;
       }
       final file = version.entry;
       return (
         image: imageOf(await connections.mediaUrl(file.sourceId, file.path), file),
         name: file.name,
-        layout: spatialLayoutOfSideBySide(photo),
+        layout: photo == null ? spatialMadeSphereLayout : spatialLayoutOfSideBySide(photo),
       );
     },
-    launch: () => ref.read(spatialConversionLauncherProvider)(context, shareFiles: [entry]),
+    launch: () => ref.read(sphere ? spatialSphereConversionLauncherProvider : spatialConversionLauncherProvider)(
+      context,
+      shareFiles: [entry],
+    ),
     // The version the job found is in the folder of the photo on its share
     existing: (path) async {
       final file = NetworkEntry(
@@ -292,8 +409,8 @@ Future<void> runShareSpatialConversion(
   );
 }
 
-/// "Spatial 2.5D" in the top bar of the viewer of a computer, on a 3D photo, and on a plain photo whose 3D photo this
-/// computer makes; nothing on any other photo
+/// "Spatial 2.5D" in the top bar of the viewer of a computer, on a 3D photo or a 3D sphere, and on a plain photo or
+/// a 360° photo of one eye whose 3D version this computer makes; nothing on any other photo
 class DesktopSpatialPhotoButton extends ConsumerWidget {
   const DesktopSpatialPhotoButton({super.key, required this.asset});
 
@@ -303,9 +420,13 @@ class DesktopSpatialPhotoButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final photo = spatialPhotoOf(ref, asset);
     if (photo == null) {
-      return spatialConversionOffered(ref, asset)
-          ? SpatialConvertPhotoButton(run: () => runLibrarySpatialConversion(context, ref, asset))
-          : const SizedBox.shrink();
+      final kind = spatialConversionKindOf(ref, asset);
+      return kind == null
+          ? const SizedBox.shrink()
+          : SpatialConvertPhotoButton(
+              sphere: kind == ConversionKind.stereoPanoramaFromPanorama,
+              run: () => runLibrarySpatialConversion(context, ref, asset, kind: kind),
+            );
     }
     return SpatialPhotoIconButton(
       onOpen: () => ref.read(spatialPhotoOpenerProvider)(context, asset, photo.layout, photo.estimatedRelief),

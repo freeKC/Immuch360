@@ -5,6 +5,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart' show ConversionKind;
 import 'package:immich_mobile/desktop/ai/enhance/enhance_dialog.dart';
 import 'package:immich_mobile/desktop/ai/library/share_versions_button.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart' show aiFeaturesEnabledProvider;
@@ -690,21 +691,18 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
         !relayed &&
         current.entry.isImage &&
         ref.watch(aiFeaturesEnabledProvider);
-    // And for a plain photo whose 3D photo this computer makes with AI: made first, then opened
-    // (lib/desktop/spatial/spatial_conversion.dart); never for an item a phone sends from its relay, as above
-    final spatialConvert =
-        CurrentPlatform.isDesktop &&
-        current != null &&
-        !tvMode &&
-        !relayed &&
-        spatialPhoto == null &&
-        spatialConversionOfferedForShare(
-          ref,
-          current.entry,
-          _info,
-          width: _info?.frameWidth ?? _imageSize?.width.round(),
-          height: _info?.frameHeight ?? _imageSize?.height.round(),
-        );
+    // And for a plain photo, or a 360° photo of one eye, whose 3D version this computer makes with AI: made first,
+    // then opened (lib/desktop/spatial/spatial_conversion.dart); never for an item a phone sends from its relay, as
+    // above
+    final spatialConvert = CurrentPlatform.isDesktop && current != null && !tvMode && !relayed && spatialPhoto == null
+        ? spatialConversionKindOfShare(
+            ref,
+            current.entry,
+            _info,
+            width: _info?.frameWidth ?? _imageSize?.width.round(),
+            height: _info?.frameHeight ?? _imageSize?.height.round(),
+          )
+        : null;
     // "AI relief" on a Meta Quest, for an ordinary photo once its file was read: the photos that turn are those
     final reliefGate = isHorizonOs && current != null && _canRotate && !relayed
         ? ref.watch(reliefGateProvider)
@@ -881,15 +879,17 @@ class _NetworkPhotoPageState extends ConsumerState<NetworkPhotoPage> {
                         spatialPhoto,
                       ),
                     ),
-                  if (photo != null && spatialConvert)
+                  if (photo != null && spatialConvert != null)
                     SpatialConvertPhotoButton(
                       key: ValueKey('spatial-convert:${photo.entry.path}'),
+                      sphere: spatialConvert == ConversionKind.stereoPanoramaFromPanorama,
                       run: () => runShareSpatialConversion(
                         this.context,
                         ref,
                         photo.entry,
                         neighbours: widget.folder?.entries,
                         imageOf: (url, file) => networkPhotoImage(url, mimeType: file.mimeType, size: file.size),
+                        kind: spatialConvert,
                       ),
                     ),
                   // Immuch360 Desktop: the versions of the photo on its share, and its original for a version

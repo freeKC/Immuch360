@@ -10,6 +10,12 @@
 // the 2.5D page opens on the file it wrote, the relief said estimated by AI. A job skipped for a version with the same
 // settings opens that version. A failure shows the words of the panel of the conversions, with Close.
 //
+// A 360° photo of one eye of the whole sphere gets it the same way, through the 3D version of a 360° photo of "Make
+// 3D (AI)" (stereo_panorama_engine.dart, `<name>_360_3D.jpg`, two eyes one above the other): offered while this build
+// makes that type (offeredConversionKindsProvider) and its gate does not refuse, on the photos that type takes
+// (aiSourceProvider, shareConversionKinds); its 3D version made by AI known for it opens at once, else the dialog on
+// that type alone, then the 2.5D page of a 3D sphere (spatial_sphere_render.dart) on the file written.
+//
 // Nothing here on phones, TVs or a Quest: the pages ask only on a computer.
 
 import 'dart:async';
@@ -30,6 +36,7 @@ import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/asset/base_asset.model.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
+import 'package:immich_mobile/domain/models/sphere_coverage.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/share_versions.dart';
 import 'package:immich_mobile/domain/services/network_media.service.dart';
 import 'package:immich_mobile/generated/translations.g.dart';
@@ -43,6 +50,14 @@ final _log = Logger('SpatialConversion');
 /// (`_3D_LRF_Full_SBS`)
 const spatialMadePhotoLayout = SpatialPhotoLayout(packing: SpatialPhotoPacking.sideBySide);
 
+/// The layout of the 3D version of a 360° photo the app makes (stereo_panorama_engine.dart): the whole sphere, the left
+/// eye on top (`_360_3D`)
+const spatialMadeSphereLayout = SpatialPhotoLayout(packing: SpatialPhotoPacking.topBottom, sphere: fullSphereCrop);
+
+/// The layout of the 3D photo or 3D sphere a job of [kind] makes
+SpatialPhotoLayout spatialMadeLayoutOf(ConversionKind kind) =>
+    kind == ConversionKind.stereoPanoramaFromPanorama ? spatialMadeSphereLayout : spatialMadePhotoLayout;
+
 /// The largest side a 3D photo of ours is decoded at for the 2.5D page, as the page of a share decodes its photos
 const spatialMadePhotoMaxSide = 4096;
 
@@ -55,10 +70,16 @@ ImageProvider spatialCappedImage(ImageProvider image) =>
 
 /// Whether this computer runs the 3D photo now, as "Make 3D (AI)" tells it: a gate that answered and does not refuse
 /// (the system, the processor, the memory, a group held back by this version); components to install do not refuse
-bool _photoGateOpen(WidgetRef ref) {
-  final gate = ref.watch(aiGateResultForProvider(AiFeature.stereoPhoto)).valueOrNull;
+bool _photoGateOpen(WidgetRef ref, {AiFeature feature = AiFeature.stereoPhoto}) {
+  final gate = ref.watch(aiGateResultForProvider(feature)).valueOrNull;
   return gate != null && !aiGateRefuses(gate);
 }
+
+/// Whether this build makes the 3D version of a 360° photo now: its engine registered and its group not held back
+/// (offeredConversionKindsProvider), its gate open as for the 3D photo
+bool _sphereKindOpen(WidgetRef ref) =>
+    ref.watch(offeredConversionKindsProvider).contains(ConversionKind.stereoPanoramaFromPanorama) &&
+    _photoGateOpen(ref, feature: AiFeature.stereoPanorama);
 
 bool _spatialEnabled(WidgetRef ref) => ref.watch(appConfigProvider.select((config) => config.viewer.spatial25d));
 
@@ -89,6 +110,52 @@ bool spatialConversionOfferedForShare(
     // Read last: the page of a photo "Make 3D (AI)" does not take never depends on the switch
     _spatialEnabled(ref);
 
+/// The same for a 360° photo of one eye through its 3D version (see the top of this file): a photo "Make 3D (AI)" takes
+/// for that type (aiSourceProvider), this build making it now, the AI features and the Spatial 2.5D switch on
+bool spatialSphereConversionOffered(WidgetRef ref, BaseAsset asset) =>
+    asset.isImage &&
+    ref.watch(aiFeaturesEnabledProvider) &&
+    ref.watch(aiSourceProvider((asset: asset, kind: ConversionKind.stereoPanoramaFromPanorama))) &&
+    _sphereKindOpen(ref) &&
+    _spatialEnabled(ref);
+
+/// What "Spatial 2.5D" makes first for the library photo [asset] that the 2.5D page does not take as it is: the 3D
+/// photo of a flat photo, the 3D version of a 360° photo, or nothing
+ConversionKind? spatialConversionKindOf(WidgetRef ref, BaseAsset asset) {
+  if (spatialConversionOffered(ref, asset)) {
+    return ConversionKind.sbsFromPhoto;
+  }
+  return spatialSphereConversionOffered(ref, asset) ? ConversionKind.stereoPanoramaFromPanorama : null;
+}
+
+/// The same for the photo of a share at [entry] once its page read its file ([info]), of [width] x [height] pixels
+/// when known (shareConversionKinds)
+ConversionKind? spatialConversionKindOfShare(
+  WidgetRef ref,
+  NetworkEntry entry,
+  NetworkMediaInfo? info, {
+  int? width,
+  int? height,
+}) {
+  if (spatialConversionOfferedForShare(ref, entry, info, width: width, height: height)) {
+    return ConversionKind.sbsFromPhoto;
+  }
+  final sphere =
+      info != null &&
+      entry.isImage &&
+      ref.watch(aiFeaturesEnabledProvider) &&
+      shareConversionKinds(
+        entry,
+        info,
+        const [ConversionKind.stereoPanoramaFromPanorama],
+        width: width,
+        height: height,
+      ).isNotEmpty &&
+      _sphereKindOpen(ref) &&
+      _spatialEnabled(ref);
+  return sphere ? ConversionKind.stereoPanoramaFromPanorama : null;
+}
+
 /// The 3D photo made by AI among the versions the details of the viewer list for a library photo: the first one that
 /// can be opened now; null when there is none
 VersionFile? madeStereoVersionOf(PhotoVersions versions) => versions.versions
@@ -106,12 +173,24 @@ ShareVersion? madeShareStereoVersionOf(Iterable<ShareVersion> versions) => versi
     )
     .firstOrNull;
 
-/// Opens the conversion dialog on the 3D photo alone for the photo of [assets] or of [shareFiles], and gives the id of
-/// its job once Convert handed it to the queue; null when the dialog closed without it
+/// The 3D version made by AI of a 360° photo among the versions the details of the viewer list for it: the first one
+/// that can be opened now; null when there is none
+VersionFile? madeSphereVersionOf(PhotoVersions versions) => versions.versions
+    .where((version) => version.kind == ImmersiveKind.stereoPanorama360 && version.available)
+    .firstOrNull;
+
+/// The 3D version made by AI of a 360° photo of a share among the versions in its folder (newest first,
+/// findShareVersions, which keeps only those of two eyes one above the other); null when there is none
+ShareVersion? madeShareSphereVersionOf(Iterable<ShareVersion> versions) =>
+    versions.where((version) => version.kind == ImmersiveKind.stereoPanorama360).firstOrNull;
+
+/// Opens the conversion dialog on the 3D photo alone (or on the type [kind] alone) for the photo of [assets] or of
+/// [shareFiles], and gives the id of its job once Convert handed it to the queue; null when the dialog closed without it
 Future<String?> launchSpatialConversion(
   BuildContext context, {
   List<BaseAsset> assets = const [],
   List<NetworkEntry> shareFiles = const [],
+  ConversionKind kind = ConversionKind.sbsFromPhoto,
 }) async {
   String? queued;
   await showDialog<bool>(
@@ -119,7 +198,7 @@ Future<String?> launchSpatialConversion(
     builder: (context) => ConversionDialog(
       assets: assets,
       shareFiles: shareFiles,
-      kind: ConversionKind.sbsFromPhoto,
+      kind: kind,
       kindOnly: true,
       onQueued: (ids) => queued = ids.firstOrNull,
     ),
@@ -133,9 +212,20 @@ typedef SpatialConversionLauncher =
 /// See [launchSpatialConversion]; replaced in the tests
 final spatialConversionLauncherProvider = Provider<SpatialConversionLauncher>((ref) => launchSpatialConversion);
 
-/// The 3D photo [job] ended with: the file it wrote, read at once (that of a photo of a share leaves this computer
-/// once it is on the share), or the version with the same settings it was skipped for, opened by [existing]; null
-/// for any other end
+/// The same on the 3D version of a 360° photo alone; replaced in the tests
+final spatialSphereConversionLauncherProvider = Provider<SpatialConversionLauncher>(
+  (ref) =>
+      (context, {assets = const [], shareFiles = const []}) => launchSpatialConversion(
+        context,
+        assets: assets,
+        shareFiles: shareFiles,
+        kind: ConversionKind.stereoPanoramaFromPanorama,
+      ),
+);
+
+/// The 3D photo (or 3D sphere, by the kind of the job) [job] ended with: the file it wrote, read at once (that of a
+/// photo of a share leaves this computer once it is on the share), or the version with the same settings it was
+/// skipped for, opened by [existing]; null for any other end
 Future<SpatialMadePhoto?> spatialJobPhoto(
   ConversionJob job, {
   required Future<ImageProvider?> Function(String path) existing,
@@ -151,7 +241,7 @@ Future<SpatialMadePhoto?> spatialJobPhoto(
   } else {
     return null;
   }
-  return image == null ? null : (image: image, name: p.basename(path!), layout: spatialMadePhotoLayout);
+  return image == null ? null : (image: image, name: p.basename(path!), layout: spatialMadeLayoutOf(job.kind));
 }
 
 /// The 3D photo made by AI already known for the photo pressed, null when there is none; past this time it is taken
