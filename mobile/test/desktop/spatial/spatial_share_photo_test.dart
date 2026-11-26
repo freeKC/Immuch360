@@ -2,6 +2,8 @@
 // another tool's by its name and frame, half width and crossed included) and two eyes one above the other by the name,
 // never for a 360° photo, an ordinary photo, an Apple spatial pair, a 3D scene or a file of a newer format, nor while
 // the Spatial 2.5D switch is off, nor on a phone. The page against the test media bridge, with real HTTP requests.
+// An ordinary photo gets it too while this computer makes its 3D photo with AI (spatial_conversion.dart): the 3D photo
+// made by AI found in its folder opens at once, else the job of the queue makes it first.
 
 import 'dart:async';
 import 'dart:io';
@@ -11,8 +13,12 @@ import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/data/db/main/database.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_job.dart';
+import 'package:immich_mobile/desktop/ai/creator/conversion_queue.dart';
 import 'package:immich_mobile/desktop/ai/ui/conversion_dialog.dart';
+import 'package:immich_mobile/desktop/spatial/spatial_conversion.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_button.dart';
 import 'package:immich_mobile/desktop/spatial/spatial_photo_render.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
@@ -34,6 +40,8 @@ import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 
 import '../../domain/ai_immersive/stereo_photo_fixtures.dart';
 import '../../presentation/pages/network/network_viewer_fakes.dart';
+import '../ai/ui/settle_still.dart';
+import 'spatial_ai_fakes.dart';
 
 const _sbs = SpatialPhotoLayout(packing: SpatialPhotoPacking.sideBySide);
 const _tb = SpatialPhotoLayout(packing: SpatialPhotoPacking.topBottom);
@@ -185,7 +193,13 @@ void main() {
       }
     }
 
-    Future<void> pumpPhoto(WidgetTester tester, String path, {bool spatial = true}) async {
+    /// [ai]: the AI of a computer (SpatialAiWorld.overrides), else the AI features off
+    Future<void> pumpPhoto(
+      WidgetTester tester,
+      String path, {
+      bool spatial = true,
+      List<Override> ai = const [],
+    }) async {
       await pumpNetworkRouter(
         tester,
         home: NetworkPhotoPage(sourceId: _source.id, path: path),
@@ -198,7 +212,8 @@ void main() {
           // A fresh cache per test
           networkMediaServiceProvider.overrideWith((ref) => NetworkMediaService()),
           networkThumbnailImageProvider.overrideWithValue(_PendingImage.new),
-          aiFeaturesEnabledProvider.overrideWith((ref) => false),
+          if (ai.isEmpty) aiFeaturesEnabledProvider.overrideWith((ref) => false),
+          ...ai,
           spatialSharePhotoOpenerProvider.overrideWithValue((context, image, name, photo) => opened.add((name, photo))),
         ],
       );
@@ -279,6 +294,117 @@ void main() {
       expect(rotate, findsOneWidget, reason: 'its file was read');
       expect(button, findsNothing);
       await endRealIo(tester);
+    });
+
+    group('a plain photo, while this computer makes its 3D photo with AI', () {
+      late SpatialAiWorld world;
+      const convertFirst = 'Spatial 2.5D: makes the 3D photo with AI first, then opens it';
+
+      setUp(() => world = SpatialAiWorld());
+      tearDown(() => world.dispose());
+
+      /// The job of the photo handed to the queue at once, as Convert does, for a copy of it on this computer
+      Override queueAtOnce() => spatialConversionLauncherProvider.overrideWith(
+        (ref) =>
+            (context, {assets = const [], shareFiles = const []}) async =>
+                ref.read(conversionQueueProvider.notifier).add([
+                  ConversionRequest(
+                    source: LocalFileSource(world.original(shareFiles.single.name)),
+                    target: ConversionTarget(folder: world.photos, fileName: 'IMG_1234_3D_LRF_Full_SBS.jpg'),
+                  ),
+                ]).first,
+      );
+
+      testWidgets('offered with its own tooltip; not for a 360° photo, nor with the switch off, nor on a phone', (
+        tester,
+      ) async {
+        await onComputer(() async {
+          await pumpPhoto(tester, '/IMG_1234.jpg', ai: world.overrides());
+          await pumpRealIo(tester, () => shows(button));
+          expect(find.byTooltip(convertFirst), findsOneWidget);
+          await endRealIo(tester);
+
+          await pumpPhoto(tester, '/pano_3D_TB.jpg', ai: world.overrides());
+          await pumpRealIo(tester, () => shows(find.byTooltip('360°')));
+          expect(find.byTooltip('360°'), findsOneWidget, reason: 'its file was read');
+          expect(button, findsNothing);
+          await endRealIo(tester);
+
+          await pumpPhoto(tester, '/IMG_1234.jpg', spatial: false, ai: world.overrides());
+          await pumpRealIo(tester, () => shows(rotate));
+          expect(rotate, findsOneWidget, reason: 'its file was read');
+          expect(button, findsNothing);
+          await endRealIo(tester);
+
+          // A 3D photo keeps its own button
+          await pumpPhoto(tester, '/salon_LR.jpg', ai: world.overrides());
+          await pumpRealIo(tester, () => shows(button));
+          expect(find.byTooltip('Spatial 2.5D'), findsOneWidget);
+          await endRealIo(tester);
+        });
+        await pumpPhoto(tester, '/IMG_1234.jpg', ai: world.overrides());
+        await pumpRealIo(tester, () => shows(rotate));
+        expect(rotate, findsOneWidget, reason: 'its file was read');
+        expect(button, findsNothing, reason: 'a phone');
+        await endRealIo(tester);
+      });
+
+      testWidgets('not when the gate refuses this computer', (tester) async {
+        world.memory = 2 << 30;
+        await onComputer(() async {
+          await pumpPhoto(tester, '/IMG_1234.jpg', ai: world.overrides());
+          await pumpRealIo(tester, () => shows(rotate));
+          expect(rotate, findsOneWidget, reason: 'its file was read');
+          expect(button, findsNothing);
+          await endRealIo(tester);
+        });
+      });
+
+      testWidgets('pressed with a 3D photo made by AI in its folder: that one opens at once, no job', (tester) async {
+        final original = jpegFile(width: 4000, height: 3000);
+        share = MemoryShare(
+          _source,
+          folders: {},
+          files: {
+            '/salon.jpg': original,
+            '/salon_3D_LRF_Full_SBS.jpg': jpegFile(
+              width: 8000,
+              height: 3000,
+              xmp: ourXmp(sourceName: 'salon.jpg', sourceSize: original.length),
+            ),
+          },
+        );
+        share.folders['/'] = [share.file('/salon.jpg'), share.file('/salon_3D_LRF_Full_SBS.jpg')];
+        server.share = share;
+        await onComputer(() async {
+          await pumpPhoto(tester, '/salon.jpg', ai: [...world.overrides(), queueAtOnce()]);
+          await pumpRealIo(tester, () => shows(button));
+          expect(find.byTooltip(convertFirst), findsOneWidget);
+          await tester.tap(button);
+          await pumpRealIo(tester, () => opened.isNotEmpty);
+          expect(opened, [('salon_3D_LRF_Full_SBS.jpg', (layout: _sbs, estimatedRelief: true))]);
+          final container = ProviderScope.containerOf(tester.element(find.byType(NetworkPhotoPage)));
+          expect(container.read(conversionQueueProvider).jobs, isEmpty);
+          await endRealIo(tester);
+        });
+      });
+
+      testWidgets('pressed without one: the job of the queue, its dialog, then the 2.5D page on the file made', (
+        tester,
+      ) async {
+        await onComputer(() async {
+          await pumpPhoto(tester, '/IMG_1234.jpg', ai: [...world.overrides(), queueAtOnce()]);
+          await pumpRealIo(tester, () => shows(button));
+          await tester.tap(button);
+          await settleStill(tester, until: () => opened.isNotEmpty);
+          final container = ProviderScope.containerOf(tester.element(find.byType(NetworkPhotoPage)));
+          final job = container.read(conversionQueueProvider).jobs.single;
+          expect(job.state, ConversionState.done);
+          expect(opened, [('IMG_1234_3D_LRF_Full_SBS.jpg', (layout: _sbs, estimatedRelief: true))]);
+          expect(find.byKey(const Key('spatial_conversion_dialog')), findsNothing);
+          await endRealIo(tester);
+        });
+      });
     });
   });
 }
