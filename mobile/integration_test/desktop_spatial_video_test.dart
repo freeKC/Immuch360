@@ -299,7 +299,14 @@ void main() {
       );
       final halfWay = rows[0.5]!;
       expect(_redness(halfWay, 336, 464), greaterThan(0.7), reason: 'half way: inside the square');
-      expect(_redness(halfWay, 310, 318), lessThan(0.4), reason: 'half way: background before the square');
+      // Before the square, the strip the square hides from the right eye: the Kotlin passes of renderer C show the
+      // left eye's background there; the Metal passes of macOS, those of the iPhones word for word, fill it from the
+      // farther disparity with both eyes blended, half red (SpatialShaders.metal, spatialSynthesisFragment)
+      expect(
+        _redness(halfWay, 310, 318),
+        lessThan(Platform.isMacOS ? 0.7 : 0.4),
+        reason: 'half way: background before the square',
+      );
       expect(_redness(halfWay, 482, 490), lessThan(0.4), reason: 'half way: background after the square');
 
       // The disparity map instead of the view
