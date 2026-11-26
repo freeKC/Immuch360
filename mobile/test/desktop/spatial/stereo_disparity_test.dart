@@ -228,8 +228,9 @@ void main() {
     });
 
     test('the sphere shader takes the same synthesis, word for word', () {
-      final photo = File('shaders/spatial_photo.frag').readAsStringSync();
-      final sphere = File('shaders/spatial_sphere.frag').readAsStringSync();
+      // A Windows checkout ends its lines with CR LF
+      final photo = File('shaders/spatial_photo.frag').readAsStringSync().replaceAll('\r\n', '\n');
+      final sphere = File('shaders/spatial_sphere.frag').readAsStringSync().replaceAll('\r\n', '\n');
       String between(String source, String from, String to) {
         final start = source.indexOf(from);
         return source.substring(start, source.indexOf(to, start));
