@@ -22,6 +22,8 @@ import 'package:immich_mobile/desktop/ai/ui/share_conversion.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/ai_components_manifest.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_format.dart';
 import 'package:immich_mobile/domain/models/ai_immersive/immersive_xmp.dart';
+import 'package:immich_mobile/domain/models/config/app_config.dart';
+import 'package:immich_mobile/domain/models/config/viewer_config.dart';
 import 'package:immich_mobile/domain/models/network_source.dart';
 import 'package:immich_mobile/domain/models/store.model.dart';
 import 'package:immich_mobile/domain/services/ai_immersive/ai_components_service.dart';
@@ -37,6 +39,7 @@ import 'package:immich_mobile/presentation/pages/network/network_photo.page.dart
 import 'package:immich_mobile/presentation/widgets/network/network_media_tile.widget.dart';
 import 'package:immich_mobile/providers/ai_immersive/ai_components.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/immersive.provider.dart';
+import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:immich_mobile/providers/infrastructure/store.provider.dart';
 import 'package:immich_mobile/providers/network/network_upload.provider.dart';
 import 'package:path/path.dart' as p;
@@ -163,6 +166,8 @@ void main() {
         (_) => NetworkVideoThumbnailService(api: FakeVideoThumbnailHost(), retryDelay: Duration.zero),
       ),
       aiFeaturesEnabledProvider.overrideWith((ref) => enabled),
+      // Spatial 2.5D off: a plain photo would get its button too (spatial_plain_photo_test.dart), which reads it
+      appConfigProvider.overrideWithValue(const AppConfig(viewer: ViewerConfig(spatial25d: false))),
       offeredConversionKindsProvider.overrideWith((ref) => kinds),
       aiComponentsServiceProvider.overrideWithValue(service),
       desktopAiGateProvider.overrideWithValue(
