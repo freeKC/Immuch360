@@ -45,6 +45,14 @@ class FlutterWindow : public Win32Window {
   // copy, which waits for its end instead (main.cpp).
   bool closing_ = false;
 
+  // Tells Dart when the session locks or unlocks and when the display goes
+  // off or on (lib/desktop/window/session_presence.dart): the Spatial page
+  // closes the webcam while nobody can be in front of the computer.
+  std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>>
+      session_channel_;
+  HPOWERNOTIFY display_notification_ = nullptr;
+  bool session_notification_ = false;
+
   // The files of later starts handled before that channel was made, sent on
   // it once it is (OnCreate).
   flutter::EncodableList early_hand_overs_;
@@ -61,6 +69,9 @@ class FlutterWindow : public Win32Window {
   // hides at once, and the process ends within seconds whatever still runs
   // (close_watchdog.h), while Dart ends its own work.
   void OnClosing();
+
+  // Sends one of "locked", "unlocked", "displayOff", "displayOn" to Dart.
+  void SendPresence(const char* message);
 };
 
 #endif  // RUNNER_FLUTTER_WINDOW_H_

@@ -109,6 +109,11 @@ dependencies:
   # package; its plugin declares windows only, used under lib/desktop/ only
   immuch_desktop_video:
     path: packages/immuch_desktop_video
+  # Immuch360 Desktop: the webcam head tracker of Spatial 2.5D (Media Foundation, V4L2 or AVFoundation, and
+  # libfacedetection, through dart:ffi), the fork's own package; its plugin declares windows and linux, its build hook
+  # builds the macOS library and nothing for the phones; used under lib/desktop/ only
+  immuch_head_tracker:
+    path: packages/immuch_head_tracker
   # Immuch360 Desktop: the Rust JPEG codec of the AI features for the big photos (zune-jpeg, jpeg-encoder), the
   # fork's own package; its build hook compiles the crate for Windows, Linux and macOS only, used under lib/desktop/
   # only

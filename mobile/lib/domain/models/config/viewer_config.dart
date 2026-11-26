@@ -109,6 +109,18 @@ abstract class ViewerConfig with _$ViewerConfig {
     /// AV2 video then says so instead of playing)
     @Default(true) bool av2Videos,
 
+    /// Immuch360 Desktop, Spatial 2.5D, the head tracked by the webcam (lib/desktop/spatial/spatial_settings.dart):
+    /// "Use the webcam for head tracking", on by default. The webcam still opens only once [spatialWebcamConsent] is
+    /// given on the card of the first time, and only while a Spatial 2.5D view is on screen; off, the view follows the
+    /// mouse
+    @Default(true) bool spatialWebcam,
+
+    /// The user said yes on the card that explains the webcam, the first time the head moved the view
+    @Default(false) bool spatialWebcamConsent,
+
+    /// The webcam picked in the menu, null for the default one (never an infrared camera)
+    String? spatialCamera,
+
     /// Experimental: the page of a film of a Plex server shows the opening of its Wikipedia article in the language of
     /// the app, found through Wikidata by the film's IMDb or TMDB number (store/m2/plex-films-2026-11-10/report.md,
     /// R8). On by default, the lab rule (Settings, Advanced, and the menu of the film page, turn it off: no request then
