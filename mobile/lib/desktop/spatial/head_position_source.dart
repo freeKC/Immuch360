@@ -8,7 +8,10 @@
 // - "Use the webcam for head tracking" is on, and the user said yes on the card of the first time (needsConsent asks
 //   the view to show it; no answer, no webcam);
 // - the last try did not end on a problem (a refusal of the system, no webcam, the webcam busy or gone): the problem
-//   is shown with its message, and nothing opens the webcam again but the user (retry).
+//   is shown with its message, and nothing opens the webcam again but the user (retry). A transient failure (the call
+//   to the Windows camera service broke, the webcam gone in its first seconds) is tried again once by the tracking
+//   itself after a short pause (head_tracking.dart), only while all of these still hold (mayRetry is
+//   shouldRunCamera); a second failure is the problem.
 // Whenever one stops holding, the webcam closes and its light goes off. While the head cannot be used ([usable] false:
 // no tracker on this computer, no consent yet, said no, the webcam off in the settings, a problem), the view moves with
 // the mouse instead, never an error page.
@@ -40,11 +43,15 @@ class HeadPositionSource extends ChangeNotifier with WidgetsBindingObserver impl
     SpatialHeadSource? source,
     ValueListenable<bool>? away,
     this._observeLifecycle = true,
+    // The pause before the one new try of a transient failure, shorter in the tests
+    Duration retryPause = const Duration(seconds: 2),
   }) : _store = store,
        _settings = store.read(),
        _away = away ?? DesktopSessionPresence.instance.away,
        _source = source {
-    _tracking = SpatialHeadTracking(source: source)..onSample = _onSample;
+    _tracking = SpatialHeadTracking(source: source, retryPause: retryPause)
+      ..onSample = _onSample
+      ..mayRetry = (() => shouldRunCamera);
     _tracking.addListener(_onTracking);
     _away.addListener(_update);
     if (_observeLifecycle) {
@@ -313,7 +320,13 @@ class HeadPositionSource extends ChangeNotifier with WidgetsBindingObserver impl
     }
   }
 
-  void _onTracking() => _notify();
+  void _onTracking() {
+    if (_tracking.state == SpatialTrackingState.starting && !_tracking.cameraOpen) {
+      // The webcam closed for a new try (or another one): the view glides back meanwhile rather than hold still
+      _emitLost();
+    }
+    _notify();
+  }
 
   void _notify() {
     if (!_closed) {

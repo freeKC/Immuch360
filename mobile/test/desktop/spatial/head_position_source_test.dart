@@ -2,8 +2,9 @@
 // head_position_source.dart), over fake webcams (head_fakes.dart) and the recorded landmark track of the clip
 // (test/fixtures/spatial/painted-head-12s.track): the webcam opens only while a view shows the source, the window is
 // shown, someone is there, the webcam is allowed and agreed to; it closes as soon as one of those stops; the card of
-// the first time; usable false (the view takes the mouse) while the head cannot be used; the problems; the positions
-// of the track, their centre, their loss; the settings.
+// the first time; usable false (the view takes the mouse) while the head cannot be used; the problems; one new try
+// after a transient failure, never once the view is gone; the positions of the track, their centre, their loss; the
+// settings.
 
 import 'dart:async';
 import 'dart:io';
@@ -107,6 +108,7 @@ void main() {
       source: noTracker ? null : source,
       away: away,
       observeLifecycle: false,
+      retryPause: const Duration(milliseconds: 10),
     );
   }
 
@@ -233,6 +235,98 @@ void main() {
       expect(source.sessions, hasLength(2));
       expect(head.problem, isNull);
       expect(head.usable, isTrue);
+    });
+
+    group('a transient failure of the webcam', () {
+      // RPC_S_CALL_FAILED as the tracker's info gives it (signed 32 bit), the failure of FreeKC's test of 26 Nov 2026
+      const rpcCallFailed = 0x800706BE - 0x100000000;
+      const pause = Duration(milliseconds: 30);
+
+      test('is tried again once by itself; the head stays the source meanwhile', () async {
+        make(settings: const DesktopSpatialSettings(consent: true)).attach();
+        await settle();
+        final positions = <ViewerPosition>[];
+        head.positions.listen(positions.add);
+        for (final value in trackSamples().where((value) => value.hasFace).take(5)) {
+          source.last.push(value);
+        }
+        await settle();
+        expect(positions.last.confidence, greaterThan(0));
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        expect(positions.last.confidence, 0, reason: 'the view glides back during the pause');
+        expect(head.problem, isNull, reason: 'no message for a first failure');
+        expect(head.usable, isTrue);
+        expect(head.cameraOpen, isFalse, reason: 'the camera icon goes while the webcam is closed');
+        await Future<void>.delayed(pause);
+        expect(source.sessions, hasLength(2));
+        expect(cameraOpen(), isTrue);
+        expect(head.cameraOpen, isTrue);
+        expect(head.problem, isNull);
+      });
+
+      test('failing again shows the problem, the view takes the mouse, and no third try', () async {
+        make(settings: const DesktopSpatialSettings(consent: true)).attach();
+        await settle();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await Future<void>.delayed(pause);
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        expect(head.problem, SpatialTrackingProblem.failed);
+        expect(head.usable, isFalse, reason: 'the mouse moves the view');
+        expect(head.cameraOpen, isFalse);
+        await Future<void>.delayed(pause * 3);
+        expect(source.sessions, hasLength(2), reason: 'no third try');
+        // The button of the message
+        await head.retry();
+        await settle();
+        expect(source.sessions, hasLength(3));
+        expect(head.usable, isTrue);
+      });
+
+      test('the view closed during the pause: no webcam opens afterwards', () async {
+        make(settings: const DesktopSpatialSettings(consent: true)).attach();
+        await settle();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        await head.close();
+        await Future<void>.delayed(pause * 3);
+        expect(source.sessions, hasLength(1));
+        expect(source.last.released, isTrue);
+      });
+
+      test('the view covered, or the webcam turned off, during the pause: no webcam opens', () async {
+        make(settings: const DesktopSpatialSettings(consent: true)).attach();
+        await settle();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        head.detach();
+        await Future<void>.delayed(pause * 3);
+        expect(source.sessions, hasLength(1));
+        expect(head.problem, isNull);
+        head.attach();
+        await settle();
+        expect(source.sessions, hasLength(2), reason: 'shown again: a start of its own');
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        await head.setWebcamAllowed(false);
+        await Future<void>.delayed(pause * 3);
+        expect(source.sessions, hasLength(2));
+        expect(head.cameraOpen, isFalse);
+      });
+
+      test('the window minimised during the pause: no webcam opens until it is back', () async {
+        make(settings: const DesktopSpatialSettings(consent: true)).attach();
+        await settle();
+        source.last.fail(HeadTrackerStatus.failed, hresult: rpcCallFailed);
+        await settle();
+        head.didChangeAppLifecycleState(AppLifecycleState.hidden);
+        await Future<void>.delayed(pause * 3);
+        expect(source.sessions, hasLength(1));
+        head.didChangeAppLifecycleState(AppLifecycleState.resumed);
+        await settle();
+        expect(source.sessions, hasLength(2));
+      });
     });
 
     test('no webcam (infrared only): a problem, and the mouse', () async {
