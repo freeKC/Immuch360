@@ -117,6 +117,7 @@ void main() {
   late PresentationContext context;
   late FakePlayers players;
   late _Passes passes;
+  late List<String> mpv;
   var now = Duration.zero;
 
   setUp(() async {
@@ -150,12 +151,14 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     passes = _Passes(players, refuse: refuse);
+    mpv = [];
     final closings = <(int, bool, SpatialStereoLayout, SpatialProjection)>[];
     final deps = SpatialVideoDependencies(
       pool: players.pool,
       resolve: (source) async => source.path,
       passes: passes,
       handleOf: (engine) async => 7,
+      setMpv: (engine, name, value) async => mpv.add('$name=$value'),
       clock: () => now,
     );
     await tester.pumpTestWidget(
@@ -250,6 +253,7 @@ void main() {
     expect(players.made.first.calls, contains('open /videos/salon_3D_SBS.mp4 at 0'));
     expect(players.made.first.calls, contains('play'));
     expect(page(tester).drawing, isTrue);
+    expect(mpv, ['keepaspect=no'], reason: 'the frame keeps the video\'s shape exactly');
     expect(find.text('Move the pointer across the picture to look around the scene; R recenters'), findsOneWidget);
     // The window's box reaches the passes once it stopped changing
     await tester.pump(SpatialVideoPageState.resizeDelay * 2);
@@ -351,6 +355,7 @@ void main() {
     await close(tester);
     await tester.pump();
     expect(passes.calls.last, 'disable');
+    expect(mpv.last, 'keepaspect=yes', reason: 'the pool keeps the player as the other pages want it');
     expect(closings.single.$3, SpatialStereoLayout.topBottom);
     expect(closings.single.$4, SpatialProjection.flat);
     expect(raised, 1);
@@ -359,6 +364,7 @@ void main() {
   testWidgets('refused passes: the video plays as it is, with the message', (tester) async {
     await pumpPage(tester, sources: {ViewerPositionKind.mouse: MousePositionSource.new}, refuse: 'no Metal device');
     expect(page(tester).flat, isTrue);
+    expect(mpv, ['keepaspect=no', 'keepaspect=yes']);
     expect(page(tester).drawing, isFalse);
     expect(find.text('Spatial 2.5D could not start on this graphics card: the video plays as it is'), findsOneWidget);
     expect(players.made.first.calls, contains('play'), reason: 'the video still plays');

@@ -53,6 +53,7 @@ import 'package:immich_mobile/generated/translations.g.dart';
 import 'package:immich_mobile/platform/spatial_video_api.g.dart';
 import 'package:immich_mobile/providers/infrastructure/settings.provider.dart';
 import 'package:logging/logging.dart';
+import 'package:media_kit/media_kit.dart' show NativePlayer;
 import 'package:media_kit_video/media_kit_video.dart' as mkv;
 import 'package:native_video_player/native_video_player.dart';
 
@@ -144,7 +145,15 @@ class PluginSpatialPasses implements SpatialPassesChannel {
 /// and the clock of the views
 @immutable
 class SpatialVideoDependencies {
-  const SpatialVideoDependencies({this.pool, this.resolve, this.passes, this.handleOf, this.clock, this.statsInterval});
+  const SpatialVideoDependencies({
+    this.pool,
+    this.resolve,
+    this.passes,
+    this.handleOf,
+    this.setMpv,
+    this.clock,
+    this.statsInterval,
+  });
 
   final PlayerPool? pool;
   final DesktopVideoSourceResolver? resolve;
@@ -152,6 +161,9 @@ class SpatialVideoDependencies {
 
   /// The plugin's handle of a player, null for a player without a texture
   final Future<int?> Function(PlaybackEngine engine)? handleOf;
+
+  /// Sets an mpv property of a player (keepaspect)
+  final Future<void> Function(PlaybackEngine engine, String name, String value)? setMpv;
 
   /// The monotonic clock of the views (spatialClock by default)
   final Duration Function()? clock;
@@ -168,6 +180,14 @@ Future<int?> pluginHandleOf(PlaybackEngine engine) async {
   }
   await controller.platform.future;
   return controller.player.handle;
+}
+
+/// Sets the mpv property [name] of the player of [engine]
+Future<void> pluginSetMpv(PlaybackEngine engine, String name, String value) async {
+  final native = engine.videoController?.player.platform;
+  if (native is NativePlayer) {
+    await native.setProperty(name, value);
+  }
 }
 
 /// The sources the video page may use: those of the photos, with the head tracked by the webcam first when the
@@ -438,16 +458,22 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
     }
     _engine = engine;
     _handle = handle;
+    final setMpv = _deps.setMpv ?? pluginSetMpv;
+    // The frame mpv draws keeps the video's shape exactly, as renderer C's pages ask: mpv's own letterbox would leave
+    // a row or a column of black where the frame's size was rounded
+    await setMpv(engine, 'keepaspect', 'no');
     final setup = _setup();
     final result = await _passes.enable(handle, setup);
     if (!mounted) {
       // The page closed during the call, after the adapter's unprepare: the passes off again, so that the pool does
       // not keep the player with them on
       await _passes.disable(handle);
+      await setMpv(engine, 'keepaspect', 'yes');
       return;
     }
     if (!result.ok) {
       _log.info('The Spatial passes refused: ${result.reason}');
+      await setMpv(engine, 'keepaspect', 'yes');
       _showFlat(result.reason ?? 'refused');
       return;
     }
@@ -475,6 +501,8 @@ class SpatialVideoPageState extends ConsumerState<SpatialVideoPage> with SingleT
     _engine = null;
     _drawing = false;
     await _passes.disable(handle);
+    // The pool keeps the player as the other pages want it
+    await (_deps.setMpv ?? pluginSetMpv)(engine, 'keepaspect', 'yes');
   }
 
   void _showFlat(String reason) {
