@@ -1101,6 +1101,7 @@ jobs:
           ai-components-3 RealESRGAN_x4plus.pth 4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1
           EOF
           for id in sd-cpp-vulkan-linux-x64 sd-cpp-seedvr2-vulkan-linux-x64; do
+            mkdir -p "$root/engines/$id"
             unzip -q "$work/mirror/$id.zip" -d "$root/engines/$id"
             chmod 755 "$root/engines/$id/immuch360-run" "$root/engines/$id/sd-cli"
             sha256sum "$root/engines/$id/immuch360-run"
